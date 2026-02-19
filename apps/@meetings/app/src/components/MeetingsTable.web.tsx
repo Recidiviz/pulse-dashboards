@@ -68,7 +68,8 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
   const { totalDurationMs } = useMeetingRecording({ meetingId: meeting.id });
   const { status: recordingState, meetingId } = useRecording<"web">();
 
-  const isMeetingInProgress = recordingState !== "idle" && meeting.id === meetingId;
+  const isMeetingInProgress =
+    recordingState !== "idle" && meeting.id === meetingId;
 
   const handleNavigateToMeeting = () => {
     if (!isMeetingInProgress) {

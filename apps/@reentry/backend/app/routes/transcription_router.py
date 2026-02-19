@@ -149,6 +149,7 @@ class TranscriptionValidation(BaseModel):
     no_prompt_injection: bool
     diarization: bool
     minimum_duration: bool
+    assigned_roles: Optional[Dict[str, str]] = None
 
 
 class TranscriptionWithValidationResponse(BaseModel):
@@ -212,15 +213,129 @@ async def get_client_transcription(
     except json.JSONDecodeError:
         raise HTTPException(status_code=500, detail="Invalid transcription file format")
 
+    # Extract assigned roles from metadata if available
+    assigned_roles = None
+    if (
+        "metadata" in transcription_data
+        and "assigned_roles" in transcription_data["metadata"]
+    ):
+        assigned_roles = transcription_data["metadata"]["assigned_roles"]
+
     # Build validation response from recording session fields
     validation = TranscriptionValidation(
         word_count=recording_session.validation_word_count,
         no_prompt_injection=recording_session.validation_no_prompt_injection,
         diarization=recording_session.validation_diarization,
         minimum_duration=recording_session.validation_minimum_duration,
+        assigned_roles=assigned_roles,
     )
 
     return TranscriptionWithValidationResponse(
         transcription=TranscriptionOutputResponse.model_validate(transcription_data),
         validation=validation,
     )
+
+
+class UpdateSpeakerRolesRequest(BaseModel):
+    """Request to update speaker roles in the transcription"""
+
+    role_mappings: Dict[str, str]  # Maps old speaker name to new speaker name
+
+
+class UpdateSpeakerRolesResponse(BaseModel):
+    """Response after updating speaker roles"""
+
+    success: bool
+    updated_turns: int
+    message: str
+
+
+@router.put(
+    "/{recording_session_id}/speaker-roles",
+    response_model=UpdateSpeakerRolesResponse,
+    summary="Update Speaker Roles in Transcription",
+    description="Update the speaker role assignments in a transcription by providing a mapping of old to new speaker names.",
+    tags=["Transcription"],
+)
+async def update_speaker_roles(
+    recording_session_id: UUID,
+    data: UpdateSpeakerRolesRequest,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    # Validate the session exists
+    recording_session = await get_recording_session_by_id(session, recording_session_id)
+    if recording_session is None:
+        raise HTTPException(status_code=404, detail="Recording session not found")
+
+    if recording_session.intake.client_pseudo_id != recording_session.client_pseudo_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Client ID mismatch between intake and recording session",
+        )
+
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+    )
+
+    if recording_session.status != RecordingStatus.COMPLETED:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot update speaker roles for incomplete transcription",
+        )
+
+    # Retrieve the transcription from storage
+    service = RecordingService(recording_session.gcs_bucket_name)
+    object_name = f"transcriptions/{recording_session_id}_processed.json"
+
+    try:
+        # Download existing transcription
+        transcription_json = await service.storage.download(
+            bucket=recording_session.gcs_bucket_name,
+            object_name=object_name,
+        )
+        transcription_data = json.loads(transcription_json)
+
+        # Add or update assigned_roles in metadata
+        if "metadata" not in transcription_data:
+            transcription_data["metadata"] = {}
+
+        transcription_data["metadata"]["assigned_roles"] = data.role_mappings
+
+        # Upload updated transcription back to storage
+        updated_json = json.dumps(transcription_data, indent=2)
+        await service.storage.upload(
+            bucket=recording_session.gcs_bucket_name,
+            object_name=object_name,
+            file_data=updated_json.encode("utf-8"),
+            content_type="application/json",
+        )
+
+        logger.info(
+            "Updated speaker role mappings in transcription metadata",
+            recording_session_id=str(recording_session_id),
+            role_mappings=data.role_mappings,
+        )
+
+        return UpdateSpeakerRolesResponse(
+            success=True,
+            updated_turns=len(data.role_mappings),
+            message=f"Successfully saved speaker role mappings for {len(data.role_mappings)} speakers",
+        )
+
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Invalid transcription file format")
+    except Exception as e:
+        logger.error(
+            "Failed to update speaker roles",
+            recording_session_id=str(recording_session_id),
+            error=str(e),
+        )
+        raise HTTPException(
+            status_code=500, detail=f"Failed to update speaker roles: {str(e)}"
+        )
+    finally:
+        await service.close()

@@ -44,6 +44,7 @@ interface ConversationTurnProps {
   onTurnClick: (startTime: number) => void;
   onToggleSplitMode: (index: number) => void;
   onSplitTurn: (index: number, splitPoint: number) => void;
+  enableEditing?: boolean;
   setRef: (el: HTMLDivElement | null) => void;
 }
 
@@ -58,6 +59,7 @@ export const ConversationTurn: React.FC<ConversationTurnProps> = ({
   onTurnClick,
   onToggleSplitMode,
   onSplitTurn,
+  enableEditing = true,
   setRef,
 }) => {
   const [splitAnchorEl, setSplitAnchorEl] = useState<HTMLElement | null>(null);
@@ -66,7 +68,9 @@ export const ConversationTurn: React.FC<ConversationTurnProps> = ({
   const [afterText, setAfterText] = useState("");
   const [cursorPosition, setCursorPosition] = useState<number | null>(null);
   const [showCursorIndicator, setShowCursorIndicator] = useState(false);
-  const [popoverAlignment, setPopoverAlignment] = useState<"left" | "right">("left");
+  const [popoverAlignment, setPopoverAlignment] = useState<"left" | "right">(
+    "left",
+  );
   const contentRef = useRef<HTMLDivElement>(null);
 
   const splitPopoverOpen = Boolean(splitAnchorEl);
@@ -156,7 +160,7 @@ export const ConversationTurn: React.FC<ConversationTurnProps> = ({
     setSplitAnchorEl(anchorEl);
   };
 
-    // Close split popover
+  // Close split popover
   const handleCloseSplitPopover = () => {
     if (splitAnchorEl) {
       document.body.removeChild(splitAnchorEl);
@@ -169,7 +173,7 @@ export const ConversationTurn: React.FC<ConversationTurnProps> = ({
 
   // Confirm split
   const handleConfirmSplit = () => {
-    onSplitTurn(index, splitPosition)
+    onSplitTurn(index, splitPosition);
     handleCloseSplitPopover();
     onToggleSplitMode(index); // Deactivate split mode
   };
@@ -188,74 +192,85 @@ export const ConversationTurn: React.FC<ConversationTurnProps> = ({
         <div className="p-3">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Select
-                size="small"
-                value={turn.role}
-                onChange={(e) => onSpeakerChange(index, e.target.value)}
-                sx={{
-                  minWidth: 120,
-                  height: 28,
-                  backgroundColor: getSpeakerColor(turn.role),
-                  color: "white",
-                  borderRadius: "9999px",
-                  fontSize: "11px",
-                  fontWeight: 500,
-                  fontFamily: "'Public Sans', sans-serif",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "& .MuiSelect-select": {
-                    paddingY: "4px",
-                    paddingX: "8px",
-                    fontFamily: "'Public Sans', sans-serif",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "& .MuiSvgIcon-root": {
-                    color: "white",
-                  },
-                }}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
+              {enableEditing ? (
+                <>
+                  <Select
+                    size="small"
+                    value={turn.role}
+                    onChange={(e) => onSpeakerChange(index, e.target.value)}
+                    sx={{
+                      minWidth: 120,
+                      height: 28,
+                      backgroundColor: getSpeakerColor(turn.role),
+                      color: "white",
+                      borderRadius: "9999px",
+                      fontSize: "11px",
+                      fontWeight: 500,
                       fontFamily: "'Public Sans', sans-serif",
-                      "& .MuiMenuItem-root": {
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                      "& .MuiSelect-select": {
+                        paddingY: "4px",
+                        paddingX: "8px",
                         fontFamily: "'Public Sans', sans-serif",
                       },
-                      "& .MuiList-root": {
-                        fontFamily: "'Public Sans', sans-serif",
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
                       },
-                    },
-                  },
-                }}
-              >
-                {uniqueSpeakers.map((speaker) => (
-                  <MenuItem key={speaker} value={speaker}>
-                    {speaker}
-                  </MenuItem>
-                ))}
-              </Select>
+                      "& .MuiSvgIcon-root": {
+                        color: "white",
+                      },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          fontFamily: "'Public Sans', sans-serif",
+                          "& .MuiMenuItem-root": {
+                            fontFamily: "'Public Sans', sans-serif",
+                          },
+                          "& .MuiList-root": {
+                            fontFamily: "'Public Sans', sans-serif",
+                          },
+                        },
+                      },
+                    }}
+                  >
+                    {uniqueSpeakers.map((speaker) => (
+                      <MenuItem key={speaker} value={speaker}>
+                        {speaker}
+                      </MenuItem>
+                    ))}
+                  </Select>
 
-              {/* Split Turn Button */}
-              <button
-                onClick={() => onToggleSplitMode(index)}
-                className={`p-1 rounded transition-colors ${
-                  isSplitMode
-                    ? "bg-[#006c67] text-white"
-                    : "text-[#2b5469]/70 hover:bg-gray-100"
-                }`}
-                title={isSplitMode ? "Cancel split mode" : "Split turn"}
-              >
-                <ContentCut sx={{ fontSize: 16 }} />
-              </button>
+                  {/* Split Turn Button */}
+                  <button
+                    onClick={() => onToggleSplitMode(index)}
+                    className={`p-1 rounded transition-colors ${
+                      isSplitMode
+                        ? "bg-[#006c67] text-white"
+                        : "text-[#2b5469]/70 hover:bg-gray-100"
+                    }`}
+                    title={isSplitMode ? "Cancel split mode" : "Split turn"}
+                  >
+                    <ContentCut sx={{ fontSize: 16 }} />
+                  </button>
+                </>
+              ) : (
+                <div
+                  className="px-3 py-1 rounded-full text-white text-xs font-medium font-['Public_Sans']"
+                  style={{ backgroundColor: getSpeakerColor(turn.role) }}
+                >
+                  {turn.role}
+                </div>
+              )}
             </div>
 
             <div
               className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans'] cursor-pointer hover:text-[#006c67]"
               onClick={() => {
                 console.log(
-                  `[ConversationTurn] Turn clicked, seeking to ${startTime}s`
+                  `[ConversationTurn] Turn clicked, seeking to ${startTime}s`,
                 );
                 onTurnClick(startTime);
               }}
@@ -287,10 +302,13 @@ export const ConversationTurn: React.FC<ConversationTurnProps> = ({
               <div className="flex items-center gap-2">
                 <ContentCut sx={{ fontSize: 14 }} />
                 <div className="flex-1">
-                  <strong>Split mode:</strong> Click where you want to split the turn. You can change speaker roles after splitting.
+                  <strong>Split mode:</strong> Click where you want to split the
+                  turn. You can change speaker roles after splitting.
                 </div>
                 {cursorPosition !== null && (
-                  <span className="text-[#2b5469]/70">Pos: {cursorPosition}</span>
+                  <span className="text-[#2b5469]/70">
+                    Pos: {cursorPosition}
+                  </span>
                 )}
               </div>
             </div>

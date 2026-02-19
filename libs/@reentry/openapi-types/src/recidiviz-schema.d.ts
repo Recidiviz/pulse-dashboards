@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -171,6 +171,46 @@ export interface paths {
         get: operations["get_assessment_config_by_intake_id_assessment_configs_outputs__plan_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/auth/password-gate-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check Password Gate Status
+         * @description Check if password protection is enabled for config management.
+         */
+        get: operations["get_password_gate_status_config_management_auth_password_gate_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/auth/verify-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Config Management Password
+         * @description Verify the password and receive a short-lived access token.
+         */
+        post: operations["verify_password_config_management_auth_verify_password_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1234,6 +1274,26 @@ export interface paths {
          */
         get: operations["get_client_transcription_transcription__recording_session_id__transcription_get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/transcription/{recording_session_id}/speaker-roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update Speaker Roles in Transcription
+         * @description Update the speaker role assignments in a transcription by providing a mapping of old to new speaker names.
+         */
+        put: operations["update_speaker_roles_transcription__recording_session_id__speaker_roles_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -3472,6 +3532,14 @@ export interface components {
             /** Pages */
             pages?: number | null;
         };
+        /**
+         * PasswordGateStatusResponse
+         * @description Response schema for the password gate status check.
+         */
+        PasswordGateStatusResponse: {
+            /** Enabled */
+            enabled: boolean;
+        };
         /** PlanAssetResponse */
         PlanAssetResponse: {
             /**
@@ -4259,6 +4327,10 @@ export interface components {
             diarization: boolean;
             /** Minimum Duration */
             minimum_duration: boolean;
+            /** Assigned Roles */
+            assigned_roles?: {
+                [key: string]: string;
+            } | null;
         };
         /** TranscriptionWithValidationResponse */
         TranscriptionWithValidationResponse: {
@@ -4277,6 +4349,28 @@ export interface components {
             audio_chunks_url?: string | null;
             /** Audio File Url */
             audio_file_url?: string | null;
+        };
+        /**
+         * UpdateSpeakerRolesRequest
+         * @description Request to update speaker roles in the transcription
+         */
+        UpdateSpeakerRolesRequest: {
+            /** Role Mappings */
+            role_mappings: {
+                [key: string]: string;
+            };
+        };
+        /**
+         * UpdateSpeakerRolesResponse
+         * @description Response after updating speaker roles
+         */
+        UpdateSpeakerRolesResponse: {
+            /** Success */
+            success: boolean;
+            /** Updated Turns */
+            updated_turns: number;
+            /** Message */
+            message: string;
         };
         /** UploadAudioFileResponse */
         UploadAudioFileResponse: {
@@ -4405,6 +4499,24 @@ export interface components {
             firebase_token: string;
             /** Client Pseudo Id */
             client_pseudo_id: string;
+        };
+        /**
+         * VerifyPasswordRequest
+         * @description Request schema for verifying the config management password.
+         */
+        VerifyPasswordRequest: {
+            /** Password */
+            password: string;
+        };
+        /**
+         * VerifyPasswordResponse
+         * @description Response schema after successful password verification.
+         */
+        VerifyPasswordResponse: {
+            /** Token */
+            token: string;
+            /** Expires In Minutes */
+            expires_in_minutes: number;
         };
         /** VerifyStateDocIdRequest */
         VerifyStateDocIdRequest: {
@@ -4846,6 +4958,59 @@ export interface operations {
             };
         };
     };
+    get_password_gate_status_config_management_auth_password_gate_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PasswordGateStatusResponse"];
+                };
+            };
+        };
+    };
+    verify_password_config_management_auth_verify_password_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifyPasswordResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_assessment_configs_config_management_assessments_get: {
         parameters: {
             query?: {
@@ -4860,7 +5025,9 @@ export interface operations {
                 /** @description Page size */
                 size?: number;
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -4889,7 +5056,9 @@ export interface operations {
     create_assessment_config_draft_config_management_assessments_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -4922,7 +5091,9 @@ export interface operations {
     get_assessment_config_config_management_assessments__config_id__get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -4953,7 +5124,9 @@ export interface operations {
     delete_assessment_config_endpoint_config_management_assessments__config_id__delete: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -4984,7 +5157,9 @@ export interface operations {
     update_assessment_config_draft_config_management_assessments__config_id__patch: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5019,7 +5194,9 @@ export interface operations {
     create_new_assessment_version_config_management_assessments__config_id__new_version_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5054,7 +5231,9 @@ export interface operations {
     validate_assessment_yaml_config_management_assessments_validate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5087,7 +5266,9 @@ export interface operations {
     activate_assessment_config_config_management_assessments__config_id__activate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5122,7 +5303,9 @@ export interface operations {
     deactivate_assessment_config_config_management_assessments__config_id__deactivate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5157,7 +5340,9 @@ export interface operations {
     export_assessment_config_config_management_assessments__config_id__export_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5188,7 +5373,9 @@ export interface operations {
     validate_assessment_import_config_management_assessments_import_validate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5228,7 +5415,9 @@ export interface operations {
                 /** @description Source environment name (for audit purposes) */
                 source_env?: string | null;
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5272,7 +5461,9 @@ export interface operations {
                 /** @description Page size */
                 size?: number;
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5301,7 +5492,9 @@ export interface operations {
     create_output_config_draft_config_management_outputs_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5334,7 +5527,9 @@ export interface operations {
     get_output_config_config_management_outputs__config_id__get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5365,7 +5560,9 @@ export interface operations {
     delete_output_config_endpoint_config_management_outputs__config_id__delete: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5396,7 +5593,9 @@ export interface operations {
     update_output_config_draft_config_management_outputs__config_id__patch: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5431,7 +5630,9 @@ export interface operations {
     create_new_output_version_config_management_outputs__config_id__new_version_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5466,7 +5667,9 @@ export interface operations {
     validate_output_yaml_config_management_outputs_validate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5499,7 +5702,9 @@ export interface operations {
     activate_output_config_config_management_outputs__config_id__activate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5534,7 +5739,9 @@ export interface operations {
     deactivate_output_config_config_management_outputs__config_id__deactivate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5569,7 +5776,9 @@ export interface operations {
     export_output_config_config_management_outputs__config_id__export_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 config_id: string;
             };
@@ -5600,7 +5809,9 @@ export interface operations {
     validate_output_import_config_management_outputs_import_validate_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5640,7 +5851,9 @@ export interface operations {
                 /** @description Source environment name (for audit purposes) */
                 source_env?: string | null;
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5688,7 +5901,9 @@ export interface operations {
                 /** @description Page size */
                 size?: number;
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -6881,6 +7096,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TranscriptionWithValidationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_speaker_roles_transcription__recording_session_id__speaker_roles_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recording_session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSpeakerRolesRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateSpeakerRolesResponse"];
                 };
             };
             /** @description Validation Error */

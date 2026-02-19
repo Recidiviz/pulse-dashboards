@@ -17,7 +17,7 @@
 
 "use client";
 
-import { Pause, PlayArrow } from "@mui/icons-material";
+import { Download, Pause, PlayArrow } from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 
@@ -46,6 +46,7 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoadingWaveform, setIsLoadingWaveform] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -120,8 +121,32 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
       barGap: 1,
       height: 20,
       normalize: true,
-      backend: "WebAudio",
+      backend: "MediaElement",
     });
+
+    // Enable pitch preservation immediately on the media element
+    const mediaElement = waveSurfer.getMediaElement();
+    if (mediaElement) {
+      // Modern browsers
+      if ("preservesPitch" in mediaElement) {
+        mediaElement.preservesPitch = true;
+      }
+      // Firefox
+      if ("mozPreservesPitch" in mediaElement) {
+        (
+          mediaElement as HTMLMediaElement & { mozPreservesPitch: boolean }
+        ).mozPreservesPitch = true;
+      }
+      // Webkit (older Safari)
+      if ("webkitPreservesPitch" in mediaElement) {
+        (
+          mediaElement as HTMLMediaElement & { webkitPreservesPitch: boolean }
+        ).webkitPreservesPitch = true;
+      }
+      console.info(
+        "[SimpleAudioPlayer] Pitch preservation enabled on media element",
+      );
+    }
 
     // Listen to play/pause events
     waveSurfer.on("play", () => {
@@ -135,7 +160,30 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
     waveSurfer.on("ready", () => {
       setIsLoadingWaveform(false);
       setDuration(waveSurfer.getDuration());
-      console.info(`Audio file ready for playback: ${signedUrl}`);
+      console.info(
+        `[SimpleAudioPlayer] Audio file ready for playback: ${signedUrl}`,
+      );
+
+      // Double-check pitch preservation is enabled (in case it was reset)
+      const mediaElement = waveSurfer.getMediaElement();
+      if (mediaElement) {
+        if ("preservesPitch" in mediaElement) {
+          mediaElement.preservesPitch = true;
+        }
+        if ("mozPreservesPitch" in mediaElement) {
+          (
+            mediaElement as HTMLMediaElement & { mozPreservesPitch: boolean }
+          ).mozPreservesPitch = true;
+        }
+        if ("webkitPreservesPitch" in mediaElement) {
+          (
+            mediaElement as HTMLMediaElement & { webkitPreservesPitch: boolean }
+          ).webkitPreservesPitch = true;
+        }
+        console.info(
+          `[SimpleAudioPlayer] Pitch preservation confirmed: preservesPitch=${mediaElement.preservesPitch}`,
+        );
+      }
 
       // Expose seek function to parent
       if (onPlayerReady) {
@@ -312,10 +360,51 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
     }
   };
 
-  const handlePlaybackRateChange = (rate: number) => {
+  const cyclePlaybackRate = () => {
+    const rates = [1, 1.5, 2];
+    const currentIndex = rates.indexOf(playbackRate);
+    const nextIndex = (currentIndex + 1) % rates.length;
+    const nextRate = rates[nextIndex];
+
     if (waveSurferRef.current) {
-      waveSurferRef.current.setPlaybackRate(rate);
-      setPlaybackRate(rate);
+      waveSurferRef.current.setPlaybackRate(nextRate);
+      setPlaybackRate(nextRate);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!signedUrl || isDownloading) return;
+
+    try {
+      setIsDownloading(true);
+      track("assessment_audio_download_started", { sessionId: sessionId });
+
+      // Fetch the audio file
+      const response = await fetch(signedUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `recording-${sessionId}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      track("assessment_audio_download_completed", { sessionId: sessionId });
+    } catch (error) {
+      console.error("Error downloading audio:", error);
+      showErrorToast("Failed to download audio file");
+      track("assessment_audio_download_failed", {
+        sessionId: sessionId,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -377,34 +466,39 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
             )}
           </div>
 
-          {/* Playback speed controls */}
-          <div className="flex items-center gap-1 flex-shrink-0">
-            {[1, 1.5, 2].map((rate) => {
-              let buttonClassName =
-                "h-7 px-2 rounded text-[11px] font-medium font-['Public_Sans'] transition-all duration-200 ";
-              if (playbackRate === rate) {
-                buttonClassName += "bg-[#006c67] text-white";
-              } else if (isLoadingWaveform) {
-                buttonClassName +=
-                  "bg-gray-200 text-gray-400 cursor-not-allowed";
-              } else {
-                buttonClassName +=
-                  "bg-gray-100 text-gray-700 hover:bg-gray-200";
-              }
+          {/* Playback speed control */}
+          <button
+            type="button"
+            onClick={cyclePlaybackRate}
+            disabled={isLoadingWaveform}
+            className={`h-7 px-3 rounded text-[11px] font-medium font-['Public_Sans'] transition-all duration-200 flex-shrink-0 ${
+              isLoadingWaveform
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-[#006c67] text-white hover:bg-[#005550]"
+            }`}
+            title="Click to cycle playback speed"
+          >
+            {playbackRate}x
+          </button>
 
-              return (
-                <button
-                  key={rate}
-                  type="button"
-                  onClick={() => handlePlaybackRateChange(rate)}
-                  disabled={isLoadingWaveform}
-                  className={buttonClassName}
-                >
-                  {rate}x
-                </button>
-              );
-            })}
-          </div>
+          {/* Download button */}
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={isLoadingWaveform || isDownloading}
+            className={`h-7 w-7 rounded flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
+              isLoadingWaveform || isDownloading
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+            title={isDownloading ? "Preparing download..." : "Download audio"}
+          >
+            {isDownloading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600" />
+            ) : (
+              <Download sx={{ fontSize: 16 }} />
+            )}
+          </button>
         </div>
       ) : (
         <div className="space-y-4">

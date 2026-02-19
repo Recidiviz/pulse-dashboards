@@ -16,15 +16,7 @@
 // =============================================================================
 
 "use client";
-import {
-  Add,
-  Check,
-  Close,
-  Download,
-  Edit,
-  MergeType,
-  Undo,
-} from "@mui/icons-material";
+import { Add, Check, Close, Edit, MergeType, Undo } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
@@ -51,6 +43,7 @@ interface TranscriptionViewProps {
   currentAudioTime?: number;
   onTurnClick?: (startTime: number) => void;
   onActiveTurnChange?: (role: string | null) => void;
+  enableEditing?: boolean;
 }
 
 interface ConversationTurnType {
@@ -76,6 +69,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   currentAudioTime = 0,
   onTurnClick,
   onActiveTurnChange,
+  enableEditing = false,
 }) => {
   const auth = useAuth();
   const [activeTurnIndex, setActiveTurnIndex] = useState<number>(-1);
@@ -128,6 +122,11 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
     },
   );
 
+  const updateSpeakerRolesMutation = $api.useMutation(
+    "put",
+    "/transcription/{recording_session_id}/speaker-roles",
+  );
+
   // Transform conversation data to include millisecond timestamps
   const transformConversationData = (
     conversation: RawConversationTurn[],
@@ -149,36 +148,25 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
     });
   };
 
-  // Calculate speaker statistics
-  const calculateSpeakerStats = (conversation: ConversationTurnType[]) => {
-    const stats: Record<string, { turns: number; duration: string }> = {};
-
-    conversation.forEach((turn) => {
-      if (!stats[turn.role]) {
-        stats[turn.role] = { turns: 0, duration: "0s" };
-      }
-      stats[turn.role].turns += 1;
-
-      const currentDuration = Number.parseFloat(
-        stats[turn.role].duration.replace("s", ""),
-      );
-      const turnDuration = Number.parseFloat(turn.duration.replace("s", ""));
-      stats[turn.role].duration =
-        `${(currentDuration + turnDuration).toFixed(1)}s`;
-    });
-
-    return stats;
-  };
-
-  // Initialize modified conversation when data loads
+  // Initialize modified conversation when data loads and apply role mappings
   useEffect(() => {
     if (data?.transcription?.conversation && !modifiedConversation) {
-      const transformedConversation = transformConversationData(
+      let transformedConversation = transformConversationData(
         data.transcription.conversation,
       );
+
+      // Apply role mappings from backend if they exist
+      if (data.validation?.assigned_roles) {
+        const roleMappings = data.validation.assigned_roles;
+        transformedConversation = transformedConversation.map((turn) => ({
+          ...turn,
+          role: roleMappings[turn.role] || turn.role,
+        }));
+      }
+
       setModifiedConversation(transformedConversation);
     }
-  }, [data]);
+  }, [data, modifiedConversation]);
 
   // Generate consistent colors for speakers
   const getSpeakerColor = (role: string) => {
@@ -275,24 +263,6 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
     }
   }, [assignRolesPopoverOpen, uniqueSpeakers]);
 
-  const exportTooltip = useMemo(() => {
-    if (canExport) return "Save conversation changes";
-    const hasClient = uniqueSpeakers.some((s) => s.toLowerCase() === "client");
-    const hasCaseworker = uniqueSpeakers.some(
-      (s) => s.toLowerCase() === "caseworker",
-    );
-    if (!hasClient && !hasCaseworker) {
-      return "Please mark one speaker as Client and one as Caseworker before saving";
-    }
-    if (!hasClient) {
-      return "Please mark one speaker as Client before saving";
-    }
-    if (!hasCaseworker) {
-      return "Please mark one speaker as Caseworker before saving";
-    }
-    return "";
-  }, [canExport, uniqueSpeakers]);
-
   // Handle role assignment (Client or Caseworker)
   const handleRoleToggle = (speaker: string, role: "Client" | "Caseworker") => {
     if (role === "Client") {
@@ -340,7 +310,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   };
 
   // Apply speaker role assignments to conversation
-  const handleApplyRenames = () => {
+  const handleApplyRenames = async () => {
     if (!modifiedConversation) return;
 
     // Save current state to history
@@ -360,15 +330,36 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
       }
     });
 
-    // Apply renames
-    const updated = modifiedConversation.map((turn) => ({
-      ...turn,
-      role: nameMapping[turn.role] || turn.role,
-    }));
+    try {
+      // Send role mappings to backend
+      await updateSpeakerRolesMutation.mutateAsync({
+        params: {
+          path: {
+            recording_session_id: sessionId,
+          },
+        },
+        body: {
+          role_mappings: nameMapping,
+        },
+        headers: {
+          Authorization: `Bearer ${auth.getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-    setModifiedConversation(updated);
-    setAssignRolesAnchorEl(null);
-    showSuccessToast("Speaker roles applied successfully");
+      // Apply renames locally
+      const updated = modifiedConversation.map((turn) => ({
+        ...turn,
+        role: nameMapping[turn.role] || turn.role,
+      }));
+
+      setModifiedConversation(updated);
+      setAssignRolesAnchorEl(null);
+      showSuccessToast("Speaker roles applied successfully");
+    } catch (error) {
+      console.error("Failed to update speaker roles:", error);
+      showErrorToast("Failed to save speaker roles. Please try again.");
+    }
   };
 
   // Handle speaker reassignment for a specific turn
@@ -455,7 +446,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   };
 
   // Handle merging two speakers
-  const handleMergeSpeakers = () => {
+  const handleMergeSpeakers = async () => {
     if (!modifiedConversation || !sourceSpeaker || !targetSpeaker) return;
 
     // Prevent merging Caseworker with Client
@@ -477,44 +468,50 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
     // Save current state to history
     saveToHistory(`Merge "${sourceSpeaker}" into "${targetSpeaker}"`);
 
-    const updated = modifiedConversation.map((turn) => ({
-      ...turn,
-      role: turn.role === sourceSpeaker ? targetSpeaker : turn.role,
-    }));
+    try {
+      // Create role mapping for merge operation
+      const roleMapping: Record<string, string> = {};
+      uniqueSpeakers.forEach((speaker) => {
+        if (speaker === sourceSpeaker) {
+          roleMapping[speaker] = targetSpeaker;
+        } else {
+          roleMapping[speaker] = speaker;
+        }
+      });
 
-    setModifiedConversation(updated);
-    setMergeAnchorEl(null);
-    setSourceSpeaker("");
-    setTargetSpeaker("");
-    showSuccessToast(
-      `Successfully merged "${sourceSpeaker}" into "${targetSpeaker}"`,
-    );
-  };
+      // Send role mappings to backend
+      await updateSpeakerRolesMutation.mutateAsync({
+        params: {
+          path: {
+            recording_session_id: sessionId,
+          },
+        },
+        body: {
+          role_mappings: roleMapping,
+        },
+        headers: {
+          Authorization: `Bearer ${auth.getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-  // Export modifications as JSON
-  const handleExport = () => {
-    if (!modifiedConversation || !data) return;
+      // Apply merge locally
+      const updated = modifiedConversation.map((turn) => ({
+        ...turn,
+        role: turn.role === sourceSpeaker ? targetSpeaker : turn.role,
+      }));
 
-    const exportData = {
-      ...data.transcription,
-      conversation: modifiedConversation,
-      metadata: {
-        ...data.transcription.metadata,
-        speakers: calculateSpeakerStats(modifiedConversation),
-      },
-    };
-
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `transcription-${sessionId}-modified.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      setModifiedConversation(updated);
+      setMergeAnchorEl(null);
+      setSourceSpeaker("");
+      setTargetSpeaker("");
+      showSuccessToast(
+        `Successfully merged "${sourceSpeaker}" into "${targetSpeaker}"`,
+      );
+    } catch (error) {
+      console.error("Failed to merge speakers:", error);
+      showErrorToast("Failed to merge speakers. Please try again.");
+    }
   };
 
   // Find and focus on the active conversation turn based on current audio time
@@ -650,28 +647,30 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
           </div>
 
           {/* Add Speaker Section */}
-          <div className="mb-3">
-            <span className="text-[rgba(43,84,105,0.5)] font-['Public_Sans'] text-[10px] font-bold leading-[1.2] tracking-[-0.12px] uppercase mb-1.5 block">
-              ADD SPEAKER
-            </span>
-            <div className="flex gap-1.5">
-              <input
-                type="text"
-                value={newSpeakerName}
-                onChange={(e) => setNewSpeakerName(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleAddSpeaker()}
-                placeholder="Speaker name"
-                className="flex-1 px-2 py-1.5 border border-[#2b5469]/20 rounded text-xs font-['Public_Sans'] focus:outline-none focus:border-[#006c67] focus:ring-1 focus:ring-[#006c67]"
-              />
-              <button
-                onClick={handleAddSpeaker}
-                className="px-2 py-1.5 bg-[#006c67] text-white rounded text-xs font-['Public_Sans'] font-medium hover:bg-[#005550] transition-colors flex items-center gap-1"
-              >
-                <Add sx={{ fontSize: 14 }} />
-                Add
-              </button>
+          {enableEditing && (
+            <div className="mb-3">
+              <span className="text-[rgba(43,84,105,0.5)] font-['Public_Sans'] text-[10px] font-bold leading-[1.2] tracking-[-0.12px] uppercase mb-1.5 block">
+                ADD SPEAKER
+              </span>
+              <div className="flex gap-1.5">
+                <input
+                  type="text"
+                  value={newSpeakerName}
+                  onChange={(e) => setNewSpeakerName(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleAddSpeaker()}
+                  placeholder="Speaker name"
+                  className="flex-1 px-2 py-1.5 border border-[#2b5469]/20 rounded text-xs font-['Public_Sans'] focus:outline-none focus:border-[#006c67] focus:ring-1 focus:ring-[#006c67]"
+                />
+                <button
+                  onClick={handleAddSpeaker}
+                  className="px-2 py-1.5 bg-[#006c67] text-white rounded text-xs font-['Public_Sans'] font-medium hover:bg-[#005550] transition-colors flex items-center gap-1"
+                >
+                  <Add sx={{ fontSize: 14 }} />
+                  Add
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Speaker List */}
           <div className="mb-3">
@@ -794,20 +793,34 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
           <div className="flex gap-2 justify-end">
             <button
               onClick={() => setAssignRolesAnchorEl(null)}
-              className="px-3 py-1.5 border border-[#2b5469]/20 text-[#2b5469] rounded text-xs font-['Public_Sans'] font-medium hover:bg-gray-50 transition-colors"
+              disabled={updateSpeakerRolesMutation.isPending}
+              className="px-3 py-1.5 border border-[#2b5469]/20 text-[#2b5469] rounded text-xs font-['Public_Sans'] font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               onClick={handleApplyRenames}
-              disabled={!clientSpeaker || !caseworkerSpeaker}
-              className={`px-3 py-1.5 rounded text-xs font-['Public_Sans'] font-medium transition-colors ${
-                clientSpeaker && caseworkerSpeaker
+              disabled={
+                !clientSpeaker ||
+                !caseworkerSpeaker ||
+                updateSpeakerRolesMutation.isPending
+              }
+              className={`px-3 py-1.5 rounded text-xs font-['Public_Sans'] font-medium transition-colors flex items-center gap-1.5 ${
+                clientSpeaker &&
+                caseworkerSpeaker &&
+                !updateSpeakerRolesMutation.isPending
                   ? "bg-[#006c67] text-white hover:bg-[#005550]"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              Apply
+              {updateSpeakerRolesMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                  Applying...
+                </>
+              ) : (
+                "Apply"
+              )}
             </button>
           </div>
         </div>
@@ -1002,20 +1015,34 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
           <div className="flex gap-2 justify-end">
             <button
               onClick={() => setMergeAnchorEl(null)}
-              className="px-3 py-1.5 border border-[#2b5469]/20 text-[#2b5469] rounded text-xs font-['Public_Sans'] font-medium hover:bg-gray-50 transition-colors"
+              disabled={updateSpeakerRolesMutation.isPending}
+              className="px-3 py-1.5 border border-[#2b5469]/20 text-[#2b5469] rounded text-xs font-['Public_Sans'] font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               onClick={handleMergeSpeakers}
-              disabled={!sourceSpeaker || !targetSpeaker}
-              className={`px-3 py-1.5 rounded text-xs font-['Public_Sans'] font-medium transition-colors ${
-                sourceSpeaker && targetSpeaker
+              disabled={
+                !sourceSpeaker ||
+                !targetSpeaker ||
+                updateSpeakerRolesMutation.isPending
+              }
+              className={`px-3 py-1.5 rounded text-xs font-['Public_Sans'] font-medium transition-colors flex items-center gap-1.5 ${
+                sourceSpeaker &&
+                targetSpeaker &&
+                !updateSpeakerRolesMutation.isPending
                   ? "bg-[#006c67] text-white hover:bg-[#005550]"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              Merge
+              {updateSpeakerRolesMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                  Merging...
+                </>
+              ) : (
+                "Merge"
+              )}
             </button>
           </div>
         </div>
@@ -1031,64 +1058,54 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
                 Interview Transcription
               </div>
               <div className="flex gap-2">
-                <Tooltip
-                  title={
-                    history.length > 0
-                      ? `Undo: ${history[history.length - 1].action}`
-                      : "No actions to undo"
-                  }
-                  arrow
-                >
-                  <span>
-                    <button
-                      onClick={handleUndo}
-                      disabled={history.length === 0}
-                      className={`px-4 py-2 border rounded-[32px] text-sm font-['Public_Sans'] font-medium transition-colors flex items-center gap-2 ${
-                        history.length > 0
-                          ? "border-[#006c67] text-[#006c67] hover:bg-[#006c67]/5"
-                          : "border-gray-300 text-gray-400 cursor-not-allowed"
-                      }`}
-                    >
-                      <Undo sx={{ fontSize: 16 }} />
-                      Undo
-                    </button>
-                  </span>
-                </Tooltip>
-                <button
-                  onClick={(e) => setAssignRolesAnchorEl(e.currentTarget)}
-                  className="px-4 py-2 border border-[#006c67] text-[#006c67] rounded-[32px] text-sm font-['Public_Sans'] font-medium hover:bg-[#006c67]/5 transition-colors flex items-center gap-2"
-                >
-                  <Edit sx={{ fontSize: 16 }} />
-                  Assign Roles
-                </button>
-                <button
-                  onClick={(e) => setMergeAnchorEl(e.currentTarget)}
-                  disabled={uniqueSpeakers.length < 2}
-                  className={`px-4 py-2 border rounded-[32px] text-sm font-['Public_Sans'] font-medium transition-colors flex items-center gap-2 ${
-                    uniqueSpeakers.length < 2
-                      ? "border-gray-300 text-gray-400 cursor-not-allowed"
-                      : "border-[#006c67] text-[#006c67] hover:bg-[#006c67]/5"
-                  }`}
-                >
-                  <MergeType sx={{ fontSize: 16 }} />
-                  Merge Speakers
-                </button>
-                <Tooltip title={exportTooltip} arrow>
-                  <span>
-                    <button
-                      onClick={handleExport}
-                      disabled={!canExport}
-                      className={`px-4 py-2 rounded-[32px] text-sm font-['Public_Sans'] font-medium transition-colors flex items-center gap-2 ${
-                        canExport
-                          ? "bg-[#006c67] text-white hover:bg-[#005550]"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
-                    >
-                      <Download sx={{ fontSize: 16 }} />
-                      Save conversation
-                    </button>
-                  </span>
-                </Tooltip>
+                {enableEditing && (
+                  <Tooltip
+                    title={
+                      history.length > 0
+                        ? `Undo: ${history[history.length - 1].action}`
+                        : "No actions to undo"
+                    }
+                    arrow
+                  >
+                    <span>
+                      <button
+                        onClick={handleUndo}
+                        disabled={history.length === 0}
+                        className={`px-4 py-2 border rounded-[32px] text-sm font-['Public_Sans'] font-medium transition-colors flex items-center gap-2 ${
+                          history.length > 0
+                            ? "border-[#006c67] text-[#006c67] hover:bg-[#006c67]/5"
+                            : "border-gray-300 text-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        <Undo sx={{ fontSize: 16 }} />
+                        Undo
+                      </button>
+                    </span>
+                  </Tooltip>
+                )}
+                {!canExport && (
+                  <button
+                    onClick={(e) => setAssignRolesAnchorEl(e.currentTarget)}
+                    className="px-4 py-2 border border-[#006c67] text-[#006c67] rounded-[32px] text-sm font-['Public_Sans'] font-medium hover:bg-[#006c67]/5 transition-colors flex items-center gap-2"
+                  >
+                    <Edit sx={{ fontSize: 16 }} />
+                    Assign Roles
+                  </button>
+                )}
+                {enableEditing && (
+                  <button
+                    onClick={(e) => setMergeAnchorEl(e.currentTarget)}
+                    disabled={uniqueSpeakers.length < 2}
+                    className={`px-4 py-2 border rounded-[32px] text-sm font-['Public_Sans'] font-medium transition-colors flex items-center gap-2 ${
+                      uniqueSpeakers.length < 2
+                        ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "border-[#006c67] text-[#006c67] hover:bg-[#006c67]/5"
+                    }`}
+                  >
+                    <MergeType sx={{ fontSize: 16 }} />
+                    Merge Speakers
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1107,7 +1124,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
             </div>
 
             {/* Save Requirements Alert */}
-            {!canExport && (
+            {enableEditing && !canExport && (
               <div className="p-3 bg-[#fff3cd] border border-[#ffc107]/30 rounded-lg">
                 <p className="text-[#856404] text-sm font-['Public_Sans']">
                   <strong>Save Requirements:</strong> Please mark one speaker as
@@ -1137,6 +1154,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
                   onTurnClick={(startTime) => onTurnClick?.(startTime)}
                   onToggleSplitMode={handleToggleSplitMode}
                   onSplitTurn={handleSplitTurn}
+                  enableEditing={enableEditing}
                   setRef={(el) => {
                     turnRefs.current[index] = el;
                   }}
