@@ -220,7 +220,7 @@ const MeetingDesktop = ({
             </View>
           </View>
 
-          <View className="mx-auto w-full max-w-[960px] flex-1">
+          <View className="mx-auto w-full flex-1">
             {activeTab === Tab.Notes && (
               <MeetingNotesTab
                 notes={meetingDetails?.userNotepadNotes}
