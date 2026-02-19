@@ -18,6 +18,7 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 
 import Meeting from "../components/Meeting";
+import { useMeetingDetails } from "../hooks/useMeetingDetails";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeClient } from "../utils/format";
@@ -26,10 +27,7 @@ type MeetingRouteProp = RouteProp<RootStackParamList, "ClientMeeting">;
 
 const ClientMeetingScreen = () => {
   const route = useRoute<MeetingRouteProp>();
-  const { data: meetingDetails } = trpc.v1.meeting.getDetails.useQuery(
-    { meetingId: route.params?.meetingId || "" },
-    { enabled: !!route.params?.meetingId },
-  );
+  const { data: meetingDetails } = useMeetingDetails(route.params?.meetingId);
   const { data: person } = trpc.v1.client.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },

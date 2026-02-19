@@ -19,9 +19,12 @@ import { Link } from "@react-navigation/native";
 import React from "react";
 import { Image, Text, View } from "react-native";
 
+import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
+
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
+import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
 type MeetingCardProps = {
@@ -31,7 +34,7 @@ type MeetingCardProps = {
     time: string;
     duration: string | null;
     content: string;
-    status: string;
+    status: PostMeetingProcessingStatus;
     recordingState: string;
     start: Date;
     end: Date | null;
@@ -40,15 +43,6 @@ type MeetingCardProps = {
   personType: "client" | "resident";
 };
 
-const RecordProcessingStatuses = [
-  "STITCHING_QUEUED", 
-  "STITCHING_IN_PROGRESS", 
-  "TRANSCRIPTION_QUEUED", 
-  "TRANSCRIPTION_IN_PROGRESS", 
-  "NOTETAKING_QUEUED", 
-  "NOTETAKING_IN_PROGRESS"
-];
-
 const MeetingsCardsList = ({
   meetings,
   person,
@@ -56,8 +50,9 @@ const MeetingsCardsList = ({
 }: MeetingCardProps) => {
   const { status: recordingState } = useRecording<"native">();
   return meetings.map((meeting, index) => {
-    const isMeetingInProgress = recordingState !== "idle" && meeting.status === "NOT_STARTED";
-    const isMeetingProcessing = RecordProcessingStatuses.includes(meeting.status);
+    const isMeetingInProgress =
+      recordingState !== "idle" && meeting.status === "NOT_STARTED";
+    const isProcessing = isMeetingProcessing(meeting.status);
 
     const linkProps =
       meeting.status === "NOT_STARTED"
@@ -114,7 +109,7 @@ const MeetingsCardsList = ({
               className="mt-2"
             />
           )}
-          {isMeetingProcessing && (
+          {isProcessing && (
             <View className="mt-4 rounded-xl bg-[#C1E3D83B] p-4">
               <View className="flex-row items-start">
                 <Image

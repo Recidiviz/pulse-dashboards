@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Put types that need to be exported to other apps here
+import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-// intended use of TRPC to share from server to client
-// eslint-disable-next-line @nx/enforce-module-boundaries
-export type { AppRouter } from "~@meetings/trpc";
+const recordProcessingStatuses = [
+  "STITCHING_QUEUED",
+  "STITCHING_IN_PROGRESS",
+  "TRANSCRIPTION_QUEUED",
+  "TRANSCRIPTION_IN_PROGRESS",
+  "NOTETAKING_QUEUED",
+  "NOTETAKING_IN_PROGRESS",
+];
 
-// LLM schema types for notetaker pipeline
-// eslint-disable-next-line @nx/enforce-module-boundaries
-export type {
-  ActionItem,
-  CriticalUpdate,
-  MinuteSection,
-} from "~@meetings/tasks";
-
-// eslint-disable-next-line @nx/enforce-module-boundaries
-export type { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+export function isMeetingProcessing(status: PostMeetingProcessingStatus) {
+  return recordProcessingStatuses.includes(status);
+}
