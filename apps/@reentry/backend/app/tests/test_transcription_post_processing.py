@@ -1,10 +1,9 @@
 import json
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
-from freezegun import freeze_time
 
 from app.core.data_config.assessment_configs.assessment_config import ModelConfig
 from app.models.recording import RecordingSession, RecordingStatus
@@ -13,7 +12,6 @@ from app.utils.transcription.post_processing import (
     DeepgramTranscriptionInput,
     GCPTranscriptionInput,
     OutputMetadata,
-    SpeakersClarification,
     SpeakerStats,
     TranscriptionOutput,
     TranscriptionProcessor,
@@ -170,91 +168,6 @@ class TestTranscriptionProcessor:
         assert stats["client"].turns == 1  # One turn for client
         assert stats["client"].duration == "1.0s"  # 1 second total
 
-    def test_format_conversation_for_llm(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(
-            deepgram_sample_from_file, "deepgram", llm_config
-        )
-
-        conversation = [
-            ConversationTurn(
-                id="turn_1",
-                role="speaker_0",
-                content="Hello there",
-                startTime="0.000s",
-                endTime="1.000s",
-                startTimeMs=0,
-                endTimeMs=1000,
-                duration="1.0s",
-                speakerTag=0,
-                wordCount=2,
-            ),
-            ConversationTurn(
-                id="turn_2",
-                role="speaker_1",
-                content="How are you",
-                startTime="2.000s",
-                endTime="3.000s",
-                startTimeMs=2000,
-                endTimeMs=3000,
-                duration="1.0s",
-                speakerTag=1,
-                wordCount=3,
-            ),
-        ]
-
-        formatted = processor._format_conversation_for_llm(conversation)
-        expected = "speaker_0: Hello there\nspeaker_1: How are you"
-        assert formatted == expected
-
-    @pytest.mark.asyncio
-    @patch("app.utils.transcription.post_processing.LLMAgentQA")
-    async def test_convert_transcript_to_conversation_deepgram(
-        self, mock_llm_agent, deepgram_sample_from_file
-    ):
-        # Mock LLM response
-        mock_agent = AsyncMock()
-        mock_agent.call.return_value = SpeakersClarification(
-            speaker_1="caseworker", speaker_2="client"
-        )
-        mock_llm_agent.return_value = mock_agent
-
-        processor = TranscriptionProcessor(
-            deepgram_sample_from_file, "deepgram", llm_config
-        )
-        result = await processor.convert_transcript_to_conversation()
-
-        assert result.metadata.diarizationService == "deepgram"
-        assert result.metadata.totalTurns > 0
-        assert result.metadata.language == "en_us"
-        assert len(result.conversation) > 0
-
-        # Check that speaker roles have been assigned
-        roles = {turn.role for turn in result.conversation}
-        assert "caseworker" in roles or "client" in roles
-
-    @pytest.mark.asyncio
-    @patch("app.utils.transcription.post_processing.LLMAgentQA")
-    async def test_convert_transcript_to_conversation_gcp(
-        self, mock_llm_agent, gcp_sample_from_file
-    ):
-        # Mock LLM response
-        mock_agent = AsyncMock()
-        mock_agent.call.return_value = SpeakersClarification(
-            speaker_1="caseworker", speaker_2="client"
-        )
-        mock_llm_agent.return_value = mock_agent
-
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
-        result = await processor.convert_transcript_to_conversation()
-
-        assert result.metadata.diarizationService == "gcp"
-        assert result.metadata.totalTurns > 0
-        assert len(result.conversation) > 0
-
-        # Check that speaker roles have been assigned
-        roles = {turn.role for turn in result.conversation}
-        assert "caseworker" in roles or "client" in roles
-
     @pytest.mark.asyncio
     async def test_create_conversation_turns_deepgram(self, deepgram_sample_from_file):
         processor = TranscriptionProcessor(
@@ -294,64 +207,6 @@ class TestTranscriptionProcessor:
 
         with pytest.raises(ValueError, match="Failed to process transcription"):
             await processor.convert_transcript_to_conversation()
-
-    @pytest.mark.asyncio
-    @freeze_time("2025-01-15T00:00:00Z")
-    @patch("app.utils.transcription.post_processing.LLMAgentQA")
-    async def test_deepgram_full_process_and_save_output(
-        self, mock_llm_agent, deepgram_sample_from_file
-    ):
-        # Mock LLM response
-        mock_agent = AsyncMock()
-        mock_agent.call.return_value = SpeakersClarification(
-            speaker_1="caseworker", speaker_2="client"
-        )
-        mock_llm_agent.return_value = mock_agent
-
-        # Process transcription
-        processor = TranscriptionProcessor(
-            deepgram_sample_from_file, "deepgram", llm_config
-        )
-        result = await processor.convert_transcript_to_conversation()
-
-        # Save to JSON file
-        output_file = (
-            Path(__file__).parent / "data/deepgram_transcription_sample_output.json"
-        )
-
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(result.model_dump(), f, indent=2, ensure_ascii=False)
-
-        # Verify file was created and contains expected data
-        assert output_file.exists()
-
-    @pytest.mark.asyncio
-    @freeze_time("2025-01-15T00:00:00Z")
-    @patch("app.utils.transcription.post_processing.LLMAgentQA")
-    async def test_gcp_full_process_and_save_output(
-        self, mock_llm_agent, gcp_sample_from_file
-    ):
-        # Mock LLM response
-        mock_agent = AsyncMock()
-        mock_agent.call.return_value = SpeakersClarification(
-            speaker_1="caseworker", speaker_2="client"
-        )
-        mock_llm_agent.return_value = mock_agent
-
-        # Process transcription
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
-        result = await processor.convert_transcript_to_conversation()
-
-        # Save to JSON file
-        output_file = (
-            Path(__file__).parent / "data/gcp_transcription_sample_output.json"
-        )
-
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(result.model_dump(), f, indent=2, ensure_ascii=False)
-
-        # Verify file was created and contains expected data
-        assert output_file.exists()
 
 
 class TestValidateRecordingSession:

@@ -28,7 +28,7 @@ interface ValidationData {
 
 interface TranscriptionValidationWarningsProps {
   validation: ValidationData;
-  hasConversation?: boolean;
+  hasConversation?: boolean | null;
   lastUpdated?: string;
 }
 

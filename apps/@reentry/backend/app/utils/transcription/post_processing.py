@@ -2,10 +2,10 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional, Union
 
 import structlog
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from app.core.data_config.assessment_configs.assessment_config import ModelConfig
-from app.utils.llm_agent_qa import LLMAgentQA
+from app.models.recording import RecordingSession
 
 logger = structlog.get_logger(__name__)
 
@@ -23,10 +23,16 @@ class DeepgramWordInput(BaseModel):
     punctuated_word: str
 
 
+class DeepgramParagraphs(BaseModel):
+    transcript: str
+    paragraphs: List[Dict]
+
+
 class DeepgramAlternativeInput(BaseModel):
     transcript: str
     confidence: float
     words: List[DeepgramWordInput]
+    paragraphs: Optional[DeepgramParagraphs] = None
 
 
 class DeepgramChannelInput(BaseModel):
@@ -51,18 +57,6 @@ class DeepgramMetadataInput(BaseModel):
 class DeepgramTranscriptionInput(BaseModel):
     metadata: DeepgramMetadataInput
     results: DeepgramResultInput
-
-
-class DeepgramParagraphs(BaseModel):
-    transcript: str
-    paragraphs: List[Dict]
-
-
-class DeepgramAlternativeInput(BaseModel):
-    transcript: str
-    confidence: float
-    words: List[DeepgramWordInput]
-    paragraphs: Optional[DeepgramParagraphs] = None
 
 
 class DeepgramTranscriptionOutput(BaseModel):
@@ -99,17 +93,6 @@ class GCPTranscriptionInput(BaseModel):
 ### OUTPUT DATA MODELS ###
 
 
-class SpeakersClarification(BaseModel):
-    speaker_1: Optional[str] = Field(
-        default=None,
-        description="Name of the first speaker, typically the caseworker",
-    )
-    speaker_2: Optional[str] = Field(
-        default=None,
-        description="Name of the second speaker, typically the client",
-    )
-
-
 class ConversationTurn(BaseModel):
     id: str
     role: str
@@ -141,6 +124,13 @@ class OutputMetadata(BaseModel):
 class TranscriptionOutput(BaseModel):
     metadata: OutputMetadata
     conversation: List[ConversationTurn]
+
+
+class SpeakersClarification(BaseModel):
+    """Model representing the clarification of speaker roles returned by LLM."""
+
+    speaker_1: str
+    speaker_2: str
 
 
 class TranscriptionProcessor:
@@ -183,10 +173,6 @@ class TranscriptionProcessor:
         # Process conversation turns from words
         conversation_turns = await self._create_deepgram_conversation_turns(words)
 
-        if conversation_turns:
-            # Clarify speaker roles using LLM
-            conversation_turns = await self._clarify_speaker_roles(conversation_turns)
-
         # Generate metadata
         metadata = await self._create_deepgram_metadata(
             conversation_turns, confidence, language, self.diarization_service
@@ -203,10 +189,6 @@ class TranscriptionProcessor:
 
         # Process conversation turns from words
         conversation_turns = await self._create_gcp_conversation_turns(words)
-
-        if conversation_turns:
-            # Clarify speaker roles using LLM
-            conversation_turns = await self._clarify_speaker_roles(conversation_turns)
 
         # Generate metadata
         metadata = await self._create_gcp_metadata(
@@ -374,90 +356,6 @@ class TranscriptionProcessor:
             grouped_turns.append(current_turn)
 
         return grouped_turns
-
-    async def _clarify_speaker_roles(
-        self, conversation: List[ConversationTurn]
-    ) -> List[ConversationTurn]:
-        """Use LLM to identify caseworker and client roles from conversation."""
-        logger.info("Requesting LLM clarification for speaker roles...")
-        unique_speakers = set(turn.role for turn in conversation)
-
-        if len(unique_speakers) > 2:
-            return await self._handle_multiple_speakers(conversation)
-        else:
-            return await self._identify_two_speakers(conversation)
-
-    async def _handle_multiple_speakers(
-        self, conversation: List[ConversationTurn]
-    ) -> List[ConversationTurn]:
-        system_prompt = """Analyze this conversation and identify the caseworker (social worker) and the client.
-        If there are more than two speakers, please focus on the primary roles of caseworker and client.
-        Always return "caseworker" or "client" as the role strings, not actual names.
-        Ignore other participants who are not in these primary roles."""
-
-        agent = LLMAgentQA(
-            system_prompt,
-            thread_id="transcription-multi-speaker",
-            model_config=self.model_config,
-            run_name="Transcription-MultiSpeaker-Identification",
-            workflow_type="transcription_processing",
-        )
-        formatted_messages = self._format_conversation_for_llm(conversation)
-        speakers_clarification = await agent.call(
-            formatted_messages, SpeakersClarification
-        )
-
-        speaker_mapping = {
-            "speaker_0": speakers_clarification.speaker_1,
-            "speaker_1": speakers_clarification.speaker_2,
-        }
-
-        for turn in conversation:
-            new_role = speaker_mapping.get(turn.role)
-            if new_role:
-                turn.role = new_role
-
-        return conversation
-
-    async def _identify_two_speakers(
-        self, conversation: List[ConversationTurn]
-    ) -> List[ConversationTurn]:
-        """Identify caseworker and client roles in a two-speaker conversation."""
-        system_prompt = """Analyze this conversation and determine who is the caseworker (social worker) and who is
-        the client based on speaking patterns, language used, and conversational roles.
-        Return "caseworker" or "client" as role strings, not actual names."""
-
-        agent = LLMAgentQA(
-            system_prompt,
-            thread_id="transcription-two-speaker",
-            model_config=self.model_config,
-            run_name="Transcription-TwoSpeaker-Identification",
-            workflow_type="transcription_processing",
-        )
-
-        sample_conversation = (
-            conversation[:10] if len(conversation) > 10 else conversation
-        )
-        formatted_messages = self._format_conversation_for_llm(sample_conversation)
-        speakers_clarification = await agent.call(
-            formatted_messages, SpeakersClarification
-        )
-
-        speaker_mapping = {
-            "speaker_0": speakers_clarification.speaker_1,
-            "speaker_1": speakers_clarification.speaker_2,
-        }
-
-        for turn in conversation:
-            new_role = speaker_mapping.get(turn.role)
-            if new_role:
-                turn.role = new_role
-
-        return conversation
-
-    def _format_conversation_for_llm(self, conversation: List[ConversationTurn]) -> str:
-        formatted_messages = [f"{turn.role}: {turn.content}" for turn in conversation]
-        return "\n".join(formatted_messages)
 
     async def _create_deepgram_metadata(
         self,
