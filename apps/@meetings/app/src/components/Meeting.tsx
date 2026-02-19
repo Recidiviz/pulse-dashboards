@@ -23,18 +23,20 @@ import MeetingDesktop from "../components/MeetingDesktop";
 import MeetingMobile from "../components/MeetingMobile";
 
 type Props = {
+  meetingId: string;
   meetingDetails?: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
 };
 
-const Meeting = ({ meetingDetails, person, personType }: Props) => {
+const Meeting = ({ meetingId, meetingDetails, person, personType }: Props) => {
   // Show transcription tab if the backend returned transcription data
   const showTranscription = meetingDetails?.transcription !== undefined;
   return (
     <SafeAreaView className="flex-1 grow bg-white">
       <View className="flex-1 grow md:hidden">
         <MeetingMobile
+          meetingId={meetingId}
           meetingDetails={meetingDetails}
           person={person}
           personType={personType}
@@ -43,6 +45,7 @@ const Meeting = ({ meetingDetails, person, personType }: Props) => {
       </View>
       <View className="hidden flex-1 grow md:flex">
         <MeetingDesktop
+          meetingId={meetingId}
           meetingDetails={meetingDetails}
           person={person}
           personType={personType}

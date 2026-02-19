@@ -17,6 +17,7 @@
 
 import { RouteProp, useRoute } from "@react-navigation/native";
 
+import Loading from "../components/Loading";
 import Meeting from "../components/Meeting";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -27,16 +28,19 @@ type MeetingRouteProp = RouteProp<RootStackParamList, "ResidentMeeting">;
 
 const ResidentMeetingScreen = () => {
   const route = useRoute<MeetingRouteProp>();
-  const { data: meetingDetails } = useMeetingDetails(route.params?.meetingId);
-  const { data: resident } = trpc.v1.resident.get.useQuery(
+  const meetingId = route.params?.meetingId || "";
+  const { data: meetingDetails, isLoading: isMeetingDetailsLoading } = useMeetingDetails(meetingId);
+  const { data: resident, isLoading: isResidentLoading } = trpc.v1.resident.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },
   );
 
+  if (isMeetingDetailsLoading || isResidentLoading) return <Loading message="Loading..." />;
   if (!resident) return null;
 
   return (
     <Meeting
+      meetingId={meetingId}
       meetingDetails={meetingDetails}
       person={deserializeResident(resident)}
       personType="resident"

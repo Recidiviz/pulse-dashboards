@@ -35,19 +35,28 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
+import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
 import { useSnackbar } from "./Snackbar";
 
 type Props = {
+  meetingId: string;
   notes: string;
   clientName: string;
   meetingDate?: Date;
   ref: RefObject<BottomSheet | null>;
 };
 
-const DraftCaseNoteSheet = ({ notes, clientName, meetingDate, ref }: Props) => {
+const DraftCaseNoteSheet = ({
+  meetingId,
+  notes,
+  clientName,
+  meetingDate,
+  ref,
+}: Props) => {
   const { bottom: bottomSafeArea } = useSafeAreaInsets();
-  const [text, onChangeText] = useState(notes);
+  const updateNotesMutation = useUpdateNotesMutation(meetingId);
+  const [inputNotes, setInputNotes] = useState(notes || "");
   const snapPoints = useMemo(() => ["70%", "90%"], []);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
@@ -56,22 +65,26 @@ const DraftCaseNoteSheet = ({ notes, clientName, meetingDate, ref }: Props) => {
   const FOOTER_HEIGHT = bottomSafeArea + 88;
 
   const handleClose = () => {
-    onChangeText("");
+    setInputNotes(notes);
     if (ref.current) {
       ref.current.close();
     }
   };
 
   const handleSave = () => {
-    console.log(text);
+    updateNotesMutation.mutate({
+      meetingId,
+      caseNote: inputNotes,
+    });
     if (ref.current) {
       ref.current.close();
     }
+    showSnackbar("Case note saved");
   };
 
   const handleCopyNotes = () => {
-    Clipboard.setString(text);
-    showSnackbar("Notes copied to clipboard");
+    Clipboard.setString(notes);
+    showSnackbar("Case note copied to clipboard");
   };
 
   // this use effect is used to remove footer while keyboard is active
@@ -141,7 +154,7 @@ const DraftCaseNoteSheet = ({ notes, clientName, meetingDate, ref }: Props) => {
       }
     >
       <BottomSheetView className="flex max-h-full flex-1 flex-col">
-        <View className="flex flex-row items-center justify-between border-b border-[#EDF1F1] p-4">
+        <View className="flex flex-row items-center justify-between border-b border-[#EDF1F1] p-4 h-20">
           <TouchableOpacity onPress={handleClose}>
             <Image
               source={Icons.ArrowLeft}
@@ -172,8 +185,8 @@ const DraftCaseNoteSheet = ({ notes, clientName, meetingDate, ref }: Props) => {
         <TextInput
           className="min-h-[200px] flex-1 p-4"
           multiline
-          value={text}
-          onChangeText={onChangeText}
+          value={inputNotes}
+          onChangeText={setInputNotes}
           textAlignVertical="top"
         />
         {!isKeyboardVisible && (

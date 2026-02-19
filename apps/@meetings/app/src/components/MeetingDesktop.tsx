@@ -34,6 +34,7 @@ import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
+import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
@@ -42,20 +43,34 @@ import {
 } from "../utils/format";
 import Header from "./Header";
 
-const DraftCaseNote = ({ notes }: { notes?: string }) => {
+type DraftCaseNoteProps = {
+  meetingId: string;
+  notes: string;
+};
+
+const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
+  const updateNotesMutation = useUpdateNotesMutation(meetingId);
   const [isEditable, setIsEditable] = useState(false);
   const [inputNotes, setInputNotes] = useState(notes || "");
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
 
   const handleCopyNotes = () => {
-    Clipboard.setString(notes || "");
+    Clipboard.setString(notes);
     showSnackbar("Case note copied to clipboard");
   };
 
   const handleSaveNotes = () => {
-    console.log("Saved notes:", inputNotes);
+    updateNotesMutation.mutate({
+      meetingId,
+      caseNote: inputNotes,
+    });
     setIsEditable(false);
     showSnackbar("Case note saved");
+  };
+
+  const handleCancelNotesEdit = () => {
+    setInputNotes(notes || "");
+    setIsEditable(false);
   };
 
   return (
@@ -79,7 +94,7 @@ const DraftCaseNote = ({ notes }: { notes?: string }) => {
       </Pressable>
       {isEditable ? (
         <View className="flex-row items-center justify-end gap-5">
-          <TouchableOpacity onPress={() => setIsEditable(false)}>
+          <TouchableOpacity onPress={handleCancelNotesEdit}>
             <Text className="font-inter text-sm font-medium text-primary">
               Cancel
             </Text>
@@ -110,6 +125,7 @@ const DraftCaseNote = ({ notes }: { notes?: string }) => {
 };
 
 type Props = {
+  meetingId: string;
   meetingDetails?: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
@@ -117,6 +133,7 @@ type Props = {
 };
 
 const MeetingDesktop = ({
+  meetingId,
   meetingDetails,
   person,
   personType,
@@ -189,7 +206,10 @@ const MeetingDesktop = ({
           </View>
 
           <View className="gap-3 px-10 py-6">
-            <DraftCaseNote notes={meetingDetails?.caseNote || undefined} />
+            <DraftCaseNote
+              meetingId={meetingId}
+              notes={meetingDetails?.caseNote || ""}
+            />
           </View>
         </View>
 

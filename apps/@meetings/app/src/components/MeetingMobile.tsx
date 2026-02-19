@@ -51,6 +51,7 @@ import {
 } from "../utils/format";
 
 type Props = {
+  meetingId: string;
   meetingDetails?: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
@@ -58,6 +59,7 @@ type Props = {
 };
 
 const MeetingMobile = ({
+  meetingId,
   meetingDetails,
   person,
   personType,
@@ -292,9 +294,7 @@ const MeetingMobile = ({
                   ellipsizeMode="tail"
                   className="font-inter text-sm font-normal text-primary"
                 >
-                  {meetingDetails?.userNotepadNotes
-                    ? meetingDetails.userNotepadNotes
-                    : "Type your notes here..."}
+                  {meetingDetails?.caseNote || "Type your notes here..."}
                 </Text>
               </BottomSheetTouchableOpacity>
             </View>
@@ -352,7 +352,8 @@ const MeetingMobile = ({
 
       <View className="absolute size-full print:hidden" pointerEvents="none">
         <DraftCaseNoteSheet
-          notes={meetingDetails?.userNotepadNotes || ""}
+          meetingId={meetingId}
+          notes={meetingDetails?.caseNote || ""}
           clientName={person.fullName}
           meetingDate={meetingDetails?.startTime}
           ref={draftCaseNoteSheetRef}
