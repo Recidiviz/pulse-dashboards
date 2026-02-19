@@ -86,13 +86,7 @@ export const useRecordingStore = create<RecordingStore>()(
       }),
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.debouncedNote = state.note;
-
-          if (state.status !== "idle" && (!state.meetingId || !state.person)) {
-            state.status = "idle";
-          }
-        }
+        if (state) state.debouncedNote = state.note;
       },
     },
   ),
