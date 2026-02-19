@@ -30,8 +30,8 @@ import {
 import filter from "lodash/fp/filter";
 import reduce from "lodash/fp/reduce";
 
-import { Dimension } from "../types/dimensions";
-import { PopulationFilterValues } from "../types/filters";
+import { Dimension, PopulationFilterValues } from "~shared-pathways";
+
 import { MetricRecord } from "./types";
 import {
   and,

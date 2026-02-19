@@ -17,8 +17,9 @@
 
 import { StylesConfig } from "react-select";
 
+import { FilterOption } from "~shared-pathways";
+
 import styles from "../CoreConstants.module.scss";
-import { FilterOption } from "../types/filters";
 
 export const coreSelectCustomStyles = (
   isChanged: boolean,

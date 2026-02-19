@@ -17,10 +17,11 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { PopulationFilterValues } from "~shared-pathways";
+
 import type TenantStore from "../../RootStore/TenantStore";
 import { TenantId } from "../../RootStore/types";
 import type UserStore from "../../RootStore/UserStore";
-import { PopulationFilterValues } from "../types/filters";
 import {
   DASHBOARD_VIEWS,
   DashboardView,

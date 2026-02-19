@@ -21,13 +21,13 @@ import {
   DownloadableData,
   DownloadableDataset,
   PersonLevelDataRecord,
+  PopulationFilterLabels,
 } from "~shared-pathways";
 
 import { TENANT_CONFIGS } from "../../tenants";
 import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { TableColumn } from "../types/charts";
-import { PopulationFilterLabels } from "../types/filters";
 import PathwaysNewBackendMetric, {
   BaseNewMetricConstructorOptions,
 } from "./PathwaysNewBackendMetric";

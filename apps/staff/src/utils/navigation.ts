@@ -17,8 +17,9 @@
 
 import { QueryParamConfigMap, StringParam } from "use-query-params";
 
+import { FILTER_TYPES } from "~shared-pathways";
+
 import { Navigation } from "../core/types/navigation";
-import { FILTER_TYPES } from "../core/utils/constants";
 import {
   DASHBOARD_VIEWS,
   INSIGHTS_PAGES,

@@ -29,22 +29,23 @@ import {
 import { QueryParamConfigMap } from "use-query-params";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
-
-import { US_DEMO } from "../../RootStore/TenantStore/pathwaysTenants";
-import { isPathwaysTenantId, PathwaysTenants } from "../../RootStore/types";
-import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
 import {
   EnabledFilter,
   EnabledFilters,
   EnabledFiltersByMetric,
+  FILTER_TYPES,
   FilterOption,
   Filters,
+  filtersOrder,
   FilterType,
   PopulationFilterLabels,
-  PopulationFilters,
   PopulationFilterValues,
-} from "../types/filters";
-import { FILTER_TYPES, filtersOrder } from "../utils/constants";
+} from "~shared-pathways";
+
+import { US_DEMO } from "../../RootStore/TenantStore/pathwaysTenants";
+import { isPathwaysTenantId, PathwaysTenants } from "../../RootStore/types";
+import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
+import { PopulationFilters } from "../types/filters";
 import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
   defaultMetricMode,

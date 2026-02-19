@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FILTER_TYPES, METRIC_MODES } from "../constants";
+import { FILTER_TYPES, METRIC_MODES } from "~shared-pathways";
+
 import filterOptions, {
   convertLabelsToValues,
   defaultDistrict,

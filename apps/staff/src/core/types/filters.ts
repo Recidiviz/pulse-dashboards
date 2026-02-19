@@ -15,31 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AgeGroup, Gender, MetricId, Sex } from "~shared-pathways";
+import { FilterOption, FilterType } from "~shared-pathways";
 
 import type FiltersStore from "../CoreStore/FiltersStore";
-import { FILTER_TYPES } from "../utils/constants";
-
-export type EnabledFilter = keyof PopulationFilters;
-export type EnabledFilters = EnabledFilter[];
-export type FilterType = (typeof FILTER_TYPES)[keyof typeof FILTER_TYPES];
-export type PopulationFilterValues = Record<
-  Exclude<FilterType, "sex" | "gender" | "ageGroup">,
-  string[]
-> & { ageGroup: AgeGroup[]; sex: Sex[]; gender: Gender[] };
-export type PopulationFilterLabels = Record<FilterType, string>;
 
 export type SetPopulationFilters = (
   filtersStore: FiltersStore,
 ) => (option: FilterOption[] | FilterOption) => void;
-
-export type FilterOption = {
-  label: string;
-  value: string;
-  longLabel?: string;
-};
-
-export type PopulationFilters = Record<FilterType, PopulationFilter>;
 
 export type PopulationFilter = {
   type: FilterType;
@@ -53,31 +35,4 @@ export type PopulationFilter = {
   useDynamicOptions?: boolean;
 };
 
-export type Filters = {
-  enabledFilters: EnabledFilters;
-  enabledMoreFilters?: EnabledFilters;
-};
-
-export type EnabledFiltersByMetric = {
-  [key in MetricId]: Filters;
-};
-
-export type DynamicFilterOptionMetadata = Record<
-  DynamicFilterOptionMetadataKey,
-  string
->;
-export type DynamicFilterOptionMetadataKey =
-  | "facility_id_name_map"
-  | "race_id_name_map"
-  | "gender_id_name_map";
-export type DynamicFilterOptionKeyToFilterTypeMap = {
-  [key in DynamicFilterOptionMetadataKey]: FilterType;
-};
-export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterTypeMap =
-  {
-    facility_id_name_map: "facility",
-    race_id_name_map: "race",
-    gender_id_name_map: "gender",
-  };
-
-export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;
+export type PopulationFilters = Record<FilterType, PopulationFilter>;

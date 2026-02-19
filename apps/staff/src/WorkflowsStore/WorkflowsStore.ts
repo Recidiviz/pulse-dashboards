@@ -50,9 +50,9 @@ import {
   isHydrated,
   isHydrationFinished,
 } from "~hydration-utils";
+import { FilterOption } from "~shared-pathways";
 
 import { AnyWorkflowsSystemConfig } from "../core/models/types";
-import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
 } from "../core/utils/filterOptions";

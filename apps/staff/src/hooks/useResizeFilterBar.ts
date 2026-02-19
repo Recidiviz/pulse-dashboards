@@ -17,7 +17,7 @@
 
 import { useEffect, useState } from "react";
 
-import { EnabledFilters } from "../core/types/filters";
+import { EnabledFilters } from "~shared-pathways";
 
 const useResizeFilterBar = (
   filtersRef: React.RefObject<HTMLElement | undefined>,

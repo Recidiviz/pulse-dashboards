@@ -19,7 +19,9 @@ import "./RadioGroup.scss";
 
 import React, { useState } from "react";
 
-import { FilterOption, PopulationFilter } from "../core/types/filters";
+import { FilterOption } from "~shared-pathways";
+
+import { PopulationFilter } from "../core/types/filters";
 
 type RadioGroupProps = {
   filter: PopulationFilter;

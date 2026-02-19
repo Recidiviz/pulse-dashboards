@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { EnabledFiltersByMetric, FILTER_TYPES } from "~shared-pathways";
+
 import {
   US_ID,
   US_MO,
@@ -23,8 +25,6 @@ import {
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { PathwaysTenants } from "../../RootStore/types";
-import { EnabledFiltersByMetric } from "../types/filters";
-import { FILTER_TYPES } from "./constants";
 
 export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   // LIBERTY TO PRISON

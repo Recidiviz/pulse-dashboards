@@ -19,11 +19,11 @@ import { waitFor } from "@testing-library/dom";
 import { runInAction, when } from "mobx";
 
 import { isHydrated } from "~hydration-utils";
+import { FILTER_TYPES } from "~shared-pathways";
 
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
-import { FILTER_TYPES } from "../../utils/constants";
 import { isAbortException } from "../../utils/exceptions";
 import SnapshotMetric from "../SnapshotMetric";
 

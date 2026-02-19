@@ -17,12 +17,13 @@
 
 import { runInAction } from "mobx";
 
+import { FILTER_TYPES } from "~shared-pathways";
+
 import { callNewMetricsApi } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
-import { FILTER_TYPES } from "../../utils/constants";
 import OverTimeMetric from "../OverTimeMetric";
 
 const mockTenantId = "US_TN";

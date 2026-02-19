@@ -25,12 +25,12 @@ import {
   DownloadableData,
   DownloadableDataset,
   OrderKeys,
+  PopulationFilterLabels,
   SnapshotDataRecord,
 } from "~shared-pathways";
 
 import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { PopulationFilterLabels } from "../types/filters";
 import PathwaysNewBackendMetric, {
   BaseNewMetricConstructorOptions,
 } from "./PathwaysNewBackendMetric";

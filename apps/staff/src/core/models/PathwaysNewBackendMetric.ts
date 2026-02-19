@@ -29,9 +29,17 @@ import {
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { castToError, HydrationState } from "~hydration-utils";
 import {
+  dynamicFilterOptionMapToFilterType,
+  DynamicFilterOptionMetadata,
+  DynamicFilterOptionMetadataKey,
+  DynamicFilterOptions,
+  FilterOption,
+  Filters,
+  FilterType,
   HydratablePathwaysMetric,
   MetricId,
   PathwaysMetricRecords,
+  PopulationFilterValues,
   SimulationCompartment,
 } from "~shared-pathways";
 
@@ -41,16 +49,6 @@ import { TenantId } from "../../RootStore/types";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
-import {
-  DynamicFilterOptionMetadata,
-  DynamicFilterOptionMetadataKey,
-  DynamicFilterOptions,
-  FilterOption,
-  Filters,
-  FilterType,
-  PopulationFilterValues,
-} from "../types/filters";
-import { dynamicFilterOptionMapToFilterType } from "../types/filters";
 import { isAbortException } from "../utils/exceptions";
 import {
   getMetricIdsForPage,

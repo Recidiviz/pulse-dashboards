@@ -19,10 +19,12 @@ import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useCallback, useState } from "react";
 
+import { FilterOption } from "~shared-pathways";
+
 import Checkbox from "../../components/Checkbox";
 import { sortByLabel } from "../../utils/datasets";
 import { useCoreStore } from "../CoreStoreProvider";
-import { FilterOption, PopulationFilter } from "../types/filters";
+import { PopulationFilter } from "../types/filters";
 import { getFilterOptions } from "../utils/filterOptions";
 
 type CheckboxGroupProps = {

@@ -27,13 +27,13 @@ import {
   DownloadableData,
   DownloadableDataset,
   OrderKeys,
+  PopulationFilterLabels,
   SupervisionPopulationSnapshotRecord,
   TimePeriod,
 } from "~shared-pathways";
 
 import { humanReadableTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { PopulationFilterLabels } from "../types/filters";
 import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { filterRecordByDimensions, filterTimePeriod } from "./utils";

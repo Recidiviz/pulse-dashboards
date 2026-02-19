@@ -17,11 +17,12 @@
 
 import { runInAction } from "mobx";
 
+import { FILTER_TYPES } from "~shared-pathways";
+
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
-import { FILTER_TYPES } from "../../utils/constants";
 import PopulationProjectionOverTimeMetric from "../PopulationProjectionOverTimeMetric";
 import { createProjectionTimeSeries } from "../utils";
 

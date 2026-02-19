@@ -21,8 +21,12 @@ import moment from "moment";
 
 import {
   AgeGroup,
+  Dimension,
+  EnabledFilter,
+  EnabledFilters,
   LengthOfStay,
   LengthOfStayRawValue,
+  PopulationFilterValues,
   PopulationProjectionTimeSeriesRecord,
   RawMetricData,
   Sex,
@@ -35,12 +39,6 @@ import {
 } from "~shared-pathways";
 
 import { toTitleCase } from "../../utils";
-import { Dimension } from "../types/dimensions";
-import {
-  EnabledFilter,
-  EnabledFilters,
-  PopulationFilterValues,
-} from "../types/filters";
 import { MetricRecord, NewBackendRecord } from "./types";
 
 const sharedDimensionDefaults = {

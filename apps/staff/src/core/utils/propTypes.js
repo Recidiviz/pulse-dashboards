@@ -17,7 +17,7 @@
 
 import PropTypes from "prop-types";
 
-import { METRIC_MODES } from "./constants";
+import { METRIC_MODES } from "~shared-pathways";
 
 export const metricModePropType = PropTypes.oneOf([
   METRIC_MODES.RATES,

@@ -36,8 +36,8 @@ import numeral from "numeral";
 import Pluralize from "pluralize";
 
 import { FullName } from "~datatypes";
+import { Dimension } from "~shared-pathways";
 
-import { Dimension } from "../core/types/dimensions";
 import { translate } from "./i18nSettings";
 
 const CRYPTO_PASSPHRASE = import.meta.env.VITE_CRYPTO_PASSPHRASE || "";

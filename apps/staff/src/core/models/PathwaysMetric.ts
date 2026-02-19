@@ -26,6 +26,9 @@ import {
 
 import { castToError, HydrationState } from "~hydration-utils";
 import {
+  Dimension,
+  EnabledFilters,
+  Filters,
   HydratablePathwaysMetric,
   MetricId,
   PathwaysMetricRecords,
@@ -42,8 +45,7 @@ import { TenantId } from "../../RootStore/types";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
-import { Dimension } from "../types/dimensions";
-import { EnabledFilters, Filters, PopulationFilters } from "../types/filters";
+import { PopulationFilters } from "../types/filters";
 import { PathwaysPage } from "../views";
 import { Diff, Differ } from "./backendDiff/Differ";
 import { DiffError } from "./backendDiff/DiffError";

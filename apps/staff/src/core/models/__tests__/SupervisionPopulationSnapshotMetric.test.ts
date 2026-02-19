@@ -18,13 +18,13 @@
 import { runInAction, when } from "mobx";
 
 import { isHydrated } from "~hydration-utils";
+import { FILTER_TYPES } from "~shared-pathways";
 
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
-import { FILTER_TYPES } from "../../utils/constants";
 import SupervisionPopulationSnapshotMetric from "../SupervisionPopulationSnapshotMetric";
 import {
   createSupervisionPopulationSnapshot,

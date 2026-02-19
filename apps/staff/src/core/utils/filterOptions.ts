@@ -15,7 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AgeGroup, Gender, Sex } from "~shared-pathways";
+import {
+  AgeGroup,
+  FILTER_TYPES,
+  FilterOption,
+  Gender,
+  METRIC_MODES,
+  PopulationFilterLabels,
+  PopulationFilterValues,
+  Sex,
+} from "~shared-pathways";
 
 import {
   US_IA,
@@ -31,14 +40,7 @@ import {
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { PathwaysTenants } from "../../RootStore/types";
-import {
-  FilterOption,
-  PopulationFilterLabels,
-  PopulationFilters,
-  PopulationFilterValues,
-  SetPopulationFilters,
-} from "../types/filters";
-import { FILTER_TYPES, METRIC_MODES } from "./constants";
+import { PopulationFilters, SetPopulationFilters } from "../types/filters";
 
 export type FilterOptions = Record<
   PathwaysTenants | "US_DEMO" | "US_PA" | "US_TX" | "US_IA",

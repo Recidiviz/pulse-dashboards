@@ -24,6 +24,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { DropdownMenuItem, ToolbarItem } from "~design-system";
+import { EnabledFilters, FILTER_TYPES } from "~shared-pathways";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import useResizeFilterBar from "../../hooks/useResizeFilterBar";
@@ -38,8 +39,7 @@ import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
 import MethodologyLink from "../MethodologyLink";
 import MoreFilters from "../MoreFilters";
-import { EnabledFilters, PopulationFilters } from "../types/filters";
-import { FILTER_TYPES } from "../utils/constants";
+import { PopulationFilters } from "../types/filters";
 import { getFilterOptions, metricModeOptions } from "../utils/filterOptions";
 import { DASHBOARD_PATHS } from "../views";
 

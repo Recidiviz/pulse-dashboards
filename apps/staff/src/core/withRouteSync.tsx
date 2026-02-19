@@ -21,6 +21,8 @@ import React, { ComponentType, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
+import { PopulationFilterLabels } from "~shared-pathways";
+
 import { TenantId } from "../RootStore/types";
 import { decrypt } from "../utils";
 import {
@@ -30,7 +32,6 @@ import {
 } from "../utils/navigation";
 import { useCoreStore } from "./CoreStoreProvider";
 import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PageVitals/types";
-import { PopulationFilterLabels } from "./types/filters";
 import { convertLabelsToValues } from "./utils/filterOptions";
 import {
   DASHBOARD_VIEWS,

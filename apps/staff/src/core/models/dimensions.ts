@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Dimension } from "../types/dimensions";
-import { DIMENSION_TYPES } from "../utils/constants";
+import { Dimension, DIMENSION_TYPES } from "~shared-pathways";
 
 export const dimensionsByMetricType = {
   // PRISON

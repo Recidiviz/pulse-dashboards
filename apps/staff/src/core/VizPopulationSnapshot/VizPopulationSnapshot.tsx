@@ -23,7 +23,12 @@ import React, { useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 
-import { SupervisionPopulationSnapshotRecord } from "~shared-pathways";
+import {
+  Dimension,
+  METRIC_MODES,
+  PopulationFilterLabels,
+  SupervisionPopulationSnapshotRecord,
+} from "~shared-pathways";
 
 import {
   formatDate,
@@ -40,9 +45,6 @@ import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
-import { Dimension } from "../types/dimensions";
-import { PopulationFilterLabels } from "../types/filters";
-import { METRIC_MODES } from "../utils/constants";
 import VizPathways from "../VizPathways";
 
 type VizPopulationOverTimeProps = {
