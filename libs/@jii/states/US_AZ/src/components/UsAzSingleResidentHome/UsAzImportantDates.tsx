@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { HomepageSectionHeading } from "~@jii/common-ui";
-import { useSingleResidentContext } from "~@jii/data";
+import { useResidentMetadata } from "~@jii/data";
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -86,11 +86,11 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   });
 
 function usePresenter() {
-  const { resident } = useSingleResidentContext();
+  const metadata = useResidentMetadata("US_AZ");
   const { t } = useUsAzTranslations();
   const markdownContent = t(($) => $.importantDates.moreInfo.body);
 
-  return new UsAzImportantDatesPresenter(resident, markdownContent);
+  return new UsAzImportantDatesPresenter(metadata, markdownContent);
 }
 
 export const UsAzImportantDates = withPresenterManager({

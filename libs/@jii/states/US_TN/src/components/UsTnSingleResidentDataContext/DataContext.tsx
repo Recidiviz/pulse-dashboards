@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 
-import { useSingleResidentContext } from "~@jii/data";
+import { useResidentMetadata } from "~@jii/data";
 import { UsTnResidentMetadata } from "~datatypes";
 
 import {
@@ -32,17 +32,7 @@ import {
  */
 export const UsTnSingleResidentDataContext: FC<{ children: ReactNode }> =
   observer(function UsTnDataContext({ children }) {
-    const {
-      resident: { metadata },
-    } = useSingleResidentContext();
-
-    const data = metadata?.stateCode === "US_TN" ? metadata : undefined;
-
-    if (!data) {
-      throw new Error(
-        `Unexpected state code for UsTnDataContext: ${metadata.stateCode}`,
-      );
-    }
+    const data = useResidentMetadata("US_TN");
 
     const monthlyReports = processMonthlyReports(data);
 

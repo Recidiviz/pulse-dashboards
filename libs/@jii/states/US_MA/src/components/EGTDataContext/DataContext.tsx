@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 
-import { useResidentsContext, useSingleResidentContext } from "~@jii/data";
+import { useResidentMetadata, useResidentsContext } from "~@jii/data";
 
 import { populateUsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 import { EGTDataContextProvider } from "./context";
@@ -30,19 +30,13 @@ import { EGTDataContextProvider } from "./context";
 export const EGTDataContext: FC<{ children: ReactNode }> = observer(
   function EGTDataContext({ children }) {
     const {
-      resident: { metadata },
-    } = useSingleResidentContext();
-    const {
       residentsStore: {
         config: { egt: egtConfig },
       },
     } = useResidentsContext();
 
-    const data = metadata?.stateCode === "US_MA" ? metadata : undefined;
+    const data = useResidentMetadata("US_MA");
 
-    if (!data) {
-      throw new Error("Unexpected metadata format");
-    }
     if (!egtConfig) {
       throw new Error("Missing Earned Good Time module config");
     }

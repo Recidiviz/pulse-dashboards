@@ -19,7 +19,7 @@ import { parseISO } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { extractHeadingIds } from "~@jii/translation";
-import { ResidentRecord } from "~datatypes";
+import { ResidentMetadata } from "~datatypes";
 
 // Shared constant for all US_AZ date field names that exist on metadata
 export const US_AZ_DATE_KEYS = [
@@ -46,22 +46,11 @@ export class UsAzImportantDatesPresenter {
   private readonly headingIds: string[];
 
   constructor(
-    public readonly resident: ResidentRecord,
+    public readonly metadata: ResidentMetadata<"US_AZ">,
     markdownContent: string,
   ) {
     this.headingIds = extractHeadingIds(markdownContent);
     makeAutoObservable(this, undefined, { autoBind: true });
-  }
-
-  get metadata() {
-    const { metadata } = this.resident;
-    if (metadata.stateCode !== "US_AZ") {
-      throw new Error(
-        `Invalid state code for UsAzImportantDatesPresenter: ${metadata.stateCode}`,
-      );
-    }
-
-    return metadata;
   }
 
   get dateEntries(): DateEntry[] {

@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { createContext } from "react";
 
-import { useSingleResidentContext } from "~@jii/data";
+import { useResidentMetadata } from "~@jii/data";
 import { UsNeResidentMetadata } from "~datatypes";
 import { useRequiredContext } from "~utils";
 
@@ -39,13 +39,7 @@ export function useUsNeContext() {
 
 export const UsNeContextProvider: React.FC<{ children: React.ReactNode }> =
   observer(function UsNeContextProvider({ children }) {
-    const {
-      resident: { metadata },
-    } = useSingleResidentContext();
-
-    if (metadata.stateCode !== "US_NE") {
-      throw new Error("Unexpected metadata format");
-    }
+    const metadata = useResidentMetadata("US_NE");
 
     return <Provider value={{ metadata, copy: usNeCopy }}>{children}</Provider>;
   });

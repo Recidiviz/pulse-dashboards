@@ -35,6 +35,7 @@ export * from "./datastores/RootStore";
 export * from "./datastores/TranslationStore";
 export * from "./datastores/UiStore";
 export * from "./datastores/UserStore";
+export * from "./hooks/useResidentMetadata";
 export * from "./hooks/useStateCodeFromSlug";
 export * from "./utils/date";
 export * from "./utils/iframe";

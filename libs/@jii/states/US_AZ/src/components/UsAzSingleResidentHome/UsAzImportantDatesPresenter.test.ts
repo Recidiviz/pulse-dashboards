@@ -15,69 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "~datatypes";
+import { ResidentMetadata } from "~datatypes";
 
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
 const mockMarkdownContent = `## H0\n## H1\n## H2\n## H3\n## H4\n## H5\n## H6`;
 
-const mockAzResident = {
+const mockAzResidentMetadata: ResidentMetadata<"US_AZ"> = {
   stateCode: "US_AZ",
-  metadata: {
-    stateCode: "US_AZ",
-    acisTprDateRaw: "2024-03-15",
-    acisDtpDateRaw: undefined,
-    csbdDateRaw: "2024-01-10", // earliest date
-    ercdDateRaw: "2024-06-01",
-    sedDateRaw: "2024-12-01", // latest date
-    csedDateRaw: undefined,
-  },
-} as never as ResidentRecord;
+  acisTprDateRaw: "2024-03-15",
+  acisDtpDateRaw: undefined,
+  csbdDateRaw: "2024-01-10", // earliest date
+  ercdDateRaw: "2024-06-01",
+  sedDateRaw: "2024-12-01", // latest date
+  csedDateRaw: undefined,
+};
 
-const mockAzResidentAllNullDates = {
+const mockAzResidentAllNullDates: ResidentMetadata<"US_AZ"> = {
   stateCode: "US_AZ",
-  metadata: {
-    stateCode: "US_AZ",
-    acisTprDateRaw: undefined,
-    csbdDateRaw: undefined,
-    ercdDateRaw: undefined,
-    sedDateRaw: undefined,
-    csedDateRaw: undefined,
-  },
-} as never as ResidentRecord;
-
-const mockCaResident = {
-  stateCode: "US_CA",
-  metadata: {
-    stateCode: "US_CA",
-  },
-} as never as ResidentRecord;
+  acisTprDateRaw: undefined,
+  csbdDateRaw: undefined,
+  ercdDateRaw: undefined,
+  sedDateRaw: undefined,
+  csedDateRaw: undefined,
+};
 
 describe("UsAzImportantDatesPresenter", () => {
-  describe("metadata", () => {
-    it("returns the metadata blob when the state code is US_AZ", () => {
-      const presenter = new UsAzImportantDatesPresenter(
-        mockAzResident,
-        mockMarkdownContent,
-      );
-      expect(presenter.metadata).toEqual(mockAzResident.metadata);
-    });
-
-    it("throws an error when the state code is not US_AZ", () => {
-      const presenter = new UsAzImportantDatesPresenter(
-        mockCaResident,
-        mockMarkdownContent,
-      );
-      expect(() => presenter.metadata).toThrow(
-        "Invalid state code for UsAzImportantDatesPresenter: US_CA",
-      );
-    });
-  });
-
   describe("dateEntries", () => {
     it("sorts dates by earliest first and highlights acisTprDate", () => {
       const presenter = new UsAzImportantDatesPresenter(
-        mockAzResident,
+        mockAzResidentMetadata,
         mockMarkdownContent,
       );
       const entries = presenter.dateEntries;
@@ -111,7 +78,7 @@ describe("UsAzImportantDatesPresenter", () => {
 
     it("assigns infoPageHash to each date entry", () => {
       const presenter = new UsAzImportantDatesPresenter(
-        mockAzResident,
+        mockAzResidentMetadata,
         mockMarkdownContent,
       );
       const entries = presenter.dateEntries;
