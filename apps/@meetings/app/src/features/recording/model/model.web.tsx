@@ -44,6 +44,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const { duration, startTimer, stopTimer, resetTimer } = useDurationTimer();
 
+  const isRecording = status && status === "recording";
+  const isPaused =
+    status && ["paused", "stopping", "discarding"].includes(status);
+
   const recorder = useWebAudioRecorder({
     onStop: () => setStatus("paused"),
     onError: (err: Error) => {
@@ -121,16 +125,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       return;
     }
 
-    if (status && ["paused", "stopping", "discarding"].includes(status)) {
-      await stopAndUploadRecording(uploadFn); // we need only uploading, the recording is already paused
-      await startRecording();
+    if (isPaused) {
+      await resumeRecording(uploadFn);
       return;
     }
 
-    if (status === "recording") {
-      setStatus("uploading");
-      await stopAndUploadRecording(uploadFn); // we need only stopping, we upload audio above
-      stopTimer();
+    if (isRecording) {
+      await pauseRecording(uploadFn);
       setStatus("paused");
     }
   };
@@ -144,13 +145,28 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     setNote("");
   };
 
+  const pauseRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+    setStatus("uploading");
+    await stopAndUploadRecording(uploadFn);
+    stopTimer();
+  };
+
+  const resumeRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+    await stopAndUploadRecording(uploadFn); // we need only uploading, the recording is already paused
+    await startRecording();
+  };
+
   const stopRecording = async (uploadFn: (uri: string) => Promise<void>) => {
-    await togglePauseResume(uploadFn);
+    if (isRecording) {
+      await pauseRecording(uploadFn);
+    }
     setStatus("stopping");
   };
 
   const discardRecording = async (uploadFn: (uri: string) => Promise<void>) => {
-    await togglePauseResume(uploadFn);
+    if (isRecording) {
+      await pauseRecording(uploadFn);
+    }
     setStatus("discarding");
   };
 
