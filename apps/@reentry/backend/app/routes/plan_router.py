@@ -194,7 +194,8 @@ async def router_create_plan(
     record = check_access(
         request.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     if not record:
@@ -886,7 +887,8 @@ async def get_address(
     check_access(
         plan.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     intake = await get_intake_by_id(session, plan.intake_id)

@@ -68,6 +68,7 @@ async def get_client_recording_sessions(
         client_pseudo_id=intake.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
     logger.info(f"Retrieved recording session for intake {intake_id}")
     return intake.recording_session
@@ -97,6 +98,7 @@ async def create_new_recording_session(
         client_pseudo_id=intake.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     if intake.intake_type is not IntakeType.TRANSCRIPTION:
@@ -155,6 +157,7 @@ async def get_recording_session(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     logger.info(f"Retrieved recording session {session_id}")
@@ -186,6 +189,7 @@ async def get_recording_session_status(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     logger.info(f"Retrieved status for recording session {session_id}")
@@ -226,6 +230,7 @@ async def update_recording_session_status(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     updated_session = await update_status(
@@ -284,6 +289,7 @@ async def upload_audio_chunk(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     if recording_session.status not in [
@@ -398,6 +404,7 @@ async def get_upload_url(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     # Validate file type (audio files only)
@@ -461,6 +468,7 @@ async def confirm_upload(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     try:
@@ -537,6 +545,7 @@ async def finalize_recording(
             client_pseudo_id=recording_session.client_pseudo_id,
             pseudonymized_staff_id=pseudonymized_id,
             cpa_client_locations=auth_user_context["cpa_client_locations"],
+            is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
         )
 
         execution = await schedule_task(
@@ -593,6 +602,7 @@ async def retry_process_recording(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     # Schedule the processing task
@@ -650,6 +660,7 @@ async def get_signed_url(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     try:

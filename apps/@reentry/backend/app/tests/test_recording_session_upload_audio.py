@@ -35,7 +35,10 @@ async def test_get_upload_url_success(
 
     # Mock check_access to allow access
     def mock_check_access(
-        client_pseudo_id, pseudonymized_staff_id, cpa_client_locations=None
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
     ):
         return mock_clientdata_service["clients_by_pseudo_id"].get(
             client_pseudo_id, mock_clientdata_service["clients"][0]
@@ -121,7 +124,10 @@ async def test_get_upload_url_invalid_content_type(
 
     # Mock check_access to allow access
     def mock_check_access(
-        client_pseudo_id, pseudonymized_staff_id, cpa_client_locations=None
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
     ):
         return mock_clientdata_service["clients_by_pseudo_id"].get(
             client_pseudo_id, mock_clientdata_service["clients"][0]
@@ -190,7 +196,10 @@ async def test_confirm_upload_success(
 
     # Mock check_access to allow access
     def mock_check_access(
-        client_pseudo_id, pseudonymized_staff_id, cpa_client_locations=None
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
     ):
         return mock_clientdata_service["clients_by_pseudo_id"].get(
             client_pseudo_id, mock_clientdata_service["clients"][0]
@@ -302,7 +311,10 @@ async def test_direct_upload_complete_flow(
 
     # Mock check_access to allow access
     def mock_check_access(
-        client_pseudo_id, pseudonymized_staff_id, cpa_client_locations=None
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
     ):
         return mock_clientdata_service["clients_by_pseudo_id"].get(
             client_pseudo_id, mock_clientdata_service["clients"][0]

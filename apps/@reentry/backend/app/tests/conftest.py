@@ -362,7 +362,12 @@ def mock_clientdata_service(monkeypatch, mock_client_data):
     def mock_get_caseworker_by_pseudonymized_id(pseudonymized_staff_id: str):
         return mock_client_data["staff"]
 
-    def mock_check_access(client_pseudo_id, pseudonymized_id):
+    def mock_check_access(
+        client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
+    ):
         return client_pseudo_id in ["client-001", "client-002"]
 
     monkeypatch.setattr(permission_utils, "check_access", mock_check_access)

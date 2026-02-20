@@ -185,6 +185,7 @@ async def get_client_transcription(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     if recording_session.status != RecordingStatus.COMPLETED:
@@ -279,6 +280,7 @@ async def update_speaker_roles(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     if recording_session.status != RecordingStatus.COMPLETED:

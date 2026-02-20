@@ -198,7 +198,8 @@ async def get_intake_address(
     check_access(
         intake.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     # Get the address for this intake
@@ -241,7 +242,8 @@ async def create_new_intake(
         client_record = check_access(
             request.client_pseudo_id,
             pseudonymized_id,
-            auth_user_context["cpa_client_locations"],
+            cpa_client_locations=auth_user_context["cpa_client_locations"],
+            is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
         )
 
         # 1. Check if client has an existing IN_PROGRESS or CREATED intake
@@ -339,7 +341,8 @@ async def delete_new_intake(
     check_access(
         intake.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     if intake.status != IntakeStatus.CREATED:
@@ -386,7 +389,8 @@ async def get_client_intake(
     check_access(
         intake.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     try:
@@ -438,7 +442,8 @@ async def get_intake_section_messages_route(
     check_access(
         client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     try:
@@ -493,7 +498,8 @@ async def set_internal_access(
     check_access(
         intake.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     await update_internal_access_by_intake_id(
@@ -531,7 +537,8 @@ async def set_outputs_enabled(
     check_access(
         intake.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     old_outputs_enabled = intake.outputs_enabled
@@ -575,7 +582,8 @@ async def generate_client_token(
         check_access(
             intake.client_pseudo_id,
             pseudonymized_id,
-            auth_user_context["cpa_client_locations"],
+            cpa_client_locations=auth_user_context["cpa_client_locations"],
+            is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
         )
 
         # Generate a new token
@@ -617,7 +625,8 @@ async def submit_address(
     check_access(
         intake.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
     # Create or update address
     if intake.address:
@@ -674,7 +683,8 @@ async def retry_intake_processing(
     check_access(
         intake.client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     # Check for failed or stuck recording/transcription

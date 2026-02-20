@@ -80,8 +80,8 @@ async def router_list_clients(
         sort_order,
         search,
         status_filter,
-        auth_user_context["is_zero_caseload_user"],
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
 
@@ -118,7 +118,8 @@ async def get_client_latest_address(
     check_access(
         client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
     # Get address from latest completed intake
     latest_address = await get_latest_address_client_pseudo_id(
@@ -149,7 +150,8 @@ async def get_client_record(
     client_record = check_access(
         client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     return client_record
@@ -177,7 +179,8 @@ async def get_client_intakes(
     check_access(
         client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     intakes = await get_all_intakes_by_client_pseudo_id(session, client_pseudo_id)
@@ -242,7 +245,8 @@ async def reset_client_data(
     check_access(
         client_pseudo_id,
         pseudonymized_id,
-        auth_user_context["cpa_client_locations"],
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
     logger.info(
