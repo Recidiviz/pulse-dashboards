@@ -21,6 +21,8 @@ import { zu } from "zod_utilz";
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
 import {
   AsamLevelOfCareRecommendationCriterion,
+  ChargeClassificationSubtype,
+  ChargeClassificationType,
   DiagnosedMentalHealthDiagnosisCriterion,
   DiagnosedSubstanceUseDisorderCriterion,
   Gender,
@@ -112,6 +114,20 @@ export const SARImportSchema = z.object({
       }),
     )
     .optional(),
+});
+
+export const chargeImportSchema = z.object({
+  state_code: stateCode,
+  case_external_id: z.string(),
+  court_case_number: z.string(),
+  offense_external_id: z.string(), // Unique identifier for this charge
+  description: z.string(), // This becomes the offense name on Charge
+  judges: z.array(z.string()).optional(),
+  classification_type: z.nativeEnum(ChargeClassificationType).optional(),
+  classification_subtype: z.nativeEnum(ChargeClassificationSubtype).optional(),
+  division: z.string().optional(),
+  county: z.string().optional(),
+  charge_code: z.string().optional(), // MO Code
 });
 
 export const clientImportSchema = z

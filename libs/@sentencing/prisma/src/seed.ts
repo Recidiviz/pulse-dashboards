@@ -27,8 +27,9 @@ import {
   AsamLevelOfCareRecommendationCriterion,
   AssessmentType,
   CaseStatus,
+  ChargeClassificationSubtype,
+  ChargeClassificationType,
   DiagnosedSubstanceUseDisorderCriterion,
-  FelonyClass,
   Gender,
   Plea,
   PriorCriminalHistoryCriterion,
@@ -242,7 +243,12 @@ async function addSARClientsAndReports(
         gender,
         birthDate: faker.date.birthdate(),
         raceOrEthnicity: faker.helpers
-          .shuffle(["WHITE", "BLACK", "ASIAN", "AMERICAN_INDIAN_ALASKAN_NATIVE"])
+          .shuffle([
+            "WHITE",
+            "BLACK",
+            "ASIAN",
+            "AMERICAN_INDIAN_ALASKAN_NATIVE",
+          ])
           .slice(0, faker.number.int({ min: 1, max: 3 })),
         DOCTreatmentHistories: {
           create: DOCHistories,
@@ -306,12 +312,14 @@ async function addSARClientsAndReports(
           sentencingAssessmentReport: {
             connect: { id: sar.id },
           },
-          offense: {
-            connect: { name: shuffledOffenses[j].name },
-          },
+          chargeExternalId: faker.string.uuid(),
+          offense: shuffledOffenses[j].name,
           // Only imported fields - the rest will be filled in by users
           causeNum: `${faker.string.numeric(2)}-CR-${faker.string.numeric(5)}`,
-          felonyClass: faker.helpers.enumValue(FelonyClass),
+          classificationType: faker.helpers.enumValue(ChargeClassificationType),
+          classificationSubtype: faker.helpers.enumValue(
+            ChargeClassificationSubtype,
+          ),
           judgeNames: Array.from(
             { length: faker.number.int({ min: 1, max: 3 }) },
             () => faker.person.fullName(),

@@ -53,15 +53,17 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     charges: [
       {
         id: "charge-1",
+        chargeExternalId: "CHARGE-001",
+
         offense: "Sample Offense",
-        offenseId: "offense-1",
         division: null,
         pleaAgreement: null,
         prosecutingAttorney: null,
         defenseAttorney: null,
         pleaDate: null,
         sentencingDate: null,
-        felonyClass: null,
+        classificationType: null,
+        classificationSubtype: null,
         causeNum: null,
         moCode: null,
         judgeNames: [],

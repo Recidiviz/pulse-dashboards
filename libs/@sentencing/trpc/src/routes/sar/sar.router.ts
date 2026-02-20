@@ -71,13 +71,6 @@ export const sarRouter = router({
               updatedAt: true,
               sentencingAssessmentReportId: true,
             },
-            include: {
-              offense: {
-                select: {
-                  name: true,
-                },
-              },
-            },
           },
           drugHistories: {
             omit: {
@@ -131,14 +124,7 @@ export const sarRouter = router({
         });
       }
 
-      // Flatten the response
-      return {
-        ...sarData,
-        charges: sarData.charges.map((charge) => ({
-          ...charge,
-          offense: charge.offense?.name ?? null,
-        })),
-      };
+      return sarData;
     }),
   getSARsForStaff: baseProcedure
     .input(getSARsForStaffInputSchema)

@@ -197,10 +197,12 @@ export class SARDetailsPresenter implements Hydratable {
     return this.SARData.charges.map((charge) => charge.offense).filter(Boolean);
   }
 
-  /** Get charges array - sorted by ID for consistent ordering */
+  /** Get charges array - sorted by chargeExternalID for consistent ordering */
   get charges(): FormCharge[] {
     if (!this.SARData?.charges) return [];
-    return [...this.SARData.charges].sort((a, b) => a.id.localeCompare(b.id));
+    return [...this.SARData.charges].sort((a, b) =>
+      (a.chargeExternalId || "").localeCompare(b.chargeExternalId || ""),
+    );
   }
 
   /** Get officer (staff) info */

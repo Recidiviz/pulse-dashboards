@@ -222,23 +222,21 @@ describe("SAR router", () => {
       // First, create some charges to update (need to connect offense)
       const charge1 = await testPrismaClient.charge.create({
         data: {
+          chargeExternalId: "charge-ext-1",
           sentencingAssessmentReport: {
             connect: { id: fakeSAR.id },
           },
-          offense: {
-            connect: { name: "offense-name" },
-          },
+          offense: "offense-name",
         },
       });
 
       const charge2 = await testPrismaClient.charge.create({
         data: {
+          chargeExternalId: "charge-ext-2",
           sentencingAssessmentReport: {
             connect: { id: fakeSAR.id },
           },
-          offense: {
-            connect: { name: "offense-name" },
-          },
+          offense: "offense-name",
         },
       });
 
@@ -450,12 +448,11 @@ describe("SAR router", () => {
       // Create a charge first
       const charge = await testPrismaClient.charge.create({
         data: {
+          chargeExternalId: "charge-ext-3",
           sentencingAssessmentReport: {
             connect: { id: fakeSAR.id },
           },
-          offense: {
-            connect: { name: "offense-name" },
-          },
+          offense: "offense-name",
         },
       });
 

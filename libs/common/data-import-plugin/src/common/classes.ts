@@ -100,9 +100,8 @@ export abstract class ImportHandlerBase<T, M> {
       const lineErrorList: string[] = [];
       try {
         if (!(file in filesToSchemasAndLoaderFns)) {
-          throw new Error(
-            `No loader function found for file ${file}. Skipping.`,
-          );
+          console.warn(`No loader function found for file ${file}. Skipping.`);
+          continue;
         }
 
         const { schema, loaderFn } = filesToSchemasAndLoaderFns[file];

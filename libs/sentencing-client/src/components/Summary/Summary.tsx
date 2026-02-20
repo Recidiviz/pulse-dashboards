@@ -44,7 +44,12 @@ const SummaryOffenseCard: React.FC<{
           Offense Information
         </Styled.OffenseColumnTitle>
         <div>Offense: {charge.offense || "—"}</div>
-        <div>Class: {charge.felonyClass || "—"}</div>
+        <div>
+          Class:{" "}
+          {charge.classificationType
+            ? `${charge.classificationType}${charge.classificationSubtype ? ` - ${charge.classificationSubtype}` : ""}`
+            : "—"}
+        </div>
       </Styled.OffenseColumn>
 
       <Styled.OffenseColumn>

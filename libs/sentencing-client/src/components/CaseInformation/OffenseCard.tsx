@@ -64,6 +64,9 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
     };
 
     const judgeAndDivision = formatJudgeAndDivision(charge);
+    const classificationDisplay = charge.classificationType
+      ? `${charge.classificationType}${charge.classificationSubtype ? ` - ${charge.classificationSubtype}` : ""}`
+      : null;
 
     return (
       <Styled.CardContainer>
@@ -75,7 +78,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
           <Styled.ColumnSection>
             <Styled.SectionHeader>Offense Information</Styled.SectionHeader>
             <ReadOnlyField label="Offense" value={charge.offense || "—"} />
-            <ReadOnlyField label="Class" value={charge.felonyClass || "—"} />
+            <ReadOnlyField label="Class" value={classificationDisplay || "—"} />
           </Styled.ColumnSection>
 
           {/* Column 2: Case Information */}

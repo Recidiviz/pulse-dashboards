@@ -266,13 +266,19 @@ enum ProtectiveFactor {
 }
 
 // SAR-specific enums
-enum FelonyClass {
-  ClassA
-  ClassB
-  ClassC
-  ClassD
-  ClassE
-  Unclassified
+enum ChargeClassificationType {
+  FELONY
+  MISDEMEANOR
+  INFRACTION
+}
+
+enum ChargeClassificationSubtype {
+  A
+  B
+  C
+  D
+  E
+  U
 }
 
 enum LevelOfEducation {
@@ -381,7 +387,6 @@ model Offense {
   mandatoryMinimums MandatoryMinimum[]
 
   Case            Case[]
-  Charge          Charge[]
   insightOffenses Insight[] @relation("InsightOffenses")
 }
 
@@ -654,12 +659,15 @@ model Charge {
   sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
   sentencingAssessmentReportId String
 
-  // Offense information
-  offense   Offense @relation(fields: [offenseId], references: [id])
-  offenseId String
+  // Unique external ID for this charge from source data
+  chargeExternalId String?
+
+  // Offense name/description from import
+  offense String
 
   // Charge details (locked fields from import)
-  felonyClass FelonyClass?
+  classificationType    ChargeClassificationType?
+  classificationSubtype ChargeClassificationSubtype?
   causeNum     String?
   moCode      String?
   judgeNames  String[] @default([])

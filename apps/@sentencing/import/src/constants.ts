@@ -17,6 +17,7 @@
 
 import {
   caseImportSchema,
+  chargeImportSchema,
   clientImportSchema,
   countyAndDistrictImportSchema,
   insightImportSchema,
@@ -26,6 +27,7 @@ import {
   staffImportSchema,
 } from "~@sentencing/import/models";
 import { transformAndLoadCaseData } from "~@sentencing/import/utils/cases";
+import { transformAndLoadChargeData } from "~@sentencing/import/utils/charges";
 import { transformAndLoadClientData } from "~@sentencing/import/utils/clients";
 import { transformAndLoadCountyAndDistrictData } from "~@sentencing/import/utils/countiesAndDistricts";
 import { transformAndLoadInsightData } from "~@sentencing/import/utils/insights";
@@ -50,6 +52,8 @@ export const OFFENSES_FILE_NAME = "sentencing_charge_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/counties_and_districts.py
 export const COUNTIES_AND_DISTRICTS_FILES_NAME =
   "sentencing_counties_and_districts.json";
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/offense_record.py
+export const CHARGES_FILE_NAME = "sentencing_offense_record.json";
 
 export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [STAFF_FILE_NAME]: {
@@ -100,6 +104,10 @@ export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     schema: SARImportSchema,
     loaderFn: transformAndLoadSARData,
   },
+  [CHARGES_FILE_NAME]: {
+    schema: chargeImportSchema,
+    loaderFn: transformAndLoadChargeData,
+  },
 };
 
 /**
@@ -120,4 +128,9 @@ export const PSI_FILES = [
  * List of files to import for SAR states (MO).
  * These states use SAR (Sentencing Assessment Report) instead of full PSI.
  */
-export const SAR_FILES = [STAFF_FILE_NAME, CLIENTS_FILE_NAME, CASES_FILE_NAME];
+export const SAR_FILES = [
+  STAFF_FILE_NAME,
+  CLIENTS_FILE_NAME,
+  CASES_FILE_NAME,
+  CHARGES_FILE_NAME,
+];
