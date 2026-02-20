@@ -25,7 +25,7 @@ export const Container = styled.div`
   width: 50rem;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 0.5rem;
   font-family: "Public Sans";
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -35,19 +35,5 @@ export const InfoContainer = styled.div`
   ${typography.Sans14}
   color: ${palette.slate70};
   align-self: stretch;
-`;
-
-export const SectionTitle = styled.h3`
-  ${typography.Sans16}
-  color: ${palette.pine1};
-  font-weight: 600;
-  margin: 0;
-  padding-left: 2.5rem;
-`;
-
-export const Subtitle = styled.div`
-  ${typography.Sans14}
-  color: ${palette.slate70};
-  padding-left: 2.5rem;
-  margin-top: -0.5rem;
+  padding-bottom:0.5rem
 `;

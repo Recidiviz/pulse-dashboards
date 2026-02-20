@@ -26,6 +26,7 @@ export const HeaderContainer = styled.div`
   gap: 12px;
   margin-bottom: 12px;
   width: 100%;
+  padding-top:10px;
 `;
 
 export const SkipContainer = styled.div`
