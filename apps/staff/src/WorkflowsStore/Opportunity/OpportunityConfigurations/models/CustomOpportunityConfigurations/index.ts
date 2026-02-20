@@ -28,6 +28,7 @@ import { UsIaSupervisionLevelDowngradeConfiguration } from "./UsIa/UsIaSupervisi
 import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdCRCConfiguration } from "./UsId/UsIdCRCConfiguration";
 import { UsIdEarnedDischargeConfiguration } from "./UsId/UsIdEarnedDischargeConfiguration";
+import { UsIdTransferToCRCLikeBedConfiguration } from "./UsId/UsIdTransferToCRCLikeBedConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
@@ -67,6 +68,8 @@ const customOpportunityConfigurations: Partial<
   usIdCRCResidentWorker: UsIdCRCConfiguration,
   usIdCRCWorkRelease: UsIdCRCConfiguration,
   usIdExpandedCRC: UsIdCRCConfiguration,
+  usIdTransferToCRCLikeBed:
+    UsIdTransferToCRCLikeBedConfiguration,
 
   // Maine
   usMeSCCP: UsMeSCCPConfiguration,

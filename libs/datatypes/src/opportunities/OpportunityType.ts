@@ -41,6 +41,7 @@ export const constructedOpportunityTypes = [
   "usIdSupervisionLevelDowngrade",
   "usIdCustodyLevelDowngrade",
   "usIdOverdueFaceToFaceContact",
+  "usIdTransferToCRCLikeBed",
 
   // US_ME
   "usMeSCCP",

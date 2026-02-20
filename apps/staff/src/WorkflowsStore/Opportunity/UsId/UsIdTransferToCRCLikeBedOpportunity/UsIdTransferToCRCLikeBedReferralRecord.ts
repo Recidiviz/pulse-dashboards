@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,10 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./EarnedDischargeOpportunity";
-export * from "./LSUOpportunity";
-export * from "./UsIdCustodyLevelDowngradeOpportunity";
-export * from "./UsIdExpandedCRCOpportunity";
-export * from "./UsIdPastFTRDOpportunity";
-export * from "./UsIdSupervisionLevelDowngradeOpportunity";
-export * from "./UsIdTransferToCRCLikeBedOpportunity";
+import { z } from "zod";
+
+import { opportunitySchemaBase } from "~datatypes";
+
+import {
+  crcSharedCriteria,
+  crcSharedIneligibleCriteria,
+} from "../UsIdSharedCriteria";
+
+export const usIdTransferToCRCLikeBedSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: crcSharedCriteria.extend({
+    custodyLevelIsMinimum: z
+      .object({
+        custodyLevel: z.string(),
+      })
+      .nullish(),
+  }),
+  ineligibleCriteria: crcSharedIneligibleCriteria.passthrough(),
+  metadata: z.object({
+    criteriaSource: z.string(),
+  }),
+});
+
+export type UsIdTransferToCRCLikeBedReferralRecord = z.infer<
+  typeof usIdTransferToCRCLikeBedSchema
+>;
+export type UsIdTransferToCRCLikeBedReferralRecordRaw = z.input<
+  typeof usIdTransferToCRCLikeBedSchema
+>;
