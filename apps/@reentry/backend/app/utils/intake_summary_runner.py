@@ -5,6 +5,7 @@ from app.core.data_config.output_configs.output_config import (
     IntakeSummaryConfigFile,
 )
 from app.utils.llm_agent_qa import LLMAgentQA
+from app.utils.template_formatter import SafeTemplateFormatter
 
 
 async def generate_summary(
@@ -30,11 +31,15 @@ async def generate_summary(
             "output_config is required - cannot generate summary without configuration"
         )
 
+    # Initialize safe template formatter for handling missing variables
+    formatter = SafeTemplateFormatter()
+
     INTAKE_SUMMARY_SYSTEM_PROMPT = output_config.prompts.system
 
     SUMMARY_PROMPT = output_config.prompts.template
 
-    system_prompt = INTAKE_SUMMARY_SYSTEM_PROMPT.format(
+    system_prompt = formatter.format(
+        INTAKE_SUMMARY_SYSTEM_PROMPT,
         Conversation=formatted_messages,
     )
 
@@ -52,9 +57,10 @@ async def generate_summary(
         client_pseudo_id=client_pseudo_id,
     )
 
-    summary_prompt = SUMMARY_PROMPT.format(
+    summary_prompt = formatter.format(
+        SUMMARY_PROMPT,
         Conversation=formatted_messages,
-        # assessment=assessment
+        # assessment=assessment  # Example of a deprecated variable
     )
     summary = await agent.call(summary_prompt)
 

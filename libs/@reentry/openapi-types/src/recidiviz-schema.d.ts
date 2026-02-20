@@ -501,6 +501,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/config-management/outputs/template-schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Template Variable Schema
+         * @description Get the complete schema of available and required template variables for an output type. This helps users know which variables they can use in their config templates.
+         */
+        get: operations["get_template_variable_schema_config_management_outputs_template_schema_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/config-management/outputs/{config_id}/activate": {
         parameters: {
             query?: never;
@@ -4254,6 +4274,48 @@ export interface components {
             /** Additional Feedback */
             additional_feedback?: string | null;
         };
+        /**
+         * TemplateFieldSchema
+         * @description Schema information for a single template field.
+         */
+        TemplateFieldSchema: {
+            /**
+             * Field Name
+             * @description Name of the template field
+             */
+            field_name: string;
+            /**
+             * Description
+             * @description Human-readable description of the field
+             */
+            description: string;
+            /**
+             * Available Variables
+             * @description List of variables that can be used in this template
+             */
+            available_variables: string[];
+            /**
+             * Required Variables
+             * @description List of variables that must be present in this template
+             */
+            required_variables: string[];
+        };
+        /**
+         * TemplateVariableSchemaResponse
+         * @description Complete template variable schema for an output type.
+         */
+        TemplateVariableSchemaResponse: {
+            /**
+             * Output Type
+             * @description Output type (action_plan or intake_summary)
+             */
+            output_type: string;
+            /**
+             * Fields
+             * @description List of template fields with their variable information
+             */
+            fields: components["schemas"]["TemplateFieldSchema"][];
+        };
         /** TextToSpeechRequest */
         TextToSpeechRequest: {
             /**
@@ -5686,6 +5748,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ValidationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_template_variable_schema_config_management_outputs_template_schema_get: {
+        parameters: {
+            query: {
+                /** @description Output type (action_plan or intake_summary) */
+                output_type: components["schemas"]["OutputType"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateVariableSchemaResponse"];
                 };
             };
             /** @description Validation Error */

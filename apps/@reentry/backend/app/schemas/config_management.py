@@ -318,3 +318,29 @@ class PasswordGateStatusResponse(BaseModel):
     """Response schema for the password gate status check."""
 
     enabled: bool
+
+
+# Template Variable Schema
+# ============================================================================
+
+
+class TemplateFieldSchema(BaseModel):
+    """Schema information for a single template field."""
+
+    field_name: str = Field(description="Name of the template field")
+    description: str = Field(description="Human-readable description of the field")
+    available_variables: list[str] = Field(
+        description="List of variables that can be used in this template"
+    )
+    required_variables: list[str] = Field(
+        description="List of variables that must be present in this template"
+    )
+
+
+class TemplateVariableSchemaResponse(BaseModel):
+    """Complete template variable schema for an output type."""
+
+    output_type: str = Field(description="Output type (action_plan or intake_summary)")
+    fields: list[TemplateFieldSchema] = Field(
+        description="List of template fields with their variable information"
+    )

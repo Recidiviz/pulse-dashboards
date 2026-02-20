@@ -26,15 +26,29 @@ class ExternalApiConfig(BaseModel):
 
 
 class PromptsConfig(BaseModel):
-    system: str
+    system: str = Field(
+        description="System message for the LLM",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
+    )
 
 
 class IntakeSummaryPromptsConfig(PromptsConfig):
     system: str = Field(
-        description="System message for intake summary. Variables: {Conversation}, {Assessments}",
+        description="System message for intake summary",
+        json_schema_extra={
+            "available_variables": ["Conversation"],
+            "required_variables": ["Conversation"],
+        },
     )
     template: str = Field(
-        description="Summary generation prompt template. Variables: {Conversation}, {assessment}",
+        description="Summary generation prompt template",
+        json_schema_extra={
+            "available_variables": ["Conversation"],
+            "required_variables": ["Conversation"],
+        },
     )
 
 
@@ -67,70 +81,170 @@ class ActionPlanPromptsConfig(PromptsConfig):
 
     # Initial setup
     data_template: str = Field(
-        description="Initial user prompt template. Variables: {client_data}, {decision_tree_statements}",
+        description="Initial user prompt template",
+        json_schema_extra={
+            "available_variables": [
+                "client_data",
+                "address",
+                "decision_tree_statements",
+            ],
+            "required_variables": ["client_data"],
+        },
     )
 
     # Reflexion phase
-    reflexion_initial: str
+    reflexion_initial: str = Field(
+        description="Prompt for initial reflexion on the action plan",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
+    )
     reflexion_with_previous_sections: str = Field(
-        description="Prompt for reflexion when previous sections exist. Variables: {previous_sections}",
+        description="Prompt for reflexion when previous sections exist",
+        json_schema_extra={
+            "available_variables": ["previous_sections"],
+            "required_variables": ["previous_sections"],
+        },
     )
 
     # Area identification
-    area_of_needs: str
-    resources_options: str
+    area_of_needs: str = Field(
+        description="Prompt for compiling areas of needs/risk",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
+    )
+    resources_options: str = Field(
+        description="Prompt for identifying resource options",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
+    )
 
     # Section generation
     section_generation_with_resources: str = Field(
-        description="Prompt for generating section content when resources are available. Variables: {section}, {resources}",
+        description="Prompt for generating section content when resources are available",
+        json_schema_extra={
+            "available_variables": ["section", "resources"],
+            "required_variables": ["section", "resources"],
+        },
     )
     section_generation_without_resources: str = Field(
-        description="Prompt for generating section content when no resources are available. Variables: {section}",
+        description="Prompt for generating section content when no resources are available",
+        json_schema_extra={
+            "available_variables": ["section"],
+            "required_variables": ["section"],
+        },
     )
     section_annotations: str = Field(
-        description="Prompt for getting annotations and notes for a section. Variables: {section}, {section_content}",
+        description="Prompt for getting annotations and notes for a section",
+        json_schema_extra={
+            "available_variables": ["section", "section_content"],
+            "required_variables": ["section", "section_content"],
+        },
     )
     section_refinement: str = Field(
-        description="Prompt for refining section content. Variables: {section}",
+        description="Prompt for refining section content",
+        json_schema_extra={
+            "available_variables": ["section"],
+            "required_variables": ["section"],
+        },
     )
 
     # Timeline generation
     timeline_generation: str = Field(
-        description="If timeline field is false, this will not be used",
+        description="Prompt for timeline generation (if timeline field is true)",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
     )
     timeline_format: str = Field(
-        description="If timeline field is false, this will not be used",
+        description="Prompt for formatting timeline (if timeline field is true)",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
     )
 
     # Milestones generation
     milestones_generation: str = Field(
-        description="If milestone field is false, this will not be used",
+        description="Prompt for milestones generation (if milestone field is true)",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
     )
     milestones_refinement: str = Field(
-        description="If milestone field is false, this will not be used",
+        description="Prompt for refining milestones (if milestone field is true)",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
     )
     milestones_format: str = Field(
-        description="If milestone field is false, this will not be used",
+        description="Prompt for formatting milestones (if milestone field is true)",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
     )
 
     # Final assembly
-    action_plan_generation: str
+    action_plan_generation: str = Field(
+        description="Prompt for final action plan assembly",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
+    )
 
     # Edit-specific prompts
     edit_section_selection: str = Field(
-        description="Prompt for selecting which sections to modify. Variables: {sections_titles}",
+        description="Prompt for selecting which sections to modify",
+        json_schema_extra={
+            "available_variables": ["sections_titles"],
+            "required_variables": ["sections_titles"],
+        },
     )
     edit_section_change: str = Field(
-        description="Prompt for modifying existing section content. Variables: {section}, {extra_instructions}, {clean_markdown_content}",
+        description="Prompt for modifying existing section content",
+        json_schema_extra={
+            "available_variables": [
+                "section",
+                "extra_instructions",
+                "clean_markdown_content",
+            ],
+            "required_variables": [
+                "section",
+                "extra_instructions",
+                "clean_markdown_content",
+            ],
+        },
     )
     edit_timeline: str = Field(
-        description="Prompt for editing timeline. Variables: {extra_instructions}. If milestone field is false, this will not be used"
+        description="Prompt for editing timeline (if milestone field is true)",
+        json_schema_extra={
+            "available_variables": ["extra_instructions"],
+            "required_variables": ["extra_instructions"],
+        },
     )
     edit_milestones: str = Field(
-        description="Prompt for editing milestones. Variables: {extra_instructions}. If milestone field is false, this will not be used",
+        description="Prompt for editing milestones (if milestone field is true)",
+        json_schema_extra={
+            "available_variables": ["extra_instructions"],
+            "required_variables": ["extra_instructions"],
+        },
     )
     edit_action_plan_generation: str = Field(
-        description="Prompt for final action plan assembly during edit"
+        description="Prompt for final action plan assembly during edit",
+        json_schema_extra={
+            "available_variables": [],
+            "required_variables": [],
+        },
     )
 
 

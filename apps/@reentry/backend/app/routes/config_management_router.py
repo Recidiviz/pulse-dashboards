@@ -62,6 +62,7 @@ from app.schemas.config_management import (
     OutputConfigResponse,
     OutputConfigUpdate,
     PasswordGateStatusResponse,
+    TemplateVariableSchemaResponse,
     ValidateYamlRequest,
     ValidationResult,
     VerifyPasswordRequest,
@@ -910,6 +911,25 @@ async def validate_output_yaml(
     _: dict = Depends(require_internal_user),
 ):
     return ValidationService.validate_output_yaml(request.yaml_content)
+
+
+@router.get(
+    "/outputs/template-schema",
+    response_model=TemplateVariableSchemaResponse,
+    summary="Get Template Variable Schema",
+    description="Get the complete schema of available and required template variables for an output type. This helps users know which variables they can use in their config templates.",
+    tags=["Output Configs"],
+)
+async def get_template_variable_schema(
+    output_type: OutputType = Query(
+        ..., description="Output type (action_plan or intake_summary)"
+    ),
+    _: dict = Depends(require_internal_user),
+):
+    try:
+        return ValidationService.get_template_variable_schema(output_type.value)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post(

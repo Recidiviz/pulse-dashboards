@@ -31,6 +31,7 @@ import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 import { AuditLog, AuditLogEntry } from "../components/AuditLog";
 import { ChangeNoteModal } from "../components/ChangeNoteModal";
 import { StatusBadge } from "../components/StatusBadge";
+import { TemplateVariableGuide } from "../components/TemplateVariableGuide";
 import { ValidationStatus } from "../components/ValidationStatus";
 import { YamlDiffViewer } from "../components/YamlDiffViewer";
 import { YamlEditor } from "../components/YamlEditor";
@@ -663,6 +664,13 @@ const ConfigDetailPage = () => {
             )}
           </div>
         </div>
+
+        {/* Template Variable Guide (for output configs when editing) */}
+        {isOutputConfig && isDraft && "output_type" in config && (
+          <TemplateVariableGuide
+            outputType={config.output_type as "action_plan" | "intake_summary"}
+          />
+        )}
 
         {/* Validation Status (for drafts) */}
         {isDraft && editedYaml !== null && isValidating && (

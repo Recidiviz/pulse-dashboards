@@ -2,6 +2,7 @@ from langchain_core.messages import HumanMessage
 
 from app.core.data_config.output_configs.output_config import ActionPlanPromptsConfig
 from app.services.resources import Resource
+from app.utils.template_formatter import SafeTemplateFormatter
 
 
 def format_resources_for_display(resources: list[Resource]) -> str:
@@ -60,6 +61,7 @@ class ActionPlanPrompts:
 
     def __init__(self, config: ActionPlanPromptsConfig):
         self.config = config
+        self.formatter = SafeTemplateFormatter()
 
     def get_system_message(self) -> str:
         """Return the system message for action plan generation."""
@@ -69,7 +71,8 @@ class ActionPlanPrompts:
         self, section: str, resources: list[Resource]
     ) -> HumanMessage:
         """Generate prompt for section generation when resources are available."""
-        content = self.config.section_generation_with_resources.format(
+        content = self.formatter.format(
+            self.config.section_generation_with_resources,
             section=section,
             resources=format_resources_for_display(resources),
         )
@@ -79,8 +82,8 @@ class ActionPlanPrompts:
         self, section: str
     ) -> HumanMessage:
         """Generate prompt for section generation when no resources are available."""
-        content = self.config.section_generation_without_resources.format(
-            section=section
+        content = self.formatter.format(
+            self.config.section_generation_without_resources, section=section
         )
         return HumanMessage(content=content)
 
@@ -88,7 +91,8 @@ class ActionPlanPrompts:
         self, section: str, section_content: str
     ) -> HumanMessage:
         """Generate prompt for getting annotations and notes for a section."""
-        content = self.config.section_annotations.format(
+        content = self.formatter.format(
+            self.config.section_annotations,
             section=section,
             section_content=section_content,
         )
@@ -96,7 +100,7 @@ class ActionPlanPrompts:
 
     def get_section_refinement_prompt(self, section: str) -> HumanMessage:
         """Generate prompt for refining section content."""
-        content = self.config.section_refinement.format(section=section)
+        content = self.formatter.format(self.config.section_refinement, section=section)
         return HumanMessage(content=content)
 
     def get_reflexion_prompt_initial(self) -> HumanMessage:
@@ -107,8 +111,9 @@ class ActionPlanPrompts:
         self, previous_sections: list[str]
     ) -> HumanMessage:
         """Generate prompt for reflexion when previous sections exist."""
-        content = self.config.reflexion_with_previous_sections.format(
-            previous_sections=", ".join(previous_sections)
+        content = self.formatter.format(
+            self.config.reflexion_with_previous_sections,
+            previous_sections=", ".join(previous_sections),
         )
         return HumanMessage(content=content)
 
@@ -148,8 +153,9 @@ class ActionPlanPrompts:
         self, client_data: str, address: str, decision_tree_statements: str | None
     ) -> str:
         """Generate the initial user prompt with client data and decision tree statements."""
-        # Use custom template from config
-        return self.config.data_template.format(
+        # Use custom template from config with safe formatting
+        return self.formatter.format(
+            self.config.data_template,
             client_data=client_data,
             address=address,
             decision_tree_statements=decision_tree_statements or "",
