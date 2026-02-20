@@ -165,11 +165,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
           />
         </FormContainer>
       </PrintablePage>
-      <PrintablePage>
-        <FormContainer {...formViewerContext}>
-          <HearingNotice />
-        </FormContainer>
-      </PrintablePage>
+      <HearingNotice />
     </>
   );
 };

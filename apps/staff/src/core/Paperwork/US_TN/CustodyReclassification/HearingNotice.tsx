@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
+import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
+import { PrintablePage } from "../../styles";
 import FormInput from "./FormInput";
+import { FormContainer } from "./styles";
 
 const Container = styled.div`
   font-family: monospace;
@@ -35,8 +38,6 @@ const Headline = styled.div`
 `;
 
 const Row = styled.div<{ indented?: boolean; grouped?: boolean }>`
-  // display: flex;
-  // justify-content: space-between;
   width: 95%;
   margin-left: ${({ indented }) => (indented ? "2em" : 0)};
   margin-top: ${({ grouped }) => (grouped ? 0 : "5em")};
@@ -48,27 +49,39 @@ const SigBlock = styled.div`
   width: 20em;
 `;
 
-const HearingNotice: React.FC = () => {
+const HearingNotice = ({
+  pilotVersion = false,
+}: {
+  pilotVersion?: boolean;
+}) => {
   const { formData } =
     useOpportunityFormContext() as UsTnReclassificationReviewForm;
+  const formViewerContext = useContext(FormViewerContext);
 
   return (
-    <Container>
-      <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
-      <Headline>CLASSIFICATION HEARING NOTICE</Headline>
-      <Row>
-        TOMIS ID: {formData.omsId} {formData.residentFullName}
-      </Row>
-      <Row grouped>CAF Date: {formData.date}</Row>
-      <Row>
-        This is to inform you that your classification hearing will be held on{" "}
-        <FormInput name="hearingDate" placeholder="hearing date" /> at{" "}
-        <FormInput name="hearingLocation" placeholder="hearing location" />.
-      </Row>
-      <Row>Classification Date:</Row>
-      <Row grouped>Classification Type: CL CLASSIFICATION</Row>
-      <SigBlock>x</SigBlock>
-    </Container>
+    <PrintablePage>
+      <FormContainer {...formViewerContext}>
+        <Container>
+          <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
+          <Headline>CLASSIFICATION HEARING NOTICE</Headline>
+          <Row>
+            TOMIS ID: {formData.omsId} {formData.residentFullName}
+          </Row>
+          <Row grouped>CAF Date: {formData.date}</Row>
+          <Row>
+            This is to inform you that your classification hearing will be held
+            on <FormInput name="hearingDate" placeholder="hearing date" /> at{" "}
+            <FormInput name="hearingLocation" placeholder="hearing location" />.
+          </Row>
+          <Row>Classification Date:</Row>
+          <Row grouped>
+            Classification Type:{" "}
+            {pilotVersion ? formData.classificationType : "CL CLASSIFICATION"}
+          </Row>
+          <SigBlock>x</SigBlock>
+        </Container>
+      </FormContainer>
+    </PrintablePage>
   );
 };
 

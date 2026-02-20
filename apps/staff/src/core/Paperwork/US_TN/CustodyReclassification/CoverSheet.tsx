@@ -26,15 +26,42 @@ import DOCXFormTextArea from "../../DOCXFormTextArea";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
+import FormDropdown from "./FormDropdown";
 import FormInput from "./FormInput";
 import FormRadioButton from "./FormRadioButton";
 import { FormContainer, Label } from "./styles";
+
+const CUSTODY_LEVELS = ["TRUSTEE", "LOW", "MEDIUM", "CLOSE", "MAX"];
+const OVERRIDE_TYPES = [
+  "Disciplinary history (A1INC)",
+  "Disciplinary history (C2DEC)",
+  "First degree murder - current conviction (A2INC)",
+  "Escapes (A4INC)",
+  "Administrative (B1INC)",
+  "Administrative (B2INC)",
+  "Parole Grant/Technical Violator's Program(s)/SAIU (C3DEC)",
+  "Vulnerability (C5DEC)",
+];
+const CLASSIFICATION_TYPES = [
+  "Diagnostic Classification",
+  "Annual Reclassification",
+  "Special Reclassification: Upgrade Due to Updated CAF Scoring",
+  "Special Reclassification: Upgrade for Serious Misconduct",
+  "Special Reclassification: Transfer to Trustee or Transition Center",
+  "Special Reclassification: Downgrade",
+];
 
 const Container = styled.div`
   font-family: monospace;
 
   textarea {
     width: 100%;
+  }
+
+  hr {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    border-top: 1px solid black;
   }
 `;
 
@@ -58,6 +85,12 @@ const Item = styled.div`
   gap: 1em;
 `;
 
+const HeaderItem = styled(Item)`
+  label {
+    margin-bottom: 0;
+  }
+`;
+
 const SigBlock = styled.div`
   margin-top: 3em;
   border-top: 0.5px solid black;
@@ -76,7 +109,7 @@ const CoverSheet: React.FC = () => {
     useOpportunityFormContext() as UsTnReclassificationReviewForm;
   const formViewerContext = useContext(FormViewerContext);
 
-  const showPilotDisclaimer = US_TN_CLASSIFICATION_OPPORTUNITIES.includes(
+  const isPilotVersion = US_TN_CLASSIFICATION_OPPORTUNITIES.includes(
     // @ts-expect-error Yeah, I know opportunity.type might not be in US_TN_CLASSIFICATION_OPPORTUNITIES. That's why I'm checking it
     opportunity.type,
   );
@@ -87,18 +120,36 @@ const CoverSheet: React.FC = () => {
         <Container>
           <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
           <Headline>OFFENDER CLASSIFICATION SUMMARY</Headline>
-          {showPilotDisclaimer && (
+          {isPilotVersion && (
             <>
               <hr />
               FOR 2026 CLASSIFICATION PILOT PURPOSES
               <br />
-              Name of Chief Counselor Finalizing Classification Form: ________
+              Name of Chief Counselor Finalizing Classification Form:{" "}
+              <FormInput name="finalizingCounselor" />
               <br />
               Date of Final Approval and Entry in OMS / Recidiviz Tool, with any
-              edits: ___________
+              edits: <FormInput name="finalApprovalDate" />
               <br />
-              If Offender scored or overridden to LOW, Trustee checklist
-              completed: YES____NO____N/A___
+              <HeaderItem>
+                If Offender scored or overridden to LOW, Trustee checklist
+                completed:
+                <FormRadioButton
+                  name="checklistCompletedOnOverride"
+                  targetValue={"Y"}
+                  label="Yes"
+                />
+                <FormRadioButton
+                  name="checklistCompletedOnOverride"
+                  targetValue={"N"}
+                  label="No"
+                />
+                <FormRadioButton
+                  name="checklistCompletedOnOverride"
+                  targetValue={"NA"}
+                  label="N/A"
+                />
+              </HeaderItem>
               <hr />
             </>
           )}
@@ -115,7 +166,22 @@ const CoverSheet: React.FC = () => {
             </Label>
           </Row>
           <Row>
-            <Label>Classification Type: CLASSIFICATION</Label>
+            <Label>
+              Classification Type:
+              {isPilotVersion ? (
+                <FormDropdown
+                  name="classificationType"
+                  menuItems={CLASSIFICATION_TYPES}
+                  style={{
+                    minWidth: "10rem",
+                    paddingLeft: "0.35rem",
+                    textWrap: "wrap",
+                  }}
+                />
+              ) : (
+                " CLASSIFICATION"
+              )}
+            </Label>
             <Label>
               CAF Date: <FormInput name="date" />
             </Label>
@@ -179,15 +245,32 @@ const CoverSheet: React.FC = () => {
               </Label>
             </Row>
           )}
-          <Row>
-            <Label>
-              Scored CAF Range:
-              {derivedData.totalText}
-            </Label>
+          <Row grouped={isPilotVersion}>
+            <Label>Scored CAF Range: {derivedData.totalText}</Label>
             <Label>
               Current Custody Level: <FormInput name="currentCustodyLevel" />
             </Label>
           </Row>
+          {isPilotVersion && (
+            <>
+              <Row grouped>
+                Counselor Recommended Override:
+                <FormDropdown
+                  name="counselorRecommendedOverride"
+                  menuItems={OVERRIDE_TYPES}
+                />
+              </Row>
+              <Row grouped>
+                Counselor Recommended Custody Level:{" "}
+                <FormDropdown
+                  name="counselorRecommendedCustody"
+                  menuItems={CUSTODY_LEVELS}
+                  style={{ minWidth: "4rem" }}
+                />
+              </Row>
+              <br />
+            </>
+          )}
           <Row>Panel&apos;s Majority Recommendation:</Row>
           <Row indented grouped>
             <Label>
@@ -211,12 +294,30 @@ const CoverSheet: React.FC = () => {
           </Row>
           <Row indented grouped>
             <Label>
-              Custody Level: <FormInput name="recommendationCustodyLevel" />
+              Custody Level:{" "}
+              {isPilotVersion ? (
+                <FormDropdown
+                  name="recommendationCustodyLevel"
+                  menuItems={CUSTODY_LEVELS}
+                  style={{ minWidth: "4rem" }}
+                />
+              ) : (
+                <FormInput name="recommendationCustodyLevel" />
+              )}
             </Label>
           </Row>
           <Row indented grouped>
             <Label>
-              Override Type: <FormInput name="recommendationOverrideType" />
+              Override Type:
+              {isPilotVersion ? (
+                <FormDropdown
+                  name="recommendationOverrideType"
+                  menuItems={OVERRIDE_TYPES}
+                  style={{ minWidth: "20rem" }}
+                />
+              ) : (
+                <FormInput name="recommendationOverrideType" />
+              )}
             </Label>
           </Row>
           <Row indented grouped>

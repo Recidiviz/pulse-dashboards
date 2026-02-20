@@ -43,6 +43,7 @@ import {
 } from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
+import HearingNotice from "../CustodyReclassification/HearingNotice";
 import { getCoverSheetTemplateArgs } from "../CustodyReclassification/utils";
 import { assessmentQuestions } from "./assessmentQuestions";
 import rcafTemplate from "./rcaf_template.docx";
@@ -59,6 +60,11 @@ export const FormUsTnReclassification2026 = observer(
     const form = useOpportunityFormContext() as UsTnReclassification2026Form;
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
+
+    const includeTrusteeChecklist =
+      derivedData.totalScore <= 12 ||
+      formData.counselorRecommendedCustody === "LOW" ||
+      formData.recommendationCustodyLevel === "LOW";
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
@@ -77,7 +83,7 @@ export const FormUsTnReclassification2026 = observer(
         ],
       ];
 
-      if (derivedData.totalScore <= 12) {
+      if (includeTrusteeChecklist) {
         fileInputs.push(getTrusteeTemplateArgs(resident, form));
       }
 
@@ -212,7 +218,8 @@ export const FormUsTnReclassification2026 = observer(
               <TotalScore score={derivedData.totalScore} mediumUpper={30} />
             </ClassificationFormPage>
           </PrintablePage>
-          <TrusteeChecklist display={derivedData.totalScore <= 12} />
+          <TrusteeChecklist display={includeTrusteeChecklist} />
+          <HearingNotice pilotVersion />
         </FormViewer>
         <PostDownloadModal
           isOpen={postDownloadModalIsOpen}

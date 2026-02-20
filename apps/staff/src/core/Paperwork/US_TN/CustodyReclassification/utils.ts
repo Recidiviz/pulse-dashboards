@@ -46,6 +46,34 @@ export function prefilledCoverSheetData(
     ?.map(({ incompatibleOffenderId }) => incompatibleOffenderId)
     .join(", ");
 
+  switch (opportunityType) {
+    case "usTnInitialClassification":
+    case "usTnAnnualReclassification":
+      // neither of these populate this field in the cover sheet
+      break;
+    case "usTnInitialClassification2026Policy":
+      out.classificationType = "Diagnostic Classification";
+      break;
+    case "usTnAnnualReclassification2026Policy":
+      out.classificationType = "Annual Reclassification";
+      break;
+    case "usTnSpecialCustodyLevelUpgrade2026Policy":
+      out.classificationType =
+        "Special Reclassification: Upgrade Due to Updated CAF Scoring";
+      break;
+    case "usTnSeriousMisconductUpgrade":
+      out.classificationType =
+        "Special Reclassification: Upgrade for Serious Misconduct";
+      break;
+    case "usTnTrusteeTransfer":
+      out.classificationType =
+        "Special Reclassification: Transfer to Trustee or Transition Center";
+      break;
+    case "usTnCustodyLevelDowngrade2026Policy":
+      out.classificationType = "Special Reclassification: Downgrade";
+      break;
+  }
+
   if (
     opportunityType === "usTnInitialClassification2026Policy" ||
     opportunityType === "usTnInitialClassification"
@@ -104,6 +132,45 @@ export function prefilledCoverSheetData(
   return out;
 }
 
+export function getDerivedCustodyLevel(
+  totalScore: number,
+  opportunityType: OpportunityType,
+): string {
+  if (opportunityType === "usTnInitialClassification2026Policy") {
+    switch (true) {
+      case totalScore <= 12:
+        return "LOW";
+      case totalScore <= 27:
+        return "MEDIUM";
+      case totalScore <= 40:
+        return "CLOSE";
+      default:
+        return "MAXIMUM";
+    }
+  }
+
+  if (
+    opportunityType === "usTnCustodyLevelDowngrade2026Policy" ||
+    opportunityType === "usTnSpecialCustodyLevelUpgrade2026Policy" ||
+    opportunityType === "usTnAnnualReclassification2026Policy" ||
+    opportunityType === "usTnTrusteeTransfer" ||
+    opportunityType === "usTnSeriousMisconductUpgrade"
+  ) {
+    switch (true) {
+      case totalScore <= 12:
+        return "LOW";
+      case totalScore <= 30:
+        return "MEDIUM";
+      case totalScore <= 40:
+        return "CLOSE";
+      default:
+        return "MAXIMUM";
+    }
+  }
+
+  return "";
+}
+
 export function getCoverSheetTemplateArgs(
   resident: Resident,
   formData: Partial<UsTnCoverSheetSharedDraftData>,
@@ -123,6 +190,11 @@ export function getCoverSheetTemplateArgs(
     updatedPhotoNeeded,
     emergencyContactUpdated,
     inmateAppeal,
+    finalizingCounselor,
+    finalApprovalDate,
+    checklistCompletedOnOverride,
+    counselorRecommendedOverride,
+    counselorRecommendedCustody,
   } = formData;
 
   formContents.residentFullName = resident.displayName;
@@ -148,6 +220,16 @@ export function getCoverSheetTemplateArgs(
 
   formContents.recFacAs = recommendationFacilityAssignment ?? "";
 
+  formContents.finalizingCounselor = finalizingCounselor ?? "__________";
+  formContents.finAppDate = finalApprovalDate ?? "_______";
+
+  formContents.counselorOverride = counselorRecommendedOverride ?? "     ";
+  formContents.counselorLevel = counselorRecommendedCustody ?? "     ";
+
+  formContents.ccY = checklistCompletedOnOverride === "Y" ? "_X_" : "___";
+  formContents.ccN = checklistCompletedOnOverride === "N" ? "_X_" : "___";
+  formContents.ccNA = checklistCompletedOnOverride === "NA" ? "_X_" : "___";
+
   // Add tabs before newlines so the underlining looks right in these big blocks
   (
     [
@@ -159,7 +241,7 @@ export function getCoverSheetTemplateArgs(
     if (formData[multiLineField]) {
       formContents[multiLineField] = formData[multiLineField].replace(
         /\n/g,
-        "\t\n",
+        "; ",
       );
     } else {
       if (multiLineField === "denialReasons") {

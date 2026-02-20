@@ -223,4 +223,10 @@ export type UsTnCoverSheetSharedDraftData = {
   inmateAppeal: boolean;
   disagreementReasons: string;
   denialReasons: string;
+  finalizingCounselor: string;
+  finalApprovalDate: string;
+  checklistCompletedOnOverride: string;
+  counselorRecommendedOverride: string;
+  counselorRecommendedCustody: string;
+  classificationType: string;
 };

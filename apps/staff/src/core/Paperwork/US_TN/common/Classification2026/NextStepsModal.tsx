@@ -210,7 +210,7 @@ export const PostDownloadModal: React.FC<{
             <ContentHeader>Next Steps</ContentHeader>
             <NextSteps>
               {NEXT_STEPS.map((step, index) => (
-                <NextStep>
+                <NextStep key={step}>
                   <StepNumber>{index + 1}</StepNumber>
                   <StepText>{step}</StepText>
                 </NextStep>
@@ -219,7 +219,7 @@ export const PostDownloadModal: React.FC<{
           </LeftAlign>
           <LevelMappings>
             {LEVELS.map((level) => (
-              <LevelMapping>
+              <LevelMapping key={level}>
                 <MappingText>{level} Scores</MappingText>
                 <StyledArrow
                   kind={IconSVG.Arrow}

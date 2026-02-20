@@ -21,7 +21,10 @@ import {
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
 } from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
-import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
+import {
+  getDerivedCustodyLevel,
+  prefilledCoverSheetData,
+} from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnDiangosticClassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTnInitialClassification2026Opportunity } from "../UsTn";
@@ -158,6 +161,8 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       this.formData.trusteeWardenHasApproved,
     ].every((criterion) => criterion === "true");
 
+    const totalText = getDerivedCustodyLevel(totalScore, this.opportunity.type);
+
     return {
       q1Score,
       q2Score,
@@ -167,6 +172,7 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       q6Score,
       totalScore,
       trusteeEligible,
+      totalText,
     };
   }
 
