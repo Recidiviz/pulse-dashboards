@@ -1,6 +1,6 @@
 import traceback
 from datetime import datetime
-from typing import Any, Callable, Coroutine, Dict, Literal, Optional
+from typing import Any, Callable, Coroutine, Dict, Optional
 
 import structlog
 from langchain_core.messages import AIMessage, AnyMessage
@@ -25,12 +25,10 @@ from app.routes.shared_models import IntakeMessageResponse
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.intake import db_manager
 from app.utils.intake.prompts import (
-    CheckIfClientNeedsHelp,
     IsSectionComplete,
     generate_closing_remarks_prompt,
     generate_opening_remarks_prompt,
     generate_question_prompt,
-    get_check_if_client_needs_help_prompt,
     get_system_message_prompt,
 )
 from app.utils.intake.schemas import (
@@ -152,6 +150,7 @@ class IntakeConversationGraph:
                 state_schema=ConversationState,
                 config_schema=ConfigSchema,
             )
+            logger.info("Building conversation graph")
             self._build_graph()
             self.graph = self.workflow.compile(checkpointer=self.memory)
         except Exception as e:
@@ -164,13 +163,10 @@ class IntakeConversationGraph:
         if not self.workflow:
             raise RuntimeError("Intake State Graph is not initialized")
         """Constructs the conversation workflow with evaluation nodes."""
-        # Define nodes for each conversation state with semantic names for LangSmith legibility
+
         self.workflow.add_node("intake_chat_introduction", self._opening_remarks)
-        self.workflow.add_node("intake_ask_question", self._ask_section_question)
+        self.workflow.add_node("intake_evaluate_section", self._evaluate_section)
         self.workflow.add_node("intake_section_complete", self._complete_section)
-        self.workflow.add_node(
-            "intake_check_client_needs_help", self._check_if_client_needs_help
-        )
         self.workflow.add_node("intake_closing_chat", self._closing_remarks)
         self.workflow.add_node(
             "intake_resume_conversation", self._resume_conversation_user
@@ -178,27 +174,27 @@ class IntakeConversationGraph:
 
         # Set conditional entry point based on conversation state
         self.workflow.set_conditional_entry_point(self._get_entry_point)
-        # Set condition for internal intake
-        self.workflow.add_edge("intake_resume_conversation", "intake_ask_question")
 
-        # Define edges between nodes
-        self.workflow.add_edge("intake_chat_introduction", "intake_ask_question")
-
+        self.workflow.add_edge("intake_resume_conversation", "intake_evaluate_section")
+        self.workflow.add_edge("intake_chat_introduction", "intake_evaluate_section")
         self.workflow.add_conditional_edges(
             "intake_section_complete",
             lambda state: "intake_closing_chat"
             if state["current_section"] == COMPLETION_SECTION
             or state["current_section"] is None
-            else "intake_ask_question",
+            else "intake_evaluate_section",
         )
         self.workflow.add_edge("intake_closing_chat", END)
 
     async def call_model(
-        self, messages: list[AnyMessage], output_type: Optional[Any] = None
+        self,
+        messages: list[AnyMessage],
+        output_type: Optional[Any] = None,
     ):
         logger.info(
             f"🔄 CALLING MODEL: {len(messages)} messages, output_type={output_type.__name__ if output_type else 'None'}"
         )
+
         start_time = datetime.now()
 
         try:
@@ -212,6 +208,7 @@ class IntakeConversationGraph:
             end_time = datetime.now()
             duration = (end_time - start_time).total_seconds()
             logger.info(f"✅ MODEL RESPONSE RECEIVED in {duration:.2f}s")
+
             return response
 
         except Exception as e:
@@ -220,13 +217,7 @@ class IntakeConversationGraph:
             logger.error(f"❌ MODEL CALL FAILED after {duration:.2f}s: {e}")
             raise
 
-    async def _get_entry_point(
-        self, state: ConversationState
-    ) -> Literal[
-        "intake_resume_conversation",
-        "intake_chat_introduction",
-        "intake_check_client_needs_help",
-    ]:
+    async def _get_entry_point(self, state: ConversationState) -> str:
         """
         Determine the entry point for the conversation based on the current state.
         - If no messages, start with introduction
@@ -250,11 +241,8 @@ class IntakeConversationGraph:
             print("Last message was from AI - resuming conversation for user to answer")
             return "intake_resume_conversation"
         else:
-            # If the last message was from the user, we need to generate a new question
-            print(
-                "Last message was from user - checking is section is finished and maybe ask a new question"
-            )
-            return "intake_check_client_needs_help"
+            print("Last message was from user - evaluating section")
+            return "intake_evaluate_section"
 
     async def _opening_remarks(self, state: ConversationState) -> ConversationState:
         logger.info("🔵 ENTERING NODE: _opening_remarks")
@@ -300,75 +288,92 @@ class IntakeConversationGraph:
             self.log_error(error_info, e)
             raise e
 
-    async def _ask_section_question(self, state: ConversationState) -> Command:
-        logger.info("🟡 ENTERING NODE: _ask_section_question")
+    async def _evaluate_section(self, state: ConversationState) -> Command:
+        logger.info("🟢 ENTERING NODE: _evaluate_section")
+        """
+        Evaluate if the current section is complete and ask next question if not.
+        This is the V3 version that skips the "check if client needs help" step.
+        """
         current_section_title = state["current_section"]
+
         try:
             client_pseudo_id = self.session.client_pseudo_id
+
+            # Validate current section
             if not current_section_title:
                 raise ValueError("Empty current section")
 
-            # Find the section data by title
             if current_section_title not in self.section_data:
                 raise ValueError(f"Section not found: {current_section_title}")
 
             section_data = self.section_data[current_section_title]
             print(
-                f"🤖 CONVERSATION: Using {section_data['source']} data for section: {section_data['title']}"
-            )
-            print(
-                f"   Required info: {section_data.get('required_information', 'N/A')[:50]}..."
+                f"🤖 CONVERSATION (V3): Using {section_data['source']} data for section: {section_data['title']}"
             )
 
-            # Get required_information from the effective section data
+            # Prepare section evaluation prompt
             required_info = section_data.get(
                 "required_information", "No specific requirements"
             )
-
-            prompt_template = generate_question_prompt(
+            section_prompt = generate_question_prompt(
                 section_data["title"],
                 required_info,
                 self.assessment_config,
             )
 
-            response = await self.call_model(
-                state["messages"] + [prompt_template], IsSectionComplete
+            # Evaluate section completion
+            logger.info("🔄 EVALUATING SECTION: IsSectionComplete")
+            section_response = await self.call_model(
+                state["messages"] + [section_prompt], IsSectionComplete
             )
 
-            print(f"DEBUG: Section complete: {response.section_complete}")
-            print(f"DEBUG: Response: {response.section_next_question}")
-            print(f"DEBUG: Reasoning: {response.section_complete_reasoning}")
+            logger.info(
+                f"✅ IsSectionComplete RESPONSE: {section_response.section_complete}"
+            )
+            logger.info(f"   Reasoning: {section_response.section_complete_reasoning}")
 
-            if response.section_complete or not response.section_next_question:
+            # If section is complete, go to complete section
+            if (
+                section_response.section_complete
+                or not section_response.section_next_question
+            ):
+                logger.info("Section complete - redirecting to section completion")
                 return Command(goto="intake_section_complete")
 
-            state["messages"].append(AIMessage(response.section_next_question))
+            # Continue with next question
+            logger.info("Continuing conversation with next question")
+            state["messages"].append(AIMessage(section_response.section_next_question))
+
             message = await self.db_manager.store_message(
                 intake_id=self.intake_id,
                 from_role=IntakeMessageRole.CASEWORKER,
-                content=response.section_next_question,
+                content=section_response.section_next_question,
             )
+
             if not message:
                 raise ValueError(
-                    f"error saving message in ask question for client {client_pseudo_id}"
+                    f"error saving message in evaluate section for client {client_pseudo_id}"
                 )
+
             client_response = await self.wait_for_user_response(
                 self.session.client_pseudo_id,
                 message,
             )
+
             if not client_response:
-                # Handled extrenally by deleting the graph and re-intantiating when we receive a message
+                # Handled externally by deleting the graph and re-instantiating when we receive a message
                 print("timeout human")
                 return Command(goto=END)
 
             state["messages"].append(HumanMessage(client_response))
 
-            return Command(update=state, goto="intake_check_client_needs_help")
+            # Loop back to this same node to check again with the new user response
+            return Command(update=state, goto="intake_evaluate_section")
 
         except Exception as e:
             traceback.print_exc()
-            print(f"ERROR in _ask_section_question: {e}")
-            raise e  # Let the error bubble up instead of setting state["error"]
+            print(f"ERROR in _evaluate_section: {e}")
+            raise e
 
     async def _resume_conversation_user(self, state: ConversationState):
         logger.info("🟢 ENTERING NODE: _resume_conversation_user")
@@ -553,34 +558,6 @@ class IntakeConversationGraph:
         await self.send_message(self.session.client_pseudo_id, section_change_event)
 
         return state
-
-    async def _check_if_client_needs_help(self, state: ConversationState) -> Command:
-        logger.info("🟣 ENTERING NODE: _check_if_client_needs_help")
-        """
-        Check if the client needs help or wants to stop the conversation.
-        Based on JavaScript checkIfClientNeedsHelp function.
-
-        Args:
-            state: Current conversation state
-
-        Returns:
-            Updated state or Command to redirect flow
-        """
-        prompt = get_check_if_client_needs_help_prompt()
-
-        response: CheckIfClientNeedsHelp = await self.call_model(
-            state["messages"] + [prompt], CheckIfClientNeedsHelp
-        )
-
-        print(f"Needs Help: {response.needs_help}")
-        print(f"Needs Help AI Reasoning: {response.needs_help_reasoning}")
-        print("\n")
-
-        # If the client needs help, redirect to the closing remarks node.
-        if response.needs_help:
-            return Command(goto="intake_closing_chat")
-
-        return Command(goto="intake_ask_question")
 
     async def save_and_send_AI_message(self, content: str):
         message = await self.db_manager.store_message(
