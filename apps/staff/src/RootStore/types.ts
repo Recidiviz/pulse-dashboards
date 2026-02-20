@@ -75,6 +75,7 @@ export type FeatureVariant =
   | "hideWorkflowsResidentsPage"
   | "indefiniteSnooze"
   | "supervisionUnrestrictedSearch"
+  | "tasksOneRowPerClient"
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
   | "sentenceProgressV2"
@@ -223,6 +224,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
+  tasksOneRowPerClient: {},
   tasksRoutePlanner: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
@@ -272,6 +274,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaSupervisionLevelDowngrade: {},
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         usIdTasksV2: {},
+        tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
@@ -289,6 +292,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_TN"],
         },
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
+        tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         SARBuilder: { activeTenants: ["US_MO"] },

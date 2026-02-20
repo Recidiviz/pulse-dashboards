@@ -30,8 +30,9 @@ import {
   formatWorkflowsDateWithoutYear,
   toTitleCase,
 } from "../../utils";
-import { Client, SupervisionTask } from "../../WorkflowsStore";
+import { Client } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
+import { TasksRowEntity } from "../../WorkflowsStore/Task/types";
 import {
   CaseloadTable,
   PersonIdCell,
@@ -50,16 +51,19 @@ const StyledInfoButton = styled.span`
   color: ${palette.slate60};
 `;
 
-function PersonNameCellWrapper({ row }: { row: Row<SupervisionTask> }) {
+const mainTaskForEntity = (entity: TasksRowEntity) =>
+  "tasks" in entity ? entity.tasks[0] : entity;
+
+function PersonNameCellWrapper({ row }: { row: Row<TasksRowEntity> }) {
   const { person } = row.original;
   return <PersonNameCell person={person} />;
 }
 
-function OfficerNameCell({ row }: { row: Row<SupervisionTask> }) {
+function OfficerNameCell({ row }: { row: Row<TasksRowEntity> }) {
   return <SupervisingOfficerNameCell person={row.original.person} />;
 }
 
-function PersonIdCellWrapper({ row }: { row: Row<SupervisionTask> }) {
+function PersonIdCellWrapper({ row }: { row: Row<TasksRowEntity> }) {
   const { person } = row.original;
   return <PersonIdCell person={person} />;
 }
@@ -90,7 +94,7 @@ function policyLinkForCaseType({
   }
 }
 
-function CaseTypeCell({ row }: { row: Row<SupervisionTask> }) {
+function CaseTypeCell({ row }: { row: Row<TasksRowEntity> }) {
   const { person } = row.original;
   const { caseType, stateCode } = person as Client;
 
@@ -139,8 +143,21 @@ const KeepTogether = styled.span`
   white-space: nowrap;
 `;
 
-function TaskDateCell({ row }: { row: Row<SupervisionTask> }) {
-  const { dueDate } = row.original;
+function TaskNameCell({ row }: { row: Row<TasksRowEntity> }) {
+  const entity = row.original;
+
+  const tasks = "tasks" in entity ? entity.tasks : [entity];
+
+  if (tasks.length === 0) return "-";
+  if (tasks.length === 1) return tasks[0].displayName;
+  if (tasks.length === 2)
+    return `${tasks[0].displayName} and ${tasks[1].displayName}`;
+  return `${tasks[0].displayName} and ${tasks.length - 1} others`;
+}
+
+function TaskDateCell({ row }: { row: Row<TasksRowEntity> }) {
+  const { dueDate } = mainTaskForEntity(row.original);
+
   return (
     <>
       {formatWorkflowsDate(dueDate)}{" "}
@@ -149,8 +166,10 @@ function TaskDateCell({ row }: { row: Row<SupervisionTask> }) {
   );
 }
 
-function FrequencyCell({ row }: { row: Row<SupervisionTask> }) {
-  return <TaskFrequency task={row.original} />;
+function FrequencyCell({ row }: { row: Row<TasksRowEntity> }) {
+  const task = mainTaskForEntity(row.original);
+
+  return <TaskFrequency task={task} />;
 }
 
 export const EmptyTasksTabView = ({
@@ -179,7 +198,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Name",
       id: "name",
-      accessorFn: (task: SupervisionTask) => task.person.displayName,
+      accessorFn: (entity: TasksRowEntity) => entity.person.displayName,
       enableSorting: true,
       sortingFn: "text",
       cell: PersonNameCellWrapper,
@@ -193,16 +212,20 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       cell: PersonIdCellWrapper,
     },
     {
-      header: "Task",
+      header: presenter.showOneRowPerClient ? "Tasks" : "Task",
       id: "task",
-      accessorKey: "displayName",
+      accessorFn: (entity) => {
+        // For ClientTasksSummary, use first task name for sorting
+        return mainTaskForEntity(entity).displayName;
+      },
       enableSorting: true,
+      cell: TaskNameCell,
     },
     {
       header: "Due",
       id: "dueDate",
       enableSorting: true,
-      accessorKey: "dueDate",
+      accessorFn: (entity) => mainTaskForEntity(entity).dueDate,
       cell: TaskDateCell,
     },
     {
@@ -220,10 +243,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Case Type",
       id: "caseType",
-      accessorFn: (task) => {
-        const person = task.person as Client;
-        return person.caseType;
-      },
+      accessorFn: ({ person }) => person.caseType,
       cell: CaseTypeCell,
       enableSorting: true,
     },
@@ -231,21 +251,16 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       header: "Tasks due",
       id: "tasksDue",
       enableSorting: true,
-      accessorFn: (task) => {
-        const person = task.person;
-        return person.supervisionTasks?.tasks.length ?? 0;
-      },
+      accessorFn: ({ person }) => person.supervisionTasks?.tasks.length ?? 0,
     },
     {
       header: "City",
       id: "city",
       enableSorting: true,
       accessorFn: ({ person }) => {
-        if (person instanceof Client) {
-          const { addressCity } =
-            person.currentPhysicalResidenceAddressStructured ?? {};
-          return (addressCity && toTitleCase(addressCity)) || "—";
-        }
+        const { addressCity } =
+          person.currentPhysicalResidenceAddressStructured ?? {};
+        return (addressCity && toTitleCase(addressCity)) || "—";
       },
     },
     {
@@ -273,7 +288,10 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Appointment Status",
       id: "appointmentStatus",
-      accessorFn: ({ futureScheduledContacts, scheduledContactDates }) => {
+      accessorFn: (entity) => {
+        const { futureScheduledContacts, scheduledContactDates } =
+          mainTaskForEntity(entity);
+
         if (!scheduledContactDates) {
           return "–";
         }
@@ -292,7 +310,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       enableSorting: true,
       sortingFn: "text",
     },
-  ] as const satisfies ColumnDef<SupervisionTask>[];
+  ] as const satisfies ColumnDef<TasksRowEntity>[];
 
 export type TaskTableColumnId = ReturnType<typeof getColumnDefs>[number]["id"];
 
@@ -301,13 +319,16 @@ export const TasksTable = observer(function TasksTable({
 }: {
   presenter: CaseloadTasksPresenterV2;
 }) {
-  if (presenter.orderedTasksForSelectedCategory.length === 0) {
+  // Check if there's data to display
+  const hasData = presenter.rowEntitiesForSelectedCategory.length > 0;
+
+  if (!hasData) {
     return <EmptyTasksTabView presenter={presenter} />;
   }
 
   const columnsById = Object.fromEntries(
     getColumnDefs(presenter).map((col) => [col.id, col]),
-  ) as Record<TaskTableColumnId, ColumnDef<SupervisionTask>>;
+  ) as Record<TaskTableColumnId, ColumnDef<TasksRowEntity>>;
 
   const pickColumns = (ids: TaskTableColumnId[]) =>
     ids.map((id) => columnsById[id]);
@@ -317,12 +338,12 @@ export const TasksTable = observer(function TasksTable({
   return (
     <CaseloadTable
       expandedLastColumn
-      data={presenter.orderedTasksForSelectedCategory}
+      data={presenter.rowEntitiesForSelectedCategory}
       columns={columns}
-      onRowClick={(task) => {
-        presenter.selectPerson(task.person);
+      onRowClick={(entity) => {
+        presenter.selectPerson(entity.person);
       }}
-      shouldHighlightRow={(task) => presenter.shouldHighlightTask(task)}
+      shouldHighlightRow={(entity) => presenter.shouldHighlightRow(entity)}
     />
   );
 });

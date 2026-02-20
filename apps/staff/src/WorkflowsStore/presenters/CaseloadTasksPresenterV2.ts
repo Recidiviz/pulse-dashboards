@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { groupBy } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 
 import { FilterField, FilterOption, FilterType } from "../../core/models/types";
@@ -27,7 +28,11 @@ import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
 import { pluralizeWord } from "../../utils/formatStrings";
-import { SupervisionTask } from "../Task/types";
+import {
+  ClientTasksSummary,
+  SupervisionTask,
+  TasksRowEntity,
+} from "../Task/types";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
 import {
@@ -141,9 +146,9 @@ export class CaseloadTasksPresenterV2
     this.workflowsStore.updateSelectedPerson(person.pseudonymizedId);
   }
 
-  shouldHighlightTask(task: SupervisionTask): boolean {
+  shouldHighlightRow({ person }: TasksRowEntity): boolean {
     return (
-      task.person.pseudonymizedId ===
+      person.pseudonymizedId ===
       this.workflowsStore.selectedPerson?.pseudonymizedId
     );
   }
@@ -241,11 +246,41 @@ export class CaseloadTasksPresenterV2
   }
 
   get tasksTableColumns(): TaskTableColumnId[] {
-    return this.tenantStore.tasksTableColumns;
+    const columns = this.tenantStore.tasksTableColumns;
+    if (this.showOneRowPerClient) {
+      // Filter out task-specific columns in client mode
+      return columns.filter(
+        (col) => col !== "frequency" && col !== "appointmentStatus",
+      );
+    }
+    return columns;
   }
 
   countForCategory(category: SupervisionTaskCategory): number {
     return this.filterStore.orderedTasksForCategory(category).length;
+  }
+
+  get rowEntitiesForSelectedCategory(): TasksRowEntity[] {
+    if (this.showOneRowPerClient) {
+      return this.orderedClientsWithTaskSummaries;
+    }
+    return this.orderedTasksForSelectedCategory;
+  }
+
+  get showOneRowPerClient(): boolean {
+    return !!this.featureVariants.tasksOneRowPerClient;
+  }
+
+  get orderedClientsWithTaskSummaries(): ClientTasksSummary[] {
+    const tasksByClient = groupBy(
+      this.orderedTasksForSelectedCategory,
+      (task) => task.person.pseudonymizedId,
+    );
+
+    return Object.values(tasksByClient).map((clientTasks) => ({
+      person: clientTasks[0].person,
+      tasks: clientTasks,
+    }));
   }
 
   trackFilterDropdownOpened() {

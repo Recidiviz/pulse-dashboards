@@ -298,6 +298,13 @@ export type SupervisionTask<
   updateSupervisionTask: (snoozeForDays?: number) => void;
 };
 
+export type ClientTasksSummary = {
+  person: Client;
+  tasks: SupervisionTask[];
+};
+
+export type TasksRowEntity = SupervisionTask | ClientTasksSummary;
+
 export type SupervisionTaskRecord<T extends SupervisionTaskType> = {
   type: T;
   details: SupervisionDetailsForTask[T];

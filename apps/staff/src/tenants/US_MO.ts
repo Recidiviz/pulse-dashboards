@@ -81,6 +81,15 @@ const US_MO_CONFIG = {
     },
     pageDescriptionMarkdown:
       "The clients below might have upcoming contact requirements.",
+    columns: [
+      "name",
+      "id",
+      "task",
+      "dueDate",
+      "frequency",
+      "supervisionLevel",
+      "caseType",
+    ],
     categories: ["DUE_THIS_MONTH", "DUE_NEXT_MONTH", "OVERDUE"],
     filters: [
       {
