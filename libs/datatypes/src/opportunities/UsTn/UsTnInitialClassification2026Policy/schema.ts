@@ -50,7 +50,7 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
     formInformation: z
       .object({
         q1Score: z.coerce.number().nullable(),
-        q2Score: z.coerce.number().nullable(),
+        q2Score: z.coerce.number().optional().default(0),
         q3Score: z.coerce.number().nullable(),
         q4Score: z.coerce.number().nullable(),
         q5Score: z.coerce.number().nullable(),
