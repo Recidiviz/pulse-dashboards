@@ -29,6 +29,7 @@ import {
   NeedToBeAddressed,
   PriorCriminalHistoryCriterion,
   StateCode,
+  TreatmentProgramCategory,
 } from "~@sentencing/prisma/client";
 
 export const nameSchema = zu.stringToJSON().pipe(
@@ -299,4 +300,42 @@ export const countyAndDistrictImportSchema = z.object({
   state_code: stateCode,
   county: z.string(),
   district: z.string(),
+});
+
+// Map incoming category strings to TreatmentProgramCategory enum values
+const categoryStringToEnum: Record<string, TreatmentProgramCategory> = {
+  ANGER: TreatmentProgramCategory.Anger,
+  "CAREER / TECHNICAL": TreatmentProgramCategory.CareerTechnical,
+  COGNITIVE: TreatmentProgramCategory.Cognitive,
+  COLLEGE: TreatmentProgramCategory.College,
+  "COMMUNITY PARTNERSHIP": TreatmentProgramCategory.CommunityPartnership,
+  "COMMUNITY TREATMENT": TreatmentProgramCategory.CommunityTreatment,
+  EDUCATION: TreatmentProgramCategory.Education,
+  "FAITH BASED": TreatmentProgramCategory.FaithBased,
+  "INSTITUTIONAL TREATMENT": TreatmentProgramCategory.InstitutionalTreatment,
+  "LIFE SKILLS": TreatmentProgramCategory.LifeSkills,
+  PARENTING: TreatmentProgramCategory.Parenting,
+  "RE-ENTRY": TreatmentProgramCategory.ReEntry,
+  "SEX OFFENDER": TreatmentProgramCategory.SexOffender,
+  "SHOCK INCARCERATION": TreatmentProgramCategory.ShockIncarceration,
+};
+
+const treatmentCategorySchema = z
+  .string()
+  .transform((val) => categoryStringToEnum[val])
+  .optional();
+
+const completedProgramSchema = z.array(
+  z.object({
+    category: treatmentCategorySchema,
+    completion_date: z.coerce.date(),
+    program_name: z.string(),
+    start_date: z.coerce.date(),
+  }),
+);
+
+export const docTreatmentHistoryImportSchema = z.object({
+  state_code: stateCode,
+  client_external_id: z.string(),
+  completed_programs: completedProgramSchema,
 });

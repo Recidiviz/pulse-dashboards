@@ -295,9 +295,20 @@ enum LevelOfEducation {
 }
 
 enum TreatmentProgramCategory {
+  Anger
+  CareerTechnical
+  Cognitive
+  College
+  CommunityPartnership
   CommunityTreatment
-  EducationProgram
-  CognitiveProgram
+  Education
+  FaithBased
+  InstitutionalTreatment
+  LifeSkills
+  Parenting
+  ReEntry
+  SexOffender
+  ShockIncarceration
 }
 
 enum AssessmentType {

@@ -22,17 +22,61 @@ export const TREATMENT_PROGRAM_CATEGORY_LABELS: Record<
   TreatmentProgramCategory,
   { singular: string; plural: string }
 > = {
+  Anger: {
+    singular: "Anger Management",
+    plural: "Anger Management",
+  },
+  CareerTechnical: {
+    singular: "Career / Technical",
+    plural: "Career / Technical",
+  },
+  Cognitive: {
+    singular: "Cognitive Program",
+    plural: "Cognitive Programs",
+  },
+  College: {
+    singular: "College",
+    plural: "College",
+  },
+  CommunityPartnership: {
+    singular: "Community Partnership",
+    plural: "Community Partnerships",
+  },
   CommunityTreatment: {
     singular: "Community Treatment",
     plural: "Community Treatments",
   },
-  EducationProgram: {
+  Education: {
     singular: "Education Program",
     plural: "Education Programs",
   },
-  CognitiveProgram: {
-    singular: "Cognitive Program",
-    plural: "Cognitive Programs",
+  FaithBased: {
+    singular: "Faith Based",
+    plural: "Faith Based",
+  },
+  InstitutionalTreatment: {
+    singular: "Institutional Treatment",
+    plural: "Institutional Treatments",
+  },
+  LifeSkills: {
+    singular: "Life Skills",
+    plural: "Life Skills",
+  },
+  Parenting: {
+    singular: "Parenting",
+    plural: "Parenting",
+  },
+  ReEntry: {
+    singular: "Re-Entry",
+    plural: "Re-Entry",
+  },
+  SexOffender: {
+    singular: "Sex Offender Program",
+    plural: "Sex Offender Programs",
+  },
+  ShockIncarceration: {
+    singular: "Shock Incarceration",
+    plural: "Shock Incarceration",
   },
 };
 

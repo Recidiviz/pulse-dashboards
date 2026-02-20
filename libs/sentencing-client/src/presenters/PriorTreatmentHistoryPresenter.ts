@@ -54,41 +54,49 @@ export class PriorTreatmentHistoryPresenter {
   }
 
   /**
-   * Returns DOC treatment histories completed before the SAR due date,
-   * grouped by program category.
+   * Returns DOC treatment histories completed on or before the SAR due date,
+   * filtered and sorted by completion date (most recent first).
    */
-  get DOCTreatmentHistoriesByCategory(): Record<
-    TreatmentProgramCategory,
-    DOCTreatmentHistory[]
-  > {
+  get filteredDOCTreatmentHistories(): DOCTreatmentHistory[] {
     const dueDate = this.SARData?.dueDate;
     const allHistories = this.DOCTreatmentHistories;
 
-    // Filter to only those completed before the SAR due date
+    // Filter to only those completed on or before the SAR due date
     const filtered = allHistories.filter((history) => {
       if (!history.completedOn) return false;
       if (!dueDate) return true; // If no due date, include all completed
       return new Date(history.completedOn) <= new Date(dueDate);
     });
 
-    // Group by category
-    const grouped: Record<TreatmentProgramCategory, DOCTreatmentHistory[]> = {
-      CommunityTreatment: [],
-      EducationProgram: [],
-      CognitiveProgram: [],
-    };
+    // Sort by completion date (most recent first)
+    return filtered.sort((a, b) => {
+      if (!a.completedOn || !b.completedOn) return 0;
+      return (
+        new Date(b.completedOn).getTime() - new Date(a.completedOn).getTime()
+      );
+    });
+  }
+
+  /**
+   * Returns DOC treatment histories completed on or before the SAR due date,
+   * grouped by program category.
+   */
+  get DOCTreatmentHistoriesByCategory(): Partial<
+    Record<TreatmentProgramCategory, DOCTreatmentHistory[]>
+  > {
+    const filtered = this.filteredDOCTreatmentHistories;
+
+    // Group by category dynamically
+    const grouped: Partial<
+      Record<TreatmentProgramCategory, DOCTreatmentHistory[]>
+    > = {};
 
     filtered.forEach((history) => {
-      if (history.programCategory) {
-        grouped[history.programCategory].push(history);
+      const { programCategory } = history;
+      if (programCategory) {
+        const existing = grouped[programCategory] ?? [];
+        grouped[programCategory] = [...existing, history];
       }
-    });
-
-    Object.values(grouped).forEach((histories) => {
-      histories.sort((a, b) => {
-        if (!a.completedOn || !b.completedOn) return 0;
-        return new Date(b.completedOn).getTime() - new Date(a.completedOn).getTime();
-      });
     });
 
     return grouped;

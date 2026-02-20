@@ -20,6 +20,7 @@ import {
   chargeImportSchema,
   clientImportSchema,
   countyAndDistrictImportSchema,
+  docTreatmentHistoryImportSchema,
   insightImportSchema,
   offenseImportSchema,
   opportunityImportSchema,
@@ -30,6 +31,7 @@ import { transformAndLoadCaseData } from "~@sentencing/import/utils/cases";
 import { transformAndLoadChargeData } from "~@sentencing/import/utils/charges";
 import { transformAndLoadClientData } from "~@sentencing/import/utils/clients";
 import { transformAndLoadCountyAndDistrictData } from "~@sentencing/import/utils/countiesAndDistricts";
+import { transformAndLoadDOCTreatmentHistoryData } from "~@sentencing/import/utils/docTreatmentHistory";
 import { transformAndLoadInsightData } from "~@sentencing/import/utils/insights";
 import { transformAndLoadOffenseData } from "~@sentencing/import/utils/offenses";
 import { transformAndLoadOpportunityData } from "~@sentencing/import/utils/opportunities";
@@ -54,6 +56,9 @@ export const COUNTIES_AND_DISTRICTS_FILES_NAME =
   "sentencing_counties_and_districts.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/offense_record.py
 export const CHARGES_FILE_NAME = "sentencing_offense_record.json";
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/us_mo_sentencing_client_metadata_materialized.py
+export const DOC_TREATMENT_HISTORY_FILE_NAME =
+  "us_mo_sentencing_client_metadata.json";
 
 export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [STAFF_FILE_NAME]: {
@@ -108,6 +113,10 @@ export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     schema: chargeImportSchema,
     loaderFn: transformAndLoadChargeData,
   },
+  [DOC_TREATMENT_HISTORY_FILE_NAME]: {
+    schema: docTreatmentHistoryImportSchema,
+    loaderFn: transformAndLoadDOCTreatmentHistoryData,
+  },
 };
 
 /**
@@ -133,4 +142,5 @@ export const SAR_FILES = [
   CLIENTS_FILE_NAME,
   CASES_FILE_NAME,
   CHARGES_FILE_NAME,
+  DOC_TREATMENT_HISTORY_FILE_NAME,
 ];

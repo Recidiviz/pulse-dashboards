@@ -244,7 +244,7 @@ export const fakeSARClient = {
         completedOn: faker.date.past(),
       },
       {
-        programCategory: TreatmentProgramCategory.EducationProgram,
+        programCategory: TreatmentProgramCategory.Education,
         programName: "GED Preparation Course",
         completedOn: faker.date.past(),
       },
