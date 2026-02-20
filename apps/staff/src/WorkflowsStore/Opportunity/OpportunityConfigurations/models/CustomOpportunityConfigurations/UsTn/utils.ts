@@ -39,7 +39,11 @@ export const usTnUntrackedEligibilityConfigBase = {
   eligibleCriteriaCopy: {},
   ineligibleCriteriaCopy: {},
   strictlyIneligibleCriteriaCopy: {},
-  sidebarComponents: [],
+  sidebarComponents: [
+    "Incarceration",
+    "CaseNotes",
+    "UsTnCommonlyUsedOverrideCodes",
+  ],
   methodologyUrl: "",
   supportsIneligible: true,
   supportsSubmitted: true,

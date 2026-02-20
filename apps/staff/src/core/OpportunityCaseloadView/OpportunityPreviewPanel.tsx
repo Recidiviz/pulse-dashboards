@@ -101,6 +101,7 @@ export function OpportunityPreviewPanel({
           onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
           selectedPerson={selectedPerson}
           shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
+          formView={isFormView}
         />
       ),
       footerContent: (
