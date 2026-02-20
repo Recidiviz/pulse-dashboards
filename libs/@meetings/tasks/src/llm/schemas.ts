@@ -85,6 +85,7 @@ export const CriticalUpdateSchema = z.object({
     "Substance",
     "Family",
     "Health",
+    "Education",
     "Other",
   ]),
   updateType: z.enum(["New", "Change", "Stable/Status Quo"]),
