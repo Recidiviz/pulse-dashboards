@@ -20,4 +20,3 @@ import "./helpers/initSentry";
 
 export * from "./functions/authorizedUserProfile";
 export * from "./functions/edovoToken";
-export * from "./functions/firebaseToken";
