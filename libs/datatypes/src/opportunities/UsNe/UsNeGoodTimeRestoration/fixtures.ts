@@ -53,7 +53,9 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "60" },
+    metadata: {
+      numberOfDaysEligibleFor: "60",
+    },
   }),
   eligibleLowGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -84,7 +86,9 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "30" },
+    metadata: {
+      numberOfDaysEligibleFor: "30",
+    },
   }),
   eligibleHighGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -115,7 +119,9 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "90" },
+    metadata: {
+      numberOfDaysEligibleFor: "90",
+    },
   }),
   eligibleModerateGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -146,7 +152,9 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "90" },
+    metadata: {
+      numberOfDaysEligibleFor: "90",
+    },
   }),
   almostEligibleRecentIdcMr: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -179,7 +187,12 @@ export const usNeGoodTimeRestorationFixtures = {
         latestIncidentDate: relativeFixtureDate({ months: -4, days: -15 }),
       },
     },
-    metadata: { numberOfDaysEligibleFor: 30 },
+    metadata: {
+      numberOfDaysEligibleFor: 30,
+      nextMonthAfterLatestGoodTimeRestorationOrDenialDate: relativeFixtureDate({
+        months: -1,
+      }),
+    },
   }),
   almostEligibleRecentClass1Mr: makeRecordFixture(
     usNeGoodTimeRestorationSchema,
@@ -214,7 +227,13 @@ export const usNeGoodTimeRestorationFixtures = {
           latestEventDate: relativeFixtureDate({ months: -10, days: -10 }),
         },
       },
-      metadata: { numberOfDaysEligibleFor: "30" },
+      metadata: {
+        numberOfDaysEligibleFor: "30",
+        nextMonthAfterLatestGoodTimeRestorationOrDenialDate:
+          relativeFixtureDate({
+            months: 1,
+          }),
+      },
     },
   ),
 } satisfies FixtureMapping<UsNeGoodTimeRestorationRecord>;

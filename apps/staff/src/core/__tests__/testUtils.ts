@@ -30,7 +30,7 @@ import { apiOpportunityConfigurationFactory } from "../../WorkflowsStore/Opportu
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
 /**
- * These are the configurations that are persisted regardless of the 
+ * These are the configurations that are persisted regardless of the
  * on-call task to replace {@link CONFIG_FIXTURES}. This ensures that these configurations
  * are always available for testing and demo purposes.
  */
@@ -38,7 +38,7 @@ const persistantConfigFixtures = {
   ...CONFIG_FIXTURES,
   LSU: {
     ...CONFIG_FIXTURES.LSU,
-    notifications:  [
+    notifications: [
       {
         id: "1",
         type: "alert",
@@ -53,9 +53,9 @@ const persistantConfigFixtures = {
         body: "There has been a recent policy change that affects the Limited Supervision Unit opportunity.",
         title: "Policy change affects LSU",
       },
-    ]
-  }
-}
+    ],
+  },
+};
 
 export const mockOpportunityConfigs = Object.fromEntries(
   Object.entries(persistantConfigFixtures).map(([type, rawConfig]) => [
@@ -247,4 +247,5 @@ export const mockOpportunity: Opportunity<Client> = {
   deleteActionHistory: async () => undefined,
   setSupervisorResponse: async () => undefined,
   isGrantApproved: false,
+  latestTransitionDate: undefined,
 };

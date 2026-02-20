@@ -45,4 +45,9 @@ export class UsNeGoodTimeRestorationOpportunity extends OpportunityBase<
       usNeGoodTimeRestorationSchema.parse(record),
     );
   }
+
+  get latestTransitionDate(): Date | undefined {
+    return this.record.metadata
+      .nextMonthAfterLatestGoodTimeRestorationOrDenialDate;
+  }
 }

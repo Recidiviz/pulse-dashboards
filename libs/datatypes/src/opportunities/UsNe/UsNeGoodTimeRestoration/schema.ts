@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 export const usNeGoodTimeRestorationSchema = opportunitySchemaBase.extend({
@@ -27,6 +28,8 @@ export const usNeGoodTimeRestorationSchema = opportunitySchemaBase.extend({
         .string()
         .transform((val) => parseInt(val))
         .or(z.number()),
+      nextMonthAfterLatestGoodTimeRestorationOrDenialDate:
+        dateStringSchema.optional(),
     })
     .passthrough(),
 });

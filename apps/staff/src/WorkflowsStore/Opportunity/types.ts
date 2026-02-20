@@ -250,6 +250,7 @@ export interface Opportunity<
   indefiniteDenialReasons: DenialReasonsMap;
   denialViewPrompt: string;
   isGrantApproved: boolean;
+  latestTransitionDate: Date | undefined;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

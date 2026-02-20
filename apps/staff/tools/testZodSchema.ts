@@ -37,6 +37,7 @@ import {
   usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
+  usNeGoodTimeRestorationSchema,
   usPaSpecialCircumstancesSupervisionSchema,
   usTnInitialClassification2026Schema,
   usTnReclassification2026Schema,
@@ -186,6 +187,9 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     usMoOverdueRestrictiveHousingReviewHearingSchema,
   usMoWorkRelease: usMoWorkReleaseSchema,
   usMoOutsideClearance: usMoWorkReleaseSchema,
+
+  // US_NE
+  usNeGoodTimeRestoration: usNeGoodTimeRestorationSchema,
 
   // US_ND
   earlyTermination: usNdEarlyTerminationSchema,

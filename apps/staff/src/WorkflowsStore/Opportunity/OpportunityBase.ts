@@ -93,6 +93,19 @@ export function updateOpportunityEligibility(
   rootStore: RootStore,
 ) {
   return async (record: DocumentData) => {
+    // If a transition has occured since the opportunity was submitted,
+    // clear the submitted status.
+    // Not all opportunity types populate latestTransitionDate.
+    const { latestTransitionDate } = opportunity;
+    const submittedDate = record.submitted?.date.toDate();
+    if (
+      latestTransitionDate &&
+      submittedDate &&
+      latestTransitionDate > submittedDate
+    ) {
+      rootStore.firestoreStore.deleteOpportunitySubmitted(opportunity);
+    }
+
     // If the record is eligible, then no update is needed.
     const denialReasons = record.denial?.reasons ?? [];
     if (!denialReasons.length || (!record.autoSnooze && !record.manualSnooze)) {
@@ -1416,5 +1429,12 @@ export class OpportunityBase<
     if (defaultEligibility === "MAYBE") return "May be eligible";
 
     return eligibleStatusMessage ?? "Eligible";
+  }
+
+  // This is the latest time that the person "completed" this opportunity.
+  // If the opportunity was was marked submitted before then,
+  // updateOpportunityEligibility will clear that status.
+  get latestTransitionDate(): Date | undefined {
+    return undefined;
   }
 }
