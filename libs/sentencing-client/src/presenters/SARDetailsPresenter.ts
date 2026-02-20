@@ -33,7 +33,7 @@ import {
 } from "../components/CaseInformation/constants";
 import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderations/constants";
 import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
-import { SARSection } from "../components/SARDetails";
+import { SARSection, type SARSectionName } from "../components/SARDetails";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
@@ -59,6 +59,9 @@ type SARMetadataSections = {
     skipped: boolean;
     edited?: boolean;
   };
+  priorTreatmentHistory?: {
+    edited?: boolean;
+  };
 };
 
 type SARMetadata = {
@@ -66,21 +69,14 @@ type SARMetadata = {
   version?: "1.0";
 };
 
-// Field counts for progress tracking
-// These must stay in sync with the arrays used in overallProgress calculation
-// TODO(#11083): Explore ways to infer these counts automatically to avoid manual updates
-const PROGRESS_FIELD_COUNTS = {
-  DEFENDANT_VERSION: 1, // defendantStatement
-  VICTIM_IMPACT: 1, // victimImpactStatement
-  RECOMMENDATION: 3, // communityStrategyRecommendation + homePlan + institutionalStrategyRecommendation
-  OFFENDER_ASSESSMENT_SUMMARIES: 8, // 8 summary text fields
-  OFFENDER_ASSESSMENT_FORM: 4, // levelOfEducation, fatherName, motherName, guardianName (excludes employedAtOffense - see note in overallProgress)
-  PRIOR_TREATMENT_HISTORY: 1, // priorTreatmentHistorySummary
-} as const;
+const RECOMMENDATION_FIELDS = [
+  "communityStrategyRecommendation",
+  "homePlan",
+  "institutionalStrategyRecommendation",
+] as const;
 
-const OFFENDER_ASSESSMENT_TOTAL =
-  PROGRESS_FIELD_COUNTS.OFFENDER_ASSESSMENT_SUMMARIES +
-  PROGRESS_FIELD_COUNTS.OFFENDER_ASSESSMENT_FORM; // 12
+// All SAR sections that contribute to progress (excludes read-only Summary)
+type ProgressSection = Exclude<SARSectionName, SARSection.SUMMARY>;
 
 export class SARDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
@@ -227,141 +223,140 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /**
-   * Helper method to check if a text field is complete
-   * A field is complete if it has content OR the section is skipped
-   */
-  private isTextFieldComplete(
-    fieldValue: string | null | undefined,
-    isSkipped: boolean,
-  ): number {
-    const hasContent = fieldValue && fieldValue.trim() !== "";
-    return hasContent || isSkipped ? 1 : 0;
-  }
-
-  /**
-   * Calculate overall SAR progress
-   * For now: only tracks Case Information (5 required fields per charge)
-   * TODO(#11083): Add other sections to progress tracking
+   * Calculate overall SAR progress at the field level.
+   * Each per-section getter counts its own {completed, total} so the
+   * progress bar advances as individual fields are filled in.
+   * Totals are derived from source arrays (REQUIRED_FIELD_IDS,
+   * KEY_CONSIDERATIONS_REQUIRED_FIELDS, RECOMMENDATION_FIELDS, etc.)
+   * so adding fields to those arrays automatically updates progress.
    *
    * Returns percentage: 0-100
    */
   get overallProgress(): number {
-    if (this.charges.length === 0) return 0;
+    const counts = this.sectionFieldCounts;
+    if (counts.total === 0) return 0;
+    return (counts.completed / counts.total) * 100;
+  }
 
-    // Case Information section
-    const caseInfoTotalFields = this.charges.length * REQUIRED_FIELD_IDS.length;
-    let caseInfoCompletedFields = 0;
+  private get sectionFieldCounts(): { completed: number; total: number } {
+    const counts: Record<ProgressSection, { completed: number; total: number }> =
+      {
+        [SARSection.CASE_INFORMATION]: this.caseInfoFieldCounts,
+        [SARSection.KEY_CONSIDERATIONS]: this.keyConsiderationsFieldCounts,
+        [SARSection.DEFENDANTS_VERSION]: this.defendantVersionFieldCounts,
+        [SARSection.VICTIM_IMPACT]: this.victimImpactFieldCounts,
+        [SARSection.OFFENDER_ASSESSMENT]: this.offenderAssessmentFieldCounts,
+        [SARSection.PRIOR_TREATMENT_HISTORY]:
+          this.priorTreatmentHistoryFieldCounts,
+        [SARSection.RECOMMENDATION]: this.recommendationFieldCounts,
+      };
+    return Object.values(counts).reduce(
+      (acc, c) => ({
+        completed: acc.completed + c.completed,
+        total: acc.total + c.total,
+      }),
+      { completed: 0, total: 0 },
+    );
+  }
 
+  private get caseInfoFieldCounts(): { completed: number; total: number } {
+    let completed = 0;
+    let total = 0;
     this.charges.forEach((charge) => {
       REQUIRED_FIELD_IDS.forEach((fieldId) => {
+        total++;
         const value = charge[fieldId as keyof typeof charge];
         if (value !== null && value !== undefined && value !== "") {
-          caseInfoCompletedFields++;
+          completed++;
         }
       });
     });
+    return { completed, total };
+  }
 
-    // Key Considerations section
-    const keyConsiderationsTotalFields =
-      KEY_CONSIDERATIONS_REQUIRED_FIELDS.length;
-    let keyConsiderationsCompletedFields = 0;
+  private get keyConsiderationsFieldCounts(): {
+    completed: number;
+    total: number;
+  } {
+    let completed = 0;
+    const total = KEY_CONSIDERATIONS_REQUIRED_FIELDS.length;
 
-    KEY_CONSIDERATIONS_REQUIRED_FIELDS.forEach((fieldId) => {
-      if (fieldId === "needsToBeAddressed") {
-        // Count as complete if field has values OR is skipped
-        const hasValues =
-          this.SARData?.needsToBeAddressed &&
-          this.SARData.needsToBeAddressed.length > 0;
-        if (hasValues || this.needsSkipped) {
-          keyConsiderationsCompletedFields++;
-        }
-      } else if (fieldId === "mitigatingFactors") {
-        // Count as complete if field has values OR is skipped
-        const hasValues =
-          this.SARData?.mitigatingFactors &&
-          this.SARData.mitigatingFactors.length > 0;
-        if (hasValues || this.factorsSkipped) {
-          keyConsiderationsCompletedFields++;
-        }
-      }
+    const hasNeeds =
+      this.SARData?.needsToBeAddressed &&
+      this.SARData.needsToBeAddressed.length > 0;
+    if (hasNeeds || this.needsSkipped) completed++;
+
+    const hasFactors =
+      this.SARData?.mitigatingFactors &&
+      this.SARData.mitigatingFactors.length > 0;
+    if (hasFactors || this.factorsSkipped) completed++;
+
+    return { completed, total };
+  }
+
+  private get defendantVersionFieldCounts(): {
+    completed: number;
+    total: number;
+  } {
+    const hasContent =
+      !!this.SARData?.defendantStatement &&
+      this.SARData.defendantStatement.trim() !== "";
+    const completed = hasContent || this.defendantStatementSkipped ? 1 : 0;
+    return { completed, total: 1 };
+  }
+
+  private get victimImpactFieldCounts(): {
+    completed: number;
+    total: number;
+  } {
+    const hasContent =
+      !!this.SARData?.victimImpactStatement &&
+      this.SARData.victimImpactStatement.trim() !== "";
+    const completed = hasContent || this.victimImpactStatementSkipped ? 1 : 0;
+    return { completed, total: 1 };
+  }
+
+  private get recommendationFieldCounts(): {
+    completed: number;
+    total: number;
+  } {
+    if (this.recommendationSkipped) {
+      return {
+        completed: RECOMMENDATION_FIELDS.length,
+        total: RECOMMENDATION_FIELDS.length,
+      };
+    }
+    let completed = 0;
+    RECOMMENDATION_FIELDS.forEach((fieldName) => {
+      const value = this.SARData?.[fieldName];
+      if (value && value.trim() !== "") completed++;
     });
+    return { completed, total: RECOMMENDATION_FIELDS.length };
+  }
 
-    // Defendant's Version section
-    const defendantVersionCompleted = this.isTextFieldComplete(
-      this.SARData?.defendantStatement,
-      this.defendantStatementSkipped,
-    );
+  private get offenderAssessmentFieldCounts(): {
+    completed: number;
+    total: number;
+  } {
+    const { summaries, formFields } = this.offenderAssessmentFields;
+    let completed = 0;
+    summaries.forEach((s) => {
+      if (s && s.trim() !== "") completed++;
+    });
+    formFields.forEach((f) => {
+      if (f !== null && f !== undefined && f.toString().trim() !== "")
+        completed++;
+    });
+    return { completed, total: summaries.length + formFields.length };
+  }
 
-    // Victim Impact section
-    const victimImpactCompleted = this.isTextFieldComplete(
-      this.SARData?.victimImpactStatement,
-      this.victimImpactStatementSkipped,
-    );
-
-    // Recommendation section (3 fields: community, home plan, and institutional)
-    // Count all fields OR if section is skipped, count all as complete
-    const recommendationCompleted = this.recommendationSkipped
-      ? 3
-      : this.isTextFieldComplete(
-          this.SARData?.communityStrategyRecommendation,
-          false,
-        ) +
-        this.isTextFieldComplete(this.SARData?.homePlan, false) +
-        this.isTextFieldComplete(
-          this.SARData?.institutionalStrategyRecommendation,
-          false,
-        );
-
-    // Offender Assessment section (8 summary fields + 5 form fields)
-    const offenderAssessmentSummaries = [
-      this.SARData?.criminalHistorySummary,
-      this.SARData?.employmentSummary,
-      this.SARData?.familyAndSocialSupportSummary,
-      this.SARData?.housingSummary,
-      this.SARData?.drugHistorySummary,
-      this.SARData?.peerAssociatesSummary,
-      this.SARData?.criminalAttitudesSummary,
-      this.SARData?.responsivityAndBarriersSummary,
-    ];
-    const offenderAssessmentSummariesCompleted =
-      offenderAssessmentSummaries.filter(
-        (summary) => summary && summary.trim() !== "",
-      ).length;
-
-    // Offender Assessment form fields (4 fields)
-    // Note: employedAtOffense excluded because "Unknown" stores as null,
-    // which is indistinguishable from "not yet answered"
-    const offenderAssessmentFormFields = [
-      this.SARData?.levelOfEducation,
-      this.SARData?.client?.fatherName,
-      this.SARData?.client?.motherName,
-      this.SARData?.client?.guardianName,
-    ];
-    const offenderAssessmentFormCompleted = offenderAssessmentFormFields.filter(
-      (field) =>
-        field !== null && field !== undefined && field.toString().trim() !== "",
-    ).length;
-
-    const offenderAssessmentCompleted =
-      offenderAssessmentSummariesCompleted + offenderAssessmentFormCompleted;
-
-    // Total progress across all sections
-    const totalFields =
-      caseInfoTotalFields +
-      keyConsiderationsTotalFields +
-      PROGRESS_FIELD_COUNTS.DEFENDANT_VERSION +
-      PROGRESS_FIELD_COUNTS.VICTIM_IMPACT +
-      PROGRESS_FIELD_COUNTS.RECOMMENDATION +
-      OFFENDER_ASSESSMENT_TOTAL;
-    const completedFields =
-      caseInfoCompletedFields +
-      keyConsiderationsCompletedFields +
-      defendantVersionCompleted +
-      victimImpactCompleted +
-      recommendationCompleted +
-      offenderAssessmentCompleted;
-
-    return (completedFields / totalFields) * 100;
+  private get priorTreatmentHistoryFieldCounts(): {
+    completed: number;
+    total: number;
+  } {
+    const summary = this.SARData?.priorTreatmentHistorySummary;
+    const hasContent = !!summary && summary.trim() !== "";
+    return { completed: hasContent ? 1 : 0, total: 1 };
   }
 
   /**
@@ -373,6 +368,14 @@ export class SARDetailsPresenter implements Hydratable {
     if (progress === 100) return "Complete";
     if (progress > 0) return "InProgress";
     return "NotYetStarted";
+  }
+
+  /** Check if a specific charge has all required fields filled */
+  isChargeComplete(charge: FormCharge): boolean {
+    return REQUIRED_FIELD_IDS.every((fieldId) => {
+      const value = charge[fieldId as keyof typeof charge];
+      return value !== null && value !== undefined && value !== "";
+    });
   }
 
   /** Update defendant declined to participate */
@@ -882,6 +885,10 @@ export class SARDetailsPresenter implements Hydratable {
             : currentSections?.recommendation ?? {
                 skipped: false,
               },
+        priorTreatmentHistory:
+          section === "priorTreatmentHistory"
+            ? { edited: true }
+            : currentSections?.priorTreatmentHistory,
       },
     };
 
@@ -951,6 +958,7 @@ export class SARDetailsPresenter implements Hydratable {
             : currentSections?.recommendation ?? {
                 skipped: false,
               },
+        priorTreatmentHistory: currentSections?.priorTreatmentHistory,
       },
     };
 
@@ -1005,7 +1013,7 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /** Get section statuses for navigation indicators */
-  get sectionStatuses(): Record<string, SectionStatus> {
+  get sectionStatuses(): Record<ProgressSection, SectionStatus> {
     return {
       [SARSection.CASE_INFORMATION]: this.getCaseInfoStatus(),
       [SARSection.KEY_CONSIDERATIONS]: this.getKeyConsiderationsStatus(),
@@ -1018,8 +1026,38 @@ export class SARDetailsPresenter implements Hydratable {
       [SARSection.PRIOR_TREATMENT_HISTORY]:
         this.getPriorTreatmentHistoryStatus(),
       [SARSection.RECOMMENDATION]: this.getRecommendationStatus(),
-      // Future sections will be added here
     };
+  }
+
+  /**
+   * Collects the offender assessment field values based on visible ORAS domains.
+   * Shared by overallProgress and getOffenderAssessmentStatus so the field
+   * lists are defined in one place.
+   */
+  private get offenderAssessmentFields(): {
+    summaries: (string | null | undefined)[];
+    formFields: (string | null | undefined)[];
+  } {
+    const domains = getDomainsForAssessmentType(this.SARData?.assessmentType);
+
+    const summaries = domains
+      .map((d) => DOMAIN_TO_SUMMARY_FIELD[d.key])
+      .filter(Boolean)
+      .map((field) => this.SARData?.[field]);
+
+    const formFields: (string | null | undefined)[] = [];
+    if (domains.some((d) => d.key === "educationEmployment")) {
+      formFields.push(this.SARData?.levelOfEducation);
+    }
+    if (domains.some((d) => d.key === "familySocialSupport")) {
+      formFields.push(
+        this.SARData?.client?.fatherName,
+        this.SARData?.client?.motherName,
+        this.SARData?.client?.guardianName,
+      );
+    }
+
+    return { summaries, formFields };
   }
 
   /** Private getter for metadata with proper typing */
@@ -1082,11 +1120,15 @@ export class SARDetailsPresenter implements Hydratable {
     return "empty";
   }
 
-  /** Helper: Get status for Prior Treatment History (no metadata/skip support) */
   private getPriorTreatmentHistoryStatus(): SectionStatus {
     const summary = this.SARData?.priorTreatmentHistorySummary;
     const hasContent = !!summary && summary.trim() !== "";
-    return hasContent ? "complete" : "empty";
+    const isEdited =
+      this.metadata?.sections?.priorTreatmentHistory?.edited === true;
+
+    if (hasContent) return "complete";
+    if (isEdited) return "incomplete";
+    return "empty";
   }
 
   /** Get Case Information section status */
@@ -1194,28 +1236,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Get Offender Assessment section status */
   private getOffenderAssessmentStatus(): SectionStatus {
-    // Get domains for this ORAS assessment type
-    const domains = getDomainsForAssessmentType(this.SARData?.assessmentType);
-
-    // Only check summaries for visible domains
-    const summaries = domains
-      .map((d) => DOMAIN_TO_SUMMARY_FIELD[d.key])
-      .filter(Boolean)
-      .map((field) => this.SARData?.[field]);
-
-    // Form fields also need to be conditional based on which domains are visible
-    const formFields: (string | null | undefined)[] = [];
-
-    if (domains.some((d) => d.key === "educationEmployment")) {
-      formFields.push(this.SARData?.levelOfEducation);
-    }
-    if (domains.some((d) => d.key === "familySocialSupport")) {
-      formFields.push(
-        this.SARData?.client?.fatherName,
-        this.SARData?.client?.motherName,
-        this.SARData?.client?.guardianName,
-      );
-    }
+    const { summaries, formFields } = this.offenderAssessmentFields;
 
     const summaryFilledCount = summaries.filter(
       (s) => s && s.trim() !== "",

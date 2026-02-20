@@ -82,7 +82,10 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
           <Styled.NavigationList>
             {SAR_REPORT_SECTIONS.map((section) => {
               const isActive = section === currentSection;
-              const status = sectionStatuses[section];
+              const status =
+                section !== SARSection.SUMMARY
+                  ? sectionStatuses[section]
+                  : "empty";
               const showSubsections =
                 isActive && section === SARSection.OFFENDER_ASSESSMENT;
 

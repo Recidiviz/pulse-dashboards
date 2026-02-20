@@ -28,14 +28,28 @@ import {
   RISK_LEVELS,
 } from "../OffenderAssessment/constants";
 import { getDomainsForAssessmentType } from "../OffenderAssessment/utils";
+import { SARSection } from "../SARDetails/constants";
+import { MissingBadge } from "./MissingBadge";
 import * as Styled from "./Summary.styles";
 
 const NONE_LISTED = "None listed";
 
+/** Renders a field value or <MissingBadge /> when empty */
+const FieldOrMissing: React.FC<{
+  label: string;
+  value: string | null | undefined;
+}> = ({ label, value }) => (
+  <Styled.InlineRow>
+    {label}: {value || <MissingBadge />}
+  </Styled.InlineRow>
+);
+
 const SummaryOffenseCard: React.FC<{
   charge: SARDetailsPresenter["charges"][number];
-}> = ({ charge }) => {
+  presenter: SARDetailsPresenter;
+}> = ({ charge, presenter }) => {
   const judgeAndDivision = formatJudgeAndDivision(charge);
+  const isComplete = presenter.isChargeComplete(charge);
 
   return (
     <Styled.OffenseCardContainer>
@@ -56,15 +70,51 @@ const SummaryOffenseCard: React.FC<{
         <Styled.OffenseColumnTitle>Case Information</Styled.OffenseColumnTitle>
         <div>Case Number: {charge.causeNum || "—"}</div>
         <div>Judge/ Division: {judgeAndDivision || "—"}</div>
-        <div>Prosecuting Attorney: {charge.prosecutingAttorney || "—"}</div>
-        <div>Defense Attorney: {charge.defenseAttorney || "—"}</div>
-        <div>Plea Agreement: {charge.pleaAgreement || "—"}</div>
-        <div>
-          Date of Plea/ Finding of Guilt: {formatDisplayDate(charge.pleaDate)}
-        </div>
-        <div>
-          Date of Sentencing: {formatDisplayDate(charge.sentencingDate)}
-        </div>
+        {isComplete ? (
+          <>
+            <div>Prosecuting Attorney: {charge.prosecutingAttorney || "—"}</div>
+            <div>Defense Attorney: {charge.defenseAttorney || "—"}</div>
+            <div>Plea Agreement: {charge.pleaAgreement || "—"}</div>
+            <div>
+              Date of Plea/ Finding of Guilt:{" "}
+              {formatDisplayDate(charge.pleaDate)}
+            </div>
+            <div>
+              Date of Sentencing: {formatDisplayDate(charge.sentencingDate)}
+            </div>
+          </>
+        ) : (
+          <>
+            <FieldOrMissing
+              label="Prosecuting Attorney"
+              value={charge.prosecutingAttorney}
+            />
+            <FieldOrMissing
+              label="Defense Attorney"
+              value={charge.defenseAttorney}
+            />
+            <FieldOrMissing
+              label="Plea Agreement"
+              value={charge.pleaAgreement}
+            />
+            <Styled.InlineRow>
+              Date of Plea/ Finding of Guilt:{" "}
+              {charge.pleaDate ? (
+                formatDisplayDate(charge.pleaDate)
+              ) : (
+                <MissingBadge />
+              )}
+            </Styled.InlineRow>
+            <Styled.InlineRow>
+              Date of Sentencing:{" "}
+              {charge.sentencingDate ? (
+                formatDisplayDate(charge.sentencingDate)
+              ) : (
+                <MissingBadge />
+              )}
+            </Styled.InlineRow>
+          </>
+        )}
       </Styled.OffenseColumn>
     </Styled.OffenseCardContainer>
   );
@@ -86,44 +136,57 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
     recommendationSkipped,
     needsSkipped,
     factorsSkipped,
+    sectionStatuses,
   } = presenter;
+
+  const isReadyForDownload = Object.values(sectionStatuses).every(
+    (s) => s === "complete",
+  );
 
   const sarData = presenter.SARData;
 
-  // Needs and Mitigation display
-  const needsDisplay =
-    needsSkipped || !sarData?.needsToBeAddressed?.length
-      ? NONE_LISTED
-      : mapEnumKeysToDisplay(
-          NeedsToBeAddressed,
-          sarData.needsToBeAddressed,
-        ).join(", ");
+  // --- Key Considerations ---
+  const needsComplete =
+    needsSkipped ||
+    (!!sarData?.needsToBeAddressed && sarData.needsToBeAddressed.length > 0);
+  const needsListText = sarData?.needsToBeAddressed?.length
+    ? mapEnumKeysToDisplay(NeedsToBeAddressed, sarData.needsToBeAddressed).join(
+        ", ",
+      )
+    : null;
+  const needsDisplay = needsSkipped ? NONE_LISTED : needsListText;
 
-  const mitigationDisplay =
-    factorsSkipped || !sarData?.mitigatingFactors?.length
-      ? NONE_LISTED
-      : mapEnumKeysToDisplay(ProtectiveFactors, sarData.mitigatingFactors).join(
-          ", ",
-        );
+  const factorsComplete =
+    factorsSkipped ||
+    (!!sarData?.mitigatingFactors && sarData.mitigatingFactors.length > 0);
+  const mitigationListText = sarData?.mitigatingFactors?.length
+    ? mapEnumKeysToDisplay(ProtectiveFactors, sarData.mitigatingFactors).join(
+        ", ",
+      )
+    : null;
+  const mitigationDisplay = factorsSkipped ? NONE_LISTED : mitigationListText;
 
-  // Defendant's Version display
-  const defendantVersionDisplay = defendantStatementSkipped
+  // --- Defendant's Version ---
+  const isDefendantComplete =
+    sectionStatuses[SARSection.DEFENDANTS_VERSION] === "complete";
+  const defendantDisplay = defendantStatementSkipped
     ? NONE_LISTED
-    : sarData?.defendantStatement || NONE_LISTED;
+    : sarData?.defendantStatement;
 
-  // Victim Impact display
+  // --- Victim Impact ---
+  const isVictimImpactComplete =
+    sectionStatuses[SARSection.VICTIM_IMPACT] === "complete";
   const victimImpactDisplay = victimImpactStatementSkipped
     ? NONE_LISTED
-    : sarData?.victimImpactStatement || NONE_LISTED;
+    : sarData?.victimImpactStatement;
 
-  // Offender Assessment summary — group domains by risk level
+  // --- Offender Assessment (always show imported score summary) ---
   const domains = getDomainsForAssessmentType(sarData?.assessmentType ?? null);
   const groupedByRisk: Record<keyof typeof RISK_LEVELS, string[]> = {
     HIGH: [],
     MODERATE: [],
     LOW: [],
   };
-
   domains.forEach((domain) => {
     const score = sarData?.[domain.scoreField as keyof typeof sarData];
     if (typeof score === "number") {
@@ -131,7 +194,6 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
       groupedByRisk[level].push(domain.title);
     }
   });
-
   const offenderAssessmentParts: string[] = [];
   (["HIGH", "MODERATE", "LOW"] as const).forEach((level) => {
     if (groupedByRisk[level].length > 0) {
@@ -143,18 +205,13 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
   const offenderAssessmentDisplay =
     offenderAssessmentParts.length > 0
       ? `Offender scored ${offenderAssessmentParts.join(" and ")}.`
-      : NONE_LISTED;
+      : null;
 
-  // Recommendation display
-  const communityDisplay = recommendationSkipped
-    ? NONE_LISTED
-    : sarData?.communityStrategyRecommendation || NONE_LISTED;
-  const homePlanDisplay = recommendationSkipped
-    ? NONE_LISTED
-    : sarData?.homePlan || NONE_LISTED;
-  const institutionalDisplay = recommendationSkipped
-    ? NONE_LISTED
-    : sarData?.institutionalStrategyRecommendation || NONE_LISTED;
+  // --- Recommendation (per sub-section) ---
+  const communityValue = sarData?.communityStrategyRecommendation?.trim();
+  const homePlanValue = sarData?.homePlan?.trim();
+  const institutionalValue =
+    sarData?.institutionalStrategyRecommendation?.trim();
 
   return (
     <Styled.Container>
@@ -166,11 +223,15 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             Clicking &ldquo;Download&rdquo; will generate a PDF report.
           </Styled.DownloadSubtitle>
         </Styled.DownloadHeaderText>
-        <Styled.DownloadButton aria-label="Download SAR report">
+        <Styled.DownloadButton
+          disabled={!isReadyForDownload}
+          aria-label="Download SAR report"
+        >
           <DownloadIcon />
           Download
         </Styled.DownloadButton>
       </Styled.DownloadHeader>
+
       {/* Case Information */}
       <Styled.SectionCard>
         <Styled.SectionTitle>Case Information</Styled.SectionTitle>
@@ -182,51 +243,75 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
 
       {/* Offense cards - one per charge */}
       {charges.map((charge) => (
-        <SummaryOffenseCard key={charge.id} charge={charge} />
+        <SummaryOffenseCard
+          key={charge.id}
+          charge={charge}
+          presenter={presenter}
+        />
       ))}
 
       {/* Key Considerations */}
       <Styled.SectionCard>
         <Styled.SectionTitle>Key Considerations</Styled.SectionTitle>
         <Styled.SectionBody>
-          <div>Needs: {needsDisplay}</div>
-          <div>Mitigation: {mitigationDisplay}</div>
+          <Styled.InlineRow>
+            Needs: {needsComplete ? needsDisplay : <MissingBadge />}
+          </Styled.InlineRow>
+          <Styled.InlineRow>
+            Mitigation: {factorsComplete ? mitigationDisplay : <MissingBadge />}
+          </Styled.InlineRow>
         </Styled.SectionBody>
       </Styled.SectionCard>
 
       {/* Defendant's Version */}
       <Styled.SectionCard>
         <Styled.SectionTitle>Defendant&apos;s Version</Styled.SectionTitle>
-        <Styled.SectionBody>{defendantVersionDisplay}</Styled.SectionBody>
+        <Styled.SectionBody>
+          {isDefendantComplete ? defendantDisplay : <MissingBadge />}
+        </Styled.SectionBody>
       </Styled.SectionCard>
 
       {/* Victim Impact */}
       <Styled.SectionCard>
         <Styled.SectionTitle>Victim Impact</Styled.SectionTitle>
-        <Styled.SectionBody>{victimImpactDisplay}</Styled.SectionBody>
+        <Styled.SectionBody>
+          {isVictimImpactComplete ? victimImpactDisplay : <MissingBadge />}
+        </Styled.SectionBody>
       </Styled.SectionCard>
 
-      {/* Offender Assessment */}
+      {/* Offender Assessment — always show the imported score summary */}
       <Styled.SectionCard>
         <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
-        <Styled.SectionBody>{offenderAssessmentDisplay}</Styled.SectionBody>
+        <Styled.SectionBody>
+          {offenderAssessmentDisplay || NONE_LISTED}
+        </Styled.SectionBody>
       </Styled.SectionCard>
 
-      {/* Recommendation */}
+      {/* Recommendation - per sub-section badges */}
       <Styled.SectionCard>
         <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
-        <Styled.RecommendationSection>
-          <Styled.RecommendationLabel>
-            Community Strategy
-          </Styled.RecommendationLabel>
-          <Styled.SectionBody>{communityDisplay}</Styled.SectionBody>
-          <Styled.RecommendationLabel>Home Plan</Styled.RecommendationLabel>
-          <Styled.SectionBody>{homePlanDisplay}</Styled.SectionBody>
-          <Styled.RecommendationLabel>
-            Institutional Strategy
-          </Styled.RecommendationLabel>
-          <Styled.SectionBody>{institutionalDisplay}</Styled.SectionBody>
-        </Styled.RecommendationSection>
+        {recommendationSkipped ? (
+          <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
+        ) : (
+          <Styled.RecommendationSection>
+            <Styled.RecommendationLabel>
+              Community Strategy
+            </Styled.RecommendationLabel>
+            <Styled.SectionBody>
+              {communityValue || <MissingBadge />}
+            </Styled.SectionBody>
+            <Styled.RecommendationLabel>Home Plan</Styled.RecommendationLabel>
+            <Styled.SectionBody>
+              {homePlanValue || <MissingBadge />}
+            </Styled.SectionBody>
+            <Styled.RecommendationLabel>
+              Institutional Strategy
+            </Styled.RecommendationLabel>
+            <Styled.SectionBody>
+              {institutionalValue || <MissingBadge />}
+            </Styled.SectionBody>
+          </Styled.RecommendationSection>
+        )}
       </Styled.SectionCard>
     </Styled.Container>
   );

@@ -59,6 +59,7 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
             onChange={(value) =>
               presenter.updatePriorTreatmentHistorySummary(value)
             }
+            onLocalChange={() => presenter.markAsEdited()}
             placeholder="Please enter a summary of prior treatment history"
             height="6.8125rem"
           />

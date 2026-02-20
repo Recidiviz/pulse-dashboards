@@ -86,6 +86,11 @@ export const DownloadButton = styled.button`
   font-family: "Public Sans";
   font-size: 0.875rem;
   font-weight: 600;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `;
 
 export const SectionCard = styled.div`
@@ -113,6 +118,12 @@ export const SectionBody = styled.div`
   font-style: normal;
   font-weight: 500;
   line-height: 150%;
+`;
+
+export const InlineRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
 
 export const RecommendationSection = styled.div`

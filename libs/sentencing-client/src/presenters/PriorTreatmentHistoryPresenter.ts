@@ -164,4 +164,8 @@ export class PriorTreatmentHistoryPresenter {
       value,
     );
   }
+
+  markAsEdited(): void {
+    this.sarDetailsPresenter.markFieldAsEditedLocally("priorTreatmentHistory");
+  }
 }

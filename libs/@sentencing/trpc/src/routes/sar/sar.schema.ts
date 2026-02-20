@@ -64,6 +64,11 @@ export const SARMetadataSchema = z.object({
       skipped: z.boolean(),
       edited: z.boolean().optional(),
     }),
+    priorTreatmentHistory: z
+      .object({
+        edited: z.boolean().optional(),
+      })
+      .optional(),
   }),
   version: z.literal("1.0").optional(),
 });
