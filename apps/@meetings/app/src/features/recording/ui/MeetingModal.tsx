@@ -49,6 +49,7 @@ function MeetingModal({ meetingId, person }: MeetingModalProps) {
   const meetingRecording = useMeetingRecording({
     meetingId,
     onComplete: closeRecordingView,
+    personId: person.personId,
   });
 
   if (!isRecordingViewOpened) return null;

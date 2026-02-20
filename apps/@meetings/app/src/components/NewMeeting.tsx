@@ -56,6 +56,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const { status, note, setNote, isRecording, actions } = useMeetingRecording({
     meetingId,
     onComplete: navigateToPersonProfile,
+    personId: person.personId,
   });
 
   if (!status) return null;
@@ -151,7 +152,9 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
       </View>
 
       <Modal
-        visible={["stopping", "discarding"].includes(status) && Platform.OS !== "web"}
+        visible={
+          ["stopping", "discarding"].includes(status) && Platform.OS !== "web"
+        }
         animationType="slide"
         transparent
       >

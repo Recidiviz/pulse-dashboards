@@ -25,14 +25,18 @@ import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
 
 import { useRecording } from "../model";
 import { sendNotification } from "../utils/notifications";
+import { useDiscardMeeting } from "./useDiscardMeeting";
+import { useEndMeeting } from "./useEndMeeting";
 
 // TODO(#11571): get rid of this hook, move all the code into models
 export const useMeetingRecording = ({
   meetingId,
   onComplete,
+  personId,
 }: {
   meetingId: string;
   onComplete?: () => void;
+  personId: bigint;
 }) => {
   const [totalDurationMs, setTotalDurationMs] = useState(0);
   const [accumulatedDurationMs, setAccumulatedDurationMs] = useState(0);
@@ -63,14 +67,8 @@ export const useMeetingRecording = ({
 
   const prevRecorderStateRef = useRef(isRecording);
 
-  const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
-    onSuccess: () => {
-      console.log("Meeting successfully ended and processing started");
-    },
-    onError: (err) => {
-      console.error("[endMeeting] Failed:", err);
-    },
-  });
+  const { mutateAsync: endMeeting } = useEndMeeting(personId);
+  const { mutateAsync: discardMeeting } = useDiscardMeeting(personId);
 
   const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
     onSuccess: () => {
@@ -78,16 +76,6 @@ export const useMeetingRecording = ({
     },
     onError: (err) => {
       console.error("[updateNotes] Failed:", err);
-    },
-  });
-
-  const discardMeetingMutation = trpc.v1.meeting.discardMeeting.useMutation({
-    onSuccess: () => {
-      console.log("Meeting discarded successfully");
-    },
-    onError: (err) => {
-      console.error("[discardMeeting] Failed:", err);
-      Alert.alert("Error", "Failed to discard meeting. Please try again.");
     },
   });
 
@@ -192,10 +180,7 @@ export const useMeetingRecording = ({
       const userNotepadNotes = await resolveUserNotepadNotes();
       await removeItem("note");
 
-      await endMeetingMutation.mutateAsync({
-        meetingId,
-        userNotepadNotes,
-      });
+      await endMeeting({ meetingId, userNotepadNotes });
 
       await cleanupRecording();
       onComplete?.();
@@ -210,7 +195,7 @@ export const useMeetingRecording = ({
     stopAndUploadRecording,
     uploadSegmentToGCS,
     resolveUserNotepadNotes,
-    endMeetingMutation,
+    endMeeting,
     meetingId,
     cleanupRecording,
     onComplete,
@@ -222,12 +207,10 @@ export const useMeetingRecording = ({
   const handleFinalDiscard = useCallback(async () => {
     await cleanupRecording();
 
-    await discardMeetingMutation.mutateAsync({
-      meetingId,
-    });
+    await discardMeeting({ meetingId });
 
     onComplete?.();
-  }, [cleanupRecording, discardMeetingMutation, meetingId, onComplete]);
+  }, [cleanupRecording, discardMeeting, meetingId, onComplete]);
 
   const handleAutoStopRecording = useCallback(async () => {
     setStatus("uploading");

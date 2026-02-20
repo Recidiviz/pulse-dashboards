@@ -16,7 +16,14 @@
 // =============================================================================
 
 import React from "react";
-import { Image, Modal, Platform, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Modal,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
@@ -52,7 +59,10 @@ const MeetingInProgressBar = ({
 }: MeetingInProgressBarProps) => {
   const isPaused = recordingState === "paused";
 
-  const { actions, totalDurationMs } = useMeetingRecording({ meetingId });
+  const { actions, totalDurationMs } = useMeetingRecording({
+    meetingId,
+    personId: person.personId,
+  });
 
   const {
     handleTogglePauseResume,
@@ -109,7 +119,10 @@ const MeetingInProgressBar = ({
       </View>
 
       <Modal
-        visible={["stopping", "discarding"].includes(recordingState) && Platform.OS !== "web"}
+        visible={
+          ["stopping", "discarding"].includes(recordingState) &&
+          Platform.OS !== "web"
+        }
         animationType="slide"
         transparent
       >

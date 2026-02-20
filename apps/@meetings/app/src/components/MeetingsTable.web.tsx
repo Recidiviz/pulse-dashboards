@@ -64,8 +64,11 @@ type MeetingRowProps = {
 };
 
 const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
-  const navigation = useNavigation<ProfileMeetingNavProp>()
-  const { totalDurationMs } = useMeetingRecording({ meetingId: meeting.id });
+  const navigation = useNavigation<ProfileMeetingNavProp>();
+  const { totalDurationMs } = useMeetingRecording({
+    meetingId: meeting.id,
+    personId: person.personId,
+  });
   const { status: recordingState, meetingId } = useRecording<"web">();
 
   const isMeetingInProgress =
@@ -78,13 +81,16 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
         {
           meetingId: meeting.id,
           personId: person.personId.toString(),
-        }
+        },
       );
     }
   };
 
   return (
-    <TableRow onClick={handleNavigateToMeeting} style={{ pointerEvents: isMeetingInProgress ? "none" : "auto" }}>
+    <TableRow
+      onClick={handleNavigateToMeeting}
+      style={{ pointerEvents: isMeetingInProgress ? "none" : "auto" }}
+    >
       <TableCell>{meeting.date}</TableCell>
       <TableCell>{meeting.time}</TableCell>
       <TableCell>
