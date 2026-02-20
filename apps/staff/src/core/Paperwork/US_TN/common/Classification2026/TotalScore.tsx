@@ -55,11 +55,6 @@ export function TotalScore({
           <Bold>Maximum:</Bold> 41+
         </div>
       </div>
-      <div>
-        <Bold>
-          Date of Final Approval and Entry in OMS/Recidiviz Tool: __________
-        </Bold>
-      </div>
     </Container>
   );
 }

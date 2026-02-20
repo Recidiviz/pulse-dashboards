@@ -166,11 +166,12 @@ const Approval = observer(function Approval() {
     derivedData: { trusteeEligible },
   } = opportunityForm;
 
-  const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    opportunityForm.updateDraftData(
-      "trusteeCustodyApproved",
-      event.target.value,
-    );
+  const onClick = (value: string) => {
+    if (value === trusteeCustodyApproved) {
+      opportunityForm.clearDraftData("trusteeCustodyApproved");
+    } else {
+      opportunityForm.updateDraftData("trusteeCustodyApproved", value);
+    }
   };
 
   const disabled = !trusteeEligible;
@@ -184,7 +185,7 @@ const Approval = observer(function Approval() {
           type="radio"
           checked={trusteeEligible && trusteeCustodyApproved === "true"}
           value="true"
-          onChange={onChange}
+          onClick={() => onClick("true")}
           disabled={disabled}
         />{" "}
         Approved
@@ -193,7 +194,7 @@ const Approval = observer(function Approval() {
           type="radio"
           checked={trusteeEligible && trusteeCustodyApproved === "false"}
           value="false"
-          onChange={onChange}
+          onClick={() => onClick("false")}
           disabled={disabled}
         />{" "}
         Denied
@@ -220,35 +221,16 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
           </Header>
           <div>
             <p>
-              Five categories of low custody inmates shall be considered for
-              placement on trustee custody:
+              All inmates that have a custody score placing them in low custody,
+              OR a recommended override to low custody, must be assessed for
+              possible placement on trustee status using the Trustee Assessment.
             </p>
-            <ol>
-              <li>
-                Inmates who score low custody on their most recent
-                classification assessment{" "}
-              </li>
-              <li>
-                Inmates who did not score low custody on their most recent
-                classification assessment, but were recommended for a decrease
-                override which places the inmate in low custody
-              </li>
-              <li>
-                Inmates classified as low custody who have been selected for and
-                assigned to the Special Alternative Incarceration Unit (SAIU) or
-                the Technical Violator Unit (Parole/Probation)
-              </li>
-              <li>
-                Inmates classified as low custody who have been granted parole
-                and are within one year of the release date that has been
-                approved by the Board of Parole
-              </li>
-              <li>
-                Inmates classified as low custody who are within six (6) months
-                of their sentence expiration date.
-              </li>
-            </ol>
+
             <p>
+              <Bold>
+                All criteria listed on the Trustee Assessment must be marked
+                TRUE for placement on trustee custody to be approved.
+              </Bold>{" "}
               Use the assessment form below to determine whether a low custody
               inmate may be placed on trustee custody.{" "}
               <Bold>
@@ -265,7 +247,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               required for trustee custody placement of an inmate that (1) has a
               disciplinary conviction for certain assaultive behavior resulting
               in serious injury or death, committed more than five years ago, OR
-              (2) scores as high risk of violence on the risk assessment.{" "}
+              (2) scores as high risk of violence on the risk assessment.
             </p>
           </div>
           <CriteriaTable>
@@ -304,12 +286,6 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
 
               <TrusteeCriteriaRow dataKey="trusteeNoFelonyDetainers">
                 Inmate has no felony detainers and/or active warrants{" "}
-                <Bold>AND</Bold>
-                <br />
-                <br />
-                <Bold>If</Bold> the inmate has misdemeanor detainers and/or
-                active warrants, the Warden has approved trustee custody
-                placement
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNoPendingFelonyCharges">
@@ -319,14 +295,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               <TrusteeCriteriaRow dataKey="trusteeNoPendingImmigrationActions">
                 Inmate has no pending immigration deportation actions
               </TrusteeCriteriaRow>
-            </tbody>
-          </CriteriaTable>
-        </TrusteeFormPage>
-      </PrintablePage>
-      <PrintablePage stretchable hidden={!display} watermark="Draft">
-        <TrusteeFormPage>
-          <CriteriaTable>
-            <tbody>
+
               <TrusteeCriteriaRow dataKey="trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years">
                 Inmate has no disciplinary convictions for assaultive conduct
                 that resulted in serious injury or the death of another
@@ -346,7 +315,14 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
                 Inmate has no court-prosecuted felony convictions for a violent
                 offense committed during the past 5 years of incarceration
               </TrusteeCriteriaRow>
-
+            </tbody>
+          </CriteriaTable>
+        </TrusteeFormPage>
+      </PrintablePage>
+      <PrintablePage stretchable hidden={!display} watermark="Draft">
+        <TrusteeFormPage>
+          <CriteriaTable>
+            <tbody>
               <TrusteeCriteriaRow dataKey="trusteeNoEscapeFromMediumCloseMaxPast10Years">
                 Inmate has no escape or attempted escape from medium, close, or
                 maximum custody within the last 10 years of incarceration.
