@@ -58,13 +58,19 @@ const Header: React.FC<HeaderProps> = ({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
-  const { onLogout, name, email } = useUserContext();
+  const { 
+    onLogout, 
+    name, 
+    email, 
+    hasSupervisionAccess, 
+    hasFacilitiesAccess 
+  } = useUserContext();
   const { canSelectStateCode, currentStateName } = useStateSelection();
 
   const handleDropdownMenuPress = (callback: () => void) => {
     setProfileDropdownOpen(false);
     callback();
-  };
+  };  
 
   return (
     <SafeAreaView edges={["top"]} className="z-10 bg-white">
@@ -105,15 +111,22 @@ const Header: React.FC<HeaderProps> = ({
         </TouchableOpacity>
 
         <View className="h-full flex-row items-center gap-x-6">
-          <DesktopMenuItem isActive={route.name === "Clients"} screen="Clients">
-            Clients
-          </DesktopMenuItem>
-          <DesktopMenuItem
-            isActive={route.name === "Residents"}
-            screen="Residents"
-          >
-            Residents
-          </DesktopMenuItem>
+          {hasSupervisionAccess && (
+            <DesktopMenuItem 
+              isActive={route.name === "Clients"} 
+              screen="Clients"
+            >
+              Clients
+            </DesktopMenuItem>
+          )}
+          {hasFacilitiesAccess && (
+            <DesktopMenuItem
+              isActive={route.name === "Residents"}
+              screen="Residents"
+            >
+              Residents
+            </DesktopMenuItem>
+          )}
           <View className="relative">
             <TouchableOpacity
               onPress={() => setProfileDropdownOpen(!profileDropdownOpen)}
