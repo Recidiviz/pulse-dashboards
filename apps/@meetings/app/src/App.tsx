@@ -45,6 +45,8 @@ BigInt.prototype.toJSON = function () {
   return Number.isNaN(int) ? this.toString() : int;
 };
 
+// TODO(dana): delete this comment
+
 const App = () => {
   return (
     <GestureHandlerRootView>
