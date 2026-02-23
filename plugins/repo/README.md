@@ -26,7 +26,9 @@ This plugin automatically injects SOPS-encrypted environment variables into your
 - **Environment inheritance**: Mimics Nx's `.env` file priority system with support for target and configuration-specific files
 - **SOPS encryption**: All environment files are encrypted with SOPS for security
 - **Zero configuration**: Works automatically with the `requires-sops-env:` prefix
-- **Tag-based sharing**: Share environment files across projects using `sops-env:@project/name` tags
+- **Project environment sharing**: Share environment files across projects using metadata
+- **Path templating**: Use `{workspaceRoot}` and `{projectRoot}` in file paths
+- **Dotenv support**: Load unencrypted `.env` files for local development
 
 ### Quick Start
 
@@ -121,14 +123,24 @@ For `nx build myapp --configuration=staging`:
 3. `env.staging.enc.yaml` (configuration-specific)
 4. `env.build.staging.enc.yaml` (target + configuration - highest priority)
 
-#### Tag-Based Environment Sharing
+**Note**: Variables already set in `process.env` will NOT be overridden, following Nx's behavior.
 
-Share environment files across projects using tags:
+### Advanced Configuration with Metadata
+
+Customize SOPS environment loading using the `sops-env` metadata key on projects and/or targets. Target metadata takes precedence over project metadata for `override-sops-env-project`, while additional file arrays are merged.
+
+#### Override Environment Source Project
+
+Use another project's SOPS files instead of the current project's:
 
 ```json
 {
   "name": "myapp-worker",
-  "tags": ["sops-env:@myorg/myapp"],
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@myorg/myapp"
+    }
+  },
   "targets": {
     "requires-sops-env:start": {
       "executor": "nx:run-commands",
@@ -140,7 +152,85 @@ Share environment files across projects using tags:
 }
 ```
 
-This project will use SOPS files from `@myorg/myapp` instead of its own directory.
+The `myapp-worker` project will use SOPS files from the `@myorg/myapp` project's directory.
+
+#### Load Additional SOPS Files
+
+Load extra SOPS-encrypted files alongside the standard ones:
+
+```json
+{
+  "targets": {
+    "requires-sops-env:deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "terraform apply"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": [
+            "shared/secrets.enc.yaml",
+            "{projectRoot}/api-keys.enc.yaml"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+#### Load Unencrypted .env Files
+
+For local development or migration from dotenv:
+
+```json
+{
+  "metadata": {
+    "sops-env": {
+      "additional-dotenv-files": [
+        "{projectRoot}/.env.local"
+      ]
+    }
+  }
+}
+```
+
+**Warning**: Only use unencrypted files for local development or publicly available values. Production secrets must be SOPS-encrypted.
+
+#### Path Templating
+
+File paths support Nx template variables for portability:
+
+- `{workspaceRoot}` - Absolute path to workspace root
+- `{projectRoot}` - Absolute path to the project's root directory
+
+```json
+{
+  "metadata": {
+    "sops-env": {
+      "additional-sops-env-files": [
+        "{workspaceRoot}/shared/secrets.enc.yaml"
+      ],
+      "additional-dotenv-files": [
+        "{projectRoot}/.env.local"
+      ]
+    }
+  }
+}
+```
+
+Paths without templates are treated as relative to `{workspaceRoot}` by default. Absolute paths (starting with `/`) are used as-is.
+
+#### File Loading Order
+
+Files are loaded in priority order (later files override earlier ones):
+
+1. Standard SOPS files from source project (current or `override-sops-env-project`)
+   - `env.enc.yaml` → `env.{target}.enc.yaml` → `env.{configuration}.enc.yaml` → `env.{target}.{configuration}.enc.yaml`
+2. Additional SOPS files from project metadata (`additional-sops-env-files`)
+3. Additional SOPS files from target metadata (`additional-sops-env-files`)
+4. Additional dotenv files from project metadata (`additional-dotenv-files`)
+5. Additional dotenv files from target metadata (`additional-dotenv-files`)
 
 ### SOPS Encryption Setup
 

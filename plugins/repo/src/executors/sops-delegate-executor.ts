@@ -19,10 +19,26 @@ import { ExecutorContext, logger, targetToTargetString } from "@nx/devkit";
 import { spawnSync } from "child_process";
 
 import { SOPS_ENV_PREFIX } from "./sops-env";
-import { decryptSopsFile, getSopsPathsForTask } from "./utils";
+import {
+  decryptSopsFile,
+  getSopsPathsForTask,
+  interpolatePath,
+  loadDotenvFile,
+} from "./utils";
 
 export interface DelegateExecutorOptions {
   prefixedTarget: string; // The requires-sops-env: prefixed target name
+}
+
+export const SOPS_ENV_METADATA_NAME = "sops-env";
+
+export interface SopsEnvMetadata {
+  // Reference another Nx project to use its env files
+  "override-sops-env-project"?: string;
+  // Additional SOPS encrypted files to load
+  "additional-sops-env-files"?: string[];
+  // Additional unencrypted .env files to load
+  "additional-dotenv-files"?: string[];
 }
 
 function delegateToTarget(
@@ -73,7 +89,7 @@ function delegateToTarget(
  *
  * This executor:
  * 1. Determines the environment from the Nx task configuration
- * 2. Decrypts the appropriate SOPS YAML file
+ * 2. Decrypts the appropriate SOPS YAML file(s) and .env files
  * 3. Loads variables into process.env (inherited by child process)
  * 4. Runs the prefixed target as a child process
  */
@@ -97,6 +113,30 @@ export default async function runSopsDelegateExecutor(
   const configurationName =
     context.configurationName || targetConfig?.defaultConfiguration;
 
+  // Read sops-env metadata from project and target config
+  // Target metadata takes precedence over project metadata
+  const projectSopsEnvMetadata = ((
+    projectConfig?.metadata as Record<string, unknown>
+  )?.[SOPS_ENV_METADATA_NAME] || {}) as SopsEnvMetadata;
+  const targetSopsEnvMetadata = ((
+    targetConfig?.metadata as Record<string, unknown>
+  )?.[SOPS_ENV_METADATA_NAME] || {}) as SopsEnvMetadata;
+
+  // Merge metadata with target taking precedence
+  const sopsEnvMetadata: SopsEnvMetadata = {
+    "override-sops-env-project":
+      targetSopsEnvMetadata["override-sops-env-project"] ??
+      projectSopsEnvMetadata["override-sops-env-project"],
+    "additional-sops-env-files": [
+      ...(projectSopsEnvMetadata["additional-sops-env-files"] || []),
+      ...(targetSopsEnvMetadata["additional-sops-env-files"] || []),
+    ],
+    "additional-dotenv-files": [
+      ...(projectSopsEnvMetadata["additional-dotenv-files"] || []),
+      ...(targetSopsEnvMetadata["additional-dotenv-files"] || []),
+    ],
+  };
+
   // Skip if explicitly disabled
   if (process.env["NX_SKIP_SOPS"] === "true") {
     logger.verbose("SOPS decryption skipped (NX_SKIP_SOPS=true)");
@@ -114,9 +154,30 @@ export default async function runSopsDelegateExecutor(
     }
   }
 
-  // Determine source project (could be current project or referenced via tag)
-  const sourceProjectName = projectName;
-  const sourceProjectRoot = projectRoot;
+  // Determine source project (could be current project or overridden via metadata)
+  let sourceProjectName = projectName;
+  let sourceProjectRoot = projectRoot;
+
+  // Check if we should use another project's env files
+  if (sopsEnvMetadata["override-sops-env-project"]) {
+    const overrideProjectName = sopsEnvMetadata["override-sops-env-project"];
+    const overrideProject =
+      context.projectsConfigurations?.projects[overrideProjectName];
+
+    if (!overrideProject) {
+      logger.error(
+        `Override project '${overrideProjectName}' not found in workspace`,
+      );
+      return { success: false };
+    }
+
+    sourceProjectName = overrideProjectName;
+    sourceProjectRoot = overrideProject.root;
+
+    logger.info(
+      `Using SOPS env files from project '${overrideProjectName}' (override-sops-env-project)`,
+    );
+  }
 
   if (!sourceProjectRoot) {
     logger.error(
@@ -154,27 +215,71 @@ export default async function runSopsDelegateExecutor(
     }
   }
 
+  // Prepare interpolation context for template variables
+  const interpolationContext = {
+    workspaceRoot: context.root,
+    projectRoot,
+  };
+
   // Load SOPS files in priority order (later files override earlier ones)
   const envVars: Record<string, string> = {};
 
   try {
+    // 1. Load standard SOPS files from source project
     for (const sopsPath of sopsFilePaths) {
       logger.info(`Decrypting ${sopsPath}`);
       const decryptedYaml = decryptSopsFile(sopsPath);
-
-      // Later files override earlier ones
       Object.assign(envVars, decryptedYaml);
     }
 
-    // Load all variables into process.env (child process will inherit)
-    Object.assign(process.env, envVars);
+    let totalFilesLoaded = sopsFilePaths.length;
+
+    // 2. Load additional SOPS files from metadata
+    if (sopsEnvMetadata["additional-sops-env-files"]?.length) {
+      for (const additionalFile of sopsEnvMetadata[
+        "additional-sops-env-files"
+      ]) {
+        const interpolatedPath = interpolatePath(
+          additionalFile,
+          interpolationContext,
+        );
+        logger.info(`Decrypting additional SOPS file: ${interpolatedPath}`);
+        const decryptedYaml = decryptSopsFile(interpolatedPath);
+        Object.assign(envVars, decryptedYaml);
+        totalFilesLoaded++;
+      }
+    }
+
+    // 3. Load additional dotenv files from metadata
+    if (sopsEnvMetadata["additional-dotenv-files"]?.length) {
+      for (const dotenvFile of sopsEnvMetadata["additional-dotenv-files"]) {
+        const interpolatedPath = interpolatePath(
+          dotenvFile,
+          interpolationContext,
+        );
+        logger.info(`Loading additional dotenv file: ${interpolatedPath}`);
+        const dotenvVars = loadDotenvFile(interpolatedPath);
+        Object.assign(envVars, dotenvVars);
+        totalFilesLoaded++;
+      }
+    }
+
+    // Load variables into process.env (child process will inherit)
+    // Following Nx behavior: do not override variables that are already set
+    let newVarsCount = 0;
+    for (const [key, value] of Object.entries(envVars)) {
+      if (process.env[key] === undefined) {
+        process.env[key] = value;
+        newVarsCount++;
+      }
+    }
 
     logger.info(
-      `Loaded ${Object.keys(envVars).length} environment variables from ${sopsFilePaths.length} file(s)`,
+      `Loaded ${newVarsCount} environment variables from ${totalFilesLoaded} file(s) (${Object.keys(envVars).length - newVarsCount} already set)`,
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    logger.error(`Failed to decrypt SOPS file: ${message}`);
+    logger.error(`Failed to load environment files: ${message}`);
     return { success: false };
   }
 

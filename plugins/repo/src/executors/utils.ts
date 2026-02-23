@@ -17,11 +17,25 @@
 
 import { workspaceRoot } from "@nx/devkit";
 import { execSync } from "child_process";
+import { config as dotenvConfig } from "dotenv";
 import { existsSync } from "fs";
 import { join } from "path";
 
 export interface DecryptedEnv {
   [key: string]: string;
+}
+
+/**
+ * Interpolate Nx template variables in a path string
+ * Supports: {workspaceRoot}, {projectRoot}
+ */
+export function interpolatePath(
+  path: string,
+  context: { workspaceRoot: string; projectRoot?: string },
+): string {
+  return path
+    .replace(/\{workspaceRoot\}/g, context.workspaceRoot)
+    .replace(/\{projectRoot\}/g, context.projectRoot || "");
 }
 
 /**
@@ -141,4 +155,28 @@ export function getSopsPathsForTask(
   }
 
   return sopsFiles;
+}
+
+/**
+ * Load and parse a dotenv file
+ */
+export function loadDotenvFile(filePath: string): DecryptedEnv {
+  const absolutePath = join(workspaceRoot, filePath);
+
+  if (!existsSync(absolutePath)) {
+    throw new Error(`Dotenv file not found: ${absolutePath}`);
+  }
+
+  try {
+    const result = dotenvConfig({ path: absolutePath });
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    return result.parsed || {};
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to load dotenv file: ${message}`);
+  }
 }
