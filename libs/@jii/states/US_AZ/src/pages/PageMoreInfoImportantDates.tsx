@@ -21,6 +21,7 @@ import { useUsAzTranslations } from "~@jii/translation";
 import { DefinitionView } from "../components/DefinitionView";
 import { importantDateHeadingsAggregator } from "../components/ImportantDatesInfoPage/importantDateHeadingsAggregator";
 import { ImportantDatesCopyWrapper } from "../components/ImportantDatesInfoPage/ImportantDatesCopyWrapper";
+import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
 
 export function PageMoreInfoImportantDates() {
   const { t } = useUsAzTranslations();
@@ -37,6 +38,7 @@ export function PageMoreInfoImportantDates() {
       body={body}
       CopyWrapperOverride={ImportantDatesCopyWrapper}
       tocHeadingsAggregatorOverride={importantDateHeadingsAggregator}
+      moreInfoPageLinks={useInfoPageFooterLinks()}
     />
   );
 }

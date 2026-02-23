@@ -22,6 +22,7 @@ import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
+import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
 
 export function PageMoreInfoAbout() {
   const { t } = useUsAzTranslations();
@@ -38,12 +39,7 @@ export function PageMoreInfoAbout() {
           text: t(($) => $.homePageLinkText),
           url: State.Resident.buildPath(pathParams),
         },
-        {
-          text: t(($) => $.importantDates.moreInfo.heading),
-          url: State.Resident.UsAzMoreInformation.ImportantDates.buildPath(
-            pathParams,
-          ),
-        },
+        ...useInfoPageFooterLinks(),
       ]}
     />
   );

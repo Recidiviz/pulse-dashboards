@@ -61,8 +61,13 @@ const PageLinks = styled(PageContainer)`
   }
 `;
 
+const LinksColumn = styled.div`
+  flex: 1 1 300px;
+`;
+
 export interface PageLinksFooterProps {
   pageLinksHeading: string;
+  // TODO(#12083): use SimpleLinkProps here instead
   pageLinks: Array<{ text: string; url: string }>;
   topLinkText: string;
 }
@@ -73,7 +78,7 @@ export const PageLinksFooter: FC<{
   return (
     <Footer>
       <PageLinks>
-        <div>
+        <LinksColumn>
           <h2>{contents.pageLinksHeading}</h2>
           <ul>
             {contents.pageLinks.map((link) => (
@@ -82,7 +87,7 @@ export const PageLinksFooter: FC<{
               </li>
             ))}
           </ul>
-        </div>
+        </LinksColumn>
         <div>
           <ButtonLink to="#top" reloadDocument>
             <Icon kind="Arrow" rotate={-90} size={12} />
