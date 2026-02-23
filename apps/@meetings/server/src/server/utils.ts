@@ -284,12 +284,12 @@ export async function handleNotetakingProcessing(
 ) {
   const { meetingId, prisma } = params;
 
-  // Fetch meeting with client data and transcriptions
-  // TODO(Recidiviz/pulse-dashboards#11275): Support creation of client profile input using Resident
+  // Fetch meeting with client/resident data and transcriptions
   const meeting = await prisma.meeting.findUniqueOrThrow({
     where: { id: meetingId },
     include: {
       client: true,
+      resident: true,
       transcriptions: {
         include: {
           utterances: {
@@ -361,10 +361,17 @@ export async function handleNotetakingProcessing(
     },
   };
 
-  // Ensure meeting has a client (meetings can have client OR resident)
-  if (!meeting.client) {
+  const meetingPerson = meeting.client ?? meeting.resident;
+
+  if (!meetingPerson) {
     throw new Error(
-      "Meeting must have an associated client for LLM processing",
+      "Meeting must have an associated client or resident for LLM processing",
+    );
+  }
+
+  if (meeting.client && meeting.resident) {
+    throw new Error(
+      "Meeting cannot have both an associated client and an associated resident",
     );
   }
 
@@ -372,7 +379,7 @@ export async function handleNotetakingProcessing(
   const pipeline = new ProductionPipeline(prisma);
   const result = await pipeline.run(
     agencyConfig,
-    meeting.client,
+    meetingPerson,
     transcriptInput,
     meetingId,
   );
