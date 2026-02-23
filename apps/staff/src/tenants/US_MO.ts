@@ -277,7 +277,7 @@ const US_MO_CONFIG = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     revocations: [],
-    sar: [],
+    sarAccess: [],
     methodology: ["system"],
   },
   tableColumns: enabledTableColumns[pathways.US_MO],

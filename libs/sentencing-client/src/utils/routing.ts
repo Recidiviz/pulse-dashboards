@@ -16,7 +16,7 @@
 // =============================================================================
 
 export const psiRootPath = "psi";
-export const sarRootPath = "sar";
+export const sarRootPath = "sarAccess";
 
 export const PSI_PATHS: Record<PSIPage, string> = {
   psi: `/${psiRootPath}`,
