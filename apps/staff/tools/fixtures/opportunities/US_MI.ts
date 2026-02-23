@@ -987,7 +987,14 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "usMiPastSecurityClassificationCommitteeReviewDate",
+          text: "Next SCC review due on or before {{date nextSccDate}}",
+          tooltip:
+            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:

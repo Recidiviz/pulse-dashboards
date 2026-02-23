@@ -881,7 +881,10 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [{ key: "Other", text: "Please specify a reason" }],
+      denialReasons: [
+        { key: "Bench warrant", text: "Client is awaiting bench warrant" },
+        { key: "Other", text: "Other (Please specify a reason)" },
+      ],
       denialText: null,
       deniedTabTitle: null,
       displayName: "Missing Contact Alert",
@@ -909,7 +912,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: null,
       notifications: [
         {
-          body: "{{opportunity.person.displayName}} has not been seen in over {{daysToYearsMonthsPast (daysPast record.eligibleCriteria.usIdMeetsOverdueFaceToFaceContactAlert.lastContactDate)}}",
+          body: "{{opportunity.person.displayName}} has not had a face to face contact in over {{daysToYearsMonthsPast (daysPast record.eligibleCriteria.usIdMeetsOverdueFaceToFaceContactAlert.lastContactDate)}}",
           id: "ee541e63-06b8-4ae1-b7a3-6ceae579d4af",
           pages: ["supervisionSupervisor", "profile"],
           type: "alert",

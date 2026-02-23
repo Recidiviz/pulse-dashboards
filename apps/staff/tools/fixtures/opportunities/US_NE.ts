@@ -188,6 +188,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No approved good time restoration yet this month",
           tooltip: "",
         },
+        {
+          key: "usNeNoClass1MrsInLastYear",
+          text: "Have not had a Class 1 MR in the past year",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_NE-goodTimeRestorationReferrals",
@@ -203,6 +207,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usNeNoIdcMrsInPast6Months",
           text: "Needs 6 months without an IDC misconduct report ({{monthsOrDaysRemainingFromToday latestEligibleDate}} remaining)",
+        },
+        {
+          key: "usNeNoClass1MrsInLastYear",
+          text: "Needs 1 Year without a Class 1 MR ({{monthsOrDaysRemainingFromToday latestEligibleDate}} remaining)",
         },
       ],
       initialHeader: null,

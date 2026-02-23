@@ -48,13 +48,13 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usNc90ConsecutiveDaysOfPositiveBehaviorForCrr",
-          text: '{{#if continuousEnrollmentAtFacilityFor90Days}}The following action step(s) have been ONGOING for 90 days or more: {{#each facilityProgramId}}"{{titleCase this}}"{{#unless @last}}, {{/unless}}{{/each}}. {{/if}}{{#if continuousEmploymentFor90Days}}Employed consistently for 90 days or more, and currently at: {{#each employerName}}"{{titleCase this}}"{{#unless @last}}, {{/unless}}{{/each}}.{{/if}}{{#if continuousStudentFor90Days}}This person has been enrolled in an educational program for 90 days or more.{{/if}}{{#if completionOfFacilityProgramDuringPrs}}Spent 90 days or more successfully completing the following programs: {{#each completedFacilityProgramIds}}"{{titleCase this}}"{{#unless @last}}, {{/unless}}{{/each}}.{{/if}}',
+          text: '{{#if continuousEnrollmentAtFacilityFor90Days}}The following action step(s) have been ONGOING for 90+ days: {{#each facilityProgramId}}"{{titleCase this}}" (started: {{lookup ../facilityProgramStartDate @index}}){{#unless @last}}, {{/unless}}{{/each}}. {{/if}}{{#each employerName}}{{#if @last}}Employed consistently since {{lookup ../employmentStartDate 0}}, and currently employed with "{{titleCase this}}"{{/if}}. {{/each}}{{#if continuousStudentFor90Days}}Enrolled in an educational program since {{lookup studentStartDate 0}}. {{/if}}{{#if completionOfFacilityProgramDuringPrs}}Spent 90 days or more successfully completing the following programs: {{#each completedFacilityProgramIds}}"{{titleCase this}}" ({{lookup ../completedProgramStartDates @index}} to {{lookup ../completedProgramDischargeDates @index}}){{#unless @last}}, {{/unless}}{{/each}}.{{/if}}',
           tooltip:
             "90 consecutive days employed, actively enrolled in an education program, or at a facility or institution for medical or psychological treatment.\n\nIf you believe this is incorrect, please email feedback@recidiviz.org.",
         },
         {
           key: "usNcNoPendingViolationsOrConvictionsPrecludingCrr",
-          text: "No pending violations or charges which would preclude the client from receiving a CRR. ",
+          text: "No pending violations or charges which would preclude the client from receiving a Credit Review. ",
           tooltip:
             "If you believe this is incorrect, please email feedback@recidiviz.org.",
         },
@@ -63,6 +63,12 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Client reports as directed. ",
           tooltip:
             "If you believe this is incorrect, please email feedback@recidiviz.org.",
+        },
+        {
+          key: "usNcCompletedSexOffenderTreatmentOrWithin30MonthsOfFullTermCompletionDate",
+          text: "{{#if dischargeDates}}Completed sex offender treatment on {{#each dischargeDates}}{{#if @last}}{{this}}.{{/if}}{{/each}}{{else}}Does not have sex offender treatment assigned.\n{{/if}}",
+          tooltip:
+            "If someone is convicted of a sex offense, they must have completed their training, or they must not have training assigned and have less than 30 months remaining on their sentence.\n\nIf you believe this is incorrect, please email feedback@recidiviz.org.",
         },
       ],
       emptyTabCopy: [],
@@ -74,9 +80,9 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "usNc90ConsecutiveDaysOfPositiveBehaviorForCrr",
-          text: 'This person will have demonstrated 90 days of positive behavior on {{eligibleDate}}.\n{{#if facilityProgramId}} They have been pursuing \n{{#each facilityProgramId}}\n{{#if @first}}"{{titleCase this}}" since \n{{/if}}\n{{/each}}\n{{#each facilityProgramStartDate}}\n{{#if @first}}{{this}}.\n{{/if}}\n{{/each}}\n{{/if}}\n\n{{#if employerName}} They have been working at  \n{{#each employerName}}\n{{#if @first}}"{{titleCase this}}" since \n{{/if}}\n{{/each}}\n{{#each employmentStartDate}}\n{{#if @first}}{{this}}.\n{{/if}}\n{{/each}}\n{{/if}}\n\n{{#if studentStartDate}} They have been enrolled in an education program since  \n{{#each studentStartDate}}\n{{#if @first}}{{this}}.\n{{/if}}\n{{/each}}\n{{/if}}',
+          text: 'This person will have demonstrated 90 days of positive behavior on {{eligibleDate}}. {{#if facilityProgramId}} They have been pursuing {{#each facilityProgramId}}{{#if @first}}"{{titleCase this}}" since {{/if}}{{/each}}{{#each facilityProgramStartDate}}{{#if @first}}{{this}}. {{/if}}{{/each}}{{/if}}{{#if employerName}}They have been continuously employed since {{#each employmentStartDate}}{{#if @first}}{{this}},{{/if}}{{/each}} and is currently employed with {{#each employerName}}{{#if @last}}"{{titleCase this}}"{{/if}}{{/each}}{{/if}}. {{#if studentStartDate}}They have been enrolled in an education program since {{#each studentStartDate}}{{#if @first}}{{this}}.{{/if}}{{/each}}{{/if}}',
           tooltip:
-            "90 consecutive days employed, actively enrolled in an education program, or at a facility or institution for medical or psychological treatment.",
+            "90 consecutive days employed, actively enrolled in an education program, or at a facility or institution for medical or psychological treatment. If you believe this is incorrect, please email feedback@recidiviz.org.",
         },
       ],
       initialHeader:
@@ -88,7 +94,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: "CRR Requirements",
+      omsCriteriaHeader: "Credit Review Requirements",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Supervision"],

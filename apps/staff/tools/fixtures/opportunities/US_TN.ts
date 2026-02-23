@@ -251,12 +251,8 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [
-        "Incarceration",
-        "CaseNotes",
-        "UsTnCommonlyUsedOverrideCodes",
-      ],
-      snooze: null,
+      sidebarComponents: ["Incarceration", "CaseNotes"],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
       strictlyIneligibleCriteriaCopy: [
@@ -624,18 +620,14 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [
-        "Incarceration",
-        "CaseNotes",
-        "UsTnCommonlyUsedOverrideCodes",
-      ],
+      sidebarComponents: ["Incarceration", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
       strictlyIneligibleCriteriaCopy: [
         {
           key: "usTnCustodyLevelHigherThanRecommended2026Policy",
-          text: "Custody level aligns with latest CAF",
+          text: "Custody level is not higher than latest CAF score suggests",
         },
         {
           key: "usTnLatestCafAssessmentNotOverride",
@@ -843,11 +835,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [
-        "Incarceration",
-        "CaseNotes",
-        "UsTnCommonlyUsedOverrideCodes",
-      ],
+      sidebarComponents: ["Incarceration", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -914,18 +902,14 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [
-        "Incarceration",
-        "CaseNotes",
-        "UsTnCommonlyUsedOverrideCodes",
-      ],
+      sidebarComponents: ["Incarceration", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
       strictlyIneligibleCriteriaCopy: [
         {
           key: "usTnCustodyLevelLowerThanRecommended2026Policy",
-          text: "Custody level aligns with latest CAF",
+          text: "Custody level is not lower than latest CAF suggests",
         },
         {
           key: "usTnLatestCafAssessmentNotOverride",
@@ -935,7 +919,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "[2026 Pilot] This alert helps staff identify residents for whom the updated CAF suggests a higher custody level than what the resident currently has. Residents who need upgrades due to a new disciplinary infraction, for example, will not be surfaced under this option.\n\nUse of this alert will phase out over time, as all residents are classified under the new CAF",
+        "[2026 Pilot] This alert helps staff identify residents for whom the updated CAF suggests a higher custody level than what the resident currently has. Residents who need upgrades due to a new disciplinary infraction, for example, will not be surfaced under this option.\n\nUse of this alert will phase out over time, as all residents are classified under the updated CAF",
       submittedTabTitle: "Pending",
       supportsIneligible: true,
       supportsSubmitted: true,
