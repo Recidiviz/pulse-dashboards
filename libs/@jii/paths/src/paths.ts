@@ -61,6 +61,7 @@ export const UsAzMoreInformation = route(
     Intro: route("intro"),
     About: route("about"),
     ImportantDates: route("important-dates", { hash: [] }),
+    DPR: route("drug-program-release"),
   },
 );
 

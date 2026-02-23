@@ -22,6 +22,7 @@ import { UsAzMoreInformation } from "~@jii/paths";
 
 import { PageIntro } from "../pages/PageIntro";
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
+import { PageMoreInfoDPR } from "../pages/PageMoreInfoDPR";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
 import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
@@ -38,6 +39,10 @@ export function UsAzRouter() {
         <Route
           path={UsAzMoreInformation.About.path}
           element={<PageMoreInfoAbout />}
+        />
+        <Route
+          path={UsAzMoreInformation.DPR.path}
+          element={<PageMoreInfoDPR />}
         />
         <Route path="*" element={<NotFound />} />
       </Routes>

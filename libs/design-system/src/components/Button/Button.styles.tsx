@@ -37,7 +37,7 @@ const blockStyles = css`
   padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
 `;
 
-const primaryStyles = css`
+export const primaryButtonStyles = css`
   border: none;
   background-color: ${palette.signal.links};
   color: ${palette.white};
@@ -58,7 +58,7 @@ const primaryStyles = css`
   }
 `;
 
-const secondaryStyles = css`
+export const secondaryButtonStyles = css`
   background-color: transparent;
   border: 1px solid ${palette.slate30};
   color: ${palette.text.normal};
@@ -83,7 +83,7 @@ const secondaryStyles = css`
 `;
 
 const borderlessStyles = css`
-  ${secondaryStyles}
+  ${secondaryButtonStyles}
 
   border-color: transparent !important;
 
@@ -93,15 +93,19 @@ const borderlessStyles = css`
   }
 `;
 
-export const BaseButton = styled.button<Pick<ButtonProps, "kind" | "shape">>`
-  ${typography.Sans14}
-
+export const baseButtonStyles = css`
   align-items: center;
   cursor: pointer;
   display: flex;
   justify-content: center;
   transition-duration: ${animation.defaultDurationMs}ms;
   transition-property: color, background-color, border-color;
+`;
+
+export const BaseButton = styled.button<Pick<ButtonProps, "kind" | "shape">>`
+  ${typography.Sans14}
+
+  ${baseButtonStyles};
 
   &:disabled {
     cursor: not-allowed;
@@ -121,9 +125,9 @@ export const BaseButton = styled.button<Pick<ButtonProps, "kind" | "shape">>`
   ${(props) => {
     switch (props.kind) {
       case "primary":
-        return primaryStyles;
+        return primaryButtonStyles;
       case "secondary":
-        return secondaryStyles;
+        return secondaryButtonStyles;
       case "borderless":
         return borderlessStyles;
       default:

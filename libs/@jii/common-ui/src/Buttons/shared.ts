@@ -18,31 +18,38 @@
 import { rem } from "polished";
 import { css } from "styled-components";
 
-import { palette } from "~design-system";
+import { ButtonKind, palette } from "~design-system";
 
 // Custom styles applied on top of design-system defaults
-export const jiiButtonStyles = css`
+export const jiiButtonStyles = css<{ kind?: ButtonKind }>`
   justify-content: space-between;
-  align-items: center;
   gap: 1em;
 
   min-height: ${rem(42)};
   padding: ${rem(10)} ${rem(18)};
   border-radius: ${rem(21)};
 
-  border: 1px solid ${palette.signal.links};
+  ${(props) => {
+    // secondary is also the default if no kind is specified,
+    // which is may not be for button-styled links
+    if (props.kind === "secondary" || !props.kind) {
+      return `
+        border: 1px solid ${palette.signal.links};
 
-  &:hover,
-  &:focus {
-    background-color: ${palette.pine4};
-    color: ${palette.white};
-  }
+        &:hover,
+        &:focus {
+        background-color: ${palette.pine4};
+        color: ${palette.white};
+        }
 
-  &:active,
-  &[aria-expanded="true"] {
-    border-color: ${palette.signal.highlight};
-    color: ${palette.signal.highlight};
-  }
+        &:active,
+        &[aria-expanded="true"] {
+        border-color: ${palette.signal.highlight};
+        color: ${palette.signal.highlight};
+        }`;
+    }
+    return "";
+  }}
 
   & > * {
     flex: 0 1 auto;

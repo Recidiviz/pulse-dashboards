@@ -49,6 +49,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 9 }),
       csedDate: relativeFixtureDate({ months: 11 }),
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -81,6 +82,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ days: 518 }),
       csedDate: relativeFixtureDate({ days: 777 }),
       stateCode: "US_AZ",
+      isDprEligible: true,
     },
   },
   {
@@ -113,6 +115,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ days: 442 }),
       csedDate: relativeFixtureDate({ days: 600 }),
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -145,6 +148,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 20 }),
       csedDate: relativeFixtureDate({ months: 23, days: 9 }),
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -177,6 +181,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 9 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -209,6 +214,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ days: 518 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -241,6 +247,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ days: 442 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -273,6 +280,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ days: 277 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -305,6 +313,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 20 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -379,6 +388,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 8 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -411,6 +421,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 11 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -443,6 +454,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 9 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -475,6 +487,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 6 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -507,6 +520,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 7 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
   {
@@ -539,6 +553,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       sedDate: relativeFixtureDate({ months: 8 }),
       csedDate: null,
       stateCode: "US_AZ",
+      isDprEligible: false,
     },
   },
 ];

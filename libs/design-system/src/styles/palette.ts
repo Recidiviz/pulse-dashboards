@@ -81,6 +81,7 @@ const signal = {
   warning: rgb(180, 45, 45),
   tooltip: rgb(8, 34, 73),
   selected: rgb(55, 151, 205),
+  important: rgb(224, 168, 82),
 };
 
 const profileColorOrder = [

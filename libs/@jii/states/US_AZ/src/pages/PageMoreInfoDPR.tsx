@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,10 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./Button";
-export {
-  baseButtonStyles,
-  primaryButtonStyles,
-  secondaryButtonStyles,
-} from "./Button.styles";
-export * from "./Button.types";
+import { usePageTitle } from "~@jii/common-ui";
+import { useUsAzTranslations } from "~@jii/translation";
+
+import { DefinitionView } from "../components";
+import { DprCopyWrapper } from "../components/DprInfoPage/DprCopyWrapper";
+
+export function PageMoreInfoDPR() {
+  const { t } = useUsAzTranslations();
+  const { heading, body } = t(($) => $.dprInfoPage, { returnObjects: true });
+
+  usePageTitle(heading);
+
+  return (
+    <DefinitionView
+      heading={heading}
+      body={body}
+      CopyWrapperOverride={DprCopyWrapper}
+    />
+  );
+}

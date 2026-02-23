@@ -16,6 +16,7 @@
 // =============================================================================
 
 import aboutInfoPage from "./aboutInfoPage.md?raw";
+import dprInfoPage from "./dprInfoPage.md?raw";
 import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 import onboardingInfoPage from "./onboardingInfoPage.md?raw";
 
@@ -45,7 +46,17 @@ export default {
     body: onboardingInfoPage,
     continueLink: "I understand, take me to the tool",
   },
+  dprInfoPage: {
+    heading:
+      "You may qualify for earlier release through Drug Program Release (DPR). What does that mean?",
+    body: dprInfoPage,
+  },
   importantDates: {
+    dprBanner: {
+      message:
+        "**You may qualify for Drug Program Release (DPR).** See how finishing a Major Program could move up your release dates.",
+      linkText: "Learn more",
+    },
     sectionHeader: "Your Important Dates",
     sectionSubHeader:
       "These are all the dates that Time Comp has calculated for your sentence. **These dates may change** if you get a disciplinary infraction, or get lost time restored. You may also see some dates appear or disappear  depending on if you meet the criteria to qualify for them. Tap “Learn More” to see what you need to do in order to be released on a particular date",

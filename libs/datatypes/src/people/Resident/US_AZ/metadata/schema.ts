@@ -41,4 +41,5 @@ export const usAzResidentMetadataSchema = z.object({
   acisDtpDateRaw: nullishAsUndefined(z.string()),
   trToAddDateRaw: nullishAsUndefined(z.string()),
   addDateRaw: nullishAsUndefined(z.string()),
+  isDprEligible: nullishAsUndefined(z.boolean()),
 });

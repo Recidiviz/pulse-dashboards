@@ -24,6 +24,7 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { DateInfoCard } from "./DateInfoCard";
 import { DateInfoCardSkeleton } from "./DateInfoCardSkeleton";
+import { DPRBanner } from "./DPRBanner";
 import { SectionSubHeader } from "./styles";
 import {
   UsAzDateField,
@@ -37,6 +38,8 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
     return (
       <div>
         <section>
+          {presenter.metadata.isDprEligible && <DPRBanner />}
+
           <HomepageSectionHeading>
             {t(($) => $.importantDates.sectionHeader)}
           </HomepageSectionHeading>

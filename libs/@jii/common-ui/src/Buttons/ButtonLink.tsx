@@ -15,26 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation } from "@recidiviz/design-system";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import {
+  baseButtonStyles,
+  primaryButtonStyles,
+  secondaryButtonStyles,
+} from "~design-system";
 
 import { jiiButtonStyles } from "./shared";
 
 /**
  * It's a React Router Link but it looks like a button
  */
-export const ButtonLink = styled(Link)`
-  // styles borrowed from the design system Button, which does not export them
-  align-items: center;
-  background-color: transparent;
-  color: ${palette.signal.links};
+export const ButtonLink = styled(Link)<{ kind?: "primary" | "secondary" }>`
+  ${baseButtonStyles};
+
+  ${(props) => {
+    switch (props.kind) {
+      case "primary":
+        return primaryButtonStyles;
+      case "secondary":
+      default:
+        return secondaryButtonStyles;
+    }
+  }}
+
   display: inline-flex;
   text-decoration: none;
-  transition-duration: ${animation.defaultDurationMs}ms;
-  transition-property: color, background-color, border-color;
 
   ${jiiButtonStyles}
 `;
