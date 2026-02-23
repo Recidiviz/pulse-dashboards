@@ -54,13 +54,13 @@ export const ImportantDatesCopyWrapper = styled(CopyWrapper)`
     :first-child {
       margin-top: 0;
     }
-    
+
     :last-child {
       margin-bottom: 0;
     }
-    
   }
 
   h3 {
-  ${dateInfoSubheadStyles}
+    ${dateInfoSubheadStyles}
+  }
 `;

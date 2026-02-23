@@ -87,10 +87,8 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
 
 function usePresenter() {
   const metadata = useResidentMetadata("US_AZ");
-  const { t } = useUsAzTranslations();
-  const markdownContent = t(($) => $.importantDates.moreInfo.body);
 
-  return new UsAzImportantDatesPresenter(metadata, markdownContent);
+  return new UsAzImportantDatesPresenter(metadata);
 }
 
 export const UsAzImportantDates = withPresenterManager({

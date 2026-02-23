@@ -19,8 +19,6 @@ import { ResidentMetadata } from "~datatypes";
 
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
-const mockMarkdownContent = `## H0\n## H1\n## H2\n## H3\n## H4\n## H5\n## H6`;
-
 const mockAzResidentMetadata: ResidentMetadata<"US_AZ"> = {
   stateCode: "US_AZ",
   acisTprDateRaw: "2024-03-15",
@@ -31,7 +29,7 @@ const mockAzResidentMetadata: ResidentMetadata<"US_AZ"> = {
   csedDateRaw: undefined,
 };
 
-const mockAzResidentAllNullDates: ResidentMetadata<"US_AZ"> = {
+const mockAzMetadataAllNullDates: ResidentMetadata<"US_AZ"> = {
   stateCode: "US_AZ",
   acisTprDateRaw: undefined,
   csbdDateRaw: undefined,
@@ -40,13 +38,23 @@ const mockAzResidentAllNullDates: ResidentMetadata<"US_AZ"> = {
   csedDateRaw: undefined,
 };
 
+// not exactly realistic but lets us test some behavior against all possible dates
+const mockAzMetadataWithAllDates: ResidentMetadata<"US_AZ"> = {
+  stateCode: "US_AZ",
+  acisTprDateRaw: "2024-03-15",
+  acisDtpDateRaw: "2024-03-15",
+  csbdDateRaw: "2024-01-10",
+  trToAddDateRaw: "2024-01-10",
+  ercdDateRaw: "2024-06-01",
+  addDateRaw: "2024-06-01",
+  sedDateRaw: "2024-12-01",
+  csedDateRaw: "2024-12-01",
+};
+
 describe("UsAzImportantDatesPresenter", () => {
   describe("dateEntries", () => {
     it("sorts dates by earliest first and highlights acisTprDate", () => {
-      const presenter = new UsAzImportantDatesPresenter(
-        mockAzResidentMetadata,
-        mockMarkdownContent,
-      );
+      const presenter = new UsAzImportantDatesPresenter(mockAzResidentMetadata);
       const entries = presenter.dateEntries;
 
       // Check sorting order
@@ -68,8 +76,7 @@ describe("UsAzImportantDatesPresenter", () => {
 
     it("handles all null dates correctly", () => {
       const presenter = new UsAzImportantDatesPresenter(
-        mockAzResidentAllNullDates,
-        mockMarkdownContent,
+        mockAzMetadataAllNullDates,
       );
       const entries = presenter.dateEntries;
 
@@ -78,16 +85,44 @@ describe("UsAzImportantDatesPresenter", () => {
 
     it("assigns infoPageHash to each date entry", () => {
       const presenter = new UsAzImportantDatesPresenter(
-        mockAzResidentMetadata,
-        mockMarkdownContent,
+        mockAzMetadataWithAllDates,
       );
       const entries = presenter.dateEntries;
 
-      // Verify all entries have an infoPageHash
-      entries.forEach((entry) => {
-        expect(entry.infoPageHash).toBeTruthy();
-        expect(typeof entry.infoPageHash).toBe("string");
-      });
+      // Verify all entries have the right infoPageHash
+      expect(entries.map(({ key, infoPageHash }) => ({ key, infoPageHash })))
+        .toMatchInlineSnapshot(`
+          [
+            {
+              "infoPageHash": "csbdDateRaw-trToAddDateRaw",
+              "key": "csbdDateRaw",
+            },
+            {
+              "infoPageHash": "csbdDateRaw-trToAddDateRaw",
+              "key": "trToAddDateRaw",
+            },
+            {
+              "infoPageHash": "acisDtpDateRaw",
+              "key": "acisDtpDateRaw",
+            },
+            {
+              "infoPageHash": "ercdDateRaw-addDateRaw",
+              "key": "ercdDateRaw",
+            },
+            {
+              "infoPageHash": "ercdDateRaw-addDateRaw",
+              "key": "addDateRaw",
+            },
+            {
+              "infoPageHash": "sedDateRaw",
+              "key": "sedDateRaw",
+            },
+            {
+              "infoPageHash": "csedDateRaw",
+              "key": "csedDateRaw",
+            },
+          ]
+        `);
     });
   });
 });

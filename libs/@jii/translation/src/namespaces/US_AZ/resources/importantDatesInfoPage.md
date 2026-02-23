@@ -4,7 +4,7 @@ There are two options.
 
 <section class="tpr">
 
-### Standard Transition Program
+<h3 id="acisTprDateRaw">Standard Transition Program</h3>
 
 #### What does this mean?
 
@@ -41,7 +41,7 @@ If you do not have one of those convictions, then you may be able to qualify for
 
 With STP, you begin community supervision early. During the Transition Release period (the 90 days until you reach your next release date), you will need to regularly attend a program in the community, and report to a supervision officer.
 
-### Drug Transition Program (DTP)
+<h3 id="acisDtpDateRaw">Drug Transition Program (DTP)</h3>
 
 #### What does this mean?
 
@@ -82,7 +82,7 @@ With DTP, you begin community supervision early. During the Transition Release p
 
 </section>
 
-## Community Supervision Begin Date (CSBD) / Temporary Release to Absolute Discharge Date (TR to ADD)
+<h2 id="csbdDateRaw-trToAddDateRaw">Community Supervision Begin Date (CSBD) / Temporary Release to Absolute Discharge Date (TR to ADD)</h2>
 
 ### What does this mean?
 
@@ -121,7 +121,7 @@ In order to be released on your CSBD or TR to ADD, you must meet these requireme
 
 At CSBD, you move to supervision in the community, reporting to a Supervision Officer. If you don't meet requirements (e.g., refuse to sign, lack a home plan), you may remain in prison past CSBD and serve part of your supervision time in custody.
 
-## Earned Release Credit Date (ERCD) / Absolute Discharge Date (ADD)
+<h2 id="ercdDateRaw-addDateRaw">Earned Release Credit Date (ERCD) / Absolute Discharge Date (ADD)</h2>
 
 ### What does this mean?
 
@@ -152,7 +152,7 @@ Most people sentenced under Truth in Sentencing are eligible to earn 1 day of Ea
 
 If released at ERCD, you serve the rest of your sentence (15%) on Community Supervision in the community. Conditions of supervision apply, including reporting to an officer and possibly electronic monitoring.
 
-## Sentence Expiration Date (SED; 100% date)
+<h2 id="sedDateRaw">Sentence Expiration Date (SED; 100% date)</h2>
 
 ### What does this mean?
 
@@ -173,7 +173,7 @@ If you are still in prison on your SED, you can be released on this date as long
 
 If your sentence has a term of Community Supervision or Probation at SED, being released on your SED requires that you sign and agree to Conditions of Supervision. You will then begin serving that term of supervision, which will end on your CSED. If you do not sign your conditions of supervision, you will remain in prison until your CSED.
 
-## Community Supervision End Date (CSED; 115% date)
+<h2 id="csedDateRaw">Community Supervision End Date (CSED; 115% date)</h2>
 
 ### What does this mean?
 

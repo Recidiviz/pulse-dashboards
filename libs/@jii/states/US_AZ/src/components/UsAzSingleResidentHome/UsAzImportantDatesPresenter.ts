@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import { parseISO } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
-import { extractHeadingIds } from "~@jii/translation";
 import { ResidentMetadata } from "~datatypes";
 
 // Shared constant for all US_AZ date field names that exist on metadata
@@ -43,13 +43,7 @@ export interface DateEntry {
 }
 
 export class UsAzImportantDatesPresenter {
-  private readonly headingIds: string[];
-
-  constructor(
-    public readonly metadata: ResidentMetadata<"US_AZ">,
-    markdownContent: string,
-  ) {
-    this.headingIds = extractHeadingIds(markdownContent);
+  constructor(public readonly metadata: ResidentMetadata<"US_AZ">) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
 
@@ -94,18 +88,22 @@ export class UsAzImportantDatesPresenter {
   }
 
   getInfoPageHashForDateKey(dateKey: UsAzDateField): string {
-    const keyToHeadingIndex: Record<string, number> = {
-      acisTprDateRaw: 1,
-      acisDtpDateRaw: 2,
-      csbdDateRaw: 3,
-      trToAddDateRaw: 3,
-      ercdDateRaw: 4,
-      addDateRaw: 4,
-      sedDateRaw: 5,
-      csedDateRaw: 6,
-    };
-
-    const headingIndex = keyToHeadingIndex[dateKey];
-    return this.headingIds[headingIndex] || "";
+    //  these headings have been explicitly added to the Markdown document
+    // for this page. You need to ensure they remain in sync if anything changes!
+    switch (dateKey) {
+      case "acisTprDateRaw":
+      case "acisDtpDateRaw":
+      case "sedDateRaw":
+      case "csedDateRaw":
+        return dateKey;
+      case "csbdDateRaw":
+      case "trToAddDateRaw":
+        return "csbdDateRaw-trToAddDateRaw";
+      case "ercdDateRaw":
+      case "addDateRaw":
+        return "ercdDateRaw-addDateRaw";
+      default:
+        assertNever(dateKey);
+    }
   }
 }
