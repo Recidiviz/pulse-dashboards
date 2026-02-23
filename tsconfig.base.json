@@ -40,6 +40,7 @@
       "~@jii-texting/server/*": ["apps/@jii-texting/server/src/*"],
       "~@jii-texting/utils": ["libs/@jii-texting/utils/src/index.ts"],
       "~@jii-texting/utils/*": ["libs/@jii-texting/utils/src/*"],
+      "~@jii/US_AR": ["libs/@jii/states/US_AR/src/index.ts"],
       "~@jii/US_AZ": ["libs/@jii/states/US_AZ/src/index.ts"],
       "~@jii/US_CO": ["libs/@jii/states/US_CO/src/index.ts"],
       "~@jii/US_ID": ["libs/@jii/states/US_ID/src/index.ts"],

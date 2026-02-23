@@ -27,6 +27,7 @@ test("mock user profile in offline mode", () => {
   expect(handler.userProfile).toMatchInlineSnapshot(`
     {
       "allowedStates": [
+        "US_AR",
         "US_AZ",
         "US_CO",
         "US_ID",

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ResidentsConfig, StateCode } from "./types";
+import { usArResidentsConfig } from "./US_AR/residents/residentsConfig";
 import { usAzResidentsConfig } from "./US_AZ/residents/residentsConfig";
 import { usCoResidentsConfig } from "./US_CO/residents/residentsConfig";
 import { usIdResidentsConfig } from "./US_ID/residents/config";
@@ -28,6 +29,7 @@ import { usTnResidentsConfig } from "./US_TN/residents/residentsConfig";
  * All configuration objects for the residents application are locally defined.
  */
 export const residentsConfigByState: Record<StateCode, ResidentsConfig> = {
+  US_AR: usArResidentsConfig,
   US_AZ: usAzResidentsConfig,
   US_CO: usCoResidentsConfig,
   US_ID: usIdResidentsConfig,
