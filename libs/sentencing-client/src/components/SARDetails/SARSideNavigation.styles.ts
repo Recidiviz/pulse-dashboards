@@ -23,7 +23,10 @@ export const SideContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  position: fixed;
+  position: sticky;
+  top: 10.5rem;
+  align-self: flex-start;
+  flex-shrink: 0;
 `;
 
 export const AutosaveMessage = styled.div`
@@ -40,26 +43,24 @@ export const AutosaveMessage = styled.div`
 `;
 
 export const SideNavigationContainer = styled.div`
-  position: sticky;
-  top: 1rem; /* Account for progress bar height */
   width: 17rem;
   height: fit-content;
-  max-height: calc(100vh - 1rem); /* Subtract progress bar height */
+  max-height: calc(100vh - 15rem); /* Viewport minus sticky top offset, autosave message, and padding */
   gap: 1rem;
   background: ${palette.white};
   border: 1px solid ${palette.slate10};
   border-radius: 0.625rem;
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
-  overflow: hidden;
+  overflow-y: auto;
 `;
 
 export const NavigationList = styled.nav`
-  padding: 2rem 1.5rem 2rem 1.5rem;
+  padding: 2rem 1rem;
   display: flex;
   align-items: center;
   align-self: stretch;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 `;
 
 export const NavigationItem = styled.button<{ isActive: boolean }>`

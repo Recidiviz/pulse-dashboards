@@ -20,8 +20,8 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 export const PageContainer = styled.div`
-  width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   background-color: ${palette.marble1};
@@ -37,7 +37,7 @@ export const ContentLayout = styled.div`
   margin-top: 10.5rem; /* Add space for fixed header (1rem progress bar + ~9.5rem header) */
   background: ${palette.marble3};
   z-index: 0;
-  position: sticky;
+  position: relative;
 `;
 
 export const SectionContainer = styled.div`
@@ -45,8 +45,6 @@ export const SectionContainer = styled.div`
   flex-direction: column;
   width: 50rem;
   height: fit-content;
-  left: 26rem;
-  position: sticky;
   padding: 1.5rem;
   gap: 1.5rem;
 `;
@@ -60,8 +58,6 @@ export const MainContent = styled.div`
   border-radius: 0.625rem;
   border: 1px solid ${palette.slate10};
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
-  left: 26rem;
-  position: sticky;
   padding-top: 2rem;
   padding-bottom: 2rem;
 `;
