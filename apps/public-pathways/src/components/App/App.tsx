@@ -60,8 +60,8 @@ export function App() {
         <StyledApp>
           <SentryRoutes>
             <Route path="/" element={<PageRoot />}>
-              <Route index element={<Navigate to="/system/prison" replace />} />
-              <Route path="/system" element={<PublicPathwaysLayout />}>
+              <Route index element={<Navigate to="/prison" replace />} />
+              <Route element={<PublicPathwaysLayout />}>
                 <Route path="methodology" element={<PageMethodology />} />
                 <Route path=":pageId" element={<PagePublicPathways />} />
               </Route>

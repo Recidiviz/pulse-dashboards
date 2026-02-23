@@ -15,6 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export function PagePublicPathways() {
-  return <>Hello World!</>;
-}
+import { observer } from "mobx-react-lite";
+
+import { usePageContent } from "~shared-pathways";
+
+import { useRootStore } from "../StoreProvider";
+import { PageContainer } from "./styles";
+
+export const PagePublicPathways = observer(function PagePublicPathways() {
+  const { currentTenantId, page } = useRootStore();
+  const pageContent = usePageContent(currentTenantId, page);
+  // eslint-disable-next-line no-console
+  console.log(pageContent);
+
+  return <PageContainer>Hello World!</PageContainer>;
+});
