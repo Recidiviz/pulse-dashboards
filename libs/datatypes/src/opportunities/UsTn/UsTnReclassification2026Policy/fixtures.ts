@@ -44,6 +44,7 @@ export const usTnReclassification2026PolicyFixtures = {
       statusAtHearingSeg: "GEN",
       q1Score: 2,
       q2Score: 10,
+      q2CurrentOffenseDate: "2022-06-21",
       q3Score: -3,
       q4Score: 2,
       q5Score: -1,
@@ -70,6 +71,7 @@ export const usTnReclassification2026PolicyFixtures = {
           incidentTimePeriod: "0-60Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "ABC",
             },
@@ -154,10 +156,12 @@ export const usTnReclassification2026PolicyFixtures = {
           incidentTimePeriod: "0-6Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "ABC",
             },
             {
+              incidentClass: "R",
               incidentDate: "2022-02-11",
               incidentTypeCode: "XYZ",
             },
@@ -168,10 +172,12 @@ export const usTnReclassification2026PolicyFixtures = {
           incidentTimePeriod: "24-48Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2021-01-08",
               incidentTypeCode: "RFV",
             },
             {
+              incidentClass: "R",
               incidentDate: "2020-02-11",
               incidentTypeCode: "IKM",
             },
@@ -184,6 +190,7 @@ export const usTnReclassification2026PolicyFixtures = {
           incidentTimePeriod: "6-12Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "DEF",
             },
@@ -196,6 +203,7 @@ export const usTnReclassification2026PolicyFixtures = {
           incidentTimePeriod: "12-24Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "HIJ",
             },

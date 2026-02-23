@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import {
   coverSheetInformationSchema,
@@ -48,6 +49,7 @@ export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
       q7Score: z.coerce.number().nullable(),
       q1Notes,
       q2Notes,
+      q2CurrentOffenseDate: dateStringSchema.optional(),
       q3Notes: multiIncidentPeriodReportSchema,
       q4Notes: multiIncidentPeriodReportSchema,
       q5Notes: multiIncidentPeriodReportSchema,

@@ -61,6 +61,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
           incidentTimePeriod: "0-60Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "ABC",
             },
@@ -129,10 +130,12 @@ export const usTnInitialClassification2026PolicyFixtures = {
           incidentTimePeriod: "0-60Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "ABC",
             },
             {
+              incidentClass: "R",
               incidentDate: "2022-02-11",
               incidentTypeCode: "XYZ",
             },
@@ -145,6 +148,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
           incidentTimePeriod: "0-60Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "DEF",
             },
@@ -157,6 +161,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
           incidentTimePeriod: "0-60Months",
           incidents: [
             {
+              incidentClass: "Q",
               incidentDate: "2023-01-08",
               incidentTypeCode: "HIJ",
             },

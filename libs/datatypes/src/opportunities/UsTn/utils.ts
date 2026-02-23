@@ -21,6 +21,7 @@ import { z } from "zod";
 import { dateStringSchema } from "../../utils/zod";
 
 const UsTnIncidentSchema = z.object({
+  incidentClass: z.string(),
   incidentDate: dateStringSchema,
   incidentTypeCode: z.string(),
 });
@@ -86,7 +87,7 @@ const formatIncidentReportPeriod = (
 ) => {
   return period.incidents
     .map((i) => {
-      return `${padding}${i.incidentTypeCode} on ${i.incidentDate.toLocaleDateString()}`;
+      return `${padding}${i.incidentTypeCode} (Class ${i.incidentClass}) on ${i.incidentDate.toLocaleDateString()}`;
     })
     .join(", ");
 };

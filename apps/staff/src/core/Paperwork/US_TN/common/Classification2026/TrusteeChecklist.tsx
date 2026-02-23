@@ -217,7 +217,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
       <PrintablePage stretchable hidden={!display} watermark="Draft">
         <TrusteeFormPage>
           <Header>
-            TENNESSEE CLASSIFICATION INSTRUMENT: TRUSTEE/ANNEX ASSESSMENT
+            TENNESSEE CLASSIFICATION INSTRUMENT: TRUSTEE ASSESSMENT
           </Header>
           <div>
             <p>

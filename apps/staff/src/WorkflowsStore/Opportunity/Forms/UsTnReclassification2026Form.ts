@@ -32,6 +32,7 @@ import {
 } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnReclassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
+import { formatWorkflowsDate } from "../../../utils";
 import {
   UsTnAnnualReclassification2026Opportunity,
   UsTnSeriousMisconductUpgradeOpportunity,
@@ -148,6 +149,16 @@ export class UsTnReclassification2026Form extends FormBase<
     const q1bNotes =
       formInformation.q1Notes.listPriorViolentTdocConvictions60Months;
 
+    const q2Notes = formInformation.q2CurrentOffenseDate
+      ? formInformation.q2Notes
+          .split(",")
+          .map(
+            (o) =>
+              `${o} on ${formatWorkflowsDate(formInformation.q2CurrentOffenseDate)}`,
+          )
+          .join(",")
+      : formInformation.q2Notes;
+
     const q3NotesFormatted = formatMultiplePeriodReports(
       formInformation.q3Notes,
     );
@@ -184,6 +195,7 @@ export class UsTnReclassification2026Form extends FormBase<
       q7Selection,
       q1aNotes,
       q1bNotes,
+      q2Notes,
       q3NotesFormatted,
       q4NotesFormatted,
       q5NotesFormatted,
