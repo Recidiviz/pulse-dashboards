@@ -47,7 +47,6 @@ export const clientImportSchema = z.object({
   pseudonymized_id: z.string(),
   display_person_external_id: z.string(),
   person_name: nameSchema,
-  officer_id: z.string(),
   supervision_type: z.string(),
 });
 
