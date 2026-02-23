@@ -239,17 +239,19 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   private get sectionFieldCounts(): { completed: number; total: number } {
-    const counts: Record<ProgressSection, { completed: number; total: number }> =
-      {
-        [SARSection.CASE_INFORMATION]: this.caseInfoFieldCounts,
-        [SARSection.KEY_CONSIDERATIONS]: this.keyConsiderationsFieldCounts,
-        [SARSection.DEFENDANTS_VERSION]: this.defendantVersionFieldCounts,
-        [SARSection.VICTIM_IMPACT]: this.victimImpactFieldCounts,
-        [SARSection.OFFENDER_ASSESSMENT]: this.offenderAssessmentFieldCounts,
-        [SARSection.PRIOR_TREATMENT_HISTORY]:
-          this.priorTreatmentHistoryFieldCounts,
-        [SARSection.RECOMMENDATION]: this.recommendationFieldCounts,
-      };
+    const counts: Record<
+      ProgressSection,
+      { completed: number; total: number }
+    > = {
+      [SARSection.CASE_INFORMATION]: this.caseInfoFieldCounts,
+      [SARSection.KEY_CONSIDERATIONS]: this.keyConsiderationsFieldCounts,
+      [SARSection.DEFENDANTS_VERSION]: this.defendantVersionFieldCounts,
+      [SARSection.VICTIM_IMPACT]: this.victimImpactFieldCounts,
+      [SARSection.OFFENDER_ASSESSMENT]: this.offenderAssessmentFieldCounts,
+      [SARSection.PRIOR_TREATMENT_HISTORY]:
+        this.priorTreatmentHistoryFieldCounts,
+      [SARSection.RECOMMENDATION]: this.recommendationFieldCounts,
+    };
     return Object.values(counts).reduce(
       (acc, c) => ({
         completed: acc.completed + c.completed,
@@ -360,14 +362,33 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /**
-   * Calculate SAR status based on completion of required fields
-   * Returns: "Complete" | "InProgress" | "NotYetStarted"
+   * Status to persist on any update. Complete when all required fields are
+   * filled, InProgress otherwise (we never send NotYetStarted — once any
+   * edit is made the SAR is always at least InProgress).
    */
-  get calculatedStatus(): "Complete" | "InProgress" | "NotYetStarted" {
-    const progress = this.overallProgress;
-    if (progress === 100) return "Complete";
-    if (progress > 0) return "InProgress";
-    return "NotYetStarted";
+  private get statusForUpdate(): "Complete" | "InProgress" {
+    return this.overallProgress === 100 ? "Complete" : "InProgress";
+  }
+
+  /**
+   * Updates the SAR status in both the detail record and the dashboard list.
+   * Must be called inside a runInAction block.
+   */
+  private updateLocalStatus(
+    status: "Complete" | "InProgress" | "NotYetStarted",
+  ): void {
+    if (this.SARData) {
+      this.SARData.status = status;
+    }
+    // Keep the dashboard list in sync so it reflects immediately without a refresh
+    const sarList =
+      this.sentencingStore.staffStore.staffInfo?.sentencingAssessmentReports;
+    if (sarList) {
+      const sarInList = sarList.find((sar) => sar.id === this.sarId);
+      if (sarInList) {
+        sarInList.status = status;
+      }
+    }
   }
 
   /** Check if a specific charge has all required fields filled */
@@ -392,7 +413,7 @@ export class SARDetailsPresenter implements Hydratable {
     // Persist to backend with updated status
     const updates: Partial<MutableSARAttributes> = {
       defendantDeclinedToParticipate: value,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
       this.SARData.id,
@@ -401,9 +422,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -442,7 +461,7 @@ export class SARDetailsPresenter implements Hydratable {
             ? moment(c.sentencingDate).toDate()
             : null,
         })),
-        status: this.calculatedStatus,
+        status: this.statusForUpdate,
       };
       await this.sentencingStore.apiClient.updateSARDetails(
         this.SARData.id,
@@ -451,9 +470,7 @@ export class SARDetailsPresenter implements Hydratable {
 
       // Update local status after successful save
       runInAction(() => {
-        if (this.SARData) {
-          this.SARData.status = this.calculatedStatus;
-        }
+        this.updateLocalStatus(this.statusForUpdate);
       });
     } catch (error) {
       // Revert local change on error
@@ -479,7 +496,7 @@ export class SARDetailsPresenter implements Hydratable {
     // Persist to backend with updated status
     const updates: Partial<MutableSARAttributes> = {
       needsToBeAddressed: values as SAR["needsToBeAddressed"],
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
       this.SARData.id,
@@ -488,9 +505,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -506,7 +521,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       otherNeedToBeAddressed: value,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
       this.SARData.id,
@@ -515,9 +530,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -533,7 +546,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       mitigatingFactors: values as SAR["mitigatingFactors"],
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
       this.SARData.id,
@@ -542,9 +555,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -560,7 +571,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       otherMitigatingFactor: value,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
       this.SARData.id,
@@ -569,9 +580,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -607,7 +616,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       [fieldName]: value,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
 
     // Only include metadata if it exists to avoid validation errors
@@ -621,9 +630,7 @@ export class SARDetailsPresenter implements Hydratable {
     );
 
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -708,6 +715,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       employedAtOffense: value,
+      status: this.statusForUpdate,
     };
 
     // Only include metadata if it exists to avoid validation errors
@@ -716,6 +724,11 @@ export class SARDetailsPresenter implements Hydratable {
     }
 
     await this.sentencingStore.apiClient.updateSARDetails(sarId, updates);
+
+    // Update local status after successful save
+    runInAction(() => {
+      this.updateLocalStatus(this.statusForUpdate);
+    });
   }
 
   /** Update level of education */
@@ -730,7 +743,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       levelOfEducation: value ?? undefined,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
 
     await this.sentencingStore.apiClient.updateSARDetails(
@@ -739,9 +752,7 @@ export class SARDetailsPresenter implements Hydratable {
     );
 
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -757,7 +768,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       fatherName: value,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
 
     await this.sentencingStore.apiClient.updateSARDetails(
@@ -766,9 +777,7 @@ export class SARDetailsPresenter implements Hydratable {
     );
 
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -784,7 +793,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       motherName: value,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
 
     await this.sentencingStore.apiClient.updateSARDetails(
@@ -793,9 +802,7 @@ export class SARDetailsPresenter implements Hydratable {
     );
 
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -811,7 +818,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       guardianName: value,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     };
 
     await this.sentencingStore.apiClient.updateSARDetails(
@@ -820,9 +827,7 @@ export class SARDetailsPresenter implements Hydratable {
     );
 
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -972,14 +977,12 @@ export class SARDetailsPresenter implements Hydratable {
     // Persist to backend with updated status
     await this.sentencingStore.apiClient.updateSARDetails(this.SARData.id, {
       metadata: updatedMetadata,
-      status: this.calculatedStatus,
+      status: this.statusForUpdate,
     } as Partial<MutableSARAttributes>);
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.status = this.calculatedStatus;
-      }
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 

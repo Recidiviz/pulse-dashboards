@@ -274,7 +274,7 @@ async function addSARClientsAndReports(
         staff: {
           connect: { pseudonymizedId: staff.pseudonymizedId },
         },
-        status: faker.helpers.enumValue(CaseStatus),
+        status: CaseStatus.NotYetStarted,
         requestingJudgeName: faker.person.fullName(),
         dateRequested: faker.date.recent(),
         dueDate: faker.date.future(),
