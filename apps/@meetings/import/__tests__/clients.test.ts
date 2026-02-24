@@ -66,7 +66,7 @@ describe("import client data", () => {
           surname: fakeClient.surname,
           name_suffix: fakeClient.suffix,
         }),
-        officer_id: newStaff.stableStaffExternalId,
+        officer_emails: [newStaff.email],
         supervision_type: "PAROLE",
       },
       // new client
@@ -84,19 +84,35 @@ describe("import client data", () => {
           surname: faker.person.lastName(),
           name_suffix: faker.person.suffix(),
         }),
-        current_address: faker.location.streetAddress(),
-        officer_id: fakeStaff.stableStaffExternalId,
+        officer_emails: [fakeStaff.email, newStaff.email],
+        supervision_type: "GENERAL",
+      },
+      // client with no staff
+      {
+        state_code: StateCode.US_NE,
+        person_id: "3",
+        stable_person_external_id: "client-ext-3",
+        stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
+        display_person_external_id: "new-client-display-ext-id-3",
+        pseudonymized_id: "new-client-pid-3",
+        person_name: JSON.stringify({
+          given_names: faker.person.firstName(),
+          middle_names: faker.person.firstName(),
+          surname: faker.person.lastName(),
+          name_suffix: faker.person.suffix(),
+        }),
+        officer_emails: [],
         supervision_type: "GENERAL",
       },
     ]);
 
     await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
-    // Check that the new case was created
+    // Check that the new client was created
     const dbClients = await testPrismaClient.client.findMany();
 
-    // There should only be two clients in the database - the new one and the updated existing one
-    expect(dbClients).toHaveLength(2);
+    // There should only be three clients in the database - the two new ones and the updated existing one
+    expect(dbClients).toHaveLength(3);
 
     expect(dbClients).toEqual([
       expect.objectContaining({
@@ -106,6 +122,7 @@ describe("import client data", () => {
         pseudonymizedId: fakeClient.pseudonymizedId,
         displayPersonExternalId: fakeClient.displayPersonExternalId,
         givenNames: "New Name",
+        staffEmails: [newStaff.email],
         isActive: true,
       }),
       expect.objectContaining({
@@ -114,6 +131,17 @@ describe("import client data", () => {
         stablePersonExternalIdType: "client-ext-type-1",
         pseudonymizedId: "new-client-pid",
         displayPersonExternalId: "new-client-display-ext-id",
+        staffEmails: [fakeStaff.email, newStaff.email],
+        isActive: true,
+        supervisionType: "GENERAL",
+      }),
+      expect.objectContaining({
+        personId: BigInt(3),
+        stablePersonExternalId: "client-ext-3",
+        stablePersonExternalIdType: "client-ext-type-1",
+        pseudonymizedId: "new-client-pid-3",
+        displayPersonExternalId: "new-client-display-ext-id-3",
+        staffEmails: [],
         isActive: true,
         supervisionType: "GENERAL",
       }),
@@ -154,7 +182,7 @@ describe("import client data", () => {
           surname: fakeClient.surname,
           name_suffix: fakeClient.suffix,
         }),
-        officer_id: fakeStaff.stableStaffExternalId,
+        officer_emails: [fakeStaff.email],
         supervision_type: "PAROLE",
       },
     ]);

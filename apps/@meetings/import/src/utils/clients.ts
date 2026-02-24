@@ -65,6 +65,7 @@ export async function transformAndLoadClientData(
       surname: clientData.person_name.surname,
       suffix: clientData.person_name.name_suffix,
       supervisionType: clientData.supervision_type,
+      staffEmails: clientData.officer_emails ?? ([] as string[]),
       isActive: true,
     } satisfies ClientCreateInput & BulkUpdateEntry;
 

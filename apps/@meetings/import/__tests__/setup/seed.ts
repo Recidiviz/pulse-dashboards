@@ -47,6 +47,7 @@ export const fakeClient = {
   surname: faker.person.lastName(),
   suffix: faker.person.suffix(),
   supervisionType: "PAROLE",
+  staffEmails: [],
 } satisfies ClientCreateInput;
 
 export const fakeResident = {

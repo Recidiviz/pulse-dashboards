@@ -18,7 +18,7 @@
 import { type PrismaClient } from "~@meetings/prisma/client";
 
 export type BulkUpdateEntry = {
-  [key: string]: number | string | boolean | Date | null | bigint;
+  [key: string]: number | string | boolean | Date | null | bigint | string[];
 };
 export type BulkUpdateEntries = BulkUpdateEntry[];
 
@@ -62,6 +62,16 @@ export async function bulkUpdate(
         ) {
           // For enum columns, we don't need to wrap the value in quotes
           return `'${value}'::"${PRISMA_COLUMN_NAME_TO_ENUM_NAME[field]}"`;
+        } else if (Array.isArray(value)) {
+          // Only string arrays are supported; other element types require a
+          // different PostgreSQL cast and should be added explicitly if needed.
+          if (value.some((v) => typeof v !== "string")) {
+            throw new Error(
+              `bulkUpdate only supports string[] arrays, got non-string element in field "${field}"`,
+            );
+          }
+          const escaped = value.map((v) => `'${v.replace(/'/g, "''")}'`);
+          return `ARRAY[${escaped.join(", ")}]::text[]`;
         } else if (typeof value === "string") {
           // Handle strings and escape single quotes
           return `'${value.replace(/'/g, "''")}'`;
