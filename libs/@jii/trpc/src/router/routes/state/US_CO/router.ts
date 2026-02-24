@@ -56,7 +56,9 @@ export const usCoRouter = router({
       const { pseudonymizedId, programId, title, isStarred } = input;
 
       if (isStarred) {
-        // Add starred program
+        // Add starred program. We use upsert here in case the frontend
+        // is out of sync with the backend: if the user tries to add a
+        // star that already exists, that's fine.
         await ctx.prisma.usCoStarredProgram.upsert({
           where: {
             pseudonymizedId_programId_title: {
@@ -73,14 +75,14 @@ export const usCoRouter = router({
           },
         });
       } else {
-        // Remove starred program
-        await ctx.prisma.usCoStarredProgram.delete({
+        // deleteMany behaves like the upsert version of delete:
+        // It'll delete the row if it exists, but it won't complain
+        // if it's already been deleted.
+        await ctx.prisma.usCoStarredProgram.deleteMany({
           where: {
-            pseudonymizedId_programId_title: {
-              pseudonymizedId,
-              programId,
-              title,
-            },
+            pseudonymizedId,
+            programId,
+            title,
           },
         });
       }
