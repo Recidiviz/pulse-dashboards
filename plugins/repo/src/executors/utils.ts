@@ -114,17 +114,25 @@ export function decryptSopsFile(filePath: string): DecryptedEnv {
  * Get SOPS file paths for a task in priority order (mirroring Nx's env file behavior)
  * Returns paths from lowest to highest priority, so later files override earlier ones
  *
- * Example: target="test-echo", configuration="staging"
+ * Example: target="test-echo", configuration="staging", suffix=".enc.yaml"
  * Returns (in order):
  *   - env.enc.yaml (base)
  *   - env.test-echo.enc.yaml (target-specific)
  *   - env.staging.enc.yaml (configuration-specific)
  *   - env.test-echo.staging.enc.yaml (target+configuration-specific)
+ *
+ * Example: target="test-echo", configuration="staging", suffix=".contractor.enc.yaml"
+ * Returns (in order):
+ *   - env.contractor.enc.yaml (base)
+ *   - env.test-echo.contractor.enc.yaml (target-specific)
+ *   - env.staging.contractor.enc.yaml (configuration-specific)
+ *   - env.test-echo.staging.contractor.enc.yaml (target+configuration-specific)
  */
 export function getSopsPathsForTask(
   projectRoot: string,
   target: string,
   configuration?: string,
+  suffix = ".enc.yaml",
 ): string[] {
   const identifiers: string[] = [];
 
@@ -146,7 +154,7 @@ export function getSopsPathsForTask(
   // Check in reverse order so we return lowest priority first
   for (let i = identifiers.length - 1; i >= 0; i--) {
     const identifier = identifiers[i];
-    const fileName = identifier ? `env.${identifier}.enc.yaml` : "env.enc.yaml";
+    const fileName = identifier ? `env.${identifier}${suffix}` : `env${suffix}`;
     const filePath = join(projectDir, fileName);
 
     if (existsSync(filePath)) {

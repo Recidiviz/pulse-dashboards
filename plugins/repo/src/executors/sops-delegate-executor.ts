@@ -194,6 +194,7 @@ export default async function runSopsDelegateExecutor(
     sourceProjectRoot,
     unprefixedTarget,
     configurationName,
+    process.env["NX_SOPS_USE_CONTRACTOR_ENV"] ? ".contractor.enc.yaml" : ".enc.yaml",
   );
 
   if (sopsFilePaths.length === 0) {
