@@ -147,6 +147,12 @@ type TasksTrackingMetadata = {
   selectedCategory: SupervisionTaskCategory;
 };
 
+type TaskSnoozedMetadata = {
+  justiceInvolvedPersonId: string;
+  taskType: SupervisionTaskType;
+  snoozeForDays?: number;
+};
+
 type TableViewChangedMetadata = {
   newViewType: "table" | "list";
   oldViewType: "table" | "list";
@@ -590,6 +596,10 @@ export default class AnalyticsStore {
 
   trackTaskPreviewed(metadata: TasksTrackingMetadata): void {
     this.track("frontend.tasks_previewed", metadata);
+  }
+
+  trackTaskSnoozed(metadata: TaskSnoozedMetadata): void {
+    this.track("frontend.task_snoozed", metadata);
   }
 
   trackTaskHeaderToggled(title: string): void {

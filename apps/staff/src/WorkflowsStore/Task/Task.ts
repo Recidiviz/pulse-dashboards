@@ -169,8 +169,15 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     const {
       workflowsStore: { currentUserEmail },
       firestoreStore,
+      analyticsStore,
     } = this.rootStore;
     if (!currentUserEmail) return;
+
+    analyticsStore.trackTaskSnoozed({
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      taskType: this.type,
+      snoozeForDays,
+    });
 
     if (snoozeForDays === undefined) {
       firestoreStore.updateSupervisionTask(this.person.recordId, {
