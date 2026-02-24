@@ -94,10 +94,10 @@ const ClientsScreen = () => {
   // Separate clients by caseload ownership
   const { myCaseloadClients, otherCaseloadClients } = React.useMemo(() => {
     const myCaseload = userEmail
-      ? clients.filter((c) => c.staffEmails.includes(userEmail))
+      ? clients.filter((c) => c.staffEmails.includes(userEmail.toLowerCase()))
       : [];
     const otherCaseload = userEmail
-      ? clients.filter((c) => !c.staffEmails.includes(userEmail))
+      ? clients.filter((c) => !c.staffEmails.includes(userEmail.toLowerCase()))
       : clients;
     return {
       myCaseloadClients: filterAndSortClients(myCaseload, search, sortBy),
