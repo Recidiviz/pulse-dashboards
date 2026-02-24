@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -9,6 +9,25 @@
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FI
+
+// TNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
@@ -93,7 +112,7 @@ export default function IntakeAssessment({
     const { data: transcriptionData } = $api.useQuery(
         "get",
         "/transcription/{recording_session_id}/transcription",
-        {
+        {   
             params: {
                 path: {
                     recording_session_id: recordingSession?.id || "",
@@ -105,11 +124,7 @@ export default function IntakeAssessment({
             },
         },
         {
-            enabled: !!recordingSession?.id && recordingSession?.status === "completed" && intakeInfo?.intake_type === "transcription",
-            refetchOnWindowFocus: false,
-            refetchOnMount: false,
-            refetchOnReconnect: false,
-            staleTime: Infinity
+            enabled: !!recordingSession?.id && recordingSession?.status === "completed" && intakeInfo?.intake_type === "transcription"
         }
     );
 
@@ -172,11 +187,14 @@ export default function IntakeAssessment({
 
     if (intakeLoading) { return "Loading intake data..."; }
 
+    const VALIDATION_FIELDS = ['word_count', 'no_prompt_injection', 'diarization', 'minimum_duration'] as const;
+
     const isValidTranscription = useMemo(() => {
         if (intakeInfo?.intake_type !== "transcription") {
             return true;
         }
-        return Object.values(transcriptionData?.validation || {}).every((value) => value) && transcriptionData?.transcription?.conversation && transcriptionData?.transcription?.conversation.length > 0;
+        const validation = transcriptionData?.validation;
+        return VALIDATION_FIELDS.every((field) => validation?.[field]) && (transcriptionData?.transcription?.conversation?.length ?? 0) > 0;
     }, [transcriptionData]);
 
     return (
@@ -285,3 +303,5 @@ export default function IntakeAssessment({
         </div>
     );
 }
+
+

@@ -255,3 +255,5 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
         </div>
     );
 }
+
+
