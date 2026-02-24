@@ -17,8 +17,8 @@
 
 import { describe, expect, test, vi } from "vitest";
 
+import { AGENCY_CONFIGS } from "~@meetings/config";
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
-import env from "~@meetings/trpc/env";
 import {
   mockCloudTasksClient,
   testkit,
@@ -46,56 +46,55 @@ describe("meeting router", () => {
     });
 
     test("Should return meeting details if it exists", async () => {
-      // Set env so US_NE is not in the disabled list (transcription included)
-      const originalDisabledStates = env.TRANSCRIPTION_DISABLED_STATES;
-      env.TRANSCRIPTION_DISABLED_STATES = "US_XX";
+      // remove US_NE in AGENCY_CONFIGS, so showTranscriptions defaults to true
+      delete AGENCY_CONFIGS["US_NE"];
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
 
-      try {
-        const result = await testTRPCClient.v1.meeting.getDetails.query({
-          meetingId: fakeActiveMeeting.id,
-        });
-
-        expect(result).toEqual({
-          id: fakeActiveMeeting.id,
-          startTime: fakeActiveMeeting.startTime,
-          endTime: null,
-          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
-          userNotepadNotes: "Sample meeting notes.",
-          caseNote: fakeActiveMeeting.caseNote,
-          actionItems: [],
-          criticalUpdates: [],
-          meetingSummary: [],
-          transcription: {
-            confidence: 0.95,
-            summary: "This is a sample summary of the meeting.",
-            // These should be ordered by startTimeMs
-            utterances: [
-              {
-                confidence: 0.98,
-                endTimeMs: 3000,
-                speaker: "Speaker A",
-                startTimeMs: 0,
-                text: "Hello, this is a sample utterance.",
-              },
-              {
-                confidence: 0.98,
-                endTimeMs: 6000,
-                speaker: "Speaker B",
-                startTimeMs: 3000,
-                text: "Hello, this is second a sample utterance.",
-              },
-            ],
-          },
-        });
-      } finally {
-        env.TRANSCRIPTION_DISABLED_STATES = originalDisabledStates;
-      }
+      expect(result).toEqual({
+        id: fakeActiveMeeting.id,
+        startTime: fakeActiveMeeting.startTime,
+        endTime: null,
+        postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+        userNotepadNotes: "Sample meeting notes.",
+        caseNote: fakeActiveMeeting.caseNote,
+        actionItems: [],
+        criticalUpdates: [],
+        meetingSummary: [],
+        transcription: {
+          confidence: 0.95,
+          summary: "This is a sample summary of the meeting.",
+          // These should be ordered by startTimeMs
+          utterances: [
+            {
+              confidence: 0.98,
+              endTimeMs: 3000,
+              speaker: "Speaker A",
+              startTimeMs: 0,
+              text: "Hello, this is a sample utterance.",
+            },
+            {
+              confidence: 0.98,
+              endTimeMs: 6000,
+              speaker: "Speaker B",
+              startTimeMs: 3000,
+              text: "Hello, this is second a sample utterance.",
+            },
+          ],
+        },
+      });
     });
 
     test("Should return meeting details if it exists without transcription", async () => {
-      // Set env so US_NE is in the disabled list (transcription excluded)
-      const originalDisabledStates = env.TRANSCRIPTION_DISABLED_STATES;
-      env.TRANSCRIPTION_DISABLED_STATES = "US_NE";
+      // Set showTranscriptions: false for US_NE via the agency config
+      AGENCY_CONFIGS["US_NE"] = {
+        name: "Nebraska",
+        stateCode: "US_NE",
+        showTranscriptions: false,
+        audioTTLDays: 30,
+        transcriptTTLDays: 30,
+      };
 
       try {
         const result = await testTRPCClient.v1.meeting.getDetails.query({
@@ -114,7 +113,7 @@ describe("meeting router", () => {
           meetingSummary: [],
         });
       } finally {
-        env.TRANSCRIPTION_DISABLED_STATES = originalDisabledStates;
+        delete AGENCY_CONFIGS["US_NE"];
       }
     });
 

@@ -20,6 +20,7 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { z } from "zod";
 
+import { AGENCY_CONFIGS } from "~@meetings/config";
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import {
   getSignedUrlForNewRecording,
@@ -29,7 +30,6 @@ import {
   WEB_AUDIO_FILE_EXTENSION,
   WEB_GCS_CONTENT_TYPE,
 } from "~@meetings/tasks";
-import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   discardMeetingInputSchema,
@@ -98,12 +98,9 @@ export const meetingRouter = router({
           }
         };
 
-        const transcriptionDisabledStatesList =
-          env.TRANSCRIPTION_DISABLED_STATES
-            ? env.TRANSCRIPTION_DISABLED_STATES.split(",").map((s) => s.trim())
-            : [];
-        const includeTranscription =
-          !transcriptionDisabledStatesList.includes(stateCode);
+        const stateConfig = AGENCY_CONFIGS[stateCode];
+
+        const includeTranscription = stateConfig?.showTranscriptions ?? true;
 
         return {
           ..._.omit(meeting, ["transcriptions"]),

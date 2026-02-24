@@ -1,0 +1,16 @@
+{
+  "name": "@meetings/config",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@meetings/config",
+  "projectType": "library",
+  "tags": ["meetings", "scope:universal", "type:util"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p ./tsconfig.lib.json"],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
