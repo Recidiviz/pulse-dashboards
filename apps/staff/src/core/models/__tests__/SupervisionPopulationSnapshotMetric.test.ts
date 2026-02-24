@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,10 +26,8 @@ import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import SupervisionPopulationSnapshotMetric from "../SupervisionPopulationSnapshotMetric";
-import {
-  createSupervisionPopulationSnapshot,
-  formatDateString,
-} from "../utils";
+import { formatDateString } from "../utils";
+import { createSupervisionPopulationSnapshot } from "../utils";
 
 vi.mock("../../../RootStore");
 vi.mock("../../../api/metrics/metricsClient");

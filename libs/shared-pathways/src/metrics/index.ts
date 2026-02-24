@@ -15,23 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { validateDynamicFilterOptions } from "~shared-pathways";
-
-describe("validateDynamicFilterOption", () => {
-  it("is true when the input is valid and length > 0", () => {
-    const facilityOptions = [
-      { label: "Option 1", value: "OPTION_1" },
-      { label: "Option 2", value: "OPTION_2" },
-    ];
-    expect(validateDynamicFilterOptions(facilityOptions)).toBeTrue();
-  });
-
-  it("is false when the input is invalid", () => {
-    const facilityOptions = [{ label: "Option 1" }, { value: "OPTION_2" }];
-    expect(validateDynamicFilterOptions(facilityOptions)).toBeFalse();
-  });
-
-  it("is false when the input length is 0", () => {
-    expect(validateDynamicFilterOptions([])).toBeFalse();
-  });
-});
+export { default as OverTimeMetric } from "./OverTimeMetric";
+export { default as PathwaysNewBackendMetric } from "./PathwaysNewBackendMetric";
+export { default as PersonLevelMetric } from "./PersonLevelMetric";
+export { default as SnapshotMetric } from "./SnapshotMetric";
+export * from "./types";

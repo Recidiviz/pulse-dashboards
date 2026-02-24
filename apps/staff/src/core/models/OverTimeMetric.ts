@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,56 +15,44 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { eachMonthOfInterval, startOfMonth, subMonths } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   DownloadableData,
   DownloadableDataset,
+  getRecordDate,
+  OverTimeMetric as SharedOverTimeMetric,
   TimeSeriesDataRecord,
 } from "~shared-pathways";
 
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
+import CoreStore from "../CoreStore";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
-import PathwaysNewBackendMetric, {
-  BaseNewMetricConstructorOptions,
-} from "./PathwaysNewBackendMetric";
-import { getRecordDate } from "./utils";
+import {
+  BaseNewMetricConstructorProps,
+  generateStaffNewMetricOptions,
+} from "./generateStaffNewMetricOptions";
 
-export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesDataRecord> {
-  constructor(props: BaseNewMetricConstructorOptions) {
-    super(props);
+export default class OverTimeMetric extends SharedOverTimeMetric {
+  readonly rootStore: CoreStore;
+
+  constructor(props: BaseNewMetricConstructorProps) {
+    super(generateStaffNewMetricOptions(props));
+    this.rootStore = props.rootStore;
 
     makeObservable<OverTimeMetric>(this, {
-      dataSeries: computed,
       downloadableData: computed,
     });
 
     this.download = this.download.bind(this);
-    this.dataTransformer = this.extrapolateRecords;
   }
 
-  get dataSeries(): TimeSeriesDataRecord[] {
-    return this.allRecords ?? [];
-  }
-
-  get dataSeriesForDiffing(): TimeSeriesDataRecord[] {
-    return this.dataSeries;
-  }
-
-  get isEmpty(): boolean {
-    return !this.dataSeries?.length;
-  }
-
-  static mostRecentDate(records?: TimeSeriesDataRecord[]): Date {
-    if (!records || records.length === 0) {
-      return new Date(9999, 11, 31);
-    }
-
-    // Records are sorted by date on the backend in order to calculate 90 day averages, so we don't
-    // need to search through all of them.
-    return getRecordDate(records.slice(-1)[0]);
+  override get tenantId(): string | undefined {
+    return isOfflineMode() || isDemoMode()
+      ? undefined
+      : this.store.currentTenantId;
   }
 
   get downloadableData(): DownloadableData | undefined {
@@ -105,33 +93,6 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
       },
       lastUpdatedOn: formatDate(OverTimeMetric.mostRecentDate(this.allRecords)),
       methodologyContent: this.methodology,
-    });
-  }
-
-  extrapolateRecords(records: TimeSeriesDataRecord[]): TimeSeriesDataRecord[] {
-    const { monthRange } = this.rootStore.filtersStore;
-    const mostRecentDate = OverTimeMetric.mostRecentDate(records);
-    const earliestDate = startOfMonth(subMonths(mostRecentDate, monthRange));
-
-    const recordsGrouped = new Map<string, TimeSeriesDataRecord>();
-    records?.forEach((record) => {
-      recordsGrouped.set(getRecordDate(record).toDateString(), record);
-    });
-
-    // For each month in range, if we have an entry for it add it to the array. If not, add an entry
-    // with a count of 0.
-    return eachMonthOfInterval({
-      start: earliestDate,
-      end: mostRecentDate,
-    }).map((date) => {
-      return (
-        recordsGrouped.get(date.toDateString()) ?? {
-          year: date.getFullYear(),
-          month: date.getMonth() + 1,
-          count: 0,
-          avg90day: 0,
-        }
-      );
     });
   }
 }

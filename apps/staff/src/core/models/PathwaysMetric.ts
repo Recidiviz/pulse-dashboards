@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ import {
   RawMetricData,
   SimulationCompartment,
 } from "~shared-pathways";
+import { PathwaysNewBackendMetric } from "~shared-pathways";
 
 import { parseResponseByFileFormat } from "../../api/metrics";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
@@ -52,7 +53,6 @@ import { PopulationFilters } from "../types/filters";
 import { Diff, Differ } from "./backendDiff/Differ";
 import { DiffError } from "./backendDiff/DiffError";
 import { dimensionsByMetricType } from "./dimensions";
-import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
 import { MetricRecord } from "./types";
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {

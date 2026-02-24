@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 
 import { differenceInCalendarMonths } from "date-fns";
 
-import { PopulationProjectionTimeSeriesRecord } from "~shared-pathways";
+import {
+  getRecordDate,
+  PopulationProjectionTimeSeriesRecord,
+} from "~shared-pathways";
 
 import { formatDate } from "../../utils";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import { getRecordDate } from "../models/utils";
 
 export type MonthOptions = 6 | 12 | 24 | 60;
 

@@ -20,6 +20,8 @@ export * from "./content";
 export * from "./content/types";
 export * from "./dimensions";
 export * from "./filters";
+export * from "./metrics";
 export * from "./tenants";
 export * from "./types";
+export * from "./utils";
 export * from "./views";

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,22 +24,33 @@ import {
   Dimension,
   EnabledFilter,
   EnabledFilters,
+  getRecordDate,
   LengthOfStay,
+  lengthOfStayMap,
   LengthOfStayRawValue,
   PopulationFilterValues,
   PopulationProjectionTimeSeriesRecord,
   RawMetricData,
   Sex,
   SimulationCompartment,
-  SnapshotDataRecord,
   SupervisionPopulationSnapshotRecord,
   SupervisionType,
   TimePeriod,
+  timePeriodMap,
   TimePeriodRawValue,
+  TimeSeriesRecord,
 } from "~shared-pathways";
 
 import { toTitleCase } from "../../utils";
 import { MetricRecord, NewBackendRecord } from "./types";
+
+export function formatDateString(dateString?: string): Date | undefined {
+  if (!dateString || !moment(dateString, "YYYY-MM-DD", true).isValid()) {
+    return undefined;
+  }
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
 
 const sharedDimensionDefaults = {
   sex: "ALL" as Sex,
@@ -58,29 +69,6 @@ const supervisionDimensionDefaults = {
   officerName: "ALL",
 };
 
-const timePeriodMap = {
-  months_0_6: "6",
-  months_7_12: "12",
-  months_13_24: "24",
-  months_25_60: "60",
-} as Record<TimePeriodRawValue, TimePeriod>;
-
-const lengthOfStayMap = {
-  months_0_3: "3",
-  months_3_6: "6",
-  months_6_9: "9",
-  months_9_12: "12",
-  months_12_15: "15",
-  months_15_18: "18",
-  months_18_21: "21",
-  months_21_24: "24",
-  months_24_36: "36",
-  months_36_48: "48",
-  months_48_60: "60",
-  unknown: "UNKNOWN",
-  all: "ALL",
-} as Record<LengthOfStayRawValue, LengthOfStay>;
-
 const mergeDefaults = (
   record: any,
   defaults: any,
@@ -98,15 +86,6 @@ const mergeDefaults = (
       return { [k]: v };
     }),
   );
-
-export function convertLengthOfStay(
-  record: SnapshotDataRecord,
-): LengthOfStay | undefined {
-  return (
-    record.lengthOfStay &&
-    lengthOfStayMap[record.lengthOfStay.toLowerCase() as LengthOfStayRawValue]
-  );
-}
 
 export function createProjectionTimeSeries(
   rawRecords: RawMetricData,
@@ -179,21 +158,6 @@ export function addLastUpdatedToRecords<T extends MetricRecord>(
   }
   return response.data;
 }
-
-export interface TimeSeriesRecord {
-  month: number;
-  year: number;
-}
-
-export function getRecordDate(d: TimeSeriesRecord): Date {
-  return new Date(d.year, d.month - 1);
-}
-
-export const formatDateString = (dateString: string): Date | undefined => {
-  if (!moment(dateString, "YYYY-MM-DD", true).isValid()) return undefined;
-  const [year, month, day] = dateString.split("-");
-  return new Date(Number(year), Number(month) - 1, Number(day));
-};
 
 export const filterTimePeriod = (
   recordTimePeriodValue: TimePeriod,
@@ -284,25 +248,4 @@ export const filterPersonLevelRecordByDimensions = (
 
     return handleFilters(filters[filterDimension], dimensionRecord);
   });
-};
-
-export const getTimePeriodRawValue = (
-  months: string | number,
-): string | undefined => {
-  return Object.keys(timePeriodMap).find(
-    (timePeriodRawValue) =>
-      timePeriodMap[timePeriodRawValue as TimePeriodRawValue] ===
-      String(months),
-  );
-};
-
-export const validateDynamicFilterOptions = (filterOption: any): boolean => {
-  // Check each has a value and a label
-  const correctFormat = filterOption.filter((o: any) => {
-    return o.value && o.label;
-  });
-  // Check length > 0
-  return (
-    correctFormat.length === filterOption.length && filterOption.length > 0
-  );
 };

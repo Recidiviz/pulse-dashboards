@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,83 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { snakeCase } from "lodash";
-import { sumBy } from "lodash/fp";
-import map from "lodash/fp/map";
 import { computed, makeObservable } from "mobx";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
-  DefaultSupervisionLevelOrder,
   DownloadableData,
   DownloadableDataset,
-  OrderKeys,
   PopulationFilterLabels,
   SnapshotDataRecord,
+  SnapshotMetric as SharedSnapshotMetric,
 } from "~shared-pathways";
 
 import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import PathwaysNewBackendMetric, {
-  BaseNewMetricConstructorOptions,
-} from "./PathwaysNewBackendMetric";
-import { convertLengthOfStay } from "./utils";
+import CoreStore from "../CoreStore";
+import {
+  BaseNewMetricConstructorProps,
+  generateStaffNewMetricOptions,
+} from "./generateStaffNewMetricOptions";
 
-export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDataRecord> {
-  accessor: keyof SnapshotDataRecord;
+export default class SnapshotMetric extends SharedSnapshotMetric {
+  readonly rootStore: CoreStore;
 
   constructor(
-    props: BaseNewMetricConstructorOptions & {
+    props: BaseNewMetricConstructorProps & {
       accessor: keyof SnapshotDataRecord;
     },
   ) {
-    super(props);
+    super({
+      ...generateStaffNewMetricOptions<SnapshotDataRecord>(props),
+      accessor: props.accessor,
+    });
+    this.rootStore = props.rootStore;
 
     makeObservable<SnapshotMetric>(this, {
-      totalCount: computed,
-      dataSeries: computed,
       downloadableData: computed,
     });
 
-    this.accessor = props.accessor;
     this.download = this.download.bind(this);
   }
 
-  get totalCount(): number | undefined {
-    if (!this.rootStore || !this.allRecords) return undefined;
-    return sumBy("count", this.allRecords);
-  }
-
-  get supervisionLevelOrder(): OrderKeys | undefined {
-    if (!this.rootStore?.currentTenantId) return undefined;
-    return DefaultSupervisionLevelOrder;
-  }
-
-  get dataSeries(): SnapshotDataRecord[] {
-    const { totalCount } = this;
-    if (!totalCount) return [];
-
-    const result = map((record: SnapshotDataRecord) => {
-      return {
-        ...record,
-        lengthOfStay: convertLengthOfStay(record),
-        populationProportion: ((record.count * 100) / totalCount).toFixed(),
-      };
-    }, this.allRecords);
-
-    return result as SnapshotDataRecord[];
-  }
-
-  get dataSeriesForDiffing(): SnapshotDataRecord[] {
-    return this.dataSeries.map((record: SnapshotDataRecord) => {
-      return {
-        ...record,
-        lastUpdated: this.lastUpdated,
-      };
-    });
-  }
-
-  get isEmpty(): boolean {
-    return !this.totalCount;
+  override get tenantId(): string | undefined {
+    return isOfflineMode() || isDemoMode()
+      ? undefined
+      : this.store.currentTenantId;
   }
 
   get downloadableData(): DownloadableData | undefined {
@@ -143,14 +110,5 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
       },
       methodologyContent: this.methodology,
     });
-  }
-
-  getQueryParams(): URLSearchParams {
-    const queryParams = super.getQueryParams();
-    queryParams.append("group", snakeCase(this.accessor.toString()));
-    // On snapshot by dimension pages, filters for the accessor just highlight that value instead of
-    // filtering out values that don't match.
-    queryParams.delete(`filters[${snakeCase(this.accessor.toString())}]`);
-    return queryParams;
   }
 }

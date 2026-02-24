@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@ import {
   toJS,
 } from "mobx";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { castToError, HydrationState } from "~hydration-utils";
+
+import { getMethodologyCopy, getMetricCopy } from "../content";
 import {
   dynamicFilterOptionMapToFilterType,
   DynamicFilterOptionMetadata,
@@ -36,46 +37,30 @@ import {
   FilterOption,
   Filters,
   FilterType,
-  getMethodologyCopy,
-  getMetricCopy,
-  getMetricIdsForPage,
-  getSectionIdForMetric,
   HydratablePathwaysMetric,
   MetricContent,
   MetricId,
+  MetricRecord,
+  NewBackendRecord,
   PageContent,
   PATHWAYS_PAGES,
   PathwaysMetricRecords,
   PathwaysPage,
   PopulationFilterValues,
-  SimulationCompartment,
-} from "~shared-pathways";
-
-import { callNewMetricsApi } from "../../api/metrics/metricsClient";
-import RootStore from "../../RootStore";
-import { TenantId } from "../../RootStore/types";
-import CoreStore from "../CoreStore";
-import { isAbortException } from "../utils/exceptions";
-import PathwaysMetric from "./PathwaysMetric";
-import { MetricRecord, NewBackendRecord } from "./types";
+} from "../index";
 import {
   formatDateString,
   getTimePeriodRawValue,
+  isAbortException,
   validateDynamicFilterOptions,
-} from "./utils";
-
-export type BaseNewMetricConstructorOptions = {
-  id: MetricId;
-  endpoint: string;
-  rootStore: CoreStore;
-  filters?: Filters;
-  enableMetricModeToggle?: boolean;
-  compartment?: SimulationCompartment;
-  isHorizontal?: boolean;
-  isGeographic?: boolean;
-  rotateLabels?: boolean;
-  accessorIsNotFilterType?: boolean;
-};
+} from "../utils";
+import { getMetricIdsForPage, getSectionIdForMetric } from "../views";
+import {
+  MetricsFetcher,
+  PathwaysMetricStore,
+  SharedMetricConstructorOptions,
+  ShouldHydratePredicate,
+} from "./types";
 
 export default abstract class PathwaysNewBackendMetric<
   RecordFormat extends MetricRecord,
@@ -85,7 +70,7 @@ export default abstract class PathwaysNewBackendMetric<
 
   readonly endpoint: string;
 
-  readonly rootStore: CoreStore;
+  readonly store: PathwaysMetricStore;
 
   readonly filters: Filters;
 
@@ -102,7 +87,6 @@ export default abstract class PathwaysNewBackendMetric<
   protected allRecords?: RecordFormat[];
 
   // this is just a noop stub method to be overridden when needed
-
   protected dataTransformer: (d: RecordFormat[]) => RecordFormat[] = (
     d: RecordFormat[],
   ) => {
@@ -115,21 +99,29 @@ export default abstract class PathwaysNewBackendMetric<
 
   protected abortController?: AbortController;
 
+  private readonly fetchMetrics: MetricsFetcher<RecordFormat>;
+
+  private readonly shouldHydrate: ShouldHydratePredicate;
+
   constructor({
     id,
     endpoint,
-    rootStore,
+    store,
+    fetchMetrics,
+    shouldHydrate = () => true,
     filters,
     enableMetricModeToggle = false,
     isHorizontal = false,
     isGeographic = false,
     rotateLabels = false,
     accessorIsNotFilterType = false,
-  }: BaseNewMetricConstructorOptions) {
+  }: SharedMetricConstructorOptions<RecordFormat>) {
     this.id = id;
     this.endpoint = endpoint;
-    this.rootStore = rootStore;
-    this.filters = filters ?? rootStore.filtersStore.enabledFilters[id];
+    this.store = store;
+    this.fetchMetrics = fetchMetrics;
+    this.shouldHydrate = shouldHydrate;
+    this.filters = filters ?? store.filtersStore.enabledFilters[id];
     this.enableMetricModeToggle = enableMetricModeToggle;
     this.isHorizontal = isHorizontal;
     this.isGeographic = isGeographic;
@@ -149,8 +141,8 @@ export default abstract class PathwaysNewBackendMetric<
         // if data was accessed in the data function (this one), and so just returning
         // this.rootStore?.filters isn't enough to track a change to a property of filters.
         return {
-          filters: toJS(this.rootStore.filters),
-          tenant: this.rootStore.currentTenantId,
+          filters: toJS(this.store.filters),
+          tenant: this.store.currentTenantId,
         };
       },
       () => {
@@ -179,7 +171,7 @@ export default abstract class PathwaysNewBackendMetric<
   }
 
   get isCurrentlyViewedMetric(): boolean {
-    const { page, section } = this.rootStore;
+    const { page, section } = this.store;
     return (
       Object.keys(PATHWAYS_PAGES).includes(page) &&
       getMetricIdsForPage(page as PathwaysPage).includes(this.id) &&
@@ -189,17 +181,17 @@ export default abstract class PathwaysNewBackendMetric<
 
   getQueryParams(): URLSearchParams {
     const queryParams = new URLSearchParams();
-    if (!this.rootStore) {
+    if (!this.store) {
       return queryParams;
     }
-    const filterValues = this.rootStore.filters;
+    const filterValues = this.store.filters;
 
     this.filters.enabledFilters.forEach((filter) => {
       const key = filter as keyof PopulationFilterValues;
       const values = filterValues[key];
       const queryKey = snakeCase(key);
       if (values) {
-        values.forEach((val: any) => {
+        values.forEach((val: string) => {
           if (queryKey === "time_period") {
             const timePeriod = getTimePeriodRawValue(val);
             if (timePeriod) {
@@ -220,10 +212,8 @@ export default abstract class PathwaysNewBackendMetric<
 
   abstract get isEmpty(): boolean;
 
-  get tenantId(): TenantId | undefined {
-    return isOfflineMode() || isDemoMode()
-      ? undefined
-      : this.rootStore.currentTenantId;
+  get tenantId(): string | undefined {
+    return this.store.currentTenantId;
   }
 
   get content(): MetricContent {
@@ -234,7 +224,7 @@ export default abstract class PathwaysNewBackendMetric<
     return this.content.title;
   }
 
-  /**
+  /** 
    * Returns the note copy, unformatted. Child metric classes can override this
    * function and format the note if necessary.
    */
@@ -260,7 +250,7 @@ export default abstract class PathwaysNewBackendMetric<
     if (!methodology?.metricCopy || !methodology?.pageCopy) return [];
 
     return [
-      methodology.pageCopy[this.rootStore.page as PathwaysPage],
+      methodology.pageCopy[this.store.page as PathwaysPage],
       methodology.metricCopy[this.id],
     ];
   }
@@ -291,10 +281,9 @@ export default abstract class PathwaysNewBackendMetric<
     this.abortController?.abort();
     this.abortController = new AbortController();
 
-    const stateCode = isOfflineMode() || isDemoMode() ? "US_OZ" : this.tenantId;
-    return callNewMetricsApi(
-      `pathways/${stateCode}/${this.endpoint}?${params.toString()}`,
-      RootStore.getTokenSilently,
+    return this.fetchMetrics(
+      this.endpoint,
+      params,
       this.abortController.signal,
     );
   }
@@ -305,7 +294,7 @@ export default abstract class PathwaysNewBackendMetric<
    * Fetches metric data and stores the result reactively on this Metric instance.
    */
   async hydrate(): Promise<void> {
-    if (PathwaysMetric.backendForMetric(this.id) === "OLD") {
+    if (!this.shouldHydrate(this.id)) {
       return Promise.resolve();
     }
     this.hydrationState = { status: "loading" };

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 import {
   DownloadableData,
   DownloadableDataset,
+  getRecordDate,
   PopulationProjectionTimeSeriesRecord,
   SimulationCompartment,
 } from "~shared-pathways";
@@ -28,7 +29,7 @@ import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { filterRecordByDimensions, getRecordDate } from "./utils";
+import { filterRecordByDimensions } from "./utils";
 
 export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<PopulationProjectionTimeSeriesRecord> {
   compartment: SimulationCompartment;

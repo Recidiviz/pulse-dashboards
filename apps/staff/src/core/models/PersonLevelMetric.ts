@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,49 +17,43 @@
 
 import { computed, makeObservable } from "mobx";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   DownloadableData,
   DownloadableDataset,
   PersonLevelDataRecord,
+  PersonLevelMetric as SharedPersonLevelMetric,
   PopulationFilterLabels,
 } from "~shared-pathways";
 
 import { TENANT_CONFIGS } from "../../tenants";
 import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
+import CoreStore from "../CoreStore";
 import { TableColumn } from "../types/charts";
-import PathwaysNewBackendMetric, {
-  BaseNewMetricConstructorOptions,
-} from "./PathwaysNewBackendMetric";
+import {
+  BaseNewMetricConstructorProps,
+  generateStaffNewMetricOptions,
+} from "./generateStaffNewMetricOptions";
 
-export default class PersonLevelMetric extends PathwaysNewBackendMetric<PersonLevelDataRecord> {
-  constructor(props: BaseNewMetricConstructorOptions) {
-    super(props);
+export default class PersonLevelMetric extends SharedPersonLevelMetric {
+  readonly rootStore: CoreStore;
+
+  constructor(props: BaseNewMetricConstructorProps) {
+    super(generateStaffNewMetricOptions(props));
+    this.rootStore = props.rootStore;
 
     makeObservable<PersonLevelMetric>(this, {
-      dataSeries: computed,
       downloadableData: computed,
     });
 
     this.download = this.download.bind(this);
   }
 
-  get dataSeries(): PersonLevelDataRecord[] {
-    return this.allRecords ?? [];
-  }
-
-  get dataSeriesForDiffing(): PersonLevelDataRecord[] {
-    return this.dataSeries.map((record: PersonLevelDataRecord) => {
-      const mappedRecord = { ...record };
-      if (this.lastUpdated) {
-        mappedRecord.lastUpdated = this.lastUpdated;
-      }
-      return mappedRecord;
-    });
-  }
-
-  get isEmpty(): boolean {
-    return !this.dataSeries.length;
+  override get tenantId(): string | undefined {
+    return isOfflineMode() || isDemoMode()
+      ? undefined
+      : this.store.currentTenantId;
   }
 
   get columns(): TableColumn[] | undefined {
