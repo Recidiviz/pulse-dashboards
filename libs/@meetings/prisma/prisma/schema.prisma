@@ -185,6 +185,9 @@ model Meeting {
   criticalUpdates  Json?
   meetingSummary   Json?
 
+  transcriptDeletedAt DateTime?
+  audioDeletedAt DateTime?
+
   transcriptions Transcription[]
 
   // Meetings must occur with either a Client or Resident, but since we don't have a way to specify

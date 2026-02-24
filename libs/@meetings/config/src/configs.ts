@@ -19,7 +19,7 @@ import { AgencyConfig } from "~@meetings/config/types";
 import US_ME_CONFIG from "~@meetings/config/US_ME";
 import US_NE_CONFIG from "~@meetings/config/US_NE";
 
-export const AGENCY_CONFIGS: Record<string, AgencyConfig | undefined> = {
+export const AGENCY_CONFIGS: Record<string, AgencyConfig> = {
   US_ME: US_ME_CONFIG,
   US_NE: US_NE_CONFIG,
 };
