@@ -184,7 +184,7 @@ export const ConversationTurn: React.FC<ConversationTurnProps> = ({
     <>
       <div
         ref={setRef}
-        className={`bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 transition-all duration-300 ${
+        className={`w-full bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 transition-all duration-300 ${
           isActive ? "ring-2 ring-[#006c67] ring-offset-2 shadow-lg" : ""
         } ${isSplitMode ? "ring-2 ring-[#006c67] ring-offset-2 shadow-lg" : ""}`}
         style={{ borderLeftColor: getSpeakerColor(turn.role) }}

@@ -1136,7 +1136,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
           </div>
 
           {/* Conversation turns */}
-          <div className="max-h-[45vh] overflow-y-auto space-y-2 self-center pb-32">
+          <div className="max-h-[calc(100vh-350px)] overflow-y-auto space-y-2 self-center pb-40 w-full flex flex-col items-center">
             {modifiedConversation.map((turn, index) => {
               const isActive = index === activeTurnIndex;
               const isSplitMode = activeSplitTurnIndex === index;
