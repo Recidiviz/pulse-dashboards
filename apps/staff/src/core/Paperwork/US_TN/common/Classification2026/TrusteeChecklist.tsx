@@ -285,7 +285,8 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNoFelonyDetainers">
-                Inmate has no felony detainers and/or active warrants{" "}
+                Inmate has no felony or misdemeanor detainers and/or active
+                warrants
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNoPendingFelonyCharges">
