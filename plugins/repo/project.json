@@ -33,6 +33,13 @@
           "NODE_OPTIONS": "--no-warnings"
         }
       }
+    },
+    "validate-contractor-env-sync": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/scripts/validate-contractor-env-sync.ts",
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }
