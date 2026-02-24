@@ -21,6 +21,7 @@ import { spawnSync } from "child_process";
 import { SOPS_ENV_PREFIX } from "./sops-env";
 import {
   decryptSopsFile,
+  getPlaintextEnvPathsForTask,
   getSopsPathsForTask,
   interpolatePath,
   loadDotenvFile,
@@ -58,13 +59,31 @@ function delegateToTarget(
     // Build arguments as an array to avoid shell escaping issues
     const args = ["run", targetString];
 
-    // Add override arguments
-    // No need for JSON.stringify since we're using spawnSync with shell: false
-    for (const [key, value] of Object.entries(overrides)) {
-      args.push(`--${key}=${String(value)}`);
+    // Extract positional arguments (typically passed as "_" key by nx)
+    const positionalArgs = overrides["_"];
+    const namedOverrides = { ...overrides };
+    delete namedOverrides["_"];
+
+    // Add named override arguments
+    for (const [key, value] of Object.entries(namedOverrides)) {
+      if (Array.isArray(value)) {
+        // Handle array values by adding multiple instances of the flag
+        for (const item of value) {
+          args.push(`--${key}=${String(item)}`);
+        }
+      } else {
+        args.push(`--${key}=${String(value)}`);
+      }
     }
 
-    logger.verbose(`Running: nx ${args}`);
+    // Add positional arguments at the end
+    if (Array.isArray(positionalArgs)) {
+      args.push(...positionalArgs.map(String));
+    } else if (positionalArgs !== undefined) {
+      args.push(String(positionalArgs));
+    }
+
+    logger.verbose(`Running: nx ${args.join(" ")}`);
 
     // Use spawnSync with shell: false to avoid shell interpretation
     const result = spawnSync("nx", args, {
@@ -174,7 +193,7 @@ export default async function runSopsDelegateExecutor(
     sourceProjectName = overrideProjectName;
     sourceProjectRoot = overrideProject.root;
 
-    logger.info(
+    logger.verbose(
       `Using SOPS env files from project '${overrideProjectName}' (override-sops-env-project)`,
     );
   }
@@ -197,11 +216,18 @@ export default async function runSopsDelegateExecutor(
     process.env["NX_SOPS_USE_CONTRACTOR_ENV"] ? ".contractor.enc.yaml" : ".enc.yaml",
   );
 
-  if (sopsFilePaths.length === 0) {
+  // Get plaintext .env files in priority order
+  const plaintextEnvPaths = getPlaintextEnvPathsForTask(
+    sourceProjectRoot,
+    unprefixedTarget,
+    configurationName,
+  );
+
+  if (sopsFilePaths.length === 0 && plaintextEnvPaths.length === 0) {
     logger.verbose(
-      `No SOPS env files found in ${sourceProjectRoot}, skipping SOPS loading`,
+      `No env files found in ${sourceProjectRoot}, skipping env loading`,
     );
-    // Still run the target even if no SOPS files
+    // Still run the target even if no env files
     try {
       const success = delegateToTarget(
         projectName,
@@ -235,7 +261,15 @@ export default async function runSopsDelegateExecutor(
 
     let totalFilesLoaded = sopsFilePaths.length;
 
-    // 2. Load additional SOPS files from metadata
+    // 2. Load standard plaintext .env files from source project (override encrypted)
+    for (const envPath of plaintextEnvPaths) {
+      logger.verbose(`Loading plaintext env file: ${envPath}`);
+      const dotenvVars = loadDotenvFile(envPath);
+      Object.assign(envVars, dotenvVars);
+      totalFilesLoaded++;
+    }
+
+    // 3. Load additional SOPS files from metadata
     if (sopsEnvMetadata["additional-sops-env-files"]?.length) {
       for (const additionalFile of sopsEnvMetadata[
         "additional-sops-env-files"
@@ -244,14 +278,14 @@ export default async function runSopsDelegateExecutor(
           additionalFile,
           interpolationContext,
         );
-        logger.info(`Decrypting additional SOPS file: ${interpolatedPath}`);
+        logger.verbose(`Decrypting additional SOPS file: ${interpolatedPath}`);
         const decryptedYaml = decryptSopsFile(interpolatedPath);
         Object.assign(envVars, decryptedYaml);
         totalFilesLoaded++;
       }
     }
 
-    // 3. Load additional dotenv files from metadata
+    // 4. Load additional dotenv files from metadata
     if (sopsEnvMetadata["additional-dotenv-files"]?.length) {
       for (const dotenvFile of sopsEnvMetadata["additional-dotenv-files"]) {
         const interpolatedPath = interpolatePath(

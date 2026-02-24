@@ -132,8 +132,7 @@ describe("tasks", () => {
         setGetPayloadImp(
           vi.fn().mockReturnValue({
             email_verified: false,
-            email:
-              "test-service-account-email@test-project.iam.gserviceaccount.com",
+            email: "test-service-account-email@recidiviz-test.org",
           }),
         );
 

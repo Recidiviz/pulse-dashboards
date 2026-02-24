@@ -65,7 +65,7 @@ beforeEach(() => {
   setGetPayloadImp(
     vi.fn().mockReturnValue({
       email_verified: true,
-      email: "test-service-account-email@test-project.iam.gserviceaccount.com",
+      email: "test-service-account-email@recidiviz-test.org",
     }),
   );
 });

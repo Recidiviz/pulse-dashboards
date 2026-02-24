@@ -1,0 +1,2 @@
+# .env.test contains no secrets - no need to exclude from git
+!.env.test

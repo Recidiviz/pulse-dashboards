@@ -52,6 +52,24 @@ nx lint staff --fix
 nx typecheck staff
 ```
 
+### SOPS Environment Variable Loading
+
+The repo uses a custom SOPS plugin to load encrypted environment variables for nx targets.
+
+#### How it works
+
+Projects can define targets with the `requires-sops-env:` prefix (e.g., `requires-sops-env:test`, `requires-sops-env:prisma-generate`).
+These are automatically wrapped by an inferred delegation target without the prefix.
+
+**Always run the unprefixed target:**
+```bash
+# ✅ Correct - uses sops plugin to load env vars
+nx test @meetings/prisma
+
+# ❌ Wrong - runs the raw target without env loading
+nx run @meetings/prisma:requires-sops-env:test
+```
+
 ### Prisma (for projects using databases)
 
 ```bash

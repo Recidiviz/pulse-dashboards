@@ -89,13 +89,22 @@
         {
           "projects": ["@meetings/prisma"],
           "target": "docker"
+        },
+        {
+          "projects": ["@meetings/prisma"],
+          "target": "prisma-deploy"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/@meetings/import"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @meetings/prisma && cd apps/@meetings/import && vitest",
-        "cwd": "{workspaceRoot}"
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {},
+        "ci": {}
       }
     },
     "upload-sourcemaps": {},

@@ -16,10 +16,12 @@
 // =============================================================================
 
 /// <reference types='vitest' />
+import {workspaceRoot} from "@nx/devkit";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import {join} from "path";
+import { defineConfig, loadEnv } from "vite";
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@meetings/tasks",
 
@@ -47,30 +49,7 @@ export default defineConfig(() => ({
       reportsDirectory: "../../../coverage/libs/@meetings/tasks",
       provider: "v8",
     },
-    // We need to set this up this way because:
-    // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
-    // 2. The env variables for local testing and CI are different
-    // NOTE: none of these are true secrets, they are all fine to put in this file
-    env: {
-      DATABASE_URL:
-        process.env["DATABASE_URL"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_ME:
-        process.env["DATABASE_URL_US_ME"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_NC:
-        process.env["DATABASE_URL_US_NC"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_NE:
-        process.env["DATABASE_URL_US_NE"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      SENTRY_DSN:
-        process.env["SENTRY_DSN"] ??
-        "https://4237e42b7c1d1964233e3a993f150553@o432474.ingest.us.sentry.io/4509985399373824",
-      SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
-      CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL:
-        process.env["CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL"] ??
-        "test-service-account-email@test-project.iam.gserviceaccount.com",
-    },
+    // Load .env.test from @meetings/server (adds basic env-compatibility for direct invocations of vitest)
+    env: mode === "test" ? loadEnv(mode, join(workspaceRoot, "apps/@meetings/server"), "") : undefined,
   },
 }));

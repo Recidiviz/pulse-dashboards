@@ -20,6 +20,7 @@ import { execSync } from "child_process";
 import { config as dotenvConfig } from "dotenv";
 import { existsSync } from "fs";
 import { join } from "path";
+import yaml from "yaml";
 
 export interface DecryptedEnv {
   [key: string]: string;
@@ -44,8 +45,6 @@ export function interpolatePath(
  */
 export function parseYamlEnv(content: string): DecryptedEnv {
   try {
-    // Try to load yaml module
-    const yaml = require("yaml");
     const parsed = yaml.parse(content);
 
     if (!parsed || typeof parsed !== "object") {
@@ -83,31 +82,61 @@ export function decryptSopsFile(filePath: string): DecryptedEnv {
     throw new Error(`SOPS encrypted file not found: ${absolutePath}`);
   }
 
-  // Check if sops is installed
-  try {
-    execSync("which sops", { stdio: "pipe" });
-  } catch {
-    throw new Error(
-      "SOPS is not installed. Install it with: brew install sops (macOS) or see https://github.com/getsops/sops",
-    );
+  let retryCount = 0;
+  const maxRetries = 1;
+
+  while (retryCount <= maxRetries) {
+    try {
+      const decrypted = execSync(`sops -d "${absolutePath}"`, {
+        encoding: "utf-8",
+        stdio: ["pipe", "pipe", "pipe"],
+        env: {
+          ...process.env,
+        },
+      });
+
+      // Parse as YAML instead of env file format
+      return parseYamlEnv(decrypted);
+    } catch (error: unknown) {
+      const stderr = (error as { stderr?: Buffer })?.stderr?.toString() || "";
+      const message = error instanceof Error ? error.message : String(error);
+
+      const isReauthError =
+        stderr.includes("reauth") ||
+        stderr.includes("invalid_rapt") ||
+        stderr.includes("Unauthenticated");
+
+      if (isReauthError && retryCount < maxRetries) {
+        console.log(
+          "`gcloud` authentication expired. Refreshing session...",
+        );
+
+        try {
+          execSync("gcloud auth login --update-adc", { stdio: "inherit" });
+
+          retryCount++;
+          continue;
+        } catch (authError) {
+          const authMessage =
+            authError instanceof Error ? authError.message : String(authError);
+          throw new Error(
+            `Failed to refresh GCloud authentication: ${authMessage}`,
+          );
+        }
+      }
+
+      if (isReauthError) {
+        throw new Error(
+          `Failed to decrypt SOPS file: GCloud authentication expired or requires reauth.\n\n` +
+            `Details: ${message}\n${stderr}`,
+        );
+      }
+
+      throw new Error(`Failed to decrypt SOPS file: ${message}\n${stderr}`);
+    }
   }
 
-  try {
-    const decrypted = execSync(`sops -d "${absolutePath}"`, {
-      encoding: "utf-8",
-      stdio: ["pipe", "pipe", "pipe"],
-      env: {
-        ...process.env,
-      },
-    });
-
-    // Parse as YAML instead of env file format
-    return parseYamlEnv(decrypted);
-  } catch (error: unknown) {
-    const stderr = (error as { stderr?: Buffer })?.stderr?.toString() || "";
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to decrypt SOPS file: ${message}\n${stderr}`);
-  }
+  throw new Error("Unexpected error in decryptSopsFile");
 }
 
 /**
@@ -166,10 +195,59 @@ export function getSopsPathsForTask(
 }
 
 /**
+ * Get plaintext .env file paths for a task in priority order (Vite-compatible naming)
+ * Returns paths from lowest to highest priority, so later files override earlier ones
+ *
+ * Example: target="test", configuration="dev"
+ * Returns (in order):
+ *   - .env (base)
+ *   - .env.test (target-specific)
+ *   - .env.dev (configuration-specific)
+ *   - .env.test.dev (target+configuration-specific)
+ */
+export function getPlaintextEnvPathsForTask(
+  projectRoot: string,
+  target: string,
+  configuration?: string,
+): string[] {
+  const identifiers: string[] = [];
+
+  // Configuration-specific identifier (like test.dev)
+  if (configuration) {
+    identifiers.push(`${target}.${configuration}`);
+    identifiers.push(configuration);
+  }
+
+  // Target-specific identifier (like test)
+  identifiers.push(target);
+
+  // Base identifier (no suffix)
+  identifiers.push("");
+
+  const projectDir = join(workspaceRoot, projectRoot);
+  const envFiles: string[] = [];
+
+  // Check in reverse order so we return lowest priority first
+  for (let i = identifiers.length - 1; i >= 0; i--) {
+    const identifier = identifiers[i];
+    const fileName = identifier ? `.env.${identifier}` : ".env";
+    const filePath = join(projectDir, fileName);
+
+    if (existsSync(filePath)) {
+      envFiles.push(filePath);
+    }
+  }
+
+  return envFiles;
+}
+
+/**
  * Load and parse a dotenv file
  */
 export function loadDotenvFile(filePath: string): DecryptedEnv {
-  const absolutePath = join(workspaceRoot, filePath);
+  const absolutePath = filePath.startsWith("/")
+    ? filePath
+    : join(workspaceRoot, filePath);
 
   if (!existsSync(absolutePath)) {
     throw new Error(`Dotenv file not found: ${absolutePath}`);

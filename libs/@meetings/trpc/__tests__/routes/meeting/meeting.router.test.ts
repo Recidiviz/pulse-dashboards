@@ -355,7 +355,7 @@ describe("meeting router", () => {
               url: "https://test-server.app/stitch-audio",
               oidcToken: {
                 serviceAccountEmail:
-                  "test-service-account-email@test-project.iam.gserviceaccount.com",
+                  "test-service-account-email@recidiviz-test.org",
               },
             },
           },

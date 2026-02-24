@@ -1,10 +1,16 @@
 # SOPS allows us to store encrypted secrets files in our git repository
 # Configure SOPS to use the GCP KMS key provisioned for encryption / decryption
 # https://github.com/getsops/sops
+# The creation_rules are selected in list-order priority. The first match is the one that is used
 creation_rules:
-  - path_regex: 'apps/@jii/.+\.enc\.yaml$'
+  # Contractor-specific rules (more specific patterns)
+  - path_regex: apps/@meetings/server/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1j9nh8pk54l790m4km3zjemzgqhaytkfcjwya6js6pj3mhuz5xvwqxmhvup
+  # General rules
+  - path_regex: apps/@jii/.+\.enc\.yaml$
     gcp_kms: projects/recidiviz-jii-staging/locations/us-central1/keyRings/recidiviz-jii-staging-sops/cryptoKeys/recidiviz-jii-staging-sops-key
-  - path_regex: 'apps/public-pathways/.+\.enc\.yaml$'
+  - path_regex: apps/public-pathways/.+\.enc\.yaml$
     gcp_kms: projects/public-pathways-staging/locations/us-central1/keyRings/public-pathways-staging-sops/cryptoKeys/public-pathways-staging-sops-key
-  - path_regex: '\.enc\.yaml$'
+  - path_regex: \.enc\.yaml$
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key

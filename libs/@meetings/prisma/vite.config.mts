@@ -16,43 +16,30 @@
 // =============================================================================
 
 /// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import {workspaceRoot} from "@nx/devkit";
+import {nxViteTsPaths} from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import {join} from "path";
+import {defineConfig, loadEnv} from "vite";
 
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@meetings/prisma",
+export default defineConfig(({mode}) =>
+  ({
+    root: __dirname,
+    cacheDir: "../../../node_modules/.vite/libs/@meetings/prisma",
 
-  plugins: [nxViteTsPaths()],
-  test: {
-    passWithNoTests: true,
-    name: "@meetings/prisma",
-    globals: true,
-    cache: { dir: "../../../node_modules/.vitest" },
-    environment: "node",
-    include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../../coverage/libs/@meetings/prisma",
-      provider: "v8",
-    },
-    // We need to set this up this way because:
-    // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
-    // 2. The env variables for local testing and CI are different
-    // NOTE: none of these are true secrets, they are all fine to put in this file
-    env: {
-      DATABASE_URL:
-        process.env["DATABASE_URL"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_ME:
-        process.env["DATABASE_URL_US_ME"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_NC:
-        process.env["DATABASE_URL_US_NC"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_NE:
-        process.env["DATABASE_URL_US_NE"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-    },
-  },
-}));
+    plugins: [nxViteTsPaths()],
+    test: {
+      passWithNoTests: true,
+      name: "@meetings/prisma",
+      globals: true,
+      cache: {dir: "../../../node_modules/.vitest"},
+      environment: "node",
+      include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+      reporters: ["default"],
+      coverage: {
+        reportsDirectory: "../../../coverage/libs/@meetings/prisma",
+        provider: "v8",
+      },
+      // Load .env.test from @meetings/server (adds basic env-compatibility for direct invocations of vitest)
+      env: mode === "test" ? loadEnv(mode, join(workspaceRoot, "apps/@meetings/server"), "") : undefined,
+    }
+  }));
