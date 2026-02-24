@@ -16,42 +16,34 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "options": {
         "command": "jest",
         "cwd": "{projectRoot}"
       }
     },
-    "load-env-file-gcp": {
+    "requires-sops-env:sync-env-to-eas": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../../tools/load_env_files.sh --env env_meetings_app",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "load-env-file-eas": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "eas env:pull --non-interactive --path .env",
+        "command": "tsx scripts/sync-env-to-eas.mts",
         "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {
-          "args": "--environment development"
+          "args": "development"
         },
         "staging": {
-          "args": "--environment preview"
+          "args": "staging"
         },
         "production": {
-          "args": "--environment production"
+          "args": "production"
         }
       },
       "defaultConfiguration": "dev"
     },
-    "offline:android": {
+    "requires-sops-env:offline:android": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-file-gcp"],
       "options": {
         "commands": [
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
@@ -61,9 +53,8 @@
       },
       "cwd": "{workspaceRoot}"
     },
-    "dev:android": {
+    "requires-sops-env:dev:android": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-file-eas"],
       "options": {
         "commands": [
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
@@ -73,9 +64,8 @@
       },
       "cwd": "{workspaceRoot}"
     },
-    "offline:ios": {
+    "requires-sops-env:offline:ios": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-file-gcp"],
       "options": {
         "commands": [
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
@@ -85,9 +75,8 @@
       },
       "cwd": "{workspaceRoot}"
     },
-    "dev:ios": {
+    "requires-sops-env:dev:ios": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-file-eas"],
       "options": {
         "commands": [
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
@@ -97,24 +86,21 @@
       },
       "cwd": "{workspaceRoot}"
     },
-    "offline:web": {
+    "requires-sops-env:offline:web": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-file-gcp"],
       "options": {
         "commands": ["nx start @meetings/app --web"]
       },
       "cwd": "{workspaceRoot}"
     },
-    "dev:web": {
+    "requires-sops-env:dev:web": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-file-eas"],
       "options": {
         "commands": ["nx start @meetings/app --web"]
       },
       "cwd": "{workspaceRoot}"
     },
     "build:web": {
-      "dependsOn": [{ "target": "load-env-file-eas", "params": "forward" }],
       "command": "nx export @meetings/app -p web --skip-nx-cache",
       "cache": false,
       "configurations": {
@@ -123,7 +109,7 @@
         "production": {}
       }
     },
-    "deploy:web": {
+    "requires-sops-env:deploy:web": {
       "dependsOn": [{ "target": "build:web", "params": "forward" }],
       "command": "firebase deploy --config firebase.meetings.json",
       "configurations": {
