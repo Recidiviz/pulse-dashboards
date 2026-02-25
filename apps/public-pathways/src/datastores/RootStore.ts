@@ -21,6 +21,7 @@ import { makeAutoObservable, onReactionError } from "mobx";
 
 import { DEFAULT_PATHWAYS_PAGE, DEFAULT_PATHWAYS_SECTION_BY_PAGE, PATHWAYS_PAGES, PathwaysPage, PathwaysSection } from "~shared-pathways";
 
+import MetricsStore from "./MetricsStore";
 import UserStore from "./UserStore";
 
 // global error handling for Mobx reactions
@@ -50,12 +51,13 @@ export function getAuthSettings(): Auth0ClientOptions | undefined {
 export class RootStore {
   userStore: UserStore;
 
+  metricsStore: MetricsStore;
+
   page: PathwaysPage = PATHWAYS_PAGES.prison;
 
-  section: PathwaysSection =
-    DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
+  section: PathwaysSection = DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
 
-   currentTenantId = "US_NY";
+  currentTenantId = "US_NY";
 
   constructor() {
     makeAutoObservable(this);
@@ -64,5 +66,6 @@ export class RootStore {
       authSettings: getAuthSettings(),
       rootStore: this,
     });
+    this.metricsStore = new MetricsStore({ rootStore: this });
   }
 }
