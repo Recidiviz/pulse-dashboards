@@ -36,6 +36,7 @@ import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfig
 import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTelephoneReporting";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
+import { UsNcCreditReductionReviewConfiguration } from "./UsNc/UsNcCreditReductionReviewConfiguration";
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
 import { UsNeGoodTimeRestorationConfiguration } from "./UsNe/UsNeGoodTimeRestorationConfiguration";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
@@ -68,8 +69,7 @@ const customOpportunityConfigurations: Partial<
   usIdCRCResidentWorker: UsIdCRCConfiguration,
   usIdCRCWorkRelease: UsIdCRCConfiguration,
   usIdExpandedCRC: UsIdCRCConfiguration,
-  usIdTransferToCRCLikeBed:
-    UsIdTransferToCRCLikeBedConfiguration,
+  usIdTransferToCRCLikeBed: UsIdTransferToCRCLikeBedConfiguration,
 
   // Maine
   usMeSCCP: UsMeSCCPConfiguration,
@@ -89,6 +89,9 @@ const customOpportunityConfigurations: Partial<
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoWorkRelease: UsMoWorkReleaseConfiguration,
+
+  // North Carolina
+  usNcCreditReductionReview: UsNcCreditReductionReviewConfiguration,
 
   // North Dakota
   // This is a non-constructed opportunity that is being customized
