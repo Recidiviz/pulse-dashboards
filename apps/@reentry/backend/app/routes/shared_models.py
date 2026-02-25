@@ -30,6 +30,7 @@ class IntakeMessageResponse(ORMResponse):
     content: str
     from_role: IntakeMessageRole
     section: str | None = None
+    requires_response: bool = False
 
 
 class ClientRecordResponse(BaseModel):

@@ -3108,6 +3108,11 @@ export interface components {
             from_role: components["schemas"]["IntakeMessageRole"];
             /** Section */
             section?: string | null;
+            /**
+             * Requires Response
+             * @default false
+             */
+            requires_response: boolean;
         };
         /**
          * IntakeMessageRole
@@ -3134,7 +3139,12 @@ export interface components {
          *     Used for both database persistence and UI state representation.
          * @enum {string}
          */
-        IntakeStatus: "created" | "in_progress" | "error" | "completed";
+        IntakeStatus:
+            | "created"
+            | "in_progress"
+            | "error"
+            | "completed"
+            | "processing";
         /**
          * IntakeType
          * @enum {string}
@@ -5767,7 +5777,9 @@ export interface operations {
                 /** @description Output type (action_plan or intake_summary) */
                 output_type: components["schemas"]["OutputType"];
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };

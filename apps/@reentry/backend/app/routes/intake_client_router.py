@@ -25,6 +25,7 @@ from app.routes.base import IntakeSectionResponse
 from app.routes.client_router import ClientRecordResponse
 from app.routes.shared_models import (
     AddressSubmission,
+    IntakeMessageResponse,
     IntakeMessageRole,
     SurveySubmission,
 )
@@ -42,12 +43,6 @@ security = HTTPBearer()
 
 
 # -------------------- Get intake ------
-class IntakeMessageResponse(ORMResponse):
-    content: str
-    from_role: IntakeMessageRole
-    section: str | None = None
-
-
 class IntakeResponse(ORMResponse):
     client_pseudo_id: str
     status: IntakeStatus

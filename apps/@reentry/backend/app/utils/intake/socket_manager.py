@@ -243,7 +243,11 @@ class SocketIOManager:
 
             await self.send_event_client_pseudo_id(
                 client_pseudo_id,
-                AIMessageEvent(content=IntakeMessageResponse(**message.model_dump())),
+                AIMessageEvent(
+                    content=IntakeMessageResponse(
+                        **message.model_dump(), requires_response=True
+                    )
+                ),
             )
 
             # Wait for response with timeout

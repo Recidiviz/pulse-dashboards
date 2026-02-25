@@ -233,7 +233,7 @@ const intakeReducer = (
       if (last && last.id === action.content.id) {
         return {
           ...state,
-          waitingForAIInput: false,
+          waitingForAIInput: action.content.requires_response !== true,
           connectionStatus: "connected",
         };
       }
@@ -246,7 +246,7 @@ const intakeReducer = (
       if (hasLetsContinuePair) {
         return {
           ...state,
-          waitingForAIInput: false,
+          waitingForAIInput: action.content.requires_response !== true,
           connectionStatus: "connected",
         };
       }
@@ -255,7 +255,7 @@ const intakeReducer = (
       return {
         ...state,
         messages: [...state.messages, action.content],
-        waitingForAIInput: false,
+        waitingForAIInput: action.content.requires_response !== true,
         currentSection: state.currentSection || action.content.section || null,
         allSections: state.currentSection
           ? state.allSections
