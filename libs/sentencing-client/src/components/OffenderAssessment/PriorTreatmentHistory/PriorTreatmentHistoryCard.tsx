@@ -81,7 +81,7 @@ export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps>
               <Styled.TableHeaderRow>
                 <Styled.TableHeaderCell>Year Completed</Styled.TableHeaderCell>
                 <Styled.TableHeaderCell>Program</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Verified</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>Verified by Report Author</Styled.TableHeaderCell>
               </Styled.TableHeaderRow>
               <Styled.HistoryList>
                 {priorTreatmentHistories.map((history) => (

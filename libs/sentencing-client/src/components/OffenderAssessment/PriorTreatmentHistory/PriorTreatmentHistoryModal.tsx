@@ -90,11 +90,9 @@ export const PriorTreatmentHistoryModal: React.FC<
     }
   };
 
-  // Check if form has any data (at least one field filled)
+  // Require program name and verified by report author to save
   const hasData =
-    formData.yearCompleted !== null ||
-    !!formData.programName ||
-    formData.verifiedByReportAuthor !== null;
+    !!formData.programName && formData.verifiedByReportAuthor !== null;
 
   return (
     <Modal isOpen={isOpen} hideModal={handleClose} padding={0}>
@@ -148,7 +146,7 @@ export const PriorTreatmentHistoryModal: React.FC<
           </ModalStyled.Field>
 
           <ModalStyled.Field>
-            <ModalStyled.Label>Verified</ModalStyled.Label>
+            <ModalStyled.Label>Verified by Report Author</ModalStyled.Label>
             <Dropdown
               value={
                 formData.verifiedByReportAuthor !== null

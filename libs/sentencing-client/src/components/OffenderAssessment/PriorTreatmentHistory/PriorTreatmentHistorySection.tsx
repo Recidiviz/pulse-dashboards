@@ -35,7 +35,7 @@ import {
 import { PriorTreatmentHistoryCard } from "./PriorTreatmentHistoryCard";
 import { TreatmentProgramCategory } from "./types";
 
-const MAX_DISPLAYED_HISTORIES = 2;
+const MAX_DISPLAYED_HISTORIES = 5;
 
 interface PriorTreatmentHistorySectionProps {
   presenter: PriorTreatmentHistoryPresenter;
