@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AgencyConfig } from "~@meetings/config/types";
+import { AgencyConfigSchema } from "~@meetings/config/types";
 
-const US_NE_CONFIG = {
+const US_NE_CONFIG = AgencyConfigSchema.parse({
   name: "Nebraska",
   stateCode: "US_NE",
   showTranscriptions: true,
   audioTTLDays: 30,
   transcriptTTLDays: 30,
-} satisfies AgencyConfig;
+});
 
 export default US_NE_CONFIG;

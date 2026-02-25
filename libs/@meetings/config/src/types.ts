@@ -15,10 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type AgencyConfig = {
-  name: string;
-  stateCode: string;
-  showTranscriptions: boolean;
-  audioTTLDays: number;
-  transcriptTTLDays: number;
-};
+import { z } from "zod";
+
+const MIN_TTL_DAYS = 7;
+
+export const AgencyConfigSchema = z.object({
+  name: z.string(),
+  stateCode: z.string(),
+  showTranscriptions: z.boolean(),
+  audioTTLDays: z.number().int().min(MIN_TTL_DAYS),
+  transcriptTTLDays: z.number().int().min(MIN_TTL_DAYS),
+});
+
+export type AgencyConfig = z.infer<typeof AgencyConfigSchema>;

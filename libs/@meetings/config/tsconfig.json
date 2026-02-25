@@ -6,5 +6,11 @@
     {
       "path": "./tsconfig.lib.json"
     },
-  ]
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "types": ["vite/client", "node"]
+  }
 }

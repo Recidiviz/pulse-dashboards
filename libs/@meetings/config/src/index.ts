@@ -17,3 +17,4 @@
 
 export { AGENCY_CONFIGS } from "~@meetings/config/configs";
 export type { AgencyConfig } from "~@meetings/config/types";
+export { AgencyConfigSchema } from "~@meetings/config/types";

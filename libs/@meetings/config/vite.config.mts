@@ -15,14 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AgencyConfigSchema } from "~@meetings/config/types";
+/// <reference types='vitest' />
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import { defineConfig } from "vite";
 
-const US_ME_CONFIG = AgencyConfigSchema.parse({
-  name: "Maine",
-  stateCode: "US_ME",
-  showTranscriptions: false,
-  audioTTLDays: 30,
-  transcriptTTLDays: 30,
-});
-
-export default US_ME_CONFIG;
+export default defineConfig(() => ({
+  root: __dirname,
+  cacheDir: "../../../node_modules/.vite/libs/@meetings/config",
+  plugins: [nxViteTsPaths()],
+  test: {
+    passWithNoTests: true,
+    name: "@meetings/config",
+    globals: true,
+    cache: { dir: "../../../node_modules/.vitest" },
+    environment: "node",
+    include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    coverage: {
+      reportsDirectory: "../../../coverage/libs/@meetings/config",
+      provider: "v8",
+    },
+  },
+}));
