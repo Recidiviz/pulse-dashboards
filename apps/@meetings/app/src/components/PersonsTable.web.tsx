@@ -44,6 +44,7 @@ import {
   TableHeadRow,
   TableRow,
 } from "./Table.web";
+import { TooltipText } from "./TooltipText";
 
 const PAGE_SIZE = 7;
 
@@ -98,12 +99,13 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
             .map((person) => (
               <TableRow
                 key={person.personId}
-                onClick={() =>
-                  handleNavigateToProfile(person.personId.toString())
-                }
+                // onClickCapture allows row to be clicked instead of Pressable inside TooltipText,
+                // If inside row by design we have to add something clickable
+                // then this solution has to be changed 
+                onClickCapture={() => handleNavigateToProfile(person.personId.toString())}
               >
                 <TableCell>
-                  <View className="flex h-full flex-row items-center gap-3">
+                  <View className="flex size-full flex-row items-center gap-3">
                     <ImageBackground
                       source={Icons.BgAvatar}
                       className="size-11 items-center justify-center overflow-hidden rounded-full"
@@ -113,13 +115,24 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                         {getInitials(person.fullName)}
                       </Text>
                     </ImageBackground>
-                    <Text className="font-inter text-base font-medium capitalize text-primary">
+                    <TooltipText 
+                      tooltipText={person.fullName.toLowerCase()}
+                      textClassName="font-inter text-base font-medium capitalize text-primary"
+                    >
                       {person.fullName.toLowerCase()}
-                    </Text>
+                    </TooltipText>
                   </View>
                 </TableCell>
-                <TableCell>{person.displayPersonExternalId}</TableCell>
-                <TableCell>{person.primaryMetadata}</TableCell>
+                <TableCell>
+                  <TooltipText tooltipText={person.displayPersonExternalId}>
+                    {person.displayPersonExternalId}
+                  </TooltipText>
+                </TableCell>
+                <TableCell>
+                  <TooltipText tooltipText={person.primaryMetadata}>
+                    {person.primaryMetadata}
+                  </TooltipText>
+                </TableCell>
                 <TableCell>
                   {person.activeMeetingId ? (
                     <View className="flex-row items-center pb-2">
