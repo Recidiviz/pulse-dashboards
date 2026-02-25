@@ -17,17 +17,18 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { Resident } from "../../../Resident";
-import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityTab } from "../../types";
 import {
   UsMiCustodyLevelDowngradeReferralRecord,
   usMiCustodyLevelDowngradeSchema,
-} from "./UsMiCustodyLevelDowngradeReferralRecord";
+} from "~datatypes";
+
+import { Resident } from "../../../Resident";
+import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityTab } from "../../types";
 
 export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
   Resident,
-  UsMiCustodyLevelDowngradeReferralRecord
+  UsMiCustodyLevelDowngradeReferralRecord["output"]
 > {
   constructor(resident: Resident, record: DocumentData) {
     super(

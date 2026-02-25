@@ -29,6 +29,7 @@ import {
   usMeMediumTrusteeFixtures,
   usMeSccpFixtures,
   usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
+  usMiCustodyLevelDowngradeFixtures,
   usMiReclassificationRequestFixtures,
   usMiSecurityClassificationCommitteeReviewFixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
@@ -163,6 +164,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
       usMeSCCPReferrals: usMeSccpFixtures,
       usMeMediumTrusteeReferrals: usMeMediumTrusteeFixtures,
       usMeReclassificationReviewReferrals: usMeAnnualReclassificationFixtures,
+      usMiCustodyLevelDowngradeReferrals: usMiCustodyLevelDowngradeFixtures,
       usMiReclassificationRequestReferrals: usMiReclassificationRequestFixtures,
       usMiSecurityClassificationCommitteeReviewReferrals:
         usMiSecurityClassificationCommitteeReviewFixtures,

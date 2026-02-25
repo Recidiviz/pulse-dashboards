@@ -44,6 +44,8 @@ export * from "./opportunities/UsMe/UsMeWorkRelease/schema";
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReview/schema";
+export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/fixtures";
+export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/schema";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/fixtures";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/schema";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/fixtures";
