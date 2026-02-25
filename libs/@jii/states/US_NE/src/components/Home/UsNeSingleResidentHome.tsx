@@ -24,8 +24,13 @@ import UsNeGoodTimeAdjustments from "./UsNeGoodTimeAdjustments";
 import UsNeHomeHeader from "./UsNeHomeHeader";
 
 const UsNeSingleResidentHome = () => {
-  const { copy } = useUsNeContext();
+  const { metadata, copy } = useUsNeContext();
   usePageTitle(copy.home.pageTitle);
+
+  if (!metadata.sentenceLastModifiedDate) {
+    return <p>{copy.home.noSentenceFallback}</p>;
+  }
+
   return (
     <>
       <UsNeHomeHeader />

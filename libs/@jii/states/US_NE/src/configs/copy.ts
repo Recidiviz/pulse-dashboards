@@ -44,6 +44,7 @@ export type UsNeCopy = {
   lastUpdated: string;
   home: {
     pageTitle: string;
+    noSentenceFallback: string;
     headerFields: { label: string; value: string }[];
     todos: {
       sectionTitle: string;
@@ -101,6 +102,8 @@ export const usNeCopy: UsNeCopy = {
     "This information is current as of {{formatFullDate sentenceLastModifiedDate}}",
   home: {
     pageTitle: "Learn More About Your Sentence",
+    noSentenceFallback:
+      "Your sentence details have still not been confirmed by NDCS. Contact Records for more information.",
     headerFields: [
       {
         label: "Open Detainers/Holds:",
