@@ -36,12 +36,12 @@ export function PageMoreInfoCreditReports() {
       {...moreInfo}
       moreInfoPageLinks={[
         {
-          text: "About the App",
-          url: State.Resident.UsTnMoreInformation.About.buildPath(pathParams),
+          children: "About the App",
+          to: State.Resident.UsTnMoreInformation.About.buildPath(pathParams),
         },
         {
-          text: "Important Dates",
-          url: State.Resident.UsTnMoreInformation.ImportantDates.buildPath(
+          children: "Important Dates",
+          to: State.Resident.UsTnMoreInformation.ImportantDates.buildPath(
             pathParams,
           ),
         },

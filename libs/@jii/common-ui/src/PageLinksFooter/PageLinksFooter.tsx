@@ -27,6 +27,7 @@ import { palette } from "~design-system";
 
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { ButtonLink } from "../Buttons/ButtonLink";
+import { SimpleLinkProps } from "../SimpleLinkProps";
 
 const Footer = styled(FullBleedContainer).attrs({ as: "footer" })`
   background: ${palette.marble3};
@@ -67,8 +68,7 @@ const LinksColumn = styled.div`
 
 export interface PageLinksFooterProps {
   pageLinksHeading: string;
-  // TODO(#12083): use SimpleLinkProps here instead
-  pageLinks: Array<{ text: string; url: string }>;
+  pageLinks: Array<SimpleLinkProps>;
   topLinkText: string;
 }
 
@@ -82,8 +82,8 @@ export const PageLinksFooter: FC<{
           <h2>{contents.pageLinksHeading}</h2>
           <ul>
             {contents.pageLinks.map((link) => (
-              <li key={link.url}>
-                <Link to={link.url}>{link.text}</Link>
+              <li key={`${link.children}-${link.to}`}>
+                <Link {...link} />
               </li>
             ))}
           </ul>

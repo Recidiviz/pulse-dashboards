@@ -17,28 +17,29 @@
 
 import { matchPath, useLocation } from "react-router-dom";
 
+import { SimpleLinkProps } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
-export function useInfoPageFooterLinks(): { text: string; url: string }[] {
+export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
   const { isDprEligible } = useResidentMetadata("US_AZ");
   const { t } = useUsAzTranslations();
   const { pathname } = useLocation();
 
-  const links: { text: string; url: string }[] = [];
+  const links: Array<SimpleLinkProps> = [];
   if (!matchPath(State.Resident.UsAzMoreInformation.About.path, pathname)) {
     links.push({
-      url: `../${State.Resident.$.UsAzMoreInformation.About.buildRelativePath({})}`,
-      text: t(($) => $.about.heading),
+      to: `../${State.Resident.$.UsAzMoreInformation.About.buildRelativePath({})}`,
+      children: t(($) => $.about.heading),
     });
   }
   if (
     !matchPath(State.Resident.UsAzMoreInformation.ImportantDates.path, pathname)
   ) {
     links.push({
-      url: `../${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath({})}`,
-      text: t(($) => $.importantDates.moreInfo.heading),
+      to: `../${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath({})}`,
+      children: t(($) => $.importantDates.moreInfo.heading),
     });
   }
   if (
@@ -46,8 +47,8 @@ export function useInfoPageFooterLinks(): { text: string; url: string }[] {
     !matchPath(State.Resident.UsAzMoreInformation.DPR.path, pathname)
   ) {
     links.push({
-      url: `../${State.Resident.$.UsAzMoreInformation.DPR.buildRelativePath({})}`,
-      text: t(($) => $.dprInfoPage.heading),
+      to: `../${State.Resident.$.UsAzMoreInformation.DPR.buildRelativePath({})}`,
+      children: t(($) => $.dprInfoPage.heading),
     });
   }
   return links;

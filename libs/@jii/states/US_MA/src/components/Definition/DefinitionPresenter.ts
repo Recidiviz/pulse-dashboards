@@ -55,12 +55,12 @@ export class DefinitionPagePresenter implements PageLinksFooterProps {
     return State.Resident.getTypedParams(urlMatch.params);
   }
 
-  get pageLinks() {
+  get pageLinks(): Array<SimpleLinkProps> {
     return Object.entries(this.allInfoPagesCopy)
       .filter(([slug]) => slug !== this.pageSlug)
       .map(([pageSlug, page]) => ({
-        text: page.heading,
-        url: State.Resident.EGT.Definition.buildPath({
+        children: page.heading,
+        to: State.Resident.EGT.Definition.buildPath({
           ...this.baseUrlParams,
           pageSlug,
         }),

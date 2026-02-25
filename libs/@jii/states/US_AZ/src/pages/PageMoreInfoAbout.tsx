@@ -36,8 +36,8 @@ export function PageMoreInfoAbout() {
       body={t(($) => $.about.body)}
       moreInfoPageLinks={[
         {
-          text: t(($) => $.homePageLinkText),
-          url: State.Resident.buildPath(pathParams),
+          children: t(($) => $.homePageLinkText),
+          to: State.Resident.buildPath(pathParams),
         },
         ...useInfoPageFooterLinks(),
       ]}

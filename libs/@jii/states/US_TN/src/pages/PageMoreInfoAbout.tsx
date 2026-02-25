@@ -36,14 +36,14 @@ export function PageMoreInfoAbout() {
       {...t(($) => $.moreInfo, { returnObjects: true })}
       moreInfoPageLinks={[
         {
-          text: "Important Dates",
-          url: State.Resident.UsTnMoreInformation.ImportantDates.buildPath(
+          children: "Important Dates",
+          to: State.Resident.UsTnMoreInformation.ImportantDates.buildPath(
             pathParams,
           ),
         },
         {
-          text: "Credits",
-          url: State.Resident.UsTnMoreInformation.Credits.buildPath(pathParams),
+          children: "Credits",
+          to: State.Resident.UsTnMoreInformation.Credits.buildPath(pathParams),
         },
       ]}
     />

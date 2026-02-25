@@ -18,7 +18,12 @@
 import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { BackLink, CopyProps, PageLinksFooter } from "~@jii/common-ui";
+import {
+  BackLink,
+  CopyProps,
+  PageLinksFooter,
+  SimpleLinkProps,
+} from "~@jii/common-ui";
 import {
   HeadingsAggregator,
   InfoPage,
@@ -30,7 +35,7 @@ import { useUsAzTranslations } from "~@jii/translation";
 type DefinitionViewProps = {
   heading: string;
   body: string;
-  moreInfoPageLinks?: { text: string; url: string }[];
+  moreInfoPageLinks?: Array<SimpleLinkProps>;
   CopyWrapperOverride?: FC<CopyProps>;
   tocHeadingsAggregatorOverride?: HeadingsAggregator;
 };
