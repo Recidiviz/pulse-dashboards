@@ -20,11 +20,14 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
+import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
+
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
 import { useMeetingRecording, useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
+import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import {
   Table,
   TableBody,
@@ -49,7 +52,7 @@ type Meeting = {
   time: string;
   duration: string | null;
   content: string;
-  status: string;
+  status: PostMeetingProcessingStatus;
   recordingState: string;
   start: Date;
   end: Date | null;
@@ -71,8 +74,8 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
   });
   const { status: recordingState, meetingId } = useRecording<"web">();
 
-  const isMeetingInProgress =
-    recordingState !== "idle" && meeting.id === meetingId;
+  const isMeetingInProgress = recordingState !== "idle" && meeting.id === meetingId;
+  const isProcessing = isMeetingProcessing(meeting.status);
 
   const handleNavigateToMeeting = () => {
     if (!isMeetingInProgress) {
@@ -98,8 +101,33 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
           ? formatDurationCompact(meeting.duration)
           : formatDurationNumeric(totalDurationMs)}
       </TableCell>
-      {!isMeetingInProgress ? (
-        <TableCell>
+      <TableCell>
+        {isMeetingInProgress && (
+          <View className="flex-row items-center pb-2">
+            <Image source={Icons.Record} className="!size-4" />
+            <Text className="px-2 font-inter text-black">In progress</Text>
+          </View>
+        )}
+        {isProcessing && (
+          <View className="rounded-xl bg-[#C1E3D83B] my-2">
+            <View className="flex flex-row items-center p-3 gap-4">
+              <Image
+                source={Icons.Processing}
+                className="!size-8"
+                style={{ resizeMode: "contain" }}
+              />
+              <View className="flex-1">
+                <Text className="font-inter text-[14px] leading-4 font-semibold text-primary">
+                  Recording is being processed...
+                </Text>
+                <Text className="font-inter text-xs font-normal text-gray-700">
+                  The notes and transcript will become available in a few minutes
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
+        {!isMeetingInProgress && !isProcessing && (
           <Text
             className="w-[180px] font-inter text-base text-[#355362D9]"
             style={{ fontStyle: meeting.content ? "normal" : "italic" }}
@@ -108,15 +136,8 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
           >
             {meeting.content || "Note is empty"}
           </Text>
-        </TableCell>
-      ) : (
-        <TableCell>
-          <View className="flex-row items-center pb-2">
-            <Image source={Icons.Record} className="!size-4" />
-            <Text className="px-2 font-inter text-black">In progress</Text>
-          </View>
-        </TableCell>
-      )}
+        )}
+      </TableCell>
       <TableCell>
         <View className="invisible size-5 items-center justify-center group-hover:visible">
           <Image source={Icons.ArrowRight} className="!size-full" />

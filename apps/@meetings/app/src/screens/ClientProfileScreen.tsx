@@ -23,6 +23,7 @@ import { Alert, Platform } from "react-native";
 import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
 import { useRecording } from "../features/recording";
+import { useMeetings } from "../hooks/useMeetings";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeClient } from "../utils/format";
@@ -59,10 +60,7 @@ const ClientProfileScreen = ({ person }: ProfileScreenProps) => {
     isLoading,
     error,
     refetch,
-  } = trpc.v1.client.getMeetings.useQuery(
-    { clientId: person.personId },
-    { enabled: !!person?.personId },
-  );
+  } = useMeetings({ personId: person.personId });
 
   const createMeetingMutation = trpc.v1.client.createMeeting.useMutation();
   const handleCreateMeeting = async () => {
