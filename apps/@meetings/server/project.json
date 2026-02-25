@@ -109,7 +109,7 @@
         "buildTarget": "@meetings/server:build"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
@@ -126,7 +126,12 @@
       "options": {
         "command": "nx prisma-deploy @meetings/prisma && cd apps/@meetings/server && vitest",
         "cwd": "{workspaceRoot}"
-      }
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "upload-sourcemaps": {},
     "container": {

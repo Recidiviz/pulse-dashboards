@@ -16,10 +16,13 @@
 // =============================================================================
 
 /// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import {workspaceRoot} from "@nx/devkit";
+import {nxViteTsPaths} from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import {join} from "path";
+import {defineConfig, loadEnv} from "vite";
 
-export default defineConfig(() => ({
+
+export default defineConfig(({mode}) => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/apps/@meetings/server",
 
@@ -43,64 +46,7 @@ export default defineConfig(() => ({
       provider: "v8",
     },
     clearMocks: true,
-    // We need to set this up this way because:
-    // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
-    // 2. The env variables for local testing and CI are different
-    // NOTE: none of these are true secrets, they are all fine to put in this file
-    env: {
-      AUTH0_AUDIENCE: process.env["AUTH0_AUDIENCE"] ?? "test",
-      AUTH0_DOMAIN: process.env["AUTH0_DOMAIN"] ?? "test",
-      DATABASE_URL:
-        process.env["DATABASE_URL"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_ME:
-        process.env["DATABASE_URL_US_ME"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_NC:
-        process.env["DATABASE_URL_US_NC"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_NE:
-        process.env["DATABASE_URL_US_NE"] ??
-        "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      SENTRY_DSN:
-        process.env["SENTRY_DSN"] ??
-        "https://4237e42b7c1d1964233e3a993f150553@o432474.ingest.us.sentry.io/4509985399373824",
-      SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
-      LANGCHAIN_API_KEY:
-        process.env["LANGCHAIN_API_KEY"] ?? "test-fake-langchain-api-key",
-      LANGCHAIN_TRACING_V2: process.env["LANGCHAIN_TRACING_V2"] ?? "false",
-      LANGCHAIN_PROJECT:
-        process.env["LANGCHAIN_PROJECT"] ?? "Meetings Module (test)",
-      LANGSMITH_ENDPOINT:
-        process.env["LANGSMITH_ENDPOINT"] ?? "http://langchain.local",
-      AUDIO_RECORDINGS_BUCKET_NAME:
-        process.env["AUDIO_RECORDINGS_BUCKET_NAME"] ?? "test-audio-bucket",
-      CLOUD_TASKS_PROJECT: process.env["CLOUD_TASKS_PROJECT"] ?? "test-project",
-      CLOUD_TASKS_LOCATION:
-        process.env["CLOUD_TASKS_LOCATION"] ?? "us-central1",
-      CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL:
-        process.env["CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL"] ??
-        "test-service-account-email@test-project.iam.gserviceaccount.com",
-      STITCHING_TASK_QUEUE_NAME:
-        process.env["STITCHING_TASK_QUEUE_NAME"] ?? "test-stitching-task-queue",
-      STITCHING_TASK_REQUEST_URL:
-        process.env["STITCHING_TASK_REQUEST_URL"] ??
-        "https://test-server.app/stitch-audio",
-      NODE_ENV: process.env["NODE_ENV"] ?? "production",
-      DEPLOY_ENV: process.env["DEPLOY_ENV"] ?? "test",
-      ASSEMBLYAI_API_KEY: process.env["ASSEMBLYAI_API_KEY"] ?? "noop",
-      DEEPGRAM_API_KEY: process.env["DEEPGRAM_API_KEY"] ?? "noop",
-      TRANSCRIPTION_TASK_QUEUE_NAME:
-        process.env["TRANSCRIPTION_TASK_QUEUE_NAME"] ??
-        "transcription-task-queue",
-      TRANSCRIPTION_TASK_REQUEST_URL:
-        process.env["TRANSCRIPTION_TASK_REQUEST_URL"] ??
-        "https://test-server.app/transcribe-audio",
-      NOTETAKING_TASK_QUEUE_NAME:
-        process.env["NOTETAKING_TASK_QUEUE_NAME"] ?? "notetaking-task-queue",
-      NOTETAKING_TASK_REQUEST_URL:
-        process.env["NOTETAKING_TASK_REQUEST_URL"] ??
-        "https://test-server.app/process-notetaking",
-    },
+    // Load .env.test from @meetings/server (adds basic env-compatibility for direct invocations of vitest)
+    env: mode === "test" ? loadEnv(mode, join(workspaceRoot, "apps/@meetings/server"), "") : undefined,
   },
 }));

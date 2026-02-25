@@ -79,7 +79,7 @@
       },
       "defaultConfiguration": "dev"
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
@@ -101,6 +101,7 @@
         "command": "vitest",
         "cwd": "{projectRoot}"
       },
+      "defaultConfiguration": "dev",
       "configurations": {
         "dev": {},
         "test": {},
