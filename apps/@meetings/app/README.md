@@ -18,8 +18,8 @@ These files are version-controlled and automatically decrypted when running targ
 ### SOPS Files
 
 - `env.dev.enc.yaml` - Development environment (EAS `development`)
-- `env.staging.enc.yaml` - Staging environment (EAS `preview`)
 - `env.production.enc.yaml` - Production environment (EAS `production`)
+- `env.staging.enc.yaml` - Staging environment (EAS `preview`)
 
 ### Editing Environment Variables
 
@@ -47,22 +47,16 @@ nx sync-env-to-eas @meetings/app --configuration production
 
 ## Running locally
 
-Running against local fixture data:
-
 1. Follow [instructions](../../@meetings/server/README.md) for running a local server
-1. Run `nx offline:android @meetings/app`
-
-Running against the live staging backend:
-
-1. Run `nx dev:android @meetings/app`
+1. There are three development targets: `web`, `ios`, and `android`. Run them using `nx` i.e. `nx run @meetings/app:web`
+   1. To run against the live staging backend specify `--configuration=staging` 
 
 ### Offline Mode with Skip Authentication
 
 When running in offline mode against a local server, you can skip the Auth0 authentication flow:
 
 1. Ensure the backend server is running in development mode (`NODE_ENV=development`)
-1. Set the environment variable `EXPO_PUBLIC_OFFLINE_MODE=true` in your `.env` file
-1. Run `nx offline:android @meetings/app` (or `nx offline:ios @meetings/app`)
+1. Run `nx android @meetings/app` (or `nx ios @meetings/app`)
 1. On the login screen, click "Skip Authentication (Offline Mode)"
 1. The app will bypass Auth0 and the backend will use a mock user with `pseudonymizedId: "staff-pid-1"`
 

@@ -36,7 +36,7 @@ export const createUnwrappedSopsEnvTargets = (
       projectJson = JSON.parse(readFileSync(projectJsonPath, "utf-8"));
     }
   } catch (e) {
-    logger.error(e);
+    logger.error(`Failed to parse project.json at path ${projectFile}: ${e}`);
     // Ignore errors reading project.json
     return {};
   }

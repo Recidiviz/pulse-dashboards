@@ -2,6 +2,7 @@
   "permissions": {
     "allow": ["Bash(nx typecheck:*)"],
     "deny": [
+      "Bash(sops:*)",
       "Read(.env)",
       "Read(*.env*)",
       "Read(.env-cmdrc)",

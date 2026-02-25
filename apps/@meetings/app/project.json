@@ -30,19 +30,13 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
-        "dev": {
-          "args": "development"
-        },
-        "staging": {
-          "args": "staging"
-        },
-        "production": {
-          "args": "production"
-        }
+        "dev": {"args": "development" },
+        "staging": { "args": "staging" },
+        "production": { "args": "production" }
       },
       "defaultConfiguration": "dev"
     },
-    "requires-sops-env:offline:android": {
+    "requires-sops-env:android": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -51,20 +45,14 @@
         ],
         "parallel": false
       },
-      "cwd": "{workspaceRoot}"
-    },
-    "requires-sops-env:dev:android": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
-          "nx run-android @meetings/app --no-build-cache"
-        ],
-        "parallel": false
+      "cwd": "{workspaceRoot}",
+      "configurations": {
+        "dev": {},
+        "staging": {}
       },
-      "cwd": "{workspaceRoot}"
+      "defaultConfiguration": "dev"
     },
-    "requires-sops-env:offline:ios": {
+    "requires-sops-env:ios": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -73,34 +61,26 @@
         ],
         "parallel": false
       },
-      "cwd": "{workspaceRoot}"
-    },
-    "requires-sops-env:dev:ios": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
-          "nx run-ios @meetings/app --no-build-cache"
-        ],
-        "parallel": false
+      "cwd": "{workspaceRoot}",
+      "configurations": {
+        "dev": {},
+        "staging": {}
       },
-      "cwd": "{workspaceRoot}"
+      "defaultConfiguration": "dev"
     },
-    "requires-sops-env:offline:web": {
+    "requires-sops-env:web": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["nx start @meetings/app --web"]
       },
-      "cwd": "{workspaceRoot}"
-    },
-    "requires-sops-env:dev:web": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["nx start @meetings/app --web"]
+      "cwd": "{workspaceRoot}",
+      "configurations": {
+        "dev": {},
+        "staging": {}
       },
-      "cwd": "{workspaceRoot}"
+      "defaultConfiguration": "dev"
     },
-    "build:web": {
+    "requires-sops-env:build:web": {
       "command": "nx export @meetings/app -p web --skip-nx-cache",
       "cache": false,
       "configurations": {
