@@ -124,3 +124,15 @@ variable "meetings_bucket_cors_origins" {
   type        = list(string)
   description = "The list of allowed CORS origins for the meetings audio bucket"
 }
+
+variable "artifact_cleanup_container_version" {
+  type        = string
+  description = "The version tag of the image that will be used for the artifact cleanup job"
+  default     = "latest"
+}
+
+variable "artifact_cleanup_schedule" {
+  type        = string
+  description = "Cron schedule for the artifact cleanup job (UTC)"
+  default     = "0 2 * * *"
+}

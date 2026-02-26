@@ -303,3 +303,15 @@ export async function cleanupMeetingData(dryRun = true): Promise<void> {
     }
   }
 }
+
+// Run cleanup when this file is the entry point (not when imported as a module)
+if (import.meta.url === new URL(process.argv[1], "file://").href) {
+  cleanupMeetingData(false)
+    .then(() => {
+      process.exit(0);
+    })
+    .catch((e) => {
+      console.error("Meeting artifact cleanup job failed:", e);
+      process.exit(1);
+    });
+}

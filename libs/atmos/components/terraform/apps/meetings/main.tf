@@ -21,6 +21,8 @@ locals {
   import_image_name = "meetings-data-import"
   import_job_name   = "meetings-data-import"
 
+  artifact_cleanup_job_name = "meetings-artifact-cleanup"
+
   etl_bucket_name     = "meetings-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
 
@@ -287,6 +289,58 @@ module "handle_meetings_gcs_upload" {
 moved {
   from = module.handle-meetings-gcs-upload
   to   = module.handle_meetings_gcs_upload
+}
+
+# Configure a job that will clean up expired meeting audio recordings and transcriptions
+module "artifact_cleanup_job" {
+  source = "../../vendor/cloud-run-job-exec"
+
+  exec                          = false
+  name                          = local.artifact_cleanup_job_name
+  image                         = "${var.artifact_registry_repo}/${local.server_image_name}:${var.artifact_cleanup_container_version}"
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.server_env_vars
+  cloud_run_deletion_protection = false
+  service_account_email         = google_service_account.default.email
+  container_command             = ["./scripts/run-artifact-cleanup.sh"]
+  max_retries                   = 0
+  timeout                       = "3600s"
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+  }]
+
+  volume_mounts = [{
+    name       = "cloudsql"
+    mount_path = "/cloudsql"
+  }]
+}
+
+# Schedule the artifact cleanup job to run once daily
+resource "google_cloud_scheduler_job" "artifact_cleanup_schedule" {
+  name        = "meetings-artifact-cleanup-schedule"
+  description = "Daily cleanup of expired meeting audio recordings and transcriptions"
+  schedule    = var.artifact_cleanup_schedule
+  time_zone   = "UTC"
+  project     = var.project_id
+  region      = var.location
+
+  http_target {
+    http_method = "POST"
+    uri         = "https://run.googleapis.com/v2/${module.artifact_cleanup_job.id}:run"
+
+    oauth_token {
+      service_account_email = google_service_account.default.email
+    }
+  }
+
+  retry_config {
+    retry_count = 0
+  }
 }
 
 resource "google_cloud_tasks_queue" "audio_stitching_task_queue" {
