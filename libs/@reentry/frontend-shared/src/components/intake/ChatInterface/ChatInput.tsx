@@ -90,16 +90,17 @@ const ChatInput = ({
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !isInputDisabled) {
-      // Check if device is mobile/tablet
-      const isMobileOrTablet =
-        /mobile|Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ||
-        window.innerWidth <= 768;
+      // Check if device is a mobile phone (not tablet)
+      const isMobilePhone =
+        (/mobile|Mobile|Android/i.test(navigator.userAgent) &&
+          !/iPad|tablet/i.test(navigator.userAgent)) ||
+        window.innerWidth <= 480;
 
-      if (isMobileOrTablet) {
-        // On mobile/tablet: Enter makes a new line, regardless of shift key
+      if (isMobilePhone) {
+        // On mobile phone: Enter makes a new line, regardless of shift key
         // Let the default behavior handle the newline
       } else {
-        // On desktop: Enter sends message, Shift+Enter makes a new line
+        // On tablet/desktop: Enter sends message, Shift+Enter makes a new line
         if (e.shiftKey) {
           // Shift+Enter: add new line - let default behavior handle it
         } else {
