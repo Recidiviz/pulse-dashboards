@@ -17,7 +17,7 @@
 
 import { configure, flowResult } from "mobx";
 
-import { ResidentsStore, RootStore } from "~@jii/data";
+import { ResidentFlags, ResidentsStore, RootStore } from "~@jii/data";
 import { usTnResidents } from "~datatypes";
 import { hydrationFailure } from "~hydration-utils";
 
@@ -28,10 +28,23 @@ let store: ResidentsStore;
 
 const testResident = usTnResidents[0];
 
+const expectedFlags = { testFlag: true } as ResidentFlags;
+
 const expectedData = {
   resident: testResident,
   opportunities: [],
+  residentFlags: expectedFlags,
 };
+
+function mockPopulateResidentFlags() {
+  vi.spyOn(store, "populateResidentFlags").mockImplementation(
+    // @ts-expect-error MobX wraps the generator as a flow at runtime, so an async
+    // function is compatible; TypeScript still sees the Generator return type
+    async (pseudoId: string) => {
+      store.residentFlagsByPseudoId.set(pseudoId, expectedFlags);
+    },
+  );
+}
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -57,6 +70,8 @@ describe("with resident ID from URL", () => {
         stateCode: "US_TN",
       },
     });
+
+    mockPopulateResidentFlags();
 
     presenter = new SingleResidentHydratorPresenter(
       store,
@@ -101,6 +116,8 @@ describe("with resident ID from user data", () => {
         pseudonymizedId: testResident.pseudonymizedId,
       },
     });
+
+    mockPopulateResidentFlags();
 
     presenter = new SingleResidentHydratorPresenter(
       store,

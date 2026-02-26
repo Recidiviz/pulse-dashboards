@@ -15,29 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMaResidents } from "~datatypes";
-
-import { useSingleResidentContext } from "../contexts/SingleResidentContext";
-import { useResidentMetadata } from "./useResidentMetadata";
-
-vi.mock("../contexts/SingleResidentContext");
-
-const testResident = usMaResidents[0];
-
-beforeEach(() => {
-  vi.mocked(useSingleResidentContext).mockReturnValue({
-    resident: testResident,
-    opportunities: [],
-    residentFlags: {},
-  });
-});
-
-test("correct state code", () => {
-  expect(useResidentMetadata("US_MA")).toEqual(testResident.metadata);
-});
-
-test("incorrect stateCode", () => {
-  expect(() => useResidentMetadata("US_TN")).toThrowErrorMatchingInlineSnapshot(
-    `[Error: Expecting US_TN metadata but got US_MA]`,
-  );
-});
+/**
+ * Slightly narrower but still sound typing for Object.fromEntries(). Doesn't
+ * help with more complicated cases where the type of Value depends on Key.
+ */
+export function typedFromEntries<Key extends string | number | symbol, Value>(
+  entries: [Key, Value][],
+) {
+  return Object.fromEntries(entries) as Partial<Record<Key, Value>>;
+}

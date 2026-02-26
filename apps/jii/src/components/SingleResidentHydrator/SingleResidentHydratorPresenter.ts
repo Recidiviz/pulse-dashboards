@@ -119,7 +119,15 @@ export class SingleResidentHydratorPresenter implements Hydratable {
       ),
     );
 
-    await Promise.all([residentPopulated, ...opportunitiesPopulated]);
+    const flagsPopulated = flowResult(
+      residentsStore.populateResidentFlags(this.residentPseudoId),
+    );
+
+    await Promise.all([
+      residentPopulated,
+      ...opportunitiesPopulated,
+      flagsPopulated,
+    ]);
   }
 
   private expectResidentDataPopulated(): SingleResidentContext {
@@ -167,7 +175,16 @@ export class SingleResidentHydratorPresenter implements Hydratable {
       );
     });
 
-    return { resident, opportunities };
+    const residentFlags = this.residentsStore.residentFlagsByPseudoId.get(
+      this.residentPseudoId,
+    );
+
+    if (!residentFlags)
+      throw new Error(
+        `Failed to populate flags for resident ${this.residentPseudoId}`,
+      );
+
+    return { resident, opportunities, residentFlags };
   }
 
   get hydrationState() {

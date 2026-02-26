@@ -47,6 +47,8 @@ export type StateUserProperties =
 // we still support them but only to incrementally migrate them to the backend
 type UserPropertyKey = "egtOnboardingSeen" | "azOnboardingSeen";
 
+export type ResidentFlags = JiiResidentAppRouterOutputs["resident"]["getFlags"];
+
 export class ResidentsStore {
   /**
    * Holds all resident records that have been fetched
@@ -62,6 +64,8 @@ export class ResidentsStore {
   > = new Map();
 
   locations: Array<LocationRecord> = [];
+
+  residentFlagsByPseudoId: Map<string, ResidentFlags> = new Map();
 
   userProperties?: StateUserProperties;
 
@@ -203,6 +207,18 @@ export class ResidentsStore {
         opportunityMap,
       );
     }
+  }
+
+  *populateResidentFlags(
+    pseudoId: string,
+  ): FlowMethod<typeof this.apiClient.trpc.resident.getFlags.query, void> {
+    if (this.residentFlagsByPseudoId.has(pseudoId)) return;
+
+    const flags = yield this.apiClient.trpc.resident.getFlags.query({
+      pseudonymizedId: pseudoId,
+    });
+
+    this.residentFlagsByPseudoId.set(pseudoId, flags);
   }
 
   async populateUserProperties() {

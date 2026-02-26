@@ -21,6 +21,7 @@ import {
   IncarcerationOpportunityId,
   OpportunityConfig,
   OpportunityRecord,
+  ResidentFlags,
 } from "~@jii/data";
 import { ResidentRecord } from "~datatypes";
 import { useRequiredContext } from "~utils";
@@ -34,6 +35,7 @@ export type OpportunityData = {
 export type SingleResidentContext = {
   resident: ResidentRecord;
   opportunities: Array<OpportunityData>;
+  residentFlags: ResidentFlags;
 };
 
 const context = createContext<SingleResidentContext | undefined>(undefined);

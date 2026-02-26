@@ -86,10 +86,11 @@ const ManagedComponent = observer(function ManagedComponent({
 
 function usePresenter() {
   const { firebaseAuthClient, userStore } = useRootStore();
-  const { resident, opportunities } = useSingleResidentContext();
+  const { resident, opportunities, residentFlags } = useSingleResidentContext();
   return new UsNeTodosPresenter(
     resident,
     opportunities,
+    residentFlags,
     firebaseAuthClient,
     userStore,
   );

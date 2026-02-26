@@ -15,6 +15,20 @@ model UserProperties {
     hasSeenOnboarding DateTime?
 }
 
+// Resident Flags tell the frontend to behave differently for specific residents
+// during testing or rollouts. This enum defines the set of flags that can be set.
+enum ResidentFlagId {
+    usNeGoodTimeAlerts
+}
+
+model ResidentFlagInstance {
+    pseudonymizedId String
+    flagId          ResidentFlagId
+    effectiveAt     DateTime
+
+    @@id([pseudonymizedId, flagId])
+}
+
 ////////////////////////////////////////////////////////
 // Models intended to be state-specific follow
 ////////////////////////////////////////////////////////

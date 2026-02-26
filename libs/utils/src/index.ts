@@ -16,3 +16,4 @@
 // =============================================================================
 
 export * from "./react/useRequiredContext";
+export * from "./types/typedFromEntries";

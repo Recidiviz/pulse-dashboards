@@ -17,6 +17,7 @@
 
 import { mergeRouters, router } from "../procedures/init";
 import { authRouter } from "./routes/auth/router";
+import { residentRouter } from "./routes/resident/router";
 import { staffRouter } from "./routes/staff/router";
 import { stateRouter } from "./routes/state/router";
 import { userRouter } from "./routes/user/router";
@@ -25,6 +26,7 @@ import { userRouter } from "./routes/user/router";
 // but in the end there is just one router on this server that handles both
 const opportunitiesRoutes = router({
   auth: authRouter,
+  resident: residentRouter,
   state: stateRouter,
   user: userRouter,
 });

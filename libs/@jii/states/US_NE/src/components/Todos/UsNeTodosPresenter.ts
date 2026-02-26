@@ -18,7 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
-import { OpportunityData, UserStore } from "~@jii/data";
+import { OpportunityData, ResidentFlags, UserStore } from "~@jii/data";
 import { ResidentRecord, UsNeGoodTimeRestorationRecord } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
 import {
@@ -36,6 +36,7 @@ export class UsNeTodosPresenter implements Hydratable {
   constructor(
     private readonly resident: ResidentRecord,
     private readonly opportunities: OpportunityData[],
+    private readonly residentFlags: ResidentFlags,
     firebaseAuthClient: FirebaseAuthClient,
     userStore: UserStore,
   ) {
@@ -103,7 +104,7 @@ export class UsNeTodosPresenter implements Hydratable {
       opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
     };
 
-    if (this.residentMetadata.isInGoodTimeRestorationAlertPilot !== true) {
+    if (!this.residentFlags.usNeGoodTimeAlerts) {
       return null;
     }
 

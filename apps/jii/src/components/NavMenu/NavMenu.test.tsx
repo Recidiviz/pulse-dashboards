@@ -192,6 +192,7 @@ describe("resident info display", () => {
     const contextValue = {
       resident: mockResident,
       opportunities: [],
+      residentFlags: {},
     };
 
     render(
