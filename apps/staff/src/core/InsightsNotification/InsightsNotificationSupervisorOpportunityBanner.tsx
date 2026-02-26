@@ -111,10 +111,8 @@ export const InsightsNotificationSupervisorOpportunityBanner: React.FC<
     return null;
   }
 
-
   const maxDisplayed = 5;
   const displayedNotifications = notifications.slice(0, maxDisplayed);
-  const remainingCount = notifications.length - maxDisplayed;
 
   return (
     <AlertBanner>
@@ -147,14 +145,9 @@ export const InsightsNotificationSupervisorOpportunityBanner: React.FC<
           </NotificationItem>
         ))}
       </NotificationList>
-      {remainingCount > 0 && (
-        <SeeMoreLink
-          to={seeMoreLink}
-          state={{ previousPage: location.pathname }}
-        >
-          {seeMoreLinkText}
-        </SeeMoreLink>
-      )}
+      <SeeMoreLink to={seeMoreLink} state={{ previousPage: location.pathname }}>
+        {seeMoreLinkText}
+      </SeeMoreLink>
     </AlertBanner>
   );
 };
