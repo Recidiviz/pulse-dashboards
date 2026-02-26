@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SentencingStore } from "../../datastores/SentencingStore";
@@ -157,12 +157,16 @@ export const SARDetails: React.FC<{
   sentencingStore: SentencingStore;
 }> = observer(function SARDetails({ sentencingStore }) {
   const params = useParams();
+  const sarId = params["sarId"];
 
-  if (!params["sarId"]) {
+  const presenter = useMemo(
+    () => (sarId ? new SARDetailsPresenter(sentencingStore, sarId) : null),
+    [sentencingStore, sarId],
+  );
+
+  if (!presenter) {
     return <Styled.PageContainer>No SAR ID found.</Styled.PageContainer>;
   }
-
-  const presenter = new SARDetailsPresenter(sentencingStore, params["sarId"]);
 
   return (
     <PageHydrator hydratable={presenter}>
