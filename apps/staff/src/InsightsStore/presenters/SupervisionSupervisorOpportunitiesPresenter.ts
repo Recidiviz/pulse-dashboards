@@ -31,10 +31,7 @@ import { HydratesFromSource, isHydrated } from "~hydration-utils";
 
 import { insightsUrl } from "../../core/views";
 import { PartialRecord } from "../../utils/typeUtils";
-import {
-  Opportunity,
-  OpportunityTab,
-} from "../../WorkflowsStore";
+import { Opportunity, OpportunityTab } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import {
@@ -139,14 +136,18 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     const { insightsSupervisorOpportunityNotifications } =
       this.supervisionStore.insightsStore.rootStore.workflowsStore
         .featureVariants;
-    return !!insightsSupervisorOpportunityNotifications && this.isWorkflowsEnabled;
+    return (
+      !!insightsSupervisorOpportunityNotifications && this.isWorkflowsEnabled
+    );
   }
 
   /**
    * Returns a map of opportunity types to their active notifications.
    * @returns A map of opportunity types to their notifications.
    */
-  get alertOpportunitiesNotificationsByOpportunityType(): NotificationsByType | undefined {
+  get alertOpportunitiesNotificationsByOpportunityType():
+    | NotificationsByType
+    | undefined {
     const { allOfficers, isNotificationBannerEnabled } = this;
 
     if (!isNotificationBannerEnabled) return undefined;
@@ -157,8 +158,18 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       const notificationsByType = mapValues(
         this.opportunitiesByTypeForOfficer(externalId),
         (opportunities, opportunityType: OpportunityType) => {
+          // Sort opportunities so the most overdue (oldest/missing lastContactDate) appear first
+          const sortedOpportunities = [...opportunities].sort((a, b) => {
+            const aDate = a.record?.lastContactDate;
+            const bDate = b.record?.lastContactDate;
+            if (aDate && bDate) return +aDate - +bDate;
+            if (!aDate && !bDate) return 0;
+            // Null/missing dates sort first (most overdue)
+            return aDate ? 1 : -1;
+          });
+
           // Aggregate all alert-type notifications for the supervisionSupervisor page
-          const notifications = opportunities
+          const notifications = sortedOpportunities
             .flatMap(
               (opportunity) =>
                 opportunity.notificationsByPage?.supervisionSupervisor ?? [],
@@ -167,7 +178,8 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
 
           if (notifications.length === 0) return undefined;
 
-          const { urlSection } = this.opportunityConfigurationStore.opportunities[opportunityType];
+          const { urlSection } =
+            this.opportunityConfigurationStore.opportunities[opportunityType];
 
           // Build the URL for "See More" link
           const seeMoreLink = insightsUrl("supervisionSupervisorOpportunity", {
