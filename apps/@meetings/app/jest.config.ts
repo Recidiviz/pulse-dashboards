@@ -30,7 +30,7 @@ module.exports = {
   moduleNameMapper: {
     "\\.svg$": "@nx/expo/plugins/jest/svg-mock",
     // Fixes https://stackoverflow.com/questions/57749271/fbbatchedbridgeconfig-is-not-set-when-running-jest-tests
-    "^react-native$": "<rootDir>/node_modules/react-native",
+    "^react-native$": require.resolve("react-native"),
   },
   transform: {
     "\\.[jt]sx?$": [
