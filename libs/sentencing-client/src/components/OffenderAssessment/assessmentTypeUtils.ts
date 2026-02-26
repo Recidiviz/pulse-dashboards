@@ -32,3 +32,15 @@ export function getAssessmentTypeDisplayName(
   if (!dbValue) return "Unknown";
   return AssessmentTypeDisplayNames[dbValue];
 }
+
+// Overall max scores derived from observed production data (excluding Age domain)
+export const OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE: Record<
+  AssessmentTypeKey,
+  number | null
+> = {
+  ORAS_CST: 49,
+  ORAS_SRT: 44,
+  ORAS_PIT: 39,
+  ORAS_RT: 27,
+  Other: null,
+};

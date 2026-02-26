@@ -43,7 +43,6 @@ export const DOMAIN_SCORE_KEYS = [
   "substanceAbuseLevel",
   "peerAssociatesLevel",
   "criminalBehaviorLevel",
-  "responsivityLevel",
 ] as const;
 
 export type DomainScoreKey = (typeof DOMAIN_SCORE_KEYS)[number];

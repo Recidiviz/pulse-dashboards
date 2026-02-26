@@ -30,6 +30,7 @@ import {
   ChargeClassificationSubtype,
   ChargeClassificationType,
   DiagnosedSubstanceUseDisorderCriterion,
+  DomainRiskLevel,
   Gender,
   Plea,
   PriorCriminalHistoryCriterion,
@@ -280,25 +281,105 @@ async function addSARClientsAndReports(
         dueDate: faker.date.future(),
         division: faker.string.numeric(4),
         address: faker.location.streetAddress(),
-        // ORAS Assessment data
-        assessmentScore: faker.number.int({ min: 0, max: 9 }),
-        assessmentType: faker.helpers.arrayElement([
-          AssessmentType.ORAS_CST,
-          AssessmentType.ORAS_SRT,
-          AssessmentType.ORAS_PIT,
-          AssessmentType.ORAS_RT,
-        ]),
+        // ORAS Assessment data — domain scores and overall max vary by tool type
+        // Max scores derived from production data
+        ...(() => {
+          const assessmentType = faker.helpers.arrayElement([
+            AssessmentType.ORAS_CST,
+            AssessmentType.ORAS_SRT,
+            AssessmentType.ORAS_PIT,
+            AssessmentType.ORAS_RT,
+          ]);
+
+          const rand = (max: number) => faker.number.int({ min: 0, max });
+
+          const randLevel = () =>
+            faker.helpers.arrayElement([
+              DomainRiskLevel.LOW,
+              DomainRiskLevel.MODERATE,
+              DomainRiskLevel.HIGH,
+            ]);
+
+          const domainScores = {
+            ORAS_CST: {
+              criminalHistoryLevel: rand(8),
+              educationLevelScore: rand(6),
+              familySocialSupportLevel: rand(5),
+              neighborhoodLevel: rand(3),
+              substanceAbuseLevel: rand(6),
+              peerAssociatesLevel: rand(8),
+              criminalBehaviorLevel: rand(13),
+              responsivityLevel: null,
+              criminalHistoryRiskLevel: randLevel(),
+              educationRiskLevel: randLevel(),
+              familySocialSupportRiskLevel: randLevel(),
+              neighborhoodRiskLevel: randLevel(),
+              substanceAbuseRiskLevel: randLevel(),
+              peerAssociatesRiskLevel: randLevel(),
+              criminalBehaviorRiskLevel: randLevel(),
+            },
+            ORAS_SRT: {
+              criminalHistoryLevel: rand(12),
+              educationLevelScore: rand(9),
+              familySocialSupportLevel: null,
+              neighborhoodLevel: null,
+              substanceAbuseLevel: rand(4),
+              peerAssociatesLevel: null,
+              criminalBehaviorLevel: rand(19),
+              responsivityLevel: null,
+              criminalHistoryRiskLevel: randLevel(),
+              educationRiskLevel: randLevel(),
+              familySocialSupportRiskLevel: null,
+              neighborhoodRiskLevel: null,
+              substanceAbuseRiskLevel: randLevel(),
+              peerAssociatesRiskLevel: null,
+              criminalBehaviorRiskLevel: randLevel(),
+            },
+            ORAS_PIT: {
+              criminalHistoryLevel: rand(10),
+              educationLevelScore: rand(7),
+              familySocialSupportLevel: rand(6),
+              neighborhoodLevel: null,
+              substanceAbuseLevel: rand(5),
+              peerAssociatesLevel: null,
+              criminalBehaviorLevel: rand(11),
+              responsivityLevel: null,
+              criminalHistoryRiskLevel: randLevel(),
+              educationRiskLevel: randLevel(),
+              familySocialSupportRiskLevel: randLevel(),
+              neighborhoodRiskLevel: null,
+              substanceAbuseRiskLevel: randLevel(),
+              peerAssociatesRiskLevel: null,
+              criminalBehaviorRiskLevel: randLevel(),
+            },
+            ORAS_RT: {
+              criminalHistoryLevel: rand(12),
+              educationLevelScore: rand(4),
+              familySocialSupportLevel: null,
+              neighborhoodLevel: null,
+              substanceAbuseLevel: null,
+              peerAssociatesLevel: null,
+              criminalBehaviorLevel: rand(11),
+              responsivityLevel: null,
+              criminalHistoryRiskLevel: randLevel(),
+              educationRiskLevel: randLevel(),
+              familySocialSupportRiskLevel: null,
+              neighborhoodRiskLevel: null,
+              substanceAbuseRiskLevel: null,
+              peerAssociatesRiskLevel: null,
+              criminalBehaviorRiskLevel: randLevel(),
+            },
+          }[assessmentType];
+
+          const assessmentScore = Object.values(domainScores).reduce<number>(
+            (sum, v) => sum + (typeof v === "number" ? v : 0),
+            0,
+          );
+
+          return { assessmentType, assessmentScore, ...domainScores };
+        })(),
         assessmentDate: faker.date.recent(),
         assessmentAdministeredBy: faker.person.fullName(),
-        // ORAS domain scores (0-9 scale)
-        criminalHistoryLevel: faker.number.int({ min: 0, max: 9 }),
-        educationLevelScore: faker.number.int({ min: 0, max: 9 }),
-        neighborhoodLevel: faker.number.int({ min: 0, max: 9 }),
-        substanceAbuseLevel: faker.number.int({ min: 0, max: 9 }),
-        familySocialSupportLevel: faker.number.int({ min: 0, max: 9 }),
-        peerAssociatesLevel: faker.number.int({ min: 0, max: 9 }),
-        criminalBehaviorLevel: faker.number.int({ min: 0, max: 9 }),
-        responsivityLevel: faker.number.int({ min: 0, max: 9 }),
       },
     });
 

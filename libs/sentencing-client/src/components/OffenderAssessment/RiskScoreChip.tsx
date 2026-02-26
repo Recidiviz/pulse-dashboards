@@ -20,18 +20,33 @@ import React from "react";
 import { calculateRiskLevel, RISK_COLORS, RISK_LEVELS } from "./constants";
 import * as Styled from "./RiskScoreChip.styles";
 
-interface RiskScoreChipProps {
-  score: number;
+// Maps stored DomainRiskLevel enum values (Prisma) to frontend RISK_LEVELS keys
+// DomainRiskLevel enum uses LOW/MODERATE/HIGH which matches RISK_LEVELS keys
+function mapStoredRiskLevel(riskLevel: string): keyof typeof RISK_LEVELS {
+  return riskLevel as keyof typeof RISK_LEVELS;
 }
 
-export const RiskScoreChip: React.FC<RiskScoreChipProps> = ({ score }) => {
-  const level = calculateRiskLevel(score);
+interface RiskScoreChipProps {
+  score: number;
+  maxScore?: number;
+  riskLevel?: string | null; // Stored DomainRiskLevel from source data
+}
+
+export const RiskScoreChip: React.FC<RiskScoreChipProps> = ({
+  score,
+  maxScore,
+  riskLevel,
+}) => {
+  const level = riskLevel
+    ? mapStoredRiskLevel(riskLevel)
+    : calculateRiskLevel(score);
   const label = RISK_LEVELS[level];
   const color = RISK_COLORS[level];
+  const scoreDisplay = maxScore !== undefined ? `${score}/${maxScore}` : score;
 
   return (
     <Styled.Chip color={color}>
-      {label} Risk ({score}/9)
+      {label} Risk ({scoreDisplay})
     </Styled.Chip>
   );
 };

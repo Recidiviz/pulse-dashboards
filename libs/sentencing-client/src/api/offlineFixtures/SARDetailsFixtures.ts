@@ -103,6 +103,13 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     peerAssociatesLevel: 0,
     criminalBehaviorLevel: 0,
     responsivityLevel: 0,
+    criminalHistoryRiskLevel: null,
+    educationRiskLevel: null,
+    neighborhoodRiskLevel: null,
+    substanceAbuseRiskLevel: null,
+    familySocialSupportRiskLevel: null,
+    peerAssociatesRiskLevel: null,
+    criminalBehaviorRiskLevel: null,
 
     // Narrative fields
     defendantStatement: null,

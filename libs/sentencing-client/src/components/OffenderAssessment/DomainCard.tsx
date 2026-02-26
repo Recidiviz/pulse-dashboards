@@ -24,6 +24,8 @@ import { RiskScoreChip } from "./RiskScoreChip";
 interface DomainCardProps {
   title: string | null;
   riskScore?: number;
+  maxDomainScore?: number;
+  riskLevel?: string | null; // Stored DomainRiskLevel from source data
   helperText?: string; // Optional helper text shown below title
   children?: React.ReactNode; // Domain-specific form fields
   summaryValue: string | null;
@@ -36,6 +38,8 @@ interface DomainCardProps {
 export const DomainCard: React.FC<DomainCardProps> = ({
   title,
   riskScore,
+  maxDomainScore,
+  riskLevel,
   helperText,
   children,
   summaryValue,
@@ -51,7 +55,13 @@ export const DomainCard: React.FC<DomainCardProps> = ({
           {title && (
             <Styled.HeaderRow>
               <Styled.Title>{title}</Styled.Title>
-              {riskScore !== undefined && <RiskScoreChip score={riskScore} />}
+              {riskScore !== undefined && (
+                <RiskScoreChip
+                  score={riskScore}
+                  maxScore={maxDomainScore}
+                  riskLevel={riskLevel}
+                />
+              )}
             </Styled.HeaderRow>
           )}
 

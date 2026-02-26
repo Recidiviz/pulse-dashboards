@@ -45,7 +45,7 @@ export const SectionContainer = styled.div`
   flex-direction: column;
   width: 50rem;
   height: fit-content;
-  padding: 1.5rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
   gap: 1.5rem;
 `;
 

@@ -21,6 +21,7 @@ import React from "react";
 import {
   AssessmentTypeKey,
   getAssessmentTypeDisplayName,
+  OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE,
 } from "./assessmentTypeUtils";
 import * as Styled from "./OrasAssessmentScoreCard.styles";
 import { OrasScoreDonut } from "./OrasScoreDonut";
@@ -35,11 +36,16 @@ interface OrasAssessmentScoreCardProps {
 export const OrasAssessmentScoreCard: React.FC<
   OrasAssessmentScoreCardProps
 > = ({ score, assessmentType, assessmentDate, administeredBy }) => {
+  const maxScore =
+    assessmentType !== null
+      ? OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE[assessmentType] ?? undefined
+      : undefined;
+
   return (
     <Styled.Card>
       <Styled.CardTitle>ORAS Assessment Score</Styled.CardTitle>
       <Styled.CardContent>
-        <OrasScoreDonut score={score} />
+        <OrasScoreDonut score={score} maxScore={maxScore} />
         <Styled.MetadataSection>
           <Styled.MetadataItem>
             <Styled.MetadataLabel>Assessment type</Styled.MetadataLabel>

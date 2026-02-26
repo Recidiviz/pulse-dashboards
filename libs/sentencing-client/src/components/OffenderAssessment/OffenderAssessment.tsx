@@ -72,10 +72,16 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       peerAssociatesSummary,
       criminalBehaviorLevel,
       criminalAttitudesSummary,
-      responsivityLevel,
       responsivityAndBarriersSummary,
       substanceAbuseLevel,
       drugHistorySummary,
+      criminalHistoryRiskLevel,
+      educationRiskLevel,
+      neighborhoodRiskLevel,
+      substanceAbuseRiskLevel,
+      familySocialSupportRiskLevel,
+      peerAssociatesRiskLevel,
+      criminalBehaviorRiskLevel,
     } = presenter.SARData ?? {};
 
     // Extract client data
@@ -88,6 +94,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       domains.some((d) => d.key === key);
     const getDomainTitle = (key: ORASDomainKey) =>
       domains.find((d) => d.key === key)?.title ?? "";
+    const getDomainMaxScore = (key: ORASDomainKey) =>
+      domains.find((d) => d.key === key)?.maxScore;
 
     // Build domain scores record for RiskCategorySummary
     const domainScores: Record<string, number | null> = {
@@ -98,7 +106,23 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       substanceAbuseLevel: substanceAbuseLevel ?? null,
       peerAssociatesLevel: peerAssociatesLevel ?? null,
       criminalBehaviorLevel: criminalBehaviorLevel ?? null,
-      responsivityLevel: responsivityLevel ?? null,
+    };
+
+    // Build domain risk levels record for RiskCategorySummary (keyed by scoreField)
+    const domainRiskLevels: Record<string, string | null> = {
+      criminalHistoryLevel: criminalHistoryRiskLevel ?? null,
+      educationLevelScore: educationRiskLevel ?? null,
+      familySocialSupportLevel: familySocialSupportRiskLevel ?? null,
+      neighborhoodLevel: neighborhoodRiskLevel ?? null,
+      substanceAbuseLevel: substanceAbuseRiskLevel ?? null,
+      peerAssociatesLevel: peerAssociatesRiskLevel ?? null,
+      criminalBehaviorLevel: criminalBehaviorRiskLevel ?? null,
+    };
+
+    const getDomainRiskLevel = (key: ORASDomainKey): string | null => {
+      const scoreField = domains.find((d) => d.key === key)?.scoreField;
+      if (!scoreField) return null;
+      return domainRiskLevels[scoreField] ?? null;
     };
 
     // Scroll to subsection when changed
@@ -144,6 +168,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <RiskCategorySummary
             assessmentType={assessmentType ?? null}
             domainScores={domainScores}
+            domainRiskLevels={domainRiskLevels}
           />
         )}
 
@@ -153,6 +178,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <DomainCard
             title={getDomainTitle("criminalHistory")}
             riskScore={criminalHistoryLevel ?? 0}
+            maxDomainScore={getDomainMaxScore("criminalHistory")}
+            riskLevel={getDomainRiskLevel("criminalHistory")}
             summaryValue={criminalHistorySummary ?? null}
             onSummaryChange={(value) =>
               presenter.updateCriminalHistorySummary(value)
@@ -173,6 +200,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <DomainCard
             title={getDomainTitle("educationEmployment")}
             riskScore={educationLevelScore ?? 0}
+            maxDomainScore={getDomainMaxScore("educationEmployment")}
+            riskLevel={getDomainRiskLevel("educationEmployment")}
             helperText='Enter "None Listed" where not applicable'
             summaryValue={employmentSummary ?? null}
             onSummaryChange={(value) =>
@@ -198,6 +227,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <DomainCard
             title={getDomainTitle("familySocialSupport")}
             riskScore={familySocialSupportLevel ?? 0}
+            maxDomainScore={getDomainMaxScore("familySocialSupport")}
+            riskLevel={getDomainRiskLevel("familySocialSupport")}
             helperText='Enter "None Listed" where not applicable'
             summaryValue={familyAndSocialSupportSummary ?? null}
             onSummaryChange={(value) =>
@@ -233,6 +264,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <DomainCard
             title={getDomainTitle("neighborhoodProblems")}
             riskScore={neighborhoodLevel ?? 0}
+            maxDomainScore={getDomainMaxScore("neighborhoodProblems")}
+            riskLevel={getDomainRiskLevel("neighborhoodProblems")}
             summaryValue={housingSummary ?? null}
             onSummaryChange={(value) => presenter.updateHousingSummary(value)}
             cardRef={neighborhoodRef}
@@ -243,6 +276,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <DomainCard
             title={getDomainTitle("substanceUse")}
             riskScore={substanceAbuseLevel ?? 0}
+            maxDomainScore={getDomainMaxScore("substanceUse")}
+            riskLevel={getDomainRiskLevel("substanceUse")}
             summaryValue={drugHistorySummary ?? null}
             onSummaryChange={(value) =>
               presenter.updateDrugHistorySummary(value)
@@ -257,6 +292,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <DomainCard
             title={getDomainTitle("peerAssociates")}
             riskScore={peerAssociatesLevel ?? 0}
+            maxDomainScore={getDomainMaxScore("peerAssociates")}
+            riskLevel={getDomainRiskLevel("peerAssociates")}
             summaryValue={peerAssociatesSummary ?? null}
             onSummaryChange={(value) =>
               presenter.updatePeerAssociatesSummary(value)
@@ -269,6 +306,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           <DomainCard
             title={getDomainTitle("criminalAttitudes")}
             riskScore={criminalBehaviorLevel ?? 0}
+            maxDomainScore={getDomainMaxScore("criminalAttitudes")}
+            riskLevel={getDomainRiskLevel("criminalAttitudes")}
             summaryValue={criminalAttitudesSummary ?? null}
             onSummaryChange={(value) =>
               presenter.updateCriminalAttitudesSummary(value)
@@ -280,7 +319,6 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
         {shouldRenderDomain("responsivity") && (
           <DomainCard
             title={getDomainTitle("responsivity")}
-            riskScore={responsivityLevel ?? 0}
             summaryValue={responsivityAndBarriersSummary ?? null}
             onSummaryChange={(value) =>
               presenter.updateResponsivityAndBarriersSummary(value)

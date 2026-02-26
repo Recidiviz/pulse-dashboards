@@ -112,6 +112,7 @@ export const SARImportSchema = z.object({
       z.object({
         domain_name: z.string(),
         domain_score: z.string(),
+        domain_risk_level: z.string().optional(),
       }),
     )
     .optional(),

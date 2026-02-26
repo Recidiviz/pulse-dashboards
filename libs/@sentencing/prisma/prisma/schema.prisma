@@ -319,6 +319,12 @@ enum AssessmentType {
   Other
 }
 
+enum DomainRiskLevel {
+  LOW
+  MODERATE
+  HIGH
+}
+
 enum SubstanceType {
   Alcohol
   Marijuana
@@ -629,6 +635,13 @@ model SentencingAssessmentReport {
   peerAssociatesLevel       Int?
   criminalBehaviorLevel     Int?
   responsivityLevel         Int?
+  criminalHistoryRiskLevel      DomainRiskLevel?
+  educationRiskLevel            DomainRiskLevel?
+  neighborhoodRiskLevel         DomainRiskLevel?
+  substanceAbuseRiskLevel       DomainRiskLevel?
+  familySocialSupportRiskLevel  DomainRiskLevel?
+  peerAssociatesRiskLevel       DomainRiskLevel?
+  criminalBehaviorRiskLevel     DomainRiskLevel?
 
   // Free text sections
   defendantStatement            String?

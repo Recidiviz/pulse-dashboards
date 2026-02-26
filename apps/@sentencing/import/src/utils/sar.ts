@@ -18,7 +18,11 @@
 import { z } from "zod";
 
 import { SARImportSchema } from "~@sentencing/import/models";
-import { AssessmentType, PrismaClient } from "~@sentencing/prisma/client";
+import {
+  AssessmentType,
+  DomainRiskLevel,
+  PrismaClient,
+} from "~@sentencing/prisma/client";
 
 const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE: Record<
   string,
@@ -47,6 +51,7 @@ const ORAS_SECTION_TO_DB_FIELD: Record<string, string> = {
   "Education, Employment and Financial Situation": "educationLevelScore",
   "Education, Employment & Financial Situation": "educationLevelScore",
   "Education, Employment & Social Support": "educationLevelScore",
+  "Education, Employment and Social Support": "educationLevelScore",
 
   // Family & Social Support (varies: "and" vs "&")
   "Family and Social Support": "familySocialSupportLevel",
@@ -66,10 +71,26 @@ const ORAS_SECTION_TO_DB_FIELD: Record<string, string> = {
   "Peer Associations": "peerAssociatesLevel",
   "Peer Associates": "peerAssociatesLevel",
 
-  // Responsivity
-  Responsivity: "responsivityLevel",
-  "Responsivity Issues & Barriers": "responsivityLevel",
-  "Responsivity Issues and Barriers": "responsivityLevel",
+};
+
+// Maps score field names to their corresponding risk level field names.
+// responsivityLevel is intentionally excluded — Responsivity is not numerically
+// scored in the source data (it is a case planning checklist, not a risk domain).
+const SCORE_FIELD_TO_RISK_LEVEL_FIELD: Record<string, string> = {
+  criminalHistoryLevel: "criminalHistoryRiskLevel",
+  educationLevelScore: "educationRiskLevel",
+  neighborhoodLevel: "neighborhoodRiskLevel",
+  substanceAbuseLevel: "substanceAbuseRiskLevel",
+  familySocialSupportLevel: "familySocialSupportRiskLevel",
+  peerAssociatesLevel: "peerAssociatesRiskLevel",
+  criminalBehaviorLevel: "criminalBehaviorRiskLevel",
+};
+
+// Maps raw domain_risk_level values (1/2/3) to DomainRiskLevel enum
+const RAW_RISK_LEVEL_TO_ENUM: Record<string, DomainRiskLevel> = {
+  "1": DomainRiskLevel.LOW,
+  "2": DomainRiskLevel.MODERATE,
+  "3": DomainRiskLevel.HIGH,
 };
 
 export async function transformAndLoadSARData(
@@ -119,7 +140,7 @@ export async function transformAndLoadSARData(
         : undefined,
     };
 
-    // Map ORAS domain scores from assessment_metadata to database fields
+    // Map ORAS domain scores and risk levels from assessment_metadata to database fields
     // domain_score comes as a string from BigQuery, parse to int
     for (const domain of sarData.assessment_metadata ?? []) {
       const dbField = ORAS_SECTION_TO_DB_FIELD[domain.domain_name];
@@ -127,6 +148,14 @@ export async function transformAndLoadSARData(
         const score = parseInt(domain.domain_score, 10);
         if (!isNaN(score)) {
           newSAR[dbField] = score;
+        }
+      }
+      if (dbField && domain.domain_risk_level) {
+        // Guard handles any future dbField that lacks a corresponding risk level entry
+        const riskLevelField = SCORE_FIELD_TO_RISK_LEVEL_FIELD[dbField];
+        const riskLevel = RAW_RISK_LEVEL_TO_ENUM[domain.domain_risk_level];
+        if (riskLevelField && riskLevel) {
+          newSAR[riskLevelField] = riskLevel;
         }
       }
     }
