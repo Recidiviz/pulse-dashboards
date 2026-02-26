@@ -138,11 +138,11 @@ export function getDerivedCustodyLevel(
 ): string {
   if (opportunityType === "usTnInitialClassification2026Policy") {
     switch (true) {
-      case totalScore <= 12:
+      case totalScore <= 11:
         return "LOW";
-      case totalScore <= 27:
+      case totalScore <= 24:
         return "MEDIUM";
-      case totalScore <= 40:
+      case totalScore <= 44:
         return "CLOSE";
       default:
         return "MAXIMUM";
@@ -157,11 +157,11 @@ export function getDerivedCustodyLevel(
     opportunityType === "usTnSeriousMisconductUpgrade"
   ) {
     switch (true) {
-      case totalScore <= 12:
+      case totalScore <= 11:
         return "LOW";
-      case totalScore <= 30:
+      case totalScore <= 25:
         return "MEDIUM";
-      case totalScore <= 40:
+      case totalScore <= 44:
         return "CLOSE";
       default:
         return "MAXIMUM";

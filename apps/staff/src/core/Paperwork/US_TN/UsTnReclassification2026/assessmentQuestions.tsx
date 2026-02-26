@@ -48,13 +48,12 @@ export const assessmentQuestions = [
     ],
   },
   {
-    title:
-      "NONVIOLENT CLASS B OR C DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    title: "CLASS B OR C DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
     type: "BREAKDOWN",
     sections: [
       {
         period: "0-6",
-        scores: [-1, 2, 4, 6],
+        scores: [-1, 2, 3, 4],
       },
       {
         period: "6-12",
@@ -68,16 +67,16 @@ export const assessmentQuestions = [
     sections: [
       {
         period: "0-6",
-        scores: [-1, 3, 6, 9],
+        scores: [-1, 2, 5, 8],
       },
       {
         period: "6-12",
-        scores: [0, 2, 3, 4],
+        scores: [0, 1, 2, 3],
       },
     ],
   },
   {
-    title: "VIOLENT CLASS A OR B DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    title: "VIOLENT CLASS A DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
     type: "BREAKDOWN",
     sections: [
       {
@@ -90,7 +89,7 @@ export const assessmentQuestions = [
       },
       {
         period: "12-18",
-        scores: [0, 7, 14, 21],
+        scores: [0, 8, 16, 24],
       },
       {
         period: "18-36",
@@ -106,17 +105,17 @@ export const assessmentQuestions = [
     title: "AGE",
     type: "SINGLE",
     options: [
-      { text: "21 or Younger", score: 15 },
-      { text: "22 - 25", score: 6 },
+      { text: "21 or Younger", score: 13 },
+      { text: "22 - 25", score: 5 },
       { text: "26 - 30", score: 2 },
       {
         text: "30 or Younger with no Class A or B Disciplinary in Previous Year",
         score: 1,
       },
       { text: "31 - 35", score: 1 },
-      { text: "36 - 40", score: -1 },
-      { text: "41 - 45", score: -2 },
-      { text: "Older than 45", score: -3 },
+      { text: "36 - 40", score: 0 },
+      { text: "41 - 45", score: -1 },
+      { text: "Older than 45", score: -2 },
     ],
   },
   {

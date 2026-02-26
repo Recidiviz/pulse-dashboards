@@ -215,7 +215,7 @@ export const FormUsTnReclassification2026 = observer(
                   name={"q7Notes"}
                 />
               </ScoredAssessmentQuestion>
-              <TotalScore score={derivedData.totalScore} mediumUpper={30} />
+              <TotalScore score={derivedData.totalScore} mediumUpper={25} />
             </ClassificationFormPage>
           </PrintablePage>
           <TrusteeChecklist display={includeTrusteeChecklist} />

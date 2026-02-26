@@ -36,23 +36,23 @@ export function TotalScore({
   return (
     <Container>
       <div>
-        <Bold>TOTAL SCORE (IF GREATER THAN 41, WRITE 41):</Bold> {score}
+        <Bold>TOTAL SCORE (IF GREATER THAN 45, WRITE 45):</Bold> {score}
       </div>
       <div>
         <div>
           <Bold>CUSTODY LEVEL SCALE FOR TOTAL:</Bold>
         </div>
         <div>
-          <Bold>Low:</Bold> 0-12
+          <Bold>Low:</Bold> 0-11
         </div>
         <div>
-          <Bold>Medium:</Bold> 13-{mediumUpper}
+          <Bold>Medium:</Bold> 12-{mediumUpper}
         </div>
         <div>
-          <Bold>Close:</Bold> {mediumUpper + 1}-40
+          <Bold>Close:</Bold> {mediumUpper + 1}-44
         </div>
         <div>
-          <Bold>Maximum:</Bold> 41+
+          <Bold>Maximum:</Bold> 45+
         </div>
       </div>
     </Container>

@@ -201,7 +201,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                   "Recidiviz is auto-filling this score based on the resident’s age using data from eTOMIS."
                 }
               />
-              <TotalScore score={derivedData.totalScore} mediumUpper={27} />
+              <TotalScore score={derivedData.totalScore} mediumUpper={24} />
             </ClassificationFormPage>
           </PrintablePage>
           <TrusteeChecklist display={includeTrusteeChecklist} />

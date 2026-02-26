@@ -47,15 +47,15 @@ export const assessmentQuestions = [
     options: [
       { text: "Low", score: 10 },
       { text: "Moderate", score: 11 },
-      { text: "High", score: 13 },
-      { text: "Highest", score: 15 },
+      { text: "High", score: 12 },
+      { text: "Highest", score: 13 },
     ],
   },
   {
-    title: "NONVIOLENT CLASS B OR C DISCIPLINARY REPORTS SINCE RECEPTION",
+    title: "CLASS B OR C DISCIPLINARY REPORTS SINCE RECEPTION",
     type: "SINGLE",
     options: [
-      { text: "Yes", score: 8 },
+      { text: "Yes", score: 6 },
       { text: "No", score: -1 },
     ],
   },
@@ -63,12 +63,12 @@ export const assessmentQuestions = [
     title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS",
     type: "SINGLE",
     options: [
-      { text: "Yes", score: 10 },
+      { text: "Yes", score: 12 },
       { text: "No", score: -1 },
     ],
   },
   {
-    title: "VIOLENT CLASS A OR B DISCIPLINARY REPORTS",
+    title: "VIOLENT CLASS A DISCIPLINARY REPORTS SINCE RECEPTION",
     type: "SINGLE",
     options: [
       { text: "Yes", score: 30 },
@@ -79,13 +79,13 @@ export const assessmentQuestions = [
     title: "AGE",
     type: "SINGLE",
     options: [
-      { text: "21 or Younger", score: 11 },
-      { text: "22 - 25", score: 7 },
+      { text: "21 or Younger", score: 10 },
+      { text: "22 - 25", score: 5 },
       { text: "26 - 30", score: 2 },
-      { text: "31 - 35", score: 0 },
-      { text: "36 - 40", score: -1 },
-      { text: "41 - 45", score: -3 },
-      { text: "Older than 45", score: -4 },
+      { text: "31 - 35", score: 1 },
+      { text: "36 - 40", score: 0 },
+      { text: "41 - 45", score: -1 },
+      { text: "Older than 45", score: -2 },
     ],
   },
 ] satisfies TupleWithArity<
