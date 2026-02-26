@@ -117,6 +117,19 @@ import OpportunitySubheading from "./OpportunitySubheading";
 import { OpportunityTypeSelect } from "./OpportunityTypeSelect";
 import { TableViewToggle } from "./TableViewToggle";
 
+// US_ID supervision level data comes in as raw internal identifiers (e.g.
+// "MEDIUM") rather than preferred human-readable labels. This
+// maps them to display labels via the tenant's supervision level config.
+function formattedSupervisionLevel(
+  opp: UsIdOverdueFaceToFaceContactOpportunity,
+): string | undefined {
+  const raw =
+    opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
+      ?.supervisionLevel;
+  if (!raw) return undefined;
+  return opp.person.rootStore.workflowsStore.formatSupervisionLevel(raw);
+}
+
 const FlexWrapper = styled.div`
   display: flex;
   gap: ${rem(spacing.lg)};
@@ -890,17 +903,13 @@ const TableView = observer(function TableView({
       sortingFn: "text",
       accessorFn: (opp: Opportunity) => {
         if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
-          return opp.record?.eligibleCriteria
-            ?.usIdMeetsOverdueFaceToFaceContactAlert?.supervisionLevel;
+          return formattedSupervisionLevel(opp);
         }
       },
       cell: ({ row }: { row: Row<Opportunity> }) => {
         const opp = row.original;
         if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
-          const supervisionLevel =
-            opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
-              ?.supervisionLevel;
-          return supervisionLevel || "—";
+          return formattedSupervisionLevel(opp) ?? "—";
         }
         return "—";
       },
