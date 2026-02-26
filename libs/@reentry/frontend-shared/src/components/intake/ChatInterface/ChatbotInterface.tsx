@@ -18,7 +18,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import ChatInput from "./ChatInput";
@@ -35,46 +35,20 @@ export const ChatbotInterface: React.FC = () => {
   } = useSocket();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [wasAtBottom, setWasAtBottom] = useState(true); // Start at bottom on load
-  // Detect if the user is currently at the bottom (with small tolerance)
-  const isAtBottom = () => {
-    const container = containerRef.current;
-    if (!container) return false;
 
-    const threshold = 5; // Allow 5px tolerance
-    return (
-      container.scrollHeight - container.scrollTop - container.clientHeight <=
-      threshold
-    );
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Track scroll position to determine if user is at bottom
+  // Scroll to bottom when new messages arrive
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      setWasAtBottom(isAtBottom());
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (messagesEndRef.current && wasAtBottom) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, wasAtBottom]);
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col h-full px-4 sm:px-6">
       {/* Messages */}
-      <div
-        className="flex-1 overflow-y-auto no-scrollbar pt-10 sm:pt-12"
-        ref={containerRef}
-      >
+      <div className="flex-1 overflow-y-auto no-scrollbar pt-10 sm:pt-12">
         <div className="flex flex-col gap-4 sm:gap-6">
           {messages.map((message, index) => (
             <ChatMessageBubble
@@ -103,6 +77,7 @@ export const ChatbotInterface: React.FC = () => {
         <ChatInput
           clientPseudoId={clientPseudoId}
           alreadyHasMessages={messages.length > 0}
+          onInputFocus={scrollToBottom}
         />
       </div>
     </div>

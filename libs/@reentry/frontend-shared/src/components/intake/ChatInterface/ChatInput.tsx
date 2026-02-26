@@ -42,12 +42,15 @@ type UIRecordingStatus =
 const ChatInput = ({
   clientPseudoId,
   alreadyHasMessages,
+  onInputFocus,
 }: {
   clientPseudoId?: string | null;
   alreadyHasMessages?: boolean;
+  onInputFocus?: () => void;
 }) => {
   const { analytics, features } = useApplicationContext();
   const [inputValue, setInputValue] = useState("");
+
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<
@@ -313,6 +316,7 @@ const ChatInput = ({
               placeholder={getPlaceholderText()}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
+              onFocus={onInputFocus}
               className={`focus:placeholder-opacity-30
 							w-full max-w-[800px]
 							border-none outline-none resize-none
