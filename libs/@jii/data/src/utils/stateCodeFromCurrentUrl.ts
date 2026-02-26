@@ -17,10 +17,10 @@
 
 import { matchPath } from "react-router-dom";
 
+import { StateCode } from "~@jii/configs";
 import { State } from "~@jii/paths";
 
 import { stateConfigsByUrlSlug } from "../configs/stateConstants";
-import { StateCode } from "../configs/types";
 
 export function stateCodeFromCurrentUrl(): StateCode | undefined {
   const pathMatch = matchPath(

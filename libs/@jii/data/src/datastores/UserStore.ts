@@ -18,6 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { Permission } from "~@jii/auth";
+import { StateCode, stateCodes } from "~@jii/configs";
 import { isDemoMode } from "~client-env-utils";
 
 import { AuthManager } from "../apis/auth/AuthManager";
@@ -26,8 +27,7 @@ import {
   SegmentClient,
   SegmentClientExternals,
 } from "../apis/Segment/SegmentClient";
-import { stateCodes, stateConfigsByUrlSlug } from "../configs/stateConstants";
-import { StateCode } from "../configs/types";
+import { stateConfigsByUrlSlug } from "../configs/stateConstants";
 import { TranslationStore } from "./TranslationStore";
 
 export class UserStore {

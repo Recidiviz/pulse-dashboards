@@ -65,32 +65,6 @@
         "command": "vitest",
         "cwd": "{projectRoot}"
       }
-    },
-    "decode-token": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx src/tools/decodeJWE.ts",
-        "cwd": "{projectRoot}"
-      },
-      "configurations": {
-        "staging": {},
-        "production": {}
-      },
-      "defaultConfiguration": "production"
-    },
-    "jwks-sim": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx watch src/jwks-simulator/main.ts",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "edovo-test-token": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx src/tools/edovoTestToken.ts",
-        "cwd": "{projectRoot}"
-      }
     }
   },
   "tags": ["scope:server", "type:app"]

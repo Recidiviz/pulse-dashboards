@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { edovoIdTokenPayloadSchema } from "./helpers";
+import { z } from "zod";
 
-describe("edovo payload schema", () => {
-  test("Maine ID crosswalk", () => {
-    const payload = {
-      inmate_id: "00123456",
-      facility_state: "ME",
-    };
-    expect(edovoIdTokenPayloadSchema.parse(payload)).toMatchInlineSnapshot(`
-      {
-        "facility_state": "US_ME",
-        "inmate_id": "123456",
-      }
-    `);
-  });
-
-  test("Nebraska ID crosswalk", () => {
-    const payload = {
-      inmate_id: "00098765",
-      facility_state: "NE",
-    };
-    expect(edovoIdTokenPayloadSchema.parse(payload)).toMatchInlineSnapshot(`
-      {
-        "facility_state": "US_NE",
-        "inmate_id": "98765",
-      }
-    `);
-  });
-});
+/**
+ * This is the source of truth for valid, enabled state codes in the application
+ */
+export const stateCodes = z.enum([
+  "US_AR",
+  "US_AZ",
+  "US_CO",
+  "US_ID",
+  "US_MA",
+  "US_NC",
+  "US_NE",
+  "US_TN",
+  "US_UT",
+]);
+export type StateCode = z.infer<typeof stateCodes>;

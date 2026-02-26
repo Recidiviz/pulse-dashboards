@@ -15,11 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../procedures/init";
-import { auth0ToFirebaseToken } from "./auth0ToFirebaseToken";
-import { edovoToken } from "./edovoToken/endpoint";
+import { z } from "zod";
 
-export const authRouter = router({
-  auth0ToFirebaseToken,
-  edovoToken: edovoToken,
-});
+export const edovoIdTokenPayloadSchema = z
+  .object({
+    inmate_id: z.string(),
+    facility_state: z
+      .string()
+      .toUpperCase()
+      .transform((s) => `US_${s}`),
+    facility_name: z.string().optional(),
+    language: z.string().optional(),
+  })
+  .transform((user) => {
+    // For these states, Edovo's IDs here are zero- padded but ours are not
+    if (["US_ME", "US_NE"].includes(user.facility_state)) {
+      return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
+    }
+    // For these states, our IDs are zero-padded but Edovo's are not
+    if (["US_CO"].includes(user.facility_state)) {
+      return { ...user, inmate_id: user.inmate_id.padStart(6, "0") };
+    }
+
+    return user;
+  });
+
+export type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;

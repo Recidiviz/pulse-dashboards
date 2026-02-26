@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,4 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const API_URL_BASE = import.meta.env["VITE_API_URL_BASE"];
+import { createPrivateKey } from "node:crypto";
+
+import { compactDecrypt } from "jose";
+
+export async function getDecryptedEdovoToken(encryptedToken: string) {
+  // decrypting gets us a signed JWT to pass on to the next middleware
+  const { plaintext } = await compactDecrypt(
+    encryptedToken,
+    createPrivateKey(process.env["EDOVO_TOKEN_PRIVATE_KEY"] ?? ""),
+  );
+
+  return plaintext.toString();
+}

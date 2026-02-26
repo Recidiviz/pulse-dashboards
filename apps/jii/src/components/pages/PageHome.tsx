@@ -18,7 +18,8 @@
 import { observer } from "mobx-react-lite";
 
 import { Redirect } from "~@jii/common-ui";
-import { StateCode, stateConfigsByStateCode, useRootStore } from "~@jii/data";
+import { StateCode } from "~@jii/configs";
+import { stateConfigsByStateCode, useRootStore } from "~@jii/data";
 import { EmailVerification, State, StateSelect } from "~@jii/paths";
 
 import { PageLanding } from "./PageLanding";

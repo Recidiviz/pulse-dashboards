@@ -16,15 +16,11 @@
 // =============================================================================
 
 import { ArgumentParser } from "argparse";
-import { execSync } from "child_process";
 import { createPrivateKey, createPublicKey } from "crypto";
-import dotenv from "dotenv";
 import { CompactEncrypt } from "jose";
 import JWT from "jsonwebtoken";
-import { join } from "path";
 
-import { secrets } from "../helpers/secrets";
-import { SIGNING_KEY_ID } from "../jwks-simulator/keys/public";
+import { SIGNING_KEY_ID } from "./jwks-simulator/keys/public";
 
 const parser = new ArgumentParser({
   description: "Construct an Edovo JWE for local testing",
@@ -60,16 +56,11 @@ const args = parser.parse_args() as Args;
 async function main() {
   // extracts the public key from our private encryption key
   const publicEncryptionKey = createPublicKey(
-    createPrivateKey(await secrets.getLatestValue("EDOVO_TOKEN_PRIVATE_KEY")),
+    createPrivateKey(process.env["EDOVO_TOKEN_PRIVATE_KEY"] ?? ""),
   );
 
   const privateSigningKey = createPrivateKey(
-    // there is surely a smarter way to store and use this secret,
-    // but we also use this technique in esbuild.config.js and it works just fine.
-    // It only requires standard gcloud auth, not GCP JIT permissions
-    dotenv.parse(
-      execSync(`sops decrypt ${join(__dirname, ".enc.env.secrets")}`),
-    )["EDOVO_SIGNING_KEY"],
+    process.env["EDOVO_SIGNING_KEY"] ?? "",
   ).export({ type: "pkcs8", format: "pem" });
 
   // simulates a token signed by the Edovo private key. This will only be usable in dev environments

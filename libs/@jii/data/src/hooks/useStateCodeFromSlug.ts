@@ -17,10 +17,10 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { StateCode } from "~@jii/configs";
 import { State } from "~@jii/paths";
 
 import { stateConfigsByUrlSlug } from "../configs/stateConstants";
-import { StateCode } from "../configs/types";
 
 export const useStateCodeFromSlug = (): StateCode | undefined => {
   const { stateSlug } = useTypedParams(State);

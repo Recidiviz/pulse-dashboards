@@ -21,6 +21,7 @@ import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
+import { StateCode } from "~@jii/configs";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
@@ -31,7 +32,6 @@ import {
   IncarcerationOpportunityId,
   OpportunityRecord,
   ResidentsConfig,
-  StateCode,
 } from "../configs/types";
 import type { RootStore } from "./RootStore";
 

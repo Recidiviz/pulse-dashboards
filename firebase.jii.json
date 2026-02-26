@@ -6,13 +6,6 @@
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
-          "source": "/auth/edovo",
-          "function": {
-            "functionId": "edovoToken",
-            "region": "us-central1"
-          }
-        },
-        {
           "source": "/api/**",
           "run": {
             "serviceId": "jii-server"
@@ -48,13 +41,6 @@
       "public": "dist/apps/jii",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
-        {
-          "source": "/auth/edovo",
-          "function": {
-            "functionId": "edovoToken",
-            "region": "us-central1"
-          }
-        },
         {
           "source": "/api/**",
           "run": {

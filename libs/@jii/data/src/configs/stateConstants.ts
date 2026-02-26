@@ -16,24 +16,10 @@
 // =============================================================================
 
 import { keyBy } from "lodash";
-import { z } from "zod";
 
-import { StateCode, StateConfig } from "./types";
+import { StateCode, stateCodes } from "~@jii/configs";
 
-/**
- * This is the source of truth for valid, enabled state codes in the application
- */
-export const stateCodes = z.enum([
-  "US_AR",
-  "US_AZ",
-  "US_CO",
-  "US_ID",
-  "US_MA",
-  "US_NC",
-  "US_NE",
-  "US_TN",
-  "US_UT",
-]);
+import { StateConfig } from "./types";
 
 /**
  * Given all state codes in tuple form, expects a corresponding tuple of config objects

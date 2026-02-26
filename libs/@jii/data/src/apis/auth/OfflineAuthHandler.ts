@@ -19,9 +19,9 @@ import { makeAutoObservable } from "mobx";
 import { z } from "zod";
 
 import { AuthorizedUserProfile, permissionSchema } from "~@jii/auth";
+import { stateCodes } from "~@jii/configs";
 import { HydrationState } from "~hydration-utils";
 
-import { stateCodes } from "../../configs/stateConstants";
 import { AuthHandler } from "./types";
 
 const offlineUserIds = z.enum(["default", "nonTranslator"]);

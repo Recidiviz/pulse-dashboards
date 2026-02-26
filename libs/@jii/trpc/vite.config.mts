@@ -33,7 +33,7 @@ export default defineConfig(() => ({
     name: "@jii/trpc",
     watch: false,
     globals: true,
-    environment: "jsdom",
+    environment: "node",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     coverage: {
@@ -45,6 +45,10 @@ export default defineConfig(() => ({
     env: {
       DATABASE_URL:
         "postgresql://postgres:postgres@localhost:6509/jii-test?schema=public",
+      // these values are used for accessing GCS which is stubbed in tests
+      RECIDIVIZ_ALLOWED_STATES_PROJECT_ID: "test-storage-project",
+      RECIDIVIZ_ALLOWED_STATES_BUCKET_NAME: "test-storage-bucket",
+      DEPLOY_ENV: "test",
     },
   },
 }));

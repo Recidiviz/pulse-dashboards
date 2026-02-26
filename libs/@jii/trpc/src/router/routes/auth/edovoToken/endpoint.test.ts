@@ -23,23 +23,20 @@ import {
   GenerateKeyPairResult,
 } from "jose";
 import { createJWKSMock, JWKSMock, JwtPayload } from "mock-jwks";
-import request from "supertest";
 
 import { AuthorizedUserProfile, ResidentUserProfile } from "~@jii/auth";
 
+import { getFirebaseToken } from "../../../../auth/getFirebaseToken";
 import {
   checkDemoResidentsRoster,
   checkEdovoTestAccountRoster,
   checkResidentsRoster,
-  getFirebaseToken,
-} from "../../helpers/firebaseAdmin";
-import { secrets } from "../../helpers/secrets";
-import { edovoToken } from "./function";
+} from "../../../../auth/roster";
+import { authRouter } from "../router";
 
 vi.mock("@google-cloud/storage");
-vi.mock("@sentry/node");
-vi.mock("../../helpers/secrets");
-vi.mock("../../helpers/firebaseAdmin");
+vi.mock("../../../../auth/roster");
+vi.mock("../../../../auth/getFirebaseToken");
 
 const mockJwksHost = "http://fake-jwks-url-test";
 
@@ -47,6 +44,7 @@ const mockSecrets: Record<string, string> = {
   // this path is what mock-jwks expects by default. the application itself doesn't care,
   // it just passes through whatever is stored in this secret as the URL
   EDOVO_JWKS_URL: `${mockJwksHost}/.well-known/jwks.json`,
+  SECURUS_TEST_FACILITIES: JSON.stringify(["securus-test-1"]),
 };
 
 const mockRealUserProfile: AuthorizedUserProfile = {
@@ -64,23 +62,32 @@ const mockFirebaseTokenValue = "test-firebase-token";
 
 let tokenEncryptionKeys: GenerateKeyPairResult;
 let mockEdovoJWKS: JWKSMock;
-let mockEncryptedToken: string;
+let authCaller: ReturnType<typeof authRouter.createCaller>;
 
-async function createMockToken(payload: JwtPayload | undefined) {
+function createMockToken(payload: JwtPayload | undefined) {
   // simulates a token signed by the Edovo private key
   const signedToken = mockEdovoJWKS.token(payload);
 
   // simulates encryption by Edovo with our public key.
   // this is what is actually passed to us
-  mockEncryptedToken = await new CompactEncrypt(
-    new TextEncoder().encode(signedToken),
-  )
+  return new CompactEncrypt(new TextEncoder().encode(signedToken))
     .setProtectedHeader({
       alg: "RSA-OAEP-256",
       enc: "A256GCM",
       cty: "JWT",
     })
     .encrypt(tokenEncryptionKeys.publicKey);
+}
+
+function createAuthCaller(mockEncryptedToken: string) {
+  return authRouter.createCaller({
+    // @ts-expect-error minimal request stub
+    req: {
+      headers: {
+        authorization: `Bearer ${mockEncryptedToken}`,
+      },
+    },
+  });
 }
 
 beforeAll(async () => {
@@ -92,9 +99,10 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  vi.mocked(secrets).getLatestValue.mockImplementation(
-    async (secretName) => mockSecrets[secretName] ?? "test-default",
-  );
+  Object.entries(mockSecrets).forEach(([k, v]) => {
+    vi.stubEnv(k, v);
+  });
+
   vi.mocked(getFirebaseToken).mockResolvedValue(mockFirebaseTokenValue);
 
   // this mocks the Edovo API where we get the signature verification key from
@@ -103,10 +111,13 @@ beforeEach(async () => {
   // and returns a callback for onTestFinished that stops it
   onTestFinished(mockEdovoJWKS.start());
 
-  await createMockToken({
-    inmate_id: "123456",
-    facility_state: "OZ",
-  });
+  // default for most of these tests, overridden as needed
+  authCaller = createAuthCaller(
+    await createMockToken({
+      inmate_id: "123456",
+      facility_state: "OZ",
+    }),
+  );
 
   // mock the various roster lookup functions. individual tests may turn some of these off
   // to exercise more realistic conditions based on the order they are called in
@@ -131,15 +142,7 @@ beforeEach(async () => {
 });
 
 test("succeeds with resident lookup", async () => {
-  const resp = await request(
-    // @ts-expect-error this type overlaps enough for our purposes
-    edovoToken,
-  )
-    .get("/")
-    .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-  expect(resp.status).toBe(200);
-  expect(resp.body).toEqual({
+  expect(await authCaller.edovoToken()).toEqual({
     firebaseToken: mockFirebaseTokenValue,
     user: mockRealUserProfile,
   });
@@ -150,15 +153,7 @@ test("succeeds with demo account lookup", async () => {
   vi.mocked(checkResidentsRoster).mockResolvedValue(undefined);
   vi.mocked(checkEdovoTestAccountRoster).mockResolvedValue(undefined);
 
-  const resp = await request(
-    // @ts-expect-error this type overlaps enough for our purposes
-    edovoToken,
-  )
-    .get("/")
-    .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-  expect(resp.status).toBe(200);
-  expect(resp.body).toEqual({
+  expect(await authCaller.edovoToken()).toEqual({
     firebaseToken: mockFirebaseTokenValue,
     user: mockDemoUserProfile,
   });
@@ -168,15 +163,7 @@ test("succeeds with Recidiviz account lookup", async () => {
   // this is the first fallback after residents roster
   vi.mocked(checkResidentsRoster).mockResolvedValue(undefined);
 
-  const resp = await request(
-    // @ts-expect-error this type overlaps enough for our purposes
-    edovoToken,
-  )
-    .get("/")
-    .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-  expect(resp.status).toBe(200);
-  expect(resp.body).toEqual({
+  expect(await authCaller.edovoToken()).toEqual({
     firebaseToken: mockFirebaseTokenValue,
     user: {
       stateCode: "RECIDIVIZ",
@@ -196,25 +183,18 @@ test("succeeds with magic payload for Securus test accounts", async () => {
   // we don't have to disable any of the lookup mocks
   // because this one takes precedence over all
 
-  mockSecrets["SECURUS_TEST_FACILITIES"] = JSON.stringify(["securus-test-1"]);
-  await createMockToken({
-    inmate_id: "123456",
-    facility_state: "OZ",
-    // this is actually the only field that matters to the result here
-    facility_name: "securus-test-1",
-  });
+  authCaller = createAuthCaller(
+    await createMockToken({
+      inmate_id: "123456",
+      facility_state: "OZ",
+      // this is actually the only field that matters to the result here
+      facility_name: "securus-test-1",
+    }),
+  );
 
-  const resp = await request(
-    // @ts-expect-error this type overlaps enough for our purposes
-    edovoToken,
-  )
-    .get("/")
-    .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-  expect(resp.status).toBe(200);
   // note here that the response is hard-coded to a specific test identity,
   // regardless of which state or ID was specified in the payload
-  expect(resp.body).toEqual({
+  expect(await authCaller.edovoToken()).toEqual({
     firebaseToken: mockFirebaseTokenValue,
     user: {
       stateCode: "US_AZ",
@@ -231,74 +211,64 @@ test("unknown user", async () => {
   vi.mocked(checkEdovoTestAccountRoster).mockResolvedValue(undefined);
   vi.mocked(checkDemoResidentsRoster).mockResolvedValue(undefined);
 
-  const resp = await request(
-    // @ts-expect-error this type overlaps enough for our purposes
-    edovoToken,
-  )
-    .get("/")
-    .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-  expect(resp.status).toBe(403);
-  expect(resp.body).toMatchInlineSnapshot(`
-    {
-      "error": "You are not authorized to access this application (state code: US_OZ)",
-    }
-  `);
+  await expect(
+    authCaller.edovoToken(),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
 });
 
 test("invalid token", async () => {
-  const resp = await request(
-    // @ts-expect-error this type overlaps enough for our purposes
-    edovoToken,
-  )
-    .get("/")
-    .auth("not-a-valid-JWE", { type: "bearer" });
+  authCaller = createAuthCaller("not-a-valid-JWE");
 
-  expect(resp.status).toBe(500);
-  expect(resp.body).toMatchInlineSnapshot(`
-    {
-      "error": "An unexpected error occurred",
-    }
-  `);
+  await expect(
+    authCaller.edovoToken(),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `[TRPCError: Invalid Compact JWE]`,
+  );
 });
 
 test("invalid payload", async () => {
-  await createMockToken({
-    marco: "polo",
-  });
+  authCaller = createAuthCaller(
+    await createMockToken({
+      marco: "polo",
+    }),
+  );
 
-  const resp = await request(
-    // @ts-expect-error this type overlaps enough for our purposes
-    edovoToken,
-  )
-    .get("/")
-    .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-  expect(resp.status).toBe(401);
-  expect(resp.body).toMatchInlineSnapshot(`
-    {
-      "error": "Your credentials contain invalid identity data",
-    }
+  await expect(authCaller.edovoToken()).rejects
+    .toThrowErrorMatchingInlineSnapshot(`
+    [TRPCError: [
+      {
+        "code": "invalid_type",
+        "expected": "string",
+        "received": "undefined",
+        "path": [
+          "inmate_id"
+        ],
+        "message": "Required"
+      },
+      {
+        "code": "invalid_type",
+        "expected": "string",
+        "received": "undefined",
+        "path": [
+          "facility_state"
+        ],
+        "message": "Required"
+      }
+    ]]
   `);
 });
 
 describe("language field handling", () => {
   test("succeeds with language field", async () => {
-    await createMockToken({
-      inmate_id: "123456",
-      facility_state: "OZ",
-      language: "es",
-    });
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "OZ",
+        language: "es",
+      }),
+    );
 
-    const resp = await request(
-      // @ts-expect-error this type overlaps enough for our purposes
-      edovoToken,
-    )
-      .get("/")
-      .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-    expect(resp.status).toBe(200);
-    expect(resp.body).toEqual({
+    expect(await authCaller.edovoToken()).toEqual({
       firebaseToken: mockFirebaseTokenValue,
       user: mockRealUserProfile,
       language: "es",
@@ -307,15 +277,7 @@ describe("language field handling", () => {
 
   test("succeeds without language field", async () => {
     // Default mock token has no language field
-    const resp = await request(
-      // @ts-expect-error this type overlaps enough for our purposes
-      edovoToken,
-    )
-      .get("/")
-      .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-    expect(resp.status).toBe(200);
-    expect(resp.body).toEqual({
+    expect(await authCaller.edovoToken()).toEqual({
       firebaseToken: mockFirebaseTokenValue,
       user: mockRealUserProfile,
       // No language field should be present
@@ -323,21 +285,15 @@ describe("language field handling", () => {
   });
 
   test("passes through invalid language values", async () => {
-    await createMockToken({
-      inmate_id: "123456",
-      facility_state: "OZ",
-      language: "invalid-locale-code",
-    });
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "OZ",
+        language: "invalid-locale-code",
+      }),
+    );
 
-    const resp = await request(
-      // @ts-expect-error this type overlaps enough for our purposes
-      edovoToken,
-    )
-      .get("/")
-      .auth(`${mockEncryptedToken}`, { type: "bearer" });
-
-    expect(resp.status).toBe(200);
-    expect(resp.body).toEqual({
+    expect(await authCaller.edovoToken()).toEqual({
       firebaseToken: mockFirebaseTokenValue,
       user: mockRealUserProfile,
       language: "invalid-locale-code",

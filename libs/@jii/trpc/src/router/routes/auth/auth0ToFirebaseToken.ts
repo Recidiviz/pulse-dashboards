@@ -15,9 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createDecoder, createVerifier } from "fast-jwt";
-import jwks from "jwks-rsa";
-
 import {
   authorizedUserProfileSchema,
   getAuth0Config,
@@ -27,34 +24,25 @@ import {
 import { getFirebaseToken } from "../../../auth/getFirebaseToken";
 import { getAuthToken, jwtSchema } from "../../../auth/utils";
 import { baseProcedure } from "../../../procedures/init";
+import { jwksVerifier } from "./jwksVerifier";
 
 const auth0Config = getAuth0Config(process.env["AUTH0_TENANT_KEY"] ?? "");
 
 // there is a one-off token for this endpoint only,
 // so it's not really worth involving the common server plugin.
 // all of the verification config just lives with this route
-const jwksClient = jwks({
-  cache: true,
-  rateLimit: true,
-  jwksRequestsPerMinute: 5,
-  jwksUri: `https://${auth0Config.domain}/.well-known/jwks.json`,
-});
-const jwtDecoder = createDecoder({ complete: true });
-
 export const auth0ToFirebaseToken = baseProcedure.query(
   async ({ ctx: { req } }) => {
-    const token = getAuthToken(req);
-    const {
-      header: { kid },
-    } = jwtDecoder(token);
-    const jwtVerifier = createVerifier({
-      key: async () => (await jwksClient.getSigningKey(kid)).getPublicKey(),
-      cache: true,
-      allowedAud: auth0Config.audience,
-      allowedIss: `https://${auth0Config.domain}/`,
-      algorithms: ["RS256"],
-    });
-    const payload = jwtSchema.parse(await jwtVerifier(token));
+    const payload = jwtSchema.parse(
+      await jwksVerifier({
+        jwksUri: `https://${auth0Config.domain}/.well-known/jwks.json`,
+        token: getAuthToken(req),
+        additionalVerifierOptions: {
+          allowedAud: auth0Config.audience,
+          allowedIss: `https://${auth0Config.domain}/`,
+        },
+      }),
+    );
 
     const uid = payload.sub;
 

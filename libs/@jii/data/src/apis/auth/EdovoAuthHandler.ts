@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createTRPCClient, httpLink } from "@trpc/client";
 import { makeAutoObservable, runInAction } from "mobx";
 import { matchPath } from "react-router-dom";
+import SuperJSON from "superjson";
 
-import { AuthorizedUserProfile, tokenAuthResponseSchema } from "~@jii/auth";
+import { AuthorizedUserProfile } from "~@jii/auth";
 import { EdovoLandingPage } from "~@jii/paths";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import {
   castToError,
   HydrationState,
@@ -28,7 +31,7 @@ import {
 } from "~hydration-utils";
 
 import { TranslationStore } from "../../datastores/TranslationStore";
-import { API_URL_BASE } from "./constants";
+import { JII_TRPC_BACKEND_PATH } from "../constants";
 import { AuthHandler } from "./types";
 
 /**
@@ -71,16 +74,24 @@ export class EdovoAuthHandler implements AuthHandler {
 
     this.hydrationStateOverride = { status: "loading" };
 
-    const response = await fetch(`${API_URL_BASE}/auth/edovo`, {
-      headers: {
-        Authorization: `Bearer ${this.userIdToken}`,
-      },
+    // this client can only call the Edovo auth flow endpoint(s) with this configuration
+    const client = createTRPCClient<JiiResidentAppRouter>({
+      links: [
+        httpLink({
+          url: JII_TRPC_BACKEND_PATH,
+          headers: async () => {
+            return {
+              Authorization: `Bearer ${this.userIdToken}`,
+            };
+          },
+          transformer: SuperJSON,
+        }),
+      ],
     });
 
-    if (response.ok) {
-      const { firebaseToken, user, language } = tokenAuthResponseSchema.parse(
-        await response.json(),
-      );
+    try {
+      const { firebaseToken, user, language } =
+        await client.auth.edovoToken.query();
 
       runInAction(() => {
         this.firebaseToken = firebaseToken;
@@ -91,14 +102,13 @@ export class EdovoAuthHandler implements AuthHandler {
       if (language) {
         this.translationStore.i18n.changeLanguage(language);
       }
-    } else {
-      const authError =
-        (await response.json())["error"] ??
-        new Error("Unable to verify your account");
-      this.hydrationStateOverride = {
-        status: "failed",
-        error: castToError(authError),
-      };
+    } catch (e) {
+      runInAction(() => {
+        this.hydrationStateOverride = {
+          status: "failed",
+          error: castToError(e ?? new Error("Unable to verify your account")),
+        };
+      });
     }
   }
 

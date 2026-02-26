@@ -32,19 +32,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createTRPCClient, httpLink } from "@trpc/client";
+
 import { TokenAuthResponse } from "~@jii/auth";
 
 import type { TranslationStore } from "../../datastores/TranslationStore";
 import { EdovoAuthHandler } from "./EdovoAuthHandler";
 
-vi.hoisted(() => {
-  vi.stubEnv("VITE_API_URL_BASE", "http://localhost:9999");
-});
+vi.mock("@trpc/client");
 
 // mocking this to avoid side effects from i18next that we don't care about here
 const mockTranslationStore = {
   i18n: { changeLanguage: vi.fn() },
 } as unknown as TranslationStore;
+
+const mockTrpcQuery = vi.fn();
 
 test("constructor requires token in URL", () => {
   expect(
@@ -70,7 +72,11 @@ describe("with url token", () => {
 
     handler = new EdovoAuthHandler(mockTranslationStore);
 
-    fetchMock.mockResponse(JSON.stringify(mockResponse));
+    // @ts-expect-error minimal stub
+    vi.mocked(createTRPCClient).mockReturnValue({
+      auth: { edovoToken: { query: mockTrpcQuery } },
+    });
+    mockTrpcQuery.mockResolvedValue(mockResponse);
   });
 
   test("hydration", async () => {
@@ -80,16 +86,12 @@ describe("with url token", () => {
 
     await handler.hydrate();
 
-    expect(fetchMock.mock.lastCall).toMatchInlineSnapshot(`
-      [
-        "http://localhost:9999/auth/edovo",
-        {
-          "headers": {
-            "Authorization": "Bearer token.adfafgasdgasdfs",
-          },
-        },
-      ]
-    `);
+    const httpLinkOpts = vi.mocked(httpLink).mock.lastCall?.[0];
+    expect(httpLinkOpts?.url).toMatchInlineSnapshot(`"/api/trpc"`);
+    // @ts-expect-error headers should not be missing, and we want test to fail if it is
+    expect(await httpLinkOpts.headers()).toEqual({
+      Authorization: `Bearer ${testToken}`,
+    });
 
     expect(handler.hydrationState).toEqual({
       status: "hydrated",
@@ -122,8 +124,8 @@ describe("with url token", () => {
         language: "es",
       };
 
-      fetchMock.mockResponse(
-        JSON.stringify(mockResponseWithLanguageAndTranslatorPermission),
+      mockTrpcQuery.mockResolvedValue(
+        mockResponseWithLanguageAndTranslatorPermission,
       );
 
       await handler.hydrate();

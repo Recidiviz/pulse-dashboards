@@ -179,11 +179,3 @@ export async function checkDemoResidentsRoster(
     permissions: [],
   };
 }
-
-export async function checkEdovoTestAccountRoster(userId: string) {
-  return (
-    await (await getFirestore())
-      .doc(`JII-edovoToRecidivizMappings/${userId}`)
-      .get()
-  ).data();
-}

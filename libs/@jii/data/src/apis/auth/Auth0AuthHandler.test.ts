@@ -22,10 +22,6 @@ import { AuthorizedUserProfile } from "~@jii/auth";
 
 import { Auth0AuthHandler } from "./Auth0AuthHandler";
 
-vi.hoisted(() => {
-  vi.stubEnv("VITE_API_URL_BASE", "http://localhost:9999");
-});
-
 vi.mock("@trpc/client");
 
 let handler: Auth0AuthHandler;

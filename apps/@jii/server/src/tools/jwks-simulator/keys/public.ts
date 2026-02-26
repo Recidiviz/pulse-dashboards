@@ -23,9 +23,10 @@ export const SIGNING_KEY_ID = "edovo-simulator-signing-dev-key";
 /**
  * Public key in JWK format used to verify JWT signature. This is not the real key!
  * It is only used for the local JWKS simulator. It needs to be in sync with the
- * private key stored in src/tools/.enc.env.secrets. To rotate them you can generate
+ * private key stored in `env.edovo-test-token.enc.yaml`. To rotate them you can generate
  * a new keypair online at e.g. https://www.oauth2.dev/tools/generate-keypair or use
- * `jose.exportJWK` on a key generated locally with e.g. `openssl` or `jose.generateKeyPair`
+ * `jose.exportJWK` on a key generated locally with e.g. `openssl` or `jose.generateKeyPair`.
+ * The algorithm for this keypair must be RS256.
  */
 export const EDOVO_SIGNING_KEY = {
   kid: SIGNING_KEY_ID,

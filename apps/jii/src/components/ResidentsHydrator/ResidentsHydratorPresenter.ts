@@ -17,7 +17,8 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { RootStore, StateCode } from "~@jii/data";
+import { StateCode } from "~@jii/configs";
+import { RootStore } from "~@jii/data";
 import {
   Hydratable,
   HydratesFromSource,

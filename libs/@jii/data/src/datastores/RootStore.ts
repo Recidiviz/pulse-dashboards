@@ -18,6 +18,7 @@
 import { captureException } from "@sentry/react";
 import { makeObservable, onReactionError } from "mobx";
 
+import { StateCode } from "~@jii/configs";
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { FlowMethod } from "~hydration-utils";
@@ -25,7 +26,6 @@ import { FlowMethod } from "~hydration-utils";
 import { ApiClient } from "../apis/data/ApiClient";
 import { DataAPI } from "../apis/data/interface";
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
-import { StateCode } from "../configs/types";
 import { proxyHost } from "../utils/proxy";
 import { LoginConfigStore } from "./LoginConfigStore";
 import { ResidentsStore } from "./ResidentsStore";

@@ -15,4 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./function";
+import { ArgumentParser } from "argparse";
+import { decodeJwt } from "jose";
+
+import { getDecryptedEdovoToken } from "~@jii/trpc";
+
+const parser = new ArgumentParser({
+  description:
+    "Decrypt and decode an Edovo JWE. Useful for debugging auth failures, see README for more",
+});
+
+parser.add_argument("-t", "--token", {
+  dest: "token",
+  required: true,
+  help: "The token to decrypt. Must be in Compact JWE format",
+});
+
+type Args = {
+  token: string;
+};
+
+const args = parser.parse_args() as Args;
+
+async function main() {
+  const decryptedToken = await getDecryptedEdovoToken(args.token);
+  const decodedPayload = decodeJwt(decryptedToken);
+
+  console.log(decodedPayload);
+}
+
+main();

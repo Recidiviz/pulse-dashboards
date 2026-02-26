@@ -6,7 +6,8 @@
   "tags": ["scope:server"],
   "targets": {
     "requires-sops-env:dev": {
-      "dependsOn": ["^prisma-generate", "^prisma-deploy"],
+      "continuous": true,
+      "dependsOn": ["^prisma-generate", "^prisma-deploy", "jwks-sim"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
@@ -21,6 +22,38 @@
         "cwd": "{projectRoot}",
         "command": "vite-node --watch src/main.ts"
       }
+    },
+    "jwks-sim": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "tsx watch src/tools/jwks-simulator/main.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "requires-sops-env:edovo-test-token": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/tools/edovoTestToken.ts",
+        "cwd": "{projectRoot}"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": ["{projectRoot}/env.dev.enc.yaml"]
+        }
+      }
+    },
+    "requires-sops-env:decode-token": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/tools/decodeJWE.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      },
+      "defaultConfiguration": "production"
     },
     "offline-e2e": {
       "continuous": true,

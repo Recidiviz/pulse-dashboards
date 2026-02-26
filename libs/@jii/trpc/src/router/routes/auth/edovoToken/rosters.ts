@@ -15,40 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createPrivateKey } from "crypto";
-import { compactDecrypt } from "jose";
 import { z } from "zod";
 
 import { AuthorizedUserProfile } from "~@jii/auth";
 
+import { getRecidivizUserProfile } from "../../../../auth/recidivizUsers";
 import {
   checkEdovoTestAccountRoster,
   checkResidentsRoster,
-} from "../../helpers/firebaseAdmin";
-import { getRecidivizUserProfile } from "../../helpers/recidivizUsers";
-import { secrets } from "../../helpers/secrets";
-
-export const edovoIdTokenPayloadSchema = z
-  .object({
-    inmate_id: z.string(),
-    facility_state: z
-      .string()
-      .toUpperCase()
-      .transform((s) => `US_${s}`),
-    facility_name: z.string().optional(),
-    language: z.string().optional(),
-  })
-  .transform((user) => {
-    // known cases where our ID formats do not match
-    if (user.facility_state === "US_ME") {
-      return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
-    }
-    if (user.facility_state === "US_NE") {
-      return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
-    }
-    return user;
-  });
-export type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
+} from "../../../../auth/roster";
+import type { EdovoIdTokenPayload } from "./payload";
 
 export async function lookupResident(
   userData: EdovoIdTokenPayload,
@@ -79,7 +55,7 @@ export async function securusTestIdentity(
   if (!userData.facility_name) return;
 
   const securusFacilities = securusSecretSchema.parse(
-    await secrets.getLatestValue("SECURUS_TEST_FACILITIES"),
+    process.env["SECURUS_TEST_FACILITIES"],
   );
   if (securusFacilities.includes(userData.facility_name)) {
     // all securus test accounts are mapped to the same test data, for consistency
@@ -91,14 +67,4 @@ export async function securusTestIdentity(
     };
   }
   return;
-}
-
-export async function getDecryptedToken(encryptedToken: string) {
-  // decrypting gets us a signed JWT to pass on to the next middleware
-  const { plaintext } = await compactDecrypt(
-    encryptedToken,
-    createPrivateKey(await secrets.getLatestValue("EDOVO_TOKEN_PRIVATE_KEY")),
-  );
-
-  return plaintext.toString();
 }

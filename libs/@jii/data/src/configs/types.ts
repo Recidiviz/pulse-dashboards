@@ -17,8 +17,9 @@
 
 import { z } from "zod";
 
+import { StateCode } from "~@jii/configs";
+
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
-import { stateCodes } from "./stateConstants";
 
 export type OpportunityConfig = {
   firestoreCollection: string;
@@ -68,8 +69,6 @@ export type EligibilityModuleConfig = {
 export type EarnedGoodTimeConfig = {
   monthlyEarnedTimeLimit?: number;
 };
-
-export type StateCode = z.infer<typeof stateCodes>;
 
 export type ResidentOpportunitySchemaMapping =
   typeof residentOpportunitySchemas;

@@ -19,6 +19,7 @@ import type { TRPCClient } from "@trpc/client";
 import assertNever from "assert-never";
 import isMatch from "lodash/isMatch";
 
+import { StateCode } from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import {
   outputFixture,
@@ -31,7 +32,6 @@ import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 import {
   IncarcerationOpportunityId,
   OpportunityRecord,
-  StateCode,
 } from "../../configs/types";
 import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";

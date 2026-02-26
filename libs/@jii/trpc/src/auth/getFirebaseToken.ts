@@ -18,7 +18,7 @@
 import firebaseAdmin from "firebase-admin";
 import { toUpper } from "lodash-es";
 
-import { AuthorizedUserProfile } from "~@jii/auth";
+import type { AuthorizedUserProfile } from "~@jii/auth";
 
 import { firebaseApp } from "../helpers/firebaseAdmin";
 

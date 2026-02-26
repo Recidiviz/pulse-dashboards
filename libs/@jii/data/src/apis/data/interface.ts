@@ -17,6 +17,7 @@
 
 import type { TRPCClient } from "@trpc/client";
 
+import { StateCode } from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
@@ -26,7 +27,6 @@ import {
   LandingPageConfig,
   OpportunityRecord,
   ResidentsConfig,
-  StateCode,
 } from "../../configs/types";
 
 export interface DataAPI {
