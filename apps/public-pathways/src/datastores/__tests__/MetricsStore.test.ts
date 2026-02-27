@@ -21,14 +21,19 @@ import {
   SnapshotMetric,
 } from "~shared-pathways";
 
+import FiltersStore from "../FiltersStore";
 import MetricsStore from "../MetricsStore";
 import type { RootStore } from "../RootStore";
 
 const mockRootStore = {
+  currentTenantId: "US_NY",
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),
   },
 } as unknown as RootStore;
+mockRootStore.filtersStore = new FiltersStore({
+  rootStore: mockRootStore,
+});
 
 describe("MetricsStore", () => {
   let metricsStore: MetricsStore;
@@ -36,6 +41,7 @@ describe("MetricsStore", () => {
   beforeEach(() => {
     fetchMock.mockResponse(JSON.stringify({ data: [], metadata: {} }));
     metricsStore = new MetricsStore({ rootStore: mockRootStore });
+    mockRootStore.metricsStore = metricsStore;
   });
 
   it("has page set to prison", () => {
@@ -50,8 +56,8 @@ describe("MetricsStore", () => {
     expect(metricsStore.currentTenantId).toBe("US_NY");
   });
 
-  it("has filtersStore with monthRange 60", () => {
-    expect(metricsStore.filtersStore.monthRange).toBe(60);
+  it("has filtersStore with default monthRange", () => {
+    expect(metricsStore.filtersStore.monthRange).toBe(6);
   });
 
   it("has default filter values", () => {

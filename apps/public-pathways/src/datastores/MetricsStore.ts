@@ -18,51 +18,23 @@
 import { makeAutoObservable } from "mobx";
 
 import {
-  AgeGroup,
   EnabledFiltersByMetric,
-  Gender,
   MetricRecord,
   NewBackendRecord,
   OverTimeMetric,
   PATHWAYS_SECTIONS,
   PathwaysMetricStore,
   PopulationFilterValues,
-  Sex,
   SnapshotDataRecord,
   SnapshotMetric,
 } from "~shared-pathways";
 
 import { callPublicPathwaysApi } from "../api/metricsClient";
-import { publicPathwaysEnabledFilters } from "../core/enabledFilters";
 import { PUBLIC_PATHWAYS_TENANT } from "../tenantId";
 import type { RootStore } from "./RootStore";
 
-// TODO(#12060) remove this once FiltersStore is added to public-pathways
-const DEFAULT_FILTERS: PopulationFilterValues = {
-  timePeriod: ["6"],
-  facility: ["ALL"],
-  sex: ["ALL"] as Sex[],
-  gender: ["ALL"] as Gender[],
-  ageGroup: ["ALL"] as AgeGroup[],
-  race: ["ALL"],
-  ethnicity: ["ALL"],
-  sentenceLengthMin: ["ALL"],
-  sentenceLengthMax: ["ALL"],
-  legalStatus: ["ALL"],
-  admissionReason: ["ALL"],
-  supervisionType: ["ALL"],
-  district: ["ALL"],
-  judicialDistrict: ["ALL"],
-  mostSevereViolation: ["ALL"],
-  numberOfViolations: ["ALL"],
-  supervisionLevel: ["ALL"],
-};
-
 export default class MetricsStore implements PathwaysMetricStore {
   private readonly rootStore: RootStore;
-
-  // TODO(#12060) adjust this once FiltersStore is added to public-pathways
-  filters: PopulationFilterValues = DEFAULT_FILTERS;
 
   page = "prison";
 
@@ -73,20 +45,19 @@ export default class MetricsStore implements PathwaysMetricStore {
     this.rootStore = rootStore;
   }
 
+  get filters(): PopulationFilterValues {
+    return this.rootStore.filtersStore.filters;
+  }
+
   get currentTenantId(): string {
     return PUBLIC_PATHWAYS_TENANT;
   }
 
-  // TODO(#12060) remove this once FiltersStore is added to public-pathways
   get filtersStore(): {
     enabledFilters: EnabledFiltersByMetric;
     monthRange: number;
   } {
-    return {
-      enabledFilters:
-        publicPathwaysEnabledFilters as unknown as EnabledFiltersByMetric,
-      monthRange: 60,
-    };
+    return this.rootStore.filtersStore;
   }
 
   private fetchMetrics = <R extends MetricRecord>(

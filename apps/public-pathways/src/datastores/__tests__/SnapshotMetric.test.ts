@@ -25,6 +25,7 @@ import {
   SnapshotMetric,
 } from "~shared-pathways";
 
+import FiltersStore from "../FiltersStore";
 import MetricsStore from "../MetricsStore";
 import type { RootStore } from "../RootStore";
 
@@ -32,10 +33,14 @@ const BASE_URL = "http://localhost:5000";
 const DIMENSION_COUNT_URL = `${BASE_URL}/public_pathways/US_NY/PrisonPopulationByDimensionCount`;
 
 const mockRootStore = {
+  currentTenantId: "US_NY",
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),
   },
 } as unknown as RootStore;
+mockRootStore.filtersStore = new FiltersStore({
+  rootStore: mockRootStore,
+});
 
 describe("SnapshotMetric", () => {
   let metric: SnapshotMetric;
@@ -43,6 +48,7 @@ describe("SnapshotMetric", () => {
 
   beforeEach(async () => {
     vi.stubEnv("VITE_PUBLIC_PATHWAYS_API_URL_BASE", BASE_URL);
+    mockRootStore.filtersStore.resetFilters();
 
     fetchMock.mockResponse(
       JSON.stringify({
@@ -57,6 +63,7 @@ describe("SnapshotMetric", () => {
     );
 
     metricsStore = new MetricsStore({ rootStore: mockRootStore });
+    mockRootStore.metricsStore = metricsStore;
     metricsStore.section = PATHWAYS_SECTIONS["countByLocation"];
     metric = metricsStore.prisonFacilityPopulation;
     metric.hydrate();
@@ -107,16 +114,18 @@ describe("SnapshotMetric", () => {
   });
 
   it("calls the backend again when filters change", async () => {
+    fetchMock.mockClear();
     runInAction(() => {
-      metricsStore.filters = {
-        ...metricsStore.filters,
+      mockRootStore.filtersStore.setFilters({
         sex: ["MALE"],
         ageGroup: ["25-29", "30-34"],
-      };
+      });
     });
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    expect(fetchMock.mock.calls[1][0]).toEqual(
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    expect(
+      fetchMock.mock.calls.map((call) => call[0]),
+    ).toContainEqual(
       encodeURI(
         `${DIMENSION_COUNT_URL}?filters[sex]=MALE&filters[age_group]=25-29&filters[age_group]=30-34&group=facility`,
       ),
@@ -124,16 +133,18 @@ describe("SnapshotMetric", () => {
   });
 
   it("does not filter on the group by value", async () => {
+    fetchMock.mockClear();
     runInAction(() => {
-      metricsStore.filters = {
-        ...metricsStore.filters,
+      mockRootStore.filtersStore.setFilters({
         sex: ["MALE"],
         facility: ["FACILITY_1", "FACILITY_2"],
-      };
+      });
     });
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    expect(fetchMock.mock.calls[1][0]).toEqual(
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    expect(
+      fetchMock.mock.calls.map((call) => call[0]),
+    ).toContainEqual(
       encodeURI(
         `${DIMENSION_COUNT_URL}?filters[sex]=MALE&group=facility`,
       ),
@@ -142,65 +153,70 @@ describe("SnapshotMetric", () => {
 
   it("aborts in-progress requests and keeps the value from the final request", async () => {
     fetchMock.resetMocks();
-    fetchMock
-      // Slow request
-      .mockResponseOnce(
-        () =>
-          new Promise((resolve) =>
-            setTimeout(
-              () =>
-                resolve({
-                  body: JSON.stringify({
-                    data: [
-                      { facility: "FACILITY_1", count: 50 },
-                      { facility: "FACILITY_2", count: 100 },
-                    ],
-                    metadata: { lastUpdated: "2022-01-01" },
-                  }),
-                }),
-              1000,
+
+    const slowResponse = () =>
+      new Promise<string>((resolve) =>
+        setTimeout(
+          () =>
+            resolve(
+              JSON.stringify({
+                data: [
+                  { facility: "FACILITY_1", count: 50 },
+                  { facility: "FACILITY_2", count: 100 },
+                ],
+                metadata: { lastUpdated: "2022-01-01" },
+              }),
             ),
-          ),
-      )
-      // Fast request
-      .mockResponseOnce(
-        JSON.stringify({
-          data: [
-            { facility: "FACILITY_1", count: 270 },
-            { facility: "FACILITY_2", count: 180 },
-          ],
-          metadata: { lastUpdated: "2022-01-01" },
-        }),
+          1000,
+        ),
       );
+
+    const fastResponse = JSON.stringify({
+      data: [
+        { facility: "FACILITY_1", count: 270 },
+        { facility: "FACILITY_2", count: 180 },
+      ],
+      metadata: { lastUpdated: "2022-01-01" },
+    });
+
+    // Use a default response so all metrics get valid data, with the
+    // first two responses specifically ordered for the abort test.
+    fetchMock.mockResponseOnce(slowResponse);
+    fetchMock.mockResponse(fastResponse);
 
     // Trigger the slow request
     runInAction(() => {
-      metricsStore.filters = {
-        ...metricsStore.filters,
+      mockRootStore.filtersStore.setFilters({
         sex: ["MALE"],
-      };
+      });
     });
 
     // Trigger the fast request
     runInAction(() => {
-      metricsStore.filters = {
-        ...metricsStore.filters,
+      mockRootStore.filtersStore.setFilters({
         sex: ["FEMALE"],
-      };
+      });
     });
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(
-        `${DIMENSION_COUNT_URL}?filters[sex]=MALE&group=facility`,
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.map((call) => call[0]),
+      ).toContainEqual(
+        encodeURI(
+          `${DIMENSION_COUNT_URL}?filters[sex]=FEMALE&group=facility`,
+        ),
       ),
     );
-    expect(fetchMock.mock.calls[1][0]).toEqual(
-      encodeURI(
-        `${DIMENSION_COUNT_URL}?filters[sex]=FEMALE&group=facility`,
-      ),
-    );
-    expect(isAbortException(fetchMock.mock.results[0].value)).toBe(true);
+
+    // The first request for this metric should have been aborted
+    const metricCalls = fetchMock.mock.calls
+      .map((call, i) => ({ url: call[0], result: fetchMock.mock.results[i] }))
+      .filter(({ url }) =>
+        (url as string).includes("PrisonPopulationByDimensionCount"),
+      );
+    expect(metricCalls.some(({ result }) => isAbortException(result.value))).toBe(true);
+
+    // The metric should contain data from the final (fast) request
     expect(metric.dataSeries).toEqual([
       {
         facility: "FACILITY_1",

@@ -19,8 +19,16 @@ import { Auth0ClientOptions } from "@auth0/auth0-spa-js";
 import { captureException } from "@sentry/react";
 import { makeAutoObservable, onReactionError } from "mobx";
 
-import { DEFAULT_PATHWAYS_PAGE, DEFAULT_PATHWAYS_SECTION_BY_PAGE, PATHWAYS_PAGES, PathwaysPage, PathwaysSection } from "~shared-pathways";
+import {
+  DEFAULT_PATHWAYS_PAGE,
+  DEFAULT_PATHWAYS_SECTION_BY_PAGE,
+  PATHWAYS_PAGES,
+  PathwaysPage,
+  PathwaysSection,
+  PathwaysTenantId,
+} from "~shared-pathways";
 
+import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import UserStore from "./UserStore";
 
@@ -51,13 +59,16 @@ export function getAuthSettings(): Auth0ClientOptions | undefined {
 export class RootStore {
   userStore: UserStore;
 
+  filtersStore: FiltersStore;
+
   metricsStore: MetricsStore;
 
   page: PathwaysPage = PATHWAYS_PAGES.prison;
 
-  section: PathwaysSection = DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
+  section: PathwaysSection =
+    DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
 
-  currentTenantId = "US_NY";
+  currentTenantId = "US_NY" as PathwaysTenantId;
 
   constructor() {
     makeAutoObservable(this);
@@ -66,6 +77,7 @@ export class RootStore {
       authSettings: getAuthSettings(),
       rootStore: this,
     });
+    this.filtersStore = new FiltersStore({ rootStore: this });
     this.metricsStore = new MetricsStore({ rootStore: this });
   }
 }

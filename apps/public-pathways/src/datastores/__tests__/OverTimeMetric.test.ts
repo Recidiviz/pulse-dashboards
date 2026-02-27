@@ -20,16 +20,21 @@ import { when } from "mobx";
 import { isHydrated } from "~hydration-utils";
 import { OverTimeMetric, PATHWAYS_SECTIONS } from "~shared-pathways";
 
+import FiltersStore from "../FiltersStore";
 import MetricsStore from "../MetricsStore";
 import type { RootStore } from "../RootStore";
 
 const BASE_URL = "http://localhost:5000";
 
 const mockRootStore = {
+  currentTenantId: "US_NY",
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),
   },
 } as unknown as RootStore;
+mockRootStore.filtersStore = new FiltersStore({
+  rootStore: mockRootStore,
+});
 
 describe("OverTimeMetric", () => {
   let metric: OverTimeMetric;
@@ -66,6 +71,7 @@ describe("OverTimeMetric", () => {
     );
 
     metricsStore = new MetricsStore({ rootStore: mockRootStore });
+    mockRootStore.metricsStore = metricsStore;
     metricsStore.section = PATHWAYS_SECTIONS["countOverTime"];
     metric = metricsStore.prisonPopulationOverTime;
     metric.hydrate();
@@ -108,27 +114,27 @@ describe("OverTimeMetric", () => {
     );
   });
 
-  it("fills in missing months with monthRange 60", () => {
-    // monthRange is 60 months (5 years). Most recent data is April 2022,
-    // so extrapolation fills from April 2017 to April 2022 = 61 months.
-    expect(metric.dataSeries).toHaveLength(61);
+  it("fills in missing months with default monthRange", () => {
+    // Default monthRange is 6 months. Most recent data is April 2022,
+    // so extrapolation fills from October 2021 to April 2022 = 7 months.
+    expect(metric.dataSeries).toHaveLength(7);
 
-    // first entry is April 2017
+    // first entry is October 2021
     expect(metric.dataSeries[0]).toEqual({
-      year: 2017,
-      month: 4,
+      year: 2021,
+      month: 10,
       count: 0,
       avg90day: 0,
     });
 
     // last four entries are the actual data
-    expect(metric.dataSeries[57]).toEqual({
+    expect(metric.dataSeries[3]).toEqual({
       year: 2022,
       month: 1,
       count: 1000,
       avg90day: 1000,
     });
-    expect(metric.dataSeries[60]).toEqual({
+    expect(metric.dataSeries[6]).toEqual({
       year: 2022,
       month: 4,
       count: 4000,
