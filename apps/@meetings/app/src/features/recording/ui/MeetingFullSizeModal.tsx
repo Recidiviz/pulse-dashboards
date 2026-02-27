@@ -206,7 +206,7 @@ const NewMeetingProgress = ({
           </Text>
           <Text className="font-inter text-base font-medium text-primary">
             {person.fullName}{" "}
-            <Text className="text-base font-normal text-[#355362D9]">
+            <Text className="text-xs md:text-base font-normal text-[#355362D9]">
               {person.primaryMetadata} • ID: {person.displayPersonExternalId}
             </Text>
           </Text>
@@ -311,8 +311,8 @@ const NewMeetingProgress = ({
         {status === "ending" && <LinearProgressBar />}
       </View>
 
-      <View className="columns-3 flex-row items-center justify-between border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5">
-        <View className="w-[180px]">
+      <View className="flex-col gap-2 lg:columns-3 lg:flex-row items-center justify-between border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5">
+        <View className="w-[250px] flex flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start ">
           <Text className="font-inter text-lg font-semibold text-primary">
             {formatDurationNumeric(totalDurationMs)}
           </Text>
@@ -361,8 +361,15 @@ const NewMeetingProgress = ({
               Stop
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            className="size-[52px] items-center justify-center rounded-full bg-[#E6EAEB] aria-disabled:opacity-40 lg:hidden"
+            onPress={handleDiscard}
+            disabled={isModalDisabled}
+          >
+            <Image source={Icons.Cross} className="!size-6" />
+          </TouchableOpacity>
         </View>
-        <View className="w-[180px] items-end">
+        <View className="w-[180px] lg:items-end hidden lg:flex">
           <TouchableOpacity
             className="flex-row items-center aria-disabled:opacity-40"
             disabled={isModalDisabled}

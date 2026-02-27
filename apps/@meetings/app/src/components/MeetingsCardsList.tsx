@@ -78,14 +78,14 @@ const MeetingsCardsList = ({
             },
           };
 
+          
     return (
-      <Link
+      <View
         key={`${meeting.id}-${index}`}
         className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
-        {...linkProps}
       >
-        <View className="w-full">
-          <View className="flex-row items-center justify-between">
+        <Link {...linkProps}>
+          <View className="w-full flex-row items-center justify-between">
             <Text className="font-inter text-base font-semibold text-primary">
               {meeting.date}
             </Text>
@@ -99,16 +99,6 @@ const MeetingsCardsList = ({
           <Text className="mr-1 font-inter text-xs font-medium text-primary">
             {meeting.time} • {meeting.duration || "In progress..."}
           </Text>
-          {isMeetingInProgress && (
-            <MeetingInProgressBar
-              recordingState={meeting.recordingState}
-              startTime={meeting.start}
-              endTime={meeting.end}
-              person={person}
-              meetingId={meeting.id}
-              className="mt-2"
-            />
-          )}
           {isProcessing && (
             <View className="mt-4 rounded-xl bg-[#C1E3D83B] p-4">
               <View className="flex-row items-start">
@@ -130,30 +120,18 @@ const MeetingsCardsList = ({
               </View>
             </View>
           )}
-          {/* <View className="my-2 border-gray-200 border-b" />
-       <View className="mt-3">
-        <Text
-          className="font-inter text-gray-700 text-sm leading-5"
-          numberOfLines={isExpanded ? undefined : 2}
-        >
-          {meeting.content}
-        </Text>
-        <TouchableOpacity
-          onPress={() => setIsExpanded(!isExpanded)}
-          className="flex-row items-center mt-1"
-        >
-          <Text className="mr-1 font-inter font-medium text-primary text-xs">
-            {isExpanded ? "Less" : "More"}
-          </Text>
-          <Image
-            source={isExpanded ? Icons.ArrowUp : Icons.ArrowDown}
-            className="!size-3.5"
-            style={{ resizeMode: "contain" }}
+        </Link>
+        {isMeetingInProgress && (
+          <MeetingInProgressBar
+            recordingState={meeting.recordingState}
+            startTime={meeting.start}
+            endTime={meeting.end}
+            person={person}
+            meetingId={meeting.id}
+            className="mt-2"
           />
-        </TouchableOpacity>
-      </View> */}
-        </View>
-      </Link>
+        )}
+      </View>
     );
   });
 };

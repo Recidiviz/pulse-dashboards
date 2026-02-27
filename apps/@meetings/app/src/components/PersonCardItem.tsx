@@ -50,15 +50,16 @@ const PersonCardItem = ({
   const height = hasActiveMeeting ? 136 : 56;
 
   return (
-    <Link
+    <View
       key={person.personId}
       style={{ height }}
-      className="border-b border-gray-300 px-2.5 py-3.5"
-      screen={type === "clients" ? "ClientProfile" : "ResidentProfile"}
-      params={{ personId: person.personId.toString() }}
+      className="w-full border-b border-gray-300 px-2.5 flex justify-center"
     >
-      <View className="w-full">
-        <View className="flex-1 flex-row items-center">
+      <Link
+        screen={type === "clients" ? "ClientProfile" : "ResidentProfile"}
+        params={{ personId: person.personId.toString() }}
+      >
+        <View className="flex-1 w-full flex-row items-center">
           <ImageBackground
             source={Icons.BgAvatar}
             className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
@@ -86,18 +87,18 @@ const PersonCardItem = ({
             </View>
           </View>
         </View>
-        {!!person.activeMeetingId && (
-          <MeetingInProgressBar
-            recordingState={recordingState || "recording"}
-            startTime={new Date()} // TODO: Replace with API value
-            endTime={null}
-            person={{ ...person, personId: person.personId }}
-            meetingId={person.activeMeetingId}
-            className="mt-2 bg-white"
-          />
-        )}
-      </View>
-    </Link>
+      </Link>
+      {!!person.activeMeetingId && (
+        <MeetingInProgressBar
+          recordingState={recordingState || "recording"}
+          startTime={new Date()} // TODO: Replace with API value
+          endTime={null}
+          person={{ ...person, personId: person.personId }}
+          meetingId={person.activeMeetingId}
+          className="mt-2 bg-white"
+        />
+      )}
+    </View>
   );
 };
 
