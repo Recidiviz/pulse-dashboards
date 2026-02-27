@@ -17,20 +17,18 @@
 
 import {
   formatMultiplePeriodReports,
-  UsTnReclassification2026DraftData,
-} from "~datatypes";
-
-import {
   getBreakdownSectionQuestionIndex,
   getBreakdownSectionScore,
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
-} from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
+  rcafAssessmentQuestions,
+  UsTnReclassification2026DraftData,
+} from "~datatypes";
+
 import {
   getDerivedCustodyLevel,
   prefilledCoverSheetData,
 } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
-import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnReclassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatWorkflowsDate } from "../../../utils";
 import {
@@ -73,62 +71,62 @@ export class UsTnReclassification2026Form extends FormBase<
     } = this;
 
     const q1Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[0],
+      rcafAssessmentQuestions[0],
       formInformation.q1Score,
     );
 
     const q2Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[1],
+      rcafAssessmentQuestions[1],
       formInformation.q2Score,
     );
 
     const q3Selection_0_6 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[2].sections[0],
+      rcafAssessmentQuestions[2].sections[0],
       formInformation.q3Notes,
     );
 
     const q3Selection_6_12 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[2].sections[1],
+      rcafAssessmentQuestions[2].sections[1],
       formInformation.q3Notes,
     );
 
     const q4Selection_0_6 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[3].sections[0],
+      rcafAssessmentQuestions[3].sections[0],
       formInformation.q4Notes,
     );
 
     const q4Selection_6_12 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[3].sections[1],
+      rcafAssessmentQuestions[3].sections[1],
       formInformation.q4Notes,
     );
 
     const q5Selection_0_6 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[4].sections[0],
+      rcafAssessmentQuestions[4].sections[0],
       formInformation.q5Notes,
     );
 
     const q5Selection_6_12 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[4].sections[1],
+      rcafAssessmentQuestions[4].sections[1],
       formInformation.q5Notes,
     );
 
     const q5Selection_12_18 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[4].sections[2],
+      rcafAssessmentQuestions[4].sections[2],
       formInformation.q5Notes,
     );
 
     const q5Selection_18_36 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[4].sections[3],
+      rcafAssessmentQuestions[4].sections[3],
       formInformation.q5Notes,
     );
 
     const q5Selection_36_60 = getBreakdownSectionQuestionIndex(
-      assessmentQuestions[4].sections[4],
+      rcafAssessmentQuestions[4].sections[4],
       formInformation.q5Notes,
     );
 
     let q6Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[5],
+      rcafAssessmentQuestions[5],
       formInformation.q6Score,
     );
 
@@ -139,7 +137,7 @@ export class UsTnReclassification2026Form extends FormBase<
     }
 
     const q7Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[6],
+      rcafAssessmentQuestions[6],
       formInformation.q7Score,
     );
 
@@ -220,59 +218,59 @@ export class UsTnReclassification2026Form extends FormBase<
     } = this.formData;
 
     const q1Score = getSingleSectionQuestionScore(
-      assessmentQuestions[0],
+      rcafAssessmentQuestions[0],
       q1Selection,
     );
     const q2Score = getSingleSectionQuestionScore(
-      assessmentQuestions[1],
+      rcafAssessmentQuestions[1],
       q2Selection,
     );
 
     let q3Score = getBreakdownSectionScore(
-      assessmentQuestions[2].sections[0],
+      rcafAssessmentQuestions[2].sections[0],
       q3Selection_0_6,
     );
     q3Score += getBreakdownSectionScore(
-      assessmentQuestions[2].sections[1],
+      rcafAssessmentQuestions[2].sections[1],
       q3Selection_6_12,
     );
 
     let q4Score = getBreakdownSectionScore(
-      assessmentQuestions[3].sections[0],
+      rcafAssessmentQuestions[3].sections[0],
       q4Selection_0_6,
     );
     q4Score += getBreakdownSectionScore(
-      assessmentQuestions[3].sections[1],
+      rcafAssessmentQuestions[3].sections[1],
       q4Selection_6_12,
     );
 
     let q5Score = getBreakdownSectionScore(
-      assessmentQuestions[4].sections[0],
+      rcafAssessmentQuestions[4].sections[0],
       q5Selection_0_6,
     );
     q5Score += getBreakdownSectionScore(
-      assessmentQuestions[4].sections[1],
+      rcafAssessmentQuestions[4].sections[1],
       q5Selection_6_12,
     );
     q5Score += getBreakdownSectionScore(
-      assessmentQuestions[4].sections[2],
+      rcafAssessmentQuestions[4].sections[2],
       q5Selection_12_18,
     );
     q5Score += getBreakdownSectionScore(
-      assessmentQuestions[4].sections[3],
+      rcafAssessmentQuestions[4].sections[3],
       q5Selection_18_36,
     );
     q5Score += getBreakdownSectionScore(
-      assessmentQuestions[4].sections[4],
+      rcafAssessmentQuestions[4].sections[4],
       q5Selection_36_60,
     );
 
     const q6Score = getSingleSectionQuestionScore(
-      assessmentQuestions[5],
+      rcafAssessmentQuestions[5],
       q6Selection,
     );
     const q7Score = getSingleSectionQuestionScore(
-      assessmentQuestions[6],
+      rcafAssessmentQuestions[6],
       q7Selection,
     );
 

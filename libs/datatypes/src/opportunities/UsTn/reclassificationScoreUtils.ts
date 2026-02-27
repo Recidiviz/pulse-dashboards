@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,43 @@
 
 import { z } from "zod";
 
-import { multiIncidentPeriodReportSchema } from "~datatypes";
+import { multiIncidentPeriodReportSchema } from "./utils";
 
-import {
-  BreakdownAssessmentQuestionSpec,
-  SingleSectionAssessmentQuestionSpec,
-} from "./types";
+export type AssessmentOption = {
+  text: string;
+  score: number;
+};
+
+export type SingleSectionAssessmentQuestionSpec = {
+  title: string;
+  type: "SINGLE";
+  canBeNone?: boolean;
+  options: AssessmentOption[];
+};
+
+export type BreakdownAssessmentQuestionPeriod =
+  | "0-6"
+  | "6-12"
+  | "12-18"
+  | "18-36"
+  | "36-60";
+
+export type BreakdownAssessmentQuestionSpec = {
+  title: string;
+  type: "BREAKDOWN";
+  sections: {
+    period: BreakdownAssessmentQuestionPeriod;
+    scores: [number, number, number, number];
+  }[];
+};
+
+export type AssessmentQuestionSpec =
+  | SingleSectionAssessmentQuestionSpec
+  | BreakdownAssessmentQuestionSpec;
+
+export type TupleWithArity<OutType, InTuple> = {
+  [K in keyof InTuple]: OutType;
+};
 
 export function getSingleSectionQuestionIndex(
   question: SingleSectionAssessmentQuestionSpec,

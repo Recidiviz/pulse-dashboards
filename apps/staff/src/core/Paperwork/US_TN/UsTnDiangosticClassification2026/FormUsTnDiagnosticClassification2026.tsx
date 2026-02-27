@@ -18,6 +18,8 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
+import { dcafAssessmentQuestions } from "~datatypes";
+
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
 import { Resident } from "../../../../WorkflowsStore/Resident";
@@ -45,7 +47,6 @@ import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
 import HearingNotice from "../CustodyReclassification/HearingNotice";
 import { getCoverSheetTemplateArgs } from "../CustodyReclassification/utils";
-import { assessmentQuestions } from "./assessmentQuestions";
 import dcafTemplate from "./dcaf_template.docx";
 
 export const FormUsTnDiagnosticClassification2026 = observer(
@@ -117,7 +118,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
             <ClassificationFormPage>
               <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
               <ScoredAssessmentQuestion
-                questionSpec={assessmentQuestions[0]}
+                questionSpec={dcafAssessmentQuestions[0]}
                 questionNumber={1}
                 supportingText={
                   "Recidiviz is auto-filling this score based on the resident’s sentence history, as found in eTOMIS. Convictions are considered prior if they did not occur on the resident’s most recent felony Sentence Imposed Date."
@@ -139,7 +140,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                 </DoubleNotes>
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
-                questionSpec={assessmentQuestions[1]}
+                questionSpec={dcafAssessmentQuestions[1]}
                 questionNumber={2}
                 supportingText={
                   "Recidiviz is auto-filling this score from the resident’s last completed CAF, directly from eTOMIS."
@@ -151,7 +152,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                 />
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
-                questionSpec={assessmentQuestions[2]}
+                questionSpec={dcafAssessmentQuestions[2]}
                 questionNumber={3}
                 supportingText={
                   "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
@@ -167,7 +168,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
           <PrintablePage landscape stretchable watermark="Draft">
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
-                questionSpec={assessmentQuestions[3]}
+                questionSpec={dcafAssessmentQuestions[3]}
                 questionNumber={4}
                 supportingText={
                   "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
@@ -179,7 +180,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                 />
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
-                questionSpec={assessmentQuestions[4]}
+                questionSpec={dcafAssessmentQuestions[4]}
                 questionNumber={5}
                 supportingText={
                   "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
@@ -195,7 +196,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
           <PrintablePage landscape watermark="Draft">
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
-                questionSpec={assessmentQuestions[5]}
+                questionSpec={dcafAssessmentQuestions[5]}
                 questionNumber={6}
                 supportingText={
                   "Recidiviz is auto-filling this score based on the resident’s age using data from eTOMIS."

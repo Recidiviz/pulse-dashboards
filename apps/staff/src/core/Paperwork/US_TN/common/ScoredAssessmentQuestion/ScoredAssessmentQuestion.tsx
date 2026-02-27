@@ -15,11 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AssessmentQuestionSpec } from "~datatypes";
+
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { AssessmentItem, SubItem } from "./AssessmentItem";
 import { BreakdownScoredAssessmentQuestion } from "./BreakdownScoredAssessmentQuestion";
 import { SingleScoredAssessmentQuestion } from "./SingleScoredAssessmentQuestion";
-import { AssessmentQuestionProps } from "./types";
+
+export type AssessmentQuestionProps<Spec = AssessmentQuestionSpec> = {
+  questionSpec: Spec;
+  questionNumber: number;
+  disabled?: boolean;
+  supportingText?: string;
+  children?: React.ReactNode;
+};
 
 export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
   const { questionNumber, questionSpec, supportingText, disabled, children } =

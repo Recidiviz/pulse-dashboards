@@ -21,16 +21,15 @@ import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import styled from "styled-components";
 
+import { AssessmentQuestionSpec } from "~datatypes";
+
 import { UsTnSharedReclassificationDraftData } from "../../../../WorkflowsStore";
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import DOCXFormTextArea from "../../DOCXFormTextArea";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
-import {
-  AssessmentQuestionSpec,
-  ScoredAssessmentQuestion,
-} from "../common/ScoredAssessmentQuestion";
+import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import SealPng from "../common/Seal.png";
 import {
   AssessmentQuestionNumber,

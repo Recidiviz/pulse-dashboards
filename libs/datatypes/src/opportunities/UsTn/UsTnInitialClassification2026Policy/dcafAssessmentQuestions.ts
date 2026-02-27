@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
 import {
   AssessmentQuestionSpec,
   TupleWithArity,
-} from "../common/ScoredAssessmentQuestion";
+} from "../reclassificationScoreUtils";
 
-export const assessmentQuestionNumbers = [1, 2, 3, 4, 5, 6] as const;
+export const dcafAssessmentQuestionNumbers = [1, 2, 3, 4, 5, 6] as const;
 
-export type AssessmentQuestionNumber =
-  (typeof assessmentQuestionNumbers)[number];
+export type DcafAssessmentQuestionNumber =
+  (typeof dcafAssessmentQuestionNumbers)[number];
 
-export const assessmentQuestions = [
+export const dcafAssessmentQuestions = [
   {
     title: "PRIOR VIOLENT FELONY CONVICTIONS",
     type: "SINGLE",
@@ -90,5 +90,5 @@ export const assessmentQuestions = [
   },
 ] satisfies TupleWithArity<
   AssessmentQuestionSpec,
-  typeof assessmentQuestionNumbers
+  typeof dcafAssessmentQuestionNumbers
 >;

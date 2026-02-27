@@ -19,10 +19,14 @@ import { observer } from "mobx-react-lite";
 import React, { ChangeEventHandler } from "react";
 import styled from "styled-components";
 
+import {
+  AssessmentOption,
+  SingleSectionAssessmentQuestionSpec,
+} from "~datatypes";
+
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { SubItem } from "./AssessmentItem";
 import { RadioButton, TextWithLeader } from "./styles";
-import { AssessmentOption, SingleSectionAssessmentQuestionSpec } from "./types";
 
 const OptionScore = styled.div`
   flex-grow: 0;

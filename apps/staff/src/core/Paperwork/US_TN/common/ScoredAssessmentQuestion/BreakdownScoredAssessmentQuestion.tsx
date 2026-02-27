@@ -19,13 +19,14 @@ import { observer } from "mobx-react-lite";
 import { ChangeEventHandler } from "react";
 import styled from "styled-components";
 
-import { useOpportunityFormContext } from "../../../OpportunityFormContext";
-import { SubItem } from "./AssessmentItem";
-import { RadioButton } from "./styles";
 import {
   BreakdownAssessmentQuestionPeriod,
   BreakdownAssessmentQuestionSpec,
-} from "./types";
+} from "~datatypes";
+
+import { useOpportunityFormContext } from "../../../OpportunityFormContext";
+import { SubItem } from "./AssessmentItem";
+import { RadioButton } from "./styles";
 
 const BreakdownTable = styled.table`
   width: 100%;

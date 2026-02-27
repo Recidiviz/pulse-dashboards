@@ -15,17 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnInitialClassification2026DraftData } from "~datatypes";
-
 import {
+  dcafAssessmentQuestions,
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
-} from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
+  UsTnInitialClassification2026DraftData,
+} from "~datatypes";
+
 import {
   getDerivedCustodyLevel,
   prefilledCoverSheetData,
 } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
-import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnDiangosticClassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTnInitialClassification2026Opportunity } from "../UsTn";
 import { FormBase } from "./FormBase";
@@ -50,32 +50,32 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
     } = this;
 
     const q1Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[0],
+      dcafAssessmentQuestions[0],
       formInformation.q1Score,
     );
 
     const q2Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[1],
+      dcafAssessmentQuestions[1],
       formInformation.q2Score,
     );
 
     const q3Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[2],
+      dcafAssessmentQuestions[2],
       formInformation.q3Score,
     );
 
     const q4Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[3],
+      dcafAssessmentQuestions[3],
       formInformation.q4Score,
     );
 
     const q5Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[4],
+      dcafAssessmentQuestions[4],
       formInformation.q5Score,
     );
 
     const q6Selection = getSingleSectionQuestionIndex(
-      assessmentQuestions[5],
+      dcafAssessmentQuestions[5],
       formInformation.q6Score,
     );
 
@@ -116,27 +116,27 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
     } = this.formData;
 
     const q1Score = getSingleSectionQuestionScore(
-      assessmentQuestions[0],
+      dcafAssessmentQuestions[0],
       q1Selection,
     );
     const q2Score = getSingleSectionQuestionScore(
-      assessmentQuestions[1],
+      dcafAssessmentQuestions[1],
       q2Selection,
     );
     const q3Score = getSingleSectionQuestionScore(
-      assessmentQuestions[2],
+      dcafAssessmentQuestions[2],
       q3Selection,
     );
     const q4Score = getSingleSectionQuestionScore(
-      assessmentQuestions[3],
+      dcafAssessmentQuestions[3],
       q4Selection,
     );
     const q5Score = getSingleSectionQuestionScore(
-      assessmentQuestions[4],
+      dcafAssessmentQuestions[4],
       q5Selection,
     );
     const q6Score = getSingleSectionQuestionScore(
-      assessmentQuestions[5],
+      dcafAssessmentQuestions[5],
       q6Selection,
     );
 

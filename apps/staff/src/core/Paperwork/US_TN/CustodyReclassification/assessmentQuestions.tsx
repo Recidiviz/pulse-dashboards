@@ -15,10 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  AssessmentQuestionSpec,
-  TupleWithArity,
-} from "../common/ScoredAssessmentQuestion";
+import { AssessmentQuestionSpec, TupleWithArity } from "~datatypes";
 
 // I'm not sure that this is the best way to do it, but the goal is to get the
 // question numbers into typeland so keys like q3Score can check

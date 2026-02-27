@@ -65,11 +65,7 @@ export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/schema";
 
 // UsTn Exports: Includes fixtures and schema related to US-TN opportunities
 // -----------------------------------------------------------------------------
-export * from "./opportunities/UsTn/UsTnInitialClassification2026Policy/fixtures";
-export * from "./opportunities/UsTn/UsTnInitialClassification2026Policy/schema";
-export * from "./opportunities/UsTn/UsTnReclassification2026Policy/fixtures";
-export * from "./opportunities/UsTn/UsTnReclassification2026Policy/schema";
-export * from "./opportunities/UsTn/utils";
+export * from "./opportunities/UsTn";
 
 // Utilities Exports: Common utilities for opportunities
 // -----------------------------------------------------------------------------
