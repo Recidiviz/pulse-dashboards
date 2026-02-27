@@ -114,7 +114,7 @@ export const FormUsTnReclassification2026 = observer(
         />
         <FormViewer formRef={formRef}>
           <CoverSheet />
-          <PrintablePage landscape stretchable watermark="Draft">
+          <PrintablePage landscape stretchable>
             <ClassificationFormPage>
               <Header>
                 TENNESSEE CLASSIFICATION INSTRUMENT: RECLASSIFICATION
@@ -167,7 +167,7 @@ export const FormUsTnReclassification2026 = observer(
               </ScoredAssessmentQuestion>
             </ClassificationFormPage>
           </PrintablePage>
-          <PrintablePage landscape stretchable watermark="Draft">
+          <PrintablePage landscape stretchable>
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestions[3]}
@@ -195,7 +195,7 @@ export const FormUsTnReclassification2026 = observer(
               </ScoredAssessmentQuestion>
             </ClassificationFormPage>
           </PrintablePage>
-          <PrintablePage landscape stretchable watermark="Draft">
+          <PrintablePage landscape stretchable>
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestions[5]}

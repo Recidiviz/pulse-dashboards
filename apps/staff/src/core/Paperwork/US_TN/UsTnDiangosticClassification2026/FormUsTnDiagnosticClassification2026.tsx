@@ -114,7 +114,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         />
         <FormViewer formRef={formRef}>
           <CoverSheet />
-          <PrintablePage landscape stretchable watermark="Draft">
+          <PrintablePage landscape stretchable>
             <ClassificationFormPage>
               <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
               <ScoredAssessmentQuestion
@@ -165,7 +165,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               </ScoredAssessmentQuestion>
             </ClassificationFormPage>
           </PrintablePage>
-          <PrintablePage landscape stretchable watermark="Draft">
+          <PrintablePage landscape stretchable>
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[3]}
@@ -193,7 +193,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               </ScoredAssessmentQuestion>
             </ClassificationFormPage>
           </PrintablePage>
-          <PrintablePage landscape watermark="Draft">
+          <PrintablePage landscape>
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[5]}
