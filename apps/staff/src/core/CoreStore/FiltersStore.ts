@@ -15,241 +15,60 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  action,
-  computed,
-  get,
-  keys,
-  makeAutoObservable,
-  observable,
-  reaction,
-  set,
-  toJS,
-} from "mobx";
-import { QueryParamConfigMap } from "use-query-params";
+import { action, computed, makeObservable, observable } from "mobx";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import {
-  defaultMetricMode,
-  DefaultPopulationFilterOptions,
-  defaultPopulationFilterValues,
-  EnabledFilter,
-  EnabledFilters,
-  EnabledFiltersByMetric,
-  FILTER_TYPES,
-  FilterOption,
-  filterOptionsByTenant,
-  Filters,
-  filtersOrder,
-  FilterType,
-  formatTimePeriodLabel,
-  getFilterOptions,
-  type MonthOptions,
-  PopulationFilterLabels,
-  PopulationFilters,
-  PopulationFilterValues,
-} from "~shared-pathways";
+import { FiltersStoreBase, PathwaysTenantId } from "~shared-pathways";
 
-import { US_DEMO } from "../../RootStore/TenantStore/pathwaysTenants";
-import { isPathwaysTenantId, PathwaysTenants } from "../../RootStore/types";
-import enabledFilters from "../utils/enabledFilters";
+import { isPathwaysTenantId } from "../../RootStore/types";
 import type CoreStore from ".";
 
-export default class FiltersStore {
-  rootStore;
-
-  filters: PopulationFilterValues = defaultPopulationFilterValues;
-
-  metricMode: string = defaultMetricMode;
+export default class FiltersStore extends FiltersStoreBase {
+  rootStore: CoreStore;
 
   constructor({ rootStore }: { rootStore: CoreStore }) {
-    makeAutoObservable(this, {
+    super();
+    this.rootStore = rootStore;
+
+    makeObservable(this, {
       filters: observable,
+      metricMode: observable,
       timePeriodLabel: computed,
       setFilters: action,
+      setMetricMode: action,
+      resetFilters: action,
+      clearDisabledFilters: action,
+      isUsingDemoData: computed,
+      metric: computed,
+      pathwaysTenantId: computed,
       filterOptions: computed,
+      enabledFilters: computed,
+      filtersLabels: computed,
+      sortedFilters: computed,
+      filtersDescription: computed,
+      enabledFiltersDefaultQueryString: computed,
+      currentMetricMode: computed,
+      monthRange: computed,
     });
 
-    this.rootStore = rootStore;
     this.resetFilters = this.resetFilters.bind(this);
     this.getFilterLabel = this.getFilterLabel.bind(this);
     this.getFilterLongLabel = this.getFilterLongLabel.bind(this);
-
-    reaction(
-      () => this.rootStore.metricsStore?.current?.filters,
-      (filters: Filters) => {
-        this.clearDisabledFilters(filters);
-      },
-      { delay: 300 },
-    );
   }
 
-  setFilters(updatedFilters: Partial<PopulationFilterValues>): void {
-    Object.keys(updatedFilters).forEach((filterKey) => {
-      const updatedFilterValue =
-        updatedFilters[filterKey as keyof PopulationFilters];
-      set(
-        this.filters,
-        filterKey,
-        // TODO(#10250) Remove this default value once Pathways hydration has been refactored
-        // Set ["ALL"] as the default value if defaultFilterOptions are still loading
-        updatedFilterValue && updatedFilterValue.length > 0
-          ? updatedFilterValue
-          : ["ALL"],
-      );
-    });
+  // --- Implements abstract members ---
+
+  override get isUsingDemoData(): boolean {
+    return isDemoMode() || isOfflineMode();
   }
 
-  clearDisabledFilters(filters: Filters = { enabledFilters: [] }): void {
-    const currentlyEnabledFilters = [
-      ...filters.enabledFilters,
-      ...(filters.enabledMoreFilters || []),
-    ];
-    keys(this.filters).forEach((filterType) => {
-      if (
-        filterType !== FILTER_TYPES.TIME_PERIOD &&
-        // @ts-ignore
-        !currentlyEnabledFilters.includes(filterType)
-      )
-        this.setFilters({ [filterType]: ["ALL"] });
-    });
+  get metric() {
+    return this.rootStore.metricsStore.current;
   }
 
-  setMetricMode(metricMode: string): void {
-    this.metricMode = metricMode;
-  }
-
-  resetFilters(): void {
-    this.setFilters(defaultPopulationFilterValues);
-  }
-
-  get pathwaysTenantId(): PathwaysTenants | undefined {
+  get pathwaysTenantId(): PathwaysTenantId | undefined {
     if (isPathwaysTenantId(this.rootStore.currentTenantId)) {
       return this.rootStore.currentTenantId;
     }
-  }
-
-  get enabledFiltersDefaultQueryString(): QueryParamConfigMap {
-    const { current: metric } = this.rootStore.metricsStore;
-    const query = {} as QueryParamConfigMap;
-    [
-      ...metric.filters.enabledFilters,
-      ...(metric.filters.enabledMoreFilters ?? []),
-    ].forEach((filterType) => {
-      query[filterType] = this.filterOptions[
-        filterType as keyof PopulationFilters
-      ].defaultOption.label as any;
-    });
-    return query;
-  }
-
-  get timePeriodLabel(): string {
-    return formatTimePeriodLabel(get(this.filters, "timePeriod"));
-  }
-
-  get monthRange(): MonthOptions {
-    // the timePeriod filter will only ever be single-select so always use the 0 index
-    return parseInt(this.filters.timePeriod[0]) as MonthOptions;
-  }
-
-  get filtersDescription(): string {
-    const metric = this.rootStore.metricsStore.current;
-    const filters = toJS(this.filters);
-    const filterKeys = Object.keys(filters) as FilterType[];
-    const filtersStrings = filterKeys.reduce((acc: string[], key) => {
-      if (
-        metric?.filters.enabledFilters.includes(key) ||
-        metric?.filters.enabledMoreFilters?.includes(key)
-      ) {
-        const { title } = this.filterOptions[key];
-        acc.push(`${title}: ${this.filtersLabels[key]}`);
-      }
-
-      return acc;
-    }, []);
-    return filtersStrings.join(";\n").concat("\n");
-  }
-
-  get currentMetricMode(): string {
-    return this.metricMode;
-  }
-
-  get filtersLabels(): PopulationFilterLabels {
-    return keys(this.filters).reduce((acc, filterType) => {
-      const filter =
-        this.filterOptions[filterType as keyof PopulationFilterLabels];
-      const labels = getFilterOptions(
-        this.filters[filter.type] as string[],
-        filter.options,
-      )
-        .map((o) => o.label)
-        .join(", ");
-      acc[filterType as FilterType] = labels;
-      return acc;
-    }, {} as PopulationFilterLabels);
-  }
-
-  get enabledFilters(): EnabledFiltersByMetric {
-    return this.pathwaysTenantId
-      ? // @ts-expect-error grandfathered
-        enabledFilters[this.pathwaysTenantId]
-      : // @ts-expect-error grandfathered
-        undefined;
-  }
-
-  get sortedFilters(): EnabledFilters {
-    const { current: metric } = this.rootStore.metricsStore;
-
-    return filtersOrder.filter((item: EnabledFilter) =>
-      metric.filters?.enabledFilters.includes(item),
-    );
-  }
-
-  get filterOptions(): PopulationFilters {
-    const metric = this.rootStore.metricsStore.current;
-    const staticFilterOptions = this.pathwaysTenantId
-      ? {
-          ...filterOptionsByTenant[
-            isDemoMode() || isOfflineMode() ? US_DEMO : this.pathwaysTenantId
-          ],
-        }
-      : DefaultPopulationFilterOptions;
-
-    return metric.hydrationState.status === "hydrated"
-      ? Object.entries(metric.dynamicFilterOptions).reduce(
-          (acc, [filterType, dynamicOptions]) => {
-            if (acc[filterType as FilterType].useDynamicOptions) {
-              acc[filterType as FilterType].options = [
-                { label: "All", value: "ALL" },
-                ...dynamicOptions,
-              ];
-            }
-            return acc;
-          },
-          staticFilterOptions,
-        )
-      : staticFilterOptions;
-  }
-
-  getFilterLabel(
-    filterType: keyof PopulationFilters,
-    filterValue: string,
-  ): string {
-    return (
-      this.filterOptions[filterType]?.options.find(
-        (option: FilterOption) => option.value === filterValue,
-      )?.label || ""
-    );
-  }
-
-  getFilterLongLabel(
-    filterType: keyof PopulationFilters,
-    filterValue: string,
-  ): string | undefined {
-    return (
-      this.filterOptions[filterType].options.find(
-        (option: FilterOption) => option.value === filterValue,
-      )?.longLabel || undefined
-    );
   }
 }

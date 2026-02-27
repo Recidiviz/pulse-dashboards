@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,16 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { EnabledFiltersByMetric, FILTER_TYPES } from "~shared-pathways";
-
+import { FILTER_TYPES } from "./constants";
+import { EnabledFiltersByMetric } from "./filters";
 import {
+  type PathwaysTenantId,
   US_ID,
   US_MO,
   US_ND,
   US_NY,
   US_TN,
-} from "../../RootStore/TenantStore/pathwaysTenants";
-import { PathwaysTenants } from "../../RootStore/types";
+} from "./tenants";
 
 export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   // LIBERTY TO PRISON
@@ -670,8 +670,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
 };
 
-const AllEnabledFilterOptions: Record<
-  PathwaysTenants,
+export const enabledFilterOptionsByTenant: Record<
+  PathwaysTenantId,
   Partial<EnabledFiltersByMetric>
 > = {
   [US_ID]: IdEnabledFilterOptions,
@@ -680,5 +680,3 @@ const AllEnabledFilterOptions: Record<
   [US_ND]: NdEnabledFilterOptions,
   [US_NY]: NyEnabledFilterOptions,
 } as const;
-
-export default AllEnabledFilterOptions;

@@ -34,9 +34,7 @@ import {
   DynamicFilterOptionMetadata,
   DynamicFilterOptionMetadataKey,
   DynamicFilterOptions,
-  FilterOption,
   Filters,
-  FilterType,
   HydratablePathwaysMetric,
   MetricContent,
   MetricId,
@@ -95,7 +93,7 @@ export default abstract class PathwaysNewBackendMetric<
 
   lastUpdated?: Date;
 
-  dynamicFilterOptions: DynamicFilterOptions;
+  dynamicFilterOptions: Partial<DynamicFilterOptions>;
 
   protected abortController?: AbortController;
 
@@ -127,7 +125,7 @@ export default abstract class PathwaysNewBackendMetric<
     this.isGeographic = isGeographic;
     this.rotateLabels = rotateLabels;
     this.accessorIsNotFilterType = accessorIsNotFilterType;
-    this.dynamicFilterOptions = {} as Record<FilterType, FilterOption[]>;
+    this.dynamicFilterOptions = {};
 
     makeObservable<PathwaysNewBackendMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -224,7 +222,7 @@ export default abstract class PathwaysNewBackendMetric<
     return this.content.title;
   }
 
-  /** 
+  /**
    * Returns the note copy, unformatted. Child metric classes can override this
    * function and format the note if necessary.
    */

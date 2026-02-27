@@ -43,7 +43,7 @@ beforeEach(() => {
     currentTenantId: "US_ID",
   }));
   vi.mocked(MetricsStore).mockImplementation(() => ({
-    // @ts-expect-error
+    // @ts-expect-error — partial mock of current metric
     current: {
       filters: {
         enabledFilters: [],

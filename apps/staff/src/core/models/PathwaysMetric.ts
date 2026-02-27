@@ -27,6 +27,7 @@ import {
 import { castToError, HydrationState } from "~hydration-utils";
 import {
   Dimension,
+  DynamicFilterOptions,
   EnabledFilters,
   Filters,
   getMethodologyCopy,
@@ -37,7 +38,6 @@ import {
   PageContent,
   PathwaysMetricRecords,
   PathwaysPage,
-  PopulationFilters,
   RawMetricData,
   SimulationCompartment,
 } from "~shared-pathways";
@@ -125,7 +125,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   newBackendMetric?: PathwaysNewBackendMetric<any>;
 
-  dynamicFilterOptions: Partial<PopulationFilters>;
+  dynamicFilterOptions: Partial<DynamicFilterOptions>;
 
   constructor({
     rootStore,
