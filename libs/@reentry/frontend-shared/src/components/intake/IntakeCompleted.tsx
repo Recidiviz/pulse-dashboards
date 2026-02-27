@@ -25,7 +25,11 @@ import styles from "../IntakeChatV2/IntakeComplete/IntakeComplete.module.css";
 const IntakeCompleted: React.FC = () => {
   const handleBack = () => {
     sessionStorage.removeItem("intake_token");
-    window.location.href = "/assessment";
+    if (window.location.pathname.split("/")[1] === "nebraska") {
+      window.history.back();
+    } else {
+      window.location.href = "/assessment";
+    }
   };
 
   return (

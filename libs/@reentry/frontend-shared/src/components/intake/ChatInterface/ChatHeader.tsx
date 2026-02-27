@@ -39,7 +39,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     sessionStorage.removeItem("preIntakeStep");
     sessionStorage.removeItem("client_pseudo_id");
     sessionStorage.removeItem("conversationStarted");
-    window.location.href = "/assessment";
+    if (window.location.pathname.split("/")[1] === "nebraska") {
+      window.history.back();
+    } else {
+      window.location.href = "/assessment";
+    }
   };
 
   const {

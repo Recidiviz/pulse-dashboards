@@ -75,7 +75,7 @@ const ManagedComponent = observer(function ManagedComponent({
       {shouldShowReentryAssessment && (
         <TodoCard
           {...copy.reentryAssessment}
-          linkTarget={State.Resident.$.UsNeReentryChecklist.buildRelativePath(
+          linkTarget={State.Resident.$.UsNeReentryAssessment.buildRelativePath(
             {},
           )}
         />

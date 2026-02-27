@@ -79,6 +79,8 @@ export const UsNcRNA = route(
 
 export const UsNeReentryChecklist = route("reentry-checklist");
 
+export const UsNeReentryAssessment = route("reentry-assessment");
+
 export const UsCoMoreInformation = route(
   "more-information",
   {},
@@ -98,6 +100,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsCoMoreInformation,
       UsNcRNA,
       UsNeReentryChecklist,
+      UsNeReentryAssessment,
     },
   ),
   Search: route("search"),
