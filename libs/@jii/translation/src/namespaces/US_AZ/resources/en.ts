@@ -64,6 +64,9 @@ export default {
       heading: "Release Types, Their Requirements, and Restrictions",
       body: importantDatesInfoPage,
     },
+    pastDateMessage: `If this date is in the past, it means you have not met all the requirements yet. 
+    Reviewing [the criteria]({{linkUrl}}) will show you what steps you still need to take.`,
+    missingDateMessage: "No date on record",
     dates: {
       acisTprDateRaw: {
         title: "Standard Transition Program (TPR)",

@@ -23,8 +23,8 @@ import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { DateInfoCard } from "./DateInfoCard";
-import { DateInfoCardSkeleton } from "./DateInfoCardSkeleton";
 import { DPRBanner } from "./DPRBanner";
+import { MissingDateCard } from "./MissingDateCard";
 import { SectionSubHeader } from "./styles";
 import {
   UsAzDateField,
@@ -47,19 +47,7 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
             {t(($) => $.importantDates.sectionSubHeader)}
           </SectionSubHeader>
           {presenter.hasNoDates ? (
-            /* Show skeleton cards for SED and CSED only */
-            <>
-              <DateInfoCardSkeleton
-                dateKey="sedDateRaw"
-                infoPageHash={presenter.getInfoPageHashForDateKey("sedDateRaw")}
-              />
-              <DateInfoCardSkeleton
-                dateKey="csedDateRaw"
-                infoPageHash={presenter.getInfoPageHashForDateKey(
-                  "csedDateRaw",
-                )}
-              />
-            </>
+            <MissingDateCard dateKey="sedDateRaw" />
           ) : (
             presenter.dateEntries.map(
               ({ key, date, isUpcoming, infoPageHash }) => {

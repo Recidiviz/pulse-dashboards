@@ -23,6 +23,7 @@ import { useUsAzTranslations } from "~@jii/translation";
 
 import { DateInfoTag } from "./DateInfoTag";
 import {
+  CardHighlightStyle,
   CardValueWrapper,
   DateInfoContent,
   LearnMoreLinkWrapper,
@@ -90,8 +91,31 @@ export const DateInfoCard = ({
       })
     : getDistanceTranslation(dateObj);
 
+  let highlightType: CardHighlightStyle | undefined;
+  // this ordering is intentional because isPastDate supersedes TPR/DTP styles
+  if (dateKey === "csbdDateRaw" || isPastDate) {
+    highlightType = "dashed";
+  } else if (dateKey === "acisTprDateRaw") {
+    highlightType = "green";
+  } else if (dateKey === "acisDtpDateRaw") {
+    highlightType = "purple";
+  }
+
+  const infoPageHashUrl = `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
+    {},
+  )}#${infoPageHash}`;
+
+  let dateInfoCopy = info;
+  if (isUpcoming) {
+    dateInfoCopy = t(($) => $.upcomingDateCopy);
+  } else if (isPastDate) {
+    dateInfoCopy = t(($) => $.importantDates.pastDateMessage, {
+      linkUrl: infoPageHashUrl,
+    });
+  }
+
   return (
-    <StyledCard $isUpcoming={isUpcoming} $highlightType={dateKey}>
+    <StyledCard $isUpcoming={isUpcoming} $highlightType={highlightType}>
       <CardHeading>{title}</CardHeading>
       <CardValue>
         <CardValueWrapper>{cardValue}</CardValueWrapper>
@@ -100,15 +124,9 @@ export const DateInfoCard = ({
       <StyledSlateCopy $isPastDate={isPastDate}>
         {slateCopyContent}
       </StyledSlateCopy>
-      <DateInfoContent>
-        {isUpcoming ? t(($) => $.upcomingDateCopy) : info}
-      </DateInfoContent>
+      <DateInfoContent>{dateInfoCopy}</DateInfoContent>
       <LearnMoreLinkWrapper>
-        <GoLink
-          to={`${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
-            {},
-          )}#${infoPageHash}`}
-        >
+        <GoLink to={infoPageHashUrl}>
           {t(($) => $.goLink)}
           {shortName}
         </GoLink>

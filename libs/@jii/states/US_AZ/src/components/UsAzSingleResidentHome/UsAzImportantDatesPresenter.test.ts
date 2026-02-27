@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { freeze, reset } from "timekeeper";
+
 import { ResidentMetadata } from "~datatypes";
 
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
@@ -123,6 +125,26 @@ describe("UsAzImportantDatesPresenter", () => {
             },
           ]
         `);
+    });
+
+    it("includes the current day in upcoming status", () => {
+      // this field should be defined
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const mockNow = new Date(mockAzResidentMetadata.csbdDateRaw!);
+      // a naked date will be interpreted the start of the day.
+      // we want to make sure that doesn't throw off comparisons later in the day
+      mockNow.setHours(15, 25);
+
+      freeze(mockNow);
+
+      const presenter = new UsAzImportantDatesPresenter(mockAzResidentMetadata);
+      const todayEntry = presenter.dateEntries.find(
+        (e) => e.key === "csbdDateRaw",
+      );
+
+      expect(todayEntry?.isUpcoming).toBeTrue();
+
+      reset();
     });
   });
 });

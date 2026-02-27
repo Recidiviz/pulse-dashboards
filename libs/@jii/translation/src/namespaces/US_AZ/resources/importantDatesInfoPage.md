@@ -15,8 +15,6 @@ The Standard Transition Program (STP) allows eligible people to leave prison up 
 
 Most people can qualify for this release type unless they are serving time for a disqualifying conviction. See below for a list of those convictions.
 
-</section>
-
 #### What do I need to do in order to be released on this date?
 
 Some people will not be able to qualify for Transition Release because of their current offense or criminal history.
@@ -36,6 +34,8 @@ If you do not have one of those convictions, then you may be able to qualify for
 - You can’t have a history of Dangerous Crimes Against Children (ARS 13-705).
 - You can’t have been revoked to prison after release while serving your current sentence.
 - You must be a US Citizen or legal permanent resident without an ICE detainer.
+
+</section>
 
 #### If I'm released on STP, what does that mean for me?
 
@@ -59,8 +59,6 @@ People convicted of particular drug use/possession offenses, who also meet the r
 
 Please note that to qualify, your current sentence can only be for drug possession/use. Someone convicted of marijuana possession and assault will not qualify for DTP. But, they might still qualify for another version of Transition Program Release called STP.
 
-</section>
-
 #### What do I need to do in order to be released on this date?
 
 - You must sign the Transition Program agreement form.
@@ -75,6 +73,8 @@ Please note that to qualify, your current sentence can only be for drug possessi
 - You can’t have been revoked to prison after release while serving your current sentence.
 - You must be a US Citizen or legal permanent resident without an ICE detainer.
 - You must be up to date with any restitution payments.
+
+</section>
 
 #### If I'm released on DTP, what does that mean for me?
 
@@ -95,14 +95,6 @@ If you are being released to Probation, the date will be called Temporary Releas
 
 Most people whose crime was on/after January 1, 1994 can qualify if they meet the criteria. The law that created the rules after that date is often called “Truth in Sentencing,” or TIS.
 
-</section>
-
-### Why can there be two different names for this date (CSBD vs. TR to ADD)?
-
-If you have a probation term after your current prison sentence, this will be called your “Temporary Release to Absolute Discharge Date”, or TR to ADD. That is because when the “Temporary Release” period is over, you will be “Discharged” from ADCRR, over to the County that will run your Probation.
-
-If you have Community Supervision after your prison sentence, it is referred to as your Community Supervision Begin Date. You would then be on Community Supervision until your Community Supervision End Date (CSED).
-
 ### What do I need to do in order to be released on this date?
 
 In order to be released on your CSBD or TR to ADD, you must meet these requirements:
@@ -116,6 +108,14 @@ In order to be released on your CSBD or TR to ADD, you must meet these requireme
 - If you are a foreign national:
   - You cannot have an ICE detainer, and
   - You must have an approved placement/program by Community Corrections prior to release.
+
+</section>
+
+### Why can there be two different names for this date (CSBD vs. TR to ADD)?
+
+If you have a probation term after your current prison sentence, this will be called your “Temporary Release to Absolute Discharge Date”, or TR to ADD. That is because when the “Temporary Release” period is over, you will be “Discharged” from ADCRR, over to the County that will run your Probation.
+
+If you have Community Supervision after your prison sentence, it is referred to as your Community Supervision Begin Date. You would then be on Community Supervision until your Community Supervision End Date (CSED).
 
 ### If I'm released on my CSBD, what does that mean for me?
 
@@ -132,6 +132,12 @@ The ERCD (may be called ADD, if you have Probation after your prison sentence fi
 
 Most people sentenced under Truth in Sentencing (after January 1, 1994), except for those serving flat-time sentences, mandatory minimums, or crimes that exclude release credits (certain violent or sex offenses).
 
+### What do I need to do in order to be released on this date?
+
+- Stay eligible to earn credits (avoid major disciplinary violations, participate in assigned programs, stay out of max custody/punitive segregation).
+- Meet any literacy/program requirements.
+- No disqualifying offense category.
+
 </section>
 
 ### Why can there be two different names for this date (ERCD or ADD)?
@@ -141,12 +147,6 @@ If you have a probation term after your current prison sentence, this will be ca
 ### Where does the 85.7% come from?
 
 Most people sentenced under Truth in Sentencing are eligible to earn 1 day of Earned Release Credit for every 6 days that they serve. If you don't get any disciplinary infractions that remove your Credits, this means that you would serve 6/7ths of your sentence. 6 divided by 7 is 85.7%. Note that this will be different for you if you are serving any of four drug possession sentences. In that case, you may be eligible for release after just 70%.
-
-### What do I need to do in order to be released on this date?
-
-- Stay eligible to earn credits (avoid major disciplinary violations, participate in assigned programs, stay out of max custody/punitive segregation).
-- Meet any literacy/program requirements.
-- No disqualifying offense category.
 
 ### If I was released on this date, what would that mean for me?
 
@@ -163,11 +163,11 @@ This is the last day of your prison sentence.
 
 Everyone.
 
-</section>
-
 ### What do I need to do in order to be released on this date?
 
 If you are still in prison on your SED, you can be released on this date as long as you sign your conditions of supervision – that is the only requirement.
+
+</section>
 
 ### If I was released on this date, what would that mean for me?
 

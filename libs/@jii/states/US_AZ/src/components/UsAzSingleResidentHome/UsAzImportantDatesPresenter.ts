@@ -16,7 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { parseISO } from "date-fns";
+import { parseISO, startOfDay } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { ResidentMetadata } from "~datatypes";
@@ -65,7 +65,7 @@ export class UsAzImportantDatesPresenter {
     });
 
     // Add highlighting and upcoming logic
-    const today = new Date();
+    const today = startOfDay(new Date());
     const thirtyOneDaysFromNow = new Date(today);
     thirtyOneDaysFromNow.setDate(today.getDate() + 31);
 

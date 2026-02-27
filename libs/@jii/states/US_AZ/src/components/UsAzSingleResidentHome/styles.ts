@@ -21,11 +21,11 @@ import styled from "styled-components";
 import { Card, CardValue, CopyWrapper, SlateCopy } from "~@jii/common-ui";
 import { palette, spacing } from "~design-system";
 
-import { UsAzDateField } from "./UsAzImportantDatesPresenter";
+export type CardHighlightStyle = "green" | "purple" | "dashed";
 
 interface StyledCardProps {
   $isUpcoming: boolean;
-  $highlightType?: UsAzDateField;
+  $highlightType?: CardHighlightStyle;
 }
 
 export const StyledCard = styled(Card)<StyledCardProps>`
@@ -47,13 +47,13 @@ export const StyledCard = styled(Card)<StyledCardProps>`
 
   /* Highlight border styling */
   ${({ $highlightType }) => {
-    if ($highlightType === "acisTprDateRaw") {
+    if ($highlightType === "green") {
       return `border-top: 8px solid ${palette.pine3};`;
     }
-    if ($highlightType === "acisDtpDateRaw") {
+    if ($highlightType === "purple") {
       return `border-top: 8px solid #624488;`;
     }
-    if ($highlightType === "csbdDateRaw") {
+    if ($highlightType === "dashed") {
       // slightly thicker border makes the dashing more legible,
       // particularly with the very light border color used here
       return `border-style: dashed; border-width: ${rem(2)}`;
