@@ -17,7 +17,7 @@
 
 import Clipboard from "@react-native-clipboard/clipboard";
 import { Link } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -53,6 +53,10 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
   const [isEditable, setIsEditable] = useState(false);
   const [inputNotes, setInputNotes] = useState(notes || "");
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
+
+  useEffect(() => {
+    setInputNotes(notes || "");
+  }, [notes, isEditable]);
 
   const handleCopyNotes = () => {
     Clipboard.setString(notes);
