@@ -78,6 +78,8 @@ import {
   formatDurationFromOptionalDays,
   formatWorkflowsDate,
   formatWorkflowsDateString,
+  toHumanReadable,
+  toTitleCase,
 } from "../../utils";
 import {
   Client,
@@ -931,7 +933,7 @@ const TableView = observer(function TableView({
           const caseType =
             opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
               ?.caseType;
-          return caseType || "—";
+          return caseType ? toTitleCase(toHumanReadable(caseType)) : "—";
         }
         return "—";
       },
