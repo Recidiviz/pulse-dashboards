@@ -53,9 +53,6 @@ import {
 import { FilterOption } from "~shared-pathways";
 
 import { AnyWorkflowsSystemConfig } from "../core/models/types";
-import filterOptions, {
-  DefaultPopulationFilterOptions,
-} from "../core/utils/filterOptions";
 import { WorkflowsPathSection } from "../core/views";
 import {
   CombinedUserRecord,
@@ -85,7 +82,10 @@ import {
   JusticeInvolvedPerson,
   WorkflowsRouteParams,
 } from "./types";
-import { staffNameComparator } from "./utils";
+import {
+  getWorkflowsSupervisionLevelOptions,
+  staffNameComparator,
+} from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
 
@@ -801,11 +801,7 @@ export class WorkflowsStore implements Hydratable {
    */
   get supervisionLevels(): FilterOption[] {
     const { currentTenantId } = this.rootStore;
-    const options =
-      // the key is not guaranteed to be present, which is why we need a fallback
-      filterOptions[(currentTenantId ?? "") as keyof typeof filterOptions] ??
-      DefaultPopulationFilterOptions;
-    return options.supervisionLevel.options;
+    return getWorkflowsSupervisionLevelOptions(currentTenantId);
   }
 
   formatSupervisionLevel(levelId: string | undefined): string {

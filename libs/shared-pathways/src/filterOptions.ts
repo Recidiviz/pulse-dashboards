@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,35 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FILTER_TYPES, METRIC_MODES } from "./constants";
 import {
-  AgeGroup,
-  FILTER_TYPES,
   FilterOption,
-  Gender,
-  METRIC_MODES,
   PopulationFilterLabels,
+  PopulationFilters,
   PopulationFilterValues,
-  Sex,
-} from "~shared-pathways";
-
-import {
-  US_IA,
-  US_PA,
-  US_TX,
-} from "../../RootStore/TenantStore/dashboardTenants";
-import {
-  US_DEMO,
-  US_ID,
-  US_MO,
-  US_ND,
-  US_NY,
-  US_TN,
-} from "../../RootStore/TenantStore/pathwaysTenants";
-import { PathwaysTenants } from "../../RootStore/types";
-import { PopulationFilters, SetPopulationFilters } from "../types/filters";
+  SetPopulationFilters,
+} from "./filters";
+import type { PathwaysTenantId } from "./tenants";
+import { US_DEMO, US_ID, US_MO, US_ND, US_NY, US_TN } from "./tenants";
+import { AgeGroup, Gender, Sex } from "./types";
 
 export type FilterOptions = Record<
-  PathwaysTenants | "US_DEMO" | "US_PA" | "US_TX" | "US_IA",
+  PathwaysTenantId | typeof US_DEMO,
   PopulationFilters
 >;
 
@@ -1414,96 +1399,6 @@ export const NyPopulationFilterOptions: PopulationFilters = {
   },
 };
 
-export const PaPopulationFilterOptions: PopulationFilters = {
-  ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.SUPERVISION_LEVEL]: {
-    type: FILTER_TYPES.SUPERVISION_LEVEL,
-    title: "Supervision Level",
-    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "Minimum", value: "MINIMUM" },
-      { label: "Medium", value: "MEDIUM" },
-      { label: "Maximum", value: "MAXIMUM" },
-      { label: "Administrative", value: "ADM" },
-      { label: "Special Circumstances", value: "SPC" },
-      { label: "Unknown", value: "UNKNOWN" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-  },
-};
-
-export const TxPopulationFilterOptions: PopulationFilters = {
-  ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.SUPERVISION_LEVEL]: {
-    ...DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL],
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "High", value: "MAXIMUM" },
-      { label: "Moderate", value: "HIGH" },
-      { label: "Low-Moderate", value: "MEDIUM" },
-      { label: "Low", value: "MINIMUM" },
-      { label: "Annual", value: "LIMITED" },
-      { label: "In-custody", value: "IN_CUSTODY" },
-    ],
-  },
-};
-
-export const IaPopulationFilterOptions: PopulationFilters = {
-  ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.SUPERVISION_LEVEL]: {
-    ...DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL],
-    options: [
-      { label: "Level 0", value: "LEVEL 0" },
-      { label: "Level 1", value: "LEVEL 1" },
-      { label: "Level 2", value: "LEVEL 2" },
-      { label: "Level 3", value: "LEVEL 3" },
-      { label: "Level 4", value: "LEVEL 4" },
-      { label: "Level 5", value: "LEVEL 5" },
-      { label: "Low Risk Probation", value: "LOW RISK PROBATION" },
-      { label: "Global Positioning", value: "GLOBAL POSITIONING" },
-      { label: "Absconded", value: "ABSCONDED" },
-      { label: "Minimum Risk Program", value: "MINIMUM RISK PROGRAM" },
-      {
-        label: "Detained by non-Iowa Jurisdiction",
-        value: "DETAINED BY NON-IOWA JURISDICTION",
-      },
-      { label: "In Jail", value: "IN JAIL" },
-      { label: "Escaped", value: "ESCAPED" },
-      { label: "Paroled to Detainer", value: "PAROLED TO DETAINER" },
-      { label: "In Prison", value: "IN PRISON" },
-      { label: "Day Reporting", value: "DAY REPORTING" },
-      { label: "Jail (Designated Site)", value: "JAIL (DESIGNATED SITE)" },
-      { label: "Intensive Supervision", value: "INTENSIVE SUPERVISION" },
-      {
-        label: "Detained by Another State",
-        value: "DETAINED BY ANOTHER STATE",
-      },
-      { label: "Electronic Monitoring", value: "ELECTRONIC MONITORING" },
-      { label: "Radio Frequency", value: "RADIO FREQUENCY" },
-      {
-        label: "Global Positioning Satellite",
-        value: "GLOBAL POSITIONING SATELLITE",
-      },
-      {
-        label: "Day Reporting Supervision",
-        value: "DAY REPORTING SUPERVISION",
-      },
-      {
-        label: "Concurrent Prison Sentence",
-        value: "CONCURRENT PRISON SENTENCE",
-      },
-      { label: "Warrant", value: "WARRANT" },
-      { label: "Diversion Program", value: "DIVERSION PROGRAM" },
-    ],
-  },
-};
-
 export const DemoPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.AGE_GROUP]: {
@@ -1688,16 +1583,13 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
 };
 
-const filterOptions: FilterOptions = {
-  [US_IA]: IaPopulationFilterOptions,
+export const filterOptionsByTenant: FilterOptions = {
   [US_ID]: IdPopulationFilterOptions,
   [US_MO]: MoPopulationFilterOptions,
   [US_ND]: NdPopulationFilterOptions,
   [US_NY]: NyPopulationFilterOptions,
-  [US_PA]: PaPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
-  [US_TX]: TxPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;
 
-export default filterOptions;
+export default filterOptionsByTenant;

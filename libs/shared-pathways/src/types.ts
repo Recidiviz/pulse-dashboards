@@ -75,6 +75,7 @@ export type LengthOfStay =
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 export type SupervisionType = "PAROLE" | "PROBATION" | "ALL";
 export type TimePeriod = "6" | "12" | "24" | "60";
+export type MonthOptions = 6 | 12 | 24 | 60;
 export type TimePeriodRawValue =
   | "months_0_6"
   | "months_7_12"

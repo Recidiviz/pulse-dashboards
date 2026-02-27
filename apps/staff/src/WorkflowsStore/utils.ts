@@ -19,6 +19,7 @@ import assertNever from "assert-never";
 import {
   add,
   differenceInDays,
+  differenceInMonths,
   endOfToday,
   getMonth,
   getYear,
@@ -36,6 +37,7 @@ import {
   StaffRecord,
   SystemId,
 } from "~datatypes";
+import { FilterOption } from "~shared-pathways";
 
 import {
   INSIGHTS_PATHS,
@@ -381,6 +383,185 @@ export function getLinkToForm(
   });
 }
 export { fieldToDate };
+
+/**
+ * Supervision level options by tenant for Workflows.
+ * These were previously sourced from the pathways filterOptions,
+ * but the dashboard-only tenants (US_PA, US_TX, US_IA) were removed from that
+ * map when it moved to shared-pathways. Pathways is moving to dynamic filter options
+ * coming in the metrics response metadata so the static map will eventually be removed.
+ * Workflows still needs them, so they are preserved here.
+ */
+export const workflowsSupervisionLevelOptionsByTenant: Record<
+  string,
+  FilterOption[]
+> = {
+  US_ID: [
+    { label: "All", value: "ALL" },
+    { label: "Low", value: "MINIMUM" },
+    { label: "Moderate", value: "MEDIUM" },
+    { label: "High", value: "HIGH" },
+    { label: "Diversion", value: "DIVERSION" },
+    { label: "Interstate", value: "INTERSTATE_COMPACT" },
+    { label: "In custody", value: "IN_CUSTODY" },
+    { label: "Unassigned", value: "UNASSIGNED" },
+    { label: "Unsupervised", value: "UNSUPERVISED" },
+    { label: "Limited supervision", value: "LIMITED" },
+    { label: "Other", value: "OTHER" },
+    { label: "Drug Court", value: "DRUG COURT" },
+    { label: "Mental Health Court", value: "MENTAL HEALTH COURT" },
+    { label: "Absconsion", value: "ABSCONSION" },
+    { label: "Maximum", value: "MAXIMUM" },
+    { label: "Bench Warrant", value: "BENCH WARRANT" },
+    { label: "Veterans Court", value: "VETERANS COURT" },
+    { label: "Family Court", value: "FAMILY COURT" },
+    { label: "Administrative", value: "ADMINISTRATIVE" },
+    { label: "Probation Violator", value: "PROBATION VIOLATOR" },
+    { label: "Dosage", value: "DOSAGE" },
+    { label: "DUI Court", value: "DUI COURT" },
+    { label: "Drug Court Div.", value: "DRUG COURT DIV" },
+    { label: "Unknown", value: "INTERNAL_UNKNOWN" },
+  ],
+  US_MO: [
+    { label: "All", value: "ALL" },
+    { label: "Incarcerated", value: "INCARCERATED" },
+    { label: "Low", value: "MINIMUM" },
+    { label: "Moderate", value: "MEDIUM" },
+    { label: "High", value: "HIGH" },
+    { label: "Maximum", value: "MAXIMUM" },
+    { label: "Electronic Monitoring", value: "ELECTRONIC_MONITORING_ONLY" },
+    { label: "Unknown", value: "UNKNOWN" },
+    { label: "Unassigned", value: "UNASSIGNED" },
+    { label: "Other", value: "OTHER" },
+  ],
+  US_ND: [
+    { label: "All", value: "ALL" },
+    { label: "Limited", value: "LIMITED" },
+    { label: "Minimum", value: "MINIMUM" },
+    { label: "Medium", value: "MEDIUM" },
+    { label: "Maximum", value: "MAXIMUM" },
+    { label: "High", value: "HIGH" },
+  ],
+  US_TN: [
+    { label: "All", value: "ALL" },
+    { label: "Absconded", value: "ABSCONSION" },
+    { label: "Furlough", value: "FURLOUGH" },
+    { label: "Minimum", value: "MINIMUM" },
+    { label: "Medium", value: "MEDIUM" },
+    { label: "Maximum", value: "HIGH" },
+    { label: "Enhanced", value: "MAXIMUM" },
+    { label: "In Custody", value: "IN_CUSTODY" },
+    { label: "Compliant Reporting", value: "LIMITED" },
+    { label: "Inactive", value: "UNSUPERVISED" },
+    { label: "Intake", value: "UNASSIGNED" },
+    { label: "Warrant", value: "WARRANT" },
+    { label: "ICOTS", value: "INTERSTATE_COMPACT" },
+    { label: "Other", value: "OTHER" },
+    { label: "Primary", value: "6P1" },
+    { label: "Secondary", value: "6P2" },
+    { label: "Intermediate", value: "6P3" },
+    { label: "Transitional", value: "6P4" },
+    { label: "Low", value: "8LO" },
+    { label: "Moderate", value: "8MO" },
+    { label: "Unknown", value: "UNKNOWN" },
+    { label: "8LC", value: "8LC" },
+    { label: "Residential Program", value: "RESIDENTIAL_PROGRAM" },
+  ],
+  US_PA: [
+    { label: "All", value: "ALL" },
+    { label: "Minimum", value: "MINIMUM" },
+    { label: "Medium", value: "MEDIUM" },
+    { label: "Maximum", value: "MAXIMUM" },
+    { label: "Administrative", value: "ADM" },
+    { label: "Special Circumstances", value: "SPC" },
+    { label: "Unknown", value: "UNKNOWN" },
+  ],
+  US_TX: [
+    { label: "All", value: "ALL" },
+    { label: "High", value: "MAXIMUM" },
+    { label: "Moderate", value: "HIGH" },
+    { label: "Low-Moderate", value: "MEDIUM" },
+    { label: "Low", value: "MINIMUM" },
+    { label: "Annual", value: "LIMITED" },
+    { label: "In-custody", value: "IN_CUSTODY" },
+  ],
+  US_IA: [
+    { label: "Level 0", value: "LEVEL 0" },
+    { label: "Level 1", value: "LEVEL 1" },
+    { label: "Level 2", value: "LEVEL 2" },
+    { label: "Level 3", value: "LEVEL 3" },
+    { label: "Level 4", value: "LEVEL 4" },
+    { label: "Level 5", value: "LEVEL 5" },
+    { label: "Low Risk Probation", value: "LOW RISK PROBATION" },
+    { label: "Global Positioning", value: "GLOBAL POSITIONING" },
+    { label: "Absconded", value: "ABSCONDED" },
+    { label: "Minimum Risk Program", value: "MINIMUM RISK PROGRAM" },
+    {
+      label: "Detained by non-Iowa Jurisdiction",
+      value: "DETAINED BY NON-IOWA JURISDICTION",
+    },
+    { label: "In Jail", value: "IN JAIL" },
+    { label: "Escaped", value: "ESCAPED" },
+    { label: "Paroled to Detainer", value: "PAROLED TO DETAINER" },
+    { label: "In Prison", value: "IN PRISON" },
+    { label: "Day Reporting", value: "DAY REPORTING" },
+    { label: "Jail (Designated Site)", value: "JAIL (DESIGNATED SITE)" },
+    { label: "Intensive Supervision", value: "INTENSIVE SUPERVISION" },
+    {
+      label: "Detained by Another State",
+      value: "DETAINED BY ANOTHER STATE",
+    },
+    { label: "Electronic Monitoring", value: "ELECTRONIC MONITORING" },
+    { label: "Radio Frequency", value: "RADIO FREQUENCY" },
+    {
+      label: "Global Positioning Satellite",
+      value: "GLOBAL POSITIONING SATELLITE",
+    },
+    { label: "Day Reporting Supervision", value: "DAY REPORTING SUPERVISION" },
+    {
+      label: "Concurrent Prison Sentence",
+      value: "CONCURRENT PRISON SENTENCE",
+    },
+    { label: "Warrant", value: "WARRANT" },
+    { label: "Diversion Program", value: "DIVERSION PROGRAM" },
+  ],
+  US_DEMO: [
+    { label: "All", value: "ALL" },
+    { label: "Limited", value: "LIMITED" },
+    { label: "Minimum", value: "MINIMUM" },
+    { label: "Medium", value: "MEDIUM" },
+    { label: "Maximum", value: "MAXIMUM" },
+    { label: "High", value: "HIGH" },
+  ],
+};
+
+const defaultSupervisionLevelOptions: FilterOption[] = [
+  { label: "All", value: "ALL" },
+  { label: "Limited", value: "LIMITED" },
+  { label: "Minimum", value: "MINIMUM" },
+  { label: "Medium", value: "MEDIUM" },
+  { label: "Maximum", value: "MAXIMUM" },
+  { label: "High", value: "HIGH" },
+];
+
+export function getWorkflowsSupervisionLevelOptions(
+  tenantId: string | undefined,
+): FilterOption[] {
+  return (
+    workflowsSupervisionLevelOptionsByTenant[tenantId ?? ""] ??
+    defaultSupervisionLevelOptions
+  );
+}
+
+/**
+ * Represents difference from current date as text. Durations under two years
+ * represented as months, otherwise truncated to full years.
+ */
+export function formatRelativeToNow(start: Date): string {
+  const months = differenceInMonths(new Date(), start);
+  if (months < 24) return `${months} months`;
+  return `${Math.floor(months / 12)} years`;
+}
 
 export const sortObject = (o: object) =>
   Object.fromEntries(sortBy(Object.entries(o), 0));

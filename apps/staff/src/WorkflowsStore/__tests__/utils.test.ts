@@ -26,6 +26,7 @@ import { Opportunity, OpportunityTabGroups } from "../Opportunity";
 import { JusticeInvolvedPerson } from "../types";
 import {
   filterByUserDistrict,
+  formatRelativeToNow,
   fractionalDateBetweenTwoDates,
   getPersonDaysToRelease,
   getPersonReleaseDate,
@@ -501,6 +502,26 @@ describe("getPersonDaysToRelease", () => {
       expirationDate: testDate,
     } as any as JusticeInvolvedPerson;
     expect(getPersonDaysToRelease(client)).toEqual(Infinity);
+  });
+});
+
+describe("formatRelativeToNow", () => {
+  beforeEach(() => {
+    timekeeper.freeze(new Date(2022, 1));
+  });
+
+  afterEach(() => {
+    timekeeper.reset();
+  });
+
+  test("formats as months", () => {
+    expect(formatRelativeToNow(new Date(2021, 1, 1))).toBe("12 months");
+    expect(formatRelativeToNow(new Date(2020, 1, 2))).toBe("23 months");
+  });
+
+  test("formats as years", () => {
+    expect(formatRelativeToNow(new Date(2020, 1, 1))).toBe("2 years");
+    expect(formatRelativeToNow(new Date(2016, 6, 1))).toBe("5 years");
   });
 });
 

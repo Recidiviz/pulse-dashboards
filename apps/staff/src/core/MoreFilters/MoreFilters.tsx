@@ -23,15 +23,19 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Button, Icon, IconSVG } from "~design-system";
-import { EnabledFilters, FilterOption } from "~shared-pathways";
+import {
+  EnabledFilters,
+  FilterOption,
+  getFilterOption,
+  getFilterOptions,
+  PopulationFilters,
+} from "~shared-pathways";
 
 import PathwaysModal from "../../components/PathwaysModal";
 import RadioGroup from "../../controls/RadioGroup";
 import useIsMobile from "../../hooks/useIsMobile";
 import CheckboxGroup from "../controls/CheckboxGroup";
 import { useCoreStore } from "../CoreStoreProvider";
-import { PopulationFilters } from "../types/filters";
-import { getFilterOption, getFilterOptions } from "../utils/filterOptions";
 
 type Props = {
   filterOptions: PopulationFilters;

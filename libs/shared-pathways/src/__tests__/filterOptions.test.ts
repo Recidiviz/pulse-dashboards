@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FILTER_TYPES, METRIC_MODES } from "~shared-pathways";
-
+import { FILTER_TYPES, METRIC_MODES } from "../constants";
 import filterOptions, {
   convertLabelsToValues,
   defaultDistrict,
@@ -24,6 +23,7 @@ import filterOptions, {
   defaultMetricPeriod,
   defaultSupervisionType,
 } from "../filterOptions";
+import type { PopulationFilterLabels } from "../filters";
 
 describe("Filter default values", () => {
   it("should be right", () => {
@@ -39,7 +39,7 @@ describe("convertLabelsToValues", () => {
     const filtersLabels = {
       [FILTER_TYPES.TIME_PERIOD]: "6 months",
       [FILTER_TYPES.LEGAL_STATUS]: "Parole Violator",
-    };
+    } as PopulationFilterLabels;
     const expected = {
       legalStatus: ["PAROLE_BOARD_HOLD"],
       timePeriod: ["6"],

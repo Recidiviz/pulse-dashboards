@@ -15,15 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import MetricsStore from "../../../core/CoreStore/MetricsStore";
-import { RootStore } from "../../../RootStore";
-import TenantStore from "../../../RootStore/TenantStore";
-import UserStore from "../../../RootStore/UserStore";
 import {
   defaultPopulationFilterValues,
   IdPopulationFilterOptions,
   NyPopulationFilterOptions,
-} from "../../utils/filterOptions";
+} from "~shared-pathways";
+
+import MetricsStore from "../../../core/CoreStore/MetricsStore";
+import { RootStore } from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "..";
 
 let coreStore: CoreStore;

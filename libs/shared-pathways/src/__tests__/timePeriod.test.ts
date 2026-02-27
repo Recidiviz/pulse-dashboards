@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import tk from "timekeeper";
-
-import { formatRelativeToNow, formatTimePeriodLabel } from "../timePeriod";
+import { formatTimePeriodLabel } from "../timePeriod";
 
 describe("timePeriod", () => {
   describe("formatTimePeriodLabel", () => {
@@ -33,30 +31,10 @@ describe("timePeriod", () => {
     it("returns an empty string for empty or invalid months values", () => {
       expect(formatTimePeriodLabel("")).toEqual("");
       expect(formatTimePeriodLabel("a")).toEqual("");
+      // @ts-expect-error testing invalid input
       expect(formatTimePeriodLabel(null)).toEqual("");
+      // @ts-expect-error testing invalid input
       expect(formatTimePeriodLabel(undefined)).toEqual("");
-    });
-  });
-
-  describe("formatRelativeToNow", () => {
-    let now;
-
-    beforeEach(() => {
-      now = new Date(2022, 1);
-      tk.freeze(now);
-    });
-
-    afterEach(() => {
-      tk.reset();
-    });
-
-    test("formats as months", () => {
-      expect(formatRelativeToNow(new Date(2021, 1, 1))).toBe("12 months");
-      expect(formatRelativeToNow(new Date(2020, 1, 2))).toBe("23 months");
-    });
-    test("formats as years", () => {
-      expect(formatRelativeToNow(new Date(2020, 1, 1))).toBe("2 years");
-      expect(formatRelativeToNow(new Date(2016, 6, 1))).toBe("5 years");
     });
   });
 });

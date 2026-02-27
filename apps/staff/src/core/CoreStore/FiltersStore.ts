@@ -30,30 +30,29 @@ import { QueryParamConfigMap } from "use-query-params";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
+  defaultMetricMode,
+  DefaultPopulationFilterOptions,
+  defaultPopulationFilterValues,
   EnabledFilter,
   EnabledFilters,
   EnabledFiltersByMetric,
   FILTER_TYPES,
   FilterOption,
+  filterOptionsByTenant,
   Filters,
   filtersOrder,
   FilterType,
+  formatTimePeriodLabel,
+  getFilterOptions,
+  type MonthOptions,
   PopulationFilterLabels,
+  PopulationFilters,
   PopulationFilterValues,
 } from "~shared-pathways";
 
 import { US_DEMO } from "../../RootStore/TenantStore/pathwaysTenants";
 import { isPathwaysTenantId, PathwaysTenants } from "../../RootStore/types";
-import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
-import { PopulationFilters } from "../types/filters";
 import enabledFilters from "../utils/enabledFilters";
-import filterOptions, {
-  defaultMetricMode,
-  DefaultPopulationFilterOptions,
-  defaultPopulationFilterValues,
-  getFilterOptions,
-} from "../utils/filterOptions";
-import { formatTimePeriodLabel } from "../utils/timePeriod";
 import type CoreStore from ".";
 
 export default class FiltersStore {
@@ -210,7 +209,7 @@ export default class FiltersStore {
     const metric = this.rootStore.metricsStore.current;
     const staticFilterOptions = this.pathwaysTenantId
       ? {
-          ...filterOptions[
+          ...filterOptionsByTenant[
             isDemoMode() || isOfflineMode() ? US_DEMO : this.pathwaysTenantId
           ],
         }

@@ -19,7 +19,8 @@ import find from "lodash/fp/find";
 import get from "lodash/fp/get";
 import pipe from "lodash/fp/pipe";
 
-import { DefaultPopulationFilterOptions } from "../core/utils/filterOptions";
+import { DefaultPopulationFilterOptions } from "~shared-pathways";
+
 import {
   ADMISSION_TYPES,
   SUPERVISION_LEVELS,

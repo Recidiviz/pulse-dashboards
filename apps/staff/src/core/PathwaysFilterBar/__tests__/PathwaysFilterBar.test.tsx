@@ -18,12 +18,13 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { Mock } from "vitest";
 
+import { filterOptionsByTenant } from "~shared-pathways";
+
 import { useRootStore } from "../../../components/StoreProvider";
 import { fireEvent, render, screen } from "../../../testUtils";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { useCoreStore } from "../../CoreStoreProvider";
-import filterOptions from "../../utils/filterOptions";
 import PathwaysFilterBar from "..";
 
 const mockSetFilters = vi.fn();
@@ -48,7 +49,7 @@ test("selecting from menu sets the filters", async () => {
   render(
     <Router>
       <PathwaysFilterBar
-        filterOptions={filterOptions.US_ID}
+        filterOptions={filterOptionsByTenant.US_ID}
         handleDownload={vi.fn()}
         enabledFilters={["timePeriod", "sex"]}
       />

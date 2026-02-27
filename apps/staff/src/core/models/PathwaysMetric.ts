@@ -37,6 +37,7 @@ import {
   PageContent,
   PathwaysMetricRecords,
   PathwaysPage,
+  PopulationFilters,
   RawMetricData,
   SimulationCompartment,
 } from "~shared-pathways";
@@ -49,7 +50,6 @@ import flags from "../../flags";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
 import CoreStore from "../CoreStore";
-import { PopulationFilters } from "../types/filters";
 import { Diff, Differ } from "./backendDiff/Differ";
 import { DiffError } from "./backendDiff/DiffError";
 import { dimensionsByMetricType } from "./dimensions";

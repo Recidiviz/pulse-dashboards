@@ -19,13 +19,14 @@ import { differenceInCalendarMonths } from "date-fns";
 
 import {
   getRecordDate,
+  type MonthOptions,
   PopulationProjectionTimeSeriesRecord,
 } from "~shared-pathways";
 
 import { formatDate } from "../../utils";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 
-export type MonthOptions = 6 | 12 | 24 | 60;
+export type { MonthOptions } from "~shared-pathways";
 
 export type ChartPoint = {
   date: Date;

@@ -22,6 +22,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
 import {
+  convertLabelsToValues,
   getDefaultPathwaysSectionByPage,
   PathwaysPage,
   PathwaysSection,
@@ -37,7 +38,6 @@ import {
 } from "../utils/navigation";
 import { useCoreStore } from "./CoreStoreProvider";
 import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PageVitals/types";
-import { convertLabelsToValues } from "./utils/filterOptions";
 import { DASHBOARD_VIEWS } from "./views";
 
 type RouteParams = {

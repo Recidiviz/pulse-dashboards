@@ -20,7 +20,6 @@ import { DocumentData } from "firebase/firestore";
 
 import { OpportunityType } from "~datatypes";
 
-import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
 import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import {
@@ -29,6 +28,7 @@ import {
   pluralizeWord,
 } from "../../../../utils";
 import { Client } from "../../../Client";
+import { formatRelativeToNow } from "../../../utils";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement, OpportunityStatus } from "../../types";

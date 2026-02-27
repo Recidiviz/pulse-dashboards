@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInMonths } from "date-fns";
-
 export function formatTimePeriodLabel(months: string): string {
   const numMonths = Number(months);
   if (Number.isNaN(numMonths) || !months) return "";
@@ -24,14 +22,4 @@ export function formatTimePeriodLabel(months: string): string {
   if (numMonths < 12) return `${months} months`;
   if (numMonths === 12) return "1 year";
   return `${numMonths / 12} years`;
-}
-
-/**
- * Represents difference from current date as text. Durations under two years
- * represented as months, otherwise truncated to full years.
- */
-export function formatRelativeToNow(start: Date): string {
-  const months = differenceInMonths(new Date(), start);
-  if (months < 24) return `${months} months`;
-  return `${Math.floor(months / 12)} years`;
 }

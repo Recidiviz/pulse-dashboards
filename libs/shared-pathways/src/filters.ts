@@ -63,3 +63,21 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
   };
 
 export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;
+
+export type SetPopulationFilters = (filtersStore: {
+  setFilters(updatedFilters: Partial<PopulationFilterValues>): void;
+}) => (option: FilterOption[] | FilterOption) => void;
+
+export type PopulationFilter = {
+  type: FilterType;
+  title: string;
+  isSingleSelect?: boolean;
+  setFilters: SetPopulationFilters;
+  options: FilterOption[];
+  defaultOption: FilterOption;
+  defaultValue: string;
+  locationNameMap?: Record<string, string>;
+  useDynamicOptions?: boolean;
+};
+
+export type PopulationFilters = Record<FilterType, PopulationFilter>;
