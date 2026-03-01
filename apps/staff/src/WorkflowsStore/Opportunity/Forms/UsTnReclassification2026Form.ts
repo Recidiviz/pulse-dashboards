@@ -16,21 +16,13 @@
 // =============================================================================
 
 import {
-  formatMultiplePeriodReports,
-  getBreakdownSectionQuestionIndex,
-  getBreakdownSectionScore,
-  getSingleSectionQuestionIndex,
-  getSingleSectionQuestionScore,
-  rcafAssessmentQuestions,
+  deriveRcafFormData,
+  prefillRcafFormData,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
 
-import {
-  getDerivedCustodyLevel,
-  prefilledCoverSheetData,
-} from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
+import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { formatWorkflowsDate } from "../../../utils";
 import {
   UsTnAnnualReclassification2026Opportunity,
   UsTnSeriousMisconductUpgradeOpportunity,
@@ -70,104 +62,7 @@ export class UsTnReclassification2026Form extends FormBase<
       person,
     } = this;
 
-    const q1Selection = getSingleSectionQuestionIndex(
-      rcafAssessmentQuestions[0],
-      formInformation.q1Score,
-    );
-
-    const q2Selection = getSingleSectionQuestionIndex(
-      rcafAssessmentQuestions[1],
-      formInformation.q2Score,
-    );
-
-    const q3Selection_0_6 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[2].sections[0],
-      formInformation.q3Notes,
-    );
-
-    const q3Selection_6_12 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[2].sections[1],
-      formInformation.q3Notes,
-    );
-
-    const q4Selection_0_6 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[3].sections[0],
-      formInformation.q4Notes,
-    );
-
-    const q4Selection_6_12 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[3].sections[1],
-      formInformation.q4Notes,
-    );
-
-    const q5Selection_0_6 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[4].sections[0],
-      formInformation.q5Notes,
-    );
-
-    const q5Selection_6_12 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[4].sections[1],
-      formInformation.q5Notes,
-    );
-
-    const q5Selection_12_18 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[4].sections[2],
-      formInformation.q5Notes,
-    );
-
-    const q5Selection_18_36 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[4].sections[3],
-      formInformation.q5Notes,
-    );
-
-    const q5Selection_36_60 = getBreakdownSectionQuestionIndex(
-      rcafAssessmentQuestions[4].sections[4],
-      formInformation.q5Notes,
-    );
-
-    let q6Selection = getSingleSectionQuestionIndex(
-      rcafAssessmentQuestions[5],
-      formInformation.q6Score,
-    );
-
-    // There are two options with a score of 0
-    // Check the person's age to determine which they are
-    if (q6Selection === 3 && (formInformation.q6Notes?.age ?? 0) > 30) {
-      q6Selection++;
-    }
-
-    const q7Selection = getSingleSectionQuestionIndex(
-      rcafAssessmentQuestions[6],
-      formInformation.q7Score,
-    );
-
-    const q1aNotes =
-      formInformation.q1Notes.listPriorNonTdocConvictions60Months;
-
-    const q1bNotes =
-      formInformation.q1Notes.listPriorViolentTdocConvictions60Months;
-
-    const q2Notes = formInformation.q2CurrentOffenseDate
-      ? formInformation.q2Notes
-          .split(",")
-          .map(
-            (o) =>
-              `${o} on ${formatWorkflowsDate(formInformation.q2CurrentOffenseDate)}`,
-          )
-          .join(",")
-      : formInformation.q2Notes;
-
-    const q3NotesFormatted = formatMultiplePeriodReports(
-      formInformation.q3Notes,
-    );
-
-    const q4NotesFormatted = formatMultiplePeriodReports(
-      formInformation.q4Notes,
-    );
-
-    const q5NotesFormatted = formatMultiplePeriodReports(
-      formInformation.q5Notes,
-    );
+    const rcafData = prefillRcafFormData(formInformation);
 
     const coverData = prefilledCoverSheetData(
       person,
@@ -178,137 +73,12 @@ export class UsTnReclassification2026Form extends FormBase<
     return {
       ...formInformation,
       ...coverData,
-      q1Selection,
-      q2Selection,
-      q3Selection_0_6,
-      q3Selection_6_12,
-      q4Selection_0_6,
-      q4Selection_6_12,
-      q5Selection_0_6,
-      q5Selection_6_12,
-      q5Selection_12_18,
-      q5Selection_18_36,
-      q5Selection_36_60,
-      q6Selection,
-      q7Selection,
-      q1aNotes,
-      q1bNotes,
-      q2Notes,
-      q3NotesFormatted,
-      q4NotesFormatted,
-      q5NotesFormatted,
+      ...rcafData,
     };
   }
 
   get derivedData() {
-    const {
-      q1Selection,
-      q2Selection,
-      q3Selection_0_6,
-      q3Selection_6_12,
-      q4Selection_0_6,
-      q4Selection_6_12,
-      q5Selection_0_6,
-      q5Selection_6_12,
-      q5Selection_12_18,
-      q5Selection_18_36,
-      q5Selection_36_60,
-      q6Selection,
-      q7Selection,
-    } = this.formData;
-
-    const q1Score = getSingleSectionQuestionScore(
-      rcafAssessmentQuestions[0],
-      q1Selection,
-    );
-    const q2Score = getSingleSectionQuestionScore(
-      rcafAssessmentQuestions[1],
-      q2Selection,
-    );
-
-    let q3Score = getBreakdownSectionScore(
-      rcafAssessmentQuestions[2].sections[0],
-      q3Selection_0_6,
-    );
-    q3Score += getBreakdownSectionScore(
-      rcafAssessmentQuestions[2].sections[1],
-      q3Selection_6_12,
-    );
-
-    let q4Score = getBreakdownSectionScore(
-      rcafAssessmentQuestions[3].sections[0],
-      q4Selection_0_6,
-    );
-    q4Score += getBreakdownSectionScore(
-      rcafAssessmentQuestions[3].sections[1],
-      q4Selection_6_12,
-    );
-
-    let q5Score = getBreakdownSectionScore(
-      rcafAssessmentQuestions[4].sections[0],
-      q5Selection_0_6,
-    );
-    q5Score += getBreakdownSectionScore(
-      rcafAssessmentQuestions[4].sections[1],
-      q5Selection_6_12,
-    );
-    q5Score += getBreakdownSectionScore(
-      rcafAssessmentQuestions[4].sections[2],
-      q5Selection_12_18,
-    );
-    q5Score += getBreakdownSectionScore(
-      rcafAssessmentQuestions[4].sections[3],
-      q5Selection_18_36,
-    );
-    q5Score += getBreakdownSectionScore(
-      rcafAssessmentQuestions[4].sections[4],
-      q5Selection_36_60,
-    );
-
-    const q6Score = getSingleSectionQuestionScore(
-      rcafAssessmentQuestions[5],
-      q6Selection,
-    );
-    const q7Score = getSingleSectionQuestionScore(
-      rcafAssessmentQuestions[6],
-      q7Selection,
-    );
-
-    const totalScore = Math.min(
-      41,
-      q1Score + q2Score + q3Score + q4Score + q5Score + q6Score + q7Score,
-    );
-
-    const trusteeEligible = [
-      this.formData.trusteeHas10YearsOrLessRemaining,
-      this.formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years,
-      this.formData.trusteeNoEscapeFromLowTrusteePast5Years,
-      this.formData.trusteeNoEscapeFromMediumCloseMaxPast10Years,
-      this.formData.trusteeNoViolentFelonyConvictionPast5YearsIncarceration,
-      this.formData.trusteeNotConvictedOfFirstDegreeMurder,
-      this.formData.trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody,
-      this.formData.trusteeNotScoredHighForViolence,
-      this.formData.trusteeNotServingForSexualOffense,
-      this.formData.trusteeNoFelonyDetainers,
-      this.formData.trusteeNoPendingFelonyCharges,
-      this.formData.trusteeNoPendingImmigrationActions,
-      this.formData.trusteeWardenHasApproved,
-    ].every((criterion) => criterion === "true");
-
-    const totalText = getDerivedCustodyLevel(totalScore, this.opportunity.type);
-
-    return {
-      q1Score,
-      q2Score,
-      q3Score,
-      q4Score,
-      q5Score,
-      q6Score,
-      q7Score,
-      totalScore,
-      trusteeEligible,
-      totalText,
-    };
+    return deriveRcafFormData(this.formData);
   }
 
   get formTemplateData() {

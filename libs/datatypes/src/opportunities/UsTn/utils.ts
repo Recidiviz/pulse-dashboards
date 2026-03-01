@@ -171,6 +171,22 @@ export type TrusteeFormAdditionalFields = {
 export type TrusteeFormSchema = z.output<typeof trusteeFormSchema> &
   TrusteeFormAdditionalFields;
 
+export const TRUSTEE_FORM_QUESTION_ORDER = [
+  "trusteeHas10YearsOrLessRemaining",
+  "trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody",
+  "trusteeNotConvictedOfFirstDegreeMurder",
+  "trusteeNotServingForSexualOffense",
+  "trusteeNoFelonyDetainers",
+  "trusteeNoPendingFelonyCharges",
+  "trusteeNoPendingImmigrationActions",
+  "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years",
+  "trusteeNoViolentFelonyConvictionPast5YearsIncarceration",
+  "trusteeNoEscapeFromMediumCloseMaxPast10Years",
+  "trusteeNoEscapeFromLowTrusteePast5Years",
+  "trusteeNotScoredHighForViolence",
+  "trusteeWardenHasApproved",
+] satisfies (keyof TrusteeFormSchema)[];
+
 export const coverSheetInformationSchema = z.object({
   levelOfCare: z.string().optional(),
   sentenceReleaseEligibilityDate: dateStringSchema.optional(),

@@ -18,3 +18,4 @@
 export * from "./fixtures";
 export * from "./rcafAssessmentQuestions";
 export * from "./schema";
+export * from "./utils";

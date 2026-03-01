@@ -20,6 +20,7 @@ import { ChangeEventHandler } from "react";
 import styled from "styled-components";
 
 import {
+  TRUSTEE_FORM_QUESTION_ORDER,
   TrusteeFormSchema,
   UsTnInitialClassification2026DraftData,
 } from "~datatypes";
@@ -59,22 +60,6 @@ const CriteriaTable = styled.table`
   }
 `;
 
-const QUESTION_ORDER = [
-  "trusteeHas10YearsOrLessRemaining",
-  "trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody",
-  "trusteeNotConvictedOfFirstDegreeMurder",
-  "trusteeNotServingForSexualOffense",
-  "trusteeNoFelonyDetainers",
-  "trusteeNoPendingFelonyCharges",
-  "trusteeNoPendingImmigrationActions",
-  "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years",
-  "trusteeNoViolentFelonyConvictionPast5YearsIncarceration",
-  "trusteeNoEscapeFromMediumCloseMaxPast10Years",
-  "trusteeNoEscapeFromLowTrusteePast5Years",
-  "trusteeNotScoredHighForViolence",
-  "trusteeWardenHasApproved",
-] satisfies (keyof TrusteeFormSchema)[];
-
 export function getTrusteeTemplateArgs(
   resident: JusticeInvolvedPerson,
   form: TrusteeForm,
@@ -83,9 +68,9 @@ export function getTrusteeTemplateArgs(
 
   const formContents: Record<string, string> = {};
 
-  for (let i = 0; i < QUESTION_ORDER.length; i++) {
+  for (let i = 0; i < TRUSTEE_FORM_QUESTION_ORDER.length; i++) {
     const index = i + 1;
-    const value = formData[QUESTION_ORDER[i]];
+    const value = formData[TRUSTEE_FORM_QUESTION_ORDER[i]];
     formContents[`q${index}t`] = value === "true" ? "X" : "";
     formContents[`q${index}f`] = value === "false" ? "X" : "";
   }
