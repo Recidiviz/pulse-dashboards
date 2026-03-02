@@ -143,6 +143,7 @@ export const deleteEmploymentHistorySchema = z.object({
 export const createDrugHistorySchema = z.object({
   sarId: z.string(),
   substance: substanceEnum.nullable().optional(),
+  otherSubstanceName: z.string().nullable().optional(),
   ageOfRegularUse: z.number().int().nullable().optional(),
   lastUse: z.date().nullable().optional(),
   heaviestUse: frequencyOfUseEnum.nullable().optional(),
@@ -152,6 +153,7 @@ export const createDrugHistorySchema = z.object({
 export const updateDrugHistorySchema = z.object({
   id: z.string(),
   substance: substanceEnum.nullable().optional(),
+  otherSubstanceName: z.string().nullable().optional(),
   ageOfRegularUse: z.number().int().nullable().optional(),
   lastUse: z.date().nullable().optional(),
   heaviestUse: frequencyOfUseEnum.nullable().optional(),

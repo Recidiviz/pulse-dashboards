@@ -716,11 +716,12 @@ model DrugHistory {
   sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
   sentencingAssessmentReportId String
 
-  substance       SubstanceType?
-  ageOfRegularUse Int?
-  lastUse         DateTime?
-  heaviestUse     FrequencyOfUse?
-  method          MethodOfUse?
+  substance          SubstanceType?
+  otherSubstanceName String?
+  ageOfRegularUse    Int?
+  lastUse            DateTime?
+  heaviestUse        FrequencyOfUse?
+  method             MethodOfUse?
 }
 
 model EmploymentHistory {

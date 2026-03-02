@@ -28,6 +28,13 @@ import {
   SubstanceTypeLabels,
 } from "./constants";
 
+const getSubstanceLabel = (history: DrugHistory): string => {
+  if (!history.substance) return "Not specified";
+  if (history.substance === "Other" && history.otherSubstanceName)
+    return history.otherSubstanceName;
+  return SubstanceTypeLabels[history.substance];
+};
+
 interface DrugHistoryItemProps {
   history: DrugHistory;
   onEdit: (id: string) => void;
@@ -81,11 +88,7 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
       </Styled.IconRow>
 
       <Styled.DataRow>
-        <Styled.DataCell>
-          {history.substance
-            ? SubstanceTypeLabels[history.substance]
-            : "Not specified"}
-        </Styled.DataCell>
+        <Styled.DataCell>{getSubstanceLabel(history)}</Styled.DataCell>
         <Styled.DataCell>
           {history.ageOfRegularUse ?? "Not specified"}
         </Styled.DataCell>
@@ -93,6 +96,8 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
           {history.lastUse
             ? new Date(history.lastUse).toLocaleDateString("en-US", {
                 timeZone: "UTC",
+                month: "2-digit",
+                year: "numeric",
               })
             : "Not specified"}
         </Styled.DataCell>

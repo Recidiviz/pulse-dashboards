@@ -29,7 +29,9 @@ const StyledModal = styled(ModalBase)<{ $padding?: number }>`
     max-height: ${MAX_MODAL_HEIGHT};
     width: ${rem(626)};
     padding: ${({ $padding }) => rem($padding ?? MODAL_PADDING)};
-    overflow: visible;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 `;
 

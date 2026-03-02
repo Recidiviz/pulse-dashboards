@@ -130,8 +130,11 @@ export class OffenderAssessmentPresenter {
     });
 
     runInAction(() => {
-      if (this.SARData) {
-        this.SARData.drugHistories = [...this.SARData.drugHistories, result];
+      if (this.SARData && result) {
+        this.SARData.drugHistories = [
+          ...this.SARData.drugHistories,
+          { ...data, id: result.id },
+        ];
       }
     });
   }

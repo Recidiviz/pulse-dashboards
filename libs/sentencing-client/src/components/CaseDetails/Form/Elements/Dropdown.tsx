@@ -43,6 +43,8 @@ export function Dropdown({
       components={customComponents}
       filterOption={filterOption}
       styles={styles}
+      menuPortalTarget={document.body}
+      menuPosition="fixed"
     />
   );
 }

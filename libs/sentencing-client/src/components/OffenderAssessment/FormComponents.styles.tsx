@@ -109,7 +109,7 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
     },
   }),
   singleValue: (styles) => ({ ...styles, color: palette.pine3 }),
-  menu: (styles) => ({ ...styles, zIndex: 10 }),
+  menuPortal: (styles) => ({ ...styles, zIndex: 1100 }),
 };
 
 // Shared button styles for modals and confirmations

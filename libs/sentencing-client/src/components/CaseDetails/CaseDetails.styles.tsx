@@ -1393,6 +1393,34 @@ export const DatePickerWrapper = styled.div`
   .rcd-cal .react-datepicker__day-name {
     display: none;
   }
+
+  /* Month/year picker tiles */
+  .rcd-cal .react-datepicker__month-wrapper {
+    ${calendarWeekCSS}
+  }
+
+  .rcd-cal .react-datepicker__month-text {
+    ${calendarDayCss}
+    width: auto;
+    padding: 0.1rem 0.25rem;
+    margin: 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    &:hover {
+      background: none;
+      border-color: ${palette.pine4};
+      color: ${palette.pine4};
+      border-radius: 6px;
+    }
+  }
+
+  .rcd-cal .react-datepicker__month-text--selected,
+  .rcd-cal .react-datepicker__month-text--keyboard-selected {
+    background: none;
+    border-color: ${palette.pine4};
+    color: ${palette.pine4};
+  }
 `;
 
 export const InputLabel = styled.label`
@@ -1600,6 +1628,7 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
     },
   }),
   singleValue: (styles) => ({ ...styles, color: palette.pine3 }),
+  menuPortal: (styles) => ({ ...styles, zIndex: 10 }),
 };
 
 export const multiDropdownStyles: StylesConfig<SelectOption, true> = {

@@ -41,11 +41,8 @@ const MONTHS = [
 const DatePickerHeader = ({
   date,
   changeYear,
-  changeMonth,
   decreaseMonth,
   increaseMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
 }: ReactDatePickerCustomHeaderProps) => (
   <CaseDetailsStyled.CalendarHeader>
     <CaseDetailsStyled.CalendarMonthIconButton
@@ -58,7 +55,6 @@ const DatePickerHeader = ({
       <span>
         {MONTHS[date.getMonth()]} {date.getFullYear()}
       </span>
-
       <CaseDetailsStyled.CalendarYearStack>
         <CaseDetailsStyled.CalendarYearIconButton
           onClick={() => changeYear(date.getFullYear() + 1)}
@@ -66,7 +62,6 @@ const DatePickerHeader = ({
         >
           <UpArrow aria-hidden="true" />
         </CaseDetailsStyled.CalendarYearIconButton>
-
         <CaseDetailsStyled.CalendarYearIconButton
           onClick={() => changeYear(date.getFullYear() - 1)}
           aria-label="Previous year"
@@ -75,10 +70,31 @@ const DatePickerHeader = ({
         </CaseDetailsStyled.CalendarYearIconButton>
       </CaseDetailsStyled.CalendarYearStack>
     </CaseDetailsStyled.CalendarCenter>
-
     <CaseDetailsStyled.CalendarMonthIconButton
       onClick={increaseMonth}
       aria-label="Next month"
+    >
+      <Arrow aria-hidden="true" style={{ transform: "scaleX(-1)" }} />
+    </CaseDetailsStyled.CalendarMonthIconButton>
+  </CaseDetailsStyled.CalendarHeader>
+);
+
+const MonthYearPickerHeader = ({
+  date,
+  decreaseYear,
+  increaseYear,
+}: ReactDatePickerCustomHeaderProps) => (
+  <CaseDetailsStyled.CalendarHeader>
+    <CaseDetailsStyled.CalendarMonthIconButton
+      onClick={decreaseYear}
+      aria-label="Previous year"
+    >
+      <Arrow aria-hidden="true" />
+    </CaseDetailsStyled.CalendarMonthIconButton>
+    <span>{date.getFullYear()}</span>
+    <CaseDetailsStyled.CalendarMonthIconButton
+      onClick={increaseYear}
+      aria-label="Next year"
     >
       <Arrow aria-hidden="true" style={{ transform: "scaleX(-1)" }} />
     </CaseDetailsStyled.CalendarMonthIconButton>
@@ -92,6 +108,7 @@ interface SharedDatePickerProps {
   icon?: ReactNode;
   resetButton?: ReactNode;
   placeholder?: string;
+  monthYearOnly?: boolean;
 }
 
 export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
@@ -101,6 +118,7 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
   icon,
   resetButton,
   placeholder,
+  monthYearOnly = false,
 }) => {
   return (
     <>
@@ -108,7 +126,9 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
         <DatePicker
           shouldCloseOnSelect={false}
           showPopperArrow={false}
-          renderCustomHeader={DatePickerHeader}
+          renderCustomHeader={
+            monthYearOnly ? MonthYearPickerHeader : DatePickerHeader
+          }
           showIcon={showIcon}
           icon={icon}
           popperClassName="rcd-cal"
@@ -116,6 +136,8 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
           selected={selected}
           onChange={onChange}
           placeholderText={placeholder}
+          showMonthYearPicker={monthYearOnly}
+          dateFormat={monthYearOnly ? "MM/yyyy" : undefined}
         />
       </CaseDetailsStyled.DatePickerWrapper>
       {resetButton}

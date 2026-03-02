@@ -44,6 +44,15 @@ import { DatePickerWrapper } from "./DrugHistoryModal.styles";
 
 type SelectOption = { label: string; value: string };
 
+const EMPTY_FORM: Omit<DrugHistory, "id"> = {
+  substance: null,
+  otherSubstanceName: null,
+  ageOfRegularUse: null,
+  lastUse: null,
+  heaviestUse: null,
+  method: null,
+};
+
 interface DrugHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -61,13 +70,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
   isEditMode,
   clientFirstName,
 }) => {
-  const [formData, setFormData] = useState<Omit<DrugHistory, "id">>({
-    substance: null,
-    ageOfRegularUse: null,
-    lastUse: null,
-    heaviestUse: null,
-    method: null,
-  });
+  const [formData, setFormData] = useState<Omit<DrugHistory, "id">>(EMPTY_FORM);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -76,26 +79,12 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
     if (isOpen && initialData) {
       setFormData(initialData);
     } else if (isOpen && !initialData) {
-      // Reset form for add mode
-      setFormData({
-        substance: null,
-        ageOfRegularUse: null,
-        lastUse: null,
-        heaviestUse: null,
-        method: null,
-      });
+      setFormData(EMPTY_FORM);
     }
   }, [isOpen, initialData]);
 
   const handleClose = () => {
-    // Reset form
-    setFormData({
-      substance: null,
-      ageOfRegularUse: null,
-      lastUse: null,
-      heaviestUse: null,
-      method: null,
-    });
+    setFormData(EMPTY_FORM);
     setSaveError(null);
     onClose();
   };
@@ -120,6 +109,9 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
     formData.lastUse ||
     formData.heaviestUse ||
     formData.method;
+
+  const isOtherWithoutName =
+    formData.substance === "Other" && !formData.otherSubstanceName;
 
   return (
     <Modal isOpen={isOpen} hideModal={handleClose} padding={0}>
@@ -148,17 +140,38 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
                   : null
               }
               options={SUBSTANCE_OPTIONS}
-              onChange={(option) =>
+              onChange={(option) => {
+                const newSubstance =
+                  ((option as SelectOption)?.value as SubstanceType) || null;
                 setFormData({
                   ...formData,
-                  substance:
-                    ((option as SelectOption)?.value as SubstanceType) || null,
-                })
-              }
+                  substance: newSubstance,
+                  otherSubstanceName:
+                    newSubstance === "Other"
+                      ? formData.otherSubstanceName
+                      : null,
+                });
+              }}
               placeholder="Select..."
               styles={dropdownStyles}
             />
           </ModalStyled.Field>
+
+          {formData.substance === "Other" && (
+            <ModalStyled.Field>
+              <ModalStyled.Label>Substance Name</ModalStyled.Label>
+              <ModalStyled.TextInput
+                value={formData.otherSubstanceName ?? ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    otherSubstanceName: e.target.value || null,
+                  })
+                }
+                placeholder="Enter substance name"
+              />
+            </ModalStyled.Field>
+          )}
 
           <ModalStyled.Field>
             <ModalStyled.Label>Age of Regular Use</ModalStyled.Label>
@@ -193,7 +206,8 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
                 onChange={(date) =>
                   setFormData({ ...formData, lastUse: date ?? null })
                 }
-                placeholder="Select date"
+                placeholder="MM/YYYY"
+                monthYearOnly
               />
             </DatePickerWrapper>
           </ModalStyled.Field>
@@ -255,7 +269,10 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
             <CancelButton onClick={handleClose} disabled={isSaving}>
               Cancel
             </CancelButton>
-            <SaveButton onClick={handleSave} disabled={!hasData || isSaving}>
+            <SaveButton
+              onClick={handleSave}
+              disabled={!hasData || isOtherWithoutName || isSaving}
+            >
               {isSaving ? "Saving..." : "Save"}
             </SaveButton>
           </ButtonRow>

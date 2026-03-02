@@ -37,7 +37,9 @@ export const CALENDAR_BACKGROUND = iconToDataURI(
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 `;
 
 export const Header = styled.div`
@@ -73,6 +75,9 @@ export const Form = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   padding: 0rem 2.5rem 2.5rem 2.5rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
 
 export const Field = styled.div`

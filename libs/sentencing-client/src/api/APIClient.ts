@@ -318,6 +318,7 @@ export class APIClient {
   async createDrugHistory(input: {
     sarId: string;
     substance?: SubstanceType | null;
+    otherSubstanceName?: string | null;
     ageOfRegularUse?: number | null;
     lastUse?: Date | null;
     heaviestUse?: FrequencyOfUse | null;
@@ -331,6 +332,7 @@ export class APIClient {
   async updateDrugHistory(input: {
     id: string;
     substance?: SubstanceType | null;
+    otherSubstanceName?: string | null;
     ageOfRegularUse?: number | null;
     lastUse?: Date | null;
     heaviestUse?: FrequencyOfUse | null;
