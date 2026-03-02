@@ -17,7 +17,11 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+import {
+  dateStringSchema,
+  nullishAsUndefined,
+  opportunitySchemaBase,
+} from "~datatypes";
 
 const usIdOverdueFaceToFaceContactCriteriaSchema = z.object({
   usIdMeetsOverdueFaceToFaceContactAlert: z
@@ -35,6 +39,12 @@ export const usIdOverdueFaceToFaceContactSchema = opportunitySchemaBase
     eligibleCriteria: usIdOverdueFaceToFaceContactCriteriaSchema.passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
     lastContactDate: dateStringSchema.nullable(),
+    metadata: nullishAsUndefined(
+      z.object({
+        dueDate: nullishAsUndefined(dateStringSchema),
+        contactCadence: nullishAsUndefined(z.string()),
+      }),
+    ),
   })
   .passthrough();
 

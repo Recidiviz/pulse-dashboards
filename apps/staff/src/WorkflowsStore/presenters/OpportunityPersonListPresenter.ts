@@ -270,7 +270,9 @@ export class OpportunityPersonListPresenter
       US_ID_SUPERVISION_LEVEL:
         this.opportunityType === "usIdOverdueFaceToFaceContact",
       US_ID_CASE_TYPE: this.opportunityType === "usIdOverdueFaceToFaceContact",
-      US_ID_NEXT_CONTACT_DUE_DATE:
+      US_ID_CONTACT_DUE_DATE:
+        this.opportunityType === "usIdOverdueFaceToFaceContact",
+      US_ID_CONTACT_CADENCE:
         this.opportunityType === "usIdOverdueFaceToFaceContact",
     };
   }

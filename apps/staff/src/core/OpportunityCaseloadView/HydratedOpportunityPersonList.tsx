@@ -283,7 +283,8 @@ export type OpportunityTableColumnId =
   | "US_ID_LAST_CONTACT_DATE"
   | "US_ID_SUPERVISION_LEVEL"
   | "US_ID_CASE_TYPE"
-  | "US_ID_NEXT_CONTACT_DUE_DATE";
+  | "US_ID_CONTACT_DUE_DATE"
+  | "US_ID_CONTACT_CADENCE";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -931,6 +932,48 @@ const TableView = observer(function TableView({
         if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
           const caseType = opp.person.caseType;
           return caseType ? toTitleCase(toHumanReadable(caseType)) : "—";
+        }
+        return "—";
+      },
+    },
+    {
+      header: "Due Date",
+      id: "US_ID_CONTACT_DUE_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          return opp.record?.metadata?.dueDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          const dueDate = opp.record?.metadata?.dueDate;
+          if (dueDate) {
+            return formatWorkflowsDate(dueDate);
+          }
+        }
+        return "—";
+      },
+    },
+    {
+      header: "Contact Cadence",
+      id: "US_ID_CONTACT_CADENCE",
+      enableSorting: true,
+      sortingFn: "text",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          return opp.record?.metadata?.contactCadence;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          const contactCadence = opp.record?.metadata?.contactCadence;
+          if (contactCadence) {
+            return contactCadence.toLowerCase();
+          }
         }
         return "—";
       },
