@@ -224,6 +224,11 @@ vi.mock("@deepgram/sdk", async (importOriginal) => {
   };
 });
 
+// Mock LangSmith wrappers to be passthrough (avoids failures when LANGCHAIN_API_KEY is set)
+vi.mock("langsmith/wrappers", () => ({
+  wrapOpenAI: vi.fn((client) => client),
+}));
+
 // Mock OpenAI client
 export const mockOpenAI = mock<OpenAI>({
   baseURL: "https://us.api.openai.com/v1",
