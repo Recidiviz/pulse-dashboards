@@ -9466,6 +9466,7 @@ __metadata:
     "@nx/rollup": "npm:*"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-native-clipboard/clipboard": "npm:^1.16.3"
+    "@react-native-community/netinfo": "npm:^12.0.1"
     "@react-navigation/drawer": "npm:^7.7.10"
     "@react-navigation/native": "npm:^7.1.26"
     "@react-navigation/native-stack": "npm:^7.6.3"
@@ -13692,6 +13693,16 @@ __metadata:
     react-native-windows:
       optional: true
   checksum: 10c0/4e6478a3dfc8862f93dd47790d1357082966c59bc6624f58a2281f3de4e7dfd57a4655e16f6c0310e46924eac654558b88fb726187c19ed3fc47c67235a1ae07
+  languageName: node
+  linkType: hard
+
+"@react-native-community/netinfo@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@react-native-community/netinfo@npm:12.0.1"
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.59"
+  checksum: 10c0/66c5fab04ef3ffe9b1f2e3578e7d3052a8c3ae327d94fa41f7d95ec4db3de4dd4017bf486013f031cb1aa12909002492474f259ea6212471f730cca39239dd35
   languageName: node
   linkType: hard
 
