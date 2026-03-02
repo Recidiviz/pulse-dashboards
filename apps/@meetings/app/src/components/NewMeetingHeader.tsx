@@ -22,58 +22,57 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
 
-interface SubHeaderProps {
-  showRightIcon?: boolean;
-  showRightBtn?: boolean;
-  showHeading?: boolean;
-  headingTxt?: string;
-  onPressBtn?: () => void;
+interface NewMeetingHeaderProps {
+  isMeetingActive: boolean;
+  onDiscard: () => void;
+  onFinalDiscard: () => void;
 }
 
-const SubHeader: React.FC<SubHeaderProps> = ({
-  showRightIcon = false,
-  showHeading = true,
-  showRightBtn = false,
-  headingTxt = "New Meeting",
-  onPressBtn,
+const NewMeetingHeader: React.FC<NewMeetingHeaderProps> = ({
+  isMeetingActive,
+  onDiscard,
+  onFinalDiscard,
 }) => {
   const navigation = useNavigation();
+
+  const handleGoBack = () => {
+    if (!isMeetingActive) {
+      onFinalDiscard();
+    }
+    navigation.goBack();
+  };
+
+  const renderHeaderRightButton = () => {
+    if (isMeetingActive) {
+      return (
+        <TouchableOpacity onPress={onDiscard}>
+          <Text className="font-inter text-base font-semibold text-[#B42D2D]">
+            Discard
+          </Text>
+        </TouchableOpacity>
+      ) 
+    } else {
+      return (
+        <View>
+          <Image source={Icons.Bell} className="!size-6" />
+        </View>      
+      );
+    }
+  }
 
   return (
     <SafeAreaView edges={["top"]} className="bg-white">
       <View className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={Icons.ArrowLeft} className="size-6" />
+        <TouchableOpacity onPress={handleGoBack}>
+          <Image source={Icons.ArrowLeft} className="!size-6" />
         </TouchableOpacity>
-        {showHeading && (
-          <Text className="font-inter text-base font-semibold text-primary">
-            {headingTxt}
-          </Text>
-        )}
-        {(() => {
-          if (showRightIcon) {
-            return (
-              <TouchableOpacity onPress={() => console.log("Icon pressed")}>
-                <Image source={Icons.Bell} className="size-6" />
-              </TouchableOpacity>
-            );
-          }
-
-          if (showRightBtn) {
-            return (
-              <TouchableOpacity onPress={onPressBtn}>
-                <Text className="font-inter text-base font-semibold text-[#B42D2D]">
-                  Discard
-                </Text>
-              </TouchableOpacity>
-            );
-          }
-
-          return <View className="size-6" />;
-        })()}
+        <Text className="font-inter text-base font-semibold text-primary">
+          {isMeetingActive ? "Meeting in Progress" : "New Meeting"}
+        </Text>
+        {renderHeaderRightButton()}
       </View>
     </SafeAreaView>
   );
 };
 
-export default SubHeader;
+export default NewMeetingHeader;

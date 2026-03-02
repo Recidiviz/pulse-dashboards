@@ -29,10 +29,10 @@ import {
 import Icons from "../../assets/icons";
 import MeetingSheet from "../components/MeetingSheet";
 import RecordingControls from "../components/RecordingControls";
-import SubHeader from "../components/SubHeader";
 import { useMeetingRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { humanReadableTitleCase } from "../utils/format";
+import NewMeetingHeader from "./NewMeetingHeader";
 
 type NewMeetingRouteProp = RouteProp<
   RootStackParamList,
@@ -125,10 +125,10 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const isMeetingActive = status !== "idle" || isRecording;
   return (
     <View className="flex-1 bg-white">
-      <SubHeader
-        headingTxt={isMeetingActive ? "Meeting in Progress" : "New Meeting"}
-        showRightBtn={isMeetingActive}
-        onPressBtn={() => handleDiscard()}
+      <NewMeetingHeader
+        isMeetingActive={isMeetingActive}
+        onDiscard={() => handleDiscard()}
+        onFinalDiscard={() => handleFinalDiscard()}
       />
 
       <View className="flex-1 px-6">

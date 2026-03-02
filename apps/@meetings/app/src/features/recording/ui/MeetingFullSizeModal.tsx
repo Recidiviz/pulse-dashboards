@@ -31,7 +31,7 @@ type Props = {
 };
 
 export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
-  const { closeRecordingView, setIsRecordingViewMinimized } =
+  const { setIsRecordingViewMinimized } =
     useRecording<"web">();
 
   const { status, note, setNote, isRecording, totalDurationMs, actions } =
@@ -44,6 +44,7 @@ export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
     handleTogglePauseResume,
     handleStopRecording,
     handleDiscard,
+    handleFinalDiscard,
   } = actions;
 
   const isMeetingActive = status !== "idle" || isRecording;
@@ -57,7 +58,7 @@ export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
       visible
       transparent
       onClickOutside={
-        isMeetingActive ? onModalClickOutside : closeRecordingView
+        isMeetingActive ? onModalClickOutside : handleFinalDiscard
       }
       containerClassName="max-w-[960px] md:h-[658px] size-full"
     >
@@ -75,7 +76,7 @@ export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
       ) : (
         <NewMeetingIntro
           person={person}
-          onClose={closeRecordingView}
+          onClose={handleFinalDiscard}
           startRecording={startRecording}
         />
       )}
