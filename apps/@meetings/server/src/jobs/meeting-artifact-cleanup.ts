@@ -290,16 +290,22 @@ export async function cleanupStateData(
 }
 
 export async function cleanupMeetingData(dryRun = true): Promise<void> {
-  for (const [stateCode, config] of Object.entries(AGENCY_CONFIGS)) {
-    try {
+  const results = await Promise.allSettled(
+    Object.values(AGENCY_CONFIGS).map((config) =>
       cleanupStateData(
-        stateCode,
+        config.stateCode,
         config.audioTTLDays,
         config.transcriptTTLDays,
         dryRun,
+      ),
+    ),
+  );
+
+  for (const result of results) {
+    if (result.status === "rejected") {
+      logger.error(
+        `failed to run meeting clean up job with error ${result.reason}`,
       );
-    } catch (error) {
-      logger.error(`failed to run meeting clean up job with error ${error}`);
     }
   }
 }

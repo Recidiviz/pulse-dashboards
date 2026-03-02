@@ -18,10 +18,20 @@
 import { subDays } from "date-fns";
 import { describe, expect, test, vi } from "vitest";
 
+import { AGENCY_CONFIGS } from "~@meetings/config";
 import { TranscriptionProvider } from "~@meetings/prisma/client";
-import { cleanupStateData } from "~@meetings/server/jobs/meeting-artifact-cleanup";
+import {
+  cleanupMeetingData,
+  cleanupStateData,
+} from "~@meetings/server/jobs/meeting-artifact-cleanup";
 import { testPrismaClient } from "~@meetings/server/test/setup";
 import { fakeClient, fakeStaff } from "~@meetings/server/test/setup/seed";
+
+const mockGetPrismaClientForStateCode = vi.hoisted(() => vi.fn());
+
+vi.mock("~@meetings/prisma", () => ({
+  getPrismaClientForStateCode: mockGetPrismaClientForStateCode,
+}));
 
 const mockGetFiles = vi.fn();
 const mockDeleteFiles = vi.fn().mockResolvedValue(undefined);
@@ -66,6 +76,15 @@ async function createExpiredMeeting(
     },
   });
 }
+
+// Return the test Prisma client for US_NE; throw for any other state to
+// simulate a missing DATABASE_URL (the common real-world failure mode).
+beforeEach(() => {
+  mockGetPrismaClientForStateCode.mockImplementation((stateCode: string) => {
+    if (stateCode === STATE_CODE) return testPrismaClient;
+    throw new Error(`No database configured for state ${stateCode}`);
+  });
+});
 
 describe("cleanupStateData", () => {
   beforeEach(() => {
@@ -333,5 +352,35 @@ describe("cleanupStateData", () => {
       expect(stats.errors).toHaveLength(1);
       expect(stats.errors[0]).toContain("Meeting cleanup failed");
     });
+  });
+});
+
+describe("cleanupMeetingData", () => {
+  test("resolves without throwing even when a state has no configured database", async () => {
+    // US_ME throws (see global beforeEach), US_NE succeeds — the function
+    // must resolve rather than propagating the unhandled rejection.
+    await expect(cleanupMeetingData(true)).resolves.toBeUndefined();
+  });
+
+  test("attempts cleanup for every state in AGENCY_CONFIGS", async () => {
+    await cleanupMeetingData(true);
+
+    const configs = Object.values(AGENCY_CONFIGS);
+    expect(mockGetPrismaClientForStateCode).toHaveBeenCalledTimes(
+      configs.length,
+    );
+    for (const config of configs) {
+      expect(mockGetPrismaClientForStateCode).toHaveBeenCalledWith(
+        config.stateCode,
+      );
+    }
+  });
+
+  test("continues processing remaining states when one state fails", async () => {
+    await createExpiredMeeting("orchestration-test-meeting", 60);
+
+    // US_ME fails (no DB), but US_NE should still find and process its meeting.
+    await expect(cleanupMeetingData(true)).resolves.toBeUndefined();
+    expect(mockGetFiles).toHaveBeenCalled();
   });
 });
