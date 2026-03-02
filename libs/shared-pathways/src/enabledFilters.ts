@@ -570,6 +570,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonFacilityPopulation: {
@@ -582,6 +584,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonPopulationByAgeGroup: {
@@ -594,6 +598,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonPopulationByGender: {
@@ -606,6 +612,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonPopulationBySex: {
@@ -618,6 +626,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonPopulationByRace: {
@@ -630,6 +640,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonPopulationByEthnicity: {
@@ -642,6 +654,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonPopulationBySentenceLengthMin: {
@@ -654,6 +668,8 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
   prisonPopulationBySentenceLengthMax: {
@@ -666,6 +682,36 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ETHNICITY,
       FILTER_TYPES.SENTENCE_LENGTH_MIN,
       FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
+    ],
+  },
+  prisonPopulationByChargeCountyCode: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.SEX,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.ETHNICITY,
+      FILTER_TYPES.SENTENCE_LENGTH_MIN,
+      FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
+    ],
+  },
+  prisonPopulationByOffenseType: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.SEX,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.ETHNICITY,
+      FILTER_TYPES.SENTENCE_LENGTH_MIN,
+      FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
     ],
   },
 };

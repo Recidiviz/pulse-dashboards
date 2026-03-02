@@ -451,6 +451,30 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.CHARGE_COUNTY_CODE]: {
+    type: FILTER_TYPES.CHARGE_COUNTY_CODE,
+    title: "Charge County",
+    setFilters: setFilters(FILTER_TYPES.CHARGE_COUNTY_CODE),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.OFFENSE_TYPE]: {
+    type: FILTER_TYPES.OFFENSE_TYPE,
+    title: "Offense Type",
+    setFilters: setFilters(FILTER_TYPES.OFFENSE_TYPE),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
   [FILTER_TYPES.SENTENCE_LENGTH_MIN]: {
     type: FILTER_TYPES.SENTENCE_LENGTH_MIN,
     title: "Min Sentence",
@@ -1397,6 +1421,14 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.SENTENCE_LENGTH_MAX],
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.CHARGE_COUNTY_CODE]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.CHARGE_COUNTY_CODE],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.OFFENSE_TYPE]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE],
+    useDynamicOptions: true,
+  },
 };
 
 export const DemoPopulationFilterOptions: PopulationFilters = {
@@ -1580,6 +1612,13 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.SENTENCE_LENGTH_MAX]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.RACE].defaultValue,
+  ],
+  [FILTER_TYPES.CHARGE_COUNTY_CODE]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.CHARGE_COUNTY_CODE]
+      .defaultValue,
+  ],
+  [FILTER_TYPES.OFFENSE_TYPE]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE].defaultValue,
   ],
 };
 

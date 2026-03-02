@@ -43,6 +43,8 @@ export const FILTER_TYPES = {
   ETHNICITY: "ethnicity",
   SENTENCE_LENGTH_MIN: "sentenceLengthMin",
   SENTENCE_LENGTH_MAX: "sentenceLengthMax",
+  CHARGE_COUNTY_CODE: "chargeCountyCode",
+  OFFENSE_TYPE: "offenseType",
 } as const;
 
 export const DIMENSION_TYPES = {
@@ -70,4 +72,6 @@ export const filtersOrder = [
   FILTER_TYPES.ETHNICITY,
   FILTER_TYPES.SENTENCE_LENGTH_MIN,
   FILTER_TYPES.SENTENCE_LENGTH_MAX,
+  FILTER_TYPES.CHARGE_COUNTY_CODE,
+  FILTER_TYPES.OFFENSE_TYPE,
 ];

@@ -88,6 +88,10 @@ export default class MetricsStore {
             this.prisonPopulationBySentenceLengthMin,
           [PATHWAYS_SECTIONS.countBySentenceLengthMax]:
             this.prisonPopulationBySentenceLengthMax,
+          [PATHWAYS_SECTIONS.countByChargeCountyCode]:
+            this.prisonPopulationByChargeCountyCode,
+          [PATHWAYS_SECTIONS.countByOffenseType]:
+            this.prisonPopulationByOffenseType,
           [PATHWAYS_SECTIONS.personLevelDetail]:
             this.prisonPopulationPersonLevel,
         },
@@ -324,6 +328,28 @@ export default class MetricsStore {
       endpoint: "PrisonPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "sentenceLengthMax",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+
+  get prisonPopulationByChargeCountyCode(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByChargeCountyCode",
+      endpoint: "PrisonPopulationByDimensionCount",
+      rootStore: this.rootStore,
+      accessor: "chargeCountyCode",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+
+  get prisonPopulationByOffenseType(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByOffenseType",
+      endpoint: "PrisonPopulationByDimensionCount",
+      rootStore: this.rootStore,
+      accessor: "offenseType",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });

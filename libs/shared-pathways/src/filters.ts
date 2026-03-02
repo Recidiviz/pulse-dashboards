@@ -51,7 +51,12 @@ export type DynamicFilterOptionMetadata = Record<
 export type DynamicFilterOptionMetadataKey =
   | "facility_id_name_map"
   | "race_id_name_map"
-  | "gender_id_name_map";
+  | "gender_id_name_map"
+  | "sentence_length_min_id_name_map"
+  | "sentence_length_max_id_name_map"
+  | "ethnicity_id_name_map"
+  | "offense_type_id_name_map"
+  | "charge_county_id_name_map";
 export type DynamicFilterOptionKeyToFilterTypeMap = {
   [key in DynamicFilterOptionMetadataKey]: FilterType;
 };
@@ -60,6 +65,11 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
     facility_id_name_map: "facility",
     race_id_name_map: "race",
     gender_id_name_map: "gender",
+    sentence_length_min_id_name_map: "sentenceLengthMin",
+    sentence_length_max_id_name_map: "sentenceLengthMax",
+    ethnicity_id_name_map: "ethnicity",
+    offense_type_id_name_map: "offenseType",
+    charge_county_id_name_map: "chargeCountyCode",
   };
 
 export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;

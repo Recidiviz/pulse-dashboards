@@ -92,6 +92,16 @@ const content: MetricCopy = {
     note: "Incarcerated population by max sentence length note",
     methodology: "Incarcerated population by max sentence length methodology",
   },
+  prisonPopulationByChargeCountyCode: {
+    title: "Incarcerated Population by Charge County",
+    note: "Incarcerated population by charge county note",
+    methodology: "Incarcerated population by charge county methodology",
+  },
+  prisonPopulationByOffenseType: {
+    title: "Incarcerated Population by Offense Type",
+    note: "Incarcerated population by offense type note",
+    methodology: "Incarcerated population by offense type methodology",
+  },
   prisonPopulationOverTime: {
     title: "Incarcerated Population",
     note: "Incarcerated population note",

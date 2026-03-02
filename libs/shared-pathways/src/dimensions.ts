@@ -33,6 +33,8 @@ type Dimensions = {
   [DIMENSION_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: string;
   [DIMENSION_TYPES.LENGTH_OF_STAY]: string;
   [DIMENSION_TYPES.OFFICER_NAME]: string;
+  [DIMENSION_TYPES.CHARGE_COUNTY_CODE]: string;
+  [DIMENSION_TYPES.OFFENSE_TYPE]: string;
 };
 
 export type Dimension = keyof Dimensions;
