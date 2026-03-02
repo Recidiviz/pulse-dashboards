@@ -5,11 +5,13 @@ import firebase_admin
 import redis.asyncio as redis
 import structlog
 import taskiq_fastapi
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi_pagination import add_pagination
 from fastapi_pagination.utils import disable_installed_extensions_check
 from prometheus_fastapi_instrumentator import Instrumentator
+from starlette.middleware.base import BaseHTTPMiddleware
 
 import app.models.assessment  # noqa
 import app.models.assessment_tree  # noqa
@@ -61,7 +63,7 @@ async def init_redis():
         await redis_client.ping()
         return redis_client
     except Exception as e:
-        print(f"Failed to connect to Redis: {str(e)}")
+        logger.error(f"Failed to connect to Redis: {str(e)}")
         return None
 
 
@@ -116,16 +118,7 @@ if settings.ENV_NAME != "pytest":
     setup_sentry()
 
 app = FastAPI(root_path="/api", lifespan=lifespan)
-ALLOWED_ORIGINS = settings.ALLOWED_ORIGINS.split(",")
-print(f"Processed ALLOWED_ORIGINS: {ALLOWED_ORIGINS}")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Content-Disposition"],
-)
+
 
 # Auth0 setup
 exclude_paths = [
@@ -154,10 +147,48 @@ setup_auth(
 )
 
 
-# Setup client authentication middleware
+# ErrorHandlingMiddleware catches unhandled exceptions and returns a 500 JSON
+# response.
+#
+# Note: @app.exception_handler(Exception) does not work here because Starlette
+# routes Exception (and HTTP 500) handlers to ServerErrorMiddleware, which sits
+# above all user middleware.
+#
+# Note: BaseHTTPMiddleware does not support streaming responses (it buffers the full body).
+class ErrorHandlingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        try:
+            return await call_next(request)
+        except Exception as exc:
+            logger.exception(f"Unhandled exception: {exc}")
+
+            error_text = "Internal server error."
+            if settings.ENV_NAME != "prod":
+                error_text += f" Error: {str(exc)}"
+            content = {"detail": error_text}
+
+            return JSONResponse(status_code=500, content=content)
+
+
+app.add_middleware(ErrorHandlingMiddleware)
+
+
 setup_client_auth(
     app,
     include_paths=["/external", "/intake/services"],
+)
+
+# CORSMiddleware must be the last added middleware,
+# so all responses get CORS headers.
+ALLOWED_ORIGINS = settings.ALLOWED_ORIGINS.split(",")
+logger.info(f"Processed ALLOWED_ORIGINS: {ALLOWED_ORIGINS}")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
 
 # Mount Socket.IO application
