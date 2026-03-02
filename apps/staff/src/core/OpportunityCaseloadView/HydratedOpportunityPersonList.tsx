@@ -125,9 +125,8 @@ import { TableViewToggle } from "./TableViewToggle";
 function formattedSupervisionLevel(
   opp: UsIdOverdueFaceToFaceContactOpportunity,
 ): string | undefined {
-  const raw =
-    opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
-      ?.supervisionLevel;
+  // TODO(#SPE-2529): Change supervision level source to opp record, not client record
+  const raw = opp.person.supervisionLevel;
   if (!raw) return undefined;
   return opp.person.rootStore.workflowsStore.formatSupervisionLevel(raw);
 }
@@ -916,6 +915,7 @@ const TableView = observer(function TableView({
         return "—";
       },
     },
+    // TODO(#SPE-2529): Change case type source to opp record, not client record
     {
       header: "Case Type",
       id: "US_ID_CASE_TYPE",
@@ -923,41 +923,14 @@ const TableView = observer(function TableView({
       sortingFn: "text",
       accessorFn: (opp: Opportunity) => {
         if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
-          return opp.record?.eligibleCriteria
-            ?.usIdMeetsOverdueFaceToFaceContactAlert?.caseType;
+          return opp.person.caseType;
         }
       },
       cell: ({ row }: { row: Row<Opportunity> }) => {
         const opp = row.original;
         if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
-          const caseType =
-            opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
-              ?.caseType;
+          const caseType = opp.person.caseType;
           return caseType ? toTitleCase(toHumanReadable(caseType)) : "—";
-        }
-        return "—";
-      },
-    },
-    {
-      header: "Last Contact Due Date",
-      id: "US_ID_NEXT_CONTACT_DUE_DATE",
-      enableSorting: true,
-      sortingFn: "datetime",
-      accessorFn: (opp: Opportunity) => {
-        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
-          return opp.record?.eligibleCriteria
-            ?.usIdMeetsOverdueFaceToFaceContactAlert?.contactRequiredStartDate;
-        }
-      },
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        const opp = row.original;
-        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
-          const contactRequiredStartDate =
-            opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
-              ?.contactRequiredStartDate;
-          if (contactRequiredStartDate) {
-            return formatWorkflowsDate(contactRequiredStartDate);
-          }
         }
         return "—";
       },

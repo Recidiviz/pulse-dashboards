@@ -22,11 +22,10 @@ import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 const usIdOverdueFaceToFaceContactCriteriaSchema = z.object({
   usIdMeetsOverdueFaceToFaceContactAlert: z
     .object({
-      caseType: z.string().nullable(),
+      caseType: z.string().nullish(),
       lastContactDate: dateStringSchema.nullable(),
       overdueForContactAlertDate: dateStringSchema.nullable().optional(),
-      contactRequiredStartDate: dateStringSchema.nullable(),
-      supervisionLevel: z.string().nullable(),
+      supervisionLevel: z.string().nullish(),
     })
     .optional(),
 });
@@ -35,7 +34,6 @@ export const usIdOverdueFaceToFaceContactSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: usIdOverdueFaceToFaceContactCriteriaSchema.passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
-    contactRequiredStartDate: dateStringSchema.nullable(),
     lastContactDate: dateStringSchema.nullable(),
   })
   .passthrough();
