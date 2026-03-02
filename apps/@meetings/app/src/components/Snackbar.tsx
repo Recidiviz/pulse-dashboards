@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Text, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -95,10 +95,10 @@ export const SnackbarProvider = ({ children }: Props) => {
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
     position: "absolute",
-    left: 64,
-    right: 64,
-    top: 128,
     zIndex: 50,
+    ...(Platform.OS === "web"
+      ? { left: 20, bottom: 20 }
+      : { left: 64, right: 64, top: 128 }),
   }));
 
   return (

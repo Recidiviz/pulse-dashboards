@@ -29,14 +29,17 @@ type MeetingRouteProp = RouteProp<RootStackParamList, "ResidentMeeting">;
 const ResidentMeetingScreen = () => {
   const route = useRoute<MeetingRouteProp>();
   const meetingId = route.params?.meetingId || "";
-  const { data: meetingDetails, isLoading: isMeetingDetailsLoading } = useMeetingDetails(meetingId);
-  const { data: resident, isLoading: isResidentLoading } = trpc.v1.resident.get.useQuery(
-    { personId: BigInt(route.params?.personId || 0) },
-    { enabled: !!route.params?.personId },
-  );
+  const { data: meetingDetails, isLoading: isMeetingDetailsLoading } =
+    useMeetingDetails(meetingId);
+  const { data: resident, isLoading: isResidentLoading } =
+    trpc.v1.resident.get.useQuery(
+      { personId: BigInt(route.params?.personId || 0) },
+      { enabled: !!route.params?.personId },
+    );
 
-  if (isMeetingDetailsLoading || isResidentLoading) return <Loading message="Loading..." />;
-  if (!resident) return null;
+  if (isMeetingDetailsLoading || isResidentLoading)
+    return <Loading message="Loading..." />;
+  if (!resident || !meetingDetails) return null;
 
   return (
     <Meeting

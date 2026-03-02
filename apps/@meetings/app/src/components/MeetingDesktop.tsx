@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -130,7 +131,7 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
 
 type Props = {
   meetingId: string;
-  meetingDetails?: MeetingDetails;
+  meetingDetails: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
   showTranscription?: boolean;
@@ -145,12 +146,12 @@ const MeetingDesktop = ({
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
 
-  const meetingDate = meetingDetails?.startTime
+  const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
     : "";
   const { time, duration } = formatMeetingDuration({
-    startDate: meetingDetails?.startTime || null,
-    endDate: meetingDetails?.endTime || null,
+    startDate: meetingDetails.startTime || null,
+    endDate: meetingDetails.endTime || null,
   });
 
   return (
@@ -212,18 +213,18 @@ const MeetingDesktop = ({
           <View className="gap-3 px-10 py-6">
             <DraftCaseNote
               meetingId={meetingId}
-              notes={meetingDetails?.caseNote || ""}
+              notes={meetingDetails.caseNote || ""}
             />
           </View>
         </View>
 
-        <View className="flex-1 gap-4 px-14 pt-8">
-          <View className="w-full flex-row items-center justify-between">
+        <View className="flex-1 gap-4 pt-8">
+          <View className="w-full flex-row items-center justify-between px-14">
             <View className="w-[300px] print:hidden">
               <MeetingTabs
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
-                isTranscriptionUnavailable={!meetingDetails?.transcription}
+                isTranscriptionUnavailable={!meetingDetails.transcription}
                 showTranscription={showTranscription}
               />
             </View>
@@ -244,32 +245,29 @@ const MeetingDesktop = ({
             </View>
           </View>
 
-          <View className="mx-auto w-full flex-1">
-            {activeTab === Tab.Notes && (
-              <MeetingNotesTab
-                notes={meetingDetails?.userNotepadNotes}
-                actionItems={meetingDetails?.actionItems}
-                criticalUpdates={meetingDetails?.criticalUpdates}
-                meetingSummary={meetingDetails?.meetingSummary}
-              />
-            )}
-            {activeTab === Tab.Transcription &&
-              showTranscription &&
-              meetingDetails?.transcription && (
-                <MeetingTranscriptionTab
-                  transcription={{
-                    ...meetingDetails.transcription,
-                    utterances: meetingDetails.transcription.utterances.map(
-                      (u) => ({
-                        ...u,
-                        confidence: u.confidence ?? 0,
-                        speaker: u.speaker ?? "Unknown",
-                      }),
-                    ),
-                  }}
-                />
+          <ScrollView className="flex-1" contentContainerClassName="grow px-14">
+            <View className="mx-auto w-full flex-1">
+              {activeTab === Tab.Notes && (
+                <MeetingNotesTab meetingDetails={meetingDetails} />
               )}
-          </View>
+              {activeTab === Tab.Transcription &&
+                showTranscription &&
+                meetingDetails?.transcription && (
+                  <MeetingTranscriptionTab
+                    transcription={{
+                      ...meetingDetails.transcription,
+                      utterances: meetingDetails.transcription.utterances.map(
+                        (u) => ({
+                          ...u,
+                          confidence: u.confidence ?? 0,
+                          speaker: u.speaker ?? "Unknown",
+                        }),
+                      ),
+                    }}
+                  />
+                )}
+            </View>
+          </ScrollView>
         </View>
       </View>
     </View>

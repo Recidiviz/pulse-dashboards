@@ -24,7 +24,7 @@ import MeetingMobile from "../components/MeetingMobile";
 
 type Props = {
   meetingId: string;
-  meetingDetails?: MeetingDetails;
+  meetingDetails: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
 };
@@ -34,7 +34,7 @@ const Meeting = ({ meetingId, meetingDetails, person, personType }: Props) => {
   const showTranscription = meetingDetails?.transcription !== undefined;
   return (
     <SafeAreaView className="flex-1 grow bg-white">
-      <View className="flex-1 grow md:hidden">
+      <View className="flex-1 grow lg:hidden">
         <MeetingMobile
           meetingId={meetingId}
           meetingDetails={meetingDetails}
@@ -43,7 +43,7 @@ const Meeting = ({ meetingId, meetingDetails, person, personType }: Props) => {
           showTranscription={showTranscription}
         />
       </View>
-      <View className="hidden flex-1 grow md:flex">
+      <View className="hidden flex-1 grow lg:flex">
         <MeetingDesktop
           meetingId={meetingId}
           meetingDetails={meetingDetails}

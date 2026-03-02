@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import React, { useCallback, useRef, useState } from "react";
 import {
   Alert,
   Image,
+  Platform,
   Share,
   Text,
   TouchableOpacity,
@@ -49,10 +50,11 @@ import {
   formatMeetingStartDate,
   humanReadableTitleCase,
 } from "../utils/format";
+import MeetingNotesSheet from "./MeetingNotesSheet";
 
 type Props = {
   meetingId: string;
-  meetingDetails?: MeetingDetails;
+  meetingDetails: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
   showTranscription?: boolean;
@@ -69,6 +71,7 @@ const MeetingMobile = ({
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
   const scrollY = useSharedValue(0);
   const draftCaseNoteSheetRef = useRef<BottomSheet>(null);
+  const meetingNotesSheetRef = useRef<BottomSheet>(null);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -79,8 +82,12 @@ const MeetingMobile = ({
     draftCaseNoteSheetRef.current?.snapToIndex(1);
   }, []);
 
+  const handleMeetingNotesSheetOpen = useCallback(() => {
+    meetingNotesSheetRef.current?.snapToIndex(1);
+  }, []);
+
   const handleCopyNotes = () => {
-    Clipboard.setString(meetingDetails?.userNotepadNotes || "");
+    Clipboard.setString(meetingDetails.caseNote || "");
     showSnackbar("Case note copied to clipboard");
   };
 
@@ -139,11 +146,11 @@ const MeetingMobile = ({
   }));
 
   const onShare = async () => {
-    if (!meetingDetails?.userNotepadNotes) return;
+    if (!meetingDetails.caseNote) return;
 
     try {
       const result = await Share.share({
-        message: meetingDetails.userNotepadNotes,
+        message: meetingDetails.caseNote,
       });
 
       if (result.action === Share.sharedAction) {
@@ -166,12 +173,12 @@ const MeetingMobile = ({
     }
   };
 
-  const meetingDate = meetingDetails?.startTime
+  const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
     : "";
   const { time, duration } = formatMeetingDuration({
-    startDate: meetingDetails?.startTime || null,
-    endDate: meetingDetails?.endTime || null,
+    startDate: meetingDetails.startTime || null,
+    endDate: meetingDetails.endTime || null,
   });
 
   return (
@@ -220,7 +227,7 @@ const MeetingMobile = ({
             <MeetingTabs
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              isTranscriptionUnavailable={!meetingDetails?.transcription}
+              isTranscriptionUnavailable={!meetingDetails.transcription}
               showTranscription={showTranscription}
             />
           </Animated.View>
@@ -294,7 +301,7 @@ const MeetingMobile = ({
                   ellipsizeMode="tail"
                   className="font-inter text-sm font-normal text-primary"
                 >
-                  {meetingDetails?.caseNote || "Type your notes here..."}
+                  {meetingDetails.caseNote ?? "Type your notes here..."}
                 </Text>
               </BottomSheetTouchableOpacity>
             </View>
@@ -321,13 +328,11 @@ const MeetingMobile = ({
           contentContainerClassName="grow"
           scrollEventThrottle={16}
         >
-          <View className="mx-auto w-full max-w-[960px] flex-1">
+          <View className="mx-auto mt-4 w-full max-w-[960px] flex-1">
             {activeTab === Tab.Notes && (
               <MeetingNotesTab
-                notes={meetingDetails?.userNotepadNotes}
-                actionItems={meetingDetails?.actionItems}
-                criticalUpdates={meetingDetails?.criticalUpdates}
-                meetingSummary={meetingDetails?.meetingSummary}
+                meetingDetails={meetingDetails}
+                onMeetingNotesSheetOpen={handleMeetingNotesSheetOpen}
               />
             )}
             {activeTab === Tab.Transcription &&
@@ -349,16 +354,24 @@ const MeetingMobile = ({
           </View>
         </Animated.ScrollView>
       </Animated.View>
-
-      <View className="absolute size-full print:hidden" pointerEvents="none">
-        <DraftCaseNoteSheet
-          meetingId={meetingId}
-          notes={meetingDetails?.caseNote || ""}
-          clientName={person.fullName}
-          meetingDate={meetingDetails?.startTime}
-          ref={draftCaseNoteSheetRef}
-        />
-      </View>
+      {/* TODO: bottom sheets mess the web print feature,
+      we need to discuss what to do with them on narrow web */}
+      {Platform.OS !== "web" && (
+        <>
+          <DraftCaseNoteSheet
+            meetingId={meetingId}
+            notes={meetingDetails?.caseNote || ""}
+            clientName={person.fullName}
+            meetingDate={meetingDetails?.startTime}
+            ref={draftCaseNoteSheetRef}
+          />
+          <MeetingNotesSheet
+            meetingDetails={meetingDetails}
+            clientName={person.fullName}
+            bottomSheetRef={meetingNotesSheetRef}
+          />
+        </>
+      )}
     </View>
   );
 };
