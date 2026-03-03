@@ -17,24 +17,44 @@
 
 import { keepPreviousData } from "@tanstack/react-query";
 
+import { ClientMeetings, ResidentMeetings } from "../common/types";
 import { trpc } from "../trpc/client";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 
 type Params = {
   personId: bigint;
+  personType: "client" | "resident";
 };
 
-export function useMeetings({ personId }: Params) {
-  return trpc.v1.client.getMeetings.useQuery(
-      { clientId: personId },
-      { enabled: !!personId,
-        refetchInterval: ({ state }) => {
-          const hasMeetingInProgress = state.data?.some((meeting) => 
-            isMeetingProcessing(meeting.postMeetingProcessingStatus)
-          );
-          return hasMeetingInProgress ? 5000 : false;
-        },
-        placeholderData: keepPreviousData,
-      },
+export function useMeetings({ personId, personType }: Params) {
+  const refetchInterval = ({
+    state,
+  }: {
+    state: { data?: ClientMeetings | ResidentMeetings };
+  }) => {
+    const hasMeetingInProgress = state.data?.some((meeting) =>
+      isMeetingProcessing(meeting.postMeetingProcessingStatus),
     );
+    return hasMeetingInProgress ? 5000 : false;
+  };
+
+  const clientQuery = trpc.v1.client.getMeetings.useQuery(
+    { clientId: personId },
+    {
+      enabled: personType === "client" && !!personId,
+      refetchInterval,
+      placeholderData: keepPreviousData,
+    },
+  );
+
+  const residentQuery = trpc.v1.resident.getMeetings.useQuery(
+    { residentId: personId },
+    {
+      enabled: personType === "resident" && !!personId,
+      refetchInterval,
+      placeholderData: keepPreviousData,
+    },
+  );
+
+  return personType === "resident" ? residentQuery : clientQuery;
 }

@@ -60,7 +60,7 @@ const ResidentProfileScreen = ({ person }: ProfileScreenProps) => {
     isLoading,
     error,
     refetch,
-  } = useMeetings({ personId: person.personId });
+  } = useMeetings({ personId: person.personId, personType: "resident" });
 
   const createMeetingMutation = trpc.v1.resident.createMeeting.useMutation();
   const handleCreateMeeting = async () => {
