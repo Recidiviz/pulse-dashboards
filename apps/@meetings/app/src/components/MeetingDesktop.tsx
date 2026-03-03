@@ -35,6 +35,7 @@ import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
+import { usePrintMeetingDetails } from "../hooks/usePrintMeetingDetails";
 import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
 import {
   formatMeetingDuration,
@@ -154,6 +155,14 @@ const MeetingDesktop = ({
     endDate: meetingDetails.endTime || null,
   });
 
+  const handlePrint = usePrintMeetingDetails({
+    person,
+    meetingDetails,
+    meetingDate,
+    time,
+    duration,
+  });
+
   return (
     <View className="flex-1 grow">
       <Header />
@@ -230,7 +239,7 @@ const MeetingDesktop = ({
             </View>
             <View className="flex-row gap-3">
               <TouchableOpacity
-                onPress={window.print}
+                onPress={handlePrint}
                 className="flex-row items-center gap-1.5 rounded-full border border-[#35536233] px-4 py-3"
               >
                 <Image
