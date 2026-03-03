@@ -85,7 +85,6 @@ class SocketIOManager:
         self.db_manager = database_manager
         self.conversation_graphs: Dict[str, IntakeConversationGraph | None] = {}
         self.pending_responses = {}
-        self.graph_tasks: Dict[str, asyncio.Task] = {}  # Track running graph tasks
 
         self._register_event_handlers()
 
@@ -165,8 +164,25 @@ class SocketIOManager:
                                 )
                             )
                             if was_connected_elsewhere:
-                                # Client was connected elsewhere, clean up existing graph
-                                await self.handle_disconnect_client(client_pseudo_id)
+                                # Client was connected elsewhere — graph keeps running,
+                                # handle_conversation_state will reattach to it.
+                                logger.info(
+                                    f"Client {client_pseudo_id} reconnected (was connected elsewhere); "
+                                    "reattaching to existing graph"
+                                )
+
+                            if intake and intake.status == IntakeStatus.COMPLETED:
+                                await self.send_event_sid(
+                                    sid,
+                                    ConnectionAckEvent(
+                                        content=ConnectionAckContent(
+                                            accepted=False,
+                                            error="Intake is already completed",
+                                        )
+                                    ),
+                                )
+                                return False
+
                             if intake and intake.status != IntakeStatus.COMPLETED:
                                 if intake.status == IntakeStatus.CREATED:
                                     intake = await self.db_manager.update_intake_status(
@@ -182,15 +198,28 @@ class SocketIOManager:
                                     ),
                                 )
 
-                                task = asyncio.create_task(
-                                    self.handle_conversation_state(
-                                        intake, client_data, sid
+                                if (
+                                    was_connected_elsewhere
+                                    and client_pseudo_id in self.conversation_graphs
+                                ):
+                                    # Graph is still running — reattach directly without
+                                    # creating a new task.
+                                    await self._handle_client_reconnect(
+                                        client_pseudo_id
                                     )
-                                )
-                                self.graph_tasks[client_pseudo_id] = task
+                                else:
+                                    asyncio.create_task(
+                                        self.handle_conversation_state(
+                                            intake, client_data, sid
+                                        )
+                                    )
+
                                 return True
 
             # Always acknowledge the connection via sid - this works even if token is invalid
+            logger.warning(
+                f"Rejecting connection sid={sid} client_pseudo_id={client_pseudo_id or 'unknown'} auth_token_present={bool(auth and auth.get('auth_token'))}"
+            )
             await self.send_event_sid(
                 sid,
                 ConnectionAckEvent(
@@ -209,7 +238,7 @@ class SocketIOManager:
             return False
 
     async def wait_for_user_response(
-        self, client_pseudo_id: str, message: IntakeMessage
+        self, client_pseudo_id: str, message: IntakeMessage, timeout: int = 1800
     ):
         """
         Wait for a user response with timeout.
@@ -251,7 +280,7 @@ class SocketIOManager:
             )
 
             # Wait for response with timeout
-            response = await asyncio.wait_for(response_future, 1800)
+            response = await asyncio.wait_for(response_future, timeout)
 
             logger.info(f"Received response from client {client_pseudo_id}")
             return response
@@ -322,21 +351,11 @@ class SocketIOManager:
         # Store the graph for future reference
         self.conversation_graphs[client_pseudo_id] = graph
 
-        current_task = asyncio.current_task()
-
         try:
             await graph.run_assessment()
         finally:
             # Cleanup when done (success, error, or cancellation)
             logger.info(f"Graph execution finished for {client_pseudo_id}")
-            if client_pseudo_id in self.graph_tasks:
-                if self.graph_tasks[client_pseudo_id] is current_task:
-                    del self.graph_tasks[client_pseudo_id]
-                else:
-                    logger.info(
-                        f"Skipping graph_tasks cleanup - newer task exists for {client_pseudo_id}"
-                    )
-
             if client_pseudo_id in self.conversation_graphs:
                 if self.conversation_graphs[client_pseudo_id] is graph:
                     del self.conversation_graphs[client_pseudo_id]
@@ -372,9 +391,9 @@ class SocketIOManager:
             # Check if we already have a conversation graph for this client
             if client_pseudo_id in self.conversation_graphs:
                 logger.info(
-                    f"Already have a conversation graph for client {client_pseudo_id}"
+                    f"Reattaching to existing graph for client {client_pseudo_id}"
                 )
-                # If we do, return - no need to create a new one
+                await self._handle_client_reconnect(client_pseudo_id)
                 return
 
             # For all other statuses (IN_PROGRESS, PAUSED, etc.), resume the conversation
@@ -389,16 +408,43 @@ class SocketIOManager:
         except Exception as e:
             traceback.print_exc()
             logger.error(f"Error handling conversation state: {e}")
-            return
-        finally:
-            if client_pseudo_id in self.graph_tasks:
-                current_task = asyncio.current_task()
-                if self.graph_tasks[client_pseudo_id] is current_task:
-                    if client_pseudo_id not in self.conversation_graphs:
-                        logger.info(
-                            f"Cleaning up task reference for {client_pseudo_id} (no graph created)"
-                        )
-                        del self.graph_tasks[client_pseudo_id]
+
+    async def _handle_client_reconnect(self, client_pseudo_id: str) -> None:
+        """
+        Handle reconnection to an existing graph.
+
+        If the graph is already waiting for user input (pending future exists),
+        re-deliver the last AI question so the client knows what to respond to.
+        If the graph is still running an LLM call (no pending future yet), the
+        client will receive messages via the room automatically once the graph emits.
+        """
+        pending = self.pending_responses.get(client_pseudo_id)
+        if pending and not pending.done():
+            # Graph is blocked in wait_for_user_response — re-deliver the last question
+            intake = await self.db_manager.get_intake(client_pseudo_id)
+            if intake:
+                latest_message = (
+                    await self.db_manager.get_latest_non_welcome_ai_message(intake.id)
+                )
+                if latest_message:
+                    await self.send_event_client_pseudo_id(
+                        client_pseudo_id,
+                        AIMessageEvent(
+                            content=IntakeMessageResponse(
+                                **latest_message.model_dump(), requires_response=True
+                            )
+                        ),
+                    )
+                    logger.info(
+                        f"Re-delivered pending question to reconnected client {client_pseudo_id}"
+                    )
+        else:
+            # Graph is still processing (LLM call in progress). Once it finishes,
+            # it will emit to the room and reach the newly registered socket automatically.
+            logger.info(
+                f"Client {client_pseudo_id} reconnected while graph is processing; "
+                "messages will arrive via room"
+            )
 
     async def handle_disconnect_client(self, client_pseudo_id) -> None:
         logger.info(f"Cleaning up resources for disconnected client {client_pseudo_id}")
@@ -408,13 +454,6 @@ class SocketIOManager:
             if not self.pending_responses[client_pseudo_id].done():
                 self.pending_responses[client_pseudo_id].cancel()
                 del self.pending_responses[client_pseudo_id]
-
-        if client_pseudo_id in self.graph_tasks:
-            task = self.graph_tasks[client_pseudo_id]
-            if not task.done():
-                logger.warning(f"Cancelling running graph task for {client_pseudo_id}")
-                task.cancel()
-            del self.graph_tasks[client_pseudo_id]
 
         # Safely delete graph reference
         if client_pseudo_id in self.conversation_graphs:
@@ -438,7 +477,9 @@ class SocketIOManager:
             await self.client_connection_manager.disconnect_client(sid)
 
             if client_pseudo_id:
-                await self.handle_disconnect_client(client_pseudo_id)
+                logger.info(
+                    f"Client {client_pseudo_id} disconnected; graph continues running until timeout"
+                )
             else:
                 logger.warning(f"No client ID found for disconnecting socket {sid}")
 
@@ -553,10 +594,7 @@ class SocketIOManager:
                 del self.conversation_graphs[client_pseudo_id]
 
             # Reinitialize the conversation graph and track the task
-            task = asyncio.create_task(
-                self._init_and_run_graph(intake, client_data, sid)
-            )
-            self.graph_tasks[client_pseudo_id] = task
+            asyncio.create_task(self._init_and_run_graph(intake, client_data, sid))
 
             # Return the message for acknowledgment
             # Create the IntakeMessageResponse and then model_dump it

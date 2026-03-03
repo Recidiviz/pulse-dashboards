@@ -314,13 +314,13 @@ async def test_init_and_run_graph(
 async def test_handle_disconnect(
     socket_manager, mock_socketio_server, mock_client_connection_manager
 ):
-    """Test client disconnection with session."""
+    """Test that disconnection cleans up the socket mapping but keeps the graph running."""
     sid = "test_sid"
 
     # Set up the test to return a valid client_pseudo_id
     mock_socketio_server.get_session.return_value = "test_client"
 
-    # Add a conversation graph to be removed
+    # Add a conversation graph and pending response
     socket_manager.conversation_graphs["test_client"] = "test_graph"
 
     # Create a proper future object for the pending response
@@ -329,14 +329,47 @@ async def test_handle_disconnect(
 
     await socket_manager.handle_disconnect(sid)
 
-    # Verify client connection manager was called
+    # Verify client connection manager was called to clean up the socket mapping
     mock_client_connection_manager.disconnect_client.assert_called_once_with(sid)
 
-    # Verify conversation graph was removed
-    assert "test_client" not in socket_manager.conversation_graphs
+    # Verify conversation graph is kept running after disconnect
+    assert "test_client" in socket_manager.conversation_graphs
 
-    # Verify pending responses was removed
-    assert "test_client" not in socket_manager.pending_responses
+    # Verify pending response is kept so the graph can resume on reconnect
+    assert "test_client" in socket_manager.pending_responses
+
+
+@pytest.mark.asyncio
+async def test_wait_for_user_response_timeout_cleans_up(
+    socket_manager, mock_client_connection_manager, mock_db_manager
+):
+    """Test that when the response future times out, graph state is cleaned up."""
+    client_pseudo_id = "test_client"
+
+    mock_message = Mock()
+    mock_message.model_dump.return_value = {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "content": "What do you like to do for fun?",
+        "from_role": "caseworker",
+        "section": "Leisure/Recreation",
+        "created_at": "2026-01-01T00:00:00",
+        "updated_at": "2026-01-01T00:00:00",
+    }
+
+    socket_manager.conversation_graphs[client_pseudo_id] = Mock()
+
+    await socket_manager.wait_for_user_response(
+        client_pseudo_id, mock_message, timeout=0.01
+    )
+
+    # Verify graph state is fully cleaned up after timeout
+    assert client_pseudo_id not in socket_manager.conversation_graphs
+    assert client_pseudo_id not in socket_manager.pending_responses
+
+    # Verify the socket connection is also torn down
+    mock_client_connection_manager.disconnect_client_pseudo_id.assert_called_once_with(
+        client_pseudo_id
+    )
 
 
 @pytest.mark.asyncio

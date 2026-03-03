@@ -753,7 +753,7 @@ export function IntakeSocketProvider({
     dispatch({ type: "connecting" });
 
     // Set authentication and reconnect
-    socket.auth = { token: storedToken };
+    socket.auth = { auth_token: storedToken, token_from_url: tokenFromUrl };
 
     // Use a small timeout to ensure disconnect completes
     setTimeout(() => {
@@ -775,6 +775,7 @@ export function IntakeSocketProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     storedToken,
+    tokenFromUrl,
     intakeContext.connectionStatus,
     intakeContext.disconnectReason,
   ]);
