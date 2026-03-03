@@ -136,6 +136,12 @@ export function sortByLabel(
     if (a[labelKey] === "All") return -1;
     if (b[labelKey] === "All") return 1;
 
+    const lastLabels = ["Unknown", "Not coded"];
+    const aIsLast = lastLabels.includes(a[labelKey]);
+    const bIsLast = lastLabels.includes(b[labelKey]);
+    if (aIsLast && !bIsLast) return 1;
+    if (!aIsLast && bIsLast) return -1;
+
     return desc
       ? b[labelKey].localeCompare(a[labelKey], "en", { numeric: true })
       : a[labelKey].localeCompare(b[labelKey], "en", { numeric: true });
