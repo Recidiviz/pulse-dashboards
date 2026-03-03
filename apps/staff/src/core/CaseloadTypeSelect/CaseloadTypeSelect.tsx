@@ -54,20 +54,28 @@ const CaseloadTypeSelect = observer(
     );
     if (searchTitles.length === 1) return null;
 
+    // If we're currently on the home page, show all possible search types, since
+    // users can access both supervision and incarceration search from the home page.
+    // Otherwise, only show pills for systems that are currently active and
+    // have multiple search types.
+    const visibleSystems = systems.filter(
+      (system) =>
+        workflowsStore.activePage.page === "home" ||
+        (systemConfigFor(system).search.length !== 1 &&
+          workflowsStore.activeSystem === system),
+    );
+
     return (
       <>
-        {systems.map((system) => {
-          if (
-            (systemConfigFor(system).search.length === 1 &&
-              workflowsStore.activePage.page !== "home") ||
-            (workflowsStore.activePage.page !== "home" &&
-              workflowsStore.activeSystem !== system)
-          )
-            return null;
+        {visibleSystems.map((system) => {
           return systemConfigFor(system).search.map((searchConfig) => (
             <PillButton
               onClick={() =>
-                handleSearchPillClick(searchConfig.searchType, system)
+                handleSearchPillClick(
+                  searchConfig.searchType,
+                  system,
+                  visibleSystems,
+                )
               }
               active={searchType === searchConfig.searchType}
             >

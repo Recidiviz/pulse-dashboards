@@ -18,7 +18,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 
+import { JiiStaffAppRouterInputs } from "~@jii/trpc-types";
+
 import { useRootStore } from "../../components/StoreProvider";
+import { Location } from "../../WorkflowsStore/Location";
+import { Officer } from "../../WorkflowsStore/Officer";
 import {
   EmptyStateText,
   EmptyStateWrapper,
@@ -26,39 +30,66 @@ import {
 import { RNATable } from "./UsNcRNATable";
 
 export const RNAListQuerier = observer(function RNAListQuerier() {
-  const { workflowsStore } = useRootStore();
+  const {
+    workflowsStore: { searchStore },
+  } = useRootStore();
 
-  if (
-    workflowsStore.searchStore.searchType !== "FACILITY" ||
-    workflowsStore.searchStore.selectedSearchIds.length === 0
-  ) {
+  const searchedForFacility = searchStore.selectedSearchables.some(
+    (s) => s instanceof Location,
+  );
+  const searchedForOfficer = searchStore.selectedSearchables.some(
+    (s) => s instanceof Officer,
+  );
+
+  if (searchedForFacility && searchedForOfficer) {
+    // TODO(#12294): handle this case if needed
     return (
       <EmptyStateWrapper>
-        <EmptyStateText>Please select a facility above.</EmptyStateText>
+        <EmptyStateText>
+          Please select only facilities or only case managers above.
+        </EmptyStateText>
+      </EmptyStateWrapper>
+    );
+  } else if (searchedForFacility) {
+    return (
+      <RNAQuerier
+        lookupField={"facilityId"}
+        ids={searchStore.selectedSearchIds}
+      />
+    );
+  } else if (searchedForOfficer) {
+    return (
+      <RNAQuerier
+        lookupField={"officerId"}
+        ids={searchStore.selectedSearchIds}
+      />
+    );
+  } else {
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateText>Please select a caseload above.</EmptyStateText>
       </EmptyStateWrapper>
     );
   }
-
-  return (
-    <RNAFacilityQuerier
-      facilityIds={workflowsStore.searchStore.selectedSearchIds}
-    />
-  );
 });
 
+type LookupField =
+  JiiStaffAppRouterInputs["staff"]["usNc"]["rnaStatusList"]["lookupField"];
+
 type QuerierProps = {
-  facilityIds: Array<string>;
+  ids: Array<string>;
+  lookupField: LookupField;
 };
 
-function RNAFacilityQuerier({ facilityIds }: QuerierProps) {
+function RNAQuerier({ ids, lookupField }: QuerierProps) {
   const {
     jiiTrpc: { querier },
   } = useRootStore();
 
   const { data, refetch } = useSuspenseQuery(
     querier.staff.usNc.rnaStatusList.queryOptions({
-      lookupField: "facilityId",
-      lookupValue: facilityIds,
+      lookupField,
+      lookupValue: ids,
     }),
   );
 

@@ -376,24 +376,41 @@ export class SearchStore {
     return callbackFn(defaultTitle);
   }
 
-  handleSearchPillClick(searchType: SearchType, system: SystemId): void {
+  /**
+   * Handle a click on a search pill, either selecting the pill if it isn't currently
+   * selected or de-selecting it (and possibly resetting the active system) if it is.
+   */
+  handleSearchPillClick(
+    searchType: SearchType,
+    system: SystemId,
+    allVisibleSystems: SystemId[],
+  ): void {
     const { updateActiveSystem } = this.workflowsStore;
 
     // Updating the active system and searchTypeOverride narrows down the
-    // availableSearchables to match the selected search pill
+    // availableSearchables to match the selected search pill.
 
-    // Clicking on the currently selected pill de-selects it
-    // Do not clear the selected search ids
     if (this.searchTypeOverride === searchType) {
+      // Clicking on the currently selected pill de-selects it
       this.setSearchTypeOverride(undefined);
-      updateActiveSystem("ALL");
-      return;
+
+      // Do not clear the selected search ids
+
+      // Update the active system to the user's only system if they can only see
+      // one system on this page, or "ALL" otherwise
+      const nextActiveSystem =
+        allVisibleSystems.length === 1 ? allVisibleSystems[0] : "ALL";
+      updateActiveSystem(nextActiveSystem);
     } else {
       // Clicking on a pill that is not currently selected:
+
       // selects the new pill
       this.setSearchTypeOverride(searchType);
+
       // clears the selected search ids since the search type changes
       this.updateSelectedSearch([]);
+
+      // update the active system based on the selected pill
       updateActiveSystem(system);
     }
   }

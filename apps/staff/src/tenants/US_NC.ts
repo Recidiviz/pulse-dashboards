@@ -45,6 +45,11 @@ const US_NC_CONFIG: TenantConfig<"US_NC"> = {
           searchField: ["facilityId"],
           searchTitle: "facility",
         },
+        {
+          searchType: "INCARCERATION_OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "case manager",
+        },
       ],
     },
   },

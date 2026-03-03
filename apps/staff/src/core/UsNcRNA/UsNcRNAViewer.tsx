@@ -25,6 +25,7 @@ import { palette } from "~design-system";
 import Loading from "../../components/Loading";
 import useIsMobile from "../../hooks/useIsMobile";
 import { CaseloadSelect } from "../CaseloadSelect";
+import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import ErrorBoundary from "../ErrorBoundary";
 import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
@@ -39,6 +40,7 @@ export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
   const { isMobile } = useIsMobile(true);
   return (
     <WorkflowsNavLayout limitedWidth={false}>
+      <CaseloadTypeSelect />
       <CaseloadSelect />
       <Heading isMobile={isMobile}>RNA Self-Report Manager</Heading>
       <SubHeading>

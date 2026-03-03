@@ -746,47 +746,60 @@ describe("trackCaseloadSearch - default caseload", () => {
       expect(mockTrackCaseloadSearch).not.toHaveBeenCalled();
     });
   });
+});
 
-  describe("handleSearchPillClick", () => {
-    const updateActiveSystemConfigMock = vi.fn();
+describe("handleSearchPillClick", () => {
+  const updateActiveSystemConfigMock = vi.fn();
 
-    beforeEach(() => {
-      workflowsStore.activeSystemConfig = {
-        search: [{ searchType: "FACILITY" }],
-      };
-      workflowsStore.activeSystem = "ALL";
-      workflowsStore.activePage = { page: "home" };
-      workflowsStore.user = {
-        ...mockOfficer,
-        updates: {
-          ...(mockOfficer.updates as UserUpdateRecord),
-          selectedSearchIds: "ID1",
-        },
-      };
-      workflowsStore.updateActiveSystem = updateActiveSystemConfigMock;
-      searchStore.setSearchTypeOverride("FACILITY");
-      vi.resetAllMocks();
-    });
+  beforeEach(() => {
+    workflowsStore.activeSystemConfig = {
+      search: [{ searchType: "FACILITY" }],
+    };
+    workflowsStore.activeSystem = "ALL";
+    workflowsStore.activePage = { page: "home" };
+    workflowsStore.user = {
+      ...mockOfficer,
+      updates: {
+        ...(mockOfficer.updates as UserUpdateRecord),
+        selectedSearchIds: "ID1",
+      },
+    };
+    workflowsStore.updateActiveSystem = updateActiveSystemConfigMock;
+    searchStore.setSearchTypeOverride("FACILITY");
+    vi.resetAllMocks();
+  });
 
-    test("when currently selected pill was clicked", () => {
-      searchStore.handleSearchPillClick("FACILITY", "INCARCERATION");
-      expect(searchStore.searchTypeOverride).toBeUndefined();
-      expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
-      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("ALL");
-    });
+  test("when currently selected pill was clicked", () => {
+    searchStore.handleSearchPillClick("FACILITY", "INCARCERATION", [
+      "INCARCERATION",
+    ]);
+    expect(searchStore.searchTypeOverride).toBeUndefined();
+    expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
+    // active system should remain "INCARCERATION" even if search type was de-selected
+    expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("INCARCERATION");
+  });
 
-    test("when not-currently selected pill was clicked", () => {
-      searchStore.handleSearchPillClick("OFFICER", "INCARCERATION");
-      expect(searchStore.searchTypeOverride).toEqual("OFFICER");
-      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([]);
-    });
+  test("when currently selected pill was clicked and user can see multiple systems", () => {
+    searchStore.handleSearchPillClick("FACILITY", "INCARCERATION", [
+      "INCARCERATION",
+      "SUPERVISION",
+    ]);
+    expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("ALL");
+  });
 
-    test("when activeSystem is INCARCERATION", () => {
-      workflowsStore.activeSystem = "INCARCERATION";
-      searchStore.handleSearchPillClick("OFFICER", "INCARCERATION");
-      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith(
-        "INCARCERATION",
-      );
-    });
+  test("when not-currently selected pill was clicked", () => {
+    searchStore.handleSearchPillClick("OFFICER", "INCARCERATION", [
+      "INCARCERATION",
+    ]);
+    expect(searchStore.searchTypeOverride).toEqual("OFFICER");
+    expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([]);
+  });
+
+  test("when activeSystem is INCARCERATION", () => {
+    workflowsStore.activeSystem = "INCARCERATION";
+    searchStore.handleSearchPillClick("OFFICER", "INCARCERATION", [
+      "INCARCERATION",
+    ]);
+    expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("INCARCERATION");
   });
 });
