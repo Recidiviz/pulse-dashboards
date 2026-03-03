@@ -67,6 +67,10 @@ export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps>
       await presenter.deletePriorTreatmentHistory(id);
     };
 
+    const handleUndo = async (data: Omit<PriorTreatmentHistory, "id">) => {
+      await presenter.createPriorTreatmentHistory(data);
+    };
+
     const handleModalClose = () => {
       setIsModalOpen(false);
       setEditingId(null);
@@ -81,7 +85,9 @@ export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps>
               <Styled.TableHeaderRow>
                 <Styled.TableHeaderCell>Year Completed</Styled.TableHeaderCell>
                 <Styled.TableHeaderCell>Program</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Verified by Report Author</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>
+                  Verified by Report Author
+                </Styled.TableHeaderCell>
               </Styled.TableHeaderRow>
               <Styled.HistoryList>
                 {priorTreatmentHistories.map((history) => (
@@ -90,6 +96,7 @@ export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps>
                     history={history}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onUndo={handleUndo}
                   />
                 ))}
               </Styled.HistoryList>

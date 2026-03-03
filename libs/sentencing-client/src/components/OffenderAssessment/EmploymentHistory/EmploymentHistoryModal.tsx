@@ -100,12 +100,8 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> = ({
     }
   };
 
-  // Check if form has any data (at least employer name filled)
   const hasData =
-    formData.employerName ||
-    formData.startDate ||
-    formData.endDate ||
-    formData.verifiedByReportAuthor !== null;
+    !!formData.employerName && formData.verifiedByReportAuthor !== null;
 
   return (
     <Modal isOpen={isOpen} hideModal={handleClose} padding={0}>

@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useState } from "react";
+import React from "react";
+import toast from "react-hot-toast";
 
 import { Icon, IconSVG } from "~design-system";
 
-import { DeleteConfirmation } from "../DeleteConfirmation";
 import * as Styled from "../HistoryItemStyles";
 import { PriorTreatmentHistory } from "./types";
 
@@ -27,39 +27,42 @@ interface PriorTreatmentHistoryItemProps {
   history: PriorTreatmentHistory;
   onEdit: (id: string) => void;
   onDelete: (id: string) => Promise<void>;
+  onUndo: (data: Omit<PriorTreatmentHistory, "id">) => Promise<void>;
 }
 
 export const PriorTreatmentHistoryItem: React.FC<
   PriorTreatmentHistoryItemProps
-> = ({ history, onEdit, onDelete }) => {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
+> = ({ history, onEdit, onDelete, onUndo }) => {
   const getVerificationStatus = (verified: boolean | null): string => {
     if (verified === null) return "Not specified";
     return verified ? "Yes" : "No";
   };
 
   const handleDelete = async () => {
-    setIsDeleting(true);
+    const { id, ...savedData } = history;
     try {
-      await onDelete(history.id);
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteConfirm(false);
+      await onDelete(id);
+    } catch {
+      toast.error("Failed to delete. Please try again.");
+      return;
     }
-  };
-
-  if (showDeleteConfirm) {
-    return (
-      <DeleteConfirmation
-        message="Are you sure you want to delete this treatment history record?"
-        onCancel={() => setShowDeleteConfirm(false)}
-        onDelete={handleDelete}
-        isDeleting={isDeleting}
-      />
+    toast(
+      (t) => (
+        <Styled.UndoToastContent>
+          <span>Treatment history record deleted.</span>
+          <Styled.UndoButton
+            onClick={() => {
+              void onUndo(savedData);
+              toast.dismiss(t.id);
+            }}
+          >
+            Undo
+          </Styled.UndoButton>
+        </Styled.UndoToastContent>
+      ),
+      { duration: 7000 },
     );
-  }
+  };
 
   return (
     <Styled.Card>
@@ -71,7 +74,7 @@ export const PriorTreatmentHistoryItem: React.FC<
           <Icon kind={IconSVG["Edit"]} size={16} />
         </Styled.EditButton>
         <Styled.DeleteIconButton
-          onClick={() => setShowDeleteConfirm(true)}
+          onClick={() => void handleDelete()}
           aria-label="Delete prior treatment history record"
         >
           <Icon kind={IconSVG["Minus"]} size={8} />

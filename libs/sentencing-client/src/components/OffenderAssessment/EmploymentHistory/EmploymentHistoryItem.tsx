@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useState } from "react";
+import React from "react";
+import toast from "react-hot-toast";
 
 import { Icon, IconSVG } from "~design-system";
 
 import { formatBooleanDisplay, formatDateRange } from "../../../utils/utils";
-import { DeleteConfirmation } from "../DeleteConfirmation";
 import * as Styled from "../HistoryItemStyles";
 import { EmploymentHistory } from "./constants";
 
@@ -28,36 +28,40 @@ interface EmploymentHistoryItemProps {
   history: EmploymentHistory;
   onEdit: (id: string) => void;
   onDelete: (id: string) => Promise<void>;
+  onUndo: (data: Omit<EmploymentHistory, "id">) => Promise<void>;
 }
 
 export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
   history,
   onEdit,
   onDelete,
+  onUndo,
 }) => {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
   const handleDelete = async () => {
-    setIsDeleting(true);
+    const { id, ...savedData } = history;
     try {
-      await onDelete(history.id);
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteConfirm(false);
+      await onDelete(id);
+    } catch {
+      toast.error("Failed to delete. Please try again.");
+      return;
     }
-  };
-
-  if (showDeleteConfirm) {
-    return (
-      <DeleteConfirmation
-        message="Are you sure you want to delete this employment record?"
-        onCancel={() => setShowDeleteConfirm(false)}
-        onDelete={handleDelete}
-        isDeleting={isDeleting}
-      />
+    toast(
+      (t) => (
+        <Styled.UndoToastContent>
+          <span>Employment record deleted.</span>
+          <Styled.UndoButton
+            onClick={() => {
+              void onUndo(savedData);
+              toast.dismiss(t.id);
+            }}
+          >
+            Undo
+          </Styled.UndoButton>
+        </Styled.UndoToastContent>
+      ),
+      { duration: 7000 },
     );
-  }
+  };
 
   return (
     <Styled.Card>
@@ -69,7 +73,7 @@ export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
           <Icon kind={IconSVG["Edit"]} size={16} />
         </Styled.EditButton>
         <Styled.DeleteIconButton
-          onClick={() => setShowDeleteConfirm(true)}
+          onClick={() => void handleDelete()}
           aria-label="Delete employment record"
         >
           <Icon kind={IconSVG["Minus"]} size={8} />

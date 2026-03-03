@@ -120,16 +120,4 @@ export const DataCell = styled.span`
   line-height: 1.5;
 `;
 
-export const DeleteConfirmation = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-export const DeleteText = styled.p`
-  font-family: "Public Sans";
-  font-size: 0.875rem;
-  color: ${palette.pine1};
-  margin: 0;
-  line-height: 1.5;
-`;
+export { UndoButton, UndoToastContent } from "../shared/styles/ToastStyles";

@@ -67,6 +67,10 @@ export const EmploymentHistoryCard: React.FC<EmploymentHistoryCardProps> =
       await presenter.deleteEmploymentHistory(id);
     };
 
+    const handleUndo = async (data: Omit<EmploymentHistory, "id">) => {
+      await presenter.createEmploymentHistory(data);
+    };
+
     const handleModalClose = () => {
       setIsModalOpen(false);
       setEditingId(null);
@@ -96,6 +100,7 @@ export const EmploymentHistoryCard: React.FC<EmploymentHistoryCardProps> =
                     history={history}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onUndo={handleUndo}
                   />
                 ))}
               </Styled.HistoryList>

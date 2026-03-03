@@ -67,6 +67,10 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
       await presenter.deleteDrugHistory(id);
     };
 
+    const handleUndo = async (data: Omit<DrugHistory, "id">) => {
+      await presenter.createDrugHistory(data);
+    };
+
     const handleModalClose = () => {
       setIsModalOpen(false);
       setEditingId(null);
@@ -96,6 +100,7 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
                     history={history}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onUndo={handleUndo}
                   />
                 ))}
               </Styled.HistoryList>
