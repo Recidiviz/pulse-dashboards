@@ -17,6 +17,7 @@
 
 "use client";
 
+import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 
@@ -25,6 +26,7 @@ export default function Profile() {
 
   return (
     <ProtectedRoute requireVerifiedEmail={false}>
+      <PageView />
       <div className="p-8 max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">Your Profile</h1>
 

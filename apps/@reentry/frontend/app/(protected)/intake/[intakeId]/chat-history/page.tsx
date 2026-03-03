@@ -25,6 +25,7 @@ import AdminIntakeHistory from "~@reentry/frontend/(protected)/intake/[intakeId]
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { PageView } from "~@reentry/frontend/components/PageView";
 import {useAuth} from "~@reentry/frontend/lib/auth/authContext";
 import {
   createPDFPageStyles,
@@ -351,6 +352,7 @@ const IntakeManagementPage = () => {
 
     return (
         <>
+            <PageView />
             <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-[calc(100vh-65px)]">
                 {/* Profile Detail */}
                 <ProfileDetail

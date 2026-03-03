@@ -22,6 +22,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { PageView } from "~@reentry/frontend/components/PageView";
 import { BACKEND_URL } from "~@reentry/frontend/constants";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
@@ -210,6 +211,7 @@ const ConfigManagementPage = () => {
 
   return (
     <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] min-h-screen">
+      <PageView />
       <div className="w-full max-w-6xl flex-col justify-start items-start gap-8 flex">
         {/* Header */}
         <div className="self-stretch flex-col justify-start items-start gap-4 flex">
