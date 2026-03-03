@@ -26,10 +26,11 @@ RUN apk add --no-cache dumb-init
 
 # Copy over the scripts since they should rarely be changed
 COPY --chown=node:node dist/apps/@meetings/server/scripts ./scripts
-RUN chmod +x scripts/*.sh
 
 # Copy node_modules from builder stage
 COPY --chown=node:node --from=builder /usr/src/app .
+
+RUN chmod +x scripts/*.sh
 
 USER node
 EXPOSE ${PORT}
