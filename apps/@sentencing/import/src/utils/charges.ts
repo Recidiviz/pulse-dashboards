@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startCase } from "lodash";
 import { z } from "zod";
 
 import { chargeImportSchema } from "~@sentencing/import/models";
@@ -54,8 +55,7 @@ export async function transformAndLoadChargeData(
 
     // Transform county to title case (e.g., "DAVI" -> "Davi")
     const countyTitleCase = chargeData.county
-      ? chargeData.county.charAt(0).toUpperCase() +
-        chargeData.county.slice(1).toLowerCase()
+      ? startCase(chargeData.county.toLocaleLowerCase())
       : undefined;
 
     const chargeFields = {

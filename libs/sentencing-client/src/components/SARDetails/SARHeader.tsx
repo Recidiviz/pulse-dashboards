@@ -20,6 +20,7 @@ import moment from "moment";
 import React from "react";
 
 import { SARAttributes } from "../../datastores/types";
+import { titleCase } from "../../utils/utils";
 import * as Styled from "./SARHeader.styles";
 import { useOverflowText } from "./useOverflowText";
 
@@ -49,7 +50,7 @@ export const SARHeader: React.FC<SARHeaderProps> = observer(function SARHeader({
 
       <Styled.HeaderContent>
         <Styled.TopRow>
-          <Styled.ClientName>{fullName}</Styled.ClientName>
+          <Styled.ClientName>{titleCase(fullName)}</Styled.ClientName>
           <Styled.HeaderInfo>
             <Styled.DocID>DOC ID: {externalId}</Styled.DocID>
             {dueDate && (

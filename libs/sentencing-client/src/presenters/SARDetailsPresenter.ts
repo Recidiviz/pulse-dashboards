@@ -37,6 +37,7 @@ import { SARSection, type SARSectionName } from "../components/SARDetails";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
+import { titleCase } from "../utils/utils";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
@@ -178,7 +179,7 @@ export class SARDetailsPresenter implements Hydratable {
         .replace(/_/g, " ")
         .toLowerCase()
         .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word) => titleCase(word))
         .join(" "),
     );
 
