@@ -389,6 +389,8 @@ class IntakeConversationGraph:
 
         try:
             client_pseudo_id = self.session.client_pseudo_id
+            # internal can't see messages from previous chats.
+            # external users have conversation history.
             is_internal = await self.db_manager.is_internal_intake(self.intake_id)
             welcome_message_text = f"Hi {self.session.client_name}, thanks for joining again! Let's continue our conversation."
 
@@ -401,115 +403,96 @@ class IntakeConversationGraph:
                 and WELCOME_BACK_TEST_STRING in latest_message.content.lower()
                 and latest_message.from_role == IntakeMessageRole.CASEWORKER
             )
+            latest_non_welcome_message = (
+                await self.db_manager.get_latest_non_welcome_ai_message(self.intake_id)
+            )
+            if not latest_non_welcome_message:
+                logger.error("No previous question found to resume from")
+                return Command(goto=END)
 
-            if is_last_message_welcome_back and not is_internal:
-                # When conversation is not internal, the user gets conversation history.
-                # The question and welcome back message are already there, so we simply await the user response
+            if is_internal:
                 logger.info(
-                    "Reusing existing welcome back message to prevent duplicates"
-                )
-                # Non-internal user: wait for the client's response
-                client_response = await self.wait_for_user_response(
-                    client_pseudo_id, latest_message
+                    "Resume conversation: internal user can't see past messages so send welcome then repeat the last question."
                 )
 
-                # Add the client's response to the conversation state
-                state["messages"].append(HumanMessage(client_response))
+                # Note that without conversation history, the user can see these 2 messages on resuming.
+                # 1 - Hi Uxr Kelly User #1, thanks for joining again! Let's continue our conversation.
+                # 2 - Thank you for letting me know. Do you have a Social Security card?
+                # The second question is the last non-welcome question but its letting me know part is from the
+                # previous chat session. A better UX would be to include the chat history in the future.
 
-                return state
-
-            elif not is_last_message_welcome_back and not is_internal:
-                # When conversation is not internal, the user gets conversation history.
-                # There is no welcome back message, so send it.
-                # store welcome back
                 stored_message = await self.db_manager.store_message(
                     intake_id=self.intake_id,
                     from_role=IntakeMessageRole.CASEWORKER,
                     content=welcome_message_text,
                 )
                 if not stored_message:
-                    raise ValueError(
+                    logger.error(
                         f"Could not save welcome back message for client {client_pseudo_id}"
                     )
+                    return Command(goto=END)
+
                 # store in conversation state
                 state["messages"].append(AIMessage(welcome_message_text))
                 message_event = AIMessageEvent(
                     content=IntakeMessageResponse(**stored_message.model_dump())
                 )
-                # Non-internal user: wait for the client's response
-                client_response = await self.send_message(
-                    client_pseudo_id, message_event
+                await self.send_message(client_pseudo_id, message_event)
+
+                # To get a response we have to repeat the last non-welcome message.
+                client_response = await self.wait_for_user_response(
+                    client_pseudo_id, latest_non_welcome_message
                 )
+
+                if not client_response:
+                    # wait_for_user_response has a timeout.
+                    # on timeout, we end the conversation graph.
+                    # on reconnecting, we start a new graph.
+                    return Command(goto=END)
 
                 # Add the client's response to the conversation state
                 state["messages"].append(HumanMessage(client_response))
-
                 return state
 
-            elif is_internal:
+            else:
                 logger.info(
-                    "Internal user: sending welcome back message and retrieving latest contentful AI message"
+                    "Resume conversation: external user has conversation history. Only welcome back if not already welcomed."
                 )
 
-                # Send the welcome back message directly to client
-                await self.send_message(
-                    client_pseudo_id,
-                    AIMessageEvent(
-                        content=IntakeMessageResponse(
-                            **IntakeMessage(
-                                intake_id=client_pseudo_id,
-                                content=welcome_message_text,
-                                from_role=IntakeMessageRole.CASEWORKER,
-                            ).model_dump()
-                        )
-                    ),
-                )
                 if not is_last_message_welcome_back:
-                    # if the welcome back message is not in store, store it
                     stored_message = await self.db_manager.store_message(
                         intake_id=self.intake_id,
                         from_role=IntakeMessageRole.CASEWORKER,
                         content=welcome_message_text,
                     )
-                    logger.info(
-                        "Reusing existing welcome back message to prevent duplicates"
-                    )
-                    # Non-internal user: wait for the client's response
-                    client_response = await self.wait_for_user_response(
-                        client_pseudo_id, latest_message
-                    )
-
-                    # Add the client's response to the conversation state
-                    state["messages"].append(HumanMessage(client_response))
-                    return state
-                else:
-                    # latest message is a welcome back, and user doesn't havce message history, find the latest contentful AI message and await an answer to that message.
-                    latest_message = (
-                        await self.db_manager.get_latest_non_welcome_ai_message(
-                            self.intake_id
+                    if not stored_message:
+                        logger.error(
+                            f"Could not save welcome back message for client {client_pseudo_id}"
                         )
+                        return Command(goto=END)
+                    # store in conversation state
+                    state["messages"].append(AIMessage(welcome_message_text))
+                    message_event = AIMessageEvent(
+                        content=IntakeMessageResponse(**stored_message.model_dump())
                     )
-                    # Non-internal user: wait for the client's response
-                    client_response = await self.wait_for_user_response(
-                        client_pseudo_id, latest_message
-                    )
+                    await self.send_message(client_pseudo_id, message_event)
 
-                    if not client_response:
-                        # Handled extrenally by deleting the graph and re-intantiating when we receive a message
-
-                        return END
-                    # Add the client's response to the conversation state
-                    state["messages"].append(HumanMessage(client_response))
-                    return state
-
-            else:
-                raise ValueError("invalid conversation state")
+                logger.info(
+                    "Resume Conversation: done with welcoming, repeating the last question."
+                )
+                client_response = await self.wait_for_user_response(
+                    client_pseudo_id, latest_non_welcome_message
+                )
+                if not client_response:
+                    # wait_for_user_response has a timeout.
+                    # on timeout, we end the conversation graph.
+                    # on reconnecting, we start a new graph.
+                    return Command(goto=END)
+                state["messages"].append(HumanMessage(client_response))
+                return state
 
         except Exception as e:
-            # Handle any errors during resumption
             logger.error(f"Error in _resume_conversation_user: {e}")
-
-            # Return the state unchanged if there was an error
             return state
 
     async def _complete_section(self, state: ConversationState) -> ConversationState:

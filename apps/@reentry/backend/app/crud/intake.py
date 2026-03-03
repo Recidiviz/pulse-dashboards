@@ -18,6 +18,7 @@ from app.models.intake import (
 from app.models.intake_sections import (
     ClientIntakeSection,
 )
+from app.routes.shared_models import IntakeMessageRole
 from app.services.client_data.queries import Queries
 from app.utils.config_loader import ConfigLoader
 
@@ -358,6 +359,20 @@ async def get_latest_not_welcome_message(
         .order_by(IntakeMessage.created_at.desc())
         .limit(1)
     )
+
+
+async def get_latest_non_welcome_message_from_caseworker(
+    session: AsyncSession, intake_id: UUID
+) -> IntakeMessage | None:
+    result = await session.execute(
+        select(IntakeMessage)
+        .where(IntakeMessage.intake_id == intake_id)
+        .filter(IntakeMessage.from_role == IntakeMessageRole.CASEWORKER)
+        .filter(not_(IntakeMessage.content.icontains(WELCOME_BACK_TEST_STRING)))
+        .order_by(IntakeMessage.created_at.desc())
+        .limit(1)
+    )
+    return result.scalar_one_or_none()
 
 
 @overload

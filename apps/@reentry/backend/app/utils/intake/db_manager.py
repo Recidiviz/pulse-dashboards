@@ -17,7 +17,7 @@ from app.core.db import get_session_async_manager
 from app.crud.intake import (
     get_latest_active_conversation_intake,
     get_latest_message,
-    get_latest_not_welcome_message,
+    get_latest_non_welcome_message_from_caseworker,
 )
 from app.models.intake import Intake, IntakeMessage, IntakeMessageRole, IntakeStatus
 from app.services.client_data.queries import ClientDataRecord
@@ -96,7 +96,9 @@ class DatabaseManager:
     ) -> Optional[IntakeMessage]:
         try:
             async with await self._get_session() as session:
-                return await get_latest_not_welcome_message(session, intake_id)
+                return await get_latest_non_welcome_message_from_caseworker(
+                    session, intake_id
+                )
 
         except Exception as e:
             logger.error(f"Error getting latest message: {e}")
