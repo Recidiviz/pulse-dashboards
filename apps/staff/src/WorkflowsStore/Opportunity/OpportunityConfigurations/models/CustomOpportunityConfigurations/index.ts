@@ -43,6 +43,7 @@ import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDisch
 import { UsPaSupervisionConfiguration } from "./UsPa/UsPaSupervisionBaseConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
 import { UsTn2026ClassificationConfiguration } from "./UsTn/UsTn2026ClassificationConfiguration";
+import { UsTnBaselineClassificationConfiguration } from "./UsTn/UsTnBaselineClassificationConfiguration";
 import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTn/UsTnCompliantReporting2025PolicyConfiguration";
 import { UsTnSuspensionofDirectSupervisionConfiguration } from "./UsTn/UsTnSuspensionofDirectSupervisionConfiguration";
 import { UsTxAnnualReportStatusConfiguration } from "./UsTx/UsTxAnnualReportStatusConfiguration";
@@ -113,6 +114,9 @@ const customOpportunityConfigurations: Partial<
     UsTnCompliantReporting2025PolicyConfiguration,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionofDirectSupervisionConfiguration,
+  usTnAnnualReclassification: UsTnBaselineClassificationConfiguration,
+  usTnCustodyLevelDowngrade: UsTnBaselineClassificationConfiguration,
+  usTnInitialClassification: UsTnBaselineClassificationConfiguration,
   usTnAnnualReclassification2026Policy: UsTn2026ClassificationConfiguration,
   usTnCustodyLevelDowngrade2026Policy: UsTn2026ClassificationConfiguration,
   usTnInitialClassification2026Policy: UsTn2026ClassificationConfiguration,
