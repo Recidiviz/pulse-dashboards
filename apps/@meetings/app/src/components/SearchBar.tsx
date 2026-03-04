@@ -37,7 +37,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View
-      className={`w-full flex-1 flex-row items-center rounded-xl border px-3 ${
+      className={`size-full flex-1 flex-row items-center rounded-xl border px-3 ${
         isFocused ? "border-primary" : "border-gray-300"
       } bg-gray-50`}
     >
@@ -61,7 +61,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {value?.length > 0 && (
         <TouchableOpacity onPress={() => onChange("")}>
           <View className="flex size-4 items-center justify-center rounded-full bg-[#9AA9B1]">
-            <Text className="font-inter text-[8px] leading-[8px] font-extrabold text-white">
+            <Text className="font-inter text-[8px] font-extrabold leading-[8px] text-white">
               ✕
             </Text>
           </View>

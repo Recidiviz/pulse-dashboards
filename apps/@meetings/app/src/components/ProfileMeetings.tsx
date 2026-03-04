@@ -358,7 +358,7 @@ const ProfileMeetings = ({
             )}
           </View>
 
-          <View className="w-full">
+          <View className="h-10 w-full">
             <SearchBar
               placeholder={"Enter keyword or phrase"}
               value={searchQuery}
