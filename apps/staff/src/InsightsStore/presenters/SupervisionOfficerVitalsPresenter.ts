@@ -145,6 +145,11 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
       .activeFeatureVariants.operationsDrilldown;
   }
 
+  get isNumeratorDenominatorEnabled(): boolean {
+    return !!this.supervisionStore.insightsStore.rootStore.userStore
+      .activeFeatureVariants.operationsNumeratorDenominatorIsEnabled;
+  }
+
   private getTasksForMetric(metricId: VitalsMetricId): SupervisionTask[] {
     if (!this.officerExternalId) return [];
     const clients = this.findClientsForOfficer(this.officerExternalId) ?? [];

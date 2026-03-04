@@ -75,6 +75,7 @@ export const InsightsStaffVitals = withPresenter(
       isDrilldownEnabled,
       labels,
       officerRecord,
+      isNumeratorDenominatorEnabled,
     } = presenter;
 
     if (vitalsMetricDetails.length === 0) return;
@@ -95,6 +96,7 @@ export const InsightsStaffVitals = withPresenter(
                   vitalsMetricDetails={metric}
                   isDrilldownEnabled={isDrilldownEnabled}
                   onClick={handleCardClick}
+                  isNumeratorDenominatorEnabled={isNumeratorDenominatorEnabled}
                 />
               );
             })}

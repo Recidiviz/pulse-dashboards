@@ -28,6 +28,8 @@ const vitalsMetricForOfficerSchema = z.object({
   // TODO(#8919) remove optional()
   metricDate: dateStringSchema.optional(),
   previousMetricDate: nullishAsUndefined(dateStringSchema),
+  metricNumerator: z.number().optional(),
+  metricDenominator: z.number().optional(),
 });
 
 export const supervisionVitalsMetricSchema = z.object({

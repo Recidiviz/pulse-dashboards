@@ -73,21 +73,26 @@ const StaffCardTitle = styled.div`
   padding-bottom: ${rem(spacing.sm)};
 `;
 
-const StaffCardBody = styled.div``;
+const StaffCardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const PillWrapper = styled.div`
-  display: flex;
-  align-items: flex-end;
+  align-self: flex-end;
   padding-right: ${rem(spacing.md)};
 `;
 
 const MetricValue = styled.div`
   ${typography.Serif34}
   color: ${palette.pine2};
-  line-height: ${rem(45)};
+  line-height: ${rem(30)};
+  font-size: ${rem(25)};
+  white-space: nowrap;
 `;
 
 const DeltaValue = styled.div<{ delta: number }>`
+  margin-top: auto;
   ${typography.Sans12}
   color: ${({ delta }) => {
     if (delta > 0) {
@@ -160,11 +165,17 @@ type InsightsStaffVitalsDetailCardProps = {
   vitalsMetricDetails: OfficerVitalsMetricDetail;
   onClick: (metricId: string) => void;
   isDrilldownEnabled: boolean;
+  isNumeratorDenominatorEnabled: boolean;
 };
 
 export const InsightsStaffVitalsDetailCard: React.FC<
   InsightsStaffVitalsDetailCardProps
-> = ({ vitalsMetricDetails, onClick, isDrilldownEnabled }) => {
+> = ({
+  vitalsMetricDetails,
+  onClick,
+  isDrilldownEnabled,
+  isNumeratorDenominatorEnabled,
+}) => {
   const {
     metricId,
     metric30DDelta,
@@ -173,12 +184,21 @@ export const InsightsStaffVitalsDetailCard: React.FC<
     bodyDisplayName,
     metricDate,
     previousMetricDate,
+    metricNumerator,
+    metricDenominator,
   } = vitalsMetricDetails;
 
   const delta = Math.round(metric30DDelta);
   const showPill = metricValue < 80;
   const hasOverdueClients = tasks.some((task) => task.isOverdue);
   const hoverCta = `See ${hasOverdueClients ? "Overdue " : ""}${bodyDisplayName}s`;
+
+  const showNumberatorDenominator =
+    isNumeratorDenominatorEnabled && metricNumerator && metricDenominator;
+
+  const metricValueString = showNumberatorDenominator
+    ? `${metricValue}% (${metricNumerator} out of ${metricDenominator} on-time)`
+    : `${metricValue}%`;
 
   return (
     <StaffCardWrapper
@@ -191,7 +211,7 @@ export const InsightsStaffVitalsDetailCard: React.FC<
       </HoverCta>
       <StaffCardBody>
         <StaffCardTitle>{titleText(vitalsMetricDetails)}</StaffCardTitle>
-        <MetricValue>{`${metricValue}%`}</MetricValue>
+        <MetricValue>{metricValueString}</MetricValue>
         <DeltaValue delta={delta}>
           {deltaText({ metricId, delta, metricDate, previousMetricDate })}
         </DeltaValue>
