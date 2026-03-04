@@ -78,7 +78,6 @@ const MeetingsCardsList = ({
             },
           };
 
-          
     return (
       <View
         key={`${meeting.id}-${index}`}
@@ -100,7 +99,7 @@ const MeetingsCardsList = ({
             {meeting.time} • {meeting.duration || "In progress..."}
           </Text>
           {isProcessing && (
-            <View className="mt-4 rounded-xl bg-[#C1E3D83B] p-4">
+            <View className="mt-4 rounded-xl bg-soft-green/23 p-4">
               <View className="flex-row items-start">
                 <Image
                   source={Icons.Processing}

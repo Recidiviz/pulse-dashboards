@@ -162,7 +162,7 @@ const MeetingMinutesList = ({ sections }: { sections: MinuteSection[] }) => {
             </View>
           </View>
           {sectionIndex < sections.length - 1 && (
-            <View className="h-px bg-[#35536226]" />
+            <View className="h-px bg-gray/15" />
           )}
         </View>
       ))}

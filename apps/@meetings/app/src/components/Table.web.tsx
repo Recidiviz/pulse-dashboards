@@ -17,6 +17,9 @@
 
 import { Text, View } from "react-native";
 
+export const TABLE_HEAD_CELL_HEIGHT = 44;
+export const TABLE_CELL_HEIGHT = 72;
+
 type Props = {
   children?: React.ReactNode;
 };
@@ -29,7 +32,7 @@ export const Table = ({
   return (
     <table
       {...props}
-      className={`w-full border-separate border-spacing-0 overflow-hidden rounded-[20px] border border-[#35536226] ${className}`}
+      className={`w-full border-separate border-spacing-0 overflow-hidden rounded-[20px] border border-gray/15 ${className}`}
     >
       {children}
     </table>
@@ -69,8 +72,9 @@ export const TableHeadCell = ({
     <th
       {...props}
       className={`px-1 first:pl-7 last:pr-7 ${className}`}
+      style={{ height: TABLE_HEAD_CELL_HEIGHT }}
     >
-      <Text className="inline-block w-full py-3 text-left font-inter text-sm font-medium text-[#355362D9]">
+      <Text className="inline-block w-full py-3 text-left font-inter text-sm font-medium text-gray/85">
         {children}
       </Text>
     </th>
@@ -112,12 +116,13 @@ export const TableCell = ({
   return (
     <td
       {...props}
-      className={`h-[72px] p-0 [&:first-child>div>div]:pl-4 [&:last-child>div>div]:pr-4 ${className}`}
+      className={`p-0 [&:first-child>div>div]:pl-4 [&:last-child>div>div]:pr-4 ${className}`}
+      style={{ height: TABLE_CELL_HEIGHT }}
     >
-      <View className="h-full justify-center border-t border-[#35536226] p-0 group-hover:border-transparent">
+      <View className="h-full justify-center border-t border-gray/15 p-0 group-hover:border-transparent">
         <View className=" h-full justify-center px-1 group-hover:bg-[#3553620A]">
           {typeof children === "string" ? (
-            <Text className="font-inter text-base text-[#355362D9]">
+            <Text className="font-inter text-base text-gray/85">
               {children}
             </Text>
           ) : (
@@ -159,10 +164,7 @@ export const TableFooterCell = ({
   ...props
 }: Props & React.TdHTMLAttributes<HTMLTableCellElement>) => {
   return (
-    <td
-      {...props}
-      className={`border-t border-[#35536226] bg-white ${className}`}
-    >
+    <td {...props} className={`bg-white ${className}`}>
       {children}
     </td>
   );

@@ -82,7 +82,7 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
   return (
     <>
       <View>
-        <Text className="font-inter text-xs font-semibold text-[#355362D9]">
+        <Text className="font-inter text-xs font-semibold text-gray/85">
           Draft case note
         </Text>
       </View>
@@ -166,8 +166,8 @@ const MeetingDesktop = ({
   return (
     <View className="flex-1 grow">
       <Header />
-      <View className="flex-1 grow flex-row border-t border-[#35536226]">
-        <View className="border-r border-[#35536226] pt-8">
+      <View className="flex-1 grow flex-row border-t border-gray/15">
+        <View className="border-r border-gray/15 pt-8">
           <Link
             className="mx-10 flex flex-row items-center gap-2"
             screen={
@@ -176,10 +176,10 @@ const MeetingDesktop = ({
             params={{ personId: person.personId.toString() }}
           >
             <Image source={Icons.ArrowLeft} className="!size-3" />
-            <Text className="text-sm font-medium text-[#355362D9]">Back</Text>
+            <Text className="text-sm font-medium text-gray/85">Back</Text>
           </Link>
 
-          <View className="flex-row items-center gap-3 border-b border-[#35536226] px-10 py-6">
+          <View className="flex-row items-center gap-3 border-b border-gray/15 px-10 py-6">
             <ImageBackground
               source={Icons.BgAvatar}
               className="size-12 items-center justify-center overflow-hidden rounded-full"
@@ -202,7 +202,7 @@ const MeetingDesktop = ({
             </View>
           </View>
 
-          <View className="gap-3 border-b border-[#35536226] px-10 py-6">
+          <View className="gap-3 border-b border-gray/15 px-10 py-6">
             <Text className="font-inter text-xl font-semibold leading-[24px] text-primary">
               Meeting: {meetingDate}
             </Text>

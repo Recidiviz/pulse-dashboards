@@ -31,8 +31,7 @@ type Props = {
 };
 
 export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
-  const { setIsRecordingViewMinimized } =
-    useRecording<"web">();
+  const { setIsRecordingViewMinimized } = useRecording<"web">();
 
   const { status, note, setNote, isRecording, totalDurationMs, actions } =
     meetingRecording;
@@ -104,7 +103,7 @@ const NewMeetingIntro = ({
           </Text>
           <Text className="font-inter text-base font-medium text-primary">
             {person.fullName}{" "}
-            <Text className="text-base font-normal text-[#355362D9]">
+            <Text className="text-base font-normal text-gray/85">
               {person.primaryMetadata} • ID: {person.displayPersonExternalId}
             </Text>
           </Text>
@@ -126,7 +125,7 @@ const NewMeetingIntro = ({
           Meeting Recording
         </Text>
 
-        <Text className="mb-6 max-w-[530px] text-center font-inter text-sm text-[#355362D9]">
+        <Text className="mb-6 max-w-[530px] text-center font-inter text-sm text-gray/85">
           This meeting will be recorded and transcribed for note-taking. Be sure
           to confirm that everyone present is aware and has agreed to recording.
         </Text>
@@ -207,7 +206,7 @@ const NewMeetingProgress = ({
           </Text>
           <Text className="font-inter text-base font-medium text-primary">
             {person.fullName}{" "}
-            <Text className="text-xs md:text-base font-normal text-[#355362D9]">
+            <Text className="text-xs font-normal text-gray/85 md:text-base">
               {person.primaryMetadata} • ID: {person.displayPersonExternalId}
             </Text>
           </Text>
@@ -312,8 +311,8 @@ const NewMeetingProgress = ({
         {status === "ending" && <LinearProgressBar />}
       </View>
 
-      <View className="flex-col gap-2 lg:columns-3 lg:flex-row items-center justify-between border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5">
-        <View className="w-[250px] flex flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start ">
+      <View className="flex-col items-center justify-between gap-2 border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5 lg:columns-3 lg:flex-row">
+        <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start ">
           <Text className="font-inter text-lg font-semibold text-primary">
             {formatDurationNumeric(totalDurationMs)}
           </Text>
@@ -370,7 +369,7 @@ const NewMeetingProgress = ({
             <Image source={Icons.Cross} className="!size-6" />
           </TouchableOpacity>
         </View>
-        <View className="w-[180px] lg:items-end hidden lg:flex">
+        <View className="hidden w-[180px] lg:flex lg:items-end">
           <TouchableOpacity
             className="flex-row items-center aria-disabled:opacity-40"
             disabled={isModalDisabled}

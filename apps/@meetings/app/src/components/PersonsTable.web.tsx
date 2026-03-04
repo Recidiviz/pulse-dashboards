@@ -19,13 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
-import {
-  Image,
-  ImageBackground,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ImageBackground, Text, View } from "react-native";
 
 import { Person } from "~@meetings/app/common/types";
 
@@ -34,19 +28,20 @@ import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getInitials } from "../utils/format";
 import {
   Table,
+  TABLE_CELL_HEIGHT,
+  TABLE_HEAD_CELL_HEIGHT,
   TableBody,
   TableCell,
-  TableFooter,
-  TableFooterCell,
-  TableFooterRow,
   TableHead,
   TableHeadCell,
   TableHeadRow,
   TableRow,
 } from "./Table.web";
+import { TablePagination } from "./TablePagination";
 import { TooltipText } from "./TooltipText";
 
 const PAGE_SIZE = 7;
+const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
 
 type ProfileNavProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -77,122 +72,101 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   return (
     <>
       {sectionTitle && (
-        <Text className="mt-6 font-inter text-base font-medium text-[#355362D9]">
+        <Text className="mt-6 font-inter text-base font-medium text-gray/85">
           {sectionTitle}
         </Text>
       )}
-      <Table className="mt-2 table-fixed">
-        <TableHead>
-          <TableHeadRow>
-            <TableHeadCell className="w-[35%]">NAME</TableHeadCell>
-            <TableHeadCell className="w-[15%]">ID</TableHeadCell>
-            <TableHeadCell className="w-[23%]">
-              {type === "clients" ? "SUPERVISION" : "FACILITY"}
-            </TableHeadCell>
-            <TableHeadCell className="w-[23%]">LAST MEETING</TableHeadCell>
-            <TableHeadCell className="w-[4%]"></TableHeadCell>
-          </TableHeadRow>
-        </TableHead>
-        <TableBody>
-          {persons
-            .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-            .map((person) => (
-              <TableRow
-                key={person.personId}
-                // onClickCapture allows row to be clicked instead of Pressable inside TooltipText,
-                // If inside row by design we have to add something clickable
-                // then this solution has to be changed 
-                onClickCapture={() => handleNavigateToProfile(person.personId.toString())}
-              >
-                <TableCell>
-                  <View className="flex size-full flex-row items-center gap-3">
-                    <ImageBackground
-                      source={Icons.BgAvatar}
-                      className="size-11 items-center justify-center overflow-hidden rounded-full"
-                      imageClassName="!size-11"
-                    >
-                      <Text className="font-inter text-base font-medium text-white">
-                        {getInitials(person.fullName)}
-                      </Text>
-                    </ImageBackground>
-                    <TooltipText 
-                      tooltipText={person.fullName.toLowerCase()}
-                      textClassName="font-inter text-base font-medium capitalize text-primary"
-                    >
-                      {person.fullName.toLowerCase()}
-                    </TooltipText>
-                  </View>
-                </TableCell>
-                <TableCell>
-                  <TooltipText tooltipText={person.displayPersonExternalId}>
-                    {person.displayPersonExternalId}
-                  </TooltipText>
-                </TableCell>
-                <TableCell>
-                  <TooltipText tooltipText={person.primaryMetadata}>
-                    {person.primaryMetadata}
-                  </TooltipText>
-                </TableCell>
-                <TableCell>
-                  {person.activeMeetingId ? (
-                    <View className="flex-row items-center pb-2">
-                      <Image source={Icons.Record} className="!size-4" />
-                      <Text className="px-2 font-inter text-black">
-                        In progress
-                      </Text>
+      <View className="mt-2 w-full" style={{ height: TABLE_HEIGHT }}>
+        <Table className="table-fixed">
+          <TableHead>
+            <TableHeadRow>
+              <TableHeadCell className="w-[35%]">NAME</TableHeadCell>
+              <TableHeadCell className="w-[15%]">ID</TableHeadCell>
+              <TableHeadCell className="w-[23%]">
+                {type === "clients" ? "SUPERVISION" : "FACILITY"}
+              </TableHeadCell>
+              <TableHeadCell className="w-[23%]">LAST MEETING</TableHeadCell>
+              <TableHeadCell className="w-[4%]"></TableHeadCell>
+            </TableHeadRow>
+          </TableHead>
+          <TableBody>
+            {persons
+              .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+              .map((person) => (
+                <TableRow
+                  key={person.personId}
+                  // onClickCapture allows row to be clicked instead of Pressable inside TooltipText,
+                  // If inside row by design we have to add something clickable
+                  // then this solution has to be changed
+                  onClickCapture={() =>
+                    handleNavigateToProfile(person.personId.toString())
+                  }
+                >
+                  <TableCell>
+                    <View className="flex size-full flex-row items-center gap-3">
+                      <ImageBackground
+                        source={Icons.BgAvatar}
+                        className="size-11 items-center justify-center overflow-hidden rounded-full"
+                        imageClassName="!size-11"
+                      >
+                        <Text className="font-inter text-base font-medium text-white">
+                          {getInitials(person.fullName)}
+                        </Text>
+                      </ImageBackground>
+                      <TooltipText
+                        tooltipText={person.fullName.toLowerCase()}
+                        textClassName="font-inter text-base font-medium capitalize text-primary"
+                      >
+                        {person.fullName.toLowerCase()}
+                      </TooltipText>
                     </View>
-                  ) : (
-                    <Text className="font-inter text-base text-[#355362D9]">
-                      <Text className="font-inter font-bold">
-                        {upperFirst(person.lastMeeting)}
+                  </TableCell>
+                  <TableCell>
+                    <TooltipText tooltipText={person.displayPersonExternalId}>
+                      {person.displayPersonExternalId}
+                    </TooltipText>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipText tooltipText={person.primaryMetadata}>
+                      {person.primaryMetadata}
+                    </TooltipText>
+                  </TableCell>
+                  <TableCell>
+                    {person.activeMeetingId ? (
+                      <View className="flex-row items-center pb-2">
+                        <Image source={Icons.Record} className="!size-4" />
+                        <Text className="px-2 font-inter text-black">
+                          In progress
+                        </Text>
+                      </View>
+                    ) : (
+                      <Text className="font-inter text-base text-gray/85">
+                        <Text className="font-inter font-bold">
+                          {upperFirst(person.lastMeeting)}
+                        </Text>
                       </Text>
-                    </Text>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <View className="invisible size-5 items-center justify-center group-hover:visible">
-                    <Image source={Icons.ArrowRight} className="!size-full" />
-                  </View>
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-        {persons.length > PAGE_SIZE && (
-          <TableFooter>
-            <TableFooterRow>
-              <TableFooterCell colSpan={5}>
-                <View className="flex flex-row items-center justify-center gap-2 py-2">
-                  <TouchableOpacity
-                    onPress={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                  >
-                    <Image
-                      source={Icons.ArrowLeft}
-                      className="!size-3"
-                      style={{ resizeMode: "contain" }}
-                    />
-                  </TouchableOpacity>
-                  <Text className="font-inter text-sm font-medium text-[#355362D9]">
-                    Showing {(page - 1) * PAGE_SIZE + 1}-
-                    {Math.min(page * PAGE_SIZE, persons.length)} of{" "}
-                    {persons.length}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => setPage((p) => p + 1)}
-                    disabled={page * PAGE_SIZE >= persons.length}
-                  >
-                    <Image
-                      source={Icons.ArrowRight}
-                      className="!size-3"
-                      style={{ resizeMode: "contain" }}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </TableFooterCell>
-            </TableFooterRow>
-          </TableFooter>
-        )}
-      </Table>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <View className="invisible size-5 items-center justify-center group-hover:visible">
+                      <Image source={Icons.ArrowRight} className="!size-full" />
+                    </View>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </View>
+      {persons.length > PAGE_SIZE && (
+        <View className="mt-2 w-full border-spacing-0 overflow-hidden rounded-[20px] border border-gray/15">
+          <TablePagination
+            page={page}
+            setPrevPage={() => setPage((p) => Math.max(1, p - 1))}
+            setNextPage={() => setPage((p) => p + 1)}
+            tableItemsLength={persons.length}
+          />
+        </View>
+      )}
     </>
   );
 };

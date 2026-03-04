@@ -323,7 +323,7 @@ const ProfileMeetings = ({
             params={{}}
           >
             <Image source={Icons.ArrowLeft} className="!size-3" />
-            <Text className="text-sm font-medium text-[#355362D9]">Back</Text>
+            <Text className="text-sm font-medium text-gray/85">Back</Text>
           </Link>
         </View>
 

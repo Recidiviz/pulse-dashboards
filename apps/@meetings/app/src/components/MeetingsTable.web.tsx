@@ -18,7 +18,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
@@ -30,16 +30,16 @@ import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import {
   Table,
+  TABLE_CELL_HEIGHT,
+  TABLE_HEAD_CELL_HEIGHT,
   TableBody,
   TableCell,
-  TableFooter,
-  TableFooterCell,
-  TableFooterRow,
   TableHead,
   TableHeadCell,
   TableHeadRow,
   TableRow,
 } from "./Table.web";
+import { TablePagination } from "./TablePagination";
 
 type ProfileMeetingNavProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -59,6 +59,7 @@ type Meeting = {
 };
 
 const PAGE_SIZE = 7;
+const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
 
 type MeetingRowProps = {
   meeting: Meeting;
@@ -74,7 +75,8 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
   });
   const { status: recordingState, meetingId } = useRecording<"web">();
 
-  const isMeetingInProgress = recordingState !== "idle" && meeting.id === meetingId;
+  const isMeetingInProgress =
+    recordingState !== "idle" && meeting.id === meetingId;
   const isProcessing = isMeetingProcessing(meeting.status);
 
   const handleNavigateToMeeting = () => {
@@ -109,19 +111,20 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
           </View>
         )}
         {isProcessing && (
-          <View className="rounded-xl bg-[#C1E3D83B] my-2">
-            <View className="flex flex-row items-center p-3 gap-4">
+          <View className="h-full max-h-[64px] overflow-hidden rounded-xl bg-soft-green/23">
+            <View className="flex flex-row items-center gap-4 px-3 py-2">
               <Image
                 source={Icons.Processing}
                 className="!size-8"
                 style={{ resizeMode: "contain" }}
               />
               <View className="flex-1">
-                <Text className="font-inter text-[14px] leading-4 font-semibold text-primary">
+                <Text className="font-inter text-[14px] font-semibold leading-4 text-primary">
                   Recording is being processed...
                 </Text>
-                <Text className="font-inter text-xs font-normal text-gray-700">
-                  The notes and transcript will become available in a few minutes
+                <Text className="font-inter text-xs font-normal text-gray/85">
+                  The notes and transcript will become available in a few
+                  minutes
                 </Text>
               </View>
             </View>
@@ -129,7 +132,7 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
         )}
         {!isMeetingInProgress && !isProcessing && (
           <Text
-            className="w-[180px] font-inter text-base text-[#355362D9]"
+            className="font-inter text-base text-gray/85"
             style={{ fontStyle: meeting.content ? "normal" : "italic" }}
             numberOfLines={2}
             ellipsizeMode="tail"
@@ -165,64 +168,43 @@ const MeetingsTable = ({
   }, [meetings]);
 
   return (
-    <Table>
-      <TableHead>
-        <TableHeadRow>
-          <TableHeadCell className="w-1/5">DATE</TableHeadCell>
-          <TableHeadCell className="w-1/5">TIME</TableHeadCell>
-          <TableHeadCell className="w-[15%]">DURATION</TableHeadCell>
-          <TableHeadCell className="w-2/5">DRAFT CASE NOTE</TableHeadCell>
-          <TableHeadCell className="w-[5%]"></TableHeadCell>
-        </TableHeadRow>
-      </TableHead>
-      <TableBody>
-        {meetings
-          .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-          .map((meeting, index) => (
-            <MeetingRow
-              key={`${meeting.id}-${index}`}
-              meeting={meeting}
-              person={person}
-              personType={personType}
-            />
-          ))}
-      </TableBody>
+    <>
+      <View className="w-full" style={{ height: TABLE_HEIGHT }}>
+        <Table className="table-fixed">
+          <TableHead>
+            <TableHeadRow>
+              <TableHeadCell className="w-1/5">DATE</TableHeadCell>
+              <TableHeadCell className="w-1/5">TIME</TableHeadCell>
+              <TableHeadCell className="w-[15%]">DURATION</TableHeadCell>
+              <TableHeadCell className="w-2/5">DRAFT CASE NOTE</TableHeadCell>
+              <TableHeadCell className="w-[5%]"></TableHeadCell>
+            </TableHeadRow>
+          </TableHead>
+          <TableBody>
+            {meetings
+              .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+              .map((meeting, index) => (
+                <MeetingRow
+                  key={`${meeting.id}-${index}`}
+                  meeting={meeting}
+                  person={person}
+                  personType={personType}
+                />
+              ))}
+          </TableBody>
+        </Table>
+      </View>
       {meetings.length > PAGE_SIZE && (
-        <TableFooter>
-          <TableFooterRow>
-            <TableFooterCell colSpan={5}>
-              <View className="flex flex-row items-center justify-center gap-2 py-2">
-                <TouchableOpacity
-                  onPress={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
-                  <Image
-                    source={Icons.ArrowLeft}
-                    className="!size-3"
-                    style={{ resizeMode: "contain" }}
-                  />
-                </TouchableOpacity>
-                <Text className="font-inter text-sm font-medium text-[#355362D9]">
-                  Showing {(page - 1) * PAGE_SIZE + 1}-
-                  {Math.min(page * PAGE_SIZE, meetings.length)} of{" "}
-                  {meetings.length}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setPage((p) => p + 1)}
-                  disabled={page * PAGE_SIZE >= meetings.length}
-                >
-                  <Image
-                    source={Icons.ArrowRight}
-                    className="!size-3"
-                    style={{ resizeMode: "contain" }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </TableFooterCell>
-          </TableFooterRow>
-        </TableFooter>
+        <View className="mt-2 w-full border-spacing-0 overflow-hidden rounded-[20px] border border-gray/15">
+          <TablePagination
+            page={page}
+            setPrevPage={() => setPage((p) => Math.max(1, p - 1))}
+            setNextPage={() => setPage((p) => p + 1)}
+            tableItemsLength={meetings.length}
+          />
+        </View>
       )}
-    </Table>
+    </>
   );
 };
 

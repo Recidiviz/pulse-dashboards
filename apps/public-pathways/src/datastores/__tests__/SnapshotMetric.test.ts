@@ -123,9 +123,7 @@ describe("SnapshotMetric", () => {
     });
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(
-      fetchMock.mock.calls.map((call) => call[0]),
-    ).toContainEqual(
+    expect(fetchMock.mock.calls.map((call) => call[0])).toContainEqual(
       encodeURI(
         `${DIMENSION_COUNT_URL}?filters[sex]=MALE&filters[age_group]=25-29&filters[age_group]=30-34&group=facility`,
       ),
@@ -142,12 +140,8 @@ describe("SnapshotMetric", () => {
     });
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(
-      fetchMock.mock.calls.map((call) => call[0]),
-    ).toContainEqual(
-      encodeURI(
-        `${DIMENSION_COUNT_URL}?filters[sex]=MALE&group=facility`,
-      ),
+    expect(fetchMock.mock.calls.map((call) => call[0])).toContainEqual(
+      encodeURI(`${DIMENSION_COUNT_URL}?filters[sex]=MALE&group=facility`),
     );
   });
 
@@ -199,12 +193,8 @@ describe("SnapshotMetric", () => {
     });
 
     await waitFor(() =>
-      expect(
-        fetchMock.mock.calls.map((call) => call[0]),
-      ).toContainEqual(
-        encodeURI(
-          `${DIMENSION_COUNT_URL}?filters[sex]=FEMALE&group=facility`,
-        ),
+      expect(fetchMock.mock.calls.map((call) => call[0])).toContainEqual(
+        encodeURI(`${DIMENSION_COUNT_URL}?filters[sex]=FEMALE&group=facility`),
       ),
     );
 
@@ -214,7 +204,9 @@ describe("SnapshotMetric", () => {
       .filter(({ url }) =>
         (url as string).includes("PrisonPopulationByDimensionCount"),
       );
-    expect(metricCalls.some(({ result }) => isAbortException(result.value))).toBe(true);
+    expect(
+      metricCalls.some(({ result }) => isAbortException(result.value)),
+    ).toBe(true);
 
     // The metric should contain data from the final (fast) request
     expect(metric.dataSeries).toEqual([

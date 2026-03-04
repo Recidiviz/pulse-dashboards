@@ -96,7 +96,12 @@ describe("cleanupStateData", () => {
 
   test("returns zero stats when there are no expired meetings", async () => {
     // Only the seeded fakeMeeting exists (endTime is null — won't be selected)
-    const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     expect(stats).toEqual({
       meetingsProcessed: 0,
@@ -115,7 +120,12 @@ describe("cleanupStateData", () => {
       audioDeletedAt: new Date(),
     });
 
-    const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     expect(stats.meetingsProcessed).toBe(0);
     expect(mockDeleteFiles).not.toHaveBeenCalled();
@@ -150,7 +160,12 @@ describe("cleanupStateData", () => {
   test("does not clean up meetings within the TTL window", async () => {
     await createExpiredMeeting("recent-meeting", 5); // 5 days ago, within 30-day TTL
 
-    const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     expect(stats.meetingsProcessed).toBe(0);
     expect(mockDeleteFiles).not.toHaveBeenCalled();
@@ -159,7 +174,12 @@ describe("cleanupStateData", () => {
   test("deletes recordings folder for expired meetings", async () => {
     await createExpiredMeeting("expired-meeting", 60);
 
-    const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     expect(stats.meetingsProcessed).toBe(1);
     expect(stats.gcsFilesDeleted).toBe(2);
@@ -173,7 +193,12 @@ describe("cleanupStateData", () => {
       finalRecordingGCSPath: "final/expired-with-final.m4a",
     });
 
-    const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     expect(stats.meetingsProcessed).toBe(1);
     expect(mockFileDelete).toHaveBeenCalled();
@@ -206,7 +231,12 @@ describe("cleanupStateData", () => {
       },
     });
 
-    const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     expect(stats.transcriptionsDeleted).toBe(1);
 
@@ -221,7 +251,12 @@ describe("cleanupStateData", () => {
       finalRecordingGCSPath: "final/recording.m4a",
     });
 
-    await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
       where: { id: "expired-clear-fields" },
@@ -236,7 +271,12 @@ describe("cleanupStateData", () => {
     await createExpiredMeeting("expired-2", 60);
     await createExpiredMeeting("expired-3", 60);
 
-    const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
 
     expect(stats.meetingsProcessed).toBe(3);
     expect(stats.gcsFilesDeleted).toBe(6); // 2 files per meeting
@@ -267,9 +307,10 @@ describe("cleanupStateData", () => {
       expect(updated.audioDeletedAt).not.toBeNull();
       expect(updated.transcriptDeletedAt).toBeNull();
 
-      const remainingTranscripts = await testPrismaClient.transcription.findMany(
-        { where: { meetingId: meeting.id } },
-      );
+      const remainingTranscripts =
+        await testPrismaClient.transcription.findMany({
+          where: { meetingId: meeting.id },
+        });
       expect(remainingTranscripts).toHaveLength(1);
     });
 
@@ -304,7 +345,12 @@ describe("cleanupStateData", () => {
     test("counts files but does not delete them from GCS", async () => {
       await createExpiredMeeting("dry-run-meeting", 60);
 
-      const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, true);
+      const stats = await cleanupStateData(
+        STATE_CODE,
+        AUDIO_TTL_DAYS,
+        TRANSCRIPT_TTL_DAYS,
+        true,
+      );
 
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(2);
@@ -326,7 +372,12 @@ describe("cleanupStateData", () => {
         },
       });
 
-      const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, true);
+      const stats = await cleanupStateData(
+        STATE_CODE,
+        AUDIO_TTL_DAYS,
+        TRANSCRIPT_TTL_DAYS,
+        true,
+      );
 
       expect(stats.transcriptionsDeleted).toBe(1);
 
@@ -345,7 +396,12 @@ describe("cleanupStateData", () => {
       // Make GCS deleteFiles fail once (for whichever meeting runs first)
       mockDeleteFiles.mockRejectedValueOnce(new Error("GCS error"));
 
-      const stats = await cleanupStateData(STATE_CODE, AUDIO_TTL_DAYS, TRANSCRIPT_TTL_DAYS, false);
+      const stats = await cleanupStateData(
+        STATE_CODE,
+        AUDIO_TTL_DAYS,
+        TRANSCRIPT_TTL_DAYS,
+        false,
+      );
 
       expect(stats.meetingsProcessed + stats.meetingsSkipped).toBe(2);
       expect(stats.meetingsSkipped).toBe(1);

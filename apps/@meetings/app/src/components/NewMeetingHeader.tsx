@@ -50,15 +50,15 @@ const NewMeetingHeader: React.FC<NewMeetingHeaderProps> = ({
             Discard
           </Text>
         </TouchableOpacity>
-      ) 
+      );
     } else {
       return (
         <View>
           <Image source={Icons.Bell} className="!size-6" />
-        </View>      
+        </View>
       );
     }
-  }
+  };
 
   return (
     <SafeAreaView edges={["top"]} className="bg-white">

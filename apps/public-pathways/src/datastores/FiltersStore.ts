@@ -17,10 +17,7 @@
 
 import { action, computed, makeObservable, observable } from "mobx";
 
-import {
-  FiltersStoreBase,
-  PathwaysTenantId,
-} from "~shared-pathways";
+import { FiltersStoreBase, PathwaysTenantId } from "~shared-pathways";
 
 import type { RootStore } from "./RootStore";
 

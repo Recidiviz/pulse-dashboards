@@ -53,13 +53,13 @@ const PersonCardItem = ({
     <View
       key={person.personId}
       style={{ height }}
-      className="w-full border-b border-gray-300 px-2.5 flex justify-center"
+      className="flex w-full justify-center border-b border-gray-300 px-2.5"
     >
       <Link
         screen={type === "clients" ? "ClientProfile" : "ResidentProfile"}
         params={{ personId: person.personId.toString() }}
       >
-        <View className="flex-1 w-full flex-row items-center">
+        <View className="w-full flex-1 flex-row items-center">
           <ImageBackground
             source={Icons.BgAvatar}
             className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"

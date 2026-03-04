@@ -29,6 +29,9 @@ module.exports = {
     extend: {
       colors: {
         primary: "#003331",
+        "gray/15": "#35536226",
+        "gray/85": "#355362D9",
+        "soft-green/23": "#C1E3D83B",
       },
       fontFamily: {
         "libre-baskerville": ["LibreBaskerville-Bold", "serif"],

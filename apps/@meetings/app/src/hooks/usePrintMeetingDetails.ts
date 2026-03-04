@@ -25,7 +25,13 @@ type Params = {
   time: string | null;
   duration: string | null;
 };
-export function usePrintMeetingDetails({person, meetingDetails, meetingDate, time, duration }: Params) {
+export function usePrintMeetingDetails({
+  person,
+  meetingDetails,
+  meetingDate,
+  time,
+  duration,
+}: Params) {
   return () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
@@ -51,29 +57,32 @@ export function usePrintMeetingDetails({person, meetingDetails, meetingDate, tim
       <p>${meetingDetails?.userNotepadNotes || "No notes taken for this meeting."}</p>
       <h3>Action Items</h3>
       <ul>
-        ${meetingDetails?.actionItems
-          ?.map(
-            (item) =>
-              `<li>${item}</li>`,
-          )
-          .join("") || "<li>No action items for this meeting.</li>"}
+        ${
+          meetingDetails?.actionItems
+            ?.map((item) => `<li>${item}</li>`)
+            .join("") || "<li>No action items for this meeting.</li>"
+        }
       </ul>
       <h3>Critical Updates</h3>
       <ul>
-        ${meetingDetails?.criticalUpdates
-          ?.map(
-            (update) =>
-              `<li>${update}</li>`,
-          )
-          .join("") || "<li>No updates for this meeting.</li>"}
+        ${
+          meetingDetails?.criticalUpdates
+            ?.map((update) => `<li>${update}</li>`)
+            .join("") || "<li>No updates for this meeting.</li>"
+        }
       </ul>
       <h3>Meeting Summary</h3>
       <ul>
-        ${meetingDetails?.meetingSummary?.map(summary => `
+        ${
+          meetingDetails?.meetingSummary
+            ?.map(
+              (summary) => `
           <li style="display: flex; flex-direction: column; gap: 8px;">
             <strong>${summary.title}</strong>
             <ol>
-              ${summary.items.map(item => `
+              ${summary.items
+                .map(
+                  (item) => `
                 <li>
                   ${item.timestamp ? `<span>${item.timestamp}</span>` : ""}
                   <div>
@@ -81,10 +90,15 @@ export function usePrintMeetingDetails({person, meetingDetails, meetingDate, tim
                     ${item.status !== "Discussed" ? `<span>${item.status}</span>` : ""}
                   </div>
                 </li>
-              `).join("")}
+              `,
+                )
+                .join("")}
             </ol>
           </li>
-        `).join("") || "<li>No summary for this meeting.</li>"}
+        `,
+            )
+            .join("") || "<li>No summary for this meeting.</li>"
+        }
       </ul>
       <h2>Draft Case Note</h2>
       <p>${meetingDetails?.caseNote || "No case note available."}</p>
@@ -95,4 +109,4 @@ export function usePrintMeetingDetails({person, meetingDetails, meetingDate, tim
     printWindow.print();
     printWindow.close();
   };
-};
+}

@@ -271,7 +271,7 @@ const MeetingMobile = ({
             <View className="flex min-h-full w-full flex-col gap-1.5 rounded-xl bg-[#F4F5F5] px-[14px] py-3">
               <View className="flex flex-row items-center justify-between">
                 <View className="flex flex-row items-center gap-1">
-                  <Text className="font-inter text-xs font-semibold text-[#355362D9]">
+                  <Text className="font-inter text-xs font-semibold text-gray/85">
                     Draft case note
                   </Text>
                   <Image
