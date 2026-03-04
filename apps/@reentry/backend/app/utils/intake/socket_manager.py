@@ -122,6 +122,27 @@ class SocketIOManager:
         """
         client_pseudo_id = None
         try:
+            # Log connection attempt with headers and auth info
+            headers = {
+                key: value
+                for key, value in environ.items()
+                if key.startswith("HTTP_") or key in ["REQUEST_METHOD", "PATH_INFO", "QUERY_STRING"]
+            }
+            logger.info(
+                "WebSocket connection attempt",
+                extra={
+                    "sid": sid,
+                    "headers": headers,
+                    "auth_present": auth is not None,
+                    "auth_token_present": bool(auth and auth.get("auth_token")) if auth else False,
+                    "auth_token_length": len(auth.get("auth_token", "")) if auth and auth.get("auth_token") else 0,
+                    "token_from_url_present": bool(auth and auth.get("token_from_url")) if auth else False,
+                    "remote_addr": environ.get("REMOTE_ADDR"),
+                    "user_agent": environ.get("HTTP_USER_AGENT"),
+                    "origin": environ.get("HTTP_ORIGIN"),
+                }
+            )
+
             if auth:
                 parsedAuth = Auth(**auth)
                 token = parsedAuth.auth_token
@@ -198,6 +219,17 @@ class SocketIOManager:
                                     ),
                                 )
 
+                                logger.info(
+                                    "WebSocket connection accepted",
+                                    extra={
+                                        "client_pseudo_id": client_pseudo_id,
+                                        "sid": sid,
+                                        "intake_status": intake.status,
+                                        "was_connected_elsewhere": was_connected_elsewhere,
+                                        "origin": environ.get("HTTP_ORIGIN"),
+                                    }
+                                )
+
                                 if (
                                     was_connected_elsewhere
                                     and client_pseudo_id in self.conversation_graphs
@@ -233,7 +265,17 @@ class SocketIOManager:
         except Exception as e:
             traceback.print_exc()
             logger.error(
-                f"\n\nError connecting client {client_pseudo_id or 'unknown'}: {str(e)}"
+                "Exception during WebSocket connection handling",
+                extra={
+                    "client_pseudo_id": client_pseudo_id or "unknown",
+                    "sid": sid,
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                    "auth_present": auth is not None,
+                    "origin": environ.get("HTTP_ORIGIN"),
+                    "headers": headers
+                },
+                exc_info=True,
             )
             return False
 
