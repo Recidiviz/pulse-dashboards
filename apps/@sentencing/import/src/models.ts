@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import _ from "lodash";
 import z from "zod";
 import { zu } from "zod_utilz";
 
@@ -69,6 +70,52 @@ const diagnosedSubstanceUseDisorderCriterion = z.nativeEnum(
 const opportunityStatus = z.enum(["Active", "Inactive"]);
 
 const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.string()));
+
+// Title case helper (converts "HELLO WORLD" to "Hello World")
+// Matches pattern used in libs/sentencing-client/src/utils/utils.ts
+const titleCase = (str: string | null | undefined): string | null => {
+  if (!str) return null;
+  return _.startCase(str.toLocaleLowerCase());
+};
+
+// Format phone number as XXX-XXX-XXXX
+const formatPhoneNumber = (phone: string | null | undefined): string | null => {
+  if (!phone) return null;
+  // Remove all non-digits
+  const digits = phone.replace(/\D/g, "");
+  // Format as XXX-XXX-XXXX (assuming 10 digit US phone)
+  if (digits.length === 10) {
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  // Return as-is if not 10 digits
+  return phone;
+};
+
+// Office address comes as a JSON string that needs to be parsed and formatted
+// Output format: "1397 State Hwy O, Po Box 1897, Fulton, MO 65251"
+const officeAddressSchema = zu
+  .stringToJSON()
+  .pipe(
+    z.object({
+      address_line_1: z.string().nullish(),
+      address_line_2: z.string().nullish(),
+      address_city: z.string().nullish(),
+      address_state: z.string().nullish(),
+      address_zip: z.string().nullish(),
+    }),
+  )
+  .transform((addr) => {
+    // Format: address_line_1, address_line_2, city, state zip
+    // Title case everything except state (keep uppercase)
+    const parts = [
+      titleCase(addr.address_line_1),
+      titleCase(addr.address_line_2),
+      titleCase(addr.address_city),
+      [addr.address_state, addr.address_zip].filter(Boolean).join(" ") || null,
+    ].filter(Boolean);
+    return parts.join(", ") || null;
+  })
+  .nullish();
 
 const reportType = z.enum([
   "PSI Assigned Full",
@@ -160,18 +207,20 @@ export const staffImportSchema = z
     case_ids: caseIdsSchema,
     state_code: stateCode,
     full_name: nameSchema,
-    email: z.string().optional(), // Email is null for MO staff
-    supervisor_id: z.string().optional(),
-    supervises_all: z.string().optional(),
-    officeAddress: z.string().optional(),
-    officePhoneNumber: z.string().optional(),
-    district: z.string().optional(),
+    email: z.string().nullish(), // Email is null for MO staff
+    supervisor_id: z.string().nullish(),
+    supervises_all: z.string().nullish(),
+    office_address: officeAddressSchema,
+    office_phone_number: z.string().nullish(),
+    district: z.string().nullish(),
   })
   .transform((data) => {
-    // Spread the full_name object into the root object
     return {
       ...data,
-      full_name: fullNameObjectToString(data.full_name),
+      full_name: titleCase(fullNameObjectToString(data.full_name)) ?? "",
+      // Transform snake_case to camelCase for consistency with DB fields
+      officeAddress: data.office_address,
+      officePhoneNumber: formatPhoneNumber(data.office_phone_number),
     };
   });
 
