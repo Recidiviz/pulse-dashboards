@@ -97,3 +97,54 @@ export function isAbortException(error: Error): boolean {
   return error instanceof DOMException && error.name === "AbortError";
 }
 
+type SortByLabelOptions<T> = {
+  dataPoints: T[];
+  labelKey: keyof T & string;
+  desc?: boolean;
+  valueKey?: keyof T & string;
+  sortOverride?: Record<string, number>;
+};
+
+/**
+ * Sorts the data points by labels, ascending alphabetic order.
+ */
+export function sortByLabel<T>({
+  dataPoints,
+  labelKey,
+  desc = false,
+  valueKey,
+  sortOverride,
+}: SortByLabelOptions<T>): T[] {
+  if (sortOverride && valueKey) {
+    return dataPoints.sort((a, b) => {
+      return (
+        sortOverride[a[valueKey] as string] -
+        sortOverride[b[valueKey] as string]
+      );
+    });
+  }
+
+  return dataPoints.sort((a, b) => {
+    const aLabel = a[labelKey] as string;
+    const bLabel = b[labelKey] as string;
+
+    if (aLabel === "All") return -1;
+    if (bLabel === "All") return 1;
+
+    // One of the sentence lengths starts with "Less than" and it should be first.
+    const aIsLessThan = aLabel.toLowerCase().startsWith("less than");
+    const bIsLessThan = bLabel.toLowerCase().startsWith("less than");
+    if (aIsLessThan && !bIsLessThan) return -1;
+    if (!aIsLessThan && bIsLessThan) return 1;
+
+    const lastLabels = ["Unknown", "Not Coded"];
+    const aIsLast = lastLabels.includes(aLabel);
+    const bIsLast = lastLabels.includes(bLabel);
+    if (aIsLast && !bIsLast) return 1;
+    if (!aIsLast && bIsLast) return -1;
+
+    return desc
+      ? bLabel.localeCompare(aLabel, "en", { numeric: true })
+      : aLabel.localeCompare(bLabel, "en", { numeric: true });
+  });
+}

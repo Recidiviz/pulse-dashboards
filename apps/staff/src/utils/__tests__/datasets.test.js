@@ -20,7 +20,6 @@ import tk from "timekeeper";
 import {
   centerSingleMonthDatasetIfNecessary,
   filterMostRecentMonths,
-  sortByLabel,
   sortByYearAndMonth,
   sortFilterAndSupplementMostRecentMonths,
 } from "../datasets";
@@ -123,115 +122,6 @@ describe("test datasets", () => {
     expect(dataAfterFiltersByMethod).toEqual(
       dataFiltersSupplementMostRecentMonth,
     );
-  });
-
-  describe("sortByLabel", () => {
-    it("sorts labels alphabetically ascending by default", () => {
-      const data = [
-        { label: "Charlie" },
-        { label: "Alpha" },
-        { label: "Bravo" },
-      ];
-      const result = sortByLabel(data, "label");
-      expect(result.map((d) => d.label)).toEqual(["Alpha", "Bravo", "Charlie"]);
-    });
-
-    it("sorts labels alphabetically descending when desc is true", () => {
-      const data = [
-        { label: "Alpha" },
-        { label: "Charlie" },
-        { label: "Bravo" },
-      ];
-      const result = sortByLabel(data, "label", true);
-      expect(result.map((d) => d.label)).toEqual(["Charlie", "Bravo", "Alpha"]);
-    });
-
-    it('keeps "All" first regardless of sort direction', () => {
-      const data = [{ label: "Bravo" }, { label: "All" }, { label: "Alpha" }];
-      const result = sortByLabel(data, "label");
-      expect(result[0].label).toBe("All");
-
-      const resultDesc = sortByLabel(
-        [{ label: "Bravo" }, { label: "All" }, { label: "Alpha" }],
-        "label",
-        true,
-      );
-      expect(resultDesc[0].label).toBe("All");
-    });
-
-    it('sorts "Unknown" to the end', () => {
-      const data = [
-        { label: "Unknown" },
-        { label: "Bravo" },
-        { label: "Alpha" },
-      ];
-      const result = sortByLabel(data, "label");
-      expect(result.map((d) => d.label)).toEqual(["Alpha", "Bravo", "Unknown"]);
-    });
-
-    it('sorts "Not coded" to the end', () => {
-      const data = [
-        { label: "Not coded" },
-        { label: "Bravo" },
-        { label: "Alpha" },
-      ];
-      const result = sortByLabel(data, "label");
-      expect(result.map((d) => d.label)).toEqual([
-        "Alpha",
-        "Bravo",
-        "Not coded",
-      ]);
-    });
-
-    it('sorts both "Unknown" and "Not coded" to the end', () => {
-      const data = [
-        { label: "Unknown" },
-        { label: "Bravo" },
-        { label: "Not coded" },
-        { label: "Alpha" },
-      ];
-      const result = sortByLabel(data, "label");
-      expect(result.map((d) => d.label)).toEqual([
-        "Alpha",
-        "Bravo",
-        "Not coded",
-        "Unknown",
-      ]);
-    });
-
-    it('keeps "All" first and "Unknown"/"Not coded" last together', () => {
-      const data = [
-        { label: "Unknown" },
-        { label: "All" },
-        { label: "Bravo" },
-        { label: "Not coded" },
-        { label: "Alpha" },
-      ];
-      const result = sortByLabel(data, "label");
-      expect(result.map((d) => d.label)).toEqual([
-        "All",
-        "Alpha",
-        "Bravo",
-        "Not coded",
-        "Unknown",
-      ]);
-    });
-
-    it('puts "Unknown"/"Not coded" last even when sorting descending', () => {
-      const data = [
-        { label: "Unknown" },
-        { label: "Bravo" },
-        { label: "Not coded" },
-        { label: "Alpha" },
-      ];
-      const result = sortByLabel(data, "label", true);
-      expect(result.map((d) => d.label)).toEqual([
-        "Bravo",
-        "Alpha",
-        "Unknown",
-        "Not coded",
-      ]);
-    });
   });
 
   describe("centerSingleMonthDatasetIfNecessary", () => {

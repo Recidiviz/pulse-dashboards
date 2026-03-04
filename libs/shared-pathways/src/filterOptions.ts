@@ -428,7 +428,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.SENTENCE_LENGTH_MAX]: {
     type: FILTER_TYPES.SENTENCE_LENGTH_MAX,
-    title: "Max Sentence",
+    title: "Max Sentence (Months)",
     setFilters: setFilters(FILTER_TYPES.SENTENCE_LENGTH_MAX),
     options: [
       { label: "All", value: "ALL" },
@@ -453,7 +453,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.CHARGE_COUNTY_CODE]: {
     type: FILTER_TYPES.CHARGE_COUNTY_CODE,
-    title: "Charge County",
+    title: "Conviction County",
     setFilters: setFilters(FILTER_TYPES.CHARGE_COUNTY_CODE),
     options: [{ label: "All", value: "ALL" }],
     get defaultOption(): FilterOption {
@@ -477,7 +477,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.SENTENCE_LENGTH_MIN]: {
     type: FILTER_TYPES.SENTENCE_LENGTH_MIN,
-    title: "Min Sentence",
+    title: "Min Sentence (Months)",
     setFilters: setFilters(FILTER_TYPES.SENTENCE_LENGTH_MIN),
     options: [
       { label: "All", value: "ALL" },

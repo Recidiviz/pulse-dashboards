@@ -20,13 +20,15 @@ import { observer } from "mobx-react-lite";
 import React, { useCallback, useState } from "react";
 
 import {
+  DefaultOffenseTypeOrder,
+  FILTER_TYPES,
   FilterOption,
   getFilterOptions,
   PopulationFilter,
+  sortByLabel,
 } from "~shared-pathways";
 
 import Checkbox from "../../components/Checkbox";
-import { sortByLabel } from "../../utils/datasets";
 import { useCoreStore } from "../CoreStoreProvider";
 
 type CheckboxGroupProps = {
@@ -45,7 +47,13 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
   const current = getFilterOptions(get(filters, filter.type), filter.options);
   const [selectedOptions, setSelectedOptions] = useState(current);
   const enabledOptions = filter.options.slice(1);
-  sortByLabel(enabledOptions, "label");
+  const isOffenseType = filter.type === FILTER_TYPES.OFFENSE_TYPE;
+  sortByLabel({
+    dataPoints: enabledOptions,
+    labelKey: "label",
+    valueKey: isOffenseType ? "value" : undefined,
+    sortOverride: isOffenseType ? DefaultOffenseTypeOrder : undefined,
+  });
 
   const handleChange = useCallback(
     (option: FilterOption) => {

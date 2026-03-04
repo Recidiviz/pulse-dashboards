@@ -27,6 +27,7 @@ import {
   Dimension,
   METRIC_MODES,
   PopulationFilterLabels,
+  sortByLabel,
   SupervisionPopulationSnapshotRecord,
 } from "~shared-pathways";
 
@@ -38,7 +39,6 @@ import {
   pluralize,
   pluralizeWord,
 } from "../../utils";
-import { sortByLabel } from "../../utils/datasets";
 import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import SnapshotMetric from "../models/SnapshotMetric";
@@ -71,10 +71,16 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     supervisionLevelOrder,
     accessorIsNotFilterType: isNotFilter,
   } = metric;
+  const offenseTypeOrder = !(
+    metric instanceof SupervisionPopulationSnapshotMetric
+  )
+    ? metric.offenseTypeOrder
+    : undefined;
 
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
   const isSupervisionLevel = accessor === "supervisionLevel";
+  const isOffenseType = accessor === "offenseType";
 
   const accessorFilter = filters[accessor as keyof PopulationFilterLabels];
 
@@ -111,14 +117,15 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
       value: currentValue.toString(),
     };
   });
-
-  sortByLabel(
-    data,
-    metric.isHorizontal ? "value" : "accessorLabel",
-    metric.isHorizontal,
-    "accessorValue",
-    isSupervisionLevel && supervisionLevelOrder,
-  );
+  sortByLabel({
+    dataPoints: data,
+    labelKey: metric.isHorizontal ? "value" : "accessorLabel",
+    desc: metric.isHorizontal,
+    valueKey: "accessorValue",
+    sortOverride:
+      (isSupervisionLevel ? supervisionLevelOrder : undefined) ||
+      (isOffenseType ? offenseTypeOrder : undefined),
+  });
   const latestUpdate = formatDate(
     metric instanceof SnapshotMetric
       ? metric.lastUpdated

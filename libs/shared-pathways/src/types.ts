@@ -293,3 +293,13 @@ export const DefaultSupervisionLevelOrder: OrderKeys = {
   ALL: 16,
   UNKNOWN: 17,
 };
+
+export const DefaultOffenseTypeOrder: OrderKeys = {
+  "VIOLENT FELONY": 1,
+  "OTHER COERCIVE": 2,
+  "DRUG OFFENSES": 3,
+  "PROPERTY AND OTHER OFFENSES": 4,
+  "YOUTHFUL OFFENDER": 5,
+  "JUVENILE OFFENDER": 6,
+  UNKNOWN: 7,
+};

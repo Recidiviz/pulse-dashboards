@@ -32,7 +32,7 @@ const content: StateSpecificPageCopy = {
       countByEthnicity: "Prison population by ethnic status",
       countBySentenceLengthMin: "Prison population by min sentence",
       countBySentenceLengthMax: "Prison population by max sentence",
-      countByChargeCountyCode: "Prison population by charge county",
+      countByChargeCountyCode: "Prison population by conviction county",
       countByOffenseType: "Prison population by offense type",
     },
     methodology:

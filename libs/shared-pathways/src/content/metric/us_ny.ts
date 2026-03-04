@@ -50,9 +50,9 @@ const content: StateSpecificMetricCopy = {
       "The chart describes the number of people from each maximum sentence (months) as of the date specified in the chart title. ",
   },
   prisonPopulationByChargeCountyCode: {
-    title: "Prison population by charge county",
+    title: "Prison population by conviction county",
     methodology:
-      "The chart describes the number of people from each charge county as of the date specified in the chart title. ",
+      "The chart describes the number of people from each conviction county as of the date specified in the chart title. ",
   },
   prisonPopulationByOffenseType: {
     title: "Prison population by offense type",

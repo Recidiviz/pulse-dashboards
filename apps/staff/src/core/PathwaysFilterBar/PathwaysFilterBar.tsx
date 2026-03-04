@@ -30,11 +30,11 @@ import {
   getFilterOptions,
   metricModeOptions,
   PopulationFilters,
+  sortByLabel,
 } from "~shared-pathways";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import useResizeFilterBar from "../../hooks/useResizeFilterBar";
-import { sortByLabel } from "../../utils/datasets";
 import { CoreSelect } from "../controls/CoreSelect";
 import Filter from "../controls/Filter";
 import FilterBar from "../controls/FilterBar";
@@ -168,7 +168,10 @@ const PathwaysFilterBar: React.FC<{
                       options={
                         filter.type === FILTER_TYPES.TIME_PERIOD
                           ? filter.options
-                          : sortByLabel(filter.options, "label")
+                          : sortByLabel({
+                              dataPoints: filter.options,
+                              labelKey: "label",
+                            })
                       }
                       onChange={filter.setFilters(filtersStore)}
                       defaultValue={filter.defaultValue}
@@ -193,7 +196,10 @@ const PathwaysFilterBar: React.FC<{
                       options={
                         filter.type === FILTER_TYPES.TIME_PERIOD
                           ? filter.options
-                          : sortByLabel(filter.options, "label")
+                          : sortByLabel({
+                              dataPoints: filter.options,
+                              labelKey: "label",
+                            })
                       }
                       onChange={filter.setFilters(filtersStore)}
                       defaultValue={[filter.defaultOption]}

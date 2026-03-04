@@ -21,6 +21,7 @@ import map from "lodash/fp/map";
 import { computed, makeObservable } from "mobx";
 
 import {
+  DefaultOffenseTypeOrder,
   DefaultSupervisionLevelOrder,
   OrderKeys,
   SnapshotDataRecord,
@@ -55,6 +56,11 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
   get supervisionLevelOrder(): OrderKeys | undefined {
     if (!this.store?.currentTenantId) return undefined;
     return DefaultSupervisionLevelOrder;
+  }
+
+  get offenseTypeOrder(): OrderKeys | undefined {
+    if (!this.store?.currentTenantId) return undefined;
+    return DefaultOffenseTypeOrder;
   }
 
   get dataSeries(): SnapshotDataRecord[] {
