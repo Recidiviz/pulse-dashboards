@@ -247,8 +247,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         supervisionUnrestrictedSearch: {},
         supervisorHomepageReviewCard: { activeTenants: ["US_IA"] },
         supervisorHomepageWorkflows: {},
-        supervisorHomepageVitals: { activeTenants: ["US_ID", "US_ND"] },
-        operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
+        supervisorHomepageVitals: {
+          activeTenants: ["US_ID", "US_ND", "US_TX"],
+        },
+        operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         insightsStaffUsage: { activeTenants: ["US_ID", "US_UT", "US_IA"] },
         usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
@@ -287,7 +289,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
-        operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
+        operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },

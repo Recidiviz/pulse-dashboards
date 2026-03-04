@@ -197,7 +197,6 @@ export const SUPERVISION_TASK_TYPES = [
   "usTxInCustodyContact",
   "usTxOfficeContactScheduled",
   "usTxFieldContactScheduled",
-  "usTxFieldContactUnscheduled",
   "usTxVirtualOfficeContactScheduled",
   // TODO(#10067) Deprecate usTxVirtualOrOfficeContact
   "usTxVirtualOrOfficeContact",
@@ -257,7 +256,6 @@ export type SupervisionDetailsForTask = {
   usTxInCustodyContact: UsTxContactDetails;
   usTxOfficeContactScheduled: UsTxContactDetails;
   usTxFieldContactScheduled: UsTxContactDetails;
-  usTxFieldContactUnscheduled: UsTxContactDetails;
   usTxVirtualOfficeContactScheduled: UsTxContactDetails;
   usTxVirtualOrOfficeContact: UsTxTypeAgnosticContactDetails;
   usTxAssessment: UsTxAssessmentDetails;
@@ -322,7 +320,6 @@ export type UsTxSimpleContactTaskType =
   | "usTxInCustodyContact"
   | "usTxOfficeContactScheduled"
   | "usTxFieldContactScheduled"
-  | "usTxFieldContactUnscheduled"
   | "usTxVirtualOfficeContactScheduled";
 
 export type UsTxAgnosticContactTaskType =

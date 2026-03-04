@@ -24,6 +24,7 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
   displayName = this.details.dueAssessmentType
     ? `TRAS - ${this.details.dueAssessmentType.replaceAll("TX_", "")}`
     : "TRAS";
+  vitalsMetricId = "timely_risk_assessment" as const;
 
   get lastEventDate(): string | undefined {
     return formatWorkflowsDate(fieldToDate(this.details.eventDate));

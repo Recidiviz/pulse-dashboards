@@ -25,6 +25,8 @@ import { UsTxSimpleContactTaskType } from "../types";
 abstract class UsTxContactTask<
   T extends UsTxSimpleContactTaskType,
 > extends Task<T> {
+  vitalsMetricId = "timely_contact_due_date_based" as const;
+
   get lastContactDate(): string | undefined {
     if (!this.details.lastContactDate) return;
     return formatWorkflowsDate(fieldToDate(this.details.lastContactDate));

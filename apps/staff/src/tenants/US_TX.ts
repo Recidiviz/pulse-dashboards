@@ -21,7 +21,6 @@ import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/US_TX/UsTxAssessmentTask";
 import usTxCollateralContactScheduled from "../WorkflowsStore/Task/US_TX/UsTxCollateralContactScheduled";
 import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxFieldContactScheduledTask";
-import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxFieldContactUnscheduledTask";
 import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactEdgeCaseTask";
 import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactScheduledTask";
 import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactUnscheduledTask";
@@ -98,10 +97,6 @@ const US_TX_CONFIG = {
         constructor: UsTxFieldContactScheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      usTxFieldContactUnscheduled: {
-        constructor: UsTxFieldContactUnscheduledTask,
-        snoozeForOptionsInDays: [7, 30, 90],
-      },
       usTxVirtualOfficeContactScheduled: {
         constructor: UsTxVirtualOfficeContactScheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
@@ -163,11 +158,6 @@ const US_TX_CONFIG = {
             value: "usTxFieldContactScheduled",
             shortLabel: "Field Contact, Sched.",
             label: "Field Contact, Scheduled",
-          },
-          {
-            value: "usTxFieldContactUnscheduled",
-            shortLabel: "Field Contact, Unsched.",
-            label: "Field Contact, Unscheduled",
           },
           {
             value: "usTxVirtualOfficeContactScheduled",

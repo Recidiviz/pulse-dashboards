@@ -72,19 +72,6 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         },
       },
       {
-        type: "usTxFieldContactUnscheduled",
-        // overdue
-        dueDate: "2022-03-09",
-        details: {
-          contactCount: 2,
-          lastContactDate: "2021-03-09",
-          overdueFlag: false,
-          typeOfContact: "UNSCHEDULED FIELD",
-          contactCadence: "1 EVERY 12 MONTHS",
-          scheduledContactDates: null,
-        },
-      },
-      {
         type: "usTxAssessment",
         // overdue
         dueDate: "2022-10-09",
@@ -233,20 +220,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     stateCode: "US_TX",
     externalId: "008",
     officerId: "OFFICER3",
-    tasks: [
-      {
-        type: "usTxFieldContactUnscheduled",
-        dueDate: "2022-06-11",
-        details: {
-          contactCount: 2,
-          lastContactDate: null,
-          overdueFlag: false,
-          typeOfContact: "FIELD CONTACT, UNSCHEDULED",
-          contactCadence: "1 EVERY 12 MONTHS",
-          scheduledContactDates: "2022-06-01",
-        },
-      },
-    ],
+    tasks: [],
   },
   {
     stateCode: "US_TX",
@@ -375,7 +349,6 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: null,
           causalDate: "2022-06-25",
-
         },
       },
     ],
