@@ -1,11 +1,10 @@
 #!/bin/sh
 
-# Get all of the env variables that include `DATABASE_URL`
-DB_URLS=$(printenv | grep DATABASE_URL)
-for DB_URL in $DB_URLS
+# Iterate over the comma-separated list of state codes and migrate each database.
+# Uses the state code as the database name, connecting via Cloud SQL socket.
+for DB_NAME in $(echo "$DATABASE_STATE_CODES" | tr ',' ' ')
 do
-   # Get the connection string
-   CONNECTION_STRING=$(echo $DB_URL | cut -d '=' -f 2-)
-   echo "Migrating database: $CONNECTION_STRING"
-   DATABASE_URL=$CONNECTION_STRING yarn prisma migrate deploy
+  CONNECTION_STRING="postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@localhost/${DB_NAME}?host=/cloudsql/${DATABASE_INSTANCE_CONNECTION_NAME}&schema=public"
+  echo "Migrating database for state ${DB_NAME}"
+  DATABASE_URL=$CONNECTION_STRING yarn prisma migrate deploy
 done

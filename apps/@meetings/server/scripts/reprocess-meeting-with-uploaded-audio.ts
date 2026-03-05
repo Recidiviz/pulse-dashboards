@@ -22,7 +22,7 @@
  * - Development: Direct database connection, no authentication
  * - Staging: Via cloud-sql-proxy with service account authentication
  *
- * Mode detection: Based on INSTANCE_CONNECTION_NAME env var presence
+ * Mode detection: Based on DATABASE_INSTANCE_CONNECTION_NAME env var presence
  *
  * Steps:
  * 1. Connects to the database (directly in dev, via cloud-sql-proxy in staging)
@@ -91,7 +91,8 @@ function isDevelopmentConfiguration(): boolean {
 }
 
 async function startCloudSqlProxy(): Promise<ChildProcess> {
-  const instanceConnectionName = process.env["INSTANCE_CONNECTION_NAME"];
+  const instanceConnectionName =
+    process.env["DATABASE_INSTANCE_CONNECTION_NAME"];
 
   console.log("🚀 Starting Cloud SQL Proxy...");
   console.log(`   Instance: ${instanceConnectionName}`);

@@ -21,7 +21,9 @@ import { getItem, saveItem } from "../utils/storage";
 import { useUserContext } from "./UserContext";
 
 // Available state codes with meetings databases
+// TODO(#12340): Read from AgencyConfig instead
 export const AVAILABLE_STATE_CODES = [
+  { code: "US_CO", name: "Colorado" },
   { code: "US_ME", name: "Maine" },
   { code: "US_NC", name: "North Carolina" },
   { code: "US_NE", name: "Nebraska" },

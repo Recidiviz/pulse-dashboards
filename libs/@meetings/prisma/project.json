@@ -40,17 +40,15 @@
         "dev": {
           "command": "docker compose up --wait"
         },
-        "ci": { "command": "echo 'No docker for CI'"},
-        "test": { "command": "echo 'No docker for CI'"}
+        "ci": { "command": "echo 'No docker for CI'" },
+        "test": { "command": "echo 'No docker for CI'" }
       },
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:prisma": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn prisma"
-        ],
+        "commands": ["yarn prisma"],
         "forwardAllArgs": true,
         "cwd": "{projectRoot}"
       },

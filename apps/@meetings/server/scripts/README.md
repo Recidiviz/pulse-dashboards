@@ -2,7 +2,7 @@
 
 ## Reprocess Meeting with Uploaded Audio
 
-This script allows you to manually trigger processing for a meeting where you've uploaded the final audio file directly to GCS. 
+This script allows you to manually trigger processing for a meeting where you've uploaded the final audio file directly to GCS.
 It can start processing at any step: `stitching`, `transcription`, or `notetaking`.
 
 ### Prerequisites
@@ -13,8 +13,9 @@ The prerequisites depend on which environment you're running against:
 
 1. **Copy test data to local test bucket**
 
-   Before running the script against development, ensure the audio file you want to process exists in your test bucket. 
-2. You can copy test data from the staging bucket  using gsutil:
+   Before running the script against development, ensure the audio file you want to process exists in your test bucket.
+
+2. You can copy test data from the staging bucket using gsutil:
 
    ```bash
    # Copy test-data directory from staging to local test bucket
@@ -25,6 +26,7 @@ The prerequisites depend on which environment you're running against:
 
 1. **Install cloud-sql-proxy binary**
    Install it via Homebrew:
+
    ```bash
    brew install cloud-sql-proxy
    ```
@@ -45,6 +47,7 @@ The prerequisites depend on which environment you're running against:
    ```
 
 2. **Authenticate with gcloud**
+
    ```bash
    gcloud auth login
    gcloud config set project recidiviz-dashboard-staging
@@ -71,13 +74,17 @@ The prerequisites depend on which environment you're running against:
 **Environment variables are automatically loaded from SOPS-encrypted files** when you run the nx target. You don't need to set them manually.
 
 #### Development Variables
-- `DATABASE_URL_US_XX` - PostgreSQL connection URLs (local database)
+
+- `DATABASE_URL` - PostgreSQL connection string (single database)
 - `REPROCESS_ENDPOINT_URL` - Local @meetings/server endpoint
 
 #### Staging Variables
+
 - `CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL` - Service account for authentication
 - `CLOUD_SQL_PROXY_PORT` - Port for the SQL proxy
-- `DATABASE_URL_US_XX` - PostgreSQL connection URLs
+- `DATABASE_USER` - PostgreSQL username
+- `DATABASE_PASSWORD` - PostgreSQL password
+- `DATABASE_INSTANCE_CONNECTION_NAME` - Cloud SQL Instance connection name (e.g. `project:region:instance`)
 - `INSTANCE_CONNECTION_NAME` - Cloud SQL instance connection string
 - `REPROCESS_ENDPOINT_URL` - Deployed @meetings/server endpoint
 
@@ -110,6 +117,7 @@ nx reprocess-meeting @meetings/server \
 ## Running Against Development
 
 When running against development (local database and server), the script:
+
 - Connects directly to the local database (no cloud-sql-proxy needed)
 - Calls the local server endpoint without authentication
 - Uses test data from the local test bucket
@@ -145,6 +153,7 @@ nx reprocess-meeting @meetings/server \
 ## Running Against Staging
 
 When running against staging (cloud database and server), the script:
+
 - Connects via cloud-sql-proxy to the staging database
 - Impersonates a service account for authentication
 - Uses data from the staging bucket
@@ -191,6 +200,7 @@ nx reprocess-meeting @meetings/server \
 The script behavior depends on the configuration:
 
 #### Development Mode
+
 1. **Decrypts SOPS environment files** to load development configuration
 2. **Connects directly to the local Prisma database**
 3. **Updates the meeting record** to set `finalRecordingGCSPath` to your uploaded file
@@ -198,6 +208,7 @@ The script behavior depends on the configuration:
 5. **Cleans up** by disconnecting from the database
 
 #### Staging Mode
+
 1. **Decrypts SOPS environment files** to load staging configuration
 2. **Starts cloud-sql-proxy** to connect to the remote database
 3. **Connects to Prisma** with the PostgreSQL adapter
@@ -260,15 +271,16 @@ gcloud iam service-accounts add-iam-policy-binding \
 
 #### "Failed to connect to database" or "Permission denied on Cloud SQL"
 
-You may need temporary project ownership to access Cloud SQL. Request access through **[go/jit](https://go/jit)** 
+You may need temporary project ownership to access Cloud SQL. Request access through **[go/jit](https://go/jit)**
 
 #### "Failed to trigger reprocess: 401 Unauthorized"
 
 The service account impersonation is working, but the server rejected the token. Check:
+
 - That you're using the correct service account email
 - That the token has the proper audience claim
 - Server logs for more details
 
-
 ### Next Steps
-Follow the logs: https://console.cloud.google.com/logs/query;duration=PT10M;query=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22meetings-server%22%0A-protoPayload.@type%3D%22type.googleapis.com%2Fgoogle.cloud.audit.AuditLog%22?project=recidiviz-dashboard-staging
+
+Follow the logs: <https://console.cloud.google.com/logs/query;duration=PT10M;query=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22meetings-server%22%0A-protoPayload.@type%3D%22type.googleapis.com%2Fgoogle.cloud.audit.AuditLog%22?project=recidiviz-dashboard-staging>

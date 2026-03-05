@@ -21,21 +21,40 @@ import { PrismaClient } from "~@meetings/prisma/client";
 
 const prismaClients: Record<string, PrismaClient> = {};
 
-export function getPrismaClientForStateCode(stateCode: string) {
-  const dbUrl = process.env[`DATABASE_URL_${stateCode}`];
+function buildConnectionString(stateCode: string): string {
+  // Single-DB environments (local dev, contractor): DATABASE_URL is set directly
+  if (process.env["DATABASE_URL"]) {
+    return process.env["DATABASE_URL"];
+  }
 
-  if (!dbUrl) {
+  // Multi-DB environments (deployed Cloud SQL): construct per-state URL from parts
+  const user = process.env["DATABASE_USER"];
+  const password = process.env["DATABASE_PASSWORD"];
+  const connectionName = process.env["DATABASE_INSTANCE_CONNECTION_NAME"];
+
+  if (!user || !password || !connectionName) {
     throw Error(
-      `Attempted to access unsupported database for state ${stateCode}`,
+      "Missing required database connection environment variables: set DATABASE_URL, or set DATABASE_USER + DATABASE_PASSWORD + DATABASE_INSTANCE_CONNECTION_NAME",
     );
   }
 
-  if (!prismaClients[dbUrl]) {
-    const adapter = new PrismaPg({
-      connectionString: process.env[`DATABASE_URL_${stateCode}`],
-    });
-    prismaClients[dbUrl] = new PrismaClient({ adapter });
+  const url = new URL("postgresql://");
+  url.hostname = "localhost";
+  url.username = user;
+  url.password = password;
+  url.pathname = `/${stateCode.toLowerCase()}`;
+  url.searchParams.set("host", `/cloudsql/${connectionName}`);
+  url.searchParams.set("schema", "public");
+  return url.toString();
+}
+
+export function getPrismaClientForStateCode(stateCode: string) {
+  const connectionString = buildConnectionString(stateCode);
+
+  if (!prismaClients[connectionString]) {
+    const adapter = new PrismaPg({ connectionString });
+    prismaClients[connectionString] = new PrismaClient({ adapter });
   }
 
-  return prismaClients[dbUrl];
+  return prismaClients[connectionString];
 }
