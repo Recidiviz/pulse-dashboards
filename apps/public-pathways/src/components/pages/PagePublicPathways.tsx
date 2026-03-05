@@ -19,14 +19,17 @@ import { observer } from "mobx-react-lite";
 
 import { usePageContent } from "~shared-pathways";
 
+import { PageHeader } from "../PageHeader/PageHeader";
 import { useRootStore } from "../StoreProvider";
 import { PageContainer } from "./styles";
 
 export const PagePublicPathways = observer(function PagePublicPathways() {
   const { currentTenantId, page } = useRootStore();
   const pageContent = usePageContent(currentTenantId, page);
-  // eslint-disable-next-line no-console
-  console.log(pageContent);
 
-  return <PageContainer>Hello World!</PageContainer>;
+  return (
+    <PageContainer>
+      <PageHeader title={pageContent.title} description={pageContent.summary} />
+    </PageContainer>
+  );
 });

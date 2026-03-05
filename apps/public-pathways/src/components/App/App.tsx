@@ -42,7 +42,7 @@ const GlobalStyle = createGlobalStyle`
     ${publicPathwaysTypography.Sans16}
 
     background: ${publicPathwaysPalette.white};
-    color: ${publicPathwaysPalette.pine2};
+    color: black;
   }
 `;
 
