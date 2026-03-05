@@ -16,9 +16,9 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-
-import Icons from "../../assets/icons";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import ArrowLeftIcon from "react-native-heroicons/outline/ArrowLeftIcon";
+import SearchIcon from "react-native-heroicons/outline/SearchIcon";
 
 interface SearchBarProps {
   value: string;
@@ -42,10 +42,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
       } bg-gray-50`}
     >
       <TouchableOpacity onPress={() => (isFocused ? onExit?.() : null)}>
-        <Image
-          source={isFocused || value ? Icons.LeftIcon : Icons.Search}
-          className="!size-[16]"
-        />
+        {isFocused || value ? (
+          <ArrowLeftIcon className="size-4 stroke-[#9AA9B1]" />
+        ) : (
+          <SearchIcon className="size-4 stroke-[#9AA9B1]" />
+        )}
       </TouchableOpacity>
 
       <TextInput

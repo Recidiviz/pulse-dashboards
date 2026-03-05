@@ -25,18 +25,23 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
-  Image,
   ImageBackground,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
+import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
+import LogoutIcon from "react-native-heroicons/outline/LogoutIcon";
+import MenuIcon from "react-native-heroicons/outline/MenuIcon";
+import SupportIcon from "react-native-heroicons/outline/SupportIcon";
+import BellIcon from "react-native-heroicons/solid/BellIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Icons from "../../assets/icons";
-import Logout from "../../assets/icons/logout.svg";
-import Support from "../../assets/icons/support.svg";
+import WordmarkSvg from "~@meetings/app/assets/icons/wordmark.svg";
+import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
+
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -58,19 +63,14 @@ const Header: React.FC<HeaderProps> = ({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
-  const { 
-    onLogout, 
-    name, 
-    email, 
-    hasSupervisionAccess, 
-    hasFacilitiesAccess 
-  } = useUserContext();
+  const { onLogout, name, email, hasSupervisionAccess, hasFacilitiesAccess } =
+    useUserContext();
   const { canSelectStateCode, currentStateName } = useStateSelection();
 
   const handleDropdownMenuPress = (callback: () => void) => {
     setProfileDropdownOpen(false);
     callback();
-  };  
+  };
 
   return (
     <SafeAreaView edges={["top"]} className="z-10 bg-white">
@@ -79,21 +79,13 @@ const Header: React.FC<HeaderProps> = ({
           <TouchableOpacity
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           >
-            <Image
-              source={Icons.Menu}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <MenuIcon className="text-muted" />
           </TouchableOpacity>
         )}
 
         {showBell && (
           <TouchableOpacity onPress={() => console.log("Notification screen")}>
-            <Image
-              source={Icons.Bell}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <BellIcon className="text-muted" />
           </TouchableOpacity>
         )}
       </View>
@@ -103,17 +95,13 @@ const Header: React.FC<HeaderProps> = ({
           testID="logo-button"
           onPress={() => navigation.navigate("Clients")}
         >
-          <Image
-            source={Icons.Brand}
-            className="!h-6 !w-24"
-            resizeMode="contain"
-          />
+          <WordmarkSvg />
         </TouchableOpacity>
 
         <View className="h-full flex-row items-center gap-x-6">
           {hasSupervisionAccess && (
-            <DesktopMenuItem 
-              isActive={route.name === "Clients"} 
+            <DesktopMenuItem
+              isActive={route.name === "Clients"}
               screen="Clients"
             >
               Clients
@@ -132,20 +120,23 @@ const Header: React.FC<HeaderProps> = ({
               onPress={() => setProfileDropdownOpen(!profileDropdownOpen)}
             >
               <View
-                className="flex-row items-center gap-x-1 border border-transparent hover:border-[#35536226] rounded-full transition-all duration-300 p-1.5"
+                className="flex-row items-center gap-x-1 rounded-full border border-transparent p-1.5 transition-all duration-300 hover:border-[#35536226]"
                 style={{ borderColor: profileDropdownOpen ? "#00665F" : "" }}
               >
                 <ImageBackground
-                  source={Icons.BgAvatar}
+                  source={BgAvatarImage}
                   className="size-8 items-center justify-center overflow-hidden rounded-full"
                   imageClassName="!size-8"
                 >
-                  <Text className="font-inter text-base text-white">{name ? getInitials(name) : "SS"}</Text>
+                  <Text className="font-inter text-base text-white">
+                    {name ? getInitials(name) : "SS"}
+                  </Text>
                 </ImageBackground>
-                <Image
-                  source={profileDropdownOpen ? Icons.ArrowUp : Icons.ArrowDown}
-                  className="!size-4"
-                />
+                {profileDropdownOpen ? (
+                  <ChevronUpIcon className="size-4 stroke-[3px] text-muted" />
+                ) : (
+                  <ChevronDownIcon className="size-4 stroke-[3px] text-muted" />
+                )}
               </View>
             </TouchableOpacity>
             {profileDropdownOpen && (
@@ -156,17 +147,23 @@ const Header: React.FC<HeaderProps> = ({
                       handleDropdownMenuPress(() => console.log("Settings"))
                     }
                   >
-                    <View className="bg-[#C1E3D83B] border border-transparent p-3.5 rounded-2xl flex flex-row items-center gap-3 min-w-[337px] mb-1 cursor-default">
+                    <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl border border-transparent bg-[#C1E3D83B] p-3.5">
                       <ImageBackground
-                        source={Icons.BgAvatar}
+                        source={BgAvatarImage}
                         className="size-12 items-center justify-center overflow-hidden rounded-full"
                         imageClassName="!size-12"
                       >
-                        <Text className="font-inter text-2xl leading-6 text-white">{name ? getInitials(name) : "SS"}</Text>
+                        <Text className="font-inter text-2xl leading-6 text-white">
+                          {name ? getInitials(name) : "SS"}
+                        </Text>
                       </ImageBackground>
                       <View className="flex flex-col justify-between">
-                        <Text className="font-semibold font-inter text-base leading-5">{name ?? "Test User"}</Text>
-                        <Text className="font-normal font-inter text-base text-[#355362D9]">{email ?? "testuser@mail.com"}</Text>
+                        <Text className="font-inter text-base font-semibold leading-5">
+                          {name ?? "Test User"}
+                        </Text>
+                        <Text className="font-inter text-base font-normal text-[#355362D9]">
+                          {email ?? "testuser@mail.com"}
+                        </Text>
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -175,14 +172,14 @@ const Header: React.FC<HeaderProps> = ({
                       screen="StateSelection"
                       onPress={() => setProfileDropdownOpen(false)}
                       params={{}}
-                      className="flex flex-row items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#C1E3D83B] group transition-all duration-300"
+                      className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-[#C1E3D83B]"
                     >
-                      <Support width={24} height={24} className="fill-[#35536280] group-hover:fill-[#006C67] transition-all duration-300" />
-                      <Text className="whitespace-nowrap font-inter font-medium text-base leading-5 text-[#355362D9] group-hover:text-[#006C67] transition-all duration-300">
+                      <SupportIcon className="stroke-muted transition-all duration-300 group-hover:stroke-[#006C67]" />
+                      <Text className="whitespace-nowrap font-inter text-base font-medium leading-5 text-[#355362D9] transition-all duration-300 group-hover:text-[#006C67]">
                         Settings
                       </Text>
                       {currentStateName && (
-                        <Text className="whitespace-nowrap font-inter text-xs text-gray-500 ml-auto">
+                        <Text className="ml-auto whitespace-nowrap font-inter text-xs text-gray-500">
                           Current state: {currentStateName}
                         </Text>
                       )}
@@ -191,9 +188,9 @@ const Header: React.FC<HeaderProps> = ({
                   <TouchableOpacity
                     onPress={() => handleDropdownMenuPress(onLogout)}
                   >
-                    <View className="flex flex-row items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#C1E3D83B] group transition-all duration-300">
-                      <Logout width={24} height={24} className="stroke-[#35536280] stroke-2 group-hover:stroke-[#006C67] transition-all duration-300" />
-                      <Text className="whitespace-nowrap font-inter font-medium text-base leading-5 text-[#355362D9] group-hover:text-[#006C67] transition-all duration-300">
+                    <View className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-[#C1E3D83B]">
+                      <LogoutIcon className="stroke-muted transition-all duration-300 group-hover:stroke-[#006C67]" />
+                      <Text className="whitespace-nowrap font-inter text-base font-medium leading-5 text-[#355362D9] transition-all duration-300 group-hover:text-[#006C67]">
                         Log Out
                       </Text>
                     </View>

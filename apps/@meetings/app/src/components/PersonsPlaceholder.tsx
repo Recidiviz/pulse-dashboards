@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Image, Text, TouchableOpacity, View } from "react-native";
-
-import Icons from "../../assets/icons";
+import { Text, TouchableOpacity, View } from "react-native";
+import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 
 type Props = {
   message: string;
@@ -28,7 +27,7 @@ const PersonsPlaceholder = ({ message, onClearSearch }: Props) => {
   return (
     <View className="items-center justify-center py-16">
       <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-        <Image source={Icons.Lock} className="!size-14" />
+        <DocumentSearchIcon className="size-14 fill-muted" />
       </View>
       <Text className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
         {message}

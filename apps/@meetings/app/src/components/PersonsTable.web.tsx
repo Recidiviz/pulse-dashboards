@@ -19,11 +19,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { ImageBackground, Text, View } from "react-native";
+import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
 import { Person } from "~@meetings/app/common/types";
 
-import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getInitials } from "../utils/format";
 import {
@@ -105,7 +106,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                   <TableCell>
                     <View className="flex size-full flex-row items-center gap-3">
                       <ImageBackground
-                        source={Icons.BgAvatar}
+                        source={BgAvatarImage}
                         className="size-11 items-center justify-center overflow-hidden rounded-full"
                         imageClassName="!size-11"
                       >
@@ -134,7 +135,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                   <TableCell>
                     {person.activeMeetingId ? (
                       <View className="flex-row items-center pb-2">
-                        <Image source={Icons.Record} className="!size-4" />
+                        <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
                         <Text className="px-2 font-inter text-black">
                           In progress
                         </Text>
@@ -149,7 +150,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                   </TableCell>
                   <TableCell>
                     <View className="invisible size-5 items-center justify-center group-hover:visible">
-                      <Image source={Icons.ArrowRight} className="!size-full" />
+                      <ChevronRightIcon className="stroke-muted stroke-[3px]" />
                     </View>
                   </TableCell>
                 </TableRow>

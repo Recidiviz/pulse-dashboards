@@ -18,11 +18,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import ProcessingSvg from "~@meetings/app/assets/icons/processing.svg";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import Icons from "../../assets/icons";
 import { Person } from "../common/types";
 import { useMeetingRecording, useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -106,18 +107,14 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
       <TableCell>
         {isMeetingInProgress && (
           <View className="flex-row items-center pb-2">
-            <Image source={Icons.Record} className="!size-4" />
+            <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
             <Text className="px-2 font-inter text-black">In progress</Text>
           </View>
         )}
         {isProcessing && (
           <View className="h-full max-h-[64px] overflow-hidden rounded-xl bg-soft-green/23">
             <View className="flex flex-row items-center gap-4 px-3 py-2">
-              <Image
-                source={Icons.Processing}
-                className="!size-8"
-                style={{ resizeMode: "contain" }}
-              />
+              <ProcessingSvg />
               <View className="flex-1">
                 <Text className="font-inter text-[14px] font-semibold leading-4 text-primary">
                   Recording is being processed...
@@ -143,7 +140,7 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
       </TableCell>
       <TableCell>
         <View className="invisible size-5 items-center justify-center group-hover:visible">
-          <Image source={Icons.ArrowRight} className="!size-full" />
+          <ChevronRightIcon className="stroke-muted stroke-[3px]" />
         </View>
       </TableCell>
     </TableRow>

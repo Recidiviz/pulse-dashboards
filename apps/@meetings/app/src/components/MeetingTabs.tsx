@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Image, Text, TouchableOpacity, View } from "react-native";
-
-import Icons from "../../assets/icons";
+import { Text, TouchableOpacity, View } from "react-native";
+import LockClosedIcon from "react-native-heroicons/solid/LockClosedIcon";
 
 export enum Tab {
   Notes = "Notes",
@@ -61,11 +60,7 @@ const MeetingTabs = ({
               {tab}
             </Text>
             {tab === Tab.Transcription && isTranscriptionUnavailable && (
-              <Image
-                source={Icons.LockSmall}
-                className="!size-3"
-                resizeMode="contain"
-              />
+              <LockClosedIcon className="size-3 fill-[#35536233]" />
             )}
           </View>
         </TouchableOpacity>

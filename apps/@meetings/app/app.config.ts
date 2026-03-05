@@ -75,7 +75,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: "recidiviz",
     version: "0.1.0",
     orientation: "portrait",
-    icon: "./assets/images/Apple_icon.png",
+    icon: "./src/assets/Apple_icon.png",
     scheme,
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
@@ -92,13 +92,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     web: {
       bundler: "metro",
-      favicon: "./assets/images/favicon-32x32.png",
+      favicon: "./src/assets/favicon-32x32.png",
     },
     plugins: [
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/Apple_icon.png",
+          image: "./src/assets/Apple_icon.png",
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff",
@@ -138,8 +138,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         "expo-font",
         {
           fonts: [
-            "./assets/fonts/LibreBaskerville-Bold.ttf",
-            "./assets/fonts/Inter.ttf",
+            "./src/assets/fonts/LibreBaskerville-Bold.ttf",
+            "./src/assets/fonts/Inter.ttf",
           ],
         },
       ],

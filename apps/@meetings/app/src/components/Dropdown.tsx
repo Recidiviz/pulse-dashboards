@@ -16,9 +16,9 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-
-import Icons from "../../assets/icons";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
+import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
 
 type DropdownProps = {
   options: string[];
@@ -55,10 +55,11 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
           >
             {selected}
           </Text>
-          <Image
-            source={open ? Icons.ArrowUpGreen : Icons.ArrowDown}
-            className="!size-4"
-          />
+          {open ? (
+            <ChevronUpIcon className="size-4 stroke-[#004D48] stroke-[3px]" />
+          ) : (
+            <ChevronDownIcon className="size-4 stroke-muted stroke-[3px]" />
+          )}
         </TouchableOpacity>
       </View>
 

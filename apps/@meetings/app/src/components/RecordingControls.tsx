@@ -16,15 +16,12 @@
 // =============================================================================
 
 import React from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
-import Icons from "../../assets/icons";
+import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
+import PlaySvg from "~@meetings/app/assets/icons/play.svg";
+import StopSvg from "~@meetings/app/assets/icons/stop.svg";
+
 import { RecordingStatus } from "../common/types";
 
 interface RecordingControlsProps {
@@ -43,8 +40,10 @@ const StartButton: React.FC<{ onPress: () => void; disabled: boolean }> = ({
     onPress={onPress}
     disabled={disabled}
   >
-    <Image source={Icons.Play} className="mr-2 size-4" />
-    <Text className="font-inter font-semibold text-white">Start Recording</Text>
+    <PlaySvg className="size-4 text-[#C1E3D8]" />
+    <Text className="ml-2 font-inter font-semibold text-white">
+      Start Recording
+    </Text>
   </TouchableOpacity>
 );
 
@@ -61,8 +60,8 @@ const StopButton: React.FC<{ onPress: () => void; disabled: boolean }> = ({
       onPress={onPress}
       disabled={disabled}
     >
-      <Image source={Icons.Stop} className="mr-2 size-6" />
-      <Text className={`font-inter font-semibold ${textClass}`}>Stop</Text>
+      <StopSvg className="size-4 text-[#FFEAE5]" />
+      <Text className={`ml-2 font-inter font-semibold ${textClass}`}>Stop</Text>
     </TouchableOpacity>
   );
 };
@@ -90,10 +89,13 @@ const PauseResumeButton: React.FC<{
       {isUploading ? (
         <ActivityIndicator size="small" color="white" className="mr-2" />
       ) : (
-        <Image
-          source={status === "paused" ? Icons.Play : Icons.Pause}
-          className="mr-2 size-6"
-        />
+        <View className="mr-2">
+          {status === "paused" ? (
+            <PlaySvg className="size-4 text-[#C1E3D8]" />
+          ) : (
+            <PauseSvg className="size-4 text-[#EDF1F1]" />
+          )}
+        </View>
       )}
       <Text className={`font-inter font-semibold ${textClass}`}>
         {status === "paused" ? "Resume" : "Pause"}
@@ -118,7 +120,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
     <>
       {status === "recording" && (
         <View className="flex-row items-center justify-center pb-2">
-          <Image source={Icons.Record} className="size-4" />
+          <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
           <Text className="px-2 font-inter text-black">
             Recording in progress
           </Text>

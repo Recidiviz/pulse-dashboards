@@ -17,12 +17,11 @@
 
 import { Link } from "@react-navigation/native";
 import React from "react";
-import { Image, ImageSourcePropType, Text, View } from "react-native";
-
-import Icons from "../../assets/icons";
+import { Text, View } from "react-native";
+import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 type MobileMenuItemProps = {
-  icon: ImageSourcePropType;
+  icon: React.ElementType;
   title: string;
   badge?: number;
   screen: string;
@@ -30,7 +29,7 @@ type MobileMenuItemProps = {
 };
 
 const MobileMenuItem = ({
-  icon,
+  icon: IconComponent,
   title,
   badge,
   screen,
@@ -40,11 +39,7 @@ const MobileMenuItem = ({
     <Link className="py-4" screen={screen} onPress={onPress} params={{}}>
       <View className="w-full flex-row items-center justify-between">
         <View className="flex-row items-center gap-3">
-          <Image
-            source={icon}
-            className="!size-[26px]"
-            style={{ resizeMode: "contain" }}
-          />
+          <IconComponent className="size-6 fill-muted" />
           <Text className="font-inter text-base font-medium color-black">
             {title}
           </Text>
@@ -56,11 +51,7 @@ const MobileMenuItem = ({
             </View>
           ) : null}
         </View>
-        <Image
-          source={Icons.ArrowRight}
-          className="!size-3.5"
-          style={{ resizeMode: "contain", tintColor: "#000000" }}
-        />
+        <ChevronRightIcon className="size-4 stroke-muted stroke-[3px]" />
       </View>
     </Link>
   );

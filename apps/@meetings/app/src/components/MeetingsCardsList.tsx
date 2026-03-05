@@ -17,11 +17,12 @@
 
 import { Link } from "@react-navigation/native";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import ProcessingSvg from "~@meetings/app/assets/icons/processing.svg";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import Icons from "../../assets/icons";
 import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
@@ -88,11 +89,7 @@ const MeetingsCardsList = ({
             <Text className="font-inter text-base font-semibold text-primary">
               {meeting.date}
             </Text>
-            <Image
-              source={Icons.ArrowRight}
-              className="ml-2 !size-3.5"
-              style={{ resizeMode: "contain" }}
-            />
+            <ChevronRightIcon className="size-3.5 stroke-muted stroke-[3px]" />
           </View>
 
           <Text className="mr-1 font-inter text-xs font-medium text-primary">
@@ -101,13 +98,8 @@ const MeetingsCardsList = ({
           {isProcessing && (
             <View className="mt-4 rounded-xl bg-soft-green/23 p-4">
               <View className="flex-row items-start">
-                <Image
-                  source={Icons.Processing}
-                  className="mr-2 !size-8"
-                  style={{ resizeMode: "contain" }}
-                />
-
-                <View className="flex-1">
+                <ProcessingSvg />
+                <View className="ml-2 flex-1">
                   <Text className="font-inter text-base font-semibold text-primary">
                     Recording is being processed...
                   </Text>

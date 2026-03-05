@@ -19,7 +19,6 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { Link } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
   ImageBackground,
   Pressable,
   ScrollView,
@@ -28,8 +27,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
+import ClockIcon from "react-native-heroicons/outline/ClockIcon";
+import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
+import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
-import Icons from "../../assets/icons";
+import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
+
 import { MeetingDetails, Person } from "../common/types";
 import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
@@ -120,7 +124,7 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
           disabled={isSnackbarShowing}
           className="flex-row items-center gap-1"
         >
-          <Image source={Icons.Copy} className="!size-4" resizeMode="contain" />
+          <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
           <Text className="font-inter text-sm font-medium text-primary">
             Copy
           </Text>
@@ -175,13 +179,13 @@ const MeetingDesktop = ({
             }
             params={{ personId: person.personId.toString() }}
           >
-            <Image source={Icons.ArrowLeft} className="!size-3" />
+            <ChevronLeftIcon className="size-3 stroke-muted stroke-[3px]" />
             <Text className="text-sm font-medium text-gray/85">Back</Text>
           </Link>
 
           <View className="flex-row items-center gap-3 border-b border-gray/15 px-10 py-6">
             <ImageBackground
-              source={Icons.BgAvatar}
+              source={BgAvatarImage}
               className="size-12 items-center justify-center overflow-hidden rounded-full"
               imageClassName="!size-full"
             >
@@ -207,11 +211,7 @@ const MeetingDesktop = ({
               Meeting: {meetingDate}
             </Text>
             <View className="flex flex-row items-center gap-1">
-              <Image
-                source={Icons.Clock}
-                className="!size-3"
-                resizeMode="contain"
-              />
+              <ClockIcon className="size-3 stroke-muted stroke-[3px]" />
               <Text className="font-inter text-sm font-normal leading-[14px] text-gray-500">
                 {time}
                 {duration ? ` • ${duration}` : ""}
@@ -242,11 +242,7 @@ const MeetingDesktop = ({
                 onPress={handlePrint}
                 className="flex-row items-center gap-1.5 rounded-full border border-[#35536233] px-4 py-3"
               >
-                <Image
-                  source={Icons.Printer}
-                  className="!size-4"
-                  resizeMode="contain"
-                />
+                <PrinterIcon className="size-4 fill-muted" />
                 <Text className="font-inter text-sm font-medium text-primary">
                   Print
                 </Text>

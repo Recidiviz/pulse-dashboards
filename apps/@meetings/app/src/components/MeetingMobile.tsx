@@ -23,13 +23,17 @@ import { Link } from "@react-navigation/native";
 import React, { useCallback, useRef, useState } from "react";
 import {
   Alert,
-  Image,
   Platform,
   Share,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
+import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
+import ClockIcon from "react-native-heroicons/outline/ClockIcon";
+import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
+import ShareIcon from "react-native-heroicons/outline/ShareIcon";
 import Animated, {
   interpolate,
   useAnimatedScrollHandler,
@@ -38,7 +42,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import Icons from "../../assets/icons";
 import { MeetingDetails, Person } from "../common/types";
 import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
 import MeetingNotesTab from "../components/MeetingNotesTab";
@@ -194,11 +197,7 @@ const MeetingMobile = ({
             }
             params={{ personId: person.personId.toString() }}
           >
-            <Image
-              source={Icons.ArrowLeft}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <ChevronLeftIcon className="text-muted" />
           </Link>
 
           <Animated.View
@@ -214,11 +213,7 @@ const MeetingMobile = ({
           </Animated.View>
 
           <TouchableOpacity onPress={onShare}>
-            <Image
-              source={Icons.Share}
-              className="!size-4"
-              resizeMode="contain"
-            />
+            <ShareIcon className="text-muted" />
           </TouchableOpacity>
         </View>
 
@@ -252,11 +247,7 @@ const MeetingMobile = ({
               Meeting: {meetingDate}
             </Text>
             <View className="flex flex-row items-center gap-1">
-              <Image
-                source={Icons.Clock}
-                className="!size-3"
-                resizeMode="contain"
-              />
+              <ClockIcon className="size-4 text-muted" />
               <Text className="font-inter text-sm font-normal leading-[14px] text-gray-500">
                 {time}
                 {duration ? ` • ${duration}` : ""}
@@ -274,21 +265,13 @@ const MeetingMobile = ({
                   <Text className="font-inter text-xs font-semibold text-gray/85">
                     Draft case note
                   </Text>
-                  <Image
-                    source={Icons.ArrowRightGray}
-                    className="!size-2"
-                    resizeMode="contain"
-                  />
+                  <ChevronRightIcon className="size-3 text-muted" />
                 </View>
                 <TouchableOpacity
                   onPress={handleCopyNotes}
                   disabled={isSnackbarShowing}
                 >
-                  <Image
-                    source={Icons.Copy}
-                    className="!size-4"
-                    resizeMode="contain"
-                  />
+                  <DocumentDuplicateIcon className="size-4 text-muted" />
                 </TouchableOpacity>
               </View>
 

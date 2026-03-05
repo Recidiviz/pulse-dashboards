@@ -23,7 +23,6 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { RefObject, useEffect, useMemo, useState } from "react";
 import {
-  Image,
   Keyboard,
   Platform,
   ScrollView,
@@ -32,8 +31,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
+import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 
-import Icons from "../../assets/icons";
 import { MeetingDetails } from "../common/types";
 import { trpc } from "../trpc/client";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";
@@ -172,11 +172,7 @@ const MeetingNotesSheet = ({
       <ScrollableContainer className="flex max-h-full flex-1 flex-col">
         <View className="flex flex-row items-center justify-between border-b border-[#EDF1F1] p-4">
           <TouchableOpacity onPress={handleClose}>
-            <Image
-              source={Icons.ArrowLeft}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <ChevronLeftIcon className="size-5 text-muted" />
           </TouchableOpacity>
           <View className="flex flex-col items-center">
             <Text className="font-inter text-lg font-semibold leading-[22px]">
@@ -193,11 +189,7 @@ const MeetingNotesSheet = ({
             onPress={handleCopyNotes}
             disabled={isSnackbarShowing}
           >
-            <Image
-              source={Icons.Copy}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
           </TouchableOpacity>
         </View>
         <View className="p-2">

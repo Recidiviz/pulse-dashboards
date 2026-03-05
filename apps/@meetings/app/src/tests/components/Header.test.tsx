@@ -62,16 +62,6 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-// Mock Icons
-jest.mock("../../../assets/icons", () => ({
-  Menu: { uri: "menu-icon" },
-  Bell: { uri: "bell-icon" },
-  Brand: { uri: "brand-icon" },
-  BgAvatar: { uri: "bg-avatar" },
-  ArrowUp: { uri: "arrow-up" },
-  ArrowDown: { uri: "arrow-down" },
-}));
-
 // Mock AsyncStorage
 // https://react-native-async-storage.github.io/2.0/advanced/Jest-integration/
 jest.mock("@react-native-async-storage/async-storage", () =>

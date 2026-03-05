@@ -16,11 +16,12 @@
 // =============================================================================
 
 import { useEffect, useState } from "react";
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
+import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
 import type { MinuteSection } from "~@meetings/trpc-types";
 
-import Icons from "../../assets/icons";
 import { MeetingDetails } from "../common/types";
 import { trpc } from "../trpc/client";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";
@@ -215,11 +216,7 @@ const MeetingNotesControls = ({
               className="flex-row items-center gap-2"
               onPress={onStartEdit}
             >
-              <Image
-                source={Icons.Edit}
-                className="!size-4"
-                resizeMode="contain"
-              />
+              <PencilIcon className="size-4 fill-muted stroke-[3px]" />
               <Text className="text-left font-inter text-base text-primary">
                 Edit Notes
               </Text>
@@ -228,11 +225,7 @@ const MeetingNotesControls = ({
               className="hidden flex-row items-center gap-2 lg:flex"
               onPress={onCopyNotes}
             >
-              <Image
-                source={Icons.Copy}
-                className="!size-4"
-                resizeMode="contain"
-              />
+              <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
               <Text className="text-left font-inter text-base text-primary">
                 Copy
               </Text>
@@ -244,7 +237,7 @@ const MeetingNotesControls = ({
         className="flex-row items-center gap-2 lg:hidden print:hidden"
         onPress={onMeetingNotesSheetOpen}
       >
-        <Image source={Icons.Edit} className="!size-4" resizeMode="contain" />
+        <PencilIcon className="size-4 fill-muted stroke-[3px]" />
         <Text className="text-left font-inter text-base text-primary">
           Edit Notes
         </Text>

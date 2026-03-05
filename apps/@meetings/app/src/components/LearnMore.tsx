@@ -17,10 +17,10 @@
 
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Ref, useMemo } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
+import XIcon from "react-native-heroicons/outline/XIcon";
 
-import Icons from "../../assets/icons";
 import Modal from "./Modal";
 
 const title = "Restricted to authorized users";
@@ -53,7 +53,7 @@ export const LearnMoreModal = ({ visible, onClose }: LearnMoreModalProps) => {
           {title}
         </Text>
         <TouchableOpacity onPress={onClose}>
-          <Image source={Icons.Cross} className="!size-5" />
+          <XIcon className="size-5 stroke-muted" />
         </TouchableOpacity>
       </View>
       <ScrollView>

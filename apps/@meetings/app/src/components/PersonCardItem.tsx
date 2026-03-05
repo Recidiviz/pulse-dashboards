@@ -19,11 +19,12 @@ import { Link } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import upperFirst from "lodash/upperFirst";
 import React from "react";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { ImageBackground, Text, View } from "react-native";
+import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
 import { Person } from "~@meetings/app/common/types";
 
-import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getInitials, humanReadableTitleCase } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
@@ -61,7 +62,7 @@ const PersonCardItem = ({
       >
         <View className="w-full flex-1 flex-row items-center">
           <ImageBackground
-            source={Icons.BgAvatar}
+            source={BgAvatarImage}
             className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
             imageClassName="!size-11"
           >
@@ -74,7 +75,7 @@ const PersonCardItem = ({
               <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
                 {person.fullName}
               </Text>
-              <Image source={Icons.ArrowRight} className="!size-3.5" />
+              <ChevronRightIcon className="size-3.5 stroke-muted stroke-[3px]" />
             </View>
             <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
               <Text className="font-inter text-xs text-gray-600">

@@ -20,7 +20,6 @@ import { format } from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Platform,
@@ -29,12 +28,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
+import PlusIcon from "react-native-heroicons/outline/PlusIcon";
+import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import Icons from "../../assets/icons";
 import { ClientMeetings, Person, ResidentMeetings } from "../common/types";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
@@ -187,7 +188,7 @@ const ProfileMeetings = ({
       return (
         <View className="items-center justify-center py-16">
           <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-            <Image source={Icons.Calendar} className="!size-14" />
+            <DocumentSearchIcon className="size-14 fill-muted" />
           </View>
           <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings yet
@@ -202,7 +203,7 @@ const ProfileMeetings = ({
       return (
         <View className="items-center justify-center py-16">
           <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-            <Image source={Icons.Lock} className="!size-14" />
+            <DocumentSearchIcon className="size-14 fill-muted" />
           </View>
           <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings match your search
@@ -272,24 +273,15 @@ const ProfileMeetings = ({
       >
         <View className="flex-row items-center justify-between">
           <Link screen="Clients" params={{}}>
-            <Image
-              source={Icons.ArrowLeft}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <ChevronLeftIcon className="size-6 stroke-muted stroke-[3px]" />
           </Link>
-
           {isCollapsed && recordingState === "idle" && (
             <TouchableOpacity
               className="px-2"
               onPress={handleCreateMeeting}
               disabled={isMeetingCreating}
             >
-              <Image
-                source={Icons.Plus}
-                className="!size-6"
-                resizeMode="contain"
-              />
+              <PlusIcon className="size-6 stroke-muted stroke-[3px]" />
             </TouchableOpacity>
           )}
         </View>
@@ -322,7 +314,7 @@ const ProfileMeetings = ({
             screen={type === "client" ? "Clients" : "Residents"}
             params={{}}
           >
-            <Image source={Icons.ArrowLeft} className="!size-3" />
+            <ChevronLeftIcon className="size-3 stroke-muted stroke-[3px]" />
             <Text className="text-sm font-medium text-gray/85">Back</Text>
           </Link>
         </View>

@@ -18,7 +18,6 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import React, { useRef, useState } from "react";
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -28,7 +27,8 @@ import {
 import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Icons from "../../assets/icons";
+import LogoSvg from "~@meetings/app/assets/icons/logo.svg";
+
 import { LearnMoreModal, LearnMoreSheet } from "../components/LearnMore";
 import PrimaryButton from "../components/PrimaryButton";
 import env from "../env";
@@ -67,11 +67,7 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
         className="flex-1 items-center justify-center px-2"
       >
         <View className="w-full max-w-[500px] items-center rounded-3xl bg-white py-12">
-          <Image
-            source={Icons.Logo}
-            className="mb-8 size-16"
-            resizeMode="contain"
-          />
+          <LogoSvg className="size-60" />
           <Text className="mb-8 text-center font-libre-baskerville text-[32px] font-bold text-primary">
             Sign In to Recidiviz
           </Text>

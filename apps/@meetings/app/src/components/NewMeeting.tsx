@@ -18,15 +18,16 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 import {
   ActivityIndicator,
-  Image,
   Modal,
   Platform,
   Text,
   TextInput,
   View,
 } from "react-native";
+import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 
-import Icons from "../../assets/icons";
+import NotesSvg from "~@meetings/app/assets/icons/notes.svg";
+
 import MeetingSheet from "../components/MeetingSheet";
 import RecordingControls from "../components/RecordingControls";
 import { useMeetingRecording } from "../features/recording";
@@ -88,7 +89,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
         className="mb-6 size-16 items-center justify-center border border-gray-200 bg-gray-100"
         style={{ borderRadius: 17 }}
       >
-        <Image source={Icons.Microphone} className="size-8" />
+        <MicrophoneIcon className="size-8 text-[#35536233]" />
       </View>
 
       <Text className="mb-2 text-center font-inter text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
@@ -105,8 +106,8 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const RecordingNotes = (
     <View className="mt-6">
       <View className="mb-2 flex-row items-center">
-        <Image source={Icons.Notes} className="mr-2 size-5" />
-        <Text className="font-inter text-lg font-semibold text-primary">
+        <NotesSvg className="size-5 text-[#9AA9B1]" />
+        <Text className="ml-2 font-inter text-lg font-semibold text-primary">
           Notepad
         </Text>
       </View>

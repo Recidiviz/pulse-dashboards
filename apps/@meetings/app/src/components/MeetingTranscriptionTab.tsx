@@ -16,9 +16,9 @@
 // =============================================================================
 
 import { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
+import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 
-import Icons from "../../assets/icons";
 import SearchBar from "./SearchBar";
 
 type Props = {
@@ -51,14 +51,10 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
     return (
       <View className="flex flex-col items-center gap-6 pt-[60px]">
         <View className="flex w-fit items-center justify-center rounded-2xl border-2 border-[#2B696908] bg-[#2B696908] p-[14px]">
-          <Image
-            source={Icons.LockBig}
-            className="!size-10"
-            resizeMode="contain"
-          />
+          <DocumentSearchIcon className="size-10 fill-muted" />
         </View>
         <View className="flex flex-col gap-[14px]">
-          <Text className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-[#35536280]">
+          <Text className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-muted">
             Transcript unavailable
           </Text>
           <Text className="text-center font-inter text-sm font-normal text-gray-500">
@@ -85,7 +81,7 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
         }}
       />
       {filteredTranscriptions.map((u) => (
-        <View key={u.startTimeMs} className="flex flex-col gap-1 mt-3">
+        <View key={u.startTimeMs} className="mt-3 flex flex-col gap-1">
           <View className="flex flex-row gap-2">
             <Text className="font-inter text-sm font-normal text-[#355362D9]">
               {formatSpeakerStartTime(u.startTimeMs)}

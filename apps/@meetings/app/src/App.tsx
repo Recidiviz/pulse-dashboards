@@ -16,6 +16,7 @@
 // =============================================================================
 
 import "../global.css";
+import "./nativewind-interop";
 
 import * as Sentry from "@sentry/react-native";
 import React from "react";

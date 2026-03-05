@@ -15,9 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import XIcon from "react-native-heroicons/outline/XIcon";
+import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 
-import Icons from "~@meetings/icons";
+import MinimizeSvg from "~@meetings/app/assets/icons/arrows-pointing-in.svg";
+import NotesSvg from "~@meetings/app/assets/icons/notes.svg";
+import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
+import PlaySvg from "~@meetings/app/assets/icons/play.svg";
+import StopSvg from "~@meetings/app/assets/icons/stop.svg";
 
 import { Person, RecordingStatus } from "../../../common/types";
 import LinearProgressBar from "../../../components/LinearProgressBar";
@@ -112,13 +118,13 @@ const NewMeetingIntro = ({
           onPress={onClose}
           className="rounded-full bg-[#F4F5F5] p-1.5"
         >
-          <Image source={Icons.Minimize} className="!size-3.5" />
+          <MinimizeSvg className="size-5 text-[#355362]" />
         </TouchableOpacity>
       </View>
 
       <View className="grow items-center justify-center px-8">
         <View className="mb-6 size-16 items-center justify-center rounded-2xl border border-gray-200 bg-gray-100">
-          <Image source={Icons.Microphone} className="!size-8" />
+          <MicrophoneIcon className="size-8 fill-muted" />
         </View>
 
         <Text className="mb-2 font-libre-baskerville text-[28px] font-bold text-primary">
@@ -140,8 +146,8 @@ const NewMeetingIntro = ({
             className="flex-row items-center rounded-full bg-[#006C67] px-8 py-4"
             onPress={startRecording}
           >
-            <Image source={Icons.Play} className="mr-2 !size-4" />
-            <Text className="font-inter font-semibold text-white">
+            <PlaySvg className="size-4 fill-[#C1E3D8]" />
+            <Text className="ml-2 font-inter font-semibold text-white">
               Start Meeting
             </Text>
           </TouchableOpacity>
@@ -230,7 +236,7 @@ const NewMeetingProgress = ({
             onPress={() => setIsRecordingViewMinimized(true)}
             className="rounded-full bg-[#F4F5F5] p-1.5"
           >
-            <Image source={Icons.Minimize} className="!size-3.5" />
+            <MinimizeSvg className="size-5 text-[#355362]" />
           </TouchableOpacity>
         </View>
       </View>
@@ -238,7 +244,7 @@ const NewMeetingProgress = ({
       <View className="flex-1 grow flex-row">
         <View className="grow gap-5 py-5">
           <View className="flex-row items-center gap-1.5 px-8">
-            <Image source={Icons.Notes} className="!size-6" />
+            <NotesSvg className="text-[#9AA9B1]" />
             <Text className="font-inter font-semibold text-primary">
               Notepad
             </Text>
@@ -318,7 +324,7 @@ const NewMeetingProgress = ({
           </Text>
           <View className="flex-row items-center gap-2">
             {status === "recording" && (
-              <Image source={Icons.Record} className="!size-4" />
+              <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
             )}
             <Text className="font-inter font-medium text-[#9AA6AC]">
               {status === "recording"
@@ -334,8 +340,8 @@ const NewMeetingProgress = ({
               onPress={handleTogglePauseResume}
               disabled={isModalDisabled}
             >
-              <Image source={Icons.PauseBlack} className="mr-2 !size-6" />
-              <Text className="font-inter text-lg font-semibold text-primary">
+              <PauseSvg className="size-6 fill-primary" />
+              <Text className="ml-2 font-inter text-lg font-semibold text-primary">
                 Pause
               </Text>
             </TouchableOpacity>
@@ -345,8 +351,8 @@ const NewMeetingProgress = ({
               onPress={handleTogglePauseResume}
               disabled={isModalDisabled}
             >
-              <Image source={Icons.Play} className="mr-2 !size-4" />
-              <Text className="font-inter text-lg font-semibold text-white">
+              <PlaySvg className="size-4 fill-[#C1E3D8]" />
+              <Text className="ml-2 font-inter text-lg font-semibold text-white">
                 Resume
               </Text>
             </TouchableOpacity>
@@ -356,8 +362,8 @@ const NewMeetingProgress = ({
             onPress={handleStopRecording}
             disabled={isModalDisabled}
           >
-            <Image source={Icons.Stop} className="mr-2 !size-6" />
-            <Text className="font-inter text-lg font-semibold text-white">
+            <StopSvg className="size-6 fill-[#FFEAE5]" />
+            <Text className="ml-2 font-inter text-lg font-semibold text-white">
               Stop
             </Text>
           </TouchableOpacity>
@@ -366,7 +372,7 @@ const NewMeetingProgress = ({
             onPress={handleDiscard}
             disabled={isModalDisabled}
           >
-            <Image source={Icons.Cross} className="!size-6" />
+            <XIcon className="size-6 stroke-[#9AA6AC]" />
           </TouchableOpacity>
         </View>
         <View className="hidden w-[180px] lg:flex lg:items-end">
@@ -375,8 +381,8 @@ const NewMeetingProgress = ({
             disabled={isModalDisabled}
             onPress={handleDiscard}
           >
-            <Image source={Icons.Cross} className="mr-2 !size-6" />
-            <Text className="font-inter text-lg font-semibold text-[#9AA6AC]">
+            <XIcon className="size-6 stroke-[#9AA6AC]" />
+            <Text className="ml-2 font-inter text-lg font-semibold text-[#9AA6AC]">
               Discard
             </Text>
           </TouchableOpacity>

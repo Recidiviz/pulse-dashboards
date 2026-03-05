@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Image, Text, TouchableOpacity, View } from "react-native";
-
-import Icons from "~@meetings/icons";
+import { Text, TouchableOpacity, View } from "react-native";
+import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
+import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 const PAGE_SIZE = 7;
 
@@ -47,10 +47,8 @@ export const TablePagination = ({
   return (
     <View className="flex w-full flex-row items-center justify-center gap-2 bg-white py-2">
       <TouchableOpacity onPress={setPrevPage} disabled={page === 1}>
-        <Image
-          source={Icons.ArrowLeft}
-          className="!size-3"
-          style={{ resizeMode: "contain" }}
+        <ChevronLeftIcon
+          className={`size-3.5  stroke-[4px] ${page === 1 ? "stroke-[#35536233]" : "stroke-[#006C67]"}`}
         />
       </TouchableOpacity>
       <Text className="font-inter text-sm font-medium text-gray/85">
@@ -61,10 +59,8 @@ export const TablePagination = ({
         onPress={setNextPage}
         disabled={page * pageSize >= tableItemsLength}
       >
-        <Image
-          source={Icons.ArrowRight}
-          className="!size-3"
-          style={{ resizeMode: "contain" }}
+        <ChevronRightIcon
+          className={`size-3.5 stroke-[4px] ${page * PAGE_SIZE >= tableItemsLength ? "stroke-[#35536233]" : "stroke-[#006C67]"}`}
         />
       </TouchableOpacity>
     </View>

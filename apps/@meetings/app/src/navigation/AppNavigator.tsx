@@ -86,8 +86,8 @@ const AppNavigator = () => {
   );
 
   const [, fontsLoadingError] = useFonts({
-    Inter: require("./../../assets/fonts/Inter.ttf"),
-    "LibreBaskerville-Bold": require("./../../assets/fonts/LibreBaskerville-Bold.ttf"),
+    Inter: require("./../assets/fonts/Inter.ttf"),
+    "LibreBaskerville-Bold": require("./../assets/fonts/LibreBaskerville-Bold.ttf"),
   });
 
   useEffect(() => {

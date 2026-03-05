@@ -20,16 +20,14 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import React from "react";
-import {
-  Image,
-  ImageBackground,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import XIcon from "react-native-heroicons/outline/XIcon";
+import BellIcon from "react-native-heroicons/solid/BellIcon";
+import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import Icons from "../../assets/icons";
+import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
+
 import MobileMenuItem from "../components/MobileMenuItem";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
@@ -55,20 +53,20 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
     >
       <View className="flex-row items-center justify-between bg-white px-4 pb-4">
         <TouchableOpacity onPress={() => navigation.closeDrawer()}>
-          <Image source={Icons.Cross} className="!size-6" />
+          <XIcon className="stroke-muted" />
         </TouchableOpacity>
         <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
           Navigation
         </Text>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
-          <Image source={Icons.Bell} className="!size-6" />
+          <BellIcon className="fill-muted" />
         </TouchableOpacity>
       </View>
 
       <View className="w-full px-2">
         <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-[#C1E3D83B] p-4">
           <ImageBackground
-            source={Icons.BgAvatar}
+            source={BgAvatarImage}
             className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
           >
             <Text className="font-inter text-white">
@@ -89,7 +87,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
       <View className="flex-1 px-4">
         {hasSupervisionAccess && (
           <MobileMenuItem
-            icon={Icons.Clients}
+            icon={UsersIcon}
             title="Clients"
             screen="Clients"
             onPress={navigation.closeDrawer}
@@ -97,7 +95,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         )}
         {hasFacilitiesAccess && (
           <MobileMenuItem
-            icon={Icons.Clients}
+            icon={UsersIcon}
             title="Residents"
             screen="Residents"
             onPress={navigation.closeDrawer}

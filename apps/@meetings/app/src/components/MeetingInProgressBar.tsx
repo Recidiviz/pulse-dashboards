@@ -16,16 +16,12 @@
 // =============================================================================
 
 import React from "react";
-import {
-  Image,
-  Modal,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 
-import Icons from "../../assets/icons";
+import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
+import PlaySvg from "~@meetings/app/assets/icons/play.svg";
+import StopSvg from "~@meetings/app/assets/icons/stop.svg";
+
 import { Person } from "../common/types";
 import { useMeetingRecording } from "../features/recording";
 import MeetingSheet from "./MeetingSheet";
@@ -95,12 +91,12 @@ const MeetingInProgressBar = ({
           }}
         >
           <View className="flex-row items-center">
-            <Image
-              source={isPaused ? Icons.Play : Icons.Pause}
-              className="mr-1.5 !size-4"
-              style={{ tintColor: "white", resizeMode: "contain" }}
-            />
-            <Text className="font-inter text-[13px] font-semibold text-white">
+            {isPaused ? (
+              <PlaySvg className="size-4 fill-[#C1E3D8]" />
+            ) : (
+              <PauseSvg className="size-4 fill-[#EDF1F1]" />
+            )}
+            <Text className="ml-1.5 font-inter text-[13px] font-semibold text-white">
               {isPaused ? "Resume" : "Pause"}
             </Text>
           </View>
@@ -110,11 +106,7 @@ const MeetingInProgressBar = ({
           className="ml-2 rounded-full bg-[#B91C1C] p-2"
           onPress={handleStopRecording}
         >
-          <Image
-            source={Icons.Stop}
-            className="!size-4"
-            style={{ tintColor: "white", resizeMode: "contain" }}
-          />
+          <StopSvg className="size-4 fill-[#FFEAE5]" />
         </TouchableOpacity>
       </View>
 

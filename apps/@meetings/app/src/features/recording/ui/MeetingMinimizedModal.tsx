@@ -15,12 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import XIcon from "react-native-heroicons/outline/XIcon";
 
+import MaximizeSvg from "~@meetings/app/assets/icons/arrows-poin-outting-in.svg";
+import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
+import PlaySvg from "~@meetings/app/assets/icons/play.svg";
+import StopSvg from "~@meetings/app/assets/icons/stop.svg";
 import { Person } from "~@meetings/app/common/types";
 import LinearProgressBar from "~@meetings/app/components/LinearProgressBar";
 import { formatDurationNumeric } from "~@meetings/app/utils/format";
-import Icons from "~@meetings/icons";
 
 import { useRecording } from "../model";
 
@@ -54,12 +58,12 @@ export function MeetingMinimizedModal({
             className="relative -right-1 -top-1"
             onPress={() => setIsRecordingViewMinimized(false)}
           >
-            <Image source={Icons.Maximize} className="!size-5" />
+            <MaximizeSvg className="size-5 text-[#355362]" />
           </TouchableOpacity>
         </View>
         <View className="flex-row items-center gap-2">
           {status === "recording" && (
-            <Image source={Icons.Record} className="!size-4" />
+            <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
           )}
           <Text className="font-inter font-medium text-primary">
             {status === "recording" ? "Recording in progress" : "Paused"}
@@ -75,8 +79,8 @@ export function MeetingMinimizedModal({
               onPress={onPauseResume}
               disabled={isControlsDisabled}
             >
-              <Image source={Icons.PauseBlack} className="mr-2 !size-6" />
-              <Text className="font-inter text-base font-semibold text-primary">
+              <PauseSvg className="size-6 fill-primary" />
+              <Text className="ml-2 font-inter text-base font-semibold text-primary">
                 Pause
               </Text>
             </TouchableOpacity>
@@ -86,8 +90,8 @@ export function MeetingMinimizedModal({
               onPress={onPauseResume}
               disabled={isControlsDisabled}
             >
-              <Image source={Icons.Play} className="mr-2 !size-4" />
-              <Text className="font-inter text-base font-semibold text-white">
+              <PlaySvg className="size-4 fill-[#EDF1F1]" />
+              <Text className="ml-2 font-inter text-base font-semibold text-white">
                 Resume
               </Text>
             </TouchableOpacity>
@@ -97,8 +101,8 @@ export function MeetingMinimizedModal({
             onPress={onStop}
             disabled={isControlsDisabled}
           >
-            <Image source={Icons.Stop} className="mr-2 !size-6" />
-            <Text className="font-inter text-base font-semibold text-white">
+            <StopSvg className="size-6 fill-[#FFEAE5]" />
+            <Text className="ml-2 font-inter text-base font-semibold text-white">
               Stop
             </Text>
           </TouchableOpacity>
@@ -107,7 +111,7 @@ export function MeetingMinimizedModal({
             onPress={onDiscard}
             disabled={isControlsDisabled}
           >
-            <Image source={Icons.Cross} className="!size-6" />
+            <XIcon className="size-5 stroke-[#9AA6AC]" />
           </TouchableOpacity>
         </View>
       </View>

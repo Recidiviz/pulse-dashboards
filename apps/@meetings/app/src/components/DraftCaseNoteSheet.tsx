@@ -24,7 +24,6 @@ import BottomSheet, {
 import Clipboard from "@react-native-clipboard/clipboard";
 import { RefObject, useEffect, useMemo, useState } from "react";
 import {
-  Image,
   Keyboard,
   Platform,
   Text,
@@ -32,9 +31,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
+import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import Icons from "../../assets/icons";
 import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
 import { useSnackbar } from "./Snackbar";
@@ -154,13 +154,9 @@ const DraftCaseNoteSheet = ({
       }
     >
       <BottomSheetView className="flex max-h-full flex-1 flex-col">
-        <View className="flex flex-row items-center justify-between border-b border-[#EDF1F1] p-4 h-20">
+        <View className="flex h-20 flex-row items-center justify-between border-b border-[#EDF1F1] p-4">
           <TouchableOpacity onPress={handleClose}>
-            <Image
-              source={Icons.ArrowLeft}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <ChevronLeftIcon className="size-5 text-muted" />
           </TouchableOpacity>
           <View className="flex flex-col items-center">
             <Text className="font-inter text-lg font-semibold leading-[22px]">
@@ -175,11 +171,7 @@ const DraftCaseNoteSheet = ({
             onPress={handleCopyNotes}
             disabled={isSnackbarShowing}
           >
-            <Image
-              source={Icons.Copy}
-              className="!size-6"
-              resizeMode="contain"
-            />
+            <DocumentDuplicateIcon className="size-5 text-muted" />
           </TouchableOpacity>
         </View>
         <TextInput
