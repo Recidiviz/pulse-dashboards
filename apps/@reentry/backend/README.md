@@ -3,6 +3,7 @@
 ## Requirements
 
 This project uses:
+
 - uv (https://docs.astral.sh/uv)
 - pre-commit (https://pre-commit.com/)
 - Google Cloud SDK (https://cloud.google.com/sdk/docs/install)
@@ -19,7 +20,6 @@ For macOs:
 Ubuntu/Debian:
 `sudo apt-get install -y libcairo2-dev libpango1.0-dev libglib2.0-dev gobject-introspection libgirepository1.0-dev libgdk-pixbuf2.0-dev`
 
-
 ## Installation
 
 1. Clone the repository
@@ -33,7 +33,6 @@ gcloud config set project recidiviz-rnd-planner
 ```
 
 3. Set up environment variables
-
 
 Go inside the `apps/@reentry/backend` folder, make a `.env` file. Get the content of the file from one of your teammates.
 
@@ -59,7 +58,7 @@ uv run fastapi dev
 4. Start the services with docker-compose (postgres, pgadmin, ...)
 
 ```bash
-cd "apps/@reentry" (relative path to the project root, adjust accordingly)
+cd apps/@reentry/backend (relative path to the project root, adjust accordingly)
 docker compose up
 ```
 
@@ -81,25 +80,34 @@ uv run python -m app.manage seed-db
 ## Run the backend API
 
 Start services (posgres, redis, pgadmin)
+
 ```bash
-cd "apps/@reentry" (relative path to the project root, adjust accordingly)
+cd apps/@reentry/backend (relative path to the project root, adjust accordingly)
 docker compose up
 ```
 
 Run migrations
+
 ```bash
 cd apps/@reentry/backend
 uv run alembic upgrade head
 ```
 
 Start server
+
 ```bash
 cd apps/@reentry/backend
 uv run fastapi dev
 ```
+
+Seed the database
+
+```bash
+uv run python -m app.manage seed-db
+```
+
 You can now access the API at [http://localhost:8000](http://localhost:8000).
 The API documentation is accessible at [http://localhost:8000/docs](http://localhost:8000/docs).
-
 
 Run the worker
 For any processing task to run, you need to start the worker
@@ -110,9 +118,9 @@ uv run taskiq worker -r main:broker
 ```
 
 ### Adding new packages
+
 - Add packages using uv add.
 - Then run any command and it will automatically sync, or `uv sync` to install and sync the dependent packages. This will update the `uv.lock` file.
-
 
 ## Testing
 
@@ -127,12 +135,14 @@ To run integration tests only use -m "integration" (skipped by default):
 ```
 uv run pytest -m "integration"
 ```
+
 Other flags:
 
 - `--no-cov`: Disables coverage reporting for faster test execution
 - `--log-cli-level=DEBUG`: Control log verbosity (DEBUG, INFO, WARNING, ERROR)
 
 The test database should have started when you ran docker compose up, but here are more precise settings :
+
 ```bash
 cd apps/@reentry
 docker compose up -d postgres-tests
@@ -168,11 +178,13 @@ nx run @reentry/frontend:openapi
 ```
 
 ## Database schema changes
+
 See (apps/@reentry/backend/alembic/README.md)[apps/@reentry/backend/alembic/README.md]
 
 ## LLM valuation
 
 For detailed instructions on manual testing, evaluation, and all CLI tools including:
+
 - Action plan generation
 - Automated conversation evaluation with AI clients
 - Summary generation testing
