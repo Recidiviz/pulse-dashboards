@@ -127,14 +127,13 @@
       "outputs": ["{workspaceRoot}/coverage/apps/meetings"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @meetings/prisma && cd apps/@meetings/server && vitest",
+        "command": "nx prisma-deploy @meetings/prisma -c test && cd apps/@meetings/server && vitest",
         "cwd": "{workspaceRoot}"
       },
       "configurations": {
-        "dev": {},
         "test": {}
       },
-      "defaultConfiguration": "dev"
+      "defaultConfiguration": "test"
     },
     "upload-sourcemaps": {},
     "container": {
