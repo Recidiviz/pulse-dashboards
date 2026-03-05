@@ -18,7 +18,6 @@
 import { isSameDay, parseISO } from "date-fns";
 
 import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
 import { DateInfoTag } from "./DateInfoTag";
@@ -40,7 +39,8 @@ export interface DateInfoCardProps {
   shortName: string;
   dateKey: UsAzDateField;
   isUpcoming: boolean;
-  infoPageHash: string;
+  linkUrl: string;
+  isPast: boolean;
 }
 
 export const DateInfoCard = ({
@@ -51,20 +51,20 @@ export const DateInfoCard = ({
   shortName,
   dateKey,
   isUpcoming,
-  infoPageHash,
+  linkUrl,
+  isPast,
 }: DateInfoCardProps) => {
   const { t } = useUsAzTranslations();
 
   const dateObj = parseISO(date);
   const today = new Date();
-  const isPastDate = dateObj < today;
   const isToday = isSameDay(dateObj, today);
 
   // Determine which distance translation to use based on whether date is past/future/today
   const getDistanceTranslation = (dateValue: Date) => {
     if (isToday) {
       return t(($) => $.distanceFromTodayNow);
-    } else if (isPastDate) {
+    } else if (isPast) {
       return t(($) => $.distanceFromTodayPast, { date: dateValue });
     } else {
       return t(($) => $.distanceFromTodayFuture, { date: dateValue });
@@ -92,26 +92,13 @@ export const DateInfoCard = ({
     : getDistanceTranslation(dateObj);
 
   let highlightType: CardHighlightStyle | undefined;
-  // this ordering is intentional because isPastDate supersedes TPR/DTP styles
-  if (dateKey === "csbdDateRaw" || isPastDate) {
+  // this ordering is intentional because isPast supersedes TPR/DTP styles
+  if (dateKey === "csbdDateRaw" || isPast) {
     highlightType = "dashed";
   } else if (dateKey === "acisTprDateRaw") {
     highlightType = "green";
   } else if (dateKey === "acisDtpDateRaw") {
     highlightType = "purple";
-  }
-
-  const infoPageHashUrl = `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
-    {},
-  )}#${infoPageHash}`;
-
-  let dateInfoCopy = info;
-  if (isUpcoming) {
-    dateInfoCopy = t(($) => $.upcomingDateCopy);
-  } else if (isPastDate) {
-    dateInfoCopy = t(($) => $.importantDates.pastDateMessage, {
-      linkUrl: infoPageHashUrl,
-    });
   }
 
   return (
@@ -121,14 +108,11 @@ export const DateInfoCard = ({
         <CardValueWrapper>{cardValue}</CardValueWrapper>
         {infoTag && <DateInfoTag text={infoTag} />}
       </CardValue>
-      <StyledSlateCopy $isPastDate={isPastDate}>
-        {slateCopyContent}
-      </StyledSlateCopy>
-      <DateInfoContent>{dateInfoCopy}</DateInfoContent>
+      <StyledSlateCopy $isPastDate={isPast}>{slateCopyContent}</StyledSlateCopy>
+      <DateInfoContent>{info}</DateInfoContent>
       <LearnMoreLinkWrapper>
-        <GoLink to={infoPageHashUrl}>
-          {t(($) => $.goLink)}
-          {shortName}
+        <GoLink to={linkUrl}>
+          {t(($) => $.goLink, { replace: { label: shortName } })}
         </GoLink>
       </LearnMoreLinkWrapper>
     </StyledCard>

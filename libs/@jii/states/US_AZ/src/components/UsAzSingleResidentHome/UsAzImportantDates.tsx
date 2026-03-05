@@ -26,10 +26,7 @@ import { DateInfoCard } from "./DateInfoCard";
 import { DPRBanner } from "./DPRBanner";
 import { MissingDateCard } from "./MissingDateCard";
 import { SectionSubHeader } from "./styles";
-import {
-  UsAzDateField,
-  UsAzImportantDatesPresenter,
-} from "./UsAzImportantDatesPresenter";
+import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
 const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   observer(function UsAzImportantDates({ presenter }) {
@@ -49,27 +46,21 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
           {presenter.hasNoDates ? (
             <MissingDateCard dateKey="sedDateRaw" />
           ) : (
-            presenter.dateEntries.map(
-              ({ key, date, isUpcoming, infoPageHash }) => {
-                const dateKey = key as UsAzDateField;
+            presenter.dateEntries.map((entry) => {
+              const dateKey = entry.dateKey;
 
-                return (
-                  <DateInfoCard
-                    key={key}
-                    title={t(($) => $.importantDates.dates[dateKey].title)}
-                    date={date}
-                    info={t(($) => $.importantDates.dates[dateKey].info)}
-                    infoTag={t(($) => $.importantDates.dates[dateKey].infoTag)}
-                    dateKey={dateKey}
-                    shortName={t(
-                      ($) => $.importantDates.dates[dateKey].shortName,
-                    )}
-                    isUpcoming={isUpcoming}
-                    infoPageHash={infoPageHash}
-                  />
-                );
-              },
-            )
+              return (
+                <DateInfoCard
+                  {...entry}
+                  key={dateKey}
+                  title={t(($) => $.importantDates.dates[dateKey].title)}
+                  infoTag={t(($) => $.importantDates.dates[dateKey].infoTag)}
+                  shortName={t(
+                    ($) => $.importantDates.dates[dateKey].shortName,
+                  )}
+                />
+              );
+            })
           )}
         </section>
       </div>
@@ -78,8 +69,9 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
 
 function usePresenter() {
   const metadata = useResidentMetadata("US_AZ");
+  const { t } = useUsAzTranslations();
 
-  return new UsAzImportantDatesPresenter(metadata);
+  return new UsAzImportantDatesPresenter(metadata, t);
 }
 
 export const UsAzImportantDates = withPresenterManager({

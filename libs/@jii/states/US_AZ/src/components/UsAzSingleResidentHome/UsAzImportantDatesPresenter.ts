@@ -19,6 +19,8 @@ import assertNever from "assert-never";
 import { parseISO, startOfDay } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
+import { State } from "~@jii/paths";
+import { UsAzTFunction } from "~@jii/translation";
 import { ResidentMetadata } from "~datatypes";
 
 // Shared constant for all US_AZ date field names that exist on metadata
@@ -36,14 +38,19 @@ export const US_AZ_DATE_KEYS = [
 export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
 
 export interface DateEntry {
-  key: UsAzDateField;
+  dateKey: UsAzDateField;
   date: string;
   isUpcoming: boolean; // Within 31 days
-  infoPageHash: string;
+  isPast: boolean;
+  info: string;
+  linkUrl: string;
 }
 
 export class UsAzImportantDatesPresenter {
-  constructor(public readonly metadata: ResidentMetadata<"US_AZ">) {
+  constructor(
+    public readonly metadata: ResidentMetadata<"US_AZ">,
+    private t: UsAzTFunction,
+  ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
 
@@ -56,7 +63,7 @@ export class UsAzImportantDatesPresenter {
       const date = this.metadata[field];
       if (!date) return [];
       if (field === "acisTprDateRaw" && hasAcisDtpDate) return [];
-      return [{ key: field, date }];
+      return [{ dateKey: field, date }];
     });
 
     // Sort by earliest date first
@@ -71,12 +78,45 @@ export class UsAzImportantDatesPresenter {
 
     return sortedEntries.map((entry) => {
       const entryDate = parseISO(entry.date);
+      const isUpcoming =
+        entryDate >= today && entryDate <= thirtyOneDaysFromNow;
+      const isPast = entryDate < today;
+
+      const infoPageHash = this.getInfoPageHashForDateKey(
+        entry.dateKey as UsAzDateField,
+      );
+      const linkUrl = `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
+        {},
+      )}#${infoPageHash}`;
+
+      // default copy for card
+      const copyContext: Record<string, unknown> = { linkUrl };
+      if (entry.dateKey === "acisTprDateRaw") {
+        copyContext["trLinkUrl"] =
+          `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
+            {},
+          )}#${this.getInfoPageHashForDateKey("trToAddDateRaw")}`;
+      }
+      let info = this.t(($) => $.importantDates.dates[entry.dateKey].info, {
+        replace: copyContext,
+      });
+      // copy overrides based on certain date properties
+      if (isUpcoming) {
+        info = this.t(($) => $.importantDates.upcomingDateMessage, {
+          replace: copyContext,
+        });
+      } else if (isPast) {
+        info = this.t(($) => $.importantDates.pastDateMessage, {
+          replace: copyContext,
+        });
+      }
+
       const result: DateEntry = {
         ...entry,
-        isUpcoming: entryDate >= today && entryDate <= thirtyOneDaysFromNow,
-        infoPageHash: this.getInfoPageHashForDateKey(
-          entry.key as UsAzDateField,
-        ),
+        isUpcoming,
+        isPast,
+        info,
+        linkUrl,
       };
 
       return result;

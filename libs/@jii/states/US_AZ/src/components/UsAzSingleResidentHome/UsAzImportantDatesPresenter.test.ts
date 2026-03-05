@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { freeze, reset } from "timekeeper";
+import tk from "timekeeper";
 
+import { UsAzTFunction } from "~@jii/translation";
 import { ResidentMetadata } from "~datatypes";
 
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
@@ -53,23 +54,40 @@ const mockAzMetadataWithAllDates: ResidentMetadata<"US_AZ"> = {
   csedDateRaw: "2024-12-01",
 };
 
+const t = vi.fn() as unknown as UsAzTFunction;
+
+const mockNestedObject = (() => {
+  const fn = () => mockNestedObject;
+  fn.accessed = "";
+
+  return new Proxy(Object.freeze(fn), {
+    get: (o, key) => {
+      fn.accessed += `.${String(key)}`;
+      return mockNestedObject;
+    },
+  });
+})();
+
 describe("UsAzImportantDatesPresenter", () => {
   describe("dateEntries", () => {
     it("sorts dates by earliest first and highlights acisTprDate", () => {
-      const presenter = new UsAzImportantDatesPresenter(mockAzResidentMetadata);
+      const presenter = new UsAzImportantDatesPresenter(
+        mockAzResidentMetadata,
+        t,
+      );
       const entries = presenter.dateEntries;
 
       // Check sorting order
-      expect(entries[0].key).toBe("csbdDateRaw");
+      expect(entries[0].dateKey).toBe("csbdDateRaw");
       expect(entries[0].date).toBe("2024-01-10");
 
-      expect(entries[1].key).toBe("acisTprDateRaw");
+      expect(entries[1].dateKey).toBe("acisTprDateRaw");
       expect(entries[1].date).toBe("2024-03-15");
 
-      expect(entries[2].key).toBe("ercdDateRaw");
+      expect(entries[2].dateKey).toBe("ercdDateRaw");
       expect(entries[2].date).toBe("2024-06-01");
 
-      expect(entries[3].key).toBe("sedDateRaw");
+      expect(entries[3].dateKey).toBe("sedDateRaw");
       expect(entries[3].date).toBe("2024-12-01");
 
       // Should only include dates that have values
@@ -79,49 +97,51 @@ describe("UsAzImportantDatesPresenter", () => {
     it("handles all null dates correctly", () => {
       const presenter = new UsAzImportantDatesPresenter(
         mockAzMetadataAllNullDates,
+        t,
       );
       const entries = presenter.dateEntries;
 
       expect(entries).toHaveLength(0);
     });
 
-    it("assigns infoPageHash to each date entry", () => {
+    it("hashlink for each date entry", () => {
       const presenter = new UsAzImportantDatesPresenter(
         mockAzMetadataWithAllDates,
+        t,
       );
       const entries = presenter.dateEntries;
 
-      // Verify all entries have the right infoPageHash
-      expect(entries.map(({ key, infoPageHash }) => ({ key, infoPageHash })))
+      // Verify all entries have the right link URL
+      expect(entries.map(({ dateKey, linkUrl }) => ({ dateKey, linkUrl })))
         .toMatchInlineSnapshot(`
           [
             {
-              "infoPageHash": "csbdDateRaw-trToAddDateRaw",
-              "key": "csbdDateRaw",
+              "dateKey": "csbdDateRaw",
+              "linkUrl": "more-information/important-dates#csbdDateRaw-trToAddDateRaw",
             },
             {
-              "infoPageHash": "csbdDateRaw-trToAddDateRaw",
-              "key": "trToAddDateRaw",
+              "dateKey": "trToAddDateRaw",
+              "linkUrl": "more-information/important-dates#csbdDateRaw-trToAddDateRaw",
             },
             {
-              "infoPageHash": "acisDtpDateRaw",
-              "key": "acisDtpDateRaw",
+              "dateKey": "acisDtpDateRaw",
+              "linkUrl": "more-information/important-dates#acisDtpDateRaw",
             },
             {
-              "infoPageHash": "ercdDateRaw-addDateRaw",
-              "key": "ercdDateRaw",
+              "dateKey": "ercdDateRaw",
+              "linkUrl": "more-information/important-dates#ercdDateRaw-addDateRaw",
             },
             {
-              "infoPageHash": "ercdDateRaw-addDateRaw",
-              "key": "addDateRaw",
+              "dateKey": "addDateRaw",
+              "linkUrl": "more-information/important-dates#ercdDateRaw-addDateRaw",
             },
             {
-              "infoPageHash": "sedDateRaw",
-              "key": "sedDateRaw",
+              "dateKey": "sedDateRaw",
+              "linkUrl": "more-information/important-dates#sedDateRaw",
             },
             {
-              "infoPageHash": "csedDateRaw",
-              "key": "csedDateRaw",
+              "dateKey": "csedDateRaw",
+              "linkUrl": "more-information/important-dates#csedDateRaw",
             },
           ]
         `);
@@ -135,16 +155,19 @@ describe("UsAzImportantDatesPresenter", () => {
       // we want to make sure that doesn't throw off comparisons later in the day
       mockNow.setHours(15, 25);
 
-      freeze(mockNow);
+      tk.freeze(mockNow);
 
-      const presenter = new UsAzImportantDatesPresenter(mockAzResidentMetadata);
+      const presenter = new UsAzImportantDatesPresenter(
+        mockAzResidentMetadata,
+        t,
+      );
       const todayEntry = presenter.dateEntries.find(
-        (e) => e.key === "csbdDateRaw",
+        (e) => e.dateKey === "csbdDateRaw",
       );
 
       expect(todayEntry?.isUpcoming).toBeTrue();
 
-      reset();
+      tk.reset();
     });
   });
 });

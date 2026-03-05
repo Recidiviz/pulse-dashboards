@@ -18,7 +18,6 @@
 export * from "./constants";
 export * from "./createI18nInstance";
 export * from "./namespaces/common/useCommonTranslations";
-export * from "./namespaces/US_AZ/resources/markdownHeadingUtils";
 export * from "./namespaces/US_AZ/useUsAzTranslations";
 export * from "./namespaces/US_CO/useUsCoTranslations";
 export * from "./namespaces/US_MA/useUsMaTranslations";

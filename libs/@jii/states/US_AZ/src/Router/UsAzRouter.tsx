@@ -20,7 +20,6 @@ import { Route, Routes } from "react-router-dom";
 import { NotFound } from "~@jii/common-ui";
 import { UsAzMoreInformation } from "~@jii/paths";
 
-import { PageIntro } from "../pages/PageIntro";
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoDPR } from "../pages/PageMoreInfoDPR";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
@@ -31,7 +30,6 @@ export function UsAzRouter() {
     <div>
       <Routes>
         <Route index element={<PageUsAzResidentHome />} />
-        <Route path={UsAzMoreInformation.Intro.path} element={<PageIntro />} />
         <Route
           path={UsAzMoreInformation.ImportantDates.path}
           element={<PageMoreInfoImportantDates />}

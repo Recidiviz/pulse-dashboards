@@ -18,7 +18,6 @@
 import aboutInfoPage from "./aboutInfoPage.md?raw";
 import dprInfoPage from "./dprInfoPage.md?raw";
 import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
-import onboardingInfoPage from "./onboardingInfoPage.md?raw";
 
 export default {
   about: {
@@ -30,22 +29,16 @@ export default {
   moreInfoPageLinksHeading: "More Information",
   backToTopLinkText: "Back to top",
   lastUpdated:
-    "This information was last updated on {{lastUpdatedDate, formatFullDate}}. It updates once per month.",
+    "This information was last updated on {{lastUpdatedDate, formatFullDate}}.",
   lastUpdatedNoDate: "This information updates once per month.",
-  goLink: "Learn more about ",
+  goLink: "Learn more about {{label}}",
   goLinkFull: "Read into full list of release types",
   distanceFromTodayNow: "Today",
   distanceFromTodayPast:
     "({{date, formatDateRangeFromToday(delimiter: ' and ')}} ago)",
   distanceFromTodayFuture:
     "({{date, formatDateRangeFromToday(delimiter: ' and ')}} from today)",
-  upcomingDateCopy:
-    "Your date is coming up soon! Stay on track to make sure that your date doesn't change.",
-  onboarding: {
-    heading: "Tool disclaimer",
-    body: onboardingInfoPage,
-    continueLink: "I understand, take me to the tool",
-  },
+
   dprInfoPage: {
     heading:
       "You may qualify for earlier release through Drug Program Release (DPR). What does that mean?",
@@ -58,76 +51,89 @@ export default {
       linkText: "Learn more",
     },
     sectionHeader: "Your Important Dates",
-    sectionSubHeader:
-      "These are all the dates that Time Comp has calculated for your sentence. **These dates may change** if you get a disciplinary infraction, or get lost time restored. You may also see some dates appear or disappear  depending on if you meet the criteria to qualify for them. Tap “Learn More” to see what you need to do in order to be released on a particular date",
+    sectionSubHeader: `These are all of the projected release dates that the Time Computation Unit has calculated 
+      for your sentence. These dates may change if you receive a disciplinary infraction and lose 
+      release credits, or if your release credits are restored. You may also see some dates appear 
+      or disappear depending on if you meet the qualifying criteria. **Tap the “Learn more about …”
+      button under any of the dates below** to learn more about that release date and its criteria.`,
     moreInfo: {
       heading: "Release Types, Their Requirements, and Restrictions",
       body: importantDatesInfoPage,
     },
-    pastDateMessage: `If this date is in the past, it means you have not met all the requirements yet. 
+    pastDateMessage: `If this date has already passed, it means you have not met all the requirements yet. 
     Reviewing [the criteria]({{linkUrl}}) will show you what steps you still need to take.`,
     missingDateMessage: "No date on record",
+    upcomingDateMessage: `Your date is coming up soon! Remaining compliant with
+    [the criteria]({{linkUrl}}) is the best way to keep your date from changing.`,
     dates: {
       acisTprDateRaw: {
-        title: "Standard Transition Program (TPR)",
-        info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria. You may also hear this called “Transition Program Release” (TPR) or “Transition Release”.",
-        skeletonInfo: "",
-        shortName: "TPR",
+        title: "Standard Transition Program (STP)",
+        info: `Under STP, you may qualify for release up to 90 days earlier than your 
+        [Temporary Release (TR)]({{trLinkUrl}}) under the Standard Transition Program if you meet all 
+        of [the criteria]({{linkUrl}}). You may also hear this called “Transition Program Release” 
+        (TPR) or “Transition Release.”`,
+        shortName: "STP",
         value: "{{acisTprDateRaw, formatFullDate}}",
         infoTag: "",
       },
       acisDtpDateRaw: {
         title: "Drug Transition Program (DTP)",
-        info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria. This is a version of Transition Program Release (TPR) for people with only drug possession or use charges.",
-        skeletonInfo: "",
+        info: `You may qualify for release up to 90 days earlier than your Temporary Release (TR)
+        under the Drug Transition Program if you meet all of [the criteria]({{linkUrl}}). This 
+        is a special version of the Transition Program Release (TPR) for people with only qualifying drug 
+        possession or use charges. You may also hear this called “Drug Transition Program Release” 
+        (DTP) or “Drug Transition Release.”`,
         shortName: "DTP",
         value: "{{acisDtpDateRaw, formatFullDate}}",
         infoTag: "",
       },
       csbdDateRaw: {
         title: "Community Supervision Begin Date (CSBD)",
-        info: "Also called a Temporary Release (TR) date, allows for release up to 90 days before your ERCD. **You must meet the criteria** in order to be released on this date. Ask your COIII if you can still qualify for this release type.",
-        skeletonInfo: "",
+        info: `A discretionary release up to 90 days before your ERCD. You must meet
+        [the criteria]({{linkUrl}}) listed in ADCRR Department Order 1002. You may also hear
+        this called a “Temporary Release” (TR) date.`,
         shortName: "CSBD",
         value: "{{csbdDateRaw, formatFullDate}}",
-        infoTag: "Only true if criteria are met",
+        infoTag: "Only eligible if you meet the criteria",
       },
       ercdDateRaw: {
         title: "Earned Release Credit Date (ERCD)",
-        info: "The earliest date you can be released based on Earned Release Credits – usually, a minimum of 85.7% of your sentence.",
-        skeletonInfo: "",
+        info: "The earliest date you can be released based on Earned Release Credits.",
         shortName: "ERCD",
         value: "{{ercdDateRaw, formatFullDate}}",
         infoTag: "",
       },
       sedDateRaw: {
-        title: "100% Date (Flat Sentence, SED)",
-        info: "The full term of your sentence; when you can be released if you haven’t met conditions for earlier release types. May require you to agree to conditions of supervision.",
-        skeletonInfo: "TKTK",
+        title: "Sentence Expiration Date (SED, “100%”, “Flat Time”)",
+        info: `The full term of your prison sentence (often called “100%” or “Flat Time”).
+        You will be released on this date if you are not eligible for earlier release types. If you
+        have to complete Community Supervision after your prison term, you must still agree to
+        certain conditions of supervision.`,
         shortName: "SED",
         value: "{{sedDateRaw, formatFullDate}}",
         infoTag: "",
       },
       csedDateRaw: {
-        title: "115% Date (CSED)",
+        title: "Community Supervision End Date (CSED)",
         info: "The last day that you can be under ADCRR supervision for your current sentence.",
-        skeletonInfo: "TKTK",
         shortName: "CSED",
         value: "{{csedDateRaw, formatFullDate}}",
         infoTag: "",
       },
       addDateRaw: {
         title: "Absolute Discharge Date (ADD)",
-        info: "The earliest date you can be released to Probation based on Earned Release Credits – usually, a minimum of 85.7% of your sentence.",
-        skeletonInfo: "",
+        info: `The earliest date you can be released to Probation based on Earned Release Credits. 
+        It applies to individuals whose sentence includes a term of probation right after their prison term.`,
         shortName: "ADD",
         value: "{{addDateRaw, formatFullDate}}",
         infoTag: "",
       },
       trToAddDateRaw: {
         title: "Transition to Absolute Discharge Date (TR to ADD)",
-        info: "Allows for release up to 90 days before your ADD (Absolute Discharge Date); must meet criteria.",
-        skeletonInfo: "",
+        info: `A discretionary release up to 90 days before your ADD (Absolute Discharge Date). 
+        You must meet [the criteria]({{linkUrl}}) listed in ADCRR Department Order 1002. This is
+        used for individuals who will be released to probation following the completion of 
+        their prison term.`,
         shortName: "TR to ADD",
         value: "{{trToAddDateRaw, formatFullDate}}",
         infoTag: "",
