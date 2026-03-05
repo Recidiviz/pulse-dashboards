@@ -16,16 +16,12 @@
 // =============================================================================
 
 import {
-  dcafAssessmentQuestions,
-  getSingleSectionQuestionIndex,
-  getSingleSectionQuestionScore,
+  deriveDcafFormData,
+  prefillDcafFormData,
   UsTnInitialClassification2026DraftData,
 } from "~datatypes";
 
-import {
-  getDerivedCustodyLevel,
-  prefilledCoverSheetData,
-} from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
+import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTnInitialClassification2026Opportunity } from "../UsTn";
 import { FormBase } from "./FormBase";
@@ -49,41 +45,7 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       },
     } = this;
 
-    const q1Selection = getSingleSectionQuestionIndex(
-      dcafAssessmentQuestions[0],
-      formInformation.q1Score,
-    );
-
-    const q2Selection = getSingleSectionQuestionIndex(
-      dcafAssessmentQuestions[1],
-      formInformation.q2Score,
-    );
-
-    const q3Selection = getSingleSectionQuestionIndex(
-      dcafAssessmentQuestions[2],
-      formInformation.q3Score,
-    );
-
-    const q4Selection = getSingleSectionQuestionIndex(
-      dcafAssessmentQuestions[3],
-      formInformation.q4Score,
-    );
-
-    const q5Selection = getSingleSectionQuestionIndex(
-      dcafAssessmentQuestions[4],
-      formInformation.q5Score,
-    );
-
-    const q6Selection = getSingleSectionQuestionIndex(
-      dcafAssessmentQuestions[5],
-      formInformation.q6Score,
-    );
-
-    const q1aNotes =
-      formInformation.q1Notes.listPriorNonTdocConvictions60Months;
-
-    const q1bNotes =
-      formInformation.q1Notes.listPriorViolentTdocConvictions60Months;
+    const dcafData = prefillDcafFormData(formInformation);
 
     const coverData = prefilledCoverSheetData(
       person,
@@ -94,86 +56,12 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
     return {
       ...formInformation,
       ...coverData,
-      q1Selection,
-      q2Selection,
-      q3Selection,
-      q4Selection,
-      q5Selection,
-      q6Selection,
-      q1aNotes,
-      q1bNotes,
+      ...dcafData,
     };
   }
 
   get derivedData() {
-    const {
-      q1Selection,
-      q2Selection,
-      q3Selection,
-      q4Selection,
-      q5Selection,
-      q6Selection,
-    } = this.formData;
-
-    const q1Score = getSingleSectionQuestionScore(
-      dcafAssessmentQuestions[0],
-      q1Selection,
-    );
-    const q2Score = getSingleSectionQuestionScore(
-      dcafAssessmentQuestions[1],
-      q2Selection,
-    );
-    const q3Score = getSingleSectionQuestionScore(
-      dcafAssessmentQuestions[2],
-      q3Selection,
-    );
-    const q4Score = getSingleSectionQuestionScore(
-      dcafAssessmentQuestions[3],
-      q4Selection,
-    );
-    const q5Score = getSingleSectionQuestionScore(
-      dcafAssessmentQuestions[4],
-      q5Selection,
-    );
-    const q6Score = getSingleSectionQuestionScore(
-      dcafAssessmentQuestions[5],
-      q6Selection,
-    );
-
-    const totalScore = Math.min(
-      41,
-      q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,
-    );
-
-    const trusteeEligible = [
-      this.formData.trusteeHas10YearsOrLessRemaining,
-      this.formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years,
-      this.formData.trusteeNoEscapeFromLowTrusteePast5Years,
-      this.formData.trusteeNoEscapeFromMediumCloseMaxPast10Years,
-      this.formData.trusteeNoViolentFelonyConvictionPast5YearsIncarceration,
-      this.formData.trusteeNotConvictedOfFirstDegreeMurder,
-      this.formData.trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody,
-      this.formData.trusteeNotScoredHighForViolence,
-      this.formData.trusteeNotServingForSexualOffense,
-      this.formData.trusteeNoFelonyDetainers,
-      this.formData.trusteeNoPendingFelonyCharges,
-      this.formData.trusteeNoPendingImmigrationActions,
-      this.formData.trusteeWardenHasApproved,
-    ].every((criterion) => criterion === "true");
-
-    const totalText = getDerivedCustodyLevel(totalScore, this.opportunity.type);
-
-    return {
-      q1Score,
-      q2Score,
-      q3Score,
-      q4Score,
-      q5Score,
-      q6Score,
-      totalScore,
-      trusteeEligible,
-      totalText,
-    };
+    return deriveDcafFormData(this.formData);
   }
 
   get formTemplateData() {

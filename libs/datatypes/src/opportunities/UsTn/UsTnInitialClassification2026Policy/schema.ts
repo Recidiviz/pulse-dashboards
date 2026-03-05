@@ -71,8 +71,11 @@ export type UsTnInitialClassification2026ReferralRecord = ParsedRecord<
   typeof usTnInitialClassification2026Schema
 >;
 
+export type UsTnInitialClassification2026FormInformation =
+  UsTnInitialClassification2026ReferralRecord["output"]["formInformation"];
+
 export type UsTnInitialClassification2026DraftData =
-  UsTnInitialClassification2026ReferralRecord["output"]["formInformation"] &
+  UsTnInitialClassification2026FormInformation &
     UsTnCoverSheetSharedDraftData &
     TrusteeFormSchema & {
       q1Selection: number;

@@ -132,45 +132,6 @@ export function prefilledCoverSheetData(
   return out;
 }
 
-export function getDerivedCustodyLevel(
-  totalScore: number,
-  opportunityType: OpportunityType,
-): string {
-  if (opportunityType === "usTnInitialClassification2026Policy") {
-    switch (true) {
-      case totalScore <= 11:
-        return "LOW";
-      case totalScore <= 24:
-        return "MEDIUM";
-      case totalScore <= 44:
-        return "CLOSE";
-      default:
-        return "MAXIMUM";
-    }
-  }
-
-  if (
-    opportunityType === "usTnCustodyLevelDowngrade2026Policy" ||
-    opportunityType === "usTnSpecialCustodyLevelUpgrade2026Policy" ||
-    opportunityType === "usTnAnnualReclassification2026Policy" ||
-    opportunityType === "usTnTrusteeTransfer" ||
-    opportunityType === "usTnSeriousMisconductUpgrade"
-  ) {
-    switch (true) {
-      case totalScore <= 11:
-        return "LOW";
-      case totalScore <= 25:
-        return "MEDIUM";
-      case totalScore <= 44:
-        return "CLOSE";
-      default:
-        return "MAXIMUM";
-    }
-  }
-
-  return "";
-}
-
 export function getCoverSheetTemplateArgs(
   resident: Resident,
   formData: Partial<UsTnCoverSheetSharedDraftData>,

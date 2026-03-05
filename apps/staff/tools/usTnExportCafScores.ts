@@ -21,10 +21,13 @@ import { Firestore } from "@google-cloud/firestore";
 import { firestore } from "firebase-admin";
 
 import {
+  deriveDcafFormData,
   deriveRcafFormData,
   OpportunityType,
+  prefillDcafFormData,
   prefillRcafFormData,
   TRUSTEE_FORM_QUESTION_ORDER,
+  usTnInitialClassification2026Schema,
   UsTnReclassification2026DraftData,
   UsTnReclassification2026ReferralRecord,
   usTnReclassification2026Schema,
@@ -108,9 +111,14 @@ const COLUMN_MAPPING: Record<
       : "N",
 };
 
+// We can conbine the RCAF and DCAF fields into one list since we are
+// just checking to see if any of these are populated, not all.
 const allScoredQuestionFields = [
   "q1Selection",
   "q2Selection",
+  "q3Selection",
+  "q4Selection",
+  "q5Selection",
   "q3Selection_0_6",
   "q3Selection_6_12",
   "q4Selection_0_6",
@@ -127,15 +135,38 @@ const allScoredQuestionFields = [
 // This record maps output fields to their source field in the derived data blob
 // as well as which fields affect that field. This allows us to determine
 // when a field was changed by the update record and record the output
-const DERIVED_DATA_MAPPING: Record<
+type DerivedDataMapping = Record<
   string,
   {
     sourceField: keyof ReturnType<typeof deriveRcafFormData>;
     relevantFields: (keyof UsTnReclassification2026DraftData)[];
   }
-> = {
+>;
+
+const DERIVED_DATA_MAPPING_DCAF: DerivedDataMapping = {
   Question1: { sourceField: "q1Score", relevantFields: ["q1Selection"] },
   Question2: { sourceField: "q2Score", relevantFields: ["q2Selection"] },
+  Question3: { sourceField: "q3Score", relevantFields: ["q3Selection"] },
+  Question4: { sourceField: "q4Score", relevantFields: ["q4Selection"] },
+  Question5: { sourceField: "q5Score", relevantFields: ["q5Selection"] },
+  Question6: { sourceField: "q6Score", relevantFields: ["q6Selection"] },
+  OverallScore: {
+    sourceField: "totalScore",
+    relevantFields: allScoredQuestionFields,
+  },
+  ScoredCustodyLevel: {
+    sourceField: "totalText",
+    relevantFields: allScoredQuestionFields,
+  },
+
+  TrusteeEligible: {
+    sourceField: "trusteeEligible",
+    relevantFields: TRUSTEE_FORM_QUESTION_ORDER,
+  },
+};
+
+const DERIVED_DATA_MAPPING_RCAF: DerivedDataMapping = {
+  ...DERIVED_DATA_MAPPING_DCAF,
   Question3: {
     sourceField: "q3Score",
     relevantFields: ["q3Selection_0_6", "q3Selection_6_12"],
@@ -154,21 +185,7 @@ const DERIVED_DATA_MAPPING: Record<
       "q5Selection_36_60",
     ],
   },
-  Question6: { sourceField: "q6Score", relevantFields: ["q6Selection"] },
   Question7: { sourceField: "q7Score", relevantFields: ["q7Selection"] },
-  OverallScore: {
-    sourceField: "totalScore",
-    relevantFields: allScoredQuestionFields,
-  },
-  ScoredCustodyLevel: {
-    sourceField: "totalText",
-    relevantFields: allScoredQuestionFields,
-  },
-
-  TrusteeEligible: {
-    sourceField: "trusteeEligible",
-    relevantFields: TRUSTEE_FORM_QUESTION_ORDER,
-  },
 };
 
 const CSV_COLUMN_ORDER = [
@@ -230,16 +247,19 @@ const CSV_COLUMN_ORDER = [
 ];
 
 function processRecord(
+  opportunityType: OpportunityType,
   personRecordKey: string,
   updateSnapshot: QueryDocumentSnapshot<DocData>,
   baseSnapshot: QueryDocumentSnapshot<
     UsTnReclassification2026ReferralRecord["output"]
   >,
   personSnapshot: QueryDocumentSnapshot,
-  classificationFormType: string,
 ) {
   // Set up an output record
   const out: Record<string, string | number | undefined> = {};
+
+  // Set flag to use dcaf vs rcaf helpers
+  const isDcaf = opportunityType === "usTnInitialClassification2026Policy";
 
   // Pull data from the firestore wrappers
   const updateRecord = updateSnapshot.data();
@@ -258,8 +278,9 @@ function processRecord(
   )
     return out;
 
-  const safeParsedBaseRecord =
-    usTnReclassification2026Schema.safeParse(baseRecord);
+  const safeParsedBaseRecord = isDcaf
+    ? usTnInitialClassification2026Schema.safeParse(baseRecord)
+    : usTnReclassification2026Schema.safeParse(baseRecord);
 
   // Drop out if we could not parse the base record
   if (!safeParsedBaseRecord.success) return out;
@@ -271,20 +292,29 @@ function processRecord(
   // slice off the leading us_tn_
   out.OFFENDERID = personRecordKey.slice(6);
   out.ClassificationType = "RCAF";
-  out.ClassificationFormType = classificationFormType;
-  out.AssessmentDate = updateRecord.updated.date.toDate().toISOString();
+  out.AssessmentDate = updateRecord.updated.date
+    .toDate()
+    .toISOString()
+    .split("T")[0];
   out.LastModifiedBy = updateRecord.updated.by;
   out.LastClassificationDate = personRecord.metadata.latestClassificationDate;
-
-  // These will be undefined for now, but we need to make sure these columns exist
-  out.DateOfApprovalAndEntry_CAF = undefined;
-  out.DateOfApprovalAndEntry_Trustee = undefined;
-  out.Warden_TrusteeSignaturesAcquired = undefined;
-  out.Warden_TrusteeSignaturesAcquiredDate = undefined;
-  out.ContractMonitor_TrusteeSignaturesAcquired = undefined;
-  out.ContractMonitor_TrusteeSignaturesAcquiredDate = undefined;
-  out.AC_TrusteeSignaturesAcquired = undefined;
-  out.AC_TrusteeSignaturesAcquiredDate = undefined;
+  switch (opportunityType) {
+    case "usTnInitialClassification2026Policy":
+      out.ClassificationFormType = "Initial";
+      break;
+    case "usTnAnnualReclassification2026Policy":
+      out.ClassificationFormType = "Annual";
+      break;
+    case "usTnCustodyLevelDowngrade2026Policy":
+      out.ClassificationFormType = "Downgrade";
+      break;
+    case "usTnSpecialCustodyLevelUpgrade2026Policy":
+    case "usTnSeriousMisconductUpgrade":
+      out.ClassificationFormType = "Upgrade";
+      break;
+    case "usTnTrusteeTransfer":
+      out.ClassificationFormType = "Transfer";
+  }
 
   // Loop over the columns that can be derived directly from the update record
   Object.entries(COLUMN_MAPPING).forEach(([field, getter]) => {
@@ -293,32 +323,48 @@ function processRecord(
   });
 
   // transform the record data into the fields stored in the update record
-  const prefilled = prefillRcafFormData(parsedBaseRecord.formInformation);
+  const prefilled = isDcaf
+    ? // @ts-expect-error We are handling the Dcaf separately from Rcaf via
+      // the isDcaf flag, but telling the typesystem that will just be a lot of
+      // extra duplicated code
+      prefillDcafFormData(parsedBaseRecord.formInformation)
+    : // @ts-expect-error ditto
+      prefillRcafFormData(parsedBaseRecord.formInformation);
 
-  const derivedData = deriveRcafFormData({
-    ...prefilled,
-    ...formUpdateData,
-  });
+  const derivedData = isDcaf
+    ? // @ts-expect-error See note above
+      deriveDcafFormData({
+        ...prefilled,
+        ...formUpdateData,
+      })
+    : // @ts-expect-error See note above
+      deriveRcafFormData({
+        ...prefilled,
+        ...formUpdateData,
+      });
 
   // Map over the derived fields and record them if an input field was updated
-  Object.entries(DERIVED_DATA_MAPPING).forEach(
-    ([outField, { sourceField, relevantFields }]) => {
-      // if none of the fields that contribute to the calculation of this field were modified, skip this entry
-      if (
-        relevantFields.every((field) => formUpdateData[field] === undefined)
-      ) {
-        return;
-      }
+  Object.entries(
+    isDcaf ? DERIVED_DATA_MAPPING_DCAF : DERIVED_DATA_MAPPING_RCAF,
+  ).forEach(([outField, { sourceField, relevantFields }]) => {
+    // if none of the fields that contribute to the calculation of this field were modified, skip this entry
+    if (relevantFields.every((field) => formUpdateData[field] === undefined)) {
+      return;
+    }
 
-      const value = derivedData[sourceField];
+    // The RCAF update has one additional question compared to the DCAF one
+    // This check makes sure we don't look for it in the DCAF update
+    if (!(sourceField in derivedData)) return;
 
-      if (typeof value === "boolean") {
-        out[outField] = value ? "T" : "F";
-      } else {
-        out[outField] = value;
-      }
-    },
-  );
+    // @ts-expect-error We drop out above for the DCAF form
+    const value = derivedData[sourceField];
+
+    if (typeof value === "boolean") {
+      out[outField] = value ? "T" : "F";
+    } else {
+      out[outField] = value;
+    }
+  });
 
   // If the person scored low, they were assessed for trustee status
   out.TrusteeFlag = out.SourcedCustodyLevel === "LOW" ? "T" : "F";
@@ -331,12 +377,11 @@ const db = getDb();
 async function getFormUpdateDocs(
   opportunityType: OpportunityType,
   collectionName: string,
-  classificationFormType: string,
 ) {
   const updatesRes = await db
     .collectionGroup("clientFormUpdates")
     .where("opportunity", "==", opportunityType)
-    .where("updated.date", ">=", new Date("2026-02-24"))
+    .where("updated.date", ">=", new Date("2026-03-01"))
     .get();
 
   const entries = [];
@@ -353,12 +398,12 @@ async function getFormUpdateDocs(
     ]);
 
     const processed = processRecord(
+      opportunityType,
       personFirestoreKey,
       // @ts-expect-error we know the data type matches
       updateDoc,
       baseRecordDoc,
       personRecordDoc,
-      classificationFormType,
     );
     entries.push(processed);
   }
@@ -370,34 +415,35 @@ async function createUpdatesCsv() {
   const entries = await getFormUpdateDocs(
     "usTnTrusteeTransfer",
     "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-    "Transfer",
   );
   entries.push(
     ...(await getFormUpdateDocs(
       "usTnSeriousMisconductUpgrade",
       "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-      "Upgrade",
     )),
   );
   entries.push(
     ...(await getFormUpdateDocs(
       "usTnSpecialCustodyLevelUpgrade2026Policy",
       "US_TN-specialCustodyLevelUpgrade2026PolicyReferrals",
-      "Upgrade",
     )),
   );
   entries.push(
     ...(await getFormUpdateDocs(
       "usTnAnnualReclassification2026Policy",
       "US_TN-annualReclassification2026PolicyReferrals",
-      "Annual",
     )),
   );
   entries.push(
     ...(await getFormUpdateDocs(
       "usTnCustodyLevelDowngrade2026Policy",
       "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-      "Downgrade",
+    )),
+  );
+  entries.push(
+    ...(await getFormUpdateDocs(
+      "usTnInitialClassification2026Policy",
+      "US_TN-initialClassification2026PolicyReferrals",
     )),
   );
 
