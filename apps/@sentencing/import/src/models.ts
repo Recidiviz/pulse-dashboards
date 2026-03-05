@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import _ from "lodash";
 import z from "zod";
 import { zu } from "zod_utilz";
 
@@ -75,7 +74,7 @@ const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.string()));
 // Matches pattern used in libs/sentencing-client/src/utils/utils.ts
 const titleCase = (str: string | null | undefined): string | null => {
   if (!str) return null;
-  return _.startCase(str.toLocaleLowerCase());
+  return str.toLocaleLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 };
 
 // Format phone number as XXX-XXX-XXXX
