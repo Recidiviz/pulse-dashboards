@@ -39,10 +39,6 @@ import {
 } from "../common/Classification2026";
 import classificationNextSteps2026Template from "../common/Classification2026/classification_next_steps_2026.docx";
 import { PostDownloadModal } from "../common/Classification2026/NextStepsModal";
-import {
-  getTrusteeTemplateArgs,
-  TrusteeChecklist,
-} from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
 import HearingNotice from "../CustodyReclassification/HearingNotice";
@@ -63,11 +59,6 @@ export const FormUsTnDiagnosticClassification2026 = observer(
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
 
-    const includeTrusteeChecklist =
-      derivedData.totalScore <= 12 ||
-      formData.counselorRecommendedCustody === "LOW" ||
-      formData.recommendationCustodyLevel === "LOW";
-
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
         [
@@ -84,10 +75,6 @@ export const FormUsTnDiagnosticClassification2026 = observer(
           },
         ],
       ];
-
-      if (includeTrusteeChecklist) {
-        fileInputs.push(getTrusteeTemplateArgs(resident, form));
-      }
 
       const documents = await renderMultipleDocx(fileInputs);
 
@@ -205,7 +192,6 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <TotalScore score={derivedData.totalScore} mediumUpper={24} />
             </ClassificationFormPage>
           </PrintablePage>
-          <TrusteeChecklist display={includeTrusteeChecklist} />
           <HearingNotice pilotVersion />
         </FormViewer>
         <PostDownloadModal
