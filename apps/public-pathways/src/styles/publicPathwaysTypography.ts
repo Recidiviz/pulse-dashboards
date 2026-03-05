@@ -16,8 +16,11 @@
 // =============================================================================
 
 /*
- * To use, import publicPathwaysTypography and use it like the design-system
- * typography. The font-family will be overridden to the NY font.
+ * Typography styles for Public Pathways using Proxima Nova.
+ *
+ * Uses typography from @recidiviz/design-system (the pre-built external
+ * package, where SCSS :export values are compiled) and overrides the
+ * font-family to Proxima Nova.
  *
  *   const BodyText = styled.div`
  *     ${publicPathwaysTypography.Body16}
@@ -27,18 +30,23 @@
  *     ${publicPathwaysTypography.Sans14}
  *   `;
  */
+// Import from the pre-built external package, not ~design-system.
+// The monorepo design-system uses SCSS :export to expose typography values,
+// but Vite only processes :export in .module.scss files, so the values
+// are undefined when imported via ~design-system.
+import { typography } from "@recidiviz/design-system";
 import { css } from "styled-components";
 
-import { typography, TypographyStyles } from "~design-system";
+import { TypographyStyles } from "~design-system";
 
-const OSWALD_FONT_FAMILY = '"Oswald", sans-serif';
+const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
 
 export const publicPathwaysTypography = Object.fromEntries(
   Object.entries(typography).map(([level, styles]) => [
     level,
     css`
       ${styles}
-      font-family: ${OSWALD_FONT_FAMILY};
+      font-family: ${PROXIMA_NOVA_FONT_FAMILY};
       font-optical-sizing: auto;
     `,
   ]),

@@ -34,7 +34,7 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        public: ['"Public Sans"', "sans-serif"],
+        proxima: ['"Proxima Nova"', "sans-serif"],
       },
     },
   },
