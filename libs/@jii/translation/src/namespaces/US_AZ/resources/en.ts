@@ -66,17 +66,17 @@ export default {
     upcomingDateMessage: `Your date is coming up soon! Remaining compliant with
     [the criteria]({{linkUrl}}) is the best way to keep your date from changing.`,
     dates: {
-      acisTprDateRaw: {
+      tprDate: {
         title: "Standard Transition Program (STP)",
         info: `Under STP, you may qualify for release up to 90 days earlier than your 
         [Temporary Release (TR)]({{trLinkUrl}}) under the Standard Transition Program if you meet all 
         of [the criteria]({{linkUrl}}). You may also hear this called “Transition Program Release” 
         (TPR) or “Transition Release.”`,
         shortName: "STP",
-        value: "{{acisTprDateRaw, formatFullDate}}",
+        value: "{{tprDate, formatFullDate}}",
         infoTag: "",
       },
-      acisDtpDateRaw: {
+      dtpDate: {
         title: "Drug Transition Program (DTP)",
         info: `You may qualify for release up to 90 days earlier than your Temporary Release (TR)
         under the Drug Transition Program if you meet all of [the criteria]({{linkUrl}}). This 
@@ -84,58 +84,58 @@ export default {
         possession or use charges. You may also hear this called “Drug Transition Program Release” 
         (DTP) or “Drug Transition Release.”`,
         shortName: "DTP",
-        value: "{{acisDtpDateRaw, formatFullDate}}",
+        value: "{{dtpDate, formatFullDate}}",
         infoTag: "",
       },
-      csbdDateRaw: {
+      csbdDate: {
         title: "Community Supervision Begin Date (CSBD)",
         info: `A discretionary release up to 90 days before your ERCD. You must meet
         [the criteria]({{linkUrl}}) listed in ADCRR Department Order 1002. You may also hear
         this called a “Temporary Release” (TR) date.`,
         shortName: "CSBD",
-        value: "{{csbdDateRaw, formatFullDate}}",
+        value: "{{csbdDate, formatFullDate}}",
         infoTag: "Only eligible if you meet the criteria",
       },
-      ercdDateRaw: {
+      ercdDate: {
         title: "Earned Release Credit Date (ERCD)",
         info: "The earliest date you can be released based on Earned Release Credits.",
         shortName: "ERCD",
-        value: "{{ercdDateRaw, formatFullDate}}",
+        value: "{{ercdDate, formatFullDate}}",
         infoTag: "",
       },
-      sedDateRaw: {
+      sedDate: {
         title: "Sentence Expiration Date (SED, “100%”, “Flat Time”)",
         info: `The full term of your prison sentence (often called “100%” or “Flat Time”).
         You will be released on this date if you are not eligible for earlier release types. If you
         have to complete Community Supervision after your prison term, you must still agree to
         certain conditions of supervision.`,
         shortName: "SED",
-        value: "{{sedDateRaw, formatFullDate}}",
+        value: "{{sedDate, formatFullDate}}",
         infoTag: "",
       },
-      csedDateRaw: {
+      csedDate: {
         title: "Community Supervision End Date (CSED)",
         info: "The last day that you can be under ADCRR supervision for your current sentence.",
         shortName: "CSED",
-        value: "{{csedDateRaw, formatFullDate}}",
+        value: "{{csedDate, formatFullDate}}",
         infoTag: "",
       },
-      addDateRaw: {
+      addDate: {
         title: "Absolute Discharge Date (ADD)",
         info: `The earliest date you can be released to Probation based on Earned Release Credits. 
         It applies to individuals whose sentence includes a term of probation right after their prison term.`,
         shortName: "ADD",
-        value: "{{addDateRaw, formatFullDate}}",
+        value: "{{addDate, formatFullDate}}",
         infoTag: "",
       },
-      trToAddDateRaw: {
+      trToAddDate: {
         title: "Transition to Absolute Discharge Date (TR to ADD)",
         info: `A discretionary release up to 90 days before your ADD (Absolute Discharge Date). 
         You must meet [the criteria]({{linkUrl}}) listed in ADCRR Department Order 1002. This is
         used for individuals who will be released to probation following the completion of 
         their prison term.`,
         shortName: "TR to ADD",
-        value: "{{trToAddDateRaw, formatFullDate}}",
+        value: "{{trToAddDate, formatFullDate}}",
         infoTag: "",
       },
     },

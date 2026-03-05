@@ -4,7 +4,7 @@ _There are two options._
 
 <section class="tpr">
 
-<h3 id="acisTprDateRaw">Standard Transition Program (STP)</h3>
+<h3 id="tprDate">Standard Transition Program (STP)</h3>
 
 #### What does this mean?
 
@@ -30,7 +30,7 @@ To be released on your STP date, you must meet the following criteria:
 - You must have an approved home plan – starting to work on this ASAP is essential to receiving your full 90 days.
 - You can’t have any past arrests, convictions, or requirements to register for sex offenses.
 - You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
-- If you have participated in the Transition Program before, you must wait at least 24 months after your last [CSED](#csedDateRaw) date before being eligible again.
+- If you have participated in the Transition Program before, you must wait at least 24 months after your last [CSED](#csedDate) date before being eligible again.
 - You must be a US Citizen or a legal permanent resident without an ICE detainer.
 
 </section>
@@ -54,13 +54,13 @@ If you are released on STP, you will begin community supervision early. During t
 
 If you violate the conditions of your supervision while on Transition Program Release, you can be returned to prison to serve the remainder of your sentence until your next eligible release date.
 
-<h3 id="acisDtpDateRaw">Drug Transition Program (DTP)</h3>
+<h3 id="dtpDate">Drug Transition Program (DTP)</h3>
 
 #### What does this mean?
 
 The Drug Transition Program (DTP) is a special version of the "Transition Program" designed for individuals serving sentences only for specific drug possession or use offenses. **This program allows you to be released to the community up to 90 days before your earliest eligible release date**, if you agree to participate in required transition programs while under supervision.
 
-Because DTP is a specific category of early release, if you qualify for and are approved through this drug-specific track, you cannot also qualify for the [Standard Transition Program (STP)](#acisTprDateRaw).
+Because DTP is a specific category of early release, if you qualify for and are approved through this drug-specific track, you cannot also qualify for the [Standard Transition Program (STP)](#tprDate).
 
 The primary goal of DTP is to help you successfully re-enter the community by providing early access to support services and treatment.
 
@@ -74,7 +74,7 @@ People convicted of particular drug use/possession crimes, who also meet the res
 - Possession or use of a Narcotic Drug (A.R.S. §13-3408(A)(1))
 - Possession or use of Drug Paraphernalia (A.R.S. §13-3415(A))
 
-Please note that in order to qualify for DTP, your current sentence can _only_ be for drug possession/use. For example, someone convicted of marijuana possession _and_ another charge like assault or burglary will not qualify for DTP. However, you may still qualify for another version of Transition Program Release called [Standard Transition Program (STP)](#acisTprDateRaw) if you meet those requirements.
+Please note that in order to qualify for DTP, your current sentence can _only_ be for drug possession/use. For example, someone convicted of marijuana possession _and_ another charge like assault or burglary will not qualify for DTP. However, you may still qualify for another version of Transition Program Release called [Standard Transition Program (STP)](#tprDate) if you meet those requirements.
 
 You will be reviewed for eligibility around 7 months before your next earliest release date. If you want to read the statutes like A.R.S. §13-3405(A)(1), you can find them in the Law Library or on your tablet through LexisNexis.
 
@@ -103,17 +103,17 @@ To get your full 90-day release, you need an approved home plan. Start working o
 
 Under DTP, you begin your term of community supervision up to 90 days early. During this transition period, you must report regularly to a Community Corrections Officer and will remain under the jurisdiction of the ADCRR.
 
-You are required to attend mandatory community-based programs, which may include substance abuse treatment and case management services, until you reach your formal [Community Supervision Begin Date (CSBD)](#csbdDateRaw-trToAddDateRaw).
+You are required to attend mandatory community-based programs, which may include substance abuse treatment and case management services, until you reach your formal [Community Supervision Begin Date (CSBD)](#csbdDate-trToAddDate).
 
 </section>
 
-<h2 id="csbdDateRaw-trToAddDateRaw">Community Supervision Begin Date (CSBD) or Temporary Release to Absolute Discharge Date (TR to ADD)</h2>
+<h2 id="csbdDate-trToAddDate">Community Supervision Begin Date (CSBD) or Temporary Release to Absolute Discharge Date (TR to ADD)</h2>
 
 ### What does this mean?
 
 This is a release up to 90 days earlier than ERCD (for most people, it’s ~77 days earlier), which can be granted if you meet [the criteria](#csbd-criteria).
 
-If your sentence includes a term of Probation following your release, this date is officially called Temporary Release to Absolute Discharge Date (TR to ADD). Be careful not to confuse “Temporary Release” with [“Transition Release” (TPR)](#acisTprDateRaw), as they are different programs with different rules.
+If your sentence includes a term of Probation following your release, this date is officially called Temporary Release to Absolute Discharge Date (TR to ADD). Be careful not to confuse “Temporary Release” with [“Transition Release” (TPR)](#tprDate), as they are different programs with different rules.
 
 <section class="callout">
 ### Who has this date?
@@ -149,7 +149,7 @@ If you have a Probation term after your current prison sentence, this will be ca
 
 If you have Community Supervision after your prison sentence, the release type is referred to as your CSBD. If you are released on this release type, and follow your Conditions of Supervision (like reporting as directed to your supervision officer), you would then be on Community Supervision until your Community Supervision End Date (CSED).
 
-<h2 id="ercdDateRaw-addDateRaw">Earned Release Credit Date (ERCD) or Absolute Discharge Date (ADD)</h2>
+<h2 id="ercdDate-addDate">Earned Release Credit Date (ERCD) or Absolute Discharge Date (ADD)</h2>
 
 ### What does this mean?
 
@@ -187,7 +187,7 @@ Note that some people serving time for _only_ non-violent drug possession or use
 
 If you have a probation term after your current prison sentence, this will be called your Absolute Discharge Date, or ADD. That is because you are being “Discharged” from ADCRR to the County that will supervise you on Probation. If you have a term of Community Supervision after your current prison sentence, this is called your ERCD.
 
-<h2 id="sedDateRaw">Sentence Expiration Date (SED; 100% date)</h2>
+<h2 id="sedDate">Sentence Expiration Date (SED; 100% date)</h2>
 
 ### What does this mean?
 
@@ -213,7 +213,7 @@ If you are released on your SED, it means you have finished 100% of your prison 
 
 It is important to know that if you refuse to sign these conditions, you will not be released; instead, you will be required to serve your entire supervision term inside the prison until your CSED.
 
-<h2 id="csedDateRaw">Community Supervision End Date (CSED)</h2>
+<h2 id="csedDate">Community Supervision End Date (CSED)</h2>
 
 ### What does this mean?
 
@@ -244,4 +244,4 @@ The CSED is calculated by adding the length of your Community Supervision to you
 
 If you lose all of your Release Credits and serve 100% of your sentence, the latest that your CSED can be is 115% of your original sentence time.
 
-Please note that time you spend on [Temporary Release](#csbdDateRaw-trToAddDateRaw) (the time between your CSBD and ERCD) or on early release through the [Transition Program](#acisTprDateRaw) (STP/DTP) does not count towards your Community Supervision term. If you are released on one of the dates before your ERCD, you will spend less time in prison, but will be reporting to a Community Supervision officer for longer. The clock only starts on your Community Supervision term once you reach your ERCD.
+Please note that time you spend on [Temporary Release](#csbdDate-trToAddDate) (the time between your CSBD and ERCD) or on early release through the [Transition Program](#tprDate) (STP/DTP) does not count towards your Community Supervision term. If you are released on one of the dates before your ERCD, you will spend less time in prison, but will be reporting to a Community Supervision officer for longer. The clock only starts on your Community Supervision term once you reach your ERCD.

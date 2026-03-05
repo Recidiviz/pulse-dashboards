@@ -18,12 +18,13 @@
 import { matchPath, useLocation } from "react-router-dom";
 
 import { SimpleLinkProps } from "~@jii/common-ui";
-import { useResidentMetadata } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
+import { useUsAzSingleResidentContext } from "../components/UsAzSingleResidentContext/UsAzSingleResidentContext";
+
 export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
-  const { isDprEligible } = useResidentMetadata("US_AZ");
+  const { isDprQualified } = useUsAzSingleResidentContext();
   const { t } = useUsAzTranslations();
   const { pathname } = useLocation();
 
@@ -43,7 +44,7 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
     });
   }
   if (
-    isDprEligible &&
+    isDprQualified &&
     !matchPath(State.Resident.UsAzMoreInformation.DPR.path, pathname)
   ) {
     links.push({

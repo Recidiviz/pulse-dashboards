@@ -18,40 +18,42 @@
 import tk from "timekeeper";
 
 import { UsAzTFunction } from "~@jii/translation";
-import { ResidentMetadata } from "~datatypes";
 
+import { UsAzResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
-const mockAzResidentMetadata: ResidentMetadata<"US_AZ"> = {
-  stateCode: "US_AZ",
-  acisTprDateRaw: "2024-03-15",
-  acisDtpDateRaw: undefined,
-  csbdDateRaw: "2024-01-10", // earliest date
-  ercdDateRaw: "2024-06-01",
-  sedDateRaw: "2024-12-01", // latest date
-  csedDateRaw: undefined,
+const mockActiveDates: UsAzResidentContext["activeDates"] = {
+  tprDate: new Date("2024-03-15"),
+  dtpDate: undefined,
+  csbdDate: new Date("2024-01-10"), // earliest date
+  ercdDate: new Date("2024-06-01"),
+  sedDate: new Date("2024-12-01"), // latest date
+  csedDate: undefined,
+  addDate: undefined,
+  trToAddDate: undefined,
 };
 
-const mockAzMetadataAllNullDates: ResidentMetadata<"US_AZ"> = {
-  stateCode: "US_AZ",
-  acisTprDateRaw: undefined,
-  csbdDateRaw: undefined,
-  ercdDateRaw: undefined,
-  sedDateRaw: undefined,
-  csedDateRaw: undefined,
+const mockAzMetadataAllNullDates: UsAzResidentContext["activeDates"] = {
+  tprDate: undefined,
+  csbdDate: undefined,
+  ercdDate: undefined,
+  sedDate: undefined,
+  csedDate: undefined,
+  addDate: undefined,
+  dtpDate: undefined,
+  trToAddDate: undefined,
 };
 
 // not exactly realistic but lets us test some behavior against all possible dates
-const mockAzMetadataWithAllDates: ResidentMetadata<"US_AZ"> = {
-  stateCode: "US_AZ",
-  acisTprDateRaw: "2024-03-15",
-  acisDtpDateRaw: "2024-03-15",
-  csbdDateRaw: "2024-01-10",
-  trToAddDateRaw: "2024-01-10",
-  ercdDateRaw: "2024-06-01",
-  addDateRaw: "2024-06-01",
-  sedDateRaw: "2024-12-01",
-  csedDateRaw: "2024-12-01",
+const mockAzMetadataWithAllDates: UsAzResidentContext["activeDates"] = {
+  tprDate: new Date("2024-03-15"),
+  dtpDate: new Date("2024-03-15"),
+  csbdDate: new Date("2024-01-10"),
+  trToAddDate: new Date("2024-01-10"),
+  ercdDate: new Date("2024-06-01"),
+  addDate: new Date("2024-06-01"),
+  sedDate: new Date("2024-12-01"),
+  csedDate: new Date("2024-12-01"),
 };
 
 const t = vi.fn() as unknown as UsAzTFunction;
@@ -71,24 +73,21 @@ const mockNestedObject = (() => {
 describe("UsAzImportantDatesPresenter", () => {
   describe("dateEntries", () => {
     it("sorts dates by earliest first and highlights acisTprDate", () => {
-      const presenter = new UsAzImportantDatesPresenter(
-        mockAzResidentMetadata,
-        t,
-      );
+      const presenter = new UsAzImportantDatesPresenter(mockActiveDates, t);
       const entries = presenter.dateEntries;
 
       // Check sorting order
-      expect(entries[0].dateKey).toBe("csbdDateRaw");
-      expect(entries[0].date).toBe("2024-01-10");
+      expect(entries[0].dateKey).toBe("csbdDate");
+      expect(entries[0].date).toEqual(new Date("2024-01-10"));
 
-      expect(entries[1].dateKey).toBe("acisTprDateRaw");
-      expect(entries[1].date).toBe("2024-03-15");
+      expect(entries[1].dateKey).toBe("tprDate");
+      expect(entries[1].date).toEqual(new Date("2024-03-15"));
 
-      expect(entries[2].dateKey).toBe("ercdDateRaw");
-      expect(entries[2].date).toBe("2024-06-01");
+      expect(entries[2].dateKey).toBe("ercdDate");
+      expect(entries[2].date).toEqual(new Date("2024-06-01"));
 
-      expect(entries[3].dateKey).toBe("sedDateRaw");
-      expect(entries[3].date).toBe("2024-12-01");
+      expect(entries[3].dateKey).toBe("sedDate");
+      expect(entries[3].date).toEqual(new Date("2024-12-01"));
 
       // Should only include dates that have values
       expect(entries).toHaveLength(4);
@@ -116,32 +115,32 @@ describe("UsAzImportantDatesPresenter", () => {
         .toMatchInlineSnapshot(`
           [
             {
-              "dateKey": "csbdDateRaw",
-              "linkUrl": "more-information/important-dates#csbdDateRaw-trToAddDateRaw",
+              "dateKey": "csbdDate",
+              "linkUrl": "more-information/important-dates#csbdDate-trToAddDate",
             },
             {
-              "dateKey": "trToAddDateRaw",
-              "linkUrl": "more-information/important-dates#csbdDateRaw-trToAddDateRaw",
+              "dateKey": "trToAddDate",
+              "linkUrl": "more-information/important-dates#csbdDate-trToAddDate",
             },
             {
-              "dateKey": "acisDtpDateRaw",
-              "linkUrl": "more-information/important-dates#acisDtpDateRaw",
+              "dateKey": "dtpDate",
+              "linkUrl": "more-information/important-dates#dtpDate",
             },
             {
-              "dateKey": "ercdDateRaw",
-              "linkUrl": "more-information/important-dates#ercdDateRaw-addDateRaw",
+              "dateKey": "ercdDate",
+              "linkUrl": "more-information/important-dates#ercdDate-addDate",
             },
             {
-              "dateKey": "addDateRaw",
-              "linkUrl": "more-information/important-dates#ercdDateRaw-addDateRaw",
+              "dateKey": "addDate",
+              "linkUrl": "more-information/important-dates#ercdDate-addDate",
             },
             {
-              "dateKey": "sedDateRaw",
-              "linkUrl": "more-information/important-dates#sedDateRaw",
+              "dateKey": "sedDate",
+              "linkUrl": "more-information/important-dates#sedDate",
             },
             {
-              "dateKey": "csedDateRaw",
-              "linkUrl": "more-information/important-dates#csedDateRaw",
+              "dateKey": "csedDate",
+              "linkUrl": "more-information/important-dates#csedDate",
             },
           ]
         `);
@@ -150,19 +149,16 @@ describe("UsAzImportantDatesPresenter", () => {
     it("includes the current day in upcoming status", () => {
       // this field should be defined
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const mockNow = new Date(mockAzResidentMetadata.csbdDateRaw!);
+      const mockNow = new Date(mockActiveDates.csbdDate!);
       // a naked date will be interpreted the start of the day.
       // we want to make sure that doesn't throw off comparisons later in the day
       mockNow.setHours(15, 25);
 
       tk.freeze(mockNow);
 
-      const presenter = new UsAzImportantDatesPresenter(
-        mockAzResidentMetadata,
-        t,
-      );
+      const presenter = new UsAzImportantDatesPresenter(mockActiveDates, t);
       const todayEntry = presenter.dateEntries.find(
-        (e) => e.dateKey === "csbdDateRaw",
+        (e) => e.dateKey === "csbdDate",
       );
 
       expect(todayEntry?.isUpcoming).toBeTrue();

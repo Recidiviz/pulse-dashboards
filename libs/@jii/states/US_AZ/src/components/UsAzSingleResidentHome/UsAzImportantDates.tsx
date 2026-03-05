@@ -18,10 +18,10 @@
 import { observer } from "mobx-react-lite";
 
 import { HomepageSectionHeading } from "~@jii/common-ui";
-import { useResidentMetadata } from "~@jii/data";
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
+import { useUsAzSingleResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { DateInfoCard } from "./DateInfoCard";
 import { DPRBanner } from "./DPRBanner";
 import { MissingDateCard } from "./MissingDateCard";
@@ -31,11 +31,12 @@ import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   observer(function UsAzImportantDates({ presenter }) {
     const { t } = useUsAzTranslations();
+    const { isDprQualified } = useUsAzSingleResidentContext();
 
     return (
       <div>
         <section>
-          {presenter.metadata.isDprEligible && <DPRBanner />}
+          {isDprQualified && <DPRBanner />}
 
           <HomepageSectionHeading>
             {t(($) => $.importantDates.sectionHeader)}
@@ -44,7 +45,7 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
             {t(($) => $.importantDates.sectionSubHeader)}
           </SectionSubHeader>
           {presenter.hasNoDates ? (
-            <MissingDateCard dateKey="sedDateRaw" />
+            <MissingDateCard dateKey="sedDate" />
           ) : (
             presenter.dateEntries.map((entry) => {
               const dateKey = entry.dateKey;
@@ -68,10 +69,10 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   });
 
 function usePresenter() {
-  const metadata = useResidentMetadata("US_AZ");
+  const { activeDates } = useUsAzSingleResidentContext();
   const { t } = useUsAzTranslations();
 
-  return new UsAzImportantDatesPresenter(metadata, t);
+  return new UsAzImportantDatesPresenter(activeDates, t);
 }
 
 export const UsAzImportantDates = withPresenterManager({

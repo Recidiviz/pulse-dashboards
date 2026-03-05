@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { nullishAsUndefined } from "../../../../utils/zod";
+import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
 export const usAzResidentMetadataSchema = z.object({
   stateCode: z.literal("US_AZ"),
@@ -42,4 +42,12 @@ export const usAzResidentMetadataSchema = z.object({
   trToAddDateRaw: nullishAsUndefined(z.string()),
   addDateRaw: nullishAsUndefined(z.string()),
   isDprEligible: nullishAsUndefined(z.boolean()),
+  hasAnyDprProgramCompleted: nullishAsUndefined(z.boolean()),
+  dprCsbdDateRaw: nullishAsUndefined(dateStringSchema),
+  dprCsedDateRaw: nullishAsUndefined(dateStringSchema),
+  dprErcdDateRaw: nullishAsUndefined(dateStringSchema),
+  dprTprDateRaw: nullishAsUndefined(dateStringSchema),
+  dprDtpDateRaw: nullishAsUndefined(dateStringSchema),
+  dprTrToAddDateRaw: nullishAsUndefined(dateStringSchema),
+  dprAddDateRaw: nullishAsUndefined(dateStringSchema),
 });

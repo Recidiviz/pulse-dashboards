@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isSameDay, parseISO } from "date-fns";
+import { isSameDay } from "date-fns";
 
 import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 
+import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
 import { DateInfoTag } from "./DateInfoTag";
 import {
   CardHighlightStyle,
@@ -29,11 +30,10 @@ import {
   StyledCard,
   StyledSlateCopy,
 } from "./styles";
-import { UsAzDateField } from "./UsAzImportantDatesPresenter";
 
 export interface DateInfoCardProps {
   title: string;
-  date: string;
+  date: Date;
   info: string;
   infoTag?: string;
   shortName: string;
@@ -56,9 +56,8 @@ export const DateInfoCard = ({
 }: DateInfoCardProps) => {
   const { t } = useUsAzTranslations();
 
-  const dateObj = parseISO(date);
   const today = new Date();
-  const isToday = isSameDay(dateObj, today);
+  const isToday = isSameDay(date, today);
 
   // Determine which distance translation to use based on whether date is past/future/today
   const getDistanceTranslation = (dateValue: Date) => {
@@ -80,24 +79,24 @@ export const DateInfoCard = ({
   - CardValue should be the date, SlateCopy should be distanceFromToday
   */
   const cardValue = isUpcoming
-    ? getDistanceTranslation(dateObj).replace(/^\(|\)$/g, "") //remove parentheses
+    ? getDistanceTranslation(date).replace(/^\(|\)$/g, "") //remove parentheses
     : t(($) => $.importantDates.dates[dateKey].value, {
-        replace: { [dateKey]: dateObj },
+        replace: { [dateKey]: date },
       });
 
   const slateCopyContent = isUpcoming
     ? t(($) => $.importantDates.dates[dateKey].value, {
-        replace: { [dateKey]: dateObj },
+        replace: { [dateKey]: date },
       })
-    : getDistanceTranslation(dateObj);
+    : getDistanceTranslation(date);
 
   let highlightType: CardHighlightStyle | undefined;
   // this ordering is intentional because isPast supersedes TPR/DTP styles
-  if (dateKey === "csbdDateRaw" || isPast) {
+  if (dateKey === "csbdDate" || isPast) {
     highlightType = "dashed";
-  } else if (dateKey === "acisTprDateRaw") {
+  } else if (dateKey === "tprDate") {
     highlightType = "green";
-  } else if (dateKey === "acisDtpDateRaw") {
+  } else if (dateKey === "dtpDate") {
     highlightType = "purple";
   }
 

@@ -52,4 +52,4 @@ While qualifying for DPR moves your release date earlier, the rules for getting 
 
 ## What else should I know?
 
-If you qualify for DPR, you might also qualify for the [Drug Transition Program, or DTP](../more-information/important-dates#acisDtpDateRaw). This program could allow you to leave prison up to 90 days earlier than your new DPR date.
+If you qualify for DPR, you might also qualify for the [Drug Transition Program, or DTP](../more-information/important-dates#dtpDate). This program could allow you to leave prison up to 90 days earlier than your new DPR date.

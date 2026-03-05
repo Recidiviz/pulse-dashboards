@@ -16,30 +16,18 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { parseISO, startOfDay } from "date-fns";
+import { startOfDay } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { State } from "~@jii/paths";
 import { UsAzTFunction } from "~@jii/translation";
-import { ResidentMetadata } from "~datatypes";
 
-// Shared constant for all US_AZ date field names that exist on metadata
-export const US_AZ_DATE_KEYS = [
-  "acisTprDateRaw",
-  "acisDtpDateRaw",
-  "csbdDateRaw",
-  "ercdDateRaw",
-  "sedDateRaw",
-  "csedDateRaw",
-  "addDateRaw",
-  "trToAddDateRaw",
-] as const;
-
-export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
+import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
+import { UsAzResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
 
 export interface DateEntry {
   dateKey: UsAzDateField;
-  date: string;
+  date: Date;
   isUpcoming: boolean; // Within 31 days
   isPast: boolean;
   info: string;
@@ -48,27 +36,28 @@ export interface DateEntry {
 
 export class UsAzImportantDatesPresenter {
   constructor(
-    public readonly metadata: ResidentMetadata<"US_AZ">,
+    private activeDates: UsAzResidentContext["activeDates"],
     private t: UsAzTFunction,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
 
   get dateEntries(): DateEntry[] {
-    // Check if acisDtpDate exists to determine whether to exclude acisTprDate
-    const hasAcisDtpDate = !!this.metadata.acisDtpDateRaw;
+    // Check if DTP exists to determine whether to exclude TPR
+    const hasDtpDate = !!this.activeDates.dtpDate;
 
     // Filter out undefined dates and prioritize acisDtpDates over acisTprDates
-    const entries = US_AZ_DATE_KEYS.flatMap((field) => {
-      const date = this.metadata[field];
+    const entries = Object.entries(this.activeDates).flatMap((entry) => {
+      // reasserting the type that was lost by Object.entries
+      const [field, date] = entry as [UsAzDateField, Date | undefined];
       if (!date) return [];
-      if (field === "acisTprDateRaw" && hasAcisDtpDate) return [];
+      if (field === "tprDate" && hasDtpDate) return [];
       return [{ dateKey: field, date }];
     });
 
     // Sort by earliest date first
     const sortedEntries = entries.sort((a, b) => {
-      return parseISO(a.date).getTime() - parseISO(b.date).getTime();
+      return a.date.getTime() - b.date.getTime();
     });
 
     // Add highlighting and upcoming logic
@@ -77,7 +66,7 @@ export class UsAzImportantDatesPresenter {
     thirtyOneDaysFromNow.setDate(today.getDate() + 31);
 
     return sortedEntries.map((entry) => {
-      const entryDate = parseISO(entry.date);
+      const entryDate = entry.date;
       const isUpcoming =
         entryDate >= today && entryDate <= thirtyOneDaysFromNow;
       const isPast = entryDate < today;
@@ -91,11 +80,11 @@ export class UsAzImportantDatesPresenter {
 
       // default copy for card
       const copyContext: Record<string, unknown> = { linkUrl };
-      if (entry.dateKey === "acisTprDateRaw") {
+      if (entry.dateKey === "tprDate") {
         copyContext["trLinkUrl"] =
           `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
             {},
-          )}#${this.getInfoPageHashForDateKey("trToAddDateRaw")}`;
+          )}#${this.getInfoPageHashForDateKey("trToAddDate")}`;
       }
       let info = this.t(($) => $.importantDates.dates[entry.dateKey].info, {
         replace: copyContext,
@@ -131,17 +120,17 @@ export class UsAzImportantDatesPresenter {
     //  these headings have been explicitly added to the Markdown document
     // for this page. You need to ensure they remain in sync if anything changes!
     switch (dateKey) {
-      case "acisTprDateRaw":
-      case "acisDtpDateRaw":
-      case "sedDateRaw":
-      case "csedDateRaw":
+      case "tprDate":
+      case "dtpDate":
+      case "sedDate":
+      case "csedDate":
         return dateKey;
-      case "csbdDateRaw":
-      case "trToAddDateRaw":
-        return "csbdDateRaw-trToAddDateRaw";
-      case "ercdDateRaw":
-      case "addDateRaw":
-        return "ercdDateRaw-addDateRaw";
+      case "csbdDate":
+      case "trToAddDate":
+        return "csbdDate-trToAddDate";
+      case "ercdDate":
+      case "addDate":
+        return "ercdDate-addDate";
       default:
         assertNever(dateKey);
     }

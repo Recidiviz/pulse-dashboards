@@ -20,6 +20,7 @@ import { Route, Routes } from "react-router-dom";
 import { NotFound } from "~@jii/common-ui";
 import { UsAzMoreInformation } from "~@jii/paths";
 
+import { UsAzSingleResidentContextRoute } from "../components/UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoDPR } from "../pages/PageMoreInfoDPR";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
@@ -29,20 +30,22 @@ export function UsAzRouter() {
   return (
     <div>
       <Routes>
-        <Route index element={<PageUsAzResidentHome />} />
-        <Route
-          path={UsAzMoreInformation.ImportantDates.path}
-          element={<PageMoreInfoImportantDates />}
-        />
-        <Route
-          path={UsAzMoreInformation.About.path}
-          element={<PageMoreInfoAbout />}
-        />
-        <Route
-          path={UsAzMoreInformation.DPR.path}
-          element={<PageMoreInfoDPR />}
-        />
-        <Route path="*" element={<NotFound />} />
+        <Route element={<UsAzSingleResidentContextRoute />}>
+          <Route index element={<PageUsAzResidentHome />} />
+          <Route
+            path={UsAzMoreInformation.ImportantDates.path}
+            element={<PageMoreInfoImportantDates />}
+          />
+          <Route
+            path={UsAzMoreInformation.About.path}
+            element={<PageMoreInfoAbout />}
+          />
+          <Route
+            path={UsAzMoreInformation.DPR.path}
+            element={<PageMoreInfoDPR />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Route>
       </Routes>
     </div>
   );

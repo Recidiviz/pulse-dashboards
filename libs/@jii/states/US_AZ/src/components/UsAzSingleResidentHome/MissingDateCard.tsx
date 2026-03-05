@@ -20,7 +20,7 @@ import { FC } from "react";
 import { Card, CardHeading, CardValue } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 
-import { UsAzDateField } from "./UsAzImportantDatesPresenter";
+import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
 
 export const MissingDateCard: FC<{ dateKey: UsAzDateField }> = ({
   dateKey,
