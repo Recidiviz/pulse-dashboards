@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str = "recidiviz"
-    OPENAI_API_KEY: Optional[str] = "lalalal"
+    OPENAI_API_KEY: Optional[str] = None
     DATABASE_URL_TESTS: str = (
         "postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test"
     )
