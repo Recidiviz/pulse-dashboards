@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import { clientImportSchema } from "~@sentencing/import/models";
+import { getMOCountyFullName } from "~@sentencing/import/utils/helpers";
 import { Gender, PrismaClient } from "~@sentencing/prisma/client";
 
 export async function transformAndLoadClientData(
@@ -60,16 +61,22 @@ export async function transformAndLoadClientData(
     };
 
     // County connection - both create and update use the same logic
-    const countyConnection = clientData.county
+    // Transform county abbreviation to full name for MO
+    const countyName =
+      clientData.county && clientData.state_code === "US_MO"
+        ? getMOCountyFullName(clientData.county)
+        : clientData.county;
+
+    const countyConnection = countyName
       ? {
           connectOrCreate: {
             where: {
               stateCode: clientData.state_code,
-              name: clientData.county,
+              name: countyName,
             },
             create: {
               stateCode: clientData.state_code,
-              name: clientData.county,
+              name: countyName,
             },
           },
         }

@@ -19,6 +19,7 @@ import _ from "lodash";
 import { z } from "zod";
 
 import { chargeImportSchema } from "~@sentencing/import/models";
+import { getMOCountyFullName } from "~@sentencing/import/utils/helpers";
 import { PrismaClient } from "~@sentencing/prisma/client";
 
 export async function transformAndLoadChargeData(
@@ -53,10 +54,14 @@ export async function transformAndLoadChargeData(
       },
     });
 
-    // Transform county to title case (e.g., "DAVI" -> "Davi")
-    const countyTitleCase = chargeData.county
-      ? _.startCase(chargeData.county.toLocaleLowerCase())
-      : undefined;
+    // Transform county abbreviation to full name for MO, or title case for others
+    let countyFullName: string | undefined;
+    if (chargeData.county) {
+      countyFullName =
+        chargeData.state_code === "US_MO"
+          ? getMOCountyFullName(chargeData.county)
+          : _.startCase(chargeData.county.toLocaleLowerCase());
+    }
 
     const chargeFields = {
       chargeExternalId: chargeData.offense_external_id,
@@ -66,7 +71,7 @@ export async function transformAndLoadChargeData(
       classificationType: chargeData.classification_type,
       classificationSubtype: chargeData.classification_subtype,
       division: chargeData.division,
-      county: countyTitleCase,
+      county: countyFullName,
       moCode: chargeData.charge_code,
     };
 

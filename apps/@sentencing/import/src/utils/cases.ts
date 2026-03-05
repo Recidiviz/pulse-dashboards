@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import { caseImportSchema } from "~@sentencing/import/models";
+import { getMOCountyFullName } from "~@sentencing/import/utils/helpers";
 import { PrismaClient, ReportType } from "~@sentencing/prisma/client";
 
 const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE = {
@@ -86,16 +87,22 @@ export async function transformAndLoadCaseData(
           },
         }
       : undefined;
-    const createCountyConnection = caseData.county
+    // Transform county abbreviation to full name for MO
+    const countyName =
+      caseData.county && caseData.state_code === "US_MO"
+        ? getMOCountyFullName(caseData.county)
+        : caseData.county;
+
+    const createCountyConnection = countyName
       ? {
           connectOrCreate: {
             where: {
               stateCode: caseData.state_code,
-              name: caseData.county,
+              name: countyName,
             },
             create: {
               stateCode: caseData.state_code,
-              name: caseData.county,
+              name: countyName,
             },
           },
         }
@@ -136,16 +143,16 @@ export async function transformAndLoadCaseData(
           disconnect: true,
         };
     // If we don't ingest a county, do nothing so we don't override the county the user sets
-    const updateCountyConnection = caseData.county
+    const updateCountyConnection = countyName
       ? {
           connectOrCreate: {
             where: {
               stateCode: caseData.state_code,
-              name: caseData.county,
+              name: countyName,
             },
             create: {
               stateCode: caseData.state_code,
-              name: caseData.county,
+              name: countyName,
             },
           },
         }

@@ -18,6 +18,10 @@
 import { z } from "zod";
 
 import { countyAndDistrictImportSchema } from "~@sentencing/import/models";
+import {
+  getMOCountyFullName,
+  getMODistrictFullName,
+} from "~@sentencing/import/utils/helpers";
 import { PrismaClient } from "~@sentencing/prisma/client";
 
 export async function transformAndLoadCountyAndDistrictData(
@@ -27,17 +31,27 @@ export async function transformAndLoadCountyAndDistrictData(
   const newCountyNames = [];
 
   for await (const countyData of data) {
+    // Transform abbreviations to full names for MO
+    const countyName =
+      countyData.state_code === "US_MO"
+        ? getMOCountyFullName(countyData.county)
+        : countyData.county;
+    const districtName =
+      countyData.state_code === "US_MO"
+        ? getMODistrictFullName(countyData.district)
+        : countyData.district;
+
     const newCounty = {
       stateCode: countyData.state_code,
-      name: countyData.county,
+      name: countyName,
       district: {
         connectOrCreate: {
           where: {
-            name: countyData.district,
+            name: districtName,
           },
           create: {
             stateCode: countyData.state_code,
-            name: countyData.district,
+            name: districtName,
           },
         },
       },
