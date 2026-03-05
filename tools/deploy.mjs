@@ -85,14 +85,7 @@ let deployingLatestMain = true;
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
   type: "list",
-  choices: [
-    "staging",
-    "preview",
-    "demo",
-    "reentry-dev",
-    "reentry-pilot",
-    "production",
-  ],
+  choices: ["staging", "preview", "demo", "production"],
   name: "deployEnv",
   message: "Which environment are you deploying?",
   default: "staging",
@@ -212,9 +205,6 @@ const caseNotesDisplayName = "Case Notes Server";
 const opportunitiesFrontendDisplayName = "Opportunities Frontend";
 const opportunitiesCloudFunctionsDisplayName = "Opportunities Cloud Functions";
 const opportunitiesBackendDisplayName = "Opportunities Backend Services";
-const reentryBackendV0DisplayName = "Reentry Backend Services (v0)";
-const reentryBackendV1DisplayName = "Reentry Backend Services (v1)";
-const reentryFrontendDisplayName = "Reentry Frontend";
 const meetingAssistantDisplayName = "Meeting Assistant Backend Services";
 const demoFixturesDisplayName = "Demo fixtures";
 const opportunitiesTestDataDisplayName = "Opportunities test data";
@@ -230,9 +220,6 @@ const deployServicesChoices = [
   { name: opportunitiesFrontendDisplayName, checked: true },
   { name: opportunitiesCloudFunctionsDisplayName, checked: inStagingOrProd },
   { name: opportunitiesBackendDisplayName, checked: inStagingOrProd },
-  { name: reentryBackendV0DisplayName, checked: false },
-  { name: reentryBackendV1DisplayName, checked: false },
-  { name: reentryFrontendDisplayName, checked: false },
   { name: meetingAssistantDisplayName, checked: inStagingOrProd },
   { name: envSecretsDisplayName, checked: inStagingOrProd },
 ];
@@ -285,15 +272,6 @@ const deployOppsBackend = deployServicesPrompt.deployServices.includes(
 const deployOppsTestData = deployServicesPrompt.deployServices.includes(
   opportunitiesTestDataDisplayName,
 );
-const deployReentryBackend = deployServicesPrompt.deployServices.includes(
-  reentryBackendV0DisplayName,
-);
-const deployReentryServer = deployServicesPrompt.deployServices.includes(
-  reentryBackendV1DisplayName,
-);
-const deployReentryFrontend = deployServicesPrompt.deployServices.includes(
-  reentryFrontendDisplayName,
-);
 const deployMeetingAssistant = deployServicesPrompt.deployServices.includes(
   meetingAssistantDisplayName,
 );
@@ -324,13 +302,10 @@ if (deployEnvSecrets && deployEnv === "staging") {
 if (
   (deployEnv === "staging" ||
     (deployEnv === "production" && isCpDeploy) ||
-    deployEnv === "demo" ||
-    deployEnv === "reentry-dev" ||
-    deployEnv === "reentry-pilot") &&
+    deployEnv === "demo") &&
   (deploySentencing ||
     deployJiiTexting ||
     deployCaseNotes ||
-    deployReentryServer ||
     deployOppsBackend ||
     deployMeetingAssistant)
 ) {
@@ -813,195 +788,6 @@ if (deployEnv === "demo" && deployDemoFixtures) {
   } while (retryFixtures);
 }
 
-if (
-  deployReentryBackend &&
-  (deployEnv === "staging" ||
-    deployEnv === "production" ||
-    deployEnv === "demo" ||
-    deployEnv === "reentry-dev" ||
-    deployEnv === "reentry-pilot")
-) {
-  let retryDeploy = false;
-
-  do {
-    // Deploy the app
-    console.log(`Deploying ${reentryBackendV0DisplayName}...`);
-
-    try {
-      if (deployEnv === "staging") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/staging/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "production") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/production/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "demo") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/demo/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "reentry-dev") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/dev/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "reentry-pilot") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/pilot/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
-          process.stdout,
-        );
-      }
-
-      retryDeploy = false;
-      successfullyDeployed.push(reentryBackendV0DisplayName);
-    } catch (e) {
-      const retryDeployPrompt = await inquirer.prompt({
-        type: "confirm",
-        name: "retryDeploy",
-        message: `${reentryBackendV0DisplayName} deploy failed with error: ${e}. Retry?`,
-        default: false,
-      });
-      retryDeploy = retryDeployPrompt.retryDeploy;
-    }
-  } while (retryDeploy);
-}
-
-// TODO(#9213): Add support for demo reentry server deploys
-if (
-  deployReentryServer &&
-  (deployEnv === "staging" || deployEnv === "production")
-) {
-  let retryDeploy = false;
-
-  do {
-    // Deploy the app
-    console.log(`Deploying ${reentryBackendV1DisplayName}...`);
-
-    try {
-      let projects;
-      let configuration;
-      if (deployEnv === "staging") {
-        projects = ["@reentry/server", "@reentry/import"];
-        configuration = "staging";
-      } else if (deployEnv === "production" && isCpDeploy) {
-        projects = ["@reentry/server", "@reentry/import"];
-        configuration = "cherry-pick";
-      } else if (deployEnv === "demo") {
-        projects = ["@reentry/server", "@reentry/seed-demo"];
-        configuration = "demo";
-      }
-
-      if (projects) {
-        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-          process.stdout,
-        );
-      }
-
-      // Deploy any changes to the artifact registry if we're on staging
-      if (deployEnv === "staging") {
-        await $`yarn atmos:apply artifact_registry -s recidiviz-dashboard-${deployEnv}--reentry -- -auto-approve`.pipe(
-          process.stdout,
-        );
-      }
-
-      // Deploy the import, migration, and server infrastructure changes for the applicable environment
-      let stack;
-      if (deployEnv === "staging") {
-        stack = `recidiviz-dashboard-${deployEnv}--reentry`;
-      } else if (deployEnv === "production") {
-        stack = `recidiviz-dashboard-${deployEnv}--reentry`;
-      } else if (deployEnv === "demo") {
-        stack = "recidiviz-dashboard-staging--reentry-demo";
-      }
-
-      await $`yarn atmos:apply apps/reentry -s ${stack} -- -auto-approve \
-          -var server_container_version=${currentRevision} \
-          -var migrate_db_container_version=${currentRevision} \
-          -var import_container_version=${currentRevision}`.pipe(
-        process.stdout,
-      );
-
-      if (deployEnv === "demo") {
-        // If we're in demo mode, deploy the seed demo job
-        await $`yarn atmos:apply apps/reentry-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "production") {
-        await $`yarn atmos:apply postgres-bq-data-transfer -s recidiviz-dashboard-production--reentry -- -auto-approve`.pipe(
-          process.stdout,
-        );
-      }
-
-      retryDeploy = false;
-      successfullyDeployed.push(reentryBackendV1DisplayName);
-    } catch (e) {
-      const retryDeployPrompt = await inquirer.prompt({
-        type: "confirm",
-        name: "retryDeploy",
-        message: `${reentryBackendV1DisplayName} deploy failed with error: ${e}. Retry?`,
-        default: false,
-      });
-      retryDeploy = retryDeployPrompt.retryDeploy;
-    }
-  } while (retryDeploy);
-}
-
-if (
-  deployReentryFrontend &&
-  (deployEnv === "staging" ||
-    deployEnv === "production" ||
-    deployEnv === "demo" ||
-    deployEnv === "reentry-dev" ||
-    deployEnv === "reentry-pilot")
-) {
-  let retryDeploy = false;
-
-  do {
-    // Deploy the app
-    console.log(`Deploying ${reentryFrontendDisplayName}...`);
-    try {
-      if (deployEnv === "staging") {
-        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "production") {
-        if (isCpDeploy) {
-          await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration cherry-pick`.pipe(
-            process.stdout,
-          );
-        } else {
-          await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
-            process.stdout,
-          );
-        }
-      } else if (deployEnv === "demo") {
-        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "reentry-dev") {
-        // have to use dev_gcp instead of dev or reentry-dev because in project.json dev is already taken for local dev
-        // apps/@reentry/frontend/project.json
-        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration dev_gcp`.pipe(
-          process.stdout,
-        );
-      } else if (deployEnv === "reentry-pilot") {
-        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration pilot`.pipe(
-          process.stdout,
-        );
-      }
-
-      retryDeploy = false;
-      successfullyDeployed.push(reentryFrontendDisplayName);
-    } catch (e) {
-      const retryDeployPrompt = await inquirer.prompt({
-        type: "confirm",
-        name: "retryDeploy",
-        message: `${reentryFrontendDisplayName} deploy failed with error: ${e}. Retry?`,
-        default: false,
-      });
-      retryDeploy = retryDeployPrompt.retryDeploy;
-    }
-  } while (retryDeploy);
-}
-
 // TODO: Add support for demo meeting assistant deploys
 if (
   deployMeetingAssistant &&
@@ -1123,22 +909,9 @@ const deployer = (await $`gcloud config get-value account`).stdout.trim();
 
 const polarisChannelId = "C026UPMAX4G";
 const polarisEngChannelId = "C04LC0VH78B";
-const reentryChannelId = "C0A432T3QUB";
 
 let slackChannel = null;
 let slackMessage = null;
-
-// Collect any additional channels we want to notify (currently only Reentry).
-const additionalSlackChannels = [];
-const reentryServiceNames = [
-  reentryBackendV0DisplayName,
-  reentryBackendV1DisplayName,
-  reentryFrontendDisplayName,
-];
-// Determine if any Reentry services were deployed (v0 backend, v1 backend, or frontend)
-const reentryDeployed = successfullyDeployed.some((name) =>
-  reentryServiceNames.includes(name),
-);
 
 if (deployEnv === "staging" && successfullyDeployed.length > 0) {
   slackChannel = polarisEngChannelId;
@@ -1175,51 +948,30 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
 
   slackChannel = polarisChannelId;
   slackMessage = message;
-} else if (
-  successfullyDeployed.length > 0 &&
-  ((deployEnv === "demo" && reentryDeployed) ||
-    deployEnv === "reentry-dev" ||
-    deployEnv === "reentry-pilot")
-) {
-  slackChannel = reentryChannelId;
-
-  let revisionText = "`" + currentRevision + "`";
-  if (!deployingLatestMain) revisionText += " (not the tip of main)";
-
-  slackMessage = `${deployer} deployed ${revisionText} to ${deployEnv}!`;
 }
 
 if (slackChannel !== null && slackMessage !== null) {
-  if (reentryDeployed && slackChannel !== reentryChannelId) {
-    additionalSlackChannels.push(reentryChannelId);
-  }
-
   slackMessage += `\nWhat was deployed: ${successfullyDeployed.join(", ")}`;
 
-  // Post to the primary channel plus any additional channels
-  const channelsToPost = [slackChannel, ...additionalSlackChannels];
-
-  for (const channel of channelsToPost) {
-    try {
-      const slackMessageResponse = await slack.chat.postMessage({
-        channel,
-        text: slackMessage,
-        // Don't show previews for Github links
-        unfurl_links: false,
-        unfurl_media: false,
-      });
-      if (slackMessageResponse.ok) {
-        console.log(`Successfully posted to Slack channel ${channel}`);
-      } else {
-        throw slackMessageResponse;
-      }
-    } catch (error) {
-      console.log(
-        "There was a problem posting to Slack, please post the message manually:",
-      );
-      console.log(slackMessage);
-      console.error(error);
+  try {
+    const slackMessageResponse = await slack.chat.postMessage({
+      channel: slackChannel,
+      text: slackMessage,
+      // Don't show previews for Github links
+      unfurl_links: false,
+      unfurl_media: false,
+    });
+    if (slackMessageResponse.ok) {
+      console.log(`Successfully posted to Slack channel ${slackChannel}`);
+    } else {
+      throw slackMessageResponse;
     }
+  } catch (error) {
+    console.log(
+      "There was a problem posting to Slack, please post the message manually:",
+    );
+    console.log(slackMessage);
+    console.error(error);
   }
 }
 
