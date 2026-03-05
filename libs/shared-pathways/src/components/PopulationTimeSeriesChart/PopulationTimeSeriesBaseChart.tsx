@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "../VizPathways.scss";
-import "./PopulationTimeSeriesChart.scss";
-
 import { scaleTime } from "d3-scale";
-import { observer } from "mobx-react-lite";
 import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
+import styled from "styled-components";
 
-import { useCoreStore } from "../CoreStoreProvider";
+import { pathwaysPalette } from "../../styles/pathwaysPalette";
 import VizPathways from "../VizPathways";
 import { ChartPoint, formatMonthAndYear, getTickValues } from "./helpers";
 import PopulationTimeSeriesTooltip from "./PopulationTimeSeriesTooltip";
+
+const ChartWrapper = styled(VizPathways)`
+  .PopulationTimeSeriesChart__projectedLine {
+    stroke: ${pathwaysPalette.indigo};
+    stroke-width: 2;
+    stroke-dasharray: 2 3;
+  }
+
+  .projection-area-label {
+    fill: ${pathwaysPalette.slate80};
+  }
+
+  .projection-area {
+    fill: ${pathwaysPalette.marble4};
+    fill-opacity: 0;
+  }
+`;
 
 type PlotLine = {
   data: ChartPoint[];
@@ -35,17 +49,20 @@ type PlotLine = {
 
 type Props = {
   title: string;
+  subtitle?: string;
   historicalPopulation: ChartPoint[];
   projectedPopulation?: ChartPoint[];
   chartTop: number;
+  chartBottom: number;
   dateSpacing: number;
   beginDate: Date;
   endDate: Date;
-  [k: string]: any;
+  [k: string]: unknown;
 };
 
 const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   title,
+  subtitle,
   historicalPopulation,
   projectedPopulation,
   chartTop,
@@ -55,9 +72,6 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   endDate,
   ...chartProps
 }) => {
-  const { filtersStore } = useCoreStore();
-  const { filtersDescription } = filtersStore;
-
   const historicalLine = {
     class: "VizPathways__historicalLine",
     data: historicalPopulation,
@@ -76,28 +90,26 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     : getTickValues(historicalPopulation, dateSpacing);
 
   return (
-    <VizPathways
-      className="PopulationTimeSeriesChart"
-      title={title}
-      subtitle={filtersDescription}
-    >
+    <ChartWrapper title={title} subtitle={subtitle}>
       <ResponsiveXYFrame
         responsiveWidth
         summaryDataAccessor="data"
         summaryClass="projection-area"
         hoverAnnotation
         // eslint-disable-next-line react/no-unstable-nested-components
-        tooltipContent={(d: any) => <PopulationTimeSeriesTooltip d={d} />}
-        // @ts-ignore
+        tooltipContent={(d: ChartPoint) => (
+          <PopulationTimeSeriesTooltip d={d} />
+        )}
+        // @ts-expect-error semiotic types
         lines={
           projectedPopulation
             ? [historicalLine, projectedLine]
             : [historicalLine]
         }
         lineDataAccessor="data"
-        // @ts-ignore
+        // @ts-expect-error semiotic types
         lineClass={(l: PlotLine) => l.class}
-        // @ts-ignore
+        // @ts-expect-error semiotic types
         xScaleType={scaleTime()}
         xAccessor="date"
         yAccessor="value"
@@ -108,7 +120,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
           right: 50,
           top: 56,
         }}
-        // @ts-ignore
+        // @ts-expect-error semiotic types
         xExtent={[beginDate, endDate]}
         yExtent={[chartBottom, chartTop]}
         showLinePoints
@@ -117,7 +129,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
           { orient: "left", tickFormat: (n: number) => n.toLocaleString() },
           {
             orient: "bottom",
-            // @ts-ignore
+            // @ts-expect-error semiotic types
             tickValues,
             tickFormat: (d: Date) => formatMonthAndYear(d),
           },
@@ -131,8 +143,8 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         Press tab to access the line, and tab again to access the points. Use
         arrow keys to hear more information about each point.
       </div>
-    </VizPathways>
+    </ChartWrapper>
   );
 };
 
-export default observer(PopulationTimeSeriesBaseChart);
+export default PopulationTimeSeriesBaseChart;

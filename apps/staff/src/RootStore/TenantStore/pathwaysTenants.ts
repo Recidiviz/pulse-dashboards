@@ -22,6 +22,4 @@ export const US_NY = "US_NY";
 export const US_TN = "US_TN";
 export const US_DEMO = "US_DEMO";
 
-export {
-  PATHWAYS_TENANTS,
-} from "~shared-pathways";
+export { PATHWAYS_TENANTS } from "~shared-pathways/tenants";

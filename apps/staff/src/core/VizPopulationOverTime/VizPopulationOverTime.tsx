@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,11 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { PopulationTimeSeriesChart } from "~shared-pathways";
+
+import { useCoreStore } from "../CoreStoreProvider";
 import OverTimeMetric from "../models/OverTimeMetric";
-import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 
 type VizPopulationOverTimeProps = {
   metric: OverTimeMetric;
@@ -28,6 +31,7 @@ type VizPopulationOverTimeProps = {
 const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
   metric,
 }) => {
+  const { filtersStore } = useCoreStore();
   const { dataSeries, chartTitle } = metric;
 
   return (
@@ -35,8 +39,9 @@ const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
       metric={metric}
       data={dataSeries}
       title={chartTitle}
+      subtitle={filtersStore.filtersDescription}
     />
   );
 };
 
-export default observer(VizPopulationOverTime);
+export default withPathwaysMetricHelpers(observer(VizPopulationOverTime));

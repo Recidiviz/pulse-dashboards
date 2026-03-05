@@ -15,18 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components";
-export * from "./constants";
-export * from "./content";
-export * from "./content/types";
-export * from "./dimensions";
-export * from "./enabledFilters";
-export * from "./filterOptions";
-export * from "./filters";
-export * from "./FiltersStoreBase";
-export * from "./metrics";
-export * from "./tenants";
-export * from "./timePeriod";
-export * from "./types";
-export * from "./utils";
-export * from "./views";
+import React from "react";
+
+import OverTimeMetric from "../../metrics/OverTimeMetric";
+import { PopulationTimeSeriesChart } from "../PopulationTimeSeriesChart";
+
+type VizPopulationOverTimeProps = {
+  metric: OverTimeMetric;
+  subtitle?: string;
+};
+
+const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
+  metric,
+  subtitle,
+}) => {
+  const { dataSeries, chartTitle } = metric;
+
+  return (
+    <PopulationTimeSeriesChart
+      metric={metric}
+      data={dataSeries}
+      title={chartTitle}
+      subtitle={subtitle}
+    />
+  );
+};
+
+export default VizPopulationOverTime;

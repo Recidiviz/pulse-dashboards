@@ -21,6 +21,7 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   DownloadableData,
   DownloadableDataset,
+  formatMonthAndYear,
   getRecordDate,
   OverTimeMetric as SharedOverTimeMetric,
   TimeSeriesDataRecord,
@@ -29,7 +30,6 @@ import {
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import CoreStore from "../CoreStore";
-import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import {
   BaseNewMetricConstructorProps,
   generateStaffNewMetricOptions,

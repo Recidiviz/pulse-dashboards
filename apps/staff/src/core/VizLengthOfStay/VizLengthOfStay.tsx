@@ -22,7 +22,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
-import { SnapshotDataRecord } from "~shared-pathways";
+import { SnapshotDataRecord, VizPathways } from "~shared-pathways";
 
 import { formatDate, formatPercent, getTicks } from "../../utils";
 import { useCoreStore } from "../CoreStoreProvider";
@@ -31,7 +31,6 @@ import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulation
 import { filterUnknownLengthOfStay } from "../models/utils";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
-import VizPathways from "../VizPathways";
 
 type VizLengthOfStayProps = {
   metric: SupervisionPopulationSnapshotMetric | SnapshotMetric;

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2024 Recidiviz, Inc.
 //

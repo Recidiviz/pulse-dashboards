@@ -21,7 +21,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Column } from "react-table";
 
-import { PopulationFilterLabels } from "~shared-pathways";
+import { PopulationFilterLabels, VizPathways } from "~shared-pathways";
 
 import PathwaysTable from "../../components/PathwaysTable";
 import { formatDate, toHumanReadable, toTitleCase } from "../../utils";
@@ -29,7 +29,6 @@ import { useCoreStore } from "../CoreStoreProvider";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import { TableColumn } from "../types/charts";
-import VizPathways from "../VizPathways";
 
 type VizPopulationPersonLevelProps = {
   metric: PersonLevelMetric;

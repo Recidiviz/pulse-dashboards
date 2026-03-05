@@ -22,15 +22,15 @@ import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
+import { formatMonthAndYear, VizPathways } from "~shared-pathways";
+
 import { getTicks } from "../../utils";
 import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import OverTimeMetric from "../models/OverTimeMetric";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
-import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PopulationTimeSeriesLegend from "../PopulationTimeSeriesChart/PopulationTimeSeriesLegend";
-import VizPathways from "../VizPathways";
 
 type VizCountOverTimeWithAvgProps = {
   metric: OverTimeMetric;

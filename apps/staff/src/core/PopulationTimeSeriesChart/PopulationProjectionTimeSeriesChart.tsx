@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,21 +19,21 @@ import { isEqual } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { PopulationProjectionTimeSeriesRecord } from "~shared-pathways";
-
-import styles from "../CoreConstants.module.scss";
-import { useCoreStore } from "../CoreStoreProvider";
-import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import {
   getChartBottom,
   getChartTop,
   getDateRange,
   getDateSpacing,
-  MonthOptions,
-  prepareData,
-} from "./helpers";
-import PopulationTimeSeriesBaseChart from "./PopulationTimeSeriesBaseChart";
+  type MonthOptions,
+  PopulationProjectionTimeSeriesRecord,
+  PopulationTimeSeriesBaseChart,
+} from "~shared-pathways";
+
+import styles from "../CoreConstants.module.scss";
+import { useCoreStore } from "../CoreStoreProvider";
+import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
+import { prepareData } from "./helpers";
 import PopulationTimeSeriesErrorBar from "./PopulationTimeSeriesErrorBar";
 
 const TOTAL_INCARCERATED_LIMIT = 8008;
@@ -141,6 +141,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
   return (
     <PopulationTimeSeriesBaseChart
       title={title}
+      subtitle={filtersStore.filtersDescription}
       historicalPopulation={historicalPopulation}
       projectedPopulation={projectedPopulation}
       chartTop={chartTop}

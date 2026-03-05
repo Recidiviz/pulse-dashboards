@@ -17,10 +17,9 @@
 
 import React from "react";
 
-import { getRecordDate, TimeSeriesDataRecord } from "~shared-pathways";
-
-import OverTimeMetric from "../models/OverTimeMetric";
-import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
+import OverTimeMetric from "../../metrics/OverTimeMetric";
+import { TimeSeriesDataRecord } from "../../types";
+import { getRecordDate } from "../../utils";
 import { getChartBottom, getChartTop, getDateRange } from "./helpers";
 import PopulationTimeSeriesBaseChart from "./PopulationTimeSeriesBaseChart";
 
@@ -28,12 +27,13 @@ type Props = {
   metric: OverTimeMetric;
   title: string;
   data: TimeSeriesDataRecord[];
+  subtitle?: string;
 };
 
 const PopulationTimeSeriesChart: React.FC<Props> = ({
   title,
   data,
-  metric,
+  subtitle,
 }) => {
   const dateSpacing = data.length >= 60 ? 2 : 1;
 
@@ -54,6 +54,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   return (
     <PopulationTimeSeriesBaseChart
       title={title}
+      subtitle={subtitle}
       historicalPopulation={historicalPopulation}
       chartTop={chartTop}
       chartBottom={chartBottom}
@@ -64,4 +65,4 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   );
 };
 
-export default withPathwaysMetricHelpers(PopulationTimeSeriesChart);
+export default PopulationTimeSeriesChart;

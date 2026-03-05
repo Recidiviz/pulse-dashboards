@@ -15,18 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components";
-export * from "./constants";
-export * from "./content";
-export * from "./content/types";
-export * from "./dimensions";
-export * from "./enabledFilters";
-export * from "./filterOptions";
-export * from "./filters";
-export * from "./FiltersStoreBase";
-export * from "./metrics";
-export * from "./tenants";
-export * from "./timePeriod";
-export * from "./types";
-export * from "./utils";
-export * from "./views";
+// This palette will eventually be removed, staging them here until the palette is passed
+// in from the app itself
+export const pathwaysPalette = {
+  pine1: "#012322",
+  slate80: "rgba(53, 83, 98, 0.8)",
+  slate20: "rgba(53, 83, 98, 0.2)",
+  indigo: "rgba(76, 98, 144, 1)",
+  indigo10: "rgba(76, 98, 144, 0.1)",
+  signalTooltip: "#082249",
+  marble4: "#eff1f1",
+};

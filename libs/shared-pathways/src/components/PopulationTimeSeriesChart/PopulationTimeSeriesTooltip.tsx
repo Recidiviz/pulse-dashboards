@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./PopulationTimeSeriesTooltip.scss";
-
+import { typography } from "@recidiviz/design-system";
+import { format } from "date-fns";
 import React from "react";
+import styled from "styled-components";
 
-import { formatDate } from "../../utils/formatStrings";
+import { pathwaysPalette } from "../../styles/pathwaysPalette";
+
+const TooltipWrapper = styled.div`
+  background: ${pathwaysPalette.signalTooltip};
+  border-radius: 0.25rem;
+  color: #fff;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, 1rem);
+  min-width: 9rem;
+`;
+
+const TooltipValue = styled.div`
+  ${typography.Sans16}
+`;
+
+const TooltipDate = styled.div`
+  opacity: 0.8;
+`;
+
+const TooltipBottom = styled.div`
+  opacity: 0.8;
+`;
 
 type DataPoint = {
   date: Date;
   value: number;
   lowerBound?: number;
   upperBound?: number;
-  parentSummary?: any;
+  parentSummary?: string;
 };
+
 type PropTypes = {
   d: DataPoint & {
     data?: DataPoint;
@@ -46,27 +72,24 @@ const PopulationTimeSeriesTooltip: React.FC<PropTypes> = ({ d }) => {
     // don't display tooltip for summary block
     return null;
   }
+  const formattedDate = format(date, "MMMM yyyy");
   const ariaLabel =
-    `${formatDate(date, "MMMM yyyy")} value: ${value}` +
+    `${formattedDate} value: ${value}` +
     (lowerBound && upperBound ? `${lowerBound} ${upperBound}` : "");
   return (
-    <div className="PopulationTimeseriesTooltip">
-      <div
-        className="PopulationTimeseriesTooltip__date"
-        aria-label={ariaLabel}
-        aria-live="polite"
-      >
-        {formatDate(date, "MMMM yyyy")}
-      </div>
-      <div className="PopulationTimeseriesTooltip__value">
+    <TooltipWrapper>
+      <TooltipDate aria-label={ariaLabel} aria-live="polite">
+        {formattedDate}
+      </TooltipDate>
+      <TooltipValue>
         {value.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-      </div>
+      </TooltipValue>
       {lowerBound && upperBound && (
-        <div className="PopulationTimeseriesTooltip__bottom">
+        <TooltipBottom>
           ({Math.round(lowerBound)}, {Math.round(upperBound)})
-        </div>
+        </TooltipBottom>
       )}
-    </div>
+    </TooltipWrapper>
   );
 };
 

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import React from "react";
 
-import PopulationTimeSeriesTooltip from "../PopulationTimeSeriesTooltip";
+import { PopulationTimeSeriesTooltip } from "~shared-pathways";
 
 describe("Tests for PopulationTimeseries Tooltip", () => {
   const baseProps = {
@@ -31,31 +31,22 @@ describe("Tests for PopulationTimeseries Tooltip", () => {
   };
 
   it("displays year and month", () => {
-    const { container } = renderTooltip(baseProps);
-    const dateElement = container.querySelector(
-      ".PopulationTimeseriesTooltip__date",
-    );
-    expect(dateElement).toHaveTextContent("February 2021");
+    renderTooltip(baseProps);
+    expect(screen.getByLabelText(/February 2021/)).toBeInTheDocument();
   });
 
   it("displays value with commas", () => {
-    const { container } = renderTooltip(baseProps);
-    const valueElement = container.querySelector(
-      ".PopulationTimeseriesTooltip__value",
-    );
-    expect(valueElement).toHaveTextContent("7,000");
+    renderTooltip(baseProps);
+    expect(screen.getByText("7,000")).toBeInTheDocument();
   });
 
   it("displays uncertainties", () => {
-    const { container } = renderTooltip({
+    renderTooltip({
       lowerBound: 6000,
       upperBound: 8000,
       ...baseProps,
     });
-    const bottomElement = container.querySelector(
-      ".PopulationTimeseriesTooltip__bottom",
-    );
-    expect(bottomElement).toHaveTextContent("(6000, 8000)");
+    expect(screen.getByText("(6000, 8000)")).toBeInTheDocument();
   });
 
   it("does not display when hovering over edges of summary box", () => {

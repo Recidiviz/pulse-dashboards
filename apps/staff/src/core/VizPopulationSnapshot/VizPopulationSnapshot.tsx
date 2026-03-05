@@ -29,6 +29,7 @@ import {
   PopulationFilterLabels,
   sortByLabel,
   SupervisionPopulationSnapshotRecord,
+  VizPathways,
 } from "~shared-pathways";
 
 import {
@@ -45,7 +46,6 @@ import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
-import VizPathways from "../VizPathways";
 
 type VizPopulationOverTimeProps = {
   metric: SupervisionPopulationSnapshotMetric | SnapshotMetric;

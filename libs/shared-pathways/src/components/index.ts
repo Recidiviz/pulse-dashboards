@@ -15,18 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components";
-export * from "./constants";
-export * from "./content";
-export * from "./content/types";
-export * from "./dimensions";
-export * from "./enabledFilters";
-export * from "./filterOptions";
-export * from "./filters";
-export * from "./FiltersStoreBase";
-export * from "./metrics";
-export * from "./tenants";
-export * from "./timePeriod";
-export * from "./types";
-export * from "./utils";
-export * from "./views";
+export * from "./PopulationTimeSeriesChart";
+export { default as VizPathways } from "./VizPathways";
+export * from "./VizPopulationOverTime";
