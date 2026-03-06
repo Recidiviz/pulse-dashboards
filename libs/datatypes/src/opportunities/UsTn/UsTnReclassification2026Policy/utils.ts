@@ -22,6 +22,7 @@ import {
   getBreakdownSectionScore,
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
+  isEligibleForTrusteeStatus,
 } from "../reclassificationScoreUtils";
 import { formatMultiplePeriodReports } from "../utils";
 import { rcafAssessmentQuestions } from "./rcafAssessmentQuestions";
@@ -30,13 +31,17 @@ import {
   UsTnReclassification2026FormInformation,
 } from "./schema";
 
-function getDerivedRcafCustodyLevel(totalScore: number): string {
+const LOW_UPPER_THRESHOLD = 11;
+const MEDIUM_UPPER_THRESHOLD = 25;
+const MAXIMUM_UPPER_THRESHOLD = 44;
+
+export function getDerivedRcafCustodyLevel(totalScore: number): string {
   switch (true) {
-    case totalScore <= 11:
+    case totalScore <= LOW_UPPER_THRESHOLD:
       return "LOW";
-    case totalScore <= 25:
+    case totalScore <= MEDIUM_UPPER_THRESHOLD:
       return "MEDIUM";
-    case totalScore <= 44:
+    case totalScore <= MAXIMUM_UPPER_THRESHOLD:
       return "CLOSE";
     default:
       return "MAXIMUM";
@@ -239,25 +244,11 @@ export function deriveRcafFormData(
   );
 
   const totalScore = Math.min(
-    45,
+    MAXIMUM_UPPER_THRESHOLD + 1,
     q1Score + q2Score + q3Score + q4Score + q5Score + q6Score + q7Score,
   );
 
-  const trusteeEligible = [
-    formData.trusteeHas10YearsOrLessRemaining,
-    formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years,
-    formData.trusteeNoEscapeFromLowTrusteePast5Years,
-    formData.trusteeNoEscapeFromMediumCloseMaxPast10Years,
-    formData.trusteeNoViolentFelonyConvictionPast5YearsIncarceration,
-    formData.trusteeNotConvictedOfFirstDegreeMurder,
-    formData.trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody,
-    formData.trusteeNotScoredHighForViolence,
-    formData.trusteeNotServingForSexualOffense,
-    formData.trusteeNoFelonyDetainers,
-    formData.trusteeNoPendingFelonyCharges,
-    formData.trusteeNoPendingImmigrationActions,
-    formData.trusteeWardenHasApproved,
-  ].every((criterion) => criterion === "true");
+  const trusteeEligible = isEligibleForTrusteeStatus(formData);
 
   const totalText = getDerivedRcafCustodyLevel(totalScore);
 

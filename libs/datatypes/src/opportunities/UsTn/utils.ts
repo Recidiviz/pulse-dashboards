@@ -174,7 +174,6 @@ export type TrusteeFormSchema = z.output<typeof trusteeFormSchema> &
 export const TRUSTEE_FORM_QUESTION_ORDER = [
   "trusteeHas10YearsOrLessRemaining",
   "trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody",
-  "trusteeNotConvictedOfFirstDegreeMurder",
   "trusteeNotServingForSexualOffense",
   "trusteeNoFelonyDetainers",
   "trusteeNoPendingFelonyCharges",

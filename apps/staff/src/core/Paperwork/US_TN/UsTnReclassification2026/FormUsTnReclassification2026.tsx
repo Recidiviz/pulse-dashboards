@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { rcafAssessmentQuestions } from "~datatypes";
+import { rcafAssessmentQuestions, showTrusteeChecklist } from "~datatypes";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
@@ -62,10 +62,11 @@ export const FormUsTnReclassification2026 = observer(
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
 
-    const includeTrusteeChecklist =
-      derivedData.totalScore <= 12 ||
-      formData.counselorRecommendedCustody === "LOW" ||
-      formData.recommendationCustodyLevel === "LOW";
+    const includeTrusteeChecklist = showTrusteeChecklist(
+      derivedData.totalText,
+      !!resident.onLifeSentence,
+      formData,
+    );
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [

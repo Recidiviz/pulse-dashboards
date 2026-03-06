@@ -261,10 +261,6 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
                 in TDOC custody for a <Bold>minimum</Bold> of 12 months
               </TrusteeCriteriaRow>
 
-              <TrusteeCriteriaRow dataKey="trusteeNotConvictedOfFirstDegreeMurder">
-                Inmate was not convicted of first degree murder
-              </TrusteeCriteriaRow>
-
               <TrusteeCriteriaRow dataKey="trusteeNotServingForSexualOffense">
                 Inmate is not a sex offender
               </TrusteeCriteriaRow>

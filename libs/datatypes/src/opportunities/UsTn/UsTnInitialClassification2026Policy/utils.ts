@@ -18,6 +18,7 @@
 import {
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
+  isEligibleForTrusteeStatus,
 } from "../reclassificationScoreUtils";
 import { dcafAssessmentQuestions } from "./dcafAssessmentQuestions";
 import {
@@ -25,13 +26,17 @@ import {
   UsTnInitialClassification2026FormInformation,
 } from "./schema";
 
+const LOW_UPPER_THRESHOLD = 11;
+const MEDIUM_UPPER_THRESHOLD = 24;
+const MAXIMUM_UPPER_THRESHOLD = 44;
+
 export function getDerivedDcafCustodyLevel(totalScore: number): string {
   switch (true) {
-    case totalScore <= 11:
+    case totalScore <= LOW_UPPER_THRESHOLD:
       return "LOW";
-    case totalScore <= 24:
+    case totalScore <= MEDIUM_UPPER_THRESHOLD:
       return "MEDIUM";
-    case totalScore <= 44:
+    case totalScore <= MAXIMUM_UPPER_THRESHOLD:
       return "CLOSE";
     default:
       return "MAXIMUM";
@@ -126,25 +131,11 @@ export function deriveDcafFormData(
   );
 
   const totalScore = Math.min(
-    41,
+    MAXIMUM_UPPER_THRESHOLD + 1,
     q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,
   );
 
-  const trusteeEligible = [
-    formData.trusteeHas10YearsOrLessRemaining,
-    formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years,
-    formData.trusteeNoEscapeFromLowTrusteePast5Years,
-    formData.trusteeNoEscapeFromMediumCloseMaxPast10Years,
-    formData.trusteeNoViolentFelonyConvictionPast5YearsIncarceration,
-    formData.trusteeNotConvictedOfFirstDegreeMurder,
-    formData.trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody,
-    formData.trusteeNotScoredHighForViolence,
-    formData.trusteeNotServingForSexualOffense,
-    formData.trusteeNoFelonyDetainers,
-    formData.trusteeNoPendingFelonyCharges,
-    formData.trusteeNoPendingImmigrationActions,
-    formData.trusteeWardenHasApproved,
-  ].every((criterion) => criterion === "true");
+  const trusteeEligible = isEligibleForTrusteeStatus(formData);
 
   const totalText = getDerivedDcafCustodyLevel(totalScore);
 

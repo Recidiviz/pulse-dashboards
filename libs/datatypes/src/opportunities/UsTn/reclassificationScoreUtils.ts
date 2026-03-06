@@ -17,7 +17,8 @@
 
 import { z } from "zod";
 
-import { multiIncidentPeriodReportSchema } from "./utils";
+import { UsTnReclassification2026DraftData } from "./UsTnReclassification2026Policy";
+import { multiIncidentPeriodReportSchema, TrusteeFormSchema } from "./utils";
 
 export type AssessmentOption = {
   text: string;
@@ -92,4 +93,38 @@ export function getBreakdownSectionScore(
   if (selection === undefined || selection === -1) return 0;
 
   return section.scores[selection] ?? 0;
+}
+
+export function isEligibleForTrusteeStatus(
+  formData: Partial<TrusteeFormSchema>,
+): boolean {
+  return [
+    formData.trusteeHas10YearsOrLessRemaining,
+    formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years,
+    formData.trusteeNoEscapeFromLowTrusteePast5Years,
+    formData.trusteeNoEscapeFromMediumCloseMaxPast10Years,
+    formData.trusteeNoViolentFelonyConvictionPast5YearsIncarceration,
+    formData.trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody,
+    formData.trusteeNotScoredHighForViolence,
+    formData.trusteeNotServingForSexualOffense,
+    formData.trusteeNoFelonyDetainers,
+    formData.trusteeNoPendingFelonyCharges,
+    formData.trusteeNoPendingImmigrationActions,
+    formData.trusteeWardenHasApproved,
+  ].every((criterion) => criterion === "true");
+}
+
+export function showTrusteeChecklist(
+  totalText: string,
+  lifeSentence: boolean,
+  formData: Partial<UsTnReclassification2026DraftData>,
+): boolean {
+  return (
+    formData.trusteeNotConvictedOfFirstDegreeMurder === "true" &&
+    formData.trusteeHas10YearsOrLessRemaining === "true" &&
+    !lifeSentence &&
+    (totalText === "LOW" ||
+      formData.counselorRecommendedCustody === "LOW" ||
+      formData.recommendationCustodyLevel === "LOW")
+  );
 }
