@@ -75,6 +75,12 @@ export class IntakeAssessmentPresenter implements Hydratable {
         (error as any).detail = data.detail;
         throw error;
       }
+
+      // If there's no access_token, it means no intake record exists.
+      if (!data?.access_token && data?.client_pseudo_id) {
+        return;
+      }
+
       if (data?.access_token && data?.client_pseudo_id) {
         sessionStorage.setItem("intake_token", data.access_token);
         this.updateAuthToken();
@@ -111,6 +117,7 @@ export class IntakeAssessmentPresenter implements Hydratable {
     this.authToken = sessionStorage.getItem("intake_token");
   }
 
+  // Returns true if the person can access the assessment, e.g. has a valid auth token from the CPA backend
   get isAuthorized() {
     return !!this.authToken;
   }

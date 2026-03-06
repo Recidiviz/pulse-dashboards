@@ -281,12 +281,11 @@ async def verify_client_from_firebase_token(
         session, internal_client_pseudo_id
     )
     if not intake_record:
-        logger.error(
+        logger.info(
             f"Intake record not found for client pseudo ID: {internal_client_pseudo_id}"
         )
-        return ValidationResult.error_result(
-            "Intake not enabled. Please contact your case worker for assistance."
-        )
+        # Return success without token data to indicate no intake record exists (not an error)
+        return ValidationResult(client_pseudo_id=internal_client_pseudo_id)
 
     if not intake_record.internal_access:
         logger.error(

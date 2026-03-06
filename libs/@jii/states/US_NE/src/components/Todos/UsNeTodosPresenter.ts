@@ -21,12 +21,7 @@ import { IntakeAssessmentPresenter } from "~@jii/case-planning";
 import { OpportunityData, ResidentFlags, UserStore } from "~@jii/data";
 import { ResidentRecord, UsNeGoodTimeRestorationRecord } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
-import {
-  Hydratable,
-  hydrationFailure,
-  HydrationState,
-  isHydrated,
-} from "~hydration-utils";
+import { Hydratable, HydrationState } from "~hydration-utils";
 
 import { UsNeCopy } from "../../configs/copy";
 
@@ -66,11 +61,6 @@ export class UsNeTodosPresenter implements Hydratable {
   }
 
   get hydrationState(): HydrationState {
-    if (hydrationFailure(this.intakeAssessmentPresenter)) {
-      // Hydration will fail if the user doesn't have an active assessment.
-      // We don't consider this an error.
-      return { status: "hydrated" };
-    }
     return this.intakeAssessmentPresenter.hydrationState;
   }
 
@@ -136,7 +126,7 @@ export class UsNeTodosPresenter implements Hydratable {
   }
 
   get shouldShowReentryAssessment(): boolean {
-    // If the intake presenter successfully hydrated, then an assessment is available
-    return isHydrated(this.intakeAssessmentPresenter);
+    // If the intake presenter successfully hydrated and an auth token exists, then an assessment is available.
+    return this.intakeAssessmentPresenter.isAuthorized;
   }
 }

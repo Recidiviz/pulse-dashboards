@@ -220,10 +220,19 @@ async def verify_firebase_token(
             request, data.firebase_token, data.client_pseudo_id, session
         )
 
-        if not result.token_data or not result.success:
+        if not result.success:
             raise HTTPException(
                 status_code=400,
                 detail={"message": result.error_message, "user_facing": True},
+            )
+
+        # If no token is present, no intake record exists for this client
+        if not result.token_data:
+            return VerifyClientResponse(
+                status=True,
+                access_token=None,
+                message="No intake record found for this client",
+                client_pseudo_id=result.client_pseudo_id,
             )
 
         return VerifyClientResponse(

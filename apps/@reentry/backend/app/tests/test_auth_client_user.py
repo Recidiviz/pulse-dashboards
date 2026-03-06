@@ -248,13 +248,10 @@ async def test_verify_client_from_firebase_token_no_intake_record(
         mock_request, valid_firebase_token, "pseudo-id-1", mock_session
     )
 
-    assert result.success is False
-    assert (
-        result.error_message
-        == "Intake not enabled. Please contact your case worker for assistance."
-    )
+    assert result.success is True
+    assert result.error_message is None
     assert result.token_data is None
-    assert result.client_pseudo_id is None
+    assert result.client_pseudo_id == "pseudo-id-1"
 
 
 @pytest.mark.asyncio
