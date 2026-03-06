@@ -32,7 +32,7 @@ export const usAzResidentMetadataSchema = z.object({
   csedDate: nullishAsUndefined(z.string()),
   ercdOrAdd: nullishAsUndefined(z.string()),
   csbdOrTrToAdd: nullishAsUndefined(z.string()),
-  lastUpdatedDate: nullishAsUndefined(z.string()),
+  lastUpdatedDate: nullishAsUndefined(dateStringSchema),
   csbdDateRaw: nullishAsUndefined(z.string()),
   csedDateRaw: nullishAsUndefined(z.string()),
   ercdDateRaw: nullishAsUndefined(z.string()),

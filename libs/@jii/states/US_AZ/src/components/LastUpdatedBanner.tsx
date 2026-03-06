@@ -35,7 +35,7 @@ export const LastUpdatedBanner = observer(function LastUpdatedBanner() {
     <FullWidthBanner>
       {lastUpdatedDate
         ? t(($) => $.lastUpdated, {
-            lastUpdatedDate: new Date(lastUpdatedDate),
+            lastUpdatedDate,
           })
         : t(($) => $.lastUpdatedNoDate)}
     </FullWidthBanner>
