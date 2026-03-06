@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ChartPoint, getChartBottom, getChartTop } from "~shared-pathways";
+import { type ChartPoint, getChartBottom, getChartTop } from "../helpers";
 
 describe("Tests for helpers", () => {
   const generateData = (mockData: number[]): ChartPoint[] => {

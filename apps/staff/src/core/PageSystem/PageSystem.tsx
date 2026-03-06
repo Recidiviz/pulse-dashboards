@@ -17,8 +17,13 @@
 
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { ThemeProvider } from "styled-components";
 
-import { PathwaysPage, usePageContent } from "~shared-pathways";
+import {
+  defaultPathwaysTheme,
+  PathwaysPage,
+  usePageContent,
+} from "~shared-pathways";
 
 import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
@@ -59,8 +64,10 @@ const PageSystem: React.FC = () => {
         />
       }
     >
-      <MetricVizMapper metric={metric} />
-      <ChartNote note={note} chartTitle={metric.chartTitle} />
+      <ThemeProvider theme={defaultPathwaysTheme}>
+        <MetricVizMapper metric={metric} />
+        <ChartNote note={note} chartTitle={metric.chartTitle} />
+      </ThemeProvider>
     </PageTemplate>
   );
 };

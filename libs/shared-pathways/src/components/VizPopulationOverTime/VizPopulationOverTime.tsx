@@ -17,17 +17,18 @@
 
 import React from "react";
 
+import { FiltersStoreBase } from "../../FiltersStoreBase";
 import OverTimeMetric from "../../metrics/OverTimeMetric";
 import { PopulationTimeSeriesChart } from "../PopulationTimeSeriesChart";
 
 type VizPopulationOverTimeProps = {
   metric: OverTimeMetric;
-  subtitle?: string;
+  filtersStore: FiltersStoreBase;
 };
 
 const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
   metric,
-  subtitle,
+  filtersStore,
 }) => {
   const { dataSeries, chartTitle } = metric;
 
@@ -36,7 +37,7 @@ const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
       metric={metric}
       data={dataSeries}
       title={chartTitle}
-      subtitle={subtitle}
+      subtitle={filtersStore.filtersDescription}
     />
   );
 };

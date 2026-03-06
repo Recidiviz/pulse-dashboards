@@ -17,8 +17,10 @@
 
 import { render, screen } from "@testing-library/react";
 import React from "react";
+import { ThemeProvider } from "styled-components";
 
-import { PopulationTimeSeriesTooltip } from "~shared-pathways";
+import { defaultPathwaysTheme } from "../../PathwaysTheme";
+import PopulationTimeSeriesTooltip from "../PopulationTimeSeriesTooltip";
 
 describe("Tests for PopulationTimeseries Tooltip", () => {
   const baseProps = {
@@ -27,7 +29,11 @@ describe("Tests for PopulationTimeseries Tooltip", () => {
   };
 
   const renderTooltip = (props) => {
-    return render(<PopulationTimeSeriesTooltip d={props} />);
+    return render(
+      <ThemeProvider theme={defaultPathwaysTheme}>
+        <PopulationTimeSeriesTooltip d={props} />
+      </ThemeProvider>,
+    );
   };
 
   it("displays year and month", () => {

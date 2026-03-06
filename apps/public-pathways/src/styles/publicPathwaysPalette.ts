@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rgba } from "polished";
+
 import { palette } from "~design-system";
+
+const nyBlue = "rgba(21, 73, 115, 1)";
 
 export const publicPathwaysPalette = {
   ...palette,
@@ -27,6 +31,8 @@ export const publicPathwaysPalette = {
   },
   data: {
     ...palette.data,
-    nyBlue: "rgba(21, 73, 115, 1)",
+    indigo1: nyBlue,
+    indigo10: rgba(nyBlue, 0.1),
   },
+  focusColor: nyBlue,
 };

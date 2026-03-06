@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import "@testing-library/jest-dom";
+
 import jestExtendedMatchers from "jest-extended";
 
 expect.extend(jestExtendedMatchers);

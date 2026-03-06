@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared-pathways/src",
   "projectType": "library",
-  "tags": ["scope:client", "type:util"],
+  "tags": ["scope:client", "type:ui"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",

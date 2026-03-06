@@ -15,33 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import React from "react";
+import "styled-components";
 
-import { PopulationTimeSeriesChart } from "~shared-pathways";
+import { PathwaysTheme } from "./components/PathwaysTheme";
 
-import { useCoreStore } from "../CoreStoreProvider";
-import OverTimeMetric from "../models/OverTimeMetric";
-import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
-
-type VizPopulationOverTimeProps = {
-  metric: OverTimeMetric;
-};
-
-const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
-  metric,
-}) => {
-  const { filtersStore } = useCoreStore();
-  const { dataSeries, chartTitle } = metric;
-
-  return (
-    <PopulationTimeSeriesChart
-      metric={metric}
-      data={dataSeries}
-      title={chartTitle}
-      subtitle={filtersStore.filtersDescription}
-    />
-  );
-};
-
-export default withPathwaysMetricHelpers(observer(VizPopulationOverTime));
+declare module "styled-components" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
+  interface DefaultTheme extends PathwaysTheme {}
+}

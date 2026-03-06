@@ -17,17 +17,24 @@
 
 import React from "react";
 
+import { VizPopulationOverTime } from "~shared-pathways";
+
+import { useCoreStore } from "../CoreStoreProvider";
 import OverTimeMetric from "../models/OverTimeMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
 import VizLengthOfStay from "../VizLengthOfStay";
-import VizPopulationOverTime from "../VizPopulationOverTime";
 import VizPopulationPersonLevel from "../VizPopulationPersonLevel";
 import VizPopulationProjectionOverTime from "../VizPopulationProjectionOverTime";
 import VizPopulationSnapshot from "../VizPopulationSnapshot";
+
+const HydratedVizPopulationOverTime = withPathwaysMetricHelpers(
+  VizPopulationOverTime,
+);
 
 type MetricVizMapperProps = {
   metric:
@@ -39,11 +46,18 @@ type MetricVizMapperProps = {
 };
 
 const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
+  const { filtersStore } = useCoreStore();
+
   if (metric instanceof OverTimeMetric) {
     switch (metric.id) {
       case "prisonPopulationOverTime":
       case "supervisionPopulationOverTime":
-        return <VizPopulationOverTime metric={metric} />;
+        return (
+          <HydratedVizPopulationOverTime
+            metric={metric}
+            filtersStore={filtersStore}
+          />
+        );
       default:
         return <VizCountOverTimeWithAvg metric={metric} />;
     }

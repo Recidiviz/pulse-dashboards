@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./PathwaysTheme";
 export * from "./PopulationTimeSeriesChart";
 export { default as VizPathways } from "./VizPathways";
 export * from "./VizPopulationOverTime";

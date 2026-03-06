@@ -9,6 +9,7 @@
       "vite/client"
     ]
   },
+  "files": ["../../libs/shared-pathways/src/styled.d.ts"],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
@@ -25,10 +26,5 @@
     "src/setupTests.ts",
     "src/setupTestsGlobal.ts"
   ],
-  "include": [
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }

@@ -19,18 +19,16 @@ import { typography } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components";
 
-import { pathwaysPalette } from "../styles/pathwaysPalette";
-
 const Wrapper = styled.div`
   .VizPathways__point {
-    fill: ${pathwaysPalette.indigo};
+    fill: ${({ theme }) => theme.palette.data.indigo1};
     r: 0.3rem;
     stroke: #fff;
     stroke-width: 2;
   }
 
   .VizPathways__historicalLine {
-    stroke: ${pathwaysPalette.indigo};
+    stroke: ${({ theme }) => theme.palette.data.indigo1};
     stroke-width: 2;
   }
 
@@ -40,7 +38,8 @@ const Wrapper = styled.div`
     }
 
     .axis-label {
-      fill: ${pathwaysPalette.slate80};
+      fill: ${({ theme }) => theme.typography.axisLabelColor};
+      font-family: ${({ theme }) => theme.typography.fontFamily};
     }
 
     .axis.bottom {
@@ -61,18 +60,18 @@ const Wrapper = styled.div`
     }
 
     .y.tick-line {
-      stroke: ${pathwaysPalette.slate20};
+      stroke: ${({ theme }) => theme.palette.slate20};
     }
   }
 
   .annotation-layer {
     .uncertainty {
-      fill: ${pathwaysPalette.indigo10};
+      fill: ${({ theme }) => theme.palette.data.indigo10};
     }
 
     .frame-hover {
-      fill: ${pathwaysPalette.signalTooltip};
-      stroke: ${pathwaysPalette.signalTooltip};
+      fill: ${({ theme }) => theme.palette.signal.tooltip};
+      stroke: ${({ theme }) => theme.palette.signal.tooltip};
       r: 0.25rem;
     }
   }
@@ -80,7 +79,7 @@ const Wrapper = styled.div`
   &:focus,
   &:focus-within,
   &:active {
-    border: 2px solid #006c67;
+    border: 2px solid ${({ theme }) => theme.palette.focusColor};
     border-radius: 8px;
   }
 `;
@@ -95,17 +94,20 @@ const Header = styled.div`
 
 const Title = styled.h2`
   ${typography.Sans16}
-  color: ${pathwaysPalette.pine1};
+  font-family: ${({ theme }) => theme.typography.fontFamily};
+  color: ${({ theme }) => theme.typography.titleColor};
+  outline: none;
 
   & span {
-    color: ${pathwaysPalette.slate80};
+    color: ${({ theme }) => theme.palette.slate80};
   }
 `;
 
 const Subtitle = styled.div`
   ${typography.Sans14}
+  font-family: ${({ theme }) => theme.typography.fontFamily};
   padding-top: 0.5rem;
-  color: ${pathwaysPalette.slate80};
+  color: ${({ theme }) => theme.palette.slate80};
 `;
 
 const Content = styled.div<{ $withPadding: boolean }>`

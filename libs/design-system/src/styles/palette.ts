@@ -18,6 +18,7 @@
 import { rgb, rgba } from "polished";
 
 const slate = "rgb(43, 84, 105)";
+const indigo = "rgb(72, 96, 149)";
 const white = rgb(255, 255, 255);
 
 const basePalette = {
@@ -104,7 +105,8 @@ const data = {
   gold2: rgb(199, 143, 56),
   crimson1: rgb(202, 68, 73),
   crimson2: rgb(182, 37, 61),
-  indigo1: rgb(72, 96, 149),
+  indigo1: indigo,
+  indigo10: rgba(indigo, 0.1),
   indigo2: rgb(50, 77, 133),
   teal1: rgb(139, 177, 186),
   teal2: rgb(97, 142, 152),

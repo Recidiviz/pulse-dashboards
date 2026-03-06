@@ -12,6 +12,7 @@
       "@nx/react/typings/image.d.ts"
     ]
   },
+  "files": ["../../libs/shared-pathways/src/styled.d.ts"],
   "include": [
     "vite.config.ts",
     "vitest.config.ts",

@@ -20,24 +20,23 @@ import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components";
 
-import { pathwaysPalette } from "../../styles/pathwaysPalette";
 import VizPathways from "../VizPathways";
 import { ChartPoint, formatMonthAndYear, getTickValues } from "./helpers";
 import PopulationTimeSeriesTooltip from "./PopulationTimeSeriesTooltip";
 
 const ChartWrapper = styled(VizPathways)`
   .PopulationTimeSeriesChart__projectedLine {
-    stroke: ${pathwaysPalette.indigo};
+    stroke: ${({ theme }) => theme.palette.data.indigo1};
     stroke-width: 2;
     stroke-dasharray: 2 3;
   }
 
   .projection-area-label {
-    fill: ${pathwaysPalette.slate80};
+    fill: ${({ theme }) => theme.palette.slate80};
   }
 
   .projection-area {
-    fill: ${pathwaysPalette.marble4};
+    fill: ${({ theme }) => theme.palette.marble4};
     fill-opacity: 0;
   }
 `;

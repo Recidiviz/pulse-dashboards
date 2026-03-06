@@ -20,10 +20,8 @@ import { format } from "date-fns";
 import React from "react";
 import styled from "styled-components";
 
-import { pathwaysPalette } from "../../styles/pathwaysPalette";
-
 const TooltipWrapper = styled.div`
-  background: ${pathwaysPalette.signalTooltip};
+  background: ${({ theme }) => theme.palette.signal.tooltip};
   border-radius: 0.25rem;
   color: #fff;
   padding: 0.5rem;
