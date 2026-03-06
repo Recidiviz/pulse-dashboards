@@ -123,7 +123,7 @@ const ProfileMeetings = ({
           end,
           duration,
           recordingState,
-          content: "",
+          content: m.caseNote?.replace(/\n/g, " ") || "",
           status: m.postMeetingProcessingStatus,
           isActive: !end,
         };

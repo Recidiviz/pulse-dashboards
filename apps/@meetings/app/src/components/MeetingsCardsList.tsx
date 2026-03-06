@@ -84,33 +84,45 @@ const MeetingsCardsList = ({
         key={`${meeting.id}-${index}`}
         className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
       >
-        <Link {...linkProps}>
-          <View className="w-full flex-row items-center justify-between">
-            <Text className="font-inter text-base font-semibold text-primary">
-              {meeting.date}
-            </Text>
-            <ChevronRightIcon className="size-3.5 stroke-muted stroke-[3px]" />
-          </View>
+        <Link className="text-[0px]" {...linkProps}>
+          <View className="w-full">
+            <View className="w-full flex-row items-center justify-between">
+              <Text className="font-inter text-base font-semibold text-primary">
+                {meeting.date}
+              </Text>
+              <ChevronRightIcon className="size-3.5 stroke-muted stroke-[3px]" />
+            </View>
 
-          <Text className="mr-1 font-inter text-xs font-medium text-primary">
-            {meeting.time} • {meeting.duration || "In progress..."}
-          </Text>
-          {isProcessing && (
-            <View className="mt-4 rounded-xl bg-soft-green/23 p-4">
-              <View className="flex-row items-start">
-                <ProcessingSvg />
-                <View className="ml-2 flex-1">
-                  <Text className="font-inter text-base font-semibold text-primary">
-                    Recording is being processed...
-                  </Text>
-                  <Text className="font-inter text-sm font-medium text-gray-700">
-                    The notes and transcript will become available in a few
-                    minutes
-                  </Text>
+            <Text className="mr-1 font-inter text-xs font-medium text-primary">
+              {meeting.time} • {meeting.duration || "In progress..."}
+            </Text>
+            {isProcessing ? (
+              <View className="mt-4 rounded-xl bg-soft-green/23 p-4">
+                <View className="flex-row items-start">
+                  <ProcessingSvg />
+
+                  <View className="ml-2 flex-1">
+                    <Text className="font-inter text-base font-semibold text-primary">
+                      Recording is being processed...
+                    </Text>
+                    <Text className="font-inter text-sm font-medium text-gray-700">
+                      The notes and transcript will become available in a few
+                      minutes
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
+            ) : (
+              <Text
+                style={{ fontStyle: meeting.content ? "normal" : "italic" }}
+                className="mt-3 border-t border-[#EDF1F1] pt-3 font-inter text-sm font-medium text-[#355362D9]"
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {meeting.content || "Note is empty"}
+              </Text>
+            )}
+          </View>
         </Link>
         {isMeetingInProgress && (
           <MeetingInProgressBar
