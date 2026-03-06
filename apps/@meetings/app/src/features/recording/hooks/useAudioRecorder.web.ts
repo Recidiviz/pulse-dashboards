@@ -17,7 +17,11 @@
 
 import { useCallback, useRef, useState } from "react";
 
-import { MAX_RECORDING_MS, WEB_CHUNK_INTERVAL_MS } from "../constants";
+import {
+  AUDIO_MIME_TYPES,
+  MAX_RECORDING_MS,
+  WEB_CHUNK_INTERVAL_MS,
+} from "../constants";
 import {
   clearRecordedChunks,
   getAllChunksAndCreateBlob,
@@ -76,8 +80,10 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
   }, []);
 
   const start = useCallback(async () => {
-    if (typeof MediaRecorder === "undefined") {
-      throw new Error("Your browser does not support recording audio");
+    if (!MediaRecorder.isTypeSupported(`${AUDIO_MIME_TYPES.web}`)) {
+      throw new Error(
+        "Your browser does not support the required audio format",
+      );
     }
 
     // Request microphone access with processing disabled — the defaults
@@ -94,9 +100,15 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
     });
     streamRef.current = stream;
 
+    const isOpusCodecSupported = MediaRecorder.isTypeSupported(
+      `${AUDIO_MIME_TYPES.web};codecs=opus`,
+    );
+
     // Create MediaRecorder for the stream
     const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: "audio/webm;codecs=opus",
+      mimeType: isOpusCodecSupported
+        ? `${AUDIO_MIME_TYPES.web};codecs=opus`
+        : AUDIO_MIME_TYPES.web,
       audioBitsPerSecond: 128000,
     });
     mediaRecorderRef.current = mediaRecorder;

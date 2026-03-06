@@ -17,8 +17,10 @@
 
 // Audio format constants for mobile (iOS/Android)
 export const MOBILE_AUDIO_FILE_EXTENSION = "m4a";
+// Keep in sync with AUDIO_MIME_TYPES.mobile in apps/@meetings/app/src/features/recording/constants.ts
 export const MOBILE_GCS_CONTENT_TYPE = "audio/m4a";
 
 // Audio format constants for web
 export const WEB_AUDIO_FILE_EXTENSION = "webm";
+// Keep in sync with AUDIO_MIME_TYPES.web in apps/@meetings/app/src/features/recording/constants.ts
 export const WEB_GCS_CONTENT_TYPE = "audio/webm";

@@ -17,6 +17,8 @@
 
 import { DBSchema, openDB } from "idb";
 
+import { AUDIO_MIME_TYPES } from "../constants";
+
 const DB_NAME = "meeting_recorder_db";
 const STORE_NAME = "recording_chunks";
 const DB_VERSION = 1;
@@ -42,7 +44,9 @@ export const saveChunk = async (blob: Blob) => {
 export const getAllChunksAndCreateBlob = async () => {
   const db = await dbPromise;
   const chunks = await db.getAll(STORE_NAME);
-  return chunks.length ? new Blob(chunks, { type: "audio/webm" }) : null;
+  return chunks.length
+    ? new Blob(chunks, { type: AUDIO_MIME_TYPES.web })
+    : null;
 };
 
 export const clearRecordedChunks = async () => {

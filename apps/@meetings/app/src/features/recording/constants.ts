@@ -17,3 +17,9 @@
 
 export const MAX_RECORDING_MS = 90 * 60 * 1000; // 90min
 export const WEB_CHUNK_INTERVAL_MS = 5000;
+
+// Keep in sync with MOBILE_GCS_CONTENT_TYPE / WEB_GCS_CONTENT_TYPE in libs/@meetings/tasks/src/constants.ts
+export const AUDIO_MIME_TYPES = {
+  mobile: "audio/m4a",
+  web: "audio/webm",
+} as const;
