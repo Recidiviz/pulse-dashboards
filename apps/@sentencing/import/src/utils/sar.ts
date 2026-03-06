@@ -70,7 +70,6 @@ const ORAS_SECTION_TO_DB_FIELD: Record<string, string> = {
   // Peer Associations (varies: "Associations" vs "Associates")
   "Peer Associations": "peerAssociatesLevel",
   "Peer Associates": "peerAssociatesLevel",
-
 };
 
 // Maps score field names to their corresponding risk level field names.
@@ -135,6 +134,9 @@ export async function transformAndLoadSARData(
       externalId: sarData.external_id,
       dueDate: sarData.due_date,
       assessmentScore,
+      dateRequested: sarData.assigned_date,
+      assessmentAdministeredBy: sarData.assessment_administered_by,
+      assessmentDate: sarData.assessment_date,
       assessmentType: sarData.report_type
         ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[sarData.report_type]
         : undefined,

@@ -150,9 +150,15 @@ export const SARImportSchema = z.object({
   state_code: stateCode,
   staff_id: z.string(),
   client_id: z.string(),
-  due_date: z.coerce.date().optional(),
+  due_date: z.coerce.date().nullish(),
   report_type: assessmentType.optional(), // MO sends ORAS types, not PSI types
   assessment_score: z.string().optional(),
+  assessment_date: z.coerce.date().nullish(),
+  assigned_date: z.coerce.date().nullish(),
+  assessment_administered_by: z
+    .string()
+    .transform((s) => s.replace(/^"|"$/g, ""))
+    .nullish(),
   assessment_metadata: z
     .array(
       z.object({
