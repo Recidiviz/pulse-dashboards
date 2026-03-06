@@ -341,6 +341,92 @@ describe("cleanupStateData", () => {
     });
   });
 
+  describe("null TTL handling", () => {
+    test("does not delete audio when audioTTLDays is null", async () => {
+      const meeting = await createExpiredMeeting("null-audio-ttl-meeting", 60);
+      await testPrismaClient.transcription.create({
+        data: {
+          meetingId: meeting.id,
+          provider: TranscriptionProvider.ASSEMBLYAI,
+          transcriptObject: {} as PrismaJson.TranscriptType,
+          confidence: 0.95,
+        },
+      });
+
+      const stats = await cleanupStateData(
+        STATE_CODE,
+        null,
+        TRANSCRIPT_TTL_DAYS,
+        false,
+      );
+
+      expect(stats.meetingsProcessed).toBe(1);
+      expect(stats.gcsFilesDeleted).toBe(0);
+      expect(stats.transcriptionsDeleted).toBe(1);
+      expect(mockDeleteFiles).not.toHaveBeenCalled();
+
+      const updated = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: "null-audio-ttl-meeting" },
+      });
+      expect(updated.audioDeletedAt).toBeNull();
+      expect(updated.transcriptDeletedAt).not.toBeNull();
+    });
+
+    test("does not delete transcriptions when transcriptTTLDays is null", async () => {
+      const meeting = await createExpiredMeeting(
+        "null-transcript-ttl-meeting",
+        60,
+      );
+      await testPrismaClient.transcription.create({
+        data: {
+          meetingId: meeting.id,
+          provider: TranscriptionProvider.ASSEMBLYAI,
+          transcriptObject: {} as PrismaJson.TranscriptType,
+          confidence: 0.95,
+        },
+      });
+
+      const stats = await cleanupStateData(
+        STATE_CODE,
+        AUDIO_TTL_DAYS,
+        null,
+        false,
+      );
+
+      expect(stats.meetingsProcessed).toBe(1);
+      expect(stats.gcsFilesDeleted).toBe(2);
+      expect(stats.transcriptionsDeleted).toBe(0);
+
+      const updated = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: "null-transcript-ttl-meeting" },
+      });
+      expect(updated.audioDeletedAt).not.toBeNull();
+      expect(updated.transcriptDeletedAt).toBeNull();
+
+      const remainingTranscripts =
+        await testPrismaClient.transcription.findMany({
+          where: { meetingId: meeting.id },
+        });
+      expect(remainingTranscripts).toHaveLength(1);
+    });
+
+    test("returns zero stats and skips DB access when both TTLs are null", async () => {
+      await createExpiredMeeting("both-null-ttl-meeting", 60);
+
+      const stats = await cleanupStateData(STATE_CODE, null, null, false);
+
+      expect(stats).toEqual({
+        meetingsProcessed: 0,
+        meetingsSkipped: 0,
+        gcsFilesDeleted: 0,
+        transcriptionsDeleted: 0,
+        errors: [],
+      });
+      expect(mockGetPrismaClientForStateCode).not.toHaveBeenCalled();
+      expect(mockDeleteFiles).not.toHaveBeenCalled();
+    });
+  });
+
   describe("dry run", () => {
     test("counts files but does not delete them from GCS", async () => {
       await createExpiredMeeting("dry-run-meeting", 60);
@@ -418,14 +504,18 @@ describe("cleanupMeetingData", () => {
     await expect(cleanupMeetingData(true)).resolves.toBeUndefined();
   });
 
-  test("attempts cleanup for every state in AGENCY_CONFIGS", async () => {
+  test("attempts cleanup for every state in AGENCY_CONFIGS that has at least one TTL configured", async () => {
     await cleanupMeetingData(true);
 
-    const configs = Object.values(AGENCY_CONFIGS);
-    expect(mockGetPrismaClientForStateCode).toHaveBeenCalledTimes(
-      configs.length,
+    const configsWithTTL = Object.values(AGENCY_CONFIGS).filter(
+      (config) =>
+        config.audioTTLDays !== undefined ||
+        config.transcriptTTLDays !== undefined,
     );
-    for (const config of configs) {
+    expect(mockGetPrismaClientForStateCode).toHaveBeenCalledTimes(
+      configsWithTTL.length,
+    );
+    for (const config of configsWithTTL) {
       expect(mockGetPrismaClientForStateCode).toHaveBeenCalledWith(
         config.stateCode,
       );

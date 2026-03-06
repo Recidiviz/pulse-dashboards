@@ -124,19 +124,21 @@ async function cleanupMeeting(
   },
   storage: Storage,
   prisma: ReturnType<typeof getPrismaClientForStateCode>,
-  audioCutoffDate: Date,
-  transcriptCutoffDate: Date,
+  audioCutoffDate: Date | null,
+  transcriptCutoffDate: Date | null,
   dryRun: boolean,
 ): Promise<MeetingCleanupResult> {
   let filesDeleted = 0;
   let transcriptionsDeleted = 0;
 
   const shouldCleanAudio =
+    audioCutoffDate !== null &&
     !meeting.audioDeletedAt &&
     meeting.endTime !== null &&
     meeting.endTime < audioCutoffDate;
 
   const shouldCleanTranscript =
+    transcriptCutoffDate !== null &&
     !meeting.transcriptDeletedAt &&
     meeting.endTime !== null &&
     meeting.endTime < transcriptCutoffDate;
@@ -219,23 +221,43 @@ async function cleanupMeeting(
 
 export async function cleanupStateData(
   stateCode: string,
-  audioTTLDays: number,
-  transcriptTTLDays: number,
+  audioTTLDays: number | null,
+  transcriptTTLDays: number | null,
   dryRun: boolean,
 ): Promise<CleanupStats> {
+  const emptyStats: CleanupStats = {
+    meetingsProcessed: 0,
+    meetingsSkipped: 0,
+    gcsFilesDeleted: 0,
+    transcriptionsDeleted: 0,
+    errors: [],
+  };
+
+  if (audioTTLDays === null && transcriptTTLDays === null) {
+    return emptyStats;
+  }
+
   const prisma = getPrismaClientForStateCode(stateCode);
   const storage = new Storage();
 
-  const audioCutoffDate = subDays(new Date(), audioTTLDays);
-  const transcriptCutoffDate = subDays(new Date(), transcriptTTLDays);
+  const audioCutoffDate =
+    audioTTLDays !== null ? subDays(new Date(), audioTTLDays) : null;
+  const transcriptCutoffDate =
+    transcriptTTLDays !== null ? subDays(new Date(), transcriptTTLDays) : null;
+
+  const orConditions = [
+    ...(audioCutoffDate
+      ? [{ endTime: { lt: audioCutoffDate }, audioDeletedAt: null }]
+      : []),
+    ...(transcriptCutoffDate
+      ? [{ endTime: { lt: transcriptCutoffDate }, transcriptDeletedAt: null }]
+      : []),
+  ];
 
   const expiredMeetings = await prisma.meeting.findMany({
     where: {
       endTime: { not: null },
-      OR: [
-        { endTime: { lt: audioCutoffDate }, audioDeletedAt: null },
-        { endTime: { lt: transcriptCutoffDate }, transcriptDeletedAt: null },
-      ],
+      OR: orConditions,
     },
     select: {
       id: true,
@@ -294,8 +316,8 @@ export async function cleanupMeetingData(dryRun = true): Promise<void> {
     Object.values(AGENCY_CONFIGS).map((config) =>
       cleanupStateData(
         config.stateCode,
-        config.audioTTLDays,
-        config.transcriptTTLDays,
+        config.audioTTLDays ?? null,
+        config.transcriptTTLDays ?? null,
         dryRun,
       ),
     ),

@@ -23,8 +23,8 @@ export const AgencyConfigSchema = z.object({
   name: z.string(),
   stateCode: z.string(),
   showTranscriptions: z.boolean(),
-  audioTTLDays: z.number().int().min(MIN_TTL_DAYS),
-  transcriptTTLDays: z.number().int().min(MIN_TTL_DAYS),
+  audioTTLDays: z.number().int().min(MIN_TTL_DAYS).optional(),
+  transcriptTTLDays: z.number().int().min(MIN_TTL_DAYS).optional(),
 });
 
 export type AgencyConfig = z.infer<typeof AgencyConfigSchema>;
