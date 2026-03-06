@@ -98,6 +98,7 @@ export default defineConfig(() => ({
 
   build: {
     outDir: "../../dist/apps/jii",
+    sourcemap: true,
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
