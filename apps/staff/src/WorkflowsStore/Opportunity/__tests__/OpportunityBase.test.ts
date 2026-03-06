@@ -326,6 +326,7 @@ describe("snoozedOnDate", () => {
 describe("setLastViewed", () => {
   beforeEach(() => {
     vi.spyOn(root.firestoreStore, "updateOpportunityLastViewed");
+
     vi.spyOn(
       (opp as TestOpportunity).form,
       "hydrationState",
@@ -385,6 +386,21 @@ describe("setLastViewed", () => {
     expect(
       root.firestoreStore.updateOpportunityLastViewed,
     ).not.toHaveBeenCalled();
+  });
+
+  test("Uses impersonated user info when making the setLastViewed call", () => {
+    mockHydration();
+
+    // When a user is impersonating, their user info matches the impersonation target.
+    vi.spyOn(root, "isImpersonating", "get").mockReturnValue(true);
+    mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
+    // Email is already mocked in `createTestUnit()`
+
+    opp.setLastViewed();
+
+    expect(
+      root.firestoreStore.updateOpportunityLastViewed,
+    ).toHaveBeenCalledWith("test@email.gov", opp);
   });
 });
 

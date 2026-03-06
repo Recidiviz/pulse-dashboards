@@ -48,11 +48,22 @@ export function getRecidivizUser(testEnv: RulesTestEnvironment) {
   });
 }
 
-export function getImpersonatedUser(testEnv: RulesTestEnvironment) {
+export function getImpersonatedUserInProd(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
     app: "staff",
     stateCode: "US_TN",
     impersonator: true,
     recidivizAllowedStates: [],
+    environment: "production",
+  });
+}
+
+export function getImpersonatedUserInStaging(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("user@us_tn.gov", {
+    app: "staff",
+    stateCode: "US_TN",
+    impersonator: true,
+    recidivizAllowedStates: [],
+    environment: "staging",
   });
 }

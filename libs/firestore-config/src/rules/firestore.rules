@@ -55,13 +55,17 @@ service cloud.firestore {
     return id.upper()[0:5] == request.auth.token.stateCode.upper();
   }
 
+  function isImpersonatorInProd() {
+    return (request.auth.get(["token", "impersonator"], false) && request.auth.get(["token", "environment"], "") == "production");
+  }
+
   function allowPersonUpdates(clientId) {
     return (hasProperStateCodePrefix(clientId) && (recidivizUserHasAccess(clientId) || 
-      stateCodeMatchesPrefix(clientId)) && !request.auth.get(["token", "impersonator"], false));
+      stateCodeMatchesPrefix(clientId)) && !isImpersonatorInProd());
   }
 
   function allowUserUpdates(document) {
-    return (usernameMatches(document) && !request.auth.get(["token", "impersonator"], false));
+    return (usernameMatches(document) && !isImpersonatorInProd());
   }
 
   function stateCodeIncludedInRecidivizAllowedStates(clientId) {

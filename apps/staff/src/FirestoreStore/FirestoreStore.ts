@@ -248,10 +248,13 @@ export default class FirestoreStore {
    * Do not use the Firestore setDoc directly.
    */
   updateDocument(docRef: DocumentReference<DocumentData>, update: any) {
-    if (this.rootStore.isImpersonating) {
+    if (
+      this.rootStore.isImpersonating &&
+      import.meta.env.VITE_DEPLOY_ENV === "production"
+    ) {
       // eslint-disable-next-line
       console.log(
-        `[IMPERSONATOR] Skipping update for: ${docRef.path} with updates ${JSON.stringify(
+        `[IMPERSONATOR IN PROD] Skipping update for: ${docRef.path} with updates ${JSON.stringify(
           update,
         )}`,
       );
@@ -271,10 +274,13 @@ export default class FirestoreStore {
     docRef: DocumentReference<DocumentData>,
     update: any,
   ) {
-    if (this.rootStore.isImpersonating) {
+    if (
+      this.rootStore.isImpersonating &&
+      import.meta.env.VITE_DEPLOY_ENV === "production"
+    ) {
       // eslint-disable-next-line no-console
       console.log(
-        `[IMPERSONATOR] Skipping update for: ${docRef.path} with updates ${JSON.stringify(
+        `[IMPERSONATOR IN PROD] Skipping update for: ${docRef.path} with updates ${JSON.stringify(
           update,
         )}`,
       );

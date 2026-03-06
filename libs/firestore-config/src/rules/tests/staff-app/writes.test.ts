@@ -23,7 +23,6 @@ import {
 
 import {
   ETL_COLLECTION_NAMES,
-  PERSONAL_UPDATE_COLLECTION_NAME,
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
   testWriteToCollectionsForStateWithStateCodePrefix,
@@ -31,7 +30,8 @@ import {
   testWriteToPersonalUpdateCollection,
 } from "../utils";
 import {
-  getImpersonatedUser,
+  getImpersonatedUserInProd,
+  getImpersonatedUserInStaging,
   getNDUser,
   getRecidivizUser,
   getStatelessUser,
@@ -232,21 +232,40 @@ describe("app = staff", () => {
   );
 
   // eslint-disable-next-line vitest/expect-expect
-  test("impersonating user cannot write to collections", async () => {
+  test("impersonating user in prod cannot write to collections", async () => {
     await testWriteToCollectionsForStateWithStateCodePrefix(
       SHARED_UPDATE_COLLECTION_NAMES,
-      getImpersonatedUser(testEnv).firestore(),
+      getImpersonatedUserInProd(testEnv).firestore(),
       assertFails,
       "US_TN",
     );
   });
 
   // eslint-disable-next-line vitest/expect-expect
-  test("impersonating user cannot write to personal update collection", async () => {
-    await testWriteToCollectionsWithoutStateCodePrefix(
-      [PERSONAL_UPDATE_COLLECTION_NAME],
-      getImpersonatedUser(testEnv).firestore(),
+  test("impersonating user in prod cannot write to personal update collection", async () => {
+    await testWriteToPersonalUpdateCollection(
+      getImpersonatedUserInProd(testEnv).firestore(),
       assertFails,
+      "user@us_tn.gov",
+    );
+  });
+
+  // eslint-disable-next-line vitest/expect-expect
+  test("impersonating user in staging can write to collections", async () => {
+    await testWriteToCollectionsForStateWithStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getImpersonatedUserInStaging(testEnv).firestore(),
+      assertSucceeds,
+      "US_TN",
+    );
+  });
+
+  // eslint-disable-next-line vitest/expect-expect
+  test("impersonating user in staging can write to personal update collection", async () => {
+    await testWriteToPersonalUpdateCollection(
+      getImpersonatedUserInStaging(testEnv).firestore(),
+      assertSucceeds,
+      "user@us_tn.gov",
     );
   });
 });

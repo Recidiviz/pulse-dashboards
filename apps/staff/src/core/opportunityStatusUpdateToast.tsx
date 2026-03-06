@@ -24,7 +24,10 @@ export const OpportunityStatusUpdateToast = ({
 }) => {
   const userStore = useUserStore();
 
-  if (userStore.isImpersonating)
+  if (
+    userStore.isImpersonating &&
+    import.meta.env.VITE_DEPLOY_ENV === "production"
+  )
     return (
       <div>
         {"[Impersonation]: Skipping Update\n"}

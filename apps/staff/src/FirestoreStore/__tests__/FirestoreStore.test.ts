@@ -235,11 +235,13 @@ describe("FirestoreStore", () => {
       vi.spyOn(console, "log");
     });
 
-    test("Does not call setDoc when user is impersonating", () => {
+    test("Does not call setDoc when user is impersonating in production", () => {
       mockRootStore = {
         ...mockRootStore,
         isImpersonating: true,
       } as unknown as RootStore;
+      vi.stubEnv("VITE_DEPLOY_ENV", "production");
+
       store = new FirestoreStore({ rootStore: mockRootStore });
       store.updateDocument(
         { path: "testDocument/recordId" } as DocumentReference,
@@ -248,8 +250,23 @@ describe("FirestoreStore", () => {
       expect(mockSetDoc).not.toBeCalled();
       // eslint-disable-next-line no-console
       expect(console.log).toBeCalledWith(
-        "[IMPERSONATOR] Skipping update for: testDocument/recordId with updates {}",
+        "[IMPERSONATOR IN PROD] Skipping update for: testDocument/recordId with updates {}",
       );
+    });
+
+    test("Calls setDoc when user is impersonating in non-prod environment", () => {
+      mockRootStore = {
+        ...mockRootStore,
+        isImpersonating: true,
+      } as unknown as RootStore;
+      vi.stubEnv("VITE_DEPLOY_ENV", "staging");
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+      store.updateDocument(
+        { path: "testDocument/recordId" } as DocumentReference,
+        {},
+      );
+      expect(mockSetDoc).toHaveBeenCalled();
     });
 
     test("Calls setDoc when user is not impersonating", () => {
@@ -269,11 +286,13 @@ describe("FirestoreStore", () => {
       vi.spyOn(console, "log");
     });
 
-    test("Does not call updateDocument/updatePerson when user is impersonating", () => {
+    test("Does not call updateDocument/updatePerson when user is impersonating in production", () => {
       mockRootStore = {
         ...mockRootStore,
         isImpersonating: true,
       } as unknown as RootStore;
+      vi.stubEnv("VITE_DEPLOY_ENV", "production");
+
       store = new FirestoreStore({ rootStore: mockRootStore });
       store.updateClientUpdatesV2Document(
         "testDocument/recordId",
@@ -283,8 +302,24 @@ describe("FirestoreStore", () => {
       expect(mockSetDoc).not.toBeCalled();
       // eslint-disable-next-line no-console
       expect(console.log).toBeCalledWith(
-        "[IMPERSONATOR] Skipping update for: testDocument/recordId with updates {}",
+        "[IMPERSONATOR IN PROD] Skipping update for: testDocument/recordId with updates {}",
       );
+    });
+
+    test("Call updateDocument/updatePerson when user is impersonating in non-prod environment", () => {
+      mockRootStore = {
+        ...mockRootStore,
+        isImpersonating: true,
+      } as unknown as RootStore;
+      vi.stubEnv("VITE_DEPLOY_ENV", "staging");
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+      store.updateClientUpdatesV2Document(
+        "testDocument/recordId",
+        { path: "testDocument/recordId" } as DocumentReference,
+        {},
+      );
+      expect(mockSetDoc).toHaveBeenCalled();
     });
 
     test("Does not call updateDocument/updatePerson for Recidiviz user in prod", () => {
@@ -778,6 +813,108 @@ describe("FirestoreStore", () => {
           },
         ],
       ]);
+    });
+
+    test("updateOpportunityLastViewed", () => {
+      const userEmail = "user@domain.gov";
+      const update = {
+        lastViewed: {
+          by: userEmail,
+          date: "mock-timestamp",
+        },
+      };
+      store.updateOpportunityLastViewed(userEmail, opp);
+      expect(mockDoc.mock.calls).toEqual([
+        [
+          undefined,
+          "clientUpdatesV2",
+          "us_id_123/clientOpportunityUpdates/LSU",
+        ],
+        [undefined, "clientUpdatesV2", "us_id_123"],
+      ]);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { stateCode: "us_id" },
+          {
+            merge: true,
+          },
+        ],
+        [
+          "test-doc-ref",
+          update,
+          {
+            merge: true,
+          },
+        ],
+      ]);
+    });
+
+    test("updateOpportunityLastViewed with impersonation", () => {
+      mockRootStore = {
+        ...mockRootStore,
+        isImpersonating: true,
+      } as unknown as RootStore;
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+
+      const userEmail = "user@domain.gov";
+
+      const update = {
+        lastViewed: {
+          by: userEmail,
+          date: "mock-timestamp",
+        },
+      };
+      store.updateOpportunityLastViewed(userEmail, opp);
+      expect(mockDoc.mock.calls).toEqual([
+        [
+          undefined,
+          "clientUpdatesV2",
+          "us_id_123/clientOpportunityUpdates/LSU",
+        ],
+        [undefined, "clientUpdatesV2", "us_id_123"],
+      ]);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { stateCode: "us_id" },
+          {
+            merge: true,
+          },
+        ],
+        [
+          "test-doc-ref",
+          update,
+          {
+            merge: true,
+          },
+        ],
+      ]);
+    });
+
+    test("updateOpportunityLastViewed with impersonation in prod will not set doc", () => {
+      mockDoc.mockReturnValue({ path: "test-doc-ref" });
+
+      mockRootStore = {
+        ...mockRootStore,
+        isImpersonating: true,
+      } as unknown as RootStore;
+      vi.stubEnv("VITE_DEPLOY_ENV", "production");
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+
+      const userEmail = "user@domain.gov";
+
+      store.updateOpportunityLastViewed(userEmail, opp);
+
+      expect(mockSetDoc).not.toBeCalled();
+      // eslint-disable-next-line no-console
+      expect(console.log).toBeCalledWith(
+        '[IMPERSONATOR IN PROD] Skipping update for: test-doc-ref with updates {"lastViewed":{"by":"user@domain.gov","date":"mock-timestamp"}}',
+      );
     });
 
     test("updateSelectedSearchIds", () => {
