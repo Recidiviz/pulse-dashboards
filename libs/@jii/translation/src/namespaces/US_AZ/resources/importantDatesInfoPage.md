@@ -13,7 +13,7 @@ The Standard Transition Program (STP) allows for release up to **90 days before 
 <section class="callout">
 #### Who has this date?
 
-Most people can qualify for this release type unless you have been convicted of certain crimes now or in the past. The next section talks about ineligible crimes.
+Most people can qualify for this release type unless you have been convicted of certain crimes now or in the past. The next two sections talk about ineligible crimes.
 
 The Department typically begins reviewing cases for eligibility up to 7 months before the earliest release date.
 
@@ -43,7 +43,7 @@ You are not eligible for Transition Release if you have ever been convicted of t
 - Kidnapping
 - Aggravated assault
 - Sex offenses
-- Robbery or burglary when a person is present or uses a deadly weapon
+- Robbery or burglary when a person is present or using a deadly weapon
 - Arson when a person is present
 
 For a more detailed list of the specific crimes that would disqualify you, please see ADCRR Department Order 1002, attachments A, B, and C. (You can find this in the FYI app, under the Department Orders section. The attachments are at the end of the document.) You can also look up ARS §31-281, the law that defines Transition Program Release, in the Law Library. It may also be available on your tablet through LexisNexis.
@@ -76,7 +76,7 @@ People convicted of particular drug use/possession crimes, who also meet the res
 
 Please note that in order to qualify for DTP, your current sentence can _only_ be for drug possession/use. For example, someone convicted of marijuana possession _and_ another charge like assault or burglary will not qualify for DTP. However, you may still qualify for another version of Transition Program Release called [Standard Transition Program (STP)](#tprDate) if you meet those requirements.
 
-You will be reviewed for eligibility around 7 months before your next earliest release date. If you want to read the statutes like A.R.S. §13-3405(A)(1), you can find them in the Law Library or on your tablet through LexisNexis.
+The Department typically begins reviewing cases for eligibility up to 7 months before the next earliest release date. If you want to read the statutes like A.R.S. §13-3405(A)(1), you can find them in the Law Library or on your tablet through LexisNexis.
 
 #### What do I need to do in order to be released on this date?
 
@@ -224,7 +224,7 @@ The CSED is the date when you are no longer under ADCRR custody. If you have a C
 
 If you agree to your conditions and are released (on your ERCD or SED), you will serve the rest of your time in the community. As long as you follow the rules and avoid violations, your CSED is the date you stop reporting to your Community Corrections Officer (CCO).
 
-While on Community Supervision, you can be revoked for a violation. If this happens, you may be returned to prison, but you cannot be held past your CSED unless you catch a new criminal charge.
+While on Community Supervision, you can be revoked for a violation. If this happens, you may be returned to prison, but you cannot be held past your CSED unless you have picked up a new criminal charge.
 
 ### What if I _do not_ want to sign my Conditions of Supervision?
 
