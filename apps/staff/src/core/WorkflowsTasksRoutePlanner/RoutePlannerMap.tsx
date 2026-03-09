@@ -32,7 +32,6 @@ import { Button, Icon, IconSVG, palette, spacing } from "~design-system";
 
 import CopyIcon from "../../assets/static/images/copy.svg?react";
 import Star from "../../assets/static/images/grayStar.svg?react";
-import SendIcon from "../../assets/static/images/sendIcon.svg?react";
 import SendIconFilled from "../../assets/static/images/sendIconFilled.svg?react";
 import { RoutePlannerRouteEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Client } from "../../WorkflowsStore";
@@ -116,10 +115,6 @@ const IconButton = styled.div`
     background: ${palette.slate20};
     cursor: pointer;
   }
-`;
-
-const EmailButtonText = styled.span`
-  margin-left: ${rem(spacing.sm)};
 `;
 
 const RouteDescriptionText = styled(Sans24)`
@@ -266,22 +261,45 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
           <RouteDescriptionText>Your trip</RouteDescriptionText>
 
           {isMobile ? (
-            /* On mobile, show a link to open the map in Google Maps app */
-            <a
-              href={presenter.mapDirectionsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                presenter.trackRoutePlannerRouteEvent(
-                  RoutePlannerRouteEvent.LinkOpened,
-                );
-              }}
-            >
-              <Button shape={"block"}>
-                <SendIcon />
-                <EmailButtonText>Open in Maps</EmailButtonText>
-              </Button>
-            </a>
+            /* On mobile, show optimize route button + open in maps icon */
+            <>
+              <a
+                href={presenter.mapDirectionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  presenter.trackRoutePlannerRouteEvent(
+                    RoutePlannerRouteEvent.LinkOpened,
+                  );
+                }}
+              >
+                <IconButton>
+                  <Icon
+                    kind={IconSVG.Open}
+                    fill={palette.slate50}
+                    height={12}
+                  />
+                </IconButton>
+              </a>
+
+              {presenter.clientsPresenter.canOptimizeRoute && (
+                <Button
+                  shape={"block"}
+                  onClick={async () => {
+                    await presenter.clientsPresenter.optimizeRoute(
+                      presenter.startingAddress,
+                      presenter.endingAddress,
+                    );
+                  }}
+                  disabled={presenter.clientsPresenter.isOptimizing}
+                  style={{ minWidth: "120px" }}
+                >
+                  {presenter.clientsPresenter.isOptimizing
+                    ? "Optimizing..."
+                    : "Optimize Route"}
+                </Button>
+              )}
+            </>
           ) : (
             /* On desktop, show open, copy to clipboard, and email links */
             <>
