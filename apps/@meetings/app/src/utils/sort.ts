@@ -15,14 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isBefore } from "date-fns";
+
 import { Client, Resident } from "../common/types";
 
 export enum SortOption {
   Name = "Name (A-Z)",
-  Id = "ID"
+  Id = "ID",
+  Facility = "Facility (A-Z)",
+  SupervisionType = "Supervision Type (A-Z)",
+  LastMeeting = "Last Meeting",
 }
 
-export const sortUsers = <T extends Client | Resident>(users: T[], option: SortOption) => {
+export const sortUsers = <T extends Client | Resident>(
+  users: T[],
+  option: SortOption,
+) => {
   const sortedUsers = [...users];
   if (option === SortOption.Name) {
     return sortedUsers.sort((a, b) => a.fullName.localeCompare(b.fullName));
@@ -33,5 +41,26 @@ export const sortUsers = <T extends Client | Resident>(users: T[], option: SortO
         Number(a.displayPersonExternalId) - Number(b.displayPersonExternalId),
     );
   }
+  if (option === SortOption.Facility || option === SortOption.SupervisionType) {
+    return sortedUsers.sort((a, b) =>
+      a.primaryMetadata.localeCompare(b.primaryMetadata),
+    );
+  }
+  if (option === SortOption.LastMeeting) {
+    return sortedUsers.sort((a, b) => {
+      if (a.meetingDetails.lastCompletedMeetingTime === null) {
+        return 1;
+      }
+      if (b.meetingDetails.lastCompletedMeetingTime === null) {
+        return -1;
+      }
+      return isBefore(
+        a.meetingDetails.lastCompletedMeetingTime,
+        b.meetingDetails.lastCompletedMeetingTime,
+      )
+        ? 1
+        : -1;
+    });
+  }
   return sortedUsers;
-}
+};

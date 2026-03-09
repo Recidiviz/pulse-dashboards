@@ -36,19 +36,9 @@ import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeClient } from "../utils/format";
+import { SortOption, sortUsers } from "../utils/sort";
 
 type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
-
-const sortClientsByOption = (data: Client[], option: string): Client[] => {
-  const sorted = [...data];
-  if (option.includes("Name")) {
-    return sorted.sort((a, b) => a.fullName.localeCompare(b.fullName));
-  }
-  return sorted.sort(
-    (a, b) =>
-      Number(a.displayPersonExternalId) - Number(b.displayPersonExternalId),
-  );
-};
 
 const filterAndSortClients = (
   clients: Client[],
@@ -61,7 +51,7 @@ const filterAndSortClients = (
       e.fullName.toLowerCase().includes(search.toLowerCase()),
     );
   }
-  results = sortClientsByOption(results, sortBy);
+  results = sortUsers(results, sortBy as SortOption);
   return results.sort(
     (a, b) => Number(!!b.activeMeetingId) - Number(!!a.activeMeetingId),
   );
@@ -84,7 +74,7 @@ const ClientsScreen = () => {
   });
 
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("Name (A-Z)");
+  const [sortBy, setSortBy] = useState(SortOption.Name as string);
 
   const clients: Client[] = React.useMemo(() => {
     if (!rawClients) return [];

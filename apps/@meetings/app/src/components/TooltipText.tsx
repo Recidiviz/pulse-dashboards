@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useRef, useState } from "react";
-import { Pressable,Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 type Props = {
   tooltipText: string;
@@ -44,11 +44,11 @@ export const TooltipText = ({
     if (fullTextWidthRef.current > 0 && containerWidthRef.current > 0) {
       setIsOverflowing(fullTextWidthRef.current > containerWidthRef.current);
     }
-  };  
-  
+  };
+
   return (
     <Pressable
-      className={`relative flex-1 size-full flex flex-row items-center ${containerClassName}`}
+      className={`relative flex size-full flex-1 flex-row items-center ${containerClassName}`}
       onHoverIn={() => setVisible(true)}
       onHoverOut={() => setVisible(false)}
       onFocus={() => setVisible(true)}
@@ -60,7 +60,7 @@ export const TooltipText = ({
     >
       {/* Hidden text to measure full width for tooltip */}
       <Text
-        className={`absolute opacity-0 pointer-events-none font-inter text-base ${textClassName} max-w-fit`}
+        className={`pointer-events-none absolute font-inter text-base opacity-0 ${textClassName} max-w-fit`}
         numberOfLines={1}
         onLayout={(e) => {
           fullTextWidthRef.current = e.nativeEvent.layout.width;
@@ -70,16 +70,16 @@ export const TooltipText = ({
         {children}
       </Text>
 
-      <Text 
-        className={`font-inter text-base text-[#355362D9] ${textClassName}`}
-        ellipsizeMode="tail" 
+      <Text
+        className={`font-inter text-base text-gray/85 ${textClassName}`}
+        ellipsizeMode="tail"
         numberOfLines={1}
       >
         {children}
       </Text>
 
       {isOverflowing && visible && (
-        <View className="absolute top-3/4 left-0 w-[50vw]">
+        <View className="absolute left-0 top-11 w-[50vw]">
           <View
             className={`w-fit rounded-md bg-primary px-2 py-1 shadow-md ${tooltipClassName}`}
           >
@@ -91,4 +91,4 @@ export const TooltipText = ({
       )}
     </Pressable>
   );
-}
+};

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useMemo } from "react";
 import { Text, View } from "react-native";
 
 import { SortOption } from "../utils/sort";
@@ -36,6 +37,20 @@ const PersonsHeaderContent = ({
   setSearchQuery,
   setSortBy,
 }: Props) => {
+  const options = useMemo(() => {
+    if (keyword === "Client") {
+      return Object.values(SortOption).filter(
+        (option) => option !== SortOption.Facility,
+      );
+    }
+    if (keyword === "Resident") {
+      return Object.values(SortOption).filter(
+        (option) => option !== SortOption.SupervisionType,
+      );
+    }
+    return Object.values(SortOption);
+  }, [keyword]);
+
   return (
     <>
       <View className="rounded-b-[24px] bg-white p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial] md:px-0 md:pb-0 md:pt-10">
@@ -61,11 +76,7 @@ const PersonsHeaderContent = ({
         </View>
       </View>
       <View className="z-10 my-4 flex-row items-center justify-end px-4 md:my-0 md:px-0">
-        <Dropdown
-          label="Sort by"
-          options={Object.values(SortOption)}
-          onSelect={setSortBy}
-        />
+        <Dropdown label="Sort by" options={options} onSelect={setSortBy} />
       </View>
     </>
   );
