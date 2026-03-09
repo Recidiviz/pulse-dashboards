@@ -30,38 +30,40 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
-        "dev": {"args": "development" },
+        "dev": { "args": "development" },
         "staging": { "args": "staging" },
         "production": { "args": "production" }
       },
       "defaultConfiguration": "dev"
     },
-    "requires-sops-env:android": {
+    "requires-sops-env:dev:android": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "tsx scripts/write-local-env.mts",
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
           "nx run-android @meetings/app --no-build-cache"
         ],
-        "parallel": false
+        "parallel": false,
+        "cwd": "{projectRoot}"
       },
-      "cwd": "{workspaceRoot}",
       "configurations": {
         "dev": {},
         "staging": {}
       },
       "defaultConfiguration": "dev"
     },
-    "requires-sops-env:ios": {
+    "requires-sops-env:dev:ios": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
-          "nx run-ios @meetings/app --no-build-cache"
+          "tsx scripts/write-local-env.mts",
+          "EXPO_NO_GIT_STATUS=1 expo prebuild --clean",
+          "expo run:ios --no-build-cache"
         ],
-        "parallel": false
+        "parallel": false,
+        "cwd": "{projectRoot}"
       },
-      "cwd": "{workspaceRoot}",
       "configurations": {
         "dev": {},
         "staging": {}
