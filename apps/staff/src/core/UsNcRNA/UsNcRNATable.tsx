@@ -109,12 +109,6 @@ const FormattedRNADueDate = ({ row }: { row: Row<RNARowData> }) => {
 };
 
 const StatusBadgeCell = ({ row }: { row: Row<RNARowData> }) => {
-  if (row.original.status === "UPCOMING") {
-    if (!row.original.rnaDueDate || row.original.rnaDueDate > new Date()) {
-      return <RNABadge kind={"UPCOMING"} />;
-    }
-    return <RNABadge kind={"UPCOMING_DUE"} />;
-  }
   return <RNABadge kind={row.original.status} />;
 };
 
@@ -153,7 +147,7 @@ export const EnableCell = observer(function EnableCell({
 const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
   const { status, enabledAt } = row.original;
 
-  if (status !== "UPCOMING" && !enabledAt) {
+  if (!["UPCOMING", "DUE"].includes(status) && !enabledAt) {
     return `Access disabled on ${formatWorkflowsDate(row.original.updatedAt)}`;
   } else if (status === "COMPLETE") {
     return `Ready since ${formatWorkflowsDate(row.original.completedAt)}`;
@@ -189,7 +183,7 @@ const ViewResultsCell = ({ row }: { row: Row<RNARowData> }) => {
 
 const rnaStatusOrder: RNAStatus[] = [
   "UPCOMING",
-  "UPCOMING_DUE",
+  "DUE",
   "NOT_STARTED",
   "IN_PROGRESS",
   "COMPLETE",

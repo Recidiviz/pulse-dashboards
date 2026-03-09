@@ -41,9 +41,7 @@ const badgeSettings = {
     textColor: palette.slate80,
     text: "Upcoming",
   },
-  // this is not a real status from the backend, but rather a copy change
-  // depending on the person's due date relative to today
-  UPCOMING_DUE: {
+  DUE: {
     backgroundColor: palette.slate05,
     borderColor: palette.slate20,
     textColor: palette.slate80,

@@ -53,6 +53,13 @@ const testResidents = [
       rnaDueDate: formatISO(futureDueDate, { representation: "date" }),
     },
   },
+  {
+    pseudonymizedId: "jkl",
+    metadata: {
+      stateCode: "US_NC",
+      rnaDueDate: formatISO(testDate, { representation: "date" }),
+    },
+  },
 ];
 const additionalResidents = [
   {
@@ -201,7 +208,7 @@ describe("rnaStatusList", () => {
     );
   });
 
-  test("UPCOMING status", async () => {
+  test("UPCOMING and DUE status", async () => {
     mockFirestoreGet.get.mockResolvedValue({
       docs: testResidents.map((r) => ({
         data() {
@@ -223,6 +230,8 @@ describe("rnaStatusList", () => {
         // resident 2 is not in the window but also does not have a record
       ],
     });
+
+    // statuses should differ depending on the due date
     expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
@@ -231,11 +240,15 @@ describe("rnaStatusList", () => {
         },
         {
           "pseudonymizedId": "def",
-          "status": "UPCOMING",
+          "status": "DUE",
         },
         {
           "pseudonymizedId": "ghi",
           "status": "UPCOMING",
+        },
+        {
+          "pseudonymizedId": "jkl",
+          "status": "DUE",
         },
       ]
     `);

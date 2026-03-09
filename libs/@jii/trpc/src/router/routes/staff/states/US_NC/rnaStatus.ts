@@ -21,6 +21,7 @@ import { z } from "zod";
 
 export const rnaAssessmentStatus = z.enum([
   "UPCOMING",
+  "DUE",
   "NOT_STARTED",
   "IN_PROGRESS",
   "COMPLETE",

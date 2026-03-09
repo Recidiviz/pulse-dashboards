@@ -35,6 +35,10 @@ const rnaFilters: FilterSection<"usNcRNA">[] = [
         label: "Upcoming",
       },
       {
+        value: "DUE",
+        label: "Due",
+      },
+      {
         value: "NOT_STARTED",
         label: "Not Started",
       },

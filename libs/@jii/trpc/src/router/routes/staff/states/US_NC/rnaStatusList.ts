@@ -133,22 +133,24 @@ export const rnaStatusList = stateStaffProcedure
             metadata: { rnaDueDate },
           } = r;
           const latestRNA = latestRNAByResident.get(pseudonymizedId);
-          // if a resident has never filled out an assessment
-          // they are considered Upcoming regardless of due date
-          if (!latestRNA)
+
+          let currentRNA;
+          if (latestRNA) {
+            currentRNA = validateCurrentRNA(rnaDueDate, latestRNA);
+          }
+
+          // if a resident has never filled out an assessment,
+          // or if their latest assessment is not fresh, staff needs to enable a new one
+          if (!latestRNA || !currentRNA) {
+            // the person's status becomes "DUE" when the due date is in the past or today
+            const status =
+              rnaDueDate && rnaDueDate <= new Date() ? "DUE" : "UPCOMING";
+
             return {
               pseudonymizedId,
-              status: "UPCOMING",
+              status,
             };
-
-          const currentRNA = validateCurrentRNA(rnaDueDate, latestRNA);
-
-          // if no fresh assessment, staff needs to enable a new one
-          if (!currentRNA)
-            return {
-              pseudonymizedId,
-              status: "UPCOMING",
-            };
+          }
 
           return {
             pseudonymizedId,
