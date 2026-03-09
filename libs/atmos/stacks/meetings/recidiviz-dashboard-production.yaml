@@ -30,6 +30,7 @@ components:
         server_env_key: env_prod_meetings_server
         migrate_db_env_key: env_prod_meetings_migrate_db
         data_import_env_key: env_prod_meetings_data_import
+        seed_demo_env_key: env_prod_meetings_seed_demo
         private_network: projects/recidiviz-dashboard-production/global/networks/default
         meetings_bucket_cors_origins:
           - "https://recidiviz-meetings.web.app/"

@@ -18,9 +18,10 @@
 /* eslint-disable no-await-in-loop */
 
 import { faker } from "@faker-js/faker";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { Transcript } from "assemblyai";
+import { fileURLToPath } from "url";
 
+import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import {
   Client,
   PostMeetingProcessingStatus,
@@ -30,12 +31,9 @@ import {
   StateCode,
 } from "~@meetings/prisma/client";
 
-const adapter = new PrismaPg({
-  connectionString: process.env[`DATABASE_URL`],
-});
-const prisma = new PrismaClient({ adapter });
+faker.seed(1234);
 
-async function main() {
+export async function main(prisma: PrismaClient) {
   // Clean up existing data
   await prisma.utterance.deleteMany({});
   await prisma.transcription.deleteMany({});
@@ -55,7 +53,7 @@ async function main() {
       middleNames: faker.person.firstName(),
       surname: faker.person.lastName(),
       email: staffEmail,
-      stateCode: StateCode.US_NE,
+      stateCode: StateCode.US_DEMO,
     },
   });
 
@@ -64,7 +62,7 @@ async function main() {
   const createdClients: Client[] = [];
   for (let i = 0; i < numberOfClients; i++) {
     const clientData: Prisma.ClientCreateInput = {
-      stateCode: StateCode.US_NE,
+      stateCode: StateCode.US_DEMO,
       personId: i + 1,
       stablePersonExternalId: `client-ext-${i + 1}`,
       stablePersonExternalIdType: "client-ext-type-1",
@@ -146,6 +144,7 @@ async function main() {
         actionItems: actionItems,
         criticalUpdates: criticalUpdates,
         meetingSummary: meetingSummary,
+        caseNote: faker.lorem.paragraphs(3),
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [
@@ -179,7 +178,7 @@ async function main() {
   const createdResidents: Resident[] = [];
   for (let i = 0; i < numberOfResidents; i++) {
     const residentData: Prisma.ResidentCreateInput = {
-      stateCode: StateCode.US_NE,
+      stateCode: StateCode.US_DEMO,
       personId: i + 1,
       stablePersonExternalId: `resident-ext-${i + 1}`,
       stablePersonExternalIdType: "resident-ext-type-1",
@@ -289,11 +288,15 @@ async function main() {
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// Only auto-run when executed directly (not when imported by seed-demo)
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const prisma = getPrismaClientForStateCode("US_DEMO");
+  main(prisma)
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

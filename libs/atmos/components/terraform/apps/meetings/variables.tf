@@ -136,3 +136,14 @@ variable "artifact_cleanup_schedule" {
   description = "Cron schedule for the artifact cleanup job (UTC)"
   default     = "0 2 * * *"
 }
+
+variable "seed_demo_env_key" {
+  type        = string
+  description = "The key for the seed demo env"
+}
+
+variable "seed_demo_container_version" {
+  type        = string
+  description = "The version tag of the image that will be used for the seed demo job"
+  default     = "latest"
+}

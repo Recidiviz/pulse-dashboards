@@ -14,6 +14,8 @@ locals {
   can_configure_import   = var.configure_import && var.data_import_env_key != null
   data_import_env        = local.can_configure_import ? local.env_secrets[var.data_import_env_key] : {}
 
+  seed_demo_env = local.env_secrets[var.seed_demo_env_key]
+
   server_image_name = "meetings-server"
 
   migrate_db_image_name = "meetings-server"
@@ -22,6 +24,9 @@ locals {
   import_job_name   = "meetings-data-import"
 
   artifact_cleanup_job_name = "meetings-artifact-cleanup"
+
+  seed_demo_job_name   = "meetings-seed-demo"
+  seed_demo_image_name = "meetings-seed-demo"
 
   etl_bucket_name     = "meetings-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
@@ -55,6 +60,17 @@ locals {
       name  = key
     }
   ])
+
+  # This list needs to be marked as nonsensitive so it can be used in `for_each`
+  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
+  seed_demo_env_vars = nonsensitive([
+    for key, value in local.seed_demo_env : {
+      # The values are sensitive so we want to omit them from the plans
+      value = sensitive(value)
+      name  = key
+    }
+  ])
+
 }
 
 module "database" {
@@ -341,6 +357,33 @@ resource "google_cloud_scheduler_job" "artifact_cleanup_schedule" {
   retry_config {
     retry_count = 0
   }
+}
+
+# Configure a job that will seed the demo database
+module "seed_demo_job" {
+  source = "../../vendor/cloud-run-job-exec"
+
+  exec                          = true
+  name                          = local.seed_demo_job_name
+  image                         = "${var.artifact_registry_repo}/${local.seed_demo_image_name}:${var.seed_demo_container_version}"
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.seed_demo_env_vars
+  cloud_run_deletion_protection = false
+  service_account_email         = google_service_account.default.email
+  max_retries                   = 1
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+  }]
+
+  volume_mounts = [{
+    name       = "cloudsql"
+    mount_path = "/cloudsql"
+  }]
 }
 
 resource "google_cloud_tasks_queue" "audio_stitching_task_queue" {
