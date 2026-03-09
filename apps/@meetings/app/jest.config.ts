@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+process.env.TZ = "Etc/GMT+5";
+
 module.exports = {
   displayName: "@meetings/app",
   resolver: require.resolve("./jest.resolver.js"),

@@ -20,9 +20,14 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import Loading from "../components/Loading";
 import Meeting from "../components/Meeting";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
-import { deserializeClient } from "../utils/format";
+import {
+  deserializeClient,
+  formatMeetingStartDateTitle,
+  formatPersonTitle,
+} from "../utils/format";
 
 type MeetingRouteProp = RouteProp<RootStackParamList, "ClientMeeting">;
 
@@ -36,6 +41,11 @@ const ClientMeetingScreen = () => {
       { personId: BigInt(route.params?.personId || 0) },
       { enabled: !!route.params?.personId },
     );
+  useSetDocumentTitle(
+    meetingDetails && person
+      ? `Meeting on ${formatMeetingStartDateTitle(meetingDetails.startTime)} - ${formatPersonTitle(person)} - Recidiviz Meetings`
+      : undefined,
+  );
 
   if (isMeetingDetailsLoading || isPersonLoading)
     return <Loading message="Loading..." />;

@@ -20,9 +20,14 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import Loading from "../components/Loading";
 import Meeting from "../components/Meeting";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
-import { deserializeResident } from "../utils/format";
+import {
+  deserializeResident,
+  formatMeetingStartDateTitle,
+  formatPersonTitle,
+} from "../utils/format";
 
 type MeetingRouteProp = RouteProp<RootStackParamList, "ResidentMeeting">;
 
@@ -31,21 +36,26 @@ const ResidentMeetingScreen = () => {
   const meetingId = route.params?.meetingId || "";
   const { data: meetingDetails, isLoading: isMeetingDetailsLoading } =
     useMeetingDetails(meetingId);
-  const { data: resident, isLoading: isResidentLoading } =
+  const { data: person, isLoading: isResidentLoading } =
     trpc.v1.resident.get.useQuery(
       { personId: BigInt(route.params?.personId || 0) },
       { enabled: !!route.params?.personId },
     );
+  useSetDocumentTitle(
+    meetingDetails && person
+      ? `Meeting on ${formatMeetingStartDateTitle(meetingDetails.startTime)} - ${formatPersonTitle(person)} - Recidiviz Meetings`
+      : undefined,
+  );
 
   if (isMeetingDetailsLoading || isResidentLoading)
     return <Loading message="Loading..." />;
-  if (!resident || !meetingDetails) return null;
+  if (!person || !meetingDetails) return null;
 
   return (
     <Meeting
       meetingId={meetingId}
       meetingDetails={meetingDetails}
-      person={deserializeResident(resident)}
+      person={deserializeResident(person)}
       personType="resident"
     />
   );

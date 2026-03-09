@@ -24,9 +24,10 @@ import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
 import { useRecording } from "../features/recording";
 import { useMeetings } from "../hooks/useMeetings";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
-import { deserializeClient } from "../utils/format";
+import { deserializeClient, formatPersonTitle } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -39,6 +40,9 @@ const ClientProfileScreenContainer = () => {
   const { data: person } = trpc.v1.client.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },
+  );
+  useSetDocumentTitle(
+    person ? `${formatPersonTitle(person)} - Recidiviz Meetings` : undefined,
   );
 
   if (!person) return null;

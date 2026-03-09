@@ -67,7 +67,7 @@ export const formatRelativeTime = (date: Date): string => {
   if (isYesterday(date)) {
     return "Yesterday";
   }
-  
+
   return formatDistanceToNow(date, { addSuffix: true });
 };
 
@@ -132,4 +132,25 @@ export const formatMeetingDuration = ({
       : `${Math.floor(differenceInSeconds / 60)} min`;
 
   return { time: timeFormatted, duration };
+};
+
+export const formatMeetingStartDateTitle = (startDate: Date) =>
+  `${format(startDate, "MM/dd/yy")} at ${format(startDate, "HH:mm")}`;
+
+export const formatPersonTitle = ({
+  fullName,
+  givenNames,
+  surname,
+  displayPersonExternalId,
+}: {
+  fullName?: string;
+  givenNames?: string;
+  surname?: string;
+  displayPersonExternalId?: string;
+}) => {
+  if (fullName) {
+    return `${fullName} | ${displayPersonExternalId}`;
+  } else {
+    return `${givenNames} ${surname} | ${displayPersonExternalId}`;
+  }
 };

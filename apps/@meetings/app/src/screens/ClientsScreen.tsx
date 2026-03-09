@@ -33,6 +33,7 @@ import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsTable from "../components/PersonsTable.web";
 import { useUserContext } from "../context/UserContext";
 import { useRecording } from "../features/recording";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeClient } from "../utils/format";
@@ -58,6 +59,7 @@ const filterAndSortClients = (
 };
 
 const ClientsScreen = () => {
+  useSetDocumentTitle("Clients - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();

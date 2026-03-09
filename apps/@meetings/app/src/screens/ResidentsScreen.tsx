@@ -32,6 +32,7 @@ import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../features/recording";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
@@ -43,6 +44,7 @@ type ProfileNavProp = NativeStackNavigationProp<
 >;
 
 const ResidentsScreen = () => {
+  useSetDocumentTitle("Residents - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();

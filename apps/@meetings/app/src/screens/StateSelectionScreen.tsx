@@ -33,12 +33,14 @@ import {
   StateCode,
   useStateSelection,
 } from "../context/StateContext";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 
 type StateSelectionNavProp = NativeStackNavigationProp<RootStackParamList>;
 
 const StateSelectionScreen = () => {
+  useSetDocumentTitle("State Selection - Recidiviz Meetings");
   const navigation = useNavigation<StateSelectionNavProp>();
   const utils = trpc.useUtils();
   const { selectedStateCode, setSelectedStateCode } = useStateSelection();

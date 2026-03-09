@@ -22,6 +22,11 @@ import * as StateContext from "../../context/StateContext";
 import * as UserContext from "../../context/UserContext";
 import DrawerNavigator from "../../navigation/DrawerNavigator";
 
+// Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
+jest.mock("../../hooks/useSetDocumentTitle", () => ({
+  useSetDocumentTitle: () => null,
+}));
+
 // Mock AsyncStorage
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),

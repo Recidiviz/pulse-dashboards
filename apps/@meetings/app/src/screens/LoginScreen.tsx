@@ -32,8 +32,10 @@ import LogoSvg from "~@meetings/app/assets/icons/logo.svg";
 import { LearnMoreModal, LearnMoreSheet } from "../components/LearnMore";
 import PrimaryButton from "../components/PrimaryButton";
 import env from "../env";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 
 const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
+  useSetDocumentTitle("Login - Recidiviz Meetings");
   const { authorize } = useAuth0();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [learnMoreModalVisible, setLearnMoreModalVisible] = useState(false);

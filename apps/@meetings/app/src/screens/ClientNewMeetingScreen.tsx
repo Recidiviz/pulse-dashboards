@@ -19,7 +19,9 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import NewMeeting from "../components/NewMeeting";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { formatPersonTitle } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "ClientNewMeeting">;
@@ -34,6 +36,9 @@ const ClientNewMeetingScreen = () => {
     // Convert this back into a BigInt for TRPC calls
     personId: BigInt(route.params.personId),
   };
+  useSetDocumentTitle(
+    `New Meeting - ${formatPersonTitle(person)} - Recidiviz Meetings`,
+  );
 
   const navigateToClientProfile = () => {
     navigation.reset({

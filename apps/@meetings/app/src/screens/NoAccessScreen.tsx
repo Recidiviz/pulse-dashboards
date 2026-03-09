@@ -21,8 +21,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import PrimaryButton from "../components/PrimaryButton";
 import { useUserContext } from "../context/UserContext";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 
 const NoAccessScreen = () => {
+  useSetDocumentTitle("Access Denied - Recidiviz Meetings");
   const { onLogout } = useUserContext();
 
   return (

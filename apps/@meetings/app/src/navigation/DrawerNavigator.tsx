@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContent } from "@react-navigation/drawer";
 import React from "react";
 
-import DrawerContent from "../components/DrawerContent";
 import Loading from "../components/Loading";
 import {
   AVAILABLE_STATE_CODES,
@@ -109,8 +108,8 @@ export default function DrawerNavigator() {
         drawerType: "front",
         drawerStyle: { width: "100%" },
       }}
-      drawerContent={(props) => <DrawerContent {...props} />}
       backBehavior="fullHistory"
+      drawerContent={(props) => <DrawerContent {...props} />}
     >
       {hasSupervisionAccess && (
         <>

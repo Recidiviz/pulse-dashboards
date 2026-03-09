@@ -24,9 +24,10 @@ import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
 import { useRecording } from "../features/recording";
 import { useMeetings } from "../hooks/useMeetings";
+import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
-import { deserializeResident } from "../utils/format";
+import { deserializeResident, formatPersonTitle } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -36,14 +37,17 @@ type ProfileRouteProp = RouteProp<RootStackParamList, "ResidentProfile">;
 
 const ResidentProfileScreenContainer = () => {
   const route = useRoute<ProfileRouteProp>();
-  const { data: resident } = trpc.v1.resident.get.useQuery(
+  const { data: person } = trpc.v1.resident.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },
   );
+  useSetDocumentTitle(
+    person ? `${formatPersonTitle(person)} - Recidiviz Meetings` : undefined,
+  );
 
-  if (!resident) return null;
+  if (!person) return null;
 
-  return <ResidentProfileScreen person={deserializeResident(resident)} />;
+  return <ResidentProfileScreen person={deserializeResident(person)} />;
 };
 
 type ProfileScreenProps = {

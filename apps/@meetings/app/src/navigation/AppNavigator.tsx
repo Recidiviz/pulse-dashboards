@@ -112,7 +112,10 @@ const AppNavigator = () => {
     >
       <QueryClientProvider client={publicQueryClient}>
         <AppUpdateModal />
-        <NavigationContainer linking={linking}>
+        <NavigationContainer
+          linking={linking}
+          documentTitle={{ enabled: false }}
+        >
           <Drawer.Navigator screenOptions={{ headerShown: false }}>
             {!loggedIn ? (
               <Drawer.Screen name="Login">
