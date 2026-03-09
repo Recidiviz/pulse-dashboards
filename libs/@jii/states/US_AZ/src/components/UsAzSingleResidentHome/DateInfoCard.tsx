@@ -25,6 +25,7 @@ import { DateInfoTag } from "./DateInfoTag";
 import {
   CardHighlightStyle,
   CardValueWrapper,
+  DashedBorderSvg,
   DateInfoContent,
   LearnMoreLinkWrapper,
   StyledCard,
@@ -35,7 +36,6 @@ export interface DateInfoCardProps {
   title: string;
   date: Date;
   info: string;
-  infoTag?: string;
   shortName: string;
   dateKey: UsAzDateField;
   isUpcoming: boolean;
@@ -47,7 +47,6 @@ export const DateInfoCard = ({
   title,
   date,
   info,
-  infoTag,
   shortName,
   dateKey,
   isUpcoming,
@@ -102,10 +101,18 @@ export const DateInfoCard = ({
 
   return (
     <StyledCard $isUpcoming={isUpcoming} $highlightType={highlightType}>
+      {highlightType === "dashed" && (
+        <DashedBorderSvg>
+          <rect />
+        </DashedBorderSvg>
+      )}
       <CardHeading>{title}</CardHeading>
       <CardValue>
         <CardValueWrapper>{cardValue}</CardValueWrapper>
-        {infoTag && <DateInfoTag text={infoTag} />}
+        {/* infoTag is part of the dashed style */}
+        {highlightType === "dashed" && (
+          <DateInfoTag text={t(($) => $.importantDates.pastDateTag)} />
+        )}
       </CardValue>
       <StyledSlateCopy $isPastDate={isPast}>{slateCopyContent}</StyledSlateCopy>
       <DateInfoContent>{info}</DateInfoContent>

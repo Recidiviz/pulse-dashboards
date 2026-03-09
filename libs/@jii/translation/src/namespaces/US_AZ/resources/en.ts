@@ -62,6 +62,7 @@ export default {
     },
     pastDateMessage: `If this date has already passed, it means you have not met all the requirements yet. 
     Reviewing [the criteria]({{linkUrl}}) will show you what steps you still need to take.`,
+    pastDateTag: "Only eligible if criteria are met",
     missingDateMessage: "No date on record",
     upcomingDateMessage: `Your date is coming up soon! Remaining compliant with
     [the criteria]({{linkUrl}}) is the best way to keep your date from changing.`,
@@ -74,7 +75,6 @@ export default {
         (TPR) or “Transition Release.”`,
         shortName: "STP",
         value: "{{tprDate, formatFullDate}}",
-        infoTag: "",
       },
       dtpDate: {
         title: "Drug Transition Program (DTP)",
@@ -85,7 +85,6 @@ export default {
         (DTP) or “Drug Transition Release.”`,
         shortName: "DTP",
         value: "{{dtpDate, formatFullDate}}",
-        infoTag: "",
       },
       csbdDate: {
         title: "Community Supervision Begin Date (CSBD)",
@@ -94,14 +93,12 @@ export default {
         this called a “Temporary Release” (TR) date.`,
         shortName: "CSBD",
         value: "{{csbdDate, formatFullDate}}",
-        infoTag: "Only eligible if you meet the criteria",
       },
       ercdDate: {
         title: "Earned Release Credit Date (ERCD)",
         info: "The earliest date you can be released based on Earned Release Credits.",
         shortName: "ERCD",
         value: "{{ercdDate, formatFullDate}}",
-        infoTag: "",
       },
       sedDate: {
         title: "Sentence Expiration Date (SED, “100%”, “Flat Time”)",
@@ -111,14 +108,12 @@ export default {
         certain conditions of supervision.`,
         shortName: "SED",
         value: "{{sedDate, formatFullDate}}",
-        infoTag: "",
       },
       csedDate: {
         title: "Community Supervision End Date (CSED)",
         info: "The last day that you can be under ADCRR supervision for your current sentence.",
         shortName: "CSED",
         value: "{{csedDate, formatFullDate}}",
-        infoTag: "",
       },
       addDate: {
         title: "Absolute Discharge Date (ADD)",
@@ -126,7 +121,6 @@ export default {
         It applies to individuals whose sentence includes a term of probation right after their prison term.`,
         shortName: "ADD",
         value: "{{addDate, formatFullDate}}",
-        infoTag: "",
       },
       trToAddDate: {
         title: "Transition to Absolute Discharge Date (TR to ADD)",
@@ -136,7 +130,6 @@ export default {
         their prison term.`,
         shortName: "TR to ADD",
         value: "{{trToAddDate, formatFullDate}}",
-        infoTag: "",
       },
     },
   },

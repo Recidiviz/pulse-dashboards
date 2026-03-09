@@ -20,7 +20,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { Icon, palette, spacing } from "~design-system";
+import { palette, spacing } from "~design-system";
 
 const Wrapper = styled.span`
   ${typography.Sans12}
@@ -36,9 +36,5 @@ const Wrapper = styled.span`
 `;
 
 export const DateInfoTag: FC<{ text: string }> = ({ text }) => {
-  return (
-    <Wrapper>
-      {text} <Icon kind="Info" size={14} />
-    </Wrapper>
-  );
+  return <Wrapper>{text}</Wrapper>;
 };

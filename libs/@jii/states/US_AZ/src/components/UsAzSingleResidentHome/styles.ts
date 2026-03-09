@@ -28,6 +28,28 @@ interface StyledCardProps {
   $highlightType?: CardHighlightStyle;
 }
 
+export const DashedBorderSvg = styled.svg`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  // makes sure the rect border doesn't get clipped
+  overflow: visible;
+
+  rect {
+    fill: none;
+    stroke: ${palette.slate20};
+    stroke-width: ${rem(1)};
+    stroke-dasharray: 8, 4;
+    rx: ${rem(8)};
+    ry: ${rem(8)};
+    width: 100%;
+    height: 100%;
+  }
+`;
+
 export const StyledCard = styled(Card)<StyledCardProps>`
   margin: ${rem(spacing.md)} 0;
   padding-right: ${rem(spacing.xl)};
@@ -54,9 +76,8 @@ export const StyledCard = styled(Card)<StyledCardProps>`
       return `border-top: 8px solid #624488;`;
     }
     if ($highlightType === "dashed") {
-      // slightly thicker border makes the dashing more legible,
-      // particularly with the very light border color used here
-      return `border-style: dashed; border-width: ${rem(2)}`;
+      return `border: none;
+      position: relative;`;
     }
     return "";
   }}

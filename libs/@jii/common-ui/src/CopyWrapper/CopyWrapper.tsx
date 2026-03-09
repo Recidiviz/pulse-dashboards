@@ -29,6 +29,8 @@ import { InternalOrExternalLink } from "./InternalOrExternalLink";
 
 export const styles = css`
   ${typography.Body16}
+  // TODO(#10706): reduce line-height to 1.5 in Body styles
+  line-height: 1.5;
 
   h1 {
     ${typography.Sans24}

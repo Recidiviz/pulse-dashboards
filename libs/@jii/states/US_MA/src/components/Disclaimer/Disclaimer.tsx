@@ -25,6 +25,8 @@ import { palette } from "~design-system";
 
 const Wrapper = styled(CopyWrapper)`
   ${typography.Body14}
+  // TODO(#10706): reduce line-height to 1.5 in Body styles
+  line-height: 1.5;
 
   color: ${palette.slate85};
   margin-top: ${rem(spacing.xxl * 2)};

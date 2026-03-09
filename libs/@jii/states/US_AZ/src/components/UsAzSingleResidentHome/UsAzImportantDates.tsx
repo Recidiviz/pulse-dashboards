@@ -55,7 +55,6 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
                   {...entry}
                   key={dateKey}
                   title={t(($) => $.importantDates.dates[dateKey].title)}
-                  infoTag={t(($) => $.importantDates.dates[dateKey].infoTag)}
                   shortName={t(
                     ($) => $.importantDates.dates[dateKey].shortName,
                   )}

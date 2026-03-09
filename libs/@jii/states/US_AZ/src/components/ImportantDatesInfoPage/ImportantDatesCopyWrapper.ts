@@ -24,6 +24,8 @@ import { palette, spacing } from "~design-system";
 
 const dateInfoSubheadStyles = css`
   ${typography.Body16}
+  // TODO(#10706): reduce line-height to 1.5 in Body styles
+  line-height: 1.5;
   font-weight: 700;
   color: ${palette.pine1};
   margin-top: ${rem(spacing.lg)};
