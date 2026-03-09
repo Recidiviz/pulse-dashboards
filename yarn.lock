@@ -3145,15 +3145,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cascadia-code/scroll-to-hash-element@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@cascadia-code/scroll-to-hash-element@npm:2.0.2"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/48a62b1b3185668c5d9dca4b5831c12b8553ad00cea28eb1f1241aee7b1d2d93e7b7f769a6dd7e68cc756cd6857730673112e247eb32b89b9ce4c915a0d0d6bd
-  languageName: node
-  linkType: hard
-
 "@cfworker/json-schema@npm:^4.0.2":
   version: 4.1.1
   resolution: "@cfworker/json-schema@npm:4.1.1"
@@ -47401,7 +47392,6 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.4"
     "@babel/preset-react": "npm:^7.14.5"
     "@babel/register": "npm:^7.13.14"
-    "@cascadia-code/scroll-to-hash-element": "npm:^2.0.2"
     "@commander-js/extra-typings": "npm:^13.1.0"
     "@cucumber/cucumber": "npm:^7.1.0"
     "@deepgram/sdk": "npm:^4.11.2"

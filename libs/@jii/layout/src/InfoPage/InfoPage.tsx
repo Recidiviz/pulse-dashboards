@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 import { FC } from "react";
 
 import { CopyProps, CopyWrapper } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
 
 import { HeadingsAggregator, TableOfContents } from "./TableOfContents";
+import { useScrollToHash } from "./useScrollToHash";
 
 /**
  * Renders the page content along with a table of contents for jumping between sections.
@@ -44,6 +44,7 @@ export const InfoPage: FC<{
   tocHeadingsAggregatorOverride,
 }) => {
   usePageTitle(heading);
+  useScrollToHash();
 
   const CopyWrapperComponent = CopyWrapperOverride ?? CopyWrapper;
 
@@ -55,7 +56,6 @@ export const InfoPage: FC<{
         headingsAggregator={tocHeadingsAggregatorOverride}
       />
       <CopyWrapperComponent>{body}</CopyWrapperComponent>
-      <ScrollToHashElement />
     </article>
   );
 };
