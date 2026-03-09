@@ -71,7 +71,7 @@ module "database" {
   zone                                          = "us-central1-f"
   secondary_zone                                = var.database_secondary_zone
   tier                                          = "db-custom-1-3840"
-  additional_databases                          = ["us_co", "us_me", "us_nc", "us_ne"]
+  additional_databases                          = ["us_co", "us_me", "us_nc", "us_ne", "us_demo"]
   private_network                               = var.private_network
   enable_private_path_for_google_cloud_services = var.private_network != null ? true : false
 

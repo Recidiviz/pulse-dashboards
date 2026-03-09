@@ -64,6 +64,9 @@ enum StateCode {
   US_WV
   US_WI
   US_WY
+
+  // Demo states
+  US_DEMO
 }
 
 model Staff {
