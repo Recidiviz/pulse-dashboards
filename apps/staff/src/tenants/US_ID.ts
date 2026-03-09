@@ -170,8 +170,6 @@ const US_ID_CONFIG = {
           restrictedToFeatureVariant: "usIdCaseManagerSearch",
         },
       ],
-      //TODO(#10991) Confirm this filter should be used for facilities
-      staffFilterFn: filterByUserDistrict,
     },
     SUPERVISION: {
       search: [
