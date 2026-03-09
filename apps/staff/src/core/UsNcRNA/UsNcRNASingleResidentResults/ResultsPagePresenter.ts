@@ -27,6 +27,7 @@ import { JiiStaffAppRouter, JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
 
 import { formatWorkflowsDate } from "../../../utils";
 import { Resident } from "../../../WorkflowsStore/Resident";
+import { RNAStatus } from "../RNABadge";
 
 export class ResultsPagePresenter {
   constructor(
@@ -44,7 +45,7 @@ export class ResultsPagePresenter {
   // page so the other views will catch up to this state on their own
   private submittedDateOverride?: Date | null;
 
-  get status() {
+  get status(): RNAStatus {
     return this.submittedDateOverride
       ? "SUBMITTED_BY_STAFF"
       : this.answerData.status;

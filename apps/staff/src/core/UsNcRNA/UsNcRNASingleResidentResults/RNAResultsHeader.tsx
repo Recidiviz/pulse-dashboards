@@ -28,6 +28,7 @@ import { RNABadge } from "../RNABadge";
 import { RNAMarkSubmittedButton } from "../RNAMarkSubmittedButton";
 import { PaddedRNAContent } from "./ResultsPage";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
+import { RNAPrintButton } from "./RNAPrintButton";
 import { SubmissionDateandUndo } from "./SubmissionDateAndUndo";
 
 const HeaderContainer = styled.div`
@@ -42,7 +43,7 @@ const Columns = styled.div`
   margin-top: ${rem(spacing.xl)};
   display: grid;
   grid-template-columns: 1fr auto;
-  column-gap: ${rem(spacing.lg)};
+  column-gap: ${rem(spacing.sm)};
   align-items: end;
   row-gap: ${rem(spacing.md)};
 `;
@@ -50,8 +51,11 @@ const Columns = styled.div`
 const Left = styled.div`
   grid-area: auto / 1;
 `;
-const Right = styled.div`
+const MiddleRight = styled.div`
   grid-area: auto / 2;
+`;
+const Right = styled.div`
+  grid-area: auto / 3;
 `;
 
 const Heading = styled(Sans18).attrs({ as: "h2" })`
@@ -91,6 +95,9 @@ export const RNAResultsHeader = observer(function RNAResultsHeader({
               </PersonId>
             </div>
           </Left>
+          <MiddleRight>
+            <RNAPrintButton presenter={presenter} />
+          </MiddleRight>
           <Right>
             <RNAMarkSubmittedButton presenter={presenter} />
           </Right>
