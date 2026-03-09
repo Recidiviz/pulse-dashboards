@@ -19,7 +19,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View, VirtualizedList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Person } from "../common/types";
+import { Person, PersonType } from "../common/types";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import PersonCardItem from "./PersonCardItem";
 import PersonsHeaderContent from "./PersonsHeaderContent";
@@ -37,7 +37,7 @@ type Props = {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   setSortBy: (option: string) => void;
-  keyword: "Client" | "Resident";
+  personType: PersonType;
   className?: string;
 };
 
@@ -48,14 +48,14 @@ const PersonsMobileList = ({
   searchQuery,
   setSearchQuery,
   setSortBy,
-  keyword,
+  personType,
   className,
 }: Props) => {
   const insets = useSafeAreaInsets();
   const emptyListPlaceholderMessage =
-    keyword === "Client" ? "No clients found" : "No residents found";
+    personType === "client" ? "No clients found" : "No residents found";
   const headerDescription =
-    keyword === "Client"
+    personType === "client"
       ? "All clients on your caseload are displayed below"
       : "All residents are displayed below";
 
@@ -71,7 +71,7 @@ const PersonsMobileList = ({
           person={item}
           recordingState={recordingState}
           navigation={navigation}
-          type={keyword === "Client" ? "clients" : "residents"}
+          personType={personType}
         />
       )}
       initialNumToRender={10}
@@ -84,7 +84,7 @@ const PersonsMobileList = ({
       ListHeaderComponent={
         <View className="mx-auto w-full max-w-[960px] flex-1">
           <PersonsHeaderContent
-            keyword={keyword}
+            personType={personType}
             description={headerDescription}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}

@@ -23,8 +23,8 @@ import { ImageBackground, Text, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
-import { Person } from "~@meetings/app/common/types";
 
+import { Person, PersonType } from "../common/types";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getInitials, humanReadableTitleCase } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
@@ -38,14 +38,14 @@ interface ItemProps {
   person: Person;
   recordingState: string;
   navigation: ProfileNavProp;
-  type: "clients" | "residents";
+  personType: PersonType;
 }
 
 const PersonCardItem = ({
   person,
   recordingState,
   navigation,
-  type,
+  personType,
 }: ItemProps) => {
   const hasActiveMeeting = !!person.activeMeetingId;
   const height = hasActiveMeeting ? 136 : 56;
@@ -57,7 +57,7 @@ const PersonCardItem = ({
       className="flex w-full justify-center border-b border-gray-300 px-2.5"
     >
       <Link
-        screen={type === "clients" ? "ClientProfile" : "ResidentProfile"}
+        screen={personType === "client" ? "ClientProfile" : "ResidentProfile"}
         params={{ personId: person.personId.toString() }}
       >
         <View className="w-full flex-1 flex-row items-center">

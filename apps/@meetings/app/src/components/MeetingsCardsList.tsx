@@ -23,7 +23,7 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import ProcessingSvg from "~@meetings/app/assets/icons/processing.svg";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import { Person } from "../common/types";
+import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import MeetingInProgressBar from "./MeetingInProgressBar";
@@ -41,7 +41,7 @@ type MeetingCardProps = {
     end: Date | null;
   }[];
   person: Person;
-  personType: "client" | "resident";
+  personType: PersonType;
 };
 
 const MeetingsCardsList = ({
@@ -115,7 +115,7 @@ const MeetingsCardsList = ({
             ) : (
               <Text
                 style={{ fontStyle: meeting.content ? "normal" : "italic" }}
-                className="mt-3 border-t border-[#EDF1F1] pt-3 font-inter text-sm font-medium text-[#355362D9]"
+                className="mt-3 border-t border-[#EDF1F1] pt-3 font-inter text-sm font-medium text-gray/85"
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >

@@ -39,6 +39,10 @@ export type Resident = Awaited<
   fullName: string;
 };
 
+export type Person = Client | Resident;
+
+export type PersonType = "client" | "resident";
+
 export type MeetingDetails = Awaited<
   ReturnType<AppRouter["v1"]["meeting"]["getDetails"]>
 >;
@@ -50,8 +54,6 @@ export type ClientMeetings = Awaited<
 export type ResidentMeetings = Awaited<
   ReturnType<AppRouter["v1"]["resident"]["getMeetings"]>
 >;
-
-export type Person = Client | Resident;
 
 export type RecordingStatus =
   | "idle"

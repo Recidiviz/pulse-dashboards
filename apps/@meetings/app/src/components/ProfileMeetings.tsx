@@ -36,7 +36,12 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { ClientMeetings, Person, ResidentMeetings } from "../common/types";
+import {
+  ClientMeetings,
+  Person,
+  PersonType,
+  ResidentMeetings,
+} from "../common/types";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import MeetingsCardsList from "../components/MeetingsCardsList";
@@ -52,7 +57,7 @@ enum MeetingsSort {
 }
 
 type Props = {
-  type: "client" | "resident";
+  type: PersonType;
   person: Person;
   rawMeetings?: ClientMeetings | ResidentMeetings;
   isLoading: boolean;

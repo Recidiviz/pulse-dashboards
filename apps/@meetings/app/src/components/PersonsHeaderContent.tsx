@@ -15,15 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import startCase from "lodash/startCase";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
 
+import { PersonType } from "../common/types";
 import { SortOption } from "../utils/sort";
 import Dropdown from "./Dropdown";
 import SearchBar from "./SearchBar";
 
 type Props = {
-  keyword: "Client" | "Resident";
+  personType: PersonType;
   description: string;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
@@ -31,32 +33,32 @@ type Props = {
 };
 
 const PersonsHeaderContent = ({
-  keyword,
+  personType,
   description,
   searchQuery,
   setSearchQuery,
   setSortBy,
 }: Props) => {
   const options = useMemo(() => {
-    if (keyword === "Client") {
+    if (personType === "client") {
       return Object.values(SortOption).filter(
         (option) => option !== SortOption.Facility,
       );
     }
-    if (keyword === "Resident") {
+    if (personType === "resident") {
       return Object.values(SortOption).filter(
         (option) => option !== SortOption.SupervisionType,
       );
     }
     return Object.values(SortOption);
-  }, [keyword]);
+  }, [personType]);
 
   return (
     <>
       <View className="rounded-b-[24px] bg-white p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial] md:px-0 md:pb-0 md:pt-10">
         <View>
           <Text className="font-libre-baskerville text-3xl font-semibold text-black">
-            {keyword}s
+            {startCase(personType)}s
           </Text>
           <Text className="my-2 font-inter text-sm font-normal text-[#707070]">
             {description}
@@ -67,7 +69,7 @@ const PersonsHeaderContent = ({
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder={`Search ${keyword.toLowerCase()}s by name`}
+              placeholder={`Search ${personType}s by name`}
               onExit={() => {
                 setSearchQuery("");
               }}

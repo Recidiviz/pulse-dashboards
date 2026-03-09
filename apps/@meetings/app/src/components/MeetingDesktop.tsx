@@ -34,7 +34,7 @@ import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
 import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
 
-import { MeetingDetails, Person } from "../common/types";
+import { MeetingDetails, Person, PersonType } from "../common/types";
 import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
@@ -138,7 +138,7 @@ type Props = {
   meetingId: string;
   meetingDetails: MeetingDetails;
   person: Person;
-  personType: "client" | "resident";
+  personType: PersonType;
   showTranscription?: boolean;
 };
 

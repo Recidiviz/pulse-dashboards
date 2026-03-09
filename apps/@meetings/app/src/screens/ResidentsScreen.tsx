@@ -105,7 +105,7 @@ const ResidentsScreen = () => {
               searchQuery={search}
               setSearchQuery={setSearch}
               setSortBy={setSortBy}
-              keyword="Resident"
+              personType="resident"
             />
           ),
           web: (
@@ -117,13 +117,13 @@ const ResidentsScreen = () => {
                 searchQuery={search}
                 setSearchQuery={setSearch}
                 setSortBy={setSortBy}
-                keyword="Resident"
+                personType="resident"
                 className="md:hidden"
               />
               <ScrollView className="hidden flex-1 md:block">
                 <View className="mx-auto w-full max-w-[960px] flex-1">
                   <PersonsHeaderContent
-                    keyword="Resident"
+                    personType="resident"
                     description="All residents are displayed below"
                     searchQuery={search}
                     setSearchQuery={setSearch}

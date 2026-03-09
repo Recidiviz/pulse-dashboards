@@ -42,7 +42,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { MeetingDetails, Person } from "../common/types";
+import { MeetingDetails, Person, PersonType } from "../common/types";
 import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
 import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
@@ -59,7 +59,7 @@ type Props = {
   meetingId: string;
   meetingDetails: MeetingDetails;
   person: Person;
-  personType: "client" | "resident";
+  personType: PersonType;
   showTranscription?: boolean;
 };
 

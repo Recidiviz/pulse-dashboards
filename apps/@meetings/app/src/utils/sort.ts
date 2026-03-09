@@ -17,7 +17,7 @@
 
 import { isBefore } from "date-fns";
 
-import { Client, Resident } from "../common/types";
+import { Person } from "../common/types";
 
 export enum SortOption {
   Name = "Name (A-Z)",
@@ -27,10 +27,7 @@ export enum SortOption {
   LastMeeting = "Last Meeting",
 }
 
-export const sortUsers = <T extends Client | Resident>(
-  users: T[],
-  option: SortOption,
-) => {
+export const sortUsers = <T extends Person>(users: T[], option: SortOption) => {
   const sortedUsers = [...users];
   if (option === SortOption.Name) {
     return sortedUsers.sort((a, b) => a.fullName.localeCompare(b.fullName));

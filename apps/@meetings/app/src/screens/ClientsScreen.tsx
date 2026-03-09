@@ -122,7 +122,7 @@ const ClientsScreen = () => {
               searchQuery={search}
               setSearchQuery={setSearch}
               setSortBy={setSortBy}
-              keyword="Client"
+              personType="client"
             />
           ),
           web: (
@@ -134,13 +134,13 @@ const ClientsScreen = () => {
                 searchQuery={search}
                 setSearchQuery={setSearch}
                 setSortBy={setSortBy}
-                keyword="Client"
+                personType="client"
                 className="md:hidden"
               />
               <ScrollView className="hidden flex-1 md:block">
                 <View className="mx-auto w-full max-w-[960px] flex-1">
                   <PersonsHeaderContent
-                    keyword="Client"
+                    personType="client"
                     description="Search for clients across all caseloads"
                     searchQuery={search}
                     setSearchQuery={setSearch}

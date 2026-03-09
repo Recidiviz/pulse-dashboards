@@ -24,7 +24,7 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import ProcessingSvg from "~@meetings/app/assets/icons/processing.svg";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import { Person } from "../common/types";
+import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
@@ -65,7 +65,7 @@ const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
 type MeetingRowProps = {
   meeting: Meeting;
   person: Person;
-  personType: "client" | "resident";
+  personType: PersonType;
   duration: string;
 };
 
@@ -147,7 +147,7 @@ const MeetingRow = ({
 type MeetingsTableProps = {
   meetings: Meeting[];
   person: Person;
-  personType: "client" | "resident";
+  personType: PersonType;
 };
 
 const MeetingsTable = ({
