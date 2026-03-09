@@ -34,11 +34,13 @@ import {
   useStateSelection,
 } from "../context/StateContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { trpc } from "../trpc/client";
 
 type StateSelectionNavProp = NativeStackNavigationProp<RootStackParamList>;
 
 const StateSelectionScreen = () => {
   const navigation = useNavigation<StateSelectionNavProp>();
+  const utils = trpc.useUtils();
   const { selectedStateCode, setSelectedStateCode } = useStateSelection();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -46,6 +48,7 @@ const StateSelectionScreen = () => {
     try {
       setIsSaving(true);
       await setSelectedStateCode(stateCode);
+      utils.v1.client.list.reset();
       // Navigate back to Clients screen after selecting
       navigation.navigate("Clients");
     } catch (error) {
