@@ -90,8 +90,7 @@
         },
         "staging": {},
         "cherry-pick": {},
-        "preview": {},
-        "demo": {}
+        "preview": {}
       },
       "defaultConfiguration": "dev"
     },
@@ -152,8 +151,7 @@
         },
         "staging": {},
         "cherry-pick": {},
-        "preview": {},
-        "demo": {}
+        "preview": {}
       },
       "defaultConfiguration": "dev"
     },

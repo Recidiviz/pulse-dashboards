@@ -788,7 +788,6 @@ if (deployEnv === "demo" && deployDemoFixtures) {
   } while (retryFixtures);
 }
 
-// TODO: Add support for demo meeting assistant deploys
 if (
   deployMeetingAssistant &&
   (deployEnv === "staging" || deployEnv === "production")
@@ -808,9 +807,6 @@ if (
       } else if (deployEnv === "production" && isCpDeploy) {
         projects = ["@meetings/server", "@meetings/import"];
         configuration = "cherry-pick";
-      } else if (deployEnv === "demo") {
-        projects = ["@meetings/server", "@meetings/seed-demo"];
-        configuration = "demo";
       }
 
       if (projects) {
@@ -832,8 +828,6 @@ if (
         stack = `recidiviz-dashboard-${deployEnv}--meetings`;
       } else if (deployEnv === "production") {
         stack = `recidiviz-dashboard-${deployEnv}--meetings`;
-      } else if (deployEnv === "demo") {
-        stack = "recidiviz-dashboard-staging--meetings-demo";
       }
 
       await $`yarn atmos:apply apps/meetings -s ${stack} -- -auto-approve \
@@ -843,13 +837,6 @@ if (
           -var seed_demo_container_version=${currentRevision}`.pipe(
         process.stdout,
       );
-
-      if (deployEnv === "demo") {
-        // If we're in demo mode, deploy the seed demo job
-        await $`yarn atmos:apply apps/meetings-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
-          process.stdout,
-        );
-      }
 
       retryDeploy = false;
       successfullyDeployed.push(meetingAssistantDisplayName);
