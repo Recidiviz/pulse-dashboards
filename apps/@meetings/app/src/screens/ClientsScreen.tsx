@@ -101,7 +101,7 @@ const ClientsScreen = () => {
     }
   }, [recordingState, refetch]);
 
-  if (isLoading || !recordingState) {
+  if (isLoading) {
     return <Loading message="Loading clients..." />;
   }
 

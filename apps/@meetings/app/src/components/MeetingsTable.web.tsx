@@ -25,7 +25,7 @@ import ProcessingSvg from "~@meetings/app/assets/icons/processing.svg";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { Person } from "../common/types";
-import { useMeetingRecording, useRecording } from "../features/recording";
+import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
@@ -66,18 +66,19 @@ type MeetingRowProps = {
   meeting: Meeting;
   person: Person;
   personType: "client" | "resident";
+  duration: string;
 };
 
-const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
+const MeetingRow = ({
+  meeting,
+  person,
+  personType,
+  duration,
+}: MeetingRowProps) => {
   const navigation = useNavigation<ProfileMeetingNavProp>();
-  const { totalDurationMs } = useMeetingRecording({
-    meetingId: meeting.id,
-    personId: person.personId,
-  });
-  const { status: recordingState, meetingId } = useRecording<"web">();
+  const { status, meetingId } = useRecording<"web">();
 
-  const isMeetingInProgress =
-    recordingState !== "idle" && meeting.id === meetingId;
+  const isMeetingInProgress = status !== "idle" && meeting.id === meetingId;
   const isProcessing = isMeetingProcessing(meeting.status);
 
   const handleNavigateToMeeting = () => {
@@ -99,11 +100,7 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
     >
       <TableCell>{meeting.date}</TableCell>
       <TableCell>{meeting.time}</TableCell>
-      <TableCell>
-        {meeting.duration
-          ? formatDurationCompact(meeting.duration)
-          : formatDurationNumeric(totalDurationMs)}
-      </TableCell>
+      <TableCell>{duration}</TableCell>
       <TableCell>
         {isMeetingInProgress && (
           <View className="flex-row items-center pb-2">
@@ -159,6 +156,7 @@ const MeetingsTable = ({
   personType,
 }: MeetingsTableProps) => {
   const [page, setPage] = React.useState(1);
+  const { durationMs } = useRecording<"web">();
 
   useEffect(() => {
     setPage(1);
@@ -186,6 +184,11 @@ const MeetingsTable = ({
                   meeting={meeting}
                   person={person}
                   personType={personType}
+                  duration={
+                    meeting.duration
+                      ? formatDurationCompact(meeting.duration)
+                      : formatDurationNumeric(durationMs)
+                  }
                 />
               ))}
           </TableBody>

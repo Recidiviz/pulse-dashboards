@@ -23,7 +23,7 @@ import PlaySvg from "~@meetings/app/assets/icons/play.svg";
 import StopSvg from "~@meetings/app/assets/icons/stop.svg";
 
 import { Person } from "../common/types";
-import { useMeetingRecording } from "../features/recording";
+import { useMeetingRecording, useRecording } from "../features/recording";
 import MeetingSheet from "./MeetingSheet";
 
 type MeetingInProgressBarProps = {
@@ -55,7 +55,8 @@ const MeetingInProgressBar = ({
 }: MeetingInProgressBarProps) => {
   const isPaused = recordingState === "paused";
 
-  const { actions, totalDurationMs } = useMeetingRecording({
+  const { durationMs } = useRecording();
+  const { actions } = useMeetingRecording({
     meetingId,
     personId: person.personId,
   });
@@ -78,7 +79,7 @@ const MeetingInProgressBar = ({
           Meeting in progress
         </Text>
         <Text className="mt-1 font-inter text-[12px] text-gray-600">
-          {formatDuration(totalDurationMs)}
+          {formatDuration(durationMs)}
         </Text>
       </View>
 

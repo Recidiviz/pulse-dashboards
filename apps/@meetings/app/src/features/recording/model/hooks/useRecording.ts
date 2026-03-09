@@ -26,7 +26,7 @@ export function useRecording(): RecordingBase;
 export function useRecording<T extends "web">(): RecordingWeb;
 export function useRecording<T extends "native">(): RecordingNative;
 
-export function useRecording() {
+export function useRecording(): RecordingBase | RecordingWeb | RecordingNative {
   const ctx = useContext(RecordingContext);
 
   if (!ctx) {

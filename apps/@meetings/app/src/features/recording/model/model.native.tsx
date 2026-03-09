@@ -23,13 +23,20 @@ import {
   useAudioRecorderState,
 } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
-import React, { createContext, useCallback, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Alert } from "react-native";
 
-import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
-
+import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useNote } from "../hooks/useNote";
+import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
 import { useRecordingStatus } from "../hooks/useRecordingStatus";
+import { useUploadSegment } from "../hooks/useUploadSegment";
 import { requestNotificationPermissions } from "../utils/notifications";
 import {
   getRecordingState,
@@ -38,6 +45,7 @@ import {
   saveRecordingUri,
   setRecordingState,
 } from "../utils/storage";
+import { useRecordingStore, useRecordingStoreHydrated } from "./store";
 import { RecordingNative, RecordingProviderProps, Status } from "./types";
 
 const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
@@ -45,15 +53,48 @@ const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
 export const RecordingContext = createContext<RecordingNative | null>(null);
 
 export const RecordingProvider = ({ children }: RecordingProviderProps) => {
+  const uploadSegment = useUploadSegment();
+
   /**
    * status = the UI state machine.
    * This drives the active screen state.
    */
   const [status, setStatus] = useRecordingStatus();
   const [note, setNote] = useNote();
-
   const audioRecorder = useAudioRecorder(RecordingPresets["HIGH_QUALITY"]);
   const recorderState = useAudioRecorderState(audioRecorder);
+  const [persistedRecordingUri, setPersistedRecordingUri] = useState<
+    string | null
+  >(null);
+
+  const {
+    meetingId,
+    setMeetingId,
+    durationMs: persistedDurationMs,
+    setDurationMs: setPersistedDurationMs,
+  } = useRecordingStore();
+
+  const hasHydrated = useRecordingStoreHydrated();
+
+  const { durationMs: persistedFileDurationMs } = usePersistedFileDuration(
+    persistedRecordingUri,
+  );
+
+  const timer = useDurationTimer();
+
+  const isTimerInitialized = useRef(false);
+  useEffect(() => {
+    if (persistedFileDurationMs && !isTimerInitialized.current) {
+      timer.setInitialDurationMs(persistedFileDurationMs + persistedDurationMs);
+      setPersistedDurationMs(persistedFileDurationMs + persistedDurationMs);
+      isTimerInitialized.current = true;
+    }
+  }, [
+    persistedFileDurationMs,
+    timer,
+    persistedDurationMs,
+    setPersistedDurationMs,
+  ]);
 
   /**
    * initializeRecording()
@@ -116,6 +157,12 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     if (isInitialized.current) return;
 
     (async () => {
+      // TODO: recordingUri is fetched separately from AsyncStorage via getRecordingUri(),
+      // but the Zustand store already persists to AsyncStorage via the `persist` middleware.
+      // We should add a `recordingUri` field to RecordingStore so it's persisted automatically
+      // alongside the other fields, and remove the manual getRecordingUri/saveRecordingUri calls.
+      const persistedUri = await getRecordingUri();
+      setPersistedRecordingUri(persistedUri);
       await initializeRecording();
       requestNotificationPermissions();
     })();
@@ -133,6 +180,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await saveRecordingUri(audioRecorder.uri);
     }
 
+    timer.start();
     await setStatus("recording");
   };
 
@@ -140,9 +188,9 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    * stopAndUploadRecording()
    * Stops recorder, uploads file, removes saved URI.
    */
-  const stopAndUploadRecording = async (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => {
+  const stopAndUploadRecording = async () => {
+    if (!meetingId) throw new Error("meetingId is required for uploading");
+
     try {
       const savedUri = await getRecordingUri();
       let uri = savedUri || audioRecorder.uri;
@@ -159,7 +207,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       }
 
       if (uri) {
-        await uploadFn(uri);
+        await uploadSegment({ uri, meetingId });
         await removeRecordingUri();
       } else {
         console.warn("No recording URI found; nothing to upload.");
@@ -173,13 +221,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
-  const stopRecording = async (uploadFn: (uri: string) => Promise<void>) => {
-    await togglePauseResume(uploadFn);
+  const stopRecording = async () => {
+    await togglePauseResume();
     setStatus("stopping");
   };
 
-  const discardRecording = async (uploadFn: (uri: string) => Promise<void>) => {
-    await togglePauseResume(uploadFn);
+  const discardRecording = async () => {
+    await togglePauseResume();
     setStatus("discarding");
   };
 
@@ -188,23 +236,17 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    * - If paused → resume (start recording)
    * - If recording → pause (upload file)
    */
-  const togglePauseResume = async (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => {
+  const togglePauseResume = async () => {
     if (status === "uploading") return;
 
-    if (status === "paused") {
+    if (status && ["paused", "stopping", "discarding"].includes(status)) {
       await startRecording();
     } else if (status === "recording") {
+      const duration = timer.stop();
+      if (duration) setPersistedDurationMs(duration);
       await setStatus("uploading");
-      await stopAndUploadRecording(uploadFn);
+      await stopAndUploadRecording();
       await setStatus("paused");
-      const prevDurationMsItem = await getItem("durationMs");
-      const prevDurationMs = Number(prevDurationMsItem || 0);
-      await saveItem(
-        "durationMs",
-        (prevDurationMs + recorderState.durationMillis).toString(),
-      );
     }
   };
 
@@ -214,7 +256,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    */
   const cleanupRecording = async () => {
     await removeRecordingUri();
-    await removeItem("durationMs");
+    timer.reset();
+    setPersistedDurationMs(0);
     await setStatus("idle");
   };
 
@@ -230,12 +273,14 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   return (
     <RecordingContext.Provider
       value={{
-        status,
+        status: status || "idle",
         setStatus,
+        setMeetingId,
         isRecording: recorderState.isRecording,
-        durationMs: recorderState.durationMillis,
+        durationMs: timer.durationMs,
         note,
         setNote,
+        hasHydrated,
         startRecording,
         stopRecording,
         discardRecording,

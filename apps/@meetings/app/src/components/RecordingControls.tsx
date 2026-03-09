@@ -23,9 +23,11 @@ import PlaySvg from "~@meetings/app/assets/icons/play.svg";
 import StopSvg from "~@meetings/app/assets/icons/stop.svg";
 
 import { RecordingStatus } from "../common/types";
+import { formatDurationNumeric } from "../utils/format";
 
 interface RecordingControlsProps {
   status: Exclude<RecordingStatus, "ending">;
+  durationMs: number;
   onStart: () => void;
   onStop: () => void;
   onPauseResume: () => void;
@@ -106,6 +108,7 @@ const PauseResumeButton: React.FC<{
 
 const RecordingControls: React.FC<RecordingControlsProps> = ({
   status,
+  durationMs,
   onStart,
   onStop,
   onPauseResume,
@@ -118,14 +121,17 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
 
   return (
     <>
-      {status === "recording" && (
-        <View className="flex-row items-center justify-center pb-2">
+      <View className="flex-row items-center justify-center pb-2">
+        {status === "recording" && (
           <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
-          <Text className="px-2 font-inter text-black">
-            Recording in progress
-          </Text>
-        </View>
-      )}
+        )}
+        <Text className="px-2 font-inter text-black">
+          {status === "recording"
+            ? "Recording in progress"
+            : "Recording is paused"}{" "}
+          {formatDurationNumeric(durationMs)}
+        </Text>
+      </View>
 
       <View className="flex-row items-center justify-center">
         <StopButton onPress={onStop} disabled={isUploading} />

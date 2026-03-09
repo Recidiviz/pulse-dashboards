@@ -37,10 +37,9 @@ type Props = {
 };
 
 export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
-  const { setIsRecordingViewMinimized } = useRecording<"web">();
+  const { durationMs, setIsRecordingViewMinimized } = useRecording<"web">();
 
-  const { status, note, setNote, isRecording, totalDurationMs, actions } =
-    meetingRecording;
+  const { status, note, setNote, isRecording, actions } = meetingRecording;
 
   if (!status) return null;
 
@@ -76,7 +75,7 @@ export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
           handleStopRecording={handleStopRecording}
           handleTogglePauseResume={handleTogglePauseResume}
           handleDiscard={handleDiscard}
-          totalDurationMs={totalDurationMs}
+          durationMs={durationMs}
         />
       ) : (
         <NewMeetingIntro
@@ -161,7 +160,7 @@ type NewMeetingProgressProps = {
   person: Person;
   status: RecordingStatus;
   note: string;
-  totalDurationMs: number;
+  durationMs: number;
   setNote: (note: string) => void;
   handleStopRecording: () => void;
   handleTogglePauseResume: () => void;
@@ -172,7 +171,7 @@ const NewMeetingProgress = ({
   person,
   status,
   note,
-  totalDurationMs,
+  durationMs,
   setNote,
   handleStopRecording,
   handleTogglePauseResume,
@@ -320,7 +319,7 @@ const NewMeetingProgress = ({
       <View className="flex-col items-center justify-between gap-2 border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5 lg:columns-3 lg:flex-row">
         <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start ">
           <Text className="font-inter text-lg font-semibold text-primary">
-            {formatDurationNumeric(totalDurationMs)}
+            {formatDurationNumeric(durationMs)}
           </Text>
           <View className="flex-row items-center gap-2">
             {status === "recording" && (

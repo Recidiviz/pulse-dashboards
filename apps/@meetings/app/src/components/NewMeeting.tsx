@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { useEffect } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -30,7 +31,7 @@ import NotesSvg from "~@meetings/app/assets/icons/notes.svg";
 
 import MeetingSheet from "../components/MeetingSheet";
 import RecordingControls from "../components/RecordingControls";
-import { useMeetingRecording } from "../features/recording";
+import { useMeetingRecording, useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { humanReadableTitleCase } from "../utils/format";
 import NewMeetingHeader from "./NewMeetingHeader";
@@ -53,10 +54,22 @@ type Props = {
 const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const route = useRoute<NewMeetingRouteProp>();
   const meetingId = route.params?.meetingId;
+  const { durationMs, setMeetingId } = useRecording<"native">();
+
+  useEffect(() => {
+    if (meetingId) {
+      setMeetingId(meetingId);
+    }
+  }, [meetingId, setMeetingId]);
+
+  const onComplete = () => {
+    navigateToPersonProfile();
+    setMeetingId(null);
+  };
 
   const { status, note, setNote, isRecording, actions } = useMeetingRecording({
     meetingId,
-    onComplete: navigateToPersonProfile,
+    onComplete: onComplete,
     personId: person.personId,
   });
 
@@ -149,6 +162,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
           onStart={startRecording}
           onStop={handleStopRecording}
           onPauseResume={handleTogglePauseResume}
+          durationMs={durationMs}
         />
       </View>
 

@@ -136,10 +136,10 @@ describe("meeting router", () => {
     });
   });
 
-  describe("getSignedUrlForRecording", () => {
+  describe("createSignedUrlForRecording", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
-        testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
+        testTRPCClient.v1.meeting.createSignedUrlForRecording.mutate({
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
@@ -150,7 +150,7 @@ describe("meeting router", () => {
 
     test("Returns a signed URL for the meeting recording", async () => {
       const result =
-        await testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
+        await testTRPCClient.v1.meeting.createSignedUrlForRecording.mutate({
           meetingId: fakeActiveMeeting.id,
         });
 

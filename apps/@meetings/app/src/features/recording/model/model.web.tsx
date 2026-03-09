@@ -15,34 +15,51 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext, useEffect, useRef } from "react";
+import { createContext } from "react";
 
 import { Person } from "~@meetings/app/common/types";
-import { removeItem } from "~@meetings/app/utils/storage";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDurationTimer } from "../hooks/useDurationTimer";
+import { useInitialization } from "../hooks/useInitialization.web";
+import { useUploadSegment } from "../hooks/useUploadSegment";
 import { MeetingModal } from "../ui/MeetingModal";
-import { useRecordingStore } from "./store";
+import { useRecordingStore, useRecordingStoreHydrated } from "./store";
 import { RecordingProviderProps, RecordingWeb } from "./types";
 
 export const RecordingContext = createContext<RecordingWeb | null>(null);
 
 export const RecordingProvider = ({ children }: RecordingProviderProps) => {
+  const uploadSegment = useUploadSegment();
+
   const {
     status,
     note,
     meetingId,
     person,
     isRecordingViewMinimized,
+    durationMs: persistedDurationMs,
     setStatus,
     setNote,
     setMeetingId,
     setPerson,
     setIsRecordingViewMinimized,
+    setDurationMs: setPersistedDurationMs,
   } = useRecordingStore();
 
-  const { duration, startTimer, stopTimer, resetTimer } = useDurationTimer();
+  const timer = useDurationTimer();
+
+  const hasHydrated = useRecordingStoreHydrated();
+
+  useInitialization({
+    status,
+    hasHydrated,
+    persistedDurationMs,
+    meetingId,
+    setStatus,
+    setInitialDuration: timer.setInitialDurationMs,
+    setPersistedDurationMs,
+  });
 
   const isRecording = status && status === "recording";
   const isPaused =
@@ -53,19 +70,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     onError: (err: Error) => {
       console.error(err);
       window.alert("Recording error occurred");
-      stopTimer();
+      const duration = timer.stop();
+      if (duration) setPersistedDurationMs(duration);
     },
   });
-
-  // -- Initialization --
-  const isInitialized = useRef(false);
-  useEffect(() => {
-    if (!status || isInitialized.current) return;
-    if (!(status === "idle" || status === "paused")) {
-      setStatus("paused");
-    }
-    isInitialized.current = true;
-  }, [status, setStatus]);
 
   const openRecordingView = ({
     meetingId,
@@ -87,7 +95,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const startRecording = async () => {
     try {
       await recorder.start();
-      startTimer();
+      timer.start();
       setStatus("recording");
     } catch (err) {
       console.error(err);
@@ -95,9 +103,9 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
-  const stopAndUploadRecording = async (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => {
+  const stopAndUploadRecording = async () => {
+    if (!meetingId) throw new Error("meetingId is required for uploading");
+
     try {
       const blob = await recorder.stop();
       let uriToUpload: string | null = null;
@@ -108,7 +116,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         return console.warn("No recording found to upload");
       }
 
-      await uploadFn(uriToUpload);
+      await uploadSegment({ uri: uriToUpload, meetingId });
 
       await recorder.cleanup();
       URL.revokeObjectURL(uriToUpload);
@@ -118,54 +126,52 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
-  const togglePauseResume = async (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => {
+  const togglePauseResume = async () => {
     if (status === "uploading") {
       return;
     }
 
     if (isPaused) {
-      await resumeRecording(uploadFn);
+      await resumeRecording();
       return;
     }
 
     if (isRecording) {
-      await pauseRecording(uploadFn);
+      await pauseRecording();
       setStatus("paused");
     }
   };
 
   const cleanupRecording = async () => {
     await recorder.cleanup();
-    resetTimer();
-
-    await removeItem("durationMs");
-    await setStatus("idle");
+    timer.reset();
+    setPersistedDurationMs(0);
+    setStatus("idle");
     setNote("");
   };
 
-  const pauseRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+  const pauseRecording = async () => {
     setStatus("uploading");
-    await stopAndUploadRecording(uploadFn);
-    stopTimer();
+    await stopAndUploadRecording();
+    const duration = timer.stop();
+    if (duration) setPersistedDurationMs(duration);
   };
 
-  const resumeRecording = async (uploadFn: (uri: string) => Promise<void>) => {
-    await stopAndUploadRecording(uploadFn); // we need only uploading, the recording is already paused
+  const resumeRecording = async () => {
+    await stopAndUploadRecording(); // we need only uploading, the recording is already paused
     await startRecording();
   };
 
-  const stopRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+  const stopRecording = async () => {
     if (isRecording) {
-      await pauseRecording(uploadFn);
+      await pauseRecording();
     }
     setStatus("stopping");
   };
 
-  const discardRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+  const discardRecording = async () => {
     if (isRecording) {
-      await pauseRecording(uploadFn);
+      await pauseRecording();
     }
     setStatus("discarding");
   };
@@ -182,9 +188,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         openRecordingView,
         closeRecordingView,
         isRecording: recorder.isRecording,
-        durationMs: duration,
+        durationMs: timer.durationMs,
         note,
         setNote,
+        hasHydrated,
         startRecording,
         stopRecording,
         discardRecording,

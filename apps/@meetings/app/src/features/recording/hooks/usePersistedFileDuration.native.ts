@@ -15,36 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DBSchema, openDB } from "idb";
+import { useAudioPlayer } from "expo-audio";
+import { useEffect, useState } from "react";
 
-const DB_NAME = "meeting_recorder_db";
-const STORE_NAME = "recording_chunks";
-const DB_VERSION = 1;
+export function usePersistedFileDuration(uri: string | null) {
+  const audioPlayer = useAudioPlayer(uri);
+  const [durationMs, setDurationMs] = useState<number | null>(null);
 
-type RecorderDB = DBSchema & {
-  recording_chunks: {
-    key: number;
-    value: Blob;
-  };
-};
+  useEffect(() => {
+    if (audioPlayer.duration) {
+      setDurationMs(audioPlayer.duration * 1000);
+    }
+  }, [audioPlayer.duration]);
 
-const dbPromise = openDB<RecorderDB>(DB_NAME, DB_VERSION, {
-  upgrade(db) {
-    db.createObjectStore(STORE_NAME, { autoIncrement: true });
-  },
-});
-
-export const saveChunk = async (blob: Blob) => {
-  const db = await dbPromise;
-  await db.add(STORE_NAME, blob);
-};
-
-export const getAllChunks = async () => {
-  const db = await dbPromise;
-  return db.getAll(STORE_NAME);
-};
-
-export const clearRecordedChunks = async () => {
-  const db = await dbPromise;
-  await db.clear(STORE_NAME);
-};
+  return { durationMs: durationMs };
+}

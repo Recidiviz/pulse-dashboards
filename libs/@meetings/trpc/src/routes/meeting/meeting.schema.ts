@@ -55,7 +55,7 @@ export const getDetailsOutputSchema = z.object({
 
 export type GetDetailsOutput = z.infer<typeof getDetailsOutputSchema>;
 
-export const getSignedUrlForRecordingInputSchema = z.object({
+export const createSignedUrlForRecordingInputSchema = z.object({
   meetingId: z.string(),
   platform: z.enum(["web", "ios", "android"]).optional(),
 });

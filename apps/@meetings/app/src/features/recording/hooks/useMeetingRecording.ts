@@ -16,12 +16,11 @@
 // =============================================================================
 
 import { useIsFocused } from "@react-navigation/native";
-import * as FileSystem from "expo-file-system/legacy";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Platform } from "react-native";
+import { useCallback, useEffect, useRef } from "react";
+import { Alert } from "react-native";
 
 import { trpc } from "~@meetings/app/trpc/client";
-import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
+import { getItem, removeItem } from "~@meetings/app/utils/storage";
 
 import { useRecording } from "../model";
 import { sendNotification } from "../utils/notifications";
@@ -38,23 +37,12 @@ export const useMeetingRecording = ({
   onComplete?: () => void;
   personId: bigint;
 }) => {
-  const [totalDurationMs, setTotalDurationMs] = useState(0);
-  const [accumulatedDurationMs, setAccumulatedDurationMs] = useState(0);
-
-  useEffect(() => {
-    getItem("durationMs").then((duration) => {
-      setAccumulatedDurationMs(Number(duration) || 0);
-      setTotalDurationMs(Number(duration) || 0);
-    });
-  }, []);
-
   const isFocused = useIsFocused();
 
   const {
     status,
     setStatus,
     isRecording,
-    durationMs,
     note,
     setNote,
     startRecording,
@@ -79,70 +67,12 @@ export const useMeetingRecording = ({
     },
   });
 
-  const { refetch } = trpc.v1.meeting.getSignedUrlForRecording.useQuery(
-    {
-      meetingId: meetingId ?? "",
-      platform: Platform.OS as "web" | "ios" | "android",
-    },
-    { enabled: false },
-  );
-
-  const uploadSegmentToGCS = useCallback(
-    async (uri: string) => {
-      setAccumulatedDurationMs(accumulatedDurationMs + durationMs);
-      saveItem("durationMs", (accumulatedDurationMs + durationMs).toString());
-
-      if (Platform.OS === "web") {
-        const response = await fetch(uri);
-        if (!response.ok) {
-          console.warn("File does not exist:", uri);
-          return;
-        }
-      } else {
-        const fileInfo = await FileSystem.getInfoAsync(uri);
-        if (!fileInfo.exists) {
-          console.warn("File does not exist:", uri);
-          return;
-        }
-      }
-
-      const { data: signedUrl } = await refetch();
-      if (!signedUrl) return;
-
-      // Use webm for web, m4a for mobile
-      const contentType = Platform.OS === "web" ? "audio/webm" : "audio/m4a";
-
-      try {
-        if (Platform.OS === "web") {
-          const response = await fetch(uri);
-          const blob = await response.blob();
-
-          await fetch(signedUrl, {
-            method: "PUT",
-            body: blob,
-            headers: { "Content-Type": contentType },
-          });
-        } else {
-          await FileSystem.uploadAsync(signedUrl, uri, {
-            httpMethod: "PUT",
-            uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-            headers: { "Content-Type": contentType },
-          });
-        }
-      } catch (error) {
-        console.error("Upload failed:", error);
-        throw error;
-      }
-    },
-    [refetch, accumulatedDurationMs, durationMs],
-  );
-
   const resolveUserNotepadNotes = useCallback(async (): Promise<string> => {
     return (await getItem("note")) ?? "";
   }, []);
 
   const handleTogglePauseResume = useCallback(async () => {
-    await contextTogglePauseResume(uploadSegmentToGCS);
+    await contextTogglePauseResume();
 
     // Update notes after pausing
     if (status === "recording") {
@@ -158,7 +88,6 @@ export const useMeetingRecording = ({
     }
   }, [
     contextTogglePauseResume,
-    uploadSegmentToGCS,
     status,
     resolveUserNotepadNotes,
     updateNotesMutation,
@@ -166,15 +95,15 @@ export const useMeetingRecording = ({
   ]);
 
   const handleStopRecording = useCallback(async () => {
-    await stopRecording(uploadSegmentToGCS);
-  }, [stopRecording, uploadSegmentToGCS]);
+    await stopRecording();
+  }, [stopRecording]);
 
   const handleFinishAndSave = useCallback(async () => {
     setStatus("ending");
 
     try {
       if (isRecording) {
-        await stopAndUploadRecording(uploadSegmentToGCS);
+        await stopAndUploadRecording();
       }
 
       const userNotepadNotes = await resolveUserNotepadNotes();
@@ -193,7 +122,6 @@ export const useMeetingRecording = ({
     setStatus,
     isRecording,
     stopAndUploadRecording,
-    uploadSegmentToGCS,
     resolveUserNotepadNotes,
     endMeeting,
     meetingId,
@@ -201,8 +129,8 @@ export const useMeetingRecording = ({
     onComplete,
   ]);
 
-  const handleContinue = () => contextTogglePauseResume(uploadSegmentToGCS);
-  const handleDiscard = () => discardRecording(uploadSegmentToGCS);
+  const handleContinue = () => contextTogglePauseResume();
+  const handleDiscard = () => discardRecording();
 
   const handleFinalDiscard = useCallback(async () => {
     await cleanupRecording();
@@ -214,14 +142,14 @@ export const useMeetingRecording = ({
 
   const handleAutoStopRecording = useCallback(async () => {
     setStatus("uploading");
-    await stopAndUploadRecording(uploadSegmentToGCS);
+    await stopAndUploadRecording();
     setStatus("paused");
 
     sendNotification(
       "Recording Paused",
       "90 minute-at-a-time recording limit reached. Pausing Recording",
     );
-  }, [setStatus, stopAndUploadRecording, uploadSegmentToGCS]);
+  }, [setStatus, stopAndUploadRecording]);
 
   // Auto-stop recording when limit is reached
   useEffect(() => {
@@ -244,26 +172,17 @@ export const useMeetingRecording = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, isRecording]);
 
-  useEffect(() => {
-    if (status === "recording") {
-      setTotalDurationMs(accumulatedDurationMs + durationMs);
-    }
-  }, [status, durationMs, accumulatedDurationMs]);
-
   return {
     status,
     setStatus,
     note,
     setNote,
     isRecording,
-    durationMs,
-    totalDurationMs,
     actions: {
       startRecording,
       handleTogglePauseResume,
       handleStopRecording,
       stopAndUploadRecording,
-      uploadSegmentToGCS,
       handleFinishAndSave,
       handleDiscard,
       handleFinalDiscard,

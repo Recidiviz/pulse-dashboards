@@ -16,7 +16,8 @@
 // =============================================================================
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { debounce } from "lodash";
+import { debounce, omit } from "lodash";
+import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -29,18 +30,20 @@ import { Status } from "./types";
 // It can be added into RecordingContext.native freely and replace several separated states.
 
 type RecordingStore = {
-  status: Status | null;
-  note: string; // note for UI
+  status: Status;
+  note: string; // UI only field
   debouncedNote: string; // save note into AsyncStorage with debounce
   person: Person | null;
   meetingId: string | null;
   isRecordingViewMinimized: boolean;
+  durationMs: number;
 
   setStatus: (status: Status) => void;
   setNote: (note: string) => void;
   setPerson: (person: Person | null) => void;
   setMeetingId: (meetingId: string | null) => void;
   setIsRecordingViewMinimized: (isMinimized: boolean) => void;
+  setDurationMs: (durationMs: number) => void;
 };
 
 export const useRecordingStore = create<RecordingStore>()(
@@ -57,6 +60,7 @@ export const useRecordingStore = create<RecordingStore>()(
         person: null,
         meetingId: null,
         isRecordingViewMinimized: false,
+        durationMs: 0,
 
         setStatus: (status: Status) => set({ status }),
         setNote: (note: string) => {
@@ -67,27 +71,36 @@ export const useRecordingStore = create<RecordingStore>()(
         setPerson: (person: Person | null) => set({ person }),
         setIsRecordingViewMinimized: (isMinimized: boolean) =>
           set({ isRecordingViewMinimized: isMinimized }),
+        setDurationMs: (durationMs: number) => set({ durationMs }),
       };
     },
     {
       name: "recording-info",
-      partialize: ({
-        status,
-        debouncedNote,
-        meetingId,
-        person,
-        isRecordingViewMinimized,
-      }) => ({
-        status,
-        note: debouncedNote,
-        meetingId,
-        person,
-        isRecordingViewMinimized,
-      }),
+      partialize: (state) => omit(state, ["note"]), // we save `debouncedNote` instead of `note`
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
-        if (state) state.debouncedNote = state.note;
+        if (state) {
+          state.note = state.debouncedNote;
+        }
       },
     },
   ),
 );
+
+export const useRecordingStoreHydrated = () => {
+  const [hasHydrated, setHasHydrated] = useState(
+    useRecordingStore.persist.hasHydrated(),
+  );
+
+  useEffect(() => {
+    if (useRecordingStore.persist.hasHydrated()) {
+      setHasHydrated(true);
+      return;
+    }
+    return useRecordingStore.persist.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+  }, []);
+
+  return hasHydrated;
+};

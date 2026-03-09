@@ -38,7 +38,7 @@ type MeetingModalProps = {
 };
 
 function MeetingModal({ meetingId, person }: MeetingModalProps) {
-  const { status, closeRecordingView, isRecordingViewMinimized } =
+  const { status, durationMs, closeRecordingView, isRecordingViewMinimized } =
     useRecording<"web">();
 
   // TODO: we can move isRecordingViewOpened into the state,
@@ -59,7 +59,7 @@ function MeetingModal({ meetingId, person }: MeetingModalProps) {
       {isRecordingViewMinimized ? (
         <MeetingMinimizedModal
           person={person}
-          totalDurationMs={meetingRecording.totalDurationMs}
+          durationMs={durationMs}
           onStop={meetingRecording.actions.handleStopRecording}
           onPauseResume={meetingRecording.actions.handleTogglePauseResume}
           onDiscard={meetingRecording.actions.handleDiscard}

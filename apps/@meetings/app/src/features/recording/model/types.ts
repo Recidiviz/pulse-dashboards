@@ -34,7 +34,7 @@ export type RecordingProviderProps = {
 
 export type RecordingBase = {
   // status: in-memory status that updates UI
-  status: Status | null;
+  status: Status;
   // Updates both status AND persistedStatus
   setStatus: (status: Status) => void;
 
@@ -45,18 +45,17 @@ export type RecordingBase = {
   setNote: (note: string) => void;
 
   startRecording: () => Promise<void>;
-  stopRecording: (uploadFn: (uri: string) => Promise<void>) => Promise<void>;
-  discardRecording: (uploadFn: (uri: string) => Promise<void>) => Promise<void>;
-  stopAndUploadRecording: (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => Promise<void>;
+  stopRecording: () => Promise<void>;
+  discardRecording: () => Promise<void>;
+  stopAndUploadRecording: () => Promise<void>;
 
-  togglePauseResume: (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => Promise<void>;
+  togglePauseResume: () => Promise<void>;
 
   // Cleanup everything — invoked when user discards or finishes
   cleanupRecording: () => Promise<void>;
+
+  // true once AsyncStorage rehydration completes; prevents from running on the pre-hydration default
+  hasHydrated: boolean;
 };
 
 export type RecordingWeb = RecordingBase & {
@@ -75,6 +74,7 @@ export type RecordingWeb = RecordingBase & {
 };
 
 export type RecordingNative = RecordingBase & {
+  setMeetingId: (meetingId: string | null) => void;
   // TODO: absence of meetingId in context was the main reason of separated context and useMeetingRecording
   // we can combine them after adding meetingId to native. see ./store.ts for more details.
   // it can be done as a part of https://github.com/Recidiviz/pulse-dashboards/issues/11571

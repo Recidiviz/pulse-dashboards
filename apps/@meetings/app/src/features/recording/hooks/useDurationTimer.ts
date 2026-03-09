@@ -15,66 +15,81 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { getItem, saveItem } from "~@meetings/app/utils/storage";
+export function useDurationTimer() {
+  const [durationMs, setDurationMs] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastTickRef = useRef<number | null>(null);
+  // Ref mirror of durationMs to avoid stale closures in stop()
+  const durationMsRef = useRef(0);
 
-import { WEB_CHUNK_INTERVAL_MS } from "../constants";
+  const start = useCallback(() => {
+    // No-op if already running
+    if (intervalRef.current !== null) return;
 
-export const useDurationTimer = () => {
-  const [duration, setDuration] = useState(0);
-  // for updating the duration state
-  const intervalRef = useRef<number | null>(null);
-  // for periodically saving duration to storage
-  const saveIntervalRef = useRef<number | null>(null);
-  // time when recording started, helps calculate elapsed time more accurately
-  const startTimeRef = useRef<number | null>(null);
+    lastTickRef.current = Date.now();
 
-  const startTimer = useCallback(() => {
-    startTimeRef.current = Date.now();
-    setDuration(0);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
+    intervalRef.current = setInterval(() => {
+      const now = Date.now();
+      // Use actual elapsed wall time rather than assuming exactly 1000ms per tick
+      const elapsed = now - (lastTickRef.current ?? now);
 
-    intervalRef.current = window.setInterval(() => {
-      const elapsed = Date.now() - (startTimeRef.current || 0);
-      setDuration(elapsed);
+      setDurationMs((prev) => {
+        const next = prev + elapsed;
+        durationMsRef.current = next;
+        return next;
+      });
+
+      lastTickRef.current = now;
     }, 1000);
-
-    saveIntervalRef.current = window.setInterval(async () => {
-      const durationMs = await getItem("durationMs");
-      saveItem(
-        "durationMs",
-        (Number(durationMs) + WEB_CHUNK_INTERVAL_MS).toString(),
-      );
-    }, WEB_CHUNK_INTERVAL_MS);
   }, []);
 
-  const stopTimer = useCallback(() => {
+  const stop = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    if (saveIntervalRef.current) {
-      clearInterval(saveIntervalRef.current);
-      saveIntervalRef.current = null;
+
+    if (lastTickRef.current !== null) {
+      // Capture the partial interval since the last tick
+      const delta = Date.now() - lastTickRef.current;
+      const finalDuration = durationMsRef.current + delta;
+
+      durationMsRef.current = finalDuration;
+      setDurationMs(finalDuration);
+      lastTickRef.current = null;
+
+      return finalDuration;
     }
-    if (startTimeRef.current) {
-      const finalDuration = Date.now() - startTimeRef.current;
-      setDuration(finalDuration);
-    }
+
+    return null;
   }, []);
 
-  const resetTimer = useCallback(() => {
-    stopTimer();
-    setDuration(0);
-    startTimeRef.current = null;
-  }, [stopTimer]);
+  const reset = useCallback(() => {
+    stop();
+    durationMsRef.current = 0;
+    setDurationMs(0);
+  }, [stop]);
+
+  const setInitialDurationMs = useCallback((ms: number) => {
+    durationMsRef.current = ms;
+    setDurationMs(ms);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   return {
-    duration,
-    startTimer,
-    stopTimer,
-    resetTimer,
+    durationMs,
+    start,
+    stop,
+    reset,
+    setInitialDurationMs,
   };
-};
+}

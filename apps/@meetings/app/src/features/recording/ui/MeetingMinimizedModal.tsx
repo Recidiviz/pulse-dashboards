@@ -30,7 +30,7 @@ import { useRecording } from "../model";
 
 type Props = {
   person: Person;
-  totalDurationMs: number;
+  durationMs: number;
   onPauseResume: () => void;
   onStop: () => void;
   onDiscard: () => void;
@@ -38,7 +38,7 @@ type Props = {
 
 export function MeetingMinimizedModal({
   person,
-  totalDurationMs,
+  durationMs,
   onPauseResume,
   onStop,
   onDiscard,
@@ -69,7 +69,7 @@ export function MeetingMinimizedModal({
             {status === "recording" ? "Recording in progress" : "Paused"}
           </Text>
           <Text className="font-inter font-semibold text-[#9AA6AC]">
-            {formatDurationNumeric(totalDurationMs)}
+            {formatDurationNumeric(durationMs)}
           </Text>
         </View>
         <View className="mt-auto w-full flex-row justify-around">

@@ -24,7 +24,7 @@ import {
 } from "../constants";
 import {
   clearRecordedChunks,
-  getAllChunksAndCreateBlob,
+  getAllChunks,
   saveChunk,
 } from "../utils/webRecorderDb.web";
 
@@ -75,8 +75,10 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
       });
     }
 
-    const blob = await getAllChunksAndCreateBlob();
-    return blob;
+    const chunks = await getAllChunks();
+    return chunks.length
+      ? new Blob(chunks, { type: AUDIO_MIME_TYPES.web })
+      : null;
   }, []);
 
   const start = useCallback(async () => {
