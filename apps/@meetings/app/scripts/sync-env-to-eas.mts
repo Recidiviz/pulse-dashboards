@@ -52,7 +52,7 @@ function getVisibility(key: string): "plaintext" | "sensitive" {
 }
 
 // Get Nx configuration from argv
-const nxConfig = process.argv[3] || "development"; // argv[2] is the script path
+const nxConfig = process.argv[2] || "development"; // argv[0]=node, argv[1]=script path, argv[2]=first arg
 const easEnvironment = NX_TO_EAS_ENV_MAP[nxConfig];
 
 if (!easEnvironment) {
