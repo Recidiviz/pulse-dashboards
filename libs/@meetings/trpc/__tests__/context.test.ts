@@ -123,6 +123,55 @@ describe("auth", () => {
       `[TRPCClientError: Recidiviz user cannot request data about state: US_NE. File a go/access request for access]`,
     );
   });
+
+  test("recidiviz user can access US_DEMO", async () => {
+    await initFastifyAndSetUser(
+      {
+        "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "recidiviz",
+          allowedStates: [],
+        },
+      },
+      { stateCode: "US_DEMO" },
+    );
+    // Recidiviz users can always access US_DEMO without it being in allowedStates
+    const clients = await testTRPCClient.v1.client.list.query();
+    expect(clients).toBeDefined();
+  });
+
+  test("state user cannot access US_DEMO", async () => {
+    await initFastifyAndSetUser(
+      {
+        "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "US_NE",
+        },
+      },
+      { stateCode: "US_DEMO" },
+    );
+    // A state user (US_NE) cannot request data for a different state (US_DEMO)
+    await expect(
+      testTRPCClient.v1.client.list.query(),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCClientError: User with state code US_NE cannot request data about state: US_DEMO]`,
+    );
+  });
+
+  test("user with stateCode US_DEMO can access US_DEMO", async () => {
+    await initFastifyAndSetUser(
+      {
+        "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "US_DEMO",
+        },
+      },
+      { stateCode: "US_DEMO" },
+    );
+    // A user whose stateCode is US_DEMO can request US_DEMO data
+    const clients = await testTRPCClient.v1.client.list.query();
+    expect(clients).toBeDefined();
+  });
 });
 
 describe("skip auth", () => {

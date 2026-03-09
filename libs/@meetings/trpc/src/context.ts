@@ -75,7 +75,10 @@ function formatAndVerifyUser(
       });
     }
   } else {
-    if (!allowedStates?.includes(requestedState)) {
+    if (
+      requestedState !== "US_DEMO" &&
+      !allowedStates?.includes(requestedState)
+    ) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: `Recidiviz user cannot request data about state: ${requestedState}. File a go/access request for access`,

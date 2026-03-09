@@ -27,6 +27,7 @@ export const AVAILABLE_STATE_CODES = [
   { code: "US_ME", name: "Maine" },
   { code: "US_NC", name: "North Carolina" },
   { code: "US_NE", name: "Nebraska" },
+  { code: "US_DEMO", name: "Demo" },
 ] as const;
 
 export type StateCode = (typeof AVAILABLE_STATE_CODES)[number]["code"];
