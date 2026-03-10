@@ -17,10 +17,13 @@
 
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { Platform } from "react-native";
 
 export function useSetDocumentTitle(title?: string) {
   useFocusEffect(
     useCallback(() => {
+      if (Platform.OS !== "web") return;
+
       if (title) {
         document.title = title;
       }
