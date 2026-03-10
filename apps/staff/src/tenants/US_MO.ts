@@ -52,11 +52,11 @@ const US_MO_CONFIG = {
       },
       usMoInitialPositiveContactWithSignificantOtherIap: {
         constructor: UsMoInitialPositiveContactWithSignificantOtherIapTask,
-        snoozeForOptionsInDays: [7, 30],
+        snoozeForOptionsInDays: [7, 30, 90],
       },
       usMoInitialPositiveContactWithSignificantOtherSmi: {
         constructor: UsMoInitialPositiveContactWithSignificantOtherSmiTask,
-        snoozeForOptionsInDays: [7, 30],
+        snoozeForOptionsInDays: [7, 30, 90],
       },
       usMoInitialPositiveHomeVisitIap: {
         constructor: UsMoInitialPositiveHomeVisitIapTask,
@@ -76,7 +76,7 @@ const US_MO_CONFIG = {
       },
       usMoPositiveContactWithSignificantOther: {
         constructor: UsMoPositiveContactWithSignificantOtherTask,
-        snoozeForOptionsInDays: [7, 30],
+        snoozeForOptionsInDays: [7, 30, 90],
       },
     },
     pageDescriptionMarkdown:
