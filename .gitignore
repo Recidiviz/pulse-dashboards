@@ -120,3 +120,4 @@ logs/*
 
 # Claude
 .claude/settings.local.json
+.claude/rules

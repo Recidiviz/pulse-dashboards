@@ -19,7 +19,7 @@ import "./VizPopulationSnapshot.scss";
 
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 
@@ -144,6 +144,31 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     const { data: pieceData } = d.pieces[0];
     setHoveredId(pieceData.index);
   };
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollEdge, setScrollEdge] = useState<"left" | "right" | "both">(
+    "right",
+  );
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const atLeft = el.scrollLeft <= 0;
+    const atRight = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+    if (atLeft && !atRight) setScrollEdge("right");
+    else if (!atLeft && atRight) setScrollEdge("left");
+    else if (!atLeft && !atRight) setScrollEdge("both");
+  }, []);
+
+  const SCROLL_THRESHOLD = 20;
+  const MIN_BAR_WIDTH = 28;
+  const SCROLL_LEFT_MARGIN = 40;
+  const CHART_HEIGHT = 558;
+  const MARGIN_TOP = 56;
+  const needsScroll = !metric.isHorizontal && data.length > SCROLL_THRESHOLD;
+  const scrollWidth = needsScroll
+    ? data.length * MIN_BAR_WIDTH + SCROLL_LEFT_MARGIN + 50
+    : undefined;
+  const effectiveMarginBottom = metric.rotateLabels ? 116 : 75;
 
   const chartProps = {
     // The key is necessary here to force the viz to remount
@@ -303,6 +328,27 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     }),
   } as ResponsiveFrameProps;
 
+  const scrollChartProps = needsScroll
+    ? ({
+        ...chartProps,
+        margin: {
+          left: SCROLL_LEFT_MARGIN,
+          bottom: effectiveMarginBottom,
+          right: 50,
+          top: MARGIN_TOP,
+        },
+        axes: [
+          {
+            orient: "left",
+            tickFormat: () => "",
+            tickValues,
+          },
+        ],
+      } as ResponsiveFrameProps)
+    : undefined;
+
+  const plotHeight = CHART_HEIGHT - MARGIN_TOP - effectiveMarginBottom;
+
   return (
     <VizPathways
       className={cn("VizPopulationSnapshot", {
@@ -313,7 +359,46 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
       latestUpdate={latestUpdate}
       subtitle={filtersDescription}
     >
-      <ResponsiveOrdinalFrame {...chartProps} />
+      {needsScroll ? (
+        <div className="VizPopulationSnapshot__scroll-layout">
+          <svg
+            className="VizPopulationSnapshot__sticky-axis"
+            width={ticksMargin}
+            height={CHART_HEIGHT}
+          >
+            {tickValues.map((tick: number) => {
+              const y = MARGIN_TOP + (1 - tick / maxTickValue) * plotHeight;
+              return (
+                <text
+                  key={tick}
+                  x={ticksMargin - 8}
+                  y={y}
+                  textAnchor="end"
+                  dominantBaseline="middle"
+                >
+                  {isRate ? `${tick}%` : tick.toLocaleString()}
+                </text>
+              );
+            })}
+          </svg>
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className={cn("VizPopulationSnapshot__scroll-wrapper", {
+              "VizPopulationSnapshot__scroll-wrapper--fade-right":
+                scrollEdge === "right" || scrollEdge === "both",
+              "VizPopulationSnapshot__scroll-wrapper--fade-left":
+                scrollEdge === "left" || scrollEdge === "both",
+            })}
+          >
+            <div style={{ width: scrollWidth, flexShrink: 0 }}>
+              <ResponsiveOrdinalFrame {...scrollChartProps} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <ResponsiveOrdinalFrame {...chartProps} />
+      )}
       {chartXAxisTitle && (
         <div className="VizPopulationSnapshot__chartXAxisTitle">
           {chartXAxisTitle}
