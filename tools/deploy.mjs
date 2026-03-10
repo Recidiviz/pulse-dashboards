@@ -802,10 +802,18 @@ if (
       let projects;
       let configuration;
       if (deployEnv === "staging") {
-        projects = ["@meetings/server", "@meetings/import"];
+        projects = [
+          "@meetings/server",
+          "@meetings/import",
+          "@meetings/seed-demo",
+        ];
         configuration = "staging";
       } else if (deployEnv === "production" && isCpDeploy) {
-        projects = ["@meetings/server", "@meetings/import"];
+        projects = [
+          "@meetings/server",
+          "@meetings/import",
+          "@meetings/seed-demo",
+        ];
         configuration = "cherry-pick";
       }
 
