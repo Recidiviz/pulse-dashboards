@@ -181,7 +181,7 @@ Once you've pushed the branch with the changes, create a PR for the change and s
 
 #### Firestore rules
 
-Firestore security rules and their tests are found in `./firestore-config`. Changes can be deployed with `nx update-rules-staging staff` or `nx update-rules-production staff`.
+Firestore security rules and their tests are found in `/libs/firestore-config`. Changes can be deployed with `nx update-rules-staging firestore-config` or `nx update-rules-production firestore-config`.
 
 #### Deploy cadence
 
