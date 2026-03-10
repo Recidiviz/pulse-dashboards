@@ -47,14 +47,14 @@ import {
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usArInstitutionalWorkerStatusSchema } from "../src/WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
-import { usAzReleaseToTPRSchema } from "../src/WorkflowsStore/Opportunity/UsAz";
 import { usAzReleaseToDTPSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPReferralRecord";
+import { usAzReleaseToTPRSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPRReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
-import { usIaEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsIa";
-import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity";
-import { usIdLsuSchema } from "../src/WorkflowsStore/Opportunity/UsId/LSUOpportunity";
-import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
-import { usIdCRCWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
+import { usIaEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsIa/UsIaEarlyDischargeOpportunity/UsIaEarlyDischargeOpportunitySchema";
+import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity/EarnedDischargeReferralRecord";
+import { usIdLsuSchema } from "../src/WorkflowsStore/Opportunity/UsId/LSUOpportunity/LSUReferralRecord";
+import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerReferralRecord";
+import { usIdCRCWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCWorkReleaseOpportunity/UsIdCRCWorkReleaseReferralRecord";
 import { usIdCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCustodyLevelDowngradeOpportunity/UsIdCustodyLevelDowngradeReferralRecord";
 import { usIdExpandedCRCSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdExpandedCRCOpportunity/UsIdExpandedCRCReferralRecord";
 import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
@@ -72,7 +72,7 @@ import { usMoOverdueRestrictiveHousingReviewHearingSchema } from "../src/Workflo
 import { usMoWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdEarlyTerminationOpportunity/UsNdEarlyTerminationReferralRecord";
 import { usNdTransferToMinFacilitySchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdTransferToMinFacilityOpportunity/UsNdTransferToMinFacilityReferralRecord";
-import { usOrEarnedDischargeSentenceSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeSentenceOpportunity";
+import { usOrEarnedDischargeSentenceSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeSentenceOpportunity/UsOrEarnedDischargeSentenceReferralRecord";
 import { usPaAdminSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
 import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
@@ -82,7 +82,7 @@ import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsT
 import { usTnInitialClassificationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnInitialClassificationOpportunity/UsTnInitialClassificationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
-import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt";
+import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt/UsUtEarlyTerminationOpportunity/UsUtEarlyTerminationReferralRecord";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 
