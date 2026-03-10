@@ -36,7 +36,7 @@ export function useNote() {
   useEffect(() => {
     async function loadNote() {
       const persistedNote = await getItem("note");
-      setNote(persistedNote);
+      setNote(persistedNote ?? "");
     }
     loadNote();
   }, []);

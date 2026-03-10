@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,4 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const saveItem = async (key: string, value: string) => {
-  await AsyncStorage.setItem(key, value);
-};
-
-export const getItem = async <T = string,>(
-  key: string,
-  parse?: (raw: string) => T,
-): Promise<T | null> => {
-  const raw = await AsyncStorage.getItem(key);
-  if (raw === null) {
-    return null;
-  }
-
-  return parse ? parse(raw) : (raw as unknown as T);
-};
-
-export const removeItem = async (key: string) => {
-  await AsyncStorage.removeItem(key);
-};
+export const meetingEventQueueStorage = AsyncStorage;
