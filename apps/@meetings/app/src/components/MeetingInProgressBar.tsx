@@ -23,7 +23,7 @@ import PlaySvg from "~@meetings/app/assets/icons/play.svg";
 import StopSvg from "~@meetings/app/assets/icons/stop.svg";
 
 import { Person } from "../common/types";
-import { useMeetingRecording, useRecording } from "../features/recording";
+import { useRecording } from "../features/recording";
 import MeetingSheet from "./MeetingSheet";
 
 type MeetingInProgressBarProps = {
@@ -50,25 +50,18 @@ const MeetingInProgressBar = ({
   startTime,
   endTime,
   person,
-  meetingId,
   className = "",
 }: MeetingInProgressBarProps) => {
   const isPaused = recordingState === "paused";
 
-  const { durationMs } = useRecording();
-  const { actions } = useMeetingRecording({
-    meetingId,
-    personId: person.personId,
-  });
-
   const {
-    handleTogglePauseResume,
-    handleStopRecording,
+    durationMs,
+    stopRecording,
+    discardRecording,
+    togglePauseResume,
     handleFinishAndSave,
-    handleDiscard,
     handleFinalDiscard,
-    handleContinue,
-  } = actions;
+  } = useRecording<"native">();
 
   return (
     <View
@@ -86,7 +79,7 @@ const MeetingInProgressBar = ({
       <View className="flex-row items-center space-x-2">
         <TouchableOpacity
           className="rounded-full px-3 py-2"
-          onPress={handleTogglePauseResume}
+          onPress={togglePauseResume}
           style={{
             backgroundColor: isPaused ? "#006C67" : "#4D5255",
           }}
@@ -105,7 +98,7 @@ const MeetingInProgressBar = ({
 
         <TouchableOpacity
           className="ml-2 rounded-full bg-[#B91C1C] p-2"
-          onPress={handleStopRecording}
+          onPress={stopRecording}
         >
           <StopSvg className="size-4 fill-[#FFEAE5]" />
         </TouchableOpacity>
@@ -131,7 +124,7 @@ const MeetingInProgressBar = ({
               }}
               secondaryButton={{
                 label: "Continue Meeting",
-                onPress: handleContinue,
+                onPress: togglePauseResume,
                 variant: "neutral",
               }}
             />
@@ -148,12 +141,12 @@ const MeetingInProgressBar = ({
               }}
               secondaryButton={{
                 label: "Continue Meeting",
-                onPress: handleContinue,
+                onPress: togglePauseResume,
                 variant: "primary",
               }}
               tertiaryButton={{
                 label: "Discard meeting",
-                onPress: handleDiscard,
+                onPress: discardRecording,
                 variant: "neutral",
               }}
             />

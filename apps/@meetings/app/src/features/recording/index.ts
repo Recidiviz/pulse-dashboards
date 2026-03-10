@@ -15,5 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { useMeetingRecording } from "./hooks/useMeetingRecording";
 export { RecordingProvider, useRecording } from "./model";

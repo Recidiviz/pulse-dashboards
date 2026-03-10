@@ -29,9 +29,10 @@ import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 
 import NotesSvg from "~@meetings/app/assets/icons/notes.svg";
 
+import { Person } from "../common/types";
 import MeetingSheet from "../components/MeetingSheet";
 import RecordingControls from "../components/RecordingControls";
-import { useMeetingRecording, useRecording } from "../features/recording";
+import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { humanReadableTitleCase } from "../utils/format";
 import NewMeetingHeader from "./NewMeetingHeader";
@@ -42,48 +43,44 @@ type NewMeetingRouteProp = RouteProp<
 >;
 
 type Props = {
-  person: {
-    fullName: string;
-    displayPersonExternalId: string;
-    primaryMetadata: string;
-    personId: bigint;
-  };
+  person: Person;
   navigateToPersonProfile: () => void;
 };
 
 const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const route = useRoute<NewMeetingRouteProp>();
   const meetingId = route.params?.meetingId;
-  const { durationMs, setMeetingId } = useRecording<"native">();
+
+  const {
+    status,
+    note,
+    setNote,
+    isRecording,
+    durationMs,
+    setMeetingId,
+    setPerson,
+    startRecording,
+    stopRecording,
+    discardRecording,
+    togglePauseResume,
+    handleFinishAndSave,
+    handleFinalDiscard,
+  } = useRecording<"native">();
 
   useEffect(() => {
-    if (meetingId) {
+    if (meetingId && person) {
       setMeetingId(meetingId);
+      setPerson(person);
     }
-  }, [meetingId, setMeetingId]);
+  }, [meetingId, person, setMeetingId, setPerson]);
 
   const onComplete = () => {
     navigateToPersonProfile();
     setMeetingId(null);
+    setPerson(null);
   };
 
-  const { status, note, setNote, isRecording, actions } = useMeetingRecording({
-    meetingId,
-    onComplete: onComplete,
-    personId: person.personId,
-  });
-
   if (!status) return null;
-
-  const {
-    startRecording,
-    handleTogglePauseResume,
-    handleStopRecording,
-    handleFinishAndSave,
-    handleDiscard,
-    handleFinalDiscard,
-    handleContinue,
-  } = actions;
 
   if (status === "ending") {
     return (
@@ -141,8 +138,8 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
     <View className="flex-1 bg-white">
       <NewMeetingHeader
         isMeetingActive={isMeetingActive}
-        onDiscard={() => handleDiscard()}
-        onFinalDiscard={() => handleFinalDiscard()}
+        onDiscard={() => discardRecording()}
+        onFinalDiscard={() => handleFinalDiscard(onComplete)}
       />
 
       <View className="flex-1 px-6">
@@ -160,8 +157,8 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
         <RecordingControls
           status={status}
           onStart={startRecording}
-          onStop={handleStopRecording}
-          onPauseResume={handleTogglePauseResume}
+          onStop={stopRecording}
+          onPauseResume={togglePauseResume}
           durationMs={durationMs}
         />
       </View>
@@ -180,12 +177,12 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
               description={`You're about to discard the meeting with ${person.fullName}. Notes and transcript will not be saved.`}
               primaryButton={{
                 label: "Discard",
-                onPress: handleFinalDiscard,
+                onPress: () => handleFinalDiscard(onComplete),
                 variant: "danger",
               }}
               secondaryButton={{
                 label: "Continue Meeting",
-                onPress: handleContinue,
+                onPress: togglePauseResume,
                 variant: "neutral",
               }}
             />
@@ -197,17 +194,17 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
               description={`You're about to finish the meeting with ${person.fullName} and save the notes for processing.`}
               primaryButton={{
                 label: "Finish & Save",
-                onPress: handleFinishAndSave,
+                onPress: () => handleFinishAndSave(onComplete),
                 variant: "danger",
               }}
               secondaryButton={{
                 label: "Continue Meeting",
-                onPress: handleContinue,
+                onPress: togglePauseResume,
                 variant: "primary",
               }}
               tertiaryButton={{
                 label: "Discard meeting",
-                onPress: handleDiscard,
+                onPress: discardRecording,
                 variant: "neutral",
               }}
             />

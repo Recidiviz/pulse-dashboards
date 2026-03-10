@@ -32,12 +32,19 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 
+import { trpc } from "~@meetings/app/trpc/client";
+
+import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";
+import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useNote } from "../hooks/useNote";
 import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
 import { useRecordingStatus } from "../hooks/useRecordingStatus";
 import { useUploadSegment } from "../hooks/useUploadSegment";
-import { requestNotificationPermissions } from "../utils/notifications";
+import {
+  requestNotificationPermissions,
+  sendNotification,
+} from "../utils/notifications";
 import {
   getRecordingState,
   getRecordingUri,
@@ -70,10 +77,18 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const {
     meetingId,
     setMeetingId,
+    person,
+    setPerson,
     durationMs: persistedDurationMs,
     setDurationMs: setPersistedDurationMs,
   } = useRecordingStore();
-
+  const { mutateAsync: endMeeting } = useEndMeeting();
+  const { mutateAsync: discardMeeting } = useDiscardMeeting();
+  const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
+    onError: (err) => {
+      console.error("[updateNotes] Failed:", err);
+    },
+  });
   const hasHydrated = useRecordingStoreHydrated();
 
   const { durationMs: persistedFileDurationMs } = usePersistedFileDuration(
@@ -234,14 +249,23 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   /**
    * togglePauseResume()
    * - If paused → resume (start recording)
-   * - If recording → pause (upload file)
+   * - If recording → pause (sync notes to server, upload file)
    */
   const togglePauseResume = async () => {
-    if (status === "uploading") return;
+    if (status === "uploading" || !meetingId) return;
 
     if (status && ["paused", "stopping", "discarding"].includes(status)) {
       await startRecording();
     } else if (status === "recording") {
+      // Sync notes to server when pausing
+      try {
+        await updateNotesMutation.mutateAsync({
+          meetingId,
+          userNotepadNotes: note,
+        });
+      } catch (err) {
+        console.error("Failed to update notes:", err);
+      }
       const duration = timer.stop();
       if (duration) setPersistedDurationMs(duration);
       await setStatus("uploading");
@@ -261,6 +285,71 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     await setStatus("idle");
   };
 
+  const handleFinishAndSave = async (onComplete?: () => void) => {
+    if (!meetingId || !person) {
+      throw new Error("Cannot end meeting without a meeting ID and person");
+    }
+
+    setStatus("ending");
+
+    try {
+      if (recorderState.isRecording) {
+        await stopAndUploadRecording();
+      }
+
+      const userNotepadNotes = note;
+      setNote("");
+      await endMeeting({
+        meetingId,
+        userNotepadNotes,
+        personId: person.personId,
+      });
+      await cleanupRecording();
+      onComplete?.();
+    } catch (err) {
+      console.error("Failed to end meeting:", err);
+      Alert.alert("Error", "Failed to end meeting. Please try again.");
+      setStatus("idle");
+    }
+  };
+
+  const handleFinalDiscard = async (onComplete?: () => void) => {
+    if (!meetingId || !person)
+      throw new Error("Cannot discard meeting without a meeting ID and person");
+
+    await cleanupRecording();
+    await discardMeeting({ meetingId, personId: person.personId });
+    onComplete?.();
+  };
+
+  // Auto-stop recording when 90-minute limit is reached
+  const prevRecorderStateRef = useRef(recorderState.isRecording);
+  useEffect(() => {
+    const prevIsRecording = prevRecorderStateRef.current;
+
+    if (
+      status === "recording" &&
+      prevIsRecording &&
+      !recorderState.isRecording
+    ) {
+      (async () => {
+        setStatus("uploading");
+        await stopAndUploadRecording();
+        setStatus("paused");
+        sendNotification(
+          "Recording Paused",
+          "90 minute-at-a-time recording limit reached. Pausing Recording",
+        );
+      })();
+    }
+
+    if (status !== "stopping") {
+      prevRecorderStateRef.current = recorderState.isRecording;
+    }
+    // stopAndUploadRecording causes infinite loop if included
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, recorderState.isRecording]);
+
   /**
    * Persist URI during active recording.
    */
@@ -275,7 +364,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       value={{
         status: status || "idle",
         setStatus,
+        meetingId,
         setMeetingId,
+        person,
+        setPerson,
         isRecording: recorderState.isRecording,
         durationMs: timer.durationMs,
         note,
@@ -287,6 +379,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         stopAndUploadRecording,
         togglePauseResume,
         cleanupRecording,
+        handleFinishAndSave,
+        handleFinalDiscard,
       }}
     >
       {children}

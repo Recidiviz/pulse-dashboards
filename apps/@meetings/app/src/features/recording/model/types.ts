@@ -54,6 +54,9 @@ export type RecordingBase = {
   // Cleanup everything — invoked when user discards or finishes
   cleanupRecording: () => Promise<void>;
 
+  // High-level meeting actions (combining recording + API calls)
+  handleFinishAndSave: (onComplete?: () => void) => Promise<void>;
+  handleFinalDiscard: (onComplete?: () => void) => Promise<void>;
   // true once AsyncStorage rehydration completes; prevents from running on the pre-hydration default
   hasHydrated: boolean;
 };
@@ -74,9 +77,8 @@ export type RecordingWeb = RecordingBase & {
 };
 
 export type RecordingNative = RecordingBase & {
+  meetingId: string | null;
   setMeetingId: (meetingId: string | null) => void;
-  // TODO: absence of meetingId in context was the main reason of separated context and useMeetingRecording
-  // we can combine them after adding meetingId to native. see ./store.ts for more details.
-  // it can be done as a part of https://github.com/Recidiviz/pulse-dashboards/issues/11571
-  // meetingId: string | null;
+  person: Person | null;
+  setPerson: (person: Person | null) => void;
 };

@@ -15,15 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useMutation } from "@tanstack/react-query";
+import type { inferRouterInputs } from "@trpc/server";
+
 import { useSnackbar } from "~@meetings/app/components/Snackbar";
 import { trpc } from "~@meetings/app/trpc/client";
+import type { AppRouter } from "~@meetings/trpc-types";
 
-export function useEndMeeting(personId: bigint) {
+type Params = inferRouterInputs<AppRouter>["v1"]["meeting"]["endMeeting"] & {
+  personId: bigint;
+};
+
+export function useEndMeeting() {
   const { showSnackbar } = useSnackbar();
   const utils = trpc.useUtils();
 
-  return trpc.v1.meeting.endMeeting.useMutation({
-    onSuccess: () => {
+  return useMutation({
+    mutationFn: ({ personId: _, ...vars }: Params) =>
+      utils.client.v1.meeting.endMeeting.mutate(vars),
+    onSuccess: (_, { personId }) => {
       utils.v1.client.getMeetings.invalidate({ clientId: personId });
       utils.v1.resident.getMeetings.invalidate({ residentId: personId });
       utils.v1.client.list.invalidate();

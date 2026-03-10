@@ -20,7 +20,9 @@ import { createContext } from "react";
 import { Person } from "~@meetings/app/common/types";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
+import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";
+import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useInitialization } from "../hooks/useInitialization.web";
 import { useUploadSegment } from "../hooks/useUploadSegment";
 import { MeetingModal } from "../ui/MeetingModal";
@@ -176,6 +178,46 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     setStatus("discarding");
   };
 
+  const { mutateAsync: endMeeting } = useEndMeeting();
+  const { mutateAsync: discardMeeting } = useDiscardMeeting();
+
+  const handleFinishAndSave = async () => {
+    if (!meetingId || !person) {
+      throw new Error("Cannot end meeting without a meeting ID and person");
+    }
+
+    setStatus("ending");
+
+    try {
+      if (recorder.isRecording) {
+        await stopAndUploadRecording();
+      }
+
+      const userNotepadNotes = note;
+      await endMeeting({
+        meetingId,
+        userNotepadNotes,
+        personId: person.personId,
+      });
+      await cleanupRecording();
+      closeRecordingView();
+    } catch (err) {
+      console.error("Failed to end meeting:", err);
+      window.alert("Failed to end meeting. Please try again.");
+      setStatus("idle");
+    }
+  };
+
+  const handleFinalDiscard = async () => {
+    if (!meetingId || !person) {
+      throw new Error("Cannot discard meeting without a meeting ID and person");
+    }
+
+    await cleanupRecording();
+    await discardMeeting({ meetingId, personId: person.personId });
+    closeRecordingView();
+  };
+
   return (
     <RecordingContext.Provider
       value={{
@@ -198,6 +240,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         stopAndUploadRecording,
         togglePauseResume,
         cleanupRecording,
+        handleFinishAndSave,
+        handleFinalDiscard,
       }}
     >
       {children}

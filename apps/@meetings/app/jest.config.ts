@@ -23,10 +23,10 @@ module.exports = {
   preset: "jest-expo",
   moduleFileExtensions: ["ts", "js", "html", "tsx", "jsx"],
   testMatch: [
-    "<rootDir>/src/tests/**/*.test.ts",
-    "<rootDir>/src/tests/**/*.test.tsx",
-    "<rootDir>/src/tests/**/*.spec.ts",
-    "<rootDir>/src/tests/**/*.spec.tsx",
+    "<rootDir>/src/**/*.test.ts",
+    "<rootDir>/src/**/*.test.tsx",
+    "<rootDir>/src/**/*.spec.ts",
+    "<rootDir>/src/**/*.spec.tsx",
   ],
   setupFilesAfterEnv: ["<rootDir>/src/tests/setup/test-setup.ts"],
   moduleNameMapper: {

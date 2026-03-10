@@ -15,42 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Person } from "~@meetings/app/common/types";
-
-import { useMeetingRecording } from "../hooks/useMeetingRecording";
 import { useRecording } from "../model";
 import { DiscardMeetingModal } from "./DiscardMeetingModal";
 import { EndMeetingModal } from "./EndMeetingModal";
 import { MeetingFullSizeModal } from "./MeetingFullSizeModal";
 import { MeetingMinimizedModal } from "./MeetingMinimizedModal";
 
-function MeetingModalContainer() {
-  const { meetingId, person } = useRecording<"web">();
-
-  if (!meetingId || !person) return null;
-
-  return <MeetingModal meetingId={meetingId} person={person} />;
-}
-
-type MeetingModalProps = {
-  meetingId: string;
-  person: Person;
-};
-
-function MeetingModal({ meetingId, person }: MeetingModalProps) {
-  const { status, durationMs, closeRecordingView, isRecordingViewMinimized } =
-    useRecording<"web">();
-
-  // TODO: we can move isRecordingViewOpened into the state,
-  // but we need to know what will make it as true on mobile
-  const isRecordingViewOpened = meetingId && person;
-
-  // TODO: get rid of this hook in following releases, move all the functionality into models
-  const meetingRecording = useMeetingRecording({
+export function MeetingModal() {
+  const {
+    status,
+    durationMs,
+    person,
     meetingId,
-    onComplete: closeRecordingView,
-    personId: person.personId,
-  });
+    isRecordingViewMinimized,
+    stopRecording,
+    togglePauseResume,
+    discardRecording,
+    handleFinishAndSave,
+    handleFinalDiscard,
+  } = useRecording<"web">();
+
+  const isRecordingViewOpened = meetingId && person;
 
   if (!isRecordingViewOpened) return null;
 
@@ -60,32 +45,27 @@ function MeetingModal({ meetingId, person }: MeetingModalProps) {
         <MeetingMinimizedModal
           person={person}
           durationMs={durationMs}
-          onStop={meetingRecording.actions.handleStopRecording}
-          onPauseResume={meetingRecording.actions.handleTogglePauseResume}
-          onDiscard={meetingRecording.actions.handleDiscard}
+          onStop={stopRecording}
+          onPauseResume={togglePauseResume}
+          onDiscard={discardRecording}
         />
       ) : (
-        <MeetingFullSizeModal
-          person={person}
-          meetingRecording={meetingRecording}
-        />
+        <MeetingFullSizeModal person={person} />
       )}
       {status === "stopping" && (
         <EndMeetingModal
           person={person}
-          onContinue={meetingRecording.actions.handleContinue}
-          onFinishAndSave={meetingRecording.actions.handleFinishAndSave}
+          onContinue={togglePauseResume}
+          onFinishAndSave={handleFinishAndSave}
         />
       )}
       {status === "discarding" && (
         <DiscardMeetingModal
           person={person}
-          onContinue={meetingRecording.actions.handleContinue}
-          onDiscard={meetingRecording.actions.handleFinalDiscard}
+          onContinue={togglePauseResume}
+          onDiscard={handleFinalDiscard}
         />
       )}
     </>
   );
 }
-
-export { MeetingModalContainer as MeetingModal };

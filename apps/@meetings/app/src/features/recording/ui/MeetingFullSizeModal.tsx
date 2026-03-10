@@ -29,27 +29,28 @@ import { Person, RecordingStatus } from "../../../common/types";
 import LinearProgressBar from "../../../components/LinearProgressBar";
 import Modal from "../../../components/Modal";
 import { formatDurationNumeric } from "../../../utils/format";
-import { useMeetingRecording, useRecording } from "..";
+import { useRecording } from "..";
 
 type Props = {
   person: Person;
-  meetingRecording: ReturnType<typeof useMeetingRecording>;
 };
 
-export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
-  const { durationMs, setIsRecordingViewMinimized } = useRecording<"web">();
-
-  const { status, note, setNote, isRecording, actions } = meetingRecording;
+export const MeetingFullSizeModal = ({ person }: Props) => {
+  const {
+    status,
+    note,
+    setNote,
+    isRecording,
+    durationMs,
+    setIsRecordingViewMinimized,
+    startRecording,
+    stopRecording,
+    discardRecording,
+    togglePauseResume,
+    handleFinalDiscard,
+  } = useRecording<"web">();
 
   if (!status) return null;
-
-  const {
-    startRecording,
-    handleTogglePauseResume,
-    handleStopRecording,
-    handleDiscard,
-    handleFinalDiscard,
-  } = actions;
 
   const isMeetingActive = status !== "idle" || isRecording;
 
@@ -72,9 +73,9 @@ export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
           status={status}
           note={note}
           setNote={setNote}
-          handleStopRecording={handleStopRecording}
-          handleTogglePauseResume={handleTogglePauseResume}
-          handleDiscard={handleDiscard}
+          handleStopRecording={stopRecording}
+          handleTogglePauseResume={togglePauseResume}
+          handleDiscard={discardRecording}
           durationMs={durationMs}
         />
       ) : (

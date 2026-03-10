@@ -18,9 +18,12 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import Loading from "../components/Loading";
 import NewMeeting from "../components/NewMeeting";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { trpc } from "../trpc/client";
+import { deserializeResident } from "../utils/format";
 import { formatPersonTitle } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<
@@ -32,16 +35,25 @@ type NewMeetingRouteProp = RouteProp<RootStackParamList, "ResidentNewMeeting">;
 const ResidentNewMeetingScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
-  const person = {
+
+  const { data: resident } = trpc.v1.resident.get.useQuery(
+    { personId: BigInt(route.params?.personId || 0) },
+    { enabled: !!route.params?.personId },
+  );
+
+  const routePerson = {
     fullName: route.params.fullName,
     displayPersonExternalId: route.params.displayPersonExternalId,
     primaryMetadata: route.params.primaryMetadata,
     // Convert this back into a BigInt for TRPC calls
     personId: BigInt(route.params.personId),
   };
+
   useSetDocumentTitle(
-    `New Meeting - ${formatPersonTitle(person)} - Recidiviz Meetings`,
+    `New Meeting - ${formatPersonTitle(routePerson)} - Recidiviz Meetings`,
   );
+
+  if (!resident) return <Loading message="Loading..." />;
 
   const navigateToResidentProfile = () => {
     navigation.reset({
@@ -51,10 +63,10 @@ const ResidentNewMeetingScreen = () => {
         {
           name: "ResidentProfile",
           params: {
-            personId: person.personId.toString(),
-            fullName: person.fullName,
-            displayPersonExternalId: person.displayPersonExternalId,
-            primaryMetadata: person.primaryMetadata,
+            personId: route.params.personId,
+            fullName: route.params.fullName,
+            displayPersonExternalId: route.params.displayPersonExternalId,
+            primaryMetadata: route.params.primaryMetadata,
           },
         },
       ],
@@ -63,7 +75,7 @@ const ResidentNewMeetingScreen = () => {
 
   return (
     <NewMeeting
-      person={person}
+      person={deserializeResident(resident)}
       navigateToPersonProfile={navigateToResidentProfile}
     />
   );
