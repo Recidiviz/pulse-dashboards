@@ -70,6 +70,9 @@ describe("DrawerNavigator", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: false,
         hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
         isLoading: true,
         stateCode: undefined,
         isSkipAuthUser: false,
@@ -93,6 +96,9 @@ describe("DrawerNavigator", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: true,
         hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
         isLoading: false,
         stateCode: "US_NE",
         isSkipAuthUser: false,
@@ -118,6 +124,9 @@ describe("DrawerNavigator", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: true,
         hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
         isLoading: false,
         stateCode: "US_TX", // Texas is not in AVAILABLE_STATE_CODES
         isSkipAuthUser: false,
@@ -141,6 +150,9 @@ describe("DrawerNavigator", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: true,
         hasFacilitiesAccess: true,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
         isLoading: false,
         stateCode: "recidiviz",
         isSkipAuthUser: false,
@@ -164,6 +176,9 @@ describe("DrawerNavigator", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: true,
         hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
         isLoading: false,
         stateCode: "US_NE", // Nebraska is supported
         isSkipAuthUser: false,
@@ -187,6 +202,9 @@ describe("DrawerNavigator", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: true,
         hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
         isLoading: false,
         stateCode: "us_ne", // lowercase but should still match
         isSkipAuthUser: false,
@@ -212,6 +230,9 @@ describe("DrawerNavigator", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: false,
         hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
         isLoading: false,
         stateCode: "US_NE",
         isSkipAuthUser: false,

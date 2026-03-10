@@ -37,6 +37,10 @@ const mockUser = {
     routes: {
       meetingsSupervision: true,
       meetingsFacilities: false,
+      workflowsSupervision: false,
+      insights: false,
+      workflowsFacilities: false,
+      cpa: false,
     },
   },
 };
@@ -89,6 +93,9 @@ describe("UserContext", () => {
         isSkipAuthUser: true,
         hasSupervisionAccess: true,
         hasFacilitiesAccess: true,
+        hasSupervisionAssistantAccess: true,
+        hasFacilitiesAssistantAccess: true,
+        hasCasePlanningAssistantAccess: true,
       });
       expect(result.current.recidivizAllowedStates.length).toBeGreaterThan(0);
     });
@@ -123,6 +130,9 @@ describe("UserContext", () => {
         recidivizAllowedStates: ["US_ND"],
         hasSupervisionAccess: true,
         hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
       });
       expect(result.current.getCredentials).toBe(mockGetCredentials);
     });
@@ -161,6 +171,9 @@ describe("UserContext", () => {
         recidivizAllowedStates: ["US_ND", "US_PA", "US_TN"],
         hasSupervisionAccess: true,
         hasFacilitiesAccess: true,
+        hasSupervisionAssistantAccess: true,
+        hasFacilitiesAssistantAccess: true,
+        hasCasePlanningAssistantAccess: true,
       });
     });
 
@@ -262,6 +275,9 @@ describe("UserContext", () => {
       expect(result.current.recidivizAllowedStates).toEqual([]);
       expect(result.current.hasSupervisionAccess).toBe(false);
       expect(result.current.hasFacilitiesAccess).toBe(false);
+      expect(result.current.hasSupervisionAssistantAccess).toBe(false);
+      expect(result.current.hasFacilitiesAssistantAccess).toBe(false);
+      expect(result.current.hasCasePlanningAssistantAccess).toBe(false);
     });
   });
 });

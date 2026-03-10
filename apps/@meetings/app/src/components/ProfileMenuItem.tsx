@@ -1,0 +1,79 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { Link } from "@react-navigation/native";
+import { ReactNode } from "react";
+import { Pressable, PressableProps, Text } from "react-native";
+
+import { RootStackParamList } from "../navigation/DrawerNavigator";
+
+type WithLink = {
+  link: { screen: keyof RootStackParamList; onPress: () => void };
+  pressable?: never;
+};
+
+type WithPressable = {
+  pressable: PressableProps;
+  link?: never;
+};
+
+type Props = {
+  label: string;
+  helperText?: string;
+  icon?: ReactNode;
+} & (WithLink | WithPressable);
+
+export const ProfileMenuItem = ({
+  label,
+  link,
+  pressable,
+  helperText,
+  icon,
+}: Props) => {
+  const children = (
+    <>
+      <Text className="whitespace-nowrap font-inter text-base font-medium leading-5 text-gray/85 transition-all duration-300 group-hover:text-[#006C67]">
+        {label}
+      </Text>
+      {helperText && (
+        <Text className="ml-auto whitespace-nowrap font-inter text-xs text-gray-500">
+          {helperText}
+        </Text>
+      )}
+      {icon}
+    </>
+  );
+
+  if (link)
+    return (
+      <Link
+        className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-soft-green/23"
+        {...link}
+      >
+        {children}
+      </Link>
+    );
+
+  return (
+    <Pressable
+      className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-soft-green/23"
+      {...pressable}
+    >
+      {children}
+    </Pressable>
+  );
+};

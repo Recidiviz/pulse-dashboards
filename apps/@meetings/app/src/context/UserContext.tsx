@@ -35,6 +35,9 @@ interface UserContextType {
   recidivizAllowedStates: string[];
   hasSupervisionAccess: boolean;
   hasFacilitiesAccess: boolean;
+  hasSupervisionAssistantAccess: boolean;
+  hasFacilitiesAssistantAccess: boolean;
+  hasCasePlanningAssistantAccess: boolean;
   onLogout: ReturnType<typeof useAuth0>["clearSession"];
   getCredentials: ReturnType<typeof useAuth0>["getCredentials"];
 }
@@ -69,6 +72,9 @@ export const UserContextProvider: React.FC<{
           ),
           hasSupervisionAccess: true,
           hasFacilitiesAccess: true,
+          hasSupervisionAssistantAccess: true,
+          hasFacilitiesAssistantAccess: true,
+          hasCasePlanningAssistantAccess: true,
           onLogout: () => Promise.resolve(),
           getCredentials,
         }}
@@ -104,6 +110,13 @@ export const UserContextProvider: React.FC<{
         recidivizAllowedStates: allowedStateCodes,
         hasSupervisionAccess: isRecidiviz || !!routes?.["meetingsSupervision"],
         hasFacilitiesAccess: isRecidiviz || !!routes?.["meetingsFacilities"],
+        hasSupervisionAssistantAccess:
+          isRecidiviz ||
+          !!routes?.["workflowsSupervision"] ||
+          !!routes?.["insights"],
+        hasFacilitiesAssistantAccess:
+          isRecidiviz || !!routes?.["workflowsFacilities"],
+        hasCasePlanningAssistantAccess: isRecidiviz || !!routes?.["cpa"],
         onLogout: async () => {
           await clearSession();
         },

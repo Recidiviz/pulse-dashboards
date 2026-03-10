@@ -17,7 +17,6 @@
 
 import {
   DrawerActions,
-  Link,
   RouteProp,
   useNavigation,
   useRoute,
@@ -33,9 +32,8 @@ import {
 } from "react-native";
 import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
-import LogoutIcon from "react-native-heroicons/outline/LogoutIcon";
+import ExternalLinkIcon from "react-native-heroicons/outline/ExternalLinkIcon";
 import MenuIcon from "react-native-heroicons/outline/MenuIcon";
-import SupportIcon from "react-native-heroicons/outline/SupportIcon";
 import BellIcon from "react-native-heroicons/solid/BellIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -44,9 +42,11 @@ import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
 
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
+import { IS_PROD } from "../env";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getInitials } from "../utils/format";
 import DesktopMenuItem from "./DesktopMenuItem";
+import { ProfileMenuItem } from "./ProfileMenuItem";
 
 type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
 type HeaderRouteProp = RouteProp<RootStackParamList>;
@@ -63,9 +63,25 @@ const Header: React.FC<HeaderProps> = ({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
-  const { onLogout, name, email, hasSupervisionAccess, hasFacilitiesAccess } =
-    useUserContext();
+  const {
+    onLogout,
+    name,
+    email,
+    hasSupervisionAccess,
+    hasFacilitiesAccess,
+    hasSupervisionAssistantAccess,
+    hasFacilitiesAssistantAccess,
+    hasCasePlanningAssistantAccess,
+  } = useUserContext();
   const { canSelectStateCode, currentStateName } = useStateSelection();
+
+  const dashboardUrl = IS_PROD
+    ? "https://dashboard.recidiviz.org"
+    : "https://dashboard-staging.recidiviz.org";
+
+  const cpaUrl = IS_PROD
+    ? "https://plan.recidiviz.org"
+    : "https://plan-staging.recidiviz.org";
 
   const handleDropdownMenuPress = (callback: () => void) => {
     setProfileDropdownOpen(false);
@@ -120,7 +136,7 @@ const Header: React.FC<HeaderProps> = ({
               onPress={() => setProfileDropdownOpen(!profileDropdownOpen)}
             >
               <View
-                className="flex-row items-center gap-x-1 rounded-full border border-transparent p-1.5 transition-all duration-300 hover:border-[#35536226]"
+                className="flex-row items-center gap-x-1 rounded-full border border-transparent p-1.5 transition-all duration-300 hover:border-gray/15"
                 style={{ borderColor: profileDropdownOpen ? "#00665F" : "" }}
               >
                 <ImageBackground
@@ -141,13 +157,13 @@ const Header: React.FC<HeaderProps> = ({
             </TouchableOpacity>
             {profileDropdownOpen && (
               <View className="absolute right-0 top-16 rounded-[20px] bg-white p-2 shadow-sm">
-                <ScrollView contentContainerClassName="gap-1">
+                <ScrollView contentContainerClassName="gap-1 cursor-pointer">
                   <TouchableOpacity
                     onPress={() =>
                       handleDropdownMenuPress(() => console.log("Settings"))
                     }
                   >
-                    <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl border border-transparent bg-[#C1E3D83B] p-3.5">
+                    <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl border border-transparent bg-soft-green/23 p-3.5">
                       <ImageBackground
                         source={BgAvatarImage}
                         className="size-12 items-center justify-center overflow-hidden rounded-full"
@@ -161,40 +177,82 @@ const Header: React.FC<HeaderProps> = ({
                         <Text className="font-inter text-base font-semibold leading-5">
                           {name ?? "Test User"}
                         </Text>
-                        <Text className="font-inter text-base font-normal text-[#355362D9]">
+                        <Text className="font-inter text-base font-normal text-gray/85">
                           {email ?? "testuser@mail.com"}
                         </Text>
                       </View>
                     </View>
                   </TouchableOpacity>
                   {canSelectStateCode && (
-                    <Link
-                      screen="StateSelection"
-                      onPress={() => setProfileDropdownOpen(false)}
-                      params={{}}
-                      className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-[#C1E3D83B]"
-                    >
-                      <SupportIcon className="stroke-muted transition-all duration-300 group-hover:stroke-[#006C67]" />
-                      <Text className="whitespace-nowrap font-inter text-base font-medium leading-5 text-[#355362D9] transition-all duration-300 group-hover:text-[#006C67]">
-                        Settings
-                      </Text>
-                      {currentStateName && (
-                        <Text className="ml-auto whitespace-nowrap font-inter text-xs text-gray-500">
-                          Current state: {currentStateName}
-                        </Text>
-                      )}
-                    </Link>
+                    <ProfileMenuItem
+                      link={{
+                        screen: "StateSelection",
+                        onPress: () => setProfileDropdownOpen(false),
+                      }}
+                      label="Profile"
+                      helperText={`Current state: ${currentStateName}`}
+                    />
                   )}
-                  <TouchableOpacity
-                    onPress={() => handleDropdownMenuPress(onLogout)}
-                  >
-                    <View className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-[#C1E3D83B]">
-                      <LogoutIcon className="stroke-muted transition-all duration-300 group-hover:stroke-[#006C67]" />
-                      <Text className="whitespace-nowrap font-inter text-base font-medium leading-5 text-[#355362D9] transition-all duration-300 group-hover:text-[#006C67]">
-                        Log Out
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                  {hasSupervisionAssistantAccess && (
+                    <ProfileMenuItem
+                      pressable={{
+                        onPress: () =>
+                          handleDropdownMenuPress(() =>
+                            window.open(
+                              dashboardUrl,
+                              "_blank",
+                              "noopener,noreferrer",
+                            ),
+                          ),
+                      }}
+                      label="Go to Supervision Assistant"
+                      icon={
+                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-muted" />
+                      }
+                    />
+                  )}
+                  {hasFacilitiesAssistantAccess && (
+                    <ProfileMenuItem
+                      pressable={{
+                        onPress: () =>
+                          handleDropdownMenuPress(() =>
+                            window.open(
+                              dashboardUrl,
+                              "_blank",
+                              "noopener,noreferrer",
+                            ),
+                          ),
+                      }}
+                      label="Go to Facilities Assistant"
+                      icon={
+                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-muted" />
+                      }
+                    />
+                  )}
+                  {hasCasePlanningAssistantAccess && (
+                    <ProfileMenuItem
+                      pressable={{
+                        onPress: () =>
+                          handleDropdownMenuPress(() =>
+                            window.open(
+                              cpaUrl,
+                              "_blank",
+                              "noopener,noreferrer",
+                            ),
+                          ),
+                      }}
+                      label="Go to Case Planning Assistant"
+                      icon={
+                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-muted" />
+                      }
+                    />
+                  )}
+                  <ProfileMenuItem
+                    pressable={{
+                      onPress: () => handleDropdownMenuPress(onLogout),
+                    }}
+                    label="Log Out"
+                  />
                 </ScrollView>
               </View>
             )}

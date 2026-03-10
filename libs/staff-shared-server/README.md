@@ -28,6 +28,12 @@ There is a dependency between the `getFilterKeys` function and the environment o
 
 1. Follow any steps laid out in [the main README for this repo](../../README.md#getting-set-up).
 
+1. Ensure you are using the correct version of Node (if you don't use NVM, just check the .nvmrc file and ensure you are using that version).
+   `nvm use`
+
+   This is especially important here because server will not run if you do not use right Node version and you will see just a message
+   `Failed running 'src/server/index.js'`
+
 1. [Install Redis Version 7](https://redis.io/download#installation) (matches Memorystore for Redis version):
 
    Via Homebrew:

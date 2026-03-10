@@ -147,6 +147,7 @@ const DropdownProfileMenu = styled(DropdownMenu)`
     color: ${palette.slate80};
     display: flex;
     justify-content: space-between;
+    gap: ${rem(spacing.md)};
     transition: color ease 500ms;
     height: 1rem;
 
@@ -456,8 +457,7 @@ const BetaPill = styled(Pill)`
   font-weight: 700;
   padding: 2px 6px;
   height: 18px;
-  margin-left: ${rem(spacing.sm)};
-  margin-right: ${rem(spacing.md)};
+  margin-left: auto;
   background-color: rgba(207, 245, 246, 1);
   border: 1px solid rgba(162, 229, 239, 1);
   border-radius: 4px;
@@ -485,6 +485,34 @@ function CPALink({ enabled }: OptionalLinkProps) {
       >
         {isMobile && <Icon kind={IconSVG.Open} width={20} />}
         Case Planning Assistant
+        <BetaPill textColor="rgba(0, 85, 188, 1)">BETA</BetaPill>
+        <Icon kind={IconSVG.Open} width={15} />
+      </a>
+    </DropdownMenuItem>
+  );
+}
+
+function MeetingsLink({ enabled }: OptionalLinkProps) {
+  const { isMobile } = useIsMobile(true);
+
+  if (!enabled) return null;
+
+  const meetingsUrl =
+    import.meta.env.VITE_DEPLOY_ENV === "production"
+      ? "https://meet.recidiviz.org"
+      : "https://meet-staging.recidiviz.org";
+
+  return (
+    <DropdownMenuItem>
+      <a
+        href={meetingsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        role="menuitem"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {isMobile && <Icon kind={IconSVG.Open} width={20} />}
+        Meetings
         <BetaPill textColor="rgba(0, 85, 188, 1)">BETA</BetaPill>
         <Icon kind={IconSVG.Open} width={15} />
       </a>
@@ -663,6 +691,13 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
 
     // TODO(#11341) - Remove external CPA navigation link when CPA is integrated into staff app
     const enabledCPA = userStore.getRoutePermission("cpa");
+    const hasMeetingsSupervisionPermission = userStore.getRoutePermission(
+      "meetingsSupervision",
+    );
+    const hasMeetingsFacilitiesPermission =
+      userStore.getRoutePermission("meetingsFacilities");
+    const isMeetingsRouteEnabled =
+      hasMeetingsSupervisionPermission || hasMeetingsFacilitiesPermission;
 
     const quickLinks = (
       <>
@@ -692,6 +727,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           staffPseudoId={sentencingStore.staffPseudoId}
         />
         <CPALink enabled={enabledCPA} />
+        <MeetingsLink enabled={isMeetingsRouteEnabled} />
         <EnvironmentLinks />
         <LogoutLink enabled={!isOfflineMode()} />
       </>

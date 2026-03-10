@@ -51,3 +51,5 @@ const env = {
 const parsedEnv = envSchema.parse(env);
 
 export default parsedEnv;
+
+export const IS_PROD = parsedEnv.EXPO_PUBLIC_DEPLOY_ENV === "production";
