@@ -178,7 +178,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["docker", "prisma-deploy", "prisma-generate"],
       "options": {
-        "command": "tsx src/seed.ts",
+        "command": "tsx src/run-seed.ts",
         "cwd": "{projectRoot}"
       },
       "configurations": {

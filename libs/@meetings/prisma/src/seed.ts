@@ -19,9 +19,7 @@
 
 import { faker } from "@faker-js/faker";
 import { Transcript } from "assemblyai";
-import { fileURLToPath } from "url";
 
-import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import {
   Client,
   PostMeetingProcessingStatus,
@@ -286,17 +284,4 @@ export async function main(prisma: PrismaClient) {
       },
     });
   }
-}
-
-// Only auto-run when executed directly (not when imported by seed-demo)
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const prisma = getPrismaClientForStateCode("US_DEMO");
-  main(prisma)
-    .catch((e) => {
-      console.error(e);
-      process.exit(1);
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
 }
