@@ -16,6 +16,9 @@
 // =============================================================================
 
 export * from "./PathwaysTheme";
+export * from "./PopulationSnapshotChart";
+export * from "./PopulationSnapshotTooltip";
 export * from "./PopulationTimeSeriesChart";
 export { default as VizPathways } from "./VizPathways";
 export * from "./VizPopulationOverTime";
+export * from "./VizPopulationSnapshot";

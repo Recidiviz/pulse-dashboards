@@ -20,10 +20,11 @@ import { deleteField } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
 import { fieldToDate, VitalsMetricId } from "~datatypes";
+import { formatDate } from "~utils";
 
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import { formatDate, formatDueDateFromToday } from "../../utils";
+import { formatDueDateFromToday } from "../../utils";
 import { Client } from "../Client";
 import {
   SnoozeInfo,

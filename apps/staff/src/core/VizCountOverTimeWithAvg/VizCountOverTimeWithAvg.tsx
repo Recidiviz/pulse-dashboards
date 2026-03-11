@@ -23,8 +23,8 @@ import React, { useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
 import { formatMonthAndYear, VizPathways } from "~shared-pathways";
+import { getTicks } from "~utils";
 
-import { getTicks } from "../../utils";
 import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import OverTimeMetric from "../models/OverTimeMetric";

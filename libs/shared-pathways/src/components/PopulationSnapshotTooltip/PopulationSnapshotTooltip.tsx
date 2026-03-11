@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
-import { format } from "date-fns";
 import React from "react";
 import styled from "styled-components";
 
@@ -33,63 +32,44 @@ const TooltipWrapper = styled.div`
   min-width: 9rem;
 `;
 
+const TooltipLabel = styled.h3`
+  opacity: 0.8;
+  ${typography.Sans14}
+  text-align: center;
+`;
+
 const TooltipValue = styled.div`
   ${typography.Sans16}
 `;
 
-const TooltipDate = styled.div`
+const TooltipAverage = styled.div`
   opacity: 0.8;
+  ${typography.Sans14}
+  text-align: center;
 `;
 
-const TooltipBottom = styled.div`
-  opacity: 0.8;
-`;
-
-type DataPoint = {
-  date: Date;
-  value: number;
-  lowerBound?: number;
-  upperBound?: number;
-  parentSummary?: string;
+type PopulationSnapshotTooltipProps = {
+  label: string;
+  value: string;
+  average?: string;
 };
 
-type PropTypes = {
-  d: DataPoint & {
-    data?: DataPoint;
-  };
-};
-
-const PopulationTimeSeriesTooltip: React.FC<PropTypes> = ({ d }) => {
-  let { date, value } = d;
-  const { lowerBound, upperBound, data } = d;
-  if (data && !date) {
-    date = data.date;
-    value = data.value;
-  }
-
-  if (d.parentSummary !== undefined || !d) {
-    // don't display tooltip for summary block
-    return null;
-  }
-  const formattedDate = format(date, "MMMM yyyy");
+const PopulationSnapshotTooltip: React.FC<PopulationSnapshotTooltipProps> = ({
+  label,
+  value,
+  average,
+}) => {
   const ariaLabel =
-    `${formattedDate} value: ${value}` +
-    (lowerBound && upperBound ? `${lowerBound} ${upperBound}` : "");
+    `${label} value: ${value}.` + (average ? ` ${average}` : "");
   return (
     <TooltipWrapper>
-      <TooltipDate aria-label={ariaLabel} aria-live="polite">
-        {formattedDate}
-      </TooltipDate>
-      <TooltipValue>
-        {value.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-      </TooltipValue>
-      {lowerBound && upperBound && (
-        <TooltipBottom>
-          ({Math.round(lowerBound)}, {Math.round(upperBound)})
-        </TooltipBottom>
-      )}
+      <TooltipLabel aria-label={ariaLabel} aria-live="polite">
+        {label}
+      </TooltipLabel>
+      <TooltipValue>{value.toLocaleString()}</TooltipValue>
+      <TooltipAverage>{average}</TooltipAverage>
     </TooltipWrapper>
   );
 };
 
-export default PopulationTimeSeriesTooltip;
+export default PopulationSnapshotTooltip;

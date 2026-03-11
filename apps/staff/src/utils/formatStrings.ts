@@ -27,16 +27,14 @@ import {
   isToday,
   parseISO,
 } from "date-fns";
-import ceil from "lodash/ceil";
 import lowerCase from "lodash/fp/lowerCase";
 import pipe from "lodash/fp/pipe";
 import startCase from "lodash/fp/startCase";
 import moment from "moment";
 import numeral from "numeral";
-import Pluralize from "pluralize";
 
 import { FullName } from "~datatypes";
-import { Dimension } from "~shared-pathways";
+import { formatDate } from "~utils";
 
 import { translate } from "./i18nSettings";
 
@@ -147,34 +145,6 @@ function numberFromOfficerId(officerId: string): number {
 const violationCountLabel = (count: string): string =>
   count === "8" ? "8+" : count;
 
-/**
- * @returns appropriately singular or plural form of `term` including irregular terms
- */
-const pluralizeWord = ({
-  term,
-  count,
-  justAppendS = false,
-}: {
-  term: string;
-  count?: number;
-  justAppendS?: boolean;
-}): string => {
-  if (count) return Pluralize(term, count);
-
-  if (justAppendS) {
-    return `${term}s`;
-  }
-
-  return Pluralize(term);
-};
-
-/**
- * @returns `count` with appropriately singular or plural form of `term`
- */
-const pluralize = (count: number, term: string): string => {
-  return `${count} ${pluralizeWord({ term: term, count: count })}`;
-};
-
 function getPeriodLabelFromMetricPeriodMonthsFilter(
   toggledValue: string,
 ): string | null {
@@ -235,12 +205,6 @@ function formatPercent(
 
 function formatISODateString(date: string): string {
   return format(parseISO(date), "M/d/yy");
-}
-
-function formatDate(date?: Date | null, pattern = "M/d/yy"): string {
-  if (!date) return "Unknown";
-
-  return format(date, pattern);
 }
 
 function formatDateToISO(date: Date, pattern = "yyyy-MM-dd"): string {
@@ -346,89 +310,9 @@ function decrypt(hexString: string): string {
   return plainText;
 }
 
-const getTicks = (
-  value: number,
-): { maxTickValue: number; tickValues: number[]; ticksMargin: number } => {
-  const precision = Math.floor(Math.log10(value));
-  const max = ceil(value, precision >= 2 ? -precision + 1 : -precision);
-  let ticksCount = 0;
-  if (max % 5 === 0) {
-    ticksCount = 5;
-  } else if (max % 4 === 0) {
-    ticksCount = 4;
-  } else if (max % 3 === 0) {
-    ticksCount = 3;
-  } else {
-    ticksCount = 2;
-  }
-
-  const ticks = Array.from({ length: ticksCount + 1 }, (_, i) =>
-    Math.round((max / ticksCount) * i),
-  );
-
-  const getMarginFactor = (n: number, isFloat: boolean) => {
-    if (n <= 2) {
-      return isFloat ? 4 : 2.2;
-    }
-    return 1;
-  };
-
-  let tickValues: number[];
-  switch (true) {
-    case value === -Infinity:
-      tickValues = [];
-      break;
-    case value < 1:
-      tickValues = [0.2, 0.4, 0.6, 0.8];
-      break;
-    default:
-      tickValues = ticks;
-  }
-
-  return {
-    maxTickValue: max,
-    tickValues,
-
-    // This value used to determine chart left margin based on tick value length
-    ticksMargin: Math.max(
-      (max.toString().length +
-        getMarginFactor(max.toString().length, ticks[1] % 1 !== 0)) *
-        10,
-      50,
-    ),
-  };
-};
-
 function convertCurlyQuotesToStraight(text: string): string {
   return text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
 }
-
-function formatName(fullName: string): string {
-  const LAST_NAME_CHARACTER_LIMIT = 10;
-  const names = fullName.split(" ");
-  const firstInitial = names[0][0];
-  const lastName = names[names.length - 1];
-
-  return `${firstInitial}. ${
-    lastName.length > LAST_NAME_CHARACTER_LIMIT
-      ? `${lastName.slice(0, LAST_NAME_CHARACTER_LIMIT)}...`
-      : lastName
-  }`;
-}
-
-const getDimensionLabel = (
-  dimensionType: Dimension,
-  dimensionValue: string,
-): string => {
-  if (
-    dimensionType === "priorLengthOfIncarceration" &&
-    dimensionValue === "0"
-  ) {
-    return "  Not previously incarcerated";
-  }
-
-  return dimensionValue;
-};
 
 const formatDueDateFromToday = (dueDate: Date): string => {
   if (isToday(dueDate)) return "today";
@@ -634,7 +518,6 @@ export {
   decrypt,
   encrypt,
   formatCurrentAddress,
-  formatDate,
   formatDateRange,
   formatDateToISO,
   formatDaysToYearsMonthsPast,
@@ -645,7 +528,6 @@ export {
   formatDurationFromOptionalDays,
   formatISODateString,
   formatLargeNumber,
-  formatName,
   formatNameFirstLast,
   formatNameLastFirst,
   formatOfficerLabel,
@@ -660,13 +542,11 @@ export {
   genderValueToLabel,
   generateEmailAddress,
   generateSerialListString,
-  getDimensionLabel,
   getFirstName,
   getPeriodLabelFromMetricPeriodMonthsFilter,
   getSerialListSeparator,
   getStatePopulations,
   getStatePopulationsLabels,
-  getTicks,
   getTrailingLabelFromMetricPeriodMonthsFilter,
   getWelcomeText,
   hashEmailAddress,
@@ -674,8 +554,6 @@ export {
   humanReadableTitleCase,
   matrixViolationTypeToLabel,
   numberFromOfficerId,
-  pluralize,
-  pluralizeWord,
   raceValueToHumanReadable,
   raceValueToLabel,
   rangeString,

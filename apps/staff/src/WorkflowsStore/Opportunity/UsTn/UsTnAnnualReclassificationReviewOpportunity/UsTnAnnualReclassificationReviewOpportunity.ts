@@ -17,8 +17,9 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { formatDate } from "~utils";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
-import { formatDate } from "../../../../utils/formatStrings";
 import { Resident } from "../../../Resident";
 import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";

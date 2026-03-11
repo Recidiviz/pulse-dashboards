@@ -22,9 +22,10 @@ import React from "react";
 import { Column } from "react-table";
 
 import { PopulationFilterLabels, VizPathways } from "~shared-pathways";
+import { formatDate } from "~utils";
 
 import PathwaysTable from "../../components/PathwaysTable";
-import { formatDate, toHumanReadable, toTitleCase } from "../../utils";
+import { toHumanReadable, toTitleCase } from "../../utils";
 import { useCoreStore } from "../CoreStoreProvider";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";

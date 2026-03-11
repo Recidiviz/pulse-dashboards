@@ -28,10 +28,11 @@ import { differenceBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { palette } from "~design-system";
+import { formatDate } from "~utils";
 
 import { ProgressGap } from "../../core/WorkflowsJusticeInvolvedPersonProfile/SentenceProgressGapV2";
 import { SentenceProgressPoint } from "../../core/WorkflowsJusticeInvolvedPersonProfile/SentenceProgressPointV2";
-import { formatDate, formatWorkflowsDate } from "../../utils";
+import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { JusticeInvolvedPerson } from "../types";

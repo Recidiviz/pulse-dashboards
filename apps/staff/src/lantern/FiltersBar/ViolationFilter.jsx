@@ -20,10 +20,10 @@ import { observer } from "mobx-react-lite";
 import React, { useMemo } from "react";
 
 import { isAllItem } from "~staff-shared-server";
+import { pluralize } from "~utils";
 
 import {
   matrixViolationTypeToLabel,
-  pluralize,
   violationCountLabel,
 } from "../../utils/formatStrings";
 import Chip from "../Chip";

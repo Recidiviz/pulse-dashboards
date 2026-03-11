@@ -21,11 +21,11 @@ import { Column } from "react-table";
 import styled from "styled-components";
 
 import { FullName, SupervisionOfficerMetricEvent } from "~datatypes";
+import { formatDate } from "~utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerMetricEventsPresenter } from "../../InsightsStore/presenters/SupervisionOfficerMetricEventsPresenter";
-import { formatDate } from "../../utils";
 import InsightsClientDetailsPanel from "../InsightsClientDetailsPanel";
 import InsightsTable from "../InsightsTable";
 import ModelHydrator from "../ModelHydrator";

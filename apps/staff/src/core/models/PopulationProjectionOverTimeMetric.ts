@@ -23,9 +23,9 @@ import {
   PopulationProjectionTimeSeriesRecord,
   SimulationCompartment,
 } from "~shared-pathways";
+import { formatDate } from "~utils";
 
 import RootStore from "../../RootStore";
-import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";

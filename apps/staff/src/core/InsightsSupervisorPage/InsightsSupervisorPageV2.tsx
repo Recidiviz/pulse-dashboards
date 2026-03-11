@@ -22,13 +22,14 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
+import { pluralize } from "~utils";
 
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
 import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPagePresenter";
-import { pluralize, toTitleCase } from "../../utils";
+import { toTitleCase } from "../../utils";
 import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { InsightsManagedUsageCard } from "../InsightsStaffUsage/InsightsStaffUsageCard";

@@ -18,6 +18,7 @@
 import { sortBy } from "lodash";
 
 import { usMoFormatSentenceLength } from "~datatypes";
+import { formatDate } from "~utils";
 
 import { renderDocx } from "../../../../core/Paperwork/DOCXFormGenerator";
 import {
@@ -27,7 +28,6 @@ import {
 } from "../../../../core/Paperwork/PDFFormFiller";
 import { downloadZipFile } from "../../../../core/Paperwork/utils";
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
-import { formatDate } from "../../../../utils/formatStrings";
 import { UsMoWorkReleaseOpportunity } from "../../UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseOpportunity";
 import { UsMoWorkReleaseDraftData } from "../../UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
 import { FormBase, PrefilledDataTransformer } from "../FormBase";

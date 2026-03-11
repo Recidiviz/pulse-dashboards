@@ -15,5 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./formatStrings";
 export * from "./react/useRequiredContext";
 export * from "./types/typedFromEntries";

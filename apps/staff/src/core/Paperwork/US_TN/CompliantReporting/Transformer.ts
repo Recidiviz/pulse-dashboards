@@ -33,11 +33,9 @@
 import _ from "lodash";
 import moment from "moment";
 
-import {
-  formatAsCurrency,
-  formatDate,
-  formatWorkflowsDate,
-} from "../../../../utils";
+import { formatDate } from "~utils";
+
+import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import type {
   Client,
   CompliantReportingOpportunity,

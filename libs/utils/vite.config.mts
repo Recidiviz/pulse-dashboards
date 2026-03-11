@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fieldToDate } from "~datatypes";
-import { formatDate } from "~utils";
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import { defineConfig } from "vite";
 
-import UsIdTaskBase from "./UsIdTaskBase";
+export default defineConfig(() => ({
+  root: __dirname,
+  cacheDir: "../../node_modules/.vite/libs/utils",
 
-class UsIdStableAssessmentTask extends UsIdTaskBase<"usIdStableAssessment"> {
-  displayName = "STABLE Assessment";
-  taskAction = "assessment";
+  plugins: [nxViteTsPaths()],
 
-  get lastContacted(): string | undefined {
-    const { lastAssessmentDate } = this.details;
-    if (!lastAssessmentDate) return;
-    return formatDate(fieldToDate(lastAssessmentDate));
-  }
-
-  get additionalDetails(): string {
-    return `${super.additionalDetails}\nScore: ${this.person.supervisionLevel}`;
-  }
-}
-
-export default UsIdStableAssessmentTask;
+  test: {
+    passWithNoTests: true,
+    globals: true,
+    environment: "node",
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    mockReset: true,
+    coverage: {
+      reportsDirectory: "../../coverage/libs/utils",
+      provider: "v8" as const,
+    },
+    typecheck: {
+      enabled: true,
+      tsconfig: "tsconfig.spec.json",
+      ignoreSourceErrors: true,
+    },
+  },
+}));

@@ -17,24 +17,21 @@
 
 import { observer } from "mobx-react-lite";
 
-import { usePageContent, VizPopulationOverTime } from "~shared-pathways";
+import { usePageContent } from "~shared-pathways";
 
+import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
 import { PageHeader } from "../PageHeader/PageHeader";
-import withPublicPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPublicPathwaysMetricHelpers";
 import { useRootStore } from "../StoreProvider";
 import { PageContainer } from "./styles";
 
-const HydratedViz = withPublicPathwaysMetricHelpers(VizPopulationOverTime);
-
 export const PagePublicPathways = observer(function PagePublicPathways() {
-  const { currentTenantId, page, metricsStore, filtersStore } = useRootStore();
+  const { currentTenantId, page, metricsStore } = useRootStore();
   const pageContent = usePageContent(currentTenantId, page);
-  const metric = metricsStore.prisonPopulationOverTime;
 
   return (
     <PageContainer>
       <PageHeader title={pageContent.title} description={pageContent.summary} />
-      <HydratedViz metric={metric} filtersStore={filtersStore} />
+      <MetricVizMapper metric={metricsStore.current} />
     </PageContainer>
   );
 });

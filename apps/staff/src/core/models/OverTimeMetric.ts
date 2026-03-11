@@ -26,8 +26,8 @@ import {
   OverTimeMetric as SharedOverTimeMetric,
   TimeSeriesDataRecord,
 } from "~shared-pathways";
+import { formatDate } from "~utils";
 
-import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import CoreStore from "../CoreStore";
 import {

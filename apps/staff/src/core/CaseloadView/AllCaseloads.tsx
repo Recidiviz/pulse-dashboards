@@ -18,11 +18,13 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { pluralizeWord } from "~utils";
+
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
-import { pluralizeWord, toTitleCase } from "../../utils";
+import { toTitleCase } from "../../utils";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import WorkflowsResults from "../WorkflowsResults";
 import { AllCaseloadsList } from "./AllCaseloadsList";

@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { formatDate } from "~utils";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { formatDate, formatNameLastFirst } from "../../../utils/formatStrings";
+import { formatNameLastFirst } from "../../../utils/formatStrings";
 import { UsAzReleaseToDTPOpportunity } from "../UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
 import { UsAzReleaseToTPROpportunity } from "../UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
 import { UsAzReleaseToTransitionProgramDraftData } from "../UsAz/UsAzReleaseToTransitionProgramBaseSchema";

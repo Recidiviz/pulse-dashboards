@@ -19,14 +19,11 @@ import { add, differenceInCalendarDays, isEqual } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 
 import { OpportunityType } from "~datatypes";
+import { formatDate, pluralizeWord } from "~utils";
 
 import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
-import {
-  formatDate,
-  formatWorkflowsDate,
-  pluralizeWord,
-} from "../../../../utils";
+import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
 import { formatRelativeToNow } from "../../../utils";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";

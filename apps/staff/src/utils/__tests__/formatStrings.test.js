@@ -112,17 +112,6 @@ describe("formatStrings", () => {
     expect(dataAfterTest).toBe(27);
   });
 
-  it("pluralize when it should not pluralize", () => {
-    const result = utils.pluralize(1, "violation");
-    expect(result).toEqual("1 violation");
-  });
-
-  it("pluralize when it should pluralize", () => {
-    expect(utils.pluralize(2, "violation")).toEqual("2 violations");
-
-    expect(utils.pluralize(0, "violation")).toEqual("0 violations");
-  });
-
   it("getFirstName when there are more than one names in fullName", () => {
     const result = utils.getFirstName("Barney Rubble");
     expect(result).toEqual("Barney");
@@ -297,20 +286,6 @@ describe("formatStrings", () => {
     const withCurlyQuotes = "“ ” ‘ ’";
     const result = utils.convertCurlyQuotesToStraight(withCurlyQuotes);
     expect(result).toEqual("\" \" ' '");
-  });
-
-  describe("formatName", () => {
-    it("formats a 'firstName lastName' correctly", () => {
-      expect(utils.formatName("Barney Rubble")).toBe("B. Rubble");
-    });
-
-    it("formats a 'firstName middleInitial lastName' correctly", () => {
-      expect(utils.formatName("Barney J. Rubble")).toBe("B. Rubble");
-    });
-
-    it("formats a name with more than 10 character last Name correctly", () => {
-      expect(utils.formatName("Barney Rubbbbbbble")).toBe("B. Rubbbbbbbl...");
-    });
   });
 
   describe("formatNameLastFirst", () => {

@@ -18,8 +18,9 @@
 import { Column } from "react-table";
 
 import { ClientEvent, ClientEventAttributes } from "~datatypes";
+import { formatDate } from "~utils";
 
-import { formatDate, humanReadableTitleCase } from "../../utils";
+import { humanReadableTitleCase } from "../../utils";
 import InsightsTable from "../InsightsTable";
 import { Code, Description, Separator, Title, Wrapper } from "./styles";
 

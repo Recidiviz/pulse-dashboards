@@ -19,6 +19,8 @@ import { format } from "date-fns";
 import { differenceInMonths } from "date-fns";
 import { findIndex, some, uniq } from "lodash";
 
+import { formatDate } from "~utils";
+
 import {
   AssessmentQuestionNumber,
   assessmentQuestionNumbers,
@@ -26,7 +28,6 @@ import {
 } from "../../../core/Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
 import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { formatDate } from "../../../utils";
 import {
   UsTnAnnualReclassificationReviewOpportunity,
   UsTnCustodyLevelDowngradeOpportunity,

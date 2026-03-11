@@ -23,8 +23,9 @@ import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
 import { SnapshotDataRecord, VizPathways } from "~shared-pathways";
+import { formatDate, getTicks } from "~utils";
 
-import { formatDate, formatPercent, getTicks } from "../../utils";
+import { formatPercent } from "../../utils";
 import { useCoreStore } from "../CoreStoreProvider";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";

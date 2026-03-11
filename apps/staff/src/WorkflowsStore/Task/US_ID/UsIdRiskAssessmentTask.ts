@@ -16,8 +16,8 @@
 // =============================================================================
 
 import { fieldToDate } from "~datatypes";
+import { formatDate } from "~utils";
 
-import { formatDate } from "../../../utils";
 import { Task } from "../Task";
 
 /**

@@ -18,8 +18,9 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { pluralizeWord } from "~utils";
+
 import { useRootStore } from "../../components/StoreProvider";
-import { pluralizeWord } from "../../utils";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";

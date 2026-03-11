@@ -18,8 +18,9 @@
 import simplur from "simplur";
 
 import { fieldToDate } from "~datatypes";
+import { formatDate } from "~utils";
 
-import { formatDate, toTitleCase } from "../../../utils";
+import { toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 import { UsIdAgnosticTaskType } from "../types";
 

@@ -89,6 +89,10 @@ export default class MetricsStore implements PathwaysMetricStore {
           this.prisonPopulationBySentenceLengthMin,
         [PATHWAYS_SECTIONS["countBySentenceLengthMax"]]:
           this.prisonPopulationBySentenceLengthMax,
+        [PATHWAYS_SECTIONS["countByChargeCountyCode"]]:
+          this.prisonPopulationByChargeCountyCode,
+        [PATHWAYS_SECTIONS["countByOffenseType"]]:
+          this.prisonPopulationByOffenseType,
       };
     }
     return this._map;
@@ -116,7 +120,6 @@ export default class MetricsStore implements PathwaysMetricStore {
       accessor: "facility" as keyof SnapshotDataRecord,
       enableMetricModeToggle: true,
       rotateLabels: true,
-      isGeographic: true,
     });
   }
 
@@ -199,6 +202,30 @@ export default class MetricsStore implements PathwaysMetricStore {
       store: this,
       fetchMetrics: this.fetchMetrics,
       accessor: "sentenceLengthMax" as keyof SnapshotDataRecord,
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+
+  get prisonPopulationByChargeCountyCode(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByChargeCountyCode",
+      endpoint: "PrisonPopulationByDimensionCount",
+      store: this,
+      fetchMetrics: this.fetchMetrics,
+      accessor: "chargeCountyCode",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+
+  get prisonPopulationByOffenseType(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByOffenseType",
+      endpoint: "PrisonPopulationByDimensionCount",
+      store: this,
+      fetchMetrics: this.fetchMetrics,
+      accessor: "offenseType",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });

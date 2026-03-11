@@ -42,10 +42,10 @@ import ReactSelect, {
 import styled from "styled-components";
 
 import { Button, Icon, IconSVG, palette } from "~design-system";
+import { pluralizeWord } from "~utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { pluralizeWord } from "../../utils";
 import { Searchable, SearchableGroup, SearchIcon } from "../models/types";
 
 // This is a query limitation imposed by Firestore

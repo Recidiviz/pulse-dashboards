@@ -20,8 +20,8 @@ import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 
 import { UsMeSCCPCriteria, UsMeSCCPRecord, usMeSCCPSchema } from "~datatypes";
+import { pluralizeWord } from "~utils";
 
-import { pluralizeWord } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { UsMeSCCPForm } from "../../Forms/UsMeSCCPForm";
 import { OpportunityRequirement } from "../../types";

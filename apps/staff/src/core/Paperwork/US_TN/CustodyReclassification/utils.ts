@@ -22,8 +22,8 @@ import {
   OpportunityType,
   UsTnCoverSheetSharedDraftData,
 } from "~datatypes";
+import { formatDate } from "~utils";
 
-import { formatDate } from "../../../../utils";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import { DocxTemplateFormContents } from "../../DOCXFormGenerator";
 

@@ -21,12 +21,12 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
 import { withPresenterManager } from "~hydration-utils";
+import { formatDate } from "~utils";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenters/SupervisionOfficerDetailPresenter";
-import { formatDate } from "../../utils";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";

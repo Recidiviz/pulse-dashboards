@@ -22,11 +22,12 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
+import { formatDate } from "~utils";
 
 import StopwatchIcon from "../../assets/static/images/stopwatch.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { formatDate, formatWorkflowsDate } from "../../utils";
+import { formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { formatDateString } from "../models/utils";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";

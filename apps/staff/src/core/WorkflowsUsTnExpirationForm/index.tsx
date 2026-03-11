@@ -28,9 +28,9 @@ import useClipboard from "react-use-clipboard";
 import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
+import { formatDate } from "~utils";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { formatDate } from "../../utils";
 import { Opportunity, UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {
   FormContainer,

@@ -25,10 +25,11 @@ import styled from "styled-components";
 
 import { TargetStatus } from "~datatypes";
 import { palette } from "~design-system";
+import { formatDate, getTicks } from "~utils";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
-import { formatDate, formatPercent, getTicks } from "../../utils";
+import { formatPercent } from "../../utils";
 import { GOAL_COLORS } from "../InsightsSwarmPlot/constants";
 import NoteComponent from "./NoteComponent";
 

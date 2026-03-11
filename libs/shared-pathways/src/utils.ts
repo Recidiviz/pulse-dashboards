@@ -17,6 +17,7 @@
 
 import moment from "moment";
 
+import { Dimension } from "./dimensions";
 import {
   LengthOfStay,
   LengthOfStayRawValue,
@@ -96,6 +97,19 @@ export const validateDynamicFilterOptions = (filterOption: any): boolean => {
 export function isAbortException(error: Error): boolean {
   return error instanceof DOMException && error.name === "AbortError";
 }
+
+export const getDimensionLabel = (
+  dimensionType: Dimension,
+  dimensionValue: string,
+): string => {
+  if (
+    dimensionType === "priorLengthOfIncarceration" &&
+    dimensionValue === "0"
+  ) {
+    return "  Not previously incarcerated";
+  }
+  return dimensionValue;
+};
 
 type SortByLabelOptions<T> = {
   dataPoints: T[];

@@ -84,13 +84,13 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   }
 
   if (metric instanceof SupervisionPopulationSnapshotMetric) {
-    switch (metric.id) {
-      case "supervisionToPrisonPopulationByLengthOfStay":
-      case "supervisionToLibertyPopulationByLengthOfStay":
-        return <VizLengthOfStay metric={metric} />;
-      default:
-        return <VizPopulationSnapshot metric={metric} />;
-    }
+    // Old backend metric (currently only supervisionToPrisonPopulationByOfficer).
+    // Cast needed because SupervisionPopulationSnapshotMetric doesn't extend the
+    // shared SnapshotMetric type. This is safe because SupervisionPopulationSnapshotMetric extends
+    // PathwaysMetric which has everything that the viz needs.
+    // - This will go away when the metric moves to the new backend.
+    // TODO(#3132) Launch count by officer on the new backend
+    return <VizPopulationSnapshot metric={metric as any} />;
   }
 
   // there are no other metric types, so this should only be reached when developing new ones

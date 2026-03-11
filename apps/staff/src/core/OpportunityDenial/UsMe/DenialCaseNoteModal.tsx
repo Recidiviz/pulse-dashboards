@@ -24,12 +24,13 @@ import useCopyClipboard from "react-use-clipboard";
 import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
+import { formatDate } from "~utils";
 
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { formatDate, formatDateToISO } from "../../../utils";
+import { formatDateToISO } from "../../../utils";
 import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
 
 const StyledModal = styled(Modal)`

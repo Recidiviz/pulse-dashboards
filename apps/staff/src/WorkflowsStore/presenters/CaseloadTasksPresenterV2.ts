@@ -18,6 +18,8 @@
 import { groupBy } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 
+import { pluralizeWord } from "~utils";
+
 import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
@@ -27,7 +29,6 @@ import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
-import { pluralizeWord } from "../../utils/formatStrings";
 import {
   ClientTasksSummary,
   SupervisionTask,

@@ -19,8 +19,9 @@ import { observer } from "mobx-react-lite";
 import simplur from "simplur";
 import styled from "styled-components";
 
+import { pluralizeWord } from "~utils";
+
 import { useRootStore } from "../../components/StoreProvider";
-import { pluralizeWord } from "../../utils";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { MaxWidthWithSidebar } from "../sharedComponents";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";

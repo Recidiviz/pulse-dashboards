@@ -43,8 +43,8 @@ import {
   VitalsMetricId,
 } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
+import { formatDate } from "~utils";
 
-import { formatDate } from "../../utils";
 import {
   ActionStrategySurfacedEvent,
   InsightsAPI,

@@ -33,6 +33,7 @@ export const publicPathwaysPalette = {
     ...palette.data,
     indigo1: nyBlue,
     indigo10: rgba(nyBlue, 0.1),
+    forest2: nyBlue,
   },
   focusColor: nyBlue,
 };

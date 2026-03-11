@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { FiltersStoreBase } from "../../FiltersStoreBase";
@@ -42,4 +43,4 @@ const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
   );
 };
 
-export default VizPopulationOverTime;
+export default observer(VizPopulationOverTime);

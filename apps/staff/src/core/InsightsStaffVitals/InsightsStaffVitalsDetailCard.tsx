@@ -21,9 +21,9 @@ import { rem } from "polished";
 import styled, { css } from "styled-components";
 
 import { Icon, palette } from "~design-system";
+import { formatDate } from "~utils";
 
 import { OfficerVitalsMetricDetail } from "../../InsightsStore/presenters/types";
-import { formatDate } from "../../utils/formatStrings";
 import InsightsPill from "../InsightsPill";
 
 const HoverCta = styled.div`

@@ -19,8 +19,9 @@ import { deleteField } from "firebase/firestore";
 import { sortBy } from "lodash";
 import moment from "moment";
 
+import { pluralize } from "~utils";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { pluralize } from "../../../utils";
 import { UNKNOWN } from "../../Client";
 import {
   UsNdEarlyTerminationDraftData,
