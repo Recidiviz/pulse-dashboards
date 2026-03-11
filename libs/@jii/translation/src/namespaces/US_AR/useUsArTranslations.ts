@@ -15,29 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// import the original type declarations
-import "i18next";
+import { useTranslation } from "react-i18next";
 
-// import all namespaces (for the default language, only)
-import common from "../namespaces/common/resources/en.json";
-import US_AR from "../namespaces/US_AR/resources/en";
-import US_AZ from "../namespaces/US_AZ/resources/en";
-import US_CO from "../namespaces/US_CO/resources/en.json";
-import US_MA from "../namespaces/US_MA/resources/en.json";
-import US_TN from "../namespaces/US_TN/resources/en";
+import { TranslationsObject } from "../../utils/types";
 
-declare module "i18next" {
-  // extends CustomTypeOptions
-  interface CustomTypeOptions {
-    resources: {
-      common: typeof common;
-      US_AZ: typeof US_AZ;
-      US_AR: typeof US_AR;
-      US_CO: typeof US_CO;
-      US_MA: typeof US_MA;
-      US_TN: typeof US_TN;
-    };
-    strictKeyChecks: true;
-    enableSelector: true;
-  }
+export function useUsArTranslations() {
+  return useTranslation("US_AR");
 }
+
+/**
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_AR namespace
+ */
+export type UsArTranslationsObject = TranslationsObject<"US_AR">;
+
+export type UsArTFunction = ReturnType<typeof useUsArTranslations>["t"];

@@ -16,9 +16,13 @@
 // =============================================================================
 
 import { usePageTitle } from "~@jii/common-ui";
+import { useResidentMetadata } from "~@jii/data";
+
+import { UsArImportantDates } from "./UsArImportantDates";
 
 export function UsArSingleResidentHome() {
   usePageTitle("Home");
+  const metadata = useResidentMetadata("US_AR");
 
-  return <div>Hello, Arkansas!</div>;
+  return <UsArImportantDates metadata={metadata} />;
 }

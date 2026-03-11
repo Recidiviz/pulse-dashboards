@@ -43,6 +43,11 @@ import { clearAllLoaders } from "./utils";
     slug: "nebraska",
     expectSpanishEnabled: false,
   },
+  {
+    state: "US_AR",
+    slug: "arkansas",
+    expectSpanishEnabled: false,
+  },
 ].forEach((opts) => {
   test.describe(`${opts.state}`, () => {
     // convention is for test data to use predictable resident IDs.

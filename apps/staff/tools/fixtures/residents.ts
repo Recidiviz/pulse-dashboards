@@ -17,6 +17,7 @@
 
 import {
   RawResidentRecord,
+  rawUsArResidents,
   rawUsAzResidents,
   rawUsCoResidents,
   rawUsIdResidents,
@@ -26,7 +27,6 @@ import {
   rawUsTnResidents,
 } from "~datatypes";
 
-import { usArResidents } from "./residents/usArResidents";
 import { usMeResidents } from "./residents/usMeResidents";
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
@@ -39,7 +39,7 @@ export type ResidentFixture = PersonFixture<RawResidentRecord>;
 // RawResidentRecords is a superset of ResidentFixture
 const data: Array<ResidentFixture | RawResidentRecord> = [
   ...rawUsAzResidents,
-  ...usArResidents,
+  ...rawUsArResidents,
   ...rawUsCoResidents,
   ...rawUsIdResidents,
   ...rawUsMaResidents,

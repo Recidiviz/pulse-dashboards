@@ -22,14 +22,14 @@ import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 export const usArProgramAchievementSchema = z.object({
   programLocation: z.string(),
   programEvaluationScore: nullishAsUndefined(z.string()),
-  programAchievementDate: z.string(),
+  programAchievementDate: dateStringSchema,
   programType: z.string(),
 });
 
 export const usArCurrentSentencesSchema = z.object({
   sentenceId: z.string(),
-  startDate: nullishAsUndefined(z.string()),
-  endDate: nullishAsUndefined(z.string()),
+  startDate: nullishAsUndefined(dateStringSchema),
+  endDate: nullishAsUndefined(dateStringSchema),
   personId: z.number(),
   initialTimeServedDays: z.number(),
 });
@@ -42,9 +42,10 @@ export const usArResidentMetadataSchema = z.object({
   currentSentences: z.array(usArCurrentSentencesSchema),
   eligibilityDate: dateStringSchema,
   eligibilityDateName: z.string(),
-  gedCompletionDate: nullishAsUndefined(z.string()),
+  gedCompletionDate: nullishAsUndefined(dateStringSchema),
   maximumReleaseDate: dateStringSchema,
   noIncarcerationSanctionsWithin6Months: z.boolean(),
   noIncarcerationSanctionsWithin12Months: z.boolean(),
   programAchievement: z.array(usArProgramAchievementSchema),
 });
+export type UsArResidentMetadata = z.output<typeof usArResidentMetadataSchema>;

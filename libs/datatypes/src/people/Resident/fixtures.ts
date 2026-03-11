@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rawUsArResidents, usArResidents } from "./US_AR/fixtures";
 import { rawUsAzResidents, usAzResidents } from "./US_AZ/fixtures";
 import { rawUsCoResidents, usCoResidents } from "./US_CO/fixtures";
 import { rawUsIdResidents, usIdResidents } from "./US_ID/fixtures";
@@ -26,6 +27,7 @@ import { rawUsTnResidents, usTnResidents } from "./US_TN/fixtures";
 
 // re-exporting state fixtures for convenience
 export {
+  rawUsArResidents,
   rawUsCoResidents,
   rawUsMaResidents,
   rawUsMeResidents,
@@ -35,6 +37,7 @@ export {
 };
 
 export const allResidents = [
+  ...usArResidents,
   ...usAzResidents,
   ...usCoResidents,
   ...usIdResidents,
@@ -46,6 +49,7 @@ export const allResidents = [
 ];
 
 export const rawAllResidents = [
+  ...rawUsArResidents,
   ...rawUsAzResidents,
   ...rawUsCoResidents,
   ...rawUsIdResidents,

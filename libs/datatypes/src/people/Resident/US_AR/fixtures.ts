@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentFixture } from "../residents";
+import { RawResidentRecord, residentRecordSchema } from "../schema";
 
-export const usArResidents: ResidentFixture[] = [
+export const rawUsArResidents: Array<RawResidentRecord> = [
   {
+    recordId: "us_ar_res001",
     allEligibleOpportunities: [],
     stateCode: "US_AR",
     personExternalId: "AR_RES001",
@@ -79,6 +80,7 @@ export const usArResidents: ResidentFixture[] = [
     },
   },
   {
+    recordId: "us_ar_res002",
     allEligibleOpportunities: [],
     stateCode: "US_AR",
     personExternalId: "AR_RES002",
@@ -139,6 +141,7 @@ export const usArResidents: ResidentFixture[] = [
     },
   },
   {
+    recordId: "us_ar_res003",
     allEligibleOpportunities: [],
     stateCode: "US_AR",
     personExternalId: "AR_RES003",
@@ -199,6 +202,7 @@ export const usArResidents: ResidentFixture[] = [
     },
   },
   {
+    recordId: "us_ar_res004",
     allEligibleOpportunities: ["usArInstitutionalWorkerStatus"],
     stateCode: "US_AR",
     personExternalId: "AR_RES004",
@@ -259,6 +263,7 @@ export const usArResidents: ResidentFixture[] = [
     },
   },
   {
+    recordId: "us_ar_res005",
     allEligibleOpportunities: ["usArInstitutionalWorkerStatus"],
     stateCode: "US_AR",
     personExternalId: "AR_RES005",
@@ -319,3 +324,7 @@ export const usArResidents: ResidentFixture[] = [
     },
   },
 ];
+
+export const usArResidents = rawUsArResidents.map((r) =>
+  residentRecordSchema.parse(r),
+);

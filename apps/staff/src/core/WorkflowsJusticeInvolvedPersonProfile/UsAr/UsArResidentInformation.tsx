@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startOfToday } from "date-fns";
 import React from "react";
 
 import { ResidentMetadata } from "~datatypes";
@@ -76,7 +77,7 @@ function UsArGoodTimeClassification({
           <>
             <DetailsSubheading>GED Completion Date</DetailsSubheading>
             <SecureDetailsContent>
-              {formatWorkflowsDate(new Date(gedCompletionDate))}
+              {formatWorkflowsDate(gedCompletionDate)}
             </SecureDetailsContent>
           </>
         )}
@@ -111,12 +112,17 @@ function UsArCurrentStatus({
         ) : (
           currentSentences.map(
             ({ sentenceId, startDate, endDate, initialTimeServedDays }) => {
-              return !endDate || !startDate ? undefined : (
+              if (!endDate || !startDate) {
+                return null;
+              }
+
+              const currentlyServing = endDate > startOfToday();
+
+              return (
                 <SecureDetailsContent key={`${sentenceId}-${startDate}`}>
-                  {new Date(endDate) > new Date() ? "Serving" : "Served"}{" "}
-                  sentence {sentenceId} from{" "}
-                  {formatWorkflowsDate(new Date(startDate))} to{" "}
-                  {formatWorkflowsDate(new Date(endDate))} with{" "}
+                  {currentlyServing ? "Serving" : "Served"} sentence{" "}
+                  {sentenceId} from {formatWorkflowsDate(startDate)} to{" "}
+                  {formatWorkflowsDate(endDate)} with{" "}
                   {initialTimeServedDays || "no"} initial days served
                 </SecureDetailsContent>
               );
@@ -176,7 +182,7 @@ function UsArProgramming({
                   <DetailsSubheading>Program: {programType}</DetailsSubheading>
                   <SecureDetailsContent>
                     Completed at {programLocation} on{" "}
-                    {formatWorkflowsDate(new Date(programAchievementDate))}
+                    {formatWorkflowsDate(programAchievementDate)}
                     {programEvaluationScore &&
                       ` with an evaluation score of ${programEvaluationScore}`}
                   </SecureDetailsContent>

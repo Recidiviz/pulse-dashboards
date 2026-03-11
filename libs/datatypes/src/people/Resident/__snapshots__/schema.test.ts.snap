@@ -1,5 +1,334 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`schema for 'US_AR' 'AR_RES001' 1`] = `
+{
+  "admissionDate": 2019-08-12T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES001",
+  "facilityId": "FACILITY1",
+  "gender": "FEMALE",
+  "metadata": {
+    "currentCustodyClassification": "C2",
+    "currentGtEarningClass": "I-P",
+    "currentLocation": "1230456",
+    "currentSentences": [
+      {
+        "endDate": 2016-06-08T00:00:00.000Z,
+        "initialTimeServedDays": 12,
+        "personId": 1,
+        "sentenceId": "555666888889999",
+        "startDate": 2015-10-12T00:00:00.000Z,
+      },
+      {
+        "endDate": 2008-04-22T00:00:00.000Z,
+        "initialTimeServedDays": 19,
+        "personId": 1,
+        "sentenceId": "222881257772134",
+        "startDate": 2005-02-12T00:00:00.000Z,
+      },
+    ],
+    "eligibilityDate": 2023-12-01T00:00:00.000Z,
+    "eligibilityDateName": "Release Eligibility Date",
+    "gedCompletionDate": 2017-05-23T00:00:00.000Z,
+    "maximumReleaseDate": 2025-10-22T00:00:00.000Z,
+    "noIncarcerationSanctionsWithin12Months": true,
+    "noIncarcerationSanctionsWithin6Months": true,
+    "programAchievement": [
+      {
+        "programAchievementDate": 2024-03-06T00:00:00.000Z,
+        "programEvaluationScore": undefined,
+        "programLocation": "1400758",
+        "programType": "TEG",
+      },
+      {
+        "programAchievementDate": 2019-12-04T00:00:00.000Z,
+        "programEvaluationScore": "PASS",
+        "programLocation": "1400756",
+        "programType": "SM",
+      },
+    ],
+    "stateCode": "US_AR",
+  },
+  "personExternalId": "AR_RES001",
+  "personName": {
+    "givenNames": "Sandra",
+    "middleNames": "Wynona",
+    "surname": "French",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_ar_res001",
+  "releaseDate": 2025-10-22T00:00:00.000Z,
+  "stateCode": "US_AR",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AR' 'AR_RES002' 1`] = `
+{
+  "admissionDate": 2019-08-12T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES002",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "currentCustodyClassification": "C2",
+    "currentGtEarningClass": "I-P",
+    "currentLocation": "1230456",
+    "currentSentences": [
+      {
+        "endDate": 2016-06-08T00:00:00.000Z,
+        "initialTimeServedDays": 12,
+        "personId": 2,
+        "sentenceId": "555666888889999",
+        "startDate": 2015-10-12T00:00:00.000Z,
+      },
+      {
+        "endDate": 2008-04-22T00:00:00.000Z,
+        "initialTimeServedDays": 19,
+        "personId": 2,
+        "sentenceId": "222881257772134",
+        "startDate": 2005-02-12T00:00:00.000Z,
+      },
+    ],
+    "eligibilityDate": 2023-12-01T00:00:00.000Z,
+    "eligibilityDateName": "Transfer Eligibility Date",
+    "gedCompletionDate": 2017-05-23T00:00:00.000Z,
+    "maximumReleaseDate": 2025-10-22T00:00:00.000Z,
+    "noIncarcerationSanctionsWithin12Months": true,
+    "noIncarcerationSanctionsWithin6Months": true,
+    "programAchievement": [
+      {
+        "programAchievementDate": 2024-03-06T00:00:00.000Z,
+        "programEvaluationScore": undefined,
+        "programLocation": "1400758",
+        "programType": "TEG",
+      },
+      {
+        "programAchievementDate": 2019-12-04T00:00:00.000Z,
+        "programEvaluationScore": "PASS",
+        "programLocation": "1400756",
+        "programType": "SM",
+      },
+    ],
+    "stateCode": "US_AR",
+  },
+  "personExternalId": "AR_RES002",
+  "personName": {
+    "givenNames": "Clayton",
+    "middleNames": "Milton",
+    "surname": "Hamilton",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "recordId": "us_ar_res002",
+  "releaseDate": 2026-01-07T00:00:00.000Z,
+  "stateCode": "US_AR",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AR' 'AR_RES003' 1`] = `
+{
+  "admissionDate": 2020-05-17T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES003",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "currentCustodyClassification": "C2",
+    "currentGtEarningClass": "I-P",
+    "currentLocation": "1230456",
+    "currentSentences": [
+      {
+        "endDate": 2016-06-08T00:00:00.000Z,
+        "initialTimeServedDays": 12,
+        "personId": 3,
+        "sentenceId": "555666888889999",
+        "startDate": 2015-10-12T00:00:00.000Z,
+      },
+      {
+        "endDate": 2008-04-22T00:00:00.000Z,
+        "initialTimeServedDays": 19,
+        "personId": 3,
+        "sentenceId": "222881257772134",
+        "startDate": 2005-02-12T00:00:00.000Z,
+      },
+    ],
+    "eligibilityDate": 2023-12-01T00:00:00.000Z,
+    "eligibilityDateName": "Transfer Eligibility Date",
+    "gedCompletionDate": 2017-05-23T00:00:00.000Z,
+    "maximumReleaseDate": 2025-10-22T00:00:00.000Z,
+    "noIncarcerationSanctionsWithin12Months": true,
+    "noIncarcerationSanctionsWithin6Months": true,
+    "programAchievement": [
+      {
+        "programAchievementDate": 2024-03-06T00:00:00.000Z,
+        "programEvaluationScore": undefined,
+        "programLocation": "1400758",
+        "programType": "TEG",
+      },
+      {
+        "programAchievementDate": 2019-12-04T00:00:00.000Z,
+        "programEvaluationScore": "PASS",
+        "programLocation": "1400756",
+        "programType": "SM",
+      },
+    ],
+    "stateCode": "US_AR",
+  },
+  "personExternalId": "AR_RES003",
+  "personName": {
+    "givenNames": "Robert",
+    "middleNames": "Terence",
+    "surname": "Bradley",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres003",
+  "recordId": "us_ar_res003",
+  "releaseDate": 2025-07-24T00:00:00.000Z,
+  "stateCode": "US_AR",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AR' 'AR_RES004' 1`] = `
+{
+  "admissionDate": 2021-01-15T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usArInstitutionalWorkerStatus",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES004",
+  "facilityId": "FACILITY1",
+  "gender": "FEMALE",
+  "metadata": {
+    "currentCustodyClassification": "C3",
+    "currentGtEarningClass": "II-P",
+    "currentLocation": "1230457",
+    "currentSentences": [
+      {
+        "endDate": 2017-01-08T00:00:00.000Z,
+        "initialTimeServedDays": 15,
+        "personId": 4,
+        "sentenceId": "555666888889998",
+        "startDate": 2016-04-12T00:00:00.000Z,
+      },
+      {
+        "endDate": 2009-10-22T00:00:00.000Z,
+        "initialTimeServedDays": 20,
+        "personId": 4,
+        "sentenceId": "222881257772133",
+        "startDate": 2006-08-12T00:00:00.000Z,
+      },
+    ],
+    "eligibilityDate": 2024-06-01T00:00:00.000Z,
+    "eligibilityDateName": "Transfer Eligibility Date",
+    "gedCompletionDate": 2018-11-23T00:00:00.000Z,
+    "maximumReleaseDate": 2026-01-15T00:00:00.000Z,
+    "noIncarcerationSanctionsWithin12Months": true,
+    "noIncarcerationSanctionsWithin6Months": true,
+    "programAchievement": [
+      {
+        "programAchievementDate": 2025-09-06T00:00:00.000Z,
+        "programEvaluationScore": undefined,
+        "programLocation": "1400759",
+        "programType": "TEG",
+      },
+      {
+        "programAchievementDate": 2020-06-04T00:00:00.000Z,
+        "programEvaluationScore": "PASS",
+        "programLocation": "1400757",
+        "programType": "SM",
+      },
+    ],
+    "stateCode": "US_AR",
+  },
+  "personExternalId": "AR_RES004",
+  "personName": {
+    "givenNames": "Alice",
+    "middleNames": "Marie",
+    "surname": "Johnson",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres004",
+  "recordId": "us_ar_res004",
+  "releaseDate": 2026-01-15T00:00:00.000Z,
+  "stateCode": "US_AR",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AR' 'AR_RES005' 1`] = `
+{
+  "admissionDate": 2018-11-20T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usArInstitutionalWorkerStatus",
+  ],
+  "custodyLevel": "MAXIMUM",
+  "displayId": "RES005",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "currentCustodyClassification": "C1",
+    "currentGtEarningClass": "III-P",
+    "currentLocation": "1230458",
+    "currentSentences": [
+      {
+        "endDate": 2015-03-08T00:00:00.000Z,
+        "initialTimeServedDays": 10,
+        "personId": 5,
+        "sentenceId": "555666888889997",
+        "startDate": 2014-07-12T00:00:00.000Z,
+      },
+      {
+        "endDate": 2006-07-22T00:00:00.000Z,
+        "initialTimeServedDays": 18,
+        "personId": 5,
+        "sentenceId": "222881257772132",
+        "startDate": 2003-05-12T00:00:00.000Z,
+      },
+    ],
+    "eligibilityDate": 2022-11-01T00:00:00.000Z,
+    "eligibilityDateName": "Parole Eligibility Date",
+    "gedCompletionDate": 2016-02-23T00:00:00.000Z,
+    "maximumReleaseDate": 2024-05-10T00:00:00.000Z,
+    "noIncarcerationSanctionsWithin12Months": true,
+    "noIncarcerationSanctionsWithin6Months": true,
+    "programAchievement": [
+      {
+        "programAchievementDate": 2023-12-06T00:00:00.000Z,
+        "programEvaluationScore": undefined,
+        "programLocation": "1400760",
+        "programType": "TEG",
+      },
+      {
+        "programAchievementDate": 2018-01-04T00:00:00.000Z,
+        "programEvaluationScore": "PASS",
+        "programLocation": "1400755",
+        "programType": "SM",
+      },
+    ],
+    "stateCode": "US_AR",
+  },
+  "personExternalId": "AR_RES005",
+  "personName": {
+    "givenNames": "John",
+    "middleNames": "Edward",
+    "surname": "Smith",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres005",
+  "recordId": "us_ar_res005",
+  "releaseDate": 2024-05-10T00:00:00.000Z,
+  "stateCode": "US_AR",
+  "unitId": "UNIT C",
+}
+`;
+
 exports[`schema for 'US_AZ' 'RES001' 1`] = `
 {
   "admissionDate": 2020-09-15T00:00:00.000Z,
