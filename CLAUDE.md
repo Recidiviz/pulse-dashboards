@@ -62,6 +62,7 @@ Projects can define targets with the `requires-sops-env:` prefix (e.g., `require
 These are automatically wrapped by an inferred delegation target without the prefix.
 
 **Always run the unprefixed target:**
+
 ```bash
 # ✅ Correct - uses sops plugin to load env vars
 nx test @meetings/prisma
@@ -200,11 +201,11 @@ uv run pytest
 
 ### License Headers
 
-When creating new files, use the current year in the license header:
+When creating new files, use the current year as $CURRENT_YEAR in the license header:
 
 ```typescript
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) $CURRENT_YEAR Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
