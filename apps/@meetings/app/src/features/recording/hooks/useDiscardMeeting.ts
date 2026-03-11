@@ -16,11 +16,12 @@
 // =============================================================================
 
 import { useMutation } from "@tanstack/react-query";
-import type { inferRouterInputs } from "@trpc/server";
+import { inferRouterInputs } from "@trpc/server";
 
-import { useSnackbar } from "~@meetings/app/components/Snackbar";
-import { trpc } from "~@meetings/app/trpc/client";
 import type { AppRouter } from "~@meetings/trpc-types";
+
+import { useSnackbar } from "../../../components/Snackbar";
+import { trpc } from "../../../trpc/client";
 
 type Params =
   inferRouterInputs<AppRouter>["v1"]["meeting"]["discardMeeting"] & {

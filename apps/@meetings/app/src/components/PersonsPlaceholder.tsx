@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
+
+import { Typography } from "../shared/ui/Typography";
 
 type Props = {
   message: string;
@@ -29,20 +31,20 @@ const PersonsPlaceholder = ({ message, onClearSearch }: Props) => {
       <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
         <DocumentSearchIcon className="size-14 fill-muted" />
       </View>
-      <Text className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
+      <Typography className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
         {message}
-      </Text>
-      <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+      </Typography>
+      <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
         Try adjusting your search or use different keywords.
-      </Text>
+      </Typography>
       {onClearSearch && (
         <TouchableOpacity
           onPress={onClearSearch}
           className="rounded-full border border-gray-300 px-6 py-3"
         >
-          <Text className="font-inter text-[16px] font-medium text-gray-700">
+          <Typography className="text-[16px] font-medium text-gray-700">
             Clear search
-          </Text>
+          </Typography>
         </TouchableOpacity>
       )}
     </View>

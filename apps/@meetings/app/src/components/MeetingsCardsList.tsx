@@ -17,14 +17,15 @@
 
 import { Link } from "@react-navigation/native";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import ProcessingSvg from "~@meetings/app/assets/icons/processing.svg";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
+import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
+import { Typography } from "../shared/ui/Typography";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
@@ -87,40 +88,40 @@ const MeetingsCardsList = ({
         <Link className="text-[0px]" {...linkProps}>
           <View className="w-full">
             <View className="w-full flex-row items-center justify-between">
-              <Text className="font-inter text-base font-semibold text-primary">
+              <Typography className="text-base font-semibold text-primary">
                 {meeting.date}
-              </Text>
+              </Typography>
               <ChevronRightIcon className="size-3.5 stroke-muted stroke-[3px]" />
             </View>
 
-            <Text className="mr-1 font-inter text-xs font-medium text-primary">
+            <Typography className="mr-1 text-xs font-medium text-primary">
               {meeting.time} • {meeting.duration || "In progress..."}
-            </Text>
+            </Typography>
             {isProcessing ? (
               <View className="mt-4 rounded-xl bg-soft-green/23 p-4">
                 <View className="flex-row items-start">
                   <ProcessingSvg />
 
                   <View className="ml-2 flex-1">
-                    <Text className="font-inter text-base font-semibold text-primary">
+                    <Typography className="text-base font-semibold text-primary">
                       Recording is being processed...
-                    </Text>
-                    <Text className="font-inter text-sm font-medium text-gray-700">
+                    </Typography>
+                    <Typography className="text-sm font-medium text-gray-700">
                       The notes and transcript will become available in a few
                       minutes
-                    </Text>
+                    </Typography>
                   </View>
                 </View>
               </View>
             ) : (
-              <Text
+              <Typography
                 style={{ fontStyle: meeting.content ? "normal" : "italic" }}
-                className="mt-3 border-t border-[#EDF1F1] pt-3 font-inter text-sm font-medium text-gray/85"
+                className="mt-3 border-t border-[#EDF1F1] pt-3 text-sm font-medium text-gray/85"
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >
                 {meeting.content || "Note is empty"}
-              </Text>
+              </Typography>
             )}
           </View>
         </Link>

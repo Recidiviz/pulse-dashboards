@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
+
+import { Typography } from "../shared/ui/Typography";
 
 const MobileMenuTextItem = ({
   title,
@@ -32,12 +34,12 @@ const MobileMenuTextItem = ({
   };
 
   return (
-    <TouchableOpacity onPress={onPress} className="py-3 px-2">
-      <Text
-        className={`font-inter text-lg leading-[22px] font-normal ${colorClasses[color]}`}
+    <TouchableOpacity onPress={onPress} className="px-2 py-3">
+      <Typography
+        className={`text-lg font-normal leading-[22px] ${colorClasses[color]}`}
       >
         {title}
-      </Text>
+      </Typography>
     </TouchableOpacity>
   );
 };

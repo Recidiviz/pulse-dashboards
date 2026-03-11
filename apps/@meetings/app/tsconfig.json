@@ -10,5 +10,11 @@
     "strict": true,
     "moduleSuffixes": ["", ".native", ".web"]
   },
-  "include": ["nativewind-env.d.ts", "src/**/*", "**/*.ts", "**/*.tsx", "svg.d.ts"]
+  "include": [
+    "nativewind-env.d.ts",
+    "src/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "svg.d.ts"
+  ]
 }

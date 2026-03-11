@@ -20,19 +20,18 @@ import React, { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import LogoSvg from "~@meetings/app/assets/icons/logo.svg";
-
+import LogoSvg from "../assets/icons/logo.svg";
 import { LearnMoreModal, LearnMoreSheet } from "../components/LearnMore";
 import PrimaryButton from "../components/PrimaryButton";
 import env from "../env";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
+import { Typography } from "../shared/ui/Typography";
 
 const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
   useSetDocumentTitle("Login - Recidiviz Meetings");
@@ -70,35 +69,33 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
       >
         <View className="w-full max-w-[500px] items-center rounded-3xl bg-white py-12">
           <LogoSvg className="size-60" />
-          <Text className="mb-8 text-center font-libre-baskerville text-[32px] font-bold text-primary">
+          <Typography className="mb-8 text-center font-libre-baskerville text-[32px] font-bold text-primary">
             Sign In to Recidiviz
-          </Text>
+          </Typography>
 
           <PrimaryButton label="Continue" onPress={handleContinue} />
 
           {/* Skip Auth Link for Offline Mode */}
           {env.EXPO_PUBLIC_OFFLINE_MODE && (
             <TouchableOpacity onPress={handleSkipAuth} className="mt-4">
-              <Text className="text-center font-inter text-sm font-medium text-blue-600">
+              <Typography className="text-center text-sm font-medium text-blue-600">
                 Skip Authentication (Offline Mode)
-              </Text>
+              </Typography>
             </TouchableOpacity>
           )}
         </View>
       </KeyboardAvoidingView>
-
       {/* Footer: restricted notice */}
       <View className="mb-6 flex-row items-center justify-center">
-        <Text className="font-inter text-sm text-gray-400">
+        <Typography className="text-sm text-gray-400">
           Restricted to authorized users
-        </Text>
+        </Typography>
         <TouchableOpacity onPress={openSheet}>
-          <Text className="ml-1 font-inter text-sm font-medium text-[#4D5255]">
+          <Typography className="ml-1 text-sm font-medium text-[#4D5255]">
             Learn more
-          </Text>
+          </Typography>
         </TouchableOpacity>
       </View>
-
       <LearnMoreModal
         visible={learnMoreModalVisible}
         onClose={() => setLearnMoreModalVisible(false)}

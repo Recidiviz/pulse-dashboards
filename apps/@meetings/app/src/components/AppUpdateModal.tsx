@@ -16,9 +16,10 @@
 // =============================================================================
 
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { useAppVersionCheck } from "../hooks/useAppVersionCheck";
+import { Typography } from "../shared/ui/Typography";
 import Modal from "./Modal";
 
 const AppUpdateModal = () => {
@@ -40,13 +41,13 @@ const AppUpdateModal = () => {
       containerClassName="w-80"
     >
       <View className="p-6">
-        <Text className="mb-2 text-center font-inter text-xl font-bold text-gray-900">
+        <Typography className="mb-2 text-center text-xl font-bold text-gray-900">
           {title}
-        </Text>
+        </Typography>
 
-        <Text className="mb-6 text-center font-inter text-base text-gray-600">
+        <Typography className="mb-6 text-center text-base text-gray-600">
           {message}
-        </Text>
+        </Typography>
 
         <TouchableOpacity
           onPress={openStore}
@@ -54,9 +55,9 @@ const AppUpdateModal = () => {
           accessibilityRole="button"
           accessibilityLabel="Update app"
         >
-          <Text className="font-inter font-semibold text-white">
+          <Typography className="font-semibold text-white">
             Update Now
-          </Text>
+          </Typography>
         </TouchableOpacity>
 
         {!forceUpgrade && (
@@ -66,7 +67,7 @@ const AppUpdateModal = () => {
             accessibilityRole="button"
             accessibilityLabel="Update later"
           >
-            <Text className="font-inter text-gray-500">Later</Text>
+            <Typography className="text-gray-500">Later</Typography>
           </TouchableOpacity>
         )}
       </View>

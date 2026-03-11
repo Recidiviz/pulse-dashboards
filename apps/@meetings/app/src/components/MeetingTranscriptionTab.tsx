@@ -16,9 +16,10 @@
 // =============================================================================
 
 import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 
+import { Typography } from "../shared/ui/Typography";
 import SearchBar from "./SearchBar";
 
 type Props = {
@@ -54,12 +55,12 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
           <DocumentSearchIcon className="size-10 fill-muted" />
         </View>
         <View className="flex flex-col gap-[14px]">
-          <Text className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-muted">
+          <Typography className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-muted">
             Transcript unavailable
-          </Text>
-          <Text className="text-center font-inter text-sm font-normal text-gray-500">
+          </Typography>
+          <Typography className="text-center text-sm font-normal text-gray-500">
             Transcript unavailable in this state due to legal restrictions.
-          </Text>
+          </Typography>
         </View>
       </View>
     );
@@ -83,16 +84,16 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
       {filteredTranscriptions.map((u) => (
         <View key={u.startTimeMs} className="mt-3 flex flex-col gap-1">
           <View className="flex flex-row gap-2">
-            <Text className="font-inter text-sm font-normal text-[#355362D9]">
+            <Typography className="text-sm font-normal text-gray/85">
               {formatSpeakerStartTime(u.startTimeMs)}
-            </Text>
-            <Text className="font-inter text-sm font-semibold text-[#355362D9]">
+            </Typography>
+            <Typography className="text-sm font-semibold text-gray/85">
               {u.speaker}
-            </Text>
+            </Typography>
           </View>
-          <Text className="font-inter text-sm font-normal text-primary">
+          <Typography className="text-sm font-normal text-primary">
             {u.text}
-          </Text>
+          </Typography>
         </View>
       ))}
     </ScrollView>

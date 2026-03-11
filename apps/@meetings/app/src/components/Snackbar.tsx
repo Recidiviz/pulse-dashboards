@@ -22,13 +22,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Platform, Text, View } from "react-native";
+import { Platform, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 
+import { Typography } from "../shared/ui/Typography";
 interface SnackbarContextType {
   showSnackbar: (text: string, duration?: number) => void;
   isShowing: boolean;
@@ -107,9 +108,9 @@ export const SnackbarProvider = ({ children }: Props) => {
       {isVisible && (
         <Animated.View style={animatedStyle}>
           <View className="rounded-xl bg-[#1D2424] px-9 py-4 shadow-lg">
-            <Text className="text-center font-inter text-sm font-semibold leading-[16px] text-white">
+            <Typography className="text-center text-sm font-semibold leading-[16px] text-white">
               {message}
-            </Text>
+            </Typography>
           </View>
         </Animated.View>
       )}

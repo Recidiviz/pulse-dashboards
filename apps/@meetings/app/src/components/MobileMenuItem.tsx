@@ -17,8 +17,10 @@
 
 import { Link } from "@react-navigation/native";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
+
+import { Typography } from "../shared/ui/Typography";
 
 type MobileMenuItemProps = {
   icon: React.ElementType;
@@ -40,14 +42,14 @@ const MobileMenuItem = ({
       <View className="w-full flex-row items-center justify-between">
         <View className="flex-row items-center gap-3">
           <IconComponent className="size-6 fill-muted" />
-          <Text className="font-inter text-base font-medium color-black">
+          <Typography className="text-base font-medium color-black">
             {title}
-          </Text>
+          </Typography>
           {badge ? (
             <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-gray-600">
-              <Text className="text-center font-inter text-xs font-medium text-white">
+              <Typography className="text-center text-xs font-medium text-white">
                 {badge}
-              </Text>
+              </Typography>
             </View>
           ) : null}
         </View>

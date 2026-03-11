@@ -17,10 +17,12 @@
 
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import BellIcon from "react-native-heroicons/solid/BellIcon";
 import ChevronLeftIcon from "react-native-heroicons/solid/ChevronLeftIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { Typography } from "../shared/ui/Typography";
 
 interface NewMeetingHeaderProps {
   isMeetingActive: boolean;
@@ -46,9 +48,9 @@ const NewMeetingHeader: React.FC<NewMeetingHeaderProps> = ({
     if (isMeetingActive) {
       return (
         <TouchableOpacity onPress={onDiscard}>
-          <Text className="font-inter text-base font-semibold text-[#B42D2D]">
+          <Typography className="text-base font-semibold text-[#B42D2D]">
             Discard
-          </Text>
+          </Typography>
         </TouchableOpacity>
       );
     } else {
@@ -66,9 +68,9 @@ const NewMeetingHeader: React.FC<NewMeetingHeaderProps> = ({
         <TouchableOpacity onPress={handleGoBack}>
           <ChevronLeftIcon className="size-6 fill-muted" />
         </TouchableOpacity>
-        <Text className="font-inter text-base font-semibold text-primary">
+        <Typography className="text-base font-semibold text-primary">
           {isMeetingActive ? "Meeting in Progress" : "New Meeting"}
-        </Text>
+        </Typography>
         {renderHeaderRightButton()}
       </View>
     </SafeAreaView>

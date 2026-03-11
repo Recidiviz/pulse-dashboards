@@ -18,7 +18,7 @@
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 
-import { getItem, saveItem } from "~@meetings/app/utils/storage";
+import { getItem, saveItem } from "../../../utils/storage";
 
 export function useNote() {
   const [note, setNote] = useState("");

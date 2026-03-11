@@ -18,7 +18,7 @@
 import * as FileSystem from "expo-file-system/legacy";
 import { Platform } from "react-native";
 
-import { trpc } from "~@meetings/app/trpc/client";
+import { trpc } from "../../../trpc/client";
 
 type Params = {
   uri: string;

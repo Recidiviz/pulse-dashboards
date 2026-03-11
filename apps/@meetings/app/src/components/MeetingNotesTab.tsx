@@ -16,13 +16,14 @@
 // =============================================================================
 
 import { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
 import type { MinuteSection } from "~@meetings/trpc-types";
 
 import { MeetingDetails } from "../common/types";
+import { Typography } from "../shared/ui/Typography";
 import { trpc } from "../trpc/client";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";
 import { useSnackbar } from "./Snackbar";
@@ -41,9 +42,9 @@ const SectionContainer = ({
   children: React.ReactNode;
 }) => (
   <View className="flex flex-col gap-2">
-    <Text className="font-inter text-base font-semibold text-primary">
+    <Typography className="text-base font-semibold text-primary">
       {title}
-    </Text>
+    </Typography>
     {children}
   </View>
 );
@@ -63,7 +64,7 @@ const ListEditor = ({ isEditing, values, setValues }: ListEditorProps) => {
   };
 
   // Shared font styles to ensure perfect alignment between Input and Mirror
-  const fontStyles = "font-inter text-base leading-[22px]";
+  const fontStyles = "text-base leading-[22px]";
 
   const mirrorValues = values.length > 0 ? values : [""];
 
@@ -75,18 +76,21 @@ const ListEditor = ({ isEditing, values, setValues }: ListEditorProps) => {
           {values.length > 0 ? (
             values.map((item, index) => (
               <View key={index} className="flex-row">
-                <Text className={`mr-2 text-[#9AA6AC] ${fontStyles}`}>•</Text>
-                <Text className={`text-primary ${fontStyles}`}>{item}</Text>
+                <Typography className={`mr-2 text-[#9AA6AC] ${fontStyles}`}>
+                  •
+                </Typography>
+                <Typography className={`text-primary ${fontStyles}`}>
+                  {item}
+                </Typography>
               </View>
             ))
           ) : (
-            <Text className={`py-1 text-primary ${fontStyles}`}>
+            <Typography className={`py-1 text-primary ${fontStyles}`}>
               No data for this meeting.
-            </Text>
+            </Typography>
           )}
         </View>
       )}
-
       {/* EDITING VIEW */}
       {isEditing && (
         <View className="relative w-full rounded-lg border border-[#35536233] bg-[#F4F5F5] focus-within:border-[#00665F] focus-within:outline focus-within:outline-2 focus-within:outline-[#00665F33]">
@@ -96,12 +100,14 @@ const ListEditor = ({ isEditing, values, setValues }: ListEditorProps) => {
           <View className="pointer-events-none absolute inset-0 select-none px-2 py-1">
             {mirrorValues.map((line, index) => (
               <View key={index} className="flex-row">
-                <Text className={`mr-2 text-[#9AA6AC] ${fontStyles}`}>•</Text>
+                <Typography className={`mr-2 text-[#9AA6AC] ${fontStyles}`}>
+                  •
+                </Typography>
                 {/* The Ghost Text - Ensures layout matches the Input exactly */}
-                <Text className={`invisible ${fontStyles}`}>
+                <Typography className={`invisible ${fontStyles}`}>
                   {/* Zero-width space ensures empty lines still have height */}
                   {line || "\u200B"}
-                </Text>
+                </Typography>
               </View>
             ))}
           </View>
@@ -126,9 +132,9 @@ const ListEditor = ({ isEditing, values, setValues }: ListEditorProps) => {
 const MeetingMinutesList = ({ sections }: { sections: MinuteSection[] }) => {
   if (sections.length === 0) {
     return (
-      <Text className="font-inter text-base leading-[22px] text-primary">
+      <Typography className="text-base leading-[22px] text-primary">
         No summary for this meeting.
-      </Text>
+      </Typography>
     );
   }
 
@@ -137,25 +143,25 @@ const MeetingMinutesList = ({ sections }: { sections: MinuteSection[] }) => {
       {sections.map((section, sectionIndex) => (
         <View key={sectionIndex}>
           <View className="flex flex-col gap-2 py-3">
-            <Text className="font-inter text-base font-semibold text-primary">
+            <Typography className="text-base font-semibold text-primary">
               {section.title}
-            </Text>
+            </Typography>
             <View className="flex flex-col gap-2">
               {section.items.map((item, itemIndex) => (
                 <View key={itemIndex} className="flex flex-row gap-2">
                   {item.timestamp && (
-                    <Text className="font-inter text-sm text-[#355362]">
+                    <Typography className="text-sm text-[#355362]">
                       {item.timestamp}
-                    </Text>
+                    </Typography>
                   )}
                   <View className="flex-1 flex-col gap-1">
-                    <Text className="font-inter text-base leading-[22px] text-primary">
+                    <Typography className="text-base leading-[22px] text-primary">
                       {item.content}
-                    </Text>
+                    </Typography>
                     {item.status !== "Discussed" && (
-                      <Text className="font-inter text-xs font-medium text-[#00665F]">
+                      <Typography className="text-xs font-medium text-[#00665F]">
                         {item.status}
-                      </Text>
+                      </Typography>
                     )}
                   </View>
                 </View>
@@ -197,17 +203,17 @@ const MeetingNotesControls = ({
               className="flex-row items-center gap-2 rounded-full border border-[#35536233] px-5 py-3"
               onPress={onCancelEdit}
             >
-              <Text className="text-left font-inter text-base font-semibold text-primary">
+              <Typography className="text-left text-base font-semibold text-primary">
                 Cancel
-              </Text>
+              </Typography>
             </TouchableOpacity>
             <TouchableOpacity
               className="flex-row items-center gap-2 rounded-full bg-[#006C67] px-5 py-3"
               onPress={onSave}
             >
-              <Text className="text-left font-inter text-base font-semibold text-white">
+              <Typography className="text-left text-base font-semibold text-white">
                 Save Changes
-              </Text>
+              </Typography>
             </TouchableOpacity>
           </View>
         ) : (
@@ -217,18 +223,18 @@ const MeetingNotesControls = ({
               onPress={onStartEdit}
             >
               <PencilIcon className="size-4 fill-muted stroke-[3px]" />
-              <Text className="text-left font-inter text-base text-primary">
+              <Typography className="text-left text-base text-primary">
                 Edit Notes
-              </Text>
+              </Typography>
             </TouchableOpacity>
             <TouchableOpacity
               className="hidden flex-row items-center gap-2 lg:flex"
               onPress={onCopyNotes}
             >
               <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
-              <Text className="text-left font-inter text-base text-primary">
+              <Typography className="text-left text-base text-primary">
                 Copy
-              </Text>
+              </Typography>
             </TouchableOpacity>
           </View>
         )}
@@ -238,9 +244,9 @@ const MeetingNotesControls = ({
         onPress={onMeetingNotesSheetOpen}
       >
         <PencilIcon className="size-4 fill-muted stroke-[3px]" />
-        <Text className="text-left font-inter text-base text-primary">
+        <Typography className="text-left text-base text-primary">
           Edit Notes
-        </Text>
+        </Typography>
       </TouchableOpacity>
     </>
   );
@@ -309,12 +315,11 @@ const MeetingNotesTab = ({
   return (
     <View className="flex-1 gap-6 pb-4">
       <SectionContainer title="Notes">
-        <Text className="font-inter text-base leading-[22px] text-primary">
+        <Typography className="text-base leading-[22px] text-primary">
           {meetingDetails.userNotepadNotes ??
             "No notes taken for this meeting."}
-        </Text>
+        </Typography>
       </SectionContainer>
-
       <SectionContainer title="Action Items">
         <ListEditor
           isEditing={isEditing}
@@ -322,7 +327,6 @@ const MeetingNotesTab = ({
           setValues={setActionItems}
         />
       </SectionContainer>
-
       <SectionContainer title="Critical Updates">
         <ListEditor
           isEditing={isEditing}
@@ -330,12 +334,10 @@ const MeetingNotesTab = ({
           setValues={setCriticalUpdates}
         />
       </SectionContainer>
-
       <SectionContainer title="Meeting Summary">
         {/* TODO: edit meeting summary after we agree about the structure */}
         <MeetingMinutesList sections={meetingDetails.meetingSummary ?? []} />
       </SectionContainer>
-
       <MeetingNotesControls
         isEditing={isEditing}
         onSave={onSave}

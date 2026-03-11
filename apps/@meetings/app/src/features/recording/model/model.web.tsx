@@ -17,8 +17,7 @@
 
 import { createContext } from "react";
 
-import { Person } from "~@meetings/app/common/types";
-
+import { Person } from "../../../common/types";
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";

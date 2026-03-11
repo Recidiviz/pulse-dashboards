@@ -21,7 +21,6 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -35,6 +34,7 @@ import {
 } from "../context/StateContext";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Typography } from "../shared/ui/Typography";
 import { trpc } from "../trpc/client";
 
 type StateSelectionNavProp = NativeStackNavigationProp<RootStackParamList>;
@@ -65,12 +65,12 @@ const StateSelectionScreen = () => {
       <Header showBell={false} />
       <ScrollView className="flex-1 px-4 py-6 md:px-10">
         <View className="mx-auto w-full max-w-2xl">
-          <Text className="font-libre mb-2 text-3xl font-bold text-gray-900">
+          <Typography className="mb-2 font-libre-baskerville text-3xl font-bold text-gray-900">
             Select State
-          </Text>
-          <Text className="mb-6 font-inter text-base text-gray-600">
+          </Typography>
+          <Typography className="mb-6 text-base text-gray-600">
             Choose which state's data you want to view
-          </Text>
+          </Typography>
 
           <View className="rounded-lg bg-white p-4 shadow-sm">
             {AVAILABLE_STATE_CODES.map((stateCodeOption, index) => (
@@ -81,19 +81,19 @@ const StateSelectionScreen = () => {
                   className="flex-row items-center justify-between py-4"
                 >
                   <View className="flex-1">
-                    <Text className="font-inter text-lg text-gray-900">
+                    <Typography className="text-lg text-gray-900">
                       {stateCodeOption.name}
-                    </Text>
-                    <Text className="font-inter text-sm text-gray-500">
+                    </Typography>
+                    <Typography className="text-sm text-gray-500">
                       {stateCodeOption.code}
-                    </Text>
+                    </Typography>
                   </View>
                   <View className="flex-row items-center gap-x-3">
                     {selectedStateCode === stateCodeOption.code && (
                       <View className="rounded-full bg-blue-600 px-3 py-1">
-                        <Text className="font-inter text-xs text-white">
+                        <Typography className="text-xs text-white">
                           Current
-                        </Text>
+                        </Typography>
                       </View>
                     )}
                     {isSaving ? (
@@ -114,13 +114,13 @@ const StateSelectionScreen = () => {
             ))}
           </View>
 
-          <Text className="mt-4 font-inter text-sm text-gray-500">
+          <Typography className="mt-4 text-sm text-gray-500">
             Currently viewing data for{" "}
             {
               AVAILABLE_STATE_CODES.find((s) => s.code === selectedStateCode)
                 ?.name
             }
-          </Text>
+          </Typography>
         </View>
       </ScrollView>
     </SafeAreaView>

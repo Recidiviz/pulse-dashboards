@@ -16,7 +16,9 @@
 // =============================================================================
 
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
+
+import { Typography } from "../shared/ui/Typography";
 
 interface PrimaryButtonProps {
   label: string;
@@ -37,13 +39,13 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         disabled ? "bg-gray-300" : "bg-[#006C67]"
       }`}
     >
-      <Text
-        className={`text-center font-inter font-semibold ${
+      <Typography
+        className={`text-center font-semibold ${
           disabled ? "text-gray-600" : "text-white"
         }`}
       >
         {label}
-      </Text>
+      </Typography>
     </TouchableOpacity>
   );
 };

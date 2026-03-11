@@ -21,19 +21,18 @@ import {
   ActivityIndicator,
   Modal,
   Platform,
-  Text,
   TextInput,
   View,
 } from "react-native";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 
-import NotesSvg from "~@meetings/app/assets/icons/notes.svg";
-
+import NotesSvg from "../assets/icons/notes.svg";
 import { Person } from "../common/types";
 import MeetingSheet from "../components/MeetingSheet";
 import RecordingControls from "../components/RecordingControls";
 import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Typography } from "../shared/ui/Typography";
 import { humanReadableTitleCase } from "../utils/format";
 import NewMeetingHeader from "./NewMeetingHeader";
 
@@ -86,9 +85,9 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
     return (
       <View className="flex-1 flex-row items-center justify-center bg-white">
         <ActivityIndicator size="small" color="text-primary" />
-        <Text className="p-4 font-inter text-lg font-medium text-primary">
+        <Typography className="p-4 text-lg font-medium text-primary">
           Meeting ending...
-        </Text>
+        </Typography>
       </View>
     );
   }
@@ -102,14 +101,14 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
         <MicrophoneIcon className="size-8 text-[#35536233]" />
       </View>
 
-      <Text className="mb-2 text-center font-inter text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
+      <Typography className="mb-2 text-center text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
         Meeting Recording
-      </Text>
+      </Typography>
 
-      <Text className="px-4 text-center font-inter text-sm font-normal leading-5 tracking-[-0.02em] text-gray-500">
+      <Typography className="px-4 text-center text-sm font-normal leading-5 tracking-[-0.02em] text-gray-500">
         This meeting will be recorded and transcribed for note-taking. Be sure
         to confirm that everyone present is aware and has agreed to recording.
-      </Text>
+      </Typography>
     </View>
   );
 
@@ -117,9 +116,9 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
     <View className="mt-6">
       <View className="mb-2 flex-row items-center">
         <NotesSvg className="size-5 text-[#9AA9B1]" />
-        <Text className="ml-2 font-inter text-lg font-semibold text-primary">
+        <Typography className="ml-2 text-lg font-semibold text-primary">
           Notepad
-        </Text>
+        </Typography>
       </View>
 
       <TextInput
@@ -141,19 +140,17 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
         onDiscard={() => discardRecording()}
         onFinalDiscard={() => handleFinalDiscard(onComplete)}
       />
-
       <View className="flex-1 px-6">
         {isMeetingActive ? RecordingNotes : RecordingIntro}
       </View>
-
       <View className="rounded-t-2xl bg-gray-100 px-6 py-12">
-        <Text className="text-center font-inter text-base font-semibold text-primary">
+        <Typography className="text-center text-base font-semibold text-primary">
           {person.fullName}
-        </Text>
-        <Text className="mb-4 text-center font-inter text-sm text-gray-600">
+        </Typography>
+        <Typography className="mb-4 text-center text-sm text-gray-600">
           ID: {person.displayPersonExternalId} •{" "}
           {humanReadableTitleCase(person.primaryMetadata)}
-        </Text>
+        </Typography>
         <RecordingControls
           status={status}
           onStart={startRecording}
@@ -162,7 +159,6 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
           durationMs={durationMs}
         />
       </View>
-
       <Modal
         visible={
           ["stopping", "discarding"].includes(status) && Platform.OS !== "web"

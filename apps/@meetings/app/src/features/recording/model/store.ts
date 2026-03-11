@@ -21,8 +21,7 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { Person } from "~@meetings/app/common/types";
-
+import { Person } from "../../../common/types";
 import { Status } from "./types";
 
 // TODO(#11571):

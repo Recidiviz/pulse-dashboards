@@ -15,17 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import MaximizeSvg from "~@meetings/app/assets/icons/arrows-poin-outting-in.svg";
-import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
-import PlaySvg from "~@meetings/app/assets/icons/play.svg";
-import StopSvg from "~@meetings/app/assets/icons/stop.svg";
-import { Person } from "~@meetings/app/common/types";
-import LinearProgressBar from "~@meetings/app/components/LinearProgressBar";
-import { formatDurationNumeric } from "~@meetings/app/utils/format";
-
+import MaximizeSvg from "../../../assets/icons/arrows-poin-outting-in.svg";
+import PauseSvg from "../../../assets/icons/pause.svg";
+import PlaySvg from "../../../assets/icons/play.svg";
+import StopSvg from "../../../assets/icons/stop.svg";
+import { Person } from "../../../common/types";
+import LinearProgressBar from "../../../components/LinearProgressBar";
+import { Typography } from "../../../shared/ui/Typography";
+import { formatDurationNumeric } from "../../../utils/format";
 import { useRecording } from "../model";
 
 type Props = {
@@ -51,9 +51,9 @@ export function MeetingMinimizedModal({
     <View className="absolute bottom-5 right-5 h-[150px] w-[360px] overflow-hidden rounded-[20px] bg-white shadow-lg">
       <View className="grow p-5">
         <View className="mb-1 w-full flex-row justify-between">
-          <Text className="font-inter text-lg font-medium text-primary">
+          <Typography className="text-lg font-medium text-primary">
             {person.fullName}
-          </Text>
+          </Typography>
           <TouchableOpacity
             className="relative -right-1 -top-1"
             onPress={() => setIsRecordingViewMinimized(false)}
@@ -65,12 +65,12 @@ export function MeetingMinimizedModal({
           {status === "recording" && (
             <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
           )}
-          <Text className="font-inter font-medium text-primary">
+          <Typography className="font-medium text-primary">
             {status === "recording" ? "Recording in progress" : "Paused"}
-          </Text>
-          <Text className="font-inter font-semibold text-[#9AA6AC]">
+          </Typography>
+          <Typography className="font-semibold text-[#9AA6AC]">
             {formatDurationNumeric(durationMs)}
-          </Text>
+          </Typography>
         </View>
         <View className="mt-auto w-full flex-row justify-around">
           {status === "recording" ? (
@@ -80,9 +80,9 @@ export function MeetingMinimizedModal({
               disabled={isControlsDisabled}
             >
               <PauseSvg className="size-6 fill-primary" />
-              <Text className="ml-2 font-inter text-base font-semibold text-primary">
+              <Typography className="ml-2 text-base font-semibold text-primary">
                 Pause
-              </Text>
+              </Typography>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -91,9 +91,9 @@ export function MeetingMinimizedModal({
               disabled={isControlsDisabled}
             >
               <PlaySvg className="size-4 fill-[#EDF1F1]" />
-              <Text className="ml-2 font-inter text-base font-semibold text-white">
+              <Typography className="ml-2 text-base font-semibold text-white">
                 Resume
-              </Text>
+              </Typography>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -102,9 +102,9 @@ export function MeetingMinimizedModal({
             disabled={isControlsDisabled}
           >
             <StopSvg className="size-6 fill-[#FFEAE5]" />
-            <Text className="ml-2 font-inter text-base font-semibold text-white">
+            <Typography className="ml-2 text-base font-semibold text-white">
               Stop
-            </Text>
+            </Typography>
           </TouchableOpacity>
           <TouchableOpacity
             className="size-[44px] items-center justify-center rounded-full bg-[#E6EAEB] aria-disabled:opacity-40"

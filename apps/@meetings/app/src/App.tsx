@@ -23,8 +23,7 @@ import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import config from "~@meetings/app/auth0-config";
-
+import config from "./auth0-config";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 import { SnackbarProvider } from "./components/Snackbar";
 import env from "./env";

@@ -16,9 +16,11 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
+
+import { Typography } from "../shared/ui/Typography";
 
 type DropdownProps = {
   options: string[];
@@ -43,21 +45,21 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
         onPress={() => setOpen((p) => !p)}
       >
         {label && (
-          <Text className="font-inter text-sm text-gray/85 md:text-base">
+          <Typography className="text-sm text-gray/85 md:text-base">
             {label}:
-          </Text>
+          </Typography>
         )}
 
         <View
-          className="flex-row items-center justify-end rounded-md  bg-gray-100"
+          className="flex-row items-center justify-end rounded-md bg-gray-100"
           // onPress={() => setOpen((p) => !p)}
         >
-          <Text
-            className="px-1 font-inter text-sm text-[#004D48] md:text-base md:font-medium"
+          <Typography
+            className="px-1 text-sm text-[#004D48] md:text-base md:font-medium"
             numberOfLines={1}
           >
             {selected}
-          </Text>
+          </Typography>
           {open ? (
             <ChevronUpIcon className="size-4 stroke-[#004D48] stroke-[3px]" />
           ) : (
@@ -65,7 +67,6 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
           )}
         </View>
       </TouchableOpacity>
-
       {open && (
         <View
           className="absolute top-7 z-50 w-full rounded-lg border border-[#EDF1F1] bg-white p-1"
@@ -84,9 +85,9 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
                 className="group rounded p-2.5 hover:bg-[#F4F5F5]"
                 onPress={() => handleSelect(opt)}
               >
-                <Text className="whitespace-nowrap font-inter text-sm font-medium text-gray/85 group-hover:text-[#004D48]">
+                <Typography className="whitespace-nowrap text-sm font-medium text-gray/85 group-hover:text-[#004D48]">
                   {opt}
-                </Text>
+                </Typography>
               </TouchableOpacity>
             ))}
           </ScrollView>

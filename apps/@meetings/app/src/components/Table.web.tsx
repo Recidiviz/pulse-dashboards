@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, View } from "react-native";
+import { View } from "react-native";
+
+import { Typography } from "../shared/ui/Typography";
 
 export const TABLE_HEAD_CELL_HEIGHT = 44;
 export const TABLE_CELL_HEIGHT = 72;
@@ -74,9 +76,9 @@ export const TableHeadCell = ({
       className={`px-1 first:pl-7 last:pr-7 ${className}`}
       style={{ height: TABLE_HEAD_CELL_HEIGHT }}
     >
-      <Text className="inline-block w-full py-3 text-left font-inter text-sm font-medium text-gray/85">
+      <Typography className="inline-block w-full py-3 text-left text-sm font-medium text-gray/85">
         {children}
-      </Text>
+      </Typography>
     </th>
   );
 };
@@ -120,11 +122,11 @@ export const TableCell = ({
       style={{ height: TABLE_CELL_HEIGHT }}
     >
       <View className="h-full justify-center border-t border-gray/15 p-0 group-hover:border-transparent">
-        <View className=" h-full justify-center px-1 group-hover:bg-[#3553620A]">
+        <View className="h-full justify-center px-1 group-hover:bg-[#3553620A]">
           {typeof children === "string" ? (
-            <Text className="font-inter text-base text-gray/85">
+            <Typography className="text-base text-gray/85">
               {children}
-            </Text>
+            </Typography>
           ) : (
             children
           )}

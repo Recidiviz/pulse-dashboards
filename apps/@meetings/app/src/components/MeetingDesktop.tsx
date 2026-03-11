@@ -22,7 +22,6 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -32,8 +31,7 @@ import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
-import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
-
+import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { MeetingDetails, Person, PersonType } from "../common/types";
 import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
@@ -41,6 +39,7 @@ import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
 import { usePrintMeetingDetails } from "../hooks/usePrintMeetingDetails";
 import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
+import { Typography } from "../shared/ui/Typography";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
@@ -86,14 +85,13 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
   return (
     <>
       <View>
-        <Text className="font-inter text-xs font-semibold text-gray/85">
+        <Typography className="text-xs font-semibold text-gray/85">
           Draft case note
-        </Text>
+        </Typography>
       </View>
-
       <Pressable onPress={() => setIsEditable(true)}>
         <TextInput
-          className={`no-scrollbar rounded-lg border border-transparent px-1.5 py-0.5 font-inter text-sm font-normal text-primary outline-2 outline-[#00665F33] hover:bg-[#F4F5F5] focus:border-[#00665F] focus:bg-[#F4F5F5] focus:outline ${isEditable ? "" : "cursor-pointer"}`}
+          className={`no-scrollbar rounded-lg border border-transparent px-1.5 py-0.5 text-sm font-normal text-primary outline-2 outline-[#00665F33] hover:bg-[#F4F5F5] focus:border-[#00665F] focus:bg-[#F4F5F5] focus:outline ${isEditable ? "" : "cursor-pointer"}`}
           placeholder="Type your notes here..."
           value={inputNotes}
           onChangeText={setInputNotes}
@@ -105,17 +103,17 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
       {isEditable ? (
         <View className="flex-row items-center justify-end gap-5">
           <TouchableOpacity onPress={handleCancelNotesEdit}>
-            <Text className="font-inter text-sm font-medium text-primary">
+            <Typography className="text-sm font-medium text-primary">
               Cancel
-            </Text>
+            </Typography>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleSaveNotes}
             className="rounded-full bg-primary px-3 py-2"
           >
-            <Text className="font-inter text-sm font-semibold text-white">
+            <Typography className="text-sm font-semibold text-white">
               Save Changes
-            </Text>
+            </Typography>
           </TouchableOpacity>
         </View>
       ) : (
@@ -125,9 +123,9 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
           className="flex-row items-center gap-1"
         >
           <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
-          <Text className="font-inter text-sm font-medium text-primary">
+          <Typography className="text-sm font-medium text-primary">
             Copy
-          </Text>
+          </Typography>
         </TouchableOpacity>
       )}
     </>
@@ -180,7 +178,9 @@ const MeetingDesktop = ({
             params={{ personId: person.personId.toString() }}
           >
             <ChevronLeftIcon className="size-3 stroke-muted stroke-[3px]" />
-            <Text className="text-sm font-medium text-gray/85">Back</Text>
+            <Typography className="text-sm font-medium text-gray/85">
+              Back
+            </Typography>
           </Link>
 
           <View className="flex-row items-center gap-3 border-b border-gray/15 px-10 py-6">
@@ -189,33 +189,33 @@ const MeetingDesktop = ({
               className="size-12 items-center justify-center overflow-hidden rounded-full"
               imageClassName="!size-full"
             >
-              <Text className="font-inter text-lg text-white">
+              <Typography className="text-lg text-white">
                 {getInitials(person.fullName)}
-              </Text>
+              </Typography>
             </ImageBackground>
             <View>
-              <Text className="font-libre-baskerville text-lg font-bold text-primary">
+              <Typography className="font-libre-baskerville text-lg font-bold text-primary">
                 {person.fullName}{" "}
-                <Text className="font-inter text-sm font-semibold text-[#8BB1BA]">
+                <Typography className="text-sm font-semibold text-[#8BB1BA]">
                   ID: {person.displayPersonExternalId}
-                </Text>
-              </Text>
-              <Text className="font-inter text-sm text-[#2B5469B2]">
+                </Typography>
+              </Typography>
+              <Typography className="text-sm text-[#2B5469B2]">
                 {humanReadableTitleCase(person.primaryMetadata)}
-              </Text>
+              </Typography>
             </View>
           </View>
 
           <View className="gap-3 border-b border-gray/15 px-10 py-6">
-            <Text className="font-inter text-xl font-semibold leading-[24px] text-primary">
+            <Typography className="text-xl font-semibold leading-[24px] text-primary">
               Meeting: {meetingDate}
-            </Text>
+            </Typography>
             <View className="flex flex-row items-center gap-1">
               <ClockIcon className="size-3 stroke-muted stroke-[3px]" />
-              <Text className="font-inter text-sm font-normal leading-[14px] text-gray-500">
+              <Typography className="text-sm font-normal leading-[14px] text-gray-500">
                 {time}
                 {duration ? ` • ${duration}` : ""}
-              </Text>
+              </Typography>
             </View>
           </View>
 
@@ -243,9 +243,9 @@ const MeetingDesktop = ({
                 className="flex-row items-center gap-1.5 rounded-full border border-[#35536233] px-4 py-3"
               >
                 <PrinterIcon className="size-4 fill-muted" />
-                <Text className="font-inter text-sm font-medium text-primary">
+                <Typography className="text-sm font-medium text-primary">
                   Print
-                </Text>
+                </Typography>
               </TouchableOpacity>
             </View>
           </View>

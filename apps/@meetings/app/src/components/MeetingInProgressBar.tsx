@@ -16,14 +16,14 @@
 // =============================================================================
 
 import React from "react";
-import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Platform, TouchableOpacity, View } from "react-native";
 
-import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
-import PlaySvg from "~@meetings/app/assets/icons/play.svg";
-import StopSvg from "~@meetings/app/assets/icons/stop.svg";
-
+import PauseSvg from "../assets/icons/pause.svg";
+import PlaySvg from "../assets/icons/play.svg";
+import StopSvg from "../assets/icons/stop.svg";
 import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
+import { Typography } from "../shared/ui/Typography";
 import MeetingSheet from "./MeetingSheet";
 
 type MeetingInProgressBarProps = {
@@ -68,14 +68,13 @@ const MeetingInProgressBar = ({
       className={`flex-row items-center justify-between rounded-xl bg-[#F4F5F5] p-3 ${className}`}
     >
       <View>
-        <Text className="font-inter text-[13px] font-medium text-gray-700">
+        <Typography className="text-[13px] font-medium text-gray-700">
           Meeting in progress
-        </Text>
-        <Text className="mt-1 font-inter text-[12px] text-gray-600">
+        </Typography>
+        <Typography className="mt-1 text-[12px] text-gray-600">
           {formatDuration(durationMs)}
-        </Text>
+        </Typography>
       </View>
-
       <View className="flex-row items-center space-x-2">
         <TouchableOpacity
           className="rounded-full px-3 py-2"
@@ -90,9 +89,9 @@ const MeetingInProgressBar = ({
             ) : (
               <PauseSvg className="size-4 fill-[#EDF1F1]" />
             )}
-            <Text className="ml-1.5 font-inter text-[13px] font-semibold text-white">
+            <Typography className="ml-1.5 text-[13px] font-semibold text-white">
               {isPaused ? "Resume" : "Pause"}
-            </Text>
+            </Typography>
           </View>
         </TouchableOpacity>
 
@@ -103,7 +102,6 @@ const MeetingInProgressBar = ({
           <StopSvg className="size-4 fill-[#FFEAE5]" />
         </TouchableOpacity>
       </View>
-
       <Modal
         visible={
           ["stopping", "discarding"].includes(recordingState) &&

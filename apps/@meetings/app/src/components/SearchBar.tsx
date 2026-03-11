@@ -16,9 +16,11 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from "react-native-heroicons/outline/ArrowLeftIcon";
 import SearchIcon from "react-native-heroicons/outline/SearchIcon";
+
+import { Typography } from "../shared/ui/Typography";
 
 interface SearchBarProps {
   value: string;
@@ -48,9 +50,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <SearchIcon className="size-4 stroke-[#9AA9B1]" />
         )}
       </TouchableOpacity>
-
       <TextInput
-        className="mx-2 h-10 flex-1 font-inter text-sm text-black outline-none"
+        className="mx-2 h-10 flex-1 text-sm text-black outline-none"
         placeholder={placeholder}
         placeholderTextColor="#999"
         value={value}
@@ -58,13 +59,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
-
       {value?.length > 0 && (
         <TouchableOpacity onPress={() => onChange("")}>
           <View className="flex size-4 items-center justify-center rounded-full bg-[#9AA9B1]">
-            <Text className="font-inter text-[8px] font-extrabold leading-[8px] text-white">
+            <Typography className="text-[8px] font-extrabold leading-[8px] text-white">
               ✕
-            </Text>
+            </Typography>
           </View>
         </TouchableOpacity>
       )}

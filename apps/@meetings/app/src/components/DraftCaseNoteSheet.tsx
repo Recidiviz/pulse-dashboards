@@ -26,7 +26,6 @@ import { RefObject, useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
   Platform,
-  Text,
   TextInput as RNTextInput,
   TouchableOpacity,
   View,
@@ -36,6 +35,7 @@ import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplic
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
+import { Typography } from "../shared/ui/Typography";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
 import { useSnackbar } from "./Snackbar";
 
@@ -136,17 +136,17 @@ const DraftCaseNoteSheet = ({
                 onPress={handleClose}
                 className="flex flex-1 items-center justify-center rounded-[32px] border border-[#35536233] py-[17px]"
               >
-                <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
+                <Typography className="text-lg font-semibold leading-[22px] text-primary">
                   CANCEL
-                </Text>
+                </Typography>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleSave}
                 className="flex flex-1 items-center justify-center rounded-[32px] bg-[#00665F] py-[17px]"
               >
-                <Text className="font-inter text-lg font-semibold leading-[22px] text-white">
+                <Typography className="text-lg font-semibold leading-[22px] text-white">
                   SAVE CHANGES
-                </Text>
+                </Typography>
               </TouchableOpacity>
             </View>
           </BottomSheetFooter>
@@ -159,13 +159,13 @@ const DraftCaseNoteSheet = ({
             <ChevronLeftIcon className="size-5 text-muted" />
           </TouchableOpacity>
           <View className="flex flex-col items-center">
-            <Text className="font-inter text-lg font-semibold leading-[22px]">
+            <Typography className="text-lg font-semibold leading-[22px]">
               Edit draft case note
-            </Text>
-            <Text className="font-inter text-sm leading-[16px] text-gray-500">
+            </Typography>
+            <Typography className="text-sm leading-[16px] text-gray-500">
               {clientName} • Meeting{" "}
               {meetingDate ? formatDraftCaseNoteMeetingDate(meetingDate) : ""}
-            </Text>
+            </Typography>
           </View>
           <TouchableOpacity
             onPress={handleCopyNotes}

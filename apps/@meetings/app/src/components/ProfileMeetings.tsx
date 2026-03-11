@@ -24,7 +24,6 @@ import {
   NativeSyntheticEvent,
   Platform,
   ScrollView,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -48,6 +47,7 @@ import MeetingsCardsList from "../components/MeetingsCardsList";
 import MeetingsTable from "../components/MeetingsTable.web";
 import SearchBar from "../components/SearchBar";
 import { useRecording } from "../features/recording";
+import { Typography } from "../shared/ui/Typography";
 import { humanReadableTitleCase } from "../utils/format";
 
 enum MeetingsSort {
@@ -177,9 +177,9 @@ const ProfileMeetings = ({
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <Text className="font-inter text-base text-gray-700">
+        <Typography className="text-base text-gray-700">
           Loading meetings...
-        </Text>
+        </Typography>
       </View>
     );
   }
@@ -195,12 +195,12 @@ const ProfileMeetings = ({
           <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
             <DocumentSearchIcon className="size-14 fill-muted" />
           </View>
-          <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
+          <Typography className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings yet
-          </Text>
-          <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+          </Typography>
+          <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
             Create a new meeting when you’re ready.
-          </Text>
+          </Typography>
         </View>
       );
     }
@@ -210,19 +210,19 @@ const ProfileMeetings = ({
           <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
             <DocumentSearchIcon className="size-14 fill-muted" />
           </View>
-          <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
+          <Typography className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings match your search
-          </Text>
-          <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+          </Typography>
+          <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
             Try adjusting your search or use different keywords.
-          </Text>
+          </Typography>
           <TouchableOpacity
             onPress={() => setSearchQuery("")}
             className="rounded-full border border-gray-300 px-6 py-3"
           >
-            <Text className="font-inter text-[16px] font-medium text-gray-700">
+            <Typography className="text-[16px] font-medium text-gray-700">
               Clear search
-            </Text>
+            </Typography>
           </TouchableOpacity>
         </View>
       );
@@ -261,7 +261,6 @@ const ProfileMeetings = ({
       <View className="z-10 hidden md:block">
         <Header />
       </View>
-
       <View
         className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] border-b border-[#F4F5F5] bg-white px-4 pb-4 md:hidden ${
           Platform.OS === "web" ? "!pt-4" : ""
@@ -293,18 +292,17 @@ const ProfileMeetings = ({
 
         {!isCollapsed && (
           <View className="pt-8">
-            <Text className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
+            <Typography className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
               {person.fullName}
-            </Text>
+            </Typography>
 
-            <Text className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
+            <Typography className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
               ID: {person.displayPersonExternalId} •{" "}
               {humanReadableTitleCase(person.primaryMetadata)}
-            </Text>
+            </Typography>
           </View>
         )}
       </View>
-
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -320,23 +318,25 @@ const ProfileMeetings = ({
             params={{}}
           >
             <ChevronLeftIcon className="size-3 stroke-muted stroke-[3px]" />
-            <Text className="text-sm font-medium text-gray/85">Back</Text>
+            <Typography className="text-sm font-medium text-gray/85">
+              Back
+            </Typography>
           </Link>
         </View>
 
         <View className="mx-auto w-full max-w-[960px]">
-          <Text className="hidden font-libre-baskerville text-[28px] font-bold capitalize leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
+          <Typography className="hidden font-libre-baskerville text-[28px] font-bold capitalize leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
             {person.fullName.toLowerCase()}
-          </Text>
+          </Typography>
 
-          <Text className="mt-1 hidden font-inter text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
+          <Typography className="mt-1 hidden text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
             ID: {person.displayPersonExternalId} • {person.primaryMetadata}
-          </Text>
+          </Typography>
 
           <View className="my-4 flex-row items-center justify-between">
-            <Text className="text-xl font-semibold text-primary md:text-2xl">
+            <Typography className="text-xl font-semibold text-primary md:text-2xl">
               Meetings
-            </Text>
+            </Typography>
 
             {recordingState === "idle" && (
               <TouchableOpacity
@@ -347,9 +347,9 @@ const ProfileMeetings = ({
                 {isMeetingCreating ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
-                  <Text className="font-inter font-medium text-white">
+                  <Typography className="font-medium text-white">
                     + Meeting
-                  </Text>
+                  </Typography>
                 )}
               </TouchableOpacity>
             )}
@@ -364,10 +364,10 @@ const ProfileMeetings = ({
           </View>
 
           <View className="z-10 my-4 flex-row items-center justify-between">
-            <Text className="font-inter text-sm text-[#9AA6AC]">
+            <Typography className="text-sm text-[#9AA6AC]">
               {filteredMeetings.length} meeting
               {filteredMeetings.length === 1 ? "" : "s"}
-            </Text>
+            </Typography>
 
             <Dropdown
               label="Sort by"

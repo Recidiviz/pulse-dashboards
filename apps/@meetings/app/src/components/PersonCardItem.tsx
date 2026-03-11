@@ -19,13 +19,13 @@ import { Link } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import upperFirst from "lodash/upperFirst";
 import React from "react";
-import { ImageBackground, Text, View } from "react-native";
+import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
-
+import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Typography } from "../shared/ui/Typography";
 import { getInitials, humanReadableTitleCase } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
@@ -66,25 +66,25 @@ const PersonCardItem = ({
             className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
             imageClassName="!size-11"
           >
-            <Text className="font-inter text-sm font-semibold text-white">
+            <Typography className="text-sm font-semibold text-white">
               {getInitials(person.fullName)}
-            </Text>
+            </Typography>
           </ImageBackground>
           <View className="flex-1">
             <View className="flex-row items-center justify-between">
-              <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
+              <Typography className="mr-1.5 text-base font-semibold text-gray-900">
                 {person.fullName}
-              </Text>
+              </Typography>
               <ChevronRightIcon className="size-3.5 stroke-muted stroke-[3px]" />
             </View>
             <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
-              <Text className="font-inter text-xs text-gray-600">
+              <Typography className="text-xs text-gray-600">
                 ID: {person.displayPersonExternalId} •{" "}
                 {humanReadableTitleCase(person.primaryMetadata)}
-              </Text>
-              <Text className="font-inter text-xs text-gray-600">
+              </Typography>
+              <Typography className="text-xs text-gray-600">
                 {upperFirst(person.lastMeeting)}
-              </Text>
+              </Typography>
             </View>
           </View>
         </View>

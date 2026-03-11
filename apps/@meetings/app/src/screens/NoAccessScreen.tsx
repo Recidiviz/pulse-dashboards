@@ -16,12 +16,13 @@
 // =============================================================================
 
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import PrimaryButton from "../components/PrimaryButton";
 import { useUserContext } from "../context/UserContext";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
+import { Typography } from "../shared/ui/Typography";
 
 const NoAccessScreen = () => {
   useSetDocumentTitle("Access Denied - Recidiviz Meetings");
@@ -31,13 +32,13 @@ const NoAccessScreen = () => {
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
       <View className="flex-1 items-center justify-center px-6">
         <View className="w-full max-w-md rounded-lg bg-white p-8 shadow-sm">
-          <Text className="font-libre mb-4 text-center text-3xl font-bold text-gray-900">
+          <Typography className="mb-4 text-center font-libre-baskerville text-3xl font-bold text-gray-900">
             Access Denied
-          </Text>
-          <Text className="mb-6 text-center font-inter text-base text-gray-600">
+          </Typography>
+          <Typography className="mb-6 text-center text-base text-gray-600">
             You do not have permission to access the Meetings app. Please
             contact your administrator to request access.
-          </Text>
+          </Typography>
           <PrimaryButton onPress={onLogout} label="Log Out" />
         </View>
       </View>

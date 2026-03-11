@@ -26,7 +26,6 @@ import React, { useState } from "react";
 import {
   ImageBackground,
   ScrollView,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -37,13 +36,13 @@ import MenuIcon from "react-native-heroicons/outline/MenuIcon";
 import BellIcon from "react-native-heroicons/solid/BellIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import WordmarkSvg from "~@meetings/app/assets/icons/wordmark.svg";
-import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
-
+import WordmarkSvg from "../assets/icons/wordmark.svg";
+import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import { IS_PROD } from "../env";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
 import DesktopMenuItem from "./DesktopMenuItem";
 import { ProfileMenuItem } from "./ProfileMenuItem";
@@ -105,7 +104,6 @@ const Header: React.FC<HeaderProps> = ({
           </TouchableOpacity>
         )}
       </View>
-
       <View className="hidden h-16 flex-row items-center justify-between bg-white px-4 md:flex lg:px-10">
         <TouchableOpacity
           testID="logo-button"
@@ -144,9 +142,9 @@ const Header: React.FC<HeaderProps> = ({
                   className="size-8 items-center justify-center overflow-hidden rounded-full"
                   imageClassName="!size-8"
                 >
-                  <Text className="font-inter text-base text-white">
+                  <Typography className="text-base text-white">
                     {name ? getInitials(name) : "SS"}
-                  </Text>
+                  </Typography>
                 </ImageBackground>
                 {profileDropdownOpen ? (
                   <ChevronUpIcon className="size-4 stroke-[3px] text-muted" />
@@ -169,17 +167,17 @@ const Header: React.FC<HeaderProps> = ({
                         className="size-12 items-center justify-center overflow-hidden rounded-full"
                         imageClassName="!size-12"
                       >
-                        <Text className="font-inter text-2xl leading-6 text-white">
+                        <Typography className="text-2xl leading-6 text-white">
                           {name ? getInitials(name) : "SS"}
-                        </Text>
+                        </Typography>
                       </ImageBackground>
                       <View className="flex flex-col justify-between">
-                        <Text className="font-inter text-base font-semibold leading-5">
+                        <Typography className="text-base font-semibold leading-5">
                           {name ?? "Test User"}
-                        </Text>
-                        <Text className="font-inter text-base font-normal text-gray/85">
+                        </Typography>
+                        <Typography className="text-base font-normal text-gray/85">
                           {email ?? "testuser@mail.com"}
-                        </Text>
+                        </Typography>
                       </View>
                     </View>
                   </TouchableOpacity>

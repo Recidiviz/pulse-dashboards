@@ -26,7 +26,6 @@ import {
   Keyboard,
   Platform,
   ScrollView,
-  Text,
   TextInput as RNTextInput,
   TouchableOpacity,
   View,
@@ -35,6 +34,7 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 
 import { MeetingDetails } from "../common/types";
+import { Typography } from "../shared/ui/Typography";
 import { trpc } from "../trpc/client";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
@@ -152,17 +152,17 @@ const MeetingNotesSheet = ({
                 onPress={handleClose}
                 className="flex flex-1 items-center justify-center rounded-[32px] border border-[#35536233] py-[17px]"
               >
-                <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
+                <Typography className="text-lg font-semibold leading-[22px] text-primary">
                   CANCEL
-                </Text>
+                </Typography>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleSave}
                 className="flex flex-1 items-center justify-center rounded-[32px] bg-[#00665F] py-[17px]"
               >
-                <Text className="font-inter text-lg font-semibold leading-[22px] text-white">
+                <Typography className="text-lg font-semibold leading-[22px] text-white">
                   SAVE CHANGES
-                </Text>
+                </Typography>
               </TouchableOpacity>
             </View>
           </BottomSheetFooter>
@@ -175,15 +175,15 @@ const MeetingNotesSheet = ({
             <ChevronLeftIcon className="size-5 text-muted" />
           </TouchableOpacity>
           <View className="flex flex-col items-center">
-            <Text className="font-inter text-lg font-semibold leading-[22px]">
+            <Typography className="text-lg font-semibold leading-[22px]">
               Edit draft case note
-            </Text>
-            <Text className="font-inter text-sm leading-[16px] text-gray-500">
+            </Typography>
+            <Typography className="text-sm leading-[16px] text-gray-500">
               {clientName} • Meeting{" "}
               {meetingDetails.startTime
                 ? formatDraftCaseNoteMeetingDate(meetingDetails.startTime)
                 : ""}
-            </Text>
+            </Typography>
           </View>
           <TouchableOpacity
             onPress={handleCopyNotes}
@@ -193,9 +193,9 @@ const MeetingNotesSheet = ({
           </TouchableOpacity>
         </View>
         <View className="p-2">
-          <Text className="text-left font-inter text-base font-semibold text-primary">
+          <Typography className="text-left text-base font-semibold text-primary">
             Action Items:
-          </Text>
+          </Typography>
           <TextInput
             className="p-2"
             scrollEnabled={false}
@@ -204,9 +204,9 @@ const MeetingNotesSheet = ({
             onChangeText={(text) => setActionItems(text.split("\n"))}
             textAlignVertical="top"
           />
-          <Text className="text-left font-inter text-base font-semibold text-primary">
+          <Typography className="text-left text-base font-semibold text-primary">
             Critical Updates:
-          </Text>
+          </Typography>
           <TextInput
             className="p-2"
             scrollEnabled={false}

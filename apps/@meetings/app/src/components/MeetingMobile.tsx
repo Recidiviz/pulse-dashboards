@@ -21,14 +21,7 @@ import BottomSheet, {
 import Clipboard from "@react-native-clipboard/clipboard";
 import { Link } from "@react-navigation/native";
 import React, { useCallback, useRef, useState } from "react";
-import {
-  Alert,
-  Platform,
-  Share,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Platform, Share, TouchableOpacity, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
@@ -48,6 +41,7 @@ import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
+import { Typography } from "../shared/ui/Typography";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
@@ -204,12 +198,12 @@ const MeetingMobile = ({
             className="flex flex-col items-center gap-0.5"
             style={[topDateStyle]}
           >
-            <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
+            <Typography className="text-lg font-semibold leading-[22px] text-primary">
               {meetingDate}
-            </Text>
-            <Text className="font-inter text-sm font-normal leading-[16px] text-gray-500">
+            </Typography>
+            <Typography className="text-sm font-normal leading-[16px] text-gray-500">
               {person.fullName}
-            </Text>
+            </Typography>
           </Animated.View>
 
           <TouchableOpacity onPress={onShare}>
@@ -231,27 +225,27 @@ const MeetingMobile = ({
             className="flex flex-row flex-wrap items-baseline gap-x-2 gap-y-1"
             style={[personNameStyle]}
           >
-            <Text className="font-inter text-base font-semibold leading-[20px] text-primary">
+            <Typography className="text-base font-semibold leading-[20px] text-primary">
               {person.fullName}
-            </Text>
-            <Text className="font-inter text-sm font-normal leading-[16px] text-gray-500">
+            </Typography>
+            <Typography className="text-sm font-normal leading-[16px] text-gray-500">
               ID: {person.displayPersonExternalId} •{" "}
               {humanReadableTitleCase(person.primaryMetadata)}
-            </Text>
+            </Typography>
           </Animated.View>
           <Animated.View
             className="flex flex-col gap-2"
             style={[bottomDateStyle]}
           >
-            <Text className="font-inter text-xl font-semibold leading-[24px] text-primary">
+            <Typography className="text-xl font-semibold leading-[24px] text-primary">
               Meeting: {meetingDate}
-            </Text>
+            </Typography>
             <View className="flex flex-row items-center gap-1">
               <ClockIcon className="size-4 text-muted" />
-              <Text className="font-inter text-sm font-normal leading-[14px] text-gray-500">
+              <Typography className="text-sm font-normal leading-[14px] text-gray-500">
                 {time}
                 {duration ? ` • ${duration}` : ""}
-              </Text>
+              </Typography>
             </View>
           </Animated.View>
 
@@ -262,9 +256,9 @@ const MeetingMobile = ({
             <View className="flex min-h-full w-full flex-col gap-1.5 rounded-xl bg-[#F4F5F5] px-[14px] py-3">
               <View className="flex flex-row items-center justify-between">
                 <View className="flex flex-row items-center gap-1">
-                  <Text className="font-inter text-xs font-semibold text-gray/85">
+                  <Typography className="text-xs font-semibold text-gray/85">
                     Draft case note
-                  </Text>
+                  </Typography>
                   <ChevronRightIcon className="size-3 text-muted" />
                 </View>
                 <TouchableOpacity
@@ -279,19 +273,18 @@ const MeetingMobile = ({
                 onPress={handleDraftCaseNoteOpen}
                 className="size-full flex-1"
               >
-                <Text
+                <Typography
                   numberOfLines={4}
                   ellipsizeMode="tail"
-                  className="font-inter text-sm font-normal text-primary"
+                  className="text-sm font-normal text-primary"
                 >
                   {meetingDetails.caseNote ?? "Type your notes here..."}
-                </Text>
+                </Typography>
               </BottomSheetTouchableOpacity>
             </View>
           </Animated.View>
         </View>
       </Animated.View>
-
       <Animated.View
         className="flex flex-1 grow flex-col gap-4"
         style={[bottomViewStyles]}

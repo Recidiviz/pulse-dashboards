@@ -16,7 +16,9 @@
 // =============================================================================
 
 import React, { useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
+
+import { Typography } from "../shared/ui/Typography";
 
 type Props = {
   tooltipText: string;
@@ -59,8 +61,8 @@ export const TooltipText = ({
       }}
     >
       {/* Hidden text to measure full width for tooltip */}
-      <Text
-        className={`pointer-events-none absolute font-inter text-base opacity-0 ${textClassName} max-w-fit`}
+      <Typography
+        className={`pointer-events-none absolute text-base opacity-0 ${textClassName} max-w-fit`}
         numberOfLines={1}
         onLayout={(e) => {
           fullTextWidthRef.current = e.nativeEvent.layout.width;
@@ -68,24 +70,24 @@ export const TooltipText = ({
         }}
       >
         {children}
-      </Text>
-
-      <Text
-        className={`font-inter text-base text-gray/85 ${textClassName}`}
+      </Typography>
+      <Typography
+        className={`text-base text-gray/85 ${textClassName}`}
         ellipsizeMode="tail"
         numberOfLines={1}
       >
         {children}
-      </Text>
-
+      </Typography>
       {isOverflowing && visible && (
         <View className="absolute left-0 top-11 w-[50vw]">
           <View
             className={`w-fit rounded-md bg-primary px-2 py-1 shadow-md ${tooltipClassName}`}
           >
-            <Text className={`text-xs text-white ${tooltipTextClassName}`}>
+            <Typography
+              className={`text-xs text-white ${tooltipTextClassName}`}
+            >
               {tooltipText}
-            </Text>
+            </Typography>
           </View>
         </View>
       )}

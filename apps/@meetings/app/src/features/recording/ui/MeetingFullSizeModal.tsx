@@ -15,19 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 
-import MinimizeSvg from "~@meetings/app/assets/icons/arrows-pointing-in.svg";
-import NotesSvg from "~@meetings/app/assets/icons/notes.svg";
-import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
-import PlaySvg from "~@meetings/app/assets/icons/play.svg";
-import StopSvg from "~@meetings/app/assets/icons/stop.svg";
-
+import MinimizeSvg from "../../../assets/icons/arrows-pointing-in.svg";
+import NotesSvg from "../../../assets/icons/notes.svg";
+import PauseSvg from "../../../assets/icons/pause.svg";
+import PlaySvg from "../../../assets/icons/play.svg";
+import StopSvg from "../../../assets/icons/stop.svg";
 import { Person, RecordingStatus } from "../../../common/types";
 import LinearProgressBar from "../../../components/LinearProgressBar";
 import Modal from "../../../components/Modal";
+import { Typography } from "../../../shared/ui/Typography";
 import { formatDurationNumeric } from "../../../utils/format";
 import { useRecording } from "..";
 
@@ -104,15 +104,15 @@ const NewMeetingIntro = ({
     <View className="h-full grow py-5 md:h-auto">
       <View className="w-full flex-row items-center justify-between border-b border-[#EDF1F1] px-8 pb-3">
         <View className="gap-1">
-          <Text className="font-inter text-xl font-semibold text-primary">
+          <Typography className="text-xl font-semibold text-primary">
             New Meeting
-          </Text>
-          <Text className="font-inter text-base font-medium text-primary">
+          </Typography>
+          <Typography className="text-base font-medium text-primary">
             {person.fullName}{" "}
-            <Text className="text-base font-normal text-gray/85">
+            <Typography className="text-base font-normal text-gray/85">
               {person.primaryMetadata} • ID: {person.displayPersonExternalId}
-            </Text>
-          </Text>
+            </Typography>
+          </Typography>
         </View>
         <TouchableOpacity
           onPress={onClose}
@@ -121,35 +121,34 @@ const NewMeetingIntro = ({
           <MinimizeSvg className="size-5 text-[#355362]" />
         </TouchableOpacity>
       </View>
-
       <View className="grow items-center justify-center px-8">
         <View className="mb-6 size-16 items-center justify-center rounded-2xl border border-gray-200 bg-gray-100">
           <MicrophoneIcon className="size-8 fill-muted" />
         </View>
 
-        <Text className="mb-2 font-libre-baskerville text-[28px] font-bold text-primary">
+        <Typography className="mb-2 font-libre-baskerville text-[28px] font-bold text-primary">
           Meeting Recording
-        </Text>
+        </Typography>
 
-        <Text className="mb-6 max-w-[530px] text-center font-inter text-sm text-gray/85">
+        <Typography className="mb-6 max-w-[530px] text-center text-sm text-gray/85">
           This meeting will be recorded and transcribed for note-taking. Be sure
           to confirm that everyone present is aware and has agreed to recording.
-        </Text>
+        </Typography>
         <View className="flex-row gap-2.5">
           <TouchableOpacity
             className="rounded-full border border-[#35536233] px-8 py-4"
             onPress={onClose}
           >
-            <Text className="font-semibold">Close</Text>
+            <Typography className="font-semibold">Close</Typography>
           </TouchableOpacity>
           <TouchableOpacity
             className="flex-row items-center rounded-full bg-[#006C67] px-8 py-4"
             onPress={startRecording}
           >
             <PlaySvg className="size-4 fill-[#C1E3D8]" />
-            <Text className="ml-2 font-inter font-semibold text-white">
+            <Typography className="ml-2 font-semibold text-white">
               Start Meeting
-            </Text>
+            </Typography>
           </TouchableOpacity>
         </View>
       </View>
@@ -207,15 +206,15 @@ const NewMeetingProgress = ({
     <View className="h-full flex-1 grow md:h-auto">
       <View className="w-full flex-row items-center justify-between border-b border-[#EDF1F1] px-8 pb-3 pt-5">
         <View className="gap-1">
-          <Text className="font-inter text-xl font-semibold text-primary">
+          <Typography className="text-xl font-semibold text-primary">
             New Meeting
-          </Text>
-          <Text className="font-inter text-base font-medium text-primary">
+          </Typography>
+          <Typography className="text-base font-medium text-primary">
             {person.fullName}{" "}
-            <Text className="text-xs font-normal text-gray/85 md:text-base">
+            <Typography className="text-xs font-normal text-gray/85 md:text-base">
               {person.primaryMetadata} • ID: {person.displayPersonExternalId}
-            </Text>
-          </Text>
+            </Typography>
+          </Typography>
         </View>
         <View className="flex-row items-center gap-4">
           {/* <View className="flex-row items-center gap-2">
@@ -240,14 +239,13 @@ const NewMeetingProgress = ({
           </TouchableOpacity>
         </View>
       </View>
-
       <View className="flex-1 grow flex-row">
         <View className="grow gap-5 py-5">
           <View className="flex-row items-center gap-1.5 px-8">
             <NotesSvg className="text-[#9AA9B1]" />
-            <Text className="font-inter font-semibold text-primary">
+            <Typography className="font-semibold text-primary">
               Notepad
-            </Text>
+            </Typography>
           </View>
           <TextInput
             value={note}
@@ -312,25 +310,23 @@ const NewMeetingProgress = ({
             </View>
           )} */}
       </View>
-
       <View className="h-1">
         {status === "ending" && <LinearProgressBar />}
       </View>
-
       <View className="flex-col items-center justify-between gap-2 border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5 lg:columns-3 lg:flex-row">
-        <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start ">
-          <Text className="font-inter text-lg font-semibold text-primary">
+        <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start">
+          <Typography className="text-lg font-semibold text-primary">
             {formatDurationNumeric(durationMs)}
-          </Text>
+          </Typography>
           <View className="flex-row items-center gap-2">
             {status === "recording" && (
               <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
             )}
-            <Text className="font-inter font-medium text-[#9AA6AC]">
+            <Typography className="font-medium text-[#9AA6AC]">
               {status === "recording"
                 ? "Recording in progress"
                 : "Recording paused"}
-            </Text>
+            </Typography>
           </View>
         </View>
         <View className="flex-row items-center gap-2">
@@ -341,9 +337,9 @@ const NewMeetingProgress = ({
               disabled={isModalDisabled}
             >
               <PauseSvg className="size-6 fill-primary" />
-              <Text className="ml-2 font-inter text-lg font-semibold text-primary">
+              <Typography className="ml-2 text-lg font-semibold text-primary">
                 Pause
-              </Text>
+              </Typography>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -352,9 +348,9 @@ const NewMeetingProgress = ({
               disabled={isModalDisabled}
             >
               <PlaySvg className="size-4 fill-[#C1E3D8]" />
-              <Text className="ml-2 font-inter text-lg font-semibold text-white">
+              <Typography className="ml-2 text-lg font-semibold text-white">
                 Resume
-              </Text>
+              </Typography>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -363,9 +359,9 @@ const NewMeetingProgress = ({
             disabled={isModalDisabled}
           >
             <StopSvg className="size-6 fill-[#FFEAE5]" />
-            <Text className="ml-2 font-inter text-lg font-semibold text-white">
+            <Typography className="ml-2 text-lg font-semibold text-white">
               Stop
-            </Text>
+            </Typography>
           </TouchableOpacity>
           <TouchableOpacity
             className="size-[52px] items-center justify-center rounded-full bg-[#E6EAEB] aria-disabled:opacity-40 lg:hidden"
@@ -382,9 +378,9 @@ const NewMeetingProgress = ({
             onPress={handleDiscard}
           >
             <XIcon className="size-6 stroke-[#9AA6AC]" />
-            <Text className="ml-2 font-inter text-lg font-semibold text-[#9AA6AC]">
+            <Typography className="ml-2 text-lg font-semibold text-[#9AA6AC]">
               Discard
-            </Text>
+            </Typography>
           </TouchableOpacity>
         </View>
       </View>

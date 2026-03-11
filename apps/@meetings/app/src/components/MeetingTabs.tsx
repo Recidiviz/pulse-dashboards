@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import LockClosedIcon from "react-native-heroicons/solid/LockClosedIcon";
+
+import { Typography } from "../shared/ui/Typography";
 
 export enum Tab {
   Notes = "Notes",
@@ -54,11 +56,11 @@ const MeetingTabs = ({
           onPress={() => setActiveTab(tab)}
         >
           <View className="flex flex-row items-center justify-center gap-1">
-            <Text
-              className={`font-inter text-sm font-medium leading-[16px] ${tab === activeTab ? "text-primary" : "text-[#9AA6AC]"}`}
+            <Typography
+              className={`text-sm font-medium leading-[16px] ${tab === activeTab ? "text-primary" : "text-[#9AA6AC]"}`}
             >
               {tab}
-            </Text>
+            </Typography>
             {tab === Tab.Transcription && isTranscriptionUnavailable && (
               <LockClosedIcon className="size-3 fill-[#35536233]" />
             )}

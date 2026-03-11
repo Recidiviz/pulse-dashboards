@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
+
+import { Typography } from "../shared/ui/Typography";
 
 const PAGE_SIZE = 7;
 
@@ -51,10 +53,10 @@ export const TablePagination = ({
           className={`size-3.5  stroke-[4px] ${page === 1 ? "stroke-[#35536233]" : "stroke-[#006C67]"}`}
         />
       </TouchableOpacity>
-      <Text className="font-inter text-sm font-medium text-gray/85">
+      <Typography className="text-sm font-medium text-gray/85">
         Showing {(page - 1) * pageSize + 1}-
         {Math.min(page * pageSize, tableItemsLength)} of {tableItemsLength}
-      </Text>
+      </Typography>
       <TouchableOpacity
         onPress={setNextPage}
         disabled={page * pageSize >= tableItemsLength}

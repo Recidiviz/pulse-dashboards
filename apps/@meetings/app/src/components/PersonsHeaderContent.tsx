@@ -17,9 +17,10 @@
 
 import startCase from "lodash/startCase";
 import { useMemo } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 import { PersonType } from "../common/types";
+import { Typography } from "../shared/ui/Typography";
 import { SortOption } from "../utils/sort";
 import Dropdown from "./Dropdown";
 import SearchBar from "./SearchBar";
@@ -57,12 +58,12 @@ const PersonsHeaderContent = ({
     <>
       <View className="rounded-b-[24px] bg-white p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial] md:px-0 md:pb-0 md:pt-10">
         <View>
-          <Text className="font-libre-baskerville text-3xl font-semibold text-black">
+          <Typography className="font-libre-baskerville text-3xl font-semibold text-black">
             {startCase(personType)}s
-          </Text>
-          <Text className="my-2 font-inter text-sm font-normal text-[#707070]">
+          </Typography>
+          <Typography className="my-2 text-sm font-normal text-[#707070]">
             {description}
-          </Text>
+          </Typography>
         </View>
         <View className="mt-3 h-10 grow flex-row items-center justify-end">
           <View className="size-full sm:max-w-[300px]">

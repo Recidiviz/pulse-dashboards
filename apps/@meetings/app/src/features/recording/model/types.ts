@@ -17,7 +17,7 @@
 
 import { ReactNode } from "react";
 
-import { Person } from "~@meetings/app/common/types";
+import { Person } from "../../../common/types";
 
 export type Status =
   | "idle"

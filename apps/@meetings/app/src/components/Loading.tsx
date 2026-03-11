@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, View } from "react-native";
+import { View } from "react-native";
+
+import { Typography } from "../shared/ui/Typography";
 
 type Props = {
   message: string;
@@ -24,7 +26,7 @@ type Props = {
 const Loading = ({ message }: Props) => {
   return (
     <View className="flex-1 items-center justify-center bg-white">
-      <Text className="font-inter text-base text-gray-700">{message}</Text>
+      <Typography className="text-base text-gray-700">{message}</Typography>
     </View>
   );
 };

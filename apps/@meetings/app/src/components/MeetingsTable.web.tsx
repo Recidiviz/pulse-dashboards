@@ -18,15 +18,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import ProcessingSvg from "~@meetings/app/assets/icons/processing.svg";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
+import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Typography } from "../shared/ui/Typography";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import {
@@ -105,7 +106,7 @@ const MeetingRow = ({
         {isMeetingInProgress && (
           <View className="flex-row items-center pb-2">
             <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
-            <Text className="px-2 font-inter text-black">In progress</Text>
+            <Typography className="px-2 text-black">In progress</Typography>
           </View>
         )}
         {isProcessing && (
@@ -113,26 +114,26 @@ const MeetingRow = ({
             <View className="flex flex-row items-center gap-4 px-3 py-2">
               <ProcessingSvg />
               <View className="flex-1">
-                <Text className="font-inter text-[14px] font-semibold leading-4 text-primary">
+                <Typography className="text-[14px] font-semibold leading-4 text-primary">
                   Recording is being processed...
-                </Text>
-                <Text className="font-inter text-xs font-normal text-gray/85">
+                </Typography>
+                <Typography className="text-xs font-normal text-gray/85">
                   The notes and transcript will become available in a few
                   minutes
-                </Text>
+                </Typography>
               </View>
             </View>
           </View>
         )}
         {!isMeetingInProgress && !isProcessing && (
-          <Text
-            className="font-inter text-base text-gray/85"
+          <Typography
+            className="text-base text-gray/85"
             style={{ fontStyle: meeting.content ? "normal" : "italic" }}
             numberOfLines={2}
             ellipsizeMode="tail"
           >
             {meeting.content || "Note is empty"}
-          </Text>
+          </Typography>
         )}
       </TableCell>
       <TableCell>

@@ -24,8 +24,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { Client } from "~@meetings/app/common/types";
-
+import { Client } from "../common/types";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";

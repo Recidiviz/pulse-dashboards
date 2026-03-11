@@ -17,10 +17,11 @@
 
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Ref, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
+import { Typography } from "../shared/ui/Typography";
 import Modal from "./Modal";
 
 const title = "Restricted to authorized users";
@@ -49,17 +50,17 @@ export const LearnMoreModal = ({ visible, onClose }: LearnMoreModalProps) => {
       containerClassName="max-w-[620px] p-6"
     >
       <View className="mb-5 flex-row items-center justify-between">
-        <Text className="font-inter text-xl font-semibold text-primary">
+        <Typography className="text-xl font-semibold text-primary">
           {title}
-        </Text>
+        </Typography>
         <TouchableOpacity onPress={onClose}>
           <XIcon className="size-5 stroke-muted" />
         </TouchableOpacity>
       </View>
       <ScrollView>
-        <Text className="font-inter leading-[22px] text-primary">
+        <Typography className="leading-[22px] text-primary">
           {content}
-        </Text>
+        </Typography>
       </ScrollView>
     </Modal>
   );
@@ -87,16 +88,16 @@ export const LearnMoreSheet = ({ ref }: LearnMoreSheetProps) => {
       handleIndicatorStyle={{ backgroundColor: "#35536280" }}
     >
       <BottomSheetScrollView className="px-5">
-        <Text className="mb-4 font-inter text-base leading-6 text-gray-700">
+        <Typography className="mb-4 text-base leading-6 text-gray-700">
           {content}
-        </Text>
+        </Typography>
         <TouchableOpacity
           className="mb-6 mt-4 rounded-full border border-gray-300 bg-white py-4"
           onPress={handleClose}
         >
-          <Text className="text-center font-inter font-semibold text-gray-700">
+          <Typography className="text-center font-semibold text-gray-700">
             Close
-          </Text>
+          </Typography>
         </TouchableOpacity>
       </BottomSheetScrollView>
     </BottomSheet>

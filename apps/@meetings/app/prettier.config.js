@@ -21,6 +21,7 @@
  */
 const config = {
   plugins: ["prettier-plugin-tailwindcss"],
+  singleQuote: false,
 };
 
 module.exports = config;

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
+module.exports = {
+  meta: {
+    type: "error",
+    docs: {
+      description: "Use <Typography> instead of <Text> from react-native",
+    },
+    messages: {
+      noText: "Do not use <Text> from react-native. Use <Typography> instead.",
+    },
+  },
+  create(context) {
+    let textImportedFromRN = false;
 
-import { Typography } from "../shared/ui/Typography";
-
-type DesktopMenuItemProps = {
-  isActive: boolean;
-  screen: string;
-  children: string;
+    return {
+      ImportDeclaration(node) {
+        if (node.source.value === "react-native") {
+          textImportedFromRN = node.specifiers.some(
+            (s) => s.type === "ImportSpecifier" && s.imported.name === "Text",
+          );
+        }
+      },
+      JSXOpeningElement(node) {
+        if (textImportedFromRN && node.name.name === "Text") {
+          context.report({ node, messageId: "noText" });
+        }
+      },
+    };
+  },
 };
-
-const DesktopMenuItem = ({
-  isActive,
-  screen,
-  children,
-}: DesktopMenuItemProps) => {
-  return (
-    <Link
-      className={`flex h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-[#006C67]" : "border-transparent"}`}
-      screen={screen}
-      params={{}}
-    >
-      <Typography
-        className={`px-1 text-sm font-medium ${isActive ? "text-primary" : "text-gray/85"}`}
-      >
-        {children}
-      </Typography>
-    </Link>
-  );
-};
-
-export default DesktopMenuItem;

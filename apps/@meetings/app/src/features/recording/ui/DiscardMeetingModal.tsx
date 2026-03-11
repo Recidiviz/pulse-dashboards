@@ -16,11 +16,11 @@
 // =============================================================================
 
 import { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
-import { Person } from "~@meetings/app/common/types";
-import Modal from "~@meetings/app/components/Modal";
-
+import { Person } from "../../../common/types";
+import Modal from "../../../components/Modal";
+import { Typography } from "../../../shared/ui/Typography";
 import { ModalConfirmationBackdrop } from "./ModalConfirmationBackdrop";
 
 type Props = {
@@ -56,31 +56,31 @@ export function DiscardMeetingModal({ person, onContinue, onDiscard }: Props) {
       onClickOutside={onContinue}
       backdrop={ModalConfirmationBackdrop}
     >
-      <Text className="mb-3 font-inter text-xl font-semibold text-primary">
+      <Typography className="mb-3 text-xl font-semibold text-primary">
         Discard meeting?
-      </Text>
-      <Text className="mb-5 w-[350px] font-inter text-[#355362D9]">
+      </Typography>
+      <Typography className="mb-5 w-[350px] text-gray/85">
         You’re about to discard the meeting with{" "}
-        <Text className="font-bold">{person.fullName}.</Text> Notes and
-        transcript won't be saved.
-      </Text>
+        <Typography className="font-bold">{person.fullName}.</Typography> Notes
+        and transcript won't be saved.
+      </Typography>
       <View className="flex-row gap-2">
         <TouchableOpacity
           className="w-[170px] items-center rounded-full border border-[#35536233] py-3"
           onPress={onContinue}
         >
-          <Text className="font-inter font-semibold text-primary">Cancel</Text>
+          <Typography className="font-semibold text-primary">Cancel</Typography>
         </TouchableOpacity>
         <TouchableOpacity
           className={`w-[170px] items-center rounded-full py-3 ${discardCountdown > 0 ? "bg-[#4D5255] opacity-30" : "bg-[#B42D2D]"}`}
           onPress={onDiscard}
           disabled={discardCountdown > 0}
         >
-          <Text className="font-inter font-semibold text-white">
+          <Typography className="font-semibold text-white">
             {discardCountdown > 0
               ? `Discard (0:${discardCountdown.toString().padStart(2, "0")})`
               : "Discard"}
-          </Text>
+          </Typography>
         </TouchableOpacity>
       </View>
     </Modal>

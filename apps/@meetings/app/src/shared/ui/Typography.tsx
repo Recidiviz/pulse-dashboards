@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
+import { Text, TextProps } from "react-native";
 
-import { Typography } from "../shared/ui/Typography";
-
-type DesktopMenuItemProps = {
-  isActive: boolean;
-  screen: string;
-  children: string;
-};
-
-const DesktopMenuItem = ({
-  isActive,
-  screen,
-  children,
-}: DesktopMenuItemProps) => {
+/**
+ * A wrapper around React Native's `Text` component that applies `font-inter`
+ * as the default font via NativeWind. Use this instead of `Text` directly.
+ *
+ * To override the font, pass a font class via `className` — it will take
+ * precedence over the default. For example, to use Libre Baskerville:
+ *
+ * @example
+ * <Typography className="text-sm text-gray-500">Hello world</Typography>
+ *
+ * @example
+ * <Typography className="font-libre-baskerville text-xl">Heading</Typography>
+ */
+export function Typography({ className, children, ...props }: TextProps) {
   return (
-    <Link
-      className={`flex h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-[#006C67]" : "border-transparent"}`}
-      screen={screen}
-      params={{}}
-    >
-      <Typography
-        className={`px-1 text-sm font-medium ${isActive ? "text-primary" : "text-gray/85"}`}
-      >
-        {children}
-      </Typography>
-    </Link>
+    // eslint-disable-next-line local/no-rn-text
+    <Text className={`font-inter ${className}`} {...props}>
+      {children}
+    </Text>
   );
-};
-
-export default DesktopMenuItem;
+}

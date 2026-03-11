@@ -20,6 +20,7 @@ import tailwind from "eslint-plugin-tailwindcss";
 import path from "path";
 
 import baseConfig from "../../../eslint.config.mjs";
+import noRnText from "./.eslint-rules/no-rn-text.js";
 
 export default [
   ...baseConfig,
@@ -37,6 +38,13 @@ export default [
   },
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    plugins: {
+      local: {
+        rules: {
+          "no-rn-text": noRnText,
+        },
+      },
+    },
     // Override or add rules here
     rules: {
       "tailwindcss/no-custom-classname": "off",
@@ -68,6 +76,7 @@ export default [
             "Use date-fns utilities instead of Intl.* functions for better React Native compatibility",
         },
       ],
+      "local/no-rn-text": "error",
     },
   },
   {

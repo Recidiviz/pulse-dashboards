@@ -19,13 +19,13 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
-import { ImageBackground, Text, View } from "react-native";
+import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
-import { Person } from "~@meetings/app/common/types";
-
+import BgAvatarImage from "../assets/images/bg-avatar.png";
+import { Person } from "../common/types";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
 import {
   Table,
@@ -73,9 +73,9 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   return (
     <>
       {sectionTitle && (
-        <Text className="mt-6 font-inter text-base font-medium text-gray/85">
+        <Typography className="mt-6 text-base font-medium text-gray/85">
           {sectionTitle}
-        </Text>
+        </Typography>
       )}
       <View className="mt-2 w-full" style={{ height: TABLE_HEIGHT }}>
         <Table className="table-fixed">
@@ -110,13 +110,13 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                         className="size-11 items-center justify-center overflow-hidden rounded-full"
                         imageClassName="!size-11"
                       >
-                        <Text className="font-inter text-base font-medium text-white">
+                        <Typography className="text-base font-medium text-white">
                           {getInitials(person.fullName)}
-                        </Text>
+                        </Typography>
                       </ImageBackground>
                       <TooltipText
                         tooltipText={person.fullName.toLowerCase()}
-                        textClassName="font-inter text-base font-medium capitalize text-primary"
+                        textClassName="text-base font-medium capitalize text-primary"
                       >
                         {person.fullName.toLowerCase()}
                       </TooltipText>
@@ -136,16 +136,16 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                     {person.activeMeetingId ? (
                       <View className="flex-row items-center pb-2">
                         <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
-                        <Text className="px-2 font-inter text-black">
+                        <Typography className="px-2 text-black">
                           In progress
-                        </Text>
+                        </Typography>
                       </View>
                     ) : (
-                      <Text className="font-inter text-base text-gray/85">
-                        <Text className="font-inter font-bold">
+                      <Typography className="text-base text-gray/85">
+                        <Typography className="font-bold">
                           {upperFirst(person.lastMeeting)}
-                        </Text>
-                      </Text>
+                        </Typography>
+                      </Typography>
                     )}
                   </TableCell>
                   <TableCell>

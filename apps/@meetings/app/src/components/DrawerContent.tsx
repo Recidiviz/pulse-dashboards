@@ -20,17 +20,17 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import React from "react";
-import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import { ImageBackground, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import BellIcon from "react-native-heroicons/solid/BellIcon";
 import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import BgAvatarImage from "~@meetings/app/assets/images/bg-avatar.png";
-
+import BgAvatarImage from "../assets/images/bg-avatar.png";
 import MobileMenuItem from "../components/MobileMenuItem";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
+import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
 import MobileMenuTextItem from "./MobileMenuTextItem";
 
@@ -55,35 +55,33 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         <TouchableOpacity onPress={() => navigation.closeDrawer()}>
           <XIcon className="stroke-muted" />
         </TouchableOpacity>
-        <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
+        <Typography className="text-lg font-semibold leading-[22px] text-primary">
           Navigation
-        </Text>
+        </Typography>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
           <BellIcon className="fill-muted" />
         </TouchableOpacity>
       </View>
-
       <View className="w-full px-2">
-        <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-[#C1E3D83B] p-4">
+        <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-soft-green/23 p-4">
           <ImageBackground
             source={BgAvatarImage}
             className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
           >
-            <Text className="font-inter text-white">
+            <Typography className="text-white">
               {name ? getInitials(name) : "SS"}
-            </Text>
+            </Typography>
           </ImageBackground>
           <View>
-            <Text className="font-inter text-base font-semibold text-primary">
+            <Typography className="text-base font-semibold text-primary">
               {name ?? "User name not found"}
-            </Text>
-            <Text className="font-inter text-sm text-[#355362D9]">
+            </Typography>
+            <Typography className="text-sm text-gray/85">
               {email ?? "User email not found"}
-            </Text>
+            </Typography>
           </View>
         </View>
       </View>
-
       <View className="flex-1 px-4">
         {hasSupervisionAccess && (
           <MobileMenuItem
@@ -102,7 +100,6 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           />
         )}
       </View>
-
       <View
         className="flex flex-col gap-1.5 bg-gray-100 px-4"
         style={{ paddingBottom: insets.bottom || 16, paddingTop: 16 }}
@@ -114,9 +111,9 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
               onPress={() => navigation.navigate("StateSelection")}
             />
             {currentStateName && (
-              <Text className="px-4 font-inter text-xs text-gray-500">
+              <Typography className="px-4 text-xs text-gray-500">
                 Current state: {currentStateName}
-              </Text>
+              </Typography>
             )}
           </>
         )}

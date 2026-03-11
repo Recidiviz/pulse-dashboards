@@ -16,13 +16,13 @@
 // =============================================================================
 
 import React from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 
-import PauseSvg from "~@meetings/app/assets/icons/pause.svg";
-import PlaySvg from "~@meetings/app/assets/icons/play.svg";
-import StopSvg from "~@meetings/app/assets/icons/stop.svg";
-
+import PauseSvg from "../assets/icons/pause.svg";
+import PlaySvg from "../assets/icons/play.svg";
+import StopSvg from "../assets/icons/stop.svg";
 import { RecordingStatus } from "../common/types";
+import { Typography } from "../shared/ui/Typography";
 import { formatDurationNumeric } from "../utils/format";
 
 interface RecordingControlsProps {
@@ -43,9 +43,9 @@ const StartButton: React.FC<{ onPress: () => void; disabled: boolean }> = ({
     disabled={disabled}
   >
     <PlaySvg className="size-4 text-[#C1E3D8]" />
-    <Text className="ml-2 font-inter font-semibold text-white">
+    <Typography className="ml-2 font-semibold text-white">
       Start Recording
-    </Text>
+    </Typography>
   </TouchableOpacity>
 );
 
@@ -63,7 +63,9 @@ const StopButton: React.FC<{ onPress: () => void; disabled: boolean }> = ({
       disabled={disabled}
     >
       <StopSvg className="size-4 text-[#FFEAE5]" />
-      <Text className={`ml-2 font-inter font-semibold ${textClass}`}>Stop</Text>
+      <Typography className={`ml-2 font-semibold ${textClass}`}>
+        Stop
+      </Typography>
     </TouchableOpacity>
   );
 };
@@ -99,9 +101,9 @@ const PauseResumeButton: React.FC<{
           )}
         </View>
       )}
-      <Text className={`font-inter font-semibold ${textClass}`}>
+      <Typography className={`font-semibold ${textClass}`}>
         {status === "paused" ? "Resume" : "Pause"}
-      </Text>
+      </Typography>
     </TouchableOpacity>
   );
 };
@@ -125,14 +127,13 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
         {status === "recording" && (
           <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
         )}
-        <Text className="px-2 font-inter text-black">
+        <Typography className="px-2 text-black">
           {status === "recording"
             ? "Recording in progress"
             : "Recording is paused"}{" "}
           {formatDurationNumeric(durationMs)}
-        </Text>
+        </Typography>
       </View>
-
       <View className="flex-row items-center justify-center">
         <StopButton onPress={onStop} disabled={isUploading} />
         <PauseResumeButton

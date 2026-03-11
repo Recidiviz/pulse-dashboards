@@ -17,9 +17,10 @@
 
 import { Link } from "@react-navigation/native";
 import { ReactNode } from "react";
-import { Pressable, PressableProps, Text } from "react-native";
+import { Pressable, PressableProps } from "react-native";
 
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Typography } from "../shared/ui/Typography";
 
 type WithLink = {
   link: { screen: keyof RootStackParamList; onPress: () => void };
@@ -46,13 +47,13 @@ export const ProfileMenuItem = ({
 }: Props) => {
   const children = (
     <>
-      <Text className="whitespace-nowrap font-inter text-base font-medium leading-5 text-gray/85 transition-all duration-300 group-hover:text-[#006C67]">
+      <Typography className="whitespace-nowrap text-base font-medium leading-5 text-gray/85 transition-all duration-300 group-hover:text-[#006C67]">
         {label}
-      </Text>
+      </Typography>
       {helperText && (
-        <Text className="ml-auto whitespace-nowrap font-inter text-xs text-gray-500">
+        <Typography className="ml-auto whitespace-nowrap text-xs text-gray-500">
           {helperText}
-        </Text>
+        </Typography>
       )}
       {icon}
     </>
