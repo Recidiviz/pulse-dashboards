@@ -18,6 +18,7 @@
 
 "use client";
 
+import * as Sentry from "@sentry/react";
 import {
   type Context,
   createContext,
@@ -39,6 +40,30 @@ import type {
 } from "./eventTypes";
 
 const DUPLICATE_ACTIVITY_MESSAGE = "This intake is active elsewhere";
+
+function logWebsocketEvent(
+  level: "info" | "warning" | "error",
+  message: string,
+  context?: Record<string, unknown>,
+): void {
+  // Only send to Sentry on edovo.com domains
+  if (
+    typeof window === "undefined" ||
+    !window.location.hostname.endsWith(".edovo.com")
+  ) {
+    return;
+  }
+
+  Sentry.captureMessage(message, {
+    level,
+    contexts: {
+      websocket: context || {},
+    },
+    tags: {
+      source: "websocket",
+    },
+  });
+}
 
 export interface IntakeSocketContextType {
   messages: components["schemas"]["IntakeMessageResponse"][];
@@ -429,9 +454,16 @@ export function IntakeSocketProvider({
   // Handler functions for socket events
   const aiMessageHandler = useCallback(
     (content: components["schemas"]["IntakeMessageResponse"]) => {
+      logWebsocketEvent("info", "WebSocket AI message received", {
+        messageId: content.id,
+        section: content.section,
+        fromRole: content.from_role,
+        requiresResponse: content.requires_response,
+        socketId: socket.id,
+      });
       dispatch({ type: "receiveAIMessage", content });
     },
-    [],
+    [socket],
   );
 
   const connectionAckHandler = useCallback(
@@ -445,6 +477,11 @@ export function IntakeSocketProvider({
           console.log("ConnectionAck content is an object:", content);
           if (content.accepted) {
             console.log("ConnectionAck accepted=true");
+            logWebsocketEvent("info", "WebSocket authentication successful", {
+              socketId: socket.id,
+              intakeStatus: content.status,
+              connectionAccepted: true,
+            });
             dispatch({ type: "connected" });
 
             if (content.status) {
@@ -452,20 +489,41 @@ export function IntakeSocketProvider({
             }
           } else {
             console.log("ConnectionAck accepted=false");
+            const auth = socket.auth as Record<string, unknown> | undefined;
+            logWebsocketEvent("error", "WebSocket authentication rejected", {
+              socketId: socket.id,
+              connectionAccepted: false,
+              hasAuthToken: !!storedToken,
+              hasTokenFromUrl: !!tokenFromUrl,
+              authTokenPresent: !!(auth && auth["auth_token"]),
+              urlTokenPresent: !!(auth && auth["token_from_url"]),
+            });
             dispatch({ type: "disconnect" });
           }
         } else {
           console.error("Unexpected connectionAck format:", content);
+          logWebsocketEvent(
+            "error",
+            "WebSocket connectionAck unexpected format",
+            {
+              socketId: socket.id,
+              contentType: typeof content,
+            },
+          );
           // Default to connected to avoid stuck UI
           dispatch({ type: "connected" });
         }
       } catch (e) {
         console.error("Error processing connectionAck:", e);
+        logWebsocketEvent("error", "WebSocket connectionAck processing error", {
+          socketId: socket.id,
+          error: e instanceof Error ? e.message : String(e),
+        });
         // Default to connected to avoid stuck UI
         dispatch({ type: "connected" });
       }
     },
-    [],
+    [socket, storedToken, tokenFromUrl],
   );
 
   const pongHandler = useCallback((content: PongEventContent) => {
@@ -482,6 +540,15 @@ export function IntakeSocketProvider({
     // Connection events
     socket.on("connect", () => {
       console.log("Socket connected with ID:", socket.id);
+      const auth = socket.auth as Record<string, unknown> | undefined;
+      logWebsocketEvent("info", "WebSocket connected", {
+        socketId: socket.id,
+        transportType: socket.io.engine.transport.name,
+        hasAuthToken: !!storedToken,
+        hasTokenFromUrl: !!tokenFromUrl,
+        authTokenPresent: !!(auth && auth["auth_token"]),
+        urlTokenPresent: !!(auth && auth["token_from_url"]),
+      });
       // We don't dispatch connected here - we wait for connectionAck
       console.log("Waiting for connectionAck event...");
       console.log(socket.id);
@@ -489,11 +556,27 @@ export function IntakeSocketProvider({
 
     socket.on("disconnect", (reason) => {
       console.log("Socket disconnected:", reason);
+      logWebsocketEvent("warning", "WebSocket disconnected", {
+        reason,
+        socketId: socket.id,
+        hasAuthToken: !!storedToken,
+        hasTokenFromUrl: !!tokenFromUrl,
+      });
       dispatch({ type: "disconnect" });
     });
 
     socket.on("connect_error", (error) => {
       console.error("Connection error:", error);
+      const auth = socket.auth as Record<string, unknown> | undefined;
+      logWebsocketEvent("error", "WebSocket connection error", {
+        errorMessage: error.message,
+        errorType: error.name,
+        socketId: socket.id,
+        hasAuthToken: !!storedToken,
+        hasTokenFromUrl: !!tokenFromUrl,
+        authTokenPresent: !!(auth && auth["auth_token"]),
+        urlTokenPresent: !!(auth && auth["token_from_url"]),
+      });
       dispatch({
         type: "error",
         content: { type: "socket", message: error.message },
@@ -532,6 +615,8 @@ export function IntakeSocketProvider({
     pongHandler,
     sectionChangeHandler,
     socket,
+    storedToken,
+    tokenFromUrl,
   ]);
 
   const { data: intakeDataToken, error: apiErrorToken } = $api.useQuery(
@@ -632,6 +717,11 @@ export function IntakeSocketProvider({
       console.log(
         `Intake status is ${actualIntakeData.status}, connecting socket`,
       );
+      logWebsocketEvent("info", "Initiating WebSocket connection", {
+        intakeStatus: actualIntakeData.status,
+        intakeId: actualIntakeData.id,
+        conversationStarted,
+      });
       // Update to connecting state before actually connecting
       dispatch({ type: "connecting" });
       socket.auth = { auth_token: storedToken, token_from_url: tokenFromUrl };
@@ -697,6 +787,11 @@ export function IntakeSocketProvider({
 
       try {
         console.log("Sending message:", message);
+        logWebsocketEvent("info", "WebSocket sending human message", {
+          messageLength: message.length,
+          socketId: socket.id,
+          connectionStatus: intakeContext.connectionStatus,
+        });
 
         // Use emitWithAck to get the response back from the server
         // Maybe it would be better for the backend to send an error event if this didn't go through
@@ -720,6 +815,11 @@ export function IntakeSocketProvider({
             }
           }
 
+          logWebsocketEvent("info", "WebSocket human message acknowledged", {
+            messageId: parsedMessage.id,
+            socketId: socket.id,
+          });
+
           // Update state with the acknowledged message from the server
           dispatch({
             type: "addHumanMessage",
@@ -727,13 +827,22 @@ export function IntakeSocketProvider({
           });
         } else {
           console.error("Failed to receive message acknowledgment");
+          logWebsocketEvent("error", "WebSocket message not acknowledged", {
+            socketId: socket.id,
+            connectionStatus: intakeContext.connectionStatus,
+          });
         }
       } catch (error) {
         console.error("Error sending message:", error);
+        logWebsocketEvent("error", "WebSocket error sending message", {
+          error: error instanceof Error ? error.message : String(error),
+          socketId: socket.id,
+          connectionStatus: intakeContext.connectionStatus,
+        });
         // Could add error handling state here
       }
     },
-    [intakeContext.waitingForAIInput, socket],
+    [intakeContext.waitingForAIInput, intakeContext.connectionStatus, socket],
   );
 
   const reconnect = useCallback(() => {
