@@ -90,12 +90,10 @@ const ManagedComponent = observer(function ManagedComponent({
         lastSavedTimestamp={presenter.lastSaved}
       />
 
-      {copy.sections.map((section) => (
+      {presenter.sections.map((section) => (
         <ChecklistSection
           key={section.id}
           section={section}
-          isEnabled={presenter.isSectionEnabled(section.id)}
-          checklistState={presenter.checklistState}
           onToggleCheckbox={(itemId) => presenter.toggleCheckbox(itemId)}
         />
       ))}
@@ -145,12 +143,9 @@ const ChecklistHydrator: FC<{
 };
 
 function usePresenter() {
-  const { resident } = useSingleResidentContext();
-  const {
-    copy: { reentryChecklist: copy },
-  } = useUsNeContext();
+  const { resident, residentFlags } = useSingleResidentContext();
   const { apiClient } = useRootStore();
-  return new UsNeReentryChecklistPresenter(resident, copy, apiClient);
+  return new UsNeReentryChecklistPresenter(resident, apiClient, residentFlags);
 }
 
 const UsNeReentryChecklistPage = withPresenterManager({

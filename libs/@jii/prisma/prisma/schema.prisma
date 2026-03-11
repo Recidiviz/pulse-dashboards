@@ -19,6 +19,7 @@ model UserProperties {
 // during testing or rollouts. This enum defines the set of flags that can be set.
 enum ResidentFlagId {
     usNeGoodTimeAlerts
+    usNeChecklistDocuments
 }
 
 model ResidentFlagInstance {

@@ -18,7 +18,7 @@
 import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { DataAPI, handleMutationError } from "~@jii/data";
+import { DataAPI, handleMutationError, ResidentFlags } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { ResidentRecord } from "~datatypes";
 import {
@@ -27,7 +27,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { UsNeCopy } from "../../configs/copy";
+import { usNeReentryChecklistSpec } from "./usNeReentryChecklistSpec";
 
 type ReentryChecklistData =
   JiiResidentAppRouterOutputs["state"]["usNe"]["getReentryChecklist"];
@@ -43,8 +43,8 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
 
   constructor(
     private readonly resident: ResidentRecord,
-    private readonly copy: UsNeCopy["reentryChecklist"],
     private readonly apiClient: DataAPI,
+    private readonly residentFlags: ResidentFlags,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
 
@@ -66,7 +66,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
    * In case we ever remove a question, this lets us filter what's saved
    */
   get displayedItemKeys(): string[] {
-    return this.copy.sections.flatMap((section) =>
+    return usNeReentryChecklistSpec.sections.flatMap((section) =>
       section.items.map((item) => item.id),
     );
   }
@@ -106,10 +106,46 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
   }
 
   /**
-   * Gets the current live state of the checklist
+   * Set of documentType strings present in the resident's criticalDocuments metadata
    */
-  get checklistState(): ChecklistState {
-    return this.liveState;
+  private get residentDocuments(): Set<string> {
+    const metadata = this.resident.metadata;
+    if (metadata.stateCode !== "US_NE") return new Set();
+    return new Set(
+      metadata.criticalDocuments
+        .map((d) => d.documentType)
+        .filter((t): t is string => t !== null),
+    );
+  }
+
+  /**
+   * Returns sections with their enabled state and per-item checked/verifiable state
+   */
+  get sections() {
+    const { residentDocuments } = this;
+    const documentsEnabled = !!this.residentFlags.usNeChecklistDocuments;
+
+    return usNeReentryChecklistSpec.sections.map((section) => ({
+      id: section.id,
+      isEnabled: this.isSectionEnabled(section.id),
+      items: section.items.map((item) => {
+        const docExists = !!item.documentTypes?.some((dt) =>
+          residentDocuments.has(dt),
+        );
+        const isVerifiable =
+          documentsEnabled &&
+          !!item.documentTypes &&
+          (!item.onlyVerifiableIfTrue || docExists);
+        const isChecked = isVerifiable
+          ? docExists
+          : this.liveState[item.id] ?? false;
+        return {
+          id: item.id,
+          isChecked,
+          isVerifiable,
+        };
+      }),
+    }));
   }
 
   /**
@@ -125,7 +161,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
   /**
    * Determines if a section is enabled based on release date proximity
    */
-  isSectionEnabled(sectionId: string): boolean {
+  private isSectionEnabled(sectionId: string): boolean {
     const closestDate = this.getClosestPedOrTrd();
     const now = new Date();
 
@@ -147,22 +183,14 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
    * Calculates progress metrics for the checklist
    */
   get progressMetrics() {
-    const totalItems = this.copy.sections.reduce(
-      (acc, section) => acc + section.items.length,
-      0,
-    );
-    const completedItems = Object.entries(this.liveState).filter(
-      ([key, value]) => value && this.displayedItemKeys.includes(key),
-    ).length;
-    const completedSections = this.copy.sections.filter((section) =>
-      section.items.every((item) => this.liveState[item.id]),
-    ).length;
-
+    const allItems = this.sections.flatMap((s) => s.items);
     return {
-      totalItems,
-      completedItems,
-      completedSections,
-      totalSections: this.copy.sections.length,
+      totalItems: allItems.length,
+      completedItems: allItems.filter((i) => i.isChecked).length,
+      completedSections: this.sections.filter((s) =>
+        s.items.every((i) => i.isChecked),
+      ).length,
+      totalSections: this.sections.length,
     };
   }
 

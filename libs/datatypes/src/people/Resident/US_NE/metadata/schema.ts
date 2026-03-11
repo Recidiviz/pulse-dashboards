@@ -78,6 +78,16 @@ export const usNeResidentMetadataSchema = z.object({
 
   // LB 191 cumulative credits since sentence start
   lb191Credits: z.number().nullable().default(0),
+
+  criticalDocuments: z
+    .object({
+      documentExpirationDate: dateStringSchema.nullable(),
+      documentIssueDate: dateStringSchema.nullable(),
+      documentStateCode: z.string().nullable(),
+      documentStatus: z.string().nullable(),
+      documentType: z.string().nullable(),
+    })
+    .array(),
 });
 
 export type RawUsNeResidentMetadata = z.input<

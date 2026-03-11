@@ -46,6 +46,7 @@ const baseMetadata: RawUsNeResidentMetadata = {
   mandatoryMinimumSentenceDays: 0,
   goodTimeLastModifiedDate: relativeFixtureMonth({}, "start"),
   numHoldsAndDetainers: 0,
+  criticalDocuments: [],
   creditActivity: [
     {
       creditsEarned: 3,
@@ -173,7 +174,10 @@ const res005Metadata: RawUsNeResidentMetadata = {
       actionDate: relativeFixtureMonth({ months: -4, days: -15 }, "start"),
       violationCode: "IDC-301",
       creditType: "VIOLATION",
-      lastModifiedDate: relativeFixtureMonth({ months: -4, days: -15 }, "start"),
+      lastModifiedDate: relativeFixtureMonth(
+        { months: -4, days: -15 },
+        "start",
+      ),
       misconductReportNumber: "MR-2024-105",
       creditDate: relativeFixtureMonth({ months: -4, days: -15 }, "start"),
     },
@@ -198,7 +202,10 @@ const res006Metadata: RawUsNeResidentMetadata = {
       actionDate: relativeFixtureMonth({ months: -10, days: -10 }, "start"),
       violationCode: "CLASS1-201",
       creditType: "VIOLATION",
-      lastModifiedDate: relativeFixtureMonth({ months: -10, days: -10 }, "start"),
+      lastModifiedDate: relativeFixtureMonth(
+        { months: -10, days: -10 },
+        "start",
+      ),
       misconductReportNumber: "MR-2024-078",
       creditDate: relativeFixtureMonth({ months: -10, days: -10 }, "start"),
     },

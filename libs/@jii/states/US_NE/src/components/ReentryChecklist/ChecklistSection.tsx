@@ -16,13 +16,14 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components";
 
-import { Checkbox } from "~@jii/common-ui";
 import { Icon, palette } from "~design-system";
+
+import { useUsNeContext } from "../usNeContext";
+import { ChecklistItem } from "./ChecklistItem";
 
 const Container = styled.div<{ $isDisabled: boolean }>`
   border: 1px solid ${palette.slate20};
@@ -96,58 +97,37 @@ const Content = styled.div<{ $isExpanded: boolean }>`
   display: ${(props) => (props.$isExpanded ? "block" : "none")};
 `;
 
-const Item = styled.label`
-  display: flex;
-  align-items: flex-start;
-  gap: ${rem(spacing.md)};
-  padding: ${rem(spacing.sm)} 0;
-  cursor: pointer;
-
-  &:first-child {
-    padding-top: 0;
-  }
-`;
-
-const ItemText = styled(Markdown)`
-  ${typography.Sans16};
-  color: ${palette.slate90};
-  margin-top: ${rem(3)};
-`;
-
 interface ChecklistSectionProps {
   section: {
     id: string;
-    title: string;
-    subtitle: string;
-    items: Array<{ id: string; text: string }>;
+    isEnabled: boolean;
+    items: Array<{ id: string; isChecked: boolean; isVerifiable: boolean }>;
   };
-  isEnabled: boolean;
-  checklistState: Record<string, boolean>;
   onToggleCheckbox: (itemId: string) => void;
 }
 
 export function ChecklistSection({
   section,
-  isEnabled,
-  checklistState,
   onToggleCheckbox,
 }: ChecklistSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(isEnabled);
+  const {
+    copy: { reentryChecklist: copy },
+  } = useUsNeContext();
+  const [isExpanded, setIsExpanded] = useState(section.isEnabled);
 
-  const allItemsChecked = section.items.every(
-    (item) => checklistState[item.id],
-  );
+  const sectionCopy = copy.sections[section.id];
+  const allItemsChecked = section.items.every((item) => item.isChecked);
 
   return (
-    <Container $isDisabled={!isEnabled}>
+    <Container $isDisabled={!section.isEnabled}>
       <Header onClick={() => setIsExpanded(!isExpanded)}>
         <HeaderLeft>
           <Chevron $isExpanded={isExpanded}>
             <Icon kind="DownChevron" width={rem(8)} height={rem(4)} />
           </Chevron>
           <HeaderContent>
-            <Title>{section.title}</Title>
-            <Subtitle>{section.subtitle}</Subtitle>
+            <Title>{sectionCopy.title}</Title>
+            <Subtitle>{sectionCopy.subtitle}</Subtitle>
           </HeaderContent>
         </HeaderLeft>
         <Check $isComplete={allItemsChecked}>
@@ -159,20 +139,13 @@ export function ChecklistSection({
         </Check>
       </Header>
       <Content $isExpanded={isExpanded}>
-        {section.items.map((item) => {
-          const isChecked = checklistState[item.id] || false;
-          return (
-            <Item key={item.id}>
-              <Checkbox
-                $size={24}
-                checked={isChecked}
-                onChange={() => onToggleCheckbox(item.id)}
-                id={item.id}
-              />
-              <ItemText>{item.text}</ItemText>
-            </Item>
-          );
-        })}
+        {section.items.map((item) => (
+          <ChecklistItem
+            key={item.id}
+            item={item}
+            onToggle={() => onToggleCheckbox(item.id)}
+          />
+        ))}
       </Content>
     </Container>
   );

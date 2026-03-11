@@ -38,28 +38,31 @@ export const Checkbox = styled.input.attrs({ type: "checkbox" })<{
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.2s ease;
-  cursor: pointer;
   position: relative;
 
   &:checked {
     border-color: ${(props) => props.$accentColor ?? palette.signal.links};
     background-color: ${(props) => props.$accentColor ?? palette.signal.links};
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: ${rem(5)};
+      height: ${rem(9)};
+      border: solid ${palette.white};
+      border-width: 0 2px 2px 0;
+      transform: translate(-50%, -60%) rotate(45deg);
+    }
   }
 
-  &:checked::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: ${rem(5)};
-    height: ${rem(9)};
-    border: solid ${palette.white};
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -60%) rotate(45deg);
-  }
+  &:not(:disabled) {
+    cursor: pointer;
 
-  &:hover {
-    border-color: ${(props) => props.$accentColor ?? palette.signal.links};
+    &:hover {
+      border-color: ${(props) => props.$accentColor ?? palette.signal.links};
+    }
   }
 
   &:focus-visible {
