@@ -53,6 +53,30 @@ async def get_intake_by_id(
 
 
 @overload
+async def get_intake_by_id_with_assessment_config(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[True]
+) -> SelectOfScalar[Intake]: ...
+
+
+@overload
+async def get_intake_by_id_with_assessment_config(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[False] = False
+) -> Intake | None: ...
+
+
+@statement_or_result(first_only=True)
+async def get_intake_by_id_with_assessment_config(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: bool = False
+) -> SelectOfScalar[Intake] | Intake | None:
+    """Get intake by ID with assessment_config relationship eagerly loaded."""
+    return (
+        select(Intake)
+        .options(selectinload(Intake.assessment_config))
+        .where(Intake.id == intake_id)
+    )
+
+
+@overload
 async def get_intake_with_address_and_recording(
     session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[True]
 ) -> SelectOfScalar[Intake]: ...

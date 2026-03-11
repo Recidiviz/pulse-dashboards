@@ -41,6 +41,237 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/ai-personas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List AI Personas
+         * @description Get all active AI personas with pagination.
+         */
+        get: operations["list_ai_personas_ai_personas_get"];
+        put?: never;
+        /**
+         * Create AI Persona
+         * @description Create a new AI persona.
+         */
+        post: operations["create_ai_persona_endpoint_ai_personas_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/{persona_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get AI Persona
+         * @description Get a specific AI persona by ID.
+         */
+        get: operations["get_ai_persona_ai_personas__persona_id__get"];
+        /**
+         * Update AI Persona
+         * @description Update an existing AI persona.
+         */
+        put: operations["update_ai_persona_endpoint_ai_personas__persona_id__put"];
+        post?: never;
+        /**
+         * Delete AI Persona
+         * @description Soft delete an AI persona (sets is_active to False).
+         */
+        delete: operations["delete_ai_persona_endpoint_ai_personas__persona_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/{persona_id}/triggers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List AI Intake Triggers for Persona
+         * @description List all AI intake triggers for a specific persona, ordered by most recent first.
+         *     Includes execution status for each trigger.
+         */
+        get: operations["list_persona_triggers_ai_personas__persona_id__triggers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/ai-intakes/trigger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Trigger AI Intake
+         * @description Trigger an AI-powered intake using a persona or a template trigger.
+         *
+         *     Exactly one of `persona_id` or `template_trigger_id` must be provided.
+         *     When `template_trigger_id` is provided the persona is resolved from the
+         *     referenced template trigger.
+         */
+        post: operations["trigger_ai_intake_ai_personas_ai_intakes_trigger_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/ai-intakes/{execution_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get AI Intake Status
+         * @description Get the status of an AI intake execution.
+         *
+         *     Returns the current progress, status, and output of the AI intake task.
+         */
+        get: operations["get_ai_intake_status_ai_personas_ai_intakes__execution_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/ai-intakes/{trigger_id}/trigger-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get AI Intake Status by Trigger ID
+         * @description Get the status of an AI intake execution by trigger ID.
+         *
+         *     Looks up the AIIntakeTrigger to find the associated execution,
+         *     then returns the current progress, status, and output.
+         */
+        get: operations["get_ai_intake_status_by_trigger_ai_personas_ai_intakes__trigger_id__trigger_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/ai-intakes/{trigger_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retry AI Intake
+         * @description Retry an AI intake execution for an existing trigger.
+         *
+         *     Creates a new background task execution for the same trigger and updates
+         *     the trigger's execution_id to track the new attempt.
+         */
+        post: operations["retry_ai_intake_ai_personas_ai_intakes__trigger_id__retry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/ai-intakes/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Template AI Intake Triggers
+         * @description List all AI intake triggers that have been marked as templates.
+         */
+        get: operations["list_template_triggers_ai_personas_ai_intakes_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/ai-intakes/{trigger_id}/toggle-template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Toggle AI Intake Trigger as Template
+         * @description Toggle the is_template flag on an AI intake trigger.
+         *
+         *     If the trigger is not currently a template, it will be marked as one.
+         *     If it is already a template, it will be unmarked.
+         */
+        post: operations["toggle_trigger_as_template_ai_personas_ai_intakes__trigger_id__toggle_template_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ai-personas/{persona_id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test AI Persona
+         * @description Test an AI persona by sending a message and getting a response.
+         *
+         *     This endpoint allows interactive testing of persona characteristics
+         *     without creating a full intake.
+         */
+        post: operations["test_ai_persona_ai_personas__persona_id__test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/decision-trees": {
         parameters: {
             query?: never;
@@ -2063,6 +2294,170 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AIIntakeStatusResponse */
+        AIIntakeStatusResponse: {
+            /**
+             * Execution Id
+             * Format: uuid
+             */
+            execution_id: string;
+            /** Intake Id */
+            intake_id: string | null;
+            /** Persona Id */
+            persona_id?: string | null;
+            /** Status */
+            status: string;
+            /** Progress */
+            progress: number;
+            /** Message */
+            message: string | null;
+            /** Output */
+            output: string | null;
+            /** Is Template */
+            is_template?: boolean | null;
+            /** From Template */
+            from_template?: boolean | null;
+            /** Assessment Config Id */
+            assessment_config_id?: string | null;
+            /** Assessment Config Name */
+            assessment_config_name?: string | null;
+            /** Assessment Config Code */
+            assessment_config_code?: string | null;
+        };
+        /** AIIntakeTriggerRequest */
+        AIIntakeTriggerRequest: {
+            /**
+             * Intake Id
+             * Format: uuid
+             */
+            intake_id: string;
+            /** Persona Id */
+            persona_id?: string | null;
+            /** Template Trigger Id */
+            template_trigger_id?: string | null;
+            /** Chat Template */
+            chat_template?:
+                | components["schemas"]["ChatTemplateSection"][]
+                | null;
+            /** Street Address */
+            street_address?: string | null;
+            /** City */
+            city?: string | null;
+            /** State */
+            state?: string | null;
+        };
+        /** AIIntakeTriggerResponse */
+        AIIntakeTriggerResponse: {
+            /**
+             * Trigger Id
+             * Format: uuid
+             */
+            trigger_id: string;
+            /**
+             * Intake Id
+             * Format: uuid
+             */
+            intake_id: string;
+            /**
+             * Execution Id
+             * Format: uuid
+             */
+            execution_id: string;
+        };
+        /** AIIntakeTriggerSummary */
+        AIIntakeTriggerSummary: {
+            /**
+             * Trigger Id
+             * Format: uuid
+             */
+            trigger_id: string;
+            /**
+             * Intake Id
+             * Format: uuid
+             */
+            intake_id: string;
+            /** Persona Id */
+            persona_id: string | null;
+            /** Execution Id */
+            execution_id: string | null;
+            /** Status */
+            status: string;
+            /** Progress */
+            progress: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Is Template */
+            is_template: boolean;
+            /** From Template */
+            from_template: boolean;
+            /** Client Pseudo Id */
+            client_pseudo_id?: string | null;
+            /** Assessment Config Id */
+            assessment_config_id?: string | null;
+            /** Assessment Config Name */
+            assessment_config_name?: string | null;
+            /** Assessment Config Code */
+            assessment_config_code?: string | null;
+        };
+        /** AIPersonaCreate */
+        AIPersonaCreate: {
+            /** Name */
+            name: string;
+            /** Age */
+            age: number;
+            /** Background */
+            background: string;
+            /** Challenges */
+            challenges: string;
+            /** Communication Style */
+            communication_style: string;
+        };
+        /** AIPersonaResponse */
+        AIPersonaResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Name */
+            name: string;
+            /** Age */
+            age: number;
+            /** Background */
+            background: string;
+            /** Challenges */
+            challenges: string;
+            /** Communication Style */
+            communication_style: string;
+            /** Is Active */
+            is_active: boolean;
+        };
+        /** AIPersonaUpdate */
+        AIPersonaUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Age */
+            age?: number | null;
+            /** Background */
+            background?: string | null;
+            /** Challenges */
+            challenges?: string | null;
+            /** Communication Style */
+            communication_style?: string | null;
+        };
         /**
          * ActivateRequest
          * @description Request schema for activating a config.
@@ -2424,6 +2819,20 @@ export interface components {
              * Format: binary
              */
             file: string;
+        };
+        /** ChatTemplateMessage */
+        ChatTemplateMessage: {
+            /** From Role */
+            from_role: string;
+            /** Content */
+            content: string;
+        };
+        /** ChatTemplateSection */
+        ChatTemplateSection: {
+            /** Title */
+            title: string;
+            /** Messages */
+            messages: components["schemas"]["ChatTemplateMessage"][];
         };
         /** CitySuggestion */
         CitySuggestion: {
@@ -3085,6 +3494,8 @@ export interface components {
              * @default true
              */
             outputs_enabled: boolean;
+            /** Trigger Id */
+            trigger_id?: string | null;
         };
         /** IntakeMessageResponse */
         IntakeMessageResponse: {
@@ -3444,6 +3855,19 @@ export interface components {
              * @default {}
              */
             options: Record<string, never> | null;
+        };
+        /** Page[AIPersonaResponse] */
+        Page_AIPersonaResponse_: {
+            /** Items */
+            items: components["schemas"]["AIPersonaResponse"][];
+            /** Total */
+            total: number | null;
+            /** Page */
+            page: number | null;
+            /** Size */
+            size: number | null;
+            /** Pages */
+            pages?: number | null;
         };
         /** Page[AssessmentConfigResponse] */
         Page_AssessmentConfigResponse_: {
@@ -4326,6 +4750,16 @@ export interface components {
              */
             fields: components["schemas"]["TemplateFieldSchema"][];
         };
+        /** TestPersonaRequest */
+        TestPersonaRequest: {
+            /** Message */
+            message: string;
+        };
+        /** TestPersonaResponse */
+        TestPersonaResponse: {
+            /** Response */
+            response: string;
+        };
         /** TextToSpeechRequest */
         TextToSpeechRequest: {
             /**
@@ -4698,6 +5132,413 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    list_ai_personas_ai_personas_get: {
+        parameters: {
+            query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AIPersonaResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_ai_persona_endpoint_ai_personas_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AIPersonaCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIPersonaResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ai_persona_ai_personas__persona_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                persona_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIPersonaResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_ai_persona_endpoint_ai_personas__persona_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                persona_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AIPersonaUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIPersonaResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_ai_persona_endpoint_ai_personas__persona_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                persona_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_persona_triggers_ai_personas__persona_id__triggers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                persona_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIIntakeTriggerSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trigger_ai_intake_ai_personas_ai_intakes_trigger_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AIIntakeTriggerRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIIntakeTriggerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ai_intake_status_ai_personas_ai_intakes__execution_id__status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                execution_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIIntakeStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ai_intake_status_by_trigger_ai_personas_ai_intakes__trigger_id__trigger_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trigger_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIIntakeStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_ai_intake_ai_personas_ai_intakes__trigger_id__retry_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trigger_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIIntakeTriggerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_template_triggers_ai_personas_ai_intakes_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIIntakeTriggerSummary"][];
+                };
+            };
+        };
+    };
+    toggle_trigger_as_template_ai_personas_ai_intakes__trigger_id__toggle_template_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trigger_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIIntakeTriggerSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    test_ai_persona_ai_personas__persona_id__test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                persona_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestPersonaRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestPersonaResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

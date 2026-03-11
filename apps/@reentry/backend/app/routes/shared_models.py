@@ -122,6 +122,7 @@ class IntakeHistoryResponse(ORMResponse):
     assessment_config_outputs_action_plan_activated: bool | None = None
     completed_at: datetime | None = None
     outputs_enabled: bool = True
+    trigger_id: UUID | None = None
 
 
 class AssessmentConfigOutput(AssessmentConfigResponse):

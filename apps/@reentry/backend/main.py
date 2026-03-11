@@ -13,6 +13,7 @@ from fastapi_pagination.utils import disable_installed_extensions_check
 from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.middleware.base import BaseHTTPMiddleware
 
+import app.models.ai_persona  # noqa
 import app.models.assessment  # noqa
 import app.models.assessment_tree  # noqa
 import app.models.decision_tree  # noqa
@@ -27,6 +28,7 @@ from app.core.config import settings
 from app.core.logging_config import setup_logging
 from app.core.sentry_config import setup_sentry
 from app.routes import (
+    ai_persona_router,
     assessment_config_router,
     autocomplete_router,
     client_router,
@@ -207,6 +209,7 @@ firebase_app = firebase_admin.initialize_app(
 
 # Include routers
 # Internal routers with prefixes - require authentication
+app.include_router(ai_persona_router.router)
 app.include_router(decision_tree_router.router, prefix="/decision-trees")
 app.include_router(assessment_config_router.router, prefix="/assessment-configs")
 app.include_router(config_management_router.router, prefix="/config-management")
@@ -250,6 +253,7 @@ tasks = [
     "app.tasks.plan_decision_tree",
     "app.tasks.plan_create",
     "app.tasks.action_plan",
+    "app.tasks.ai_intake",
 ]
 for task in tasks:
     importlib.import_module(task)

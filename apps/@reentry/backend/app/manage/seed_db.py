@@ -7,6 +7,7 @@ from sqlmodel import select
 
 from app.core.config import settings
 from app.core.db import get_session_async_manager
+from app.models.ai_persona import AIPersona
 from app.models.assessment_config import AssessmentConfig
 from app.models.output_config import OutputConfig
 from app.utils.string_utils import normalize_state_code_format
@@ -170,6 +171,65 @@ async def seed_db_selective():
         )
 
     print("All user data (intakes, plans) has been preserved.")
+
+
+async def seed_ai_personas():
+    """
+    Seed the database with default AI personas from headless_conversation_eval.py.
+    Only inserts personas that don't already exist (by name).
+    """
+    print("Seeding AI personas...")
+
+    async with get_session_async_manager() as session:
+        # Import SAMPLE_PERSONAS from evaluation code
+        from app.manage.evaluate.headless_conversation_eval import SAMPLE_PERSONAS
+
+        for persona_data in SAMPLE_PERSONAS:
+            try:
+                name = persona_data.get("name")
+                if not name:
+                    print(f"  Warning: Skipping persona - missing name")
+                    continue
+
+                # Check if already exists
+                existing = await session.exec(
+                    select(AIPersona).where(AIPersona.name == name)
+                )
+                if existing.first():
+                    print(f"  AI Persona already exists: {name}")
+                    continue
+
+                # Create new persona
+                persona = AIPersona(
+                    name=name,
+                    age=persona_data.get("age", 30),
+                    background=persona_data.get("background", "No background provided"),
+                    challenges=persona_data.get(
+                        "challenges", "No challenges provided"
+                    ),
+                    communication_style=persona_data.get(
+                        "communication_style", "Direct and honest"
+                    ),
+                    is_active=True,
+                )
+                session.add(persona)
+                print(f"  Created AI persona: {name}")
+            except Exception as e:
+                print(f"  Error creating persona {persona_data.get('name', 'unknown')}: {e}")
+
+        await session.commit()
+        print("AI persona seeding complete.")
+
+
+@cli.command()
+async def seed_personas():
+    """
+    Seed the database with default AI personas for testing.
+
+    This command seeds AI personas from SAMPLE_PERSONAS in headless_conversation_eval.py.
+    Existing personas are preserved - only missing personas are added.
+    """
+    await seed_ai_personas()
 
 
 @cli.command()

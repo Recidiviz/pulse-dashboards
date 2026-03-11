@@ -10,6 +10,7 @@ from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.crud.address import get_latest_address_client_pseudo_id
+from app.crud.ai_persona import get_latest_ai_intake_trigger_by_intake_id
 from app.crud.client import ClientSort, get_paginated_client_list
 from app.crud.client import reset_client_data as crud_reset_client_data
 from app.crud.intake import (
@@ -194,6 +195,7 @@ async def get_client_intakes(
         plan_config = await ConfigLoader.load_plan_config(
             intake.assessment_config_id, session
         )
+        trigger = await get_latest_ai_intake_trigger_by_intake_id(session, intake.id)
         response.append(
             IntakeHistoryResponse(
                 id=intake.id,
@@ -210,6 +212,7 @@ async def get_client_intakes(
                 completed_at=intake.completed_at,
                 assessment_config_outputs_action_plan_activated=plan_config is not None,
                 outputs_enabled=intake.outputs_enabled,
+                trigger_id=trigger.id if trigger else None,
             )
         )
 

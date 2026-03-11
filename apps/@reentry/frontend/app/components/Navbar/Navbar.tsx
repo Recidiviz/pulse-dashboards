@@ -99,6 +99,23 @@ const Navbar = () => {
                     </Link>
                   </div>
                 )}
+                {showConfigLink && (
+                  <div
+                    className={`self-stretch px-1 py-6 flex-col justify-center items-center gap-2 inline-flex ${
+                      pathname.startsWith("/ai-test-harness")
+                        ? "border-t-4 border-[#00c49d] text-[#003331]"
+                        : "text-[#2a5469]/90"
+                    }`}
+                  >
+                    <Link href="/ai-test-harness/personas">
+                      <div
+                        className={`text-sm font-medium leading-[16.80px] ${pathname.startsWith("/ai-test-harness") ? "mt-[-4%]" : ""}`}
+                      >
+                        AI Test Harness
+                      </div>
+                    </Link>
+                  </div>
+                )}
               </div>
               <UserDropdown
                 user={state.user}

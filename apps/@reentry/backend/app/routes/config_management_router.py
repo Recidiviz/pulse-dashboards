@@ -9,7 +9,7 @@ from typing import List, Optional
 from uuid import UUID
 
 import structlog
-from fastapi import APIRouter, Depends, File, Header, HTTPException, Query, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from fastapi.responses import Response
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
@@ -21,10 +21,10 @@ from app.auth.auth_core import (
 )
 from app.auth.config_access import (
     create_config_access_token,
-    decode_config_access_token,
     is_password_gate_enabled,
     verify_config_password,
 )
+from app.auth.dependencies import require_internal_user
 from app.core.db import AsyncSession, get_session
 from app.crud.config_management import (
     create_assessment_config,
@@ -92,42 +92,6 @@ async def validate_file_size(
             detail=f"File too large. Maximum size is {max_size // 1024}KB.",
         )
     return content
-
-
-async def require_internal_user(
-    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
-    auth_user_context=Depends(get_auth_user_context),
-    x_config_access_token: str | None = Header(default=None),
-) -> dict:
-    """Dependency to require internal user access for config management.
-
-    Checks two layers:
-    1. User must be from an internal domain (Recidiviz staff).
-    2. If password gate is enabled (demo/staging/prod), the request must
-       include a valid config access token in the X-Config-Access-Token header.
-
-    Note: pseudonymized_id dependency is included to ensure the Auth0 userinfo
-    cache is populated before get_auth_user_context runs (follows the pattern
-    used in other routers like plan_router, client_router, etc.).
-    """
-    email = auth_user_context.get("email") or ""
-    if not is_internal_user(email):
-        raise HTTPException(
-            status_code=403,
-            detail="Config management is only available to Recidiviz staff",
-        )
-
-    # If password gate is enabled, validate config access token
-    if is_password_gate_enabled():
-        if not x_config_access_token:
-            raise HTTPException(
-                status_code=403,
-                detail="Config access token required. Please enter the config management password.",
-            )
-        # This will raise HTTPException if token is invalid/expired
-        decode_config_access_token(x_config_access_token)
-
-    return auth_user_context
 
 
 def get_email_from_context(auth_user_context: dict) -> str:

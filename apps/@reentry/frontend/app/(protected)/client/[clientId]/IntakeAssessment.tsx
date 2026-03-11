@@ -15,27 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FI
-
-// TNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
-
+import Link from "next/link";
 import React, { useMemo, useState } from "react";
 
+import TriggerAIIntakeModal from "~@reentry/frontend/(protected)/ai-test-harness/components/TriggerAIIntakeModal";
 import AudioRecordings from "~@reentry/frontend/(protected)/client/[clientId]/AudioRecordings";
 import IntakeArtifacts from "~@reentry/frontend/(protected)/client/[clientId]/IntakeArtifacts";
 import { $api } from "~@reentry/frontend/api";
@@ -70,6 +53,7 @@ export default function IntakeAssessment({
   const assessmentStatus = intakeInfo?.status;
   const [removeAssessmentModalOpen, setRemoveAssessmentModalOpen] =
     useState(false);
+  const [isTriggerAIModalOpen, setIsTriggerAIModalOpen] = useState(false);
   const auth = useAuth();
   const userEmail = auth.authStore?.user?.email;
 
@@ -248,6 +232,23 @@ export default function IntakeAssessment({
                       />
                     </div>
                   )}
+                {isInternalUser(userEmail) &&
+                  intakeStatus?.frontend_status === "intake_enabled" && (
+                    <button
+                      onClick={() => setIsTriggerAIModalOpen(true)}
+                      className="px-4 py-2 bg-[#003331] text-white rounded-full hover:bg-gray-950 transition-colors text-sm font-medium whitespace-nowrap"
+                    >
+                      Trigger AI Intake
+                    </button>
+                  )}
+                {isInternalUser(userEmail) && intakeInfo.trigger_id && (
+                  <Link
+                    href={`/ai-test-harness/status/${intakeInfo.trigger_id}`}
+                    className="px-4 py-2 border border-[#003331] text-[#003331] rounded-full hover:bg-gray-100 transition-colors text-sm font-medium whitespace-nowrap"
+                  >
+                    View AI Status
+                  </Link>
+                )}
                 {assessmentStatus != "completed" &&
                   intakeInfo.intake_type === "transcription" && (
                     <div className="w-full md:w-auto shrink-0">
@@ -323,6 +324,16 @@ export default function IntakeAssessment({
             )}
           </p>
         </div>
+
+        {/* Trigger AI Intake Modal */}
+        {intakeInfo && (
+          <TriggerAIIntakeModal
+            isOpen={isTriggerAIModalOpen}
+            onClose={() => setIsTriggerAIModalOpen(false)}
+            assessment={intakeInfo}
+          />
+        )}
+
         {/* Validation warnings */}
         {transcriptionData?.validation && (
           <TranscriptionValidationWarnings
