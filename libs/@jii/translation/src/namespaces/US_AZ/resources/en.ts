@@ -123,7 +123,7 @@ export default {
         value: "{{addDate, formatFullDate}}",
       },
       trToAddDate: {
-        title: "Transition to Absolute Discharge Date (TR to ADD)",
+        title: "Temporary Release to Absolute Discharge Date (TR to ADD)",
         info: `A discretionary release up to 90 days before your ADD (Absolute Discharge Date). 
         You must meet [the criteria]({{linkUrl}}) listed in ADCRR Department Order 1002. This is
         used for individuals who will be released to probation following the completion of 
