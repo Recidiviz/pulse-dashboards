@@ -251,17 +251,20 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
       ))}
 
       {/* Key Considerations */}
-      <Styled.SectionCard>
-        <Styled.SectionTitle>Key Considerations</Styled.SectionTitle>
-        <Styled.SectionBody>
-          <Styled.InlineRow>
-            Needs: {needsComplete ? needsDisplay : <MissingBadge />}
-          </Styled.InlineRow>
-          <Styled.InlineRow>
-            Mitigation: {factorsComplete ? mitigationDisplay : <MissingBadge />}
-          </Styled.InlineRow>
-        </Styled.SectionBody>
-      </Styled.SectionCard>
+      {!presenter.defendantDeclinedToParticipate && (
+        <Styled.SectionCard>
+          <Styled.SectionTitle>Key Considerations</Styled.SectionTitle>
+          <Styled.SectionBody>
+            <Styled.InlineRow>
+              Needs: {needsComplete ? needsDisplay : <MissingBadge />}
+            </Styled.InlineRow>
+            <Styled.InlineRow>
+              Mitigation:{" "}
+              {factorsComplete ? mitigationDisplay : <MissingBadge />}
+            </Styled.InlineRow>
+          </Styled.SectionBody>
+        </Styled.SectionCard>
+      )}
 
       {/* Defendant's Version */}
       <Styled.SectionCard>
@@ -279,40 +282,46 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
         </Styled.SectionBody>
       </Styled.SectionCard>
 
-      {/* Offender Assessment — always show the imported score summary */}
-      <Styled.SectionCard>
-        <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
-        <Styled.SectionBody>
-          {offenderAssessmentDisplay || NONE_LISTED}
-        </Styled.SectionBody>
-      </Styled.SectionCard>
+      {!presenter.defendantDeclinedToParticipate && (
+        <>
+          {/* Offender Assessment — always show the imported score summary */}
+          <Styled.SectionCard>
+            <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
+            <Styled.SectionBody>
+              {offenderAssessmentDisplay || NONE_LISTED}
+            </Styled.SectionBody>
+          </Styled.SectionCard>
 
-      {/* Recommendation - per sub-section badges */}
-      <Styled.SectionCard>
-        <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
-        {recommendationSkipped ? (
-          <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
-        ) : (
-          <Styled.RecommendationSection>
-            <Styled.RecommendationLabel>
-              Community Strategy
-            </Styled.RecommendationLabel>
-            <Styled.SectionBody>
-              {communityValue || <MissingBadge />}
-            </Styled.SectionBody>
-            <Styled.RecommendationLabel>Home Plan</Styled.RecommendationLabel>
-            <Styled.SectionBody>
-              {homePlanValue || <MissingBadge />}
-            </Styled.SectionBody>
-            <Styled.RecommendationLabel>
-              Institutional Strategy
-            </Styled.RecommendationLabel>
-            <Styled.SectionBody>
-              {institutionalValue || <MissingBadge />}
-            </Styled.SectionBody>
-          </Styled.RecommendationSection>
-        )}
-      </Styled.SectionCard>
+          {/* Recommendation - per sub-section badges */}
+          <Styled.SectionCard>
+            <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
+            {recommendationSkipped ? (
+              <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
+            ) : (
+              <Styled.RecommendationSection>
+                <Styled.RecommendationLabel>
+                  Community Strategy
+                </Styled.RecommendationLabel>
+                <Styled.SectionBody>
+                  {communityValue || <MissingBadge />}
+                </Styled.SectionBody>
+                <Styled.RecommendationLabel>
+                  Home Plan
+                </Styled.RecommendationLabel>
+                <Styled.SectionBody>
+                  {homePlanValue || <MissingBadge />}
+                </Styled.SectionBody>
+                <Styled.RecommendationLabel>
+                  Institutional Strategy
+                </Styled.RecommendationLabel>
+                <Styled.SectionBody>
+                  {institutionalValue || <MissingBadge />}
+                </Styled.SectionBody>
+              </Styled.RecommendationSection>
+            )}
+          </Styled.SectionCard>
+        </>
+      )}
     </Styled.Container>
   );
 });

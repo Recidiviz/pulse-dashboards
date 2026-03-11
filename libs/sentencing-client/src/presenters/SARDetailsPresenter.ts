@@ -33,7 +33,11 @@ import {
 } from "../components/CaseInformation/constants";
 import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderations/constants";
 import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
-import { SARSection, type SARSectionName } from "../components/SARDetails";
+import {
+  SAR_REPORT_SECTIONS,
+  SARSection,
+  type SARSectionName,
+} from "../components/SARDetails/constants";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
@@ -75,6 +79,8 @@ const RECOMMENDATION_FIELDS = [
   "homePlan",
   "institutionalStrategyRecommendation",
 ] as const;
+
+const EMPTY_SECTION = { completed: 0, total: 0 };
 
 // All SAR sections that contribute to progress (excludes read-only Summary)
 type ProgressSection = Exclude<SARSectionName, SARSection.SUMMARY>;
@@ -146,6 +152,19 @@ export class SARDetailsPresenter implements Hydratable {
       charges: this.SARData.charges,
       dueDate: this.SARData.dueDate,
     };
+  }
+
+  get SARSections(): SARSectionName[] {
+    const result =
+      this.defendantDeclinedToParticipate === false
+        ? (SAR_REPORT_SECTIONS as unknown as SARSectionName[])
+        : ([
+            SARSection.CASE_INFORMATION,
+            SARSection.DEFENDANTS_VERSION,
+            SARSection.VICTIM_IMPACT,
+            SARSection.SUMMARY,
+          ] as SARSectionName[]);
+    return result;
   }
 
   /** Formatted birth date for display */
@@ -258,7 +277,7 @@ export class SARDetailsPresenter implements Hydratable {
         completed: acc.completed + c.completed,
         total: acc.total + c.total,
       }),
-      { completed: 0, total: 0 },
+      EMPTY_SECTION,
     );
   }
 
@@ -281,6 +300,10 @@ export class SARDetailsPresenter implements Hydratable {
     completed: number;
     total: number;
   } {
+    if (this.defendantDeclinedToParticipate === true) {
+      return EMPTY_SECTION;
+    }
+
     let completed = 0;
     const total = KEY_CONSIDERATIONS_REQUIRED_FIELDS.length;
 
@@ -323,6 +346,10 @@ export class SARDetailsPresenter implements Hydratable {
     completed: number;
     total: number;
   } {
+    if (this.defendantDeclinedToParticipate === true) {
+      return EMPTY_SECTION;
+    }
+
     if (this.recommendationSkipped) {
       return {
         completed: RECOMMENDATION_FIELDS.length,
@@ -341,6 +368,10 @@ export class SARDetailsPresenter implements Hydratable {
     completed: number;
     total: number;
   } {
+    if (this.defendantDeclinedToParticipate === true) {
+      return EMPTY_SECTION;
+    }
+
     const { summaries, formFields } = this.offenderAssessmentFields;
     let completed = 0;
     summaries.forEach((s) => {
@@ -357,6 +388,10 @@ export class SARDetailsPresenter implements Hydratable {
     completed: number;
     total: number;
   } {
+    if (this.defendantDeclinedToParticipate === true) {
+      return EMPTY_SECTION;
+    }
+
     const summary = this.SARData?.priorTreatmentHistorySummary;
     const hasContent = !!summary && summary.trim() !== "";
     return { completed: hasContent ? 1 : 0, total: 1 };

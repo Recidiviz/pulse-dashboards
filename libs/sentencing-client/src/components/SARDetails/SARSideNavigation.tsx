@@ -23,7 +23,6 @@ import { getDomainsForAssessmentType } from "../OffenderAssessment/utils";
 import { ArrowIcon } from "./ArrowIcon";
 import {
   OFFENDER_ASSESSMENT_SUBSECTIONS,
-  SAR_REPORT_SECTIONS,
   SARSection,
   SARSectionName,
   SUBSECTION_TO_DOMAIN_KEY,
@@ -47,8 +46,9 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
     onSubsectionChange,
     presenter,
   }) {
-    const currentIndex = SAR_REPORT_SECTIONS.indexOf(currentSection);
-    const totalSections = SAR_REPORT_SECTIONS.length;
+    const reportSections = presenter.SARSections;
+    const currentIndex = reportSections.indexOf(currentSection);
+    const totalSections = reportSections.length;
     const sectionStatuses = presenter.sectionStatuses;
 
     // Filter subsections based on ORAS assessment type
@@ -63,13 +63,13 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
 
     const handlePrevious = () => {
       if (currentIndex > 0) {
-        onSectionChange(SAR_REPORT_SECTIONS[currentIndex - 1]);
+        onSectionChange(reportSections[currentIndex - 1]);
       }
     };
 
     const handleNext = () => {
       if (currentIndex < totalSections - 1) {
-        onSectionChange(SAR_REPORT_SECTIONS[currentIndex + 1]);
+        onSectionChange(reportSections[currentIndex + 1]);
       }
     };
 
@@ -80,7 +80,7 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
       <Styled.SideContainer>
         <Styled.SideNavigationContainer>
           <Styled.NavigationList>
-            {SAR_REPORT_SECTIONS.map((section) => {
+            {reportSections.map((section) => {
               const isActive = section === currentSection;
               const status =
                 section !== SARSection.SUMMARY

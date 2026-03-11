@@ -79,7 +79,11 @@ const SARSectionContent: React.FC<{
           presenter={presenter}
           title="Enter Defendant's Version"
           fieldName="defendantStatement"
-          placeholder="Please add the details of the Defendant's version"
+          placeholder={
+            presenter.defendantDeclinedToParticipate === true
+              ? "Since the client declined to participate, please write a short paragraph describing your attempts to contact the client."
+              : "Please add the details of the Defendant's version"
+          }
         />
       )}
       {currentSection === SARSection.VICTIM_IMPACT && (
