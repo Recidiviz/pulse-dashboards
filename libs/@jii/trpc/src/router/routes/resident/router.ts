@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { ResidentFlagId } from "~@jii/prisma";
 import { typedFromEntries } from "~utils";
 
 import { residentRestrictedMiddleware } from "../../../middleware/residentRestrictedMiddleware";
@@ -28,6 +29,12 @@ export const residentRouter = router({
     .input(z.object({ pseudonymizedId: z.string() }))
     .use(residentRestrictedMiddleware)
     .query(async ({ ctx, input }) => {
+      if (ctx.userProfile.permissions?.includes("all_resident_flags_enabled")) {
+        return typedFromEntries(
+          Object.values(ResidentFlagId).map((id) => [id, true]),
+        );
+      }
+
       const rows = await ctx.prisma.residentFlagInstance.findMany({
         where: {
           pseudonymizedId: input.pseudonymizedId,

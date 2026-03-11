@@ -25,7 +25,8 @@ export const permissionSchema = z.enum([
   "live_data",
   "translator",
   "global_write",
-  "cpa_v1"
+  "all_resident_flags_enabled",
+  "cpa_v1",
 ]);
 
 /**
