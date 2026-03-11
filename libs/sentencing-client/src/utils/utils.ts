@@ -166,6 +166,19 @@ export const titleCase = (str?: string | null) => {
   return startCase(str.toLocaleLowerCase());
 };
 
+/**
+ * Formats a judge name from source-data format ("LAST, FIRST") to display
+ * format ("First Last"). Falls back to title-casing the raw string if there
+ * is no comma.
+ */
+export const formatJudgeName = (raw: string): string => {
+  const commaIdx = raw.indexOf(",");
+  if (commaIdx === -1) return titleCase(raw);
+  const lastName = raw.slice(0, commaIdx).trim();
+  const firstName = raw.slice(commaIdx + 1).trim();
+  return `${titleCase(firstName)} ${titleCase(lastName)}`;
+};
+
 /** Capitalizes human names (accounting for things like hyphens and apostrophes)  */
 export const capitalizeName = (name: string) =>
   name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -175,7 +188,9 @@ export const capitalizeName = (name: string) =>
  * Takes the first word as firstName and the last word as lastName,
  * capitalizing both.
  */
-export const splitFullName = (fullName?: string | null): { firstName: string; lastName: string } => {
+export const splitFullName = (
+  fullName?: string | null,
+): { firstName: string; lastName: string } => {
   const nameParts = fullName?.trim().split(/\s+/) || [];
   return {
     firstName: capitalizeName(nameParts[0] || ""),
@@ -236,7 +251,7 @@ export const formatDateRange = (
 export const formatJudgeAndDivision = (charge: FormCharge): string | null => {
   const judgeNames =
     charge.judgeNames && charge.judgeNames.length > 0
-      ? charge.judgeNames.join(", ")
+      ? charge.judgeNames.map(capitalizeName).join(", ")
       : null;
   if (judgeNames && charge.division) {
     return `${judgeNames} / ${charge.division}`;

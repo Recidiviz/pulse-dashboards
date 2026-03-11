@@ -176,7 +176,12 @@ export const chargeImportSchema = z.object({
   court_case_number: z.string(),
   offense_external_id: z.string(), // Unique identifier for this charge
   description: z.string(), // This becomes the offense name on Charge
-  judges: z.array(z.string()).optional(),
+  judges: z
+    .preprocess(
+      (val) => (typeof val === "string" ? [val] : val),
+      z.array(z.string()),
+    )
+    .optional(),
   classification_type: z.nativeEnum(ChargeClassificationType).optional(),
   classification_subtype: z.nativeEnum(ChargeClassificationSubtype).optional(),
   division: z.string().optional(),

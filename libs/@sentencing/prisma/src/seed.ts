@@ -276,10 +276,8 @@ async function addSARClientsAndReports(
           connect: { pseudonymizedId: staff.pseudonymizedId },
         },
         status: CaseStatus.NotYetStarted,
-        requestingJudgeName: faker.person.fullName(),
         dateRequested: faker.date.recent(),
         dueDate: faker.date.future(),
-        division: faker.string.numeric(4),
         address: faker.location.streetAddress(),
         // ORAS Assessment data — domain scores and overall max vary by tool type
         // Max scores derived from production data
@@ -403,7 +401,8 @@ async function addSARClientsAndReports(
           ),
           judgeNames: Array.from(
             { length: faker.number.int({ min: 1, max: 3 }) },
-            () => faker.person.fullName(),
+            () =>
+              `${faker.person.lastName().toUpperCase()}, ${faker.person.firstName().toUpperCase()}`,
           ),
           division: faker.string.numeric(4),
           county: faker.location.county(),

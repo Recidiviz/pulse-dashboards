@@ -21,6 +21,7 @@ import React from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import * as Styled from "./CaseInformation.styles";
 import { EditableChargeField } from "./constants";
+import { JudgeSelector } from "./JudgeSelector";
 import { OffenseCard } from "./OffenseCard";
 
 interface CaseInformationProps {
@@ -58,18 +59,12 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
             </Styled.CheckboxLabel>
           </Styled.CheckboxContainer>
 
-          <Styled.JudgeInformationContainer>
-            <Styled.StaffInfoColumn>
-              {presenter.SARData?.requestingJudgeName
-                ? `To Honorable ${presenter.SARData.requestingJudgeName}`
-                : null}
-            </Styled.StaffInfoColumn>
-            <Styled.SARDivisionName>
-              {presenter.SARData?.division
-                ? `Division ${presenter.SARData.division}`
-                : null}
-            </Styled.SARDivisionName>
-          </Styled.JudgeInformationContainer>
+          <JudgeSelector
+            judgeOptions={presenter.judgeOptions}
+            selectedJudgeName={presenter.SARData?.requestingJudgeName ?? null}
+            selectedDivision={presenter.SARData?.division ?? null}
+            onUpdate={presenter.updateJudgeSelection}
+          />
 
           <Styled.OfficerInformationContainer>
             <Styled.StaffInfoColumn>

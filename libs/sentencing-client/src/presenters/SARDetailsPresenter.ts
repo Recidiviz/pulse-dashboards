@@ -31,6 +31,7 @@ import {
   EditableChargeField,
   REQUIRED_FIELD_IDS,
 } from "../components/CaseInformation/constants";
+import { JudgeOption } from "../components/CaseInformation/JudgeSelector";
 import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderations/constants";
 import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
 import {
@@ -41,7 +42,7 @@ import {
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
-import { titleCase } from "../utils/utils";
+import { formatJudgeName, titleCase } from "../utils/utils";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
@@ -242,6 +243,21 @@ export class SARDetailsPresenter implements Hydratable {
     return this.SARData?.defendantDeclinedToParticipate ?? false;
   }
 
+  /** Extract unique judge name/division pairs from all imported charges */
+  get judgeOptions(): JudgeOption[] {
+    const judgeMap = new Map<string, string | null>();
+    this.SARData?.charges?.forEach((charge) => {
+      (charge.judgeNames ?? []).forEach((name) => {
+        if (!judgeMap.has(name)) judgeMap.set(name, charge.division ?? null);
+      });
+    });
+    return Array.from(judgeMap.entries()).map(([name, division]) => ({
+      label: formatJudgeName(name),
+      value: name,
+      division,
+    }));
+  }
+
   /**
    * Calculate overall SAR progress at the field level.
    * Each per-section getter counts its own {completed, total} so the
@@ -284,6 +300,11 @@ export class SARDetailsPresenter implements Hydratable {
   private get caseInfoFieldCounts(): { completed: number; total: number } {
     let completed = 0;
     let total = 0;
+
+    // Judge name is required at the SAR level
+    total++;
+    if (this.SARData?.requestingJudgeName) completed++;
+
     this.charges.forEach((charge) => {
       REQUIRED_FIELD_IDS.forEach((fieldId) => {
         total++;
@@ -457,6 +478,35 @@ export class SARDetailsPresenter implements Hydratable {
     );
 
     // Update local status after successful save
+    runInAction(() => {
+      this.updateLocalStatus(this.statusForUpdate);
+    });
+  }
+
+  /** Update requesting judge name and optionally division */
+  async updateJudgeSelection(
+    name: string | null,
+    division?: string | null,
+  ): Promise<void> {
+    if (!this.SARData) return;
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.requestingJudgeName = name;
+        if (division !== undefined) this.SARData.division = division;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      requestingJudgeName: name,
+      ...(division !== undefined ? { division } : {}),
+      status: this.statusForUpdate,
+    };
+    await this.sentencingStore.apiClient.updateSARDetails(
+      this.SARData.id,
+      updates,
+    );
+
     runInAction(() => {
       this.updateLocalStatus(this.statusForUpdate);
     });
@@ -1174,8 +1224,9 @@ export class SARDetailsPresenter implements Hydratable {
   private getCaseInfoStatus(): SectionStatus {
     if (this.charges.length === 0) return "empty";
 
-    let hasAnyValue = false;
-    let allFieldsComplete = true;
+    const hasJudgeName = !!this.SARData?.requestingJudgeName;
+    let hasAnyValue = hasJudgeName;
+    let allFieldsComplete = hasJudgeName;
 
     this.charges.forEach((charge) => {
       REQUIRED_FIELD_IDS.forEach((fieldId) => {

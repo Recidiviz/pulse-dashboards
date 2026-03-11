@@ -78,6 +78,8 @@ export const updateSARSchema = z.object({
     ssn: z.string().nullable().optional(),
     status: CaseStatusEnum.optional(),
     address: z.string().nullable().optional(),
+    requestingJudgeName: z.string().nullish(),
+    division: z.string().nullish(),
     defendantDeclinedToParticipate: z.boolean().optional(),
     needsToBeAddressed: z.array(NeedsToBeAddressedEnum).optional(),
     otherNeedToBeAddressed: z.string().nullable().optional(),

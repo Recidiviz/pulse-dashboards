@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { rgba } from "polished";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
@@ -61,14 +61,8 @@ export const InputWrapper = styled.div<{ $inline?: boolean }>`
   flex: 1;
 `;
 
-export const InputBase = styled.input<{ $inline?: boolean }>`
+export const pencilInputBase = css`
   border: 1px solid white;
-  font-weight: inherit;
-  padding: 2px 9px 2px 1.5em;
-  margin: -5px 0 0 -5px;
-  font-size: 0.8rem;
-  width: 100%;
-  min-width: 1px;
   background-repeat: no-repeat;
   background-position: left 4px center;
   background-size: 0.75em;
@@ -80,6 +74,16 @@ export const InputBase = styled.input<{ $inline?: boolean }>`
   &::placeholder {
     color: ${palette.pine4};
   }
+`;
+
+export const InputBase = styled.input<{ $inline?: boolean }>`
+  ${pencilInputBase}
+  font-weight: inherit;
+  padding: 2px 9px 2px 1.5em;
+  margin: -5px 0 0 -5px;
+  font-size: 0.8rem;
+  width: 100%;
+  min-width: 1px;
 `;
 
 export const HelperText = styled.div`
