@@ -21,9 +21,23 @@ import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
+const mrCriteria = z
+  .object({
+    latestEligibleDate: dateStringSchema,
+  })
+  .optional();
+
 export const usNeGoodTimeRestorationSchema = opportunitySchemaBase.extend({
+  ineligibleCriteria: z
+    .object({
+      usNeNoIdcMrsInPast6Months: mrCriteria,
+      usNeLessThan3UdcMrsInPast6Months: mrCriteria,
+      usNeNoClass1MrsInLastYear: mrCriteria,
+    })
+    .passthrough(),
   metadata: z
     .object({
+      almostEligibleForJiiApp: z.boolean(),
       numberOfDaysEligibleFor: z
         .string()
         .transform((val) => parseInt(val))

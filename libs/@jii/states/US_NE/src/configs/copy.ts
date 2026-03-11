@@ -49,7 +49,12 @@ export type UsNeCopy = {
     todos: {
       sectionTitle: string;
       goodTimeRestoration: {
-        [K in "almostEligible" | "eligible" | "eligibleForMoreThan30Days"]: {
+        [K in
+          | "almostEligible"
+          | "eligible"
+          | "eligibleForMoreThan30Days"
+          | "ineligibleLTRH"
+          | "ineligibleTreatment"]: {
           title: string;
           body: string;
           linkText: string;
@@ -134,24 +139,42 @@ export const usNeCopy: UsNeCopy = {
         eligible: {
           title: "Restore Lost Good Time",
           body: dedent`Congrats on going 6 months without any misconduct reports.
-                       You are eligible to request 30 days back this month. You currently have {{metadata.goodTimeLostDaysRestorable}} total days lost.
+          You are eligible to request 30 days back this month. You currently have {{metadata.goodTimeLostDaysRestorable}} total lost restorable days.
 
-                       To begin the time restoration process, ask your case manager or submit an Inmate Interview Request (IIR)
-                       to the records office personnel in your facility.`,
+          To begin the time restoration process, ask your case manager or submit an Inmate Interview Request (IIR) to the records office personnel in your facility.`,
           linkText: "Learn More",
         },
         eligibleForMoreThan30Days: {
           title: "Restore Lost Good Time",
           body: dedent`Congrats on getting 30 days of good time back each of the last 5 months.
-                       You are now eligible to request more than 30 days back this month. You currently have {{metadata.goodTimeLostDaysRestorable}} total days lost.
+                       You are now eligible to request more than 30 days back this month. You currently have {{metadata.goodTimeLostDaysRestorable}} total lost restorable days.
 
                        To begin the time restoration process, ask your case manager or submit an Inmate Interview Request (IIR)
                        to the records office personnel in your facility.`,
           linkText: "Learn More",
         },
         almostEligible: {
-          title: "Restore Lost Good Time",
-          body: "ALMOST ELIGIBLE COPY TK",
+          title: "Become Eligible For Good Time Restoration",
+          body: dedent`{{goodTimeRestorationMonthsRemainingString}} with no Misconduct Reports and you will be eligible to request a good time restoration.
+          If you become eligible, staff will automatically initiate a request and inform you of the decision.
+
+          You currently have {{metadata.goodTimeLostDaysRestorable}} total lost restorable days.`,
+          linkText: "Learn More",
+        },
+        ineligibleLTRH: {
+          title: "Become Eligible For Good Time Restoration",
+          body: dedent`Despite no disqualifying recent Misconduct Reports, facility staff have noted you are currently ineligible for good time restoration
+          due to your current or recent placement in Long-Term Restrictive Housing. Please speak with facility staff for more detail.
+ 
+          You currently have {{metadata.goodTimeLostDaysRestorable}} total lost restorable days.`,
+          linkText: "Learn More",
+        },
+        ineligibleTreatment: {
+          title: "Become Eligible For Good Time Restoration",
+          body: dedent`Despite no disqualifying recent Misconduct Reports, facility staff have noted you are currently ineligible for good time restoration
+          due to your refusal of recommended clinical programming. Please speak with facility staff for more detail.
+ 
+          You currently have {{metadata.goodTimeLostDaysRestorable}} total lost restorable days.`,
           linkText: "Learn More",
         },
       },

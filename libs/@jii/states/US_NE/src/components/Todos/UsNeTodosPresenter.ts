@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInMonths } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
@@ -24,6 +25,10 @@ import { FirebaseAuthClient } from "~firebase-auth";
 import { Hydratable, HydrationState } from "~hydration-utils";
 
 import { UsNeCopy } from "../../configs/copy";
+
+type GoodTimeOpportunity = OpportunityData & {
+  opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
+};
 
 export class UsNeTodosPresenter implements Hydratable {
   readonly intakeAssessmentPresenter: IntakeAssessmentPresenter;
@@ -84,45 +89,64 @@ export class UsNeTodosPresenter implements Hydratable {
     return years <= 75;
   }
 
-  /**
-   * Which Good Time Restoration todo should be shown? Null if none should be shown.
-   */
-  get goodTimeRestorationStatus():
-    | keyof UsNeCopy["home"]["todos"]["goodTimeRestoration"]
-    | null {
-    type GoodTimeOpportunity = OpportunityData & {
-      opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
-    };
-
+  get goodTimeRestorationOpportunityRecord():
+    | GoodTimeOpportunity["opportunityRecord"]
+    | undefined {
     if (!this.residentFlags.usNeGoodTimeAlerts) {
-      return null;
+      return;
     }
 
-    const goodTimeOpportunity = this.opportunities.find(
+    return this.opportunities.find(
       // This type guard only asserts what OpportunityData guarantees (that opportunityRecord's
       // type matches the opportunityId) but TypeScript is unable to deduce on its own.
       (opp): opp is GoodTimeOpportunity =>
         opp.opportunityId === "usNeGoodTimeRestoration",
-    );
+    )?.opportunityRecord;
+  }
 
-    if (!goodTimeOpportunity) {
-      return null;
+  /**
+   * Which Good Time Restoration todo should be shown, if any?
+   */
+  get goodTimeRestorationStatus():
+    | keyof UsNeCopy["home"]["todos"]["goodTimeRestoration"]
+    | undefined {
+    const { goodTimeRestorationOpportunityRecord } = this;
+    if (!goodTimeRestorationOpportunityRecord) {
+      return;
     }
 
     const {
-      isEligible,
-      isAlmostEligible,
-      metadata: { numberOfDaysEligibleFor },
-    } = goodTimeOpportunity.opportunityRecord;
+      ineligibleCriteria,
+      metadata: { almostEligibleForJiiApp },
+    } = goodTimeRestorationOpportunityRecord;
 
-    if (numberOfDaysEligibleFor > 30) {
-      return "eligibleForMoreThan30Days";
-    } else if (isEligible) {
-      return "eligible";
-    } else if (isAlmostEligible) {
-      return "almostEligible";
+    // We're not showing the eligible states for now, just almost/ineligible
+    if (!almostEligibleForJiiApp) return;
+
+    if ("usNeNotInLtrhFor90Days" in ineligibleCriteria) return "ineligibleLTRH";
+    if ("usNeNoOngoingClinicalTreatmentProgramRefusal" in ineligibleCriteria)
+      return "ineligibleTreatment";
+    return "almostEligible";
+  }
+
+  // Only used/well defined when goodTimeRestorationStatus === "almostEligible"
+  get goodTimeRestorationMonthsRemainingString(): string | undefined {
+    const ineligibleCriteria =
+      this.goodTimeRestorationOpportunityRecord?.ineligibleCriteria;
+    if (!ineligibleCriteria) {
+      return;
     }
-    return null;
+
+    // At most one of these will exist in records marked as almostEligibleForJiiApp
+    const latestEligibleDate =
+      ineligibleCriteria.usNeLessThan3UdcMrsInPast6Months?.latestEligibleDate ??
+      ineligibleCriteria.usNeNoIdcMrsInPast6Months?.latestEligibleDate ??
+      ineligibleCriteria.usNeNoClass1MrsInLastYear?.latestEligibleDate;
+
+    if (!latestEligibleDate) return;
+    const monthsRemaining = differenceInMonths(latestEligibleDate, new Date());
+    if (monthsRemaining <= 1) return "1 more month";
+    return `${monthsRemaining} more months`;
   }
 
   get shouldShowReentryAssessment(): boolean {

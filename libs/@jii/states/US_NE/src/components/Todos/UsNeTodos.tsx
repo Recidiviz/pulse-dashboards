@@ -47,6 +47,7 @@ const ManagedComponent = observer(function ManagedComponent({
     shouldShowReentryChecklist,
     shouldShowTodos,
     shouldShowReentryAssessment,
+    goodTimeRestorationMonthsRemainingString,
   } = presenter;
 
   if (!shouldShowTodos) {
@@ -59,6 +60,7 @@ const ManagedComponent = observer(function ManagedComponent({
       {goodTimeRestorationStatus && (
         <TodoCard
           {...copy.goodTimeRestoration[goodTimeRestorationStatus]}
+          templateValues={{ goodTimeRestorationMonthsRemainingString }}
           linkTarget={State.Resident.$.EGT.Definition.buildRelativePath({
             pageSlug: "gbmd",
           })}

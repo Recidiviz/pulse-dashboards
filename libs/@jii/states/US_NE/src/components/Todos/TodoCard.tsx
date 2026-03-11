@@ -32,9 +32,16 @@ export type TodoCardProps = {
   body: string;
   linkText: string;
   linkTarget: string;
+  templateValues?: Record<string, string | number | undefined>;
 };
 
-export function TodoCard({ title, body, linkText, linkTarget }: TodoCardProps) {
+export function TodoCard({
+  title,
+  body,
+  linkText,
+  linkTarget,
+  templateValues,
+}: TodoCardProps) {
   const { resident, opportunities: rawOpps } = useSingleResidentContext();
   const opportunities = Object.fromEntries(
     rawOpps.map((opp) => [opp.opportunityId, opp.opportunityRecord]),
@@ -43,7 +50,11 @@ export function TodoCard({ title, body, linkText, linkTarget }: TodoCardProps) {
     <Card>
       <Headline>{title}</Headline>
       <SlateCopy options={{ forceBlock: true }}>
-        {hydrateTemplate(body, { ...resident, ...opportunities })}
+        {hydrateTemplate(body, {
+          ...resident,
+          ...opportunities,
+          ...templateValues,
+        })}
       </SlateCopy>
       <GoLink to={linkTarget}>{linkText}</GoLink>
     </Card>
