@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { randomUUID } from "crypto";
+import uuid from "react-native-uuid";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -75,7 +75,7 @@ export const useMeetingEventQueue = create<MeetingEventQueueState>()(
         set((s) => ({
           events: [
             ...s.events,
-            { eventId: randomUUID(), createdAt: new Date(), metadata },
+            { eventId: uuid.v4(), createdAt: new Date(), metadata },
           ],
         })),
       dequeue: () => {

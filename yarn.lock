@@ -9468,7 +9468,6 @@ __metadata:
     expo: "npm:^54.0.0"
     expo-audio: "npm:~1.0.15"
     expo-build-properties: "npm:~1.0.9"
-    expo-crypto: "npm:^55.0.9"
     expo-dev-client: "npm:~6.0.18"
     expo-font: "npm:~14.0.9"
     expo-notifications: "npm:~0.32.12"
@@ -9491,6 +9490,7 @@ __metadata:
     react-native-screens: "npm:~4.16.0"
     react-native-svg: "npm:15.12.1"
     react-native-svg-transformer: "npm:~1.5.1"
+    react-native-uuid: "npm:^2.0.3"
     react-native-web: "npm:^0.21.0"
     react-native-worklets: "npm:0.5.1"
     tsconfig-paths: "npm:*"
@@ -29772,15 +29772,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-crypto@npm:^55.0.9":
-  version: 55.0.9
-  resolution: "expo-crypto@npm:55.0.9"
-  peerDependencies:
-    expo: "*"
-  checksum: 10c0/6eff2afa56b1f65c33287f185556c78b6bdeec1387c2841cf6c92218500947bc21085bb2c09d77ee293144ba4139974104500edb5399f85fc15fb0369b16e58f
-  languageName: node
-  linkType: hard
-
 "expo-dev-client@npm:~6.0.18":
   version: 6.0.18
   resolution: "expo-dev-client@npm:6.0.18"
@@ -46597,6 +46588,13 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/ed94b57007125c715283fc760438ac8eac0677ced3201f6e272a7cd4459f3fecb672a8eed2c32664e5b8e6e0367585353b0f83f99b231f603d75094bb052c01f
+  languageName: node
+  linkType: hard
+
+"react-native-uuid@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "react-native-uuid@npm:2.0.3"
+  checksum: 10c0/d94bccc28936c2dea081ab404f90b0c968092013af4d428b8e74bf407d6098ad5410914f77a903ad1296cce364fc85d27d8dfd70d22ec48d8cf1b7edc8803a8d
   languageName: node
   linkType: hard
 
