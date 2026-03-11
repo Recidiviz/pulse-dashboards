@@ -69,9 +69,12 @@ const getTrusteeQuestionValue = (data: DocData["data"], index: number) => {
   return undefined;
 };
 
-// This record defines a map from raw fields in the update record to output fields
-// with minimal transformation. Everything here is derivable just from the update
-// record without needing to check the base record
+function removeNewlines(input: string | undefined): string | undefined {
+  return input?.replaceAll("\n", "; ");
+}
+
+// This record defines a map from fields in thecombined draft record to output
+// fields with minimal transformation or need to map dependencies.
 const COLUMN_MAPPING: Record<
   string,
   (
@@ -101,6 +104,14 @@ const COLUMN_MAPPING: Record<
   TrusteeDenialReasons: (doc) => doc["trusteeDenialReasons"],
   ChiefCounselorFinalizingForm: (doc) => doc["finalizingCounselor"],
   DateOfFinalApprovalAndEntry: (doc) => doc["finalApprovalDate"],
+
+  Question1_notes: (doc) =>
+    removeNewlines(doc["q1aNotes"] + "; " + doc["q1bNotes"]),
+  Question2_notes: (doc) => removeNewlines(doc["q2Notes"]),
+  Question3_notes: (doc) => removeNewlines(doc["q3NotesFormatted"]),
+  Question4_notes: (doc) => removeNewlines(doc["q4NotesFormatted"]),
+  Question5_notes: (doc) => removeNewlines(doc["q5NotesFormatted"]),
+  Question7_notes: (doc) => removeNewlines(doc["q7Notes"]),
 
   TrusteeChecklistComplete: (doc) =>
     doc["trusteeNoFelonyDetainers"] !== undefined &&
@@ -244,6 +255,8 @@ const CSV_COLUMN_ORDER = [
   "ChiefCounselorFinalizingForm",
   "TrusteeChecklistComplete",
   "DateOfFinalApprovalAndEntry",
+  "LastModifiedDate",
+  "UpdatedFields",
 ];
 
 function processRecord(
@@ -256,7 +269,7 @@ function processRecord(
   personSnapshot: QueryDocumentSnapshot,
 ) {
   // Set up an output record
-  const out: Record<string, string | number | undefined> = {};
+  const out: Record<string, string | number | undefined | string[]> = {};
 
   // Set flag to use dcaf vs rcaf helpers
   const isDcaf = opportunityType === "usTnInitialClassification2026Policy";
@@ -291,11 +304,12 @@ function processRecord(
   out.state_code = "US_TN";
   // slice off the leading us_tn_
   out.OFFENDERID = personRecordKey.slice(6);
-  out.ClassificationType = "RCAF";
+  out.ClassificationType = isDcaf ? "DCAF" : "RCAF";
   out.AssessmentDate = updateRecord.updated.date
     .toDate()
     .toISOString()
     .split("T")[0];
+  out.LastModifiedDate = updateRecord.updated.date.toDate().toISOString();
   out.LastModifiedBy = updateRecord.updated.by;
   out.LastClassificationDate = personRecord.metadata.latestClassificationDate;
   switch (opportunityType) {
@@ -316,12 +330,6 @@ function processRecord(
       out.ClassificationFormType = "Transfer";
   }
 
-  // Loop over the columns that can be derived directly from the update record
-  Object.entries(COLUMN_MAPPING).forEach(([field, getter]) => {
-    const value = getter(formUpdateData);
-    if (value !== undefined) out[field] = value;
-  });
-
   // transform the record data into the fields stored in the update record
   const prefilled = isDcaf
     ? // @ts-expect-error We are handling the Dcaf separately from Rcaf via
@@ -331,27 +339,31 @@ function processRecord(
     : // @ts-expect-error ditto
       prefillRcafFormData(parsedBaseRecord.formInformation);
 
+  const combinedRecord = {
+    ...parsedBaseRecord.formInformation,
+    ...prefilled,
+    ...formUpdateData,
+  };
+
+  // Loop over the columns that can be derived directly from the update record
+  Object.entries(COLUMN_MAPPING).forEach(([field, getter]) => {
+    // @ts-expect-error
+    const value = getter(combinedRecord);
+    if (value !== undefined) out[field] = value;
+  });
+
   const derivedData = isDcaf
     ? // @ts-expect-error See note above
-      deriveDcafFormData({
-        ...prefilled,
-        ...formUpdateData,
-      })
+      deriveDcafFormData(combinedRecord)
     : // @ts-expect-error See note above
-      deriveRcafFormData({
-        ...prefilled,
-        ...formUpdateData,
-      });
+      deriveRcafFormData(combinedRecord);
+
+  out.UpdatedFields = Object.keys(formUpdateData);
 
   // Map over the derived fields and record them if an input field was updated
   Object.entries(
     isDcaf ? DERIVED_DATA_MAPPING_DCAF : DERIVED_DATA_MAPPING_RCAF,
   ).forEach(([outField, { sourceField, relevantFields }]) => {
-    // if none of the fields that contribute to the calculation of this field were modified, skip this entry
-    if (relevantFields.every((field) => formUpdateData[field] === undefined)) {
-      return;
-    }
-
     // The RCAF update has one additional question compared to the DCAF one
     // This check makes sure we don't look for it in the DCAF update
     if (!(sourceField in derivedData)) return;
@@ -363,6 +375,12 @@ function processRecord(
       out[outField] = value ? "T" : "F";
     } else {
       out[outField] = value;
+    }
+
+    // if none of the fields that contribute to the calculation of this field were modified, skip this entry
+    if (relevantFields.some((field) => formUpdateData[field] !== undefined)) {
+      // @ts-expect-error We define it 22 lines above
+      out.UpdatedFields.push(outField);
     }
   });
 
