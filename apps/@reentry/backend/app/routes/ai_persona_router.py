@@ -26,7 +26,11 @@ from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel
 
-from app.auth.auth_core import get_auth_user_context, is_internal_user
+from app.auth.auth_core import (
+    get_auth_user_context,
+    get_pseudonymized_id,
+    is_internal_user,
+)
 from app.core.db import AsyncSession, get_session
 from app.crud.address import update_intake_address
 from app.crud.ai_persona import (
@@ -107,6 +111,7 @@ class AIIntakeTriggerSummary(BaseModel):
 )
 async def list_ai_personas(
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -129,6 +134,7 @@ async def list_ai_personas(
 async def get_ai_persona(
     persona_id: UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -153,6 +159,7 @@ async def get_ai_persona(
 async def list_persona_triggers(
     persona_id: UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -220,6 +227,7 @@ async def list_persona_triggers(
 async def create_ai_persona_endpoint(
     request: AIPersonaCreate,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -251,6 +259,7 @@ async def update_ai_persona_endpoint(
     persona_id: UUID,
     request: AIPersonaUpdate,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -285,6 +294,7 @@ async def update_ai_persona_endpoint(
 async def delete_ai_persona_endpoint(
     persona_id: UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -354,6 +364,7 @@ class AIIntakeStatusResponse(BaseModel):
 async def trigger_ai_intake(
     request: AIIntakeTriggerRequest,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -621,6 +632,7 @@ async def trigger_ai_intake(
 async def get_ai_intake_status(
     execution_id: UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -655,6 +667,7 @@ async def get_ai_intake_status(
 async def get_ai_intake_status_by_trigger(
     trigger_id: UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -717,6 +730,7 @@ async def get_ai_intake_status_by_trigger(
 async def retry_ai_intake(
     trigger_id: UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -781,6 +795,7 @@ async def retry_ai_intake(
 )
 async def list_template_triggers(
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -842,6 +857,7 @@ async def list_template_triggers(
 async def toggle_trigger_as_template(
     trigger_id: UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
@@ -911,6 +927,7 @@ async def test_ai_persona(
     persona_id: UUID,
     request: TestPersonaRequest,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),  # noqa: ARG001
     auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
