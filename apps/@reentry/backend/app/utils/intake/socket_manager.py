@@ -52,7 +52,7 @@ engineio_logger = logging.getLogger("engineio.server")
 sio = socketio.AsyncServer(
     async_mode="asgi",
     client_manager=mgr,
-    cors_allowed_origins=settings.ALLOWED_ORIGINS.split(","),
+    cors_allowed_origins=[],  # CORS handled by FastAPI CORSMiddleware in main.py
     logger=socketio_logger,
 )
 
@@ -126,7 +126,8 @@ class SocketIOManager:
             headers = {
                 key: value
                 for key, value in environ.items()
-                if key.startswith("HTTP_") or key in ["REQUEST_METHOD", "PATH_INFO", "QUERY_STRING"]
+                if key.startswith("HTTP_")
+                or key in ["REQUEST_METHOD", "PATH_INFO", "QUERY_STRING"]
             }
             logger.info(
                 "WebSocket connection attempt",
@@ -134,13 +135,19 @@ class SocketIOManager:
                     "sid": sid,
                     "headers": headers,
                     "auth_present": auth is not None,
-                    "auth_token_present": bool(auth and auth.get("auth_token")) if auth else False,
-                    "auth_token_length": len(auth.get("auth_token", "")) if auth and auth.get("auth_token") else 0,
-                    "token_from_url_present": bool(auth and auth.get("token_from_url")) if auth else False,
+                    "auth_token_present": bool(auth and auth.get("auth_token"))
+                    if auth
+                    else False,
+                    "auth_token_length": len(auth.get("auth_token", ""))
+                    if auth and auth.get("auth_token")
+                    else 0,
+                    "token_from_url_present": bool(auth and auth.get("token_from_url"))
+                    if auth
+                    else False,
                     "remote_addr": environ.get("REMOTE_ADDR"),
                     "user_agent": environ.get("HTTP_USER_AGENT"),
                     "origin": environ.get("HTTP_ORIGIN"),
-                }
+                },
             )
 
             if auth:
@@ -227,7 +234,7 @@ class SocketIOManager:
                                         "intake_status": intake.status,
                                         "was_connected_elsewhere": was_connected_elsewhere,
                                         "origin": environ.get("HTTP_ORIGIN"),
-                                    }
+                                    },
                                 )
 
                                 if (
@@ -273,7 +280,7 @@ class SocketIOManager:
                     "error_type": type(e).__name__,
                     "auth_present": auth is not None,
                     "origin": environ.get("HTTP_ORIGIN"),
-                    "headers": headers
+                    "headers": headers,
                 },
                 exc_info=True,
             )
