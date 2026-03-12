@@ -39,7 +39,7 @@ const Navbar = () => {
           <a href="/" className="flex items-center gap-2">
             <Image
               src="/images/brand.svg"
-              alt="Next.js logo"
+              alt="Recidiviz logo"
               width={100}
               height={100}
               priority

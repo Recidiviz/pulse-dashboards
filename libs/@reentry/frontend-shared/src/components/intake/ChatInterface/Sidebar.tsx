@@ -130,7 +130,7 @@ export const Sidebar: FC<SidebarProps> = ({ onClose }) => {
         <div className="w-[80px] h-[28px] sm:w-[60px] sm:h-[20px]">
           <Image
             src="/images/brand.svg"
-            alt="Brand logo"
+            alt="Recidiviz logo"
             width={80}
             height={28}
             priority
