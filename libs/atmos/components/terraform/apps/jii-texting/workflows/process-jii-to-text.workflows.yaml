@@ -24,7 +24,7 @@ main:
         args:
           name: ${import_job_name}
           connector_params:
-            timeout: 10800
+            timeout: 21600
           body:
             overrides:
               containerOverrides:
@@ -54,7 +54,7 @@ main:
         args:
           name: ${process_job_name}
           connector_params:
-            timeout: 10800
+            timeout: 21600
           body:
             overrides:
               containerOverrides:
