@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str = "recidiviz"
     OPENAI_API_KEY: Optional[str] = None
+    OPENAI_BASE_URL: Optional[str] = "https://us.api.openai.com/v1"
     DATABASE_URL_TESTS: str = (
         "postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test"
     )
@@ -142,7 +143,11 @@ def create_model_from_config(provider: str, name: str, version: str | None):
         if not settings.OPENAI_API_KEY:
             raise ValueError("OPENAI_API_KEY must be set to use OpenAI models")
         model_name = f"{name}-{version}" if version else name
-        return ChatOpenAI(api_key=settings.OPENAI_API_KEY, model=model_name)
+        return ChatOpenAI(
+            api_key=settings.OPENAI_API_KEY,
+            model=model_name,
+            base_url=settings.OPENAI_BASE_URL,
+        )
     elif provider == "anthropic":
         if not settings.ANTHROPIC_API_KEY:
             raise ValueError("ANTHROPIC_API_KEY must be set to use Anthropic models")
