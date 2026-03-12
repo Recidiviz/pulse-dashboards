@@ -138,6 +138,7 @@ exclude_paths = [
     "/autocomplete-address",
     "/webhooks/deepgram/transcription",
     "/intake/services",
+    "/socket.io",
 ]
 
 auth0_config = get_auth0_config()
