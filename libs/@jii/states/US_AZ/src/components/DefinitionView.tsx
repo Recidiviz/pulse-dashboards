@@ -15,56 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import {
-  BackLink,
-  CopyProps,
-  PageLinksFooter,
-  SimpleLinkProps,
-} from "~@jii/common-ui";
-import {
-  HeadingsAggregator,
-  InfoPage,
-  ScreenFillingWrapper,
-} from "~@jii/layout";
+import { SimpleLinkProps } from "~@jii/common-ui";
+import { DefinitionPage, InfoPageProps } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
-type DefinitionViewProps = {
-  heading: string;
-  body: string;
-  moreInfoPageLinks?: Array<SimpleLinkProps>;
-  CopyWrapperOverride?: FC<CopyProps>;
-  tocHeadingsAggregatorOverride?: HeadingsAggregator;
-};
+interface DefinitionViewProps extends InfoPageProps {
+  moreInfoPageLinks: Array<SimpleLinkProps>;
+}
 
 export const DefinitionView = (props: DefinitionViewProps) => {
   const params = useTypedParams(State.Resident.UsAzMoreInformation);
   const { t } = useUsAzTranslations();
   return (
-    <ScreenFillingWrapper
-      top={
-        <>
-          <BackLink
-            to={State.Resident.buildPath(params)}
-            children={t(($) => $.backToHomePageLinkText)}
-          />
-          <InfoPage {...props} />
-        </>
-      }
-      bottom={
-        props.moreInfoPageLinks && (
-          <PageLinksFooter
-            contents={{
-              pageLinksHeading: t(($) => $.moreInfoPageLinksHeading),
-              pageLinks: props.moreInfoPageLinks,
-              topLinkText: t(($) => $.backToTopLinkText),
-            }}
-          />
-        )
-      }
+    <DefinitionPage
+      backLinkProps={{
+        to: State.Resident.buildPath(params),
+        children: t(($) => $.backToHomePageLinkText),
+      }}
+      pageLinksFooterProps={{
+        pageLinksHeading: t(($) => $.moreInfoPageLinksHeading),
+        pageLinks: props.moreInfoPageLinks,
+        topLinkText: t(($) => $.backToTopLinkText),
+      }}
+      {...props}
     />
   );
 };

@@ -15,38 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { FC } from "react";
 
-import { BackLink, PageLinksFooter, SimpleLinkProps } from "~@jii/common-ui";
-import { InfoPage, ScreenFillingWrapper } from "~@jii/layout";
-import { State } from "~@jii/paths";
+import {
+  BackLink,
+  PageLinksFooter,
+  PageLinksFooterProps,
+  SimpleLinkProps,
+} from "~@jii/common-ui";
 
-type DefinitionViewProps = {
-  heading: string;
-  body: string;
-  moreInfoPageLinks?: Array<SimpleLinkProps>;
-};
+import { InfoPage, InfoPageProps } from "../InfoPage/InfoPage";
+import { ScreenFillingWrapper } from "../ScreenFillingWrapper/ScreenFillingWrapper";
 
-export const DefinitionView = (props: DefinitionViewProps) => {
-  const params = useTypedParams(State.Resident.UsCoMoreInformation);
+interface DefinitionPageProps extends InfoPageProps {
+  backLinkProps: SimpleLinkProps;
+  pageLinksFooterProps?: PageLinksFooterProps;
+}
 
+/**
+ * An entire page that houses an InfoPage, with a back link at the top.
+ * If footer links are provided, they will be shown at the bottom.
+ */
+export const DefinitionPage: FC<DefinitionPageProps> = (
+  props: DefinitionPageProps,
+) => {
   return (
     <ScreenFillingWrapper
       top={
         <>
-          <BackLink to={State.Resident.buildPath(params)} children="Home" />
+          <BackLink {...props.backLinkProps} />
           <InfoPage {...props} />
         </>
       }
       bottom={
-        props.moreInfoPageLinks && (
-          <PageLinksFooter
-            contents={{
-              pageLinksHeading: "More Information",
-              pageLinks: props.moreInfoPageLinks,
-              topLinkText: "Back to top",
-            }}
-          />
+        props.pageLinksFooterProps && (
+          <PageLinksFooter contents={{ ...props.pageLinksFooterProps }} />
         )
       }
     />

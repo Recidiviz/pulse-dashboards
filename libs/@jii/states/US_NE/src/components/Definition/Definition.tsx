@@ -19,9 +19,8 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { BackLink, PageLinksFooter } from "~@jii/common-ui";
 import { EgtCopyWrapper } from "~@jii/earned-good-time";
-import { InfoPage, ScreenFillingWrapper } from "~@jii/layout";
+import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -32,18 +31,16 @@ const ManagedComponent: FC<{
   presenter: DefinitionPagePresenter;
 }> = observer(function Definition({ presenter }) {
   return (
-    <ScreenFillingWrapper
-      top={
-        <>
-          <BackLink {...presenter.backLink} />
-          <InfoPage
-            heading={presenter.heading}
-            body={presenter.body}
-            CopyWrapperOverride={EgtCopyWrapper}
-          />
-        </>
-      }
-      bottom={<PageLinksFooter contents={presenter} />}
+    <DefinitionPage
+      backLinkProps={{ ...presenter.backLink }}
+      heading={presenter.heading}
+      body={presenter.body}
+      CopyWrapperOverride={EgtCopyWrapper}
+      pageLinksFooterProps={{
+        pageLinks: presenter.pageLinks,
+        pageLinksHeading: presenter.pageLinksHeading,
+        topLinkText: presenter.topLinkText,
+      }}
     />
   );
 });

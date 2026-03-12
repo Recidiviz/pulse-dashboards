@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsCoTranslationsObject, useUsCoTranslations } from "~@jii/translation";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { DefinitionView } from "../components/DefinitionView";
+import { DefinitionPage } from "~@jii/layout";
+import { State } from "~@jii/paths";
+import { UsCoTranslationsObject, useUsCoTranslations } from "~@jii/translation";
 
 type Props = {
   pageSlug: keyof UsCoTranslationsObject["moreInformation"]["pages"];
@@ -25,9 +27,11 @@ type Props = {
 
 export function PageMoreInformation({ pageSlug }: Props) {
   const { t } = useUsCoTranslations();
+  const params = useTypedParams(State.Resident.UsCoMoreInformation);
 
   return (
-    <DefinitionView
+    <DefinitionPage
+      backLinkProps={{ to: State.Resident.buildPath(params), children: "Home" }}
       heading={t(($) => $.moreInformation.pages[pageSlug].heading)}
       body={t(($) => $.moreInformation.pages[pageSlug].body)}
     />

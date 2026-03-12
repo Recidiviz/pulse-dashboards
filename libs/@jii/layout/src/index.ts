@@ -16,6 +16,7 @@
 // =============================================================================
 
 export * from "./constants";
+export * from "./DefinitionPage/DefinitionPage";
 export * from "./ErrorPage/ErrorPageMainContent";
 export * from "./FullWidthBanner";
 export * from "./InfoPage/InfoPage";

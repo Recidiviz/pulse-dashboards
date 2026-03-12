@@ -23,6 +23,13 @@ import { usePageTitle } from "~@jii/common-ui";
 import { HeadingsAggregator, TableOfContents } from "./TableOfContents";
 import { useScrollToHash } from "./useScrollToHash";
 
+export interface InfoPageProps {
+  heading: string;
+  body: string;
+  CopyWrapperOverride?: FC<CopyProps>;
+  tocHeadingsAggregatorOverride?: HeadingsAggregator;
+}
+
 /**
  * Renders the page content along with a table of contents for jumping between sections.
  * @param props
@@ -32,12 +39,7 @@ import { useScrollToHash } from "./useScrollToHash";
  * @param props.CopyWrapperOverride - optional alternative component for rendering Markdown copy.
  * Mostly useful to substitute a wrapper that supports additional custom React components.
  */
-export const InfoPage: FC<{
-  heading: string;
-  body: string;
-  CopyWrapperOverride?: FC<CopyProps>;
-  tocHeadingsAggregatorOverride?: HeadingsAggregator;
-}> = ({
+export const InfoPage: FC<InfoPageProps> = ({
   heading,
   body,
   CopyWrapperOverride,
