@@ -55,11 +55,15 @@ export const clientRouter = router({
   createMeeting: auth0Procedure
     .input(createMeetingInputSchema)
     .mutation(
-      async ({ input: { clientId, startTime }, ctx: { prisma, user } }) => {
+      async ({
+        input: { clientId, startTime, meetingId },
+        ctx: { prisma, user },
+      }) => {
         return createMeetingForPerson({
           prisma,
           user,
           personId: clientId,
+          meetingId,
           startTime,
           personType: "client",
         });

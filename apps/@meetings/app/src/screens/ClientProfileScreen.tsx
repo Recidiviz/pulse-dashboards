@@ -17,12 +17,12 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useState } from "react";
-import { Alert, Platform } from "react-native";
+import { Platform } from "react-native";
 
 import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
 import { useRecording } from "../features/recording";
+import { useCreateMeeting } from "../hooks/useCreateMeeting";
 import { useMeetings } from "../hooks/useMeetings";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -56,7 +56,6 @@ type ProfileScreenProps = {
 
 const ClientProfileScreen = ({ person }: ProfileScreenProps) => {
   const navigation = useNavigation<ProfileNavProp>();
-  const [isCreating, setIsCreating] = useState(false);
   const { openRecordingView } = useRecording<"web">();
 
   const {
@@ -66,16 +65,10 @@ const ClientProfileScreen = ({ person }: ProfileScreenProps) => {
     refetch,
   } = useMeetings({ personId: person.personId, personType: "client" });
 
-  const createMeetingMutation = trpc.v1.client.createMeeting.useMutation();
-  const handleCreateMeeting = async () => {
-    try {
-      setIsCreating(true);
-      const startTime = new Date();
-      const { id: meetingId } = await createMeetingMutation.mutateAsync({
-        clientId: person.personId,
-        startTime,
-      });
-
+  const { handleCreateMeeting, isCreating } = useCreateMeeting({
+    person,
+    personType: "client",
+    onSuccess: (meetingId) => {
       switch (Platform.OS) {
         case "web":
           openRecordingView({ meetingId, person });
@@ -91,13 +84,8 @@ const ClientProfileScreen = ({ person }: ProfileScreenProps) => {
           });
           break;
       }
-    } catch (err) {
-      console.error("[createMeeting] Failed:", err);
-      Alert.alert("Error", "Failed to create meeting. Please try again.");
-    } finally {
-      setIsCreating(false);
-    }
-  };
+    },
+  });
 
   return (
     <ProfileMeetings

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 
 import {
@@ -30,12 +31,14 @@ export async function createMeetingForPerson({
   personId,
   startTime,
   personType,
+  meetingId,
 }: {
   prisma: PrismaClient;
   user: AuthUser;
   personId: bigint;
   startTime: Date;
   personType: "client" | "resident";
+  meetingId?: string;
 }) {
   if (env.DEPLOY_ENV === "production" && user.isRecidivizUser) {
     throw new TRPCError({
@@ -44,8 +47,13 @@ export async function createMeetingForPerson({
     });
   }
 
-  const meeting = await prisma.meeting.create({
+  // TODO - AVild: Remove this logic once we remove meeting ID as
+  // optional
+  meetingId = meetingId ?? createId();
+
+  return await prisma.meeting.create({
     data: {
+      id: meetingId,
       [personType]: {
         connect: {
           personId,
@@ -54,16 +62,7 @@ export async function createMeetingForPerson({
       staffEmail: user.email,
       startTime,
       recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
-      recordingsFolderPath: "placeholder",
-    },
-  });
-
-  return await prisma.meeting.update({
-    where: {
-      id: meeting.id,
-    },
-    data: {
-      recordingsFolderPath: meeting.id,
+      recordingsFolderPath: meetingId,
     },
     select: {
       id: true,

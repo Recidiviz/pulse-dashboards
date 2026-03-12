@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { createId } from "@paralleldrive/cuid2";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
@@ -40,6 +41,7 @@ describe("resident router", () => {
         const result = await testTRPCClient.v1.resident.createMeeting.mutate({
           residentId: fakeResidents[0].personId,
           startTime,
+          meetingId: createId(),
         });
 
         // Check expected fields are returned
@@ -199,6 +201,7 @@ describe("resident router", () => {
         const result = await testTRPCClient.v1.resident.createMeeting.mutate({
           residentId: fakeResidents[0].personId,
           startTime,
+          meetingId: createId(),
         });
 
         expect(result).toEqual({
@@ -227,6 +230,7 @@ describe("resident router", () => {
             testTRPCClient.v1.resident.createMeeting.mutate({
               residentId: fakeResidents[0].personId,
               startTime: faker.date.future(),
+              meetingId: createId(),
             }),
           ).rejects.toThrow(
             "Recidiviz users may not create meetings in production",

@@ -22,11 +22,9 @@ import { Prisma } from "~@meetings/prisma/client/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createMeetingForPerson,
-  getMeetingsForPerson,
-} from "~@meetings/trpc/routes/meeting.helpers";
-import {
   extractActiveMeetingId,
   extractLastCompletedMeetingTime,
+  getMeetingsForPerson,
 } from "~@meetings/trpc/routes/meeting.helpers";
 import {
   createMeetingInputSchema,
@@ -37,12 +35,16 @@ export const residentRouter = router({
   createMeeting: auth0Procedure
     .input(createMeetingInputSchema)
     .mutation(
-      async ({ input: { residentId, startTime }, ctx: { prisma, user } }) => {
+      async ({
+        input: { residentId, startTime, meetingId },
+        ctx: { prisma, user },
+      }) => {
         return createMeetingForPerson({
           prisma,
           user,
           personId: residentId,
           startTime,
+          meetingId,
           personType: "resident",
         });
       },
