@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./global.css";
+import "@fontsource/libre-baskerville";
 import "@fontsource/public-sans/400.css";
 import "@fontsource/public-sans/500.css";
 import "@fontsource/public-sans/600.css";
 import "@fontsource/public-sans/700.css";
-import "@fontsource/libre-baskerville";
+import "./global.css";
 
 import {
   GlobalStyle as GlobalStyleBase,
@@ -56,6 +56,7 @@ import { PageSearch } from "../pages/PageSearch";
 import { PageSelectState } from "../pages/PageSelectState";
 import { PageSingleResidentRoot } from "../pages/PageSingleResidentRoot";
 import { PageState } from "../pages/PageState";
+import { PageTransportDemo } from "../pages/PageTransportDemo";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
 import { StateSpecificRouter } from "../StateSpecificRouter/StateSpecificRouter";
@@ -90,6 +91,9 @@ export function App() {
           <GlobalStyle />
           <StyledApp>
             <SentryRoutes>
+              {/* Transport demo — outside PageRoot to bypass AuthManagerHydrator */}
+              {/* NOTE: Temporary for user testing and will be removed entirely after user testing*/}
+              <Route path="transport-demo" element={<PageTransportDemo />} />
               <Route path={SiteRoot.path} element={<PageRoot />}>
                 <Route index element={<PageHome />} />
                 <Route path={State.path}>

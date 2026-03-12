@@ -34,6 +34,7 @@ from app.routes import (
     client_router,
     config_management_router,
     decision_tree_router,
+    demo_router,
     execution_router,
     intake_admin_router,
     intake_auth_router,
@@ -47,6 +48,7 @@ from app.routes import (
     transcription_router,
     webhook_router,
 )
+from app.routes.demo_socketio import demo_socket_app
 from app.tasks.base import broker
 from app.utils.intake.socket_manager import intake_setup_background_tasks, socket_app
 from app.utils.PrometheusBackgroundThreadManager import (
@@ -138,6 +140,8 @@ exclude_paths = [
     "/autocomplete-address",
     "/webhooks/deepgram/transcription",
     "/intake/services",
+    # Temporary for user testing and will be removed entirely after user testing
+    "/demo/",
     "/socket.io",
 ]
 
@@ -197,6 +201,9 @@ app.add_middleware(
 # Mount Socket.IO application
 app.mount("/socket.io", socket_app)
 
+# Mount demo Socket.IO (separate instance, no Redis dependency)
+app.mount("/demo-socket.io", demo_socket_app)
+
 Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 # taskiq_fastapi
@@ -228,6 +235,9 @@ app.include_router(webhook_router.router, prefix="/webhooks")
 
 # Public routers -- no auth required
 app.include_router(intake_config_public_router.router, prefix="/public/intake-config")
+
+# Demo routers -- no auth required (A/B transport testing)
+app.include_router(demo_router.router, prefix="/demo")
 
 # Authenticated client endpoints
 app.include_router(intake_client_router.router, prefix="/external/client")

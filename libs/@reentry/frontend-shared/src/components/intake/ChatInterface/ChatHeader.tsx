@@ -65,6 +65,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const progressPercentage =
     totalSections > 0 ? (completedSections / totalSections) * 100 : 0;
 
+  // NOTE: Temporary for user testing and will be removed entirely after user testing
+  const isEdovo =
+    typeof window !== "undefined" &&
+    window.location.hostname.endsWith(".edovo.com");
+
   return (
     <>
       {/* Main header */}
@@ -128,6 +133,14 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 buttonText="End chat"
                 onClick={() => setIsEndChatModalOpen(true)}
               />
+              {/* NOTE: Temporary for user testing and will be removed entirely after user testing*/}
+              {isEdovo && (
+                <PrimaryButton
+                  className={"w-[100px] md:max-w-lg"}
+                  buttonText="Test"
+                  onClick={() => (window.location.href = "/transport-demo")}
+                />
+              )}
             </Box>
             <EndChatModal
               isOpen={isEndChatModalOpen}
