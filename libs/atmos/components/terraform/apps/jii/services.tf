@@ -90,3 +90,10 @@ resource "google_project_service" "project" {
   project = var.project_id
   service = "sqladmin.googleapis.com"
 }
+
+# permissions to read the employee ACLs from GCS
+resource "google_storage_bucket_iam_member" "acl_viewer" {
+  bucket = data.dotenv.env.entries.RECIDIVIZ_ALLOWED_STATES_BUCKET_NAME
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${google_service_account.default.email}"
+}
