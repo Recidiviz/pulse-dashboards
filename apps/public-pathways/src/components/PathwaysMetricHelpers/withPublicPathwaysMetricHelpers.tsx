@@ -17,27 +17,11 @@
 
 import { typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rgba } from "polished";
 import React from "react";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 
 import { Hydrator } from "~hydration-utils";
-import { HydratablePathwaysMetric, PathwaysTheme } from "~shared-pathways";
-
-import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
-
-const CHART_FONT_FAMILY = '"Oswald", sans-serif';
-
-const publicPathwaysTheme: PathwaysTheme = {
-  palette: {
-    ...publicPathwaysPalette,
-  },
-  typography: {
-    fontFamily: CHART_FONT_FAMILY,
-    titleColor: "black",
-    axisLabelColor: rgba("black", 0.75),
-  },
-};
+import { HydratablePathwaysMetric } from "~shared-pathways";
 
 type WithMetricHelperProps = {
   metric: HydratablePathwaysMetric;
@@ -83,9 +67,7 @@ const withPublicPathwaysMetricHelpers = <Props extends WithMetricHelperProps>(
         failed={<div>Failed to load data.</div>}
       >
         <NoDataHelper metric={metric}>
-          <ThemeProvider theme={publicPathwaysTheme}>
-            <OriginalComponent {...props} />
-          </ThemeProvider>
+          <OriginalComponent {...props} />
         </NoDataHelper>
       </MetricVizHydrator>
     );

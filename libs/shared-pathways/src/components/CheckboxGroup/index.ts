@@ -15,37 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "~design-system";
-
-const DEFAULT_FONT_FAMILY = '"Public Sans", sans-serif';
-
-export type PathwaysTheme = {
-  palette: typeof palette & { focusColor: string };
-  typography: {
-    fontFamily: string;
-    titleColor: string;
-    axisLabelColor: string;
-  };
-  checkbox: {
-    checkedColor: string;
-    labelColor: string;
-    titleColor: string;
-  };
-};
-
-export const defaultPathwaysTheme: PathwaysTheme = {
-  palette: {
-    ...palette,
-    focusColor: "#006c67",
-  },
-  typography: {
-    fontFamily: DEFAULT_FONT_FAMILY,
-    titleColor: palette.pine1,
-    axisLabelColor: palette.slate80,
-  },
-  checkbox: {
-    checkedColor: palette.pine3,
-    labelColor: palette.pine1,
-    titleColor: palette.pine1,
-  },
-};
+export { default as CheckboxGroup } from "./CheckboxGroup";
+export { default as CheckboxGroupWithSelectAllTitle } from "./CheckboxGroupWithSelectAllTitle";
