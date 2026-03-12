@@ -30,10 +30,7 @@ export async function transformAndLoadClientData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof clientImportSchema>>,
 ) {
-  // Mark all clients as inactive initially
-  await prismaClient.client.updateMany({
-    data: { isActive: false },
-  });
+  const BATCH_SIZE = 500;
 
   const existingStablePersonExternalIdsAndTypes = new Set(
     (
@@ -49,8 +46,26 @@ export async function transformAndLoadClientData(
     ),
   );
 
-  const newClientsToCreate: ClientCreateInput[] = [];
-  const existingClientsToUpdate: BulkUpdateEntries = [];
+  const processedPersonIds: bigint[] = [];
+  let createBatch: ClientCreateInput[] = [];
+  let updateBatch: BulkUpdateEntries = [];
+
+  const flushCreateBatch = async () => {
+    if (createBatch.length === 0) return;
+    await prismaClient.client.createMany({ data: createBatch });
+    createBatch = [];
+  };
+
+  const flushUpdateBatch = async () => {
+    if (updateBatch.length === 0) return;
+    await bulkUpdate(
+      prismaClient,
+      "Client",
+      ["stablePersonExternalId", "stablePersonExternalIdType"],
+      updateBatch,
+    );
+    updateBatch = [];
+  };
 
   for await (const clientData of data) {
     const newClient = {
@@ -69,25 +84,27 @@ export async function transformAndLoadClientData(
       isActive: true,
     } satisfies ClientCreateInput & BulkUpdateEntry;
 
+    processedPersonIds.push(clientData.person_id);
+
     if (
       existingStablePersonExternalIdsAndTypes.has(
         `${clientData.stable_person_external_id}+${clientData.stable_person_external_id_type}`,
       )
     ) {
-      existingClientsToUpdate.push(newClient);
+      updateBatch.push(newClient);
+      if (updateBatch.length >= BATCH_SIZE) await flushUpdateBatch();
     } else {
-      newClientsToCreate.push(newClient);
+      createBatch.push(newClient);
+      if (createBatch.length >= BATCH_SIZE) await flushCreateBatch();
     }
   }
 
-  await bulkUpdate(
-    prismaClient,
-    "Client",
-    ["stablePersonExternalId", "stablePersonExternalIdType"],
-    existingClientsToUpdate,
-  );
+  await flushCreateBatch();
+  await flushUpdateBatch();
 
-  await prismaClient.client.createMany({
-    data: newClientsToCreate,
+  // Mark clients not present in the import as inactive
+  await prismaClient.client.updateMany({
+    where: { personId: { notIn: processedPersonIds } },
+    data: { isActive: false },
   });
 }

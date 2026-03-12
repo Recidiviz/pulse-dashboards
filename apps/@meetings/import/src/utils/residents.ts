@@ -30,10 +30,7 @@ export async function transformAndLoadResidentData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof residentImportSchema>>,
 ) {
-  // Mark all residents as inactive initially
-  await prismaClient.resident.updateMany({
-    data: { isActive: false },
-  });
+  const BATCH_SIZE = 500;
 
   const existingStablePersonExternalIdsAndTypes = new Set(
     (
@@ -49,8 +46,26 @@ export async function transformAndLoadResidentData(
     ),
   );
 
-  const newResidentsToCreate: ResidentCreateInput[] = [];
-  const existingResidentsToUpdate: BulkUpdateEntries = [];
+  const processedPersonIds: bigint[] = [];
+  let createBatch: ResidentCreateInput[] = [];
+  let updateBatch: BulkUpdateEntries = [];
+
+  const flushCreateBatch = async () => {
+    if (createBatch.length === 0) return;
+    await prismaClient.resident.createMany({ data: createBatch });
+    createBatch = [];
+  };
+
+  const flushUpdateBatch = async () => {
+    if (updateBatch.length === 0) return;
+    await bulkUpdate(
+      prismaClient,
+      "Resident",
+      ["stablePersonExternalId", "stablePersonExternalIdType"],
+      updateBatch,
+    );
+    updateBatch = [];
+  };
 
   for await (const residentData of data) {
     const newResident = {
@@ -68,25 +83,27 @@ export async function transformAndLoadResidentData(
       isActive: true,
     } satisfies ResidentCreateInput & BulkUpdateEntry;
 
+    processedPersonIds.push(residentData.person_id);
+
     if (
       existingStablePersonExternalIdsAndTypes.has(
         `${residentData.stable_person_external_id}+${residentData.stable_person_external_id_type}`,
       )
     ) {
-      existingResidentsToUpdate.push(newResident);
+      updateBatch.push(newResident);
+      if (updateBatch.length >= BATCH_SIZE) await flushUpdateBatch();
     } else {
-      newResidentsToCreate.push(newResident);
+      createBatch.push(newResident);
+      if (createBatch.length >= BATCH_SIZE) await flushCreateBatch();
     }
   }
 
-  await bulkUpdate(
-    prismaClient,
-    "Resident",
-    ["stablePersonExternalId", "stablePersonExternalIdType"],
-    existingResidentsToUpdate,
-  );
+  await flushCreateBatch();
+  await flushUpdateBatch();
 
-  await prismaClient.resident.createMany({
-    data: newResidentsToCreate,
+  // Mark residents not present in the import as inactive
+  await prismaClient.resident.updateMany({
+    where: { personId: { notIn: processedPersonIds } },
+    data: { isActive: false },
   });
 }

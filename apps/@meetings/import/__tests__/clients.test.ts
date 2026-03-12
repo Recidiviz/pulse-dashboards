@@ -109,22 +109,14 @@ describe("import client data", () => {
     await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     // Check that the new client was created
-    const dbClients = await testPrismaClient.client.findMany();
+    const dbClients = await testPrismaClient.client.findMany({
+      orderBy: { personId: "asc" },
+    });
 
     // There should only be three clients in the database - the two new ones and the updated existing one
     expect(dbClients).toHaveLength(3);
 
     expect(dbClients).toEqual([
-      expect.objectContaining({
-        personId: BigInt(100),
-        stablePersonExternalId: fakeClient.stablePersonExternalId,
-        stablePersonExternalIdType: fakeClient.stablePersonExternalIdType,
-        pseudonymizedId: fakeClient.pseudonymizedId,
-        displayPersonExternalId: fakeClient.displayPersonExternalId,
-        givenNames: "New Name",
-        staffEmails: [newStaff.email],
-        isActive: true,
-      }),
       expect.objectContaining({
         personId: BigInt(2),
         stablePersonExternalId: "client-ext-2",
@@ -145,7 +137,65 @@ describe("import client data", () => {
         isActive: true,
         supervisionType: "GENERAL",
       }),
+      expect.objectContaining({
+        personId: BigInt(100),
+        stablePersonExternalId: fakeClient.stablePersonExternalId,
+        stablePersonExternalIdType: fakeClient.stablePersonExternalIdType,
+        pseudonymizedId: fakeClient.pseudonymizedId,
+        displayPersonExternalId: fakeClient.displayPersonExternalId,
+        givenNames: "New Name",
+        staffEmails: [newStaff.email],
+        isActive: true,
+      }),
     ]);
+  });
+
+  test("should correctly import more than BATCH_SIZE clients", async () => {
+    const existingClientData = {
+      state_code: StateCode.US_NE,
+      person_id: fakeClient.personId.toString(),
+      stable_person_external_id: fakeClient.stablePersonExternalId,
+      stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
+      display_person_external_id: fakeClient.displayPersonExternalId,
+      pseudonymized_id: fakeClient.pseudonymizedId,
+      person_name: JSON.stringify({
+        given_names: fakeClient.givenNames,
+        middle_names: fakeClient.middleNames,
+        surname: fakeClient.surname,
+        name_suffix: fakeClient.suffix,
+      }),
+      officer_emails: [fakeStaff.email],
+      supervision_type: "PAROLE",
+    };
+
+    // Generate 600 new clients (more than BATCH_SIZE of 500)
+    const newClientsData = Array.from({ length: 600 }, (_, i) => ({
+      state_code: StateCode.US_NE,
+      person_id: String(1000 + i),
+      stable_person_external_id: `batch-client-ext-${i}`,
+      stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
+      display_person_external_id: `batch-client-display-${i}`,
+      pseudonymized_id: `batch-client-pid-${i}`,
+      person_name: JSON.stringify({
+        given_names: faker.person.firstName(),
+        middle_names: faker.person.firstName(),
+        surname: faker.person.lastName(),
+        name_suffix: faker.person.suffix(),
+      }),
+      officer_emails: [],
+      supervision_type: "GENERAL",
+    }));
+
+    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+      existingClientData,
+      ...newClientsData,
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
+
+    const dbClients = await testPrismaClient.client.findMany();
+    expect(dbClients).toHaveLength(601);
+    expect(dbClients.every((c) => c.isActive)).toBe(true);
   });
 
   test("should mark clients not in import as inactive", async () => {

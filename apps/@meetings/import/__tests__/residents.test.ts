@@ -77,12 +77,23 @@ describe("import resident data", () => {
     await importHandler.import(TEST_STATE_CODE, [RESIDENTS_FILE_NAME]);
 
     // Check that the new resident was created
-    const dbResidents = await testPrismaClient.resident.findMany({});
+    const dbResidents = await testPrismaClient.resident.findMany({
+      orderBy: { personId: "asc" },
+    });
 
     // There should only be two residents in the database - the new one and the updated existing one
     expect(dbResidents).toHaveLength(2);
 
     expect(dbResidents).toEqual([
+      expect.objectContaining({
+        personId: BigInt(3),
+        stablePersonExternalId: "resident-ext-2",
+        stablePersonExternalIdType: "resident-ext-type-1",
+        pseudonymizedId: "new-resident-pid",
+        displayPersonExternalId: "new-resident-display-ext-id",
+        facilityId: "facility-1",
+        isActive: true,
+      }),
       expect.objectContaining({
         personId: BigInt(100),
         stablePersonExternalId: fakeResident.stablePersonExternalId,
@@ -93,16 +104,53 @@ describe("import resident data", () => {
         facilityId: "facility-2",
         isActive: true,
       }),
-      expect.objectContaining({
-        personId: BigInt(3),
-        stablePersonExternalId: "resident-ext-2",
-        stablePersonExternalIdType: "resident-ext-type-1",
-        pseudonymizedId: "new-resident-pid",
-        displayPersonExternalId: "new-resident-display-ext-id",
-        facilityId: "facility-1",
-        isActive: true,
-      }),
     ]);
+  });
+
+  test("should correctly import more than BATCH_SIZE residents", async () => {
+    const existingResidentData = {
+      state_code: StateCode.US_NE,
+      person_id: fakeResident.personId.toString(),
+      stable_person_external_id: fakeResident.stablePersonExternalId,
+      stable_person_external_id_type: fakeResident.stablePersonExternalIdType,
+      display_person_external_id: fakeResident.displayPersonExternalId,
+      pseudonymized_id: fakeResident.pseudonymizedId,
+      person_name: JSON.stringify({
+        given_names: fakeResident.givenNames,
+        middle_names: fakeResident.middleNames,
+        surname: fakeResident.surname,
+        name_suffix: fakeResident.suffix,
+      }),
+      facility_id: fakeResident.facilityId,
+    };
+
+    // Generate 600 new residents (more than BATCH_SIZE of 500)
+    const newResidentsData = Array.from({ length: 600 }, (_, i) => ({
+      state_code: StateCode.US_NE,
+      person_id: String(1000 + i),
+      stable_person_external_id: `batch-resident-ext-${i}`,
+      stable_person_external_id_type: fakeResident.stablePersonExternalIdType,
+      display_person_external_id: `batch-resident-display-${i}`,
+      pseudonymized_id: `batch-resident-pid-${i}`,
+      person_name: JSON.stringify({
+        given_names: faker.person.firstName(),
+        middle_names: faker.person.firstName(),
+        surname: faker.person.lastName(),
+        name_suffix: faker.person.suffix(),
+      }),
+      facility_id: "facility-1",
+    }));
+
+    dataProviderSingleton.setData(TEST_RESIDENTS_FILE_NAME, [
+      existingResidentData,
+      ...newResidentsData,
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    const dbResidents = await testPrismaClient.resident.findMany();
+    expect(dbResidents).toHaveLength(601);
+    expect(dbResidents.every((r) => r.isActive)).toBe(true);
   });
 
   test("should mark residents not in import as inactive", async () => {
