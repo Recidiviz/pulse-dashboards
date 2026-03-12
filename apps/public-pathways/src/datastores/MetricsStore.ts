@@ -38,16 +38,13 @@ export default class MetricsStore implements PathwaysMetricStore {
 
   page = "prison";
 
-  section = PATHWAYS_SECTIONS["countOverTime"];
-
   constructor({ rootStore }: { rootStore: RootStore }) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, { section: false });
     this.rootStore = rootStore;
   }
 
-  setSection(section: string): void {
-    this.section = section;
-    this._map = undefined;
+  get section(): string {
+    return this.rootStore.section;
   }
 
   get filters(): PopulationFilterValues {

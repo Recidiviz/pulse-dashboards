@@ -17,23 +17,45 @@
 
 import { StateSpecificPageCopy } from "../types";
 
+const isPublicPathways = !!import.meta.env["VITE_PUBLIC_PATHWAYS_API_URL_BASE"];
+
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
       "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly.",
     sections: {
-      countOverTime: "Prison population over time",
-      countByLocation: "Prison population by facility",
-      countByRace: "Prison population by race",
-      countByGender: "Prison population by gender identity",
-      countBySex: "Prison population by sex",
-      countByAgeGroup: "Prison population by age group",
-      personLevelDetail: "List of people in prison",
-      countByEthnicity: "Prison population by ethnic status",
-      countBySentenceLengthMin: "Prison population by min sentence",
-      countBySentenceLengthMax: "Prison population by max sentence",
-      countByChargeCountyCode: "Prison population by conviction county",
-      countByOffenseType: "Prison population by offense type",
+      countOverTime: isPublicPathways
+        ? "Overview"
+        : "Prison population over time",
+      countByLocation: isPublicPathways
+        ? "Facility"
+        : "Prison population by facility",
+      countByGender: isPublicPathways
+        ? "Gender Identity"
+        : "Prison population by gender identity",
+      countByAgeGroup: isPublicPathways
+        ? "Age Group"
+        : "Prison population by age group",
+      countByRace: isPublicPathways ? "Race" : "Prison population by race",
+      countBySex: isPublicPathways ? "Sex" : "Prison population by sex",
+      countByEthnicity: isPublicPathways
+        ? "Ethnicity"
+        : "Prison population by ethnic status",
+      personLevelDetail: isPublicPathways
+        ? "People"
+        : "List of people in prison",
+      countBySentenceLengthMin: isPublicPathways
+        ? "Min Sentence"
+        : "Prison population by min sentence",
+      countBySentenceLengthMax: isPublicPathways
+        ? "Max Sentence"
+        : "Prison population by max sentence",
+      countByChargeCountyCode: isPublicPathways
+        ? "Conviction County"
+        : "Prison population by conviction county",
+      countByOffenseType: isPublicPathways
+        ? "Offense Type"
+        : "Prison population by offense type",
     },
     methodology:
       "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly. \n- For more reports, please see: https://doccs.ny.gov/research-and-reports \n- For questions, please contact NYS DOCCS. \n",

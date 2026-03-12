@@ -18,6 +18,7 @@
 import {
   OverTimeMetric,
   PATHWAYS_SECTIONS,
+  type PathwaysSection,
   SnapshotMetric,
 } from "~shared-pathways";
 
@@ -27,6 +28,7 @@ import type { RootStore } from "../RootStore";
 
 const mockRootStore = {
   currentTenantId: "US_NY",
+  section: PATHWAYS_SECTIONS["countOverTime"],
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),
   },
@@ -134,7 +136,7 @@ describe("MetricsStore", () => {
     });
 
     it("falls back to prisonPopulationOverTime for unknown sections", () => {
-      metricsStore.section = "nonExistentSection";
+      mockRootStore.section = "nonExistentSection" as PathwaysSection;
       expect(metricsStore.current).toBeInstanceOf(OverTimeMetric);
     });
   });

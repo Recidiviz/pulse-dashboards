@@ -25,6 +25,9 @@ const PAGE_PADDING = rem(spacing.md);
  * Constrained to a desired max width, with left and right padding
  */
 export const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
   margin-left: auto;
   margin-right: auto;
   max-width: ${rem(PAGE_WIDTH)};

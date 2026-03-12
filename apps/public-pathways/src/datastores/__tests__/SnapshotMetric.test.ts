@@ -34,6 +34,7 @@ const DIMENSION_COUNT_URL = `${BASE_URL}/public_pathways/US_NY/PrisonPopulationB
 
 const mockRootStore = {
   currentTenantId: "US_NY",
+  section: PATHWAYS_SECTIONS["countByLocation"],
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),
   },
@@ -64,7 +65,6 @@ describe("SnapshotMetric", () => {
 
     metricsStore = new MetricsStore({ rootStore: mockRootStore });
     mockRootStore.metricsStore = metricsStore;
-    metricsStore.section = PATHWAYS_SECTIONS["countByLocation"];
     metric = metricsStore.prisonFacilityPopulation;
     metric.hydrate();
     await when(() => isHydrated(metric));
@@ -90,7 +90,6 @@ describe("SnapshotMetric", () => {
     fetchMock.mockResponse(JSON.stringify({ data: [] }));
 
     const store = new MetricsStore({ rootStore: mockRootStore });
-    store.section = PATHWAYS_SECTIONS["countByLocation"];
     const emptyMetric = store.prisonFacilityPopulation;
     emptyMetric.hydrate();
     await when(() => isHydrated(emptyMetric));

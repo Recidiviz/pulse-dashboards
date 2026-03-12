@@ -16,6 +16,8 @@
 // =============================================================================
 
 export * from "./components";
+export type { SectionNavigationProps } from "./components/SectionNavigation/SectionNavigation";
+export { SectionNavigation } from "./components/SectionNavigation/SectionNavigation";
 export * from "./constants";
 export * from "./content";
 export * from "./content/types";

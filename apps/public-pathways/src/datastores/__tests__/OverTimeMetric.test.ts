@@ -28,6 +28,7 @@ const BASE_URL = "http://localhost:5000";
 
 const mockRootStore = {
   currentTenantId: "US_NY",
+  section: PATHWAYS_SECTIONS["countOverTime"],
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),
   },
@@ -72,7 +73,6 @@ describe("OverTimeMetric", () => {
 
     metricsStore = new MetricsStore({ rootStore: mockRootStore });
     mockRootStore.metricsStore = metricsStore;
-    metricsStore.section = PATHWAYS_SECTIONS["countOverTime"];
     metric = metricsStore.prisonPopulationOverTime;
     metric.hydrate();
     await when(() => isHydrated(metric));

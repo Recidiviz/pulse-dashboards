@@ -17,9 +17,16 @@
 
 import { observer } from "mobx-react-lite";
 import { rgba } from "polished";
+import { useMemo } from "react";
 import { ThemeProvider } from "styled-components";
 
-import { PathwaysTheme, usePageContent } from "~shared-pathways";
+import type { Sections } from "~shared-pathways";
+import {
+  PathwaysSection,
+  PathwaysTheme,
+  SectionNavigation,
+  usePageContent,
+} from "~shared-pathways";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { useRouteSync } from "../../useRouteSync";
@@ -48,8 +55,22 @@ const publicPathwaysTheme: PathwaysTheme = {
 
 export const PagePublicPathways = observer(function PagePublicPathways() {
   useRouteSync();
-  const { currentTenantId, page, metricsStore } = useRootStore();
+  const rootStore = useRootStore();
+  const { currentTenantId, page, section, metricsStore } = rootStore;
   const pageContent = usePageContent(currentTenantId, page);
+
+  const sections = useMemo((): Partial<Sections> => {
+    const all = pageContent.sections;
+    if (!all) return {};
+
+    const metricMap = metricsStore.map;
+
+    return Object.fromEntries(
+      (Object.keys(all) as PathwaysSection[])
+        .filter((id) => id in metricMap)
+        .map((id) => [id, all[id]]),
+    ) as Partial<Sections>;
+  }, [metricsStore.map, pageContent.sections]);
 
   return (
     <ThemeProvider theme={publicPathwaysTheme}>
@@ -57,6 +78,12 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
         <PageHeader
           title={pageContent.title}
           description={pageContent.summary}
+        />
+        <SectionNavigation
+          sections={sections}
+          activeSection={section}
+          onSectionSelect={(id) => rootStore.setSection(id)}
+          accentColor={publicPathwaysPalette.signal.links}
         />
         <MetricVizMapper metric={metricsStore.current} />
       </PageContainer>
