@@ -39,6 +39,7 @@ const STATUS_FILTER_OPTIONS: [string, string][] = [
 
 const AIPersonaLibraryPage = () => {
   const auth = useAuth();
+  const { getAccessToken } = auth;
   const userEmail = auth.authStore?.user?.email;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPersona, setEditingPersona] = useState<string | null>(null);
@@ -61,6 +62,10 @@ const AIPersonaLibraryPage = () => {
           page: 1,
           size: 100,
         },
+      },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
       },
     },
     {

@@ -220,12 +220,9 @@ async def async_session() -> AsyncSession:
 @pytest.fixture
 async def client():
     # Import auth functions
-    from datetime import datetime, timezone
 
     from app.auth.auth_core import (
-        UserProfile,
         get_auth_user_context,
-        get_current_user,
         get_pseudonymized_id,
     )
 
@@ -245,23 +242,9 @@ async def client():
             "cpa_client_locations": [],
         }
 
-    async def mock_get_current_user():
-        return UserProfile(
-            sub="auth0|test",
-            given_name="Test",
-            family_name="User",
-            nickname="testuser",
-            name="Test User",
-            picture="https://example.com/picture.jpg",
-            updated_at=datetime.now(tz=timezone.utc),
-            email="test@recidiviz.org",
-            email_verified=True,
-        )
-
     # Apply the override
     fastapi_app.dependency_overrides[get_pseudonymized_id] = mock_get_pseudonymized_id
     fastapi_app.dependency_overrides[get_auth_user_context] = mock_get_auth_user_context
-    fastapi_app.dependency_overrides[get_current_user] = mock_get_current_user
 
     # Create and yield the test client
     async with AsyncClient(

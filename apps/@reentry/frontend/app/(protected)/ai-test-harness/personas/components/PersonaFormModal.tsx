@@ -24,6 +24,7 @@ import Modal from "react-modal";
 import { $api } from "~@reentry/frontend/api";
 import { FormInput } from "~@reentry/frontend/components/clients/AddClientModal/FormInput";
 import { LoadingSpinner } from "~@reentry/frontend/components/clients/AddClientModal/LoadingSpinner";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 interface PersonaFormModalProps {
@@ -81,6 +82,7 @@ export const PersonaFormModal = ({
   onSuccess,
   personaId,
 }: PersonaFormModalProps) => {
+  const { getAccessToken } = useAuth();
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [background, setBackground] = useState("");
@@ -96,6 +98,10 @@ export const PersonaFormModal = ({
     "/ai-personas/{persona_id}",
     {
       params: { path: { persona_id: personaId ?? "" } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
     },
     {
       enabled: isEditMode,
@@ -145,11 +151,19 @@ export const PersonaFormModal = ({
         await updateMutation.mutateAsync({
           params: { path: { persona_id: personaId } },
           body: requestData,
+          headers: {
+            Authorization: `Bearer ${getAccessToken()}`,
+            "Content-Type": "application/json",
+          },
         });
         showSuccessToast("Persona updated successfully");
       } else {
         await createMutation.mutateAsync({
           body: requestData,
+          headers: {
+            Authorization: `Bearer ${getAccessToken()}`,
+            "Content-Type": "application/json",
+          },
         });
         showSuccessToast("Persona created successfully");
       }

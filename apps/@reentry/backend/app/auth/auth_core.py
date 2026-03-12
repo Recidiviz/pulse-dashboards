@@ -420,7 +420,6 @@ async def get_current_user(request: Request) -> JSONResponse | UserProfile:
 
     # Try to get userinfo from cache first
     user_info = await _get_cached_auth0_userinfo(token)
-
     if not user_info:
         # Cache miss, fetch from Auth0
         logger.info("Cache miss for Auth0 userinfo, fetching from API")

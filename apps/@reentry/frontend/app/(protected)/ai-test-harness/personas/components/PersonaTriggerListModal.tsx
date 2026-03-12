@@ -31,6 +31,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Modal from "react-modal";
 
 import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 // Fetches and renders a client's full name, notifying the parent when resolved
 // so the parent can use the name for search/sort without re-fetching.
@@ -120,6 +121,7 @@ export const PersonaTriggerListModal = ({
   personaId,
   personaName,
 }: PersonaTriggerListModalProps) => {
+  const { getAccessToken } = useAuth();
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -129,7 +131,13 @@ export const PersonaTriggerListModal = ({
   const { data: triggers, isLoading } = $api.useQuery(
     "get",
     "/ai-personas/{persona_id}/triggers",
-    { params: { path: { persona_id: personaId } } },
+    {
+      params: { path: { persona_id: personaId } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
     { enabled: isOpen && !!personaId },
   );
 

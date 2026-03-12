@@ -105,18 +105,34 @@ export const TriggerAIIntakeModal = ({
 
   const { data: personasData } = $api.useQuery("get", "/ai-personas", {
     params: { query: { page: 1, size: 100 } },
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+      "Content-Type": "application/json",
+    },
   });
 
   const { data: templateTriggers } = $api.useQuery(
     "get",
     "/ai-personas/ai-intakes/templates",
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
   );
 
   // Persona preview in "persona" mode
   const { data: selectedPersona } = $api.useQuery(
     "get",
     "/ai-personas/{persona_id}",
-    { params: { path: { persona_id: personaId } } },
+    {
+      params: { path: { persona_id: personaId } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
     { enabled: mode === "persona" && !!personaId },
   );
 
@@ -244,7 +260,13 @@ export const TriggerAIIntakeModal = ({
         body = { ...baseAddress, chat_template: jsonTemplate };
       }
 
-      const result = await triggerMutation.mutateAsync({ body });
+      const result = await triggerMutation.mutateAsync({
+        body,
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       showSuccessToast("AI Intake triggered successfully!");
       router.push(`/ai-test-harness/status/${result.trigger_id}`);

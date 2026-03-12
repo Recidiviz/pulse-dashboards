@@ -23,6 +23,7 @@ import Modal from "react-modal";
 
 import { $api } from "~@reentry/frontend/api";
 import { LoadingSpinner } from "~@reentry/frontend/components/clients/AddClientModal/LoadingSpinner";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { showErrorToast } from "~@reentry/frontend-shared";
 
 interface TestPersonaModalProps {
@@ -42,6 +43,7 @@ export const TestPersonaModal = ({
   onClose,
   personaId,
 }: TestPersonaModalProps) => {
+  const { getAccessToken } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +55,10 @@ export const TestPersonaModal = ({
     "/ai-personas/{persona_id}",
     {
       params: { path: { persona_id: personaId ?? "" } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
     },
     {
       enabled: !!personaId && isOpen,
@@ -106,6 +112,10 @@ export const TestPersonaModal = ({
         },
         body: {
           message: userMessage.content,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
         },
       });
 

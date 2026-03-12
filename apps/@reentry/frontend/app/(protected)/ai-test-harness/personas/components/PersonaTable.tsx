@@ -23,6 +23,7 @@ import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 
 import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { PersonaTriggerListModal } from "./PersonaTriggerListModal";
@@ -86,6 +87,7 @@ export const PersonaTable = ({
   onTest,
   onDeleteSuccess,
 }: PersonaTableProps) => {
+  const { getAccessToken } = useAuth();
   const [triggerModalPersona, setTriggerModalPersona] = useState<{
     id: string;
     name: string;
@@ -104,6 +106,10 @@ export const PersonaTable = ({
     try {
       await deleteMutation.mutateAsync({
         params: { path: { persona_id: personaId } },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
       });
       showSuccessToast("Persona deleted successfully");
       onDeleteSuccess();

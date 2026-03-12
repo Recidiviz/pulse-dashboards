@@ -26,7 +26,7 @@ from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel
 
-from app.auth.auth_core import UserProfile, get_current_user, is_internal_user
+from app.auth.auth_core import get_auth_user_context, is_internal_user
 from app.core.db import AsyncSession, get_session
 from app.crud.address import update_intake_address
 from app.crud.ai_persona import (
@@ -107,12 +107,12 @@ class AIIntakeTriggerSummary(BaseModel):
 )
 async def list_ai_personas(
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Get all active AI personas with pagination.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -129,12 +129,12 @@ async def list_ai_personas(
 async def get_ai_persona(
     persona_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Get a specific AI persona by ID.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -153,13 +153,13 @@ async def get_ai_persona(
 async def list_persona_triggers(
     persona_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     List all AI intake triggers for a specific persona, ordered by most recent first.
     Includes execution status for each trigger.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -220,12 +220,12 @@ async def list_persona_triggers(
 async def create_ai_persona_endpoint(
     request: AIPersonaCreate,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Create a new AI persona.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -251,12 +251,12 @@ async def update_ai_persona_endpoint(
     persona_id: UUID,
     request: AIPersonaUpdate,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Update an existing AI persona.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -285,12 +285,12 @@ async def update_ai_persona_endpoint(
 async def delete_ai_persona_endpoint(
     persona_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Soft delete an AI persona (sets is_active to False).
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -354,7 +354,7 @@ class AIIntakeStatusResponse(BaseModel):
 async def trigger_ai_intake(
     request: AIIntakeTriggerRequest,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Trigger an AI-powered intake using a persona or a template trigger.
@@ -363,7 +363,7 @@ async def trigger_ai_intake(
     When `template_trigger_id` is provided the persona is resolved from the
     referenced template trigger.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -621,14 +621,14 @@ async def trigger_ai_intake(
 async def get_ai_intake_status(
     execution_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Get the status of an AI intake execution.
 
     Returns the current progress, status, and output of the AI intake task.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -655,7 +655,7 @@ async def get_ai_intake_status(
 async def get_ai_intake_status_by_trigger(
     trigger_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Get the status of an AI intake execution by trigger ID.
@@ -663,7 +663,7 @@ async def get_ai_intake_status_by_trigger(
     Looks up the AIIntakeTrigger to find the associated execution,
     then returns the current progress, status, and output.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -717,7 +717,7 @@ async def get_ai_intake_status_by_trigger(
 async def retry_ai_intake(
     trigger_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Retry an AI intake execution for an existing trigger.
@@ -725,7 +725,7 @@ async def retry_ai_intake(
     Creates a new background task execution for the same trigger and updates
     the trigger's execution_id to track the new attempt.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -781,12 +781,12 @@ async def retry_ai_intake(
 )
 async def list_template_triggers(
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     List all AI intake triggers that have been marked as templates.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -842,7 +842,7 @@ async def list_template_triggers(
 async def toggle_trigger_as_template(
     trigger_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Toggle the is_template flag on an AI intake trigger.
@@ -850,7 +850,7 @@ async def toggle_trigger_as_template(
     If the trigger is not currently a template, it will be marked as one.
     If it is already a template, it will be unmarked.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",
@@ -911,7 +911,7 @@ async def test_ai_persona(
     persona_id: UUID,
     request: TestPersonaRequest,
     session: AsyncSession = Depends(get_session),
-    current_user: UserProfile = Depends(get_current_user),
+    auth_user_context: dict = Depends(get_auth_user_context),
 ):
     """
     Test an AI persona by sending a message and getting a response.
@@ -919,7 +919,7 @@ async def test_ai_persona(
     This endpoint allows interactive testing of persona characteristics
     without creating a full intake.
     """
-    if not is_internal_user(current_user.email):
+    if not is_internal_user(auth_user_context.get("email") or ""):
         raise HTTPException(
             status_code=403,
             detail="AI persona management is only available to Recidiviz staff",

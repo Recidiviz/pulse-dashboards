@@ -31,6 +31,7 @@ import { useState } from "react";
 
 import AdminIntakeHistory from "~@reentry/frontend/(protected)/intake/[intakeId]/chat-history/AdminIntakeHistory";
 import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import styles from "../../../client/[clientId]/intake-summary/[planId]/markdown.module.css";
@@ -40,6 +41,7 @@ type ActiveTab = "chat" | "summary" | "action-plan";
 
 const AIIntakeStatusPage = () => {
   const params = useParams();
+  const { getAccessToken } = useAuth();
   const triggerId = params["executionId"] as string;
   const [isRetrying, setIsRetrying] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>("chat");
@@ -55,6 +57,10 @@ const AIIntakeStatusPage = () => {
     "/ai-personas/ai-intakes/{trigger_id}/trigger-status",
     {
       params: { path: { trigger_id: triggerId } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
     },
     {
       refetchInterval: (query) => {
@@ -79,7 +85,13 @@ const AIIntakeStatusPage = () => {
   const { data: persona } = $api.useQuery(
     "get",
     "/ai-personas/{persona_id}",
-    { params: { path: { persona_id: personaId } } },
+    {
+      params: { path: { persona_id: personaId } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
     { enabled: !!personaId },
   );
 
@@ -146,6 +158,10 @@ const AIIntakeStatusPage = () => {
     try {
       await toggleTemplateMutation.mutateAsync({
         params: { path: { trigger_id: triggerId } },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
       });
       const label = isTemplate
         ? "removed from templates"
@@ -169,6 +185,10 @@ const AIIntakeStatusPage = () => {
     try {
       await retryMutation.mutateAsync({
         params: { path: { trigger_id: triggerId } },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
       });
       showSuccessToast("Retrying AI intake...");
       await refetchStatus();
