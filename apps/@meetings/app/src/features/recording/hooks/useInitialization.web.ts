@@ -17,11 +17,12 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-import { AUDIO_MIME_TYPES } from "../constants";
+import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
+import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
+
 import { Status } from "../model";
 import { getBlobDurationMs } from "../utils/getBlobDurationMs.web";
 import { clearRecordedChunks, getAllChunks } from "../utils/webRecorderDb.web";
-import { useUploadSegment } from "./useUploadSegment";
 
 type Params = {
   status: Status;

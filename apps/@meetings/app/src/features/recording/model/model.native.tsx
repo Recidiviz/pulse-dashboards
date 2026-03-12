@@ -32,6 +32,7 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 
+import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
 import { trpc } from "~@meetings/app/trpc/client";
 
 import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
@@ -40,7 +41,6 @@ import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useNote } from "../hooks/useNote";
 import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
 import { useRecordingStatus } from "../hooks/useRecordingStatus";
-import { useUploadSegment } from "../hooks/useUploadSegment";
 import {
   requestNotificationPermissions,
   sendNotification,

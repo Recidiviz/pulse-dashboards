@@ -17,11 +17,9 @@
 
 import { useCallback, useRef, useState } from "react";
 
-import {
-  AUDIO_MIME_TYPES,
-  MAX_RECORDING_MS,
-  WEB_CHUNK_INTERVAL_MS,
-} from "../constants";
+import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
+
+import { MAX_RECORDING_MS, WEB_CHUNK_INTERVAL_MS } from "../constants";
 import {
   clearRecordedChunks,
   getAllChunks,

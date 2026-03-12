@@ -18,12 +18,13 @@
 import { act, renderHook } from "@testing-library/react-native";
 import React from "react";
 
+import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
+
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useInitialization } from "../hooks/useInitialization.web";
-import { useUploadSegment } from "../hooks/useUploadSegment";
 import { RecordingProvider, useRecording } from "../model";
 import { useRecordingStore, useRecordingStoreHydrated } from "../model/store";
 
@@ -39,7 +40,7 @@ jest.mock("../hooks/useDurationTimer");
 jest.mock("../hooks/useInitialization.web", () => ({
   useInitialization: jest.fn(),
 }));
-jest.mock("../hooks/useUploadSegment");
+jest.mock("~@meetings/app/hooks/useUploadSegment");
 jest.mock("../ui/MeetingModal", () => ({
   MeetingModal: () => null,
 }));

@@ -18,11 +18,13 @@
 import * as FileSystem from "expo-file-system/legacy";
 import { Platform } from "react-native";
 
-import { trpc } from "../../../trpc/client";
+import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
+import { trpc } from "~@meetings/app/trpc/client";
 
 type Params = {
   uri: string;
   meetingId: string;
+  onProgress?: (loaded: number, total: number) => void;
   createSignedUrlForRecording: (params: {
     meetingId: string;
     platform: "web" | "ios" | "android";
@@ -32,6 +34,7 @@ type Params = {
 const uploadSegmentWeb = async ({
   uri,
   meetingId,
+  onProgress,
   createSignedUrlForRecording,
 }: Params) => {
   const response = await fetch(uri);
@@ -50,20 +53,32 @@ const uploadSegmentWeb = async ({
   }
 
   const blob = await response.blob();
-  const uploadResponse = await fetch(signedUrl, {
-    method: "PUT",
-    body: blob,
-    headers: { "Content-Type": "audio/webm" },
-  });
 
-  if (!uploadResponse.ok) {
-    throw new Error("Could not upload audio recording.");
-  }
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", signedUrl);
+    xhr.setRequestHeader("Content-Type", AUDIO_MIME_TYPES.web);
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) {
+        onProgress?.(e.loaded, e.total);
+      }
+    });
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+      } else {
+        reject(new Error("Could not upload audio recording."));
+      }
+    };
+    xhr.onerror = () => reject(new Error("Could not upload audio recording."));
+    xhr.send(blob);
+  });
 };
 
 const uploadSegmentNative = async ({
   uri,
   meetingId,
+  onProgress,
   createSignedUrlForRecording,
 }: Params) => {
   const fileInfo = await FileSystem.getInfoAsync(uri);
@@ -81,13 +96,20 @@ const uploadSegmentNative = async ({
     throw new Error("Could not get signed URL for recording.");
   }
 
-  const uploadResponse = await FileSystem.uploadAsync(signedUrl, uri, {
-    httpMethod: "PUT",
-    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-    headers: { "Content-Type": "audio/m4a" },
-  });
+  const task = FileSystem.createUploadTask(
+    signedUrl,
+    uri,
+    {
+      httpMethod: "PUT",
+      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+      headers: { "Content-Type": AUDIO_MIME_TYPES.mobile },
+    },
+    (data) => onProgress?.(data.totalBytesSent, data.totalBytesExpectedToSend),
+  );
 
-  if (uploadResponse.status < 200 || uploadResponse.status >= 300) {
+  const result = await task.uploadAsync();
+
+  if (!result || result.status < 200 || result.status >= 300) {
     throw new Error("Could not upload audio recording.");
   }
 };

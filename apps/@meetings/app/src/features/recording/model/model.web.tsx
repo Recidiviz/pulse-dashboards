@@ -17,13 +17,14 @@
 
 import { createContext } from "react";
 
-import { Person } from "../../../common/types";
+import { Person } from "~@meetings/app/common/types";
+import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
+
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useInitialization } from "../hooks/useInitialization.web";
-import { useUploadSegment } from "../hooks/useUploadSegment";
 import { MeetingModal } from "../ui/MeetingModal";
 import { useRecordingStore, useRecordingStoreHydrated } from "./store";
 import { RecordingProviderProps, RecordingWeb } from "./types";
