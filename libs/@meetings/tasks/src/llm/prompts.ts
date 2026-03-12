@@ -120,6 +120,7 @@ export const PROMPTS = {
                             ### INSTRUCTIONS
                             1. **Ignore Metadata:** Do not extract tasks about recording, uploading, or file management. Focus only on the conversation between Agency Staff Member and Client.
                             2. **Be Specific:** Use the exact details found in the text (dates, names, locations).
+                            3. Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.
                             
                             ### TARGET 1: ACTION ITEMS
                             - List every future task assigned to the Client or Officer.
@@ -214,7 +215,9 @@ export const PROMPTS = {
                        - IF ROUTINE: Focus on "Since last visit" updates and Progress.
                     
                     ### OUTPUT 2: MEETING MINUTES
-                    ${MINUTES_STYLE}s`),
+                    ${MINUTES_STYLE}s
+                    
+                    Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.`),
     USER: template(dedent`EXTRACTED FACTS:
                           <%= extracted %>
                           
