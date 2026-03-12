@@ -22,6 +22,7 @@ import { ThemeProvider } from "styled-components";
 import { PathwaysTheme, usePageContent } from "~shared-pathways";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
+import { useRouteSync } from "../../useRouteSync";
 import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
 import { PageHeader } from "../PageHeader/PageHeader";
 import { useRootStore } from "../StoreProvider";
@@ -46,6 +47,7 @@ const publicPathwaysTheme: PathwaysTheme = {
 };
 
 export const PagePublicPathways = observer(function PagePublicPathways() {
+  useRouteSync();
   const { currentTenantId, page, metricsStore } = useRootStore();
   const pageContent = usePageContent(currentTenantId, page);
 

@@ -45,6 +45,11 @@ export default class MetricsStore implements PathwaysMetricStore {
     this.rootStore = rootStore;
   }
 
+  setSection(section: string): void {
+    this.section = section;
+    this._map = undefined;
+  }
+
   get filters(): PopulationFilterValues {
     return this.rootStore.filtersStore.filters;
   }

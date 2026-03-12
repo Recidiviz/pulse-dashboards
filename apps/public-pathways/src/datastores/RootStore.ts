@@ -80,4 +80,13 @@ export class RootStore {
     this.filtersStore = new FiltersStore({ rootStore: this });
     this.metricsStore = new MetricsStore({ rootStore: this });
   }
+
+  setPage(page: PathwaysPage): void {
+    this.page = page;
+  }
+
+  setSection(section: PathwaysSection): void {
+    this.section = section;
+    this.metricsStore.setSection(section);
+  }
 }
