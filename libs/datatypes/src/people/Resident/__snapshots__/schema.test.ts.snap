@@ -1952,7 +1952,8 @@ exports[`schema for 'US_NC' 'RES001' 1`] = `
   "facilityUnitId": null,
   "gender": "MALE",
   "metadata": {
-    "rnaDueDate": "2021-12-13",
+    "rnaDueDate": 2021-12-13T00:00:00.000Z,
+    "stateCode": "US_NC",
   },
   "personExternalId": "RES001",
   "personName": {
@@ -1978,7 +1979,8 @@ exports[`schema for 'US_NC' 'RES002' 1`] = `
   "facilityUnitId": null,
   "gender": "FEMALE",
   "metadata": {
-    "rnaDueDate": "2022-01-07",
+    "rnaDueDate": 2022-01-07T00:00:00.000Z,
+    "stateCode": "US_NC",
   },
   "personExternalId": "RES002",
   "personName": {

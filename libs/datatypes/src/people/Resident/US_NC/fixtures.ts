@@ -38,6 +38,7 @@ export const rawUsNcResidents: Array<RawResidentRecord> = [
     unitId: null,
     stateCode: "US_NC",
     metadata: {
+      stateCode: "US_NC",
       rnaDueDate: relativeFixtureDate({ days: -3 }),
     },
   },
@@ -60,6 +61,7 @@ export const rawUsNcResidents: Array<RawResidentRecord> = [
     unitId: null,
     stateCode: "US_NC",
     metadata: {
+      stateCode: "US_NC",
       rnaDueDate: relativeFixtureDate({ days: 22 }),
     },
   },
