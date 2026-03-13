@@ -85,17 +85,34 @@ const RouteDescriptionBox = styled.div<{
   width: ${({ $isMobile }) =>
     $isMobile ? `calc(100% - ${rem(54)})` : rem(400)};
   border-radius: ${rem(8)};
-  padding: ${rem(16)};
-
   background-color: ${palette.marble1};
   border: 1px solid ${palette.slate20};
   box-shadow: 0 ${rem(4)} ${rem(16)} 0 ${palette.slate20};
+`;
+
+const DescriptionContainer = styled.div`
+  padding: ${rem(16)};
 `;
 
 const RouteDescriptionControls = styled.div`
   display: flex;
   margin-bottom: ${rem(14)};
   gap: ${rem(spacing.xs)};
+`;
+
+const DisclaimerContainer = styled.div`
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(248, 228, 198, 1);
+  padding: ${rem(16)};
+  border-radius: 0 0 ${rem(8)} ${rem(8)};
+  background-color: rgba(255, 241, 220, 1);
+  color: ${palette.data.gold2};
+  gap: ${rem(spacing.md)};
+`;
+
+const DisclaimerText = styled.span`
+  color: ${palette.data.gold2};
 `;
 
 const IconButton = styled.div`
@@ -222,7 +239,9 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
     return (
       <RouteDescriptionBoxContainer>
         <RouteDescriptionBox $isMobile={isMobile}>
-          Select some clients to show results.
+          <DescriptionContainer>
+            Select some clients to show results.
+          </DescriptionContainer>
         </RouteDescriptionBox>
       </RouteDescriptionBoxContainer>
     );
@@ -257,136 +276,143 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
   return (
     <RouteDescriptionBoxContainer>
       <RouteDescriptionBox $isMobile={isMobile}>
-        <RouteDescriptionControls>
-          <RouteDescriptionText>Your trip</RouteDescriptionText>
+        <DescriptionContainer>
+          <RouteDescriptionControls>
+            <RouteDescriptionText>Your trip</RouteDescriptionText>
 
-          {isMobile ? (
-            /* On mobile, show optimize route button + open in maps icon */
-            <>
-              <a
-                href={presenter.mapDirectionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  presenter.trackRoutePlannerRouteEvent(
-                    RoutePlannerRouteEvent.LinkOpened,
-                  );
-                }}
-              >
-                <IconButton>
-                  <Icon
-                    kind={IconSVG.Open}
-                    fill={palette.slate50}
-                    height={12}
-                  />
-                </IconButton>
-              </a>
-
-              {presenter.clientsPresenter.canOptimizeRoute && (
-                <Button
-                  shape={"block"}
-                  onClick={async () => {
-                    await presenter.clientsPresenter.optimizeRoute(
-                      presenter.startingAddress,
-                      presenter.endingAddress,
+            {isMobile ? (
+              /* On mobile, show optimize route button + open in maps icon */
+              <>
+                <a
+                  href={presenter.mapDirectionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    presenter.trackRoutePlannerRouteEvent(
+                      RoutePlannerRouteEvent.LinkOpened,
                     );
                   }}
-                  disabled={presenter.clientsPresenter.isOptimizing}
-                  style={{ minWidth: "120px" }}
                 >
-                  {presenter.clientsPresenter.isOptimizing
-                    ? "Optimizing..."
-                    : "Optimize Route"}
-                </Button>
-              )}
-            </>
-          ) : (
-            /* On desktop, show open, copy to clipboard, and email links */
-            <>
-              <a
-                href={presenter.mapDirectionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  presenter.trackRoutePlannerRouteEvent(
-                    RoutePlannerRouteEvent.LinkOpened,
-                  );
-                }}
-              >
-                <IconButton>
-                  <TooltipTrigger contents={"Open route link in new tab"}>
+                  <IconButton>
                     <Icon
                       kind={IconSVG.Open}
                       fill={palette.slate50}
                       height={12}
                     />
-                  </TooltipTrigger>
-                </IconButton>
-              </a>
+                  </IconButton>
+                </a>
 
-              <IconButton onClick={onClickCopyLink}>
-                <TooltipTrigger contents={"Copy route link to clipboard"}>
-                  <CopyIcon />
-                </TooltipTrigger>
-              </IconButton>
-
-              <IconButton onClick={onClickEmailLink}>
-                <TooltipTrigger contents={"Email route link to me"}>
-                  <SendIconFilled fill={palette.slate50} height={12} />
-                </TooltipTrigger>
-              </IconButton>
-
-              {presenter.clientsPresenter.canOptimizeRoute && (
-                <Button
-                  shape={"block"}
-                  onClick={async () => {
-                    await presenter.clientsPresenter.optimizeRoute(
-                      presenter.startingAddress,
-                      presenter.endingAddress,
+                {presenter.clientsPresenter.canOptimizeRoute && (
+                  <Button
+                    shape={"block"}
+                    onClick={async () => {
+                      await presenter.clientsPresenter.optimizeRoute(
+                        presenter.startingAddress,
+                        presenter.endingAddress,
+                      );
+                    }}
+                    disabled={presenter.clientsPresenter.isOptimizing}
+                    style={{ minWidth: "120px" }}
+                  >
+                    {presenter.clientsPresenter.isOptimizing
+                      ? "Optimizing..."
+                      : "Optimize Route"}
+                  </Button>
+                )}
+              </>
+            ) : (
+              /* On desktop, show open, copy to clipboard, and email links */
+              <>
+                <a
+                  href={presenter.mapDirectionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    presenter.trackRoutePlannerRouteEvent(
+                      RoutePlannerRouteEvent.LinkOpened,
                     );
                   }}
-                  disabled={presenter.clientsPresenter.isOptimizing}
-                  className="ml-1"
-                  style={{ minWidth: "120px" }}
                 >
-                  {presenter.clientsPresenter.isOptimizing
-                    ? "Optimizing..."
-                    : "Optimize Route"}
-                </Button>
-              )}
-            </>
-          )}
-        </RouteDescriptionControls>
+                  <IconButton>
+                    <TooltipTrigger contents={"Open route link in new tab"}>
+                      <Icon
+                        kind={IconSVG.Open}
+                        fill={palette.slate50}
+                        height={12}
+                      />
+                    </TooltipTrigger>
+                  </IconButton>
+                </a>
 
-        <RouteInfo>
-          <AddressRow
-            address={presenter.startingAddress}
-            label={
-              presenter.userPickedStartingAddress
-                ? "Your starting point"
-                : "Your office"
-            }
-            displayStar={true}
-          />
-          <AddressDivider />
+                <IconButton onClick={onClickCopyLink}>
+                  <TooltipTrigger contents={"Copy route link to clipboard"}>
+                    <CopyIcon />
+                  </TooltipTrigger>
+                </IconButton>
 
-          {presenter.clientsPresenter.selectedClients.map((client, i) => {
-            // TODO(#9712) Remove this cast
-            const { formattedAddress, displayPreferredName } = client as Client;
-            if (!formattedAddress) return null;
-            return (
-              <React.Fragment key={client.pseudonymizedId}>
-                <AddressRow
-                  address={formattedAddress}
-                  label={displayPreferredName}
-                  index={i + 1}
-                  displayStar={false}
-                />
-                <AddressDivider />
-              </React.Fragment>
-            );
-          })}
-        </RouteInfo>
+                <IconButton onClick={onClickEmailLink}>
+                  <TooltipTrigger contents={"Email route link to me"}>
+                    <SendIconFilled fill={palette.slate50} height={12} />
+                  </TooltipTrigger>
+                </IconButton>
+
+                {presenter.clientsPresenter.canOptimizeRoute && (
+                  <Button
+                    shape={"block"}
+                    onClick={async () => {
+                      await presenter.clientsPresenter.optimizeRoute(
+                        presenter.startingAddress,
+                        presenter.endingAddress,
+                      );
+                    }}
+                    disabled={presenter.clientsPresenter.isOptimizing}
+                    className="ml-1"
+                    style={{ minWidth: "120px" }}
+                  >
+                    {presenter.clientsPresenter.isOptimizing
+                      ? "Optimizing..."
+                      : "Optimize Route"}
+                  </Button>
+                )}
+              </>
+            )}
+          </RouteDescriptionControls>
+
+          <RouteInfo>
+            <AddressRow
+              address={presenter.startingAddress}
+              label={
+                presenter.userPickedStartingAddress
+                  ? "Your starting point"
+                  : "Your office"
+              }
+              displayStar={true}
+            />
+            <AddressDivider />
+
+            {presenter.clientsPresenter.selectedClients.map((client, i) => {
+              // TODO(#9712) Remove this cast
+              const { formattedAddress, displayPreferredName } =
+                client as Client;
+              if (!formattedAddress) return null;
+              return (
+                <React.Fragment key={client.pseudonymizedId}>
+                  <AddressRow
+                    address={formattedAddress}
+                    label={displayPreferredName}
+                    index={i + 1}
+                    displayStar={false}
+                  />
+                  <AddressDivider />
+                </React.Fragment>
+              );
+            })}
+          </RouteInfo>
+        </DescriptionContainer>
+        <DisclaimerContainer>
+          <Icon kind={IconSVG.WarningCircle} width={20} />
+          <DisclaimerText>Estimates don't reflect live traffic</DisclaimerText>
+        </DisclaimerContainer>
       </RouteDescriptionBox>
       {isMobile && <SwitchToClientViewButton presenter={presenter} />}
     </RouteDescriptionBoxContainer>
