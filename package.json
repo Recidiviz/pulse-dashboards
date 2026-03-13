@@ -317,7 +317,7 @@
     "@nx/vite": "21.4.0",
     "@nx/web": "21.4.0",
     "@nx/workspace": "21.4.0",
-    "@octokit/rest": "^19.0.7",
+    "@octokit/rest": "^21.0.0",
     "@playwright/test": "^1.36.0",
     "@sentry/cli": "^2.50.2",
     "@sentry/esbuild-plugin": "^4.0.2",
