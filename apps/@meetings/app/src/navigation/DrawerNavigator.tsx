@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createDrawerNavigator, DrawerContent } from "@react-navigation/drawer";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
 
+import DrawerContent from "../components/DrawerContent";
 import Loading from "../components/Loading";
 import {
   AVAILABLE_STATE_CODES,
