@@ -15,8 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
+import {
+  Card,
+  GoButton,
+  HomepageSectionHeading,
+  SlateCopy,
+} from "~@jii/common-ui";
 import { CardDateInfo } from "~@jii/earned-good-time";
+import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 import { UsArResidentMetadata } from "~datatypes";
 
@@ -58,6 +64,13 @@ export function UsArImportantDates({
           </Card>
         );
       })}
+      <GoButton
+        to={State.Resident.$.UsArMoreInformation.ImportantDates.buildRelativePath(
+          {},
+        )}
+      >
+        {t(($) => $.importantDates.moreInfoLink)}
+      </GoButton>
     </section>
   );
 }

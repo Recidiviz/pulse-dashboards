@@ -26,6 +26,7 @@ export * from "./Checkbox";
 export * from "./Chip";
 export * from "./constants";
 export * from "./CopyWrapper/CopyWrapper";
+export * from "./CopyWrapper/ImportantDatesCopyWrapper";
 export * from "./CopyWrapper/ShadowDOM";
 export * from "./CopyWrapper/SlateCopy";
 export * from "./CopyWrapper/withCopyWrapperOverrides";

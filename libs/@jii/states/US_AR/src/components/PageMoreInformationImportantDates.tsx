@@ -15,25 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsArMoreInformation } from "~@jii/paths";
+import { ImportantDatesCopyWrapper } from "~@jii/common-ui";
+import { DefinitionPage } from "~@jii/layout";
+import { State } from "~@jii/paths";
+import { useUsArTranslations } from "~@jii/translation";
 
-import { PageMoreInformationImportantDates } from "./PageMoreInformationImportantDates";
-import { UsArSingleResidentHome } from "./UsArSingleResidentHome";
+export function PageMoreInformationImportantDates() {
+  const { t } = useUsArTranslations();
+  const params = useTypedParams(State.Resident.UsArMoreInformation);
 
-export function UsArRouter() {
   return (
-    <Routes>
-      <Route index element={<UsArSingleResidentHome />} />
-      <Route path={UsArMoreInformation.path}>
-        <Route
-          path={UsArMoreInformation.ImportantDates.path}
-          element={<PageMoreInformationImportantDates />}
-        />
-      </Route>
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <DefinitionPage
+      backLinkProps={{ to: State.Resident.buildPath(params), children: "Home" }}
+      heading={t(($) => $.importantDates.moreInfo.heading)}
+      body={t(($) => $.importantDates.moreInfo.body)}
+      CopyWrapperOverride={ImportantDatesCopyWrapper}
+    />
   );
 }

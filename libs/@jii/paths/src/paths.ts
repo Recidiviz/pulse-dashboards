@@ -60,6 +60,14 @@ export const UsTnMoreInformation = route(
   },
 );
 
+export const UsArMoreInformation = route(
+  "more-information",
+  {},
+  {
+    ImportantDates: route("important-dates"),
+  },
+);
+
 export const UsAzMoreInformation = route(
   "more-information",
   {},
@@ -114,13 +122,14 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
     {},
     {
       EGT,
-      UsTnMoreInformation,
+      UsArMoreInformation,
       UsAzMoreInformation,
       UsCoMoreInformation,
       UsNcRNA,
       UsNeMoreInformation,
       UsNeReentryChecklist,
       UsNeReentryAssessment,
+      UsTnMoreInformation,
     },
   ),
   Search: route("search"),

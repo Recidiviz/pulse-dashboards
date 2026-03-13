@@ -20,7 +20,7 @@ import { useUsAzTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
 import { importantDateHeadingsAggregator } from "../components/ImportantDatesInfoPage/importantDateHeadingsAggregator";
-import { ImportantDatesCopyWrapper } from "../components/ImportantDatesInfoPage/ImportantDatesCopyWrapper";
+import { TPRCopyWrapper } from "../components/ImportantDatesInfoPage/TPRCopyWrapper";
 import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
 
 export function PageMoreInfoImportantDates() {
@@ -36,7 +36,7 @@ export function PageMoreInfoImportantDates() {
     <DefinitionView
       heading={heading}
       body={body}
-      CopyWrapperOverride={ImportantDatesCopyWrapper}
+      CopyWrapperOverride={TPRCopyWrapper}
       tocHeadingsAggregatorOverride={importantDateHeadingsAggregator}
       moreInfoPageLinks={useInfoPageFooterLinks()}
     />

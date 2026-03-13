@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
+
 export default {
   importantDates: {
     sectionHeader: "Your Important Dates",
@@ -33,5 +35,10 @@ export default {
         "The latest date you can be held in custody, marking the full completion of your sentence.",
     },
     formatFullDate: "{{date, formatFullDate}}",
+    moreInfoLink: "Learn more about dates",
+    moreInfo: {
+      heading: "Understanding Release Dates & Good Time",
+      body: importantDatesInfoPage,
+    },
   },
 };

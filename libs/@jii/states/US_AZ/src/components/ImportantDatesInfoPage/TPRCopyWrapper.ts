@@ -17,25 +17,15 @@
 
 import { typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-import { CopyWrapper } from "~@jii/common-ui";
+import {
+  dateInfoSubheadStyles,
+  ImportantDatesCopyWrapper,
+} from "~@jii/common-ui";
 import { palette, spacing } from "~design-system";
 
-const dateInfoSubheadStyles = css`
-  ${typography.Body16}
-  // TODO(#10706): reduce line-height to 1.5 in Body styles
-  line-height: 1.5;
-  font-weight: 700;
-  color: ${palette.pine1};
-  margin-top: ${rem(spacing.lg)};
-  margin-bottom: ${rem(spacing.xs)};
-`;
-
-/**
- * Includes some unique formatting for explaining many types of dates on one page
- */
-export const ImportantDatesCopyWrapper = styled(CopyWrapper)`
+export const TPRCopyWrapper = styled(ImportantDatesCopyWrapper)`
   section.tpr {
     h3 {
       ${typography.Sans18}
@@ -46,23 +36,5 @@ export const ImportantDatesCopyWrapper = styled(CopyWrapper)`
     h4 {
       ${dateInfoSubheadStyles}
     }
-  }
-
-  .callout {
-    background: ${palette.slate05};
-    padding: ${rem(spacing.md)};
-    margin: ${rem(spacing.lg)} 0;
-
-    :first-child {
-      margin-top: 0;
-    }
-
-    :last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  h3 {
-    ${dateInfoSubheadStyles}
   }
 `;
