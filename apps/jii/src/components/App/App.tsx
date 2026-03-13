@@ -91,10 +91,9 @@ export function App() {
           <GlobalStyle />
           <StyledApp>
             <SentryRoutes>
-              {/* Transport demo — outside PageRoot to bypass AuthManagerHydrator */}
-              {/* NOTE: Temporary for user testing and will be removed entirely after user testing*/}
-              <Route path="transport-demo" element={<PageTransportDemo />} />
               <Route path={SiteRoot.path} element={<PageRoot />}>
+                {/* NOTE: Temporary for user testing and will be removed entirely after user testing*/}
+                <Route path="transport-demo" element={<PageTransportDemo />} />
                 <Route index element={<PageHome />} />
                 <Route path={State.path}>
                   <Route index element={<PageState />} />

@@ -17,6 +17,7 @@
 
 // NOTE: Temporary for user testing and will be removed entirely after user testing
 
+import { captureMessage } from "@sentry/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 
@@ -118,6 +119,7 @@ function SSEChat({
     const streamStart = Date.now();
 
     try {
+      captureMessage("Sending user message");
       const response = await fetch(SSE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -186,6 +188,7 @@ function SSEChat({
             else if (line.startsWith("data: ")) eventData = line.slice(6);
           }
           if (!eventType || !eventData) continue;
+          captureMessage("Processing SSE event");
           processEvent(eventType, JSON.parse(eventData));
         }
         // eslint-disable-next-line no-await-in-loop
@@ -772,6 +775,8 @@ export function PageTransportDemo() {
   const [tab, setTab] = useState<Transport>("sse");
   const { entries, log, clear } = useEventLog();
 
+  captureMessage("Instantiating A/B testing component");
+
   if (!isEdovoEnv()) {
     return (
       <CenteredMessage>
@@ -779,6 +784,8 @@ export function PageTransportDemo() {
       </CenteredMessage>
     );
   }
+
+  captureMessage("Validated user is in Edovo environment");
 
   return (
     <PasswordGate>

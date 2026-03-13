@@ -20,6 +20,7 @@
 import { Box, Typography } from "@mui/material";
 import type React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import { PrimaryButton } from "../../buttons/PrimaryButton";
@@ -33,6 +34,7 @@ interface ChatHeaderProps {
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   isConversationInProgress = false,
 }: ChatHeaderProps) => {
+  const navigate = useNavigate();
   const [isEndChatModalOpen, setIsEndChatModalOpen] = useState(false);
   const onConfirmEndChat = () => {
     sessionStorage.removeItem("intake_token");
@@ -66,9 +68,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     totalSections > 0 ? (completedSections / totalSections) * 100 : 0;
 
   // NOTE: Temporary for user testing and will be removed entirely after user testing
-  const isEdovo =
-    typeof window !== "undefined" &&
-    window.location.hostname.endsWith(".edovo.com");
+  const isEdovo = window.location.hostname.endsWith(".edovo.com");
 
   return (
     <>
@@ -138,7 +138,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <PrimaryButton
                   className={"w-[100px] md:max-w-lg"}
                   buttonText="Test"
-                  onClick={() => (window.location.href = "/transport-demo")}
+                  onClick={() => {
+                    navigate(`/transport-demo`);
+                  }}
                 />
               )}
             </Box>
