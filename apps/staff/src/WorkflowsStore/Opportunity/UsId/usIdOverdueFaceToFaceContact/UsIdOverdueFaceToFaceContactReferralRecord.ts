@@ -27,8 +27,8 @@ const usIdOverdueFaceToFaceContactCriteriaSchema = z.object({
   usIdMeetsOverdueFaceToFaceContactAlert: z
     .object({
       caseType: z.string().nullish(),
-      lastContactDate: dateStringSchema.nullable(),
-      overdueForContactAlertDate: dateStringSchema.nullable().optional(),
+      lastContactDate: dateStringSchema.nullish(),
+      overdueForContactAlertDate: dateStringSchema.nullish(),
       supervisionLevel: z.string().nullish(),
     })
     .optional(),
@@ -38,7 +38,7 @@ export const usIdOverdueFaceToFaceContactSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: usIdOverdueFaceToFaceContactCriteriaSchema.passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
-    lastContactDate: dateStringSchema.nullable(),
+    lastContactDate: dateStringSchema.nullish(),
     metadata: nullishAsUndefined(
       z.object({
         dueDate: nullishAsUndefined(dateStringSchema),
