@@ -40,7 +40,7 @@ export function createSocket(url: string): SocketConnection {
   return io(socketUrl.origin, {
     autoConnect: false,
     path: socketUrl.pathname,
-    transports: ["websocket", "polling"], // allow fallback to polling if websockets are unavailable
+    transports: ["polling", "websocket"],
     tryAllTransports: true,
     // Add custom headers to ensure environment data is preserved during reconnections
     extraHeaders: {
