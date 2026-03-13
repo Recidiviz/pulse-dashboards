@@ -19,9 +19,8 @@ import { typography } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
 import styled from "styled-components";
 
+import { useUsNeTranslations } from "~@jii/translation";
 import { Button, palette, spacing } from "~design-system";
-
-import { useUsNeContext } from "../usNeContext";
 
 interface UnsavedChangesModalProps {
   isOpen: boolean;
@@ -91,22 +90,25 @@ export function UnsavedChangesModal({
   onCancel,
   onDiscard,
 }: UnsavedChangesModalProps) {
-  const { title, message, cancelButtonText, discardButtonText } =
-    useUsNeContext().copy.reentryChecklist.unsavedChangesModal;
+  const { t } = useUsNeTranslations();
 
   if (!isOpen) return null;
 
   return (
     <Overlay onClick={onCancel}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
-        <ModalTitle>{title}</ModalTitle>
-        <ModalMessage>{message}</ModalMessage>
+        <ModalTitle>
+          {t(($) => $.reentryChecklist.unsavedChangesModal.title)}
+        </ModalTitle>
+        <ModalMessage>
+          {t(($) => $.reentryChecklist.unsavedChangesModal.message)}
+        </ModalMessage>
         <ButtonGroup>
           <Button kind="secondary" shape="pill" onClick={onCancel}>
-            {cancelButtonText}
+            {t(($) => $.reentryChecklist.unsavedChangesModal.cancelButtonText)}
           </Button>
           <DiscardButton shape="pill" onClick={onDiscard}>
-            {discardButtonText}
+            {t(($) => $.reentryChecklist.unsavedChangesModal.discardButtonText)}
           </DiscardButton>
         </ButtonGroup>
       </ModalContainer>

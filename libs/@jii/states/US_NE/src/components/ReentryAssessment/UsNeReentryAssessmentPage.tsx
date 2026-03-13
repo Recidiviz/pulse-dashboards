@@ -17,9 +17,11 @@
 
 import { IntakeAssessment } from "~@jii/case-planning";
 import { usePageTitle } from "~@jii/common-ui";
+import { useUsNeTranslations } from "~@jii/translation";
 
 export function UsNeReentryAssessmentPage() {
-  usePageTitle("Reentry Assessment");
+  const { t } = useUsNeTranslations();
+  usePageTitle(t(($) => $.reentryAssessment.pageTitle));
 
   return <IntakeAssessment />;
 }

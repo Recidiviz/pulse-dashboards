@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,30 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import styled from "styled-components";
+import { RouteParams, State } from "~@jii/paths";
+import { UsNeTranslationsObject } from "~@jii/translation";
 
-import { Card, GoLink, SlateCopy } from "~@jii/common-ui";
-import { CardValue } from "~@jii/common-ui";
-import { spacing } from "~design-system";
+export type UsNeInfoPageSlugs = keyof UsNeTranslationsObject["infoPages"];
 
-export const Headline = styled(CardValue)`
-  margin-bottom: ${rem(spacing.lg)};
-`;
+type ErrorIfUnroutableSlugs<
+  T extends RouteParams<typeof State.Resident.UsNeMoreInformation>["pageSlug"],
+> = T;
 
-export type TodoCardProps = {
-  title: string;
-  body: string;
-  linkText: string;
-  linkTarget: string;
-};
-
-export function TodoCard({ title, body, linkText, linkTarget }: TodoCardProps) {
-  return (
-    <Card>
-      <Headline>{title}</Headline>
-      <SlateCopy options={{ forceBlock: true }}>{body}</SlateCopy>
-      <GoLink to={linkTarget}>{linkText}</GoLink>
-    </Card>
-  );
-}
+// This type exists to check that all info pages defined in the translations file
+// have been added to the UsNeMoreInformation route in libs/@jii/paths/src/paths.ts.
+// If it's throwing an error, add the missing slug there. The other direction
+// is already checked implicitly in the Definitions component.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type InfoPagesRoutableCheck = ErrorIfUnroutableSlugs<UsNeInfoPageSlugs>;

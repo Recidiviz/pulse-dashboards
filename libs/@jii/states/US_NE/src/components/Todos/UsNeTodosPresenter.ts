@@ -20,11 +20,10 @@ import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
 import { OpportunityData, ResidentFlags, UserStore } from "~@jii/data";
+import { UsNeTranslationsObject } from "~@jii/translation";
 import { ResidentRecord, UsNeGoodTimeRestorationRecord } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { Hydratable, HydrationState } from "~hydration-utils";
-
-import { UsNeCopy } from "../../configs/copy";
 
 type GoodTimeOpportunity = OpportunityData & {
   opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
@@ -108,7 +107,7 @@ export class UsNeTodosPresenter implements Hydratable {
    * Which Good Time Restoration todo should be shown, if any?
    */
   get goodTimeRestorationStatus():
-    | keyof UsNeCopy["home"]["todos"]["goodTimeRestoration"]
+    | keyof UsNeTranslationsObject["home"]["todos"]["goodTimeRestoration"]
     | undefined {
     const { goodTimeRestorationOpportunityRecord } = this;
     if (!goodTimeRestorationOpportunityRecord) {
@@ -130,7 +129,7 @@ export class UsNeTodosPresenter implements Hydratable {
   }
 
   // Only used/well defined when goodTimeRestorationStatus === "almostEligible"
-  get goodTimeRestorationMonthsRemainingString(): string | undefined {
+  get goodTimeRestorationMonthsRemaining(): number | undefined {
     const ineligibleCriteria =
       this.goodTimeRestorationOpportunityRecord?.ineligibleCriteria;
     if (!ineligibleCriteria) {
@@ -144,9 +143,7 @@ export class UsNeTodosPresenter implements Hydratable {
       ineligibleCriteria.usNeNoClass1MrsInLastYear?.latestEligibleDate;
 
     if (!latestEligibleDate) return;
-    const monthsRemaining = differenceInMonths(latestEligibleDate, new Date());
-    if (monthsRemaining <= 1) return "1 more month";
-    return `${monthsRemaining} more months`;
+    return Math.max(1, differenceInMonths(latestEligibleDate, new Date()));
   }
 
   get shouldShowReentryAssessment(): boolean {

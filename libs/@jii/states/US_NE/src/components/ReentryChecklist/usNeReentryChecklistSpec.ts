@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { UsNeTranslationsObject } from "~@jii/translation";
+
 export type UsNeDocumentType =
   | "Medicaid Card"
   | "Birth Certificate"
@@ -22,21 +24,23 @@ export type UsNeDocumentType =
   | "State ID"
   | "Social Security Card";
 
-export type UsNeReentryChecklistItem = {
-  id: string;
-  documentTypes?: UsNeDocumentType[];
-  // onlyVerifiedIfTrue uses the verified/controlled state only if the document exists.
-  // e.g. "I have X or have applied for it."
-  onlyVerifiableIfTrue?: boolean;
-};
+export type UsNeReentryChecklistSectionId =
+  keyof UsNeTranslationsObject["reentryChecklist"]["sections"];
+export type UsNeReentryChecklistItemId =
+  keyof UsNeTranslationsObject["reentryChecklist"]["items"];
 
-export type UsNeReentryChecklistSection = {
-  id: string;
-  items: UsNeReentryChecklistItem[];
-};
-
-export type UsNeReentryChecklistLayout = {
-  sections: UsNeReentryChecklistSection[];
+type UsNeReentryChecklistLayout = {
+  sections: {
+    id: UsNeReentryChecklistSectionId;
+    items: {
+      id: UsNeReentryChecklistItemId;
+      documentTypes?: UsNeDocumentType[];
+      // onlyVerifiableIfTrue uses the verified/controlled state only if the document exists.
+      // e.g. "I have X or have applied for it." could be true even if the application doesn't
+      // show up yet in our data.
+      onlyVerifiableIfTrue?: boolean;
+    }[];
+  }[];
 };
 
 export const usNeReentryChecklistSpec: UsNeReentryChecklistLayout = {

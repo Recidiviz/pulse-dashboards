@@ -20,8 +20,9 @@ import { matchPath } from "react-router-dom";
 import { PageLinksFooterProps } from "~@jii/common-ui";
 import { SimpleLinkProps } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { UsNeTFunction } from "~@jii/translation";
 
-import { UsNeCopy } from "../../configs/copy";
+import { UsNeInfoPageSlugs } from "./types";
 
 export class DefinitionPagePresenter implements PageLinksFooterProps {
   heading: string;
@@ -30,18 +31,15 @@ export class DefinitionPagePresenter implements PageLinksFooterProps {
   topLinkText: string;
 
   constructor(
-    private pageSlug: string,
-    private copy: UsNeCopy,
+    private pageSlug: UsNeInfoPageSlugs,
+    private t: UsNeTFunction,
   ) {
-    const currentPage = copy.infoPages[pageSlug as keyof typeof copy.infoPages];
-    if (!currentPage) {
-      throw new Error(`Definition page ${pageSlug} not found`);
-    }
+    const page = t(($) => $.infoPages[pageSlug], { returnObjects: true });
 
-    this.heading = currentPage.heading;
-    this.body = currentPage.body;
-    this.pageLinksHeading = copy.definitionsLinksHeading;
-    this.topLinkText = copy.topLinkText;
+    this.heading = page.heading;
+    this.body = page.body;
+    this.pageLinksHeading = t(($) => $.definitionsLinksHeading);
+    this.topLinkText = t(($) => $.topLinkText);
   }
 
   private get baseUrlParams() {
@@ -55,20 +53,21 @@ export class DefinitionPagePresenter implements PageLinksFooterProps {
   }
 
   get pageLinks(): Array<SimpleLinkProps> {
-    return Object.entries(this.copy.infoPages)
+    const infoPages = this.t(($) => $.infoPages, { returnObjects: true });
+    return Object.entries(infoPages)
       .filter(([slug]) => slug !== this.pageSlug)
-      .map(([pageSlug, page]) => ({
-        children: page.heading,
-        to: State.Resident.EGT.Definition.buildPath({
+      .map(([pageSlug, { heading }]) => ({
+        children: heading,
+        to: State.Resident.UsNeMoreInformation.buildPath({
           ...this.baseUrlParams,
-          pageSlug,
+          pageSlug: pageSlug as keyof typeof infoPages,
         }),
       }));
   }
 
   get backLink(): SimpleLinkProps {
     return {
-      children: this.copy.homeLink,
+      children: this.t(($) => $.homeLink),
       to: State.Resident.buildPath(this.baseUrlParams),
     };
   }

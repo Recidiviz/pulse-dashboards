@@ -20,10 +20,11 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components";
 
+import { useUsNeTranslations } from "~@jii/translation";
 import { Icon, palette } from "~design-system";
 
-import { useUsNeContext } from "../usNeContext";
 import { ChecklistItem } from "./ChecklistItem";
+import { UsNeReentryChecklistSectionState } from "./UsNeReentryChecklistPresenter";
 
 const Container = styled.div<{ $isDisabled: boolean }>`
   border: 1px solid ${palette.slate20};
@@ -98,11 +99,7 @@ const Content = styled.div<{ $isExpanded: boolean }>`
 `;
 
 interface ChecklistSectionProps {
-  section: {
-    id: string;
-    isEnabled: boolean;
-    items: Array<{ id: string; isChecked: boolean; isVerifiable: boolean }>;
-  };
+  section: UsNeReentryChecklistSectionState;
   onToggleCheckbox: (itemId: string) => void;
 }
 
@@ -110,12 +107,9 @@ export function ChecklistSection({
   section,
   onToggleCheckbox,
 }: ChecklistSectionProps) {
-  const {
-    copy: { reentryChecklist: copy },
-  } = useUsNeContext();
+  const { t } = useUsNeTranslations();
   const [isExpanded, setIsExpanded] = useState(section.isEnabled);
 
-  const sectionCopy = copy.sections[section.id];
   const allItemsChecked = section.items.every((item) => item.isChecked);
 
   return (
@@ -126,8 +120,12 @@ export function ChecklistSection({
             <Icon kind="DownChevron" width={rem(8)} height={rem(4)} />
           </Chevron>
           <HeaderContent>
-            <Title>{sectionCopy.title}</Title>
-            <Subtitle>{sectionCopy.subtitle}</Subtitle>
+            <Title>
+              {t(($) => $.reentryChecklist.sections[section.id].title)}
+            </Title>
+            <Subtitle>
+              {t(($) => $.reentryChecklist.sections[section.id].subtitle)}
+            </Subtitle>
           </HeaderContent>
         </HeaderLeft>
         <Check $isComplete={allItemsChecked}>

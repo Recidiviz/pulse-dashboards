@@ -21,9 +21,10 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { Checkbox } from "~@jii/common-ui";
+import { useUsNeTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
-import { useUsNeContext } from "../usNeContext";
+import { UsNeReentryChecklistItemState } from "./UsNeReentryChecklistPresenter";
 
 const Item = styled.label`
   display: flex;
@@ -48,7 +49,7 @@ const ItemBody = styled.div`
   gap: ${rem(4)};
 `;
 
-const VerifiedNote = styled.p`
+const VerificationNote = styled.p`
   ${typography.Sans14};
   font-style: italic;
   color: ${palette.slate70};
@@ -56,19 +57,24 @@ const VerifiedNote = styled.p`
 `;
 
 interface ChecklistItemProps {
-  item: { id: string; isChecked: boolean; isVerifiable: boolean };
+  item: UsNeReentryChecklistItemState;
   onToggle: () => void;
 }
 
 export function ChecklistItem({ item, onToggle }: ChecklistItemProps) {
-  const {
-    copy: { reentryChecklist: copy },
-  } = useUsNeContext();
+  const { t } = useUsNeTranslations();
 
-  const verifiedCopy = {
-    ...copy.verifiedItem,
-    ...copy.verifiedItem.overrides[item.id],
-  };
+  const verificationTranslations = t(
+    ($) =>
+      $.reentryChecklist.verifiedItem[
+        item.isChecked ? "confirmed" : "unconfirmed"
+      ],
+    { returnObjects: true },
+  );
+
+  const verificationText =
+    (verificationTranslations as Record<string, string>)[item.id] ??
+    verificationTranslations.default;
 
   return (
     <Item>
@@ -80,11 +86,9 @@ export function ChecklistItem({ item, onToggle }: ChecklistItemProps) {
         disabled={item.isVerifiable}
       />
       <ItemBody>
-        <ItemText>{copy.items[item.id]}</ItemText>
+        <ItemText>{t(($) => $.reentryChecklist.items[item.id])}</ItemText>
         {item.isVerifiable && (
-          <VerifiedNote>
-            {item.isChecked ? verifiedCopy.confirmed : verifiedCopy.unconfirmed}
-          </VerifiedNote>
+          <VerificationNote>{verificationText}</VerificationNote>
         )}
       </ItemBody>
     </Item>

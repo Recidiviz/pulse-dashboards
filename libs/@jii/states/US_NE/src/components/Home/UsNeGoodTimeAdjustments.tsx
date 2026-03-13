@@ -15,43 +15,78 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { sortBy } from "lodash";
+import { sortBy, startCase, toLower } from "lodash";
 
 import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
+import { formatFullDate, useResidentMetadata } from "~@jii/data";
 import { OpenTable } from "~@jii/earned-good-time";
-
-import { useUsNeContext } from "./../usNeContext";
+import { useUsNeTranslations } from "~@jii/translation";
 
 const UsNeGoodTimeAdjustments = () => {
-  const { copy, metadata } = useUsNeContext();
-  const sectionCopy = copy.home.goodTimeAdjustments;
+  const metadata = useResidentMetadata("US_NE");
+  const { t } = useUsNeTranslations();
+
+  const colSpec = [
+    {
+      label: t(($) => $.home.goodTimeAdjustments.tableColumns.adjustmentType),
+      key: "adjustmentType",
+    },
+    {
+      label: t(
+        ($) => $.home.goodTimeAdjustments.tableColumns.misconductReportNumber,
+      ),
+      key: "misconductReportNumber",
+    },
+    {
+      label: t(($) => $.home.goodTimeAdjustments.tableColumns.days),
+      key: "days",
+    },
+    {
+      label: t(($) => $.home.goodTimeAdjustments.tableColumns.transactionDate),
+      key: "transactionDate",
+    },
+  ];
 
   const rows = sortBy(
     metadata.creditActivity,
     ({ creditDate }) => -creditDate,
-  ).map((a) =>
-    Object.fromEntries(
-      sectionCopy.tableColumns.map(({ value, label }) => [
-        label,
-        hydrateTemplate(value, a),
-      ]),
-    ),
-  );
+  ).map(
+    ({
+      creditsEarned,
+      violationDescription,
+      misconductReportNumber,
+      creditDate,
+    }) => {
+      const adjustmentType =
+        (creditsEarned > 0
+          ? t(($) => $.home.goodTimeAdjustments.adjustmentType.addition)
+          : t(($) => $.home.goodTimeAdjustments.adjustmentType.removal)) +
+        (violationDescription
+          ? `: ${startCase(toLower(violationDescription))}`
+          : "");
 
-  const colSpec = sectionCopy.tableColumns.map(({ label }) => ({
-    label,
-    key: label,
-  }));
+      const days =
+        creditsEarned > 0 ? `+${creditsEarned}` : String(creditsEarned);
+
+      const transactionDate = creditDate ? formatFullDate(creditDate) : "";
+
+      return {
+        adjustmentType,
+        misconductReportNumber: misconductReportNumber ?? "",
+        days,
+        transactionDate,
+      };
+    },
+  );
 
   return (
     <section>
       <HomepageSectionHeading>
-        {sectionCopy.sectionTitle}
+        {t(($) => $.home.goodTimeAdjustments.sectionTitle)}
       </HomepageSectionHeading>
       <Card>
         {rows.length === 0 ? (
-          sectionCopy.emptyMessage
+          t(($) => $.home.goodTimeAdjustments.emptyMessage)
         ) : (
           <OpenTable columns={colSpec} data={rows} />
         )}

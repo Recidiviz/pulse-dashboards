@@ -16,27 +16,30 @@
 // =============================================================================
 
 import { usePageTitle } from "~@jii/common-ui";
+import { useResidentMetadata } from "~@jii/data";
+import { useUsNeTranslations } from "~@jii/translation";
 
 import { UsNeTodos } from "../Todos/UsNeTodos";
-import { useUsNeContext } from "../usNeContext";
-import UsNeCardGroup from "./UsNeCardGroup";
+import UsNeDateCardGroup from "./UsNeDateCardGroup";
 import UsNeGoodTimeAdjustments from "./UsNeGoodTimeAdjustments";
+import UsNeGoodTimeCardGroup from "./UsNeGoodTimeCardGroup";
 import UsNeHomeHeader from "./UsNeHomeHeader";
 
 const UsNeSingleResidentHome = () => {
-  const { metadata, copy } = useUsNeContext();
-  usePageTitle(copy.home.pageTitle);
+  const metadata = useResidentMetadata("US_NE");
+  const { t } = useUsNeTranslations();
+  usePageTitle(t(($) => $.home.pageTitle));
 
   if (!metadata.sentenceLastModifiedDate) {
-    return <p>{copy.home.noSentenceFallback}</p>;
+    return <p>{t(($) => $.home.noSentenceFallback)}</p>;
   }
 
   return (
     <>
       <UsNeHomeHeader />
       <UsNeTodos />
-      <UsNeCardGroup copy={copy.home.dates} />
-      <UsNeCardGroup copy={copy.home.goodTimeBalances} />
+      <UsNeDateCardGroup />
+      <UsNeGoodTimeCardGroup />
       <UsNeGoodTimeAdjustments />
     </>
   );

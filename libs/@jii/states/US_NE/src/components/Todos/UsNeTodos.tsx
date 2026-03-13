@@ -19,15 +19,19 @@ import { observer } from "mobx-react-lite";
 import { ReactNode } from "react";
 
 import { HomepageSectionHeading } from "~@jii/common-ui";
-import { useRootStore, useSingleResidentContext } from "~@jii/data";
+import {
+  useResidentMetadata,
+  useRootStore,
+  useSingleResidentContext,
+} from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsNeTranslations } from "~@jii/translation";
 import {
   Hydratable,
   HydratorWithDirectHydration,
   withPresenterManager,
 } from "~hydration-utils";
 
-import { useUsNeContext } from "../usNeContext";
 import { TodoCard } from "./TodoCard";
 import { UsNeTodosPresenter } from "./UsNeTodosPresenter";
 
@@ -36,18 +40,14 @@ const ManagedComponent = observer(function ManagedComponent({
 }: {
   presenter: UsNeTodosPresenter;
 }) {
-  const {
-    copy: {
-      home: { todos: copy },
-    },
-  } = useUsNeContext();
+  const metadata = useResidentMetadata("US_NE");
+  const { t } = useUsNeTranslations();
 
   const {
     goodTimeRestorationStatus,
     shouldShowReentryChecklist,
     shouldShowTodos,
     shouldShowReentryAssessment,
-    goodTimeRestorationMonthsRemainingString,
   } = presenter;
 
   if (!shouldShowTodos) {
@@ -56,19 +56,38 @@ const ManagedComponent = observer(function ManagedComponent({
 
   return (
     <section>
-      <HomepageSectionHeading>{copy.sectionTitle}</HomepageSectionHeading>
+      <HomepageSectionHeading>
+        {t(($) => $.home.todos.sectionTitle)}
+      </HomepageSectionHeading>
       {goodTimeRestorationStatus && (
         <TodoCard
-          {...copy.goodTimeRestoration[goodTimeRestorationStatus]}
-          templateValues={{ goodTimeRestorationMonthsRemainingString }}
-          linkTarget={State.Resident.$.EGT.Definition.buildRelativePath({
+          title={t(
+            ($) =>
+              $.home.todos.goodTimeRestoration[goodTimeRestorationStatus].title,
+          )}
+          body={t(
+            ($) =>
+              $.home.todos.goodTimeRestoration[goodTimeRestorationStatus].body,
+            {
+              goodTimeLostDaysRestorable: metadata.goodTimeLostDaysRestorable,
+              count: presenter.goodTimeRestorationMonthsRemaining,
+            },
+          )}
+          linkText={t(
+            ($) =>
+              $.home.todos.goodTimeRestoration[goodTimeRestorationStatus]
+                .linkText,
+          )}
+          linkTarget={State.Resident.$.UsNeMoreInformation.buildRelativePath({
             pageSlug: "gbmd",
           })}
         />
       )}
       {shouldShowReentryChecklist && (
         <TodoCard
-          {...copy.reentryChecklist}
+          title={t(($) => $.home.todos.reentryChecklist.title)}
+          body={t(($) => $.home.todos.reentryChecklist.body)}
+          linkText={t(($) => $.home.todos.reentryChecklist.linkText)}
           linkTarget={State.Resident.$.UsNeReentryChecklist.buildRelativePath(
             {},
           )}
@@ -76,7 +95,9 @@ const ManagedComponent = observer(function ManagedComponent({
       )}
       {shouldShowReentryAssessment && (
         <TodoCard
-          {...copy.reentryAssessment}
+          title={t(($) => $.home.todos.reentryAssessment.title)}
+          body={t(($) => $.home.todos.reentryAssessment.body)}
+          linkText={t(($) => $.home.todos.reentryAssessment.linkText)}
           linkTarget={State.Resident.$.UsNeReentryAssessment.buildRelativePath(
             {},
           )}

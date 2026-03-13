@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import { format } from "date-fns";
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { useUsNeTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 const Container = styled.div``;
@@ -62,6 +62,7 @@ export function ChecklistProgressBar({
   totalSections,
   lastSavedTimestamp,
 }: ChecklistProgressBarProps) {
+  const { t } = useUsNeTranslations();
   const progressPercentage =
     totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
@@ -72,10 +73,17 @@ export function ChecklistProgressBar({
       </Wrapper>
       <Footer>
         <span>
-          {completedSections}/{totalSections} Sections Complete
+          {t(($) => $.reentryChecklist.progressBar.sectionsComplete, {
+            completedSections,
+            totalSections,
+          })}
         </span>
         {lastSavedTimestamp && (
-          <span>Saved {format(lastSavedTimestamp, "MMMM d, yyyy")}</span>
+          <span>
+            {t(($) => $.reentryChecklist.progressBar.lastSaved, {
+              date: lastSavedTimestamp,
+            })}
+          </span>
         )}
       </Footer>
     </Container>

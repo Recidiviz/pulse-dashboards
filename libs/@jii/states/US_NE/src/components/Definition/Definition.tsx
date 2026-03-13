@@ -19,13 +19,15 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { NotFound } from "~@jii/common-ui";
 import { EgtCopyWrapper } from "~@jii/earned-good-time";
 import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
+import { useUsNeTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useUsNeContext } from "../usNeContext";
 import { DefinitionPagePresenter } from "./DefinitionPresenter";
+import { UsNeInfoPageSlugs } from "./types";
 
 const ManagedComponent: FC<{
   presenter: DefinitionPagePresenter;
@@ -45,15 +47,19 @@ const ManagedComponent: FC<{
   );
 });
 
-function usePresenter() {
-  const { pageSlug } = useTypedParams(State.Resident.EGT.Definition);
-  const { copy } = useUsNeContext();
-
-  return new DefinitionPagePresenter(pageSlug, copy);
+function usePresenter({ pageSlug }: { pageSlug: UsNeInfoPageSlugs }) {
+  const { t } = useUsNeTranslations();
+  return new DefinitionPagePresenter(pageSlug, t);
 }
 
-export const Definition = withPresenterManager({
+const ManagedDefinition = withPresenterManager({
   usePresenter,
   managerIsObserver: false,
   ManagedComponent,
 });
+
+export const Definition = () => {
+  const { pageSlug } = useTypedParams(State.Resident.UsNeMoreInformation);
+  if (!pageSlug) return <NotFound />;
+  return <ManagedDefinition pageSlug={pageSlug} />;
+};

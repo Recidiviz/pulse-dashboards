@@ -15,31 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { createContext } from "react";
+import { useTranslation } from "react-i18next";
 
-import { useResidentMetadata } from "~@jii/data";
-import { UsNeResidentMetadata } from "~datatypes";
-import { useRequiredContext } from "~utils";
+import { TranslationsObject } from "../../utils/types";
 
-import { UsNeCopy, usNeCopy } from "../configs/copy";
-
-export type UsNeContextValue = {
-  metadata: UsNeResidentMetadata;
-  copy: UsNeCopy;
-};
-
-const context = createContext<UsNeContextValue | undefined>(undefined);
-
-const { Provider } = context;
-
-export function useUsNeContext() {
-  return useRequiredContext(context);
+export function useUsNeTranslations() {
+  return useTranslation("US_NE");
 }
 
-export const UsNeContextProvider: React.FC<{ children: React.ReactNode }> =
-  observer(function UsNeContextProvider({ children }) {
-    const metadata = useResidentMetadata("US_NE");
+/**
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_NE namespace
+ */
+export type UsNeTranslationsObject = TranslationsObject<"US_NE">;
 
-    return <Provider value={{ metadata, copy: usNeCopy }}>{children}</Provider>;
-  });
+export type UsNeTFunction = ReturnType<typeof useUsNeTranslations>["t"];

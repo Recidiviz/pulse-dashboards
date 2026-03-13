@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { number, route, string, types } from "react-router-typesafe-routes/dom";
+import {
+  number,
+  route,
+  string,
+  types,
+  union,
+} from "react-router-typesafe-routes/dom";
 
 export const EmailVerification = route("verify");
 
@@ -77,6 +83,19 @@ export const UsNcRNA = route(
   },
 );
 
+export const UsNeMoreInformation = route("more-information/:pageSlug", {
+  params: {
+    pageSlug: union([
+      "mmtd",
+      "ped",
+      "trd",
+      "gbmd",
+      "lb191",
+      "jailCredits",
+    ] as const),
+  },
+});
+
 export const UsNeReentryChecklist = route("reentry-checklist");
 
 export const UsNeReentryAssessment = route("reentry-assessment");
@@ -99,6 +118,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsAzMoreInformation,
       UsCoMoreInformation,
       UsNcRNA,
+      UsNeMoreInformation,
       UsNeReentryChecklist,
       UsNeReentryAssessment,
     },

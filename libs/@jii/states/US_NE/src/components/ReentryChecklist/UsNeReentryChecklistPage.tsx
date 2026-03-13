@@ -24,12 +24,9 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import { BackLink, SlateCopy, usePageTitle } from "~@jii/common-ui";
-import {
-  hydrateTemplate,
-  useRootStore,
-  useSingleResidentContext,
-} from "~@jii/data";
+import { useRootStore, useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsNeTranslations } from "~@jii/translation";
 import { Button, spacing } from "~design-system";
 import {
   Hydratable,
@@ -37,7 +34,6 @@ import {
   withPresenterManager,
 } from "~hydration-utils";
 
-import { useUsNeContext } from "../usNeContext";
 import { ChecklistProgressBar } from "./ChecklistProgressBar";
 import { ChecklistSection } from "./ChecklistSection";
 import { UnsavedChangesModal } from "./UnsavedChangesModal";
@@ -59,14 +55,12 @@ const ManagedComponent = observer(function ManagedComponent({
 }: {
   presenter: UsNeReentryChecklistPresenter;
 }) {
-  const {
-    copy: { reentryChecklist: copy },
-  } = useUsNeContext();
+  const { t } = useUsNeTranslations();
   const params = useTypedParams(State.Resident);
   const navigate = useNavigate();
   const [isUnsavedChangesModalOpen, setIsUnsavedChangesModalOpen] =
     useState(false);
-  usePageTitle(copy.pageTitle);
+  usePageTitle(t(($) => $.reentryChecklist.pageTitle));
 
   const backPath = State.Resident.buildPath(params);
 
@@ -80,10 +74,10 @@ const ManagedComponent = observer(function ManagedComponent({
   return (
     <PageWrapper>
       <BackLink to={State.Resident.buildPath(params)} onClick={handleBackClick}>
-        Back to home
+        {t(($) => $.reentryChecklist.backLink)}
       </BackLink>
-      <Header34 as="h1">{copy.pageTitle}</Header34>
-      <SlateCopy>{copy.subtitle}</SlateCopy>
+      <Header34 as="h1">{t(($) => $.reentryChecklist.pageTitle)}</Header34>
+      <SlateCopy>{t(($) => $.reentryChecklist.subtitle)}</SlateCopy>
 
       <ChecklistProgressBar
         {...presenter.progressMetrics}
@@ -100,7 +94,7 @@ const ManagedComponent = observer(function ManagedComponent({
 
       {presenter.writeError && (
         <SlateCopy>
-          {hydrateTemplate(copy.writeErrorMessage, {
+          {t(($) => $.reentryChecklist.writeErrorMessage, {
             error: presenter.writeError,
           })}
         </SlateCopy>
@@ -111,7 +105,9 @@ const ManagedComponent = observer(function ManagedComponent({
           onClick={() => presenter.saveState()}
           disabled={!presenter.isDirty || presenter.isSaving}
         >
-          {presenter.isSaving ? "Saving..." : "Save"}
+          {presenter.isSaving
+            ? t(($) => $.reentryChecklist.savingButton)
+            : t(($) => $.reentryChecklist.saveButton)}
         </Button>
       </SaveButtonContainer>
 

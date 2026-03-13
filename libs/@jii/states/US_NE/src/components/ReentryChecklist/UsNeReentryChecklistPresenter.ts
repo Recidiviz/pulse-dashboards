@@ -27,11 +27,27 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { usNeReentryChecklistSpec } from "./usNeReentryChecklistSpec";
+import {
+  UsNeReentryChecklistItemId,
+  UsNeReentryChecklistSectionId,
+  usNeReentryChecklistSpec,
+} from "./usNeReentryChecklistSpec";
 
 type ReentryChecklistData =
   JiiResidentAppRouterOutputs["state"]["usNe"]["getReentryChecklist"];
-export type ChecklistState = ReentryChecklistData["questions"];
+type ChecklistState = ReentryChecklistData["questions"];
+
+export type UsNeReentryChecklistItemState = {
+  id: UsNeReentryChecklistItemId;
+  isChecked: boolean;
+  isVerifiable: boolean;
+};
+
+export type UsNeReentryChecklistSectionState = {
+  id: UsNeReentryChecklistSectionId;
+  isEnabled: boolean;
+  items: UsNeReentryChecklistItemState[];
+};
 
 export class UsNeReentryChecklistPresenter implements Hydratable {
   private savedState?: ChecklistState;
@@ -121,7 +137,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
   /**
    * Returns sections with their enabled state and per-item checked/verifiable state
    */
-  get sections() {
+  get sections(): UsNeReentryChecklistSectionState[] {
     const { residentDocuments } = this;
     const documentsEnabled = !!this.residentFlags.usNeChecklistDocuments;
 
@@ -184,6 +200,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
    */
   get progressMetrics() {
     const allItems = this.sections.flatMap((s) => s.items);
+
     return {
       totalItems: allItems.length,
       completedItems: allItems.filter((i) => i.isChecked).length,

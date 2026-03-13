@@ -22,5 +22,6 @@ export * from "./namespaces/US_AR/useUsArTranslations";
 export * from "./namespaces/US_AZ/useUsAzTranslations";
 export * from "./namespaces/US_CO/useUsCoTranslations";
 export * from "./namespaces/US_MA/useUsMaTranslations";
+export * from "./namespaces/US_NE/useUsNeTranslations";
 export * from "./namespaces/US_TN/useUsTnTranslations";
 export * from "./utils/date";

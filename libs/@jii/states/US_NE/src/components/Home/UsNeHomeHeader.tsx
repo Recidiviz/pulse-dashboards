@@ -16,14 +16,27 @@
 // =============================================================================
 
 import { Header34, Sans14, spacing } from "@recidiviz/design-system";
+import { isNumber } from "lodash";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
-import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
+import { useResidentMetadata } from "~@jii/data";
 import { FullWidthBanner } from "~@jii/layout";
+import { useUsNeTranslations } from "~@jii/translation";
+import type { UsNeResidentMetadata } from "~datatypes";
 import { palette } from "~design-system";
 
-import { useUsNeContext } from "./../usNeContext";
+const headerFields = [
+  { key: "numHoldsAndDetainers", metadataField: "numHoldsAndDetainers" },
+  { key: "numNotifiers", metadataField: "numNotifiers" },
+  { key: "deadTime", metadataField: "deadTimeDays" },
+  { key: "minimumSentence", metadataField: "minimumSentenceYears" },
+  { key: "maximumSentence", metadataField: "maximumSentenceYears" },
+  { key: "goodTimeLaw", metadataField: "goodTimeLawNumber" },
+] as const satisfies {
+  key: string;
+  metadataField: keyof UsNeResidentMetadata;
+}[];
 
 const HeaderFieldsContainer = styled.div`
   display: flex;
@@ -44,24 +57,36 @@ const SubtitleLabel = styled(Sans14)`
 `;
 
 const UsNeHomeHeader = observer(function UsNeHomeHeader() {
-  const { copy, metadata } = useUsNeContext();
-  const { resident } = useSingleResidentContext();
-  const sectionCopy = copy.home;
-  const headerFields = sectionCopy.headerFields
-    .map((f) => ({ ...f, hydrated: hydrateTemplate(f.value, resident) }))
-    .filter((f) => f.hydrated !== ""); // drop empty (e.g., optional mandatory minimum sentence)
+  const metadata = useResidentMetadata("US_NE");
+  const { t } = useUsNeTranslations();
+
+  const visibleFields = headerFields.filter(
+    ({ metadataField }) => metadata[metadataField] !== null,
+  );
+
   return (
     <>
       <FullWidthBanner>
-        {hydrateTemplate(copy.lastUpdated, metadata)}
+        {t(($) => $.lastUpdated, {
+          sentenceLastModifiedDate: metadata.sentenceLastModifiedDate,
+        })}
       </FullWidthBanner>
       <header>
-        <Header34 as="h1">{sectionCopy.pageTitle}</Header34>
+        <Header34 as="h1">{t(($) => $.home.pageTitle)}</Header34>
         <HeaderFieldsContainer>
-          {headerFields.map(({ label, hydrated }) => (
-            <HeaderField key={label}>
-              <SubtitleLabel>{label}</SubtitleLabel>
-              <span>{hydrated}</span>
+          {visibleFields.map(({ key, metadataField }) => (
+            <HeaderField key={key}>
+              <SubtitleLabel>
+                {t(($) => $.home.headerFields[key].label)}
+              </SubtitleLabel>
+              <span>
+                {t(($) => $.home.headerFields[key].value, {
+                  ...metadata,
+                  count: isNumber(metadata[metadataField])
+                    ? metadata[metadataField]
+                    : undefined,
+                })}
+              </span>
             </HeaderField>
           ))}
         </HeaderFieldsContainer>

@@ -18,30 +18,30 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { EGT, UsNeReentryAssessment, UsNeReentryChecklist } from "~@jii/paths";
+import {
+  UsNeMoreInformation,
+  UsNeReentryAssessment,
+  UsNeReentryChecklist,
+} from "~@jii/paths";
 
 import { Definition } from "./Definition/Definition";
 import UsNeSingleResidentHome from "./Home/UsNeSingleResidentHome";
 import { UsNeReentryAssessmentPage } from "./ReentryAssessment/UsNeReentryAssessmentPage";
 import UsNeReentryChecklistPage from "./ReentryChecklist/UsNeReentryChecklistPage";
-import { UsNeContextProvider } from "./usNeContext";
-
 export const UsNeRouter = () => {
   return (
-    <UsNeContextProvider>
-      <Routes>
-        <Route index element={<UsNeSingleResidentHome />} />
-        <Route path={EGT.Definition.path} element={<Definition />} />
-        <Route
-          path={UsNeReentryChecklist.path}
-          element={<UsNeReentryChecklistPage />}
-        />
-        <Route
-          path={UsNeReentryAssessment.path}
-          element={<UsNeReentryAssessmentPage />}
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </UsNeContextProvider>
+    <Routes>
+      <Route index element={<UsNeSingleResidentHome />} />
+      <Route path={UsNeMoreInformation.path} element={<Definition />} />
+      <Route
+        path={UsNeReentryChecklist.path}
+        element={<UsNeReentryChecklistPage />}
+      />
+      <Route
+        path={UsNeReentryAssessment.path}
+        element={<UsNeReentryAssessmentPage />}
+      />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
