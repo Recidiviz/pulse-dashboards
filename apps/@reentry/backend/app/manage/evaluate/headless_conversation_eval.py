@@ -5,12 +5,12 @@ This allows testing the conversation flow without manual input by simulating cli
 
 import json
 import logging
-import structlog
 import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import structlog
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, ValidationError
@@ -67,6 +67,7 @@ class ConversationEvaluator:
     def __init__(self, sections):
         self.evaluation_llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_BASE_URL,
             model="o4-mini",
             reasoning_effort="high",
         )
@@ -248,6 +249,7 @@ class HeadlessIntakeClient:
         # Initialize LLM for generating responses using app settings
         self.llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_BASE_URL,
             model="o4-mini",
             max_tokens=500,
             reasoning_effort="low",

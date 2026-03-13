@@ -49,6 +49,7 @@ class AIIntakeClient:
         # Initialize LLM for generating responses
         self.llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_BASE_URL,
             model="o4-mini",
             max_tokens=500,
             reasoning_effort="low",
