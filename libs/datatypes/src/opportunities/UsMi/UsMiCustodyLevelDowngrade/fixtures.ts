@@ -103,7 +103,7 @@ export const usMiCustodyLevelDowngradeFixtures = {
     metadata: {
       confinementLevel: "I",
       managementLevel: "I",
-      managementLevelRawScore: 3,
+      managementLevelRawScore: null,
       mostRecentAssessmentDate: relativeFixtureDate({ days: -30 }),
       noAssessmentSince26: true,
       tabName: "ELIGIBLE_FOR_ASSESSMENT",

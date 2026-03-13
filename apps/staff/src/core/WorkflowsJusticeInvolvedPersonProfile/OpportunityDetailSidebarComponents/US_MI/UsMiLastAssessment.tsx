@@ -72,7 +72,10 @@ const UsMiLastAssessment: React.FC<OpportunityProfileProps> = ({
   const name = opportunity.person.fullName.givenNames ?? "This resident";
 
   const tableContents = [
-    { label: "Management Level Raw Score", text: managementLevelRawScore },
+    {
+      label: "Management Level Raw Score",
+      text: managementLevelRawScore ?? "N/A",
+    },
     { label: "Management Level", text: managementLevel },
     { label: "Confinement Level", text: confinementLevel },
   ];

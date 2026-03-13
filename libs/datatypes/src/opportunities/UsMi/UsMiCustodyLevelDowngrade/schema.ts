@@ -18,14 +18,14 @@
 import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
-import { dateStringSchema } from "../../../utils/zod";
+import { dateStringSchema, nullishAsUndefined } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 export const usMiCustodyLevelDowngradeSchema = opportunitySchemaBase.extend({
   metadata: z.object({
     confinementLevel: z.string(),
     managementLevel: z.string(),
-    managementLevelRawScore: z.coerce.number(),
+    managementLevelRawScore: nullishAsUndefined(z.coerce.number()),
     mostRecentAssessmentDate: dateStringSchema,
     noAssessmentSince26: z.boolean(),
     tabName: z.string(),
