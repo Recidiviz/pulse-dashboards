@@ -41,6 +41,12 @@ steps:
       - "recidiviz-rnd-planner:us-central1:recidiviz-prod"
       - "--service-account"
       - "reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com"
+      - "--network"
+      - "default"
+      - "--subnet"
+      - "default"
+      - "--vpc-egress"
+      - "private-ranges-only"
       - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_OPENAI_API_KEY=RECIDIVIZ_OPENAI_API_KEY_PROD:latest"
       - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_PROD:latest"
@@ -84,7 +90,6 @@ steps:
         RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-production,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
 
-
   # Deploy Worker service
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
@@ -109,6 +114,12 @@ steps:
       - "--no-cpu-throttling"
       - "--service-account"
       - "reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com"
+      - "--network"
+      - "default"
+      - "--subnet"
+      - "default"
+      - "--vpc-egress"
+      - "private-ranges-only"
       - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_OPENAI_API_KEY=RECIDIVIZ_OPENAI_API_KEY_PROD:latest"
       - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_PROD:latest"
@@ -148,7 +159,6 @@ steps:
         RECIDIVIZ_BASE_URL=https://backend-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840
-
 
   # Route traffic to latest revision
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
