@@ -407,6 +407,18 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
                 </React.Fragment>
               );
             })}
+
+            {presenter.hasEndingAddress && presenter.endingAddress && (
+              <AddressRow
+                address={presenter.endingAddress}
+                label={
+                  presenter.isEndingAddressMatchingStart
+                    ? "Back to start"
+                    : "Your ending point"
+                }
+                displayStar={true}
+              />
+            )}
           </RouteInfo>
         </DescriptionContainer>
         <DisclaimerContainer>
