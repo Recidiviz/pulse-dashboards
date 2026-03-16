@@ -40,7 +40,10 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
   const [learnMoreModalVisible, setLearnMoreModalVisible] = useState(false);
 
   const handleContinue = async () => {
-    await authorize({ audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE });
+    await authorize({
+      audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
+      scope: "openid profile email offline_access",
+    });
   };
 
   const handleSkipAuth = () => {
