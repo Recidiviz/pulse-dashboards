@@ -1044,7 +1044,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usIdCrcLikeBedTimeBasedCriteria",
           text: "Resident satisfies the time-based criteria",
           tooltip:
-            "For individuals serving low-severity risk crimes, eligibility is met if either (1) the EPRD (Earliest Possible Release Date) is in the past and the TPD (Tentative Parole Date) is between 6 and 12 months away, or (2) the EPRD equals the TPD and the TPD is between 6 and 12 months away. For individuals serving high-severity risk crimes, eligibility is met if either (1) the FTRD (Full Term Release Date) is within the next 6 months, or (2) the EPRD is in the past and the TPD is within the next 6 months.",
+            "For individuals serving low-severity risk crimes, eligibility is met if either (1) the EPRD (Earliest Possible Release Date) is in the past and the TPD (Tentative Parole Date) is between 6 and 18 months away, or (2) the EPRD equals the TPD and the TPD is between 6 and 12 months away. For individuals serving high-severity risk crimes, eligibility is met if either (1) the FTRD (Full Term Release Date) is within the next 12 months, or (2) the EPRD is in the past and the TPD is within the next 6 months.",
         },
         {
           key: "notServingForSexualOffense",
