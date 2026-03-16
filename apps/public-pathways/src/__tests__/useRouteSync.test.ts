@@ -30,10 +30,14 @@ import {
 import { useRootStore } from "../components/StoreProvider";
 import { useRouteSync } from "../useRouteSync";
 
-vi.mock("react-router-dom", () => ({
-  useParams: vi.fn(),
-  useNavigate: vi.fn(),
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useParams: vi.fn(),
+    useNavigate: vi.fn(),
+  };
+});
 
 vi.mock("use-query-params", () => ({
   StringParam: "string",

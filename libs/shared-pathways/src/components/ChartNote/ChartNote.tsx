@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,66 +15,68 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./ChartNote.scss";
-
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { convertToSlug } from "../../utils/navigation";
-import { DASHBOARD_PATHS, DASHBOARD_VIEWS } from "../views";
+const Wrapper = styled.div`
+  font-family: ${({ theme }) => theme.typography.fontFamily};
+  font-size: 14px;
+  color: ${({ theme }) => theme.palette.slate80};
+  margin-top: 12px;
+  margin-bottom: 1.375rem;
+`;
 
-type Props = {
-  note?: string;
-  chartTitle: string;
-  isLoading?: boolean;
-};
+const MethodologyLink = styled(Link)`
+  color: ${({ theme }) => theme.palette.signal.links};
+  padding-left: 5px;
 
-type LinkProps = {
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.palette.signal.links};
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+`;
+
+type MethodologyLinkProps = {
   pathname: string;
   hash: string;
   search: string;
 };
 
-const ChartNote: React.FC<Props> = ({
+type ChartNoteProps = {
+  note?: string;
+  isLoading?: boolean;
+  methodologyLink?: MethodologyLinkProps;
+};
+
+const ChartNote: React.FC<ChartNoteProps> = ({
   note,
-  chartTitle,
   isLoading = false,
+  methodologyLink,
 }) => {
-  const { pathname } = useLocation();
-  const view = pathname.split("/")[1];
-  const {
-    tenantStore: { currentTenantId },
-  } = useRootStore();
-
-  const pathwaysLinkProps: LinkProps = {
-    pathname: `${DASHBOARD_PATHS.methodologySystem}`,
-    hash: convertToSlug(chartTitle || ""),
-    search: `?stateCode=${currentTenantId}`,
-  };
-
   if (isLoading || !note) {
     return (
-      <div className="ChartNote">
+      <Wrapper>
         <br />
-      </div>
+      </Wrapper>
     );
   }
+
   return (
-    <div className="ChartNote">
+    <Wrapper>
       <strong>Note: </strong>
-      {/* TODO add link when methodology is ready */}
       {note}
-      {view === DASHBOARD_VIEWS.system && (
-        <Link
-          className="ChartNote__link"
-          to={pathwaysLinkProps}
-          target="_blank"
-        >
+      {methodologyLink && (
+        <MethodologyLink to={methodologyLink} target="_blank">
           See full methodology →
-        </Link>
+        </MethodologyLink>
       )}
-    </div>
+    </Wrapper>
   );
 };
 

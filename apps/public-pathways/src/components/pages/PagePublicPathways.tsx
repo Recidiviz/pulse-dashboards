@@ -22,6 +22,7 @@ import { ThemeProvider } from "styled-components";
 
 import type { Sections } from "~shared-pathways";
 import {
+  ChartNote,
   PathwaysSection,
   PathwaysTheme,
   SectionNavigation,
@@ -29,20 +30,22 @@ import {
 } from "~shared-pathways";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
+import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
 import { useRouteSync } from "../../useRouteSync";
 import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
 import { PageHeader } from "../PageHeader/PageHeader";
 import { useRootStore } from "../StoreProvider";
 import { PageContainer } from "./styles";
 
-const CHART_FONT_FAMILY = '"Oswald", sans-serif';
+const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
 
 const publicPathwaysTheme: PathwaysTheme = {
   palette: {
     ...publicPathwaysPalette,
   },
   typography: {
-    fontFamily: CHART_FONT_FAMILY,
+    ...publicPathwaysTypography,
+    fontFamily: PROXIMA_NOVA_FONT_FAMILY,
     titleColor: "black",
     axisLabelColor: rgba("black", 0.75),
   },
@@ -86,6 +89,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
           accentColor={publicPathwaysPalette.signal.links}
         />
         <MetricVizMapper metric={metricsStore.current} />
+        <ChartNote note={metricsStore.current?.note} />
       </PageContainer>
     </ThemeProvider>
   );

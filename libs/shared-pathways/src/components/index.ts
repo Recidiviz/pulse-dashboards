@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./ChartNote";
 export * from "./PathwaysTheme";
 export * from "./PopulationSnapshotChart";
 export * from "./PopulationSnapshotTooltip";

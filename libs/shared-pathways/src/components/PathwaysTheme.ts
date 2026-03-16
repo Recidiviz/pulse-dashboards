@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "~design-system";
+import { palette, typography } from "~design-system";
 
 const DEFAULT_FONT_FAMILY = '"Public Sans", sans-serif';
 
 export type PathwaysTheme = {
   palette: typeof palette & { focusColor: string };
-  typography: {
+  typography: typeof typography & {
     fontFamily: string;
     titleColor: string;
     axisLabelColor: string;
@@ -39,6 +39,7 @@ export const defaultPathwaysTheme: PathwaysTheme = {
     focusColor: "#006c67",
   },
   typography: {
+    ...typography,
     fontFamily: DEFAULT_FONT_FAMILY,
     titleColor: palette.pine1,
     axisLabelColor: palette.slate80,

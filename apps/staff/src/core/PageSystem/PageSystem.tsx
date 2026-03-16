@@ -20,18 +20,20 @@ import React from "react";
 import { ThemeProvider } from "styled-components";
 
 import {
+  ChartNote,
   defaultPathwaysTheme,
   PathwaysPage,
   usePageContent,
 } from "~shared-pathways";
 
-import ChartNote from "../ChartNote";
+import { convertToSlug } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import MetricVizMapper from "../MetricVizMapper";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar/PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
+import { DASHBOARD_PATHS } from "../views";
 import withRouteSync from "../withRouteSync";
 
 const PageSystem: React.FC = () => {
@@ -48,6 +50,12 @@ const PageSystem: React.FC = () => {
   const { title, summary } = pageContent;
   const { download, note } = metric;
   const { filterOptions, sortedFilters } = filtersStore;
+
+  const methodologyLink = {
+    pathname: DASHBOARD_PATHS.methodologySystem,
+    hash: convertToSlug(metric.chartTitle || ""),
+    search: `?stateCode=${currentTenantId}`,
+  };
 
   return (
     <PageTemplate
@@ -66,7 +74,7 @@ const PageSystem: React.FC = () => {
     >
       <ThemeProvider theme={defaultPathwaysTheme}>
         <MetricVizMapper metric={metric} />
-        <ChartNote note={note} chartTitle={metric.chartTitle} />
+        <ChartNote note={note} methodologyLink={methodologyLink} />
       </ThemeProvider>
     </PageTemplate>
   );
