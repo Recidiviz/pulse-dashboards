@@ -40,6 +40,8 @@ export async function main(prisma: PrismaClient) {
   await prisma.resident.deleteMany({});
   await prisma.staff.deleteMany({});
 
+  const importedAt = new Date();
+
   // Seed single staff
   const staffEmail = faker.internet.email();
   await prisma.staff.create({
@@ -72,6 +74,7 @@ export async function main(prisma: PrismaClient) {
       suffix: faker.person.suffix(),
       staffEmails: [staffEmail],
       supervisionType: "PAROLE",
+      lastImportedAt: importedAt,
     };
     const client = await prisma.client.create({ data: clientData });
     createdClients.push(client);
@@ -187,6 +190,7 @@ export async function main(prisma: PrismaClient) {
       surname: faker.person.lastName(),
       suffix: faker.person.suffix(),
       facilityId: `facility-${i + 1}`,
+      lastImportedAt: importedAt,
     };
     const resident = await prisma.resident.create({ data: residentData });
     createdResidents.push(resident);

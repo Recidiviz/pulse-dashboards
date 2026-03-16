@@ -48,6 +48,7 @@ describe("ProductionPipeline", () => {
     supervisionType: "PROBATION",
     isActive: true,
     staffEmails: ["fake@fake.com"],
+    lastImportedAt: new Date(0),
   };
 
   const mockAgency: AgencyConfig = {

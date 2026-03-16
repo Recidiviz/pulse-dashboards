@@ -50,6 +50,7 @@ export const fakeClient = {
   suffix: faker.person.suffix(),
   staffEmails: [fakeStaff.email],
   supervisionType: "PAROLE",
+  lastImportedAt: new Date(0),
 } satisfies Prisma.ClientCreateInput;
 
 export const fakeMeeting = {

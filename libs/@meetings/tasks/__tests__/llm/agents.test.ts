@@ -41,6 +41,7 @@ describe("SpecialistCore", () => {
     supervisionType: "PAROLE",
     isActive: true,
     staffEmails: ["fake@fake.com"],
+    lastImportedAt: new Date(0),
   };
 
   const mockTranscript: TranscriptInput = {

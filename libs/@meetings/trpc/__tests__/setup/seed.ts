@@ -72,6 +72,7 @@ export const fakeClients = [
     staffEmails: [fakeStaff[0].email],
     supervisionType: "PAROLE",
     isActive: true,
+    lastImportedAt: new Date(0),
   },
   {
     stateCode: StateCode.US_NE,
@@ -87,6 +88,7 @@ export const fakeClients = [
     staffEmails: [fakeStaff[1].email],
     supervisionType: "PAROLE",
     isActive: true,
+    lastImportedAt: new Date(0),
   },
   {
     stateCode: StateCode.US_NE,
@@ -102,6 +104,7 @@ export const fakeClients = [
     staffEmails: [fakeStaff[0].email],
     supervisionType: "PAROLE",
     isActive: false,
+    lastImportedAt: new Date(0),
   },
   {
     stateCode: StateCode.US_NE,
@@ -117,6 +120,7 @@ export const fakeClients = [
     staffEmails: [fakeStaff[0].email],
     supervisionType: "PAROLE",
     isActive: true,
+    lastImportedAt: new Date(0),
   },
 ] satisfies Prisma.ClientCreateInput[];
 
@@ -134,6 +138,7 @@ export const fakeResidents = [
     suffix: faker.person.suffix(),
     facilityId: "facility-1",
     isActive: true,
+    lastImportedAt: new Date(0),
   },
   {
     stateCode: StateCode.US_NE,
@@ -148,6 +153,7 @@ export const fakeResidents = [
     suffix: faker.person.suffix(),
     facilityId: "facility-1",
     isActive: true,
+    lastImportedAt: new Date(0),
   },
   {
     stateCode: StateCode.US_NE,
@@ -162,6 +168,7 @@ export const fakeResidents = [
     suffix: faker.person.suffix(),
     facilityId: "facility-2",
     isActive: false,
+    lastImportedAt: new Date(0),
   },
 ] satisfies Prisma.ResidentCreateInput[];
 

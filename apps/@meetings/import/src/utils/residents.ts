@@ -31,6 +31,7 @@ export async function transformAndLoadResidentData(
   data: AsyncGenerator<z.infer<typeof residentImportSchema>>,
 ) {
   const BATCH_SIZE = 500;
+  const importedAt = new Date();
 
   const existingStablePersonExternalIdsAndTypes = new Set(
     (
@@ -46,7 +47,6 @@ export async function transformAndLoadResidentData(
     ),
   );
 
-  const processedPersonIds: bigint[] = [];
   let createBatch: ResidentCreateInput[] = [];
   let updateBatch: BulkUpdateEntries = [];
 
@@ -81,9 +81,8 @@ export async function transformAndLoadResidentData(
       suffix: residentData.person_name.name_suffix,
       facilityId: residentData.facility_id,
       isActive: true,
+      lastImportedAt: importedAt,
     } satisfies ResidentCreateInput & BulkUpdateEntry;
-
-    processedPersonIds.push(residentData.person_id);
 
     if (
       existingStablePersonExternalIdsAndTypes.has(
@@ -101,9 +100,10 @@ export async function transformAndLoadResidentData(
   await flushCreateBatch();
   await flushUpdateBatch();
 
-  // Mark residents not present in the import as inactive
+  // Mark residents not present in this import as inactive.
+  // Using lastImportedAt avoids passing all IDs as query parameters (which hits DB limits at scale).
   await prismaClient.resident.updateMany({
-    where: { personId: { notIn: processedPersonIds } },
+    where: { lastImportedAt: { lt: importedAt } },
     data: { isActive: false },
   });
 }

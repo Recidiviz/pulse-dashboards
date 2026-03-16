@@ -169,6 +169,7 @@ describe("import resident data", () => {
         suffix: faker.person.suffix(),
         facilityId: "facility-999",
         isActive: true,
+        lastImportedAt: new Date(0),
       },
     });
 
@@ -215,5 +216,8 @@ describe("import resident data", () => {
       stablePersonExternalId: fakeResident.stablePersonExternalId,
       isActive: true,
     });
+    expect(activeResident?.lastImportedAt.getTime()).toBeGreaterThan(
+      new Date(0).getTime(),
+    );
   });
 });

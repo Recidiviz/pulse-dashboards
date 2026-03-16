@@ -48,6 +48,7 @@ export const fakeClient = {
   suffix: faker.person.suffix(),
   supervisionType: "PAROLE",
   staffEmails: [],
+  lastImportedAt: new Date(0),
 } satisfies ClientCreateInput;
 
 export const fakeResident = {
@@ -62,6 +63,7 @@ export const fakeResident = {
   surname: faker.person.lastName(),
   suffix: faker.person.suffix(),
   facilityId: "facility-1",
+  lastImportedAt: new Date(0),
 } satisfies ResidentCreateInput;
 
 export async function seed(prismaClient: PrismaClient) {

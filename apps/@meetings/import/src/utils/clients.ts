@@ -31,6 +31,7 @@ export async function transformAndLoadClientData(
   data: AsyncGenerator<z.infer<typeof clientImportSchema>>,
 ) {
   const BATCH_SIZE = 500;
+  const importedAt = new Date();
 
   const existingStablePersonExternalIdsAndTypes = new Set(
     (
@@ -46,7 +47,6 @@ export async function transformAndLoadClientData(
     ),
   );
 
-  const processedPersonIds: bigint[] = [];
   let createBatch: ClientCreateInput[] = [];
   let updateBatch: BulkUpdateEntries = [];
 
@@ -82,9 +82,8 @@ export async function transformAndLoadClientData(
       supervisionType: clientData.supervision_type,
       staffEmails: clientData.officer_emails ?? ([] as string[]),
       isActive: true,
+      lastImportedAt: importedAt,
     } satisfies ClientCreateInput & BulkUpdateEntry;
-
-    processedPersonIds.push(clientData.person_id);
 
     if (
       existingStablePersonExternalIdsAndTypes.has(
@@ -102,9 +101,10 @@ export async function transformAndLoadClientData(
   await flushCreateBatch();
   await flushUpdateBatch();
 
-  // Mark clients not present in the import as inactive
+  // Mark clients not present in this import as inactive.
+  // Using lastImportedAt avoids passing all IDs as query parameters (which hits DB limits at scale).
   await prismaClient.client.updateMany({
-    where: { personId: { notIn: processedPersonIds } },
+    where: { lastImportedAt: { lt: importedAt } },
     data: { isActive: false },
   });
 }

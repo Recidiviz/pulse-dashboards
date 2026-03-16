@@ -214,6 +214,7 @@ describe("import client data", () => {
         suffix: faker.person.suffix(),
         supervisionType: "PAROLE",
         isActive: true,
+        lastImportedAt: new Date(0),
       },
     });
 
@@ -261,5 +262,8 @@ describe("import client data", () => {
       stablePersonExternalId: fakeClient.stablePersonExternalId,
       isActive: true,
     });
+    expect(activeClient?.lastImportedAt.getTime()).toBeGreaterThan(
+      new Date(0).getTime(),
+    );
   });
 });

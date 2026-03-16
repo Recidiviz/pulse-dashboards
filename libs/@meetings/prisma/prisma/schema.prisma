@@ -119,7 +119,8 @@ model Client {
 
   // Whether or not the client appeared in the most recent export. Needed to ensure we don't delete
   // meetings when clients are removed.
-  isActive Boolean @default(true)
+  isActive       Boolean  @default(true)
+  lastImportedAt DateTime
 
   @@unique([stablePersonExternalId, stablePersonExternalIdType])
   @@unique([pseudonymizedId, stablePersonExternalIdType])
@@ -150,7 +151,8 @@ model Resident {
 
   // Whether or not the resident appeared in the most recent export. Needed to ensure we don't delete
   // meetings when residents are removed.
-  isActive Boolean @default(true)
+  isActive       Boolean  @default(true)
+  lastImportedAt DateTime
 
   @@unique([stablePersonExternalId, stablePersonExternalIdType])
   @@unique([pseudonymizedId, stablePersonExternalIdType])
@@ -189,7 +191,7 @@ model Meeting {
   meetingSummary   Json?
 
   transcriptDeletedAt DateTime?
-  audioDeletedAt DateTime?
+  audioDeletedAt      DateTime?
 
   transcriptions Transcription[]
 
