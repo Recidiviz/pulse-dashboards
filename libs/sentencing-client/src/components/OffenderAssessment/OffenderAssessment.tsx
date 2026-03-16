@@ -21,6 +21,7 @@ import React, { useEffect, useRef } from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { OffenderAssessmentSubsection } from "../SARDetails/constants";
 import { SectionContainer } from "../SARDetails/SARDetails.styles";
+import { RiskLevelKey } from "./constants";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
 import { EmploymentHistoryCard } from "./EmploymentHistory";
@@ -97,19 +98,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
     const getDomainMaxScore = (key: ORASDomainKey) =>
       domains.find((d) => d.key === key)?.maxScore;
 
-    // Build domain scores record for RiskCategorySummary
-    const domainScores: Record<string, number | null> = {
-      criminalHistoryLevel: criminalHistoryLevel ?? null,
-      educationLevelScore: educationLevelScore ?? null,
-      familySocialSupportLevel: familySocialSupportLevel ?? null,
-      neighborhoodLevel: neighborhoodLevel ?? null,
-      substanceAbuseLevel: substanceAbuseLevel ?? null,
-      peerAssociatesLevel: peerAssociatesLevel ?? null,
-      criminalBehaviorLevel: criminalBehaviorLevel ?? null,
-    };
-
     // Build domain risk levels record for RiskCategorySummary (keyed by scoreField)
-    const domainRiskLevels: Record<string, string | null> = {
+    const domainRiskLevels: Record<string, RiskLevelKey | null> = {
       criminalHistoryLevel: criminalHistoryRiskLevel ?? null,
       educationLevelScore: educationRiskLevel ?? null,
       familySocialSupportLevel: familySocialSupportRiskLevel ?? null,
@@ -119,7 +109,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       criminalBehaviorLevel: criminalBehaviorRiskLevel ?? null,
     };
 
-    const getDomainRiskLevel = (key: ORASDomainKey): string | null => {
+    const getDomainRiskLevel = (key: ORASDomainKey): RiskLevelKey | null => {
       const scoreField = domains.find((d) => d.key === key)?.scoreField;
       if (!scoreField) return null;
       return domainRiskLevels[scoreField] ?? null;
@@ -167,7 +157,6 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
         {hasDomains && (
           <RiskCategorySummary
             assessmentType={assessmentType ?? null}
-            domainScores={domainScores}
             domainRiskLevels={domainRiskLevels}
           />
         )}

@@ -23,10 +23,7 @@ import { formatDisplayDate, formatJudgeAndDivision } from "../../utils/utils";
 import DownloadIcon from "../assets/download-icon.svg?react";
 import { NeedsToBeAddressed, ProtectiveFactors } from "../constants";
 import { mapEnumKeysToDisplay } from "../KeyConsiderations/utils";
-import {
-  calculateRiskLevel,
-  RISK_LEVELS,
-} from "../OffenderAssessment/constants";
+import { RISK_LEVELS, RiskLevelKey } from "../OffenderAssessment/constants";
 import { getDomainsForAssessmentType } from "../OffenderAssessment/utils";
 import { SARSection } from "../SARDetails/constants";
 import { MissingBadge } from "./MissingBadge";
@@ -188,10 +185,12 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
     LOW: [],
   };
   domains.forEach((domain) => {
-    const score = sarData?.[domain.scoreField as keyof typeof sarData];
-    if (typeof score === "number") {
-      const level = calculateRiskLevel(score);
-      groupedByRisk[level].push(domain.title);
+    if (!domain.riskLevelField) return;
+    const storedLevel = sarData?.[
+      domain.riskLevelField as keyof typeof sarData
+    ] as RiskLevelKey | null;
+    if (storedLevel) {
+      groupedByRisk[storedLevel].push(domain.title);
     }
   });
   const offenderAssessmentParts: string[] = [];

@@ -18,6 +18,7 @@
 import React from "react";
 
 import { SkippableTextArea } from "../shared/SkippableTextArea/SkippableTextArea";
+import { RiskLevelKey } from "./constants";
 import * as Styled from "./DomainCard.styles";
 import { RiskScoreChip } from "./RiskScoreChip";
 
@@ -25,7 +26,7 @@ interface DomainCardProps {
   title: string | null;
   riskScore?: number;
   maxDomainScore?: number;
-  riskLevel?: string | null; // Stored DomainRiskLevel from source data
+  riskLevel?: RiskLevelKey | null;
   helperText?: string; // Optional helper text shown below title
   children?: React.ReactNode; // Domain-specific form fields
   summaryValue: string | null;

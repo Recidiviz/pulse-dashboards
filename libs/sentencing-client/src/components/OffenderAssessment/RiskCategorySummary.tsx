@@ -17,27 +17,17 @@
 
 import React from "react";
 
-import { calculateRiskLevel, RISK_COLORS, RISK_LEVELS } from "./constants";
+import { RISK_COLORS, RISK_LEVELS, RiskLevelKey } from "./constants";
 import * as Styled from "./RiskCategorySummary.styles";
 import { getDomainsForAssessmentType } from "./utils";
 
-// Maps stored DomainRiskLevel (Prisma enum) to frontend RISK_LEVELS key
-// DomainRiskLevel enum uses LOW/MODERATE/HIGH which matches RISK_LEVELS keys
-function mapStoredRiskLevel(riskLevel: string): keyof typeof RISK_LEVELS {
-  return riskLevel as keyof typeof RISK_LEVELS;
-}
-
 interface RiskCategorySummaryProps {
   assessmentType: string | null;
-  domainScores: Record<string, number | null>; // scoreField -> score
-  domainRiskLevels?: Record<string, string | null>; // scoreField -> stored DomainRiskLevel
+  domainRiskLevels?: Record<string, RiskLevelKey | null>;
 }
-
-type RiskLevelKey = keyof typeof RISK_LEVELS;
 
 export const RiskCategorySummary: React.FC<RiskCategorySummaryProps> = ({
   assessmentType,
-  domainScores,
   domainRiskLevels,
 }) => {
   // Get domains for this assessment type
@@ -56,13 +46,7 @@ export const RiskCategorySummary: React.FC<RiskCategorySummaryProps> = ({
 
     const storedLevel = domainRiskLevels?.[domain.scoreField];
     if (storedLevel) {
-      groupedDomains[mapStoredRiskLevel(storedLevel)].push(domain.title);
-      return;
-    }
-    const score = domainScores[domain.scoreField];
-    if (score !== null && score !== undefined) {
-      const riskLevel = calculateRiskLevel(score);
-      groupedDomains[riskLevel].push(domain.title);
+      groupedDomains[storedLevel].push(domain.title);
     }
   });
 

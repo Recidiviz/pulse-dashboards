@@ -21,11 +21,7 @@ export const RISK_LEVELS = {
   HIGH: "High",
 } as const;
 
-export function calculateRiskLevel(score: number): keyof typeof RISK_LEVELS {
-  if (score >= 7) return "HIGH";
-  if (score >= 4) return "MODERATE";
-  return "LOW";
-}
+export type RiskLevelKey = keyof typeof RISK_LEVELS;
 
 export const RISK_COLORS = {
   HIGH: "#FFDCE5", // Light pink
