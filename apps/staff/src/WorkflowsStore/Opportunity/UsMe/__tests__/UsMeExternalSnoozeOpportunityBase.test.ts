@@ -88,6 +88,7 @@ function mockFirestoreSnooze() {
       snoozedOn: "2022-11-01",
       snoozeForDays: 999,
     },
+    stateCode: opp.person.stateCode,
   });
 }
 

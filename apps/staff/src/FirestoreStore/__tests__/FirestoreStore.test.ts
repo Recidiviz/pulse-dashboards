@@ -82,7 +82,7 @@ describe("FirestoreStore", () => {
   let store: FirestoreStore;
   let mockRootStore: RootStore;
   const opp: Opportunity = {
-    person: { recordId: "us_id_123" },
+    person: { recordId: "us_id_123", stateCode: "US_ID" },
     firestoreUpdateDocId: "LSU",
   } as unknown as Opportunity;
 
@@ -446,10 +446,16 @@ describe("FirestoreStore", () => {
           reasons: ["reason1", "reason2"],
         };
 
-        await store.updateOpportunityDenial(testEmail, opp, update, {
-          otherReason: true,
-          userInput: true,
-        });
+        await store.updateOpportunityDenial(
+          testEmail,
+          opp,
+          opp.person.stateCode,
+          update,
+          {
+            otherReason: true,
+            userInput: true,
+          },
+        );
 
         expect(updateSpy).toHaveBeenCalledWith(opp, {
           denial: {
@@ -459,6 +465,7 @@ describe("FirestoreStore", () => {
 
             updated: expectedUpdateLog,
           },
+          stateCode: "US_ID",
         });
       });
 
@@ -468,16 +475,23 @@ describe("FirestoreStore", () => {
           reasons: ["reason1", "reason2"],
         };
 
-        await store.updateOpportunityDenial(testEmail, opp, update, {
-          userInput: false,
-          otherReason: false,
-        });
+        await store.updateOpportunityDenial(
+          testEmail,
+          opp,
+          opp.person.stateCode,
+          update,
+          {
+            userInput: false,
+            otherReason: false,
+          },
+        );
 
         expect(updateSpy).toHaveBeenCalledWith(opp, {
           denial: {
             ...update,
             updated: expectedUpdateLog,
           },
+          stateCode: "US_ID",
         });
       });
 
@@ -487,13 +501,19 @@ describe("FirestoreStore", () => {
           reasons: ["reason1", "reason2"],
         };
 
-        await store.updateOpportunityDenial(testEmail, opp, update);
+        await store.updateOpportunityDenial(
+          testEmail,
+          opp,
+          opp.person.stateCode,
+          update,
+        );
 
         expect(updateSpy).toHaveBeenCalledWith(opp, {
           denial: {
             ...update,
             updated: expectedUpdateLog,
           },
+          stateCode: "US_ID",
         });
       });
 
@@ -505,13 +525,19 @@ describe("FirestoreStore", () => {
           otherReason: undefined,
         };
 
-        await store.updateOpportunityDenial(testEmail, opp, update);
+        await store.updateOpportunityDenial(
+          testEmail,
+          opp,
+          opp.person.stateCode,
+          update,
+        );
 
         expect(updateSpy).toHaveBeenCalledWith(opp, {
           denial: {
             ...omit(update, "otherReason"),
             updated: expectedUpdateLog,
           },
+          stateCode: "US_ID",
         });
       });
     });
@@ -625,7 +651,11 @@ describe("FirestoreStore", () => {
     });
 
     test("updateOpportunitySubmitted", async () => {
-      await store.updateOpportunitySubmitted("test-email", opp);
+      await store.updateOpportunitySubmitted(
+        "test-email",
+        opp,
+        opp.person.stateCode,
+      );
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
         {
@@ -633,6 +663,7 @@ describe("FirestoreStore", () => {
             by: "test-email",
             date: "mock-timestamp",
           },
+          stateCode: "US_ID",
         },
         {
           merge: true,
@@ -1111,6 +1142,7 @@ describe("FirestoreStore", () => {
       await store.updateOpportunityDenial(
         "test-user",
         mockOpportunity,
+        opp.person.stateCode,
         denialUpdate,
       );
 
@@ -1120,12 +1152,14 @@ describe("FirestoreStore", () => {
           ...denialUpdate,
           updated: { by: "test-user", date: "mock-timestamp" },
         },
+        stateCode: "US_ID",
       });
       expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[1], {
         denial: {
           ...denialUpdate,
           updated: { by: "test-user", date: "mock-timestamp" },
         },
+        stateCode: "US_ID",
       });
     });
   });

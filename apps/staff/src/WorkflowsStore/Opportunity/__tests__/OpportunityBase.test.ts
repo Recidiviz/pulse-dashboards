@@ -169,6 +169,7 @@ function mockDenied() {
         reasons: ["boo"],
         updated: { by: "foo", date: vi.fn() as any },
       },
+      stateCode: opp.person.stateCode,
     },
   });
 }
@@ -502,6 +503,7 @@ describe("setDenialReasons", () => {
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
       opp,
+      opp.person.stateCode,
       { reasons },
       { otherReason: true, userInput: true },
     );
@@ -526,6 +528,7 @@ describe("setDenialReasons", () => {
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
       opp,
+      opp.person.stateCode,
       { reasons },
       { otherReason: false, userInput: true },
     );
@@ -540,6 +543,7 @@ describe("setDenialReasons", () => {
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
       opp,
+      opp.person.stateCode,
       { reasons, userInput },
       { otherReason: true, userInput: false },
     );
@@ -554,6 +558,7 @@ describe("setDenialReasons", () => {
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
       opp,
+      opp.person.stateCode,
       { reasons, userInput },
       { otherReason: true, userInput: true },
     );
@@ -568,6 +573,7 @@ describe("setDenialReasons", () => {
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
       opp,
+      opp.person.stateCode,
       { otherReason },
     );
   });
@@ -858,7 +864,7 @@ describe("tracking", () => {
     });
 
     mockDenied();
-    await opp.markSubmitted();
+    await opp.markSubmitted(opp.person.stateCode);
 
     expect(
       root.analyticsStore.trackOpportunityMarkedSubmitted,

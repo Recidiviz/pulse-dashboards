@@ -94,6 +94,7 @@ export type OpportunityUpdate = {
     update: UpdateLog;
   };
   lastViewed?: UpdateLog;
+  stateCode?: string;
 };
 
 export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {

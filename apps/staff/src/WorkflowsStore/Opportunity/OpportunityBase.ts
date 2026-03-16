@@ -633,10 +633,14 @@ export class OpportunityBase<
     return buildOpportunityCompareFunction(sortParams);
   }
 
-  async markSubmitted(newSubcategory?: string): Promise<void> {
+  async markSubmitted(
+    stateCode: string,
+    newSubcategory?: string,
+  ): Promise<void> {
     await this.rootStore.firestoreStore.updateOpportunitySubmitted(
       this.currentUserEmail,
       this,
+      stateCode,
       newSubcategory,
     );
 
@@ -695,7 +699,7 @@ export class OpportunityBase<
       }
     }
 
-    await this.markSubmitted(newSubcategory);
+    await this.markSubmitted(this.person.stateCode, newSubcategory);
 
     const toastStatus = newSubcategory
       ? this.subcategoryHeadingFor(newSubcategory)
@@ -737,6 +741,7 @@ export class OpportunityBase<
     await this.rootStore.firestoreStore.updateOpportunityDenial(
       this.currentUserEmail,
       this,
+      this.person.stateCode,
       { reasons, userInput: updatedUserInput },
       deletions,
     );
@@ -765,6 +770,7 @@ export class OpportunityBase<
     await this.rootStore.firestoreStore.updateOpportunityDenial(
       this.currentUserEmail,
       this,
+      this.person.stateCode,
       {
         otherReason,
       },

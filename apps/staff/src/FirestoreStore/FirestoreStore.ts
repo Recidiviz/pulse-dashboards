@@ -405,6 +405,7 @@ export default class FirestoreStore {
   async updateOpportunitySubmitted(
     userEmail: string,
     opportunity: Opportunity,
+    stateCode: string,
     subcategory?: string,
   ) {
     // firestore rejects undefined values, so filter them out
@@ -415,6 +416,7 @@ export default class FirestoreStore {
     });
     return this.updateOpportunity(opportunity, {
       submitted: update,
+      stateCode: stateCode,
     });
   }
 
@@ -482,6 +484,7 @@ export default class FirestoreStore {
   async updateOpportunityDenial(
     userEmail: string,
     opportunity: Opportunity,
+    stateCode: string,
     fieldUpdates: {
       reasons?: string[];
       otherReason?: string;
@@ -506,6 +509,7 @@ export default class FirestoreStore {
           date: serverTimestamp(),
         },
       },
+      stateCode: stateCode,
     };
 
     await this.updateSnoozeCompanions(opportunity, changes);

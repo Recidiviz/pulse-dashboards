@@ -300,7 +300,10 @@ describe("companion opportunity", () => {
       client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
       opportunity.person = client;
       opportunity.updatesSubscription = {
-        data: { denial: { reasons: ["FINES & FEES", "COURT"] } },
+        data: {
+          denial: { reasons: ["FINES & FEES", "COURT"] },
+          stateCode: opportunity.person.stateCode,
+        },
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
         hydrate: vi.fn(),
@@ -323,7 +326,10 @@ describe("companion opportunity", () => {
       client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
       opportunity.person = client;
       opportunity.updatesSubscription = {
-        data: { denial: { reasons: [] } },
+        data: {
+          denial: { reasons: [] },
+          stateCode: opportunity.person.stateCode,
+        },
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
         hydrate: vi.fn(),

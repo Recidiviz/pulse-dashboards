@@ -104,7 +104,10 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
     });
     it("returns true when the earlyDischargeCompanionOpportunity has a denial with relevant reason", () => {
       edOpportunity.updatesSubscription = {
-        data: { denial: { reasons: ["FINES & FEES"] } },
+        data: {
+          denial: { reasons: ["FINES & FEES"] },
+          stateCode: edOpportunity.person.stateCode,
+        },
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
         hydrate: vi.fn(),
@@ -126,7 +129,10 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
 
     it("returns false when the earlyDischargeCompanionOpportunity has a denial without relevant reason", () => {
       edOpportunity.updatesSubscription = {
-        data: { denial: { reasons: ["OTHER REASON"] } },
+        data: {
+          denial: { reasons: ["OTHER REASON"] },
+          stateCode: edOpportunity.person.stateCode,
+        },
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
         hydrate: vi.fn(),
@@ -137,7 +143,10 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
 
     it("returns false when the earlyDischargeCompanionOpportunity has a denial with relevant and not-relevant reason", () => {
       edOpportunity.updatesSubscription = {
-        data: { denial: { reasons: ["ANY OTHER REASON", "FINES & FEES"] } },
+        data: {
+          denial: { reasons: ["ANY OTHER REASON", "FINES & FEES"] },
+          stateCode: edOpportunity.person.stateCode,
+        },
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
         hydrate: vi.fn(),
@@ -148,7 +157,10 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
 
     it("returns true when the earlyDischargeCompanionOpportunity has a denial with more than one relevant reason", () => {
       edOpportunity.updatesSubscription = {
-        data: { denial: { reasons: ["COURT", "FINES & FEES"] } },
+        data: {
+          denial: { reasons: ["COURT", "FINES & FEES"] },
+          stateCode: edOpportunity.person.stateCode,
+        },
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
         hydrate: vi.fn(),
