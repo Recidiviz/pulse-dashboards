@@ -38,8 +38,13 @@ const Wrapper = styled.div`
     }
 
     .axis-label {
-      fill: ${({ theme }) => theme.typography.axisLabelColor};
-      font-family: ${({ theme }) => theme.typography.fontFamily};
+      fill: ${({ theme }) => theme.typography.axisLabel.color};
+      font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
+      font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
+      font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
+      line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
+      letter-spacing: ${({ theme }) =>
+        theme.typography.axisLabel.letterSpacing};
     }
 
     .axis.bottom {
@@ -62,6 +67,12 @@ const Wrapper = styled.div`
     .y.tick-line {
       stroke: ${({ theme }) => theme.palette.slate20};
     }
+  }
+
+  .points:focus,
+  .lines:focus,
+  .pieces:focus {
+    outline: none;
   }
 
   .annotation-layer {

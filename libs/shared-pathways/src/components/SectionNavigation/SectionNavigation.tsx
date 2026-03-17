@@ -72,6 +72,8 @@ const pillBase = css`
 const SectionPill = styled.button<{ $active: boolean; $accent: string }>`
   ${pillBase}
 
+  outline: none;
+
   ${({ $active, $accent }) =>
     $active
       ? css`

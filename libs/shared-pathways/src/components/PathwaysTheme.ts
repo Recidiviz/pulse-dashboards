@@ -20,12 +20,22 @@ import { palette, typography } from "~design-system";
 const DEFAULT_FONT_FAMILY = '"Public Sans", sans-serif';
 const DEFAULT_SERIF_FAMILY = '"Libre Baskerville", serif';
 
+export type AxisLabelStyle = {
+  fontFamily: string;
+  fontWeight: number;
+  fontSize: string;
+  lineHeight: string;
+  letterSpacing: string;
+  color: string;
+  charWidth: number;
+};
+
 export type PathwaysTheme = {
   palette: typeof palette & { focusColor: string };
   typography: typeof typography & {
     fontFamily: string;
+    axisLabel: AxisLabelStyle;
     titleColor: string;
-    axisLabelColor: string;
   };
   checkbox: {
     checkedColor: string;
@@ -52,8 +62,16 @@ export const defaultPathwaysTheme: PathwaysTheme = {
   typography: {
     ...typography,
     fontFamily: DEFAULT_FONT_FAMILY,
+    axisLabel: {
+      fontFamily: DEFAULT_FONT_FAMILY,
+      fontWeight: 400,
+      fontSize: "12px",
+      lineHeight: "normal",
+      letterSpacing: "normal",
+      color: palette.slate80,
+      charWidth: 10,
+    },
     titleColor: palette.pine1,
-    axisLabelColor: palette.slate80,
   },
   checkbox: {
     checkedColor: palette.pine3,

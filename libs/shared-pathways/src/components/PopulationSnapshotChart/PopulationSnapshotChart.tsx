@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 import styled, { css, useTheme } from "styled-components";
@@ -92,8 +92,13 @@ const ChartWrapper = styled.div<{
     }
 
     .axis-label {
-      fill: ${({ theme }) => theme.palette.slate80};
-      font-size: 12px;
+      fill: ${({ theme }) => theme.typography.axisLabel.color};
+      font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
+      font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
+      font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
+      line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
+      letter-spacing: ${({ theme }) =>
+        theme.typography.axisLabel.letterSpacing};
     }
   }
 
@@ -101,8 +106,13 @@ const ChartWrapper = styled.div<{
     transform: translate(0, 2rem);
 
     .ordinal-labels text {
-      fill: ${({ theme }) => theme.palette.slate80};
-      font-family: ${({ theme }) => theme.typography.fontFamily};
+      fill: ${({ theme }) => theme.typography.axisLabel.color};
+      font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
+      font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
+      font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
+      line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
+      letter-spacing: ${({ theme }) =>
+        theme.typography.axisLabel.letterSpacing};
       transform: rotate(-45deg) translate(-1rem, -2rem);
     }
   }
@@ -114,13 +124,6 @@ const ChartWrapper = styled.div<{
         stroke-dasharray: 7;
       }
     }
-  }
-
-  &:focus,
-  &:focus-within,
-  &:active {
-    border: 1px solid #006c67;
-    border-radius: 8px;
   }
 
   ${({ $rotateLabels }) =>
@@ -164,8 +167,12 @@ const StickyAxis = styled.svg`
   flex-shrink: 0;
 
   text {
-    fill: ${({ theme }) => theme.palette.slate80};
-    font-size: 12px;
+    fill: ${({ theme }) => theme.typography.axisLabel.color};
+    font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
+    font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
+    font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
+    line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
+    letter-spacing: ${({ theme }) => theme.typography.axisLabel.letterSpacing};
   }
 `;
 
@@ -175,10 +182,8 @@ const ScrollWrapper = styled.div<{
 }>`
   flex: 1;
   min-width: 0;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
+  overflow: clip;
+  position: relative;
 
   ${({ $fadeRight, $fadeLeft }) => {
     if ($fadeRight && $fadeLeft) {
@@ -306,18 +311,6 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   };
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrollEdge, setScrollEdge] = useState<"left" | "right" | "both">(
-    "right",
-  );
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const atLeft = el.scrollLeft <= 0;
-    const atRight = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
-    if (atLeft && !atRight) setScrollEdge("right");
-    else if (!atLeft && atRight) setScrollEdge("left");
-    else if (!atLeft && !atRight) setScrollEdge("both");
-  }, []);
 
   const SCROLL_THRESHOLD = 20;
   const MIN_BAR_WIDTH = 28;
@@ -450,9 +443,93 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
 
   const plotHeight = CHART_HEIGHT - MARGIN_TOP - effectiveMarginBottom;
 
+  // Use overflow:clip + transform to scroll the chart content. This avoids
+  // the browser's native scroll-into-view on focus, since there is no
+  // scrollable container. We handle wheel events to allow manual scrolling.
+  const [scrollOffset, setScrollOffset] = useState(0);
+
+  useEffect(() => {
+    if (!needsScroll) return;
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const delta =
+        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      setScrollOffset((prev) => {
+        const maxVal = Math.max(0, (scrollWidth ?? 0) - el.clientWidth);
+        return Math.max(0, Math.min(maxVal, prev + delta));
+      });
+      e.preventDefault();
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [needsScroll, scrollWidth]);
+
+  // Track the keyboard-navigated bar index ourselves and scroll to keep
+  // it visible. We listen on the ChartWrapper via capture phase to ensure
+  // we catch events from SVG children.
+  const keyNavIndexRef = useRef(-1);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!needsScroll) return;
+    const el = scrollRef.current;
+    const wrapper = wrapperRef.current;
+    if (!el || !wrapper) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+
+      if (e.key === "ArrowRight") {
+        keyNavIndexRef.current = Math.min(
+          keyNavIndexRef.current + 1,
+          data.length - 1,
+        );
+      } else {
+        keyNavIndexRef.current = Math.max(keyNavIndexRef.current - 1, 0);
+      }
+
+      const idx = keyNavIndexRef.current;
+      const containerWidth = el.clientWidth;
+      // Each bar column = (scrollWidth - margins) / data.length
+      const chartArea = (scrollWidth ?? 0) - SCROLL_LEFT_MARGIN - 50;
+      const colWidth = chartArea / data.length;
+      const barLeft = SCROLL_LEFT_MARGIN + idx * colWidth;
+      const barRight = barLeft + colWidth;
+
+      // Keep 4 bars of padding so the tooltip is never under the fade
+      const PAD = colWidth * 4;
+      setScrollOffset((prev) => {
+        const maxVal = Math.max(0, (scrollWidth ?? 0) - containerWidth);
+        if (barRight + PAD > prev + containerWidth) {
+          return Math.min(maxVal, barRight + PAD - containerWidth);
+        }
+        if (barLeft - PAD < prev) {
+          return Math.max(0, barLeft - PAD);
+        }
+        return prev;
+      });
+    };
+
+    // Use capture phase to catch keyboard events from SVG children
+    wrapper.addEventListener("keydown", onKeyDown, true);
+    return () => wrapper.removeEventListener("keydown", onKeyDown, true);
+  }, [needsScroll, scrollWidth, data.length]);
+
+  const fadeRight =
+    needsScroll &&
+    scrollOffset <
+      (scrollWidth ?? 0) - (scrollRef.current?.clientWidth ?? 0) - 1;
+  const fadeLeft = needsScroll && scrollOffset > 0;
+
   return (
     <VizPathways title={title} latestUpdate={latestUpdate} subtitle={subtitle}>
-      <ChartWrapper $rotateLabels={rotateLabels} $isHorizontal={isHorizontal}>
+      <ChartWrapper
+        ref={wrapperRef}
+        $rotateLabels={rotateLabels}
+        $isHorizontal={isHorizontal}
+      >
         {needsScroll ? (
           <ScrollLayout>
             <StickyAxis width={ticksMargin} height={CHART_HEIGHT}>
@@ -473,11 +550,16 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
             </StickyAxis>
             <ScrollWrapper
               ref={scrollRef}
-              onScroll={handleScroll}
-              $fadeRight={scrollEdge === "right" || scrollEdge === "both"}
-              $fadeLeft={scrollEdge === "left" || scrollEdge === "both"}
+              $fadeRight={fadeRight}
+              $fadeLeft={fadeLeft}
             >
-              <div style={{ width: scrollWidth, flexShrink: 0 }}>
+              <div
+                style={{
+                  width: scrollWidth,
+                  flexShrink: 0,
+                  transform: `translateX(-${scrollOffset}px)`,
+                }}
+              >
                 <ResponsiveOrdinalFrame {...scrollChartProps} />
               </div>
             </ScrollWrapper>

@@ -18,8 +18,9 @@
 import { scaleTime } from "d3-scale";
 import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
+import { PathwaysTheme } from "../PathwaysTheme";
 import VizPathways from "../VizPathways";
 import { ChartPoint, formatMonthAndYear, getTickValues } from "./helpers";
 import PopulationTimeSeriesTooltip from "./PopulationTimeSeriesTooltip";
@@ -71,6 +72,9 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   endDate,
   ...chartProps
 }) => {
+  const theme = useTheme() as PathwaysTheme;
+  const charWidth = theme.typography.axisLabel.charWidth;
+
   const historicalLine = {
     class: "VizPathways__historicalLine",
     data: historicalPopulation,
@@ -114,7 +118,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         yAccessor="value"
         size={[558, 558]}
         margin={{
-          left: (chartTop.toString().length + 1.5) * 10,
+          left: (chartTop.toString().length + 1.5) * charWidth,
           bottom: 96,
           right: 50,
           top: 56,

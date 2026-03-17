@@ -40,6 +40,7 @@ import { PageTitle } from "../PageTitle/PageTitle";
 import { useRootStore } from "../StoreProvider";
 import { NavigationRow, PageContainer } from "./styles";
 
+const OSWALD_FONT_FAMILY = '"Oswald", sans-serif';
 const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
 
 const publicPathwaysTheme: PathwaysTheme = {
@@ -50,8 +51,17 @@ const publicPathwaysTheme: PathwaysTheme = {
     ...publicPathwaysTypography,
     fontFamily: PROXIMA_NOVA_FONT_FAMILY,
     titleColor: "black",
-    axisLabelColor: rgba("black", 0.75),
+    axisLabel: {
+      fontFamily: OSWALD_FONT_FAMILY,
+      fontWeight: 500,
+      fontSize: "11px",
+      lineHeight: "16px",
+      letterSpacing: "1%",
+      color: rgba("black", 0.75),
+      charWidth: 8.5,
+    },
   },
+
   checkbox: {
     checkedColor: publicPathwaysPalette.signal.links,
     labelColor: publicPathwaysPalette.pine1,
