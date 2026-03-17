@@ -1,0 +1,86 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { UsIdOverdueFaceToFaceContactReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId/usIdOverdueFaceToFaceContact/UsIdOverdueFaceToFaceContactReferralRecord";
+import { externalIdFunc, FirestoreFixture } from "./utils";
+
+export const usIdOverdueFaceToFaceContactReferralsFixture: FirestoreFixture<UsIdOverdueFaceToFaceContactReferralRecordRaw> =
+  {
+    data: [
+      {
+        stateCode: "US_ID",
+        externalId: "001",
+        eligibleCriteria: {
+          usIdMeetsOverdueFaceToFaceContactAlert: {
+            caseType: "GENERAL",
+            lastContactDate: "2025-11-15",
+            overdueForContactAlertDate: "2026-02-15",
+            supervisionLevel: "MEDIUM",
+          },
+        },
+        ineligibleCriteria: {},
+        lastContactDate: "2025-11-15",
+        metadata: {
+          dueDate: "2026-02-15",
+          contactCadence: "Every 90 days",
+        },
+        isEligible: true,
+        isAlmostEligible: false,
+      },
+      {
+        stateCode: "US_ID",
+        externalId: "003",
+        eligibleCriteria: {
+          usIdMeetsOverdueFaceToFaceContactAlert: {
+            caseType: "GENERAL",
+            lastContactDate: "2025-12-01",
+            overdueForContactAlertDate: "2026-03-01",
+            supervisionLevel: "HIGH",
+          },
+        },
+        ineligibleCriteria: {},
+        lastContactDate: "2025-12-01",
+        metadata: {
+          dueDate: "2026-03-01",
+          contactCadence: "Every 90 days",
+        },
+        isEligible: true,
+        isAlmostEligible: false,
+      },
+      {
+        stateCode: "US_ID",
+        externalId: "005",
+        eligibleCriteria: {
+          usIdMeetsOverdueFaceToFaceContactAlert: {
+            caseType: "SEX_OFFENSE",
+            lastContactDate: "2026-01-10",
+            overdueForContactAlertDate: "2026-03-10",
+            supervisionLevel: "HIGH",
+          },
+        },
+        ineligibleCriteria: {},
+        lastContactDate: "2026-01-10",
+        metadata: {
+          dueDate: "2026-03-10",
+          contactCadence: "Every 60 days",
+        },
+        isEligible: true,
+        isAlmostEligible: false,
+      },
+    ],
+    idFunc: externalIdFunc,
+  };

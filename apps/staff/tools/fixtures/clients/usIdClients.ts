@@ -44,6 +44,7 @@ export const US_ID_CLIENTS: ClientFixture[] = [
       "LSU",
       "earnedDischarge",
       "usIdSupervisionLevelDowngrade",
+      "usIdOverdueFaceToFaceContact",
     ],
     currentEmployers: [
       {
@@ -127,6 +128,7 @@ export const US_ID_CLIENTS: ClientFixture[] = [
       "usIdSupervisionLevelDowngrade",
       "LSU",
       "earnedDischarge",
+      "usIdOverdueFaceToFaceContact",
     ],
     currentEmployers: [
       {
@@ -167,7 +169,7 @@ export const US_ID_CLIENTS: ClientFixture[] = [
     currentBalance: 0,
     lastPaymentAmount: 17.84,
     lastPaymentDate: "2022-10-04",
-    allEligibleOpportunities: ["LSU"],
+    allEligibleOpportunities: ["LSU", "usIdOverdueFaceToFaceContact"],
     currentEmployers: [
       {
         name: "Blue Bean Coffee",
