@@ -19,11 +19,11 @@ import { createContext } from "react";
 
 import { Person } from "~@meetings/app/common/types";
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
+import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
-import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useInitialization } from "../hooks/useInitialization.web";
 import { MeetingModal } from "../ui/MeetingModal";
 import { useRecordingStore, useRecordingStoreHydrated } from "./store";

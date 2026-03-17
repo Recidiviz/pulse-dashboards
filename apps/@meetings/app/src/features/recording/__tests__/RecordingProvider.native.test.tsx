@@ -27,11 +27,11 @@ import React from "react";
 import { Alert } from "react-native";
 
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
+import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import { trpc } from "~@meetings/app/trpc/client";
 
-import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useNote } from "../hooks/useNote";
 import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
 import { useRecordingStatus } from "../hooks/useRecordingStatus";
@@ -66,8 +66,8 @@ jest.mock("~@meetings/app/trpc/client", () => ({
   },
 }));
 
-jest.mock("../hooks/useDiscardMeeting");
-jest.mock("../hooks/useEndMeeting");
+jest.mock("~@meetings/app/hooks/useDiscardMeeting");
+jest.mock("~@meetings/app/hooks/useEndMeeting");
 jest.mock("../hooks/useDurationTimer");
 jest.mock("../hooks/useNote");
 jest.mock("../hooks/usePersistedFileDuration.native", () => ({

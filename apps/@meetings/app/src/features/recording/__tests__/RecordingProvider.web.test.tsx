@@ -19,11 +19,11 @@ import { act, renderHook } from "@testing-library/react-native";
 import React from "react";
 
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
+import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
-import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
 import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useEndMeeting } from "../hooks/useEndMeeting";
 import { useInitialization } from "../hooks/useInitialization.web";
 import { RecordingProvider, useRecording } from "../model";
 import { useRecordingStore, useRecordingStoreHydrated } from "../model/store";
@@ -34,8 +34,8 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 );
 jest.mock("../hooks/useAudioRecorder.web");
 jest.mock("../utils/webRecorderDb.web");
-jest.mock("../hooks/useDiscardMeeting");
-jest.mock("../hooks/useEndMeeting");
+jest.mock("~@meetings/app/hooks/useDiscardMeeting");
+jest.mock("~@meetings/app/hooks/useEndMeeting");
 jest.mock("../hooks/useDurationTimer");
 jest.mock("../hooks/useInitialization.web", () => ({
   useInitialization: jest.fn(),
