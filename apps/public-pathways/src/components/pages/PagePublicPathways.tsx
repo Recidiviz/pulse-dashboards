@@ -32,6 +32,8 @@ import {
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
 import { useRouteSync } from "../../useRouteSync";
+import { Footer } from "../Footer/Footer";
+import { Header } from "../Header/Header";
 import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
 import { PageHeader } from "../PageHeader/PageHeader";
 import { useRootStore } from "../StoreProvider";
@@ -78,6 +80,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
   return (
     <ThemeProvider theme={publicPathwaysTheme}>
       <PageContainer>
+        <Header />
         <PageHeader
           title={pageContent.title}
           description={pageContent.summary}
@@ -90,6 +93,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
         />
         <MetricVizMapper metric={metricsStore.current} />
         <ChartNote note={metricsStore.current?.note} />
+        <Footer />
       </PageContainer>
     </ThemeProvider>
   );

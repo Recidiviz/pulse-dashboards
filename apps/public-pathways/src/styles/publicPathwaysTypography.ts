@@ -41,13 +41,31 @@ import { TypographyStyles } from "~design-system";
 
 const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
 
-export const publicPathwaysTypography = Object.fromEntries(
-  Object.entries(typography).map(([level, styles]) => [
-    level,
-    css`
-      ${styles}
-      font-family: ${PROXIMA_NOVA_FONT_FAMILY};
-      font-optical-sizing: auto;
-    `,
-  ]),
-) as TypographyStyles;
+export const publicPathwaysTypography = {
+  ...Object.fromEntries(
+    Object.entries(typography).map(([level, styles]) => [
+      level,
+      css`
+        ${styles}
+        font-family: ${PROXIMA_NOVA_FONT_FAMILY};
+        font-optical-sizing: auto;
+      `,
+    ]),
+  ),
+  Sans14: css`
+    font-family: ${PROXIMA_NOVA_FONT_FAMILY};
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: -1%;
+    font-optical-sizing: auto;
+  `,
+  Header24: css`
+    font-family: ${PROXIMA_NOVA_FONT_FAMILY};
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    font-optical-sizing: auto;
+  `,
+} as TypographyStyles;

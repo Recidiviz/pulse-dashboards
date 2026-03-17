@@ -17,6 +17,7 @@
 
 import { typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
 import styled from "styled-components";
 
@@ -27,10 +28,14 @@ type WithMetricHelperProps = {
   metric: HydratablePathwaysMetric;
 };
 
+const MAX_HEIGHT = rem(531);
+
 const MetricVizHydrator = styled(Hydrator)`
   ${typography.Sans14}
   width: 100%;
   min-height: 40rem;
+  max-height: ${MAX_HEIGHT};
+  overflow: hidden;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
 `;
