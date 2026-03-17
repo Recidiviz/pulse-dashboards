@@ -26,7 +26,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import React from "react";
 import { Alert } from "react-native";
 
-import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
+import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { trpc } from "~@meetings/app/trpc/client";
 
 import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
@@ -74,7 +74,7 @@ jest.mock("../hooks/usePersistedFileDuration.native", () => ({
   usePersistedFileDuration: jest.fn(),
 }));
 jest.mock("../hooks/useRecordingStatus");
-jest.mock("~@meetings/app/hooks/useUploadSegment");
+jest.mock("~@meetings/app/entities/upload-segment");
 jest.mock("../utils/notifications");
 jest.mock("../utils/storage");
 jest.mock("../model/store");

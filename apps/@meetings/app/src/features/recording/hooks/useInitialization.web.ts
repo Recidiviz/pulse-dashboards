@@ -18,7 +18,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
 import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
-import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
+import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 
 import { Status } from "../model";
 import { getBlobDurationMs } from "../utils/getBlobDurationMs.web";

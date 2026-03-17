@@ -32,7 +32,7 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 
-import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
+import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { trpc } from "~@meetings/app/trpc/client";
 
 import { useDiscardMeeting } from "../hooks/useDiscardMeeting";

@@ -18,7 +18,7 @@
 import { createContext } from "react";
 
 import { Person } from "~@meetings/app/common/types";
-import { useUploadSegment } from "~@meetings/app/hooks/useUploadSegment";
+import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDiscardMeeting } from "../hooks/useDiscardMeeting";
