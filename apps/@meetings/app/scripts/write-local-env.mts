@@ -18,82 +18,82 @@
 /**
  * Writes environment variables from SOPS-encrypted YAML files to .env.local
  *
- * This script reads all env.*.enc.yaml files in the app directory,
- * extracts the environment variable keys (excluding SOPS metadata),
- * filters process.env to only include those keys, and writes them
- * to .env.local for local development.
+ * This script decrypts the appropriate sops-env files and
+ * writes the result to .env.local for local development.
  *
- * Usage:
- *   yarn tsx apps/@meetings/app/scripts/write-local-env.mts
+ * NX Configuration is determined by NX_TASK_TARGET_CONFIGURATION environment variable.
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
-import path from "node:path";
+import { writeFileSync } from "node:fs";
+import * as path from "node:path";
 
-import fg from "fast-glob";
+import { workspaceRoot } from "@nx/devkit";
 import { fileURLToPath } from "url";
-import yaml from "yaml";
 import { chalk } from "zx";
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { loadEnvFilesForTask } from "~repo";
 
 // Get the app directory (parent of scripts/)
 const appDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+const projectRoot = path.relative(workspaceRoot, appDir);
 const envLocalPath = path.join(appDir, ".env.local");
 
 console.log(chalk.blue("Writing .env.local...\n"));
 
-// Find all encrypted env files
-const envFiles = fg.sync("env.*.enc.yaml", { cwd: appDir, absolute: true });
+// Read configuration from environment (default to "dev")
+const configuration = process.env["NX_TASK_TARGET_CONFIGURATION"] || "dev";
+console.log(chalk.gray(`Configuration: ${configuration}`));
 
-console.log(chalk.gray(`Found ${envFiles.length} env files:`));
-envFiles.forEach((file) => {
-  console.log(chalk.gray(`  - ${path.basename(file)}`));
-});
+// Determine SOPS file suffix (contractor vs regular)
+const suffix = process.env["NX_SOPS_USE_CONTRACTOR_ENV"]
+  ? ".contractor.enc.yaml"
+  : ".enc.yaml";
 
-// Extract unique keys from all env files
-const envKeys = new Set<string>();
+try {
+  // Load all env files in one consolidated call
+  const { envVars, sopsFiles, plaintextFiles } = loadEnvFilesForTask({
+    projectRoot,
+    configuration,
+    suffix,
+  });
 
-for (const envFile of envFiles) {
-  try {
-    const content = readFileSync(envFile, "utf-8");
-    const parsed = yaml.parse(content);
+  console.log(chalk.gray(`\nLoaded ${sopsFiles.length} encrypted file(s):`));
+  sopsFiles.forEach((file) => {
+    console.log(chalk.gray(`  - ${path.basename(file)}`));
+  });
 
-    if (parsed && typeof parsed === "object") {
-      for (const key of Object.keys(parsed)) {
-        // Exclude SOPS metadata keys
-        if (key !== "sops") {
-          envKeys.add(key);
-        }
-      }
-    }
-  } catch (error) {
-    console.warn(
-      chalk.yellow(`Warning: Failed to parse ${path.basename(envFile)}`),
+  console.log(
+    chalk.gray(`\nLoaded ${plaintextFiles.length} plaintext file(s):`),
+  );
+  plaintextFiles.forEach((file) => {
+    console.log(chalk.gray(`  - ${path.basename(file)}`));
+  });
+
+  if (sopsFiles.length === 0 && plaintextFiles.length === 0) {
+    console.log(
+      chalk.yellow("\nNo env files found, skipping .env.local write"),
     );
-    if (error instanceof Error) {
-      console.warn(chalk.yellow(`  ${error.message}`));
-    }
+    process.exit(0);
   }
+
+  console.log(
+    chalk.blue(`\nTotal environment variables: ${Object.keys(envVars).length}`),
+  );
+
+  // Write to .env.local
+  const envEntries = Object.entries(envVars).map(
+    ([key, value]) => `${key}=${value}`,
+  );
+  const envContent = envEntries.join("\n") + "\n";
+  writeFileSync(envLocalPath, envContent, "utf-8");
+
+  console.log(
+    chalk.green(`\n✓ Successfully wrote .env.local to ${envLocalPath}`),
+  );
+  console.log(chalk.gray(`  ${envEntries.length} variables written`));
+} catch (error) {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(chalk.red(`\n✗ Failed to write .env.local: ${message}`));
+  process.exit(1);
 }
-
-console.log(chalk.blue(`\nExtracted ${envKeys.size} unique environment keys`));
-
-// Filter process.env to only include keys found in YAML files
-const envEntries: string[] = [];
-
-for (const key of envKeys) {
-  const value = process.env[key];
-  if (value !== undefined) {
-    envEntries.push(`${key}=${value}`);
-  }
-}
-
-console.log(
-  chalk.blue(`Found ${envEntries.length} variables in current environment\n`),
-);
-
-// Write to .env.local
-const envContent = envEntries.join("\n") + "\n";
-writeFileSync(envLocalPath, envContent, "utf-8");
-
-console.log(chalk.green(`✓ Successfully wrote .env.local to ${envLocalPath}`));
-console.log(chalk.gray(`  ${envEntries.length} variables written`));

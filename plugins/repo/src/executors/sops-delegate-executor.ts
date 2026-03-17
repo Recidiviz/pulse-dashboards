@@ -21,10 +21,9 @@ import { spawnSync } from "child_process";
 import { SOPS_ENV_PREFIX } from "./sops-env";
 import {
   decryptSopsFile,
-  getPlaintextEnvPathsForTask,
-  getSopsPathsForTask,
   interpolatePath,
   loadDotenvFile,
+  loadEnvFilesForTask,
 } from "./utils";
 
 export interface DelegateExecutorOptions {
@@ -208,68 +207,34 @@ export default async function runSopsDelegateExecutor(
   // Extract unprefixed target name for SOPS file lookup
   const unprefixedTarget = options.prefixedTarget.replace(SOPS_ENV_PREFIX, "");
 
-  // Get SOPS files in priority order (mirroring Nx's env file behavior)
-  const sopsFilePaths = getSopsPathsForTask(
-    sourceProjectRoot,
-    unprefixedTarget,
-    configurationName,
-    process.env["NX_SOPS_USE_CONTRACTOR_ENV"] ? ".contractor.enc.yaml" : ".enc.yaml",
-  );
-
-  // Get plaintext .env files in priority order
-  const plaintextEnvPaths = getPlaintextEnvPathsForTask(
-    sourceProjectRoot,
-    unprefixedTarget,
-    configurationName,
-  );
-
-  if (sopsFilePaths.length === 0 && plaintextEnvPaths.length === 0) {
-    logger.verbose(
-      `No env files found in ${sourceProjectRoot}, skipping env loading`,
-    );
-    // Still run the target even if no env files
-    try {
-      const success = delegateToTarget(
-        projectName,
-        prefixedTarget,
-        configurationName,
-        argsToForward,
-      );
-
-      return { success };
-    } catch {
-      return { success: false };
-    }
-  }
-
   // Prepare interpolation context for template variables
   const interpolationContext = {
     workspaceRoot: context.root,
     projectRoot,
   };
 
-  // Load SOPS files in priority order (later files override earlier ones)
-  const envVars: Record<string, string> = {};
-
   try {
-    // 1. Load standard SOPS files from source project
-    for (const sopsPath of sopsFilePaths) {
+    // 1. Load standard SOPS and plaintext env files
+    const { envVars, sopsFiles, plaintextFiles } = loadEnvFilesForTask({
+      projectRoot: sourceProjectRoot,
+      target: unprefixedTarget,
+      configuration: configurationName,
+      suffix: process.env["NX_SOPS_USE_CONTRACTOR_ENV"]
+        ? ".contractor.enc.yaml"
+        : ".enc.yaml",
+    });
+
+    // Log loaded files
+    for (const sopsPath of sopsFiles) {
       logger.info(`Decrypting ${sopsPath}`);
-      const decryptedYaml = decryptSopsFile(sopsPath);
-      Object.assign(envVars, decryptedYaml);
     }
-
-    let totalFilesLoaded = sopsFilePaths.length;
-
-    // 2. Load standard plaintext .env files from source project (override encrypted)
-    for (const envPath of plaintextEnvPaths) {
+    for (const envPath of plaintextFiles) {
       logger.verbose(`Loading plaintext env file: ${envPath}`);
-      const dotenvVars = loadDotenvFile(envPath);
-      Object.assign(envVars, dotenvVars);
-      totalFilesLoaded++;
     }
 
-    // 3. Load additional SOPS files from metadata
+    let totalFilesLoaded = sopsFiles.length + plaintextFiles.length;
+
+    // 2. Load additional SOPS files from metadata
     if (sopsEnvMetadata["additional-sops-env-files"]?.length) {
       for (const additionalFile of sopsEnvMetadata[
         "additional-sops-env-files"
@@ -285,7 +250,7 @@ export default async function runSopsDelegateExecutor(
       }
     }
 
-    // 4. Load additional dotenv files from metadata
+    // 3. Load additional dotenv files from metadata
     if (sopsEnvMetadata["additional-dotenv-files"]?.length) {
       for (const dotenvFile of sopsEnvMetadata["additional-dotenv-files"]) {
         const interpolatedPath = interpolatePath(

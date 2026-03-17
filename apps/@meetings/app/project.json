@@ -40,7 +40,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "tsx scripts/write-local-env.mts",
+          "tsx --tsconfig ../../../tsconfig.base.json scripts/write-local-env.mts",
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
           "nx run-android @meetings/app --no-build-cache"
         ],
@@ -57,7 +57,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "tsx scripts/write-local-env.mts",
+          "tsx --tsconfig ../../../tsconfig.base.json scripts/write-local-env.mts",
           "EXPO_NO_GIT_STATUS=1 expo prebuild --clean",
           "expo run:ios --no-build-cache"
         ],

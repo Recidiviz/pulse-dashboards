@@ -107,9 +107,7 @@ export function decryptSopsFile(filePath: string): DecryptedEnv {
         stderr.includes("Unauthenticated");
 
       if (isReauthError && retryCount < maxRetries) {
-        console.log(
-          "`gcloud` authentication expired. Refreshing session...",
-        );
+        console.log("`gcloud` authentication expired. Refreshing session...");
 
         try {
           execSync("gcloud auth login --update-adc", { stdio: "inherit" });
@@ -265,4 +263,71 @@ export function loadDotenvFile(filePath: string): DecryptedEnv {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to load dotenv file: ${message}`);
   }
+}
+
+export interface LoadEnvFilesOptions {
+  projectRoot: string;
+  target?: string;
+  configuration?: string;
+  suffix?: string;
+}
+
+export interface LoadEnvFilesResult {
+  envVars: DecryptedEnv;
+  sopsFiles: string[];
+  plaintextFiles: string[];
+}
+
+/**
+ * Load and merge all environment files (SOPS and plaintext) for a task
+ * Returns merged environment variables with file paths loaded
+ *
+ * Priority order (later files override earlier ones):
+ * 1. SOPS encrypted files (base -> target-specific -> configuration-specific -> target+configuration)
+ * 2. Plaintext .env files (same priority order, overrides encrypted values)
+ */
+export function loadEnvFilesForTask(
+  options: LoadEnvFilesOptions,
+): LoadEnvFilesResult {
+  const {
+    projectRoot,
+    target = "",
+    configuration,
+    suffix = ".enc.yaml",
+  } = options;
+
+  // Get SOPS files in priority order
+  const sopsFiles = getSopsPathsForTask(
+    projectRoot,
+    target,
+    configuration,
+    suffix,
+  );
+
+  // Get plaintext .env files in priority order
+  const plaintextFiles = getPlaintextEnvPathsForTask(
+    projectRoot,
+    target,
+    configuration,
+  );
+
+  const envVars: DecryptedEnv = {};
+
+  // 1. Load SOPS files
+  for (const sopsPath of sopsFiles) {
+    const decryptedVars = decryptSopsFile(sopsPath);
+    Object.assign(envVars, decryptedVars);
+  }
+
+  // 2. Load plaintext files (override encrypted)
+  for (const envPath of plaintextFiles) {
+    const plaintextVars = loadDotenvFile(envPath);
+    Object.assign(envVars, plaintextVars);
+  }
+
+  return {
+    envVars,
+    sopsFiles,
+    plaintextFiles,
+  };
 }
