@@ -1713,6 +1713,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/demo/sse/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sse Chat */
+        post: operations["sse_chat_demo_sse_chat_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/demo/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Sessions */
+        get: operations["list_sessions_demo_sessions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/demo/sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Clear Session */
+        delete: operations["clear_session_demo_sessions__session_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/external/client/by-token/{token_from_url}": {
         parameters: {
             query?: never;
@@ -4661,6 +4712,13 @@ export interface components {
             | "Volunteer Opportunities"
             | "Recreation"
             | "Civic Engagement";
+        /** SSEChatRequest */
+        SSEChatRequest: {
+            /** Session Id */
+            session_id?: string | null;
+            /** Message */
+            message: string;
+        };
         /** SetNotificationRequest */
         SetNotificationRequest: {
             /** Notify */
@@ -8329,6 +8387,90 @@ export interface operations {
             };
         };
     };
+    sse_chat_demo_sse_chat_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SSEChatRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sessions_demo_sessions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    clear_session_demo_sessions__session_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_client_intake_with_token_external_client_by_token__token_from_url__get: {
         parameters: {
             query?: never;
@@ -8485,7 +8627,8 @@ export interface operations {
     };
     router_list_plans_plans_get: {
         parameters: {
-            query?: {
+            query: {
+                client_pseudo_id: string;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -8718,6 +8861,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                id: string;
                 gen_id: string;
             };
             cookie?: never;

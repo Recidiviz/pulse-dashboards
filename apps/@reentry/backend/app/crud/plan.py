@@ -58,21 +58,21 @@ async def get_plan_by_intake_id(
 
 @overload
 async def get_plans(
-    session: AsyncSession, *, query_only: Literal[True]
+    session: AsyncSession, *, client_pseudo_id: str, query_only: Literal[True]
 ) -> SelectOfScalar[Plan]: ...
 
 
 @overload
 async def get_plans(
-    session: AsyncSession, *, query_only: Literal[False] = False
+    session: AsyncSession, *, client_pseudo_id: str, query_only: Literal[False] = False
 ) -> list[Plan]: ...
 
 
 @statement_or_result(result_type=list)
 async def get_plans(
-    session: AsyncSession, *, query_only: bool = False
+    session: AsyncSession, *, client_pseudo_id: str, query_only: bool = False
 ) -> SelectOfScalar[Plan] | list[Plan]:
-    return select(Plan)
+    return select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
 
 
 async def delete_plan_by_id(session: AsyncSession, plan_id: UUID):

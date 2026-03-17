@@ -93,7 +93,7 @@ async def test_plan_get(
     assert data["latest_generation"] is None
 
     # list all plans
-    response = await client.get("/plans")
+    response = await client.get("/plans", params={"client_pseudo_id": client_pseudo_id})
     assert_response(response, 200)
     data = response.json()
     assert data["total"] == 1

@@ -167,9 +167,18 @@ class PlanAssetResponse(ORMResponse):
     tags=["Plans"],
 )
 async def router_list_plans(
+    client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
-    query = await get_plans(session, query_only=True)
+    check_access(
+        client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
+    query = await get_plans(session, client_pseudo_id=client_pseudo_id, query_only=True)
     return await paginate(session, query)
 
 
@@ -235,12 +244,20 @@ async def router_create_plan(
 async def router_get_plan_by_intake_id(
     intake_id: str,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_intake_id(session, intake_id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     intake = await get_intake_by_id(session, intake_id)
     if intake and not intake.outputs_enabled:
@@ -277,12 +294,20 @@ async def router_get_plan_by_intake_id(
 async def router_get_plan(
     id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     if plan.intake_id:
         intake = await get_intake_by_id(session, plan.intake_id)
@@ -329,12 +354,20 @@ async def router_get_plan(
 async def router_delete_plan(
     id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
     was_removed = await delete_plan_by_id(session, id)
     status = DeletionStatus.SUCCESS if was_removed else DeletionStatus.FAILED
     return DeletionResponse(status=status)
@@ -358,6 +391,8 @@ async def router_generate_plan(
     id: uuid.UUID,
     request: PlanGenerationRequestCreate,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     if request.prompt and (
         request.resource_to_add_content or request.resource_to_remove_id
@@ -372,6 +407,12 @@ async def router_generate_plan(
         raise HTTPException(status_code=404, detail="Plan not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     # Check if this assessment config supports action plan generation
     from app.utils.config_loader import ConfigLoader
@@ -430,12 +471,20 @@ async def router_generate_plan_manually(
     id: uuid.UUID,
     request: PlanGenerationEditRequest,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     # TODO:it could change with resources change refactoing,
     # for now copying the latest get_data_json to not break if a change resource is needed
@@ -470,11 +519,23 @@ async def router_generate_plan_manually(
     tags=["Plans"],
 )
 async def router_get_generation(
+    id: uuid.UUID,
     gen_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
     gen = await get_gen_by_id(session, gen_id)
-    if gen is None:
+    if gen is None or gen.plan_id != id:
         raise HTTPException(status_code=404, detail="Generation not found")
     return gen
 
@@ -496,7 +557,18 @@ async def router_get_generation(
 async def router_list_assets(
     id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> Page[PlanAssetResponse]:
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
     query = await get_assets_by_plan_id(session, id, query_only=True)
     return await paginate(session, query)
 
@@ -514,7 +586,18 @@ async def router_upload_asset(
     id: uuid.UUID,
     file: UploadFile,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
     asset = PlanAsset(
         plan_id=id,
         filename=file.filename,
@@ -537,14 +620,25 @@ async def router_get_asset_by_filename(
     filename: str,
     session: AsyncSession = Depends(get_session),
     include_data: Optional[bool] = False,
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     asset = await get_asset_by_filename(session, id, filename)
     if not asset or asset.plan_id != id:
         raise HTTPException(status_code=404, detail="Asset not found")
 
-    # Check if outputs are enabled for this intake
     plan = await get_plan_by_id(session, id)
-    if plan and plan.intake_id:
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
+
+    # Check if outputs are enabled for this intake
+    if plan.intake_id:
         intake = await get_intake_by_id(session, plan.intake_id)
         if intake and not intake.outputs_enabled:
             raise HTTPException(
@@ -570,10 +664,21 @@ async def router_get_asset(
     id: uuid.UUID,
     asset_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     asset = await get_asset_by_id(session, asset_id)
     if not asset or asset.plan_id != id:
         raise HTTPException(status_code=404, detail="Asset not found")
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
     return asset
 
 
@@ -590,10 +695,21 @@ async def router_download_asset(
     id: uuid.UUID,
     asset_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     asset = await get_asset_by_id(session, asset_id)
     if not asset or asset.plan_id != id:
         raise HTTPException(status_code=404, detail="Asset not found")
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
     if not asset.file_blob:
         raise HTTPException(status_code=500, detail="Asset is empty")
     return StreamingResponse(
@@ -617,10 +733,18 @@ async def get_plan_resources(
         ResourceSubcategory | ResourceSubcategoryLegacy
     ] = None,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     gen = await plan.get_latest_generation(session)
     if gen is None or not gen.gen_data_json:
@@ -662,10 +786,18 @@ async def search_resources(
     id: uuid.UUID,
     request: GetPlanResourcesRequest,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     if not plan.intake:
         raise HTTPException(status_code=404, detail="Plan has no associated intake")
@@ -705,10 +837,18 @@ async def search_resources(
 async def get_suggested_resources(
     id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     gen = await plan.get_latest_generation(session)
     if gen is None or not gen.gen_data_json:
@@ -732,10 +872,21 @@ async def router_delete_asset(
     id: uuid.UUID,
     asset_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     asset = await get_asset_by_id(session, asset_id)
     if not asset or asset.plan_id != id:
         raise HTTPException(status_code=404, detail="Asset not found")
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
     was_removed = await delete_asset_by_id(session, asset_id)
     status = DeletionStatus.SUCCESS if was_removed else DeletionStatus.FAILED
     return DeletionResponse(status=status)
@@ -757,10 +908,18 @@ async def router_set_generation_notify(
     id: uuid.UUID,
     request: SetNotificationRequest,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404)
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     latest_generation = await plan.get_latest_generation(session)
 
@@ -786,7 +945,12 @@ class PDFRequest(BaseModel):
 
 
 @router.post("/generate-pdf")
-async def generate_pdf(request: PDFRequest):
+async def generate_pdf(
+    request: PDFRequest,
+    _: str = Depends(
+        get_pseudonymized_id
+    ),  # authentication only; no client-level check needed since PDF is generated from caller-provided HTML
+):
     """Generate PDF from HTML using WeasyPrint"""
     try:
         # Create HTML document
@@ -839,6 +1003,8 @@ async def update_intake_address_and_regenerate_plan(
     id: uuid.UUID,
     address_data: AddressSubmission,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     """
     This function updates the client address, which is accessed through the
@@ -848,6 +1014,12 @@ async def update_intake_address_and_regenerate_plan(
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
 
     if not plan.intake_id:
         raise HTTPException(
