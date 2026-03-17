@@ -37,12 +37,14 @@ interface DispositionChartProps {
   hideInfoTooltip?: boolean;
   recommendationType: RecommendationOptionType;
   orgName: string;
+  headerText?: string;
 }
 
 export function DispositionChart({
   insight,
   selectedRecommendation,
   justifyContent = "center",
+  headerText = SENTENCE_DISTRIBUTION_TEXT,
   scale,
   hideInfoTooltip,
   recommendationType,
@@ -91,10 +93,10 @@ export function DispositionChart({
   return (
     <>
       <CommonStyled.ChartTitle>
-        {SENTENCE_DISTRIBUTION_TEXT}{" "}
+        {headerText}{" "}
         {!hideInfoTooltip && insight && (
           <InfoIconWithTooltip
-            headerText={SENTENCE_DISTRIBUTION_TEXT}
+            headerText={headerText}
             content={
               <CommonStyled.ChartTooltipContentSection>
                 <DispositionChartExplanation

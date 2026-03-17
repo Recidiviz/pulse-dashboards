@@ -19,6 +19,7 @@ import { z } from "zod";
 
 import {
   FrequencyOfUse,
+  Gender,
   LevelOfEducation,
   MethodOfUse,
   ProtectiveFactor,
@@ -32,6 +33,12 @@ import {
   GetSARInput,
   UpsertSARInput,
 } from "~@sentencing/trpc/routes/sar/types";
+export const getSARInsightSchema = z.object({
+  offenseName: z.string(),
+  gender: z.nativeEnum(Gender),
+  assessmentScoreBucket: z.number().int(),
+});
+
 export const getSARByIDInputSchema = z.object({
   id: z.string(),
 }) satisfies z.ZodType<GetSARInput>;

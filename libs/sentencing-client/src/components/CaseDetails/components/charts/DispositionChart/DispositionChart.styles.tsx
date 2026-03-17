@@ -17,6 +17,8 @@
 
 import styled from "styled-components";
 
+import { palette } from "~design-system";
+
 export const DispositionChartBySentenceTypeContainer = styled.div<{
   $justify: string;
 }>`
@@ -73,13 +75,55 @@ export const DispositionDonutChartContainer = styled.div`
   margin-top: 47px;
 `;
 
-export const DonutChartContainer = styled.div<{ isReport?: boolean }>`
+export const DonutChartContainer = styled.div`
   display: flex;
-  gap: 24px;
-  ${({ isReport }) =>
-    !isReport && `flex-direction: column; align-items: center; gap: 0px;`}
+  flex-direction: column;
+  position: relative;
 
   path:hover {
     cursor: default;
   }
+`;
+
+export const DonutTooltipContainer = styled.div`
+  position: fixed;
+  width: 220px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 8px;
+  background: ${palette.pine1};
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 10;
+  font-family: "Public Sans";
+`;
+
+export const DonutTooltipHeader = styled.div`
+  color: ${palette.white};
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+export const DonutTooltipBody = styled.div`
+  color: ${palette.white80};
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.12px;
+`;
+
+export const DonutChartRow = styled.div<{
+  isReport?: boolean;
+  inlineLayout?: boolean;
+}>`
+  display: flex;
+  gap: 24px;
+  ${({ isReport, inlineLayout }) =>
+    !isReport &&
+    !inlineLayout &&
+    `flex-direction: column; align-items: center; gap: 0px;`}
+  ${({ inlineLayout }) =>
+    inlineLayout &&
+    `align-items: flex-start; width: 100%; & > svg { flex-shrink: 0; }`}
 `;

@@ -112,6 +112,8 @@ const data = {
   teal2: rgb(97, 142, 152),
   salmon1: rgb(221, 152, 157),
   salmon2: rgb(200, 116, 123),
+  spring1: rgb(183, 212, 144),
+  cornflower1: rgb(83, 128, 198),
   defaultOrder: [] as string[],
   profileColorOrder,
 };

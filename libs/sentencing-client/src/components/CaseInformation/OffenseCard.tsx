@@ -20,7 +20,10 @@ import React from "react";
 
 import { FormCharge } from "../../datastores/types";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
-import { formatJudgeAndDivision } from "../../utils/utils";
+import {
+  formatClassification,
+  formatJudgeAndDivision,
+} from "../../utils/utils";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
 import { EditableChargeField } from "./constants";
 import { FormField } from "./FormField";
@@ -64,9 +67,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
     };
 
     const judgeAndDivision = formatJudgeAndDivision(charge);
-    const classificationDisplay = charge.classificationType
-      ? `${charge.classificationType}${charge.classificationSubtype ? ` - ${charge.classificationSubtype}` : ""}`
-      : null;
+    const classificationDisplay = formatClassification(charge);
 
     return (
       <Styled.CardContainer>

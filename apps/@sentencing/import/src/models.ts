@@ -340,8 +340,8 @@ const mandatoryMinimumsSchema = z.array(
     SentenceType: z.string(),
     MinimumSentenceLength: z.coerce.number().nullable(),
     MaximumSentenceLength: z.coerce.number().nullable(),
-    StatuteNumber: z.string().nullable().optional(),
-    StatuteLink: z.string().nullable().optional(),
+    StatuteNumber: z.string().nullish(),
+    StatuteLink: z.string().nullish(),
   }),
 );
 

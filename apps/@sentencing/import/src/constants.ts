@@ -117,6 +117,10 @@ export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     schema: docTreatmentHistoryImportSchema,
     loaderFn: transformAndLoadDOCTreatmentHistoryData,
   },
+  [INSIGHTS_FILE_NAME]: {
+    schema: insightImportSchema,
+    loaderFn: transformAndLoadInsightData,
+  },
 };
 
 /**
@@ -143,4 +147,5 @@ export const SAR_FILES = [
   CASES_FILE_NAME,
   CHARGES_FILE_NAME,
   DOC_TREATMENT_HISTORY_FILE_NAME,
+  INSIGHTS_FILE_NAME,
 ];

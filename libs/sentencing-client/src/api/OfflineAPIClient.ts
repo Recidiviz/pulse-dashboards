@@ -22,7 +22,15 @@ import {
   SubstanceType,
 } from "../components/OffenderAssessment/SubstanceUse/constants";
 import { SentencingStore } from "../datastores/SentencingStore";
-import { Case, Opportunities, SAR, Staff, Supervisor } from "./APIClient";
+import {
+  Case,
+  Insight,
+  Opportunities,
+  SAR,
+  SARInsight,
+  Staff,
+  Supervisor,
+} from "./APIClient";
 
 export class OfflineAPIClient {
   private editableInfo: Map<string, unknown> = new Map();
@@ -84,8 +92,18 @@ export class OfflineAPIClient {
     return [];
   }
 
-  async getInsight(): Promise<string[]> {
-    return [];
+  async getInsight(): Promise<Insight> {
+    const { InsightFixture } = await import(
+      "./offlineFixtures/InsightFixtures"
+    );
+    return InsightFixture;
+  }
+
+  async getSARInsight(): Promise<SARInsight> {
+    const { SARInsightFixture } = await import(
+      "./offlineFixtures/InsightFixtures"
+    );
+    return SARInsightFixture;
   }
 
   async getSARDetails(sarId: string): Promise<SAR> {

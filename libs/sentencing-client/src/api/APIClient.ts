@@ -54,6 +54,8 @@ export type CaseInsight = NonNullable<Case["insight"]>;
 
 export type Insight = Awaited<ReturnType<APIClient["getInsight"]>>;
 
+export type SARInsight = Awaited<ReturnType<APIClient["getSARInsight"]>>;
+
 export type SAR = Awaited<ReturnType<APIClient["getSARDetails"]>>;
 
 export type Offenses = Awaited<ReturnType<APIClient["getOffenses"]>>;
@@ -277,6 +279,23 @@ export class APIClient {
       lsirScore,
       isSexOffense,
       isViolentOffense,
+    });
+
+    return fetchedData;
+  }
+
+  async getSARInsight(
+    offense: string,
+    gender: Client["gender"],
+    assessmentScoreBucket: number,
+  ) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    const fetchedData = await this.trpcClient.sar.getSARInsight.query({
+      offenseName: offense,
+      gender,
+      assessmentScoreBucket,
     });
 
     return fetchedData;

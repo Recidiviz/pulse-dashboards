@@ -24,7 +24,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { SAR } from "../api";
+import { SAR, SARInsight } from "../api";
 import { GenderToDisplayName } from "../components/CaseDetails/constants";
 import { MutableSARAttributes } from "../components/CaseDetails/types";
 import {
@@ -33,6 +33,7 @@ import {
 } from "../components/CaseInformation/constants";
 import { JudgeOption } from "../components/CaseInformation/JudgeSelector";
 import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderations/constants";
+import { getAssessmentScoreBucket } from "../components/OffenderAssessment/assessmentTypeUtils";
 import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
 import {
   SAR_REPORT_SECTIONS,
@@ -46,6 +47,54 @@ import { formatJudgeName, titleCase } from "../utils/utils";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
+
+// Severity ordering for charge classification: FELONY > MISDEMEANOR > INFRACTION > null
+const CLASSIFICATION_TYPE_ORDER: Record<string, number> = {
+  FELONY: 0,
+  MISDEMEANOR: 1,
+  INFRACTION: 2,
+};
+
+// Severity ordering for charge classification subtype: A > B > C > D > E > U > null
+const CLASSIFICATION_SUBTYPE_ORDER: Record<string, number> = {
+  A: 0,
+  B: 1,
+  C: 2,
+  D: 3,
+  E: 4,
+  U: 5,
+};
+
+// Sorts charges from most severe to least severe: FELONY > MISDEMEANOR > INFRACTION > null,
+// with subtypes ordered A > B > C within each type.
+function sortChargesBySeverity<
+  T extends {
+    classificationType: string | null | undefined;
+    classificationSubtype: string | null | undefined;
+  },
+>(charges: T[]): T[] {
+  return [...charges].sort((a, b) => {
+    const typeA =
+      a.classificationType != null
+        ? CLASSIFICATION_TYPE_ORDER[a.classificationType] ?? Infinity
+        : Infinity;
+    const typeB =
+      b.classificationType != null
+        ? CLASSIFICATION_TYPE_ORDER[b.classificationType] ?? Infinity
+        : Infinity;
+    if (typeA !== typeB) return typeA - typeB;
+
+    const subtypeA =
+      a.classificationSubtype != null
+        ? CLASSIFICATION_SUBTYPE_ORDER[a.classificationSubtype] ?? Infinity
+        : Infinity;
+    const subtypeB =
+      b.classificationSubtype != null
+        ? CLASSIFICATION_SUBTYPE_ORDER[b.classificationSubtype] ?? Infinity
+        : Infinity;
+    return subtypeA - subtypeB;
+  });
+}
 
 // Type for SAR metadata structure
 type SARMetadataSections = {
@@ -91,6 +140,8 @@ export class SARDetailsPresenter implements Hydratable {
 
   SARData?: SAR;
 
+  insight?: SARInsight | null;
+
   offenderAssessment: OffenderAssessmentPresenter;
 
   priorTreatmentHistory: PriorTreatmentHistoryPresenter;
@@ -127,6 +178,7 @@ export class SARDetailsPresenter implements Hydratable {
           this.sentencingStore.apiClient.getSARDetails(this.sarId),
         );
         this.SARData = data;
+        await flowResult(this.loadInsight());
       },
     });
   }
@@ -137,6 +189,72 @@ export class SARDetailsPresenter implements Hydratable {
 
   async hydrate(): Promise<void> {
     return this.hydrator.hydrate();
+  }
+
+  *loadInsight() {
+    const sarData = this.SARData;
+    if (!sarData) return;
+
+    // Uses the most severe charge (highest classificationType + lowest subtype letter).
+    const offense = this.charges[0]?.offense;
+    const gender = sarData.client?.gender;
+    const score = sarData.assessmentScore;
+    const assessmentType = sarData.assessmentType;
+
+    if (!offense || !gender || score == null) {
+      let missingField = "assessment score";
+      if (!offense) missingField = "offense";
+      else if (!gender) missingField = "gender";
+      console.warn(
+        `[SARDetailsPresenter] Cannot load insight: missing ${missingField}`,
+      );
+      this.insight = null;
+      return;
+    }
+
+    const scoreBucket = getAssessmentScoreBucket(assessmentType, score);
+    if (scoreBucket == null) {
+      console.warn(
+        `[SARDetailsPresenter] Cannot load insight: could not determine score bucket for assessmentType=${assessmentType}, score=${score}`,
+      );
+      this.insight = null;
+      return;
+    }
+
+    try {
+      this.insight = yield this.sentencingStore.apiClient.getSARInsight(
+        offense,
+        gender,
+        scoreBucket,
+      );
+      if (!this.insight) {
+        console.warn(
+          `[SARDetailsPresenter] No insight found for offense="${offense}", gender=${gender}, scoreBucket=${scoreBucket}`,
+        );
+      }
+    } catch (e) {
+      console.warn(`[SARDetailsPresenter] Failed to load insight: ${e}`);
+      this.insight = null;
+    }
+  }
+
+  get insightData() {
+    return this.insight ?? undefined;
+  }
+
+  get sortedDispositionData() {
+    if (!this.insight?.dispositionData) return [];
+    // ChartLegend internally re-sorts length buckets by sentenceLengthBucketStart,
+    // so we only need to control the flat-type order here.
+    const TYPE_ORDER: Record<string, number> = {
+      Probation: 0,
+      Treatment_in_prison: 1,
+    };
+    return [...this.insight.dispositionData].sort(
+      (a, b) =>
+        (TYPE_ORDER[a.recommendationType ?? ""] ?? 2) -
+        (TYPE_ORDER[b.recommendationType ?? ""] ?? 2),
+    );
   }
 
   get staffPseudoId(): string | undefined {
@@ -214,12 +332,10 @@ export class SARDetailsPresenter implements Hydratable {
     return this.SARData.charges.map((charge) => charge.offense).filter(Boolean);
   }
 
-  /** Get charges array - sorted by chargeExternalID for consistent ordering */
+  /** Get charges array sorted by severity (FELONY A first, null classification last) */
   get charges(): FormCharge[] {
     if (!this.SARData?.charges) return [];
-    return [...this.SARData.charges].sort((a, b) =>
-      (a.chargeExternalId || "").localeCompare(b.chargeExternalId || ""),
-    );
+    return sortChargesBySeverity(this.SARData.charges);
   }
 
   /** Get officer (staff) info */

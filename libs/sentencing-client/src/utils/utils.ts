@@ -247,7 +247,24 @@ export const formatDateRange = (
   return `${start} - ${end}`;
 };
 
-/** Format a judge/division display string for a charge */
+/**
+ * Formats a charge's classification type and subtype into a display string.
+ * e.g. classificationType="FELONY", classificationSubtype="A" → "FELONY - A"
+ * e.g. classificationType="MISDEMEANOR", classificationSubtype=null → "MISDEMEANOR"
+ */
+export const formatClassification = (charge: FormCharge): string | null => {
+  if (!charge.classificationType) return null;
+  return charge.classificationSubtype
+    ? `${charge.classificationType} - ${charge.classificationSubtype}`
+    : `${charge.classificationType}`;
+};
+
+/**
+ * Formats judge names and division into a combined display string.
+ * e.g. judgeNames=["Smith, John"], division="4" → "Smith, John / 4"
+ * e.g. judgeNames=["Smith, John"], division=null → "Smith, John"
+ * e.g. judgeNames=null, division="4" → "4"
+ */
 export const formatJudgeAndDivision = (charge: FormCharge): string | null => {
   const judgeNames =
     charge.judgeNames && charge.judgeNames.length > 0

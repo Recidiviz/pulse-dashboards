@@ -32,6 +32,7 @@ import {
   DiagnosedSubstanceUseDisorderCriterion,
   DomainRiskLevel,
   Gender,
+  Offense,
   Plea,
   PriorCriminalHistoryCriterion,
   Prisma,
@@ -131,7 +132,7 @@ async function addCounties(
 async function addPSIClientsAndCases(
   countyByName: Map<string, string>,
   staff: Prisma.StaffCreateInput,
-  offenses: Prisma.OffenseCreateInput[],
+  offenses: Offense[],
 ) {
   /* Add and link 10 clients and PSI cases to local user */
   const clients: { externalId: string }[] = [];
@@ -213,7 +214,7 @@ async function addPSIClientsAndCases(
 
 async function addSARClientsAndReports(
   staff: Prisma.StaffCreateInput,
-  offenses: Prisma.OffenseCreateInput[],
+  moOffenses: Offense[],
 ) {
   /* Add 5 SAR clients and reports with charges */
   const clients: { externalId: string }[] = [];
@@ -221,11 +222,7 @@ async function addSARClientsAndReports(
   // Create 5 clients for Missouri
   for (let i = 0; i < 5; i++) {
     const externalId = faker.string.uuid();
-    const gender = faker.helpers.arrayElement([
-      Gender.MALE,
-      Gender.FEMALE,
-      Gender.NON_BINARY,
-    ]);
+    const gender = faker.helpers.arrayElement([Gender.MALE, Gender.FEMALE]);
     const sex = gender === Gender.MALE ? "male" : "female";
 
     const numDOCHistories = faker.number.int({ min: 0, max: 7 });
@@ -384,7 +381,7 @@ async function addSARClientsAndReports(
     // Add 6-10 charges per SAR with only imported fields: offense name, felony class, cause number, judge name, division, county, moCode
     const numCharges = faker.number.int({ min: 6, max: 10 });
     // To avoid duplicate offenses in a single SAR, shuffle and slice offenses
-    const shuffledOffenses = faker.helpers.shuffle(offenses);
+    const shuffledOffenses = faker.helpers.shuffle(moOffenses);
     for (let j = 0; j < numCharges; j++) {
       await prisma.charge.create({
         data: {
@@ -450,10 +447,55 @@ async function addOpportunities() {
   await prisma.opportunity.createMany({ data: opportunities });
 }
 
-async function addOffenses(): Promise<Prisma.OffenseCreateInput[]> {
-  const offenseData: Prisma.OffenseCreateInput[] = [];
+// MO SAR disposition buckets match the sentence types used by case_insights_record for US_MO
+const MO_DISPOSITION_DATA = (malePercentages: number[]) => [
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 1,
+    sentenceLengthBucketEnd: 2,
+    percentage: malePercentages[0],
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 3,
+    sentenceLengthBucketEnd: 5,
+    percentage: malePercentages[1],
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 6,
+    sentenceLengthBucketEnd: -1,
+    percentage: malePercentages[2],
+  },
+  {
+    recommendationType: "Probation",
+    sentenceLengthBucketStart: 0,
+    sentenceLengthBucketEnd: -1,
+    percentage: malePercentages[3],
+  },
+  {
+    recommendationType: "Treatment_in_prison",
+    sentenceLengthBucketStart: 0,
+    sentenceLengthBucketEnd: -1,
+    percentage: malePercentages[4],
+  },
+];
 
-  // Create Offenses
+async function createOffenses(stateCode: StateCode, names: string[]) {
+  await prisma.offense.createMany({
+    data: names.map((name) => ({
+      stateCode,
+      name,
+      frequency: faker.number.int(100),
+      isViolentOffense: faker.datatype.boolean(),
+      isSexOffense: faker.datatype.boolean(),
+    })),
+    skipDuplicates: true,
+  });
+  return prisma.offense.findMany({ where: { stateCode } });
+}
+
+async function addOffenses() {
   const offenseNames = [
     "ASSAULT",
     "BURGLARY",
@@ -466,25 +508,16 @@ async function addOffenses(): Promise<Prisma.OffenseCreateInput[]> {
     "ARSON",
     "VANDALISM",
   ];
-  for (let i = 0; i < offenseNames.length; i++) {
-    offenseData.push({
-      stateCode: StateCode.US_ID,
-      name: offenseNames[i],
-      frequency: faker.number.int(100),
-      isViolentOffense: faker.datatype.boolean(),
-      isSexOffense: faker.datatype.boolean(),
-    });
-  }
 
-  await prisma.offense.createMany({
-    data: offenseData,
-    skipDuplicates: true,
-  });
+  const psiOffenses = await createOffenses(StateCode.US_ID, offenseNames);
+  // MO offense names must be globally unique (Offense.name @@unique)
+  const moOffenses = await createOffenses(
+    StateCode.US_MO,
+    offenseNames.map((n) => `${n} (MO)`),
+  );
 
-  const offenses = await prisma.offense.findMany();
-
-  // Create Mandatory Minimums and Insights for each Offense
-  for (const offense of offenses) {
+  // Create Mandatory Minimums and PSI insights for each PSI offense
+  for (const offense of psiOffenses) {
     await prisma.mandatoryMinimum.create({
       data: {
         minimumSentenceLength: faker.number.int({ min: 1, max: 120 }),
@@ -496,35 +529,146 @@ async function addOffenses(): Promise<Prisma.OffenseCreateInput[]> {
       },
     });
 
-    const bucketData = {
-      assessmentScoreBucketStart: 0,
-      assessmentScoreBucketEnd: 54,
-      rollupStateCode: StateCode.US_ID,
-      rollupRecidivismNumRecords: 0,
-      dispositionNumRecords: 0,
-    };
+    // Create one insight per bucket (0=Low, 1=Moderate, 2=High, 3=Very High) for each gender
+    for (const bucket of [0, 1, 2, 3]) {
+      const bucketData = {
+        assessmentScoreBucketStart: bucket,
+        assessmentScoreBucketEnd: bucket,
+        rollupStateCode: StateCode.US_ID,
+        rollupRecidivismNumRecords: 0,
+      };
 
-    // 1. Create Insight for MALE
-    await prisma.insight.create({
-      data: {
-        stateCode: StateCode.US_ID,
-        gender: Gender.MALE,
-        offenseId: offense.id,
-        ...bucketData,
-      },
-    });
+      await prisma.insight.create({
+        data: {
+          stateCode: StateCode.US_ID,
+          gender: Gender.MALE,
+          offenseId: offense.id,
+          ...bucketData,
+          dispositionNumRecords: 100,
+          dispositionData: {
+            create: [
+              {
+                recommendationType: "Probation",
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: -1,
+                percentage: 0.05,
+              },
+              {
+                recommendationType: "Court Ordered Treatment",
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: -1,
+                percentage: 0.11,
+              },
+              {
+                recommendationType: null,
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: 1,
+                percentage: 0.18,
+              },
+              {
+                recommendationType: null,
+                sentenceLengthBucketStart: 1,
+                sentenceLengthBucketEnd: 2,
+                percentage: 0.51,
+              },
+              {
+                recommendationType: null,
+                sentenceLengthBucketStart: 3,
+                sentenceLengthBucketEnd: 5,
+                percentage: 0.15,
+              },
+            ],
+          },
+        },
+      });
 
-    // 2. Create Insight for FEMALE
-    await prisma.insight.create({
-      data: {
-        stateCode: StateCode.US_ID,
-        gender: Gender.FEMALE,
-        offenseId: offense.id,
-        ...bucketData,
-      },
-    });
+      await prisma.insight.create({
+        data: {
+          stateCode: StateCode.US_ID,
+          gender: Gender.FEMALE,
+          offenseId: offense.id,
+          ...bucketData,
+          dispositionNumRecords: 80,
+          dispositionData: {
+            create: [
+              {
+                recommendationType: "Probation",
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: -1,
+                percentage: 0.08,
+              },
+              {
+                recommendationType: "Court Ordered Treatment",
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: -1,
+                percentage: 0.14,
+              },
+              {
+                recommendationType: null,
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: 1,
+                percentage: 0.22,
+              },
+              {
+                recommendationType: null,
+                sentenceLengthBucketStart: 1,
+                sentenceLengthBucketEnd: 2,
+                percentage: 0.42,
+              },
+              {
+                recommendationType: null,
+                sentenceLengthBucketStart: 3,
+                sentenceLengthBucketEnd: 5,
+                percentage: 0.14,
+              },
+            ],
+          },
+        },
+      });
+    }
   }
-  return offenses;
+
+  // Create MO (SAR) insights for each MO offense
+  for (const offense of moOffenses) {
+    for (const bucket of [0, 1, 2, 3]) {
+      const moBucketData = {
+        assessmentScoreBucketStart: bucket,
+        assessmentScoreBucketEnd: bucket,
+        rollupStateCode: StateCode.US_MO,
+        rollupRecidivismNumRecords: faker.number.int({ min: 100, max: 2000 }),
+      };
+
+      await prisma.insight.create({
+        data: {
+          stateCode: StateCode.US_MO,
+          gender: Gender.MALE,
+          offenseId: offense.id,
+          ...moBucketData,
+          dispositionNumRecords: faker.number.int({ min: 100, max: 1000 }),
+          dispositionData: {
+            // 6+ Years Incarceration is intentionally sub-threshold (< 0.5%) to
+            // exercise the "zero values" excluded-data note in the Summary Insights section.
+            create: MO_DISPOSITION_DATA([0.02, 0.12, 0.001, 0.789, 0.07]),
+          },
+        },
+      });
+
+      await prisma.insight.create({
+        data: {
+          stateCode: StateCode.US_MO,
+          gender: Gender.FEMALE,
+          offenseId: offense.id,
+          ...moBucketData,
+          dispositionNumRecords: faker.number.int({ min: 50, max: 800 }),
+          dispositionData: {
+            create: MO_DISPOSITION_DATA([0.02, 0.1, 0.06, 0.76, 0.06]),
+          },
+        },
+      });
+    }
+  }
+
+  return { psiOffenses, moOffenses };
 }
 
 async function getManagementAPIToken(): Promise<string> {
@@ -651,13 +795,13 @@ async function main() {
   });
 
   console.log("Adding Offenses...");
-  const offenses = await addOffenses();
+  const { psiOffenses, moOffenses } = await addOffenses();
 
   console.log("Adding PSI Clients and Cases...");
-  await addPSIClientsAndCases(countyByName, staff, offenses);
+  await addPSIClientsAndCases(countyByName, staff, psiOffenses);
 
   console.log("Adding SAR Clients and Reports...");
-  await addSARClientsAndReports(staff, offenses);
+  await addSARClientsAndReports(staff, moOffenses);
 
   // TODO(#10194) Add recidivism data to power visualizations
 }

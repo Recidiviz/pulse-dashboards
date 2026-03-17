@@ -359,3 +359,51 @@ export async function getInsight(
     rollupOffenseDescription: formatRollupOffenseDescription(insightToReturn),
   };
 }
+
+// SAR-specific insight lookup using exact bucket match (0=Low, 1=Moderate, 2=High, 3=Very High)
+export async function getSARInsight(
+  offenseName: string,
+  gender: Gender,
+  assessmentScoreBucket: number,
+  prisma: PrismaClient,
+) {
+  const insight = await prisma.insight.findFirst({
+    where: {
+      assessmentScoreBucketStart: assessmentScoreBucket,
+      assessmentScoreBucketEnd: assessmentScoreBucket,
+      offense: {
+        name: offenseName,
+      },
+      gender: gender,
+    },
+    ...INSIGHT_INCLUDES_AND_OMITS,
+  });
+
+  if (!insight) {
+    // Not necessarily an error — MO insight data may not yet cover all offense/bucket combos
+    console.warn(
+      `No SAR insight found for offense "${offenseName}", gender ${gender}, bucket ${assessmentScoreBucket}`,
+    );
+
+    return undefined;
+  }
+
+  return {
+    ..._.pick(insight, [
+      "gender",
+      "assessmentScoreBucketStart",
+      "assessmentScoreBucketEnd",
+      "rollupGender",
+      "rollupAssessmentScoreBucketStart",
+      "rollupAssessmentScoreBucketEnd",
+      "dispositionData",
+      "dispositionNumRecords",
+      "rollupRecidivismSeries",
+      "rollupRecidivismNumRecords",
+    ]),
+    offense: insight.offense.name,
+    offenseCategory: insight.offense.category,
+    rollupOffenseName: insight.rollupOffenseName,
+    rollupOffenseDescription: formatRollupOffenseDescription(insight),
+  };
+}

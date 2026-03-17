@@ -32,8 +32,13 @@ interface ChartLegendProps {
     | CaseInsight["rollupRecidivismSeries"][number]
   >;
   isReport?: boolean;
+  inlineLayout?: boolean;
 }
-export function ChartLegend({ datapoints, isReport }: ChartLegendProps) {
+export function ChartLegend({
+  datapoints,
+  isReport,
+  inlineLayout,
+}: ChartLegendProps) {
   const chartLegend = useMemo(
     () =>
       sortDataForSentenceLengthCharts(datapoints ?? []).map((dp, i) => {
@@ -70,7 +75,10 @@ export function ChartLegend({ datapoints, isReport }: ChartLegendProps) {
   );
 
   return (
-    <CommonStyled.ChartLegendContainer isReport={isReport}>
+    <CommonStyled.ChartLegendContainer
+      isReport={isReport}
+      inlineLayout={inlineLayout}
+    >
       {chartLegend}
     </CommonStyled.ChartLegendContainer>
   );

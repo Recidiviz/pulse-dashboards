@@ -412,7 +412,7 @@ export const ExcludedDataPointsLegend: React.FC<
 
   return (
     <CommonStyled.ChartFootnote>
-      {`Note: ${labels} had zero values and ${
+      {`Note: ${labels} had no records and ${
         count === 1 ? "is" : "are"
       } not represented in the chart.`}
     </CommonStyled.ChartFootnote>

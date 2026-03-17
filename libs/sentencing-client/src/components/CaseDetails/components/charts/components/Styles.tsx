@@ -67,19 +67,34 @@ export const ChartTooltipContentSection = styled.div`
   }
 `;
 
-export const ChartLegendContainer = styled.div<{ isReport?: boolean }>`
+export const ChartLegendContainer = styled.div<{
+  isReport?: boolean;
+  inlineLayout?: boolean;
+}>`
   display: flex;
-  ${({ isReport }) => isReport && `flex-direction: column; gap: 10px;`}
+  ${({ isReport, inlineLayout }) =>
+    (isReport || inlineLayout) && `flex-direction: column; gap: 10px;`}
 `;
 
-export const ChartLegendWrapper = styled.div<{ isReport?: boolean }>`
+export const ChartLegendWrapper = styled.div<{
+  isReport?: boolean;
+  inlineLayout?: boolean;
+}>`
   display: flex;
   align-items: center;
-  min-width: ${({ isReport }) => (isReport ? "fit-content" : "500px")};
-  margin-top: ${({ isReport }) => (isReport ? "0" : "21px")};
+  min-width: ${({ isReport, inlineLayout }) => {
+    if (inlineLayout) return "0";
+    if (isReport) return "fit-content";
+    return "500px";
+  }};
+  margin-top: ${({ isReport, inlineLayout }) =>
+    isReport || inlineLayout ? "0" : "21px"};
+  ${({ inlineLayout }) => inlineLayout && `flex: 1;`}
 
   & > div {
-    margin-top: ${({ isReport }) => (isReport ? "0" : "35px")};
+    margin-top: ${({ isReport, inlineLayout }) =>
+      isReport || inlineLayout ? "0" : "35px"};
+    ${({ inlineLayout }) => inlineLayout && `width: 100%;`}
   }
 `;
 

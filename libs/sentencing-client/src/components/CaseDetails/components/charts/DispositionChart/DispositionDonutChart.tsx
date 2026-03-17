@@ -16,11 +16,9 @@
 // =============================================================================
 
 import { arc, pie, PieArcDatum } from "d3-shape";
-import { useRef, useState } from "react";
-import { Tooltip, TooltipRefProps } from "react-tooltip";
+import { useState } from "react";
 
 import { convertDecimalToPercentage } from "../../../../../utils/utils";
-import { TooltipContent } from "../../../../Tooltip/Tooltip";
 import { ExcludedDataPointsLegend } from "../../../Recommendations/report/components";
 import { DispositionData } from "../../../Recommendations/types";
 import { BW_COLOR_SCHEME, SENTENCE_TYPE_TO_COLOR } from "../common/constants";
@@ -38,17 +36,27 @@ interface DispositionDonutChartProps {
   datapoints: DispositionData[];
   numberOfRecords: number;
   isReport?: boolean;
+  inlineLayout?: boolean;
   selectedRecommendation?: string | null;
+}
+
+interface TooltipState {
+  x: number;
+  y: number;
+  index: number;
+  label: string;
+  percentage: number;
+  records: number;
 }
 
 export function DispositionDonutChart({
   datapoints,
   isReport,
+  inlineLayout,
   selectedRecommendation,
   numberOfRecords,
 }: DispositionDonutChartProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const tooltipRef = useRef<TooltipRefProps>(null);
+  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const [includedDataPoints, excludedDataPoints] = datapoints.reduce(
     (acc, dataPoint) => {
@@ -80,91 +88,92 @@ export function DispositionDonutChart({
     });
 
   return (
-    <Styled.DonutChartContainer isReport={isReport}>
-      <svg width={DONUT_SIZE} height={DONUT_SIZE}>
-        <g transform={DONUT_G_TRANSFORM}>
-          {arcs.map((dp, i) => {
-            const label = getSentenceLengthBucketLabel(
-              includedDataPoints[i].recommendationType,
-              includedDataPoints[i].sentenceLengthBucketStart,
-              includedDataPoints[i].sentenceLengthBucketEnd,
-            );
-            const isMatchingRecommendationSlice =
-              label.toLowerCase() === normalizedSelectedRecommendation;
-            const isActive =
-              isReport ||
-              hoveredIndex === i ||
-              (hoveredIndex === null &&
-                (!isSelectedRecommendationInData ||
-                  isMatchingRecommendationSlice));
+    <Styled.DonutChartContainer>
+      <Styled.DonutChartRow isReport={isReport} inlineLayout={inlineLayout}>
+        <svg width={DONUT_SIZE} height={DONUT_SIZE}>
+          <g transform={DONUT_G_TRANSFORM}>
+            {arcs.map((dp, i) => {
+              const label = getSentenceLengthBucketLabel(
+                includedDataPoints[i].recommendationType,
+                includedDataPoints[i].sentenceLengthBucketStart,
+                includedDataPoints[i].sentenceLengthBucketEnd,
+              );
+              const isMatchingRecommendationSlice =
+                label.toLowerCase() === normalizedSelectedRecommendation;
+              const isActive =
+                isReport ||
+                tooltip?.index === i ||
+                (tooltip === null &&
+                  (!isSelectedRecommendationInData ||
+                    isMatchingRecommendationSlice));
 
-            return (
-              <path
-                id={`segment-${i}`}
-                key={`arc-${label}`}
-                d={arcGenerator(dp) ?? undefined}
-                fill={
-                  isReport ? BW_COLOR_SCHEME[i] : SENTENCE_TYPE_TO_COLOR[label]
-                }
-                stroke="#fff"
-                strokeWidth={1}
-                opacity={isActive ? 1 : 0.4}
-                onMouseEnter={() => {
-                  if (!isReport) {
-                    setHoveredIndex(i);
-                    tooltipRef.current?.open({
-                      anchorSelect: `#segment-${i}`,
-                      place: "left",
-                      content: (
-                        <TooltipContent
-                          headerText={`${label} (${convertDecimalToPercentage(dp.data.percentage)}%)`}
-                          content={
-                            <>{`${Math.round(numberOfRecords * dp.data.percentage)} ${Math.round(numberOfRecords * dp.data.percentage) === 1 ? "record" : "records"}`}</>
-                          }
-                          styleOverrides={{
-                            color: "#575656",
-                            fontSize: 12,
-                          }}
-                        />
+              return (
+                <path
+                  key={`arc-${label}`}
+                  d={arcGenerator(dp) ?? undefined}
+                  fill={
+                    isReport
+                      ? BW_COLOR_SCHEME[i]
+                      : SENTENCE_TYPE_TO_COLOR[label]
+                  }
+                  stroke="#fff"
+                  strokeWidth={1}
+                  opacity={isActive ? 1 : 0.4}
+                  onMouseMove={(e) => {
+                    if (isReport) return;
+                    setTooltip({
+                      x: e.clientX,
+                      y: e.clientY,
+                      index: i,
+                      label,
+                      percentage: convertDecimalToPercentage(
+                        dp.data.percentage,
                       ),
+                      records: Math.round(numberOfRecords * dp.data.percentage),
                     });
-                  }
-                }}
-                onMouseLeave={() => {
-                  if (!isReport) {
-                    setHoveredIndex(null);
-                    tooltipRef.current?.close();
-                  }
-                }}
+                  }}
+                  onMouseLeave={() => {
+                    if (!isReport) setTooltip(null);
+                  }}
+                />
+              );
+            })}
+          </g>
+        </svg>
+
+        <CommonStyled.ChartLegendWrapper
+          isReport={isReport}
+          inlineLayout={inlineLayout}
+        >
+          <div>
+            <CommonStyled.ChartLegend>
+              <ChartLegend
+                datapoints={includedDataPoints}
+                isReport={isReport}
+                inlineLayout={inlineLayout}
               />
-            );
-          })}
-        </g>
-      </svg>
+            </CommonStyled.ChartLegend>
+            {!isReport && (
+              <ExcludedDataPointsLegend
+                excludedDataPoints={excludedDataPoints}
+              />
+            )}
+          </div>
+        </CommonStyled.ChartLegendWrapper>
+      </Styled.DonutChartRow>
 
-      <CommonStyled.ChartLegendWrapper isReport={isReport}>
-        <div>
-          <CommonStyled.ChartLegend>
-            <ChartLegend datapoints={includedDataPoints} isReport={isReport} />
-          </CommonStyled.ChartLegend>
-          {!isReport && (
-            <ExcludedDataPointsLegend excludedDataPoints={excludedDataPoints} />
-          )}
-        </div>
-      </CommonStyled.ChartLegendWrapper>
-
-      <Tooltip
-        id="donut-tooltip"
-        ref={tooltipRef}
-        style={{
-          backgroundColor: "white",
-          borderRadius: 0,
-          padding: 0,
-          color: "black",
-          outline: "1px solid black",
-        }}
-        noArrow
-      />
+      {tooltip && (
+        <Styled.DonutTooltipContainer
+          style={{ left: tooltip.x + 12, top: tooltip.y - 50 }}
+        >
+          <Styled.DonutTooltipHeader>
+            {tooltip.label} ({tooltip.percentage}%)
+          </Styled.DonutTooltipHeader>
+          <Styled.DonutTooltipBody>
+            {tooltip.records} {tooltip.records === 1 ? "record" : "records"}
+          </Styled.DonutTooltipBody>
+        </Styled.DonutTooltipContainer>
+      )}
     </Styled.DonutChartContainer>
   );
 }

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "~design-system";
+
 export const BW_COLOR_SCHEME = [
   "rgb(0,0,0)",
   "rgb(58,58,58)",
@@ -25,19 +27,30 @@ export const BW_COLOR_SCHEME = [
 ];
 
 export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
-  Probation: "#25636F",
+  Probation: palette.data.gold1,
   Rider: "#D9A95F",
   Term: "#BA4F4F",
-  "< 1 Year Incarceration": "#90AEB5",
-  "1-2 Years Incarceration": "#D9A95F",
-  "3-5 Years Incarceration": "#BA4F4F",
-  "6+ Years Incarceration": "#4C6290",
+  "Court Ordered Treatment": palette.data.spring1,
+  "< 1 Year Incarceration": palette.data.teal1,
+  "1-2 Years Incarceration": palette.data.cornflower1,
+  "3-5 Years Incarceration": palette.data.indigo1,
+  "6+ Years Incarceration": palette.data.forest2,
+  "Treatment In Prison": palette.data.spring1,
+};
+
+// TODO(#12402): Remove this map once write_case_insights_data_to_bq.py is fixed
+// to use .replace("_", " ").title() instead of .capitalize(), so multi-word
+// sentence types like "Treatment_in_prison" arrive correctly formatted.
+// Maps raw sentence type strings (as they come from the DB/BigQuery) to their
+// display-formatted equivalents. Used by getSentenceLengthBucketLabel.
+export const SENTENCE_TYPE_DISPLAY_NAMES: Record<string, string> = {
+  Treatment_in_prison: "Treatment In Prison",
 };
 
 export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {
   Probation: "#003331",
-  Rider: "#C78F38",
-  Term: "#B6253D",
+  Rider: palette.data.gold2,
+  Term: palette.data.crimson2,
 };
 
 export const INDIVIDUALS_STRING = "individuals";

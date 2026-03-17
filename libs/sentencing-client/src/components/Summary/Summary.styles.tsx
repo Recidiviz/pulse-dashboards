@@ -109,6 +109,7 @@ export const SectionTitle = styled.h3`
   font-weight: 500;
   line-height: 120%;
   letter-spacing: -0.16px;
+  margin: 0;
 `;
 
 export const SectionBody = styled.div`
@@ -140,11 +141,52 @@ export const RecommendationLabel = styled.div`
   line-height: 150%;
 `;
 
-export const Divider = styled.hr`
+export const SummaryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 50rem;
+`;
+
+export const InsightsSidePanel = styled.div`
+  display: flex;
+  padding: 32px 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+  border-radius: 10px;
+  border: 1px solid ${palette.slate10};
+  background: ${palette.white};
+`;
+
+export const InsightsChartCard = styled.div`
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  align-self: stretch;
+  border-radius: 10px;
+  border: 1px solid ${palette.slate10};
+  background: ${palette.white};
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
+`;
+
+export const InsightsSubtitle = styled.p`
+  color: ${palette.slate85};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.14px;
+  margin: 0;
+`;
+
+export const InsightsDonutWrapper = styled.div`
   width: 100%;
-  border: none;
-  border-top: 1px solid ${palette.slate20};
-  margin: 4px 0;
+  overflow: hidden;
 `;
 
 /** Offense card: two-column layout */

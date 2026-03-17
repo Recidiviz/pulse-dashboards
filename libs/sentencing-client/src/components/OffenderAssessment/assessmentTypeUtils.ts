@@ -44,3 +44,58 @@ export const OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE: Record<
   ORAS_RT: 27,
   Other: null,
 };
+
+// Score thresholds per assessment type (male ranges from official ORAS scoring guide)
+// Bucket values: 0 = Low, 1 = Moderate, 2 = High, 3 = Very High
+const SCORE_BUCKET_BOUNDARIES: Partial<
+  Record<
+    AssessmentTypeKey,
+    { moderate: number; high: number; veryHigh?: number }
+  >
+> = {
+  ORAS_CST: { moderate: 15, high: 24, veryHigh: 34 },
+  ORAS_SRT: { moderate: 15, high: 21 },
+  ORAS_PIT: { moderate: 9, high: 17, veryHigh: 25 },
+  ORAS_RT: { moderate: 10, high: 16 },
+};
+
+export function getAssessmentScoreBucket(
+  assessmentType: AssessmentTypeKey | null | undefined,
+  score: number,
+): number | null {
+  if (!assessmentType) return null;
+  const boundaries = SCORE_BUCKET_BOUNDARIES[assessmentType];
+  if (!boundaries) return null;
+  if (boundaries.veryHigh !== undefined && score >= boundaries.veryHigh)
+    return 3;
+  if (score >= boundaries.high) return 2;
+  if (score >= boundaries.moderate) return 1;
+  return 0;
+}
+
+/**
+ * Returns a human-readable ORAS score range string for a given bucket number
+ * (0=Low, 1=Moderate, 2=High, 3=Very High).
+ * Returns null if the assessment type is unknown or bucket is invalid.
+ */
+export function getOrasBucketScoreRange(
+  bucket: number,
+  assessmentType: AssessmentTypeKey,
+): string | null {
+  const boundaries = SCORE_BUCKET_BOUNDARIES[assessmentType];
+  if (!boundaries) return null;
+  switch (bucket) {
+    case 0:
+      return `0-${boundaries.moderate - 1}`;
+    case 1:
+      return `${boundaries.moderate}-${boundaries.high - 1}`;
+    case 2:
+      return boundaries.veryHigh
+        ? `${boundaries.high}-${boundaries.veryHigh - 1}`
+        : `${boundaries.high}+`;
+    case 3:
+      return boundaries.veryHigh ? `${boundaries.veryHigh}+` : null;
+    default:
+      return null;
+  }
+}

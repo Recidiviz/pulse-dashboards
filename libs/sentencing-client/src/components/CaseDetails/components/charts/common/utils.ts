@@ -20,7 +20,7 @@ import _ from "lodash";
 
 import { CaseInsight } from "../../../../../api/APIClient";
 import { GenderToDisplayName } from "../../../constants";
-import { INDIVIDUALS_STRING } from "./constants";
+import { INDIVIDUALS_STRING, SENTENCE_TYPE_DISPLAY_NAMES } from "./constants";
 
 export function getDescriptionGender(
   rollupGender: NonNullable<CaseInsight["rollupGender"]>,
@@ -94,7 +94,10 @@ export function getSentenceLengthBucketLabel(
       );
     }
 
-    return recommendationType ?? "UNKNOWN";
+    const displayName = recommendationType
+      ? SENTENCE_TYPE_DISPLAY_NAMES[recommendationType] ?? recommendationType
+      : null;
+    return displayName ?? "UNKNOWN";
   }
 
   // If the bucket is 0 - x, just make it < x year(s)

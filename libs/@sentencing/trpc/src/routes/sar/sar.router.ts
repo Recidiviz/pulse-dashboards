@@ -21,6 +21,7 @@ import _ from "lodash";
 import { Prisma } from "~@sentencing/prisma/client";
 import { handlePrismaError } from "~@sentencing/trpc/errors";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
+import { getSARInsight } from "~@sentencing/trpc/routes/common/utils";
 import {
   createDrugHistorySchema,
   createEmploymentHistorySchema,
@@ -29,6 +30,7 @@ import {
   deleteEmploymentHistorySchema,
   deletePriorTreatmentHistorySchema,
   getSARByIDInputSchema,
+  getSARInsightSchema,
   getSARsForStaffInputSchema,
   updateDrugHistorySchema,
   updateEmploymentHistorySchema,
@@ -37,6 +39,22 @@ import {
 } from "~@sentencing/trpc/routes/sar/sar.schema";
 
 export const sarRouter = router({
+  getSARInsight: baseProcedure
+    .input(getSARInsightSchema)
+    .query(
+      async ({
+        input: { offenseName, gender, assessmentScoreBucket },
+        ctx: { prisma },
+      }) => {
+        return await getSARInsight(
+          offenseName,
+          gender,
+          assessmentScoreBucket,
+          prisma,
+        );
+      },
+    ),
+
   getSAR: baseProcedure
     .input(getSARByIDInputSchema)
     .query(async ({ input: { id }, ctx: { prisma } }) => {
