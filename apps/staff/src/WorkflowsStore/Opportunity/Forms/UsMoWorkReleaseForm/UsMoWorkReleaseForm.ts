@@ -38,6 +38,28 @@ function formatList<T>(items: T[], formatFn: (item: T) => string): string {
   return items.length > 0 ? items.map(formatFn).join("\n") : "None Noted";
 }
 
+function earliestReleaseDate(metadata: {
+  presumptiveParoleDate?: Date;
+  conditionalReleaseDate?: Date;
+  maximumReleaseDate?: Date;
+}): Partial<UsMoWorkReleaseDraftData> {
+  // Priority order determines winner when dates tie
+  const candidates = [
+    { type: "Presumptive Parole Date", date: metadata.presumptiveParoleDate },
+    { type: "Conditional Release", date: metadata.conditionalReleaseDate },
+    { type: "Maximum Release Date", date: metadata.maximumReleaseDate },
+  ].filter((c): c is { type: string; date: Date } => c.date !== undefined);
+
+  if (candidates.length === 0) return {};
+
+  // reduce keeps the first element on ties, preserving the priority order above
+  const earliest = candidates.reduce((a, b) => (a.date <= b.date ? a : b));
+  return {
+    releaseDatesType: earliest.type,
+    detailsReleaseDates: formatDate(earliest.date),
+  };
+}
+
 const fillerFunc: PDFFillerFunc<UsMoWorkReleaseDraftData> = async (
   formData,
   set,
@@ -319,10 +341,7 @@ export class UsMoWorkReleaseForm extends FormBase<
         scoreI: metadata.institutionalRiskScore?.toString() ?? "",
         scoreE: metadata.educationScore?.toString() ?? "",
         scoreC: (person.custodyLevel ?? "").replace("C-", ""),
-        // releaseDatesType: formInformation.releaseDate.releaseDateType,
-        // detailsReleaseDates: formatDate(
-        //   formInformation.releaseDate.releaseDate,
-        // ),
+        ...earliestReleaseDate(metadata),
         detainer: "",
         substanceUseHistory: "",
         organizedCrimeInvolvement: metadata.gangAffiliation ?? "",
