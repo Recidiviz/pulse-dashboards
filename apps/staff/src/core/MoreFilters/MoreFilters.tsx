@@ -28,10 +28,10 @@ import {
   FilterOption,
   getFilterOption,
   getFilterOptions,
+  PathwaysModal,
   PopulationFilters,
 } from "~shared-pathways";
 
-import PathwaysModal from "../../components/PathwaysModal";
 import RadioGroup from "../../controls/RadioGroup";
 import useIsMobile from "../../hooks/useIsMobile";
 import CheckboxGroup from "../controls/CheckboxGroup";

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
-
-import PathwaysModal from "../PathwaysModal";
-
-describe("PathwaysModal.js", () => {
-  const mockHide = vi.fn();
-
-  it("should render standard modal", () => {
-    render(<PathwaysModal isShowing>Some content</PathwaysModal>);
-
-    expect(screen.queryByText("Some content")).toBeInTheDocument();
-  });
-
-  it("should not be rendered if isShowing is false", () => {
-    render(
-      <PathwaysModal isShowing={false} hide={mockHide}>
-        Some content
-      </PathwaysModal>,
-    );
-
-    expect(screen.queryByText("Some content")).not.toBeInTheDocument();
-  });
-});
+export { default as PathwaysModal } from "./PathwaysModal";

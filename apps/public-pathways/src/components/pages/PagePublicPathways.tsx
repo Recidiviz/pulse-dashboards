@@ -23,6 +23,7 @@ import { ThemeProvider } from "styled-components";
 import type { Sections } from "~shared-pathways";
 import {
   ChartNote,
+  FiltersButton,
   PathwaysSection,
   PathwaysTheme,
   SectionNavigation,
@@ -37,7 +38,7 @@ import { Header } from "../Header/Header";
 import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
 import { PageTitle } from "../PageTitle/PageTitle";
 import { useRootStore } from "../StoreProvider";
-import { PageContainer } from "./styles";
+import { NavigationRow, PageContainer } from "./styles";
 
 const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
 
@@ -55,6 +56,16 @@ const publicPathwaysTheme: PathwaysTheme = {
     checkedColor: publicPathwaysPalette.signal.links,
     labelColor: publicPathwaysPalette.pine1,
     titleColor: publicPathwaysPalette.pine1,
+  },
+  modal: {
+    headerFontFamily: PROXIMA_NOVA_FONT_FAMILY,
+    headerFontSize: "18px",
+    headerFontWeight: 400,
+    headerColor: "black",
+    backgroundColor: "white",
+    closeButtonColor: "rgba(0, 0, 0, 0.60)",
+    closeFocusColor: publicPathwaysPalette.focusColor,
+    footerBorderColor: "rgba(0, 0, 0, 0.15)",
   },
 };
 
@@ -85,12 +96,15 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
           title={pageContent.title}
           description={pageContent.summary}
         />
-        <SectionNavigation
-          sections={sections}
-          activeSection={section}
-          onSectionSelect={(id) => rootStore.setSection(id)}
-          accentColor={publicPathwaysPalette.signal.links}
-        />
+        <NavigationRow>
+          <SectionNavigation
+            sections={sections}
+            activeSection={section}
+            onSectionSelect={(id) => rootStore.setSection(id)}
+            accentColor={publicPathwaysPalette.signal.links}
+          />
+          <FiltersButton />
+        </NavigationRow>
         <MetricVizMapper metric={metricsStore.current} />
         <ChartNote note={metricsStore.current?.note} />
         <Footer />

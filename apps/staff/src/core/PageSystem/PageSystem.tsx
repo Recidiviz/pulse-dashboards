@@ -58,25 +58,25 @@ const PageSystem: React.FC = () => {
   };
 
   return (
-    <PageTemplate
-      mobileNavigation={<MobileNavigation title={title} />}
-      leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
-      filters={
-        <PathwaysFilterBar
-          key={metric.id}
-          filterOptions={filterOptions}
-          enabledFilters={sortedFilters}
-          handleDownload={download}
-          chartTitle={metric.chartTitle}
-          enableMetricModeToggle={metric.enableMetricModeToggle}
-        />
-      }
-    >
-      <ThemeProvider theme={defaultPathwaysTheme}>
+    <ThemeProvider theme={defaultPathwaysTheme}>
+      <PageTemplate
+        mobileNavigation={<MobileNavigation title={title} />}
+        leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
+        filters={
+          <PathwaysFilterBar
+            key={metric.id}
+            filterOptions={filterOptions}
+            enabledFilters={sortedFilters}
+            handleDownload={download}
+            chartTitle={metric.chartTitle}
+            enableMetricModeToggle={metric.enableMetricModeToggle}
+          />
+        }
+      >
         <MetricVizMapper metric={metric} />
         <ChartNote note={note} methodologyLink={methodologyLink} />
-      </ThemeProvider>
-    </PageTemplate>
+      </PageTemplate>
+    </ThemeProvider>
   );
 };
 

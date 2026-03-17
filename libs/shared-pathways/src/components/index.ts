@@ -16,6 +16,8 @@
 // =============================================================================
 
 export * from "./ChartNote";
+export * from "./FiltersButton";
+export * from "./PathwaysModal";
 export * from "./PathwaysTheme";
 export * from "./PopulationSnapshotChart";
 export * from "./PopulationSnapshotTooltip";

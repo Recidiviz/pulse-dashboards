@@ -497,6 +497,17 @@ IconSVG["Filter"] = () => (
   </FillSVG>
 );
 
+IconSVG["FilterSliders"] = () => (
+  <StrokeSVG viewBox="0 0 12 11">
+    <path d="M3.5 5.5V0.5" />
+    <path d="M0.5 3H3.5" />
+    <path d="M5.5 3H11.5" />
+    <path d="M8.5 10.5V5.5" />
+    <path d="M11.5 8H8.5" />
+    <path d="M6.5 8H0.5" />
+  </StrokeSVG>
+);
+
 IconSVG["Next"] = () => (
   <StrokeSVG viewBox="0 0 16 16">
     <path d="M6.5 3.5 11 8l-4.5 4.5" />

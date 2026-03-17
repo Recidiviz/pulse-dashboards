@@ -34,3 +34,8 @@ export const PageContainer = styled.div`
   padding-left: ${PAGE_PADDING};
   padding-right: ${PAGE_PADDING};
 `;
+
+export const NavigationRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;

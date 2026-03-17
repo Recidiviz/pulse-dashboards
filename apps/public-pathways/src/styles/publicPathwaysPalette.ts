@@ -20,12 +20,13 @@ import { rgba } from "polished";
 import { palette } from "~design-system";
 
 const nyBlue = "rgba(21, 73, 115, 1)";
+const accentBlue = "rgba(0, 77, 209, 1)";
 
 export const publicPathwaysPalette = {
   ...palette,
   signal: {
     ...palette.signal,
-    links: "rgba(0, 77, 209, 1)",
+    links: accentBlue,
     alert: "rgba(255, 227, 150, 1)",
     error: "rgba(179, 46, 49, 1)",
   },
@@ -35,5 +36,5 @@ export const publicPathwaysPalette = {
     indigo10: rgba(nyBlue, 0.1),
     forest2: nyBlue,
   },
-  focusColor: nyBlue,
+  focusColor: accentBlue,
 };

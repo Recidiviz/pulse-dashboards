@@ -18,6 +18,7 @@
 import { palette, typography } from "~design-system";
 
 const DEFAULT_FONT_FAMILY = '"Public Sans", sans-serif';
+const DEFAULT_SERIF_FAMILY = '"Libre Baskerville", serif';
 
 export type PathwaysTheme = {
   palette: typeof palette & { focusColor: string };
@@ -30,6 +31,16 @@ export type PathwaysTheme = {
     checkedColor: string;
     labelColor: string;
     titleColor: string;
+  };
+  modal: {
+    headerFontFamily: string;
+    headerFontSize: string;
+    headerFontWeight: number;
+    headerColor: string;
+    backgroundColor: string;
+    closeButtonColor: string;
+    closeFocusColor: string;
+    footerBorderColor: string;
   };
 };
 
@@ -48,5 +59,15 @@ export const defaultPathwaysTheme: PathwaysTheme = {
     checkedColor: palette.pine3,
     labelColor: palette.pine1,
     titleColor: palette.pine1,
+  },
+  modal: {
+    headerFontFamily: DEFAULT_SERIF_FAMILY,
+    headerFontSize: "1.5rem",
+    headerFontWeight: 400,
+    headerColor: palette.pine2,
+    backgroundColor: palette.marble3,
+    closeButtonColor: palette.slate70,
+    closeFocusColor: palette.signal.links,
+    footerBorderColor: palette.slate20,
   },
 };
