@@ -17,20 +17,20 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
 
 const DESCRIPTION_MAX_WIDTH = 710;
 
-const HeaderSection = styled.section`
+const TitleSection = styled.section`
   padding-top: ${rem(spacing.xl)};
   padding-bottom: ${rem(spacing.lg)};
 `;
 
 const Title = styled.h1`
-  ${publicPathwaysTypography.Header24}
+  ${publicPathwaysTypography.Header22}
   margin-bottom: ${rem(spacing.sm)};
 
   &:focus {
@@ -39,18 +39,18 @@ const Title = styled.h1`
 `;
 
 const Description = styled.p`
-  ${publicPathwaysTypography.Body16}
+  ${publicPathwaysTypography.Sans16}
   max-width: ${rem(DESCRIPTION_MAX_WIDTH)};
   line-height: 1.3;
   margin: 0;
 `;
 
-interface PageHeaderProps {
+interface PageTitleProps {
   title: string;
   description: string;
 }
 
-export function PageHeader({ title, description }: PageHeaderProps) {
+export function PageTitle({ title, description }: PageTitleProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function PageHeader({ title, description }: PageHeaderProps) {
   }, [title]);
 
   return (
-    <HeaderSection aria-labelledby="page-title">
+    <TitleSection aria-labelledby="page-title">
       <Title
         ref={titleRef}
         tabIndex={-1}
@@ -68,6 +68,6 @@ export function PageHeader({ title, description }: PageHeaderProps) {
         {title}
       </Title>
       <Description id="page-description">{description}</Description>
-    </HeaderSection>
+    </TitleSection>
   );
 }

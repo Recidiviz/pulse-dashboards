@@ -35,9 +35,13 @@
 // but Vite only processes :export in .module.scss files, so the values
 // are undefined when imported via ~design-system.
 import { typography } from "@recidiviz/design-system";
-import { css } from "styled-components";
+import { css, CSSProp } from "styled-components";
 
 import { TypographyStyles } from "~design-system";
+
+type PublicPathwaysTypographyStyles = TypographyStyles & {
+  Header22: CSSProp;
+};
 
 const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
 
@@ -52,12 +56,36 @@ export const publicPathwaysTypography = {
       `,
     ]),
   ),
+  Sans16: css`
+    font-family: ${PROXIMA_NOVA_FONT_FAMILY};
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 130%;
+    letter-spacing: 0%;
+    font-optical-sizing: auto;
+  `,
   Sans14: css`
     font-family: ${PROXIMA_NOVA_FONT_FAMILY};
     font-weight: 400;
     font-size: 14px;
     line-height: 16px;
     letter-spacing: -1%;
+    font-optical-sizing: auto;
+  `,
+  Sans24: css`
+    font-family: ${PROXIMA_NOVA_FONT_FAMILY};
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    font-optical-sizing: auto;
+  `,
+  Header22: css`
+    font-family: ${PROXIMA_NOVA_FONT_FAMILY};
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 100%;
+    letter-spacing: 0%;
     font-optical-sizing: auto;
   `,
   Header24: css`
@@ -68,4 +96,4 @@ export const publicPathwaysTypography = {
     letter-spacing: 0%;
     font-optical-sizing: auto;
   `,
-} as TypographyStyles;
+} as PublicPathwaysTypographyStyles;
