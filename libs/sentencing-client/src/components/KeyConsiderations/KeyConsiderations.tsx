@@ -83,8 +83,7 @@ export const KeyConsiderations: React.FC<KeyConsiderationsProps> = observer(
         <Styled.InfoContainer>
           Select key considerations to help paint a fuller picture of{" "}
           {displayName}'s situation. <br />
-          Considerations selected will be listed on the final report and will be
-          used to identify potential community and institutional strategies.
+          Considerations selected will be listed on the final report.
         </Styled.InfoContainer>
         <MultiSelectRadioInput
           title="Select Areas of Need"
