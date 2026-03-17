@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { fetchAudioBlobUrl } from "../api/client";
 import type {
   OverallComponentFeedback,
   PlanDetailFeedback,
@@ -68,19 +69,19 @@ interface LabelingViewProps {
   onUpdateSummaryNeedsRisks: (
     category: string,
     issueType: "facts_incorrect" | "facts_missing" | "tone_issues" | "other",
-    field: "severity" | "notes",
-    value: SeverityLevel | string | null,
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => void;
   onUpdateSummaryNeedsSection: (
     section: "priority_needs" | "longer_term_needs",
     issueType: "needs_not_justified" | "needs_missing" | "other",
-    field: "severity" | "notes",
-    value: SeverityLevel | string | null,
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => void;
   onUpdateSummaryFinalThoughts: (
     issueType: "statements_not_supported" | "other",
-    field: "severity" | "notes",
-    value: SeverityLevel | string | null,
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => void;
   onUpdatePlanSection: (
     section: string,
@@ -90,8 +91,8 @@ interface LabelingViewProps {
       | "obvious_incoherence"
       | "missing_incomplete_sections"
       | "other",
-    field: "severity" | "notes",
-    value: SeverityLevel | string | null,
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => void;
   onUpdateOverallNotes: (notes: string | null) => void;
   onSubmit: () => void;
@@ -126,6 +127,24 @@ function LabelingView({
   );
   const [summarySubTab, setSummarySubTab] =
     useState<SummaryDetailSubTab>("full-summary");
+  const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!recordDetail?.has_audio) {
+      setAudioBlobUrl(null);
+      return;
+    }
+    let objectUrl: string | null = null;
+    fetchAudioBlobUrl(recordDetail.intake_id)
+      .then((url) => {
+        objectUrl = url;
+        setAudioBlobUrl(url);
+      })
+      .catch((err) => console.error("Failed to load audio:", err));
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [recordDetail?.intake_id, recordDetail?.has_audio]);
 
   // Scroll to a section in the transcript (only scrolls the container, not the page)
   const scrollToSection = useCallback((category: string) => {
@@ -195,13 +214,13 @@ function LabelingView({
   // Check if this is an audio/transcription intake (has audio associated)
   // For now, we'll show audio criteria if there's any recording session data
   // This can be refined later when we have proper audio URL detection
-  const hasAudio = false; // TODO: detect from recordDetail when audio is available
+  const hasAudio = !!recordDetail.has_audio;
 
   const renderTranscriptView = () => (
     <div className="transcript-tab-container">
       {/* Left pane: Audio player + Transcript */}
       <div className="transcript-left-pane">
-        <AudioPlayer audioUrl={hasAudio ? "placeholder" : null} />
+        <AudioPlayer audioUrl={audioBlobUrl} />
         <div className="transcript-content-scroll">
           <TranscriptPanel messages={recordDetail.transcript_messages} />
         </div>
@@ -364,7 +383,11 @@ function LabelingView({
                     feedback={
                       feedback.summary_detail_feedback.needs_risks_overview[
                         "Personal Background"
-                      ]?.facts_incorrect || { severity: null, notes: null }
+                      ]?.facts_incorrect || {
+                        severity: null,
+                        notes: null,
+                        related_to_transcription: false,
+                      }
                     }
                     onSeverityChange={(v) =>
                       onUpdateSummaryNeedsRisks(
@@ -379,6 +402,15 @@ function LabelingView({
                         "Personal Background",
                         "facts_incorrect",
                         "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_incorrect",
+                        "related_to_transcription",
                         v,
                       )
                     }
@@ -388,7 +420,11 @@ function LabelingView({
                     feedback={
                       feedback.summary_detail_feedback.needs_risks_overview[
                         "Personal Background"
-                      ]?.facts_missing || { severity: null, notes: null }
+                      ]?.facts_missing || {
+                        severity: null,
+                        notes: null,
+                        related_to_transcription: false,
+                      }
                     }
                     onSeverityChange={(v) =>
                       onUpdateSummaryNeedsRisks(
@@ -403,6 +439,15 @@ function LabelingView({
                         "Personal Background",
                         "facts_missing",
                         "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_missing",
+                        "related_to_transcription",
                         v,
                       )
                     }
@@ -503,6 +548,15 @@ function LabelingView({
                         )
                       }
                       compact
+                      showTranscriptionCheckbox={hasAudio}
+                      onTranscriptionChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_incorrect",
+                          "related_to_transcription",
+                          v,
+                        )
+                      }
                     />
                     <IssueRow
                       label="Facts missing"
@@ -524,6 +578,15 @@ function LabelingView({
                         )
                       }
                       compact
+                      showTranscriptionCheckbox={hasAudio}
+                      onTranscriptionChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_missing",
+                          "related_to_transcription",
+                          v,
+                        )
+                      }
                     />
                     <IssueRow
                       label="Tone issues"
@@ -598,6 +661,15 @@ function LabelingView({
                         v,
                       )
                     }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsSection(
+                        "priority_needs",
+                        "needs_not_justified",
+                        "related_to_transcription",
+                        v,
+                      )
+                    }
                   />
                   <IssueRow
                     label="Needs missing"
@@ -618,6 +690,15 @@ function LabelingView({
                         "priority_needs",
                         "needs_missing",
                         "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsSection(
+                        "priority_needs",
+                        "needs_missing",
+                        "related_to_transcription",
                         v,
                       )
                     }
@@ -683,6 +764,15 @@ function LabelingView({
                         v,
                       )
                     }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsSection(
+                        "longer_term_needs",
+                        "needs_not_justified",
+                        "related_to_transcription",
+                        v,
+                      )
+                    }
                   />
                   <IssueRow
                     label="Needs missing"
@@ -703,6 +793,15 @@ function LabelingView({
                         "longer_term_needs",
                         "needs_missing",
                         "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsSection(
+                        "longer_term_needs",
+                        "needs_missing",
+                        "related_to_transcription",
                         v,
                       )
                     }
@@ -763,6 +862,14 @@ function LabelingView({
                       onUpdateSummaryFinalThoughts(
                         "statements_not_supported",
                         "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryFinalThoughts(
+                        "statements_not_supported",
+                        "related_to_transcription",
                         v,
                       )
                     }
@@ -866,6 +973,15 @@ function LabelingView({
                     planFeedbackKey,
                     "recommendation_groundedness",
                     "notes",
+                    v,
+                  )
+                }
+                showTranscriptionCheckbox={hasAudio}
+                onTranscriptionChange={(v) =>
+                  onUpdatePlanSection(
+                    planFeedbackKey,
+                    "recommendation_groundedness",
+                    "related_to_transcription",
                     v,
                   )
                 }

@@ -15,17 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import './App.css';
+import "./App.css";
 
-import { useAuth0 } from '@auth0/auth0-react';
-import { useCallback,useEffect, useState } from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
+import { useCallback, useEffect, useState } from "react";
 
-import { getRecordDetail, listRecords, setAuthTokenGetter,submitFeedback } from './api/client';
-import FeedbackBrowser from './components/FeedbackBrowser';
-import FeedbackDetail from './components/FeedbackDetail';
-import LabelingView from './components/LabelingView';
-import RecordList from './components/RecordList';
-import StatsPage from './components/StatsPage';
+import {
+  getRecordDetail,
+  listRecords,
+  setAuthTokenGetter,
+  submitFeedback,
+} from "./api/client";
+import FeedbackBrowser from "./components/FeedbackBrowser";
+import FeedbackDetail from "./components/FeedbackDetail";
+import LabelingView from "./components/LabelingView";
+import RecordList from "./components/RecordList";
+import StatsPage from "./components/StatsPage";
 import type {
   FeedbackSubmission,
   OverallComponentFeedback,
@@ -36,8 +41,8 @@ import type {
   SummaryDetailFeedback,
   TranscriptFeedback,
   TranscriptSeverity,
-} from './types';
-import type { FeedbackListItem } from './types';
+} from "./types";
+import type { FeedbackListItem } from "./types";
 import {
   createDefaultOverallComponentFeedback,
   createDefaultPlanSectionFeedback,
@@ -45,10 +50,15 @@ import {
   createDefaultSummaryNeedsRisksFeedback,
   createDefaultSummaryNeedsSectionFeedback,
   createDefaultTranscriptFeedback,
-} from './types';
+} from "./types";
 
-type View = 'list' | 'labeling' | 'stats' | 'feedback-browser' | 'feedback-detail';
-type LabelingTab = 'transcript' | 'summary-details' | 'plan-details';
+type View =
+  | "list"
+  | "labeling"
+  | "stats"
+  | "feedback-browser"
+  | "feedback-detail";
+type LabelingTab = "transcript" | "summary-details" | "plan-details";
 
 // State shape for all feedback
 interface FeedbackState {
@@ -87,7 +97,7 @@ function prepareFeedbackForSubmission(state: FeedbackState): FeedbackState {
 }
 
 // Skip auth for local development if VITE_SKIP_AUTH is set
-const SKIP_AUTH = import.meta.env.VITE_SKIP_AUTH === 'true';
+const SKIP_AUTH = import.meta.env.VITE_SKIP_AUTH === "true";
 
 function App() {
   const {
@@ -103,8 +113,8 @@ function App() {
   const isAuthenticated = SKIP_AUTH || auth0IsAuthenticated;
   const authLoading = SKIP_AUTH ? false : auth0Loading;
 
-  const [view, setView] = useState<View>('list');
-  const [labelingTab, setLabelingTab] = useState<LabelingTab>('transcript');
+  const [view, setView] = useState<View>("list");
+  const [labelingTab, setLabelingTab] = useState<LabelingTab>("transcript");
   const [records, setRecords] = useState<RecordListItem[]>([]);
   const [totalUnreviewed, setTotalUnreviewed] = useState(0);
   const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
@@ -114,11 +124,16 @@ function App() {
   const [submitting, setSubmitting] = useState(false);
 
   // Feedback state
-  const [feedback, setFeedback] = useState<FeedbackState>(createDefaultFeedbackState());
-  const [selectedFeedbackItem, setSelectedFeedbackItem] = useState<FeedbackListItem | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState>(
+    createDefaultFeedbackState(),
+  );
+  const [selectedFeedbackItem, setSelectedFeedbackItem] =
+    useState<FeedbackListItem | null>(null);
 
   // Use email as evaluator (or name, or "unknown") - use "local-dev" when skipping auth
-  const evaluator = SKIP_AUTH ? 'local-dev' : (user?.email || user?.name || 'unknown');
+  const evaluator = SKIP_AUTH
+    ? "local-dev"
+    : user?.email || user?.name || "unknown";
 
   // Set up auth token getter for API calls (skip when auth is disabled)
   useEffect(() => {
@@ -137,14 +152,14 @@ function App() {
     try {
       // Request only 1 record (the oldest unreviewed), but get total count
       const response = await listRecords(1, 1, {
-        status: 'completed',
+        status: "completed",
         unlabeled_only: true,
-        evaluator: evaluator,  // Filter to show only unreviewed by this user
+        evaluator: evaluator, // Filter to show only unreviewed by this user
       });
       setRecords(response.items);
       setTotalUnreviewed(response.total);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load records');
+      setError(err instanceof Error ? err.message : "Failed to load records");
     } finally {
       setLoading(false);
     }
@@ -157,54 +172,61 @@ function App() {
     }
   }, [isAuthenticated, evaluator]);
 
-  const loadRecordDetail = useCallback(async (intakeId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const detail = await getRecordDetail(intakeId, evaluator || undefined);
-      setRecordDetail(detail);
+  const loadRecordDetail = useCallback(
+    async (intakeId: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const detail = await getRecordDetail(intakeId, evaluator || undefined);
+        setRecordDetail(detail);
 
-      // If existing feedback, populate the form
-      if (detail.existing_feedback) {
-        const ef = detail.existing_feedback;
-        // For transcript_feedback, check if it's the new format (has danger_indication)
-        // or old format (has factual/tone/other) - use default if old format
-        const isNewTranscriptFormat = ef.transcript_feedback && 'danger_indication' in ef.transcript_feedback;
-        setFeedback({
-          transcript_feedback: isNewTranscriptFormat
-            ? (ef.transcript_feedback as unknown as TranscriptFeedback)
-            : createDefaultTranscriptFeedback(),
-          summary_feedback: ef.summary_feedback || createDefaultOverallComponentFeedback(),
-          plan_feedback: ef.plan_feedback || createDefaultOverallComponentFeedback(),
-          summary_detail_feedback: ef.summary_detail_feedback || {
-            needs_risks_overview: {},
-            priority_needs: createDefaultSummaryNeedsSectionFeedback(),
-            longer_term_needs: createDefaultSummaryNeedsSectionFeedback(),
-            final_thoughts: createDefaultSummaryFinalThoughtsFeedback(),
-          },
-          plan_detail_feedback: ef.plan_detail_feedback || { sections: {} },
-          overall_notes: ef.overall_notes,
-        });
-      } else {
-        // Reset form for new record
-        setFeedback(createDefaultFeedbackState());
+        // If existing feedback, populate the form
+        if (detail.existing_feedback) {
+          const ef = detail.existing_feedback;
+          // For transcript_feedback, check if it's the new format (has danger_indication)
+          // or old format (has factual/tone/other) - use default if old format
+          const isNewTranscriptFormat =
+            ef.transcript_feedback &&
+            "danger_indication" in ef.transcript_feedback;
+          setFeedback({
+            transcript_feedback: isNewTranscriptFormat
+              ? (ef.transcript_feedback as unknown as TranscriptFeedback)
+              : createDefaultTranscriptFeedback(),
+            summary_feedback:
+              ef.summary_feedback || createDefaultOverallComponentFeedback(),
+            plan_feedback:
+              ef.plan_feedback || createDefaultOverallComponentFeedback(),
+            summary_detail_feedback: ef.summary_detail_feedback || {
+              needs_risks_overview: {},
+              priority_needs: createDefaultSummaryNeedsSectionFeedback(),
+              longer_term_needs: createDefaultSummaryNeedsSectionFeedback(),
+              final_thoughts: createDefaultSummaryFinalThoughtsFeedback(),
+            },
+            plan_detail_feedback: ef.plan_detail_feedback || { sections: {} },
+            overall_notes: ef.overall_notes,
+          });
+        } else {
+          // Reset form for new record
+          setFeedback(createDefaultFeedbackState());
+        }
+
+        // Reset to transcript tab when loading new record
+        setLabelingTab("transcript");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load record");
+      } finally {
+        setLoading(false);
       }
-
-      // Reset to transcript tab when loading new record
-      setLabelingTab('transcript');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load record');
-    } finally {
-      setLoading(false);
-    }
-  }, [evaluator]);
+    },
+    [evaluator],
+  );
 
   const handleSelectRecord = (index: number) => {
     setCurrentRecordIndex(index);
     const record = records[index];
     if (record) {
       loadRecordDetail(record.intake_id);
-      setView('labeling');
+      setView("labeling");
     }
   };
 
@@ -231,9 +253,11 @@ function App() {
       // Refresh records to get the next unreviewed record
       await loadRecords();
       // Go back to list view (which will show the next unreviewed record)
-      setView('list');
+      setView("list");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit feedback');
+      setError(
+        err instanceof Error ? err.message : "Failed to submit feedback",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -242,13 +266,17 @@ function App() {
   // Update function for new transcript feedback (8 criteria + audio)
   const updateTranscriptFeedback = (
     criterion: keyof TranscriptFeedback,
-    field: 'severity' | 'notes',
-    value: TranscriptSeverity | string | null
+    field: "severity" | "notes",
+    value: TranscriptSeverity | string | null,
   ) => {
-    setFeedback(prev => {
+    setFeedback((prev) => {
       const currentCriterion = prev.transcript_feedback[criterion];
       // Handle criterion fields that are objects (severity + notes)
-      if (typeof currentCriterion === 'object' && currentCriterion !== null && 'severity' in currentCriterion) {
+      if (
+        typeof currentCriterion === "object" &&
+        currentCriterion !== null &&
+        "severity" in currentCriterion
+      ) {
         return {
           ...prev,
           transcript_feedback: {
@@ -274,12 +302,13 @@ function App() {
   // Update functions for summary detail feedback
   const updateSummaryNeedsRisks = (
     category: string,
-    issueType: 'facts_incorrect' | 'facts_missing' | 'tone_issues' | 'other',
-    field: 'severity' | 'notes',
-    value: SeverityLevel | string | null
+    issueType: "facts_incorrect" | "facts_missing" | "tone_issues" | "other",
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => {
-    setFeedback(prev => {
-      const currentCategory = prev.summary_detail_feedback.needs_risks_overview[category] ||
+    setFeedback((prev) => {
+      const currentCategory =
+        prev.summary_detail_feedback.needs_risks_overview[category] ||
         createDefaultSummaryNeedsRisksFeedback();
       return {
         ...prev,
@@ -301,12 +330,12 @@ function App() {
   };
 
   const updateSummaryNeedsSection = (
-    section: 'priority_needs' | 'longer_term_needs',
-    issueType: 'needs_not_justified' | 'needs_missing' | 'other',
-    field: 'severity' | 'notes',
-    value: SeverityLevel | string | null
+    section: "priority_needs" | "longer_term_needs",
+    issueType: "needs_not_justified" | "needs_missing" | "other",
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => {
-    setFeedback(prev => ({
+    setFeedback((prev) => ({
       ...prev,
       summary_detail_feedback: {
         ...prev.summary_detail_feedback,
@@ -322,11 +351,11 @@ function App() {
   };
 
   const updateSummaryFinalThoughts = (
-    issueType: 'statements_not_supported' | 'other',
-    field: 'severity' | 'notes',
-    value: SeverityLevel | string | null
+    issueType: "statements_not_supported" | "other",
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => {
-    setFeedback(prev => ({
+    setFeedback((prev) => ({
       ...prev,
       summary_detail_feedback: {
         ...prev.summary_detail_feedback,
@@ -344,12 +373,18 @@ function App() {
   // Update functions for plan detail feedback
   const updatePlanSection = (
     section: string,
-    issueType: 'recommendation_groundedness' | 'unsound_recommendation' | 'obvious_incoherence' | 'missing_incomplete_sections' | 'other',
-    field: 'severity' | 'notes',
-    value: SeverityLevel | string | null
+    issueType:
+      | "recommendation_groundedness"
+      | "unsound_recommendation"
+      | "obvious_incoherence"
+      | "missing_incomplete_sections"
+      | "other",
+    field: "severity" | "notes" | "related_to_transcription",
+    value: SeverityLevel | string | boolean | null,
   ) => {
-    setFeedback(prev => {
-      const currentSection = prev.plan_detail_feedback.sections[section] ||
+    setFeedback((prev) => {
+      const currentSection =
+        prev.plan_detail_feedback.sections[section] ||
         createDefaultPlanSectionFeedback();
       return {
         ...prev,
@@ -394,18 +429,18 @@ function App() {
     );
   }
 
-  let navSection: 'review' | 'stats' | 'feedback';
-  if (view === 'list' || view === 'labeling') {
-    navSection = 'review';
-  } else if (view === 'stats') {
-    navSection = 'stats';
+  let navSection: "review" | "stats" | "feedback";
+  if (view === "list" || view === "labeling") {
+    navSection = "review";
+  } else if (view === "stats") {
+    navSection = "stats";
   } else {
-    navSection = 'feedback';
+    navSection = "feedback";
   }
 
   const renderMainContent = () => {
     switch (view) {
-      case 'list':
+      case "list":
         return (
           <RecordList
             records={records}
@@ -415,7 +450,7 @@ function App() {
             onRefresh={loadRecords}
           />
         );
-      case 'labeling':
+      case "labeling":
         return (
           <LabelingView
             recordDetail={recordDetail}
@@ -428,7 +463,9 @@ function App() {
             onUpdateSummaryNeedsSection={updateSummaryNeedsSection}
             onUpdateSummaryFinalThoughts={updateSummaryFinalThoughts}
             onUpdatePlanSection={updatePlanSection}
-            onUpdateOverallNotes={(notes) => setFeedback(prev => ({ ...prev, overall_notes: notes }))}
+            onUpdateOverallNotes={(notes) =>
+              setFeedback((prev) => ({ ...prev, overall_notes: notes }))
+            }
             onSubmit={handleSubmit}
             submitting={submitting}
             canSubmit={!!evaluator}
@@ -436,29 +473,29 @@ function App() {
             totalRecords={totalUnreviewed}
           />
         );
-      case 'stats':
+      case "stats":
         return <StatsPage />;
-      case 'feedback-browser':
+      case "feedback-browser":
         return (
           <FeedbackBrowser
             onSelectFeedback={(item) => {
               setSelectedFeedbackItem(item);
-              setView('feedback-detail');
+              setView("feedback-detail");
             }}
           />
         );
-      case 'feedback-detail':
+      case "feedback-detail":
         return selectedFeedbackItem ? (
           <FeedbackDetail
             feedbackItem={selectedFeedbackItem}
-            onBack={() => setView('feedback-browser')}
+            onBack={() => setView("feedback-browser")}
             onOpenLabeling={(intakeId) => {
-              const index = records.findIndex(r => r.intake_id === intakeId);
+              const index = records.findIndex((r) => r.intake_id === intakeId);
               if (index >= 0) {
                 handleSelectRecord(index);
               } else {
                 loadRecordDetail(intakeId);
-                setView('labeling');
+                setView("labeling");
               }
             }}
           />
@@ -474,22 +511,22 @@ function App() {
         <h1>Reentry Labeling Tool</h1>
         <nav className="app-nav">
           <button
-            className={`nav-tab ${navSection === 'review' ? 'active' : ''}`}
-            onClick={() => setView('list')}
+            className={`nav-tab ${navSection === "review" ? "active" : ""}`}
+            onClick={() => setView("list")}
           >
             Review Records
           </button>
           {SKIP_AUTH && (
             <>
               <button
-                className={`nav-tab ${navSection === 'stats' ? 'active' : ''}`}
-                onClick={() => setView('stats')}
+                className={`nav-tab ${navSection === "stats" ? "active" : ""}`}
+                onClick={() => setView("stats")}
               >
                 Stats
               </button>
               <button
-                className={`nav-tab ${navSection === 'feedback' ? 'active' : ''}`}
-                onClick={() => setView('feedback-browser')}
+                className={`nav-tab ${navSection === "feedback" ? "active" : ""}`}
+                onClick={() => setView("feedback-browser")}
               >
                 Feedback Browser
               </button>
@@ -497,18 +534,22 @@ function App() {
           )}
         </nav>
         <div className="user-info">
-          <span>Logged in as: {SKIP_AUTH ? 'local-dev' : (user?.email || user?.name)}</span>
+          <span>
+            Logged in as: {SKIP_AUTH ? "local-dev" : user?.email || user?.name}
+          </span>
           {!SKIP_AUTH && (
             <button
               className="logout-btn"
-              onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+              onClick={() =>
+                logout({ logoutParams: { returnTo: window.location.origin } })
+              }
             >
               Log Out
             </button>
           )}
         </div>
-        {view === 'labeling' && (
-          <button className="back-btn" onClick={() => setView('list')}>
+        {view === "labeling" && (
+          <button className="back-btn" onClick={() => setView("list")}>
             Back to List
           </button>
         )}
@@ -516,9 +557,7 @@ function App() {
 
       {error && <div className="error-banner">{error}</div>}
 
-      <main className="app-main">
-        {renderMainContent()}
-      </main>
+      <main className="app-main">{renderMainContent()}</main>
     </div>
   );
 }

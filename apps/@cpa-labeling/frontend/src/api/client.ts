@@ -130,6 +130,29 @@ export async function getStats(): Promise<LabelingStats> {
   return fetchJson(`${API_BASE}/stats`);
 }
 
+export async function fetchAudioBlobUrl(intakeId: string): Promise<string> {
+  const headers: Record<string, string> = {};
+  if (getAuthToken) {
+    try {
+      const token = await getAuthToken();
+      headers["Authorization"] = `Bearer ${token}`;
+    } catch (err) {
+      console.error("Failed to get auth token:", err);
+    }
+  }
+
+  const response = await fetch(`${API_BASE}/records/${intakeId}/audio`, {
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Audio fetch failed: ${response.status}`);
+  }
+
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+}
+
 export async function getAllFeedback(
   page = 1,
   size = 20,

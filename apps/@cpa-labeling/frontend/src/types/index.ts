@@ -28,6 +28,7 @@ export interface TranscriptMessage {
 export interface IssueFeedback {
   severity: SeverityLevel;
   notes: string | null;
+  related_to_transcription: boolean;
 }
 
 export interface OverallComponentFeedback {
@@ -137,6 +138,7 @@ export interface RecordDetail {
   action_plan_markdown: string | null;
   plan_sections: PlanSection[];
   existing_feedback: LabelingFeedback | null;
+  has_audio: boolean;
 }
 
 export interface FeedbackSubmission {
@@ -220,7 +222,7 @@ export interface TranscriptFeedback {
 
 // Helper to create default issue feedback
 export function createDefaultIssueFeedback(): IssueFeedback {
-  return { severity: null, notes: null }; // null = no selection yet
+  return { severity: null, notes: null, related_to_transcription: false }; // null = no selection yet
 }
 
 // Helper to create default overall component feedback

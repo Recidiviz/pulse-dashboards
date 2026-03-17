@@ -6,6 +6,8 @@ from uuid import UUID
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
+from sqlalchemy import func
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -27,6 +29,7 @@ from app.crud.labeling import (
     get_labeling_stats,
     get_all_feedback,
     get_recording_transcript,
+    get_recording_session_for_intake,
     _highest_severity_for_row,
 )
 
@@ -50,6 +53,7 @@ class IssueFeedback(BaseModel):
 
     severity: Optional[str] = None
     notes: Optional[str] = None
+    related_to_transcription: bool = False
 
 
 class OverallComponentFeedback(BaseModel):
@@ -192,6 +196,7 @@ class RecordDetail(BaseModel):
     action_plan_markdown: Optional[str] = None
     plan_sections: list = []
     existing_feedback: Optional[LabelingFeedbackResponse] = None
+    has_audio: bool = False
 
 
 class FeedbackSubmission(BaseModel):
@@ -455,7 +460,8 @@ async def list_records(
     # Build base query for intakes - use the IntakeStatus enum for comparison
     # Sort by oldest first so reviewers see oldest unreviewed records first
     status_enum = IntakeStatus(status) if status else IntakeStatus.COMPLETED
-    stmt = select(Intake).where(Intake.status == status_enum).order_by(Intake.created_at.asc())
+    completed_or_updated = func.coalesce(Intake.completed_at, Intake.updated_at)
+    stmt = select(Intake).where(Intake.status == status_enum).order_by(completed_or_updated.asc())
 
     result = await reentry_session.execute(stmt)
     intakes = result.scalars().all()
@@ -510,6 +516,33 @@ async def list_records(
         size=size,
         pages=pages,
     )
+
+
+@router.get("/records/{intake_id}/audio")
+async def get_audio(
+    intake_id: UUID,
+    reentry_session: AsyncSession = Depends(get_reentry_session),
+):
+    """Stream the audio file for a transcription intake directly from GCS."""
+    from google.cloud import storage as gcs
+
+    recording = await get_recording_session_for_intake(reentry_session, intake_id)
+    if not recording or not recording.gcs_bucket_name:
+        raise HTTPException(status_code=404, detail="No audio available")
+
+    client = gcs.Client()
+    bucket = client.bucket(recording.gcs_bucket_name)
+    blob = bucket.blob(f"recordings/{recording.id}/final/final_audio.webm")
+
+    if not blob.exists():
+        raise HTTPException(status_code=404, detail="Audio file not found")
+
+    def generate():
+        with blob.open("rb") as f:
+            while chunk := f.read(65536):
+                yield chunk
+
+    return StreamingResponse(generate(), media_type="audio/webm")
 
 
 @router.get("/records/{intake_id}", response_model=RecordDetail)
@@ -582,6 +615,12 @@ async def get_record_detail(
         )
         state_code = config_result.scalar_one_or_none()
 
+    # Check if audio is available for transcription intakes
+    has_audio = False
+    if intake.intake_type == IntakeType.TRANSCRIPTION:
+        recording = await get_recording_session_for_intake(reentry_session, intake_id)
+        has_audio = recording is not None and bool(recording.gcs_bucket_name)
+
     # Feedback from labeling database
     existing_feedback = None
     if evaluator:
@@ -602,6 +641,7 @@ async def get_record_detail(
         action_plan_markdown=action_plan_markdown,
         plan_sections=[],
         existing_feedback=existing_feedback,
+        has_audio=has_audio,
     )
 
 

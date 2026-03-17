@@ -36,6 +36,8 @@ interface IssueRowProps {
   onSeverityChange: (value: SeverityLevel) => void;
   onNotesChange: (value: string | null) => void;
   compact?: boolean;
+  showTranscriptionCheckbox?: boolean;
+  onTranscriptionChange?: (value: boolean) => void;
 }
 
 export function IssueRow({
@@ -44,6 +46,8 @@ export function IssueRow({
   onSeverityChange,
   onNotesChange,
   compact,
+  showTranscriptionCheckbox,
+  onTranscriptionChange,
 }: IssueRowProps) {
   return (
     <div className={`issue-row ${compact ? "compact" : ""}`}>
@@ -67,6 +71,16 @@ export function IssueRow({
           value={feedback.notes || ""}
           onChange={(e) => onNotesChange(e.target.value || null)}
         />
+        {showTranscriptionCheckbox && (
+          <label className="checkbox-label transcription-checkbox">
+            <input
+              type="checkbox"
+              checked={feedback.related_to_transcription ?? false}
+              onChange={(e) => onTranscriptionChange?.(e.target.checked)}
+            />
+            Related to transcription
+          </label>
+        )}
       </div>
     </div>
   );

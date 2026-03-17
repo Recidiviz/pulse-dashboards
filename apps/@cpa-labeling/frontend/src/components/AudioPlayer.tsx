@@ -15,19 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface AudioPlayerProps {
-  // audioUrl will be added later when we connect to actual audio
   audioUrl?: string | null;
 }
 
 const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
 
 function AudioPlayer({ audioUrl }: AudioPlayerProps) {
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration] = useState(180); // Placeholder: 3 minutes
+  const [duration, setDuration] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
 
   const formatTime = (seconds: number) => {
@@ -37,23 +37,36 @@ function AudioPlayer({ audioUrl }: AudioPlayerProps) {
   };
 
   const handlePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      void audio.play();
+    }
     setIsPlaying(!isPlaying);
-    // TODO: Connect to actual audio element
   };
 
   const handleSkip = (delta: number) => {
-    setCurrentTime((prev) => Math.max(0, Math.min(duration, prev + delta)));
-    // TODO: Connect to actual audio element
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = Math.max(
+      0,
+      Math.min(duration, audio.currentTime + delta),
+    );
   };
 
   const handleSpeedChange = (speed: number) => {
+    const audio = audioRef.current;
+    if (audio) audio.playbackRate = speed;
     setPlaybackSpeed(speed);
-    // TODO: Connect to actual audio element
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentTime(Number(e.target.value));
-    // TODO: Connect to actual audio element
+    const audio = audioRef.current;
+    const value = Number(e.target.value);
+    if (audio) audio.currentTime = value;
+    setCurrentTime(value);
   };
 
   if (!audioUrl) {
@@ -66,13 +79,22 @@ function AudioPlayer({ audioUrl }: AudioPlayerProps) {
 
   return (
     <div className="audio-player">
+      <audio
+        ref={audioRef}
+        src={audioUrl}
+        onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime ?? 0)}
+        onDurationChange={() => setDuration(audioRef.current?.duration ?? 0)}
+        onEnded={() => setIsPlaying(false)}
+        style={{ display: "none" }}
+      />
+
       <div className="audio-controls">
         <button
           className="audio-btn skip-btn"
-          onClick={() => handleSkip(-10)}
-          title="Skip back 10 seconds"
+          onClick={() => handleSkip(-5)}
+          title="Skip back 5 seconds"
         >
-          -10s
+          -5s
         </button>
 
         <button
@@ -85,10 +107,10 @@ function AudioPlayer({ audioUrl }: AudioPlayerProps) {
 
         <button
           className="audio-btn skip-btn"
-          onClick={() => handleSkip(10)}
-          title="Skip forward 10 seconds"
+          onClick={() => handleSkip(5)}
+          title="Skip forward 5 seconds"
         >
-          +10s
+          +5s
         </button>
       </div>
 
@@ -98,7 +120,7 @@ function AudioPlayer({ audioUrl }: AudioPlayerProps) {
           type="range"
           className="audio-slider"
           min={0}
-          max={duration}
+          max={duration || 0}
           value={currentTime}
           onChange={handleSeek}
         />

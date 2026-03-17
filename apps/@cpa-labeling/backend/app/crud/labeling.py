@@ -122,6 +122,7 @@ async def get_recording_transcript(
     return messages
 
 
+
 async def get_completed_intakes(session: AsyncSession) -> list[Intake]:
     """Get all completed intakes. Uses reentry database."""
     from app.models.intake import IntakeStatus
