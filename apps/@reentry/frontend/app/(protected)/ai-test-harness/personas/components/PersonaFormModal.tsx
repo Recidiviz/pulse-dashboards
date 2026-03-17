@@ -227,6 +227,15 @@ export const PersonaFormModal = ({
             </div>
           )}
 
+          {isEditMode && !isLoadingPersona && (
+            <div className="text-sm text-[#2a5469]/80 bg-[#f0f7f6] border border-[#2a5469]/20 rounded-lg px-3 py-2.5 font-['Public_Sans']">
+              Changes to this persona will only apply to future intake triggers.
+              Previously created triggers will not be affected. To use updated
+              settings on past intakes, create a new persona and trigger new
+              intakes.
+            </div>
+          )}
+
           {isLoadingPersona ? (
             <div className="text-center py-8">
               <LoadingSpinner />

@@ -56,7 +56,11 @@ export default function RemoveAssessmentModal({
         </p>
 
         <div className="flex gap-3 justify-end">
-          <PrimaryButton buttonText="No, go back" onClick={onClose} ignoreCapabilities={true}/>
+          <PrimaryButton
+            buttonText="No, go back"
+            onClick={onClose}
+            ignoreCapabilities={true}
+          />
 
           <PrimaryButton
             buttonText={

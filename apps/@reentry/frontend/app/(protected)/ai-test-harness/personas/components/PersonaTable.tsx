@@ -26,6 +26,7 @@ import { $api } from "~@reentry/frontend/api";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
+import { DeletePersonaModal } from "./DeletePersonaModal";
 import { PersonaTriggerListModal } from "./PersonaTriggerListModal";
 
 export interface AIPersona {
@@ -92,26 +93,29 @@ export const PersonaTable = ({
     id: string;
     name: string;
   } | null>(null);
+  const [deleteModalPersona, setDeleteModalPersona] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const deleteMutation = $api.useMutation(
     "delete",
     "/ai-personas/{persona_id}",
   );
 
-  const handleDelete = async (personaId: string) => {
-    if (!confirm("Are you sure you want to delete this persona?")) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (!deleteModalPersona) return;
 
     try {
       await deleteMutation.mutateAsync({
-        params: { path: { persona_id: personaId } },
+        params: { path: { persona_id: deleteModalPersona.id } },
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,
           "Content-Type": "application/json",
         },
       });
       showSuccessToast("Persona deleted successfully");
+      setDeleteModalPersona(null);
       onDeleteSuccess();
     } catch {
       showErrorToast("Failed to delete persona");
@@ -222,7 +226,7 @@ export const PersonaTable = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleDelete(row.id);
+                setDeleteModalPersona({ id: row.id, name: row.name });
               }}
               className="p-1.5 rounded hover:bg-red-50 text-red-500 hover:text-red-700 transition-colors"
             >
@@ -260,6 +264,17 @@ export const PersonaTable = ({
           onClose={() => setTriggerModalPersona(null)}
           personaId={triggerModalPersona.id}
           personaName={triggerModalPersona.name}
+        />
+      )}
+
+      {deleteModalPersona && (
+        <DeletePersonaModal
+          isOpen={!!deleteModalPersona}
+          onClose={() => setDeleteModalPersona(null)}
+          onConfirm={handleDelete}
+          personaId={deleteModalPersona.id}
+          personaName={deleteModalPersona.name}
+          isDeleting={deleteMutation.isPending}
         />
       )}
     </>

@@ -233,7 +233,8 @@ export default function IntakeAssessment({
                     </div>
                   )}
                 {isInternalUser(userEmail) &&
-                  intakeStatus?.frontend_status === "intake_enabled" && (
+                  intakeStatus?.frontend_status === "intake_enabled" &&
+                  intakeInfo.intake_type !== "transcription" && (
                     <button
                       onClick={() => setIsTriggerAIModalOpen(true)}
                       className="px-4 py-2 bg-[#003331] text-white rounded-full hover:bg-gray-950 transition-colors text-sm font-medium whitespace-nowrap"
@@ -241,14 +242,16 @@ export default function IntakeAssessment({
                       Trigger AI Intake
                     </button>
                   )}
-                {isInternalUser(userEmail) && intakeInfo.trigger_id && (
-                  <Link
-                    href={`/ai-test-harness/status/${intakeInfo.trigger_id}`}
-                    className="px-4 py-2 border border-[#003331] text-[#003331] rounded-full hover:bg-gray-100 transition-colors text-sm font-medium whitespace-nowrap"
-                  >
-                    View AI Status
-                  </Link>
-                )}
+                {isInternalUser(userEmail) &&
+                  intakeInfo.trigger_id &&
+                  intakeInfo.intake_type !== "transcription" && (
+                    <Link
+                      href={`/ai-test-harness/status/${intakeInfo.trigger_id}`}
+                      className="px-4 py-2 border border-[#003331] text-[#003331] rounded-full hover:bg-gray-100 transition-colors text-sm font-medium whitespace-nowrap"
+                    >
+                      View AI Status
+                    </Link>
+                  )}
                 {assessmentStatus != "completed" &&
                   intakeInfo.intake_type === "transcription" && (
                     <div className="w-full md:w-auto shrink-0">
