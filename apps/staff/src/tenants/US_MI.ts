@@ -26,6 +26,7 @@ const US_MI_CONFIG = {
   domain: "michigan.gov",
   availableStateCodes: [dashboard.US_MI],
   enableUserRestrictions: false,
+  sessionTimeoutMinutes: 15,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",

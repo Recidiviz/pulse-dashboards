@@ -28,7 +28,7 @@ import {
 } from "../components/StoreProvider";
 
 const THREE_HOURS = 3 * 60 * 60 * 1000;
-const FIFTEEN_MINUTES = 15 * 60 * 1000;
+const DEFAULT_TIMEOUT_MINUTES = 30;
 
 const useAuth = () => {
   const { search } = useLocation();
@@ -36,6 +36,13 @@ const useAuth = () => {
   const { userStore, tenantStore } = useRootStore() as PartiallyTypedRootStore;
   const stateCodeParam = new URLSearchParams(search).get("stateCode");
   const navigate = useNavigate();
+
+  const tenantId = tenantStore.currentTenantId;
+  const sessionTimeoutMinutes = tenantId
+    ? tenantStore.tenantConfigs[tenantId].sessionTimeoutMinutes ??
+      DEFAULT_TIMEOUT_MINUTES
+    : DEFAULT_TIMEOUT_MINUTES;
+  const sessionTimeoutMs = sessionTimeoutMinutes * 60 * 1000;
 
   useEffect(
     () =>
@@ -62,10 +69,11 @@ const useAuth = () => {
         userStore.logout?.({ returnTo: window.location.origin });
       }
     },
-    // Certain state policies require that users reauthenticate after 15
-    // minutes of inactivity. More details at:
+    // State-specific session timeout (configured via sessionTimeoutMinutes in tenant config).
+    // MI requires 15 min, CA requires 20 min, all others default to 30 min for CJIS compliance.
+    // More details at:
     // https://github.com/Recidiviz/pulse-dashboards/issues/3403#issuecomment-1569096723
-    timeout: isDemoMode() ? THREE_HOURS : FIFTEEN_MINUTES,
+    timeout: isDemoMode() ? THREE_HOURS : sessionTimeoutMs,
     crossTab: true,
     syncTimers: 200,
   });

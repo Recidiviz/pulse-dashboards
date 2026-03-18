@@ -61,6 +61,10 @@ describe("useAuth", () => {
         ...userStore,
         authError,
       },
+      tenantStore: {
+        currentTenantId: undefined,
+        tenantConfigs: {},
+      },
     });
 
     expect(() => renderHook(() => useAuth())).toThrowError(authError);

@@ -98,6 +98,9 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   incarcerationStaffTitleOverride?: string;
   custodyLevelCopy?: Record<string, string>;
 
+  // Session
+  sessionTimeoutMinutes?: number;
+
   // Insights
   insightsLaunchedDistricts?: string[];
   insightsLanternState?: boolean;

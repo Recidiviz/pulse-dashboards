@@ -30,6 +30,7 @@ const US_CA_CONFIG = {
   internalSystemName: "OMS",
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,
+  sessionTimeoutMinutes: 20,
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1qIXF7G6CY_pVbNTNTyHvYJF1lAIgiy1n/view?usp=sharing",
