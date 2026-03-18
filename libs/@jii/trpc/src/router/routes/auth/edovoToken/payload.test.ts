@@ -30,6 +30,7 @@ test.each([
   switch (stateCode) {
     case "US_NE":
     case "US_ME":
+    case "US_AZ":
       incomingId = "00000" + incomingId;
       break;
     case "US_CO":

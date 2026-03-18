@@ -29,7 +29,7 @@ export const edovoIdTokenPayloadSchema = z
   })
   .transform((user) => {
     // For these states, Edovo's IDs here are zero- padded but ours are not
-    if (["US_ME", "US_NE"].includes(user.facility_state)) {
+    if (["US_ME", "US_NE", "US_AZ"].includes(user.facility_state)) {
       return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
     }
     // For these states, our IDs are zero-padded but Edovo's are not
