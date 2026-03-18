@@ -27,7 +27,8 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
-import { OAuth2Client } from "google-auth-library";
+import { GoogleAuth, OAuth2Client } from "google-auth-library";
+import { run_v2 } from "googleapis";
 import { z } from "zod";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
@@ -99,8 +100,28 @@ async function verifyGoogleIdToken(authorizationHeaders: string | undefined) {
     throw new AuthError("Email not verified", 401);
   }
 
-  if (payload.email !== env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL) {
-    throw new AuthError("Invalid email address", 403);
+  const auth = new GoogleAuth({
+    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+  });
+
+  const runClient = new run_v2.Run({ auth });
+  // technically the cloud tasks project/location could be different from the cloud run one,
+  // but in practice they are the same so we can reuse the env vars
+  const resource = `projects/${env.CLOUD_TASKS_PROJECT}/locations/${env.CLOUD_TASKS_LOCATION}/services/${process.env["K_SERVICE"]}`;
+  const runInvokerPermission = "run.routes.invoke";
+  const iamResponse =
+    await runClient.projects.locations.services.testIamPermissions({
+      resource,
+      requestBody: {
+        permissions: [runInvokerPermission],
+      },
+    });
+
+  if (!iamResponse.data.permissions?.includes(runInvokerPermission)) {
+    throw new AuthError(
+      "Caller does not have Cloud Run invoker permission",
+      403,
+    );
   }
 
   console.log(`Email verified: ${payload.email}`);
@@ -475,20 +496,28 @@ export function registerTaskRoutes(app: FastifyInstance) {
         stateCode: z.nativeEnum(StateCode),
         meetingId: z.string(),
         step: z.enum(["stitching", "transcription", "notetaking"]).optional(),
+        gcsPath: z.string().optional(),
       }),
     },
     preHandler: [authenticateInternalRequestPreHandlerFn],
     handler: async (req, reply) => {
-      const { stateCode, meetingId, step } = req.body;
+      const { stateCode, meetingId, step, gcsPath } = req.body;
 
       const prisma = getPrismaClientForStateCode(stateCode);
 
       // Try and find the meeting and fail fast if it doesn't exist
-      const meeting = await prisma.meeting.findUniqueOrThrow({
+      let meeting = await prisma.meeting.findUniqueOrThrow({
         where: {
           id: meetingId,
         },
       });
+
+      if (gcsPath) {
+        meeting = await prisma.meeting.update({
+          where: { id: meetingId },
+          data: { finalRecordingGCSPath: gcsPath },
+        });
+      }
 
       const stepToProcess =
         getStepFromUserSetStep(step) ??

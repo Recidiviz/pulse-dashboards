@@ -59,6 +59,30 @@ vi.mock("google-auth-library", () => ({
       }),
     };
   }),
+  GoogleAuth: vi.fn().mockImplementation(() => ({})),
+}));
+
+export let testIamPermissionsImp = vi
+  .fn()
+  .mockResolvedValue({ data: { permissions: ["run.routes.invoke"] } });
+
+export function setTestIamPermissionsImp(fn: typeof testIamPermissionsImp) {
+  testIamPermissionsImp = fn;
+}
+
+vi.mock("googleapis", () => ({
+  run_v2: {
+    Run: vi.fn().mockImplementation(() => ({
+      projects: {
+        locations: {
+          services: {
+            testIamPermissions: (...args: unknown[]) =>
+              testIamPermissionsImp(...args),
+          },
+        },
+      },
+    })),
+  },
 }));
 
 beforeEach(() => {
@@ -67,6 +91,9 @@ beforeEach(() => {
       email_verified: true,
       email: "test-service-account-email@recidiviz-test.org",
     }),
+  );
+  setTestIamPermissionsImp(
+    vi.fn().mockResolvedValue({ data: { permissions: ["run.routes.invoke"] } }),
   );
 });
 

@@ -26,6 +26,7 @@ import env from "~@meetings/server/env";
 import {
   mockCloudTasksClient,
   setGetPayloadImp,
+  setTestIamPermissionsImp,
   testAndGetSentryReports,
   testPrismaClient,
   testServer,
@@ -155,12 +156,9 @@ describe("tasks", () => {
         );
       });
 
-      test("Should return authorization error if email doesn't match expected", async () => {
-        setGetPayloadImp(
-          vi.fn().mockReturnValue({
-            email_verified: true,
-            email: "wrong-email@test-project.iam.gserviceaccount.com",
-          }),
+      test("Should return authorization error if caller lacks Cloud Run invoker permission", async () => {
+        setTestIamPermissionsImp(
+          vi.fn().mockResolvedValue({ data: { permissions: [] } }),
         );
 
         const response = await testServer.inject({
@@ -177,7 +175,7 @@ describe("tasks", () => {
         expect(JSON.parse(response.body)).toEqual(
           expect.objectContaining({
             error: "Forbidden",
-            message: "Invalid email address",
+            message: "Caller does not have Cloud Run invoker permission",
           }),
         );
       });
@@ -1054,6 +1052,66 @@ describe("tasks", () => {
           }),
         );
       });
+    });
+
+    test("Should update finalRecordingGCSPath when gcsPath is provided", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: {
+          finalRecordingGCSPath: null,
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+          step: "transcription",
+          gcsPath: "path/to/uploaded-audio.m4a",
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual("Transcription task queued successfully.");
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(meeting.finalRecordingGCSPath).toBe("path/to/uploaded-audio.m4a");
+    });
+
+    test("Should not update finalRecordingGCSPath when gcsPath is not provided", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: {
+          finalRecordingGCSPath: "existing/path.m4a",
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(meeting.finalRecordingGCSPath).toBe("existing/path.m4a");
     });
 
     test("Should start step even if it doesn't match the implied next step", async () => {

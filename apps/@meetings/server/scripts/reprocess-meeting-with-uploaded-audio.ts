@@ -16,36 +16,26 @@
 // =============================================================================
 
 /**
- * Script to manually trigger audio stitching for a meeting with uploaded audio file.
+ * Manually triggers reprocessing for a meeting, optionally with an uploaded audio file.
  *
- * This script supports both development and staging modes:
- * - Development: Direct database connection, no authentication
- * - Staging: Via cloud-sql-proxy with service account authentication
+ * Calls the reprocess-meeting endpoint, which will update the meeting's
+ * finalRecordingGCSPath (if gcsPath is provided) and queue the specified
+ * processing step.
  *
- * Mode detection: Based on DATABASE_INSTANCE_CONNECTION_NAME env var presence
- *
- * Steps:
- * 1. Connects to the database (directly in dev, via cloud-sql-proxy in staging)
- * 2. Updates the meeting's finalRecordingGCSPath in Prisma
- * 3. Calls the reprocess-meeting endpoint to trigger stitching
- *
+ * Run `nx reprocess-meeting @meetings/server --args="--help"` for usage.
  */
 
-import { ChildProcess, spawn } from "node:child_process";
+import { Command, Option } from "@commander-js/extra-typings";
+import { GoogleAuth } from "google-auth-library";
 
-import { Command } from "@commander-js/extra-typings";
-
-import { getPrismaClientForStateCode } from "~@meetings/prisma";
-import { PrismaClient } from "~@meetings/prisma/client";
-
-type VALID_STEPS = ["stitching", "transcription", "notetaking"];
-type Step = VALID_STEPS[number];
+const VALID_STEPS = ["stitching", "transcription", "notetaking"] as const;
+type Step = (typeof VALID_STEPS)[number];
 
 interface ScriptArgs {
   meetingId: string;
   stateCode: string;
-  gcsPath: string;
-  step: Step;
+  gcsPath?: string;
+  step?: Step;
 }
 
 function parseArgs(): ScriptArgs {
@@ -56,33 +46,25 @@ function parseArgs(): ScriptArgs {
     )
     .requiredOption("--meeting-id <meeting-id>", "Meeting ID to reprocess")
     .requiredOption("--state-code <state-code>", "State code (e.g., US_NE)")
-    .requiredOption(
-      "--gcs-path <gcs-path>",
-      "GCS path to the uploaded audio file (e.g., path/to/audio.m4a)",
-    )
     .option(
-      "--step <step>",
-      "Processing step to execute (stitching, transcription, or notetaking)",
-      "transcription",
+      "--gcs-path <gcs-path>",
+      "Optional GCS path to the uploaded audio file (e.g., path/to/audio.m4a). When provided, the server updates the meeting's finalRecordingGCSPath before queuing the task.",
+    )
+    .addOption(
+      new Option(
+        "--step <step>",
+        "Optional processing step to execute (stitching, transcription, or notetaking). If omitted, the step is inferred from the meeting's current processing status.",
+      ).choices(VALID_STEPS),
     )
     .parse();
 
   const options = program.opts();
 
-  // Validate step value
-  const validSteps = ["stitching", "transcription", "notetaking"];
-  if (!validSteps.includes(options.step)) {
-    console.error(
-      `❌ Invalid step: ${options.step}. Must be one of: ${validSteps.join(", ")}`,
-    );
-    process.exit(1);
-  }
-
   return {
     meetingId: options.meetingId,
     stateCode: options.stateCode,
     gcsPath: options.gcsPath,
-    step: options.step as Step,
+    step: options.step,
   };
 }
 
@@ -90,98 +72,17 @@ function isDevelopmentConfiguration(): boolean {
   return process.env["NX_TASK_TARGET_CONFIGURATION"] === "development";
 }
 
-async function startCloudSqlProxy(): Promise<ChildProcess> {
-  const instanceConnectionName =
-    process.env["DATABASE_INSTANCE_CONNECTION_NAME"];
-
-  console.log("🚀 Starting Cloud SQL Proxy...");
-  console.log(`   Instance: ${instanceConnectionName}`);
-
-  const proxy = spawn(
-    "cloud-sql-proxy",
-    ["--port", process.env.CLOUD_SQL_PROXY_PORT, instanceConnectionName],
-    {
-      cwd: __dirname,
-      stdio: ["ignore", "pipe", "pipe"],
-    },
-  );
-
-  proxy.stdout?.on("data", (data) => {
-    console.log(`[proxy] ${data.toString().trim()}`);
-  });
-
-  proxy.stderr?.on("data", (data) => {
-    console.log(`[proxy] ${data.toString().trim()}`);
-  });
-
-  // Wait for proxy to be ready
-  console.log("⏳ Waiting for Cloud SQL Proxy to be ready...");
-  await new Promise<void>((resolve, reject) => {
-    let output = "";
-
-    const onData = (data: Buffer) => {
-      output += data.toString();
-      // Cloud SQL Proxy logs "Ready for new connections" when it's ready
-      if (
-        output.includes("Ready for new connections") ||
-        output.includes("ready for new connections")
-      ) {
-        proxy.stdout?.off("data", onData);
-        proxy.stderr?.off("data", onData);
-        resolve();
-      }
-    };
-
-    proxy.stdout?.on("data", onData);
-    proxy.stderr?.on("data", onData);
-
-    proxy.on("error", (error) => {
-      reject(new Error(`Failed to start cloud-sql-proxy: ${error.message}`));
-    });
-
-    proxy.on("exit", (code) => {
-      if (code !== 0 && code !== null) {
-        reject(new Error(`cloud-sql-proxy exited with code ${code}`));
-      }
-    });
-
-    // Timeout after 30 seconds
-    setTimeout(() => {
-      reject(new Error("Timeout waiting for cloud-sql-proxy to be ready"));
-    }, 30000);
-  });
-
-  console.log("✅ Cloud SQL Proxy is ready!");
-  return proxy;
-}
-
-async function updateMeetingFinalRecordingPath(
-  prisma: PrismaClient,
-  meetingId: string,
-  gcsPath: string,
-): Promise<void> {
-  console.log("\n📝 Updating meeting in database...");
-  console.log(`   Meeting ID: ${meetingId}`);
-  console.log(`   GCS Path: ${gcsPath}`);
-
-  await prisma.meeting.update({
-    where: { id: meetingId },
-    data: {
-      finalRecordingGCSPath: gcsPath,
-    },
-  });
-
-  console.log("✅ Meeting updated successfully!");
-}
-
 async function triggerReprocessMeeting(
   stateCode: string,
   meetingId: string,
-  step: Step,
   isDevelopment: boolean,
+  step?: Step,
+  gcsPath?: string,
 ): Promise<void> {
   const endpoint = process.env["REPROCESS_ENDPOINT_URL"];
-  const serviceAccount = process.env["CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL"];
+  if (!endpoint) {
+    throw new Error("Missing value for REPROCESS_ENDPOINT_URL");
+  }
 
   console.log("\n🔄 Triggering reprocess-meeting endpoint...");
   console.log(`   Endpoint: ${endpoint}`);
@@ -194,36 +95,12 @@ async function triggerReprocessMeeting(
   };
 
   if (!isDevelopment) {
-    console.log(`   Service Account: ${serviceAccount}`);
+    const auth = new GoogleAuth();
+    const idTokenClient = await auth.getIdTokenClient(endpoint);
+    const gcpHeaders = await idTokenClient.getRequestHeaders();
+    Object.assign(headers, gcpHeaders);
 
-    // Get auth token by impersonating the Cloud Tasks service account
-    const { execSync } = await import("node:child_process");
-    let token: string;
-    try {
-      token = execSync(
-        `gcloud auth print-identity-token --impersonate-service-account=${serviceAccount} --include-email`,
-        {
-          encoding: "utf-8",
-        },
-      ).trim();
-    } catch (e) {
-      throw new Error(
-        `Failed to get auth token for service account ${serviceAccount}. Make sure you have the Service Account Token Creator role.
-
-        \n This can be granted with the following command:
-        \n gcloud iam service-accounts add-iam-policy-binding \\
-          ${serviceAccount} \\
-          --member=user:YOUR_EMAIL@recidiviz.org \\
-          --role=roles/iam.serviceAccountTokenCreator \\
-          --project=recidiviz-dashboard-staging
-
-          Underlying error:
-          ${e}
-        `,
-      );
-    }
-
-    headers["Authorization"] = `Bearer ${token}`;
+    console.log(`   Running with user credentials`);
   } else {
     console.log("   Auth: None (development mode)");
   }
@@ -235,6 +112,7 @@ async function triggerReprocessMeeting(
       stateCode,
       meetingId,
       step,
+      gcsPath,
     }),
   });
 
@@ -258,28 +136,15 @@ async function main() {
 
   const isDevelopment = isDevelopmentConfiguration();
 
-  let proxy: ChildProcess | undefined;
-  let prisma: PrismaClient | undefined;
-
   try {
-    // Start cloud-sql-proxy only in staging mode
-    if (!isDevelopment) {
-      proxy = await startCloudSqlProxy();
-    } else {
-      console.log("⏩ Skipping Cloud SQL Proxy (using direct connection)\n");
-    }
-
-    // Create Prisma client
-    prisma = getPrismaClientForStateCode(stateCode);
-
-    await prisma.$connect();
-    console.log("✅ Connected to database");
-
-    // Update meeting with final recording path
-    await updateMeetingFinalRecordingPath(prisma, meetingId, gcsPath);
-
-    // Trigger reprocess endpoint
-    await triggerReprocessMeeting(stateCode, meetingId, step, isDevelopment);
+    // Trigger reprocess endpoint (passes gcsPath so the server updates the DB)
+    await triggerReprocessMeeting(
+      stateCode,
+      meetingId,
+      isDevelopment,
+      step,
+      gcsPath,
+    );
 
     console.log(`\n🎉 All done! The ${step} task has been queued.`);
     console.log("   Monitor the meeting status in the database or logs.");
@@ -289,28 +154,6 @@ async function main() {
       error instanceof Error ? error.message : error,
     );
     process.exit(1);
-  } finally {
-    // Cleanup
-    if (prisma) {
-      await prisma.$disconnect();
-      console.log("\n🔌 Disconnected from database");
-    }
-
-    if (proxy && !proxy.killed) {
-      console.log("🛑 Stopping Cloud SQL Proxy...");
-      proxy.kill("SIGTERM");
-
-      // Wait for graceful shutdown
-      await new Promise<void>((resolve) => {
-        proxy.on("exit", () => resolve());
-        setTimeout(() => {
-          if (!proxy.killed) {
-            proxy.kill("SIGKILL");
-          }
-          resolve();
-        }, 5000);
-      });
-    }
   }
 }
 
