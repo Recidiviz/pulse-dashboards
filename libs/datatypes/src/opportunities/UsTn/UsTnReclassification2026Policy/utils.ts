@@ -122,10 +122,10 @@ export function prefillRcafFormData(
     formInformation.q7Score,
   );
 
-  const q1aNotes = formInformation.q1Notes.listPriorNonTdocConvictions60Months;
-
-  const q1bNotes =
+  const q1aNotes =
     formInformation.q1Notes.listPriorViolentTdocConvictions60Months;
+
+  const q1bNotes = formInformation.q1Notes.listPriorNonTdocConvictions60Months;
 
   const q2Notes = formInformation.q2CurrentOffenseDate
     ? formInformation.q2Notes
