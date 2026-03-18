@@ -19,9 +19,6 @@
 
 import React from "react";
 
-import common from "../IntakeChatV2/Common.module.css";
-import styles from "../IntakeChatV2/IntakeComplete/IntakeComplete.module.css";
-
 const IntakeCompleted: React.FC = () => {
   const handleBack = () => {
     sessionStorage.removeItem("intake_token");
@@ -47,7 +44,7 @@ const IntakeCompleted: React.FC = () => {
           </p>
           <button
             type="button"
-            className={`${styles["buttonCommon"]} ${styles["secondary"]} ${common["buttonBase"]} ${common["buttonSecondary"]}`}
+            className="w-[269px] h-12 px-8 py-3 rounded-md font-['Public_Sans'] text-sm leading-6 tracking-[-0.01em] cursor-pointer border border-[var(--ink-4-a20)] bg-transparent text-[var(--ink-4-a85)] hover:bg-[var(--gray-50)]"
             onClick={handleBack}
           >
             Back to Home

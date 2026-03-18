@@ -29,8 +29,6 @@ export * from "./components/intake/ChatInterface/ChatMessageBubble";
 export * from "./components/intake/ChatInterface/Sidebar";
 export * from "./components/intake/ChatInterface/TTSButton";
 export * from "./components/intake/IntakeRouter";
-export { default as IntakeChatV2CommonStyles } from "./components/IntakeChatV2/Common.module.css";
-export { default as IntakeCompleteStyles } from "./components/IntakeChatV2/IntakeComplete/IntakeComplete.module.css";
 export * from "./components/modals/BaseModal";
 export * from "./components/QueryProvider/QueryProvider";
 export * from "./constants";
