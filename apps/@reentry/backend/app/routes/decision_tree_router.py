@@ -6,6 +6,7 @@ from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel, ConfigDict, field_validator
 
+from app.auth.dependencies import require_internal_user
 from app.core.db import AsyncSession, get_session
 from app.crud.decision_tree import (
     add_decision_tree_revision,
@@ -131,6 +132,7 @@ async def router_get_decision_tree(
 async def router_add_decision_tree(
     data: DecisionTreeCreate,
     session: AsyncSession = Depends(get_session),
+    _: dict = Depends(require_internal_user),
 ):
     # for the first decision tree, we always want to also create a revision
     # to prevent having empty decision-tree
@@ -158,6 +160,7 @@ async def router_update_decision_tree(
     decision_tree_id: uuid.UUID,
     data: DecisionTreeUpdate,
     session: AsyncSession = Depends(get_session),
+    _: dict = Depends(require_internal_user),
 ):
     decision_tree = await get_decision_tree_by_id(session, decision_tree_id)
     if decision_tree is None:
@@ -188,6 +191,7 @@ async def router_update_decision_tree(
 async def router_delete_decision_tree(
     decision_tree_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    _: dict = Depends(require_internal_user),
 ):
     decision_tree = await get_decision_tree_by_id(session, decision_tree_id)
     if decision_tree is None:
@@ -246,6 +250,7 @@ async def router_add_decision_tree_revision(
     data: DecisionTreeRevisionCreate,
     decision_tree_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    _: dict = Depends(require_internal_user),
 ):
     decision_tree = await get_decision_tree_by_id(session, decision_tree_id)
     if decision_tree is None:
