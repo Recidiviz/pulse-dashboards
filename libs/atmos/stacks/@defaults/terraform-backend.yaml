@@ -20,7 +20,7 @@ terraform:
   hooks:
     store-outputs:
       # Determine where we store outputs based on the project_id
-      name: !template "{{ index .settings.context.project_to_store .settings.context.project_id }}"
+      name: "{{ index .settings.context.project_to_store .settings.context.project_id }}"
       events:
         - after-terraform-apply
       command: store
