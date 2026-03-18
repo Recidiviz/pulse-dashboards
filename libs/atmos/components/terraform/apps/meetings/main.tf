@@ -363,7 +363,9 @@ resource "google_cloud_scheduler_job" "artifact_cleanup_schedule" {
 module "seed_demo_job" {
   source = "../../vendor/cloud-run-job-exec"
 
-  exec                          = true
+  # Don't execute this job on deploy (for now) so that employees can
+  # record meetings to be used as demo data without having them cleared
+  exec                          = false
   name                          = local.seed_demo_job_name
   image                         = "${var.artifact_registry_repo}/${local.seed_demo_image_name}:${var.seed_demo_container_version}"
   project_id                    = var.project_id
