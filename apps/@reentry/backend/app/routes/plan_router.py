@@ -1,11 +1,15 @@
+import ipaddress
+import socket
 import uuid
 from datetime import datetime
 from io import BytesIO
 from typing import List, Optional
+from urllib.parse import urlparse
 from uuid import UUID
 
 import orjson
 import structlog
+import weasyprint
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
@@ -87,6 +91,49 @@ from .execution_router import ExecutionResponse
 
 router = APIRouter()
 logger = structlog.get_logger(__name__)
+
+_BLOCKED_HOSTS = frozenset({"metadata.google.internal", "metadata", "169.254.169.254"})
+
+
+def _is_blocked_ip(addr_str: str) -> bool:
+    """Check if an IP address is private, loopback, or link-local."""
+    try:
+        addr = ipaddress.ip_address(addr_str)
+        return addr.is_private or addr.is_loopback or addr.is_link_local
+    except ValueError:
+        return False
+
+
+def _safe_url_fetcher(url, timeout=10, ssl_context=None):
+    """URL fetcher for WeasyPrint that blocks internal/metadata endpoints.
+
+    Resolves DNS before allowing requests to prevent DNS rebinding attacks
+    where attacker-controlled domains point to internal IPs.
+    """
+    parsed = urlparse(url)
+    hostname = parsed.hostname or ""
+
+    # Block known metadata hostnames
+    if hostname in _BLOCKED_HOSTS:
+        raise ValueError(f"URL fetch blocked: {hostname}")
+
+    # Block literal private IPs
+    if _is_blocked_ip(hostname):
+        raise ValueError(f"URL fetch blocked: private IP {hostname}")
+
+    # Resolve DNS and block if it points to a private/internal IP
+    try:
+        resolved_ips = socket.getaddrinfo(hostname, parsed.port or 80, proto=socket.IPPROTO_TCP)
+        for family, _, _, _, sockaddr in resolved_ips:
+            ip_str = sockaddr[0]
+            if _is_blocked_ip(ip_str):
+                raise ValueError(
+                    f"URL fetch blocked: {hostname} resolves to private IP {ip_str}"
+                )
+    except socket.gaierror:
+        raise ValueError(f"URL fetch blocked: cannot resolve {hostname}")
+
+    return weasyprint.default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
 
 
 class PlanRequestCreate(BaseModel):
@@ -953,8 +1000,8 @@ async def generate_pdf(
 ):
     """Generate PDF from HTML using WeasyPrint"""
     try:
-        # Create HTML document
-        html_doc = HTML(string=request.html)
+        # Create HTML document with restricted URL fetcher
+        html_doc = HTML(string=request.html, url_fetcher=_safe_url_fetcher)
 
         # Process CSS content from frontend (now includes PDF-specific CSS)
         css_objects = []
