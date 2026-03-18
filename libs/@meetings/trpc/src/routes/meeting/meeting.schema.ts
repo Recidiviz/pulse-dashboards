@@ -60,6 +60,10 @@ export const createSignedUrlForRecordingInputSchema = z.object({
   platform: z.enum(["web", "ios", "android"]).optional(),
 });
 
+export const deleteRecordingsInputSchema = z.object({
+  meetingId: z.string(),
+});
+
 export const discardMeetingInputSchema = z.object({
   meetingId: z.string(),
 });

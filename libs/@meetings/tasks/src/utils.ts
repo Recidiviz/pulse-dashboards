@@ -75,6 +75,25 @@ export async function getSignedUrlForNewRecording(
   return url;
 }
 
+export async function deleteRecordingFiles(
+  bucketName: string,
+  folderPath: string,
+) {
+  if (isOffline()) {
+    const localStorageDir =
+      process.env["OFFLINE_STORAGE_DIR"] ??
+      path.join(os.tmpdir(), "meetings-offline");
+    const dir = path.join(localStorageDir, folderPath);
+    if (fs.existsSync(dir)) {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+    return;
+  }
+
+  const storage = new Storage();
+  await storage.bucket(bucketName).deleteFiles({ prefix: folderPath });
+}
+
 function downloadFilesOffline(
   folderName: string,
   tempFilePaths: string[],

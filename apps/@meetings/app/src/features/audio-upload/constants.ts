@@ -15,16 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export class AbortError extends Error {
-  constructor(message?: string) {
-    super(message ?? "Aborted");
-    this.name = "AbortError";
-  }
-}
+export const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB
 
-export class FileValidationError extends Error {
-  constructor(message?: string) {
-    super(message ?? "File validation error");
-    this.name = "FileValidationError";
-  }
-}
+// TODO: expand allowed mime types
+export const ALLOWED_MIME_TYPES = [
+  "audio/webm",
+  "audio/m4a",
+  "audio/x-m4a",
+] as const;

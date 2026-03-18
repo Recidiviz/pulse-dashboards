@@ -23,6 +23,7 @@ import { z } from "zod";
 import { AGENCY_CONFIGS } from "~@meetings/config";
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import {
+  deleteRecordingFiles,
   getSignedUrlForNewRecording,
   MinuteSectionSchema,
   MOBILE_AUDIO_FILE_EXTENSION,
@@ -33,6 +34,7 @@ import {
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createSignedUrlForRecordingInputSchema,
+  deleteRecordingsInputSchema,
   discardMeetingInputSchema,
   endMeetingInputSchema,
   getDetailInputSchema,
@@ -201,6 +203,29 @@ export const meetingRouter = router({
         meeting.recordingsFolderPath,
         fileExtension,
         contentType,
+      );
+    }),
+  deleteRecordings: auth0Procedure
+    .input(deleteRecordingsInputSchema)
+    .mutation(async ({ input: { meetingId }, ctx: { prisma } }) => {
+      const meeting = await prisma.meeting.findUnique({
+        where: { id: meetingId },
+        select: {
+          recordingsGCSBucket: true,
+          recordingsFolderPath: true,
+        },
+      });
+
+      if (!meeting) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting with that id was not found",
+        });
+      }
+
+      await deleteRecordingFiles(
+        meeting.recordingsGCSBucket,
+        meeting.recordingsFolderPath,
       );
     }),
   discardMeeting: auth0Procedure

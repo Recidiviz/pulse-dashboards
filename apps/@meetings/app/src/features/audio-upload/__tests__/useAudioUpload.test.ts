@@ -1,0 +1,446 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { act, renderHook } from "@testing-library/react-native";
+
+import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
+import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
+import { AbortError } from "~@meetings/app/shared/errors";
+import { trpc } from "~@meetings/app/trpc/client";
+
+import { useAudioUpload } from "../hooks/useAudioUpload";
+import { useAudioUploadStore } from "../store";
+import { RawFileInfo } from "../types";
+
+jest.mock("@react-native-async-storage/async-storage", () =>
+  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
+);
+jest.mock("~@meetings/app/entities/upload-segment");
+jest.mock("~@meetings/app/hooks/useEndMeeting");
+jest.mock("~@meetings/app/hooks/useDiscardMeeting");
+jest.mock("~@meetings/app/trpc/client", () => ({
+  __esModule: true,
+  trpc: {
+    v1: {
+      meeting: {
+        deleteRecordings: { useMutation: jest.fn() },
+      },
+    },
+  },
+}));
+jest.mock("../store");
+
+const mockUploadSegment = jest.fn();
+const mockEndMeeting = jest.fn();
+const mockDiscardMeeting = jest.fn();
+const mockDeleteRecordings = jest.fn();
+
+const mockSetError = jest.fn();
+const mockSetFile = jest.fn();
+const mockSetStatus = jest.fn();
+const mockSetUploadProgress = jest.fn();
+const mockReset = jest.fn();
+
+const MEETING_ID = "meeting-123";
+const PERSON_ID = BigInt(456);
+
+const validRawFile: RawFileInfo = {
+  uri: "file:///test/audio.m4a",
+  name: "audio.m4a",
+  mimeType: "audio/m4a",
+  size: 1024,
+};
+
+function mockStoreWith(overrides: Record<string, unknown> = {}) {
+  (useAudioUploadStore as unknown as jest.Mock).mockReturnValue({
+    status: "selecting",
+    meetingId: MEETING_ID,
+    personId: PERSON_ID,
+    file: null,
+    error: null,
+    setError: mockSetError,
+    setFile: mockSetFile,
+    setStatus: mockSetStatus,
+    setUploadProgress: mockSetUploadProgress,
+    reset: mockReset,
+    ...overrides,
+  });
+}
+
+beforeEach(() => {
+  jest.clearAllMocks();
+
+  mockStoreWith();
+
+  (useUploadSegment as jest.Mock).mockReturnValue(mockUploadSegment);
+  (useEndMeeting as jest.Mock).mockReturnValue({
+    mutateAsync: mockEndMeeting,
+  });
+  (useDiscardMeeting as jest.Mock).mockReturnValue({
+    mutateAsync: mockDiscardMeeting,
+  });
+  (trpc.v1.meeting.deleteRecordings.useMutation as jest.Mock).mockReturnValue({
+    mutateAsync: mockDeleteRecordings,
+  });
+
+  mockUploadSegment.mockResolvedValue(undefined);
+  mockEndMeeting.mockResolvedValue(undefined);
+  mockDiscardMeeting.mockResolvedValue(undefined);
+  mockDeleteRecordings.mockResolvedValue(undefined);
+});
+
+describe("useAudioUpload", () => {
+  describe("addFile", () => {
+    it("uploads a valid file and sets status to uploaded", async () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(mockDeleteRecordings).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+      });
+      expect(mockSetError).toHaveBeenCalledWith(null);
+      expect(mockSetFile).toHaveBeenCalledWith(
+        expect.objectContaining({
+          uri: validRawFile.uri,
+          name: validRawFile.name,
+          size: validRawFile.size,
+        }),
+      );
+      expect(mockSetStatus).toHaveBeenCalledWith("uploading");
+      expect(mockSetUploadProgress).toHaveBeenCalledWith(0, validRawFile.size);
+      expect(mockUploadSegment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          uri: validRawFile.uri,
+          meetingId: MEETING_ID,
+          signal: expect.any(AbortSignal),
+          onProgress: expect.any(Function),
+        }),
+      );
+      expect(mockSetStatus).toHaveBeenCalledWith("uploaded");
+    });
+
+    it("calls onProgress callback during upload", async () => {
+      mockUploadSegment.mockImplementation(async ({ onProgress }) => {
+        onProgress(512, 1024);
+      });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(mockSetUploadProgress).toHaveBeenCalledWith(512, 1024);
+    });
+
+    it("throws when meetingId is null", async () => {
+      mockStoreWith({ meetingId: null });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(mockUploadSegment).not.toHaveBeenCalled();
+      expect(mockSetError).toHaveBeenCalledWith("meetingId is required");
+      expect(mockSetStatus).toHaveBeenCalledWith("selecting");
+    });
+
+    it("clears file and reverts to selecting on AbortError", async () => {
+      mockUploadSegment.mockRejectedValue(new AbortError());
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(mockSetError).not.toHaveBeenCalledWith(expect.any(String));
+      expect(mockSetFile).toHaveBeenCalledWith(null);
+      expect(mockSetUploadProgress).toHaveBeenCalledWith(0, 0);
+      expect(mockSetStatus).toHaveBeenCalledWith("selecting");
+    });
+
+    it("sets error on FileValidationError", async () => {
+      const rawFile: RawFileInfo = {
+        uri: "file:///test/audio.txt",
+        name: "audio.txt",
+        mimeType: "text/plain",
+        size: 1024,
+      };
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(rawFile);
+      });
+
+      expect(mockSetError).toHaveBeenCalledWith("Unsupported file type");
+      expect(mockSetStatus).not.toHaveBeenCalled();
+      expect(mockUploadSegment).not.toHaveBeenCalled();
+    });
+
+    it("sets error and reverts to selecting when deleteRecordings fails", async () => {
+      mockDeleteRecordings.mockRejectedValue(new Error("Storage error"));
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(mockUploadSegment).not.toHaveBeenCalled();
+      expect(mockSetError).toHaveBeenCalledWith("Storage error");
+      expect(mockSetStatus).toHaveBeenCalledWith("selecting");
+    });
+
+    it("sets error and reverts to selecting on generic upload error", async () => {
+      mockUploadSegment.mockRejectedValue(new Error("Network error"));
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(mockSetError).toHaveBeenCalledWith("Network error");
+      expect(mockSetStatus).toHaveBeenCalledWith("selecting");
+    });
+  });
+
+  describe("removeFile", () => {
+    it("clears file state and reverts to selecting", () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      act(() => {
+        result.current.removeFile();
+      });
+
+      expect(mockSetFile).toHaveBeenCalledWith(null);
+      expect(mockSetUploadProgress).toHaveBeenCalledWith(0, 0);
+      expect(mockSetStatus).toHaveBeenCalledWith("selecting");
+    });
+
+    it("aborts in-progress upload before removing", async () => {
+      let abortSignal: AbortSignal | undefined;
+      mockUploadSegment.mockImplementation(
+        async ({ signal }: { signal: AbortSignal }) => {
+          abortSignal = signal;
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          return new Promise(() => {});
+        },
+      );
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        result.current.addFile(validRawFile);
+        await Promise.resolve();
+      });
+
+      act(() => {
+        result.current.removeFile();
+      });
+
+      expect(abortSignal?.aborted).toBe(true);
+      expect(mockSetFile).toHaveBeenCalledWith(null);
+    });
+
+    it("sets error when meetingId is null", () => {
+      mockStoreWith({ meetingId: null });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      act(() => {
+        result.current.removeFile();
+      });
+
+      expect(mockSetFile).not.toHaveBeenCalled();
+      expect(mockSetError).toHaveBeenCalledWith("meetingId is required");
+    });
+  });
+
+  describe("confirmUpload", () => {
+    it("calls endMeeting and sets status to completed", async () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.confirmUpload();
+      });
+
+      expect(mockEndMeeting).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+        personId: PERSON_ID,
+      });
+      expect(mockSetStatus).toHaveBeenCalledWith("completed");
+    });
+
+    it("sets confirming-error status on failure", async () => {
+      mockEndMeeting.mockRejectedValue(new Error("Server error"));
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.confirmUpload();
+      });
+
+      expect(mockSetStatus).toHaveBeenCalledWith("confirming-error");
+    });
+
+    it("throws when meetingId or personId is null", async () => {
+      mockStoreWith({ meetingId: null, personId: null });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.confirmUpload();
+      });
+
+      expect(mockEndMeeting).not.toHaveBeenCalled();
+      expect(mockSetStatus).toHaveBeenCalledWith("confirming-error");
+    });
+  });
+
+  describe("discardUpload", () => {
+    it("calls discardMeeting and resets store", async () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.discardUpload();
+      });
+
+      expect(mockDiscardMeeting).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+        personId: PERSON_ID,
+      });
+      expect(mockReset).toHaveBeenCalled();
+    });
+
+    it("aborts in-progress upload before discarding", async () => {
+      let abortSignal: AbortSignal | undefined;
+      mockUploadSegment.mockImplementation(
+        async ({ signal }: { signal: AbortSignal }) => {
+          abortSignal = signal;
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          return new Promise(() => {});
+        },
+      );
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      // Start upload — await so deleteRecordings resolves and uploadSegment begins
+      await act(async () => {
+        result.current.addFile(validRawFile);
+        await Promise.resolve();
+      });
+
+      await act(async () => {
+        await result.current.discardUpload();
+      });
+
+      expect(abortSignal?.aborted).toBe(true);
+      expect(mockDiscardMeeting).toHaveBeenCalled();
+      expect(mockReset).toHaveBeenCalled();
+    });
+
+    it("throws when meetingId or personId is null", async () => {
+      mockStoreWith({ meetingId: null, personId: null });
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.discardUpload();
+      });
+
+      expect(mockDiscardMeeting).not.toHaveBeenCalled();
+      expect(mockReset).not.toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe("continueUpload", () => {
+    it("sets status to uploading", () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      act(() => {
+        result.current.continueUpload();
+      });
+
+      expect(mockSetStatus).toHaveBeenCalledWith("uploading");
+    });
+  });
+
+  describe("retryUpload", () => {
+    it("retries confirmUpload when status is confirming-error", async () => {
+      mockStoreWith({ status: "confirming-error" });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.retryUpload();
+      });
+
+      expect(mockEndMeeting).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+        personId: PERSON_ID,
+      });
+    });
+
+    it("does nothing when status is not confirming-error", async () => {
+      mockStoreWith({ status: "uploading" });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.retryUpload();
+      });
+
+      expect(mockEndMeeting).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("requestCancel", () => {
+    it("sets status to cancelling", () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      act(() => {
+        result.current.requestCancel();
+      });
+
+      expect(mockSetStatus).toHaveBeenCalledWith("cancelling");
+    });
+  });
+
+  describe("closeModal", () => {
+    it("resets the store", () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      act(() => {
+        result.current.closeModal();
+      });
+
+      expect(mockReset).toHaveBeenCalled();
+    });
+  });
+});

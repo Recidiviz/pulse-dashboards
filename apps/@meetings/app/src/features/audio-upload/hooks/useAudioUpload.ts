@@ -1,0 +1,176 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { useCallback, useRef } from "react";
+
+import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
+import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
+import { AbortError, FileValidationError } from "~@meetings/app/shared/errors";
+import { trpc } from "~@meetings/app/trpc/client";
+
+import { useAudioUploadStore } from "../store";
+import { RawFileInfo } from "../types";
+import { deserializeFile } from "../utils/deserializeFile";
+
+export function useAudioUpload() {
+  const store = useAudioUploadStore();
+  const uploadSegment = useUploadSegment();
+  const endMeetingMutation = useEndMeeting();
+  const discardMeetingMutation = useDiscardMeeting();
+  const deleteRecordings = trpc.v1.meeting.deleteRecordings.useMutation();
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const addFile = useCallback(
+    async (rawFile: RawFileInfo) => {
+      try {
+        if (!store.meetingId) {
+          throw new Error("meetingId is required");
+        }
+
+        await deleteRecordings.mutateAsync({ meetingId: store.meetingId });
+
+        const file = deserializeFile(rawFile);
+
+        store.setError(null);
+        store.setFile(file);
+        store.setStatus("uploading");
+        store.setUploadProgress(0, file.size);
+
+        const abortController = new AbortController();
+        abortControllerRef.current = abortController;
+        await uploadSegment({
+          uri: file.uri,
+          meetingId: store.meetingId,
+          signal: abortController.signal,
+          onProgress: (loaded, total) => {
+            store.setUploadProgress(loaded, total);
+          },
+        });
+
+        store.setStatus("uploaded");
+      } catch (error) {
+        if (error instanceof AbortError) {
+          store.setFile(null);
+          store.setUploadProgress(0, 0);
+          store.setStatus("selecting");
+        } else if (error instanceof FileValidationError) {
+          store.setError(error.message);
+        } else if (error instanceof Error) {
+          store.setError(error.message || "Upload failed. Please try again.");
+          store.setStatus("selecting");
+        }
+        console.error("Failed to add file:", error);
+      }
+    },
+    [store, uploadSegment, deleteRecordings],
+  );
+
+  const removeFile = useCallback(() => {
+    try {
+      if (!store.meetingId) {
+        throw new Error("meetingId is required");
+      }
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+
+      store.setFile(null);
+      store.setUploadProgress(0, 0);
+      store.setStatus("selecting");
+    } catch (error) {
+      if (error instanceof Error) {
+        store.setError(error.message || "Removing failed. Please try again.");
+      }
+      console.error("Failed to remove file:", error);
+    }
+  }, [store]);
+
+  const confirmUpload = useCallback(async () => {
+    try {
+      if (!store.meetingId || !store.personId) {
+        throw new Error("meetingId and personId are required");
+      }
+      await endMeetingMutation.mutateAsync({
+        meetingId: store.meetingId,
+        personId: store.personId,
+      });
+      store.setStatus("completed");
+    } catch (error) {
+      store.setStatus("confirming-error");
+      console.error("Failed to confirm uploading:", error);
+    }
+  }, [store, endMeetingMutation]);
+
+  const discardUpload = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    try {
+      if (!store.meetingId || !store.personId) {
+        throw new Error("meetingId and personId are required");
+      }
+      await discardMeetingMutation.mutateAsync({
+        meetingId: store.meetingId,
+        personId: store.personId,
+      });
+      store.reset();
+    } catch (error) {
+      console.error("Failed to discard meeting:", error);
+    }
+  }, [store, discardMeetingMutation]);
+
+  const continueUpload = useCallback(() => {
+    store.setStatus("uploading");
+  }, [store]);
+
+  const retryUpload = useCallback(async () => {
+    if (store.status !== "confirming-error") return;
+
+    try {
+      await confirmUpload();
+    } catch (error) {
+      console.error("Failed to retry uploading:", error);
+    }
+  }, [store, confirmUpload]);
+
+  const requestCancel = useCallback(() => {
+    store.setStatus("cancelling");
+  }, [store]);
+
+  const closeModal = useCallback(() => {
+    store.reset();
+  }, [store]);
+
+  return {
+    addFile,
+    removeFile,
+
+    confirmUpload,
+    discardUpload,
+    continueUpload,
+    retryUpload,
+
+    requestCancel,
+
+    closeModal,
+  };
+}

@@ -15,16 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export class AbortError extends Error {
-  constructor(message?: string) {
-    super(message ?? "Aborted");
-    this.name = "AbortError";
-  }
-}
+export type AudioUploadStatus =
+  | "idle"
+  | "selecting"
+  | "uploading"
+  | "uploaded"
+  | "confirming-error"
+  | "completed"
+  | "cancelling";
 
-export class FileValidationError extends Error {
-  constructor(message?: string) {
-    super(message ?? "File validation error");
-    this.name = "FileValidationError";
-  }
-}
+export type RawFileInfo = {
+  uri: string;
+  name: string;
+  mimeType?: string;
+  size?: number;
+};
+
+export type FileInfo = {
+  uri: string;
+  name: string;
+  mimeType: string;
+  size: number;
+};
