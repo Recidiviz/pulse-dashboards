@@ -26,6 +26,15 @@ import { verifyAuth0Token } from "~server-setup-plugin";
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
+const APP_METADATA_KEY =
+  "https://dashboard.recidiviz.org/app_metadata" as const;
+
+type Auth0User = {
+  [APP_METADATA_KEY]: {
+    stateCode: string;
+    allowedStates?: string[];
+  };
+};
 
 export async function createContext(opts: CreateFastifyContextOptions) {
   const { req, res } = opts;
@@ -50,6 +59,20 @@ export async function createContext(opts: CreateFastifyContextOptions) {
   }
 
   const authPayload = await verifyAuth0Token(opts);
+
+  if (authPayload) {
+    const auth0User = authPayload as Auth0User;
+    const userStateLower = auth0User[APP_METADATA_KEY]?.stateCode;
+    const userState = userStateLower?.toUpperCase();
+    const isRecidivizUser = userState === "RECIDIVIZ";
+
+    if (!isRecidivizUser && userState !== stateCode) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: `User with state code ${userState} cannot request data about state: ${stateCode}`,
+      });
+    }
+  }
 
   return {
     req,

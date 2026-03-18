@@ -15,12 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import { TRPCError } from "@trpc/server";
+import {
+  fastifyTRPCPlugin,
+  FastifyTRPCPluginOptions,
+} from "@trpc/server/adapters/fastify";
+import Fastify from "fastify";
+import type { FastifyInstance } from "fastify/types/instance";
+import fastifyAuth0Verify from "fastify-auth0-verify";
 import superjson from "superjson";
-import { describe, expect, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { AppRouter } from "~@sentencing/trpc/router";
+import { createContext } from "~@sentencing/trpc/context";
+import { AppRouter, appRouter } from "~@sentencing/trpc/router";
 import { testHost, testPort } from "~@sentencing/trpc/test/setup";
 import { fakeCase } from "~@sentencing/trpc/test/setup/seed";
 
@@ -115,5 +123,73 @@ describe("init trpc", () => {
         }),
       );
     });
+  });
+});
+
+describe("stateCode JWT claim validation", () => {
+  let mismatchServer: FastifyInstance;
+  let mismatchClient: TRPCClient<AppRouter>;
+  const mismatchPort = testPort + 10;
+
+  beforeAll(async () => {
+    mismatchServer = Fastify({ logger: false });
+    mismatchServer.register(fastifyTRPCPlugin, {
+      prefix: "",
+      trpcOptions: {
+        router: appRouter,
+        createContext,
+        onError({ path, error }) {
+          console.error(`Error in tRPC handler on path '${path}':`, error);
+        },
+      } satisfies FastifyTRPCPluginOptions<typeof appRouter>["trpcOptions"],
+    });
+    mismatchServer.register(fastifyAuth0Verify, {
+      domain: "domain",
+      audience: "audience",
+    });
+    // JWT stateCode (us_ne) does not match the request StateCode header (US_ID)
+    mismatchServer.addHook("preHandler", (req, _reply, done) => {
+      req.jwtVerify = async () => {
+        return;
+      };
+      req.user = {
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "us_ne",
+          allowedStates: [],
+        },
+        "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
+      };
+      done();
+    });
+    await mismatchServer.listen({ port: mismatchPort, host: testHost });
+
+    mismatchClient = createTRPCClient<AppRouter>({
+      links: [
+        httpBatchLink({
+          url: `http://${testHost}:${mismatchPort}`,
+          headers() {
+            return {
+              Authorization: "Bearer test-token",
+              StateCode: "US_ID",
+            };
+          },
+          transformer: superjson,
+        }),
+      ],
+    });
+  });
+
+  afterAll(() => mismatchServer.close());
+
+  test("should throw FORBIDDEN when JWT stateCode does not match header stateCode", async () => {
+    await expect(() =>
+      mismatchClient.case.getCase.query({ id: fakeCase.id }),
+    ).rejects.toThrowError(
+      new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "User with state code US_NE cannot request data about state: US_ID",
+      }),
+    );
   });
 });
