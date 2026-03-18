@@ -70,8 +70,8 @@ export const FormUsTnDiagnosticClassification2026 = observer(
           `${resident.displayName} - Diagnostic Classification Form.docx`,
           dcafTemplate,
           {
-            ...formTemplateData,
             ...getCoverSheetTemplateArgs(resident, formData),
+            ...formTemplateData,
           },
         ],
       ];

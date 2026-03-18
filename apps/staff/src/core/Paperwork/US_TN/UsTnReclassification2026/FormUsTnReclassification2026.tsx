@@ -79,8 +79,8 @@ export const FormUsTnReclassification2026 = observer(
           `${resident.displayName} - Reclassification Form.docx`,
           rcafTemplate,
           {
-            ...formTemplateData,
             ...getCoverSheetTemplateArgs(resident, formData),
+            ...formTemplateData,
           },
         ],
       ];

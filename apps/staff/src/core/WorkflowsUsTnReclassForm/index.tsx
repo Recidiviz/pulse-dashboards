@@ -69,8 +69,8 @@ const WorkflowsUsTnReclassForm = ({
     // we are not mutating any observables here, just telling Mobx not to track this access
     runInAction(() => {
       contents = {
-        ...toJS(derivedData),
         ...getCoverSheetTemplateArgs(resident, form.formData),
+        ...toJS(derivedData),
       };
     });
 

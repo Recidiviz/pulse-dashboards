@@ -199,17 +199,15 @@ export function getCoverSheetTemplateArgs(
       "denialReasons",
     ] as const
   ).forEach((multiLineField) => {
+    const outputField = `${multiLineField}OneLine`;
     if (formData[multiLineField]) {
-      formContents[multiLineField] = formData[multiLineField].replace(
-        /\n/g,
-        "; ",
-      );
+      formContents[outputField] = formData[multiLineField].replace(/\n/g, "; ");
     } else {
       if (multiLineField === "denialReasons") {
-        formContents["denialReasons"] =
+        formContents[outputField] =
           "_________________________________________________________________________________________";
       } else {
-        formContents[multiLineField] = "\t";
+        formContents[outputField] = "\t";
       }
     }
   });
