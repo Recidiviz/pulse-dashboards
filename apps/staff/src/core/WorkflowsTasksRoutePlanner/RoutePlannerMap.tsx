@@ -423,7 +423,9 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
         </DescriptionContainer>
         <DisclaimerContainer>
           <Icon kind={IconSVG.WarningCircle} width={20} />
-          <DisclaimerText>Estimates don't reflect live traffic</DisclaimerText>
+          <DisclaimerText>
+            Estimates may not reflect live traffic
+          </DisclaimerText>
         </DisclaimerContainer>
       </RouteDescriptionBox>
       {isMobile && <SwitchToClientViewButton presenter={presenter} />}
