@@ -1,4 +1,4 @@
-import pickle
+import json as json_module
 import time
 from asyncio import Lock
 from datetime import datetime, timezone
@@ -73,7 +73,7 @@ async def _get_cached_auth0_userinfo(token: str) -> dict | None:
         cached_data = await redis_client.get(cache_key)
         if cached_data:
             logger.info("Cache hit for Auth0 userinfo")
-            return pickle.loads(cached_data)
+            return json_module.loads(cached_data)
     except Exception as e:
         logger.error(f"Error retrieving cached Auth0 userinfo: {str(e)}")
 
@@ -91,7 +91,7 @@ async def _cache_auth0_userinfo(token: str, userinfo: dict) -> None:
     cache_key = f"auth0_userinfo:{hash(token)}"
 
     try:
-        await redis_client.setex(cache_key, AUTH_CACHE_TTL, pickle.dumps(userinfo))
+        await redis_client.setex(cache_key, AUTH_CACHE_TTL, json_module.dumps(userinfo))
         logger.info("Cached Auth0 userinfo")
     except Exception as e:
         logger.error(f"Error caching Auth0 userinfo: {str(e)}")
@@ -115,7 +115,7 @@ async def _get_cached_auth0_user_metadata(sub: str, token: str) -> dict | None:
         cached_data = await redis_client.get(cache_key)
         if cached_data:
             logger.info(f"Cache hit for Auth0 user metadata for sub: {sub}")
-            return pickle.loads(cached_data)
+            return json_module.loads(cached_data)
     except Exception as e:
         logger.error(f"Error retrieving cached Auth0 user metadata: {str(e)}")
 
@@ -134,7 +134,7 @@ async def _cache_auth0_user_metadata(sub: str, token: str, metadata: dict) -> No
     cache_key = f"auth0_metadata:{sub}:{hash(token)}"
 
     try:
-        await redis_client.setex(cache_key, AUTH_CACHE_TTL, pickle.dumps(metadata))
+        await redis_client.setex(cache_key, AUTH_CACHE_TTL, json_module.dumps(metadata))
         logger.info(f"Cached Auth0 user metadata for sub: {sub}")
     except Exception as e:
         logger.error(f"Error caching Auth0 user metadata: {str(e)}")
