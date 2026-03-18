@@ -19,14 +19,19 @@
 
 import React from "react";
 
+import {
+  getIntakeTenantConfig,
+  navigateAfterIntake,
+} from "../../configs/tenantConfig";
+import { useSocket } from "../../websockets/IntakeSocketContext";
+
 const IntakeCompleted: React.FC = () => {
+  const { intakeContext } = useSocket();
+  const tenantConfig = getIntakeTenantConfig(intakeContext.client_state);
+
   const handleBack = () => {
     sessionStorage.removeItem("intake_token");
-    if (window.location.pathname.split("/")[1] === "nebraska") {
-      window.history.back();
-    } else {
-      window.location.href = "/assessment";
-    }
+    navigateAfterIntake(tenantConfig);
   };
 
   return (

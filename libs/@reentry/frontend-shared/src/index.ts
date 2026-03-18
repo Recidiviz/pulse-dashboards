@@ -31,6 +31,8 @@ export * from "./components/intake/ChatInterface/TTSButton";
 export * from "./components/intake/IntakeRouter";
 export * from "./components/modals/BaseModal";
 export * from "./components/QueryProvider/QueryProvider";
+export * from "./configs/tenantConfig";
+export * from "./configs/types";
 export * from "./constants";
 export * from "./contexts/ApplicationContext";
 export * from "./hooks/tts/useGoogleTTS";

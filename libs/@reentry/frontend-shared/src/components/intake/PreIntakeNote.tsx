@@ -19,26 +19,22 @@
 
 import { useRef, useState } from "react";
 
+import type {
+  IntakeTenantConfig,
+  VideoIntakeConfig,
+} from "../../configs/types";
+
 interface PreIntakeNoteOneProps {
   onContinue: () => void;
+  tenantConfig: IntakeTenantConfig;
 }
 
-const copyFirstParagraph = `
-This intake is designed to help your case manager and parole officer
-learn more about your reentry goals, plans, and needs. This helps
-them understand the best ways to support you as you transition back
-into the community.
-`;
+const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({
+  onContinue,
+  tenantConfig,
+}) => {
+  const { title, paragraphs } = tenantConfig.noteOneCopy;
 
-const copySecondParagraph = `
-Please provide honest and complete answers to make this process as
-effective as possible. This program will then draft a personalized
-reentry action plan for you. If you’d prefer to skip this digital
-intake and answer questions with your case manager directly,
-stop here and let your case manager know.
-`;
-
-const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
   const handleGoBack = () => {
     window.history.back();
   };
@@ -49,15 +45,15 @@ const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
         <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg w-full md:max-w-[714px] h-[684px] px-6 md:px-[48px] pt-[56px] pb-[40px] flex flex-col justify-between">
           <div>
             <h1 className="font-['Libre_Baskerville'] font-normal text-[32px] leading-[40px] tracking-[-0.04em] text-black text-center">
-              Your Community Intake
+              {title}
             </h1>
           </div>
 
           <div className="flex-1 flex items-center justify-center">
             <div className="space-y-6 text-black text-center font-['Public_Sans'] text-[18px] leading-[1.2] tracking-[-0.02em] max-w-[520px] mx-auto">
-              <p>{copyFirstParagraph}</p>
-
-              <p>{copySecondParagraph}</p>
+              {paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
           </div>
 
@@ -95,88 +91,48 @@ const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
 interface PreIntakeNoteTwoProps {
   onGoBack: () => void;
   onStartIntake: () => void;
+  tenantConfig: IntakeTenantConfig;
 }
 
 const PreIntakeNoteTwo: React.FC<PreIntakeNoteTwoProps> = ({
   onGoBack,
   onStartIntake,
+  tenantConfig,
 }) => {
+  const { title, faqItems, importantItems } = tenantConfig.noteTwoCopy;
+
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-[3vh]">
       <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-sm w-full md:max-w-[714px] px-6 md:px-[48px] pt-[36px] pb-[28px] flex flex-col justify-between">
         <h1 className="text-center font-serif text-4xl font-normal text-black mb-10 tracking-tight">
-          Before You Start
+          {title}
         </h1>
 
         <div className="text-black text-base leading-relaxed space-y-8 flex-1">
-          <div>
-            <h3 className="font-['Public_Sans'] font-bold text-[14px] leading-[24px] tracking-[-0.01em] text-black">
-              Who will I be chatting with?
-            </h3>
-            <p className="font-['Public_Sans'] font-medium text-[14px] leading-[24px] tracking-[-0.01em] text-black">
-              In this intake, you will be interacting with a chatbot, not a live
-              person.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-['Public_Sans'] font-bold text-[14px] leading-[24px] tracking-[-0.01em] text-black">
-              What will this intake cover?
-            </h3>
-            <p className="font-['Public_Sans'] font-medium text-[14px] leading-[24px] tracking-[-0.01em] text-black">
-              This intake will cover topics related to education, employment,
-              criminal history, finances, family and marital details, housing,
-              leisure and recreation, and alcohol and drugs.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-['Public_Sans'] font-bold text-[14px] leading-[24px] tracking-[-0.01em] text-black">
-              Who will see my responses?
-            </h3>
-            <p className="font-['Public_Sans'] font-medium text-[14px] leading-[24px] tracking-[-0.01em] text-black">
-              Your responses to this intake will be visible to your case manager
-              and to your supervision officer after release.
-            </p>
-          </div>
+          {faqItems.map((item) => (
+            <div key={item.question}>
+              <h3 className="font-['Public_Sans'] font-bold text-[14px] leading-[24px] tracking-[-0.01em] text-black">
+                {item.question}
+              </h3>
+              <p className="font-['Public_Sans'] font-medium text-[14px] leading-[24px] tracking-[-0.01em] text-black">
+                {item.answer}
+              </p>
+            </div>
+          ))}
 
           <div>
             <h3 className="font-['Public_Sans'] font-bold text-[14px] leading-[24px] tracking-[-0.01em] text-black mb-2">
               Important things to know:
             </h3>
             <ul className="space-y-1 font-['Public_Sans'] text-[14px] leading-[24px] tracking-[-0.01em] text-black list-disc">
-              <li className="flex items-start gap-3">
-                <span className="mt-2 w-1 h-1 rounded-full bg-black flex-shrink-0" />
-                <p>
-                  <span className="font-bold">Time:</span> This intake will take
-                  approximately 45 minutes to complete.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-2 w-1 h-1 rounded-full bg-black flex-shrink-0" />
-                <p>
-                  <span className="font-bold">Pace:</span> Some questions might
-                  require careful thought. Feel free to pause and reflect as
-                  much as you need.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-2 w-1 h-1 rounded-full bg-black flex-shrink-0" />
-                <p>
-                  <span className="font-bold">Pausing and continuing:</span>{" "}
-                  Your progress is automatically saved, so you can leave the
-                  intake chat and return later if you need to pause and resume
-                  later.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-2 w-1 h-1 rounded-full bg-black flex-shrink-0" />
-                <p>
-                  <span className="font-bold">Deadline:</span> This intake
-                  should be completed before your re-entry to help develop a
-                  plan. The sooner you can finish it, the better.
-                </p>
-              </li>
+              {importantItems.map((item) => (
+                <li key={item.label} className="flex items-start gap-3">
+                  <span className="mt-2 w-1 h-1 rounded-full bg-black flex-shrink-0" />
+                  <p>
+                    <span className="font-bold">{item.label}</span> {item.text}
+                  </p>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -213,9 +169,13 @@ const PreIntakeNoteTwo: React.FC<PreIntakeNoteTwoProps> = ({
 
 interface PreIntakeVideoProps {
   onStartIntake: () => void;
+  tenantConfig: VideoIntakeConfig;
 }
 
-const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
+const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({
+  onStartIntake,
+  tenantConfig,
+}) => {
   const handleGoBack = () => {
     sessionStorage.removeItem("intake_token");
     window.location.reload();
@@ -237,7 +197,7 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
 
           <div className="flex-1 flex flex-col items-center justify-center space-y-8">
             <div className="text-black text-center font-['Public_Sans'] text-[18px] leading-[1.2] tracking-[-0.02em] max-w-[520px] mx-auto">
-              <p>{copyFirstParagraph}</p>
+              <p>{tenantConfig.preIntakeCopy}</p>
             </div>
 
             {/* Video Placeholder */}
@@ -252,9 +212,9 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
                 controlsList="noplaybackrate noremoteplayback nodownload nopictureinpicture noseekbar"
                 onEnded={() => setHasWatchedFullVideo(true)}
               >
-                <source src="/videos/intake-video.mp4" type="video/mp4" />
+                <source src={tenantConfig.video.src} type="video/mp4" />
                 <track
-                  src="/videos/intake-subtitles.vtt"
+                  src={tenantConfig.video.subtitlesSrc}
                   kind="subtitles"
                   srcLang="en"
                   label="English"

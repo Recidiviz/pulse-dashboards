@@ -1,0 +1,185 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import {
+  DEFAULT_INTAKE_CONFIG,
+  getIntakeTenantConfig,
+  navigateAfterIntake,
+} from "../../src/configs/tenantConfig";
+
+describe("getIntakeTenantConfig", () => {
+  it("returns default config for null", () => {
+    expect(getIntakeTenantConfig(null)).toEqual(DEFAULT_INTAKE_CONFIG);
+  });
+
+  it("returns default config for undefined", () => {
+    expect(getIntakeTenantConfig(undefined)).toEqual(DEFAULT_INTAKE_CONFIG);
+  });
+
+  it("returns default config for empty string", () => {
+    expect(getIntakeTenantConfig("")).toEqual(DEFAULT_INTAKE_CONFIG);
+  });
+
+  it("returns default config for unknown state", () => {
+    expect(getIntakeTenantConfig("US_XX")).toEqual(DEFAULT_INTAKE_CONFIG);
+  });
+
+  it("default config uses text flow with no video property", () => {
+    expect(DEFAULT_INTAKE_CONFIG.preIntakeFlow).toBe("text");
+    expect("video" in DEFAULT_INTAKE_CONFIG).toBe(false);
+  });
+
+  it("default config uses redirect navigation", () => {
+    expect(DEFAULT_INTAKE_CONFIG.navigation).toEqual({
+      type: "redirect",
+      url: "/assessment",
+    });
+  });
+
+  it("default config has noteOneCopy with title and paragraphs", () => {
+    expect(DEFAULT_INTAKE_CONFIG.noteOneCopy.title).toBe(
+      "Your Community Intake",
+    );
+    expect(DEFAULT_INTAKE_CONFIG.noteOneCopy.paragraphs).toHaveLength(2);
+  });
+
+  it("default config has noteTwoCopy with faqItems and importantItems", () => {
+    expect(DEFAULT_INTAKE_CONFIG.noteTwoCopy.title).toBe("Before You Start");
+    expect(DEFAULT_INTAKE_CONFIG.noteTwoCopy.faqItems).toHaveLength(3);
+    expect(DEFAULT_INTAKE_CONFIG.noteTwoCopy.importantItems).toHaveLength(4);
+  });
+
+  describe("US_UT overrides", () => {
+    it("returns video flow", () => {
+      const config = getIntakeTenantConfig("US_UT");
+      expect(config.preIntakeFlow).toBe("video");
+    });
+
+    it("returns custom DOC ID label", () => {
+      const config = getIntakeTenantConfig("US_UT");
+      expect(config.docId.label).toBe("DOC ID / Offender Number");
+      expect(config.docId.placeholder).toBe("Enter DOC ID / Offender Number");
+    });
+
+    it("uses default video src when no video override provided", () => {
+      const config = getIntakeTenantConfig("US_UT");
+      if (config.preIntakeFlow !== "video") {
+        throw new Error("Expected video config for US_UT");
+      }
+      expect(config.video).toEqual({
+        src: "/videos/intake-video.mp4",
+        subtitlesSrc: "/videos/intake-subtitles.vtt",
+      });
+    });
+
+    it("keeps default navigation (no override)", () => {
+      const config = getIntakeTenantConfig("US_UT");
+      expect(config.navigation).toEqual(DEFAULT_INTAKE_CONFIG.navigation);
+    });
+
+    it("keeps default preIntakeCopy (no override)", () => {
+      const config = getIntakeTenantConfig("US_UT");
+      expect(config.preIntakeCopy).toBe(DEFAULT_INTAKE_CONFIG.preIntakeCopy);
+    });
+
+    it("keeps default noteOneCopy and noteTwoCopy (no override)", () => {
+      const config = getIntakeTenantConfig("US_UT");
+      expect(config.noteOneCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteOneCopy);
+      expect(config.noteTwoCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteTwoCopy);
+    });
+  });
+
+  describe("US_NE overrides", () => {
+    it("returns video flow", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.preIntakeFlow).toBe("video");
+    });
+
+    it("returns custom video src", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      if (config.preIntakeFlow !== "video") {
+        throw new Error("Expected video config for US_NE");
+      }
+      expect(config.video.src).toBe("/videos/nebraska-intake-video.mp4");
+      expect(config.video.subtitlesSrc).toBe(
+        "/videos/nebraska-intake-subtitles.vtt",
+      );
+    });
+
+    it("returns custom preIntakeCopy", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.preIntakeCopy).toContain("institutional parole officer");
+    });
+
+    it("returns history-back navigation", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.navigation).toEqual({ type: "history-back" });
+    });
+
+    it("keeps default DOC ID label (no override)", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.docId).toEqual(DEFAULT_INTAKE_CONFIG.docId);
+    });
+
+    it("keeps default noteOneCopy and noteTwoCopy (no override)", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.noteOneCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteOneCopy);
+      expect(config.noteTwoCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteTwoCopy);
+    });
+  });
+});
+
+describe("navigateAfterIntake", () => {
+  const originalWindow = globalThis.window;
+
+  beforeEach(() => {
+    // Provide a minimal window mock for node environment
+    globalThis.window = {
+      history: { back: vi.fn() },
+      location: { href: "" },
+    } as unknown as Window & typeof globalThis;
+  });
+
+  afterEach(() => {
+    globalThis.window = originalWindow;
+    vi.restoreAllMocks();
+  });
+
+  it("calls window.history.back() for history-back navigation", () => {
+    const config = {
+      ...DEFAULT_INTAKE_CONFIG,
+      navigation: { type: "history-back" as const },
+    };
+
+    navigateAfterIntake(config);
+
+    expect(window.history.back).toHaveBeenCalledOnce();
+  });
+
+  it("sets window.location.href for redirect navigation", () => {
+    const config = {
+      ...DEFAULT_INTAKE_CONFIG,
+      navigation: { type: "redirect" as const, url: "/assessment" },
+    };
+
+    navigateAfterIntake(config);
+
+    expect(window.location.href).toBe("/assessment");
+  });
+});

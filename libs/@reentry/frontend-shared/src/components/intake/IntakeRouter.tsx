@@ -19,6 +19,7 @@
 
 import { useEffect, useState } from "react";
 
+import { getIntakeTenantConfig } from "../../configs/tenantConfig";
 import { useSocket } from "../../websockets/IntakeSocketContext";
 import AddressForm from "./AddressForm";
 import { ChatHeader } from "./ChatInterface/ChatHeader";
@@ -43,7 +44,7 @@ export function IntakeRouter() {
     intakeId,
   } = intakeContext;
   const { startConversation } = intakeDispatchContext;
-  const isFromUtah = intakeContext.client_state === "US_UT";
+  const tenantConfig = getIntakeTenantConfig(intakeContext.client_state);
   const [preIntakeStep, setPreIntakeStep] = useState<"one" | "two">(() => {
     if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem("preIntakeStep");
@@ -139,18 +140,25 @@ export function IntakeRouter() {
             intakeId={intakeId}
           />
         )}
-        {isFromUtah && isPreIntake ? (
-          <PreIntakeVideo onStartIntake={handleStartConversation} />
+        {tenantConfig.preIntakeFlow === "video" && isPreIntake ? (
+          <PreIntakeVideo
+            onStartIntake={handleStartConversation}
+            tenantConfig={tenantConfig}
+          />
         ) : (
           <>
             {isPreIntake && preIntakeStep === "one" && (
-              <PreIntakeNoteOne onContinue={() => setPreIntakeStep("two")} />
+              <PreIntakeNoteOne
+                onContinue={() => setPreIntakeStep("two")}
+                tenantConfig={tenantConfig}
+              />
             )}
 
             {isPreIntake && preIntakeStep === "two" && (
               <PreIntakeNoteTwo
                 onGoBack={() => setPreIntakeStep("one")}
                 onStartIntake={handleStartConversation}
+                tenantConfig={tenantConfig}
               />
             )}
           </>

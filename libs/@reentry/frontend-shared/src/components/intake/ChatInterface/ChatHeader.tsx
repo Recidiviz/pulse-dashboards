@@ -21,6 +21,10 @@ import { Box, Typography } from "@mui/material";
 import type React from "react";
 import { useState } from "react";
 
+import {
+  getIntakeTenantConfig,
+  navigateAfterIntake,
+} from "../../../configs/tenantConfig";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import { PrimaryButton } from "../../buttons/PrimaryButton";
 import { EndChatModal } from "../EndChatModal";
@@ -34,17 +38,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   isConversationInProgress = false,
 }: ChatHeaderProps) => {
   const [isEndChatModalOpen, setIsEndChatModalOpen] = useState(false);
-  const onConfirmEndChat = () => {
-    sessionStorage.removeItem("intake_token");
-    sessionStorage.removeItem("preIntakeStep");
-    sessionStorage.removeItem("client_pseudo_id");
-    sessionStorage.removeItem("conversationStarted");
-    if (window.location.pathname.split("/")[1] === "nebraska") {
-      window.history.back();
-    } else {
-      window.location.href = "/assessment";
-    }
-  };
 
   const {
     intakeContext: {
@@ -53,8 +46,18 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       allSections,
       conversationStarted,
       currentSection,
+      client_state,
     },
   } = useSocket();
+  const tenantConfig = getIntakeTenantConfig(client_state);
+
+  const onConfirmEndChat = () => {
+    sessionStorage.removeItem("intake_token");
+    sessionStorage.removeItem("preIntakeStep");
+    sessionStorage.removeItem("client_pseudo_id");
+    sessionStorage.removeItem("conversationStarted");
+    navigateAfterIntake(tenantConfig);
+  };
   const totalSections = allSections?.length ?? 0;
   const completedSections =
     allSections?.filter((section) => section.status === "completed").length ??

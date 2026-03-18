@@ -20,6 +20,7 @@
 import type React from "react";
 import { useState } from "react";
 
+import { getIntakeTenantConfig } from "../../../configs/tenantConfig";
 import { getStateLabel } from "../../../constants/states";
 import { useApplicationContext } from "../../../contexts/ApplicationContext";
 import { getUserFacingErrorMessage } from "../../../utils/errors";
@@ -49,6 +50,7 @@ export function AssessmentLoginPage({
   const [docId, setDocId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const tenantConfig = getIntakeTenantConfig(stateCode);
   //const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   // Fetch available state codes from the backend
@@ -250,7 +252,7 @@ export function AssessmentLoginPage({
                   "Before you proceed, please confirm your name and birthdate.",
                 "dob+token":
                   "Before you proceed, please confirm your full name and birthdate.",
-                "state+docid": `Before you proceed, please select your state and enter your ${stateCode === "US_UT" ? "DOC ID / Offender Number" : "DOC ID"}.`,
+                "state+docid": `Before you proceed, please select your state and enter your ${tenantConfig.docId.label}.`,
               }[mode]
             }
           </p>
@@ -333,18 +335,12 @@ export function AssessmentLoginPage({
                   htmlFor="doc-id-input"
                   className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
                 >
-                  {stateCode === "US_UT"
-                    ? "DOC ID / Offender Number"
-                    : "DOC ID"}
+                  {tenantConfig.docId.label}
                 </label>
                 <input
                   id="doc-id-input"
                   type="text"
-                  placeholder={
-                    stateCode === "US_UT"
-                      ? "Enter DOC ID / Offender Number"
-                      : "Enter DOC ID"
-                  }
+                  placeholder={tenantConfig.docId.placeholder}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start placeholder:text-gray-500"
                   value={docId}
                   onChange={(e) => setDocId(e.target.value)}
