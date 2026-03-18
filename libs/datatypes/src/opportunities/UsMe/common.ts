@@ -37,7 +37,7 @@ export const noABViolation90DaysSchema = {
     usMeNoClassAOrBViolationFor90Days: z.object({
       eligibleDate: dateStringSchema.nullable(),
       highestClassViol: z.string(),
-      violType: z.string(),
+      violType: z.string().nullable(),
     }),
   },
 };
