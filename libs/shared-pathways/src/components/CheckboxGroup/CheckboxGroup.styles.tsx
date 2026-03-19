@@ -125,6 +125,28 @@ export const CheckboxGroupGrid = styled.div`
   gap: 0.25rem 1rem;
 `;
 
+export const ShowMoreButton = styled.button`
+  ${typography.Sans14}
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 1rem;
+  outline: none;
+
+  &:hover {
+    text-decoration: underline;
+    color: ${({ theme }) =>
+      theme.checkbox?.checkedColor ?? palette.signal.links};
+  }
+
+  &:focus-visible {
+    outline: 2px solid
+      ${({ theme }) => theme.checkbox?.checkedColor ?? palette.signal.links};
+    outline-offset: 2px;
+  }
+`;
+
 export const SelectAllContainer = styled.div`
   display: flex;
   align-items: center;

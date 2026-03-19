@@ -30,6 +30,7 @@ import {
 type PathwaysDropdownFilterProps = {
   label: string;
   options: FilterOption[];
+  defaultValue?: string;
   selectedValue: string;
   onChange: (value: string) => void;
 };
@@ -37,17 +38,25 @@ type PathwaysDropdownFilterProps = {
 const PathwaysDropdownFilter: React.FC<PathwaysDropdownFilterProps> = ({
   label,
   options,
+  defaultValue,
   selectedValue,
   onChange,
 }) => {
   const selectedLabel =
     options.find((o) => o.value === selectedValue)?.label ?? options[0]?.label;
+  const hasNonDefaultSelection =
+    defaultValue != null && selectedValue !== defaultValue;
 
   return (
     <>
       <DropdownLabel>{label}</DropdownLabel>
       <FilterDropdownWrapper>
-        <FilterDropdownToggle kind="secondary" shape="pill" showCaret>
+        <FilterDropdownToggle
+          kind="secondary"
+          shape="pill"
+          showCaret
+          $hasNonDefaultSelection={hasNonDefaultSelection}
+        >
           {selectedLabel}
         </FilterDropdownToggle>
         <FilterDropdownMenu alignment="left" ariaLabel={label}>

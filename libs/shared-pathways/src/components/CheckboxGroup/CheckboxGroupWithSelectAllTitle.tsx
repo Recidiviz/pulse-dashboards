@@ -72,6 +72,7 @@ const CheckboxGroupWithSelectAllTitle: React.FC<
         filter={filter}
         selectedOptions={selectedOptions}
         onChange={onChange}
+        collapsible
       />
     </div>
   );

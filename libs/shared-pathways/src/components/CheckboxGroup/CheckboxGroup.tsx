@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useCallback, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   DefaultOffenseTypeOrder,
@@ -25,21 +31,28 @@ import {
   sortByLabel,
 } from "../../";
 import Checkbox from "./Checkbox";
-import { CheckboxGroupGrid } from "./CheckboxGroup.styles";
+import { CheckboxGroupGrid, ShowMoreButton } from "./CheckboxGroup.styles";
+
+const COLLAPSED_ROWS = 2;
 
 type CheckboxGroupProps = {
   filter: PopulationFilter;
   selectedOptions: FilterOption[];
   onChange: (options: FilterOption[], filterType: string) => void;
+  collapsible?: boolean;
 };
 
 const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
   filter,
   selectedOptions,
   onChange,
+  collapsible = false,
 }) => {
   const enabledOptions = filter.options.slice(1);
   const isOffenseType = filter.type === FILTER_TYPES.OFFENSE_TYPE;
+  const [expanded, setExpanded] = useState(false);
+  const [columnCount, setColumnCount] = useState<number | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const sortedOptions = useMemo(() => {
     const opts = [...enabledOptions];
@@ -73,19 +86,53 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
     [selectedOptions, enabledOptions, onChange, filter.type],
   );
 
+  // Measure column count from the grid after first render
+  useEffect(() => {
+    if (!collapsible) return;
+    const el = gridRef.current;
+    if (!el) return;
+    const columns = getComputedStyle(el)
+      .gridTemplateColumns.split(" ")
+      .filter(Boolean).length;
+    setColumnCount(columns);
+  }, [collapsible]);
+
+  const totalCount = sortedOptions.length;
+  const visibleCount =
+    collapsible && columnCount != null
+      ? COLLAPSED_ROWS * columnCount
+      : totalCount;
+  const needsCollapse = collapsible && totalCount > visibleCount;
+
+  const displayedOptions =
+    needsCollapse && !expanded
+      ? sortedOptions.slice(0, visibleCount)
+      : sortedOptions;
+
   return (
-    <CheckboxGroupGrid>
-      {sortedOptions.map((option) => (
-        <Checkbox
-          key={option.value}
-          value={option.value}
-          checked={selectedOptions.some((o) => o.value === option.value)}
-          onChange={() => handleChange(option)}
+    <>
+      <CheckboxGroupGrid ref={gridRef}>
+        {displayedOptions.map((option) => (
+          <Checkbox
+            key={option.value}
+            value={option.value}
+            checked={selectedOptions.some((o) => o.value === option.value)}
+            onChange={() => handleChange(option)}
+          >
+            {option.label}
+          </Checkbox>
+        ))}
+      </CheckboxGroupGrid>
+      {needsCollapse && (
+        <ShowMoreButton
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((prev) => !prev)}
         >
-          {option.label}
-        </Checkbox>
-      ))}
-    </CheckboxGroupGrid>
+          {expanded ? "Show less" : `Show all ${totalCount}`}
+        </ShowMoreButton>
+      )}
+    </>
   );
 };
 

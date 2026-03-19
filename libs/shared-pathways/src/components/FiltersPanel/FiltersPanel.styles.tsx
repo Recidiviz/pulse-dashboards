@@ -60,14 +60,21 @@ export const FilterDropdownWrapper = styled(Dropdown)`
   margin-bottom: 0.5rem;
 `;
 
-export const FilterDropdownToggle = styled(DropdownToggle)`
+export const FilterDropdownToggle = styled(DropdownToggle)<{
+  $hasNonDefaultSelection?: boolean;
+}>`
   ${({ theme }) => theme.typography.Sans16}
   width: 100%;
   padding: 8px 16px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid
+    ${({ $hasNonDefaultSelection, theme }) =>
+      $hasNonDefaultSelection
+        ? theme.palette.focusColor
+        : "rgba(0, 0, 0, 0.15)"};
   border-radius: 50px;
   background: white;
-  color: black;
+  color: ${({ $hasNonDefaultSelection, theme }) =>
+    $hasNonDefaultSelection ? theme.palette.focusColor : "black"};
   font-weight: 400;
   min-width: auto;
   min-height: auto;

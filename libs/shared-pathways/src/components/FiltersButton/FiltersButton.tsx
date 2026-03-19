@@ -40,6 +40,7 @@ const FiltersTrigger = styled(Button)`
     background-color 0.15s,
     border-color 0.15s,
     color 0.15s;
+  outline: none;
 
   &:hover,
   &:focus-visible {

@@ -130,6 +130,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
               <PathwaysDropdownFilter
                 label={dateInPopulationFilter.title}
                 options={dateInPopulationFilter.options}
+                defaultValue={dateInPopulationFilter.options[0]?.value}
                 selectedValue={getSelectedValue(
                   FILTER_TYPES.DATE_IN_POPULATION,
                 )}
