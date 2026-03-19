@@ -24,7 +24,7 @@ export const CheckboxContainer = styled.label`
   position: relative;
   padding-left: 1.5rem;
   min-height: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   user-select: none;
   cursor: pointer;
   color: ${({ theme }) => theme.checkbox?.labelColor ?? palette.pine1};

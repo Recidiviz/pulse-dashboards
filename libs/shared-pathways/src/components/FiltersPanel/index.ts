@@ -15,15 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./ChartNote";
-export * from "./CheckboxGroup";
-export * from "./FiltersButton";
-export * from "./FiltersPanel";
-export * from "./PathwaysModal";
-export * from "./PathwaysTheme";
-export * from "./PopulationSnapshotChart";
-export * from "./PopulationSnapshotTooltip";
-export * from "./PopulationTimeSeriesChart";
-export { default as VizPathways } from "./VizPathways";
-export * from "./VizPopulationOverTime";
-export * from "./VizPopulationSnapshot";
+export { default as FiltersPanel } from "./FiltersPanel";

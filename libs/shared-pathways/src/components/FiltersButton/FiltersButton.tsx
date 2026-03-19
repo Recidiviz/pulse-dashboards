@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 
 import { Button, Icon, IconSVG } from "~design-system";
 
-import PathwaysModal from "../PathwaysModal/PathwaysModal";
+import { FiltersStoreBase } from "../../FiltersStoreBase";
+import FiltersPanel from "../FiltersPanel/FiltersPanel";
 
 const FiltersTrigger = styled(Button)`
   gap: 6px;
@@ -61,17 +62,19 @@ const FiltersTrigger = styled(Button)`
 `;
 
 type FiltersButtonProps = {
-  children?: React.ReactNode;
+  filtersStore: FiltersStoreBase;
 };
 
-const FiltersButton: React.FC<FiltersButtonProps> = ({ children }) => {
+const FiltersButton: React.FC<FiltersButtonProps> = ({ filtersStore }) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsOpen(false);
-    buttonRef.current?.focus();
-  };
+    requestAnimationFrame(() => {
+      buttonRef.current?.focus();
+    });
+  }, []);
 
   return (
     <>
@@ -87,13 +90,11 @@ const FiltersButton: React.FC<FiltersButtonProps> = ({ children }) => {
         <Icon kind={IconSVG["FilterSliders"]} size={12} />
         Filters
       </FiltersTrigger>
-      <PathwaysModal
-        isShowing={isOpen}
-        hide={handleClose}
-        title="Select Filters"
-      >
-        {children}
-      </PathwaysModal>
+      <FiltersPanel
+        isOpen={isOpen}
+        onClose={handleClose}
+        filtersStore={filtersStore}
+      />
     </>
   );
 };

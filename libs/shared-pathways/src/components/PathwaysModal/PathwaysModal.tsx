@@ -80,7 +80,7 @@ const Header = styled.div`
   font-weight: ${({ theme }) => theme.modal.headerFontWeight};
   line-height: 1.2;
   color: ${({ theme }) => theme.modal.headerColor};
-  padding: 3rem 2.5rem 0;
+  padding: 3rem 2.5rem 1rem;
 
   @media screen and (max-width: ${MOBILE_BREAKPOINT}px) {
     padding: 2rem 1rem 0;
@@ -94,6 +94,7 @@ const CloseButton = styled.button`
   cursor: pointer;
   color: ${({ theme }) => theme.modal.closeButtonColor};
   margin-left: auto;
+  outline: none;
 
   &:focus-visible {
     color: ${({ theme }) => theme.modal.closeFocusColor};

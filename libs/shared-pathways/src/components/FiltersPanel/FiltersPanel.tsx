@@ -1,0 +1,127 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { get } from "mobx";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useState } from "react";
+
+import { getFilterOptions } from "../../filterOptions";
+import { FilterOption, PopulationFilters } from "../../filters";
+import { FiltersStoreBase } from "../../FiltersStoreBase";
+import CheckboxGroupWithSelectAllTitle from "../CheckboxGroup/CheckboxGroupWithSelectAllTitle";
+import PathwaysModal from "../PathwaysModal/PathwaysModal";
+import {
+  ApplyButton,
+  FilterSection,
+  FilterSectionContent,
+  ResetButton,
+} from "./FiltersPanel.styles";
+
+type FiltersPanelProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  filtersStore: FiltersStoreBase;
+};
+
+const FiltersPanel: React.FC<FiltersPanelProps> = observer(
+  function FiltersPanel({ isOpen, onClose, filtersStore }) {
+    const { filters, filterOptions } = filtersStore;
+    const enabledFilters = filtersStore.metric.filters.enabledFilters;
+
+    const [pendingFilters, setPendingFilters] = useState<
+      Record<string, string[]>
+    >({});
+
+    useEffect(() => {
+      if (!isOpen) {
+        setPendingFilters({});
+      }
+    }, [isOpen, enabledFilters]);
+
+    const multiSelectFilters = enabledFilters.filter(
+      (filterType) => !filterOptions[filterType]?.isSingleSelect,
+    );
+
+    const getSelectedOptions = (
+      filterType: keyof PopulationFilters,
+    ): FilterOption[] => {
+      const filter = filterOptions[filterType];
+      const pending = pendingFilters[filterType];
+      const currentValues = pending ?? (get(filters, filterType) as string[]);
+      // "ALL" means all options are selected — return all non-ALL options
+      if (currentValues.length === 1 && currentValues[0] === "ALL") {
+        return filter.options.slice(1);
+      }
+      return getFilterOptions(currentValues, filter.options);
+    };
+
+    const onUpdateFilters = (
+      newOptions: FilterOption[],
+      filterType: string,
+    ) => {
+      setPendingFilters({
+        ...pendingFilters,
+        [filterType]: newOptions.map((o) => o.value),
+      });
+    };
+
+    const onApply = () => {
+      filtersStore.setFilters(pendingFilters);
+      onClose();
+    };
+
+    const onReset = () => {
+      filtersStore.resetFilters();
+      onClose();
+    };
+
+    return (
+      <PathwaysModal
+        isShowing={isOpen}
+        hide={onClose}
+        title="Select Filters"
+        footer={
+          <>
+            <ResetButton type="button" onClick={onReset}>
+              Reset filters
+            </ResetButton>
+            <ApplyButton onClick={onApply}>Apply</ApplyButton>
+          </>
+        }
+      >
+        {multiSelectFilters.map((filterType) => {
+          const filter = filterOptions[filterType];
+          if (!filter) return null;
+
+          return (
+            <FilterSection key={filterType}>
+              <FilterSectionContent>
+                <CheckboxGroupWithSelectAllTitle
+                  filter={filter}
+                  selectedOptions={getSelectedOptions(filterType)}
+                  onChange={onUpdateFilters}
+                />
+              </FilterSectionContent>
+            </FilterSection>
+          );
+        })}
+      </PathwaysModal>
+    );
+  },
+);
+
+export default FiltersPanel;

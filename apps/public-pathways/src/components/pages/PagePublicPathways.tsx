@@ -76,6 +76,7 @@ const publicPathwaysTheme: PathwaysTheme = {
     closeButtonColor: "rgba(0, 0, 0, 0.60)",
     closeFocusColor: publicPathwaysPalette.focusColor,
     footerBorderColor: "rgba(0, 0, 0, 0.15)",
+    resetColor: "black",
   },
 };
 
@@ -113,7 +114,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
             onSectionSelect={(id) => rootStore.setSection(id)}
             accentColor={publicPathwaysPalette.signal.links}
           />
-          <FiltersButton />
+          <FiltersButton filtersStore={rootStore.filtersStore} />
         </NavigationRow>
         <MetricVizMapper metric={metricsStore.current} />
         <ChartNote note={metricsStore.current?.note} />

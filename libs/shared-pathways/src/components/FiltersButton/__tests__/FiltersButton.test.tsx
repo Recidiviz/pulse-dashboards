@@ -16,10 +16,45 @@
 // =============================================================================
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { observable } from "mobx";
 import { ThemeProvider } from "styled-components";
 
+import { PopulationFilter, PopulationFilters } from "../../../filters";
 import { defaultPathwaysTheme } from "../../PathwaysTheme";
 import FiltersButton from "../FiltersButton";
+
+const raceFilter: PopulationFilter = {
+  type: "race",
+  title: "Race",
+  options: [
+    { label: "All", value: "ALL" },
+    { label: "Black", value: "BLACK" },
+    { label: "White", value: "WHITE" },
+  ],
+  setFilters: vi.fn(),
+  defaultOption: { label: "All", value: "ALL" },
+  defaultValue: "ALL",
+};
+
+function createMockFiltersStore() {
+  const filters = observable({ race: ["ALL"] });
+  const filterOptions: PopulationFilters = {
+    race: raceFilter,
+  } as unknown as PopulationFilters;
+
+  return {
+    filters,
+    filterOptions,
+    metric: {
+      filters: { enabledFilters: ["race"] },
+      hydrationState: { status: "hydrated" },
+      dynamicFilterOptions: {},
+    },
+    setFilters: vi.fn(),
+    resetFilters: vi.fn(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any;
+}
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider theme={defaultPathwaysTheme}>{children}</ThemeProvider>
@@ -27,51 +62,51 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe("FiltersButton", () => {
   it("renders the Filters button", () => {
-    render(<FiltersButton />, { wrapper });
+    render(<FiltersButton filtersStore={createMockFiltersStore()} />, {
+      wrapper,
+    });
 
     expect(
       screen.getByRole("button", { name: /filters/i }),
     ).toBeInTheDocument();
   });
 
-  it("opens the modal on click", () => {
-    render(<FiltersButton />, { wrapper });
-
-    fireEvent.click(screen.getByRole("button", { name: /filters/i }));
-
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText("Select Filters")).toBeInTheDocument();
-  });
-
-  it("closes the modal when close button is clicked", async () => {
-    render(<FiltersButton />, { wrapper });
-
-    fireEvent.click(screen.getByRole("button", { name: /filters/i }));
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByLabelText("Close modal"));
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  it("has aria-haspopup dialog attribute", () => {
+    render(<FiltersButton filtersStore={createMockFiltersStore()} />, {
+      wrapper,
     });
+
+    const button = screen.getByRole("button", { name: /filters/i });
+    expect(button).toHaveAttribute("aria-haspopup", "dialog");
   });
 
-  it("toggles aria-expanded", () => {
-    render(<FiltersButton />, { wrapper });
+  it("opens the filters panel when clicked", () => {
+    render(<FiltersButton filtersStore={createMockFiltersStore()} />, {
+      wrapper,
+    });
 
     const button = screen.getByRole("button", { name: /filters/i });
     expect(button).toHaveAttribute("aria-expanded", "false");
 
     fireEvent.click(button);
+
     expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Select Filters")).toBeInTheDocument();
   });
 
-  it("returns focus to the button on close", () => {
-    render(<FiltersButton />, { wrapper });
+  it("returns focus to the button when the modal is closed", async () => {
+    render(<FiltersButton filtersStore={createMockFiltersStore()} />, {
+      wrapper,
+    });
 
     const button = screen.getByRole("button", { name: /filters/i });
     fireEvent.click(button);
+
+    // Close the modal
     fireEvent.click(screen.getByLabelText("Close modal"));
 
-    expect(button).toHaveFocus();
+    await waitFor(() => {
+      expect(button).toHaveFocus();
+    });
   });
 });

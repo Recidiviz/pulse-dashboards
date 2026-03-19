@@ -51,6 +51,7 @@ export type PathwaysTheme = {
     closeButtonColor: string;
     closeFocusColor: string;
     footerBorderColor: string;
+    resetColor: string;
   };
 };
 
@@ -87,5 +88,6 @@ export const defaultPathwaysTheme: PathwaysTheme = {
     closeButtonColor: palette.slate70,
     closeFocusColor: palette.signal.links,
     footerBorderColor: palette.slate20,
+    resetColor: palette.signal.links,
   },
 };
