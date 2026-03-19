@@ -23,6 +23,12 @@ import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { Octokit } from "@octokit/rest";
 import { WebClient as SlackClient } from "@slack/web-api";
 import inquirer from "inquirer";
+import { inc } from "semver";
+
+const dryRun = process.argv.includes("--dry-run");
+if (dryRun) {
+  console.log("🏃 Dry run mode: skipping installs, deploys, and Slack posting");
+}
 
 // The default is true, but we explicitly set it here because it needs to be set to true
 // in order for the gcloud stderr to display (used for the backend deploy)
@@ -63,6 +69,8 @@ const currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
 const successfullyDeployed = [];
 let deployingLatestMain = true;
 let isCpDeploy = false;
+let nextVersion = "deploy-candidate";
+let releaseNotes;
 
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
@@ -123,18 +131,69 @@ if (deployEnv === "production") {
     message: `Is this a cherry-pick deploy?`,
     default: false,
   }));
+
+  console.log("Generating release notes...");
+  const latestReentryTag = (
+    await $`git tag -l 'reentry/v*' --sort=-v:refname`
+  ).stdout
+    .trim()
+    .split("\n")[0];
+
+  if (!latestReentryTag) {
+    console.error(
+      "No reentry/v* tag found. Seed one before the first production deploy:\n" +
+        "  git tag reentry/v0.0.0 HEAD && git push origin reentry/v0.0.0",
+    );
+    process.exit(1);
+  }
+
+  const generatedReleaseNotes = await octokit.rest.repos.generateReleaseNotes({
+    owner,
+    repo,
+    tag_name: `rc/reentry/${currentRevision}`,
+    target_commitish: currentRevision,
+    previous_tag_name: latestReentryTag,
+  });
+  releaseNotes = generatedReleaseNotes.data.body;
+  console.log(releaseNotes);
+
+  const editNotesPrompt = await inquirer.prompt({
+    type: "confirm",
+    name: "editNotes",
+    message: "Would you like to edit these notes?",
+    default: false,
+  });
+
+  if (editNotesPrompt.editNotes) {
+    const noteEditorPrompt = await inquirer.prompt({
+      type: "editor",
+      name: "noteEditor",
+      message: "Open in editor",
+      default: releaseNotes,
+    });
+    releaseNotes = noteEditorPrompt.noteEditor;
+    console.log(`${chalk.bold("New release notes:")}\n${releaseNotes}`);
+  }
+
+  // Compute next version
+  const latestVersion = latestReentryTag.replace("reentry/", "");
+  const releaseType = isCpDeploy ? "patch" : "minor";
+  nextVersion = `reentry/v${inc(latestVersion, releaseType)}`;
+  console.log(`Next version: ${nextVersion}`);
 }
 
-console.log("Running nx reset...");
-await $`nx reset`.pipe(process.stdout);
+if (!dryRun) {
+  console.log("Running nx reset...");
+  await $`nx reset`.pipe(process.stdout);
 
-console.log("Installing yarn packages...");
-await $`yarn install`.pipe(process.stdout);
+  console.log("Installing yarn packages...");
+  await $`yarn install`.pipe(process.stdout);
 
-console.log("Updating atmos...");
-await $`brew install atmos`.pipe(process.stdout);
+  console.log("Updating atmos...");
+  await $`brew install atmos`.pipe(process.stdout);
+}
 
-if (deployReentryBackend) {
+if (deployReentryBackend && !dryRun) {
   let retryDeploy = false;
 
   do {
@@ -178,7 +237,7 @@ if (deployReentryBackend) {
   } while (retryDeploy);
 }
 
-if (deployReentryFrontend) {
+if (deployReentryFrontend && !dryRun) {
   let retryDeploy = false;
 
   do {
@@ -229,6 +288,14 @@ if (deployReentryFrontend) {
   } while (retryDeploy);
 }
 
+// Tag the deploy for release notes tracking
+if (deployEnv === "production" && successfullyDeployed.length > 0 && !dryRun) {
+  console.log(`Creating tag ${nextVersion}...`);
+  await $`git tag -m "Reentry ${nextVersion}" "${nextVersion}"`;
+  await $`git push origin ${nextVersion}`;
+  console.log(`Tag ${nextVersion} pushed.`);
+}
+
 // Post a message to Slack about the deployment through the Deployment Bot account
 console.log("Posting the deploy notification to Slack...");
 
@@ -245,7 +312,30 @@ const reentryChannelId = "C0A432T3QUB";
 
 let slackMessage = null;
 
-if (successfullyDeployed.length > 0) {
+const hasDeployedOrDryRun =
+  successfullyDeployed.length > 0 || (dryRun && deployEnv === "production");
+
+if (deployEnv === "production" && hasDeployedOrDryRun) {
+  const githubLink = `https://github.com/${owner}/${repo}/commit/${currentRevision}`;
+  const deployedServices = dryRun
+    ? [
+        deployReentryBackend && reentryBackendV0DisplayName,
+        deployReentryFrontend && reentryFrontendDisplayName,
+      ]
+        .filter(Boolean)
+        .join(", ") || "(none selected)"
+    : successfullyDeployed.join(", ");
+
+  slackMessage = `${deployer} deployed ${nextVersion} to production! (<${githubLink}|view on GitHub>)`;
+
+  const releaseNotesMessage = releaseNotes
+    .split("\n")
+    .slice(1, -1)
+    .join("\n")
+    .trim();
+  slackMessage += ` \`\`\`${releaseNotesMessage}\`\`\``;
+  slackMessage += `\nWhat was deployed: ${deployedServices}`;
+} else if (successfullyDeployed.length > 0) {
   let revisionText = "`" + currentRevision + "`";
   if (!deployingLatestMain) revisionText += " (not the tip of main)";
 
@@ -254,25 +344,30 @@ if (successfullyDeployed.length > 0) {
 }
 
 if (slackMessage !== null) {
-  try {
-    const slackMessageResponse = await slack.chat.postMessage({
-      channel: reentryChannelId,
-      text: slackMessage,
-      // Don't show previews for Github links
-      unfurl_links: false,
-      unfurl_media: false,
-    });
-    if (slackMessageResponse.ok) {
-      console.log(`Successfully posted to Slack channel ${reentryChannelId}`);
-    } else {
-      throw slackMessageResponse;
-    }
-  } catch (error) {
-    console.log(
-      "There was a problem posting to Slack, please post the message manually:",
-    );
+  if (dryRun) {
+    console.log("Dry run — Slack message that would be posted:");
     console.log(slackMessage);
-    console.error(error);
+  } else {
+    try {
+      const slackMessageResponse = await slack.chat.postMessage({
+        channel: reentryChannelId,
+        text: slackMessage,
+        // Don't show previews for Github links
+        unfurl_links: false,
+        unfurl_media: false,
+      });
+      if (slackMessageResponse.ok) {
+        console.log(`Successfully posted to Slack channel ${reentryChannelId}`);
+      } else {
+        throw slackMessageResponse;
+      }
+    } catch (error) {
+      console.log(
+        "There was a problem posting to Slack, please post the message manually:",
+      );
+      console.log(slackMessage);
+      console.error(error);
+    }
   }
 }
 
