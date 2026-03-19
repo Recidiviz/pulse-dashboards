@@ -45,6 +45,7 @@ export const FILTER_TYPES = {
   SENTENCE_LENGTH_MAX: "sentenceLengthMax",
   CHARGE_COUNTY_CODE: "chargeCountyCode",
   OFFENSE_TYPE: "offenseType",
+  DATE_IN_POPULATION: "dateInPopulation",
 } as const;
 
 export const DIMENSION_TYPES = {
@@ -74,4 +75,5 @@ export const filtersOrder = [
   FILTER_TYPES.SENTENCE_LENGTH_MAX,
   FILTER_TYPES.CHARGE_COUNTY_CODE,
   FILTER_TYPES.OFFENSE_TYPE,
+  FILTER_TYPES.DATE_IN_POPULATION,
 ];

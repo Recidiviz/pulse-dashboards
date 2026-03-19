@@ -17,7 +17,7 @@
 
 import styled from "styled-components";
 
-import { Button } from "~design-system";
+import { Button, Dropdown, DropdownMenu, DropdownToggle } from "~design-system";
 
 export const FilterSection = styled.div`
   background: ${({ theme }) => theme.modal.backgroundColor};
@@ -42,6 +42,84 @@ export const ResetButton = styled.button`
   &:hover {
     text-decoration: underline;
     color: ${({ theme }) => theme.palette.focusColor};
+  }
+`;
+
+export const DropdownLabel = styled.label`
+  ${({ theme }) => theme.typography.Sans16}
+  font-weight: 700;
+  color: ${({ theme }) =>
+    theme.checkbox?.titleColor ?? theme.typography.titleColor};
+  display: block;
+  margin-bottom: 1rem;
+`;
+
+export const FilterDropdownWrapper = styled(Dropdown)`
+  display: block;
+  width: 50%;
+  margin-bottom: 0.5rem;
+`;
+
+export const FilterDropdownToggle = styled(DropdownToggle)`
+  ${({ theme }) => theme.typography.Sans16}
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50px;
+  background: white;
+  color: black;
+  font-weight: 400;
+  min-width: auto;
+  min-height: auto;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  outline: none;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(0, 0, 0, 0.03);
+    color: black;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
+    outline-offset: 2px;
+  }
+
+  &:active,
+  &[aria-expanded="true"] {
+    border-color: ${({ theme }) => theme.palette.focusColor};
+    color: ${({ theme }) => theme.palette.focusColor};
+    background: white;
+    outline: none;
+  }
+`;
+
+export const FilterDropdownMenu = styled(DropdownMenu)`
+  transition: opacity 0.1s ease-in-out;
+  transform: none;
+  max-height: 300px;
+  overflow-y: auto;
+
+  button[role="menuitem"] {
+    ${({ theme }) => theme.typography.Sans16}
+    color: black;
+
+    &:focus {
+      color: white;
+      background-color: ${({ theme }) => theme.palette.focusColor};
+    }
+  }
+
+  .filter-dropdown-active-item {
+    font-weight: 700;
+    color: ${({ theme }) => theme.palette.focusColor};
+
+    &:focus {
+      color: white;
+    }
   }
 `;
 

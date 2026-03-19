@@ -56,7 +56,8 @@ export type DynamicFilterOptionMetadataKey =
   | "sentence_length_max_id_name_map"
   | "ethnicity_id_name_map"
   | "offense_type_id_name_map"
-  | "charge_county_id_name_map";
+  | "charge_county_id_name_map"
+  | "date_in_population_id_name_map";
 export type DynamicFilterOptionKeyToFilterTypeMap = {
   [key in DynamicFilterOptionMetadataKey]: FilterType;
 };
@@ -70,6 +71,7 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
     ethnicity_id_name_map: "ethnicity",
     offense_type_id_name_map: "offenseType",
     charge_county_id_name_map: "chargeCountyCode",
+    date_in_population_id_name_map: "dateInPopulation",
   };
 
 export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;

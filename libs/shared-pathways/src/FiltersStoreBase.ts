@@ -127,8 +127,9 @@ export abstract class FiltersStoreBase {
     const filterKeys = Object.keys(filters) as FilterType[];
     const filtersStrings = filterKeys.reduce((acc: string[], key) => {
       if (
-        this.metric?.filters.enabledFilters.includes(key) ||
-        this.metric?.filters.enabledMoreFilters?.includes(key)
+        key !== FILTER_TYPES.DATE_IN_POPULATION &&
+        (this.metric?.filters.enabledFilters.includes(key) ||
+          this.metric?.filters.enabledMoreFilters?.includes(key))
       ) {
         const { title } = this.filterOptions[key];
         acc.push(`${title}: ${this.filtersLabels[key]}`);
@@ -205,10 +206,27 @@ export abstract class FiltersStoreBase {
               dynamicOptions &&
               acc[filterType as FilterType].useDynamicOptions
             ) {
-              acc[filterType as FilterType].options = [
-                { label: "All", value: "ALL" },
-                ...dynamicOptions,
-              ];
+              if (filterType === FILTER_TYPES.DATE_IN_POPULATION) {
+                acc[filterType as FilterType].options = dynamicOptions;
+                // Default to the most recent date (first option)
+                const mostRecent = dynamicOptions[0];
+                acc[filterType as FilterType].defaultOption = mostRecent;
+                acc[filterType as FilterType].defaultValue = mostRecent.value;
+                // Update the active filter value if still set to "ALL"
+                const current = get(this.filters, filterType) as string[];
+                if (
+                  current.length === 1 &&
+                  current[0] === "ALL" &&
+                  mostRecent
+                ) {
+                  set(this.filters, filterType, [mostRecent.value]);
+                }
+              } else {
+                acc[filterType as FilterType].options = [
+                  { label: "All", value: "ALL" },
+                  ...dynamicOptions,
+                ];
+              }
             }
             return acc;
           },

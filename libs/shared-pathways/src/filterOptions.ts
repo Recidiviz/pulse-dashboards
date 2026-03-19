@@ -475,6 +475,19 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.DATE_IN_POPULATION]: {
+    type: FILTER_TYPES.DATE_IN_POPULATION,
+    title: "As of",
+    isSingleSelect: true,
+    setFilters: setFilters(FILTER_TYPES.DATE_IN_POPULATION),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
   [FILTER_TYPES.SENTENCE_LENGTH_MIN]: {
     type: FILTER_TYPES.SENTENCE_LENGTH_MIN,
     title: "Min Sentence (Months)",
@@ -1429,6 +1442,10 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE],
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.DATE_IN_POPULATION]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION],
+    useDynamicOptions: true,
+  },
 };
 
 export const DemoPopulationFilterOptions: PopulationFilters = {
@@ -1619,6 +1636,10 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.OFFENSE_TYPE]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE].defaultValue,
+  ],
+  [FILTER_TYPES.DATE_IN_POPULATION]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION]
+      .defaultValue,
   ],
 };
 

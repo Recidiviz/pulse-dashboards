@@ -20,7 +20,7 @@ import React, { useEffect, useState } from "react";
 
 import { formatDate } from "~utils";
 
-import { METRIC_MODES } from "../../constants";
+import { FILTER_TYPES, METRIC_MODES } from "../../constants";
 import { Dimension } from "../../dimensions";
 import { PopulationFilterLabels } from "../../filters";
 import { FiltersStoreBase } from "../../FiltersStoreBase";
@@ -116,11 +116,17 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       (isOffenseType ? offenseTypeOrder : undefined),
   });
 
-  const latestUpdate = formatDate(
-    metric.lastUpdated ??
-      (dataSeries[0] as SupervisionPopulationSnapshotRecord)?.lastUpdated,
-    "MMMM dd, yyyy",
-  );
+  const dateInPop = (filters as Record<string, string[]>)[
+    FILTER_TYPES.DATE_IN_POPULATION
+  ]?.[0];
+  const latestUpdate =
+    dateInPop && dateInPop !== "ALL"
+      ? filtersStore.getFilterLabel(FILTER_TYPES.DATE_IN_POPULATION, dateInPop)
+      : formatDate(
+          metric.lastUpdated ??
+            (dataSeries[0] as SupervisionPopulationSnapshotRecord)?.lastUpdated,
+          "MMMM dd, yyyy",
+        );
 
   return (
     <PopulationSnapshotChart

@@ -16,3 +16,4 @@
 // =============================================================================
 
 export { default as FiltersPanel } from "./FiltersPanel";
+export { default as PathwaysDropdownFilter } from "./PathwaysDropdownFilter";

@@ -19,6 +19,7 @@ import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
+import { FILTER_TYPES } from "../../constants";
 import { getFilterOptions } from "../../filterOptions";
 import { FilterOption, PopulationFilters } from "../../filters";
 import { FiltersStoreBase } from "../../FiltersStoreBase";
@@ -30,6 +31,7 @@ import {
   FilterSectionContent,
   ResetButton,
 } from "./FiltersPanel.styles";
+import PathwaysDropdownFilter from "./PathwaysDropdownFilter";
 
 type FiltersPanelProps = {
   isOpen: boolean;
@@ -52,6 +54,12 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
       }
     }, [isOpen, enabledFilters]);
 
+    const dateInPopulationFilter = enabledFilters.includes(
+      FILTER_TYPES.DATE_IN_POPULATION,
+    )
+      ? filterOptions[FILTER_TYPES.DATE_IN_POPULATION]
+      : null;
+
     const multiSelectFilters = enabledFilters.filter(
       (filterType) => !filterOptions[filterType]?.isSingleSelect,
     );
@@ -69,6 +77,12 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
       return getFilterOptions(currentValues, filter.options);
     };
 
+    const getSelectedValue = (filterType: keyof PopulationFilters): string => {
+      const pending = pendingFilters[filterType];
+      const currentValues = pending ?? (get(filters, filterType) as string[]);
+      return currentValues[0] ?? "";
+    };
+
     const onUpdateFilters = (
       newOptions: FilterOption[],
       filterType: string,
@@ -76,6 +90,13 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
       setPendingFilters({
         ...pendingFilters,
         [filterType]: newOptions.map((o) => o.value),
+      });
+    };
+
+    const onDropdownChange = (filterType: string, value: string) => {
+      setPendingFilters({
+        ...pendingFilters,
+        [filterType]: [value],
       });
     };
 
@@ -103,6 +124,22 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
           </>
         }
       >
+        {dateInPopulationFilter && (
+          <FilterSection>
+            <FilterSectionContent>
+              <PathwaysDropdownFilter
+                label={dateInPopulationFilter.title}
+                options={dateInPopulationFilter.options}
+                selectedValue={getSelectedValue(
+                  FILTER_TYPES.DATE_IN_POPULATION,
+                )}
+                onChange={(value) =>
+                  onDropdownChange(FILTER_TYPES.DATE_IN_POPULATION, value)
+                }
+              />
+            </FilterSectionContent>
+          </FilterSection>
+        )}
         {multiSelectFilters.map((filterType) => {
           const filter = filterOptions[filterType];
           if (!filter) return null;

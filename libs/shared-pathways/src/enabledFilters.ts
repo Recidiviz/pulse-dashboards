@@ -576,6 +576,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonFacilityPopulation: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -590,6 +591,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationByAgeGroup: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -604,6 +606,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationByGender: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -618,6 +621,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationBySex: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -632,6 +636,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationByRace: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -646,6 +651,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationByEthnicity: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -660,6 +666,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationBySentenceLengthMin: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -674,6 +681,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationBySentenceLengthMax: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -688,6 +696,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationByChargeCountyCode: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
@@ -702,6 +711,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonPopulationByOffenseType: {
     enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
