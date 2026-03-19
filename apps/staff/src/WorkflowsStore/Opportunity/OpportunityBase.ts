@@ -150,8 +150,6 @@ export class OpportunityBase<
    */
   readonly supportsExternalRequest: boolean = false;
 
-  readonly compareFunction: (a: Opportunity, b: Opportunity) => number;
-
   /**
    * Updates an ineligible opportunity to be eligible when
    * the overridden/denied time period has expired.
@@ -194,6 +192,7 @@ export class OpportunityBase<
       isInSnoozeReview: computed,
       latestAction: computed,
       actionHistory: computed,
+      compareFunction: computed,
     });
 
     this.updateOpportunityEligibility = updateOpportunityEligibility(
@@ -207,8 +206,6 @@ export class OpportunityBase<
       this.firestoreUpdateDocId,
       this.updateOpportunityEligibility,
     );
-
-    this.compareFunction = this.buildCompareFunction();
   }
 
   get firestoreUpdateDocId() {
@@ -621,8 +618,8 @@ export class OpportunityBase<
     return this.compareFunction(this, other);
   }
 
-  buildCompareFunction(): (a: Opportunity, b: Opportunity) => number {
-    const { compareBy, systemType } = this.config;
+  get compareFunction(): (a: Opportunity, b: Opportunity) => number {
+    const { compareBy, systemType } = this.config ?? {};
     if (compareBy) return buildOpportunityCompareFunction(compareBy);
     const sortParams = [{ field: "eligibilityDate" }];
 

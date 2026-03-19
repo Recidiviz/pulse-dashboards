@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { reverse, shuffle } from "lodash";
-import { configure } from "mobx";
+import { configure, observable, runInAction } from "mobx";
 
 import { OpportunityRecordBase, SystemId } from "~datatypes";
 import { OpportunityType } from "~datatypes";
@@ -340,6 +340,92 @@ describe("Created sort functions should work", () => {
           .sort((a, b) => a.compare(b))
           .map((a) => a.eligibilityDate),
       ).toEqual(expected);
+    });
+  });
+
+  describe("compareFunction memoization", () => {
+    function overrideConfigWithObservable(opp: TestOpportunity) {
+      const configBox = observable.box<OpportunityConfiguration>({
+        systemType: "SUPERVISION",
+      } as OpportunityConfiguration);
+      Object.defineProperty(opp, "config", {
+        get: () => configBox.get(),
+        configurable: true,
+      });
+      return configBox;
+    }
+
+    test("does not throw when config is undefined (before hydration)", () => {
+      const opp = createTestUnit("SUPERVISION");
+      const configBox = observable.box<OpportunityConfiguration | undefined>(
+        undefined,
+      );
+      Object.defineProperty(opp, "config", {
+        get: () => configBox.get(),
+        configurable: true,
+      });
+
+      // Should fall back to default sort params without throwing
+      expect(() => opp.compareFunction).not.toThrow();
+      const fn = opp.compareFunction;
+      expect(typeof fn).toBe("function");
+    });
+
+    test("updates from undefined config to hydrated config", () => {
+      const opp = createTestUnit("SUPERVISION");
+      const configBox = observable.box<OpportunityConfiguration | undefined>(
+        undefined,
+      );
+      Object.defineProperty(opp, "config", {
+        get: () => configBox.get(),
+        configurable: true,
+      });
+
+      const fnBeforeHydration = opp.compareFunction;
+
+      // Simulate config hydrating
+      runInAction(() => {
+        configBox.set({
+          systemType: "SUPERVISION",
+          compareBy: [{ field: "reviewStatus" }],
+        } as OpportunityConfiguration);
+      });
+
+      const fnAfterHydration = opp.compareFunction;
+      expect(fnAfterHydration).not.toBe(fnBeforeHydration);
+    });
+
+    test("returns a new function when config.compareBy changes", () => {
+      const opp = createTestUnit("SUPERVISION");
+      const configBox = overrideConfigWithObservable(opp);
+
+      const fn1 = opp.compareFunction;
+
+      runInAction(() => {
+        configBox.set({
+          systemType: "SUPERVISION",
+          compareBy: [{ field: "reviewStatus" }],
+        } as OpportunityConfiguration);
+      });
+      const fn2 = opp.compareFunction;
+
+      expect(fn2).not.toBe(fn1);
+    });
+
+    test("returns a new function when config.systemType changes", () => {
+      const opp = createTestUnit("SUPERVISION");
+      const configBox = overrideConfigWithObservable(opp);
+
+      const fn1 = opp.compareFunction;
+
+      runInAction(() => {
+        configBox.set({
+          systemType: "INCARCERATION",
+        } as OpportunityConfiguration);
+      });
+      const fn2 = opp.compareFunction;
+
+      expect(fn2).not.toBe(fn1);
     });
   });
 
