@@ -292,10 +292,10 @@ exports[`schema for 'US_AR' 'AR_RES005' 1`] = `
         "startDate": 2003-05-12T00:00:00.000Z,
       },
     ],
-    "eligibilityDate": 2022-11-01T00:00:00.000Z,
+    "eligibilityDate": undefined,
     "eligibilityDateName": "Parole Eligibility Date",
     "gedCompletionDate": 2016-02-23T00:00:00.000Z,
-    "maximumReleaseDate": 2024-05-10T00:00:00.000Z,
+    "maximumReleaseDate": undefined,
     "noIncarcerationSanctionsWithin12Months": true,
     "noIncarcerationSanctionsWithin6Months": true,
     "programAchievement": [

@@ -301,10 +301,10 @@ export const rawUsArResidents: Array<RawResidentRecord> = [
           personId: 5,
         },
       ],
-      eligibilityDate: "2022-11-01",
+      eligibilityDate: null,
       eligibilityDateName: "Parole Eligibility Date",
       gedCompletionDate: "2016-02-23",
-      maximumReleaseDate: "2024-05-10",
+      maximumReleaseDate: null,
       noIncarcerationSanctionsWithin6Months: true,
       noIncarcerationSanctionsWithin12Months: true,
       programAchievement: [

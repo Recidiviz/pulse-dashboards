@@ -40,5 +40,6 @@ export default {
       heading: "Understanding Release Dates & Good Time",
       body: importantDatesInfoPage,
     },
+    missingDateMessage: "No date on record",
   },
 };

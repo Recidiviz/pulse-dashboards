@@ -54,12 +54,18 @@ export function UsArImportantDates({
         {t(($) => $.importantDates.sectionHeader)}
       </HomepageSectionHeading>
       {dates.map(({ date, label, description }) => {
-        const localeAwareDate = t(($) => $.importantDates.formatFullDate, {
-          replace: { date: date },
-        });
+        let dateCardValue;
+        if (date) {
+          // locale-aware formatting of the date
+          dateCardValue = t(($) => $.importantDates.formatFullDate, {
+            replace: { date: date },
+          });
+        } else {
+          dateCardValue = t(($) => $.importantDates.missingDateMessage);
+        }
         return (
           <Card key={label}>
-            <CardDateInfo label={label} value={localeAwareDate} />
+            <CardDateInfo label={label} value={dateCardValue} />
             <SlateCopy>{description}</SlateCopy>
           </Card>
         );
