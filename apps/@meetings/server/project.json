@@ -134,27 +134,7 @@
       },
       "defaultConfiguration": "test"
     },
-    "requires-sops-env:upload-sourcemaps": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "inputs": [],
-      "options": {
-        "env": {
-          "BUILD_OUTPUT_PATH": "{workspaceRoot}/dist/apps/{projectName}"
-        },
-        "cwd": "{workspaceRoot}",
-        "command": "sentry-cli sourcemaps inject $BUILD_OUTPUT_PATH && sentry-cli sourcemaps upload $BUILD_OUTPUT_PATH && find $BUILD_OUTPUT_PATH -type f -name \"*.js.map\" -delete"
-      },
-      "configurations": {
-        "dev": {
-          "command": "echo 'No sourcemaps to upload in dev mode.'"
-        },
-        "staging": {},
-        "cherry-pick": {},
-        "preview": {}
-      },
-      "defaultConfiguration": "dev"
-    },
+    "requires-sops-env:upload-sourcemaps": {},
     "container": {
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["upload-sourcemaps"],

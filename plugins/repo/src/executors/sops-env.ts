@@ -17,10 +17,28 @@
 
 import { logger, ProjectConfiguration, TargetConfiguration } from "@nx/devkit";
 import { existsSync, readFileSync } from "fs";
+import merge from "lodash/merge";
 import { CreateNodesContextV2 } from "nx/src/project-graph/plugins/public-api";
 import { dirname, join } from "path";
 
 export const SOPS_ENV_PREFIX = "requires-sops-env:";
+
+/**
+ * Read and parse nx.json from the workspace root
+ */
+function readNxJson(workspaceRoot: string): {
+  targetDefaults?: Record<string, TargetConfiguration>;
+} | null {
+  try {
+    const nxJsonPath = join(workspaceRoot, "nx.json");
+    if (existsSync(nxJsonPath)) {
+      return JSON.parse(readFileSync(nxJsonPath, "utf-8"));
+    }
+  } catch (e) {
+    logger.error(`Failed to parse nx.json: ${e}`);
+  }
+  return null;
+}
 
 // Detect targets with 'requires-sops-env:' prefix and return un-prefixed inferred delegate targets
 export const createUnwrappedSopsEnvTargets = (
@@ -45,6 +63,10 @@ export const createUnwrappedSopsEnvTargets = (
     return {};
   }
 
+  // Read nx.json to get targetDefaults
+  const nxJson = readNxJson(context.workspaceRoot);
+  const targetDefaults = nxJson?.targetDefaults || {};
+
   const targets: Record<string, TargetConfiguration> = {};
 
   // Find targets with 'requires-sops-env:' prefix
@@ -56,14 +78,23 @@ export const createUnwrappedSopsEnvTargets = (
       const unprefixedName = targetName.replace(SOPS_ENV_PREFIX, "");
 
       // Type assertion for targetConfig
-      const config = targetConfig as TargetConfiguration;
+      const projectTargetConfig = targetConfig as TargetConfiguration;
 
-      // Forward configurations for the inferred task so that NX_TASK_TARGET_CONFIGURATION is set
+      // Merge nx.json targetDefaults (base) with project.json config (override)
+      const prefixedDefaults = targetDefaults[targetName];
+      const mergedPrefixedTarget = prefixedDefaults
+        ? merge({}, prefixedDefaults, projectTargetConfig)
+        : projectTargetConfig;
+
+      // Forward configurations from merged target for the inferred task so that NX_TASK_TARGET_CONFIGURATION is set
       const configurations = Object.fromEntries(
-        Object.keys(config.configurations || {}).map((name) => [name, {}]),
+        Object.keys(mergedPrefixedTarget.configurations || {}).map((name) => [
+          name,
+          {},
+        ]),
       );
 
-      // Create a new target that delegates to the prefixed target
+      // Create a new target that loads env then delegates to the prefixed target
       targets[unprefixedName] = {
         executor: "~repo:sopsDelegateExecutor",
         options: {
@@ -72,9 +103,18 @@ export const createUnwrappedSopsEnvTargets = (
         configurations,
       };
 
+      // Also create the prefixed target with merged configuration
+      targets[targetName] = mergedPrefixedTarget;
+
       logger.verbose(
         `SOPS-ENV: Created delegate target '${unprefixedName}' -> '${targetName}' in ${projectRoot}`,
       );
+
+      if (prefixedDefaults) {
+        logger.verbose(
+          `SOPS-ENV: Merged targetDefaults for '${targetName}' in ${projectRoot}`,
+        );
+      }
     }
   }
 

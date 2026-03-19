@@ -125,7 +125,7 @@
       "cache": true,
       "dependsOn": ["^prisma-generate", "prisma-generate"]
     },
-    "upload-sourcemaps": {
+    "requires-sops-env:upload-sourcemaps": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "inputs": [],
