@@ -17,9 +17,15 @@
 
 "use client";
 
+import { Loading } from "@recidiviz/design-system";
 import { useEffect, useState } from "react";
 
-import { getIntakeTenantConfig } from "../../configs/tenantConfig";
+import {
+  getInitialStep,
+  getIntakeTenantConfig,
+} from "../../configs/tenantConfig";
+import type { PreIntakeStep } from "../../configs/types";
+import { hasVideo, isPreIntakeStep } from "../../configs/types";
 import { useSocket } from "../../websockets/IntakeSocketContext";
 import AddressForm from "./AddressForm";
 import { ChatHeader } from "./ChatInterface/ChatHeader";
@@ -45,12 +51,13 @@ export function IntakeRouter() {
   } = intakeContext;
   const { startConversation } = intakeDispatchContext;
   const tenantConfig = getIntakeTenantConfig(intakeContext.client_state);
-  const [preIntakeStep, setPreIntakeStep] = useState<"one" | "two">(() => {
+  const stepStorageKey = `preIntakeStep:${intakeContext.client_state ?? "default"}`;
+  const [preIntakeStep, setPreIntakeStep] = useState<PreIntakeStep>(() => {
     if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("preIntakeStep");
-      return (saved as "one" | "two") || "one";
+      const saved = sessionStorage.getItem(stepStorageKey);
+      if (isPreIntakeStep(saved)) return saved;
     }
-    return "one";
+    return getInitialStep(tenantConfig);
   });
   const [displaySurvey, setDisplaySurvey] = useState(false);
   const [surveySubmitted, setSurveySubmitted] = useState(has_survey);
@@ -66,21 +73,39 @@ export function IntakeRouter() {
     !conversationStarted &&
     !needsAddress &&
     !isCompleted;
+  const isClientStateInitialized = !!intakeContext.client_state;
   const isConversationInProgress =
     (intakeStatus === "in_progress" || intakeStatus === "created") &&
     conversationStarted &&
     !needsAddress &&
     !isCompleted;
 
+  /**
+   * Re-sync step when client_state loads asynchronously — the useState
+   * initializer only runs once (with client_state=null → default text flow),
+   * so we need to reset to the correct initial step for the actual tenant.
+   */
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("preIntakeStep", preIntakeStep);
+    if (!isClientStateInitialized) return;
+    const saved = sessionStorage.getItem(stepStorageKey);
+    if (isPreIntakeStep(saved)) {
+      setPreIntakeStep(saved);
+    } else {
+      setPreIntakeStep(getInitialStep(tenantConfig));
     }
-  }, [preIntakeStep]);
+  }, [isClientStateInitialized, stepStorageKey, tenantConfig]);
+
+  /** Save step to sessionStorage only on intentional user navigation. */
+  const goToStep = (step: PreIntakeStep) => {
+    setPreIntakeStep(step);
+    if (typeof window !== "undefined" && intakeContext.client_state) {
+      sessionStorage.setItem(stepStorageKey, step);
+    }
+  };
 
   const handleStartConversation = () => {
     if (typeof window !== "undefined") {
-      sessionStorage.removeItem("preIntakeStep");
+      sessionStorage.removeItem(stepStorageKey);
     }
     startConversation();
   };
@@ -140,29 +165,46 @@ export function IntakeRouter() {
             intakeId={intakeId}
           />
         )}
-        {tenantConfig.preIntakeFlow === "video" && isPreIntake ? (
-          <PreIntakeVideo
-            onStartIntake={handleStartConversation}
-            tenantConfig={tenantConfig}
-          />
-        ) : (
-          <>
-            {isPreIntake && preIntakeStep === "one" && (
-              <PreIntakeNoteOne
-                onContinue={() => setPreIntakeStep("two")}
-                tenantConfig={tenantConfig}
-              />
-            )}
+        {isPreIntake &&
+          (!isClientStateInitialized ? (
+            <Loading showMessage={false} />
+          ) : (
+            <>
+              {preIntakeStep === "one" && (
+                <PreIntakeNoteOne
+                  onContinue={() => goToStep("two")}
+                  tenantConfig={tenantConfig}
+                />
+              )}
 
-            {isPreIntake && preIntakeStep === "two" && (
-              <PreIntakeNoteTwo
-                onGoBack={() => setPreIntakeStep("one")}
-                onStartIntake={handleStartConversation}
-                tenantConfig={tenantConfig}
-              />
-            )}
-          </>
-        )}
+              {preIntakeStep === "two" && (
+                <PreIntakeNoteTwo
+                  onGoBack={() => goToStep("one")}
+                  onStartIntake={
+                    tenantConfig.preIntakeFlow === "text+video"
+                      ? () => goToStep("video")
+                      : handleStartConversation
+                  }
+                  tenantConfig={tenantConfig}
+                />
+              )}
+
+              {preIntakeStep === "video" && hasVideo(tenantConfig) && (
+                <PreIntakeVideo
+                  onGoBack={
+                    tenantConfig.preIntakeFlow === "text+video"
+                      ? () => goToStep("two")
+                      : () => {
+                          sessionStorage.removeItem("intake_token");
+                          window.location.reload();
+                        }
+                  }
+                  onStartIntake={handleStartConversation}
+                  tenantConfig={tenantConfig}
+                />
+              )}
+            </>
+          ))}
 
         {isConversationInProgress && <ConversationLayout />}
       </div>

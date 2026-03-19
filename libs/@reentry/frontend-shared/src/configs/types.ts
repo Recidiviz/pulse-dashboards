@@ -42,19 +42,45 @@ export interface TextIntakeConfig extends IntakeConfigBase {
   preIntakeFlow: "text";
 }
 
-export interface VideoIntakeConfig extends IntakeConfigBase {
-  preIntakeFlow: "video";
-  video: {
-    src: string;
-    subtitlesSrc: string;
-  };
+export interface IntakeVideoConfig {
+  src: string;
+  subtitlesSrc: string;
 }
 
-export type IntakeTenantConfig = TextIntakeConfig | VideoIntakeConfig;
+export interface VideoIntakeConfig extends IntakeConfigBase {
+  preIntakeFlow: "video";
+  video: IntakeVideoConfig;
+}
+
+/** Flow order: NoteOne → NoteTwo → Video → Start. */
+export interface TextVideoIntakeConfig extends IntakeConfigBase {
+  preIntakeFlow: "text+video";
+  video: IntakeVideoConfig;
+}
+
+export type IntakeTenantConfig =
+  | TextIntakeConfig
+  | VideoIntakeConfig
+  | TextVideoIntakeConfig;
+
+/** Type guard: narrows to a config that has a `video` property. */
+export function hasVideo(
+  config: IntakeTenantConfig,
+): config is VideoIntakeConfig | TextVideoIntakeConfig {
+  return (
+    config.preIntakeFlow === "video" || config.preIntakeFlow === "text+video"
+  );
+}
+
+export type PreIntakeStep = "one" | "two" | "video";
+
+export function isPreIntakeStep(value: string | null): value is PreIntakeStep {
+  return value === "one" || value === "two" || value === "video";
+}
 
 export type IntakeTenantOverride =
-  | Partial<IntakeConfigBase>
+  | (Partial<IntakeConfigBase> & { preIntakeFlow?: "text" })
   | (Partial<IntakeConfigBase> & {
-      preIntakeFlow: "video";
-      video: { src: string; subtitlesSrc: string };
+      preIntakeFlow: "video" | "text+video";
+      video: IntakeVideoConfig;
     });

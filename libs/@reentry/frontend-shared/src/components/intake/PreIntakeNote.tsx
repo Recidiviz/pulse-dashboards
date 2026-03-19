@@ -21,6 +21,7 @@ import { useRef, useState } from "react";
 
 import type {
   IntakeTenantConfig,
+  TextVideoIntakeConfig,
   VideoIntakeConfig,
 } from "../../configs/types";
 
@@ -158,7 +159,9 @@ const PreIntakeNoteTwo: React.FC<PreIntakeNoteTwoProps> = ({
 							text-[14px] leading-[24px] tracking-[-0.01em]
 							border border-[#35536233] hover:opacity-80 transition-opacity duration-200"
             >
-              Start Intake
+              {tenantConfig.preIntakeFlow === "text+video"
+                ? "Continue"
+                : "Start Intake"}
             </button>
           </div>
         </div>
@@ -168,18 +171,16 @@ const PreIntakeNoteTwo: React.FC<PreIntakeNoteTwoProps> = ({
 };
 
 interface PreIntakeVideoProps {
+  onGoBack: () => void;
   onStartIntake: () => void;
-  tenantConfig: VideoIntakeConfig;
+  tenantConfig: VideoIntakeConfig | TextVideoIntakeConfig;
 }
 
 const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({
+  onGoBack,
   onStartIntake,
   tenantConfig,
 }) => {
-  const handleGoBack = () => {
-    sessionStorage.removeItem("intake_token");
-    window.location.reload();
-  };
   const videoRef = useRef(null);
 
   const [isChecked, setIsChecked] = useState(false);
@@ -249,7 +250,7 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({
           <div className="flex justify-center gap-4 mt-10 flex-col md:flex-row">
             <button
               type="button"
-              onClick={handleGoBack}
+              onClick={onGoBack}
               className="w-full md:max-w-[269px] h-[48px] px-8 py-3 border border-[#35536233] rounded-md
 							text-[14px] leading-[24px] tracking-[-0.01em] text-[#355362D9]
 							font-medium font-['Public_Sans']

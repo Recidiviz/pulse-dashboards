@@ -19,11 +19,56 @@ import type {
   IntakeConfigBase,
   IntakeTenantConfig,
   IntakeTenantOverride,
+  PreIntakeStep,
   TextIntakeConfig,
 } from "./types";
 
+export const DEFAULT_PARAGRAPHS = {
+  intro:
+    "This intake is designed to help your case manager and parole officer learn more about your reentry goals, plans, and needs. This helps them understand the best ways to support you as you transition back into the community.",
+  instructions:
+    "Please provide honest and complete answers to make this process as effective as possible. This program will then draft a personalized reentry action plan for you. If you'd prefer to skip this digital intake and answer questions with your case manager directly, stop here and let your case manager know.",
+};
+
+export const DEFAULT_FAQ = {
+  chatbot: {
+    question: "Who will I be chatting with?",
+    answer:
+      "In this intake, you will be interacting with a chatbot, not a live person.",
+  },
+  coverage: {
+    question: "What will this intake cover?",
+    answer:
+      "This intake will cover topics related to education, employment, criminal history, finances, family and marital details, housing, leisure and recreation, and alcohol and drugs.",
+  },
+  visibility: {
+    question: "Who will see my responses?",
+    answer:
+      "Your responses to this intake will be visible to your case manager and to your supervision officer after release.",
+  },
+};
+
+export const DEFAULT_IMPORTANT_ITEMS = {
+  time: {
+    label: "Time:",
+    text: "This intake will take approximately 45 minutes to complete.",
+  },
+  pace: {
+    label: "Pace:",
+    text: "Some questions might require careful thought. Feel free to pause and reflect as much as you need.",
+  },
+  pausing: {
+    label: "Pausing and continuing:",
+    text: "Your progress is automatically saved, so you can leave the intake chat and return later if you need to pause and resume later.",
+  },
+  deadline: {
+    label: "Deadline:",
+    text: "This intake should be completed before your re-entry to help develop a plan. The sooner you can finish it, the better.",
+  },
+};
+
 const BASE_DEFAULTS: IntakeConfigBase = {
-  preIntakeCopy: `This intake is designed to help your case manager and parole officer learn more about your reentry goals, plans, and needs. This helps them understand the best ways to support you as you transition back into the community.`,
+  preIntakeCopy: DEFAULT_PARAGRAPHS.intro,
   docId: {
     label: "DOC ID",
     placeholder: "Enter DOC ID",
@@ -31,48 +76,12 @@ const BASE_DEFAULTS: IntakeConfigBase = {
   navigation: { type: "redirect", url: "/assessment" },
   noteOneCopy: {
     title: "Your Community Intake",
-    paragraphs: [
-      "This intake is designed to help your case manager and parole officer learn more about your reentry goals, plans, and needs. This helps them understand the best ways to support you as you transition back into the community.",
-      "Please provide honest and complete answers to make this process as effective as possible. This program will then draft a personalized reentry action plan for you. If you'd prefer to skip this digital intake and answer questions with your case manager directly, stop here and let your case manager know.",
-    ],
+    paragraphs: Object.values(DEFAULT_PARAGRAPHS),
   },
   noteTwoCopy: {
     title: "Before You Start",
-    faqItems: [
-      {
-        question: "Who will I be chatting with?",
-        answer:
-          "In this intake, you will be interacting with a chatbot, not a live person.",
-      },
-      {
-        question: "What will this intake cover?",
-        answer:
-          "This intake will cover topics related to education, employment, criminal history, finances, family and marital details, housing, leisure and recreation, and alcohol and drugs.",
-      },
-      {
-        question: "Who will see my responses?",
-        answer:
-          "Your responses to this intake will be visible to your case manager and to your supervision officer after release.",
-      },
-    ],
-    importantItems: [
-      {
-        label: "Time:",
-        text: "This intake will take approximately 45 minutes to complete.",
-      },
-      {
-        label: "Pace:",
-        text: "Some questions might require careful thought. Feel free to pause and reflect as much as you need.",
-      },
-      {
-        label: "Pausing and continuing:",
-        text: "Your progress is automatically saved, so you can leave the intake chat and return later if you need to pause and resume later.",
-      },
-      {
-        label: "Deadline:",
-        text: "This intake should be completed before your re-entry to help develop a plan. The sooner you can finish it, the better.",
-      },
-    ],
+    faqItems: Object.values(DEFAULT_FAQ),
+    importantItems: Object.values(DEFAULT_IMPORTANT_ITEMS),
   },
 };
 
@@ -94,7 +103,7 @@ const INTAKE_TENANT_OVERRIDES: Record<string, IntakeTenantOverride> = {
     },
   },
   US_NE: {
-    preIntakeFlow: "video",
+    preIntakeFlow: "text+video",
     video: {
       src: "/videos/nebraska-intake-video.mp4",
       subtitlesSrc: "/videos/nebraska-intake-subtitles.vtt",
@@ -114,11 +123,15 @@ export function getIntakeTenantConfig(
   const overrides = INTAKE_TENANT_OVERRIDES[stateCode];
   if (!overrides) return DEFAULT_INTAKE_CONFIG;
 
-  if ("preIntakeFlow" in overrides && overrides.preIntakeFlow === "video") {
+  if (
+    "preIntakeFlow" in overrides &&
+    (overrides.preIntakeFlow === "video" ||
+      overrides.preIntakeFlow === "text+video")
+  ) {
     return {
       ...BASE_DEFAULTS,
       ...overrides,
-      preIntakeFlow: "video",
+      preIntakeFlow: overrides.preIntakeFlow,
       video: overrides.video,
     };
   }
@@ -128,6 +141,11 @@ export function getIntakeTenantConfig(
     ...overrides,
     preIntakeFlow: "text",
   };
+}
+
+/** Returns the initial pre-intake step for a given flow type. */
+export function getInitialStep(config: IntakeTenantConfig): PreIntakeStep {
+  return config.preIntakeFlow === "video" ? "video" : "one";
 }
 
 /** Navigate based on the configured navigation action (redirect or history-back). */

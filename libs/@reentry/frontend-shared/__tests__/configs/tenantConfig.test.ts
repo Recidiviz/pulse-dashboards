@@ -19,9 +19,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   DEFAULT_INTAKE_CONFIG,
+  getInitialStep,
   getIntakeTenantConfig,
   navigateAfterIntake,
 } from "../../src/configs/tenantConfig";
+import { isPreIntakeStep } from "../../src/configs/types";
 
 describe("getIntakeTenantConfig", () => {
   it("returns default config for null", () => {
@@ -106,15 +108,15 @@ describe("getIntakeTenantConfig", () => {
   });
 
   describe("US_NE overrides", () => {
-    it("returns video flow", () => {
+    it("returns text+video flow", () => {
       const config = getIntakeTenantConfig("US_NE");
-      expect(config.preIntakeFlow).toBe("video");
+      expect(config.preIntakeFlow).toBe("text+video");
     });
 
     it("returns custom video src", () => {
       const config = getIntakeTenantConfig("US_NE");
-      if (config.preIntakeFlow !== "video") {
-        throw new Error("Expected video config for US_NE");
+      if (config.preIntakeFlow !== "text+video") {
+        throw new Error("Expected text+video config for US_NE");
       }
       expect(config.video.src).toBe("/videos/nebraska-intake-video.mp4");
       expect(config.video.subtitlesSrc).toBe(
@@ -181,5 +183,43 @@ describe("navigateAfterIntake", () => {
     navigateAfterIntake(config);
 
     expect(window.location.href).toBe("/assessment");
+  });
+});
+
+describe("isPreIntakeStep", () => {
+  it('returns true for "one"', () => {
+    expect(isPreIntakeStep("one")).toBe(true);
+  });
+
+  it('returns true for "two"', () => {
+    expect(isPreIntakeStep("two")).toBe(true);
+  });
+
+  it('returns true for "video"', () => {
+    expect(isPreIntakeStep("video")).toBe(true);
+  });
+
+  it("returns false for null", () => {
+    expect(isPreIntakeStep(null)).toBe(false);
+  });
+
+  it("returns false for an invalid string", () => {
+    expect(isPreIntakeStep("three")).toBe(false);
+  });
+});
+
+describe("getInitialStep", () => {
+  it('returns "one" for text flow', () => {
+    expect(getInitialStep(DEFAULT_INTAKE_CONFIG)).toBe("one");
+  });
+
+  it('returns "video" for video flow', () => {
+    const config = getIntakeTenantConfig("US_UT");
+    expect(getInitialStep(config)).toBe("video");
+  });
+
+  it('returns "one" for text+video flow', () => {
+    const config = getIntakeTenantConfig("US_NE");
+    expect(getInitialStep(config)).toBe("one");
   });
 });
