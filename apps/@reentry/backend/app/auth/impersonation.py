@@ -98,8 +98,13 @@ async def get_impersonated_user_metadata(target_email: str) -> dict:
                 response.raise_for_status()
                 user_data = response.json()
         except httpx.HTTPStatusError as e:
+            try:
+                response_text = e.response.text
+            except Exception:
+                response_text = e.response.json()
+
             logger.error(
-                "Failed to fetch impersonated user metadata from Data API",
+                f"Failed to fetch impersonated user metadata from Data API: {response_text}",
                 target_email=target_email,
                 status_code=e.response.status_code,
             )
