@@ -208,6 +208,14 @@ const columns = [
     cell: IdCellWrapper,
   },
   {
+    header: "Assigned Case Manager",
+    id: "caseManager",
+    enableSorting: true,
+    sortingFn: "text",
+    accessorFn: (r: RNARowData) =>
+      r.person.assignedStaff ? r.person.assignedStaffFullName : "Unknown",
+  },
+  {
     header: "Self-Report Due Date",
     id: "dueDate",
     accessorFn: (r: RNARowData) => r.rnaDueDate,
