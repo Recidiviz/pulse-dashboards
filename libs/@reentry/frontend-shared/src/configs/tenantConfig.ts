@@ -102,6 +102,9 @@ const INTAKE_TENANT_OVERRIDES: Record<string, IntakeTenantOverride> = {
       placeholder: "Enter DOC ID / Offender Number",
     },
   },
+  US_NE: {
+    navigation: { type: "history-back" },
+  },
 };
 
 /**
