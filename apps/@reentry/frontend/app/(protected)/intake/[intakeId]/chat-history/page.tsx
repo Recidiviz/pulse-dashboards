@@ -393,7 +393,7 @@ const IntakeManagementPage = () => {
           onClose={() => setShowTemplateEditor(false)}
         />
       )}
-      <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-[calc(100vh-65px)]">
+      <div className="w-full p-6 md:px-6 md:py-2 flex flex-col items-center gap-2 bg-[#f9fafa] h-[calc(100vh-65px)] overflow-hidden">
         {/* Profile Detail */}
         <ProfileDetail
           clientRecord={clientData}
@@ -402,12 +402,12 @@ const IntakeManagementPage = () => {
         />
 
         {intakeData?.intake_type === "transcription" ? (
-          <div className="flex items-center justify-center h-full text-gray-500 p-0 md:p-10 mb-6  w-full max-w-7xl">
+          <div className="flex items-center justify-center flex-1 text-gray-500 w-full max-w-7xl">
             Not chat history available for recorded intakes.
           </div>
         ) : (
-          <div className="p-0 md:p-10 mb-6  w-full max-w-7xl">
-            <div className="flex items-start justify-between mb-4 gap-4">
+          <div className="flex flex-col flex-1 min-h-0 px-0 md:px-10 pb-6 w-full max-w-7xl">
+            <div className="flex items-start justify-between mb-4 gap-4 shrink-0">
               <div className="flex-1">
                 <h2 className="text-lg font-medium text-[#003331] flex items-center mb-2">
                   <FiMessageSquare className="mr-2" /> Intake Conversation
@@ -439,7 +439,7 @@ const IntakeManagementPage = () => {
                   </div>
                 )}
             </div>
-            <div className="h-[600px]">
+            <div className="flex-1 min-h-0">
               {clientData?.external_client_id &&
               intakeData &&
               intakeData.id &&

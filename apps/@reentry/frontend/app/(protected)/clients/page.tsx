@@ -16,12 +16,7 @@
 // =============================================================================
 
 "use client";
-import {
-  ArrowDropDown,
-  ArrowDropUp,
-  FilterList,
-  Search,
-} from "@mui/icons-material";
+import { ArrowDropDown, FilterList, Search } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -29,21 +24,20 @@ import DataTable, { TableColumn } from "react-data-table-component";
 
 import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
-import {InfoTooltip} from "~@reentry/frontend/components/base/InfoTooltip";
+import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
-import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import AddClientModal, {
   type AddClientFormData,
 } from "~@reentry/frontend/components/clients/AddClientModal";
-import {ClipboardIcon} from "~@reentry/frontend/components/icons/ClipboardIcon";
+import { ClipboardIcon } from "~@reentry/frontend/components/icons/ClipboardIcon";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import {useAuthUserCapabilities} from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
+import { useAuthUserCapabilities } from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import { showSuccessToast } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
-
 
 type ClientResponse = components["schemas"]["ClientResponse"];
 
@@ -85,13 +79,6 @@ const customStyles = {
   },
 };
 
-const SortIcon = () => (
-  <div className="relative flex flex-col items-center w-4 h-6 text-slate-400 mt-1">
-    <ArrowDropDown className="absolute bottom-2 h-6 w-6 rotate-180" />
-    <ArrowDropUp className="absolute bottom-0.5 h-6 w-6" />
-  </div>
-);
-
 // Formatting
 const formatInitials = (row: ClientResponse) => {
   if (!row.client || !row.client.full_name) return null;
@@ -103,7 +90,6 @@ const formatName = (row: ClientResponse) => {
   return `${row.client.full_name.given_names} ${row.client.full_name.surname}`;
 };
 
-
 const ClientsPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -113,8 +99,14 @@ const ClientsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeSearchTerm, setActiveSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [sortBy, setSortBy] = useState<components["schemas"]["ClientSort"]>("last_assessment_date");
-  const [sortOrder, setSortOrder] = useState("desc");
+
+  // ✅ Fix: estado inicial alineado con lo que devuelve el backend por defecto
+  const [sortConfig, setSortConfig] = useState<{
+    sortBy: components["schemas"]["ClientSort"];
+    sortOrder: string;
+  }>({ sortBy: "name", sortOrder: "asc" });
+
+  const { sortBy, sortOrder } = sortConfig;
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
   const { isZeroCaseloadUser } = useAuthUserCapabilities();
@@ -197,7 +189,7 @@ const ClientsPage = () => {
     }
   };
 
-  const handleSort = (column, sortDirection) => {
+  const handleSort = (column) => {
     const columnMapping = {
       name: "name",
       intake_count: "intake_count",
@@ -206,8 +198,11 @@ const ClientsPage = () => {
 
     const apiSortBy = columnMapping[column.id];
     if (apiSortBy) {
-      setSortBy(apiSortBy);
-      setSortOrder(sortDirection);
+      let newSortOrder = "asc";
+      if (apiSortBy === sortBy) {
+        newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+      }
+      setSortConfig({ sortBy: apiSortBy, sortOrder: newSortOrder });
     }
   };
 
@@ -219,58 +214,6 @@ const ClientsPage = () => {
       day: "numeric",
     });
   };
-
-
-  // TODO STATUS FILTER
-  // // Client Status Polling
-  // // State to track status updates from polling
-  // const [statusUpdates, setStatusUpdates] = useState<Map<string, string>>(
-  //   new Map(),
-  // );
-
-  // // Determine if any clients are in progress and need polling
-  // const hasInProgressClients = useMemo(() => {
-  //   if (!data?.items) return false;
-  //   return data.items.some(
-  //     (client) => client.processing_status === "in_progress",
-  //   );
-  // }, [data?.items]);
-
-  // // Handle status updates from polling
-  // const handleStatusUpdate = useCallback(
-  //   (
-  //     inProgressClients: Array<{
-  //       client_pseudo_id: string;
-  //       processing_status: string;
-  //     }>,
-  //   ) => {
-  //     const newUpdates = new Map<string, string>();
-
-  //     // Update status for clients that are still in progress
-  //     for (const client of inProgressClients) {
-  //       newUpdates.set(client.client_pseudo_id, client.processing_status);
-  //     }
-
-  //     // Check if any previously in-progress clients are no longer in the list (completed)
-  //     for (const [clientPseudoId, status] of statusUpdates) {
-  //       if (status === "in_progress" && !newUpdates.has(clientPseudoId)) {
-  //         // Client was in progress but is no longer - it likely completed
-  //         // Trigger a full refetch to get updated data
-  //         refetch();
-  //       }
-  //     }
-
-  //     setStatusUpdates(newUpdates);
-  //   },
-  //   [statusUpdates, refetch],
-  // );
-
-  // // Set up polling for status updates
-  // useClientStatusPolling({
-  //   enabled: hasInProgressClients,
-  //   interval: 10000, // Poll every 10 seconds
-  //   onStatusUpdate: handleStatusUpdate,
-  // });
 
   if (isLoading) {
     return (
@@ -311,58 +254,60 @@ const ClientsPage = () => {
       name: "DOC ID",
       selector: (row: ClientResponse) => row.client?.external_client_id || "",
       cell: (row: ClientResponse) => (
-          <div className="flex items-center gap-1.5">
-            <span className="text-[#002321] text-sm pointer-events-none">
-              {row.client?.external_client_id || "-"}
-            </span>
-              <button
-                  onClick={() => {
-                      showSuccessToast(`DOC ID copied to clipboard`);
-                      navigator.clipboard.writeText(
-                          row.client?.external_client_id as string,
-                      );
-                  }}
-                  className="p-1 rounded hover:bg-gray-100 transition"
-              >
-                  <ClipboardIcon/>
-              </button>
-          </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[#002321] text-sm pointer-events-none">
+            {row.client?.external_client_id || "-"}
+          </span>
+          <button
+            onClick={() => {
+              showSuccessToast(`DOC ID copied to clipboard`);
+              navigator.clipboard.writeText(
+                row.client?.external_client_id as string,
+              );
+            }}
+            className="p-1 rounded hover:bg-gray-100 transition"
+          >
+            <ClipboardIcon />
+          </button>
+        </div>
       ),
       sortable: false,
     },
     {
       id: "intake_count",
       name: (
-          <div className="flex items-center gap-1">
-              <span  className={"text-[12px] md:text-[14px]"}>Number of Assessments</span>
-              <InfoTooltip
-                  text="The total number of assessments associated with the client, including enabled, in progress, and completed assessments"
-                  position="top"
-                  className={"w-3 h-3"}
-              />
-          </div>
+        <div className="flex items-center gap-1">
+          <span className={"text-[12px] md:text-[14px]"}>
+            Number of Assessments
+          </span>
+          <InfoTooltip
+            text="The total number of assessments associated with the client, including enabled, in progress, and completed assessments"
+            position="top"
+            className={"w-3 h-3"}
+          />
+        </div>
       ),
       selector: (row: ClientResponse) => row.intake_count,
       cell: (row: ClientResponse) => (
-          <span className="text-[#002321] text-sm pointer-events-none">
-              { row.intake_count }
-          </span>
-        ),
-        sortable: true,
+        <span className="text-[#002321] text-sm pointer-events-none">
+          {row.intake_count}
+        </span>
+      ),
+      sortable: true,
     },
     {
       id: "last_completed_date",
       name: (
-          <div className="flex flex-col leading-tight w-full text-[12px] md:text-[14px]">
-              <span>Last Assessment</span>
-              <span>Completed</span>
-          </div>
+        <div className="flex flex-col leading-tight w-full text-[12px] md:text-[14px]">
+          <span>Last Assessment</span>
+          <span>Completed</span>
+        </div>
       ),
       selector: (row: ClientResponse) => row.last_completed_date || "",
       cell: (row: ClientResponse) => (
-          <span className="text-[#002321] text-sm pointer-events-none">
-            {row.last_completed_date ? formatDate(row.last_completed_date) : "-"}
-          </span>
+        <span className="text-[#002321] text-sm pointer-events-none">
+          {row.last_completed_date ? formatDate(row.last_completed_date) : "-"}
+        </span>
       ),
       sortable: true,
     },
@@ -382,14 +327,17 @@ const ClientsPage = () => {
           columns={buildColumns()}
           data={data?.items || []}
           customStyles={customStyles}
-          sortIcon={<SortIcon />}
+          sortIcon={<ArrowDropDown className="h-5 w-5 text-slate-400 ml-1" />}
           onSort={handleSort}
           sortServer
+          // ✅ Fix: sincroniza el estado interno de la librería con sortConfig inicial
+          defaultSortFieldId="name"
+          defaultSortAsc={true}
           noHeader
           responsive
           highlightOnHover
           noDataComponent={
-            <div className="text-gray-600 py-4 ">No clients found.</div>
+            <div className="text-gray-600 py-4">No clients found.</div>
           }
           pagination
           paginationPerPage={rowsPerPage}
@@ -421,14 +369,16 @@ const ClientsPage = () => {
       <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
         <div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
           <div className="self-stretch flex-col justify-start items-start gap-2 flex">
-              <div className="text-black font-['Public_Sans'] text-2xl font-medium leading-[120%] tracking-[-0.48px] ">
-                  All Clients ({data?.total || 0})
-              </div>
+            <div className="text-black font-['Public_Sans'] text-2xl font-medium leading-[120%] tracking-[-0.48px]">
+              All Clients ({data?.total || 0})
+            </div>
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
-              <div className="text-[#2b5469]/70 text-lg font-medium leading-snug  w-full md:w-auto">
-                  {!isZeroCaseloadUser? "All clients on your caseload are displayed below.": "All clients in your assigned facilities are displayed below."}
+              <div className="text-[#2b5469]/70 text-lg font-medium leading-snug w-full md:w-auto">
+                {!isZeroCaseloadUser
+                  ? "All clients on your caseload are displayed below."
+                  : "All clients in your assigned facilities are displayed below."}
               </div>
-              <div className="flex flex-col  md:flex-row gap-4 items-stretch md:items-center w-full md:w-auto">
+              <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center w-full md:w-auto">
                 <IconInput
                   placeholder="Search by name or ID"
                   startIcon={
@@ -454,12 +404,10 @@ const ClientsPage = () => {
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                     fontSize="small"
                   />
-
                   <select
                     value={statusFilter}
                     onChange={(e) => {
                       setStatusFilter(e.target.value);
-                      // Reset to page 1 when filter changes
                       const params = new URLSearchParams(searchParams);
                       params.set("page", "1");
                       track("clients_page_client_status_filtered", {
@@ -475,7 +423,6 @@ const ClientsPage = () => {
                       </option>
                     ))}
                   </select>
-
                   <ArrowDropDown
                     className="pointer-events-none absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
                     fontSize="small"
@@ -483,10 +430,10 @@ const ClientsPage = () => {
                 </div>
                 {isFeatureEnabled("CLIENT_ADDITION") && (
                   <PrimaryButton
-                      buttonText={"Add Client"}
+                    buttonText={"Add Client"}
                     onClick={() => setIsAddClientModalOpen(true)}
                     className="px-4 py-2 bg-[#003331] text-white text-sm font-medium rounded-full hover:bg-gray-950 transition-colors whitespace-nowrap"
-                      ignoreCapabilities={true}
+                    ignoreCapabilities={true}
                   />
                 )}
               </div>
@@ -501,7 +448,6 @@ const ClientsPage = () => {
                   onClick={() => {
                     setActiveSearchTerm("");
                     setSearchTerm("");
-                    // Reset to page 1 when clearing search
                     const params = new URLSearchParams(searchParams);
                     params.set("page", "1");
                     router.push(`?${params.toString()}`);

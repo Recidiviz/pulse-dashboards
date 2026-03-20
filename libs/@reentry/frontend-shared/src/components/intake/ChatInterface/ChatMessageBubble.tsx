@@ -28,6 +28,7 @@ interface MessageBubbleProps {
   isTyping?: boolean;
   clientPseudoId?: string | null;
   disableTTS?: boolean;
+  smallText?: boolean;
 }
 
 const TypingDots: React.FC = () => (
@@ -96,6 +97,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   isTyping = false,
   clientPseudoId,
   disableTTS = false,
+  smallText = false,
 }) => {
   // Return nothing if no message and not typing
   if (!message && !isTyping) {
@@ -124,7 +126,9 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
 
           <div className="relative inline-flex flex-col items-end">
             <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-[#2B6C75] text-white break-words">
-              <Typography className="break-words whitespace-pre-wrap md:!text-[18px] xs:!text-[16px]">
+              <Typography
+                className={`break-words whitespace-pre-wrap ${smallText ? "!text-sm" : "md:!text-[18px] xs:!text-[16px]"}`}
+              >
                 {isTyping ? <TypingDots /> : message?.content}
               </Typography>
             </div>
@@ -149,7 +153,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
               <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-white text-[#1E3A3A] break-words">
                 <Typography
                   variant="body1"
-                  className="font-inter md:!text-[18px] xs:!text-[16px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
+                  className={`font-inter ${smallText ? "!text-sm" : "md:!text-[18px] xs:!text-[16px]"} leading-[1.2] font-normal break-words whitespace-pre-wrap`}
                 >
                   {isTyping ? <TypingDots /> : message?.content}
                 </Typography>

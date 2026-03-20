@@ -41,7 +41,6 @@ const AdminIntakeHistory = ({
   const { trackClientIntakeChatHistoryViewed } = useAnalytics();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [containerHeight, setContainerHeight] = useState<number | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,43 +54,10 @@ const AdminIntakeHistory = ({
     }
   }, [intake, activeSection]);
 
-  useEffect(() => {
-    if (sidebarRef.current && sidebarOpen) {
-      const measureHeight = () => {
-        // Check if we're on md or larger screens
-        const isMdOrLarger = window.matchMedia("(min-width: 768px)").matches;
-
-        if (isMdOrLarger) {
-          // On md+ screens, constrain height to sidebar
-          const sidebarHeight = sidebarRef.current?.scrollHeight || 0;
-          const minHeight = 500;
-          setContainerHeight(Math.max(minHeight, sidebarHeight + 50)); // +50 for padding
-        } else {
-          // On smaller screens, let it grow naturally
-          setContainerHeight(null);
-        }
-      };
-
-      // Measure after render
-      setTimeout(measureHeight, 0);
-
-      // Listen for screen size changes
-      const mediaQuery = window.matchMedia("(min-width: 768px)");
-      mediaQuery.addEventListener("change", measureHeight);
-
-      return () => mediaQuery.removeEventListener("change", measureHeight);
-    }
-
-    return;
-  }, [sidebarOpen, intake?.intake_sections]);
-
   const sections: IntakeSection[] = intake.intake_sections || [];
 
   return (
-    <div
-      className="mx-auto bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row overflow-hidden"
-      style={containerHeight ? { height: `${containerHeight}px` } : undefined}
-    >
+    <div className="h-full mx-auto bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row overflow-hidden">
       {/* Sidebar */}
       {sidebarOpen ? (
         <div className="flex-none" ref={sidebarRef}>
@@ -129,7 +95,7 @@ const AdminIntakeHistory = ({
             .map((section) => (
               <div key={section.title} className="flex flex-col h-full min-h-0">
                 <div className="flex items-center pb-4 border-b flex-shrink-0">
-                  <h2 className="text-lg font-medium">
+                  <h2 className="text-sm font-bold">
                     {section.title}
                     <StatusPill status={section.status} />
                   </h2>
@@ -140,6 +106,7 @@ const AdminIntakeHistory = ({
                     intakeId={intake.id}
                     isActive={true}
                     client={clientRecord}
+                    smallText
                   />
                 </div>
               </div>

@@ -34,11 +34,13 @@ const SectionChatInterface = ({
   intakeId,
   isActive,
   client,
+  smallText,
 }: {
   section: IntakeSection;
   intakeId: string;
   isActive: boolean;
   client: ClientRecord;
+  smallText?: boolean;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -70,7 +72,7 @@ const SectionChatInterface = ({
         "Content-Type": "application/json",
       },
     },
-    {enabled: shouldFetchMessages},
+    { enabled: shouldFetchMessages },
   );
 
   const messages: IntakeMessage[] = data || [];
@@ -154,6 +156,7 @@ const SectionChatInterface = ({
                   message={message}
                   name={clientFullName}
                   disableTTS
+                  smallText={smallText}
                 />
               ))
             )}

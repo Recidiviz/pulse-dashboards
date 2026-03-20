@@ -185,7 +185,7 @@ const Sidebar: FC<SidebarProps> = ({
         </button>
       </div>
 
-      <div className="p-2">
+      <div className="p-2 overflow-y-auto flex-1">
         {intakeSections.map((section, index) => {
           const status: StepStatus = section.status;
 
