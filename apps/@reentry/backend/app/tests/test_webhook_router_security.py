@@ -78,7 +78,7 @@ class TestDeepgramWebhookSecurity:
         response = await client.post(
             "/webhooks/deepgram/transcription",
             json=sample_webhook_payload,
-            # No dg-signature header
+            # No dg-token header
         )
         assert response.status_code == 401
         assert "Invalid webhook signature" in response.json()["detail"]
@@ -91,7 +91,7 @@ class TestDeepgramWebhookSecurity:
         response = await client.post(
             "/webhooks/deepgram/transcription",
             json=sample_webhook_payload,
-            headers={"dg-signature": "invalid_signature_12345"},
+            headers={"dg-token": "invalid_signature_12345"},
         )
         assert response.status_code == 401
         assert "Invalid webhook signature" in response.json()["detail"]
@@ -114,7 +114,7 @@ class TestDeepgramWebhookSecurity:
             response = await client.post(
                 "/webhooks/deepgram/transcription",
                 json=tampered_payload,
-                headers={"dg-signature": valid_signature},
+                headers={"dg-token": valid_signature},
             )
         assert response.status_code == 401
         assert "Invalid webhook signature" in response.json()["detail"]
@@ -134,7 +134,7 @@ class TestDeepgramWebhookSecurity:
             response = await client.post(
                 "/webhooks/deepgram/transcription",
                 json=sample_webhook_payload,
-                headers={"dg-signature": valid_signature},
+                headers={"dg-token": valid_signature},
             )
 
         # Should pass signature verification but fail later
@@ -178,7 +178,7 @@ class TestDeepgramWebhookSecurity:
             response = await client.post(
                 "/webhooks/deepgram/transcription",
                 json=malicious_payload,
-                headers={"dg-signature": original_signature},
+                headers={"dg-token": original_signature},
             )
 
         # Should be rejected because signature doesn't match new payload
@@ -221,7 +221,7 @@ class TestDeepgramWebhookSecurity:
         response = await client.post(
             "/webhooks/deepgram/transcription",
             json=malicious_payload,
-            headers={"dg-signature": "a" * 64},
+            headers={"dg-token": "a" * 64},
         )
         assert response.status_code == 401
 

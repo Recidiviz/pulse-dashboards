@@ -38,7 +38,7 @@ def verify_deepgram_signature(
 
     Args:
         payload: The raw request body as bytes
-        signature_header: The value of the 'dg-signature' header
+        signature_header: The value of the 'dg-token' header
         webhook_secret: The webhook secret configured in Deepgram
 
     Returns:
@@ -50,7 +50,7 @@ def verify_deepgram_signature(
         - Returns False for any errors to fail securely
     """
     if not signature_header:
-        logger.warning("Missing dg-signature header in webhook request")
+        logger.warning("Missing dg-token header in webhook request")
         return False
 
     if not webhook_secret:

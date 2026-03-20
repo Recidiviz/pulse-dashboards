@@ -31,7 +31,7 @@ async def deepgram_transcription_webhook(
     This is called by Deepgram when async transcription completes.
 
     Security:
-        Verifies HMAC-SHA256 signature in the 'dg-signature' header to ensure
+        Verifies HMAC-SHA256 signature in the 'dg-token' header to ensure
         the request is authentic and hasn't been tampered with. Rejects any
         unsigned or invalidly signed requests to prevent injection attacks.
     """
@@ -40,7 +40,7 @@ async def deepgram_transcription_webhook(
         raw_body = await request.body()
 
         # Get the signature from the header
-        signature = request.headers.get("dg-signature")
+        signature = request.headers.get("dg-token")
 
         # Verify the webhook signature using Deepgram API Key ID
         if not verify_deepgram_signature(
@@ -56,6 +56,7 @@ async def deepgram_transcription_webhook(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid webhook signature",
             )
+            # todo set intake status to error
 
         # Parse the verified payload from raw body
         # (cannot use request.json() after consuming body)
