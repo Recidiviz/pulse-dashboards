@@ -38,7 +38,11 @@ class ClientConnectionManager:
         self.sio = sio
 
     async def register_client(
-        self, client_pseudo_id: str, sid: str, user_agent: str = "Unknown"
+        self,
+        client_pseudo_id: str,
+        sid: str,
+        user_agent: str = "Unknown",
+        exp: Optional[int] = None,
     ) -> bool:
         """
         Register a client connection, enforcing one connection per client.
@@ -96,13 +100,14 @@ class ClientConnectionManager:
             client_room = f"client_{client_pseudo_id}"
             await self.sio.enter_room(sid, client_room)
 
-            print(
+            logger.info(
                 f"Registered client {client_pseudo_id} with sid {sid} in room {client_room}"
             )
 
-            # saves the client_pseudo_id as the unique session info,
-            # to be used when receiving messages for an established connection
-            await self.sio.save_session(sid, client_pseudo_id)
+            # saves the client_pseudo_id and token exp as the session info
+            await self.sio.save_session(
+                sid, {"client_pseudo_id": client_pseudo_id, "exp": exp}
+            )
             return was_connected_elsewhere
 
         except Exception as e:
@@ -181,7 +186,12 @@ class ClientConnectionManager:
         try:
             # First try to get from Socket.IO session (faster)
             try:
-                client_pseudo_id = await self.sio.get_session(sid)
+                session = await self.sio.get_session(sid)
+                client_pseudo_id = (
+                    session.get("client_pseudo_id")
+                    if isinstance(session, dict)
+                    else session
+                )
                 if client_pseudo_id:
                     logger.debug(
                         f"Found client ID {client_pseudo_id} in session for sid {sid}"

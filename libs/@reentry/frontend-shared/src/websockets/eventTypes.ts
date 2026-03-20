@@ -46,7 +46,7 @@ export interface PongEventContent {
 
 export interface ConnectionAckEventContent {
   accepted: boolean;
-  status: "error" | "created" | "in_progress" | "completed"
+  status: "error" | "created" | "in_progress" | "completed";
 }
 
 export interface SectionChangeContent {
@@ -73,6 +73,7 @@ export interface ServerToClientEvents {
   AIMessage: (content: IntakeMessageResponse) => void;
   sectionChange: (content: SectionChangeContent) => void;
   forceDisconnect: (content: ForceDisconnectContent) => void;
+  tokenExpired: () => void;
 }
 
 export interface ClientToServerEvents {

@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any, Dict, Optional, Tuple, Union
 
 import jwt
@@ -22,6 +22,8 @@ def create_access_token(
     payload = {
         "sub": client_pseudo_id,
         "iat": login_time,
+        "exp": login_time
+        + timedelta(seconds=settings.BACKEND_ISSUED_INTAKE_TOKEN_EXPIRY_SECONDS),
         "token_type": "client",
         "login_timestamp": login_time.timestamp(),
     }

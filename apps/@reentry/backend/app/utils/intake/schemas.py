@@ -145,6 +145,16 @@ class ForceDisconnectEvent(BaseModel):
     reason: str
 
 
-type ServerEvent = PongEvent | AIMessageEvent | ConnectionAckEvent | SectionChangeEvent
+class TokenExpiredEvent(BaseModel):
+    type: Literal["tokenExpired"] = "tokenExpired"
+
+
+type ServerEvent = (
+    PongEvent
+    | AIMessageEvent
+    | ConnectionAckEvent
+    | SectionChangeEvent
+    | TokenExpiredEvent
+)
 
 ## Front-end Events

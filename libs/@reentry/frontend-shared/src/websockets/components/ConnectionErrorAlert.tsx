@@ -24,7 +24,13 @@ import { useSocket } from "../IntakeSocketContext";
 
 export const ConnectionErrorAlert = () => {
   const {
-    intakeContext: { connectionStatus, intakeStatus, error, disconnectReason },
+    intakeContext: {
+      connectionStatus,
+      intakeStatus,
+      error,
+      disconnectReason,
+      sessionExpiring,
+    },
     intakeDispatchContext: { reconnect },
   } = useSocket();
 
@@ -42,11 +48,24 @@ export const ConnectionErrorAlert = () => {
     return;
   }, [connectionStatus]);
   if (
-    connectionStatus === "connected" ||
     intakeStatus === "error" ||
     error?.type === "api" ||
     intakeStatus !== "in_progress"
   ) {
+    return null;
+  }
+
+  if (sessionExpiring) {
+    return (
+      <Box sx={{ width: "100%", position: "absolute", top: 0, zIndex: 1100 }}>
+        <Alert severity="warning">
+          Your session is about to expire. Please log in again to continue.
+        </Alert>
+      </Box>
+    );
+  }
+
+  if (connectionStatus === "connected") {
     return null;
   }
 

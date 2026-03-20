@@ -57,7 +57,9 @@ async def test_register_client(connection_manager, mock_redis_client, mock_socke
 
     # Verify Socket.IO interactions
     mock_socketio.enter_room.assert_called_once_with(sid, f"client_{client_pseudo_id}")
-    mock_socketio.save_session.assert_called_once_with(sid, client_pseudo_id)
+    mock_socketio.save_session.assert_called_once_with(
+        sid, {"client_pseudo_id": client_pseudo_id, "exp": None}
+    )
 
 
 @pytest.mark.asyncio

@@ -40,6 +40,9 @@ import type {
 } from "./eventTypes";
 
 const DUPLICATE_ACTIVITY_MESSAGE = "This intake is active elsewhere";
+// Warn the user this many ms before their session expires. Set to 1 minute to
+// give enough time on slow prison tablets.
+const SESSION_EXPIRY_WARNING_MS = 60_000;
 
 function logWebsocketEvent(
   level: "info" | "warning" | "error",
@@ -83,6 +86,7 @@ export interface IntakeSocketContextType {
   has_survey: boolean;
   disconnectReason?: string | null;
   intakeId?: string | null;
+  sessionExpiring?: boolean;
 }
 
 interface IntakeSocketDispatchContextType {
@@ -177,6 +181,9 @@ type SetStatusAction = {
   content: components["schemas"]["IntakeStatus"];
 };
 
+type SetSessionExpiringAction = { type: "setSessionExpiring" };
+type ResetSessionExpiringAction = { type: "resetSessionExpiring" };
+
 type IntakeAction =
   | ConnectionAction
   | IntakeApiAction
@@ -188,7 +195,9 @@ type IntakeAction =
   | SetConversationStartedAction
   | SetIntakeCompleteAction
   | SetWaitingForAIInputAction
-  | SetStatusAction;
+  | SetStatusAction
+  | SetSessionExpiringAction
+  | ResetSessionExpiringAction;
 
 const intakeReducer = (
   state: IntakeSocketContextType,
@@ -376,6 +385,12 @@ const intakeReducer = (
         waitingForAIInput: action.content,
       };
     }
+    case "setSessionExpiring": {
+      return { ...state, sessionExpiring: true };
+    }
+    case "resetSessionExpiring": {
+      return { ...state, sessionExpiring: false };
+    }
     default: {
       // TypeScript will ensure we've covered all action types
       const _exhaustiveCheck: never = action;
@@ -450,6 +465,45 @@ export function IntakeSocketProvider({
   const setIntakeComplete = () => {
     dispatch({ type: "setIntakeComplete" });
   };
+
+  const logOut = useCallback(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("intake_token");
+      setStoredToken(null);
+      window.location.reload();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!storedToken) return;
+    let warningTimer: ReturnType<typeof setTimeout> | null = null;
+    let logoutTimer: ReturnType<typeof setTimeout> | null = null;
+    try {
+      const payload = JSON.parse(atob(storedToken.split(".")[1]));
+      const msUntilExpiry = payload.exp * 1000 - Date.now();
+      if (msUntilExpiry > 0) {
+        const msUntilWarning = msUntilExpiry - SESSION_EXPIRY_WARNING_MS;
+        if (msUntilWarning > 0) {
+          warningTimer = setTimeout(
+            () => dispatch({ type: "setSessionExpiring" }),
+            msUntilWarning,
+          );
+        } else {
+          dispatch({ type: "setSessionExpiring" });
+        }
+        logoutTimer = setTimeout(() => logOut(), msUntilExpiry);
+      } else {
+        logOut();
+      }
+    } catch {
+      // Invalid token format — let the server reject it
+    }
+    return () => {
+      if (warningTimer) clearTimeout(warningTimer);
+      if (logoutTimer) clearTimeout(logoutTimer);
+      dispatch({ type: "resetSessionExpiring" });
+    };
+  }, [storedToken, logOut]);
 
   // Handler functions for socket events
   const aiMessageHandler = useCallback(
@@ -577,9 +631,15 @@ export function IntakeSocketProvider({
         authTokenPresent: !!(auth && auth["auth_token"]),
         urlTokenPresent: !!(auth && auth["token_from_url"]),
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const reason = (error as any)?.data?.message;
+      if (reason === "Token has expired") {
+        logOut();
+        return;
+      }
       dispatch({
         type: "error",
-        content: { type: "socket", message: error.message },
+        content: { type: "socket", message: reason ?? error.message },
       });
     });
     socket.on("forceDisconnect", (content) => {
@@ -590,6 +650,9 @@ export function IntakeSocketProvider({
       });
       socket.disconnect();
     });
+    socket.on("tokenExpired", () => {
+      logOut();
+    });
     console.log("listening now");
 
     // Application-specific events
@@ -597,7 +660,6 @@ export function IntakeSocketProvider({
     socket.on("connectionAck", connectionAckHandler);
     socket.on("pong", pongHandler);
     socket.on("sectionChange", sectionChangeHandler);
-
     // Cleanup on unmount
     return () => {
       socket.off("connect");
@@ -608,12 +670,14 @@ export function IntakeSocketProvider({
       socket.off("pong");
       socket.off("sectionChange");
       socket.off("forceDisconnect");
+      socket.off("tokenExpired");
     };
   }, [
     aiMessageHandler,
     connectionAckHandler,
     pongHandler,
     sectionChangeHandler,
+    logOut,
     socket,
     storedToken,
     tokenFromUrl,
@@ -649,23 +713,18 @@ export function IntakeSocketProvider({
     },
     { enabled: !!storedToken && !tokenFromUrl },
   );
-  const logOut = useCallback(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.removeItem("intake_token");
-      setStoredToken(null);
-    }
-  }, []);
-
   useEffect(() => {
     if (!apiError && !apiErrorToken) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((apiError as any)?.detail === "Unauthorized") {
+    const isAuthError = (err: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const detail = (err as any)?.detail;
+      return detail === "Unauthorized" || detail === "Token has expired";
+    };
+
+    if (isAuthError(apiError) || isAuthError(apiErrorToken)) {
       logOut();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((apiErrorToken as any)?.detail === "Unauthorized") {
-      logOut();
+      return;
     }
     // Update error state
     dispatch({
@@ -891,7 +950,6 @@ export function IntakeSocketProvider({
 
   const handleClickDisconnect = () => {
     logOut();
-    window.close();
   };
 
   const dispatchContext: IntakeSocketDispatchContextType = {

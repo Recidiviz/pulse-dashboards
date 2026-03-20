@@ -14,6 +14,7 @@ import socketio
 import structlog
 
 from app.auth.intake.auth_client_user import verify_client_token
+from app.auth.intake.utils import decode_jwt_token
 from app.core.config import create_model_from_config, settings
 from app.models.intake import (
     COMPLETION_SECTION,
@@ -37,6 +38,7 @@ from app.utils.intake.schemas import (
     PongEvent,
     PongEventContent,
     ServerEvent,
+    TokenExpiredEvent,
 )
 
 logger = structlog.get_logger(__name__)
@@ -164,15 +166,7 @@ class SocketIOManager:
 
                     if not success:
                         logger.error(f"Token verification failed: {error_message}")
-                        await self.send_event_sid(
-                            sid,
-                            ConnectionAckEvent(
-                                content=ConnectionAckContent(
-                                    accepted=False, error=error_message
-                                )
-                            ),
-                        )
-                        return False
+                        raise ConnectionRefusedError({"message": error_message})
 
                     client_pseudo_id = extracted_client_pseudo_id
                     structlog.contextvars.bind_contextvars(
@@ -186,10 +180,14 @@ class SocketIOManager:
                             client_pseudo_id, parsedAuth.token_from_url
                         )
                         if client_data and intake:
+                            token_exp = decode_jwt_token(token).get("exp", None)
                             was_connected_elsewhere = (
                                 await self.client_connection_manager.register_client(
-                                    client_pseudo_id, sid, user_agent
+                                    client_pseudo_id, sid, user_agent, exp=token_exp
                                 )
+                            )
+                            asyncio.create_task(
+                                self._schedule_token_expiry(sid, token_exp)
                             )
                             if was_connected_elsewhere:
                                 # Client was connected elsewhere — graph keeps running,
@@ -200,16 +198,9 @@ class SocketIOManager:
                                 )
 
                             if intake and intake.status == IntakeStatus.COMPLETED:
-                                await self.send_event_sid(
-                                    sid,
-                                    ConnectionAckEvent(
-                                        content=ConnectionAckContent(
-                                            accepted=False,
-                                            error="Intake is already completed",
-                                        )
-                                    ),
+                                raise ConnectionRefusedError(
+                                    {"message": "Intake is already completed"}
                                 )
-                                return False
 
                             if intake and intake.status != IntakeStatus.COMPLETED:
                                 if intake.status == IntakeStatus.CREATED:
@@ -255,20 +246,13 @@ class SocketIOManager:
 
                                 return True
 
-            # Always acknowledge the connection via sid - this works even if token is invalid
             logger.warning(
                 f"Rejecting connection sid={sid} client_pseudo_id={client_pseudo_id or 'unknown'} auth_token_present={bool(auth and auth.get('auth_token'))}"
             )
-            await self.send_event_sid(
-                sid,
-                ConnectionAckEvent(
-                    content=ConnectionAckContent(
-                        accepted=False, error="Authentication failed"
-                    )
-                ),
-            )
-            return False
+            raise ConnectionRefusedError({"message": "Authentication failed"})
 
+        except ConnectionRefusedError:
+            raise
         except Exception as e:
             traceback.print_exc()
             logger.error(
@@ -507,6 +491,38 @@ class SocketIOManager:
         # Safely delete graph reference
         if client_pseudo_id in self.conversation_graphs:
             del self.conversation_graphs[client_pseudo_id]
+
+    async def _schedule_token_expiry(self, sid: str, exp: Optional[int]) -> None:
+        """
+        Sleep until the token expires, then emit tokenExpired and disconnect.
+        If exp is None (token had no exp claim), falls back to the configured
+        BACKEND_ISSUED_INTAKE_TOKEN_EXPIRY_SECONDS setting.
+        """
+        try:
+            if exp:
+                secs_remaining = exp - time()
+            else:
+                secs_remaining = settings.BACKEND_ISSUED_INTAKE_TOKEN_EXPIRY_SECONDS
+            logger.info(
+                f"Token expiry timer set for sid {sid}, fires in {secs_remaining:.1f}s"
+            )
+            if secs_remaining > 0:
+                await asyncio.sleep(secs_remaining)
+            try:
+                session = await self.sio.get_session(sid)
+            except Exception:
+                logger.info(f"Token expiry fired for sid {sid} but session not found.")
+                return
+            if session:
+                logger.info(f"Token expired for sid {sid}, disconnecting")
+                await self.sio.emit(TokenExpiredEvent().type, {}, room=sid)
+                await self.sio.disconnect(sid)
+            else:
+                logger.info(f"Token expiry fired for sid {sid} but session is empty.")
+        except asyncio.CancelledError:
+            logger.info(f"Token expiry task cancelled for sid {sid}")
+        except Exception as e:
+            logger.error(f"Error in token expiry task for sid {sid}: {e}")
 
     async def handle_disconnect(self, sid: str) -> None:
         """

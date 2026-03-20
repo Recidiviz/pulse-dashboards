@@ -116,6 +116,8 @@ class Settings(BaseSettings):
     CONFIG_MANAGEMENT_PASSWORD: str = ""
     # Token expiry in minutes for config management access
     CONFIG_ACCESS_TOKEN_EXPIRY_MINUTES: int = 30
+    # Token expiry for backend-issued client intake sessions, set in seconds (default: 8 hours)
+    BACKEND_ISSUED_INTAKE_TOKEN_EXPIRY_SECONDS: int = 28800
 
     @property
     def DATABASE_URL(self):

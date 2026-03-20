@@ -109,21 +109,22 @@ async def test_initialization(socket_manager, mock_socketio_server):
 
 @pytest.mark.asyncio
 async def test_handle_connect_no_client_pseudo_id(socket_manager):
-    """Test connect handler with no client ID."""
+    """Test connect handler with no auth token raises ConnectionRefusedError."""
     sid = "test_sid"
     environ = {}
     auth = {}
 
-    result = await socket_manager.handle_connect(sid, environ, auth)
+    # Empty auth dict is falsy; code raises ConnectionRefusedError instead of returning False
+    with pytest.raises(ConnectionRefusedError):
+        await socket_manager.handle_connect(sid, environ, auth)
 
-    # Should return False when no client_pseudo_id is provided
-    assert result is False
 
-
+@patch("app.utils.intake.socket_manager.decode_jwt_token")
 @patch("app.auth.intake.auth_client_user.decode_jwt_token")
 @pytest.mark.asyncio
 async def test_handle_connect_success(
-    mock_decode_jwt_token,
+    mock_auth_decode_jwt_token,
+    mock_sm_decode_jwt_token,
     socket_manager,
     mock_socketio_server,
     mock_client_connection_manager,
@@ -138,26 +139,28 @@ async def test_handle_connect_success(
     # Auth contains auth_token and token_from_url
     auth = {"auth_token": "mock_jwt_token", "token_from_url": "mock_url_token"}
 
-    mock_decode_jwt_token.return_value = {
-        "sub": client_pseudo_id,
-        "token_type": "client",
-    }
+    decoded_payload = {"sub": client_pseudo_id, "token_type": "client", "exp": None}
+    mock_auth_decode_jwt_token.return_value = decoded_payload
+    mock_sm_decode_jwt_token.return_value = decoded_payload
 
     intake, client = mock_intake_and_client
     mock_db_manager.get_client.return_value = client
     mock_db_manager.get_intake.return_value = intake
 
-    with patch.object(socket_manager, "handle_conversation_state"):
+    with (
+        patch.object(socket_manager, "handle_conversation_state"),
+        patch.object(socket_manager, "_schedule_token_expiry", new_callable=AsyncMock),
+    ):
         result = await socket_manager.handle_connect(sid, environ, auth)
 
         # Verify result
         assert result is True
 
-        mock_decode_jwt_token.assert_called_once_with("mock_jwt_token")
+        mock_auth_decode_jwt_token.assert_called_once_with("mock_jwt_token")
 
-        # Verify connection manager was called
+        # Verify connection manager was called with the new exp kwarg
         mock_client_connection_manager.register_client.assert_called_once_with(
-            client_pseudo_id, sid, "test_agent"
+            client_pseudo_id, sid, "test_agent", exp=None
         )
 
         # Verify client data and intake were fetched
@@ -170,8 +173,12 @@ async def test_handle_connect_success(
         mock_socketio_server.emit.assert_called()
 
 
+@patch("app.utils.intake.socket_manager.decode_jwt_token")
+@patch("app.auth.intake.auth_client_user.decode_jwt_token")
 @pytest.mark.asyncio
 async def test_handle_connect_failure(
+    mock_auth_decode_jwt_token,
+    mock_sm_decode_jwt_token,
     socket_manager,
     mock_socketio_server,
     mock_client_connection_manager,
@@ -180,9 +187,14 @@ async def test_handle_connect_failure(
     """Test client connection failure."""
     sid = "test_sid"
     environ = {"HTTP_USER_AGENT": "test_agent"}
-    auth = {"client_pseudo_id": "test_client"}
+    client_pseudo_id = "test_client"
+    auth = {"auth_token": "mock_jwt_token"}
 
-    # Setup mocks
+    decoded_payload = {"sub": client_pseudo_id, "token_type": "client", "exp": None}
+    mock_auth_decode_jwt_token.return_value = decoded_payload
+    mock_sm_decode_jwt_token.return_value = decoded_payload
+
+    # get_client raises an unexpected error → caught by outer except Exception → return False
     mock_db_manager.get_client.side_effect = Exception("Test error")
 
     result = await socket_manager.handle_connect(sid, environ, auth)
