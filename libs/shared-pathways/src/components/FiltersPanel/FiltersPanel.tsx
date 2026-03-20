@@ -54,6 +54,10 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
       }
     }, [isOpen, enabledFilters]);
 
+    const timePeriodFilter = enabledFilters.includes(FILTER_TYPES.TIME_PERIOD)
+      ? filterOptions[FILTER_TYPES.TIME_PERIOD]
+      : null;
+
     const dateInPopulationFilter = enabledFilters.includes(
       FILTER_TYPES.DATE_IN_POPULATION,
     )
@@ -124,6 +128,21 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
           </>
         }
       >
+        {timePeriodFilter && (
+          <FilterSection>
+            <FilterSectionContent>
+              <PathwaysDropdownFilter
+                label={timePeriodFilter.title}
+                options={timePeriodFilter.options}
+                defaultValue={timePeriodFilter.defaultValue}
+                selectedValue={getSelectedValue(FILTER_TYPES.TIME_PERIOD)}
+                onChange={(value) =>
+                  onDropdownChange(FILTER_TYPES.TIME_PERIOD, value)
+                }
+              />
+            </FilterSectionContent>
+          </FilterSection>
+        )}
         {dateInPopulationFilter && (
           <FilterSection>
             <FilterSectionContent>

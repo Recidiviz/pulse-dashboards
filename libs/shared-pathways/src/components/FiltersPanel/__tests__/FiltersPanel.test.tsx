@@ -143,7 +143,7 @@ describe("FiltersPanel", () => {
     expect(screen.getByText("Female")).toBeInTheDocument();
   });
 
-  it("excludes single-select filters from the checkbox groups", () => {
+  it("renders time period filter as a dropdown, not checkbox groups", () => {
     const store = createMockFiltersStore({
       enabledFilters: ["race", "timePeriod"],
     });
@@ -152,8 +152,13 @@ describe("FiltersPanel", () => {
       { wrapper },
     );
 
+    // Race should render as a checkbox group
     expect(screen.getByText("Race")).toBeInTheDocument();
-    expect(screen.queryByText("Time Period")).not.toBeInTheDocument();
+    expect(screen.getByTestId("checkbox-BLACK")).toBeInTheDocument();
+
+    // Time Period should render as a dropdown label, not checkboxes
+    expect(screen.getByText("Time Period")).toBeInTheDocument();
+    expect(screen.queryByTestId("checkbox-6")).not.toBeInTheDocument();
   });
 
   it("renders Apply and Reset buttons", () => {
