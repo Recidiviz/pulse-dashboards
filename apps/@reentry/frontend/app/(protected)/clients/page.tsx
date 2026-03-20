@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ import type { components } from "~@reentry/openapi-types";
 
 type ClientResponse = components["schemas"]["ClientResponse"];
 
-// Styles
 const customStyles = {
   header: {
     style: {
@@ -53,8 +52,7 @@ const customStyles = {
     style: {
       minHeight: "72px",
       borderBottomColor: "#2b5469/10",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      overflowY: "auto" as any,
+      overflowY: "auto" as const,
     },
   },
   headCells: {
@@ -79,7 +77,6 @@ const customStyles = {
   },
 };
 
-// Formatting
 const formatInitials = (row: ClientResponse) => {
   if (!row.client || !row.client.full_name) return null;
   return row.client.full_name.given_names.charAt(0);
@@ -95,12 +92,10 @@ const ClientsPage = () => {
   const router = useRouter();
   const { track } = useAnalytics();
   const [rowsPerPage, setRowsPerPage] = useState(50);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [activeSearchTerm, setActiveSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  // ✅ Fix: estado inicial alineado con lo que devuelve el backend por defecto
   const [sortConfig, setSortConfig] = useState<{
     sortBy: components["schemas"]["ClientSort"];
     sortOrder: string;
@@ -121,8 +116,6 @@ const ClientsPage = () => {
   ];
 
   const auth = useAuth();
-
-  // Get page from URL query parameters, default to 1
   const page = Number(searchParams.get("page") || 1);
 
   const { data, error, isLoading, refetch } = $api.useQuery(
@@ -151,7 +144,7 @@ const ClientsPage = () => {
     refetch();
   };
 
-  const handleSearchKeyDown = (e) => {
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       executeSearch();
     }
@@ -189,14 +182,14 @@ const ClientsPage = () => {
     }
   };
 
-  const handleSort = (column) => {
-    const columnMapping = {
+  const handleSort = (column: TableColumn<ClientResponse>) => {
+    const columnMapping: Record<string, components["schemas"]["ClientSort"]> = {
       name: "name",
       intake_count: "intake_count",
       last_completed_date: "last_assessment_date",
     };
 
-    const apiSortBy = columnMapping[column.id];
+    const apiSortBy = columnMapping[column.id as string];
     if (apiSortBy) {
       let newSortOrder = "asc";
       if (apiSortBy === sortBy) {
@@ -213,6 +206,28 @@ const ClientsPage = () => {
       month: "short",
       day: "numeric",
     });
+  };
+
+  const SortableColumnHeader = ({
+    label,
+    columnSortKey,
+  }: {
+    label: React.ReactNode;
+    columnSortKey: string;
+  }) => {
+    const isActive = sortBy === columnSortKey;
+    const triangle = isActive && sortOrder === "desc" ? "▼" : "▲";
+    return (
+      <div className="flex items-center gap-1">
+        <span>{label}</span>
+        <span
+          className="text-[10px] leading-none select-none"
+          style={{ color: isActive ? "#2b5469" : "#cbd5e1" }}
+        >
+          {triangle}
+        </span>
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -235,7 +250,7 @@ const ClientsPage = () => {
   const buildColumns = (): TableColumn<ClientResponse>[] => [
     {
       id: "name",
-      name: "Name",
+      name: <SortableColumnHeader label="Name" columnSortKey="name" />,
       cell: (row: ClientResponse) => (
         <div className="flex items-center gap-3 pointer-events-none">
           <div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')] hidden md:flex">
@@ -277,13 +292,18 @@ const ClientsPage = () => {
       id: "intake_count",
       name: (
         <div className="flex items-center gap-1">
-          <span className={"text-[12px] md:text-[14px]"}>
-            Number of Assessments
-          </span>
+          <SortableColumnHeader
+            columnSortKey="intake_count"
+            label={
+              <span className="text-[12px] md:text-[14px]">
+                Number of Assessments
+              </span>
+            }
+          />
           <InfoTooltip
             text="The total number of assessments associated with the client, including enabled, in progress, and completed assessments"
             position="top"
-            className={"w-3 h-3"}
+            className="w-3 h-3"
           />
         </div>
       ),
@@ -298,10 +318,15 @@ const ClientsPage = () => {
     {
       id: "last_completed_date",
       name: (
-        <div className="flex flex-col leading-tight w-full text-[12px] md:text-[14px]">
-          <span>Last Assessment</span>
-          <span>Completed</span>
-        </div>
+        <SortableColumnHeader
+          columnSortKey="last_assessment_date"
+          label={
+            <div className="flex flex-col leading-tight w-full text-[12px] md:text-[14px]">
+              <span>Last Assessment</span>
+              <span>Completed</span>
+            </div>
+          }
+        />
       ),
       selector: (row: ClientResponse) => row.last_completed_date || "",
       cell: (row: ClientResponse) => (
@@ -327,12 +352,9 @@ const ClientsPage = () => {
           columns={buildColumns()}
           data={data?.items || []}
           customStyles={customStyles}
-          sortIcon={<ArrowDropDown className="h-5 w-5 text-slate-400 ml-1" />}
           onSort={handleSort}
           sortServer
-          // ✅ Fix: sincroniza el estado interno de la librería con sortConfig inicial
-          defaultSortFieldId="name"
-          defaultSortAsc={true}
+          sortIcon={<span />}
           noHeader
           responsive
           highlightOnHover
