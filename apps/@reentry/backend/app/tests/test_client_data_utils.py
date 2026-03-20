@@ -17,7 +17,6 @@
 
 """Tests for client_data utils module."""
 
-import pickle
 from datetime import date
 from unittest.mock import patch
 
@@ -435,8 +434,8 @@ class TestGetClientFromCache:
             location=["loc1"],
         )
 
-        # Mock Redis to return pickled data
-        mock_redis.get.return_value = pickle.dumps(mock_client)
+        # Mock Redis to return JSON data
+        mock_redis.get.return_value = mock_client.model_dump_json().encode("utf-8")
 
         result = get_client_from_cache("test_cache_key")
 
@@ -458,7 +457,7 @@ class TestGetClientFromCache:
     @patch("app.services.client_data.utils.redis_client")
     def test_cache_deserialization_error_returns_none(self, mock_redis):
         """Test that deserialization errors are handled gracefully."""
-        # Return corrupted data that can't be unpickled
+        # Return corrupted data that can't be parsed as JSON
         mock_redis.get.return_value = b"corrupted_data"
 
         result = get_client_from_cache("bad_data_key")

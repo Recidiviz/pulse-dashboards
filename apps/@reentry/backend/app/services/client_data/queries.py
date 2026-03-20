@@ -26,7 +26,6 @@ Example of a case manager record
 """
 
 import json
-import pickle
 import random
 import time
 import uuid
@@ -628,7 +627,15 @@ class Queries:
                 f"Cache hit for pseudonymized_staff_id {pseudonymized_staff_id}"
             )
             try:
-                clients_data = pickle.loads(cached_data)
+                json_str = (
+                    cached_data.decode("utf-8")
+                    if isinstance(cached_data, bytes)
+                    else str(cached_data)
+                )
+                clients_list = json.loads(json_str)
+                clients_data = [
+                    ClientDataRecord.model_validate(c) for c in clients_list
+                ]
                 return clients_data
             except Exception as e:
                 logger.error(f"Error deserializing cached client data: {str(e)}")
@@ -717,7 +724,8 @@ class Queries:
 
             # Cache the results
             try:
-                redis_client.setex(cache_key, CACHE_TTL, pickle.dumps(clients))
+                clients_json = json.dumps([c.model_dump() for c in clients])
+                redis_client.setex(cache_key, CACHE_TTL, clients_json)
                 logger.info(
                     f"Cached {len(clients)} clients for pseudonymized_staff_id {pseudonymized_staff_id}"
                 )
@@ -750,7 +758,13 @@ class Queries:
                 f"Cache hit for pseudonymized_staff_id {pseudonymized_staff_id}"
             )
             try:
-                caseworker_data = pickle.loads(cached_data)
+                json_str = (
+                    cached_data.decode("utf-8")
+                    if isinstance(cached_data, bytes)
+                    else str(cached_data)
+                )
+                caseworker_dict = json.loads(json_str)
+                caseworker_data = CaseWorkerDataRecord.model_validate(caseworker_dict)
                 return caseworker_data
             except Exception as e:
                 logger.error(f"Error deserializing cached caseworker data: {str(e)}")
@@ -849,7 +863,7 @@ class Queries:
 
             # Cache the result
             try:
-                redis_client.setex(cache_key, CACHE_TTL, pickle.dumps(caseworker))
+                redis_client.setex(cache_key, CACHE_TTL, caseworker.model_dump_json())
                 logger.info(
                     f"Cached caseworker data for pseudonymized_staff_id {pseudonymized_staff_id}"
                 )

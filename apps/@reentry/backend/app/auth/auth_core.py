@@ -1,4 +1,4 @@
-import json as json_module
+import json
 import time
 from asyncio import Lock
 from datetime import datetime, timezone
@@ -73,7 +73,12 @@ async def _get_cached_auth0_userinfo(token: str) -> dict | None:
         cached_data = await redis_client.get(cache_key)
         if cached_data:
             logger.info("Cache hit for Auth0 userinfo")
-            return json_module.loads(cached_data)
+            json_str = (
+                cached_data.decode("utf-8")
+                if isinstance(cached_data, bytes)
+                else str(cached_data)
+            )
+            return json.loads(json_str)
     except Exception as e:
         logger.error(f"Error retrieving cached Auth0 userinfo: {str(e)}")
 
@@ -91,7 +96,7 @@ async def _cache_auth0_userinfo(token: str, userinfo: dict) -> None:
     cache_key = f"auth0_userinfo:{hash(token)}"
 
     try:
-        await redis_client.setex(cache_key, AUTH_CACHE_TTL, json_module.dumps(userinfo))
+        await redis_client.setex(cache_key, AUTH_CACHE_TTL, json.dumps(userinfo))
         logger.info("Cached Auth0 userinfo")
     except Exception as e:
         logger.error(f"Error caching Auth0 userinfo: {str(e)}")
@@ -115,7 +120,12 @@ async def _get_cached_auth0_user_metadata(sub: str, token: str) -> dict | None:
         cached_data = await redis_client.get(cache_key)
         if cached_data:
             logger.info(f"Cache hit for Auth0 user metadata for sub: {sub}")
-            return json_module.loads(cached_data)
+            json_str = (
+                cached_data.decode("utf-8")
+                if isinstance(cached_data, bytes)
+                else str(cached_data)
+            )
+            return json.loads(json_str)
     except Exception as e:
         logger.error(f"Error retrieving cached Auth0 user metadata: {str(e)}")
 
@@ -134,7 +144,7 @@ async def _cache_auth0_user_metadata(sub: str, token: str, metadata: dict) -> No
     cache_key = f"auth0_metadata:{sub}:{hash(token)}"
 
     try:
-        await redis_client.setex(cache_key, AUTH_CACHE_TTL, json_module.dumps(metadata))
+        await redis_client.setex(cache_key, AUTH_CACHE_TTL, json.dumps(metadata))
         logger.info(f"Cached Auth0 user metadata for sub: {sub}")
     except Exception as e:
         logger.error(f"Error caching Auth0 user metadata: {str(e)}")
@@ -408,14 +418,13 @@ async def get_current_user(request: Request) -> JSONResponse | UserProfile:
     This function now uses Redis caching to avoid repeated calls to Auth0 APIs
     for the same user data within the cache TTL period.
     """
-
-    if not hasattr(request.state, "user"):
+    auth_header = request.headers.get("Authorization")
+    if not hasattr(request.state, "user") or auth_header is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
         )
 
-    auth_header = request.headers.get("Authorization")
     token = auth_header.split(" ")[1]
 
     # Try to get userinfo from cache first

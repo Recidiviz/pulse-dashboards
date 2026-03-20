@@ -367,7 +367,10 @@ async def evaluate(output_config_file: str = "exported-config.yaml"):
     )
     dataset_dir.mkdir(parents=True, exist_ok=True)
 
-    results.to_pandas().to_pickle(dataset_dir / f"{results.experiment_name}.pkl")
+    # Save results as CSV instead of pickle for security
+    results.to_pandas().to_csv(
+        dataset_dir / f"{results.experiment_name}.csv", index=False
+    )
 
     # Save markdown results for each client in a folder
     markdown_dir = dataset_dir / f"{results.experiment_name}_markdown"

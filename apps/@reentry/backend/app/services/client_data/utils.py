@@ -1,5 +1,4 @@
 import json
-import pickle
 from typing import Optional
 
 import redis
@@ -178,7 +177,20 @@ def get_client_from_cache(cache_key: str) -> Optional[ClientDataRecord]:
 
     if cached_data:
         try:
-            client_data = pickle.loads(cached_data)
+            # Deserialize JSON and validate with Pydantic
+            json_str = (
+                cached_data.decode("utf-8")
+                if isinstance(cached_data, bytes)
+                else str(cached_data)
+            )
+
+            # Handle both single records and lists of records
+            data = json.loads(json_str)
+            if isinstance(data, list):
+                client_data = [ClientDataRecord.model_validate(item) for item in data]
+            else:
+                client_data = ClientDataRecord.model_validate(data)
+
             logger.info(f"Client found in cache with key: {cache_key}")
             return client_data
         except Exception as e:
@@ -232,25 +244,36 @@ def process_client_row(row) -> Optional[ClientDataRecord]:
         return None
 
 
-def cache_client_record(cache_key: str, client_record: ClientDataRecord) -> bool:
+def cache_client_record(
+    cache_key: str, client_record: ClientDataRecord | list[ClientDataRecord]
+) -> bool:
     """
     Cache a client record in Redis
 
     Args:
         cache_key: The Redis cache key
-        client_record: The client record to cache
+        client_record: The client record(s) to cache (single or list)
 
     Returns:
         True if caching was successful, False otherwise
     """
     try:
-        redis_client.setex(cache_key, CACHE_TTL, pickle.dumps(client_record))
+        # Serialize to JSON using Pydantic
+        if isinstance(client_record, list):
+            json_data = json.dumps([record.model_dump() for record in client_record])
+        else:
+            json_data = client_record.model_dump_json()
+
+        redis_client.setex(cache_key, CACHE_TTL, json_data)
         return True
     except Exception as e:
-        id_info = getattr(
-            client_record,
-            "external_client_id",
-            getattr(client_record, "pseudonymized_client_id", "unknown"),
-        )
+        if isinstance(client_record, list):
+            id_info = f"list of {len(client_record)} clients"
+        else:
+            id_info = getattr(
+                client_record,
+                "external_client_id",
+                getattr(client_record, "pseudonymized_client_id", "unknown"),
+            )
         logger.error(f"Error caching client data for {id_info}: {str(e)}")
         return False
