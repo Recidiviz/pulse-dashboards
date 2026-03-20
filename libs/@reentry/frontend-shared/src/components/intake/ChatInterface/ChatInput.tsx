@@ -122,7 +122,10 @@ const ChatInput = ({
   useEffect(() => {
     if (!waitingForAIInput && !isInputDisabled) {
       setIsSending(false);
-      textareaRef.current?.focus();
+      const isTablet = /iPad|tablet/i.test(navigator.userAgent);
+      if (!isTablet) {
+        textareaRef.current?.focus();
+      }
     }
   }, [waitingForAIInput, isInputDisabled]);
 
