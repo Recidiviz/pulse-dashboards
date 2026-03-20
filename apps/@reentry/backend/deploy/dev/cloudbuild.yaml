@@ -67,7 +67,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_BQ_PROJECT_ID=RECIDIVIZ_BQ_PROJECT_ID_DEV:latest"
       - "--set-secrets=RECIDIVIZ_BQ_DATASET=RECIDIVIZ_BQ_DATASET_DEV:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
-      - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY_ID=RECIDIVIZ_DEEPGRAM_API_KEY_IDENTIFIER :latest"
+      - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY_ID=RECIDIVIZ_DEEPGRAM_API_KEY_IDENTIFIER:latest"
       - "--set-env-vars"
       - |
         ENTRYPOINT=api,
