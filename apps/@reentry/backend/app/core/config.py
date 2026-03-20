@@ -114,6 +114,10 @@ class Settings(BaseSettings):
     # Token expiry for backend-issued client intake sessions, set in seconds (default: 8 hours)
     BACKEND_ISSUED_INTAKE_TOKEN_EXPIRY_SECONDS: int = 28800
 
+    # Impersonation - Recidiviz Data API for fetching target user metadata
+    DATA_API_URL: str = ""
+    GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE: str = ""
+
     @property
     def DATABASE_URL(self):
         if self.DEPLOY_ENV == "gcp":

@@ -71,6 +71,14 @@ export const authMiddleware: Middleware = {
       console.error("Error setting token in middleware:", error);
     }
 
+    // Attach impersonation header if active
+    if (typeof window !== "undefined") {
+      const impersonatedEmail = localStorage.getItem("impersonated_email");
+      if (impersonatedEmail) {
+        request.headers.set("X-Impersonated-Email", impersonatedEmail);
+      }
+    }
+
     // Attach config access token for config-management endpoints
     if (url.includes("/config-management/")) {
       const configToken = getConfigAccessToken();

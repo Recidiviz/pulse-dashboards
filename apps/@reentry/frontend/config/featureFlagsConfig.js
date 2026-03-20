@@ -33,6 +33,7 @@ const FEATURE_FLAGS_CONFIG = {
   TEST_FEATURE_DEV_STAGING: "dev,staging",
   UPLOAD_AUDIO: "development,dev,demo,pilot,staging",
   TOGGLE_ENABLED_OUTPUTS: "development,dev,staging,prod",
+  IMPERSONATION: "development,dev,demo,pilot,staging",
 };
 
 module.exports = { FEATURE_FLAGS_CONFIG };

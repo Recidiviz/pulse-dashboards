@@ -36,6 +36,7 @@ from app.routes import (
     decision_tree_router,
     demo_router,
     execution_router,
+    impersonation_router,
     intake_admin_router,
     intake_auth_router,
     intake_client_router,
@@ -227,6 +228,7 @@ app.include_router(client_router.router, prefix="/clients")
 app.include_router(intake_admin_router.router, prefix="/intake/admin")
 app.include_router(recording_session_router.router, prefix="/recordings")
 app.include_router(transcription_router.router, prefix="/transcription")
+app.include_router(impersonation_router.router, prefix="/impersonate")
 
 # External routers -- no auth required
 app.include_router(intake_auth_router.router, prefix="/external/client/verify")

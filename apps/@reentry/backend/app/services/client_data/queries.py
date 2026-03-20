@@ -878,6 +878,123 @@ class Queries:
             return None
 
     @staticmethod
+    def get_caseworker_by_email(
+        email: str,
+    ) -> CaseWorkerDataRecord | None:
+        """
+        Get caseworker data by email address.
+        Uses Redis caching to improve performance.
+
+        Args:
+            email: The email address of the staff member
+        """
+        if not email:
+            return None
+
+        email = email.strip().lower()
+
+        cache_key = f"caseworker_by_email:{email}"
+        cached_data = redis_client.get(cache_key)
+
+        if cached_data:
+            logger.info(f"Cache hit for caseworker email {email}")
+            try:
+                return pickle.loads(cached_data)
+            except Exception as e:
+                logger.error(f"Error deserializing cached caseworker data: {str(e)}")
+        else:
+            logger.info(f"Cache miss for caseworker email {email}")
+
+        query = f"""
+                SELECT
+                external_id,
+                pseudonymized_id,
+                email,
+                full_name,
+                client_ids,
+                state_code,
+                locations
+                FROM (
+                SELECT
+                    external_id,
+                    pseudonymized_id,
+                    email,
+                    full_name,
+                    client_ids,
+                    state_code,
+                    locations
+                FROM
+                    `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
+                UNION ALL
+                SELECT
+                    external_id,
+                    pseudonymized_id,
+                    email,
+                    full_name,
+                    client_ids,
+                    state_code,
+                    locations
+                FROM
+                    `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`)
+                WHERE
+                LOWER(email) = @email
+                """
+
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("email", "STRING", email),
+            ]
+        )
+
+        try:
+            client = get_bigquery_client()
+            query_job = client.query(query, job_config=job_config)
+            results = query_job.result()
+            rows = list(results)
+            if not rows:
+                return None
+
+            all_client_external_ids = []
+            all_locations = []
+            for r in rows:
+                if r.client_ids:
+                    all_client_external_ids.extend(r.client_ids)
+                if r.locations:
+                    all_locations.extend(r.locations)
+            first_row = rows[0]
+
+            try:
+                full_name_data = first_row.full_name
+                capitalized_data = format_name_capitalization(full_name_data)
+                full_name = FullNameModel(**capitalized_data)
+
+                caseworker = CaseWorkerDataRecord(
+                    external_staff_id=first_row.external_id,
+                    pseudonymized_staff_id=first_row.pseudonymized_id,
+                    email=first_row.email,
+                    full_name=full_name,
+                    external_client_ids=all_client_external_ids,
+                    state_code=normalize_state_code(first_row.state_code),
+                    locations=all_locations,
+                )
+            except Exception as e:
+                logger.error(
+                    f"Error processing caseworker data for email {email}: {str(e)}"
+                )
+                return None
+
+            try:
+                redis_client.setex(cache_key, CACHE_TTL, pickle.dumps(caseworker))
+                logger.info(f"Cached caseworker data for email {email}")
+            except Exception as e:
+                logger.error(f"Error caching caseworker data: {str(e)}")
+
+            return caseworker
+        except Exception as e:
+            logger.error(f"Error fetching caseworker by email: {str(e)}")
+            return None
+
+    @staticmethod
     def get_pseudonymized_id_by_names_and_dob(
         first_name: str, last_name: str, date_of_birth: date | None = None
     ) -> Optional[str]:

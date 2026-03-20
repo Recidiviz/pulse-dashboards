@@ -411,10 +411,13 @@ async def test_get_current_user_not_authenticated():
 async def test_get_pseudonymized_id_success(
     mock_async_client, auth0_config, mock_jwt_payload, mock_redis
 ):
-    # set request mock
+    # set request mock — use a dict-like headers so impersonation header returns None
+    headers_data = {"Authorization": "Bearer test-token"}
     request = MagicMock()
     request.state.user = mock_jwt_payload
-    request.headers.get.return_value = "Bearer test-token"
+    request.headers.get.side_effect = lambda key, default=None: headers_data.get(
+        key, default
+    )
 
     # set up httpx client mock
     mock_client = AsyncMock()
@@ -470,10 +473,13 @@ async def test_get_pseudonymized_id_success(
 async def test_get_pseudonymized_id_missing(
     mock_async_client, auth0_config, mock_jwt_payload, mock_redis
 ):
-    # set request mock
+    # set request mock — use a dict-like headers so impersonation header returns None
+    headers_data = {"Authorization": "Bearer test-token"}
     request = MagicMock()
     request.state.user = mock_jwt_payload
-    request.headers.get.return_value = "Bearer test-token"
+    request.headers.get.side_effect = lambda key, default=None: headers_data.get(
+        key, default
+    )
 
     # set up httpx client mock
     mock_client = AsyncMock()

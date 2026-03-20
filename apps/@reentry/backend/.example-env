@@ -111,3 +111,10 @@ RECIDIVIZ_CONFIG_MANAGEMENT_PASSWORD=
 RECIDIVIZ_CONFIG_ACCESS_TOKEN_EXPIRY_MINUTES=30
 
 RECIDIVIZ_ENVIRONMENT_TEST_FEATURE="dev,demo"
+
+
+# ----------------------------------------------- #
+# Impersonate (only for staging and prod)
+# ----------------------------------------------- #
+DATA_API_URL=
+GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE=

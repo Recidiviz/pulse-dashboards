@@ -60,6 +60,8 @@ steps:
       - "--set-secrets=RECIDIVIZ_BQ_SUPERVISION_OFFICER_TABLE=RECIDIVIZ_BQ_SUPERVISION_OFFICER_TABLE:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY_ID=RECIDIVIZ_DEEPGRAM_API_KEY_IDENTIFIER:latest"
+      - "--set-secrets=RECIDIVIZ_DATA_API_URL=RECIDIVIZ_DATA_API_URL:latest"
+      - "--set-secrets=RECIDIVIZ_GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE=GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE:latest"
       - "--set-secrets=RECIDIVIZ_BQ_CLIENT_TABLE=RECIDIVIZ_BQ_CLIENT_TABLE:latest"
       # escaping to allow commas in the value, see https://cloud.google.com/sdk/gcloud/reference/topic/escaping
       - "--set-env-vars=^@^RECIDIVIZ_ALLOWED_ORIGINS=https://plan-staging.recidiviz.org,https://staging.opportunities.app,https://staging.opportunities.edovo.com"
@@ -132,6 +134,8 @@ steps:
       - "--set-secrets=RECIDIVIZ_BQ_DATASET=RECIDIVIZ_BQ_DATASET_STAGING:latest"
       - "--set-secrets=RECIDIVIZ_BQ_CASE_MANAGER_TABLE=RECIDIVIZ_BQ_CASE_MANAGER_TABLE:latest"
       - "--set-secrets=RECIDIVIZ_BQ_SUPERVISION_OFFICER_TABLE=RECIDIVIZ_BQ_SUPERVISION_OFFICER_TABLE:latest"
+      - "--set-secrets=RECIDIVIZ_DATA_API_URL=RECIDIVIZ_DATA_API_URL:latest"
+      - "--set-secrets=RECIDIVIZ_GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE=GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE:latest"
       - "--set-secrets=RECIDIVIZ_BQ_CLIENT_TABLE=RECIDIVIZ_BQ_CLIENT_TABLE:latest"
       - "--set-env-vars"
       - |

@@ -21,6 +21,7 @@ import { usePathname } from "next/navigation";
 import AccessDeniedState from "~@reentry/frontend/components/auth/AccessDeniedState";
 import AuthErrorState from "~@reentry/frontend/components/auth/AuthErrorState";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
+import ImpersonationBanner from "~@reentry/frontend/components/ImpersonationBanner";
 import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
 import ReadOnlyIndicatorBanner from "~@reentry/frontend/components/ReadOnlyIndicatorBanner";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
@@ -38,7 +39,7 @@ export default function ProtectedLayout({ children }) {
   // Exclude specific routes from the layout (not using the Navbar)
   const routesWithoutLayout = ["/audio-recording/"];
   const shouldHideLayout = routesWithoutLayout.some((route) =>
-    pathname.includes(route)
+    pathname.includes(route),
   );
 
   if (auth.state.isLoading) {
@@ -70,10 +71,11 @@ export default function ProtectedLayout({ children }) {
   }
 
   return (
-      <main className="flex flex-col min-h-full">
-        <ReadOnlyIndicatorBanner />
-        <Navbar />
-        <ProtectedRoute>{children}</ProtectedRoute>
-      </main>
+    <main className="flex flex-col min-h-full">
+      <ImpersonationBanner />
+      <ReadOnlyIndicatorBanner />
+      <Navbar />
+      <ProtectedRoute>{children}</ProtectedRoute>
+    </main>
   );
 }

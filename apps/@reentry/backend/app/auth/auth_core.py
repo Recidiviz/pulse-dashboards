@@ -496,6 +496,37 @@ async def get_pseudonymized_id(request: Request) -> str:
             detail="Not authenticated",
         )
 
+    # Check for impersonation
+    impersonated_email = request.headers.get("X-Impersonated-Email")
+    if impersonated_email:
+        from app.auth.impersonation import (
+            get_impersonated_user_metadata,
+            validate_impersonation_request,
+        )
+
+        target_email = await validate_impersonation_request(request)
+        if target_email:
+            app_metadata = await get_impersonated_user_metadata(target_email)
+            pseudonymized_id = app_metadata.get("pseudonymizedId")
+            if not pseudonymized_id:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Pseudonymized ID not found for impersonated user {target_email}",
+                )
+            # Get caller email for logging
+            auth_header = request.headers.get("Authorization")
+            caller_token = auth_header.split(" ")[1]
+            caller_info = await _get_cached_auth0_userinfo(caller_token)
+            caller_email = (
+                caller_info.get("email", "unknown") if caller_info else "unknown"
+            )
+            logger.info(
+                "Impersonation active",
+                caller_email=caller_email,
+                target_email=target_email,
+            )
+            return pseudonymized_id
+
     auth_header = request.headers.get("Authorization")
     token = auth_header.split(" ")[1]
 
@@ -578,26 +609,66 @@ async def get_pseudonymized_id(request: Request) -> str:
     return pseudonymized_id
 
 
-async def get_auth_user_context(request: Request):
+def _extract_token(request: Request) -> str:
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+    return auth_header.split(" ")[1]
+
+
+def _parse_feature_variants(feature_variants: dict) -> dict:
+    return {
+        "is_zero_caseload_user": "zeroCaseloadUser" in feature_variants,
+        "is_read_only_user": "readOnly" in feature_variants,
+        "cpa_client_locations": [
+            key.replace("CPA_LOCATION_", "")
+            for key in feature_variants
+            if key.startswith("CPA_LOCATION_")
+        ],
+    }
+
+
+async def _build_user_context(
+    email: str, feature_variants: dict, is_impersonating=False
+):
+    base = _parse_feature_variants(feature_variants)
+    return {
+        "email": email,
+        "is_impersonating": is_impersonating,
+        **base,
+    }
+
+
+async def get_auth_user_context(request: Request, skip_impersonation: bool = False):
     if not hasattr(request.state, "user"):
         raise HTTPException(status_code=401, detail="Not authenticated")
 
-    token = request.headers["Authorization"].split(" ")[1]
+    token = _extract_token(request)
 
     user_info = await _get_cached_auth0_userinfo(token)
     if not user_info:
         raise HTTPException(status_code=401, detail="Userinfo not found")
 
+    caller_email = user_info.get("email")
+
+    # Impersonation
+    if not skip_impersonation:
+        impersonated_email = request.headers.get("X-Impersonated-Email")
+
+        if impersonated_email and is_internal_user(caller_email):
+            from app.auth.impersonation import get_impersonated_user_metadata
+
+            target_metadata = await get_impersonated_user_metadata(impersonated_email)
+            feature_variants = target_metadata.get("featureVariants", {})
+
+            return await _build_user_context(
+                impersonated_email,
+                feature_variants,
+                is_impersonating=True,
+            )
+
     app_metadata = user_info.get("https://dashboard.recidiviz.org/app_metadata", {})
     feature_variants = app_metadata.get("featureVariants", {})
-    cpa_client_locations = [
-        key.replace("CPA_LOCATION_", "")
-        for key in feature_variants
-        if key.startswith("CPA_LOCATION_")
-    ]
-    return {
-        "email": user_info.get("email"),
-        "is_zero_caseload_user": "zeroCaseloadUser" in feature_variants,
-        "is_read_only_user": "readOnly" in feature_variants,
-        "cpa_client_locations": cpa_client_locations,
-    }
+
+    user_context = await _build_user_context(caller_email, feature_variants)
+    return user_context
