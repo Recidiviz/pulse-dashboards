@@ -65,6 +65,7 @@ const publicPathwaysTheme: PathwaysTheme = {
   checkbox: {
     checkedColor: publicPathwaysPalette.signal.links,
     labelColor: publicPathwaysPalette.pine1,
+    labelTypography: publicPathwaysTypography.Sans14,
     titleColor: publicPathwaysPalette.pine1,
   },
   modal: {

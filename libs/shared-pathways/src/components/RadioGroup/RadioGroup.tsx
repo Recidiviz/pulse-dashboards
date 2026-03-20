@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./RadioGroup.scss";
-
 import React, { useState } from "react";
 
-import { FilterOption, PopulationFilter } from "~shared-pathways";
+import { FilterOption, PopulationFilter } from "../../filters";
+import {
+  RadioContainer,
+  RadioDot,
+  RadioInput,
+  RadioLabel,
+} from "./RadioGroup.styles";
 
 type RadioGroupProps = {
   filter: PopulationFilter;
@@ -34,16 +38,15 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 }) => {
   const [state, setState] = useState(defaultValue);
   const { type, options } = filter;
+
   return (
     <>
       {options.map(({ value, label }) => (
-        <label className="RadioGroup__container">
-          <span className="RadioGroup__label" key={value}>
-            {label}
-          </span>
-          <input
-            className="RadioGroup__input"
+        <RadioContainer key={value}>
+          <RadioLabel>{label}</RadioLabel>
+          <RadioInput
             type="radio"
+            name={type}
             checked={state === value}
             onChange={() => {
               setState(value);
@@ -51,8 +54,8 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
             }}
             tabIndex={0}
           />
-          <span className="RadioGroup__box" />
-        </label>
+          <RadioDot $checked={state === value} />
+        </RadioContainer>
       ))}
     </>
   );

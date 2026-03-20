@@ -30,9 +30,9 @@ import {
   getFilterOptions,
   PathwaysModal,
   PopulationFilters,
+  RadioGroup,
 } from "~shared-pathways";
 
-import RadioGroup from "../../controls/RadioGroup";
 import useIsMobile from "../../hooks/useIsMobile";
 import CheckboxGroup from "../controls/CheckboxGroup";
 import { useCoreStore } from "../CoreStoreProvider";

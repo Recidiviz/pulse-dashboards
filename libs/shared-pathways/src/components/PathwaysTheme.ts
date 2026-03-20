@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { CSSProp } from "styled-components";
+
 import { palette, typography } from "~design-system";
 
 const DEFAULT_FONT_FAMILY = '"Public Sans", sans-serif';
@@ -40,6 +42,7 @@ export type PathwaysTheme = {
   checkbox: {
     checkedColor: string;
     labelColor: string;
+    labelTypography: CSSProp;
     titleColor: string;
   };
   modal: {
@@ -77,6 +80,7 @@ export const defaultPathwaysTheme: PathwaysTheme = {
   checkbox: {
     checkedColor: palette.pine3,
     labelColor: palette.pine1,
+    labelTypography: typography.Sans14,
     titleColor: palette.pine1,
   },
   modal: {
