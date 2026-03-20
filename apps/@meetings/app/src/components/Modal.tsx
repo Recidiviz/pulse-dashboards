@@ -51,7 +51,7 @@ const Modal = ({
         <View className="size-full items-center justify-center p-5">
           <TouchableWithoutFeedback>
             <View
-              className={`max-h-full overflow-hidden rounded-3xl bg-white shadow-md ${containerClassName}`}
+              className={`max-h-full overflow-hidden rounded-3xl bg-primary shadow-md ${containerClassName}`}
             >
               {children}
             </View>

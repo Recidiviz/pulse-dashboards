@@ -152,6 +152,8 @@ describe("resident router", () => {
             facilityId: fakeResidents[0].facilityId,
             activeMeetingId: fakeResidentMeeting.id,
             meetingDetails: {
+              id: null,
+              caseNote: null,
               lastCompletedMeetingTime: null,
             },
           },
@@ -163,6 +165,8 @@ describe("resident router", () => {
             facilityId: fakeResidents[1].facilityId,
             activeMeetingId: null,
             meetingDetails: {
+              id: fakeResidentMeetingCompleted.id,
+              caseNote: null,
               lastCompletedMeetingTime: fakeResidentMeetingCompleted.startTime,
             },
           },

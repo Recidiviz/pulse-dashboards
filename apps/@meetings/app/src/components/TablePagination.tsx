@@ -47,13 +47,13 @@ export const TablePagination = ({
   pageSize = PAGE_SIZE,
 }: Props) => {
   return (
-    <View className="flex w-full flex-row items-center justify-center gap-2 bg-white py-2">
+    <View className="flex w-full flex-row items-center justify-center gap-4 bg-primary py-2">
       <TouchableOpacity onPress={setPrevPage} disabled={page === 1}>
         <ChevronLeftIcon
-          className={`size-3.5  stroke-[4px] ${page === 1 ? "stroke-[#35536233]" : "stroke-[#006C67]"}`}
+          className={`size-3.5 stroke-[4px] ${page === 1 ? "stroke-disabled" : "stroke-brand"}`}
         />
       </TouchableOpacity>
-      <Typography className="text-sm font-medium text-gray/85">
+      <Typography className="text-sm font-medium text-brand">
         Showing {(page - 1) * pageSize + 1}-
         {Math.min(page * pageSize, tableItemsLength)} of {tableItemsLength}
       </Typography>
@@ -62,7 +62,7 @@ export const TablePagination = ({
         disabled={page * pageSize >= tableItemsLength}
       >
         <ChevronRightIcon
-          className={`size-3.5 stroke-[4px] ${page * PAGE_SIZE >= tableItemsLength ? "stroke-[#35536233]" : "stroke-[#006C67]"}`}
+          className={`size-3.5 stroke-[4px] ${page * PAGE_SIZE >= tableItemsLength ? "stroke-disabled" : "stroke-brand"}`}
         />
       </TouchableOpacity>
     </View>

@@ -18,6 +18,7 @@
 import "../global.css";
 import "./nativewind-interop";
 
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Sentry from "@sentry/react-native";
 import React from "react";
 import { Auth0Provider } from "react-native-auth0";
@@ -48,16 +49,18 @@ BigInt.prototype.toJSON = function () {
 const App = () => {
   return (
     <GestureHandlerRootView>
-      <SnackbarProvider>
-        <Auth0Provider
-          domain={config.domain as string}
-          clientId={config.clientId as string}
-        >
-          <AppErrorBoundary>
-            <AppNavigator />
-          </AppErrorBoundary>
-        </Auth0Provider>
-      </SnackbarProvider>
+      <BottomSheetModalProvider>
+        <SnackbarProvider>
+          <Auth0Provider
+            domain={config.domain as string}
+            clientId={config.clientId as string}
+          >
+            <AppErrorBoundary>
+              <AppNavigator />
+            </AppErrorBoundary>
+          </Auth0Provider>
+        </SnackbarProvider>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 };

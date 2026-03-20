@@ -161,6 +161,8 @@ describe("client router", () => {
             supervisionType: fakeClients[0].supervisionType,
             activeMeetingId: fakeActiveMeeting.id,
             meetingDetails: {
+              id: null,
+              caseNote: null,
               lastCompletedMeetingTime: null,
             },
             staffEmails: [fakeStaff[0].email],
@@ -173,6 +175,8 @@ describe("client router", () => {
             supervisionType: fakeClients[1].supervisionType,
             activeMeetingId: null,
             meetingDetails: {
+              id: null,
+              caseNote: null,
               lastCompletedMeetingTime: null,
             },
             staffEmails: [fakeStaff[1].email],
@@ -185,6 +189,8 @@ describe("client router", () => {
             supervisionType: fakeClients[3].supervisionType,
             activeMeetingId: null,
             meetingDetails: {
+              id: fakeInactiveMeeting.id,
+              caseNote: null,
               lastCompletedMeetingTime: fakeInactiveMeeting.startTime,
             },
             staffEmails: [fakeStaff[0].email],
@@ -216,6 +222,8 @@ describe("client router", () => {
           supervisionType: fakeClients[0].supervisionType,
           activeMeetingId: fakeActiveMeeting.id,
           meetingDetails: {
+            id: null,
+            caseNote: null,
             lastCompletedMeetingTime: null,
           },
           staffEmails: [fakeStaff[0].email],

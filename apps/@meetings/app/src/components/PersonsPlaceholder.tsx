@@ -15,38 +15,46 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
-import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
+import clsx from "clsx";
+import { View } from "react-native";
+import SearchIcon from "react-native-heroicons/solid/SearchIcon";
 
+import { PersonType } from "../common/types";
 import { Typography } from "../shared/ui/Typography";
 
 type Props = {
-  message: string;
-  onClearSearch?: () => void;
+  personType: PersonType;
+  isSearchResultEmpty: boolean;
 };
 
-const PersonsPlaceholder = ({ message, onClearSearch }: Props) => {
+const PersonsPlaceholder = ({ personType, isSearchResultEmpty }: Props) => {
+  const emptyListPlaceholderTitle = `No ${personType}s yet`;
+  const emptySearchPlaceholderTitle =
+    personType === "client" ? "No clients on caseload" : "No residents found";
+  const emptyListPlaceholderSubtitle = `Your ${personType}s will be listed here.`;
+  const emptySearchPlaceholderSubtitle =
+    "Try adjusting your search or use different keywords.";
+
   return (
-    <View className="items-center justify-center py-16">
-      <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-        <DocumentSearchIcon className="size-14 fill-muted" />
-      </View>
-      <Typography className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
-        {message}
-      </Typography>
-      <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
-        Try adjusting your search or use different keywords.
-      </Typography>
-      {onClearSearch && (
-        <TouchableOpacity
-          onPress={onClearSearch}
-          className="rounded-full border border-gray-300 px-6 py-3"
-        >
-          <Typography className="text-[16px] font-medium text-gray-700">
-            Clear search
-          </Typography>
-        </TouchableOpacity>
+    <View
+      className={clsx(
+        "min-h-full flex-1 items-center justify-center",
+        isSearchResultEmpty ? "pt-16" : "pt-48",
       )}
+    >
+      <View className="mb-4 flex size-11 items-center justify-center rounded-xl border border-subtle bg-secondary">
+        <SearchIcon className="!size-6 fill-tertiary" />
+      </View>
+      <Typography className="text-center font-libre-baskerville text-2xl font-extrabold leading-[30px] tracking-[-0.56px] text-primary">
+        {isSearchResultEmpty
+          ? emptySearchPlaceholderTitle
+          : emptyListPlaceholderTitle}
+      </Typography>
+      <Typography className="mb-6 text-center text-sm font-normal tracking-[-0.28px] text-secondary">
+        {isSearchResultEmpty
+          ? emptySearchPlaceholderSubtitle
+          : emptyListPlaceholderSubtitle}
+      </Typography>
     </View>
   );
 };

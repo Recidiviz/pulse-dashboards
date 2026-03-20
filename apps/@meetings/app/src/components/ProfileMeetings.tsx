@@ -35,6 +35,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
+import { theme } from "../common/theme";
 import {
   ClientMeetings,
   Person,
@@ -192,13 +193,13 @@ const ProfileMeetings = ({
     if (processedMeetings.length === 0) {
       return (
         <View className="items-center justify-center py-16">
-          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-            <DocumentSearchIcon className="size-14 fill-muted" />
+          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-subtle bg-tertiary p-3">
+            <DocumentSearchIcon className="size-14 fill-primary" />
           </View>
           <Typography className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings yet
           </Typography>
-          <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+          <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-secondary">
             Create a new meeting when you’re ready.
           </Typography>
         </View>
@@ -207,20 +208,20 @@ const ProfileMeetings = ({
     if (filteredMeetings.length === 0) {
       return (
         <View className="items-center justify-center py-16">
-          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-            <DocumentSearchIcon className="size-14 fill-muted" />
+          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-subtle bg-secondary p-3">
+            <DocumentSearchIcon className="size-14 fill-primary" />
           </View>
           <Typography className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings match your search
           </Typography>
-          <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+          <Typography className="mb-6 text-center text-sm font-normal leading-5 tracking-[-0.28px] text-secondary">
             Try adjusting your search or use different keywords.
           </Typography>
           <TouchableOpacity
             onPress={() => setSearchQuery("")}
-            className="rounded-full border border-gray-300 px-6 py-3"
+            className="rounded-full border border-subtle px-6 py-3"
           >
-            <Typography className="text-[16px] font-medium text-gray-700">
+            <Typography className="text-[16px] font-medium text-secondary">
               Clear search
             </Typography>
           </TouchableOpacity>
@@ -262,12 +263,14 @@ const ProfileMeetings = ({
         <Header />
       </View>
       <View
-        className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] border-b border-[#F4F5F5] bg-white px-4 pb-4 md:hidden ${
+        className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] border-b border-subtle bg-primary px-4 pb-4 md:hidden ${
           Platform.OS === "web" ? "!pt-4" : ""
         }`}
         style={{
           paddingTop: insets.top,
-          shadowColor: isCollapsed ? "#000" : "transparent",
+          shadowColor: isCollapsed
+            ? theme["backgroundColor"]["strong"]
+            : "transparent",
         }}
         onLayout={(e) =>
           setMobileHeaderHeight(
@@ -277,7 +280,7 @@ const ProfileMeetings = ({
       >
         <View className="flex-row items-center justify-between">
           <Link screen="Clients" params={{}}>
-            <ChevronLeftIcon className="size-6 stroke-muted stroke-[3px]" />
+            <ChevronLeftIcon className="size-6 stroke-primary stroke-[3px]" />
           </Link>
           {isCollapsed && recordingState === "idle" && (
             <TouchableOpacity
@@ -285,7 +288,7 @@ const ProfileMeetings = ({
               onPress={handleCreateMeeting}
               disabled={isMeetingCreating}
             >
-              <PlusIcon className="size-6 stroke-muted stroke-[3px]" />
+              <PlusIcon className="size-6 stroke-primary stroke-[3px]" />
             </TouchableOpacity>
           )}
         </View>
@@ -317,8 +320,8 @@ const ProfileMeetings = ({
             screen={type === "client" ? "Clients" : "Residents"}
             params={{}}
           >
-            <ChevronLeftIcon className="size-3 stroke-muted stroke-[3px]" />
-            <Typography className="text-sm font-medium text-gray/85">
+            <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
+            <Typography className="text-sm font-medium text-primary">
               Back
             </Typography>
           </Link>
@@ -340,14 +343,14 @@ const ProfileMeetings = ({
 
             {recordingState === "idle" && (
               <TouchableOpacity
-                className="w-[100px] flex-row items-center justify-center rounded-full bg-[#006C67] px-4 py-2"
+                className="w-[100px] flex-row items-center justify-center rounded-full bg-brand px-4 py-2"
                 onPress={handleCreateMeeting}
                 disabled={isMeetingCreating}
               >
                 {isMeetingCreating ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
-                  <Typography className="font-medium text-white">
+                  <Typography className="font-medium text-on-brand">
                     + Meeting
                   </Typography>
                 )}
@@ -364,7 +367,7 @@ const ProfileMeetings = ({
           </View>
 
           <View className="z-10 my-4 flex-row items-center justify-between">
-            <Typography className="text-sm text-[#9AA6AC]">
+            <Typography className="text-sm text-secondary">
               {filteredMeetings.length} meeting
               {filteredMeetings.length === 1 ? "" : "s"}
             </Typography>

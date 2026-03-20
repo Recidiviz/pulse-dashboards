@@ -41,19 +41,19 @@ const MobileMenuItem = ({
     <Link className="py-4" screen={screen} onPress={onPress} params={{}}>
       <View className="w-full flex-row items-center justify-between">
         <View className="flex-row items-center gap-3">
-          <IconComponent className="size-6 fill-muted" />
-          <Typography className="text-base font-medium color-black">
+          <IconComponent className="size-6 fill-primary" />
+          <Typography className="text-base font-medium text-primary">
             {title}
           </Typography>
           {badge ? (
-            <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-gray-600">
+            <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-screen">
               <Typography className="text-center text-xs font-medium text-white">
                 {badge}
               </Typography>
             </View>
           ) : null}
         </View>
-        <ChevronRightIcon className="size-4 stroke-muted stroke-[3px]" />
+        <ChevronRightIcon className="size-4 stroke-primary stroke-[3px]" />
       </View>
     </Link>
   );

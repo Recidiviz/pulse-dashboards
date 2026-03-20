@@ -23,8 +23,9 @@ import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
-import { Person } from "../common/types";
+import { Person, PersonType } from "../common/types";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
 import {
@@ -51,7 +52,7 @@ type ProfileNavProp = NativeStackNavigationProp<
 
 interface PersonsProps {
   persons: Person[];
-  type: "clients" | "residents";
+  type: PersonType;
   sectionTitle?: string;
 }
 
@@ -65,7 +66,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
 
   const handleNavigateToProfile = (personId: string) => {
     navigation.navigate(
-      type === "clients" ? "ClientProfile" : "ResidentProfile",
+      type === "client" ? "ClientProfile" : "ResidentProfile",
       { personId },
     );
   };
@@ -73,7 +74,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   return (
     <>
       {sectionTitle && (
-        <Typography className="mt-6 text-base font-medium text-gray/85">
+        <Typography className="mt-6 text-base font-medium text-secondary">
           {sectionTitle}
         </Typography>
       )}
@@ -84,7 +85,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
               <TableHeadCell className="w-[35%]">NAME</TableHeadCell>
               <TableHeadCell className="w-[15%]">ID</TableHeadCell>
               <TableHeadCell className="w-[23%]">
-                {type === "clients" ? "SUPERVISION" : "FACILITY"}
+                {type === "client" ? "SUPERVISION" : "FACILITY"}
               </TableHeadCell>
               <TableHeadCell className="w-[23%]">LAST MEETING</TableHeadCell>
               <TableHeadCell className="w-[4%]"></TableHeadCell>
@@ -110,7 +111,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                         className="size-11 items-center justify-center overflow-hidden rounded-full"
                         imageClassName="!size-11"
                       >
-                        <Typography className="text-base font-medium text-white">
+                        <Typography className="text-base font-medium text-on-brand">
                           {getInitials(person.fullName)}
                         </Typography>
                       </ImageBackground>
@@ -123,34 +124,38 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                     </View>
                   </TableCell>
                   <TableCell>
-                    <TooltipText tooltipText={person.displayPersonExternalId}>
+                    <TooltipText
+                      tooltipText={person.displayPersonExternalId}
+                      textClassName="text-secondary"
+                    >
                       {person.displayPersonExternalId}
                     </TooltipText>
                   </TableCell>
                   <TableCell>
-                    <TooltipText tooltipText={person.primaryMetadata}>
+                    <TooltipText
+                      tooltipText={person.primaryMetadata}
+                      textClassName="text-secondary"
+                    >
                       {person.primaryMetadata}
                     </TooltipText>
                   </TableCell>
                   <TableCell>
                     {person.activeMeetingId ? (
                       <View className="flex-row items-center pb-2">
-                        <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
-                        <Typography className="px-2 text-black">
+                        <RecordingIndicator />
+                        <Typography className="px-2 text-secondary">
                           In progress
                         </Typography>
                       </View>
                     ) : (
-                      <Typography className="text-base text-gray/85">
-                        <Typography className="font-bold">
-                          {upperFirst(person.lastMeeting)}
-                        </Typography>
+                      <Typography className="text-base font-medium text-secondary">
+                        {upperFirst(person.lastMeeting)}
                       </Typography>
                     )}
                   </TableCell>
                   <TableCell>
                     <View className="invisible size-5 items-center justify-center group-hover:visible">
-                      <ChevronRightIcon className="stroke-muted stroke-[3px]" />
+                      <ChevronRightIcon className="stroke-secondary stroke-[3px]" />
                     </View>
                   </TableCell>
                 </TableRow>
@@ -159,7 +164,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
         </Table>
       </View>
       {persons.length > PAGE_SIZE && (
-        <View className="mt-2 w-full border-spacing-0 overflow-hidden rounded-[20px] border border-gray/15">
+        <View className="mt-2 w-full border-spacing-0 overflow-hidden rounded-[20px] border border-subtle">
           <TablePagination
             page={page}
             setPrevPage={() => setPage((p) => Math.max(1, p - 1))}

@@ -27,7 +27,7 @@ import {
 import {
   createMeetingForPerson,
   extractActiveMeetingId,
-  extractLastCompletedMeetingTime,
+  extractLastCompletedMeetingInfo,
   getMeetingsForPerson,
 } from "~@meetings/trpc/routes/meeting.helpers";
 
@@ -47,6 +47,7 @@ const querySelect = {
       staffEmail: true,
       endTime: true,
       startTime: true,
+      caseNote: true,
     },
   },
 } satisfies Prisma.ClientSelect;
@@ -94,11 +95,9 @@ export const clientRouter = router({
         user: user,
         meetingsOrderedByDateDesc: client.meetings,
       }),
-      meetingDetails: {
-        lastCompletedMeetingTime: extractLastCompletedMeetingTime({
-          meetingsOrderedByDateDesc: client.meetings,
-        }),
-      },
+      meetingDetails: extractLastCompletedMeetingInfo({
+        meetingsOrderedByDateDesc: client.meetings,
+      }),
     }));
   }),
 
@@ -119,11 +118,9 @@ export const clientRouter = router({
           user: user,
           meetingsOrderedByDateDesc: client.meetings,
         }),
-        meetingDetails: {
-          lastCompletedMeetingTime: extractLastCompletedMeetingTime({
-            meetingsOrderedByDateDesc: client.meetings,
-          }),
-        },
+        meetingDetails: extractLastCompletedMeetingInfo({
+          meetingsOrderedByDateDesc: client.meetings,
+        }),
       };
     }),
 });

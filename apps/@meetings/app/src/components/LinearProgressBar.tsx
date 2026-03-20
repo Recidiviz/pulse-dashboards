@@ -20,9 +20,9 @@ import { View } from "react-native";
 const LinearProgressBar = () => {
   return (
     <View className="w-full">
-      <View className="relative block h-1 w-full overflow-hidden bg-[#00665F33]">
-        <View className="absolute inset-y-0 -left-full w-full animate-linear-progress-1 bg-[#006C67]" />
-        <View className="absolute inset-y-0 -left-full w-full animate-linear-progress-2 bg-[#006C67]" />
+      <View className="relative block h-1 w-full overflow-hidden bg-strong">
+        <View className="absolute inset-y-0 -left-full w-full animate-linear-progress-1 bg-brand" />
+        <View className="absolute inset-y-0 -left-full w-full animate-linear-progress-2 bg-brand" />
       </View>
     </View>
   );

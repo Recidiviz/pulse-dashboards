@@ -15,11 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useState } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
+import XIcon from "react-native-heroicons/outline/XIcon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { theme } from "../common/theme";
 import { Typography } from "../shared/ui/Typography";
 
 type DropdownProps = {
@@ -29,49 +43,69 @@ type DropdownProps = {
 };
 
 const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
+  const insets = useSafeAreaInsets();
   const [selected, setSelected] = useState(options[0]);
   const [open, setOpen] = useState(false);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const handleSelect = (opt: string) => {
+  const snapPoints = useMemo(() => ["40%"], []);
+
+  const handleToggle = useCallback(() => {
+    if (Platform.OS === "web") {
+      setOpen((open) => !open);
+    } else {
+      bottomSheetRef.current?.present();
+    }
+  }, []);
+
+  const handleDropdownSelect = (opt: string) => {
     setSelected(opt);
     setOpen(false);
     if (onSelect) onSelect(opt);
   };
 
+  const handleBottomSheetSelect = useCallback(
+    (opt: string) => {
+      setSelected(opt);
+      setOpen(false);
+      bottomSheetRef.current?.close();
+      if (onSelect) onSelect(opt);
+    },
+    [onSelect],
+  );
+
+  const ScrollableContainer =
+    Platform.OS === "web" ? ScrollView : BottomSheetScrollView;
+
   return (
-    <View className="z-50 self-start md:w-fit md:min-w-[200px]">
-      <TouchableOpacity
+    <View className="relative z-50 w-fit self-start md:min-w-[200px]">
+      <Pressable
         className="flex-row items-center justify-end"
-        onPress={() => setOpen((p) => !p)}
+        onPress={handleToggle}
       >
         {label && (
-          <Typography className="text-sm text-gray/85 md:text-base">
-            {label}:
-          </Typography>
+          <Typography className="text-sm text-secondary">{label}:</Typography>
         )}
 
-        <View
-          className="flex-row items-center justify-end rounded-md bg-gray-100"
-          // onPress={() => setOpen((p) => !p)}
-        >
+        <View className="flex-row items-center justify-end rounded-md">
           <Typography
-            className="px-1 text-sm text-[#004D48] md:text-base md:font-medium"
+            className="px-1 text-sm text-primary md:font-medium"
             numberOfLines={1}
           >
             {selected}
           </Typography>
           {open ? (
-            <ChevronUpIcon className="size-4 stroke-[#004D48] stroke-[3px]" />
+            <ChevronUpIcon className="size-4 stroke-tertiary stroke-[3px]" />
           ) : (
-            <ChevronDownIcon className="size-4 stroke-muted stroke-[3px]" />
+            <ChevronDownIcon className="size-4 stroke-tertiary stroke-[3px]" />
           )}
         </View>
-      </TouchableOpacity>
-      {open && (
+      </Pressable>
+      {open && Platform.OS === "web" && (
         <View
-          className="absolute top-7 z-50 w-full rounded-lg border border-[#EDF1F1] bg-white p-1"
+          className="absolute right-0 top-7 w-fit rounded-lg border border-subtle bg-primary p-1"
           style={{
-            shadowColor: "#29605F",
+            shadowColor: theme["backgroundColor"]["brand-light"],
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.1,
             shadowRadius: 10,
@@ -82,10 +116,10 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
             {options.map((opt) => (
               <TouchableOpacity
                 key={opt}
-                className="group rounded p-2.5 hover:bg-[#F4F5F5]"
-                onPress={() => handleSelect(opt)}
+                className="group rounded p-2.5 hover:bg-hover"
+                onPress={() => handleDropdownSelect(opt)}
               >
-                <Typography className="whitespace-nowrap text-sm font-medium text-gray/85 group-hover:text-[#004D48]">
+                <Typography className="whitespace-nowrap text-sm font-medium text-primary group-hover:text-brand">
                   {opt}
                 </Typography>
               </TouchableOpacity>
@@ -93,7 +127,84 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
           </ScrollView>
         </View>
       )}
+      {Platform.OS !== "web" && (
+        <BottomSheetModal
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+          handleIndicatorStyle={{
+            backgroundColor: theme["backgroundColor"]["strong"],
+          }}
+          containerStyle={{ flex: 1 }}
+          backdropComponent={(props) => (
+            <BottomSheetBackdrop
+              {...props}
+              disappearsOnIndex={-1}
+              appearsOnIndex={1}
+              pressBehavior="close"
+              opacity={0.5}
+            />
+          )}
+        >
+          <ScrollableContainer className="flex max-h-full flex-1 flex-col px-4">
+            <View className="mb-4 flex flex-row items-center justify-between">
+              <View className="pointer-events-none size-8" />
+              <Typography className="text-xl font-semibold text-primary">
+                Sort by
+              </Typography>
+              <Pressable onPress={() => bottomSheetRef.current?.close()}>
+                <View className="flex size-8 items-center justify-center rounded-full bg-secondary">
+                  <XIcon className="!size-4 stroke-tertiary" />
+                </View>
+              </Pressable>
+            </View>
+            <View
+              className="flex size-full flex-col py-1"
+              style={{ paddingBottom: insets.bottom + 16 }}
+            >
+              {options.map((opt, i) => (
+                <BottomSheetOptionItem
+                  key={opt}
+                  option={opt}
+                  isActive={opt === selected}
+                  onSelect={handleBottomSheetSelect}
+                  isLast={i === options.length - 1}
+                />
+              ))}
+            </View>
+          </ScrollableContainer>
+        </BottomSheetModal>
+      )}
     </View>
+  );
+};
+
+const BottomSheetOptionItem = ({
+  option,
+  isActive,
+  onSelect,
+  isLast,
+}: {
+  option: string;
+  isActive: boolean;
+  onSelect: (opt: string) => void;
+  isLast: boolean;
+}) => {
+  return (
+    <Pressable onPress={() => onSelect(option)}>
+      <View
+        className={`flex w-full flex-1 flex-row items-center justify-between border-subtle py-3 ${isLast ? "border-none" : "border-b"}`}
+      >
+        <Typography className="text-base font-medium">{option}</Typography>
+        <View
+          className={`flex size-6 items-center justify-center rounded-full border border-subtle ${isActive ? "bg-brand" : "bg-secondary"}`}
+        >
+          <View
+            className={`size-2 rounded-full bg-primary ${isActive ? "block" : "hidden"}`}
+          />
+        </View>
+      </View>
+    </Pressable>
   );
 };
 

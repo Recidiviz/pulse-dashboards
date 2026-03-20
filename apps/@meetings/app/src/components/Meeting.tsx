@@ -33,7 +33,7 @@ const Meeting = ({ meetingId, meetingDetails, person, personType }: Props) => {
   // Show transcription tab if the backend returned transcription data
   const showTranscription = meetingDetails?.transcription !== undefined;
   return (
-    <SafeAreaView className="flex-1 grow bg-white">
+    <SafeAreaView className="flex-1 grow bg-primary">
       <View className="flex-1 grow lg:hidden">
         <MeetingMobile
           meetingId={meetingId}

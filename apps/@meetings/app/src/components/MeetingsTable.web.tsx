@@ -27,6 +27,7 @@ import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
@@ -99,25 +100,25 @@ const MeetingRow = ({
       onClick={handleNavigateToMeeting}
       style={{ pointerEvents: isMeetingInProgress ? "none" : "auto" }}
     >
-      <TableCell>{meeting.date}</TableCell>
-      <TableCell>{meeting.time}</TableCell>
-      <TableCell>{duration}</TableCell>
+      <TableCell textClassName="text-secondary">{meeting.date}</TableCell>
+      <TableCell textClassName="text-secondary">{meeting.time}</TableCell>
+      <TableCell textClassName="text-secondary">{duration}</TableCell>
       <TableCell>
         {isMeetingInProgress && (
           <View className="flex-row items-center pb-2">
-            <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
-            <Typography className="px-2 text-black">In progress</Typography>
+            <RecordingIndicator />
+            <Typography className="px-2 text-secondary">In progress</Typography>
           </View>
         )}
         {isProcessing && (
-          <View className="h-full max-h-[64px] overflow-hidden rounded-xl bg-soft-green/23">
+          <View className="h-full max-h-[64px] overflow-hidden rounded-xl bg-brand-light">
             <View className="flex flex-row items-center gap-4 px-3 py-2">
               <ProcessingSvg />
               <View className="flex-1">
                 <Typography className="text-[14px] font-semibold leading-4 text-primary">
                   Recording is being processed...
                 </Typography>
-                <Typography className="text-xs font-normal text-gray/85">
+                <Typography className="text-xs font-normal text-secondary">
                   The notes and transcript will become available in a few
                   minutes
                 </Typography>
@@ -127,7 +128,7 @@ const MeetingRow = ({
         )}
         {!isMeetingInProgress && !isProcessing && (
           <Typography
-            className="text-base text-gray/85"
+            className="text-base text-secondary"
             style={{ fontStyle: meeting.content ? "normal" : "italic" }}
             numberOfLines={2}
             ellipsizeMode="tail"
@@ -138,7 +139,7 @@ const MeetingRow = ({
       </TableCell>
       <TableCell>
         <View className="invisible size-5 items-center justify-center group-hover:visible">
-          <ChevronRightIcon className="stroke-muted stroke-[3px]" />
+          <ChevronRightIcon className="stroke-secondary stroke-[3px]" />
         </View>
       </TableCell>
     </TableRow>
@@ -196,7 +197,7 @@ const MeetingsTable = ({
         </Table>
       </View>
       {meetings.length > PAGE_SIZE && (
-        <View className="mt-2 w-full border-spacing-0 overflow-hidden rounded-[20px] border border-gray/15">
+        <View className="mt-2 w-full border-spacing-0 overflow-hidden rounded-[20px] border border-subtle">
           <TablePagination
             page={page}
             setPrevPage={() => setPage((p) => Math.max(1, p - 1))}

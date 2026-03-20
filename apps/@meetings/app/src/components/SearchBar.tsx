@@ -39,21 +39,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View
-      className={`size-full flex-1 flex-row items-center rounded-xl border px-3 ${
-        isFocused ? "border-primary" : "border-gray-300"
-      } bg-gray-50`}
+      className={`h-10 w-full flex-1 flex-row items-center rounded-xl border bg-secondary px-3 ${
+        isFocused ? "border-brand" : "border-subtle"
+      }`}
+      style={{
+        boxShadow: isFocused ? `0px 0px 0px 2px #00665F33` : "",
+      }}
     >
       <TouchableOpacity onPress={() => (isFocused ? onExit?.() : null)}>
         {isFocused || value ? (
-          <ArrowLeftIcon className="size-4 stroke-[#9AA9B1]" />
+          <ArrowLeftIcon className="size-4 stroke-tertiary" />
         ) : (
-          <SearchIcon className="size-4 stroke-[#9AA9B1]" />
+          <SearchIcon className="size-4 stroke-tertiary" />
         )}
       </TouchableOpacity>
       <TextInput
-        className="mx-2 h-10 flex-1 text-sm text-black outline-none"
+        className="mx-2 h-10 w-full text-sm text-primary outline-none"
         placeholder={placeholder}
-        placeholderTextColor="#999"
+        placeholderClassName="text-sm text-secondary"
         value={value}
         onChangeText={onChange}
         onFocus={() => setIsFocused(true)}
@@ -61,7 +64,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       />
       {value?.length > 0 && (
         <TouchableOpacity onPress={() => onChange("")}>
-          <View className="flex size-4 items-center justify-center rounded-full bg-[#9AA9B1]">
+          <View className="flex size-4 items-center justify-center rounded-full bg-tertiary">
             <Typography className="text-[8px] font-extrabold leading-[8px] text-white">
               ✕
             </Typography>

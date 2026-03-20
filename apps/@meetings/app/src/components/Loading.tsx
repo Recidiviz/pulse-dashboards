@@ -25,8 +25,8 @@ type Props = {
 
 const Loading = ({ message }: Props) => {
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Typography className="text-base text-gray-700">{message}</Typography>
+    <View className="flex-1 items-center justify-center bg-primary">
+      <Typography className="text-base text-secondary">{message}</Typography>
     </View>
   );
 };

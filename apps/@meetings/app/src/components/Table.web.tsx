@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import clsx from "clsx";
 import { View } from "react-native";
 
 import { Typography } from "../shared/ui/Typography";
@@ -24,6 +25,7 @@ export const TABLE_CELL_HEIGHT = 72;
 
 type Props = {
   children?: React.ReactNode;
+  textClassName?: string;
 };
 
 export const Table = ({
@@ -34,7 +36,7 @@ export const Table = ({
   return (
     <table
       {...props}
-      className={`w-full border-separate border-spacing-0 overflow-hidden rounded-[20px] border border-gray/15 ${className}`}
+      className={`w-full border-separate border-spacing-0 overflow-hidden rounded-[20px] border border-subtle ${className}`}
     >
       {children}
     </table>
@@ -47,7 +49,7 @@ export const TableHead = ({
   ...props
 }: Props & React.HTMLAttributes<HTMLTableSectionElement>) => {
   return (
-    <thead {...props} className={`bg-[#3553620A] ${className}`}>
+    <thead {...props} className={`bg-secondary ${className}`}>
       {children}
     </thead>
   );
@@ -76,7 +78,7 @@ export const TableHeadCell = ({
       className={`px-1 first:pl-7 last:pr-7 ${className}`}
       style={{ height: TABLE_HEAD_CELL_HEIGHT }}
     >
-      <Typography className="inline-block w-full py-3 text-left text-sm font-medium text-gray/85">
+      <Typography className="inline-block w-full py-3 text-left text-sm font-medium text-secondary">
         {children}
       </Typography>
     </th>
@@ -89,7 +91,7 @@ export const TableBody = ({
   ...props
 }: Props & React.HTMLAttributes<HTMLTableSectionElement>) => {
   return (
-    <tbody {...props} className={`bg-white ${className}`}>
+    <tbody {...props} className={`bg-primary ${className}`}>
       {children}
     </tbody>
   );
@@ -113,6 +115,7 @@ export const TableRow = ({
 export const TableCell = ({
   children,
   className = "",
+  textClassName = "",
   ...props
 }: Props & React.TdHTMLAttributes<HTMLTableCellElement>) => {
   return (
@@ -121,10 +124,12 @@ export const TableCell = ({
       className={`p-0 [&:first-child>div>div]:pl-4 [&:last-child>div>div]:pr-4 ${className}`}
       style={{ height: TABLE_CELL_HEIGHT }}
     >
-      <View className="h-full justify-center border-t border-gray/15 p-0 group-hover:border-transparent">
-        <View className="h-full justify-center px-1 group-hover:bg-[#3553620A]">
+      <View className="h-full justify-center border-t border-subtle p-0 group-hover:border-transparent">
+        <View className="h-full justify-center px-1 group-hover:bg-secondary">
           {typeof children === "string" ? (
-            <Typography className="text-base text-gray/85">
+            <Typography
+              className={clsx("text-base text-primary", textClassName)}
+            >
               {children}
             </Typography>
           ) : (
@@ -166,7 +171,7 @@ export const TableFooterCell = ({
   ...props
 }: Props & React.TdHTMLAttributes<HTMLTableCellElement>) => {
   return (
-    <td {...props} className={`bg-white ${className}`}>
+    <td {...props} className={`bg-primary ${className}`}>
       {children}
     </td>
   );

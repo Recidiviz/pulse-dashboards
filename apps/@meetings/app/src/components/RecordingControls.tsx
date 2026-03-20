@@ -22,6 +22,7 @@ import PauseSvg from "../assets/icons/pause.svg";
 import PlaySvg from "../assets/icons/play.svg";
 import StopSvg from "../assets/icons/stop.svg";
 import { RecordingStatus } from "../common/types";
+import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { formatDurationNumeric } from "../utils/format";
 
@@ -124,9 +125,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   return (
     <>
       <View className="flex-row items-center justify-center pb-2">
-        {status === "recording" && (
-          <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
-        )}
+        {status === "recording" && <RecordingIndicator />}
         <Typography className="px-2 text-black">
           {status === "recording"
             ? "Recording in progress"

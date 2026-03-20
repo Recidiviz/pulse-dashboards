@@ -34,6 +34,7 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { theme } from "../common/theme";
 import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
 import { Typography } from "../shared/ui/Typography";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
@@ -117,7 +118,9 @@ const DraftCaseNoteSheet = ({
       index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
-      handleIndicatorStyle={{ backgroundColor: "#00000099" }}
+      handleIndicatorStyle={{
+        backgroundColor: theme["backgroundColor"]["strong"],
+      }}
       containerStyle={{ flex: 1 }}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
@@ -131,20 +134,20 @@ const DraftCaseNoteSheet = ({
       footerComponent={(props) =>
         isKeyboardVisible ? null : (
           <BottomSheetFooter {...props} bottomInset={bottomSafeArea}>
-            <View className="flex w-full flex-row items-start gap-4 self-end bg-white p-4">
+            <View className="flex w-full flex-row items-start gap-4 self-end bg-primary p-4">
               <TouchableOpacity
                 onPress={handleClose}
-                className="flex flex-1 items-center justify-center rounded-[32px] border border-[#35536233] py-[17px]"
+                className="flex flex-1 items-center justify-center rounded-[32px] border border-brand py-[17px]"
               >
-                <Typography className="text-lg font-semibold leading-[22px] text-primary">
+                <Typography className="text-lg font-semibold leading-[22px] text-brand">
                   CANCEL
                 </Typography>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleSave}
-                className="flex flex-1 items-center justify-center rounded-[32px] bg-[#00665F] py-[17px]"
+                className="flex flex-1 items-center justify-center rounded-[32px] bg-brand py-[17px]"
               >
-                <Typography className="text-lg font-semibold leading-[22px] text-white">
+                <Typography className="text-lg font-semibold leading-[22px] text-on-brand">
                   SAVE CHANGES
                 </Typography>
               </TouchableOpacity>
@@ -154,15 +157,15 @@ const DraftCaseNoteSheet = ({
       }
     >
       <BottomSheetView className="flex max-h-full flex-1 flex-col">
-        <View className="flex h-20 flex-row items-center justify-between border-b border-[#EDF1F1] p-4">
+        <View className="flex h-20 flex-row items-center justify-between border-b border-subtle p-4">
           <TouchableOpacity onPress={handleClose}>
-            <ChevronLeftIcon className="size-5 text-muted" />
+            <ChevronLeftIcon className="size-5 text-primary" />
           </TouchableOpacity>
           <View className="flex flex-col items-center">
             <Typography className="text-lg font-semibold leading-[22px]">
               Edit draft case note
             </Typography>
-            <Typography className="text-sm leading-[16px] text-gray-500">
+            <Typography className="text-sm leading-[16px] text-secondary">
               {clientName} • Meeting{" "}
               {meetingDate ? formatDraftCaseNoteMeetingDate(meetingDate) : ""}
             </Typography>
@@ -171,7 +174,7 @@ const DraftCaseNoteSheet = ({
             onPress={handleCopyNotes}
             disabled={isSnackbarShowing}
           >
-            <DocumentDuplicateIcon className="size-5 text-muted" />
+            <DocumentDuplicateIcon className="size-5 text-primary" />
           </TouchableOpacity>
         </View>
         <TextInput

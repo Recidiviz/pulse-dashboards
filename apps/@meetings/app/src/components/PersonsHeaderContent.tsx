@@ -28,6 +28,7 @@ import SearchBar from "./SearchBar";
 type Props = {
   personType: PersonType;
   description: string;
+  personsCount: number;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
   setSortBy: (value: string) => void;
@@ -36,6 +37,7 @@ type Props = {
 const PersonsHeaderContent = ({
   personType,
   description,
+  personsCount,
   searchQuery,
   setSearchQuery,
   setSortBy,
@@ -54,14 +56,31 @@ const PersonsHeaderContent = ({
     return Object.values(SortOption);
   }, [personType]);
 
-  return (
-    <>
-      <View className="rounded-b-[24px] bg-white p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial] md:px-0 md:pb-0 md:pt-10">
+  const personsCountString =
+    personsCount === 1 ? `1 ${personType}` : `${personsCount} ${personType}s`;
+
+  const hasNoPersons = !searchQuery && personsCount === 0;
+
+  if (hasNoPersons) {
+    return (
+      <View className="mb-4 rounded-b-[24px] bg-primary p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-transparent md:px-0 md:pb-0 md:pt-10">
         <View>
-          <Typography className="font-libre-baskerville text-3xl font-semibold text-black">
+          <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
             {startCase(personType)}s
           </Typography>
-          <Typography className="my-2 text-sm font-normal text-[#707070]">
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <>
+      <View className="mb-4 rounded-b-[24px] bg-primary p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-transparent md:px-0 md:pb-0 md:pt-10">
+        <View>
+          <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
+            {startCase(personType)}s
+          </Typography>
+          <Typography className="my-2 text-sm font-normal text-secondary">
             {description}
           </Typography>
         </View>
@@ -78,7 +97,10 @@ const PersonsHeaderContent = ({
           </View>
         </View>
       </View>
-      <View className="z-10 my-4 flex-row items-center justify-end px-4 md:my-0 md:px-0">
+      <View className="z-10 mb-3 flex-row items-center justify-between px-4 md:my-0 md:px-0">
+        <Typography className="text-sm leading-4 text-secondary">
+          {personsCountString}
+        </Typography>
         <Dropdown label="Sort by" options={options} onSelect={setSortBy} />
       </View>
     </>

@@ -24,6 +24,7 @@ import PlaySvg from "../../../assets/icons/play.svg";
 import StopSvg from "../../../assets/icons/stop.svg";
 import { Person } from "../../../common/types";
 import LinearProgressBar from "../../../components/LinearProgressBar";
+import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { formatDurationNumeric } from "../../../utils/format";
 import { useRecording } from "../model";
@@ -48,7 +49,7 @@ export function MeetingMinimizedModal({
   const isControlsDisabled = status === "uploading" || status === "ending";
 
   return (
-    <View className="absolute bottom-5 right-5 h-[150px] w-[360px] overflow-hidden rounded-[20px] bg-white shadow-lg">
+    <View className="absolute bottom-5 right-5 h-[150px] w-[360px] overflow-hidden rounded-[20px] bg-primary shadow-lg">
       <View className="grow p-5">
         <View className="mb-1 w-full flex-row justify-between">
           <Typography className="text-lg font-medium text-primary">
@@ -58,24 +59,22 @@ export function MeetingMinimizedModal({
             className="relative -right-1 -top-1"
             onPress={() => setIsRecordingViewMinimized(false)}
           >
-            <MaximizeSvg className="size-5 text-[#355362]" />
+            <MaximizeSvg className="size-5 text-secondary" />
           </TouchableOpacity>
         </View>
         <View className="flex-row items-center gap-2">
-          {status === "recording" && (
-            <View className="box-content size-1.5 rounded-full border-[3px] border-[#FFEAE5] bg-[#B42D2D]" />
-          )}
+          {status === "recording" && <RecordingIndicator />}
           <Typography className="font-medium text-primary">
             {status === "recording" ? "Recording in progress" : "Paused"}
           </Typography>
-          <Typography className="font-semibold text-[#9AA6AC]">
+          <Typography className="font-semibold text-tertiary">
             {formatDurationNumeric(durationMs)}
           </Typography>
         </View>
         <View className="mt-auto w-full flex-row justify-around">
           {status === "recording" ? (
             <TouchableOpacity
-              className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-[#F4F5F5] aria-disabled:opacity-40"
+              className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-screen aria-disabled:opacity-40"
               onPress={onPauseResume}
               disabled={isControlsDisabled}
             >
@@ -86,32 +85,32 @@ export function MeetingMinimizedModal({
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-[#006C67] aria-disabled:opacity-40"
+              className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-brand aria-disabled:opacity-40"
               onPress={onPauseResume}
               disabled={isControlsDisabled}
             >
-              <PlaySvg className="size-4 fill-[#EDF1F1]" />
-              <Typography className="ml-2 text-base font-semibold text-white">
+              <PlaySvg className="size-4 fill-on-brand" />
+              <Typography className="ml-2 text-base font-semibold text-on-brand">
                 Resume
               </Typography>
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-[#B42D2D] aria-disabled:opacity-40"
+            className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-attention aria-disabled:opacity-40"
             onPress={onStop}
             disabled={isControlsDisabled}
           >
-            <StopSvg className="size-6 fill-[#FFEAE5]" />
-            <Typography className="ml-2 text-base font-semibold text-white">
+            <StopSvg className="size-6 fill-on-brand" />
+            <Typography className="ml-2 text-base font-semibold text-on-brand">
               Stop
             </Typography>
           </TouchableOpacity>
           <TouchableOpacity
-            className="size-[44px] items-center justify-center rounded-full bg-[#E6EAEB] aria-disabled:opacity-40"
+            className="size-[44px] items-center justify-center rounded-full bg-screen aria-disabled:opacity-40"
             onPress={onDiscard}
             disabled={isControlsDisabled}
           >
-            <XIcon className="size-5 stroke-[#9AA6AC]" />
+            <XIcon className="size-5 stroke-secondary" />
           </TouchableOpacity>
         </View>
       </View>

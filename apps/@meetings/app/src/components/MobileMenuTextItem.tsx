@@ -29,8 +29,8 @@ const MobileMenuTextItem = ({
   color?: "default" | "danger";
 }) => {
   const colorClasses: Record<"default" | "danger", string> = {
-    default: "text-gray-600",
-    danger: "text-[#B42D2D]",
+    default: "text-secondary",
+    danger: "text-attention",
   };
 
   return (

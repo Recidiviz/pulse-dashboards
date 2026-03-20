@@ -47,11 +47,11 @@ export const ProfileMenuItem = ({
 }: Props) => {
   const children = (
     <>
-      <Typography className="whitespace-nowrap text-base font-medium leading-5 text-gray/85 transition-all duration-300 group-hover:text-[#006C67]">
+      <Typography className="whitespace-nowrap text-base font-medium leading-5 text-secondary transition-all duration-300 group-hover:text-brand">
         {label}
       </Typography>
       {helperText && (
-        <Typography className="ml-auto whitespace-nowrap text-xs text-gray-500">
+        <Typography className="ml-auto whitespace-nowrap text-xs text-tertiary">
           {helperText}
         </Typography>
       )}
@@ -62,7 +62,7 @@ export const ProfileMenuItem = ({
   if (link)
     return (
       <Link
-        className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-soft-green/23"
+        className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-brand-light"
         {...link}
       >
         {children}
@@ -71,7 +71,7 @@ export const ProfileMenuItem = ({
 
   return (
     <Pressable
-      className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-soft-green/23"
+      className="group flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-brand-light"
       {...pressable}
     >
       {children}

@@ -91,14 +91,14 @@ const MeetingsCardsList = ({
               <Typography className="text-base font-semibold text-primary">
                 {meeting.date}
               </Typography>
-              <ChevronRightIcon className="size-3.5 stroke-muted stroke-[3px]" />
+              <ChevronRightIcon className="stroke-muted size-3.5 stroke-[3px]" />
             </View>
 
             <Typography className="mr-1 text-xs font-medium text-primary">
               {meeting.time} • {meeting.duration || "In progress..."}
             </Typography>
             {isProcessing ? (
-              <View className="mt-4 rounded-xl bg-soft-green/23 p-4">
+              <View className="bg-soft-green/23 mt-4 rounded-xl p-4">
                 <View className="flex-row items-start">
                   <ProcessingSvg />
 
@@ -116,7 +116,7 @@ const MeetingsCardsList = ({
             ) : (
               <Typography
                 style={{ fontStyle: meeting.content ? "normal" : "italic" }}
-                className="mt-3 border-t border-[#EDF1F1] pt-3 text-sm font-medium text-gray/85"
+                className="text-title-default mt-3 border-t border-[#EDF1F1] pt-3 text-sm font-medium"
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >

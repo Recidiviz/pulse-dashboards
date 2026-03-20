@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import clsx from "clsx";
 import React from "react";
 import { Modal, Platform, TouchableOpacity, View } from "react-native";
 
@@ -23,6 +24,7 @@ import PlaySvg from "../assets/icons/play.svg";
 import StopSvg from "../assets/icons/stop.svg";
 import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
+import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import MeetingSheet from "./MeetingSheet";
 
@@ -65,41 +67,52 @@ const MeetingInProgressBar = ({
 
   return (
     <View
-      className={`flex-row items-center justify-between rounded-xl bg-[#F4F5F5] p-3 ${className}`}
+      className={clsx(
+        "flex-row items-center justify-between rounded-xl bg-secondary px-3 py-2",
+        className,
+      )}
     >
-      <View>
-        <Typography className="text-[13px] font-medium text-gray-700">
-          Meeting in progress
+      <View className="flex flex-row items-center gap-1">
+        <RecordingIndicator />
+        <Typography className="text-sm font-medium leading-4 text-primary">
+          Recording
         </Typography>
-        <Typography className="mt-1 text-[12px] text-gray-600">
+        <Typography className="text-sm leading-4 text-secondary">
           {formatDuration(durationMs)}
         </Typography>
       </View>
       <View className="flex-row items-center space-x-2">
         <TouchableOpacity
-          className="rounded-full px-3 py-2"
+          className={clsx(
+            "rounded-full px-3 py-1.5",
+            isPaused
+              ? "border border-brand bg-brand"
+              : "border border-subtle bg-transparent",
+          )}
           onPress={togglePauseResume}
-          style={{
-            backgroundColor: isPaused ? "#006C67" : "#4D5255",
-          }}
         >
           <View className="flex-row items-center">
             {isPaused ? (
-              <PlaySvg className="size-4 fill-[#C1E3D8]" />
+              <PlaySvg className="!size-4 fill-on-brand" />
             ) : (
-              <PauseSvg className="size-4 fill-[#EDF1F1]" />
+              <PauseSvg className="!size-4 fill-tertiary" />
             )}
-            <Typography className="ml-1.5 text-[13px] font-semibold text-white">
+            <Typography
+              className={clsx(
+                "ml-1 text-sm font-semibold",
+                isPaused ? "text-on-brand" : "text-primary",
+              )}
+            >
               {isPaused ? "Resume" : "Pause"}
             </Typography>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="ml-2 rounded-full bg-[#B91C1C] p-2"
+          className="ml-2 rounded-full border border-attention bg-attention p-[6px]"
           onPress={stopRecording}
         >
-          <StopSvg className="size-4 fill-[#FFEAE5]" />
+          <StopSvg className="size-4 fill-on-brand" />
         </TouchableOpacity>
       </View>
       <Modal
@@ -110,7 +123,7 @@ const MeetingInProgressBar = ({
         animationType="slide"
         transparent
       >
-        <View className="flex-1 justify-end bg-[rgba(0,0,0,0.3)]">
+        <View className="flex-1 justify-end bg-active">
           {recordingState === "discarding" && (
             <MeetingSheet
               title="Discard meeting?"

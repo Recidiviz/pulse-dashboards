@@ -74,6 +74,8 @@ describe("server", () => {
         activeMeetingId: fakeMeeting.id,
         supervisionType: fakeClient.supervisionType,
         meetingDetails: {
+          id: null,
+          caseNote: null,
           lastCompletedMeetingTime: null,
         },
         staffEmails: [fakeStaff.email],

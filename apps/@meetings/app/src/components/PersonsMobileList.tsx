@@ -15,25 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View, VirtualizedList } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Person, PersonType } from "../common/types";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import PersonCardItem from "./PersonCardItem";
 import PersonsHeaderContent from "./PersonsHeaderContent";
 import PersonsPlaceholder from "./PersonsPlaceholder";
 
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "Clients" | "Residents"
->;
-
 type Props = {
   persons: Person[];
   recordingState: string;
-  navigation: ProfileNavProp;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   setSortBy: (option: string) => void;
@@ -44,16 +35,12 @@ type Props = {
 const PersonsMobileList = ({
   persons,
   recordingState,
-  navigation,
   searchQuery,
   setSearchQuery,
   setSortBy,
   personType,
   className,
 }: Props) => {
-  const insets = useSafeAreaInsets();
-  const emptyListPlaceholderMessage =
-    personType === "client" ? "No clients found" : "No residents found";
   const headerDescription =
     personType === "client"
       ? "All clients on your caseload are displayed below"
@@ -70,29 +57,34 @@ const PersonsMobileList = ({
         <PersonCardItem
           person={item}
           recordingState={recordingState}
-          navigation={navigation}
           personType={personType}
         />
       )}
       initialNumToRender={10}
       ListEmptyComponent={
         <PersonsPlaceholder
-          message={emptyListPlaceholderMessage}
-          onClearSearch={() => setSearchQuery("")}
+          personType={personType}
+          isSearchResultEmpty={searchQuery.trim().length > 0}
         />
       }
+      ListHeaderComponentStyle={{ zIndex: 50 }}
       ListHeaderComponent={
         <View className="mx-auto w-full max-w-[960px] flex-1">
           <PersonsHeaderContent
             personType={personType}
             description={headerDescription}
+            personsCount={persons.length}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setSortBy={setSortBy}
           />
         </View>
       }
-      contentContainerStyle={{ paddingBottom: insets.bottom }}
+      contentContainerStyle={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+      }}
     />
   );
 };

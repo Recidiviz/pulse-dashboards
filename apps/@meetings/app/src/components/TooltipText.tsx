@@ -72,7 +72,7 @@ export const TooltipText = ({
         {children}
       </Typography>
       <Typography
-        className={`text-base text-gray/85 ${textClassName}`}
+        className={`text-base text-primary ${textClassName}`}
         ellipsizeMode="tail"
         numberOfLines={1}
       >
@@ -81,10 +81,10 @@ export const TooltipText = ({
       {isOverflowing && visible && (
         <View className="absolute left-0 top-11 w-[50vw]">
           <View
-            className={`w-fit rounded-md bg-primary px-2 py-1 shadow-md ${tooltipClassName}`}
+            className={`w-fit rounded-md bg-strong px-2 py-1 shadow-md ${tooltipClassName}`}
           >
             <Typography
-              className={`text-xs text-white ${tooltipTextClassName}`}
+              className={`text-xs text-on-brand ${tooltipTextClassName}`}
             >
               {tooltipText}
             </Typography>

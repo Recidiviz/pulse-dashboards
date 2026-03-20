@@ -169,7 +169,7 @@ const MeetingMinutesList = ({ sections }: { sections: MinuteSection[] }) => {
             </View>
           </View>
           {sectionIndex < sections.length - 1 && (
-            <View className="h-px bg-gray/15" />
+            <View className="bg-gray/15 h-px" />
           )}
         </View>
       ))}
@@ -196,11 +196,11 @@ const MeetingNotesControls = ({
 }: MeetingNotesControlsProps) => {
   return (
     <>
-      <View className="hidden lg:flex print:hidden">
+      <View className="hidden lg:flex">
         {isEditing ? (
           <View className="w-full flex-row justify-end gap-3">
             <TouchableOpacity
-              className="flex-row items-center gap-2 rounded-full border border-[#35536233] px-5 py-3"
+              className="flex-row items-center gap-2 rounded-full border border-subtle px-5 py-3"
               onPress={onCancelEdit}
             >
               <Typography className="text-left text-base font-semibold text-primary">
@@ -208,10 +208,10 @@ const MeetingNotesControls = ({
               </Typography>
             </TouchableOpacity>
             <TouchableOpacity
-              className="flex-row items-center gap-2 rounded-full bg-[#006C67] px-5 py-3"
+              className="flex-row items-center gap-2 rounded-full bg-brand px-5 py-3"
               onPress={onSave}
             >
-              <Typography className="text-left text-base font-semibold text-white">
+              <Typography className="text-left text-base font-semibold text-on-brand">
                 Save Changes
               </Typography>
             </TouchableOpacity>
@@ -222,7 +222,7 @@ const MeetingNotesControls = ({
               className="flex-row items-center gap-2"
               onPress={onStartEdit}
             >
-              <PencilIcon className="size-4 fill-muted stroke-[3px]" />
+              <PencilIcon className="size-4 fill-tertiary stroke-[3px]" />
               <Typography className="text-left text-base text-primary">
                 Edit Notes
               </Typography>
@@ -231,7 +231,7 @@ const MeetingNotesControls = ({
               className="hidden flex-row items-center gap-2 lg:flex"
               onPress={onCopyNotes}
             >
-              <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
+              <DocumentDuplicateIcon className="size-4 stroke-tertiary stroke-[3px]" />
               <Typography className="text-left text-base text-primary">
                 Copy
               </Typography>
@@ -240,10 +240,10 @@ const MeetingNotesControls = ({
         )}
       </View>
       <TouchableOpacity
-        className="flex-row items-center gap-2 lg:hidden print:hidden"
+        className="flex-row items-center gap-2 lg:hidden"
         onPress={onMeetingNotesSheetOpen}
       >
-        <PencilIcon className="size-4 fill-muted stroke-[3px]" />
+        <PencilIcon className="size-4 fill-tertiary stroke-[3px]" />
         <Typography className="text-left text-base text-primary">
           Edit Notes
         </Typography>

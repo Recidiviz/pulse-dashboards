@@ -48,7 +48,7 @@ const NewMeetingHeader: React.FC<NewMeetingHeaderProps> = ({
     if (isMeetingActive) {
       return (
         <TouchableOpacity onPress={onDiscard}>
-          <Typography className="text-base font-semibold text-[#B42D2D]">
+          <Typography className="text-base font-semibold text-attention">
             Discard
           </Typography>
         </TouchableOpacity>
@@ -56,17 +56,17 @@ const NewMeetingHeader: React.FC<NewMeetingHeaderProps> = ({
     } else {
       return (
         <View>
-          <BellIcon className="size-6 fill-muted" />
+          <BellIcon className="size-6 fill-primary" />
         </View>
       );
     }
   };
 
   return (
-    <SafeAreaView edges={["top"]} className="bg-white">
-      <View className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
+    <SafeAreaView edges={["top"]} className="bg-primary">
+      <View className="flex-row items-center justify-between border-b border-subtle bg-primary px-4 py-3">
         <TouchableOpacity onPress={handleGoBack}>
-          <ChevronLeftIcon className="size-6 fill-muted" />
+          <ChevronLeftIcon className="size-6 fill-primary" />
         </TouchableOpacity>
         <Typography className="text-base font-semibold text-primary">
           {isMeetingActive ? "Meeting in Progress" : "New Meeting"}

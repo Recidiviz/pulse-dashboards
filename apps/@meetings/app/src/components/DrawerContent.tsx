@@ -51,24 +51,24 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         paddingEnd: 0,
       }}
     >
-      <View className="flex-row items-center justify-between bg-white px-4 pb-4">
+      <View className="flex-row items-center justify-between bg-primary px-4 pb-4">
         <TouchableOpacity onPress={() => navigation.closeDrawer()}>
-          <XIcon className="stroke-muted" />
+          <XIcon className="stroke-tertiary" />
         </TouchableOpacity>
         <Typography className="text-lg font-semibold leading-[22px] text-primary">
           Navigation
         </Typography>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
-          <BellIcon className="fill-muted" />
+          <BellIcon className="fill-tertiary" />
         </TouchableOpacity>
       </View>
       <View className="w-full px-2">
-        <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-soft-green/23 p-4">
+        <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-brand-light-secondary p-4">
           <ImageBackground
             source={BgAvatarImage}
             className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
           >
-            <Typography className="text-white">
+            <Typography className="text-on-brand">
               {name ? getInitials(name) : "SS"}
             </Typography>
           </ImageBackground>
@@ -76,7 +76,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             <Typography className="text-base font-semibold text-primary">
               {name ?? "User name not found"}
             </Typography>
-            <Typography className="text-sm text-gray/85">
+            <Typography className="text-sm text-secondary">
               {email ?? "User email not found"}
             </Typography>
           </View>
@@ -101,7 +101,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         )}
       </View>
       <View
-        className="flex flex-col gap-1.5 bg-gray-100 px-4"
+        className="flex flex-col gap-1.5 bg-screen px-4"
         style={{ paddingBottom: insets.bottom || 16, paddingTop: 16 }}
       >
         {canSelectStateCode && (
@@ -111,7 +111,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
               onPress={() => navigation.navigate("StateSelection")}
             />
             {currentStateName && (
-              <Typography className="px-4 text-xs text-gray-500">
+              <Typography className="px-4 text-xs text-secondary">
                 Current state: {currentStateName}
               </Typography>
             )}

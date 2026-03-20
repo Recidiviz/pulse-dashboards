@@ -26,6 +26,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { theme } from "../common/theme";
 import Header from "../components/Header";
 import {
   AVAILABLE_STATE_CODES,
@@ -61,18 +62,18 @@ const StateSelectionScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1" edges={["top"]}>
       <Header showBell={false} />
       <ScrollView className="flex-1 px-4 py-6 md:px-10">
         <View className="mx-auto w-full max-w-2xl">
-          <Typography className="mb-2 font-libre-baskerville text-3xl font-bold text-gray-900">
+          <Typography className="mb-2 font-libre-baskerville text-3xl font-bold text-primary">
             Select State
           </Typography>
-          <Typography className="mb-6 text-base text-gray-600">
+          <Typography className="mb-6 text-base text-secondary">
             Choose which state's data you want to view
           </Typography>
 
-          <View className="rounded-lg bg-white p-4 shadow-sm">
+          <View className="rounded-lg bg-primary p-4 shadow-sm">
             {AVAILABLE_STATE_CODES.map((stateCodeOption, index) => (
               <React.Fragment key={stateCodeOption.code}>
                 <TouchableOpacity
@@ -81,40 +82,43 @@ const StateSelectionScreen = () => {
                   className="flex-row items-center justify-between py-4"
                 >
                   <View className="flex-1">
-                    <Typography className="text-lg text-gray-900">
+                    <Typography className="text-lg text-primary">
                       {stateCodeOption.name}
                     </Typography>
-                    <Typography className="text-sm text-gray-500">
+                    <Typography className="text-sm text-secondary">
                       {stateCodeOption.code}
                     </Typography>
                   </View>
                   <View className="flex-row items-center gap-x-3">
                     {selectedStateCode === stateCodeOption.code && (
-                      <View className="rounded-full bg-blue-600 px-3 py-1">
-                        <Typography className="text-xs text-white">
+                      <View className="rounded-full bg-brand px-3 py-1">
+                        <Typography className="text-xs text-on-brand">
                           Current
                         </Typography>
                       </View>
                     )}
                     {isSaving ? (
-                      <ActivityIndicator size="small" color="#2563EB" />
+                      <ActivityIndicator
+                        size="small"
+                        color={theme["colors"]["brand"]}
+                      />
                     ) : (
-                      <View className="size-6 items-center justify-center rounded-full border-2 border-gray-300">
+                      <View className="size-6 items-center justify-center rounded-full border-2 border-subtle">
                         {selectedStateCode === stateCodeOption.code && (
-                          <View className="size-3 rounded-full bg-blue-600" />
+                          <View className="size-3 rounded-full bg-brand" />
                         )}
                       </View>
                     )}
                   </View>
                 </TouchableOpacity>
                 {index < AVAILABLE_STATE_CODES.length - 1 && (
-                  <View className="h-px bg-gray-200" />
+                  <View className="h-px border-b border-subtle" />
                 )}
               </React.Fragment>
             ))}
           </View>
 
-          <Typography className="mt-4 text-sm text-gray-500">
+          <Typography className="mt-4 text-sm text-secondary">
             Currently viewing data for{" "}
             {
               AVAILABLE_STATE_CODES.find((s) => s.code === selectedStateCode)

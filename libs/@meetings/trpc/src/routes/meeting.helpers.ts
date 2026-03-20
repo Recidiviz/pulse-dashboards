@@ -124,13 +124,22 @@ export function extractActiveMeetingId({
   return activeMeeting?.id ?? null;
 }
 
-export function extractLastCompletedMeetingTime({
+export function extractLastCompletedMeetingInfo({
   meetingsOrderedByDateDesc,
 }: {
-  meetingsOrderedByDateDesc: { endTime: Date | null; startTime: Date }[];
+  meetingsOrderedByDateDesc: {
+    id: string | null;
+    endTime: Date | null;
+    startTime: Date;
+    caseNote: string | null;
+  }[];
 }) {
   const latestMeeting = meetingsOrderedByDateDesc.find(
     (meeting) => meeting.endTime != null,
   );
-  return latestMeeting?.startTime ?? null;
+  return {
+    id: latestMeeting?.id ?? null,
+    lastCompletedMeetingTime: latestMeeting?.startTime ?? null,
+    caseNote: latestMeeting?.caseNote ?? null,
+  };
 }

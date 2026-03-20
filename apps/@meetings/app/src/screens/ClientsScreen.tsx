@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useIsFocused } from "@react-navigation/native";
+import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
@@ -29,16 +29,14 @@ import Header from "../components/Header";
 import Loading from "../components/Loading";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsMobileList from "../components/PersonsMobileList";
+import PersonsPlaceholder from "../components/PersonsPlaceholder";
 import PersonsTable from "../components/PersonsTable.web";
 import { useUserContext } from "../context/UserContext";
 import { useRecording } from "../features/recording";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeClient } from "../utils/format";
 import { SortOption, sortUsers } from "../utils/sort";
-
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
 
 const filterAndSortClients = (
   clients: Client[],
@@ -60,7 +58,6 @@ const filterAndSortClients = (
 const ClientsScreen = () => {
   useSetDocumentTitle("Clients - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
   const { email: userEmail } = useUserContext();
 
@@ -110,14 +107,21 @@ const ClientsScreen = () => {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-1" style={{ marginTop: -insets.top }}>
+      <View
+        className={clsx(
+          "flex-1",
+          Platform.OS !== "web" &&
+            [...myCaseloadClients, ...otherCaseloadClients].length === 0 &&
+            "bg-primary",
+        )}
+        style={{ marginTop: -insets.top }}
+      >
         <Header />
         {Platform.select({
           native: (
             <PersonsMobileList
               persons={[...myCaseloadClients, ...otherCaseloadClients]}
               recordingState={recordingState}
-              navigation={navigation}
               searchQuery={search}
               setSearchQuery={setSearch}
               setSortBy={setSortBy}
@@ -129,7 +133,6 @@ const ClientsScreen = () => {
               <PersonsMobileList
                 persons={[...myCaseloadClients, ...otherCaseloadClients]}
                 recordingState={recordingState}
-                navigation={navigation}
                 searchQuery={search}
                 setSearchQuery={setSearch}
                 setSortBy={setSortBy}
@@ -141,6 +144,9 @@ const ClientsScreen = () => {
                   <PersonsHeaderContent
                     personType="client"
                     description="Search for clients across all caseloads"
+                    personsCount={
+                      [...myCaseloadClients, ...otherCaseloadClients].length
+                    }
                     searchQuery={search}
                     setSearchQuery={setSearch}
                     setSortBy={setSortBy}
@@ -148,16 +154,25 @@ const ClientsScreen = () => {
                   {myCaseloadClients.length > 0 && (
                     <PersonsTable
                       persons={myCaseloadClients}
-                      type="clients"
+                      type="client"
                       sectionTitle="My caseload"
                     />
                   )}
                   {otherCaseloadClients.length > 0 && (
                     <PersonsTable
                       persons={otherCaseloadClients}
-                      type="clients"
+                      type="client"
                       sectionTitle="Results from other caseloads"
                     />
+                  )}
+                  {[...myCaseloadClients, ...otherCaseloadClients].length ===
+                    0 && (
+                    <View className="flex h-[560px] w-full items-center justify-center">
+                      <PersonsPlaceholder
+                        personType="client"
+                        isSearchResultEmpty={!!search}
+                      />
+                    </View>
                   )}
                 </View>
               </ScrollView>
@@ -165,6 +180,15 @@ const ClientsScreen = () => {
           ),
         })}
       </View>
+      <View
+        className={clsx(
+          "absolute inset-x-0 bottom-0",
+          Platform.OS !== "web" &&
+            [...myCaseloadClients, ...otherCaseloadClients].length === 0 &&
+            "bg-primary",
+        )}
+        style={{ height: insets.bottom }}
+      />
     </SafeAreaView>
   );
 };

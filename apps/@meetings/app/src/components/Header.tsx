@@ -22,6 +22,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import clsx from "clsx";
 import React, { useState } from "react";
 import {
   ImageBackground,
@@ -88,23 +89,23 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <SafeAreaView edges={["top"]} className="z-10 bg-white">
+    <SafeAreaView edges={["top"]} className="z-10 bg-primary">
       <View className="flex-row items-center justify-between px-4 py-3 md:hidden">
         {showDrawer && (
           <TouchableOpacity
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           >
-            <MenuIcon className="text-muted" />
+            <MenuIcon className="text-tertiary" />
           </TouchableOpacity>
         )}
 
         {showBell && (
           <TouchableOpacity onPress={() => console.log("Notification screen")}>
-            <BellIcon className="text-muted" />
+            <BellIcon className="text-tertiary" />
           </TouchableOpacity>
         )}
       </View>
-      <View className="hidden h-16 flex-row items-center justify-between bg-white px-4 md:flex lg:px-10">
+      <View className="hidden h-16 flex-row items-center justify-between bg-primary px-4 md:flex lg:px-10">
         <TouchableOpacity
           testID="logo-button"
           onPress={() => navigation.navigate("Clients")}
@@ -115,7 +116,7 @@ const Header: React.FC<HeaderProps> = ({
         <View className="h-full flex-row items-center gap-x-6">
           {hasSupervisionAccess && (
             <DesktopMenuItem
-              isActive={route.name === "Clients"}
+              isActive={route.name.includes("Client")}
               screen="Clients"
             >
               Clients
@@ -123,7 +124,7 @@ const Header: React.FC<HeaderProps> = ({
           )}
           {hasFacilitiesAccess && (
             <DesktopMenuItem
-              isActive={route.name === "Residents"}
+              isActive={route.name.includes("Resident")}
               screen="Residents"
             >
               Residents
@@ -134,48 +135,52 @@ const Header: React.FC<HeaderProps> = ({
               onPress={() => setProfileDropdownOpen(!profileDropdownOpen)}
             >
               <View
-                className="flex-row items-center gap-x-1 rounded-full border border-transparent p-1.5 transition-all duration-300 hover:border-gray/15"
-                style={{ borderColor: profileDropdownOpen ? "#00665F" : "" }}
+                className={clsx(
+                  "flex-row items-center gap-x-1 rounded-full border p-1.5 transition-all duration-300",
+                  profileDropdownOpen
+                    ? "border-brand hover:border-brand"
+                    : "border-transparent hover:border-subtle",
+                )}
               >
                 <ImageBackground
                   source={BgAvatarImage}
                   className="size-8 items-center justify-center overflow-hidden rounded-full"
                   imageClassName="!size-8"
                 >
-                  <Typography className="text-base text-white">
+                  <Typography className="text-base text-on-brand">
                     {name ? getInitials(name) : "SS"}
                   </Typography>
                 </ImageBackground>
                 {profileDropdownOpen ? (
-                  <ChevronUpIcon className="size-4 stroke-[3px] text-muted" />
+                  <ChevronUpIcon className="size-4 stroke-[3px] text-primary" />
                 ) : (
-                  <ChevronDownIcon className="size-4 stroke-[3px] text-muted" />
+                  <ChevronDownIcon className="size-4 stroke-[3px] text-primary" />
                 )}
               </View>
             </TouchableOpacity>
             {profileDropdownOpen && (
-              <View className="absolute right-0 top-16 rounded-[20px] bg-white p-2 shadow-sm">
+              <View className="absolute right-0 top-16 rounded-[20px] bg-primary p-2 shadow-sm">
                 <ScrollView contentContainerClassName="gap-1 cursor-pointer">
                   <TouchableOpacity
                     onPress={() =>
                       handleDropdownMenuPress(() => console.log("Settings"))
                     }
                   >
-                    <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl border border-transparent bg-soft-green/23 p-3.5">
+                    <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl bg-brand-light-secondary p-3.5">
                       <ImageBackground
                         source={BgAvatarImage}
                         className="size-12 items-center justify-center overflow-hidden rounded-full"
                         imageClassName="!size-12"
                       >
-                        <Typography className="text-2xl leading-6 text-white">
+                        <Typography className="text-2xl leading-6 text-on-brand">
                           {name ? getInitials(name) : "SS"}
                         </Typography>
                       </ImageBackground>
                       <View className="flex flex-col justify-between">
-                        <Typography className="text-base font-semibold leading-5">
+                        <Typography className="text-base font-semibold leading-5 text-primary">
                           {name ?? "Test User"}
                         </Typography>
-                        <Typography className="text-base font-normal text-gray/85">
+                        <Typography className="text-base font-normal text-secondary">
                           {email ?? "testuser@mail.com"}
                         </Typography>
                       </View>
@@ -205,7 +210,7 @@ const Header: React.FC<HeaderProps> = ({
                       }}
                       label="Go to Supervision Assistant"
                       icon={
-                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-muted" />
+                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
                       }
                     />
                   )}
@@ -223,7 +228,7 @@ const Header: React.FC<HeaderProps> = ({
                       }}
                       label="Go to Facilities Assistant"
                       icon={
-                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-muted" />
+                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
                       }
                     />
                   )}
@@ -241,7 +246,7 @@ const Header: React.FC<HeaderProps> = ({
                       }}
                       label="Go to Case Planning Assistant"
                       icon={
-                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-muted" />
+                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
                       }
                     />
                   )}

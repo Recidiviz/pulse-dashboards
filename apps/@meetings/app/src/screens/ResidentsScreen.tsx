@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useIsFocused } from "@react-navigation/native";
+import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
@@ -29,23 +29,17 @@ import Header from "../components/Header";
 import Loading from "../components/Loading";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsMobileList from "../components/PersonsMobileList";
+import PersonsPlaceholder from "../components/PersonsPlaceholder";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../features/recording";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
 import { SortOption, sortUsers } from "../utils/sort";
 
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "Residents"
->;
-
 const ResidentsScreen = () => {
   useSetDocumentTitle("Residents - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
 
   const isFocused = useIsFocused();
@@ -93,14 +87,21 @@ const ResidentsScreen = () => {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-1" style={{ marginTop: -insets.top }}>
+      <View
+        className={clsx(
+          "flex-1",
+          Platform.OS !== "web" &&
+            filteredResidents.length === 0 &&
+            "bg-primary",
+        )}
+        style={{ marginTop: -insets.top }}
+      >
         <Header />
         {Platform.select({
           native: (
             <PersonsMobileList
               persons={filteredResidents}
               recordingState={recordingState}
-              navigation={navigation}
               searchQuery={search}
               setSearchQuery={setSearch}
               setSortBy={setSortBy}
@@ -112,7 +113,6 @@ const ResidentsScreen = () => {
               <PersonsMobileList
                 persons={filteredResidents}
                 recordingState={recordingState}
-                navigation={navigation}
                 searchQuery={search}
                 setSearchQuery={setSearch}
                 setSortBy={setSortBy}
@@ -124,17 +124,37 @@ const ResidentsScreen = () => {
                   <PersonsHeaderContent
                     personType="resident"
                     description="All residents are displayed below"
+                    personsCount={filteredResidents.length}
                     searchQuery={search}
                     setSearchQuery={setSearch}
                     setSortBy={setSortBy}
                   />
-                  <PersonsTable persons={filteredResidents} type="residents" />
+
+                  {filteredResidents.length === 0 ? (
+                    <View className="flex h-[560px] w-full items-center justify-center">
+                      <PersonsPlaceholder
+                        personType="resident"
+                        isSearchResultEmpty={!!search}
+                      />
+                    </View>
+                  ) : (
+                    <PersonsTable persons={filteredResidents} type="resident" />
+                  )}
                 </View>
               </ScrollView>
             </View>
           ),
         })}
       </View>
+      <View
+        className={clsx(
+          "absolute inset-x-0 bottom-0",
+          Platform.OS !== "web" &&
+            filteredResidents.length === 0 &&
+            "bg-primary",
+        )}
+        style={{ height: insets.bottom }}
+      />
     </SafeAreaView>
   );
 };

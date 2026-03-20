@@ -59,24 +59,26 @@ export function DiscardMeetingModal({ person, onContinue, onDiscard }: Props) {
       <Typography className="mb-3 text-xl font-semibold text-primary">
         Discard meeting?
       </Typography>
-      <Typography className="mb-5 w-[350px] text-gray/85">
+      <Typography className="mb-5 w-[350px] text-secondary">
         You’re about to discard the meeting with{" "}
-        <Typography className="font-bold">{person.fullName}.</Typography> Notes
-        and transcript won't be saved.
+        <Typography className="font-bold text-primary">
+          {person.fullName}.
+        </Typography>{" "}
+        Notes and transcript won't be saved.
       </Typography>
       <View className="flex-row gap-2">
         <TouchableOpacity
-          className="w-[170px] items-center rounded-full border border-[#35536233] py-3"
+          className="w-[170px] items-center rounded-full border border-subtle py-3"
           onPress={onContinue}
         >
           <Typography className="font-semibold text-primary">Cancel</Typography>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`w-[170px] items-center rounded-full py-3 ${discardCountdown > 0 ? "bg-[#4D5255] opacity-30" : "bg-[#B42D2D]"}`}
+          className={`w-[170px] items-center rounded-full py-3 ${discardCountdown > 0 ? "bg-disabled" : "bg-attention"}`}
           onPress={onDiscard}
           disabled={discardCountdown > 0}
         >
-          <Typography className="font-semibold text-white">
+          <Typography className="font-semibold text-on-brand">
             {discardCountdown > 0
               ? `Discard (0:${discardCountdown.toString().padStart(2, "0")})`
               : "Discard"}

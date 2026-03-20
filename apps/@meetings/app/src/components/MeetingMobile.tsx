@@ -241,7 +241,7 @@ const MeetingMobile = ({
               Meeting: {meetingDate}
             </Typography>
             <View className="flex flex-row items-center gap-1">
-              <ClockIcon className="size-4 text-muted" />
+              <ClockIcon className="text-muted size-4" />
               <Typography className="text-sm font-normal leading-[14px] text-gray-500">
                 {time}
                 {duration ? ` • ${duration}` : ""}
@@ -256,16 +256,16 @@ const MeetingMobile = ({
             <View className="flex min-h-full w-full flex-col gap-1.5 rounded-xl bg-[#F4F5F5] px-[14px] py-3">
               <View className="flex flex-row items-center justify-between">
                 <View className="flex flex-row items-center gap-1">
-                  <Typography className="text-xs font-semibold text-gray/85">
+                  <Typography className="text-title-default text-xs font-semibold">
                     Draft case note
                   </Typography>
-                  <ChevronRightIcon className="size-3 text-muted" />
+                  <ChevronRightIcon className="text-muted size-3" />
                 </View>
                 <TouchableOpacity
                   onPress={handleCopyNotes}
                   disabled={isSnackbarShowing}
                 >
-                  <DocumentDuplicateIcon className="size-4 text-muted" />
+                  <DocumentDuplicateIcon className="text-muted size-4" />
                 </TouchableOpacity>
               </View>
 

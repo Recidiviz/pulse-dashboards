@@ -9464,6 +9464,7 @@ __metadata:
     "@react-navigation/native-stack": "npm:^7.6.3"
     "@sentry/react-native": "npm:~7.2.0"
     babel-preset-expo: "npm:~54.0.0"
+    clsx: "npm:^2.1.1"
     date-fns: "npm:^4.1.0"
     enhanced-resolve: "npm:*"
     expo: "npm:^54.0.0"

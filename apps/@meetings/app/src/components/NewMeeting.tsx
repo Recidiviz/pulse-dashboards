@@ -83,7 +83,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
 
   if (status === "ending") {
     return (
-      <View className="flex-1 flex-row items-center justify-center bg-white">
+      <View className="flex-1 flex-row items-center justify-center bg-primary">
         <ActivityIndicator size="small" color="text-primary" />
         <Typography className="p-4 text-lg font-medium text-primary">
           Meeting ending...
@@ -95,17 +95,17 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const RecordingIntro = (
     <View className="flex-1 items-center justify-center">
       <View
-        className="mb-6 size-16 items-center justify-center border border-gray-200 bg-gray-100"
+        className="mb-6 size-16 items-center justify-center border border-subtle bg-secondary"
         style={{ borderRadius: 17 }}
       >
-        <MicrophoneIcon className="size-8 text-[#35536233]" />
+        <MicrophoneIcon className="size-8 text-primary" />
       </View>
 
       <Typography className="mb-2 text-center text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
         Meeting Recording
       </Typography>
 
-      <Typography className="px-4 text-center text-sm font-normal leading-5 tracking-[-0.02em] text-gray-500">
+      <Typography className="px-4 text-center text-sm font-normal leading-5 tracking-[-0.02em] text-secondary">
         This meeting will be recorded and transcribed for note-taking. Be sure
         to confirm that everyone present is aware and has agreed to recording.
       </Typography>
@@ -115,7 +115,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const RecordingNotes = (
     <View className="mt-6">
       <View className="mb-2 flex-row items-center">
-        <NotesSvg className="size-5 text-[#9AA9B1]" />
+        <NotesSvg className="size-5 text-secondary" />
         <Typography className="ml-2 text-lg font-semibold text-primary">
           Notepad
         </Typography>
@@ -143,11 +143,11 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
       <View className="flex-1 px-6">
         {isMeetingActive ? RecordingNotes : RecordingIntro}
       </View>
-      <View className="rounded-t-2xl bg-gray-100 px-6 py-12">
+      <View className="rounded-t-2xl bg-secondary px-6 py-12">
         <Typography className="text-center text-base font-semibold text-primary">
           {person.fullName}
         </Typography>
-        <Typography className="mb-4 text-center text-sm text-gray-600">
+        <Typography className="mb-4 text-center text-sm text-secondary">
           ID: {person.displayPersonExternalId} •{" "}
           {humanReadableTitleCase(person.primaryMetadata)}
         </Typography>
@@ -166,7 +166,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
         animationType="slide"
         transparent
       >
-        <View className="flex-1 justify-end bg-[rgba(0,0,0,0.3)]">
+        <View className="flex-1 justify-end bg-tertiary">
           {status === "discarding" && (
             <MeetingSheet
               title="Discard meeting?"

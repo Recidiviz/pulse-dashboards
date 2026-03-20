@@ -85,13 +85,13 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
   return (
     <>
       <View>
-        <Typography className="text-xs font-semibold text-gray/85">
+        <Typography className="text-xs font-semibold text-secondary">
           Draft case note
         </Typography>
       </View>
       <Pressable onPress={() => setIsEditable(true)}>
         <TextInput
-          className={`no-scrollbar rounded-lg border border-transparent px-1.5 py-0.5 text-sm font-normal text-primary outline-2 outline-[#00665F33] hover:bg-[#F4F5F5] focus:border-[#00665F] focus:bg-[#F4F5F5] focus:outline ${isEditable ? "" : "cursor-pointer"}`}
+          className={`no-scrollbar rounded-lg border border-transparent px-1.5 py-0.5 text-sm font-normal text-primary outline-2 outline-brand hover:bg-hover focus:border-brand focus:bg-secondary focus:outline ${isEditable ? "" : "cursor-pointer"}`}
           placeholder="Type your notes here..."
           value={inputNotes}
           onChangeText={setInputNotes}
@@ -109,9 +109,9 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleSaveNotes}
-            className="rounded-full bg-primary px-3 py-2"
+            className="rounded-full bg-brand px-3 py-2"
           >
-            <Typography className="text-sm font-semibold text-white">
+            <Typography className="text-sm font-semibold text-on-brand">
               Save Changes
             </Typography>
           </TouchableOpacity>
@@ -122,7 +122,7 @@ const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
           disabled={isSnackbarShowing}
           className="flex-row items-center gap-1"
         >
-          <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
+          <DocumentDuplicateIcon className="size-4 stroke-tertiary stroke-[3px]" />
           <Typography className="text-sm font-medium text-primary">
             Copy
           </Typography>
@@ -168,8 +168,8 @@ const MeetingDesktop = ({
   return (
     <View className="flex-1 grow">
       <Header />
-      <View className="flex-1 grow flex-row border-t border-gray/15">
-        <View className="border-r border-gray/15 pt-8">
+      <View className="flex-1 grow flex-row border-t border-subtle">
+        <View className="border-r border-subtle pt-8">
           <Link
             className="mx-10 flex flex-row items-center gap-2"
             screen={
@@ -177,42 +177,42 @@ const MeetingDesktop = ({
             }
             params={{ personId: person.personId.toString() }}
           >
-            <ChevronLeftIcon className="size-3 stroke-muted stroke-[3px]" />
-            <Typography className="text-sm font-medium text-gray/85">
+            <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
+            <Typography className="text-sm font-medium text-primary">
               Back
             </Typography>
           </Link>
 
-          <View className="flex-row items-center gap-3 border-b border-gray/15 px-10 py-6">
+          <View className="flex-row items-center gap-3 border-b border-subtle px-10 py-6">
             <ImageBackground
               source={BgAvatarImage}
               className="size-12 items-center justify-center overflow-hidden rounded-full"
               imageClassName="!size-full"
             >
-              <Typography className="text-lg text-white">
+              <Typography className="text-lg text-on-brand">
                 {getInitials(person.fullName)}
               </Typography>
             </ImageBackground>
             <View>
               <Typography className="font-libre-baskerville text-lg font-bold text-primary">
                 {person.fullName}{" "}
-                <Typography className="text-sm font-semibold text-[#8BB1BA]">
+                <Typography className="text-sm font-semibold text-secondary">
                   ID: {person.displayPersonExternalId}
                 </Typography>
               </Typography>
-              <Typography className="text-sm text-[#2B5469B2]">
+              <Typography className="text-sm text-tertiary">
                 {humanReadableTitleCase(person.primaryMetadata)}
               </Typography>
             </View>
           </View>
 
-          <View className="gap-3 border-b border-gray/15 px-10 py-6">
+          <View className="gap-3 border-b border-subtle px-10 py-6">
             <Typography className="text-xl font-semibold leading-[24px] text-primary">
               Meeting: {meetingDate}
             </Typography>
             <View className="flex flex-row items-center gap-1">
-              <ClockIcon className="size-3 stroke-muted stroke-[3px]" />
-              <Typography className="text-sm font-normal leading-[14px] text-gray-500">
+              <ClockIcon className="size-3 stroke-secondary stroke-[3px]" />
+              <Typography className="text-sm font-normal leading-[14px] text-secondary">
                 {time}
                 {duration ? ` • ${duration}` : ""}
               </Typography>
@@ -229,7 +229,7 @@ const MeetingDesktop = ({
 
         <View className="flex-1 gap-4 pt-8">
           <View className="w-full flex-row items-center justify-between px-14">
-            <View className="w-[300px] print:hidden">
+            <View className="w-[300px]">
               <MeetingTabs
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
@@ -240,9 +240,9 @@ const MeetingDesktop = ({
             <View className="flex-row gap-3">
               <TouchableOpacity
                 onPress={handlePrint}
-                className="flex-row items-center gap-1.5 rounded-full border border-[#35536233] px-4 py-3"
+                className="flex-row items-center gap-1.5 rounded-full border border-subtle px-4 py-3"
               >
-                <PrinterIcon className="size-4 fill-muted" />
+                <PrinterIcon className="size-4 fill-tertiary" />
                 <Typography className="text-sm font-medium text-primary">
                   Print
                 </Typography>

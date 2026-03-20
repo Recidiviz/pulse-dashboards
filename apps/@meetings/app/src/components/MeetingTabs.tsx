@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, View } from "react-native";
 import LockClosedIcon from "react-native-heroicons/solid/LockClosedIcon";
 
 import { Typography } from "../shared/ui/Typography";
@@ -48,24 +48,25 @@ const MeetingTabs = ({
   }
 
   return (
-    <View className="flex w-full flex-row rounded-full bg-[#E6EAEB] p-1 print:hidden">
+    <View className="flex w-full flex-row rounded-full bg-screen p-1">
       {visibleTabs.map((tab) => (
-        <TouchableOpacity
+        <Pressable
           key={tab}
-          className={`flex w-1/2 items-center justify-center rounded-full bg-transparent p-2.5 ${tab === activeTab ? "bg-white" : "bg-[#E6EAEB]"}`}
+          className={`flex w-1/2 items-center justify-center rounded-full p-2.5 ${tab === activeTab ? "bg-primary" : "bg-transparent"}`}
           onPress={() => setActiveTab(tab)}
+          disabled={tab === Tab.Transcription && isTranscriptionUnavailable}
         >
           <View className="flex flex-row items-center justify-center gap-1">
             <Typography
-              className={`text-sm font-medium leading-[16px] ${tab === activeTab ? "text-primary" : "text-[#9AA6AC]"}`}
+              className={`text-sm font-medium leading-[16px] ${tab === activeTab ? "text-primary" : "text-tertiary"}`}
             >
               {tab}
             </Typography>
             {tab === Tab.Transcription && isTranscriptionUnavailable && (
-              <LockClosedIcon className="size-3 fill-[#35536233]" />
+              <LockClosedIcon className="size-3 fill-disabled" />
             )}
           </View>
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   );

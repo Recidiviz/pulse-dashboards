@@ -52,10 +52,10 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
     return (
       <View className="flex flex-col items-center gap-6 pt-[60px]">
         <View className="flex w-fit items-center justify-center rounded-2xl border-2 border-[#2B696908] bg-[#2B696908] p-[14px]">
-          <DocumentSearchIcon className="size-10 fill-muted" />
+          <DocumentSearchIcon className="fill-muted size-10" />
         </View>
         <View className="flex flex-col gap-[14px]">
-          <Typography className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-muted">
+          <Typography className="text-muted text-center font-libre-baskerville text-[28px] font-bold leading-[32px]">
             Transcript unavailable
           </Typography>
           <Typography className="text-center text-sm font-normal text-gray-500">
@@ -84,10 +84,10 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
       {filteredTranscriptions.map((u) => (
         <View key={u.startTimeMs} className="mt-3 flex flex-col gap-1">
           <View className="flex flex-row gap-2">
-            <Typography className="text-sm font-normal text-gray/85">
+            <Typography className="text-sm font-normal text-secondary">
               {formatSpeakerStartTime(u.startTimeMs)}
             </Typography>
-            <Typography className="text-sm font-semibold text-gray/85">
+            <Typography className="text-sm font-semibold text-secondary">
               {u.speaker}
             </Typography>
           </View>

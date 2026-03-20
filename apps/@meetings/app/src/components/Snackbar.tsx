@@ -107,8 +107,8 @@ export const SnackbarProvider = ({ children }: Props) => {
       {children}
       {isVisible && (
         <Animated.View style={animatedStyle}>
-          <View className="rounded-xl bg-[#1D2424] px-9 py-4 shadow-lg">
-            <Typography className="text-center text-sm font-semibold leading-[16px] text-white">
+          <View className="rounded-xl bg-strong px-9 py-4 shadow-lg">
+            <Typography className="text-center text-sm font-semibold leading-[16px] text-on-brand">
               {message}
             </Typography>
           </View>

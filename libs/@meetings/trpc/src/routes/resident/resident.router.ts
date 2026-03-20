@@ -23,7 +23,7 @@ import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createMeetingForPerson,
   extractActiveMeetingId,
-  extractLastCompletedMeetingTime,
+  extractLastCompletedMeetingInfo,
   getMeetingsForPerson,
 } from "~@meetings/trpc/routes/meeting.helpers";
 import {
@@ -77,6 +77,7 @@ export const residentRouter = router({
             staffEmail: true,
             endTime: true,
             startTime: true,
+            caseNote: true,
           },
         },
       } satisfies Prisma.ResidentSelect;
@@ -96,11 +97,9 @@ export const residentRouter = router({
           user,
           meetingsOrderedByDateDesc: resident.meetings,
         }),
-        meetingDetails: {
-          lastCompletedMeetingTime: extractLastCompletedMeetingTime({
-            meetingsOrderedByDateDesc: resident.meetings,
-          }),
-        },
+        meetingDetails: extractLastCompletedMeetingInfo({
+          meetingsOrderedByDateDesc: resident.meetings,
+        }),
       };
     }),
   list: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
@@ -120,6 +119,7 @@ export const residentRouter = router({
             staffEmail: true,
             endTime: true,
             startTime: true,
+            caseNote: true,
           },
         },
       },
@@ -134,11 +134,9 @@ export const residentRouter = router({
         user,
         meetingsOrderedByDateDesc: resident.meetings,
       }),
-      meetingDetails: {
-        lastCompletedMeetingTime: extractLastCompletedMeetingTime({
-          meetingsOrderedByDateDesc: resident.meetings,
-        }),
-      },
+      meetingDetails: extractLastCompletedMeetingInfo({
+        meetingsOrderedByDateDesc: resident.meetings,
+      }),
     }));
   }),
 });

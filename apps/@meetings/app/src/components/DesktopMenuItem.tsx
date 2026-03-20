@@ -32,12 +32,12 @@ const DesktopMenuItem = ({
 }: DesktopMenuItemProps) => {
   return (
     <Link
-      className={`flex h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-[#006C67]" : "border-transparent"}`}
+      className={`flex h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-brand" : "border-transparent"}`}
       screen={screen}
       params={{}}
     >
       <Typography
-        className={`px-1 text-sm font-medium ${isActive ? "text-primary" : "text-gray/85"}`}
+        className={`px-1 text-sm font-medium ${isActive ? "text-brand" : "font-normal text-secondary"}`}
       >
         {children}
       </Typography>

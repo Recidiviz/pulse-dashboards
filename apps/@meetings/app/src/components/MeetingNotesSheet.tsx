@@ -33,6 +33,7 @@ import {
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 
+import { theme } from "../common/theme";
 import { MeetingDetails } from "../common/types";
 import { Typography } from "../shared/ui/Typography";
 import { trpc } from "../trpc/client";
@@ -133,7 +134,9 @@ const MeetingNotesSheet = ({
       index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
-      handleIndicatorStyle={{ backgroundColor: "#00000099" }}
+      handleIndicatorStyle={{
+        backgroundColor: theme["backgroundColor"]["strong"],
+      }}
       containerStyle={{ flex: 1 }}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
@@ -172,7 +175,7 @@ const MeetingNotesSheet = ({
       <ScrollableContainer className="flex max-h-full flex-1 flex-col">
         <View className="flex flex-row items-center justify-between border-b border-[#EDF1F1] p-4">
           <TouchableOpacity onPress={handleClose}>
-            <ChevronLeftIcon className="size-5 text-muted" />
+            <ChevronLeftIcon className="text-muted size-5" />
           </TouchableOpacity>
           <View className="flex flex-col items-center">
             <Typography className="text-lg font-semibold leading-[22px]">
@@ -189,7 +192,7 @@ const MeetingNotesSheet = ({
             onPress={handleCopyNotes}
             disabled={isSnackbarShowing}
           >
-            <DocumentDuplicateIcon className="size-4 stroke-muted stroke-[3px]" />
+            <DocumentDuplicateIcon className="stroke-muted size-4 stroke-[3px]" />
           </TouchableOpacity>
         </View>
         <View className="p-2">

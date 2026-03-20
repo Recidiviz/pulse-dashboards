@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,35 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { TouchableOpacity } from "react-native";
+import { View } from "react-native";
 
-import { Typography } from "../shared/ui/Typography";
-
-interface PrimaryButtonProps {
-  label: string;
-  onPress: () => void;
-  disabled?: boolean;
-}
-
-const PrimaryButton: React.FC<PrimaryButtonProps> = ({
-  label,
-  onPress,
-  disabled = false,
-}) => {
+export function RecordingIndicator() {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      disabled={disabled}
-      className={`mb-3 w-80 items-center self-center rounded-full py-4 ${
-        disabled ? "bg-disabled" : "bg-brand"
-      }`}
-    >
-      <Typography className="text-center font-semibold text-on-brand">
-        {label}
-      </Typography>
-    </TouchableOpacity>
+    <View className="size-3 animate-pulse rounded-full border-[3px] border-attention-light bg-attention" />
   );
-};
-
-export default PrimaryButton;
+}

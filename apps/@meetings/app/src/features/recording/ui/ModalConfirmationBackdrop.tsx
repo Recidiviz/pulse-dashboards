@@ -19,6 +19,6 @@ import { View } from "react-native";
 
 export function ModalConfirmationBackdrop() {
   return (
-    <View className="absolute size-full bg-[#E0E6E680] backdrop-blur-sm" />
+    <View className="absolute size-full bg-scrim-default backdrop-blur-sm" />
   );
 }

@@ -154,3 +154,6 @@ export const formatPersonTitle = ({
     return `${givenNames} ${surname} | ${displayPersonExternalId}`;
   }
 };
+
+export const formatPersonLastMeetingDate = (date?: Date | null) =>
+  date ? format(date, "EEEE, MMM dd") : null;

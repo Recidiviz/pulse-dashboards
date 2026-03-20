@@ -21,6 +21,7 @@ import { ScrollView, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
+import { theme } from "../common/theme";
 import { Typography } from "../shared/ui/Typography";
 import Modal from "./Modal";
 
@@ -54,7 +55,7 @@ export const LearnMoreModal = ({ visible, onClose }: LearnMoreModalProps) => {
           {title}
         </Typography>
         <TouchableOpacity onPress={onClose}>
-          <XIcon className="size-5 stroke-muted" />
+          <XIcon className="size-5 stroke-primary" />
         </TouchableOpacity>
       </View>
       <ScrollView>
@@ -85,7 +86,9 @@ export const LearnMoreSheet = ({ ref }: LearnMoreSheetProps) => {
       index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
-      handleIndicatorStyle={{ backgroundColor: "#35536280" }}
+      handleIndicatorStyle={{
+        backgroundColor: theme["backgroundColor"]["strong"],
+      }}
     >
       <BottomSheetScrollView className="px-5">
         <Typography className="mb-4 text-base leading-6 text-gray-700">

@@ -56,12 +56,12 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
 }) => {
   // Primary button classes
   let primaryBgClass = "bg-transparent";
-  let primaryTextClass = "text-white";
+  let primaryTextClass = "text-on-brand";
 
   if (primaryButton.variant === "danger") {
-    primaryBgClass = "bg-[#B42D2D]";
+    primaryBgClass = "bg-attention";
   } else if (primaryButton.variant === "primary") {
-    primaryBgClass = "bg-[#006C67]";
+    primaryBgClass = "bg-brand";
   }
 
   if (primaryButton.variant === "neutral") {
@@ -73,8 +73,8 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
   let secondaryTextClass = "text-primary";
 
   if (secondaryButton?.variant === "primary") {
-    secondaryBgClass = "bg-[#4D5255]";
-    secondaryTextClass = "text-white";
+    secondaryBgClass = "bg-secondary";
+    secondaryTextClass = "text-on-brand";
   }
 
   const SecondaryButton = secondaryButton ? (
@@ -95,18 +95,18 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
       )}`}
       onPress={tertiaryButton.onPress}
     >
-      <Typography className="font-semibold text-[#B42D2D]">
+      <Typography className="font-semibold text-attention">
         {tertiaryButton.label}
       </Typography>
     </TouchableOpacity>
   ) : null;
 
   return (
-    <View className="rounded-t-3xl bg-white p-6 shadow-lg">
+    <View className="rounded-t-3xl bg-primary p-6 shadow-lg">
       <Typography className="mb-4 px-4 text-center text-lg font-bold text-primary">
         {title}
       </Typography>
-      <Typography className="mb-6 w-80 self-center px-4 text-center text-sm text-gray-500">
+      <Typography className="mb-6 w-80 self-center px-4 text-center text-sm text-secondary">
         {description}
       </Typography>
       <TouchableOpacity

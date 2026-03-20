@@ -44,23 +44,25 @@ export function EndMeetingModal({
       <Typography className="mb-3 text-xl font-semibold text-primary">
         End this meeting?
       </Typography>
-      <Typography className="mb-5 w-[350px] text-gray/85">
+      <Typography className="mb-5 w-[350px] text-secondary">
         You’re about to finish the meeting with{" "}
-        <Typography className="font-bold">{person.fullName}</Typography> and
-        save the notes for processing.
+        <Typography className="font-bold text-primary">
+          {person.fullName}
+        </Typography>{" "}
+        and save the notes for processing.
       </Typography>
       <View className="flex-row gap-2">
         <TouchableOpacity
-          className="w-[170px] items-center rounded-full border border-[#35536233] py-3"
+          className="w-[170px] items-center rounded-full border border-subtle py-3"
           onPress={onContinue}
         >
           <Typography className="font-semibold text-primary">Cancel</Typography>
         </TouchableOpacity>
         <TouchableOpacity
-          className="w-[170px] items-center rounded-full bg-primary py-3"
+          className="w-[170px] items-center rounded-full bg-brand py-3"
           onPress={onFinishAndSave}
         >
-          <Typography className="font-semibold text-white">
+          <Typography className="font-semibold text-on-brand">
             Finish & Save
           </Typography>
         </TouchableOpacity>
