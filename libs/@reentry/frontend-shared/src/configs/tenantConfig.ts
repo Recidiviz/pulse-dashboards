@@ -102,15 +102,6 @@ const INTAKE_TENANT_OVERRIDES: Record<string, IntakeTenantOverride> = {
       placeholder: "Enter DOC ID / Offender Number",
     },
   },
-  US_NE: {
-    preIntakeFlow: "text+video",
-    video: {
-      src: "/videos/nebraska-intake-video.mp4",
-      subtitlesSrc: "/videos/nebraska-intake-subtitles.vtt",
-    },
-    preIntakeCopy: `This intake is designed to help your institutional parole officer learn more about your reentry goals, plans, and needs before you meet to discuss your personalized reentry plan.`,
-    navigation: { type: "history-back" },
-  },
 };
 
 /**

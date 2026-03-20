@@ -106,45 +106,6 @@ describe("getIntakeTenantConfig", () => {
       expect(config.noteTwoCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteTwoCopy);
     });
   });
-
-  describe("US_NE overrides", () => {
-    it("returns text+video flow", () => {
-      const config = getIntakeTenantConfig("US_NE");
-      expect(config.preIntakeFlow).toBe("text+video");
-    });
-
-    it("returns custom video src", () => {
-      const config = getIntakeTenantConfig("US_NE");
-      if (config.preIntakeFlow !== "text+video") {
-        throw new Error("Expected text+video config for US_NE");
-      }
-      expect(config.video.src).toBe("/videos/nebraska-intake-video.mp4");
-      expect(config.video.subtitlesSrc).toBe(
-        "/videos/nebraska-intake-subtitles.vtt",
-      );
-    });
-
-    it("returns custom preIntakeCopy", () => {
-      const config = getIntakeTenantConfig("US_NE");
-      expect(config.preIntakeCopy).toContain("institutional parole officer");
-    });
-
-    it("returns history-back navigation", () => {
-      const config = getIntakeTenantConfig("US_NE");
-      expect(config.navigation).toEqual({ type: "history-back" });
-    });
-
-    it("keeps default DOC ID label (no override)", () => {
-      const config = getIntakeTenantConfig("US_NE");
-      expect(config.docId).toEqual(DEFAULT_INTAKE_CONFIG.docId);
-    });
-
-    it("keeps default noteOneCopy and noteTwoCopy (no override)", () => {
-      const config = getIntakeTenantConfig("US_NE");
-      expect(config.noteOneCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteOneCopy);
-      expect(config.noteTwoCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteTwoCopy);
-    });
-  });
 });
 
 describe("navigateAfterIntake", () => {
