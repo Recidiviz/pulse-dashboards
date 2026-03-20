@@ -33,12 +33,6 @@ export default {
   lastUpdatedNoDate: "This information updates once per month.",
   goLink: "Learn more about {{label}}",
   goLinkFull: "Read into full list of release types",
-  distanceFromTodayNow: "Today",
-  distanceFromTodayPast:
-    "({{date, formatDateRangeFromToday(delimiter: ' and ')}} ago)",
-  distanceFromTodayFuture:
-    "({{date, formatDateRangeFromToday(delimiter: ' and ')}} from today)",
-
   dprInfoPage: {
     heading:
       "You may qualify for earlier release through Drug Program Release (DPR). What does that mean?",

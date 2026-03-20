@@ -13,5 +13,10 @@
   "skipLink": "[common]skipLink",
   "infoPage": {
     "tocHeading": "[common]infoPage.tocHeading"
+  },
+  "dateDistance": {
+    "distanceFromTodayNow": "[common]dateDistance.distanceFromTodayNow",
+    "distanceFromTodayPast": "[common]dateDistance.distanceFromTodayPast",
+    "distanceFromTodayFuture": "[common]dateDistance.distanceFromTodayFuture"
   }
 }

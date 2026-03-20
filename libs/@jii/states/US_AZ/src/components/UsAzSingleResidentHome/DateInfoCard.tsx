@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isSameDay } from "date-fns";
-
 import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
-import { useUsAzTranslations } from "~@jii/translation";
+import {
+  useDateDistanceTranslation,
+  useUsAzTranslations,
+} from "~@jii/translation";
 
 import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
 import { DateInfoTag } from "./DateInfoTag";
@@ -54,31 +55,17 @@ export const DateInfoCard = ({
   isPast,
 }: DateInfoCardProps) => {
   const { t } = useUsAzTranslations();
-
-  const today = new Date();
-  const isToday = isSameDay(date, today);
-
-  // Determine which distance translation to use based on whether date is past/future/today
-  const getDistanceTranslation = (dateValue: Date) => {
-    if (isToday) {
-      return t(($) => $.distanceFromTodayNow);
-    } else if (isPast) {
-      return t(($) => $.distanceFromTodayPast, { date: dateValue });
-    } else {
-      return t(($) => $.distanceFromTodayFuture, { date: dateValue });
-    }
-  };
-
+  const distanceFromToday = useDateDistanceTranslation(date);
   /*
   For upcoming dates in the next 31 days:
-  - CardValue should show distanceFromToday without parentheses
+  - CardValue should show distanceFromToday
   - SlateCopy should be the date
 
   For all other dates:
-  - CardValue should be the date, SlateCopy should be distanceFromToday
+  - CardValue should be the date, SlateCopy should be distanceFromToday in parentheses
   */
   const cardValue = isUpcoming
-    ? getDistanceTranslation(date).replace(/^\(|\)$/g, "") //remove parentheses
+    ? distanceFromToday
     : t(($) => $.importantDates.dates[dateKey].value, {
         replace: { [dateKey]: date },
       });
@@ -87,7 +74,7 @@ export const DateInfoCard = ({
     ? t(($) => $.importantDates.dates[dateKey].value, {
         replace: { [dateKey]: date },
       })
-    : getDistanceTranslation(date);
+    : `(${distanceFromToday})`;
 
   let highlightType: CardHighlightStyle | undefined;
   // this ordering is intentional because isPast supersedes TPR/DTP styles

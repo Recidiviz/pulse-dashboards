@@ -13,5 +13,10 @@
   "skipLink": "Skip to main content",
   "infoPage": {
     "tocHeading": "On this page"
+  },
+  "dateDistanceFromToday": {
+    "now": "Today",
+    "past": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} ago",
+    "future": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} from today"
   }
 }

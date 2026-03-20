@@ -15,16 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Card,
-  GoButton,
-  HomepageSectionHeading,
-  SlateCopy,
-} from "~@jii/common-ui";
-import { CardDateInfo } from "~@jii/earned-good-time";
+import { GoButton, HomepageSectionHeading } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 import { UsArResidentMetadata } from "~datatypes";
+
+import { DateInfoCard, DateInfoProps } from "./DateInfoCard";
 
 export function UsArImportantDates({
   metadata,
@@ -32,7 +28,7 @@ export function UsArImportantDates({
   metadata: UsArResidentMetadata;
 }) {
   const { t } = useUsArTranslations();
-  const dates = [
+  const dates: DateInfoProps[] = [
     {
       date: metadata.eligibilityDate,
       label: t(
@@ -53,23 +49,9 @@ export function UsArImportantDates({
       <HomepageSectionHeading>
         {t(($) => $.importantDates.sectionHeader)}
       </HomepageSectionHeading>
-      {dates.map(({ date, label, description }) => {
-        let dateCardValue;
-        if (date) {
-          // locale-aware formatting of the date
-          dateCardValue = t(($) => $.importantDates.formatFullDate, {
-            replace: { date: date },
-          });
-        } else {
-          dateCardValue = t(($) => $.importantDates.missingDateMessage);
-        }
-        return (
-          <Card key={label}>
-            <CardDateInfo label={label} value={dateCardValue} />
-            <SlateCopy>{description}</SlateCopy>
-          </Card>
-        );
-      })}
+      {dates.map((dateInfo) => (
+        <DateInfoCard {...dateInfo} />
+      ))}
       <GoButton
         to={State.Resident.$.UsArMoreInformation.ImportantDates.buildRelativePath(
           {},

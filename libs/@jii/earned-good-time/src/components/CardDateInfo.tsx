@@ -17,7 +17,7 @@
 
 import { FC } from "react";
 
-import { CardValue } from "~@jii/common-ui";
+import { CardValue, SlateCopy } from "~@jii/common-ui";
 
 import { DateInfoShell } from "./DateInfoShell";
 
@@ -26,6 +26,7 @@ export type CardDateInfoProps = {
   label: string;
   value?: string;
   muted?: boolean;
+  subtitle?: string;
 };
 
 export const CardDateInfo: FC<CardDateInfoProps> = ({
@@ -33,10 +34,12 @@ export const CardDateInfo: FC<CardDateInfoProps> = ({
   label,
   value,
   muted,
+  subtitle,
 }) => {
   return (
     <DateInfoShell tag={tag} label={label} muted={muted}>
       {value && <CardValue>{value}</CardValue>}
+      {subtitle && <SlateCopy>{subtitle}</SlateCopy>}
     </DateInfoShell>
   );
 };
