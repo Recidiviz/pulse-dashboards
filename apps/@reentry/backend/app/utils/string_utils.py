@@ -27,28 +27,6 @@ def normalize_state_code_format(state_code: str) -> str:
     return state_code.upper().replace("-", "_")
 
 
-def escape_sql_string(content: str) -> str:
-    """
-    Escape single quotes in SQL string literals.
-
-    This is used when embedding string values in SQL statements to prevent
-    syntax errors and SQL injection vulnerabilities.
-
-    Args:
-        content: The string content to escape
-
-    Returns:
-        String with single quotes escaped (doubled)
-
-    Example:
-        >>> escape_sql_string("test's string")
-        "test''s string"
-        >>> escape_sql_string("it's a test")
-        "it''s a test"
-    """
-    return content.replace("'", "''")
-
-
 def normalize_locations(locations: list[str]) -> list[str]:
     """
     Normalize a list of location codes.

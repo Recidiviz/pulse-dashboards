@@ -1,34 +1,8 @@
 """Tests for string utility functions"""
 
 from app.utils.string_utils import (
-    escape_sql_string,
     normalize_locations,
 )
-
-
-class TestEscapeSqlString:
-    """Tests for escape_sql_string function"""
-
-    def test_escape_single_quotes(self):
-        """Test that single quotes are properly escaped"""
-        assert escape_sql_string("test's string") == "test''s string"
-        assert escape_sql_string("it's a test") == "it''s a test"
-
-    def test_no_quotes(self):
-        """Test that strings without quotes remain unchanged"""
-        assert escape_sql_string("test string") == "test string"
-
-    def test_multiple_quotes(self):
-        """Test that multiple single quotes are all escaped"""
-        assert escape_sql_string("'it's' a 'test'") == "''it''s'' a ''test''"
-
-    def test_empty_string(self):
-        """Test empty string handling"""
-        assert escape_sql_string("") == ""
-
-    def test_only_quotes(self):
-        """Test string with only quotes"""
-        assert escape_sql_string("'''") == "''''''"
 
 
 class TestNormalizeLocations:

@@ -123,9 +123,6 @@ class Queries:
             f"Fetching client with pseudonymized ID {pseudonymized_id} from BigQuery"
         )
 
-        escaped_id = pseudonymized_id.replace("'", "''")
-        quoted_id = f"'{escaped_id}'"
-
         query = f"""
         SELECT
         external_id,
@@ -137,13 +134,21 @@ class Queries:
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
-        pseudonymized_id = {quoted_id}
+        pseudonymized_id = @pseudonymized_id
         LIMIT 1
         """
 
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter(
+                    "pseudonymized_id", "STRING", pseudonymized_id
+                )
+            ]
+        )
+
         try:
             client = get_bigquery_client()
-            query_job = client.query(query)
+            query_job = client.query(query, job_config=job_config)
             results = query_job.result()
 
             client_record = None
@@ -201,9 +206,6 @@ class Queries:
             f"Fetching client with workflows pseudonymized ID {workflows_pseudonymized_id} from BigQuery"
         )
 
-        escaped_id = workflows_pseudonymized_id.replace("'", "''")
-        quoted_id = f"'{escaped_id}'"
-
         query = f"""
         SELECT
         external_id,
@@ -215,13 +217,21 @@ class Queries:
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
-        workflows_pseudonymized_id = {quoted_id}
+        workflows_pseudonymized_id = @workflows_pseudonymized_id
         LIMIT 1
         """
 
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter(
+                    "workflows_pseudonymized_id", "STRING", workflows_pseudonymized_id
+                )
+            ]
+        )
+
         try:
             client = get_bigquery_client()
-            query_job = client.query(query)
+            query_job = client.query(query, job_config=job_config)
             results = query_job.result()
 
             client_record = None
@@ -287,9 +297,6 @@ class Queries:
             f"Fetching client with DOC ID {doc_id} and state {bq_state_code} from BigQuery"
         )
 
-        escaped_doc_id = doc_id.replace("'", "''")
-        escaped_state_code = bq_state_code.replace("'", "''")
-
         query = f"""
         SELECT
         external_id,
@@ -301,14 +308,21 @@ class Queries:
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
-            external_id = '{escaped_doc_id}'
-            AND state_code = '{escaped_state_code}'
+            external_id = @doc_id
+            AND state_code = @state_code
         LIMIT 1
         """
 
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("doc_id", "STRING", doc_id),
+                bigquery.ScalarQueryParameter("state_code", "STRING", bq_state_code),
+            ]
+        )
+
         try:
             client = get_bigquery_client()
-            query_job = client.query(query)
+            query_job = client.query(query, job_config=job_config)
             results = query_job.result()
 
             client_record = None
@@ -458,12 +472,6 @@ class Queries:
         logger.info(
             f"Fetching client with name {first_name} {last_name} and DOB {date_of_birth} from BigQuery"
         )
-        escaped_first_name = first_name.replace("'", "''")
-        escaped_last_name = last_name.replace("'", "''")
-        logger.info(
-            f"Escaped names: first_name={escaped_first_name}, last_name={escaped_last_name}, birthdate={date_of_birth}"
-        )
-
         query = f"""
         SELECT
         external_id,
@@ -475,15 +483,23 @@ class Queries:
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
-            UPPER(JSON_VALUE(full_name, "$.given_names")) = UPPER('{escaped_first_name}')
-            AND UPPER(JSON_VALUE(full_name, "$.surname")) = UPPER('{escaped_last_name}')
-            AND birthdate = DATE('{date_of_birth}')
+            UPPER(JSON_VALUE(full_name, "$.given_names")) = UPPER(@first_name)
+            AND UPPER(JSON_VALUE(full_name, "$.surname")) = UPPER(@last_name)
+            AND birthdate = @date_of_birth
         LIMIT 1
         """
 
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("first_name", "STRING", first_name),
+                bigquery.ScalarQueryParameter("last_name", "STRING", last_name),
+                bigquery.ScalarQueryParameter("date_of_birth", "DATE", date_of_birth),
+            ]
+        )
+
         try:
             client = get_bigquery_client()
-            query_job = client.query(query)
+            query_job = client.query(query, job_config=job_config)
             results = query_job.result()
 
             client_record = None
@@ -541,9 +557,6 @@ class Queries:
 
         # Fetch client from BigQuery
         logger.info(f"Fetching client with name {first_name} {last_name} from BigQuery")
-        escaped_first_name = first_name.replace("'", "''")
-        escaped_last_name = last_name.replace("'", "''")
-
         query = f"""
         SELECT
         external_id,
@@ -555,14 +568,21 @@ class Queries:
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
-            UPPER(JSON_VALUE(full_name, "$.given_names")) = UPPER('{escaped_first_name}')
-            AND UPPER(JSON_VALUE(full_name, "$.surname")) = UPPER('{escaped_last_name}')
+            UPPER(JSON_VALUE(full_name, "$.given_names")) = UPPER(@first_name)
+            AND UPPER(JSON_VALUE(full_name, "$.surname")) = UPPER(@last_name)
         LIMIT 1
         """
 
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("first_name", "STRING", first_name),
+                bigquery.ScalarQueryParameter("last_name", "STRING", last_name),
+            ]
+        )
+
         try:
             client = get_bigquery_client()
-            query_job = client.query(query)
+            query_job = client.query(query, job_config=job_config)
             results = query_job.result()
 
             client_record = None
