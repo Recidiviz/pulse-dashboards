@@ -19,9 +19,6 @@
 Tests for webhook security utilities.
 """
 
-import hashlib
-import hmac
-
 import pytest
 
 from app.utils.webhook_security import verify_deepgram_signature
@@ -42,12 +39,8 @@ class TestDeepgramSignatureVerification:
 
     @pytest.fixture
     def valid_signature(self, sample_payload, webhook_secret):
-        """Generate a valid HMAC-SHA256 signature for the sample payload."""
-        return hmac.new(
-            key=webhook_secret.encode("utf-8"),
-            msg=sample_payload,
-            digestmod=hashlib.sha256,
-        ).hexdigest()
+        """Return the webhook secret as the dg-token (plain token comparison)."""
+        return webhook_secret
 
     def test_valid_signature(self, sample_payload, valid_signature, webhook_secret):
         """Test that a valid signature is accepted."""
@@ -86,13 +79,13 @@ class TestDeepgramSignatureVerification:
         )
         assert result is False
 
-    def test_tampered_payload(self, sample_payload, valid_signature, webhook_secret):
-        """Test that signature verification fails when payload is tampered."""
-        # Modify the payload after signature generation
+    def test_tampered_payload(self, sample_payload, webhook_secret):
+        """Test that an incorrect token is rejected regardless of payload."""
+        # dg-token is a plain token, not payload-bound; wrong token should fail
         tampered_payload = sample_payload + b"malicious_data"
         result = verify_deepgram_signature(
             payload=tampered_payload,
-            signature_header=valid_signature,
+            signature_header="wrong-token",
             webhook_secret=webhook_secret,
         )
         assert result is False
@@ -134,28 +127,18 @@ class TestDeepgramSignatureVerification:
         """Test signature verification with different payload sizes."""
         # Test with empty payload
         empty_payload = b""
-        empty_sig = hmac.new(
-            key=webhook_secret.encode("utf-8"),
-            msg=empty_payload,
-            digestmod=hashlib.sha256,
-        ).hexdigest()
         result = verify_deepgram_signature(
             payload=empty_payload,
-            signature_header=empty_sig,
+            signature_header=webhook_secret,
             webhook_secret=webhook_secret,
         )
         assert result is True
 
         # Test with large payload
         large_payload = b"x" * 10000
-        large_sig = hmac.new(
-            key=webhook_secret.encode("utf-8"),
-            msg=large_payload,
-            digestmod=hashlib.sha256,
-        ).hexdigest()
         result = verify_deepgram_signature(
             payload=large_payload,
-            signature_header=large_sig,
+            signature_header=webhook_secret,
             webhook_secret=webhook_secret,
         )
         assert result is True
@@ -163,14 +146,9 @@ class TestDeepgramSignatureVerification:
     def test_unicode_in_payload(self, webhook_secret):
         """Test signature verification with unicode characters in payload."""
         unicode_payload = '{"message": "Hello 世界 🌍"}'.encode("utf-8")
-        unicode_sig = hmac.new(
-            key=webhook_secret.encode("utf-8"),
-            msg=unicode_payload,
-            digestmod=hashlib.sha256,
-        ).hexdigest()
         result = verify_deepgram_signature(
             payload=unicode_payload,
-            signature_header=unicode_sig,
+            signature_header=webhook_secret,
             webhook_secret=webhook_secret,
         )
         assert result is True

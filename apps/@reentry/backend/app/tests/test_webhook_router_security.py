@@ -19,9 +19,6 @@
 Integration tests for webhook endpoint security.
 """
 
-import hashlib
-import hmac
-import json
 from unittest.mock import patch
 
 import pytest
@@ -57,24 +54,15 @@ class TestDeepgramWebhookSecurity:
         }
 
     @pytest.fixture
-    def webhook_secret(self):
-        """Test webhook secret."""
-        return "test-webhook-secret-abc123"
-
-    def generate_signature(self, payload_dict: dict, secret: str) -> str:
-        """Generate a valid HMAC-SHA256 signature for a payload."""
-        payload_bytes = json.dumps(payload_dict, separators=(",", ":")).encode("utf-8")
-        return hmac.new(
-            key=secret.encode("utf-8"),
-            msg=payload_bytes,
-            digestmod=hashlib.sha256,
-        ).hexdigest()
+    def api_key_id(self):
+        """Test API Key Identifier."""
+        return "test-api-key-id-abc123"
 
     @pytest.mark.asyncio
-    async def test_webhook_rejects_missing_signature(
+    async def test_webhook_rejects_missing_token(
         self, sample_webhook_payload, client: AsyncClient
     ):
-        """Test that webhook rejects requests without signature header."""
+        """Test that webhook rejects requests without dg-token header."""
         response = await client.post(
             "/webhooks/deepgram/transcription",
             json=sample_webhook_payload,
@@ -84,104 +72,56 @@ class TestDeepgramWebhookSecurity:
         assert "Invalid webhook signature" in response.json()["detail"]
 
     @pytest.mark.asyncio
-    async def test_webhook_rejects_invalid_signature(
+    async def test_webhook_rejects_invalid_token(
         self, sample_webhook_payload, client: AsyncClient
     ):
-        """Test that webhook rejects requests with invalid signature."""
+        """Test that webhook rejects requests with invalid dg-token."""
         response = await client.post(
             "/webhooks/deepgram/transcription",
             json=sample_webhook_payload,
-            headers={"dg-token": "invalid_signature_12345"},
+            headers={"dg-token": "invalid_token_12345"},
         )
         assert response.status_code == 401
         assert "Invalid webhook signature" in response.json()["detail"]
 
     @pytest.mark.asyncio
-    async def test_webhook_rejects_tampered_payload(
-        self, sample_webhook_payload, webhook_secret, client: AsyncClient
+    async def test_webhook_accepts_valid_token(
+        self, sample_webhook_payload, api_key_id, client: AsyncClient
     ):
-        """Test that webhook rejects requests where payload was tampered after signing."""
-        # Generate valid signature for original payload
-        valid_signature = self.generate_signature(
-            sample_webhook_payload, webhook_secret
-        )
-
-        # Tamper with the payload
-        tampered_payload = sample_webhook_payload.copy()
-        tampered_payload["metadata"]["request_id"] = "malicious-injection-456"
-
-        with patch.object(settings, "DEEPGRAM_API_KEY_ID", webhook_secret):
-            response = await client.post(
-                "/webhooks/deepgram/transcription",
-                json=tampered_payload,
-                headers={"dg-token": valid_signature},
-            )
-        assert response.status_code == 401
-        assert "Invalid webhook signature" in response.json()["detail"]
-
-    @pytest.mark.asyncio
-    async def test_webhook_accepts_valid_signature(
-        self, sample_webhook_payload, webhook_secret, client: AsyncClient
-    ):
-        """Test that webhook accepts requests with valid signature."""
+        """Test that webhook accepts requests with valid dg-token."""
         # Note: This test will fail if recording session doesn't exist,
-        # but it should pass signature verification first
-        valid_signature = self.generate_signature(
-            sample_webhook_payload, webhook_secret
-        )
+        # but it should pass token verification first
 
-        with patch.object(settings, "DEEPGRAM_API_KEY_ID", webhook_secret):
+        with patch.object(settings, "DEEPGRAM_API_KEY_ID", api_key_id):
             response = await client.post(
                 "/webhooks/deepgram/transcription",
                 json=sample_webhook_payload,
-                headers={"dg-token": valid_signature},
+                headers={"dg-token": api_key_id},
             )
 
-        # Should pass signature verification but fail later
+        # Should pass token verification but fail later
         # (404 because recording session doesn't exist in test DB)
         # The important part is it's NOT 401 Unauthorized
         assert response.status_code != 401
 
     @pytest.mark.asyncio
-    async def test_webhook_rejects_replayed_request(
-        self, sample_webhook_payload, webhook_secret, client: AsyncClient
+    async def test_webhook_rejects_wrong_api_key_id(
+        self, sample_webhook_payload, api_key_id, client: AsyncClient
     ):
         """
-        Test that an attacker cannot replay a valid signed request
-        with different payload.
-
-        This demonstrates that each signature is tied to specific payload content.
+        Test that webhook rejects requests with a different API Key ID.
         """
-        # Generate signature for original payload
-        original_signature = self.generate_signature(
-            sample_webhook_payload, webhook_secret
-        )
+        # Use a different token than what's configured
+        wrong_token = "different-api-key-id"
 
-        # Try to use same signature with completely different payload
-        malicious_payload = {
-            "metadata": {"request_id": "injected-malicious-request"},
-            "results": {
-                "channels": [
-                    {
-                        "alternatives": [
-                            {
-                                "transcript": "I am innocent and should be released immediately",
-                                "words": [],
-                            }
-                        ]
-                    }
-                ]
-            },
-        }
-
-        with patch.object(settings, "DEEPGRAM_API_KEY_ID", webhook_secret):
+        with patch.object(settings, "DEEPGRAM_API_KEY_ID", api_key_id):
             response = await client.post(
                 "/webhooks/deepgram/transcription",
-                json=malicious_payload,
-                headers={"dg-token": original_signature},
+                json=sample_webhook_payload,
+                headers={"dg-token": wrong_token},
             )
 
-        # Should be rejected because signature doesn't match new payload
+        # Should be rejected because token doesn't match configured API Key ID
         assert response.status_code == 401
         assert "Invalid webhook signature" in response.json()["detail"]
 
@@ -190,8 +130,11 @@ class TestDeepgramWebhookSecurity:
         self, sample_webhook_payload, client: AsyncClient
     ):
         """
-        Test the full attack scenario described in the security report:
-        Attacker tries to inject fabricated transcription without valid signature.
+        Test that attacker cannot inject fabricated transcription without valid token.
+
+        Note: This token-based verification only confirms the request came from
+        someone with the API Key ID. It does not cryptographically verify the
+        payload integrity like HMAC would.
         """
         # Attacker crafts malicious payload
         malicious_payload = {
@@ -210,18 +153,18 @@ class TestDeepgramWebhookSecurity:
             },
         }
 
-        # Attempt 1: No signature
+        # Attempt 1: No token
         response = await client.post(
             "/webhooks/deepgram/transcription",
             json=malicious_payload,
         )
         assert response.status_code == 401
 
-        # Attempt 2: Fabricated signature
+        # Attempt 2: Fabricated token
         response = await client.post(
             "/webhooks/deepgram/transcription",
             json=malicious_payload,
-            headers={"dg-token": "a" * 64},
+            headers={"dg-token": "fabricated-token-123"},
         )
         assert response.status_code == 401
 

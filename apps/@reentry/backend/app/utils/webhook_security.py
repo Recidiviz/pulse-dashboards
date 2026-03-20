@@ -19,7 +19,6 @@
 Webhook security utilities for verifying external service signatures.
 """
 
-import hashlib
 import hmac
 from typing import Optional
 
@@ -34,19 +33,22 @@ def verify_deepgram_signature(
     webhook_secret: str,
 ) -> bool:
     """
-    Verify the HMAC-SHA256 signature of a Deepgram webhook request.
+    Verify the dg-token header of a Deepgram webhook request.
+
+    The dg-token header contains the API Key Identifier used in the original request.
+    This is a simple token verification, not HMAC-based cryptographic verification.
 
     Args:
-        payload: The raw request body as bytes
+        payload: The raw request body as bytes (unused, kept for compatibility)
         signature_header: The value of the 'dg-token' header
-        webhook_secret: The webhook secret configured in Deepgram
+        webhook_secret: The expected API Key Identifier
 
     Returns:
-        True if the signature is valid, False otherwise
+        True if the token is valid, False otherwise
 
     Security Notes:
         - Uses constant-time comparison to prevent timing attacks
-        - Validates that signature exists before processing
+        - Validates that token exists before processing
         - Returns False for any errors to fail securely
     """
     if not signature_header:
@@ -54,30 +56,23 @@ def verify_deepgram_signature(
         return False
 
     if not webhook_secret:
-        logger.error("Webhook secret not configured")
+        logger.error("API Key Identifier not configured")
         return False
 
     try:
-        # Compute the expected signature
-        # Deepgram uses HMAC-SHA256 with the webhook secret
-        expected_signature = hmac.new(
-            key=webhook_secret.encode("utf-8"),
-            msg=payload,
-            digestmod=hashlib.sha256,
-        ).hexdigest()
-
+        # Verify the token matches the expected API Key Identifier
         # Use constant-time comparison to prevent timing attacks
-        is_valid = hmac.compare_digest(expected_signature, signature_header)
+        is_valid = hmac.compare_digest(webhook_secret, signature_header)
 
         if not is_valid:
             logger.warning(
-                "Invalid webhook signature",
-                expected_length=len(expected_signature),
+                "Invalid dg-token",
+                expected_length=len(webhook_secret),
                 received_length=len(signature_header),
             )
 
         return is_valid
 
     except Exception as e:
-        logger.error("Error verifying webhook signature", error=str(e))
+        logger.error("Error verifying dg-token", error=str(e))
         return False

@@ -81,7 +81,7 @@ class Settings(BaseSettings):
     DEEPGRAM_API_KEY: str
 
     # Deepgram API Key ID (identifier shown in console)
-    # Used to verify webhook signatures in the dg-signature header
+    # Used to verify webhook requests in the dg-token header
     DEEPGRAM_API_KEY_ID: str = ""
 
     # Deepgram callback configuration - set to True to use callback URLs for async transcription

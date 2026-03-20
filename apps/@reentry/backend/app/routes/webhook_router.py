@@ -42,7 +42,7 @@ async def deepgram_transcription_webhook(
         # Get the signature from the header
         signature = request.headers.get("dg-token")
 
-        # Verify the webhook signature using Deepgram API Key ID
+        # Verify the webhook token using Deepgram API Key ID
         if not verify_deepgram_signature(
             payload=raw_body,
             signature_header=signature,
