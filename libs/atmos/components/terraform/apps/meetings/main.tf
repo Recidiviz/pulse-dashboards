@@ -30,6 +30,7 @@ locals {
 
   etl_bucket_name     = "meetings-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
+  audio_bucket_name   = "meetings-audio-data"
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
@@ -217,14 +218,14 @@ module "audio_gcs_bucket" {
   project_id = var.project_id
   location   = var.location
   prefix     = var.project_id
-  names      = ["meetings-audio-data"]
+  names      = [local.audio_bucket_name]
   logging = {
     log_bucket = "${var.project_id}-gcs-object-logs"
   }
   storage_class   = "STANDARD"
   set_admin_roles = true
   bucket_admins = {
-    (local.etl_bucket_name) = "serviceAccount:${google_service_account.default.email}"
+    (local.audio_bucket_name) = "serviceAccount:${google_service_account.default.email}"
   }
   cors = [{
     origin          = var.meetings_bucket_cors_origins
