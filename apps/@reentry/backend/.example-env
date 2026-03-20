@@ -27,8 +27,13 @@ RECIDIVIZ_BQ_CLIENT_TABLE=client_dev
 # Google Cloud Bucket for Audio Recordings
 RECIDIVIZ_GCS_BUCKET_NAME=your-audio-recordings-bucket
 
-# Deepgram api key
-RECIDIVIZ_DEEPGRAM_API_KEY=deepgram-api-key
+# Deepgram API Key (secret) - used for API requests
+RECIDIVIZ_DEEPGRAM_API_KEY=your-deepgram-api-key-secret
+
+# Deepgram API Key ID (identifier shown in Deepgram console)
+# Used to verify webhook signatures in the dg-signature header
+# This is NOT your API Key secret - it's a unique identifier
+RECIDIVIZ_DEEPGRAM_API_KEY_ID=your-api-key-id-here
 
 # Transcription service provider, deepgram or gcp
 RECIDIVIZ_DIARIZATION_SERVICE=deepgram

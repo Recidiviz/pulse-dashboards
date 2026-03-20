@@ -36,13 +36,6 @@ class Settings(BaseSettings):
     LANGCHAIN_PROJECT: str | None = "dev-recidiviz"
     ANTHROPIC_API_KEY: str | None = None
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:4200"
-    DT_MODEL_PROVIDER: str = "openai"
-    DT_MODEL_NAME: str = "o4-mini"
-    DT_MODEL_VERSION: str = "2025-04-16"
-
-    GEN_MODEL_PROVIDER: str = "openai"
-    GEN_MODEL_NAME: str = "o4-mini"
-    GEN_MODEL_VERSION: str = "2025-04-16"
 
     EVAL_MODEL_PROVIDER: str = "openai"
     EVAL_MODEL_NAME: str = "o4-mini"
@@ -56,8 +49,6 @@ class Settings(BaseSettings):
     # External resources API configuration
     EXTERNAL_RESOURCES_API_URL: str
     RESOURCES_API_KEY: str
-
-    ALLOW_EXPERIMENTS: bool = False
 
     #### Authentication Middleware Configuration ####
     ENABLE_AUTH_MIDDLEWARE: bool = True
@@ -86,8 +77,12 @@ class Settings(BaseSettings):
     # Google Cloud Storage settings
     GCS_BUCKET_NAME: str
 
-    # Deepgram api key
+    # Deepgram API key (secret) - used for API requests
     DEEPGRAM_API_KEY: str
+
+    # Deepgram API Key ID (identifier shown in console)
+    # Used to verify webhook signatures in the dg-signature header
+    DEEPGRAM_API_KEY_ID: str = ""
 
     # Deepgram callback configuration - set to True to use callback URLs for async transcription
     DEEPGRAM_CALLBACK: bool = False

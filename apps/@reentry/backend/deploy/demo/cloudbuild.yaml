@@ -51,6 +51,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_BQ_PROJECT_ID=RECIDIVIZ_BQ_PROJECT_ID_DEMO:latest"
       - "--set-secrets=RECIDIVIZ_BQ_DATASET=RECIDIVIZ_BQ_DATASET_DEMO:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
+      - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY_ID=RECIDIVIZ_DEEPGRAM_API_KEY_IDENTIFIER :latest"
       - "--set-env-vars"
       - |
         ENTRYPOINT=api,
@@ -82,7 +83,6 @@ steps:
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-staging,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
-
 
   # Deploy Worker service
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
@@ -146,7 +146,6 @@ steps:
         RECIDIVIZ_BASE_URL=https://backend-api-demo-773019812766.us-central1.run.app,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840
-
 
   # Route traffic to latest revision
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"

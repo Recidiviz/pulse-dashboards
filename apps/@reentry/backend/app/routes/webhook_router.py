@@ -2,15 +2,19 @@
 Webhook routes for external service callbacks.
 """
 
+import json
+
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
 
+from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.models.intake import Intake, IntakeStatus
 from app.models.recording import RecordingSession, RecordingStatus
 from app.utils.transcription.deepgram_utils import process_deepgram_transcription
+from app.utils.webhook_security import verify_deepgram_signature
 
 logger = structlog.get_logger(__name__)
 
@@ -25,10 +29,45 @@ async def deepgram_transcription_webhook(
     """
     Webhook endpoint for receiving transcription results from Deepgram.
     This is called by Deepgram when async transcription completes.
+
+    Security:
+        Verifies HMAC-SHA256 signature in the 'dg-signature' header to ensure
+        the request is authentic and hasn't been tampered with. Rejects any
+        unsigned or invalidly signed requests to prevent injection attacks.
     """
     try:
-        # Get the raw payload
-        payload = await request.json()
+        # Get the raw request body for signature verification
+        raw_body = await request.body()
+
+        # Get the signature from the header
+        signature = request.headers.get("dg-signature")
+
+        # Verify the webhook signature using Deepgram API Key ID
+        if not verify_deepgram_signature(
+            payload=raw_body,
+            signature_header=signature,
+            webhook_secret=settings.DEEPGRAM_API_KEY_ID,
+        ):
+            logger.error(
+                "Webhook signature verification failed",
+                has_signature=bool(signature),
+            )
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid webhook signature",
+            )
+
+        # Parse the verified payload from raw body
+        # (cannot use request.json() after consuming body)
+        try:
+            payload = json.loads(raw_body)
+        except json.JSONDecodeError as e:
+            logger.error("Invalid JSON in webhook payload", error=str(e))
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid JSON payload",
+            )
+
         # Extract request_id from metadata
         metadata = payload.get("metadata", {})
         request_id = metadata.get("request_id") or payload.get("request_id")

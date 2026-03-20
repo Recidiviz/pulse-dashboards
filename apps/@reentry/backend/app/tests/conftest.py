@@ -9,6 +9,8 @@ os.environ["RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE"] = "false"
 os.environ["RECIDIVIZ_LANGCHAIN_TRACING_V2"] = "false"
 # Use fakeredis for tests to avoid connecting to real Redis
 os.environ["RECIDIVIZ_REDIS_URL"] = "redis://fakeredis:6379"
+# Set test Deepgram API Key ID for webhook signature verification
+os.environ["RECIDIVIZ_DEEPGRAM_API_KEY_ID"] = "test-api-key-id-12345"
 
 import pytest
 import pytest_asyncio
