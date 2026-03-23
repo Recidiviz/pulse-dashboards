@@ -116,13 +116,15 @@ export function isEligibleForTrusteeStatus(
 
 export function showTrusteeChecklist(
   totalText: string,
-  lifeSentence: boolean,
   formData: Partial<UsTnReclassification2026DraftData>,
 ): boolean {
+  // Only show the trustee checklist if all three questions at top are true
+  // (no 1st degree, 10 years or less, and not serving life) and the person
+  // has been scored or overridden to "LOW"
   return (
     formData.trusteeNotConvictedOfFirstDegreeMurder === "true" &&
     formData.trusteeHas10YearsOrLessRemaining === "true" &&
-    !lifeSentence &&
+    formData.isServingLife === "false" &&
     (totalText === "LOW" ||
       formData.counselorRecommendedCustody === "LOW" ||
       formData.recommendationCustodyLevel === "LOW")

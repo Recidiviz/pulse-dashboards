@@ -23,6 +23,7 @@ import {
   coverSheetInformationSchema,
   q1Notes,
   q2Notes,
+  q7Notes,
   singleIncidentPeriodReportSchema,
   TrusteeFormSchema,
   trusteeFormSchema,
@@ -55,11 +56,13 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         q4Score: z.coerce.number().nullable(),
         q5Score: z.coerce.number().nullable(),
         q6Score: z.coerce.number().nullable(),
+        q7Score: z.coerce.number().optional().default(0),
         q1Notes,
         q2Notes,
         q3Notes: singleIncidentPeriodReportSchema,
         q4Notes: singleIncidentPeriodReportSchema,
         q5Notes: singleIncidentPeriodReportSchema,
+        q7Notes,
       })
       .merge(trusteeFormSchema)
       .merge(coverSheetInformationSchema)
@@ -84,6 +87,7 @@ export type UsTnInitialClassification2026DraftData =
       q4Selection: number;
       q5Selection: number;
       q6Selection: number;
+      q7Selection: number;
       q1aNotes: string;
       q1bNotes: string;
     };

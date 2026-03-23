@@ -64,7 +64,6 @@ export const FormUsTnReclassification2026 = observer(
 
     const includeTrusteeChecklist = showTrusteeChecklist(
       derivedData.totalText,
-      !!resident.onLifeSentence,
       formData,
     );
 

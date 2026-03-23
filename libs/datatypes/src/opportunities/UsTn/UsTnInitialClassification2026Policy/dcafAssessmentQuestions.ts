@@ -20,7 +20,7 @@ import {
   TupleWithArity,
 } from "../reclassificationScoreUtils";
 
-export const dcafAssessmentQuestionNumbers = [1, 2, 3, 4, 5, 6] as const;
+export const dcafAssessmentQuestionNumbers = [1, 2, 3, 4, 5, 6, 7] as const;
 
 export type DcafAssessmentQuestionNumber =
   (typeof dcafAssessmentQuestionNumbers)[number];
@@ -86,6 +86,18 @@ export const dcafAssessmentQuestions = [
       { text: "36 - 40", score: 0 },
       { text: "41 - 45", score: -1 },
       { text: "Older than 45", score: -2 },
+    ],
+  },
+  {
+    title: "PROGRAM COMPLETIONS",
+    type: "SINGLE",
+    options: [
+      { text: "None", score: 0 },
+      { text: "One", score: -1 },
+      { text: "Two", score: -2 },
+      { text: "Three", score: -3 },
+      { text: "Four", score: -4 },
+      { text: "Five or More", score: -5 },
     ],
   },
 ] satisfies TupleWithArity<

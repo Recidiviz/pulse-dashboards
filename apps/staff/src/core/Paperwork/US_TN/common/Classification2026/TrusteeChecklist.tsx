@@ -21,7 +21,6 @@ import styled from "styled-components";
 
 import {
   TRUSTEE_FORM_QUESTION_ORDER,
-  TrusteeFormSchema,
   UsTnInitialClassification2026DraftData,
 } from "~datatypes";
 
@@ -110,7 +109,7 @@ const TrusteeCriteriaRow = observer(function TrusteeCriteriaRow({
   dataKey,
   children,
 }: {
-  dataKey: keyof TrusteeFormSchema;
+  dataKey: (typeof TRUSTEE_FORM_QUESTION_ORDER)[number];
   children: React.ReactNode;
 }) {
   const opportunityForm = useOpportunityFormContext();
@@ -120,25 +119,30 @@ const TrusteeCriteriaRow = observer(function TrusteeCriteriaRow({
     opportunityForm.updateDraftData(dataKey, event.target.value);
   };
 
+  const factorNumber = TRUSTEE_FORM_QUESTION_ORDER.indexOf(dataKey) + 1;
+
   return (
     <tr>
-      <th scope="row">{children}</th>
-      <th>
+      <th scope="row" style={{ minWidth: "2.7rem" }}>
+        <Bold>{factorNumber}</Bold>
+      </th>
+      <td>{children}</td>
+      <td>
         <input
           type="radio"
           checked={selected === "true"}
           value="true"
           onChange={onChange}
         />
-      </th>
-      <th>
+      </td>
+      <td>
         <input
           type="radio"
           checked={selected === "false"}
           value="false"
           onChange={onChange}
         />
-      </th>
+      </td>
     </tr>
   );
 });
@@ -238,6 +242,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
           <CriteriaTable>
             <thead>
               <tr>
+                <th scope="col">Factor</th>
                 <th scope="col">
                   CRITERIA – All must be true for placement on TRUSTEE custody
                 </th>
@@ -256,9 +261,9 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody">
-                <Bold>If</Bold> inmate was convicted of a violent offenses (see
-                Classification User’s Guide, Appendix VI), the inmate has been
-                in TDOC custody for a <Bold>minimum</Bold> of 12 months
+                <Bold>If</Bold> inmate's current offense is a violent offense
+                (see Classification User’s Guide, Appendix I), the inmate has
+                been in TDOC custody for a <Bold>minimum</Bold> of 12 months
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNotServingForSexualOffense">
@@ -281,7 +286,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               <TrusteeCriteriaRow dataKey="trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years">
                 Inmate has no disciplinary convictions for assaultive conduct
                 that resulted in serious injury or the death of another
-                individual within the past 5 years of incarceration{" "}
+                individual within the past 5 years of incarceration,{" "}
                 <Bold>AND</Bold>
                 <br />
                 <br />

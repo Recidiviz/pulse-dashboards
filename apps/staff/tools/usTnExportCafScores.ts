@@ -257,6 +257,10 @@ const CSV_COLUMN_ORDER = [
   "DateOfFinalApprovalAndEntry",
   "LastModifiedDate",
   "UpdatedFields",
+  "SummaryTrusteeEverConvictedOfFirstDegreeMurder",
+  "SummaryTrusteeServingLifeSentence",
+  "SummaryTrusteeMoreThan10YearRemaining",
+  "SummaryTrusteeAllNoTrusteeCompleted",
 ];
 
 function processRecord(
@@ -364,11 +368,6 @@ function processRecord(
   Object.entries(
     isDcaf ? DERIVED_DATA_MAPPING_DCAF : DERIVED_DATA_MAPPING_RCAF,
   ).forEach(([outField, { sourceField, relevantFields }]) => {
-    // The RCAF update has one additional question compared to the DCAF one
-    // This check makes sure we don't look for it in the DCAF update
-    if (!(sourceField in derivedData)) return;
-
-    // @ts-expect-error We drop out above for the DCAF form
     const value = derivedData[sourceField];
 
     if (typeof value === "boolean") {

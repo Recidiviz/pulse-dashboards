@@ -91,6 +91,15 @@ const HeaderItem = styled(Item)`
   }
 `;
 
+const HeaderList = styled.ol`
+  margin-bottom: 0;
+  padding-bottom: 0;
+
+  & .Question {
+    max-width: 26rem;
+  }
+`;
+
 const SigBlock = styled.div`
   margin-top: 3em;
   border-top: 0.5px solid black;
@@ -115,7 +124,7 @@ const CoverSheet: React.FC = () => {
   );
 
   return (
-    <PrintablePage>
+    <PrintablePage stretchable>
       <FormContainer {...formViewerContext}>
         <Container>
           <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
@@ -131,8 +140,65 @@ const CoverSheet: React.FC = () => {
               Date of Final Approval and Entry in OMS / Recidiviz Tool, with any
               edits: <FormInput name="finalApprovalDate" />
               <br />
+              If Offender scored or overridden to LOW:
+              <HeaderList>
+                <li>
+                  <HeaderItem>
+                    <div className="Question">
+                      Were they ever convicted of First Degree Murder (or
+                      facilitation, solicitation, attempt, or conspiracy to
+                      commit first degree murder)?
+                    </div>
+                    <FormRadioButton
+                      name="trusteeNotConvictedOfFirstDegreeMurder"
+                      targetValue="false"
+                      label="Yes"
+                    />
+                    <FormRadioButton
+                      name="trusteeNotConvictedOfFirstDegreeMurder"
+                      targetValue="true"
+                      label="No"
+                    />
+                  </HeaderItem>
+                </li>
+                <li>
+                  <HeaderItem>
+                    <div className="Question">
+                      Are they serving a Life Sentence?
+                    </div>
+                    <FormRadioButton
+                      name="isServingLife"
+                      targetValue="true"
+                      label="Yes"
+                    />
+                    <FormRadioButton
+                      name="isServingLife"
+                      targetValue="false"
+                      label="No"
+                    />
+                  </HeaderItem>
+                </li>
+                <li>
+                  <HeaderItem>
+                    <div className="Question">
+                      Do they have more than 10 years remaining on their
+                      sentence?
+                    </div>
+                    <FormRadioButton
+                      name="trusteeHas10YearsOrLessRemaining"
+                      targetValue="false"
+                      label="Yes"
+                    />
+                    <FormRadioButton
+                      name="trusteeHas10YearsOrLessRemaining"
+                      targetValue="true"
+                      label="No"
+                    />
+                  </HeaderItem>
+                </li>
+              </HeaderList>
               <HeaderItem>
-                If Offender scored or overridden to LOW, Trustee checklist
+                If all are No, please confirm that Trustee Checklist was
                 completed:
                 <FormRadioButton
                   name="checklistCompletedOnOverride"

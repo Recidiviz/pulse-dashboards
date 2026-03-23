@@ -76,6 +76,11 @@ export function prefillDcafFormData(
     formInformation.q6Score,
   );
 
+  const q7Selection = getSingleSectionQuestionIndex(
+    dcafAssessmentQuestions[6],
+    formInformation.q7Score,
+  );
+
   const q1aNotes = formInformation.q1Notes.listPriorNonTdocConvictions60Months;
 
   const q1bNotes =
@@ -88,6 +93,7 @@ export function prefillDcafFormData(
     q4Selection,
     q5Selection,
     q6Selection,
+    q7Selection,
     q1aNotes,
     q1bNotes,
   };
@@ -103,6 +109,7 @@ export function deriveDcafFormData(
     q4Selection,
     q5Selection,
     q6Selection,
+    q7Selection,
   } = formData;
 
   const q1Score = getSingleSectionQuestionScore(
@@ -129,10 +136,14 @@ export function deriveDcafFormData(
     dcafAssessmentQuestions[5],
     q6Selection,
   );
+  const q7Score = getSingleSectionQuestionScore(
+    dcafAssessmentQuestions[6],
+    q7Selection,
+  );
 
   const totalScore = Math.min(
     MAXIMUM_UPPER_THRESHOLD + 1,
-    q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,
+    q1Score + q2Score + q3Score + q4Score + q5Score + q6Score + q7Score,
   );
 
   const trusteeEligible = isEligibleForTrusteeStatus(formData);
@@ -146,6 +157,7 @@ export function deriveDcafFormData(
     q4Score,
     q5Score,
     q6Score,
+    q7Score,
     totalScore,
     trusteeEligible,
     totalText,

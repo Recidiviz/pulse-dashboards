@@ -156,6 +156,9 @@ export function getCoverSheetTemplateArgs(
     checklistCompletedOnOverride,
     counselorRecommendedOverride,
     counselorRecommendedCustody,
+    isServingLife,
+    trusteeNotConvictedOfFirstDegreeMurder,
+    trusteeHas10YearsOrLessRemaining,
   } = formData;
 
   formContents.residentFullName = resident.displayName;
@@ -190,6 +193,19 @@ export function getCoverSheetTemplateArgs(
   formContents.ccY = checklistCompletedOnOverride === "Y" ? "_X_" : "___";
   formContents.ccN = checklistCompletedOnOverride === "N" ? "_X_" : "___";
   formContents.ccNA = checklistCompletedOnOverride === "NA" ? "_X_" : "___";
+
+  formContents.pq1Y =
+    trusteeNotConvictedOfFirstDegreeMurder === "false" ? "_X_" : "___";
+  formContents.pq1N =
+    trusteeNotConvictedOfFirstDegreeMurder === "true" ? "_X_" : "___";
+
+  formContents.pq2Y = isServingLife === "true" ? "_X_" : "___";
+  formContents.pq2N = isServingLife === "false" ? "_X_" : "___";
+
+  formContents.pq3Y =
+    trusteeHas10YearsOrLessRemaining === "false" ? "_X_" : "___";
+  formContents.pq3N =
+    trusteeHas10YearsOrLessRemaining === "true" ? "_X_" : "___";
 
   // Add tabs before newlines so the underlining looks right in these big blocks
   (

@@ -211,6 +211,7 @@ export const coverSheetInformationSchema = z.object({
     }),
   ),
   statusAtHearingSeg: z.string(),
+  isServingLife: booleanToString,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -241,8 +242,14 @@ export type UsTnCoverSheetSharedDraftData = {
   denialReasons: string;
   finalizingCounselor: string;
   finalApprovalDate: string;
-  checklistCompletedOnOverride: string;
   counselorRecommendedOverride: string;
   counselorRecommendedCustody: string;
   classificationType: string;
+
+  // used for the headers at the top of the summary sheet
+  // and only filled out for 2026 pilot opps
+  trusteeNotConvictedOfFirstDegreeMurder: string;
+  isServingLife: string;
+  trusteeHas10YearsOrLessRemaining: string;
+  checklistCompletedOnOverride: string;
 };

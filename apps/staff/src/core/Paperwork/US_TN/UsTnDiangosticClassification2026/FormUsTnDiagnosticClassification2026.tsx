@@ -178,10 +178,6 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                   name={"q5Notes"}
                 />
               </ScoredAssessmentQuestion>
-            </ClassificationFormPage>
-          </PrintablePage>
-          <PrintablePage landscape>
-            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[5]}
                 questionNumber={6}
@@ -189,6 +185,22 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                   "Recidiviz is auto-filling this score based on the resident’s age using data from eTOMIS."
                 }
               />
+            </ClassificationFormPage>
+          </PrintablePage>
+          <PrintablePage landscape>
+            <ClassificationFormPage>
+              <ScoredAssessmentQuestion
+                questionSpec={dcafAssessmentQuestions[6]}
+                questionNumber={7}
+                supportingText={
+                  "Recidiviz is auto-filling this score based on the resident’s class and job history in eTOMIS."
+                }
+              >
+                <TextboxWithHeader
+                  header={"List completed programs:"}
+                  name={"q7Notes"}
+                />
+              </ScoredAssessmentQuestion>
               <TotalScore score={derivedData.totalScore} mediumUpper={24} />
             </ClassificationFormPage>
           </PrintablePage>

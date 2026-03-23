@@ -93,6 +93,7 @@ export const usTnReclassification2026PolicyFixtures = {
           completionDate: "2024-04-04",
         },
       ],
+      isServingLife: false,
       trusteeHas10YearsOrLessRemaining: true,
       trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: true,
       trusteeNoEscapeFromLowTrusteePast5Years: true,
@@ -213,6 +214,7 @@ export const usTnReclassification2026PolicyFixtures = {
       q6Notes: {
         age: 26,
       },
+      isServingLife: false,
       trusteeHas10YearsOrLessRemaining: true,
       trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: true,
       trusteeNoEscapeFromLowTrusteePast5Years: true,

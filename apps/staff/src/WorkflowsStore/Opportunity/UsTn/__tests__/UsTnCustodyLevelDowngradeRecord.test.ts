@@ -46,6 +46,7 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       lastCafDate: "2022-08-22",
       lastCafTotal: "8",
+      isServingLife: false,
       q1Score: 1,
       q2Score: 1,
       q3Score: 1,

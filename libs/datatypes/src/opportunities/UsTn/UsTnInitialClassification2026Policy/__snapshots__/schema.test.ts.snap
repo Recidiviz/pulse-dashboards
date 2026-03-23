@@ -25,6 +25,7 @@ exports[`schema for fullyEligible 1`] = `
         "incompatibleType": "psychic",
       },
     ],
+    "isServingLife": "false",
     "q1Notes": {
       "listPriorNonTdocConvictions60Months": "some offense on 12/1/2022",
       "listPriorViolentTdocConvictions60Months": "some other offense on 8/22/2021",
@@ -39,6 +40,8 @@ exports[`schema for fullyEligible 1`] = `
     "q5Notes": "",
     "q5Score": -1,
     "q6Score": 0,
+    "q7Notes": "",
+    "q7Score": 0,
     "statusAtHearingSeg": "GEN",
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years": "true",
@@ -67,6 +70,7 @@ exports[`schema for ineligible 1`] = `
     "activeRecommendations": [],
     "hasIncompatibles": false,
     "incompatibleArray": [],
+    "isServingLife": "false",
     "q1Notes": {
       "listPriorNonTdocConvictions60Months": "some offense on 12/1/2022",
       "listPriorViolentTdocConvictions60Months": "some other offense on 8/22/2021",
@@ -81,6 +85,8 @@ exports[`schema for ineligible 1`] = `
     "q5Notes": "HIJ (Class Q) on 1/8/2023",
     "q5Score": -1,
     "q6Score": 0,
+    "q7Notes": "Completed TXI (Taxi Maintenance) on 2/2/2023",
+    "q7Score": -2,
     "statusAtHearingSeg": "GEN",
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years": "true",

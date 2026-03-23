@@ -68,6 +68,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
           ],
         },
       ],
+      isServingLife: false,
       trusteeHas10YearsOrLessRemaining: true,
       trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: true,
       trusteeNoEscapeFromLowTrusteePast5Years: false,
@@ -109,6 +110,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
       q4Score: 2,
       q5Score: -1,
       q6Score: 0,
+      q7Score: -2,
       q1Notes: {
         listPriorNonTdocConvictions60Months: [
           {
@@ -168,6 +170,14 @@ export const usTnInitialClassification2026PolicyFixtures = {
           ],
         },
       ],
+      q7Notes: [
+        {
+          programCode: "TXI",
+          completionDate: "2023-02-02",
+          programType: "Taxi Maintenance",
+        },
+      ],
+      isServingLife: false,
       trusteeHas10YearsOrLessRemaining: true,
       trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: true,
       trusteeNoEscapeFromLowTrusteePast5Years: true,
