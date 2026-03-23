@@ -82,7 +82,6 @@ export const SARMetadataSchema = z.object({
 export const updateSARSchema = z.object({
   id: z.string(),
   attributes: z.object({
-    ssn: z.string().nullable().optional(),
     status: CaseStatusEnum.optional(),
     address: z.string().nullable().optional(),
     requestingJudgeName: z.string().nullish(),

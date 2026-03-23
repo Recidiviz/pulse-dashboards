@@ -123,7 +123,6 @@ model Client {
   isCountyLocked Boolean @default(false)
 
   // SAR-specific fields for Missouri
-  ssn          String?
   motherName   String?
   fatherName   String?
   guardianName String?

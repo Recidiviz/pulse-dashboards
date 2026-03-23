@@ -89,7 +89,6 @@ describe("SAR router", () => {
               "fullName",
               "gender",
               "raceOrEthnicity",
-              "ssn",
               "externalId",
               "birthDate",
               "motherName",
@@ -201,7 +200,6 @@ describe("SAR router", () => {
       await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
-          ssn: "123456789",
           motherName: "Jane Doe",
           fatherName: "John Doe",
         },
@@ -212,7 +210,6 @@ describe("SAR router", () => {
       });
 
       expect(updatedClient).toMatchObject({
-        ssn: "123456789",
         motherName: "Jane Doe",
         fatherName: "John Doe",
       });

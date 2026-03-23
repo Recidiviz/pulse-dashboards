@@ -55,7 +55,6 @@ export type UpsertSARInput = Pick<
   | "communityStrategyRecommendation"
   | "institutionalStrategyRecommendation"
 > & {
-  ssn?: string | null;
   motherName?: string | null;
   fatherName?: string | null;
   guardianName?: string | null;

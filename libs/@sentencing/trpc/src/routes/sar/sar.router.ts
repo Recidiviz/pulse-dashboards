@@ -116,7 +116,6 @@ export const sarRouter = router({
               fullName: true,
               gender: true, // Returned for display but not editable (state data)
               raceOrEthnicity: true, // Returned for display but not editable (state data)
-              ssn: true,
               externalId: true,
               birthDate: true, // Returned for display but not editable (state data)
               motherName: true,
@@ -169,12 +168,10 @@ export const sarRouter = router({
     .input(updateSARSchema)
     .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
       try {
-        const { ssn, motherName, fatherName, guardianName, charges } =
-          attributes;
+        const { motherName, fatherName, guardianName, charges } = attributes;
 
         const updateData: Prisma.SentencingAssessmentReportUpdateInput = {
           ..._.omit(attributes, [
-            "ssn",
             "motherName",
             "fatherName",
             "guardianName",
@@ -195,7 +192,6 @@ export const sarRouter = router({
 
         // Update client fields if provided
         const clientUpdateFields: Prisma.ClientUpdateInput = {};
-        if (ssn !== undefined) clientUpdateFields.ssn = ssn;
         if (motherName !== undefined)
           clientUpdateFields.motherName = motherName;
         if (fatherName !== undefined)

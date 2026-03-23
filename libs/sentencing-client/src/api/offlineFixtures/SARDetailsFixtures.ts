@@ -35,7 +35,6 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
       gender: "MALE" as const,
       birthDate,
       raceOrEthnicity: ["White"],
-      ssn: null,
       motherName: null,
       fatherName: null,
       guardianName: null,

@@ -232,7 +232,6 @@ export const fakeSARClient = {
   raceOrEthnicity: ["WHITE"],
   isCountyLocked: false,
   birthDate: faker.date.birthdate(),
-  ssn: faker.string.numeric(9),
   motherName: faker.person.fullName(),
   fatherName: faker.person.fullName(),
   guardianName: null,
