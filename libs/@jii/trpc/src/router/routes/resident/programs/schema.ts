@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../procedures/init";
-import { usNcRouter } from "./US_NC/rna.router";
-import { usNeRouter } from "./US_NE/router";
+import { z } from "zod";
 
-export const stateRouter = router({
-  usNe: usNeRouter,
-  usNc: usNcRouter,
+export const getProgramsInputSchema = z.object({
+  pseudonymizedId: z.string(),
+});
+
+export const setStarredProgramInputSchema = z.object({
+  pseudonymizedId: z.string(),
+  programId: z.string(),
+  title: z.string(),
+  isStarred: z.boolean(),
 });

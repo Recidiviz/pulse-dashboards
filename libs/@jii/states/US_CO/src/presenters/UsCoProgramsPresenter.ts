@@ -29,7 +29,7 @@ import {
 } from "~hydration-utils";
 
 export type UsCoProgram =
-  JiiResidentAppRouterOutputs["state"]["usCo"]["getPrograms"][number];
+  JiiResidentAppRouterOutputs["resident"]["getPrograms"][number];
 
 export class UsCoProgramsPresenter implements Hydratable {
   programs?: UsCoProgram[];
@@ -69,7 +69,7 @@ export class UsCoProgramsPresenter implements Hydratable {
   }
 
   private async populatePrograms() {
-    this.programs = await this.apiClient.trpc.state.usCo.getPrograms.query({
+    this.programs = await this.apiClient.trpc.resident.getPrograms.query({
       pseudonymizedId: this.residentId,
     });
   }
@@ -195,7 +195,7 @@ export class UsCoProgramsPresenter implements Hydratable {
 
     try {
       // Persist to backend
-      await this.apiClient.trpc.state.usCo.setStarredProgram.mutate({
+      await this.apiClient.trpc.resident.setStarredProgram.mutate({
         pseudonymizedId: this.residentId,
         programId: program.programId,
         title: program.title,

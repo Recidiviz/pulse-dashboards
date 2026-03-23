@@ -30,14 +30,8 @@ model ResidentFlagInstance {
     @@id([pseudonymizedId, flagId])
 }
 
-////////////////////////////////////////////////////////
-// Models intended to be state-specific follow
-////////////////////////////////////////////////////////
-
-// US_CO (Colorado)
-
-// Tracks programs that a user has starred/favorited in Colorado
-model UsCoStarredProgram {
+// Tracks programs that a user has starred/favorited
+model StarredProgram {
     pseudonymizedId String
     programId       String
     title           String
@@ -45,6 +39,10 @@ model UsCoStarredProgram {
 
     @@id([pseudonymizedId, programId, title])
 }
+
+////////////////////////////////////////////////////////
+// Models intended to be state-specific follow
+////////////////////////////////////////////////////////
 
 // US_NC (North Carolina)
 

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+export type ProgramFromSheet = {
+  dateAddedOrUpdated?: Date;
+  programId: string;
+  category: string;
+  title: string;
+  description: string;
+  facilitiesOffered: string[];
+  numberOfDaysThatCanBeEarned: number;
+  prerequisites: string;
+  eligibilityRequirements: string;
+};
 
-export const getProgramsInputSchema = z.object({
-  pseudonymizedId: z.string(),
-});
-
-export const setStarredProgramInputSchema = z.object({
-  pseudonymizedId: z.string(),
-  programId: z.string(),
-  title: z.string(),
-  isStarred: z.boolean(),
-});
+export type ProgramsConfig = {
+  spreadsheetEnvVar: string;
+  sheetRange: string;
+  fixtures: ProgramFromSheet[];
+};

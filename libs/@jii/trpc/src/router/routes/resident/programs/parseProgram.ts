@@ -15,23 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createCachedCall } from "../../../../../helpers/createCachedCall";
-import { getSheetData } from "../../../../../helpers/googleSheets";
-import { US_CO_PROGRAM_FIXTURES } from "./fixtures";
+import type { ProgramFromSheet, ProgramsConfig } from "./types";
 
-export type ProgramFromSheet = {
-  dateAddedOrUpdated?: Date;
-  programId: string;
-  category: string;
-  title: string;
-  description: string;
-  facilitiesOffered: string[];
-  numberOfDaysThatCanBeEarned: number;
-  eligibilityRequirements: string;
-  prerequisites: string;
-};
-
-const PROGRAM_FIELDS = [
+export const SPREADSHEET_FIELDS = [
   "Date added or updated",
   "Program ID",
   "Category",
@@ -43,12 +29,12 @@ const PROGRAM_FIELDS = [
   "Prerequisites",
 ] as const;
 
-type ProgramField = (typeof PROGRAM_FIELDS)[number];
+type Row = Record<(typeof SPREADSHEET_FIELDS)[number], string>;
 
 const parseCommaSeparated = (value: string): string[] =>
   value ? value.split(",").map((s) => s.trim()) : [];
 
-const parseProgram = (row: Record<ProgramField, string>): ProgramFromSheet => ({
+export const parseProgram = (row: Row): ProgramFromSheet => ({
   dateAddedOrUpdated: row["Date added or updated"]
     ? new Date(row["Date added or updated"])
     : undefined,
@@ -65,25 +51,6 @@ const parseProgram = (row: Record<ProgramField, string>): ProgramFromSheet => ({
   prerequisites: row["Prerequisites"],
 });
 
-export async function fetchPrograms(): Promise<ProgramFromSheet[]> {
-  if (process.env["IS_OFFLINE"]) {
-    return US_CO_PROGRAM_FIXTURES;
-  }
-
-  const spreadsheetId = process.env["US_CO_PROGRAMS_SPREADSHEET_ID"];
-
-  if (!spreadsheetId) {
-    throw new Error("US_CO_PROGRAMS_SPREADSHEET_ID is not set");
-  }
-
-  const rows = await getSheetData(
-    spreadsheetId,
-    "Program list!A:I",
-    PROGRAM_FIELDS,
-  );
-  return rows.map(parseProgram);
+export function programsConfig(config: ProgramsConfig) {
+  return config;
 }
-
-// Google Sheets rate limits are per-minute, so we use a TTL of 1 minute
-// to avoid throttling while still ensuring reasonably fresh data.
-export const cachedFetchPrograms = createCachedCall(fetchPrograms, 60);
