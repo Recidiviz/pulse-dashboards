@@ -32,7 +32,7 @@ import cssVars from "../CoreConstants.module.scss";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
-import { NavigationLayout } from "../NavigationLayout";
+import { NAV_BAR_HEIGHT, NavigationLayout } from "../NavigationLayout";
 import { OpportunityPreviewPanel } from "../OpportunityCaseloadView/OpportunityPreviewPanel";
 import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormUsIaEarlyDischargeParole } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeParole";
@@ -86,6 +86,11 @@ const Sidebar = styled.div`
 `;
 
 const SidebarSection = styled.section`
+  position: sticky;
+  inset: 0;
+  max-height: ${`calc(100vh - ${rem(NAV_BAR_HEIGHT)})`};
+  overflow-y: auto;
+
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
 
   &:first-child {
