@@ -50,7 +50,13 @@ beforeAll(async () => {
       return;
     };
 
-    req.user = "We did it Joe!";
+    req.user = {
+      "https://dashboard.recidiviz.org/app_metadata": {
+        stateCode: "us_id",
+        allowedStates: [],
+      },
+      "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
+    };
     done();
   });
 

@@ -16,9 +16,17 @@
 // =============================================================================
 
 import { protos } from "@google-cloud/discoveryengine";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { TRPCError } from "@trpc/server";
+import superjson from "superjson";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { testTRPCClient } from "~@case-notes-server/trpc/test/setup";
+import { AppRouter } from "~@case-notes-server/trpc/router";
+import {
+  testHost,
+  testPort,
+  testTRPCClient,
+} from "~@case-notes-server/trpc/test/setup";
 
 const mockServerConfigFn = vi.fn().mockReturnValue("serving-config");
 
@@ -461,6 +469,38 @@ describe("search", () => {
         },
       ]),
     });
+  });
+
+  test("should throw FORBIDDEN when JWT stateCode does not match header stateCode", async () => {
+    // The test server's preHandler sets req.user with stateCode: "us_id".
+    // Sending StateCode: "US_NE" triggers FORBIDDEN.
+    const mismatchClient = createTRPCClient<AppRouter>({
+      links: [
+        httpBatchLink({
+          url: `http://${testHost}:${testPort}`,
+          headers() {
+            return {
+              Authorization: "Bearer test-token",
+              StateCode: "US_NE",
+            };
+          },
+          transformer: superjson,
+        }),
+      ],
+    });
+
+    await expect(() =>
+      mismatchClient.search.query({
+        query: "test",
+        userExternalId: "TEST",
+      }),
+    ).rejects.toThrowError(
+      new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "User with state code US_ID cannot request data about state: US_NE",
+      }),
+    );
   });
 
   test("shouldn't search bigquery if page token is passed", async () => {
