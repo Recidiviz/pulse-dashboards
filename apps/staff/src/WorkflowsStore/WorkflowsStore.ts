@@ -807,7 +807,7 @@ export class WorkflowsStore implements Hydratable {
   formatSupervisionLevel(levelId: string | undefined): string {
     return (
       this.supervisionLevels.find((opt) => opt.value === levelId)?.label ??
-      toTitleCase(levelId ?? UNKNOWN)
+      toTitleCase((levelId ?? UNKNOWN).replaceAll("_", " "))
     );
   }
 

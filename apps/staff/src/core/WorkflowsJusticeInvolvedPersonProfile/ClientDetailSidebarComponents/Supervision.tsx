@@ -59,10 +59,14 @@ export function Supervision({
             )}
           </SecureDetailsContent>
           <PartialTime person={client} />
-          <DetailsSubheading>{supervisionEndDateCopy}</DetailsSubheading>
-          <SecureDetailsContent>
-            {formatWorkflowsDate(client.expirationDate)}
-          </SecureDetailsContent>
+          {(client.stateCode !== "US_MO" || client.expirationDate) && (
+            <>
+              <DetailsSubheading>{supervisionEndDateCopy}</DetailsSubheading>
+              <SecureDetailsContent>
+                {formatWorkflowsDate(client.expirationDate)}
+              </SecureDetailsContent>
+            </>
+          )}
           <StateSpecificSupervisionDetails client={client} />
 
           <DetailsSubheading>Assigned to</DetailsSubheading>
