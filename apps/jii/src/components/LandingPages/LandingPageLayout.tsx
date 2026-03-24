@@ -24,11 +24,11 @@ import styled from "styled-components";
 
 import { FullBleedContainer, PAGE_WIDTH } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";
+import { Wordmark } from "~@jii/layout";
 import { ReturnToPathFragment } from "~@jii/paths";
 import { Button } from "~design-system";
 import { palette } from "~design-system";
 
-import { Wordmark } from "../Wordmark/Wordmark";
 import recidivizWordmarkUrl from "./recidiviz-wordmark-white.svg";
 
 const CONTENT_WIDTH = PAGE_WIDTH * 0.8;

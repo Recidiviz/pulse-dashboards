@@ -15,14 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./AppLayout/AppLayout";
 export * from "./constants";
 export * from "./DefinitionPage/DefinitionPage";
+export * from "./ErrorPage/ErrorPage";
 export * from "./ErrorPage/ErrorPageMainContent";
 export * from "./FullWidthBanner";
+export * from "./GenericLayout/GenericLayout";
 export * from "./InfoPage/InfoPage";
 export type * from "./InfoPage/TableOfContents";
-export * from "./MainContent/MainContentHydrator";
+export * from "./MainContentHydrator/MainContentHydratorWithErrorLogging";
+export * from "./MainContentHydrator/MainContentHydratorWithoutErrorLogging";
+export * from "./NavMenu/NavMenu";
 export * from "./Onboarding/OnboardingTakeover";
 export * from "./Onboarding/useTrackOnboardingSeen";
+export * from "./PageHydrator/PageHydratorWithErrorLogging";
 export * from "./RequiresPermission/RequiresPermission";
 export * from "./ScreenFillingWrapper/ScreenFillingWrapper";
+export * from "./Wordmark/Wordmark";

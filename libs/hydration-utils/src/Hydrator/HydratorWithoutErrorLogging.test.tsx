@@ -19,7 +19,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { observable, set } from "mobx";
 
 import { Hydratable } from "../Hydratable/types";
-import { HydratorWithErrorMessage } from "./HydratorWithErrorMessage";
+import { HydratorWithoutErrorLogging } from "./HydratorWithoutErrorLogging";
 
 let testModel: Hydratable;
 
@@ -33,12 +33,12 @@ beforeEach(() => {
 
 test("error state", async () => {
   render(
-    <HydratorWithErrorMessage
+    <HydratorWithoutErrorLogging
       hydratable={testModel}
       fallback={({ error }) => <div>{error.message}</div>}
     >
       <div>test content</div>
-    </HydratorWithErrorMessage>,
+    </HydratorWithoutErrorLogging>,
   );
 
   expect(screen.getByText("Loading data...")).toBeInTheDocument();

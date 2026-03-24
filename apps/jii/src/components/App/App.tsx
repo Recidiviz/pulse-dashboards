@@ -33,6 +33,7 @@ import styled, { createGlobalStyle } from "styled-components";
 
 import { NotFound } from "~@jii/common-ui";
 import { initializeSentry, StoreProvider } from "~@jii/data";
+import { ErrorPage, GenericLayoutRoute } from "~@jii/layout";
 import {
   AfterLogin,
   EdovoLandingPage,
@@ -44,8 +45,6 @@ import {
 } from "~@jii/paths";
 import { palette } from "~design-system";
 
-import { ErrorPage } from "../ErrorPage/ErrorPage";
-import { GenericLayoutRoute } from "../GenericLayout/GenericLayout";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEdovoLanding } from "../pages/PageEdovoLanding";
 import { PageHome } from "../pages/PageHome";

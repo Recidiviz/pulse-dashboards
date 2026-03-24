@@ -34,9 +34,9 @@ import {
   STICKY_HEADER_ZINDEX,
 } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";
-import { PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
 import { palette } from "~design-system";
 
+import { PAGE_LAYOUT_HEADER_GAP } from "../constants";
 import { useSkipNav } from "../SkipNav/SkipNav";
 import { Wordmark } from "../Wordmark/Wordmark";
 

@@ -25,7 +25,7 @@ import { ErrorPage } from "../ErrorPage/ErrorPage";
  * In case of error this Hydrator logs to Sentry and renders an error page with its own PageLayout.
  * Intended mainly for hydrating routes that are not nested under a layout route.
  */
-export const PageHydrator: FC<{
+export const PageHydratorWithErrorLogging: FC<{
   children: ReactNode;
   hydratable: Hydratable;
 }> = ({ children, hydratable }) => {

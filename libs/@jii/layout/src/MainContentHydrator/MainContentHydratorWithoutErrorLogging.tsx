@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ErrorPageMainContent } from "~@jii/layout";
+import { FC, ReactNode } from "react";
 
-import { GenericLayout } from "../GenericLayout/GenericLayout";
+import { Hydratable, HydratorWithoutErrorLogging } from "~hydration-utils";
 
-export const ErrorPage = ({ error }: { error: Error }) => {
+import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
+
+/**
+ * In case of error this Hydrator displays an error message suitable
+ * to serve as the main content of a layout route or component,
+ * but does not log to Sentry.
+ */
+export const MainContentHydratorWithoutErrorLogging: FC<{
+  children: ReactNode;
+  hydratable: Hydratable;
+}> = ({ children, hydratable }) => {
   return (
-    <GenericLayout>
-      <ErrorPageMainContent error={error} />
-    </GenericLayout>
+    <HydratorWithoutErrorLogging
+      hydratable={hydratable}
+      fallback={ErrorPageMainContent}
+    >
+      {children}
+    </HydratorWithoutErrorLogging>
   );
 };

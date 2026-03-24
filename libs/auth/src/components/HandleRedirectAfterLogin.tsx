@@ -30,10 +30,12 @@ export const HandleRedirectAfterLogin: FC<{
   authClient: AuthClient;
   defaultRedirectPath?: string;
   ErrorComponent?: ComponentType;
+  logToSentry?: boolean;
 }> = observer(function HandleRedirectAfterLogin({
   authClient,
   defaultRedirectPath,
   ErrorComponent = NotAuthorized,
+  logToSentry = true,
 }) {
   const navigate = useNavigate();
   const [error, setError] = useState<Error | undefined>();
@@ -42,7 +44,7 @@ export const HandleRedirectAfterLogin: FC<{
     authClient
       .handleRedirectFromLogin(navigate, defaultRedirectPath)
       .catch((r) => {
-        captureException(r);
+        if (logToSentry) captureException(r);
         setError(castToError(r));
       });
   });

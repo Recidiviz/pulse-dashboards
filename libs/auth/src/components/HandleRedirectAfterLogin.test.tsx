@@ -70,3 +70,15 @@ test("error during handling", async () => {
 
   expect(captureException).toHaveBeenCalledWith("test");
 });
+
+test("error during handling without Sentry logging", async () => {
+  handlerSpy.mockRejectedValue("test");
+
+  render(<HandleRedirectAfterLogin authClient={client} logToSentry={false} />);
+
+  expect(
+    await screen.findByRole("heading", { name: "Authorization required" }),
+  ).toBeInTheDocument();
+
+  expect(captureException).not.toHaveBeenCalled();
+});

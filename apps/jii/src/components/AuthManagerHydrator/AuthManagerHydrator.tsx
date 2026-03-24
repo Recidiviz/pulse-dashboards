@@ -19,9 +19,9 @@ import { FC, ReactNode } from "react";
 
 import { useRootStore } from "~@jii/data";
 import { EdovoAuthHandler } from "~@jii/data";
-import { HydratorWithErrorMessage } from "~hydration-utils";
+import { ErrorPage } from "~@jii/layout";
+import { HydratorWithoutErrorLogging } from "~hydration-utils";
 
-import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { EdovoUnknownUserError } from "../UnknownUserError/EdovoUnknownUserError";
 
 /**
@@ -39,7 +39,7 @@ export const AuthManagerHydrator: FC<{ children: ReactNode }> = ({
   } = useRootStore();
 
   return (
-    <HydratorWithErrorMessage
+    <HydratorWithoutErrorLogging
       hydratable={authManager}
       fallback={
         authManager.handler instanceof EdovoAuthHandler
@@ -48,6 +48,6 @@ export const AuthManagerHydrator: FC<{ children: ReactNode }> = ({
       }
     >
       {children}
-    </HydratorWithErrorMessage>
+    </HydratorWithoutErrorLogging>
   );
 };

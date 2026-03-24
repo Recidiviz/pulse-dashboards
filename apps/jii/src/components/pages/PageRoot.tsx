@@ -22,9 +22,9 @@ import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 import { PageContainer } from "~@jii/common-ui";
+import { ErrorPage } from "~@jii/layout";
 
 import { AuthManagerHydrator } from "../AuthManagerHydrator/AuthManagerHydrator";
-import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
 import { usePageviewTracking } from "../usePageviewTracking/usePageviewTracking";
 

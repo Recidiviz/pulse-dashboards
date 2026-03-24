@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { PageContainer } from "~@jii/common-ui";
+import { ErrorPage, GenericLayout } from "~@jii/layout";
 import { UsNcRNANotEnabled } from "~@jii/US_NC";
 
-import { ErrorPage } from "../ErrorPage/ErrorPage";
-import { GenericLayout } from "../GenericLayout/GenericLayout";
 import { stateCodeFromError } from "./Auth0UnknownUserError";
 
 export const EdovoUnknownUserError = ({ error }: { error: Error }) => {

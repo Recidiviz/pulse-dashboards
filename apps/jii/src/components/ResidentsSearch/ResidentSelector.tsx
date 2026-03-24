@@ -23,7 +23,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Selector } from "~@jii/common-ui";
 import { useResidentsContext } from "~@jii/data";
-import { MainContentHydrator } from "~@jii/layout";
+import { MainContentHydratorWithErrorLogging } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -67,5 +67,5 @@ export const ResidentSelector = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: true,
-  HydratorComponent: MainContentHydrator,
+  HydratorComponent: MainContentHydratorWithErrorLogging,
 });

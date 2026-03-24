@@ -21,7 +21,7 @@ import { Outlet } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { SingleResidentContextProvider, useResidentsContext } from "~@jii/data";
-import { MainContentHydrator } from "~@jii/layout";
+import { MainContentHydratorWithErrorLogging } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -49,5 +49,5 @@ export const SingleResidentHydrator = withPresenterManager({
   usePresenter,
   managerIsObserver: false,
   ManagedComponent,
-  HydratorComponent: MainContentHydrator,
+  HydratorComponent: MainContentHydratorWithErrorLogging,
 });

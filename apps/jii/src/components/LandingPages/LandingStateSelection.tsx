@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 
 import { usePageTitle } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";
-import { MainContentHydrator } from "~@jii/layout";
+import { MainContentHydratorWithErrorLogging } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
 import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
@@ -63,6 +63,6 @@ function usePresenter() {
 export const LoginStateSelection = withPresenterManager({
   usePresenter,
   ManagedComponent,
-  HydratorComponent: MainContentHydrator,
+  HydratorComponent: MainContentHydratorWithErrorLogging,
   managerIsObserver: false,
 });

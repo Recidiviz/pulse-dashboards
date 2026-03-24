@@ -21,7 +21,10 @@ import { FC } from "react";
 
 import { TAILWIND_WRAPPER_CLASS } from "~@jii/common-ui";
 import { useRootStore, useSingleResidentContext } from "~@jii/data";
-import { MainContentHydrator, PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
+import {
+  MainContentHydratorWithoutErrorLogging,
+  PAGE_LAYOUT_HEADER_GAP,
+} from "~@jii/layout";
 import {
   IntakeRouter,
   IntakeSocketProvider,
@@ -68,5 +71,5 @@ export const IntakeAssessment = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: false,
-  HydratorComponent: MainContentHydrator,
+  HydratorComponent: MainContentHydratorWithoutErrorLogging,
 });

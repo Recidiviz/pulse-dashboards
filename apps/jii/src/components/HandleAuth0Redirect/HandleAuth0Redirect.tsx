@@ -48,6 +48,7 @@ export const HandleAuth0Redirect: FC = observer(function HandleAuth0Redirect() {
     <HandleRedirectAfterLogin
       authClient={authClient}
       ErrorComponent={customErrorComponent}
+      logToSentry={false}
     />
   );
 });

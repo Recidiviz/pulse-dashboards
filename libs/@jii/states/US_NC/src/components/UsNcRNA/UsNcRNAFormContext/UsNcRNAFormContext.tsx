@@ -20,7 +20,7 @@ import { FC } from "react";
 import { Outlet } from "react-router-dom";
 
 import { useRootStore, useSingleResidentContext } from "~@jii/data";
-import { MainContentHydrator } from "~@jii/layout";
+import { MainContentHydratorWithErrorLogging } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
 import { UsNcRNANotEnabled } from "../UsNcRNALanding/UsNcRNANotEnabled";
@@ -56,5 +56,5 @@ export const UsNcRNAFormContext = withPresenterManager({
   usePresenter,
   managerIsObserver: true,
   ManagedComponent,
-  HydratorComponent: MainContentHydrator,
+  HydratorComponent: MainContentHydratorWithErrorLogging,
 });

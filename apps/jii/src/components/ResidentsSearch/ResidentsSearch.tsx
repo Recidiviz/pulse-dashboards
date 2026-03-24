@@ -28,7 +28,7 @@ import styled from "styled-components";
 
 import { Selector } from "~@jii/common-ui";
 import { useResidentsContext, useRootStore } from "~@jii/data";
-import { MainContentHydrator } from "~@jii/layout";
+import { MainContentHydratorWithErrorLogging } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
 import { ResidentSelector } from "./ResidentSelector";
@@ -88,5 +88,5 @@ export const ResidentsSearch = withPresenterManager({
   usePresenter,
   managerIsObserver: false,
   ManagedComponent,
-  HydratorComponent: MainContentHydrator,
+  HydratorComponent: MainContentHydratorWithErrorLogging,
 });

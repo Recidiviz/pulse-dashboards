@@ -22,7 +22,7 @@ import { hydrationFailure } from "../Hydratable/utils";
 import { Hydrator } from "./Hydrator";
 import { HydratorProps } from "./types";
 
-type HydratorWithErrorMessageProps = Omit<HydratorProps, "failed"> & {
+type HydratorWithoutErrorLoggingProps = Omit<HydratorProps, "failed"> & {
   // similar API as HydratorWithErrorLogging for convenience
   fallback: ComponentType<{ error: Error }>;
 };
@@ -31,8 +31,8 @@ type HydratorWithErrorMessageProps = Omit<HydratorProps, "failed"> & {
  * Catches and displays hydration error messages using the provided fallback component,
  * but does not log them to Sentry
  */
-export const HydratorWithErrorMessage: FC<HydratorWithErrorMessageProps> =
-  observer(function HydratorWithErrorMessage(hydratorProps) {
+export const HydratorWithoutErrorLogging: FC<HydratorWithoutErrorLoggingProps> =
+  observer(function HydratorWithoutErrorLogging(hydratorProps) {
     const error = hydrationFailure(hydratorProps.hydratable);
     if (error) {
       return <hydratorProps.fallback error={error} />;

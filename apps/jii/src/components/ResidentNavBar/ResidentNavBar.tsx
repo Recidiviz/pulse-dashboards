@@ -25,12 +25,12 @@ import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { useResidentsContext } from "~@jii/data";
+import { NavMenu } from "~@jii/layout";
 import { RouteParams, State } from "~@jii/paths";
 import { useCommonTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import { NavMenu } from "../NavMenu/NavMenu";
 import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
 
 const BORDER = 4;

@@ -24,9 +24,9 @@ import {
   useRootStore,
   useStateCodeFromSlug,
 } from "~@jii/data";
+import { PageHydratorWithErrorLogging } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
-import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 
 const ManagedComponent: FC<{
@@ -52,5 +52,5 @@ export const ResidentsHydrator = withPresenterManager({
   usePresenter,
   managerIsObserver: false,
   ManagedComponent,
-  HydratorComponent: PageHydrator,
+  HydratorComponent: PageHydratorWithErrorLogging,
 });

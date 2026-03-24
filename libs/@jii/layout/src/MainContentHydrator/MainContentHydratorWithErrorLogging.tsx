@@ -25,7 +25,7 @@ import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
  * In case of error this Hydrator logs to Sentry and renders an error message suitable
  * to serve as the main content of a layout route or component
  */
-export const MainContentHydrator: FC<{
+export const MainContentHydratorWithErrorLogging: FC<{
   children: ReactNode;
   hydratable: Hydratable;
 }> = ({ children, hydratable }) => {

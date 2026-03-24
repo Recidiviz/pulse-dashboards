@@ -29,7 +29,10 @@ import {
   PageContainer,
 } from "~@jii/common-ui";
 import { useRootStore, useSingleResidentContext } from "~@jii/data";
-import { FullWidthBanner, MainContentHydrator } from "~@jii/layout";
+import {
+  FullWidthBanner,
+  MainContentHydratorWithErrorLogging,
+} from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsCoTranslations } from "~@jii/translation";
 import { Icon, palette } from "~design-system";
@@ -176,5 +179,5 @@ export const UsCoProgramsList = withPresenterManager({
   usePresenter,
   managerIsObserver: false,
   ManagedComponent,
-  HydratorComponent: MainContentHydrator,
+  HydratorComponent: MainContentHydratorWithErrorLogging,
 });

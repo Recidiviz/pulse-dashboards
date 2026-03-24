@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type * from "./Hydratable/types";
-export * from "./Hydratable/utils";
-export * from "./HydratesFromSource/HydratesFromSource";
-export * from "./Hydrator/Hydrator";
-export * from "./Hydrator/HydratorWithDirectHydration";
-export * from "./Hydrator/HydratorWithErrorLogging";
-export * from "./Hydrator/HydratorWithoutErrorLogging";
-export type * from "./types";
-export * from "./utils/castToError";
-export * from "./utils/unpackAggregatedErrors";
-export * from "./withPresenterManager/withPresenterManager";
+import { GenericLayout } from "../GenericLayout/GenericLayout";
+import { ErrorPageMainContent } from "./ErrorPageMainContent";
+
+export const ErrorPage = ({ error }: { error: Error }) => {
+  return (
+    <GenericLayout>
+      <ErrorPageMainContent error={error} />
+    </GenericLayout>
+  );
+};
