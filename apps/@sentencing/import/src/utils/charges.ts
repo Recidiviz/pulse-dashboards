@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import _ from "lodash";
 import { z } from "zod";
 
 import { chargeImportSchema } from "~@sentencing/import/models";
@@ -53,75 +52,96 @@ export async function transformAndLoadChargeData(
     ...new Map(allCharges.map((c) => [c.description, c])).values(),
   ];
 
-  await Promise.all(
-    uniqueOffenses.map((chargeData) =>
-      prismaClient.offense.upsert({
-        where: { name: chargeData.description },
-        create: {
-          stateCode: chargeData.state_code,
-          name: chargeData.description,
+  // Process sequentially to avoid exhausting the Prisma connection pool
+  for (const chargeData of uniqueOffenses) {
+    // eslint-disable-next-line no-await-in-loop
+    await prismaClient.offense.upsert({
+      where: { name: chargeData.description },
+      create: {
+        stateCode: chargeData.state_code,
+        name: chargeData.description,
+      },
+      update: {},
+    });
+  }
+
+  // Batch-fetch all existing charges for the relevant SARs to avoid N+1 queries
+  const existingChargesBySarAndExternalId = new Map(
+    (
+      await prismaClient.charge.findMany({
+        where: {
+          sentencingAssessmentReport: {
+            externalId: { in: [...sarExternalIds] },
+          },
         },
-        update: {},
-      }),
-    ),
+        select: {
+          id: true,
+          chargeExternalId: true,
+          sentencingAssessmentReport: { select: { externalId: true } },
+        },
+      })
+    ).map((c) => [
+      `${c.sentencingAssessmentReport.externalId}|${c.chargeExternalId}`,
+      c,
+    ]),
   );
 
-  await Promise.all(
-    allCharges.map(async (chargeData) => {
-      const sarExternalId = chargeData.case_external_id;
+  // Process sequentially to avoid exhausting the Prisma connection pool
+  for (const chargeData of allCharges) {
+    const sarExternalId = chargeData.case_external_id;
 
-      // Skip if SAR doesn't exist
-      if (!sarExternalIds.has(sarExternalId)) {
-        console.warn(`Skipping charge for SAR ${sarExternalId}: SAR not found`);
-        return;
-      }
+    // Skip if SAR doesn't exist
+    if (!sarExternalIds.has(sarExternalId)) {
+      console.warn(`Skipping charge for SAR ${sarExternalId}: SAR not found`);
+      continue;
+    }
 
-      // Find existing charge by SAR + chargeExternalId
-      // (a case can have multiple charges with the same court case number)
-      // Use the offense_external_id from source to uniquely identify the charge
-      const existingCharge = await prismaClient.charge.findFirst({
-        where: {
-          sentencingAssessmentReport: { externalId: sarExternalId },
-          chargeExternalId: chargeData.offense_external_id,
+    // Look up existing charge by SAR + chargeExternalId using pre-fetched map
+    // (a case can have multiple charges with the same court case number)
+    // Use the offense_external_id from source to uniquely identify the charge
+    const existingCharge = existingChargesBySarAndExternalId.get(
+      `${sarExternalId}|${chargeData.offense_external_id}`,
+    );
+
+    // Transform county abbreviation to full name for MO, or title case for others
+    let countyFullName: string | undefined;
+    if (chargeData.county) {
+      countyFullName =
+        chargeData.state_code === "US_MO"
+          ? getMOCountyFullName(chargeData.county)
+          : chargeData.county
+              .toLocaleLowerCase()
+              .replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+
+    const chargeFields = {
+      chargeExternalId: chargeData.offense_external_id,
+      offense: chargeData.description,
+      causeNum: chargeData.court_case_number,
+      judgeNames: chargeData.judges ?? [],
+      classificationType: chargeData.classification_type,
+      classificationSubtype: chargeData.classification_subtype,
+      division: chargeData.division,
+      county: countyFullName,
+      moCode: chargeData.charge_code,
+    };
+
+    if (existingCharge) {
+      // eslint-disable-next-line no-await-in-loop
+      await prismaClient.charge.update({
+        where: { id: existingCharge.id },
+        data: chargeFields,
+      });
+    } else {
+      // eslint-disable-next-line no-await-in-loop
+      await prismaClient.charge.create({
+        data: {
+          ...chargeFields,
+          sentencingAssessmentReport: {
+            connect: { externalId: sarExternalId },
+          },
         },
       });
-
-      // Transform county abbreviation to full name for MO, or title case for others
-      let countyFullName: string | undefined;
-      if (chargeData.county) {
-        countyFullName =
-          chargeData.state_code === "US_MO"
-            ? getMOCountyFullName(chargeData.county)
-            : _.startCase(chargeData.county.toLocaleLowerCase());
-      }
-
-      const chargeFields = {
-        chargeExternalId: chargeData.offense_external_id,
-        offense: chargeData.description,
-        causeNum: chargeData.court_case_number,
-        judgeNames: chargeData.judges ?? [],
-        classificationType: chargeData.classification_type,
-        classificationSubtype: chargeData.classification_subtype,
-        division: chargeData.division,
-        county: countyFullName,
-        moCode: chargeData.charge_code,
-      };
-
-      if (existingCharge) {
-        await prismaClient.charge.update({
-          where: { id: existingCharge.id },
-          data: chargeFields,
-        });
-      } else {
-        await prismaClient.charge.create({
-          data: {
-            ...chargeFields,
-            sentencingAssessmentReport: {
-              connect: { externalId: sarExternalId },
-            },
-          },
-        });
-      }
-    }),
-  );
+    }
+  }
 }
