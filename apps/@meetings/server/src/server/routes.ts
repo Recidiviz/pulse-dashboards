@@ -151,6 +151,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
+  app.get("/health", async (_req, reply) => {
+    return reply.status(200).send({ status: "ok" });
+  });
+
   // Add content type parser for audio files - don't parse, just flag as handled
   app.addContentTypeParser(
     [
