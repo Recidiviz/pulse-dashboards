@@ -448,7 +448,6 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       lastCafDate: "2022-08-22",
       lastCafTotal: "8",
-      isServingLife: false,
       q1Score: -3,
       q2Score: -2,
       q3Score: -1,

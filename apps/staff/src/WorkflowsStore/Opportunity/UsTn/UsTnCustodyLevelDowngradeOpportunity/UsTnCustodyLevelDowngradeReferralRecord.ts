@@ -39,7 +39,7 @@ export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
         }),
       })
       .passthrough(),
-    formInformation,
+    formInformation: formInformation.omit({ isServingLife: true }),
   })
   .transform((r) => {
     const out = cloneDeep(r);
