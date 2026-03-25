@@ -15,22 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { INTAKE_TENANT_OVERRIDES } from "./overrides";
 import type {
   IntakeConfigBase,
   IntakeTenantConfig,
-  IntakeTenantOverride,
   PreIntakeStep,
   TextIntakeConfig,
 } from "./types";
 
-export const DEFAULT_PARAGRAPHS = {
+const DEFAULT_PARAGRAPHS = {
   intro:
     "This intake is designed to help your case manager and parole officer learn more about your reentry goals, plans, and needs. This helps them understand the best ways to support you as you transition back into the community.",
   instructions:
     "Please provide honest and complete answers to make this process as effective as possible. This program will then draft a personalized reentry action plan for you. If you'd prefer to skip this digital intake and answer questions with your case manager directly, stop here and let your case manager know.",
 };
 
-export const DEFAULT_FAQ = {
+const DEFAULT_FAQ = {
   chatbot: {
     question: "Who will I be chatting with?",
     answer:
@@ -48,7 +48,7 @@ export const DEFAULT_FAQ = {
   },
 };
 
-export const DEFAULT_IMPORTANT_ITEMS = {
+const DEFAULT_IMPORTANT_ITEMS = {
   time: {
     label: "Time:",
     text: "This intake will take approximately 45 minutes to complete.",
@@ -88,23 +88,6 @@ const BASE_DEFAULTS: IntakeConfigBase = {
 export const DEFAULT_INTAKE_CONFIG: TextIntakeConfig = {
   ...BASE_DEFAULTS,
   preIntakeFlow: "text",
-};
-
-const INTAKE_TENANT_OVERRIDES: Record<string, IntakeTenantOverride> = {
-  US_UT: {
-    preIntakeFlow: "video",
-    video: {
-      src: "/videos/intake-video.mp4",
-      subtitlesSrc: "/videos/intake-subtitles.vtt",
-    },
-    docId: {
-      label: "DOC ID / Offender Number",
-      placeholder: "Enter DOC ID / Offender Number",
-    },
-  },
-  US_NE: {
-    navigation: { type: "history-back" },
-  },
 };
 
 /**

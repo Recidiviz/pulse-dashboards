@@ -85,8 +85,8 @@ describe("getIntakeTenantConfig", () => {
         throw new Error("Expected video config for US_UT");
       }
       expect(config.video).toEqual({
-        src: "/videos/intake-video.mp4",
-        subtitlesSrc: "/videos/intake-subtitles.vtt",
+        src: "/videos/us-ut-intake-video.mp4",
+        subtitlesSrc: "/videos/us-ut-intake-subtitles.vtt",
       });
     });
 
@@ -104,6 +104,60 @@ describe("getIntakeTenantConfig", () => {
       const config = getIntakeTenantConfig("US_UT");
       expect(config.noteOneCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteOneCopy);
       expect(config.noteTwoCopy).toEqual(DEFAULT_INTAKE_CONFIG.noteTwoCopy);
+    });
+  });
+
+  describe("US_NE overrides", () => {
+    it("returns text+video flow", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.preIntakeFlow).toBe("text+video");
+    });
+
+    it("returns custom video src", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      if (config.preIntakeFlow !== "text+video") {
+        throw new Error("Expected text+video config for US_NE");
+      }
+      expect(config.video.src).toBe("/videos/us-ne-intake-video.mp4");
+      expect(config.video.subtitlesSrc).toBe(
+        "/videos/us-ne-intake-subtitles.vtt",
+      );
+    });
+
+    it("returns custom preIntakeCopy", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.preIntakeCopy).toContain("institutional parole officer");
+    });
+
+    it("returns history-back navigation", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.navigation).toEqual({ type: "history-back" });
+    });
+
+    it("keeps default DOC ID label (no override)", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.docId).toEqual(DEFAULT_INTAKE_CONFIG.docId);
+    });
+
+    it("returns custom noteOneCopy with NE-specific title and paragraphs", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.noteOneCopy.title).toBe("Your 120-Day Reentry Prep");
+      expect(config.noteOneCopy.paragraphs[0]).toContain("reentry specialist");
+      expect(config.noteOneCopy.paragraphs[1]).toContain("reentry specialist");
+    });
+
+    it("returns custom noteTwoCopy with NE-specific FAQ and important items", () => {
+      const config = getIntakeTenantConfig("US_NE");
+      expect(config.noteTwoCopy.title).toBe("Before You Start");
+      expect(config.noteTwoCopy.faqItems[1].answer).toContain(
+        "not to create misconduct reports",
+      );
+      expect(config.noteTwoCopy.faqItems[2].answer).toContain(
+        "reentry specialist",
+      );
+      expect(config.noteTwoCopy.importantItems[3].text).toContain(
+        "120 day reentry meeting",
+      );
     });
   });
 });
