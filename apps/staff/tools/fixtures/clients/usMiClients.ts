@@ -34,7 +34,10 @@ export const US_MI_CLIENTS: ClientFixture[] = [
     address: "123 Bedrock Lane",
     phoneNumber: "5555555678",
     expirationDate: "2024-12-31",
-    allEligibleOpportunities: ["usMiSupervisionLevelDowngrade"],
+    allEligibleOpportunities: [
+      "usMiEarlyDischarge",
+      "usMiSupervisionLevelDowngrade",
+    ],
   },
   {
     personName: {
@@ -51,7 +54,11 @@ export const US_MI_CLIENTS: ClientFixture[] = [
     supervisionLevelStart: "2019-12-20",
     currentBalance: 221.88,
     specialConditions: [],
-    allEligibleOpportunities: ["usMiClassificationReview"],
+    expirationDate: "2026-10-15",
+    allEligibleOpportunities: [
+      "usMiEarlyDischarge",
+      "usMiClassificationReview",
+    ],
   },
   {
     personName: {
@@ -68,7 +75,11 @@ export const US_MI_CLIENTS: ClientFixture[] = [
     supervisionLevelStart: "2021-07-02",
     currentBalance: 18.34,
     specialConditions: [],
-    allEligibleOpportunities: ["usMiClassificationReview"],
+    expirationDate: "2028-11-10",
+    allEligibleOpportunities: [
+      "usMiEarlyDischarge",
+      "usMiClassificationReview",
+    ],
   },
   {
     personName: {
@@ -85,6 +96,7 @@ export const US_MI_CLIENTS: ClientFixture[] = [
     supervisionLevelStart: "2019-12-20",
     currentBalance: 221.88,
     specialConditions: [],
+    expirationDate: "2029-12-30",
     allEligibleOpportunities: ["usMiEarlyDischarge"],
   },
   {
@@ -102,6 +114,8 @@ export const US_MI_CLIENTS: ClientFixture[] = [
     supervisionLevelStart: "2019-12-20",
     currentBalance: 221.88,
     specialConditions: [],
+    expirationDate: "2027-12-30",
+
     allEligibleOpportunities: ["usMiEarlyDischarge"],
   },
   {
@@ -119,6 +133,69 @@ export const US_MI_CLIENTS: ClientFixture[] = [
     supervisionLevelStart: "2019-12-20",
     currentBalance: 221.88,
     specialConditions: [],
-    allEligibleOpportunities: ["usMiMinimumTelephoneReporting", "usMiPastFTRD"],
+    expirationDate: "2030-12-30",
+
+    allEligibleOpportunities: [
+      "usMiEarlyDischarge",
+      "usMiMinimumTelephoneReporting",
+      "usMiPastFTRD",
+    ],
+  },
+  {
+    personName: {
+      givenNames: "Daniel",
+      surname: "Cartman",
+    },
+    personExternalId: "ed-eligible-3",
+    displayId: "ded-eligible-3",
+    pseudonymizedId: "pseudo-ed-eligible-3",
+    stateCode: "US_MI",
+    officerId: "OFFICER8",
+    supervisionType: "PROBATION",
+    supervisionLevel: "HIGH",
+    supervisionLevelStart: "2023-12-20",
+    currentBalance: 200,
+    specialConditions: [],
+    expirationDate: "2026-12-30",
+
+    allEligibleOpportunities: ["usMiEarlyDischarge"],
+  },
+  {
+    personName: {
+      givenNames: "Ella",
+      surname: "Carmichael",
+    },
+    personExternalId: "ed-eligible-4",
+    displayId: "ded-eligible-4",
+    pseudonymizedId: "pseudo-ed-eligible-4",
+    stateCode: "US_MI",
+    officerId: "OFFICER8",
+    supervisionType: "PROBATION",
+    supervisionLevel: "HIGH",
+    supervisionLevelStart: "2019-10-20",
+    currentBalance: 100,
+    specialConditions: [],
+    expirationDate: "2029-10-30",
+
+    allEligibleOpportunities: ["usMiEarlyDischarge"],
+  },
+  {
+    personName: {
+      givenNames: "Sam",
+      surname: "Miller",
+    },
+    personExternalId: "ed-eligible-5",
+    displayId: "ded-eligible-5",
+    pseudonymizedId: "pseudo-ed-eligible-5",
+    stateCode: "US_MI",
+    officerId: "OFFICER8",
+    supervisionType: "PROBATION",
+    supervisionLevel: "HIGH",
+    supervisionLevelStart: "2019-12-20",
+    currentBalance: 150,
+    expirationDate: "2027-12-30",
+
+    specialConditions: [],
+    allEligibleOpportunities: ["usMiEarlyDischarge"],
   },
 ];
