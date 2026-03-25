@@ -14,9 +14,10 @@
   "infoPage": {
     "tocHeading": "[common]infoPage.tocHeading"
   },
-  "dateDistance": {
-    "distanceFromTodayNow": "[common]dateDistance.distanceFromTodayNow",
-    "distanceFromTodayPast": "[common]dateDistance.distanceFromTodayPast",
-    "distanceFromTodayFuture": "[common]dateDistance.distanceFromTodayFuture"
-  }
+  "dateDistanceFromToday": {
+    "now": "[common]dateDistanceFromToday.now",
+    "past": "[common]dateDistanceFromToday.past",
+    "future": "[common]dateDistanceFromToday.future"
+  },
+  "lastUpdated": "[common]lastUpdated"
 }

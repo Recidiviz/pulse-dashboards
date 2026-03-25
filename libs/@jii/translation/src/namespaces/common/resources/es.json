@@ -13,5 +13,6 @@
   "skipLink": "Saltar al contenido principal",
   "infoPage": {
     "tocHeading": "En esta página"
-  }
+  },
+  "lastUpdated": "Esta información se actualizó por última vez en {{lastUpdatedDate, formatFullDate}}."
 }

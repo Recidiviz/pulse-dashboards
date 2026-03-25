@@ -21,6 +21,8 @@ import aboutInfoPage from "./aboutInfoPage.md?raw";
 import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 
 export default {
+  lastUpdated:
+    "This information was last updated on {{lastUpdatedDate, formatFullDate}}. Most monthly updates will appear here by the 13th.",
   importantDates: {
     sectionHeading: "Important Dates",
     releaseEligibilityDate: {

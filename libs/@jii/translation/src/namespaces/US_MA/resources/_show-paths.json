@@ -3,7 +3,7 @@
     "rts": "[US_MA]tags.rts",
     "maxRelease": "[US_MA]tags.maxRelease"
   },
-  "lastUpdated": "[US_MA]lastUpdated",
+  "lastUpdatedAddendum": "[US_MA]lastUpdatedAddendum",
   "creditRatings": {
     "S": "[US_MA]creditRatings.S",
     "I": "[US_MA]creditRatings.I",

@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../../../utils/zod";
+import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
 export const usNeCreditActivitySchema = z.object({
   creditDate: dateStringSchema,
@@ -40,7 +40,7 @@ export const usNeResidentMetadataSchema = z.object({
   mandatoryMinimumDate: dateStringSchema.nullable(),
   paroleEligibilityDate: dateStringSchema.nullable(),
   tentativeReleaseDate: dateStringSchema.nullable(),
-  sentenceLastModifiedDate: dateStringSchema.nullable(),
+  sentenceLastModifiedDate: nullishAsUndefined(dateStringSchema),
   sentenceInfoIsCurrent: z.boolean().nullable(),
 
   // Jail / dead time

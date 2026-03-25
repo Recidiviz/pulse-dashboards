@@ -1,7 +1,6 @@
 {
-  "lastUpdated": "[US_AZ]lastUpdated",
   "goLink": "[US_AZ]goLink",
-  "noDate": "[US_AZ]noDate",
+  "lastUpdatedNoDate": "[US_AZ]lastUpdatedNoDate",
   "fromToday": "[US_AZ]fromToday",
   "importantDates": {
     "sectionHeader": "[US_AZ]importantDates.sectionHeader",

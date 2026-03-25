@@ -17,27 +17,19 @@
 
 import { observer } from "mobx-react-lite";
 
-import { useSingleResidentContext } from "~@jii/data";
-import { FullWidthBanner } from "~@jii/layout";
-import { useUsAzTranslations } from "~@jii/translation";
+import { useResidentMetadata } from "~@jii/data";
+import { LastUpdatedBanner } from "~@jii/layout";
+import { useUsTnTranslations } from "~@jii/translation";
 
-export const LastUpdatedBanner = observer(function LastUpdatedBanner() {
-  const { t } = useUsAzTranslations();
-  const {
-    resident: { metadata },
-  } = useSingleResidentContext();
-
-  if (metadata.stateCode !== "US_AZ") return null;
-
-  const { lastUpdatedDate } = metadata;
+export const UsTnLastUpdatedBanner = observer(function UsTnLastUpdatedBanner() {
+  const { fileUpdateDate } = useResidentMetadata("US_TN");
+  const { t } = useUsTnTranslations();
 
   return (
-    <FullWidthBanner>
-      {lastUpdatedDate
-        ? t(($) => $.lastUpdated, {
-            lastUpdatedDate,
-          })
-        : t(($) => $.lastUpdatedNoDate)}
-    </FullWidthBanner>
+    <LastUpdatedBanner
+      overrideCopy={t(($) => $.lastUpdated, {
+        lastUpdatedDate: fileUpdateDate,
+      })}
+    />
   );
 });

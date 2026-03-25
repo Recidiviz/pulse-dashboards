@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { usePageTitle } from "~@jii/common-ui";
-import { FullWidthBanner } from "~@jii/layout";
+import { LastUpdatedBanner } from "~@jii/layout";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
@@ -40,7 +40,7 @@ export const Homepage = observer(function Homepage() {
 
   return (
     <div>
-      <FullWidthBanner>{t(($) => $.lastUpdated, data)}</FullWidthBanner>
+      <LastUpdatedBanner overrideCopy={t(($) => $.lastUpdated, data)} />
       {data.isEgtDisabled ? (
         <>
           <EmptyState />

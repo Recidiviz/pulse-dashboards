@@ -18,5 +18,6 @@
     "now": "Today",
     "past": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} ago",
     "future": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} from today"
-  }
+  },
+  "lastUpdated": "This information was last updated on {{lastUpdatedDate, formatFullDate}}."
 }

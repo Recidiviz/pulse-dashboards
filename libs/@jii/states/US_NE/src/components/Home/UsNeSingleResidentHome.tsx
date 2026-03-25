@@ -36,7 +36,9 @@ const UsNeSingleResidentHome = () => {
 
   return (
     <>
-      <UsNeHomeHeader />
+      <UsNeHomeHeader
+        sentenceLastModifiedDate={metadata.sentenceLastModifiedDate}
+      />
       <UsNeTodos />
       <UsNeDateCardGroup />
       <UsNeGoodTimeCardGroup />

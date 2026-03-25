@@ -82,8 +82,8 @@ export class UsCoProgramsPresenter implements Hydratable {
 
   // Computed properties
 
-  get lastUpdatedDate(): Date | null {
-    if (!this.programs || this.programs.length === 0) return null;
+  get lastUpdatedDate(): Date | undefined {
+    if (!this.programs || this.programs.length === 0) return;
 
     return max([
       parseISO("2026-02-02"), // Initial data load date

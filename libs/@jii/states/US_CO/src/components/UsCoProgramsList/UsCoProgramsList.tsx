@@ -30,7 +30,7 @@ import {
 } from "~@jii/common-ui";
 import { useRootStore, useSingleResidentContext } from "~@jii/data";
 import {
-  FullWidthBanner,
+  LastUpdatedBanner,
   MainContentHydratorWithErrorLogging,
 } from "~@jii/layout";
 import { State } from "~@jii/paths";
@@ -102,11 +102,11 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
 
     return (
       <PageContainer>
-        <FullWidthBanner>
-          {t(($) => $.programs.lastUpdated, {
+        <LastUpdatedBanner
+          overrideCopy={t(($) => $.programs.lastUpdated, {
             date: presenter.lastUpdatedDate,
           })}
-        </FullWidthBanner>
+        />
 
         <Header>
           <HomepageSectionHeading>

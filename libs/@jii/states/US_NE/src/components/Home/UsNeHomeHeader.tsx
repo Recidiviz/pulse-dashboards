@@ -21,7 +21,7 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
 import { useResidentMetadata } from "~@jii/data";
-import { FullWidthBanner } from "~@jii/layout";
+import { LastUpdatedBanner } from "~@jii/layout";
 import { useUsNeTranslations } from "~@jii/translation";
 import type { UsNeResidentMetadata } from "~datatypes";
 import { palette } from "~design-system";
@@ -56,7 +56,11 @@ const SubtitleLabel = styled(Sans14)`
   margin-right: 4px;
 `;
 
-const UsNeHomeHeader = observer(function UsNeHomeHeader() {
+const UsNeHomeHeader = observer(function UsNeHomeHeader({
+  sentenceLastModifiedDate,
+}: {
+  sentenceLastModifiedDate: Date;
+}) {
   const metadata = useResidentMetadata("US_NE");
   const { t } = useUsNeTranslations();
 
@@ -66,11 +70,9 @@ const UsNeHomeHeader = observer(function UsNeHomeHeader() {
 
   return (
     <>
-      <FullWidthBanner>
-        {t(($) => $.lastUpdated, {
-          sentenceLastModifiedDate: metadata.sentenceLastModifiedDate,
-        })}
-      </FullWidthBanner>
+      <LastUpdatedBanner
+        overrideCopy={t(($) => $.lastUpdated, { sentenceLastModifiedDate })}
+      />
       <header>
         <Header34 as="h1">{t(($) => $.home.pageTitle)}</Header34>
         <HeaderFieldsContainer>

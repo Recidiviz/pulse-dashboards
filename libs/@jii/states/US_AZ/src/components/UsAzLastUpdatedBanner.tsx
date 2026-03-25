@@ -17,22 +17,18 @@
 
 import { observer } from "mobx-react-lite";
 
-import { formatFullDate, useSingleResidentContext } from "~@jii/data";
-import { FullWidthBanner } from "~@jii/layout";
+import { useResidentMetadata } from "~@jii/data";
+import { LastUpdatedBanner } from "~@jii/layout";
+import { useUsAzTranslations } from "~@jii/translation";
 
-export const LastUpdatedBanner = observer(function LastUpdatedBanner() {
-  const {
-    resident: { metadata },
-  } = useSingleResidentContext();
-
-  if (metadata.stateCode !== "US_TN") return null;
-
-  const updatedAt = formatFullDate(metadata.fileUpdateDate);
+export const UsAzLastUpdatedBanner = observer(function UsAzLastUpdatedBanner() {
+  const { lastUpdatedDate } = useResidentMetadata("US_AZ");
+  const { t } = useUsAzTranslations();
 
   return (
-    <FullWidthBanner>
-      This information was last updated on {updatedAt}. Most monthly updates
-      will appear here by the 13th.
-    </FullWidthBanner>
+    <LastUpdatedBanner
+      lastUpdatedDate={lastUpdatedDate}
+      noDateCopy={t(($) => $.lastUpdatedNoDate)}
+    />
   );
 });

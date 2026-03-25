@@ -25,14 +25,14 @@ import {
   PageContainer,
   STICKY_HEADER_ZINDEX,
 } from "~@jii/common-ui";
+import { stickyHeader } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";
-import { stickyHeaderStyles } from "~@jii/layout";
 import { palette } from "~design-system";
 
 const ProgressContainer = styled.div<{
   $hideHeader: boolean;
 }>`
-  ${stickyHeaderStyles}
+  ${stickyHeader}
   z-index: ${STICKY_HEADER_ZINDEX + 1};
   top: ${({ $hideHeader }) => rem($hideHeader ? 0 : HIDDEN_HEADER_OFFSET)};
 

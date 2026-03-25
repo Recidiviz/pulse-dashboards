@@ -28,8 +28,6 @@ export default {
   backToHomePageLinkText: "Back to Home",
   moreInfoPageLinksHeading: "More Information",
   backToTopLinkText: "Back to top",
-  lastUpdated:
-    "This information was last updated on {{lastUpdatedDate, formatFullDate}}.",
   lastUpdatedNoDate: "This information updates once per month.",
   goLink: "Learn more about {{label}}",
   goLinkFull: "Read into full list of release types",
