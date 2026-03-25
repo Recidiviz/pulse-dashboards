@@ -147,7 +147,8 @@
       "~staff-shared-server": ["libs/staff-shared-server/src/index.ts"],
       "~twilio-api": ["libs/twilio-api/src/index.ts"],
       "~ui": ["libs/ui/src/index.ts"],
-      "~utils": ["libs/utils/src/index.ts"]
+      "~utils": ["libs/utils/src/index.ts"],
+      "~utils/*": ["libs/utils/src/*"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",
