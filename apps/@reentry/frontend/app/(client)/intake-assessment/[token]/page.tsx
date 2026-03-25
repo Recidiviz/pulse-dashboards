@@ -58,7 +58,7 @@ export default function Intake({ params }: { params: { token: string } }) {
   }
 
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
+    <div style={{ width: "100%", height: "100dvh" }}>
       <IntakeSocketProvider>
         <IntakeRouter />
       </IntakeSocketProvider>

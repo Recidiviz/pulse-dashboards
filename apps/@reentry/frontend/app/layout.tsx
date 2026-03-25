@@ -19,7 +19,7 @@ import "./globals.css";
 
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 
@@ -46,6 +46,12 @@ const publicSans = localFont({
   weight: "400 700",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
+};
+
 export const metadata: Metadata = {
   title: "Recidiviz",
   description: "Recidiviz app",
@@ -65,7 +71,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${publicSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
+        className={`${publicSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased h-dvh`}
       >
         <QueryProvider>
           <AppRouterCacheProvider>

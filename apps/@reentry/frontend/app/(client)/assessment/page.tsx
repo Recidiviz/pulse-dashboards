@@ -60,7 +60,7 @@ export default function Intake() {
   }
 
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
+    <div style={{ width: "100%", height: "100dvh" }}>
       <IntakeSocketProvider>
         <IntakeRouter />
       </IntakeSocketProvider>

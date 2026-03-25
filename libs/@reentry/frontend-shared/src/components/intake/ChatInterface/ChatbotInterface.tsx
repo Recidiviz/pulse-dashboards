@@ -19,8 +19,8 @@
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
 
+import { useAutoScroll } from "../../../hooks/useAutoScroll";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import ChatInput from "./ChatInput";
 import { ChatMessageBubble } from "./ChatMessageBubble";
@@ -35,42 +35,20 @@ export const ChatbotInterface: React.FC = () => {
     },
   } = useSocket();
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [showScrollButton, setShowScrollButton] = useState(false);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // Check if user is at the bottom of the scroll container
-  const checkIfAtBottom = () => {
-    const container = scrollContainerRef.current;
-    if (!container) return true;
-
-    const threshold = 50; // pixels from bottom to consider "at bottom"
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight <
-      threshold;
-
-    setShowScrollButton(!isAtBottom);
-    return isAtBottom;
-  };
-
-  // Scroll to bottom when new messages arrive (only if already at bottom)
-  useEffect(() => {
-    const isAtBottom = checkIfAtBottom();
-    if (isAtBottom) {
-      scrollToBottom();
-    }
-  }, [messages]);
+  const {
+    scrollContainerRef,
+    messagesEndRef,
+    showScrollButton,
+    scrollToBottom,
+    onScroll,
+  } = useAutoScroll([messages, waitingForAIInput]);
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col h-full px-4 sm:px-6">
       {/* Messages */}
       <div
         ref={scrollContainerRef}
-        onScroll={checkIfAtBottom}
+        onScroll={onScroll}
         className="flex-1 overflow-y-auto no-scrollbar pt-10 sm:pt-12"
       >
         <div className="flex flex-col gap-4 sm:gap-6">
@@ -98,7 +76,6 @@ export const ChatbotInterface: React.FC = () => {
 
       {/* Input */}
       <div className="shrink-0 md:pb-6 xs:pb-0 relative">
-        {/* Scroll to bottom button */}
         {showScrollButton && (
           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2">
             <button
