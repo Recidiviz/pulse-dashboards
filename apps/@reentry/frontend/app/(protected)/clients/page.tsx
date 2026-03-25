@@ -99,9 +99,9 @@ const ClientsPage = () => {
   const [sortConfig, setSortConfig] = useState<{
     sortBy: components["schemas"]["ClientSort"];
     sortOrder: string;
-  }>({ sortBy: "name", sortOrder: "asc" });
+  } | null>(null);
 
-  const { sortBy, sortOrder } = sortConfig;
+  const { sortBy, sortOrder } = sortConfig ?? {};
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
   const { isZeroCaseloadUser } = useAuthUserCapabilities();
@@ -127,8 +127,8 @@ const ClientsPage = () => {
           page: page,
           size: rowsPerPage,
           ...(activeSearchTerm && { search: activeSearchTerm }),
-          ...(sortBy && { sort_by: sortBy }),
-          ...(sortOrder && { sort_order: sortOrder }),
+          ...(sortConfig && sortBy && { sort_by: sortBy }),
+          ...(sortConfig && sortOrder && { sort_order: sortOrder }),
           ...(statusFilter && { status_filter: statusFilter }),
         },
       },
@@ -195,7 +195,7 @@ const ClientsPage = () => {
       if (apiSortBy === sortBy) {
         newSortOrder = sortOrder === "asc" ? "desc" : "asc";
       }
-      setSortConfig({ sortBy: apiSortBy, sortOrder: newSortOrder });
+      setSortConfig({ sortBy: apiSortBy, sortOrder: newSortOrder ?? "asc" });
     }
   };
 
