@@ -175,11 +175,18 @@ const IntakeManagementPage = () => {
     messageDiv.className = "mb-3";
     const isClient = message.from_role === "client";
     const senderLabel = isClient ? "Client" : "Chatbot";
-    messageDiv.innerHTML = `
-            <div class="text-gray-900 pl-[20px]">
-                <span class="font-bold">${senderLabel}:</span> ${message.content}
-            </div>
-        `;
+
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "text-gray-900 pl-[20px]";
+
+    const senderSpan = document.createElement("span");
+    senderSpan.className = "font-bold";
+    senderSpan.textContent = `${senderLabel}: `;
+
+    contentDiv.appendChild(senderSpan);
+    contentDiv.appendChild(document.createTextNode(message.content ?? ""));
+
+    messageDiv.appendChild(contentDiv);
     return messageDiv;
   };
 
@@ -191,11 +198,16 @@ const IntakeManagementPage = () => {
     messagesDiv.className = "section-messages mt-4";
 
     if (section.status === "not_started") {
-      messagesDiv.innerHTML =
-        '<div class="text-gray-500 my-4 pl-[20px]">This section has not been started by the client.</div>';
+      const notStartedDiv = document.createElement("div");
+      notStartedDiv.className = "text-gray-500 my-4 pl-[20px]";
+      notStartedDiv.textContent =
+        "This section has not been started by the client.";
+      messagesDiv.appendChild(notStartedDiv);
     } else if (messages.length === 0) {
-      messagesDiv.innerHTML =
-        '<div class="text-gray-500 my-4 pl-[20px]">No messages in this section</div>';
+      const noMessagesDiv = document.createElement("div");
+      noMessagesDiv.className = "text-gray-500 my-4 pl-[20px]";
+      noMessagesDiv.textContent = "No messages in this section";
+      messagesDiv.appendChild(noMessagesDiv);
     } else {
       messages.forEach((message) => {
         messagesDiv.appendChild(createMessageElement(message));
@@ -214,20 +226,29 @@ const IntakeManagementPage = () => {
     const sectionHeader = document.createElement("div");
     sectionHeader.className =
       "section-header flex flex-col items-center pb-4 border-b mb-4 justify-left text-left";
-    sectionHeader.innerHTML = `
-            ${
-              index === 0
-                ? `
-                    <h1 style="text-align: left; width: 100%;"> Intake Chat History, ${clientFullName} </h1>
-                    <h1 style="text-align: left; width: 100%;"> Date completed: ${dateCompleted} </h1>
-                    <br/>
-                `
-                : ""
-            }
-            <h2 class="text-lg font-medium text-[#003331]" style="text-align: left; width: 100%;">
-                Section name: ${section.title}
-            </h2>
-        `;
+    if (index === 0) {
+      const h1Name = document.createElement("h1");
+      h1Name.style.textAlign = "left";
+      h1Name.style.width = "100%";
+      h1Name.textContent = ` Intake Chat History, ${clientFullName} `;
+      sectionHeader.appendChild(h1Name);
+
+      const h1Date = document.createElement("h1");
+      h1Date.style.textAlign = "left";
+      h1Date.style.width = "100%";
+      h1Date.textContent = ` Date completed: ${dateCompleted} `;
+      sectionHeader.appendChild(h1Date);
+
+      sectionHeader.appendChild(document.createElement("br"));
+    }
+
+    const h2 = document.createElement("h2");
+    h2.className = "text-lg font-medium text-[#003331]";
+    h2.style.textAlign = "left";
+    h2.style.width = "100%";
+    h2.textContent = `Section name: ${section.title}`;
+    sectionHeader.appendChild(h2);
+
     return sectionHeader;
   };
 
