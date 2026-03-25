@@ -157,7 +157,7 @@ export async function userDataDownload(req, res) {
 
     let headers = Object.keys(jsonArray[0]);
 
-    const clientUpdatesV2 = await fetchClientUpdatesV2(stateCode.toLowerCase());
+    const clientUpdatesV2 = await fetchClientUpdatesV2(stateCode.toUpperCase());
     const mergedUserData = mergeUserDataWithClientUpdates(
       jsonArray,
       clientUpdatesV2,

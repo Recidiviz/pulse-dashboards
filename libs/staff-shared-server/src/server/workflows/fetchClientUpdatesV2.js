@@ -36,30 +36,29 @@ export async function fetchClientUpdatesV2(stateCode) {
   );
   const denialSnapshot = await clientOpportunityUpdatesRef
     .where("denial", "!=", null)
+    .where("stateCode", "==", stateCode)
     .get();
   const submittedSnapshot = await clientOpportunityUpdatesRef
     .where("submitted", "!=", null)
+    .where("stateCode", "==", stateCode)
     .get();
   const results = {};
   [denialSnapshot, submittedSnapshot].forEach((snapshot) => {
     snapshot.forEach((doc) => {
-      // Only grab update docs for us_tx
-      if (doc.ref.path.includes(stateCode)) {
-        const docPathSplit = doc.ref.path.split("/");
-        const externalId = docPathSplit[1].split("_")[2];
-        const oppString = docPathSplit[3];
+      const docPathSplit = doc.ref.path.split("/");
+      const externalId = docPathSplit[1].split("_")[2];
+      const oppString = docPathSplit[3];
 
-        const { denial, submitted } = doc.data();
-        const opportunityStatuses = {
-          denial: Boolean(denial),
-          submitted: Boolean(submitted),
-        };
+      const { denial, submitted } = doc.data();
+      const opportunityStatuses = {
+        denial: Boolean(denial),
+        submitted: Boolean(submitted),
+      };
 
-        if (!results[externalId]) {
-          results[externalId] = {};
-        }
-        results[externalId][oppString] = opportunityStatuses;
+      if (!results[externalId]) {
+        results[externalId] = {};
       }
+      results[externalId][oppString] = opportunityStatuses;
     });
   });
 
