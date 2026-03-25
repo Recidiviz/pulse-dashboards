@@ -18,9 +18,10 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { Card, GoButton } from "~@jii/common-ui";
+import { Card, CopyWrapper, GoButton } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsNcTranslations } from "~@jii/translation";
 import { palette, spacing } from "~design-system";
 
 import { RNADescription, RNAHeading } from "../styles";
@@ -41,21 +42,25 @@ function IdentityPart({ label, value }: { label: string; value: string }) {
 
 export function UsNcRNAConfirmIdentity() {
   const { resident } = useSingleResidentContext();
+  const { t } = useUsNcTranslations();
+  const { heading, nameLabel, idLabel, description, button } = t(
+    ($) => $.rna.confirmIdentity,
+    { returnObjects: true },
+  );
 
   return (
     <Card>
-      <RNAHeading>Is this you?</RNAHeading>
+      <RNAHeading>{heading}</RNAHeading>
+
       <RNADescription>
         <IdentityPart
-          label="Name"
+          label={nameLabel}
           value={`${resident.personName.givenNames} ${resident.personName.surname}`}
         />
-        <IdentityPart label="ID Number" value={resident.displayId} />
-        <p>
-          If this is you, please tap the button to continue to your Self-Report.
-        </p>
-        <p>If this is not you, please talk to a staff member.</p>
+        <IdentityPart label={idLabel} value={resident.displayId} />
+        <CopyWrapper>{description}</CopyWrapper>
       </RNADescription>
+
       <GoButton
         to={
           "../" +
@@ -64,7 +69,7 @@ export function UsNcRNAConfirmIdentity() {
           })
         }
       >
-        Yes, this is me
+        {button}
       </GoButton>
     </Card>
   );

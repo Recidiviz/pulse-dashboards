@@ -15,26 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card } from "~@jii/common-ui";
-import { useUsNcTranslations } from "~@jii/translation";
+import { useTranslation } from "react-i18next";
 
-import { RNADescription, RNAHeading } from "../styles";
+import { TranslationsObject } from "../../utils/types";
+
+export function useUsNcTranslations() {
+  return useTranslation("US_NC");
+}
 
 /**
- * Landing page when the case manager has not enabled the form for a user,
- * or we aren't sure how to identify a user.
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_NC namespace
  */
-export function UsNcRNANotEnabled() {
-  const { t } = useUsNcTranslations();
+export type UsNcTranslationsObject = TranslationsObject<"US_NC">;
 
-  const { heading, description } = t(($) => $.rna.landing.notEnabled, {
-    returnObjects: true,
-  });
-
-  return (
-    <Card>
-      <RNAHeading>{heading}</RNAHeading>
-      <RNADescription>{description}</RNADescription>
-    </Card>
-  );
-}
+export type UsNcTFunction = ReturnType<typeof useUsNcTranslations>["t"];

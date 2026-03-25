@@ -1,0 +1,367 @@
+{
+  "pageTitle": {
+    "home": "[US_NC]pageTitle.home",
+    "rna": "[US_NC]pageTitle.rna"
+  },
+  "rna": {
+    "landing": {
+      "notEnabled": {
+        "heading": "[US_NC]rna.landing.notEnabled.heading",
+        "description": "[US_NC]rna.landing.notEnabled.description"
+      },
+      "notStarted": {
+        "heading": "[US_NC]rna.landing.notStarted.heading",
+        "description": "[US_NC]rna.landing.notStarted.description",
+        "button": "[US_NC]rna.landing.notStarted.button"
+      },
+      "resumeForm": {
+        "heading": "[US_NC]rna.landing.resumeForm.heading",
+        "description": "[US_NC]rna.landing.resumeForm.description",
+        "button": "[US_NC]rna.landing.resumeForm.button"
+      },
+      "submitted": {
+        "heading": "[US_NC]rna.landing.submitted.heading",
+        "description": "[US_NC]rna.landing.submitted.description"
+      }
+    },
+    "confirmIdentity": {
+      "heading": "[US_NC]rna.confirmIdentity.heading",
+      "nameLabel": "[US_NC]rna.confirmIdentity.nameLabel",
+      "idLabel": "[US_NC]rna.confirmIdentity.idLabel",
+      "description": "[US_NC]rna.confirmIdentity.description",
+      "button": "[US_NC]rna.confirmIdentity.button"
+    },
+    "page": {
+      "progressBar": {
+        "sectionLabel": "[US_NC]rna.page.progressBar.sectionLabel",
+        "amountComplete": "[US_NC]rna.page.progressBar.amountComplete"
+      },
+      "invalidAnswer": "[US_NC]rna.page.invalidAnswer",
+      "answerAllQuestions": "[US_NC]rna.page.answerAllQuestions",
+      "saving": "[US_NC]rna.page.saving",
+      "savingError": "[US_NC]rna.page.savingError",
+      "goBackModal": {
+        "title": "[US_NC]rna.page.goBackModal.title",
+        "message": "[US_NC]rna.page.goBackModal.message",
+        "cancelButtonText": "[US_NC]rna.page.goBackModal.cancelButtonText",
+        "confirmButtonText": "[US_NC]rna.page.goBackModal.confirmButtonText"
+      },
+      "confirmSubmissionModal": {
+        "title": "[US_NC]rna.page.confirmSubmissionModal.title",
+        "message": "[US_NC]rna.page.confirmSubmissionModal.message",
+        "cancelButtonText": "[US_NC]rna.page.confirmSubmissionModal.cancelButtonText",
+        "confirmButtonText": "[US_NC]rna.page.confirmSubmissionModal.confirmButtonText"
+      },
+      "navButtons": {
+        "previous": "[US_NC]rna.page.navButtons.previous",
+        "next": "[US_NC]rna.page.navButtons.next",
+        "submit": "[US_NC]rna.page.navButtons.submit"
+      }
+    },
+    "radioAnswerCopy": {
+      "FREQUENCY": {
+        "NEVER": "[US_NC]rna.radioAnswerCopy.FREQUENCY.NEVER",
+        "RARELY": "[US_NC]rna.radioAnswerCopy.FREQUENCY.RARELY",
+        "SOMETIMES": "[US_NC]rna.radioAnswerCopy.FREQUENCY.SOMETIMES",
+        "USUALLY": "[US_NC]rna.radioAnswerCopy.FREQUENCY.USUALLY",
+        "ALWAYS": "[US_NC]rna.radioAnswerCopy.FREQUENCY.ALWAYS"
+      },
+      "DAYS_PER_WEEK_RADIO": {
+        "ZERO": "[US_NC]rna.radioAnswerCopy.DAYS_PER_WEEK_RADIO.ZERO",
+        "ONE_TO_TWO": "[US_NC]rna.radioAnswerCopy.DAYS_PER_WEEK_RADIO.ONE_TO_TWO",
+        "THREE_TO_FIVE": "[US_NC]rna.radioAnswerCopy.DAYS_PER_WEEK_RADIO.THREE_TO_FIVE",
+        "SIX_TO_SEVEN": "[US_NC]rna.radioAnswerCopy.DAYS_PER_WEEK_RADIO.SIX_TO_SEVEN"
+      },
+      "YES_NO": {
+        "YES": "[US_NC]rna.radioAnswerCopy.YES_NO.YES",
+        "NO": "[US_NC]rna.radioAnswerCopy.YES_NO.NO"
+      },
+      "RATIO": {
+        "NONE": "[US_NC]rna.radioAnswerCopy.RATIO.NONE",
+        "SOME": "[US_NC]rna.radioAnswerCopy.RATIO.SOME",
+        "MOST": "[US_NC]rna.radioAnswerCopy.RATIO.MOST",
+        "ALL": "[US_NC]rna.radioAnswerCopy.RATIO.ALL"
+      }
+    },
+    "sobrietyAnswerCopy": {
+      "SOBER": "[US_NC]rna.sobrietyAnswerCopy.SOBER",
+      "JUST_ALCOHOL": "[US_NC]rna.sobrietyAnswerCopy.JUST_ALCOHOL",
+      "JUST_DRUGS": "[US_NC]rna.sobrietyAnswerCopy.JUST_DRUGS",
+      "BOTH": "[US_NC]rna.sobrietyAnswerCopy.BOTH"
+    },
+    "lifeAreasQuestionCopy": {
+      "isThisAProblem": "[US_NC]rna.lifeAreasQuestionCopy.isThisAProblem",
+      "customLifeAreaPrompt": "[US_NC]rna.lifeAreasQuestionCopy.customLifeAreaPrompt",
+      "interestedInImproving": "[US_NC]rna.lifeAreasQuestionCopy.interestedInImproving",
+      "improvement": "[US_NC]rna.lifeAreasQuestionCopy.improvement",
+      "improvementPlaceholder": "[US_NC]rna.lifeAreasQuestionCopy.improvementPlaceholder"
+    },
+    "pageCopy": {
+      "sectionBasicNeeds": {
+        "heading": "[US_NC]rna.pageCopy.sectionBasicNeeds.heading",
+        "description": "[US_NC]rna.pageCopy.sectionBasicNeeds.description"
+      },
+      "sectionAlcoholDrugs": {
+        "heading": "[US_NC]rna.pageCopy.sectionAlcoholDrugs.heading",
+        "description": "[US_NC]rna.pageCopy.sectionAlcoholDrugs.description"
+      },
+      "sectionAlcoholDrugs2": {
+        "heading": "[US_NC]rna.pageCopy.sectionAlcoholDrugs2.heading",
+        "description": "[US_NC]rna.pageCopy.sectionAlcoholDrugs2.description"
+      },
+      "sectionChildhoodTrouble": {
+        "heading": "[US_NC]rna.pageCopy.sectionChildhoodTrouble.heading",
+        "description": "[US_NC]rna.pageCopy.sectionChildhoodTrouble.description"
+      },
+      "sectionFamilyGrowingUp": {
+        "heading": "[US_NC]rna.pageCopy.sectionFamilyGrowingUp.heading",
+        "description": "[US_NC]rna.pageCopy.sectionFamilyGrowingUp.description"
+      },
+      "sectionFamilyNow": {
+        "heading": "[US_NC]rna.pageCopy.sectionFamilyNow.heading",
+        "description": "[US_NC]rna.pageCopy.sectionFamilyNow.description"
+      },
+      "sectionBehavior": {
+        "heading": "[US_NC]rna.pageCopy.sectionBehavior.heading",
+        "description": "[US_NC]rna.pageCopy.sectionBehavior.description"
+      },
+      "sectionBehavior2": {
+        "heading": "[US_NC]rna.pageCopy.sectionBehavior2.heading",
+        "description": "[US_NC]rna.pageCopy.sectionBehavior2.description"
+      },
+      "sectionBehavior3": {
+        "heading": "[US_NC]rna.pageCopy.sectionBehavior3.heading",
+        "description": "[US_NC]rna.pageCopy.sectionBehavior3.description"
+      },
+      "sectionFriends": {
+        "heading": "[US_NC]rna.pageCopy.sectionFriends.heading",
+        "description": "[US_NC]rna.pageCopy.sectionFriends.description"
+      },
+      "sectionLifeAreas": {
+        "heading": "[US_NC]rna.pageCopy.sectionLifeAreas.heading",
+        "description": "[US_NC]rna.pageCopy.sectionLifeAreas.description"
+      }
+    },
+    "questionCopy": {
+      "needsWorkSchoolSatisfied": {
+        "question": "[US_NC]rna.questionCopy.needsWorkSchoolSatisfied.question"
+      },
+      "needsHasJobSkills": {
+        "question": "[US_NC]rna.questionCopy.needsHasJobSkills.question"
+      },
+      "needsImproveJobSchool": {
+        "question": "[US_NC]rna.questionCopy.needsImproveJobSchool.question"
+      },
+      "needsRanOutOfMoney": {
+        "question": "[US_NC]rna.questionCopy.needsRanOutOfMoney.question"
+      },
+      "needsStruggledWithBills": {
+        "question": "[US_NC]rna.questionCopy.needsStruggledWithBills.question"
+      },
+      "needsReliedOnOthersForMoney": {
+        "question": "[US_NC]rna.questionCopy.needsReliedOnOthersForMoney.question"
+      },
+      "needsHasPermanentHousing": {
+        "question": "[US_NC]rna.questionCopy.needsHasPermanentHousing.question"
+      },
+      "needsSpecialEducation": {
+        "question": "[US_NC]rna.questionCopy.needsSpecialEducation.question"
+      },
+      "needsReadingDifficulty": {
+        "question": "[US_NC]rna.questionCopy.needsReadingDifficulty.question"
+      },
+      "needsCalculatingChange": {
+        "question": "[US_NC]rna.questionCopy.needsCalculatingChange.question"
+      },
+      "needsMedicalPaymentHardship": {
+        "question": "[US_NC]rna.questionCopy.needsMedicalPaymentHardship.question"
+      },
+      "alcoholDrugsDaysOfUse": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsDaysOfUse.question"
+      },
+      "alcoholDrugsMoreThan5Drinks": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsMoreThan5Drinks.question",
+        "placeholderText": "[US_NC]rna.questionCopy.alcoholDrugsMoreThan5Drinks.placeholderText",
+        "customInvalidAnswerNotice": "[US_NC]rna.questionCopy.alcoholDrugsMoreThan5Drinks.customInvalidAnswerNotice"
+      },
+      "alcoholDrugsTimeOfOffense": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsTimeOfOffense.question"
+      },
+      "alcoholDrugsArguments": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsArguments.question"
+      },
+      "alcoholDrugsHungOver": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsHungOver.question"
+      },
+      "alcoholDrugsTrouble": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsTrouble.question"
+      },
+      "alcoholDrugsStopping": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsStopping.question"
+      },
+      "childhoodSkippingSchool": {
+        "question": "[US_NC]rna.questionCopy.childhoodSkippingSchool.question"
+      },
+      "childhoodRunningAway": {
+        "question": "[US_NC]rna.questionCopy.childhoodRunningAway.question"
+      },
+      "childhoodFighting": {
+        "question": "[US_NC]rna.questionCopy.childhoodFighting.question"
+      },
+      "childhoodHavingWeapons": {
+        "question": "[US_NC]rna.questionCopy.childhoodHavingWeapons.question"
+      },
+      "childhoodForcingSexualActivities": {
+        "question": "[US_NC]rna.questionCopy.childhoodForcingSexualActivities.question"
+      },
+      "childhoodHurtingAnimalsOrPeople": {
+        "question": "[US_NC]rna.questionCopy.childhoodHurtingAnimalsOrPeople.question"
+      },
+      "childhoodTearingProperty": {
+        "question": "[US_NC]rna.questionCopy.childhoodTearingProperty.question"
+      },
+      "childhoodStartingFires": {
+        "question": "[US_NC]rna.questionCopy.childhoodStartingFires.question"
+      },
+      "childhoodLying": {
+        "question": "[US_NC]rna.questionCopy.childhoodLying.question"
+      },
+      "childhoodStealing": {
+        "question": "[US_NC]rna.questionCopy.childhoodStealing.question"
+      },
+      "familyLawTrouble": {
+        "question": "[US_NC]rna.questionCopy.familyLawTrouble.question"
+      },
+      "familyFights": {
+        "question": "[US_NC]rna.questionCopy.familyFights.question"
+      },
+      "familyProblemSolving": {
+        "question": "[US_NC]rna.questionCopy.familyProblemSolving.question"
+      },
+      "familyPunished": {
+        "question": "[US_NC]rna.questionCopy.familyPunished.question"
+      },
+      "familyNoRules": {
+        "question": "[US_NC]rna.questionCopy.familyNoRules.question"
+      },
+      "familyAnythingGoes": {
+        "question": "[US_NC]rna.questionCopy.familyAnythingGoes.question"
+      },
+      "familyHappy": {
+        "question": "[US_NC]rna.questionCopy.familyHappy.question"
+      },
+      "familyUnderstands": {
+        "question": "[US_NC]rna.questionCopy.familyUnderstands.question"
+      },
+      "behaviorCantStop": {
+        "question": "[US_NC]rna.questionCopy.behaviorCantStop.question"
+      },
+      "behaviorImpulsive": {
+        "question": "[US_NC]rna.questionCopy.behaviorImpulsive.question"
+      },
+      "behaviorTryGetInTrouble": {
+        "question": "[US_NC]rna.questionCopy.behaviorTryGetInTrouble.question"
+      },
+      "behaviorAngry": {
+        "question": "[US_NC]rna.questionCopy.behaviorAngry.question"
+      },
+      "behaviorStayOutOfTrouble": {
+        "question": "[US_NC]rna.questionCopy.behaviorStayOutOfTrouble.question"
+      },
+      "behaviorThinkBeforeActing": {
+        "question": "[US_NC]rna.questionCopy.behaviorThinkBeforeActing.question"
+      },
+      "behaviorLoseTemper": {
+        "question": "[US_NC]rna.questionCopy.behaviorLoseTemper.question"
+      },
+      "behaviorApologize": {
+        "question": "[US_NC]rna.questionCopy.behaviorApologize.question"
+      },
+      "behaviorBlurt": {
+        "question": "[US_NC]rna.questionCopy.behaviorBlurt.question"
+      },
+      "behaviorWorldOwesBetter": {
+        "question": "[US_NC]rna.questionCopy.behaviorWorldOwesBetter.question"
+      },
+      "behaviorGetEven": {
+        "question": "[US_NC]rna.questionCopy.behaviorGetEven.question"
+      },
+      "behaviorBadLuck": {
+        "question": "[US_NC]rna.questionCopy.behaviorBadLuck.question"
+      },
+      "behaviorAffectOthers": {
+        "question": "[US_NC]rna.questionCopy.behaviorAffectOthers.question"
+      },
+      "behaviorControlSpeech": {
+        "question": "[US_NC]rna.questionCopy.behaviorControlSpeech.question"
+      },
+      "behaviorNotPlanned": {
+        "question": "[US_NC]rna.questionCopy.behaviorNotPlanned.question"
+      },
+      "behaviorLawbreaking": {
+        "question": "[US_NC]rna.questionCopy.behaviorLawbreaking.question"
+      },
+      "friendsJusticeInvolved": {
+        "question": "[US_NC]rna.questionCopy.friendsJusticeInvolved.question"
+      },
+      "friendsGangMembers": {
+        "question": "[US_NC]rna.questionCopy.friendsGangMembers.question"
+      },
+      "friendsCommittedCrime": {
+        "question": "[US_NC]rna.questionCopy.friendsCommittedCrime.question"
+      },
+      "friendsDrugs": {
+        "question": "[US_NC]rna.questionCopy.friendsDrugs.question"
+      },
+      "friendsOrganizations": {
+        "question": "[US_NC]rna.questionCopy.friendsOrganizations.question"
+      },
+      "friendsClose": {
+        "question": "[US_NC]rna.questionCopy.friendsClose.question"
+      },
+      "lifeAreaBehavior": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaBehavior.question"
+      },
+      "lifeAreaEmployability": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaEmployability.question"
+      },
+      "lifeAreaAlcoholDrugs": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaAlcoholDrugs.question"
+      },
+      "lifeAreaEducation": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaEducation.question"
+      },
+      "lifeAreaEmployment": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaEmployment.question"
+      },
+      "lifeAreaFamilyFriends": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaFamilyFriends.question"
+      },
+      "lifeAreaLifeSkills": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaLifeSkills.question"
+      },
+      "lifeAreaPhysicalMedical": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaPhysicalMedical.question"
+      },
+      "lifeAreaMentalHealth": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaMentalHealth.question"
+      },
+      "lifeAreaFinancial": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaFinancial.question"
+      },
+      "lifeAreaHousing": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaHousing.question"
+      },
+      "lifeAreaTransportation": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaTransportation.question"
+      },
+      "lifeAreaLegalStatus": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaLegalStatus.question"
+      },
+      "lifeAreaCustom": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaCustom.question",
+        "placeholderText": "[US_NC]rna.questionCopy.lifeAreaCustom.placeholderText"
+      }
+    }
+  }
+}

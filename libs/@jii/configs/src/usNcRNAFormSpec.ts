@@ -20,8 +20,20 @@
  * for North Carolina.
  *
  * This file should only contain internal identifiers, not copy. All copy should be
- * in the @jii/US_NC library.
+ * in the @jii/translation library.
  */
+
+// Types relating to copy
+
+export type RNAPageCopy = {
+  heading: string;
+  description?: string;
+};
+export type RNAQuestionCopy = {
+  question: string;
+  customInvalidAnswerNotice?: string;
+  placeholderText?: string;
+};
 
 // The RNA form is a sequence of pages. Each page has a section header and some questions.
 

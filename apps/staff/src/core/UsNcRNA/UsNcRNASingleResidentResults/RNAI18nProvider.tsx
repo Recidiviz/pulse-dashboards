@@ -15,26 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card } from "~@jii/common-ui";
-import { useUsNcTranslations } from "~@jii/translation";
+import { I18nextProvider } from "react-i18next";
 
-import { RNADescription, RNAHeading } from "../styles";
+import { createI18nInstance } from "~@jii/translation";
+
+// An i18next instance with only access to English-language JII translations
+const jiiI18nInstance = createI18nInstance([]);
 
 /**
- * Landing page when the case manager has not enabled the form for a user,
- * or we aren't sure how to identify a user.
+ * Provides an i18next instance to its children;
+ * use hooks from the @jii/translation library to access translations
  */
-export function UsNcRNANotEnabled() {
-  const { t } = useUsNcTranslations();
-
-  const { heading, description } = t(($) => $.rna.landing.notEnabled, {
-    returnObjects: true,
-  });
-
-  return (
-    <Card>
-      <RNAHeading>{heading}</RNAHeading>
-      <RNADescription>{description}</RNADescription>
-    </Card>
-  );
-}
+export const RNAI18nProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return <I18nextProvider i18n={jiiI18nInstance}>{children}</I18nextProvider>;
+};

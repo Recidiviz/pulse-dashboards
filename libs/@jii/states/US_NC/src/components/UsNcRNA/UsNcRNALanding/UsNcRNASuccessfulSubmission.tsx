@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Card } from "~@jii/common-ui";
-import { formatFullDate } from "~@jii/data";
+import { useUsNcTranslations } from "~@jii/translation";
 
 import { RNADescription, RNAHeading } from "../styles";
 
@@ -28,13 +28,17 @@ export function UsNcRNASuccessfulSubmission({
 }: {
   completedAt: Date;
 }) {
+  const { t } = useUsNcTranslations();
+
+  const { heading, description } = t(($) => $.rna.landing.resumeForm, {
+    completedAt,
+    returnObjects: true,
+  });
+
   return (
     <Card>
-      <RNAHeading>Thanks for filling out your Self-Report</RNAHeading>
-      <RNADescription>
-        You completed the form on {formatFullDate(completedAt)}. A staff member
-        will be in touch about next steps.
-      </RNADescription>
+      <RNAHeading>{heading}</RNAHeading>
+      <RNADescription>{description}</RNADescription>
     </Card>
   );
 }

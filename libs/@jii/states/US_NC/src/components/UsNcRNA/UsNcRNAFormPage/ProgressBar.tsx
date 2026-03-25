@@ -27,6 +27,7 @@ import {
 } from "~@jii/common-ui";
 import { stickyHeader } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";
+import { useUsNcTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 const ProgressContainer = styled.div<{
@@ -88,16 +89,21 @@ export const ProgressHeader = observer(function ProgressHeader({
   const {
     uiStore: { hideHeaderBar },
   } = useRootStore();
+  const { t } = useUsNcTranslations();
+  const { sectionLabel, amountComplete } = t(($) => $.rna.page.progressBar, {
+    section,
+    totalSections,
+    percentDone: Math.trunc(percentDone),
+    returnObjects: true,
+  });
 
   return (
     <ProgressContainer $hideHeader={hideHeaderBar}>
       <PageContainer>
         <ProgressBar percentDone={percentDone} />
         <ProgressLabel>
-          <span>
-            Section {section} of {totalSections}
-          </span>
-          <span>{Math.trunc(percentDone)}% complete</span>
+          <span>{sectionLabel}</span>
+          <span>{amountComplete}</span>
         </ProgressLabel>
       </PageContainer>
     </ProgressContainer>

@@ -19,9 +19,12 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Redirect, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { useUsNcTranslations } from "~@jii/translation";
 
 export function UsNcSingleResidentHome() {
-  usePageTitle("Home");
+  const { t } = useUsNcTranslations();
+  usePageTitle(t(($) => $.pageTitle.home));
+
   const routeParams = useTypedParams(State.Resident);
 
   return (

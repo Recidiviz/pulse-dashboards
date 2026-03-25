@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
 import { RowDivider } from "~@jii/common-ui";
+import { useUsNcTranslations } from "~@jii/translation";
 
 import {
   LongTextEntry,
@@ -28,10 +29,6 @@ import {
   QuestionExplainer,
   ShortTextEntry,
 } from "../styles";
-import {
-  rnaLifeAreasQuestionCopy,
-  rnaRadioAnswerCopy,
-} from "../usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 import { RadioButton } from "./UsNcRNARadioQuestion";
 
@@ -59,13 +56,22 @@ export const UsNcRNALifeAreaQuestion = observer(
     placeholderText,
     presenter,
   }: RNALifeAreaQuestionProps) {
-    const yesNoCopy = rnaRadioAnswerCopy["YES_NO"];
+    const { t } = useUsNcTranslations();
+
+    const yesNoCopy = t(($) => $.rna.radioAnswerCopy["YES_NO"], {
+      returnObjects: true,
+    });
+
     const {
       interestedInImproving,
       improvement,
       improvementPlaceholder,
-      improvementRatings,
-    } = rnaLifeAreasQuestionCopy;
+      customLifeAreaPrompt,
+      isThisAProblem,
+    } = t(($) => $.rna.lifeAreasQuestionCopy, { returnObjects: true });
+
+    // hardcoded here, not in the copy library, because it doesn't need translation
+    const ratingScale = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
     const yesNoId = `${id}-yes-no`;
     const improvementRatingId = `${id}-improvement`;
@@ -78,9 +84,7 @@ export const UsNcRNALifeAreaQuestion = observer(
           /* The user can either enter an answer or select yes or no. */
           placeholderText ? (
             <>
-              <QuestionExplainer>
-                {rnaLifeAreasQuestionCopy.customLifeAreaPrompt}
-              </QuestionExplainer>
+              <QuestionExplainer>{customLifeAreaPrompt}</QuestionExplainer>
               <ShortTextEntry
                 id={id}
                 type={"text"}
@@ -94,9 +98,7 @@ export const UsNcRNALifeAreaQuestion = observer(
             </>
           ) : (
             <>
-              <QuestionExplainer>
-                {rnaLifeAreasQuestionCopy.isThisAProblem}
-              </QuestionExplainer>
+              <QuestionExplainer>{isThisAProblem}</QuestionExplainer>
               <MultipleAnswerGroup>
                 {Object.entries(yesNoCopy).map(([value, label]) => {
                   const inputId = `${id}-${value}`;
@@ -131,7 +133,7 @@ export const UsNcRNALifeAreaQuestion = observer(
 
             <QuestionExplainer>{interestedInImproving}</QuestionExplainer>
             <VerticalMultipleAnswerGroup>
-              {improvementRatings.map((value) => {
+              {ratingScale.map((value) => {
                 const inputId = `${improvementRatingId}${value}`;
                 return (
                   <VerticalMultipleAnswerOption key={value}>

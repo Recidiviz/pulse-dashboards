@@ -20,6 +20,7 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { RNARadioQuestionFormat } from "~@jii/configs";
+import { useUsNcTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 import {
@@ -27,7 +28,6 @@ import {
   MultipleAnswerOption,
   QuestionCopy,
 } from "../styles";
-import { rnaRadioAnswerCopy } from "../usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 export const RadioButton = styled.input`
@@ -72,7 +72,10 @@ export const UsNcRNARadioQuestion = observer(function UsNcRNARadioQuestion({
   format,
   presenter,
 }: RNARadioQuestionProps) {
-  const answerCopy = rnaRadioAnswerCopy[format];
+  const { t } = useUsNcTranslations();
+  const answerCopy = t(($) => $.rna.radioAnswerCopy[format], {
+    returnObjects: true,
+  });
 
   return (
     <>

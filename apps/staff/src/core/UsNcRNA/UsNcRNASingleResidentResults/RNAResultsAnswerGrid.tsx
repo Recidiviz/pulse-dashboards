@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
 import { allRNAQuestions, RNARadioQuestionFormat } from "~@jii/configs";
-import { rnaQuestionCopy, rnaRadioAnswerCopy } from "~@jii/US_NC";
+import { useUsNcTranslations } from "~@jii/translation";
 
 import { toTitleCase } from "../../../utils";
 import { RNAResultsSectionProps } from "./RNAResultsSection";
@@ -43,13 +43,19 @@ export const RNAResultsAnswerGrid = observer(function RNAResultsAnswerGrid({
 }: RNAResultsSectionProps & {
   format: RNARadioQuestionFormat;
 }) {
+  const { t } = useUsNcTranslations();
+
+  const radioAnswers = t(($) => $.rna.radioAnswerCopy[format], {
+    returnObjects: true,
+  });
+
   return (
     <RNAResultsTable>
       <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col">Question</th>
-          {Object.values(rnaRadioAnswerCopy[format]).map((copy) => (
+          {Object.values(radioAnswers).map((copy) => (
             <CenteredHeader scope="col" key={copy}>
               {toTitleCase(copy)}
             </CenteredHeader>
@@ -59,15 +65,17 @@ export const RNAResultsAnswerGrid = observer(function RNAResultsAnswerGrid({
 
       <tbody>
         {questions.map((id) => {
+          const questionText = t(($) => $.rna.questionCopy[id].question);
+
           return (
             <tr key={id}>
               <th scope="row">
                 <QuestionNum>{allRNAQuestions.indexOf(id) + 1}</QuestionNum>
               </th>
               <WideAnswerCell>
-                <WideQuestion>{rnaQuestionCopy[id].question}</WideQuestion>
+                <WideQuestion>{questionText}</WideQuestion>
               </WideAnswerCell>
-              {Object.keys(rnaRadioAnswerCopy[format]).map((option) => (
+              {Object.keys(radioAnswers).map((option) => (
                 <SmallAnswerCell key={option}>
                   {presenter.textAnswers[id] === option ? (
                     <FakeRadioButton $checked={true} $centered={true} />

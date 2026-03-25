@@ -29,6 +29,7 @@ import { useRootStore } from "../../../components/StoreProvider";
 import { Resident } from "../../../WorkflowsStore/Resident";
 import { SubHeading } from "../../sharedComponents";
 import { Divider } from "../../WorkflowsJusticeInvolvedPersonProfile/styles";
+import { RNAI18nProvider } from "../UsNcRNASingleResidentResults/RNAI18nProvider";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { RNAResultsFooter } from "./RNAResultsFooter";
 import { RNAResultsHeader } from "./RNAResultsHeader";
@@ -58,7 +59,7 @@ export const ManagedComponent = observer(function ResultsPage({
   };
 
   return (
-    <>
+    <RNAI18nProvider>
       <RNAResultsHeader presenter={presenter} />
       <PaddedRNAContent>
         {subheadCopy[presenter.status] && (
@@ -87,7 +88,7 @@ export const ManagedComponent = observer(function ResultsPage({
           <RNAResultsFooter presenter={presenter} />
         )}
       </PaddedRNAContent>
-    </>
+    </RNAI18nProvider>
   );
 });
 

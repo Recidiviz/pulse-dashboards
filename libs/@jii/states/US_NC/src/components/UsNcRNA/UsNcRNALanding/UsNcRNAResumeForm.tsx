@@ -20,6 +20,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { Card, GoButton } from "~@jii/common-ui";
 import { fullRNASpec } from "~@jii/configs";
 import { State } from "~@jii/paths";
+import { useUsNcTranslations } from "~@jii/translation";
 
 import { RNADescription, RNAHeading } from "../styles";
 import { useRNAFormContext } from "../UsNcRNAFormContext/UsNcRNAFormContextProvider";
@@ -30,23 +31,28 @@ import { useRNAFormContext } from "../UsNcRNAFormContext/UsNcRNAFormContextProvi
 export function UsNcRNAResumeForm() {
   const { form } = useRNAFormContext();
   const routeParams = useTypedParams(State.Resident);
+  const { t } = useUsNcTranslations();
 
   const numCompletedSections = form.pageToResumeAt - 1;
   const totalSections = fullRNASpec.length;
 
+  const { heading, description, button } = t(($) => $.rna.landing.resumeForm, {
+    numCompletedSections,
+    totalSections,
+    returnObjects: true,
+  });
+
   return (
     <Card>
-      <RNAHeading>Self-Report: Pick up where you left off</RNAHeading>
-      <RNADescription>
-        You have finished {numCompletedSections} of {totalSections} sections.
-      </RNADescription>
+      <RNAHeading>{heading}</RNAHeading>
+      <RNADescription>{description}</RNADescription>
       <GoButton
         to={State.Resident.UsNcRNA.FormPage.buildPath({
           ...routeParams,
           pageNum: form.pageToResumeAt,
         })}
       >
-        Continue Self-Report
+        {button}
       </GoButton>
     </Card>
   );

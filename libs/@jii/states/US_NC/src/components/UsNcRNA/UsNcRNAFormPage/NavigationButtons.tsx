@@ -20,9 +20,9 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { JIIButton } from "~@jii/common-ui";
+import { useUsNcTranslations } from "~@jii/translation";
 import { Icon, spacing } from "~design-system";
 
-import { rnaMiscellaneousCopy } from "../usNcRNAFormCopy";
 import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 
 const RNAPageFooter = styled.div`
@@ -41,6 +41,11 @@ export const NavigationButtons = observer(function NavigationButtons({
 }: {
   presenter: UsNcRNAFormPagePresenter;
 }) {
+  const { t } = useUsNcTranslations();
+  const { previous, next, submit } = t(($) => $.rna.page.navButtons, {
+    returnObjects: true,
+  });
+
   return (
     <RNAPageFooter>
       {presenter.showPrevious && (
@@ -49,18 +54,18 @@ export const NavigationButtons = observer(function NavigationButtons({
           onClick={presenter.onPreviousPageButtonClick}
         >
           <Icon kind="Arrow" size={16} rotate={180} />
-          <span>{rnaMiscellaneousCopy.PREVIOUS_BUTTON}</span>
+          <span>{previous}</span>
         </PreviousPageButton>
       )}
 
       {presenter.showSubmit ? (
         <JIIButton kind={"primary"} onClick={presenter.onSubmitButtonClick}>
-          <span>{rnaMiscellaneousCopy.SUBMIT_BUTTON}</span>
+          <span>{submit}</span>
           <Icon kind="Arrow" size={16} />
         </JIIButton>
       ) : (
         <JIIButton kind={"secondary"} onClick={presenter.onNextPageButtonClick}>
-          <span>{rnaMiscellaneousCopy.NEXT_BUTTON}</span>
+          <span>{next}</span>
           <Icon kind="Arrow" size={16} />
         </JIIButton>
       )}

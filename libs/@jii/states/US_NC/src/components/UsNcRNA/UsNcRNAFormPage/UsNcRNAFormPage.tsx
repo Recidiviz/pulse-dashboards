@@ -20,18 +20,18 @@ import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
-import { allRNAQuestions, fullRNASpec, rnaQuestionConfig } from "~@jii/configs";
+import {
+  allRNAQuestions,
+  fullRNASpec,
+  RNAPageCopy,
+  rnaQuestionConfig,
+} from "~@jii/configs";
 import { State } from "~@jii/paths";
+import { useUsNcTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { RNADescription, RNAHeading, UnboxedNotice } from "../styles";
 import { useRNAFormContext } from "../UsNcRNAFormContext/UsNcRNAFormContextProvider";
-import {
-  rnaMiscellaneousCopy,
-  RNAPageCopy,
-  rnaPageCopy,
-  rnaQuestionCopy,
-} from "../usNcRNAFormCopy";
 import { UsNcRNAQuestion } from "../UsNcRNAQuestion/UsNcRNAQuestion";
 import { NavigationButtons } from "./NavigationButtons";
 import { ProgressHeader } from "./ProgressBar";
@@ -55,12 +55,23 @@ const ManagedComponent = observer(function ManagedComponent({
 }: {
   presenter: UsNcRNAFormPagePresenter;
 }) {
+  const { t } = useUsNcTranslations();
+
   // (Users should not encounter invalid pages in practice as they can't edit the URL)
   if (!presenter.isValidPage) {
     return <NotFound />;
   }
 
   const { pageNum, questionIds, pageId, percentDone } = presenter;
+
+  const pageCopy = t(($) => $.rna.pageCopy[pageId], { returnObjects: true });
+  const goBackModalCopy = t(($) => $.rna.page.goBackModal, {
+    returnObjects: true,
+  });
+  const submitModalCopy = t(($) => $.rna.page.confirmSubmissionModal, {
+    returnObjects: true,
+  });
+
   return (
     <>
       <ProgressHeader
@@ -68,30 +79,33 @@ const ManagedComponent = observer(function ManagedComponent({
         totalSections={fullRNASpec.length}
         percentDone={percentDone}
       />
-      <UsNcRNASectionInfo {...rnaPageCopy[pageId]} />
+      <UsNcRNASectionInfo {...pageCopy} />
 
-      {questionIds.map((questionId) => (
-        <UsNcRNAQuestion
-          key={questionId}
-          id={questionId}
-          questionNumber={allRNAQuestions.indexOf(questionId) + 1}
-          presenter={presenter}
-          {...rnaQuestionCopy[questionId]}
-          {...rnaQuestionConfig[questionId]}
-        />
-      ))}
+      {questionIds.map((questionId) => {
+        const questionCopy = t(($) => $.rna.questionCopy[questionId], {
+          returnObjects: true,
+        });
+        return (
+          <UsNcRNAQuestion
+            key={questionId}
+            id={questionId}
+            questionNumber={allRNAQuestions.indexOf(questionId) + 1}
+            presenter={presenter}
+            {...questionCopy}
+            {...rnaQuestionConfig[questionId]}
+          />
+        );
+      })}
 
       {presenter.hasAnyInvalidAnswer && (
-        <UnboxedNotice>
-          {rnaMiscellaneousCopy["ANSWER_ALL_QUESTIONS_NOTICE"]}
-        </UnboxedNotice>
+        <UnboxedNotice>{t(($) => $.rna.page.answerAllQuestions)}</UnboxedNotice>
       )}
       {presenter.isSaving && (
-        <UnboxedNotice>{rnaMiscellaneousCopy["SAVING"]}</UnboxedNotice>
+        <UnboxedNotice>{t(($) => $.rna.page.saving)}</UnboxedNotice>
       )}
       {presenter.savingError && (
         <UnboxedNotice>
-          {rnaMiscellaneousCopy["SAVING_ERROR"]} {presenter.savingError}
+          {t(($) => $.rna.page.savingError)} {presenter.savingError}
         </UnboxedNotice>
       )}
       <NavigationButtons presenter={presenter} />
@@ -100,21 +114,22 @@ const ManagedComponent = observer(function ManagedComponent({
         isOpen={presenter.isUnsavedChangesModalOpen}
         onCancel={presenter.closeUnsavedChangesModal}
         onConfirm={presenter.navigateBack}
-        {...rnaMiscellaneousCopy.GO_BACK_MODAL}
+        {...goBackModalCopy}
       />
 
       <UsNcRNAModal
         isOpen={presenter.isConfirmSubmissionModalOpen}
         onCancel={presenter.closeConfirmSubmissionModal}
         onConfirm={presenter.onConfirmSubmission}
-        {...rnaMiscellaneousCopy.CONFIRM_SUBMISSION_MODAL}
+        {...submitModalCopy}
       />
     </>
   );
 });
 
 function usePresenter() {
-  usePageTitle("Self-Report");
+  const { t } = useUsNcTranslations();
+  usePageTitle(t(($) => $.pageTitle.rna));
 
   const navigate = useNavigate();
   const { form } = useRNAFormContext();

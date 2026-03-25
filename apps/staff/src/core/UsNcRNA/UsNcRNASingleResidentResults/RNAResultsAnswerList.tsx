@@ -26,11 +26,7 @@ import {
   RNAQuestionFormat,
   RNAQuestionId,
 } from "~@jii/configs";
-import {
-  rnaQuestionCopy,
-  rnaRadioAnswerCopy,
-  rnaSobrietyAnswerCopy,
-} from "~@jii/US_NC";
+import { useUsNcTranslations } from "~@jii/translation";
 import { spacing } from "~design-system";
 
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
@@ -77,12 +73,16 @@ export const RNAResultsAnswers = observer(function RNAResultsAnswers({
   questionId: RNAQuestionId;
   presenter: ResultsPagePresenter;
 }) {
+  const { t } = useUsNcTranslations();
+  const rnaCopy = t(($) => $.rna, { returnObjects: true });
+
   if (isRNARadioFormat(format)) {
     // Radio button question
     const selectedAnswer = presenter.textAnswers[questionId];
+
     return (
       <RNAAnswerList
-        answerCopy={rnaRadioAnswerCopy[format]}
+        answerCopy={rnaCopy.radioAnswerCopy[format]}
         answers={selectedAnswer ? [selectedAnswer] : []}
       />
     );
@@ -92,7 +92,7 @@ export const RNAResultsAnswers = observer(function RNAResultsAnswers({
     const selectedAnswers = Object.keys(answer).filter((k) => answer[k]);
     return (
       <RNAAnswerList
-        answerCopy={rnaSobrietyAnswerCopy}
+        answerCopy={rnaCopy.sobrietyAnswerCopy}
         answers={selectedAnswers}
       />
     );
@@ -106,6 +106,8 @@ export const RNAResultsAnswerList = observer(function RNAResultsAnswerList({
   questions,
   presenter,
 }: RNAResultsSectionProps) {
+  const { t } = useUsNcTranslations();
+
   return (
     <RNAResultsTable>
       <thead>
@@ -117,23 +119,27 @@ export const RNAResultsAnswerList = observer(function RNAResultsAnswerList({
       </thead>
 
       <tbody>
-        {questions.map((id) => (
-          <tr key={id}>
-            <th scope="row">
-              <QuestionNum>{allRNAQuestions.indexOf(id) + 1}</QuestionNum>
-            </th>
-            <WideAnswerCell>
-              <WideQuestion>{rnaQuestionCopy[id].question}</WideQuestion>
-            </WideAnswerCell>
-            <WideAnswerCell>
-              <RNAResultsAnswers
-                format={rnaQuestionConfig[id].format}
-                questionId={id}
-                presenter={presenter}
-              />
-            </WideAnswerCell>
-          </tr>
-        ))}
+        {questions.map((id) => {
+          const questionText = t(($) => $.rna.questionCopy[id].question);
+
+          return (
+            <tr key={id}>
+              <th scope="row">
+                <QuestionNum>{allRNAQuestions.indexOf(id) + 1}</QuestionNum>
+              </th>
+              <WideAnswerCell>
+                <WideQuestion>{questionText}</WideQuestion>
+              </WideAnswerCell>
+              <WideAnswerCell>
+                <RNAResultsAnswers
+                  format={rnaQuestionConfig[id].format}
+                  questionId={id}
+                  presenter={presenter}
+                />
+              </WideAnswerCell>
+            </tr>
+          );
+        })}
       </tbody>
     </RNAResultsTable>
   );

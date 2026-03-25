@@ -19,6 +19,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, GoButton, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { useUsNcTranslations } from "~@jii/translation";
 
 import { RNADescription, RNAHeading } from "../styles";
 import { useRNAFormContext } from "../UsNcRNAFormContext/UsNcRNAFormContextProvider";
@@ -32,7 +33,12 @@ import { UsNcRNASuccessfulSubmission } from "./UsNcRNASuccessfulSubmission";
  * and a record of survey completion if it's been completed.
  */
 export function UsNcRNALanding() {
-  usePageTitle("Self-Report");
+  const { t } = useUsNcTranslations();
+  usePageTitle(t(($) => $.pageTitle.rna));
+  const { heading, description, button } = t(($) => $.rna.landing.resumeForm, {
+    returnObjects: true,
+  });
+
   const { form } = useRNAFormContext();
   const routeParams = useTypedParams(State.Resident);
 
@@ -54,17 +60,12 @@ export function UsNcRNALanding() {
 
   return (
     <Card>
-      <RNAHeading>Time for your Self-Report</RNAHeading>
-      <RNADescription>
-        Your answers will help your case manager build a better, more personal
-        case plan for you, tailored to your programming interests, goals, and
-        the areas you want to work on. These questions should take around 15
-        minutes to finish.
-      </RNADescription>
+      <RNAHeading>{heading}</RNAHeading>
+      <RNADescription>{description}</RNADescription>
       <GoButton
         to={State.Resident.UsNcRNA.ConfirmIdentity.buildPath(routeParams)}
       >
-        Start
+        {button}
       </GoButton>
     </Card>
   );

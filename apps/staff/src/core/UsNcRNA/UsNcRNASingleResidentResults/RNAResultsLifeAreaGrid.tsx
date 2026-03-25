@@ -21,7 +21,7 @@ import { rem } from "polished";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components";
 
-import { rnaLifeAreasQuestionCopy, rnaQuestionCopy } from "~@jii/US_NC";
+import { useUsNcTranslations } from "~@jii/translation";
 import { Button, palette, spacing } from "~design-system";
 
 import CopyIcon from "../../../assets/static/images/copy.svg?react";
@@ -72,14 +72,19 @@ export const RNAResultsLifeAreaGrid = observer(function RNAResultsLifeAreaGrid({
   questions,
   presenter,
 }: RNAResultsSectionProps) {
+  const { t } = useUsNcTranslations();
+  const { lifeAreasQuestionCopy, questionCopy } = t(($) => $.rna, {
+    returnObjects: true,
+  });
+
   return (
     <RNAResultsTable>
       <thead>
         <tr>
           <th scope="col">Life Area</th>
-          <th scope="col">{rnaLifeAreasQuestionCopy.isThisAProblem}</th>
-          <th scope="col">{rnaLifeAreasQuestionCopy.interestedInImproving}</th>
-          <th scope="col">{rnaLifeAreasQuestionCopy.improvement}</th>
+          <th scope="col">{lifeAreasQuestionCopy.isThisAProblem}</th>
+          <th scope="col">{lifeAreasQuestionCopy.interestedInImproving}</th>
+          <th scope="col">{lifeAreasQuestionCopy.improvement}</th>
         </tr>
       </thead>
 
@@ -89,7 +94,7 @@ export const RNAResultsLifeAreaGrid = observer(function RNAResultsLifeAreaGrid({
 
           const customText = answer?.customLifeArea;
           const hasInterest = !!(answer?.interest || customText);
-          const lifeAreaName = rnaQuestionCopy[id].question;
+          const lifeAreaName = questionCopy[id].question;
 
           const interestRating = answer?.interestRating;
           const improvementText = answer?.improvementText;

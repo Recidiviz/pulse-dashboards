@@ -1,0 +1,306 @@
+{
+  "pageTitle": {
+    "home": "Inicio"
+  },
+  "rna": {
+    "radioAnswerCopy": {
+      "FREQUENCY": {
+        "NEVER": "Nunca",
+        "RARELY": "Rara vez",
+        "SOMETIMES": "A veces",
+        "USUALLY": "Con frecuencia",
+        "ALWAYS": "Siempre"
+      },
+      "DAYS_PER_WEEK_RADIO": {
+        "ZERO": "0 días",
+        "ONE_TO_TWO": "1-2 días",
+        "THREE_TO_FIVE": "3-5 días",
+        "SIX_TO_SEVEN": "6-7 días"
+      },
+      "YES_NO": {
+        "YES": "Sí",
+        "NO": "No"
+      },
+      "RATIO": {
+        "NONE": "Ninguno",
+        "SOME": "Algunos",
+        "MOST": "La mayoría",
+        "ALL": "Todos"
+      }
+    },
+    "sobrietyAnswerCopy": {
+      "SOBER": "sobrio",
+      "JUST_ALCOHOL": "bajo los efectos del alcohol únicamente",
+      "JUST_DRUGS": "bajo los efectos de drogas únicamente",
+      "BOTH": "bajo los efectos del alcohol y las drogas"
+    },
+    "lifeAreasQuestionCopy": {
+      "isThisAProblem": "¿Esto es un problema para usted?",
+      "interestedInImproving": "¿Le interesa mejorar? (1 = Para nada, 10 = Mucho)",
+      "improvement": "¿Qué puede hacer para mejorar la situación? (TKTK)"
+    },
+    "pageCopy": {
+      "sectionBasicNeeds": {
+        "heading": "Parte 1: TKTK",
+        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+      },
+      "sectionAlcoholDrugs": {
+        "heading": "Parte 2: TKTK",
+        "description": "Piense en una semana normal de su vida para responder a las siguientes preguntas. Marque la casilla que mejor refleje su situación."
+      },
+      "sectionAlcoholDrugs2": {
+        "heading": "Parte 3: TKTK",
+        "description": "Piense en una semana normal de su vida para responder a las siguientes preguntas. Marque la casilla que mejor refleje su situación."
+      },
+      "sectionChildhoodTrouble": {
+        "heading": "Parte 4: TKTK",
+        "description": "Piense en los momentos antes de cumplir 15 años en los que se metió en problemas."
+      },
+      "sectionFamilyGrowingUp": {
+        "heading": "Parte 5: TKTK",
+        "description": "En cada una de las siguientes afirmaciones, marque la casilla que mejor refleje la realidad de cómo era su familia cuando era pequeño."
+      },
+      "sectionFamilyNow": {
+        "heading": "Parte 6: TKTK",
+        "description": "En cada afirmación, marque la casilla que mejor refleje la situación actual de su familia."
+      },
+      "sectionBehavior": {
+        "heading": "Parte 7: TKTK",
+        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+      },
+      "sectionBehavior2": {
+        "heading": "Parte 8: TKTK",
+        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+      },
+      "sectionBehavior3": {
+        "heading": "Parte 9: TKTK",
+        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+      },
+      "sectionFriends": {
+        "heading": "Parte 10: TKTK",
+        "description": "Piense en los amigos que tiene ahora y téngalos en mente para responder estas preguntas."
+      },
+      "sectionLifeAreas": {
+        "heading": "Parte 11: Aspectos de la vida"
+      }
+    },
+    "questionCopy": {
+      "needsWorkSchoolSatisfied": {
+        "question": "Estoy satisfecho con mi situación laboral y escolar."
+      },
+      "needsHasJobSkills": {
+        "question": "Tengo las habilidades que necesito para conseguir un buen trabajo."
+      },
+      "needsImproveJobSchool": {
+        "question": "Intento mejorar mi situación laboral o escolar."
+      },
+      "needsRanOutOfMoney": {
+        "question": "A menudo me quedaba sin dinero."
+      },
+      "needsStruggledWithBills": {
+        "question": "Me costaba pagar el alquiler o gastos como la factura de la luz."
+      },
+      "needsReliedOnOthersForMoney": {
+        "question": "A menudo dependía de que otras personas me dieran dinero."
+      },
+      "needsHasPermanentHousing": {
+        "question": "Tengo un lugar permanente para vivir tras la liberación."
+      },
+      "needsSpecialEducation": {
+        "question": "Cuando estaba en la escuela, asistía a clases de educación especial."
+      },
+      "needsReadingDifficulty": {
+        "question": "Me cuesta leer."
+      },
+      "needsCalculatingChange": {
+        "question": "Cuando compraba algo en efectivo, podía calcular cuánto cambio me debían devolver."
+      },
+      "needsMedicalPaymentHardship": {
+        "question": "Me costaba pagar los gastos médicos."
+      },
+      "alcoholDrugsDaysOfUse": {
+        "question": "En una semana normal, ¿cuántos días bebía alcohol o consumía drogas?"
+      },
+      "alcoholDrugsMoreThan5Drinks": {
+        "question": "¿Cuántos días de una semana normal bebía más de 5 copas de una vez?"
+      },
+      "alcoholDrugsTimeOfOffense": {
+        "question": "En el momento de cometer el delito por el que estoy actualmente encarcelado, estaba... (TKTK)"
+      },
+      "alcoholDrugsArguments": {
+        "question": "Cuando bebía alcohol o consumía drogas, me involucraba en discusiones con otras personas."
+      },
+      "alcoholDrugsHungOver": {
+        "question": "Cuando me despertaba, me sentía “con resaca” o enfermo."
+      },
+      "alcoholDrugsTrouble": {
+        "question": "Cuando bebía o consumía drogas, me metía en problemas en el trabajo o la escuela."
+      },
+      "alcoholDrugsStopping": {
+        "question": "Pienso en dejar de beber o de drogarme."
+      },
+      "childhoodSkippingSchool": {
+        "question": "Faltaba a clase."
+      },
+      "childhoodRunningAway": {
+        "question": "Huía."
+      },
+      "childhoodFighting": {
+        "question": "Peleaba."
+      },
+      "childhoodHavingWeapons": {
+        "question": "Tenía armas."
+      },
+      "childhoodForcingSexualActivities": {
+        "question": "Obligaba a otros a realizar actividades sexuales."
+      },
+      "childhoodHurtingAnimalsOrPeople": {
+        "question": "Dañaba a animales o personas."
+      },
+      "childhoodTearingProperty": {
+        "question": "Destrozaba propiedad ajena."
+      },
+      "childhoodStartingFires": {
+        "question": "Iniciaba incendios."
+      },
+      "childhoodLying": {
+        "question": "Mentía."
+      },
+      "childhoodStealing": {
+        "question": "Robaba cosas a otras personas."
+      },
+      "familyLawTrouble": {
+        "question": "Los miembros de la familia tenían problemas con la ley."
+      },
+      "familyFights": {
+        "question": "En mi casa, había peleas y discusiones."
+      },
+      "familyProblemSolving": {
+        "question": "Cuando tenía un problema, sabía que alguien de mi familia me ayudaría a resolverlo."
+      },
+      "familyPunished": {
+        "question": "Sabía que me castigarían si infringía las normas."
+      },
+      "familyNoRules": {
+        "question": "No respetábamos las reglas ni las normas."
+      },
+      "familyAnythingGoes": {
+        "question": "En nuestra familia, todo vale."
+      },
+      "familyHappy": {
+        "question": "Era feliz con mi vida familiar antes de ser encarcelado."
+      },
+      "familyUnderstands": {
+        "question": "Mi familia comprende mi situación y mis problemas."
+      },
+      "behaviorCantStop": {
+        "question": "A veces no puedo evitar hacer ciertas cosas, aunque sepa que están mal."
+      },
+      "behaviorImpulsive": {
+        "question": "Las personas me describirían como impulsivo."
+      },
+      "behaviorTryGetInTrouble": {
+        "question": "Me parece emocionante probar hacer algo que puede meterme en problemas."
+      },
+      "behaviorAngry": {
+        "question": "Me enfado cuando las personas intentan decirme lo que tengo que hacer."
+      },
+      "behaviorStayOutOfTrouble": {
+        "question": "Intento mantenerme al margen de las situaciones que podrían meterme en problemas."
+      },
+      "behaviorThinkBeforeActing": {
+        "question": "Pienso en lo que podría pasar antes de actuar."
+      },
+      "behaviorLoseTemper": {
+        "question": "Pierdo los estribos con facilidad."
+      },
+      "behaviorApologize": {
+        "question": "Pido disculpas a los demás cuando hago algo mal."
+      },
+      "behaviorBlurt": {
+        "question": "Digo todo lo que se me pasa por la cabeza."
+      },
+      "behaviorWorldOwesBetter": {
+        "question": "Creo que el mundo me debe una vida mejor."
+      },
+      "behaviorGetEven": {
+        "question": "Ajusto cuentas con las personas que se meten conmigo."
+      },
+      "behaviorBadLuck": {
+        "question": "Me meto en problemas porque tengo mala suerte."
+      },
+      "behaviorAffectOthers": {
+        "question": "Pienso en cómo mis acciones afectarán a otras personas."
+      },
+      "behaviorControlSpeech": {
+        "question": "Puedo controlar las cosas que digo."
+      },
+      "behaviorNotPlanned": {
+        "question": "Hago cosas que no tenía previsto hacer."
+      },
+      "behaviorLawbreaking": {
+        "question": "No pasa nada si se infringe la ley mientras no se haga daño a nadie."
+      },
+      "friendsJusticeInvolved": {
+        "question": "¿Cuántos de esos amigos están en prisión, en libertad condicional o libertad vigilada luego de ser liberados?"
+      },
+      "friendsGangMembers": {
+        "question": "¿Cuántos de esos amigos son miembros de una banda?"
+      },
+      "friendsCommittedCrime": {
+        "question": "¿Cuántos de esos amigos han cometido algún delito, independientemente de si se los arrestó?"
+      },
+      "friendsDrugs": {
+        "question": "¿Cuántos de esos amigos venden o consumen drogas (incluida marihuana)?"
+      },
+      "friendsOrganizations": {
+        "question": "¿Cuántos de esos amigos participan en organizaciones comunitarias o sociales?"
+      },
+      "friendsClose": {
+        "question": "¿A cuántos de esos amigos consideraría que son amigos cercanos?"
+      },
+      "lifeAreaBehavior": {
+        "question": "Comportamiento"
+      },
+      "lifeAreaEmployability": {
+        "question": "Habilidad para conseguir empleo"
+      },
+      "lifeAreaAlcoholDrugs": {
+        "question": "Alcohol y otras drogas"
+      },
+      "lifeAreaEducation": {
+        "question": "Educación"
+      },
+      "lifeAreaEmployment": {
+        "question": "Empleo"
+      },
+      "lifeAreaFamilyFriends": {
+        "question": "Familia y amigos"
+      },
+      "lifeAreaLifeSkills": {
+        "question": "Habilidades para la vida"
+      },
+      "lifeAreaPhysicalMedical": {
+        "question": "Físico y médico"
+      },
+      "lifeAreaMentalHealth": {
+        "question": "Salud mental"
+      },
+      "lifeAreaFinancial": {
+        "question": "Finanzas"
+      },
+      "lifeAreaHousing": {
+        "question": "Vivienda"
+      },
+      "lifeAreaTransportation": {
+        "question": "Transporte"
+      },
+      "lifeAreaLegalStatus": {
+        "question": "Situación legal"
+      },
+      "lifeAreaCustom": {
+        "question": "Otro"
+      }
+    }
+  }
+}

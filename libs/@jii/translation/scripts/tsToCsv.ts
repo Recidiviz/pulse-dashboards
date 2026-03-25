@@ -20,6 +20,7 @@ import { csvFormat } from "d3-dsv";
 import { flatten } from "flat";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+import { exit } from "process";
 
 // ======================
 // How to use this script
@@ -75,3 +76,6 @@ const flattenedCsv = csvFormat(
 );
 
 await writeFile(join(resourceDirectory, `${args.namespace}.csv`), flattenedCsv);
+
+// process hangs if we don't manually exit
+exit();

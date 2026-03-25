@@ -18,13 +18,13 @@
 import { observer } from "mobx-react-lite";
 
 import { Checkbox } from "~@jii/common-ui";
+import { useUsNcTranslations } from "~@jii/translation";
 
 import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
   QuestionCopy,
 } from "../styles";
-import { rnaSobrietyAnswerCopy } from "../usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 interface RNASobrietyQuestionProps extends RNAQuestionProps {
@@ -42,13 +42,18 @@ export const UsNcRNASobrietyQuestion = observer(
     questionNumber,
     presenter,
   }: RNASobrietyQuestionProps) {
+    const { t } = useUsNcTranslations();
+    const sobrietyAnswerCopy = t(($) => $.rna.sobrietyAnswerCopy, {
+      returnObjects: true,
+    });
+
     return (
       <>
         <QuestionCopy>
           {questionNumber}. {question}
         </QuestionCopy>
         <MultipleAnswerGroup>
-          {Object.entries(rnaSobrietyAnswerCopy).map(([value, label]) => {
+          {Object.entries(sobrietyAnswerCopy).map(([value, label]) => {
             const checkboxAnswers = presenter.form.liveCheckboxAnswers[id];
 
             const inputId = `${id}-${value}`;

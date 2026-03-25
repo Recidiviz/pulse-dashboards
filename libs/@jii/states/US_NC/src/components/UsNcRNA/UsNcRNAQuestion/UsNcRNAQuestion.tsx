@@ -18,15 +18,15 @@
 import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 
-import { type RNAQuestionConfig, type RNAQuestionId } from "~@jii/configs";
+import {
+  type RNAQuestionConfig,
+  type RNAQuestionCopy,
+  type RNAQuestionId,
+} from "~@jii/configs";
+import { useUsNcTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
 import { InvalidAnswerNotice, QuestionCard } from "../styles";
-import {
-  rnaMiscellaneousCopy,
-  RNAQuestionCopy,
-  rnaQuestionCopy,
-} from "../usNcRNAFormCopy";
 import { UsNcRNAFormPagePresenter } from "../UsNcRNAFormPage/UsNcRNAFormPagePresenter";
 import { UsNcRNADaysQuestion } from "./UsNcRNADaysQuestion";
 import { UsNcRNALifeAreaQuestion } from "./UsNcRNALifeAreaQuestion";
@@ -65,7 +65,13 @@ const UsNcRNAQuestionContents = function (props: RNAQuestionProps) {
 export const UsNcRNAQuestion = observer(function UsNcRNAQuestion(
   props: RNAQuestionProps,
 ) {
+  const { t } = useUsNcTranslations();
+
   const { id, presenter } = props;
+
+  const questionCopy = t(($) => $.rna.questionCopy[id], {
+    returnObjects: true,
+  }) as RNAQuestionCopy;
 
   const invalid = presenter.isVisiblyInvalid(id);
 
@@ -77,8 +83,8 @@ export const UsNcRNAQuestion = observer(function UsNcRNAQuestion(
         <div>
           <Icon kind={"Alert"} />
           <InvalidAnswerNotice>
-            {rnaQuestionCopy[id].customInvalidAnswerNotice ??
-              rnaMiscellaneousCopy["INVALID_ANSWER_NOTICE"]}
+            {questionCopy.customInvalidAnswerNotice ??
+              t(($) => $.rna.page.invalidAnswer)}
           </InvalidAnswerNotice>
         </div>
       )}
