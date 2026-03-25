@@ -55,7 +55,6 @@ import { PageSearch } from "../pages/PageSearch";
 import { PageSelectState } from "../pages/PageSelectState";
 import { PageSingleResidentRoot } from "../pages/PageSingleResidentRoot";
 import { PageState } from "../pages/PageState";
-import { PageTransportDemo } from "../pages/PageTransportDemo";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
 import { StateSpecificRouter } from "../StateSpecificRouter/StateSpecificRouter";
@@ -91,8 +90,6 @@ export function App() {
           <StyledApp>
             <SentryRoutes>
               <Route path={SiteRoot.path} element={<PageRoot />}>
-                {/* NOTE: Temporary for user testing and will be removed entirely after user testing*/}
-                <Route path="transport-demo" element={<PageTransportDemo />} />
                 <Route index element={<PageHome />} />
                 <Route path={State.path}>
                   <Route index element={<PageState />} />
