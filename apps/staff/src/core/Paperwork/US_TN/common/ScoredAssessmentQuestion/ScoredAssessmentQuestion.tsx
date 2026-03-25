@@ -37,7 +37,7 @@ export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
   // @ts-expect-error The opportunities using these components have the derivedData field
   const derivedData = useOpportunityFormContext().derivedData;
 
-  const score = derivedData?.[`q${questionNumber}Score`] ?? 0;
+  const score = derivedData?.[`q${questionNumber}Score`];
 
   return (
     <AssessmentItem

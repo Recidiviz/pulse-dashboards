@@ -80,8 +80,9 @@ export function getBreakdownSectionQuestionIndex(
 export function getSingleSectionQuestionScore(
   question: SingleSectionAssessmentQuestionSpec,
   selection: number | undefined,
-): number {
-  if (selection === undefined || selection === -1) return 0;
+): number | undefined {
+  if (selection === undefined) return undefined;
+  if (selection === -1) return 0;
 
   return question.options[selection]?.score ?? 0;
 }
@@ -129,4 +130,16 @@ export function showTrusteeChecklist(
       formData.counselorRecommendedCustody === "LOW" ||
       formData.recommendationCustodyLevel === "LOW")
   );
+}
+
+export function getTotalScore(
+  scores: (number | undefined)[],
+  upperThresholdForMaxClassification: number,
+): number | undefined {
+  return scores.every((s) => s !== undefined)
+    ? Math.min(
+        upperThresholdForMaxClassification + 1,
+        scores.reduce((a, b) => a + b, 0),
+      )
+    : undefined;
 }

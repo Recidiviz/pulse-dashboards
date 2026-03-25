@@ -30,7 +30,7 @@ export function TotalScore({
   score,
   mediumUpper,
 }: {
-  score: number;
+  score: number | undefined;
   mediumUpper: number;
 }) {
   return (

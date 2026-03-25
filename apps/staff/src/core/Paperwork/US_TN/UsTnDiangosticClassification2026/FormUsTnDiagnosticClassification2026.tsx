@@ -31,9 +31,14 @@ import { PrintablePage } from "../../styles";
 import { downloadZipFile } from "../../utils";
 import { CafScoreSourceModal } from "../common/cafScoreSourceModal";
 import {
+  AGE_SUPPORTING_TEXT,
   ClassificationFormPage,
+  DISCIPLINARY_RECORD_SUPPORTING_TEXT,
   DoubleNotes,
   Header,
+  PROGRAM_COMPLETION_SUPPORTING_TEXT,
+  Q1_SUPPORTING_TEXT,
+  Q2_SUPPORTING_TEXT,
   TextboxWithHeader,
   TotalScore,
 } from "../common/Classification2026";
@@ -94,11 +99,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         opportunity={opportunity}
         downloadButtonLabel="Download as .DOCX"
       >
-        <CafScoreSourceModal
-          sentenceHistoryQs={[1]}
-          lastestCafQs={[2]}
-          latestRecordQs={[3, 4, 5, 6]}
-        />
+        <CafScoreSourceModal latestRecordQs={[3, 4, 5, 6]} jobHistoryQs={[7]} />
         <FormViewer formRef={formRef}>
           <CoverSheet />
           <PrintablePage landscape stretchable>
@@ -107,9 +108,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[0]}
                 questionNumber={1}
-                supportingText={
-                  "Recidiviz is auto-filling this score based on the resident’s sentence history, as found in eTOMIS. Convictions are considered prior if they did not occur on the resident’s most recent felony Sentence Imposed Date."
-                }
+                supportingText={Q1_SUPPORTING_TEXT}
               >
                 <DoubleNotes>
                   <TextboxWithHeader
@@ -129,9 +128,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[1]}
                 questionNumber={2}
-                supportingText={
-                  "Recidiviz is auto-filling this score from the resident’s last completed CAF, directly from eTOMIS."
-                }
+                supportingText={Q2_SUPPORTING_TEXT}
               >
                 <TextboxWithHeader
                   header={"List current offenses:"}
@@ -141,9 +138,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[2]}
                 questionNumber={3}
-                supportingText={
-                  "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
-                }
+                supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
@@ -157,9 +152,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[3]}
                 questionNumber={4}
-                supportingText={
-                  "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
-                }
+                supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
@@ -169,9 +162,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[4]}
                 questionNumber={5}
-                supportingText={
-                  "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
-                }
+                supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
@@ -181,9 +172,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[5]}
                 questionNumber={6}
-                supportingText={
-                  "Recidiviz is auto-filling this score based on the resident’s age using data from eTOMIS."
-                }
+                supportingText={AGE_SUPPORTING_TEXT}
               />
             </ClassificationFormPage>
           </PrintablePage>
@@ -192,9 +181,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[6]}
                 questionNumber={7}
-                supportingText={
-                  "Recidiviz is auto-filling this score based on the resident’s class and job history in eTOMIS."
-                }
+                supportingText={PROGRAM_COMPLETION_SUPPORTING_TEXT}
               >
                 <TextboxWithHeader
                   header={"List completed programs:"}

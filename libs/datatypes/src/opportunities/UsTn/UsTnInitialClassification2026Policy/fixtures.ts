@@ -34,8 +34,6 @@ export const usTnInitialClassification2026PolicyFixtures = {
     },
     ineligibleCriteria: {},
     formInformation: {
-      q1Score: 2,
-      q2Score: 10,
       q3Score: -3,
       q4Score: 2,
       q5Score: -1,
@@ -104,8 +102,6 @@ export const usTnInitialClassification2026PolicyFixtures = {
       },
     },
     formInformation: {
-      q1Score: 2,
-      q2Score: 10,
       q3Score: -3,
       q4Score: 2,
       q5Score: -1,

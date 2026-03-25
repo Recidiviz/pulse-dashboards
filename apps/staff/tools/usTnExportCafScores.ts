@@ -27,6 +27,7 @@ import {
   prefillDcafFormData,
   prefillRcafFormData,
   TRUSTEE_FORM_QUESTION_ORDER,
+  UsTnInitialClassification2026DraftData,
   usTnInitialClassification2026Schema,
   UsTnReclassification2026DraftData,
   UsTnReclassification2026ReferralRecord,
@@ -122,7 +123,7 @@ const COLUMN_MAPPING: Record<
       : "N",
 };
 
-// We can conbine the RCAF and DCAF fields into one list since we are
+// We can combine the RCAF and DCAF fields into one list since we are
 // just checking to see if any of these are populated, not all.
 const allScoredQuestionFields = [
   "q1Selection",
@@ -141,7 +142,7 @@ const allScoredQuestionFields = [
   "q5Selection_36_60",
   "q6Selection",
   "q7Selection",
-];
+] as const;
 
 // This record maps output fields to their source field in the derived data blob
 // as well as which fields affect that field. This allows us to determine
@@ -150,7 +151,8 @@ type DerivedDataMapping = Record<
   string,
   {
     sourceField: keyof ReturnType<typeof deriveRcafFormData>;
-    relevantFields: (keyof UsTnReclassification2026DraftData)[];
+    relevantFields: readonly (keyof (UsTnReclassification2026DraftData &
+      UsTnInitialClassification2026DraftData))[];
   }
 >;
 
@@ -377,6 +379,7 @@ function processRecord(
     }
 
     // if none of the fields that contribute to the calculation of this field were modified, skip this entry
+    // @ts-expect-error We filter by classification type above, but it still fine to find an undefined even if we don't filter a key out
     if (relevantFields.some((field) => formUpdateData[field] !== undefined)) {
       // @ts-expect-error We define it 22 lines above
       out.UpdatedFields.push(outField);

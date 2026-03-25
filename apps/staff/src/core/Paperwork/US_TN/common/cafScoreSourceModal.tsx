@@ -34,14 +34,10 @@ function joinNumbers(numbers: number[]): string {
 }
 
 export function CafScoreSourceModal({
-  lastestCafQs,
   latestRecordQs,
-  sentenceHistoryQs,
   jobHistoryQs = [],
 }: {
-  lastestCafQs: number[];
   latestRecordQs: number[];
-  sentenceHistoryQs: number[];
   jobHistoryQs?: number[];
 }) {
   const [showCafScoresModal, setShowCafScoresModal] = useState(true);
@@ -55,16 +51,6 @@ export function CafScoreSourceModal({
         submitButtonText="Got it"
       >
         <ModalText>
-          <b>For {joinNumbers(sentenceHistoryQs)}</b>, Recidiviz is auto-filling
-          scores from this resident's <b>sentence history</b> directly from
-          eTOMIS.
-          <br />
-          <br />
-          <b>For {joinNumbers(lastestCafQs)}</b>, Recidiviz is auto-filling
-          scores from this resident's <b>last completed CAF</b> directly from
-          eTOMIS.
-          <br />
-          <br />
           <b>For {joinNumbers(latestRecordQs)}</b>, Recidiviz is auto-filling
           scores based on any{" "}
           <b>changes to the resident's disciplinary record</b> using data from

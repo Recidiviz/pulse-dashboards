@@ -21,10 +21,8 @@ exports[`schema for fullyEligible 1`] = `
       "listPriorNonTdocConvictions60Months": "some offense on 12/1/2022",
       "listPriorViolentTdocConvictions60Months": "some other offense on 8/22/2021",
     },
-    "q1Score": 2,
     "q2CurrentOffenseDate": 2022-06-21T00:00:00.000Z,
     "q2Notes": "a third offense",
-    "q2Score": 10,
     "q3Notes": [
       {
         "incidentTimePeriod": "0-60Months",
@@ -96,9 +94,7 @@ exports[`schema for ineligible 1`] = `
       "listPriorNonTdocConvictions60Months": "some offense on 12/1/2022",
       "listPriorViolentTdocConvictions60Months": "some other offense on 8/22/2021",
     },
-    "q1Score": 2,
     "q2Notes": "a third offense, a fourth offense",
-    "q2Score": 10,
     "q3Notes": [
       {
         "incidentTimePeriod": "0-6Months",

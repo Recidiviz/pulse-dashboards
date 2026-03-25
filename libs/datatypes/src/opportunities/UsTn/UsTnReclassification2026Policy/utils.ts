@@ -22,6 +22,7 @@ import {
   getBreakdownSectionScore,
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
+  getTotalScore,
   isEligibleForTrusteeStatus,
 } from "../reclassificationScoreUtils";
 import { formatMultiplePeriodReports } from "../utils";
@@ -35,7 +36,11 @@ const LOW_UPPER_THRESHOLD = 11;
 const MEDIUM_UPPER_THRESHOLD = 25;
 const MAXIMUM_UPPER_THRESHOLD = 44;
 
-export function getDerivedRcafCustodyLevel(totalScore: number): string {
+export function getDerivedRcafCustodyLevel(
+  totalScore: number | undefined,
+): string {
+  if (totalScore === undefined) return "";
+
   switch (true) {
     case totalScore <= LOW_UPPER_THRESHOLD:
       return "LOW";
@@ -51,16 +56,6 @@ export function getDerivedRcafCustodyLevel(totalScore: number): string {
 export function prefillRcafFormData(
   formInformation: UsTnReclassification2026FormInformation,
 ): Partial<UsTnReclassification2026DraftData> {
-  const q1Selection = getSingleSectionQuestionIndex(
-    rcafAssessmentQuestions[0],
-    formInformation.q1Score,
-  );
-
-  const q2Selection = getSingleSectionQuestionIndex(
-    rcafAssessmentQuestions[1],
-    formInformation.q2Score,
-  );
-
   const q3Selection_0_6 = getBreakdownSectionQuestionIndex(
     rcafAssessmentQuestions[2].sections[0],
     formInformation.q3Notes,
@@ -111,8 +106,8 @@ export function prefillRcafFormData(
     formInformation.q6Score,
   );
 
-  // There are two options with a score of 0
-  // Check the person's age to determine which they are
+  // Selections 3 and 4 have the same score
+  // Check the person's age to determine the correct one
   if (q6Selection === 3 && (formInformation.q6Notes?.age ?? 0) > 30) {
     q6Selection++;
   }
@@ -145,8 +140,6 @@ export function prefillRcafFormData(
   const q5NotesFormatted = formatMultiplePeriodReports(formInformation.q5Notes);
 
   return {
-    q1Selection,
-    q2Selection,
     q3Selection_0_6,
     q3Selection_6_12,
     q4Selection_0_6,
@@ -243,9 +236,9 @@ export function deriveRcafFormData(
     q7Selection,
   );
 
-  const totalScore = Math.min(
-    MAXIMUM_UPPER_THRESHOLD + 1,
-    q1Score + q2Score + q3Score + q4Score + q5Score + q6Score + q7Score,
+  const totalScore = getTotalScore(
+    [q1Score, q2Score, q3Score, q4Score, q5Score, q6Score, q7Score],
+    MAXIMUM_UPPER_THRESHOLD,
   );
 
   const trusteeEligible = isEligibleForTrusteeStatus(formData);

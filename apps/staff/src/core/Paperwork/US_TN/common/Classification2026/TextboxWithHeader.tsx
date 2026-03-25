@@ -18,7 +18,10 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { UsTnInitialClassification2026DraftData } from "~datatypes";
+import {
+  UsTnInitialClassification2026DraftData,
+  UsTnReclassification2026DraftData,
+} from "~datatypes";
 
 import DOCXFormTextArea from "../../../DOCXFormTextArea";
 
@@ -36,18 +39,21 @@ export const TextAreaContainer = styled.div`
   min-height: 3.5rem;
 `;
 
+type DraftData = UsTnInitialClassification2026DraftData &
+  UsTnReclassification2026DraftData;
+
 export function TextboxWithHeader({
   header,
   name,
 }: {
   header: string;
-  name: Extract<keyof UsTnInitialClassification2026DraftData, string>;
+  name: Extract<keyof DraftData, string>;
 }) {
   return (
     <Container>
       <TextboxHeader>{header}</TextboxHeader>
       <TextAreaContainer>
-        <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name={name} />
+        <DOCXFormTextArea<DraftData> name={name} />
       </TextAreaContainer>
     </Container>
   );
