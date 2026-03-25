@@ -43,6 +43,7 @@ from app.utils.intake.utils import (
     log_error,
 )
 from app.utils.langsmith_utils import create_langsmith_metadata, create_langsmith_tags
+from app.utils.llm_retry_config import INTAKE_ERRORS_TO_RETRY_ON
 
 logger = structlog.get_logger(__name__)
 
@@ -70,7 +71,7 @@ class IntakeConversationGraph:
             )
 
         self.memory = MemorySaver()
-        self.model = model
+        self.model = model.bind(timeout=40)
         self.session = session
         self.db_manager = db_manager
         self.send_message = send_message
@@ -199,11 +200,19 @@ class IntakeConversationGraph:
 
         try:
             if output_type is not None:
-                response = await self.model.with_structured_output(output_type).ainvoke(
-                    messages, self.config
+                response = (
+                    await self.model.with_structured_output(output_type)
+                    .with_retry(
+                        retry_if_exception_type=INTAKE_ERRORS_TO_RETRY_ON,
+                        stop_after_attempt=3,
+                    )
+                    .ainvoke(messages, self.config)
                 )
             else:
-                response = await self.model.ainvoke(messages, self.config)
+                response = await self.model.with_retry(
+                    retry_if_exception_type=INTAKE_ERRORS_TO_RETRY_ON,
+                    stop_after_attempt=3,
+                ).ainvoke(messages, self.config)
 
             end_time = datetime.now()
             duration = (end_time - start_time).total_seconds()

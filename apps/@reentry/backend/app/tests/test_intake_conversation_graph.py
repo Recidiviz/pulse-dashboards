@@ -24,6 +24,7 @@ from app.utils.intake import db_manager
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.prompts import IsSectionComplete
 from app.utils.intake.schemas import ClientContext, ConversationState
+from app.utils.llm_retry_config import INTAKE_ERRORS_TO_RETRY_ON
 
 
 @pytest.fixture
@@ -257,19 +258,28 @@ class TestIntakeConversationGraph:
     async def test_call_model_without_output_type(self, graph):
         """Without output_type, calls model.ainvoke directly."""
         graph.model = MagicMock()
-        graph.model.ainvoke = AsyncMock(return_value=LCAIMessage("AI reply"))
+        graph.model.with_retry(
+            retry_if_exception_type=INTAKE_ERRORS_TO_RETRY_ON,
+            stop_after_attempt=3,
+        ).ainvoke = AsyncMock(return_value=LCAIMessage("AI reply"))
 
         messages = [SystemMessage("System"), LCHumanMessage("Hello")]
         result = await graph.call_model(messages)
 
-        graph.model.ainvoke.assert_called_once_with(messages, graph.config)
+        graph.model.with_retry(
+            retry_if_exception_type=INTAKE_ERRORS_TO_RETRY_ON,
+            stop_after_attempt=3,
+        ).ainvoke.assert_called_once_with(messages, graph.config)
         assert result.content == "AI reply"
 
     @pytest.mark.asyncio
     async def test_call_model_with_output_type(self, graph):
         """With output_type, calls model.with_structured_output(...).ainvoke."""
         structured_mock = MagicMock()
-        structured_mock.ainvoke = AsyncMock(
+        structured_mock.with_retry(
+            retry_if_exception_type=INTAKE_ERRORS_TO_RETRY_ON,
+            stop_after_attempt=3,
+        ).ainvoke = AsyncMock(
             return_value=IsSectionComplete(
                 section_complete=True,
                 section_complete_reasoning="Done",
@@ -283,7 +293,10 @@ class TestIntakeConversationGraph:
         result = await graph.call_model(messages, IsSectionComplete)
 
         graph.model.with_structured_output.assert_called_once_with(IsSectionComplete)
-        structured_mock.ainvoke.assert_called_once_with(messages, graph.config)
+        structured_mock.with_retry(
+            retry_if_exception_type=INTAKE_ERRORS_TO_RETRY_ON,
+            stop_after_attempt=3,
+        ).ainvoke.assert_called_once_with(messages, graph.config)
         assert result.section_complete is True
 
 
