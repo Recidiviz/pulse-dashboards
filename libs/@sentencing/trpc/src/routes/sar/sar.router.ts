@@ -66,7 +66,6 @@ export const sarRouter = router({
           staffId: true,
           clientId: true,
           createdAt: true,
-          updatedAt: true,
         },
         include: {
           staff: {

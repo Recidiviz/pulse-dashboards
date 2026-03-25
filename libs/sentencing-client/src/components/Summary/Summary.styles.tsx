@@ -189,6 +189,19 @@ export const InsightsDonutWrapper = styled.div`
   overflow: hidden;
 `;
 
+// Positioned off-screen so the report renders in the DOM for html2canvas
+// capture without being visible to the user.
+export const ReportPDFContainer = styled.div`
+  position: absolute;
+  left: 100%;
+  top: -200%;
+`;
+
+export const SummaryReportWrapper = styled.div`
+  position: relative;
+  overflow: hidden;
+`;
+
 /** Offense card: two-column layout */
 export const OffenseCardContainer = styled.div`
   display: flex;

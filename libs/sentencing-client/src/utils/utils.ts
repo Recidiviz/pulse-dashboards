@@ -24,7 +24,6 @@ import {
   OFFENSES_SUFFIX,
 } from "../components/CaseDetails/constants";
 import { ReportType } from "../components/constants";
-import { FormCharge } from "../datastores/types";
 
 /**
  * Converts a decimal number to a percentage
@@ -252,11 +251,30 @@ export const formatDateRange = (
  * e.g. classificationType="FELONY", classificationSubtype="A" → "FELONY - A"
  * e.g. classificationType="MISDEMEANOR", classificationSubtype=null → "MISDEMEANOR"
  */
-export const formatClassification = (charge: FormCharge): string | null => {
+export const formatClassification = (charge: {
+  classificationType?: string | null;
+  classificationSubtype?: string | null;
+}): string | null => {
   if (!charge.classificationType) return null;
   return charge.classificationSubtype
     ? `${charge.classificationType} - ${charge.classificationSubtype}`
     : `${charge.classificationType}`;
+};
+
+/**
+ * Formats the charge classification for inline display next to the offense name.
+ * e.g. classificationType="FELONY", classificationSubtype="B" → " (Class B)"
+ * e.g. classificationType="MISDEMEANOR", classificationSubtype=null → " (Misdemeanor)"
+ */
+export const formatInlineClassification = (charge: {
+  classificationType?: string | null;
+  classificationSubtype?: string | null;
+}): string => {
+  if (!charge.classificationType) return "";
+  if (charge.classificationSubtype) {
+    return ` (Class ${charge.classificationSubtype})`;
+  }
+  return ` (${titleCase(charge.classificationType)})`;
 };
 
 /**
@@ -265,7 +283,10 @@ export const formatClassification = (charge: FormCharge): string | null => {
  * e.g. judgeNames=["Smith, John"], division=null → "Smith, John"
  * e.g. judgeNames=null, division="4" → "4"
  */
-export const formatJudgeAndDivision = (charge: FormCharge): string | null => {
+export const formatJudgeAndDivision = (charge: {
+  judgeNames?: string[] | null;
+  division?: string | null;
+}): string | null => {
   const judgeNames =
     charge.judgeNames && charge.judgeNames.length > 0
       ? charge.judgeNames.map(capitalizeName).join(", ")

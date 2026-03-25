@@ -36,10 +36,12 @@ import { mapEnumKeysToDisplay } from "../KeyConsiderations/utils";
 import { RISK_LEVELS, RiskLevelKey } from "../OffenderAssessment/constants";
 import { getDomainsForAssessmentType } from "../OffenderAssessment/utils";
 import { SARSection } from "../SARDetails/constants";
+import { useStore } from "../StoreProvider/StoreProvider";
 import { InfoIconWithTooltip } from "../Tooltip/Tooltip";
 import { MissingBadge } from "./MissingBadge";
+import { exportSARtoPDF } from "./SARPdfExport";
+import { SentencingAssessmentReport } from "./SentencingAssessmentReport";
 import * as Styled from "./Summary.styles";
-
 const NONE_LISTED = "None listed";
 
 /** Renders a field value or <MissingBadge /> when empty */
@@ -142,6 +144,9 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
     sectionStatuses,
   } = presenter;
 
+  const { activeFeatureVariants } = useStore();
+  const hasSARDownload = Boolean(activeFeatureVariants["SARBuilder"]);
+
   const isReadyForDownload = Object.values(sectionStatuses).every(
     (s) => s === "complete",
   );
@@ -220,161 +225,192 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
 
   const insightData = presenter.insightData;
   const sortedDispositionData = presenter.sortedDispositionData;
+  const targetRef = React.useRef<HTMLDivElement>(null);
+  const fileName = `Sentencing Assessment Report - ${titleCase(sarData?.client?.fullName ?? "")}`;
+  const [isDownloading, setIsDownloading] = React.useState(false);
+
+  const handleClickToDownload = async () => {
+    if (!hasSARDownload || !targetRef.current || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      await exportSARtoPDF(targetRef.current, fileName);
+    } catch (e) {
+      console.error("SAR PDF export failed:", e);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
-    <Styled.SummaryWrapper>
-      <Styled.Container>
-        {/* Download header */}
-        <Styled.DownloadHeader>
-          <Styled.DownloadHeaderText>
-            <Styled.DownloadTitle>Download SAR</Styled.DownloadTitle>
-            <Styled.DownloadSubtitle>
-              Clicking &ldquo;Download&rdquo; will generate a PDF report.
-            </Styled.DownloadSubtitle>
-          </Styled.DownloadHeaderText>
-          <Styled.DownloadButton
-            disabled={!isReadyForDownload}
-            aria-label="Download SAR report"
-          >
-            <DownloadIcon />
-            Download
-          </Styled.DownloadButton>
-        </Styled.DownloadHeader>
+    <Styled.SummaryReportWrapper>
+      <Styled.SummaryWrapper>
+        <Styled.Container>
+          {/* Download header */}
+          <Styled.DownloadHeader>
+            <Styled.DownloadHeaderText>
+              <Styled.DownloadTitle>Download SAR</Styled.DownloadTitle>
+              <Styled.DownloadSubtitle>
+                Clicking &ldquo;Download&rdquo; will generate and save the PDF
+                directly.
+              </Styled.DownloadSubtitle>
+            </Styled.DownloadHeaderText>
+            <Styled.DownloadButton
+              disabled={!isReadyForDownload || !hasSARDownload || isDownloading}
+              aria-label="Download SAR report"
+              onClick={handleClickToDownload}
+            >
+              <DownloadIcon />
+              Download
+            </Styled.DownloadButton>
+          </Styled.DownloadHeader>
 
-        {/* Case Information */}
-        <Styled.SectionCard>
-          <Styled.SectionTitle>Case Information</Styled.SectionTitle>
-          <Styled.SectionBody>
-            <div>Date of Birth: {formattedBirthDate || "—"}</div>
-            <div>Gender: {formattedGender || "—"}</div>
-          </Styled.SectionBody>
-        </Styled.SectionCard>
-
-        {/* Offense cards - one per charge */}
-        {charges.map((charge) => (
-          <SummaryOffenseCard
-            key={charge.id}
-            charge={charge}
-            presenter={presenter}
-          />
-        ))}
-
-        {/* Key Considerations */}
-        {!presenter.defendantDeclinedToParticipate && (
+          {/* Case Information */}
           <Styled.SectionCard>
-            <Styled.SectionTitle>Key Considerations</Styled.SectionTitle>
+            <Styled.SectionTitle>Case Information</Styled.SectionTitle>
             <Styled.SectionBody>
-              <Styled.InlineRow>
-                Needs: {needsComplete ? needsDisplay : <MissingBadge />}
-              </Styled.InlineRow>
-              <Styled.InlineRow>
-                Mitigation:{" "}
-                {factorsComplete ? mitigationDisplay : <MissingBadge />}
-              </Styled.InlineRow>
+              <div>Date of Birth: {formattedBirthDate || "—"}</div>
+              <div>Gender: {formattedGender || "—"}</div>
             </Styled.SectionBody>
           </Styled.SectionCard>
-        )}
 
-        {/* Defendant's Version */}
-        <Styled.SectionCard>
-          <Styled.SectionTitle>Defendant&apos;s Version</Styled.SectionTitle>
-          <Styled.SectionBody>
-            {isDefendantComplete ? defendantDisplay : <MissingBadge />}
-          </Styled.SectionBody>
-        </Styled.SectionCard>
+          {/* Offense cards - one per charge */}
+          {charges.map((charge) => (
+            <SummaryOffenseCard
+              key={charge.id}
+              charge={charge}
+              presenter={presenter}
+            />
+          ))}
 
-        {/* Victim Impact */}
-        <Styled.SectionCard>
-          <Styled.SectionTitle>Victim Impact</Styled.SectionTitle>
-          <Styled.SectionBody>
-            {isVictimImpactComplete ? victimImpactDisplay : <MissingBadge />}
-          </Styled.SectionBody>
-        </Styled.SectionCard>
-
-        {/* Offender Assessment + Recommendation */}
-        {!presenter.defendantDeclinedToParticipate && (
-          <>
+          {/* Key Considerations */}
+          {!presenter.defendantDeclinedToParticipate && (
             <Styled.SectionCard>
-              <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
+              <Styled.SectionTitle>Key Considerations</Styled.SectionTitle>
               <Styled.SectionBody>
-                {offenderAssessmentDisplay || NONE_LISTED}
+                <Styled.InlineRow>
+                  Needs: {needsComplete ? needsDisplay : <MissingBadge />}
+                </Styled.InlineRow>
+                <Styled.InlineRow>
+                  Mitigation:{" "}
+                  {factorsComplete ? mitigationDisplay : <MissingBadge />}
+                </Styled.InlineRow>
               </Styled.SectionBody>
             </Styled.SectionCard>
+          )}
 
-            {/* Recommendation - per sub-section badges */}
-            <Styled.SectionCard>
-              <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
-              {recommendationSkipped ? (
-                <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
-              ) : (
-                <Styled.RecommendationSection>
-                  <Styled.RecommendationLabel>
-                    Community Strategy
-                  </Styled.RecommendationLabel>
-                  <Styled.SectionBody>
-                    {communityValue || <MissingBadge />}
-                  </Styled.SectionBody>
-                  <Styled.RecommendationLabel>
-                    Home Plan
-                  </Styled.RecommendationLabel>
-                  <Styled.SectionBody>
-                    {homePlanValue || <MissingBadge />}
-                  </Styled.SectionBody>
-                  <Styled.RecommendationLabel>
-                    Institutional Strategy
-                  </Styled.RecommendationLabel>
-                  <Styled.SectionBody>
-                    {institutionalValue || <MissingBadge />}
-                  </Styled.SectionBody>
-                </Styled.RecommendationSection>
-              )}
-            </Styled.SectionCard>
-          </>
+          {/* Defendant's Version */}
+          <Styled.SectionCard>
+            <Styled.SectionTitle>Defendant&apos;s Version</Styled.SectionTitle>
+            <Styled.SectionBody>
+              {isDefendantComplete ? defendantDisplay : <MissingBadge />}
+            </Styled.SectionBody>
+          </Styled.SectionCard>
+
+          {/* Victim Impact */}
+          <Styled.SectionCard>
+            <Styled.SectionTitle>Victim Impact</Styled.SectionTitle>
+            <Styled.SectionBody>
+              {isVictimImpactComplete ? victimImpactDisplay : <MissingBadge />}
+            </Styled.SectionBody>
+          </Styled.SectionCard>
+
+          {/* Offender Assessment + Recommendation */}
+          {!presenter.defendantDeclinedToParticipate && (
+            <>
+              <Styled.SectionCard>
+                <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
+                <Styled.SectionBody>
+                  {offenderAssessmentDisplay || NONE_LISTED}
+                </Styled.SectionBody>
+              </Styled.SectionCard>
+
+              {/* Recommendation - per sub-section badges */}
+              <Styled.SectionCard>
+                <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
+                {recommendationSkipped ? (
+                  <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
+                ) : (
+                  <Styled.RecommendationSection>
+                    <Styled.RecommendationLabel>
+                      Community Strategy
+                    </Styled.RecommendationLabel>
+                    <Styled.SectionBody>
+                      {communityValue || <MissingBadge />}
+                    </Styled.SectionBody>
+                    <Styled.RecommendationLabel>
+                      Home Plan
+                    </Styled.RecommendationLabel>
+                    <Styled.SectionBody>
+                      {homePlanValue || <MissingBadge />}
+                    </Styled.SectionBody>
+                    <Styled.RecommendationLabel>
+                      Institutional Strategy
+                    </Styled.RecommendationLabel>
+                    <Styled.SectionBody>
+                      {institutionalValue || <MissingBadge />}
+                    </Styled.SectionBody>
+                  </Styled.RecommendationSection>
+                )}
+              </Styled.SectionCard>
+            </>
+          )}
+        </Styled.Container>
+
+        {/* Insights — separate card, below the sticky summary panel */}
+        {insightData && insightData.dispositionNumRecords > 0 && (
+          <Styled.InsightsSidePanel>
+            <Styled.SectionTitle>Insights</Styled.SectionTitle>
+            <Styled.InsightsSubtitle>
+              This information represents outcomes for cases similar to that of
+              the current client, {titleCase(sarData?.client?.fullName)}, based
+              on gender, risk score, and most severe offense.
+            </Styled.InsightsSubtitle>
+            <Styled.InsightsChartCard>
+              <CommonStyled.ChartTitle>
+                Historical Precedent{" "}
+                <InfoIconWithTooltip
+                  headerText="Historical Precedent"
+                  content={
+                    <CommonStyled.ChartTooltipContentSection>
+                      <SARDispositionChartExplanation
+                        insight={insightData}
+                        assessmentType={sarData?.assessmentType ?? null}
+                      />
+                    </CommonStyled.ChartTooltipContentSection>
+                  }
+                />
+              </CommonStyled.ChartTitle>
+              <CommonStyled.ChartSubTitle>
+                {getSARDispositionChartSubtitle(insightData)}{" "}
+                <span>
+                  (Based on {insightData.dispositionNumRecords.toLocaleString()}{" "}
+                  {printFormattedRecordString(
+                    insightData.dispositionNumRecords,
+                  )}
+                  )
+                </span>
+              </CommonStyled.ChartSubTitle>
+              <Styled.InsightsDonutWrapper>
+                <DispositionDonutChart
+                  datapoints={sortedDispositionData}
+                  numberOfRecords={insightData.dispositionNumRecords}
+                  selectedRecommendation={null}
+                  inlineLayout
+                />
+              </Styled.InsightsDonutWrapper>
+            </Styled.InsightsChartCard>
+          </Styled.InsightsSidePanel>
         )}
-      </Styled.Container>
+      </Styled.SummaryWrapper>
 
-      {/* Insights — separate card, below the sticky summary panel */}
-      {insightData && insightData.dispositionNumRecords > 0 && (
-        <Styled.InsightsSidePanel>
-          <Styled.SectionTitle>Insights</Styled.SectionTitle>
-          <Styled.InsightsSubtitle>
-            This information represents outcomes for cases similar to that of
-            the current client, {titleCase(sarData?.client?.fullName)}, based on
-            gender, risk score, and most severe offense.
-          </Styled.InsightsSubtitle>
-          <Styled.InsightsChartCard>
-            <CommonStyled.ChartTitle>
-              Historical Precedent{" "}
-              <InfoIconWithTooltip
-                headerText="Historical Precedent"
-                content={
-                  <CommonStyled.ChartTooltipContentSection>
-                    <SARDispositionChartExplanation
-                      insight={insightData}
-                      assessmentType={sarData?.assessmentType ?? null}
-                    />
-                  </CommonStyled.ChartTooltipContentSection>
-                }
-              />
-            </CommonStyled.ChartTitle>
-            <CommonStyled.ChartSubTitle>
-              {getSARDispositionChartSubtitle(insightData)}{" "}
-              <span>
-                (Based on {insightData.dispositionNumRecords.toLocaleString()}{" "}
-                {printFormattedRecordString(insightData.dispositionNumRecords)})
-              </span>
-            </CommonStyled.ChartSubTitle>
-            <Styled.InsightsDonutWrapper>
-              <DispositionDonutChart
-                datapoints={sortedDispositionData}
-                numberOfRecords={insightData.dispositionNumRecords}
-                selectedRecommendation={null}
-                inlineLayout
-              />
-            </Styled.InsightsDonutWrapper>
-          </Styled.InsightsChartCard>
-        </Styled.InsightsSidePanel>
+      {/* PDF report — off-screen, captured by html2canvas + jsPDF on download */}
+      {sarData && (
+        <Styled.ReportPDFContainer>
+          <div ref={targetRef}>
+            <SentencingAssessmentReport SARAttributes={sarData} />
+          </div>
+        </Styled.ReportPDFContainer>
       )}
-    </Styled.SummaryWrapper>
+    </Styled.SummaryReportWrapper>
   );
 });
