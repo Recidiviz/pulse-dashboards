@@ -580,15 +580,14 @@ class SocketIOManager:
                 logger.debug(f"Empty content received from sid {sid}")
                 return
 
+            intake = await self.db_manager.get_intake(client_pseudo_id)
+            if not intake:
+                logger.warning(f"No intake found for client {client_pseudo_id}")
+                return
+
             # If there's a pending response waiting, fulfill it
             pending_response = self.pending_responses.get(client_pseudo_id)
             if pending_response and not pending_response.done():
-                # Get intake to get intake_id
-                intake = await self.db_manager.get_intake(client_pseudo_id)
-                if not intake:
-                    logger.warning(f"No intake found for client {client_pseudo_id}")
-                    return
-
                 message = await self.db_manager.store_message(
                     intake_id=intake.id,
                     from_role=IntakeMessageRole.CLIENT,
@@ -612,11 +611,8 @@ class SocketIOManager:
                 return serialized
 
             # If we're not expecting a response, check if it's the caseworker's turn to talk
-            # Get intake to check turn
-            intake_for_turn = await self.db_manager.get_intake(client_pseudo_id)
             if (
-                intake_for_turn
-                and (await self.db_manager.get_talking_turn(intake_for_turn.id))
+                await self.db_manager.get_talking_turn(intake.id)
                 == IntakeMessageRole.CASEWORKER
             ):
                 logger.debug(
@@ -624,12 +620,7 @@ class SocketIOManager:
                 )
                 return
 
-            # If we get here, we're handling an unexpected or out-of-sequence message
-            intake = await self.db_manager.get_intake(client_pseudo_id)
-            if not intake:
-                logger.warning(f"No intake found for client {client_pseudo_id}")
-                return
-
+            # If we get here, we're handling an unexpected message
             if intake.status != IntakeStatus.IN_PROGRESS:
                 logger.info(
                     f"Intake for client {client_pseudo_id} is not in progress (status: {intake.status})"
