@@ -28,7 +28,8 @@ import structlog
 from fastapi import HTTPException, Request
 
 from app.auth.auth_core import (
-    get_current_user,
+    get_auth_user_context,
+    get_pseudonymized_id,
     is_internal_user,
     redis_client,
 )
@@ -198,8 +199,10 @@ async def validate_impersonation_request(request: Request) -> str | None:
         return None
 
     # Get the caller's identity
-    current_user = await get_current_user(request)
-    caller_email = current_user.email
+    # todo: check why we need to call get_pseudonymized_id before get_auth_user_context to get the current email user,
+    await get_pseudonymized_id(request, skip_impersonation=True)
+    auth_user_context = await get_auth_user_context(request, skip_impersonation=True)
+    caller_email = auth_user_context["email"]
 
     if not is_internal_user(caller_email):
         raise HTTPException(

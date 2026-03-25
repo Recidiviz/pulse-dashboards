@@ -477,7 +477,9 @@ async def get_current_user(request: Request) -> JSONResponse | UserProfile:
     return UserProfile(**{**request.state.user, **user_info, **extra_info})
 
 
-async def get_pseudonymized_id(request: Request) -> str:
+async def get_pseudonymized_id(
+    request: Request, skip_impersonation: bool = False
+) -> str:
     """
     Get the pseudonymized ID from the user's auth profile with caching.
 
@@ -496,36 +498,37 @@ async def get_pseudonymized_id(request: Request) -> str:
             detail="Not authenticated",
         )
 
-    # Check for impersonation
-    impersonated_email = request.headers.get("X-Impersonated-Email")
-    if impersonated_email:
-        from app.auth.impersonation import (
-            get_impersonated_user_metadata,
-            validate_impersonation_request,
-        )
+    if not skip_impersonation:
+        # Check for impersonation
+        impersonated_email = request.headers.get("X-Impersonated-Email")
+        if impersonated_email:
+            from app.auth.impersonation import (
+                get_impersonated_user_metadata,
+                validate_impersonation_request,
+            )
 
-        target_email = await validate_impersonation_request(request)
-        if target_email:
-            app_metadata = await get_impersonated_user_metadata(target_email)
-            pseudonymized_id = app_metadata.get("pseudonymizedId")
-            if not pseudonymized_id:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Pseudonymized ID not found for impersonated user {target_email}",
+            target_email = await validate_impersonation_request(request)
+            if target_email:
+                app_metadata = await get_impersonated_user_metadata(target_email)
+                pseudonymized_id = app_metadata.get("pseudonymizedId")
+                if not pseudonymized_id:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Pseudonymized ID not found for impersonated user {target_email}",
+                    )
+                # Get caller email for logging
+                auth_header = request.headers.get("Authorization")
+                caller_token = auth_header.split(" ")[1]
+                caller_info = await _get_cached_auth0_userinfo(caller_token)
+                caller_email = (
+                    caller_info.get("email", "unknown") if caller_info else "unknown"
                 )
-            # Get caller email for logging
-            auth_header = request.headers.get("Authorization")
-            caller_token = auth_header.split(" ")[1]
-            caller_info = await _get_cached_auth0_userinfo(caller_token)
-            caller_email = (
-                caller_info.get("email", "unknown") if caller_info else "unknown"
-            )
-            logger.info(
-                "Impersonation active",
-                caller_email=caller_email,
-                target_email=target_email,
-            )
-            return pseudonymized_id
+                logger.info(
+                    "Impersonation active",
+                    caller_email=caller_email,
+                    target_email=target_email,
+                )
+                return pseudonymized_id
 
     auth_header = request.headers.get("Authorization")
     token = auth_header.split(" ")[1]
