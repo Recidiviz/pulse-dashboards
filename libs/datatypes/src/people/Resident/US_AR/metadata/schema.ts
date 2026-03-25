@@ -43,6 +43,7 @@ export const usArResidentMetadataSchema = z.object({
   eligibilityDate: nullishAsUndefined(dateStringSchema),
   eligibilityDateName: z.string(),
   gedCompletionDate: nullishAsUndefined(dateStringSchema),
+  lastUpdatedDate: dateStringSchema,
   maximumReleaseDate: nullishAsUndefined(dateStringSchema),
   noIncarcerationSanctionsWithin6Months: z.boolean(),
   noIncarcerationSanctionsWithin12Months: z.boolean(),
