@@ -15,12 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components";
+
 import { GoButton, HomepageSectionHeading } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 import { UsArResidentMetadata } from "~datatypes";
 
 import { DateInfoCard, DateInfoProps } from "./DateInfoCard";
+
+const LinkContainer = styled.div`
+  margin-top: ${rem(spacing.lg)};
+  margin-bottom: ${rem(spacing.lg)};
+`;
 
 export function UsArImportantDates({
   metadata,
@@ -49,16 +58,20 @@ export function UsArImportantDates({
       <HomepageSectionHeading>
         {t(($) => $.importantDates.sectionHeader)}
       </HomepageSectionHeading>
+
       {dates.map((dateInfo) => (
         <DateInfoCard {...dateInfo} />
       ))}
-      <GoButton
-        to={State.Resident.$.UsArMoreInformation.ImportantDates.buildRelativePath(
-          {},
-        )}
-      >
-        {t(($) => $.importantDates.moreInfoLink)}
-      </GoButton>
+
+      <LinkContainer>
+        <GoButton
+          to={State.Resident.$.UsArMoreInformation.ImportantDates.buildRelativePath(
+            {},
+          )}
+        >
+          {t(($) => $.importantDates.moreInfoLink)}
+        </GoButton>
+      </LinkContainer>
     </section>
   );
 }

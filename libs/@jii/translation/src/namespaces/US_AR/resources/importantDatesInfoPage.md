@@ -15,8 +15,6 @@ Your “sentence imposed” date is the date the judge officially gave you your 
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
 <dd>Days of credit you can earn by **staying in lower Class levels** that move your Parole Eligibility Date closer to the present.</dd>
-<dt>Earned Time</dt>
-<dd>Days of credit you can earn by **completing programming** that move your Parole Eligibility Date closer to the present.</dd>
 </dl>
 
 ### If Your Sentence Was Imposed Between 1994-2024
@@ -28,8 +26,6 @@ Your “sentence imposed” date is the date the judge officially gave you your 
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
 <dd>Days of credit you can earn by **staying in lower Class levels** that move your Transfer Eligibility Date closer to the present.</dd>
-<dt>Earned Time</dt>
-<dd>Days of credit you can earn by **completing programming** that move your Transfer Eligibility Date closer to the present.</dd>
 </dl>
 
 ### If Your Sentence Was Imposed January 1, 2025 or After
@@ -41,16 +37,16 @@ Your “sentence imposed” date is the date the judge officially gave you your 
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
 <dd>Days of credit you can earn by **staying in lower Class levels** that move your Release Eligibility Date closer to the present.</dd>
-<dt>Earned Time</dt>
-<dd>Days of credit you can earn by **completing programming** that move your Release Eligibility Date closer to the present.</dd>
 <dt>Case Plan Units (CPUs)</dt>
 <dd>Credits you can earn for completing assigned programming that move your Release Eligibility Date closer to the present. The number of days each CPU counts for depends on your individual sentence and case plan.</dd>
 </dl>
 
 ## Good Time
 
-<section class="callout">
 ### How many days do I reduce my sentence by for my Class level?
+
+<section class="callout">
+#### If Your Sentence Was Imposed Before 1994 OR Between 1994-2024
 
 <dl>
 <dt>Class I (one)</dt>
@@ -63,11 +59,20 @@ Your “sentence imposed” date is the date the judge officially gave you your 
 <dd>Your sentence is not reduced.</dd>
 </dl>
 
+#### If Your Sentence Was Imposed January 1, 2025 or After
+
+<dl>
+<dt>Class I (one)</dt>
+<dd>You earn 1 day of earned release credit for **every day** you are Class I (one).</dd>
+<dt>Class II (two)</dt>
+<dd>You earn 1 day of earned release credit for **every three days** you are Class II (two).</dd>
+<dt>Class III (three)</dt>
+<dd>You earn 1 day of earned release credit for **every seven days** you are Class III (three).</dd>
+<dt>Class IV (four)</dt>
+<dd>Your sentence is not reduced.</dd>
+</dl>
+
 </section>
-
-### How much Good Time can I complete?
-
-You cannot earn more than 50% of your original sentence in good time credits. If your transfer/parole/release eligibility date is already at the halfway point between the start of your sentence and your max release date, you can no longer earn additional good time.
 
 ### When do I not earn Good Time?
 
