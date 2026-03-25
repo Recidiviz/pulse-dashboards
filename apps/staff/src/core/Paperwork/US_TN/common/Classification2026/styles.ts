@@ -74,8 +74,6 @@ export const TrusteeFormPage = styled(BaseFormPage)`
 `;
 
 export const ClassificationFormPage = styled(BaseFormPage)`
-  padding: 3rem 4.25rem;
-
   ${LeftColumn} {
     width: 100%;
   }

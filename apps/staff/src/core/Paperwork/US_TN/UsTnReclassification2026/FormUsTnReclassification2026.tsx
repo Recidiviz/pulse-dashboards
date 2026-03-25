@@ -114,7 +114,7 @@ export const FormUsTnReclassification2026 = observer(
         <CafScoreSourceModal latestRecordQs={[3, 4, 5, 6]} jobHistoryQs={[7]} />
         <FormViewer formRef={formRef}>
           <CoverSheet />
-          <PrintablePage landscape stretchable>
+          <PrintablePage stretchable>
             <ClassificationFormPage>
               <Header>
                 TENNESSEE CLASSIFICATION INSTRUMENT: RECLASSIFICATION
@@ -159,10 +159,6 @@ export const FormUsTnReclassification2026 = observer(
                   name={"q3NotesFormatted"}
                 />
               </ScoredAssessmentQuestion>
-            </ClassificationFormPage>
-          </PrintablePage>
-          <PrintablePage landscape stretchable>
-            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestions[3]}
                 questionNumber={4}
@@ -173,6 +169,10 @@ export const FormUsTnReclassification2026 = observer(
                   name={"q4NotesFormatted"}
                 />
               </ScoredAssessmentQuestion>
+            </ClassificationFormPage>
+          </PrintablePage>
+          <PrintablePage stretchable>
+            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestions[4]}
                 questionNumber={5}
@@ -183,10 +183,6 @@ export const FormUsTnReclassification2026 = observer(
                   name={"q5NotesFormatted"}
                 />
               </ScoredAssessmentQuestion>
-            </ClassificationFormPage>
-          </PrintablePage>
-          <PrintablePage landscape stretchable>
-            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestions[5]}
                 questionNumber={6}

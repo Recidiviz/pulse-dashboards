@@ -102,7 +102,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         <CafScoreSourceModal latestRecordQs={[3, 4, 5, 6]} jobHistoryQs={[7]} />
         <FormViewer formRef={formRef}>
           <CoverSheet />
-          <PrintablePage landscape stretchable>
+          <PrintablePage stretchable>
             <ClassificationFormPage>
               <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
               <ScoredAssessmentQuestion
@@ -145,10 +145,6 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                   name={"q3Notes"}
                 />
               </ScoredAssessmentQuestion>
-            </ClassificationFormPage>
-          </PrintablePage>
-          <PrintablePage landscape stretchable>
-            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[3]}
                 questionNumber={4}
@@ -159,6 +155,10 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                   name={"q4Notes"}
                 />
               </ScoredAssessmentQuestion>
+            </ClassificationFormPage>
+          </PrintablePage>
+          <PrintablePage stretchable>
+            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[4]}
                 questionNumber={5}
@@ -174,10 +174,6 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                 questionNumber={6}
                 supportingText={AGE_SUPPORTING_TEXT}
               />
-            </ClassificationFormPage>
-          </PrintablePage>
-          <PrintablePage landscape>
-            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={dcafAssessmentQuestions[6]}
                 questionNumber={7}

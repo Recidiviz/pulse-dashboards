@@ -36,7 +36,9 @@ const TextboxHeader = styled.div`
 `;
 
 export const TextAreaContainer = styled.div`
-  min-height: 3.5rem;
+  & textarea {
+    min-height: 3.5rem;
+  }
 `;
 
 type DraftData = UsTnInitialClassification2026DraftData &
