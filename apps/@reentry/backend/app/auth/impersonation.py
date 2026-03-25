@@ -40,8 +40,11 @@ IMPERSONATION_CACHE_TTL = 300  # 5 minutes
 
 
 def _compute_user_hash(email: str) -> str:
-    digest = hashlib.sha256(email.encode()).digest()
-    return base64.urlsafe_b64encode(digest).decode().rstrip("=")
+    digest = hashlib.sha256(email.lower().encode()).digest()
+    user_hash = base64.b64encode(digest).decode()
+    if user_hash.startswith("/"):
+        user_hash = "_" + user_hash[1:]
+    return user_hash
 
 
 async def get_impersonated_user_metadata(target_email: str) -> dict:
@@ -69,6 +72,12 @@ async def get_impersonated_user_metadata(target_email: str) -> dict:
             error=str(e),
         )
 
+    logger.info(
+        "Fetching impersonation metadata",
+        target_email=target_email,
+        env=settings.ENV_NAME,
+    )
+
     # Cache miss: fetch metadata based on environment
     if settings.ENV_NAME in ("staging", "prod"):
         # Staging/prod: call the Recidiviz Data API
@@ -80,6 +89,14 @@ async def get_impersonated_user_metadata(target_email: str) -> dict:
         try:
             user_hash = _compute_user_hash(target_email)
             url = f"{settings.DATA_API_URL}/auth/users/{user_hash}"
+
+            logger.info(
+                "Requesting Data API for user metadata",
+                target_email=target_email,
+                user_hash=user_hash,
+                url=url,
+            )
+
             auth_req = google.auth.transport.requests.Request()
             # load the default credentials (which may be impersonated credentials if --impersonate-service-account is used)
             credentials, _ = google.auth.default()
@@ -95,6 +112,11 @@ async def get_impersonated_user_metadata(target_email: str) -> dict:
                     headers={"Authorization": f"Bearer {id_token}"},
                     timeout=10,
                 )
+                logger.info(
+                    "Data API response received",
+                    status_code=response.status_code,
+                    target_email=target_email,
+                )
                 response.raise_for_status()
                 user_data = response.json()
         except httpx.HTTPStatusError as e:
@@ -104,9 +126,11 @@ async def get_impersonated_user_metadata(target_email: str) -> dict:
                 response_text = e.response.json()
 
             logger.error(
-                f"Failed to fetch impersonated user metadata from Data API: {response_text}",
+                "Failed to fetch impersonated user metadata from Data API",
                 target_email=target_email,
+                user_hash=user_hash,
                 status_code=e.response.status_code,
+                response_body=response_text,
             )
             raise HTTPException(
                 status_code=404,
@@ -124,6 +148,12 @@ async def get_impersonated_user_metadata(target_email: str) -> dict:
             )
 
         app_metadata = user_data.get("app_metadata", user_data)
+        logger.info(
+            "Successfully fetched impersonation metadata from Data API",
+            target_email=target_email,
+            has_pseudonymized_id="pseudonymizedId" in app_metadata,
+            state_code=app_metadata.get("stateCode"),
+        )
     else:
         # dev/demo/pilot: Use BigQuery lookup
         from app.services.client_data.queries import Queries
