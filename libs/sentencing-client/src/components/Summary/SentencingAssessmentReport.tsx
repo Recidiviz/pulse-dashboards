@@ -18,23 +18,28 @@
 import moment from "moment";
 import React from "react";
 
-import { SARAttributes } from "../../datastores/types";
+import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { titleCase } from "../../utils/utils";
 import { ReportBlock, SentencingAssessmentReportSection } from "./ReportBlock";
 import { ReportCharge } from "./ReportCharge";
+import { ReportKeyConsiderations } from "./ReportKeyConsiderations";
 import { ReportRequestedOf } from "./ReportRequestedOf";
 import { BLOCK_GAP, CHIP_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 interface SentencingAssessmentReportProps {
-  SARAttributes: SARAttributes;
+  presenter: SARDetailsPresenter;
 }
 
 export const SentencingAssessmentReport: React.FC<
   SentencingAssessmentReportProps
-> = ({ SARAttributes }) => {
-  const { client, externalId, dateRequested, updatedAt, staff } = SARAttributes;
-  const charges = SARAttributes.charges ?? [];
+> = ({ presenter }) => {
+  const sarData = presenter.SARData;
+  if (!sarData) return null;
+
+  const { client, externalId, dateRequested, updatedAt, staff } = sarData;
+  const charges = sarData.charges;
+  const { needsDisplayItems, factorsDisplayItems } = presenter;
 
   const header = (
     <Styled.Header>
@@ -117,6 +122,10 @@ export const SentencingAssessmentReport: React.FC<
                   ))}
                 </Styled.ColumnFlexContainer>
               </SentencingAssessmentReportSection>
+              <ReportKeyConsiderations
+                needsDisplayItems={needsDisplayItems}
+                factorsDisplayItems={factorsDisplayItems}
+              />
             </Styled.PageContent>
           </td>
         </tr>

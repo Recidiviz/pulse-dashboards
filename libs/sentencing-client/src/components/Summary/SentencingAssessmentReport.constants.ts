@@ -35,3 +35,6 @@ export const CHIP_GAP = 10;
 
 /** Left padding applied to each column in the charge card body. */
 export const CHARGE_COLUMN_PADDING = 10;
+
+/** Gap between an icon and its adjacent label/content column. */
+export const ICON_LABEL_GAP = 5;

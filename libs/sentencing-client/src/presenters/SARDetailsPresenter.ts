@@ -32,7 +32,13 @@ import {
   REQUIRED_FIELD_IDS,
 } from "../components/CaseInformation/constants";
 import { JudgeOption } from "../components/CaseInformation/JudgeSelector";
+import {
+  NeedsToBeAddressed,
+  OTHER_OPTION,
+  ProtectiveFactors,
+} from "../components/constants";
 import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderations/constants";
+import { mapEnumKeysToDisplay } from "../components/KeyConsiderations/utils";
 import { getAssessmentScoreBucket } from "../components/OffenderAssessment/assessmentTypeUtils";
 import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
 import {
@@ -1203,6 +1209,34 @@ export class SARDetailsPresenter implements Hydratable {
         "mitigatingFactors"
       ]?.["skipped"] === true
     );
+  }
+
+  /** Display labels for areas of need, replacing the "Other" placeholder with
+   * the free-text value. Returns [] if the section was skipped. */
+  get needsDisplayItems(): string[] {
+    if (this.needsSkipped) return [];
+    const items = mapEnumKeysToDisplay(
+      NeedsToBeAddressed,
+      this.SARData?.needsToBeAddressed,
+    ).filter((item) => item !== OTHER_OPTION);
+    if (this.SARData?.otherNeedToBeAddressed) {
+      items.push(this.SARData.otherNeedToBeAddressed);
+    }
+    return items;
+  }
+
+  /** Display labels for mitigating factors, replacing the "Other" placeholder
+   * with the free-text value. Returns [] if the section was skipped. */
+  get factorsDisplayItems(): string[] {
+    if (this.factorsSkipped) return [];
+    const items = mapEnumKeysToDisplay(
+      ProtectiveFactors,
+      this.SARData?.mitigatingFactors,
+    ).filter((item) => item !== OTHER_OPTION);
+    if (this.SARData?.otherMitigatingFactor) {
+      items.push(this.SARData.otherMitigatingFactor);
+    }
+    return items;
   }
 
   get victimImpactStatementSkipped(): boolean {

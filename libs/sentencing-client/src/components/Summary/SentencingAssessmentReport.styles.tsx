@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
+import { Property } from "csstype";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -113,14 +114,19 @@ export const SectionTitleNote = styled.div`
 export const ColumnFlexContainer = styled.div<{ gap?: number }>`
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   ${({ gap }) => gap !== undefined && `gap: ${gap}px;`}
 `;
 
-export const RowFlexContainer = styled.div<{ gap?: number }>`
+export const RowFlexContainer = styled.div<{
+  gap?: number;
+  justifyContent?: Property.JustifyContent;
+  alignItems?: Property.AlignItems;
+}>`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: baseline;
+  align-items: ${({ alignItems }) => alignItems ?? "baseline"};
+  justify-content: ${({ justifyContent }) => justifyContent ?? "flex-start"};
   ${({ gap }) => gap !== undefined && `gap: ${gap}px;`}
 `;
 
@@ -128,6 +134,7 @@ export const Label = styled.div`
   ${typography.Sans14}
   font-weight: 700;
   line-height: 120%; /* 16.8px */
+  flex-shrink: 0;
   letter-spacing: -0.14px;
   white-space: nowrap;
 `;
@@ -140,6 +147,7 @@ export const Value = styled.div`
   min-width: 0;
   overflow-wrap: break-word;
 `;
+
 export const ReportChip = styled.div`
   padding: 6.052px 12.105px;
   justify-content: center;

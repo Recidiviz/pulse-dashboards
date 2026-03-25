@@ -31,8 +31,6 @@ import * as CommonStyled from "../CaseDetails/components/charts/components/Style
 import { DispositionDonutChart } from "../CaseDetails/components/charts/DispositionChart/DispositionDonutChart";
 import { SARDispositionChartExplanation } from "../CaseDetails/components/charts/DispositionChart/SARDispositionChartExplanation";
 import { getSARDispositionChartSubtitle } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
-import { NeedsToBeAddressed, ProtectiveFactors } from "../constants";
-import { mapEnumKeysToDisplay } from "../KeyConsiderations/utils";
 import { RISK_LEVELS, RiskLevelKey } from "../OffenderAssessment/constants";
 import { getDomainsForAssessmentType } from "../OffenderAssessment/utils";
 import { SARSection } from "../SARDetails/constants";
@@ -157,22 +155,16 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
   const needsComplete =
     needsSkipped ||
     (!!sarData?.needsToBeAddressed && sarData.needsToBeAddressed.length > 0);
-  const needsListText = sarData?.needsToBeAddressed?.length
-    ? mapEnumKeysToDisplay(NeedsToBeAddressed, sarData.needsToBeAddressed).join(
-        ", ",
-      )
-    : null;
-  const needsDisplay = needsSkipped ? NONE_LISTED : needsListText;
+  const needsDisplay = needsSkipped
+    ? NONE_LISTED
+    : presenter.needsDisplayItems.join(", ") || null;
 
   const factorsComplete =
     factorsSkipped ||
     (!!sarData?.mitigatingFactors && sarData.mitigatingFactors.length > 0);
-  const mitigationListText = sarData?.mitigatingFactors?.length
-    ? mapEnumKeysToDisplay(ProtectiveFactors, sarData.mitigatingFactors).join(
-        ", ",
-      )
-    : null;
-  const mitigationDisplay = factorsSkipped ? NONE_LISTED : mitigationListText;
+  const mitigationDisplay = factorsSkipped
+    ? NONE_LISTED
+    : presenter.factorsDisplayItems.join(", ") || null;
 
   // --- Defendant's Version ---
   const isDefendantComplete =
@@ -404,13 +396,11 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
       </Styled.SummaryWrapper>
 
       {/* PDF report — off-screen, captured by html2canvas + jsPDF on download */}
-      {sarData && (
-        <Styled.ReportPDFContainer>
-          <div ref={targetRef}>
-            <SentencingAssessmentReport SARAttributes={sarData} />
-          </div>
-        </Styled.ReportPDFContainer>
-      )}
+      <Styled.ReportPDFContainer>
+        <div ref={targetRef}>
+          <SentencingAssessmentReport presenter={presenter} />
+        </div>
+      </Styled.ReportPDFContainer>
     </Styled.SummaryReportWrapper>
   );
 });
