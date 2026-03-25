@@ -41,7 +41,7 @@ export const usMeAnnualReclassificationSchema = opportunitySchemaBase.extend({
     .partial()
     .passthrough(),
   formInformation: z.object({
-    arrivalDate: dateStringSchema,
+    arrivalDate: dateStringSchema.optional(),
     casePlanGoals: z.string().optional(),
     currentOffenses: z.string().optional(),
     programEnrollment: z.string().optional(),
