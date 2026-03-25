@@ -35294,5 +35294,24 @@ exports[`returns the officers with outcomes data 1`] = `
       "agonzalez123",
     ],
   },
+  {
+    "avgDailyPopulation": 54,
+    "displayName": "Antonia Bonilla",
+    "district": "Unit 1",
+    "email": "officer8@recidiviz.org",
+    "externalId": "OFFICER8",
+    "fullName": {
+      "givenNames": "Antonia",
+      "surname": "Bonilla",
+    },
+    "includeInOutcomes": true,
+    "latestLoginDate": 2021-12-16T00:00:00.000Z,
+    "pseudonymizedId": "hashed-so8",
+    "supervisorExternalIds": [
+      "agonzalez123",
+      "dlee456",
+    ],
+    "zeroGrantOpportunities": [],
+  },
 ]
 `;

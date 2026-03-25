@@ -5,6 +5,14 @@ exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
   {
     "officersWithMetricValues": [
       {
+        "displayName": "Antonia Bonilla",
+        "metric30DDelta": -0.2,
+        "metricDate": 2021-12-16T00:00:00.000Z,
+        "metricValue": 22,
+        "officerPseudonymizedId": "hashed-so8",
+        "previousMetricDate": 2021-11-16T00:00:00.000Z,
+      },
+      {
         "displayName": "Jason Nelson",
         "metric30DDelta": 1.2,
         "metricDate": 2021-12-16T00:00:00.000Z,
@@ -95,6 +103,14 @@ exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
         "metricDate": 2021-12-16T00:00:00.000Z,
         "metricValue": 86,
         "officerPseudonymizedId": "hashed-so2",
+        "previousMetricDate": 2021-11-16T00:00:00.000Z,
+      },
+      {
+        "displayName": "Antonia Bonilla",
+        "metric30DDelta": 1,
+        "metricDate": 2021-12-16T00:00:00.000Z,
+        "metricValue": 90,
+        "officerPseudonymizedId": "hashed-so8",
         "previousMetricDate": 2021-11-16T00:00:00.000Z,
       },
       {

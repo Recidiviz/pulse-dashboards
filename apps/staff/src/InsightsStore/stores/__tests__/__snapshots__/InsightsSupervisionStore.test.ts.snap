@@ -219,6 +219,13 @@ exports[`hydrate vitalsForSupervisor 1`] = `
         "previousMetricDate": 2021-11-16T00:00:00.000Z,
       },
       {
+        "metric30DDelta": -0.2,
+        "metricDate": 2021-12-16T00:00:00.000Z,
+        "metricValue": 22,
+        "officerPseudonymizedId": "hashed-so8",
+        "previousMetricDate": 2021-11-16T00:00:00.000Z,
+      },
+      {
         "metric30DDelta": 5.9,
         "metricDate": 2021-12-16T00:00:00.000Z,
         "metricValue": 79,
@@ -270,6 +277,13 @@ exports[`hydrate vitalsForSupervisor 1`] = `
         "metricDate": 2021-12-16T00:00:00.000Z,
         "metricValue": 97,
         "officerPseudonymizedId": "hashed-so3",
+        "previousMetricDate": 2021-11-16T00:00:00.000Z,
+      },
+      {
+        "metric30DDelta": 1,
+        "metricDate": 2021-12-16T00:00:00.000Z,
+        "metricValue": 90,
+        "officerPseudonymizedId": "hashed-so8",
         "previousMetricDate": 2021-11-16T00:00:00.000Z,
       },
       {

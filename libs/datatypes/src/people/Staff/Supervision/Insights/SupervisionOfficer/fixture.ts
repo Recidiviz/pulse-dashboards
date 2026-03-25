@@ -191,6 +191,25 @@ export const rawSupervisionOfficerFixture = [
     district: "Unit 1",
     latestLoginDate: relativeFixtureDate({ days: -101 }),
   },
+  // MI Officer
+  {
+    externalId: "OFFICER8",
+    pseudonymizedId: "hashed-so8",
+    fullName: {
+      givenNames: "Antonia",
+      surname: "Bonilla",
+    },
+    supervisorExternalIds: [
+      supervisionOfficerSupervisorsFixture[0].externalId,
+      supervisionOfficerSupervisorsFixture[1].externalId,
+    ],
+    avgDailyPopulation: 54.321,
+    zeroGrantOpportunities: [],
+    includeInOutcomes: true,
+    email: "officer8@recidiviz.org",
+    district: "Unit 1",
+    latestLoginDate: relativeFixtureDate({ days: 0 }),
+  },
 ] satisfies RawSupervisionOfficer[];
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(
