@@ -98,9 +98,7 @@ const ManagedComponent = observer(function ManagedComponent({
           title={t(($) => $.home.todos.reentryAssessment.title)}
           body={t(($) => $.home.todos.reentryAssessment.body)}
           linkText={t(($) => $.home.todos.reentryAssessment.linkText)}
-          linkTarget={State.Resident.$.UsNeReentryAssessment.buildRelativePath(
-            {},
-          )}
+          linkTarget={State.Resident.$.ReentryAssessment.buildRelativePath({})}
         />
       )}
     </section>

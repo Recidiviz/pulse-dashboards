@@ -23,6 +23,7 @@ import common from "../namespaces/common/resources/en.json";
 import US_AR from "../namespaces/US_AR/resources/en";
 import US_AZ from "../namespaces/US_AZ/resources/en";
 import US_CO from "../namespaces/US_CO/resources/en.json";
+import US_ID from "../namespaces/US_ID/resources/en";
 import US_MA from "../namespaces/US_MA/resources/en.json";
 import US_NC from "../namespaces/US_NC/resources/en.json";
 import US_NE from "../namespaces/US_NE/resources/en";
@@ -36,6 +37,7 @@ declare module "i18next" {
       US_AZ: typeof US_AZ;
       US_AR: typeof US_AR;
       US_CO: typeof US_CO;
+      US_ID: typeof US_ID;
       US_MA: typeof US_MA;
       US_NC: typeof US_NC;
       US_NE: typeof US_NE;

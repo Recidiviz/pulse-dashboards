@@ -15,16 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./constants";
-export * from "./createI18nInstance";
-export * from "./namespaces/common/useCommonTranslations";
-export * from "./namespaces/US_AR/useUsArTranslations";
-export * from "./namespaces/US_AZ/useUsAzTranslations";
-export * from "./namespaces/US_CO/useUsCoTranslations";
-export * from "./namespaces/US_ID/useUsIdTranslations";
-export * from "./namespaces/US_MA/useUsMaTranslations";
-export * from "./namespaces/US_NC/useUsNcTranslations";
-export * from "./namespaces/US_NE/useUsNeTranslations";
-export * from "./namespaces/US_TN/useUsTnTranslations";
-export * from "./utils/date";
-export * from "./utils/useDateDistanceTranslation";
+import { useTranslation } from "react-i18next";
+
+import { TranslationsObject } from "../../utils/types";
+
+export function useUsIdTranslations() {
+  return useTranslation("US_ID");
+}
+
+/**
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_ID namespace
+ */
+export type UsIdTranslationsObject = TranslationsObject<"US_ID">;
+
+export type UsIdTFunction = ReturnType<typeof useUsIdTranslations>["t"];

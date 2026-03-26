@@ -19,8 +19,8 @@ import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
 import {
+  ReentryAssessment,
   UsNeMoreInformation,
-  UsNeReentryAssessment,
   UsNeReentryChecklist,
 } from "~@jii/paths";
 
@@ -38,7 +38,7 @@ export const UsNeRouter = () => {
         element={<UsNeReentryChecklistPage />}
       />
       <Route
-        path={UsNeReentryAssessment.path}
+        path={ReentryAssessment.path}
         element={<UsNeReentryAssessmentPage />}
       />
       <Route path="*" element={<NotFound />} />

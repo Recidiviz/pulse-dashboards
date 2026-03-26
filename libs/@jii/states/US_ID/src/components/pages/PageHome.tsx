@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,16 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./constants";
-export * from "./createI18nInstance";
-export * from "./namespaces/common/useCommonTranslations";
-export * from "./namespaces/US_AR/useUsArTranslations";
-export * from "./namespaces/US_AZ/useUsAzTranslations";
-export * from "./namespaces/US_CO/useUsCoTranslations";
-export * from "./namespaces/US_ID/useUsIdTranslations";
-export * from "./namespaces/US_MA/useUsMaTranslations";
-export * from "./namespaces/US_NC/useUsNcTranslations";
-export * from "./namespaces/US_NE/useUsNeTranslations";
-export * from "./namespaces/US_TN/useUsTnTranslations";
-export * from "./utils/date";
-export * from "./utils/useDateDistanceTranslation";
+import { ReentryHome } from "../Home/ReentryHome";
+
+export function PageHome() {
+  return <ReentryHome />;
+}

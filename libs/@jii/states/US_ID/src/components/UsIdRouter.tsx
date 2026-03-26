@@ -18,16 +18,19 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { ReentryAssessment } from "~@jii/paths";
 
+import { PageHome } from "./pages/PageHome";
 import { PageIntakeAssessment } from "./pages/PageIntakeAssessment";
 import { PageInterview } from "./pages/PageInterview";
 
 export const UsIdRouter = () => {
   return (
     <Routes>
-      <Route index element={<PageIntakeAssessment />} />
+      <Route index element={<PageHome />} />
+      <Route path={ReentryAssessment.path} element={<PageIntakeAssessment />} />
+      <Route path="cpa" element={<PageInterview />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="cpa" element={<PageInterview/>}/>
     </Routes>
   );
 };

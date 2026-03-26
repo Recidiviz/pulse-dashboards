@@ -78,6 +78,9 @@ export class IntakeAssessmentPresenter implements Hydratable {
 
       // If there's no access_token, it means no intake record exists.
       if (!data?.access_token && data?.client_pseudo_id) {
+        // clear token in case it contains a stale value
+        sessionStorage.removeItem("intake_token");
+        this.updateAuthToken();
         return;
       }
 

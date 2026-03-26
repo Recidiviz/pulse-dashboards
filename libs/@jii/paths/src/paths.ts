@@ -106,7 +106,7 @@ export const UsNeMoreInformation = route("more-information/:pageSlug", {
 
 export const UsNeReentryChecklist = route("reentry-checklist");
 
-export const UsNeReentryAssessment = route("reentry-assessment");
+export const ReentryAssessment = route("reentry-assessment");
 
 export const UsCoMoreInformation = route(
   "more-information",
@@ -122,13 +122,13 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
     {},
     {
       EGT,
+      ReentryAssessment,
       UsArMoreInformation,
       UsAzMoreInformation,
       UsCoMoreInformation,
       UsNcRNA,
       UsNeMoreInformation,
       UsNeReentryChecklist,
-      UsNeReentryAssessment,
       UsTnMoreInformation,
     },
   ),
