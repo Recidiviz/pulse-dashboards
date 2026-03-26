@@ -24,7 +24,9 @@ import { getFilterOptions } from "../../filterOptions";
 import { FilterOption, PopulationFilters } from "../../filters";
 import { FiltersStoreBase } from "../../FiltersStoreBase";
 import CheckboxGroupWithSelectAllTitle from "../CheckboxGroup/CheckboxGroupWithSelectAllTitle";
+import FilterSectionLayout from "../FilterSectionLayout/FilterSectionLayout";
 import PathwaysModal from "../PathwaysModal/PathwaysModal";
+import RadioGroup from "../RadioGroup/RadioGroup";
 import {
   ApplyButton,
   FilterSection,
@@ -63,6 +65,20 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
     )
       ? filterOptions[FILTER_TYPES.DATE_IN_POPULATION]
       : null;
+
+    // TODO(#2583) Remove these dropdown/singleSelect filter types once staff
+    // app is moved over to new layout.
+    // Then remove TIME_PERIOD and DATE_IN_POPULATION as isSingleSelect
+    const dropdownFilterTypes: string[] = [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DATE_IN_POPULATION,
+    ];
+
+    const singleSelectRadioFilters = enabledFilters.filter(
+      (filterType) =>
+        filterOptions[filterType]?.isSingleSelect &&
+        !dropdownFilterTypes.includes(filterType),
+    );
 
     const multiSelectFilters = enabledFilters.filter(
       (filterType) => !filterOptions[filterType]?.isSingleSelect,
@@ -160,6 +176,24 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
             </FilterSectionContent>
           </FilterSection>
         )}
+        {singleSelectRadioFilters.map((filterType) => {
+          const filter = filterOptions[filterType];
+          if (!filter) return null;
+
+          return (
+            <FilterSection key={filterType}>
+              <FilterSectionContent>
+                <FilterSectionLayout title={filter.title}>
+                  <RadioGroup
+                    filter={filter}
+                    defaultValue={getSelectedValue(filterType)}
+                    onChange={onUpdateFilters}
+                  />
+                </FilterSectionLayout>
+              </FilterSectionContent>
+            </FilterSection>
+          );
+        })}
         {multiSelectFilters.map((filterType) => {
           const filter = filterOptions[filterType];
           if (!filter) return null;

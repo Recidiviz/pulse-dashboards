@@ -21,6 +21,7 @@ import { FilterOption, PopulationFilter } from "../../filters";
 import {
   RadioContainer,
   RadioDot,
+  RadioGroupGrid,
   RadioInput,
   RadioLabel,
 } from "./RadioGroup.styles";
@@ -40,7 +41,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   const { type, options } = filter;
 
   return (
-    <>
+    <RadioGroupGrid>
       {options.map(({ value, label }) => (
         <RadioContainer key={value}>
           <RadioLabel>{label}</RadioLabel>
@@ -57,7 +58,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
           <RadioDot $checked={state === value} />
         </RadioContainer>
       ))}
-    </>
+    </RadioGroupGrid>
   );
 };
 

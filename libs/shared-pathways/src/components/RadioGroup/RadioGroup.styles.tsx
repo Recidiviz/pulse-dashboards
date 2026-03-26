@@ -24,7 +24,7 @@ export const RadioContainer = styled.label`
   position: relative;
   padding-left: 1.75rem;
   min-height: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   user-select: none;
   cursor: pointer;
   color: ${({ theme }) => theme.checkbox?.labelColor ?? palette.pine1};
@@ -41,7 +41,7 @@ export const RadioContainer = styled.label`
 
 export const RadioLabel = styled.span`
   position: relative;
-  top: -4px;
+  top: -2px;
   ${({ theme }) => theme.checkbox?.labelTypography}
 `;
 
@@ -51,6 +51,12 @@ export const RadioInput = styled.input`
   cursor: pointer;
   height: 0;
   width: 0;
+`;
+
+export const RadioGroupGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.25rem 1rem;
 `;
 
 export const RadioDot = styled.span<{ $checked: boolean }>`

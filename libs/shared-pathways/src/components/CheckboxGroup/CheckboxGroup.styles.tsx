@@ -46,7 +46,7 @@ export const CheckboxContainer = styled.label`
 export const CheckboxLabel = styled.span`
   position: relative;
   top: -2px;
-  ${typography.Sans14}
+  ${({ theme }) => theme.checkbox?.labelTypography}
 `;
 
 export const CheckboxInput = styled.input`

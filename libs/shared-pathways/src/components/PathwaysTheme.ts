@@ -79,7 +79,7 @@ export const defaultPathwaysTheme: PathwaysTheme = {
   },
   checkbox: {
     checkedColor: palette.pine3,
-    labelColor: palette.pine1,
+    labelColor: palette.pine3,
     labelTypography: typography.Sans14,
     titleColor: palette.pine1,
   },
