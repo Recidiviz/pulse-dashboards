@@ -30,6 +30,7 @@ import {
   SectionNavigation,
   usePageContent,
 } from "~shared-pathways";
+import useIsMobile from "~utils/react/useIsMobile";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
@@ -49,6 +50,9 @@ function usePageViews() {
     analyticsStore.page(location.pathname);
   }, [analyticsStore, location.pathname]);
 }
+
+const TABLET_MAX_VISIBLE = 3;
+const MOBILE_MAX_VISIBLE = 1;
 
 const OSWALD_FONT_FAMILY = '"Oswald", sans-serif';
 const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
@@ -99,6 +103,12 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
     rootStore;
   const pageContent = usePageContent(currentTenantId, page);
 
+  const { isMobile, isTablet } = useIsMobile(true);
+
+  let maxVisible;
+  if (isMobile) maxVisible = MOBILE_MAX_VISIBLE;
+  else if (isTablet) maxVisible = TABLET_MAX_VISIBLE;
+
   const sections = useMemo((): Partial<Sections> => {
     const all = pageContent.sections;
     if (!all) return {};
@@ -132,6 +142,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
               }
             }}
             accentColor={publicPathwaysPalette.signal.links}
+            maxVisible={maxVisible}
           />
           <FiltersButton
             filtersStore={rootStore.filtersStore}

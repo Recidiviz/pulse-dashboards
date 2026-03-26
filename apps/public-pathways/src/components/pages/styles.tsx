@@ -38,5 +38,6 @@ export const PageContainer = styled.div`
 
 export const NavigationRow = styled.div`
   display: flex;
-  justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
 `;

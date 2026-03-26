@@ -35,6 +35,8 @@ const MAX_VISIBLE = 5;
 
 const StyledMenubar = styled(Menubar)<{ $focusColor: string }>`
   justify-content: flex-start;
+  width: auto;
+  flex: 1;
   gap: 12px;
   align-items: center;
 
@@ -142,6 +144,7 @@ export interface SectionNavigationProps {
   activeSection: PathwaysSection;
   onSectionSelect: (sectionId: PathwaysSection) => void;
   accentColor?: string;
+  maxVisible?: number;
 }
 
 export function SectionNavigation({
@@ -149,19 +152,18 @@ export function SectionNavigation({
   activeSection,
   onSectionSelect,
   accentColor = palette.signal.links,
+  maxVisible = MAX_VISIBLE,
 }: SectionNavigationProps) {
   const entries = Object.entries(sections) as [PathwaysSection, string][];
-  const needsOverflow = entries.length > MAX_VISIBLE;
+  const needsOverflow = entries.length > maxVisible;
 
-  const visibleEntries = needsOverflow
-    ? entries.slice(0, MAX_VISIBLE)
-    : entries;
-  const overflowEntries = needsOverflow ? entries.slice(MAX_VISIBLE) : [];
+  const visibleEntries = needsOverflow ? entries.slice(0, maxVisible) : entries;
+  const overflowEntries = needsOverflow ? entries.slice(maxVisible) : [];
 
   if (needsOverflow && overflowEntries.some(([id]) => id === activeSection)) {
     const activeIdx = overflowEntries.findIndex(([id]) => id === activeSection);
-    const displaced = visibleEntries[MAX_VISIBLE - 1];
-    visibleEntries[MAX_VISIBLE - 1] = overflowEntries[activeIdx];
+    const displaced = visibleEntries[maxVisible - 1];
+    visibleEntries[maxVisible - 1] = overflowEntries[activeIdx];
     overflowEntries[activeIdx] = displaced;
   }
 
