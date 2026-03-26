@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 import { NavigateFunction } from "react-router-dom";
 
@@ -23,7 +24,6 @@ import {
   requiredRNAQuestions,
   RNAQuestionId,
 } from "~@jii/configs";
-import { handleMutationError } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";
 
 import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
@@ -75,7 +75,7 @@ export class UsNcRNAFormPagePresenter {
         yield this.form.saveAnswers({ completed });
         this.savingError = undefined;
       } catch (e) {
-        handleMutationError(e);
+        captureException(e);
         this.savingError = e instanceof Error ? e.message : "Unknown error";
       }
       this.isSaving = false;

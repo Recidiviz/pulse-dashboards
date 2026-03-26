@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { PrismaClient } from "~@jii/prisma";
 
 import { TRPCFastifyRequest } from "../context";
+import { ReadOnlyStaffPermissionError } from "../errors";
 import {
   FirestoreCollectionQuerier,
   getFirestoreCollectionQuerier,
@@ -60,8 +60,7 @@ function checkWriteOnlyPermissions(
   userProfile: AuthorizedStaffAppUserProfile,
 ) {
   if (userProfile.impersonator) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
+    throw new ReadOnlyStaffPermissionError({
       message: "Data mutations are not allowed during impersonation",
     });
   }
@@ -69,8 +68,7 @@ function checkWriteOnlyPermissions(
   if (process.env["DEPLOY_ENV"] === "production") {
     // internal users (as identified by their state code) should not be able to write to prod
     if (stateCode !== userProfile.stateCode) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
+      throw new ReadOnlyStaffPermissionError({
         message:
           "Data mutations are not allowed by internal users in production",
       });

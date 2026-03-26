@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./auth/getDecryptedToken";
-export * from "./context";
-export * from "./errors";
-export { firebaseApp } from "./helpers/firebaseAdmin";
-export * from "./router/appRouter";
+import { AuthorizedResidentUserContext } from "../firebaseAuthedResidentProcedure";
+
+/**
+ * Analyzes procedure context to determine if the user has a staff profile or a
+ * resident profile
+ */
+export function isStaffUserOfResidentApp(
+  ctx: AuthorizedResidentUserContext,
+): boolean {
+  // this is a resident DOC ID, so staff will not have them
+  return !ctx.userProfile.externalId;
+}

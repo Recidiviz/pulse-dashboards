@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { DataAPI, handleMutationError, ResidentFlags } from "~@jii/data";
+import { DataAPI, ResidentFlags } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { ResidentRecord } from "~datatypes";
 import {
@@ -253,7 +254,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
       this.lastSaved = data.lastUpdated;
       this.isSaving = false;
     } catch (e) {
-      handleMutationError(e);
+      captureException(e);
       this.writeError =
         e instanceof Error ? e.message : "An unknown error occurred";
       this.isSaving = false;

@@ -264,11 +264,9 @@ test("impersonators cannot write", async () => {
     impersonator: true,
   });
 
+  // because we are testing this with a TRPC client, we can't verify the server-side error class
   await expect(client.testMutation.mutate()).rejects.toThrow(
-    new TRPCError({
-      code: "FORBIDDEN",
-      message: "Data mutations are not allowed during impersonation",
-    }),
+    "Data mutations are not allowed during impersonation",
   );
 });
 
@@ -282,11 +280,9 @@ test("Recidiviz users cannot write to prod", async () => {
     recidivizAllowedStates: ["US_XX"],
   });
 
+  // because we are testing this with a TRPC client, we can't verify the server-side error class
   await expect(client.testMutation.mutate()).rejects.toThrow(
-    new TRPCError({
-      code: "FORBIDDEN",
-      message: "Data mutations are not allowed by internal users in production",
-    }),
+    "Data mutations are not allowed by internal users in production",
   );
 });
 

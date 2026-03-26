@@ -18,6 +18,8 @@
 import { init, prismaIntegration } from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
+import { ReadOnlyStaffPermissionError } from "~@jii/trpc";
+
 init({
   // same project as jii-functions, we expect this will eventually replace that
   dsn: "https://9854b2227e71fa6bd5191e28c0e14320@o432474.ingest.us.sentry.io/4509159316979712",
@@ -26,4 +28,12 @@ init({
   profilesSampleRate: 0,
   integrations: [nodeProfilingIntegration(), prismaIntegration()],
   maxValueLength: 5000,
+  beforeSend(event, hint) {
+    if (hint.originalException instanceof ReadOnlyStaffPermissionError) {
+      // these don't need to be logged, they are considered routine and not actionable
+      return null;
+    }
+    // returning this will cause it to be logged to Sentry
+    return event;
+  },
 });

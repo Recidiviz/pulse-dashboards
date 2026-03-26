@@ -19,7 +19,9 @@ import { TRPCError } from "@trpc/server";
 
 import { Permission } from "~@jii/auth";
 
+import { ReadOnlyStaffPermissionError } from "../errors";
 import type { AuthorizedResidentUserContext } from "../procedures/firebaseAuthedResidentProcedure";
+import { isStaffUserOfResidentApp } from "../procedures/utils/isStaffUserOfResidentApp";
 
 /**
  * Middleware that enforces resident-level permissions.
@@ -62,11 +64,18 @@ export function residentRestrictedMiddleware<MiddlewareResult>({
 
   if (isOwnData || hasSpecialPermission) {
     return next({ ctx });
-  } else {
-    const action = type === "mutation" ? "update" : "access";
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: `You do not have permission to ${action} this resident's data`,
-    });
   }
+  const message = `You do not have permission to ${type === "mutation" ? "update" : "access"} this resident's data`;
+
+  // these errors are handled a little differently downstream of here
+  // because staff user access may be read-only in prod; throwing a different error class
+  // lets us identify these cases
+  if (type === "mutation" && isStaffUserOfResidentApp(ctx)) {
+    throw new ReadOnlyStaffPermissionError({ message });
+  }
+  // anything else is a normal error
+  throw new TRPCError({
+    code: "FORBIDDEN",
+    message,
+  });
 }

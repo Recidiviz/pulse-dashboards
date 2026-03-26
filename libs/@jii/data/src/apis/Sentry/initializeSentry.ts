@@ -21,6 +21,7 @@ import {
   init,
   reactRouterV6Instrumentation,
 } from "@sentry/react";
+import { isTRPCClientError } from "@trpc/client";
 import { useEffect } from "react";
 import {
   createRoutesFromChildren,
@@ -28,6 +29,8 @@ import {
   useLocation,
   useNavigationType,
 } from "react-router-dom";
+
+import { JiiResidentAppRouter } from "~@jii/trpc-types";
 
 import { proxyHost } from "../../utils/proxy";
 
@@ -64,6 +67,11 @@ export function initializeSentry(): void {
 
     if (isOffline) {
       // returning null prevents the event from being buffered forever in offline mode
+      return null;
+    }
+
+    if (isTRPCClientError<JiiResidentAppRouter>(hint.originalException)) {
+      // these are captured on the server, there is no need to log them from the frontend
       return null;
     }
 

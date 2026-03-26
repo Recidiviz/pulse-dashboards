@@ -15,25 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { captureException } from "@sentry/react";
-import { isTRPCClientError } from "@trpc/client";
-
-import { JiiResidentAppRouter } from "~@jii/trpc-types";
+import { TRPCError } from "@trpc/server";
 
 /**
- * Error logging utility with special handling for tRPC mutation errors.
- * (Some mutation failures are routine and expected and may be logged differently
- * e.g. rejected writes by staff or Recidiviz users in prod.)
+ * A subclass of TRPCError to specifically identify errors that result from
+ * routine application of read-only permissions for certain users (e.g. Recidiviz
+ * employees or staff in production). It always carries the "FORBIDDEN" error code.
  */
-export function handleMutationError(e: unknown) {
-  if (isTRPCClientError<JiiResidentAppRouter>(e)) {
-    // This code is assumed to mean the request was denied for a known reason,
-    // therefore is not a bug and doesn't need to go to Sentry
-    if (e.data?.code === "FORBIDDEN") {
-      console.error(e);
-      return;
-    }
+export class ReadOnlyStaffPermissionError extends TRPCError {
+  constructor(opts: { message?: string; cause?: unknown }) {
+    super({ ...opts, code: "FORBIDDEN" });
   }
-
-  captureException(e);
 }

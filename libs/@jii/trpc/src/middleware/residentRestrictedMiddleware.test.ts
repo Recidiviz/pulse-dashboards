@@ -20,6 +20,7 @@ import { TRPCError } from "@trpc/server";
 import type { AuthorizedUserProfile } from "~@jii/auth";
 import type { PrismaClient } from "~@jii/prisma";
 
+import { ReadOnlyStaffPermissionError } from "../errors";
 import type { AuthorizedResidentUserContext } from "../procedures/firebaseAuthedResidentProcedure";
 import { residentRestrictedMiddleware } from "./residentRestrictedMiddleware";
 
@@ -262,6 +263,72 @@ describe("residentRestrictedMiddleware", () => {
       });
 
       expect(mockNext).toHaveBeenCalledWith({ ctx });
+    });
+  });
+
+  describe("staff users of the resident app", () => {
+    const createStaffContext = (
+      permissions: AuthorizedUserProfile["permissions"] = [],
+    ): AuthorizedResidentUserContext => ({
+      userId: "staff-123",
+      stateCode: "US_XX",
+      prisma: mockPrisma,
+      userProfile: {
+        stateCode: "US_XX",
+        permissions,
+      },
+    });
+
+    it("throws ReadOnlyStaffPermissionError for unauthorized mutations", () => {
+      const ctx = createStaffContext();
+      const input = { pseudonymizedId: "some-resident-pseudo-id" };
+
+      try {
+        residentRestrictedMiddleware({
+          ctx,
+          next: mockNext,
+          type: "mutation",
+          input,
+        });
+      } catch (e) {
+        expect(e).toEqual(
+          new ReadOnlyStaffPermissionError({
+            message:
+              "You do not have permission to update this resident's data",
+          }),
+        );
+        expect(e).toBeInstanceOf(ReadOnlyStaffPermissionError);
+      }
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect.assertions(3);
+    });
+
+    it("throws TRPCError (not ReadOnlyStaffPermissionError) for unauthorized queries", () => {
+      const ctx = createStaffContext();
+      const input = { pseudonymizedId: "some-resident-pseudo-id" };
+
+      try {
+        residentRestrictedMiddleware({
+          ctx,
+          next: mockNext,
+          type: "query",
+          input,
+        });
+      } catch (e) {
+        expect(e).toEqual(
+          new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have permission to access this resident's data",
+          }),
+        );
+        expect(e).toBeInstanceOf(TRPCError);
+        expect(e).not.toBeInstanceOf(ReadOnlyStaffPermissionError);
+      }
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect.assertions(4);
     });
   });
 });
