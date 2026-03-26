@@ -164,7 +164,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Classification Review",
+      displayName: "Supervision Level Downgrade upon Classification Review",
       dynamicEligibilityText:
         "client[|s] may be eligible for a supervision level downgrade",
       eligibilityDateText: "Next Classification Due Date",
@@ -238,7 +238,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify clients due or overdue for a classification review, which are generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior; per FOA Field Memorandum 2023-211, agents are presumptively required to downgrade clients’ supervision level during each classification review, provided that they have “satisfactorily completed” the prior six months on supervision. Review clients who meet the time threshold for classification review as per OP 06.04.130I and downgrade their supervision level in COMS.",
+        "This alert helps staff identify clients who may be eligible for a supervision level downgrade when a classification review is due or overdue.\n\nA classification review is generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior; per FOA Field Memorandum 2023-211, agents are presumptively required to downgrade clients’ supervision level during each classification review, provided that they have “satisfactorily completed” the prior six months on supervision.\n\nReview clients who meet the supervision level downgrade criteria and the classification review time threshold as per OP 06.04.130I, and downgrade their supervision level in COMS.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,

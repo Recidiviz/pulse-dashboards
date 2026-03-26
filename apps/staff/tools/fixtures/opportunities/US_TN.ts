@@ -283,17 +283,30 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
-        { key: "DECF", text: "Denied, No Effort to Pay Fine and Costs" },
-        { key: "DECR", text: "Denied Compliant Report due to Criminal Record" },
         {
-          key: "DECT",
-          text: "Denied Compliant Reporting, Insufficient Time in Supervision Level",
+          key: "CONTACT",
+          text: "Hasn't had 3 face-to-face contacts (or doesn't have them scheduled) within 60 days",
         },
-        { key: "DEDF", text: "Denied, No Effort to Pay Fees" },
-        { key: "DEDU", text: "Denied, Serious Compliance Issues" },
-        { key: "DEIJ", text: "Compliant Reporting Not Allowed Per Court" },
-        { key: "DEIO", text: "Denied for CR" },
-        { key: "DEIR", text: "Denied, Failure to Report as Instructed" },
+        { key: "FELONY", text: "Has pending felony charges" },
+        {
+          key: "REPORTING",
+          text: "Hasn't reported as instructed for 3 months",
+        },
+        {
+          key: "CONDITIONS",
+          text: "Hasn't complied with Court/Board of Parole conditions",
+        },
+        {
+          key: "NEEDS",
+          text: "Isn't addressing high assessed criminogenic needs",
+        },
+        {
+          key: "CASE",
+          text: "On supervision for highly publicized case, sex offense or domestic violence",
+        },
+        { key: "FEE", text: "No effort to pay fees" },
+        { key: "JUDGE", text: "Denied by judge order" },
+        { key: "EXPIRE", text: "Too close to expiration date" },
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
@@ -361,6 +374,12 @@ export const mockApiOpportunityConfigurationResponse = {
             "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
         },
         {
+          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
+          text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first two months of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
+        },
+        {
           key: "usTnHomeVisitSinceIntakeSupervisionLevel",
           text: "First home visit since intake on {{date eligibleDate}}",
         },
@@ -412,7 +431,13 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnThreeFaceToFaceContactsWithin60DaysOfIntakeSupervisionStart",
           text: "Did not have 3 face to face contacts within 60 days of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
           tooltip:
-            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
+            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
+        },
+        {
+          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
+          text: "Did not have 3 face to face contacts within 2 months of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first two months of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
         },
         {
           key: "usTnNegativeArrestCheckInPast6Months",

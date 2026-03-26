@@ -124,13 +124,30 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MO",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "usMoMentalHealthScore3OrBelowWhileIncarcerated",
+          text: "Mental health needs score must be MH-1 or MH-2 (or MH-3, with written recommendation)",
+        },
+        {
+          key: "usMoInstitutionalRiskScore1WhileIncarcerated",
+          text: "Institutional risk score must be I-1",
+        },
+        {
+          key: "usMoWithin60MonthsOfEarliestReleaseDate",
+          text: "Must be within 60 months of earliest established release date",
+        },
+        {
+          key: "usMoNoEscapeIn10YearsOrCurrentCycle",
+          text: "Cannot have perimeter escapes within the current sentence structure or within the past 10 years",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
         "Outside Clearance is a program allowing residents to work on assignments located outside the security perimeter that are on department property and supervised by department staff members.",
       submittedTabTitle: "Submitted",
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,
@@ -535,13 +552,34 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MO",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "usMoMentalHealthScore3OrBelowWhileIncarcerated",
+          text: "Mental health needs score must be MH-1 or MH-2 (or MH-3, with written recommendation)",
+        },
+        {
+          key: "usMoInstitutionalRiskScore1WhileIncarcerated",
+          text: "Institutional risk score must be I-1",
+        },
+        {
+          key: "usMoMeetsTimeRemainingRequirementsWorkRelease",
+          text: "Must be within 48 months of earliest established release date",
+        },
+        {
+          key: "usMoNoEscapeIn10YearsOrCurrentCycle",
+          text: "Cannot have perimeter escapes within the current sentence structure or within the past 10 years",
+        },
+        {
+          key: "usMoEducationalScore1",
+          text: "Must meet educational requirements",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
         "Supervised Work Release is a program that allows residents to work outside of the institution under the supervision of department staff members or trained employees of another private, nonprofit, or government agency.",
       submittedTabTitle: "Submitted",
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,

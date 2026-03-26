@@ -893,7 +893,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usIdMeetsOverdueFaceToFaceContactAlert",
-          text: "Client has not been seen since {{date lastContactDate}}",
+          text: "{{#if lastContactDate}}Client has not been seen since {{date lastContactDate}}{{else}}No previous face-to-face contact on record{{/if}}",
         },
       ],
       emptyTabCopy: [],
