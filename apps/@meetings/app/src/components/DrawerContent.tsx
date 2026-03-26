@@ -22,7 +22,6 @@ import {
 import React from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
-import BellIcon from "react-native-heroicons/solid/BellIcon";
 import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -58,9 +57,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         <Typography className="text-lg font-semibold leading-[22px] text-primary">
           Navigation
         </Typography>
-        <TouchableOpacity onPress={() => console.log("Bell pressed")}>
-          <BellIcon className="fill-tertiary" />
-        </TouchableOpacity>
+        <View />
       </View>
       <View className="w-full px-2">
         <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-brand-light-secondary p-4">
@@ -117,7 +114,6 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             )}
           </>
         )}
-        <MobileMenuTextItem title="Contact Support" />
         <MobileMenuTextItem title="Log Out" onPress={onLogout} color="danger" />
       </View>
     </DrawerContentScrollView>

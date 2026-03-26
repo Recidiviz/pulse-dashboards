@@ -6,9 +6,9 @@
 1. Follow the instructions for using the [iOS Emulator](https://docs.expo.dev/workflow/ios-simulator/) with Expo
 1. Run `adb reverse tcp:3002 tcp:3002` to allow the Android Emulator to talk to a local backend server
 1. [Optional] To be able to run locally against real data or submit builds:
-    1. [Sign up](https://expo.dev/signup) for an Expo account and ask in the #meeting-assistant slack channel to be added to the Recidiviz org.
-    1. Install the EAS cli: `npm install -g eas-cli`
-    1. Log in to expo: `eas login`
+   1. [Sign up](https://expo.dev/signup) for an Expo account and ask in the #meeting-assistant slack channel to be added to the Recidiviz org.
+   1. Install the EAS cli: `npm install -g eas-cli`
+   1. Log in to expo: `eas login`
 
 ## Environment Variables
 
@@ -49,7 +49,19 @@ nx sync-env-to-eas @meetings/app --configuration production
 
 1. Follow [instructions](../../@meetings/server/README.md) for running a local server
 1. There are three development targets: `web`, `ios`, and `android`. Run them using `nx` i.e. `nx run @meetings/app:web`
-   1. To run against the live staging backend specify `--configuration=staging` 
+   1. To run against the live staging backend specify `--configuration=staging`
+
+### Running locally on a physical device
+
+1. Run the local server with `HOST=0.0.0.0 nx dev @meetings/app`. This will output a few IP
+   addresses the server is listening on.
+1. In your .env.dev.enc.yaml file, set EXPO_PUBLIC_SERVER_URL to the URL of your local dev backend,
+   using one of the local IP address emitted (such as 192.168.0.127- I've had success using the one
+   that starts with 192.168). Make sure you revert this change when putting a PR up for review.
+1. Run `nx dev:ios:device @meetings/app`
+
+If your device shows "No development servers found", enter the URL manually. The IP address will be
+shown in the console under the QR code, something like http://192.168.0.127:8081.
 
 ### Offline Mode with Skip Authentication
 
@@ -61,3 +73,35 @@ When running in offline mode against a local server, you can skip the Auth0 auth
 1. The app will bypass Auth0 and the backend will use a mock user with `pseudonymizedId: "staff-pid-1"`
 
 **Note**: Skip authentication is only allowed when the backend is running in development mode for security reasons.
+
+## Releasing
+
+To build the app and submit to TestFlight / App store, run the following from this directory:
+
+```bash
+eas build --platform ios --profile [staging|production] --auto-submit
+```
+
+To submit the app, you need our App Store Connect API key. Download it from Secret Manager
+(meetings_app_store_connect_key) as a file called AuthKey_3KP2AHK76R.p8 in this directory.
+
+### Building separately
+
+If you want to build the app, but not submit it to apple, run:
+
+```bash
+eas build --platform ios --profile [staging|production]
+```
+
+### Submitting to TestFlight / App Store separately
+
+When submitting an already existing build, you must prefix the command with `APP_ENV=<profile>` so
+that EAS resolves the correct bundle identifier from `app.config.ts`. Without it, the config
+defaults to `development` and EAS will register the wrong app in App Store Connect.
+
+```bash
+APP_ENV=staging eas submit --platform ios --profile staging
+APP_ENV=production eas submit --platform ios --profile production
+```
+
+Then select the build you want to submit when prompted.

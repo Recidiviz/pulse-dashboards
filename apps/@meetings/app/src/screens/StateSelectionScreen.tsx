@@ -63,7 +63,7 @@ const StateSelectionScreen = () => {
 
   return (
     <SafeAreaView className="flex-1" edges={["top"]}>
-      <Header showBell={false} />
+      <Header />
       <ScrollView className="flex-1 px-4 py-6 md:px-10">
         <View className="mx-auto w-full max-w-2xl">
           <Typography className="mb-2 font-libre-baskerville text-3xl font-bold text-primary">

@@ -49,7 +49,20 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "ascApiKeyPath": "AuthKey_3KP2AHK76R.p8",
+        "ascApiKeyId": "3KP2AHK76R",
+        "ascApiKeyIssuerId": "f15a4ff0-8f5b-488e-ab78-f4e7019b4c48"
+      }
+    },
+    "staging": {
+      "ios": {
+        "ascApiKeyPath": "AuthKey_3KP2AHK76R.p8",
+        "ascApiKeyId": "3KP2AHK76R",
+        "ascApiKeyIssuerId": "f15a4ff0-8f5b-488e-ab78-f4e7019b4c48"
+      }
+    }
   },
   "cli": {
     "appVersionSource": "remote"

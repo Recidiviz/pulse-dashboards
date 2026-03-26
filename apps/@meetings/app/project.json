@@ -70,6 +70,23 @@
       },
       "defaultConfiguration": "dev"
     },
+    "requires-sops-env:dev:ios:device": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsx --tsconfig ../../../tsconfig.base.json scripts/write-local-env.mts",
+          "EXPO_NO_GIT_STATUS=1 expo prebuild --clean",
+          "expo run:ios --no-build-cache --device"
+        ],
+        "parallel": false,
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {}
+      },
+      "defaultConfiguration": "dev"
+    },
     "requires-sops-env:web": {
       "executor": "nx:run-commands",
       "options": {

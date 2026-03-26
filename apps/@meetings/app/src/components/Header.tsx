@@ -34,7 +34,6 @@ import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
 import ExternalLinkIcon from "react-native-heroicons/outline/ExternalLinkIcon";
 import MenuIcon from "react-native-heroicons/outline/MenuIcon";
-import BellIcon from "react-native-heroicons/solid/BellIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import WordmarkSvg from "../assets/icons/wordmark.svg";
@@ -52,14 +51,10 @@ type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
 type HeaderRouteProp = RouteProp<RootStackParamList>;
 
 interface HeaderProps {
-  showBell?: boolean;
   showDrawer?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({
-  showBell = true,
-  showDrawer = true,
-}) => {
+const Header: React.FC<HeaderProps> = ({ showDrawer = true }) => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
@@ -96,12 +91,6 @@ const Header: React.FC<HeaderProps> = ({
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           >
             <MenuIcon className="text-tertiary" />
-          </TouchableOpacity>
-        )}
-
-        {showBell && (
-          <TouchableOpacity onPress={() => console.log("Notification screen")}>
-            <BellIcon className="text-tertiary" />
           </TouchableOpacity>
         )}
       </View>
