@@ -31,6 +31,7 @@ import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils/common/
 import {
   fakeMissingDA,
   fakePersonOne,
+  fakeWorkflowExecutionFour,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
   fakeWorkflowExecutionTwo,
@@ -622,6 +623,377 @@ describe("one person in DB with three initial text attempts", () => {
       });
 
       expect(TwilioAPIClient.prototype.createMessage).not.toBeCalled();
+    });
+
+    test("phone number updated, validate createMessage is called", async () => {
+      const numMessageAttemptsBefore =
+        await testUsIdPrismaClient.messageAttempt.count();
+      expect(numMessageAttemptsBefore).toEqual(3);
+
+      await testUsIdPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          phoneNumber: "8888888888",
+        },
+      });
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Hello world",
+        status: "queued",
+        sid: "message-sid-4",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      const numMessageAttempts =
+        await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledOnce();
+      expect(numMessageAttempts).toEqual(4);
+    });
+
+    test("phone number updated, validate createMessage is called 3 times", async () => {
+      const numMessageAttemptsBefore =
+        await testUsIdPrismaClient.messageAttempt.count();
+      expect(numMessageAttemptsBefore).toEqual(3);
+
+      await testUsIdPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          phoneNumber: "8888888888",
+        },
+      });
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Hello world",
+        status: "failed",
+        sid: "message-sid-4",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: "Invalid 'To' Phone Number",
+        errorCode: 21211,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      let numMessageAttempts =
+        await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledOnce();
+      expect(numMessageAttempts).toEqual(4);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Hello world",
+        status: "failed",
+        sid: "message-sid-5",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: "Invalid 'To' Phone Number",
+        errorCode: 21211,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      numMessageAttempts = await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(2);
+      expect(numMessageAttempts).toEqual(5);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Hello world",
+        status: "failed",
+        sid: "message-sid-6",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: "Invalid 'To' Phone Number",
+        errorCode: 21211,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      numMessageAttempts = await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(3);
+      expect(numMessageAttempts).toEqual(6);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Hello world",
+        status: "failed",
+        sid: "message-sid-7",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: "Invalid 'To' Phone Number",
+        errorCode: 21211,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      numMessageAttempts = await testUsIdPrismaClient.messageAttempt.count();
+
+      // 7th attempt (4th with this number) is not made
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(3);
+      expect(numMessageAttempts).toEqual(6);
+    });
+  });
+});
+
+describe("one person in DB with three eligibility text attempts", () => {
+  beforeEach(async () => {
+    const person = await testUsIdPrismaClient.person.findFirstOrThrow({
+      where: { personId: fakePersonOne.personId },
+      include: { groups: true },
+    });
+
+    const group = await testUsIdPrismaClient.group.findFirstOrThrow({
+      where: {
+        id: person?.groups[0].id,
+      },
+    });
+
+    // Insert successful INITIAL_TEXT MessageSeries
+    await testUsIdPrismaClient.messageSeries.create({
+      data: {
+        messageType: MessageType.INITIAL_TEXT,
+        group: { connect: { id: group.id } },
+        person: { connect: { personId: person?.personId } },
+        messageAttempts: {
+          create: [
+            {
+              twilioMessageSid: "initial-message-sid",
+              body: "Hello world",
+              phoneNumber: person.phoneNumber,
+              status: MessageAttemptStatus.SUCCESS,
+              createdTimestamp: fakeWorkflowExecutionOne.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionOne.id,
+            },
+          ],
+        },
+      },
+    });
+
+    // Insert ELIGIBILITY_TEXT MessageSeries with multiple MessageAttempts
+    await testUsIdPrismaClient.messageSeries.create({
+      data: {
+        messageType: MessageType.ELIGIBILITY_TEXT,
+        group: { connect: { id: group.id } },
+        person: { connect: { personId: person?.personId } },
+        messageAttempts: {
+          create: [
+            {
+              twilioMessageSid: "eligibility-message-sid-1",
+              body: "Eligibility message",
+              phoneNumber: person.phoneNumber,
+              status: MessageAttemptStatus.FAILURE,
+              createdTimestamp: fakeWorkflowExecutionOne.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionOne.id,
+            },
+            {
+              twilioMessageSid: "eligibility-message-sid-2",
+              body: "Eligibility message",
+              status: MessageAttemptStatus.FAILURE,
+              phoneNumber: person.phoneNumber,
+              createdTimestamp: fakeWorkflowExecutionTwo.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionTwo.id,
+            },
+            {
+              twilioMessageSid: "eligibility-message-sid-3",
+              body: "Eligibility message",
+              status: MessageAttemptStatus.IN_PROGRESS,
+              phoneNumber: person.phoneNumber,
+              createdTimestamp:
+                fakeWorkflowExecutionThree.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionThree.id,
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  describe("latest attempt is failure", () => {
+    beforeEach(() => {
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "eligibility-message-sid-3",
+        status: "failed",
+      } as MessageInstance);
+    });
+
+    test("validate createMessage is not called when phone number unchanged", async () => {
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      expect(TwilioAPIClient.prototype.createMessage).not.toBeCalled();
+    });
+
+    test("phone number updated, validate createMessage is called", async () => {
+      // 1 initial + 3 eligibility = 4 total
+      const numMessageAttemptsBefore =
+        await testUsIdPrismaClient.messageAttempt.count();
+      expect(numMessageAttemptsBefore).toEqual(4);
+
+      await testUsIdPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          phoneNumber: "8888888888",
+        },
+      });
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Eligibility message",
+        status: "queued",
+        sid: "eligibility-message-sid-4",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      const numMessageAttempts =
+        await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledOnce();
+      expect(numMessageAttempts).toEqual(5);
+    });
+
+    test("phone number updated, validate createMessage is called 3 times", async () => {
+      // 1 initial + 3 eligibility = 4 total
+      const numMessageAttemptsBefore =
+        await testUsIdPrismaClient.messageAttempt.count();
+      expect(numMessageAttemptsBefore).toEqual(4);
+
+      await testUsIdPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          phoneNumber: "8888888888",
+        },
+      });
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Eligibility message",
+        status: "queued",
+        sid: "eligibility-message-sid-4",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      let numMessageAttempts =
+        await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledOnce();
+      expect(numMessageAttempts).toEqual(5);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Eligibility message",
+        status: "queued",
+        sid: "eligibility-message-sid-5",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      numMessageAttempts = await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(2);
+      expect(numMessageAttempts).toEqual(6);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Eligibility message",
+        status: "queued",
+        sid: "eligibility-message-sid-6",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      numMessageAttempts = await testUsIdPrismaClient.messageAttempt.count();
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(3);
+      expect(numMessageAttempts).toEqual(7);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "Eligibility message",
+        status: "queued",
+        sid: "eligibility-message-sid-7",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJiiEligiblityTexts({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionFour.id,
+      });
+
+      numMessageAttempts = await testUsIdPrismaClient.messageAttempt.count();
+
+      // 7th attempt (4th with this number) is not made
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(3);
+      expect(numMessageAttempts).toEqual(7);
     });
   });
 });

@@ -20,6 +20,7 @@ import { PrismaClient } from "@prisma/jii-texting/client";
 import {
   fakeContactOne,
   fakePersonOne,
+  fakeWorkflowExecutionFour,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
   fakeWorkflowExecutionTwo,
@@ -31,6 +32,7 @@ export async function seedContactReminders(prismaClient: PrismaClient) {
       fakeWorkflowExecutionOne,
       fakeWorkflowExecutionTwo,
       fakeWorkflowExecutionThree,
+      fakeWorkflowExecutionFour,
     ],
   });
 

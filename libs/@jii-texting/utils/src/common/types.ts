@@ -23,6 +23,7 @@ export const MESSAGE_ATTEMPT_SELECT = {
     twilioMessageSid: true,
     status: true,
     createdTimestamp: true,
+    phoneNumber: true,
   } satisfies Prisma.MessageAttemptSelectScalar,
 };
 
@@ -62,7 +63,8 @@ export const REMINDER_MESSAGE_SERIES_INCLUDE_ATTEMPTS = {
         twilioMessageSid: true,
         status: true,
         createdTimestamp: true,
-      } satisfies Prisma.MessageAttemptSelectScalar,
+        phoneNumber: true,
+      } satisfies Prisma.ContactReminderMessageAttemptSelectScalar,
       orderBy: {
         createdTimestamp: "desc",
       },
@@ -84,6 +86,7 @@ export const WELCOME_MESSAGE_SERIES_INCLUDE_ATTEMPTS = {
         twilioMessageSid: true,
         status: true,
         createdTimestamp: true,
+        phoneNumber: true,
       } satisfies Prisma.WelcomeMessageAttemptSelectScalar,
       orderBy: {
         createdTimestamp: "desc",
@@ -180,6 +183,7 @@ export const REMINDER_MESSAGE_ATTEMPT_SELECT = {
     twilioMessageSid: true,
     status: true,
     createdTimestamp: true,
+    phoneNumber: true,
   } satisfies Prisma.ContactReminderMessageAttemptSelectScalar,
 };
 
@@ -189,6 +193,7 @@ export const WELCOME_MESSAGE_ATTEMPT_SELECT = {
     twilioMessageSid: true,
     status: true,
     createdTimestamp: true,
+    phoneNumber: true,
   } satisfies Prisma.WelcomeMessageAttemptSelectScalar,
 };
 

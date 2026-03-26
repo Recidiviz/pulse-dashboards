@@ -37,6 +37,12 @@ export const fakeWorkflowExecutionThree = {
   id: "workflow-id3",
 } satisfies Prisma.WorkflowExecutionCreateInput;
 
+export const fakeWorkflowExecutionFour = {
+  stateCode: StateCode.US_ID,
+  workflowExecutionTime: new Date("2025-03-04"),
+  id: "workflow-id4",
+} satisfies Prisma.WorkflowExecutionCreateInput;
+
 // GROUPS
 export const fakeTrustedTesterGroup = {
   groupName: "TRUSTED_TESTER",

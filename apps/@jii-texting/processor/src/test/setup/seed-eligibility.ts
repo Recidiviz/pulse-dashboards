@@ -26,6 +26,7 @@ import {
   fakeTopic,
   fakeTrustedTesterGroup,
   fakeTwoMissingCriteria,
+  fakeWorkflowExecutionFour,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
   fakeWorkflowExecutionTwo,
@@ -56,6 +57,7 @@ export async function seed(prismaClient: PrismaClient) {
       fakeWorkflowExecutionOne,
       fakeWorkflowExecutionTwo,
       fakeWorkflowExecutionThree,
+      fakeWorkflowExecutionFour,
     ],
   });
 

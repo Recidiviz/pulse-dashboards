@@ -33,9 +33,10 @@ import {
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import {
   auditNumMessagesAttemptedChangeRatio,
-  getOrderedMessageAttempts,
+  getOrderedMessageAttemptsForCurrentPhoneNumber,
   mapTwilioStatusToInternalStatus,
   MessageSeriesWithAttemptsAndGroup,
+  PersonDataForMessage,
   updateMessageStatuses,
 } from "~@jii-texting/utils";
 import {
@@ -108,6 +109,17 @@ test.each([
 
 describe("getOrderedMessageAttemptFromMessageSeries", () => {
   test("one MessageSeries", async () => {
+    const jii: PersonDataForMessage = {
+      phoneNumber: "1231231234",
+      stableExternalId: "test-id-1",
+      pseudonymizedId: "pseudo-id-1",
+      givenName: "test-first-name",
+      poName: "test-po-name",
+      poPhoneNumber: null,
+      district: "District 1",
+      preferredLanguage: "en",
+    };
+
     const messageSeries: MessageSeriesWithAttemptsAndGroup = {
       messageType: MessageType.INITIAL_TEXT,
       id: "message-series-id",
@@ -119,6 +131,7 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
           twilioMessageSid: "initial-msg-id-1",
           status: MessageAttemptStatus.IN_PROGRESS,
           createdTimestamp: new Date("2025-03-04"),
+          phoneNumber: "1231231234",
         },
       ],
       group: {
@@ -130,11 +143,25 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
       },
     };
 
-    const result = getOrderedMessageAttempts(messageSeries);
+    const result = getOrderedMessageAttemptsForCurrentPhoneNumber(
+      messageSeries,
+      jii,
+    );
     expect(result[0].id).toBe("attempt-id-1");
   });
 
   test("one MessageSeries with multiple attempts", async () => {
+    const jii: PersonDataForMessage = {
+      phoneNumber: "1231231234",
+      stableExternalId: "test-id-1",
+      pseudonymizedId: "pseudo-id-1",
+      givenName: "test-first-name",
+      poName: "test-po-name",
+      poPhoneNumber: null,
+      district: "District 1",
+      preferredLanguage: "en",
+    };
+
     const messageSeries: MessageSeriesWithAttemptsAndGroup = {
       messageType: MessageType.INITIAL_TEXT,
       id: "message-series-id",
@@ -146,12 +173,14 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
           twilioMessageSid: "initial-msg-id-1",
           status: MessageAttemptStatus.IN_PROGRESS,
           createdTimestamp: new Date("2025-03-04"),
+          phoneNumber: "1231231234",
         },
         {
           id: "attempt-id-2",
           twilioMessageSid: "initial-msg-id-1",
           status: MessageAttemptStatus.IN_PROGRESS,
           createdTimestamp: new Date("2025-03-05"),
+          phoneNumber: "1231231234",
         },
       ],
       group: {
@@ -163,7 +192,10 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
       },
     };
 
-    const result = getOrderedMessageAttempts(messageSeries);
+    const result = getOrderedMessageAttemptsForCurrentPhoneNumber(
+      messageSeries,
+      jii,
+    );
     expect(
       result.map(
         (attempt: {

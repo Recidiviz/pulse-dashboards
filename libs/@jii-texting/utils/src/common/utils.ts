@@ -96,21 +96,23 @@ export function mapTwilioStatusToInternalStatus(
 }
 
 /**
- * Takes in a MessageSeries[] and returns a list of flattened MessageAttempt objects
- * ordered by descending createdTimestamp across all of the MessageSeries objects.
+ * Takes in a MessageSeries[] and a Person and returns a list of flattened MessageAttempt objects
+ * ordered by descending createdTimestamp across all of the MessageSeries objects associated with the Person's current phone number.
  *
  * @param messageSeries List of MessageSeries with nested MessageAttempts
+ * @param jii A person with a phone number associated with the MessageAttempts
  * @returns The MessageAttempt objects with internal ID, twilioMessageSid, status, and date created, ordered by descending createdTimestamp
  */
-export function getOrderedMessageAttempts(
+export function getOrderedMessageAttemptsForCurrentPhoneNumber(
   messageSeries:
     | MessageSeriesWithAttemptsAndGroup
     | ReminderMessageSeriesWithAttempts
     | WelcomeMessageSeriesWithAttempts,
+  jii: PersonDataForMessage,
 ) {
-  return messageSeries.messageAttempts.sort(
-    messageAttemptSortByCreatedTimestampDesc,
-  );
+  return messageSeries.messageAttempts
+    .filter((a) => a.phoneNumber === jii.phoneNumber)
+    .sort(messageAttemptSortByCreatedTimestampDesc);
 }
 
 /**
@@ -778,6 +780,7 @@ function allTextAttemptsForSeriesFailed(
     messageAttemptSortByCreatedTimestampDesc,
   );
 
+  // Note, messageAttempts includes attempts with any status (Success, Failure, etc)
   if (
     messageAttempts.length >= MAX_RETRY_ATTEMPTS &&
     messageAttempts[0].status === MessageAttemptStatus.FAILURE
@@ -1052,9 +1055,31 @@ export async function processIndividualJiiEligibilityTexts(
   // TODO(#7573): Reevaluate when there are multiple topics/state, e.g. do we need to filter by group?
   const messageSeriesList = jii.messageSeries;
 
-  // If there are no MessageSeries entries, we have never sent this JII a text. Thus, send an initial text.
+  // Get the latest MessageSeries (if it exists) and the latestMessageAttempt of that series
+  let latestSeriesForCurrentPhoneNumber;
+  if (messageSeriesList) {
+    latestSeriesForCurrentPhoneNumber = messageSeriesList
+      .map((series) => {
+        // Get the latest attempt for each series
+        const orderedMessageAttempts =
+          getOrderedMessageAttemptsForCurrentPhoneNumber(series, jii);
+        const latestMessageAttempt = orderedMessageAttempts[0];
+
+        return { series: series, latestAttemptForSeries: latestMessageAttempt };
+      })
+      .filter((s) => s.latestAttemptForSeries !== undefined)
+      .sort(
+        ({ latestAttemptForSeries: a }, { latestAttemptForSeries: b }) =>
+          b.createdTimestamp.getTime() - a.createdTimestamp.getTime(),
+      )[0];
+  }
+
+  // If there are no MessageSeries entries, or there are MessageSeries entries for an old phone number, send an initial text.
   // TODO(#7573): Reevaluate when there are multiple topics/state, e.g. will the topics share an initial text or will there be different ones?
-  if (!messageSeriesList.length) {
+  if (
+    !messageSeriesList.length ||
+    latestSeriesForCurrentPhoneNumber === undefined
+  ) {
     if (dryRun) {
       // Don't send requests to Twilio on a dry run, but omit the action that would've been taken
       console.log(`Skipped sending initial message for ${jii.pseudonymizedId}`);
@@ -1083,24 +1108,10 @@ export async function processIndividualJiiEligibilityTexts(
     }
   }
 
-  // Get the latest MessageSeries and the latestMessageAttempt of that series
   const {
     series: latestMessageSeries,
     latestAttemptForSeries: latestMessageAttempt,
-  } = messageSeriesList
-    .map((series) => {
-      // Get the latest attempt for each series
-      const orderedMessageAttempts = getOrderedMessageAttempts(series);
-      const latestMessageAttempt = orderedMessageAttempts[0];
-
-      return { series: series, latestAttemptForSeries: latestMessageAttempt };
-    })
-    .sort(
-      ({ latestAttemptForSeries: a }, { latestAttemptForSeries: b }) =>
-        b.createdTimestamp.getTime() - a.createdTimestamp.getTime(),
-    )[0];
-
-  if (latestMessageSeries === undefined) return ScriptAction.ERROR;
+  } = latestSeriesForCurrentPhoneNumber;
 
   const {
     group: { id: latestMessageGroupId },
@@ -1216,7 +1227,22 @@ export async function processContact(
     (series) => series.reminderType === contact.reminderType,
   );
 
-  if (reminderMessageSeries === undefined) {
+  let orderedMessageAttempts = [];
+  let latestMessageAttempt = undefined;
+  if (reminderMessageSeries !== undefined) {
+    orderedMessageAttempts = getOrderedMessageAttemptsForCurrentPhoneNumber(
+      reminderMessageSeries,
+      jii,
+    );
+    latestMessageAttempt = orderedMessageAttempts[0];
+  }
+
+  // If we've never sent a reminder message to this person, or we did so with an old phone number,
+  // attempt to send a reminder text
+  if (
+    reminderMessageSeries === undefined ||
+    latestMessageAttempt === undefined
+  ) {
     if (dryRun) {
       return ScriptAction.REMINDER_TEXT_SENT;
     } else {
@@ -1228,6 +1254,7 @@ export async function processContact(
         twilio,
         contactDataForMessage,
         i18n,
+        reminderMessageSeries ? reminderMessageSeries.id : undefined,
       );
 
       console.log(
@@ -1242,10 +1269,6 @@ export async function processContact(
     }
   }
 
-  const orderedMessageAttempts = getOrderedMessageAttempts(
-    reminderMessageSeries,
-  );
-  const latestMessageAttempt = orderedMessageAttempts[0];
   const updatedMessageAttemptStatus = latestMessageAttempt.status;
 
   // Retry the message and add an attempt to the existing series by
@@ -1295,7 +1318,23 @@ export async function processWelcomeText(
   twilio: TwilioAPIClient,
   i18n: i18n,
 ) {
-  if (jii.welcomeMessageSeries === null) {
+  const initialMessageSeries = jii.welcomeMessageSeries;
+
+  let latestInitialMessageAttempt;
+  if (initialMessageSeries !== null) {
+    latestInitialMessageAttempt =
+      getOrderedMessageAttemptsForCurrentPhoneNumber(
+        initialMessageSeries,
+        jii,
+      )[0];
+  }
+
+  // If we've never sent a welcome message to this person, or we did so with an old phone number,
+  // attempt to send a welcome text
+  if (
+    initialMessageSeries === null ||
+    latestInitialMessageAttempt === undefined
+  ) {
     if (dryRun) {
       // Don't send requests to Twilio on a dry run, but omit the action that would've been taken
       console.log(`Skipped sending initial message for ${jii.pseudonymizedId}`);
@@ -1308,6 +1347,7 @@ export async function processWelcomeText(
       prisma,
       twilio,
       i18n,
+      initialMessageSeries ? initialMessageSeries.id : undefined,
     );
 
     console.log(
@@ -1320,11 +1360,6 @@ export async function processWelcomeText(
       return ScriptAction.ERROR;
     }
   }
-
-  const initialMessageSeries = jii.welcomeMessageSeries;
-
-  const latestInitialMessageAttempt =
-    getOrderedMessageAttempts(initialMessageSeries)[0];
 
   if (
     latestInitialMessageAttempt.status === MessageAttemptStatus.SUCCESS &&
@@ -1343,7 +1378,9 @@ export async function processWelcomeText(
   }
 
   if (
-    (initialMessageSeries.messageAttempts.length >= MAX_RETRY_ATTEMPTS &&
+    (initialMessageSeries.messageAttempts.filter(
+      (a) => a.phoneNumber === jii.phoneNumber,
+    ).length >= MAX_RETRY_ATTEMPTS &&
       latestInitialMessageAttempt.status === MessageAttemptStatus.FAILURE) ||
     latestInitialMessageAttempt.status === MessageAttemptStatus.SUCCESS
   ) {
@@ -1359,8 +1396,13 @@ export async function processWelcomeText(
     return ScriptAction.SKIPPED;
   }
 
+  // TODO(#SPE-2462) Refactor unreachable condition / branch
   if (latestInitialMessageAttemptStatus === MessageAttemptStatus.FAILURE) {
-    if (initialMessageSeries.messageAttempts.length >= MAX_RETRY_ATTEMPTS) {
+    if (
+      initialMessageSeries.messageAttempts.filter(
+        (a) => a.phoneNumber === jii.phoneNumber,
+      ).length >= MAX_RETRY_ATTEMPTS
+    ) {
       return ScriptAction.SKIPPED;
     } else {
       if (dryRun) {
