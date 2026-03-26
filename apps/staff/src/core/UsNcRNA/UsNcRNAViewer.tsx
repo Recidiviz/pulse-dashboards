@@ -44,7 +44,8 @@ export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
       <CaseloadSelect />
       <Heading isMobile={isMobile}>RNA Self-Report Manager</Heading>
       <SubHeading>
-        The people listed below might have upcoming self-report due dates.
+        The people listed below might have upcoming self-report due dates. You
+        can change the filters to view more people.
       </SubHeading>
       <ErrorBoundary>
         <RNAFilterStoreProvider>

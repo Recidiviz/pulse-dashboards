@@ -88,6 +88,10 @@ const rnaFilters: FilterSection<"usNcRNA">[] = [
         value: "NEXT_90_DAYS",
         label: "the next 90 days",
       },
+      {
+        value: "MORE_THAN_90_DAYS",
+        label: "more than 90 days",
+      },
     ] satisfies { value: RNADueTime; label: string }[],
   },
   {
@@ -117,9 +121,11 @@ export default class UsNcRNAFilterStore extends FilterStoreBase {
   ) {
     super();
 
-    // Default state: only non-submitted to OPUS assessments
+    // Default state: only non-submitted to OPUS assessments,
+    // and only people who are due within the next 90 days
     this._selectedFilters = {
       isSubmitted: [false],
+      dueIn: ["PAST", "NEXT_7_DAYS", "NEXT_30_DAYS", "NEXT_90_DAYS"],
     };
 
     makeObservable<UsNcRNAFilterStore>(this, {

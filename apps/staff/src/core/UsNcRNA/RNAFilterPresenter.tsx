@@ -38,6 +38,7 @@ export type RNADueTime =
   | "NEXT_7_DAYS"
   | "NEXT_30_DAYS"
   | "NEXT_90_DAYS"
+  | "MORE_THAN_90_DAYS"
   | "OTHER";
 
 export type RNARowData = Exclude<RNAStatusList[number], "pseudonymizedId"> & {
@@ -74,7 +75,7 @@ function computeRNADue(dueDate?: Date): RNADueTime {
   } else if (daysUntilDue <= 90) {
     return "NEXT_90_DAYS";
   } else {
-    return "OTHER";
+    return "MORE_THAN_90_DAYS";
   }
 }
 
