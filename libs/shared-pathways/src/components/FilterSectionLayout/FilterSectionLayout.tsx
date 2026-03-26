@@ -15,17 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./ChartNote";
-export * from "./CheckboxGroup";
-export * from "./FiltersButton";
-export * from "./FilterSectionLayout";
-export * from "./FiltersPanel";
-export * from "./PathwaysModal";
-export * from "./PathwaysTheme";
-export * from "./PopulationSnapshotChart";
-export * from "./PopulationSnapshotTooltip";
-export * from "./PopulationTimeSeriesChart";
-export * from "./RadioGroup";
-export { default as VizPathways } from "./VizPathways";
-export * from "./VizPopulationOverTime";
-export * from "./VizPopulationSnapshot";
+import React, { ReactNode } from "react";
+
+import { FilterTitle, FilterTitleRow } from "./FilterSectionLayout.styles";
+
+type FilterSectionLayoutProps = {
+  title: string;
+  titlePrefix?: ReactNode;
+  children: ReactNode;
+};
+
+const FilterSectionLayout: React.FC<FilterSectionLayoutProps> = ({
+  title,
+  titlePrefix,
+  children,
+}) => (
+  <div>
+    <FilterTitleRow>
+      {titlePrefix}
+      <FilterTitle>{title}</FilterTitle>
+    </FilterTitleRow>
+    {children}
+  </div>
+);
+
+export default FilterSectionLayout;

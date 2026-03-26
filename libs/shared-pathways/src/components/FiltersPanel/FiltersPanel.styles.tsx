@@ -45,15 +45,6 @@ export const ResetButton = styled.button`
   }
 `;
 
-export const DropdownLabel = styled.label`
-  ${({ theme }) => theme.typography.Sans16}
-  font-weight: 700;
-  color: ${({ theme }) =>
-    theme.checkbox?.titleColor ?? theme.typography.titleColor};
-  display: block;
-  margin-bottom: 1rem;
-`;
-
 export const FilterDropdownWrapper = styled(Dropdown)`
   display: block;
   width: 50%;

@@ -18,9 +18,9 @@
 import React, { useCallback, useMemo } from "react";
 
 import { FilterOption, PopulationFilter } from "../../";
+import FilterSectionLayout from "../FilterSectionLayout/FilterSectionLayout";
 import Checkbox from "./Checkbox";
 import CheckboxGroup from "./CheckboxGroup";
-import { CheckboxGroupTitle, SelectAllContainer } from "./CheckboxGroup.styles";
 
 type CheckboxGroupWithSelectAllTitleProps = {
   filter: PopulationFilter;
@@ -58,23 +58,24 @@ const CheckboxGroupWithSelectAllTitle: React.FC<
   }, [allSelected, indeterminate, enabledOptions, onChange, filter.type]);
 
   return (
-    <div>
-      <SelectAllContainer>
+    <FilterSectionLayout
+      title={filter.title}
+      titlePrefix={
         <Checkbox
           value="select-all"
           checked={allSelected}
           indeterminate={indeterminate}
           onChange={handleSelectAllToggle}
         />
-        <CheckboxGroupTitle>{filter.title}</CheckboxGroupTitle>
-      </SelectAllContainer>
+      }
+    >
       <CheckboxGroup
         filter={filter}
         selectedOptions={selectedOptions}
         onChange={onChange}
         collapsible
       />
-    </div>
+    </FilterSectionLayout>
   );
 };
 

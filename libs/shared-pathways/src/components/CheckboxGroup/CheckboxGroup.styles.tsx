@@ -146,26 +146,3 @@ export const ShowMoreButton = styled.button`
     outline-offset: 2px;
   }
 `;
-
-export const SelectAllContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-
-  ${CheckboxContainer} {
-    margin-bottom: 0;
-    padding-left: 1rem;
-  }
-
-  ${CheckboxBox} {
-    top: 50%;
-    transform: translateY(-50%);
-  }
-`;
-
-export const CheckboxGroupTitle = styled.span`
-  ${typography.Sans14}
-  font-weight: 700;
-  color: ${({ theme }) => theme.checkbox?.titleColor ?? palette.pine1};
-`;

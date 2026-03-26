@@ -20,8 +20,8 @@ import React from "react";
 import { DropdownMenuItem } from "~design-system";
 
 import { FilterOption } from "../../filters";
+import FilterSectionLayout from "../FilterSectionLayout/FilterSectionLayout";
 import {
-  DropdownLabel,
   FilterDropdownMenu,
   FilterDropdownToggle,
   FilterDropdownWrapper,
@@ -48,8 +48,7 @@ const PathwaysDropdownFilter: React.FC<PathwaysDropdownFilterProps> = ({
     defaultValue != null && selectedValue !== defaultValue;
 
   return (
-    <>
-      <DropdownLabel>{label}</DropdownLabel>
+    <FilterSectionLayout title={label}>
       <FilterDropdownWrapper>
         <FilterDropdownToggle
           kind="secondary"
@@ -75,7 +74,7 @@ const PathwaysDropdownFilter: React.FC<PathwaysDropdownFilterProps> = ({
           ))}
         </FilterDropdownMenu>
       </FilterDropdownWrapper>
-    </>
+    </FilterSectionLayout>
   );
 };
 
