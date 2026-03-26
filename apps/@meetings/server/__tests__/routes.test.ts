@@ -99,7 +99,7 @@ const mockCleanupOfflineFiles = vi.spyOn(tasks, "cleanupOfflineFiles");
 
 // Make these succeed by default
 mockStitchAudio.mockImplementation(async () => {
-  return "final-path.m4a";
+  return { outputFileName: "final-path.m4a", durationMs: 1000 };
 });
 mockCleanupOfflineFiles.mockImplementation(
   vi.fn().mockResolvedValue(undefined),

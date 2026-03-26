@@ -242,7 +242,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
         },
       });
 
-      let finalRecordingGCSPath;
       try {
         const meeting = await prisma.meeting.update({
           where: {
@@ -254,13 +253,13 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
         });
 
-        finalRecordingGCSPath = await stitchAudio(
+        const stitchResult = await stitchAudio(
           meeting.recordingsGCSBucket,
           meeting.recordingsFolderPath,
         );
 
         // If there is no audio to stitch, mark the meeting as completed and exit early without queuing transcription
-        if (!finalRecordingGCSPath) {
+        if (!stitchResult) {
           await prisma.meeting.update({
             where: {
               id: meetingId,
@@ -283,7 +282,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
             id: meetingId,
           },
           data: {
-            finalRecordingGCSPath,
+            finalRecordingGCSPath: stitchResult.outputFileName,
+            durationMs: stitchResult.durationMs,
           },
         });
       } catch (e) {

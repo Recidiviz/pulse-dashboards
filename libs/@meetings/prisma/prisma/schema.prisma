@@ -181,6 +181,7 @@ model Meeting {
   recordingsGCSBucket   String
   recordingsFolderPath  String
   finalRecordingGCSPath String?
+  durationMs            Int?
 
   postMeetingProcessingStatus PostMeetingProcessingStatus @default(NOT_STARTED)
 

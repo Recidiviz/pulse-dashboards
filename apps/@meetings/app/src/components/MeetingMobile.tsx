@@ -176,6 +176,7 @@ const MeetingMobile = ({
   const { time, duration } = formatMeetingDuration({
     startDate: meetingDetails.startTime || null,
     endDate: meetingDetails.endTime || null,
+    durationMs: meetingDetails.durationMs,
   });
 
   return (

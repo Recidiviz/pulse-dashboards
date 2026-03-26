@@ -34,6 +34,7 @@ export const getDetailsOutputSchema = z.object({
   actionItems: z.array(z.string()).nullable(),
   criticalUpdates: z.array(z.string()).nullable(),
   meetingSummary: z.array(MinuteSectionSchema).nullable(),
+  durationMs: z.number().nullable(),
   postMeetingProcessingStatus: z.nativeEnum(PostMeetingProcessingStatus),
   transcription: z
     .object({

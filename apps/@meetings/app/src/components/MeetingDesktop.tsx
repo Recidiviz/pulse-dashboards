@@ -155,6 +155,7 @@ const MeetingDesktop = ({
   const { time, duration } = formatMeetingDuration({
     startDate: meetingDetails.startTime || null,
     endDate: meetingDetails.endTime || null,
+    durationMs: meetingDetails.durationMs,
   });
 
   const handlePrint = usePrintMeetingDetails({

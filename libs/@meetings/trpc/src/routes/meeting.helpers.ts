@@ -102,6 +102,7 @@ export async function getMeetingsForPerson({
       endTime: true,
       postMeetingProcessingStatus: true,
       caseNote: true,
+      durationMs: true,
     },
   });
 }

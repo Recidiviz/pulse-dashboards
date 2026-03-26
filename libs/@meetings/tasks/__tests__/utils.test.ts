@@ -22,7 +22,15 @@ import path from "node:path";
 import { DeepgramError } from "@deepgram/sdk";
 import { Storage } from "@google-cloud/storage";
 import { Transcript } from "assemblyai";
+import ffmpeg from "fluent-ffmpeg";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.spyOn(ffmpeg, "ffprobe").mockImplementation(
+  // @ts-expect-error - mock doesn't need full signature
+  (_filePath: string, cb: (err: Error | null, metadata: unknown) => void) => {
+    cb(null, { format: { duration: 1.5 } });
+  },
+);
 
 import {
   MOBILE_AUDIO_FILE_EXTENSION,
@@ -144,7 +152,10 @@ describe("utils", () => {
         .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
         .getFiles({ prefix: `stitch-audio-test-folder/` });
 
-      expect(stitchedAudioPath).toEqual("stitch-audio-test-folder/final.m4a");
+      expect(stitchedAudioPath).toEqual({
+        outputFileName: "stitch-audio-test-folder/final.m4a",
+        durationMs: 1500,
+      });
       expect(files.map((f) => f.name)).toEqual(
         expect.arrayContaining([`stitch-audio-test-folder/final.m4a`]),
       );
@@ -423,7 +434,10 @@ describe("utils", () => {
           meetingId,
         );
 
-        expect(result).toEqual(`${meetingId}/final.m4a`);
+        expect(result).toEqual({
+          outputFileName: `${meetingId}/final.m4a`,
+          durationMs: 1500,
+        });
 
         // Verify final file exists
         const finalPath = path.join(meetingDir, "final.m4a");
@@ -449,7 +463,10 @@ describe("utils", () => {
           meetingId,
         );
 
-        expect(result).toEqual(`${meetingId}/final.m4a`);
+        expect(result).toEqual({
+          outputFileName: `${meetingId}/final.m4a`,
+          durationMs: 1500,
+        });
 
         // Verify final file was created
         const finalPath = path.join(meetingDir, "final.m4a");

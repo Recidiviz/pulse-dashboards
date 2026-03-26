@@ -180,6 +180,16 @@ async function downloadFilesGCS(
   return fileListContent;
 }
 
+function getAudioDurationMs(filePath: string): Promise<number> {
+  return new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(filePath, (err, metadata) => {
+      if (err) return reject(err);
+      const durationSec = metadata.format.duration ?? 0;
+      resolve(Math.round(durationSec * 1000));
+    });
+  });
+}
+
 export async function stitchAudio(bucketName: string, folderName: string) {
   const tempFilePaths: string[] = [];
   const fileListPath = path.join(os.tmpdir(), "filelist.txt");
@@ -274,7 +284,9 @@ export async function stitchAudio(bucketName: string, folderName: string) {
     });
   }
 
-  return outputFileName;
+  const durationMs = await getAudioDurationMs(tempOutputPath);
+
+  return { outputFileName, durationMs };
 }
 
 function getLocalAudioFilePath(finalRecordingFilePath: string) {

@@ -104,9 +104,11 @@ export const formatMeetingStartDate = (date: Date) => {
 export const formatMeetingDuration = ({
   startDate,
   endDate,
+  durationMs,
 }: {
   startDate: Date | null;
   endDate: Date | null;
+  durationMs: number | null;
 }) => {
   if (!startDate) {
     return { time: null, duration: null };
@@ -118,14 +120,14 @@ export const formatMeetingDuration = ({
     ? `${startTimeFormatted} - ${endTimeFormatted}`
     : startTimeFormatted;
 
-  if (!endDate) {
+  const durationInMs =
+    durationMs ?? (endDate ? endDate.getTime() - startDate.getTime() : null);
+
+  if (durationInMs == null) {
     return { time: timeFormatted, duration: null };
   }
 
-  const startTime = startDate.getTime();
-  const endTime = endDate.getTime();
-  const differenceInMilliseconds = endTime - startTime;
-  const differenceInSeconds = Math.floor(differenceInMilliseconds / 1000);
+  const differenceInSeconds = Math.floor(durationInMs / 1000);
   const duration =
     differenceInSeconds < 60
       ? `${differenceInSeconds} sec`

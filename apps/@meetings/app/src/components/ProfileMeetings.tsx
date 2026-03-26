@@ -110,11 +110,21 @@ const ProfileMeetings = ({
         const start = new Date(m.startTime);
         const end = m.endTime ? new Date(m.endTime) : null;
 
-        const duration = end
-          ? new Date(end.getTime() - start.getTime())
-              .toISOString()
-              .substring(11, 19)
-          : null;
+        let duration: string | null = null;
+
+        if (m.durationMs) {
+          const totalSeconds = Math.floor(m.durationMs / 1000);
+          const hours = Math.floor(totalSeconds / 3600);
+          const minutes = Math.floor((totalSeconds % 3600) / 60);
+          const seconds = totalSeconds % 60;
+          duration = [hours, minutes, seconds]
+            .map((v) => String(v).padStart(2, "0"))
+            .join(":");
+        } else if (end) {
+          duration = new Date(end.getTime() - start.getTime())
+            .toISOString()
+            .substring(11, 19);
+        }
 
         const date = format(start, "EEEE MMM dd");
         const time = `${format(start, "HH:mm")}${
