@@ -586,6 +586,113 @@ describe("tasks", () => {
       );
     });
 
+    test("Should succeed if called a second time for the same meeting (retry/duplicate delivery)", async () => {
+      const body = {
+        stateCode: "US_NE",
+        meetingId: fakeMeeting.id,
+      };
+
+      const firstResponse = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body,
+      });
+      expect(firstResponse.statusCode).toBe(200);
+
+      // Simulate a retry where the providers return different results
+      const updatedAssemblyAIResult = {
+        confidence: 0.88,
+        summary: "Updated summary from retry.",
+        utterances: [
+          {
+            confidence: 0.9,
+            end: 5000,
+            speaker: "A",
+            start: 0,
+            text: "This is the updated transcription sentence.",
+          },
+        ] satisfies Omit<TranscriptUtterance, "words">[],
+      };
+      const updatedDeepgramResult = {
+        results: {
+          channels: [{ language_confidence: 0.75 }],
+          summary: { result: "Updated Deepgram summary from retry." },
+          utterances: [
+            {
+              confidence: 0.91,
+              end: 5000,
+              speaker: 0,
+              start: 0,
+              transcript:
+                "This is the updated Deepgram transcription sentence.",
+            },
+          ],
+        },
+      };
+      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(
+        vi.fn().mockResolvedValue(updatedAssemblyAIResult),
+      );
+      mockTranscribeAudioWithDeepgram.mockImplementationOnce(
+        vi.fn().mockResolvedValue(updatedDeepgramResult),
+      );
+
+      const secondResponse = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body,
+      });
+      expect(secondResponse.statusCode).toBe(200);
+
+      // Should have exactly one transcription per provider, updated with the new values
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+        include: { transcriptions: { include: { utterances: true } } },
+      });
+      expect(meeting.transcriptions).toHaveLength(2);
+
+      const assemblyAI = meeting.transcriptions.find(
+        (t) => t.provider === TranscriptionProvider.ASSEMBLYAI,
+      );
+      expect(assemblyAI).toEqual(
+        expect.objectContaining({
+          confidence: 0.88,
+          summary: "Updated summary from retry.",
+          transcriptObject: updatedAssemblyAIResult,
+          utterances: [
+            expect.objectContaining({
+              text: "This is the updated transcription sentence.",
+              speaker: "A",
+              startTimeMs: 0,
+              endTimeMs: 5000,
+              confidence: 0.9,
+            }),
+          ],
+        }),
+      );
+
+      const deepgram = meeting.transcriptions.find(
+        (t) => t.provider === TranscriptionProvider.DEEPGRAM,
+      );
+      expect(deepgram).toEqual(
+        expect.objectContaining({
+          confidence: 0.75,
+          summary: "Updated Deepgram summary from retry.",
+          transcriptObject: updatedDeepgramResult,
+          utterances: [
+            expect.objectContaining({
+              text: "This is the updated Deepgram transcription sentence.",
+              speaker: "0",
+              startTimeMs: 0,
+              endTimeMs: 5000,
+              confidence: 0.91,
+            }),
+          ],
+        }),
+      );
+    });
+
     test("Should call cleanupOfflineFiles after successful transcription", async () => {
       const response = await testServer.inject({
         method: "POST",

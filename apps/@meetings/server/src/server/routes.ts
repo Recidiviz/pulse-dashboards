@@ -370,6 +370,37 @@ export function registerTaskRoutes(app: FastifyInstance) {
           finalRecordingGCSPath: meeting.finalRecordingGCSPath,
         });
 
+        // Upsert each transcription to handle retries in the case we got here
+        // via the reprocess-meeting script.
+        // Utterances must be handled explicitly here (rather than nested in the
+        // meeting update) because prisma.transcription.upsert operates on the
+        // Transcription model directly, so relation fields like `utterances`
+        // must be passed as explicit relation operations.
+        await Promise.all(
+          transcriptions.map(({ utterances, ...transcription }) =>
+            prisma.transcription.upsert({
+              where: {
+                provider_meetingId: {
+                  provider: transcription.provider,
+                  meetingId,
+                },
+              },
+              create: {
+                ...transcription,
+                meetingId,
+                utterances,
+              },
+              update: {
+                ...transcription,
+                utterances: {
+                  deleteMany: {}, // delete all utterances for this transcription (scoped by foreign key)
+                  createMany: utterances.createMany,
+                },
+              },
+            }),
+          ),
+        );
+
         await prisma.meeting.update({
           where: {
             id: meetingId,
@@ -377,9 +408,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
           data: {
             postMeetingProcessingStatus:
               PostMeetingProcessingStatus.NOTETAKING_QUEUED,
-            transcriptions: {
-              create: transcriptions,
-            },
           },
         });
 
