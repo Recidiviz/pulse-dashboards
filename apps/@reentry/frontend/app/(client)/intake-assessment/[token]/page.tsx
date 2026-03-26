@@ -17,7 +17,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import {
   AssessmentLoginPage,
@@ -25,17 +25,20 @@ import {
   IntakeSocketProvider,
 } from "~@reentry/frontend-shared";
 
-export default function Intake({ params }: { params: { token: string } }) {
+export default function Intake({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const { token } = use(params);
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
-
-  const token = params.token;
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("intake_token");
     setAuthorized(!!storedToken);
     setLoading(false);
-  }, [params.token]);
+  }, [token]);
 
   if (loading) {
     return (
