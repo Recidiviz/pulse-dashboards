@@ -185,8 +185,8 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
       transcriptObject:
         deepgramTranscriptionResult as PrismaJson.TranscriptType,
       confidence:
-        deepgramTranscriptionResult.results.channels[0]?.language_confidence ??
-        0,
+        deepgramTranscriptionResult.results.channels[0]?.alternatives[0]
+          ?.confidence ?? 0,
       summary: deepgramTranscriptionResult.results.summary?.result,
       utterances: {
         createMany: {

@@ -277,6 +277,26 @@ export async function stitchAudio(bucketName: string, folderName: string) {
   return outputFileName;
 }
 
+function getLocalAudioFilePath(finalRecordingFilePath: string) {
+  // Extract meeting ID from the path (format: {meetingId}/final.{extension})
+  const meetingId = path.dirname(finalRecordingFilePath);
+  const localStorageDir =
+    process.env["OFFLINE_STORAGE_DIR"] ||
+    path.join(os.tmpdir(), "meetings-offline");
+  const meetingDir = path.join(localStorageDir, meetingId);
+
+  // Look for final file with either extension
+  let localFilePath = path.join(
+    meetingDir,
+    `final.${MOBILE_AUDIO_FILE_EXTENSION}`,
+  );
+  if (!fs.existsSync(localFilePath)) {
+    localFilePath = path.join(meetingDir, `final.${WEB_AUDIO_FILE_EXTENSION}`);
+  }
+
+  return localFilePath;
+}
+
 export async function transcribeAudioWithAssemblyAI(
   bucketName: string,
   finalRecordingFilePath: string,
@@ -286,27 +306,8 @@ export async function transcribeAudioWithAssemblyAI(
 
   if (isOffline()) {
     // In offline mode, use local file path
-    // Extract meeting ID from the path (format: {meetingId}/final.{extension})
-    const meetingId = path.dirname(finalRecordingFilePath);
-    const localStorageDir =
-      process.env["OFFLINE_STORAGE_DIR"] ||
-      path.join(os.tmpdir(), "meetings-offline");
-    const meetingDir = path.join(localStorageDir, meetingId);
-
-    // Look for final file with either extension
-    let localFilePath = path.join(
-      meetingDir,
-      `final.${MOBILE_AUDIO_FILE_EXTENSION}`,
-    );
-    if (!fs.existsSync(localFilePath)) {
-      localFilePath = path.join(
-        meetingDir,
-        `final.${WEB_AUDIO_FILE_EXTENSION}`,
-      );
-    }
-
     // AssemblyAI accepts local file paths directly
-    audioUrl = localFilePath;
+    audioUrl = getLocalAudioFilePath(finalRecordingFilePath);
   } else {
     // Online mode: generate signed URL from GCS
     const storage = new Storage();
@@ -375,20 +376,7 @@ export async function transcribeAudioWithDeepgram(
 
   if (isOffline()) {
     // In offline mode, use local file path
-    // Extract meeting ID from the path (format: {meetingId}/final.{extension})
-    const meetingId = path.dirname(finalRecordingFilePath);
-    const localStorageDir =
-      process.env["OFFLINE_STORAGE_DIR"] ||
-      path.join(os.tmpdir(), "meetings-offline");
-    const meetingDir = path.join(localStorageDir, meetingId);
-
-    // Look for final file with either extension
-    const localFilePath = path.join(
-      meetingDir,
-      `final.${MOBILE_AUDIO_FILE_EXTENSION}`,
-    );
-
-    const audioUrl = localFilePath;
+    const audioUrl = getLocalAudioFilePath(finalRecordingFilePath);
     const bufferData = fs.readFileSync(audioUrl);
 
     const deepgramClient = createClient(apiKey);
@@ -399,6 +387,7 @@ export async function transcribeAudioWithDeepgram(
         punctuate: true,
         diarize: true,
         summarize: true,
+        utterances: true,
         mip_opt_out: true,
       });
   } else {
@@ -422,6 +411,7 @@ export async function transcribeAudioWithDeepgram(
         punctuate: true,
         diarize: true,
         summarize: true,
+        utterances: true,
         mip_opt_out: true,
       },
     );

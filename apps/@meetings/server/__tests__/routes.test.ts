@@ -59,7 +59,11 @@ const FAKE_DEEPGRAM_TRANSCRIPT_OBJECT = {
   results: {
     channels: [
       {
-        language_confidence: 0.5,
+        alternatives: [
+          {
+            confidence: 0.5,
+          },
+        ],
       },
     ],
     summary: { result: "This is a mock summary of the transcription." },
