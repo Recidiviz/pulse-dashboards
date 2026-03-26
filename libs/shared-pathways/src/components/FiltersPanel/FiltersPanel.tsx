@@ -21,7 +21,11 @@ import React, { useEffect, useState } from "react";
 
 import { FILTER_TYPES } from "../../constants";
 import { getFilterOptions } from "../../filterOptions";
-import { FilterOption, PopulationFilters } from "../../filters";
+import {
+  FilterOption,
+  PopulationFilters,
+  PopulationFilterValues,
+} from "../../filters";
 import { FiltersStoreBase } from "../../FiltersStoreBase";
 import CheckboxGroupWithSelectAllTitle from "../CheckboxGroup/CheckboxGroupWithSelectAllTitle";
 import FilterSectionLayout from "../FilterSectionLayout/FilterSectionLayout";
@@ -39,10 +43,11 @@ type FiltersPanelProps = {
   isOpen: boolean;
   onClose: () => void;
   filtersStore: FiltersStoreBase;
+  trackApplyFilters?: (filters: PopulationFilterValues) => void;
 };
 
 const FiltersPanel: React.FC<FiltersPanelProps> = observer(
-  function FiltersPanel({ isOpen, onClose, filtersStore }) {
+  function FiltersPanel({ isOpen, onClose, filtersStore, trackApplyFilters }) {
     const { filters, filterOptions } = filtersStore;
     const enabledFilters = filtersStore.metric.filters.enabledFilters;
 
@@ -122,6 +127,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
 
     const onApply = () => {
       filtersStore.setFilters(pendingFilters);
+      trackApplyFilters?.({ ...filtersStore.filters });
       onClose();
     };
 

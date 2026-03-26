@@ -28,6 +28,7 @@ import {
   PathwaysTenantId,
 } from "~shared-pathways";
 
+import AnalyticsStore from "./AnalyticsStore";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import UserStore from "./UserStore";
@@ -63,6 +64,8 @@ export class RootStore {
 
   metricsStore: MetricsStore;
 
+  analyticsStore: AnalyticsStore;
+
   page: PathwaysPage = PATHWAYS_PAGES.prison;
 
   section: PathwaysSection =
@@ -83,6 +86,7 @@ export class RootStore {
     });
     this.filtersStore = new FiltersStore({ rootStore: this });
     this.metricsStore = new MetricsStore({ rootStore: this });
+    this.analyticsStore = new AnalyticsStore({ rootStore: this });
   }
 
   setPage(page: PathwaysPage): void {

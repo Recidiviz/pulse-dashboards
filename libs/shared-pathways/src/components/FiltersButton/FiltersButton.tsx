@@ -20,6 +20,7 @@ import styled from "styled-components";
 
 import { Button, Icon, IconSVG } from "~design-system";
 
+import { PopulationFilterValues } from "../../filters";
 import { FiltersStoreBase } from "../../FiltersStoreBase";
 import FiltersPanel from "../FiltersPanel/FiltersPanel";
 
@@ -64,9 +65,13 @@ const FiltersTrigger = styled(Button)`
 
 type FiltersButtonProps = {
   filtersStore: FiltersStoreBase;
+  trackApplyFilters?: (filters: PopulationFilterValues) => void;
 };
 
-const FiltersButton: React.FC<FiltersButtonProps> = ({ filtersStore }) => {
+const FiltersButton: React.FC<FiltersButtonProps> = ({
+  filtersStore,
+  trackApplyFilters,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -95,6 +100,7 @@ const FiltersButton: React.FC<FiltersButtonProps> = ({ filtersStore }) => {
         isOpen={isOpen}
         onClose={handleClose}
         filtersStore={filtersStore}
+        trackApplyFilters={trackApplyFilters}
       />
     </>
   );

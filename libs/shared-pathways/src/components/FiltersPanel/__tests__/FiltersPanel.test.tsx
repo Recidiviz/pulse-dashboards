@@ -265,6 +265,30 @@ describe("FiltersPanel", () => {
     expect(store.setFilters).toHaveBeenCalledOnce();
   });
 
+  it("calls trackApplyFilters with current filters when Apply is clicked", () => {
+    const store = createMockFiltersStore({
+      filterValues: { race: ["BLACK"], gender: ["ALL"] },
+    });
+    const trackApplyFilters = vi.fn();
+    render(
+      <FiltersPanel
+        isOpen={true}
+        onClose={onClose}
+        filtersStore={store}
+        trackApplyFilters={trackApplyFilters}
+      />,
+      { wrapper },
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /apply/i }));
+
+    expect(trackApplyFilters).toHaveBeenCalledWith({
+      race: ["BLACK"],
+      gender: ["ALL"],
+      timePeriod: ["6"],
+    });
+  });
+
   it("does not render filters that are not enabled", () => {
     const store = createMockFiltersStore({
       enabledFilters: ["race"],

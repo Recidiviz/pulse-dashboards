@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
@@ -22,6 +23,7 @@ import { Menubar, spacing } from "~design-system";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
+import { useRootStore } from "../StoreProvider";
 
 const HeaderWrapper = styled.header`
   height: ${rem(100)};
@@ -85,17 +87,33 @@ const DownloadButton = styled.button`
   outline: none;
 `;
 
-export function Header() {
+export const Header = observer(function Header() {
+  const { analyticsStore, metricsStore } = useRootStore();
+
   return (
     <HeaderWrapper>
       <Title>DOCCS Dashboard</Title>
       <StyledMenubar focusBorderColor={publicPathwaysPalette.signal.links}>
         <MenuLinks>
           <MenuLink role="menuitem">About</MenuLink>
-          <MenuLink role="menuitem">How it works</MenuLink>
+          <MenuLink
+            role="menuitem"
+            onClick={() => analyticsStore.trackMethodologyLinkClicked()}
+          >
+            How it works
+          </MenuLink>
         </MenuLinks>
-        <DownloadButton role="menuitem">Download</DownloadButton>
+        <DownloadButton
+          role="menuitem"
+          onClick={() =>
+            analyticsStore.trackDownloadClicked({
+              metricId: metricsStore.current.id,
+            })
+          }
+        >
+          Download
+        </DownloadButton>
       </StyledMenubar>
     </HeaderWrapper>
   );
-}
+});

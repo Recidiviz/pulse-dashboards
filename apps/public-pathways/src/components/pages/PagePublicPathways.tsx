@@ -17,7 +17,8 @@
 
 import { observer } from "mobx-react-lite";
 import { rgba } from "polished";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 
 import type { Sections } from "~shared-pathways";
@@ -39,6 +40,15 @@ import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
 import { PageTitle } from "../PageTitle/PageTitle";
 import { useRootStore } from "../StoreProvider";
 import { NavigationRow, PageContainer } from "./styles";
+
+function usePageViews() {
+  const location = useLocation();
+  const { analyticsStore } = useRootStore();
+
+  useEffect(() => {
+    analyticsStore.page(location.pathname);
+  }, [analyticsStore, location.pathname]);
+}
 
 const OSWALD_FONT_FAMILY = '"Oswald", sans-serif';
 const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
@@ -82,9 +92,11 @@ const publicPathwaysTheme: PathwaysTheme = {
 };
 
 export const PagePublicPathways = observer(function PagePublicPathways() {
+  usePageViews();
   useRouteSync();
   const rootStore = useRootStore();
-  const { currentTenantId, page, section, metricsStore } = rootStore;
+  const { currentTenantId, page, section, metricsStore, analyticsStore } =
+    rootStore;
   const pageContent = usePageContent(currentTenantId, page);
 
   const sections = useMemo((): Partial<Sections> => {
@@ -112,10 +124,24 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
           <SectionNavigation
             sections={sections}
             activeSection={section}
-            onSectionSelect={(id) => rootStore.setSection(id)}
+            onSectionSelect={(id) => {
+              rootStore.setSection(id);
+              const metric = metricsStore.map[id];
+              if (metric) {
+                analyticsStore.trackMetricSelected({ metricId: metric.id });
+              }
+            }}
             accentColor={publicPathwaysPalette.signal.links}
           />
-          <FiltersButton filtersStore={rootStore.filtersStore} />
+          <FiltersButton
+            filtersStore={rootStore.filtersStore}
+            trackApplyFilters={(filters) =>
+              analyticsStore.trackApplyFilters({
+                metricId: metricsStore.current.id,
+                filters,
+              })
+            }
+          />
         </NavigationRow>
         <MetricVizMapper metric={metricsStore.current} />
         <ChartNote note={metricsStore.current?.note} />

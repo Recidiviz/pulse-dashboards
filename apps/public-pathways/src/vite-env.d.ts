@@ -32,6 +32,7 @@ interface ImportMetaEnv {
   readonly VITE_PUBLIC_PATHWAYS_SENTRY_DSN: string;
   readonly VITE_PUBLIC_PATHWAYS_SENTRY_ENV: string;
   readonly VITE_PUBLIC_PATHWAYS_METADATA_NAMESPACE: string;
+  readonly VITE_PUBLIC_PATHWAYS_SEGMENT_WRITE_KEY?: string;
 }
 
 interface ImportMeta {
