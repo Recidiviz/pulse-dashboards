@@ -146,6 +146,7 @@ export interface RecordDetail {
   intake_created_at: string;
   completed_at: string | null;
   state_code: string | null;
+  assessment_config_code?: string | null;
   transcript_messages: TranscriptMessage[];
   summary_markdown: string | null;
   summary_sections: SummarySection[];

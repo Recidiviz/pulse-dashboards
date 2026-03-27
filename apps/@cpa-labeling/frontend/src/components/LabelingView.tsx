@@ -18,6 +18,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchAudioBlobUrl } from "../api/client";
+import { getFormatForConfig } from "../summaryFormats";
 import type {
   IssueFeedback,
   OverallComponentFeedback,
@@ -46,7 +47,9 @@ type SummaryDetailSubTab =
   | "needs-risks"
   | "priority-needs"
   | "longer-term"
-  | "final-thoughts";
+  | "final-thoughts"
+  | "ne-personal-background"
+  | "ne-agenda";
 
 interface FeedbackState {
   transcript_feedback: TranscriptFeedback;
@@ -228,6 +231,11 @@ function LabelingView({
     };
   }, [recordDetail?.intake_id, recordDetail?.has_audio]);
 
+  // Reset sub-tab when switching records to avoid landing on a format-specific tab
+  useEffect(() => {
+    setSummarySubTab("full-summary");
+  }, [recordDetail?.intake_id]);
+
   // Scroll to a section in the transcript (only scrolls the container, not the page)
   const scrollToSection = useCallback((category: string) => {
     if (!transcriptContainerRef.current) return;
@@ -298,6 +306,39 @@ function LabelingView({
   // This can be refined later when we have proper audio URL detection
   const hasAudio = !!recordDetail.has_audio;
 
+  const summaryFormat = getFormatForConfig(recordDetail.assessment_config_code);
+
+  // For NE format, extract action plan sections from summary markdown so they
+  // can be shown in the Plan Details tab instead of as a summary sub-tab.
+  // Includes "120-Day Action Plan" and "Success Plan: Suggested Entries"
+  // (and their headings), stopping at any other top-level heading.
+  const neActionPlanContent = (() => {
+    if (summaryFormat !== "ne-120-day") return null;
+    const md = recordDetail.summary_markdown || "";
+    const lines = md.split("\n");
+    let inSection = false;
+    const content: string[] = [];
+    const isPlanSection = (name: string) =>
+      name.includes("action plan") ||
+      name.includes("120-day action") ||
+      name.includes("success plan");
+    for (const line of lines) {
+      const headerMatch = line.match(/^#{1,6}\s+(.+?)\s*$/);
+      if (headerMatch) {
+        const name = headerMatch[1].toLowerCase();
+        if (isPlanSection(name)) {
+          inSection = true;
+          content.push(line); // include the heading itself
+        } else if (inSection) {
+          break; // stop at the next non-plan heading
+        }
+      } else if (inSection) {
+        content.push(line);
+      }
+    }
+    return content.length > 0 ? content.join("\n").trim() : null;
+  })();
+
   const renderTranscriptView = () => (
     <div className="transcript-tab-container">
       {/* Left pane: Audio player + Transcript */}
@@ -345,8 +386,8 @@ function LabelingView({
       let currentSection: { name: string; content: string[] } | null = null;
 
       for (const line of lines) {
-        // Check for h1 header: # Section Name
-        const headerMatch = line.match(/^#\s+(.+?)\s*$/);
+        // Check for any markdown header: # through ######
+        const headerMatch = line.match(/^#{1,6}\s+(.+?)\s*$/);
         if (headerMatch) {
           // Save previous section if exists
           if (currentSection) {
@@ -389,19 +430,42 @@ function LabelingView({
     const finalThoughtsSection = findSection(["final", "thoughts"]);
 
     // Parse categories from Needs and Risks Overview section
-    // Format: - **Category Name:** description text
+    // Supports two formats:
+    //   bullet: - **Category Name:** description text
+    //   table:  | Category Name | description text |
     const parseNeedsRisksCategories = (
       content: string,
     ): { name: string; bullet: string }[] => {
       const categories: { name: string; bullet: string }[] = [];
       const lines = content.split("\n");
       for (const line of lines) {
-        // Match lines like: - **Employment:** Plans to work...
-        const match = line.match(/^-\s+\*\*([^*:]+)(?::\*\*|\*\*:)\s*(.*)$/);
-        if (match) {
+        // Match bullet format: - **Employment:** Plans to work...
+        const bulletMatch = line.match(
+          /^-\s+\*\*([^*:]+)(?::\*\*|\*\*:)\s*(.*)$/,
+        );
+        if (bulletMatch) {
           categories.push({
-            name: match[1].trim(),
+            name: bulletMatch[1].trim(),
             bullet: line.trim(),
+          });
+          continue;
+        }
+        // Match table row format: | Category | description |
+        // Skip header/separator rows (separator lines contain only |, -, and spaces)
+        const tableMatch = line.match(/^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|/);
+        if (tableMatch && !/^[\s|:-]+$/.test(line)) {
+          const name = tableMatch[1].trim();
+          const description = tableMatch[2].trim();
+          // Skip the header row (first column is "Reentry Area" or similar label)
+          if (
+            name.toLowerCase() === "reentry area" ||
+            name.toLowerCase() === "category" ||
+            name.toLowerCase() === "area"
+          )
+            continue;
+          categories.push({
+            name,
+            bullet: `**${name}:** ${description}`,
           });
         }
       }
@@ -412,39 +476,69 @@ function LabelingView({
       ? parseNeedsRisksCategories(needsRisksSection.content)
       : [];
 
+    const agendaSection = findSection(["agenda"]);
+
     // Sub-navigation tabs for summary details
     const subTabs: {
       id: SummaryDetailSubTab;
       label: string;
       hasContent: boolean;
-    }[] = [
-      { id: "full-summary", label: "Full Summary", hasContent: !!markdown },
-      {
-        id: "personal-background",
-        label: "Personal Background",
-        hasContent: !!personalBackgroundSection,
-      },
-      {
-        id: "needs-risks",
-        label: "Needs & Risks",
-        hasContent: needsRisksCategories.length > 0,
-      },
-      {
-        id: "priority-needs",
-        label: "Priority Needs",
-        hasContent: !!priorityNeedsSection,
-      },
-      {
-        id: "longer-term",
-        label: "Longer-term",
-        hasContent: !!longerTermSection,
-      },
-      {
-        id: "final-thoughts",
-        label: "Final Thoughts",
-        hasContent: !!finalThoughtsSection,
-      },
-    ];
+    }[] =
+      summaryFormat === "ne-120-day"
+        ? [
+            {
+              id: "full-summary",
+              label: "Full Summary",
+              hasContent: !!markdown,
+            },
+            {
+              id: "ne-personal-background",
+              label: "Personal Background",
+              hasContent: !!personalBackgroundSection,
+            },
+            {
+              id: "ne-agenda",
+              label: "Agenda",
+              hasContent: !!agendaSection,
+            },
+            {
+              id: "needs-risks",
+              label: "Needs & Risks",
+              hasContent: needsRisksCategories.length > 0,
+            },
+          ]
+        : [
+            {
+              id: "full-summary",
+              label: "Full Summary",
+              hasContent: !!markdown,
+            },
+            {
+              id: "personal-background",
+              label: "Personal Background",
+              hasContent: !!personalBackgroundSection,
+            },
+            {
+              id: "needs-risks",
+              label: "Needs & Risks",
+              hasContent: needsRisksCategories.length > 0,
+            },
+            {
+              id: "priority-needs",
+              label: "Priority Needs",
+              hasContent: !!priorityNeedsSection,
+            },
+            {
+              id: "longer-term",
+              label: "Longer-term",
+              hasContent: !!longerTermSection,
+            },
+            {
+              id: "final-thoughts",
+              label: "Final Thoughts",
+              hasContent: !!finalThoughtsSection,
+            },
+          ];
 
     const renderSubTabContent = () => {
       switch (summarySubTab) {
@@ -1094,6 +1188,220 @@ function LabelingView({
             </div>
           );
 
+        case "ne-personal-background":
+          return (
+            <div className="detail-section">
+              {personalBackgroundSection ? (
+                <>
+                  <div className="section-content-preview">
+                    <MarkdownPanel
+                      content={personalBackgroundSection.content}
+                    />
+                  </div>
+                  <IssueRow
+                    label="Groundedness"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background Update"
+                      ]?.facts_incorrect || {
+                        severity: null,
+                        notes: null,
+                        related_to_transcription: false,
+                      }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "facts_incorrect",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "facts_incorrect",
+                        "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "facts_incorrect",
+                        "related_to_transcription",
+                        v,
+                      )
+                    }
+                  />
+                  <IssueRow
+                    label="Facts missing"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background Update"
+                      ]?.facts_missing || {
+                        severity: null,
+                        notes: null,
+                        related_to_transcription: false,
+                      }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "facts_missing",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "facts_missing",
+                        "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "facts_missing",
+                        "related_to_transcription",
+                        v,
+                      )
+                    }
+                  />
+                  <IssueRow
+                    label="Tone issues"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background Update"
+                      ]?.tone_issues || { severity: null, notes: null }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "tone_issues",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "tone_issues",
+                        "notes",
+                        v,
+                      )
+                    }
+                  />
+                  <IssueRow
+                    label="Other"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background Update"
+                      ]?.other || { severity: null, notes: null }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "other",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background Update",
+                        "other",
+                        "notes",
+                        v,
+                      )
+                    }
+                  />
+                </>
+              ) : (
+                <div className="empty-content">
+                  No Personal Background section found in summary
+                </div>
+              )}
+            </div>
+          );
+
+        case "ne-agenda":
+          return (
+            <div className="detail-section">
+              {agendaSection ? (
+                <>
+                  <div className="section-content-preview">
+                    <MarkdownPanel content={agendaSection.content} />
+                  </div>
+                  <IssueRow
+                    label="Groundedness"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Agenda"
+                      ]?.facts_incorrect || {
+                        severity: null,
+                        notes: null,
+                        related_to_transcription: false,
+                      }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Agenda",
+                        "facts_incorrect",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Agenda",
+                        "facts_incorrect",
+                        "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Agenda",
+                        "facts_incorrect",
+                        "related_to_transcription",
+                        v,
+                      )
+                    }
+                  />
+                  <IssueRow
+                    label="Other"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Agenda"
+                      ]?.other || { severity: null, notes: null }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Agenda",
+                        "other",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks("Agenda", "other", "notes", v)
+                    }
+                  />
+                </>
+              ) : (
+                <div className="empty-content">
+                  No Agenda section found in summary
+                </div>
+              )}
+            </div>
+          );
+
         default:
           return null;
       }
@@ -1132,8 +1440,12 @@ function LabelingView({
   };
 
   const renderPlanDetailsView = () => {
-    // For plan feedback, we use a single "Full Plan" key
-    const planFeedbackKey = "Full Plan";
+    // NE format: action plan is extracted from summary; standard: separate field
+    const planFeedbackKey = neActionPlanContent
+      ? "120-Day Action Plan"
+      : "Full Plan";
+    const planContent =
+      recordDetail.action_plan_markdown ?? neActionPlanContent;
     const sectionFeedback =
       feedback.plan_detail_feedback.sections[planFeedbackKey] ||
       createDefaultPlanSectionFeedback();
@@ -1145,7 +1457,7 @@ function LabelingView({
           <h3>Action Plan</h3>
           <div className="scrollable-content">
             <MarkdownPanel
-              content={recordDetail.action_plan_markdown}
+              content={planContent}
               emptyMessage="No action plan available"
             />
           </div>
@@ -1313,12 +1625,14 @@ function LabelingView({
         >
           Summary Details
         </button>
-        <button
-          className={`tab-btn ${labelingTab === "plan-details" ? "active" : ""}`}
-          onClick={() => onTabChange("plan-details")}
-        >
-          Plan Details
-        </button>
+        {(recordDetail.action_plan_markdown || neActionPlanContent) && (
+          <button
+            className={`tab-btn ${labelingTab === "plan-details" ? "active" : ""}`}
+            onClick={() => onTabChange("plan-details")}
+          >
+            Plan Details
+          </button>
+        )}
       </div>
 
       {/* Read-Only / Override Banner */}

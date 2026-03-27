@@ -74,6 +74,7 @@ class AssessmentConfig(SQLModel, table=True):
     id: UUID = Field(primary_key=True)
     state_code: str
     display_name: str
+    code: str
 
 
 class IntakeMessage(SQLModel, table=True):

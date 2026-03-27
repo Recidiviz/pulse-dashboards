@@ -196,6 +196,7 @@ class RecordDetail(BaseModel):
     intake_created_at: datetime
     completed_at: Optional[datetime] = None
     state_code: Optional[str] = None
+    assessment_config_code: Optional[str] = None
     transcript_messages: list[TranscriptMessage]
     summary_markdown: Optional[str] = None
     summary_sections: list = []
@@ -666,14 +667,18 @@ async def get_record_detail(
             latest_gen = completed_gens[0]
             action_plan_markdown = latest_gen.markdown_result
 
-    # Fetch state_code from assessment_config
+    # Fetch state_code and code from assessment_config
     state_code = None
+    assessment_config_code = None
     if intake.assessment_config_id:
         from app.models.intake import AssessmentConfig
         config_result = await reentry_session.execute(
-            select(AssessmentConfig.state_code).where(AssessmentConfig.id == intake.assessment_config_id)
+            select(AssessmentConfig.state_code, AssessmentConfig.code)
+            .where(AssessmentConfig.id == intake.assessment_config_id)
         )
-        state_code = config_result.scalar_one_or_none()
+        row = config_result.one_or_none()
+        state_code = row.state_code if row else None
+        assessment_config_code = row.code if row else None
 
     # Check if audio is available for transcription intakes
     has_audio = False
@@ -695,6 +700,7 @@ async def get_record_detail(
         intake_created_at=intake.created_at,
         completed_at=intake.completed_at,
         state_code=state_code,
+        assessment_config_code=assessment_config_code,
         transcript_messages=transcript_messages,
         summary_markdown=summary_markdown,
         summary_sections=[],
