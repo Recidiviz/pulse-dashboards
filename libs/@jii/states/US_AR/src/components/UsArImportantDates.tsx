@@ -44,7 +44,12 @@ export function UsArImportantDates({
         ($) =>
           $.importantDates.eligibilityDate.labels[metadata.eligibilityDateName],
       ),
-      description: t(($) => $.importantDates.eligibilityDate.description),
+      description: t(
+        ($) =>
+          $.importantDates.eligibilityDate.description[
+            metadata.eligibilityDateName
+          ],
+      ),
     },
     {
       date: metadata.maximumReleaseDate,

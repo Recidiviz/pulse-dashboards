@@ -32,8 +32,14 @@ export default {
         "Parole Eligibility Date": "Parole Eligibility Date",
         "Release Eligibility Date": "Release Eligibility Date",
       } as Record<string, string>,
-      description:
-        "The earliest date you can become eligible for transfer to community supervision.",
+      description: {
+        "Transfer Eligibility Date":
+          "The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
+        "Parole Eligibility Date":
+          "The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
+        "Release Eligibility Date":
+          "The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks.",
+      } as Record<string, string>,
     },
     maximumReleaseDate: {
       label: "Maximum Release Date",

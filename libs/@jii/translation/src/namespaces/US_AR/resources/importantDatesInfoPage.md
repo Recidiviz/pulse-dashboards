@@ -2,51 +2,51 @@
 
 Arkansas laws and policies have changed the names of release dates over the years. You can use the guide below to understand the specific terms used for your sentence.
 
-### What does “sentenced imposed” mean?
-
-Your “sentence imposed” date is the date the judge officially gave you your sentence, which may be different from the date of your arrest or the date you arrived at this facility.
-
-### If Your Sentence Was Imposed Before 1994
+### If Your Offense Was Committed Before 1994
 
 <dl>
 <dt>Parole Eligibility Date</dt>
-<dd>The earliest date you are eligible for transfer to community supervision.</dd>
+<dd>The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>
 <dt>Maximum Release Date</dt>
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
-<dd>Days of credit you can earn by **staying in lower Class levels** that move your Parole Eligibility Date closer to the present.</dd>
+<dd>Days of credit you can earn by staying in lower Class levels **or** by completing programming that moves your Parole Eligibility Date closer to the present.</dd>
 </dl>
 
-### If Your Sentence Was Imposed Between 1994-2024
+### If Your Offense Was Committed Between 1994-2024
 
 <dl>
 <dt>Transfer Eligibility Date</dt>
-<dd>The earliest date you are eligible for transfer to community supervision.</dd>
+<dd>The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>
 <dt>Maximum Release Date</dt>
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
-<dd>Days of credit you can earn by **staying in lower Class levels** that move your Transfer Eligibility Date closer to the present.</dd>
+<dd>Days of credit you can earn by staying in lower Class levels **or** by completing programming that moves your Transfer Eligibility Date closer to the present.</dd>
 </dl>
 
-### If Your Sentence Was Imposed January 1, 2025 or After
+### If Your Offense Was Committed January 1, 2025 or After
 
 <dl>
 <dt>Release Eligibility Date</dt>
-<dd>The earliest date you are eligible for transfer to community supervision.</dd>
+<dd>The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks.</dd>
 <dt>Maximum Release Date</dt>
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
-<dd>Days of credit you can earn by **staying in lower Class levels** that move your Release Eligibility Date closer to the present.</dd>
-<dt>Case Plan Units (CPUs)</dt>
-<dd>Credits you can earn for completing assigned programming that move your Release Eligibility Date closer to the present. The number of days each CPU counts for depends on your individual sentence and case plan.</dd>
+<dd>Days of credit you can earn by staying in lower Class levels **or** by completing programming that moves your Release Eligibility Date closer to the present.</dd>
 </dl>
+
+#### Why does my time card say Parole Eligibility Date, but this app says Release Eligibility Date?
+
+The term “Release Eligibility Date” is the updated term for when you become eligible to appear before the Parole Board (Post-Prison Transfer Board), based on the amount of earned time and good time you have accumulated.
+
+If you have previously seen a Parole Eligibility Date on your time card, this date serves the same purpose. The terminology has been updated to “Release Eligibility Date” for individuals whose offense occurred on or after January 1, 2025.
 
 ## Good Time
 
 ### How many days do I reduce my sentence by for my Class level?
 
 <section class="callout">
-#### If Your Sentence Was Imposed Before 1994 OR Between 1994-2024
+#### If Your Offense Was Committed Before 1994 OR Between 1994-2024
 
 <dl>
 <dt>Class I (one)</dt>
@@ -59,7 +59,7 @@ Your “sentence imposed” date is the date the judge officially gave you your 
 <dd>Your sentence is not reduced.</dd>
 </dl>
 
-#### If Your Sentence Was Imposed January 1, 2025 or After
+#### If Your Offense Was Committed On or After January 1, 2025
 
 <dl>
 <dt>Class I (one)</dt>
