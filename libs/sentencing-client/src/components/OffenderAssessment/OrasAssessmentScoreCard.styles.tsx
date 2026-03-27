@@ -73,3 +73,13 @@ export const MetadataValue = styled.span`
   font-weight: 500;
   line-height: 150%;
 `;
+
+export const EmptyState = styled.div`
+  color: ${palette.slate60};
+  text-align: center;
+  font-family: "Public Sans";
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.00875rem;
+`;

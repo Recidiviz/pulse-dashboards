@@ -41,6 +41,15 @@ export const OrasAssessmentScoreCard: React.FC<
       ? OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE[assessmentType] ?? undefined
       : undefined;
 
+  if (!assessmentDate) {
+    return (
+      <Styled.Card>
+        <Styled.CardTitle>ORAS Assessment Score</Styled.CardTitle>
+        <Styled.EmptyState>No ORAS assessment on file.</Styled.EmptyState>
+      </Styled.Card>
+    );
+  }
+
   return (
     <Styled.Card>
       <Styled.CardTitle>ORAS Assessment Score</Styled.CardTitle>
@@ -56,9 +65,7 @@ export const OrasAssessmentScoreCard: React.FC<
           <Styled.MetadataItem>
             <Styled.MetadataLabel>Assessment date</Styled.MetadataLabel>
             <Styled.MetadataValue>
-              {assessmentDate
-                ? moment(assessmentDate).utc().format("MM/DD/YYYY")
-                : "N/A"}
+              {moment(assessmentDate).utc().format("MM/DD/YYYY")}
             </Styled.MetadataValue>
           </Styled.MetadataItem>
           <Styled.MetadataItem>

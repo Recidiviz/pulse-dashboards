@@ -143,7 +143,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
     }, [currentSubsection]);
 
     // Check if this assessment type has domains (screening/Other types don't)
-    const hasDomains = domains.length > 0;
+    // Also requires an assessment date — if there's no date, no assessment was performed
+    const hasDomains = domains.length > 0 && !!assessmentDate;
 
     return (
       <SectionContainer>
