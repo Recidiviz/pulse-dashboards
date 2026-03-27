@@ -200,19 +200,30 @@ function LabelingView({
     useState<SummaryDetailSubTab>("full-summary");
   const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null);
 
+  // Clear audio immediately when intake changes to prevent stale audio from a
+  // previous intake appearing on the next one
   useEffect(() => {
-    if (!recordDetail?.has_audio) {
-      setAudioBlobUrl(null);
-      return;
-    }
+    setAudioBlobUrl(null);
+  }, [recordDetail?.intake_id]);
+
+  useEffect(() => {
+    if (!recordDetail?.has_audio) return;
     let objectUrl: string | null = null;
+    let aborted = false;
     fetchAudioBlobUrl(recordDetail.intake_id)
       .then((url) => {
+        if (aborted) {
+          URL.revokeObjectURL(url);
+          return;
+        }
         objectUrl = url;
         setAudioBlobUrl(url);
       })
-      .catch((err) => console.error("Failed to load audio:", err));
+      .catch((err) => {
+        if (!aborted) console.error("Failed to load audio:", err);
+      });
     return () => {
+      aborted = true;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [recordDetail?.intake_id, recordDetail?.has_audio]);
@@ -291,7 +302,7 @@ function LabelingView({
     <div className="transcript-tab-container">
       {/* Left pane: Audio player + Transcript */}
       <div className="transcript-left-pane">
-        <AudioPlayer audioUrl={audioBlobUrl} />
+        <AudioPlayer key={recordDetail.intake_id} audioUrl={audioBlobUrl} />
         <div className="transcript-content-scroll">
           <TranscriptPanel messages={recordDetail.transcript_messages} />
         </div>
