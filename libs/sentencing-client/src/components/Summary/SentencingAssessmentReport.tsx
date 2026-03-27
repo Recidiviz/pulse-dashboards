@@ -20,6 +20,7 @@ import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { formatJudgeName } from "../../utils/utils";
+import { SARSection } from "../SARDetails/constants";
 import { ReportBlock, SentencingAssessmentReportSection } from "./ReportBlock";
 import { ReportCharge } from "./ReportCharge";
 import { ReportKeyConsiderations } from "./ReportKeyConsiderations";
@@ -149,6 +150,26 @@ export const SentencingAssessmentReport: React.FC<
                 factorsDisplayItems={factorsDisplayItems}
                 riskProfileCardData={presenter.riskProfileCardData}
               />
+              {sarData.defendantStatement &&
+                !presenter.defendantStatementSkipped && (
+                  <SentencingAssessmentReportSection
+                    title={SARSection.DEFENDANTS_VERSION}
+                  >
+                    <Styled.FreeTextContent>
+                      {sarData.defendantStatement}
+                    </Styled.FreeTextContent>
+                  </SentencingAssessmentReportSection>
+                )}
+              {sarData.victimImpactStatement &&
+                !presenter.victimImpactStatementSkipped && (
+                  <SentencingAssessmentReportSection
+                    title={SARSection.VICTIM_IMPACT}
+                  >
+                    <Styled.FreeTextContent>
+                      {sarData.victimImpactStatement}
+                    </Styled.FreeTextContent>
+                  </SentencingAssessmentReportSection>
+                )}
             </Styled.PageContent>
           </td>
         </tr>

@@ -230,6 +230,14 @@ export const CaseInformationValue = styled.div`
   letter-spacing: -0.4px;
 `;
 
+export const FreeTextContent = styled.div`
+  ${typography.Sans14}
+  font-weight: 500;
+  line-height: 150%;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+`;
+
 // ─── Risk Profile Summary Card ────────────────────────────────────────────────
 
 /** Card header with title on left, metadata on right. */
