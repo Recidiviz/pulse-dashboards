@@ -61,6 +61,20 @@ export const US_AZ: InsightsConfig = {
       descriptionMarkdown: "",
       topXPct: null,
     },
+    {
+      name: "absconsions_bench_warrants",
+      outcomeType: "ADVERSE",
+      titleDisplayName: "Absconder Rate",
+      bodyDisplayName: "absconder rate",
+      eventName: "absconsions",
+      eventNameSingular: "absconsion",
+      eventNamePastTense: "absconded",
+      descriptionMarkdown:
+        "All reported absconsions from supervision in the given time period.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
+      topXPct: null,
+      listTableText:
+        "Clients will appear on this list multiple times if they have had more than one absconsion under this officer in the time period.",
+    },
   ],
   noneAreOutliersLabel: "--",
   officerHasNoEligibleClientsLabel:
