@@ -27,6 +27,10 @@ export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
     return true;
   }
 
+  get showIneligibleFormButtons() {
+    return false;
+  }
+
   get indefiniteSnoozeSectionSubheading(): string {
     return "";
   }

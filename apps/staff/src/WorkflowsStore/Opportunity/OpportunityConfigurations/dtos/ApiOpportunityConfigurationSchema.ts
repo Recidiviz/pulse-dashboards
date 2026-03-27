@@ -133,6 +133,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   denialNoun: nullishAsUndefined(z.string()),
 
   supportsIneligible: z.boolean().default(false),
+  showIneligibleFormButtons: z.boolean().default(true),
   supportsSubmitted: z.boolean().default(false),
   submittedTabTitle: nullishAsUndefined(z.string()),
 

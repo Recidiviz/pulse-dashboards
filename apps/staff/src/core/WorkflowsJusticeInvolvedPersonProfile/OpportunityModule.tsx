@@ -153,8 +153,15 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         opportunity.showRevertLinkFallback ||
         opportunity.isSnoozed);
 
+    // If the opportunity is determined to be ineligible by our system (not marked ineligible/denied),
+    // and we don't specify otherwise via showIneligibleFormButtons, hide the buttons
+    const hideButtonsBecauseIneligible =
+      opportunity.isIneligible && !opportunity.config.showIneligibleFormButtons;
+
     const showActionButtons =
-      (showUpdateStatusButton || formLinkButton) && !hideActionButtons;
+      (showUpdateStatusButton || formLinkButton) && // Do we have any buttons to show?
+      !hideActionButtons && // Does our parent component want the buttons hidden?
+      !hideButtonsBecauseIneligible;
 
     const handleUndoAction = async () => {
       await opportunity.handleAdditionalUndoActions();

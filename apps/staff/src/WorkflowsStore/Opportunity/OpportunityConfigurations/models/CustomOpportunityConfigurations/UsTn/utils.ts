@@ -46,6 +46,7 @@ export const usTnUntrackedEligibilityConfigBase = {
   ],
   methodologyUrl: "",
   supportsIneligible: true,
+  showIneligibleFormButtons: true,
   supportsSubmitted: true,
   submittedTabTitle: "Pending",
   emptyTabCopy: {},

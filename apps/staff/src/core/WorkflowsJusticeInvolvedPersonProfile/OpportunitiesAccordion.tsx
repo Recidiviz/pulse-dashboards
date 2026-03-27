@@ -137,9 +137,6 @@ export const AccordionSection = observer(function AccordionSection({
 }) {
   const colors = useStatusColors(opportunity);
 
-  const hideIneligibleFormButtons =
-    opportunity.isIneligible && !opportunity.config.supportsIneligible;
-
   return (
     <OpportunityWrapper className="ProfileOpportunityItem" {...colors}>
       <AccordionItem uuid={opportunity.accordionKey}>
@@ -156,12 +153,7 @@ export const AccordionSection = observer(function AccordionSection({
                 isVisible={expanded}
                 opportunity={opportunity}
                 formLinkButton={formLinkButton && !!opportunity.form}
-                // If the opportunity is determined to be ineligible by our system (not marked ineligible/denied),
-                // and we don't specify otherwise via showIneligibleFormButtons, hide the buttons
-                // Or override this logic and hide them no matter what via hideActionButtons
-                hideActionButtons={
-                  hideActionButtons || hideIneligibleFormButtons
-                }
+                hideActionButtons={hideActionButtons}
                 shouldTrackOpportunityPreviewed={
                   shouldTrackOpportunityPreviewed
                 }
