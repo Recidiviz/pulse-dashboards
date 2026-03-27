@@ -20,6 +20,7 @@ import { rem } from "polished";
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
+import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
 
 const DESCRIPTION_MAX_WIDTH = 710;
@@ -45,12 +46,29 @@ const Description = styled.p`
   margin: 0;
 `;
 
+const LearnMoreLink = styled.a`
+  ${publicPathwaysTypography.Sans16}
+  color: ${publicPathwaysPalette.signal.links};
+  text-decoration: underline;
+  margin-left: ${rem(spacing.xs)};
+
+  &:focus-visible {
+    outline: 2px solid ${publicPathwaysPalette.focusColor};
+    outline-offset: 2px;
+  }
+`;
+
 interface PageTitleProps {
   title: string;
   description: string;
+  methodologyUrl?: string;
 }
 
-export function PageTitle({ title, description }: PageTitleProps) {
+export function PageTitle({
+  title,
+  description,
+  methodologyUrl,
+}: PageTitleProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -67,7 +85,19 @@ export function PageTitle({ title, description }: PageTitleProps) {
       >
         {title}
       </Title>
-      <Description id="page-description">{description}</Description>
+      <Description id="page-description">
+        {description}
+        {methodologyUrl && (
+          <LearnMoreLink
+            href={methodologyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Learn more about our methodology"
+          >
+            Learn more
+          </LearnMoreLink>
+        )}
+      </Description>
     </TitleSection>
   );
 }

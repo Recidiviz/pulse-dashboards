@@ -129,6 +129,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
         <PageTitle
           title={pageContent.title}
           description={pageContent.summary}
+          methodologyUrl="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
         />
         <NavigationRow>
           <SectionNavigation

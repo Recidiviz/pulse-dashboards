@@ -97,6 +97,10 @@ export const Header = observer(function Header() {
         <MenuLinks>
           <MenuLink role="menuitem">About</MenuLink>
           <MenuLink
+            as="a"
+            href="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
+            target="_blank"
+            rel="noopener noreferrer"
             role="menuitem"
             onClick={() => analyticsStore.trackMethodologyLinkClicked()}
           >
