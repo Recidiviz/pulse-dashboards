@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { TranscriptFeedback, TranscriptSeverity } from "../types";
+import type {
+  IssueFeedback,
+  TranscriptFeedback,
+  TranscriptSeverity,
+} from "../types";
 
 interface TranscriptFeedbackFormProps {
   feedback: TranscriptFeedback;
@@ -25,6 +29,15 @@ interface TranscriptFeedbackFormProps {
     value: TranscriptSeverity | string | null,
   ) => void;
   showAudioCriteria?: boolean;
+  readOnly?: boolean;
+  // Override mode props
+  canOverride?: boolean;
+  overrideTranscriptFeedback?: Record<string, IssueFeedback>;
+  onOverrideUpdate?: (
+    criterion: string,
+    field: "severity" | "notes",
+    value: string | null,
+  ) => void;
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
@@ -60,6 +73,10 @@ function TranscriptFeedbackForm({
   feedback,
   onUpdate,
   showAudioCriteria = false,
+  readOnly = false,
+  canOverride = false,
+  overrideTranscriptFeedback,
+  onOverrideUpdate,
 }: TranscriptFeedbackFormProps) {
   const renderCriterion = (key: keyof TranscriptFeedback, label: string) => {
     const value = feedback[key];
@@ -70,9 +87,13 @@ function TranscriptFeedbackForm({
         severity: TranscriptSeverity;
         notes: string | null;
       };
+      const overrideData = overrideTranscriptFeedback?.[key];
 
       return (
-        <div key={key} className="transcript-criterion">
+        <div
+          key={key}
+          className={`transcript-criterion ${readOnly ? "read-only" : ""}`}
+        >
           <div className="transcript-criterion-label">{label}</div>
           <div className="transcript-severity-toggle">
             {(["none", "mild", "severe"] as const).map((level) => (
@@ -87,7 +108,8 @@ function TranscriptFeedbackForm({
                   color:
                     criterionFeedback.severity === level ? "white" : undefined,
                 }}
-                onClick={() => onUpdate(key, "severity", level)}
+                onClick={() => !readOnly && onUpdate(key, "severity", level)}
+                disabled={readOnly}
               >
                 {level.charAt(0).toUpperCase() + level.slice(1)}
               </button>
@@ -95,11 +117,48 @@ function TranscriptFeedbackForm({
           </div>
           <textarea
             className="transcript-notes"
-            placeholder="Notes..."
+            placeholder={readOnly ? "" : "Notes..."}
             value={criterionFeedback.notes || ""}
-            onChange={(e) => onUpdate(key, "notes", e.target.value || null)}
+            onChange={(e) =>
+              !readOnly && onUpdate(key, "notes", e.target.value || null)
+            }
             rows={2}
+            readOnly={readOnly}
+            disabled={readOnly}
           />
+          {canOverride && onOverrideUpdate && (
+            <div className="override-controls">
+              <div className="override-label">Override:</div>
+              <div className="transcript-severity-toggle">
+                {(["none", "mild", "severe"] as const).map((level) => (
+                  <button
+                    key={level}
+                    className={`severity-btn override ${overrideData?.severity === level ? "active" : ""}`}
+                    style={{
+                      backgroundColor:
+                        overrideData?.severity === level
+                          ? SEVERITY_COLORS[level]
+                          : undefined,
+                      color:
+                        overrideData?.severity === level ? "white" : undefined,
+                    }}
+                    onClick={() => onOverrideUpdate(key, "severity", level)}
+                  >
+                    {level.charAt(0).toUpperCase() + level.slice(1)}
+                  </button>
+                ))}
+              </div>
+              <textarea
+                className="transcript-notes override-notes"
+                placeholder="Override notes..."
+                value={overrideData?.notes || ""}
+                onChange={(e) =>
+                  onOverrideUpdate(key, "notes", e.target.value || null)
+                }
+                rows={2}
+              />
+            </div>
+          )}
         </div>
       );
     }
@@ -119,31 +178,43 @@ function TranscriptFeedbackForm({
             Audio Review
           </h3>
 
-          <div className="transcript-criterion">
+          <div
+            className={`transcript-criterion ${readOnly ? "read-only" : ""}`}
+          >
             <div className="transcript-criterion-label">Number of speakers</div>
             <input
               type="text"
               className="transcript-text-input"
-              placeholder="e.g., 2"
+              placeholder={readOnly ? "" : "e.g., 2"}
               value={feedback.number_of_speakers || ""}
               onChange={(e) =>
+                !readOnly &&
                 onUpdate("number_of_speakers", "notes", e.target.value || null)
               }
+              readOnly={readOnly}
+              disabled={readOnly}
             />
           </div>
 
           {AUDIO_CRITERIA.map(({ key, label }) => renderCriterion(key, label))}
 
-          <div className="transcript-criterion">
+          <div
+            className={`transcript-criterion ${readOnly ? "read-only" : ""}`}
+          >
             <div className="transcript-criterion-label">Other notes</div>
             <textarea
               className="transcript-notes"
-              placeholder="Any other observations about the audio..."
+              placeholder={
+                readOnly ? "" : "Any other observations about the audio..."
+              }
               value={feedback.audio_other_notes || ""}
               onChange={(e) =>
+                !readOnly &&
                 onUpdate("audio_other_notes", "notes", e.target.value || null)
               }
               rows={3}
+              readOnly={readOnly}
+              disabled={readOnly}
             />
           </div>
         </>

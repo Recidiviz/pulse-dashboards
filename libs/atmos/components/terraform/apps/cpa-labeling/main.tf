@@ -192,3 +192,11 @@ module "migrate_db_job" {
     mount_path = "/cloudsql"
   }]
 }
+
+# Grant the service account read access to the recording bucket so it can
+# stream audio and fetch transcripts for transcription-type intakes.
+resource "google_storage_bucket_iam_member" "recording_bucket_reader" {
+  bucket = var.recording_bucket_name
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${google_service_account.default.email}"
+}

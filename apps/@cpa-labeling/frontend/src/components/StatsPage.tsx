@@ -46,20 +46,19 @@ function StatsPage() {
   if (error) return <div className="error-banner">{error}</div>;
   if (!stats) return null;
 
-  const pctAnyIssue =
-    stats.total_feedback_records > 0
-      ? (
-          (stats.records_with_issues / stats.total_feedback_records) *
-          100
-        ).toFixed(1)
-      : "0";
-  const pctSevere =
-    stats.total_feedback_records > 0
-      ? (
-          (stats.records_with_severe_issues / stats.total_feedback_records) *
-          100
-        ).toFixed(1)
-      : "0";
+  const total = stats.total_feedback_records;
+
+  const pct = (n: number) => (total > 0 ? ((n / total) * 100).toFixed(1) : "0");
+
+  // Show original in parentheses only when it differs from override value
+  const withOriginal = (value: number, original: number) =>
+    value !== original ? `${value} (${original})` : `${value}`;
+
+  const pctWithOriginal = (value: number, original: number) => {
+    const pctVal = pct(value);
+    const pctOrig = pct(original);
+    return pctVal !== pctOrig ? `${pctVal}% (${pctOrig}%)` : `${pctVal}%`;
+  };
 
   return (
     <div className="stats-page">
@@ -70,9 +69,14 @@ function StatsPage() {
         </button>
       </div>
 
+      <p style={{ color: "#6b7280", fontSize: "0.85rem", margin: "0 0 1rem" }}>
+        Empty reviews (from mark_reviewed script) are excluded. When overrides
+        differ from originals, original values are shown in parentheses.
+      </p>
+
       <div className="stats-cards">
         <div className="stat-card">
-          <div className="stat-value">{stats.total_feedback_records}</div>
+          <div className="stat-value">{total}</div>
           <div className="stat-label">Total Reviews</div>
         </div>
         <div className="stat-card">
@@ -80,12 +84,22 @@ function StatsPage() {
           <div className="stat-label">Unique Intakes Reviewed</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{pctSevere}%</div>
-          <div className="stat-label">% of Plans with Severe Issues</div>
+          <div className="stat-value">
+            {pctWithOriginal(
+              stats.records_with_severe_issues,
+              stats.records_with_severe_issues_original,
+            )}
+          </div>
+          <div className="stat-label">% with Severe Issues</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{pctAnyIssue}%</div>
-          <div className="stat-label">% of Plans with Any Issue</div>
+          <div className="stat-value">
+            {pctWithOriginal(
+              stats.records_with_issues,
+              stats.records_with_issues_original,
+            )}
+          </div>
+          <div className="stat-label">% with Any Issue</div>
         </div>
       </div>
 
@@ -101,20 +115,16 @@ function StatsPage() {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(stats.by_component).map(([component, count]) => (
-                <tr key={component}>
-                  <td style={{ textTransform: "capitalize" }}>{component}</td>
-                  <td>{count}</td>
-                  <td>
-                    {stats.total_feedback_records > 0
-                      ? ((count / stats.total_feedback_records) * 100).toFixed(
-                          1,
-                        )
-                      : 0}
-                    %
-                  </td>
-                </tr>
-              ))}
+              {Object.entries(stats.by_component).map(([component, count]) => {
+                const orig = stats.by_component_original[component] ?? count;
+                return (
+                  <tr key={component}>
+                    <td style={{ textTransform: "capitalize" }}>{component}</td>
+                    <td>{withOriginal(count, orig)}</td>
+                    <td>{pctWithOriginal(count, orig)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -130,20 +140,16 @@ function StatsPage() {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(stats.by_issue_type).map(([type, count]) => (
-                <tr key={type}>
-                  <td style={{ textTransform: "capitalize" }}>{type}</td>
-                  <td>{count}</td>
-                  <td>
-                    {stats.total_feedback_records > 0
-                      ? ((count / stats.total_feedback_records) * 100).toFixed(
-                          1,
-                        )
-                      : 0}
-                    %
-                  </td>
-                </tr>
-              ))}
+              {Object.entries(stats.by_issue_type).map(([type, count]) => {
+                const orig = stats.by_issue_type_original[type] ?? count;
+                return (
+                  <tr key={type}>
+                    <td style={{ textTransform: "capitalize" }}>{type}</td>
+                    <td>{withOriginal(count, orig)}</td>
+                    <td>{pctWithOriginal(count, orig)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -159,16 +165,20 @@ function StatsPage() {
             </thead>
             <tbody>
               {Object.entries(stats.severity_distribution).map(
-                ([severity, count]) => (
-                  <tr key={severity}>
-                    <td>
-                      <span className={`severity-indicator ${severity}`}>
-                        {severity}
-                      </span>
-                    </td>
-                    <td>{count}</td>
-                  </tr>
-                ),
+                ([severity, count]) => {
+                  const orig =
+                    stats.severity_distribution_original[severity] ?? count;
+                  return (
+                    <tr key={severity}>
+                      <td>
+                        <span className={`severity-indicator ${severity}`}>
+                          {severity}
+                        </span>
+                      </td>
+                      <td>{withOriginal(count, orig)}</td>
+                    </tr>
+                  );
+                },
               )}
             </tbody>
           </table>

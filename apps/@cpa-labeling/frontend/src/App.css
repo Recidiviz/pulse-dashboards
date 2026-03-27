@@ -488,7 +488,7 @@
 }
 
 .category-feedback h5.clickable-category::after {
-  content: '\2197';
+  content: "\2197";
   font-size: 0.75rem;
   opacity: 0.6;
 }
@@ -650,10 +650,18 @@
   color: white;
 }
 
-.severity-btn.active.none { background: #9ca3af; }
-.severity-btn.active.low { background: #fbbf24; }
-.severity-btn.active.med { background: #f97316; }
-.severity-btn.active.severe { background: #dc2626; }
+.severity-btn.active.none {
+  background: #9ca3af;
+}
+.severity-btn.active.low {
+  background: #fbbf24;
+}
+.severity-btn.active.med {
+  background: #f97316;
+}
+.severity-btn.active.severe {
+  background: #dc2626;
+}
 
 .notes-input {
   width: 100%;
@@ -1003,10 +1011,22 @@
   text-transform: capitalize;
 }
 
-.severity-indicator.none { background: #f0f0f0; color: #666; }
-.severity-indicator.low { background: #fef3c7; color: #92400e; }
-.severity-indicator.med { background: #ffedd5; color: #9a3412; }
-.severity-indicator.severe { background: #fee2e2; color: #dc2626; }
+.severity-indicator.none {
+  background: #f0f0f0;
+  color: #666;
+}
+.severity-indicator.low {
+  background: #fef3c7;
+  color: #92400e;
+}
+.severity-indicator.med {
+  background: #ffedd5;
+  color: #9a3412;
+}
+.severity-indicator.severe {
+  background: #fee2e2;
+  color: #dc2626;
+}
 
 /* Feedback Browser */
 .feedback-browser {
@@ -1346,4 +1366,150 @@
 .transcript-text-input:focus {
   outline: none;
   border-color: #4a90d9;
+}
+
+/* Read-Only Mode Styles */
+.read-only-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: #fef3c7;
+  border-bottom: 2px solid #f59e0b;
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
+.read-only-icon {
+  font-size: 1.25rem;
+}
+
+.read-only-label {
+  padding: 0.25rem 0.75rem;
+  background: #f59e0b;
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Read-only form elements */
+.issue-row.read-only {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+.issue-row.read-only .severity-btn {
+  cursor: default;
+  opacity: 0.9;
+}
+
+.issue-row.read-only .severity-btn:not(.active) {
+  opacity: 0.5;
+}
+
+.issue-row.read-only .issue-notes-input {
+  background: #f3f4f6;
+  cursor: default;
+}
+
+.transcript-criterion.read-only {
+  background: #f9fafb;
+}
+
+.transcript-criterion.read-only .severity-btn:not(.active) {
+  opacity: 0.5;
+}
+
+.transcript-criterion.read-only .transcript-notes,
+.transcript-criterion.read-only .transcript-text-input {
+  background: #f3f4f6;
+  cursor: default;
+}
+
+/* Overall notes display in read-only mode */
+.overall-notes-display {
+  max-width: 400px;
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.overall-notes-display strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #374151;
+}
+
+.overall-notes-display p {
+  margin: 0;
+  color: #4b5563;
+  white-space: pre-wrap;
+}
+
+/* Override Mode Styles */
+.override-banner {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+}
+
+.override-banner .read-only-label {
+  background: #f59e0b !important;
+}
+
+.override-controls {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 2px dashed #f59e0b;
+  border-radius: 6px;
+  background: #fffbeb;
+}
+
+.override-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #b45309;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.override-controls .severity-btn.override {
+  border-color: #f59e0b;
+}
+
+.override-controls .severity-btn.override.active.none {
+  background: #9ca3af;
+}
+.override-controls .severity-btn.override.active.mild {
+  background: #fbbf24;
+}
+.override-controls .severity-btn.override.active.severe {
+  background: #dc2626;
+}
+
+.override-notes {
+  border-color: #f59e0b !important;
+}
+
+.override-submit {
+  border-top: 2px solid #f59e0b;
+  padding-top: 0.75rem;
+}
+
+.override-submit .overall-notes-input {
+  border-color: #f59e0b;
+}
+
+.override-btn {
+  background: #f59e0b !important;
+  color: white !important;
+}
+
+.override-btn:hover {
+  background: #d97706 !important;
 }

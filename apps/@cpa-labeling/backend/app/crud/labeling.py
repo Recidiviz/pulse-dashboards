@@ -7,7 +7,7 @@ This module contains two types of operations:
 The routes are responsible for injecting the appropriate session.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 from uuid import UUID
 
@@ -193,6 +193,34 @@ async def upsert_feedback(
     return existing
 
 
+async def get_feedback_by_id(
+    session: AsyncSession, feedback_id: UUID
+) -> Optional[LabelingFeedback]:
+    """Get a feedback record by its ID. Uses labeling database."""
+    result = await session.execute(
+        select(LabelingFeedback).where(LabelingFeedback.id == feedback_id)
+    )
+    return result.scalar_one_or_none()
+
+
+async def update_override_feedback(
+    session: AsyncSession,
+    feedback_id: UUID,
+    override_data: dict[str, Any],
+) -> Optional[LabelingFeedback]:
+    """Update the override_feedback column for a feedback record. Uses labeling database."""
+    feedback = await get_feedback_by_id(session, feedback_id)
+    if not feedback:
+        return None
+
+    feedback.override_feedback = override_data
+    feedback.updated_at = datetime.utcnow()
+    session.add(feedback)
+    await session.commit()
+    await session.refresh(feedback)
+    return feedback
+
+
 def _has_any_issue_in_json(feedback: LabelingFeedback) -> bool:
     """Check if a feedback record has any non-'none' severity in JSON columns.
 
@@ -223,6 +251,32 @@ def _has_any_issue_in_json(feedback: LabelingFeedback) -> bool:
                     severity = field_data.get("severity")
                     if not _is_empty_severity(severity):
                         return True
+
+    # Check summary_detail_feedback JSON
+    if feedback.summary_detail_feedback:
+        sd = feedback.summary_detail_feedback
+        # needs_risks_overview: dict of category -> {facts_incorrect, facts_missing, tone_issues, other}
+        for cat_data in sd.get("needs_risks_overview", {}).values():
+            if isinstance(cat_data, dict):
+                for field in ["facts_incorrect", "facts_missing", "tone_issues", "other"]:
+                    field_data = cat_data.get(field, {})
+                    if isinstance(field_data, dict) and not _is_empty_severity(field_data.get("severity")):
+                        return True
+        # priority_needs, longer_term_needs: {needs_not_justified, needs_missing, other}
+        for section_key in ["priority_needs", "longer_term_needs"]:
+            section_data = sd.get(section_key, {})
+            if isinstance(section_data, dict):
+                for field in ["needs_not_justified", "needs_missing", "other"]:
+                    field_data = section_data.get(field, {})
+                    if isinstance(field_data, dict) and not _is_empty_severity(field_data.get("severity")):
+                        return True
+        # final_thoughts: {statements_not_supported, other}
+        ft = sd.get("final_thoughts", {})
+        if isinstance(ft, dict):
+            for field in ["statements_not_supported", "other"]:
+                field_data = ft.get(field, {})
+                if isinstance(field_data, dict) and not _is_empty_severity(field_data.get("severity")):
+                    return True
 
     # Check summary columns (still uses individual columns) - treat null same as "none"
     if any([
@@ -388,22 +442,26 @@ async def get_all_feedback(
         stmt = stmt.where(LabelingFeedback.evaluator == evaluator)
     if intake_id:
         stmt = stmt.where(LabelingFeedback.intake_id == intake_id)
-    if has_issues is True:
-        stmt = stmt.where(_has_any_issue_filter())
-    elif has_issues is False:
-        stmt = stmt.where(~_has_any_issue_filter())
 
-    # Count before pagination
-    from sqlalchemy import select as sa_select
-    count_stmt = select(func.count()).select_from(stmt.subquery())
-    total = (await session.execute(count_stmt)).scalar() or 0
-
-    # Order and paginate
+    # Order by date (descending)
     stmt = stmt.order_by(LabelingFeedback.created_at.desc())
-    stmt = stmt.offset((page - 1) * size).limit(size)
 
     result = await session.execute(stmt)
-    return list(result.scalars().all()), total
+    all_records = list(result.scalars().all())
+
+    # Post-filter for has_issues using _has_any_issue_in_json() which correctly
+    # inspects JSON content instead of just checking for JSON column presence
+    if has_issues is True:
+        all_records = [fb for fb in all_records if _has_any_issue_in_json(fb)]
+    elif has_issues is False:
+        all_records = [fb for fb in all_records if not _has_any_issue_in_json(fb)]
+
+    total = len(all_records)
+
+    # Paginate
+    start = (page - 1) * size
+    end = start + size
+    return all_records[start:end], total
 
 
 def _get_severities_from_transcript_json(td: dict) -> list[str]:
@@ -443,119 +501,491 @@ def _get_severities_from_plan_json(pd: dict) -> list[str]:
     return severities
 
 
-async def get_labeling_stats(session: AsyncSession) -> dict[str, Any]:
-    """Get labeling statistics. Uses labeling database."""
-    # Total feedback records
-    total_result = await session.execute(select(func.count(LabelingFeedback.id)))
-    total = total_result.scalar() or 0
+def _get_effective_transcript_severity(
+    criterion: str,
+    original_td: dict,
+    override_td: Optional[dict],
+) -> str:
+    """Get effective severity for a transcript criterion, using override if available."""
+    if override_td and criterion in override_td:
+        od = override_td.get(criterion, {})
+        if isinstance(od, dict) and od.get("severity"):
+            return od["severity"]
+    cd = original_td.get(criterion, {})
+    if isinstance(cd, dict):
+        return cd.get("severity") or "none"
+    return "none"
 
-    # Unique intakes labeled
-    unique_intakes_result = await session.execute(
-        select(func.count(func.distinct(LabelingFeedback.intake_id)))
+
+def _get_effective_column_severity(
+    fb: LabelingFeedback,
+    component: str,
+    field: str,
+    override_component: Optional[dict],
+) -> str:
+    """Get effective severity for a column-based field (summary/plan overall)."""
+    if override_component and field in override_component:
+        od = override_component.get(field, {})
+        if isinstance(od, dict) and od.get("severity"):
+            return od["severity"]
+    return getattr(fb, f"{component}_{field}_severity", "none") or "none"
+
+
+def _get_effective_plan_detail_severity(
+    field: str,
+    original_section: dict,
+    override_section: Optional[dict],
+) -> str:
+    """Get effective severity for a plan detail field, using override if available."""
+    if override_section and field in override_section:
+        od = override_section.get(field, {})
+        if isinstance(od, dict) and od.get("severity"):
+            return od["severity"]
+    fd = original_section.get(field, {})
+    if isinstance(fd, dict):
+        return fd.get("severity") or "none"
+    return "none"
+
+
+TRANSCRIPT_CRITERIA = [
+    "danger_indication", "toxic_language", "inappropriate_topic",
+    "user_frustration", "major_output_error", "chatbot_misunderstanding",
+    "looping_questions", "skipping_questions", "other",
+    "audio_quality", "transcription_quality",
+]
+
+PLAN_DETAIL_FIELDS = [
+    "recommendation_groundedness", "unsound_recommendation",
+    "obvious_incoherence", "missing_incomplete_sections", "other",
+]
+
+
+def _compute_record_stats(fb: LabelingFeedback, use_overrides: bool) -> dict[str, Any]:
+    """Compute per-record stats, optionally applying override severities."""
+    override = fb.override_feedback if use_overrides and fb.override_feedback else None
+
+    all_severities: list[str] = []
+    has_transcript_issue = False
+    has_summary_issue = False
+    has_plan_issue = False
+    issue_types: dict[str, int] = {}
+
+    # Transcript
+    td = fb.transcript_detail_feedback or {}
+    override_td = (override or {}).get("transcript_detail_feedback")
+    for criterion in TRANSCRIPT_CRITERIA:
+        sev = _get_effective_transcript_severity(criterion, td, override_td)
+        all_severities.append(sev)
+        if sev != "none":
+            has_transcript_issue = True
+            # Only count non-audio criteria in issue_types
+            if criterion not in ("audio_quality", "transcription_quality"):
+                issue_types[criterion] = issue_types.get(criterion, 0) + 1
+
+    # Summary (column-based, overrides in JSON)
+    override_sf = (override or {}).get("summary_feedback")
+    for field in ["factual", "tone", "other"]:
+        sev = _get_effective_column_severity(fb, "summary", field, override_sf)
+        all_severities.append(sev)
+        if sev != "none":
+            has_summary_issue = True
+
+    # Summary detail JSON
+    sd = fb.summary_detail_feedback or {}
+    override_sd = (override or {}).get("summary_detail_feedback") or {}
+    # needs_risks_overview categories
+    orig_nro = sd.get("needs_risks_overview", {})
+    ovr_nro = override_sd.get("needs_risks_overview", {})
+    for cat_key in set(orig_nro.keys()) | set(ovr_nro.keys()):
+        orig_cat = orig_nro.get(cat_key, {})
+        ovr_cat = ovr_nro.get(cat_key)
+        for field in ["facts_incorrect", "facts_missing", "tone_issues", "other"]:
+            sev = _get_effective_plan_detail_severity(field, orig_cat or {}, ovr_cat)
+            all_severities.append(sev)
+            if sev != "none":
+                has_summary_issue = True
+    # priority_needs, longer_term_needs
+    for section_key in ["priority_needs", "longer_term_needs"]:
+        orig_sec = sd.get(section_key, {})
+        ovr_sec = override_sd.get(section_key)
+        for field in ["needs_not_justified", "needs_missing", "other"]:
+            sev = _get_effective_plan_detail_severity(field, orig_sec or {}, ovr_sec)
+            all_severities.append(sev)
+            if sev != "none":
+                has_summary_issue = True
+    # final_thoughts
+    orig_ft = sd.get("final_thoughts", {})
+    ovr_ft = override_sd.get("final_thoughts")
+    for field in ["statements_not_supported", "other"]:
+        sev = _get_effective_plan_detail_severity(field, orig_ft or {}, ovr_ft)
+        all_severities.append(sev)
+        if sev != "none":
+            has_summary_issue = True
+
+    # Plan overall (column-based)
+    override_pf = (override or {}).get("plan_feedback")
+    for field in ["factual", "tone", "other"]:
+        sev = _get_effective_column_severity(fb, "plan", field, override_pf)
+        all_severities.append(sev)
+        if sev != "none":
+            has_plan_issue = True
+
+    # Plan detail JSON
+    pd_data = fb.plan_detail_feedback or {}
+    override_pd = (override or {}).get("plan_detail_feedback") or {}
+    original_sections = pd_data.get("sections", {})
+    override_sections = override_pd.get("sections", {})
+    all_section_keys = set(original_sections.keys()) | set(override_sections.keys())
+
+    for section_key in all_section_keys:
+        orig_section = original_sections.get(section_key, {})
+        ovr_section = override_sections.get(section_key)
+        for field in PLAN_DETAIL_FIELDS:
+            sev = _get_effective_plan_detail_severity(field, orig_section, ovr_section)
+            all_severities.append(sev)
+            if sev != "none":
+                has_plan_issue = True
+                issue_types[field] = issue_types.get(field, 0) + 1
+
+    return {
+        "has_transcript_issue": has_transcript_issue,
+        "has_summary_issue": has_summary_issue,
+        "has_plan_issue": has_plan_issue,
+        "has_any_issue": has_transcript_issue or has_summary_issue or has_plan_issue,
+        "has_severe": "severe" in all_severities,
+        "all_severities": all_severities,
+        "issue_types": issue_types,
+    }
+
+
+def _business_days_elapsed(start: datetime, end: datetime) -> int:
+    """Count Mon–Fri business days between start and end (exclusive of start, inclusive of end)."""
+    if end <= start:
+        return 0
+    count = 0
+    current = start.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = end.replace(hour=0, minute=0, second=0, microsecond=0)
+    # Move to the next day to start counting
+    from datetime import timedelta
+    current += timedelta(days=1)
+    while current <= end_date:
+        if current.weekday() < 5:  # Mon=0 ... Fri=4
+            count += 1
+        current += timedelta(days=1)
+    return count
+
+
+def _week_end_dates(reference: datetime, count: int) -> list[datetime]:
+    """Return the last `count` Sunday dates (midnight UTC) before reference."""
+    from datetime import timedelta
+    # Find the most recent Sunday
+    days_since_sunday = (reference.weekday() + 1) % 7  # Sun=0 in this scheme
+    most_recent_sunday = reference - timedelta(days=days_since_sunday)
+    most_recent_sunday = most_recent_sunday.replace(
+        hour=23, minute=59, second=59, microsecond=999999
     )
-    unique_intakes = unique_intakes_result.scalar() or 0
+    result = []
+    for i in range(count):
+        result.append(most_recent_sunday - timedelta(weeks=i))
+    return list(reversed(result))
 
-    # By evaluator
-    by_evaluator_result = await session.execute(
-        select(LabelingFeedback.evaluator, func.count(LabelingFeedback.id)).group_by(
-            LabelingFeedback.evaluator
+
+def _month_end_dates(reference: datetime, count: int) -> list[datetime]:
+    """Return the last `count` month-end dates (end of day UTC) before reference."""
+    import calendar
+    result = []
+    year, month = reference.year, reference.month
+    # Go to previous month if we haven't finished this month yet
+    # Always use completed months
+    month -= 1
+    if month == 0:
+        month = 12
+        year -= 1
+    for _ in range(count):
+        last_day = calendar.monthrange(year, month)[1]
+        result.append(datetime(year, month, last_day, 23, 59, 59, 999999, tzinfo=timezone.utc))
+        month -= 1
+        if month == 0:
+            month = 12
+            year -= 1
+    return list(reversed(result))
+
+
+async def get_queue_stats(
+    reentry_session: AsyncSession,
+    labeling_session: AsyncSession,
+    evaluators: list[str],
+) -> dict[str, Any]:
+    """Compute per-evaluator queue sizes, overdue counts, and historical snapshots."""
+    from app.models.intake import IntakeStatus
+
+    now = datetime.now(timezone.utc)
+
+    # Load all completed intakes
+    intakes_result = await reentry_session.execute(
+        select(Intake).where(Intake.status == IntakeStatus.COMPLETED)
+    )
+    all_intakes = list(intakes_result.scalars().all())
+
+    # Load all feedback for the evaluators in one query
+    if evaluators:
+        feedback_result = await labeling_session.execute(
+            select(LabelingFeedback).where(LabelingFeedback.evaluator.in_(evaluators))
         )
-    )
-    by_evaluator = {row[0]: row[1] for row in by_evaluator_result.all()}
+        all_feedback = list(feedback_result.scalars().all())
+    else:
+        all_feedback = []
 
-    # Fetch all feedback for detailed analysis
+    from datetime import timedelta
+
+    # Build index: evaluator -> list of (intake_id, created_at)
+    feedback_by_evaluator: dict[str, list[tuple[Any, datetime]]] = {e: [] for e in evaluators}
+    for fb in all_feedback:
+        if fb.evaluator in feedback_by_evaluator:
+            fb_created = fb.created_at
+            if fb_created.tzinfo is None:
+                fb_created = fb_created.replace(tzinfo=timezone.utc)
+            feedback_by_evaluator[fb.evaluator].append((fb.intake_id, fb_created))
+
+    # First feedback date per evaluator (used to suppress overdue counts before they started)
+    first_feedback_date: dict[str, datetime | None] = {
+        e: (min(t for _, t in feedback_by_evaluator[e]) if feedback_by_evaluator[e] else None)
+        for e in evaluators
+    }
+
+    # Intake map for fast lookup
+    intake_map = {intake.id: intake for intake in all_intakes}
+
+    def _cdt(intake: Any) -> datetime | None:
+        dt = intake.completed_at or intake.updated_at
+        if dt is None:
+            return None
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
+    # labeled_on_time: intake_ids where ANY evaluator submitted feedback within 2 biz days
+    labeled_on_time: set = set()
+    for evaluator in evaluators:
+        for intake_id, fb_created in feedback_by_evaluator[evaluator]:
+            intake = intake_map.get(intake_id)
+            if intake:
+                cdt = _cdt(intake)
+                if cdt and _business_days_elapsed(cdt, fb_created) <= 2:
+                    labeled_on_time.add(intake_id)
+
+    # Compute snapshot dates
+    week_ends = _week_end_dates(now, 4)
+
+    def overdue_at(evaluator: str, snapshot_dt: datetime) -> int:
+        """Count intakes overdue for evaluator as of snapshot_dt."""
+        labeled_before = {
+            intake_id
+            for intake_id, created_at in feedback_by_evaluator.get(evaluator, [])
+            if created_at <= snapshot_dt
+        }
+        count = 0
+        for intake in all_intakes:
+            cdt = _cdt(intake)
+            if cdt is None or cdt > snapshot_dt:
+                continue
+            if _business_days_elapsed(cdt, snapshot_dt) <= 2:
+                continue
+            if intake.id not in labeled_before:
+                count += 1
+        return count
+
+    evaluator_stats = []
+    for evaluator in evaluators:
+        labeled_intake_ids = {intake_id for intake_id, _ in feedback_by_evaluator[evaluator]}
+        first_fb = first_feedback_date[evaluator]
+
+        # Queue size: completed intakes not yet labeled by this evaluator
+        queue_size = sum(1 for intake in all_intakes if intake.id not in labeled_intake_ids)
+
+        # Current overdue — zero if evaluator has never submitted feedback
+        current_overdue = overdue_at(evaluator, now) if first_fb is not None else 0
+
+        fb_times = [created_at for _, created_at in feedback_by_evaluator[evaluator]]
+        weekly_snapshots = []
+        for d in week_ends:
+            week_start = d - timedelta(weeks=1)
+            completed_count = sum(1 for t in fb_times if week_start < t <= d)
+            # Suppress overdue count for periods before evaluator's first feedback
+            overdue_count = overdue_at(evaluator, d) if (first_fb is not None and d >= first_fb) else 0
+            weekly_snapshots.append({
+                "period_end": d.strftime("%Y-%m-%d"),
+                "overdue_count": overdue_count,
+                "completed_count": completed_count,
+            })
+
+        evaluator_stats.append({
+            "evaluator": evaluator,
+            "queue_size": queue_size,
+            "overdue_count": current_overdue,
+            "weekly_snapshots": weekly_snapshots,
+        })
+
+    # Aggregate weekly snapshots (across all evaluators, per-intake SLA view)
+    aggregate_snapshots = []
+    for d in week_ends:
+        week_start = d - timedelta(weeks=1)
+        eligible = []  # (intake_id, days_overdue_at_week_end)
+        completed_this_week = 0
+
+        for intake in all_intakes:
+            cdt = _cdt(intake)
+            if cdt is None:
+                continue
+            if week_start < cdt <= d:
+                completed_this_week += 1
+            # Eligible = SLA deadline (cdt + 2 biz days) falls within this week
+            biz_to_start = _business_days_elapsed(cdt, week_start)
+            biz_to_end = _business_days_elapsed(cdt, d)
+            if biz_to_start <= 2 and biz_to_end >= 2:
+                eligible.append((intake.id, biz_to_end - 2))
+
+        overdue_items = [(iid, days) for iid, days in eligible if iid not in labeled_on_time]
+        eligible_count = len(eligible)
+        overdue_count = len(overdue_items)
+        days_list = [days for _, days in overdue_items]
+
+        aggregate_snapshots.append({
+            "period_end": d.strftime("%Y-%m-%d"),
+            "overdue_count": overdue_count,
+            "eligible_count": eligible_count,
+            "overdue_rate": round(overdue_count / eligible_count, 3) if eligible_count > 0 else 0.0,
+            "completed_count": completed_this_week,
+            "max_days_overdue": max(days_list) if days_list else None,
+            "avg_days_overdue": round(sum(days_list) / len(days_list), 1) if days_list else None,
+        })
+
+    return {
+        "evaluators": evaluator_stats,
+        "aggregate_snapshots": aggregate_snapshots,
+        "as_of": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
+
+
+async def get_evaluator_queue(
+    reentry_session: AsyncSession,
+    labeling_session: AsyncSession,
+    evaluator: str,
+) -> list[dict[str, Any]]:
+    """Return the full unlabeled queue for a single evaluator, sorted by completed_dt ASC."""
+    from app.models.intake import IntakeStatus
+    from datetime import timedelta
+
+    now = datetime.now(timezone.utc)
+
+    intakes_result = await reentry_session.execute(
+        select(Intake).where(Intake.status == IntakeStatus.COMPLETED)
+    )
+    all_intakes = list(intakes_result.scalars().all())
+
+    feedback_result = await labeling_session.execute(
+        select(LabelingFeedback.intake_id).where(LabelingFeedback.evaluator == evaluator)
+    )
+    labeled_ids = {str(row[0]) for row in feedback_result.fetchall()}
+
+    items = []
+    for intake in all_intakes:
+        if str(intake.id) in labeled_ids:
+            continue
+        completed_dt = intake.completed_at or intake.updated_at
+        if completed_dt is None:
+            continue
+        if completed_dt.tzinfo is None:
+            completed_dt = completed_dt.replace(tzinfo=timezone.utc)
+        is_overdue = _business_days_elapsed(completed_dt, now) > 2
+        items.append({
+            "intake_id": str(intake.id),
+            "completed_dt": completed_dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "is_overdue": is_overdue,
+        })
+
+    items.sort(key=lambda x: x["completed_dt"])
+    return items
+
+
+async def get_labeling_stats(session: AsyncSession) -> dict[str, Any]:
+    """Get labeling statistics. Uses labeling database.
+
+    Returns two sets of stats: one with overrides applied (primary),
+    and one without overrides (original). Empty/script-generated feedback
+    is excluded from all counts.
+    """
+    # Fetch all feedback
     all_feedback_result = await session.execute(select(LabelingFeedback))
     all_feedback = all_feedback_result.scalars().all()
 
-    # Compute stats from all feedback records
-    with_issues = 0
-    with_severe = 0
-    transcript_issues = 0
-    summary_issues = 0
-    plan_issues = 0
-    severity_distribution: dict[str, int] = {s.value: 0 for s in SeverityLevel}
+    # Filter to meaningful feedback only
+    meaningful = [fb for fb in all_feedback if _is_meaningful_feedback(fb)]
 
-    # Track issues by the new criteria categories
-    by_issue_type: dict[str, int] = {}
+    total = len(meaningful)
+    unique_intakes = len({fb.intake_id for fb in meaningful})
+    by_evaluator: dict[str, int] = {}
+    for fb in meaningful:
+        by_evaluator[fb.evaluator] = by_evaluator.get(fb.evaluator, 0) + 1
 
-    for fb in all_feedback:
-        # Skip "empty" feedback (used for marking as reviewed without actual review)
-        if not _is_meaningful_feedback(fb):
-            continue
+    # Compute stats with and without overrides
+    def _aggregate(use_overrides: bool) -> dict[str, Any]:
+        with_issues = 0
+        with_severe = 0
+        transcript_issues = 0
+        summary_issues = 0
+        plan_issues = 0
+        severity_dist: dict[str, int] = {s.value: 0 for s in SeverityLevel}
+        by_type: dict[str, int] = {}
 
-        all_severities: list[str] = []
-        has_transcript_issue = False
-        has_summary_issue = False
-        has_plan_issue = False
+        for fb in meaningful:
+            rs = _compute_record_stats(fb, use_overrides)
 
-        # Check transcript from JSON
-        if fb.transcript_detail_feedback:
-            transcript_sevs = _get_severities_from_transcript_json(fb.transcript_detail_feedback)
-            all_severities.extend(transcript_sevs)
-            if any(s != "none" for s in transcript_sevs):
-                has_transcript_issue = True
-            # Track by criterion
-            td = fb.transcript_detail_feedback
-            for criterion in ["danger_indication", "toxic_language", "inappropriate_topic",
-                              "user_frustration", "major_output_error", "chatbot_misunderstanding",
-                              "looping_questions", "skipping_questions", "other"]:
-                criterion_data = td.get(criterion, {})
-                if isinstance(criterion_data, dict) and criterion_data.get("severity", "none") != "none":
-                    by_issue_type[criterion] = by_issue_type.get(criterion, 0) + 1
+            if rs["has_transcript_issue"]:
+                transcript_issues += 1
+            if rs["has_summary_issue"]:
+                summary_issues += 1
+            if rs["has_plan_issue"]:
+                plan_issues += 1
+            if rs["has_any_issue"]:
+                with_issues += 1
+            if rs["has_severe"]:
+                with_severe += 1
 
-        # Check summary from individual columns
-        summary_sevs = [
-            fb.summary_factual_severity,
-            fb.summary_tone_severity,
-            fb.summary_other_severity,
-        ]
-        all_severities.extend(summary_sevs)
-        if any(s != SeverityLevel.NONE.value for s in summary_sevs):
-            has_summary_issue = True
+            for sev in rs["all_severities"]:
+                if sev in severity_dist:
+                    severity_dist[sev] += 1
 
-        # Check plan from JSON
-        if fb.plan_detail_feedback:
-            plan_sevs = _get_severities_from_plan_json(fb.plan_detail_feedback)
-            all_severities.extend(plan_sevs)
-            if any(s != "none" for s in plan_sevs):
-                has_plan_issue = True
-            # Track by criterion
-            for section_data in fb.plan_detail_feedback.get("sections", {}).values():
-                for field in ["recommendation_groundedness", "unsound_recommendation", "obvious_incoherence", "missing_incomplete_sections", "other"]:
-                    field_data = section_data.get(field, {})
-                    if isinstance(field_data, dict) and field_data.get("severity", "none") != "none":
-                        by_issue_type[field] = by_issue_type.get(field, 0) + 1
+            for criterion, count in rs["issue_types"].items():
+                by_type[criterion] = by_type.get(criterion, 0) + count
 
-        # Update counts
-        if has_transcript_issue:
-            transcript_issues += 1
-        if has_summary_issue:
-            summary_issues += 1
-        if has_plan_issue:
-            plan_issues += 1
+        return {
+            "records_with_issues": with_issues,
+            "records_with_severe_issues": with_severe,
+            "by_component": {
+                "transcript": transcript_issues,
+                "summary": summary_issues,
+                "plan": plan_issues,
+            },
+            "by_issue_type": by_type,
+            "severity_distribution": severity_dist,
+        }
 
-        if has_transcript_issue or has_summary_issue or has_plan_issue:
-            with_issues += 1
-
-        if "severe" in all_severities:
-            with_severe += 1
-
-        # Update severity distribution
-        for sev in all_severities:
-            if sev in severity_distribution:
-                severity_distribution[sev] += 1
+    with_overrides = _aggregate(use_overrides=True)
+    without_overrides = _aggregate(use_overrides=False)
 
     return {
         "total_feedback_records": total,
         "unique_intakes_labeled": unique_intakes,
-        "records_with_issues": with_issues,
-        "records_with_severe_issues": with_severe,
         "by_evaluator": by_evaluator,
-        "by_component": {
-            "transcript": transcript_issues,
-            "summary": summary_issues,
-            "plan": plan_issues,
-        },
-        "by_issue_type": by_issue_type,
-        "severity_distribution": severity_distribution,
+        # Primary stats (with overrides applied)
+        "records_with_issues": with_overrides["records_with_issues"],
+        "records_with_severe_issues": with_overrides["records_with_severe_issues"],
+        "by_component": with_overrides["by_component"],
+        "by_issue_type": with_overrides["by_issue_type"],
+        "severity_distribution": with_overrides["severity_distribution"],
+        # Original stats (without overrides)
+        "records_with_issues_original": without_overrides["records_with_issues"],
+        "records_with_severe_issues_original": without_overrides["records_with_severe_issues"],
+        "by_component_original": without_overrides["by_component"],
+        "by_issue_type_original": without_overrides["by_issue_type"],
+        "severity_distribution_original": without_overrides["severity_distribution"],
     }

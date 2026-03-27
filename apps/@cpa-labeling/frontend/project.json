@@ -59,6 +59,7 @@
       "cache": true,
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/@cpa-labeling/frontend",
+        "tsConfig": "apps/@cpa-labeling/frontend/tsconfig.json",
         "emptyOutDir": true
       },
       "configurations": {

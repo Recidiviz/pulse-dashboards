@@ -88,6 +88,18 @@ export interface PlanSection {
   content: string;
 }
 
+// Override feedback stored as a JSON blob on the original feedback record
+export interface OverrideFeedback {
+  evaluator: string;
+  updated_at: string;
+  notes?: string | null;
+  transcript_detail_feedback?: Record<string, IssueFeedback>;
+  summary_detail_feedback?: SummaryDetailFeedback;
+  plan_detail_feedback?: PlanDetailFeedback;
+  summary_feedback?: OverallComponentFeedback;
+  plan_feedback?: OverallComponentFeedback;
+}
+
 export interface LabelingFeedback {
   id: string;
   created_at: string;
@@ -96,11 +108,13 @@ export interface LabelingFeedback {
   plan_id: string | null;
   evaluator: string;
   // New structure
-  transcript_feedback: OverallComponentFeedback;
+  transcript_feedback: TranscriptFeedback | null;
   summary_feedback: OverallComponentFeedback;
   plan_feedback: OverallComponentFeedback;
   summary_detail_feedback: SummaryDetailFeedback | null;
   plan_detail_feedback: PlanDetailFeedback | null;
+  // Override feedback
+  override_feedback: OverrideFeedback | null;
   // Legacy fields
   transcript_needs_review: boolean;
   transcript_severity: SeverityLevel;
@@ -181,6 +195,12 @@ export interface LabelingStats {
   by_component: Record<string, number>;
   by_issue_type: Record<string, number>;
   severity_distribution: Record<string, number>;
+  // Original stats (without overrides applied)
+  records_with_issues_original: number;
+  records_with_severe_issues_original: number;
+  by_component_original: Record<string, number>;
+  by_issue_type_original: Record<string, number>;
+  severity_distribution_original: Record<string, number>;
 }
 
 export interface FeedbackListItem {
@@ -192,6 +212,41 @@ export interface FeedbackListItem {
   highest_severity: string;
   components_with_issues: string[];
   overall_notes: string | null;
+}
+
+export interface OverdueSnapshot {
+  period_end: string;
+  overdue_count: number;
+  completed_count: number;
+}
+
+export interface EvaluatorQueueStats {
+  evaluator: string;
+  queue_size: number;
+  overdue_count: number;
+  weekly_snapshots: OverdueSnapshot[];
+}
+
+export interface AggregateWeeklySnapshot {
+  period_end: string;
+  overdue_count: number;
+  eligible_count: number;
+  overdue_rate: number;
+  completed_count: number;
+  max_days_overdue: number | null;
+  avg_days_overdue: number | null;
+}
+
+export interface QueueStatsResponse {
+  evaluators: EvaluatorQueueStats[];
+  aggregate_snapshots: AggregateWeeklySnapshot[];
+  as_of: string;
+}
+
+export interface QueueItem {
+  intake_id: string;
+  completed_dt: string;
+  is_overdue: boolean;
 }
 
 // New transcript-specific feedback types

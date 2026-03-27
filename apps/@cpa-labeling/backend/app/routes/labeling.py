@@ -25,9 +25,13 @@ from app.crud.labeling import (
     get_plan_generations,
     get_feedback_by_intake_id,
     get_feedback_by_intake_and_evaluator,
+    get_feedback_by_id,
     upsert_feedback,
+    update_override_feedback,
     get_labeling_stats,
     get_all_feedback,
+    get_queue_stats,
+    get_evaluator_queue,
     get_recording_transcript,
     get_recording_session_for_intake,
     _highest_severity_for_row,
@@ -155,6 +159,8 @@ class LabelingFeedbackResponse(BaseModel):
     plan_feedback: OverallComponentFeedback = OverallComponentFeedback()
     summary_detail_feedback: Optional[SummaryDetailFeedback] = None
     plan_detail_feedback: Optional[PlanDetailFeedback] = None
+    # Override feedback (reviewer overrides of original labels)
+    override_feedback: Optional[dict[str, Any]] = None
     # Legacy fields
     transcript_needs_review: bool = False
     transcript_severity: str = SeverityLevel.NONE.value
@@ -224,6 +230,18 @@ class FeedbackSubmission(BaseModel):
     overall_notes: Optional[str] = None
 
 
+class OverrideSubmission(BaseModel):
+    """Request model for submitting override feedback."""
+
+    evaluator: str
+    notes: Optional[str] = None
+    transcript_detail_feedback: Optional[dict[str, Any]] = None
+    summary_detail_feedback: Optional[dict[str, Any]] = None
+    plan_detail_feedback: Optional[dict[str, Any]] = None
+    summary_feedback: Optional[dict[str, Any]] = None
+    plan_feedback: Optional[dict[str, Any]] = None
+
+
 class FeedbackListItem(BaseModel):
     """A feedback record in the feedback browser."""
 
@@ -247,6 +265,41 @@ class FeedbackListResponse(BaseModel):
     pages: int
 
 
+class OverdueSnapshot(BaseModel):
+    period_end: str
+    overdue_count: int
+    completed_count: int
+
+
+class EvaluatorQueueStats(BaseModel):
+    evaluator: str
+    queue_size: int
+    overdue_count: int
+    weekly_snapshots: list[OverdueSnapshot]
+
+
+class AggregateWeeklySnapshot(BaseModel):
+    period_end: str
+    overdue_count: int
+    eligible_count: int
+    overdue_rate: float
+    completed_count: int
+    max_days_overdue: Optional[int] = None
+    avg_days_overdue: Optional[float] = None
+
+
+class QueueStatsResponse(BaseModel):
+    evaluators: list[EvaluatorQueueStats]
+    aggregate_snapshots: list[AggregateWeeklySnapshot]
+    as_of: str
+
+
+class QueueItem(BaseModel):
+    intake_id: str
+    completed_dt: str
+    is_overdue: bool
+
+
 class LabelingStatsResponse(BaseModel):
     """Response model for labeling statistics."""
 
@@ -258,6 +311,12 @@ class LabelingStatsResponse(BaseModel):
     by_component: dict[str, int]
     by_issue_type: dict[str, int]
     severity_distribution: dict[str, int]
+    # Original stats (without overrides applied)
+    records_with_issues_original: int
+    records_with_severe_issues_original: int
+    by_component_original: dict[str, int]
+    by_issue_type_original: dict[str, int]
+    severity_distribution_original: dict[str, int]
 
 
 class PaginatedResponse(BaseModel):
@@ -330,6 +389,7 @@ def feedback_to_response(feedback: LabelingFeedback) -> LabelingFeedbackResponse
         plan_feedback=plan_feedback,
         summary_detail_feedback=summary_detail,
         plan_detail_feedback=plan_detail,
+        override_feedback=feedback.override_feedback,
         transcript_needs_review=feedback.transcript_needs_review,
         transcript_severity=feedback.transcript_severity,
         transcript_notes=feedback.transcript_notes,
@@ -709,6 +769,37 @@ async def submit_feedback(
     return feedback_to_response(feedback)
 
 
+@router.post("/feedback/{feedback_id}/override", response_model=LabelingFeedbackResponse)
+async def submit_override(
+    feedback_id: UUID,
+    submission: OverrideSubmission,
+    labeling_session: AsyncSession = Depends(get_labeling_session),
+):
+    """Submit override feedback for an existing feedback record."""
+    override_data = {
+        "evaluator": submission.evaluator,
+        "updated_at": datetime.utcnow().isoformat(),
+    }
+    if submission.notes is not None:
+        override_data["notes"] = submission.notes
+    if submission.transcript_detail_feedback is not None:
+        override_data["transcript_detail_feedback"] = submission.transcript_detail_feedback
+    if submission.summary_detail_feedback is not None:
+        override_data["summary_detail_feedback"] = submission.summary_detail_feedback
+    if submission.plan_detail_feedback is not None:
+        override_data["plan_detail_feedback"] = submission.plan_detail_feedback
+    if submission.summary_feedback is not None:
+        override_data["summary_feedback"] = submission.summary_feedback
+    if submission.plan_feedback is not None:
+        override_data["plan_feedback"] = submission.plan_feedback
+
+    feedback = await update_override_feedback(labeling_session, feedback_id, override_data)
+    if not feedback:
+        raise HTTPException(status_code=404, detail="Feedback record not found")
+
+    return feedback_to_response(feedback)
+
+
 @router.get("/feedback/all", response_model=FeedbackListResponse)
 async def list_all_feedback(
     labeling_session: AsyncSession = Depends(get_labeling_session),
@@ -820,3 +911,24 @@ async def get_stats(labeling_session: AsyncSession = Depends(get_labeling_sessio
     # Stats from labeling database
     stats = await get_labeling_stats(labeling_session)
     return LabelingStatsResponse(**stats)
+
+
+@router.get("/queue", response_model=QueueStatsResponse)
+async def get_queue(
+    reentry_session: AsyncSession = Depends(get_reentry_session),
+    labeling_session: AsyncSession = Depends(get_labeling_session),
+):
+    """Get per-evaluator queue sizes, overdue counts, and historical snapshots."""
+    result = await get_queue_stats(reentry_session, labeling_session, settings.evaluators_list)
+    return QueueStatsResponse(**result)
+
+
+@router.get("/queue/{evaluator:path}", response_model=list[QueueItem])
+async def get_evaluator_queue_detail(
+    evaluator: str,
+    reentry_session: AsyncSession = Depends(get_reentry_session),
+    labeling_session: AsyncSession = Depends(get_labeling_session),
+):
+    """Get the full unlabeled queue for a specific evaluator."""
+    items = await get_evaluator_queue(reentry_session, labeling_session, evaluator)
+    return [QueueItem(**item) for item in items]

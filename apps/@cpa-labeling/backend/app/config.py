@@ -42,6 +42,13 @@ class Settings(BaseSettings):
     # Slack webhook for severe issue alerts
     slack_webhook_url: str | None = None
 
+    # Evaluators for queue monitor (comma-separated emails)
+    evaluators: str = ""
+
+    @property
+    def evaluators_list(self) -> list[str]:
+        return [e.strip() for e in self.evaluators.split(",") if e.strip()]
+
     @property
     def reentry_database_url(self) -> str:
         """Build the reentry (read-only) database URL."""

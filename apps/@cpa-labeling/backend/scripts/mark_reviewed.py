@@ -31,7 +31,7 @@ from uuid import uuid4, UUID
 # Add the app directory to the path so we can import models
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sqlalchemy import func, select, delete
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 

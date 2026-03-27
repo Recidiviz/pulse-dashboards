@@ -25,14 +25,18 @@ import {
   listRecords,
   setAuthTokenGetter,
   submitFeedback,
+  submitOverride,
 } from "./api/client";
 import FeedbackBrowser from "./components/FeedbackBrowser";
 import FeedbackDetail from "./components/FeedbackDetail";
 import LabelingView from "./components/LabelingView";
+import QueueMonitorPage from "./components/QueueMonitorPage";
 import RecordList from "./components/RecordList";
 import StatsPage from "./components/StatsPage";
 import type {
+  FeedbackListItem,
   FeedbackSubmission,
+  IssueFeedback,
   OverallComponentFeedback,
   PlanDetailFeedback,
   RecordDetail,
@@ -42,8 +46,8 @@ import type {
   TranscriptFeedback,
   TranscriptSeverity,
 } from "./types";
-import type { FeedbackListItem } from "./types";
 import {
+  createDefaultIssueFeedback,
   createDefaultOverallComponentFeedback,
   createDefaultPlanSectionFeedback,
   createDefaultSummaryFinalThoughtsFeedback,
@@ -57,8 +61,32 @@ type View =
   | "labeling"
   | "stats"
   | "feedback-browser"
-  | "feedback-detail";
+  | "feedback-detail"
+  | "queue";
 type LabelingTab = "transcript" | "summary-details" | "plan-details";
+type ViewMode = "normal" | "readOnly" | "override";
+
+// Override state mirrors the feedback structure but only for overrides
+interface OverrideState {
+  transcript_detail_feedback: Record<string, IssueFeedback>;
+  summary_detail_feedback: SummaryDetailFeedback;
+  plan_detail_feedback: PlanDetailFeedback;
+  notes: string | null;
+}
+
+function createDefaultOverrideState(): OverrideState {
+  return {
+    transcript_detail_feedback: {},
+    summary_detail_feedback: {
+      needs_risks_overview: {},
+      priority_needs: createDefaultSummaryNeedsSectionFeedback(),
+      longer_term_needs: createDefaultSummaryNeedsSectionFeedback(),
+      final_thoughts: createDefaultSummaryFinalThoughtsFeedback(),
+    },
+    plan_detail_feedback: { sections: {} },
+    notes: null,
+  };
+}
 
 // State shape for all feedback
 interface FeedbackState {
@@ -130,6 +158,17 @@ function App() {
   const [selectedFeedbackItem, setSelectedFeedbackItem] =
     useState<FeedbackListItem | null>(null);
 
+  // View mode for labeling view
+  const [viewMode, setViewMode] = useState<ViewMode>("normal");
+  const [viewingEvaluator, setViewingEvaluator] = useState<string | null>(null);
+  const [overrideState, setOverrideState] = useState<OverrideState>(
+    createDefaultOverrideState(),
+  );
+  // Store the feedback ID for the record being overridden
+  const [overrideFeedbackId, setOverrideFeedbackId] = useState<string | null>(
+    null,
+  );
+
   // Use email as evaluator (or name, or "unknown") - use "local-dev" when skipping auth
   const evaluator = SKIP_AUTH
     ? "local-dev"
@@ -173,11 +212,13 @@ function App() {
   }, [isAuthenticated, evaluator]);
 
   const loadRecordDetail = useCallback(
-    async (intakeId: string) => {
+    async (intakeId: string, targetEvaluator?: string) => {
       setLoading(true);
       setError(null);
       try {
-        const detail = await getRecordDetail(intakeId, evaluator || undefined);
+        // Use targetEvaluator if provided (for viewing other reviewers' feedback), otherwise use current user
+        const evalToUse = targetEvaluator || evaluator || undefined;
+        const detail = await getRecordDetail(intakeId, evalToUse);
         setRecordDetail(detail);
 
         // If existing feedback, populate the form
@@ -205,9 +246,40 @@ function App() {
             plan_detail_feedback: ef.plan_detail_feedback || { sections: {} },
             overall_notes: ef.overall_notes,
           });
+
+          // Store feedback ID for override submission
+          setOverrideFeedbackId(ef.id);
+
+          // Load existing override data if present
+          if (ef.override_feedback) {
+            const of_ = ef.override_feedback;
+            setOverrideState({
+              transcript_detail_feedback:
+                (of_.transcript_detail_feedback as Record<
+                  string,
+                  IssueFeedback
+                >) || {},
+              summary_detail_feedback:
+                (of_.summary_detail_feedback as SummaryDetailFeedback) || {
+                  needs_risks_overview: {},
+                  priority_needs: createDefaultSummaryNeedsSectionFeedback(),
+                  longer_term_needs: createDefaultSummaryNeedsSectionFeedback(),
+                  final_thoughts: createDefaultSummaryFinalThoughtsFeedback(),
+                },
+              plan_detail_feedback:
+                (of_.plan_detail_feedback as PlanDetailFeedback) || {
+                  sections: {},
+                },
+              notes: of_.notes ?? null,
+            });
+          } else {
+            setOverrideState(createDefaultOverrideState());
+          }
         } else {
           // Reset form for new record
           setFeedback(createDefaultFeedbackState());
+          setOverrideState(createDefaultOverrideState());
+          setOverrideFeedbackId(null);
         }
 
         // Reset to transcript tab when loading new record
@@ -405,6 +477,132 @@ function App() {
     });
   };
 
+  // Generic override update handler - navigates the override state by path
+  const updateOverride = (
+    path: string[],
+    field: "severity" | "notes",
+    value: string | null,
+  ) => {
+    setOverrideState((prev) => {
+      const newState = { ...prev };
+      // Navigate to the right location and set the value
+      // path like ["summary_detail_feedback", "needs_risks_overview", "Employment", "facts_incorrect"]
+      // or ["transcript_detail_feedback", "danger_indication"]
+      // or ["plan_detail_feedback", "sections", "Full Plan", "recommendation_groundedness"]
+      const topKey = path[0] as keyof OverrideState;
+      if (topKey === "transcript_detail_feedback") {
+        const criterion = path[1];
+        const current =
+          newState.transcript_detail_feedback[criterion] ||
+          createDefaultIssueFeedback();
+        newState.transcript_detail_feedback = {
+          ...newState.transcript_detail_feedback,
+          [criterion]: { ...current, [field]: value },
+        };
+      } else if (topKey === "summary_detail_feedback") {
+        const section = path[1]; // needs_risks_overview, priority_needs, etc.
+        if (section === "needs_risks_overview") {
+          const category = path[2];
+          const issueType = path[3];
+          const currentOverview =
+            newState.summary_detail_feedback.needs_risks_overview[category] ||
+            createDefaultSummaryNeedsRisksFeedback();
+          const currentIssue =
+            (currentOverview as unknown as Record<string, IssueFeedback>)[
+              issueType
+            ] || createDefaultIssueFeedback();
+          newState.summary_detail_feedback = {
+            ...newState.summary_detail_feedback,
+            needs_risks_overview: {
+              ...newState.summary_detail_feedback.needs_risks_overview,
+              [category]: {
+                ...currentOverview,
+                [issueType]: { ...currentIssue, [field]: value },
+              },
+            },
+          };
+        } else if (
+          section === "priority_needs" ||
+          section === "longer_term_needs"
+        ) {
+          const issueType = path[2];
+          const currentSection = newState.summary_detail_feedback[section];
+          const currentIssue =
+            (currentSection as unknown as Record<string, IssueFeedback>)[
+              issueType
+            ] || createDefaultIssueFeedback();
+          newState.summary_detail_feedback = {
+            ...newState.summary_detail_feedback,
+            [section]: {
+              ...currentSection,
+              [issueType]: { ...currentIssue, [field]: value },
+            },
+          };
+        } else if (section === "final_thoughts") {
+          const issueType = path[2];
+          const currentFT = newState.summary_detail_feedback.final_thoughts;
+          const currentIssue =
+            (currentFT as unknown as Record<string, IssueFeedback>)[
+              issueType
+            ] || createDefaultIssueFeedback();
+          newState.summary_detail_feedback = {
+            ...newState.summary_detail_feedback,
+            final_thoughts: {
+              ...currentFT,
+              [issueType]: { ...currentIssue, [field]: value },
+            },
+          };
+        }
+      } else if (topKey === "plan_detail_feedback") {
+        const sectionKey = path[2]; // e.g., "Full Plan"
+        const issueType = path[3];
+        const currentSection =
+          newState.plan_detail_feedback.sections[sectionKey] ||
+          createDefaultPlanSectionFeedback();
+        const currentIssue =
+          (currentSection as unknown as Record<string, IssueFeedback>)[
+            issueType
+          ] || createDefaultIssueFeedback();
+        newState.plan_detail_feedback = {
+          ...newState.plan_detail_feedback,
+          sections: {
+            ...newState.plan_detail_feedback.sections,
+            [sectionKey]: {
+              ...currentSection,
+              [issueType]: { ...currentIssue, [field]: value },
+            },
+          },
+        };
+      }
+      return newState;
+    });
+  };
+
+  const handleSubmitOverride = async () => {
+    if (!overrideFeedbackId) return;
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await submitOverride(overrideFeedbackId, {
+        evaluator,
+        updated_at: new Date().toISOString(),
+        notes: overrideState.notes,
+        transcript_detail_feedback: overrideState.transcript_detail_feedback,
+        summary_detail_feedback: overrideState.summary_detail_feedback,
+        plan_detail_feedback: overrideState.plan_detail_feedback,
+      });
+      // Stay on the same view, just show success
+      alert("Overrides saved successfully!");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to submit overrides",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Show loading while Auth0 is initializing
   if (authLoading) {
     return (
@@ -429,11 +627,13 @@ function App() {
     );
   }
 
-  let navSection: "review" | "stats" | "feedback";
+  let navSection: "review" | "stats" | "feedback" | "queue";
   if (view === "list" || view === "labeling") {
     navSection = "review";
   } else if (view === "stats") {
     navSection = "stats";
+  } else if (view === "queue") {
+    navSection = "queue";
   } else {
     navSection = "feedback";
   }
@@ -471,10 +671,20 @@ function App() {
             canSubmit={!!evaluator}
             currentIndex={currentRecordIndex}
             totalRecords={totalUnreviewed}
+            mode={viewMode}
+            viewingEvaluator={viewingEvaluator}
+            overrideState={overrideState}
+            onUpdateOverride={updateOverride}
+            onUpdateOverrideNotes={(notes) =>
+              setOverrideState((prev) => ({ ...prev, notes }))
+            }
+            onSubmitOverride={handleSubmitOverride}
           />
         );
       case "stats":
         return <StatsPage />;
+      case "queue":
+        return <QueueMonitorPage />;
       case "feedback-browser":
         return (
           <FeedbackBrowser
@@ -489,14 +699,12 @@ function App() {
           <FeedbackDetail
             feedbackItem={selectedFeedbackItem}
             onBack={() => setView("feedback-browser")}
-            onOpenLabeling={(intakeId) => {
-              const index = records.findIndex((r) => r.intake_id === intakeId);
-              if (index >= 0) {
-                handleSelectRecord(index);
-              } else {
-                loadRecordDetail(intakeId);
-                setView("labeling");
-              }
+            onOpenLabeling={(intakeId, targetEvaluator) => {
+              // Set override mode with the specific evaluator
+              setViewMode("override");
+              setViewingEvaluator(targetEvaluator);
+              loadRecordDetail(intakeId, targetEvaluator);
+              setView("labeling");
             }}
           />
         ) : null;
@@ -530,6 +738,12 @@ function App() {
               >
                 Feedback Browser
               </button>
+              <button
+                className={`nav-tab ${navSection === "queue" ? "active" : ""}`}
+                onClick={() => setView("queue")}
+              >
+                Queue
+              </button>
             </>
           )}
         </nav>
@@ -549,8 +763,21 @@ function App() {
           )}
         </div>
         {view === "labeling" && (
-          <button className="back-btn" onClick={() => setView("list")}>
-            Back to List
+          <button
+            className="back-btn"
+            onClick={() => {
+              const goBack =
+                viewMode !== "normal" ? "feedback-browser" : "list";
+              setViewMode("normal");
+              setViewingEvaluator(null);
+              setOverrideState(createDefaultOverrideState());
+              setOverrideFeedbackId(null);
+              setView(goBack);
+            }}
+          >
+            {viewMode !== "normal"
+              ? "Back to Feedback Browser"
+              : "Back to List"}
           </button>
         )}
       </header>

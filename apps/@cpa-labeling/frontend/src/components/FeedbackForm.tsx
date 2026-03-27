@@ -38,6 +38,12 @@ interface IssueRowProps {
   compact?: boolean;
   showTranscriptionCheckbox?: boolean;
   onTranscriptionChange?: (value: boolean) => void;
+  readOnly?: boolean;
+  // Override mode props
+  canOverride?: boolean;
+  overrideFeedback?: IssueFeedback;
+  onOverrideSeverityChange?: (value: SeverityLevel) => void;
+  onOverrideNotesChange?: (value: string | null) => void;
 }
 
 export function IssueRow({
@@ -48,9 +54,16 @@ export function IssueRow({
   compact,
   showTranscriptionCheckbox,
   onTranscriptionChange,
+  readOnly = false,
+  canOverride = false,
+  overrideFeedback,
+  onOverrideSeverityChange,
+  onOverrideNotesChange,
 }: IssueRowProps) {
   return (
-    <div className={`issue-row ${compact ? "compact" : ""}`}>
+    <div
+      className={`issue-row ${compact ? "compact" : ""} ${readOnly ? "read-only" : ""}`}
+    >
       <div className="issue-label">{label}</div>
       <div className="issue-controls">
         <div className="severity-toggle">
@@ -58,7 +71,8 @@ export function IssueRow({
             <button
               key={level.value}
               className={`severity-btn ${feedback.severity === level.value ? `active ${level.value}` : ""}`}
-              onClick={() => onSeverityChange(level.value)}
+              onClick={() => !readOnly && onSeverityChange(level.value)}
+              disabled={readOnly}
             >
               {level.label}
             </button>
@@ -66,10 +80,12 @@ export function IssueRow({
         </div>
         <textarea
           className="issue-notes-input"
-          placeholder="Notes..."
+          placeholder={readOnly ? "" : "Notes..."}
           rows={2}
           value={feedback.notes || ""}
-          onChange={(e) => onNotesChange(e.target.value || null)}
+          onChange={(e) => !readOnly && onNotesChange(e.target.value || null)}
+          readOnly={readOnly}
+          disabled={readOnly}
         />
         {showTranscriptionCheckbox && (
           <label className="checkbox-label transcription-checkbox">
@@ -82,6 +98,42 @@ export function IssueRow({
           </label>
         )}
       </div>
+      {showTranscriptionCheckbox && (
+        <label className="checkbox-label transcription-checkbox">
+          <input
+            type="checkbox"
+            checked={feedback.related_to_transcription ?? false}
+            onChange={(e) => onTranscriptionChange?.(e.target.checked)}
+            disabled={readOnly}
+          />
+          Related to transcription
+        </label>
+      )}
+      {canOverride && onOverrideSeverityChange && onOverrideNotesChange && (
+        <div className="override-controls">
+          <div className="override-label">Override:</div>
+          <div className="issue-controls">
+            <div className="severity-toggle">
+              {SEVERITY_LEVELS.map((level) => (
+                <button
+                  key={level.value}
+                  className={`severity-btn override ${overrideFeedback?.severity === level.value ? `active ${level.value}` : ""}`}
+                  onClick={() => onOverrideSeverityChange(level.value)}
+                >
+                  {level.label}
+                </button>
+              ))}
+            </div>
+            <textarea
+              className="issue-notes-input override-notes"
+              placeholder="Override notes..."
+              rows={2}
+              value={overrideFeedback?.notes || ""}
+              onChange={(e) => onOverrideNotesChange(e.target.value || null)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

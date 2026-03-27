@@ -19,6 +19,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchAudioBlobUrl } from "../api/client";
 import type {
+  IssueFeedback,
   OverallComponentFeedback,
   PlanDetailFeedback,
   RecordDetail,
@@ -28,6 +29,7 @@ import type {
   TranscriptSeverity,
 } from "../types";
 import {
+  createDefaultIssueFeedback,
   createDefaultPlanSectionFeedback,
   createDefaultSummaryNeedsRisksFeedback,
 } from "../types";
@@ -53,6 +55,16 @@ interface FeedbackState {
   summary_detail_feedback: SummaryDetailFeedback;
   plan_detail_feedback: PlanDetailFeedback;
   overall_notes: string | null;
+}
+
+type ViewMode = "normal" | "readOnly" | "override";
+
+// Override state for all feedback sections
+interface OverrideState {
+  transcript_detail_feedback: Record<string, IssueFeedback>;
+  summary_detail_feedback: SummaryDetailFeedback;
+  plan_detail_feedback: PlanDetailFeedback;
+  notes: string | null;
 }
 
 interface LabelingViewProps {
@@ -100,6 +112,18 @@ interface LabelingViewProps {
   canSubmit: boolean;
   currentIndex: number;
   totalRecords: number;
+  readOnly?: boolean;
+  viewingEvaluator?: string | null;
+  // Override mode props
+  mode?: ViewMode;
+  overrideState?: OverrideState;
+  onUpdateOverride?: (
+    path: string[],
+    field: "severity" | "notes",
+    value: string | null,
+  ) => void;
+  onUpdateOverrideNotes?: (notes: string | null) => void;
+  onSubmitOverride?: () => void;
 }
 
 function LabelingView({
@@ -119,7 +143,54 @@ function LabelingView({
   canSubmit,
   currentIndex,
   totalRecords,
+  readOnly = false,
+  viewingEvaluator = null,
+  mode: modeProp,
+  overrideState,
+  onUpdateOverride,
+  onUpdateOverrideNotes,
+  onSubmitOverride,
 }: LabelingViewProps) {
+  // Derive effective mode from props (backwards-compatible with readOnly)
+  const mode: ViewMode = modeProp ?? (readOnly ? "readOnly" : "normal");
+  const isReadOnly = mode === "readOnly" || mode === "override";
+  const canOverride = mode === "override";
+
+  // Helper to get override feedback for a given path
+  const getOverrideFeedback = (...path: string[]): IssueFeedback => {
+    if (!overrideState) return createDefaultIssueFeedback();
+    // Navigate the override state using the path
+    // e.g. ["summary_detail_feedback", "needs_risks_overview", "Employment", "facts_incorrect"]
+    let current: unknown = overrideState;
+    for (const key of path) {
+      if (current && typeof current === "object" && key in current) {
+        current = (current as Record<string, unknown>)[key];
+      } else {
+        return createDefaultIssueFeedback();
+      }
+    }
+    if (
+      current &&
+      typeof current === "object" &&
+      "severity" in (current as Record<string, unknown>)
+    ) {
+      return current as IssueFeedback;
+    }
+    return createDefaultIssueFeedback();
+  };
+
+  // Helper to generate override props for an IssueRow
+  const overridePropsFor = (...path: string[]) =>
+    canOverride
+      ? {
+          canOverride: true as const,
+          overrideFeedback: getOverrideFeedback(...path),
+          onOverrideSeverityChange: (v: SeverityLevel) =>
+            onUpdateOverride?.(path, "severity", v),
+          onOverrideNotesChange: (v: string | null) =>
+            onUpdateOverride?.(path, "notes", v),
+        }
+      : {};
   // Ref for transcript container in summary details view
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
   const [highlightedSection, setHighlightedSection] = useState<string | null>(
@@ -232,6 +303,19 @@ function LabelingView({
           feedback={feedback.transcript_feedback}
           onUpdate={onUpdateTranscriptFeedback}
           showAudioCriteria={hasAudio}
+          readOnly={isReadOnly}
+          canOverride={canOverride}
+          overrideTranscriptFeedback={overrideState?.transcript_detail_feedback}
+          onOverrideUpdate={
+            canOverride && onUpdateOverride
+              ? (criterion, field, value) =>
+                  onUpdateOverride(
+                    ["transcript_detail_feedback", criterion],
+                    field,
+                    value,
+                  )
+              : undefined
+          }
         />
       </div>
     </div>
@@ -414,6 +498,13 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "facts_incorrect",
+                    )}
                   />
                   <IssueRow
                     label="Facts missing"
@@ -451,6 +542,13 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "facts_missing",
+                    )}
                   />
                   <IssueRow
                     label="Tone issues"
@@ -475,6 +573,13 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "tone_issues",
+                    )}
                   />
                   <IssueRow
                     label="Other"
@@ -499,6 +604,13 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "other",
+                    )}
                   />
                 </>
               ) : (
@@ -557,6 +669,13 @@ function LabelingView({
                           v,
                         )
                       }
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "facts_incorrect",
+                      )}
                     />
                     <IssueRow
                       label="Facts missing"
@@ -587,6 +706,13 @@ function LabelingView({
                           v,
                         )
                       }
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "facts_missing",
+                      )}
                     />
                     <IssueRow
                       label="Tone issues"
@@ -608,6 +734,13 @@ function LabelingView({
                         )
                       }
                       compact
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "tone_issues",
+                      )}
                     />
                     <IssueRow
                       label="Other"
@@ -619,6 +752,13 @@ function LabelingView({
                         onUpdateSummaryNeedsRisks(name, "other", "notes", v)
                       }
                       compact
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "other",
+                      )}
                     />
                   </div>
                 );
@@ -670,6 +810,12 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "priority_needs",
+                      "needs_not_justified",
+                    )}
                   />
                   <IssueRow
                     label="Needs missing"
@@ -702,6 +848,12 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "priority_needs",
+                      "needs_missing",
+                    )}
                   />
                   <IssueRow
                     label="Other"
@@ -724,6 +876,12 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "priority_needs",
+                      "other",
+                    )}
                   />
                 </>
               ) : (
@@ -773,6 +931,12 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "longer_term_needs",
+                      "needs_not_justified",
+                    )}
                   />
                   <IssueRow
                     label="Needs missing"
@@ -805,6 +969,12 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "longer_term_needs",
+                      "needs_missing",
+                    )}
                   />
                   <IssueRow
                     label="Other"
@@ -827,6 +997,12 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "longer_term_needs",
+                      "other",
+                    )}
                   />
                 </>
               ) : (
@@ -873,6 +1049,12 @@ function LabelingView({
                         v,
                       )
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "final_thoughts",
+                      "statements_not_supported",
+                    )}
                   />
                   <IssueRow
                     label="Other"
@@ -885,6 +1067,12 @@ function LabelingView({
                     onNotesChange={(v) =>
                       onUpdateSummaryFinalThoughts("other", "notes", v)
                     }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "final_thoughts",
+                      "other",
+                    )}
                   />
                 </>
               ) : (
@@ -985,6 +1173,13 @@ function LabelingView({
                     v,
                   )
                 }
+                readOnly={isReadOnly}
+                {...overridePropsFor(
+                  "plan_detail_feedback",
+                  "sections",
+                  planFeedbackKey,
+                  "recommendation_groundedness",
+                )}
               />
               <IssueRow
                 label="Unsound Recommendation"
@@ -1005,6 +1200,13 @@ function LabelingView({
                     v,
                   )
                 }
+                readOnly={isReadOnly}
+                {...overridePropsFor(
+                  "plan_detail_feedback",
+                  "sections",
+                  planFeedbackKey,
+                  "unsound_recommendation",
+                )}
               />
               <IssueRow
                 label="Obvious incoherence"
@@ -1025,6 +1227,13 @@ function LabelingView({
                     v,
                   )
                 }
+                readOnly={isReadOnly}
+                {...overridePropsFor(
+                  "plan_detail_feedback",
+                  "sections",
+                  planFeedbackKey,
+                  "obvious_incoherence",
+                )}
               />
               <IssueRow
                 label="Missing/Incomplete Sections"
@@ -1045,6 +1254,13 @@ function LabelingView({
                     v,
                   )
                 }
+                readOnly={isReadOnly}
+                {...overridePropsFor(
+                  "plan_detail_feedback",
+                  "sections",
+                  planFeedbackKey,
+                  "missing_incomplete_sections",
+                )}
               />
               <IssueRow
                 label="Other"
@@ -1055,6 +1271,13 @@ function LabelingView({
                 onNotesChange={(v) =>
                   onUpdatePlanSection(planFeedbackKey, "other", "notes", v)
                 }
+                readOnly={isReadOnly}
+                {...overridePropsFor(
+                  "plan_detail_feedback",
+                  "sections",
+                  planFeedbackKey,
+                  "other",
+                )}
               />
             </div>
           </div>
@@ -1086,6 +1309,26 @@ function LabelingView({
           Plan Details
         </button>
       </div>
+
+      {/* Read-Only / Override Banner */}
+      {mode === "readOnly" && viewingEvaluator && (
+        <div className="read-only-banner">
+          <span className="read-only-icon">&#128065;</span>
+          <span>
+            Viewing feedback from: <strong>{viewingEvaluator}</strong>
+          </span>
+          <span className="read-only-label">Read-Only</span>
+        </div>
+      )}
+      {mode === "override" && viewingEvaluator && (
+        <div className="read-only-banner override-banner">
+          <span className="read-only-icon">&#9998;</span>
+          <span>
+            Reviewing feedback from: <strong>{viewingEvaluator}</strong>
+          </span>
+          <span className="read-only-label">Override Mode</span>
+        </div>
+      )}
 
       {/* Record Metadata */}
       <div className="record-metadata">
@@ -1120,25 +1363,57 @@ function LabelingView({
       {/* Navigation Footer */}
       <div className="navigation-footer">
         <div className="record-counter">
-          Record {currentIndex + 1} of {totalRecords}
+          {isReadOnly ? (
+            <span>Viewing {viewingEvaluator}&apos;s feedback</span>
+          ) : (
+            `Record ${currentIndex + 1} of ${totalRecords}`
+          )}
         </div>
 
-        <div className="submit-section">
-          <textarea
-            className="overall-notes-input"
-            placeholder="Overall notes (optional)"
-            rows={3}
-            value={feedback.overall_notes || ""}
-            onChange={(e) => onUpdateOverallNotes(e.target.value || null)}
-          />
-          <button
-            className="submit-btn"
-            onClick={onSubmit}
-            disabled={!canSubmit || submitting}
-          >
-            {submitting ? "Submitting..." : "Submit Feedback"}
-          </button>
-        </div>
+        {mode === "normal" && (
+          <div className="submit-section">
+            <textarea
+              className="overall-notes-input"
+              placeholder="Overall notes (optional)"
+              rows={3}
+              value={feedback.overall_notes || ""}
+              onChange={(e) => onUpdateOverallNotes(e.target.value || null)}
+            />
+            <button
+              className="submit-btn"
+              onClick={onSubmit}
+              disabled={!canSubmit || submitting}
+            >
+              {submitting ? "Submitting..." : "Submit Feedback"}
+            </button>
+          </div>
+        )}
+
+        {isReadOnly && feedback.overall_notes && (
+          <div className="overall-notes-display">
+            <strong>Reviewer&apos;s Notes:</strong>
+            <p>{feedback.overall_notes}</p>
+          </div>
+        )}
+
+        {canOverride && (
+          <div className="submit-section override-submit">
+            <textarea
+              className="overall-notes-input override-notes"
+              placeholder="Override notes (optional)"
+              rows={3}
+              value={overrideState?.notes || ""}
+              onChange={(e) => onUpdateOverrideNotes?.(e.target.value || null)}
+            />
+            <button
+              className="submit-btn override-btn"
+              onClick={onSubmitOverride}
+              disabled={submitting}
+            >
+              {submitting ? "Submitting..." : "Submit Overrides"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

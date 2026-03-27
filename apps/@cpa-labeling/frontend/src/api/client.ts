@@ -20,7 +20,10 @@ import type {
   FeedbackSubmission,
   LabelingFeedback,
   LabelingStats,
+  OverrideFeedback,
   PaginatedResponse,
+  QueueItem,
+  QueueStatsResponse,
   RecordDetail,
   RecordListItem,
 } from "../types";
@@ -151,6 +154,26 @@ export async function fetchAudioBlobUrl(intakeId: string): Promise<string> {
 
   const blob = await response.blob();
   return URL.createObjectURL(blob);
+}
+
+export async function submitOverride(
+  feedbackId: string,
+  overrideData: OverrideFeedback,
+): Promise<LabelingFeedback> {
+  return fetchJson(`${API_BASE}/feedback/${feedbackId}/override`, {
+    method: "POST",
+    body: JSON.stringify(overrideData),
+  });
+}
+
+export async function getQueueStats(): Promise<QueueStatsResponse> {
+  return fetchJson(`${API_BASE}/queue`);
+}
+
+export async function getEvaluatorQueue(
+  evaluator: string,
+): Promise<QueueItem[]> {
+  return fetchJson(`${API_BASE}/queue/${encodeURIComponent(evaluator)}`);
 }
 
 export async function getAllFeedback(

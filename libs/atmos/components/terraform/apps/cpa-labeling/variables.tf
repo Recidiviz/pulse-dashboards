@@ -101,3 +101,8 @@ variable "ssl_certificates" {
   description = "Optional list of existing SSL certificate names. If not provided, a managed certificate will be created."
   default     = []
 }
+
+variable "recording_bucket_name" {
+  type        = string
+  description = "Name of the GCS bucket containing intake recordings (for audio streaming and transcript fetching)"
+}

@@ -77,3 +77,6 @@ class LabelingFeedback(SQLModel, table=True):
     plan_severity: str = Field(default=SeverityLevel.NONE.value)
     plan_notes: Optional[str] = None
     overall_notes: Optional[str] = None
+
+    # Override feedback (JSONB) - stores reviewer overrides of original labels
+    override_feedback: Optional[dict[str, Any]] = Field(sa_type=JSON, default=None)

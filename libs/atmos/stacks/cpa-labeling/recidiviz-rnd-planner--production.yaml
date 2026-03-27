@@ -43,5 +43,8 @@ components:
         database_availability_type: REGIONAL
         database_secondary_zone: us-central1-c
 
+        # GCS bucket for intake recordings (audio streaming + transcripts)
+        recording_bucket_name: recidiviz-recording-bucket-production
+
         # Load balancer and IAP
-        domain_name: "cpa-labeling.recidiviz.org"
+        domain_name: cpa-labeling.recidiviz.org
