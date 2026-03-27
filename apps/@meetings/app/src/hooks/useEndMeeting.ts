@@ -18,27 +18,53 @@
 import { useMutation } from "@tanstack/react-query";
 import type { inferRouterInputs } from "@trpc/server";
 
+import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import type { AppRouter } from "~@meetings/trpc-types";
 
+import { PersonType } from "../common/types";
 import { useSnackbar } from "../components/Snackbar";
-import { trpc } from "../trpc/client";
+import { useMeetingActions } from "./useMeetingActions";
+import { MeetingEventType } from "./useMeetingEventQueue";
+import { useOfflineEventFactory } from "./useOfflineEventFactory";
 
 type Params = inferRouterInputs<AppRouter>["v1"]["meeting"]["endMeeting"] & {
   personId: bigint;
+  personType: PersonType;
+  audioUri?: string;
+  audioBlob?: Blob;
 };
 
 export function useEndMeeting() {
   const { showSnackbar } = useSnackbar();
-  const utils = trpc.useUtils();
+  const { isOnline } = useIsOnline();
+  const { dispatch: dispatchOfflineEvent } = useOfflineEventFactory();
+  const { endMeeting } = useMeetingActions();
 
   return useMutation({
-    mutationFn: ({ personId: _, ...vars }: Params) =>
-      utils.client.v1.meeting.endMeeting.mutate(vars),
-    onSuccess: (_, { personId }) => {
-      utils.v1.client.getMeetings.invalidate({ clientId: personId });
-      utils.v1.resident.getMeetings.invalidate({ residentId: personId });
-      utils.v1.client.list.invalidate();
-      utils.v1.resident.list.invalidate();
+    networkMode: "always",
+    mutationFn: ({
+      personId,
+      personType,
+      audioUri,
+      audioBlob,
+      ...vars
+    }: Params) => {
+      if (!isOnline) {
+        dispatchOfflineEvent({
+          type: MeetingEventType.Ended,
+          meetingId: vars.meetingId,
+          personId,
+          personType,
+          endTime: new Date(),
+          userNotepadNotes: vars.userNotepadNotes,
+          audioUri,
+          audioBlob,
+        });
+
+        return Promise.resolve();
+      }
+
+      return endMeeting({ ...vars, personId, personType });
     },
     onError: () => showSnackbar("Failed to end meeting. Please try again."),
   });

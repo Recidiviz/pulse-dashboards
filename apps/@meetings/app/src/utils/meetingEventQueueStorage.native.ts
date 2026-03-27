@@ -16,5 +16,14 @@
 // =============================================================================
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createJSONStorage } from "zustand/middleware";
 
-export const meetingEventQueueStorage = AsyncStorage;
+export const createEventQueueStorage = () =>
+  createJSONStorage(() => AsyncStorage, {
+    reviver: (key, value) => {
+      if (key === "createdAt" && typeof value === "string") {
+        return new Date(value);
+      }
+      return value;
+    },
+  });

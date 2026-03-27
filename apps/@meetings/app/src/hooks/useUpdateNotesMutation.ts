@@ -15,18 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "../trpc/client";
+import { useMutation } from "@tanstack/react-query";
+import type { inferRouterInputs } from "@trpc/server";
 
-export function useUpdateNotesMutation(meetingId: string) {
-  const utils = trpc.useUtils();
-  const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
+import type { AppRouter } from "~@meetings/trpc-types";
+
+import useIsOnline from "./useIsOnline";
+import { useMeetingActions } from "./useMeetingActions";
+import { MeetingEventType } from "./useMeetingEventQueue";
+import { useOfflineEventFactory } from "./useOfflineEventFactory";
+
+type Params = inferRouterInputs<AppRouter>["v1"]["meeting"]["updateNotes"];
+
+export function useUpdateNotes(options?: {
+  onSuccess?: () => void;
+  onError?: () => void;
+}) {
+  const { dispatch: dispatchOfflineEvent } = useOfflineEventFactory();
+  const { isOnline } = useIsOnline();
+  const { updateNotes } = useMeetingActions();
+
+  return useMutation({
+    networkMode: "always",
+    mutationFn: (vars: Params) => {
+      if (!isOnline) {
+        dispatchOfflineEvent({
+          type: MeetingEventType.Edited,
+          meetingId: vars.meetingId,
+          userNotepadNotes: vars.userNotepadNotes,
+          criticalUpdates: vars.criticalUpdates,
+          actionItems: vars.actionItems,
+          caseNote: vars.caseNote,
+        });
+
+        return Promise.resolve();
+      }
+
+      return updateNotes(vars);
+    },
     onSuccess: () => {
-      console.log("Notes updated successfully on server");
-      utils.v1.meeting.getDetails.invalidate({ meetingId });
+      options?.onSuccess?.();
     },
     onError: (err) => {
-      console.error("[updateNotes] Failed:", err); 
+      console.error("[updateNotes] Failed:", err);
+      options?.onError?.();
     },
   });
-  return updateNotesMutation;
-};
+}

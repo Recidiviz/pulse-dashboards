@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import useIsOnline from "./useIsOnline";
 
-export const createMeetingInputSchema = z.object({
-  clientId: z.bigint(),
-  startTime: z.date(),
-  meetingId: z.string().cuid2(),
-});
+export function useProcessingText() {
+  const { isOnline } = useIsOnline();
 
-export const getMeetingsInputSchema = z.object({
-  clientId: z.bigint(),
-});
+  return {
+    title: isOnline
+      ? "Recording is being processed..."
+      : "No internet connection...",
+    subtitle: isOnline
+      ? "The notes and transcript will become available in a few minutes"
+      : "The recording will upload automatically when you're back online",
+  };
+}

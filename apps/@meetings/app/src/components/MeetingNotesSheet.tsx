@@ -35,8 +35,8 @@ import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplic
 
 import { theme } from "../common/theme";
 import { MeetingDetails } from "../common/types";
+import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
 import { Typography } from "../shared/ui/Typography";
-import { trpc } from "../trpc/client";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
 import { useSnackbar } from "./Snackbar";
@@ -52,7 +52,6 @@ const MeetingNotesSheet = ({
   clientName,
   bottomSheetRef,
 }: Props) => {
-  const utils = trpc.useUtils();
   const [actionItems, setActionItems] = useState(
     meetingDetails.actionItems || [],
   );
@@ -63,16 +62,12 @@ const MeetingNotesSheet = ({
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
 
-  const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
+  const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       showSnackbar("Changes saved");
-      utils.v1.meeting.getDetails.invalidate({ meetingId: meetingDetails.id });
       bottomSheetRef.current?.close();
     },
-    onError: (err) => {
-      showSnackbar("Failed to save changes");
-      console.error("[updateNotes] Failed", err);
-    },
+    onError: () => showSnackbar("Failed to save changes"),
   });
 
   const FOOTER_HEIGHT = 88;
@@ -89,6 +84,7 @@ const MeetingNotesSheet = ({
       userNotepadNotes: meetingDetails.userNotepadNotes || "",
       actionItems,
       criticalUpdates,
+      caseNote: meetingDetails.caseNote || "",
     });
   };
 

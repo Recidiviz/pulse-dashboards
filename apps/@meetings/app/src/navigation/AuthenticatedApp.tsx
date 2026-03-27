@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { httpBatchLink } from "@trpc/client";
 import React from "react";
 import superjson from "superjson";
-
-import { AudioUpload } from "~@meetings/app/features/audio-upload";
 
 import {
   DEFAULT_STATE_CODE,
@@ -29,11 +28,19 @@ import {
 } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import env from "../env";
-import { RecordingProvider } from "../features/recording";
 import { trpc } from "../trpc/client";
-import DrawerNavigator from "./DrawerNavigator";
+import { queryCachePersister } from "../utils/queryCachePersister";
+import { AuthenticatedContent } from "./AuthenticatedContent";
 
-const queryClient = new QueryClient();
+const ONE_WEEK_MS = 1000 * 60 * 60 * 24 * 7;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: ONE_WEEK_MS,
+    },
+  },
+});
 
 /**
  * Sets up tRPC client and provides it to the app.
@@ -83,14 +90,14 @@ const AuthenticatedApp: React.FC = () => {
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister: queryCachePersister, maxAge: ONE_WEEK_MS }}
+      >
         <StateCodeProvider selectedStateRef={selectedStateRef}>
-          <RecordingProvider>
-            <DrawerNavigator />
-            <AudioUpload />
-          </RecordingProvider>
+          <AuthenticatedContent />
         </StateCodeProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </trpc.Provider>
   );
 };

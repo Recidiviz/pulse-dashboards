@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext } from "react";
+import { createContext, useRef } from "react";
 
-import { Person } from "~@meetings/app/common/types";
+import { getPersonType, Person } from "~@meetings/app/common/types";
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
+import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDurationTimer } from "../hooks/useDurationTimer";
@@ -50,6 +51,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   } = useRecordingStore();
 
   const timer = useDurationTimer();
+  const { isOnline } = useIsOnline();
+  const pendingOfflineBlobRef = useRef<Blob | null>(null);
 
   const hasHydrated = useRecordingStoreHydrated();
 
@@ -105,23 +108,25 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
-  const stopAndUploadRecording = async () => {
+  const stopAndUploadRecording = async (): Promise<Blob | null> => {
     if (!meetingId) throw new Error("meetingId is required for uploading");
 
     try {
       const blob = await recorder.stop();
-      let uriToUpload: string | null = null;
 
-      if (blob) {
-        uriToUpload = URL.createObjectURL(blob);
-      } else {
-        return console.warn("No recording found to upload");
+      if (!blob) {
+        return null;
       }
 
-      await uploadSegment({ uri: uriToUpload, meetingId });
+      if (!isOnline) {
+        return blob;
+      }
 
+      const uriToUpload = URL.createObjectURL(blob);
+      await uploadSegment({ uri: uriToUpload, meetingId });
       await recorder.cleanup();
       URL.revokeObjectURL(uriToUpload);
+      return null;
     } catch (err) {
       setStatus("paused");
       throw err;
@@ -154,7 +159,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const pauseRecording = async () => {
     setStatus("uploading");
-    await stopAndUploadRecording();
+    const blob = await stopAndUploadRecording();
+    if (blob) {
+      pendingOfflineBlobRef.current = blob;
+    }
     const duration = timer.stop();
     if (duration) setPersistedDurationMs(duration);
   };
@@ -189,8 +197,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     setStatus("ending");
 
     try {
+      let audioBlob: Blob | undefined;
       if (recorder.isRecording) {
-        await stopAndUploadRecording();
+        const blob = await stopAndUploadRecording();
+        if (blob) audioBlob = blob;
+      } else {
+        audioBlob = pendingOfflineBlobRef.current ?? undefined;
+        pendingOfflineBlobRef.current = null;
       }
 
       const userNotepadNotes = note;
@@ -198,6 +211,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         userNotepadNotes,
         personId: person.personId,
+        personType: getPersonType(person),
+        audioBlob,
       });
       await cleanupRecording();
       closeRecordingView();
@@ -214,8 +229,12 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
 
     await cleanupRecording();
-    await discardMeeting({ meetingId, personId: person.personId });
     closeRecordingView();
+    await discardMeeting({
+      meetingId,
+      personId: person.personId,
+      personType: getPersonType(person),
+    });
   };
 
   return (

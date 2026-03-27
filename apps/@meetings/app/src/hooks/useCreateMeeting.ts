@@ -20,7 +20,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Alert } from "react-native";
 
 import { Person, PersonType } from "../common/types";
-import { trpc } from "../trpc/client";
+import useIsOnline from "./useIsOnline";
+import { useMeetingActions } from "./useMeetingActions";
+import { MeetingEventType } from "./useMeetingEventQueue";
+import { useOfflineEventFactory } from "./useOfflineEventFactory";
 
 type Params = {
   person: Person;
@@ -29,26 +32,34 @@ type Params = {
 };
 
 export function useCreateMeeting({ person, personType, onSuccess }: Params) {
-  const utils = trpc.useUtils();
+  const { isOnline } = useIsOnline();
+  const { dispatch: dispatchOfflineEvent } = useOfflineEventFactory();
+  const { createMeeting } = useMeetingActions();
 
   const { mutate: handleCreateMeeting, isPending: isCreating } = useMutation({
+    networkMode: "always",
     mutationFn: async () => {
       const meetingId = createId();
       const startTime = new Date();
 
-      if (personType === "client") {
-        await utils.client.v1.client.createMeeting.mutate({
-          clientId: person.personId,
-          startTime,
+      if (!isOnline) {
+        dispatchOfflineEvent({
+          type: MeetingEventType.Created,
           meetingId,
-        });
-      } else {
-        await utils.client.v1.resident.createMeeting.mutate({
-          residentId: person.personId,
+          personId: person.personId,
+          personType,
           startTime,
-          meetingId,
         });
+
+        return meetingId;
       }
+
+      await createMeeting({
+        personId: person.personId,
+        personType,
+        meetingId,
+        startTime,
+      });
 
       return meetingId;
     },

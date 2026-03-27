@@ -18,28 +18,55 @@
 import { useMutation } from "@tanstack/react-query";
 import { inferRouterInputs } from "@trpc/server";
 
+import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import type { AppRouter } from "~@meetings/trpc-types";
 
+import { PersonType } from "../common/types";
 import { useSnackbar } from "../components/Snackbar";
-import { trpc } from "../trpc/client";
+import { useMeetingActions } from "./useMeetingActions";
+import { MeetingEventType, useMeetingEventQueue } from "./useMeetingEventQueue";
+import { useOfflineEventFactory } from "./useOfflineEventFactory";
 
 type Params =
   inferRouterInputs<AppRouter>["v1"]["meeting"]["discardMeeting"] & {
     personId: bigint;
+    personType: PersonType;
   };
 
 export function useDiscardMeeting() {
   const { showSnackbar } = useSnackbar();
-  const utils = trpc.useUtils();
+  const { isOnline } = useIsOnline();
+  const { dispatch: dispatchOfflineEvent, removeMeetingFromCache } =
+    useOfflineEventFactory();
+  const { removeEventsOfType } = useMeetingEventQueue();
+  const { discardMeeting } = useMeetingActions();
 
   return useMutation({
-    mutationFn: ({ personId: _, ...vars }: Params) =>
-      utils.client.v1.meeting.discardMeeting.mutate(vars),
-    onSuccess: (_, { personId }) => {
-      utils.v1.client.getMeetings.invalidate({ clientId: personId });
-      utils.v1.resident.getMeetings.invalidate({ residentId: personId });
-      utils.v1.client.list.invalidate();
-      utils.v1.resident.list.invalidate();
+    networkMode: "always",
+    mutationFn: ({ personId, personType, ...vars }: Params) => {
+      if (!isOnline) {
+        // If this meeting was _created_ while offline,
+        // don't even bother creating a discard event -
+        // instead, just drop the original creation event
+        const removedCreatedEvents = removeEventsOfType(
+          vars.meetingId,
+          MeetingEventType.Created,
+        );
+
+        if (removedCreatedEvents.length === 0) {
+          dispatchOfflineEvent({
+            type: MeetingEventType.Discarded,
+            meetingId: vars.meetingId,
+            personId,
+            personType,
+          });
+        } else {
+          removeMeetingFromCache(vars.meetingId, personId, personType);
+        }
+
+        return Promise.resolve();
+      }
+      return discardMeeting({ ...vars, personId, personType });
     },
     onError: () => showSnackbar("Failed to discard meeting. Please try again."),
   });

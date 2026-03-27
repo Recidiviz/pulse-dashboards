@@ -38,7 +38,7 @@ import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
 import { usePrintMeetingDetails } from "../hooks/usePrintMeetingDetails";
-import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
+import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
 import { Typography } from "../shared/ui/Typography";
 import {
   formatMeetingDuration,
@@ -54,7 +54,7 @@ type DraftCaseNoteProps = {
 };
 
 const DraftCaseNote = ({ meetingId, notes }: DraftCaseNoteProps) => {
-  const updateNotesMutation = useUpdateNotesMutation(meetingId);
+  const updateNotesMutation = useUpdateNotes();
   const [isEditable, setIsEditable] = useState(false);
   const [inputNotes, setInputNotes] = useState(notes || "");
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();

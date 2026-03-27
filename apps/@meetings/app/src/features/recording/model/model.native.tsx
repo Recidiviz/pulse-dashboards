@@ -32,10 +32,12 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 
+import { getPersonType } from "~@meetings/app/common/types";
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import { trpc } from "~@meetings/app/trpc/client";
+import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
 
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useNote } from "../hooks/useNote";
@@ -82,13 +84,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     durationMs: persistedDurationMs,
     setDurationMs: setPersistedDurationMs,
   } = useRecordingStore();
+  const { isOnline } = useIsOnline();
   const { mutateAsync: endMeeting } = useEndMeeting();
   const { mutateAsync: discardMeeting } = useDiscardMeeting();
-  const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
-    onError: (err) => {
-      console.error("[updateNotes] Failed:", err);
-    },
-  });
+  const updateNotesMutation = useUpdateNotes();
   const hasHydrated = useRecordingStoreHydrated();
 
   const { durationMs: persistedFileDurationMs } = usePersistedFileDuration(
@@ -234,6 +233,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await setStatus("paused"); // fallback safe state
       throw err;
     }
+    return null;
   };
 
   const stopRecording = async () => {
@@ -268,6 +268,21 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       }
       const duration = timer.stop();
       if (duration) setPersistedDurationMs(duration);
+
+      if (!isOnline) {
+        // Offline: stop the recorder and save the URI locally; skip upload
+        if (recorderState.isRecording) {
+          await audioRecorder.stop();
+          const uri = audioRecorder.uri;
+          if (uri) {
+            await saveRecordingUri(uri);
+            setPersistedRecordingUri(uri);
+          }
+        }
+        await setStatus("paused");
+        return;
+      }
+
       await setStatus("uploading");
       await stopAndUploadRecording();
       await setStatus("paused");
@@ -299,10 +314,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
       const userNotepadNotes = note;
       setNote("");
+      const audioUri = persistedRecordingUri ?? audioRecorder.uri ?? undefined;
       await endMeeting({
         meetingId,
         userNotepadNotes,
         personId: person.personId,
+        personType: getPersonType(person),
+        audioUri,
       });
       await cleanupRecording();
       onComplete?.();
@@ -318,8 +336,12 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       throw new Error("Cannot discard meeting without a meeting ID and person");
 
     await cleanupRecording();
-    await discardMeeting({ meetingId, personId: person.personId });
     onComplete?.();
+    await discardMeeting({
+      meetingId,
+      personId: person.personId,
+      personType: getPersonType(person),
+    });
   };
 
   // Auto-stop recording when 90-minute limit is reached

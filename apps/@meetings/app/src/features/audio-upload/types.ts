@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type AudioUploadStatus = "selecting" | "uploading" | "uploaded" | null;
+export type AudioUploadStatus =
+  | "selecting"
+  | "uploading"
+  | "uploaded"
+  | "confirming-error"
+  | null;
 
 export type AudioUploadDialog = "cancel" | "error" | "success" | null;
 

@@ -21,6 +21,7 @@ import React from "react";
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
+import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDurationTimer } from "../hooks/useDurationTimer";
@@ -36,6 +37,10 @@ jest.mock("../hooks/useAudioRecorder.web");
 jest.mock("../utils/webRecorderDb.web");
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
+jest.mock("~@meetings/app/hooks/useIsOnline", () => ({
+  __esModule: true,
+  default: jest.fn().mockReturnValue({ isOnline: true }),
+}));
 jest.mock("../hooks/useDurationTimer");
 jest.mock("../hooks/useInitialization.web", () => ({
   useInitialization: jest.fn(),
@@ -144,6 +149,7 @@ describe("RecordingProvider (web)", () => {
     global.URL.createObjectURL = jest.fn().mockReturnValue(BLOB_URL);
     global.URL.revokeObjectURL = jest.fn();
     global.alert = jest.fn();
+    (useIsOnline as jest.Mock).mockReturnValue({ isOnline: true });
   });
 
   it("provides correct initial context values", () => {
@@ -278,6 +284,24 @@ describe("RecordingProvider (web)", () => {
           "meetingId is required for uploading",
         );
       });
+    });
+
+    it("when offline: stops recorder, returns blob without uploading or cleaning up", async () => {
+      (useIsOnline as jest.Mock).mockReturnValue({ isOnline: false });
+
+      const { result } = renderHook(() => useRecording<"web">(), {
+        wrapper: buildWrapper(),
+      });
+
+      let returnedBlob: Blob | null = null;
+      await act(async () => {
+        returnedBlob = await result.current.stopAndUploadRecording();
+      });
+
+      expect(mockRecorderStop).toHaveBeenCalled();
+      expect(mockUploadSegment).not.toHaveBeenCalled();
+      expect(mockRecorderCleanup).not.toHaveBeenCalled();
+      expect(returnedBlob).toBeInstanceOf(Blob);
     });
   });
 
@@ -442,6 +466,8 @@ describe("RecordingProvider (web)", () => {
         meetingId: MEETING_ID,
         userNotepadNotes: "my notes",
         personId: mockPerson.personId,
+        personType: "resident",
+        audioBlob: undefined,
       });
       expect(mockRecorderCleanup).toHaveBeenCalled();
       expect(mockSetMeetingId).toHaveBeenCalledWith(null);
@@ -485,6 +511,51 @@ describe("RecordingProvider (web)", () => {
       });
     });
 
+    it("when offline: passes blob from stopped recording to endMeeting", async () => {
+      const mockBlob = new Blob(["audio"], { type: "audio/webm" });
+      mockRecorderStop.mockResolvedValueOnce(mockBlob);
+
+      (useIsOnline as jest.Mock).mockReturnValue({ isOnline: false });
+      (useRecordingStore as unknown as jest.Mock).mockReturnValue({
+        ...defaultStoreValues,
+        status: "recording",
+        note: "my notes",
+      });
+      (useWebAudioRecorder as jest.Mock).mockReturnValue({
+        start: mockRecorderStart,
+        stop: mockRecorderStop,
+        cleanup: mockRecorderCleanup,
+        isRecording: true,
+      });
+
+      const { result, rerender } = renderHook(() => useRecording<"web">(), {
+        wrapper: buildWrapper(),
+      });
+
+      // Stop recording offline — blob is stored in pendingOfflineBlobRef
+      await act(async () => {
+        await result.current.stopRecording();
+      });
+
+      // Simulate recorder having fully stopped
+      (useWebAudioRecorder as jest.Mock).mockReturnValue({
+        start: mockRecorderStart,
+        stop: mockRecorderStop,
+        cleanup: mockRecorderCleanup,
+        isRecording: false,
+      });
+      rerender(() => useRecording<"web">());
+
+      await act(async () => {
+        await result.current.handleFinishAndSave();
+      });
+
+      expect(mockUploadSegment).not.toHaveBeenCalled();
+      expect(mockEndMeeting).toHaveBeenCalledWith(
+        expect.objectContaining({ audioBlob: mockBlob }),
+      );
+    });
+
     it("shows alert and resets to idle when endMeeting fails", async () => {
       mockEndMeeting.mockRejectedValueOnce(new Error("Server error"));
       const consoleSpy = jest
@@ -519,6 +590,7 @@ describe("RecordingProvider (web)", () => {
       expect(mockDiscardMeeting).toHaveBeenCalledWith({
         meetingId: MEETING_ID,
         personId: mockPerson.personId,
+        personType: "resident",
       });
       expect(mockSetMeetingId).toHaveBeenCalledWith(null);
     });

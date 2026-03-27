@@ -34,6 +34,8 @@ module.exports = {
     // Fixes https://stackoverflow.com/questions/57749271/fbbatchedbridgeconfig-is-not-set-when-running-jest-tests
     "^react-native$": require.resolve("react-native"),
     "^~@meetings/app/(.*)$": "<rootDir>/src/$1",
+    "@react-native-community/netinfo":
+      "@react-native-community/netinfo/jest/netinfo-mock.js",
   },
   transform: {
     "\\.[jt]sx?$": [

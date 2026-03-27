@@ -16,10 +16,3 @@
 // =============================================================================
 
 export { RecordingProvider, useRecording } from "./model";
-export type {
-  CreateMeetingEvent,
-  DiscardMeetingEvent,
-  EndMeetingEvent,
-  MeetingEvent,
-} from "./utils/useMeetingEventQueue";
-export { useMeetingEventQueue } from "./utils/useMeetingEventQueue";

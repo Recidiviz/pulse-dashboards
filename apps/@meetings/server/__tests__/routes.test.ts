@@ -620,7 +620,7 @@ describe("tasks", () => {
       };
       const updatedDeepgramResult = {
         results: {
-          channels: [{ language_confidence: 0.75 }],
+          channels: [{ alternatives: [{ confidence: 0.75 }] }],
           summary: { result: "Updated Deepgram summary from retry." },
           utterances: [
             {

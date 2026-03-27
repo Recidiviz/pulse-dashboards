@@ -19,6 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { PersonType } from "~@meetings/app/common/types";
+
 import { AudioUploadDialog, AudioUploadStatus, FileInfo } from "./types";
 
 type AudioUploadStore = {
@@ -27,6 +29,7 @@ type AudioUploadStore = {
   dialog: AudioUploadDialog;
   meetingId: string | null;
   personId: bigint | null;
+  personType: PersonType | null;
   file: FileInfo | null;
   error: string | null; // file uploading error
 
@@ -40,7 +43,11 @@ type AudioUploadStore = {
   setFile: (file: FileInfo | null) => void;
   setError: (error: string | null) => void;
   setUploadProgress: (uploaded: number, total: number) => void;
-  open: (params: { personId: bigint; meetingId: string }) => void;
+  open: (params: {
+    personId: bigint;
+    personType: PersonType;
+    meetingId: string;
+  }) => void;
   reset: () => void;
 };
 
@@ -49,6 +56,7 @@ const initialState = {
   dialog: null,
   meetingId: null,
   personId: null,
+  personType: null,
   file: null,
   error: null,
   uploadedBytes: 0,
@@ -67,8 +75,14 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       setError: (error) => set({ error }),
       setUploadProgress: (uploadedBytes, totalBytes) =>
         set({ uploadedBytes, totalBytes }),
-      open: ({ personId, meetingId }) =>
-        set({ ...initialState, personId, meetingId, status: "selecting" }),
+      open: ({ personId, personType, meetingId }) =>
+        set({
+          ...initialState,
+          personId,
+          personType,
+          meetingId,
+          status: "selecting",
+        }),
       reset: () => set(initialState),
     }),
     {

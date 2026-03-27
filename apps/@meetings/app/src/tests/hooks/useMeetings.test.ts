@@ -20,6 +20,10 @@ import { renderHook } from "@testing-library/react-native";
 import { useMeetings } from "../../hooks/useMeetings";
 import { trpc } from "../../trpc/client";
 
+jest.mock("@react-native-async-storage/async-storage", () =>
+  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
+);
+
 jest.mock("../../trpc/client", () => ({
   __esModule: true,
   trpc: {
@@ -73,7 +77,7 @@ describe("useMeetings", () => {
         useMeetings({ personId, personType: "client" }),
       );
 
-      expect(result.current.data).toBe(clientData);
+      expect(result.current.data).toEqual(clientData);
     });
   });
 
@@ -104,7 +108,7 @@ describe("useMeetings", () => {
         useMeetings({ personId, personType: "resident" }),
       );
 
-      expect(result.current.data).toBe(residentData);
+      expect(result.current.data).toEqual(residentData);
     });
   });
 });

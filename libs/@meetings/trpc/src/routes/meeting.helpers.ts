@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 
 import {
@@ -38,7 +37,7 @@ export async function createMeetingForPerson({
   personId: bigint;
   startTime: Date;
   personType: "client" | "resident";
-  meetingId?: string;
+  meetingId: string;
 }) {
   if (env.DEPLOY_ENV === "production" && user.isRecidivizUser) {
     throw new TRPCError({
@@ -46,10 +45,6 @@ export async function createMeetingForPerson({
       message: "Recidiviz users may not create meetings in production",
     });
   }
-
-  // TODO - AVild: Remove this logic once we remove meeting ID as
-  // optional
-  meetingId = meetingId ?? createId();
 
   return await prisma.meeting.create({
     data: {

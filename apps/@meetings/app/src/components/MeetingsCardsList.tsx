@@ -25,6 +25,7 @@ import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
+import { useProcessingText } from "../hooks/useProcessingText";
 import { Typography } from "../shared/ui/Typography";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import MeetingInProgressBar from "./MeetingInProgressBar";
@@ -51,6 +52,8 @@ const MeetingsCardsList = ({
   personType,
 }: MeetingCardProps) => {
   const { status: recordingState } = useRecording<"native">();
+  const { title: processingTitle, subtitle: processingSubtitle } =
+    useProcessingText();
   return meetings.map((meeting, index) => {
     const isMeetingInProgress =
       recordingState !== "idle" && meeting.status === "NOT_STARTED";
@@ -104,11 +107,10 @@ const MeetingsCardsList = ({
 
                   <View className="ml-2 flex-1">
                     <Typography className="text-base font-semibold text-primary">
-                      Recording is being processed...
+                      {processingTitle}
                     </Typography>
                     <Typography className="text-sm font-medium text-gray-700">
-                      The notes and transcript will become available in a few
-                      minutes
+                      {processingSubtitle}
                     </Typography>
                   </View>
                 </View>

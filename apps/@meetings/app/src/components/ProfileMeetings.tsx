@@ -108,6 +108,7 @@ const ProfileMeetings = ({
     onSuccess: (meetingId) => {
       openAudioUpload({
         personId: person.personId,
+        personType: type,
         meetingId,
       });
     },
@@ -376,8 +377,8 @@ const ProfileMeetings = ({
                   onPress={() => handleAudioUpload()}
                   disabled={isUploadCreating}
                 >
-                  <UploadIcon className="size-4 fill-[#006C67]" />
-                  <Typography className="font-medium text-[#006C67]">
+                  <UploadIcon className="size-4 fill-brand" />
+                  <Typography className="font-medium text-brand">
                     Upload
                   </Typography>
                 </TouchableOpacity>

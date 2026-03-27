@@ -29,7 +29,8 @@ import { Alert } from "react-native";
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import { trpc } from "~@meetings/app/trpc/client";
+import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
 
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useNote } from "../hooks/useNote";
@@ -56,18 +57,13 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("~@meetings/app/trpc/client", () => ({
-  trpc: {
-    v1: {
-      meeting: {
-        updateNotes: { useMutation: jest.fn() },
-      },
-    },
-  },
-}));
-
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
+jest.mock("~@meetings/app/hooks/useIsOnline", () => ({
+  __esModule: true,
+  default: jest.fn().mockReturnValue({ isOnline: true }),
+}));
+jest.mock("~@meetings/app/hooks/useUpdateNotesMutation");
 jest.mock("../hooks/useDurationTimer");
 jest.mock("../hooks/useNote");
 jest.mock("../hooks/usePersistedFileDuration.native", () => ({
@@ -145,9 +141,8 @@ describe("RecordingProvider (native)", () => {
       setDurationMs: mockSetPersistedDurationMs,
     });
     (useRecordingStoreHydrated as unknown as jest.Mock).mockReturnValue(true);
-    (trpc.v1.meeting.updateNotes.useMutation as jest.Mock).mockReturnValue({
+    (useUpdateNotes as jest.Mock).mockReturnValue({
       mutateAsync: mockUpdateNotes,
-      onError: undefined,
     });
 
     (
@@ -166,6 +161,7 @@ describe("RecordingProvider (native)", () => {
       undefined,
     );
     (notifications.sendNotification as jest.Mock).mockReturnValue(undefined);
+    (useIsOnline as jest.Mock).mockReturnValue({ isOnline: true });
   });
 
   it("provides correct initial context values", async () => {
@@ -332,6 +328,31 @@ describe("RecordingProvider (native)", () => {
       expect(mockAudioRecorder.prepareToRecordAsync).not.toHaveBeenCalled();
       expect(mockUploadSegment).not.toHaveBeenCalled();
     });
+
+    it("when offline: stops recorder, saves URI, sets paused without uploading", async () => {
+      (useIsOnline as jest.Mock).mockReturnValue({ isOnline: false });
+      (useRecordingStatus as jest.Mock).mockReturnValue([
+        "recording",
+        mockSetStatus,
+      ]);
+      (useAudioRecorderState as jest.Mock).mockReturnValue({
+        isRecording: true,
+      });
+      (useNote as jest.Mock).mockReturnValue(["my notes", mockSetNote]);
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.togglePauseResume();
+      });
+
+      expect(mockAudioRecorder.stop).toHaveBeenCalled();
+      expect(storage.saveRecordingUri).toHaveBeenCalledWith(RECORDING_URI);
+      expect(mockSetStatus).toHaveBeenCalledWith("paused");
+      expect(mockUploadSegment).not.toHaveBeenCalled();
+    });
   });
 
   describe("cleanupRecording", () => {
@@ -368,6 +389,8 @@ describe("RecordingProvider (native)", () => {
         meetingId: MEETING_ID,
         userNotepadNotes: "my notes",
         personId: mockPerson.personId,
+        personType: "resident",
+        audioUri: RECORDING_URI,
       });
       expect(storage.removeRecordingUri).toHaveBeenCalled();
       expect(onComplete).toHaveBeenCalled();
@@ -429,6 +452,7 @@ describe("RecordingProvider (native)", () => {
       expect(mockDiscardMeeting).toHaveBeenCalledWith({
         meetingId: MEETING_ID,
         personId: mockPerson.personId,
+        personType: "resident",
       });
       expect(onComplete).toHaveBeenCalled();
     });

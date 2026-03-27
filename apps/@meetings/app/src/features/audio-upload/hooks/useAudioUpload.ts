@@ -116,12 +116,13 @@ export function useAudioUpload() {
 
   const confirmUpload = useCallback(async () => {
     try {
-      if (!store.meetingId || !store.personId) {
-        throw new Error("meetingId and personId are required");
+      if (!store.meetingId || !store.personId || !store.personType) {
+        throw new Error("meetingId, personId, and personType are required");
       }
       await endMeetingMutation.mutateAsync({
         meetingId: store.meetingId,
         personId: store.personId,
+        personType: store.personType,
       });
       store.setDialog("success");
     } catch (error) {
@@ -137,13 +138,14 @@ export function useAudioUpload() {
     }
 
     try {
-      if (!store.meetingId || !store.personId) {
-        throw new Error("meetingId and personId are required");
+      if (!store.meetingId || !store.personId || !store.personType) {
+        throw new Error("meetingId, personId, and personType are required");
       }
       await deleteRecordings({ meetingId: store.meetingId });
       await discardMeetingMutation.mutateAsync({
         meetingId: store.meetingId,
         personId: store.personId,
+        personType: store.personType,
       });
       store.reset();
     } catch (error) {
@@ -153,7 +155,13 @@ export function useAudioUpload() {
 
   const continueUpload = useCallback(() => {
     store.setDialog(null);
+    store.setStatus("uploading");
   }, [store]);
+
+  const retryUpload = useCallback(async () => {
+    if (store.status !== "confirming-error") return;
+    await confirmUpload();
+  }, [store.status, confirmUpload]);
 
   const requestCancel = useCallback(() => {
     store.setDialog("cancel");
@@ -170,6 +178,7 @@ export function useAudioUpload() {
     confirmUpload,
     discardUpload,
     continueUpload,
+    retryUpload,
 
     requestCancel,
 

@@ -23,8 +23,8 @@ import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 import type { MinuteSection } from "~@meetings/trpc-types";
 
 import { MeetingDetails } from "../common/types";
+import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
 import { Typography } from "../shared/ui/Typography";
-import { trpc } from "../trpc/client";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";
 import { useSnackbar } from "./Snackbar";
 
@@ -256,7 +256,6 @@ const MeetingNotesTab = ({
   meetingDetails,
   onMeetingNotesSheetOpen,
 }: Props) => {
-  const utils = trpc.useUtils();
   const { showSnackbar } = useSnackbar();
   const [isEditing, setIsEditing] = useState(false);
   const [actionItems, setActionItems] = useState(
@@ -271,16 +270,12 @@ const MeetingNotesTab = ({
     setCriticalUpdates(meetingDetails.criticalUpdates || []);
   }, [meetingDetails.actionItems, meetingDetails.criticalUpdates]);
 
-  const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
+  const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       showSnackbar("Changes saved");
       setIsEditing(false);
-      utils.v1.meeting.getDetails.invalidate({ meetingId: meetingDetails.id });
     },
-    onError: (err) => {
-      showSnackbar("Failed to save changes");
-      console.error("[updateNotes] Failed", err);
-    },
+    onError: () => showSnackbar("Failed to save changes"),
   });
 
   const onCopyNotes = () => {
@@ -309,6 +304,7 @@ const MeetingNotesTab = ({
       userNotepadNotes: meetingDetails.userNotepadNotes || "",
       actionItems,
       criticalUpdates,
+      caseNote: meetingDetails.caseNote || "",
     });
   };
 

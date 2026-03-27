@@ -35,7 +35,7 @@ import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplic
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { theme } from "../common/theme";
-import { useUpdateNotesMutation } from "../hooks/useUpdateNotesMutation";
+import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
 import { Typography } from "../shared/ui/Typography";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
 import { useSnackbar } from "./Snackbar";
@@ -56,7 +56,7 @@ const DraftCaseNoteSheet = ({
   ref,
 }: Props) => {
   const { bottom: bottomSafeArea } = useSafeAreaInsets();
-  const updateNotesMutation = useUpdateNotesMutation(meetingId);
+  const updateNotesMutation = useUpdateNotes();
   const [inputNotes, setInputNotes] = useState(notes || "");
   const snapPoints = useMemo(() => ["70%", "90%"], []);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);

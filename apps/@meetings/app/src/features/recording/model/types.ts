@@ -47,7 +47,7 @@ export type RecordingBase = {
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
   discardRecording: () => Promise<void>;
-  stopAndUploadRecording: () => Promise<void>;
+  stopAndUploadRecording: () => Promise<Blob | null>;
 
   togglePauseResume: () => Promise<void>;
 

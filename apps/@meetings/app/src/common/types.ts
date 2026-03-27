@@ -43,6 +43,10 @@ export type Person = Client | Resident;
 
 export type PersonType = "client" | "resident";
 
+export function getPersonType(person: Person): PersonType {
+  return "supervisionType" in person ? "client" : "resident";
+}
+
 export type MeetingDetails = Awaited<
   ReturnType<AppRouter["v1"]["meeting"]["getDetails"]>
 >;

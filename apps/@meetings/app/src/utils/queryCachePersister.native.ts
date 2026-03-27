@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import superjson from "superjson";
 
-export const createMeetingInputSchema = z.object({
-  clientId: z.bigint(),
-  startTime: z.date(),
-  meetingId: z.string().cuid2(),
-});
-
-export const getMeetingsInputSchema = z.object({
-  clientId: z.bigint(),
+export const queryCachePersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+  key: "meetings-query-cache",
+  serialize: superjson.stringify,
+  deserialize: superjson.parse,
 });

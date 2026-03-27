@@ -20,7 +20,7 @@ import { z } from "zod";
 export const createMeetingInputSchema = z.object({
   residentId: z.bigint(),
   startTime: z.date(),
-  meetingId: z.string().cuid2().optional(),
+  meetingId: z.string().cuid2(),
 });
 
 export const getMeetingsInputSchema = z.object({

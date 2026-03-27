@@ -59,6 +59,7 @@ const mockReset = jest.fn();
 
 const MEETING_ID = "meeting-123";
 const PERSON_ID = BigInt(456);
+const PERSON_TYPE = "client" as const;
 
 const validRawFile: RawFileInfo = {
   uri: "file:///test/audio.m4a",
@@ -73,6 +74,7 @@ function mockStoreWith(overrides: Record<string, unknown> = {}) {
     dialog: null,
     meetingId: MEETING_ID,
     personId: PERSON_ID,
+    personType: PERSON_TYPE,
     file: null,
     error: null,
     setError: mockSetError,
@@ -296,6 +298,7 @@ describe("useAudioUpload", () => {
       expect(mockEndMeeting).toHaveBeenCalledWith({
         meetingId: MEETING_ID,
         personId: PERSON_ID,
+        personType: PERSON_TYPE,
       });
       expect(mockSetDialog).toHaveBeenCalledWith("success");
     });
@@ -340,6 +343,7 @@ describe("useAudioUpload", () => {
       expect(mockDiscardMeeting).toHaveBeenCalledWith({
         meetingId: MEETING_ID,
         personId: PERSON_ID,
+        personType: PERSON_TYPE,
       });
       expect(mockReset).toHaveBeenCalled();
     });
@@ -396,8 +400,37 @@ describe("useAudioUpload", () => {
         result.current.continueUpload();
       });
 
-      expect(mockSetDialog).toHaveBeenCalledWith(null);
-      expect(mockSetStatus).not.toHaveBeenCalled();
+      expect(mockSetStatus).toHaveBeenCalledWith("uploading");
+    });
+  });
+
+  describe("retryUpload", () => {
+    it("retries confirmUpload when status is confirming-error", async () => {
+      mockStoreWith({ status: "confirming-error" });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.retryUpload();
+      });
+
+      expect(mockEndMeeting).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+        personId: PERSON_ID,
+        personType: PERSON_TYPE,
+      });
+    });
+
+    it("does nothing when status is not confirming-error", async () => {
+      mockStoreWith({ status: "uploading" });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.retryUpload();
+      });
+
+      expect(mockEndMeeting).not.toHaveBeenCalled();
     });
   });
 
