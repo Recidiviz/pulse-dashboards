@@ -20,10 +20,6 @@ import {
   printFormattedRecordString,
 } from "../../../../../../src/utils/utils";
 import { SARInsight } from "../../../../../api";
-import {
-  AssessmentTypeKey,
-  getOrasBucketScoreRange,
-} from "../../../../OffenderAssessment/assessmentTypeUtils";
 import { getDescriptionGender } from "../common/utils";
 import * as Styled from "../components/Styles";
 import { HISTORICAL_PRECEDENT_TEXT } from "../constants";
@@ -35,21 +31,12 @@ const BUCKET_TO_RISK_LEVEL: Record<number, string> = {
   3: "very high risk",
 };
 
-const ORAS_ABBREVIATION: Partial<Record<AssessmentTypeKey, string>> = {
-  ORAS_CST: "CST",
-  ORAS_SRT: "SRT",
-  ORAS_PIT: "PIT",
-  ORAS_RT: "RT",
-};
-
 interface SARDispositionChartExplanationProps {
   insight: NonNullable<SARInsight>;
-  assessmentType: AssessmentTypeKey | null;
 }
 
 export function SARDispositionChartExplanation({
   insight,
-  assessmentType,
 }: SARDispositionChartExplanationProps) {
   const {
     gender,
@@ -62,15 +49,8 @@ export function SARDispositionChartExplanation({
   const genderString = getDescriptionGender(gender);
   const riskLevel =
     BUCKET_TO_RISK_LEVEL[assessmentScoreBucketStart] ?? "unknown risk";
-  const orasAbbrev =
-    assessmentType !== null ? ORAS_ABBREVIATION[assessmentType] ?? null : null;
-  const orasRange =
-    assessmentType !== null
-      ? getOrasBucketScoreRange(assessmentScoreBucketStart, assessmentType)
-      : null;
-  const orasLabel =
-    orasAbbrev && orasRange ? `ORAS-${orasAbbrev} ${orasRange}` : null;
-  const offenseDescriptor = offenseCategory ?? formatOffenseLabel(offense);
+  const offenseDescriptor =
+    offenseCategory ?? formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
 
   return (
     <Styled.TextContainer>
@@ -79,11 +59,8 @@ export function SARDispositionChartExplanation({
         to a particular disposition. The rates are based on{" "}
         {dispositionNumRecords.toLocaleString()}{" "}
         {printFormattedRecordString(dispositionNumRecords)} of{" "}
-        <span>{genderString.trim()}</span> with{" "}
-        <span>
-          {riskLevel} scores{orasLabel ? ` (${orasLabel})` : ""}
-        </span>{" "}
-        with <span>{offenseDescriptor}</span> convictions, using MODOC data from
+        <span>{genderString.trim()}</span> with <span>{riskLevel} scores*</span>{" "}
+        with <span>{offenseDescriptor} convictions</span>, using MODOC data from
         2020-present.
       </Styled.TextWrapper>
     </Styled.TextContainer>

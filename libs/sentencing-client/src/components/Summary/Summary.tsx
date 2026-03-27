@@ -28,6 +28,7 @@ import {
 } from "../../utils/utils";
 import DownloadIcon from "../assets/download-icon.svg?react";
 import * as CommonStyled from "../CaseDetails/components/charts/components/Styles";
+import { HISTORICAL_PRECEDENT_TEXT } from "../CaseDetails/components/charts/constants";
 import { DispositionDonutChart } from "../CaseDetails/components/charts/DispositionChart/DispositionDonutChart";
 import { SARDispositionChartExplanation } from "../CaseDetails/components/charts/DispositionChart/SARDispositionChartExplanation";
 import { getSARDispositionChartSubtitle } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
@@ -361,13 +362,10 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
               <CommonStyled.ChartTitle>
                 Historical Precedent{" "}
                 <InfoIconWithTooltip
-                  headerText="Historical Precedent"
+                  headerText={HISTORICAL_PRECEDENT_TEXT}
                   content={
                     <CommonStyled.ChartTooltipContentSection>
-                      <SARDispositionChartExplanation
-                        insight={insightData}
-                        assessmentType={sarData?.assessmentType ?? null}
-                      />
+                      <SARDispositionChartExplanation insight={insightData} />
                     </CommonStyled.ChartTooltipContentSection>
                   }
                 />
