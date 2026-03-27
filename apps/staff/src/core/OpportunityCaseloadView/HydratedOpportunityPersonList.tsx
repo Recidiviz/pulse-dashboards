@@ -285,7 +285,8 @@ export type OpportunityTableColumnId =
   | "US_ID_SUPERVISION_LEVEL"
   | "US_ID_CASE_TYPE"
   | "US_ID_CONTACT_DUE_DATE"
-  | "US_ID_CONTACT_CADENCE";
+  | "US_ID_CONTACT_CADENCE"
+  | "US_ID_LAST_VIEWED";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -790,7 +791,6 @@ const TableView = observer(function TableView({
       accessorFn: (opp: Opportunity) => opp.lastViewed?.date,
       enableSorting: true,
       sortingFn: "datetime",
-      // treat opportunities that have never been viewed as having the earliest dates
       sortUndefined: -1,
       cell: LastViewedCell,
     },
@@ -990,6 +990,15 @@ const TableView = observer(function TableView({
       enableSorting: true,
       sortingFn: "text",
       cell: OfficerNameCell,
+    },
+    {
+      header: "Last Viewed in Recidiviz",
+      id: "US_ID_LAST_VIEWED",
+      accessorFn: (opp: Opportunity) => opp.lastViewed?.date,
+      enableSorting: true,
+      sortingFn: "datetime",
+      sortUndefined: -1,
+      cell: LastViewedCell,
     },
     // The CTA button column should be last to take advantage of special rightmost column formatting
     {

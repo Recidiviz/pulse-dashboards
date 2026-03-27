@@ -237,7 +237,9 @@ export class OpportunityPersonListPresenter
 
       US_TN_LATEST_CLASSIFICATION_DATE:
         "usTnCustodyLevelDowngrade2026Policy" === this.opportunityType,
-      LAST_VIEWED: true,
+      LAST_VIEWED: this.opportunityType !== "usIdOverdueFaceToFaceContact",
+      US_ID_LAST_VIEWED:
+        this.opportunityType === "usIdOverdueFaceToFaceContact",
       ALMOST_ELIGIBLE_STATUS: opportunities.some(
         (opp: Opportunity) =>
           !opp.denied && !opp.isSubmitted && opp.almostEligibleStatusMessage,
