@@ -20,6 +20,8 @@ import { httpBatchLink } from "@trpc/client";
 import React from "react";
 import superjson from "superjson";
 
+import { AudioUpload } from "~@meetings/app/features/audio-upload";
+
 import {
   DEFAULT_STATE_CODE,
   StateCode,
@@ -85,6 +87,7 @@ const AuthenticatedApp: React.FC = () => {
         <StateCodeProvider selectedStateRef={selectedStateRef}>
           <RecordingProvider>
             <DrawerNavigator />
+            <AudioUpload />
           </RecordingProvider>
         </StateCodeProvider>
       </QueryClientProvider>

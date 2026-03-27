@@ -18,8 +18,8 @@
 export const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB
 
 // TODO: expand allowed mime types
-export const ALLOWED_MIME_TYPES = [
-  "audio/webm",
-  "audio/m4a",
-  "audio/x-m4a",
-] as const;
+export const ALLOWED_AUDIO_TYPES = {
+  "audio/webm": "WebM",
+  "audio/m4a": "M4A",
+  "audio/x-m4a": "M4A",
+} as const;

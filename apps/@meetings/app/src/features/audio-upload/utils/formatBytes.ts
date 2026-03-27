@@ -15,20 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type AudioUploadStatus = "selecting" | "uploading" | "uploaded" | null;
-
-export type AudioUploadDialog = "cancel" | "error" | "success" | null;
-
-export type RawFileInfo = {
-  uri: string;
-  name: string;
-  mimeType?: string;
-  size?: number;
-};
-
-export type FileInfo = {
-  uri: string;
-  name: string;
-  mimeType: string;
-  size: number;
-};
+export function formatBytes(bytes: number, decimals = 2) {
+  if (bytes === 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${units[i]}`;
+}

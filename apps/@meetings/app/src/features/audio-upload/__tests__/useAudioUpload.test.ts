@@ -53,6 +53,7 @@ const mockDeleteRecordings = jest.fn();
 const mockSetError = jest.fn();
 const mockSetFile = jest.fn();
 const mockSetStatus = jest.fn();
+const mockSetDialog = jest.fn();
 const mockSetUploadProgress = jest.fn();
 const mockReset = jest.fn();
 
@@ -69,6 +70,7 @@ const validRawFile: RawFileInfo = {
 function mockStoreWith(overrides: Record<string, unknown> = {}) {
   (useAudioUploadStore as unknown as jest.Mock).mockReturnValue({
     status: "selecting",
+    dialog: null,
     meetingId: MEETING_ID,
     personId: PERSON_ID,
     file: null,
@@ -76,6 +78,7 @@ function mockStoreWith(overrides: Record<string, unknown> = {}) {
     setError: mockSetError,
     setFile: mockSetFile,
     setStatus: mockSetStatus,
+    setDialog: mockSetDialog,
     setUploadProgress: mockSetUploadProgress,
     reset: mockReset,
     ...overrides,
@@ -195,7 +198,7 @@ describe("useAudioUpload", () => {
       });
 
       expect(mockSetError).toHaveBeenCalledWith("Unsupported file type");
-      expect(mockSetStatus).not.toHaveBeenCalled();
+      expect(mockSetStatus).toHaveBeenCalledWith("selecting");
       expect(mockUploadSegment).not.toHaveBeenCalled();
     });
 
@@ -228,13 +231,16 @@ describe("useAudioUpload", () => {
   });
 
   describe("removeFile", () => {
-    it("clears file state and reverts to selecting", () => {
+    it("clears file state and reverts to selecting", async () => {
       const { result } = renderHook(() => useAudioUpload());
 
-      act(() => {
-        result.current.removeFile();
+      await act(async () => {
+        await result.current.removeFile();
       });
 
+      expect(mockDeleteRecordings).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+      });
       expect(mockSetFile).toHaveBeenCalledWith(null);
       expect(mockSetUploadProgress).toHaveBeenCalledWith(0, 0);
       expect(mockSetStatus).toHaveBeenCalledWith("selecting");
@@ -280,7 +286,7 @@ describe("useAudioUpload", () => {
   });
 
   describe("confirmUpload", () => {
-    it("calls endMeeting and sets status to completed", async () => {
+    it("calls endMeeting and sets dialog to success", async () => {
       const { result } = renderHook(() => useAudioUpload());
 
       await act(async () => {
@@ -291,10 +297,10 @@ describe("useAudioUpload", () => {
         meetingId: MEETING_ID,
         personId: PERSON_ID,
       });
-      expect(mockSetStatus).toHaveBeenCalledWith("completed");
+      expect(mockSetDialog).toHaveBeenCalledWith("success");
     });
 
-    it("sets confirming-error status on failure", async () => {
+    it("sets error dialog on failure", async () => {
       mockEndMeeting.mockRejectedValue(new Error("Server error"));
 
       const { result } = renderHook(() => useAudioUpload());
@@ -303,7 +309,7 @@ describe("useAudioUpload", () => {
         await result.current.confirmUpload();
       });
 
-      expect(mockSetStatus).toHaveBeenCalledWith("confirming-error");
+      expect(mockSetDialog).toHaveBeenCalledWith("error");
     });
 
     it("throws when meetingId or personId is null", async () => {
@@ -316,7 +322,7 @@ describe("useAudioUpload", () => {
       });
 
       expect(mockEndMeeting).not.toHaveBeenCalled();
-      expect(mockSetStatus).toHaveBeenCalledWith("confirming-error");
+      expect(mockSetDialog).toHaveBeenCalledWith("error");
     });
   });
 
@@ -328,6 +334,9 @@ describe("useAudioUpload", () => {
         await result.current.discardUpload();
       });
 
+      expect(mockDeleteRecordings).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+      });
       expect(mockDiscardMeeting).toHaveBeenCalledWith({
         meetingId: MEETING_ID,
         personId: PERSON_ID,
@@ -380,55 +389,27 @@ describe("useAudioUpload", () => {
   });
 
   describe("continueUpload", () => {
-    it("sets status to uploading", () => {
+    it("dismisses the dialog without changing status", () => {
       const { result } = renderHook(() => useAudioUpload());
 
       act(() => {
         result.current.continueUpload();
       });
 
-      expect(mockSetStatus).toHaveBeenCalledWith("uploading");
-    });
-  });
-
-  describe("retryUpload", () => {
-    it("retries confirmUpload when status is confirming-error", async () => {
-      mockStoreWith({ status: "confirming-error" });
-
-      const { result } = renderHook(() => useAudioUpload());
-
-      await act(async () => {
-        await result.current.retryUpload();
-      });
-
-      expect(mockEndMeeting).toHaveBeenCalledWith({
-        meetingId: MEETING_ID,
-        personId: PERSON_ID,
-      });
-    });
-
-    it("does nothing when status is not confirming-error", async () => {
-      mockStoreWith({ status: "uploading" });
-
-      const { result } = renderHook(() => useAudioUpload());
-
-      await act(async () => {
-        await result.current.retryUpload();
-      });
-
-      expect(mockEndMeeting).not.toHaveBeenCalled();
+      expect(mockSetDialog).toHaveBeenCalledWith(null);
+      expect(mockSetStatus).not.toHaveBeenCalled();
     });
   });
 
   describe("requestCancel", () => {
-    it("sets status to cancelling", () => {
+    it("sets dialog to cancel", () => {
       const { result } = renderHook(() => useAudioUpload());
 
       act(() => {
         result.current.requestCancel();
       });
 
-      expect(mockSetStatus).toHaveBeenCalledWith("cancelling");
+      expect(mockSetDialog).toHaveBeenCalledWith("cancel");
     });
   });
 

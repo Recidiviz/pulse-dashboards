@@ -9707,6 +9707,7 @@ __metadata:
     expo-audio: "npm:~1.0.15"
     expo-build-properties: "npm:~1.0.9"
     expo-dev-client: "npm:~6.0.18"
+    expo-document-picker: "npm:^55.0.8"
     expo-font: "npm:~14.0.9"
     expo-notifications: "npm:~0.32.12"
     expo-splash-screen: "npm:~31.0.10"
@@ -30094,6 +30095,15 @@ __metadata:
   bin:
     expo-doctor: build/index.js
   checksum: 10c0/aed5dcf75bc667f4daf1d2a9f80e08d5ddc70c86ea76607e519cb4bbcdc7c72ef3c6696aa741f6153b214c1e1c4a2cfb6fcfb0bb23ba34291ee6bbe21bda5ae2
+  languageName: node
+  linkType: hard
+
+"expo-document-picker@npm:^55.0.8":
+  version: 55.0.8
+  resolution: "expo-document-picker@npm:55.0.8"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/347dd30848eeaf9986696e41621981adb371250790312505fcdfd880d7ea8280b97ea0f8dcba55bcf717ef1b53575109cb89c39b2e886896dca75e903187c11d
   languageName: node
   linkType: hard
 

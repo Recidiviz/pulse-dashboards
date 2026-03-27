@@ -15,20 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type AudioUploadStatus = "selecting" | "uploading" | "uploaded" | null;
+import FileSvg from "~@meetings/app/assets/icons/file.svg";
+import FileAacSvg from "~@meetings/app/assets/icons/file-aac.svg";
+import FileM4aSvg from "~@meetings/app/assets/icons/file-m4a.svg";
+import FileMp3Svg from "~@meetings/app/assets/icons/file-mp3.svg";
+import FileWavSvg from "~@meetings/app/assets/icons/file-wav.svg";
+import FileWebmSvg from "~@meetings/app/assets/icons/file-webm.svg";
 
-export type AudioUploadDialog = "cancel" | "error" | "success" | null;
-
-export type RawFileInfo = {
-  uri: string;
-  name: string;
-  mimeType?: string;
-  size?: number;
+const iconsMap = {
+  aac: FileAacSvg,
+  m4a: FileM4aSvg,
+  mp3: FileMp3Svg,
+  wav: FileWavSvg,
+  webm: FileWebmSvg,
 };
 
-export type FileInfo = {
-  uri: string;
-  name: string;
-  mimeType: string;
-  size: number;
+type Props = {
+  extension: keyof typeof iconsMap | string;
 };
+
+export function FileIcon({ extension }: Props) {
+  const Icon = iconsMap[extension as keyof typeof iconsMap] ?? FileSvg;
+  return <Icon />;
+}

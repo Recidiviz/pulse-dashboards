@@ -15,20 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type AudioUploadStatus = "selecting" | "uploading" | "uploaded" | null;
+import * as DocumentPicker from "expo-document-picker";
+import { Platform } from "react-native";
 
-export type AudioUploadDialog = "cancel" | "error" | "success" | null;
+import { ALLOWED_AUDIO_TYPES } from "../constants";
 
-export type RawFileInfo = {
-  uri: string;
-  name: string;
-  mimeType?: string;
-  size?: number;
-};
+export function useFilePicker() {
+  // TODO: fix in the following PR
+  const webAllowedAudioTypes = ["audio/webm"];
+  const nativeAllowedAudioTypes = Object.keys(ALLOWED_AUDIO_TYPES).filter(
+    (t) => t !== "audio/webm",
+  );
 
-export type FileInfo = {
-  uri: string;
-  name: string;
-  mimeType: string;
-  size: number;
-};
+  const pickFile = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: Object.keys(
+        Platform.OS === "web" ? webAllowedAudioTypes : nativeAllowedAudioTypes,
+      ),
+    });
+
+    // User dismissed the picker without selecting a file
+    if (result.canceled || !result.assets?.[0]) {
+      return null;
+    }
+
+    return result.assets[0];
+  };
+
+  return { pickFile };
+}

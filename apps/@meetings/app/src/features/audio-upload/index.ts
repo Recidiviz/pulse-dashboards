@@ -15,20 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type AudioUploadStatus = "selecting" | "uploading" | "uploaded" | null;
+import { useAudioUploadStore } from "./store";
 
-export type AudioUploadDialog = "cancel" | "error" | "success" | null;
-
-export type RawFileInfo = {
-  uri: string;
-  name: string;
-  mimeType?: string;
-  size?: number;
-};
-
-export type FileInfo = {
-  uri: string;
-  name: string;
-  mimeType: string;
-  size: number;
-};
+export const openAudioUpload = useAudioUploadStore.getState().open;
+export { AudioUpload } from "./ui/AudioUpload";

@@ -17,7 +17,7 @@
 
 import { FileValidationError } from "~@meetings/app/shared/errors";
 
-import { ALLOWED_MIME_TYPES, MAX_FILE_SIZE_BYTES } from "../constants";
+import { ALLOWED_AUDIO_TYPES, MAX_FILE_SIZE_BYTES } from "../constants";
 import { FileInfo, RawFileInfo } from "../types";
 
 export function deserializeFile(params: RawFileInfo): FileInfo {
@@ -29,8 +29,7 @@ export function deserializeFile(params: RawFileInfo): FileInfo {
   const mimeType =
     params.mimeType === "video/webm" ? "audio/webm" : params.mimeType;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!ALLOWED_MIME_TYPES.includes(mimeType as any)) {
+  if (!Object.keys(ALLOWED_AUDIO_TYPES).includes(mimeType)) {
     throw new FileValidationError("Unsupported file type");
   }
 

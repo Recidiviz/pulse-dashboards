@@ -32,7 +32,8 @@ export function useAudioUpload() {
   const uploadSegment = useUploadSegment();
   const endMeetingMutation = useEndMeeting();
   const discardMeetingMutation = useDiscardMeeting();
-  const deleteRecordings = trpc.v1.meeting.deleteRecordings.useMutation();
+  const { mutateAsync: deleteRecordings } =
+    trpc.v1.meeting.deleteRecordings.useMutation();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const addFile = useCallback(
@@ -42,7 +43,9 @@ export function useAudioUpload() {
           throw new Error("meetingId is required");
         }
 
-        await deleteRecordings.mutateAsync({ meetingId: store.meetingId });
+        await deleteRecordings({ meetingId: store.meetingId });
+
+        store.setFile(null);
 
         const file = deserializeFile(rawFile);
 
@@ -66,21 +69,27 @@ export function useAudioUpload() {
       } catch (error) {
         if (error instanceof AbortError) {
           store.setFile(null);
-          store.setUploadProgress(0, 0);
-          store.setStatus("selecting");
         } else if (error instanceof FileValidationError) {
           store.setError(error.message);
         } else if (error instanceof Error) {
           store.setError(error.message || "Upload failed. Please try again.");
-          store.setStatus("selecting");
         }
+
+        store.setStatus("selecting");
+        store.setUploadProgress(0, 0);
+
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+          abortControllerRef.current = null;
+        }
+
         console.error("Failed to add file:", error);
       }
     },
     [store, uploadSegment, deleteRecordings],
   );
 
-  const removeFile = useCallback(() => {
+  const removeFile = useCallback(async () => {
     try {
       if (!store.meetingId) {
         throw new Error("meetingId is required");
@@ -91,7 +100,10 @@ export function useAudioUpload() {
         abortControllerRef.current = null;
       }
 
+      await deleteRecordings({ meetingId: store.meetingId });
+
       store.setFile(null);
+      store.setError(null);
       store.setUploadProgress(0, 0);
       store.setStatus("selecting");
     } catch (error) {
@@ -100,7 +112,7 @@ export function useAudioUpload() {
       }
       console.error("Failed to remove file:", error);
     }
-  }, [store]);
+  }, [store, deleteRecordings]);
 
   const confirmUpload = useCallback(async () => {
     try {
@@ -111,9 +123,9 @@ export function useAudioUpload() {
         meetingId: store.meetingId,
         personId: store.personId,
       });
-      store.setStatus("completed");
+      store.setDialog("success");
     } catch (error) {
-      store.setStatus("confirming-error");
+      store.setDialog("error");
       console.error("Failed to confirm uploading:", error);
     }
   }, [store, endMeetingMutation]);
@@ -128,6 +140,7 @@ export function useAudioUpload() {
       if (!store.meetingId || !store.personId) {
         throw new Error("meetingId and personId are required");
       }
+      await deleteRecordings({ meetingId: store.meetingId });
       await discardMeetingMutation.mutateAsync({
         meetingId: store.meetingId,
         personId: store.personId,
@@ -136,24 +149,14 @@ export function useAudioUpload() {
     } catch (error) {
       console.error("Failed to discard meeting:", error);
     }
-  }, [store, discardMeetingMutation]);
+  }, [store, discardMeetingMutation, deleteRecordings]);
 
   const continueUpload = useCallback(() => {
-    store.setStatus("uploading");
+    store.setDialog(null);
   }, [store]);
 
-  const retryUpload = useCallback(async () => {
-    if (store.status !== "confirming-error") return;
-
-    try {
-      await confirmUpload();
-    } catch (error) {
-      console.error("Failed to retry uploading:", error);
-    }
-  }, [store, confirmUpload]);
-
   const requestCancel = useCallback(() => {
-    store.setStatus("cancelling");
+    store.setDialog("cancel");
   }, [store]);
 
   const closeModal = useCallback(() => {
@@ -167,7 +170,6 @@ export function useAudioUpload() {
     confirmUpload,
     discardUpload,
     continueUpload,
-    retryUpload,
 
     requestCancel,
 

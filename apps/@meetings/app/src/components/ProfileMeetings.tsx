@@ -30,10 +30,14 @@ import {
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import PlusIcon from "react-native-heroicons/outline/PlusIcon";
 import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
+import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+
+import { openAudioUpload } from "~@meetings/app/features/audio-upload";
+import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
 
 import { theme } from "../common/theme";
 import {
@@ -94,6 +98,20 @@ const ProfileMeetings = ({
     if (currentOffset > 50) setIsCollapsed(true);
     else setIsCollapsed(false);
   };
+
+  const {
+    handleCreateMeeting: handleAudioUpload,
+    isCreating: isUploadCreating,
+  } = useCreateMeeting({
+    person,
+    personType: type,
+    onSuccess: (meetingId) => {
+      openAudioUpload({
+        personId: person.personId,
+        meetingId,
+      });
+    },
+  });
 
   useEffect(() => {
     if (recordingState) {
@@ -352,19 +370,31 @@ const ProfileMeetings = ({
             </Typography>
 
             {recordingState === "idle" && (
-              <TouchableOpacity
-                className="w-[100px] flex-row items-center justify-center rounded-full bg-brand px-4 py-2"
-                onPress={handleCreateMeeting}
-                disabled={isMeetingCreating}
-              >
-                {isMeetingCreating ? (
-                  <ActivityIndicator size="small" color="white" />
-                ) : (
-                  <Typography className="font-medium text-on-brand">
-                    + Meeting
+              <View className="flex-row gap-6">
+                <TouchableOpacity
+                  className="flex-row items-center gap-1"
+                  onPress={() => handleAudioUpload()}
+                  disabled={isUploadCreating}
+                >
+                  <UploadIcon className="size-4 fill-[#006C67]" />
+                  <Typography className="font-medium text-[#006C67]">
+                    Upload
                   </Typography>
-                )}
-              </TouchableOpacity>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="w-[100px] flex-row items-center justify-center rounded-full bg-brand px-4 py-2"
+                  onPress={handleCreateMeeting}
+                  disabled={isMeetingCreating}
+                >
+                  {isMeetingCreating ? (
+                    <ActivityIndicator size="small" color="white" />
+                  ) : (
+                    <Typography className="font-medium text-on-brand">
+                      + Meeting
+                    </Typography>
+                  )}
+                </TouchableOpacity>
+              </View>
             )}
           </View>
 

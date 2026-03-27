@@ -19,11 +19,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { AudioUploadStatus, FileInfo } from "./types";
+import { AudioUploadDialog, AudioUploadStatus, FileInfo } from "./types";
 
 type AudioUploadStore = {
   // Persisted fields
   status: AudioUploadStatus;
+  dialog: AudioUploadDialog;
   meetingId: string | null;
   personId: bigint | null;
   file: FileInfo | null;
@@ -34,6 +35,7 @@ type AudioUploadStore = {
   totalBytes: number;
 
   setStatus: (status: AudioUploadStatus) => void;
+  setDialog: (dialog: AudioUploadDialog) => void;
   setMeetingId: (meetingId: string | null) => void;
   setFile: (file: FileInfo | null) => void;
   setError: (error: string | null) => void;
@@ -43,7 +45,8 @@ type AudioUploadStore = {
 };
 
 const initialState = {
-  status: "idle" as const,
+  status: null,
+  dialog: null,
   meetingId: null,
   personId: null,
   file: null,
@@ -58,6 +61,7 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       ...initialState,
 
       setStatus: (status) => set({ status }),
+      setDialog: (dialog) => set({ dialog }),
       setMeetingId: (meetingId) => set({ meetingId }),
       setFile: (file) => set({ file }),
       setError: (error) => set({ error }),
@@ -72,6 +76,7 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         status: state.status,
+        dialog: state.dialog,
         meetingId: state.meetingId,
         personId: state.personId ? state.personId.toString() : null,
         file: state.file,
@@ -79,13 +84,17 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
-        if (state.status === "uploading" || state.status === "cancelling") {
+        if (state.status === "uploading") {
           state.status = "selecting";
           state.error = "Upload was interrupted. Please try again.";
         }
         if (state.personId) {
           state.personId = BigInt(state.personId);
         }
+        if (state.error && !state.file) {
+          state.setError(null);
+        }
+        state.dialog = null;
       },
     },
   ),
