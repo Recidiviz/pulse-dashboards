@@ -17,7 +17,6 @@
 
 export * from "./ActivityList";
 export * from "./BackLink/BackLink";
-export * from "./BackLink/GoBackButton";
 export * from "./BaseLayout/BaseLayout";
 export * from "./Buttons/ButtonLink";
 export * from "./Buttons/JIIButton";

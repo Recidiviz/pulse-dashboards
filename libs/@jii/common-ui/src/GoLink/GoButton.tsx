@@ -24,13 +24,18 @@ import { ButtonLink } from "../Buttons/ButtonLink";
 
 /**
  * Wrapper around a ReactRouter Link element that styles it like a button
- * and appends an arrow icon
+ * and appends an arrow icon. Pass `back` to prepend a left-pointing arrow instead.
  */
-export const GoButton: FC<LinkProps> = ({ children, ...props }) => {
+export const GoButton: FC<LinkProps & { back?: boolean }> = ({
+  back,
+  children,
+  ...props
+}) => {
   return (
     <ButtonLink {...props}>
+      {back && <Icon kind="Arrow" size={16} rotate={180} />}
       <span>{children}</span>
-      <Icon kind="Arrow" size={16} />
+      {!back && <Icon kind="Arrow" size={16} />}
     </ButtonLink>
   );
 };

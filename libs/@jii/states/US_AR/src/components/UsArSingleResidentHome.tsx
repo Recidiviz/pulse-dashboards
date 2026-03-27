@@ -19,6 +19,7 @@ import { usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 
+import { ProgramsCta } from "./ProgramsCta/ProgramsCta";
 import { UsArImportantDates } from "./UsArImportantDates";
 
 export function UsArSingleResidentHome() {
@@ -29,6 +30,7 @@ export function UsArSingleResidentHome() {
     <>
       <LastUpdatedBanner lastUpdatedDate={metadata.lastUpdatedDate} />
       <UsArImportantDates metadata={metadata} />
+      <ProgramsCta />
     </>
   );
 }

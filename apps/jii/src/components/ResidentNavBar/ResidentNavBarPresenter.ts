@@ -66,6 +66,15 @@ export class ResidentNavBarPresenter {
       ];
     }
 
+    if (this.routeParams.stateSlug === "arkansas") {
+      return [
+        {
+          label: "Programs",
+          to: State.Resident.UsArPrograms.buildPath(this.routeParams),
+        },
+      ];
+    }
+
     return [];
   }
 

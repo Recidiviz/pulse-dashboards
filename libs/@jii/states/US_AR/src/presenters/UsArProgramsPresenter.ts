@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { group, rollup } from "d3-array";
 import { max, parseISO } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI, handleMutationError } from "~@jii/data";
+import { DataAPI } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { ResidentRecord } from "~datatypes";
 import {
@@ -206,7 +207,7 @@ export class UsArProgramsPresenter implements Hydratable {
       runInAction(() => {
         program.isStarred = isCurrentlyStarred;
       });
-      handleMutationError(error);
+      captureException(error);
     }
   }
 

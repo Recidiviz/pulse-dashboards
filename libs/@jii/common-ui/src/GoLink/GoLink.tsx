@@ -38,14 +38,16 @@ const StyledGoLink = styled(Link)`
   }
 `;
 
-export const GoLink: FC<{ children: ReactNode; to: string }> = ({
-  children,
-  to,
-}) => {
+export const GoLink: FC<{
+  children: ReactNode;
+  to: string;
+  back?: boolean;
+}> = ({ back, children, to }) => {
   return (
     <StyledGoLink to={to}>
+      {back && <Icon kind="Arrow" size={16} rotate={180} />}
       <span>{children}</span>
-      <Icon kind="Arrow" size={16} />
+      {!back && <Icon kind="Arrow" size={16} />}
     </StyledGoLink>
   );
 };

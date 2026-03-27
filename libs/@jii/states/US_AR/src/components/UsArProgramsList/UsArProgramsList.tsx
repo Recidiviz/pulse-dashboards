@@ -23,6 +23,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import {
+  BackLink,
   ButtonLink,
   CopyWrapper,
   HomepageSectionHeading,
@@ -109,6 +110,9 @@ const ManagedComponent: FC<{ presenter: UsArProgramsPresenter }> = observer(
         />
 
         <Header>
+          <BackLink to={State.Resident.buildPath(pathParams)}>
+            {t(($) => $.programs.backLink)}
+          </BackLink>
           <HomepageSectionHeading>
             {t(($) => $.programs.pageTitle)}
           </HomepageSectionHeading>

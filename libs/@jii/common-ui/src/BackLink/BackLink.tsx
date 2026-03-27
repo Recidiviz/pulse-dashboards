@@ -20,9 +20,8 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { SimpleLinkProps } from "~@jii/common-ui";
-
-import { GoBackButton } from "./GoBackButton";
+import { GoLink } from "../GoLink/GoLink";
+import { SimpleLinkProps } from "../SimpleLinkProps";
 
 const Wrapper = styled.div`
   margin-bottom: ${rem(spacing.xxl)};
@@ -34,7 +33,7 @@ const Wrapper = styled.div`
 export const BackLink: FC<SimpleLinkProps> = (props) => {
   return (
     <Wrapper>
-      <GoBackButton {...props} />
+      <GoLink back {...props} />
     </Wrapper>
   );
 };

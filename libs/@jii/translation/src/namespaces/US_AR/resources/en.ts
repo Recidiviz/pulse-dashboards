@@ -52,7 +52,15 @@ export default {
     missingDateMessage: "No date on record",
   },
   programs: {
+    homepageCta: {
+      sectionHeader: "Programming",
+      heading: "Browse Available Programs",
+      description:
+        "Explore available programs, filter by facility, and star the ones that are interesting to you.",
+      link: "View full list of programs",
+    },
     lastUpdated: "This information was last updated {{date, formatFullDate}}.",
+    backLink: "Back to Home",
     pageTitle: "Earn time off your sentence",
     pageDescription: `This page helps you find programs and activities that can provide Good Time off of your Parole/Transfer/Release Eligibility Date. 
 
