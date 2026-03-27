@@ -137,7 +137,7 @@
     "express-validator": "^6.8.1",
     "extensionless": "^1.9.9",
     "fast-jwt": "^6.0.2",
-    "fastify": "5.2.1",
+    "fastify": "5.8.3",
     "fastify-auth0-verify": "^3.0.0",
     "fastify-type-provider-zod": "^4.0.0",
     "ffmpeg-static": "^5.2.0",
