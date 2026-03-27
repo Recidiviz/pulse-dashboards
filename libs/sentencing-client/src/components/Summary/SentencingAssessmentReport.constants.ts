@@ -21,6 +21,22 @@
  */
 export const NO_SPLIT_CLASS = "sar-no-split";
 
+/**
+ * CSS class that forces a page break immediately before the element. Queried
+ * by the PDF generator to ensure the element always begins at the top of a page.
+ * Unlike NO_SPLIT_CLASS, the element's own content may still be split across
+ * subsequent pages.
+ */
+export const PAGE_START_CLASS = "sar-page-start";
+
+/**
+ * CSS class applied to a section's title container when it is a continuation
+ * of the preceding section. The PDF generator hides this heading when the
+ * continuation section lands on the same page as its primary — it only appears
+ * when an actual page break separates the two.
+ */
+export const CONTINUATION_HEADER_CLASS = "sar-continuation-header";
+
 /** Vertical gap between top-level report blocks (sections, charge cards). */
 export const BLOCK_GAP = 30;
 

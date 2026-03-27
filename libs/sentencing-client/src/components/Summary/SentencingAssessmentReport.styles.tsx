@@ -111,10 +111,10 @@ export const SectionTitleNote = styled.div`
   line-height: 150%;
 `;
 
-export const ColumnFlexContainer = styled.div<{ gap?: number }>`
+export const ColumnFlexContainer = styled.div<{ gap?: number; flex?: string }>`
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: ${({ flex }) => flex ?? "1 1 auto"};
   ${({ gap }) => gap !== undefined && `gap: ${gap}px;`}
 `;
 
@@ -195,4 +195,87 @@ export const ReportChargeHeader = styled.div`
 export const ReportChargeBody = styled(ColumnFlexContainer).attrs({ gap: 15 })`
   border: 1px solid ${palette.slate05};
   padding: 15px 10px 10px 0;
+`;
+
+/** Row displaying key case metadata (defendant, judge/division, case number). */
+export const CaseInformationRow = styled(RowFlexContainer)`
+  border-radius: 4px;
+  border: 0.5px solid ${customPalette.black};
+  align-items: flex-start;
+  align-self: stretch;
+`;
+
+export const CaseInformationColumn = styled(ColumnFlexContainer)`
+  border-left: 0.5px solid ${customPalette.black};
+  padding: 10px 16px;
+
+  &:first-child {
+    border-left: none;
+  }
+`;
+
+export const CaseInformationLabel = styled.div`
+  color: ${customPalette.black};
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.09px;
+`;
+
+export const CaseInformationValue = styled.div`
+  color: ${customPalette.black};
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.4px;
+`;
+
+// ─── Risk Profile Summary Card ────────────────────────────────────────────────
+
+/** Card header with title on left, metadata on right. */
+export const ReportCardHeader = styled.div`
+  ${typography.Sans12}
+  font-weight: 500;
+  line-height: 150%;
+  background: ${palette.slate05};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+`;
+
+export const RiskLevelColumnsContainer = styled.div`
+  display: flex;
+  padding-top: 10px;
+`;
+
+export const RiskLevelColumn = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+`;
+
+export const RiskLevelColumnHeader = styled.div<{
+  $bgColor: string;
+  $textColor: string;
+}>`
+  ${typography.Sans12}
+  font-weight: 600;
+  line-height: 1;
+  display: flex;
+  height: 19px;
+  padding: 0 8px;
+  align-items: center;
+  border-radius: 100px;
+  align-self: flex-start;
+  background: ${({ $bgColor }) => $bgColor};
+  color: ${({ $textColor }) => $textColor};
+`;
+
+export const RiskLevelDomainItem = styled.div`
+  ${typography.Sans12}
+  font-weight: 500;
+  line-height: 150%;
 `;

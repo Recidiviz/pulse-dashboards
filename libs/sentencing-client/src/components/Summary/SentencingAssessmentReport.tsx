@@ -19,7 +19,7 @@ import moment from "moment";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { titleCase } from "../../utils/utils";
+import { formatJudgeName } from "../../utils/utils";
 import { ReportBlock, SentencingAssessmentReportSection } from "./ReportBlock";
 import { ReportCharge } from "./ReportCharge";
 import { ReportKeyConsiderations } from "./ReportKeyConsiderations";
@@ -37,7 +37,7 @@ export const SentencingAssessmentReport: React.FC<
   const sarData = presenter.SARData;
   if (!sarData) return null;
 
-  const { client, externalId, dateRequested, updatedAt, staff } = sarData;
+  const { externalId, dateRequested, updatedAt, staff } = sarData;
   const charges = sarData.charges;
   const { needsDisplayItems, factorsDisplayItems } = presenter;
 
@@ -55,10 +55,36 @@ export const SentencingAssessmentReport: React.FC<
     </Styled.Header>
   );
 
+  const caseInformation = (
+    <Styled.CaseInformationRow gap={5}>
+      <Styled.CaseInformationColumn gap={5}>
+        <Styled.CaseInformationLabel>Defendant</Styled.CaseInformationLabel>
+        <Styled.CaseInformationValue>
+          {presenter.formattedClientName}
+        </Styled.CaseInformationValue>
+      </Styled.CaseInformationColumn>
+      <Styled.CaseInformationColumn gap={5}>
+        <Styled.CaseInformationLabel>To</Styled.CaseInformationLabel>
+        <Styled.CaseInformationValue>
+          {sarData.requestingJudgeName
+            ? `Honorable ${formatJudgeName(sarData.requestingJudgeName)}`
+            : "—"}{" "}
+          / {sarData.division}
+        </Styled.CaseInformationValue>
+      </Styled.CaseInformationColumn>
+      <Styled.CaseInformationColumn gap={5}>
+        <Styled.CaseInformationLabel>Case Number</Styled.CaseInformationLabel>
+        <Styled.CaseInformationValue>
+          #{sarData.externalId}
+        </Styled.CaseInformationValue>
+      </Styled.CaseInformationColumn>
+    </Styled.CaseInformationRow>
+  );
+
   const footer = (
     <Styled.Footer>
       <Styled.FooterMessage>
-        Defendant: {titleCase(client?.fullName)} | Case: #{externalId}
+        Defendant: {presenter.formattedClientName} | Case: #{externalId}
       </Styled.FooterMessage>
       {/*
        * The &nbsp; maintains the element's line height so the footer height
@@ -73,17 +99,12 @@ export const SentencingAssessmentReport: React.FC<
 
   const clientChips = (
     <Styled.RowFlexContainer gap={CHIP_GAP}>
+      <Styled.ReportChip>Gender: {presenter.formattedGender}</Styled.ReportChip>
       <Styled.ReportChip>
-        Name: {titleCase(client?.fullName || "")}
+        Race: {presenter.formattedRaceOrEthnicity}
       </Styled.ReportChip>
       <Styled.ReportChip>
-        Gender: {titleCase(client?.gender || "Unknown")}
-      </Styled.ReportChip>
-      <Styled.ReportChip>
-        Date of Birth:{" "}
-        {client?.birthDate
-          ? moment(client.birthDate).format("MM/DD/YYYY")
-          : "Unknown"}
+        Date of Birth: {presenter.formattedBirthDate}
       </Styled.ReportChip>
     </Styled.RowFlexContainer>
   );
@@ -104,6 +125,7 @@ export const SentencingAssessmentReport: React.FC<
         <tr>
           <td>
             <Styled.PageContent>
+              {caseInformation}
               <ReportRequestedOf
                 dateRequested={dateRequested}
                 updatedAt={updatedAt}
@@ -125,6 +147,7 @@ export const SentencingAssessmentReport: React.FC<
               <ReportKeyConsiderations
                 needsDisplayItems={needsDisplayItems}
                 factorsDisplayItems={factorsDisplayItems}
+                riskProfileCardData={presenter.riskProfileCardData}
               />
             </Styled.PageContent>
           </td>

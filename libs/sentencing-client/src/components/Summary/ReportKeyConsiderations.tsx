@@ -19,11 +19,12 @@ import React from "react";
 
 import AreasOfNeedIcon from "../assets/areas-of-need-icon.svg?react";
 import JusticeScaleIcon from "../assets/justice-scale-icon.svg?react";
-import { SentencingAssessmentReportSection } from "./ReportBlock";
+import { ReportBlock, SentencingAssessmentReportSection } from "./ReportBlock";
 import {
-  ICON_LABEL_GAP,
-  SECTION_COLUMN_GAP,
-} from "./SentencingAssessmentReport.constants";
+  ReportRiskProfileSummaryCard,
+  RiskProfileCardData,
+} from "./ReportRiskProfileSummaryCard";
+import { ICON_LABEL_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const KeyConsiderationColumn: React.FC<{
@@ -31,7 +32,7 @@ const KeyConsiderationColumn: React.FC<{
   label: string;
   items: string[];
 }> = ({ icon, label, items }) => (
-  <Styled.ColumnFlexContainer>
+  <Styled.ColumnFlexContainer flex="none">
     <Styled.RowFlexContainer gap={ICON_LABEL_GAP} alignItems="flex-start">
       {icon}
       <Styled.ColumnFlexContainer gap={ICON_LABEL_GAP}>
@@ -49,16 +50,21 @@ const KeyConsiderationColumn: React.FC<{
 interface ReportKeyConsiderationsProps {
   needsDisplayItems: string[];
   factorsDisplayItems: string[];
+  riskProfileCardData: RiskProfileCardData | null;
 }
 
-export const ReportKeyConsiderations: React.FC<
-  ReportKeyConsiderationsProps
+const AdditionalConsiderationsContent: React.FC<
+  Pick<
+    ReportKeyConsiderationsProps,
+    "needsDisplayItems" | "factorsDisplayItems"
+  >
 > = ({ needsDisplayItems, factorsDisplayItems }) => (
-  <SentencingAssessmentReportSection title="Key Considerations">
-    <Styled.RowFlexContainer
-      gap={SECTION_COLUMN_GAP}
-      justifyContent="space-between"
-    >
+  <Styled.ColumnFlexContainer gap={15}>
+    <Styled.ReportCardHeader>
+      <span>ADDITIONAL CONSIDERATIONS</span>
+      <span>As determined by report author</span>
+    </Styled.ReportCardHeader>
+    <Styled.RowFlexContainer gap={50}>
       <KeyConsiderationColumn
         icon={<AreasOfNeedIcon />}
         label="Areas of Need"
@@ -70,5 +76,33 @@ export const ReportKeyConsiderations: React.FC<
         items={factorsDisplayItems}
       />
     </Styled.RowFlexContainer>
+  </Styled.ColumnFlexContainer>
+);
+
+export const ReportKeyConsiderations: React.FC<
+  ReportKeyConsiderationsProps
+> = ({ needsDisplayItems, factorsDisplayItems, riskProfileCardData }) => (
+  <SentencingAssessmentReportSection
+    title="Key Considerations"
+    continuationContent={
+      <AdditionalConsiderationsContent
+        needsDisplayItems={needsDisplayItems}
+        factorsDisplayItems={factorsDisplayItems}
+      />
+    }
+  >
+    <Styled.ColumnFlexContainer gap={15}>
+      <ReportBlock>
+        The Ohio Risk Assessment System (ORAS) is a validated, evidence-based
+        tool used to identify an individual's risk of recidivism and determine
+        the appropriate level of supervision and treatment. For further
+        information on its application in Missouri, please visit{" "}
+        <strong>https://doc.mo.gov/justice-reinvestment-initiative/oras</strong>
+        .
+      </ReportBlock>
+      {riskProfileCardData && (
+        <ReportRiskProfileSummaryCard {...riskProfileCardData} />
+      )}
+    </Styled.ColumnFlexContainer>
   </SentencingAssessmentReportSection>
 );

@@ -39,7 +39,11 @@ import {
 } from "../components/constants";
 import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderations/constants";
 import { mapEnumKeysToDisplay } from "../components/KeyConsiderations/utils";
-import { getAssessmentScoreBucket } from "../components/OffenderAssessment/assessmentTypeUtils";
+import {
+  AssessmentTypeKey,
+  getAssessmentScoreBucket,
+} from "../components/OffenderAssessment/assessmentTypeUtils";
+import { RiskLevelKey } from "../components/OffenderAssessment/constants";
 import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
 import {
   SAR_REPORT_SECTIONS,
@@ -47,9 +51,10 @@ import {
   type SARSectionName,
 } from "../components/SARDetails/constants";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
+import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSummaryCard";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
-import { formatJudgeName, titleCase } from "../utils/utils";
+import { formatJudgeName, formatLongDate, titleCase } from "../utils/utils";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
@@ -290,6 +295,11 @@ export class SARDetailsPresenter implements Hydratable {
             SARSection.SUMMARY,
           ] as SARSectionName[]);
     return result;
+  }
+
+  /** Formatted full name for display */
+  get formattedClientName(): string {
+    return titleCase(this.SARData?.client?.fullName) || "Unknown";
   }
 
   /** Formatted birth date for display */
@@ -1237,6 +1247,44 @@ export class SARDetailsPresenter implements Hydratable {
       items.push(this.SARData.otherMitigatingFactor);
     }
     return items;
+  }
+
+  /**
+   * Data for the Risk Profile Summary card in the SAR report.
+   * Groups domains by risk level (HIGH/MODERATE/LOW) for display.
+   * Returns null when assessmentType is missing.
+   */
+  get riskProfileCardData(): RiskProfileCardData | null {
+    const sarData = this.SARData;
+    if (!sarData?.assessmentType) return null;
+
+    const domains = getDomainsForAssessmentType(sarData.assessmentType);
+    const grouped: Record<RiskLevelKey, string[]> = {
+      HIGH: [],
+      MODERATE: [],
+      LOW: [],
+    };
+
+    for (const domain of domains) {
+      if (!domain.riskLevelField) continue;
+      // Dynamic field access is necessary here: domain configs store risk-level
+      // field names as strings, so keyof-narrowing is the best available approach.
+      const level = sarData[
+        domain.riskLevelField as keyof typeof sarData
+      ] as RiskLevelKey | null;
+      if (level && level in grouped) {
+        grouped[level].push(domain.title);
+      }
+    }
+
+    return {
+      assessmentType: sarData.assessmentType as AssessmentTypeKey,
+      administeredBy: sarData.assessmentAdministeredBy ?? null,
+      assessmentDate: sarData.assessmentDate
+        ? formatLongDate(sarData.assessmentDate)
+        : null,
+      groupedDomains: grouped,
+    };
   }
 
   get victimImpactStatementSkipped(): boolean {

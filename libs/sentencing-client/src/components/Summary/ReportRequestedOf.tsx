@@ -42,6 +42,7 @@ export const ReportRequestedOf: React.FC<ReportRequestedOfProps> = ({
       <Styled.ColumnFlexContainer>
         <Styled.Label>Officer:</Styled.Label>
         <Styled.Value>{staff?.externalId}</Styled.Value>
+        <Styled.Value>{staff?.fullName}</Styled.Value>
       </Styled.ColumnFlexContainer>
       <Styled.ColumnFlexContainer>
         <Styled.Label>District:</Styled.Label>

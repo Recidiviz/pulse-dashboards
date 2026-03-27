@@ -40,7 +40,7 @@ export const ReportCharge: React.FC<ReportChargeProps> = ({
   return (
     <>
       <Styled.ReportChargeHeader>
-        Offense {index + 1}
+        OFFENSE {index + 1}
         {charge.moCode ? ` — MoCode: ${charge.moCode}` : ""}
       </Styled.ReportChargeHeader>
       <Styled.ReportChargeBody>
@@ -71,6 +71,10 @@ export const ReportCharge: React.FC<ReportChargeProps> = ({
             </Styled.RowFlexContainer>
           </Styled.ReportChargeLeftColumn>
           <Styled.ReportChargeRightColumn gap={FIELD_ROW_GAP}>
+            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
+              <Styled.Label>Prosecuting Attorney:</Styled.Label>
+              <Styled.Value>{charge.prosecutingAttorney || "—"}</Styled.Value>
+            </Styled.RowFlexContainer>
             <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
               <Styled.Label>Plea Agreement:</Styled.Label>
               <Styled.Value>{charge.pleaAgreement || "—"}</Styled.Value>

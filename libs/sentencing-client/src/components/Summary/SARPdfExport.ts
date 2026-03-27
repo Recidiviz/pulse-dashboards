@@ -17,7 +17,11 @@
 
 import { palette } from "~design-system";
 
-import { NO_SPLIT_CLASS } from "./SentencingAssessmentReport.constants";
+import {
+  CONTINUATION_HEADER_CLASS,
+  NO_SPLIT_CLASS,
+  PAGE_START_CLASS,
+} from "./SentencingAssessmentReport.constants";
 
 // Structural type matching the subset of jsPDF methods we use.
 // Avoids a hard dependency on jsPDF's type declarations in this module.
@@ -61,6 +65,19 @@ const HTML2CANVAS_OPTS = {
 };
 
 /**
+ * Shared conversion context for a tbody measurement pass.
+ * Avoids recomputing tbodyRect / mmPerCSSPx across multiple helpers.
+ */
+function getTbodyMeasurementContext(
+  tbodyEl: HTMLElement,
+  pageWidthMM: number,
+): { tbodyRect: DOMRect; mmPerCSSPx: number } {
+  const tbodyRect = tbodyEl.getBoundingClientRect();
+  // getBoundingClientRect().width is more reliable than offsetWidth on <tbody>.
+  return { tbodyRect, mmPerCSSPx: pageWidthMM / tbodyRect.width };
+}
+
+/**
  * Measures each .sar-no-split element's top/bottom position relative to
  * the tbody, converting CSS pixels to PDF millimetres.
  *
@@ -71,9 +88,10 @@ function measureNoSplitBlocks(
   tbodyEl: HTMLElement,
   pageWidthMM: number,
 ): BlockBound[] {
-  const tbodyRect = tbodyEl.getBoundingClientRect();
-  // getBoundingClientRect().width is more reliable than offsetWidth on <tbody>.
-  const mmPerCSSPx = pageWidthMM / tbodyRect.width;
+  const { tbodyRect, mmPerCSSPx } = getTbodyMeasurementContext(
+    tbodyEl,
+    pageWidthMM,
+  );
 
   return Array.from(
     tbodyEl.querySelectorAll<HTMLElement>(`.${NO_SPLIT_CLASS}`),
@@ -87,28 +105,76 @@ function measureNoSplitBlocks(
 }
 
 /**
- * Captures <thead>, <tbody>, and <tfoot> as separate canvases at 2× resolution.
+ * Measures the top position (in MM) of each .sar-page-start element relative
+ * to the tbody. These positions are used to force page cuts immediately before
+ * the element so it always begins at the top of a page.
  *
- * html2canvas produces a flat bitmap — it has no concept of repeating table
- * headers/footers across pages. By capturing the three sections separately we
- * can slice only the body content per page and stamp the header and a
- * per-page footer image on top of each page.
- *
- * The returned `footer` canvas is used only for height measurement. Renderable
- * footer images (with the page number injected) come from captureFooterImagesPerPage.
+ * Must be called BEFORE html2canvas for the same reason as measureNoSplitBlocks.
  */
-async function captureTableCanvases(table: HTMLTableElement): Promise<{
-  header: HTMLCanvasElement;
-  body: HTMLCanvasElement;
-  footer: HTMLCanvasElement;
-}> {
-  const { default: html2canvas } = await import("html2canvas");
-  const [header, body, footer] = await Promise.all([
-    html2canvas(table.querySelector("thead") as HTMLElement, HTML2CANVAS_OPTS),
-    html2canvas(table.querySelector("tbody") as HTMLElement, HTML2CANVAS_OPTS),
-    html2canvas(table.querySelector("tfoot") as HTMLElement, HTML2CANVAS_OPTS),
-  ]);
-  return { header, body, footer };
+function measurePageStartPositions(
+  tbodyEl: HTMLElement,
+  pageWidthMM: number,
+): number[] {
+  const { tbodyRect, mmPerCSSPx } = getTbodyMeasurementContext(
+    tbodyEl,
+    pageWidthMM,
+  );
+
+  return Array.from(
+    tbodyEl.querySelectorAll<HTMLElement>(`.${PAGE_START_CLASS}`),
+  ).map((el) => (el.getBoundingClientRect().top - tbodyRect.top) * mmPerCSSPx);
+}
+
+type ContinuationHeader = {
+  element: HTMLElement;
+  /** Top of the continuation heading, in MM from the tbody top. */
+  headerTop: number;
+  /** Bottom of the preceding primary section, in MM from the tbody top. */
+  primaryBottom: number;
+};
+
+/**
+ * Finds every .sar-continuation-header element and records:
+ * - its own top position (so we know where the continuation section starts), and
+ * - the bottom of the preceding .sar-no-split sibling (the primary section).
+ *
+ * Used to decide whether to hide the heading before canvas capture: if no cut
+ * point falls between primaryBottom and headerTop, both sections are on the same
+ * page and the "Continued..." label should be suppressed.
+ */
+function measureContinuationHeaders(
+  tbodyEl: HTMLElement,
+  pageWidthMM: number,
+): ContinuationHeader[] {
+  const { tbodyRect, mmPerCSSPx } = getTbodyMeasurementContext(
+    tbodyEl,
+    pageWidthMM,
+  );
+  const result: ContinuationHeader[] = [];
+
+  for (const el of Array.from(
+    tbodyEl.querySelectorAll<HTMLElement>(`.${CONTINUATION_HEADER_CLASS}`),
+  )) {
+    const headerTop =
+      (el.getBoundingClientRect().top - tbodyRect.top) * mmPerCSSPx;
+
+    // Walk up to find the continuation section's no-split block, then find
+    // the nearest preceding no-split sibling (the primary section).
+    const continuationSection = el.closest(`.${NO_SPLIT_CLASS}`);
+    if (!(continuationSection instanceof HTMLElement)) continue;
+
+    let prev = continuationSection.previousElementSibling as HTMLElement | null;
+    while (prev && !prev.classList.contains(NO_SPLIT_CLASS)) {
+      prev = prev.previousElementSibling as HTMLElement | null;
+    }
+    if (!prev) continue;
+
+    const primaryBottom =
+      (prev.getBoundingClientRect().bottom - tbodyRect.top) * mmPerCSSPx;
+    result.push({ element: el, headerTop, primaryBottom });
+  }
+
+  return result;
 }
 
 /** Converts a canvas to mm height, preserving the aspect ratio at pageWidth. */
@@ -125,17 +191,25 @@ function canvasToJpeg(canvas: HTMLCanvasElement): string {
 }
 
 /**
- * Determines where a page should end by snapping the natural cut back to the
- * top of any block that would straddle the boundary, preventing mid-card splits.
+ * Determines where a page should end.
+ *
+ * 1. Start at the natural cut (bodyOffset + sliceMM).
+ * 2. Snap back to the top of the first no-split block that straddles the cut.
+ * 3. Snap back further to any page-start element within the page's range,
+ *    ensuring it always begins at the top of the next page.
+ * 4. Guard: if a block is taller than a full slice, force-advance to avoid an
+ *    infinite loop.
  */
 function computePageCutPoint(
   bodyOffset: number,
   sliceMM: number,
   bodyMM: number,
   blocks: BlockBound[],
+  pageStartPositions: number[],
 ): number {
   let cutPoint = Math.min(bodyOffset + sliceMM, bodyMM);
 
+  // Snap back to the top of the first no-split block that straddles the cut.
   for (const block of blocks) {
     if (
       block.top < cutPoint &&
@@ -143,6 +217,15 @@ function computePageCutPoint(
       block.top > bodyOffset
     ) {
       cutPoint = block.top;
+      break;
+    }
+  }
+
+  // Snap back further to the first page-start element within this page's range.
+  // Positions are in DOM (top-to-bottom) order so the first match is correct.
+  for (const pos of pageStartPositions) {
+    if (pos > bodyOffset && pos < cutPoint) {
+      cutPoint = pos;
       break;
     }
   }
@@ -208,11 +291,18 @@ function computePageCutPoints(
   bodyMM: number,
   sliceMM: number,
   blocks: BlockBound[],
+  pageStartPositions: number[],
 ): number[] {
   const cutPoints: number[] = [];
   let offset = 0;
   while (offset < bodyMM) {
-    offset = computePageCutPoint(offset, sliceMM, bodyMM, blocks);
+    offset = computePageCutPoint(
+      offset,
+      sliceMM,
+      bodyMM,
+      blocks,
+      pageStartPositions,
+    );
     cutPoints.push(offset);
   }
   return cutPoints;
@@ -263,23 +353,81 @@ export async function exportSARtoPDF(
   if (!table) return;
 
   const { default: jsPDF } = await import("jspdf");
+  const { default: html2canvas } = await import("html2canvas");
+
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 
-  // Block positions must be measured before canvas capture for stable layout coordinates.
   const tbodyEl = table.querySelector("tbody") as HTMLElement;
-  const blocks = measureNoSplitBlocks(tbodyEl, pageWidth);
+  const tfootEl = table.querySelector("tfoot") as HTMLElement;
 
-  const canvases = await captureTableCanvases(table);
-
-  const headerMM = canvasHeightToMM(canvases.header, pageWidth);
-  const footerMM = canvasHeightToMM(canvases.footer, pageWidth);
-  const bodyMM = canvasHeightToMM(canvases.body, pageWidth);
+  // Capture header and footer first so we know sliceMM before touching the body.
+  const [headerCanvas, footerCanvas] = await Promise.all([
+    html2canvas(table.querySelector("thead") as HTMLElement, HTML2CANVAS_OPTS),
+    html2canvas(tfootEl, HTML2CANVAS_OPTS),
+  ]);
+  const headerMM = canvasHeightToMM(headerCanvas, pageWidth);
+  const footerMM = canvasHeightToMM(footerCanvas, pageWidth);
   const sliceMM = pageHeight - headerMM - footerMM;
 
-  const cutPoints = computePageCutPoints(bodyMM, sliceMM, blocks);
-  const tfootEl = table.querySelector("tfoot") as HTMLElement;
+  // Measure all DOM positions before any body canvas capture.
+  // DOM measurement must happen before html2canvas — canvas capture can shift layout.
+  const { mmPerCSSPx } = getTbodyMeasurementContext(tbodyEl, pageWidth);
+  const bodyMMEstimate = tbodyEl.getBoundingClientRect().height * mmPerCSSPx;
+  const continuationHeaders = measureContinuationHeaders(tbodyEl, pageWidth);
+  const blocksPrelim = measureNoSplitBlocks(tbodyEl, pageWidth);
+  const pageStartPositionsPrelim = measurePageStartPositions(
+    tbodyEl,
+    pageWidth,
+  );
+
+  // Preliminary cut points — used only to decide which continuation headings to hide.
+  const cutPointsPrelim = computePageCutPoints(
+    bodyMMEstimate,
+    sliceMM,
+    blocksPrelim,
+    pageStartPositionsPrelim,
+  );
+
+  // If no cut point falls between a primary section's bottom and the continuation
+  // heading's top, both sections share a page — suppress the "Continued..." label.
+  const hiddenHeadings: HTMLElement[] = [];
+  for (const h of continuationHeaders) {
+    const splitsBetween = cutPointsPrelim.some(
+      (cp) => cp > h.primaryBottom && cp <= h.headerTop,
+    );
+    if (!splitsBetween) {
+      h.element.style.display = "none";
+      hiddenHeadings.push(h.element);
+    }
+  }
+
+  // Re-measure only if headings were hidden — hidden elements shift subsequent
+  // block positions upward, making the preliminary measurements stale.
+  const blocks =
+    hiddenHeadings.length > 0
+      ? measureNoSplitBlocks(tbodyEl, pageWidth)
+      : blocksPrelim;
+  const pageStartPositions =
+    hiddenHeadings.length > 0
+      ? measurePageStartPositions(tbodyEl, pageWidth)
+      : pageStartPositionsPrelim;
+
+  // Capture body with continuation headings selectively hidden.
+  const bodyCanvas = await html2canvas(tbodyEl, HTML2CANVAS_OPTS);
+
+  // Restore hidden headings so the on-screen view is unchanged.
+  for (const el of hiddenHeadings) el.style.display = "";
+
+  const bodyMM = canvasHeightToMM(bodyCanvas, pageWidth);
+  const cutPoints = computePageCutPoints(
+    bodyMM,
+    sliceMM,
+    blocks,
+    pageStartPositions,
+  );
+
   const footerImages = await captureFooterImagesPerPage(
     tfootEl,
     cutPoints.length,
@@ -292,8 +440,8 @@ export async function exportSARtoPDF(
     footerMM,
     bodyMM,
   };
-  const headerImage = canvasToJpeg(canvases.header);
-  const bodyImage = canvasToJpeg(canvases.body);
+  const headerImage = canvasToJpeg(headerCanvas);
+  const bodyImage = canvasToJpeg(bodyCanvas);
 
   let bodyOffset = 0;
   for (let i = 0; i < cutPoints.length; i++) {

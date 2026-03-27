@@ -297,6 +297,19 @@ export const formatJudgeAndDivision = (charge: {
   return judgeNames || charge.division || null;
 };
 
+/**
+ * Formats a date as "Month Day, Year" (e.g. "March 27, 2026").
+ * Uses UTC to avoid off-by-one timezone issues.
+ */
+export const formatLongDate = (date: Date): string => {
+  return date.toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 /** Format a date for display as MM/DD/YYYY, returning a dash for empty values */
 export const formatDisplayDate = (
   date: string | Date | null | undefined,

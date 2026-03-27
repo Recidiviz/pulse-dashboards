@@ -33,6 +33,14 @@ export function getAssessmentTypeDisplayName(
   return AssessmentTypeDisplayNames[dbValue];
 }
 
+/** Returns the short tool code for an assessment type, e.g. "ORAS_CST" → "ORAS-CST". */
+export function getAssessmentTypeShortName(
+  assessmentType: AssessmentTypeKey | null | undefined,
+): string {
+  if (!assessmentType || assessmentType === "Other") return "ORAS";
+  return assessmentType.replace(/_/g, "-");
+}
+
 // Overall max scores derived from observed production data (excluding Age domain)
 export const OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE: Record<
   AssessmentTypeKey,
