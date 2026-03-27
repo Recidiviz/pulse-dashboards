@@ -15,22 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
+import styled from "styled-components";
+
 import { usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
+import { spacing } from "~design-system";
 
 import { ProgramsCta } from "./ProgramsCta/ProgramsCta";
 import { UsArImportantDates } from "./UsArImportantDates";
+
+const Wrapper = styled.div`
+  padding-bottom: ${rem(spacing.xxl)};
+`;
 
 export function UsArSingleResidentHome() {
   usePageTitle("Home");
   const metadata = useResidentMetadata("US_AR");
 
   return (
-    <>
+    <Wrapper>
       <LastUpdatedBanner lastUpdatedDate={metadata.lastUpdatedDate} />
       <UsArImportantDates metadata={metadata} />
       <ProgramsCta />
-    </>
+    </Wrapper>
   );
 }

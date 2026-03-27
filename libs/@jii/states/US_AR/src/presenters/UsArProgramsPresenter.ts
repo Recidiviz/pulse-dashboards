@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { captureException } from "@sentry/react";
-import { group, rollup } from "d3-array";
+import { groups, rollup } from "d3-array";
 import { max, parseISO } from "date-fns";
+import { sortBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI } from "~@jii/data";
@@ -94,10 +95,16 @@ export class UsArProgramsPresenter implements Hydratable {
     ]);
   }
 
-  get categories(): string[] {
+  get categories(): {
+    name: string;
+    programs: UsArProgram[];
+  }[] {
     if (!this.programs) return [];
-    const categories = new Set(this.programs.map((p) => p.category));
-    return Array.from(categories).sort();
+    const unsortedCategories = groups(
+      this.filteredPrograms,
+      (p) => p.category,
+    ).map(([name, programs]) => ({ name, programs }));
+    return sortBy(unsortedCategories, "name");
   }
 
   get facilities(): string[] {
@@ -150,10 +157,6 @@ export class UsArProgramsPresenter implements Hydratable {
 
       return true;
     });
-  }
-
-  get programsByCategory(): Map<string, UsArProgram[]> {
-    return group(this.filteredPrograms, (p) => p.category);
   }
 
   get totalProgramsByCategory(): Map<string, number> {

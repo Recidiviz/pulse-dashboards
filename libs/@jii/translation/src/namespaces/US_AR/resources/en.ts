@@ -19,12 +19,9 @@ import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 
 export default {
   moreInformation: {
-    pages: {
-      earnedCredit: {
-        heading: "Understanding Release Dates & Good Time",
-        body: importantDatesInfoPage,
-        backLink: "Back to Programs",
-      },
+    backLink: {
+      home: "Back to Home",
+      programs: "Back to Programs",
     },
   },
   importantDates: {
@@ -61,11 +58,11 @@ export default {
     },
     lastUpdated: "This information was last updated {{date, formatFullDate}}.",
     backLink: "Back to Home",
-    pageTitle: "Earn time off your sentence",
+    pageTitle: "Earn Time Off Your Sentence",
     pageDescription: `This page helps you find programs and activities that can provide Good Time off of your Parole/Transfer/Release Eligibility Date. 
 
-This list will update from time to time—look for the “New” label to see what has changed. If you are eligible for a particular program, please follow your facility’s process for signing up.`,
-    learnMoreLink: "Learn about earned time",
+This list will update from time to time—look for the “New” label to see what was recently updated. If you are eligible for a particular program, please follow your facility’s process for signing up.`,
+    learnMoreLink: "Learn about Good Time and Programs",
     resultsCount_one: "{{count}} result below.",
     resultsCount_other: "{{count}} results below.",
     resultsHint: "Tap on each card to view more information.",
@@ -102,7 +99,7 @@ This list will update from time to time—look for the “New” label to see wh
       eligibilityNone: "No requirements needed",
       availableFacilities: "Available Facilities",
       callToAction:
-        "Sound interesting? Talk to your case manager to see if there might be a good fit.",
+        "Sound interesting? Reach out to your unit’s program services to see if this might be a good fit.",
       closeWindow: "Close window",
     },
   },

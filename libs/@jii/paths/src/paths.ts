@@ -64,8 +64,9 @@ export const UsArMoreInformation = route(
   "more-information",
   {},
   {
-    ImportantDates: route("important-dates"),
-    EarnedCredit: route("earned-credit"),
+    ImportantDates: route("important-dates", {
+      searchParams: { backTarget: string() },
+    }),
   },
 );
 

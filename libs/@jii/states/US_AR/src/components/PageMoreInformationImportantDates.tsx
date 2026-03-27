@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import {
+  useTypedParams,
+  useTypedSearchParams,
+} from "react-router-typesafe-routes/dom";
 
 import { ImportantDatesCopyWrapper } from "~@jii/common-ui";
 import { DefinitionPage } from "~@jii/layout";
@@ -25,10 +28,24 @@ import { useUsArTranslations } from "~@jii/translation";
 export function PageMoreInformationImportantDates() {
   const { t } = useUsArTranslations();
   const params = useTypedParams(State.Resident.UsArMoreInformation);
+  const [{ backTarget }] = useTypedSearchParams(
+    State.Resident.UsArMoreInformation.ImportantDates,
+  );
+
+  const backLinkProps =
+    backTarget === "programs"
+      ? {
+          to: State.Resident.UsArPrograms.buildPath(params),
+          children: t(($) => $.moreInformation.backLink.programs),
+        }
+      : {
+          to: State.Resident.buildPath(params),
+          children: t(($) => $.moreInformation.backLink.home),
+        };
 
   return (
     <DefinitionPage
-      backLinkProps={{ to: State.Resident.buildPath(params), children: "Home" }}
+      backLinkProps={backLinkProps}
       heading={t(($) => $.importantDates.moreInfo.heading)}
       body={t(($) => $.importantDates.moreInfo.body)}
       CopyWrapperOverride={ImportantDatesCopyWrapper}

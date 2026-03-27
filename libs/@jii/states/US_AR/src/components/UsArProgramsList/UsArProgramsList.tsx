@@ -70,6 +70,7 @@ const FilterSection = styled.div`
   padding: ${rem(spacing.md)};
   border-top: 1px solid ${palette.slate20};
   border-bottom: 1px solid ${palette.slate20};
+  margin-bottom: ${rem(spacing.lg)};
 `;
 
 const ResultsText = styled.p`
@@ -120,8 +121,9 @@ const ManagedComponent: FC<{ presenter: UsArProgramsPresenter }> = observer(
             {t(($) => $.programs.pageDescription)}
           </Description>
           <ButtonLink
-            to={State.Resident.UsArMoreInformation.EarnedCredit.buildPath(
+            to={State.Resident.UsArMoreInformation.ImportantDates.buildPath(
               pathParams,
+              { backTarget: "programs" },
             )}
           >
             {t(($) => $.programs.learnMoreLink)}
@@ -142,26 +144,23 @@ const ManagedComponent: FC<{ presenter: UsArProgramsPresenter }> = observer(
         </FilterSection>
 
         <CategoriesList>
-          {/* Array.from() because react doesn't like iterators as children */}
-          {Array.from(presenter.programsByCategory.entries()).map(
-            ([category, programs]) => (
-              <CategorySection
-                key={category}
-                categoryName={category}
-                programCount={programs.length}
-                totalCount={presenter.totalProgramsByCategory.get(category)}
-              >
-                {programs.map((program) => (
-                  <ProgramCard
-                    key={`${program.programId}-${program.title}`}
-                    program={program}
-                    onToggleStar={handleToggleStar}
-                    onClick={setSelectedProgram}
-                  />
-                ))}
-              </CategorySection>
-            ),
-          )}
+          {presenter.categories.map(({ name, programs }) => (
+            <CategorySection
+              key={name}
+              categoryName={name}
+              programCount={programs.length}
+              totalCount={presenter.totalProgramsByCategory.get(name)}
+            >
+              {programs.map((program) => (
+                <ProgramCard
+                  key={`${program.programId}-${program.title}`}
+                  program={program}
+                  onToggleStar={handleToggleStar}
+                  onClick={setSelectedProgram}
+                />
+              ))}
+            </CategorySection>
+          ))}
         </CategoriesList>
 
         <ProgramDetailModal

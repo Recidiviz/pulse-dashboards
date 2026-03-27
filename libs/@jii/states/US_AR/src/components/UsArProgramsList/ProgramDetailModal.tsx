@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Modal as ModalBase, typography } from "@recidiviz/design-system";
+import { upperFirst } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
@@ -46,14 +47,15 @@ const Header = styled.div`
 
 const TitleRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: ${rem(12)};
 `;
 
-const TitleLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(12)};
+const InlineStar = styled(StarButton)`
+  display: inline-flex;
+  margin-left: ${rem(12)};
+  vertical-align: ${rem(-2)};
 `;
 
 const Title = styled.h2`
@@ -70,6 +72,8 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: ${rem(6)};
+  flex-shrink: 0;
 `;
 
 const Divider = styled.hr`
@@ -151,14 +155,10 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
 
   if (program) {
     if (!isEmpty(program.eligibilityRequirements)) {
-      eligibilityItems.push(program.eligibilityRequirements);
-    }
-    if (!isEmpty(program.prerequisites)) {
-      eligibilityItems.push(
-        t(($) => $.programs.modal.eligibilityPrereq, {
-          prereq: program.prerequisites,
-        }),
-      );
+      const reqs = program.eligibilityRequirements
+        .split(/\s*;\s*(?:and\s*)?/)
+        .map(upperFirst);
+      eligibilityItems.push(...reqs);
     }
     if (eligibilityItems.length === 0) {
       eligibilityItems.push(t(($) => $.programs.modal.eligibilityNone));
@@ -171,14 +171,17 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
         <>
           <Header>
             <TitleRow>
-              <TitleLeft>
-                <Title>{program.title}</Title>
-                <StarButton
-                  isStarred={program.isStarred}
-                  onClick={() => onToggleStar(program)}
-                  size={20}
-                />
-              </TitleLeft>
+              <Title>
+                {program.title.slice(0, program.title.lastIndexOf(" ") + 1)}
+                <span style={{ whiteSpace: "nowrap" }}>
+                  {program.title.slice(program.title.lastIndexOf(" ") + 1)}
+                  <InlineStar
+                    isStarred={program.isStarred}
+                    onClick={() => onToggleStar(program)}
+                    size={20}
+                  />
+                </span>
+              </Title>
               <CloseButton type="button" onClick={onClose} aria-label="Close">
                 <Icon kind="Close" size={16} color={palette.slate85} />
               </CloseButton>

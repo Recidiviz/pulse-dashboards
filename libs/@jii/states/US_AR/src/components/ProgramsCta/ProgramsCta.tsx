@@ -17,6 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { Card, GoLink, HomepageSectionHeading } from "~@jii/common-ui";
@@ -40,30 +41,42 @@ const CardContent = styled.div`
 
 const CardHeading = styled.h3`
   ${typography.Sans24}
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 `;
 
 const CardDescription = styled.p`
   ${typography.Sans16}
   color: black;
+
+  margin-bottom: ${rem(spacing.lg)};
 `;
 
 export function ProgramsCta() {
   const { t } = useUsArTranslations();
+
+  const linkTo = State.Resident.$.UsArPrograms.buildRelativePath({});
+
   return (
     <section>
       <HomepageSectionHeading>
         {t(($) => $.programs.homepageCta.sectionHeader)}
       </HomepageSectionHeading>
       <CtaCard>
-        <Illustration />
+        <Link to={linkTo}>
+          <Illustration />
+        </Link>
         <CardContent>
-          <CardHeading>{t(($) => $.programs.homepageCta.heading)}</CardHeading>
+          <CardHeading>
+            <Link to={linkTo}>{t(($) => $.programs.homepageCta.heading)}</Link>
+          </CardHeading>
           <CardDescription>
             {t(($) => $.programs.homepageCta.description)}
           </CardDescription>
-          <GoLink to={State.Resident.$.UsArPrograms.buildRelativePath({})}>
-            {t(($) => $.programs.homepageCta.link)}
-          </GoLink>
+          <GoLink to={linkTo}>{t(($) => $.programs.homepageCta.link)}</GoLink>
         </CardContent>
       </CtaCard>
     </section>

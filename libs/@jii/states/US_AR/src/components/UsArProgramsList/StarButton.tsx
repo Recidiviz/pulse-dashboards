@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { ComponentProps, FC } from "react";
 import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
@@ -27,21 +27,32 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: revert;
+  }
 `;
 
 type StarButtonProps = {
   isStarred: boolean;
   onClick: (e: React.MouseEvent) => void;
   size: number;
+  // Pipe through `className` so the caller can style it with styled-components
+  className?: ComponentProps<typeof StyledButton>["className"];
 };
 
 export const StarButton: FC<StarButtonProps> = ({
   isStarred,
   onClick,
   size,
+  className,
 }) => {
   return (
-    <StyledButton type="button" onClick={onClick}>
+    <StyledButton type="button" onClick={onClick} className={className}>
       <Icon
         kind={isStarred ? "Star" : "StarOutline"}
         role="img"
