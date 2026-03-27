@@ -18,9 +18,11 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { UsArMoreInformation } from "~@jii/paths";
+import { UsArMoreInformation, UsArPrograms } from "~@jii/paths";
 
+import { PageMoreInformationEarnedCredit } from "./PageMoreInformationEarnedCredit";
 import { PageMoreInformationImportantDates } from "./PageMoreInformationImportantDates";
+import { UsArProgramsList } from "./UsArProgramsList/UsArProgramsList";
 import { UsArSingleResidentHome } from "./UsArSingleResidentHome";
 
 export function UsArRouter() {
@@ -32,7 +34,12 @@ export function UsArRouter() {
           path={UsArMoreInformation.ImportantDates.path}
           element={<PageMoreInformationImportantDates />}
         />
+        <Route
+          path={UsArMoreInformation.EarnedCredit.path}
+          element={<PageMoreInformationEarnedCredit />}
+        />
       </Route>
+      <Route path={UsArPrograms.path} element={<UsArProgramsList />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
