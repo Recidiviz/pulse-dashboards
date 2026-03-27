@@ -58,7 +58,7 @@ const ConfigManagementPage = () => {
     },
     {
       enabled: isInternalUser(userEmail),
-    }
+    },
   );
 
   // Fetch output configs using openapi-react-query
@@ -80,7 +80,7 @@ const ConfigManagementPage = () => {
     },
     {
       enabled: isInternalUser(userEmail),
-    }
+    },
   );
 
   // Extract unique states from assessment configs for the filter dropdown
@@ -134,15 +134,18 @@ const ConfigManagementPage = () => {
         `${BACKEND_URL}/config-management/assessments/${configId}/export`,
         {
           headers: configHeaders(accessToken),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();
       const contentDisposition = response.headers.get("content-disposition");
+      const filenameMatch = contentDisposition?.match(
+        /filename="([^"]+)"|filename=([^\s;]+)/,
+      );
       const filename =
-        contentDisposition?.match(/filename="?(.+)"?/)?.[1] || "config.yaml";
+        filenameMatch?.[1] || filenameMatch?.[2] || "config.yaml";
 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -167,15 +170,18 @@ const ConfigManagementPage = () => {
         `${BACKEND_URL}/config-management/outputs/${configId}/export`,
         {
           headers: configHeaders(accessToken),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();
       const contentDisposition = response.headers.get("content-disposition");
+      const filenameMatch = contentDisposition?.match(
+        /filename="([^"]+)"|filename=([^\s;]+)/,
+      );
       const filename =
-        contentDisposition?.match(/filename="?(.+)"?/)?.[1] || "config.yaml";
+        filenameMatch?.[1] || filenameMatch?.[2] || "config.yaml";
 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -289,7 +295,9 @@ const ConfigManagementPage = () => {
         {/* Output Configs Section */}
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-900">Output Configs</h2>
+            <h2 className="text-lg font-medium text-gray-900">
+              Output Configs
+            </h2>
             <span className="text-sm text-gray-500">
               {outputData?.items?.length || 0} configs
             </span>
