@@ -222,7 +222,7 @@ export const formatBooleanDisplay = (
 
 /**
  * Formats a date range for display.
- * Returns "Apr 2023 - Nov 2025" format, or "Apr 2023 - Present" if no end date.
+ * Returns "04/2023 - 11/2025" format, or "04/2023 - Present" if no end date.
  * Returns "Not specified" if no start date.
  * Uses UTC to avoid off-by-one timezone issues.
  */
@@ -234,7 +234,7 @@ export const formatDateRange = (
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
+      month: "2-digit",
       year: "numeric",
       timeZone: "UTC",
     });

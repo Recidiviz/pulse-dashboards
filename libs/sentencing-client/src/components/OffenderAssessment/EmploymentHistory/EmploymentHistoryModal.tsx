@@ -163,7 +163,8 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> = ({
                   onChange={(date) =>
                     setFormData({ ...formData, startDate: date ?? null })
                   }
-                  placeholder="dd/mm/yyyy"
+                  placeholder="MM/YYYY"
+                  monthYearOnly
                 />
               </Styled.DatePickerWrapper>
             </Styled.Field>
@@ -178,7 +179,8 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> = ({
                   onChange={(date) =>
                     setFormData({ ...formData, endDate: date ?? null })
                   }
-                  placeholder="dd/mm/yyyy"
+                  placeholder="MM/YYYY"
+                  monthYearOnly
                 />
               </Styled.DatePickerWrapper>
             </Styled.Field>
