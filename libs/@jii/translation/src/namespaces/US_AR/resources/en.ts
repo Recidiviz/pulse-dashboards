@@ -34,11 +34,11 @@ export default {
       } as Record<string, string>,
       description: {
         "Transfer Eligibility Date":
-          "The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
+          "The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
         "Parole Eligibility Date":
-          "The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
+          "The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
         "Release Eligibility Date":
-          "The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks.",
+          "The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks.",
       } as Record<string, string>,
     },
     maximumReleaseDate: {
@@ -49,7 +49,7 @@ export default {
     formatFullDate: "{{date, formatFullDate}}",
     moreInfoLink: "Learn more about dates",
     moreInfo: {
-      heading: "Understanding Release Dates & Good Time",
+      heading: "Understanding Release Dates & Time",
       body: importantDatesInfoPage,
     },
     missingDateMessage: "No date on record",

@@ -6,33 +6,33 @@ Arkansas laws and policies have changed the names of release dates over the year
 
 <dl>
 <dt>Parole Eligibility Date</dt>
-<dd>The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>
+<dd>The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>
 <dt>Maximum Release Date</dt>
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
-<dd>Days of credit you can earn by staying in lower Class levels **or** by completing programming that moves your Parole Eligibility Date closer to the present.</dd>
+<dd>Days of credit that change your Parole Eligibility Date (PED) based on behavior, participation in work programs, Class level or program completion.</dd>
 </dl>
 
 ### If Your Offense Was Committed Between 1994-2024
 
 <dl>
 <dt>Transfer Eligibility Date</dt>
-<dd>The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>
+<dd>The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>
 <dt>Maximum Release Date</dt>
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
-<dd>Days of credit you can earn by staying in lower Class levels **or** by completing programming that moves your Transfer Eligibility Date closer to the present.</dd>
+<dd>Days of credit that change your Transfer Eligibility Date (TED) based on behavior, participation in work programs, Class level or programs completion.</dd>
 </dl>
 
 ### If Your Offense Was Committed January 1, 2025 or After
 
 <dl>
 <dt>Release Eligibility Date</dt>
-<dd>The date you are currently eligible for transfer to community supervision. This date may move up as you participate in programming and earn good time. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks.</dd>
+<dd>The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks.</dd>
 <dt>Maximum Release Date</dt>
 <dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>
 <dt>Good Time</dt>
-<dd>Days of credit you can earn by staying in lower Class levels **or** by completing programming that moves your Release Eligibility Date closer to the present.</dd>
+<dd>Days of credit that change your Release Eligibility Date (RED) based on behavior, participation in work programs, Class level or program completion.</dd>
 </dl>
 
 #### Why does my time card say Parole Eligibility Date, but this app says Release Eligibility Date?
@@ -41,7 +41,7 @@ The term “Release Eligibility Date” is the updated term for when you become 
 
 If you have previously seen a Parole Eligibility Date on your time card, this date serves the same purpose. The terminology has been updated to “Release Eligibility Date” for individuals whose offense occurred on or after January 1, 2025.
 
-## Good Time
+## Good Time / Earned Release Credits
 
 ### How many days do I reduce my sentence by for my Class level?
 
