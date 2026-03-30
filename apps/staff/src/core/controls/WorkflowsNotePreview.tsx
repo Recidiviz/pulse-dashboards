@@ -64,7 +64,7 @@ export const NotePreview = styled.article`
   background-color: ${palette.marble1};
   border: 1px solid ${palette.slate30};
   padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-  white-space: pre;
+  white-space: pre-line;
   max-width: ${rem(960)};
 `;
 
