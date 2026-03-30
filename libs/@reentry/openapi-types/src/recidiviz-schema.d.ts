@@ -472,6 +472,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/config-management/assessments/available-states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List States with Assessment Configs
+         * @description Returns distinct state codes that have assessment configs
+         */
+        get: operations["list_states_for_assessment_configs_config_management_assessments_available_states_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/config-management/assessments/{config_id}": {
         parameters: {
             query?: never;
@@ -1552,6 +1572,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/impersonate/impersonate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Impersonate User
+         * @description Fetch metadata for a target user to enable impersonation.
+         *     Only accessible to internal (Recidiviz) users.
+         */
+        get: operations["impersonate_user_impersonate_impersonate_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/external/client/verify/dob+urltoken": {
         parameters: {
             query?: never;
@@ -1685,6 +1726,11 @@ export interface paths {
          * Deepgram Transcription Webhook
          * @description Webhook endpoint for receiving transcription results from Deepgram.
          *     This is called by Deepgram when async transcription completes.
+         *
+         *     Security:
+         *         Verifies HMAC-SHA256 signature in the 'dg-token' header to ensure
+         *         the request is authentic and hasn't been tampered with. Rejects any
+         *         unsigned or invalidly signed requests to prevent injection attacks.
          */
         post: operations["deepgram_transcription_webhook_webhooks_deepgram_transcription_post"];
         delete?: never;
@@ -1708,57 +1754,6 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/demo/sse/chat": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Sse Chat */
-        post: operations["sse_chat_demo_sse_chat_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/demo/sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Sessions */
-        get: operations["list_sessions_demo_sessions_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/demo/sessions/{session_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Clear Session */
-        delete: operations["clear_session_demo_sessions__session_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4712,13 +4707,6 @@ export interface components {
             | "Volunteer Opportunities"
             | "Recreation"
             | "Civic Engagement";
-        /** SSEChatRequest */
-        SSEChatRequest: {
-            /** Session Id */
-            session_id?: string | null;
-            /** Message */
-            message: string;
-        };
         /** SetNotificationRequest */
         SetNotificationRequest: {
             /** Notify */
@@ -5197,6 +5185,7 @@ export interface operations {
     list_ai_personas_ai_personas_get: {
         parameters: {
             query?: {
+                skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -5230,7 +5219,9 @@ export interface operations {
     };
     create_ai_persona_endpoint_ai_personas_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -5263,7 +5254,9 @@ export interface operations {
     };
     get_ai_persona_ai_personas__persona_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 persona_id: string;
@@ -5294,7 +5287,9 @@ export interface operations {
     };
     update_ai_persona_endpoint_ai_personas__persona_id__put: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 persona_id: string;
@@ -5329,7 +5324,9 @@ export interface operations {
     };
     delete_ai_persona_endpoint_ai_personas__persona_id__delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 persona_id: string;
@@ -5360,7 +5357,9 @@ export interface operations {
     };
     list_persona_triggers_ai_personas__persona_id__triggers_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 persona_id: string;
@@ -5391,7 +5390,9 @@ export interface operations {
     };
     trigger_ai_intake_ai_personas_ai_intakes_trigger_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -5424,7 +5425,9 @@ export interface operations {
     };
     get_ai_intake_status_ai_personas_ai_intakes__execution_id__status_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 execution_id: string;
@@ -5455,7 +5458,9 @@ export interface operations {
     };
     get_ai_intake_status_by_trigger_ai_personas_ai_intakes__trigger_id__trigger_status_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 trigger_id: string;
@@ -5486,7 +5491,9 @@ export interface operations {
     };
     retry_ai_intake_ai_personas_ai_intakes__trigger_id__retry_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 trigger_id: string;
@@ -5517,7 +5524,9 @@ export interface operations {
     };
     list_template_triggers_ai_personas_ai_intakes_templates_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -5533,11 +5542,22 @@ export interface operations {
                     "application/json": components["schemas"]["AIIntakeTriggerSummary"][];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     toggle_trigger_as_template_ai_personas_ai_intakes__trigger_id__toggle_template_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 trigger_id: string;
@@ -5568,7 +5588,9 @@ export interface operations {
     };
     test_ai_persona_ai_personas__persona_id__test_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 persona_id: string;
@@ -5637,8 +5659,12 @@ export interface operations {
     };
     router_add_decision_tree_decision_trees_post: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5701,8 +5727,12 @@ export interface operations {
     };
     router_delete_decision_tree_decision_trees__decision_tree_id__delete: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 decision_tree_id: string;
             };
@@ -5730,8 +5760,12 @@ export interface operations {
     };
     router_update_decision_tree_decision_trees__decision_tree_id__patch: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 decision_tree_id: string;
             };
@@ -5801,8 +5835,12 @@ export interface operations {
     };
     router_add_decision_tree_revision_decision_trees__decision_tree_id__revisions_post: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path: {
                 decision_tree_id: string;
             };
@@ -5951,7 +5989,9 @@ export interface operations {
     };
     verify_password_config_management_auth_verify_password_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -5991,6 +6031,7 @@ export interface operations {
                 code?: string | null;
                 /** @description Filter by status (draft, active, inactive) */
                 status?: string[] | null;
+                skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -6026,7 +6067,9 @@ export interface operations {
     };
     create_assessment_config_draft_config_management_assessments_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6059,9 +6102,44 @@ export interface operations {
             };
         };
     };
+    list_states_for_assessment_configs_config_management_assessments_available_states_get: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_assessment_config_config_management_assessments__config_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6094,7 +6172,9 @@ export interface operations {
     };
     delete_assessment_config_endpoint_config_management_assessments__config_id__delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6127,7 +6207,9 @@ export interface operations {
     };
     update_assessment_config_draft_config_management_assessments__config_id__patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6164,7 +6246,9 @@ export interface operations {
     };
     create_new_assessment_version_config_management_assessments__config_id__new_version_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6201,7 +6285,9 @@ export interface operations {
     };
     validate_assessment_yaml_config_management_assessments_validate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6236,7 +6322,9 @@ export interface operations {
     };
     activate_assessment_config_config_management_assessments__config_id__activate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6273,7 +6361,9 @@ export interface operations {
     };
     deactivate_assessment_config_config_management_assessments__config_id__deactivate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6310,7 +6400,9 @@ export interface operations {
     };
     export_assessment_config_config_management_assessments__config_id__export_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6343,7 +6435,9 @@ export interface operations {
     };
     validate_assessment_import_config_management_assessments_import_validate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6385,6 +6479,7 @@ export interface operations {
                 auto_activate?: boolean;
                 /** @description Source environment name (for audit purposes) */
                 source_env?: string | null;
+                skip_impersonation?: boolean;
             };
             header?: {
                 "x-config-access-token"?: string | null;
@@ -6427,6 +6522,7 @@ export interface operations {
                 code?: string | null;
                 /** @description Filter by status (draft, active, inactive) */
                 status?: string[] | null;
+                skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -6462,7 +6558,9 @@ export interface operations {
     };
     create_output_config_draft_config_management_outputs_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6497,7 +6595,9 @@ export interface operations {
     };
     get_output_config_config_management_outputs__config_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6530,7 +6630,9 @@ export interface operations {
     };
     delete_output_config_endpoint_config_management_outputs__config_id__delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6563,7 +6665,9 @@ export interface operations {
     };
     update_output_config_draft_config_management_outputs__config_id__patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6600,7 +6704,9 @@ export interface operations {
     };
     create_new_output_version_config_management_outputs__config_id__new_version_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6637,7 +6743,9 @@ export interface operations {
     };
     validate_output_yaml_config_management_outputs_validate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6675,6 +6783,7 @@ export interface operations {
             query: {
                 /** @description Output type (action_plan or intake_summary) */
                 output_type: components["schemas"]["OutputType"];
+                skip_impersonation?: boolean;
             };
             header?: {
                 "x-config-access-token"?: string | null;
@@ -6706,7 +6815,9 @@ export interface operations {
     };
     activate_output_config_config_management_outputs__config_id__activate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6743,7 +6854,9 @@ export interface operations {
     };
     deactivate_output_config_config_management_outputs__config_id__deactivate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6780,7 +6893,9 @@ export interface operations {
     };
     export_output_config_config_management_outputs__config_id__export_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6813,7 +6928,9 @@ export interface operations {
     };
     validate_output_import_config_management_outputs_import_validate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: {
                 "x-config-access-token"?: string | null;
             };
@@ -6855,6 +6972,7 @@ export interface operations {
                 auto_activate?: boolean;
                 /** @description Source environment name (for audit purposes) */
                 source_env?: string | null;
+                skip_impersonation?: boolean;
             };
             header?: {
                 "x-config-access-token"?: string | null;
@@ -6901,6 +7019,7 @@ export interface operations {
                 from_date?: string | null;
                 /** @description Filter to date (inclusive) */
                 to_date?: string | null;
+                skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -7108,6 +7227,7 @@ export interface operations {
                 sort_order?: string;
                 search?: string | null;
                 status_filter?: string | null;
+                skip_impersonation?: boolean;
             };
             header?: never;
             path?: never;
@@ -7137,7 +7257,9 @@ export interface operations {
     };
     get_client_latest_address_clients__client_pseudo_id__latest_address_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 client_pseudo_id: string;
@@ -7170,7 +7292,9 @@ export interface operations {
     };
     get_client_record_clients__client_pseudo_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 client_pseudo_id: string;
@@ -7201,7 +7325,9 @@ export interface operations {
     };
     get_client_intakes_clients__client_pseudo_id__intakes_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 client_pseudo_id: string;
@@ -7232,7 +7358,9 @@ export interface operations {
     };
     reset_client_data_clients__client_pseudo_id__reset_delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 client_pseudo_id: string;
@@ -7263,7 +7391,9 @@ export interface operations {
     };
     add_client_route_clients_admin_add_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -7296,7 +7426,9 @@ export interface operations {
     };
     remove_client_route_clients_admin_remove_delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -7360,7 +7492,9 @@ export interface operations {
     };
     get_intake_address_intake_admin__intake_id__address_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7391,7 +7525,9 @@ export interface operations {
     };
     submit_address_intake_admin__intake_id__address_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7426,7 +7562,9 @@ export interface operations {
     };
     create_new_intake_intake_admin_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -7459,7 +7597,9 @@ export interface operations {
     };
     get_client_intake_intake_admin__intake_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7490,7 +7630,9 @@ export interface operations {
     };
     delete_new_intake_intake_admin__intake_id__delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7521,7 +7663,9 @@ export interface operations {
     };
     get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7553,7 +7697,9 @@ export interface operations {
     };
     set_internal_access_intake_admin__intake_id__internal_access_patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7588,7 +7734,9 @@ export interface operations {
     };
     set_outputs_enabled_intake_admin__intake_id__outputs_enabled_patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7623,7 +7771,9 @@ export interface operations {
     };
     generate_client_token_intake_admin__intake_id__token_access_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7654,7 +7804,9 @@ export interface operations {
     };
     retry_intake_processing_intake_admin__intake_id__retry_processing_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7685,7 +7837,9 @@ export interface operations {
     };
     get_client_recording_sessions_recordings_by_intake__intake_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -7718,7 +7872,9 @@ export interface operations {
     };
     create_new_recording_session_recordings_sessions_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -7751,7 +7907,9 @@ export interface operations {
     };
     get_recording_session_recordings_sessions__session_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -7782,7 +7940,9 @@ export interface operations {
     };
     get_recording_session_status_recordings_sessions__session_id__status_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -7813,7 +7973,9 @@ export interface operations {
     };
     update_recording_session_status_recordings_sessions__session_id__status_put: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -7848,7 +8010,9 @@ export interface operations {
     };
     upload_audio_chunk_recordings_sessions__session_id__upload_chunk_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -7883,7 +8047,9 @@ export interface operations {
     };
     get_upload_url_recordings_sessions__session_id__get_upload_url_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -7918,7 +8084,9 @@ export interface operations {
     };
     confirm_upload_recordings_sessions__session_id__confirm_upload_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -7953,7 +8121,9 @@ export interface operations {
     };
     finalize_recording_recordings_sessions__session_id__finalize_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -7988,7 +8158,9 @@ export interface operations {
     };
     retry_process_recording_recordings_sessions__session_id__retry_processing_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -8019,7 +8191,9 @@ export interface operations {
     };
     get_signed_url_recordings_sessions__session_id__signed_url_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 session_id: string;
@@ -8085,7 +8259,9 @@ export interface operations {
     };
     get_client_transcription_transcription__recording_session_id__transcription_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 recording_session_id: string;
@@ -8116,7 +8292,9 @@ export interface operations {
     };
     update_speaker_roles_transcription__recording_session_id__speaker_roles_put: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 recording_session_id: string;
@@ -8136,6 +8314,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UpdateSpeakerRolesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    impersonate_user_impersonate_impersonate_get: {
+        parameters: {
+            query: {
+                email: string;
+                skip_impersonation?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -8387,90 +8597,6 @@ export interface operations {
             };
         };
     };
-    sse_chat_demo_sse_chat_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SSEChatRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_sessions_demo_sessions_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    clear_session_demo_sessions__session_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                session_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     get_client_intake_with_token_external_client_by_token__token_from_url__get: {
         parameters: {
             query?: never;
@@ -8629,6 +8755,7 @@ export interface operations {
         parameters: {
             query: {
                 client_pseudo_id: string;
+                skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -8662,7 +8789,9 @@ export interface operations {
     };
     router_create_plan_plans_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -8695,7 +8824,9 @@ export interface operations {
     };
     router_get_plan_by_intake_id_plans_by_intake__intake_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -8726,7 +8857,9 @@ export interface operations {
     };
     router_get_plan_plans__id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -8757,7 +8890,9 @@ export interface operations {
     };
     router_delete_plan_plans__id__delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -8788,7 +8923,9 @@ export interface operations {
     };
     router_generate_plan_plans__id__generate_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -8823,7 +8960,9 @@ export interface operations {
     };
     router_generate_plan_manually_plans__id__edit_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -8858,7 +8997,9 @@ export interface operations {
     };
     router_get_generation_plans__id__gens__gen_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -8891,6 +9032,7 @@ export interface operations {
     router_list_assets_plans__id__assets_get: {
         parameters: {
             query?: {
+                skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -8926,7 +9068,9 @@ export interface operations {
     };
     router_upload_asset_plans__id__assets_upload_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -8963,6 +9107,7 @@ export interface operations {
         parameters: {
             query?: {
                 include_data?: boolean | null;
+                skip_impersonation?: boolean;
             };
             header?: never;
             path: {
@@ -8995,7 +9140,9 @@ export interface operations {
     };
     router_get_asset_plans__id__assets__asset_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9027,7 +9174,9 @@ export interface operations {
     };
     router_delete_asset_plans__id__assets__asset_id__delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9059,7 +9208,9 @@ export interface operations {
     };
     router_download_asset_plans__id__assets__asset_id__download_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9100,6 +9251,7 @@ export interface operations {
                     | components["schemas"]["ResourceSubcategory"]
                     | components["schemas"]["ResourceSubcategoryLegacy"]
                     | null;
+                skip_impersonation?: boolean;
             };
             header?: never;
             path: {
@@ -9131,7 +9283,9 @@ export interface operations {
     };
     search_resources_plans__id__search_resources_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9166,7 +9320,9 @@ export interface operations {
     };
     get_suggested_resources_plans__id__suggested_resources_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9197,7 +9353,9 @@ export interface operations {
     };
     router_set_generation_notify_plans__id__set_notify_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9232,7 +9390,9 @@ export interface operations {
     };
     generate_pdf_generate_pdf_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -9265,7 +9425,9 @@ export interface operations {
     };
     update_intake_address_and_regenerate_plan_plans__id__address_patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9300,7 +9462,9 @@ export interface operations {
     };
     get_address_plan__plan_id__address_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 plan_id: string;
@@ -9398,6 +9562,7 @@ export interface operations {
     router_list_decision_trees_plans__id__decisiontrees_get: {
         parameters: {
             query?: {
+                skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
                 /** @description Page size */
@@ -9433,7 +9598,9 @@ export interface operations {
     };
     router_add_decision_tree_plans__id__decisiontrees_post: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -9468,7 +9635,9 @@ export interface operations {
     };
     router_delete_all_decision_trees_plans__id__decisiontrees_delete: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 id: string;

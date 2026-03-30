@@ -12,7 +12,10 @@ import structlog
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from fastapi.responses import Response
 from fastapi_pagination import Page
+from fastapi_pagination.default import Params as DefaultParams
 from fastapi_pagination.ext.sqlmodel import paginate
+from pydantic import Field
+from sqlmodel import select
 
 from app.auth.auth_core import (
     get_auth_user_context,
@@ -73,6 +76,11 @@ from app.services.config_management.import_export import ImportExportService
 from app.services.config_management.lifecycle import LifecycleService
 from app.services.config_management.validation import ValidationService
 from app.utils.string_utils import normalize_state_code_format
+
+
+class BigPageParams(DefaultParams):
+    size: int = Field(1000, ge=1, le=1000)
+
 
 router = APIRouter()
 logger = structlog.get_logger(__name__)
@@ -194,7 +202,22 @@ async def list_assessment_configs(
         status=status,
         query_only=True,
     )
-    return await paginate(session, query)
+    return await paginate(session, query, params=BigPageParams())
+
+
+@router.get(
+    "/assessments/available-states",
+    response_model=list[str],
+    summary="List States with Assessment Configs",
+    description="Returns distinct state codes that have assessment configs",
+    tags=["Assessment Configs"],
+)
+async def list_states_for_assessment_configs(
+    session: AsyncSession = Depends(get_session),
+    _: dict = Depends(require_internal_user),
+):
+    result = await session.exec(select(AssessmentConfig.state_code).distinct())
+    return sorted(result.all())
 
 
 @router.get(
@@ -630,7 +653,7 @@ async def list_output_configs(
         status=status,
         query_only=True,
     )
-    return await paginate(session, query)
+    return await paginate(session, query, params=BigPageParams())
 
 
 @router.get(

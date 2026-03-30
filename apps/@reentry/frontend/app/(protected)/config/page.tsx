@@ -19,7 +19,7 @@
 
 import { Box, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { PageView } from "~@reentry/frontend/components/PageView";
@@ -49,10 +49,8 @@ const ConfigManagementPage = () => {
     {
       params: {
         query: {
-          page: 1,
-          size: 100,
-          ...(statusFilter && { status: [statusFilter] }),
           ...(stateFilter && { state_code: stateFilter }),
+          ...(statusFilter && { status: [statusFilter] }),
         },
       },
     },
@@ -72,8 +70,6 @@ const ConfigManagementPage = () => {
     {
       params: {
         query: {
-          page: 1,
-          size: 100,
           ...(statusFilter && { status: [statusFilter] }),
         },
       },
@@ -83,12 +79,16 @@ const ConfigManagementPage = () => {
     },
   );
 
-  // Extract unique states from assessment configs for the filter dropdown
-  const availableStates = useMemo(() => {
-    if (!assessmentData?.items) return [];
-    const states = new Set(assessmentData.items.map((item) => item.state_code));
-    return Array.from(states).sort();
-  }, [assessmentData]);
+  // Fetch available state codes from the backend
+  const { data: availableStates } = $api.useQuery(
+    "get",
+    "/config-management/assessments/available-states",
+    {},
+    { enabled: isInternalUser(userEmail) },
+  );
+
+  const assessmentItems = assessmentData?.items ?? [];
+  const outputItems = outputData?.items ?? [];
 
   // Wait for auth to finish loading before checking access
   if (auth.state.isLoading) {
@@ -257,7 +257,7 @@ const ConfigManagementPage = () => {
                 className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All States</option>
-                {availableStates.map((state) => (
+                {(availableStates ?? []).map((state) => (
                   <option key={state} value={state}>
                     {state}
                   </option>
@@ -274,7 +274,7 @@ const ConfigManagementPage = () => {
               Assessment Configs
             </h2>
             <span className="text-sm text-gray-500">
-              {assessmentData?.items?.length || 0} configs
+              {assessmentItems.length} configs
             </span>
           </div>
 
@@ -285,7 +285,7 @@ const ConfigManagementPage = () => {
           ) : (
             <ConfigTable
               type="assessment"
-              data={assessmentData?.items || []}
+              data={assessmentItems}
               isLoading={assessmentLoading}
               onExport={handleExportAssessment}
             />
@@ -299,7 +299,7 @@ const ConfigManagementPage = () => {
               Output Configs
             </h2>
             <span className="text-sm text-gray-500">
-              {outputData?.items?.length || 0} configs
+              {outputItems.length} configs
             </span>
           </div>
 
@@ -310,7 +310,7 @@ const ConfigManagementPage = () => {
           ) : (
             <ConfigTable
               type="output"
-              data={outputData?.items || []}
+              data={outputItems}
               isLoading={outputLoading}
               onExport={handleExportOutput}
             />
