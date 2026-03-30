@@ -21,8 +21,9 @@ const isPublicPathways = !!import.meta.env["VITE_PUBLIC_PATHWAYS_API_URL_BASE"];
 
 const content: StateSpecificPageCopy = {
   prison: {
+    title: "NYS DOCCS Population Under Custody",
     summary:
-      "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly.",
+      "This dashboard shows data on individuals who are under custody of New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly.",
     sections: {
       countOverTime: isPublicPathways
         ? "Overview"
