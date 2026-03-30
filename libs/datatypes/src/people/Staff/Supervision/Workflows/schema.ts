@@ -47,6 +47,7 @@ export const supervisionStaffRecordSchema =
   workflowsStaffRecordBaseSchema.extend({
     recordType: z.literal("supervisionStaff").default("supervisionStaff"),
     supervisorExternalId: z.string().nullish(),
+    supervisorExternalIds: z.array(z.string().nullish()).nullish(),
     stateSpecificData: supervisionStaffStateSpecificSchema.optional(),
   });
 

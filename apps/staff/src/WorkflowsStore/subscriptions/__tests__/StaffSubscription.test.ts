@@ -266,6 +266,11 @@ describe("StaffSubscription tests", () => {
         "==",
         "2222",
       );
+      expect(whereMock).toHaveBeenCalledWith(
+        "supervisorExternalIds",
+        "array-contains",
+        "2222",
+      );
       expect(queryMock).toHaveBeenCalled();
       expect(orMock).toHaveBeenCalled();
       expect(andMock).toHaveBeenCalled();

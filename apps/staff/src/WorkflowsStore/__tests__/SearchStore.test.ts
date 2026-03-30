@@ -47,7 +47,8 @@ const officers = [
     stateCode: "US_XX",
     givenNames: "TestSupervisedOfficer1",
     surname: "AlphabeticallySecond",
-    supervisorExternalId: mockSupervisor.info.id,
+    supervisorExternalId: "XX_SUPERVISOR_OTHER",
+    supervisorExternalIds: ["XX_SUPERVISOR_OTHER", mockSupervisor.info.id],
     pseudonymizedId: "p001",
     recordType: "supervisionStaff",
   },
@@ -249,7 +250,10 @@ describe("availableSearchables", () => {
     workflowsStore.hasSupervisedStaffAndRequiredFeatureVariant = true;
 
     workflowsStore.staffSupervisedByCurrentUser = officers.filter(
-      (o) => o.supervisorExternalId === mockSupervisor.info.id,
+      (o) =>
+        o.supervisorExternalId === mockSupervisor.info.id ||
+        (o.supervisorExternalIds &&
+          o.supervisorExternalIds.includes(mockSupervisor.info.id)),
     );
     workflowsStore.availableOfficers = officers;
 

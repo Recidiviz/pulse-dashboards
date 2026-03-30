@@ -463,7 +463,8 @@ const populateSupervisedStaff = () => {
         stateCode: "US_XX",
         givenNames: "TestSupervisedOfficer2",
         surname: "AlphabeticallyFirst",
-        supervisorExternalId: mockSupervisor.info.id,
+        supervisorExternalId: "XX_SUPERVISOR_OTHER",
+        supervisorExternalIds: ["XX_SUPERVISOR_OTHER", mockSupervisor.info.id],
         pseudonymizedId: "p002",
         recordType: "supervisionStaff",
       },
@@ -487,12 +488,15 @@ test("staffSupervisedByCurrentUser provides a list of users supervised by curren
   const staffSupervisedByCurrentUser =
     workflowsStore.staffSupervisedByCurrentUser;
   const staffSupervisorExternalIds = staffSupervisedByCurrentUser.map(
-    (staff) => (staff as SupervisionStaffRecord["output"]).supervisorExternalId,
+    (staff) =>
+      (staff as SupervisionStaffRecord["output"]).supervisorExternalIds ?? [
+        (staff as SupervisionStaffRecord["output"]).supervisorExternalId,
+      ],
   );
 
   expect(staffSupervisedByCurrentUser).toBeArrayOfSize(2);
-  expect(staffSupervisorExternalIds[0]).toEqual(mockSupervisor.info.id);
-  expect(staffSupervisorExternalIds[1]).toEqual(mockSupervisor.info.id);
+  expect(staffSupervisorExternalIds[0]).toContain(mockSupervisor.info.id);
+  expect(staffSupervisorExternalIds[1]).toContain(mockSupervisor.info.id);
 });
 
 describe("staffSubscription", () => {

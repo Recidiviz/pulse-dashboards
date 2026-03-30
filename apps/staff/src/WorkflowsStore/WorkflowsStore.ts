@@ -790,8 +790,10 @@ export class WorkflowsStore implements Hydratable {
   get staffSupervisedByCurrentUser(): StaffRecord[] {
     const filteredOfficers = this.availableOfficers.filter(
       (officer) =>
-        "supervisorExternalId" in officer &&
-        officer.supervisorExternalId === this.user?.info.id,
+        ("supervisorExternalId" in officer &&
+          officer.supervisorExternalId === this.user?.info.id) ||
+        ("supervisorExternalIds" in officer &&
+          officer.supervisorExternalIds?.includes(this.user?.info.id)),
     );
     return filteredOfficers.sort(staffNameComparator);
   }
