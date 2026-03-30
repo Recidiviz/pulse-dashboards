@@ -229,6 +229,20 @@ class Intake(BaseModel, table=True):
             self.completed_at = datetime.utcnow()
             logger.info(f"Scheduling action plan for intake {self.id}")
             await self.schedule_plan_generation(session)
+            # Fire-and-forget Slack notification (errors are caught inside)
+            from app.utils.slack import send_intake_completion_notification
+
+            state_code = (
+                self.assessment_config.state_code
+                if self.assessment_config
+                else "unknown"
+            )
+            await send_intake_completion_notification(
+                state_code=state_code,
+                intake_id=str(self.id),
+                client_pseudo_id=self.client_pseudo_id,
+                intake_type=self.intake_type,
+            )
 
         session.add(self)
         await session.commit()

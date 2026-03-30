@@ -118,6 +118,9 @@ class Settings(BaseSettings):
     DATA_API_URL: str = ""
     GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE: str = ""
 
+    # Slack webhook URLs for intake completion notifications (JSON: {"US_NE": "url", "default": "url"})
+    SLACK_INTAKE_WEBHOOK_URLS: str | None = None
+
     @property
     def DATABASE_URL(self):
         if self.DEPLOY_ENV == "gcp":

@@ -1,6 +1,7 @@
 # Environment files with credentials
 .env
 .env.local
+.env.local-*
 
 # Python
 __pycache__/
