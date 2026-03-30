@@ -74,6 +74,7 @@ export type ApplicationContext = {
   features: {
     enableSTT: boolean;
   };
+  navigateAfterIntake: () => void;
 };
 
 const context = createContext<ApplicationContext | undefined>(undefined);

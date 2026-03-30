@@ -73,7 +73,6 @@ const BASE_DEFAULTS: IntakeConfigBase = {
     label: "DOC ID",
     placeholder: "Enter DOC ID",
   },
-  navigation: { type: "redirect", url: "/assessment" },
   noteOneCopy: {
     title: "Your Community Intake",
     paragraphs: Object.values(DEFAULT_PARAGRAPHS),
@@ -123,13 +122,4 @@ export function getIntakeTenantConfig(
 /** Returns the initial pre-intake step for a given flow type. */
 export function getInitialStep(config: IntakeTenantConfig): PreIntakeStep {
   return config.preIntakeFlow === "video" ? "video" : "one";
-}
-
-/** Navigate based on the configured navigation action (redirect or history-back). */
-export function navigateAfterIntake(config: IntakeTenantConfig): void {
-  if (config.navigation.type === "history-back") {
-    window.history.back();
-  } else {
-    window.location.href = config.navigation.url;
-  }
 }

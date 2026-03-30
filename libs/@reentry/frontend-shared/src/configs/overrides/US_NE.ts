@@ -24,7 +24,6 @@ export const US_NE_OVERRIDES: IntakeTenantOverride = {
     subtitlesSrc: "/videos/us-ne-intake-subtitles.vtt",
   },
   preIntakeCopy: `This intake is designed to help your institutional parole officer learn more about your reentry goals, plans, and needs before you meet to discuss your personalized reentry plan.`,
-  navigation: { type: "history-back" },
   noteOneCopy: {
     title: "Your 120-Day Reentry Prep",
     paragraphs: [

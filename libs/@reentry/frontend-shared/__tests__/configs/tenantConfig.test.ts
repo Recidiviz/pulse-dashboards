@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
   DEFAULT_INTAKE_CONFIG,
   getInitialStep,
   getIntakeTenantConfig,
-  navigateAfterIntake,
 } from "../../src/configs/tenantConfig";
 import { isPreIntakeStep } from "../../src/configs/types";
 
@@ -45,13 +44,6 @@ describe("getIntakeTenantConfig", () => {
   it("default config uses text flow with no video property", () => {
     expect(DEFAULT_INTAKE_CONFIG.preIntakeFlow).toBe("text");
     expect("video" in DEFAULT_INTAKE_CONFIG).toBe(false);
-  });
-
-  it("default config uses redirect navigation", () => {
-    expect(DEFAULT_INTAKE_CONFIG.navigation).toEqual({
-      type: "redirect",
-      url: "/assessment",
-    });
   });
 
   it("default config has noteOneCopy with title and paragraphs", () => {
@@ -90,11 +82,6 @@ describe("getIntakeTenantConfig", () => {
       });
     });
 
-    it("keeps default navigation (no override)", () => {
-      const config = getIntakeTenantConfig("US_UT");
-      expect(config.navigation).toEqual(DEFAULT_INTAKE_CONFIG.navigation);
-    });
-
     it("keeps default preIntakeCopy (no override)", () => {
       const config = getIntakeTenantConfig("US_UT");
       expect(config.preIntakeCopy).toBe(DEFAULT_INTAKE_CONFIG.preIntakeCopy);
@@ -129,11 +116,6 @@ describe("getIntakeTenantConfig", () => {
       expect(config.preIntakeCopy).toContain("institutional parole officer");
     });
 
-    it("returns history-back navigation", () => {
-      const config = getIntakeTenantConfig("US_NE");
-      expect(config.navigation).toEqual({ type: "history-back" });
-    });
-
     it("keeps default DOC ID label (no override)", () => {
       const config = getIntakeTenantConfig("US_NE");
       expect(config.docId).toEqual(DEFAULT_INTAKE_CONFIG.docId);
@@ -159,45 +141,6 @@ describe("getIntakeTenantConfig", () => {
         "120 day reentry meeting",
       );
     });
-  });
-});
-
-describe("navigateAfterIntake", () => {
-  const originalWindow = globalThis.window;
-
-  beforeEach(() => {
-    // Provide a minimal window mock for node environment
-    globalThis.window = {
-      history: { back: vi.fn() },
-      location: { href: "" },
-    } as unknown as Window & typeof globalThis;
-  });
-
-  afterEach(() => {
-    globalThis.window = originalWindow;
-    vi.restoreAllMocks();
-  });
-
-  it("calls window.history.back() for history-back navigation", () => {
-    const config = {
-      ...DEFAULT_INTAKE_CONFIG,
-      navigation: { type: "history-back" as const },
-    };
-
-    navigateAfterIntake(config);
-
-    expect(window.history.back).toHaveBeenCalledOnce();
-  });
-
-  it("sets window.location.href for redirect navigation", () => {
-    const config = {
-      ...DEFAULT_INTAKE_CONFIG,
-      navigation: { type: "redirect" as const, url: "/assessment" },
-    };
-
-    navigateAfterIntake(config);
-
-    expect(window.location.href).toBe("/assessment");
   });
 });
 

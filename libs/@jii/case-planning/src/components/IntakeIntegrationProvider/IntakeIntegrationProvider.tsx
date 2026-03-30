@@ -45,7 +45,14 @@ export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(
     const socket = createSocket(REENTRY_BACKEND_URL);
     const $api = createApiClient(REENTRY_BACKEND_URL);
 
-    const applicationContext = { socket, $api, Image };
+    const applicationContext = {
+      socket,
+      $api,
+      Image,
+      navigateAfterIntake: () => {
+        window.history.back();
+      },
+    };
 
     return (
       <ApplicationContextProvider

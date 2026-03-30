@@ -32,8 +32,6 @@ export interface IntakeConfigBase {
     label: string;
     placeholder: string;
   };
-  /** Navigation behavior for exit/completion actions */
-  navigation: { type: "redirect"; url: string } | { type: "history-back" };
   noteOneCopy: PreIntakeNoteOneCopy;
   noteTwoCopy: PreIntakeNoteTwoCopy;
 }

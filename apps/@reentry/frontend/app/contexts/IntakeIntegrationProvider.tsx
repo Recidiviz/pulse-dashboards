@@ -36,6 +36,9 @@ const applicationContext = {
   features: {
     enableSTT: true,
   },
+  navigateAfterIntake: () => {
+    window.location.href = "/assessment";
+  },
 };
 
 export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(
