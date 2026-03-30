@@ -24,12 +24,40 @@ import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography"
 const FooterWrapper = styled.footer`
   ${publicPathwaysTypography.Sans14}
   height: ${rem(100)};
-  padding: ${rem(spacing.md)} ${rem(spacing.sm)};
+  padding: ${rem(spacing.md)} 0 ${rem(spacing.md)} 0;
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.md)};
+`;
+
+const LogoLink = styled.a`
+  display: flex;
+  align-items: center;
+`;
+
+const Logo = styled.img`
+  height: ${rem(40)};
 `;
 
 export function Footer() {
-  // TODO(#spe-2535) Add icons to footer once design is finished
   return (
-    <FooterWrapper>Footer area for logo and other credits :)</FooterWrapper>
+    <FooterWrapper>
+      <LogoLink
+        href="https://doccs.ny.gov/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Visit the DOCCS website"
+      >
+        <Logo src="/DOCCS_logo.png" alt="DOCCS logo" />
+      </LogoLink>
+      <LogoLink
+        href="https://recidiviz.org"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Visit the Recidiviz website"
+      >
+        <Logo src="/recidiviz_logo_192x192.png" alt="Recidiviz logo" />
+      </LogoLink>
+    </FooterWrapper>
   );
 }
