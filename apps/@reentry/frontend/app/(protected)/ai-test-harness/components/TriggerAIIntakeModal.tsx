@@ -33,6 +33,8 @@ import {
 } from "~@reentry/frontend-shared";
 import { components } from "~@reentry/openapi-types";
 
+type ClientData = components["schemas"]["ClientRecordResponse"];
+
 type Mode = "persona" | "template" | "json";
 
 type ChatTemplateSection = {
@@ -75,12 +77,14 @@ interface TriggerAIIntakeModalProps {
   isOpen: boolean;
   onClose: () => void;
   assessment: components["schemas"]["IntakeHistoryResponse"];
+  clientData?: ClientData | null;
 }
 
 export const TriggerAIIntakeModal = ({
   isOpen,
   onClose,
   assessment,
+  clientData,
 }: TriggerAIIntakeModalProps) => {
   const router = useRouter();
   const { getAccessToken } = useAuth();
@@ -269,7 +273,14 @@ export const TriggerAIIntakeModal = ({
       });
 
       showSuccessToast("AI Intake triggered successfully!");
-      router.push(`/ai-test-harness/status/${result.trigger_id}`);
+      const clientId = clientData?.pseudonymized_client_id ?? "";
+      const clientName = encodeURIComponent(
+        `${clientData?.full_name?.given_names ?? ""} ${clientData?.full_name?.surname ?? ""}`.trim(),
+      );
+      const backQuery = clientData
+        ? `?from=client&clientId=${clientId}&clientName=${clientName}`
+        : "";
+      router.push(`/ai-test-harness/status/${result.trigger_id}${backQuery}`);
       handleClose();
     } catch (err: unknown) {
       const errorMessage =

@@ -246,7 +246,7 @@ export default function IntakeAssessment({
                   intakeInfo.trigger_id &&
                   intakeInfo.intake_type !== "transcription" && (
                     <Link
-                      href={`/ai-test-harness/status/${intakeInfo.trigger_id}`}
+                      href={`/ai-test-harness/status/${intakeInfo.trigger_id}?from=client&clientId=${clientData?.pseudonymized_client_id ?? ""}&clientName=${encodeURIComponent(`${clientData?.full_name?.given_names ?? ""} ${clientData?.full_name?.surname ?? ""}`.trim())}`}
                       className="px-4 py-2 border border-[#003331] text-[#003331] rounded-full hover:bg-gray-100 transition-colors text-sm font-medium whitespace-nowrap"
                     >
                       View AI Status
@@ -334,6 +334,7 @@ export default function IntakeAssessment({
             isOpen={isTriggerAIModalOpen}
             onClose={() => setIsTriggerAIModalOpen(false)}
             assessment={intakeInfo}
+            clientData={clientData}
           />
         )}
 

@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import Markdown from "markdown-to-jsx";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import AdminIntakeHistory from "~@reentry/frontend/(protected)/intake/[intakeId]/chat-history/AdminIntakeHistory";
@@ -46,6 +46,12 @@ const AIIntakeStatusPage = () => {
   const [isRetrying, setIsRetrying] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>("chat");
   const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+
+  const searchParams = useSearchParams();
+  const fromClient = searchParams.get("from") === "client";
+  const backClientId = searchParams.get("clientId") ?? "";
+  const rawClientName = searchParams.get("clientName");
+  const backClientName = rawClientName ? decodeURIComponent(rawClientName) : "";
 
   // Poll status every 2 seconds
   const {
@@ -360,12 +366,21 @@ const AIIntakeStatusPage = () => {
         {/* Header */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <Link
-              href="/ai-test-harness/personas"
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-            >
-              ← Back to Personas
-            </Link>
+            {fromClient ? (
+              <Link
+                href={`/client/${backClientId}`}
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              >
+                ← Go back to {backClientName || "Client"}
+              </Link>
+            ) : (
+              <Link
+                href="/ai-test-harness/personas"
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              >
+                ← Back to Personas
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center justify-between">
