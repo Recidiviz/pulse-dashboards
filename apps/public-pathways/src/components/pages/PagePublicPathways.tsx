@@ -25,6 +25,7 @@ import type { Sections } from "~shared-pathways";
 import {
   ChartNote,
   FiltersButton,
+  metricModeOptions,
   PathwaysSection,
   PathwaysTheme,
   SectionNavigation,
@@ -93,6 +94,14 @@ const publicPathwaysTheme: PathwaysTheme = {
     footerBorderColor: "rgba(0, 0, 0, 0.15)",
     resetColor: "black",
   },
+  togglePill: {
+    borderColor: "rgba(0, 0, 0, 0.15)",
+    selectedBackgroundColor: publicPathwaysPalette.focusColor,
+    selectedTextColor: "white",
+    textColor: "black",
+    focusBorderColor: publicPathwaysPalette.focusColor,
+    labelTypography: publicPathwaysTypography.Sans14,
+  },
 };
 
 export const PagePublicPathways = observer(function PagePublicPathways() {
@@ -153,6 +162,8 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
                 filters,
               })
             }
+            enableMetricModeToggle={metricsStore.current.enableMetricModeToggle}
+            metricModeOptions={metricModeOptions}
           />
         </NavigationRow>
         <MetricVizMapper metric={metricsStore.current} />

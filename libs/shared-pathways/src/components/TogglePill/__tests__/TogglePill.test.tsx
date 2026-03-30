@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +15,42 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render } from "@testing-library/react";
-import React from "react";
+import { render, screen } from "@testing-library/react";
+import { ThemeProvider } from "styled-components";
+import { vi } from "vitest";
 
-import TogglePill from "../TogglePill";
+import { defaultPathwaysTheme } from "../../PathwaysTheme";
+import { TogglePill } from "../TogglePill";
 
-describe("TogglePill tests", () => {
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <ThemeProvider theme={defaultPathwaysTheme}>{children}</ThemeProvider>
+);
+
+describe("TogglePill", () => {
   const renderTogglePill = () => {
     return render(
       <TogglePill
         currentValue="left"
         leftPill={{ label: "Left", value: "left" }}
         rightPill={{ label: "Right", value: "right" }}
-        onChange={() => undefined}
+        onChange={vi.fn()}
       />,
+      { wrapper },
     );
   };
 
-  it("Should render two options", () => {
-    const { container } = renderTogglePill();
-    const buttons = container.querySelectorAll(".TogglePill__button");
+  it("should render two radio buttons", () => {
+    renderTogglePill();
+    const buttons = screen.getAllByRole("radio");
     expect(buttons).toHaveLength(2);
   });
 
-  it("One one option should be checked", () => {
-    const { container } = renderTogglePill();
-    const selectedButtons = container.querySelectorAll(
-      ".TogglePill__button--selected",
+  it("should have one option checked", () => {
+    renderTogglePill();
+    const buttons = screen.getAllByRole("radio");
+    const checked = buttons.filter(
+      (b) => b.getAttribute("aria-checked") === "true",
     );
-    expect(selectedButtons).toHaveLength(1);
+    expect(checked).toHaveLength(1);
   });
 });

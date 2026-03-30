@@ -56,6 +56,14 @@ export type PathwaysTheme = {
     footerBorderColor: string;
     resetColor: string;
   };
+  togglePill: {
+    borderColor: string;
+    selectedBackgroundColor: string;
+    selectedTextColor: string;
+    textColor: string;
+    focusBorderColor: string;
+    labelTypography: CSSProp;
+  };
 };
 
 export const defaultPathwaysTheme: PathwaysTheme = {
@@ -93,5 +101,13 @@ export const defaultPathwaysTheme: PathwaysTheme = {
     closeFocusColor: palette.signal.links,
     footerBorderColor: palette.slate20,
     resetColor: palette.signal.links,
+  },
+  togglePill: {
+    borderColor: "#d2d8d8",
+    selectedBackgroundColor: "#006c67",
+    selectedTextColor: "white",
+    textColor: palette.pine3,
+    focusBorderColor: "#006c67",
+    labelTypography: typography.Sans14,
   },
 };

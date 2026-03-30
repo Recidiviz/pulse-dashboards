@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./TogglePill.scss";
-
-import cx from "classnames";
-import PropTypes from "prop-types";
 import { useRef } from "react";
 
-function TogglePill({ currentValue, onChange, leftPill, rightPill }) {
-  const leftRef = useRef(null);
-  const rightRef = useRef(null);
+import { TogglePillButton, TogglePillContainer } from "./TogglePill.styles";
 
-  const handleToggle = (clickedValue) => {
+export type PillOption = {
+  label: string;
+  value: string;
+};
+
+type TogglePillProps = {
+  currentValue: string;
+  onChange: (value: string) => void;
+  leftPill: PillOption;
+  rightPill: PillOption;
+};
+
+export function TogglePill({
+  currentValue,
+  onChange,
+  leftPill,
+  rightPill,
+}: TogglePillProps) {
+  const leftRef = useRef<HTMLButtonElement>(null);
+  const rightRef = useRef<HTMLButtonElement>(null);
+
+  const handleToggle = (clickedValue: string) => {
     const otherValue =
       clickedValue === leftPill.value ? rightPill.value : leftPill.value;
 
@@ -36,16 +51,14 @@ function TogglePill({ currentValue, onChange, leftPill, rightPill }) {
   };
 
   return (
-    <div className="TogglePill" role="radiogroup">
+    <TogglePillContainer role="radiogroup" aria-label="Toggle display mode">
       {[leftPill, rightPill].map(({ value, label }) => (
-        <button
+        <TogglePillButton
           role="radio"
           aria-checked={currentValue === value}
           key={label}
           ref={value === leftPill.value ? leftRef : rightRef}
-          className={cx("TogglePill__button", {
-            "TogglePill__button--selected": currentValue === value,
-          })}
+          $selected={currentValue === value}
           onClick={() => onChange(value)}
           tabIndex={currentValue === value ? 0 : -1}
           aria-label={label}
@@ -57,23 +70,8 @@ function TogglePill({ currentValue, onChange, leftPill, rightPill }) {
           }}
         >
           {label}
-        </button>
+        </TogglePillButton>
       ))}
-    </div>
+    </TogglePillContainer>
   );
 }
-
-TogglePill.propTypes = {
-  currentValue: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  leftPill: PropTypes.shape({
-    label: PropTypes.string,
-    value: PropTypes.string,
-  }).isRequired,
-  rightPill: PropTypes.shape({
-    label: PropTypes.string,
-    value: PropTypes.string,
-  }).isRequired,
-};
-
-export default TogglePill;

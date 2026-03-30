@@ -42,6 +42,9 @@
     width: 11rem;
   }
   &__toggle-pill {
+    display: flex;
+    align-items: center;
     margin-right: 1.5rem;
+    padding-bottom: 0.5rem;
   }
 }

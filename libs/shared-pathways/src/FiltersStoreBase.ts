@@ -83,6 +83,7 @@ export abstract class FiltersStoreBase {
 
   resetFilters(): void {
     this.setFilters(defaultPopulationFilterValues);
+    this.setMetricMode(defaultMetricMode);
   }
 
   // --- Simple derived getters ---

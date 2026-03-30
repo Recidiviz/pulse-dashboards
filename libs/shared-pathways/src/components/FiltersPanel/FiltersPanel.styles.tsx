@@ -30,6 +30,12 @@ export const FilterSectionContent = styled.div`
   padding: 1rem 1.5rem;
 `;
 
+export const FilterSectionRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+`;
+
 export const ResetButton = styled.button`
   background: none;
   border: none;
@@ -48,6 +54,7 @@ export const ResetButton = styled.button`
 export const FilterDropdownWrapper = styled(Dropdown)`
   display: block;
   width: 50%;
+  min-width: 200px;
   margin-bottom: 0.5rem;
 `;
 

@@ -31,10 +31,13 @@ import CheckboxGroupWithSelectAllTitle from "../CheckboxGroup/CheckboxGroupWithS
 import FilterSectionLayout from "../FilterSectionLayout/FilterSectionLayout";
 import PathwaysModal from "../PathwaysModal/PathwaysModal";
 import RadioGroup from "../RadioGroup/RadioGroup";
+import { TogglePill } from "../TogglePill";
+import { PillOption } from "../TogglePill/TogglePill";
 import {
   ApplyButton,
   FilterSection,
   FilterSectionContent,
+  FilterSectionRow,
   ResetButton,
 } from "./FiltersPanel.styles";
 import PathwaysDropdownFilter from "./PathwaysDropdownFilter";
@@ -44,20 +47,33 @@ type FiltersPanelProps = {
   onClose: () => void;
   filtersStore: FiltersStoreBase;
   trackApplyFilters?: (filters: PopulationFilterValues) => void;
+  enableMetricModeToggle?: boolean;
+  metricModeOptions?: PillOption[];
 };
 
 const FiltersPanel: React.FC<FiltersPanelProps> = observer(
-  function FiltersPanel({ isOpen, onClose, filtersStore, trackApplyFilters }) {
+  function FiltersPanel({
+    isOpen,
+    onClose,
+    filtersStore,
+    trackApplyFilters,
+    enableMetricModeToggle,
+    metricModeOptions,
+  }) {
     const { filters, filterOptions } = filtersStore;
     const enabledFilters = filtersStore.metric.filters.enabledFilters;
 
     const [pendingFilters, setPendingFilters] = useState<
       Record<string, string[]>
     >({});
+    const [pendingMetricMode, setPendingMetricMode] = useState<string | null>(
+      null,
+    );
 
     useEffect(() => {
       if (!isOpen) {
         setPendingFilters({});
+        setPendingMetricMode(null);
       }
     }, [isOpen, enabledFilters]);
 
@@ -127,6 +143,11 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
 
     const onApply = () => {
       filtersStore.setFilters(pendingFilters);
+      // TODO(#4658) move metric mode apply logic into FiltersStore once staff Pathways
+      // is moved over to new design
+      if (pendingMetricMode !== null) {
+        filtersStore.setMetricMode(pendingMetricMode);
+      }
       trackApplyFilters?.({ ...filtersStore.filters });
       onClose();
     };
@@ -165,20 +186,36 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
             </FilterSectionContent>
           </FilterSection>
         )}
-        {dateInPopulationFilter && (
+        {(dateInPopulationFilter || enableMetricModeToggle) && (
           <FilterSection>
             <FilterSectionContent>
-              <PathwaysDropdownFilter
-                label={dateInPopulationFilter.title}
-                options={dateInPopulationFilter.options}
-                defaultValue={dateInPopulationFilter.options[0]?.value}
-                selectedValue={getSelectedValue(
-                  FILTER_TYPES.DATE_IN_POPULATION,
+              <FilterSectionRow>
+                {enableMetricModeToggle && metricModeOptions && (
+                  <FilterSectionLayout title="Display">
+                    <TogglePill
+                      leftPill={metricModeOptions[0]}
+                      rightPill={metricModeOptions[1]}
+                      currentValue={
+                        pendingMetricMode ?? filtersStore.currentMetricMode
+                      }
+                      onChange={setPendingMetricMode}
+                    />
+                  </FilterSectionLayout>
                 )}
-                onChange={(value) =>
-                  onDropdownChange(FILTER_TYPES.DATE_IN_POPULATION, value)
-                }
-              />
+                {dateInPopulationFilter && (
+                  <PathwaysDropdownFilter
+                    label={dateInPopulationFilter.title}
+                    options={dateInPopulationFilter.options}
+                    defaultValue={dateInPopulationFilter.options[0]?.value}
+                    selectedValue={getSelectedValue(
+                      FILTER_TYPES.DATE_IN_POPULATION,
+                    )}
+                    onChange={(value) =>
+                      onDropdownChange(FILTER_TYPES.DATE_IN_POPULATION, value)
+                    }
+                  />
+                )}
+              </FilterSectionRow>
             </FilterSectionContent>
           </FilterSection>
         )}

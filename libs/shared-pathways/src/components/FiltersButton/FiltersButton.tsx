@@ -66,11 +66,15 @@ const FiltersTrigger = styled(Button)`
 type FiltersButtonProps = {
   filtersStore: FiltersStoreBase;
   trackApplyFilters?: (filters: PopulationFilterValues) => void;
+  enableMetricModeToggle?: boolean;
+  metricModeOptions?: { label: string; value: string }[];
 };
 
 const FiltersButton: React.FC<FiltersButtonProps> = ({
   filtersStore,
   trackApplyFilters,
+  enableMetricModeToggle,
+  metricModeOptions,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -101,6 +105,8 @@ const FiltersButton: React.FC<FiltersButtonProps> = ({
         onClose={handleClose}
         filtersStore={filtersStore}
         trackApplyFilters={trackApplyFilters}
+        enableMetricModeToggle={enableMetricModeToggle}
+        metricModeOptions={metricModeOptions}
       />
     </>
   );

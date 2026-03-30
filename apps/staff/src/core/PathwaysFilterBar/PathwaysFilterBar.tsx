@@ -31,6 +31,7 @@ import {
   metricModeOptions,
   PopulationFilters,
   sortByLabel,
+  TogglePill,
 } from "~shared-pathways";
 
 import useIsMobile from "../../hooks/useIsMobile";
@@ -39,7 +40,6 @@ import { CoreSelect } from "../controls/CoreSelect";
 import Filter from "../controls/Filter";
 import FilterBar from "../controls/FilterBar";
 import CoreMultiSelect from "../controls/MultiSelect/CoreMultiSelect";
-import TogglePill from "../controls/TogglePill";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
@@ -140,7 +140,10 @@ const PathwaysFilterBar: React.FC<{
         }
       >
         {enableMetricModeToggle && (
-          <ToolbarItem ariaLabel="Counts or Rates Toggle">
+          <ToolbarItem
+            ariaLabel="Counts or Rates Toggle"
+            className="PathwaysFilterBar__toggle-pill"
+          >
             <TogglePill
               leftPill={metricModeOptions[0]}
               rightPill={metricModeOptions[1]}
