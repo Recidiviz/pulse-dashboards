@@ -292,7 +292,7 @@ describe("OpportunityDenialView", () => {
     });
 
     it("shows the slider", () => {
-      expect(screen.getByText("Snooze for:")).toBeInTheDocument();
+      expect(screen.getByText("Snooze for: 30 day(s)")).toBeInTheDocument();
       expect(
         screen.getByTestId("OpportunityDenialView__slider"),
       ).toBeInTheDocument();
