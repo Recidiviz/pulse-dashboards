@@ -52,6 +52,7 @@ import {
   stitchAudio,
 } from "~@meetings/tasks";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
+import { postMeetingCreatedNotification } from "~@meetings/trpc/services/slack";
 
 /**
  * Convert ActionItem objects to simple task strings
@@ -488,7 +489,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
         );
 
         // Update status through drafting and verification stages
-        await prisma.meeting.update({
+        const completedMeeting = await prisma.meeting.update({
           where: {
             id: meetingId,
           },
@@ -499,6 +500,28 @@ export function registerTaskRoutes(app: FastifyInstance) {
             meetingSummary: result.output.meetingMinutes,
             postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
           },
+          select: {
+            staffEmail: true,
+            client: { select: { pseudonymizedId: true } },
+            resident: { select: { pseudonymizedId: true } },
+          },
+        });
+
+        const personPseudoId =
+          completedMeeting.client?.pseudonymizedId ??
+          completedMeeting.resident?.pseudonymizedId ??
+          meetingId;
+
+        postMeetingCreatedNotification({
+          staffEmail: completedMeeting.staffEmail,
+          stateCode,
+          personPseudoId,
+          meetingId,
+        }).catch((e) => {
+          console.error(
+            "Failed to post meeting completed Slack notification",
+            e,
+          );
         });
       } catch (e) {
         // Set error status at the current stage
