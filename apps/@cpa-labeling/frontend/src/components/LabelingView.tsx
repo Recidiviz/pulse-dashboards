@@ -49,7 +49,10 @@ type SummaryDetailSubTab =
   | "longer-term"
   | "final-thoughts"
   | "ne-personal-background"
-  | "ne-agenda";
+  | "ne-agenda"
+  | "ix-personal-background"
+  | "ix-key-topics"
+  | "ix-other-issues";
 
 interface FeedbackState {
   transcript_feedback: TranscriptFeedback;
@@ -478,67 +481,126 @@ function LabelingView({
 
     const agendaSection = findSection(["agenda"]);
 
+    // For IX format, extract numbered subsections (e.g. 2.1, 2.2 or 3.1, 3.2...)
+    // Each subsection header matches "## N.M Name"; any other header ends the current subsection.
+    const extractIxSubsections = (
+      md: string,
+      group: number,
+    ): { name: string; content: string }[] => {
+      const subsections: { name: string; content: string }[] = [];
+      let current: { name: string; content: string[] } | null = null;
+      for (const line of md.split("\n")) {
+        const headerMatch = line.match(/^#{1,6}\s+(.+?)\s*$/);
+        if (headerMatch) {
+          const subMatch = headerMatch[1].match(
+            new RegExp(`^${group}\\.(\\d+)\\s+(.+)$`),
+          );
+          if (subMatch) {
+            if (current)
+              subsections.push({
+                name: current.name,
+                content: current.content.join("\n").trim(),
+              });
+            current = { name: subMatch[2].trim(), content: [] };
+          } else if (current) {
+            subsections.push({
+              name: current.name,
+              content: current.content.join("\n").trim(),
+            });
+            current = null;
+          }
+        } else if (current) {
+          current.content.push(line);
+        }
+      }
+      if (current)
+        subsections.push({
+          name: current.name,
+          content: current.content.join("\n").trim(),
+        });
+      return subsections;
+    };
+
+    const ixKeyTopicsSections =
+      summaryFormat === "ix-prerelease"
+        ? extractIxSubsections(markdown, 2)
+        : [];
+    const ixOtherIssuesSections =
+      summaryFormat === "ix-prerelease"
+        ? extractIxSubsections(markdown, 3)
+        : [];
+
     // Sub-navigation tabs for summary details
-    const subTabs: {
-      id: SummaryDetailSubTab;
-      label: string;
-      hasContent: boolean;
-    }[] =
-      summaryFormat === "ne-120-day"
-        ? [
-            {
-              id: "full-summary",
-              label: "Full Summary",
-              hasContent: !!markdown,
-            },
-            {
-              id: "ne-personal-background",
-              label: "Personal Background",
-              hasContent: !!personalBackgroundSection,
-            },
-            {
-              id: "ne-agenda",
-              label: "Agenda",
-              hasContent: !!agendaSection,
-            },
-            {
-              id: "needs-risks",
-              label: "Needs & Risks",
-              hasContent: needsRisksCategories.length > 0,
-            },
-          ]
-        : [
-            {
-              id: "full-summary",
-              label: "Full Summary",
-              hasContent: !!markdown,
-            },
-            {
-              id: "personal-background",
-              label: "Personal Background",
-              hasContent: !!personalBackgroundSection,
-            },
-            {
-              id: "needs-risks",
-              label: "Needs & Risks",
-              hasContent: needsRisksCategories.length > 0,
-            },
-            {
-              id: "priority-needs",
-              label: "Priority Needs",
-              hasContent: !!priorityNeedsSection,
-            },
-            {
-              id: "longer-term",
-              label: "Longer-term",
-              hasContent: !!longerTermSection,
-            },
-            {
-              id: "final-thoughts",
-              label: "Final Thoughts",
-              hasContent: !!finalThoughtsSection,
-            },
-          ];
+    const subTabsByFormat: Record<
+      string,
+      { id: SummaryDetailSubTab; label: string; hasContent: boolean }[]
+    > = {
+      "ne-120-day": [
+        { id: "full-summary", label: "Full Summary", hasContent: !!markdown },
+        {
+          id: "ne-personal-background",
+          label: "Personal Background",
+          hasContent: !!personalBackgroundSection,
+        },
+        {
+          id: "ne-agenda",
+          label: "Agenda",
+          hasContent: !!agendaSection,
+        },
+        {
+          id: "needs-risks",
+          label: "Needs & Risks",
+          hasContent: needsRisksCategories.length > 0,
+        },
+      ],
+      "ix-prerelease": [
+        { id: "full-summary", label: "Full Summary", hasContent: !!markdown },
+        {
+          id: "ix-personal-background",
+          label: "Personal Background",
+          hasContent: !!personalBackgroundSection,
+        },
+        {
+          id: "ix-key-topics",
+          label: "Key Topics",
+          hasContent: ixKeyTopicsSections.length > 0,
+        },
+        {
+          id: "ix-other-issues",
+          label: "Other Issues",
+          hasContent: ixOtherIssuesSections.length > 0,
+        },
+      ],
+      standard: [
+        { id: "full-summary", label: "Full Summary", hasContent: !!markdown },
+        {
+          id: "personal-background",
+          label: "Personal Background",
+          hasContent: !!personalBackgroundSection,
+        },
+        {
+          id: "needs-risks",
+          label: "Needs & Risks",
+          hasContent: needsRisksCategories.length > 0,
+        },
+        {
+          id: "priority-needs",
+          label: "Priority Needs",
+          hasContent: !!priorityNeedsSection,
+        },
+        {
+          id: "longer-term",
+          label: "Longer-term",
+          hasContent: !!longerTermSection,
+        },
+        {
+          id: "final-thoughts",
+          label: "Final Thoughts",
+          hasContent: !!finalThoughtsSection,
+        },
+      ],
+    };
+    const subTabs = subTabsByFormat[summaryFormat] ?? subTabsByFormat.standard;
 
     const renderSubTabContent = () => {
       switch (summarySubTab) {
@@ -1400,6 +1462,463 @@ function LabelingView({
                 </div>
               )}
             </div>
+          );
+
+        case "ix-personal-background":
+          return (
+            <div className="detail-section">
+              {personalBackgroundSection ? (
+                <>
+                  <div className="section-content-preview">
+                    <MarkdownPanel
+                      content={personalBackgroundSection.content}
+                    />
+                  </div>
+                  <IssueRow
+                    label="Groundedness"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background"
+                      ]?.facts_incorrect || {
+                        severity: null,
+                        notes: null,
+                        related_to_transcription: false,
+                      }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_incorrect",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_incorrect",
+                        "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_incorrect",
+                        "related_to_transcription",
+                        v,
+                      )
+                    }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "facts_incorrect",
+                    )}
+                  />
+                  <IssueRow
+                    label="Facts missing"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background"
+                      ]?.facts_missing || {
+                        severity: null,
+                        notes: null,
+                        related_to_transcription: false,
+                      }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_missing",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_missing",
+                        "notes",
+                        v,
+                      )
+                    }
+                    showTranscriptionCheckbox={hasAudio}
+                    onTranscriptionChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "facts_missing",
+                        "related_to_transcription",
+                        v,
+                      )
+                    }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "facts_missing",
+                    )}
+                  />
+                  <IssueRow
+                    label="Tone issues"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background"
+                      ]?.tone_issues || { severity: null, notes: null }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "tone_issues",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "tone_issues",
+                        "notes",
+                        v,
+                      )
+                    }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "tone_issues",
+                    )}
+                  />
+                  <IssueRow
+                    label="Other"
+                    feedback={
+                      feedback.summary_detail_feedback.needs_risks_overview[
+                        "Personal Background"
+                      ]?.other || { severity: null, notes: null }
+                    }
+                    onSeverityChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "other",
+                        "severity",
+                        v,
+                      )
+                    }
+                    onNotesChange={(v) =>
+                      onUpdateSummaryNeedsRisks(
+                        "Personal Background",
+                        "other",
+                        "notes",
+                        v,
+                      )
+                    }
+                    readOnly={isReadOnly}
+                    {...overridePropsFor(
+                      "summary_detail_feedback",
+                      "needs_risks_overview",
+                      "Personal Background",
+                      "other",
+                    )}
+                  />
+                </>
+              ) : (
+                <div className="empty-content">
+                  No Personal Background section found in summary
+                </div>
+              )}
+            </div>
+          );
+
+        case "ix-key-topics":
+          return (
+            <>
+              {ixKeyTopicsSections.map(({ name, content }) => {
+                const categoryFeedback =
+                  feedback.summary_detail_feedback.needs_risks_overview[name] ||
+                  createDefaultSummaryNeedsRisksFeedback();
+                return (
+                  <div key={name} className="category-feedback">
+                    <h5>{name}</h5>
+                    <div className="category-bullet-preview">
+                      <MarkdownPanel content={content} />
+                    </div>
+                    <IssueRow
+                      label="Groundedness"
+                      feedback={categoryFeedback.facts_incorrect}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_incorrect",
+                          "severity",
+                          v,
+                        )
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_incorrect",
+                          "notes",
+                          v,
+                        )
+                      }
+                      compact
+                      showTranscriptionCheckbox={hasAudio}
+                      onTranscriptionChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_incorrect",
+                          "related_to_transcription",
+                          v,
+                        )
+                      }
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "facts_incorrect",
+                      )}
+                    />
+                    <IssueRow
+                      label="Facts missing"
+                      feedback={categoryFeedback.facts_missing}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_missing",
+                          "severity",
+                          v,
+                        )
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_missing",
+                          "notes",
+                          v,
+                        )
+                      }
+                      compact
+                      showTranscriptionCheckbox={hasAudio}
+                      onTranscriptionChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_missing",
+                          "related_to_transcription",
+                          v,
+                        )
+                      }
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "facts_missing",
+                      )}
+                    />
+                    <IssueRow
+                      label="Tone issues"
+                      feedback={categoryFeedback.tone_issues}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "tone_issues",
+                          "severity",
+                          v,
+                        )
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "tone_issues",
+                          "notes",
+                          v,
+                        )
+                      }
+                      compact
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "tone_issues",
+                      )}
+                    />
+                    <IssueRow
+                      label="Other"
+                      feedback={categoryFeedback.other}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(name, "other", "severity", v)
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(name, "other", "notes", v)
+                      }
+                      compact
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "other",
+                      )}
+                    />
+                  </div>
+                );
+              })}
+              {ixKeyTopicsSections.length === 0 && (
+                <div className="empty-content">
+                  No Key Topics subsections found in summary
+                </div>
+              )}
+            </>
+          );
+
+        case "ix-other-issues":
+          return (
+            <>
+              {ixOtherIssuesSections.map(({ name, content }) => {
+                const categoryFeedback =
+                  feedback.summary_detail_feedback.needs_risks_overview[name] ||
+                  createDefaultSummaryNeedsRisksFeedback();
+                return (
+                  <div key={name} className="category-feedback">
+                    <h5>{name}</h5>
+                    <div className="category-bullet-preview">
+                      <MarkdownPanel content={content} />
+                    </div>
+                    <IssueRow
+                      label="Groundedness"
+                      feedback={categoryFeedback.facts_incorrect}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_incorrect",
+                          "severity",
+                          v,
+                        )
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_incorrect",
+                          "notes",
+                          v,
+                        )
+                      }
+                      compact
+                      showTranscriptionCheckbox={hasAudio}
+                      onTranscriptionChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_incorrect",
+                          "related_to_transcription",
+                          v,
+                        )
+                      }
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "facts_incorrect",
+                      )}
+                    />
+                    <IssueRow
+                      label="Facts missing"
+                      feedback={categoryFeedback.facts_missing}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_missing",
+                          "severity",
+                          v,
+                        )
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_missing",
+                          "notes",
+                          v,
+                        )
+                      }
+                      compact
+                      showTranscriptionCheckbox={hasAudio}
+                      onTranscriptionChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "facts_missing",
+                          "related_to_transcription",
+                          v,
+                        )
+                      }
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "facts_missing",
+                      )}
+                    />
+                    <IssueRow
+                      label="Tone issues"
+                      feedback={categoryFeedback.tone_issues}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "tone_issues",
+                          "severity",
+                          v,
+                        )
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(
+                          name,
+                          "tone_issues",
+                          "notes",
+                          v,
+                        )
+                      }
+                      compact
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "tone_issues",
+                      )}
+                    />
+                    <IssueRow
+                      label="Other"
+                      feedback={categoryFeedback.other}
+                      onSeverityChange={(v) =>
+                        onUpdateSummaryNeedsRisks(name, "other", "severity", v)
+                      }
+                      onNotesChange={(v) =>
+                        onUpdateSummaryNeedsRisks(name, "other", "notes", v)
+                      }
+                      compact
+                      readOnly={isReadOnly}
+                      {...overridePropsFor(
+                        "summary_detail_feedback",
+                        "needs_risks_overview",
+                        name,
+                        "other",
+                      )}
+                    />
+                  </div>
+                );
+              })}
+              {ixOtherIssuesSections.length === 0 && (
+                <div className="empty-content">
+                  No Other Issues subsections found in summary
+                </div>
+              )}
+            </>
           );
 
         default:

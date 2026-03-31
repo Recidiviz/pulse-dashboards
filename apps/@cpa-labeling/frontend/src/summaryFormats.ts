@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type SummaryFormat = "standard" | "ne-120-day";
+export type SummaryFormat = "standard" | "ne-120-day" | "ix-prerelease";
 
 // Map assessment_config_code → SummaryFormat.
 // Any code not listed here defaults to "standard".
 const CONFIG_CODE_TO_FORMAT: Record<string, SummaryFormat> = {
   RA: "ne-120-day",
+  FACR_alt: "ix-prerelease",
 };
 
 export function getFormatForConfig(
