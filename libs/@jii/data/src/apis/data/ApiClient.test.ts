@@ -76,38 +76,6 @@ describe("after authentication", () => {
     await waitFor(() => expect(client.isAuthenticated).toBeTrue());
   });
 
-  describe("resident", () => {
-    const record = usAzResidents[0];
-
-    test("exists", async () => {
-      vi.mocked(FirestoreAPIClient.prototype.resident).mockResolvedValue(
-        record,
-      );
-
-      const fetched = await client.residentById(
-        stateCodeMock,
-        record.personExternalId,
-      );
-
-      expect(
-        FirestoreAPIClient.prototype.resident,
-      ).toHaveBeenCalledExactlyOnceWith(stateCodeMock, record.personExternalId);
-      expect(fetched).toEqual(record);
-    });
-
-    test("does not exist", async () => {
-      vi.mocked(FirestoreAPIClient.prototype.resident).mockResolvedValue(
-        undefined,
-      );
-
-      await expect(
-        client.residentById(stateCodeMock, record.personExternalId),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[Error: No data found for resident RES001]`,
-      );
-    });
-  });
-
   // TODO: revive this once we have AZ eligibility data
   describe.skip("eligibility", () => {
     const record = usMeSccpFixtures.RES004fullyEligibleHalfPortion.output;

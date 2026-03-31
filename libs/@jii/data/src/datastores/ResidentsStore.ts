@@ -85,7 +85,7 @@ export class ResidentsStore {
     return this.rootStore.userStore;
   }
 
-  areAllResidentsPopulated(): boolean {
+  private areAllResidentsPopulated(): boolean {
     // if we started the session on a single resident's page, we might have had one
     // populated already. Seems a safe assumption that the total will always be > 1
     return this.residentsByExternalId.size > 1;
@@ -105,32 +105,11 @@ export class ResidentsStore {
     set(this.residentsByExternalId, keyBy(residents, "personExternalId"));
   }
 
-  isResidentPopulated(residentExternalId: string): boolean {
-    return this.residentsByExternalId.has(residentExternalId);
-  }
-
   /**
    * Populates {@link locations} with the API response for all available locations
    */
   *populateLocations(): FlowMethod<DataAPI["locations"], void> {
     this.locations = yield this.apiClient.locations(this.stateCode);
-  }
-
-  /**
-   * Populates {@link residentsByExternalId} with the API response for the resident
-   * with personExternalId matching `residentExternalId`. Throws if the API request fails.
-   * Will not refetch if data is already populated.
-   */
-  *populateResidentById(
-    residentExternalId: string,
-  ): FlowMethod<DataAPI["residentById"], void> {
-    if (this.isResidentPopulated(residentExternalId)) return;
-
-    const resident = yield this.apiClient.residentById(
-      this.stateCode,
-      residentExternalId,
-    );
-    this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 
   get residentsByPseudoId(): Map<string, ResidentRecord> {
@@ -141,7 +120,7 @@ export class ResidentsStore {
     );
   }
 
-  isResidentWithPseudoIdPopulated(pseudoId: string): boolean {
+  private isResidentWithPseudoIdPopulated(pseudoId: string): boolean {
     return this.residentsByPseudoId.has(pseudoId);
   }
 
@@ -152,7 +131,7 @@ export class ResidentsStore {
    */
   *populateResidentByPseudoId(
     residentPseudoId: string,
-  ): FlowMethod<DataAPI["residentById"], void> {
+  ): FlowMethod<DataAPI["residentByPseudoId"], void> {
     if (this.isResidentWithPseudoIdPopulated(residentPseudoId)) return;
 
     const resident = yield this.apiClient.residentByPseudoId(
@@ -162,7 +141,7 @@ export class ResidentsStore {
     this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 
-  isResidentEligibilityRecordPopulated(
+  private isResidentEligibilityRecordPopulated(
     residentExternalId: string,
     opportunityId: IncarcerationOpportunityId,
   ): boolean {

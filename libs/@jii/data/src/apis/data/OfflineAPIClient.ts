@@ -78,25 +78,6 @@ export class OfflineAPIClient implements DataAPI {
   }
 
   /**
-   * Fetches fixture data for the resident with personExternalId matching `residentExternalId`
-   * and `stateCode`. Throws if a match cannot be found.
-   */
-  async residentById(stateCode: StateCode, residentExternalId: string) {
-    const residentFixture = await this.firestoreClient.resident(
-      stateCode,
-      residentExternalId,
-    );
-
-    if (!residentFixture) {
-      throw new Error(
-        `Missing data for resident ${residentExternalId} in ${stateCode}`,
-      );
-    }
-
-    return residentFixture;
-  }
-
-  /**
    * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
    * and `stateCode`. Throws if a match cannot be found.
    */

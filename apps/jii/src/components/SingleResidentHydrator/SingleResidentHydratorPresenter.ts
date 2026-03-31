@@ -98,7 +98,11 @@ export class SingleResidentHydratorPresenter implements Hydratable {
     // we have to populate the data before constructing the report from it.
     // these should be no-ops if already populated so we don't need bailing logic
 
-    const residentPopulated = flowResult(
+    // we await this first because we might need it to retrieve residentExternalId below;
+    // if it were to reject while we were indirectly awaiting it via the when() call,
+    // it would be treated as an unhandled promise rejection and the error would not propagate
+    // correctly through the hydration flow
+    await flowResult(
       residentsStore.populateResidentByPseudoId(this.residentPseudoId),
     );
 
@@ -110,23 +114,16 @@ export class SingleResidentHydratorPresenter implements Hydratable {
     // safe assertion because we just awaited it
     const externalId = this.residentExternalId as string;
 
-    const opportunitiesPopulated = this.opportunityTypes.map((oppType) =>
-      flowResult(
-        residentsStore.populateOpportunityRecordByResidentId(
-          externalId,
-          oppType,
+    await Promise.all([
+      ...this.opportunityTypes.map((oppType) =>
+        flowResult(
+          residentsStore.populateOpportunityRecordByResidentId(
+            externalId,
+            oppType,
+          ),
         ),
       ),
-    );
-
-    const flagsPopulated = flowResult(
-      residentsStore.populateResidentFlags(this.residentPseudoId),
-    );
-
-    await Promise.all([
-      residentPopulated,
-      ...opportunitiesPopulated,
-      flagsPopulated,
+      flowResult(residentsStore.populateResidentFlags(this.residentPseudoId)),
     ]);
   }
 

@@ -115,43 +115,6 @@ describe("populate residents", () => {
   });
 });
 
-describe("populate single resident", () => {
-  test("succeeds", async () => {
-    const expectedRes = usAzResidents[1];
-
-    expect(
-      store.residentsByExternalId.get(expectedRes.personExternalId),
-    ).toBeUndefined();
-
-    await flowResult(store.populateResidentById(expectedRes.personExternalId));
-
-    expect(
-      store.residentsByExternalId.get(expectedRes.personExternalId),
-    ).toEqual(expectedRes);
-  });
-
-  test("fails", async () => {
-    await expect(
-      flowResult(store.populateResidentById("does-not-exist")),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: Missing data for resident does-not-exist in US_AZ]`,
-    );
-  });
-
-  test("does not refetch if already populated", async () => {
-    const expectedRes = usAzResidents[1];
-
-    vi.spyOn(OfflineAPIClient.prototype, "residentById");
-
-    await flowResult(store.populateResidentById(expectedRes.personExternalId));
-
-    expect(OfflineAPIClient.prototype.residentById).toHaveBeenCalledTimes(1);
-
-    await flowResult(store.populateResidentById(expectedRes.personExternalId));
-    expect(OfflineAPIClient.prototype.residentById).toHaveBeenCalledTimes(1);
-  });
-});
-
 // TODO: revive these when we have actual AZ eligibility data. The logic here still holds but
 // they'll fail in the meantime because we can't instantiate a store with US_ME
 describe.skip("populate resident eligibility", () => {

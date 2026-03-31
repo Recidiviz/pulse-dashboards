@@ -17,6 +17,7 @@
 
 import { allResidents, locationRecordFixtures } from "~datatypes";
 
+import { MissingRecordError } from "./errors";
 import { FirestoreAPI } from "./interface";
 
 export class FirestoreOfflineAPIClient implements FirestoreAPI {
@@ -24,20 +25,17 @@ export class FirestoreOfflineAPIClient implements FirestoreAPI {
     return allResidents.filter((r) => r.stateCode === stateCode);
   }
 
-  async resident(stateCode: string, externalId: string) {
-    const residentFixture = allResidents.find(
-      (r) => r.stateCode === stateCode && r.personExternalId === externalId,
-    );
-
-    return residentFixture ? residentFixture : undefined;
-  }
-
   async residentByPseudoId(stateCode: string, pseudoId: string) {
     const residentFixture = allResidents.find(
       (r) => r.stateCode === stateCode && r.pseudonymizedId === pseudoId,
     );
 
-    return residentFixture ? residentFixture : undefined;
+    if (!residentFixture)
+      throw new MissingRecordError(
+        `Record for ${pseudoId} in ${stateCode} missing from offline data`,
+      );
+
+    return residentFixture;
   }
 
   async recordForExternalId() {

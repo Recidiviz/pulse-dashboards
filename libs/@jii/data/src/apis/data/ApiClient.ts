@@ -104,32 +104,10 @@ export class ApiClient implements DataAPI {
     return await this.firestoreClient.residents(stateCode, filters);
   }
 
-  async residentById(stateCode: StateCode, residentExternalId: string) {
-    await when(() => this.isAuthenticated);
-
-    const record = await this.firestoreClient.resident(
-      stateCode,
-      residentExternalId,
-    );
-    if (!record) {
-      throw new Error(`No data found for resident ${residentExternalId}`);
-    }
-
-    return record;
-  }
-
   async residentByPseudoId(stateCode: StateCode, residentPseudoId: string) {
     await when(() => this.isAuthenticated);
 
-    const record = await this.firestoreClient.residentByPseudoId(
-      stateCode,
-      residentPseudoId,
-    );
-    if (!record) {
-      throw new Error(`No data found for resident ${residentPseudoId}`);
-    }
-
-    return record;
+    return this.firestoreClient.residentByPseudoId(stateCode, residentPseudoId);
   }
 
   async residentEligibility<O extends IncarcerationOpportunityId>(
@@ -152,17 +130,11 @@ export class ApiClient implements DataAPI {
 
       const schema = residentOpportunitySchemas[opportunityId];
 
-      const record = await this.firestoreClient.recordForExternalId(
+      return this.firestoreClient.recordForExternalId(
         stateCode,
         { raw: collectionName },
         residentExternalId,
         schema,
-      );
-
-      if (record) return record;
-
-      throw new Error(
-        `Missing ${opportunityId} record for ${residentExternalId}`,
       );
     } catch (e) {
       // eslint-disable-next-line no-console

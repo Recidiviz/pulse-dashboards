@@ -47,14 +47,6 @@ export interface DataAPI {
     filters?: Array<FilterParams>,
   ): Promise<Array<ResidentRecord>>;
   /**
-   * Fetches data for the resident with personExternalId matching `residentExternalId`
-   * for the given StateCode. Throws if a match cannot be found.
-   */
-  residentById(
-    stateCode: StateCode,
-    residentExternalId: string,
-  ): Promise<ResidentRecord>;
-  /**
    * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
    * for the given StateCode. Throws if a match cannot be found.
    */

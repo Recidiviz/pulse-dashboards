@@ -29,15 +29,10 @@ export interface FirestoreAPI {
     filters?: Array<FilterParams>,
   ): Promise<Array<ResidentRecord>>;
 
-  resident(
-    stateCode: string,
-    externalId: string,
-  ): Promise<ResidentRecord | undefined>;
-
   residentByPseudoId(
     stateCode: string,
     pseudoId: string,
-  ): Promise<ResidentRecord | undefined>;
+  ): Promise<ResidentRecord>;
 
   recordForExternalId<Schema extends z.ZodTypeAny>(
     stateCode: string,

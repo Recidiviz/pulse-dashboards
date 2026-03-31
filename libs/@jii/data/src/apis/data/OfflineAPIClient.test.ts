@@ -37,25 +37,6 @@ test("residents should reflect state code", async () => {
   residents.forEach((r) => expect(r.stateCode).toBe("US_AZ"));
 });
 
-test("fetch single resident", async () => {
-  const expectedRes = usAzResidents[0];
-
-  const fetched = await api.residentById(
-    stateCodeMock,
-    expectedRes.personExternalId,
-  );
-
-  expect(fetched).toEqual(expectedRes);
-});
-
-test("missing single resident", async () => {
-  await expect(
-    api.residentById(stateCodeMock, "does-not-exist"),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Missing data for resident does-not-exist in US_AZ]`,
-  );
-});
-
 test("local config object", async () => {
   const expectedConfig = residentsConfigByState.US_AZ;
 

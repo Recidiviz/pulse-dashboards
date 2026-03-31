@@ -33,6 +33,7 @@ import {
   collection,
   doc,
   DocumentData,
+  enableNetwork,
   Firestore,
   getDoc,
   getDocs,
@@ -40,6 +41,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import pRetry, { Options } from "p-retry";
 import { z } from "zod";
 
 import {
@@ -54,6 +56,7 @@ import {
   FirestoreCollectionKey,
 } from "~firestore-config";
 
+import { DuplicateRecordError, MissingRecordError } from "./errors";
 import { FilterParams, FirestoreAPI } from "./interface";
 
 export class FirestoreAPIClient implements FirestoreAPI {
@@ -94,6 +97,38 @@ export class FirestoreAPIClient implements FirestoreAPI {
     return result;
   }
 
+  /**
+   * Utility function for retrying Firestore fetches, particularly in the case of poor network conditions
+   * @param fetchFn async function that makes a one-time Firestore request (NOT a subscription).
+   * Rejections will be caught and potentially retried based on the options
+   * @param retryIf optional function to make retries conditional; return false to bail out of retry loop
+   * @returns whatever `fetchFn` returns
+   */
+  private fetchWithRetry<Result>(
+    fetchFn: (...args: Array<unknown>) => Promise<Result>,
+    retryIf?: Options["shouldRetry"],
+  ): Promise<Result> {
+    return pRetry(fetchFn, {
+      // this is not a special number, just picked arbitrarily
+      // because the default of 10 retries seemed too high for this use case
+      retries: 3,
+      // we don't need to wait before retrying because we'll force Firestore to try reconnecting first
+      // and that action already carries a 10 second timeout
+      minTimeout: 0,
+      // Note that this function does not override the logic around counting retries etc.,
+      // it just lets us apply additional conditions on top of that
+      shouldRetry: async (ctx) => {
+        const conditionsMet = (await retryIf?.(ctx)) ?? true;
+
+        // try to get back online if bad connection has forced us into offline mode.
+        // skip this if we aren't going to retry because it can take up to 10 seconds
+        if (conditionsMet) await enableNetwork(this.db);
+
+        return conditionsMet;
+      },
+    });
+  }
+
   async residents(stateCode: string, filters: Array<FilterParams> = []) {
     const snapshot = await getDocs(
       query(
@@ -123,16 +158,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
       .filter((r): r is ResidentRecord => !!r);
   }
 
-  resident(stateCode: string, externalId: string) {
-    return this.recordForExternalId(
-      stateCode,
-      { key: "residents" },
-      externalId,
-      residentRecordSchema,
-    );
-  }
-
-  residentByPseudoId(stateCode: string, pseudoId: string) {
+  async residentByPseudoId(stateCode: string, pseudoId: string) {
     return this.recordForUniqueId(
       stateCode,
       { key: "residents" },
@@ -142,35 +168,50 @@ export class FirestoreAPIClient implements FirestoreAPI {
     );
   }
 
+  /**
+   * Use to look up documents by their document ID. Will throw if none is found;
+   * check for `MissingRecordError` to identify that case during during error handling.
+   * Missing records will be automatically retried because they can be caused by
+   * poor network conditions.
+   */
   async recordForExternalId<Schema extends z.ZodTypeAny>(
     stateCode: string,
     collectionKey: FirestoreCollectionKey,
     externalId: string,
     recordSchema: Schema,
-  ): Promise<z.infer<Schema> | undefined> {
-    const snapshot = await getDoc(
-      doc(
-        this.db,
-        collectionNameFromConfig({
+  ): Promise<z.infer<Schema>> {
+    return this.fetchWithRetry(
+      async () => {
+        const collectionName = collectionNameFromConfig({
           name: collectionKey,
           demo: this.isDemoMode(),
-        }),
-        `${stateCode.toLowerCase()}_${externalId}`,
-      ),
+        });
+        const documentId = `${stateCode.toLowerCase()}_${externalId}`;
+        const snapshot = await getDoc(doc(this.db, collectionName, documentId));
+
+        if (!snapshot.exists())
+          throw new MissingRecordError(
+            `No record at ${documentId} found in ${collectionName}`,
+          );
+
+        return this.parseFirestoreDocument(recordSchema, {
+          ...snapshot.data(),
+          recordId: snapshot.id,
+        });
+      },
+      // Retry MissingRecordError because fetch timeouts can be masked by Firestore
+      // automatically switching ito offline mode and finding nothing in the cache.
+      ({ error }) => error instanceof MissingRecordError,
     );
-
-    if (!snapshot.exists()) return;
-
-    return this.parseFirestoreDocument(recordSchema, {
-      ...snapshot.data(),
-      recordId: snapshot.id,
-    });
   }
 
   /**
    * Use to lookup by a field that is expected to be unique
    * but is not actually used as the document ID.
-   * Will throw if more than one record is found
+   * Will throw if the collection does not contain exactly one matching record;
+   * check for `MissingRecordError` or `DuplicateRecordError` classes to pinpoint
+   * those specific causes during error handling. Missing records will be automatically
+   * retried because they can be caused by poor network conditions.
    */
   private async recordForUniqueId<Schema extends z.ZodTypeAny>(
     stateCode: string,
@@ -178,30 +219,40 @@ export class FirestoreAPIClient implements FirestoreAPI {
     fieldName: string,
     fieldValue: string,
     recordSchema: Schema,
-  ): Promise<z.infer<Schema> | undefined> {
-    const resolvedCollectionName = collectionNameFromConfig({
-      name: collectionKey,
-      demo: this.isDemoMode(),
-    });
-    const snapshot = await getDocs(
-      query(
-        collection(this.db, resolvedCollectionName),
-        where("stateCode", "==", stateCode),
-        where(fieldName, "==", fieldValue),
-      ),
+  ): Promise<z.infer<Schema>> {
+    return this.fetchWithRetry(
+      async () => {
+        const resolvedCollectionName = collectionNameFromConfig({
+          name: collectionKey,
+          demo: this.isDemoMode(),
+        });
+        const snapshot = await getDocs(
+          query(
+            collection(this.db, resolvedCollectionName),
+            where("stateCode", "==", stateCode),
+            where(fieldName, "==", fieldValue),
+          ),
+        );
+
+        if (snapshot.size === 0)
+          throw new MissingRecordError(
+            `Found no documents matching ${fieldName} = ${fieldValue} in ${resolvedCollectionName}`,
+          );
+        if (snapshot.size > 1) {
+          throw new DuplicateRecordError(
+            `Found ${snapshot.size} documents matching ${fieldName} = ${fieldValue} in ${resolvedCollectionName}, but only one was expected`,
+          );
+        }
+
+        return this.parseFirestoreDocument(recordSchema, {
+          ...snapshot.docs[0].data(),
+          recordId: snapshot.docs[0].id,
+        });
+      },
+      // Retry MissingRecordError because fetch timeouts can be masked by Firestore
+      // automatically switching ito offline mode and finding nothing in the cache.
+      ({ error }) => error instanceof MissingRecordError,
     );
-
-    if (snapshot.size === 0) return;
-    if (snapshot.size > 1) {
-      throw new Error(
-        `Found ${snapshot.size} documents matching ${fieldName} = ${fieldValue} in ${resolvedCollectionName}, but only one was expected`,
-      );
-    }
-
-    return this.parseFirestoreDocument(recordSchema, {
-      ...snapshot.docs[0].data(),
-      recordId: snapshot.docs[0].id,
-    });
   }
 
   /**

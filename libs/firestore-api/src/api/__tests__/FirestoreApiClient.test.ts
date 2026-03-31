@@ -216,8 +216,12 @@ describe("resident by pseudo ID", () => {
 
     vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
 
-    const result = await client.residentByPseudoId(stateCodeMock, testId);
-    expect(result).toBeUndefined();
+    await expect(
+      client.residentByPseudoId(stateCodeMock, testId),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Found no documents matching pseudonymizedId = anonres001 in residents]`,
+    );
+    expect(getDocs).toHaveBeenCalledTimes(4);
   });
 
   test("too many results", async () => {
@@ -232,6 +236,8 @@ describe("resident by pseudo ID", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Found 3 documents matching pseudonymizedId = anonres001 in residents, but only one was expected]`,
     );
+
+    expect(getDocs).toHaveBeenCalledTimes(1);
   });
 
   test("demo data", async () => {
@@ -267,7 +273,8 @@ describe("recordForExternalId", () => {
     demoModeStub.mockReturnValue(true);
     vi.mocked(getDoc).mockResolvedValue({
       // for this test we don't actually care what the data is
-      exists: () => false,
+      data: () => "foo",
+      exists: () => true,
     } as unknown as DocumentSnapshot);
 
     await client.recordForExternalId(
@@ -282,6 +289,25 @@ describe("recordForExternalId", () => {
       "DEMO_residents",
       "us_xx_foo123",
     );
+  });
+
+  test("retries fetches that don't find results", async () => {
+    vi.mocked(getDoc).mockResolvedValue({
+      exists: () => false,
+    } as unknown as DocumentSnapshot);
+
+    await expect(
+      client.recordForExternalId(
+        stateCodeMock,
+        { key: "residents" },
+        "foo123",
+        z.any(),
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: No record at us_xx_foo123 found in residents]`,
+    );
+
+    expect(getDoc).toHaveBeenCalledTimes(4);
   });
 
   describe("ineligible opportunities filter", () => {
