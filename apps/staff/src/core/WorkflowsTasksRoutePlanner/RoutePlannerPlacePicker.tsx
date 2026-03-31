@@ -62,6 +62,7 @@ const CheckboxContainer = styled.div`
 
 const StyledPlacePicker = styled(PlacePicker)`
   width: 100%;
+  --gmpx-font-family-base: "Public Sans", sans-serif;
 `;
 
 export const RoutePlannerPlacePicker = observer(
