@@ -44,7 +44,7 @@ beforeEach(() => {
         status: "hydrated",
       },
       dynamicFilterOptions: {},
-    },
+    } as Record<string, unknown>,
   }));
 
   rootStore = new RootStore();
@@ -137,6 +137,55 @@ describe("FiltersStore", () => {
 
       expect(rootStore.filtersStore.filtersDescription).toEqual(
         "Time Period: 1 year;\nSex: All;\nAge: 25-29, 30-34\n",
+      );
+    });
+
+    it("includes 'Data last updated on' for over-time metrics", () => {
+      Object.assign(rootStore.metricsStore.current, {
+        filters: { enabledFilters: ["timePeriod", "sex"] },
+        isOverTime: true,
+        lastUpdated: new Date(2026, 2, 16),
+      });
+
+      expect(rootStore.filtersStore.filtersDescription).toEqual(
+        "Time Period: 6 months;\nSex: All;\nData last updated on: 03-16-2026\n",
+      );
+    });
+
+    it("does not include 'Data last updated on' for non-over-time metrics", () => {
+      Object.assign(rootStore.metricsStore.current, {
+        filters: { enabledFilters: ["timePeriod", "sex"] },
+        lastUpdated: new Date(2026, 2, 16),
+      });
+
+      expect(rootStore.filtersStore.filtersDescription).toEqual(
+        "Time Period: 6 months;\nSex: All\n",
+      );
+    });
+
+    it("does not include 'Data last updated on' when lastUpdated is undefined", () => {
+      Object.assign(rootStore.metricsStore.current, {
+        filters: { enabledFilters: ["timePeriod", "sex"] },
+        isOverTime: true,
+      });
+
+      expect(rootStore.filtersStore.filtersDescription).toEqual(
+        "Time Period: 6 months;\nSex: All\n",
+      );
+    });
+
+    it("excludes dateInPopulation from the description", () => {
+      rootStore.metricsStore.current.filters.enabledFilters = [
+        "timePeriod",
+        "sex",
+        "dateInPopulation",
+      ];
+      rootStore.filtersStore.setFilters({
+        dateInPopulation: ["2026-03-16"],
+      });
+
+      expect(rootStore.filtersStore.filtersDescription).toEqual(
+        "Time Period: 6 months;\nSex: All\n",
       );
     });
   });

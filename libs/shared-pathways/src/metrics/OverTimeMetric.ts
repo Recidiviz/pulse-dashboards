@@ -29,6 +29,8 @@ import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
 import { SharedMetricConstructorOptions } from "./types";
 
 export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesDataRecord> {
+  override readonly isOverTime = true;
+
   constructor(props: SharedMetricConstructorOptions<TimeSeriesDataRecord>) {
     super(props);
 

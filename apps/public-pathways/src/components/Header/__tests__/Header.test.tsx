@@ -23,6 +23,7 @@ import { Header } from "../Header";
 
 vi.mock("../../StoreProvider");
 
+const mockDownload = vi.fn();
 const mockTrackDownloadClicked = vi.fn();
 const mockTrackMethodologyLinkClicked = vi.fn();
 const mockUseRootStore = useRootStore as Mock;
@@ -36,6 +37,7 @@ describe("Header", () => {
       },
       metricsStore: {
         current: { id: "prisonPopulationOverTime" },
+        download: mockDownload,
       },
     });
   });
@@ -48,6 +50,14 @@ describe("Header", () => {
     expect(mockTrackDownloadClicked).toHaveBeenCalledWith({
       metricId: "prisonPopulationOverTime",
     });
+  });
+
+  it("calls download when Download is clicked", () => {
+    render(<Header />);
+
+    fireEvent.click(screen.getByRole("menuitem", { name: "Download" }));
+
+    expect(mockDownload).toHaveBeenCalled();
   });
 
   it("calls trackMethodologyLinkClicked when How it works is clicked", () => {

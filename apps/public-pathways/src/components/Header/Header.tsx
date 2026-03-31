@@ -108,11 +108,12 @@ export const Header = observer(function Header() {
         </MenuLinks>
         <DownloadButton
           role="menuitem"
-          onClick={() =>
+          onClick={() => {
+            metricsStore.download();
             analyticsStore.trackDownloadClicked({
               metricId: metricsStore.current.id,
-            })
-          }
+            });
+          }}
         >
           Download
         </DownloadButton>

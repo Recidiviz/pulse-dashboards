@@ -93,6 +93,8 @@ export default abstract class PathwaysNewBackendMetric<
 
   lastUpdated?: Date;
 
+  readonly isOverTime?: boolean;
+
   dynamicFilterOptions: Partial<DynamicFilterOptions>;
 
   protected abortController?: AbortController;

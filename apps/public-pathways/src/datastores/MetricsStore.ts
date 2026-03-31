@@ -18,6 +18,8 @@
 import { makeAutoObservable } from "mobx";
 
 import {
+  downloadChartAsData,
+  FILTER_TYPES,
   MetricRecord,
   NewBackendRecord,
   OverTimeMetric,
@@ -27,6 +29,7 @@ import {
   SnapshotDataRecord,
   SnapshotMetric,
 } from "~shared-pathways";
+import { formatDate, ZipFileEntry } from "~utils";
 
 import { callPublicPathwaysApi } from "../api/metricsClient";
 import { PUBLIC_PATHWAYS_TENANT } from "../tenantId";
@@ -56,6 +59,57 @@ export default class MetricsStore implements PathwaysMetricStore {
 
   get filtersStore(): PathwaysMetricStore["filtersStore"] {
     return this.rootStore.filtersStore;
+  }
+
+  async download(): Promise<void> {
+    const metric = this.current;
+    const { downloadableData } = metric;
+    if (!downloadableData) return;
+
+    let methodologyPDF: ZipFileEntry | null = null;
+    try {
+      const response = await fetch(
+        "/New York State DOCCS Dashboard Methodology.pdf",
+      );
+      if (response.ok) {
+        const arrayBuffer = await response.arrayBuffer();
+        methodologyPDF = {
+          name: "New York State DOCCS Dashboard Methodology.pdf",
+          data: arrayBuffer,
+          type: "binary",
+        };
+      }
+    } catch {
+      // methodology PDF is optional; proceed without it if unavailable
+    }
+
+    const isOverTime = metric instanceof OverTimeMetric;
+    const dateInPopulationValues =
+      this.rootStore.filtersStore.filters[FILTER_TYPES.DATE_IN_POPULATION];
+    const dateInPopulation =
+      !isOverTime && dateInPopulationValues?.length === 1
+        ? dateInPopulationValues[0]
+        : undefined;
+
+    let { filtersDescription } = this.rootStore.filtersStore;
+    if (!isOverTime && dateInPopulation && dateInPopulation !== "ALL") {
+      const [year, month, day] = dateInPopulation.split("-").map(Number);
+      const formattedDate = formatDate(
+        new Date(year, month - 1, day),
+        "MM-dd-yyyy",
+      );
+      filtersDescription = filtersDescription.trimEnd();
+      filtersDescription += `;\nAs of: ${formattedDate}\n`;
+    }
+
+    return downloadChartAsData({
+      fileContents: [downloadableData],
+      chartTitle: metric.chartTitle,
+      filters: filtersDescription,
+      includeFiltersDescriptionInCSV: true,
+      methodologyPDF,
+      dateInPopulation,
+    });
   }
 
   private fetchMetrics = <R extends MetricRecord>(

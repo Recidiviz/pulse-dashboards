@@ -22,14 +22,24 @@ type FilenameFilters = {
   metricPeriodMonths?: string;
   supervisionType?: string;
   district?: string;
+  dateInPopulation?: string;
 };
+
+function formatAsOfDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split("-");
+  return `${month}-${day}-${year}`;
+}
 
 export default function configureFilename(
   chartId: string,
   filters?: FilenameFilters | null,
   withoutFilters?: boolean,
 ): string {
-  let filename = `${chartId}-${getTimeStamp()}`;
+  const asOf =
+    filters?.dateInPopulation && filters.dateInPopulation !== "ALL"
+      ? `-As-Of-${formatAsOfDate(filters.dateInPopulation)}`
+      : "";
+  let filename = `${chartId}${asOf}-Downloaded-${getTimeStamp()}`;
   if (withoutFilters || !filters) {
     return filename;
   }

@@ -36,6 +36,7 @@ export type DownloadChartAsDataParams = {
   methodologyPDF?: ZipFileEntry | null;
   lastUpdatedOn?: string | null;
   includeFiltersDescriptionInCSV?: boolean;
+  dateInPopulation?: string | null;
 };
 
 export default async function downloadChartAsData({
@@ -46,6 +47,7 @@ export default async function downloadChartAsData({
   methodologyPDF = null,
   lastUpdatedOn = null,
   includeFiltersDescriptionInCSV = false,
+  dateInPopulation = null,
 }: DownloadChartAsDataParams): Promise<void> {
   const validContents = fileContents.filter(
     (f): f is NonNullable<DownloadableData> => f != null,
@@ -66,7 +68,7 @@ export default async function downloadChartAsData({
   csvs.forEach((csv, index) => {
     const filename = configureFilename(
       validContents[index].chartId,
-      null,
+      dateInPopulation ? { dateInPopulation } : null,
       true,
     );
     const formattedCSV =
@@ -81,7 +83,6 @@ export default async function downloadChartAsData({
       chartTitle,
       filters,
       methodologyContent,
-      lastUpdatedOn,
     });
     zip.file(methodologyFile.name, methodologyFile.data);
   }

@@ -17,6 +17,8 @@
 
 import { get, keys, set, toJS } from "mobx";
 
+import { formatDate } from "~utils";
+
 import { FILTER_TYPES, filtersOrder } from "./constants";
 import { enabledFilterOptionsByTenant } from "./enabledFilters";
 import {
@@ -138,6 +140,13 @@ export abstract class FiltersStoreBase {
 
       return acc;
     }, []);
+
+    if (this.metric?.isOverTime && this.metric.lastUpdated) {
+      filtersStrings.push(
+        `Data last updated on: ${formatDate(this.metric.lastUpdated, "MM-dd-yyyy")}`,
+      );
+    }
+
     return filtersStrings.join(";\n").concat("\n");
   }
 
@@ -242,6 +251,8 @@ export abstract class FiltersStoreBase {
     filters: Filters;
     hydrationState: { status: string };
     dynamicFilterOptions: Partial<DynamicFilterOptions>;
+    lastUpdated?: Date;
+    isOverTime?: boolean;
   };
 
   abstract get pathwaysTenantId(): PathwaysTenantId | undefined;
