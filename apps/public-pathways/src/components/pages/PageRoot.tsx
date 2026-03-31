@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Loading } from "@recidiviz/design-system";
 import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { Suspense, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
 import AuthProvider from "../AuthProvider/AuthProvider";
+import PublicPathwaysLoading from "../PublicPathwaysLoading";
 import { PageError } from "./PageError";
 import { PageContainer } from "./styles";
 
@@ -34,7 +34,7 @@ export const PageRoot = withErrorBoundary(
     }, [pathname]);
 
     return (
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<PublicPathwaysLoading />}>
         <AuthProvider>
           <PageContainer>
             <Outlet />

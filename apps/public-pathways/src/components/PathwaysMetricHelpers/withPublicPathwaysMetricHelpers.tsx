@@ -24,6 +24,8 @@ import styled from "styled-components";
 import { Hydrator } from "~hydration-utils";
 import { HydratablePathwaysMetric } from "~shared-pathways";
 
+import PublicPathwaysLoading from "../PublicPathwaysLoading";
+
 type WithMetricHelperProps = {
   metric: HydratablePathwaysMetric;
 };
@@ -38,6 +40,10 @@ const MetricVizHydrator = styled(Hydrator)`
   overflow: hidden;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
+
+  & > div {
+    min-height: inherit;
+  }
 `;
 
 const NoDataWrapper = styled.div`
@@ -69,6 +75,7 @@ const withPublicPathwaysMetricHelpers = <Props extends WithMetricHelperProps>(
     return (
       <MetricVizHydrator
         hydratable={metric}
+        loading={<PublicPathwaysLoading />}
         failed={<div>Failed to load data.</div>}
       >
         <NoDataHelper metric={metric}>
