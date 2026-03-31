@@ -5,84 +5,10 @@ This directory contains tools for evaluating and manually testing various parts 
 ## Overview
 
 This folder provides several CLI tools for:
+
 - **Automated Evaluation**: Run complete intake conversations with AI-simulated clients
 - **Summary Testing**: Test intake summary generation with fake data
 - **Action Plan Evaluation**: Evaluate AI-generated action plans using LangSmith with quality metrics
-
-## Setup for Evaluation Only
-
-If you only want to run evaluations (without setting up the full backend), follow these minimal setup steps:
-
-### 1. Install System Dependencies
-
-**macOS:**
-```bash
-brew install cairo pango glib gobject-introspection gdk-pixbuf uv
-```
-
-**Ubuntu/Debian:**
-```bash
-sudo apt-get install -y libcairo2-dev libpango1.0-dev libglib2.0-dev gobject-introspection libgirepository1.0-dev libgdk-pixbuf2.0-dev
-```
-
-### 2. Install Python Dependencies
-
-Navigate to the backend directory and install dependencies:
-```bash
-cd apps/@reentry/backend
-uv sync
-```
-
-### 3. Configure Environment Variables
-
-Create a `.env` file in `apps/@reentry/backend/` with the following minimal configuration:
-
-```bash
-# LLM Provider API Keys (you need at least one)
-RECIDIVIZ_OPENAI_API_KEY=your_openai_key_here
-# OR
-RECIDIVIZ_ANTHROPIC_API_KEY=your_anthropic_key_here
-# OR
-RECIDIVIZ_GOOGLE_GENAI_API_KEY=your_google_gemini_key_here
-
-# LangSmith Configuration (required for evaluations)
-RECIDIVIZ_LANGCHAIN_API_KEY=your_langsmith_key_here
-RECIDIVIZ_LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
-RECIDIVIZ_LANGCHAIN_PROJECT=reentry-evaluations
-
-# Required fields (use dummy values for evaluation-only setup)
-RECIDIVIZ_FABRK_BEARER_TOKEN=dummy_token
-RECIDIVIZ_AUTH0_AUDIENCE=dummy_audience
-RECIDIVIZ_AUTH0_CLIENT_ID=dummy_client_id
-RECIDIVIZ_AUTH0_DOMAIN=dummy_domain.auth0.com
-RECIDIVIZ_JWT_ALGORITHM=HS256
-RECIDIVIZ_JWT_SECRET_KEY=dummy_secret_key
-RECIDIVIZ_GCS_BUCKET_NAME=dummy_bucket
-RECIDIVIZ_DEEPGRAM_API_KEY=dummy_deepgram_key
-```
-
-**Note:** You do **not** need:
-- Database configuration (no PostgreSQL required)
-- Redis configuration
-- GCP service account credentials
-- Full backend setup
-
-### 4. Verify Setup
-
-Test that your environment is configured correctly:
-
-```bash
-# Test action plan evaluation (requires LangSmith)
-uv run python -m app.manage evaluate
-```
-
-If this command runs without errors, you're ready to use the evaluation tools!
-
-> **Note:** To test summary evaluation, first export an output config from the
-> Config Management UI, then run:
-> ```bash
-> uv run python -m app.manage evaluate-summary exported-config.yaml
-> ```
 
 ## Command Line Testing Tools
 
@@ -135,6 +61,7 @@ This generates both an assessment summary and client summary using the specified
 ## Action Plan Generation Evaluation
 
 The evaluation pipeline tests the action plan generation process using LangSmith by:
+
 1. Loading evaluation examples (client intake data, summaries, assessments)
 2. Generating action plans using the `LLMAgentGenerate` pipeline
 3. Evaluating the generated plans against quality metrics (tone, clarity, actionability, etc.)
@@ -176,6 +103,7 @@ Your choice: Existing
 ```
 
 You'll be prompted to:
+
 - Select a dataset from the list
 - Enter an experiment prefix (optional but recommended) to identify this evaluation run
 
@@ -190,6 +118,7 @@ Your choice: New
 ```
 
 You'll be prompted for:
+
 - **Path**: Directory containing evaluation example JSON files (e.g., `data/examples/default_eval`)
 - **Dataset Name**: Unique name for this dataset (e.g., `plan-generation-dev`)
 - **Experiment Prefix**: Optional descriptor for this evaluation run
@@ -233,11 +162,13 @@ Each JSON file should contain:
 ## Example Datasets
 
 Sample evaluation examples are provided in:
+
 ```
 backend/data/examples/default_eval/
 ```
 
 These include diverse scenarios:
+
 - Young adult with housing and employment needs
 - Client with substance abuse and mental health challenges
 - Client with education and transportation barriers
@@ -270,6 +201,7 @@ uv run python -m app.manage evaluate
 - Enter experiment prefix: `initial-test`
 
 The tool will:
+
 1. Validate all JSON files against the `EvaluationExample` schema
 2. Create a dataset in LangSmith
 3. Upload all examples to the dataset
@@ -280,6 +212,7 @@ The tool will:
 Results are saved in two places:
 
 1. **LangSmith Dashboard**: View detailed results at `https://smith.langchain.com`
+
    - Compare experiments side-by-side
    - Drill into individual examples
    - Track evaluation metrics over time
@@ -304,15 +237,19 @@ The evaluation uses the following metrics (defined in `markdown_evals.py`):
 ## Troubleshooting
 
 ### "No dataset found"
+
 If running "Default" mode for the first time, create the dataset using "New" mode with the provided examples in `data/examples/default_eval/`.
 
 ### Validation errors
+
 Check that your JSON files match the required schema. Common issues:
+
 - `messages` must be an array of objects, not a single object
 - `client_extracted_info` must include all required location fields
 - All required fields must be present
 
 ### LangSmith API errors
+
 - Verify `LANGCHAIN_API_KEY` is set correctly in `.env`
 - Check that `LANGCHAIN_ENDPOINT` points to the correct URL
 - Ensure you have network access to the LangSmith API

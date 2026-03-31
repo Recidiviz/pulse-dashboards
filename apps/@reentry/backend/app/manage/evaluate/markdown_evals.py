@@ -6,7 +6,11 @@ from pydantic import BaseModel, Field
 from app.core.config import settings
 from app.utils.llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 
-eval_llm = ChatOpenAI(openai_api_key=settings.OPENAI_API_KEY, model_name="o4-mini")
+eval_llm = ChatOpenAI(
+    api_key=settings.OPENAI_API_KEY,
+    model="o4-mini",
+    base_url=settings.OPENAI_BASE_URL,
+)
 
 grade_prompt = (
     "After providing your explanation, you must rate the response on a scale of 1 to 10"
@@ -331,3 +335,120 @@ async def no_judgments(run: Run, example: Example):
     )
 
     return {"key": "no_judgments", "score": int(score.one_to_ten_score)}
+
+
+# Helper function to extract all annotations from structured plan
+def _extract_all_annotations(structured_plan):
+    """Extract all annotations from the structured action plan"""
+    all_annotations = []
+
+    # Get annotations from immediate needs
+    if structured_plan.immediate_needs and structured_plan.immediate_needs.annotations:
+        all_annotations.extend(structured_plan.immediate_needs.annotations)
+
+    # Get annotations from all sections
+    for section in structured_plan.sections:
+        if section.annotations:
+            all_annotations.extend(section.annotations)
+
+    return all_annotations
+
+
+# Check that citation sources reference the transcript/conversation
+async def citations_source_is_transcript(run: Run, example: Example):
+    structured_plan = run.outputs.get("structured_plan")
+
+    if not structured_plan:
+        # Fallback if structured plan is not available
+        return {"key": "citations_source_is_transcript", "score": 0}
+
+    # Extract all annotations
+    all_annotations = _extract_all_annotations(structured_plan)
+
+    # If no annotations, return perfect score (nothing to validate)
+    if not all_annotations:
+        return {"key": "citations_source_is_transcript", "score": 1}
+
+    # Check if all sources reference transcript or conversation
+    valid_sources = {"transcript", "conversation", "intake"}
+    invalid_annotations = []
+
+    for i, ann in enumerate(all_annotations):
+        source_lower = ann.source.lower()
+        if not any(valid_src in source_lower for valid_src in valid_sources):
+            invalid_annotations.append(
+                f"Citation {i+1}: Source='{ann.source}' (should reference transcript/conversation)"
+            )
+
+    # Calculate score: 1 if all valid, 0 if any invalid
+    score = 1 if len(invalid_annotations) == 0 else 0
+
+    return {"key": "citations_source_is_transcript", "score": score}
+
+
+# Verify that citation text extracts actually appear in the transcript
+async def citations_text_verified(run: Run, example: Example):
+    structured_plan = run.outputs.get("structured_plan")
+    messages = example.inputs.get("messages", [])
+
+    if not structured_plan:
+        # Fallback if structured plan is not available
+        return {"key": "citations_text_verified", "score": 0}
+
+    # Extract all annotations
+    all_annotations = _extract_all_annotations(structured_plan)
+
+    # If no annotations, return perfect score (nothing to validate)
+    if not all_annotations:
+        return {"key": "citations_text_verified", "score": 1}
+
+    # Format annotations for LLM evaluation
+    annotations_text = "\n\n".join(
+        [
+            f'Citation {i+1}:\n- Source: {ann.source}\n- Location: {ann.source_location}\n- Text Extract: "{ann.source_text_extract}"'
+            for i, ann in enumerate(all_annotations)
+        ]
+    )
+
+    # Data model
+    class GradeCitationVerification(BaseModel):
+        """Binary score for whether citation text extracts are accurate"""
+
+        explanation: str = Field(description="Explanation of the score")
+        binary_score: int = Field(
+            description="1 if all citation text extracts are accurate, 0 otherwise"
+        )
+
+    # LLM with function call
+    structured_llm_grader = eval_llm.with_structured_output(GradeCitationVerification)
+
+    # Prompt
+    criterium = """citations_text_verified: All citation text extracts must accurately reflect what appears in the transcript. Each "Text Extract" should either directly quote or accurately paraphrase content from the transcript messages. Partial citations are accepted, only factually incorrect ones should be reported.
+
+    For each citation listed, verify that the "Text Extract" can be traced to the transcript. The extract doesn't need to be a verbatim quote, but it should accurately represent what was said. If ALL citation text extracts are accurate and traceable to the transcript, assign a score of 1. If ANY citation text extract is fabricated, misquoted, or cannot be found in the transcript, assign a score of 0.
+    """
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system_prompt),
+            (
+                "human",
+                "Transcript Messages: \n\n {transcript}\n\nCitations to Verify: \n\n {citations}",
+            ),
+        ]
+    )
+
+    grader = prompt | structured_llm_grader
+    score = await grader.with_retry(
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
+    ).ainvoke(
+        {
+            "transcript": str(messages),
+            "citations": annotations_text,
+            "criteria": criterium,
+            "type_of_prompt": binary_prompt,
+        }
+    )
+
+    return {"key": "citations_text_verified", "score": int(score.binary_score)}

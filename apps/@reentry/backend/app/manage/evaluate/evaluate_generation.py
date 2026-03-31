@@ -16,6 +16,8 @@ from app.utils.llm_agent_gen_plan import LLMAgentGenerate
 from .markdown_evals import (
     actionable,
     addressed_to_client,
+    citations_source_is_transcript,
+    citations_text_verified,
     clarity,
     no_judgments,
     structure,
@@ -142,14 +144,7 @@ async def initialize_existing(dataset_name: str):
     examples = []
     for doc in dataset:
         try:
-            # Extract the inputs from the document
-            if hasattr(doc, "inputs"):
-                data = doc.inputs
-            elif hasattr(doc, "metadata"):
-                data = doc.metadata
-            else:
-                print("Warning: Document has no inputs or metadata")
-                continue
+            data = orjson.loads(doc.page_content)
 
             # Validate as EvaluationExample
             example = EvaluationExample(**data)
@@ -160,6 +155,8 @@ async def initialize_existing(dataset_name: str):
             continue
 
     print(f"Validated {len(examples)} examples")
+    if len(examples) == 0:
+        return
     return examples
 
 
@@ -343,6 +340,7 @@ async def evaluate(output_config_file: str = "exported-config.yaml"):
             "markdown": action_plan.action_plan,
             "gen_data": action_plan.messages,
             "resources": action_plan.suggested_resources,
+            "structured_plan": action_plan.structured_action_plan,
         }
 
     results = await aevaluate(
@@ -356,9 +354,12 @@ async def evaluate(output_config_file: str = "exported-config.yaml"):
             tone,
             timeline,
             no_judgments,
+            citations_source_is_transcript,
+            citations_text_verified,
         ],
         client=langsmith_client,
         experiment_prefix=experiment_prefix,
+        max_concurrency=5,  # Run up to 5 plan generations in parallel
     )
 
     # Save results next to examples folder in data/results
