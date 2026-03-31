@@ -198,9 +198,21 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Name",
       id: "name",
-      accessorFn: (entity: TasksRowEntity) => entity.person.displayName,
+      accessorFn: (entity: TasksRowEntity) => {
+        return entity.person.displayName;
+      },
       enableSorting: true,
-      sortingFn: "text",
+      sortingFn: (rowA, rowB) => {
+        if (rowA.original.person.stateCode === "US_TX") {
+          const lastB = rowB.original.person.displayName.split(" ")[1];
+          const lastA = rowA.original.person.displayName.split(" ")[1];
+          return lastA < lastB ? 1 : -1;
+        }
+        return rowA.original.person.displayName <
+          rowB.original.person.displayName
+          ? 1
+          : -1;
+      },
       cell: PersonNameCellWrapper,
     },
     {
