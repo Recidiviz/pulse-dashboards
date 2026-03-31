@@ -92,10 +92,9 @@ export const Header = observer(function Header() {
 
   return (
     <HeaderWrapper>
-      <Title>DOCCS Dashboard</Title>
+      <Title>NYS DOCCS</Title>
       <StyledMenubar focusBorderColor={publicPathwaysPalette.signal.links}>
         <MenuLinks>
-          <MenuLink role="menuitem">About</MenuLink>
           <MenuLink
             as="a"
             href="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
