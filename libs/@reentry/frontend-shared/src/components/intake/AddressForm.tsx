@@ -138,7 +138,7 @@ const AddressForm = ({
               </div>
               <div>
                 <p className="font-bold">
-                  What if I don&apos; t know the adress yet?
+                  What if I don&apos;t know the address yet?
                 </p>
                 <p>
                   No problem! Leave the street address blank and make your best
