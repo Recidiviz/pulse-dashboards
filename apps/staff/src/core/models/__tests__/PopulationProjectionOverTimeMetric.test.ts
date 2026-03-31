@@ -238,7 +238,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
           type: "binary",
         }),
       );
-      await expect(pdf.data.text()).resolves.toBe("blob");
+      expect(new TextDecoder().decode(pdf.data)).toBe("blob");
     });
   });
 });

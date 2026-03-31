@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -87,12 +87,13 @@ describe("transformChartDataToCsv", () => {
       expect(
         await transformChartDataToCsv(
           [
-            { data: [1, 2, 6] },
-            { data: [2, 4, 6] },
-            { data: [3, 3, 4] },
-            { data: [1, 6, 8] },
+            { label: "", data: [1, 2, 6] },
+            { label: "", data: [2, 4, 6] },
+            { label: "", data: [3, 3, 4] },
+            { label: "", data: [1, 6, 8] },
           ],
           labels,
+          "",
           false,
           true,
         ),

@@ -23,10 +23,11 @@ import {
   PopulationProjectionTimeSeriesRecord,
   SimulationCompartment,
 } from "~shared-pathways";
+import { downloadChartAsData } from "~shared-pathways";
 import { formatDate } from "~utils";
+import { ZipFileEntry } from "~utils";
 
 import RootStore from "../../RootStore";
-import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { filterRecordByDimensions } from "./utils";
@@ -116,7 +117,7 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
     };
   }
 
-  async fetchMethodologyPDF(): Promise<Record<string, any>> {
+  async fetchMethodologyPDF(): Promise<ZipFileEntry> {
     const token = await RootStore.getTokenSilently();
     const endpoint = `${
       import.meta.env.VITE_API_URL
@@ -126,8 +127,9 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
         Authorization: `Bearer ${token}`,
       },
     });
+    const blob = await pdf.blob();
     return {
-      data: await pdf.blob(),
+      data: await blob.arrayBuffer(),
       type: "binary",
       name: "population_projections_methodology.pdf",
     };
@@ -137,12 +139,8 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
     return downloadChartAsData({
       fileContents: [this.downloadableData],
       chartTitle: this.chartTitle,
-      shouldZipDownload: true,
-      getTokenSilently: this.rootStore?.userStore.getTokenSilently,
       includeFiltersDescriptionInCSV: true,
-      filters: {
-        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
-      },
+      filters: this.rootStore?.filtersStore.filtersDescription,
       lastUpdatedOn: formatDate(this.simulationDate),
       methodologyContent: this.methodology,
       methodologyPDF: await this.fetchMethodologyPDF(),

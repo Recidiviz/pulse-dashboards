@@ -20,9 +20,12 @@ import { sumBy } from "lodash/fp";
 import map from "lodash/fp/map";
 import { computed, makeObservable } from "mobx";
 
+import { PopulationFilterLabels } from "../filters";
 import {
   DefaultOffenseTypeOrder,
   DefaultSupervisionLevelOrder,
+  DownloadableData,
+  DownloadableDataset,
   OrderKeys,
   SnapshotDataRecord,
 } from "../types";
@@ -43,6 +46,7 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
     makeObservable<SnapshotMetric>(this, {
       totalCount: computed,
       dataSeries: computed,
+      downloadableData: computed,
     });
 
     this.accessor = props.accessor;
@@ -89,6 +93,50 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
 
   get isEmpty(): boolean {
     return !this.totalCount;
+  }
+
+  get downloadableData(): DownloadableData {
+    if (!this.dataSeries) return undefined;
+
+    const datasets = [] as DownloadableDataset[];
+    const data: Record<string, number>[] = [];
+    const labels: string[] = [];
+
+    this.dataSeries.forEach((d: SnapshotDataRecord) => {
+      data.push({
+        Count: Math.round(d.count),
+      });
+
+      const filterValue = d[this.accessor];
+      if (filterValue) {
+        labels.push(
+          this.store.filtersStore.getFilterLabel(
+            this.accessor as keyof PopulationFilterLabels,
+            filterValue.toString(),
+          ) || filterValue.toString(),
+        );
+      }
+    });
+
+    datasets.push({ data, label: "" });
+
+    const filterOption =
+      this.store.filtersStore.filterOptions[
+        this.accessor as keyof PopulationFilterLabels
+      ];
+
+    return {
+      chartDatasets: datasets,
+      chartLabels: labels,
+      chartId: this.chartTitle,
+      dataExportLabel:
+        filterOption?.title ||
+        this.accessor
+          .toString()
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (s) => s.toUpperCase())
+          .trim(),
+    };
   }
 
   override getQueryParams(): URLSearchParams {

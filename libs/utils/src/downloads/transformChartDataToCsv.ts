@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,15 @@
 
 import csvExport from "jsonexport/dist";
 
-async function transformChartDataToCsv(
-  datasets,
-  labels,
-  dataExportLabel,
-  convertValuesToNumbers,
-  fixLabelsInColumns = null,
-) {
+import { DownloadableDataset } from "./types";
+
+export default async function transformChartDataToCsv(
+  datasets: DownloadableDataset[],
+  labels: string[],
+  dataExportLabel: string,
+  convertValuesToNumbers?: boolean,
+  fixLabelsInColumns: boolean | null = null,
+): Promise<string> {
   const datasetsWithoutTrendLine = datasets.filter(
     (dataset) => dataset.label !== "trendline",
   );
@@ -32,15 +34,18 @@ async function transformChartDataToCsv(
 
   if (!fixLabelsInColumns && labels.length >= datasetsWithoutTrendLine.length) {
     formattedData = labels.map((label, index) => {
-      const dataPoints = datasetsWithoutTrendLine.reduce((acc, dataset) => {
-        let dataPoint = dataset.data[index];
+      const dataPoints = datasetsWithoutTrendLine.reduce(
+        (acc: Record<string, unknown>, dataset) => {
+          let dataPoint = dataset.data[index];
 
-        if (convertValuesToNumbers && !Number.isNaN(Number(dataPoint))) {
-          dataPoint = Number(dataPoint);
-        }
+          if (convertValuesToNumbers && !Number.isNaN(Number(dataPoint))) {
+            dataPoint = Number(dataPoint);
+          }
 
-        return { ...acc, [dataset.label]: dataPoint };
-      }, {});
+          return { ...acc, [dataset.label]: dataPoint };
+        },
+        {},
+      );
 
       return {
         [dataExportLabel]: label,
@@ -50,7 +55,7 @@ async function transformChartDataToCsv(
   } else {
     formattedData = datasetsWithoutTrendLine.map((dataset) => {
       return dataset.data.reduce(
-        (acc, dataPoint, index) => ({
+        (acc: Record<string, unknown>, dataPoint: unknown, index: number) => ({
           ...acc,
           [labels[index]]: dataPoint,
         }),
@@ -68,5 +73,3 @@ async function transformChartDataToCsv(
     throw e;
   }
 }
-
-export default transformChartDataToCsv;

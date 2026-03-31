@@ -15,21 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components";
-export type { SectionNavigationProps } from "./components/SectionNavigation/SectionNavigation";
-export { SectionNavigation } from "./components/SectionNavigation/SectionNavigation";
-export * from "./constants";
-export * from "./content";
-export * from "./content/types";
-export * from "./dimensions";
-export * from "./downloads";
-export * from "./enabledFilters";
-export * from "./filterOptions";
-export * from "./filters";
-export * from "./FiltersStoreBase";
-export * from "./metrics";
-export * from "./tenants";
-export * from "./timePeriod";
-export * from "./types";
-export * from "./utils";
-export * from "./views";
+import getTimeStamp from "./getTimeStamp";
+
+type FilenameFilters = {
+  metricType?: string;
+  metricPeriodMonths?: string;
+  supervisionType?: string;
+  district?: string;
+};
+
+export default function configureFilename(
+  chartId: string,
+  filters?: FilenameFilters | null,
+  withoutFilters?: boolean,
+): string {
+  let filename = `${chartId}-${getTimeStamp()}`;
+  if (withoutFilters || !filters) {
+    return filename;
+  }
+
+  if (filters.metricType) {
+    filename += `-${filters.metricType}`;
+  }
+  if (filters.metricPeriodMonths) {
+    filename += `-${filters.metricPeriodMonths}`;
+  }
+  if (filters.supervisionType) {
+    filename += `-${filters.supervisionType}`;
+  }
+  if (filters.district) {
+    filename += `-${filters.district}`;
+  }
+  return filename;
+}

@@ -15,19 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable } from "mobx";
-
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
-  DownloadableData,
-  DownloadableDataset,
-  PopulationFilterLabels,
+  downloadChartAsData,
   SnapshotDataRecord,
   SnapshotMetric as SharedSnapshotMetric,
 } from "~shared-pathways";
 
-import { toTitleCase } from "../../utils";
-import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import CoreStore from "../CoreStore";
 import {
   BaseNewMetricConstructorProps,
@@ -48,10 +42,6 @@ export default class SnapshotMetric extends SharedSnapshotMetric {
     });
     this.rootStore = props.rootStore;
 
-    makeObservable<SnapshotMetric>(this, {
-      downloadableData: computed,
-    });
-
     this.download = this.download.bind(this);
   }
 
@@ -61,53 +51,12 @@ export default class SnapshotMetric extends SharedSnapshotMetric {
       : this.store.currentTenantId;
   }
 
-  get downloadableData(): DownloadableData | undefined {
-    if (!this.dataSeries) return undefined;
-
-    const datasets = [] as DownloadableDataset[];
-    const data: Record<string, number>[] = [];
-    const labels: string[] = [];
-
-    this.dataSeries.forEach((d: SnapshotDataRecord) => {
-      data.push({
-        Count: Math.round(d.count),
-      });
-
-      if (this.rootStore?.filtersStore) {
-        const filterValue = d[this.accessor];
-        if (filterValue) {
-          labels.push(
-            this.rootStore?.filtersStore.getFilterLabel(
-              this.accessor as keyof PopulationFilterLabels,
-              filterValue.toString(),
-            ) || filterValue.toString(),
-          );
-        }
-      }
-    });
-
-    datasets.push({ data, label: "" });
-    return {
-      chartDatasets: datasets,
-      chartLabels: labels,
-      chartId: this.chartTitle,
-      dataExportLabel:
-        this.rootStore?.filtersStore.filterOptions?.[
-          this.accessor as keyof PopulationFilterLabels
-        ]?.title || toTitleCase(this.accessor.toString()),
-    };
-  }
-
   async download(): Promise<void> {
     return downloadChartAsData({
       fileContents: [this.downloadableData],
       chartTitle: this.chartTitle,
-      shouldZipDownload: true,
-      getTokenSilently: this.rootStore?.userStore.getTokenSilently,
       includeFiltersDescriptionInCSV: true,
-      filters: {
-        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
-      },
+      filters: this.rootStore?.filtersStore.filtersDescription,
       methodologyContent: this.methodology,
     });
   }

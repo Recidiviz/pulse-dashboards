@@ -31,9 +31,9 @@ import {
   SupervisionPopulationSnapshotRecord,
   TimePeriod,
 } from "~shared-pathways";
+import { downloadChartAsData } from "~shared-pathways";
 
 import { humanReadableTitleCase } from "../../utils";
-import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { filterRecordByDimensions, filterTimePeriod } from "./utils";
@@ -181,12 +181,8 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     return downloadChartAsData({
       fileContents: [this.downloadableData],
       chartTitle: this.chartTitle,
-      shouldZipDownload: true,
-      getTokenSilently: this.rootStore?.userStore.getTokenSilently,
       includeFiltersDescriptionInCSV: true,
-      filters: {
-        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
-      },
+      filters: this.rootStore?.filtersStore.filtersDescription,
       methodologyContent: this.methodology,
     });
   }

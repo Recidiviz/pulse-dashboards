@@ -18,7 +18,6 @@
 import { makeAutoObservable } from "mobx";
 
 import {
-  EnabledFiltersByMetric,
   MetricRecord,
   NewBackendRecord,
   OverTimeMetric,
@@ -55,10 +54,7 @@ export default class MetricsStore implements PathwaysMetricStore {
     return PUBLIC_PATHWAYS_TENANT;
   }
 
-  get filtersStore(): {
-    enabledFilters: EnabledFiltersByMetric;
-    monthRange: number;
-  } {
+  get filtersStore(): PathwaysMetricStore["filtersStore"] {
     return this.rootStore.filtersStore;
   }
 

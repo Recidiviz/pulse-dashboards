@@ -21,6 +21,7 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   DownloadableData,
   DownloadableDataset,
+  downloadChartAsData,
   PersonLevelDataRecord,
   PersonLevelMetric as SharedPersonLevelMetric,
   PopulationFilterLabels,
@@ -28,7 +29,6 @@ import {
 
 import { TENANT_CONFIGS } from "../../tenants";
 import { toHumanReadable, toTitleCase } from "../../utils";
-import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import CoreStore from "../CoreStore";
 import { TableColumn } from "../types/charts";
 import {
@@ -106,12 +106,8 @@ export default class PersonLevelMetric extends SharedPersonLevelMetric {
     return downloadChartAsData({
       fileContents: [this.downloadableData],
       chartTitle: this.chartTitle,
-      shouldZipDownload: true,
-      getTokenSilently: this.rootStore?.userStore.getTokenSilently,
       includeFiltersDescriptionInCSV: true,
-      filters: {
-        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
-      },
+      filters: this.rootStore?.filtersStore.filtersDescription,
       methodologyContent: this.methodology,
     });
   }

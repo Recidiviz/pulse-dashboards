@@ -18,7 +18,12 @@
 import { eachMonthOfInterval, startOfMonth, subMonths } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { TimeSeriesDataRecord } from "../types";
+import { formatMonthAndYear } from "../components/PopulationTimeSeriesChart/helpers";
+import {
+  DownloadableData,
+  DownloadableDataset,
+  TimeSeriesDataRecord,
+} from "../types";
 import { getRecordDate } from "../utils";
 import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
 import { SharedMetricConstructorOptions } from "./types";
@@ -29,6 +34,7 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
 
     makeObservable<OverTimeMetric>(this, {
       dataSeries: computed,
+      downloadableData: computed,
     });
 
     this.dataTransformer = this.extrapolateRecords;
@@ -44,6 +50,32 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
 
   get isEmpty(): boolean {
     return !this.dataSeries?.length;
+  }
+
+  get downloadableData(): DownloadableData {
+    if (!this.dataSeries) return undefined;
+
+    const datasets = [] as DownloadableDataset[];
+    const data: Record<string, number>[] = [];
+    const labels: string[] = [];
+
+    this.dataSeries.forEach((d: TimeSeriesDataRecord) => {
+      data.push({
+        Population: Math.round(d.count),
+        "3-month rolling average": Math.round(d.avg90day),
+      });
+
+      labels.push(formatMonthAndYear(getRecordDate(d)));
+    });
+
+    datasets.push({ data, label: "" });
+
+    return {
+      chartDatasets: datasets,
+      chartLabels: labels,
+      chartId: this.chartTitle,
+      dataExportLabel: "Month",
+    };
   }
 
   static mostRecentDate(records?: TimeSeriesDataRecord[]): Date {

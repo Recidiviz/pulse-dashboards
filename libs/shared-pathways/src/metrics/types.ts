@@ -21,6 +21,7 @@ import {
   MetricId,
   MetricRecord,
   NewBackendRecord,
+  PopulationFilters,
   PopulationFilterValues,
   SimulationCompartment,
 } from "../index";
@@ -34,6 +35,12 @@ export interface PathwaysMetricStore {
   readonly filtersStore: {
     readonly enabledFilters: EnabledFiltersByMetric;
     readonly monthRange: number;
+    readonly filterOptions: PopulationFilters;
+    readonly filtersDescription: string;
+    getFilterLabel(
+      filterType: keyof PopulationFilters,
+      filterValue: string,
+    ): string;
   };
   readonly page: string;
   readonly section: string;

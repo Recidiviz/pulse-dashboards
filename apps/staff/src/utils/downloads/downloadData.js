@@ -20,13 +20,16 @@ import downloadjs from "downloadjs";
 import html2canvas from "html2canvas";
 import JSZip from "jszip";
 
+import {
+  configureFilename,
+  createMethodologyFile,
+  transformChartDataToCsv,
+} from "~utils";
+
 import exportDataOnMobileDevices, {
   isMobile,
 } from "../../api/exportData/exportDataOnMobileDevices";
-import configureFilename from "./configureFileName";
-import createMethodologyFile from "./createMethodologyFile";
 import transformCanvasToBase64 from "./transformCanvasToBase64";
-import transformChartDataToCsv from "./transformChartDataToCsv";
 
 // Functions for flowing through browser-specific download functionality
 // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser

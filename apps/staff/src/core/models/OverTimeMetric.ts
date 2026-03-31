@@ -15,20 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable } from "mobx";
-
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
-  DownloadableData,
-  DownloadableDataset,
-  formatMonthAndYear,
-  getRecordDate,
+  downloadChartAsData,
   OverTimeMetric as SharedOverTimeMetric,
-  TimeSeriesDataRecord,
 } from "~shared-pathways";
 import { formatDate } from "~utils";
 
-import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import CoreStore from "../CoreStore";
 import {
   BaseNewMetricConstructorProps,
@@ -42,10 +35,6 @@ export default class OverTimeMetric extends SharedOverTimeMetric {
     super(generateStaffNewMetricOptions(props));
     this.rootStore = props.rootStore;
 
-    makeObservable<OverTimeMetric>(this, {
-      downloadableData: computed,
-    });
-
     this.download = this.download.bind(this);
   }
 
@@ -55,42 +44,12 @@ export default class OverTimeMetric extends SharedOverTimeMetric {
       : this.store.currentTenantId;
   }
 
-  get downloadableData(): DownloadableData | undefined {
-    if (!this.dataSeries) return undefined;
-
-    const datasets = [] as DownloadableDataset[];
-    const data: Record<string, number>[] = [];
-    const labels: string[] = [];
-
-    this.dataSeries.forEach((d: TimeSeriesDataRecord) => {
-      data.push({
-        Population: Math.round(d.count),
-        "3-month rolling average": Math.round(d.avg90day),
-      });
-
-      labels.push(formatMonthAndYear(getRecordDate(d)));
-    });
-
-    datasets.push({ data, label: "" });
-
-    return {
-      chartDatasets: datasets,
-      chartLabels: labels,
-      chartId: this.chartTitle,
-      dataExportLabel: "Month",
-    };
-  }
-
   async download(): Promise<void> {
     return downloadChartAsData({
       fileContents: [this.downloadableData],
       chartTitle: this.chartTitle,
-      shouldZipDownload: true,
-      getTokenSilently: this.rootStore?.userStore.getTokenSilently,
       includeFiltersDescriptionInCSV: true,
-      filters: {
-        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
-      },
+      filters: this.rootStore?.filtersStore.filtersDescription,
       lastUpdatedOn: formatDate(OverTimeMetric.mostRecentDate(this.allRecords)),
       methodologyContent: this.methodology,
     });
