@@ -17,11 +17,17 @@
 
 /// <reference types='vitest' />
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
+  // In production, always disable skip-auth regardless of shell env vars set by
+  // the SOPS build plugin (which loads .env before Vite, overriding .env.production).
+  define:
+    mode === "production"
+      ? { "import.meta.env.VITE_SKIP_AUTH": JSON.stringify("false") }
+      : {},
   cacheDir: "../../../node_modules/.vite/apps/@cpa-labeling/frontend",
 
   plugins: [react(), nxViteTsPaths()],
@@ -31,11 +37,11 @@ export default defineConfig({
     host: "localhost",
     proxy: {
       // Proxy to standalone labeling backend (no path rewrite needed)
-      '/api': {
-        target: 'http://localhost:8080',
+      "/api": {
+        target: "http://localhost:8080",
         changeOrigin: true,
-      }
-    }
+      },
+    },
   },
 
   build: {
@@ -45,4 +51,4 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
-})
+}));

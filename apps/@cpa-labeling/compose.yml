@@ -7,15 +7,13 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      # Default database (will create this on startup)
-      POSTGRES_DB: reentry
+      POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - "5438:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d reentry -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,12 +47,12 @@ services:
       LABELING_REENTRY_POSTGRES_PORT: 5432
       LABELING_REENTRY_POSTGRES_USER: postgres
       LABELING_REENTRY_POSTGRES_PASSWORD: postgres
-      LABELING_REENTRY_POSTGRES_DB: reentry
+      LABELING_REENTRY_POSTGRES_DB: postgres
       LABELING_LABELING_POSTGRES_SERVER: postgres
       LABELING_LABELING_POSTGRES_PORT: 5432
       LABELING_LABELING_POSTGRES_USER: postgres
       LABELING_LABELING_POSTGRES_PASSWORD: postgres
-      LABELING_LABELING_POSTGRES_DB: labeling
+      LABELING_LABELING_POSTGRES_DB: postgres
       LABELING_ALLOWED_ORIGINS: "http://localhost:5173,http://localhost:3000"
       LABELING_SKIP_AUTH: "true"
     ports:

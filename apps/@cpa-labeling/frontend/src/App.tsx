@@ -21,6 +21,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useCallback, useEffect, useState } from "react";
 
 import {
+  getMe,
   getRecordDetail,
   listRecords,
   setAuthTokenGetter,
@@ -45,6 +46,7 @@ import type {
   SummaryDetailFeedback,
   TranscriptFeedback,
   TranscriptSeverity,
+  UserSettings,
 } from "./types";
 import {
   createDefaultIssueFeedback,
@@ -145,6 +147,7 @@ function App() {
   const [labelingTab, setLabelingTab] = useState<LabelingTab>("transcript");
   const [records, setRecords] = useState<RecordListItem[]>([]);
   const [totalUnreviewed, setTotalUnreviewed] = useState(0);
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
   const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [recordDetail, setRecordDetail] = useState<RecordDetail | null>(null);
   const [loading, setLoading] = useState(false);
@@ -185,15 +188,19 @@ function App() {
     }
   }, [isAuthenticated, getAccessTokenSilently]);
 
-  const loadRecords = async () => {
+  const loadRecords = async (settingsOverride?: UserSettings | null) => {
+    const s = settingsOverride !== undefined ? settingsOverride : userSettings;
+    const size = s?.full_queue ? 10000 : 1;
+    const stateCodes = s?.state_codes ?? undefined;
+
     setLoading(true);
     setError(null);
     try {
-      // Request only 1 record (the oldest unreviewed), but get total count
-      const response = await listRecords(1, 1, {
+      const response = await listRecords(1, size, {
         status: "completed",
         unlabeled_only: true,
-        evaluator: evaluator, // Filter to show only unreviewed by this user
+        evaluator: evaluator,
+        state_codes: stateCodes,
       });
       setRecords(response.items);
       setTotalUnreviewed(response.total);
@@ -204,11 +211,19 @@ function App() {
     }
   };
 
-  // Load records when authenticated and evaluator is set
+  // Fetch user settings then load records when authenticated
   useEffect(() => {
-    if (isAuthenticated && evaluator) {
-      loadRecords();
-    }
+    if (!isAuthenticated || !evaluator) return;
+    const emailHint = SKIP_AUTH ? undefined : user?.email ?? undefined;
+    getMe(emailHint)
+      .then((settings) => {
+        setUserSettings(settings);
+        loadRecords(settings);
+      })
+      .catch(() => {
+        // Default to non-whitelisted if /me fails
+        loadRecords(null);
+      });
   }, [isAuthenticated, evaluator]);
 
   const loadRecordDetail = useCallback(

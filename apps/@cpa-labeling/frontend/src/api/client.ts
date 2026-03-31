@@ -26,6 +26,7 @@ import type {
   QueueStatsResponse,
   RecordDetail,
   RecordListItem,
+  UserSettings,
 } from "../types";
 
 // The frontend and backend are served from the same origin in production
@@ -73,6 +74,11 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   return response.json();
 }
 
+export async function getMe(email?: string): Promise<UserSettings> {
+  const params = email ? `?email_hint=${encodeURIComponent(email)}` : "";
+  return fetchJson(`${API_BASE}/me${params}`);
+}
+
 export async function listRecords(
   page = 1,
   size = 20,
@@ -80,6 +86,7 @@ export async function listRecords(
     status?: string;
     evaluator?: string;
     unlabeled_only?: boolean;
+    state_codes?: string[];
   },
 ): Promise<PaginatedResponse<RecordListItem>> {
   const params = new URLSearchParams({
@@ -90,6 +97,8 @@ export async function listRecords(
   if (options?.status) params.set("status", options.status);
   if (options?.evaluator) params.set("evaluator", options.evaluator);
   if (options?.unlabeled_only) params.set("unlabeled_only", "true");
+  if (options?.state_codes?.length)
+    params.set("state_codes", options.state_codes.join(","));
 
   return fetchJson(`${API_BASE}/records?${params}`);
 }

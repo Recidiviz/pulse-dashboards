@@ -7,7 +7,6 @@ from uuid import UUID
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from sqlalchemy import func
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -35,6 +34,8 @@ from app.crud.labeling import (
     get_recording_transcript,
     get_recording_session_for_intake,
     _highest_severity_for_row,
+    get_user_allowlist_entry,
+    list_intakes_with_state,
 )
 
 router = APIRouter(dependencies=[Depends(require_auth)])
@@ -174,6 +175,15 @@ class LabelingFeedbackResponse(BaseModel):
     overall_notes: Optional[str] = None
 
 
+class UserSettings(BaseModel):
+    """Response model for /me endpoint."""
+
+    email: str
+    is_whitelisted: bool
+    full_queue: bool
+    state_codes: Optional[list[str]] = None
+
+
 class RecordListItem(BaseModel):
     """Summary of a record for list view."""
 
@@ -185,6 +195,7 @@ class RecordListItem(BaseModel):
     intake_status: str
     has_feedback: bool
     feedback_evaluators: list[str]
+    state_code: Optional[str] = None
 
 
 class RecordDetail(BaseModel):
@@ -507,29 +518,53 @@ async def check_and_send_severe_alert(
 # ----- Endpoints -----
 
 
+@router.get("/me", response_model=UserSettings)
+async def get_me(
+    labeling_session: AsyncSession = Depends(get_labeling_session),
+    auth: dict = Depends(require_auth),
+    email_hint: Optional[str] = Query(default=None),
+):
+    """Return whether the current user is on the allowlist and their state restrictions."""
+    # Auth0 access tokens may not include an email claim; fall back to the
+    # email_hint query param supplied by the frontend from the ID token.
+    email = auth.get("email") or email_hint or ""
+    entry = await get_user_allowlist_entry(labeling_session, email)
+    return UserSettings(
+        email=email,
+        is_whitelisted=entry is not None,
+        full_queue=entry.full_queue if entry else False,
+        state_codes=entry.state_codes if entry else None,
+    )
+
+
 @router.get("/records", response_model=PaginatedResponse)
 async def list_records(
     reentry_session: AsyncSession = Depends(get_reentry_session),
     labeling_session: AsyncSession = Depends(get_labeling_session),
     page: int = Query(default=1, ge=1),
-    size: int = Query(default=20, ge=1, le=100),
+    size: int = Query(default=20, ge=1, le=10000),
     status: Optional[str] = Query(default="completed"),
     evaluator: Optional[str] = Query(default=None),
     unlabeled_only: bool = Query(default=False),
+    state_codes: Optional[str] = Query(default=None),
 ):
     """List completed intakes available for manual labeling."""
-    # Build base query for intakes - use the IntakeStatus enum for comparison
-    # Sort by oldest first so reviewers see oldest unreviewed records first
     status_enum = IntakeStatus(status) if status else IntakeStatus.COMPLETED
-    completed_or_updated = func.coalesce(Intake.completed_at, Intake.updated_at)
-    stmt = select(Intake).where(Intake.status == status_enum).order_by(completed_or_updated.asc())
 
-    result = await reentry_session.execute(stmt)
-    intakes = result.scalars().all()
+    # Parse comma-separated state_codes param
+    parsed_state_codes: Optional[list[str]] = None
+    if state_codes:
+        parsed_state_codes = [s.strip() for s in state_codes.split(",") if s.strip()]
+
+    # Fetch intakes joined with state_code
+    all_pairs = await list_intakes_with_state(reentry_session, state_codes=parsed_state_codes)
+
+    # Apply status filter
+    all_pairs = [(intake, sc) for intake, sc in all_pairs if intake.status == status_enum]
 
     # Build response items with feedback info
     items = []
-    for intake in intakes:
+    for intake, state_code in all_pairs:
         # Feedback comes from labeling database
         feedback_list = await get_feedback_by_intake_id(labeling_session, intake.id)
         feedback_evaluators = [f.evaluator for f in feedback_list]
@@ -560,6 +595,7 @@ async def list_records(
                 intake_status=intake.status.value if hasattr(intake.status, 'value') else str(intake.status),
                 has_feedback=has_feedback,
                 feedback_evaluators=feedback_evaluators,
+                state_code=state_code,
             )
         )
 

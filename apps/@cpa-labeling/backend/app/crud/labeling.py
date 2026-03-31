@@ -19,6 +19,7 @@ from app.models.intake import Intake, IntakeMessage, IntakeType
 from app.models.plan import Plan, PlanAsset, PlanGeneration
 from app.models.recording import RecordingSession
 from app.models.labeling_feedback import LabelingFeedback, SeverityLevel
+from app.models.user_allowlist import LabelingUserAllowlist
 
 
 # =============================================================================
@@ -134,10 +135,45 @@ async def get_completed_intakes(session: AsyncSession) -> list[Intake]:
     return list(result.scalars().all())
 
 
+async def list_intakes_with_state(
+    reentry_session: AsyncSession,
+    state_codes: Optional[list[str]] = None,
+) -> list[tuple[Intake, Optional[str]]]:
+    """Get intakes joined with their state_code via AssessmentConfig.
+
+    Optionally filters to specific state_codes. Returns (Intake, state_code) pairs.
+    Uses reentry database.
+    """
+    from app.models.intake import AssessmentConfig
+    from sqlalchemy import func
+
+    completed_or_updated = func.coalesce(Intake.completed_at, Intake.updated_at)
+    stmt = (
+        select(Intake, AssessmentConfig.state_code)
+        .outerjoin(AssessmentConfig, Intake.assessment_config_id == AssessmentConfig.id)
+        .order_by(completed_or_updated.asc())
+    )
+    if state_codes:
+        stmt = stmt.where(AssessmentConfig.state_code.in_(state_codes))
+
+    result = await reentry_session.execute(stmt)
+    return [(row[0], row[1]) for row in result.all()]
+
+
 # =============================================================================
 # Labeling Database Operations (read-write)
 # These functions should be called with a labeling_session
 # =============================================================================
+
+
+async def get_user_allowlist_entry(
+    session: AsyncSession, email: str
+) -> Optional[LabelingUserAllowlist]:
+    """Get a user's allowlist entry by email. Uses labeling database."""
+    result = await session.execute(
+        select(LabelingUserAllowlist).where(LabelingUserAllowlist.email == email)
+    )
+    return result.scalar_one_or_none()
 
 
 async def get_feedback_by_intake_id(

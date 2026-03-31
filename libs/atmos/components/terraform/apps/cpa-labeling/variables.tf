@@ -57,6 +57,7 @@ variable "server_container_version" {
 variable "migrate_db_container_version" {
   type        = string
   description = "The version tag of the image that will be used for the database migration job"
+  default     = "latest"
 }
 
 variable "artifact_registry_repo" {

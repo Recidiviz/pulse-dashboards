@@ -128,6 +128,13 @@ export interface LabelingFeedback {
   overall_notes: string | null;
 }
 
+export interface UserSettings {
+  email: string;
+  is_whitelisted: boolean;
+  full_queue: boolean;
+  state_codes: string[] | null;
+}
+
 export interface RecordListItem {
   intake_id: string;
   plan_id: string | null;
@@ -137,6 +144,7 @@ export interface RecordListItem {
   intake_status: string;
   has_feedback: boolean;
   feedback_evaluators: string[];
+  state_code?: string | null;
 }
 
 export interface RecordDetail {
