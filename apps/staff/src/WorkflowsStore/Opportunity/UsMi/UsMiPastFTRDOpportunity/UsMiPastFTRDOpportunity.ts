@@ -19,6 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
 import { PastFTRDOpportunityBase } from "../../PastFTRDOpportunityBase";
+import { OpportunityTab } from "../../types";
 import {
   UsMiPastFTRDReferralRecord,
   usMiPastFTRDSchema,
@@ -27,5 +28,12 @@ import {
 export class UsMiPastFTRDOpportunity extends PastFTRDOpportunityBase<UsMiPastFTRDReferralRecord> {
   constructor(client: Client, record: DocumentData) {
     super(client, "usMiPastFTRD", usMiPastFTRDSchema.parse(record));
+  }
+
+  tabTitle(): OpportunityTab {
+    const base = super.tabTitle();
+    if (base === "Eligible Now") return "Overdue";
+    if (base === "Almost Eligible") return "Upcoming";
+    return base;
   }
 }
