@@ -55,6 +55,18 @@
       },
       "defaultConfiguration": "production"
     },
+    "requires-sops-env:decrypt-edovo-tokens": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/tools/decryptEdovoTokens.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      },
+      "defaultConfiguration": "production"
+    },
     "offline-e2e": {
       "continuous": true,
       "dependsOn": ["^prisma-generate", "^prepare-test-db"],

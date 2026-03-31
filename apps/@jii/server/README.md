@@ -16,6 +16,10 @@ To use this simulator, run the `edovo-test-token` script (e.g. `nx edovo-test-to
 
 In the case of Edovo auth failures (both errors and denials), encrypted tokens are the only identifying information we have for those requests. (Unencrypted tokens contain PII and cannot be sent to Segment or Sentry.)
 
-We can identify the affected users by decrypting the tokens with the `decode-token` script in this project. Copy the token in question and pass it to `nx decode-token @jii/server --token <token>`; the script will print the decoded payload, which contains `facility_state` (which translates to `stateCode`) and `inmate_id` (which translates to `externalId`) along with a number of other fields that may be useful for troubleshooting (useful mainly to Edovo, in case we need to reach out to them for assistance).
+We have two scripts that you can run on demand to identify the affected users by decrypting the tokens.
 
-This script uses the production encryption key by default. If you need to troubleshoot an issue in staging, use the `staging` configuration by including a `-c staging` argument in your command.
+For one-off operations, you can use the `decode-token` script in this project. Copy the token in question and pass it to `nx decode-token @jii/server --token <token>`; the script will print the decoded payload, which contains `facility_state` (which translates to `stateCode`) and `inmate_id` (which translates to `externalId`) along with a number of other fields that may be useful for troubleshooting (useful mainly to Edovo, in case we need to reach out to them for assistance).
+
+For bulk operations, use the `decrypt-edovo-tokens` script instead: `nx decrypt-edovo-tokens @jii/server --input path/to/file.csv --output path/to/another/file.csv`. The input CSV must include the token in a column named `encrypted_edovo_token`, and the output CSV will contain the payload fields appended as new columns. This is useful for, e.g., pulling Segment events from BigQuery tables, which not coincidentally contain a column named `encrypted_edovo_token`.
+
+These scripts use the production encryption key by default. If you need to decrypt tokens from staging, use the `staging` configuration by including a `-c staging` argument in your command.
