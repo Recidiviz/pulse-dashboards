@@ -63,7 +63,6 @@ steps:
       - "--set-secrets=RECIDIVIZ_DATA_API_URL=RECIDIVIZ_DATA_API_URL:latest"
       - "--set-secrets=RECIDIVIZ_GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE=GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE:latest"
       - "--set-secrets=RECIDIVIZ_BQ_CLIENT_TABLE=RECIDIVIZ_BQ_CLIENT_TABLE:latest"
-      - "--set-secrets=RECIDIVIZ_SLACK_INTAKE_WEBHOOK_URLS=RECIDIVIZ_SLACK_INTAKE_WEBHOOK_URLS_STAGING:latest"
       # escaping to allow commas in the value, see https://cloud.google.com/sdk/gcloud/reference/topic/escaping
       - "--set-env-vars=^@^RECIDIVIZ_ALLOWED_ORIGINS=https://plan-staging.recidiviz.org,https://staging.opportunities.app,https://staging.opportunities.edovo.com"
       - "--set-env-vars"

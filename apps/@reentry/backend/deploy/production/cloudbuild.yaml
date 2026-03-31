@@ -61,6 +61,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY_ID=RECIDIVIZ_DEEPGRAM_API_KEY_IDENTIFIER:latest"
       - "--set-secrets=RECIDIVIZ_BQ_CLIENT_TABLE=RECIDIVIZ_BQ_CLIENT_TABLE:latest"
+      - "--set-secrets=RECIDIVIZ_SLACK_INTAKE_WEBHOOK_URLS=RECIDIVIZ_SLACK_INTAKE_WEBHOOK_URLS_PROD:latest"
       # escaping to allow commas in the value, see https://cloud.google.com/sdk/gcloud/reference/topic/escaping
       - "--set-env-vars=^@^RECIDIVIZ_ALLOWED_ORIGINS=https://plan.recidiviz.org,https://opportunities.app,https://opportunities.edovo.com"
       - "--set-env-vars"
