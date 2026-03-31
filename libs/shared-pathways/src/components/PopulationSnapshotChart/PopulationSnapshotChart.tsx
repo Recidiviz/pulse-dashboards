@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 import styled, { css, useTheme } from "styled-components";
@@ -24,6 +24,12 @@ import styled, { css, useTheme } from "styled-components";
 import { formatName, getTicks, pluralize, pluralizeWord } from "~utils";
 
 import { SupervisionPopulationSnapshotRecord } from "../../types";
+import {
+  ScrollLayout,
+  ScrollWrapper,
+  StickyAxis,
+  useChartScroll,
+} from "../chartScrollUtils";
 import { PathwaysTheme } from "../PathwaysTheme";
 import PopulationSnapshotTooltip from "../PopulationSnapshotTooltip/PopulationSnapshotTooltip";
 import VizPathways from "../VizPathways";
@@ -159,58 +165,6 @@ const ChartXAxisTitle = styled.div`
   color: ${({ theme }) => theme.palette.slate85};
 `;
 
-const ScrollLayout = styled.div`
-  display: flex;
-`;
-
-const StickyAxis = styled.svg`
-  flex-shrink: 0;
-
-  text {
-    fill: ${({ theme }) => theme.typography.axisLabel.color};
-    font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
-    font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
-    font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
-    line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
-    letter-spacing: ${({ theme }) => theme.typography.axisLabel.letterSpacing};
-  }
-`;
-
-const ScrollWrapper = styled.div<{
-  $fadeRight: boolean;
-  $fadeLeft: boolean;
-}>`
-  flex: 1;
-  min-width: 0;
-  overflow: clip;
-  position: relative;
-
-  ${({ $fadeRight, $fadeLeft }) => {
-    if ($fadeRight && $fadeLeft) {
-      return css`
-        mask-image: linear-gradient(
-          to right,
-          transparent,
-          white 8%,
-          white 92%,
-          transparent
-        );
-      `;
-    }
-    if ($fadeRight) {
-      return css`
-        mask-image: linear-gradient(to left, transparent, white 8%);
-      `;
-    }
-    if ($fadeLeft) {
-      return css`
-        mask-image: linear-gradient(to right, transparent, white 8%);
-      `;
-    }
-    return "";
-  }}
-`;
-
 function defaultOLabel(accessorLabel: string) {
   return <text textAnchor="middle">{accessorLabel}</text>;
 }
@@ -310,18 +264,26 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
     setHoveredId(pieceData.index);
   };
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   const SCROLL_THRESHOLD = 20;
   const MIN_BAR_WIDTH = 28;
   const SCROLL_LEFT_MARGIN = 40;
   const CHART_HEIGHT = 558;
   const MARGIN_TOP = 56;
+  const MARGIN_RIGHT = 50;
   const needsScroll = !isHorizontal && data.length > SCROLL_THRESHOLD;
   const scrollWidth = needsScroll
-    ? data.length * MIN_BAR_WIDTH + SCROLL_LEFT_MARGIN + 50
+    ? data.length * MIN_BAR_WIDTH + SCROLL_LEFT_MARGIN + MARGIN_RIGHT
     : undefined;
   const effectiveMarginBottom = rotateLabels ? 116 : 75;
+
+  const { scrollRef, wrapperRef, scrollOffset, fadeRight, fadeLeft } =
+    useChartScroll({
+      needsScroll,
+      scrollWidth,
+      itemCount: data.length,
+      leftMargin: SCROLL_LEFT_MARGIN,
+      rightMargin: MARGIN_RIGHT,
+    });
 
   const barColor = isGeographic
     ? theme.palette.data.gold2
@@ -442,86 +404,6 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
     : undefined;
 
   const plotHeight = CHART_HEIGHT - MARGIN_TOP - effectiveMarginBottom;
-
-  // Use overflow:clip + transform to scroll the chart content. This avoids
-  // the browser's native scroll-into-view on focus, since there is no
-  // scrollable container. We handle wheel events to allow manual scrolling.
-  const [scrollOffset, setScrollOffset] = useState(0);
-
-  useEffect(() => {
-    if (!needsScroll) return;
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const onWheel = (e: WheelEvent) => {
-      const delta =
-        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      setScrollOffset((prev) => {
-        const maxVal = Math.max(0, (scrollWidth ?? 0) - el.clientWidth);
-        return Math.max(0, Math.min(maxVal, prev + delta));
-      });
-      e.preventDefault();
-    };
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, [needsScroll, scrollWidth]);
-
-  // Track the keyboard-navigated bar index ourselves and scroll to keep
-  // it visible. We listen on the ChartWrapper via capture phase to ensure
-  // we catch events from SVG children.
-  const keyNavIndexRef = useRef(-1);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!needsScroll) return;
-    const el = scrollRef.current;
-    const wrapper = wrapperRef.current;
-    if (!el || !wrapper) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-
-      if (e.key === "ArrowRight") {
-        keyNavIndexRef.current = Math.min(
-          keyNavIndexRef.current + 1,
-          data.length - 1,
-        );
-      } else {
-        keyNavIndexRef.current = Math.max(keyNavIndexRef.current - 1, 0);
-      }
-
-      const idx = keyNavIndexRef.current;
-      const containerWidth = el.clientWidth;
-      // Each bar column = (scrollWidth - margins) / data.length
-      const chartArea = (scrollWidth ?? 0) - SCROLL_LEFT_MARGIN - 50;
-      const colWidth = chartArea / data.length;
-      const barLeft = SCROLL_LEFT_MARGIN + idx * colWidth;
-      const barRight = barLeft + colWidth;
-
-      // Keep 4 bars of padding so the tooltip is never under the fade
-      const PAD = colWidth * 4;
-      setScrollOffset((prev) => {
-        const maxVal = Math.max(0, (scrollWidth ?? 0) - containerWidth);
-        if (barRight + PAD > prev + containerWidth) {
-          return Math.min(maxVal, barRight + PAD - containerWidth);
-        }
-        if (barLeft - PAD < prev) {
-          return Math.max(0, barLeft - PAD);
-        }
-        return prev;
-      });
-    };
-
-    // Use capture phase to catch keyboard events from SVG children
-    wrapper.addEventListener("keydown", onKeyDown, true);
-    return () => wrapper.removeEventListener("keydown", onKeyDown, true);
-  }, [needsScroll, scrollWidth, data.length]);
-
-  const fadeRight =
-    needsScroll &&
-    scrollOffset <
-      (scrollWidth ?? 0) - (scrollRef.current?.clientWidth ?? 0) - 1;
-  const fadeLeft = needsScroll && scrollOffset > 0;
 
   return (
     <VizPathways title={title} latestUpdate={latestUpdate} subtitle={subtitle}>

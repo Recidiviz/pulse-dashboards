@@ -133,7 +133,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
 
   return (
     <ThemeProvider theme={publicPathwaysTheme}>
-      <PageContainer>
+      <PageContainer $isMobile={isMobile}>
         <Header />
         <PageTitle
           title={pageContent.title}

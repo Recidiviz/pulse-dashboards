@@ -103,7 +103,19 @@ describe("PopulationSnapshotChart scroll behavior", () => {
         return scrollContent.parentElement as HTMLElement;
       }
 
-      it("scrolls right on vertical wheel down", () => {
+      it("scrolls right on horizontal wheel", () => {
+        const { container } = renderChart(DATA_COUNT);
+        const scrollWrapper = getScrollWrapper(container);
+
+        fireEvent.wheel(scrollWrapper, { deltaX: 100, deltaY: 0 });
+
+        const scrollContent = container.querySelector(
+          "[style*='translateX']",
+        ) as HTMLElement;
+        expect(scrollContent.style.transform).toBe("translateX(-100px)");
+      });
+
+      it("ignores vertical-only wheel events", () => {
         const { container } = renderChart(DATA_COUNT);
         const scrollWrapper = getScrollWrapper(container);
 
@@ -112,14 +124,14 @@ describe("PopulationSnapshotChart scroll behavior", () => {
         const scrollContent = container.querySelector(
           "[style*='translateX']",
         ) as HTMLElement;
-        expect(scrollContent.style.transform).toBe("translateX(-100px)");
+        expect(scrollContent.style.transform).toBe("translateX(-0px)");
       });
 
       it("scrolls using deltaX when it exceeds deltaY", () => {
         const { container } = renderChart(DATA_COUNT);
         const scrollWrapper = getScrollWrapper(container);
 
-        fireEvent.wheel(scrollWrapper, { deltaY: 10, deltaX: 50 });
+        fireEvent.wheel(scrollWrapper, { deltaX: 50, deltaY: 10 });
 
         const scrollContent = container.querySelector(
           "[style*='translateX']",
@@ -131,7 +143,7 @@ describe("PopulationSnapshotChart scroll behavior", () => {
         const { container } = renderChart(DATA_COUNT);
         const scrollWrapper = getScrollWrapper(container);
 
-        fireEvent.wheel(scrollWrapper, { deltaY: -200, deltaX: 0 });
+        fireEvent.wheel(scrollWrapper, { deltaX: -200, deltaY: 0 });
 
         const scrollContent = container.querySelector(
           "[style*='translateX']",
@@ -143,7 +155,7 @@ describe("PopulationSnapshotChart scroll behavior", () => {
         const { container } = renderChart(DATA_COUNT);
         const scrollWrapper = getScrollWrapper(container);
 
-        fireEvent.wheel(scrollWrapper, { deltaY: 99999, deltaX: 0 });
+        fireEvent.wheel(scrollWrapper, { deltaX: 99999, deltaY: 0 });
 
         const scrollContent = container.querySelector(
           "[style*='translateX']",
@@ -156,8 +168,8 @@ describe("PopulationSnapshotChart scroll behavior", () => {
         const { container } = renderChart(DATA_COUNT);
         const scrollWrapper = getScrollWrapper(container);
 
-        fireEvent.wheel(scrollWrapper, { deltaY: 50, deltaX: 0 });
-        fireEvent.wheel(scrollWrapper, { deltaY: 75, deltaX: 0 });
+        fireEvent.wheel(scrollWrapper, { deltaX: 50, deltaY: 0 });
+        fireEvent.wheel(scrollWrapper, { deltaX: 75, deltaY: 0 });
 
         const scrollContent = container.querySelector(
           "[style*='translateX']",

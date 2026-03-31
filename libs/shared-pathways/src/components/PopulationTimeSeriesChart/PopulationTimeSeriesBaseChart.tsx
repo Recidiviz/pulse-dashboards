@@ -20,6 +20,12 @@ import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 import styled, { useTheme } from "styled-components";
 
+import {
+  ScrollLayout,
+  ScrollWrapper,
+  StickyAxis,
+  useChartScroll,
+} from "../chartScrollUtils";
 import { PathwaysTheme } from "../PathwaysTheme";
 import VizPathways from "../VizPathways";
 import { ChartPoint, formatMonthAndYear, getTickValues } from "./helpers";
@@ -60,6 +66,24 @@ type Props = {
   [k: string]: unknown;
 };
 
+const SCROLL_THRESHOLD = 40;
+const MIN_POINT_WIDTH = 40;
+const SCROLL_LEFT_MARGIN = 40;
+const MARGIN_RIGHT = 50;
+const CHART_HEIGHT = 558;
+const MARGIN_TOP = 56;
+const MARGIN_BOTTOM = 96;
+
+function computeYTicks(bottom: number, top: number): number[] {
+  const ticks: number[] = [];
+  const step = Math.ceil((top - bottom) / 5);
+  if (step <= 0) return [bottom];
+  for (let v = bottom; v <= top; v += step) {
+    ticks.push(v);
+  }
+  return ticks;
+}
+
 const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   title,
   subtitle,
@@ -74,6 +98,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
 }) => {
   const theme = useTheme() as PathwaysTheme;
   const charWidth = theme.typography.axisLabel.charWidth;
+  const leftMargin = (chartTop.toString().length + 1.5) * charWidth;
 
   const historicalLine = {
     class: "VizPathways__historicalLine",
@@ -85,60 +110,137 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     data: projectedPopulation,
   };
 
-  const tickValues = projectedPopulation
-    ? getTickValues(
-        historicalPopulation.concat(projectedPopulation.slice(1)), // don't double-draw center date
-        dateSpacing,
-      )
-    : getTickValues(historicalPopulation, dateSpacing);
+  const allPoints = projectedPopulation
+    ? historicalPopulation.concat(projectedPopulation.slice(1))
+    : historicalPopulation;
 
-  return (
-    <ChartWrapper title={title} subtitle={subtitle}>
-      <ResponsiveXYFrame
-        responsiveWidth
-        summaryDataAccessor="data"
-        summaryClass="projection-area"
-        hoverAnnotation
-        // eslint-disable-next-line react/no-unstable-nested-components
-        tooltipContent={(d: ChartPoint) => (
-          <PopulationTimeSeriesTooltip d={d} />
-        )}
-        // @ts-expect-error semiotic types
-        lines={
-          projectedPopulation
-            ? [historicalLine, projectedLine]
-            : [historicalLine]
-        }
-        lineDataAccessor="data"
-        // @ts-expect-error semiotic types
-        lineClass={(l: PlotLine) => l.class}
-        // @ts-expect-error semiotic types
-        xScaleType={scaleTime()}
-        xAccessor="date"
-        yAccessor="value"
-        size={[558, 558]}
-        margin={{
-          left: (chartTop.toString().length + 1.5) * charWidth,
-          bottom: 96,
-          right: 50,
-          top: 56,
-        }}
-        // @ts-expect-error semiotic types
-        xExtent={[beginDate, endDate]}
-        yExtent={[chartBottom, chartTop]}
-        showLinePoints
-        pointClass="VizPathways__point"
-        axes={[
-          { orient: "left", tickFormat: (n: number) => n.toLocaleString() },
+  const tickValues = getTickValues(allPoints, dateSpacing);
+
+  const needsScroll = allPoints.length > SCROLL_THRESHOLD;
+  const scrollWidth = needsScroll
+    ? allPoints.length * MIN_POINT_WIDTH + SCROLL_LEFT_MARGIN + MARGIN_RIGHT
+    : undefined;
+
+  const { scrollRef, wrapperRef, scrollOffset, fadeRight, fadeLeft } =
+    useChartScroll({
+      needsScroll,
+      scrollWidth,
+      itemCount: allPoints.length,
+      leftMargin: SCROLL_LEFT_MARGIN,
+      rightMargin: MARGIN_RIGHT,
+    });
+
+  const plotHeight = CHART_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM;
+
+  const yTickValues = computeYTicks(chartBottom, chartTop);
+
+  const frameProps = {
+    responsiveWidth: true,
+    summaryDataAccessor: "data",
+    summaryClass: "projection-area",
+    hoverAnnotation: true,
+    // eslint-disable-next-line react/no-unstable-nested-components
+    tooltipContent: (d: ChartPoint) => <PopulationTimeSeriesTooltip d={d} />,
+    lines: projectedPopulation
+      ? [historicalLine, projectedLine]
+      : [historicalLine],
+    lineDataAccessor: "data",
+    lineClass: (l: PlotLine) => l.class,
+    xScaleType: scaleTime(),
+    xAccessor: "date",
+    yAccessor: "value",
+    size: [558, CHART_HEIGHT],
+    margin: {
+      left: leftMargin,
+      bottom: MARGIN_BOTTOM,
+      right: MARGIN_RIGHT,
+      top: MARGIN_TOP,
+    },
+    xExtent: [beginDate, endDate],
+    yExtent: [chartBottom, chartTop],
+    showLinePoints: true,
+    pointClass: "VizPathways__point",
+    axes: [
+      { orient: "left", tickFormat: (n: number) => n.toLocaleString() },
+      {
+        orient: "bottom",
+        tickValues,
+        tickFormat: (d: Date) => formatMonthAndYear(d),
+      },
+    ],
+    ...chartProps,
+  };
+
+  const scrollFrameProps = needsScroll
+    ? {
+        ...frameProps,
+        margin: {
+          left: SCROLL_LEFT_MARGIN,
+          bottom: MARGIN_BOTTOM,
+          right: MARGIN_RIGHT,
+          top: MARGIN_TOP,
+        },
+        axes: [
           {
-            orient: "bottom",
-            // @ts-expect-error semiotic types
+            orient: "left" as const,
+            tickFormat: () => "",
+            tickValues: yTickValues,
+          },
+          {
+            orient: "bottom" as const,
             tickValues,
             tickFormat: (d: Date) => formatMonthAndYear(d),
           },
-        ]}
-        {...chartProps}
-      />
+        ],
+      }
+    : undefined;
+
+  return (
+    <ChartWrapper title={title} subtitle={subtitle}>
+      <div ref={wrapperRef}>
+        {needsScroll ? (
+          <ScrollLayout>
+            <StickyAxis width={leftMargin} height={CHART_HEIGHT}>
+              {yTickValues.map((tick: number) => {
+                const y =
+                  MARGIN_TOP +
+                  (1 - (tick - chartBottom) / (chartTop - chartBottom)) *
+                    plotHeight;
+                return (
+                  <text
+                    key={tick}
+                    x={leftMargin - 8}
+                    y={y}
+                    textAnchor="end"
+                    dominantBaseline="middle"
+                  >
+                    {tick.toLocaleString()}
+                  </text>
+                );
+              })}
+            </StickyAxis>
+            <ScrollWrapper
+              ref={scrollRef}
+              $fadeRight={fadeRight}
+              $fadeLeft={fadeLeft}
+            >
+              <div
+                style={{
+                  width: scrollWidth,
+                  flexShrink: 0,
+                  transform: `translateX(-${scrollOffset}px)`,
+                }}
+              >
+                {/* @ts-expect-error semiotic types don't accept Date[] tickValues */}
+                <ResponsiveXYFrame {...scrollFrameProps} />
+              </div>
+            </ScrollWrapper>
+          </ScrollLayout>
+        ) : (
+          // @ts-expect-error semiotic types don't accept Date[] tickValues
+          <ResponsiveXYFrame {...frameProps} />
+        )}
+      </div>
       <div id="chart-description" className="sr-only">
         A line chart showing the population over time.
       </div>

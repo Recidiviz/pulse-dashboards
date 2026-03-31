@@ -20,20 +20,19 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 export const PAGE_WIDTH = 991;
-const PAGE_PADDING = rem(spacing.md);
 /**
  * Constrained to a desired max width, with left and right padding
  */
-export const PageContainer = styled.div`
+export const PageContainer = styled.div<{ $isMobile?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
-  margin-left: auto;
-  margin-right: auto;
-  max-width: ${rem(PAGE_WIDTH)};
-  width: 90%;
-  padding-left: ${PAGE_PADDING};
-  padding-right: ${PAGE_PADDING};
+  margin-left: ${({ $isMobile }) => ($isMobile ? "0" : "auto")};
+  margin-right: ${({ $isMobile }) => ($isMobile ? "0" : "auto")};
+  max-width: ${({ $isMobile }) => ($isMobile ? "none" : rem(PAGE_WIDTH))};
+  width: ${({ $isMobile }) => ($isMobile ? "100%" : "90%")};
+  padding-left: ${({ $isMobile }) => rem($isMobile ? spacing.sm : spacing.md)};
+  padding-right: ${({ $isMobile }) => rem($isMobile ? spacing.sm : spacing.md)};
 `;
 
 export const NavigationRow = styled.div`

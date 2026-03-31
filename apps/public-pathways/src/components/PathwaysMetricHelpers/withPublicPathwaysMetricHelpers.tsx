@@ -23,6 +23,7 @@ import styled from "styled-components";
 
 import { Hydrator } from "~hydration-utils";
 import { HydratablePathwaysMetric } from "~shared-pathways";
+import useIsMobile from "~utils/react/useIsMobile";
 
 import PublicPathwaysLoading from "../PublicPathwaysLoading";
 
@@ -31,12 +32,14 @@ type WithMetricHelperProps = {
 };
 
 const MAX_HEIGHT = rem(531);
+const MOBILE_MAX_HEIGHT = rem(675);
 
-const MetricVizHydrator = styled(Hydrator)`
+const MetricVizHydrator = styled(Hydrator)<{ $isMobile?: boolean }>`
   ${typography.Sans14}
   width: 100%;
   min-height: 40rem;
-  max-height: ${MAX_HEIGHT};
+  max-height: ${({ $isMobile }) =>
+    $isMobile ? MOBILE_MAX_HEIGHT : MAX_HEIGHT};
   overflow: hidden;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -72,8 +75,10 @@ const withPublicPathwaysMetricHelpers = <Props extends WithMetricHelperProps>(
 ): React.ComponentType<Props> => {
   const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
     const { metric } = props;
+    const isMobile = useIsMobile();
     return (
       <MetricVizHydrator
+        $isMobile={isMobile}
         hydratable={metric}
         loading={<PublicPathwaysLoading />}
         failed={<div>Failed to load data.</div>}

@@ -20,6 +20,8 @@ import { observer } from "mobx-react-lite";
 import { Suspense, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
+import useIsMobile from "~utils/react/useIsMobile";
+
 import AuthProvider from "../AuthProvider/AuthProvider";
 import PublicPathwaysLoading from "../PublicPathwaysLoading";
 import { PageError } from "./PageError";
@@ -28,6 +30,7 @@ import { PageContainer } from "./styles";
 export const PageRoot = withErrorBoundary(
   observer(function AppRoot() {
     const { pathname } = useLocation();
+    const isMobile = useIsMobile();
 
     useEffect(() => {
       window.scrollTo(0, 0);
@@ -36,7 +39,7 @@ export const PageRoot = withErrorBoundary(
     return (
       <Suspense fallback={<PublicPathwaysLoading />}>
         <AuthProvider>
-          <PageContainer>
+          <PageContainer $isMobile={isMobile}>
             <Outlet />
           </PageContainer>
         </AuthProvider>
