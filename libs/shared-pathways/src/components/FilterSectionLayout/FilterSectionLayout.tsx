@@ -22,18 +22,21 @@ import { FilterTitle, FilterTitleRow } from "./FilterSectionLayout.styles";
 type FilterSectionLayoutProps = {
   title: string;
   titlePrefix?: ReactNode;
+  titleSuffix?: ReactNode;
   children: ReactNode;
 };
 
 const FilterSectionLayout: React.FC<FilterSectionLayoutProps> = ({
   title,
   titlePrefix,
+  titleSuffix,
   children,
 }) => (
   <div>
     <FilterTitleRow>
       {titlePrefix}
       <FilterTitle>{title}</FilterTitle>
+      {titleSuffix}
     </FilterTitleRow>
     {children}
   </div>

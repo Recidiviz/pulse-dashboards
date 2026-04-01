@@ -38,13 +38,12 @@ const Wrapper = styled.div`
     }
 
     .axis-label {
-      fill: ${({ theme }) => theme.typography.axisLabel.color};
-      font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
-      font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
-      font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
-      line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
-      letter-spacing: ${({ theme }) =>
-        theme.typography.axisLabel.letterSpacing};
+      fill: ${({ theme }) => theme.chart.axisLabel.color};
+      font-family: ${({ theme }) => theme.chart.axisLabel.fontFamily};
+      font-weight: ${({ theme }) => theme.chart.axisLabel.fontWeight};
+      font-size: ${({ theme }) => theme.chart.axisLabel.fontSize};
+      line-height: ${({ theme }) => theme.chart.axisLabel.lineHeight};
+      letter-spacing: ${({ theme }) => theme.chart.axisLabel.letterSpacing};
     }
 
     .axis.bottom {
@@ -106,11 +105,11 @@ const Header = styled.div`
 const Title = styled.h2`
   ${typography.Sans16}
   font-family: ${({ theme }) => theme.typography.fontFamily};
-  color: ${({ theme }) => theme.typography.titleColor};
+  color: ${({ theme }) => theme.chart.titleColor};
   outline: none;
 
   & span {
-    color: ${({ theme }) => theme.palette.slate80};
+    color: ${({ theme }) => theme.chart.subtitleColor};
   }
 `;
 
@@ -118,7 +117,7 @@ const Subtitle = styled.div`
   ${typography.Sans14}
   font-family: ${({ theme }) => theme.typography.fontFamily};
   padding-top: 0.5rem;
-  color: ${({ theme }) => theme.palette.slate80};
+  color: ${({ theme }) => theme.chart.subtitleColor};
 `;
 
 const Content = styled.div<{ $withPadding: boolean }>`

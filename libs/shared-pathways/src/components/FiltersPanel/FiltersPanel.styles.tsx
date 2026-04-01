@@ -22,7 +22,6 @@ import { Button, Dropdown, DropdownMenu, DropdownToggle } from "~design-system";
 export const FilterSection = styled.div`
   background: ${({ theme }) => theme.modal.backgroundColor};
   border-radius: 8px;
-  box-shadow: inset 0 -1px 1px rgba(19, 44, 82, 0.1);
   margin-bottom: 1rem;
 `;
 
@@ -61,7 +60,7 @@ export const FilterDropdownWrapper = styled(Dropdown)`
 export const FilterDropdownToggle = styled(DropdownToggle)<{
   $hasNonDefaultSelection?: boolean;
 }>`
-  ${({ theme }) => theme.typography.Sans16}
+  ${({ theme }) => theme.typography.Sans14}
   width: 100%;
   padding: 8px 16px;
   border: 1px solid
@@ -109,7 +108,7 @@ export const FilterDropdownMenu = styled(DropdownMenu)`
   overflow-y: auto;
 
   button[role="menuitem"] {
-    ${({ theme }) => theme.typography.Sans16}
+    ${({ theme }) => theme.typography.Sans14}
     color: black;
 
     &:focus {
@@ -129,6 +128,7 @@ export const FilterDropdownMenu = styled(DropdownMenu)`
 `;
 
 export const ApplyButton = styled(Button)`
+  ${({ theme }) => theme.typography.Sans14}
   background-color: ${({ theme }) => theme.palette.focusColor};
   border-color: ${({ theme }) => theme.palette.focusColor};
 

@@ -98,13 +98,12 @@ const ChartWrapper = styled.div<{
     }
 
     .axis-label {
-      fill: ${({ theme }) => theme.typography.axisLabel.color};
-      font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
-      font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
-      font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
-      line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
-      letter-spacing: ${({ theme }) =>
-        theme.typography.axisLabel.letterSpacing};
+      fill: ${({ theme }) => theme.chart.axisLabel.color};
+      font-family: ${({ theme }) => theme.chart.axisLabel.fontFamily};
+      font-weight: ${({ theme }) => theme.chart.axisLabel.fontWeight};
+      font-size: ${({ theme }) => theme.chart.axisLabel.fontSize};
+      line-height: ${({ theme }) => theme.chart.axisLabel.lineHeight};
+      letter-spacing: ${({ theme }) => theme.chart.axisLabel.letterSpacing};
     }
   }
 
@@ -112,13 +111,12 @@ const ChartWrapper = styled.div<{
     transform: translate(0, 2rem);
 
     .ordinal-labels text {
-      fill: ${({ theme }) => theme.typography.axisLabel.color};
-      font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
-      font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
-      font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
-      line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
-      letter-spacing: ${({ theme }) =>
-        theme.typography.axisLabel.letterSpacing};
+      fill: ${({ theme }) => theme.chart.axisLabel.color};
+      font-family: ${({ theme }) => theme.chart.axisLabel.fontFamily};
+      font-weight: ${({ theme }) => theme.chart.axisLabel.fontWeight};
+      font-size: ${({ theme }) => theme.chart.axisLabel.fontSize};
+      line-height: ${({ theme }) => theme.chart.axisLabel.lineHeight};
+      letter-spacing: ${({ theme }) => theme.chart.axisLabel.letterSpacing};
       transform: rotate(-45deg) translate(-1rem, -2rem);
     }
   }

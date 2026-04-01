@@ -65,7 +65,10 @@ const publicPathwaysTheme: PathwaysTheme = {
   typography: {
     ...publicPathwaysTypography,
     fontFamily: PROXIMA_NOVA_FONT_FAMILY,
+  },
+  chart: {
     titleColor: "black",
+    subtitleColor: rgba("black", 0.6),
     axisLabel: {
       fontFamily: OSWALD_FONT_FAMILY,
       fontWeight: 500,
@@ -76,8 +79,11 @@ const publicPathwaysTheme: PathwaysTheme = {
       charWidth: 8.5,
     },
   },
-
   checkbox: {
+    badgeBorderColor: "rgba(0, 0, 0, 0.15)",
+    badgeColor: "rgba(0, 0, 0, 0.4)",
+    badgeFontFamily: PROXIMA_NOVA_FONT_FAMILY,
+    borderColor: "black",
     checkedColor: publicPathwaysPalette.signal.links,
     labelColor: publicPathwaysPalette.pine1,
     labelTypography: publicPathwaysTypography.Sans14,

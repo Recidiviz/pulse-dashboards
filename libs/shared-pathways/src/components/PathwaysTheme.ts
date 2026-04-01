@@ -36,10 +36,17 @@ export type PathwaysTheme = {
   palette: typeof palette & { focusColor: string };
   typography: typeof typography & {
     fontFamily: string;
-    axisLabel: AxisLabelStyle;
+  };
+  chart: {
     titleColor: string;
+    subtitleColor: string;
+    axisLabel: AxisLabelStyle;
   };
   checkbox: {
+    badgeBorderColor: string;
+    badgeColor: string;
+    badgeFontFamily: string;
+    borderColor: string;
     checkedColor: string;
     labelColor: string;
     labelTypography: CSSProp;
@@ -74,6 +81,8 @@ export const defaultPathwaysTheme: PathwaysTheme = {
   typography: {
     ...typography,
     fontFamily: DEFAULT_FONT_FAMILY,
+  },
+  chart: {
     axisLabel: {
       fontFamily: DEFAULT_FONT_FAMILY,
       fontWeight: 400,
@@ -84,8 +93,13 @@ export const defaultPathwaysTheme: PathwaysTheme = {
       charWidth: 10,
     },
     titleColor: palette.pine1,
+    subtitleColor: palette.slate80,
   },
   checkbox: {
+    badgeBorderColor: palette.slate20,
+    badgeColor: palette.slate60,
+    badgeFontFamily: DEFAULT_FONT_FAMILY,
+    borderColor: palette.slate30,
     checkedColor: palette.pine3,
     labelColor: palette.pine3,
     labelTypography: typography.Sans14,

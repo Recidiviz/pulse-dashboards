@@ -17,7 +17,7 @@
 
 import styled, { css } from "styled-components";
 
-import { palette, typography } from "~design-system";
+import { palette } from "~design-system";
 
 export const CheckboxContainer = styled.label`
   display: block;
@@ -34,7 +34,7 @@ export const CheckboxContainer = styled.label`
   }
 
   &:focus,
-  &:focus-within,
+  &:focus-visible,
   &:active {
     span:last-child {
       border: 1px solid
@@ -66,7 +66,8 @@ export const CheckboxBox = styled.span<{
   left: 0;
   height: 1rem;
   width: 1rem;
-  border: 1px solid ${palette.slate30};
+  border: 1px solid
+    ${({ theme }) => theme.checkbox?.borderColor ?? palette.slate30};
   background: transparent;
   border-radius: 3px;
 
@@ -101,6 +102,7 @@ export const CheckboxBox = styled.span<{
     if ($checked) {
       return css`
         background-color: ${bgColor};
+        border: 1px solid ${bgColor};
 
         &::after {
           display: block;
@@ -126,7 +128,7 @@ export const CheckboxGroupGrid = styled.div`
 `;
 
 export const ShowMoreButton = styled.button`
-  ${typography.Sans14}
+  ${({ theme }) => theme.typography.Sans14}
   background: none;
   border: none;
   cursor: pointer;

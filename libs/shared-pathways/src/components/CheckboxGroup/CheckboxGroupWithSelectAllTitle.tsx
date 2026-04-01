@@ -19,6 +19,7 @@ import React, { useCallback, useMemo } from "react";
 
 import { FilterOption, PopulationFilter } from "../../";
 import FilterSectionLayout from "../FilterSectionLayout/FilterSectionLayout";
+import { AllSelectedBadge } from "../FilterSectionLayout/FilterSectionLayout.styles";
 import Checkbox from "./Checkbox";
 import CheckboxGroup from "./CheckboxGroup";
 
@@ -67,6 +68,9 @@ const CheckboxGroupWithSelectAllTitle: React.FC<
           indeterminate={indeterminate}
           onChange={handleSelectAllToggle}
         />
+      }
+      titleSuffix={
+        <AllSelectedBadge $visible={allSelected}>All Selected</AllSelectedBadge>
       }
     >
       <CheckboxGroup

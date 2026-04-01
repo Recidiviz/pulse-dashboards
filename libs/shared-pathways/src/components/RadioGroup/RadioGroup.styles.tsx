@@ -65,7 +65,8 @@ export const RadioDot = styled.span<{ $checked: boolean }>`
   left: 0;
   height: 1rem;
   width: 1rem;
-  border: 1px solid ${palette.slate30};
+  border: 1px solid
+    ${({ theme }) => theme.checkbox?.borderColor ?? palette.slate30};
   border-radius: 1rem;
   background: transparent;
 

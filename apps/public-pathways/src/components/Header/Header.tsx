@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { Menubar, spacing } from "~design-system";
+import { Icon, Menubar, spacing } from "~design-system";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
@@ -78,6 +78,7 @@ const DownloadButton = styled.button`
   width: fit-content;
   min-width: 110px;
   height: 38px;
+  gap: 8px;
   padding: 8px 16px;
   border-radius: 50px;
   border: 1px solid ${publicPathwaysPalette.signal.links};
@@ -115,6 +116,7 @@ export const Header = observer(function Header() {
             });
           }}
         >
+          <Icon kind="DownloadArrowThin" color="white" size={12} />
           Download
         </DownloadButton>
       </StyledMenubar>

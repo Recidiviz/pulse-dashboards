@@ -26,12 +26,12 @@ export const StickyAxis = styled.svg`
   flex-shrink: 0;
 
   text {
-    fill: ${({ theme }) => theme.typography.axisLabel.color};
-    font-family: ${({ theme }) => theme.typography.axisLabel.fontFamily};
-    font-weight: ${({ theme }) => theme.typography.axisLabel.fontWeight};
-    font-size: ${({ theme }) => theme.typography.axisLabel.fontSize};
-    line-height: ${({ theme }) => theme.typography.axisLabel.lineHeight};
-    letter-spacing: ${({ theme }) => theme.typography.axisLabel.letterSpacing};
+    fill: ${({ theme }) => theme.chart.axisLabel.color};
+    font-family: ${({ theme }) => theme.chart.axisLabel.fontFamily};
+    font-weight: ${({ theme }) => theme.chart.axisLabel.fontWeight};
+    font-size: ${({ theme }) => theme.chart.axisLabel.fontSize};
+    line-height: ${({ theme }) => theme.chart.axisLabel.lineHeight};
+    letter-spacing: ${({ theme }) => theme.chart.axisLabel.letterSpacing};
   }
 `;
 

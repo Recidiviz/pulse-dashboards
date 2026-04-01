@@ -22,7 +22,7 @@ import styled from "styled-components";
 const Wrapper = styled.div`
   font-family: ${({ theme }) => theme.typography.fontFamily};
   font-size: 14px;
-  color: ${({ theme }) => theme.palette.slate80};
+  color: ${({ theme }) => theme.chart.subtitleColor};
   margin-top: 12px;
   margin-bottom: 1.375rem;
 `;

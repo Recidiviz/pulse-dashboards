@@ -97,7 +97,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   ...chartProps
 }) => {
   const theme = useTheme() as PathwaysTheme;
-  const charWidth = theme.typography.axisLabel.charWidth;
+  const charWidth = theme.chart.axisLabel.charWidth;
   const leftMargin = (chartTop.toString().length + 1.5) * charWidth;
 
   const historicalLine = {

@@ -48,3 +48,21 @@ export const FilterTitle = styled.span`
   letter-spacing: 0%;
   color: ${({ theme }) => theme.checkbox?.titleColor ?? palette.pine1};
 `;
+
+export const AllSelectedBadge = styled.span<{ $visible: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid
+    ${({ theme }) => theme.checkbox?.badgeBorderColor ?? "rgba(0, 0, 0, 0.15)"};
+  border-radius: 4px;
+  font-family: ${({ theme }) =>
+    theme.checkbox?.badgeFontFamily ?? '"Public Sans", sans-serif'};
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 120%;
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.checkbox?.badgeColor ?? "rgba(0, 0, 0, 0.4)"};
+  visibility: ${({ $visible }) => ($visible ? "visible" : "hidden")};
+`;
