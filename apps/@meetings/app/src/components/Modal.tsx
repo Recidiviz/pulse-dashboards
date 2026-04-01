@@ -19,7 +19,10 @@ import { ComponentType, ReactNode } from "react";
 import {
   Modal as RNModal,
   ModalBaseProps,
+  Platform,
+  StyleSheet,
   TouchableWithoutFeedback,
+  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -35,18 +38,20 @@ function DefaultBackdrop() {
   return <View className="absolute size-full bg-[#00000099]" />;
 }
 
-const Modal = ({
+const ModalContent = ({
   onClickOutside,
   backdrop: customBackdrop,
   children,
   containerClassName = "",
-  ...modalProps
-}: ModalProps) => {
+}: Pick<
+  ModalProps,
+  "onClickOutside" | "backdrop" | "children" | "containerClassName"
+>) => {
   const Backdrop = customBackdrop || DefaultBackdrop;
 
   return (
     <TouchableWithoutFeedback onPress={onClickOutside}>
-      <RNModal {...modalProps}>
+      <View style={StyleSheet.absoluteFill}>
         <Backdrop />
         <View className="size-full items-center justify-center p-5">
           <TouchableWithoutFeedback>
@@ -57,8 +62,48 @@ const Modal = ({
             </View>
           </TouchableWithoutFeedback>
         </View>
-      </RNModal>
+      </View>
     </TouchableWithoutFeedback>
+  );
+};
+
+// On Android, avoid RN Modal to prevent an intermittent Yoga layout crash
+// in Fabric (YGNodeGetOwner assertion failure) when coexisting with @gorhom/bottom-sheet.
+// https://github.com/facebook/react-native/issues/52349
+const Modal = ({
+  onClickOutside,
+  backdrop: customBackdrop,
+  children,
+  containerClassName = "",
+  ...modalProps
+}: ModalProps) => {
+  const { width, height } = useWindowDimensions();
+
+  if (Platform.OS === "android") {
+    if (!modalProps.visible) return null;
+    return (
+      <View className="absolute left-0 top-0 z-50" style={{ width, height }}>
+        <ModalContent
+          onClickOutside={onClickOutside}
+          backdrop={customBackdrop}
+          containerClassName={containerClassName}
+        >
+          {children}
+        </ModalContent>
+      </View>
+    );
+  }
+
+  return (
+    <RNModal {...modalProps}>
+      <ModalContent
+        onClickOutside={onClickOutside}
+        backdrop={customBackdrop}
+        containerClassName={containerClassName}
+      >
+        {children}
+      </ModalContent>
+    </RNModal>
   );
 };
 

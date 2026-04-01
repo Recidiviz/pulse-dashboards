@@ -19,7 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { PersonType } from "~@meetings/app/common/types";
+import { Person, PersonType } from "~@meetings/app/common/types";
 
 import { AudioUploadDialog, AudioUploadStatus, FileInfo } from "./types";
 
@@ -28,12 +28,12 @@ type AudioUploadStore = {
   status: AudioUploadStatus;
   dialog: AudioUploadDialog;
   meetingId: string | null;
-  personId: bigint | null;
+  person: Person | null;
   personType: PersonType | null;
   file: FileInfo | null;
   error: string | null; // file uploading error
 
-  // Non-persisted fields (progress resets on reload)
+  // Non-persisted fields (reset on reload)
   uploadedBytes: number;
   totalBytes: number;
 
@@ -43,11 +43,7 @@ type AudioUploadStore = {
   setFile: (file: FileInfo | null) => void;
   setError: (error: string | null) => void;
   setUploadProgress: (uploaded: number, total: number) => void;
-  open: (params: {
-    personId: bigint;
-    personType: PersonType;
-    meetingId: string;
-  }) => void;
+  open: (params: { person: Person; personType: PersonType }) => void;
   reset: () => void;
 };
 
@@ -55,8 +51,8 @@ const initialState = {
   status: null,
   dialog: null,
   meetingId: null,
-  personId: null,
   personType: null,
+  person: null,
   file: null,
   error: null,
   uploadedBytes: 0,
@@ -75,12 +71,11 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       setError: (error) => set({ error }),
       setUploadProgress: (uploadedBytes, totalBytes) =>
         set({ uploadedBytes, totalBytes }),
-      open: ({ personId, personType, meetingId }) =>
+      open: ({ person, personType }) =>
         set({
           ...initialState,
-          personId,
+          person,
           personType,
-          meetingId,
           status: "selecting",
         }),
       reset: () => set(initialState),
@@ -92,7 +87,9 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
         status: state.status,
         dialog: state.dialog,
         meetingId: state.meetingId,
-        personId: state.personId ? state.personId.toString() : null,
+        person: state.person
+          ? { ...state.person, personId: state.person.personId.toString() }
+          : null,
         file: state.file,
         error: state.error,
       }),
@@ -102,8 +99,11 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
           state.status = "selecting";
           state.error = "Upload was interrupted. Please try again.";
         }
-        if (state.personId) {
-          state.personId = BigInt(state.personId);
+        if (state.person) {
+          state.person = {
+            ...state.person,
+            personId: BigInt(state.person.personId),
+          };
         }
         if (state.error && !state.file) {
           state.setError(null);

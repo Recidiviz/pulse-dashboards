@@ -16,22 +16,22 @@
 // =============================================================================
 
 import * as DocumentPicker from "expo-document-picker";
+import { useCallback } from "react";
 import { Platform } from "react-native";
 
 import { ALLOWED_AUDIO_TYPES } from "../constants";
 
 export function useFilePicker() {
-  // TODO: fix in the following PR
-  const webAllowedAudioTypes = ["audio/webm"];
-  const nativeAllowedAudioTypes = Object.keys(ALLOWED_AUDIO_TYPES).filter(
-    (t) => t !== "audio/webm",
-  );
+  const pickFile = useCallback(async () => {
+    // TODO: fix in the following PR
+    const webAllowedAudioTypes = ["audio/webm"];
+    const nativeAllowedAudioTypes = Object.keys(ALLOWED_AUDIO_TYPES).filter(
+      (t) => t !== "audio/webm",
+    );
 
-  const pickFile = async () => {
     const result = await DocumentPicker.getDocumentAsync({
-      type: Object.keys(
+      type:
         Platform.OS === "web" ? webAllowedAudioTypes : nativeAllowedAudioTypes,
-      ),
     });
 
     // User dismissed the picker without selecting a file
@@ -40,7 +40,7 @@ export function useFilePicker() {
     }
 
     return result.assets[0];
-  };
+  }, []);
 
   return { pickFile };
 }

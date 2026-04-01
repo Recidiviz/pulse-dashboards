@@ -17,7 +17,7 @@
 
 import { Link } from "@react-navigation/native";
 import { format } from "date-fns";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   NativeScrollEvent,
@@ -36,8 +36,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { openAudioUpload } from "~@meetings/app/features/audio-upload";
-import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
+import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
 
 import { theme } from "../common/theme";
 import {
@@ -50,6 +49,7 @@ import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import MeetingsCardsList from "../components/MeetingsCardsList";
 import MeetingsTable from "../components/MeetingsTable.web";
+import { NewMeetingRecordingSheet } from "../components/NewMeetingRecordingSheet";
 import SearchBar from "../components/SearchBar";
 import { useRecording } from "../features/recording";
 import { Typography } from "../shared/ui/Typography";
@@ -88,8 +88,16 @@ const ProfileMeetings = ({
   const [sortBy, setSortBy] = useState("Date (Latest first)");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileHeaderHeight, setMobileHeaderHeight] = useState(0);
+  const [isNewMeetingSheetOpen, setIsNewMeetingSheetOpen] = useState(false);
   const { status: recordingState } = useRecording();
   // const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
+
+  const openAudioUpload = useAudioUploadStore((s) => s.open);
+  const audioUploadStatus = useAudioUploadStore((s) => s.status);
+
+  const handleAudioUpload = useCallback(() => {
+    openAudioUpload({ person, personType: type });
+  }, [openAudioUpload, person, type]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffset = event.nativeEvent.contentOffset.y;
@@ -98,21 +106,6 @@ const ProfileMeetings = ({
     if (currentOffset > 50) setIsCollapsed(true);
     else setIsCollapsed(false);
   };
-
-  const {
-    handleCreateMeeting: handleAudioUpload,
-    isCreating: isUploadCreating,
-  } = useCreateMeeting({
-    person,
-    personType: type,
-    onSuccess: (meetingId) => {
-      openAudioUpload({
-        personId: person.personId,
-        personType: type,
-        meetingId,
-      });
-    },
-  });
 
   useEffect(() => {
     if (recordingState) {
@@ -287,143 +280,169 @@ const ProfileMeetings = ({
   };
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 grow">
-      <View className="z-10 hidden md:block">
-        <Header />
-      </View>
-      <View
-        className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] border-b border-subtle bg-primary px-4 pb-4 md:hidden ${
-          Platform.OS === "web" ? "!pt-4" : ""
-        }`}
-        style={{
-          paddingTop: insets.top,
-          shadowColor: isCollapsed
-            ? theme["backgroundColor"]["strong"]
-            : "transparent",
-        }}
-        onLayout={(e) =>
-          setMobileHeaderHeight(
-            Math.max(mobileHeaderHeight, e.nativeEvent.layout.height),
-          )
-        }
-      >
-        <View className="flex-row items-center justify-between">
-          <Link screen="Clients" params={{}}>
-            <ChevronLeftIcon className="size-6 stroke-primary stroke-[3px]" />
-          </Link>
-          {isCollapsed && recordingState === "idle" && (
-            <TouchableOpacity
-              className="px-2"
-              onPress={handleCreateMeeting}
-              disabled={isMeetingCreating}
-            >
-              <PlusIcon className="size-6 stroke-primary stroke-[3px]" />
-            </TouchableOpacity>
-          )}
+    <>
+      <SafeAreaView edges={["top"]} className="flex-1 grow">
+        <View className="z-10 hidden md:block">
+          <Header />
         </View>
-
-        {!isCollapsed && (
-          <View className="pt-8">
-            <Typography className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
-              {person.fullName}
-            </Typography>
-
-            <Typography className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
-              ID: {person.displayPersonExternalId} •{" "}
-              {humanReadableTitleCase(person.primaryMetadata)}
-            </Typography>
-          </View>
-        )}
-      </View>
-      <ScrollView
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        className="grow md:!pt-0"
-        contentContainerClassName="flex-grow px-4 md:pt-10"
-        style={{ paddingTop: mobileContentPadding }}
-      >
-        <View className="mx-auto mb-4 hidden w-full max-w-[960px] items-start md:flex xl:absolute xl:left-10 xl:max-w-none">
-          {/* TODO: back button under discussion with design team */}
-          <Link
-            className="flex flex-row items-center gap-2"
-            screen={type === "client" ? "Clients" : "Residents"}
-            params={{}}
-          >
-            <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
-            <Typography className="text-sm font-medium text-primary">
-              Back
-            </Typography>
-          </Link>
-        </View>
-
-        <View className="mx-auto w-full max-w-[960px]">
-          <Typography className="hidden font-libre-baskerville text-[28px] font-bold capitalize leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
-            {person.fullName.toLowerCase()}
-          </Typography>
-
-          <Typography className="mt-1 hidden text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
-            ID: {person.displayPersonExternalId} • {person.primaryMetadata}
-          </Typography>
-
-          <View className="my-4 flex-row items-center justify-between">
-            <Typography className="text-xl font-semibold text-primary md:text-2xl">
-              Meetings
-            </Typography>
-
-            {recordingState === "idle" && (
-              <View className="flex-row gap-6">
-                <TouchableOpacity
-                  className="flex-row items-center gap-1"
-                  onPress={() => handleAudioUpload()}
-                  disabled={isUploadCreating}
-                >
-                  <UploadIcon className="size-4 fill-brand" />
-                  <Typography className="font-medium text-brand">
-                    Upload
-                  </Typography>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  className="w-[100px] flex-row items-center justify-center rounded-full bg-brand px-4 py-2"
-                  onPress={handleCreateMeeting}
-                  disabled={isMeetingCreating}
-                >
-                  {isMeetingCreating ? (
-                    <ActivityIndicator size="small" color="white" />
-                  ) : (
-                    <Typography className="font-medium text-on-brand">
-                      + Meeting
-                    </Typography>
-                  )}
-                </TouchableOpacity>
-              </View>
+        <View
+          className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] border-b border-subtle bg-primary px-4 pb-4 md:hidden ${
+            Platform.OS === "web" ? "!pt-4" : ""
+          }`}
+          style={{
+            paddingTop: insets.top,
+            shadowColor: isCollapsed
+              ? theme["backgroundColor"]["strong"]
+              : "transparent",
+          }}
+          onLayout={(e) =>
+            setMobileHeaderHeight(
+              Math.max(mobileHeaderHeight, e.nativeEvent.layout.height),
+            )
+          }
+        >
+          <View className="flex-row items-center justify-between">
+            <Link screen="Clients" params={{}}>
+              <ChevronLeftIcon className="size-6 stroke-primary stroke-[3px]" />
+            </Link>
+            {isCollapsed && recordingState === "idle" && (
+              <TouchableOpacity
+                className="px-2"
+                onPress={() => setIsNewMeetingSheetOpen(true)}
+              >
+                <PlusIcon className="size-6 stroke-primary stroke-[3px]" />
+              </TouchableOpacity>
             )}
           </View>
 
-          <View className="h-10 w-full">
-            <SearchBar
-              placeholder={"Enter keyword or phrase"}
-              value={searchQuery}
-              onChange={setSearchQuery}
-            />
+          {!isCollapsed && (
+            <View className="pt-8">
+              <Typography className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
+                {person.fullName}
+              </Typography>
+
+              <Typography className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
+                ID: {person.displayPersonExternalId} •{" "}
+                {humanReadableTitleCase(person.primaryMetadata)}
+              </Typography>
+            </View>
+          )}
+        </View>
+        <ScrollView
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          className="grow md:!pt-0"
+          contentContainerClassName="flex-grow px-4 md:pt-10"
+          style={{ paddingTop: mobileContentPadding }}
+        >
+          <View className="mx-auto mb-4 hidden w-full max-w-[960px] items-start md:flex xl:absolute xl:left-10 xl:max-w-none">
+            {/* TODO: back button under discussion with design team */}
+            <Link
+              className="flex flex-row items-center gap-2"
+              screen={type === "client" ? "Clients" : "Residents"}
+              params={{}}
+            >
+              <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
+              <Typography className="text-sm font-medium text-primary">
+                Back
+              </Typography>
+            </Link>
           </View>
 
-          <View className="z-10 my-4 flex-row items-center justify-between">
-            <Typography className="text-sm text-secondary">
-              {filteredMeetings.length} meeting
-              {filteredMeetings.length === 1 ? "" : "s"}
+          <View className="mx-auto w-full max-w-[960px]">
+            <Typography className="hidden font-libre-baskerville text-[28px] font-bold capitalize leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
+              {person.fullName.toLowerCase()}
             </Typography>
 
-            <Dropdown
-              label="Sort by"
-              options={Object.values(MeetingsSort)}
-              onSelect={(value) => setSortBy(value as MeetingsSort)}
-            />
-          </View>
+            <Typography className="mt-1 hidden text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
+              ID: {person.displayPersonExternalId} • {person.primaryMetadata}
+            </Typography>
 
-          <View className="grow basis-0 pb-8">{renderMeetingsContent()}</View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <View className="my-4 flex-row items-center justify-between">
+              <Typography className="text-xl font-semibold text-primary md:text-2xl">
+                Meetings
+              </Typography>
+
+              {recordingState === "idle" && (
+                <>
+                  {/* Desktop: show both buttons inline */}
+                  <View className="hidden flex-row gap-6 md:flex">
+                    <TouchableOpacity
+                      className="flex-row items-center gap-1"
+                      onPress={() => handleAudioUpload()}
+                    >
+                      <UploadIcon className="size-4 fill-brand" />
+                      <Typography className="font-medium text-brand">
+                        Upload
+                      </Typography>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      className="w-[100px] flex-row items-center justify-center rounded-full bg-brand px-4 py-2"
+                      onPress={handleCreateMeeting}
+                      disabled={isMeetingCreating}
+                    >
+                      {isMeetingCreating ? (
+                        <ActivityIndicator size="small" color="white" />
+                      ) : (
+                        <Typography className="font-medium text-on-brand">
+                          + Meeting
+                        </Typography>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Mobile: single button that opens the bottom sheet */}
+                  <TouchableOpacity
+                    className="w-[100px] flex-row items-center justify-center rounded-full bg-brand px-4 py-2 md:hidden"
+                    onPress={() => setIsNewMeetingSheetOpen(true)}
+                  >
+                    <Typography className="font-medium text-on-brand">
+                      + Meeting
+                    </Typography>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+
+            <View className="h-10 w-full">
+              <SearchBar
+                placeholder={"Enter keyword or phrase"}
+                value={searchQuery}
+                onChange={setSearchQuery}
+              />
+            </View>
+
+            <View className="z-10 my-4 flex-row items-center justify-between">
+              <Typography className="text-sm text-secondary">
+                {filteredMeetings.length} meeting
+                {filteredMeetings.length === 1 ? "" : "s"}
+              </Typography>
+
+              <Dropdown
+                label="Sort by"
+                options={Object.values(MeetingsSort)}
+                onSelect={(value) => setSortBy(value as MeetingsSort)}
+              />
+            </View>
+
+            <View className="grow basis-0 pb-8">{renderMeetingsContent()}</View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+
+      {isNewMeetingSheetOpen && !audioUploadStatus && (
+        <NewMeetingRecordingSheet
+          person={person}
+          onClose={() => setIsNewMeetingSheetOpen(false)}
+          onStartMeeting={() => {
+            setIsNewMeetingSheetOpen(false);
+            handleCreateMeeting();
+          }}
+          onUploadFile={handleAudioUpload}
+          isMeetingCreating={isMeetingCreating}
+        />
+      )}
+    </>
   );
 };
 

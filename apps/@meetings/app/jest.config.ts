@@ -36,7 +36,11 @@ module.exports = {
     "^~@meetings/app/(.*)$": "<rootDir>/src/$1",
     "@react-native-community/netinfo":
       "@react-native-community/netinfo/jest/netinfo-mock.js",
+    "^@paralleldrive/cuid2$": "<rootDir>/src/__mocks__/@paralleldrive/cuid2.js",
   },
+  transformIgnorePatterns: [
+    "node_modules/(?!(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/|@expo-google-fonts/|react-navigation|@react-navigation/|@unimodules/|unimodules|sentry-expo|native-base|react-native-svg|@rneui/|@paralleldrive/cuid2)",
+  ],
   transform: {
     "\\.[jt]sx?$": [
       "babel-jest",

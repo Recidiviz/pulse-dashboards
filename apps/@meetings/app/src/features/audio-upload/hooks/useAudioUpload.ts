@@ -18,6 +18,7 @@
 import { useCallback, useRef } from "react";
 
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import { AbortError, FileValidationError } from "~@meetings/app/shared/errors";
@@ -29,21 +30,33 @@ import { deserializeFile } from "../utils/deserializeFile";
 
 export function useAudioUpload() {
   const store = useAudioUploadStore();
+  const person = useAudioUploadStore((s) => s.person);
   const uploadSegment = useUploadSegment();
   const endMeetingMutation = useEndMeeting();
   const discardMeetingMutation = useDiscardMeeting();
   const { mutateAsync: deleteRecordings } =
     trpc.v1.meeting.deleteRecordings.useMutation();
+  const { createMeetingAsync } = useCreateMeeting({
+    person,
+    personType: store.personType,
+    onSuccess: () => undefined,
+  });
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const addFile = useCallback(
     async (rawFile: RawFileInfo) => {
       try {
-        if (!store.meetingId) {
-          throw new Error("meetingId is required");
-        }
+        let meetingId = store.meetingId;
 
-        await deleteRecordings({ meetingId: store.meetingId });
+        if (!meetingId) {
+          if (!person || !store.personType) {
+            throw new Error("person and personType are required");
+          }
+          meetingId = await createMeetingAsync();
+          store.setMeetingId(meetingId);
+        } else {
+          await deleteRecordings({ meetingId });
+        }
 
         store.setFile(null);
 
@@ -58,7 +71,7 @@ export function useAudioUpload() {
         abortControllerRef.current = abortController;
         await uploadSegment({
           uri: file.uri,
-          meetingId: store.meetingId,
+          meetingId,
           signal: abortController.signal,
           onProgress: (loaded, total) => {
             store.setUploadProgress(loaded, total);
@@ -86,7 +99,7 @@ export function useAudioUpload() {
         console.error("Failed to add file:", error);
       }
     },
-    [store, uploadSegment, deleteRecordings],
+    [store, person, uploadSegment, deleteRecordings, createMeetingAsync],
   );
 
   const removeFile = useCallback(async () => {
@@ -116,12 +129,12 @@ export function useAudioUpload() {
 
   const confirmUpload = useCallback(async () => {
     try {
-      if (!store.meetingId || !store.personId || !store.personType) {
+      if (!store.meetingId || !store.person || !store.personType) {
         throw new Error("meetingId, personId, and personType are required");
       }
       await endMeetingMutation.mutateAsync({
         meetingId: store.meetingId,
-        personId: store.personId,
+        personId: store.person.personId,
         personType: store.personType,
       });
       store.setDialog("success");
@@ -138,13 +151,13 @@ export function useAudioUpload() {
     }
 
     try {
-      if (!store.meetingId || !store.personId || !store.personType) {
+      if (!store.meetingId || !store.person || !store.personType) {
         throw new Error("meetingId, personId, and personType are required");
       }
       await deleteRecordings({ meetingId: store.meetingId });
       await discardMeetingMutation.mutateAsync({
         meetingId: store.meetingId,
-        personId: store.personId,
+        personId: store.person.personId,
         personType: store.personType,
       });
       store.reset();
@@ -155,15 +168,12 @@ export function useAudioUpload() {
 
   const continueUpload = useCallback(() => {
     store.setDialog(null);
-    store.setStatus("uploading");
   }, [store]);
 
-  const retryUpload = useCallback(async () => {
-    if (store.status !== "confirming-error") return;
-    await confirmUpload();
-  }, [store.status, confirmUpload]);
-
   const requestCancel = useCallback(() => {
+    if (!store.meetingId) {
+      return store.reset();
+    }
     store.setDialog("cancel");
   }, [store]);
 
@@ -178,7 +188,6 @@ export function useAudioUpload() {
     confirmUpload,
     discardUpload,
     continueUpload,
-    retryUpload,
 
     requestCancel,
 

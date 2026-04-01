@@ -26,8 +26,8 @@ import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";
 
 type Params = {
-  person: Person;
-  personType: PersonType;
+  person?: Person | null;
+  personType?: PersonType | null;
   onSuccess: (meetingId: string) => void;
 };
 
@@ -36,11 +36,17 @@ export function useCreateMeeting({ person, personType, onSuccess }: Params) {
   const { dispatch: dispatchOfflineEvent } = useOfflineEventFactory();
   const { createMeeting } = useMeetingActions();
 
-  const { mutate: handleCreateMeeting, isPending: isCreating } = useMutation({
+  const {
+    mutate: handleCreateMeeting,
+    mutateAsync: createMeetingAsync,
+    isPending: isCreating,
+  } = useMutation({
     networkMode: "always",
     mutationFn: async () => {
       const meetingId = createId();
       const startTime = new Date();
+
+      if (!person || !personType) return meetingId;
 
       if (!isOnline) {
         dispatchOfflineEvent({
@@ -70,5 +76,5 @@ export function useCreateMeeting({ person, personType, onSuccess }: Params) {
     },
   });
 
-  return { handleCreateMeeting, isCreating };
+  return { handleCreateMeeting, createMeetingAsync, isCreating };
 }

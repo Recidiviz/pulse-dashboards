@@ -23,6 +23,7 @@ import tailwindConfig from "../../../../tailwind.config";
 import { useAudioUpload } from "../hooks/useAudioUpload";
 import { useAudioUploadStore } from "../store";
 import { AudioUploadModal } from "./AudioUploadModal";
+import { AudioUploadSheet } from "./AudioUploadSheet";
 import { DiscardUploadModal } from "./DiscardUploadModal";
 import { UploadErrorModal } from "./UploadErrorModal";
 import { UploadSuccessModal } from "./UploadSuccessModal";
@@ -50,10 +51,13 @@ export function AudioUpload() {
 
   const isUploadModalVisible =
     isWeb && !isDialogVisible && width >= mdBreakpoint;
+  const isBottomSheetVisible = isWeb ? width < mdBreakpoint : true;
 
   return (
     <>
       {isUploadModalVisible && <AudioUploadModal {...contentHandlers} />}
+
+      {isBottomSheetVisible && <AudioUploadSheet {...contentHandlers} />}
 
       {dialog === "cancel" && (
         <DiscardUploadModal

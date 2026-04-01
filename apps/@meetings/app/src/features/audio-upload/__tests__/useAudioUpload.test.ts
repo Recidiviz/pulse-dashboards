@@ -18,6 +18,7 @@
 import { act, renderHook } from "@testing-library/react-native";
 
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import { AbortError } from "~@meetings/app/shared/errors";
@@ -31,6 +32,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 jest.mock("~@meetings/app/entities/upload-segment");
+jest.mock("~@meetings/app/hooks/useCreateMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
 jest.mock("~@meetings/app/trpc/client", () => ({
@@ -46,6 +48,7 @@ jest.mock("~@meetings/app/trpc/client", () => ({
 jest.mock("../store");
 
 const mockUploadSegment = jest.fn();
+const mockCreateMeetingAsync = jest.fn();
 const mockEndMeeting = jest.fn();
 const mockDiscardMeeting = jest.fn();
 const mockDeleteRecordings = jest.fn();
@@ -55,6 +58,7 @@ const mockSetFile = jest.fn();
 const mockSetStatus = jest.fn();
 const mockSetDialog = jest.fn();
 const mockSetUploadProgress = jest.fn();
+const mockSetMeetingId = jest.fn();
 const mockReset = jest.fn();
 
 const MEETING_ID = "meeting-123";
@@ -69,11 +73,11 @@ const validRawFile: RawFileInfo = {
 };
 
 function mockStoreWith(overrides: Record<string, unknown> = {}) {
-  (useAudioUploadStore as unknown as jest.Mock).mockReturnValue({
+  const storeState = {
     status: "selecting",
     dialog: null,
     meetingId: MEETING_ID,
-    personId: PERSON_ID,
+    person: { personId: PERSON_ID },
     personType: PERSON_TYPE,
     file: null,
     error: null,
@@ -82,9 +86,14 @@ function mockStoreWith(overrides: Record<string, unknown> = {}) {
     setStatus: mockSetStatus,
     setDialog: mockSetDialog,
     setUploadProgress: mockSetUploadProgress,
+    setMeetingId: mockSetMeetingId,
     reset: mockReset,
     ...overrides,
-  });
+  };
+  (useAudioUploadStore as unknown as jest.Mock).mockImplementation(
+    (selector?: (s: typeof storeState) => unknown) =>
+      selector ? selector(storeState) : storeState,
+  );
 }
 
 beforeEach(() => {
@@ -93,6 +102,9 @@ beforeEach(() => {
   mockStoreWith();
 
   (useUploadSegment as jest.Mock).mockReturnValue(mockUploadSegment);
+  (useCreateMeeting as jest.Mock).mockReturnValue({
+    createMeetingAsync: mockCreateMeetingAsync,
+  });
   (useEndMeeting as jest.Mock).mockReturnValue({
     mutateAsync: mockEndMeeting,
   });
@@ -118,6 +130,7 @@ describe("useAudioUpload", () => {
         await result.current.addFile(validRawFile);
       });
 
+      expect(mockCreateMeetingAsync).not.toHaveBeenCalled();
       expect(mockDeleteRecordings).toHaveBeenCalledWith({
         meetingId: MEETING_ID,
       });
@@ -156,7 +169,9 @@ describe("useAudioUpload", () => {
       expect(mockSetUploadProgress).toHaveBeenCalledWith(512, 1024);
     });
 
-    it("throws when meetingId is null", async () => {
+    it("creates a meeting when meetingId is null", async () => {
+      const newMeetingId = "new-meeting-id";
+      mockCreateMeetingAsync.mockResolvedValue(newMeetingId);
       mockStoreWith({ meetingId: null });
 
       const { result } = renderHook(() => useAudioUpload());
@@ -165,8 +180,28 @@ describe("useAudioUpload", () => {
         await result.current.addFile(validRawFile);
       });
 
+      expect(mockCreateMeetingAsync).toHaveBeenCalled();
+      expect(mockDeleteRecordings).not.toHaveBeenCalled();
+      expect(mockSetMeetingId).toHaveBeenCalledWith(newMeetingId);
+      expect(mockUploadSegment).toHaveBeenCalledWith(
+        expect.objectContaining({ meetingId: newMeetingId }),
+      );
+      expect(mockSetStatus).toHaveBeenCalledWith("uploaded");
+    });
+
+    it("sets error when meetingId and person are null", async () => {
+      mockStoreWith({ meetingId: null, person: null });
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
       expect(mockUploadSegment).not.toHaveBeenCalled();
-      expect(mockSetError).toHaveBeenCalledWith("meetingId is required");
+      expect(mockSetError).toHaveBeenCalledWith(
+        "person and personType are required",
+      );
       expect(mockSetStatus).toHaveBeenCalledWith("selecting");
     });
 
@@ -316,7 +351,7 @@ describe("useAudioUpload", () => {
     });
 
     it("throws when meetingId or personId is null", async () => {
-      mockStoreWith({ meetingId: null, personId: null });
+      mockStoreWith({ meetingId: null, person: null });
 
       const { result } = renderHook(() => useAudioUpload());
 
@@ -376,7 +411,7 @@ describe("useAudioUpload", () => {
     });
 
     it("throws when meetingId or personId is null", async () => {
-      mockStoreWith({ meetingId: null, personId: null });
+      mockStoreWith({ meetingId: null, person: null });
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
       const { result } = renderHook(() => useAudioUpload());
@@ -400,37 +435,8 @@ describe("useAudioUpload", () => {
         result.current.continueUpload();
       });
 
-      expect(mockSetStatus).toHaveBeenCalledWith("uploading");
-    });
-  });
-
-  describe("retryUpload", () => {
-    it("retries confirmUpload when status is confirming-error", async () => {
-      mockStoreWith({ status: "confirming-error" });
-
-      const { result } = renderHook(() => useAudioUpload());
-
-      await act(async () => {
-        await result.current.retryUpload();
-      });
-
-      expect(mockEndMeeting).toHaveBeenCalledWith({
-        meetingId: MEETING_ID,
-        personId: PERSON_ID,
-        personType: PERSON_TYPE,
-      });
-    });
-
-    it("does nothing when status is not confirming-error", async () => {
-      mockStoreWith({ status: "uploading" });
-
-      const { result } = renderHook(() => useAudioUpload());
-
-      await act(async () => {
-        await result.current.retryUpload();
-      });
-
-      expect(mockEndMeeting).not.toHaveBeenCalled();
+      expect(mockSetDialog).toHaveBeenCalledWith(null);
+      expect(mockSetStatus).not.toHaveBeenCalled();
     });
   });
 

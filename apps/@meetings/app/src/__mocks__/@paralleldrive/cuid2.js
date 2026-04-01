@@ -15,5 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { useAudioUploadStore } from "./store";
-export { AudioUpload } from "./ui/AudioUpload";
+let counter = 0;
+module.exports = {
+  createId: () => `test-id-${++counter}`,
+  init: () => () => `test-id-${++counter}`,
+  isCuid: () => true,
+  getConstants: () => ({}),
+};

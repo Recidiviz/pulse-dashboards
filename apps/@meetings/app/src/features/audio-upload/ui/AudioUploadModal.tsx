@@ -65,12 +65,12 @@ export function AudioUploadModal({
             Upload audio
           </Typography>
           <TouchableOpacity onPress={onCancel} className="p-1">
-            <XIcon className="stroke-muted size-5" />
+            <XIcon className="size-5 stroke-tertiary" />
           </TouchableOpacity>
         </View>
 
         <Typography className="mb-5 text-sm text-secondary">
-          Use an existing audio file to generate meeting
+          Use an existing audio file to generate a meeting
         </Typography>
 
         <DropZone onAddFile={onAddFile} disabled={isUploading} />

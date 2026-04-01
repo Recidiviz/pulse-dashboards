@@ -71,31 +71,36 @@ export function FileCard({
 
           <View className="flex-row items-center gap-1">
             {isUploading && (
-              <Typography className="flex items-center gap-3 text-xs text-secondary">
-                <Typography>
+              <View className="flex-row items-center gap-3">
+                <Typography className="text-xs text-secondary">
                   {formatBytes(uploadedBytes)} / {formatBytes(totalBytes)}
                 </Typography>
-                <Typography>•</Typography>
-                <Typography className="flex items-center">
+                <Typography className="text-xs text-secondary">•</Typography>
+                <View className="flex-row items-center gap-1">
                   <ActivityIndicator
                     size={12}
-                    className="mr-2"
                     color={theme["colors"]["tertiary"]}
                   />
-                  Uploading..
-                </Typography>
-              </Typography>
+                  <Typography className="text-xs text-secondary">
+                    Uploading..
+                  </Typography>
+                </View>
+              </View>
             )}
 
             {isCompleted && (
-              <Typography className="flex items-center gap-3 text-xs text-secondary">
-                <Typography>{formatBytes(file.size)}</Typography>
-                <Typography>•</Typography>
-                <Typography className="flex items-center text-xs text-brand">
-                  <CheckCircleIcon className="mr-1 size-4 fill-brand" />
-                  Uploaded
+              <View className="flex-row items-center gap-3">
+                <Typography className="text-xs text-secondary">
+                  {formatBytes(file.size)}
                 </Typography>
-              </Typography>
+                <Typography className="text-xs text-secondary">•</Typography>
+                <View className="flex-row items-center gap-1">
+                  <CheckCircleIcon className="size-4 fill-brand" />
+                  <Typography className="text-xs text-brand">
+                    Uploaded
+                  </Typography>
+                </View>
+              </View>
             )}
 
             {isError && (

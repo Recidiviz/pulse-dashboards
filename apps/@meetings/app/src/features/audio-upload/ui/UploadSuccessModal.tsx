@@ -34,8 +34,8 @@ export function UploadSuccessModal({ onClose }: Props) {
       onClickOutside={onClose}
       containerClassName="max-w-[520px] items-center p-6"
     >
-      <View className="mb-5 w-full flex-row items-center justify-center sm:justify-between">
-        <CheckCircleIcon className="size-7 fill-brand" />
+      <View className="mb-5 w-full flex-row items-center sm:justify-between">
+        <CheckCircleIcon className="m-auto size-7 fill-brand" />
         <TouchableOpacity onPress={onClose} className="hidden sm:block">
           <XIcon className="stroke-muted size-5" />
         </TouchableOpacity>
