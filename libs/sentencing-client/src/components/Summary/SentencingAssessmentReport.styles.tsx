@@ -249,7 +249,11 @@ export const ReportCardHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px;
+  padding: 8px 10px;
+
+  & > span:first-child {
+    text-transform: uppercase;
+  }
 `;
 
 export const RiskLevelColumnsContainer = styled.div`
@@ -269,13 +273,15 @@ export const RiskLevelColumnHeader = styled.div<{
   $bgColor: string;
   $textColor: string;
 }>`
-  ${typography.Sans12}
-  font-weight: 600;
-  line-height: 1;
+  ${typography.Sans14}
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.14px;
   display: flex;
   height: 19px;
   padding: 0 8px;
   align-items: center;
+  justify-content: center;
   border-radius: 100px;
   align-self: flex-start;
   background: ${({ $bgColor }) => $bgColor};
@@ -286,4 +292,77 @@ export const RiskLevelDomainItem = styled.div`
   ${typography.Sans12}
   font-weight: 500;
   line-height: 150%;
+`;
+
+// ─── Offender Risk Assessment ─────────────────────────────────────────────────
+
+/** Row container for the 3 indicator boxes + risk level chip. */
+export const RiskLevelIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  /* align-self: flex-start on RiskLevelColumnHeader is needed in the column-direction
+     summary card to prevent width-stretching, but overrides centering in this row
+     context — reset it here so the chip centers with the boxes. */
+  & > *:last-child {
+    align-self: center;
+    margin-left: 4px;
+  }
+`;
+
+/** Single 10×10 filled/empty box in the risk level indicator. */
+export const RiskLevelBox = styled.div<{ $filled: boolean }>`
+  width: 10px;
+  height: 10px;
+  border: 0.556px solid ${customPalette.black};
+  background: ${({ $filled }) =>
+    $filled ? customPalette.black : palette.white};
+`;
+
+/** Body area of a domain subsection — stacks summary text, extra fields, and table. */
+export const ReportDomainSectionBody = styled(ColumnFlexContainer).attrs({
+  gap: 10,
+})`
+  padding: 10px;
+`;
+
+// ─── History Table ────────────────────────────────────────────────────────────
+
+export const ReportHistoryTableContainer = styled(ColumnFlexContainer)`
+  border: 1px solid ${customPalette.black};
+`;
+
+export const ReportHistoryTableHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  gap: 8px;
+  border-bottom: 1px solid ${customPalette.black};
+  ${typography.Sans12}
+  font-weight: 500;
+`;
+
+export const ReportHistoryTableRow = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  gap: 8px;
+  border-bottom: 1px solid ${customPalette.white.white2};
+`;
+
+export const ReportHistoryTableCell = styled.div`
+  flex: 1;
+  ${typography.Sans12}
+  font-weight: 500;
+`;
+
+export const ReportHistoryTableFootnote = styled.div`
+  ${typography.Sans12}
+  color: ${customPalette.black};
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.12px;
+  align-self: stretch;
+  margin-top: 15px;
 `;

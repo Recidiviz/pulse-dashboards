@@ -70,5 +70,26 @@ export const AGE_OPTIONS = Array.from({ length: 100 }, (_, i) => ({
   label: (i + 1).toString(),
 }));
 
+export const DRUG_HISTORY_COLUMNS = [
+  "Substance",
+  "Age of Regular Use",
+  "Last Use",
+  "Heaviest Use",
+  "Method",
+] as const;
+
 export type CreateDrugHistoryInput = Omit<DrugHistory, "id">;
 export type UpdateDrugHistoryInput = Partial<Omit<DrugHistory, "id">>;
+
+/**
+ * Returns the display label for a substance, or null if none is set.
+ * e.g. "Methamphetamine", "My Custom Substance" (Other with a name), null
+ */
+export function formatSubstanceName(
+  substance: string | null | undefined,
+  otherSubstanceName: string | null | undefined,
+): string | null {
+  if (!substance) return null;
+  if (substance === "Other") return otherSubstanceName ?? "Other";
+  return SubstanceTypeLabels[substance as SubstanceType] ?? substance;
+}

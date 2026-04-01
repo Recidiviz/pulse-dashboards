@@ -20,7 +20,7 @@ import React, { useState } from "react";
 
 import { OffenderAssessmentPresenter } from "../../../presenters/OffenderAssessmentPresenter";
 import * as Styled from "../HistoryCardStyles";
-import { DrugHistory } from "./constants";
+import { DRUG_HISTORY_COLUMNS, DrugHistory } from "./constants";
 import { DrugHistoryItem } from "./DrugHistoryItem";
 import { DrugHistoryModal } from "./DrugHistoryModal";
 
@@ -85,13 +85,11 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
           {drugHistories && drugHistories.length > 0 ? (
             <Styled.HistoryTable>
               <Styled.TableHeaderRow>
-                <Styled.TableHeaderCell>Substance</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>
-                  Age of Regular Use
-                </Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Last Use</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Heaviest Use</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Method</Styled.TableHeaderCell>
+                {DRUG_HISTORY_COLUMNS.map((col) => (
+                  <Styled.TableHeaderCell key={col}>
+                    {col}
+                  </Styled.TableHeaderCell>
+                ))}
               </Styled.TableHeaderRow>
               <Styled.HistoryList>
                 {drugHistories.map((history) => (

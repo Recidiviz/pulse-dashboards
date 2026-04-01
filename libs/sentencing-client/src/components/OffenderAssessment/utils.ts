@@ -36,11 +36,20 @@ export type ORASDomainSummaryField =
   | "criminalAttitudesSummary"
   | "responsivityAndBarriersSummary";
 
+export type ORASDomainRiskLevelField =
+  | "criminalHistoryRiskLevel"
+  | "educationRiskLevel"
+  | "familySocialSupportRiskLevel"
+  | "neighborhoodRiskLevel"
+  | "substanceAbuseRiskLevel"
+  | "peerAssociatesRiskLevel"
+  | "criminalBehaviorRiskLevel";
+
 export interface DomainConfig {
   key: ORASDomainKey;
   title: string;
   scoreField?: string;
-  riskLevelField?: string;
+  riskLevelField?: ORASDomainRiskLevelField;
   summaryField: ORASDomainSummaryField;
   maxScore?: number;
 }

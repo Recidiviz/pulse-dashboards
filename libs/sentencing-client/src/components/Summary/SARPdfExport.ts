@@ -135,12 +135,14 @@ type ContinuationHeader = {
 
 /**
  * Finds every .sar-continuation-header element and records:
- * - its own top position (so we know where the continuation section starts), and
+ * - the top of its enclosing sar-no-split block (so we know where the cut must
+ *   land for this heading to appear on the new page), and
  * - the bottom of the preceding .sar-no-split sibling (the primary section).
  *
- * Used to decide whether to hide the heading before canvas capture: if no cut
- * point falls between primaryBottom and headerTop, both sections are on the same
- * page and the "Continued..." label should be suppressed.
+ * Using the block's top rather than the element's own top means this function
+ * can be called while the header elements are display:none (the block is still
+ * in the layout; only its height shrinks). Both values are equivalent when the
+ * header is visible because the header is always the first child of its block.
  */
 function measureContinuationHeaders(
   tbodyEl: HTMLElement,
@@ -155,13 +157,17 @@ function measureContinuationHeaders(
   for (const el of Array.from(
     tbodyEl.querySelectorAll<HTMLElement>(`.${CONTINUATION_HEADER_CLASS}`),
   )) {
-    const headerTop =
-      (el.getBoundingClientRect().top - tbodyRect.top) * mmPerCSSPx;
-
     // Walk up to find the continuation section's no-split block, then find
     // the nearest preceding no-split sibling (the primary section).
     const continuationSection = el.closest(`.${NO_SPLIT_CLASS}`);
     if (!(continuationSection instanceof HTMLElement)) continue;
+
+    // Use the block's top, not the element's top. The element returns a zero
+    // rect when display:none; the block remains in layout with the same top
+    // position (hiding the element shrinks the block height, not its top).
+    const headerTop =
+      (continuationSection.getBoundingClientRect().top - tbodyRect.top) *
+      mmPerCSSPx;
 
     let prev = continuationSection.previousElementSibling as HTMLElement | null;
     while (prev && !prev.classList.contains(NO_SPLIT_CLASS)) {
@@ -371,8 +377,15 @@ export async function exportSARtoPDF(
   const footerMM = canvasHeightToMM(footerCanvas, pageWidth);
   const sliceMM = pageHeight - headerMM - footerMM;
 
-  // Measure all DOM positions before any body canvas capture.
-  // DOM measurement must happen before html2canvas — canvas capture can shift layout.
+  // Hide ALL continuation headings first so block measurements are accurate
+  // (not inflated by heading heights). Measuring with all headings visible causes
+  // phantom cut points that make headings appear on the wrong page.
+  const allContinuationHeaderEls = Array.from(
+    tbodyEl.querySelectorAll<HTMLElement>(`.${CONTINUATION_HEADER_CLASS}`),
+  );
+  for (const el of allContinuationHeaderEls) el.style.display = "none";
+
+  // Must be called BEFORE html2canvas — canvas capture can shift layout.
   const { mmPerCSSPx } = getTbodyMeasurementContext(tbodyEl, pageWidth);
   const bodyMMEstimate = tbodyEl.getBoundingClientRect().height * mmPerCSSPx;
   const continuationHeaders = measureContinuationHeaders(tbodyEl, pageWidth);
@@ -382,7 +395,7 @@ export async function exportSARtoPDF(
     pageWidth,
   );
 
-  // Preliminary cut points — used only to decide which continuation headings to hide.
+  // Preliminary cut points computed from clean (inflation-free) measurements.
   const cutPointsPrelim = computePageCutPoints(
     bodyMMEstimate,
     sliceMM,
@@ -390,39 +403,46 @@ export async function exportSARtoPDF(
     pageStartPositionsPrelim,
   );
 
-  // If no cut point falls between a primary section's bottom and the continuation
-  // heading's top, both sections share a page — suppress the "Continued..." label.
-  const hiddenHeadings: HTMLElement[] = [];
+  // Show a continuation heading only when a cut actually precedes its block.
+  // Because headings are embedded at the top of their sar-no-split blocks, a
+  // cut that lands before the block snaps to block.top ≈ headerTop — the heading
+  // will be the first element visible on the new page.
+  let anyHeadingsShown = false;
   for (const h of continuationHeaders) {
-    const splitsBetween = cutPointsPrelim.some(
-      (cp) => cp > h.primaryBottom && cp <= h.headerTop,
+    const splitsBefore = cutPointsPrelim.some(
+      (cp) => cp >= h.primaryBottom && cp <= h.headerTop,
     );
-    if (!splitsBetween) {
-      h.element.style.display = "none";
-      hiddenHeadings.push(h.element);
+    if (splitsBefore) {
+      h.element.style.display = "";
+      anyHeadingsShown = true;
     }
   }
 
-  // Re-measure only if headings were hidden — hidden elements shift subsequent
-  // block positions upward, making the preliminary measurements stale.
-  const blocks =
-    hiddenHeadings.length > 0
-      ? measureNoSplitBlocks(tbodyEl, pageWidth)
-      : blocksPrelim;
-  const pageStartPositions =
-    hiddenHeadings.length > 0
-      ? measurePageStartPositions(tbodyEl, pageWidth)
-      : pageStartPositionsPrelim;
+  // Re-measure only if headings were shown — visible headings add height to
+  // their blocks, shifting subsequent sar-no-split block positions downward.
+  const blocks = anyHeadingsShown
+    ? measureNoSplitBlocks(tbodyEl, pageWidth)
+    : blocksPrelim;
+  const pageStartPositions = anyHeadingsShown
+    ? measurePageStartPositions(tbodyEl, pageWidth)
+    : pageStartPositionsPrelim;
 
-  // Capture body with continuation headings selectively hidden.
   const bodyCanvas = await html2canvas(tbodyEl, HTML2CANVAS_OPTS);
 
-  // Restore hidden headings so the on-screen view is unchanged.
-  for (const el of hiddenHeadings) el.style.display = "";
+  for (const el of allContinuationHeaderEls) el.style.display = "";
 
   const bodyMM = canvasHeightToMM(bodyCanvas, pageWidth);
+
+  // Use the last block's bottom as the effective body height instead of the
+  // raw canvas height. PageContent's padding-bottom extends the canvas past the
+  // last content block, which causes the cut-point loop to generate a blank
+  // final page containing only that padding.
+  const lastBlockBottomMM =
+    blocks.length > 0 ? Math.max(...blocks.map((b) => b.bottom)) : bodyMM;
+  const effectiveBodyMM = Math.min(lastBlockBottomMM, bodyMM);
+
   const cutPoints = computePageCutPoints(
-    bodyMM,
+    effectiveBodyMM,
     sliceMM,
     blocks,
     pageStartPositions,

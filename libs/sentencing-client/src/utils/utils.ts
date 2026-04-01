@@ -310,6 +310,26 @@ export const formatLongDate = (date: Date): string => {
   });
 };
 
+// e.g. "Administered By: Officer Smith, March 27, 2026"
+export const formatAssessmentNote = (
+  administeredBy: string | null | undefined,
+  formattedDate: string | null | undefined,
+): string | undefined => {
+  const parts = [
+    administeredBy ? `Administered By: Officer ${administeredBy}` : null,
+    formattedDate,
+  ].filter((part): part is string => part != null);
+  return parts.length > 0 ? parts.join(", ") : undefined;
+};
+
+// e.g. "04/2023"
+export const formatMonthYear = (date: Date | string): string =>
+  new Date(date).toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "2-digit",
+    year: "numeric",
+  });
+
 /** Format a date for display as MM/DD/YYYY, returning a dash for empty values */
 export const formatDisplayDate = (
   date: string | Date | null | undefined,

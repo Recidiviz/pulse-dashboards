@@ -19,6 +19,7 @@ import React from "react";
 
 import { palette } from "~design-system";
 
+import { formatAssessmentNote } from "../../utils/utils";
 import {
   AssessmentTypeKey,
   getAssessmentTypeShortName,
@@ -28,7 +29,7 @@ import { customPalette } from "../styles/palette";
 import { ReportBlock } from "./ReportBlock";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
-const RISK_COLUMN_CONFIG: Array<{
+export const RISK_COLUMN_CONFIG: Array<{
   level: RiskLevelKey;
   bgColor: string;
   textColor: string;
@@ -58,39 +59,33 @@ export const ReportRiskProfileSummaryCard: React.FC<RiskProfileCardData> = ({
   administeredBy,
   assessmentDate,
   groupedDomains,
-}) => (
-  <ReportBlock>
-    <Styled.ReportCardHeader>
-      <span>
-        RISK PROFILE SUMMARY ({getAssessmentTypeShortName(assessmentType)})
-      </span>
-      {(administeredBy || assessmentDate) && (
+}) => {
+  const note = formatAssessmentNote(administeredBy, assessmentDate);
+  return (
+    <ReportBlock>
+      <Styled.ReportCardHeader>
         <span>
-          {[
-            administeredBy ? `Administered By: ${administeredBy}` : null,
-            assessmentDate,
-          ]
-            .filter(Boolean)
-            .join(", ")}
+          RISK PROFILE SUMMARY ({getAssessmentTypeShortName(assessmentType)})
         </span>
-      )}
-    </Styled.ReportCardHeader>
-    <Styled.RiskLevelColumnsContainer>
-      {RISK_COLUMN_CONFIG.map(({ level, bgColor, textColor }) => (
-        <Styled.RiskLevelColumn key={level}>
-          <Styled.RiskLevelColumnHeader
-            $bgColor={bgColor}
-            $textColor={textColor}
-          >
-            {RISK_LEVELS[level]}
-          </Styled.RiskLevelColumnHeader>
-          {groupedDomains[level].map((domain) => (
-            <Styled.RiskLevelDomainItem key={domain}>
-              {domain}
-            </Styled.RiskLevelDomainItem>
-          ))}
-        </Styled.RiskLevelColumn>
-      ))}
-    </Styled.RiskLevelColumnsContainer>
-  </ReportBlock>
-);
+        {note && <span>{note}</span>}
+      </Styled.ReportCardHeader>
+      <Styled.RiskLevelColumnsContainer>
+        {RISK_COLUMN_CONFIG.map(({ level, bgColor, textColor }) => (
+          <Styled.RiskLevelColumn key={level}>
+            <Styled.RiskLevelColumnHeader
+              $bgColor={bgColor}
+              $textColor={textColor}
+            >
+              {RISK_LEVELS[level]}
+            </Styled.RiskLevelColumnHeader>
+            {groupedDomains[level].map((domain) => (
+              <Styled.RiskLevelDomainItem key={domain}>
+                {domain}
+              </Styled.RiskLevelDomainItem>
+            ))}
+          </Styled.RiskLevelColumn>
+        ))}
+      </Styled.RiskLevelColumnsContainer>
+    </ReportBlock>
+  );
+};

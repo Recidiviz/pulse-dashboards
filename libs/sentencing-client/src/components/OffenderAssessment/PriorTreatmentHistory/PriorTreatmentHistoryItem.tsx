@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 
 import { Icon, IconSVG } from "~design-system";
 
+import { formatBooleanDisplay } from "../../../utils/utils";
 import * as Styled from "../HistoryItemStyles";
 import { PriorTreatmentHistory } from "./types";
 
@@ -33,11 +34,6 @@ interface PriorTreatmentHistoryItemProps {
 export const PriorTreatmentHistoryItem: React.FC<
   PriorTreatmentHistoryItemProps
 > = ({ history, onEdit, onDelete, onUndo }) => {
-  const getVerificationStatus = (verified: boolean | null): string => {
-    if (verified === null) return "Not specified";
-    return verified ? "Yes" : "No";
-  };
-
   const handleDelete = async () => {
     const { id, ...savedData } = history;
     try {
@@ -89,7 +85,7 @@ export const PriorTreatmentHistoryItem: React.FC<
           {history.programName ?? "Not specified"}
         </Styled.DataCell>
         <Styled.DataCell>
-          {getVerificationStatus(history.verifiedByReportAuthor)}
+          {formatBooleanDisplay(history.verifiedByReportAuthor)}
         </Styled.DataCell>
       </Styled.DataRow>
     </Styled.Card>

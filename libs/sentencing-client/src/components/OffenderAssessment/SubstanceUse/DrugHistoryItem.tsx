@@ -20,20 +20,14 @@ import toast from "react-hot-toast";
 
 import { Icon, IconSVG } from "~design-system";
 
+import { formatMonthYear } from "../../../utils/utils";
 import * as Styled from "../HistoryItemStyles";
 import {
   DrugHistory,
+  formatSubstanceName,
   FrequencyOfUseLabels,
   MethodOfUseLabels,
-  SubstanceTypeLabels,
 } from "./constants";
-
-const getSubstanceLabel = (history: DrugHistory): string => {
-  if (!history.substance) return "Not specified";
-  if (history.substance === "Other" && history.otherSubstanceName)
-    return history.otherSubstanceName;
-  return SubstanceTypeLabels[history.substance];
-};
 
 interface DrugHistoryItemProps {
   history: DrugHistory;
@@ -92,18 +86,15 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
       </Styled.IconRow>
 
       <Styled.DataRow>
-        <Styled.DataCell>{getSubstanceLabel(history)}</Styled.DataCell>
+        <Styled.DataCell>
+          {formatSubstanceName(history.substance, history.otherSubstanceName) ??
+            "Not specified"}
+        </Styled.DataCell>
         <Styled.DataCell>
           {history.ageOfRegularUse ?? "Not specified"}
         </Styled.DataCell>
         <Styled.DataCell>
-          {history.lastUse
-            ? new Date(history.lastUse).toLocaleDateString("en-US", {
-                timeZone: "UTC",
-                month: "2-digit",
-                year: "numeric",
-              })
-            : "Not specified"}
+          {history.lastUse ? formatMonthYear(history.lastUse) : "Not specified"}
         </Styled.DataCell>
         <Styled.DataCell>
           {history.heaviestUse
