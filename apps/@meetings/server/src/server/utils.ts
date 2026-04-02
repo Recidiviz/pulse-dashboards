@@ -110,21 +110,29 @@ type HandleTranscriptionParams = {
   meetingId: string;
   recordingsGCSBucket: string;
   finalRecordingGCSPath: string;
+  keywords?: string[];
 };
 
 export async function handleTranscriptions(params: HandleTranscriptionParams) {
-  const { meetingId, recordingsGCSBucket, finalRecordingGCSPath } = params;
+  const {
+    meetingId,
+    recordingsGCSBucket,
+    finalRecordingGCSPath,
+    keywords = [],
+  } = params;
 
   const [assemblyAIResult, deepgramResult] = await Promise.allSettled([
     transcribeAudioWithAssemblyAI(
       recordingsGCSBucket,
       finalRecordingGCSPath,
       env.ASSEMBLYAI_API_KEY,
+      keywords,
     ),
     transcribeAudioWithDeepgram(
       recordingsGCSBucket,
       finalRecordingGCSPath,
       env.DEEPGRAM_API_KEY,
+      keywords,
     ),
   ]);
 

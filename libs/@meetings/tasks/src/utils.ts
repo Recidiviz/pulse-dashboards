@@ -313,6 +313,7 @@ export async function transcribeAudioWithAssemblyAI(
   bucketName: string,
   finalRecordingFilePath: string,
   apiKey: string,
+  keywords: string[] = [],
 ) {
   let audioUrl: string;
 
@@ -350,6 +351,7 @@ export async function transcribeAudioWithAssemblyAI(
     summarization: true,
     summary_model: "conversational",
     summary_type: "bullets_verbose",
+    ...(keywords.length > 0 && { keyterms_prompt: keywords }),
   });
 
   if (transcriptionResult.error) {
@@ -383,6 +385,7 @@ export async function transcribeAudioWithDeepgram(
   bucketName: string,
   finalRecordingFilePath: string,
   apiKey: string,
+  keywords: string[] = [],
 ) {
   let transcriptionResult;
 
@@ -401,6 +404,7 @@ export async function transcribeAudioWithDeepgram(
         summarize: true,
         utterances: true,
         mip_opt_out: true,
+        ...(keywords.length > 0 && { keywords: keywords }),
       });
   } else {
     const storage = new Storage();
@@ -425,6 +429,7 @@ export async function transcribeAudioWithDeepgram(
         summarize: true,
         utterances: true,
         mip_opt_out: true,
+        ...(keywords.length > 0 && { keywords: keywords }),
       },
     );
   }

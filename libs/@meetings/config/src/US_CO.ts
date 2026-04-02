@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AgencyConfig } from "~@meetings/config/types";
-import US_AZ_CONFIG from "~@meetings/config/US_AZ";
-import US_CO_CONFIG from "~@meetings/config/US_CO";
-import US_ME_CONFIG from "~@meetings/config/US_ME";
-import US_NE_CONFIG from "~@meetings/config/US_NE";
+import { AgencyConfigSchema } from "~@meetings/config/types";
 
-export const AGENCY_CONFIGS: Record<string, AgencyConfig> = {
-  US_AZ: US_AZ_CONFIG,
-  US_CO: US_CO_CONFIG,
-  US_ME: US_ME_CONFIG,
-  US_NE: US_NE_CONFIG,
-};
+const US_CO_CONFIG = AgencyConfigSchema.parse({
+  name: "Colorado",
+  stateCode: "US_CO",
+  showTranscriptions: true,
+  audioTTLDays: 30,
+  transcriptTTLDays: 30,
+  keywords: ["CDOC", "Edovo"],
+});
+
+export default US_CO_CONFIG;

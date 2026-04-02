@@ -23,6 +23,7 @@ const US_NE_CONFIG = AgencyConfigSchema.parse({
   showTranscriptions: true,
   audioTTLDays: 30,
   transcriptTTLDays: 30,
+  keywords: ["NDCS", "Edovo"],
 });
 
 export default US_NE_CONFIG;

@@ -31,6 +31,7 @@ import { GoogleAuth, OAuth2Client } from "google-auth-library";
 import { run_v2 } from "googleapis";
 import { z } from "zod";
 
+import { AGENCY_CONFIGS } from "~@meetings/config/configs";
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import {
   PostMeetingProcessingStatus,
@@ -51,6 +52,7 @@ import {
   CriticalUpdate,
   stitchAudio,
 } from "~@meetings/tasks";
+import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 import { postMeetingCreatedNotification } from "~@meetings/trpc/services/slack";
 
@@ -359,16 +361,27 @@ export function registerTaskRoutes(app: FastifyInstance) {
             postMeetingProcessingStatus:
               PostMeetingProcessingStatus.TRANSCRIPTION_IN_PROGRESS,
           },
+          include: { client: true, resident: true },
         });
 
         if (!meeting.finalRecordingGCSPath) {
           throw new Error("Final recording GCS path is not set for meeting");
         }
 
+        const agencyKeywords = AGENCY_CONFIGS[stateCode]?.keywords ?? [];
+
+        const person = meeting.client ?? meeting.resident;
+        const personNameTokens = person ? getPersonNameTokens(person) : [];
+
+        // TODO - AVild: Logged in staff member's name included in list of tokens
+
+        const keywords = [...agencyKeywords, ...personNameTokens];
+
         const transcriptions = await handleTranscriptions({
           meetingId,
           recordingsGCSBucket: meeting.recordingsGCSBucket,
           finalRecordingGCSPath: meeting.finalRecordingGCSPath,
+          keywords,
         });
 
         // Upsert each transcription to handle retries in the case we got here

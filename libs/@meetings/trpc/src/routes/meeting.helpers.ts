@@ -139,3 +139,17 @@ export function extractLastCompletedMeetingInfo({
     caseNote: latestMeeting?.caseNote ?? null,
   };
 }
+
+type PersonWithNames = {
+  givenNames: string;
+  middleNames?: string | null;
+  surname: string;
+};
+
+export function getPersonNameTokens(person: PersonWithNames): string[] {
+  return [
+    ...person.givenNames.split(" "),
+    ...(person.middleNames?.split(" ") ?? []),
+    person.surname,
+  ].filter(Boolean);
+}
