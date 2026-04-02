@@ -15,21 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 import ProfileLink from "../components/ProfileLink";
+import { useUserStore } from "../components/StoreProvider";
 import TopBar from "../components/TopBar/TopBar";
 import TopBarLogo from "../components/TopBar/TopBarLogo";
 
-const LanternTopBar: React.FC = () => {
+const LanternTopBar: React.FC = observer(function LanternTopBar() {
+  const userStore = useUserStore();
+  const hasSARAccess = !!userStore.userAllowedNavigation?.sarAccess;
+  const hasTasksAccess =
+    !!userStore.userAllowedNavigation?.workflows?.includes("tasks");
+
   return (
     <TopBar isWide>
       <TopBarLogo />
       <ul className="nav-right">
+        {hasTasksAccess && (
+          <li>
+            <NavLink to="/workflows/tasks">Go to Tasks</NavLink>
+          </li>
+        )}
+        {hasSARAccess && (
+          <li>
+            <NavLink to="/sarAccess">Go to SAR Dashboard</NavLink>
+          </li>
+        )}
         <ProfileLink />
       </ul>
     </TopBar>
   );
-};
+});
 
 export default LanternTopBar;
