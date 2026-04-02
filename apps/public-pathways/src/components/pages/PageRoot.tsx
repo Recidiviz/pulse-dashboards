@@ -27,6 +27,19 @@ import PublicPathwaysLoading from "../PublicPathwaysLoading";
 import { PageError } from "./PageError";
 import { PageContainer } from "./styles";
 
+const CenteredFallback = () => (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: "100vh",
+    }}
+  >
+    <PublicPathwaysLoading />
+  </div>
+);
+
 export const PageRoot = withErrorBoundary(
   observer(function AppRoot() {
     const { pathname } = useLocation();
@@ -37,7 +50,7 @@ export const PageRoot = withErrorBoundary(
     }, [pathname]);
 
     return (
-      <Suspense fallback={<PublicPathwaysLoading />}>
+      <Suspense fallback={<CenteredFallback />}>
         <AuthProvider>
           <PageContainer $isMobile={isMobile}>
             <Outlet />
