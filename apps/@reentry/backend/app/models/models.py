@@ -181,6 +181,9 @@ class PlanGeneration(BaseModel, table=True):
     markdown_result: Optional[str] = None
     finished_at: Optional[datetime] = None
     gen_type: str = Field(default=GenerationType.AUTOMATED)
+    resources_associations_map: Optional[Dict] = Field(
+        sa_type=JSON, nullable=True, default=None
+    )
 
     # actual internal generation data
     gen_data_json: Optional[str] = None
