@@ -120,6 +120,11 @@ const MoreToggle = styled(DropdownToggle)<{ $accent: string }>`
 `;
 
 const StyledDropdownMenu = styled(DropdownMenu)<{ $accent: string }>`
+  && {
+    transition: none;
+    transform: none;
+  }
+
   button[role="menuitem"] {
     color: black;
 
