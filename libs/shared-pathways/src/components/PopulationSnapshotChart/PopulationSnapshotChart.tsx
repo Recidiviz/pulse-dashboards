@@ -195,7 +195,11 @@ function makeDefaultTooltipContent(isRate: boolean) {
     return (
       <PopulationSnapshotTooltip
         label={pieceData?.tooltipLabel ?? ""}
-        value={isRate ? `${pieceData?.value}%` : pieceData?.value ?? ""}
+        value={
+          isRate
+            ? `${pieceData?.value}%`
+            : Number(pieceData?.value).toLocaleString() ?? ""
+        }
       />
     );
   };
@@ -216,7 +220,11 @@ function makeHorizontalTooltipContent(
     return (
       <PopulationSnapshotTooltip
         label={pieceData.tooltipLabel}
-        value={isRate ? `${pieceData.value}%` : pieceData.value}
+        value={
+          isRate
+            ? `${pieceData.value}%`
+            : Number(pieceData.value).toLocaleString()
+        }
         average={
           isRate
             ? `(${pluralize(caseloadData.count, "admission")} / ${
