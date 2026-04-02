@@ -29,14 +29,30 @@ import {
 } from "~@sentencing/trpc/routes/case/case.schema";
 import { PRISMA_CASE_GET_ARGS } from "~@sentencing/trpc/routes/case/constants";
 import { getInsightForCase } from "~@sentencing/trpc/routes/case/utils";
+import {
+  buildStaffCaseFilter,
+  fetchStaffById,
+} from "~@sentencing/trpc/routes/staff/staff.helpers";
 
 export const caseRouter = router({
   getCase: baseProcedure
     .input(getCaseInputSchema)
-    .query(async ({ input: { id }, ctx: { prisma } }) => {
-      const caseData = await prisma.case.findUnique({
+    .query(async ({ input: { id }, ctx: { prisma, staffPseudonymizedId } }) => {
+      // Build an ownership filter so staff can only access cases in their caseload.
+      // If staffPseudonymizedId is undefined (e.g. Recidiviz internal users), the filter
+      // is omitted and access is unrestricted.
+      let staffAccessFilter: Prisma.CaseWhereInput["staff"] | undefined;
+      if (staffPseudonymizedId) {
+        const staff = await fetchStaffById(prisma, staffPseudonymizedId);
+        staffAccessFilter = await buildStaffCaseFilter(prisma, staff);
+      }
+
+      const caseData = await prisma.case.findFirst({
         where: {
           id,
+          ...(staffAccessFilter !== undefined
+            ? { staff: staffAccessFilter }
+            : {}),
         },
         ...PRISMA_CASE_GET_ARGS,
       });
@@ -98,137 +114,154 @@ export const caseRouter = router({
     }),
   updateCase: baseProcedure
     .input(updateCaseSchema)
-    .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
-      try {
-        const { lsirScore, reportType, county, clientGender, clientCounty } =
-          attributes;
-        if (lsirScore || reportType || clientGender || county || clientCounty) {
-          const {
-            isLsirScoreLocked,
-            isReportTypeLocked,
-            isCountyLocked,
-            client,
-          } = await prisma.case.findUniqueOrThrow({
-            where: {
-              id,
-            },
-            select: {
-              isLsirScoreLocked: true,
-              isReportTypeLocked: true,
-              isCountyLocked: true,
-              client: {
-                select: {
-                  isGenderLocked: true,
-                  isCountyLocked: true,
-                },
-              },
-            },
+    .mutation(
+      async ({
+        input: { id, attributes },
+        ctx: { prisma, staffPseudonymizedId },
+      }) => {
+        // Verify the requesting user has access to this case before mutating it.
+        if (staffPseudonymizedId) {
+          const staff = await fetchStaffById(prisma, staffPseudonymizedId);
+          const staffAccessFilter = await buildStaffCaseFilter(prisma, staff);
+          const accessible = await prisma.case.findFirst({
+            where: { id, staff: staffAccessFilter },
+            select: { id: true },
           });
-
-          if (lsirScore && isLsirScoreLocked) {
+          if (!accessible) {
             throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "LSIR score is locked and cannot be updated",
-            });
-          }
-
-          if (reportType && isReportTypeLocked) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Report type is locked and cannot be updated",
-            });
-          }
-
-          if (county && isCountyLocked) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "County is locked and cannot be updated",
-            });
-          }
-
-          if (clientGender && client?.isGenderLocked) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Client gender is locked and cannot be updated",
-            });
-          }
-          if (clientCounty && client?.isCountyLocked) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Client county is locked and cannot be updated",
+              code: "FORBIDDEN",
+              message: "You do not have access to this case",
             });
           }
         }
-      } catch (e) {
-        handlePrismaError(e, "Case with that id was not found");
-      }
 
-      try {
-        // Look up opportunity IDs by their compound unique key (opportunityName, providerName, district).
-        // We do this because Prisma's generated TypeScript types for `set` operations don't work correctly
-        // when a compound unique constraint includes a nullable field (district). Using `id` instead
-        // of the compound key avoids the type issue while maintaining correct runtime behavior.
-        let opportunityIds: { id: string }[] | undefined;
-        if (attributes.recommendedOpportunities) {
-          const opportunities = await Promise.all(
-            attributes.recommendedOpportunities.map((opp) =>
-              prisma.opportunity.findFirst({
-                where: {
-                  opportunityName: opp.opportunityName,
-                  providerName: opp.providerName,
-                  district: opp.district,
+        try {
+          const { lsirScore, reportType, county, clientGender, clientCounty } =
+            attributes;
+          if (
+            lsirScore ||
+            reportType ||
+            clientGender ||
+            county ||
+            clientCounty
+          ) {
+            const {
+              isLsirScoreLocked,
+              isReportTypeLocked,
+              isCountyLocked,
+              client,
+            } = await prisma.case.findFirstOrThrow({
+              where: { id },
+              select: {
+                isLsirScoreLocked: true,
+                isReportTypeLocked: true,
+                isCountyLocked: true,
+                client: {
+                  select: {
+                    isGenderLocked: true,
+                    isCountyLocked: true,
+                  },
                 },
-                select: { id: true },
-              }),
-            ),
-          );
-          opportunityIds = opportunities.filter(
-            (o): o is { id: string } => o !== null,
-          );
+              },
+            });
+
+            if (lsirScore && isLsirScoreLocked) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "LSIR score is locked and cannot be updated",
+              });
+            }
+
+            if (reportType && isReportTypeLocked) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Report type is locked and cannot be updated",
+              });
+            }
+
+            if (county && isCountyLocked) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "County is locked and cannot be updated",
+              });
+            }
+
+            if (clientGender && client?.isGenderLocked) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Client gender is locked and cannot be updated",
+              });
+            }
+            if (clientCounty && client?.isCountyLocked) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Client county is locked and cannot be updated",
+              });
+            }
+          }
+        } catch (e) {
+          handlePrismaError(e, "Case with that id was not found");
         }
 
-        const updateData: Prisma.CaseUpdateInput = {
-          ..._.omit(attributes, ["district", "clientGender", "clientCounty"]),
-          county: {
-            connect: attributes.county
-              ? {
-                  name: attributes.county,
-                }
+        try {
+          // Look up opportunity IDs by their compound unique key (opportunityName, providerName, district).
+          // We do this because Prisma's generated TypeScript types for `set` operations don't work correctly
+          // when a compound unique constraint includes a nullable field (district). Using `id` instead
+          // of the compound key avoids the type issue while maintaining correct runtime behavior.
+          let opportunityIds: { id: string }[] | undefined;
+          if (attributes.recommendedOpportunities) {
+            const opportunities = await Promise.all(
+              attributes.recommendedOpportunities.map((opp) =>
+                prisma.opportunity.findFirst({
+                  where: {
+                    opportunityName: opp.opportunityName,
+                    providerName: opp.providerName,
+                    district: opp.district,
+                  },
+                  select: { id: true },
+                }),
+              ),
+            );
+            opportunityIds = opportunities.filter(
+              (o): o is { id: string } => o !== null,
+            );
+          }
+
+          const updateData: Prisma.CaseUpdateInput = {
+            ..._.omit(attributes, ["district", "clientGender", "clientCounty"]),
+            county: {
+              connect: attributes.county
+                ? { name: attributes.county }
+                : undefined,
+            },
+            customDueDate: attributes.customDueDate,
+            recommendedOpportunities: opportunityIds
+              ? { set: opportunityIds.map((o) => ({ id: o.id })) }
               : undefined,
-          },
-          customDueDate: attributes.customDueDate,
-          recommendedOpportunities: opportunityIds
-            ? { set: opportunityIds.map((o) => ({ id: o.id })) }
-            : undefined,
-          offense: {
-            connect: attributes.offense
-              ? {
-                  name: attributes.offense,
-                }
-              : undefined,
-          },
-          client: {
-            update: {
-              gender: attributes.clientGender,
-              county: {
-                connect: attributes.clientCounty
-                  ? {
-                      name: attributes.clientCounty,
-                    }
-                  : undefined,
+            offense: {
+              connect: attributes.offense
+                ? { name: attributes.offense }
+                : undefined,
+            },
+            client: {
+              update: {
+                gender: attributes.clientGender,
+                county: {
+                  connect: attributes.clientCounty
+                    ? { name: attributes.clientCounty }
+                    : undefined,
+                },
               },
             },
-          },
-        };
+          };
 
-        await prisma.case.update({
-          where: {
-            id,
-          },
-          data: updateData,
-        });
-      } catch (e) {
-        handlePrismaError(e, "Case with that id was not found");
-      }
-    }),
+          await prisma.case.update({
+            where: { id },
+            data: updateData,
+          });
+        } catch (e) {
+          handlePrismaError(e, "Case with that id was not found");
+        }
+      },
+    ),
 });

@@ -38,6 +38,15 @@ import {
   updateSARSchema,
 } from "~@sentencing/trpc/routes/sar/sar.schema";
 
+// Builds a Prisma `where` fragment that restricts a SAR query to the requesting staff member.
+// When staffPseudonymizedId is undefined (e.g. Recidiviz internal users), returns an empty
+// object so the query is unrestricted.
+function sarStaffFilter(staffPseudonymizedId: string | undefined) {
+  return staffPseudonymizedId
+    ? { staff: { pseudonymizedId: staffPseudonymizedId } }
+    : {};
+}
+
 export const sarRouter = router({
   getSARInsight: baseProcedure
     .input(getSARInsightSchema)
@@ -57,11 +66,10 @@ export const sarRouter = router({
 
   getSAR: baseProcedure
     .input(getSARByIDInputSchema)
-    .query(async ({ input: { id }, ctx: { prisma } }) => {
-      const sarData = await prisma.sentencingAssessmentReport.findUnique({
-        where: {
-          id,
-        },
+    .query(async ({ input: { id }, ctx: { prisma, staffPseudonymizedId } }) => {
+      // Fold ownership check into the main query — one round trip instead of two.
+      const sarData = await prisma.sentencingAssessmentReport.findFirst({
+        where: { id, ...sarStaffFilter(staffPseudonymizedId) },
         omit: {
           staffId: true,
           clientId: true,
@@ -142,99 +150,151 @@ export const sarRouter = router({
 
       return sarData;
     }),
+
   getSARsForStaff: baseProcedure
     .input(getSARsForStaffInputSchema)
-    .query(async ({ input: { staffPseudonymizedId }, ctx: { prisma } }) => {
-      return prisma.sentencingAssessmentReport.findMany({
-        where: {
-          staff: { pseudonymizedId: staffPseudonymizedId },
-        },
-        select: {
-          id: true,
-          externalId: true,
-          status: true,
-          dueDate: true,
-          client: {
-            select: {
-              externalId: true,
-              fullName: true,
+    .query(
+      async ({
+        input: { staffPseudonymizedId: requestedPseudonymizedId },
+        ctx: { prisma, staffPseudonymizedId },
+      }) => {
+        // Verify the requesting user is only fetching their own caseload.
+        // If staffPseudonymizedId is undefined in context, the check is skipped.
+        if (
+          staffPseudonymizedId &&
+          staffPseudonymizedId !== requestedPseudonymizedId
+        ) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only view your own caseload",
+          });
+        }
+
+        return prisma.sentencingAssessmentReport.findMany({
+          where: {
+            staff: { pseudonymizedId: requestedPseudonymizedId },
+          },
+          select: {
+            id: true,
+            externalId: true,
+            status: true,
+            dueDate: true,
+            client: {
+              select: {
+                externalId: true,
+                fullName: true,
+              },
             },
           },
-        },
-      });
-    }),
+        });
+      },
+    ),
+
   updateSAR: baseProcedure
     .input(updateSARSchema)
-    .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
-      try {
-        const { motherName, fatherName, guardianName, charges } = attributes;
-
-        const updateData: Prisma.SentencingAssessmentReportUpdateInput = {
-          ..._.omit(attributes, [
-            "motherName",
-            "fatherName",
-            "guardianName",
-            "charges",
-          ]),
-        };
-
-        // Cast metadata to Prisma's InputJsonValue if provided.
-        // Explanation: Prisma stores JSON data and expects type `InputJsonValue` (any valid JSON).
-        // Our `SARMetadata` type is a specific structured object (sections, statuses, etc.).
-        // Even though our structure IS valid JSON, TypeScript doesn't automatically know
-        // that `SARMetadata` is compatible with `InputJsonValue`.
-        // The cast tells TypeScript: "This specific structure is valid JSON that Prisma can store."
-        // The Zod schema (`SARMetadataSchema`) still validates the structure at runtime.
-        if (attributes.metadata !== undefined) {
-          updateData.metadata = attributes.metadata as Prisma.InputJsonValue;
+    .mutation(
+      async ({
+        input: { id, attributes },
+        ctx: { prisma, staffPseudonymizedId },
+      }) => {
+        if (staffPseudonymizedId) {
+          const accessible = await prisma.sentencingAssessmentReport.findFirst({
+            where: { id, ...sarStaffFilter(staffPseudonymizedId) },
+            select: { id: true },
+          });
+          if (!accessible) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message:
+                "You do not have access to this Sentencing Assessment Report",
+            });
+          }
         }
 
-        // Update client fields if provided
-        const clientUpdateFields: Prisma.ClientUpdateInput = {};
-        if (motherName !== undefined)
-          clientUpdateFields.motherName = motherName;
-        if (fatherName !== undefined)
-          clientUpdateFields.fatherName = fatherName;
-        if (guardianName !== undefined)
-          clientUpdateFields.guardianName = guardianName;
+        try {
+          const { motherName, fatherName, guardianName, charges } = attributes;
 
-        if (Object.keys(clientUpdateFields).length > 0) {
-          updateData.client = {
-            update: clientUpdateFields,
+          const updateData: Prisma.SentencingAssessmentReportUpdateInput = {
+            ..._.omit(attributes, [
+              "motherName",
+              "fatherName",
+              "guardianName",
+              "charges",
+            ]),
           };
-        }
-        // Handle charges - upsert by ID to preserve imported charges
-        if (charges !== undefined && charges !== null) {
-          updateData.charges = {
-            update: charges.map((charge) => ({
-              where: { id: charge.id },
-              data: {
-                prosecutingAttorney: charge.prosecutingAttorney,
-                defenseAttorney: charge.defenseAttorney,
-                pleaAgreement: charge.pleaAgreement,
-                pleaDate: charge.pleaDate,
-                sentencingDate: charge.sentencingDate,
-              },
-            })),
-          };
-        }
 
-        await prisma.sentencingAssessmentReport.update({
-          where: { id },
-          data: updateData,
-        });
-      } catch (e) {
-        handlePrismaError(
-          e,
-          "Sentencing Assessment Report with that id was not found",
-        );
-      }
-    }),
+          // Cast metadata to Prisma's InputJsonValue if provided.
+          // Explanation: Prisma stores JSON data and expects type `InputJsonValue` (any valid JSON).
+          // Our `SARMetadata` type is a specific structured object (sections, statuses, etc.).
+          // Even though our structure IS valid JSON, TypeScript doesn't automatically know
+          // that `SARMetadata` is compatible with `InputJsonValue`.
+          // The cast tells TypeScript: "This specific structure is valid JSON that Prisma can store."
+          // The Zod schema (`SARMetadataSchema`) still validates the structure at runtime.
+          if (attributes.metadata !== undefined) {
+            updateData.metadata = attributes.metadata as Prisma.InputJsonValue;
+          }
+
+          // Update client fields if provided
+          const clientUpdateFields: Prisma.ClientUpdateInput = {};
+          if (motherName !== undefined)
+            clientUpdateFields.motherName = motherName;
+          if (fatherName !== undefined)
+            clientUpdateFields.fatherName = fatherName;
+          if (guardianName !== undefined)
+            clientUpdateFields.guardianName = guardianName;
+
+          if (Object.keys(clientUpdateFields).length > 0) {
+            updateData.client = {
+              update: clientUpdateFields,
+            };
+          }
+          // Handle charges - upsert by ID to preserve imported charges
+          if (charges !== undefined && charges !== null) {
+            updateData.charges = {
+              update: charges.map((charge) => ({
+                where: { id: charge.id },
+                data: {
+                  prosecutingAttorney: charge.prosecutingAttorney,
+                  defenseAttorney: charge.defenseAttorney,
+                  pleaAgreement: charge.pleaAgreement,
+                  pleaDate: charge.pleaDate,
+                  sentencingDate: charge.sentencingDate,
+                },
+              })),
+            };
+          }
+
+          await prisma.sentencingAssessmentReport.update({
+            where: { id },
+            data: updateData,
+          });
+        } catch (e) {
+          handlePrismaError(
+            e,
+            "Sentencing Assessment Report with that id was not found",
+          );
+        }
+      },
+    ),
 
   // Employment History CRUD mutations
   createEmploymentHistory: baseProcedure
     .input(createEmploymentHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.sentencingAssessmentReport.findFirst({
+          where: { id: input.sarId, ...sarStaffFilter(staffPseudonymizedId) },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have access to this Sentencing Assessment Report",
+          });
+        }
+      }
+
       try {
         const { sarId, ...data } = input;
         return await prisma.employmentHistory.create({
@@ -253,7 +313,23 @@ export const sarRouter = router({
 
   updateEmploymentHistory: baseProcedure
     .input(updateEmploymentHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.employmentHistory.findFirst({
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+          },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this employment history record",
+          });
+        }
+      }
+
       try {
         const { id, ...data } = input;
         return await prisma.employmentHistory.update({
@@ -270,7 +346,23 @@ export const sarRouter = router({
 
   deleteEmploymentHistory: baseProcedure
     .input(deleteEmploymentHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.employmentHistory.findFirst({
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+          },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this employment history record",
+          });
+        }
+      }
+
       try {
         return await prisma.employmentHistory.delete({
           where: { id: input.id },
@@ -286,7 +378,21 @@ export const sarRouter = router({
   // Substance Use History CRUD mutations
   createDrugHistory: baseProcedure
     .input(createDrugHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.sentencingAssessmentReport.findFirst({
+          where: { id: input.sarId, ...sarStaffFilter(staffPseudonymizedId) },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have access to this Sentencing Assessment Report",
+          });
+        }
+      }
+
       try {
         const { sarId, ...data } = input;
         return await prisma.drugHistory.create({
@@ -305,7 +411,24 @@ export const sarRouter = router({
 
   updateDrugHistory: baseProcedure
     .input(updateDrugHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.drugHistory.findFirst({
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+          },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have access to this substance use history record",
+          });
+        }
+      }
+
       try {
         const { id, ...data } = input;
         return await prisma.drugHistory.update({
@@ -322,7 +445,24 @@ export const sarRouter = router({
 
   deleteDrugHistory: baseProcedure
     .input(deleteDrugHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.drugHistory.findFirst({
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+          },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have access to this substance use history record",
+          });
+        }
+      }
+
       try {
         return await prisma.drugHistory.delete({
           where: { id: input.id },
@@ -338,7 +478,21 @@ export const sarRouter = router({
   // Prior Treatment History CRUD mutations
   createPriorTreatmentHistory: baseProcedure
     .input(createPriorTreatmentHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.sentencingAssessmentReport.findFirst({
+          where: { id: input.sarId, ...sarStaffFilter(staffPseudonymizedId) },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have access to this Sentencing Assessment Report",
+          });
+        }
+      }
+
       try {
         const { sarId, ...data } = input;
         return await prisma.priorTreatmentHistory.create({
@@ -357,7 +511,24 @@ export const sarRouter = router({
 
   updatePriorTreatmentHistory: baseProcedure
     .input(updatePriorTreatmentHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.priorTreatmentHistory.findFirst({
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+          },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have access to this prior treatment history record",
+          });
+        }
+      }
+
       try {
         const { id, ...data } = input;
         return await prisma.priorTreatmentHistory.update({
@@ -374,7 +545,24 @@ export const sarRouter = router({
 
   deletePriorTreatmentHistory: baseProcedure
     .input(deletePriorTreatmentHistorySchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
+      if (staffPseudonymizedId) {
+        const accessible = await prisma.priorTreatmentHistory.findFirst({
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+          },
+          select: { id: true },
+        });
+        if (!accessible) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have access to this prior treatment history record",
+          });
+        }
+      }
+
       try {
         return await prisma.priorTreatmentHistory.delete({
           where: { id: input.id },

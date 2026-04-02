@@ -33,6 +33,7 @@ type Auth0User = {
   [APP_METADATA_KEY]: {
     stateCode: string;
     allowedStates?: string[];
+    pseudonymizedId?: string;
   };
 };
 
@@ -60,6 +61,8 @@ export async function createContext(opts: CreateFastifyContextOptions) {
 
   const authPayload = await verifyAuth0Token(opts);
 
+  let staffPseudonymizedId: string | undefined;
+
   if (authPayload) {
     const auth0User = authPayload as Auth0User;
     const userStateLower = auth0User[APP_METADATA_KEY]?.stateCode;
@@ -72,6 +75,14 @@ export async function createContext(opts: CreateFastifyContextOptions) {
         message: `User with state code ${userState} cannot request data about state: ${stateCode}`,
       });
     }
+
+    // Read pseudonymizedId directly from the JWT app_metadata claim.
+    // Recidiviz internal users are excluded — their pseudonymizedId is not in
+    // client-state Staff tables, so applying ownership checks would block them from
+    // everything. They retain unrestricted access via the state-code check above.
+    if (!isRecidivizUser) {
+      staffPseudonymizedId = auth0User[APP_METADATA_KEY]?.pseudonymizedId;
+    }
   }
 
   return {
@@ -79,5 +90,6 @@ export async function createContext(opts: CreateFastifyContextOptions) {
     res,
     isAuthorized: !!authPayload,
     prisma: prismaClient,
+    staffPseudonymizedId,
   };
 }
