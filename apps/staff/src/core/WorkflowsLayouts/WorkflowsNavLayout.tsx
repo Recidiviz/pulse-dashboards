@@ -69,10 +69,10 @@ const Main = styled.main<{
         ${MaxWidth}`}
 `;
 
-const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
+const BackButtonWrapper = styled.div<{ $fixed: boolean; $isMobile: boolean }>`
   max-width: fit-content;
-  padding: ${rem(spacing.lg)};
-  padding-bottom: 0;
+  padding: 0 ${rem(spacing.lg)};
+  ${({ $isMobile }) => !$isMobile && `padding-top: ${rem(spacing.lg)}`}
   ${(props) =>
     props.$fixed
       ? `
@@ -108,7 +108,10 @@ export const WorkflowsNavLayout: React.FC<{
       >
         <OverviewNavLinks />
       </NavigationLayout>
-      <BackButtonWrapper $fixed={!isLaptop && limitedWidth}>
+      <BackButtonWrapper
+        $fixed={!isLaptop && limitedWidth}
+        $isMobile={isMobile}
+      >
         <WorkflowsBackButton />
       </BackButtonWrapper>
       <Main isMobile={isMobile} $limitedWidth={limitedWidth}>

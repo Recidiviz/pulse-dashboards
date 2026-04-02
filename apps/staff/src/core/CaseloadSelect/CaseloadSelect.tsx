@@ -254,13 +254,13 @@ export const ScrollShadow = styled.div<{
   background: linear-gradient(
     ${({ side }) => (side === "top" ? 180 : 360)}deg,
     ${palette.marble1} 3.13%,
-    ${palette.marble1} 109.62%
+    transparent 109.62%
   );
   pointer-events: none;
   position: absolute;
   opacity: ${({ show }) => (show ? 1 : 0)};
   transition: all 200ms ease;
-  ${({ side }) => side}: 0;
+  ${({ side }) => side === "bottom" && "bottom: 0;"}
   width: 100%;
   height: 3em;
   z-index: ${zindex.tooltip - 1};
@@ -275,11 +275,16 @@ export const MenuListWithShadow = (
   function MenuList({ children, ...props }: MenuListProps<SelectOption, true>) {
     const topShadow = useInView();
     const bottomShadow = useInView();
+    const MIN_ENTRIES_FOR_SCROLLABLE_MENU = 9;
 
     return (
       <>
         <ScrollShadow
-          show={!!topShadow.entry && !topShadow.inView && entriesNumber > 9}
+          show={
+            !!topShadow.entry &&
+            !topShadow.inView &&
+            entriesNumber >= MIN_ENTRIES_FOR_SCROLLABLE_MENU
+          }
           side="top"
         />
         <components.MenuList {...props}>
@@ -298,7 +303,10 @@ export const MenuListWithShadow = (
           <div ref={bottomShadow.ref} />
         </components.MenuList>
         <ScrollShadow
-          show={!bottomShadow.inView && entriesNumber > 9}
+          show={
+            !bottomShadow.inView &&
+            entriesNumber >= MIN_ENTRIES_FOR_SCROLLABLE_MENU
+          }
           side="bottom"
         />
       </>
@@ -316,7 +324,7 @@ const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
   padding: 0 0.5rem;
 `;
 
-const StyledModal = styled(Modal)`
+const MobileSearchModal = styled(Modal)`
   .ReactModal__Content {
     font-family: "Public Sans", sans-serif;
     font-weight: 500;
@@ -329,6 +337,8 @@ const StyledModal = styled(Modal)`
     height: 100%;
     padding: 1rem;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 `;
 
@@ -413,13 +423,21 @@ export const caseloadSelectStyles = (
   }),
   container: (base) => ({
     ...base,
-    margin: isMobile && "0 -1rem",
     fontSize: rem(16),
+
+    ...(isMobile
+      ? {
+          margin: "0 -1rem",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+        }
+      : {}),
   }),
   menuList: (base) => ({
     ...base,
-    maxHeight: rem(isMobile ? 900 : 300),
     padding: `${rem(spacing.sm)} 0`,
+    maxHeight: isMobile ? "unset" : rem(300),
   }),
   control: (base, state) => ({
     ...base,
@@ -443,6 +461,17 @@ export const caseloadSelectStyles = (
     borderTop: `1px solid ${palette.slate20}`,
     borderRadius: "0 0 8px 8px",
     boxShadow: !isMobile ? `0px 10px 40px ${palette.slate20}` : "none",
+
+    // By default the menu is absolutely positioned, but on mobile devices
+    // we want it to take up the whole screen
+    ...(isMobile
+      ? {
+          position: "unset",
+          top: "unset",
+          flex: "1",
+          overflowY: "auto",
+        }
+      : {}),
   }),
   option: (base) => ({
     ...base,
@@ -522,8 +551,13 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const disableAdditionalSelections =
     selectedSearchables.length >= SELECTED_SEARCH_LIMIT;
 
+  const numAvailableSearchables = availableSearchables.reduce(
+    (acc, group) => acc + group.searchables.length,
+    0,
+  );
+
   customComponents.MenuList = MenuListWithShadow(
-    availableSearchables.length,
+    numAvailableSearchables,
     disableAdditionalSelections,
     searchTitle,
     searchTitleIgnoreCase,
@@ -572,7 +606,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           &nbsp;
           <Icon kind={IconSVG.DownChevron} width={8} />
         </CaseloadSelectMobileButton>
-        <StyledModal
+        <MobileSearchModal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
         >
@@ -586,7 +620,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           </ModalButtonRow>
           <ModalHeader>Search</ModalHeader>
           <ReactSelect menuIsOpen isClearable={false} {...defaultOptions} />
-        </StyledModal>
+        </MobileSearchModal>
       </CaseloadSelectContainer>
     );
   }

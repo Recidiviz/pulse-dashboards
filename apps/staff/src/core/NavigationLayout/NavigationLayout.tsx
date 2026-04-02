@@ -56,7 +56,9 @@ import { SYSTEM_ID_TO_PATH } from "./OverviewNavLinks";
 
 export const NAV_BAR_HEIGHT = 64;
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  height: ${rem(NAV_BAR_HEIGHT)};
+`;
 
 const Banner = styled.div<{ topOffset?: number }>`
   height: ${({ topOffset }) => rem(NAV_BAR_HEIGHT + (topOffset || 0))};
