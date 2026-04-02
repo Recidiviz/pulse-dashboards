@@ -65,6 +65,10 @@ resource "google_compute_ssl_certificate" "edovo_ssl" {
   name_prefix = "edovo-ssl-certificate-"
   private_key = data.google_secret_manager_secret_version.edovo_ssl_private_key.secret_data
   certificate = data.google_secret_manager_secret_version.edovo_ssl_certificate.secret_data
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 
