@@ -15,9 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
 import styled from "styled-components";
 
-import { Button, Dropdown, DropdownMenu, DropdownToggle } from "~design-system";
+import {
+  Button,
+  Dropdown,
+  DropdownMenu,
+  DropdownToggle,
+  spacing,
+} from "~design-system";
 
 export const FilterSection = styled.div`
   background: ${({ theme }) => theme.modal.backgroundColor};
@@ -109,6 +116,9 @@ export const FilterDropdownMenu = styled(DropdownMenu)`
 
   button[role="menuitem"] {
     ${({ theme }) => theme.typography.Sans14}
+    height: ${rem(spacing.xl)};
+    line-height: ${rem(spacing.xl)};
+    padding: 0 ${rem(spacing.md)};
     color: black;
 
     &:focus {
