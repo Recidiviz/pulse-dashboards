@@ -21,6 +21,6 @@ import { ResidentsConfig } from "../../types";
 export const usNcResidentsConfig: ResidentsConfig = {
   home,
   translation: {
-    additionalLanguages: [],
+    additionalLanguages: ["es"],
   },
 };

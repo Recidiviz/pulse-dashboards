@@ -51,7 +51,7 @@ import { clearAllLoaders } from "./utils";
   {
     state: "US_NC",
     slug: "north-carolina",
-    expectSpanishEnabled: false,
+    expectSpanishEnabled: true,
   },
 ].forEach((opts) => {
   test.describe(`${opts.state}`, () => {

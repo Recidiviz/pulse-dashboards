@@ -35,7 +35,7 @@ import { UsNcRNASuccessfulSubmission } from "./UsNcRNASuccessfulSubmission";
 export function UsNcRNALanding() {
   const { t } = useUsNcTranslations();
   usePageTitle(t(($) => $.pageTitle.rna));
-  const { heading, description, button } = t(($) => $.rna.landing.resumeForm, {
+  const { heading, description, button } = t(($) => $.rna.landing.notStarted, {
     returnObjects: true,
   });
 

@@ -1,15 +1,70 @@
 {
   "pageTitle": {
-    "home": "Inicio"
+    "home": "Inicio",
+    "rna": "Autoinforme"
   },
   "rna": {
+    "landing": {
+      "notEnabled": {
+        "heading": "Todavía no es el momento para tu autoinforme",
+        "description": "Vuelva a revisar después de que tu administrador de casos empiece tu reevaluación."
+      },
+      "notStarted": {
+        "heading": "Es hora de tu autoinforme",
+        "description": "Tus respuestas ayudarán a tu administrador de casos a crear un plan de caso más personal para ti, basado en los programas que te interesan, tus metas, y las áreas en las que quieras trabajar. Completar estas preguntas te tomará unos 15 minutos.",
+        "button": "Empezar"
+      },
+      "resumeForm": {
+        "heading": "Autoinforme: Continúa donde lo dejaste",
+        "description": "Has completado {{numCompletedSections}} de {{totalSections}} secciones.",
+        "button": "Continuar autoinforme"
+      },
+      "submitted": {
+        "heading": "Gracias por completar tu autoinforme",
+        "description": "Completaste el formulario el {{completedAt, formatFullDate}}. Un miembro del personal se pondrá en contacto contigo para los siguientes pasos."
+      }
+    },
+    "confirmIdentity": {
+      "heading": "¿Eres tú?",
+      "nameLabel": "Nombre",
+      "idLabel": "Número de identificación",
+      "description": "Si eres tú, presiona el botón para continuar a tu autoinforme. Si no eres tú, habla con un miembro del personal.",
+      "button": "Sí, soy yo"
+    },
+    "page": {
+      "progressBar": {
+        "sectionLabel": "Sección {{section}} de {{totalSections}}",
+        "amountComplete": "{{percentDone}}% completado"
+      },
+      "invalidAnswer": "Debes responder a esta pregunta para continuar.",
+      "answerAllQuestions": "Debes responder a todas las preguntas para continuar.",
+      "saving": "Guardando tus respuestas...",
+      "savingError": "Hubo un problema al guardar tus respuestas.",
+      "goBackModal": {
+        "title": "¿Seguro que quieres volver?",
+        "message": "Puedes volver para cambiar tus otras respuestas, pero si lo haces, las respuestas de esta página no se guardarán. ",
+        "cancelButtonText": "Quedarse aquí",
+        "confirmButtonText": "Volver"
+      },
+      "confirmSubmissionModal": {
+        "title": "¿Estás seguro de que quieres enviarlo?",
+        "message": "Tu administrador de casos verá tus respuestas. No podrás cambiar tus respuestas después de enviar el reporte. ",
+        "cancelButtonText": "Quedarse aquí",
+        "confirmButtonText": "Enviar"
+      },
+      "navButtons": {
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "submit": "Enviar"
+      }
+    },
     "radioAnswerCopy": {
       "FREQUENCY": {
-        "NEVER": "Nunca",
-        "RARELY": "Rara vez",
-        "SOMETIMES": "A veces",
-        "USUALLY": "Con frecuencia",
-        "ALWAYS": "Siempre"
+        "NEVER": "Nunca es cierto",
+        "RARELY": "Rara vez es cierto",
+        "SOMETIMES": "A veces es cierto",
+        "USUALLY": "Con frecuencia es cierto",
+        "ALWAYS": "Siempre es cierto"
       },
       "DAYS_PER_WEEK_RADIO": {
         "ZERO": "0 días",
@@ -29,59 +84,62 @@
       }
     },
     "sobrietyAnswerCopy": {
-      "SOBER": "sobrio",
+      "SOBER": "sobrio/a",
       "JUST_ALCOHOL": "bajo los efectos del alcohol únicamente",
       "JUST_DRUGS": "bajo los efectos de drogas únicamente",
-      "BOTH": "bajo los efectos del alcohol y las drogas"
+      "BOTH": "bajo los efectos del alcohol y drogas"
     },
     "lifeAreasQuestionCopy": {
       "isThisAProblem": "¿Esto es un problema para usted?",
-      "interestedInImproving": "¿Le interesa mejorar? (1 = Para nada, 10 = Mucho)",
-      "improvement": "¿Qué puede hacer para mejorar la situación? (TKTK)"
+      "customLifeAreaPrompt": "¿Hay otra área en la que quieres mejorar?",
+      "interestedInImproving": "¿Qué tanto le interesa mejorar? (1 = Para nada, 10 = Mucho)",
+      "improvement": "¿Qué puedes hacer para mejorar la situación? (opcional)",
+      "improvementPlaceholder": "Maneras en que puedes mejorar la situación u obstáculos que puedes enfrentar al mejorar la situación"
     },
     "pageCopy": {
       "sectionBasicNeeds": {
-        "heading": "Parte 1: TKTK",
-        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+        "heading": "Parte 1: Tus necesidades",
+        "description": "Selecciona la respuesta que mejor describa tu situación."
       },
       "sectionAlcoholDrugs": {
-        "heading": "Parte 2: TKTK",
-        "description": "Piense en una semana normal de su vida para responder a las siguientes preguntas. Marque la casilla que mejor refleje su situación."
+        "heading": "Parte 2: Alcohol y drogas",
+        "description": "Piensa en una semana típica de tu vida al responder las siguientes preguntas. Selecciona la respuesta que mejor describa tu situación."
       },
       "sectionAlcoholDrugs2": {
-        "heading": "Parte 3: TKTK",
-        "description": "Piense en una semana normal de su vida para responder a las siguientes preguntas. Marque la casilla que mejor refleje su situación."
+        "heading": "Parte 3: Alcohol y drogas",
+        "description": "Piensa en una semana típica de tu vida al responder las siguientes preguntas. Selecciona la respuesta que mejor describa tu situación."
       },
       "sectionChildhoodTrouble": {
-        "heading": "Parte 4: TKTK",
+        "heading": "Parte 4: Tu infancia",
         "description": "Piense en los momentos antes de cumplir 15 años en los que se metió en problemas."
       },
       "sectionFamilyGrowingUp": {
-        "heading": "Parte 5: TKTK",
-        "description": "En cada una de las siguientes afirmaciones, marque la casilla que mejor refleje la realidad de cómo era su familia cuando era pequeño."
+        "heading": "Parte 5: Tu familia durante la infancia",
+        "description": "Selecciona la respuesta que mejor describa cómo era tu familia durante tu infancia."
       },
       "sectionFamilyNow": {
-        "heading": "Parte 6: TKTK",
-        "description": "En cada afirmación, marque la casilla que mejor refleje la situación actual de su familia."
+        "heading": "Parte 6: Tu familia ahora",
+        "description": "Selecciona la respuesta que mejor describa tu situación familiar actual."
       },
       "sectionBehavior": {
-        "heading": "Parte 7: TKTK",
-        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+        "heading": "Parte 7: Tu comportamiento",
+        "description": "Selecciona la respuesta que mejor describa tu situación familiar actual."
       },
       "sectionBehavior2": {
-        "heading": "Parte 8: TKTK",
-        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+        "heading": "Parte 8: Tu comportamiento",
+        "description": "Selecciona la respuesta que mejor describa tu situación familiar actual."
       },
       "sectionBehavior3": {
-        "heading": "Parte 9: TKTK",
-        "description": "En cada afirmación, marque la casilla que mejor refleje su situación."
+        "heading": "Parte 9: Tu comportamiento",
+        "description": "Selecciona la respuesta que mejor describa tu situación familiar actual."
       },
       "sectionFriends": {
-        "heading": "Parte 10: TKTK",
+        "heading": "Parte 10: Tus amigos",
         "description": "Piense en los amigos que tiene ahora y téngalos en mente para responder estas preguntas."
       },
       "sectionLifeAreas": {
-        "heading": "Parte 11: Aspectos de la vida"
+        "heading": "Parte 11: Aspectos de la vida",
+        "description": "Abajo, verás áreas de la vida que pueden o no preocuparte. Para cada área que marques como un problema, indica qué tanto te interesa mejorar tu situación y qué puedes hacer. "
       }
     },
     "questionCopy": {
@@ -122,10 +180,12 @@
         "question": "En una semana normal, ¿cuántos días bebía alcohol o consumía drogas?"
       },
       "alcoholDrugsMoreThan5Drinks": {
-        "question": "¿Cuántos días de una semana normal bebía más de 5 copas de una vez?"
+        "question": "¿Cuántos días de una semana normal bebía más de 5 copas de una vez?",
+        "placeholderText": "Número de días",
+        "customInvalidAnswerNotice": "Debes ingresar un número entre 0 y 7 para continuar."
       },
       "alcoholDrugsTimeOfOffense": {
-        "question": "En el momento de cometer el delito por el que estoy actualmente encarcelado, estaba... (TKTK)"
+        "question": "En el momento de cometer el delito por el que estoy actualmente encarcelado, estaba (marca todo lo que aplique):"
       },
       "alcoholDrugsArguments": {
         "question": "Cuando bebía alcohol o consumía drogas, me involucraba en discusiones con otras personas."
@@ -263,7 +323,7 @@
         "question": "Comportamiento"
       },
       "lifeAreaEmployability": {
-        "question": "Habilidad para conseguir empleo"
+        "question": "Empleabilidad"
       },
       "lifeAreaAlcoholDrugs": {
         "question": "Alcohol y otras drogas"
@@ -272,7 +332,7 @@
         "question": "Educación"
       },
       "lifeAreaEmployment": {
-        "question": "Empleo"
+        "question": "Habilidad para conseguir empleo"
       },
       "lifeAreaFamilyFriends": {
         "question": "Familia y amigos"
@@ -299,7 +359,8 @@
         "question": "Situación legal"
       },
       "lifeAreaCustom": {
-        "question": "Otro"
+        "question": "Otro",
+        "placeholderText": "Otras áreas en las que quieras mejorar (opcional)"
       }
     }
   }

@@ -30,7 +30,7 @@ export function UsNcRNASuccessfulSubmission({
 }) {
   const { t } = useUsNcTranslations();
 
-  const { heading, description } = t(($) => $.rna.landing.resumeForm, {
+  const { heading, description } = t(($) => $.rna.landing.submitted, {
     completedAt,
     returnObjects: true,
   });
