@@ -22,6 +22,7 @@ import { createClient } from "@deepgram/sdk";
 import { Storage } from "@google-cloud/storage";
 import { AssemblyAI } from "assemblyai";
 import ffmpegPath from "ffmpeg-static";
+import ffprobePath from "ffprobe-static";
 import ffmpeg from "fluent-ffmpeg";
 import path from "path";
 
@@ -37,6 +38,7 @@ if (!ffmpegPath) {
 }
 
 ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath.path);
 
 function isOffline() {
   return process.env["IS_OFFLINE"] === "true";

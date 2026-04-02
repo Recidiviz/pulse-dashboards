@@ -18099,6 +18099,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ffprobe-static@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@types/ffprobe-static@npm:2.0.3"
+  checksum: 10c0/fcb175b6d71be1ec62614e368ae43679512d84176ff8fdabca96684b51d37d23a2f0032643d6729191a456e0f9cace03e39b122e0132ee11825b618a222b33fd
+  languageName: node
+  linkType: hard
+
 "@types/file-saver@npm:^2.0.5":
   version: 2.0.5
   resolution: "@types/file-saver@npm:2.0.5"
@@ -31106,6 +31113,13 @@ __metadata:
     https-proxy-agent: "npm:^5.0.0"
     progress: "npm:^2.0.3"
   checksum: 10c0/ac5126fc1391533476232682df593c88f49707878a392cce118576320cc33a1fc33a2d8c918f7d6ac7fa6472fb9d8a67f6c1d3e3842a760644dfcb73f7d10b46
+  languageName: node
+  linkType: hard
+
+"ffprobe-static@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "ffprobe-static@npm:3.1.0"
+  checksum: 10c0/4c20acf651a8f7310ec9e8fceaf1db76c827469636a6a38ece1c32da17d29d6db23a5b551cec1bb50d2a03c2880a18980efbaa030df08df9b0f41a5dd76a4a12
   languageName: node
   linkType: hard
 
@@ -47824,6 +47838,7 @@ __metadata:
     "@types/dompurify": "npm:^3.0.5"
     "@types/downloadjs": "npm:^1.4.3"
     "@types/express-jwt": "npm:^6.0.4"
+    "@types/ffprobe-static": "npm:^2.0.3"
     "@types/file-saver": "npm:^2.0.5"
     "@types/fluent-ffmpeg": "npm:^2.1.27"
     "@types/ioredis-mock": "npm:^8.2.5"
@@ -47940,6 +47955,7 @@ __metadata:
     fastify-auth0-verify: "npm:^3.0.0"
     fastify-type-provider-zod: "npm:^4.0.0"
     ffmpeg-static: "npm:^5.2.0"
+    ffprobe-static: "npm:^3.1.0"
     file-saver: "npm:^2.0.5"
     firebase: "npm:^9.18.0"
     firebase-admin: "npm:^10.0.2"
