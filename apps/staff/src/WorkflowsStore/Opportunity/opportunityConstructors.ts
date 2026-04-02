@@ -72,6 +72,7 @@ import { UsMeMediumTrusteeOpportunity } from "./UsMe/UsMeMediumTrusteeOpportunit
 import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "./UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { usMiReclassificationRequestOpportunity } from "./UsMi/UsMiReclassificationRequestOpportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "./UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
+import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "./UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
@@ -141,6 +142,8 @@ export const opportunityConstructors = {
   usMiReclassificationRequest: usMiReclassificationRequestOpportunity,
   usMiSecurityClassificationCommitteeReview:
     usMiSecurityClassificationCommitteeReviewOpportunity,
+  usMiSecurityClassificationCommitteeReviewV2:
+    usMiSecurityClassificationCommitteeReviewV2Opportunity,
   usMiSupervisionLevelDowngrade: UsMiSupervisionLevelDowngradeOpportunity,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity,

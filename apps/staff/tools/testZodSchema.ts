@@ -37,6 +37,7 @@ import {
   usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiCustodyLevelDowngradeSchema,
   usMiSecurityClassificationCommitteeReviewSchema,
+  usMiSecurityClassificationCommitteeReviewV2Schema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usNeGoodTimeRestorationSchema,
   usPaSpecialCircumstancesSupervisionSchema,
@@ -176,6 +177,8 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReview:
     usMiSecurityClassificationCommitteeReviewSchema,
+  usMiSecurityClassificationCommitteeReviewV2:
+    usMiSecurityClassificationCommitteeReviewV2Schema,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usMiCustodyLevelDowngrade: usMiCustodyLevelDowngradeSchema,

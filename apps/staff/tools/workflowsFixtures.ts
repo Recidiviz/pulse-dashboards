@@ -32,6 +32,7 @@ import {
   usMiCustodyLevelDowngradeFixtures,
   usMiReclassificationRequestFixtures,
   usMiSecurityClassificationCommitteeReviewFixtures,
+  usMiSecurityClassificationCommitteeReviewV2Fixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
   usNeGoodTimeRestorationFixtures,
   usPaSpecialCircumstancesSupervisionFixtures,
@@ -167,6 +168,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
       usMeReclassificationReviewReferrals: usMeAnnualReclassificationFixtures,
       usMiCustodyLevelDowngradeReferrals: usMiCustodyLevelDowngradeFixtures,
       usMiReclassificationRequestReferrals: usMiReclassificationRequestFixtures,
+      usMiSecurityClassificationCommitteeReviewV2Referrals:
+        usMiSecurityClassificationCommitteeReviewV2Fixtures,
       usMiSecurityClassificationCommitteeReviewReferrals:
         usMiSecurityClassificationCommitteeReviewFixtures,
       usMiWardenInPersonSecurityClassificationCommitteeReviewReferrals:

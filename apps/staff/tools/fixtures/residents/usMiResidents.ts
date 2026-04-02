@@ -24,6 +24,7 @@ export const usMiResidents: ResidentFixture[] = [
     allEligibleOpportunities: [
       "usMiReclassificationRequest",
       "usMiSecurityClassificationCommitteeReview",
+      "usMiSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiAddInPersonSecurityClassificationCommitteeReview",
       "usMiCustodyLevelDowngrade",
@@ -48,6 +49,7 @@ export const usMiResidents: ResidentFixture[] = [
     allEligibleOpportunities: [
       "usMiReclassificationRequest",
       "usMiSecurityClassificationCommitteeReview",
+      "usMiSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiAddInPersonSecurityClassificationCommitteeReview",
       "usMiCustodyLevelDowngrade",
@@ -72,6 +74,7 @@ export const usMiResidents: ResidentFixture[] = [
     allEligibleOpportunities: [
       "usMiReclassificationRequest",
       "usMiSecurityClassificationCommitteeReview",
+      "usMiSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiAddInPersonSecurityClassificationCommitteeReview",
       "usMiCustodyLevelDowngrade",

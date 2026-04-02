@@ -1022,6 +1022,121 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "securityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
     },
+    usMiSecurityClassificationCommitteeReviewV2: {
+      callToAction:
+        "Complete 2026 SCC review and fill out 283 Form for eligible residents",
+      caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "PRIOR RH",
+          text: "Prior restrictive housing history requires management at more restrictive level",
+        },
+        {
+          key: "PLACING BEHAVIOR",
+          text: "Severe placing behavior necessitates longer stay in segregation",
+        },
+        { key: "RESPECT", text: "Fails to be cordial and respectful to staff" },
+        {
+          key: "ATTITUDE",
+          text: "Behavior and attitude not consistent with general population expectations",
+        },
+        { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
+        {
+          key: "GP NOT APPROPRIATE",
+          text: "Unable to honor trust implicit in less restrictive environment ",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "2026 Security Classification Committee Review",
+      dynamicEligibilityText:
+        "resident[|s] [is|are] eligible for 2026 SCC review to potentially return to general population",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "usMiPastSecurityClassificationCommitteeReviewDate",
+          text: "{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestSccReviewDate}} last SCC review recorded on {{date latestSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDate}}",
+          tooltip:
+            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+        },
+        {
+          key: "housingUnitTypeIsSolitaryConfinement",
+          text: "Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}",
+          tooltip:
+            '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_MI-securityClassificationCommitteeReviewV2",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 7,
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMiPastSecurityClassificationCommitteeReviewDate",
+          text: "Next SCC review due next week, on or before {{date nextSccDate}}",
+          tooltip:
+            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+        },
+      ],
+      initialHeader:
+        "Complete SCC review and fill out 283 Form for eligible residents.",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: [
+        "Incarceration",
+        "UsMiRestrictiveHousing",
+        "CaseNotes",
+      ],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_MI",
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "usMiPastSecurityClassificationCommitteeReviewDate",
+          text: "Next SCC review due on or before {{date nextSccDate}}",
+          tooltip:
+            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+        },
+      ],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
+      submittedTabTitle: "Pending",
+      supportsIneligible: true,
+      supportsSubmitted: true,
+      systemType: "INCARCERATION",
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Overdue",
+            "Due now",
+            "Upcoming",
+            "Marked Ineligible",
+            "Pending",
+          ],
+        },
+      ],
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "securityClassificationCommitteeReview",
+      zeroGrantsTooltip: null,
+    },
     usMiSupervisionLevelDowngrade: {
       callToAction:
         "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
