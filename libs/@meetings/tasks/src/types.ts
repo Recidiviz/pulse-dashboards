@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "~@meetings/tasks/constants";
-export * from "~@meetings/tasks/llm";
-export * from "~@meetings/tasks/types";
-export * from "~@meetings/tasks/utils";
+export const ValidationError = {
+  SCHEMA: "Schema",
+  LENGTH: "Length",
+  FORMAT: "Format",
+  TONE: "Tone",
+  AUDIO_QUALITY: "AudioQuality",
+  SECURITY: "Security",
+} as const;
+
+export type ValidationError =
+  (typeof ValidationError)[keyof typeof ValidationError];

@@ -28,6 +28,7 @@ import { traceable } from "langsmith/traceable";
 
 import type { PrismaClient } from "~@meetings/prisma/client";
 import { Person } from "~@meetings/prisma/types";
+import { TranscriptValidationError } from "~@meetings/tasks/errors";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import {
   createAgentExecution,
@@ -111,19 +112,11 @@ export class ProductionPipeline {
             error_type: gatekeeperResult.errorKind,
             message: gatekeeperResult.message,
           });
-          const error = new Error(
-            gatekeeperResult.message || "Transcript validation failed",
-          );
 
-          // Update pipeline run status on gatekeeper failure
-          await updatePipelineRunStatus(
-            this.prisma,
-            pipelineRun.id,
-            "FAILURE",
-            serializeError(error),
-          );
-
-          throw error;
+          throw new TranscriptValidationError({
+            message: gatekeeperResult.message,
+            validationErrorType: gatekeeperResult.errorKind,
+          });
         }
 
         // STEP 1: EXTRACTION AGENT
@@ -220,17 +213,7 @@ export class ProductionPipeline {
 
         // STEP 4: FINAL ASSEMBLY
         if (!finalPayload) {
-          const error = new Error("Drafting failed after all retry attempts");
-
-          // Update pipeline run status on drafting failure
-          await updatePipelineRunStatus(
-            this.prisma,
-            pipelineRun.id,
-            "FAILURE",
-            serializeError(error),
-          );
-
-          throw error;
+          throw new Error("Drafting failed after all retry attempts");
         }
 
         await updatePipelineRunStatus(this.prisma, pipelineRun.id, "SUCCESS");

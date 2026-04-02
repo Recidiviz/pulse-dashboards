@@ -18,7 +18,7 @@
 import { z } from "zod";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
-import { MinuteSectionSchema } from "~@meetings/tasks";
+import { MinuteSectionSchema, ValidationError } from "~@meetings/tasks";
 
 export const getDetailInputSchema = z.object({
   meetingId: z.string(),
@@ -36,6 +36,7 @@ export const getDetailsOutputSchema = z.object({
   meetingSummary: z.array(MinuteSectionSchema).nullable(),
   durationMs: z.number().nullable(),
   postMeetingProcessingStatus: z.nativeEnum(PostMeetingProcessingStatus),
+  validationErrorType: z.nativeEnum(ValidationError).nullable(),
   transcription: z
     .object({
       confidence: z.number().nullable(),

@@ -155,6 +155,7 @@ describe("resident router", () => {
               id: null,
               caseNote: null,
               lastCompletedMeetingTime: null,
+              validationErrorType: null,
             },
           },
           {
@@ -168,6 +169,7 @@ describe("resident router", () => {
               id: fakeResidentMeetingCompleted.id,
               caseNote: null,
               lastCompletedMeetingTime: fakeResidentMeetingCompleted.startTime,
+              validationErrorType: null,
             },
           },
         ]);

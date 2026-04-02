@@ -16,6 +16,8 @@
 // =============================================================================
 
 import { TRPCError } from "@trpc/server";
+import keyBy from "lodash/keyBy";
+import uniqBy from "lodash/uniqBy";
 
 import {
   PostMeetingProcessingStatus,
@@ -77,7 +79,7 @@ export async function getMeetingsForPerson({
   personId: bigint;
   personType: "client" | "resident";
 }) {
-  return await prisma.meeting.findMany({
+  const meetings = await prisma.meeting.findMany({
     where: {
       [`${personType}Id`]: personId,
       OR: [
@@ -100,6 +102,24 @@ export async function getMeetingsForPerson({
       durationMs: true,
     },
   });
+
+  const pipelineRuns = await prisma.notetakingPipelineRun.findMany({
+    where: { meetingId: { in: meetings.map((m) => m.id) } },
+    orderBy: { createdAt: "desc" },
+    select: { meetingId: true, errorDetails: true },
+  });
+
+  const latestRunByMeetingId = keyBy(
+    uniqBy(pipelineRuns, "meetingId"),
+    "meetingId",
+  );
+
+  return meetings.map((meeting) => ({
+    ...meeting,
+    validationErrorType:
+      latestRunByMeetingId[meeting.id]?.errorDetails?.validationErrorType ??
+      null,
+  }));
 }
 
 export function extractActiveMeetingId({
@@ -120,11 +140,13 @@ export function extractActiveMeetingId({
   return activeMeeting?.id ?? null;
 }
 
-export function extractLastCompletedMeetingInfo({
+export async function extractLastCompletedMeetingInfo({
+  prisma,
   meetingsOrderedByDateDesc,
 }: {
+  prisma: PrismaClient;
   meetingsOrderedByDateDesc: {
-    id: string | null;
+    id: string;
     endTime: Date | null;
     startTime: Date;
     caseNote: string | null;
@@ -133,10 +155,30 @@ export function extractLastCompletedMeetingInfo({
   const latestMeeting = meetingsOrderedByDateDesc.find(
     (meeting) => meeting.endTime != null,
   );
+
+  if (!latestMeeting) {
+    return {
+      id: null,
+      lastCompletedMeetingTime: null,
+      caseNote: null,
+      validationErrorType: null,
+    };
+  }
+
+  const latestPipelineRun = await prisma.notetakingPipelineRun.findFirst({
+    where: { meetingId: latestMeeting.id },
+    orderBy: { createdAt: "desc" },
+    select: { meetingId: true, errorDetails: true },
+  });
+
+  const pipelineValidationErrorType =
+    latestPipelineRun?.errorDetails?.validationErrorType;
+
   return {
-    id: latestMeeting?.id ?? null,
-    lastCompletedMeetingTime: latestMeeting?.startTime ?? null,
+    id: latestMeeting.id,
+    lastCompletedMeetingTime: latestMeeting.startTime,
     caseNote: latestMeeting?.caseNote ?? null,
+    validationErrorType: pipelineValidationErrorType ?? null,
   };
 }
 

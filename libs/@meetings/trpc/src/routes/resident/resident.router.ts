@@ -91,15 +91,18 @@ export const residentRouter = router({
         throw new Error("Resident not found");
       }
 
+      const meetingDetails = await extractLastCompletedMeetingInfo({
+        prisma,
+        meetingsOrderedByDateDesc: resident.meetings,
+      });
+
       return {
         ..._.omit(resident, ["meetings"]),
         activeMeetingId: extractActiveMeetingId({
           user,
           meetingsOrderedByDateDesc: resident.meetings,
         }),
-        meetingDetails: extractLastCompletedMeetingInfo({
-          meetingsOrderedByDateDesc: resident.meetings,
-        }),
+        meetingDetails,
       };
     }),
   list: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
@@ -128,15 +131,18 @@ export const residentRouter = router({
       },
     });
 
-    return residents.map((resident) => ({
-      ..._.omit(resident, ["meetings"]),
-      activeMeetingId: extractActiveMeetingId({
-        user,
-        meetingsOrderedByDateDesc: resident.meetings,
-      }),
-      meetingDetails: extractLastCompletedMeetingInfo({
-        meetingsOrderedByDateDesc: resident.meetings,
-      }),
-    }));
+    return Promise.all(
+      residents.map(async (resident) => ({
+        ..._.omit(resident, ["meetings"]),
+        activeMeetingId: extractActiveMeetingId({
+          user: user,
+          meetingsOrderedByDateDesc: resident.meetings,
+        }),
+        meetingDetails: await extractLastCompletedMeetingInfo({
+          prisma,
+          meetingsOrderedByDateDesc: resident.meetings,
+        }),
+      })),
+    );
   }),
 });

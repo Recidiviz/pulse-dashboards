@@ -101,6 +101,15 @@ export const meetingRouter = router({
           }
         };
 
+        const latestPipelineRun = await prisma.notetakingPipelineRun.findFirst({
+          where: { meetingId },
+          orderBy: { createdAt: "desc" },
+          select: { status: true, errorDetails: true },
+        });
+
+        const pipelineValidationErrorType =
+          latestPipelineRun?.errorDetails?.validationErrorType || null;
+
         const stateConfig = AGENCY_CONFIGS[stateCode];
 
         const includeTranscription = stateConfig?.showTranscriptions ?? true;
@@ -120,6 +129,7 @@ export const meetingRouter = router({
           transcription: includeTranscription
             ? meeting.transcriptions[0] || null
             : undefined,
+          validationErrorType: pipelineValidationErrorType,
         };
       } catch (e) {
         if (

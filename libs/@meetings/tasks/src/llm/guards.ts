@@ -24,6 +24,7 @@
 
 import { z } from "zod";
 
+import { ValidationError } from "~@meetings/tasks";
 import {
   DraftingOutput,
   ExtractionOutput,
@@ -40,7 +41,7 @@ import {
  */
 export interface ValidationResult {
   valid: boolean;
-  errorKind?: string;
+  errorKind?: ValidationError;
   message?: string;
 }
 
@@ -76,7 +77,7 @@ export function createGuard<T>(validators: Validator<T>[] = []): Guard<T> {
     if (!parseResult.success) {
       return {
         valid: false,
-        errorKind: "Schema",
+        errorKind: ValidationError.SCHEMA,
         message: `Schema validation failed: ${parseResult.error.message}`,
       };
     }
@@ -139,7 +140,7 @@ export const validateWordCount: Validator<TranscriptInput> = (data) => {
   if (wordCount < minWords) {
     return {
       valid: false,
-      errorKind: "Length",
+      errorKind: ValidationError.LENGTH,
       message: `Transcript too short: ${wordCount} words (minimum ${minWords})`,
     };
   }
@@ -160,7 +161,7 @@ export const validateNoTemplateLeaks: Validator<{ content: string }> = (
     if (pattern.test(text)) {
       return {
         valid: false,
-        errorKind: "Format",
+        errorKind: ValidationError.FORMAT,
         message: `Template artifact detected: ${pattern.source}`,
       };
     }
@@ -187,7 +188,7 @@ export const validateNoRoboticTone: Validator<{
   if (!text) {
     return {
       valid: false,
-      errorKind: "Format",
+      errorKind: ValidationError.FORMAT,
       message: "No text content found (expected 'content' or 'rawText' field)",
     };
   }
@@ -196,7 +197,7 @@ export const validateNoRoboticTone: Validator<{
     if (pattern.test(text)) {
       return {
         valid: false,
-        errorKind: "Tone",
+        errorKind: ValidationError.TONE,
         message: "AI refusal/apology detected",
       };
     }
@@ -214,7 +215,7 @@ export const validateCaseNoteLength: Validator<DraftingOutput> = (data) => {
   if (totalWords < minWords) {
     return {
       valid: false,
-      errorKind: "Length",
+      errorKind: ValidationError.LENGTH,
       message: `Note too short: ${totalWords} words (minimum ${minWords})`,
     };
   }
@@ -257,7 +258,7 @@ export const validateMinutesDetail: Validator<DraftingOutput> = (data) => {
   if (!minutes || minutes.length === 0) {
     return {
       valid: false,
-      errorKind: "Length",
+      errorKind: ValidationError.LENGTH,
       message: "No meeting sections found",
     };
   }
@@ -277,7 +278,7 @@ export const validateMinutesDetail: Validator<DraftingOutput> = (data) => {
   if (totalItems < minItems) {
     return {
       valid: false,
-      errorKind: "Length",
+      errorKind: ValidationError.LENGTH,
       message: `Insufficient detail: ${totalItems} items (minimum ${minItems})`,
     };
   }
@@ -329,7 +330,7 @@ export const validateNoPromptInjection: Validator<{
   if (!text) {
     return {
       valid: false,
-      errorKind: "Format",
+      errorKind: ValidationError.FORMAT,
       message: "No text content found (expected 'content' or 'rawText' field)",
     };
   }
@@ -338,7 +339,7 @@ export const validateNoPromptInjection: Validator<{
   if (pattern) {
     return {
       valid: false,
-      errorKind: "Security",
+      errorKind: ValidationError.SECURITY,
       message: `Prompt injection detected: ${pattern.source}`,
     };
   }
@@ -357,7 +358,7 @@ export const validateNoNotesInjection: Validator<TranscriptInput> = (data) => {
   if (pattern) {
     return {
       valid: false,
-      errorKind: "Security",
+      errorKind: ValidationError.SECURITY,
       message: `Prompt injection detected in PO notes: ${pattern.source}`,
     };
   }
@@ -388,7 +389,7 @@ export const validateDiarization: Validator<TranscriptInput> = (data) => {
   if (uniqueSpeakers < 2) {
     return {
       valid: false,
-      errorKind: "AudioQuality",
+      errorKind: ValidationError.AUDIO_QUALITY,
       message: `Only ${uniqueSpeakers} speaker detected.`,
     };
   }
@@ -400,7 +401,7 @@ export const validateDiarization: Validator<TranscriptInput> = (data) => {
       if (ratio > 0.95) {
         return {
           valid: false,
-          errorKind: "AudioQuality",
+          errorKind: ValidationError.AUDIO_QUALITY,
           message: `Speaker '${speaker}' dominates ${(ratio * 100).toFixed(1)}% of conversation. Possible audio quality issue.`,
         };
       }

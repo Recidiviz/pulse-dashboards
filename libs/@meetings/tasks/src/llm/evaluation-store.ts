@@ -29,12 +29,14 @@ import type {
   NotetakingAgentType,
   NotetakingPipelineStatus,
 } from "~@meetings/prisma/client";
+import { TranscriptValidationError } from "~@meetings/tasks/errors";
 import type { ValidationResult } from "~@meetings/tasks/llm/guards";
 import type {
   DraftingOutput,
   ExtractionOutput,
   VerificationOutput,
 } from "~@meetings/tasks/llm/schemas";
+import { ValidationError } from "~@meetings/tasks/types";
 
 // ==========================================
 // TYPES
@@ -45,6 +47,7 @@ export interface ErrorDetails {
   stack?: string;
   name?: string;
   cause?: unknown;
+  validationErrorType?: ValidationError;
 }
 
 export interface CreatePipelineRunParams {
@@ -82,7 +85,19 @@ export function getLangsmithTraceId(): string | undefined {
 /**
  * Serializes an error object to JSON format with stack trace
  */
-export function serializeError(error: Error | unknown): ErrorDetails {
+export function serializeError(
+  error: TranscriptValidationError | Error | unknown,
+): ErrorDetails {
+  if (error instanceof TranscriptValidationError) {
+    return {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      cause: error.cause,
+      validationErrorType: error.validationErrorType,
+    };
+  }
+
   if (error instanceof Error) {
     return {
       message: error.message,

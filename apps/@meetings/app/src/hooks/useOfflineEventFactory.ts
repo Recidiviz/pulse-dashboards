@@ -68,6 +68,7 @@ export function useOfflineEventFactory() {
           durationMs: null,
           postMeetingProcessingStatus: "NOT_STARTED" as const,
           caseNote: null,
+          validationErrorType: null,
         };
 
         if (personType === "client") {
@@ -95,6 +96,7 @@ export function useOfflineEventFactory() {
             criticalUpdates: null,
             meetingSummary: null,
             postMeetingProcessingStatus: "NOT_STARTED",
+            validationErrorType: null,
             transcription: null,
           },
         );

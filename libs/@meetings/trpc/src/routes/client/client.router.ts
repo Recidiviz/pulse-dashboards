@@ -89,16 +89,19 @@ export const clientRouter = router({
       },
     });
 
-    return clients.map((client) => ({
-      ..._.omit(client, ["meetings"]),
-      activeMeetingId: extractActiveMeetingId({
-        user: user,
-        meetingsOrderedByDateDesc: client.meetings,
-      }),
-      meetingDetails: extractLastCompletedMeetingInfo({
-        meetingsOrderedByDateDesc: client.meetings,
-      }),
-    }));
+    return Promise.all(
+      clients.map(async (client) => ({
+        ..._.omit(client, ["meetings"]),
+        activeMeetingId: extractActiveMeetingId({
+          user: user,
+          meetingsOrderedByDateDesc: client.meetings,
+        }),
+        meetingDetails: await extractLastCompletedMeetingInfo({
+          prisma,
+          meetingsOrderedByDateDesc: client.meetings,
+        }),
+      })),
+    );
   }),
 
   get: auth0Procedure
@@ -112,15 +115,19 @@ export const clientRouter = router({
       if (!client) {
         throw new Error("Client not found or access denied");
       }
+
+      const meetingDetails = await extractLastCompletedMeetingInfo({
+        prisma,
+        meetingsOrderedByDateDesc: client.meetings,
+      });
+
       return {
         ..._.omit(client, ["meetings"]),
         activeMeetingId: extractActiveMeetingId({
           user: user,
           meetingsOrderedByDateDesc: client.meetings,
         }),
-        meetingDetails: extractLastCompletedMeetingInfo({
-          meetingsOrderedByDateDesc: client.meetings,
-        }),
+        meetingDetails,
       };
     }),
 });
