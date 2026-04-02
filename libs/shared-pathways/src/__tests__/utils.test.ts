@@ -75,16 +75,35 @@ describe("sortByLabel", () => {
     expect(result.map((d) => d.label)).toEqual([
       "Alpha",
       "Bravo",
-      "Not Coded",
       "Unknown",
+      "Not Coded",
     ]);
   });
 
-  it('keeps "All" first and "Unknown"/"Not Coded" last together', () => {
+  it('sorts "Other" just before "Unknown" and "Not Coded"', () => {
+    const data = [
+      { label: "Unknown" },
+      { label: "Other" },
+      { label: "Bravo" },
+      { label: "Not Coded" },
+      { label: "Alpha" },
+    ];
+    const result = sortByLabel({ dataPoints: data, labelKey: "label" });
+    expect(result.map((d) => d.label)).toEqual([
+      "Alpha",
+      "Bravo",
+      "Other",
+      "Unknown",
+      "Not Coded",
+    ]);
+  });
+
+  it('keeps "All" first and "Other"/"Unknown"/"Not Coded" last together', () => {
     const data = [
       { label: "Unknown" },
       { label: "All" },
       { label: "Bravo" },
+      { label: "Other" },
       { label: "Not Coded" },
       { label: "Alpha" },
     ];
@@ -93,15 +112,17 @@ describe("sortByLabel", () => {
       "All",
       "Alpha",
       "Bravo",
-      "Not Coded",
+      "Other",
       "Unknown",
+      "Not Coded",
     ]);
   });
 
-  it('puts "Unknown"/"Not Coded" last even when sorting descending', () => {
+  it('puts "Other"/"Unknown"/"Not Coded" last even when sorting descending', () => {
     const data = [
       { label: "Unknown" },
       { label: "Bravo" },
+      { label: "Other" },
       { label: "Not Coded" },
       { label: "Alpha" },
     ];
@@ -113,6 +134,7 @@ describe("sortByLabel", () => {
     expect(result.map((d) => d.label)).toEqual([
       "Bravo",
       "Alpha",
+      "Other",
       "Unknown",
       "Not Coded",
     ]);

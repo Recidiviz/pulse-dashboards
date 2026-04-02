@@ -151,11 +151,16 @@ export function sortByLabel<T>({
     if (aIsLessThan && !bIsLessThan) return -1;
     if (!aIsLessThan && bIsLessThan) return 1;
 
-    const lastLabels = ["Unknown", "Not Coded"];
-    const aIsLast = lastLabels.includes(aLabel);
-    const bIsLast = lastLabels.includes(bLabel);
-    if (aIsLast && !bIsLast) return 1;
-    if (!aIsLast && bIsLast) return -1;
+    const tailLabels: Record<string, number> = {
+      Other: 0,
+      Unknown: 1,
+      "Not Coded": 2,
+    };
+    const aInTail = aLabel in tailLabels;
+    const bInTail = bLabel in tailLabels;
+    if (aInTail && bInTail) return tailLabels[aLabel] - tailLabels[bLabel];
+    if (aInTail && !bInTail) return 1;
+    if (!aInTail && bInTail) return -1;
 
     return desc
       ? bLabel.localeCompare(aLabel, "en", { numeric: true })
