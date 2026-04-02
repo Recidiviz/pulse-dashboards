@@ -17,9 +17,9 @@
 
 import { Platform } from "react-native";
 import { useWindowDimensions } from "react-native";
-import resolveConfig from "tailwindcss/resolveConfig";
 
-import tailwindConfig from "../../../../tailwind.config";
+import { theme } from "~@meetings/app/common/theme";
+
 import { useAudioUpload } from "../hooks/useAudioUpload";
 import { useAudioUploadStore } from "../store";
 import { AudioUploadModal } from "./AudioUploadModal";
@@ -43,8 +43,7 @@ export function AudioUpload() {
     onCancel: audioUpload.requestCancel,
   };
 
-  const twConfig = resolveConfig(tailwindConfig);
-  const mdBreakpoint = parseInt(twConfig.theme["screens"]["md"]);
+  const mdBreakpoint = parseInt(theme["screens"]["md"]);
 
   const isWeb = Platform.OS === "web";
   const isDialogVisible = dialog !== null;

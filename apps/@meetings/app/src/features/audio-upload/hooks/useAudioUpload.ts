@@ -73,6 +73,8 @@ export function useAudioUpload() {
           uri: file.uri,
           meetingId,
           signal: abortController.signal,
+          fileExtension: file.extension,
+          contentType: file.contentType,
           onProgress: (loaded, total) => {
             store.setUploadProgress(loaded, total);
           },

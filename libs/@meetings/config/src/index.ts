@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { AUDIO_FORMATS } from "~@meetings/config/audio";
 export { AGENCY_CONFIGS } from "~@meetings/config/configs";
 export type { AgencyConfig } from "~@meetings/config/types";
 export { AgencyConfigSchema } from "~@meetings/config/types";

@@ -15,13 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type UploadSegmentParams = {
+export type UploadParams = {
   uri: string;
   meetingId: string;
   onProgress?: (loaded: number, total: number) => void;
   signal?: AbortSignal;
-  createSignedUrlForRecording: (params: {
-    meetingId: string;
-    platform: "web" | "ios" | "android";
-  }) => Promise<string | null>;
+  fileExtension: string;
+  contentType: string;
+};
+
+type CreateSignedUrlParams = {
+  meetingId: string;
+  fileExtension: string;
+  contentType: string;
+};
+
+export type UploadSegmentParams = UploadParams & {
+  createSignedUrlForRecording: (
+    params: CreateSignedUrlParams,
+  ) => Promise<string | null>;
 };

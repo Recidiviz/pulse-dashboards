@@ -31,6 +31,7 @@ import { GoogleAuth, OAuth2Client } from "google-auth-library";
 import { run_v2 } from "googleapis";
 import { z } from "zod";
 
+import { AUDIO_FORMATS } from "~@meetings/config";
 import { AGENCY_CONFIGS } from "~@meetings/config/configs";
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import {
@@ -160,14 +161,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
   // Add content type parser for audio files - don't parse, just flag as handled
   app.addContentTypeParser(
-    [
-      "audio/m4a",
-      "audio/x-m4a",
-      "audio/mp4",
-      "audio/webm",
-      "audio/webm;codecs=opus",
-      "audio/*",
-    ],
+    Object.values(AUDIO_FORMATS).flatMap((f) => f.acceptedMimeTypes),
     (req, payload, done) => {
       // Don't parse the body, just indicate we're handling this content type
       // The raw stream will be available via req.raw

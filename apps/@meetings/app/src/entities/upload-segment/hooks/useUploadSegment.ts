@@ -19,7 +19,7 @@ import { useCallback } from "react";
 
 import { trpc } from "~@meetings/app/trpc/client";
 
-import { UploadSegmentParams } from "../types";
+import { UploadParams } from "../types";
 import { uploadSegment } from "../utils/uploadSegment";
 
 export function useUploadSegment() {
@@ -27,9 +27,7 @@ export function useUploadSegment() {
     trpc.v1.meeting.createSignedUrlForRecording.useMutation();
 
   const upload = useCallback(
-    async (
-      params: Omit<UploadSegmentParams, "createSignedUrlForRecording">,
-    ) => {
+    async (params: UploadParams) => {
       return await uploadSegment({ ...params, createSignedUrlForRecording });
     },
     [createSignedUrlForRecording],

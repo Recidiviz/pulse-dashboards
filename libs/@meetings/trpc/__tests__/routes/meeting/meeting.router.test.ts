@@ -17,7 +17,7 @@
 
 import { describe, expect, test, vi } from "vitest";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
+import { AGENCY_CONFIGS, AUDIO_FORMATS } from "~@meetings/config";
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
 import {
   mockCloudTasksClient,
@@ -145,6 +145,8 @@ describe("meeting router", () => {
       await expect(
         testTRPCClient.v1.meeting.createSignedUrlForRecording.mutate({
           meetingId: "non-existent-meeting-id",
+          contentType: AUDIO_FORMATS.m4a.contentType,
+          fileExtension: AUDIO_FORMATS.m4a.extension,
         }),
       ).rejects.toMatchObject({
         message: "Meeting with that id was not found",
@@ -156,6 +158,8 @@ describe("meeting router", () => {
       const result =
         await testTRPCClient.v1.meeting.createSignedUrlForRecording.mutate({
           meetingId: fakeActiveMeeting.id,
+          contentType: AUDIO_FORMATS.m4a.contentType,
+          fileExtension: AUDIO_FORMATS.m4a.extension,
         });
 
       expect(result).toEqual(

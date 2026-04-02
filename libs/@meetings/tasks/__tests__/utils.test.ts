@@ -25,6 +25,8 @@ import { Transcript } from "assemblyai";
 import ffmpeg from "fluent-ffmpeg";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+import { AUDIO_FORMATS } from "~@meetings/config";
+
 vi.spyOn(ffmpeg, "ffprobe").mockImplementation(
   // @ts-expect-error - mock doesn't need full signature
   (_filePath: string, cb: (err: Error | null, metadata: unknown) => void) => {
@@ -32,12 +34,6 @@ vi.spyOn(ffmpeg, "ffprobe").mockImplementation(
   },
 );
 
-import {
-  MOBILE_AUDIO_FILE_EXTENSION,
-  MOBILE_GCS_CONTENT_TYPE,
-  WEB_AUDIO_FILE_EXTENSION,
-  WEB_GCS_CONTENT_TYPE,
-} from "~@meetings/tasks/constants";
 import {
   GCS_API_ENDPOINT,
   mockAssemblyAI,
@@ -70,8 +66,8 @@ describe("utils", () => {
       const url = await getSignedUrlForNewRecording(
         AUDIO_RECORDINGS_BUCKET_NAME,
         "signed-url-test-folder",
-        MOBILE_AUDIO_FILE_EXTENSION,
-        MOBILE_GCS_CONTENT_TYPE,
+        AUDIO_FORMATS.m4a.extension,
+        AUDIO_FORMATS.m4a.contentType,
       );
 
       // 1760832000 = seconds since epoch for Oct 19, 2025
@@ -84,8 +80,8 @@ describe("utils", () => {
       const url = await getSignedUrlForNewRecording(
         AUDIO_RECORDINGS_BUCKET_NAME,
         "signed-url-test-folder-web",
-        WEB_AUDIO_FILE_EXTENSION,
-        WEB_GCS_CONTENT_TYPE,
+        AUDIO_FORMATS.webm.extension,
+        AUDIO_FORMATS.webm.contentType,
       );
 
       // 1760832000 = seconds since epoch for Oct 19, 2025
@@ -367,8 +363,8 @@ describe("utils", () => {
         const url = await getSignedUrlForNewRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           "test-meeting-id",
-          MOBILE_AUDIO_FILE_EXTENSION,
-          MOBILE_GCS_CONTENT_TYPE,
+          AUDIO_FORMATS.m4a.extension,
+          AUDIO_FORMATS.m4a.contentType,
         );
 
         // 1760832000 = seconds since epoch for Oct 19, 2025
@@ -381,8 +377,8 @@ describe("utils", () => {
         const url = await getSignedUrlForNewRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           "test-meeting-id-web",
-          WEB_AUDIO_FILE_EXTENSION,
-          WEB_GCS_CONTENT_TYPE,
+          AUDIO_FORMATS.webm.extension,
+          AUDIO_FORMATS.webm.contentType,
         );
 
         // 1760832000 = seconds since epoch for Oct 19, 2025

@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Platform } from "react-native";
+
+import { AUDIO_FORMATS } from "~@meetings/config";
+
 import { useUploadSegment } from "../entities/upload-segment/hooks/useUploadSegment";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType, OfflineEvent } from "./useMeetingEventQueue";
@@ -56,7 +60,18 @@ export function useProcessOfflineEvent() {
           }
 
           if (uploadUri) {
-            await uploadSegment({ uri: uploadUri, meetingId: event.meetingId });
+            // TODO(#12776): currently we use offline mode for recording only,
+            // where we have static formats for web and mobile.
+            // We will need to use dynamic formats for the upload audio feature
+            const audioFormat = Platform.OS === "web" ? "webm" : "m4a";
+            const { contentType, extension } = AUDIO_FORMATS[audioFormat];
+
+            await uploadSegment({
+              uri: uploadUri,
+              meetingId: event.meetingId,
+              contentType,
+              fileExtension: extension,
+            });
           }
 
           if (blobUrl) {

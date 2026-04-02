@@ -17,21 +17,17 @@
 
 import * as DocumentPicker from "expo-document-picker";
 import { useCallback } from "react";
-import { Platform } from "react-native";
 
-import { ALLOWED_AUDIO_TYPES } from "../constants";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 export function useFilePicker() {
   const pickFile = useCallback(async () => {
-    // TODO: fix in the following PR
-    const webAllowedAudioTypes = ["audio/webm"];
-    const nativeAllowedAudioTypes = Object.keys(ALLOWED_AUDIO_TYPES).filter(
-      (t) => t !== "audio/webm",
-    );
+    const acceptedMimeTypes = Object.values(AUDIO_FORMATS)
+      .map((f) => f.acceptedMimeTypes)
+      .flat();
 
     const result = await DocumentPicker.getDocumentAsync({
-      type:
-        Platform.OS === "web" ? webAllowedAudioTypes : nativeAllowedAudioTypes,
+      type: acceptedMimeTypes,
     });
 
     // User dismissed the picker without selecting a file

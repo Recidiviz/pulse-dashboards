@@ -26,14 +26,14 @@ import { AudioUploadDialog, AudioUploadStatus, FileInfo } from "./types";
 type AudioUploadStore = {
   // Persisted fields
   status: AudioUploadStatus;
-  dialog: AudioUploadDialog;
   meetingId: string | null;
   person: Person | null;
   personType: PersonType | null;
   file: FileInfo | null;
   error: string | null; // file uploading error
 
-  // Non-persisted fields (reset on reload)
+  // Non-persisted fields (progress resets on reload)
+  dialog: AudioUploadDialog;
   uploadedBytes: number;
   totalBytes: number;
 
@@ -85,7 +85,6 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         status: state.status,
-        dialog: state.dialog,
         meetingId: state.meetingId,
         person: state.person
           ? { ...state.person, personId: state.person.personId.toString() }
@@ -108,7 +107,6 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
         if (state.error && !state.file) {
           state.setError(null);
         }
-        state.dialog = null;
       },
     },
   ),

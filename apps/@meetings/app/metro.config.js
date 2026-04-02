@@ -15,15 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const path = require("path");
 const { getSentryExpoConfig } = require("@sentry/react-native/metro");
 const { mergeConfig } = require("metro-config");
 const { withNativeWind } = require("nativewind/metro");
 const {
   wrapWithReanimatedMetroConfig,
 } = require("react-native-reanimated/metro-config");
+const { createMatchPath, loadConfig } = require("tsconfig-paths");
 
 const defaultConfig = getSentryExpoConfig(__dirname);
 const { assetExts, sourceExts } = defaultConfig.resolver;
+
+const monorepoRoot = path.resolve(__dirname, "../../..");
+const tsConfig = loadConfig(__dirname);
+const matchPath =
+  tsConfig.resultType === "success"
+    ? createMatchPath(tsConfig.absoluteBaseUrl, tsConfig.paths)
+    : null;
 
 /**
  * Metro configuration
@@ -33,6 +42,7 @@ const { assetExts, sourceExts } = defaultConfig.resolver;
  */
 const customConfig = {
   cacheVersion: "@meetings/app",
+  watchFolders: [monorepoRoot],
   transformer: {
     babelTransformerPath: require.resolve("react-native-svg-transformer"),
   },
@@ -42,6 +52,20 @@ const customConfig = {
     // Fixes 'import.meta' errors on web (for example for zustand lib) by enabling proper ESM resolution for browser
     // https://github.com/expo/expo/issues/30323
     unstable_conditionNames: ["browser", "require", "react-native"],
+    resolveRequest: (context, moduleName, platform) => {
+      if (matchPath) {
+        const resolved = matchPath(moduleName, undefined, undefined, [
+          ".ts",
+          ".tsx",
+          ".js",
+          ".jsx",
+        ]);
+        if (resolved) {
+          return context.resolveRequest(context, resolved, platform);
+        }
+      }
+      return context.resolveRequest(context, moduleName, platform);
+    },
   },
 };
 

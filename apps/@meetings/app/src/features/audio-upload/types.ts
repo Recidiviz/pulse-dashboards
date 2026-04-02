@@ -34,6 +34,7 @@ export type RawFileInfo = {
 export type FileInfo = {
   uri: string;
   name: string;
-  mimeType: string;
+  contentType: string;
+  extension: string;
   size: number;
 };

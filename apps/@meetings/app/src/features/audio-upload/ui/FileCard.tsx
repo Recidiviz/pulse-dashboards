@@ -58,7 +58,7 @@ export function FileCard({
     <View className="mt-4 rounded-xl border border-subtle bg-white px-4 py-3">
       <View className="flex-row items-center gap-4">
         <View className="size-10 items-center justify-center rounded-lg bg-brand-light">
-          <FileIcon extension={file.name.split(".")[1]} />
+          <FileIcon extension={file.extension} />
         </View>
 
         <View className="flex-1 gap-1">

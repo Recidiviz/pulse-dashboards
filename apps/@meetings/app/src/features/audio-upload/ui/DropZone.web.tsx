@@ -16,14 +16,14 @@
 // =============================================================================
 
 import clsx from "clsx";
-import uniq from "lodash/uniq";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import CloudUploadIcon from "react-native-heroicons/outline/CloudUploadIcon";
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { ALLOWED_AUDIO_TYPES, MAX_FILE_SIZE_BYTES } from "../constants";
+import { MAX_FILE_SIZE_BYTES } from "../constants";
 import { useFilePicker } from "../hooks/useFilePicker";
 import { RawFileInfo } from "../types";
 import { formatBytes } from "../utils/formatBytes";
@@ -53,13 +53,17 @@ export function DropZone({ disabled, onAddFile }: Props) {
       setIsDragOver(false);
     };
 
+    const acceptedMimeTypes = Object.values(AUDIO_FORMATS).flatMap(
+      (f) => f.acceptedMimeTypes,
+    );
+
     const handleDrop = (e: DragEvent) => {
       e.preventDefault();
 
       setIsDragOver(false);
       const file = e.dataTransfer?.files[0];
 
-      if (!file) return;
+      if (!file || !acceptedMimeTypes.includes(file.type)) return;
 
       onAddFile({
         uri: URL.createObjectURL(file),
@@ -85,7 +89,7 @@ export function DropZone({ disabled, onAddFile }: Props) {
     if (result) onAddFile(result);
   }, [pickFile, onAddFile]);
 
-  const allowedFormats = uniq(Object.values(ALLOWED_AUDIO_TYPES));
+  const allowedFormats = Object.values(AUDIO_FORMATS).map((f) => f.displayName);
 
   return (
     <View

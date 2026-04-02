@@ -16,9 +16,7 @@
 // =============================================================================
 
 import * as FileSystem from "expo-file-system/legacy";
-import { Platform } from "react-native";
 
-import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
 import { AbortError } from "~@meetings/app/shared/errors";
 
 import { UploadSegmentParams } from "../types";
@@ -28,6 +26,8 @@ export async function uploadSegment({
   meetingId,
   onProgress,
   signal,
+  contentType,
+  fileExtension,
   createSignedUrlForRecording,
 }: UploadSegmentParams) {
   const fileInfo = await FileSystem.getInfoAsync(uri);
@@ -37,8 +37,9 @@ export async function uploadSegment({
   }
 
   const signedUrl = await createSignedUrlForRecording({
-    meetingId: meetingId,
-    platform: Platform.OS as "ios" | "android",
+    meetingId,
+    contentType,
+    fileExtension,
   });
 
   if (!signedUrl) {
@@ -51,7 +52,7 @@ export async function uploadSegment({
     {
       httpMethod: "PUT",
       uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-      headers: { "Content-Type": AUDIO_MIME_TYPES.mobile },
+      headers: { "Content-Type": contentType },
     },
     (data) => onProgress?.(data.totalBytesSent, data.totalBytesExpectedToSend),
   );

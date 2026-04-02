@@ -22,6 +22,7 @@ import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDurationTimer } from "../hooks/useDurationTimer";
@@ -123,7 +124,14 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       }
 
       const uriToUpload = URL.createObjectURL(blob);
-      await uploadSegment({ uri: uriToUpload, meetingId });
+
+      await uploadSegment({
+        uri: uriToUpload,
+        meetingId,
+        contentType: AUDIO_FORMATS.webm.contentType,
+        fileExtension: AUDIO_FORMATS.webm.extension,
+      });
+
       await recorder.cleanup();
       URL.revokeObjectURL(uriToUpload);
       return null;

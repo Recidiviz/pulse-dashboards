@@ -32,7 +32,7 @@ import { FileCard } from "./FileCard";
 
 type AudioUploadSheetProps = {
   onAddFile: (file: RawFileInfo) => void;
-  onRemoveFile: () => void;
+  onRemoveFile: () => Promise<void>;
   onConfirm: () => Promise<void>;
   onCancel: () => void;
 };
@@ -71,6 +71,11 @@ export function AudioUploadSheet({
 
     return () => clearTimeout(timeout);
   }, [status, dialog, pickFile, onAddFile, onCancel]);
+
+  const onRemove = async () => {
+    await onRemoveFile();
+    onCancel();
+  };
 
   const canConfirm = status === "uploaded" && file !== null && !isConfirming;
 
@@ -115,10 +120,7 @@ export function AudioUploadSheet({
               uploadedBytes={uploadedBytes}
               totalBytes={totalBytes}
               error={error}
-              onRemove={() => {
-                onRemoveFile();
-                onCancel();
-              }}
+              onRemove={onRemove}
             />
           )}
 

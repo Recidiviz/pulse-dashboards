@@ -22,6 +22,7 @@ import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDurationTimer } from "../hooks/useDurationTimer";
@@ -246,6 +247,8 @@ describe("RecordingProvider (web)", () => {
       expect(mockUploadSegment).toHaveBeenCalledWith({
         uri: BLOB_URL,
         meetingId: MEETING_ID,
+        contentType: AUDIO_FORMATS.webm.contentType,
+        fileExtension: AUDIO_FORMATS.webm.extension,
       });
       expect(mockRecorderCleanup).toHaveBeenCalled();
       expect(URL.revokeObjectURL).toHaveBeenCalledWith(BLOB_URL);

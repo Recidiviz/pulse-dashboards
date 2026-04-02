@@ -17,7 +17,7 @@
 
 import { useCallback, useRef, useState } from "react";
 
-import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { MAX_RECORDING_MS, WEB_CHUNK_INTERVAL_MS } from "../constants";
 import {
@@ -32,6 +32,8 @@ type Params = {
 };
 
 export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
+  const { contentType } = AUDIO_FORMATS.webm;
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const autoStopTimerRef = useRef<number | null>(null);
@@ -74,13 +76,11 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
     }
 
     const chunks = await getAllChunks();
-    return chunks.length
-      ? new Blob(chunks, { type: AUDIO_MIME_TYPES.web })
-      : null;
-  }, []);
+    return chunks.length ? new Blob(chunks, { type: contentType }) : null;
+  }, [contentType]);
 
   const start = useCallback(async () => {
-    if (!MediaRecorder.isTypeSupported(`${AUDIO_MIME_TYPES.web}`)) {
+    if (!MediaRecorder.isTypeSupported(`${contentType}`)) {
       throw new Error(
         "Your browser does not support the required audio format",
       );
@@ -101,14 +101,14 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
     streamRef.current = stream;
 
     const isOpusCodecSupported = MediaRecorder.isTypeSupported(
-      `${AUDIO_MIME_TYPES.web};codecs=opus`,
+      `${contentType};codecs=opus`,
     );
 
     // Create MediaRecorder for the stream
     const mediaRecorder = new MediaRecorder(stream, {
       mimeType: isOpusCodecSupported
-        ? `${AUDIO_MIME_TYPES.web};codecs=opus`
-        : AUDIO_MIME_TYPES.web,
+        ? `${contentType};codecs=opus`
+        : contentType,
       audioBitsPerSecond: 128000,
     });
     mediaRecorderRef.current = mediaRecorder;
@@ -134,7 +134,7 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
       stop();
       onStop();
     }, MAX_RECORDING_MS);
-  }, [onError, onStop, stop]);
+  }, [onError, onStop, stop, contentType]);
 
   const cleanup = useCallback(async () => {
     await stop();

@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { FileValidationError } from "~@meetings/app/shared/errors";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { ALLOWED_AUDIO_TYPES, MAX_FILE_SIZE_BYTES } from "../constants";
+import { MAX_FILE_SIZE_BYTES } from "../constants";
 import { FileInfo, RawFileInfo } from "../types";
 
 export function deserializeFile(params: RawFileInfo): FileInfo {
@@ -29,8 +30,21 @@ export function deserializeFile(params: RawFileInfo): FileInfo {
   const mimeType =
     params.mimeType === "video/webm" ? "audio/webm" : params.mimeType;
 
-  if (!Object.keys(ALLOWED_AUDIO_TYPES).includes(mimeType)) {
+  const acceptedMimeTypes = Object.values(AUDIO_FORMATS).flatMap(
+    (f) => f.acceptedMimeTypes,
+  );
+
+  if (!acceptedMimeTypes.includes(mimeType)) {
     throw new FileValidationError("Unsupported file type");
+  }
+
+  const fileExtension = params.name.split(".").at(-1);
+  const acceptedFileExtensions = Object.values(AUDIO_FORMATS).map(
+    (f) => f.extension,
+  );
+
+  if (!fileExtension || !acceptedFileExtensions.includes(fileExtension)) {
+    throw new FileValidationError("Unsupported file extension");
   }
 
   if ((params.size || 0) > MAX_FILE_SIZE_BYTES) {
@@ -40,7 +54,8 @@ export function deserializeFile(params: RawFileInfo): FileInfo {
   return {
     uri: params.uri,
     name: params.name,
-    mimeType,
     size: params.size ?? 0,
+    contentType: mimeType,
+    extension: fileExtension,
   };
 }

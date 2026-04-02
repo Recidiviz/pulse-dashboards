@@ -26,12 +26,7 @@ import ffprobePath from "ffprobe-static";
 import ffmpeg from "fluent-ffmpeg";
 import path from "path";
 
-import {
-  MOBILE_AUDIO_FILE_EXTENSION,
-  MOBILE_GCS_CONTENT_TYPE,
-  WEB_AUDIO_FILE_EXTENSION,
-  WEB_GCS_CONTENT_TYPE,
-} from "~@meetings/tasks/constants";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 if (!ffmpegPath) {
   throw new Error("ffmpeg-static failed to load ffmpeg binary");
@@ -111,14 +106,10 @@ function downloadFilesOffline(
     return null;
   }
 
-  // Support both m4a and webm files
+  const audioExtensions = new Set(Object.keys(AUDIO_FORMATS));
   const files = fs
     .readdirSync(meetingDir)
-    .filter(
-      (file) =>
-        file.endsWith(`.${MOBILE_AUDIO_FILE_EXTENSION}`) ||
-        file.endsWith(`.${WEB_AUDIO_FILE_EXTENSION}`),
-    );
+    .filter((f) => audioExtensions.has(path.extname(f).slice(1)));
 
   if (files.length === 0) {
     return null;
@@ -216,21 +207,15 @@ export async function stitchAudio(bucketName: string, folderName: string) {
 
   fs.writeFileSync(fileListPath, fileListContent);
 
-  // Detect the file extension from the first file
-  let detectedExtension = MOBILE_AUDIO_FILE_EXTENSION;
-  let detectedContentType = MOBILE_GCS_CONTENT_TYPE;
-  if (tempFilePaths.length > 0) {
-    const firstFileExt = path.extname(tempFilePaths[0]).substring(1);
-    if (firstFileExt === WEB_AUDIO_FILE_EXTENSION) {
-      detectedExtension = WEB_AUDIO_FILE_EXTENSION;
-      detectedContentType = WEB_GCS_CONTENT_TYPE;
-    } else if (firstFileExt === MOBILE_AUDIO_FILE_EXTENSION) {
-      detectedExtension = MOBILE_AUDIO_FILE_EXTENSION;
-      detectedContentType = MOBILE_GCS_CONTENT_TYPE;
-    }
+  const extension = path.extname(tempFilePaths[0]).slice(1);
+  const contentType =
+    AUDIO_FORMATS[extension as keyof typeof AUDIO_FORMATS]?.contentType;
+
+  if (!contentType) {
+    throw new Error("Unexpected file format");
   }
 
-  const tempOutputPath = path.join(os.tmpdir(), `final.${detectedExtension}`);
+  const tempOutputPath = path.join(os.tmpdir(), `final.${extension}`);
 
   console.log(
     `Starting ffmpeg concatenation. Output will be: ${tempOutputPath}`,
@@ -265,7 +250,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
       });
   });
 
-  const outputFileName = `${folderName}/final.${detectedExtension}`;
+  const outputFileName = `${folderName}/final.${extension}`;
 
   if (isOffline()) {
     // In offline mode, save final file to local storage
@@ -273,7 +258,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
       process.env["OFFLINE_STORAGE_DIR"] ||
       path.join(os.tmpdir(), "meetings-offline");
     const meetingDir = path.join(localStorageDir, folderName);
-    const finalPath = path.join(meetingDir, `final.${detectedExtension}`);
+    const finalPath = path.join(meetingDir, `final.${extension}`);
     fs.copyFileSync(tempOutputPath, finalPath);
   } else {
     // Upload the final stitched file back to the bucket
@@ -281,7 +266,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
     const bucket = storage.bucket(bucketName);
     await bucket.upload(tempOutputPath, {
       destination: outputFileName,
-      metadata: { contentType: detectedContentType },
+      metadata: { contentType },
       resumable: false,
     });
   }
@@ -299,16 +284,14 @@ function getLocalAudioFilePath(finalRecordingFilePath: string) {
     path.join(os.tmpdir(), "meetings-offline");
   const meetingDir = path.join(localStorageDir, meetingId);
 
-  // Look for final file with either extension
-  let localFilePath = path.join(
-    meetingDir,
-    `final.${MOBILE_AUDIO_FILE_EXTENSION}`,
-  );
-  if (!fs.existsSync(localFilePath)) {
-    localFilePath = path.join(meetingDir, `final.${WEB_AUDIO_FILE_EXTENSION}`);
+  const files = fs.readdirSync(meetingDir);
+  const finalFile = files.find((f) => f.startsWith("final."));
+
+  if (!finalFile) {
+    throw new Error("Final file not found");
   }
 
-  return localFilePath;
+  return path.join(meetingDir, finalFile);
 }
 
 export async function transcribeAudioWithAssemblyAI(

@@ -17,8 +17,8 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
 import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { Status } from "../model";
 import { getBlobDurationMs } from "../utils/getBlobDurationMs.web";
@@ -48,13 +48,14 @@ export function useInitialization({
 
   const initialize = useCallback(async () => {
     const restoredStatus = status;
+    const { contentType, extension } = AUDIO_FORMATS.webm;
     setStatus("uploading");
 
     try {
       // STEP 1: save duration from persisted chunks
       const chunks = await getAllChunks();
       const blob = chunks.length
-        ? new Blob(chunks, { type: AUDIO_MIME_TYPES.web })
+        ? new Blob(chunks, { type: contentType })
         : null;
       const blobDurationMs = blob ? await getBlobDurationMs(blob) : 0;
       const result = blobDurationMs + persistedDurationMs;
@@ -64,7 +65,12 @@ export function useInitialization({
       // STEP 2: upload and clear persisted chunks
       if (blob && meetingId) {
         const uriToUpload = URL.createObjectURL(blob);
-        await uploadSegment({ uri: uriToUpload, meetingId });
+        await uploadSegment({
+          uri: uriToUpload,
+          meetingId,
+          contentType,
+          fileExtension: extension,
+        });
         await clearRecordedChunks();
         URL.revokeObjectURL(uriToUpload);
       }

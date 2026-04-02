@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AUDIO_MIME_TYPES } from "~@meetings/app/constants";
 import { AbortError } from "~@meetings/app/shared/errors";
 
 import { UploadSegmentParams } from "../types";
@@ -25,6 +24,8 @@ export async function uploadSegment({
   meetingId,
   onProgress,
   signal,
+  contentType,
+  fileExtension,
   createSignedUrlForRecording,
 }: UploadSegmentParams) {
   const response = await fetch(uri);
@@ -34,8 +35,9 @@ export async function uploadSegment({
   }
 
   const signedUrl = await createSignedUrlForRecording({
-    meetingId: meetingId,
-    platform: "web",
+    meetingId,
+    contentType,
+    fileExtension,
   });
 
   if (!signedUrl) {
@@ -47,7 +49,7 @@ export async function uploadSegment({
   await new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("PUT", signedUrl);
-    xhr.setRequestHeader("Content-Type", AUDIO_MIME_TYPES.web);
+    xhr.setRequestHeader("Content-Type", contentType);
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
         onProgress?.(e.loaded, e.total);

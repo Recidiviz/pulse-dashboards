@@ -59,7 +59,8 @@ export type GetDetailsOutput = z.infer<typeof getDetailsOutputSchema>;
 
 export const createSignedUrlForRecordingInputSchema = z.object({
   meetingId: z.string(),
-  platform: z.enum(["web", "ios", "android"]).optional(),
+  fileExtension: z.string(),
+  contentType: z.string(),
 });
 
 export const deleteRecordingsInputSchema = z.object({

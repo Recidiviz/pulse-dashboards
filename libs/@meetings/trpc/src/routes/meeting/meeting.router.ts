@@ -26,10 +26,6 @@ import {
   deleteRecordingFiles,
   getSignedUrlForNewRecording,
   MinuteSectionSchema,
-  MOBILE_AUDIO_FILE_EXTENSION,
-  MOBILE_GCS_CONTENT_TYPE,
-  WEB_AUDIO_FILE_EXTENSION,
-  WEB_GCS_CONTENT_TYPE,
 } from "~@meetings/tasks";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
@@ -146,76 +142,32 @@ export const meetingRouter = router({
         throw e;
       }
     }),
-  // TODO: remove once the new mutation has been deployed.
-  // Use `createSignedUrlForRecording` instead.
-  getSignedUrlForRecording: auth0Procedure
-    .input(createSignedUrlForRecordingInputSchema)
-    .query(async ({ input: { meetingId, platform }, ctx: { prisma } }) => {
-      const meeting = await prisma.meeting.findUnique({
-        where: { id: meetingId },
-      });
-
-      if (!meeting) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Meeting with that id was not found",
-        });
-      }
-
-      // Determine file extension and content type based on platform
-      let fileExtension: string;
-      let contentType: string;
-
-      if (platform === "web") {
-        fileExtension = WEB_AUDIO_FILE_EXTENSION;
-        contentType = WEB_GCS_CONTENT_TYPE;
-      } else {
-        // Default to mobile format for iOS, Android, or if platform not specified
-        fileExtension = MOBILE_AUDIO_FILE_EXTENSION;
-        contentType = MOBILE_GCS_CONTENT_TYPE;
-      }
-
-      return await getSignedUrlForNewRecording(
-        meeting.recordingsGCSBucket,
-        meeting.recordingsFolderPath,
-        fileExtension,
-        contentType,
-      );
-    }),
   createSignedUrlForRecording: auth0Procedure
     .input(createSignedUrlForRecordingInputSchema)
-    .mutation(async ({ input: { meetingId, platform }, ctx: { prisma } }) => {
-      const meeting = await prisma.meeting.findUnique({
-        where: { id: meetingId },
-      });
-
-      if (!meeting) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Meeting with that id was not found",
+    .mutation(
+      async ({
+        input: { meetingId, contentType, fileExtension },
+        ctx: { prisma },
+      }) => {
+        const meeting = await prisma.meeting.findUnique({
+          where: { id: meetingId },
         });
-      }
 
-      // Determine file extension and content type based on platform
-      let fileExtension: string;
-      let contentType: string;
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
 
-      if (platform === "web") {
-        fileExtension = WEB_AUDIO_FILE_EXTENSION;
-        contentType = WEB_GCS_CONTENT_TYPE;
-      } else {
-        // Default to mobile format for iOS, Android, or if platform not specified
-        fileExtension = MOBILE_AUDIO_FILE_EXTENSION;
-        contentType = MOBILE_GCS_CONTENT_TYPE;
-      }
-
-      return await getSignedUrlForNewRecording(
-        meeting.recordingsGCSBucket,
-        meeting.recordingsFolderPath,
-        fileExtension,
-        contentType,
-      );
-    }),
+        return await getSignedUrlForNewRecording(
+          meeting.recordingsGCSBucket,
+          meeting.recordingsFolderPath,
+          fileExtension,
+          contentType,
+        );
+      },
+    ),
   deleteRecordings: auth0Procedure
     .input(deleteRecordingsInputSchema)
     .mutation(async ({ input: { meetingId }, ctx: { prisma } }) => {

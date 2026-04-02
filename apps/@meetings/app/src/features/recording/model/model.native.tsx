@@ -38,6 +38,7 @@ import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useNote } from "../hooks/useNote";
@@ -221,7 +222,12 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       }
 
       if (uri) {
-        await uploadSegment({ uri, meetingId });
+        await uploadSegment({
+          uri,
+          meetingId,
+          contentType: AUDIO_FORMATS.m4a.contentType,
+          fileExtension: AUDIO_FORMATS.m4a.extension,
+        });
         await removeRecordingUri();
       } else {
         console.warn("No recording URI found; nothing to upload.");

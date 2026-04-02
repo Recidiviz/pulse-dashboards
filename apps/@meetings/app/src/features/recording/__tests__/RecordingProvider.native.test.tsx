@@ -31,6 +31,7 @@ import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useNote } from "../hooks/useNote";
@@ -218,6 +219,8 @@ describe("RecordingProvider (native)", () => {
       expect(mockUploadSegment).toHaveBeenCalledWith({
         uri: RECORDING_URI,
         meetingId: MEETING_ID,
+        contentType: AUDIO_FORMATS.m4a.contentType,
+        fileExtension: AUDIO_FORMATS.m4a.extension,
       });
       expect(storage.removeRecordingUri).toHaveBeenCalled();
     });
