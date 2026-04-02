@@ -16,10 +16,12 @@
 // =============================================================================
 
 import type { IntakeTenantOverride } from "../types";
+import { US_IX_OVERRIDES } from "./US_IX";
 import { US_NE_OVERRIDES } from "./US_NE";
 import { US_UT_OVERRIDES } from "./US_UT";
 
 export const INTAKE_TENANT_OVERRIDES: Record<string, IntakeTenantOverride> = {
+  US_IX: US_IX_OVERRIDES,
   US_UT: US_UT_OVERRIDES,
   US_NE: US_NE_OVERRIDES,
 };
