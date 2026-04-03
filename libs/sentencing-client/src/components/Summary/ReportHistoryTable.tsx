@@ -123,3 +123,34 @@ export const ReportEmploymentHistoryTable: React.FC<{
     />
   );
 };
+
+// ─── Community prior treatment wrapper ────────────────────────────────────────
+
+const PRIOR_TREATMENT_COLUMNS = [
+  "Year Completed",
+  "Program",
+  "Verified by Report Author*",
+] as const;
+
+const PRIOR_TREATMENT_FOOTNOTE =
+  "* The defendant's community treatment participation was verified through independent documentation (such as program certificates or discharge summaries), direct communication with the provider, or other reliable corroborating evidence.";
+
+export const ReportPriorTreatmentHistoryTable: React.FC<{
+  priorTreatmentHistories: SAR["priorTreatmentHistories"];
+}> = ({ priorTreatmentHistories }) => {
+  if (!priorTreatmentHistories?.length) return null;
+
+  const rows = priorTreatmentHistories.map((h) => [
+    h.yearCompleted != null ? String(h.yearCompleted) : null,
+    h.programName,
+    formatBooleanDisplay(h.verifiedByReportAuthor),
+  ]);
+
+  return (
+    <ReportHistoryTable
+      columns={PRIOR_TREATMENT_COLUMNS}
+      rows={rows}
+      footnote={PRIOR_TREATMENT_FOOTNOTE}
+    />
+  );
+};

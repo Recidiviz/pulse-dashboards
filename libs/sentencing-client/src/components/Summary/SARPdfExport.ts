@@ -387,45 +387,51 @@ export async function exportSARtoPDF(
 
   // Must be called BEFORE html2canvas — canvas capture can shift layout.
   const { mmPerCSSPx } = getTbodyMeasurementContext(tbodyEl, pageWidth);
-  const bodyMMEstimate = tbodyEl.getBoundingClientRect().height * mmPerCSSPx;
-  const continuationHeaders = measureContinuationHeaders(tbodyEl, pageWidth);
-  const blocksPrelim = measureNoSplitBlocks(tbodyEl, pageWidth);
-  const pageStartPositionsPrelim = measurePageStartPositions(
-    tbodyEl,
-    pageWidth,
-  );
 
-  // Preliminary cut points computed from clean (inflation-free) measurements.
-  const cutPointsPrelim = computePageCutPoints(
-    bodyMMEstimate,
-    sliceMM,
-    blocksPrelim,
-    pageStartPositionsPrelim,
-  );
+  // Iteratively converge on the correct set of continuation headers to show.
+  // Each pass re-evaluates every header against the current cut points. Showing
+  // or hiding a header changes block heights, which shifts subsequent blocks and
+  // alters cut points — so we repeat until the desired set is stable.
+  // Headers are both added AND removed each pass; a one-way "only add" approach
+  // gets stuck when an earlier section's newly-shown headers shift later blocks
+  // onto different page boundaries. The bound of 10 passes prevents infinite
+  // loops in pathological edge cases (convergence is typically 2–3 passes).
+  let blocks = measureNoSplitBlocks(tbodyEl, pageWidth);
+  let pageStartPositions = measurePageStartPositions(tbodyEl, pageWidth);
+  let shownHeaders = new Set<HTMLElement>();
 
-  // Show a continuation heading only when a cut actually precedes its block.
-  // Because headings are embedded at the top of their sar-no-split blocks, a
-  // cut that lands before the block snaps to block.top ≈ headerTop — the heading
-  // will be the first element visible on the new page.
-  let anyHeadingsShown = false;
-  for (const h of continuationHeaders) {
-    const splitsBefore = cutPointsPrelim.some(
-      (cp) => cp >= h.primaryBottom && cp <= h.headerTop,
+  for (let pass = 0; pass < 10; pass++) {
+    const bodyHeight = tbodyEl.getBoundingClientRect().height * mmPerCSSPx;
+    const cutPointsCurrent = computePageCutPoints(
+      bodyHeight,
+      sliceMM,
+      blocks,
+      pageStartPositions,
     );
-    if (splitsBefore) {
-      h.element.style.display = "";
-      anyHeadingsShown = true;
-    }
-  }
 
-  // Re-measure only if headings were shown — visible headings add height to
-  // their blocks, shifting subsequent sar-no-split block positions downward.
-  const blocks = anyHeadingsShown
-    ? measureNoSplitBlocks(tbodyEl, pageWidth)
-    : blocksPrelim;
-  const pageStartPositions = anyHeadingsShown
-    ? measurePageStartPositions(tbodyEl, pageWidth)
-    : pageStartPositionsPrelim;
+    const desiredHeaders = new Set<HTMLElement>();
+    for (const h of measureContinuationHeaders(tbodyEl, pageWidth)) {
+      const splitsBefore = cutPointsCurrent.some(
+        (cp) => cp >= h.primaryBottom && cp <= h.headerTop,
+      );
+      if (splitsBefore) desiredHeaders.add(h.element);
+    }
+
+    // Capture in a const so the closure below doesn't reference a reassigned `let`.
+    const prevHeaders = shownHeaders;
+    const converged =
+      desiredHeaders.size === prevHeaders.size &&
+      [...desiredHeaders].every((el) => prevHeaders.has(el));
+    if (converged) break;
+
+    for (const el of allContinuationHeaderEls) {
+      el.style.display = desiredHeaders.has(el) ? "" : "none";
+    }
+    shownHeaders = desiredHeaders;
+
+    blocks = measureNoSplitBlocks(tbodyEl, pageWidth);
+    pageStartPositions = measurePageStartPositions(tbodyEl, pageWidth);
+  }
 
   const bodyCanvas = await html2canvas(tbodyEl, HTML2CANVAS_OPTS);
 

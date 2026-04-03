@@ -366,3 +366,59 @@ export const ReportHistoryTableFootnote = styled.div`
   align-self: stretch;
   margin-top: 15px;
 `;
+
+// ─── Prior Treatment and Programming History ──────────────────────────────────
+
+/** Bold subheading within a section — no border, used for DOC and community subsections. */
+export const ReportSubsectionTitle = styled.h4`
+  ${typography.Sans14}
+  font-weight: 700;
+  line-height: 120%;
+  letter-spacing: -0.14px;
+  margin-bottom: 6px;
+`;
+
+/** Flex row of DOC category boxes — wraps if there are more than ~3 categories. */
+export const DOCCategoryBoxesContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+`;
+
+/** Individual gray category box — grows equally within the row, capped at 30%
+ *  so a single box doesn't span the full width. */
+export const DOCCategoryBox = styled.div`
+  flex: 1 1 0;
+  min-width: 180px;
+  max-width: 30%;
+  display: flex;
+  flex-direction: column;
+  background: ${palette.slate05};
+  padding: 12px 14px;
+`;
+
+/** "N Institutional Treatments" heading inside a DOC category box. */
+export const DOCCategoryBoxHeader = styled.div`
+  ${typography.Sans16}
+  font-weight: 600;
+  line-height: 150%;
+  margin-bottom: 8px;
+`;
+
+/** Date or program name row inside a DOC category box. */
+export const DOCCategoryBoxItem = styled.div`
+  ${typography.Sans12}
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.12px;
+`;
+
+/** "and N more" overflow indicator — italic. */
+export const DOCCategoryBoxMore = styled.div`
+  ${typography.Sans12}
+  font-style: italic;
+  font-weight: 500;
+  line-height: 150%;
+  margin-top: 4px;
+`;

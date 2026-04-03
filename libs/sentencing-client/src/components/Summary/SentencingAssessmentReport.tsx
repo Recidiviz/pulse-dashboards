@@ -25,6 +25,7 @@ import { ReportBlock, SentencingAssessmentReportSection } from "./ReportBlock";
 import { ReportCharge } from "./ReportCharge";
 import { ReportKeyConsiderations } from "./ReportKeyConsiderations";
 import { ReportOffenderAssessment } from "./ReportOffenderAssessment";
+import { ReportPriorTreatmentHistory } from "./ReportPriorTreatmentHistory";
 import { ReportRequestedOf } from "./ReportRequestedOf";
 import { BLOCK_GAP, CHIP_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
@@ -174,6 +175,9 @@ export const SentencingAssessmentReport: React.FC<
               {sarData.assessmentType && (
                 <ReportOffenderAssessment sarData={sarData} />
               )}
+              <ReportPriorTreatmentHistory
+                presenter={presenter.priorTreatmentHistory}
+              />
             </Styled.PageContent>
           </td>
         </tr>
