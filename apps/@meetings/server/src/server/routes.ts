@@ -55,7 +55,10 @@ import {
 } from "~@meetings/tasks";
 import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
-import { postMeetingCreatedNotification } from "~@meetings/trpc/services/slack";
+import {
+  postMeetingCreatedNotification,
+  postMeetingErrorNotification,
+} from "~@meetings/trpc/services/slack";
 
 /**
  * Convert ActionItem objects to simple task strings
@@ -294,6 +297,14 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
         });
 
+        postMeetingErrorNotification({
+          meetingId,
+          stateCode,
+          errorStep: "stitching",
+        }).catch((err) =>
+          console.error("Failed to post Slack error notification", err),
+        );
+
         // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
         throw e;
       }
@@ -445,6 +456,14 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
         });
 
+        postMeetingErrorNotification({
+          meetingId,
+          stateCode,
+          errorStep: "transcription",
+        }).catch((err) =>
+          console.error("Failed to post Slack error notification", err),
+        );
+
         // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
         throw e;
       }
@@ -541,6 +560,14 @@ export function registerTaskRoutes(app: FastifyInstance) {
               PostMeetingProcessingStatus.NOTETAKING_ERROR,
           },
         });
+
+        postMeetingErrorNotification({
+          meetingId,
+          stateCode,
+          errorStep: "notetaking",
+        }).catch((err) =>
+          console.error("Failed to post Slack error notification", err),
+        );
 
         // Rethrow the error so the task fails and can be retried
         throw e;

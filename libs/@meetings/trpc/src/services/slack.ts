@@ -19,6 +19,44 @@ const SLACK_WEBHOOK_URL = process.env["SLACK_WEBHOOK_URL"];
 const SLACK_NOTIFICATIONS_ENABLED =
   process.env["SLACK_NOTIFICATIONS_ENABLED"] === "true";
 
+function getValidatedWebhookUrl(): string | null {
+  if (!SLACK_NOTIFICATIONS_ENABLED || !SLACK_WEBHOOK_URL) return null;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(SLACK_WEBHOOK_URL);
+  } catch {
+    console.warn(
+      `Configured Slack webhook URL is not a valid URL, skipping: ${SLACK_WEBHOOK_URL}`,
+    );
+    return null;
+  }
+
+  if (parsed.protocol !== "https:" || parsed.hostname !== "hooks.slack.com") {
+    console.warn(
+      `Configured Slack webhook URL is not a valid Slack URL, skipping: ${parsed.hostname}`,
+    );
+    return null;
+  }
+
+  return SLACK_WEBHOOK_URL;
+}
+
+async function postSlackMessage(text: string): Promise<void> {
+  const webhookUrl = getValidatedWebhookUrl();
+  if (!webhookUrl) return;
+
+  try {
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+  } catch (e) {
+    console.warn("Failed to post Slack notification:", e);
+  }
+}
+
 export async function postMeetingCreatedNotification({
   staffEmail,
   stateCode,
@@ -30,25 +68,6 @@ export async function postMeetingCreatedNotification({
   personPseudoId: string;
   meetingId: string;
 }): Promise<void> {
-  if (!SLACK_NOTIFICATIONS_ENABLED || !SLACK_WEBHOOK_URL) return;
-
-  let parsed: URL;
-  try {
-    parsed = new URL(SLACK_WEBHOOK_URL);
-  } catch {
-    console.warn(
-      `Configured Slack webhook URL is not a valid URL, skipping: ${SLACK_WEBHOOK_URL}`,
-    );
-    return;
-  }
-
-  if (parsed.protocol !== "https:" || parsed.hostname !== "hooks.slack.com") {
-    console.warn(
-      `Configured Slack webhook URL is not a valid Slack URL, skipping: ${parsed.hostname}`,
-    );
-    return;
-  }
-
   const text = [
     "New meeting created",
     `• Staff: ${staffEmail}`,
@@ -57,9 +76,24 @@ export async function postMeetingCreatedNotification({
     `• Meeting ID: ${meetingId}`,
   ].join("\n");
 
-  await fetch(SLACK_WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text }),
-  });
+  await postSlackMessage(text);
+}
+
+export async function postMeetingErrorNotification({
+  meetingId,
+  stateCode,
+  errorStep,
+}: {
+  meetingId: string;
+  stateCode: string;
+  errorStep: "stitching" | "transcription" | "notetaking";
+}): Promise<void> {
+  const text = [
+    `:warning: Meeting processing error (${errorStep})`,
+    `• Meeting ID: ${meetingId}`,
+    `• State: ${stateCode}`,
+    `• Failed step: ${errorStep}`,
+  ].join("\n");
+
+  await postSlackMessage(text);
 }
