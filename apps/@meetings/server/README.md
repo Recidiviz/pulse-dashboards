@@ -17,6 +17,7 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 2. Make sure you have your Docker daemon running.
 3. To point to your own GCS bucket for local development:
+
    1. Create a GCS bucket in the recidiviz-dashboard-staging project with the pattern `recidiviz-dashboard-staging-[your-name]-meetings-test-bucket`
    1. Set the CORS policy on the bucket by running `gcloud storage buckets update gs://[your-bucket-name] --cors-file=apps/@meetings/server/gcs-cors.json`
    1. create an `.env.dev` file in this directory with the following contents:
@@ -27,24 +28,25 @@ If you haven't already, follow the setup instructions in the root README to inst
    ```
 
    Replace `your-bucket-name` with the name of your GCS bucket.
+
 4. Get the service account key JSON file for the `recidiviz-dashboard-staging` GCP project from your team lead and put it in this directory. Name the file `recidiviz-dashboard-staging-22598baea1a7.json`.
 5. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx run @meetings/prisma:docker && nx run @meetings/prisma:prisma-seed` to seed the database with initial data.
 6. Start the server with `nx dev @meetings/server`.
 
-### Offline Mode (No GCS)
+### Local Mode (No GCS)
 
-If you want to run the meeting assistant without connecting to Google Cloud Storage (useful for local development or testing), you can enable offline mode:
+If you want to run the meeting assistant without connecting to Google Cloud Storage (useful for local development or testing), you can enable local mode:
 
 1. In your `.env.dev` file, add the following:
 
    ```
-   IS_OFFLINE=true
-   OFFLINE_STORAGE_DIR=/path/to/local/storage  # Optional, defaults to system temp directory
+   IS_LOCAL_MODE=true
+   LOCAL_STORAGE_DIR=/path/to/local/storage  # Optional, defaults to system temp directory
    ```
 
 2. Start the server with `nx dev @meetings/server`.
 
-**How Offline Mode Works:**
+**How Local Mode Works:**
 
 - Audio recordings are stored locally on your file system instead of GCS
 - The signed URL endpoint returns a local HTTP endpoint (`/upload-audio/:meetingId/:filename`)
@@ -54,8 +56,8 @@ If you want to run the meeting assistant without connecting to Google Cloud Stor
 
 **Environment Variables:**
 
-- `IS_OFFLINE`: Set to `"true"` to enable offline mode (default: `false`)
-- `OFFLINE_STORAGE_DIR`: Directory for storing audio files locally (default: `{system-temp}/meetings-offline`)
+- `IS_LOCAL_MODE`: Set to `"true"` to enable local mode (default: `false`)
+- `LOCAL_STORAGE_DIR`: Directory for storing audio files locally (default: `{system-temp}/meetings-local`)
 
 ### Updating the prisma schema
 
@@ -110,14 +112,15 @@ Please only deploy the meetings server via the `nx deploy` command. This will en
 There is an internal API endpoint to reprocess meetings. This can be used to re-run post-meeting processing steps (like audio stitching and transcription) for a specific meeting in the case that something went wrong during the initial processing or you want to re-run processing with updated logic.
 
 The endpoint is a POST request to `/reprocess-meeting` with the following body parameters:
+
 - `stateCode`: The state code of the meeting to reprocess (e.g. `US_CA` for California)
 - `meetingId`: The ID of the meeting to reprocess
 - `step` (optional): The specific post-meeting processing step to reprocess. Valid values are `stitching`, `transcription`, and `notetaking`. If not provided, the server will determine the appropriate step to reprocess based on the current status of the meeting.
 
-You will need to pass a Google Identity Token in the `Authorization` header of the request. The token must be for a service account that has permission to access the meetings server (`meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com` for the staging and demo servers, and `meetings@recidiviz-dashboard-production.iam.gserviceaccount.com` for the production server). 
+You will need to pass a Google Identity Token in the `Authorization` header of the request. The token must be for a service account that has permission to access the meetings server (`meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com` for the staging and demo servers, and `meetings@recidiviz-dashboard-production.iam.gserviceaccount.com` for the production server).
 
 1. You can generate a token by following the instructions at https://docs.cloud.google.com/iam/docs/create-short-lived-credentials-direct#console_4
 
 2. You can attach the token to your request using the `Authorization` header:
 
-```-H "Authorization: Bearer {your_id_token}"```
+`-H "Authorization: Bearer {your_id_token}"`

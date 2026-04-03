@@ -49,7 +49,7 @@ import {
 } from "~@meetings/server/server/utils";
 import {
   ActionItem,
-  cleanupOfflineFiles,
+  cleanupLocalFiles,
   CriticalUpdate,
   stitchAudio,
 } from "~@meetings/tasks";
@@ -172,7 +172,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
     },
   );
 
-  // Upload endpoint for offline mode
+  // Upload endpoint for local mode
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "PUT",
     url: "/upload-audio/:meetingId/:filename",
@@ -183,12 +183,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
       }),
     },
     handler: async (req, reply) => {
-      if (!env.IS_OFFLINE) {
+      if (!env.IS_LOCAL_MODE) {
         return reply
           .status(400)
-          .send(
-            "Uploading to server is only valid when running in offline mode",
-          );
+          .send("Uploading to server is only valid when running in local mode");
       }
 
       const { meetingId, filename } = req.params;
@@ -196,7 +194,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
       try {
         // Create directory if it doesn't exist
         const localStorageDir =
-          env.OFFLINE_STORAGE_DIR ?? path.join(os.tmpdir(), "meetings-offline");
+          env.LOCAL_STORAGE_DIR ?? path.join(os.tmpdir(), "meetings-local");
         const meetingDir = path.join(localStorageDir, meetingId);
 
         if (!fs.existsSync(meetingDir)) {
@@ -443,8 +441,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
             );
         }
 
-        // Clean up offline files after successful transcription
-        await cleanupOfflineFiles(meetingId);
+        // Clean up local files after successful transcription
+        await cleanupLocalFiles(meetingId);
       } catch (e) {
         await prisma.meeting.update({
           where: {

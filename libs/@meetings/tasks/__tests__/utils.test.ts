@@ -40,7 +40,7 @@ import {
   mockDeepgram,
 } from "~@meetings/tasks/test/setup";
 import {
-  cleanupOfflineFiles,
+  cleanupLocalFiles,
   getSignedUrlForNewRecording,
   stitchAudio,
   transcribeAudioWithAssemblyAI,
@@ -322,15 +322,15 @@ describe("utils", () => {
     });
   });
 
-  describe("Offline mode", () => {
-    const originalOfflineMode = process.env["IS_OFFLINE"];
-    const originalOfflineStorageDir = process.env["OFFLINE_STORAGE_DIR"];
-    const testStorageDir = path.join(os.tmpdir(), "test-offline-storage");
+  describe("Local mode", () => {
+    const originalLocalMode = process.env["IS_LOCAL_MODE"];
+    const originalLocalStorageDir = process.env["LOCAL_STORAGE_DIR"];
+    const testStorageDir = path.join(os.tmpdir(), "test-local-storage");
 
     beforeEach(() => {
-      // Enable offline mode for these tests
-      process.env["IS_OFFLINE"] = "true";
-      process.env["OFFLINE_STORAGE_DIR"] = testStorageDir;
+      // Enable local mode for these tests
+      process.env["IS_LOCAL_MODE"] = "true";
+      process.env["LOCAL_STORAGE_DIR"] = testStorageDir;
 
       // Create test storage directory
       if (!fs.existsSync(testStorageDir)) {
@@ -340,8 +340,8 @@ describe("utils", () => {
 
     afterEach(() => {
       // Restore original env vars
-      process.env["IS_OFFLINE"] = originalOfflineMode;
-      process.env["OFFLINE_STORAGE_DIR"] = originalOfflineStorageDir;
+      process.env["IS_LOCAL_MODE"] = originalLocalMode;
+      process.env["LOCAL_STORAGE_DIR"] = originalLocalStorageDir;
 
       // Clean up test storage directory
       if (fs.existsSync(testStorageDir)) {
@@ -349,7 +349,7 @@ describe("utils", () => {
       }
     });
 
-    describe("getSignedUrlForNewRecording (offline)", () => {
+    describe("getSignedUrlForNewRecording (local mode)", () => {
       beforeAll(() => {
         vi.useFakeTimers();
         vi.setSystemTime(new Date("2025-10-19"));
@@ -359,7 +359,7 @@ describe("utils", () => {
         vi.useRealTimers();
       });
 
-      test("Should return local endpoint URL in offline mode with m4a", async () => {
+      test("Should return local endpoint URL in local mode with m4a", async () => {
         const url = await getSignedUrlForNewRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           "test-meeting-id",
@@ -373,7 +373,7 @@ describe("utils", () => {
         );
       });
 
-      test("Should return local endpoint URL in offline mode with webm", async () => {
+      test("Should return local endpoint URL in local mode with webm", async () => {
         const url = await getSignedUrlForNewRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           "test-meeting-id-web",
@@ -388,8 +388,8 @@ describe("utils", () => {
       });
     });
 
-    describe("stitchAudio (offline)", () => {
-      const meetingId = "offline-stitch-test-meeting";
+    describe("stitchAudio (local mode)", () => {
+      const meetingId = "local-stitch-test-meeting";
       const meetingDir = path.join(testStorageDir, meetingId);
 
       beforeEach(() => {
@@ -470,8 +470,8 @@ describe("utils", () => {
       });
     });
 
-    describe("transcribeAudioWithAssemblyAI (offline)", () => {
-      const meetingId = "offline-transcribe-test-meeting";
+    describe("transcribeAudioWithAssemblyAI (local mode)", () => {
+      const meetingId = "local-transcribe-test-meeting";
       const meetingDir = path.join(testStorageDir, meetingId);
 
       beforeEach(() => {
@@ -504,7 +504,7 @@ describe("utils", () => {
       });
     });
 
-    describe("cleanupOfflineFiles", () => {
+    describe("cleanupLocalFiles", () => {
       test("Should delete meeting directory and all files", async () => {
         const meetingId = "cleanup-test-meeting";
         const meetingDir = path.join(testStorageDir, meetingId);
@@ -520,7 +520,7 @@ describe("utils", () => {
         expect(fs.readdirSync(meetingDir).length).toBe(3);
 
         // Cleanup
-        await cleanupOfflineFiles(meetingId);
+        await cleanupLocalFiles(meetingId);
 
         // Verify directory was deleted
         expect(fs.existsSync(meetingDir)).toBe(false);
@@ -528,22 +528,22 @@ describe("utils", () => {
 
       test("Should not throw error if meeting directory doesn't exist", async () => {
         await expect(
-          cleanupOfflineFiles("non-existent-meeting"),
+          cleanupLocalFiles("non-existent-meeting"),
         ).resolves.not.toThrow();
       });
 
-      test("Should not cleanup in online mode", async () => {
-        process.env["IS_OFFLINE"] = "false";
+      test("Should not cleanup in GCS mode", async () => {
+        process.env["IS_LOCAL_MODE"] = "false";
 
-        const meetingId = "online-mode-meeting";
+        const meetingId = "gcs-mode-meeting";
         const meetingDir = path.join(testStorageDir, meetingId);
 
         // Create meeting directory with files
         fs.mkdirSync(meetingDir, { recursive: true });
         fs.writeFileSync(path.join(meetingDir, "final.m4a"), "final audio");
 
-        // Cleanup should not delete in online mode
-        await cleanupOfflineFiles(meetingId);
+        // Cleanup should not delete in GCS mode
+        await cleanupLocalFiles(meetingId);
 
         // Verify directory still exists
         expect(fs.existsSync(meetingDir)).toBe(true);

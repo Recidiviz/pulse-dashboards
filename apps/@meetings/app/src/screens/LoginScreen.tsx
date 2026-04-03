@@ -78,11 +78,11 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
 
           <PrimaryButton label="Continue" onPress={handleContinue} />
 
-          {/* Skip Auth Link for Offline Mode */}
-          {env.EXPO_PUBLIC_OFFLINE_MODE && (
+          {/* Skip Auth Link for Local Mode */}
+          {env.EXPO_PUBLIC_LOCAL_MODE && (
             <TouchableOpacity onPress={handleSkipAuth} className="mt-4">
               <Typography className="text-center text-sm font-medium text-blue-600">
-                Skip Authentication (Offline Mode)
+                Skip Authentication (Local Mode)
               </Typography>
             </TouchableOpacity>
           )}

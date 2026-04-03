@@ -27,7 +27,7 @@ const envSchema = z.object({
   EXPO_PUBLIC_AUTH0_DOMAIN: z
     .string()
     .min(1, "EXPO_PUBLIC_AUTH0_DOMAIN is required"),
-  EXPO_PUBLIC_OFFLINE_MODE: z.coerce.boolean().default(false),
+  EXPO_PUBLIC_LOCAL_MODE: z.coerce.boolean().default(false),
   EXPO_PUBLIC_SENTRY_DSN: z
     .string()
     .min(1, "EXPO_PUBLIC_SENTRY_DSN is required"),
@@ -40,7 +40,7 @@ const env = {
   EXPO_PUBLIC_AUTH0_AUDIENCE: process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"],
   EXPO_PUBLIC_AUTH0_CLIENT_ID: process.env["EXPO_PUBLIC_AUTH0_CLIENT_ID"],
   EXPO_PUBLIC_AUTH0_DOMAIN: process.env["EXPO_PUBLIC_AUTH0_DOMAIN"],
-  EXPO_PUBLIC_OFFLINE_MODE: process.env["EXPO_PUBLIC_OFFLINE_MODE"],
+  EXPO_PUBLIC_LOCAL_MODE: process.env["EXPO_PUBLIC_LOCAL_MODE"],
   EXPO_PUBLIC_SENTRY_DSN: process.env["EXPO_PUBLIC_SENTRY_DSN"],
   EXPO_PUBLIC_SERVER_URL: process.env["EXPO_PUBLIC_SERVER_URL"],
   EXPO_PUBLIC_DEPLOY_ENV: process.env["EXPO_PUBLIC_DEPLOY_ENV"],

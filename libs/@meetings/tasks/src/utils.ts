@@ -35,8 +35,8 @@ if (!ffmpegPath) {
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath.path);
 
-function isOffline() {
-  return process.env["IS_OFFLINE"] === "true";
+function isLocalMode() {
+  return process.env["IS_LOCAL_MODE"] === "true";
 }
 
 export async function getSignedUrlForNewRecording(
@@ -48,8 +48,8 @@ export async function getSignedUrlForNewRecording(
   // Make the file name the time since epoch so that files are naturally ordered
   const secondsSinceEpoch = Math.round(Date.now() / 1000);
 
-  // In offline mode, return a local upload endpoint instead of a GCS signed URL
-  if (isOffline()) {
+  // In local mode, return a local upload endpoint instead of a GCS signed URL
+  if (isLocalMode()) {
     const host = process.env["HOST"] ?? "localhost";
     const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;
     const serverUrl = `http://${host}:${port}`;
@@ -76,10 +76,10 @@ export async function deleteRecordingFiles(
   bucketName: string,
   folderPath: string,
 ) {
-  if (isOffline()) {
+  if (isLocalMode()) {
     const localStorageDir =
-      process.env["OFFLINE_STORAGE_DIR"] ??
-      path.join(os.tmpdir(), "meetings-offline");
+      process.env["LOCAL_STORAGE_DIR"] ??
+      path.join(os.tmpdir(), "meetings-local");
     const dir = path.join(localStorageDir, folderPath);
     if (fs.existsSync(dir)) {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -91,15 +91,15 @@ export async function deleteRecordingFiles(
   await storage.bucket(bucketName).deleteFiles({ prefix: folderPath });
 }
 
-function downloadFilesOffline(
+function downloadFilesLocal(
   folderName: string,
   tempFilePaths: string[],
 ): string | null {
   let fileListContent = "";
-  // In offline mode, read files from local storage directory
+  // In local mode, read files from local storage directory
   const localStorageDir =
-    process.env["OFFLINE_STORAGE_DIR"] ||
-    path.join(os.tmpdir(), "meetings-offline");
+    process.env["LOCAL_STORAGE_DIR"] ||
+    path.join(os.tmpdir(), "meetings-local");
   const meetingDir = path.join(localStorageDir, folderName);
 
   if (!fs.existsSync(meetingDir)) {
@@ -188,13 +188,10 @@ export async function stitchAudio(bucketName: string, folderName: string) {
   const fileListPath = path.join(os.tmpdir(), "filelist.txt");
   let fileListContent = "";
 
-  if (isOffline()) {
-    const offlineFileListContent = downloadFilesOffline(
-      folderName,
-      tempFilePaths,
-    );
-    if (offlineFileListContent === null) return null;
-    fileListContent = offlineFileListContent;
+  if (isLocalMode()) {
+    const localFileListContent = downloadFilesLocal(folderName, tempFilePaths);
+    if (localFileListContent === null) return null;
+    fileListContent = localFileListContent;
   } else {
     const gcsFileListContent = await downloadFilesGCS(
       bucketName,
@@ -252,11 +249,11 @@ export async function stitchAudio(bucketName: string, folderName: string) {
 
   const outputFileName = `${folderName}/final.${extension}`;
 
-  if (isOffline()) {
-    // In offline mode, save final file to local storage
+  if (isLocalMode()) {
+    // In local mode, save final file to local storage
     const localStorageDir =
-      process.env["OFFLINE_STORAGE_DIR"] ||
-      path.join(os.tmpdir(), "meetings-offline");
+      process.env["LOCAL_STORAGE_DIR"] ||
+      path.join(os.tmpdir(), "meetings-local");
     const meetingDir = path.join(localStorageDir, folderName);
     const finalPath = path.join(meetingDir, `final.${extension}`);
     fs.copyFileSync(tempOutputPath, finalPath);
@@ -280,8 +277,8 @@ function getLocalAudioFilePath(finalRecordingFilePath: string) {
   // Extract meeting ID from the path (format: {meetingId}/final.{extension})
   const meetingId = path.dirname(finalRecordingFilePath);
   const localStorageDir =
-    process.env["OFFLINE_STORAGE_DIR"] ||
-    path.join(os.tmpdir(), "meetings-offline");
+    process.env["LOCAL_STORAGE_DIR"] ||
+    path.join(os.tmpdir(), "meetings-local");
   const meetingDir = path.join(localStorageDir, meetingId);
 
   const files = fs.readdirSync(meetingDir);
@@ -302,12 +299,12 @@ export async function transcribeAudioWithAssemblyAI(
 ) {
   let audioUrl: string;
 
-  if (isOffline()) {
-    // In offline mode, use local file path
+  if (isLocalMode()) {
+    // In local mode, use local file path
     // AssemblyAI accepts local file paths directly
     audioUrl = getLocalAudioFilePath(finalRecordingFilePath);
   } else {
-    // Online mode: generate signed URL from GCS
+    // GCS mode: generate signed URL from GCS
     const storage = new Storage();
     const bucket = storage.bucket(bucketName);
     const file = bucket.file(finalRecordingFilePath);
@@ -348,21 +345,21 @@ export async function transcribeAudioWithAssemblyAI(
   return transcriptionResult;
 }
 
-export async function cleanupOfflineFiles(meetingId: string) {
-  if (!isOffline()) {
-    // Only cleanup in offline mode
+export async function cleanupLocalFiles(meetingId: string) {
+  if (!isLocalMode()) {
+    // Only cleanup in local mode
     return;
   }
 
   const localStorageDir =
-    process.env["OFFLINE_STORAGE_DIR"] ||
-    path.join(os.tmpdir(), "meetings-offline");
+    process.env["LOCAL_STORAGE_DIR"] ||
+    path.join(os.tmpdir(), "meetings-local");
   const meetingDir = path.join(localStorageDir, meetingId);
 
   if (fs.existsSync(meetingDir)) {
     // Remove all files in the meeting directory
     fs.rmSync(meetingDir, { recursive: true, force: true });
-    console.log(`Cleaned up offline files for meeting ${meetingId}`);
+    console.log(`Cleaned up local files for meeting ${meetingId}`);
   }
 }
 
@@ -374,8 +371,8 @@ export async function transcribeAudioWithDeepgram(
 ) {
   let transcriptionResult;
 
-  if (isOffline()) {
-    // In offline mode, use local file path
+  if (isLocalMode()) {
+    // In local mode, use local file path
     const audioUrl = getLocalAudioFilePath(finalRecordingFilePath);
     const bufferData = fs.readFileSync(audioUrl);
 

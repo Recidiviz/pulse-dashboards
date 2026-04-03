@@ -63,13 +63,13 @@ nx sync-env-to-eas @meetings/app --configuration production
 If your device shows "No development servers found", enter the URL manually. The IP address will be
 shown in the console under the QR code, something like http://192.168.0.127:8081.
 
-### Offline Mode with Skip Authentication
+### Local Mode with Skip Authentication
 
-When running in offline mode against a local server, you can skip the Auth0 authentication flow:
+When running in local mode against a local server, you can skip the Auth0 authentication flow:
 
 1. Ensure the backend server is running in development mode (`NODE_ENV=development`)
 1. Run `nx android @meetings/app` (or `nx ios @meetings/app`)
-1. On the login screen, click "Skip Authentication (Offline Mode)"
+1. On the login screen, click "Skip Authentication (Local Mode)"
 1. The app will bypass Auth0 and the backend will use a mock user with `pseudonymizedId: "staff-pid-1"`
 
 **Note**: Skip authentication is only allowed when the backend is running in development mode for security reasons.

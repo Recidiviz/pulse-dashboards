@@ -95,15 +95,13 @@ const mockTranscribeAudioWithDeepgram = vi.spyOn(
   tasks,
   "transcribeAudioWithDeepgram",
 );
-const mockCleanupOfflineFiles = vi.spyOn(tasks, "cleanupOfflineFiles");
+const mockCleanupLocalFiles = vi.spyOn(tasks, "cleanupLocalFiles");
 
 // Make these succeed by default
 mockStitchAudio.mockImplementation(async () => {
   return { outputFileName: "final-path.m4a", durationMs: 1000 };
 });
-mockCleanupOfflineFiles.mockImplementation(
-  vi.fn().mockResolvedValue(undefined),
-);
+mockCleanupLocalFiles.mockImplementation(vi.fn().mockResolvedValue(undefined));
 mockTranscribeAudioWithAssemblyAI.mockImplementation(
   vi.fn().mockResolvedValue(FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT),
 );
@@ -697,7 +695,7 @@ describe("tasks", () => {
       );
     });
 
-    test("Should call cleanupOfflineFiles after successful transcription", async () => {
+    test("Should call cleanupLocalFiles after successful transcription", async () => {
       const response = await testServer.inject({
         method: "POST",
         url: "/transcribe-audio",
@@ -709,10 +707,10 @@ describe("tasks", () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(mockCleanupOfflineFiles).toHaveBeenCalledWith(fakeMeeting.id);
+      expect(mockCleanupLocalFiles).toHaveBeenCalledWith(fakeMeeting.id);
     });
 
-    test("Should not call cleanupOfflineFiles if transcription fails", async () => {
+    test("Should not call cleanupLocalFiles if transcription fails", async () => {
       mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
         throw new Error("Transcription failed");
       });
@@ -731,19 +729,19 @@ describe("tasks", () => {
       });
 
       expect(response.statusCode).toBe(500);
-      expect(mockCleanupOfflineFiles).not.toHaveBeenCalled();
+      expect(mockCleanupLocalFiles).not.toHaveBeenCalled();
     });
   });
 
-  describe("/upload-audio (offline mode)", () => {
-    const originalOfflineMode = env.IS_OFFLINE;
-    const originalOfflineStorageDir = env.OFFLINE_STORAGE_DIR;
-    const testStorageDir = "/tmp/test-offline-upload-storage";
+  describe("/upload-audio (local mode)", () => {
+    const originalLocalMode = env.IS_LOCAL_MODE;
+    const originalLocalStorageDir = env.LOCAL_STORAGE_DIR;
+    const testStorageDir = "/tmp/test-local-upload-storage";
 
     beforeEach(() => {
-      // Enable offline mode for these tests
-      env.IS_OFFLINE = true;
-      env.OFFLINE_STORAGE_DIR = testStorageDir;
+      // Enable local mode for these tests
+      env.IS_LOCAL_MODE = true;
+      env.LOCAL_STORAGE_DIR = testStorageDir;
 
       // Create test storage directory
       if (!require("fs").existsSync(testStorageDir)) {
@@ -753,8 +751,8 @@ describe("tasks", () => {
 
     afterEach(() => {
       // Restore original env vars
-      env.IS_OFFLINE = originalOfflineMode;
-      env.OFFLINE_STORAGE_DIR = originalOfflineStorageDir;
+      env.IS_LOCAL_MODE = originalLocalMode;
+      env.LOCAL_STORAGE_DIR = originalLocalStorageDir;
 
       // Clean up test storage directory
       if (require("fs").existsSync(testStorageDir)) {
@@ -762,8 +760,8 @@ describe("tasks", () => {
       }
     });
 
-    test("Should return 400 if offline mode is not enabled", async () => {
-      env.IS_OFFLINE = false;
+    test("Should return 400 if local mode is not enabled", async () => {
+      env.IS_LOCAL_MODE = false;
 
       const response = await testServer.inject({
         method: "PUT",
@@ -776,7 +774,7 @@ describe("tasks", () => {
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toContain(
-        "Uploading to server is only valid when running in offline mode",
+        "Uploading to server is only valid when running in local mode",
       );
     });
 
