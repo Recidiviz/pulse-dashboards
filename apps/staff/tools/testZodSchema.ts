@@ -35,10 +35,12 @@ import {
   usMeSCCPSchema,
   usMeWorkReleaseSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
+  usMiAddInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMiCustodyLevelDowngradeSchema,
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewV2Schema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
+  usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
   usNeGoodTimeRestorationSchema,
   usPaSpecialCircumstancesSupervisionSchema,
   usTnInitialClassification2026Schema,
@@ -175,12 +177,16 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usMiMinimumTelephoneReporting: usMiMinimumTelephoneReportingSchema,
   usMiAddInPersonSecurityClassificationCommitteeReview:
     usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
+  usMiAddInPersonSecurityClassificationCommitteeReviewV2:
+    usMiAddInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMiSecurityClassificationCommitteeReview:
     usMiSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewV2:
     usMiSecurityClassificationCommitteeReviewV2Schema,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
+  usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
+    usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMiCustodyLevelDowngrade: usMiCustodyLevelDowngradeSchema,
 
   // US_MO

@@ -29,11 +29,13 @@ import {
   usMeMediumTrusteeFixtures,
   usMeSccpFixtures,
   usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
+  usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures,
   usMiCustodyLevelDowngradeFixtures,
   usMiReclassificationRequestFixtures,
   usMiSecurityClassificationCommitteeReviewFixtures,
   usMiSecurityClassificationCommitteeReviewV2Fixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
+  usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures,
   usNeGoodTimeRestorationFixtures,
   usPaSpecialCircumstancesSupervisionFixtures,
 } from "~datatypes";
@@ -174,8 +176,12 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
         usMiSecurityClassificationCommitteeReviewFixtures,
       usMiWardenInPersonSecurityClassificationCommitteeReviewReferrals:
         usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
+      usMiWardenInPersonSecurityClassificationCommitteeReviewV2Referrals:
+        usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures,
       usMiAddInPersonSecurityClassificationCommitteeReviewReferrals:
         usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
+      usMiAddInPersonSecurityClassificationCommitteeReviewV2Referrals:
+        usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures,
       usPaSpecialCircumstancesSupervisionReferrals:
         usPaSpecialCircumstancesSupervisionFixtures,
       usNeGoodTimeRestorationReferrals: usNeGoodTimeRestorationFixtures,

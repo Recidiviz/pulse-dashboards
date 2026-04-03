@@ -18,9 +18,11 @@
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatWorkflowsDate } from "../../../utils";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
+import { usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { FormBase } from "./FormBase";
 
 export type UsMiSCCReviewDraftData = {
@@ -136,6 +138,8 @@ export class UsMiSCCReviewForm extends FormBase<
   | usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity
   | usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity
   | usMiSecurityClassificationCommitteeReviewV2Opportunity
+  | usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity
+  | usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity
 > {
   navigateToFormText = "Automate 283 Form";
 

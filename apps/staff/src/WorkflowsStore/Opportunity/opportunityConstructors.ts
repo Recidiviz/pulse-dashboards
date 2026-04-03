@@ -70,10 +70,12 @@ import {
 import { UsMeAnnualReclassificationOpportunity } from "./UsMe/UsMeAnnualReclassificationOpportunity";
 import { UsMeMediumTrusteeOpportunity } from "./UsMe/UsMeMediumTrusteeOpportunity";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "./UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiReclassificationRequestOpportunity } from "./UsMi/UsMiReclassificationRequestOpportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "./UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "./UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
+import { usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
@@ -135,6 +137,8 @@ export const opportunityConstructors = {
   // US_MI
   usMiAddInPersonSecurityClassificationCommitteeReview:
     usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity,
+  usMiAddInPersonSecurityClassificationCommitteeReviewV2:
+    usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity,
   usMiClassificationReview: UsMiClassificationReviewOpportunity,
   usMiEarlyDischarge: UsMiEarlyDischargeOpportunity,
   usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingOpportunity,
@@ -147,6 +151,8 @@ export const opportunityConstructors = {
   usMiSupervisionLevelDowngrade: UsMiSupervisionLevelDowngradeOpportunity,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity,
+  usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
+    usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity,
   usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeOpportunity,
 
   // US_ME

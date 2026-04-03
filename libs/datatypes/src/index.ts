@@ -44,6 +44,8 @@ export * from "./opportunities/UsMe/UsMeWorkRelease/schema";
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReview/schema";
+export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2/fixtures";
+export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2/schema";
 export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/fixtures";
 export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/schema";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/fixtures";
@@ -54,6 +56,8 @@ export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReviewV2/
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReviewV2/schema";
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/schema";
+export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2/fixtures";
+export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2/schema";
 
 // UsNe Exports: Includes fixtures and schema related to US-NE opportunities
 // -----------------------------------------------------------------------------

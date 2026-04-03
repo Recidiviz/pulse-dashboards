@@ -1,0 +1,275 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible1 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMiInSolitaryConfinementAtLeastOneYear": {
+      "eligibleDate": 2021-10-27T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES021",
+  "formInformation": {
+    "STG": "2",
+    "adSegStaysAndReasonsWithin3Yrs": [
+      "(2022-11-07,003,)",
+    ],
+    "bondableOffensesWithin6Months": "(020, 2024-02-26)",
+    "facility": "FACILITY2",
+    "lock": "LOCKID3",
+    "maxReleaseDate": 2024-06-16T00:00:00.000Z,
+    "minReleaseDate": 2023-03-16T00:00:00.000Z,
+    "nonbondableOffensesWithin1Year": "(008, 2023-05-31)",
+    "prisonerName": "Third Resident",
+    "prisonerNumber": "RES021",
+    "segregationClassificationDate": 2021-10-27T00:00:00.000Z,
+    "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
+  },
+  "ineligibleCriteria": {
+    "usMiPastAddInPersonReviewForSccDate": {
+      "latestAddInPersonSccReviewDate": null,
+      "nextSccDate": 2021-12-18T00:00:00.000Z,
+      "solitaryStartDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "daysInCollapsedSolitarySession": 30,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [
+      {
+        "stayEndDate": 2022-11-07T00:00:00.000Z,
+        "stayOffenses": "003",
+        "stayStartDate": 2022-11-07T00:00:00.000Z,
+      },
+    ],
+    "jsonRecentBondableOffenses": [],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
+    "lessThan24MonthsFromErd": false,
+    "neededProgramming": "105",
+    "nextSccDate": 2021-12-18T00:00:00.000Z,
+    "tabName": "DUE",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for almostEligible2 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMiPastAddInPersonReviewForSccDate": {
+      "latestAddInPersonSccReviewDate": null,
+      "nextSccDate": 2021-12-18T00:00:00.000Z,
+      "solitaryStartDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES022",
+  "formInformation": {
+    "STG": "2",
+    "adSegStaysAndReasonsWithin3Yrs": [
+      "(2022-11-07,003,)",
+    ],
+    "bondableOffensesWithin6Months": "(020, 2024-02-26)",
+    "facility": "FACILITY2",
+    "lock": "LOCKID3",
+    "maxReleaseDate": 2024-06-16T00:00:00.000Z,
+    "minReleaseDate": 2023-03-16T00:00:00.000Z,
+    "nonbondableOffensesWithin1Year": "(008, 2023-05-31)",
+    "prisonerName": "Third Resident",
+    "prisonerNumber": "RES021",
+    "segregationClassificationDate": 2021-10-27T00:00:00.000Z,
+    "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
+  },
+  "ineligibleCriteria": {
+    "usMiInSolitaryConfinementAtLeastOneYear": {
+      "eligibleDate": 2021-12-22T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "daysInCollapsedSolitarySession": 30,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [
+      {
+        "stayEndDate": 2022-11-07T00:00:00.000Z,
+        "stayOffenses": "003",
+        "stayStartDate": 2022-11-07T00:00:00.000Z,
+      },
+    ],
+    "jsonRecentBondableOffenses": [],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
+    "lessThan24MonthsFromErd": false,
+    "neededProgramming": "105",
+    "nextSccDate": 2021-12-18T00:00:00.000Z,
+    "tabName": "UPCOMING",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for fullyEligible1 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMiInSolitaryConfinementAtLeastOneYear": {
+      "eligibleDate": 2021-11-26T00:00:00.000Z,
+    },
+    "usMiPastAddInPersonReviewForSccDate": {
+      "latestAddInPersonSccReviewDate": 2021-12-01T00:00:00.000Z,
+      "nextSccDate": 2021-12-21T00:00:00.000Z,
+      "solitaryStartDate": 2021-11-26T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES019",
+  "formInformation": {
+    "STG": "1",
+    "adSegStaysAndReasonsWithin3Yrs": [
+      "(2021-11-03,014,)",
+      "(2022-03-02,014,)",
+      "(2021-08-02,030,)",
+      "(2023-10-12,003,014,029,)",
+      "(2022-05-16,014,)",
+      "(2022-04-30,012,)",
+    ],
+    "bondableOffensesWithin6Months": "(423, 2023-12-27)",
+    "facility": "FACILITY1",
+    "lock": "LOCKID1",
+    "maxReleaseDate": 2023-08-16T00:00:00.000Z,
+    "minReleaseDate": 2022-10-16T00:00:00.000Z,
+    "nonbondableOffensesWithin1Year": "(008, 2023-05-31)",
+    "prisonerName": "First Resident",
+    "prisonerNumber": "RES019",
+    "segregationClassificationDate": 2021-11-26T00:00:00.000Z,
+    "segregationType": "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "completedProgramming": "105",
+    "daysInCollapsedSolitarySession": 25,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [
+      {
+        "stayEndDate": 2021-11-03T00:00:00.000Z,
+        "stayOffenses": "014",
+        "stayStartDate": 2021-11-03T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2022-03-02T00:00:00.000Z,
+        "stayOffenses": "014",
+        "stayStartDate": 2022-03-02T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2021-08-02T00:00:00.000Z,
+        "stayOffenses": "030",
+        "stayStartDate": 2021-08-02T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2023-10-12T00:00:00.000Z,
+        "stayOffenses": "003,014,029",
+        "stayStartDate": 2023-10-12T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2022-05-16T00:00:00.000Z,
+        "stayOffenses": "014",
+        "stayStartDate": 2022-05-16T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2022-04-30T00:00:00.000Z,
+        "stayOffenses": "012",
+        "stayStartDate": 2022-04-30T00:00:00.000Z,
+      },
+    ],
+    "jsonRecentBondableOffenses": [
+      {
+        "bondableIncidentDate": 2023-12-27T00:00:00.000Z,
+        "bondableOffense": "423",
+      },
+    ],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
+    "neededProgramming": "101",
+    "nextSccDate": 2021-12-21T00:00:00.000Z,
+    "tabName": "OVERDUE",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for fullyEligible2 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMiInSolitaryConfinementAtLeastOneYear": {
+      "eligibleDate": 2021-10-27T00:00:00.000Z,
+    },
+    "usMiPastAddInPersonReviewForSccDate": {
+      "latestAddInPersonSccReviewDate": null,
+      "nextSccDate": 2021-12-18T00:00:00.000Z,
+      "solitaryStartDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES020",
+  "formInformation": {
+    "STG": "2",
+    "adSegStaysAndReasonsWithin3Yrs": [],
+    "bondableOffensesWithin6Months": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
+    "facility": "FACILITY2",
+    "lock": "LOCKID2",
+    "maxReleaseDate": 2024-06-16T00:00:00.000Z,
+    "minReleaseDate": 2022-05-16T00:00:00.000Z,
+    "nonbondableOffensesWithin1Year": "(008, 2023-05-31)",
+    "prisonerName": "Second Resident",
+    "prisonerNumber": "RES020",
+    "segregationClassificationDate": 2021-10-27T00:00:00.000Z,
+    "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "daysInCollapsedSolitarySession": 50,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [],
+    "jsonRecentBondableOffenses": [
+      {
+        "bondableIncidentDate": 2024-02-26T00:00:00.000Z,
+        "bondableOffense": "020",
+      },
+      {
+        "bondableIncidentDate": 2023-12-05T00:00:00.000Z,
+        "bondableOffense": "057",
+      },
+      {
+        "bondableIncidentDate": 2024-01-31T00:00:00.000Z,
+        "bondableOffense": "057",
+      },
+    ],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
+    "lessThan24MonthsFromErd": true,
+    "neededProgramming": "101",
+    "nextSccDate": 2021-12-18T00:00:00.000Z,
+    "tabName": "OVERDUE",
+  },
+  "stateCode": "US_MI",
+}
+`;
