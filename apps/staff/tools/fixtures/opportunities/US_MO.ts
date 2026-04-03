@@ -105,11 +105,6 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Misdemeanor warrants from out of state should be reviewed to ensure they are not considered felony wants in Missouri. Residents participating in Outside Clearance should be checked for felony wants, warrants, or detainers at least monthly.",
         },
-        {
-          text: "No violations for introducing drugs or contraband within the past 2 years",
-          tooltip:
-            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
-        },
         { text: "Does not have any disqualifying C-3 sanctions" },
         {
           text: "Meets any other institution-specific requirements established in standard operating procedures (SOP)",
@@ -510,28 +505,13 @@ export const mockApiOpportunityConfigurationResponse = {
       methodologyUrl: "TBD",
       nonOmsCriteria: [
         {
-          text: "Arson I or Robbery I: Within 24 months of release and has completed 12+ months of outside clearance",
-          tooltip:
-            "If current or prior conviction for Arson I or Robbery I, resident must be within 24 months of earliest release date and must have completed at least 12 months on supervised outside clearance assignment.",
-        },
-        {
           text: "No outstanding wants, warrants, or detainers for Class A–E felonies",
           tooltip:
             "Misdemeanor warrants from out of state should be reviewed to ensure they are not considered felony wants in Missouri. Residents participating in Supervised Work Release should be checked for felony wants, warrants, or detainers at least monthly.",
         },
         {
-          text: "No current or prior conviction for an excluded offense",
-          tooltip:
-            "Excluded offenses are rape and attempted rape, sodomy and attempted sodomy, kidnapping, assault in the first degree, and murder in the first or second degree.",
-        },
-        {
           text: "No conviction or demonstrated pattern of child abuse or sexual offenses",
           tooltip: "",
-        },
-        {
-          text: "No violations for introducing drugs or contraband within the past 2 years",
-          tooltip:
-            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
         },
         {
           text: "Consider adverse community impact due to factors such as gang or organized crime involvement",

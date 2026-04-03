@@ -22,6 +22,7 @@ import { OpportunityType } from "~datatypes";
 import { Resident } from "../../../Resident";
 import { UsMoWorkReleaseForm } from "../../Forms/UsMoWorkReleaseForm/UsMoWorkReleaseForm";
 import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityRequirement } from "../../types";
 import {
   UsMoWorkReleaseReferralRecord,
   usMoWorkReleaseSchema,
@@ -44,5 +45,44 @@ export class UsMoWorkReleaseOpportunity extends OpportunityBase<
     );
 
     this.form = new UsMoWorkReleaseForm(this, resident.rootStore);
+  }
+
+  get nonOMSRequirements(): OpportunityRequirement[] {
+    // Silent checks are criteria where we can't identify everyone who doesn't meet it,
+    // but we can eliminate some people. For ineligible people they show up as red triangles,
+    // but for those who are "eligible" they're still requirements to check.
+    const silentChecks = [
+      {
+        criteria: "usMoMeetsTimeRemainingRequirementsWorkRelease",
+        requirement: {
+          text: "Arson I or Robbery I: Within 24 months of release and has completed 12+ months of outside clearance",
+          tooltip:
+            "If current or prior conviction for Arson I or Robbery I, resident must be within 24 months of earliest release date and must have completed at least 12 months on supervised outside clearance assignment.",
+        },
+      },
+      {
+        criteria: "usMoNoCurrentOrPriorExcludedOffensesWorkRelease",
+        requirement: {
+          text: "No current or prior conviction for an excluded offense",
+          tooltip:
+            "Excluded offenses are rape and attempted rape, sodomy and attempted sodomy, kidnapping, assault in the first degree, and murder in the first or second degree.",
+        },
+      },
+      {
+        criteria: "usMoNo112IncarcerationIncidentWithin2Years",
+        requirement: {
+          text: "No violations for introducing drugs or contraband within the past 2 years",
+          tooltip:
+            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
+        },
+      },
+    ];
+
+    return [
+      ...silentChecks
+        .filter(({ criteria }) => criteria in this.record.eligibleCriteria)
+        .map(({ requirement }) => requirement),
+      ...super.nonOMSRequirements,
+    ];
   }
 }
