@@ -27,6 +27,14 @@ import Header from "../../components/Header";
 import { StateCode, StateCodeProvider } from "../../context/StateContext";
 import { UserContextProvider } from "../../context/UserContext";
 
+jest.mock("react-native", () => {
+  const RN = jest.requireActual("react-native");
+  RN.Platform.OS = "web";
+  RN.Platform.select = (objs: Record<string, unknown>) =>
+    objs["web"] || objs["default"];
+  return RN;
+});
+
 // Mock react-native-auth0
 const mockClearSession = jest.fn();
 const mockGetCredentials = jest.fn();

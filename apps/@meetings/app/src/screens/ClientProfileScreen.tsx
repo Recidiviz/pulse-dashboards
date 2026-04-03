@@ -15,24 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Platform } from "react-native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 
 import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
-import { useRecording } from "../features/recording";
-import { useCreateMeeting } from "../hooks/useCreateMeeting";
 import { useMeetings } from "../hooks/useMeetings";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeClient, formatPersonTitle } from "../utils/format";
 
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "ClientProfile"
->;
 type ProfileRouteProp = RouteProp<RootStackParamList, "ClientProfile">;
 
 const ClientProfileScreenContainer = () => {
@@ -55,9 +47,6 @@ type ProfileScreenProps = {
 };
 
 const ClientProfileScreen = ({ person }: ProfileScreenProps) => {
-  const navigation = useNavigation<ProfileNavProp>();
-  const { openRecordingView } = useRecording<"web">();
-
   const {
     data: rawMeetings,
     isLoading,
@@ -65,38 +54,14 @@ const ClientProfileScreen = ({ person }: ProfileScreenProps) => {
     refetch,
   } = useMeetings({ personId: person.personId, personType: "client" });
 
-  const { handleCreateMeeting, isCreating } = useCreateMeeting({
-    person,
-    personType: "client",
-    onSuccess: (meetingId) => {
-      switch (Platform.OS) {
-        case "web":
-          openRecordingView({ meetingId, person });
-          break;
-        case "ios":
-        case "android":
-          navigation.navigate("ClientNewMeeting", {
-            personId: person.personId.toString(),
-            fullName: person.fullName,
-            displayPersonExternalId: person.displayPersonExternalId,
-            primaryMetadata: person.primaryMetadata,
-            meetingId,
-          });
-          break;
-      }
-    },
-  });
-
   return (
     <ProfileMeetings
-      type="client"
       person={person}
+      personType="client"
       rawMeetings={rawMeetings}
       isLoading={isLoading}
       error={error}
       refetch={refetch}
-      isMeetingCreating={isCreating}
-      handleCreateMeeting={handleCreateMeeting}
     />
   );
 };

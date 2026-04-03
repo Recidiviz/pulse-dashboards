@@ -24,7 +24,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { theme } from "../common/theme";
 import Header from "../components/Header";
@@ -41,6 +44,7 @@ import { trpc } from "../trpc/client";
 type StateSelectionNavProp = NativeStackNavigationProp<RootStackParamList>;
 
 const StateSelectionScreen = () => {
+  const insets = useSafeAreaInsets();
   useSetDocumentTitle("State Selection - Recidiviz Meetings");
   const navigation = useNavigation<StateSelectionNavProp>();
   const utils = trpc.useUtils();
@@ -62,7 +66,11 @@ const StateSelectionScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1" edges={["top"]}>
+    <SafeAreaView
+      className="flex-1"
+      style={{ marginTop: -insets.top }}
+      edges={["top"]}
+    >
       <Header />
       <ScrollView className="flex-1 px-4 py-6 md:px-10">
         <View className="mx-auto w-full max-w-2xl">

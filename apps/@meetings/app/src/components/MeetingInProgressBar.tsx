@@ -17,7 +17,7 @@
 
 import clsx from "clsx";
 import React from "react";
-import { Modal, Platform, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import PauseSvg from "../assets/icons/pause.svg";
 import PlaySvg from "../assets/icons/play.svg";
@@ -26,7 +26,6 @@ import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
-import MeetingSheet from "./MeetingSheet";
 
 type MeetingInProgressBarProps = {
   recordingState: string;
@@ -49,21 +48,12 @@ const formatDuration = (diffMs: number) => {
 
 const MeetingInProgressBar = ({
   recordingState,
-  startTime,
-  endTime,
-  person,
   className = "",
 }: MeetingInProgressBarProps) => {
   const isPaused = recordingState === "paused";
 
-  const {
-    durationMs,
-    stopRecording,
-    discardRecording,
-    togglePauseResume,
-    handleFinishAndSave,
-    handleFinalDiscard,
-  } = useRecording<"native">();
+  const { durationMs, stopRecording, togglePauseResume } =
+    useRecording<"native">();
 
   return (
     <View
@@ -115,55 +105,6 @@ const MeetingInProgressBar = ({
           <StopSvg className="size-4 fill-on-brand" />
         </TouchableOpacity>
       </View>
-      <Modal
-        visible={
-          ["stopping", "discarding"].includes(recordingState) &&
-          Platform.OS !== "web"
-        }
-        animationType="slide"
-        transparent
-      >
-        <View className="flex-1 justify-end bg-active">
-          {recordingState === "discarding" && (
-            <MeetingSheet
-              title="Discard meeting?"
-              description={`You're about to discard the meeting with ${person.fullName}. Notes and transcript will not be saved.`}
-              primaryButton={{
-                label: "Discard",
-                onPress: handleFinalDiscard,
-                variant: "danger",
-              }}
-              secondaryButton={{
-                label: "Continue Meeting",
-                onPress: togglePauseResume,
-                variant: "neutral",
-              }}
-            />
-          )}
-
-          {recordingState === "stopping" && (
-            <MeetingSheet
-              title="End this meeting?"
-              description={`You're about to finish the meeting with ${person.fullName} and save the notes for processing.`}
-              primaryButton={{
-                label: "Finish & Save",
-                onPress: handleFinishAndSave,
-                variant: "danger",
-              }}
-              secondaryButton={{
-                label: "Continue Meeting",
-                onPress: togglePauseResume,
-                variant: "primary",
-              }}
-              tertiaryButton={{
-                label: "Discard meeting",
-                onPress: discardRecording,
-                variant: "neutral",
-              }}
-            />
-          )}
-        </View>
-      </Modal>
     </View>
   );
 };

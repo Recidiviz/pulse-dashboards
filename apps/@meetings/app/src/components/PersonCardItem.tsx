@@ -22,6 +22,7 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
+import { useListItemHeight } from "../hooks/useListItemHeight";
 import { Typography } from "../shared/ui/Typography";
 import {
   formatPersonLastMeetingDate,
@@ -37,14 +38,21 @@ interface ItemProps {
 }
 
 const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
+  const { calculatePersonItemHeight } = useListItemHeight();
   const hasActiveMeeting = !!person.activeMeetingId;
   const hasLastMeeting =
     !!person.meetingDetails.id &&
     !!person.meetingDetails.lastCompletedMeetingTime;
 
   return (
-    <View key={person.personId} className="h-fit w-full flex-1 px-4">
-      <View className="flex w-full flex-1 flex-col justify-between gap-2 rounded-[20px] bg-primary p-3">
+    <View
+      style={{
+        height: calculatePersonItemHeight({ hasActiveMeeting, hasLastMeeting }),
+      }}
+      key={person.personId}
+      className="w-full px-4"
+    >
+      <View className="flex w-full flex-1 flex-col gap-2 rounded-[20px] bg-primary p-3">
         <Link
           screen={personType === "client" ? "ClientProfile" : "ResidentProfile"}
           params={{ personId: person.personId.toString() }}
@@ -84,6 +92,7 @@ const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
         )}
         {hasLastMeeting && !hasActiveMeeting && (
           <Link
+            className="flex flex-1"
             screen={
               personType === "client" ? "ClientMeeting" : "ResidentMeeting"
             }
@@ -92,7 +101,7 @@ const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
               meetingId: person.meetingDetails.id,
             }}
           >
-            <View className="flex h-[109px] w-full flex-col gap-2.5 rounded-xl bg-secondary px-4 py-2.5">
+            <View className="w-full flex-1 flex-col gap-2.5 rounded-xl bg-secondary px-4 py-2.5">
               <View className="flex w-full flex-row items-center justify-between">
                 <View className="flex flex-col gap-[3px]">
                   <Typography className="text-sm leading-4 text-secondary">
@@ -107,11 +116,11 @@ const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
                 <ChevronRightIcon className="ml-auto !size-6 stroke-tertiary stroke-[2px]" />
               </View>
               <Typography
-                className="text-sm font-normal text-secondary"
+                className="flex-1 text-sm font-normal text-secondary"
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >
-                {person.meetingDetails.caseNote ?? "Case note is empty."}
+                {person.meetingDetails.caseNote ?? "Case note is empty. \n"}
               </Typography>
             </View>
           </Link>

@@ -84,12 +84,14 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
         onPress={handleToggle}
       >
         {label && (
-          <Typography className="text-sm text-secondary">{label}:</Typography>
+          <Typography className="text-sm text-secondary md:text-base">
+            {label}:
+          </Typography>
         )}
 
         <View className="flex-row items-center justify-end rounded-md">
           <Typography
-            className="px-1 text-sm text-primary md:font-medium"
+            className="px-1 text-sm text-primary md:text-base md:font-medium"
             numberOfLines={1}
           >
             {selected}

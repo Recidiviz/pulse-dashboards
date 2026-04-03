@@ -41,7 +41,7 @@ const publicQueryClient = new QueryClient();
 
 const trpcUrl = env.EXPO_PUBLIC_SERVER_URL;
 
-type AppStackParamList = {
+export type AppStackParamList = {
   Login: undefined;
   Main: NavigatorScreenParams<RootStackParamList>;
 };

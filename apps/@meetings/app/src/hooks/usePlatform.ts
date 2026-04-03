@@ -15,18 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import clsx from "clsx";
-import { View } from "react-native";
+import { Platform } from "react-native";
 
-export function RecordingIndicator({ className }: { className?: string }) {
-  return (
-    <View
-      className={clsx(
-        "flex size-[9px] animate-pulse items-center justify-center rounded-full bg-attention-light-secondary",
-        className,
-      )}
-    >
-      <View className="size-1.5 rounded-full bg-attention" />
-    </View>
-  );
-}
+export const usePlatform = () => {
+  const isWeb = Platform.OS === "web";
+  const isMobile = Platform.OS !== "web";
+  return { isWeb, isMobile };
+};

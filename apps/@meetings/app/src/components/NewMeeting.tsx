@@ -15,69 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { useEffect } from "react";
 import {
   ActivityIndicator,
-  Modal,
-  Platform,
+  Keyboard,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
-import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import NotesSvg from "../assets/icons/notes.svg";
-import { Person } from "../common/types";
-import MeetingSheet from "../components/MeetingSheet";
-import RecordingControls from "../components/RecordingControls";
-import { useRecording } from "../features/recording";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Person, PersonType } from "../common/types";
+import { MeetingControlsMobile, useRecording } from "../features/recording";
 import { Typography } from "../shared/ui/Typography";
-import { humanReadableTitleCase } from "../utils/format";
-import NewMeetingHeader from "./NewMeetingHeader";
-
-type NewMeetingRouteProp = RouteProp<
-  RootStackParamList,
-  "ClientNewMeeting" | "ResidentNewMeeting"
->;
+import Header from "./Header";
 
 type Props = {
   person: Person;
+  personType: PersonType;
   navigateToPersonProfile: () => void;
 };
 
-const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
-  const route = useRoute<NewMeetingRouteProp>();
-  const meetingId = route.params?.meetingId;
+const NewMeeting = ({ person, personType, navigateToPersonProfile }: Props) => {
+  const insets = useSafeAreaInsets();
 
   const {
     status,
     note,
     setNote,
     isRecording,
-    durationMs,
     setMeetingId,
     setPerson,
-    startRecording,
-    stopRecording,
-    discardRecording,
-    togglePauseResume,
-    handleFinishAndSave,
     handleFinalDiscard,
   } = useRecording<"native">();
 
-  useEffect(() => {
-    if (meetingId && person) {
-      setMeetingId(meetingId);
-      setPerson(person);
-    }
-  }, [meetingId, person, setMeetingId, setPerson]);
-
-  const onComplete = () => {
-    navigateToPersonProfile();
-    setMeetingId(null);
-    setPerson(null);
-  };
+  const isMeetingActive = status !== "idle" || isRecording;
 
   if (!status) return null;
 
@@ -92,122 +64,56 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
     );
   }
 
-  const RecordingIntro = (
-    <View className="flex-1 items-center justify-center">
-      <View
-        className="mb-6 size-16 items-center justify-center border border-subtle bg-secondary"
-        style={{ borderRadius: 17 }}
-      >
-        <MicrophoneIcon className="size-8 text-primary" />
-      </View>
+  const handleGoBack = () => {
+    if (!isMeetingActive) {
+      handleFinalDiscard(() => {
+        setMeetingId(null);
+        setPerson(null);
+      });
+    }
+    navigateToPersonProfile();
+  };
 
-      <Typography className="mb-2 text-center text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
-        Meeting Recording
-      </Typography>
-
-      <Typography className="px-4 text-center text-sm font-normal leading-5 tracking-[-0.02em] text-secondary">
-        This meeting will be recorded and transcribed for note-taking. Be sure
-        to confirm that everyone present is aware and has agreed to recording.
-      </Typography>
-    </View>
-  );
-
-  const RecordingNotes = (
-    <View className="mt-6">
-      <View className="mb-2 flex-row items-center">
-        <NotesSvg className="size-5 text-secondary" />
-        <Typography className="ml-2 text-lg font-semibold text-primary">
-          Notepad
-        </Typography>
-      </View>
-
-      <TextInput
-        className="text-primary"
-        value={note}
-        onChangeText={setNote}
-        placeholder="Write your notes..."
-        maxLength={100000}
-        multiline
-      />
-    </View>
-  );
-
-  const isMeetingActive = status !== "idle" || isRecording;
   return (
-    <View className="flex-1 bg-white">
-      <NewMeetingHeader
-        isMeetingActive={isMeetingActive}
-        onDiscard={() => discardRecording()}
-        onFinalDiscard={() => handleFinalDiscard(onComplete)}
-      />
-      <View className="flex-1 px-6">
-        {isMeetingActive ? RecordingNotes : RecordingIntro}
-      </View>
-      <View className="rounded-t-2xl bg-secondary px-6 py-12">
-        <Typography className="text-center text-base font-semibold text-primary">
-          {person.fullName}
-        </Typography>
-        <Typography className="mb-4 text-center text-sm text-secondary">
-          ID: {person.displayPersonExternalId} •{" "}
-          {humanReadableTitleCase(person.primaryMetadata)}
-        </Typography>
-        <RecordingControls
-          status={status}
-          onStart={startRecording}
-          onStop={stopRecording}
-          onPauseResume={togglePauseResume}
-          durationMs={durationMs}
-        />
-      </View>
-      <Modal
-        visible={
-          ["stopping", "discarding"].includes(status) && Platform.OS !== "web"
-        }
-        animationType="slide"
-        transparent
-      >
-        <View className="flex-1 justify-end bg-tertiary">
-          {status === "discarding" && (
-            <MeetingSheet
-              title="Discard meeting?"
-              description={`You're about to discard the meeting with ${person.fullName}. Notes and transcript will not be saved.`}
-              primaryButton={{
-                label: "Discard",
-                onPress: () => handleFinalDiscard(onComplete),
-                variant: "danger",
-              }}
-              secondaryButton={{
-                label: "Continue Meeting",
-                onPress: togglePauseResume,
-                variant: "neutral",
-              }}
-            />
-          )}
-
-          {status === "stopping" && (
-            <MeetingSheet
-              title="End this meeting?"
-              description={`You're about to finish the meeting with ${person.fullName} and save the notes for processing.`}
-              primaryButton={{
-                label: "Finish & Save",
-                onPress: () => handleFinishAndSave(onComplete),
-                variant: "danger",
-              }}
-              secondaryButton={{
-                label: "Continue Meeting",
-                onPress: togglePauseResume,
-                variant: "primary",
-              }}
-              tertiaryButton={{
-                label: "Discard meeting",
-                onPress: discardRecording,
-                variant: "neutral",
-              }}
-            />
-          )}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View className="flex-1 bg-secondary" style={{ marginTop: -insets.top }}>
+        <Header showDrawer={false} showGoBack={true} onGoBack={handleGoBack} />
+        <View className="rounded-b-3xl bg-primary">
+          <View className="flex flex-col gap-1 p-4 md:px-0 md:pt-0">
+            <Typography className="text-base text-primary">
+              {person.fullName.toUpperCase()}
+            </Typography>
+            <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
+              New Meeting
+            </Typography>
+            <Typography className="text-base text-secondary">
+              ID: {person.displayPersonExternalId} • {person.primaryMetadata}
+            </Typography>
+          </View>
         </View>
-      </Modal>
-    </View>
+        <View className="flex-1 bg-secondary px-6">
+          <View className="mt-6">
+            <View className="mb-2 flex-row items-center">
+              <NotesSvg className="size-5 text-secondary" />
+              <Typography className="ml-2 text-lg font-semibold text-primary">
+                Notepad
+              </Typography>
+            </View>
+
+            <TextInput
+              className="h-full text-primary"
+              value={note}
+              onChangeText={setNote}
+              placeholder="Write your notes..."
+              maxLength={100000}
+              multiline
+              textAlignVertical="top"
+            />
+          </View>
+        </View>
+        <MeetingControlsMobile person={person} personType={personType} />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

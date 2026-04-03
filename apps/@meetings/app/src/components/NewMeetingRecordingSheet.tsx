@@ -28,6 +28,7 @@ import {
 } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import PlaySvg from "../assets/icons/play.svg";
 import BgAvatarImage from "../assets/images/bg-avatar.png";
@@ -50,6 +51,7 @@ export function NewMeetingRecordingSheet({
   onUploadFile,
   isMeetingCreating,
 }: NewMeetingRecordingSheetProps) {
+  const insets = useSafeAreaInsets();
   return (
     <BottomSheet
       enableDynamicSizing
@@ -67,7 +69,7 @@ export function NewMeetingRecordingSheet({
         />
       )}
     >
-      <BottomSheetView>
+      <BottomSheetView style={{ paddingBottom: insets.bottom }}>
         <View className="items-center p-6">
           <View className="absolute right-4 top-4 z-10">
             <TouchableOpacity

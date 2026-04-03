@@ -16,3 +16,5 @@
 // =============================================================================
 
 export { RecordingProvider, useRecording } from "./model";
+export { MeetingControlsMobile } from "./ui/MeetingControlsMobile";
+export { MeetingModalMobile } from "./ui/MeetingModalMobile";

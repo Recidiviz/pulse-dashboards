@@ -17,76 +17,101 @@
 
 import { View, VirtualizedList } from "react-native";
 
+import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
+
 import { Person, PersonType } from "../common/types";
-import PersonCardItem from "./PersonCardItem";
-import PersonsHeaderContent from "./PersonsHeaderContent";
-import PersonsPlaceholder from "./PersonsPlaceholder";
+import MeetingCardItem from "./MeetingCardItem";
+import MeetingsHeaderContent from "./MeetingsHeaderContent";
+import MeetingsPlaceholder from "./MeetingsPlaceholder";
+
+type Meeting = {
+  id: string;
+  date: string;
+  time: string;
+  duration: string | null;
+  content: string;
+  status: PostMeetingProcessingStatus;
+  recordingState: string;
+  start: Date;
+  end: Date | null;
+  caseNote: string | null;
+};
 
 type Props = {
-  persons: Person[];
-  recordingState: string;
+  meetings: Meeting[];
+  person: Person;
+  handleCreateMeeting: () => void;
+  isMeetingCreating: boolean;
+  handleAudioUpload: () => void;
+  handleOpenBottomSheet: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  sortOptions: string[];
   setSortBy: (option: string) => void;
   personType: PersonType;
   className?: string;
 };
 
-const PersonsMobileList = ({
-  persons,
-  recordingState,
+const MeetingsMobileList = ({
+  meetings,
+  person,
+  handleCreateMeeting,
+  isMeetingCreating,
+  handleAudioUpload,
+  handleOpenBottomSheet,
   searchQuery,
   setSearchQuery,
+  sortOptions,
   setSortBy,
   personType,
   className,
 }: Props) => {
-  const headerDescription =
-    personType === "client"
-      ? "All clients on your caseload are displayed below"
-      : "All residents are displayed below";
-
   return (
     <VirtualizedList
       className={className}
-      data={persons}
-      keyExtractor={(item: Person) => item.personId.toString()}
-      getItemCount={(data: Person[]) => data.length}
-      getItem={(data: Person[], index) => data[index]}
-      renderItem={({ item }: { item: Person }) => (
-        <PersonCardItem
-          person={item}
-          recordingState={recordingState}
+      data={meetings}
+      keyExtractor={(item: Meeting) => item.id}
+      getItemCount={(data: Meeting[]) => data.length}
+      getItem={(data: Meeting[], index) => data[index]}
+      renderItem={({ item }: { item: Meeting }) => (
+        <MeetingCardItem
+          meeting={item}
+          person={person}
           personType={personType}
         />
       )}
       initialNumToRender={10}
-      ListEmptyComponent={
-        <PersonsPlaceholder
-          personType={personType}
-          isSearchResultEmpty={searchQuery.trim().length > 0}
-        />
-      }
       ListHeaderComponentStyle={{ zIndex: 50, flex: 1 }}
       ListHeaderComponent={
         <View className="mx-auto w-full max-w-[960px]">
-          <PersonsHeaderContent
-            personType={personType}
-            description={headerDescription}
-            personsCount={persons.length}
+          <MeetingsHeaderContent
+            person={person}
+            meetingsCount={meetings.length}
+            handleCreateMeeting={handleCreateMeeting}
+            isMeetingCreating={isMeetingCreating}
+            handleAudioUpload={handleAudioUpload}
+            handleOpenBottomSheet={handleOpenBottomSheet}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            sortOptions={sortOptions}
             setSortBy={setSortBy}
           />
         </View>
+      }
+      ListEmptyComponent={
+        <MeetingsPlaceholder
+          handleCreateMeeting={handleCreateMeeting}
+          isSearchResultEmpty={searchQuery.trim().length > 0}
+        />
       }
       contentContainerStyle={{
         display: "flex",
         flexDirection: "column",
         gap: 8,
+        paddingBottom: 16,
       }}
     />
   );
 };
 
-export default PersonsMobileList;
+export default MeetingsMobileList;

@@ -17,7 +17,7 @@
 
 import { ReactNode } from "react";
 
-import { Person } from "../../../common/types";
+import { Person, PersonType } from "../../../common/types";
 
 export type Status =
   | "idle"
@@ -80,5 +80,7 @@ export type RecordingNative = RecordingBase & {
   meetingId: string | null;
   setMeetingId: (meetingId: string | null) => void;
   person: Person | null;
+  personType: PersonType | null;
   setPerson: (person: Person | null) => void;
+  setPersonType: (personType: PersonType | null) => void;
 };

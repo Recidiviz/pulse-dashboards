@@ -84,8 +84,8 @@ const PersonsHeaderContent = ({
             {description}
           </Typography>
         </View>
-        <View className="mt-3 h-10 grow flex-row items-center justify-end">
-          <View className="size-full sm:max-w-[300px]">
+        <View className="mt-3 w-full flex-1 flex-row items-center justify-end sm:mt-0">
+          <View className="flex-1 sm:max-w-[300px]">
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}

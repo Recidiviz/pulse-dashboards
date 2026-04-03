@@ -17,6 +17,7 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import Loading from "../components/Loading";
 import NewMeeting from "../components/NewMeeting";
@@ -74,10 +75,13 @@ const ResidentNewMeetingScreen = () => {
   };
 
   return (
-    <NewMeeting
-      person={deserializeResident(resident)}
-      navigateToPersonProfile={navigateToResidentProfile}
-    />
+    <SafeAreaView className="flex-1 bg-primary">
+      <NewMeeting
+        person={deserializeResident(resident)}
+        personType="resident"
+        navigateToPersonProfile={navigateToResidentProfile}
+      />
+    </SafeAreaView>
   );
 };
 

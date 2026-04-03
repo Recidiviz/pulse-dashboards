@@ -67,6 +67,9 @@ module.exports = {
         subtle: "#E1E5E7",
         attention: "#B42D2D",
       },
+      boxShadow: {
+        "focus-brand": "0px 0px 0px 2px #00665F33",
+      },
       fontFamily: {
         "libre-baskerville": ["LibreBaskerville-Bold", "serif"],
         inter: ["Inter", "sans-serif"],

@@ -20,6 +20,7 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from "react-native-heroicons/outline/ArrowLeftIcon";
 import SearchIcon from "react-native-heroicons/outline/SearchIcon";
 
+import { theme } from "../common/theme";
 import { Typography } from "../shared/ui/Typography";
 
 interface SearchBarProps {
@@ -39,24 +40,25 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View
-      className={`h-10 w-full flex-1 flex-row items-center rounded-xl border bg-secondary px-3 ${
-        isFocused ? "border-brand" : "border-subtle"
-      }`}
+      className="w-full flex-1 flex-row items-center rounded-xl border bg-secondary px-3 py-2"
       style={{
-        boxShadow: isFocused ? `0px 0px 0px 2px #00665F33` : "",
+        borderColor: isFocused
+          ? theme["borderColor"]["brand"]
+          : theme["borderColor"]["subtle"],
+        boxShadow: isFocused ? theme["boxShadow"]["focus-brand"] : "",
       }}
     >
       <TouchableOpacity onPress={() => (isFocused ? onExit?.() : null)}>
         {isFocused || value ? (
-          <ArrowLeftIcon className="size-4 stroke-tertiary" />
+          <ArrowLeftIcon className="!size-4 stroke-tertiary" />
         ) : (
-          <SearchIcon className="size-4 stroke-tertiary" />
+          <SearchIcon className="!size-4 stroke-tertiary" />
         )}
       </TouchableOpacity>
       <TextInput
-        className="mx-2 h-10 w-full text-sm text-primary outline-none"
+        className="flex-1 px-2 py-0 font-inter text-sm text-primary outline-none"
         placeholder={placeholder}
-        placeholderClassName="text-sm text-secondary"
+        placeholderTextColor={theme["colors"]["secondary"]}
         value={value}
         onChangeText={onChange}
         onFocus={() => setIsFocused(true)}
@@ -65,7 +67,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {value?.length > 0 && (
         <TouchableOpacity onPress={() => onChange("")}>
           <View className="flex size-4 items-center justify-center rounded-full bg-tertiary">
-            <Typography className="text-[8px] font-extrabold leading-[8px] text-white">
+            <Typography className="text-[8px] font-extrabold leading-[8px] text-on-brand">
               ✕
             </Typography>
           </View>

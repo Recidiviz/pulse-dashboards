@@ -44,6 +44,7 @@ import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useNote } from "../hooks/useNote";
 import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
 import { useRecordingStatus } from "../hooks/useRecordingStatus";
+import { MeetingModalMobile } from "../ui/MeetingModalMobile";
 import {
   requestNotificationPermissions,
   sendNotification,
@@ -81,7 +82,9 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     meetingId,
     setMeetingId,
     person,
+    personType,
     setPerson,
+    setPersonType,
     durationMs: persistedDurationMs,
     setDurationMs: setPersistedDurationMs,
   } = useRecordingStore();
@@ -395,7 +398,9 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         setMeetingId,
         person,
+        personType,
         setPerson,
+        setPersonType,
         isRecording: recorderState.isRecording,
         durationMs: timer.durationMs,
         note,
@@ -412,6 +417,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       }}
     >
       {children}
+      <MeetingModalMobile />
     </RecordingContext.Provider>
   );
 };

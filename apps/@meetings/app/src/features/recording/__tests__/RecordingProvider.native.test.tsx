@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { NavigationContainer } from "@react-navigation/native";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import {
   AudioModule,
@@ -76,7 +77,11 @@ jest.mock("../utils/notifications");
 jest.mock("../utils/storage");
 jest.mock("../model/store");
 
-const mockPerson = { personId: "person-1", fullName: "John Doe" };
+const mockPerson = {
+  personId: "person-1",
+  personType: "client",
+  fullName: "John Doe",
+};
 const MEETING_ID = "meeting-1";
 const RECORDING_URI = "file://test-recording.m4a";
 
@@ -101,7 +106,9 @@ const mockAudioRecorder = {
 
 function buildWrapper() {
   return ({ children }: { children: React.ReactNode }) => (
-    <RecordingProvider>{children}</RecordingProvider>
+    <NavigationContainer>
+      <RecordingProvider>{children}</RecordingProvider>
+    </NavigationContainer>
   );
 }
 

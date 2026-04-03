@@ -26,6 +26,7 @@ import clsx from "clsx";
 import React, { useState } from "react";
 import {
   ImageBackground,
+  Platform,
   ScrollView,
   TouchableOpacity,
   View,
@@ -34,6 +35,7 @@ import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
 import ExternalLinkIcon from "react-native-heroicons/outline/ExternalLinkIcon";
 import MenuIcon from "react-native-heroicons/outline/MenuIcon";
+import ArrowLeftIcon from "react-native-heroicons/solid/ArrowLeftIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import WordmarkSvg from "../assets/icons/wordmark.svg";
@@ -52,9 +54,51 @@ type HeaderRouteProp = RouteProp<RootStackParamList>;
 
 interface HeaderProps {
   showDrawer?: boolean;
+  showGoBack?: boolean;
+  onGoBack?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ showDrawer = true }) => {
+interface MobileHeaderProps extends HeaderProps {
+  className?: string;
+}
+
+const MobileHeader = ({
+  showDrawer,
+  showGoBack,
+  onGoBack,
+  className,
+}: MobileHeaderProps) => {
+  const navigation = useNavigation<HeaderNavProp>();
+
+  return (
+    <View
+      className={clsx(
+        "flex-row items-center justify-between px-4 py-3",
+        className,
+      )}
+    >
+      {showDrawer && (
+        <TouchableOpacity
+          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+        >
+          <MenuIcon className="text-tertiary" />
+        </TouchableOpacity>
+      )}
+
+      {showGoBack && (
+        <TouchableOpacity onPress={onGoBack}>
+          <ArrowLeftIcon className="fill-tertiary" />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
+
+const Header: React.FC<HeaderProps> = ({
+  showDrawer = true,
+  showGoBack = false,
+  onGoBack,
+}) => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
@@ -79,179 +123,183 @@ const Header: React.FC<HeaderProps> = ({ showDrawer = true }) => {
     ? "https://plan.recidiviz.org"
     : "https://plan-staging.recidiviz.org";
 
-  const handleDropdownMenuPress = (callback: () => void) => {
+  const handleDropdownMenuPress = (callback?: () => void) => {
     setProfileDropdownOpen(false);
-    callback();
+    callback?.();
   };
 
   return (
     <SafeAreaView edges={["top"]} className="z-10 bg-primary">
-      <View className="flex-row items-center justify-between px-4 py-3 md:hidden">
-        {showDrawer && (
-          <TouchableOpacity
-            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-          >
-            <MenuIcon className="text-tertiary" />
-          </TouchableOpacity>
-        )}
-      </View>
-      <View className="hidden h-16 flex-row items-center justify-between bg-primary px-4 md:flex lg:px-10">
-        <TouchableOpacity
-          testID="logo-button"
-          onPress={() => navigation.navigate("Clients")}
-        >
-          <WordmarkSvg />
-        </TouchableOpacity>
-
-        <View className="h-full flex-row items-center gap-x-6">
-          {hasSupervisionAccess && (
-            <DesktopMenuItem
-              isActive={route.name.includes("Client")}
-              screen="Clients"
-            >
-              Clients
-            </DesktopMenuItem>
-          )}
-          {hasFacilitiesAccess && (
-            <DesktopMenuItem
-              isActive={route.name.includes("Resident")}
-              screen="Residents"
-            >
-              Residents
-            </DesktopMenuItem>
-          )}
-          <View className="relative">
-            <TouchableOpacity
-              onPress={() => setProfileDropdownOpen(!profileDropdownOpen)}
-            >
-              <View
-                className={clsx(
-                  "flex-row items-center gap-x-1 rounded-full border p-1.5 transition-all duration-300",
-                  profileDropdownOpen
-                    ? "border-brand hover:border-brand"
-                    : "border-transparent hover:border-subtle",
-                )}
+      {Platform.select({
+        native: (
+          <MobileHeader
+            showDrawer={showDrawer}
+            showGoBack={showGoBack}
+            onGoBack={onGoBack}
+          />
+        ),
+        web: (
+          <>
+            <MobileHeader
+              showDrawer={showDrawer}
+              showGoBack={showGoBack}
+              onGoBack={onGoBack}
+              className="md:hidden"
+            />
+            <View className="hidden h-16 flex-row items-center justify-between bg-primary px-4 md:flex lg:px-10">
+              <TouchableOpacity
+                testID="logo-button"
+                onPress={() => navigation.navigate("Clients")}
               >
-                <ImageBackground
-                  source={BgAvatarImage}
-                  className="size-8 items-center justify-center overflow-hidden rounded-full"
-                  imageClassName="!size-8"
-                >
-                  <Typography className="text-base text-on-brand">
-                    {name ? getInitials(name) : "SS"}
-                  </Typography>
-                </ImageBackground>
-                {profileDropdownOpen ? (
-                  <ChevronUpIcon className="size-4 stroke-[3px] text-primary" />
-                ) : (
-                  <ChevronDownIcon className="size-4 stroke-[3px] text-primary" />
-                )}
-              </View>
-            </TouchableOpacity>
-            {profileDropdownOpen && (
-              <View className="absolute right-0 top-16 rounded-[20px] bg-primary p-2 shadow-sm">
-                <ScrollView contentContainerClassName="gap-1 cursor-pointer">
-                  <TouchableOpacity
-                    onPress={() =>
-                      handleDropdownMenuPress(() => console.log("Settings"))
-                    }
+                <WordmarkSvg />
+              </TouchableOpacity>
+
+              <View className="h-full flex-row items-center gap-x-6">
+                {hasSupervisionAccess && (
+                  <DesktopMenuItem
+                    isActive={route.name.includes("Client")}
+                    screen="Clients"
                   >
-                    <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl bg-brand-light-secondary p-3.5">
+                    Clients
+                  </DesktopMenuItem>
+                )}
+                {hasFacilitiesAccess && (
+                  <DesktopMenuItem
+                    isActive={route.name.includes("Resident")}
+                    screen="Residents"
+                  >
+                    Residents
+                  </DesktopMenuItem>
+                )}
+                <View className="relative">
+                  <TouchableOpacity
+                    onPress={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  >
+                    <View
+                      className={clsx(
+                        "flex-row items-center gap-x-1 rounded-full border p-1.5 transition-all duration-300",
+                        profileDropdownOpen
+                          ? "border-brand hover:border-brand"
+                          : "border-transparent hover:border-subtle",
+                      )}
+                    >
                       <ImageBackground
                         source={BgAvatarImage}
-                        className="size-12 items-center justify-center overflow-hidden rounded-full"
-                        imageClassName="!size-12"
+                        className="size-8 items-center justify-center overflow-hidden rounded-full"
+                        imageClassName="!size-8"
                       >
-                        <Typography className="text-2xl leading-6 text-on-brand">
+                        <Typography className="text-base text-on-brand">
                           {name ? getInitials(name) : "SS"}
                         </Typography>
                       </ImageBackground>
-                      <View className="flex flex-col justify-between">
-                        <Typography className="text-base font-semibold leading-5 text-primary">
-                          {name ?? "Test User"}
-                        </Typography>
-                        <Typography className="text-base font-normal text-secondary">
-                          {email ?? "testuser@mail.com"}
-                        </Typography>
-                      </View>
+                      {profileDropdownOpen ? (
+                        <ChevronUpIcon className="size-4 stroke-[3px] text-primary" />
+                      ) : (
+                        <ChevronDownIcon className="size-4 stroke-[3px] text-primary" />
+                      )}
                     </View>
                   </TouchableOpacity>
-                  {canSelectStateCode && (
-                    <ProfileMenuItem
-                      link={{
-                        screen: "StateSelection",
-                        onPress: () => setProfileDropdownOpen(false),
-                      }}
-                      label="Profile"
-                      helperText={`Current state: ${currentStateName}`}
-                    />
+                  {profileDropdownOpen && (
+                    <View className="absolute right-0 top-16 rounded-[20px] bg-primary p-2 shadow-sm">
+                      <ScrollView contentContainerClassName="gap-1 cursor-pointer">
+                        <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl bg-brand-light-secondary p-3.5">
+                          <ImageBackground
+                            source={BgAvatarImage}
+                            className="size-12 items-center justify-center overflow-hidden rounded-full"
+                            imageClassName="!size-12"
+                          >
+                            <Typography className="text-2xl leading-6 text-on-brand">
+                              {name ? getInitials(name) : "SS"}
+                            </Typography>
+                          </ImageBackground>
+                          <View className="flex flex-col justify-between">
+                            <Typography className="text-base font-semibold leading-5 text-primary">
+                              {name ?? "Test User"}
+                            </Typography>
+                            <Typography className="text-base font-normal text-secondary">
+                              {email ?? "testuser@mail.com"}
+                            </Typography>
+                          </View>
+                        </View>
+                        {canSelectStateCode && (
+                          <ProfileMenuItem
+                            link={{
+                              screen: "StateSelection",
+                              onPress: () => setProfileDropdownOpen(false),
+                            }}
+                            label="Profile"
+                            helperText={`Current state: ${currentStateName}`}
+                          />
+                        )}
+                        {hasSupervisionAssistantAccess && (
+                          <ProfileMenuItem
+                            pressable={{
+                              onPress: () =>
+                                handleDropdownMenuPress(() =>
+                                  window.open(
+                                    dashboardUrl,
+                                    "_blank",
+                                    "noopener,noreferrer",
+                                  ),
+                                ),
+                            }}
+                            label="Go to Supervision Assistant"
+                            icon={
+                              <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
+                            }
+                          />
+                        )}
+                        {hasFacilitiesAssistantAccess && (
+                          <ProfileMenuItem
+                            pressable={{
+                              onPress: () =>
+                                handleDropdownMenuPress(() =>
+                                  window.open(
+                                    dashboardUrl,
+                                    "_blank",
+                                    "noopener,noreferrer",
+                                  ),
+                                ),
+                            }}
+                            label="Go to Facilities Assistant"
+                            icon={
+                              <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
+                            }
+                          />
+                        )}
+                        {hasCasePlanningAssistantAccess && (
+                          <ProfileMenuItem
+                            pressable={{
+                              onPress: () =>
+                                handleDropdownMenuPress(() =>
+                                  window.open(
+                                    cpaUrl,
+                                    "_blank",
+                                    "noopener,noreferrer",
+                                  ),
+                                ),
+                            }}
+                            label="Go to Case Planning Assistant"
+                            icon={
+                              <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
+                            }
+                          />
+                        )}
+                        <ProfileMenuItem
+                          pressable={{
+                            onPress: () => handleDropdownMenuPress(onLogout),
+                          }}
+                          label="Log Out"
+                        />
+                      </ScrollView>
+                    </View>
                   )}
-                  {hasSupervisionAssistantAccess && (
-                    <ProfileMenuItem
-                      pressable={{
-                        onPress: () =>
-                          handleDropdownMenuPress(() =>
-                            window.open(
-                              dashboardUrl,
-                              "_blank",
-                              "noopener,noreferrer",
-                            ),
-                          ),
-                      }}
-                      label="Go to Supervision Assistant"
-                      icon={
-                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
-                      }
-                    />
-                  )}
-                  {hasFacilitiesAssistantAccess && (
-                    <ProfileMenuItem
-                      pressable={{
-                        onPress: () =>
-                          handleDropdownMenuPress(() =>
-                            window.open(
-                              dashboardUrl,
-                              "_blank",
-                              "noopener,noreferrer",
-                            ),
-                          ),
-                      }}
-                      label="Go to Facilities Assistant"
-                      icon={
-                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
-                      }
-                    />
-                  )}
-                  {hasCasePlanningAssistantAccess && (
-                    <ProfileMenuItem
-                      pressable={{
-                        onPress: () =>
-                          handleDropdownMenuPress(() =>
-                            window.open(
-                              cpaUrl,
-                              "_blank",
-                              "noopener,noreferrer",
-                            ),
-                          ),
-                      }}
-                      label="Go to Case Planning Assistant"
-                      icon={
-                        <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
-                      }
-                    />
-                  )}
-                  <ProfileMenuItem
-                    pressable={{
-                      onPress: () => handleDropdownMenuPress(onLogout),
-                    }}
-                    label="Log Out"
-                  />
-                </ScrollView>
+                </View>
               </View>
-            )}
-          </View>
-        </View>
-      </View>
+            </View>
+          </>
+        ),
+      })}
       {selectedStateCode === "US_DEMO" && (
         <View className="bg-warning-light px-4 py-2.5">
           <Typography className="text-center text-sm font-medium text-warning">

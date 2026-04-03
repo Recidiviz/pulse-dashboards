@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { Person } from "../../../common/types";
+import { Person, PersonType } from "../../../common/types";
 import { Status } from "./types";
 
 // TODO(#11571):
@@ -33,6 +33,7 @@ type RecordingStore = {
   note: string; // UI only field
   debouncedNote: string; // save note into AsyncStorage with debounce
   person: Person | null;
+  personType: PersonType | null;
   meetingId: string | null;
   isRecordingViewMinimized: boolean;
   durationMs: number;
@@ -40,6 +41,7 @@ type RecordingStore = {
   setStatus: (status: Status) => void;
   setNote: (note: string) => void;
   setPerson: (person: Person | null) => void;
+  setPersonType: (personType: PersonType | null) => void;
   setMeetingId: (meetingId: string | null) => void;
   setIsRecordingViewMinimized: (isMinimized: boolean) => void;
   setDurationMs: (durationMs: number) => void;
@@ -57,6 +59,7 @@ export const useRecordingStore = create<RecordingStore>()(
         note: "",
         debouncedNote: "",
         person: null,
+        personType: null,
         meetingId: null,
         isRecordingViewMinimized: false,
         durationMs: 0,
@@ -68,6 +71,7 @@ export const useRecordingStore = create<RecordingStore>()(
         },
         setMeetingId: (meetingId: string | null) => set({ meetingId }),
         setPerson: (person: Person | null) => set({ person }),
+        setPersonType: (personType: PersonType | null) => set({ personType }),
         setIsRecordingViewMinimized: (isMinimized: boolean) =>
           set({ isRecordingViewMinimized: isMinimized }),
         setDurationMs: (durationMs: number) => set({ durationMs }),

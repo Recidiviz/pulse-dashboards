@@ -47,7 +47,7 @@ export const TablePagination = ({
   pageSize = PAGE_SIZE,
 }: Props) => {
   return (
-    <View className="flex w-full flex-row items-center justify-center gap-4 bg-primary py-2">
+    <View className="flex w-full flex-row items-center justify-center gap-2 bg-primary py-2">
       <TouchableOpacity onPress={setPrevPage} disabled={page === 1}>
         <ChevronLeftIcon
           className={`size-3.5 stroke-[4px] ${page === 1 ? "stroke-disabled" : "stroke-brand"}`}
