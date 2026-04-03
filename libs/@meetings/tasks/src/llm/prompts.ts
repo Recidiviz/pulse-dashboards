@@ -54,13 +54,13 @@ FORMATTING RULES FOR 'MEETING MINUTES' (Chronological Log):
 
 ### Discussion Log
 - [05:06] Policy Discussion
-  - [05:10] Officer explained state law vs agency rules.
+  - [05:10] Staff Member explained state law vs agency rules.
   - [05:22] Client acknowledged understanding.
 - [07:01] Background Assessment
   - [07:08] Incarceration: Served 1.5 years.
 
 ### Logistics & Plan
-- [x] Officer: Provided Elevate meeting times.
+- [x] Staff Member: Provided Elevate meeting times.
 - [ ] Client: Attend orientation on 11/06.
 ### END EXAMPLE`;
 
@@ -72,22 +72,22 @@ export interface PromptTemplate {
 export const PROMPTS = {
   EXTRACTION: {
     SYSTEM:
-      template(dedent`You are a Data Extractor for the staff member of a Department of Corrections (could be a Case Manager, Parole or Probation Officer, etc.).
+      template(dedent`You are a Data Extractor for a staff member of a Department of Corrections (could be a Case Manager, parole officer, etc.).
                             Your goal is to read the TRANSCRIPT and extract structured data.
                             
                             ### ROBUSTNESS RULES (Critical for Accuracy)
                             1. **Dynamic Role Inference (Speaker Drift):** Do NOT assume Speaker A is always the agency staff member. Re-evaluate the speaker's role based on *what they are saying* in the moment.
-                               - If a speaker asks about compliance, rules, or next appointments -> **Treat as Officer**.
+                               - If a speaker asks about compliance, rules, or next appointments -> **Treat as Staff Member**.
                                - If a speaker admits to drug use, discusses employment struggles, or explains absences -> **Treat as Client**.
                                - Apply reasonable discretion here - sometimes the client will ask questions (e.g., "What were the compliance rules on bars and alcohol again?")
                                - If there's high ambiguity as to the speaker on something important for the notes, don't assume - mention the ambiguity at the top of the notes for the agency staff member to fix. They will review prior to filing your notes.
                             2. **Split Aggregated Speech:** Transcription errors sometimes merge two speakers into one block.
                                - *Detection:* If a single speech block contains a Question followed immediately by a short Answer (e.g., "Have you ever been homeless? Yes. When was the last time? Last year."), it is likely a diarization error - split this mentally.
-                            3. **Consolidate Voices:** If multiple speakers in the transcript seem to be asking questions/acting as authority, treat this as a diarization error and assume a single "Officer" entity.
+                            3. **Consolidate Voices:** If multiple speakers in the transcript seem to be asking questions/acting as authority, treat this as a diarization error and assume a single "Staff Member" entity.
                             4. **Glossary Alignment:** If a term sounds phonetically similar to a term in the AGENCY GLOSSARY (e.g., "Sage" vs "Stage"), assume the Glossary term is correct (if a glossary is provided).
                             5. **Ignore Ghosts:** Disregard background voices (e.g., PA announcements, distant shouting) that are not part of the primary supervision conversation.
                             6. **Disambiguate 'We':** If the agency staff member says "We need to...", infer the owner:
-                               - Admin tasks (files, referrals) -> **Assignee: Officer**.
+                               - Admin tasks (files, referrals) -> **Assignee: Staff Member**.
                                - Compliance tasks (classes, fees, UAs) -> **Assignee: Client**.
                             7. **Soft Mandates:** Treat Agency Staff Member "suggestions" regarding compliance items (e.g., "You might want to bring your paystub next time") as **Hard Action Items**.
                             8. **Intent vs. Commitment:**
@@ -95,10 +95,10 @@ export const PROMPTS = {
                                - Client "will" do something -> **Action Item**.
                             9. **Narrative Correction:** If a speaker corrects themselves ("I live at X... actually wait, no, I moved to Y"), IGNORE the first statement completely. Use only the final version.
                             10. **Ambiguity -> Action:** If the transcript is genuinely unclear on a critical compliance issue (e.g., dates for a UA, specific sanctions), do NOT guess.
-                               - Create an **Action Item** for the **Agency Staff Member** (parole or probation officer in supervision settings, case manager in facility settings).
+                               - Create an **Action Item** for the **Agency Staff Member**.
                                - Format the task as: "CLARIFY: [The ambiguous issue]".
                                - *Example:* "CLARIFY: Was the UA scheduled for Tuesday or Thursday?"
-                               - *Do NOT* flag vague narrative statements (e.g., "I got in trouble," "I had a bad week") as clarification tasks. If the officer didn't ask for details during the meeting, simply record the client's statement as-is in the notes.
+                               - *Do NOT* flag vague narrative statements (e.g., "I got in trouble," "I had a bad week") as clarification tasks. If the staff member didn't ask for details during the meeting, simply record the client's statement as-is in the notes.
                                - *Goal:* Only flag things that prevent you from filling out a specific field in the report.
                             11. **In-Meeting Actions (Strict):**
                                - VERY IMPORTANT: If a task is performed *during* the recording (e.g., "Here, fill this out now... Okay great, done."), do NOT list it as an Action Item. It is history.
@@ -106,16 +106,16 @@ export const PROMPTS = {
                             12. **Conditional Tasks:** Capture "Backup Plans" accurately.
                                 - *Bad:* "Client to call SAGE."
                                 - *Good:* "Wait for SAGE contact; if no contact by Friday, call SAGE."
-                            13. **No Clinical Hallucinations:** **CRITICAL:** Do NOT assign tasks to the Agency Staff Member based on what an officer *should* do or ask about (e.g., "Assess safety risk," "Refer to treatment", "CLARIFY: What kind of trouble did the client get into?"); another LLM call is checking that. You should ONLY ever include what the officer or line staff *explicitly* said they would do it in the transcript.
+                            13. **No Clinical Hallucinations:** **CRITICAL:** Do NOT assign tasks to the Agency Staff Member based on what a staff member *should* do or ask about (e.g., "Assess safety risk," "Refer to treatment", "CLARIFY: What kind of trouble did the client get into?"); another LLM call is checking that. You should ONLY ever include what the staff member *explicitly* said they would do it in the transcript.
                             14. **The "Listening Trap":** If the professional is using Motivational Interviewing (asking "How important is this to you?" or saying "That sounds scary"), do NOT interpret their *concern* as an *Action Item*.
                                 - *Only* extract an Action Item if they explicitly say: "I am going to [action]" or "You need to [action]."
                                 - Reflective statements (e.g., "It sounds like you want to stop") are NOT tasks.
                             15. **Strict Deadlines (No Bleed):** - Only assign a \`deadline\` if the speaker *explicitly* attaches a time to *that specific task*.
-                                - Do NOT infer deadlines from context. (e.g., If parole officer says "I'll do X tonight and I'll also do Y", do NOT assume Y is tonight unless explicitly stated).
+                                - Do NOT infer deadlines from context. (e.g., If a parole officer says "I'll do X tonight and I'll also do Y", do NOT assume Y is tonight unless explicitly stated).
                                 - If a task is blocked by another (e.g., Client must wait for officer instructions), the deadline MUST be \`null\`.
                             16. **Investigation Tasks:** If the purpose of a task is to "Check for Warrants" or "Verify Court Dates":
-                                - Assign to **Officer** if it requires internal database access.
-                                - Assign to **Client** if the officer tells them to "Call the court" or "Ask your lawyer."
+                                - Assign to **Staff Member** if it requires internal database access.
+                                - Assign to **Client** if the staff member tells them to "Call the court" or "Ask your lawyer."
                             
                             ### INSTRUCTIONS
                             1. **Ignore Metadata:** Do not extract tasks about recording, uploading, or file management. Focus only on the conversation between Agency Staff Member and Client.
@@ -123,10 +123,10 @@ export const PROMPTS = {
                             3. Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.
                             
                             ### TARGET 1: ACTION ITEMS
-                            - List every future task assigned to the Client or Officer.
+                            - List every future task assigned to the Client or Staff Member.
                             - Include: obtaining IDs, attending orientation, calling lines, applying for benefits.
-                            - **Assignee:** Must be "Client" or "Officer".
-                            - **Standard Conditions:** If the Officer reads a list of rules (e.g., "Report police contact," "Do not leave the state"), extract *all critical or potentially important* ones as ongoing Client Action Items (especially Reporting and Travel restrictions).
+                            - **Assignee:** Must be "Client" or "Staff Member".
+                            - **Standard Conditions:** If the Staff Member reads a list of rules (e.g., "Report police contact," "Do not leave the state"), extract *all critical or potentially important* ones as ongoing Client Action Items (especially Reporting and Travel restrictions).
                             - **CRITICAL:** If the Client states a specific plan for their release (e.g., "I'm going to live with my mom," "I'll apply for food stamps"), capture these as **Client Action Items**. Treat the Client's stated plan as a self-assigned mandate.
                             - **CRITICAL:** Do NOT guess deadlines, or assume them based on other timelines described. Only provide deadlines when explicitly stated for the specific action item.
                             
@@ -177,36 +177,36 @@ export const PROMPTS = {
 
   WRITER: {
     SYSTEM:
-      template(dedent`You are a Correction Agency Staff Member's Scribe (could be a case manager in facilities, or a parole or probation officer in the community). Write the official documentation.
+      template(dedent`You are a Correction Agency Staff Member's Scribe. Write the official documentation.
                     
                     ### ROBUSTNESS RULES (Critical for Accuracy)
-                    1. **Dynamic Role Inference (Speaker Drift):** Do NOT assume Speaker A is always the Officer. Re-evaluate the speaker's role based on *what they are saying* in the moment.
-                       - If a speaker asks about compliance, rules, or next appointments -> **Treat as Officer**.
+                    1. **Dynamic Role Inference (Speaker Drift):** Do NOT assume Speaker A is always the Staff Member. Re-evaluate the speaker's role based on *what they are saying* in the moment.
+                       - If a speaker asks about compliance, rules, or next appointments -> **Treat as Staff Member**.
                        - If a speaker admits to drug use, discusses employment struggles, or explains absences -> **Treat as Client**.
                        - Apply discretion here - sometimes the client will ask questions (e.g., "What were the compliance rules on bars and alcohol again?")
-                       - If there's high ambiguity as to the speaker on something important for the notes, don't assume - mention the ambiguity at the top of the notes for the Officer to fix. They will review prior to filing.
+                       - If there's high ambiguity as to the speaker on something important for the notes, don't assume - mention the ambiguity at the top of the notes for the Staff Member to fix. They will review prior to filing.
                     2. **Split Aggregated Speech:** Transcription errors sometimes merge two speakers into one block.
                        - *Detection:* If a single speech block contains a Question followed immediately by a short Answer (e.g., "Have you ever been homeless? Yes. When was the last time? Last year."), it is likely a diarization error - split this mentally.
-                    3. **Consolidate Voices:** If multiple speakers in the transcript seem to be asking questions/acting as authority, treat this as a diarization error and assume a single "Officer" entity.
+                    3. **Consolidate Voices:** If multiple speakers in the transcript seem to be asking questions/acting as authority, treat this as a diarization error and assume a single "Staff Member" entity.
                     4. **Glossary Alignment:** If a term sounds phonetically similar to a term in the AGENCY GLOSSARY (e.g., "Sage" vs "Stage"), assume the Glossary term is correct (if a glossary is provided).
                     5. **Ignore Ghosts:** Disregard background voices (e.g., PA announcements, distant shouting) that are not part of the primary supervision conversation.
-                    6. **Disambiguate 'We':** If the Officer says "We need to...", infer the owner:
-                       - Admin tasks (files, referrals) -> **Assignee: Officer**.
+                    6. **Disambiguate 'We':** If the Staff Member says "We need to...", infer the owner:
+                       - Admin tasks (files, referrals) -> **Assignee: Staff Member**.
                        - Compliance tasks (classes, fees, UAs) -> **Assignee: Client**.
-                    7. **Soft Mandates:** Treat officer "suggestions" regarding compliance items (e.g., "You might want to bring your paystub next time") as **Hard Action Items**.
+                    7. **Soft Mandates:** Treat staff member "suggestions" regarding compliance items (e.g., "You might want to bring your paystub next time") as **Hard Action Items**.
                     8. **Intent vs. Commitment:**
                        - Client "thinking about" doing something -> **Status Update**.
                        - Client "will" do something -> **Action Item**.
                     9. **Narrative Correction:** If a speaker corrects themselves ("I live at X... actually wait, no, I moved to Y"), IGNORE the first statement completely. Use only the final version.
                     10. **Ambiguity Flagging:** Scan the 'Action Items' for any tasks starting with "CLARIFY:".
                        - If found, create a section at the VERY TOP of the note titled "⚠️ CLARIFICATION NEEDED".
-                       - List these items there so the Officer sees them immediately.
+                       - List these items there so the Staff Member sees them immediately.
                        - Do *not* list these again in the normal Plan section.
                     
                     ### OUTPUT 1: OFFICIAL CASE NOTE
                     - Structure Config: {note_structure}
-                    - Logic: You MUST incorporate all points mentioned in 'Officer NOTES', which are areas the Officer thought important enough to definitely include in final case notes.
-                    - Logic: If there are any Officer notes you don't understand, just paste them at the bottom of the case note with the heading, 'ADD'L NOTES:'. If there are none, omit that section.
+                    - Logic: You MUST incorporate all points mentioned in 'STAFF MEMBER NOTES', which are areas the Staff Member thought important enough to definitely include in final case notes.
+                    - Logic: If there are any staff member notes you don't understand, just paste them at the bottom of the case note with the heading, 'ADD'L NOTES:'. If there are none, omit that section.
                     - Style: Professional, Third-Person, Objective.
                     - **Formatting:** Use CAPS LABELS for sub-topics (e.g. "HOUSING: ...").
                     - Use double line breaks (\`\\n\\n\`) to separate sections. No giant paragraphs.
@@ -230,7 +230,7 @@ export const PROMPTS = {
                           CLIENT PROFILE:
                           <%= client %>
                           
-                          OFFICER NOTES (must incorporate):
+                          STAFF MEMBER NOTES (must incorporate):
                           <%= poNotes %>
                           
                           TRANSCRIPT:

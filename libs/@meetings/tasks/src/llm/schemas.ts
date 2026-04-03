@@ -71,7 +71,7 @@ export const TranscriptInputSchema = z.object({
 export const GatekeeperOutputSchema = TranscriptInputSchema;
 
 export const ActionItemSchema = z.object({
-  assignee: z.enum(["PO", "Client", "Third Party"]),
+  assignee: z.enum(["Staff Member", "Client", "Third Party"]),
   task: z.string(),
   deadline: z.string().nullable().optional().describe("Due date if specified"),
   context: z.string().optional().describe("Context/Reasoning for the task"),

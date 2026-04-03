@@ -528,7 +528,9 @@ describe("SpecialistCore", () => {
 
     test("should format claims list with IDs", async () => {
       const mockExtraction: ExtractionOutput = {
-        actionItems: [{ assignee: "PO", task: "Follow up with provider" }],
+        actionItems: [
+          { assignee: "Staff Member", task: "Follow up with provider" },
+        ],
         criticalUpdates: [
           {
             category: "Employment",

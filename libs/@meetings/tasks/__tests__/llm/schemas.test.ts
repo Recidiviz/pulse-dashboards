@@ -96,7 +96,7 @@ describe("LLM Pipeline Schemas", () => {
 
     test("should validate action without optional fields", () => {
       const minimalAction = {
-        assignee: "PO",
+        assignee: "Staff Member",
         task: "Follow up with treatment provider",
       };
 
