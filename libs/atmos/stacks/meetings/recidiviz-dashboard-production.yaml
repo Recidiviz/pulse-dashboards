@@ -33,8 +33,9 @@ components:
         seed_demo_env_key: env_prod_meetings_seed_demo
         private_network: projects/recidiviz-dashboard-production/global/networks/default
         meetings_bucket_cors_origins:
-          - "https://recidiviz-meetings.web.app/"
+          - "https://recidiviz-meetings.web.app"
           - "https://meet.recidiviz.org"
+          - "https://label-studio.recidiviz.org"
 
     postgres-bq-data-transfer:
       vars:

@@ -234,8 +234,8 @@ module "audio_gcs_bucket" {
   }
   cors = [{
     origin          = var.meetings_bucket_cors_origins
-    method          = ["PUT"]
-    response_header = ["Content-Type"]
+    method          = ["GET", "HEAD", "PUT"]
+    response_header = ["Content-Type", "Range"]
   }]
 }
 
