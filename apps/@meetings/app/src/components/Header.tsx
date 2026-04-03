@@ -68,7 +68,8 @@ const Header: React.FC<HeaderProps> = ({ showDrawer = true }) => {
     hasFacilitiesAssistantAccess,
     hasCasePlanningAssistantAccess,
   } = useUserContext();
-  const { canSelectStateCode, currentStateName } = useStateSelection();
+  const { canSelectStateCode, currentStateName, selectedStateCode } =
+    useStateSelection();
 
   const dashboardUrl = IS_PROD
     ? "https://dashboard.recidiviz.org"
@@ -251,6 +252,15 @@ const Header: React.FC<HeaderProps> = ({ showDrawer = true }) => {
           </View>
         </View>
       </View>
+      {selectedStateCode === "US_DEMO" && (
+        <View className="bg-warning-light px-4 py-2.5">
+          <Typography className="text-center text-sm font-medium text-warning">
+            NOTE: You are currently viewing the Demo state, which is shared
+            externally to Recidiviz and our state agencies. DO NOT create
+            meetings including real agency data.
+          </Typography>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
