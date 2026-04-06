@@ -21,14 +21,21 @@ import React from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { formatJudgeName } from "../../utils/utils";
 import { SARSection } from "../SARDetails/constants";
-import { ReportBlock, SentencingAssessmentReportSection } from "./ReportBlock";
+import {
+  ReportBlock,
+  SectionContinuationHeader,
+  SentencingAssessmentReportSection,
+} from "./ReportBlock";
 import { ReportCharge } from "./ReportCharge";
 import { ReportKeyConsiderations } from "./ReportKeyConsiderations";
 import { ReportOffenderAssessment } from "./ReportOffenderAssessment";
 import { ReportPriorTreatmentHistory } from "./ReportPriorTreatmentHistory";
+import { ReportRecommendation } from "./ReportRecommendation";
 import { ReportRequestedOf } from "./ReportRequestedOf";
 import { BLOCK_GAP, CHIP_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
+
+const OFFENDER_COURT_SECTION_TITLE = "Offender / Court Information";
 
 interface SentencingAssessmentReportProps {
   presenter: SARDetailsPresenter;
@@ -143,13 +150,18 @@ export const SentencingAssessmentReport: React.FC<
                 staff={staff}
               />
               <SentencingAssessmentReportSection
-                title="Offender / Court Information"
+                title={OFFENDER_COURT_SECTION_TITLE}
                 splittable
               >
                 <Styled.ColumnFlexContainer gap={BLOCK_GAP}>
                   {clientChips}
                   {charges.map((charge, i) => (
                     <ReportBlock key={charge.id}>
+                      {i > 0 && (
+                        <SectionContinuationHeader
+                          title={`${OFFENDER_COURT_SECTION_TITLE} Continued...`}
+                        />
+                      )}
                       <ReportCharge charge={charge} index={i} />
                     </ReportBlock>
                   ))}
@@ -186,6 +198,9 @@ export const SentencingAssessmentReport: React.FC<
               <ReportPriorTreatmentHistory
                 presenter={presenter.priorTreatmentHistory}
               />
+              {!presenter.recommendationSkipped && (
+                <ReportRecommendation sarData={sarData} />
+              )}
             </Styled.PageContent>
           </td>
         </tr>

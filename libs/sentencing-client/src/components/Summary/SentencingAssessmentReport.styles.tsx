@@ -25,6 +25,7 @@ import { customPalette } from "../styles/palette";
 import {
   BLOCK_GAP,
   CHARGE_COLUMN_PADDING,
+  ICON_LABEL_GAP,
 } from "./SentencingAssessmentReport.constants";
 
 // Table-based layout so <thead> and <tfoot> repeat on every printed page.
@@ -433,4 +434,57 @@ export const DOCCategoryBoxMore = styled.div`
   font-weight: 500;
   line-height: 150%;
   margin-top: 4px;
+`;
+
+// ─── Recommendation and Supervision Plan ──────────────────────────────────────
+
+/** Outer gray container for a strategy block (Community or Institutional). */
+export const StrategyBox = styled.div`
+  display: flex;
+  padding: 30px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 4px;
+  background: ${palette.slate05};
+`;
+
+/** "Community Strategies" / "Institutional Strategies" centered heading. */
+export const StrategyTitle = styled.h4`
+  ${typography.Sans16}
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: center;
+  margin: 0;
+`;
+
+/** Nested box inside Community Strategies for the Home Plan subsection. */
+export const HomePlanBox = styled.div`
+  display: flex;
+  padding: 16px 16px 30px 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 2px solid ${customPalette.black};
+`;
+
+/** Icon + "Home Plan" title row. */
+export const HomePlanTitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${ICON_LABEL_GAP}px;
+`;
+
+/** "Home Plan" heading inside the nested Home Plan box. */
+export const HomePlanTitle = styled.h5`
+  ${typography.Sans14}
+  font-weight: 700;
+  line-height: 120%;
+  letter-spacing: -0.14px;
+  color: ${customPalette.black};
+  margin: 0;
 `;

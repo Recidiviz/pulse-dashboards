@@ -25,12 +25,9 @@ import {
   DOCTreatmentHistory,
   TreatmentProgramCategory,
 } from "../OffenderAssessment/PriorTreatmentHistory/types";
-import { ReportBlock } from "./ReportBlock";
+import { ReportBlock, SectionContinuationHeader } from "./ReportBlock";
 import { ReportPriorTreatmentHistoryTable } from "./ReportHistoryTable";
-import {
-  BLOCK_GAP,
-  CONTINUATION_HEADER_CLASS,
-} from "./SentencingAssessmentReport.constants";
+import { BLOCK_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const SECTION_TITLE = "Prior Treatment and Programming History";
@@ -43,16 +40,6 @@ const COMMUNITY_TREATMENT_DESCRIPTION =
   "The defendant has shared that they participated in the following community based treatments/programs.";
 
 const MAX_DISPLAYED_PER_CATEGORY = 5;
-
-/** Renders a "Continued..." heading as the first child of a block. Hidden by the
- *  PDF generator when no page break precedes this block. */
-const ContinuationHeader: React.FC = () => (
-  <div className={CONTINUATION_HEADER_CLASS}>
-    <Styled.SectionTitleContainer>
-      <Styled.SectionTitle>{CONTINUATION_TITLE}</Styled.SectionTitle>
-    </Styled.SectionTitleContainer>
-  </div>
-);
 
 interface ReportPriorTreatmentHistoryProps {
   presenter: PriorTreatmentHistoryPresenter;
@@ -75,18 +62,16 @@ export const ReportPriorTreatmentHistory: React.FC<ReportPriorTreatmentHistoryPr
 
     // All blocks are flattened as direct siblings so measureContinuationHeaders
     // can find the preceding sar-no-split block via previousElementSibling.
+    // The section title is merged into the first content block so it can never
+    // be orphaned alone at the bottom of a page.
     return (
       <Styled.ColumnFlexContainer gap={BLOCK_GAP / 2}>
-        <ReportBlock>
-          <Styled.SectionTitleContainer>
-            <Styled.SectionTitle>{SECTION_TITLE}</Styled.SectionTitle>
-          </Styled.SectionTitleContainer>
-        </ReportBlock>
-
-        {hasDOC && (
+        {hasDOC ? (
           <>
             <ReportBlock>
-              <ContinuationHeader />
+              <Styled.SectionTitleContainer>
+                <Styled.SectionTitle>{SECTION_TITLE}</Styled.SectionTitle>
+              </Styled.SectionTitleContainer>
               <Styled.ReportSubsectionTitle>
                 Department of Corrections Incarceration Program Completion
                 History
@@ -96,7 +81,7 @@ export const ReportPriorTreatmentHistory: React.FC<ReportPriorTreatmentHistoryPr
               </Styled.FreeTextContent>
             </ReportBlock>
             <ReportBlock>
-              <ContinuationHeader />
+              <SectionContinuationHeader title={CONTINUATION_TITLE} />
               <Styled.DOCCategoryBoxesContainer>
                 {categorized.map(([category, histories]) => {
                   const labels = TREATMENT_PROGRAM_CATEGORY_LABELS[category];
@@ -135,12 +120,37 @@ export const ReportPriorTreatmentHistory: React.FC<ReportPriorTreatmentHistoryPr
                 })}
               </Styled.DOCCategoryBoxesContainer>
             </ReportBlock>
+            {hasCommunity && (
+              <ReportBlock>
+                <SectionContinuationHeader title={CONTINUATION_TITLE} />
+                <Styled.ColumnFlexContainer gap={10}>
+                  <Styled.ReportSubsectionTitle>
+                    Community Treatments and Programming
+                  </Styled.ReportSubsectionTitle>
+                  {treatmentSummary && (
+                    <Styled.FreeTextContent>
+                      {treatmentSummary}
+                    </Styled.FreeTextContent>
+                  )}
+                  {communityHistories.length > 0 && (
+                    <>
+                      <Styled.FreeTextContent>
+                        {COMMUNITY_TREATMENT_DESCRIPTION}
+                      </Styled.FreeTextContent>
+                      <ReportPriorTreatmentHistoryTable
+                        priorTreatmentHistories={communityHistories}
+                      />
+                    </>
+                  )}
+                </Styled.ColumnFlexContainer>
+              </ReportBlock>
+            )}
           </>
-        )}
-
-        {hasCommunity && (
+        ) : (
           <ReportBlock>
-            <ContinuationHeader />
+            <Styled.SectionTitleContainer>
+              <Styled.SectionTitle>{SECTION_TITLE}</Styled.SectionTitle>
+            </Styled.SectionTitleContainer>
             <Styled.ColumnFlexContainer gap={10}>
               <Styled.ReportSubsectionTitle>
                 Community Treatments and Programming

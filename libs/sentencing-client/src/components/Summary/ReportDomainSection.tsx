@@ -23,9 +23,8 @@ import {
   DomainConfig,
   ORASDomainRiskLevelField,
 } from "../OffenderAssessment/utils";
-import { ReportBlock } from "./ReportBlock";
+import { ReportBlock, SectionContinuationHeader } from "./ReportBlock";
 import { RISK_COLUMN_CONFIG } from "./ReportRiskProfileSummaryCard";
-import { CONTINUATION_HEADER_CLASS } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const RISK_LEVEL_FILL_COUNT: Record<RiskLevelKey, number> = {
@@ -69,11 +68,7 @@ export const ReportDomainSection: React.FC<ReportDomainSectionProps> = ({
   return (
     <ReportBlock>
       {continuationTitle && (
-        <div className={CONTINUATION_HEADER_CLASS}>
-          <Styled.SectionTitleContainer>
-            <Styled.SectionTitle>{continuationTitle}</Styled.SectionTitle>
-          </Styled.SectionTitleContainer>
-        </div>
+        <SectionContinuationHeader title={continuationTitle} />
       )}
       <Styled.ReportCardHeader>
         <span>{domain.title}</span>

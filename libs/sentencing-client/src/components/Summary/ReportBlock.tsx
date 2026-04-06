@@ -79,6 +79,18 @@ interface SentencingAssessmentReportSectionProps {
   children: React.ReactNode;
 }
 
+/** Renders a "Continued..." heading as the first child of a block. Hidden by the
+ *  PDF generator when no page break precedes this block. */
+export const SectionContinuationHeader: React.FC<{ title: string }> = ({
+  title,
+}) => (
+  <div className={CONTINUATION_HEADER_CLASS}>
+    <Styled.SectionTitleContainer>
+      <Styled.SectionTitle>{title}</Styled.SectionTitle>
+    </Styled.SectionTitleContainer>
+  </div>
+);
+
 export const SentencingAssessmentReportSection: React.FC<
   SentencingAssessmentReportSectionProps
 > = ({ title, note, splittable, pageStart, continuationContent, children }) => (
@@ -92,11 +104,7 @@ export const SentencingAssessmentReportSection: React.FC<
     </ReportBlock>
     {continuationContent && (
       <ReportBlock>
-        <div className={CONTINUATION_HEADER_CLASS}>
-          <Styled.SectionTitleContainer>
-            <Styled.SectionTitle>{title} Continued...</Styled.SectionTitle>
-          </Styled.SectionTitleContainer>
-        </div>
+        <SectionContinuationHeader title={`${title} Continued...`} />
         {continuationContent}
       </ReportBlock>
     )}
