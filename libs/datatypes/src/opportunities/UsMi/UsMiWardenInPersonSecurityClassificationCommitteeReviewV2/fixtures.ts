@@ -66,6 +66,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         ineligibleCriteria: {},
         metadata: {
           tabName: "DUE",
+          solitarySessionType: "Administrative Segregation",
           daysInCollapsedSolitarySession: 25,
           jsonRecentBondableOffenses: [
             { bondableOffense: "423", bondableIncidentDate: "2023-12-27" },
@@ -147,6 +148,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         },
         ineligibleCriteria: {},
         metadata: {
+          solitarySessionType: "Administrative Segregation",
           tabName: "UPCOMING",
           daysInCollapsedSolitarySession: 50,
           lessThan24MonthsFromErd: true,
@@ -201,6 +203,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         metadata: {
+          solitarySessionType: "Temporary Segregation",
           tabName: "OVERDUE",
           daysInCollapsedSolitarySession: 30,
           lessThan24MonthsFromErd: false,
@@ -259,6 +262,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         metadata: {
+          solitarySessionType: "Temporary Segregation",
           tabName: "DUE",
           daysInCollapsedSolitarySession: 30,
           lessThan24MonthsFromErd: false,

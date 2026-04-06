@@ -60,4 +60,8 @@ export class usMiSecurityClassificationCommitteeReviewV2Opportunity extends Oppo
         return "Other";
     }
   }
+
+  get subcategory(): string | undefined {
+    return this.record.metadata.solitarySessionType;
+  }
 }

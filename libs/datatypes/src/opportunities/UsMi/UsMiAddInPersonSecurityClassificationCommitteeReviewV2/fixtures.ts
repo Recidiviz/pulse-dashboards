@@ -62,6 +62,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
       },
       ineligibleCriteria: {},
       metadata: {
+        solitarySessionType: "Administrative Segregation",
         tabName: "OVERDUE",
         daysInCollapsedSolitarySession: 25,
         jsonRecentBondableOffenses: [
@@ -142,6 +143,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
       },
       ineligibleCriteria: {},
       metadata: {
+        solitarySessionType: "Administrative Segregation",
         tabName: "OVERDUE",
         daysInCollapsedSolitarySession: 50,
         lessThan24MonthsFromErd: true,
@@ -193,6 +195,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
         },
       },
       metadata: {
+        solitarySessionType: "Administrative Segregation",
         tabName: "DUE",
         daysInCollapsedSolitarySession: 30,
         lessThan24MonthsFromErd: false,
@@ -246,6 +249,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
         },
       },
       metadata: {
+        solitarySessionType: "Temporary Segregation",
         tabName: "UPCOMING",
         daysInCollapsedSolitarySession: 30,
         lessThan24MonthsFromErd: false,

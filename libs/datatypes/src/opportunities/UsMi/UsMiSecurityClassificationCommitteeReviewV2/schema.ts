@@ -54,6 +54,10 @@ const jsonRecentNonbondableOffenseSchema = z.object({
   nonbondableIncidentDate: dateStringSchema,
 });
 
+const solitarySessionType = z
+  .literal("Administrative Segregation")
+  .or(z.literal("Temporary Segregation"));
+
 export const usMiSecurityClassificationCommitteeReviewV2Schema =
   opportunitySchemaBase.extend({
     eligibleCriteria: possiblyIneligibleCriteria,
@@ -79,7 +83,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Schema =
       neededProgramming: z.string().optional(),
       completedProgramming: z.string().optional(),
       solitarySessionStartDate: dateStringSchema.optional(),
-      solitarySessionType: z.string().optional(),
+      solitarySessionType: solitarySessionType,
       jsonAdSegStaysAndReasonsWithin3Yrs: z
         .array(jsonAdSegStaySchema)
         .default([]),
