@@ -119,9 +119,11 @@ module "server" {
         mount_path = "/cloudsql"
       }]
 
-      limits = {
-        cpu    = "1000m"
-        memory = "2Gi"
+      resources = {
+        limits = {
+          cpu    = "1000m"
+          memory = "2Gi"
+        }
       }
     }
   ]
