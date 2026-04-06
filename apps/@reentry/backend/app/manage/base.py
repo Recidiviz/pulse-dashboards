@@ -49,8 +49,6 @@ import app.manage.generate_client_data  # noqa
 import app.manage.conversation_tester  # noqa
 import app.manage.process_recording  # noqa
 import app.manage.requeue_pending_executions  # noqa
-import app.manage.retry_plan_gens  # noqa
-import app.manage.migrate_external_to_pseudonymized  # noqa
 import app.manage.update_recording_status  # noqa
 import app.manage.refresh_configs  # noqa
 import app.manage.populate_intake  # noqa
