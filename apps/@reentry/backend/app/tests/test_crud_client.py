@@ -8,9 +8,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.crud.client import (
     compute_frontend_status,
-    count_intakes_for_client,
     get_paginated_client_list,
-    reset_client_data,
 )
 from app.models.base import IntakeStatus
 from app.models.intake import Intake
@@ -291,7 +289,6 @@ async def test_merge_caseload_and_facility_clients(async_session):
         patch(
             "app.services.client_data.queries.Queries.get_clients_by_facility_access"
         ) as mock_facility_clients,
-        patch("app.crud.client.build_response_for_clients") as mock_build_response,
     ):
         # Mock caseload clients
         mock_get_clients.return_value = [caseload_client_1, caseload_client_2]
@@ -301,17 +298,6 @@ async def test_merge_caseload_and_facility_clients(async_session):
 
         # Mock facility clients (with 1 duplicate)
         mock_facility_clients.return_value = [facility_client_1, facility_client_2]
-
-        # Expected merged + deduped result
-        expected_unique = [caseload_client_1, caseload_client_2, facility_client_2]
-
-        # Mock build response
-        mock_build_response.return_value = {
-            "items": expected_unique,
-            "total": 3,
-            "page": 1,
-            "pages": 1,
-        }
 
         result = await get_paginated_client_list(
             session=async_session,
@@ -509,63 +495,6 @@ async def test_compute_frontend_status():
 
     # Error intake
     assert compute_frontend_status("error", ProcessingStatus.NOT_STARTED) == "error"
-
-
-@pytest.mark.asyncio
-async def test_count_intakes_for_client(async_session: AsyncSession):
-    """Test counting intakes for a client"""
-    client_pseudo_id = "client-004"
-
-    # Create test intakes
-    intake1 = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.CREATED)
-    intake2 = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
-    intake3 = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS)
-
-    async_session.add_all([intake1, intake2, intake3])
-    await async_session.commit()
-
-    count = await count_intakes_for_client(async_session, client_pseudo_id)
-    assert count == 3
-
-
-@pytest.mark.asyncio
-async def test_count_intakes_for_client_zero(async_session: AsyncSession):
-    """Test counting intakes returns 0 when none exist"""
-    count = await count_intakes_for_client(async_session, "nonexistent-client")
-    assert count == 0
-
-
-@pytest.mark.asyncio
-async def test_reset_client_data(async_session: AsyncSession, seed_configs):
-    """Test reset_client_data deletes all client data"""
-    from app.models.models import Plan
-
-    client_pseudo_id = "client-005"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
-
-    # Create intake with proper config
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.COMPLETED,
-        assessment_config_id=assessment_config_id,
-    )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
-
-    # Create plan
-    plan = Plan(client_pseudo_id=client_pseudo_id, intake_id=intake.id)
-    async_session.add(plan)
-    await async_session.commit()
-
-    # Reset client data
-    total_deleted = await reset_client_data(async_session, client_pseudo_id)
-
-    assert total_deleted >= 2  # At least intake, assessment, plan
-
-    # Verify everything is deleted
-    remaining_intakes = await count_intakes_for_client(async_session, client_pseudo_id)
-    assert remaining_intakes == 0
 
 
 # ===== Tests for new filtering and sorting functionality =====

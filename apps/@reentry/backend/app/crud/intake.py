@@ -357,34 +357,6 @@ async def get_intake_section_messages(
 WELCOME_BACK_TEST_STRING = "thanks for joining again"
 
 
-@overload
-async def get_latest_not_welcome_message(
-    session: AsyncSession, intake_id: UUID, *, query_only: Literal[True]
-) -> SelectOfScalar[IntakeMessage]: ...
-
-
-@overload
-async def get_latest_not_welcome_message(
-    session: AsyncSession, intake_id: UUID, *, query_only: Literal[False] = False
-) -> IntakeMessage | None: ...
-
-
-@statement_or_result(first_only=True)
-async def get_latest_not_welcome_message(
-    session: AsyncSession, intake_id: UUID, *, query_only: bool = False
-) -> SelectOfScalar[IntakeMessage] | IntakeMessage | None:
-    """
-    Get the most recent message for a specific intake.
-    """
-    return (
-        select(IntakeMessage)
-        .where(IntakeMessage.intake_id == intake_id)
-        .filter(not_(IntakeMessage.content.icontains(WELCOME_BACK_TEST_STRING)))
-        .order_by(IntakeMessage.created_at.desc())
-        .limit(1)
-    )
-
-
 async def get_latest_non_welcome_message_from_caseworker(
     session: AsyncSession, intake_id: UUID
 ) -> IntakeMessage | None:
@@ -501,32 +473,6 @@ async def get_intake_by_token(
     intake = parent_result.scalars().first()
 
     return token_obj, intake
-
-
-async def update_internal_access_by_client_pseudo_id(
-    session: AsyncSession,
-    client_pseudo_id: str,
-    internal_access: bool,
-) -> Intake | None:
-    """
-    DEPRECATED: Use update_internal_access_by_intake_id instead.
-    This function doesn't work correctly with multiple intakes per client.
-    """
-    result = await session.execute(
-        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
-    )
-    intake = result.scalar_one_or_none()
-
-    if not intake:
-        return None
-
-    intake.internal_access = internal_access
-    session.add(intake)
-
-    await session.commit()
-    await session.refresh(intake)
-
-    return intake
 
 
 async def update_internal_access_by_intake_id(

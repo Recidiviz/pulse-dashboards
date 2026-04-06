@@ -18,7 +18,6 @@ from app.crud.intake import (
     get_intake_token,
     get_latest_active_conversation_intake,
     get_latest_message,
-    get_latest_not_welcome_message,
     get_or_create_token,
     update_internal_access_by_intake_id,
 )
@@ -453,33 +452,6 @@ async def test_get_latest_message(async_session: AsyncSession, mock_intake):
 
     assert latest is not None
     assert latest.content == "Second"
-
-
-@pytest.mark.asyncio
-async def test_get_latest_not_welcome_message(async_session: AsyncSession, mock_intake):
-    """Test retrieving latest message excluding welcome messages."""
-    msg1 = IntakeMessage(
-        intake_id=mock_intake.id,
-        content="Regular message",
-        from_role=IntakeMessageRole.CLIENT,
-        section="intro",
-    )
-    async_session.add(msg1)
-    await async_session.commit()
-
-    msg2 = IntakeMessage(
-        intake_id=mock_intake.id,
-        content="thanks for joining again",  # Welcome message
-        from_role=IntakeMessageRole.CASEWORKER,
-        section="intro",
-    )
-    async_session.add(msg2)
-    await async_session.commit()
-
-    latest = await get_latest_not_welcome_message(async_session, mock_intake.id)
-
-    assert latest is not None
-    assert latest.content == "Regular message"
 
 
 @pytest.mark.asyncio

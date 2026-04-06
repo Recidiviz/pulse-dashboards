@@ -6,9 +6,6 @@ import structlog
 from sqlmodel import select
 
 from app.core.db import AsyncSession
-from app.crud.intake import (
-    get_latest_completed_intake_by_client_pseudo_id,
-)
 from app.crud.utils import apply_search_filter, paginate, sort_clients_by_name
 from app.models.intake import (
     ClientAddress,
@@ -219,15 +216,6 @@ def empty_paginated_response(page: int, size: int):
         "size": size,
         "pages": 0,
     }
-
-
-async def count_intakes_for_client(session: AsyncSession, client_pseudo_id: str) -> int:
-    """Count the total number of intakes for a given client."""
-    result = await session.exec(
-        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
-    )
-    intakes = result.all()
-    return len(intakes)
 
 
 async def handle_simple_status_filter(
@@ -645,44 +633,6 @@ async def handle_complex_status_filter(
         "pages": (len(filtered_clients) + page_size - 1) // page_size
         if filtered_clients
         else 0,
-    }
-
-
-async def build_response_for_clients(
-    clients: list[ClientDataRecord],
-    session: AsyncSession,
-    page: int,
-    page_size: int,
-) -> dict:
-    paged_clients = paginate(clients, page, page_size)
-
-    items = []
-    for client in paged_clients:
-        latest_intake = await get_latest_completed_intake_by_client_pseudo_id(
-            session, client.pseudonymized_client_id
-        )
-        intake_count = await count_intakes_for_client(
-            session, client.pseudonymized_client_id
-        )
-        last_completed_date = None
-        if latest_intake:
-            last_completed_date = latest_intake.completed_at or latest_intake.updated_at
-
-        items.append(
-            {
-                "client_pseudo_id": client.pseudonymized_client_id,
-                "client": client,
-                "intake_count": intake_count,
-                "last_completed_date": last_completed_date,
-            }
-        )
-
-    return {
-        "items": items,
-        "total": len(clients),
-        "page": page,
-        "size": page_size,
-        "pages": (len(clients) + page_size - 1) // page_size if clients else 0,
     }
 
 

@@ -43,25 +43,6 @@ async def get_execution_by_id(
     return select(Execution).where(Execution.id == execution_id)
 
 
-@overload
-async def get_executions(
-    session: AsyncSession, *, query_only: Literal[True]
-) -> SelectOfScalar[Execution]: ...
-
-
-@overload
-async def get_executions(
-    session: AsyncSession, *, query_only: Literal[False] = False
-) -> list[Execution]: ...
-
-
-@statement_or_result(result_type=list)
-async def get_executions(
-    session: AsyncSession, *, query_only: bool = False
-) -> SelectOfScalar[Execution] | list[Execution]:
-    return select(Execution)
-
-
 async def delete_execution_by_id(session: AsyncSession, execution_id: UUID):
     execution = await get_execution_by_id(session, execution_id)
     if not execution:
