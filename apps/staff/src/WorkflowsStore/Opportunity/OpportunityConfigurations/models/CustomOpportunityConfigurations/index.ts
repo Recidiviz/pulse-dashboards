@@ -34,6 +34,7 @@ import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
 import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTelephoneReporting";
+import { UsMiSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/UsMiSecurityClassificationCommitteeReviewV2Configuration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNcCreditReductionReviewConfiguration } from "./UsNc/UsNcCreditReductionReviewConfiguration";
@@ -80,6 +81,12 @@ const customOpportunityConfigurations: Partial<
   usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeConfiguration,
   usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
   usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingConfiguration,
+  usMiSecurityClassificationCommitteeReviewV2:
+    UsMiSecurityClassificationCommitteeReviewV2Configuration,
+  usMiAddInPersonSecurityClassificationCommitteeReviewV2:
+    UsMiSecurityClassificationCommitteeReviewV2Configuration,
+  usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
+    UsMiSecurityClassificationCommitteeReviewV2Configuration,
 
   // Missouri
   usMoOutsideClearance: UsMoWorkReleaseConfiguration,
