@@ -19,7 +19,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 
 import { PrismaClient, StateCode } from "~@reentry/prisma/client";
 
-export type AuthUser = {
+type AuthUser = {
   clientPseudoId: string;
   iat?: number;
   exp?: number;

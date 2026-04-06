@@ -210,7 +210,7 @@ async function transitionToNextSection(state: State) {
   });
 }
 
-export function endChat(state: State) {
+function endChat(state: State) {
   const { currentSectionIndex, config } = state;
   const newMessage = createAiMessageWithMetadata({
     content: `I see! Ending the conversation now.`,
@@ -223,7 +223,7 @@ export function endChat(state: State) {
   };
 }
 
-export function closingRemarks(state: State) {
+function closingRemarks(state: State) {
   const { currentSectionIndex, clientName, config } = state;
 
   return {
@@ -237,7 +237,7 @@ export function closingRemarks(state: State) {
   };
 }
 
-export function alreadyFinished(state: State) {
+function alreadyFinished(state: State) {
   const { currentSectionIndex, clientName, config } = state;
 
   return {

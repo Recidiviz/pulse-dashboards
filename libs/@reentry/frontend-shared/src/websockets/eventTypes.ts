@@ -22,24 +22,7 @@ import { components } from "~@reentry/openapi-types";
 
 type IntakeMessageResponse = components["schemas"]["IntakeMessageResponse"];
 
-// Enum definitions
-export enum UserAction {
-  CONTINUE = "continue",
-  PAUSE = "pause",
-  REQUEST_CASEWORKER = "request_caseworker",
-}
-
-export enum CommandAction {
-  PAUSE = "pause",
-  MANAGER_REQUESTED = "manager_requested",
-  RESUME = "resume",
-}
-
 // Event content interfaces
-export interface PingEventContent {
-  timestamp: number;
-}
-
 export interface PongEventContent {
   timestamp: number;
 }
@@ -54,16 +37,8 @@ export interface SectionChangeContent {
   messages: IntakeMessageResponse[];
 }
 
-export interface CommandContent {
-  action: CommandAction;
-}
-
 export interface ForceDisconnectContent {
   reason: string;
-}
-
-export interface Auth {
-  token: string;
 }
 
 // Socket.io specific interfaces
@@ -77,11 +52,6 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  ping: (content: PingEventContent) => void;
-  command: (
-    content: CommandContent,
-    callback?: (response: unknown) => void,
-  ) => void;
   humanMessage: (
     content: string,
     callback?: (response: IntakeMessageResponse | null) => void,

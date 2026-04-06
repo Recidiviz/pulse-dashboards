@@ -20,7 +20,7 @@ import { z } from "zod";
 import { getSectionTitles } from "~@reentry/intake-agent/utils";
 import type { IntakeConfig } from "~@reentry/prisma/types";
 
-export const TONE = `
+const TONE = `
 Your Tone: Warm, trauma-informed, and professional. Use plain language that is understandable at a 4th-grade reading level.
 `;
 

@@ -15,30 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./api";
-export * from "./auth/authMiddleware";
+export { createApiClient } from "./api";
 export * from "./auth/globalAuthStore";
 export * from "./components/AIDisclosure";
-export * from "./components/buttons/PrimaryButton";
 export { FullAddressForm } from "./components/FullAddressForm";
-export * from "./components/inputs";
 export * from "./components/intake/ChatInterface/AssessmentLogin";
-export * from "./components/intake/ChatInterface/ChatbotInterface";
-export * from "./components/intake/ChatInterface/ChatHeader";
 export * from "./components/intake/ChatInterface/ChatMessageBubble";
-export * from "./components/intake/ChatInterface/Sidebar";
-export * from "./components/intake/ChatInterface/TTSButton";
 export * from "./components/intake/IntakeRouter";
 export * from "./components/modals/BaseModal";
 export * from "./components/QueryProvider/QueryProvider";
-export * from "./configs/tenantConfig";
 export * from "./configs/types";
-export * from "./constants";
 export * from "./contexts/ApplicationContext";
-export * from "./hooks/tts/useGoogleTTS";
-export * from "./utils/encoding";
 export * from "./utils/errors";
 export * from "./utils/toast";
-export * from "./websockets/components/ConnectionErrorAlert";
-export * from "./websockets/IntakeSocketContext";
+export { IntakeSocketProvider } from "./websockets/IntakeSocketContext";
 export * from "./websockets/socket";
