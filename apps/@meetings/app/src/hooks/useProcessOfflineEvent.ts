@@ -81,6 +81,7 @@ export function useProcessOfflineEvent() {
           if (event.personId && event.personType) {
             await endMeeting({
               meetingId: event.meetingId,
+              endTime: event.endTime,
               userNotepadNotes: event.userNotepadNotes,
               personId: event.personId,
               personType: event.personType,

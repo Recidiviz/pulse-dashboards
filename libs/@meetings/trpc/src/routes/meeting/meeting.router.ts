@@ -217,14 +217,14 @@ export const meetingRouter = router({
     .input(endMeetingInputSchema)
     .mutation(
       async ({
-        input: { meetingId, userNotepadNotes },
+        input: { meetingId, endTime, userNotepadNotes },
         ctx: { prisma, stateCode },
       }) => {
         try {
           await prisma.meeting.update({
             where: { id: meetingId },
             data: {
-              endTime: new Date(),
+              endTime: endTime ?? new Date(),
               userNotepadNotes,
             },
           });
