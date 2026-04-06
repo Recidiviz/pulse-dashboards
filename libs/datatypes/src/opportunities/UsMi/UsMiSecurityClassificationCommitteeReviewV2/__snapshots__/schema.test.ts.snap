@@ -35,7 +35,7 @@ exports[`schema for almostEligible 1`] = `
   "isAlmostEligible": true,
   "isEligible": false,
   "metadata": {
-    "daysInCollapsedSolitarySession": 30,
+    "daysInSolitarySession": 30,
     "jsonAdSegStaysAndReasonsWithin3Yrs": [
       {
         "stayEndDate": 2022-11-07T00:00:00.000Z,
@@ -106,7 +106,7 @@ exports[`schema for fullyEligible1 1`] = `
   "isEligible": true,
   "metadata": {
     "completedProgramming": "105",
-    "daysInCollapsedSolitarySession": 25,
+    "daysInSolitarySession": 25,
     "jsonAdSegStaysAndReasonsWithin3Yrs": [
       {
         "stayEndDate": 2021-11-03T00:00:00.000Z,
@@ -193,7 +193,7 @@ exports[`schema for fullyEligible2 1`] = `
   "isAlmostEligible": false,
   "isEligible": true,
   "metadata": {
-    "daysInCollapsedSolitarySession": 50,
+    "daysInSolitarySession": 50,
     "jsonAdSegStaysAndReasonsWithin3Yrs": [],
     "jsonRecentBondableOffenses": [
       {

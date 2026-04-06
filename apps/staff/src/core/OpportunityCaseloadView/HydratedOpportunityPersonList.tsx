@@ -270,6 +270,8 @@ export type OpportunityTableColumnId =
   | "US_MI_UNIT_ID"
   | "US_MI_ERD"
   | "US_MI_CUSTODY_LEVEL"
+  | "US_MI_SEG_START_DATE"
+  | "US_MI_SEG_DURATION"
   | "US_MI_NEXT_SCC_DATE"
   | "US_TN_LATEST_CLASSIFICATION_DATE"
   | "SNOOZE_ENDS_IN"
@@ -721,6 +723,26 @@ const TableView = observer(function TableView({
       },
     },
     {
+      header: "Segregation Start Date",
+      id: "US_MI_SEG_START_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return formatWorkflowsDate(
+            opp.record.metadata.solitarySessionStartDate,
+          );
+        }
+      },
+    },
+    {
       header: "SCC Due Date",
       id: "US_MI_NEXT_SCC_DATE",
       enableSorting: true,
@@ -731,10 +753,46 @@ const TableView = observer(function TableView({
             "usMiSecurityClassificationCommitteeReview",
             "usMiAddInPersonSecurityClassificationCommitteeReview",
             "usMiWardenInPersonSecurityClassificationCommitteeReview",
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
           ].includes(opp.type) &&
           opp.record
         ) {
           return formatWorkflowsDate(opp.record.metadata.nextSccDate);
+        }
+      },
+    },
+
+    {
+      header: "Time in Segregation",
+      id: "US_MI_SEG_DURATION",
+      enableSorting: true,
+      sortingFn: "basic",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.metadata.daysInSolitarySession;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(row.original.type) &&
+          row.original.record
+        ) {
+          return formatDurationFromOptionalDays(
+            row.original.record.metadata.daysInSolitarySession,
+          );
         }
       },
     },

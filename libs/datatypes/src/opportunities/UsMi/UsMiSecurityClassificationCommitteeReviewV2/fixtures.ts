@@ -63,7 +63,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
       ineligibleCriteria: {},
       metadata: {
         tabName: "OVERDUE",
-        daysInCollapsedSolitarySession: 25,
+        daysInSolitarySession: 25,
         jsonRecentBondableOffenses: [
           { bondableOffense: "423", bondableIncidentDate: "2023-12-27" },
         ],
@@ -145,7 +145,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
       ineligibleCriteria: {},
       metadata: {
         tabName: "NOT_DUE",
-        daysInCollapsedSolitarySession: 50,
+        daysInSolitarySession: 50,
         lessThan24MonthsFromErd: true,
         jsonRecentBondableOffenses: [
           { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },
@@ -199,7 +199,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
       metadata: {
         tabName: "OVERDUE",
 
-        daysInCollapsedSolitarySession: 30,
+        daysInSolitarySession: 30,
         lessThan24MonthsFromErd: false,
         jsonRecentBondableOffenses: [
           { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },

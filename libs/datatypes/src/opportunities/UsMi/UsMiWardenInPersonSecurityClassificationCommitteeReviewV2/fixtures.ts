@@ -67,7 +67,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         metadata: {
           tabName: "DUE",
           solitarySessionType: "Administrative Segregation",
-          daysInCollapsedSolitarySession: 25,
+          daysInSolitarySession: 25,
           jsonRecentBondableOffenses: [
             { bondableOffense: "423", bondableIncidentDate: "2023-12-27" },
           ],
@@ -150,7 +150,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         metadata: {
           solitarySessionType: "Administrative Segregation",
           tabName: "UPCOMING",
-          daysInCollapsedSolitarySession: 50,
+          daysInSolitarySession: 50,
           lessThan24MonthsFromErd: true,
           jsonRecentBondableOffenses: [
             { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },
@@ -205,7 +205,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         metadata: {
           solitarySessionType: "Temporary Segregation",
           tabName: "OVERDUE",
-          daysInCollapsedSolitarySession: 30,
+          daysInSolitarySession: 30,
           lessThan24MonthsFromErd: false,
           jsonRecentBondableOffenses: [
             { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },
@@ -264,7 +264,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         metadata: {
           solitarySessionType: "Temporary Segregation",
           tabName: "DUE",
-          daysInCollapsedSolitarySession: 30,
+          daysInSolitarySession: 30,
           lessThan24MonthsFromErd: false,
           jsonRecentBondableOffenses: [
             { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },

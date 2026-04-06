@@ -192,6 +192,9 @@ export class OpportunityPersonListPresenter
           "usMiSecurityClassificationCommitteeReview",
           "usMiAddInPersonSecurityClassificationCommitteeReview",
           "usMiWardenInPersonSecurityClassificationCommitteeReview",
+          "usMiSecurityClassificationCommitteeReviewV2",
+          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
           "usMiCustodyLevelDowngrade",
           "usIdCustodyLevelDowngrade",
         ].includes(this.opportunityType),
@@ -226,6 +229,14 @@ export class OpportunityPersonListPresenter
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
         this.opportunityType === "usMiCustodyLevelDowngrade",
+      US_MI_SEG_START_DATE:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        [
+          "usMiSecurityClassificationCommitteeReviewV2",
+          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+        ].includes(this.opportunityType),
       US_MI_NEXT_SCC_DATE:
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
@@ -233,6 +244,17 @@ export class OpportunityPersonListPresenter
           "usMiSecurityClassificationCommitteeReview",
           "usMiAddInPersonSecurityClassificationCommitteeReview",
           "usMiWardenInPersonSecurityClassificationCommitteeReview",
+          "usMiSecurityClassificationCommitteeReviewV2",
+          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+        ].includes(this.opportunityType),
+      US_MI_SEG_DURATION:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        [
+          "usMiSecurityClassificationCommitteeReviewV2",
+          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
         ].includes(this.opportunityType),
 
       US_TN_LATEST_CLASSIFICATION_DATE:

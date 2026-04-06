@@ -78,7 +78,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Schema =
       adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
     }),
     metadata: z.object({
-      daysInCollapsedSolitarySession: nullishAsUndefined(z.coerce.number()),
+      daysInSolitarySession: nullishAsUndefined(z.coerce.number()),
       lessThan24MonthsFromErd: z.boolean().optional(),
       neededProgramming: z.string().optional(),
       completedProgramming: z.string().optional(),
