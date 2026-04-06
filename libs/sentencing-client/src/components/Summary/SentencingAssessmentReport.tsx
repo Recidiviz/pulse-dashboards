@@ -40,7 +40,7 @@ export const SentencingAssessmentReport: React.FC<
   const sarData = presenter.SARData;
   if (!sarData) return null;
 
-  const { externalId, dateRequested, updatedAt, staff } = sarData;
+  const { dateRequested, updatedAt, staff } = sarData;
   const charges = sarData.charges;
   const { needsDisplayItems, factorsDisplayItems } = presenter;
 
@@ -87,7 +87,12 @@ export const SentencingAssessmentReport: React.FC<
   const footer = (
     <Styled.Footer>
       <Styled.FooterMessage>
-        Defendant: {presenter.formattedClientName} | Case: #{externalId}
+        Defendant: {presenter.formattedClientName} | Cause:{" "}
+        {charges
+          .map((c) => c.causeNum)
+          .filter(Boolean)
+          .map((n) => `#${n}`)
+          .join(", ")}
       </Styled.FooterMessage>
       {/*
        * The &nbsp; maintains the element's line height so the footer height

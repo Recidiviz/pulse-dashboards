@@ -71,6 +71,18 @@ export const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   border-top: 1.513px solid ${palette.slate30};
+
+  & > *:first-child {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  & > *:last-child {
+    flex-shrink: 0;
+  }
 `;
 
 export const FooterMessage = styled.div`
