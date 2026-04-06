@@ -5,7 +5,7 @@ RECIDIVIZ_ENV_NAME = dev
 # ----------------------------------------------- #
 RECIDIVIZ_DEPLOY_ENV=gcp
 RECIDIVIZ_GCP_DB_INSTANCE_NAME=<PROJECT_ID>:<REGION>:<INSTANCE_NAME>
-REDIS_URL=redis://<REDIS_HOST>:<REDIS_PORT>
+RECIDIVIZ_REDIS_URL=redis://<REDIS_HOST>:<REDIS_PORT>
 
 
 # ----------------------------------------------- #
@@ -70,7 +70,6 @@ RECIDIVIZ_LANGCHAIN_PROJECT="dev-recidiviz"
 # ----------------------------------------------- #
 # Resources API
 # ----------------------------------------------- #
-RECIDIVIZ_USE_EXTERNAL_RESOURCES_API=False
 RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=
 RECIDIVIZ_RESOURCES_API_KEY=
 
@@ -93,11 +92,6 @@ RECIDIVIZ_JWT_SECRET_KEY
 
 
 # ----------------------------------------------- #
-# RECAPTCHA CONFIGURATION
-# ----------------------------------------------- #
-RECIDIVIZ_RECAPTCHA_SECRET_KEY=
-
-# ----------------------------------------------- #
 # SENTRY ERROR TRACKING
 # ----------------------------------------------- #
 RECIDIVIZ_SENTRY_DSN=
@@ -116,5 +110,5 @@ RECIDIVIZ_ENVIRONMENT_TEST_FEATURE="dev,demo"
 # ----------------------------------------------- #
 # Impersonate (only for staging and prod)
 # ----------------------------------------------- #
-DATA_API_URL=
-GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE=
+RECIDIVIZ_DATA_API_URL=
+RECIDIVIZ_GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE=

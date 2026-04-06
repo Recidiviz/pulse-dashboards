@@ -55,8 +55,6 @@ spec:
                   value: "${RECIDIVIZ_AUTH0_AUDIENCE}"
                 - name: RECIDIVIZ_AUTH0_DOMAIN
                   value: "${RECIDIVIZ_AUTH0_DOMAIN}"
-                - name: RECIDIVIZ_USE_EXTERNAL_RESOURCES_API
-                  value: "${RECIDIVIZ_USE_EXTERNAL_RESOURCES_API}"
                 - name: RECIDIVIZ_JWT_ALGORITHM
                   value: "${RECIDIVIZ_JWT_ALGORITHM}"
                 - name: RECIDIVIZ_GCS_BUCKET_NAME

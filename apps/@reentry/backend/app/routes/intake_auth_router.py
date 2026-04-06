@@ -91,23 +91,6 @@ async def verify_dob_fullname(
     session: AsyncSession = Depends(get_session),
 ):
     try:
-        # Pending to define if reCAPTCHA is needed
-        # # validate recaptcha
-        # if not data.recaptchaToken:
-        #     raise HTTPException(status_code=400, detail="Recaptcha token is required")
-        # async with httpx.AsyncClient() as client:
-        #     response = await client.post(
-        #         "https://www.google.com/recaptcha/api/siteverify",
-        #         data={
-        #             "secret": settings.RECAPTCHA_SECRET_KEY,
-        #             "response": data.recaptchaToken,
-        #         },
-        #     )
-        # result = response.json()
-        # logger.info(f"reCAPTCHA validation result: {result}")
-        # if not result.get("success"):
-        #     raise HTTPException(status_code=400, detail="Invalid reCAPTCHA token")
-
         result = await validate_dob_fullname(
             request=request,
             date_of_birth=data.date_of_birth,

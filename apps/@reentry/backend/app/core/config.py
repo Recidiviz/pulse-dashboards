@@ -37,9 +37,6 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str | None = None
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:4200"
 
-    EVAL_MODEL_PROVIDER: str = "openai"
-    EVAL_MODEL_NAME: str = "o4-mini"
-    EVAL_MODEL_VERSION: str = "2024-11-20"
     # https://platform.openai.com/docs/models
     # https://docs.anthropic.com/en/docs/about-claude/models
     GOOGLE_GENAI_API_KEY: str | None = None
@@ -67,9 +64,6 @@ class Settings(BaseSettings):
     BQ_CASE_MANAGER_TABLE: str = "case_manager_dev"
     BQ_SUPERVISION_OFFICER_TABLE: str = "supervision_officer_dev"
     BQ_CLIENT_TABLE: str = "client_dev"
-
-    # reCAPTCHA settings
-    RECAPTCHA_SECRET_KEY: str = "your_recaptcha_secret_key"
 
     # Sentry settings
     SENTRY_DSN: str = ""
