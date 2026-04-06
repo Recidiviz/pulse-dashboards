@@ -9,14 +9,14 @@ from sqlalchemy import Column
 from sqlalchemy import Enum as SAEnum
 from sqlmodel import Field, SQLModel
 
-
 class IntakeStatus(StrEnum):
-    """Status for intake assessment process."""
+    """Status for intake assessment process"""
 
     CREATED = "created"
     IN_PROGRESS = "in_progress"
     ERROR = "error"
     COMPLETED = "completed"
+    PROCESSING = "processing"
 
 
 class IntakeType(StrEnum):
