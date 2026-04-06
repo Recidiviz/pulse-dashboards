@@ -109,6 +109,9 @@ export const SentencingAssessmentReport: React.FC<
       <Styled.ReportChip>
         Date of Birth: {presenter.formattedBirthDate}
       </Styled.ReportChip>
+      <Styled.ReportChip>
+        DOC ID: {presenter.SARAttributes.externalId}
+      </Styled.ReportChip>
     </Styled.RowFlexContainer>
   );
 
