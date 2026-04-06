@@ -19,7 +19,11 @@ import { useEffect, useRef } from "react";
 
 import useIsOnline from "./useIsOnline";
 import { useMeetingEventQueue } from "./useMeetingEventQueue";
+import { useOfflineFailureQueue } from "./useOfflineFailureQueue";
 import { useProcessOfflineEvent } from "./useProcessOfflineEvent";
+
+const TIMEOUT_MS = 500;
+const RETRY_MAX = 3;
 
 export function useOfflineQueueDrainer() {
   const { isOnline } = useIsOnline();
@@ -27,6 +31,7 @@ export function useOfflineQueueDrainer() {
   const isDrainingRef = useRef(false);
 
   const { dequeue, events } = useMeetingEventQueue();
+  const { enqueue: enqueueFailure } = useOfflineFailureQueue();
   const { processEvent } = useProcessOfflineEvent();
 
   // Keep a stable ref so the drain closure always calls the latest version
@@ -47,13 +52,32 @@ export function useOfflineQueueDrainer() {
       isDrainingRef.current = true;
 
       let event = dequeue();
+      let retryCount = 0;
       while (event !== null) {
         // Sequential awaits are intentional here
         // eslint-disable-next-line no-await-in-loop
-        await processEventRef.current(event);
+        const res = await processEventRef.current(event);
 
-        // TODO AVild - Process failures? can get result from above call
+        if (res.status === "error") {
+          // If we want to retry this event...
+          if (retryCount < RETRY_MAX) {
+            retryCount++;
+            // eslint-disable-next-line no-await-in-loop
+            await new Promise((resolve) => setTimeout(resolve, TIMEOUT_MS));
+            continue;
+          } else {
+            // We're out of retries, event has failed.
+            console.error(
+              `Failed to process event after ${RETRY_MAX} attempts:`,
+              res.error,
+            );
 
+            //TODO AVid - Persist truly-failed events, deal with in future ticket (12931/12928)
+            enqueueFailure(event);
+          }
+        }
+
+        retryCount = 0;
         event = dequeue();
       }
 
@@ -61,5 +85,5 @@ export function useOfflineQueueDrainer() {
     }
 
     drain();
-  }, [isOnline, dequeue, events.length]);
+  }, [isOnline, dequeue, events.length, enqueueFailure]);
 }

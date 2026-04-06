@@ -23,6 +23,7 @@ import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 
 import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
+import useIsOnline from "../hooks/useIsOnline.native";
 import { usePlatform } from "../hooks/usePlatform";
 import { Typography } from "../shared/ui/Typography";
 import Dropdown from "./Dropdown";
@@ -57,6 +58,7 @@ const MeetingsHeaderContent = ({
   const { isWeb, isMobile } = usePlatform();
   const showSearchAndSort = !(meetingsCount <= 1 && !searchQuery);
   const showCountAndCreate = !(meetingsCount === 0 && !searchQuery);
+  const { isOnline } = useIsOnline();
 
   const NativeMeetingControls = () => (
     <TouchableOpacity onPress={handleOpenBottomSheet}>
@@ -82,10 +84,19 @@ const MeetingsHeaderContent = ({
         </TouchableOpacity>
       </View>
       <View className="hidden flex-row items-center gap-1 md:flex">
-        <TouchableOpacity onPress={handleAudioUpload}>
+        <TouchableOpacity
+          disabled={!isOnline}
+          aria-disabled={!isOnline}
+          onPress={handleAudioUpload}
+        >
           <View className="flex-row items-center gap-1 px-4 py-2">
             <UploadIcon className="!size-4 fill-brand" />
-            <Typography className="text-sm font-semibold leading-4 text-brand">
+            <Typography
+              className={clsx(
+                "text-sm font-semibold leading-4 text-brand",
+                !isOnline && "text-gray-400",
+              )}
+            >
               Upload
             </Typography>
           </View>

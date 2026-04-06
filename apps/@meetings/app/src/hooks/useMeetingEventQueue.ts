@@ -74,7 +74,7 @@ export type EditMeetingEvent = {
   caseNote?: string;
 } & MeetingEventMetadata;
 
-type MeetingEventQueueState = {
+export type MeetingEventQueueState = {
   events: MeetingEvent[];
   enqueue: (metadata: OfflineEvent) => void;
   dequeue: () => MeetingEvent["metadata"] | null;
