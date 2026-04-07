@@ -212,7 +212,7 @@ export interface Opportunity<
   deleteSubmitted: () => Promise<void>;
   submittedUpdate: Submission | undefined;
   readonly allSubcategoriesOfSubmitted: string[] | undefined;
-  readonly submitMenuOptions: string[] | undefined;
+  submitMenuOptions: string[] | undefined;
   sentryTrackingId: string | undefined;
   instanceDetails: string | undefined;
   labelAddendum: string | undefined;

@@ -28,4 +28,8 @@ export class UsMiSecurityClassificationCommitteeReviewV2Configuration extends Ap
   get hydrateIneligibleRecordsInOpportunityManager() {
     return true;
   }
+
+  get allSubcategoriesOfSubmitted() {
+    return undefined;
+  }
 }

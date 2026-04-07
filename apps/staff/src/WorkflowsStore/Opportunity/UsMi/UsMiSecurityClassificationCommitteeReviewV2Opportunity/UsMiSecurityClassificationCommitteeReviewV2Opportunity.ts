@@ -64,4 +64,8 @@ export class usMiSecurityClassificationCommitteeReviewV2Opportunity extends Oppo
   get subcategory(): string | undefined {
     return this.record.metadata.solitarySessionType;
   }
+
+  get submitMenuOptions() {
+    return undefined;
+  }
 }

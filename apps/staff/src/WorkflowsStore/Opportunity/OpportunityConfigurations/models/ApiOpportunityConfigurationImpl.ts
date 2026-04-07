@@ -371,7 +371,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.markSubmittedOptionsByTab;
   }
 
-  get allSubcategoriesOfSubmitted() {
+  get allSubcategoriesOfSubmitted(): string[] | undefined {
     return this.subcategoryOrderings?.[this.submittedTabTitle];
   }
 
