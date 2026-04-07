@@ -31,6 +31,7 @@ export const LSUFormFields: WebFormFieldProps[] = [
       validationMsg: true,
       children: "Include interlock requirement for DUI cases",
     },
+    textarea: true,
   },
   {
     name: "contactInformation",
@@ -43,16 +44,26 @@ export const LSUFormFields: WebFormFieldProps[] = [
     textarea: true,
   },
   { name: "employmentInformation", label: "Employment", textarea: true },
-  { name: "substanceTest", label: "Last Substance Test Result & Date" },
-  { name: "courtFinesAndRestitution", label: "Court fines and Restitution" },
-  { name: "costOfSupervision", label: "Cost of Supervision" },
+  {
+    name: "substanceTest",
+    label: "Last Substance Test Result & Date",
+    textarea: true,
+  },
+  {
+    name: "courtFinesAndRestitution",
+    label: "Court fines and Restitution",
+    textarea: true,
+  },
+  { name: "costOfSupervision", label: "Cost of Supervision", textarea: true },
   {
     name: "iletsReviewDate",
     label: "ILETS Review Date [note any protection orders or NCOs]",
+    textarea: true,
   },
   {
     name: "courtOrderDate",
     label: "Date Court Order/Parole Contract last reviewed with client",
+    textarea: true,
   },
   {
     name: "treatmentCompletionDate",
@@ -62,6 +73,7 @@ export const LSUFormFields: WebFormFieldProps[] = [
   {
     name: "specialConditionsCompletedDates",
     label: "Special Conditions Completed Date(s)",
+    textarea: true,
   },
   {
     name: "pendingSpecialConditions",
