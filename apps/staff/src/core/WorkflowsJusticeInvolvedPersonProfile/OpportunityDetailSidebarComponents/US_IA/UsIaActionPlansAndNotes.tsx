@@ -54,9 +54,21 @@ function OfficerActionContents({
     return <SecureSmallDetailsCopy>{action.notes}</SecureSmallDetailsCopy>;
   } else {
     const denialReasons = `Denial Reasons: ${action.denialReasons.join(", ")}`;
-    const snooze = action?.requestedSnoozeLength
-      ? `Snooze: ${action.requestedSnoozeLength} Days (Will resurface: ${formatWorkflowsDate(addDays(new Date(), action.requestedSnoozeLength))})`
-      : "Snooze: Indefinite (Will not resurface)";
+
+    let snoozeText;
+    if (action?.requestedSnoozeLength) {
+      const resurfaceDate = addDays(
+        action.date.toDate(),
+        action.requestedSnoozeLength,
+      );
+      if (new Date() < resurfaceDate) {
+        snoozeText = `Snooze: ${action.requestedSnoozeLength} Days (Will resurface: ${formatWorkflowsDate(resurfaceDate)})`;
+      } else {
+        snoozeText = `Snooze: ${action.requestedSnoozeLength} Days (Resurfaced on ${formatWorkflowsDate(resurfaceDate)})`;
+      }
+    } else {
+      snoozeText = "Snooze: Indefinite (Will not resurface)";
+    }
 
     return (
       <div>
@@ -64,11 +76,9 @@ function OfficerActionContents({
         <SecureSmallDetailsCopy style={{ marginTop: spacing.sm }}>
           {denialReasons}
         </SecureSmallDetailsCopy>
-        {snooze && (
-          <SecureSmallDetailsCopy style={{ marginTop: spacing.sm }}>
-            {snooze}
-          </SecureSmallDetailsCopy>
-        )}
+        <SecureSmallDetailsCopy style={{ marginTop: spacing.sm }}>
+          {snoozeText}
+        </SecureSmallDetailsCopy>
       </div>
     );
   }
