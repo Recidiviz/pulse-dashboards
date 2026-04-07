@@ -155,7 +155,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
         {
           key: "GP NOT APPROPRIATE",
-          text: "Unable to honor trust implicit in less restrictive environment ",
+          text: "Unable to honor trust implicit in less restrictive environment",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -163,20 +163,14 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "ADD In-Person Review V2",
       dynamicEligibilityText:
-        "resident[|s] [is|are] eligible for in-person review by the ADD at SCC to potentially return to general population",
+        "resident[|s] [is|are] eligible for in-person review by the ADD (V2) at SCC to potentially return to general population",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "usMiPastAddInPersonReviewForSccDate",
-          text: "{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestADDInPersonSccReviewDate}} last ADD in-person review recorded on {{date latestADDInPersonSccReviewDate}};{{/if}} ADD in-person review due on or before {{date nextSccDate}}",
+          key: "usMiOneYearSinceLastAddInPersonSccReview",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if latestADDInPersonSccReviewDate}} last ADD in-person review recorded on {{date latestADDInPersonSccReviewDate}};{{/if}} ADD in-person review due on or before {{date nextSccDueDate}}",
           tooltip:
             "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
-        },
-        {
-          key: "usMiInSolitaryConfinementAtLeastOneYear",
-          text: "Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}",
-          tooltip:
-            '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
       ],
       emptyTabCopy: [],
@@ -185,19 +179,8 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 8,
-      ineligibleCriteriaCopy: [
-        {
-          key: "usMiPastAddInPersonReviewForSccDate",
-          text: "Next ADD in-person review due in the next two months, on or before {{date nextSccDate}}",
-          tooltip:
-            "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
-        },
-        {
-          key: "usMiInSolitaryConfinementAtLeastOneYear",
-          text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
-        },
-      ],
+      homepagePosition: 11,
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [],
@@ -217,13 +200,20 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "usMiOneYearSinceLastAddInPersonSccReview",
+          text: "Next ADD in-person review due on or before {{date nextSccDueDate}}",
+          tooltip:
+            "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
+        "\nThis alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       submittedTabTitle: null,
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
@@ -231,8 +221,9 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "ELIGIBILITY STATUS",
           tabs: [
             "Overdue",
-            "Due now",
+            "Due",
             "Upcoming",
+            "Not Due",
             "Marked Ineligible",
             "Pending",
           ],
@@ -418,7 +409,7 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 1,
+      homepagePosition: 4,
       ineligibleCriteriaCopy: [
         {
           key: "usMiNoClassIOrIiMisconductInSixMonthsAndNoSecurityAssessment",
@@ -917,9 +908,12 @@ export const mockApiOpportunityConfigurationResponse = {
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": ["Overdue", "Upcoming", "Pending", "Overridden"],
-      },
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: ["Overdue", "Upcoming", "Pending", "Overridden"],
+        },
+      ],
       tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
@@ -1136,7 +1130,7 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usMiSecurityClassificationCommitteeReviewV2: {
       callToAction:
-        "Complete 2026 SCC review and fill out 283 Form for eligible residents",
+        "Complete SCC review and fill out 283 Form for eligible residents",
       caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
@@ -1158,28 +1152,28 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
         {
           key: "GP NOT APPROPRIATE",
-          text: "Unable to honor trust implicit in less restrictive environment ",
+          text: "Unable to honor trust implicit in less restrictive environment",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
-      deniedTabTitle: null,
-      displayName: "2026 Security Classification Committee Review",
+      deniedTabTitle: "Marked Ineligible",
+      displayName: "Security Classification Committee Review V2",
       dynamicEligibilityText:
-        "resident[|s] [is|are] eligible for 2026 SCC review to potentially return to general population",
+        "resident[|s] [is|are] eligible for SCC review (V2) to potentially return to general population",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "usMiPastSecurityClassificationCommitteeReviewDate",
-          text: "{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestSccReviewDate}} last SCC review recorded on {{date latestSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDate}}",
+          key: "usMiPastAdSegSecurityClassificationCommitteeReviewDate",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
             "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
         {
-          key: "housingUnitTypeIsSolitaryConfinement",
-          text: "Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}",
+          key: "usMiPastTempSegSecurityClassificationCommitteeReviewDate",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
+            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
       ],
       emptyTabCopy: [],
@@ -1187,15 +1181,8 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 7,
-      ineligibleCriteriaCopy: [
-        {
-          key: "usMiPastSecurityClassificationCommitteeReviewDate",
-          text: "Next SCC review due next week, on or before {{date nextSccDate}}",
-          tooltip:
-            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
-        },
-      ],
+      homepagePosition: 1,
+      ineligibleCriteriaCopy: [],
       initialHeader:
         "Complete SCC review and fill out 283 Form for eligible residents.",
       isAlert: false,
@@ -1218,16 +1205,53 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_MI",
       strictlyIneligibleCriteriaCopy: [
         {
-          key: "usMiPastSecurityClassificationCommitteeReviewDate",
-          text: "Next SCC review due on or before {{date nextSccDate}}",
+          key: "usMiPastAdSegSecurityClassificationCommitteeReviewDate",
+          text: "Next SCC review due on or before {{date nextSccDueDate}}",
+          tooltip:
+            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+        },
+        {
+          key: "usMiPastTempSegSecurityClassificationCommitteeReviewDate",
+          text: "Next SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
             "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
       ],
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
+      subcategoryHeadings: [
+        {
+          subcategory: "Administrative Segregation",
+          text: "Administrative Segregation",
+        },
+        { subcategory: "Temporary Segregation", text: "Temporary Segregation" },
+      ],
+      subcategoryOrderings: [
+        {
+          tab: "Upcoming",
+          texts: ["Temporary Segregation", "Administrative Segregation"],
+        },
+        {
+          tab: "Due",
+          texts: ["Temporary Segregation", "Administrative Segregation"],
+        },
+        {
+          tab: "Overdue",
+          texts: ["Temporary Segregation", "Administrative Segregation"],
+        },
+        {
+          tab: "Not Due",
+          texts: ["Temporary Segregation", "Administrative Segregation"],
+        },
+        {
+          tab: "Pending",
+          texts: ["Temporary Segregation", "Administrative Segregation"],
+        },
+        {
+          tab: "Marked Ineligible",
+          texts: ["Temporary Segregation", "Administrative Segregation"],
+        },
+      ],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
+        "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. ",
       submittedTabTitle: "Pending",
       supportsIneligible: true,
       supportsSubmitted: true,
@@ -1237,8 +1261,9 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "ELIGIBILITY STATUS",
           tabs: [
             "Overdue",
-            "Due now",
+            "Due",
             "Upcoming",
+            "Not Due",
             "Marked Ineligible",
             "Pending",
           ],
@@ -1246,7 +1271,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
-      urlSection: "securityClassificationCommitteeReview",
+      urlSection: "securityClassificationCommitteeReviewV2",
       zeroGrantsTooltip: null,
     },
     usMiSupervisionLevelDowngrade: {
@@ -1446,7 +1471,7 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2: {
       callToAction:
-        "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
+        "resident[|s] [is|are] eligible for in-person review by the Warden at SCC (V2) to potentially return to general population",
       caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
@@ -1468,7 +1493,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
         {
           key: "GP NOT APPROPRIATE",
-          text: "Unable to honor trust implicit in less restrictive environment ",
+          text: "Unable to honor trust implicit in less restrictive environment",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -1476,20 +1501,14 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "Warden In-Person Review V2",
       dynamicEligibilityText:
-        "resident[|s] [is|are] eligible for in-person review by the Warden at SCC to potentially return to general population",
+        "resident[|s] [is|are] eligible for in-person review by the Warden at SCC (V2) to potentially return to general population",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "usMiPastWardenInPersonReviewForSccDate",
-          text: "{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDate}}",
+          key: "usMiSixMonthsSinceLastWardenInPersonSccReview",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDueDate}}",
           tooltip:
             "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
-        },
-        {
-          key: "usMiInSolitaryConfinementAtLeastSixMonths",
-          text: "Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}",
-          tooltip:
-            '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
       ],
       emptyTabCopy: [],
@@ -1498,20 +1517,10 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 7,
-      ineligibleCriteriaCopy: [
-        {
-          key: "usMiPastWardenInPersonReviewForSccDate",
-          text: "Next Warden in-person review due in the next two months, on or before {{date nextSccDate}}",
-          tooltip:
-            "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
-        },
-        {
-          key: "usMiInSolitaryConfinementAtLeastSixMonths",
-          text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
-        },
-      ],
-      initialHeader: null,
+      homepagePosition: 10,
+      ineligibleCriteriaCopy: [],
+      initialHeader:
+        "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
@@ -1530,13 +1539,20 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "usMiSixMonthsSinceLastWardenInPersonSccReview",
+          text: "Next Warden in-person review due on or before {{date nextSccDueDate}}",
+          tooltip:
+            "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
+        "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       submittedTabTitle: null,
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
@@ -1544,8 +1560,9 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "ELIGIBILITY STATUS",
           tabs: [
             "Overdue",
-            "Due now",
+            "Due",
             "Upcoming",
+            "Not Due",
             "Marked Ineligible",
             "Pending",
           ],
@@ -1553,7 +1570,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
-      urlSection: "wardenInPersonSecurityClassificationCommitteeReview",
+      urlSection: "wardenInPersonSecurityClassificationCommitteeReviewV2",
       zeroGrantsTooltip: null,
     },
   },

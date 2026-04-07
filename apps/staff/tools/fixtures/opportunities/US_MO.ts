@@ -136,6 +136,18 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usMoNoEscapeIn10YearsOrCurrentCycle",
           text: "Cannot have perimeter escapes within the current sentence structure or within the past 10 years",
         },
+        {
+          key: "usMoNo112IncarcerationIncidentWithin2Years",
+          text: "Has an 11.2 violation within the past 2 years",
+        },
+        {
+          key: "usMoNotInWorkReleaseAndNotOnWorkReleaseAssignment",
+          text: "Already granted work release",
+        },
+        {
+          key: "notOnInstitutionalWorkerStatus",
+          text: "Already granted outside clearance",
+        },
       ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -543,7 +555,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usMoMeetsTimeRemainingRequirementsWorkRelease",
-          text: "Must be within 48 months of earliest established release date",
+          text: "Must be within 48 months of earliest established release date (or 24 months for Arson I or Robbery I convictions)",
         },
         {
           key: "usMoNoEscapeIn10YearsOrCurrentCycle",
@@ -552,6 +564,18 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usMoEducationalScore1",
           text: "Must meet educational requirements",
+        },
+        {
+          key: "usMoNoCurrentOrPriorExcludedOffensesWorkRelease",
+          text: "Has a current or prior conviction for an excluded offense",
+        },
+        {
+          key: "usMoNo112IncarcerationIncidentWithin2Years",
+          text: "Has an 11.2 violation within the past 2 years",
+        },
+        {
+          key: "usMoNotInWorkReleaseAndNotOnWorkReleaseAssignment",
+          text: "Already granted work release",
         },
       ],
       subcategoryHeadings: [],

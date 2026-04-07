@@ -894,6 +894,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usIdMeetsOverdueFaceToFaceContactAlert",
           text: "{{#if lastContactDate}}Client has not been seen since {{date lastContactDate}}{{else}}No previous face-to-face contact on record{{/if}}",
+          tooltip: "",
         },
       ],
       emptyTabCopy: [],
@@ -912,7 +913,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: null,
       notifications: [
         {
-          body: "{{opportunity.person.displayName}} has not had a face to face contact in over {{daysToYearsMonthsPast (daysPast record.eligibleCriteria.usIdMeetsOverdueFaceToFaceContactAlert.lastContactDate)}}",
+          body: '{{#if record.eligibleCriteria.usIdMeetsOverdueFaceToFaceContactAlert.lastContactDate}}{{#if (eq (daysToYearsMonthsPast (daysPast record.eligibleCriteria.usIdMeetsOverdueFaceToFaceContactAlert.lastContactDate)) "")}}{{opportunity.person.displayName}} has not had a face to face contact in {{daysPast record.eligibleCriteria.usIdMeetsOverdueFaceToFaceContactAlert.lastContactDate}} days{{else}}{{opportunity.person.displayName}} has not had a face to face contact in over {{daysToYearsMonthsPast (daysPast record.eligibleCriteria.usIdMeetsOverdueFaceToFaceContactAlert.lastContactDate)}}{{/if}}{{else}}No previous face-to-face contact on record{{/if}}',
           id: "ee541e63-06b8-4ae1-b7a3-6ceae579d4af",
           pages: ["supervisionSupervisor", "profile"],
           type: "alert",

@@ -433,8 +433,8 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Less than 42 months until release",
         },
         {
-          key: "notIncarcerationWithin3MonthsOfFullTermCompletionDate",
-          text: "More than 3 months until release",
+          key: "notIncarcerationWithin2MonthsOfFullTermCompletionDate",
+          text: "More than 2 months until release",
         },
         {
           key: "usNdNoRecentReferralsToMinimumHousing",
