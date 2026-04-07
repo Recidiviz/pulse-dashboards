@@ -154,6 +154,7 @@ const ProfileMeetings = ({
           recordingState,
           content: m.caseNote?.replace(/\n/g, " ") || "",
           status: m.postMeetingProcessingStatus,
+          validationErrorType: m.validationErrorType,
           isActive: !end,
           caseNote: m.caseNote,
         };

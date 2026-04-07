@@ -21,6 +21,7 @@ import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
+import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
@@ -140,18 +141,37 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                     </TooltipText>
                   </TableCell>
                   <TableCell>
-                    {person.activeMeetingId ? (
+                    {person.activeMeetingId && (
                       <View className="flex-row items-center pb-2">
                         <RecordingIndicator />
                         <Typography className="px-2 text-secondary">
                           In progress
                         </Typography>
                       </View>
-                    ) : (
-                      <Typography className="text-base font-medium text-secondary">
-                        {upperFirst(person.lastMeeting)}
-                      </Typography>
                     )}
+                    {!person.activeMeetingId &&
+                      person.meetingDetails.validationErrorType && (
+                        <View className="flex-row items-center gap-3">
+                          <ExclamationCircleIcon className="size-5 fill-attention" />
+                          <View className="flex-1">
+                            <Typography className="text-sm font-semibold text-attention">
+                              Processing Failed
+                            </Typography>
+                            <Typography className="text-xs font-normal text-secondary">
+                              {person.meetingDetails.validationErrorType ===
+                              "Length"
+                                ? "Less than 50 words identified, too short to generate results"
+                                : "Contact our support team for assistance"}
+                            </Typography>
+                          </View>
+                        </View>
+                      )}
+                    {!person.activeMeetingId &&
+                      !person.meetingDetails.validationErrorType && (
+                        <Typography className="text-base font-medium text-secondary">
+                          {upperFirst(person.lastMeeting)}
+                        </Typography>
+                      )}
                   </TableCell>
                   <TableCell>
                     <View className="invisible size-5 items-center justify-center group-hover:visible">
