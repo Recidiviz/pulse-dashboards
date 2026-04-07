@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, {
-  TouchableOpacity as BottomSheetTouchableOpacity,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { Link } from "@react-navigation/native";
 import React, { useCallback, useRef, useState } from "react";
-import { Alert, Platform, Share, TouchableOpacity, View } from "react-native";
+import { Alert, Share, TouchableOpacity, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
@@ -67,7 +65,7 @@ const MeetingMobile = ({
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
   const scrollY = useSharedValue(0);
-  const draftCaseNoteSheetRef = useRef<BottomSheet>(null);
+  const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const meetingNotesSheetRef = useRef<BottomSheet>(null);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
 
@@ -76,7 +74,7 @@ const MeetingMobile = ({
   });
 
   const handleDraftCaseNoteOpen = useCallback(() => {
-    draftCaseNoteSheetRef.current?.snapToIndex(1);
+    draftCaseNoteSheetRef.current?.present();
   }, []);
 
   const handleMeetingNotesSheetOpen = useCallback(() => {
@@ -270,7 +268,7 @@ const MeetingMobile = ({
                 </TouchableOpacity>
               </View>
 
-              <BottomSheetTouchableOpacity
+              <TouchableOpacity
                 onPress={handleDraftCaseNoteOpen}
                 className="size-full flex-1"
               >
@@ -281,7 +279,7 @@ const MeetingMobile = ({
                 >
                   {meetingDetails.caseNote ?? "Type your notes here..."}
                 </Typography>
-              </BottomSheetTouchableOpacity>
+              </TouchableOpacity>
             </View>
           </Animated.View>
         </View>
@@ -331,24 +329,18 @@ const MeetingMobile = ({
           </View>
         </Animated.ScrollView>
       </Animated.View>
-      {/* TODO: bottom sheets mess the web print feature,
-      we need to discuss what to do with them on narrow web */}
-      {Platform.OS !== "web" && (
-        <>
-          <DraftCaseNoteSheet
-            meetingId={meetingId}
-            notes={meetingDetails?.caseNote || ""}
-            clientName={person.fullName}
-            meetingDate={meetingDetails?.startTime}
-            ref={draftCaseNoteSheetRef}
-          />
-          <MeetingNotesSheet
-            meetingDetails={meetingDetails}
-            clientName={person.fullName}
-            bottomSheetRef={meetingNotesSheetRef}
-          />
-        </>
-      )}
+      <DraftCaseNoteSheet
+        meetingId={meetingId}
+        notes={meetingDetails?.caseNote || ""}
+        clientName={person.fullName}
+        meetingDate={meetingDetails?.startTime}
+        ref={draftCaseNoteSheetRef}
+      />
+      <MeetingNotesSheet
+        meetingDetails={meetingDetails}
+        clientName={person.fullName}
+        bottomSheetRef={meetingNotesSheetRef}
+      />
     </View>
   );
 };

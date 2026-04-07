@@ -15,13 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { Link } from "@react-navigation/native";
 import clsx from "clsx";
-import React from "react";
+import React, { useRef, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { ChevronRightIcon } from "react-native-heroicons/outline";
-import { DocumentDuplicateIcon } from "react-native-heroicons/solid";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "react-native-heroicons/outline";
+import {
+  DocumentDuplicateIcon,
+  PencilIcon,
+} from "react-native-heroicons/solid";
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
@@ -33,6 +40,7 @@ import { useProcessingText } from "../hooks/useProcessingText";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
+import DraftCaseNoteSheet from "./DraftCaseNoteSheet";
 import { useSnackbar } from "./Snackbar";
 
 type MeetingCardItemProps = {
@@ -62,6 +70,8 @@ const MeetingCardItem = ({
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
+  const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
+  const [canEditNote, setCanEditNote] = useState(false);
   const isInProgress =
     recordingState !== "idle" && meeting.status === "NOT_STARTED";
   const isProcessing = isMeetingProcessing(meeting.status);
@@ -96,6 +106,16 @@ const MeetingCardItem = ({
       Clipboard.setString(meeting.caseNote);
       showSnackbar("Case note copied to clipboard");
     }
+  };
+
+  const handleDraftCaseNoteEdit = () => {
+    draftCaseNoteSheetRef.current?.present();
+    setCanEditNote(true);
+  };
+
+  const handleDraftCaseNoteShow = () => {
+    draftCaseNoteSheetRef.current?.present();
+    setCanEditNote(false);
   };
 
   return (
@@ -176,8 +196,10 @@ const MeetingCardItem = ({
               {meeting.caseNote}
             </Typography>
             <View className="flex w-full flex-row items-center justify-end gap-2">
-              {/* TODO(#12879): Add showMore/edit functionality to meeting card #12927 */}
-              {/* <TouchableOpacity className="mr-auto">
+              <TouchableOpacity
+                className="mr-auto"
+                onPress={handleDraftCaseNoteShow}
+              >
                 <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-secondary px-4 py-2">
                   <Typography className="text-sm font-semibold leading-4 text-primary">
                     Show more
@@ -185,14 +207,14 @@ const MeetingCardItem = ({
                   <ChevronDownIcon className="!size-3 stroke-tertiary stroke-[3px]" />
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleDraftCaseNoteEdit}>
                 <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-secondary px-4 py-2">
                   <PencilIcon className="!size-4 fill-tertiary" />
                   <Typography className="text-sm font-semibold leading-4 text-primary">
                     Edit
                   </Typography>
                 </View>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleCopyNotes}
                 disabled={isSnackbarShowing}
@@ -208,6 +230,14 @@ const MeetingCardItem = ({
           </View>
         )}
       </View>
+      <DraftCaseNoteSheet
+        meetingId={meeting.id}
+        notes={meeting?.caseNote || ""}
+        clientName={person.fullName}
+        meetingDate={meeting?.start}
+        ref={draftCaseNoteSheetRef}
+        canEdit={canEditNote}
+      />
     </View>
   );
 };

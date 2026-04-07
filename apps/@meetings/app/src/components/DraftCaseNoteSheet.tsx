@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
   BottomSheetFooter,
+  BottomSheetModal,
   BottomSheetTextInput,
   BottomSheetView,
+  TouchableWithoutFeedback,
 } from "@gorhom/bottom-sheet";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { RefObject, useEffect, useMemo, useState } from "react";
@@ -45,7 +47,8 @@ type Props = {
   notes: string;
   clientName: string;
   meetingDate?: Date;
-  ref: RefObject<BottomSheet | null>;
+  ref: RefObject<BottomSheetModal | null>;
+  canEdit?: boolean;
 };
 
 const DraftCaseNoteSheet = ({
@@ -54,16 +57,17 @@ const DraftCaseNoteSheet = ({
   clientName,
   meetingDate,
   ref,
+  canEdit = true,
 }: Props) => {
   const { bottom: bottomSafeArea } = useSafeAreaInsets();
   const updateNotesMutation = useUpdateNotes();
   const [inputNotes, setInputNotes] = useState(notes || "");
-  const snapPoints = useMemo(() => ["70%", "90%"], []);
+  const snapPoints = useMemo(() => ["90%"], []);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
 
   // 88px is height of button plus paddings from figma
-  const FOOTER_HEIGHT = bottomSafeArea + 88;
+  const FOOTER_HEIGHT = 88;
 
   const handleClose = () => {
     setInputNotes(notes);
@@ -113,11 +117,12 @@ const DraftCaseNoteSheet = ({
   const TextInput = Platform.OS === "web" ? RNTextInput : BottomSheetTextInput;
 
   return (
-    <BottomSheet
+    <BottomSheetModal
       ref={ref}
-      index={-1}
+      enableDynamicSizing={false}
       snapPoints={snapPoints}
       enablePanDownToClose
+      keyboardBehavior="extend"
       handleIndicatorStyle={{
         backgroundColor: theme["backgroundColor"]["strong"],
       }}
@@ -134,61 +139,81 @@ const DraftCaseNoteSheet = ({
       footerComponent={(props) =>
         isKeyboardVisible ? null : (
           <BottomSheetFooter {...props} bottomInset={bottomSafeArea}>
-            <View className="flex w-full flex-row items-start gap-4 self-end bg-primary p-4">
-              <TouchableOpacity
-                onPress={handleClose}
-                className="flex flex-1 items-center justify-center rounded-[32px] border border-brand py-[17px]"
-              >
-                <Typography className="text-lg font-semibold leading-[22px] text-brand">
-                  CANCEL
-                </Typography>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSave}
-                className="flex flex-1 items-center justify-center rounded-[32px] bg-brand py-[17px]"
-              >
-                <Typography className="text-lg font-semibold leading-[22px] text-on-brand">
-                  SAVE CHANGES
-                </Typography>
-              </TouchableOpacity>
+            <View className="flex w-full flex-row items-start gap-4 self-end bg-primary p-4 transition-all duration-300">
+              {!canEdit && (
+                <TouchableOpacity
+                  onPress={handleClose}
+                  className="flex flex-1 items-center justify-center rounded-[32px] border border-brand bg-brand py-3"
+                >
+                  <Typography className="text-base font-semibold leading-[18px] text-on-brand">
+                    Close
+                  </Typography>
+                </TouchableOpacity>
+              )}
+              {canEdit && (
+                <>
+                  <TouchableOpacity
+                    onPress={handleClose}
+                    className="flex flex-1 items-center justify-center rounded-[32px] border border-brand py-3"
+                  >
+                    <Typography className="text-base font-semibold leading-[18px] text-brand">
+                      Cancel
+                    </Typography>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleSave}
+                    className="flex flex-1 items-center justify-center rounded-[32px] border border-brand bg-brand py-3"
+                  >
+                    <Typography className="text-base font-semibold leading-[18px] text-on-brand">
+                      Save changes
+                    </Typography>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </BottomSheetFooter>
         )
       }
     >
       <BottomSheetView className="flex max-h-full flex-1 flex-col">
-        <View className="flex h-20 flex-row items-center justify-between border-b border-subtle p-4">
-          <TouchableOpacity onPress={handleClose}>
-            <ChevronLeftIcon className="size-5 text-primary" />
-          </TouchableOpacity>
-          <View className="flex flex-col items-center">
-            <Typography className="text-lg font-semibold leading-[22px]">
-              Edit draft case note
-            </Typography>
-            <Typography className="text-sm leading-[16px] text-secondary">
-              {clientName} • Meeting{" "}
-              {meetingDate ? formatDraftCaseNoteMeetingDate(meetingDate) : ""}
-            </Typography>
+        <TouchableWithoutFeedback
+          onPress={Keyboard.dismiss}
+          className="flex-1 cursor-default"
+        >
+          <View className="flex h-20 flex-row items-center justify-between border-b border-subtle p-4">
+            <TouchableOpacity onPress={handleClose}>
+              <ChevronLeftIcon className="size-5 text-primary" />
+            </TouchableOpacity>
+            <View className="flex flex-col items-center">
+              <Typography className="text-lg font-semibold leading-[22px]">
+                Edit draft case note
+              </Typography>
+              <Typography className="text-sm leading-[16px] text-secondary">
+                {clientName} • Meeting{" "}
+                {meetingDate ? formatDraftCaseNoteMeetingDate(meetingDate) : ""}
+              </Typography>
+            </View>
+            <TouchableOpacity
+              onPress={handleCopyNotes}
+              disabled={isSnackbarShowing}
+            >
+              <DocumentDuplicateIcon className="size-5 text-primary" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={handleCopyNotes}
-            disabled={isSnackbarShowing}
-          >
-            <DocumentDuplicateIcon className="size-5 text-primary" />
-          </TouchableOpacity>
-        </View>
+        </TouchableWithoutFeedback>
         <TextInput
-          className="min-h-[200px] flex-1 p-4"
+          className="min-h-80 flex-1 p-4 outline-none"
           multiline
           value={inputNotes}
           onChangeText={setInputNotes}
           textAlignVertical="top"
+          readOnly={!canEdit}
         />
         {!isKeyboardVisible && (
           <View className="w-full" style={{ height: FOOTER_HEIGHT }} />
         )}
       </BottomSheetView>
-    </BottomSheet>
+    </BottomSheetModal>
   );
 };
 
