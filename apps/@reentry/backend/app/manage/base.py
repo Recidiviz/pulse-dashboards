@@ -33,6 +33,10 @@ class AsyncTyper(Typer):
 
 cli = AsyncTyper()
 
+# Register SQLModel table models on metadata
+import app.models.assessment  # noqa
+from app.models.models import Plan  # noqa
+
 # extend commands
 import app.manage.import_decision_tree  # noqa
 import app.manage.parse_decision_tree  # noqa
