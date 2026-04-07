@@ -20,7 +20,7 @@ import { PersistStorage, StorageValue } from "zustand/middleware";
 
 const DB_NAME = "meeting-event-queue";
 const STORE_NAME = "keyval";
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 const getDb = () =>
   openDB(DB_NAME, DB_VERSION, {
@@ -28,7 +28,9 @@ const getDb = () =>
       // v3: migrate to structured-clone storage (blobs supported natively).
       // Drop all old stores and recreate clean — any queued events from prior
       // versions used JSON strings and are no longer readable.
-      if (oldVersion < 3) {
+      // v4: migrate to per-user event storage (eventsByUser). Drop all stores
+      // and recreate clean — old flat { events: [] } shape is incompatible.
+      if (oldVersion < 4) {
         Array.from(db.objectStoreNames).forEach((name) =>
           db.deleteObjectStore(name),
         );

@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useCallback } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { useUserContext } from "../context/UserContext";
 import { createEventQueueStorage } from "../utils/meetingEventQueueStorage";
 import { MeetingEvent, OfflineEvent } from "./useMeetingEventQueue";
 
@@ -29,35 +31,61 @@ type OfflineFailureQueueState = {
   dequeue: () => MeetingEvent["metadata"] | null;
 };
 
-export const useOfflineFailureQueue = create<OfflineFailureQueueState>()(
+type OfflineFailureQueueStoreState = {
+  eventsByUser: Record<string, MeetingEvent[]>;
+  enqueue: (userId: string, metadata: OfflineEvent) => void;
+  dequeue: (userId: string) => MeetingEvent["metadata"] | null;
+};
+
+const _offlineFailureQueueStore = create<OfflineFailureQueueStoreState>()(
   persist(
     (set, get) => ({
-      events: [],
-      enqueue: (metadata) =>
-        set((state) => ({
-          events: [
-            ...state.events,
-            {
-              eventId: crypto.randomUUID(),
-              createdAt: new Date(),
-              metadata,
-            },
-          ],
+      eventsByUser: {},
+      enqueue: (userId, metadata) =>
+        set((s) => ({
+          eventsByUser: {
+            ...s.eventsByUser,
+            [userId]: [
+              ...(s.eventsByUser[userId] ?? []),
+              { eventId: crypto.randomUUID(), createdAt: new Date(), metadata },
+            ],
+          },
         })),
-      dequeue: () => {
-        const { events } = get();
-        if (events.length === 0) {
-          return null;
-        }
+      dequeue: (userId) => {
+        const events = get().eventsByUser[userId] ?? [];
+        if (events.length === 0) return null;
         const [firstEvent, ...rest] = events;
-        set({ events: rest });
+        set((s) => ({ eventsByUser: { ...s.eventsByUser, [userId]: rest } }));
         return firstEvent.metadata;
       },
     }),
     {
       name: STORE_NAME,
       storage: createEventQueueStorage(),
-      partialize: (state) => ({ events: state.events }),
+      version: 1,
+      migrate: () => ({ eventsByUser: {} }),
+      partialize: (state) => ({ eventsByUser: state.eventsByUser }),
     },
   ),
 );
+
+/**
+ * Returns the failure queue scoped to the currently logged-in user.
+ */
+export function useOfflineFailureQueue(): OfflineFailureQueueState {
+  const { email } = useUserContext();
+  const userId = email ?? "";
+  const store = _offlineFailureQueueStore();
+
+  const enqueue = useCallback(
+    (metadata: OfflineEvent) => store.enqueue(userId, metadata),
+    [store, userId],
+  );
+  const dequeue = useCallback(() => store.dequeue(userId), [store, userId]);
+
+  return {
+    events: store.eventsByUser[userId] ?? [],
+    enqueue,
+    dequeue,
+  };
+}

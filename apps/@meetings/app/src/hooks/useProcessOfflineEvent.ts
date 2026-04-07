@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TRPCClientError } from "@trpc/client";
 import { Platform } from "react-native";
 
 import { AUDIO_FORMATS } from "~@meetings/config";
+import type { AppRouter } from "~@meetings/trpc-types";
 
 import { useUploadSegment } from "../entities/upload-segment/hooks/useUploadSegment";
 import { useMeetingActions } from "./useMeetingActions";
@@ -25,7 +27,7 @@ import { MeetingEventType, OfflineEvent } from "./useMeetingEventQueue";
 
 export type EventProcessResult =
   | { status: "success" }
-  | { status: "error"; error: Error };
+  | { status: "error"; error: Error; unauthenticated: boolean };
 
 export function useProcessOfflineEvent() {
   const { createMeeting, endMeeting, discardMeeting, updateNotes } =
@@ -114,7 +116,12 @@ export function useProcessOfflineEvent() {
 
       return { status: "success" };
     } catch (error) {
-      return { status: "error", error: error as Error };
+      if (error instanceof TRPCClientError) {
+        const unauthenticated =
+          (error as TRPCClientError<AppRouter>).data?.code === "UNAUTHORIZED";
+        return { status: "error", error, unauthenticated };
+      }
+      return { status: "error", error: error as Error, unauthenticated: false };
     }
   };
 

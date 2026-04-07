@@ -37,6 +37,7 @@ module.exports = {
     "@react-native-community/netinfo":
       "@react-native-community/netinfo/jest/netinfo-mock.js",
     "^@paralleldrive/cuid2$": "<rootDir>/src/__mocks__/@paralleldrive/cuid2.js",
+    "^react-native-auth0$": "<rootDir>/src/__mocks__/react-native-auth0.js",
   },
   transformIgnorePatterns: [
     "node_modules/(?!(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/|@expo-google-fonts/|react-navigation|@react-navigation/|@unimodules/|unimodules|sentry-expo|native-base|react-native-svg|@rneui/|@paralleldrive/cuid2)",

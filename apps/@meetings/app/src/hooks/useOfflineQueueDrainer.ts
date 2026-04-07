@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useAuth0 } from "react-native-auth0";
 
 import useIsOnline from "./useIsOnline";
 import { useMeetingEventQueue } from "./useMeetingEventQueue";
@@ -30,60 +31,71 @@ export function useOfflineQueueDrainer() {
   const wasOnlineRef = useRef<boolean | null>(null);
   const isDrainingRef = useRef(false);
 
-  const { dequeue, events } = useMeetingEventQueue();
+  const { head, dequeue, events } = useMeetingEventQueue();
   const { enqueue: enqueueFailure } = useOfflineFailureQueue();
   const { processEvent } = useProcessOfflineEvent();
+  const { clearSession } = useAuth0();
 
   // Keep a stable ref so the drain closure always calls the latest version
   // without needing to re-run the effect.
   const processEventRef = useRef(processEvent);
   processEventRef.current = processEvent;
 
-  useEffect(() => {
-    const previouslyOnline = wasOnlineRef.current;
-    wasOnlineRef.current = isOnline;
+  const drain = useCallback(async () => {
+    isDrainingRef.current = true;
 
-    const isNotReconnect = previouslyOnline !== false || !isOnline;
-    if (isNotReconnect || isDrainingRef.current || events.length === 0) {
-      return;
-    }
+    let event = head();
+    let retryCount = 0;
+    while (event !== null) {
+      // Sequential awaits are intentional here
+      // eslint-disable-next-line no-await-in-loop
+      const res = await processEventRef.current(event);
 
-    async function drain() {
-      isDrainingRef.current = true;
-
-      let event = dequeue();
-      let retryCount = 0;
-      while (event !== null) {
-        // Sequential awaits are intentional here
-        // eslint-disable-next-line no-await-in-loop
-        const res = await processEventRef.current(event);
-
-        if (res.status === "error") {
-          // If we want to retry this event...
-          if (retryCount < RETRY_MAX) {
-            retryCount++;
-            // eslint-disable-next-line no-await-in-loop
-            await new Promise((resolve) => setTimeout(resolve, TIMEOUT_MS));
-            continue;
-          } else {
-            // We're out of retries, event has failed.
-            console.error(
-              `Failed to process event after ${RETRY_MAX} attempts:`,
-              res.error,
-            );
-
-            //TODO AVid - Persist truly-failed events, deal with in future ticket (12931/12928)
-            enqueueFailure(event);
-          }
+      if (res.status === "error") {
+        // If we've lost auth, force login before dequeueing
+        if (res.unauthenticated) {
+          clearSession();
+          return;
         }
+        // If we want to retry this event...
+        if (retryCount < RETRY_MAX) {
+          retryCount++;
+          // eslint-disable-next-line no-await-in-loop
+          await new Promise((resolve) => setTimeout(resolve, TIMEOUT_MS));
+          continue;
+        } else {
+          // We're out of retries, event has failed.
+          console.error(
+            `Failed to process event after ${RETRY_MAX} attempts:`,
+            res.error,
+          );
 
-        retryCount = 0;
-        event = dequeue();
+          //TODO AVid - Persist truly-failed events, deal with in future ticket (12931/12928)
+          enqueueFailure(event);
+        }
       }
 
-      isDrainingRef.current = false;
+      retryCount = 0;
+      dequeue();
+      event = head();
     }
 
-    drain();
-  }, [isOnline, dequeue, events.length, enqueueFailure]);
+    isDrainingRef.current = false;
+  }, [dequeue, enqueueFailure, clearSession, head]);
+
+  useEffect(
+    function onConnectionRestored() {
+      const previouslyOnline = wasOnlineRef.current;
+      wasOnlineRef.current = isOnline;
+
+      const isNotReconnect = previouslyOnline !== false || !isOnline;
+      if (isNotReconnect || isDrainingRef.current || events.length === 0) {
+        return;
+      }
+      drain();
+    },
+    [events.length, isOnline, drain],
+  );
+
+  return { drain };
 }

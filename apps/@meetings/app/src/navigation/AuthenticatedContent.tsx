@@ -15,13 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useEffect, useState } from "react";
+
 import { AudioUpload } from "../features/audio-upload";
 import { RecordingProvider } from "../features/recording";
+import useIsOnline from "../hooks/useIsOnline.native";
 import { useOfflineQueueDrainer } from "../hooks/useOfflineQueueDrainer";
 import DrawerNavigator from "./DrawerNavigator";
 
 export function AuthenticatedContent() {
-  useOfflineQueueDrainer();
+  const { drain: forceDrain } = useOfflineQueueDrainer();
+  const { isOnline } = useIsOnline();
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  // On fresh login, we want to force-drain the offline event queue in the event
+  // that the user was logged out while the queue was being drained due to
+  // losing auth.
+  useEffect(
+    function onLogin() {
+      if (isOnline && isFirstRender) {
+        forceDrain();
+      }
+      setIsFirstRender(false);
+    },
+    [forceDrain, isOnline, isFirstRender],
+  );
+
   return (
     <RecordingProvider>
       <DrawerNavigator />
