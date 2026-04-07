@@ -49,7 +49,6 @@ export class UsNcRNAForm {
     readonly id: string,
     readonly completedAt: Date | null,
     readonly updatedAt: Date,
-    readonly enabledAt: Date | null,
 
     // All of the user's saved answers, read from the database
     readonly savedTextAnswers: RNATextAnswers,

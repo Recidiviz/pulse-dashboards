@@ -208,7 +208,7 @@ describe("rnaStatusList", () => {
     );
   });
 
-  test("UPCOMING and DUE status", async () => {
+  test("UPCOMING vs NOT_STARTED status", async () => {
     mockFirestoreGet.get.mockResolvedValue({
       docs: testResidents.map((r) => ({
         data() {
@@ -235,20 +235,24 @@ describe("rnaStatusList", () => {
     expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
+          "enabledAt": 2025-11-03T00:00:00.000Z,
           "pseudonymizedId": "abc",
-          "status": "UPCOMING",
+          "status": "NOT_STARTED",
         },
         {
+          "enabledAt": 2025-09-02T00:00:00.000Z,
           "pseudonymizedId": "def",
-          "status": "DUE",
+          "status": "NOT_STARTED",
         },
         {
+          "enabledAt": 2026-08-12T00:00:00.000Z,
           "pseudonymizedId": "ghi",
           "status": "UPCOMING",
         },
         {
+          "enabledAt": 2025-10-12T00:00:00.000Z,
           "pseudonymizedId": "jkl",
-          "status": "DUE",
+          "status": "NOT_STARTED",
         },
       ]
     `);

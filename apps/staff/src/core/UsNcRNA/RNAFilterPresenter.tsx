@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UseSuspenseQueryResult } from "@tanstack/react-query";
-import { TRPCClient } from "@trpc/client";
 import { differenceInDays } from "date-fns/esm";
 import startOfToday from "date-fns/startOfToday";
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 
-import { JiiStaffAppRouter, JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
+import { JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
 
 import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { FilterPresenter } from "../../FilterStore/FilterPresenter";
@@ -46,7 +44,6 @@ export type RNARowData = Exclude<RNAStatusList[number], "pseudonymizedId"> & {
   rnaDueDate?: Date;
 
   // Auxiliary information for filters
-  isEnabled: boolean;
   isSubmitted: boolean;
   dueIn: RNADueTime;
 
@@ -85,22 +82,11 @@ function computeRNADue(dueDate?: Date): RNADueTime {
  * to manage the set of residents shown in the table.
  */
 export class RNAFilterPresenter implements FilterPresenter<UsNcRNAFilterStore> {
-  // tracks outstanding backend requests, to prevent sending more than one request
-  // per person at a time
-  private currentlyUpdatingPseudoIds: Set<string>;
-
   constructor(
     private data: RNAStatusList,
-    private refetchAllTableData: UseSuspenseQueryResult<
-      RNAStatusList,
-      any
-    >["refetch"],
     readonly filterStore: UsNcRNAFilterStore,
     private workflowsStore: WorkflowsStore,
-    private trpcClient: TRPCClient<JiiStaffAppRouter>,
   ) {
-    this.currentlyUpdatingPseudoIds = new Set();
-
     makeAutoObservable<this, "trpcClient" | "refetch">(
       this,
       { trpcClient: false, refetch: false },
@@ -130,70 +116,11 @@ export class RNAFilterPresenter implements FilterPresenter<UsNcRNAFilterStore> {
           ...result,
           person,
           rnaDueDate,
-          isEnabled: !!result.enabledAt,
           isSubmitted: result.status === "SUBMITTED_BY_STAFF",
           dueIn: computeRNADue(rnaDueDate),
           presenter: this,
         },
       ];
-    });
-  }
-
-  /**
-   * Return true when there is currently an outstanding backend request for the person
-   * with given pseudo ID
-   */
-  isUpdating(pseudonymizedId: string): boolean {
-    return this.currentlyUpdatingPseudoIds.has(pseudonymizedId);
-  }
-
-  /**
-   * Enable the assessment for the person with given pseudo ID. If the assessment ID
-   * is provided, an assessment already exists, so set it to enabled; if not,
-   * create a new assessment for the person. Then, if a change was made,
-   * refetch all table data.
-   *
-   * This should not be called for someone who is already being updated.
-   */
-  async onEnableClick(pseudonymizedId: string, assessmentId?: string) {
-    this.currentlyUpdatingPseudoIds.add(pseudonymizedId);
-
-    if (assessmentId) {
-      await this.trpcClient.staff.usNc.setRNAEnabled.mutate({
-        id: assessmentId,
-      });
-    } else {
-      await this.trpcClient.staff.usNc.createRNA.mutate({
-        pseudonymizedId: pseudonymizedId,
-      });
-    }
-    await this.refetchAllTableData();
-
-    runInAction(() => {
-      this.currentlyUpdatingPseudoIds.delete(pseudonymizedId);
-    });
-  }
-
-  /**
-   * Disable the assessment with given assessment ID, which is assigned to
-   * the person with given pseudo ID, and refetch all table data if a change was made.
-   *
-   * The assessment ID should always be provided in real cases when this
-   * function is called, but if one isn't, it's fine to do nothing:
-   * an assessment doesn't exist to do anything with.
-   */
-  async onDisableClick(pseudonymizedId: string, assessmentId?: string) {
-    if (!assessmentId) return;
-
-    this.currentlyUpdatingPseudoIds.add(pseudonymizedId);
-
-    await this.trpcClient.staff.usNc.setRNADisabled.mutate({
-      id: assessmentId,
-    });
-    await this.refetchAllTableData();
-
-    runInAction(() => {
-      this.currentlyUpdatingPseudoIds.delete(pseudonymizedId);
     });
   }
 

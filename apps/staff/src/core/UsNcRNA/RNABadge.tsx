@@ -41,12 +41,6 @@ const badgeSettings = {
     textColor: palette.slate80,
     text: "Upcoming",
   },
-  DUE: {
-    backgroundColor: palette.slate05,
-    borderColor: palette.slate20,
-    textColor: palette.slate80,
-    text: "Due",
-  },
   NOT_STARTED: {
     backgroundColor: "rgb(242,240,245)",
     borderColor: "rgb(137,115,165)",

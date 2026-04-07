@@ -16,9 +16,12 @@
 // =============================================================================
 
 import { rollup } from "d3-array";
-import { isAfter, subDays } from "date-fns";
 import { z } from "zod";
 
+import {
+  getRNAWindow,
+  validateCurrentRNA,
+} from "../../../../../helpers/US_NC/rna";
 import { dateStringSchemaWithoutTimeShift } from "../../../../../helpers/zod";
 import { getStatusOfExistingRNA, RNAAssessmentStatus } from "./rnaStatus";
 import { stateStaffProcedure } from "./stateStaffProcedure";
@@ -30,36 +33,9 @@ const residentRecordFields = z.object({
   // note this is assuming only NC records will be fetched
   metadata: z.object({
     stateCode: z.literal("US_NC"),
-    rnaDueDate: dateStringSchemaWithoutTimeShift.nullish(),
+    rnaDueDate: dateStringSchemaWithoutTimeShift,
   }),
 });
-
-export function validateCurrentRNA<T extends { createdAt: Date }>(
-  rnaDueDate: Date | null | undefined,
-  latestRNA: T,
-) {
-  const now = new Date();
-
-  // within this window, older assessments are considered stale
-  const rnaWindowStart = rnaDueDate ? subDays(rnaDueDate, 90) : undefined;
-  const isWithinRNAWindow = rnaWindowStart
-    ? isAfter(now, rnaWindowStart)
-    : false;
-  if (
-    isWithinRNAWindow &&
-    // this will always be true if isWithinRNAWindow is, but typescript can't infer that
-    rnaWindowStart
-  ) {
-    if (isAfter(latestRNA.createdAt, rnaWindowStart)) {
-      // the latest RNA is fresh
-      return latestRNA;
-    }
-    // the latest RNA is stale
-    return undefined;
-  }
-  // we don't care about freshness here
-  return latestRNA;
-}
 
 /**
  * Returns RNA status details for all residents matching the input query specs
@@ -97,7 +73,6 @@ export const rnaStatusList = stateStaffProcedure
           updatedAt: true,
           answers: true,
           submittedByStaffAt: true,
-          enabledAt: true,
         },
         // we only want the most recent for each person,
         // this will help us filter for that in memory
@@ -126,7 +101,7 @@ export const rnaStatusList = stateStaffProcedure
           createdAt?: Date;
           completedAt?: Date;
           submittedByStaffAt?: Date;
-          enabledAt?: Date;
+          enabledAt: Date;
         } => {
           const {
             pseudonymizedId,
@@ -139,16 +114,20 @@ export const rnaStatusList = stateStaffProcedure
             currentRNA = validateCurrentRNA(rnaDueDate, latestRNA);
           }
 
-          // if a resident has never filled out an assessment,
-          // or if their latest assessment is not fresh, staff needs to enable a new one
+          const { rnaWindowStart, isWithinRNAWindow } =
+            getRNAWindow(rnaDueDate);
+
+          // if a resident has never filled out an assessment, or if their latest
+          // assessment is not fresh, they'll see a new one when they open the app
           if (!latestRNA || !currentRNA) {
-            // the person's status becomes "DUE" when the due date is in the past or today
-            const status =
-              rnaDueDate && rnaDueDate <= new Date() ? "DUE" : "UPCOMING";
+            // the person's status goes from "UPCOMING" to "NOT_STARTED" once it's
+            // within 90 days of the due date
+            const status = isWithinRNAWindow ? "NOT_STARTED" : "UPCOMING";
 
             return {
               pseudonymizedId,
               status,
+              enabledAt: rnaWindowStart,
             };
           }
 
@@ -162,7 +141,7 @@ export const rnaStatusList = stateStaffProcedure
             // the distinction between them is not important
             completedAt: currentRNA.completedAt ?? undefined,
             submittedByStaffAt: currentRNA.submittedByStaffAt ?? undefined,
-            enabledAt: currentRNA.enabledAt ?? undefined,
+            enabledAt: rnaWindowStart,
           };
         },
       );

@@ -39,7 +39,6 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { StatusAwareButton } from "../OpportunityDenial/MenuButton.styles";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
-import { EnableToggle } from "../UsNcRNA/UsNcRNATable";
 
 const Table = styled.table`
   width: 100%;
@@ -122,10 +121,6 @@ const Cell = styled.td<{
     /* Increase size of target for click-to-copy when within a table cell */
     padding-top: ${rem(spacing.sm + spacing.xs)};
     padding-bottom: ${rem(spacing.sm + spacing.xs)};
-  }
-
-  &:has(${EnableToggle}) {
-    border-left: 1px solid ${palette.slate10};
   }
 `;
 
