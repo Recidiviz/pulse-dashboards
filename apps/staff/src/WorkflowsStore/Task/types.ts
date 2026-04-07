@@ -128,6 +128,7 @@ type UsTxAssessmentDetails = {
   dueAssessmentDate: string | null;
   eventDate: string;
   frequency: string;
+  contactCadence: string;
   dueAssessmentType?: string;
 };
 

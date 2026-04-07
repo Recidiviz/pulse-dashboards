@@ -51,7 +51,7 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
   }
 
   get frequency(): string {
-    return `1 Every ${toTitleCase(this.details.frequency)}`;
+    return toTitleCase(this.details.contactCadence);
   }
 }
 
