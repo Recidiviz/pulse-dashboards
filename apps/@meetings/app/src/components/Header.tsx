@@ -44,6 +44,7 @@ import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import { IS_PROD } from "../env";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
 import DesktopMenuItem from "./DesktopMenuItem";
@@ -90,6 +91,9 @@ const MobileHeader = ({
           <ArrowLeftIcon className="fill-tertiary" />
         </TouchableOpacity>
       )}
+      <View className="pointer-events-none absolute inset-x-0 items-center">
+        <OfflineIndicator />
+      </View>
     </View>
   );
 };
@@ -153,8 +157,8 @@ const Header: React.FC<HeaderProps> = ({
               >
                 <WordmarkSvg />
               </TouchableOpacity>
-
               <View className="h-full flex-row items-center gap-x-6">
+                <OfflineIndicator />
                 {hasSupervisionAccess && (
                   <DesktopMenuItem
                     isActive={route.name.includes("Client")}
