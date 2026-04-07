@@ -18,7 +18,6 @@
 import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
-import { nullishAsUndefined } from "../../../utils/zod";
 import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
@@ -72,13 +71,14 @@ export const usMiSecurityClassificationCommitteeReviewV2Schema =
       facility: z.string().optional(),
       lock: z.string().optional(),
       OPT: z.boolean().optional(),
+      SMI: z.boolean(),
       STG: z.string().optional(),
       bondableOffensesWithin6Months: z.string().nullish(),
       nonbondableOffensesWithin1Year: z.string().optional(),
       adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
     }),
     metadata: z.object({
-      daysInSolitarySession: nullishAsUndefined(z.coerce.number()),
+      daysInSolitarySession: z.coerce.number(),
       lessThan24MonthsFromErd: z.boolean().optional(),
       neededProgramming: z.string().optional(),
       completedProgramming: z.string().optional(),

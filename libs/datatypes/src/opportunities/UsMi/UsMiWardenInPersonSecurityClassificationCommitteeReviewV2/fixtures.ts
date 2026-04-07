@@ -43,6 +43,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         formInformation: {
+          SMI: true,
           segregationType: "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
           segregationClassificationDate: relativeFixtureDate({ days: -20 }),
           maxReleaseDate: relativeFixtureDate({ months: 20 }),
@@ -132,6 +133,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         formInformation: {
+          SMI: true,
           segregationType: "TEMPORARY_SOLITARY_CONFINEMENT",
           segregationClassificationDate: relativeFixtureDate({ days: -50 }),
           maxReleaseDate: relativeFixtureDate({ months: 30 }),
@@ -182,6 +184,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         formInformation: {
+          SMI: false,
           segregationType: "TEMPORARY_SOLITARY_CONFINEMENT",
           segregationClassificationDate: relativeFixtureDate({ days: -50 }),
           maxReleaseDate: relativeFixtureDate({ months: 30 }),
@@ -243,6 +246,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         formInformation: {
+          SMI: true,
           segregationType: "TEMPORARY_SOLITARY_CONFINEMENT",
           segregationClassificationDate: relativeFixtureDate({ days: -50 }),
           maxReleaseDate: relativeFixtureDate({ months: 30 }),

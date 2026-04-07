@@ -28,8 +28,11 @@ import { palette } from "~design-system";
 
 import { formatDateRange, formatWorkflowsDate } from "../../../../utils";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
+import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
+import { usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import {
   DetailsHeading,
   DetailsSection,
@@ -38,6 +41,7 @@ import {
   SecureDetailsList,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
+import { UsMiRestrictiveHousingV2 } from "./UsMiRestrictiveHousingDetailsV2";
 
 const OffenseCode = styled.div`
   margin-top: 0.25rem;
@@ -116,6 +120,16 @@ export const MisconductHistory: React.FC<{
 export function UsMiRestrictiveHousing({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement<any> | null {
+  if (
+    opportunity instanceof
+      usMiSecurityClassificationCommitteeReviewV2Opportunity ||
+    opportunity instanceof
+      usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity ||
+    opportunity instanceof
+      usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity
+  ) {
+    return UsMiRestrictiveHousingV2({ opportunity });
+  }
   if (
     !(
       opportunity instanceof

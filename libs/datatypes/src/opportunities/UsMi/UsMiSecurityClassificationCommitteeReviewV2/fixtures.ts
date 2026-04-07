@@ -49,6 +49,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
         facility: "FACILITY1",
         lock: "LOCKID1",
         STG: "1",
+        SMI: false,
         bondableOffensesWithin6Months: "(423, 2023-12-27)",
         nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
         adSegStaysAndReasonsWithin3Yrs: [
@@ -137,6 +138,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
         facility: "FACILITY2",
         lock: "LOCKID2",
         STG: "2",
+        SMI: true,
         bondableOffensesWithin6Months:
           "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
         nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
@@ -185,6 +187,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
         facility: "FACILITY2",
         lock: "LOCKID3",
         STG: "2",
+        SMI: true,
         bondableOffensesWithin6Months: "(020, 2024-02-26)",
         nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
         adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],

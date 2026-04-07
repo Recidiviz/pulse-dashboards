@@ -10,6 +10,7 @@ exports[`schema for almostEligible1 1`] = `
   },
   "externalId": "RES021",
   "formInformation": {
+    "SMI": false,
     "STG": "2",
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2022-11-07,003,)",
@@ -77,6 +78,7 @@ exports[`schema for almostEligible2 1`] = `
   },
   "externalId": "RES022",
   "formInformation": {
+    "SMI": true,
     "STG": "2",
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2022-11-07,003,)",
@@ -145,6 +147,7 @@ exports[`schema for fullyEligible1 1`] = `
   },
   "externalId": "RES019",
   "formInformation": {
+    "SMI": true,
     "STG": "1",
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2021-11-03,014,)",
@@ -234,6 +237,7 @@ exports[`schema for fullyEligible2 1`] = `
   },
   "externalId": "RES020",
   "formInformation": {
+    "SMI": true,
     "STG": "2",
     "adSegStaysAndReasonsWithin3Yrs": [],
     "bondableOffensesWithin6Months": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
