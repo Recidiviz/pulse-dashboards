@@ -61,37 +61,35 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
   opportunity: Opportunity;
 }) {
   const colors = useStatusColors(opportunity);
-  const isClientProfile = useMatch(WORKFLOWS_PATHS.clientProfile);
-  const isResidentProfile = useMatch(WORKFLOWS_PATHS.residentProfile);
-  const isFullProfilePage = isClientProfile || isResidentProfile;
-
-  const showStatusPill =
-    isFullProfilePage || opportunity.isSubmitted || !opportunity.isIneligible;
 
   return (
-    showStatusPill && (
-      <EligibilityStatusPillStyled
-        className="EligibilityStatus"
-        filled
-        color={colors.badgeBackground}
-        textColor={colors.badgeText}
-        $borderColor={colors.badgeBorder}
-      >
-        {opportunity.eligibilityStatusLabel()}
-      </EligibilityStatusPillStyled>
-    )
+    <EligibilityStatusPillStyled
+      className="EligibilityStatus"
+      filled
+      color={colors.badgeBackground}
+      textColor={colors.badgeText}
+      $borderColor={colors.badgeBorder}
+    >
+      {opportunity.eligibilityStatusLabel()}
+    </EligibilityStatusPillStyled>
   );
 });
 
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
   observer(function OpportunityModuleHeader({ opportunity }) {
+    const isClientProfile = useMatch(WORKFLOWS_PATHS.clientProfile);
+    const isResidentProfile = useMatch(WORKFLOWS_PATHS.residentProfile);
+    const isFullProfilePage = isClientProfile || isResidentProfile;
+
+    const showStatusPill =
+      isFullProfilePage || opportunity.isSubmitted || !opportunity.isIneligible;
     return (
       <TitleText>
         <OpportunityLabelWithPill>
           {opportunity.config.label}
           {opportunity.labelAddendum}
         </OpportunityLabelWithPill>
-        <EligibilityStatusPill opportunity={opportunity} />
+        {showStatusPill && <EligibilityStatusPill opportunity={opportunity} />}
       </TitleText>
     );
   });
