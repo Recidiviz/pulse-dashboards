@@ -18,7 +18,7 @@
 import { Sans12, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -89,6 +89,14 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
     tenantStore: { tasksSidebarComponents },
   } = useRootStore();
 
+  useEffect(() => {
+    if (selectedClient) {
+      selectedClient.supervisionTasks?.trackPreviewed(
+        presenter.selectedTaskCategory,
+      );
+    }
+  }, [selectedClient, presenter.selectedTaskCategory]);
+
   if (!selectedClient) return null;
 
   const opportunitiesToDisplay = !!Object.values(selectedClient.opportunities)
@@ -110,11 +118,6 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
   return (
     <WorkflowsPreviewModal
       isOpen={!!selectedClient}
-      onAfterOpen={() =>
-        selectedClient.supervisionTasks?.trackPreviewed(
-          presenter.selectedTaskCategory,
-        )
-      }
       pageContent={
         <article>
           <Heading person={selectedClient} />
