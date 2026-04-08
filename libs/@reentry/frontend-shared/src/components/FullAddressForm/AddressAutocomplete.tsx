@@ -21,6 +21,8 @@ import { AlertCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { useApplicationContext } from "../../contexts/ApplicationContext";
+import { getAutocompleteHelpMessage } from "./autocompleteHelpers";
+import { HelpMessage } from "./HelpMessage";
 
 export interface AddressSuggestion {
   place_id: string;
@@ -158,6 +160,18 @@ export const AddressAutocomplete = ({
     setShowSuggestions(false);
   };
 
+  const getHelpMessage = () => {
+    return getAutocompleteHelpMessage({
+      value,
+      debouncedInput,
+      isLoading,
+      queryError,
+      data,
+      suggestionSelected,
+      fieldName: "addresses",
+    });
+  };
+
   return (
     <div className="relative">
       <label
@@ -195,11 +209,7 @@ export const AddressAutocomplete = ({
         autoComplete="off"
       />
       {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
-      {isLoading && !value && !suggestionSelected && (
-        <div className="absolute right-3 top-8">
-          <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
+      <HelpMessage message={getHelpMessage()} />
       {showSuggestions && suggestions.length > 0 && isActive && (
         <div
           ref={suggestionsRef}
@@ -222,7 +232,7 @@ export const AddressAutocomplete = ({
           ))}
         </div>
       )}
-      {!suggestionSelected && value.length >= 2 && (
+      {!suggestionSelected && value.length >= 2 && !getHelpMessage() && (
         <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-md">
           <AlertCircle className="w-4 h-4 text-orange-600 flex-shrink-0" />
           <span className="text-xs text-orange-800">
