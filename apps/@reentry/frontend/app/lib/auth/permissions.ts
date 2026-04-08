@@ -39,6 +39,14 @@ function getInternalDomains(): string[] {
 
 export function isInternalUser(email: string | undefined | null): boolean {
   if (!email) return false;
+  // When impersonating, treat the caller as a non-internal user
+  // so that all dev controls are hidden
+  if (
+    typeof window !== "undefined" &&
+    !!localStorage.getItem("impersonated_email")
+  ) {
+    return false;
+  }
   const domains = getInternalDomains();
   return domains.some((domain) => email.endsWith(domain));
 }

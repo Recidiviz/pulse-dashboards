@@ -635,6 +635,8 @@ async def _build_user_context(
     email: str, feature_variants: dict, is_impersonating=False
 ):
     base = _parse_feature_variants(feature_variants)
+    if is_impersonating:
+        base["is_read_only_user"] = True
     return {
         "email": email,
         "is_impersonating": is_impersonating,

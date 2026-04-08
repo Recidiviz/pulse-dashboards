@@ -40,6 +40,10 @@ export const AuthUserCapabilitiesProvider = ({
 }) => {
   const { userAppMetadata } = useAuth();
 
+  const isImpersonating =
+    typeof window !== "undefined" &&
+    !!localStorage.getItem("impersonated_email");
+
   // Extract Auth0 feature variants
   const capabilities = useMemo<AuthUserCapabilities>(() => {
     // @ts-expect-error: featureVariants may not be defined in userAppMetadata
@@ -52,10 +56,10 @@ export const AuthUserCapabilitiesProvider = ({
 
     return {
       isZeroCaseloadUser: Boolean(features.zeroCaseloadUser),
-      isReadOnlyUser: Boolean(features.readOnly),
+      isReadOnlyUser: Boolean(features.readOnly) || isImpersonating,
       cpaClientLocations: cpaClientLocations,
     };
-  }, [userAppMetadata]);
+  }, [userAppMetadata, isImpersonating]);
 
   return (
     <AuthUserCapabilitiesContext.Provider value={capabilities}>
