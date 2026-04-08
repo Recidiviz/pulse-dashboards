@@ -74,13 +74,13 @@ function removeNewlines(input: string | undefined): string | undefined {
   return input?.replaceAll("\n", "; ");
 }
 
-// This record defines a map from fields in thecombined draft record to output
+// This record defines a map from fields in the combined draft record to output
 // fields with minimal transformation or need to map dependencies.
 const COLUMN_MAPPING: Record<
   string,
   (
     data: Partial<UsTnReclassification2026DraftData>,
-  ) => string | number | undefined
+  ) => string | number | boolean | undefined
 > = {
   Trustee_Question1: (doc) => getTrusteeQuestionValue(doc, 0),
   Trustee_Question2: (doc) => getTrusteeQuestionValue(doc, 1),
@@ -121,6 +121,15 @@ const COLUMN_MAPPING: Record<
     doc["trusteeWardenHasApproved"] !== undefined
       ? "Y"
       : "N",
+
+  Warden_TrusteeSignaturesAcquired: (doc) => doc["trusteeWardenSignature"],
+  Warden_TrusteeSignaturesAcquiredDate: (doc) =>
+    doc["trusteeWardenSignatureDate"],
+  ContractMonitor_TrusteeSignaturesAcquired: (doc) => doc["trusteeCMSignature"],
+  ContractMonitor_TrusteeSignaturesAcquiredDate: (doc) =>
+    doc["trusteeCMSignatureDate"],
+  AC_TrusteeSignaturesAcquired: (doc) => doc["trusteeACSignature"],
+  AC_TrusteeSignaturesAcquiredDate: (doc) => doc["trusteeACSignatureDate"],
 };
 
 // We can combine the RCAF and DCAF fields into one list since we are
@@ -275,7 +284,8 @@ function processRecord(
   personSnapshot: QueryDocumentSnapshot,
 ) {
   // Set up an output record
-  const out: Record<string, string | number | undefined | string[]> = {};
+  const out: Record<string, string | string[] | number | boolean | undefined> =
+    {};
 
   // Set flag to use dcaf vs rcaf helpers
   const isDcaf = opportunityType === "usTnInitialClassification2026Policy";

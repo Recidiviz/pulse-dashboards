@@ -73,7 +73,10 @@ const HearingNotice = ({
             on <FormInput name="hearingDate" placeholder="hearing date" /> at{" "}
             <FormInput name="hearingLocation" placeholder="hearing location" />.
           </Row>
-          <Row>Classification Date:</Row>
+          <Row>
+            Classification Date:
+            <FormInput name="hearingClassificationDate" />
+          </Row>
           <Row grouped>
             Classification Type:{" "}
             {pilotVersion ? formData.classificationType : "CL CLASSIFICATION"}

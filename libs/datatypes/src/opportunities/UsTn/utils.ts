@@ -166,6 +166,12 @@ export type TrusteeFormAdditionalFields = {
   trusteeWardenHasApproved: string;
   trusteeDenialReasons: string;
   trusteeCustodyApproved: string;
+  trusteeWardenSignature: boolean;
+  trusteeWardenSignatureDate: string;
+  trusteeCMSignature: boolean;
+  trusteeCMSignatureDate: string;
+  trusteeACSignature: boolean;
+  trusteeACSignatureDate: string;
 };
 
 export type TrusteeFormSchema = z.output<typeof trusteeFormSchema> &

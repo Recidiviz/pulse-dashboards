@@ -20,6 +20,7 @@ import { z } from "zod";
 import {
   coverSheetInformationSchema,
   dateStringSchema,
+  TrusteeFormSchema,
   UsTnCoverSheetSharedDraftData,
 } from "~datatypes";
 
@@ -90,6 +91,8 @@ export type UsTnSharedReclassificationDraftData = {
   levelOfCare: string;
   hearingDate: string;
   hearingLocation: string;
+  hearingClassificationDate: string;
 } & DraftDataSelections &
   UsTnCoverSheetSharedDraftData &
-  DraftDataNotes;
+  DraftDataNotes &
+  TrusteeFormSchema;

@@ -21,22 +21,22 @@ import styled from "styled-components";
 
 import {
   TRUSTEE_FORM_QUESTION_ORDER,
-  UsTnInitialClassification2026DraftData,
+  TrusteeFormSchema,
+  UsTnReclassification2026DraftData,
 } from "~datatypes";
 
+import { KeysMatching } from "../../../../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../../../../../WorkflowsStore";
-import { UsTnDiagnosticClassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { FileGeneratorArgs } from "../../../DOCXFormGenerator";
 import DOCXFormTextArea from "../../../DOCXFormTextArea";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { PrintablePage } from "../../../styles";
+import FormInput from "../../CustodyReclassification/FormInput";
 import { Bold, Header, TrusteeFormPage } from "./styles";
 import trusteeAssessmentTemplate from "./trustee_assessment_template.docx";
 
-type TrusteeForm =
-  | UsTnDiagnosticClassification2026Form
-  | UsTnReclassification2026Form;
+type TrusteeForm = UsTnReclassification2026Form;
 
 const CriteriaTable = styled.table`
   border-collapse: collapse;
@@ -148,8 +148,7 @@ const TrusteeCriteriaRow = observer(function TrusteeCriteriaRow({
 });
 
 const Approval = observer(function Approval() {
-  const opportunityForm =
-    useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
+  const opportunityForm = useOpportunityFormContext() as TrusteeForm;
   const {
     formData: { trusteeCustodyApproved },
     derivedData: { trusteeEligible },
@@ -192,13 +191,111 @@ const Approval = observer(function Approval() {
   );
 });
 
+const SignaturesReceivedContainer = styled.div`
+  font-weight: 600;
+
+  & input {
+    background-color: aliceblue;
+  }
+
+  & label {
+    margin-bottom: unset;
+  }
+`;
+
+const TogglableRadioButton = observer(function TogglableRadioButton({
+  name,
+  value,
+}: {
+  name: KeysMatching<TrusteeFormSchema, boolean>;
+  value: boolean | undefined;
+}) {
+  const opportunityForm = useOpportunityFormContext() as TrusteeForm;
+  const { formData } = opportunityForm;
+  const selected = formData[name] === value;
+
+  // eslint-disable-next-line no-nested-ternary
+  const text = value === undefined ? "Not Applicable" : value ? "Yes" : "No";
+
+  const onClick = () => {
+    if (selected || value === undefined) {
+      opportunityForm.clearDraftData(name);
+    } else {
+      opportunityForm.updateDraftData(name, value);
+    }
+  };
+
+  return (
+    <label>
+      {text} <input type="radio" checked={selected} onClick={onClick} />
+    </label>
+  );
+});
+
+function SignatureRow({
+  title,
+  radioName,
+  dateName,
+  allowNA = true,
+}: {
+  title: string;
+  radioName: KeysMatching<TrusteeFormSchema, boolean>;
+  dateName: KeysMatching<TrusteeFormSchema, string>;
+  allowNA?: boolean;
+}) {
+  return (
+    <li>
+      {title}
+      <ul>
+        <li>
+          <TogglableRadioButton name={radioName} value={true} />{" "}
+          <TogglableRadioButton name={radioName} value={false} />
+          {allowNA && (
+            <TogglableRadioButton name={radioName} value={undefined} />
+          )}
+        </li>
+        <li>
+          Date Received{" "}
+          <FormInput name={dateName} placeholder="Approval date" />
+        </li>
+      </ul>
+    </li>
+  );
+}
+
+function SignaturesReceived() {
+  return (
+    <SignaturesReceivedContainer>
+      Signatures
+      <ul>
+        <SignatureRow
+          title="Warden"
+          radioName="trusteeWardenSignature"
+          dateName="trusteeWardenSignatureDate"
+          allowNA={false}
+        />
+        <SignatureRow
+          title="Contract Monitor (private facilities)"
+          radioName="trusteeCMSignature"
+          dateName="trusteeCMSignatureDate"
+        />
+        <SignatureRow
+          title="Assistant Commissioner/Designee"
+          radioName="trusteeACSignature"
+          dateName="trusteeACSignatureDate"
+        />
+      </ul>
+    </SignaturesReceivedContainer>
+  );
+}
+
 export const TrusteeChecklist = observer(function TrusteeChecklist({
   display,
 }: {
   display: boolean;
 }) {
   const opportunityForm =
-    useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
+    useOpportunityFormContext() as UsTnReclassification2026Form;
 
   const { trusteeEligible } = opportunityForm.derivedData;
   return (
@@ -354,12 +451,13 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
           <Approval />
           <div>
             <Bold>Reasons for Denial:</Bold>
-            <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name="trusteeDenialReasons" />
+            <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeDenialReasons" />
           </div>
           <div>
             <Bold>Notes for Warden Review:</Bold>
-            <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name="trusteeNotesForWarden" />
+            <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeNotesForWarden" />
           </div>
+          <SignaturesReceived />
         </TrusteeFormPage>
       </PrintablePage>
     </>

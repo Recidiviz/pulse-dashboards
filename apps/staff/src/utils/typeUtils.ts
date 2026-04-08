@@ -92,3 +92,10 @@ export type Leaves<T, D extends number = 10> = [D] extends [never]
   : T extends object
     ? { [K in keyof T]-?: [K, ...Leaves<T[K], Prev[D]>] }[keyof T]
     : [];
+
+// Takes and object and returns all keys whose values match the second type
+// e.g. type Obj = {a: string; b: boolean; c: number}
+// KeysMatching<Obj, number | string> => "a" | "c"
+export type KeysMatching<T, V> = {
+  [K in keyof T]-?: T[K] extends V ? K : never;
+}[keyof T];
