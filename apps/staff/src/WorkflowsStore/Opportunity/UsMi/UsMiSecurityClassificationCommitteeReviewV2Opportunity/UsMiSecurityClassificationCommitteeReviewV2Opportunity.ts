@@ -68,4 +68,8 @@ export class usMiSecurityClassificationCommitteeReviewV2Opportunity extends Oppo
   get submitMenuOptions() {
     return undefined;
   }
+
+  eligibilityStatusLabel(_?: boolean) {
+    return this.tabTitle();
+  }
 }

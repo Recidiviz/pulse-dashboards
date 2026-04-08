@@ -62,4 +62,7 @@ export class usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity e
         return "Other";
     }
   }
+  eligibilityStatusLabel(_?: boolean) {
+    return this.tabTitle();
+  }
 }

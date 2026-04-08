@@ -74,4 +74,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunit
         return "Other";
     }
   }
+  eligibilityStatusLabel(_?: boolean) {
+    return this.tabTitle();
+  }
 }
