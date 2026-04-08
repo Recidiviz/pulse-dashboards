@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
-from app.services.resources import Resource, ResourceSubcategory
+from app.services.resources import Resource, ResourceCategory, ResourceSubcategory
 
 
 ### Result Types
@@ -30,6 +30,17 @@ class ActionPlanSectionResourceTypes(BaseModel):
 class ActionPlanResourcesAssociations(BaseModel):
     associations: list[ActionPlanSectionResourceTypes] = Field(
         description="List of resource types to look for each section"
+    )
+
+
+class ResourceAssociation(BaseModel):
+    """Represents a resource category and subcategory association."""
+
+    resource_category: ResourceCategory = Field(
+        description="The parent resource category"
+    )
+    resource_subcategory: ResourceSubcategory = Field(
+        description="The specific resource subcategory"
     )
 
 
@@ -147,6 +158,7 @@ class ActionPlanMarkdown(BaseModel):
     messages: list  # openai-like messages
     structured_action_plan: ActionPlan  # structured action plan as ActionPlan
     suggested_resources: list[Resource]  # list of suggested resources
+    resources_associations: ActionPlanResourcesAssociations | None = None
 
 
 #

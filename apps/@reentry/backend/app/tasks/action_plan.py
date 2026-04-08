@@ -33,6 +33,7 @@ from app.utils.action_plan_types import (
 from app.utils.config_loader import ConfigLoader
 from app.utils.llm_agent_edit_plan import LLMAgentEdit
 from app.utils.llm_agent_gen_plan import LLMAgentGenerate
+from app.utils.resources_utils import transform_resources_associations_to_map
 
 from .base import broker
 from .plan_decision_tree import get_plan_asset
@@ -495,4 +496,15 @@ async def generate_action_plan(
     gen.markdown_result = action_plan.action_plan
     gen.gen_data_json = str(action_plan.model_dump_json())
     gen.finished_at = datetime.utcnow()
+
+    # Transform and save resources associations
+    if action_plan.resources_associations:
+        resources_map = transform_resources_associations_to_map(action_plan.resources_associations)
+        if resources_map:
+            # Convert Pydantic models to dict for JSON serialization
+            gen.resources_associations_map = {
+                section: [assoc.model_dump() for assoc in associations]
+                for section, associations in resources_map.items()
+            }
+
     await update_plan_generation(session, gen)

@@ -122,57 +122,9 @@ async def call_generate_section(
     logger.debug("Generating section", section=section)
     if not section:
         raise ValueError("Error generating section")
-    resource_requests = []
-    if state.get("resources_associations"):
-        for association in state["resources_associations"].associations:
-            if association.section_title == section:
-                for subcategory in association.subcategories:
-                    # Find the parent category for this subcategory
-                    parent_category = None
-                    for category, subcategories in CATEGORY_SUBCATEGORY_MAP.items():
-                        if subcategory in subcategories:
-                            parent_category = category
-                            break
-                    if not parent_category:
-                        logger.warning(
-                            "No parent category found for subcategory",
-                            subcategory=subcategory,
-                        )
-                        continue
 
-                    request = GetResourcesRequest(
-                        category=parent_category,
-                        subcategory=subcategory,
-                        address=client_address,
-                        limit=2,
-                        exclude_names=None,
-                        exclude_ids=None,
-                    )
-                    resource_requests.append(request)
-
-    # Fetch all resources in parallel
-    fetch_tasks = [fetch_resources_with_retry(request) for request in resource_requests]
-    results = await asyncio.gather(*fetch_tasks, return_exceptions=True)
-
-    resources = []
-    for request, result in zip(resource_requests, results):
-        if isinstance(result, list):
-            resources.extend(result)
-        elif isinstance(result, Exception):
-            logger.error(
-                "Failed to fetch resources for subcategory",
-                category=request.category,
-                subcategory=request.subcategory,
-                error=str(result),
-            )
-
-    if resources:
-        message = prompts.get_section_generation_prompt_with_resources(
-            section, resources
-        )
-    else:
-        message = prompts.get_section_generation_prompt_without_resources(section)
-
+    message = prompts.get_section_generation_prompt_without_resources(section)
+        
     result_messages = []
     messages = state["messages"] + [message]
 
@@ -208,24 +160,18 @@ async def call_generate_section(
     ).ainvoke(messages + [temp_response] + [prompt], config)
     result_messages.append(final_response)
 
-    suggested_resources = [
-        resource for resource in resources if resource.id in final_response.content
-    ]
-
     # Save the section
     action_plan_section = ActionPlanSection(
         title=section,
         markdown_content=final_response.content,
         annotations=annotations.annotations,
         notes=annotations.notes,
-        resources=suggested_resources,
+        resources=[],
     )
 
     logger.info(
         "Section generation completed",
         section=section,
-        total_resources=len(resources),
-        suggested_resources_count=len(suggested_resources),
     )
 
     return {
@@ -462,9 +408,7 @@ class LLMAgentGenerate:
         # Create a new plan
         workflow.add_node("gen_reflexion", call_reflexion)
         workflow.add_node("gen_area_of_needs", call_area_of_needs)
-
-        if self.include_resources:
-            workflow.add_node("gen_resources", call_resources_options)
+        workflow.add_node("gen_resources", call_resources_options)
 
         workflow.add_node("gen_section", call_generate_section_node)
 
@@ -481,12 +425,8 @@ class LLMAgentGenerate:
         # Links
         workflow.add_edge(START, "gen_reflexion")
         workflow.add_edge("gen_reflexion", "gen_area_of_needs")
-
-        if self.include_resources:
-            workflow.add_edge("gen_area_of_needs", "gen_resources")
-            workflow.add_conditional_edges("gen_resources", call_generate_sections)
-        else:
-            workflow.add_conditional_edges("gen_area_of_needs", call_generate_sections)
+        workflow.add_edge("gen_area_of_needs", "gen_resources")
+        workflow.add_conditional_edges("gen_resources", call_generate_sections)
 
         # Conditionally connect section -> timeline -> milestones -> assemble
         # based on which features are enabled
@@ -609,6 +549,7 @@ class LLMAgentGenerate:
             action_plan=convert_to_markdown(plan),
             structured_action_plan=plan,
             suggested_resources=final_resources,
+            resources_associations=final_state.get("resources_associations"),
         )
 
 

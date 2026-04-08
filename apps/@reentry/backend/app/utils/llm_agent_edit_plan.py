@@ -484,4 +484,7 @@ class LLMAgentEdit:
             action_plan=convert_to_markdown(self.plan),
             structured_action_plan=self.plan,
             suggested_resources=self.suggested_resources,
+            resources_associations=final_state.get(
+                "resources_associations"
+            ),  # Edit agent doesn't regenerate resources associations
         )

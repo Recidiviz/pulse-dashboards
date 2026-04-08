@@ -66,7 +66,9 @@ prompts:
     Avoid title like 'X and Y'.
     An area of needs/risk should be a short title without description.
 
-  resources_options: "resources disabled"
+  resources_options: |
+    1. For each area of needs/risk, choose the most relevant resources types to query in the resource pipeline.
+    2. The same resource type cannot be used for multiple sections.
 
   section_generation_with_resources: "unreachable: resources disabled"
 
