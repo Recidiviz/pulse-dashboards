@@ -17,6 +17,7 @@
 
 //@ts-check
 
+const path = require("path");
 const { composePlugins, withNx } = require("@nx/next");
 const { withSentryConfig } = require("@sentry/nextjs");
 const { isFeatureEnabled } = require("./config/featureFlagsBuildtime");
@@ -26,6 +27,7 @@ const { isFeatureEnabled } = require("./config/featureFlagsBuildtime");
  **/
 const nextConfig = {
   output: "standalone",
+  outputFileTracingRoot: path.join(__dirname, "../../.."),
   productionBrowserSourceMaps: isFeatureEnabled("ENABLE_SOURCE_MAPS"),
   async headers() {
     return [
