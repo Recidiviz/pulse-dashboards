@@ -171,6 +171,36 @@ describe("FiltersStore", () => {
     });
   });
 
+  describe("enabledFilters", () => {
+    it("does not include dateInPopulation for US_NY prison metrics in the staff app", () => {
+      // @ts-expect-error — partial mock
+      vi.mocked(TenantStore).mockImplementation(() => ({
+        currentTenantId: "US_NY",
+      }));
+      coreStore = new CoreStore(new RootStore());
+
+      const nyEnabledFilters = coreStore.filtersStore.enabledFilters;
+      const prisonMetricKeys = [
+        "prisonFacilityPopulation",
+        "prisonPopulationByAgeGroup",
+        "prisonPopulationByGender",
+        "prisonPopulationBySex",
+        "prisonPopulationByRace",
+        "prisonPopulationByEthnicity",
+        "prisonPopulationBySentenceLengthMin",
+        "prisonPopulationBySentenceLengthMax",
+        "prisonPopulationByChargeCountyCode",
+        "prisonPopulationByOffenseType",
+      ] as const;
+
+      prisonMetricKeys.forEach((metricKey) => {
+        expect(nyEnabledFilters[metricKey].enabledFilters).not.toContain(
+          "dateInPopulation",
+        );
+      });
+    });
+  });
+
   describe("dynamicFilterOptions with useDynamicOptions config set to false", () => {
     it("uses the default filterOptions from the current metric", () => {
       // ID does not have any dynamic filter options enabled

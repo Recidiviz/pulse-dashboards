@@ -22,6 +22,7 @@ import { FiltersStoreBase, PathwaysTenantId } from "~shared-pathways";
 
 import { isPathwaysTenantId } from "../../RootStore/types";
 import type CoreStore from ".";
+import { enabledFilterOptionsByTenant } from "./enabledFilters";
 
 export default class FiltersStore extends FiltersStoreBase {
   rootStore: CoreStore;
@@ -70,5 +71,9 @@ export default class FiltersStore extends FiltersStoreBase {
     if (isPathwaysTenantId(this.rootStore.currentTenantId)) {
       return this.rootStore.currentTenantId;
     }
+  }
+
+  get enabledFilterOptionsByTenant() {
+    return enabledFilterOptionsByTenant;
   }
 }

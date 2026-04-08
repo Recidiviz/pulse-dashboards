@@ -213,4 +213,28 @@ describe("FiltersStore", () => {
       expect(rootStore.filtersStore.pathwaysTenantId).toEqual("US_NY");
     });
   });
+
+  describe("enabledFilters", () => {
+    it("includes dateInPopulation for US_NY prison metrics in public pathways", () => {
+      const nyEnabledFilters = rootStore.filtersStore.enabledFilters;
+      const prisonMetricKeys = [
+        "prisonFacilityPopulation",
+        "prisonPopulationByAgeGroup",
+        "prisonPopulationByGender",
+        "prisonPopulationBySex",
+        "prisonPopulationByRace",
+        "prisonPopulationByEthnicity",
+        "prisonPopulationBySentenceLengthMin",
+        "prisonPopulationBySentenceLengthMax",
+        "prisonPopulationByChargeCountyCode",
+        "prisonPopulationByOffenseType",
+      ] as const;
+
+      prisonMetricKeys.forEach((metricKey) => {
+        expect(nyEnabledFilters[metricKey].enabledFilters).toContain(
+          "dateInPopulation",
+        );
+      });
+    });
+  });
 });

@@ -19,6 +19,7 @@ import { action, computed, makeObservable, observable } from "mobx";
 
 import { FiltersStoreBase, PathwaysTenantId } from "~shared-pathways";
 
+import { enabledFilterOptionsByTenant } from "./enabledFilters";
 import type { RootStore } from "./RootStore";
 
 export default class FiltersStore extends FiltersStoreBase {
@@ -61,5 +62,9 @@ export default class FiltersStore extends FiltersStoreBase {
 
   get pathwaysTenantId(): PathwaysTenantId {
     return this.rootStore.currentTenantId;
+  }
+
+  get enabledFilterOptionsByTenant() {
+    return enabledFilterOptionsByTenant;
   }
 }

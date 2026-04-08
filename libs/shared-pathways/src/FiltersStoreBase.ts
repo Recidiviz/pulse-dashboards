@@ -20,7 +20,6 @@ import { get, keys, set, toJS } from "mobx";
 import { formatDate } from "~utils";
 
 import { FILTER_TYPES, filtersOrder } from "./constants";
-import { enabledFilterOptionsByTenant } from "./enabledFilters";
 import {
   defaultMetricMode,
   DefaultPopulationFilterOptions,
@@ -196,7 +195,7 @@ export abstract class FiltersStoreBase {
 
   get enabledFilters(): EnabledFiltersByMetric {
     return (this.pathwaysTenantId
-      ? enabledFilterOptionsByTenant[this.pathwaysTenantId]
+      ? this.enabledFilterOptionsByTenant[this.pathwaysTenantId]
       : undefined) as unknown as EnabledFiltersByMetric;
   }
 
@@ -256,4 +255,13 @@ export abstract class FiltersStoreBase {
   };
 
   abstract get pathwaysTenantId(): PathwaysTenantId | undefined;
+
+  /**
+   * Per-tenant enabled-filter overlays. Each app provides its own map so that
+   * product surfaces can diverge between apps (e.g. staff vs public-pathways)
+   * without coupling shared-pathways to either app's product decisions.
+   */
+  abstract get enabledFilterOptionsByTenant(): Partial<
+    Record<PathwaysTenantId, Partial<EnabledFiltersByMetric>>
+  >;
 }
