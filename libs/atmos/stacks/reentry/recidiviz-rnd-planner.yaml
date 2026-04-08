@@ -54,19 +54,3 @@ components:
             - recidiviz
       metadata:
         component: postgres-bq-data-transfer
-
-    postgres-bq-data-transfer-cpa-labeling:
-      vars:
-        dataset_name: cpa_labeling_prod
-        tables:
-          - labeling_feedback
-        service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
-        postgresql:
-          host: !terraform.state cloud-sql-proxy recidiviz-rnd-planner--shared-infra cloud_sql_proxy_ip
-          port: !terraform.state cloud-sql-proxy recidiviz-rnd-planner--shared-infra ".ports[""cpa-labeling-prod""]"
-          username: !store.get rnd-planner-direct cpa_labeling_db_user
-          password: !store.get rnd-planner-direct cpa_labeling_db_password
-          databases:
-            - postgres
-      metadata:
-        component: postgres-bq-data-transfer

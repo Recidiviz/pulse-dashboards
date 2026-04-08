@@ -20,6 +20,7 @@ components:
         sql_instance_connections:
           recidiviz-prod: 5432
           recidiviz-staging: 5433
+          cpa-labeling-prod: 5434
       hooks:
         store-outputs:
           outputs:
