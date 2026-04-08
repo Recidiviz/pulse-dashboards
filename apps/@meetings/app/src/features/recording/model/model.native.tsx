@@ -306,6 +306,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     await removeRecordingUri();
     timer.reset();
     setPersistedDurationMs(0);
+    setNote("");
     await setStatus("idle");
   };
 
