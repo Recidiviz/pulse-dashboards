@@ -25,6 +25,7 @@ import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircl
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
+import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
@@ -60,6 +61,7 @@ interface PersonsProps {
 const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   const [page, setPage] = React.useState(1);
   const navigation = useNavigation<ProfileNavProp>();
+  const { status } = useRecording<"web">();
 
   useEffect(() => {
     setPage(1);
@@ -143,7 +145,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                   <TableCell>
                     {person.activeMeetingId && (
                       <View className="flex-row items-center pb-2">
-                        <RecordingIndicator />
+                        <RecordingIndicator status={status} />
                         <Typography className="px-2 text-secondary">
                           In progress
                         </Typography>

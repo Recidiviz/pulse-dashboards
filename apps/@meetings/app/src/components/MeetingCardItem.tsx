@@ -66,7 +66,7 @@ const MeetingCardItem = ({
   personType,
 }: MeetingCardItemProps) => {
   const { calculateMeetingItemHeight } = useListItemHeight();
-  const { status: recordingState } = useRecording<"native">();
+  const { status: recordingState, status } = useRecording<"native">();
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
@@ -144,7 +144,7 @@ const MeetingCardItem = ({
                 </Typography>
                 {isInProgress && (
                   <>
-                    <RecordingIndicator />
+                    <RecordingIndicator status={status} />
                     <Typography className="text-sm font-medium text-primary">
                       In progress
                     </Typography>

@@ -322,7 +322,7 @@ const NewMeetingProgress = ({
             {formatDurationNumeric(durationMs)}
           </Typography>
           <View className="flex-row items-center gap-2">
-            {status === "recording" && <RecordingIndicator />}
+            <RecordingIndicator status={status} />
             <Typography className="font-medium text-secondary">
               {status === "recording"
                 ? "Recording in progress"

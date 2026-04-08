@@ -63,7 +63,7 @@ export function MeetingMinimizedModal({
           </TouchableOpacity>
         </View>
         <View className="flex-row items-center gap-2">
-          {status === "recording" && <RecordingIndicator />}
+          <RecordingIndicator status={status} />
           <Typography className="font-medium text-primary">
             {status === "recording" ? "Recording in progress" : "Paused"}
           </Typography>

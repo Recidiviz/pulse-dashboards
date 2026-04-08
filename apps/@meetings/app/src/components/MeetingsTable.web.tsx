@@ -134,7 +134,7 @@ const MeetingRow = ({
           <TableCell>
             {isMeetingInProgress && (
               <View className="flex-row items-center pb-2">
-                <RecordingIndicator />
+                <RecordingIndicator status={status} />
                 <Typography className="px-2 text-secondary">
                   In progress
                 </Typography>

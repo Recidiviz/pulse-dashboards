@@ -18,15 +18,32 @@
 import clsx from "clsx";
 import { View } from "react-native";
 
-export function RecordingIndicator({ className }: { className?: string }) {
+import { Status } from "~@meetings/app/features/recording/model";
+
+type Props = {
+  status: Status;
+  className?: string;
+};
+
+export function RecordingIndicator({ status, className }: Props) {
+  const isRecording = status === "recording";
+
   return (
     <View
       className={clsx(
-        "flex size-[9px] animate-pulse items-center justify-center rounded-full bg-attention-light-secondary",
+        "flex size-2.5 items-center justify-center rounded-full",
+        isRecording
+          ? "animate-pulse bg-attention-light-secondary"
+          : "animate-none bg-transparent",
         className,
       )}
     >
-      <View className="size-1.5 rounded-full bg-attention" />
+      <View
+        className={clsx(
+          "size-1.5 rounded-full",
+          isRecording ? "bg-attention" : "bg-tertiary",
+        )}
+      />
     </View>
   );
 }

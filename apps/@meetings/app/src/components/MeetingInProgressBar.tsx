@@ -52,7 +52,7 @@ const MeetingInProgressBar = ({
 }: MeetingInProgressBarProps) => {
   const isPaused = recordingState === "paused";
 
-  const { durationMs, stopRecording, togglePauseResume } =
+  const { durationMs, stopRecording, togglePauseResume, status } =
     useRecording<"native">();
 
   return (
@@ -63,7 +63,7 @@ const MeetingInProgressBar = ({
       )}
     >
       <View className="flex flex-row items-center gap-1">
-        <RecordingIndicator />
+        <RecordingIndicator status={status} />
         <Typography className="text-sm font-medium leading-4 text-primary">
           Recording
         </Typography>

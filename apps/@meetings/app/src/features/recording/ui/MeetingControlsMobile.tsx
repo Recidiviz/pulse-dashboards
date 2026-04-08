@@ -79,9 +79,11 @@ export function MeetingControlsMobile({ person, personType }: Props) {
         </Link>
       )}
       <View className="mt-1 flex flex-row items-center gap-2">
-        <RecordingIndicator />
+        <RecordingIndicator status={status} />
         <Typography className="text-sm font-medium text-primary">
-          Recording in progress
+          {status === "recording"
+            ? "Recording in progress"
+            : "Recording paused"}
         </Typography>
         <Typography className="text-sm text-secondary">
           {formatDurationNumeric(durationMs)}
