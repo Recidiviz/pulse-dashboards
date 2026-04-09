@@ -15,36 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { JsonValue } from "@prisma/client/runtime/client";
-import isEmpty from "lodash-es/isEmpty";
 import { z } from "zod";
 
-export const rnaAssessmentStatus = z.enum([
-  "UPCOMING",
-  "DUE",
-  "NOT_STARTED",
-  "IN_PROGRESS",
-  "COMPLETE",
-  "SUBMITTED_BY_STAFF",
-]);
+import { stateStaffProcedure } from "./stateStaffProcedure";
 
-export type RNAAssessmentStatus = z.infer<typeof rnaAssessmentStatus>;
-
-type RNARow = {
-  completedAt: Date | null;
-  answers: JsonValue;
-  submittedByStaffAt: Date | null;
-};
-
-export function getStatusOfExistingRNA(
-  currentRNA: RNARow,
-): RNAAssessmentStatus {
-  if (currentRNA.submittedByStaffAt)
-    return rnaAssessmentStatus.enum.SUBMITTED_BY_STAFF;
-
-  if (currentRNA.completedAt) return rnaAssessmentStatus.enum.COMPLETE;
-
-  if (!isEmpty(currentRNA.answers)) return rnaAssessmentStatus.enum.IN_PROGRESS;
-
-  return rnaAssessmentStatus.enum.NOT_STARTED;
-}
+/**
+ * One of two procedures corresponding to the "enable" action in the staff UI.
+ * If there is no RNA, or the RNA is stale, this action creates a new RNA.
+ */
+export const createRNA = stateStaffProcedure
+  .input(z.object({ pseudonymizedId: z.string() }))
+  .mutation(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
+    // No RNA exists, or the RNA is stale, so make a new one
+    await prisma.usNcRNA.create({
+      data: {
+        pseudonymizedId,
+        enabledAt: new Date(),
+        answers: {},
+      },
+    });
+  });

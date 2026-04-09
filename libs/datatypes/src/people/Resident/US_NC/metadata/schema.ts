@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../../../utils/zod";
+import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
 export const usNcResidentMetadataSchema = z.object({
   stateCode: z.literal("US_NC"),
-  rnaDueDate: dateStringSchema,
+  rnaDueDate: nullishAsUndefined(dateStringSchema),
 });

@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Switch from "@mui/material/Switch";
+import { animation } from "@recidiviz/design-system";
+import { UseSuspenseQueryResult } from "@tanstack/react-query";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -33,12 +36,6 @@ import { RNAFilterPresenter } from "./RNAFilterPresenter";
 import { RNARowData, RNAStatusList } from "./RNAFilterPresenter";
 import { useRNAFilterStore } from "./RNAFilterStoreProvider";
 
-// On this date, we changed from staff-enabled assessments to assessments that people
-// automatically gain access to, after a certain date (90 days before their RNA due
-// date). Since RNA due dates may be far in the past, we use this date to display when
-// someone's assessment was "enabled", rather than the 90-days-prior date.
-const RNA_AUTO_ENABLEMENT_DATE = new Date(2026, 3, 9);
-
 const ViewResults = styled.div`
   border-radius: ${rem(spacing.xs)};
   padding: ${rem(spacing.md)} ${rem(spacing.xs)};
@@ -50,6 +47,52 @@ const ViewResults = styled.div`
 
   &:hover {
     background-color: ${palette.slate05};
+  }
+`;
+
+// many styles taken from AntSwitch at https://mui.com/material-ui/react-switch/#customization
+export const EnableToggle = styled(Switch)<{ $width: number; $height: number }>`
+  &.MuiSwitch-root {
+    width: ${({ $width }) => rem($width)};
+    height: ${({ $height }) => rem($height)};
+    padding: ${rem(0)};
+  }
+
+  & .MuiSwitch-switchBase {
+    padding: ${rem(2)};
+    transition-duration: ${animation.defaultDurationMs}ms;
+
+    &.Mui-checked {
+      transform: translateX(${({ $width, $height }) => rem($width - $height)});
+      color: ${palette.marble1};
+      & + .MuiSwitch-track {
+        opacity: 1;
+        background-color: ${palette.pine4};
+      }
+    }
+
+    &.Mui-disabled + .MuiSwitch-track {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  & .MuiSwitch-thumb {
+    color: ${palette.marble1};
+
+    width: ${({ $height }) => rem($height - 4)};
+    height: ${({ $height }) => rem($height - 4)};
+    border-radius: ${({ $height }) => rem($height / 2)};
+  }
+
+  & .MuiSwitch-track {
+    cursor: pointer;
+    height: ${({ $height }) => rem($height)};
+    border-radius: ${({ $height }) => rem($height / 2)};
+    background-color: ${palette.slate50Opaque};
+    opacity: 1;
+    transition: opacity background-color ${animation.defaultDurationMs}ms
+      ease-in-out;
   }
 `;
 
@@ -69,20 +112,49 @@ const StatusBadgeCell = ({ row }: { row: Row<RNARowData> }) => {
   return <RNABadge kind={row.original.status} />;
 };
 
-const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
-  const { status } = row.original;
+export const EnableCell = observer(function EnableCell({
+  row,
+}: {
+  row: Row<RNARowData>;
+}) {
+  const { presenter, pseudonymizedId, id, isEnabled } = row.original;
 
-  if (status === "COMPLETE") {
+  return (
+    <EnableToggle
+      onChange={(e) => {
+        if (presenter.isUpdating(pseudonymizedId)) return;
+
+        if (e.target.checked) {
+          presenter.onEnableClick(pseudonymizedId, id);
+        } else {
+          presenter.onDisableClick(pseudonymizedId, id);
+        }
+      }}
+      defaultChecked={isEnabled ?? false}
+      // setting the key is a workaround to force re-renders on change, since MUI
+      // expects defaultChecked to remain the same between renders
+      key={String(isEnabled)}
+      disabled={presenter.isUpdating(pseudonymizedId)}
+      $width={38}
+      $height={22}
+      slotProps={{ input: { "aria-label": "enable self-report" } }}
+      disableRipple={true}
+      disableTouchRipple={true}
+    />
+  );
+});
+
+const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
+  const { status, enabledAt } = row.original;
+
+  if (!["UPCOMING", "DUE"].includes(status) && !enabledAt) {
+    return `Access disabled on ${formatWorkflowsDate(row.original.updatedAt)}`;
+  } else if (status === "COMPLETE") {
     return `Ready since ${formatWorkflowsDate(row.original.completedAt)}`;
   } else if (status === "IN_PROGRESS") {
     return formatWorkflowsDate(row.original.updatedAt);
   } else if (status === "NOT_STARTED") {
-    const enablementDate =
-      row.original.enabledAt < RNA_AUTO_ENABLEMENT_DATE
-        ? RNA_AUTO_ENABLEMENT_DATE
-        : row.original.enabledAt;
-
-    return `Enabled since ${formatWorkflowsDate(enablementDate)}`;
+    return `Enabled on ${formatWorkflowsDate(row.original.createdAt)}`;
   } else if (status === "SUBMITTED_BY_STAFF") {
     return `Submitted ${formatWorkflowsDate(row.original.submittedByStaffAt)}`;
   } else {
@@ -111,6 +183,7 @@ const ViewResultsCell = ({ row }: { row: Row<RNARowData> }) => {
 
 const rnaStatusOrder: RNAStatus[] = [
   "UPCOMING",
+  "DUE",
   "NOT_STARTED",
   "IN_PROGRESS",
   "COMPLETE",
@@ -169,6 +242,11 @@ const columns = [
     cell: StatusBadgeCell,
   },
   {
+    header: "Enable Self-Report",
+    id: "enable",
+    cell: EnableCell,
+  },
+  {
     header: "Last Updated",
     id: "lastUpdated",
     accessorFn: (r: RNARowData) =>
@@ -186,15 +264,22 @@ const columns = [
 
 export const RNATable = observer(function RNATable({
   data,
+  refetch,
 }: {
   data: RNAStatusList;
+  refetch: UseSuspenseQueryResult<RNAStatusList, any>["refetch"];
 }) {
-  const { workflowsStore } = useRootStore();
+  const {
+    workflowsStore,
+    jiiTrpc: { client },
+  } = useRootStore();
   const rnaFilterStore = useRNAFilterStore();
   const presenter = new RNAFilterPresenter(
     data,
+    refetch,
     rnaFilterStore,
     workflowsStore,
+    client,
   );
 
   return (

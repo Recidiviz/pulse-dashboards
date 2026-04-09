@@ -19,11 +19,7 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { Outlet } from "react-router-dom";
 
-import {
-  useResidentMetadata,
-  useRootStore,
-  useSingleResidentContext,
-} from "~@jii/data";
+import { useRootStore, useSingleResidentContext } from "~@jii/data";
 import { MainContentHydratorWithErrorLogging } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -53,13 +49,7 @@ const ManagedComponent: FC<{
 function usePresenter() {
   const { apiClient } = useRootStore();
   const { resident } = useSingleResidentContext();
-  const { rnaDueDate } = useResidentMetadata("US_NC");
-
-  return new UsNcRNAFormContextPresenter(
-    apiClient,
-    resident.pseudonymizedId,
-    rnaDueDate,
-  );
+  return new UsNcRNAFormContextPresenter(apiClient, resident.pseudonymizedId);
 }
 
 export const UsNcRNAFormContext = withPresenterManager({

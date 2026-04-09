@@ -30,24 +30,15 @@ export class UsNcRNAFormContextPresenter implements Hydratable {
   constructor(
     private readonly apiClient: DataAPI,
     private readonly pseudonymizedId: string,
-    private readonly rnaDueDate: Date,
   ) {
     makeAutoObservable(this);
   }
 
   async hydrate() {
     try {
-      let queryResult = await this.apiClient.trpc.state.usNc.getRNA.query({
+      const queryResult = await this.apiClient.trpc.state.usNc.getRNA.query({
         pseudonymizedId: this.pseudonymizedId,
-        rnaDueDate: this.rnaDueDate,
       });
-
-      // If the resident doesn't have a form, or it's stale, make a new one
-      if (!queryResult) {
-        queryResult = await this.apiClient.trpc.state.usNc.createRNA.mutate({
-          pseudonymizedId: this.pseudonymizedId,
-        });
-      }
 
       runInAction(() => {
         this.hydrationSucceeded = true;
@@ -58,6 +49,7 @@ export class UsNcRNAFormContextPresenter implements Hydratable {
             queryResult.id,
             queryResult.completedAt,
             queryResult.updatedAt,
+            queryResult.enabledAt,
             queryResult.textAnswers,
             queryResult.checkboxAnswers,
             queryResult.lifeAreaAnswers,

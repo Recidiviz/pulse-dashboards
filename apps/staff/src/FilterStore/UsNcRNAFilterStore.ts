@@ -53,9 +53,9 @@ const rnaFilters: FilterSection<"usNcRNA">[] = [
     ],
   },
   {
-    title: "Submitted to OPUS",
+    title: "Assessment Enabled",
     type: "usNcRNA",
-    field: "isSubmitted",
+    field: "isEnabled",
     options: [
       {
         value: true,
@@ -93,6 +93,21 @@ const rnaFilters: FilterSection<"usNcRNA">[] = [
         label: "more than 90 days",
       },
     ] satisfies { value: RNADueTime; label: string }[],
+  },
+  {
+    title: "Submitted to OPUS",
+    type: "usNcRNA",
+    field: "isSubmitted",
+    options: [
+      {
+        value: true,
+        label: "Yes",
+      },
+      {
+        value: false,
+        label: "No",
+      },
+    ],
   },
 ] as const;
 

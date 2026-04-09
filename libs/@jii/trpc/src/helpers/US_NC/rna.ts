@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isAfter, subDays } from "date-fns";
 import { z } from "zod";
 
 import {
@@ -60,44 +59,3 @@ export const getRNAQueryResolver = async ({
     lifeAreaAnswers: rnaLifeAreaAnswersSchema.parse(result.answers),
   };
 };
-
-// Within the returned window, older assessments are considered stale.
-export function getRNAWindow(rnaDueDate: Date): {
-  rnaWindowStart: Date;
-  isWithinRNAWindow: boolean;
-} {
-  const rnaWindowStart = subDays(rnaDueDate, 90);
-  return {
-    rnaWindowStart,
-    isWithinRNAWindow: isAfter(new Date(), rnaWindowStart),
-  };
-}
-
-/**
- * Return the provided RNA results if they are considered current
- * (i.e. can be viewed in the tablet app or staff app), or undefined
- * if the self-report doesn't exist.
- *
- * An RNA starts being considered stale if the date 90 days before the
- * person's RNA due date has passed.
- */
-export function validateCurrentRNA<T extends { createdAt: Date }>(
-  rnaDueDate: Date,
-  latestRNA?: T,
-) {
-  if (!latestRNA) return undefined;
-
-  // within this window, older assessments are considered stale
-  const { rnaWindowStart, isWithinRNAWindow } = getRNAWindow(rnaDueDate);
-
-  if (isWithinRNAWindow) {
-    if (isAfter(latestRNA.createdAt, rnaWindowStart)) {
-      // the latest RNA is fresh
-      return latestRNA;
-    }
-    // the latest RNA is stale
-    return undefined;
-  }
-  // we don't care about freshness here
-  return latestRNA;
-}

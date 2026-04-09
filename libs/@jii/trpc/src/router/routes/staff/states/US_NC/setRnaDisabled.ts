@@ -15,36 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { JsonValue } from "@prisma/client/runtime/client";
-import isEmpty from "lodash-es/isEmpty";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-export const rnaAssessmentStatus = z.enum([
-  "UPCOMING",
-  "DUE",
-  "NOT_STARTED",
-  "IN_PROGRESS",
-  "COMPLETE",
-  "SUBMITTED_BY_STAFF",
-]);
+import { stateStaffProcedure } from "./stateStaffProcedure";
 
-export type RNAAssessmentStatus = z.infer<typeof rnaAssessmentStatus>;
-
-type RNARow = {
-  completedAt: Date | null;
-  answers: JsonValue;
-  submittedByStaffAt: Date | null;
-};
-
-export function getStatusOfExistingRNA(
-  currentRNA: RNARow,
-): RNAAssessmentStatus {
-  if (currentRNA.submittedByStaffAt)
-    return rnaAssessmentStatus.enum.SUBMITTED_BY_STAFF;
-
-  if (currentRNA.completedAt) return rnaAssessmentStatus.enum.COMPLETE;
-
-  if (!isEmpty(currentRNA.answers)) return rnaAssessmentStatus.enum.IN_PROGRESS;
-
-  return rnaAssessmentStatus.enum.NOT_STARTED;
-}
+/**
+ * Disable / un-enable an existing RNA, preventing the resident from viewing it.
+ */
+export const setRNADisabled = stateStaffProcedure
+  .input(
+    z.object({
+      id: z.string(),
+    }),
+  )
+  .mutation(async ({ input: { id }, ctx: { prisma } }) => {
+    try {
+      await prisma.usNcRNA.update({
+        where: {
+          id,
+        },
+        data: {
+          enabledAt: null,
+        },
+      });
+    } catch (e) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        cause: e,
+        message: "This assessment could not be disabled.",
+      });
+    }
+  });

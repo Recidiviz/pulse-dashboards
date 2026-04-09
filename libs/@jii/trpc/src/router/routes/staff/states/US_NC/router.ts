@@ -16,12 +16,18 @@
 // =============================================================================
 
 import { router } from "../../../../../procedures/init";
+import { createRNA } from "./createRNA";
 import { getRNA } from "./getRNA";
 import { rnaStatusList } from "./rnaStatusList";
+import { setRNADisabled } from "./setRnaDisabled";
+import { setRNAEnabled } from "./setRnaEnabled";
 import { setRNASubmitted } from "./setRnaSubmitted";
 
 export const usNcStaffRouter = router({
   rnaStatusList,
   getRNA,
   setRNASubmitted,
+  setRNAEnabled,
+  setRNADisabled,
+  createRNA,
 });

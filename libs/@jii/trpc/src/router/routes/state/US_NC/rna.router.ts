@@ -16,13 +16,12 @@
 // =============================================================================
 
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
 import { Prisma } from "~@jii/prisma";
 
 import {
+  getRNAInputSchema,
   getRNAQueryResolver,
-  validateCurrentRNA,
 } from "../../../../helpers/US_NC/rna";
 import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { router } from "../../../../procedures/init";
@@ -31,44 +30,8 @@ import { updateRNASchema } from "./rna.schema";
 
 const ncProcedure = restrictedResidentProcedureForState("US_NC");
 
-const residentGetRNAInputSchema = z.object({
-  pseudonymizedId: z.string(),
-  rnaDueDate: z.date(),
-}) satisfies z.ZodType<Prisma.UsNcRNAWhereInput>;
-
-const residentCreateRNAInputSchema = z.object({
-  pseudonymizedId: z.string(),
-}) satisfies z.ZodType<Prisma.UsNcRNAWhereInput>;
-
 export const usNcRouter = router({
-  // Get the current RNA for the person with provided pseudonymized ID
-  getRNA: ncProcedure
-    .input(residentGetRNAInputSchema)
-    .use(residentRestrictedMiddleware)
-    .query(async (queryArgs) => {
-      const latestRNA = await getRNAQueryResolver(queryArgs);
-      return validateCurrentRNA(queryArgs.input.rnaDueDate, latestRNA);
-    }),
-
-  // Create a new RNA for the person with provided pseudonymized ID
-  createRNA: ncProcedure
-    .input(residentCreateRNAInputSchema)
-    .use(residentRestrictedMiddleware)
-    .mutation(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
-      const result = await prisma.usNcRNA.create({
-        data: {
-          pseudonymizedId,
-          answers: {},
-        },
-      });
-
-      return {
-        ...result,
-        textAnswers: {},
-        checkboxAnswers: {},
-        lifeAreaAnswers: {},
-      };
-    }),
+  getRNA: ncProcedure.input(getRNAInputSchema).query(getRNAQueryResolver),
 
   // Update the RNA that has the given RNA id with the provided answers.
   // This will fully overwrite the user's answers stored in the db with whatever
