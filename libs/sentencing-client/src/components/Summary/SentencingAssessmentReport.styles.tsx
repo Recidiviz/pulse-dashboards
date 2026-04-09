@@ -100,15 +100,20 @@ export const PageContent = styled.div`
   flex-direction: column;
 `;
 
-export const SectionTitleContainer = styled.div`
+export const SectionTitleContainer = styled.div<{ $noMarginBottom?: boolean }>`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   font-style: normal;
   flex-direction: row;
   border-bottom: 2px solid ${customPalette.black};
-  margin-bottom: 15px;
+  margin-bottom: ${({ $noMarginBottom }) => ($noMarginBottom ? 0 : "15px")};
   padding-bottom: 2px;
+`;
+
+export const TitleRightContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export const SectionTitle = styled.h3`
@@ -487,4 +492,186 @@ export const HomePlanTitle = styled.h5`
   letter-spacing: -0.14px;
   color: ${customPalette.black};
   margin: 0;
+`;
+
+// ─── Historical Outcome Reference ─────────────────────────────────────────────
+
+export const DispositionChipsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+`;
+
+export const InsightChip = styled.div`
+  ${typography.Sans12}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 0.5px solid ${customPalette.black};
+  font-weight: 500;
+  line-height: 150%;
+`;
+
+export const DispositionTwoColumnRow = styled.div`
+  position: relative;
+  display: flex;
+  border: 1px solid ${customPalette.white.white2};
+`;
+
+export const DispositionLeftPanel = styled.div`
+  display: flex;
+  width: 250px;
+  padding: 20px 16px 24px 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-shrink: 0;
+  align-self: stretch;
+  background: ${palette.slate05};
+`;
+
+export const DispositionLeftPanelTitle = styled.h4`
+  ${typography.Sans16}
+  width: 158px;
+  color: ${customPalette.black};
+  font-weight: 600;
+  line-height: 18px;
+  margin: 0;
+`;
+
+export const DispositionLeftPanelText = styled.div`
+  ${typography.Sans12}
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 150%;
+
+  span {
+    font-weight: 700;
+  }
+`;
+
+export const DispositionRightPanel = styled.div`
+  display: flex;
+  width: 576px;
+  padding: 30px 16px 24px 16px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+`;
+
+export const DispositionRecordBadge = styled.div`
+  ${typography.Sans16}
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: ${customPalette.grey.dark};
+  color: ${palette.white};
+  line-height: 120%;
+  letter-spacing: -0.16px;
+  padding: 4px 10px;
+  border-radius: 4px;
+`;
+
+export const DispositionChartRow = styled.div`
+  display: flex;
+  padding: 0 40px;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  align-self: stretch;
+`;
+
+export const DispositionLegendList = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+`;
+
+export const DispositionLegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const DispositionLegendSwatch = styled.div<{ $color: string }>`
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: ${({ $color }) => $color};
+  border: 1px solid ${palette.white};
+`;
+
+export const DispositionLegendLabel = styled.div`
+  ${typography.Sans12}
+  font-weight: 500;
+  line-height: 150%;
+  white-space: nowrap;
+
+  span {
+    font-weight: 700;
+  }
+`;
+
+export const DispositionSVG = styled.svg`
+  flex-shrink: 0;
+`;
+
+export const DispositionEmptyContainer = styled.div`
+  display: flex;
+`;
+
+export const DispositionEmptyContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px 16px 24px 16px;
+`;
+
+export const DispositionEmptyTitle = styled.h4`
+  ${typography.Sans16}
+  font-weight: 600;
+  line-height: 18px;
+  color: ${customPalette.black};
+  margin: 0;
+`;
+
+export const DispositionEmptyBadge = styled.div`
+  ${typography.Sans16}
+  display: flex;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  background: ${customPalette.grey.dark};
+  color: ${palette.white};
+  line-height: 120%;
+  letter-spacing: -0.16px;
+`;
+
+export const DispositionEmptySubheading = styled.div`
+  ${typography.Sans14}
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 120%;
+  letter-spacing: -0.3px;
+  color: ${customPalette.black};
+`;
+
+export const DispositionEmptyText = styled.div`
+  ${typography.Sans12}
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.115px;
+  color: ${customPalette.black};
+
+  span {
+    font-weight: 700;
+  }
 `;

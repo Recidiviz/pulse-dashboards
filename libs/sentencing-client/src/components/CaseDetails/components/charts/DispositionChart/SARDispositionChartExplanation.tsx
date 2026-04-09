@@ -23,13 +23,7 @@ import { SARInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import * as Styled from "../components/Styles";
 import { HISTORICAL_PRECEDENT_TEXT } from "../constants";
-
-const BUCKET_TO_RISK_LEVEL: Record<number, string> = {
-  0: "low risk",
-  1: "moderate risk",
-  2: "high risk",
-  3: "very high risk",
-};
+import { BUCKET_TO_RISK_LEVEL } from "./sarUtils";
 
 interface SARDispositionChartExplanationProps {
   insight: NonNullable<SARInsight>;

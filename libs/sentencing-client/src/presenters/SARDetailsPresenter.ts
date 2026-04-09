@@ -51,6 +51,7 @@ import {
   type SARSectionName,
 } from "../components/SARDetails/constants";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
+import { InsightDescriptionContext } from "../components/Summary/ReportDispositionChart";
 import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSummaryCard";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
@@ -251,6 +252,31 @@ export class SARDetailsPresenter implements Hydratable {
 
   get insightData() {
     return this.insight ?? undefined;
+  }
+
+  get emptyStateDescriptionContext(): InsightDescriptionContext | null {
+    if (this.insight) {
+      const { gender, assessmentScoreBucketStart, offense, offenseCategory } =
+        this.insight;
+      return { gender, assessmentScoreBucketStart, offense, offenseCategory };
+    }
+    // Fallback: build context from sarData when no matching insight exists.
+    const sarData = this.SARData;
+    const gender = sarData?.client?.gender;
+    const offense = this.charges[0]?.offense;
+    if (!gender || !offense) return null;
+    return {
+      gender,
+      assessmentScoreBucketStart:
+        sarData?.assessmentScore != null
+          ? getAssessmentScoreBucket(
+              sarData.assessmentType ?? null,
+              sarData.assessmentScore,
+            )
+          : null,
+      offense,
+      offenseCategory: null,
+    };
   }
 
   get sortedDispositionData() {

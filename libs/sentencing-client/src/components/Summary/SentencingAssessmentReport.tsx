@@ -27,6 +27,10 @@ import {
   SentencingAssessmentReportSection,
 } from "./ReportBlock";
 import { ReportCharge } from "./ReportCharge";
+import {
+  ReportDispositionChart,
+  ReportDispositionChartEmpty,
+} from "./ReportDispositionChart";
 import { ReportKeyConsiderations } from "./ReportKeyConsiderations";
 import { ReportOffenderAssessment } from "./ReportOffenderAssessment";
 import { ReportPriorTreatmentHistory } from "./ReportPriorTreatmentHistory";
@@ -200,6 +204,16 @@ export const SentencingAssessmentReport: React.FC<
               />
               {!presenter.recommendationSkipped && (
                 <ReportRecommendation sarData={sarData} />
+              )}
+              {presenter.insightData?.dispositionNumRecords ? (
+                <ReportDispositionChart
+                  insight={presenter.insightData}
+                  sortedDispositionData={presenter.sortedDispositionData}
+                />
+              ) : (
+                <ReportDispositionChartEmpty
+                  descriptionContext={presenter.emptyStateDescriptionContext}
+                />
               )}
             </Styled.PageContent>
           </td>

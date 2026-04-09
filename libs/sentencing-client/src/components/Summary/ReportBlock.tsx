@@ -65,8 +65,11 @@ export const ReportBlock: React.FC<ReportBlockProps> = ({
 interface SentencingAssessmentReportSectionProps {
   title: string;
   note?: string;
+  titleRight?: React.ReactNode;
   splittable?: boolean;
   pageStart?: boolean;
+  /** Removes the default margin-bottom under the section header line. */
+  noHeaderMargin?: boolean;
   /**
    * When provided, a second no-split block is rendered immediately after the
    * primary block, with the heading "{title} Continued..." auto-derived from
@@ -93,13 +96,25 @@ export const SectionContinuationHeader: React.FC<{ title: string }> = ({
 
 export const SentencingAssessmentReportSection: React.FC<
   SentencingAssessmentReportSectionProps
-> = ({ title, note, splittable, pageStart, continuationContent, children }) => (
+> = ({
+  title,
+  note,
+  titleRight,
+  splittable,
+  pageStart,
+  noHeaderMargin,
+  continuationContent,
+  children,
+}) => (
   <>
     <ReportBlock splittable={splittable} pageStart={pageStart}>
-      <Styled.SectionTitleContainer>
+      <Styled.SectionTitleContainer $noMarginBottom={noHeaderMargin}>
         <Styled.SectionTitle>{title}</Styled.SectionTitle>
         {note && <Styled.SectionTitleNote>{note}</Styled.SectionTitleNote>}
       </Styled.SectionTitleContainer>
+      {titleRight && (
+        <Styled.TitleRightContainer>{titleRight}</Styled.TitleRightContainer>
+      )}
       {children}
     </ReportBlock>
     {continuationContent && (

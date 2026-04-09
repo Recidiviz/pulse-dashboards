@@ -19,6 +19,13 @@ import { formatOffenseLabel } from "../../../../../../src/utils/utils";
 import { SARInsight } from "../../../../../api";
 import { getSubtitleGender } from "../common/utils";
 
+export const BUCKET_TO_RISK_LEVEL: Record<number, string> = {
+  0: "low risk",
+  1: "moderate risk",
+  2: "high risk",
+  3: "very high risk",
+};
+
 const BUCKET_TO_SUBTITLE_RISK_LEVEL: Record<number, string> = {
   0: "Low risk score",
   1: "Moderate risk score",
