@@ -3,6 +3,11 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@jii-texting/seed-demo/src",
   "projectType": "application",
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@jii-texting/server"
+    }
+  },
   "targets": {
     "create-base-package-json": {
       "executor": "nx:run-commands",
@@ -11,14 +16,7 @@
         "cwd": "{workspaceRoot}"
       }
     },
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "build": {
+    "requires-sops-env:build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
@@ -26,8 +24,7 @@
         {
           "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
-        },
-        "load-env-files"
+        }
       ],
       "options": {
         "platform": "node",
@@ -80,9 +77,15 @@
     },
     "run-local-job": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": "@jii-texting/prisma",
+          "target": "custom-prisma-deploy"
+        }
+      ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "nx custom-prisma-deploy @jii-texting/prisma && tsx src/main.ts --state-code=US_ID"
+        "command": "tsx src/main.ts --state-code=US_ID"
       }
     }
   },

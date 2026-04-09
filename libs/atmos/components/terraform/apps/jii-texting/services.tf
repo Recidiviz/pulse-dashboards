@@ -104,22 +104,12 @@ resource "google_project_iam_member" "airflow_pubsub_publisher" {
   member  = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
 }
 
-moved {
-  from = google_project_iam_member.airflow-pubsub-publisher
-  to   = google_project_iam_member.airflow_pubsub_publisher
-}
-
 # Grant Workflow Invoker role to Google Workflows service account to allow it to execute Workflows
 resource "google_project_iam_member" "workflow_executor" {
   project = var.project_id
   role    = "roles/workflows.admin"
   member  = google_service_account.workflows[0].member
   count   = length(google_service_account.eventarc) > 0 ? 1 : 0
-}
-
-moved {
-  from = google_project_iam_member.workflow-executor
-  to   = google_project_iam_member.workflow_executor
 }
 
 # Grant cloud run job executor so the Workflows service account can execute Cloud Run jobs with env variable overrides
@@ -138,11 +128,6 @@ resource "google_project_iam_member" "cloud_run_viewer" {
   count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
-moved {
-  from = google_project_iam_member.cloud-run-viewer
-  to   = google_project_iam_member.cloud_run_viewer
-}
-
 # Grant Cloud Run job SA permission to run with overrides
 resource "google_project_iam_member" "job_with_overrides" {
   project = var.project_id
@@ -150,21 +135,11 @@ resource "google_project_iam_member" "job_with_overrides" {
   member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
 }
 
-moved {
-  from = google_project_iam_member.job-with-overrides
-  to   = google_project_iam_member.job_with_overrides
-}
-
 # Grant Cloud Run job SA permission to run with overrides
 resource "google_project_iam_member" "secret_accessor" {
   project = var.project_id
   role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
-}
-
-moved {
-  from = google_project_iam_member.secret-accessor
-  to   = google_project_iam_member.secret_accessor
 }
 
 # Allow unauthenticated (public) access to the Cloud Run service, e.g. for Twilio to make requests to the webhook

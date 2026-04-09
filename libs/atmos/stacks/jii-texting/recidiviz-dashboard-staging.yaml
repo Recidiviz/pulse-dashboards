@@ -68,10 +68,7 @@ components:
         etl_bucket_name: !terraform.state gcs-buckets {{ .stack }} name
         # The 'names_list' output uses the same order as the list of names, so ensure that the archive bucket is second
         archive_bucket_name: !terraform.state gcs-buckets {{ .stack }} names_list[1]
-        processor_job_env_secret_id: env_staging_jii_texting_processor_job
-        server_env_secret_id: env_staging_jii_texting_server
-        import_job_env_secret_id: env_staging_jii_texting_import_job
-        migrate_db_env_secret_id: env_staging_jii_texting_migrate_db
+        environment: staging
 
     postgres-bq-data-transfer:
       vars:

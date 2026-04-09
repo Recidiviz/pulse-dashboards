@@ -148,7 +148,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "dependsOn": ["prisma-generate"],
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/libs/@jii/prisma"],
@@ -156,6 +156,10 @@
       "options": {
         "command": "vitest",
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     }
   }

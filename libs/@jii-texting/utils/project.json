@@ -3,15 +3,13 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@jii-texting/utils/src",
   "projectType": "library",
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@jii-texting/server"
+    }
+  },
   "tags": ["jii-texting", "scope:server"],
   "targets": {
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_jii_texting_server --env_test env_test_jii_texting_server",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "dependsOn": [
@@ -28,23 +26,23 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
           "projects": ["@jii-texting/prisma"],
-          "target": "prisma-generate"
-        },
-        {
-          "projects": ["@jii-texting/prisma"],
-          "target": "docker"
+          "target": "custom-prisma-deploy"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/libs/@jii-texting/utils"],
       "cache": true,
       "options": {
-        "command": "nx custom-prisma-deploy @jii-texting/prisma --accept-data-loss && cd libs/@jii-texting/utils && vitest",
-        "cwd": "{workspaceRoot}"
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     }
   }

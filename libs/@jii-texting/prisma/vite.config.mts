@@ -16,10 +16,12 @@
 // =============================================================================
 
 /// <reference types='vitest' />
+import { workspaceRoot } from "@nx/devkit";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@jii-texting/prisma",
 
@@ -36,11 +38,10 @@ export default defineConfig(() => ({
       reportsDirectory: "../../../coverage/libs/@jii-texting/prisma",
       provider: "v8",
     },
-    env: {
-      DATABASE_URL:
-        "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
-      DATABASE_URL_US_ID:
-        "postgresql://postgres:postgres@localhost:6503/jii-texting-test-us-id?schema=public",
-    },
+    // Load .env.test from @jii-texting/server (adds basic env-compatibility for direct invocations of vitest)
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/@jii-texting/server"), "")
+        : undefined,
   },
 }));

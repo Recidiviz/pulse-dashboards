@@ -65,20 +65,20 @@ variable "processor_job_name" {
   default     = "process-jii"
 }
 
-variable "processor_job_env_secret_id" {
-  type        = string
-  description = "The secret id for where to find the env vars for the processor job"
-}
-
 variable "server_name" {
   type        = string
   description = "The name of the Cloud Run service"
   default     = "jii-texting-server"
 }
 
-variable "server_env_secret_id" {
+variable "environment" {
   type        = string
-  description = "The secret id for where to find the env vars for the server"
+  description = "The environment name to load its corresponding environment file from ./secrets/ from"
+
+  validation {
+    condition     = contains(["demo", "staging", "production"], var.environment)
+    error_message = "ERROR: Valid values for 'environment' are \"demo\", \"staging\",  and \"production\"!"
+  }
 }
 
 variable "archive_bucket_name" {
@@ -86,15 +86,6 @@ variable "archive_bucket_name" {
   description = "The bucket id for where the archived data should be stored"
 }
 
-variable "import_job_env_secret_id" {
-  type        = string
-  description = "The secret id for where to find the env vars for the import job"
-}
-
-variable "migrate_db_env_secret_id" {
-  type        = string
-  description = "The secret id for where to find the env vars for the migrate db job"
-}
 
 variable "migrate_db_name" {
   type        = string

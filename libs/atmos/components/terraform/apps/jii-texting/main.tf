@@ -1,17 +1,15 @@
+data "sops_file" "shared_env" {
+  source_file = "./secrets/env.shared.enc.yaml"
+}
+
 data "sops_file" "env" {
-  source_file = "../../env-secrets/secrets/jii_texting_server.enc.yaml"
+  source_file = "./secrets/env.${var.environment}.enc.yaml"
 }
 
 
 locals {
-  env_secrets          = yamldecode(data.sops_file.env.raw)
-  shared_server_env    = local.env_secrets["env_jii_texting_server"]
-  shared_processor_env = local.env_secrets["env_jii_texting_processor_job"]
-  shared_import_env    = local.env_secrets["env_jii_texting_import_job"]
-  processor_job_env    = local.env_secrets[var.processor_job_env_secret_id]
-  server_env           = local.env_secrets[var.server_env_secret_id]
-  migrate_db_env       = local.env_secrets[var.migrate_db_env_secret_id]
-  import_env           = var.demo_mode ? null : local.env_secrets[var.import_job_env_secret_id]
+  shared_env  = yamldecode(data.sops_file.shared_env.raw)
+  env_secrets = yamldecode(data.sops_file.env.raw)
 
   server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_container_version}"
   migrate_db_image    = "${var.artifact_registry_repo}/jii-texting-server:${var.migrate_db_container_version}"
@@ -22,34 +20,8 @@ locals {
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  import_job_env_vars = nonsensitive([
-    for key, value in merge(local.shared_import_env, var.demo_mode ? null : local.import_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  processor_job_env_vars = nonsensitive([
-    for key, value in merge(local.shared_processor_env, local.processor_job_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  server_env_vars = nonsensitive([
-    for key, value in merge(local.shared_server_env, local.server_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  migrate_db_env_vars = nonsensitive([
-    for key, value in local.migrate_db_env : {
+  env_vars = nonsensitive([
+    for key, value in merge(local.shared_env, local.env_secrets) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -95,7 +67,10 @@ module "cloud_run" {
     {
       container_image = local.server_image
 
-      env_vars = local.server_env_vars
+      env_vars = concat(local.env_vars, [{
+        name  = "SENTRY_DSN"
+        value = "https://d469d84bb29f6e77828e286a793ede9d@o432474.ingest.us.sentry.io/4508728082890752"
+      }])
 
       volume_mounts = [{
         name       = "cloudsql"
@@ -104,23 +79,12 @@ module "cloud_run" {
     }
   ]
 
-  volumes = [{
-    name = "cloudsql"
-    cloud_sql_instance = {
-      instances = [module.database.connection_name]
-    }
-    }
-  ]
+  volumes = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
 
   # Roles to grant the Cloud Run service account
   service_account_project_roles = ["roles/cloudsql.client", "roles/storage.objectViewer"]
 
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
-}
-
-moved {
-  from = module.cloud-run
-  to   = module.cloud_run
 }
 
 # Configure a job that will migrate the database schema
@@ -131,32 +95,22 @@ module "migrate_db_job" {
   image                         = local.migrate_db_image
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.migrate_db_env_vars
   cloud_run_deletion_protection = false
   container_command             = ["./scripts/migrate-dbs.sh"]
   max_retries                   = 1
 
-  volumes = [{
-    name = "cloudsql"
-    cloud_sql_instance = {
-      instances = [module.database.connection_name]
-    }
-    }
-  ]
+  env_vars = concat(local.env_vars, [{
+    name  = "SENTRY_DSN"
+    value = "https://d469d84bb29f6e77828e286a793ede9d@o432474.ingest.us.sentry.io/4508728082890752"
+  }])
 
-  volume_mounts = [{
-    name       = "cloudsql"
-    mount_path = "/cloudsql"
-  }]
+  volumes       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
+  volume_mounts = [{ name = "cloudsql", mount_path = "/cloudsql" }]
 }
 
 
 # Configure a Google Workflow that is executed when a message is published to
-
-moved {
-  from = module.migrate-db-job
-  to   = module.migrate_db_job
-} # the jii_texting_export_success_topic
+# the jii_texting_export_success_topic
 module "handle_jii_texting_export_wf" {
   count                 = var.demo_mode ? 0 : 1
   project_id            = var.project_id
@@ -186,13 +140,6 @@ module "handle_jii_texting_export_wf" {
   }
 }
 
-
-
-moved {
-  from = module.handle-jii-texting-export-wf
-  to   = module.handle_jii_texting_export_wf
-}
-
 # Configure a Cloud Run job that will process the JII eligible for texts on a given day
 module "process_jii_cloud_run_job" {
   source                        = "../../vendor/cloud-run-job-exec"
@@ -200,39 +147,38 @@ module "process_jii_cloud_run_job" {
   image                         = local.processor_job_image
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.processor_job_env_vars
   cloud_run_deletion_protection = false
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
+  volume_mounts                 = [{ name = "cloudsql", mount_path = "/cloudsql" }]
   limits                        = { memory = "1Gi", cpu = "1" }
   timeout                       = "21600s"
-}
-
-moved {
-  from = module.process-jii-cloud-run-job
-  to   = module.process_jii_cloud_run_job
+  env_vars = concat(local.env_vars, [{
+    name  = "SENTRY_DSN"
+    value = "https://8342ef51075f2b70627d3e32a8c31494@o432474.ingest.us.sentry.io/4509232178724864"
+  }])
 }
 
 
 # Configure a Cloud Run job that will import the data into our CloudSQL DB
 module "import_job" {
-  task_count                    = var.demo_mode ? 0 : 1
-  source                        = "../../vendor/cloud-run-job-exec"
-  name                          = local.import_job_name
-  image                         = local.import_job_image
-  project_id                    = var.project_id
-  location                      = var.location
-  env_vars                      = local.import_job_env_vars
+  task_count = var.demo_mode ? 0 : 1
+  source     = "../../vendor/cloud-run-job-exec"
+  name       = local.import_job_name
+  image      = local.import_job_image
+  project_id = var.project_id
+  location   = var.location
+  env_vars = concat(local.env_vars, [{
+    name  = "SENTRY_DSN",
+    value = "https://fbf09e10a846d795ceef327123f2ab5a@o432474.ingest.us.sentry.io/4509232399843328"
+  }])
   cloud_run_deletion_protection = false
   exec                          = false
   timeout                       = "21600s"
   max_retries                   = 1
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
+  volume_mounts                 = [{ name = "cloudsql", mount_path = "/cloudsql" }]
 }
 
-moved {
-  from = module.import-job
-  to   = module.import_job
-}
 
 # Configure a Google Workflow that executes the main processing of JII texts,
 # which will be executed by the handle-jii-texting-gcs-upload-wf
@@ -251,9 +197,4 @@ module "process_jii_to_text_wf" {
     IMPORT_JOB_NAME       = module.import_job.id
     PROCESS_JOB_NAME      = module.process_jii_cloud_run_job.id
   }
-}
-
-moved {
-  from = module.process-jii-to-text-wf
-  to   = module.process_jii_to_text_wf
 }

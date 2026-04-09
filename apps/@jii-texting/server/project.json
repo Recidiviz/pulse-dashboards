@@ -11,13 +11,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server --env_demo env_demo_jii_texting_server",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "dependsOn": [
@@ -34,7 +27,13 @@
         "cwd": "{projectRoot}"
       }
     },
-    "dev": {
+    "requires-sops-env:dev": {
+      "dependsOn": [
+        {
+          "projects": ["@jii-texting/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
       "executor": "nx:run-commands",
       "options": {
         "command": "vite-node --watch src/main.ts",
@@ -56,8 +55,7 @@
         {
           "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
-        },
-        "load-env-files"
+        }
       ],
       "options": {
         "platform": "node",
@@ -114,23 +112,23 @@
         "buildTarget": "@jii-texting/server:build"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
           "projects": ["@jii-texting/prisma"],
-          "target": "prisma-generate"
-        },
-        {
-          "projects": ["@jii-texting/prisma"],
-          "target": "docker"
+          "target": "custom-prisma-deploy"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/@jii-texting/server"],
       "cache": true,
       "options": {
-        "command": "nx custom-prisma-deploy @jii-texting/prisma && cd apps/@jii-texting/server && vitest",
-        "cwd": "{workspaceRoot}"
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     },
     "requires-sops-env:upload-sourcemaps": {},
