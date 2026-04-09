@@ -249,7 +249,6 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
       ? {
           manualSorting: true,
           onSortingChange: manualSorting.setSorting,
-          state: { sorting: manualSorting?.sorting },
         }
       : {}),
     ...(enableMultiSort
@@ -264,6 +263,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
       : {}),
     initialState,
     state: {
+      ...(manualSorting ? { sorting: manualSorting?.sorting } : {}),
       ...(enableProgressiveLoading ? { pagination: progressiveLoading } : {}),
     },
   });

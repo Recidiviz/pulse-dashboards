@@ -408,11 +408,7 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   return (
     <CaseloadTable
       expandedLastColumn
-      data={
-        presenter.config.enableWorkflowsFilter
-          ? presenter.orderedOpportunitiesForSelectedCategory(subcategory)
-          : opportunities
-      }
+      data={opportunities}
       columns={displayedColumns}
       onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
       onRowRender={(opp) => {
@@ -466,7 +462,9 @@ const MultiTableView = observer(function MultiTableView({
       preExpanded={[...displayedSubcategories.keys()]}
     >
       {displayedSubcategories.map((category, i) => {
-        const opps = peopleInActiveTabBySubcategory[category];
+        const opps = presenter.config.enableWorkflowsFilter
+          ? presenter.orderedOpportunitiesForSelectedCategory(category)
+          : peopleInActiveTabBySubcategory[category];
 
         const sortedOpps =
           sorting.length === 0
