@@ -68,7 +68,7 @@ const [slackToken] = await secretClient.accessSecretVersion({
 
 const owner = "Recidiviz";
 const repo = "pulse-dashboards";
-const currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
+const currentRevision = (await $`git rev-parse --short=12 HEAD`).stdout.trim();
 const octokit = new Octokit({
   auth: deployScriptPat.payload.data.toString(),
 });
@@ -923,7 +923,7 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
     await $`git fetch origin main --negotiate-only --negotiation-tip=${currentRevision}`
   ).stdout.trim();
   const shortenedAncestor = (
-    await $`git rev-parse --short ${mostRecentAncestor}`
+    await $`git rev-parse --short=12 ${mostRecentAncestor}`
   ).stdout.trim();
   if (shortenedAncestor === currentRevision) {
     const githubLink = `https://github.com/${owner}/${repo}/commit/${mostRecentAncestor}`;
