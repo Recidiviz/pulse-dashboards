@@ -17,8 +17,8 @@ services:
       app: pulse-dashboards-e2e
 
   app:
-    # This image is built using e2e.Dockerfile and manually pushed to Dockerhub
-    image: danrecidiviz/firebase-tools-react:latest
+    # This image is built using e2e.Dockerfile and manually pushed to github
+    image: ghcr.io/recidiviz/pulse-dashboards/firebase-tools-react:latest
     working_dir: /home/node/app/dist/apps/staff
     volumes:
       - ../../:/home/node/app
@@ -40,7 +40,7 @@ services:
       app: pulse-dashboards-e2e
 
   server:
-    image: danrecidiviz/firebase-tools-react:latest
+    image: ghcr.io/recidiviz/pulse-dashboards/firebase-tools-react:latest
     working_dir: /home/node/app/dist/libs/staff-shared-server
     volumes:
       - ../../:/home/node/app
@@ -65,7 +65,7 @@ services:
       app: pulse-dashboards-e2e
 
   firebase:
-    image: danrecidiviz/firebase-tools-react:latest
+    image: ghcr.io/recidiviz/pulse-dashboards/firebase-tools-react:latest
     working_dir: /home/node/app
     volumes:
       - ../../:/home/node/app
