@@ -29,7 +29,9 @@ import RecordPlugin from "wavesurfer.js/dist/plugins/record";
 
 import { getBaseUrl } from "../../../api";
 import { useApplicationContext } from "../../../contexts/ApplicationContext";
+import { CHAR_LIMIT } from "../../../hooks/useGuardrails";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
+import { CharacterCounter } from "./CharacterCounter";
 
 type UIRecordingStatus =
   | "created"
@@ -317,6 +319,7 @@ const ChatInput = ({
                 recordingStatus === "recording" ||
                 recordingStatus === "processing"
               }
+              maxLength={CHAR_LIMIT}
               placeholder={getPlaceholderText()}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -412,6 +415,7 @@ const ChatInput = ({
           </div>
         </Box>
       </Box>
+      <CharacterCounter count={inputValue.length} limit={CHAR_LIMIT} />
     </Box>
   );
 };

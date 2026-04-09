@@ -1,0 +1,14 @@
+.wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 4px 0;
+}
+
+.counter {
+  font-size: 0.75rem;
+  color: var(--gray-700);
+}
+
+.counter.nearLimit {
+  color: var(--color-error-1);
+}

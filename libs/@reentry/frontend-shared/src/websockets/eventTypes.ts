@@ -41,6 +41,12 @@ export interface ForceDisconnectContent {
   reason: string;
 }
 
+export type GuardrailType = "char_limit" | "crisis" | "injection";
+
+export interface GuardrailTriggeredContent {
+  guardrails: GuardrailType[];
+}
+
 // Socket.io specific interfaces
 export interface ServerToClientEvents {
   pong: (content: PongEventContent) => void;
@@ -49,6 +55,7 @@ export interface ServerToClientEvents {
   sectionChange: (content: SectionChangeContent) => void;
   forceDisconnect: (content: ForceDisconnectContent) => void;
   tokenExpired: () => void;
+  guardrailTriggered: (content: GuardrailTriggeredContent) => void;
 }
 
 export interface ClientToServerEvents {

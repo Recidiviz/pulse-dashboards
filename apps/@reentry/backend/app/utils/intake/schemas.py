@@ -149,12 +149,18 @@ class TokenExpiredEvent(BaseModel):
     type: Literal["tokenExpired"] = "tokenExpired"
 
 
+class GuardrailTriggeredEvent(BaseModel):
+    type: Literal["guardrailTriggered"] = "guardrailTriggered"
+    guardrails: list[str]
+
+
 type ServerEvent = (
     PongEvent
     | AIMessageEvent
     | ConnectionAckEvent
     | SectionChangeEvent
     | TokenExpiredEvent
+    | GuardrailTriggeredEvent
 )
 
 ## Front-end Events

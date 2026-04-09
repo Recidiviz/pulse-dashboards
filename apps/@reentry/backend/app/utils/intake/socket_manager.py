@@ -28,12 +28,14 @@ from app.services.client_data.types import ClientDataRecord
 from app.utils.intake.client_connection_manager import ClientConnectionManager
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.db_manager import DatabaseManager
+from app.utils.intake.guardrails import run_guardrails
 from app.utils.intake.schemas import (
     AIMessageEvent,
     Auth,
     ClientContext,
     ConnectionAckContent,
     ConnectionAckEvent,
+    GuardrailTriggeredEvent,
     HumanMessage,
     PongEvent,
     PongEventContent,
@@ -552,6 +554,13 @@ class SocketIOManager:
             traceback.print_exc()
             logger.error(f"Error handling disconnect for {sid}: {e}")
 
+    async def _handle_guardrail_response(
+        self, sid: str, client_pseudo_id: str, triggered: list[str]
+    ) -> None:
+        logger.warning(f"Guardrail(s) triggered for {client_pseudo_id}: {triggered}")
+        event = GuardrailTriggeredEvent(guardrails=triggered)
+        await self.sio.emit(event.type, event.model_dump(mode="json"), room=sid)
+
     async def handle_client_response(
         self, sid: str, data
     ) -> None | IntakeMessageResponse:
@@ -578,6 +587,10 @@ class SocketIOManager:
             content = parsed_message.content
             if not content:
                 logger.debug(f"Empty content received from sid {sid}")
+                return
+
+            if triggered := run_guardrails(content):
+                await self._handle_guardrail_response(sid, client_pseudo_id, triggered)
                 return
 
             intake = await self.db_manager.get_intake(client_pseudo_id)
