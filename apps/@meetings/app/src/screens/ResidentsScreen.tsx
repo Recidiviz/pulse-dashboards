@@ -110,15 +110,16 @@ const ResidentsScreen = () => {
           ),
           web: (
             <View className="flex-1 pb-4">
-              <PersonsMobileList
-                persons={filteredResidents}
-                recordingState={recordingState}
-                searchQuery={search}
-                setSearchQuery={setSearch}
-                setSortBy={setSortBy}
-                personType="resident"
-                className="md:hidden"
-              />
+              <View className="flex-1 md:hidden">
+                <PersonsMobileList
+                  persons={filteredResidents}
+                  recordingState={recordingState}
+                  searchQuery={search}
+                  setSearchQuery={setSearch}
+                  setSortBy={setSortBy}
+                  personType="resident"
+                />
+              </View>
               <ScrollView className="hidden flex-1 md:block">
                 <View className="mx-auto w-full max-w-[960px] flex-1">
                   <PersonsHeaderContent

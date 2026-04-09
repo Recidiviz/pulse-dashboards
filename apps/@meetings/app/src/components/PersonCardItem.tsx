@@ -22,7 +22,6 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
-import { useListItemHeight } from "../hooks/useListItemHeight";
 import { Typography } from "../shared/ui/Typography";
 import {
   formatPersonLastMeetingDate,
@@ -38,20 +37,13 @@ interface ItemProps {
 }
 
 const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
-  const { calculatePersonItemHeight } = useListItemHeight();
   const hasActiveMeeting = !!person.activeMeetingId;
   const hasLastMeeting =
     !!person.meetingDetails.id &&
     !!person.meetingDetails.lastCompletedMeetingTime;
 
   return (
-    <View
-      style={{
-        height: calculatePersonItemHeight({ hasActiveMeeting, hasLastMeeting }),
-      }}
-      key={person.personId}
-      className="w-full px-4"
-    >
+    <View key={person.personId} className="mb-2 w-full px-4">
       <View className="flex w-full flex-1 flex-col gap-2 rounded-[20px] bg-primary p-3">
         <Link
           screen={personType === "client" ? "ClientProfile" : "ResidentProfile"}

@@ -37,29 +37,29 @@ export function EndMeetingModal({
     <Modal
       visible
       transparent
-      containerClassName="px-6 py-5"
+      containerClassName="px-6 py-5 sm:max-w-[360px]"
       onClickOutside={onContinue}
       backdrop={ModalConfirmationBackdrop}
     >
-      <Typography className="mb-3 text-xl font-semibold text-primary">
+      <Typography className="mb-3 text-center text-xl font-semibold text-primary">
         End this meeting?
       </Typography>
-      <Typography className="mb-5 w-[350px] text-secondary">
+      <Typography className="mb-5 text-center text-base text-secondary">
         You’re about to finish the meeting with{" "}
-        <Typography className="font-bold text-primary">
+        <Typography className="text-base font-bold text-primary">
           {person.fullName}
         </Typography>{" "}
         and save the notes for processing.
       </Typography>
       <View className="flex-row gap-2">
         <TouchableOpacity
-          className="w-[170px] items-center rounded-full border border-subtle py-3"
+          className="flex-1 items-center rounded-full border border-subtle py-3"
           onPress={onContinue}
         >
           <Typography className="font-semibold text-primary">Cancel</Typography>
         </TouchableOpacity>
         <TouchableOpacity
-          className="w-[170px] items-center rounded-full bg-brand py-3"
+          className="flex-1 items-center rounded-full bg-brand py-3"
           onPress={onFinishAndSave}
         >
           <Typography className="font-semibold text-on-brand">

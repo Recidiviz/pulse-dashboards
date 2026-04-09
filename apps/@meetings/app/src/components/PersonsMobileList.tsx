@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { View, VirtualizedList } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { View } from "react-native";
 
 import { Person, PersonType } from "../common/types";
 import PersonCardItem from "./PersonCardItem";
@@ -29,7 +30,6 @@ type Props = {
   setSearchQuery: (query: string) => void;
   setSortBy: (option: string) => void;
   personType: PersonType;
-  className?: string;
 };
 
 const PersonsMobileList = ({
@@ -39,7 +39,6 @@ const PersonsMobileList = ({
   setSearchQuery,
   setSortBy,
   personType,
-  className,
 }: Props) => {
   const headerDescription =
     personType === "client"
@@ -47,12 +46,9 @@ const PersonsMobileList = ({
       : "All residents are displayed below";
 
   return (
-    <VirtualizedList
-      className={className}
+    <FlashList
       data={persons}
       keyExtractor={(item: Person) => item.personId.toString()}
-      getItemCount={(data: Person[]) => data.length}
-      getItem={(data: Person[], index) => data[index]}
       renderItem={({ item }: { item: Person }) => (
         <PersonCardItem
           person={item}
@@ -60,7 +56,6 @@ const PersonsMobileList = ({
           personType={personType}
         />
       )}
-      initialNumToRender={10}
       ListEmptyComponent={
         <PersonsPlaceholder
           personType={personType}
@@ -80,11 +75,6 @@ const PersonsMobileList = ({
           />
         </View>
       }
-      contentContainerStyle={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-      }}
     />
   );
 };

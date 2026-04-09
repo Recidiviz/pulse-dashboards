@@ -9720,6 +9720,7 @@ __metadata:
     "@react-navigation/native": "npm:^7.1.26"
     "@react-navigation/native-stack": "npm:^7.6.3"
     "@sentry/react-native": "npm:~7.2.0"
+    "@shopify/flash-list": "npm:^2.3.1"
     babel-preset-expo: "npm:~54.0.0"
     clsx: "npm:^2.1.1"
     date-fns: "npm:^4.1.0"
@@ -16474,6 +16475,17 @@ __metadata:
   peerDependencies:
     webpack: ">=4.40.0"
   checksum: 10c0/dc9466b32df15faa98915a916faeaaca4dc374d823f855c39f3edbdf9939eaf44d73f49bc3de9a91bb593ae5f76de1a55aa5939d319c9ef752076a169e44f43d
+  languageName: node
+  linkType: hard
+
+"@shopify/flash-list@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@shopify/flash-list@npm:2.3.1"
+  peerDependencies:
+    "@babel/runtime": "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/abe921b93aeb6bf35efb4cd16163ca0126eec1513a40f1b88e370eb646e8bece5daa245e889300aa7ace2a4a81a9ffbd765c1ce2c3f2346611e94cc66c97c6e3
   languageName: node
   linkType: hard
 

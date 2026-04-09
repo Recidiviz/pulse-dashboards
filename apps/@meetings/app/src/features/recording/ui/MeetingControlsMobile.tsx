@@ -19,6 +19,7 @@ import { Link, useRoute } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { ChevronRightIcon } from "react-native-heroicons/outline";
 import XIcon from "react-native-heroicons/outline/XIcon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import PauseSvg from "../../../assets/icons/pause.svg";
 import PlaySvg from "../../../assets/icons/play.svg";
@@ -35,6 +36,7 @@ type Props = {
 };
 
 export function MeetingControlsMobile({ person, personType }: Props) {
+  const insets = useSafeAreaInsets();
   const route = useRoute();
   const {
     status,
@@ -63,82 +65,86 @@ export function MeetingControlsMobile({ person, personType }: Props) {
     route.name === "ClientNewMeeting" || route.name === "ResidentNewMeeting";
 
   return (
-    <View className="flex flex-col items-center rounded-t-3xl bg-primary p-4">
-      {isNewMeetingScreen ? (
-        <Typography className="text-lg font-semibold leading-[26px] text-primary">
-          {person.fullName}
-        </Typography>
-      ) : (
-        <Link {...linkProps}>
-          <View className="flex flex-row items-center gap-1">
-            <Typography className="text-lg font-semibold leading-[26px] text-primary">
-              {person.fullName}
-            </Typography>
-            <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
-          </View>
-        </Link>
-      )}
-      <View className="mt-1 flex flex-row items-center gap-2">
-        <RecordingIndicator status={status} />
-        <Typography className="text-sm font-medium text-primary">
-          {status === "recording"
-            ? "Recording in progress"
-            : "Recording paused"}
-        </Typography>
-        <Typography className="text-sm text-secondary">
-          {formatDurationNumeric(durationMs)}
-        </Typography>
-      </View>
-      <View className="mt-4 w-full flex-row items-center justify-center gap-2">
-        {status === "recording" ? (
-          <TouchableOpacity
-            className="flex-1 disabled:opacity-50"
-            onPress={togglePauseResume}
-            disabled={isControlsDisabled}
-          >
-            <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-secondary">
-              <PauseSvg className="!size-4 fill-tertiary" />
-              <Typography className="text-base font-semibold leading-[18px] text-primary">
-                Pause
-              </Typography>
-            </View>
-          </TouchableOpacity>
+    <>
+      <View className="flex flex-col items-center rounded-t-3xl bg-primary p-4">
+        {isNewMeetingScreen ? (
+          <Typography className="text-lg font-semibold leading-[26px] text-primary">
+            {person.fullName}
+          </Typography>
         ) : (
+          <Link {...linkProps}>
+            <View className="flex flex-row items-center gap-1">
+              <Typography className="text-lg font-semibold leading-[26px] text-primary">
+                {person.fullName}
+              </Typography>
+              <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
+            </View>
+          </Link>
+        )}
+        <View className="mt-1 flex flex-row items-center gap-2">
+          <RecordingIndicator status={status} />
+          <Typography className="text-sm font-medium text-primary">
+            Recording in progress
+          </Typography>
+          <Typography className="text-sm text-secondary">
+            {formatDurationNumeric(durationMs)}
+          </Typography>
+        </View>
+        <View className="mt-4 w-full flex-row items-center justify-center gap-2">
+          {status === "recording" ? (
+            <TouchableOpacity
+              className="flex-1 disabled:opacity-50"
+              onPress={togglePauseResume}
+              disabled={isControlsDisabled}
+            >
+              <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-secondary">
+                <PauseSvg className="!size-4 fill-tertiary" />
+                <Typography className="text-base font-semibold leading-[18px] text-primary">
+                  Pause
+                </Typography>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              className="flex-1 disabled:opacity-50"
+              onPress={togglePauseResume}
+              disabled={isControlsDisabled}
+            >
+              <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-brand">
+                <PlaySvg className="!size-4 fill-on-brand" />
+                <Typography className="text-base font-semibold leading-[18px] text-on-brand">
+                  Resume
+                </Typography>
+              </View>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             className="flex-1 disabled:opacity-50"
-            onPress={togglePauseResume}
+            onPress={stopRecording}
             disabled={isControlsDisabled}
           >
-            <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-brand">
-              <PlaySvg className="!size-4 fill-on-brand" />
+            <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-attention">
+              <StopSvg className="!size-4 fill-on-brand" />
               <Typography className="text-base font-semibold leading-[18px] text-on-brand">
-                Resume
+                Stop
               </Typography>
             </View>
           </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          className="flex-1 disabled:opacity-50"
-          onPress={stopRecording}
-          disabled={isControlsDisabled}
-        >
-          <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-attention">
-            <StopSvg className="!size-4 fill-on-brand" />
-            <Typography className="text-base font-semibold leading-[18px] text-on-brand">
-              Stop
-            </Typography>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="disabled:opacity-50"
-          onPress={discardRecording}
-          disabled={isControlsDisabled}
-        >
-          <View className="flex size-[44px] items-center justify-center rounded-full bg-secondary">
-            <XIcon className="!size-5 stroke-tertiary" />
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            className="disabled:opacity-50"
+            onPress={discardRecording}
+            disabled={isControlsDisabled}
+          >
+            <View className="flex size-[44px] items-center justify-center rounded-full bg-secondary">
+              <XIcon className="!size-5 stroke-tertiary" />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+      <View
+        className="bg-primary"
+        style={{ height: insets.bottom, marginBottom: -insets.bottom }}
+      />
+    </>
   );
 }

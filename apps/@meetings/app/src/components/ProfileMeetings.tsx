@@ -239,27 +239,27 @@ const ProfileMeetings = ({
                 sortOptions={Object.values(MeetingsSort)}
                 setSortBy={setSortBy}
                 personType={personType}
-                className="flex-1"
               />
               <MeetingControlsMobile person={person} personType={personType} />
             </>
           ),
           web: (
             <View className="flex-1 pb-4">
-              <MeetingsMobileList
-                meetings={filteredMeetings}
-                person={person}
-                handleCreateMeeting={handleCreateMeeting}
-                isMeetingCreating={isCreating}
-                handleAudioUpload={handleAudioUpload}
-                handleOpenBottomSheet={() => setIsNewMeetingSheetOpen(true)}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                sortOptions={Object.values(MeetingsSort)}
-                setSortBy={setSortBy}
-                personType={personType}
-                className="md:hidden"
-              />
+              <View className="flex-1 md:hidden">
+                <MeetingsMobileList
+                  meetings={filteredMeetings}
+                  person={person}
+                  handleCreateMeeting={handleCreateMeeting}
+                  isMeetingCreating={isCreating}
+                  handleAudioUpload={handleAudioUpload}
+                  handleOpenBottomSheet={() => setIsNewMeetingSheetOpen(true)}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  sortOptions={Object.values(MeetingsSort)}
+                  setSortBy={setSortBy}
+                  personType={personType}
+                />
+              </View>
               <ScrollView className="hidden flex-1 md:block">
                 <View className="mx-auto w-full max-w-[960px] flex-1">
                   <View className="flex flex-1 flex-row pt-10">

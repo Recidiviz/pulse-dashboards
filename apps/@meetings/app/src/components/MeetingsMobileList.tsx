@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { View, VirtualizedList } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { View } from "react-native";
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
@@ -49,7 +50,6 @@ type Props = {
   sortOptions: string[];
   setSortBy: (option: string) => void;
   personType: PersonType;
-  className?: string;
 };
 
 const MeetingsMobileList = ({
@@ -64,15 +64,11 @@ const MeetingsMobileList = ({
   sortOptions,
   setSortBy,
   personType,
-  className,
 }: Props) => {
   return (
-    <VirtualizedList
-      className={className}
+    <FlashList
       data={meetings}
       keyExtractor={(item: Meeting) => item.id}
-      getItemCount={(data: Meeting[]) => data.length}
-      getItem={(data: Meeting[], index) => data[index]}
       renderItem={({ item }: { item: Meeting }) => (
         <MeetingCardItem
           meeting={item}
@@ -80,7 +76,6 @@ const MeetingsMobileList = ({
           personType={personType}
         />
       )}
-      initialNumToRender={10}
       ListHeaderComponentStyle={{ zIndex: 50, flex: 1 }}
       ListHeaderComponent={
         <View className="mx-auto w-full max-w-[960px]">
@@ -104,12 +99,6 @@ const MeetingsMobileList = ({
           isSearchResultEmpty={searchQuery.trim().length > 0}
         />
       }
-      contentContainerStyle={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        paddingBottom: 16,
-      }}
     />
   );
 };

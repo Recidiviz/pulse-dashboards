@@ -35,7 +35,7 @@ type ModalProps = ModalBaseProps & {
 };
 
 function DefaultBackdrop() {
-  return <View className="absolute size-full bg-[#00000099]" />;
+  return <View className="absolute size-full bg-scrim-default" />;
 }
 
 const ModalContent = ({

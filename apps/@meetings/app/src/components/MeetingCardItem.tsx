@@ -35,7 +35,6 @@ import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
-import { useListItemHeight } from "../hooks/useListItemHeight";
 import { useProcessingText } from "../hooks/useProcessingText";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
@@ -65,7 +64,6 @@ const MeetingCardItem = ({
   person,
   personType,
 }: MeetingCardItemProps) => {
-  const { calculateMeetingItemHeight } = useListItemHeight();
   const { status: recordingState, status } = useRecording<"native">();
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
@@ -119,22 +117,15 @@ const MeetingCardItem = ({
   };
 
   return (
-    <View
-      key={meeting.id}
-      style={{
-        height: calculateMeetingItemHeight({
-          isProcessing,
-          hasNote: isFinishedWithNote,
-        }),
-      }}
-      className="w-full px-4"
-    >
+    <View key={meeting.id} className="mb-2 w-full px-4">
       <View className="w-full flex-1 rounded-[20px] bg-primary p-3">
         <Link {...linkProps}>
           <View
             className={clsx(
-              "w-full flex-row items-center justify-between border-b border-subtle pb-3",
-              (isInProgress || isFinishedWithoutNote) && "border-b-0 pb-0",
+              "w-full flex-row items-center justify-between",
+              isInProgress || isFinishedWithoutNote
+                ? "border-b-0 pb-0"
+                : "border-b border-subtle pb-3",
             )}
           >
             <View className="flex flex-col gap-1">

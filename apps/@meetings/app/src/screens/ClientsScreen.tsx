@@ -130,15 +130,16 @@ const ClientsScreen = () => {
           ),
           web: (
             <View className="flex-1 pb-4">
-              <PersonsMobileList
-                persons={[...myCaseloadClients, ...otherCaseloadClients]}
-                recordingState={recordingState}
-                searchQuery={search}
-                setSearchQuery={setSearch}
-                setSortBy={setSortBy}
-                personType="client"
-                className="md:hidden"
-              />
+              <View className="flex-1 md:hidden">
+                <PersonsMobileList
+                  persons={[...myCaseloadClients, ...otherCaseloadClients]}
+                  recordingState={recordingState}
+                  searchQuery={search}
+                  setSearchQuery={setSearch}
+                  setSortBy={setSortBy}
+                  personType="client"
+                />
+              </View>
               <ScrollView className="hidden flex-1 md:block">
                 <View className="mx-auto w-full max-w-[960px] flex-1">
                   <PersonsHeaderContent
