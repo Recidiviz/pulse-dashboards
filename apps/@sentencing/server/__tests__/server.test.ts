@@ -18,11 +18,8 @@
 import { describe, test } from "vitest";
 
 import { testTRPCClient } from "~@sentencing/server/test/setup";
-import {
-  fakeStaff
-} from "~@sentencing/server/test/setup/seed";
+import { fakeStaff } from "~@sentencing/server/test/setup/seed";
 import { testGetStaff } from "~@sentencing/trpc/test/common/utils";
-
 
 describe("Server", () => {
   // eslint-disable-next-line vitest/expect-expect
@@ -31,9 +28,7 @@ describe("Server", () => {
     const returnedStaff = await testTRPCClient.staff.getStaff.query({
       pseudonymizedId: fakeStaff.pseudonymizedId,
     });
-    
-    testGetStaff(returnedStaff)
 
-
+    await testGetStaff(returnedStaff);
   });
 });

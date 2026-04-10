@@ -31,7 +31,7 @@ describe("staff router", () => {
       const returnedStaff = await testTRPCClient.staff.getStaff.query({
         pseudonymizedId: fakeStaff.pseudonymizedId,
       });
-      testGetStaff(returnedStaff);
+      await testGetStaff(returnedStaff);
     });
 
     test("should throw error if staff does not exist", async () => {

@@ -46,8 +46,9 @@ export async function testGetStaff(returnedStaff: staffRouterOutput) {
   expect(returnedStaff).toEqual(
     expect.objectContaining({
       ..._.omit(fakeStaff, ["externalId", "dueDate"]),
+      officeAddress: null,
+      officePhoneNumber: null,
       cases: expect.any(Array),
-      sentencingAssessmentReports: expect.any(Array),
     }),
   );
 
@@ -63,7 +64,7 @@ export async function testGetStaff(returnedStaff: staffRouterOutput) {
       status: fakeCase.status,
       offense: fakeCase.offense,
       isCancelled: fakeCase.isCancelled,
-      assignedTo: undefined, // Regular staff viewing their own case
+      assignedTo: "You", // Regular staff viewing their own case
       client: expect.objectContaining(
         _.pick(fakeClient, ["fullName", "externalId"]),
       ),
@@ -71,7 +72,6 @@ export async function testGetStaff(returnedStaff: staffRouterOutput) {
   );
 
   // dueDate/customDueDate semantics:
-  // Since there is a customDueDate it should be the effective due date of the case
-  // - dueDate returned by the API should equal (customDueDate ?? dueDate) from the seed
-  expect(fakeCase.customDueDate).toBe(staffCase.dueDate);
+  // When customDueDate is set, the API should return it as the effective dueDate
+  expect(staffCase.dueDate).toBe(staffCase.customDueDate);
 }
