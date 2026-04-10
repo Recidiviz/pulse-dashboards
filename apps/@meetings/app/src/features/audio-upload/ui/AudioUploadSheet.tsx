@@ -19,9 +19,12 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { useCallback, useEffect, useState } from "react";
+import { format } from "date-fns";
+import { ComponentProps, useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
+import CalendarIcon from "react-native-heroicons/solid/CalendarIcon";
+import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -29,6 +32,8 @@ import { useFilePicker } from "../hooks/useFilePicker";
 import { useAudioUploadStore } from "../store";
 import { RawFileInfo } from "../types";
 import { FileCard } from "./FileCard";
+import { PickerTrigger } from "./PickerTrigger";
+import { RecordingDateTimePicker } from "./RecordingDateTimePicker";
 
 type AudioUploadSheetProps = {
   onAddFile: (file: RawFileInfo) => void;
@@ -37,6 +42,8 @@ type AudioUploadSheetProps = {
   onCancel: () => void;
 };
 
+type PickerMode = ComponentProps<typeof RecordingDateTimePicker>["mode"];
+
 export function AudioUploadSheet({
   onAddFile,
   onRemoveFile,
@@ -44,8 +51,19 @@ export function AudioUploadSheet({
   onCancel,
 }: AudioUploadSheetProps) {
   const [isConfirming, setIsConfirming] = useState(false);
-  const { status, dialog, file, error, uploadedBytes, totalBytes } =
-    useAudioUploadStore();
+  const [pickerMode, setPickerMode] = useState<PickerMode>(null);
+  const {
+    status,
+    dialog,
+    file,
+    error,
+    uploadedBytes,
+    totalBytes,
+    recordingDate,
+    recordingTime,
+    setRecordingDate,
+    setRecordingTime,
+  } = useAudioUploadStore();
   const { pickFile } = useFilePicker();
 
   const handleConfirm = useCallback(async () => {
@@ -77,7 +95,12 @@ export function AudioUploadSheet({
     onCancel();
   };
 
-  const canConfirm = status === "uploaded" && file !== null && !isConfirming;
+  const canConfirm =
+    status === "uploaded" &&
+    file !== null &&
+    !isConfirming &&
+    recordingDate !== null &&
+    recordingTime !== null;
 
   return (
     <BottomSheet
@@ -112,6 +135,34 @@ export function AudioUploadSheet({
           <Typography className="text-sm text-secondary">
             Use an existing audio file to generate a meeting
           </Typography>
+
+          <Typography className="mt-5 text-sm text-primary">
+            Date and time of the meeting recording
+          </Typography>
+          <View className="mt-4 flex-row gap-3">
+            <PickerTrigger
+              icon={CalendarIcon}
+              onPress={() => setPickerMode("date")}
+            >
+              {recordingDate
+                ? format(recordingDate, "MMM d, yyyy")
+                : "Select date"}
+            </PickerTrigger>
+            <PickerTrigger
+              icon={ClockIcon}
+              onPress={() => setPickerMode("time")}
+            >
+              {recordingTime ? format(recordingTime, "h:mm a") : "Pick a time"}
+            </PickerTrigger>
+          </View>
+          <RecordingDateTimePicker
+            date={recordingDate}
+            time={recordingTime}
+            mode={pickerMode}
+            onClose={() => setPickerMode(null)}
+            onDateChange={setRecordingDate}
+            onTimeChange={setRecordingTime}
+          />
 
           {file && (
             <FileCard

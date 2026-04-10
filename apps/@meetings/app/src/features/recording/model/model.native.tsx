@@ -331,6 +331,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         personId: person.personId,
         personType: getPersonType(person),
         audioUri,
+        endTime: new Date(),
       });
       await cleanupRecording();
       onComplete?.();

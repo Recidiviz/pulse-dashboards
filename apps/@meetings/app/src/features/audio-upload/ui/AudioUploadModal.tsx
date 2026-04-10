@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback, useState } from "react";
+import { format } from "date-fns";
+import { useCallback, useRef, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
+import CalendarIcon from "react-native-heroicons/solid/CalendarIcon";
+import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
 import Modal from "~@meetings/app/components/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -26,6 +29,7 @@ import { useAudioUploadStore } from "../store";
 import { RawFileInfo } from "../types";
 import { DropZone } from "./DropZone.web";
 import { FileCard } from "./FileCard";
+import { PickerTrigger } from "./PickerTrigger";
 
 type Props = {
   onAddFile: (file: RawFileInfo) => void;
@@ -40,10 +44,41 @@ export function AudioUploadModal({
   onConfirm,
   onCancel,
 }: Props) {
-  const { status, file, error, uploadedBytes, totalBytes } =
-    useAudioUploadStore();
+  const {
+    status,
+    file,
+    error,
+    uploadedBytes,
+    totalBytes,
+    recordingDate,
+    recordingTime,
+    setRecordingDate,
+    setRecordingTime,
+  } = useAudioUploadStore();
 
   const [isConfirming, setIsConfirming] = useState(false);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const timeInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!e.target.value) return;
+      const [year, month, day] = e.target.value.split("-").map(Number);
+      setRecordingDate(new Date(year, month - 1, day));
+    },
+    [setRecordingDate],
+  );
+
+  const handleTimeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!e.target.value) return;
+      const [hours, minutes] = e.target.value.split(":").map(Number);
+      const t = new Date();
+      t.setHours(hours, minutes, 0, 0);
+      setRecordingTime(t);
+    },
+    [setRecordingTime],
+  );
 
   const handleConfirm = useCallback(async () => {
     setIsConfirming(true);
@@ -55,7 +90,12 @@ export function AudioUploadModal({
   }, [onConfirm]);
 
   const isUploading = status === "uploading";
-  const canConfirm = status === "uploaded" && file !== null && !isConfirming;
+  const canConfirm =
+    status === "uploaded" &&
+    file !== null &&
+    !isConfirming &&
+    recordingDate !== null &&
+    recordingTime !== null;
 
   return (
     <Modal visible transparent onClickOutside={onCancel}>
@@ -72,6 +112,45 @@ export function AudioUploadModal({
         <Typography className="mb-5 text-sm text-secondary">
           Use an existing audio file to generate a meeting
         </Typography>
+
+        <Typography className="mb-2 text-sm font-medium text-primary">
+          Date and time of the meeting recording
+        </Typography>
+        <View className="mb-4 flex-row gap-3">
+          <View className="relative flex-1">
+            <PickerTrigger
+              icon={CalendarIcon}
+              onPress={() => dateInputRef.current?.showPicker()}
+            >
+              {recordingDate
+                ? format(recordingDate, "MMM d, yyyy")
+                : "Select date"}
+            </PickerTrigger>
+            <input
+              ref={dateInputRef}
+              type="date"
+              className="pointer-events-none absolute bottom-0 left-0 size-0 opacity-0"
+              value={recordingDate ? format(recordingDate, "yyyy-MM-dd") : ""}
+              max={format(new Date(), "yyyy-MM-dd")}
+              onChange={handleDateChange}
+            />
+          </View>
+          <View className="relative flex-1">
+            <PickerTrigger
+              icon={ClockIcon}
+              onPress={() => timeInputRef.current?.showPicker()}
+            >
+              {recordingTime ? format(recordingTime, "h:mm a") : "Pick a time"}
+            </PickerTrigger>
+            <input
+              ref={timeInputRef}
+              type="time"
+              className="pointer-events-none absolute bottom-0 left-0 size-0 opacity-0"
+              value={recordingTime ? format(recordingTime, "HH:mm") : ""}
+              onChange={handleTimeChange}
+            />
+          </View>
+        </View>
 
         <DropZone onAddFile={onAddFile} disabled={isUploading} />
 

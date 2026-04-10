@@ -131,13 +131,29 @@ export function useAudioUpload() {
 
   const confirmUpload = useCallback(async () => {
     try {
-      if (!store.meetingId || !store.person || !store.personType) {
-        throw new Error("meetingId, personId, and personType are required");
+      if (
+        !store.meetingId ||
+        !store.person ||
+        !store.personType ||
+        !store.recordingDate ||
+        !store.recordingTime
+      ) {
+        throw new Error(
+          "meetingId, person, personType, recordingDate, and recordingTime are required",
+        );
       }
+      const startTime = new Date(store.recordingDate);
+      startTime.setHours(
+        store.recordingTime.getHours(),
+        store.recordingTime.getMinutes(),
+        0,
+        0,
+      );
       await endMeetingMutation.mutateAsync({
         meetingId: store.meetingId,
         personId: store.person.personId,
         personType: store.personType,
+        startTime,
       });
       store.setDialog("success");
     } catch (error) {
@@ -154,7 +170,7 @@ export function useAudioUpload() {
 
     try {
       if (!store.meetingId || !store.person || !store.personType) {
-        throw new Error("meetingId, personId, and personType are required");
+        throw new Error("meetingId, person, and personType are required");
       }
       await deleteRecordings({ meetingId: store.meetingId });
       await discardMeetingMutation.mutateAsync({

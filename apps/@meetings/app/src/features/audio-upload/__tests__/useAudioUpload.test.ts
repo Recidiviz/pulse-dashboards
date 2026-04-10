@@ -59,7 +59,12 @@ const mockSetStatus = jest.fn();
 const mockSetDialog = jest.fn();
 const mockSetUploadProgress = jest.fn();
 const mockSetMeetingId = jest.fn();
+const mockSetRecordingDate = jest.fn();
+const mockSetRecordingTime = jest.fn();
 const mockReset = jest.fn();
+
+const FAKE_RECORDING_DATE = new Date("2025-10-19");
+const FAKE_RECORDING_TIME = new Date("2025-10-19T14:30:00");
 
 const MEETING_ID = "meeting-123";
 const PERSON_ID = BigInt(456);
@@ -87,6 +92,10 @@ function mockStoreWith(overrides: Record<string, unknown> = {}) {
     setDialog: mockSetDialog,
     setUploadProgress: mockSetUploadProgress,
     setMeetingId: mockSetMeetingId,
+    setRecordingDate: mockSetRecordingDate,
+    setRecordingTime: mockSetRecordingTime,
+    recordingDate: FAKE_RECORDING_DATE,
+    recordingTime: FAKE_RECORDING_TIME,
     reset: mockReset,
     ...overrides,
   };
@@ -334,6 +343,7 @@ describe("useAudioUpload", () => {
         meetingId: MEETING_ID,
         personId: PERSON_ID,
         personType: PERSON_TYPE,
+        startTime: expect.any(Date),
       });
       expect(mockSetDialog).toHaveBeenCalledWith("success");
     });

@@ -31,6 +31,8 @@ type AudioUploadStore = {
   personType: PersonType | null;
   file: FileInfo | null;
   error: string | null; // file uploading error
+  recordingDate: Date | null;
+  recordingTime: Date | null;
 
   // Non-persisted fields (progress resets on reload)
   dialog: AudioUploadDialog;
@@ -43,6 +45,8 @@ type AudioUploadStore = {
   setFile: (file: FileInfo | null) => void;
   setError: (error: string | null) => void;
   setUploadProgress: (uploaded: number, total: number) => void;
+  setRecordingDate: (date: Date | null) => void;
+  setRecordingTime: (time: Date | null) => void;
   open: (params: { person: Person; personType: PersonType }) => void;
   reset: () => void;
 };
@@ -57,6 +61,8 @@ const initialState = {
   error: null,
   uploadedBytes: 0,
   totalBytes: 0,
+  recordingDate: null,
+  recordingTime: null,
 };
 
 export const useAudioUploadStore = create<AudioUploadStore>()(
@@ -71,6 +77,8 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       setError: (error) => set({ error }),
       setUploadProgress: (uploadedBytes, totalBytes) =>
         set({ uploadedBytes, totalBytes }),
+      setRecordingDate: (recordingDate) => set({ recordingDate }),
+      setRecordingTime: (recordingTime) => set({ recordingTime }),
       open: ({ person, personType }) =>
         set({
           ...initialState,
@@ -89,8 +97,11 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
         person: state.person
           ? { ...state.person, personId: state.person.personId.toString() }
           : null,
+        personType: state.personType,
         file: state.file,
         error: state.error,
+        recordingDate: state.recordingDate,
+        recordingTime: state.recordingTime,
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
@@ -106,6 +117,12 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
         }
         if (state.error && !state.file) {
           state.setError(null);
+        }
+        if (state.recordingDate) {
+          state.recordingDate = new Date(state.recordingDate);
+        }
+        if (state.recordingTime) {
+          state.recordingTime = new Date(state.recordingTime);
         }
       },
     },

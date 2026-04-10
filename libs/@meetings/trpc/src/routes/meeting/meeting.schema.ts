@@ -73,6 +73,7 @@ export const discardMeetingInputSchema = z.object({
 
 export const endMeetingInputSchema = z.object({
   meetingId: z.string(),
+  startTime: z.date().optional(),
   endTime: z.date().optional(),
   userNotepadNotes: z.string().max(100000).optional(),
 });

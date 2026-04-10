@@ -282,6 +282,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
           data: {
             finalRecordingGCSPath: stitchResult.outputFileName,
             durationMs: stitchResult.durationMs,
+            ...(!meeting.endTime && {
+              endTime: new Date(
+                meeting.startTime.getTime() + stitchResult.durationMs,
+              ),
+            }),
           },
         });
       } catch (e) {

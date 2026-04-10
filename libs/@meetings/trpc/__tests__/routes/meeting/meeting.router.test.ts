@@ -304,6 +304,7 @@ describe("meeting router", () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "These are some notes",
+        endTime: FAKE_DATE,
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -328,6 +329,7 @@ describe("meeting router", () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "These are some notes",
+        endTime: FAKE_DATE,
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
