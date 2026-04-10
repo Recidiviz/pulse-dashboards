@@ -275,24 +275,6 @@ describe("OverTimeMetric", () => {
   it("fills in missing months", () => {
     expect(metric.dataSeries).toEqual([
       {
-        year: 2021,
-        month: 10,
-        count: 0,
-        avg90day: 0,
-      },
-      {
-        year: 2021,
-        month: 11,
-        count: 0,
-        avg90day: 0,
-      },
-      {
-        year: 2021,
-        month: 12,
-        count: 0,
-        avg90day: 0,
-      },
-      {
         year: 2022,
         month: 1,
         count: 1000,
@@ -325,18 +307,6 @@ describe("OverTimeMetric", () => {
         {
           data: [
             {
-              Population: 0,
-              "3-month rolling average": 0,
-            },
-            {
-              Population: 0,
-              "3-month rolling average": 0,
-            },
-            {
-              Population: 0,
-              "3-month rolling average": 0,
-            },
-            {
               Population: 1000,
               "3-month rolling average": 1000,
             },
@@ -357,15 +327,7 @@ describe("OverTimeMetric", () => {
         },
       ],
       chartId: "Admissions from liberty to prison over time",
-      chartLabels: [
-        "Oct '21",
-        "Nov '21",
-        "Dec '21",
-        "Jan '22",
-        "Feb '22",
-        "Mar '22",
-        "Apr '22",
-      ],
+      chartLabels: ["Jan '22", "Feb '22", "Mar '22", "Apr '22"],
       dataExportLabel: "Month",
     };
     expect(metric.downloadableData).toEqual(expected);

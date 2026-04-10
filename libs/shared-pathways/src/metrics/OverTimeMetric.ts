@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { eachMonthOfInterval, startOfMonth, subMonths } from "date-fns";
+import { eachMonthOfInterval, startOfMonth } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
 import { formatMonthAndYear } from "../components/PopulationTimeSeriesChart/helpers";
@@ -89,9 +89,10 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
   }
 
   extrapolateRecords(records: TimeSeriesDataRecord[]): TimeSeriesDataRecord[] {
-    const { monthRange } = this.store.filtersStore;
+    if (!records || records.length === 0) return [];
+
     const mostRecentDate = OverTimeMetric.mostRecentDate(records);
-    const earliestDate = startOfMonth(subMonths(mostRecentDate, monthRange));
+    const earliestDate = startOfMonth(getRecordDate(records[0]));
 
     const recordsGrouped = new Map<string, TimeSeriesDataRecord>();
     records?.forEach((record) => {

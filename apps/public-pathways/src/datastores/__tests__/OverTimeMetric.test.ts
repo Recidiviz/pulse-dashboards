@@ -115,26 +115,21 @@ describe("OverTimeMetric", () => {
   });
 
   it("fills in missing months with default monthRange", () => {
-    // Default monthRange is 6 months. Most recent data is April 2022,
-    // so extrapolation fills from October 2021 to April 2022 = 7 months.
-    expect(metric.dataSeries).toHaveLength(7);
+    // Backend returns Jan-Apr 2022 (4 months). Frontend no longer pads
+    // leading months before the first record, so the series is just the
+    // 4 records the backend sent.
+    expect(metric.dataSeries).toHaveLength(4);
 
-    // first entry is October 2021
+    // first entry is January 2022
     expect(metric.dataSeries[0]).toEqual({
-      year: 2021,
-      month: 10,
-      count: 0,
-      avg90day: 0,
-    });
-
-    // last four entries are the actual data
-    expect(metric.dataSeries[3]).toEqual({
       year: 2022,
       month: 1,
       count: 1000,
       avg90day: 1000,
     });
-    expect(metric.dataSeries[6]).toEqual({
+
+    // last entry is April 2022
+    expect(metric.dataSeries[3]).toEqual({
       year: 2022,
       month: 4,
       count: 4000,
