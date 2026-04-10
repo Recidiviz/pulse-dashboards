@@ -24,6 +24,7 @@ import { useState } from "react";
 import { ConnectionErrorAlert } from "../../../websockets/components/ConnectionErrorAlert";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import { AIDisclosure, AIDisclosureType } from "../../AIDisclosure";
+import { GuardrailModal } from "../GuardrailModal";
 import { ChatbotInterface } from "./ChatbotInterface";
 import { ChatHeader } from "./ChatHeader";
 import { Sidebar } from "./Sidebar";
@@ -37,7 +38,12 @@ const LinearChatComponent: React.FC = () => {
   };
 
   const {
-    intakeContext: { isLoading, error, intakeStatus },
+    intakeContext: {
+      isLoading,
+      error,
+      intakeStatus,
+      guardrailDisconnectReason,
+    },
   } = useSocket();
 
   if ((error && error.type === "api") || intakeStatus === "error") {
@@ -78,6 +84,9 @@ const LinearChatComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-slate-50">
+      {guardrailDisconnectReason && (
+        <GuardrailModal reason={guardrailDisconnectReason} />
+      )}
       <ConnectionErrorAlert />
       {/* Header */}
       <div className="relative max-w-full overflow-x-hidden flex-shrink-0">

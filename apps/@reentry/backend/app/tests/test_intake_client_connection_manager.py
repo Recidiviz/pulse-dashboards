@@ -211,7 +211,7 @@ async def test_register_client_twice_same_client_pseudo_id(
     # Verify first connection was disconnected
     mock_socketio.emit.assert_called_once_with(
         "forceDisconnect",
-        {"type": "forceDisconnect", "reason": "Client connected elsewhere"},
+        {"type": "forceDisconnect", "reason": "duplicate_session"},
         room=sid1,
     )
 

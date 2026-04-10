@@ -22,6 +22,7 @@ import type React from "react";
 import { useState } from "react";
 
 import { useApplicationContext } from "../../../contexts/ApplicationContext";
+import { clearIntakeSession } from "../../../utils/clearIntakeSession";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import { PrimaryButton } from "../../buttons/PrimaryButton";
 import { EndChatModal } from "../EndChatModal";
@@ -48,10 +49,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   } = useSocket();
 
   const onConfirmEndChat = () => {
-    sessionStorage.removeItem("intake_token");
-    sessionStorage.removeItem("preIntakeStep");
-    sessionStorage.removeItem("client_pseudo_id");
-    sessionStorage.removeItem("conversationStarted");
+    clearIntakeSession();
     navigateAfterIntake();
   };
   const totalSections = allSections?.length ?? 0;

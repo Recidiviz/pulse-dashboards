@@ -29,6 +29,7 @@ export const ConnectionErrorAlert = () => {
       intakeStatus,
       error,
       disconnectReason,
+      guardrailDisconnectReason,
       sessionExpiring,
     },
     intakeDispatchContext: { reconnect },
@@ -54,6 +55,8 @@ export const ConnectionErrorAlert = () => {
   ) {
     return null;
   }
+
+  if (guardrailDisconnectReason) return null;
 
   if (sessionExpiring) {
     return (

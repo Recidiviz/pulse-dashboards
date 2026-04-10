@@ -35,9 +35,12 @@ import { components } from "~@reentry/openapi-types";
 import { useApplicationContext } from "../contexts/ApplicationContext";
 import type {
   ConnectionAckEventContent,
+  ForceDisconnectReason,
+  HardStopGuardrailType,
   PongEventContent,
   SectionChangeContent,
 } from "./eventTypes";
+import { isHardStopGuardrail } from "./eventTypes";
 
 const DUPLICATE_ACTIVITY_MESSAGE = "This intake is active elsewhere";
 // Warn the user this many ms before their session expires. Set to 1 minute to
@@ -85,6 +88,7 @@ export interface IntakeSocketContextType {
   has_address: boolean;
   has_survey: boolean;
   disconnectReason?: string | null;
+  guardrailDisconnectReason?: HardStopGuardrailType | null;
   intakeId?: string | null;
   sessionExpiring?: boolean;
 }
@@ -122,7 +126,7 @@ type IntakeApiAction = {
 
 type ConnectionAction = {
   type: "connected" | "disconnect" | "connecting";
-  reason?: string;
+  reason?: ForceDisconnectReason;
 };
 
 type ReceiveMessageAction = {
@@ -227,13 +231,17 @@ const intakeReducer = (
       if (state.connectionStatus === "disconnected") return state;
       console.log("Setting connection status to DISCONNECTED");
       const disconnectReason =
-        action.reason === "Client connected elsewhere"
+        action.reason === "duplicate_session"
           ? DUPLICATE_ACTIVITY_MESSAGE
           : null;
+      const guardrailDisconnectReason = isHardStopGuardrail(action.reason)
+        ? action.reason
+        : null;
       return {
         ...state,
         connectionStatus: "disconnected",
         disconnectReason,
+        guardrailDisconnectReason,
       };
     }
     case "setStatus": {
@@ -424,6 +432,7 @@ export function IntakeSocketProvider({
     has_address: false,
     has_survey: false,
     disconnectReason: null,
+    guardrailDisconnectReason: null,
   };
 
   const { socket, $api } = useApplicationContext();

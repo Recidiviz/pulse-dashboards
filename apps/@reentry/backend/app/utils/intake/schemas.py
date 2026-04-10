@@ -142,7 +142,7 @@ class SectionChangeEvent(BaseModel):
 
 class ForceDisconnectEvent(BaseModel):
     type: Literal["forceDisconnect"] = "forceDisconnect"
-    reason: str
+    reason: Literal["duplicate_session", "crisis", "prompt_injection", "timeout"]
 
 
 class TokenExpiredEvent(BaseModel):

@@ -37,11 +37,28 @@ export interface SectionChangeContent {
   messages: IntakeMessageResponse[];
 }
 
+export type ForceDisconnectReason =
+  | "duplicate_session"
+  | "timeout"
+  | HardStopGuardrailType;
+
 export interface ForceDisconnectContent {
-  reason: string;
+  reason: ForceDisconnectReason;
 }
 
-export type GuardrailType = "char_limit" | "crisis" | "injection";
+/** Guardrail types that trigger a hard stop (socket disconnected, modal shown) */
+export const HARD_STOP_GUARDRAIL_TYPES = [
+  "crisis",
+  "prompt_injection",
+] as const;
+export type HardStopGuardrailType = (typeof HARD_STOP_GUARDRAIL_TYPES)[number];
+export type GuardrailType = HardStopGuardrailType | "char_limit";
+
+export function isHardStopGuardrail(
+  reason: ForceDisconnectReason | undefined,
+): reason is HardStopGuardrailType {
+  return HARD_STOP_GUARDRAIL_TYPES.some((t) => t === reason);
+}
 
 export interface GuardrailTriggeredContent {
   guardrails: GuardrailType[];

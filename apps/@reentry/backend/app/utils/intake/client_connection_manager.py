@@ -76,7 +76,7 @@ class ClientConnectionManager:
                 )
                 # Signal to that connection to disconnect
                 try:
-                    event = ForceDisconnectEvent(reason="Client connected elsewhere")
+                    event = ForceDisconnectEvent(reason="duplicate_session")
                     await self.sio.emit(
                         event.type,
                         event.model_dump(),
@@ -257,7 +257,7 @@ class ClientConnectionManager:
 
         if sid:
             try:
-                event = ForceDisconnectEvent(reason="Timeout")
+                event = ForceDisconnectEvent(reason="timeout")
                 await self.sio.emit(
                     event.type,
                     event.model_dump(),
