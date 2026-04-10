@@ -1,0 +1,22 @@
+{
+  "description": "Empty intake (client declined to share) with a hallucinated summary containing fabricated details",
+  "conversation": [
+    {
+      "role": "assistant",
+      "content": "Hi, I'm here to help gather some information from you. Can you tell me about your background?"
+    },
+    {
+      "role": "user",
+      "content": "I don't want to talk about it."
+    },
+    {
+      "role": "assistant",
+      "content": "I understand. Is there anything else you'd like to share?"
+    },
+    {
+      "role": "user",
+      "content": "No."
+    }
+  ],
+  "expected_summary": "The client is a 35-year-old male with a history of substance abuse. He has three children and needs assistance with housing and employment. He has been sober for 6 months and is motivated to reconnect with his family."
+}

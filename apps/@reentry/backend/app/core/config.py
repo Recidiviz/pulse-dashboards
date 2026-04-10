@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str | None = None
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:4200"
 
+    EVAL_MODEL_PROVIDER: str = "openai"
+    EVAL_MODEL_NAME: str = "o4-mini"
+    EVAL_MODEL_VERSION: str = ""
     # https://platform.openai.com/docs/models
     # https://docs.anthropic.com/en/docs/about-claude/models
     GOOGLE_GENAI_API_KEY: str | None = None

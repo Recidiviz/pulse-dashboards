@@ -1,0 +1,22 @@
+{
+  "description": "Empty intake (client declined to share) with an accurate, grounded summary",
+  "conversation": [
+    {
+      "role": "assistant",
+      "content": "Hi, I'm here to help gather some information from you. Can you tell me about your background?"
+    },
+    {
+      "role": "user",
+      "content": "I don't want to talk about it."
+    },
+    {
+      "role": "assistant",
+      "content": "I understand. Is there anything else you'd like to share?"
+    },
+    {
+      "role": "user",
+      "content": "No."
+    }
+  ],
+  "expected_summary": "The client declined to provide information during the intake conversation."
+}
