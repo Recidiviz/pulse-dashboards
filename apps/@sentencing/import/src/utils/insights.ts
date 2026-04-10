@@ -20,9 +20,16 @@ import z from "zod";
 import { insightImportSchema } from "~@sentencing/import/models";
 import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
 
+type TransformedRecidivismSeries = {
+  recommendationType: string | null | undefined;
+  sentenceLengthBucketStart: number | undefined;
+  sentenceLengthBucketEnd: number | undefined;
+  dataPoints: Prisma.RecidvismSeriesDataPointCreateManyRecidivismSeriesInput[];
+};
+
 function transformRecidivismSeries(
   rawRecidivismSeries: z.infer<typeof insightImportSchema>["recidivism_series"],
-) {
+): TransformedRecidivismSeries[] {
   return rawRecidivismSeries
     .map((series) => {
       if (series.data_points === undefined) {
@@ -33,21 +40,15 @@ function transformRecidivismSeries(
         recommendationType: series.sentence_type,
         sentenceLengthBucketStart: series.sentence_length_bucket_start,
         sentenceLengthBucketEnd: series.sentence_length_bucket_end,
-        dataPoints: {
-          createMany: {
-            data: series.data_points.map((s) => ({
-              cohortMonths: s.cohort_months,
-              eventRate: s.event_rate,
-              lowerCI: s.lower_ci,
-              upperCI: s.upper_ci,
-            })),
-          },
-        },
+        dataPoints: series.data_points.map((s) => ({
+          cohortMonths: s.cohort_months,
+          eventRate: s.event_rate,
+          lowerCI: s.lower_ci,
+          upperCI: s.upper_ci,
+        })),
       };
     })
-    .filter(
-      (v) => v !== undefined,
-    ) satisfies Prisma.RecidivismSeriesCreateWithoutInsightInput[];
+    .filter((v) => v !== undefined);
 }
 
 function transformDispositions(
@@ -67,8 +68,8 @@ export async function transformAndLoadInsightData(
 ) {
   const newInsights = [];
 
-  // Load new insight data
-  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
+  // Load new insight data.
+  // We do this in a for loop instead of Promise.all to avoid a prisma pool connection error.
   for await (const insightData of data) {
     // Look up the offense by name — offenses are imported before insights,
     // so they should already exist. If not, skip this insight with a warning.
@@ -86,62 +87,95 @@ export async function transformAndLoadInsightData(
       continue;
     }
 
-    const newInsight = {
-      stateCode: insightData.state_code,
-      gender: insightData.gender,
-      offense: {
-        connect: {
-          id: offense.id,
-        },
-      },
-      assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
-      assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
-      rollupStateCode: insightData.recidivism_rollup.state_code,
-      rollupGender: insightData.recidivism_rollup.gender,
-      rollupAssessmentScoreBucketStart:
-        insightData.recidivism_rollup.assessment_score_bucket_start,
-      rollupAssessmentScoreBucketEnd:
-        insightData.recidivism_rollup.assessment_score_bucket_end,
-      rollupOffenseName: insightData.recidivism_rollup.most_severe_description,
-      rollupNcicCategory:
-        insightData.recidivism_rollup.most_severe_ncic_category_uniform,
-      rollupCombinedOffenseCategory:
-        insightData.recidivism_rollup.combined_offense_category,
-      rollupViolentOffense:
-        insightData.recidivism_rollup.any_is_violent_uniform,
-      rollupRecidivismNumRecords: insightData.recidivism_num_records,
-      rollupRecidivismSeries: {
-        create: transformRecidivismSeries(insightData.recidivism_series),
-      },
-      // If this missing, assume it is zero
-      dispositionNumRecords: insightData.disposition_num_records ?? 0,
-      dispositionData: {
-        create: transformDispositions(insightData.dispositions),
-      },
-    } satisfies Prisma.InsightCreateInput;
-
-    // Since the data has been validated, delete the existing insight and insert the new one so that all of stale recidivism and disposition records are deleted
+    // Since the data has been validated, delete the existing insight and insert the new one
+    // so that all stale recidivism and disposition records are deleted via cascade.
     await prismaClient.insight
       .delete({
         where: {
           gender_offenseId_assessmentScoreBucketStart_assessmentScoreBucketEnd:
             {
-              gender: newInsight.gender,
-              offenseId: newInsight.offense.connect.id,
-              assessmentScoreBucketStart: newInsight.assessmentScoreBucketStart,
-              assessmentScoreBucketEnd: newInsight.assessmentScoreBucketEnd,
+              gender: insightData.gender,
+              offenseId: offense.id,
+              assessmentScoreBucketStart:
+                insightData.assessment_score_bucket_start,
+              assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
             },
         },
       })
       .catch(() => {
-        // Catch an errors - it's possible that the insight doesn't exist in the database yet, so we don't want to throw an error if that's the case
+        // Catch any errors — it's possible the insight doesn't exist yet.
       });
 
-    const newCreatedInsight = await prismaClient.insight.create({
-      data: newInsight,
+    // Create the insight without nested data. Prisma wraps nested creates (e.g. createMany
+    // inside create) in an implicit interactive transaction, which times out for large datasets
+    // like ND. By separating the creates, each operation is its own small transaction.
+    const createdInsight = await prismaClient.insight.create({
+      data: {
+        stateCode: insightData.state_code,
+        gender: insightData.gender,
+        offense: {
+          connect: {
+            id: offense.id,
+          },
+        },
+        assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
+        assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
+        rollupStateCode: insightData.recidivism_rollup.state_code,
+        rollupGender: insightData.recidivism_rollup.gender,
+        rollupAssessmentScoreBucketStart:
+          insightData.recidivism_rollup.assessment_score_bucket_start,
+        rollupAssessmentScoreBucketEnd:
+          insightData.recidivism_rollup.assessment_score_bucket_end,
+        rollupOffenseName:
+          insightData.recidivism_rollup.most_severe_description,
+        rollupNcicCategory:
+          insightData.recidivism_rollup.most_severe_ncic_category_uniform,
+        rollupCombinedOffenseCategory:
+          insightData.recidivism_rollup.combined_offense_category,
+        rollupViolentOffense:
+          insightData.recidivism_rollup.any_is_violent_uniform,
+        rollupRecidivismNumRecords: insightData.recidivism_num_records,
+        // If this is missing, assume it is zero
+        dispositionNumRecords: insightData.disposition_num_records ?? 0,
+      },
     });
 
-    newInsights.push(newCreatedInsight);
+    // Create dispositions separately using createMany (no nesting, no implicit transaction).
+    await prismaClient.disposition.createMany({
+      data: transformDispositions(insightData.dispositions).map((d) => ({
+        ...d,
+        insightId: createdInsight.id,
+      })),
+    });
+
+    // Create each recidivism series and its data points in separate operations.
+    // Sequential loop to avoid overwhelming the connection pool.
+    const recidivismSeries = transformRecidivismSeries(
+      insightData.recidivism_series,
+    );
+    for (const series of recidivismSeries) {
+      // eslint-disable-next-line no-await-in-loop
+      const createdSeries = await prismaClient.recidivismSeries.create({
+        data: {
+          recommendationType: series.recommendationType,
+          sentenceLengthBucketStart: series.sentenceLengthBucketStart,
+          sentenceLengthBucketEnd: series.sentenceLengthBucketEnd,
+          insightId: createdInsight.id,
+        },
+      });
+
+      if (series.dataPoints.length > 0) {
+        // eslint-disable-next-line no-await-in-loop
+        await prismaClient.recidvismSeriesDataPoint.createMany({
+          data: series.dataPoints.map((dp) => ({
+            ...dp,
+            recidivismSeriesId: createdSeries.id,
+          })),
+        });
+      }
+    }
+
+    newInsights.push(createdInsight);
   }
 
   // Delete all of the old insights that weren't just loaded if we haven't hit any errors
