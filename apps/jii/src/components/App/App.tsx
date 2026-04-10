@@ -32,7 +32,7 @@ import { ToastContainer } from "react-toastify";
 import styled, { createGlobalStyle } from "styled-components";
 
 import { NotFound } from "~@jii/common-ui";
-import { initializeSentry, StoreProvider } from "~@jii/data";
+import { StoreProvider } from "~@jii/data";
 import { ErrorPage, GenericLayoutRoute } from "~@jii/layout";
 import {
   AfterLogin,
@@ -59,6 +59,7 @@ import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
 import { StateSpecificRouter } from "../StateSpecificRouter/StateSpecificRouter";
 import { TranslationProvider } from "../TranslationProvider/TranslationProvider";
+import { initApp } from "./initApp";
 
 const StyledApp = styled.div`
   /* these properties prevent full-bleed sections from messing up the page width */
@@ -75,7 +76,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-initializeSentry();
+initApp();
 
 // doing this once (at the root off all <Routes>) allows Sentry to trace client-side URLs
 const SentryRoutes = withSentryReactRouterV6Routing(Routes);

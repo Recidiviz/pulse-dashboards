@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-import { Timestamp } from "firebase/firestore";
+let dateshift = false;
 
-import { shouldDateshift } from "./dateshift";
-import { shiftFixtureDate } from "./fixtureDates";
+export function setDateshift(input: boolean) {
+  dateshift = input;
+}
 
-export function fieldToDate(field: Timestamp | string): Date {
-  let result: Date;
-  if (typeof field === "string") {
-    result = parseISO(field);
-  } else {
-    result = field.toDate();
-  }
-  if (shouldDateshift()) {
-    result = shiftFixtureDate(result);
-  }
-
-  return result;
+export function shouldDateshift(): boolean {
+  return dateshift;
 }

@@ -18,8 +18,7 @@
 import tk from "timekeeper";
 import { z } from "zod";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
-
+import { setDateshift } from "../dateshift";
 import {
   dateStringSchema,
   dateStringSchemaWithoutTimeShift,
@@ -30,13 +29,12 @@ import {
 } from "../fixtureDates";
 import { shiftAllDates } from "../shiftAllDates";
 
-vi.mock("~client-env-utils");
-
 const testObj = {
   date: CURRENT_DATE_STRING_FIXTURE,
 };
 
 beforeEach(() => {
+  setDateshift(false);
   tk.freeze(new Date(2025, 6, 8));
 });
 
@@ -57,9 +55,6 @@ test("unshifted dates are changed", () => {
 });
 
 test("dates where shifting is skipped are changed", () => {
-  vi.mocked(isDemoMode).mockReturnValue(false);
-  vi.mocked(isOfflineMode).mockReturnValue(false);
-
   const schema = z.object({
     date: dateStringSchema,
   });
@@ -71,8 +66,7 @@ test("dates where shifting is skipped are changed", () => {
 });
 
 test("already shifted dates are unchanged", () => {
-  vi.mocked(isDemoMode).mockReturnValue(true);
-  vi.mocked(isOfflineMode).mockReturnValue(false);
+  setDateshift(true);
 
   const schema = z.object({
     date: dateStringSchema,

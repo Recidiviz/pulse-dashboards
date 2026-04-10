@@ -23,22 +23,16 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 
-import { isDemoMode } from "~client-env-utils";
-
 import NotFound from "./components/NotFound";
 import SentryErrorBoundary from "./components/SentryErrorBoundary";
 import StoreProvider from "./components/StoreProvider";
 import StyledToaster from "./components/StyledToaster";
 import VerificationNeeded from "./components/VerificationNeeded";
+import initApp from "./initApp";
 import ProtectedLayout from "./ProtectedLayout";
 import { ReactQueryClientProvider } from "./reactQuery/ReactQueryClientProvider";
-import { initI18n } from "./utils/i18nSettings";
-import initIntercom from "./utils/initIntercom";
 
-if (!isDemoMode()) {
-  initIntercom();
-}
-initI18n();
+initApp();
 
 function App() {
   return (

@@ -16,6 +16,7 @@
 // =============================================================================
 
 export * from "./date";
+export * from "./dateshift";
 export * from "./dateStringSchema";
 export * from "./fixtureDates";
 export * from "./shiftAllDates";

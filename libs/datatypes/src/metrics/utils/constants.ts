@@ -20,10 +20,9 @@ import { formatISO, startOfMonth, subMonths } from "date-fns";
 import { range } from "lodash";
 import { z } from "zod";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
-
 import { InsightsConfigMetric } from "../../config/InsightsConfig/schema";
-import { CURRENT_DATE_FIXTURE } from "../../utils/zod/date/fixtureDates";
+import { CURRENT_DATE_FIXTURE } from "../../utils/zod";
+import { shouldDateshift } from "../../utils/zod/date/dateshift";
 
 export const ADVERSE_METRIC_IDS = z.enum([
   "incarceration_starts",
@@ -40,10 +39,9 @@ export const CASELOAD_CATEGORY_IDS = z.enum([
 ]);
 
 // We want to keep the dates consistent for tests but relevant to today in offline and demo mode
-export const LATEST_END_DATE =
-  isDemoMode() || isOfflineMode()
-    ? startOfMonth(new Date())
-    : startOfMonth(CURRENT_DATE_FIXTURE);
+export const LATEST_END_DATE = shouldDateshift()
+  ? startOfMonth(new Date())
+  : startOfMonth(CURRENT_DATE_FIXTURE);
 
 export const LOOKBACK_END_DATES = range(6)
   .map((offset) => subMonths(LATEST_END_DATE, offset))

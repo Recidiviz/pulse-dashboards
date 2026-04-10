@@ -17,15 +17,16 @@
 
 import tk from "timekeeper";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
-
+import { setDateshift } from "../dateshift";
 import {
   dateStringSchema,
   dateStringSchemaWithoutTimeShift,
   toDateList,
 } from "../dateStringSchema";
 
-vi.mock("~client-env-utils");
+beforeEach(() => {
+  setDateshift(false);
+});
 
 test("parses valid ISO date", () => {
   expect(dateStringSchemaWithoutTimeShift.parse("2024-03-20")).toEqual(
@@ -91,9 +92,8 @@ describe("toDateList", () => {
   });
 
   test("invalid date", () => {
-    expect(() =>
-      toDateList("2024-03-20,4/21/2024"),
-    ).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => toDateList("2024-03-20,4/21/2024"))
+      .toThrowErrorMatchingInlineSnapshot(`
       [ZodError: [
         {
           "code": "invalid_string",
@@ -109,11 +109,8 @@ describe("toDateList", () => {
 describe.each(["demo", "offline"] as const)("in %s mode", (mode) => {
   beforeEach(() => {
     tk.freeze(new Date(2024, 2, 25));
-    if (mode === "demo") {
-      vi.mocked(isDemoMode).mockReturnValue(true);
-    }
-    if (mode === "offline") {
-      vi.mocked(isOfflineMode).mockReturnValue(true);
+    if (mode === "demo" || mode === "offline") {
+      setDateshift(true);
     }
   });
 

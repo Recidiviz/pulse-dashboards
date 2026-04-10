@@ -18,8 +18,7 @@
 import { isValid, parseISO } from "date-fns";
 import { z } from "zod";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
-
+import { shouldDateshift } from "./dateshift";
 import { shiftFixtureDate } from "./fixtureDates";
 
 /**
@@ -54,7 +53,7 @@ export const dateStringSchemaWithoutTimeShift = z
  */
 export const dateStringSchema = dateStringSchemaWithoutTimeShift.transform(
   (value) => {
-    if (isDemoMode() || isOfflineMode()) {
+    if (shouldDateshift()) {
       return shiftFixtureDate(value);
     }
     return value;
