@@ -38,7 +38,10 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
   const email = event.user.email?.toLowerCase();
 
-  // We can treat everyone in this step as a STATE user.
+  // this should catch manually provisioned test accounts, which don't require a roster check
+  if (email?.endsWith("@recidiviz-test.org")) return;
+
+  // We can treat everyone else in this step as a STATE user.
   // Recidiviz and Orijin users sign in via SSO, which skips this action
   const jwt = await new SignJWT({ userType: "STATE", email })
     .setProtectedHeader({ alg })
