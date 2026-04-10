@@ -17,13 +17,11 @@
 
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import clsx from "clsx";
-import { ActivityIndicator, Platform, View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
-import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 
 import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
-import useIsOnline from "../hooks/useIsOnline.native";
 import { usePlatform } from "../hooks/usePlatform";
 import { Typography } from "../shared/ui/Typography";
 import Dropdown from "./Dropdown";
@@ -32,10 +30,8 @@ import SearchBar from "./SearchBar";
 type Props = {
   person: Person;
   meetingsCount: number;
-  handleCreateMeeting: () => void;
-  isMeetingCreating: boolean;
-  handleAudioUpload: () => void;
   handleOpenBottomSheet: () => void;
+  handleOpenModal: () => void;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
   sortOptions: string[];
@@ -45,10 +41,8 @@ type Props = {
 const MeetingsHeaderContent = ({
   person,
   meetingsCount,
-  handleCreateMeeting,
-  handleAudioUpload,
-  isMeetingCreating,
   handleOpenBottomSheet,
+  handleOpenModal,
   searchQuery,
   setSearchQuery,
   sortOptions,
@@ -56,69 +50,12 @@ const MeetingsHeaderContent = ({
 }: Props) => {
   const { status: recordingState } = useRecording<"native">();
   const { isWeb, isMobile } = usePlatform();
+  const { width } = useWindowDimensions();
   const showSearchAndSort = !(meetingsCount <= 1 && !searchQuery);
   const showCountAndCreate = !(meetingsCount === 0 && !searchQuery);
-  const { isOnline } = useIsOnline();
 
-  const NativeMeetingControls = () => (
-    <TouchableOpacity onPress={handleOpenBottomSheet}>
-      <View className="flex flex-row items-center gap-1 rounded-full bg-brand px-4 py-2">
-        <PlusIcon className="!size-4 stroke-on-brand stroke-[3px]" />
-        <Typography className="text-sm font-semibold leading-4 text-on-brand">
-          Meeting
-        </Typography>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const WebMeetingControls = () => (
-    <>
-      <View className="md:hidden">
-        <TouchableOpacity onPress={handleOpenBottomSheet}>
-          <View className="flex flex-row items-center gap-1 rounded-full bg-brand px-4 py-2">
-            <PlusIcon className="!size-4 stroke-on-brand stroke-[3px]" />
-            <Typography className="text-sm font-semibold leading-4 text-on-brand">
-              Meeting
-            </Typography>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View className="hidden flex-row items-center gap-1 md:flex">
-        <TouchableOpacity
-          disabled={!isOnline}
-          aria-disabled={!isOnline}
-          onPress={handleAudioUpload}
-        >
-          <View className="flex-row items-center gap-1 px-4 py-2">
-            <UploadIcon className="!size-4 fill-brand" />
-            <Typography
-              className={clsx(
-                "text-sm font-semibold leading-4 text-brand",
-                !isOnline && "text-gray-400",
-              )}
-            >
-              Upload
-            </Typography>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleCreateMeeting}
-          disabled={isMeetingCreating}
-        >
-          <View className="flex flex-row items-center gap-1 rounded-full bg-brand px-4 py-2">
-            {isMeetingCreating ? (
-              <ActivityIndicator className="!size-1 px-2" />
-            ) : (
-              <PlusIcon className="!size-4 stroke-on-brand stroke-[3px]" />
-            )}
-            <Typography className="text-sm font-semibold leading-4 text-on-brand">
-              Meeting
-            </Typography>
-          </View>
-        </TouchableOpacity>
-      </View>
-    </>
-  );
+  const onPressNewMeeting =
+    isWeb && width >= 768 ? handleOpenModal : handleOpenBottomSheet;
 
   return (
     <>
@@ -157,11 +94,16 @@ const MeetingsHeaderContent = ({
                 ({meetingsCount})
               </Typography>
             </Typography>
-            {recordingState === "idle" &&
-              Platform.select({
-                native: <NativeMeetingControls />,
-                web: <WebMeetingControls />,
-              })}
+            {recordingState === "idle" && (
+              <TouchableOpacity onPress={onPressNewMeeting}>
+                <View className="flex flex-row items-center gap-1 rounded-full bg-brand px-4 py-2">
+                  <PlusIcon className="!size-4 stroke-on-brand stroke-[3px]" />
+                  <Typography className="text-sm font-semibold leading-4 text-on-brand">
+                    Meeting
+                  </Typography>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
         )}
         {showSearchAndSort && (

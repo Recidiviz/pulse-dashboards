@@ -41,10 +41,8 @@ type Meeting = {
 type Props = {
   meetings: Meeting[];
   person: Person;
-  handleCreateMeeting: () => void;
-  isMeetingCreating: boolean;
-  handleAudioUpload: () => void;
   handleOpenBottomSheet: () => void;
+  handleOpenModal: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   sortOptions: string[];
@@ -55,10 +53,8 @@ type Props = {
 const MeetingsMobileList = ({
   meetings,
   person,
-  handleCreateMeeting,
-  isMeetingCreating,
-  handleAudioUpload,
   handleOpenBottomSheet,
+  handleOpenModal,
   searchQuery,
   setSearchQuery,
   sortOptions,
@@ -82,10 +78,8 @@ const MeetingsMobileList = ({
           <MeetingsHeaderContent
             person={person}
             meetingsCount={meetings.length}
-            handleCreateMeeting={handleCreateMeeting}
-            isMeetingCreating={isMeetingCreating}
-            handleAudioUpload={handleAudioUpload}
             handleOpenBottomSheet={handleOpenBottomSheet}
+            handleOpenModal={handleOpenModal}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             sortOptions={sortOptions}
@@ -95,7 +89,7 @@ const MeetingsMobileList = ({
       }
       ListEmptyComponent={
         <MeetingsPlaceholder
-          handleCreateMeeting={handleCreateMeeting}
+          handleCreateMeeting={handleOpenModal}
           isSearchResultEmpty={searchQuery.trim().length > 0}
         />
       }

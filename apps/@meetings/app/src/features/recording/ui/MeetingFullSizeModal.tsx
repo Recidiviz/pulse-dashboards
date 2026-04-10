@@ -17,14 +17,13 @@
 
 import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
-import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 
 import MinimizeSvg from "../../../assets/icons/arrows-pointing-in.svg";
 import NotesSvg from "../../../assets/icons/notes.svg";
 import PauseSvg from "../../../assets/icons/pause.svg";
 import PlaySvg from "../../../assets/icons/play.svg";
 import StopSvg from "../../../assets/icons/stop.svg";
-import { Person, RecordingStatus } from "../../../common/types";
+import { Person } from "../../../common/types";
 import LinearProgressBar from "../../../components/LinearProgressBar";
 import Modal from "../../../components/Modal";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
@@ -41,146 +40,12 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
     status,
     note,
     setNote,
-    isRecording,
     durationMs,
     setIsRecordingViewMinimized,
-    startRecording,
     stopRecording,
     discardRecording,
     togglePauseResume,
-    handleFinalDiscard,
   } = useRecording<"web">();
-
-  if (!status) return null;
-
-  const isMeetingActive = status !== "idle" || isRecording;
-
-  const onModalClickOutside = () => {
-    setIsRecordingViewMinimized(true);
-  };
-
-  return (
-    <Modal
-      visible
-      transparent
-      onClickOutside={
-        isMeetingActive ? onModalClickOutside : handleFinalDiscard
-      }
-      containerClassName="max-w-[960px] md:h-[658px] size-full"
-    >
-      {isMeetingActive ? (
-        <NewMeetingProgress
-          person={person}
-          status={status}
-          note={note}
-          setNote={setNote}
-          handleStopRecording={stopRecording}
-          handleTogglePauseResume={togglePauseResume}
-          handleDiscard={discardRecording}
-          durationMs={durationMs}
-        />
-      ) : (
-        <NewMeetingIntro
-          person={person}
-          onClose={handleFinalDiscard}
-          startRecording={startRecording}
-        />
-      )}
-    </Modal>
-  );
-};
-
-type NewMeetingIntroProps = {
-  person: Person;
-  onClose: () => void;
-  startRecording: () => Promise<void>;
-};
-
-const NewMeetingIntro = ({
-  person,
-  onClose,
-  startRecording,
-}: NewMeetingIntroProps) => {
-  return (
-    <View className="h-full grow py-5 md:h-auto">
-      <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3">
-        <View className="gap-1">
-          <Typography className="text-xl font-semibold text-primary">
-            New Meeting
-          </Typography>
-          <Typography className="text-base font-medium text-primary">
-            {person.fullName}{" "}
-            <Typography className="text-base font-normal text-secondary">
-              {person.primaryMetadata} • ID: {person.displayPersonExternalId}
-            </Typography>
-          </Typography>
-        </View>
-        <TouchableOpacity
-          onPress={onClose}
-          className="rounded-full bg-screen p-1.5"
-        >
-          <MinimizeSvg className="size-5 text-secondary" />
-        </TouchableOpacity>
-      </View>
-      <View className="grow items-center justify-center px-8">
-        <View className="mb-6 size-16 items-center justify-center rounded-2xl border border-subtle bg-screen">
-          <MicrophoneIcon className="size-8 fill-tertiary" />
-        </View>
-
-        <Typography className="mb-2 font-libre-baskerville text-[28px] font-bold text-primary">
-          Meeting Recording
-        </Typography>
-
-        <Typography className="mb-6 max-w-[530px] text-center text-sm text-secondary">
-          This meeting will be recorded and transcribed for note-taking. Be sure
-          to confirm that everyone present is aware and has agreed to recording.
-        </Typography>
-        <View className="flex-row gap-2.5">
-          <TouchableOpacity
-            className="rounded-full border border-subtle px-8 py-4"
-            onPress={onClose}
-          >
-            <Typography className="font-semibold text-primary">
-              Close
-            </Typography>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="flex-row items-center rounded-full bg-brand px-8 py-4"
-            onPress={startRecording}
-          >
-            <PlaySvg className="size-4 fill-on-brand" />
-            <Typography className="ml-2 font-semibold text-on-brand">
-              Start Meeting
-            </Typography>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-};
-
-type NewMeetingProgressProps = {
-  person: Person;
-  status: RecordingStatus;
-  note: string;
-  durationMs: number;
-  setNote: (note: string) => void;
-  handleStopRecording: () => void;
-  handleTogglePauseResume: () => void;
-  handleDiscard: () => void;
-};
-
-const NewMeetingProgress = ({
-  person,
-  status,
-  note,
-  durationMs,
-  setNote,
-  handleStopRecording,
-  handleTogglePauseResume,
-  handleDiscard,
-}: NewMeetingProgressProps) => {
-  const { setIsRecordingViewMinimized } = useRecording<"web">();
 
   // TODO: live transcript will be added in next releases
   // const [showLiveTranscript, setShowLiveTranscript] = useState(false);
@@ -203,24 +68,32 @@ const NewMeetingProgress = ({
   //   if (showLiveTranscript) scrollToBottom();
   // }, [showLiveTranscript]);
 
+  if (!status) return null;
+
   const isModalDisabled = status === "uploading" || status === "ending";
 
   return (
-    <View className="h-full flex-1 grow md:h-auto">
-      <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3 pt-5">
-        <View className="gap-1">
-          <Typography className="text-xl font-semibold text-primary">
-            New Meeting
-          </Typography>
-          <Typography className="text-base font-medium text-primary">
-            {person.fullName}{" "}
-            <Typography className="text-xs font-normal text-secondary md:text-base">
-              {person.primaryMetadata} • ID: {person.displayPersonExternalId}
+    <Modal
+      visible
+      transparent
+      onClickOutside={() => setIsRecordingViewMinimized(true)}
+      containerClassName="max-w-[960px] md:h-[658px] size-full"
+    >
+      <View className="h-full flex-1 grow md:h-auto">
+        <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3 pt-5">
+          <View className="gap-1">
+            <Typography className="text-xl font-semibold text-primary">
+              New Meeting
             </Typography>
-          </Typography>
-        </View>
-        <View className="flex-row items-center gap-4">
-          {/* <View className="flex-row items-center gap-2">
+            <Typography className="text-base font-medium text-primary">
+              {person.fullName}{" "}
+              <Typography className="text-xs font-normal text-secondary md:text-base">
+                {person.primaryMetadata} • ID: {person.displayPersonExternalId}
+              </Typography>
+            </Typography>
+          </View>
+          <View className="flex-row items-center gap-4">
+            {/* <View className="flex-row items-center gap-2">
               <Text className="text-sm font-medium text-[#355362D9]">
                 Show live AI transcript
               </Text>
@@ -234,32 +107,32 @@ const NewMeetingProgress = ({
                 </View>
               </TouchableWithoutFeedback>
             </View> */}
-          <TouchableOpacity
-            onPress={() => setIsRecordingViewMinimized(true)}
-            className="rounded-full bg-screen p-1.5"
-          >
-            <MinimizeSvg className="size-5 text-secondary" />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View className="flex-1 grow flex-row">
-        <View className="grow gap-5 py-5">
-          <View className="flex-row items-center gap-1.5 px-8">
-            <NotesSvg className="text-tertiary" />
-            <Typography className="font-semibold text-primary">
-              Notepad
-            </Typography>
+            <TouchableOpacity
+              onPress={() => setIsRecordingViewMinimized(true)}
+              className="rounded-full bg-screen p-1.5"
+            >
+              <MinimizeSvg className="size-5 text-secondary" />
+            </TouchableOpacity>
           </View>
-          <TextInput
-            value={note}
-            onChangeText={setNote}
-            multiline
-            className="grow justify-start px-8 leading-[20px] text-primary outline-none"
-            placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It won’t be saved, just used to build the summary."
-            editable={!isModalDisabled}
-          />
         </View>
-        {/* {showLiveTranscript && (
+        <View className="flex-1 grow flex-row">
+          <View className="grow gap-5 py-5">
+            <View className="flex-row items-center gap-1.5 px-8">
+              <NotesSvg className="text-tertiary" />
+              <Typography className="font-semibold text-primary">
+                Notepad
+              </Typography>
+            </View>
+            <TextInput
+              value={note}
+              onChangeText={setNote}
+              multiline
+              className="grow justify-start px-8 leading-[20px] text-primary outline-none"
+              placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It won’t be saved, just used to build the summary."
+              editable={!isModalDisabled}
+            />
+          </View>
+          {/* {showLiveTranscript && (
             <View className="min-w-[300px] flex-1 gap-5 border-l border-[#EDF1F1] py-5">
               <View className="flex-row items-center gap-1.5 px-8">
                 <Image source={Icons.Sparkles} className="!size-5" />
@@ -312,79 +185,80 @@ const NewMeetingProgress = ({
               )}
             </View>
           )} */}
-      </View>
-      <View className="h-1">
-        {status === "ending" && <LinearProgressBar />}
-      </View>
-      <View className="flex-col items-center justify-between gap-2 border-t border-subtle bg-screen px-8 py-5 lg:columns-3 lg:flex-row">
-        <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start">
-          <Typography className="text-lg font-semibold text-primary">
-            {formatDurationNumeric(durationMs)}
-          </Typography>
-          <View className="flex-row items-center gap-2">
-            <RecordingIndicator status={status} />
-            <Typography className="font-medium text-secondary">
-              {status === "recording"
-                ? "Recording in progress"
-                : "Recording paused"}
+        </View>
+        <View className="h-1">
+          {status === "ending" && <LinearProgressBar />}
+        </View>
+        <View className="flex-col items-center justify-between gap-2 border-t border-subtle bg-screen px-8 py-5 lg:columns-3 lg:flex-row">
+          <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start">
+            <Typography className="text-lg font-semibold text-primary">
+              {formatDurationNumeric(durationMs)}
             </Typography>
+            <View className="flex-row items-center gap-2">
+              <RecordingIndicator status={status} />
+              <Typography className="font-medium text-secondary">
+                {status === "recording"
+                  ? "Recording in progress"
+                  : "Recording paused"}
+              </Typography>
+            </View>
+          </View>
+          <View className="flex-row items-center gap-2">
+            {status === "recording" ? (
+              <TouchableOpacity
+                className="w-[150px] flex-row items-center justify-center rounded-full bg-primary py-3 aria-disabled:opacity-40"
+                onPress={togglePauseResume}
+                disabled={isModalDisabled}
+              >
+                <PauseSvg className="size-6 fill-primary" />
+                <Typography className="ml-2 text-lg font-semibold text-primary">
+                  Pause
+                </Typography>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                className="w-[150px] flex-row items-center justify-center rounded-full bg-brand py-3 aria-disabled:opacity-40"
+                onPress={togglePauseResume}
+                disabled={isModalDisabled}
+              >
+                <PlaySvg className="size-4 fill-on-brand" />
+                <Typography className="ml-2 text-lg font-semibold text-on-brand">
+                  Resume
+                </Typography>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              className="w-[150px] flex-row items-center justify-center rounded-full bg-attention py-3 aria-disabled:opacity-40"
+              onPress={stopRecording}
+              disabled={isModalDisabled}
+            >
+              <StopSvg className="size-6 fill-on-brand" />
+              <Typography className="ml-2 text-lg font-semibold text-on-brand">
+                Stop
+              </Typography>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="size-[52px] items-center justify-center rounded-full aria-disabled:opacity-40 lg:hidden"
+              onPress={discardRecording}
+              disabled={isModalDisabled}
+            >
+              <XIcon className="size-6 stroke-secondary" />
+            </TouchableOpacity>
+          </View>
+          <View className="hidden w-[180px] lg:flex lg:items-end">
+            <TouchableOpacity
+              className="flex-row items-center aria-disabled:opacity-40"
+              disabled={isModalDisabled}
+              onPress={discardRecording}
+            >
+              <XIcon className="size-6 stroke-secondary" />
+              <Typography className="ml-2 text-lg font-semibold text-secondary">
+                Discard
+              </Typography>
+            </TouchableOpacity>
           </View>
         </View>
-        <View className="flex-row items-center gap-2">
-          {status === "recording" ? (
-            <TouchableOpacity
-              className="w-[150px] flex-row items-center justify-center rounded-full bg-primary py-3 aria-disabled:opacity-40"
-              onPress={handleTogglePauseResume}
-              disabled={isModalDisabled}
-            >
-              <PauseSvg className="size-6 fill-primary" />
-              <Typography className="ml-2 text-lg font-semibold text-primary">
-                Pause
-              </Typography>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              className="w-[150px] flex-row items-center justify-center rounded-full bg-brand py-3 aria-disabled:opacity-40"
-              onPress={handleTogglePauseResume}
-              disabled={isModalDisabled}
-            >
-              <PlaySvg className="size-4 fill-on-brand" />
-              <Typography className="ml-2 text-lg font-semibold text-on-brand">
-                Resume
-              </Typography>
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            className="w-[150px] flex-row items-center justify-center rounded-full bg-attention py-3 aria-disabled:opacity-40"
-            onPress={handleStopRecording}
-            disabled={isModalDisabled}
-          >
-            <StopSvg className="size-6 fill-on-brand" />
-            <Typography className="ml-2 text-lg font-semibold text-on-brand">
-              Stop
-            </Typography>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="size-[52px] items-center justify-center rounded-full aria-disabled:opacity-40 lg:hidden"
-            onPress={handleDiscard}
-            disabled={isModalDisabled}
-          >
-            <XIcon className="size-6 stroke-secondary" />
-          </TouchableOpacity>
-        </View>
-        <View className="hidden w-[180px] lg:flex lg:items-end">
-          <TouchableOpacity
-            className="flex-row items-center aria-disabled:opacity-40"
-            disabled={isModalDisabled}
-            onPress={handleDiscard}
-          >
-            <XIcon className="size-6 stroke-secondary" />
-            <Typography className="ml-2 text-lg font-semibold text-secondary">
-              Discard
-            </Typography>
-          </TouchableOpacity>
-        </View>
       </View>
-    </View>
+    </Modal>
   );
 };

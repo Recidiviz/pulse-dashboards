@@ -36,6 +36,7 @@ import {
 } from "../common/types";
 import Header from "../components/Header";
 import MeetingsTable from "../components/MeetingsTable.web";
+import { NewMeetingOptionsModal } from "../components/NewMeetingOptionsModal";
 import { NewMeetingRecordingSheet } from "../components/NewMeetingRecordingSheet";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import { useCreateMeeting } from "../hooks/useCreateMeeting";
@@ -78,12 +79,14 @@ const ProfileMeetings = ({
   const { status: recordingState } = useRecording();
   const { setMeetingId, setPerson, setPersonType, startRecording } =
     useRecording<"native">();
-  const { openRecordingView } = useRecording<"web">();
+  const { openRecordingView, startRecording: startRecordingWeb } =
+    useRecording<"web">();
   const openAudioUpload = useAudioUploadStore((s) => s.open);
   const audioUploadStatus = useAudioUploadStore((s) => s.status);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState(MeetingsSort.NEWEST_FIRST as string);
   const [isNewMeetingSheetOpen, setIsNewMeetingSheetOpen] = useState(false);
+  const [isNewMeetingModalOpen, setIsNewMeetingModalOpen] = useState(false);
 
   const handleAudioUpload = useCallback(() => {
     openAudioUpload({ person, personType });
@@ -96,6 +99,7 @@ const ProfileMeetings = ({
       switch (Platform.OS) {
         case "web":
           openRecordingView({ meetingId, person });
+          startRecordingWeb();
           break;
         case "ios":
         case "android":
@@ -230,10 +234,8 @@ const ProfileMeetings = ({
               <MeetingsMobileList
                 meetings={filteredMeetings}
                 person={person}
-                handleCreateMeeting={handleCreateMeeting}
-                isMeetingCreating={isCreating}
-                handleAudioUpload={handleAudioUpload}
                 handleOpenBottomSheet={() => setIsNewMeetingSheetOpen(true)}
+                handleOpenModal={() => setIsNewMeetingModalOpen(true)}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 sortOptions={Object.values(MeetingsSort)}
@@ -249,10 +251,8 @@ const ProfileMeetings = ({
                 <MeetingsMobileList
                   meetings={filteredMeetings}
                   person={person}
-                  handleCreateMeeting={handleCreateMeeting}
-                  isMeetingCreating={isCreating}
-                  handleAudioUpload={handleAudioUpload}
                   handleOpenBottomSheet={() => setIsNewMeetingSheetOpen(true)}
+                  handleOpenModal={() => setIsNewMeetingModalOpen(true)}
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
                   sortOptions={Object.values(MeetingsSort)}
@@ -277,10 +277,8 @@ const ProfileMeetings = ({
                   <MeetingsHeaderContent
                     person={person}
                     meetingsCount={filteredMeetings.length}
-                    handleCreateMeeting={handleCreateMeeting}
-                    isMeetingCreating={isCreating}
-                    handleAudioUpload={handleAudioUpload}
                     handleOpenBottomSheet={() => setIsNewMeetingSheetOpen(true)}
+                    handleOpenModal={() => setIsNewMeetingModalOpen(true)}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     sortOptions={Object.values(MeetingsSort)}
@@ -288,7 +286,7 @@ const ProfileMeetings = ({
                   />
                   {filteredMeetings.length === 0 ? (
                     <MeetingsPlaceholder
-                      handleCreateMeeting={handleCreateMeeting}
+                      handleCreateMeeting={() => setIsNewMeetingModalOpen(true)}
                       isSearchResultEmpty={searchQuery.trim().length > 0}
                     />
                   ) : (
@@ -313,6 +311,21 @@ const ProfileMeetings = ({
             handleCreateMeeting();
           }}
           onUploadFile={handleAudioUpload}
+          isMeetingCreating={isCreating}
+        />
+      )}
+      {isNewMeetingModalOpen && (
+        <NewMeetingOptionsModal
+          person={person}
+          onClose={() => setIsNewMeetingModalOpen(false)}
+          onStartMeeting={() => {
+            setIsNewMeetingModalOpen(false);
+            handleCreateMeeting();
+          }}
+          onUploadFile={() => {
+            setIsNewMeetingModalOpen(false);
+            handleAudioUpload();
+          }}
           isMeetingCreating={isCreating}
         />
       )}
