@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from app.models.recording import RecordingSession
 
 import jwt
-from sqlalchemy import Column, and_
+from sqlalchemy import JSON, Column, and_, or_
 from sqlalchemy import Enum as SAEnum
 from sqlmodel import Field, Relationship, select
 
@@ -505,6 +505,20 @@ class IntakeMessage(BaseModel, table=True):
     )
     content: str = Field(nullable=False)
     section: str = Field(default=None, nullable=True)
+    guardrailed_by: Optional[list[str]] = Field(
+        default=None,
+        sa_column=Column(JSON(none_as_null=True), nullable=True),
+    )
+    false_positive: bool = Field(default=False, nullable=False)
+
+    @classmethod
+    def visible_filter(cls):
+        """Filter clause that excludes guardrailed messages unless marked as false positives.
+
+        Safe for all existing rows: guardrailed_by defaults to NULL, so this
+        is a no-op for any message written before the guardrails system existed.
+        """
+        return or_(cls.guardrailed_by.is_(None), cls.false_positive.is_(True))
 
 
 # ------------------------------ Intake Token ------------------------------------------

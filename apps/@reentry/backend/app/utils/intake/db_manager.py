@@ -110,6 +110,7 @@ class DatabaseManager:
         intake_id: UUID,
         from_role: IntakeMessageRole,
         content: str,
+        guardrailed_by: list[str] | None = None,
     ) -> Optional[IntakeMessage]:
         """Store a message in the database."""
         async with await self._get_session() as session:
@@ -130,6 +131,7 @@ class DatabaseManager:
                     from_role=from_role,
                     content=content,
                     section=current_section,
+                    guardrailed_by=guardrailed_by,
                 )
 
                 session.add(message)
@@ -175,6 +177,7 @@ class DatabaseManager:
                         and_(
                             IntakeMessage.intake_id == intake_id,
                             IntakeMessage.section == section_title,
+                            IntakeMessage.visible_filter(),
                         )
                     )
                     .order_by(IntakeMessage.created_at)
@@ -248,7 +251,12 @@ class DatabaseManager:
                 # CRITICAL: Filter by intake_id (not just client) to prevent history bleeding
                 messages_stmt = (
                     select(IntakeMessage)
-                    .where(IntakeMessage.intake_id == intake_id)
+                    .where(
+                        and_(
+                            IntakeMessage.intake_id == intake_id,
+                            IntakeMessage.visible_filter(),
+                        )
+                    )
                     .order_by(IntakeMessage.created_at)
                 )
 
