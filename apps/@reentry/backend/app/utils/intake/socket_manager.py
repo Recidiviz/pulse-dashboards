@@ -35,6 +35,7 @@ from app.utils.intake.schemas import (
     ClientContext,
     ConnectionAckContent,
     ConnectionAckEvent,
+    ForceDisconnectEvent,
     GuardrailTriggeredEvent,
     HumanMessage,
     PongEvent,
@@ -555,11 +556,29 @@ class SocketIOManager:
             logger.error(f"Error handling disconnect for {sid}: {e}")
 
     async def _handle_guardrail_response(
-        self, sid: str, client_pseudo_id: str, triggered: list[str]
+        self, sid: str, client_pseudo_id: str, triggered: list[str], content: str
     ) -> None:
         logger.warning(f"Guardrail(s) triggered for {client_pseudo_id}: {triggered}")
-        event = GuardrailTriggeredEvent(guardrails=triggered)
-        await self.sio.emit(event.type, event.model_dump(mode="json"), room=sid)
+
+        if "prompt_injection" in triggered:
+            # Persist the blocked message with guardrailed_by set for querying and auditing.
+            intake = await self.db_manager.get_intake(client_pseudo_id)
+            if intake:
+                await self.db_manager.store_message(
+                    intake_id=intake.id,
+                    from_role=IntakeMessageRole.CLIENT,
+                    content=content,
+                    guardrailed_by=triggered,
+                )
+            # Cancel graph before closing socket — prevents a window where the socket
+            # is dead but the graph is still running and attempting to emit.
+            if client_pseudo_id in self.conversation_graphs:
+                del self.conversation_graphs[client_pseudo_id]
+            event = ForceDisconnectEvent(reason="prompt_injection")
+            await self.sio.emit(event.type, event.model_dump(), room=sid)
+        else:
+            event = GuardrailTriggeredEvent(guardrails=triggered)
+            await self.sio.emit(event.type, event.model_dump(mode="json"), room=sid)
 
     async def handle_client_response(
         self, sid: str, data
@@ -590,7 +609,9 @@ class SocketIOManager:
                 return
 
             if triggered := run_guardrails(content):
-                await self._handle_guardrail_response(sid, client_pseudo_id, triggered)
+                await self._handle_guardrail_response(
+                    sid, client_pseudo_id, triggered, content
+                )
                 return
 
             intake = await self.db_manager.get_intake(client_pseudo_id)
