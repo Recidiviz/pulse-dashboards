@@ -1,8 +1,6 @@
 # Defines services needed to run the Workflows end to end tests
 # Run via `docker compose -f docker-compose.e2e.yaml up`
 
-version: "3"
-
 services:
   redis:
     image: redis:5.0
