@@ -130,7 +130,7 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
           .array(
             z.object({
               staffTitle: z.string().nullable().default(""),
-              workUnit: z.string(),
+              workUnit: z.string().nullable().default(""),
               officerExternalId: z.string(),
             }),
           )
