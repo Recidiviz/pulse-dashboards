@@ -17,6 +17,7 @@
 
 import { useEffect, useState } from "react";
 
+import { ReconnectStatus } from "../components/ReconnectStatus";
 import { AudioUpload } from "../features/audio-upload";
 import { RecordingProvider } from "../features/recording";
 import useIsOnline from "../hooks/useIsOnline.native";
@@ -45,6 +46,7 @@ export function AuthenticatedContent() {
     <RecordingProvider>
       <DrawerNavigator />
       <AudioUpload />
+      <ReconnectStatus />
     </RecordingProvider>
   );
 }

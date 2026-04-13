@@ -402,6 +402,7 @@ describe("RecordingProvider (native)", () => {
         personType: "resident",
         audioUri: RECORDING_URI,
         endTime: expect.any(Date),
+        person: mockPerson,
       });
       expect(storage.removeRecordingUri).toHaveBeenCalled();
       expect(onComplete).toHaveBeenCalled();

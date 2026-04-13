@@ -222,6 +222,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         personType: getPersonType(person),
         audioBlob,
         endTime: new Date(),
+        person,
       });
       await cleanupRecording();
       closeRecordingView();

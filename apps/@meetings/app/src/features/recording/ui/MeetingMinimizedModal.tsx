@@ -23,6 +23,7 @@ import PauseSvg from "../../../assets/icons/pause.svg";
 import PlaySvg from "../../../assets/icons/play.svg";
 import StopSvg from "../../../assets/icons/stop.svg";
 import { Person } from "../../../common/types";
+import { FloatingCard } from "../../../components/FloatingCard";
 import LinearProgressBar from "../../../components/LinearProgressBar";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
@@ -49,8 +50,8 @@ export function MeetingMinimizedModal({
   const isControlsDisabled = status === "uploading" || status === "ending";
 
   return (
-    <View className="absolute bottom-5 right-5 h-[150px] w-[360px] overflow-hidden rounded-[20px] bg-primary shadow-lg">
-      <View className="grow p-5">
+    <FloatingCard position="bottom-right" className="h-[150px] w-[360px]">
+      <View className="grow">
         <View className="mb-1 w-full flex-row justify-between">
           <Typography className="text-lg font-medium text-primary">
             {person.fullName}
@@ -117,6 +118,6 @@ export function MeetingMinimizedModal({
       <View className="h-1">
         {status === "ending" && <LinearProgressBar />}
       </View>
-    </View>
+    </FloatingCard>
   );
 }

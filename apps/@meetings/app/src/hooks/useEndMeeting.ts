@@ -21,17 +21,19 @@ import type { inferRouterInputs } from "@trpc/server";
 import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import type { AppRouter } from "~@meetings/trpc-types";
 
-import { PersonType } from "../common/types";
+import { Person, PersonType } from "../common/types";
 import { useSnackbar } from "../components/Snackbar";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";
+import { useReconnectUploadStore } from "./useReconnectUploadStore";
 
 type Params = inferRouterInputs<AppRouter>["v1"]["meeting"]["endMeeting"] & {
   personId: bigint;
   personType: PersonType;
   audioUri?: string;
   audioBlob?: Blob;
+  person?: Person;
 };
 
 export function useEndMeeting() {
@@ -39,6 +41,7 @@ export function useEndMeeting() {
   const { isOnline } = useIsOnline();
   const { dispatch: dispatchOfflineEvent } = useOfflineEventFactory();
   const { endMeeting } = useMeetingActions();
+  const { initUpload } = useReconnectUploadStore();
 
   return useMutation({
     networkMode: "always",
@@ -47,18 +50,22 @@ export function useEndMeeting() {
       personType,
       audioUri,
       audioBlob,
+      person,
       ...vars
     }: Params) => {
       if (!isOnline) {
+        const endTime = new Date();
+        initUpload(vars.meetingId, { person, recordedAt: endTime });
         dispatchOfflineEvent({
           type: MeetingEventType.Ended,
           meetingId: vars.meetingId,
           personId,
           personType,
-          endTime: new Date(),
+          endTime,
           userNotepadNotes: vars.userNotepadNotes,
           audioUri,
           audioBlob,
+          person,
         });
 
         return Promise.resolve();

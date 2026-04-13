@@ -24,6 +24,7 @@ import type { AppRouter } from "~@meetings/trpc-types";
 import { useUploadSegment } from "../entities/upload-segment/hooks/useUploadSegment";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType, OfflineEvent } from "./useMeetingEventQueue";
+import { useReconnectUploadStore } from "./useReconnectUploadStore";
 
 export type EventProcessResult =
   | { status: "success" }
@@ -33,6 +34,8 @@ export function useProcessOfflineEvent() {
   const { createMeeting, endMeeting, discardMeeting, updateNotes } =
     useMeetingActions();
   const uploadSegment = useUploadSegment();
+  const { initUpload, setUploadProgress, setUploadStatus } =
+    useReconnectUploadStore();
 
   const processEvent = async (
     event: OfflineEvent,
@@ -52,6 +55,12 @@ export function useProcessOfflineEvent() {
         }
 
         case MeetingEventType.Ended: {
+          // Store this as a future upload that we need to display
+          initUpload(event.meetingId, {
+            person: event.person,
+            recordedAt: event.endTime,
+          });
+
           // Resolve upload URI: native stores a file URI, web stores a Blob.
           let uploadUri: string | undefined = event.audioUri;
           let blobUrl: string | undefined;
@@ -73,8 +82,12 @@ export function useProcessOfflineEvent() {
               meetingId: event.meetingId,
               contentType,
               fileExtension: extension,
+              onProgress: (loaded, total) =>
+                setUploadProgress(event.meetingId, loaded, total),
             });
           }
+
+          setUploadStatus(event.meetingId, "complete");
 
           if (blobUrl) {
             URL.revokeObjectURL(blobUrl);
@@ -116,6 +129,9 @@ export function useProcessOfflineEvent() {
 
       return { status: "success" };
     } catch (error) {
+      if (event.type === MeetingEventType.Ended) {
+        setUploadStatus(event.meetingId, "error");
+      }
       if (error instanceof TRPCClientError) {
         const unauthenticated =
           (error as TRPCClientError<AppRouter>).data?.code === "UNAUTHORIZED";

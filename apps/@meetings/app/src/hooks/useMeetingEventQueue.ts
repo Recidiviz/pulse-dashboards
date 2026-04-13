@@ -20,7 +20,7 @@ import uuid from "react-native-uuid";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { PersonType } from "~@meetings/app/common/types";
+import { Person, PersonType } from "~@meetings/app/common/types";
 
 import { useUserContext } from "../context/UserContext";
 import { createEventQueueStorage } from "../utils/meetingEventQueueStorage";
@@ -62,6 +62,7 @@ export type EndMeetingEvent = {
   audioUri?: string;
   audioBlob?: Blob;
   userNotepadNotes?: string;
+  person?: Person;
 } & MeetingEventMetadata;
 
 export type DiscardMeetingEvent = {

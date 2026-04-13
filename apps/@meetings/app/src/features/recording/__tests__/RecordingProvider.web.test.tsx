@@ -472,6 +472,7 @@ describe("RecordingProvider (web)", () => {
         personType: "resident",
         audioBlob: undefined,
         endTime: expect.any(Date),
+        person: mockPerson,
       });
       expect(mockRecorderCleanup).toHaveBeenCalled();
       expect(mockSetMeetingId).toHaveBeenCalledWith(null);
