@@ -17,69 +17,54 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { palette, RadioGroup as DSRadioGroup } from "~design-system";
 
-export const RadioContainer = styled.label`
-  display: block;
-  position: relative;
-  padding-left: 1.75rem;
-  min-height: 1rem;
-  margin-bottom: 0.25rem;
-  user-select: none;
-  cursor: pointer;
-  color: ${({ theme }) => theme.checkbox?.labelColor ?? palette.pine1};
-
-  &:focus,
-  &:focus-within,
-  &:active {
-    span:last-child {
-      border: 1px solid
-        ${({ theme }) => theme.checkbox?.checkedColor ?? palette.pine3};
-    }
-  }
-`;
-
-export const RadioLabel = styled.span`
-  position: relative;
-  top: -2px;
-  ${({ theme }) => theme.checkbox?.labelTypography}
-`;
-
-export const RadioInput = styled.input`
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-`;
-
-export const RadioGroupGrid = styled.div`
+/**
+ * Themed wrapper around the design-system RadioGroup that preserves the
+ * Pathways grid layout and applies the consumer's `theme.checkbox.*` styles
+ * to the design-system Radio internals via stable class names.
+ */
+export const PathwaysRadioGroup = styled(DSRadioGroup)`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 0.25rem 1rem;
-`;
 
-export const RadioDot = styled.span<{ $checked: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 1rem;
-  width: 1rem;
-  border: 1px solid
-    ${({ theme }) => theme.checkbox?.borderColor ?? palette.slate30};
-  border-radius: 1rem;
-  background: transparent;
+  /* Override the design-system default focus ring with the themed focus color. */
+  &:has(:focus-visible) {
+    box-shadow:
+      -1px 1px 1px 1px
+        ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links},
+      1px -1px 1px 1px ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links};
+  }
 
-  &::after {
-    content: "";
-    position: absolute;
-    display: ${({ $checked }) => ($checked ? "block" : "none")};
-    left: 3px;
-    top: 3px;
-    width: 8px;
-    height: 8px;
-    background: ${({ theme }) => theme.checkbox?.checkedColor ?? palette.pine3};
-    border-radius: 1000px;
-    border: 0;
+  input[data-rg-item="true"]:focus-visible + .ds-radio__indicator {
+    outline-color: ${({ theme }) =>
+      theme.palette?.focusColor ?? palette.signal.links};
+  }
+
+  .ds-radio {
+    color: ${({ theme }) => theme.checkbox?.labelColor ?? palette.pine1};
+    margin-bottom: 0.25rem;
+  }
+
+  .ds-radio__label {
+    ${({ theme }) => theme.checkbox?.labelTypography}
+  }
+
+  .ds-radio__indicator {
+    border-color: ${({ theme }) =>
+      theme.checkbox?.borderColor ?? palette.slate30};
+
+    &::after {
+      background: ${({ theme }) =>
+        theme.checkbox?.checkedColor ?? palette.pine3};
+    }
+  }
+
+  .ds-radio:has(input:checked) .ds-radio__indicator,
+  .ds-radio:hover .ds-radio__indicator,
+  .ds-radio:focus-within .ds-radio__indicator {
+    border-color: ${({ theme }) =>
+      theme.checkbox?.checkedColor ?? palette.pine3};
   }
 `;

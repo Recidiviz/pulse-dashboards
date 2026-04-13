@@ -17,14 +17,10 @@
 
 import React, { useState } from "react";
 
+import { Radio } from "~design-system";
+
 import { FilterOption, PopulationFilter } from "../../filters";
-import {
-  RadioContainer,
-  RadioDot,
-  RadioGroupGrid,
-  RadioInput,
-  RadioLabel,
-} from "./RadioGroup.styles";
+import { PathwaysRadioGroup } from "./RadioGroup.styles";
 
 type RadioGroupProps = {
   filter: PopulationFilter;
@@ -37,28 +33,30 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   defaultValue,
   onChange,
 }) => {
-  const [state, setState] = useState(defaultValue);
-  const { type, options } = filter;
+  const [value, setValue] = useState(defaultValue);
+  const { type, title, options } = filter;
+
+  const handleChange = (next: string) => {
+    setValue(next);
+    const matched = options.find((o) => o.value === next);
+    if (matched) {
+      onChange([matched], type);
+    }
+  };
 
   return (
-    <RadioGroupGrid>
-      {options.map(({ value, label }) => (
-        <RadioContainer key={value}>
-          <RadioLabel>{label}</RadioLabel>
-          <RadioInput
-            type="radio"
-            name={type}
-            checked={state === value}
-            onChange={() => {
-              setState(value);
-              onChange([{ value, label }], type);
-            }}
-            tabIndex={0}
-          />
-          <RadioDot $checked={state === value} />
-        </RadioContainer>
+    <PathwaysRadioGroup
+      value={value}
+      onChange={handleChange}
+      ariaLabel={title}
+      name={type}
+    >
+      {options.map(({ value: optionValue, label }) => (
+        <Radio key={optionValue} value={optionValue}>
+          {label}
+        </Radio>
       ))}
-    </RadioGroupGrid>
+    </PathwaysRadioGroup>
   );
 };
 
