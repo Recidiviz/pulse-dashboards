@@ -119,6 +119,8 @@ describe("queryConstraints", () => {
       () => supervisionSystemConfig,
     );
     // @ts-ignore
+    searchStoreMock.searchType = "DISTRICT";
+    // @ts-ignore
     searchStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
 
     // eslint-disable-next-line
@@ -130,6 +132,38 @@ describe("queryConstraints", () => {
     ]);
     expect(orMock).toHaveBeenCalledWith("in, TEST1,TEST2");
     expect(andMock).toHaveBeenCalledWith("==, US_ND", "in, TEST1,TEST2");
+  });
+
+  test("queryConstraints determined by selected search type, not search config", () => {
+    const supervisionSystemConfig = {
+      search: [
+        { searchType: "DISTRICT", searchField: ["district"] },
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+          searchOp: "fakeOp",
+        },
+      ],
+    } as WorkflowsSystemConfig<ClientRecord, any>;
+    searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
+      () => supervisionSystemConfig,
+    );
+    // @ts-ignore
+    searchStoreMock.searchType = "DISTRICT";
+    // @ts-ignore
+    searchStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
+
+    // eslint-disable-next-line
+    clientSearchManager.queryConstraints;
+    expect(whereMock).toHaveBeenCalledWith(new FieldPath("district"), "in", [
+      "TEST1",
+      "TEST2",
+    ]);
+    expect(whereMock).not.toHaveBeenCalledWith(
+      new FieldPath("officerId"),
+      "fakeOp",
+      ["TEST1", "TEST2"],
+    );
   });
 
   test("queryConstraints builds the correct query for multiple searchField", () => {
@@ -147,6 +181,8 @@ describe("queryConstraints", () => {
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => supervisionSystemConfig,
     );
+    // @ts-ignore
+    searchStoreMock.searchType = "ALL";
     // @ts-ignore
     searchStoreMock.selectedSearchIds = ["TEST1", "TEST2", "OFFICER1"];
 

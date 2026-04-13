@@ -46,6 +46,7 @@ export class SearchManager {
         rootStore: { currentTenantId },
       },
       selectedSearchIds,
+      searchType,
     } = this.searchStore;
     const { systemConfig } = this;
 
@@ -53,9 +54,14 @@ export class SearchManager {
       return undefined;
     }
 
+    const searchConfigs =
+      searchType !== "ALL"
+        ? systemConfig.search.filter((c) => c.searchType === searchType)
+        : systemConfig.search;
+
     // The conditions that are applied with a logical OR
     // A person should match if they match searchId1 OR searchId2
-    const orConditions = systemConfig.search.map((c) => {
+    const orConditions = searchConfigs.map((c) => {
       const whereClause = where(
         new FieldPath(...c.searchField),
         c.searchOp ?? "in",
