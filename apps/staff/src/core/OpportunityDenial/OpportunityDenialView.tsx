@@ -395,6 +395,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     setUserInput(pick(userInput, updatedReasons));
   };
 
+  const isOtherIndefiniteReason = reasonsIncludesOtherKey(
+    Object.keys(opportunity.indefiniteDenialReasons),
+  );
+
   return (
     <SidePanelContents
       className="OpportunityDenial"
@@ -411,6 +415,17 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         denialInputSettings={denialInputSettings}
         userInput={userInput}
       />
+      {reasonsIncludesOtherKey(reasons) && !isOtherIndefiniteReason && (
+        <CharacterCountTextField
+          data-testid="OtherReasonInput"
+          id="OtherReasonInput"
+          maxLength={DEFAULT_MAX_CHAR_LENGTH}
+          minLength={DEFAULT_MIN_CHAR_LENGTH}
+          value={otherReason}
+          placeholder="Please specify a reason…"
+          onChange={(newValue) => setOtherReason(newValue)}
+        />
+      )}
       {!isEmpty(opportunity.indefiniteDenialReasons) && (
         <DenialReasonSection
           denialReasonsMap={opportunity.indefiniteDenialReasons}
@@ -426,10 +441,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           userInput={userInput}
         />
       )}
-      {/*TODO(#11849): When indefinite snooze reasons exist, the "Other" text field
-       appears below them, far from the "Other" checkbox. Consider moving it closer
-       (e.g. keep Other input next to main reasons) or redesigning the layout. */}
-      {reasonsIncludesOtherKey(reasons) && (
+      {reasonsIncludesOtherKey(reasons) && isOtherIndefiniteReason && (
         <CharacterCountTextField
           data-testid="OtherReasonInput"
           id="OtherReasonInput"
