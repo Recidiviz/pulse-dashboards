@@ -171,11 +171,13 @@ export const SentencingAssessmentReport: React.FC<
                   ))}
                 </Styled.ColumnFlexContainer>
               </SentencingAssessmentReportSection>
-              <ReportKeyConsiderations
-                needsDisplayItems={needsDisplayItems}
-                factorsDisplayItems={factorsDisplayItems}
-                riskProfileCardData={presenter.riskProfileCardData}
-              />
+              {!presenter.defendantDeclinedToParticipate && (
+                <ReportKeyConsiderations
+                  needsDisplayItems={needsDisplayItems}
+                  factorsDisplayItems={factorsDisplayItems}
+                  riskProfileCardData={presenter.riskProfileCardData}
+                />
+              )}
               {sarData.defendantStatement &&
                 !presenter.defendantStatementSkipped && (
                   <SentencingAssessmentReportSection
@@ -196,14 +198,18 @@ export const SentencingAssessmentReport: React.FC<
                     </Styled.FreeTextContent>
                   </SentencingAssessmentReportSection>
                 )}
-              {sarData.assessmentType && (
-                <ReportOffenderAssessment sarData={sarData} />
-              )}
-              <ReportPriorTreatmentHistory
-                presenter={presenter.priorTreatmentHistory}
-              />
-              {!presenter.recommendationSkipped && (
-                <ReportRecommendation sarData={sarData} />
+              {!presenter.defendantDeclinedToParticipate && (
+                <>
+                  {sarData.assessmentType && (
+                    <ReportOffenderAssessment sarData={sarData} />
+                  )}
+                  <ReportPriorTreatmentHistory
+                    presenter={presenter.priorTreatmentHistory}
+                  />
+                  {!presenter.recommendationSkipped && (
+                    <ReportRecommendation sarData={sarData} />
+                  )}
+                </>
               )}
               {presenter.insightData?.dispositionNumRecords ? (
                 <ReportDispositionChart

@@ -1327,18 +1327,28 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Get section statuses for navigation indicators */
   get sectionStatuses(): Record<ProgressSection, SectionStatus> {
+    // These sections are removed from the UI when the defendant declines, so
+    // they should not block download readiness.
+    const declined = this.defendantDeclinedToParticipate;
     return {
       [SARSection.CASE_INFORMATION]: this.getCaseInfoStatus(),
-      [SARSection.KEY_CONSIDERATIONS]: this.getKeyConsiderationsStatus(),
+      [SARSection.KEY_CONSIDERATIONS]: declined
+        ? "complete"
+        : this.getKeyConsiderationsStatus(),
       [SARSection.DEFENDANTS_VERSION]:
         this.getTextFieldStatus("defendantStatement"),
       [SARSection.VICTIM_IMPACT]: this.getTextFieldStatus(
         "victimImpactStatement",
       ),
-      [SARSection.OFFENDER_ASSESSMENT]: this.getOffenderAssessmentStatus(),
-      [SARSection.PRIOR_TREATMENT_HISTORY]:
-        this.getPriorTreatmentHistoryStatus(),
-      [SARSection.RECOMMENDATION]: this.getRecommendationStatus(),
+      [SARSection.OFFENDER_ASSESSMENT]: declined
+        ? "complete"
+        : this.getOffenderAssessmentStatus(),
+      [SARSection.PRIOR_TREATMENT_HISTORY]: declined
+        ? "complete"
+        : this.getPriorTreatmentHistoryStatus(),
+      [SARSection.RECOMMENDATION]: declined
+        ? "complete"
+        : this.getRecommendationStatus(),
     };
   }
 
