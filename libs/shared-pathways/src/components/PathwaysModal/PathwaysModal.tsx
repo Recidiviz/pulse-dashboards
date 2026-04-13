@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 import useOnClickOutside from "use-onclickoutside";
@@ -133,12 +133,35 @@ const ModalFooter = styled.div`
   }
 `;
 
+/**
+ * Form wrapper rendered around the modal's content + footer when the consumer
+ * provides an `onSubmit` handler. Inherits the Body's flex column so the
+ * footer's `margin-top: auto` still pushes it to the bottom and the content
+ * area can scroll.
+ */
+const FormElement = styled.form`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+`;
+
 type PathwaysModalProps = {
   isShowing: boolean;
   hide: () => void;
   title?: string;
   footer?: React.ReactElement;
   children?: React.ReactNode;
+  /**
+   * If provided, wraps the modal's content + footer in a `<form>` element
+   * with this onSubmit handler. Use this for modals whose body gathers form
+   * inputs and submits them together (form pattern from APG). The form is
+   * labelled by the modal title.
+   *
+   * Pair with a submit button (`type="submit"`) inside `footer` so clicking
+   * the button or pressing Enter on a focused input both submit the form.
+   */
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
 const PathwaysModal: React.FC<PathwaysModalProps> = ({
@@ -147,8 +170,10 @@ const PathwaysModal: React.FC<PathwaysModalProps> = ({
   title,
   footer,
   children,
+  onSubmit,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const [isMounted, setIsMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -234,19 +259,35 @@ const PathwaysModal: React.FC<PathwaysModalProps> = ({
     return null;
   }
 
+  const contentAndFooter = (
+    <>
+      <ModalContent>{children}</ModalContent>
+      {footer && <ModalFooter>{footer}</ModalFooter>}
+    </>
+  );
+
+  const labelProps = title
+    ? { "aria-labelledby": titleId }
+    : { "aria-label": "Modal" };
+
   return createPortal(
     <div>
       <Overlay $isVisible={isVisible} />
-      <Wrapper aria-modal="true" aria-label={title || "Modal"} role="dialog">
+      <Wrapper aria-modal="true" {...labelProps} role="dialog">
         <Body $isVisible={isVisible} ref={ref}>
           <Header>
-            {title}
+            <span id={titleId}>{title}</span>
             <CloseButton onClick={hide} aria-label="Close modal">
               <Icon kind={IconSVG["Close"]} width={14} height={14} />
             </CloseButton>
           </Header>
-          <ModalContent>{children}</ModalContent>
-          {footer && <ModalFooter>{footer}</ModalFooter>}
+          {onSubmit ? (
+            <FormElement onSubmit={onSubmit} {...labelProps} noValidate>
+              {contentAndFooter}
+            </FormElement>
+          ) : (
+            contentAndFooter
+          )}
         </Body>
       </Wrapper>
     </div>,

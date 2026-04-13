@@ -55,6 +55,12 @@ export const ResetButton = styled.button`
     text-decoration: underline;
     color: ${({ theme }) => theme.palette.focusColor};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 `;
 
 export const FilterDropdownWrapper = styled(Dropdown)`
@@ -142,7 +148,8 @@ export const ApplyButton = styled(Button)`
   background-color: ${({ theme }) => theme.palette.focusColor};
   border-color: ${({ theme }) => theme.palette.focusColor};
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     text-decoration: underline;
     background-color: ${({ theme }) => theme.palette.focusColor};
     border-color: ${({ theme }) => theme.palette.focusColor};

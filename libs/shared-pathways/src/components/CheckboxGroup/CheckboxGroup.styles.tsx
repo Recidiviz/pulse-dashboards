@@ -36,7 +36,9 @@ export const PathwaysCheckboxGroup = styled(DSCheckboxGroup)`
       1px -1px 1px 1px ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links};
   }
 
-  input[data-cg-item="true"]:focus-visible + .ds-checkbox__indicator {
+  /* Themed focus ring on the input itself (which is now the visible
+     indicator). */
+  .ds-checkbox__indicator:focus-visible {
     outline-color: ${({ theme }) =>
       theme.palette?.focusColor ?? palette.signal.links};
   }
@@ -50,22 +52,25 @@ export const PathwaysCheckboxGroup = styled(DSCheckboxGroup)`
     ${({ theme }) => theme.checkbox?.labelTypography}
   }
 
+  /* The indicator IS the input. Use background-color (not the background
+     shorthand) so the design-system's check / indeterminate background-image
+     SVG isn't clobbered by the theme override. */
   .ds-checkbox__indicator {
     border-radius: 3px;
     border-color: ${({ theme }) =>
       theme.checkbox?.borderColor ?? palette.slate30};
-    background: transparent;
   }
 
-  .ds-checkbox:has(input:checked) .ds-checkbox__indicator,
-  .ds-checkbox:has(input:indeterminate) .ds-checkbox__indicator {
-    background: ${({ theme }) => theme.checkbox?.checkedColor ?? palette.pine3};
+  .ds-checkbox__indicator:checked,
+  .ds-checkbox__indicator:indeterminate {
+    background-color: ${({ theme }) =>
+      theme.checkbox?.checkedColor ?? palette.pine3};
     border-color: ${({ theme }) =>
       theme.checkbox?.checkedColor ?? palette.pine3};
   }
 
   .ds-checkbox:hover .ds-checkbox__indicator,
-  .ds-checkbox:focus-within .ds-checkbox__indicator {
+  .ds-checkbox__indicator:focus-visible {
     border-color: ${({ theme }) =>
       theme.checkbox?.checkedColor ?? palette.pine3};
   }
@@ -98,5 +103,6 @@ export const ShowMoreButton = styled.button`
     outline: 2px solid
       ${({ theme }) => theme.checkbox?.checkedColor ?? palette.signal.links};
     outline-offset: 2px;
+    border-radius: 2px;
   }
 `;

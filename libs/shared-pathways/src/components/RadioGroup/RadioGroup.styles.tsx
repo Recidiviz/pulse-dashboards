@@ -37,7 +37,9 @@ export const PathwaysRadioGroup = styled(DSRadioGroup)`
       1px -1px 1px 1px ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links};
   }
 
-  input[data-rg-item="true"]:focus-visible + .ds-radio__indicator {
+  /* Themed focus ring on the input itself (which is now the visible
+     indicator). */
+  .ds-radio__indicator:focus-visible {
     outline-color: ${({ theme }) =>
       theme.palette?.focusColor ?? palette.signal.links};
   }
@@ -51,19 +53,25 @@ export const PathwaysRadioGroup = styled(DSRadioGroup)`
     ${({ theme }) => theme.checkbox?.labelTypography}
   }
 
+  /* The indicator IS the input. */
   .ds-radio__indicator {
     border-color: ${({ theme }) =>
       theme.checkbox?.borderColor ?? palette.slate30};
-
-    &::after {
-      background: ${({ theme }) =>
-        theme.checkbox?.checkedColor ?? palette.pine3};
-    }
   }
 
-  .ds-radio:has(input:checked) .ds-radio__indicator,
+  .ds-radio__indicator:checked {
+    border-color: ${({ theme }) =>
+      theme.checkbox?.checkedColor ?? palette.pine3};
+  }
+
+  /* The inner dot is drawn by the sibling RadioDot span via ::after; recolor
+     it via the themed checkedColor. */
+  .ds-radio__indicator:checked + span::after {
+    background: ${({ theme }) => theme.checkbox?.checkedColor ?? palette.pine3};
+  }
+
   .ds-radio:hover .ds-radio__indicator,
-  .ds-radio:focus-within .ds-radio__indicator {
+  .ds-radio__indicator:focus-visible {
     border-color: ${({ theme }) =>
       theme.checkbox?.checkedColor ?? palette.pine3};
   }

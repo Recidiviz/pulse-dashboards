@@ -16,7 +16,7 @@
     display: flex;
     flex-wrap: wrap;
     padding: 1.75rem 2rem;
-    & * {
+    & > * {
       flex: 0 50%;
       &:nth-last-child(-n + 2) {
         margin-bottom: 0;

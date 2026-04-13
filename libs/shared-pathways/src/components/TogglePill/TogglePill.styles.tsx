@@ -43,12 +43,12 @@ export const TogglePillRadioGroup = styled(DSRadioGroup)`
       1px -1px 1px 1px ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links};
   }
 
-  /* The radio circle isn't shown — the entire pill *is* the affordance. */
-  .ds-radio__indicator {
-    display: none;
-  }
-
+  /* Promote each radio wrapper to a pill button. The wrapper holds the
+     (visually-hidden) input + visible label, positioned so the input covers
+     the whole pill area for click/focus while the label sits centered on
+     top via DOM order. */
   .ds-radio {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -62,6 +62,42 @@ export const TogglePillRadioGroup = styled(DSRadioGroup)`
     border: 1px solid
       ${({ theme }) => theme.togglePill?.borderColor ?? "#d2d8d8"};
     ${({ theme }) => theme.togglePill?.labelTypography}
+  }
+
+  /* The default RadioBox sub-wrapper is sized 1rem × 1rem to hold the radio
+     circle. Stretch it to cover the entire pill so its absolutely-positioned
+     child (the input) can be the click/focus target across the whole pill. */
+  .ds-radio__box {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Hide the input visually but keep it focusable and click-able. */
+  .ds-radio__indicator {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: none;
+    border-radius: inherit;
+    background: transparent;
+    opacity: 0;
+    cursor: inherit;
+    /* The group focus ring + per-pill border highlight handle the focus
+       affordance — suppress the per-input outline. */
+    outline: none;
+  }
+
+  /* Hide the radio dot — TogglePill doesn't show a circle indicator. */
+  .ds-radio__box > span[aria-hidden="true"] {
+    display: none;
+  }
+
+  /* The label text sits on top of the absolutely-positioned input. */
+  .ds-radio__label {
+    position: relative;
+    pointer-events: none;
   }
 
   .ds-radio:first-child {

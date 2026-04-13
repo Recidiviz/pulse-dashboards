@@ -152,6 +152,11 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
       onClose();
     };
 
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      onApply();
+    };
+
     const onReset = () => {
       filtersStore.resetFilters();
       onClose();
@@ -162,12 +167,13 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
         isShowing={isOpen}
         hide={onClose}
         title="Select Filters"
+        onSubmit={onSubmit}
         footer={
           <>
             <ResetButton type="button" onClick={onReset}>
               Reset filters
             </ResetButton>
-            <ApplyButton onClick={onApply}>Apply</ApplyButton>
+            <ApplyButton type="submit">Apply</ApplyButton>
           </>
         }
       >
