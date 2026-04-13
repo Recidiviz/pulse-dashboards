@@ -210,13 +210,14 @@ export const formatPercentage = (rate?: number): string | undefined => {
 };
 
 /**
- * Formats a boolean value for display as Yes/No/Not specified
+ * Formats a boolean value for display as Yes/No/Unknown/Not specified
  */
 export const formatBooleanDisplay = (
   value: boolean | null | undefined,
 ): string => {
   if (value === true) return "Yes";
   if (value === false) return "No";
+  if (value === null) return "Unknown";
   return "Not specified";
 };
 

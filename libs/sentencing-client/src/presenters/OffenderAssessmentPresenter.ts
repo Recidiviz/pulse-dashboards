@@ -19,6 +19,11 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { APIClient, OfflineAPIClient } from "../api";
 import {
+  RISK_LEVEL_KEYS,
+  RISK_LEVELS,
+  RiskLevelKey,
+} from "../components/OffenderAssessment/constants";
+import {
   CreateEmploymentHistoryInput,
   EmploymentHistory,
   UpdateEmploymentHistoryInput,
@@ -28,6 +33,10 @@ import {
   DrugHistory,
   UpdateDrugHistoryInput,
 } from "../components/OffenderAssessment/SubstanceUse/constants";
+import {
+  DomainConfig,
+  getDomainsForAssessmentType,
+} from "../components/OffenderAssessment/utils";
 import { splitFullName } from "../utils/utils";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
 
@@ -49,6 +58,44 @@ export class OffenderAssessmentPresenter {
   // Delegate to parent for SAR data access
   get SARData() {
     return this.sarDetailsPresenter.SARData;
+  }
+
+  get domains(): DomainConfig[] {
+    return getDomainsForAssessmentType(this.SARData?.assessmentType ?? null);
+  }
+
+  /** True when an ORAS assessment was actually performed (has date + has scored domains). */
+  get hasOrasAssessment(): boolean {
+    return this.domains.length > 0 && !!this.SARData?.assessmentDate;
+  }
+
+  get groupedByRisk(): Record<RiskLevelKey, string[]> {
+    return (
+      this.sarDetailsPresenter.riskProfileCardData?.groupedDomains ?? {
+        HIGH: [],
+        MODERATE: [],
+        LOW: [],
+      }
+    );
+  }
+
+  get offenderAssessmentDisplay(): string | null {
+    const grouped = this.groupedByRisk;
+    const parts: string[] = [];
+    RISK_LEVEL_KEYS.forEach((level) => {
+      if (grouped[level].length > 0) {
+        parts.push(
+          `${RISK_LEVELS[level].toLowerCase()} in ${grouped[level].join(", ")}`,
+        );
+      }
+    });
+    return parts.length > 0 ? `Offender scored ${parts.join(" and ")}.` : null;
+  }
+
+  getDomainSummary(domain: DomainConfig): string | null {
+    const sarData = this.SARData;
+    if (!sarData) return null;
+    return sarData[domain.summaryField] ?? null;
   }
 
   // Employment History - Individual CRUD operations

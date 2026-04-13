@@ -23,6 +23,12 @@ export const RISK_LEVELS = {
 
 export type RiskLevelKey = keyof typeof RISK_LEVELS;
 
+export const RISK_LEVEL_KEYS = [
+  "HIGH",
+  "MODERATE",
+  "LOW",
+] as const satisfies RiskLevelKey[];
+
 export const RISK_COLORS = {
   HIGH: "#FFDCE5", // Light pink
   MODERATE: "#FDECD2", // Light peach/orange

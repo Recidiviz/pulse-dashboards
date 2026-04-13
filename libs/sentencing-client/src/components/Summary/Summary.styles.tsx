@@ -15,9 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
+
+const flexColumn = css`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const subsectionTitleStyle = css`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.14px;
+`;
+
+export const tableHeaderCellStyle = css`
+  color: ${palette.slate85};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 150%;
+`;
+
+const baseTextStyle = css`
+  color: ${palette.slate85};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 150%;
+`;
 
 export const Container = styled.div`
   display: flex;
@@ -29,6 +60,10 @@ export const Container = styled.div`
   position: sticky;
   border-radius: 10px;
   overflow: hidden;
+
+  > *:last-child {
+    padding-bottom: 24px;
+  }
 `;
 
 export const DownloadHeader = styled.div`
@@ -94,10 +129,9 @@ export const DownloadButton = styled.button`
 `;
 
 export const SectionCard = styled.div`
-  display: flex;
-  flex-direction: column;
+  ${flexColumn}
   background: ${palette.white};
-  padding: 24px;
+  padding: 24px 24px 0;
 `;
 
 export const SectionTitle = styled.h3`
@@ -113,12 +147,8 @@ export const SectionTitle = styled.h3`
 `;
 
 export const SectionBody = styled.div`
-  color: ${palette.slate85};
-  font-family: "Public Sans";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%;
+  ${flexColumn}
+  ${baseTextStyle}
 `;
 
 export const InlineRow = styled.div`
@@ -133,12 +163,13 @@ export const RecommendationSection = styled.div`
   gap: 12px;
 `;
 
+export const SubsectionTitle = styled.h4`
+  ${subsectionTitleStyle}
+  margin: 0;
+`;
+
 export const RecommendationLabel = styled.div`
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 150%;
+  ${subsectionTitleStyle}
 `;
 
 export const SummaryWrapper = styled.div`
@@ -207,19 +238,76 @@ export const OffenseCardContainer = styled.div`
   display: flex;
   align-self: stretch;
   background: ${palette.white};
-  padding: 24px;
+  padding: 24px 24px 0;
+`;
+
+export const CategoryRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+`;
+
+export const CategoryColumnHeader = styled.span`
+  ${tableHeaderCellStyle}
+`;
+
+export const CategoryColumn = styled.div`
+  ${flexColumn}
+  ${baseTextStyle}
+  flex: 1;
+`;
+
+export const DetailContainer = styled.div`
+  ${flexColumn}
+  gap: 24px;
+  margin-top: 16px;
+`;
+
+export const DetailSubsection = styled.div`
+  ${flexColumn}
+  gap: 8px;
+`;
+
+export const FamilyFieldRow = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+export const FamilyFieldLabel = styled.span`
+  ${baseTextStyle}
+  min-width: 9rem;
+`;
+
+export const AssessmentTable = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const TableHeaderRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+export const TableHeaderCell = styled.span`
+  ${tableHeaderCellStyle}
+  flex: 1;
+`;
+
+export const TableDataRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+export const TableDataCell = styled.span`
+  ${baseTextStyle}
+  flex: 1;
 `;
 
 export const OffenseColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  ${flexColumn}
+  ${baseTextStyle}
   width: 50%;
-  color: ${palette.slate85};
-  font-family: "Public Sans";
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 150%;
 `;
 
 export const OffenseColumnTitle = styled.h4`
@@ -230,4 +318,9 @@ export const OffenseColumnTitle = styled.h4`
   line-height: 120%;
   letter-spacing: -0.16px;
   margin: 0;
+`;
+
+export const MoreText = styled.span`
+  ${baseTextStyle}
+  font-style: italic;
 `;

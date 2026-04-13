@@ -20,7 +20,11 @@ import React from "react";
 
 import { PriorTreatmentHistoryPresenter } from "../../presenters/PriorTreatmentHistoryPresenter";
 import { formatDisplayDate } from "../../utils/utils";
-import { TREATMENT_PROGRAM_CATEGORY_LABELS } from "../OffenderAssessment/PriorTreatmentHistory/constants";
+import {
+  DOC_INCARCERATION_DESCRIPTION,
+  MAX_DOC_HISTORIES_PER_CATEGORY,
+  TREATMENT_PROGRAM_CATEGORY_LABELS,
+} from "../OffenderAssessment/PriorTreatmentHistory/constants";
 import {
   DOCTreatmentHistory,
   TreatmentProgramCategory,
@@ -33,13 +37,8 @@ import * as Styled from "./SentencingAssessmentReport.styles";
 const SECTION_TITLE = "Prior Treatment and Programming History";
 const CONTINUATION_TITLE = `${SECTION_TITLE} Continued...`;
 
-const DOC_INCARCERATION_DESCRIPTION =
-  "The defendant has participated in the following treatments/programs while previously incarcerated. Records limited to DOC-tracked programming only. This summary does not account for external, private, or non-DOC-affiliated services completed by the defendant.";
-
 const COMMUNITY_TREATMENT_DESCRIPTION =
   "The defendant has shared that they participated in the following community based treatments/programs.";
-
-const MAX_DISPLAYED_PER_CATEGORY = 5;
 
 interface ReportPriorTreatmentHistoryProps {
   presenter: PriorTreatmentHistoryPresenter;
@@ -89,10 +88,10 @@ export const ReportPriorTreatmentHistory: React.FC<ReportPriorTreatmentHistoryPr
                     histories.length === 1 ? labels.singular : labels.plural;
                   const visible = histories.slice(
                     0,
-                    MAX_DISPLAYED_PER_CATEGORY,
+                    MAX_DOC_HISTORIES_PER_CATEGORY,
                   );
                   const overflow =
-                    histories.length - MAX_DISPLAYED_PER_CATEGORY;
+                    histories.length - MAX_DOC_HISTORIES_PER_CATEGORY;
                   return (
                     <Styled.DOCCategoryBox key={category}>
                       <Styled.DOCCategoryBoxHeader>

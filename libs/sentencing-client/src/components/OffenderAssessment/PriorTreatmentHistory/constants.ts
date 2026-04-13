@@ -80,6 +80,11 @@ export const TREATMENT_PROGRAM_CATEGORY_LABELS: Record<
   },
 };
 
+export const MAX_DOC_HISTORIES_PER_CATEGORY = 5;
+
+export const DOC_INCARCERATION_DESCRIPTION =
+  "The defendant has participated in the following treatments/programs while previously incarcerated. Records limited to DOC-tracked programming only. This summary does not account for external, private, or non-DOC-affiliated services completed by the defendant.";
+
 export function getYearOptions(): SelectOption[] {
   const currentYear = new Date().getFullYear();
   const years: SelectOption[] = [];

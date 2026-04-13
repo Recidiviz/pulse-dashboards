@@ -22,7 +22,10 @@ import React from "react";
 import { PriorTreatmentHistoryPresenter } from "../../../presenters/PriorTreatmentHistoryPresenter";
 import { SkippableTextArea } from "../../shared/SkippableTextArea";
 import { SectionTitle } from "../../shared/styles/SectionStyles";
-import { TREATMENT_PROGRAM_CATEGORY_LABELS } from "./constants";
+import {
+  MAX_DOC_HISTORIES_PER_CATEGORY,
+  TREATMENT_PROGRAM_CATEGORY_LABELS,
+} from "./constants";
 import {
   DOCPriorTreatmentCategory,
   DOCPriorTreatmentCategoryContainer,
@@ -34,8 +37,6 @@ import {
 } from "./PriorTreatmentHistory.styles";
 import { PriorTreatmentHistoryCard } from "./PriorTreatmentHistoryCard";
 import { TreatmentProgramCategory } from "./types";
-
-const MAX_DISPLAYED_HISTORIES = 5;
 
 interface PriorTreatmentHistorySectionProps {
   presenter: PriorTreatmentHistoryPresenter;
@@ -90,7 +91,7 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
                         {histories.length} {label}
                       </DOCPriorTreatmentCategoryHeader>
                       {histories
-                        .slice(0, MAX_DISPLAYED_HISTORIES)
+                        .slice(0, MAX_DOC_HISTORIES_PER_CATEGORY)
                         .map((history) => {
                           const completedDate = history.completedOn
                             ? moment(history.completedOn)
@@ -110,9 +111,10 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
                             </React.Fragment>
                           );
                         })}
-                      {histories.length > MAX_DISPLAYED_HISTORIES && (
+                      {histories.length > MAX_DOC_HISTORIES_PER_CATEGORY && (
                         <DOCPriorTreatmentCategoryContent>
-                          + {histories.length - MAX_DISPLAYED_HISTORIES} more
+                          + {histories.length - MAX_DOC_HISTORIES_PER_CATEGORY}{" "}
+                          more
                         </DOCPriorTreatmentCategoryContent>
                       )}
                     </DOCPriorTreatmentCategory>
