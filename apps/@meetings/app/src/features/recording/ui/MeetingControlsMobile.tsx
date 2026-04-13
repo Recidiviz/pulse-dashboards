@@ -24,21 +24,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PauseSvg from "../../../assets/icons/pause.svg";
 import PlaySvg from "../../../assets/icons/play.svg";
 import StopSvg from "../../../assets/icons/stop.svg";
-import { Person, PersonType } from "../../../common/types";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { formatDurationNumeric } from "../../../utils/format";
 import { useRecording } from "../model";
 
-type Props = {
-  person: Person;
-  personType: PersonType;
-};
-
-export function MeetingControlsMobile({ person, personType }: Props) {
+export function MeetingControlsMobile() {
   const insets = useSafeAreaInsets();
   const route = useRoute();
   const {
+    person,
+    personType,
     status,
     durationMs,
     meetingId,
@@ -47,7 +43,7 @@ export function MeetingControlsMobile({ person, personType }: Props) {
     togglePauseResume,
   } = useRecording<"native">();
 
-  if (status === "idle" || !meetingId) return null;
+  if (status === "idle" || !meetingId || !person) return null;
 
   const linkProps = {
     screen: personType === "client" ? "ClientNewMeeting" : "ResidentNewMeeting",

@@ -111,7 +111,7 @@ const NewMeeting = ({ person, personType, navigateToPersonProfile }: Props) => {
             />
           </View>
         </View>
-        <MeetingControlsMobile person={person} personType={personType} />
+        <MeetingControlsMobile />
       </View>
     </TouchableWithoutFeedback>
   );

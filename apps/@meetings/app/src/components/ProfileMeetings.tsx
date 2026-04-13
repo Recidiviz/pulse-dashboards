@@ -242,7 +242,7 @@ const ProfileMeetings = ({
                 setSortBy={setSortBy}
                 personType={personType}
               />
-              <MeetingControlsMobile person={person} personType={personType} />
+              <MeetingControlsMobile />
             </>
           ),
           web: (
