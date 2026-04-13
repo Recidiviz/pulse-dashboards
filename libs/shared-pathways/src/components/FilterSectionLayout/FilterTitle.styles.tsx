@@ -15,32 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { ReactNode } from "react";
+import styled from "styled-components";
 
-import { FilterTitleRow } from "./FilterSectionLayout.styles";
-import { FilterTitle } from "./FilterTitle.styles";
+import { palette } from "~design-system";
 
-type FilterSectionLayoutProps = {
-  title: string;
-  titlePrefix?: ReactNode;
-  titleSuffix?: ReactNode;
-  children: ReactNode;
-};
-
-const FilterSectionLayout: React.FC<FilterSectionLayoutProps> = ({
-  title,
-  titlePrefix,
-  titleSuffix,
-  children,
-}) => (
-  <div>
-    <FilterTitleRow>
-      {titlePrefix}
-      <FilterTitle>{title}</FilterTitle>
-      {titleSuffix}
-    </FilterTitleRow>
-    {children}
-  </div>
-);
-
-export default FilterSectionLayout;
+/**
+ * Canonical styled title used by every filter section header in the
+ * FiltersPanel. Shared between `FilterSectionLayout` (for radio / dropdown /
+ * toggle filter sections) and the in-group header row used by
+ * `CheckboxGroup` (when paired with a select-all). Keeping this in a single
+ * module ensures the typography and color stay in sync across all filter
+ * section types.
+ */
+export const FilterTitle = styled.span`
+  ${({ theme }) => theme.checkbox?.labelTypography}
+  font-weight: 700;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: ${({ theme }) => theme.checkbox?.titleColor ?? palette.pine1};
+`;

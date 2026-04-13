@@ -17,36 +17,11 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
-
-import {
-  CheckboxBox,
-  CheckboxContainer,
-} from "../CheckboxGroup/CheckboxGroup.styles";
-
 export const FilterTitleRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-
-  ${CheckboxContainer} {
-    margin-bottom: 0;
-    padding-left: 1rem;
-  }
-
-  ${CheckboxBox} {
-    top: 50%;
-    transform: translateY(-50%);
-  }
-`;
-
-export const FilterTitle = styled.span`
-  ${({ theme }) => theme.checkbox?.labelTypography}
-  font-weight: 700;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: ${({ theme }) => theme.checkbox?.titleColor ?? palette.pine1};
 `;
 
 export const AllSelectedBadge = styled.span<{ $visible: boolean }>`

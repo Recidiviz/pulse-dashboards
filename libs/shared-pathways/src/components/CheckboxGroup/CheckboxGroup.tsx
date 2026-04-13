@@ -16,12 +16,15 @@
 // =============================================================================
 
 import React, {
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+
+import { Checkbox } from "~design-system";
 
 import {
   DefaultOffenseTypeOrder,
@@ -30,23 +33,42 @@ import {
   PopulationFilter,
   sortByLabel,
 } from "../../";
-import Checkbox from "./Checkbox";
-import { CheckboxGroupGrid, ShowMoreButton } from "./CheckboxGroup.styles";
+import { FilterTitle } from "../FilterSectionLayout/FilterTitle.styles";
+import {
+  HeaderRow,
+  PathwaysCheckboxGroup,
+  ShowMoreButton,
+} from "./CheckboxGroup.styles";
 
 const COLLAPSED_ROWS = 2;
+
+type SelectAllConfig = {
+  ariaLabel: string;
+  checked: boolean;
+  indeterminate: boolean;
+  onChange: (next: boolean) => void;
+};
 
 type CheckboxGroupProps = {
   filter: PopulationFilter;
   selectedOptions: FilterOption[];
   onChange: (options: FilterOption[], filterType: string) => void;
   collapsible?: boolean;
+  selectAll?: SelectAllConfig;
+  headerTitle?: string;
+  headerSuffix?: ReactNode;
 };
+
+const SELECT_ALL_VALUE = "__select_all__";
 
 const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
   filter,
   selectedOptions,
   onChange,
   collapsible = false,
+  selectAll,
+  headerTitle,
+  headerSuffix,
 }) => {
   const enabledOptions = filter.options.slice(1);
   const isOffenseType = filter.type === FILTER_TYPES.OFFENSE_TYPE;
@@ -65,25 +87,22 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
     return opts;
   }, [enabledOptions, isOffenseType]);
 
+  const selectedValues = useMemo(
+    () => selectedOptions.map((o) => o.value),
+    [selectedOptions],
+  );
+
   const handleChange = useCallback(
-    (option: FilterOption) => {
-      const isSelected = selectedOptions.some((o) => o.value === option.value);
+    (nextValues: string[]) => {
+      // If nothing is selected, fall back to all enabled options.
+      const finalOptions =
+        nextValues.length === 0
+          ? [...enabledOptions]
+          : enabledOptions.filter((o) => nextValues.includes(o.value));
 
-      let newOptions: FilterOption[];
-      if (isSelected) {
-        newOptions = selectedOptions.filter((o) => o.value !== option.value);
-      } else {
-        newOptions = [...selectedOptions, option];
-      }
-
-      // If nothing is selected, fall back to all options
-      if (newOptions.length === 0) {
-        newOptions = [...enabledOptions];
-      }
-
-      onChange(newOptions, filter.type);
+      onChange(finalOptions, filter.type);
     },
-    [selectedOptions, enabledOptions, onChange, filter.type],
+    [enabledOptions, onChange, filter.type],
   );
 
   // Measure column count from the grid after first render
@@ -111,18 +130,38 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
 
   return (
     <>
-      <CheckboxGroupGrid ref={gridRef}>
+      <PathwaysCheckboxGroup
+        ref={gridRef}
+        ariaLabel={filter.title}
+        value={selectedValues}
+        onChange={handleChange}
+      >
+        {(selectAll || headerTitle) && (
+          <HeaderRow>
+            {selectAll && (
+              <Checkbox
+                value={SELECT_ALL_VALUE}
+                checked={selectAll.checked}
+                indeterminate={selectAll.indeterminate}
+                onChange={selectAll.onChange}
+                ariaLabel={selectAll.ariaLabel}
+                testId="checkbox-select-all"
+              />
+            )}
+            {headerTitle && <FilterTitle>{headerTitle}</FilterTitle>}
+            {headerSuffix}
+          </HeaderRow>
+        )}
         {displayedOptions.map((option) => (
           <Checkbox
             key={option.value}
             value={option.value}
-            checked={selectedOptions.some((o) => o.value === option.value)}
-            onChange={() => handleChange(option)}
+            testId={`checkbox-${option.value}`}
           >
             {option.label}
           </Checkbox>
         ))}
-      </CheckboxGroupGrid>
+      </PathwaysCheckboxGroup>
       {needsCollapse && (
         <ShowMoreButton
           type="button"

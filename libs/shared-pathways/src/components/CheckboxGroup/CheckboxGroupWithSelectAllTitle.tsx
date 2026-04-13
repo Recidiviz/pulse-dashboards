@@ -18,9 +18,7 @@
 import React, { useCallback, useMemo } from "react";
 
 import { FilterOption, PopulationFilter } from "../../";
-import FilterSectionLayout from "../FilterSectionLayout/FilterSectionLayout";
 import { AllSelectedBadge } from "../FilterSectionLayout/FilterSectionLayout.styles";
-import Checkbox from "./Checkbox";
 import CheckboxGroup from "./CheckboxGroup";
 
 type CheckboxGroupWithSelectAllTitleProps = {
@@ -59,27 +57,22 @@ const CheckboxGroupWithSelectAllTitle: React.FC<
   }, [allSelected, indeterminate, enabledOptions, onChange, filter.type]);
 
   return (
-    <FilterSectionLayout
-      title={filter.title}
-      titlePrefix={
-        <Checkbox
-          value="select-all"
-          checked={allSelected}
-          indeterminate={indeterminate}
-          onChange={handleSelectAllToggle}
-        />
-      }
-      titleSuffix={
+    <CheckboxGroup
+      filter={filter}
+      selectedOptions={selectedOptions}
+      onChange={onChange}
+      collapsible
+      headerTitle={filter.title}
+      headerSuffix={
         <AllSelectedBadge $visible={allSelected}>All Selected</AllSelectedBadge>
       }
-    >
-      <CheckboxGroup
-        filter={filter}
-        selectedOptions={selectedOptions}
-        onChange={onChange}
-        collapsible
-      />
-    </FilterSectionLayout>
+      selectAll={{
+        ariaLabel: `Select all ${filter.title}`,
+        checked: allSelected,
+        indeterminate,
+        onChange: handleSelectAllToggle,
+      }}
+    />
   );
 };
 

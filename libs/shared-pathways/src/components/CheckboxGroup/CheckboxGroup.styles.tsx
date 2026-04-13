@@ -15,116 +15,68 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { CheckboxGroup as DSCheckboxGroup, palette } from "~design-system";
 
-export const CheckboxContainer = styled.label`
-  display: block;
-  position: relative;
-  padding-left: 1.5rem;
-  min-height: 1rem;
-  margin-bottom: 0.25rem;
-  user-select: none;
-  cursor: pointer;
-  color: ${({ theme }) => theme.checkbox?.labelColor ?? palette.pine1};
-
-  &:has(input:disabled) {
-    cursor: not-allowed;
-  }
-
-  &:focus,
-  &:focus-visible,
-  &:active {
-    span:last-child {
-      border: 1px solid
-        ${({ theme }) => theme.checkbox?.checkedColor ?? palette.pine3};
-    }
-  }
-`;
-
-export const CheckboxLabel = styled.span`
-  position: relative;
-  top: -2px;
-  ${({ theme }) => theme.checkbox?.labelTypography}
-`;
-
-export const CheckboxInput = styled.input`
-  position: absolute;
-  opacity: 0;
-  height: 0;
-  width: 0;
-`;
-
-export const CheckboxBox = styled.span<{
-  $checked: boolean;
-  $disabled: boolean;
-  $indeterminate?: boolean;
-}>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 1rem;
-  width: 1rem;
-  border: 1px solid
-    ${({ theme }) => theme.checkbox?.borderColor ?? palette.slate30};
-  background: transparent;
-  border-radius: 3px;
-
-  &::after {
-    content: "";
-    position: absolute;
-    display: none;
-  }
-
-  ${({ $checked, $indeterminate, $disabled, theme }) => {
-    const bgColor = $disabled
-      ? palette.slate30
-      : theme.checkbox?.checkedColor ?? palette.pine3;
-
-    if ($indeterminate) {
-      return css`
-        background-color: ${bgColor};
-
-        &::after {
-          display: block;
-          left: 3px;
-          top: 6px;
-          width: 8px;
-          height: 0;
-          border: solid white;
-          border-width: 0 0 2px 0;
-          transform: none;
-        }
-      `;
-    }
-
-    if ($checked) {
-      return css`
-        background-color: ${bgColor};
-        border: 1px solid ${bgColor};
-
-        &::after {
-          display: block;
-          left: 4px;
-          top: 1px;
-          width: 6px;
-          height: 9px;
-          border: solid white;
-          border-width: 0 2px 2px 0;
-          transform: rotate(45deg);
-        }
-      `;
-    }
-
-    return "";
-  }}
-`;
-
-export const CheckboxGroupGrid = styled.div`
+/**
+ * Themed wrapper around the design-system CheckboxGroup that preserves the
+ * Pathways grid layout and applies the consumer's `theme.checkbox.*` styles
+ * to the design-system Checkbox internals via stable class names.
+ */
+export const PathwaysCheckboxGroup = styled(DSCheckboxGroup)`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 0.25rem 1rem;
+
+  &:has(:focus-visible) {
+    box-shadow:
+      -1px 1px 1px 1px
+        ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links},
+      1px -1px 1px 1px ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links};
+  }
+
+  input[data-cg-item="true"]:focus-visible + .ds-checkbox__indicator {
+    outline-color: ${({ theme }) =>
+      theme.palette?.focusColor ?? palette.signal.links};
+  }
+
+  .ds-checkbox {
+    color: ${({ theme }) => theme.checkbox?.labelColor ?? palette.pine1};
+    margin-bottom: 0.25rem;
+  }
+
+  .ds-checkbox__label {
+    ${({ theme }) => theme.checkbox?.labelTypography}
+  }
+
+  .ds-checkbox__indicator {
+    border-radius: 3px;
+    border-color: ${({ theme }) =>
+      theme.checkbox?.borderColor ?? palette.slate30};
+    background: transparent;
+  }
+
+  .ds-checkbox:has(input:checked) .ds-checkbox__indicator,
+  .ds-checkbox:has(input:indeterminate) .ds-checkbox__indicator {
+    background: ${({ theme }) => theme.checkbox?.checkedColor ?? palette.pine3};
+    border-color: ${({ theme }) =>
+      theme.checkbox?.checkedColor ?? palette.pine3};
+  }
+
+  .ds-checkbox:hover .ds-checkbox__indicator,
+  .ds-checkbox:focus-within .ds-checkbox__indicator {
+    border-color: ${({ theme }) =>
+      theme.checkbox?.checkedColor ?? palette.pine3};
+  }
+`;
+
+export const HeaderRow = styled.div`
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 `;
 
 export const ShowMoreButton = styled.button`
