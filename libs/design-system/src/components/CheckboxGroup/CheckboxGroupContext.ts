@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,10 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./Button";
-export * from "./CheckboxGroup";
-export * from "./Dropdown";
-export * from "./Icon";
-export * from "./Menubar";
-export * from "./RadioGroup";
-export * from "./Toolbar";
+import { createContext, useContext } from "react";
+
+export interface CheckboxGroupContextValue {
+  /** Currently selected values. */
+  value: string[];
+  /** Toggle a single value in/out of the selection. */
+  toggleValue: (value: string) => void;
+  disabled?: boolean;
+}
+
+export const CheckboxGroupContext =
+  createContext<CheckboxGroupContextValue | null>(null);
+
+export const useCheckboxGroupContext = (): CheckboxGroupContextValue => {
+  const ctx = useContext(CheckboxGroupContext);
+  if (!ctx) {
+    throw new Error("Checkbox must be rendered inside a <CheckboxGroup>");
+  }
+  return ctx;
+};

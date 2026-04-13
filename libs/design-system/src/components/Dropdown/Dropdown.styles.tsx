@@ -112,6 +112,12 @@ export interface MenuElementProps {
 
 export const MenuElement = styled.div.attrs({
   role: "menu",
+  // Opt the menu container out of the tab order. Without this, Chrome's
+  // "scrollable region keyboard focus" heuristic adds the menu div to the
+  // tab sequence whenever its content overflows (e.g., a Pathways dropdown
+  // with overflow-y: auto + max-height where the option list is longer than
+  // the max height), creating a phantom tab stop after the dropdown toggle.
+  tabIndex: -1,
 })<MenuElementProps>`
   ${typography.Sans14}
   display: flex;
