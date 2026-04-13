@@ -25,6 +25,10 @@ const flexColumn = css`
   gap: 0.5rem;
 `;
 
+const flexRow = css`
+  display: flex;
+`;
+
 const subsectionTitleStyle = css`
   color: ${palette.pine1};
   font-family: "Public Sans";
@@ -191,7 +195,7 @@ export const InsightsSidePanel = styled.div`
   background: ${palette.white};
 `;
 
-export const InsightsChartCard = styled.div`
+export const InsightsChartCard = styled.div<{ $isEmpty?: boolean }>`
   display: flex;
   padding: 24px;
   flex-direction: column;
@@ -202,6 +206,8 @@ export const InsightsChartCard = styled.div`
   border: 1px solid ${palette.slate10};
   background: ${palette.white};
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
+  position: relative;
+  ${({ $isEmpty }) => $isEmpty && `min-height: 521px;`}
 `;
 
 export const InsightsSubtitle = styled.p`
@@ -220,6 +226,52 @@ export const InsightsDonutWrapper = styled.div`
   overflow: hidden;
 `;
 
+export const InsightsSimilarCases = styled.p`
+  color: ${palette.slate80};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.14px;
+  margin: 0;
+`;
+
+export const InsightsEmptyState = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 552px;
+  height: 473px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const InsightsEmptyText = styled.p`
+  color: ${palette.slate60};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+  margin: 0;
+  max-width: 360px;
+  text-align: center;
+`;
+
+export const InsightsFootnote = styled.p`
+  color: ${palette.slate70};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.14px;
+  align-self: stretch;
+  margin: 0;
+`;
+
 // Positioned off-screen so the report renders in the DOM for html2canvas
 // capture without being visible to the user.
 export const ReportPDFContainer = styled.div`
@@ -235,23 +287,23 @@ export const SummaryReportWrapper = styled.div`
 
 /** Offense card: two-column layout */
 export const OffenseCardContainer = styled.div`
-  display: flex;
+  ${flexRow}
   align-self: stretch;
   background: ${palette.white};
   padding: 24px 24px 0;
 `;
 
-export const CategoryRow = styled.div`
-  display: flex;
+export const RiskCategoryRow = styled.div`
+  ${flexRow}
   align-items: flex-start;
   gap: 1rem;
 `;
 
-export const CategoryColumnHeader = styled.span`
+export const RiskColumnHeader = styled.span`
   ${tableHeaderCellStyle}
 `;
 
-export const CategoryColumn = styled.div`
+export const RiskColumn = styled.div`
   ${flexColumn}
   ${baseTextStyle}
   flex: 1;
@@ -269,7 +321,7 @@ export const DetailSubsection = styled.div`
 `;
 
 export const FamilyFieldRow = styled.div`
-  display: flex;
+  ${flexRow}
   gap: 1rem;
 `;
 
@@ -285,7 +337,7 @@ export const AssessmentTable = styled.div`
 `;
 
 export const TableHeaderRow = styled.div`
-  display: flex;
+  ${flexRow}
   gap: 0.5rem;
 `;
 
@@ -295,7 +347,7 @@ export const TableHeaderCell = styled.span`
 `;
 
 export const TableDataRow = styled.div`
-  display: flex;
+  ${flexRow}
   gap: 0.5rem;
 `;
 

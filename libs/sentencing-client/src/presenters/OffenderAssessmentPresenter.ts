@@ -64,31 +64,44 @@ export class OffenderAssessmentPresenter {
     return getDomainsForAssessmentType(this.SARData?.assessmentType ?? null);
   }
 
+  /** Domains excluding substanceUse, which is rendered separately as Substance Abuse History. */
+  get domainsWithoutSubstanceUse(): DomainConfig[] {
+    return this.domains.filter((d) => d.key !== "substanceUse");
+  }
+
   /** True when an ORAS assessment was actually performed (has date + has scored domains). */
   get hasOrasAssessment(): boolean {
     return this.domains.length > 0 && !!this.SARData?.assessmentDate;
   }
 
   get groupedByRisk(): Record<RiskLevelKey, string[]> {
-    return (
-      this.sarDetailsPresenter.riskProfileCardData?.groupedDomains ?? {
-        HIGH: [],
-        MODERATE: [],
-        LOW: [],
-      }
-    );
+    const sarData = this.SARData;
+    const grouped: Record<RiskLevelKey, string[]> = {
+      HIGH: [],
+      MODERATE: [],
+      LOW: [],
+    };
+    if (!sarData) return grouped;
+    for (const domain of this.domains) {
+      if (!domain.riskLevelField) continue;
+      // Dynamic field access is necessary here: domain configs store risk-level
+      // field names as strings, so keyof-narrowing is the best available approach.
+      const level = sarData[
+        domain.riskLevelField as keyof typeof sarData
+      ] as RiskLevelKey | null;
+      if (level && level in grouped) grouped[level].push(domain.title);
+    }
+    return grouped;
   }
 
   get offenderAssessmentDisplay(): string | null {
     const grouped = this.groupedByRisk;
-    const parts: string[] = [];
-    RISK_LEVEL_KEYS.forEach((level) => {
-      if (grouped[level].length > 0) {
-        parts.push(
-          `${RISK_LEVELS[level].toLowerCase()} in ${grouped[level].join(", ")}`,
-        );
-      }
-    });
+    const parts = RISK_LEVEL_KEYS.filter(
+      (level) => grouped[level].length > 0,
+    ).map(
+      (level) =>
+        `${RISK_LEVELS[level].toLowerCase()} in ${grouped[level].join(", ")}`,
+    );
     return parts.length > 0 ? `Offender scored ${parts.join(" and ")}.` : null;
   }
 

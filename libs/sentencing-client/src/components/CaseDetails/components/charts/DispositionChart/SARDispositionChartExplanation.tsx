@@ -22,7 +22,7 @@ import {
 import { SARInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import * as Styled from "../components/Styles";
-import { HISTORICAL_PRECEDENT_TEXT } from "../constants";
+import { SENTENCE_DISTRIBUTION_TEXT } from "../constants";
 import { BUCKET_TO_RISK_LEVEL } from "./sarUtils";
 
 interface SARDispositionChartExplanationProps {
@@ -49,8 +49,8 @@ export function SARDispositionChartExplanation({
   return (
     <Styled.TextContainer>
       <Styled.TextWrapper>
-        {HISTORICAL_PRECEDENT_TEXT} represents the percentage of cases sentenced
-        to a particular disposition. The rates are based on{" "}
+        {SENTENCE_DISTRIBUTION_TEXT} represents the percentage of cases
+        sentenced to a particular disposition. The rates are based on{" "}
         {dispositionNumRecords.toLocaleString()}{" "}
         {printFormattedRecordString(dispositionNumRecords)} of{" "}
         <span>{genderString.trim()}</span> with <span>{riskLevel} scores*</span>{" "}

@@ -102,6 +102,22 @@ export class PriorTreatmentHistoryPresenter {
     return grouped;
   }
 
+  /** DOC histories grouped by category, filtered to non-empty categories only. */
+  get DOCTreatmentHistoriesByCategoryEntries(): [
+    TreatmentProgramCategory,
+    DOCTreatmentHistory[],
+  ][] {
+    return (
+      Object.entries(this.DOCTreatmentHistoriesByCategory) as [
+        TreatmentProgramCategory,
+        DOCTreatmentHistory[] | undefined,
+      ][]
+    ).filter(
+      (entry): entry is [TreatmentProgramCategory, DOCTreatmentHistory[]] =>
+        entry[1] !== undefined && entry[1].length > 0,
+    );
+  }
+
   async createPriorTreatmentHistory(
     data: CreatePriorTreatmentHistoryInput,
   ): Promise<void> {

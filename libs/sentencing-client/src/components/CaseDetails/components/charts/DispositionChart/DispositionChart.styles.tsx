@@ -125,5 +125,5 @@ export const DonutChartRow = styled.div<{
     `flex-direction: column; align-items: center; gap: 0px;`}
   ${({ inlineLayout }) =>
     inlineLayout &&
-    `align-items: flex-start; width: 100%; & > svg { flex-shrink: 0; }`}
+    `align-items: center; width: 100%; & > svg { flex-shrink: 0; }`}
 `;

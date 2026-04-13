@@ -26,6 +26,14 @@ export const AssessmentTypeDisplayNames = {
 
 export type AssessmentTypeKey = keyof typeof AssessmentTypeDisplayNames;
 
+/** The four ORAS assessment tool types (excludes "Other"). */
+export const ORAS_TOOL_KEYS = [
+  "ORAS_CST",
+  "ORAS_SRT",
+  "ORAS_PIT",
+  "ORAS_RT",
+] as const satisfies AssessmentTypeKey[];
+
 export function getAssessmentTypeDisplayName(
   dbValue: AssessmentTypeKey | null | undefined,
 ): string {
