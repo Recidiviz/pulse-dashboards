@@ -41,16 +41,14 @@ describe("TogglePill", () => {
 
   it("should render two radio buttons", () => {
     renderTogglePill();
-    const buttons = screen.getAllByRole("radio");
-    expect(buttons).toHaveLength(2);
+    expect(screen.getByRole("radiogroup")).toBeInTheDocument();
+    expect(screen.getByLabelText("Left")).toBeInTheDocument();
+    expect(screen.getByLabelText("Right")).toBeInTheDocument();
   });
 
   it("should have one option checked", () => {
     renderTogglePill();
-    const buttons = screen.getAllByRole("radio");
-    const checked = buttons.filter(
-      (b) => b.getAttribute("aria-checked") === "true",
-    );
-    expect(checked).toHaveLength(1);
+    expect(screen.getByLabelText("Left")).toBeChecked();
+    expect(screen.getByLabelText("Right")).not.toBeChecked();
   });
 });

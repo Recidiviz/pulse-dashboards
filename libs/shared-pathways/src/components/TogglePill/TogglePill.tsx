@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useRef } from "react";
+import { Radio } from "~design-system";
 
-import { TogglePillButton, TogglePillContainer } from "./TogglePill.styles";
+import { TogglePillRadioGroup } from "./TogglePill.styles";
 
 export type PillOption = {
   label: string;
@@ -29,6 +29,8 @@ type TogglePillProps = {
   onChange: (value: string) => void;
   leftPill: PillOption;
   rightPill: PillOption;
+  /** Accessible name for the radio group. Defaults to "Toggle display mode". */
+  ariaLabel?: string;
 };
 
 export function TogglePill({
@@ -36,42 +38,17 @@ export function TogglePill({
   onChange,
   leftPill,
   rightPill,
+  ariaLabel = "Toggle display mode",
 }: TogglePillProps) {
-  const leftRef = useRef<HTMLButtonElement>(null);
-  const rightRef = useRef<HTMLButtonElement>(null);
-
-  const handleToggle = (clickedValue: string) => {
-    const otherValue =
-      clickedValue === leftPill.value ? rightPill.value : leftPill.value;
-
-    onChange(otherValue);
-
-    const otherRef = clickedValue === leftPill.value ? rightRef : leftRef;
-    otherRef.current?.focus();
-  };
-
   return (
-    <TogglePillContainer role="radiogroup" aria-label="Toggle display mode">
-      {[leftPill, rightPill].map(({ value, label }) => (
-        <TogglePillButton
-          role="radio"
-          aria-checked={currentValue === value}
-          key={label}
-          ref={value === leftPill.value ? leftRef : rightRef}
-          $selected={currentValue === value}
-          onClick={() => onChange(value)}
-          tabIndex={currentValue === value ? 0 : -1}
-          aria-label={label}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleToggle(value);
-            }
-          }}
-        >
-          {label}
-        </TogglePillButton>
-      ))}
-    </TogglePillContainer>
+    <TogglePillRadioGroup
+      value={currentValue}
+      onChange={onChange}
+      orientation="horizontal"
+      ariaLabel={ariaLabel}
+    >
+      <Radio value={leftPill.value}>{leftPill.label}</Radio>
+      <Radio value={rightPill.value}>{rightPill.label}</Radio>
+    </TogglePillRadioGroup>
   );
 }

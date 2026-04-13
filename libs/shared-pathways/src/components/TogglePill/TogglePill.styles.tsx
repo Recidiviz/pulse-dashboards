@@ -17,55 +17,71 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { palette, RadioGroup as DSRadioGroup } from "~design-system";
 
 const PILL_WIDTH = "80px";
+const PILL_HEIGHT = "2.33rem";
 
-export const TogglePillContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  height: 100%;
-`;
+/**
+ * Themed wrapper around the design-system RadioGroup that styles the inner
+ * radios as a two-button pill toggle. Hides the radio indicator entirely and
+ * promotes each `.ds-radio` label element to a pill button.
+ *
+ * The design-system RadioGroup handles all keyboard navigation and ARIA:
+ * - Arrow keys move focus + select (per APG radio pattern)
+ * - Single tab stop on the checked radio
+ * - Native input semantics for screen readers
+ */
+export const TogglePillRadioGroup = styled(DSRadioGroup)`
+  padding: 0;
+  gap: 0;
 
-export const TogglePillButton = styled.button<{ $selected: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: ${PILL_WIDTH};
-  height: 2.33rem;
-  border: 1px solid ${({ theme }) => theme.togglePill?.borderColor ?? "#d2d8d8"};
-  background: ${({ $selected, theme }) =>
-    $selected
-      ? theme.togglePill?.selectedBackgroundColor ?? "#006c67"
-      : "transparent"};
-  color: ${({ $selected, theme }) =>
-    $selected
-      ? theme.togglePill?.selectedTextColor ?? "white"
-      : theme.togglePill?.textColor ?? palette.pine3};
-  padding: 0 1rem;
-  ${({ theme }) => theme.togglePill?.labelTypography}
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
+  &:has(:focus-visible) {
+    box-shadow:
+      -1px 1px 1px 1px
+        ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links},
+      1px -1px 1px 1px ${({ theme }) => theme.palette?.focusColor ?? palette.signal.links};
   }
 
-  &:first-of-type {
+  /* The radio circle isn't shown — the entire pill *is* the affordance. */
+  .ds-radio__indicator {
+    display: none;
+  }
+
+  .ds-radio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: ${PILL_WIDTH};
+    height: ${PILL_HEIGHT};
+    margin: 0;
+    padding: 0 1rem;
+    cursor: pointer;
+    color: ${({ theme }) => theme.togglePill?.textColor ?? palette.pine3};
+    background: transparent;
+    border: 1px solid
+      ${({ theme }) => theme.togglePill?.borderColor ?? "#d2d8d8"};
+    ${({ theme }) => theme.togglePill?.labelTypography}
+  }
+
+  .ds-radio:first-child {
     border-right: none;
     border-radius: 200px 0 0 200px;
   }
 
-  &:last-of-type {
+  .ds-radio:last-child {
     border-left: none;
     border-radius: 0 200px 200px 0;
   }
 
-  &:focus,
-  &:focus-within,
-  &:active,
-  &:hover {
+  .ds-radio:has(input:checked) {
+    background: ${({ theme }) =>
+      theme.togglePill?.selectedBackgroundColor ?? "#006c67"};
+    color: ${({ theme }) => theme.togglePill?.selectedTextColor ?? "white"};
+  }
+
+  .ds-radio:hover,
+  .ds-radio:focus-within {
     border: 1px solid
       ${({ theme }) => theme.togglePill?.focusBorderColor ?? "#006c67"};
   }
