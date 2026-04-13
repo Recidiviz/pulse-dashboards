@@ -40,7 +40,7 @@ const HoverCta = styled.div`
   }
 `;
 
-export const StaffCardWrapper = styled.div<{ isDrilldownEnabled?: boolean }>`
+export const StaffCardWrapper = styled.div<{ isAnyDrilldownEnbled?: boolean }>`
   flex: 1 1 0px;
   height: ${rem(130)};
   padding: ${rem(spacing.lg)} ${rem(0)} ${rem(spacing.md)} ${rem(spacing.lg)};
@@ -52,8 +52,8 @@ export const StaffCardWrapper = styled.div<{ isDrilldownEnabled?: boolean }>`
   justify-content: space-between;
   position: relative;
 
-  ${({ isDrilldownEnabled }) =>
-    isDrilldownEnabled &&
+  ${({ isAnyDrilldownEnbled }) =>
+    isAnyDrilldownEnbled &&
     css`
       &:hover {
         border-color: ${palette.pine4};
@@ -164,7 +164,7 @@ function titleText({
 type InsightsStaffVitalsDetailCardProps = {
   vitalsMetricDetails: OfficerVitalsMetricDetail;
   onClick: (metricId: string) => void;
-  isDrilldownEnabled: boolean;
+  isAnyDrilldownEnbled: boolean;
   isNumeratorDenominatorEnabled: boolean;
 };
 
@@ -173,7 +173,7 @@ export const InsightsStaffVitalsDetailCard: React.FC<
 > = ({
   vitalsMetricDetails,
   onClick,
-  isDrilldownEnabled,
+  isAnyDrilldownEnbled,
   isNumeratorDenominatorEnabled,
 }) => {
   const {
@@ -203,7 +203,7 @@ export const InsightsStaffVitalsDetailCard: React.FC<
   return (
     <StaffCardWrapper
       onClick={() => onClick(metricId)}
-      isDrilldownEnabled={isDrilldownEnabled}
+      isAnyDrilldownEnbled={isAnyDrilldownEnbled}
     >
       <HoverCta>
         {hoverCta}

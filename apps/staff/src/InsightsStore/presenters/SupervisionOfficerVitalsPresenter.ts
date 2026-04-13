@@ -17,7 +17,11 @@
 
 import { makeObservable } from "mobx";
 
-import { SupervisionVitalsMetric, VitalsMetricId } from "~datatypes";
+import {
+  SupervisionVitalsMetric,
+  VitalsMetricId,
+  VitalsSupervisionContacts,
+} from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { JusticeInvolvedPerson, SupervisionTask } from "../../WorkflowsStore";
@@ -42,6 +46,8 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
 
   private fetchedOfficerVitalsMetrics?: SupervisionVitalsMetric[];
 
+  private fetchedOfficerVitalsContacts?: VitalsSupervisionContacts[];
+
   private _selectedMetricId: string | undefined;
 
   constructor(
@@ -56,19 +62,24 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
       SupervisionOfficerVitalsPresenter,
       | "expectVitalsForOfficerPopulated"
       | "populateVitalsForOfficer"
+      | "populateVitalsContactsForOfficer"
+      | "fetchedOfficerVitalsContacts"
       | "expectCaseloadPopulated"
       | "findClientsForOfficer"
       | "_selectedMetricId"
     >(this, {
       expectVitalsForOfficerPopulated: true,
       populateVitalsForOfficer: true,
-      isDrilldownEnabled: true,
+      populateVitalsContactsForOfficer: true,
+      fetchedOfficerVitalsContacts: true,
+      isTasksDrilldownEnabled: true,
       expectCaseloadPopulated: true,
       findClientsForOfficer: true,
       vitalsMetricDetails: true,
       selectedMetricDetails: true,
       _selectedMetricId: true,
       setSelectedMetricId: true,
+      officerVitalsContacts: true,
     });
 
     this.personFieldsToHydrate = ["supervisionTasks"];
@@ -77,18 +88,29 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
       expectPopulated: [
         this.expectVitalsForOfficerPopulated,
         () =>
-          this.isDrilldownEnabled &&
+          this.isTasksDrilldownEnabled &&
           this.expectCaseloadPopulated(this.officerExternalId),
+        () => {
+          if (this.isTasksDrilldownEnabled && !this.officerVitalsContacts)
+            throw new Error("Vitals contacts not yet populated");
+        },
       ],
       populate: async () => {
         await this.populateSupervisionOfficer();
         await this.populateVitalsForOfficer();
-        if (this.officerExternalId && this.isDrilldownEnabled) {
+        if (this.officerExternalId && this.isTasksDrilldownEnabled) {
           await this.populateCaseloadForOfficer(this.officerExternalId);
+        }
+        if (this.officerPseudoId && this.isContactsDrilldownEnabled) {
+          await this.populateVitalsContactsForOfficer();
         }
       },
     });
     this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
+  }
+
+  get currentTenantId(): string | undefined {
+    return this.supervisionStore.insightsStore.rootStore.userStore.stateCode;
   }
 
   get clients(): JusticeInvolvedPerson[] | undefined {
@@ -116,6 +138,13 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
     );
   }
 
+  get officerVitalsContacts() {
+    const officerVitalsContacts = this.supervisionStore.officerVitalsContacts;
+    return officerVitalsContacts.length > 0
+      ? officerVitalsContacts
+      : this.fetchedOfficerVitalsContacts;
+  }
+
   get vitalsMetricDetails(): OfficerVitalsMetricDetail[] {
     const metrics = this.officerVitalsMetrics;
     if (!metrics) return [];
@@ -140,9 +169,14 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
     };
   }
 
-  get isDrilldownEnabled(): boolean {
+  get isTasksDrilldownEnabled(): boolean {
     return !!this.supervisionStore.insightsStore.rootStore.userStore
       .activeFeatureVariants.operationsDrilldown;
+  }
+
+  get isContactsDrilldownEnabled(): boolean {
+    return !!this.supervisionStore.insightsStore.rootStore.userStore
+      .activeFeatureVariants.operationsContactsDrilldown;
   }
 
   get isNumeratorDenominatorEnabled(): boolean {
@@ -185,6 +219,19 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
   > {
     this.fetchedOfficerVitalsMetrics =
       yield this.supervisionStore.insightsStore.apiClient.vitalsForOfficer(
+        this.officerPseudoId,
+      );
+  }
+
+  /**
+   * Fetch vitals contacts for current officer.
+   */
+  *populateVitalsContactsForOfficer(): FlowMethod<
+    InsightsAPI["vitalsContactsDrilldownForOfficer"],
+    void
+  > {
+    this.fetchedOfficerVitalsContacts =
+      yield this.supervisionStore.insightsStore.apiClient.vitalsContactsDrilldownForOfficer(
         this.officerPseudoId,
       );
   }

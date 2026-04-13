@@ -43,6 +43,8 @@ import {
   supervisionVitalsMetricSchema,
   UserInfo,
   userInfoSchema,
+  VitalsSupervisionContacts,
+  vitalsSupervisionContactsSchema,
 } from "~datatypes";
 
 import { formatDateToISO } from "../../utils";
@@ -229,6 +231,16 @@ export class InsightsAPIClient implements InsightsAPI {
     const { data } = await this.apiStore.client.get(endpoint);
     return (data as Array<unknown>).map((b) =>
       supervisionVitalsMetricSchema.parse(b),
+    );
+  }
+
+  async vitalsContactsDrilldownForOfficer(
+    officerPseudoId: string,
+  ): Promise<Array<VitalsSupervisionContacts>> {
+    const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/vitals/contacts_drilldown`;
+    const { data } = await this.apiStore.client.get(endpoint);
+    return (data as Array<unknown>).map((b) =>
+      vitalsSupervisionContactsSchema.parse(b),
     );
   }
 

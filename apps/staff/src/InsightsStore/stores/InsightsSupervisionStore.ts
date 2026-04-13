@@ -41,6 +41,7 @@ import {
   UserInfo,
   VitalsMetricForOfficer,
   VitalsMetricId,
+  VitalsSupervisionContacts,
 } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 import { formatDate } from "~utils";
@@ -101,6 +102,11 @@ export class InsightsSupervisionStore {
 
   vitalsMetricsBySupervisorPseudoId: Map<string, SupervisionVitalsMetric[]> =
     new Map();
+
+  vitalsContactsDrilldownByOfficerPseudoId: Map<
+    string,
+    VitalsSupervisionContacts[]
+  > = new Map();
 
   officersOutcomesBySupervisorPseudoId: Map<
     string,
@@ -319,6 +325,15 @@ export class InsightsSupervisionStore {
       .find((o) => o.pseudonymizedId === this.officerPseudoId);
 
     return officerOutcomes;
+  }
+
+  get officerVitalsContacts(): VitalsSupervisionContacts[] {
+    if (!this.officerPseudoId) return [];
+
+    const officerVitalsContacts =
+      this.vitalsContactsDrilldownByOfficerPseudoId.get(this.officerPseudoId);
+
+    return officerVitalsContacts ? [...officerVitalsContacts.values()] : [];
   }
 
   get officerVitalsMetrics(): SupervisionVitalsMetric[] | undefined {

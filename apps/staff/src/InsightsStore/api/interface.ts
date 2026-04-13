@@ -32,6 +32,7 @@ import {
   SupervisionOfficerSupervisor,
   SupervisionVitalsMetric,
   UserInfo,
+  VitalsSupervisionContacts,
 } from "~datatypes";
 
 export type PatchUserInfoProps = { hasSeenOnboarding: boolean };
@@ -85,4 +86,7 @@ export interface InsightsAPI {
     officerPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>>;
   downloadStateConfiguration(stateCode: string): Promise<InsightsConfig>;
+  vitalsContactsDrilldownForOfficer(
+    officerPseudoId: string,
+  ): Promise<Array<VitalsSupervisionContacts>>;
 }

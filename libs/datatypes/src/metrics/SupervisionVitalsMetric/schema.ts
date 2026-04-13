@@ -32,6 +32,18 @@ const vitalsMetricForOfficerSchema = z.object({
   metricDenominator: z.number().optional(),
 });
 
+export const vitalsSupervisionContactsSchema = z.object({
+  fullName: z.string(),
+  displayPersonExternalId: z.string(),
+  stateCode: z.string(),
+  personId: z.number(),
+  officerId: z.string(),
+  contactType: z.string(),
+  contactDueDate: z.string(),
+  contactCompleted: z.boolean(),
+  contactCompletedDate: z.string().nullable(),
+});
+
 export const supervisionVitalsMetricSchema = z.object({
   metricId: VITALS_METRIC_IDS,
   vitalsMetrics: z.array(vitalsMetricForOfficerSchema),
@@ -45,4 +57,7 @@ export type RawSupervisionVitalsMetric = z.input<
 >;
 export type VitalsMetricForOfficer = z.infer<
   typeof vitalsMetricForOfficerSchema
+>;
+export type VitalsSupervisionContacts = z.infer<
+  typeof vitalsSupervisionContactsSchema
 >;

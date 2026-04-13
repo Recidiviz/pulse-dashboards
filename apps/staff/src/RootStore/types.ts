@@ -141,6 +141,7 @@ export type FeatureVariant =
   | "outcomesModule"
   | "reportIncorrectRosters"
   | "operationsDrilldown"
+  | "operationsContactsDrilldown"
   | "operationsNumeratorDenominatorIsEnabled"
   | "insightsStaffUsage"
   | "supervisorHomepageReviewCard"
@@ -213,6 +214,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIaEarlyDischargeForms: {},
   usIaSupervisionLevelDowngrade: {},
   operationsDrilldown: {},
+  operationsContactsDrilldown: {},
   operationsNumeratorDenominatorIsEnabled: {},
   usTnInitialClassification: {},
   usTn2026ClassificationPolicyPilot: {},
@@ -255,6 +257,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_ID", "US_ND", "US_TX"],
         },
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
+        operationsContactsDrilldown: { activeTenants: ["US_TX"] },
         operationsNumeratorDenominatorIsEnabled: { activeTenants: ["US_TX"] },
         insightsStaffUsage: { activeTenants: ["US_ID", "US_UT", "US_IA"] },
         usAzFacilitySearch: {},
@@ -295,6 +298,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
+        operationsContactsDrilldown: { activeTenants: ["US_TX"] },
         operationsNumeratorDenominatorIsEnabled: { activeTenants: ["US_TX"] },
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],

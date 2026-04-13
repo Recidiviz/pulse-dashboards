@@ -23,6 +23,7 @@ import { SupervisionOfficerVitalsPresenter } from "../../InsightsStore/presenter
 import { Body, Grid } from "../InsightsPageLayout/InsightsPageLayout";
 import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
 import { InsightsStaffVitalsDetailCard } from "../InsightsStaffVitals/InsightsStaffVitalsDetailCard";
+import { VitalsContactsDrilldownModal } from "../InsightsStaffVitals/VitalsContactsDrilldownModal";
 import { VitalsTaskDrilldownModal } from "../InsightsStaffVitals/VitalsTaskDrilldownModal";
 import ModelHydrator from "../ModelHydrator";
 
@@ -72,10 +73,12 @@ export const InsightsStaffVitals = withPresenter(
       vitalsMetricDetails,
       selectedMetricDetails,
       setSelectedMetricId,
-      isDrilldownEnabled,
+      isTasksDrilldownEnabled,
+      isContactsDrilldownEnabled,
       labels,
       officerRecord,
       isNumeratorDenominatorEnabled,
+      officerVitalsContacts,
     } = presenter;
 
     if (vitalsMetricDetails.length === 0) return;
@@ -84,6 +87,19 @@ export const InsightsStaffVitals = withPresenter(
       setSelectedMetricId(metricId);
       setModalOpen(true);
     };
+
+    const showVitalsContactsDrilldownModal =
+      isContactsDrilldownEnabled &&
+      selectedMetricDetails &&
+      ["timely_contact", "timely_contact_due_date_based"].includes(
+        selectedMetricDetails.metricId,
+      );
+
+    const showVitalsTasksDrilldownModal =
+      isTasksDrilldownEnabled && !showVitalsContactsDrilldownModal;
+
+    const isAnyDrilldownEnbled =
+      showVitalsContactsDrilldownModal || showVitalsTasksDrilldownModal;
 
     return (
       <InsightsPageSection sectionTitle="Operations">
@@ -94,7 +110,7 @@ export const InsightsStaffVitals = withPresenter(
                 <InsightsStaffVitalsDetailCard
                   key={metric.metricId}
                   vitalsMetricDetails={metric}
-                  isDrilldownEnabled={isDrilldownEnabled}
+                  isAnyDrilldownEnbled={isAnyDrilldownEnbled}
                   onClick={handleCardClick}
                   isNumeratorDenominatorEnabled={isNumeratorDenominatorEnabled}
                 />
@@ -102,7 +118,16 @@ export const InsightsStaffVitals = withPresenter(
             })}
           </Grid>
         </Body>
-        {isDrilldownEnabled && (
+        {showVitalsContactsDrilldownModal && (
+          <VitalsContactsDrilldownModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            contacts={officerVitalsContacts ?? []}
+            labels={labels}
+            officer={officerRecord}
+          />
+        )}
+        {showVitalsTasksDrilldownModal && (
           <VitalsTaskDrilldownModal
             isOpen={modalOpen}
             onClose={() => setModalOpen(false)}

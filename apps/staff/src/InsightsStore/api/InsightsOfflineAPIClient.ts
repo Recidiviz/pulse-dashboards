@@ -36,6 +36,7 @@ import {
   RosterChangeRequestResponse,
   rosterChangeRequestResponseFixture,
   SupervisionOfficer,
+  supervisionOfficerContactsFixture,
   supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventFixture,
@@ -46,6 +47,7 @@ import {
   supervisionOfficerVitalsMetricFixture,
   SupervisionVitalsMetric,
   UserInfo,
+  VitalsSupervisionContacts,
 } from "~datatypes";
 
 import type { InsightsStore } from "../InsightsStore";
@@ -85,7 +87,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     const matchingSupervisor = supervisionOfficerSupervisorsFixture.find(
       (supervisor) => supervisor.pseudonymizedId === userPseudoId,
     );
-
 
     if (matchingSupervisor) {
       return {
@@ -317,6 +318,12 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
         ),
       };
     });
+  }
+
+  async vitalsContactsDrilldownForOfficer(
+    officerPseudoId: string,
+  ): Promise<Array<VitalsSupervisionContacts>> {
+    return supervisionOfficerContactsFixture;
   }
 
   async submitRosterChangeRequestIntercomTicket(

@@ -171,6 +171,7 @@ export * from "./metrics/ClientInfo/schema";
 export * from "./metrics/MetricBenchmark/fixture";
 export * from "./metrics/MetricBenchmark/schema";
 export * from "./metrics/MetricConfig/schema";
+export * from "./metrics/SupervisionOfficerContacts/fixture";
 export * from "./metrics/SupervisionOfficerMetricEvent/fixture";
 export * from "./metrics/SupervisionOfficerMetricEvent/schema";
 export * from "./metrics/SupervisionOfficerMetricOutlier/fixture";
