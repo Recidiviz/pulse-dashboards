@@ -28,10 +28,6 @@ export const mockApiOpportunityConfigurationResponse = {
       denialReasons: [
         { key: "WARDEN", text: "Was denied warden approval" },
         {
-          key: "CURRENT PARTICIPANT",
-          text: "Already assigned to Outside Clearance",
-        },
-        {
           key: "MENTAL HEALTH",
           text: "Doesn't meet mental health requirements",
         },
@@ -117,7 +113,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: [],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
-      snoozeCompanionOpportunityTypes: [],
+      snoozeCompanionOpportunityTypes: ["usMoWorkRelease"],
       stateCode: "US_MO",
       strictlyIneligibleCriteriaCopy: [
         {

@@ -139,36 +139,24 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
+        { key: "PENDING MISCONDUCT", text: "Pending misconduct hearing" },
         {
-          key: "PRIOR RH",
-          text: "Prior restrictive housing history requires management at more restrictive level",
+          key: "NOT IN SEG",
+          text: "Resident is not currently in segregation (please ensure this is reflected in OMNI)",
         },
-        {
-          key: "PLACING BEHAVIOR",
-          text: "Severe placing behavior necessitates longer stay in segregation",
-        },
-        { key: "RESPECT", text: "Fails to be cordial and respectful to staff" },
-        {
-          key: "ATTITUDE",
-          text: "Behavior and attitude not consistent with general population expectations",
-        },
-        { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
-        {
-          key: "GP NOT APPROPRIATE",
-          text: "Unable to honor trust implicit in less restrictive environment",
-        },
+        { key: "START DATE INCORRECT", text: "Ad seg start date is incorrect" },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "ADD In-Person Review V2",
+      displayName: "[2026 Policy] ADD In-Person Review",
       dynamicEligibilityText:
-        "resident[|s] [is|are] eligible for in-person review by the ADD (V2) at SCC to potentially return to general population",
+        "resident[|s] [is|are] eligible for in-person review by the ADD at SCC to potentially return to general population [2026 Policy]",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "usMiOneYearSinceLastAddInPersonSccReview",
-          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if latestADDInPersonSccReviewDate}} last ADD in-person review recorded on {{date latestADDInPersonSccReviewDate}};{{/if}} ADD in-person review due on or before {{date nextSccDueDate}}",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in {{record.metadata.solitarySessionType}};{{#if latestADDInPersonSccReviewDate}} last ADD in-person review recorded on {{date latestADDInPersonSccReviewDate}};{{/if}} ADD in-person review due on or before {{date nextSccDueDate}}",
           tooltip:
             "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
         },
@@ -179,7 +167,7 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 11,
+      homepagePosition: 3,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
@@ -211,7 +199,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "\nThis alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+        "This page helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore upcoming or due for an in-person SCC review with the relevant ADD.  Per the policy #04.05.120, people in Administrative Segregation must be reviewed in person by ADD after one year in Administrative Segregation and every year thereafter. Schedule eligible residents for an SCC review and prepare the pre-filled 283 Form, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       submittedTabTitle: null,
       supportsIneligible: true,
       supportsSubmitted: true,
@@ -229,7 +217,32 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      tabPrefaceCopy: [],
+      tabPrefaceCopy: [
+        {
+          tab: "Overdue",
+          text: "This tab shows people who are Overdue for an ADD review. This means they have been in Administrative Segregation for over 12 months without an ADD review, or it has been 12 months since their last ADD review.",
+        },
+        {
+          tab: "Due",
+          text: "This tab shows people who are Due for an ADD review. This means that they are 2 weeks away from having spent 12 months in continuous Administrative Segregation, or 12 months since their last ADD review.",
+        },
+        {
+          tab: "Upcoming",
+          text: "This tab shows people who are Upcoming for an ADD review. This means they have been in Administrative Segregation for over 10 months or it has been 10 months since their last ADD review and are approaching 12 months in continuous Administrative Segregation.",
+        },
+        {
+          tab: "Not Due",
+          text: "This tab shows people who are in Administrative Segregation but are not currently due for an ADD review. ",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "These residents have been manually reviewed by a user and determined ineligible for an ADD review at the calculated time.",
+        },
+        {
+          tab: "Pending",
+          text: "These residents are pending the completion of an ADD review.",
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "addInPersonSecurityClassificationCommitteeReviewV2",
       zeroGrantsTooltip: null,
@@ -402,6 +415,12 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Actual Security Level {{actualPlacementLevel}} on most recent assessment is lower than current Security Level",
           tooltip:
             "Most recent assessment was done on {{date mostRecentAssessmentDate}}",
+        },
+        {
+          key: "usMiManagementLevelCouldDropToLowerLevel",
+          text: "Management level could be reduced due to favorable behavior",
+          tooltip:
+            "Management score is {{managementLevelRawScore}}. A 6-point (5-point for female facility) reduction to management score due to favorable behavior would result in a lower management level.",
         },
       ],
       emptyTabCopy: [],
@@ -1136,44 +1155,32 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
+        { key: "PENDING MISCONDUCT", text: "Pending misconduct hearing" },
         {
-          key: "PRIOR RH",
-          text: "Prior restrictive housing history requires management at more restrictive level",
+          key: "NOT IN SEG",
+          text: "Resident is not currently in segregation (please ensure this is reflected in OMNI)",
         },
-        {
-          key: "PLACING BEHAVIOR",
-          text: "Severe placing behavior necessitates longer stay in segregation",
-        },
-        { key: "RESPECT", text: "Fails to be cordial and respectful to staff" },
-        {
-          key: "ATTITUDE",
-          text: "Behavior and attitude not consistent with general population expectations",
-        },
-        { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
-        {
-          key: "GP NOT APPROPRIATE",
-          text: "Unable to honor trust implicit in less restrictive environment",
-        },
+        { key: "START DATE INCORRECT", text: "Ad seg start date is incorrect" },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: "Marked Ineligible",
-      displayName: "Security Classification Committee Review V2",
+      displayName: "[2026 Policy] Security Classification Committee Review ",
       dynamicEligibilityText:
-        "resident[|s] [is|are] eligible for SCC review (V2) to potentially return to general population",
+        "resident[|s] [is|are] eligible for SCC review to potentially return to general population [2026 Policy]",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "usMiPastAdSegSecurityClassificationCommitteeReviewDate",
-          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in {{record.metadata.solitarySessionType}};{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+            "An SCC review shall be conducted within 14 calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status\n",
         },
         {
           key: "usMiPastTempSegSecurityClassificationCommitteeReviewDate",
-          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in {{record.metadata.solitarySessionType}};{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+            "An SCC review shall be conducted within seven business days of the prisoner being classified to temporary segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status",
         },
       ],
       emptyTabCopy: [],
@@ -1208,13 +1215,13 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usMiPastAdSegSecurityClassificationCommitteeReviewDate",
           text: "Next SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+            "An SCC review shall be conducted within 14 calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status\n",
         },
         {
           key: "usMiPastTempSegSecurityClassificationCommitteeReviewDate",
           text: "Next SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+            "An SCC review shall be conducted within seven business days of the prisoner being classified to temporary segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status",
         },
       ],
       subcategoryHeadings: [
@@ -1251,7 +1258,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. ",
+        "This page helps staff identify residents in Temporary Segregation or Administrative Segregation who may be due, overdue, or have an upcoming Security Classification Committee (SCC) Review. Per the policy #04.05.120, people moved to Temporary Segregation must have an SCC within 7 business days of starting segregation, and every 30 calendar days after. People in Administrative Segregation must be reviewed within 14 calendar days and every 30 calendar days thereafter. Schedule eligible residents for an SCC review and prepare the pre-filled 283 Form. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       submittedTabTitle: "Pending",
       supportsIneligible: true,
       supportsSubmitted: true,
@@ -1269,7 +1276,32 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      tabPrefaceCopy: [],
+      tabPrefaceCopy: [
+        {
+          tab: "Overdue",
+          text: "This tab shows people who are Overdue for an SCC review, based on their segregation type. For people in Temporary Segregation awaiting initial review, they will show up in this tab on and after the 8th business day. For people in Temporary Segregation awaiting a follow-up review, they will show up in this tab 31 calendar days after their last review. For people in Administrative Segregation awaiting initial review, they will show in this tab on and after 15 calendar days. For people in Administrative Segregation awaiting a follow-up review, they will show in this tab 31 calendar days after their last review.",
+        },
+        {
+          tab: "Due",
+          text: "This tab shows people who are Due for an SCC review, based on their segregation type. For people in Temporary Segregation awaiting initial review, they will show up in this tab on business days 3 to 7 after their segregation starts. For people in Temporary Segregation awaiting a follow-up review, they will show up in this tab on business days 28 to 30 after their last review. For people in Administrative Segregation awaiting initial review, they will show in this tab on calendar days 8 to 14 after their segregation starts. For people in Administrative Segregation awaiting a follow-up review, they will show in this tab on days 28 to 30 after their last review.",
+        },
+        {
+          tab: "Upcoming",
+          text: "This tab shows people who are Upcoming for an SCC review, based on their segregation type. For people in Temporary Segregation awaiting initial review, they will show up in this tab on business days 1 to 2 after their segregation starts. For people in Temporary Segregation awaiting a follow-up review, they will show up in this tab on business days 24 to 27 after their last review. For people in Administrative Segregation awaiting initial review, they will show in this tab on calendar days 1 to 7 after their segregation starts. For people in Administrative Segregation awaiting a follow-up review, they will show in this tab on days 24 to 27 after their last review.",
+        },
+        {
+          tab: "Not Due",
+          text: "This tab shows people who are in Administrative or Temporary Segregation, but not currently due for an SCC review. For anyone awaiting an initial review, they will show up in this tab when they begin segregation. For anyone awaiting a follow up review, they will show up in this tab on calendar day 1 to 23 since their last review.",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "These residents have been manually reviewed by a user and determined ineligible for an SCC review at the calculated time.",
+        },
+        {
+          tab: "Pending",
+          text: "These residents have been marked by a user as scheduled for an upcoming SCC review",
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "securityClassificationCommitteeReviewV2",
       zeroGrantsTooltip: null,
@@ -1471,42 +1503,30 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2: {
       callToAction:
-        "resident[|s] [is|are] eligible for in-person review by the Warden at SCC (V2) to potentially return to general population",
+        "resident[|s] [is|are] eligible for in-person review by the Warden at SCC to potentially return to general population",
       caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
+        { key: "PENDING MISCONDUCT", text: "Pending misconduct hearing" },
         {
-          key: "PRIOR RH",
-          text: "Prior restrictive housing history requires management at more restrictive level",
+          key: "NOT IN SEG",
+          text: "Resident is not currently in segregation (please ensure this is reflected in OMNI)",
         },
-        {
-          key: "PLACING BEHAVIOR",
-          text: "Severe placing behavior necessitates longer stay in segregation",
-        },
-        { key: "RESPECT", text: "Fails to be cordial and respectful to staff" },
-        {
-          key: "ATTITUDE",
-          text: "Behavior and attitude not consistent with general population expectations",
-        },
-        { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
-        {
-          key: "GP NOT APPROPRIATE",
-          text: "Unable to honor trust implicit in less restrictive environment",
-        },
+        { key: "START DATE INCORRECT", text: "Ad seg start date is incorrect" },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Warden In-Person Review V2",
+      displayName: "[2026 Policy] Warden In-Person Review",
       dynamicEligibilityText:
-        "resident[|s] [is|are] eligible for in-person review by the Warden at SCC (V2) to potentially return to general population",
+        "resident[|s] [is|are] eligible for in-person review by the Warden at SCC to potentially return to general population [2026 Policy]",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "usMiSixMonthsSinceLastWardenInPersonSccReview",
-          text: "{{record.metadata.daysInSolitarySession}} consecutive days in restrictive housing;{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDueDate}}",
+          text: "{{record.metadata.daysInSolitarySession}} consecutive days in {{ record.metadata.solitarySessionType}};{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDueDate}}",
           tooltip:
             "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
         },
@@ -1517,7 +1537,7 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 10,
+      homepagePosition: 2,
       ineligibleCriteriaCopy: [],
       initialHeader:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
@@ -1550,7 +1570,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+        "This page helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore upcoming or due for an in-person SCC review with the Warden. Per policy #04.05.120, people in Administrative Segregation must be reviewed in person by the Warden after six months in Administrative Segregation and every six months thereafter. Schedule eligible residents for an SCC review and prepare the pre-filled 283 Form inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       submittedTabTitle: null,
       supportsIneligible: true,
       supportsSubmitted: true,
@@ -1568,7 +1588,32 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      tabPrefaceCopy: [],
+      tabPrefaceCopy: [
+        {
+          tab: "Overdue",
+          text: "This tab shows people who are Overdue for a Warden review. This means they have been in Administrative Segregation for over 6 months without a Warden review, or it has been 6 months since their last Warden review.",
+        },
+        {
+          tab: "Due",
+          text: "This tab shows people who are Due for an Warden review. This means that they are 2 weeks away from having spent 6 months in continuous Administrative Segregation, or 6 months since their last Warden review.",
+        },
+        {
+          tab: "Upcoming",
+          text: "This tab shows people who are Upcoming for a Warden review. This means they have been in Administrative Segregation for over 4 months or it has been 4 months since their last Warden review and are approaching 6 months in continuous Administrative Segregation.",
+        },
+        {
+          tab: "Not Due",
+          text: "This tab shows people who are in Administrative Segregation but do not currently have an upcoming Warden review.",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "These residents have been manually reviewed by a user and determined ineligible for a Warden review at the calculated time.",
+        },
+        {
+          tab: "Pending",
+          text: "These residents are pending the completion of a Warden review.",
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "wardenInPersonSecurityClassificationCommitteeReviewV2",
       zeroGrantsTooltip: null,

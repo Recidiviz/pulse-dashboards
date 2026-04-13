@@ -361,12 +361,6 @@ export const mockApiOpportunityConfigurationResponse = {
             "Have addressed or are addressing any highly assessed criminogenic needs.",
         },
         {
-          key: "usTnThreeFaceToFaceContactsWithin60DaysOfIntakeSupervisionStart",
-          text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
-        },
-        {
           key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
           text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
           tooltip:
@@ -384,7 +378,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnNoIneligibleCrOffense2025Policy",
-          text: "No convictions for domestic violence or sex offenses",
+          text: "No convictions for sex offenses or felony domestic-violence offenses",
           tooltip: "",
         },
         {
@@ -419,12 +413,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has at least one high need domain",
           tooltip:
             "Have addressed or are addressing any highly assessed criminogenic needs.",
-        },
-        {
-          key: "usTnThreeFaceToFaceContactsWithin60DaysOfIntakeSupervisionStart",
-          text: "Did not have 3 face to face contacts within 60 days of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
         },
         {
           key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",

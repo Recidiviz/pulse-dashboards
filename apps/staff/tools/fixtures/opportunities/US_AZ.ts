@@ -92,6 +92,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzNoActiveFelonyDetainers",
           text: "No active felony detainers or warrants",
         },
+        {
+          key: "usAzIncarcerationPastAcisDtpDate",
+          text: "Past DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-DTPReferrals",
@@ -579,7 +583,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzOrasEmployedDisabledRetiredOrStudent",
-          text: "Currently employed, disabled, retired, or in school",
+          text: "{{#unless record.metadata.isMaybeEligible}}\nCurrently employed, disabled, retired, or in school\n{{/unless}}",
           tooltip:
             "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
         },
@@ -595,7 +599,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
-          text: "Not currently dealing with substance use issues",
+          text: "{{#unless record.metadata.isMaybeEligible}}\nNot currently dealing with substance use issues\n{{/unless}}",
           tooltip:
             "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
