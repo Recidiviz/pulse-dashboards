@@ -17,8 +17,10 @@
 
 /* eslint-disable no-console */
 
+import { Connector, IpAddressTypes } from "@google-cloud/cloud-sql-connector";
 import { Firestore } from "@google-cloud/firestore";
 import { firestore } from "firebase-admin";
+import { Pool } from "pg";
 
 import {
   deriveDcafFormData,
@@ -36,9 +38,14 @@ import {
 
 import { FormUpdate } from "../src/FirestoreStore";
 import QueryDocumentSnapshot = firestore.QueryDocumentSnapshot;
-import { csvFormat } from "d3-dsv";
 
-const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
+const {
+  FIREBASE_PROJECT,
+  FIREBASE_CREDENTIAL,
+  PERSISTENCE_DB_CONNECTION,
+  PERSISTENCE_DB_USER,
+  PERSISTENCE_DB_PASSWORD,
+} = process.env;
 
 function getDb() {
   const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL
@@ -411,7 +418,7 @@ async function getFormUpdateDocs(
   const updatesRes = await db
     .collectionGroup("clientFormUpdates")
     .where("opportunity", "==", opportunityType)
-    .where("updated.date", ">=", new Date("2026-03-01"))
+    .where("updated.date", ">=", new Date("2026-04-06"))
     .get();
 
   const entries = [];
@@ -441,7 +448,7 @@ async function getFormUpdateDocs(
   return entries;
 }
 
-async function createUpdatesCsv() {
+async function getUpdatedRecords() {
   const entries = await getFormUpdateDocs(
     "usTnTrusteeTransfer",
     "US_TN-custodyLevelDowngrade2026PolicyReferrals",
@@ -477,8 +484,73 @@ async function createUpdatesCsv() {
     )),
   );
 
-  const formattedCsv = csvFormat(entries, CSV_COLUMN_ORDER);
-  console.log(formattedCsv);
+  return entries;
 }
 
-createUpdatesCsv();
+// check arguments
+const opts = {
+  doUpdates: process.argv.includes("--execute"),
+};
+
+if (!opts.doUpdates) {
+  console.log();
+  console.log("Note: Dry run");
+  console.log("Run with --execute to write to postgres");
+}
+
+const updatesToUpload = await getUpdatedRecords();
+
+console.log();
+console.log(`Found ${updatesToUpload.length} updates to upload.`);
+
+// Insert every column in CSV_COLUMN order into us_tn_caf_edits
+let query = `INSERT INTO us_tn_caf_edits (${CSV_COLUMN_ORDER.map((c) => `"${c}"`).join(", ")})`;
+// With templated values ($1, $2, $3, ..., $(CSV_COLUMN_ORDER+length))
+// Note that by unsing templated values here, we get two things:
+// 1. We only need to generate the query string once
+// 2. The server will sanitize all the values for SQL injection for us
+query += ` VALUES (${CSV_COLUMN_ORDER.map((_, i) => `$${i + 1}`).join(", ")})`;
+// If there is a PK conflict,
+query += ` ON CONFLICT ("state_code", "OFFENDERID", "ClassificationType", "ClassificationFormType", "AssessmentDate") DO UPDATE SET `;
+// replace all columns with the values from the new (EXCLUDED) entry
+query += CSV_COLUMN_ORDER.map((c) => `"${c}" = EXCLUDED."${c}"`).join(", ");
+
+console.log();
+console.log("Query to execute:");
+console.log(query);
+
+if (!opts.doUpdates) {
+  console.log();
+  console.log("Dry run. Exiting without connecting to postgres.");
+  process.exit(0);
+}
+
+const connector = new Connector();
+const clientOpts = await connector.getOptions({
+  // @ts-expect-error will check for existence when I wrap this in a function
+  instanceConnectionName: PERSISTENCE_DB_CONNECTION,
+  ipType: IpAddressTypes.PUBLIC,
+});
+
+const pool = new Pool({
+  stream: clientOpts.stream(),
+  user: PERSISTENCE_DB_USER,
+  password: PERSISTENCE_DB_PASSWORD,
+  database: "postgres",
+  max: 5,
+});
+
+const res = [];
+for (const update of updatesToUpload) {
+  res.push(
+    // eslint-disable-next-line no-await-in-loop
+    await pool.query(
+      query,
+      //
+      CSV_COLUMN_ORDER.map((c) => update[c]),
+    ),
+  );
+}
+
+await pool.end();
+connector.close();

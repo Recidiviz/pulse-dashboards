@@ -350,7 +350,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/usTnExportCafScores.ts'"
+        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/usTnExportCafScores.ts {args}'"
       }
     }
   }

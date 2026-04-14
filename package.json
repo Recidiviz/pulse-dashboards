@@ -302,6 +302,7 @@
     "@eslint/js": "^9.33.0",
     "@expo/cli": "^54.0.0",
     "@firebase/rules-unit-testing": "^2.0.2",
+    "@google-cloud/cloud-sql-connector": "^1.9.2",
     "@google-cloud/firestore": "^6.3.0",
     "@juggle/resize-observer": "^3.4.0",
     "@nx-extend/gcp-cloud-run": "^12.1.1",

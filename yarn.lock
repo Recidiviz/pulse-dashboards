@@ -7100,6 +7100,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@google-cloud/cloud-sql-connector@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "@google-cloud/cloud-sql-connector@npm:1.9.2"
+  dependencies:
+    "@googleapis/sqladmin": "npm:^35.2.0"
+    gaxios: "npm:^7.1.4"
+    google-auth-library: "npm:^10.6.1"
+    p-throttle: "npm:^7.0.0"
+  checksum: 10c0/7bc53225323fc05baf5db7f24784e92aa08d4c29acc4dac2935b00738036a428d6d78012b0deda015e45bb783bd2bc55ef313722aa27765dcbb1aaa941a0d7a2
+  languageName: node
+  linkType: hard
+
 "@google-cloud/common@npm:^3.8.1":
   version: 3.8.1
   resolution: "@google-cloud/common@npm:3.8.1"
@@ -7297,6 +7309,15 @@ __metadata:
   version: 0.24.1
   resolution: "@google/generative-ai@npm:0.24.1"
   checksum: 10c0/8da77fc648b04fc2ecef53e75230e2ee67a8fd29a34b6b8874e77a7332b2a1e4b51d44dd9eb604fb063ed8ea46d293aac5b1e2a955ae2435e2582a265f2cb80d
+  languageName: node
+  linkType: hard
+
+"@googleapis/sqladmin@npm:^35.2.0":
+  version: 35.2.0
+  resolution: "@googleapis/sqladmin@npm:35.2.0"
+  dependencies:
+    googleapis-common: "npm:^8.0.0"
+  checksum: 10c0/7833e6e3395923d8d6280cbfd0bc9d5a6198e9d0d92f00d20eb62afb49f26a3f536efe2bafe5c6611aec7a627070f5dae0e07a59a1ddde8ad1cc97e5b89a4015
   languageName: node
   linkType: hard
 
@@ -32070,12 +32091,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gaxios@npm:^7.0.0-rc.4, gaxios@npm:^7.1.4":
+  version: 7.1.4
+  resolution: "gaxios@npm:7.1.4"
+  dependencies:
+    extend: "npm:^3.0.2"
+    https-proxy-agent: "npm:^7.0.1"
+    node-fetch: "npm:^3.3.2"
+  checksum: 10c0/147adf5f2606442945d8b19df1e9fe2833a5ec30af00743d0c44292899c5eef1c0a77b74ff07d9dfdc6b009c08af1f3f3d1d5d772109fde50c92435533795803
+  languageName: node
+  linkType: hard
+
 "gaze@npm:^1.1.2":
   version: 1.1.3
   resolution: "gaze@npm:1.1.3"
   dependencies:
     globule: "npm:^1.0.0"
   checksum: 10c0/5369619e23f6585e3a5efc4b8fad3b9f129fb4a88685bf0d6a98ca5ea0adb3868ede3d05643101deb03c42e15a0d36182d37f0122945935d05eddc82f4d79bfe
+  languageName: node
+  linkType: hard
+
+"gcp-metadata@npm:8.1.2":
+  version: 8.1.2
+  resolution: "gcp-metadata@npm:8.1.2"
+  dependencies:
+    gaxios: "npm:^7.0.0"
+    google-logging-utils: "npm:^1.0.0"
+    json-bigint: "npm:^1.0.0"
+  checksum: 10c0/15a61231a9410dc11c2828d2c9fdc8b0a939f1af746195c44edc6f2ffea0acab52cef3a7b9828069a36fd5d68bda730f7328a415fe42a01258f6e249dfba6908
   languageName: node
   linkType: hard
 
@@ -32730,6 +32773,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"google-auth-library@npm:^10.6.1":
+  version: 10.6.2
+  resolution: "google-auth-library@npm:10.6.2"
+  dependencies:
+    base64-js: "npm:^1.3.0"
+    ecdsa-sig-formatter: "npm:^1.0.11"
+    gaxios: "npm:^7.1.4"
+    gcp-metadata: "npm:8.1.2"
+    google-logging-utils: "npm:1.1.3"
+    jws: "npm:^4.0.0"
+  checksum: 10c0/4878d9070e751202eff8adca7a78a41f045c460f611a62d8c0c14ac4bd33d66afc5d788ef82225873dadc7cde401d47f223f3c109f1a192564164fdd44a36614
+  languageName: node
+  linkType: hard
+
 "google-auth-library@npm:^7.0.0, google-auth-library@npm:^7.14.0, google-auth-library@npm:^7.9.2":
   version: 7.14.0
   resolution: "google-auth-library@npm:7.14.0"
@@ -32865,6 +32922,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"google-logging-utils@npm:1.1.3":
+  version: 1.1.3
+  resolution: "google-logging-utils@npm:1.1.3"
+  checksum: 10c0/e65201c7e96543bd1423b9324013736646b9eed60941e0bfa47b9bfd146d2f09cf3df1c99ca60b7d80a726075263ead049ee72de53372cb8458c3bc55c2c1e59
+  languageName: node
+  linkType: hard
+
 "google-logging-utils@npm:^1.0.0, google-logging-utils@npm:^1.1.1":
   version: 1.1.1
   resolution: "google-logging-utils@npm:1.1.1"
@@ -32920,6 +32984,19 @@ __metadata:
     url-template: "npm:^2.0.8"
     uuid: "npm:^9.0.0"
   checksum: 10c0/cbbce900582a66c28bb8ccde631bc08202c6fb2e591932b981a23b437b074150051b966d3ad67bcb4b06b4ff5bbbfd8524ac5ca6f7b77b8790f417924bec1f3c
+  languageName: node
+  linkType: hard
+
+"googleapis-common@npm:^8.0.0":
+  version: 8.0.1
+  resolution: "googleapis-common@npm:8.0.1"
+  dependencies:
+    extend: "npm:^3.0.2"
+    gaxios: "npm:^7.0.0-rc.4"
+    google-auth-library: "npm:^10.1.0"
+    qs: "npm:^6.7.0"
+    url-template: "npm:^2.0.8"
+  checksum: 10c0/ee939fdfcaea32c528e7be64621b3e6b35e612f2456c8d4aca835e0a01ccec52f4ea2ac9509b083128398631a6cd66512c400adb4d0375a4638c55888ccdea7f
   languageName: node
   linkType: hard
 
@@ -43271,6 +43348,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-throttle@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "p-throttle@npm:7.0.0"
+  checksum: 10c0/7a9ca80826808b3d7f946369fc17a0ba020064c1bda9a5dfa74d2c9713f896576cdc4872bd61091ef2950d6a84072cac672bb1eb88a8b6a0c9e348d030623fc1
+  languageName: node
+  linkType: hard
+
 "p-timeout@npm:^3.2.0":
   version: 3.2.0
   resolution: "p-timeout@npm:3.2.0"
@@ -47799,6 +47883,7 @@ __metadata:
     "@firebase/rules-unit-testing": "npm:^2.0.2"
     "@floating-ui/react": "npm:^0.26.1"
     "@google-cloud/bigquery": "npm:^7.9.1"
+    "@google-cloud/cloud-sql-connector": "npm:^1.9.2"
     "@google-cloud/discoveryengine": "npm:^1.14.0"
     "@google-cloud/firestore": "npm:^6.3.0"
     "@google-cloud/secret-manager": "npm:^4.2.1"
