@@ -205,6 +205,7 @@ const caseNotesDisplayName = "Case Notes Server";
 const opportunitiesFrontendDisplayName = "Opportunities Frontend";
 const opportunitiesCloudFunctionsDisplayName = "Opportunities Cloud Functions";
 const opportunitiesBackendDisplayName = "Opportunities Backend Services";
+const opportunitiesStorybookDisplayName = "Opportunities Storybook";
 const meetingAssistantDisplayName = "Meeting Assistant Backend Services";
 const demoFixturesDisplayName = "Demo fixtures";
 const opportunitiesTestDataDisplayName = "Opportunities test data";
@@ -220,6 +221,7 @@ const deployServicesChoices = [
   { name: opportunitiesFrontendDisplayName, checked: true },
   { name: opportunitiesCloudFunctionsDisplayName, checked: inStagingOrProd },
   { name: opportunitiesBackendDisplayName, checked: inStagingOrProd },
+  { name: opportunitiesStorybookDisplayName, checked: inStagingOrProd },
   { name: meetingAssistantDisplayName, checked: inStagingOrProd },
   { name: envSecretsDisplayName, checked: inStagingOrProd },
 ];
@@ -268,6 +270,9 @@ const deployOppsFunctions = deployServicesPrompt.deployServices.includes(
 );
 const deployOppsBackend = deployServicesPrompt.deployServices.includes(
   opportunitiesBackendDisplayName,
+);
+const deployOppsStorybook = deployServicesPrompt.deployServices.includes(
+  opportunitiesStorybookDisplayName,
 );
 const deployOppsTestData = deployServicesPrompt.deployServices.includes(
   opportunitiesTestDataDisplayName,
@@ -743,6 +748,40 @@ if (
         type: "confirm",
         name: "retryDeploy",
         message: `${opportunitiesFrontendDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
+}
+
+if (
+  deployOppsStorybook &&
+  (deployEnv === "staging" || deployEnv === "production")
+) {
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log(`Deploying ${opportunitiesStorybookDisplayName}...`);
+
+    try {
+      let deployMessage = `${currentRevision}`;
+      if (deployEnv === "production") {
+        deployMessage = `Version ${nextVersion} - Commit hash ${currentRevision}`;
+      }
+
+      // deploy target includes build
+      await $`nx deploy @jii/storybook --configuration ${deployEnv} -m "${deployMessage}"`.pipe(
+        process.stdout,
+      );
+
+      retryDeploy = false;
+      successfullyDeployed.push(opportunitiesStorybookDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${opportunitiesStorybookDisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;

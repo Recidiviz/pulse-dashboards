@@ -21,6 +21,9 @@
         ],
         "demo": [
           "recidiviz-jii-demo"
+        ],
+        "storybook": [
+          "recidiviz-jii-staging-storybook"
         ]
       }
     },
@@ -28,6 +31,9 @@
       "hosting": {
         "live": [
           "recidiviz-jii-production"
+        ],
+        "storybook": [
+          "recidiviz-jii-storybook"
         ]
       }
     },

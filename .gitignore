@@ -124,3 +124,6 @@ apps/@reentry/backend/app/core/data_config/output_configs/*.yaml
 # Claude
 .claude/settings.local.json
 .claude/rules
+
+
+storybook-static

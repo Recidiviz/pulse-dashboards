@@ -1,0 +1,50 @@
+{
+  "name": "@jii/storybook",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@jii/storybook/src",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["@jii/sentence-dates"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p ./tsconfig.storybook.json"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "check-implicit-dependencies": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/check-implicit-dependencies.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build-storybook"],
+      "command": "firebase deploy --config firebase.jii.json",
+      "configurations": {
+        "staging": {
+          "args": "--project jii-staging --only hosting:storybook"
+        },
+        "production": {
+          "args": "--project jii-production --only hosting:storybook"
+        }
+      },
+      "defaultConfiguration": "staging"
+    },
+    "deploy-preview": {
+      "dependsOn": ["build-storybook"],
+      "command": "firebase --config firebase.jii.json hosting:channel:deploy",
+      "configurations": {
+        "staging": {
+          "args": "--project jii-staging --only storybook"
+        },
+        "production": {
+          "args": "--project jii-production --only storybook"
+        }
+      },
+      "defaultConfiguration": "staging"
+    }
+  }
+}
