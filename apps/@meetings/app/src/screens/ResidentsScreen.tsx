@@ -62,8 +62,11 @@ const ResidentsScreen = () => {
   const filteredResidents = React.useMemo(() => {
     let results = residents;
     if (search) {
-      results = results.filter((e) =>
-        e.fullName.toLowerCase().includes(search.toLowerCase()),
+      const lowerSearch = search.toLowerCase();
+      results = results.filter(
+        (e) =>
+          e.fullName.toLowerCase().includes(lowerSearch) ||
+          e.displayPersonExternalId?.toLowerCase().includes(lowerSearch),
       );
     }
 

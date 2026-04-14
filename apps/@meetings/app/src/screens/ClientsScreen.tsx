@@ -45,8 +45,11 @@ const filterAndSortClients = (
 ): Client[] => {
   let results = clients;
   if (search) {
-    results = results.filter((e) =>
-      e.fullName.toLowerCase().includes(search.toLowerCase()),
+    const lowerSearch = search.toLowerCase();
+    results = results.filter(
+      (e) =>
+        e.fullName.toLowerCase().includes(lowerSearch) ||
+        e.displayPersonExternalId?.toLowerCase().includes(lowerSearch),
     );
   }
   results = sortUsers(results, sortBy as SortOption);

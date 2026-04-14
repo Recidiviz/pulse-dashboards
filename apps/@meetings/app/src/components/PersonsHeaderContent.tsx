@@ -89,7 +89,7 @@ const PersonsHeaderContent = ({
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder={`Search ${personType}s by name`}
+              placeholder="Search by name or ID"
               onExit={() => {
                 setSearchQuery("");
               }}
