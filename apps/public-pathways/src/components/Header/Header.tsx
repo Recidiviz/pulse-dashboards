@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { Icon, Menubar, spacing } from "~design-system";
+import { Icon, spacing } from "~design-system";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
@@ -34,38 +34,37 @@ const HeaderWrapper = styled.header`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 `;
 
-const Title = styled.h1`
+const Title = styled.p`
   ${publicPathwaysTypography.Header24}
-  margin-bottom: 0;
+  margin: 0;
 `;
 
-const StyledMenubar = styled(Menubar)`
-  width: auto;
+const HeaderActions = styled.div`
   display: flex;
   align-items: center;
-  padding: 0 ${rem(spacing.xs)};
   gap: ${rem(spacing.md)};
-
-  [role="menuitem"] {
-    &:hover {
-      text-decoration: underline;
-      outline-color: ${publicPathwaysPalette.signal.links};
-    }
-  }
 `;
 
-const MenuLinks = styled.div`
+const SiteNav = styled.nav`
   display: flex;
+  align-items: center;
 `;
 
-const MenuLink = styled.button`
+const NavLink = styled.a`
   ${publicPathwaysTypography.Sans14}
   padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
-  outline: none;
+  color: inherit;
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
     color: ${publicPathwaysPalette.signal.links};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 `;
 
@@ -86,6 +85,11 @@ const DownloadButton = styled.button`
   color: white;
   cursor: pointer;
   outline: none;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
+    outline-offset: 2px;
+  }
 `;
 
 export const Header = observer(function Header() {
@@ -94,21 +98,19 @@ export const Header = observer(function Header() {
   return (
     <HeaderWrapper>
       <Title>NYS DOCCS</Title>
-      <StyledMenubar focusBorderColor={publicPathwaysPalette.signal.links}>
-        <MenuLinks>
-          <MenuLink
-            as="a"
+      <HeaderActions>
+        <SiteNav aria-label="Site navigation">
+          <NavLink
             href="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
             target="_blank"
             rel="noopener noreferrer"
-            role="menuitem"
             onClick={() => analyticsStore.trackMethodologyLinkClicked()}
           >
             How it works
-          </MenuLink>
-        </MenuLinks>
+          </NavLink>
+        </SiteNav>
         <DownloadButton
-          role="menuitem"
+          type="button"
           onClick={() => {
             metricsStore.download();
             analyticsStore.trackDownloadClicked({
@@ -119,7 +121,7 @@ export const Header = observer(function Header() {
           <Icon kind="DownloadArrowThin" color="white" size={12} />
           Download
         </DownloadButton>
-      </StyledMenubar>
+      </HeaderActions>
     </HeaderWrapper>
   );
 });

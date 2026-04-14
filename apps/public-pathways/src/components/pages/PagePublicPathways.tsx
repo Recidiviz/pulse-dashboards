@@ -41,7 +41,7 @@ import { Header } from "../Header/Header";
 import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
 import { PageTitle } from "../PageTitle/PageTitle";
 import { useRootStore } from "../StoreProvider";
-import { NavigationRow, PageContainer } from "./styles";
+import { NavigationRow, PageContainer, PageMain, SectionNav } from "./styles";
 
 function usePageViews() {
   const location = useLocation();
@@ -141,39 +141,45 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
     <ThemeProvider theme={publicPathwaysTheme}>
       <PageContainer $isMobile={isMobile}>
         <Header />
-        <PageTitle
-          title={pageContent.title}
-          description={pageContent.summary}
-          methodologyUrl="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
-        />
-        <NavigationRow>
-          <SectionNavigation
-            sections={sections}
-            activeSection={section}
-            onSectionSelect={(id) => {
-              rootStore.setSection(id);
-              const metric = metricsStore.map[id];
-              if (metric) {
-                analyticsStore.trackMetricSelected({ metricId: metric.id });
+        <PageMain>
+          <PageTitle
+            title={pageContent.title}
+            description={pageContent.summary}
+            methodologyUrl="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
+          />
+          <NavigationRow>
+            <SectionNav aria-label="Section navigation">
+              <SectionNavigation
+                sections={sections}
+                activeSection={section}
+                onSectionSelect={(id) => {
+                  rootStore.setSection(id);
+                  const metric = metricsStore.map[id];
+                  if (metric) {
+                    analyticsStore.trackMetricSelected({ metricId: metric.id });
+                  }
+                }}
+                accentColor={publicPathwaysPalette.signal.links}
+                maxVisible={maxVisible}
+              />
+            </SectionNav>
+            <FiltersButton
+              filtersStore={rootStore.filtersStore}
+              trackApplyFilters={(filters) =>
+                analyticsStore.trackApplyFilters({
+                  metricId: metricsStore.current.id,
+                  filters,
+                })
               }
-            }}
-            accentColor={publicPathwaysPalette.signal.links}
-            maxVisible={maxVisible}
-          />
-          <FiltersButton
-            filtersStore={rootStore.filtersStore}
-            trackApplyFilters={(filters) =>
-              analyticsStore.trackApplyFilters({
-                metricId: metricsStore.current.id,
-                filters,
-              })
-            }
-            enableMetricModeToggle={metricsStore.current.enableMetricModeToggle}
-            metricModeOptions={metricModeOptions}
-          />
-        </NavigationRow>
-        <MetricVizMapper metric={metricsStore.current} />
-        <ChartNote note={metricsStore.current?.note} />
+              enableMetricModeToggle={
+                metricsStore.current.enableMetricModeToggle
+              }
+              metricModeOptions={metricModeOptions}
+            />
+          </NavigationRow>
+          <MetricVizMapper metric={metricsStore.current} />
+          <ChartNote note={metricsStore.current?.note} />
+        </PageMain>
         <Footer />
       </PageContainer>
     </ThemeProvider>

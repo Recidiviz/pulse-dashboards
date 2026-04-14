@@ -33,6 +33,12 @@ const FooterWrapper = styled.footer`
 const LogoLink = styled.a`
   display: flex;
   align-items: center;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 `;
 
 const Logo = styled.img`

@@ -39,10 +39,7 @@ const StyledMenubar = styled(Menubar)<{ $focusColor: string }>`
   flex: 1;
   gap: 12px;
   align-items: center;
-
-  &&:has(:focus-visible) {
-    box-shadow: none;
-  }
+  padding: 0.5rem;
 
   && > [role="menuitem"]:focus-visible,
   && > * > [role="menuitem"]:focus-visible {

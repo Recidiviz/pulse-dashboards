@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { fireEvent, render, screen } from "@testing-library/react";
+import { ThemeProvider } from "styled-components";
 import { Mock } from "vitest";
+
+import { defaultPathwaysTheme } from "~shared-pathways";
 
 import { useRootStore } from "../../StoreProvider";
 import { Header } from "../Header";
@@ -27,6 +30,10 @@ const mockDownload = vi.fn();
 const mockTrackDownloadClicked = vi.fn();
 const mockTrackMethodologyLinkClicked = vi.fn();
 const mockUseRootStore = useRootStore as Mock;
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <ThemeProvider theme={defaultPathwaysTheme}>{children}</ThemeProvider>
+);
 
 describe("Header", () => {
   beforeEach(() => {
@@ -43,9 +50,9 @@ describe("Header", () => {
   });
 
   it("calls trackDownloadClicked with the current metric id when Download is clicked", () => {
-    render(<Header />);
+    render(<Header />, { wrapper });
 
-    fireEvent.click(screen.getByRole("menuitem", { name: "Download" }));
+    fireEvent.click(screen.getByRole("button", { name: /Download/i }));
 
     expect(mockTrackDownloadClicked).toHaveBeenCalledWith({
       metricId: "prisonPopulationOverTime",
@@ -53,17 +60,17 @@ describe("Header", () => {
   });
 
   it("calls download when Download is clicked", () => {
-    render(<Header />);
+    render(<Header />, { wrapper });
 
-    fireEvent.click(screen.getByRole("menuitem", { name: "Download" }));
+    fireEvent.click(screen.getByRole("button", { name: /Download/i }));
 
     expect(mockDownload).toHaveBeenCalled();
   });
 
   it("calls trackMethodologyLinkClicked when How it works is clicked", () => {
-    render(<Header />);
+    render(<Header />, { wrapper });
 
-    fireEvent.click(screen.getByRole("menuitem", { name: "How it works" }));
+    fireEvent.click(screen.getByRole("link", { name: "How it works" }));
 
     expect(mockTrackMethodologyLinkClicked).toHaveBeenCalled();
   });
