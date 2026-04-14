@@ -27,6 +27,7 @@ import { palette } from "~design-system";
 import { Denial, Submission } from "../../FirestoreStore";
 import { appendDateSuffixIfMissing } from "../../utils";
 import { ActedOnTextAddition, Opportunity } from "../../WorkflowsStore";
+import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
 import { formatSupervisionEndDatePhrase } from "./utils";
 
 const MarkedIneligibleReasonsText = styled.div`
@@ -38,7 +39,7 @@ const MarkedIneligibleReasonsText = styled.div`
   margin: 1.5rem 0;
 `;
 
-const OtherReasonText = styled.pre`
+const DenialReasonText = styled.pre`
   ${typography.Sans14}
   color: ${palette.slate85};
   text-wrap: inherit;
@@ -192,6 +193,15 @@ export function buildActedOnTextAndResurfaceText(
   return [actedOnText, resurfaceText];
 }
 
+// Filtering out admin panel formatting for checkboxes
+// ie: Other: Other reasons here
+const stripCode = (value: string) => {
+  if (value.includes(":")) {
+    const val = value.split(":")[1].trim();
+    return val.charAt(0).toUpperCase() + val.slice(1);
+  } else return value;
+};
+
 const IneligibleReasonList: React.FC<{
   opportunity: Opportunity;
   denialReasons: string[];
@@ -209,7 +219,7 @@ const IneligibleReasonList: React.FC<{
         {denialReasons.map((code) => (
           <li key={code}>
             {code in denialReasonsMap
-              ? `${code} - ${denialReasonsMap[code]}`
+              ? `${code} - ${stripCode(denialReasonsMap[code])}`
               : code}
           </li>
         ))}
@@ -247,6 +257,12 @@ const MarkedIneligibleReasons: React.FC<{
     ? actedOnTextAndResurfaceTextPair.join(" ")
     : undefined;
 
+  const denialReasonsWithInput = denialReasons.filter(
+    (x) =>
+      (opportunity.denial?.userInput && x in opportunity.denial.userInput) ||
+      reasonsIncludesOtherKey([x]),
+  );
+
   return (
     <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
       {actedOnTextAndResurfaceText && (
@@ -262,24 +278,16 @@ const MarkedIneligibleReasons: React.FC<{
             opportunity={opportunity}
             denialReasons={denialReasons}
           />
-          {opportunity.denial.otherReason ? (
-            <OtherReasonText>
-              &quot;{opportunity.denial.otherReason}&quot;
-            </OtherReasonText>
-          ) : null}
-          {opportunity.denial.userInput
-            ? Object.entries(opportunity.denial.userInput).map(
-                ([code, input]) => {
-                  return (
-                    <OtherReasonText>
-                      &quot;
-                      {`${code}: ${opportunity.config.denialInputSettings[code].prefix ?? ""}${input}`}
-                      &quot;
-                    </OtherReasonText>
-                  );
-                },
-              )
-            : null}
+          {denialReasonsWithInput.map((code) => {
+            let value = "";
+            if (!opportunity.denial) return;
+            if (reasonsIncludesOtherKey([code])) {
+              value = `${code}: ${opportunity.denial.otherReason}`;
+            } else if (opportunity.denial.userInput) {
+              value = `${code}: ${opportunity.config.denialInputSettings[code].prefix ?? ""}${opportunity.denial.userInput[code]}`;
+            }
+            return <DenialReasonText>&quot;{value}&quot;</DenialReasonText>;
+          })}
         </div>
       )}
     </MarkedIneligibleReasonsText>

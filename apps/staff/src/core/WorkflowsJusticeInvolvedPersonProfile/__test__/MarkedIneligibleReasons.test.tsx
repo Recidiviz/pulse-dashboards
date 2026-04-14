@@ -264,7 +264,7 @@ describe("MarkedIneligibleReasons", () => {
         reasons: ["REASON"],
         otherReason: "Other Reason",
       },
-      denialReasons: { REASON: "Test reason", Other: "other reason" },
+      denialReasons: { REASON: "Test reason", [OTHER_KEY]: "other reason" },
     };
     const testText = buildActedOnTextAndResurfaceText(
       opp,
@@ -298,7 +298,7 @@ describe("MarkedIneligibleReasons", () => {
   });
 
   test("otherReason text", () => {
-    expect(screen.getByText('"Other Reason"')).toBeInTheDocument();
+    expect(screen.getByText('"Other: Other Reason"')).toBeInTheDocument();
   });
 });
 
