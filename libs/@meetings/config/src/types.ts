@@ -22,9 +22,9 @@ const MIN_TTL_DAYS = 7;
 export const AgencyConfigSchema = z.object({
   name: z.string(),
   stateCode: z.string(),
-  showTranscriptions: z.boolean(),
-  audioTTLDays: z.number().int().min(MIN_TTL_DAYS).optional(),
-  transcriptTTLDays: z.number().int().min(MIN_TTL_DAYS).optional(),
+  showTranscriptions: z.boolean().default(true),
+  audioTTLDays: z.number().int().min(MIN_TTL_DAYS).default(30),
+  transcriptTTLDays: z.number().int().min(MIN_TTL_DAYS).default(30),
   keywords: z.array(z.string()).optional(),
 });
 

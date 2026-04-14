@@ -20,9 +20,6 @@ import { AgencyConfigSchema } from "~@meetings/config/types";
 const US_CO_CONFIG = AgencyConfigSchema.parse({
   name: "Colorado",
   stateCode: "US_CO",
-  showTranscriptions: true,
-  audioTTLDays: 30,
-  transcriptTTLDays: 30,
   keywords: ["CDOC", "Edovo"],
 });
 

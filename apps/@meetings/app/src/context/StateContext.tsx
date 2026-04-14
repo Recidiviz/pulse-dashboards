@@ -27,7 +27,9 @@ export const AVAILABLE_STATE_CODES = [
   { code: "US_CO", name: "Colorado" },
   { code: "US_ME", name: "Maine" },
   { code: "US_NC", name: "North Carolina" },
+  { code: "US_ND", name: "North Dakota" },
   { code: "US_NE", name: "Nebraska" },
+  { code: "US_TN", name: "Tennessee" },
   { code: "US_DEMO", name: "Demo" },
 ] as const;
 

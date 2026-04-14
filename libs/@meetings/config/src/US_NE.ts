@@ -20,9 +20,6 @@ import { AgencyConfigSchema } from "~@meetings/config/types";
 const US_NE_CONFIG = AgencyConfigSchema.parse({
   name: "Nebraska",
   stateCode: "US_NE",
-  showTranscriptions: true,
-  audioTTLDays: 30,
-  transcriptTTLDays: 30,
   keywords: ["NDCS", "Edovo"],
 });
 

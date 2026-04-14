@@ -21,8 +21,7 @@ const US_ME_CONFIG = AgencyConfigSchema.parse({
   name: "Maine",
   stateCode: "US_ME",
   showTranscriptions: false,
-  audioTTLDays: 30,
-  transcriptTTLDays: 30,
+  keywords: ["MDOC"],
 });
 
 export default US_ME_CONFIG;

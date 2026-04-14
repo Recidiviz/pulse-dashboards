@@ -17,10 +17,10 @@
 
 import { AgencyConfigSchema } from "~@meetings/config/types";
 
-const US_AZ_CONFIG = AgencyConfigSchema.parse({
-  name: "Arizona",
-  stateCode: "US_AZ",
-  keywords: ["ADCRR"],
+const US_TN_CONFIG = AgencyConfigSchema.parse({
+  name: "Tennessee",
+  stateCode: "US_TN",
+  keywords: ["TDOC"],
 });
 
-export default US_AZ_CONFIG;
+export default US_TN_CONFIG;

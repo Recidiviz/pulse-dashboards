@@ -19,11 +19,15 @@ import { AgencyConfig } from "~@meetings/config/types";
 import US_AZ_CONFIG from "~@meetings/config/US_AZ";
 import US_CO_CONFIG from "~@meetings/config/US_CO";
 import US_ME_CONFIG from "~@meetings/config/US_ME";
+import US_ND_CONFIG from "~@meetings/config/US_ND";
 import US_NE_CONFIG from "~@meetings/config/US_NE";
+import US_TN_CONFIG from "~@meetings/config/US_TN";
 
 export const AGENCY_CONFIGS: Record<string, AgencyConfig> = {
   US_AZ: US_AZ_CONFIG,
   US_CO: US_CO_CONFIG,
   US_ME: US_ME_CONFIG,
+  US_ND: US_ND_CONFIG,
   US_NE: US_NE_CONFIG,
+  US_TN: US_TN_CONFIG,
 };
