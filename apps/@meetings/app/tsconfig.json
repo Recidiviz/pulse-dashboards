@@ -16,5 +16,6 @@
     "**/*.ts",
     "**/*.tsx",
     "svg.d.ts"
-  ]
+  ],
+  "exclude": ["steiger.config.ts"]
 }

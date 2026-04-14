@@ -108,6 +108,13 @@
         "production": {}
       }
     },
+    "steiger": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "steiger ./src",
+        "cwd": "{projectRoot}"
+      }
+    },
     "requires-sops-env:deploy:web": {
       "dependsOn": [{ "target": "build:web", "params": "forward" }],
       "command": "firebase deploy --config firebase.meetings.json",

@@ -4,10 +4,7 @@
     "outDir": "../../../dist/out-tsc",
     "types": ["node"]
   },
-  "files": [
-    "../../../node_modules/@nx/expo/typings/svg.d.ts",
-    "images.d.ts"
-  ],
+  "files": ["../../../node_modules/@nx/expo/typings/svg.d.ts", "images.d.ts"],
   "exclude": [
     "**/*.test.ts",
     "**/*.spec.ts",
@@ -21,7 +18,8 @@
     "jest.config.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
-    "jest.resolver.js"
+    "jest.resolver.js",
+    "steiger.config.ts"
   ],
   "include": [
     "**/*.ts",

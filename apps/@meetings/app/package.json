@@ -60,5 +60,9 @@
     "react-native-web": "^0.21.0",
     "react-native-worklets": "0.5.1",
     "tsconfig-paths": "*"
+  },
+  "devDependencies": {
+    "@feature-sliced/steiger-plugin": "^0.5.7",
+    "steiger": "^0.5.11"
   }
 }
