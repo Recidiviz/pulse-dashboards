@@ -123,6 +123,7 @@ export const mockOpportunity: Opportunity<Client> = {
   showEligibilityStatus: () => true,
   nonOMSRequirements: [],
   isSubmitted: false,
+  isPendingOverdue: false,
   submittedTabTitle: "Submitted",
   submittedButtonText: "Mark Submitted",
   undoSubmittedButtonText: "Revert from Submitted",

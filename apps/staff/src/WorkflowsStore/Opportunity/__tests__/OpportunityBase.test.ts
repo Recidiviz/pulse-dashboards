@@ -1128,6 +1128,76 @@ describe("snoozeCompanionOpportunities", () => {
   });
 });
 
+describe("isPendingOverdue", () => {
+  test("returns false when not submitted", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+      pendingOverdueDaysThreshold: 14,
+    } as any);
+    mockHydration();
+    expect(opp.isPendingOverdue).toBe(false);
+  });
+
+  function mockSubmittedTimestamp(daysAgo: number) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const date = sub(today, { days: daysAgo });
+    return { toDate: () => date } as unknown as Timestamp;
+  }
+
+  test("returns false when threshold is not configured", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+      pendingOverdueDaysThreshold: undefined,
+    } as any);
+    mockHydration({
+      updateData: {
+        submitted: { date: mockSubmittedTimestamp(20), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isPendingOverdue).toBe(false);
+  });
+
+  test("returns false when submitted recently (under threshold)", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+      pendingOverdueDaysThreshold: 14,
+    } as any);
+    mockHydration({
+      updateData: {
+        submitted: { date: mockSubmittedTimestamp(5), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isPendingOverdue).toBe(false);
+  });
+
+  test("returns true when submitted over threshold days ago", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+      pendingOverdueDaysThreshold: 14,
+    } as any);
+    mockHydration({
+      updateData: {
+        submitted: { date: mockSubmittedTimestamp(20), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isPendingOverdue).toBe(true);
+  });
+
+  test("returns true when submitted exactly at threshold", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+      pendingOverdueDaysThreshold: 14,
+    } as any);
+    mockHydration({
+      updateData: {
+        submitted: { date: mockSubmittedTimestamp(14), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isPendingOverdue).toBe(true);
+  });
+});
+
 describe("tabTitle", () => {
   test("Under review for snooze", () => {
     const opportunity: Opportunity = {
@@ -1282,6 +1352,26 @@ describe("eligibilityStatusLabel", () => {
     const submitted = {
       ...mockOpportunity,
       isSubmitted: true,
+    };
+
+    expect(submitted.eligibilityStatusLabel()).toBe("Submitted");
+  });
+
+  test("submitted and pending overdue", () => {
+    const submitted = {
+      ...mockOpportunity,
+      isSubmitted: true,
+      isPendingOverdue: true,
+    };
+
+    expect(submitted.eligibilityStatusLabel()).toBe("Pending: Overdue");
+  });
+
+  test("submitted but not overdue", () => {
+    const submitted = {
+      ...mockOpportunity,
+      isSubmitted: true,
+      isPendingOverdue: false,
     };
 
     expect(submitted.eligibilityStatusLabel()).toBe("Submitted");

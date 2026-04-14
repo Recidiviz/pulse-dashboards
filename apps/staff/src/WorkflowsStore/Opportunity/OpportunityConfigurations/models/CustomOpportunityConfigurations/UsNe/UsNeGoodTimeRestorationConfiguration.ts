@@ -18,6 +18,10 @@
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsNeGoodTimeRestorationConfiguration extends ApiOpportunityConfiguration {
+  get pendingOverdueDaysThreshold() {
+    return 14;
+  }
+
   get indefiniteSnoozeSectionSubheading(): string {
     return "";
   }

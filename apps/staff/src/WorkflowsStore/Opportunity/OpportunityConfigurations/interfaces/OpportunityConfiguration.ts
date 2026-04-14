@@ -147,4 +147,6 @@ export interface OpportunityConfiguration {
   customSubmittedText?: string;
 
   enableWorkflowsFilter: boolean;
+
+  pendingOverdueDaysThreshold?: number;
 }

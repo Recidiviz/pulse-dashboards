@@ -89,6 +89,19 @@ export const OPPORTUNITY_STATUS_COLORS = {
     badgeBorder: "rgb(162,179,239)",
     badgeText: "rgb(0,56,124)",
   },
+  pendingOverdue: {
+    icon: palette.signal.error,
+    iconAlmost: palette.data.gold1,
+    iconIneligible: palette.signal.error,
+    background: "transparent",
+    border: rgba(palette.slate20, 0.2),
+    text: palette.pine4,
+    buttonFill: palette.signal.links,
+    link: palette.signal.error,
+    badgeBackground: "rgb(255,244,249)",
+    badgeBorder: "rgb(255,204,223)",
+    badgeText: "rgb(179,9,60)",
+  },
   alert: {
     icon: palette.signal.error,
     iconAlmost: palette.signal.error,
@@ -136,6 +149,7 @@ export type StatusPalette =
 export function useStatusColors({
   config: { isAlert },
   isSubmitted,
+  isPendingOverdue,
   denial,
   almostEligible,
   customStatusPalette,
@@ -146,6 +160,9 @@ export function useStatusColors({
 
   switch (reviewStatus) {
     case "SUBMITTED":
+      if (isPendingOverdue) {
+        return OPPORTUNITY_STATUS_COLORS.pendingOverdue;
+      }
       return OPPORTUNITY_STATUS_COLORS.submitted;
     case "DENIED":
       return isAlert

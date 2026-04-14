@@ -180,6 +180,7 @@ export class OpportunityBase<
       setOtherReasonText: action,
       denied: computed,
       isSubmitted: computed,
+      isPendingOverdue: computed,
       isDenied: computed,
       isCompleted: computed,
       isInProgress: computed,
@@ -369,6 +370,15 @@ export class OpportunityBase<
 
   get isSubmitted(): boolean {
     return this.config.supportsSubmitted && !!this.submittedUpdate;
+  }
+
+  get isPendingOverdue(): boolean {
+    if (!this.isSubmitted) return false;
+    const threshold = this.config.pendingOverdueDaysThreshold;
+    if (threshold == null) return false;
+    const submittedDate = this.submittedUpdate?.date?.toDate();
+    if (!submittedDate) return false;
+    return differenceInDays(startOfToday(), submittedDate) >= threshold;
   }
 
   get isCompleted(): boolean {
@@ -1406,6 +1416,9 @@ export class OpportunityBase<
     }
 
     if (isSubmitted) {
+      if (this.isPendingOverdue) {
+        return "Pending: Overdue";
+      }
       return submittedTabTitle;
     }
 

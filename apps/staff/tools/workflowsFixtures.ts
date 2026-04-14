@@ -17,7 +17,8 @@
 
 /* eslint-disable no-console */
 
-import { Firestore } from "@google-cloud/firestore";
+import { Firestore, Timestamp } from "@google-cloud/firestore";
+import { subDays } from "date-fns";
 import { mapValues } from "lodash";
 
 import {
@@ -325,6 +326,61 @@ async function loadClientUpdatesV2(logger: Logger): Promise<void> {
     .then(() => logger(`new milestonesMessages data loaded successfully`));
 }
 
+async function loadOpportunityUpdates(logger: Logger): Promise<void> {
+  const collectionName = generateCollectionName({ key: "clientUpdatesV2" });
+  const subcollection =
+    FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates;
+
+  const submittedUpdates: Array<{
+    recordId: string;
+    opportunityType: string;
+    stateCode: string;
+    submittedDaysAgo: number;
+  }> = [
+    {
+      recordId: "us_ne_RES001",
+      opportunityType: "usNeGoodTimeRestoration",
+      stateCode: "US_NE",
+      submittedDaysAgo: 30,
+    },
+    {
+      recordId: "us_ne_RES003",
+      opportunityType: "usNeGoodTimeRestoration",
+      stateCode: "US_NE",
+      submittedDaysAgo: 21,
+    },
+    {
+      recordId: "us_ne_RES002",
+      opportunityType: "usNeGoodTimeRestoration",
+      stateCode: "US_NE",
+      submittedDaysAgo: 3,
+    },
+  ];
+
+  logger(`loading opportunity update fixtures...`);
+  const bulkWriter = db.bulkWriter();
+
+  for (const update of submittedUpdates) {
+    const docRef = db
+      .collection(collectionName)
+      .doc(update.recordId)
+      .collection(subcollection)
+      .doc(update.opportunityType);
+
+    bulkWriter.set(docRef, {
+      submitted: {
+        date: Timestamp.fromDate(subDays(new Date(), update.submittedDaysAgo)),
+        by: "staff@recidiviz.org",
+      },
+      stateCode: update.stateCode,
+    });
+  }
+
+  bulkWriter
+    .close()
+    .then(() => logger(`opportunity update fixtures loaded successfully`));
+}
+
 export async function loadWorkflowsFixtures({
   quietLogs = false,
 } = {}): Promise<void> {
@@ -334,5 +390,9 @@ export async function loadWorkflowsFixtures({
       return null;
     };
   }
-  await Promise.all([loadFixtures(logger), loadClientUpdatesV2(logger)]);
+  await Promise.all([
+    loadFixtures(logger),
+    loadClientUpdatesV2(logger),
+    loadOpportunityUpdates(logger),
+  ]);
 }
