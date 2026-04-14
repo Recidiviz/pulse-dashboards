@@ -18,6 +18,8 @@
 import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
+import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
+
 import MinimizeSvg from "../../../assets/icons/arrows-pointing-in.svg";
 import NotesSvg from "../../../assets/icons/notes.svg";
 import PauseSvg from "../../../assets/icons/pause.svg";
@@ -190,20 +192,40 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
           {status === "ending" && <LinearProgressBar />}
         </View>
         <View className="flex-col items-center justify-between gap-2 border-t border-subtle bg-screen px-8 py-5 lg:columns-3 lg:flex-row">
-          <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start">
-            <Typography className="text-lg font-semibold text-primary">
-              {formatDurationNumeric(durationMs)}
-            </Typography>
-            <View className="flex-row items-center gap-2">
-              <RecordingIndicator status={status} />
-              <Typography className="font-medium text-secondary">
-                {status === "recording"
-                  ? "Recording in progress"
-                  : "Recording paused"}
+          <View className="flex flex-row items-center gap-3">
+            <OfflineIndicator
+              triggerClassName="hidden rounded-full border-2 border-on-brand bg-warning-light size-11 lg:flex"
+              iconClassName="!size-5"
+              enableTooltip
+              side="top"
+              align="start"
+              alignOffset={-9}
+              isInsideModal
+            />
+            <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start">
+              <Typography className="text-lg font-semibold text-primary">
+                {formatDurationNumeric(durationMs)}
               </Typography>
+              <View className="flex-row items-center gap-2">
+                <RecordingIndicator status={status} />
+                <Typography className="font-medium text-secondary">
+                  {status === "recording"
+                    ? "Recording in progress"
+                    : "Recording paused"}
+                </Typography>
+              </View>
             </View>
           </View>
           <View className="flex-row items-center gap-2">
+            <OfflineIndicator
+              triggerClassName="rounded-full border-2 border-on-brand bg-warning-light size-11 lg:hidden"
+              iconClassName="!size-5"
+              enableTooltip
+              side="top"
+              align="start"
+              alignOffset={-8}
+              isInsideModal
+            />
             {status === "recording" ? (
               <TouchableOpacity
                 className="w-[150px] flex-row items-center justify-center rounded-full bg-primary py-3 aria-disabled:opacity-40"

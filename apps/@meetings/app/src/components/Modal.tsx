@@ -95,7 +95,7 @@ const Modal = ({
   }
 
   return (
-    <RNModal {...modalProps}>
+    <RNModal {...modalProps} id="rnmodal">
       <ModalContent
         onClickOutside={onClickOutside}
         backdrop={customBackdrop}

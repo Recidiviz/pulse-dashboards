@@ -33,6 +33,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlaySvg from "../assets/icons/play.svg";
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person } from "../common/types";
+import useIsOnline from "../hooks/useIsOnline";
+import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { getInitials, humanReadableTitleCase } from "../utils/format";
 
@@ -52,6 +54,7 @@ export function NewMeetingRecordingSheet({
   isMeetingCreating,
 }: NewMeetingRecordingSheetProps) {
   const insets = useSafeAreaInsets();
+  const { isOnline } = useIsOnline();
   return (
     <BottomSheet
       enableDynamicSizing
@@ -79,15 +82,21 @@ export function NewMeetingRecordingSheet({
               <XIcon className="size-5 stroke-tertiary" />
             </TouchableOpacity>
           </View>
-          <View className="mb-4 size-16 items-center justify-center rounded-xl border border-subtle bg-secondary">
-            <MicrophoneIcon className="size-8 fill-tertiary" />
+          <View className="relative mb-4 size-11 items-center justify-center rounded-xl border border-subtle bg-secondary">
+            <MicrophoneIcon className="size-6 fill-tertiary" />
+            <OfflineIndicator
+              rootClassName="absolute right-[-14px] top-[-14px]"
+              triggerClassName="size-7 rounded-full border-2 border-on-brand bg-warning-light"
+              iconClassName="!size-3"
+            />
           </View>
           <Typography className="mb-2 text-center text-xl font-bold text-primary">
-            New Meeting Recording
+            {isOnline ? "New Meeting Recording" : "Offline Meeting Recording"}
           </Typography>
           <Typography className="mb-6 px-4 text-center text-sm leading-5 text-secondary">
-            Record a new meeting or upload an audio file. Be sure to confirm
-            that everyone present is aware and has agreed to recording.
+            {isOnline
+              ? "Record a new meeting or upload an audio file. Be sure to confirm that everyone present is aware and has agreed to recording."
+              : "Your meeting is being recorded locally and will upload automatically upon reconnection. Be sure to confirm that everyone present is aware and has agreed to recording."}
           </Typography>
           <View className="mb-6 w-full flex-row items-center gap-3 rounded-2xl bg-secondary p-4">
             <ImageBackground

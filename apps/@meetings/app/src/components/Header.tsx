@@ -43,6 +43,7 @@ import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import { IS_PROD } from "../env";
+import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
@@ -69,6 +70,7 @@ const MobileHeader = ({
   onGoBack,
   className,
 }: MobileHeaderProps) => {
+  const { status } = useRecording();
   const navigation = useNavigation<HeaderNavProp>();
 
   return (
@@ -91,8 +93,12 @@ const MobileHeader = ({
           <ArrowLeftIcon className="fill-tertiary" />
         </TouchableOpacity>
       )}
-      <View className="pointer-events-none absolute inset-x-0 items-center">
-        <OfflineIndicator />
+      <View className="absolute inset-x-0 items-center">
+        <OfflineIndicator
+          enableTooltip={status !== "idle"}
+          side="bottom"
+          align="center"
+        />
       </View>
     </View>
   );
@@ -103,6 +109,7 @@ const Header: React.FC<HeaderProps> = ({
   showGoBack = false,
   onGoBack,
 }) => {
+  const { status } = useRecording();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
@@ -158,7 +165,11 @@ const Header: React.FC<HeaderProps> = ({
                 <WordmarkSvg />
               </TouchableOpacity>
               <View className="h-full flex-row items-center gap-x-6">
-                <OfflineIndicator />
+                <OfflineIndicator
+                  enableTooltip={status !== "idle"}
+                  align="center"
+                  side="bottom"
+                />
                 {hasSupervisionAccess && (
                   <DesktopMenuItem
                     isActive={route.name.includes("Client")}

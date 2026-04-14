@@ -25,6 +25,9 @@ import { Person } from "~@meetings/app/common/types";
 import Modal from "~@meetings/app/components/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import useIsOnline from "../hooks/useIsOnline";
+import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
+
 type NewMeetingOptionsModalProps = {
   person: Person;
   onClose: () => void;
@@ -40,6 +43,7 @@ export function NewMeetingOptionsModal({
   onUploadFile,
   isMeetingCreating,
 }: NewMeetingOptionsModalProps) {
+  const { isOnline } = useIsOnline();
   return (
     <Modal
       visible
@@ -69,22 +73,26 @@ export function NewMeetingOptionsModal({
         </View>
 
         <View className="flex-1 grow items-center justify-center gap-4 px-8 py-10">
-          <View className="mb-2 size-16 items-center justify-center rounded-xl border border-subtle bg-secondary">
+          <View className="relative mb-2 size-16 items-center justify-center rounded-xl border border-subtle bg-secondary">
             <MicrophoneIcon className="size-8 fill-tertiary" />
+            <OfflineIndicator
+              rootClassName="absolute -right-4 -top-4"
+              triggerClassName="size-9 rounded-full border-2 border-on-brand bg-warning-light"
+              iconClassName="!size-5"
+            />
           </View>
           <Typography className="text-center font-libre-baskerville text-3xl font-bold text-primary">
-            Meeting Recording
+            {isOnline ? "New Meeting Recording" : "Offline Meeting Recording"}
           </Typography>
           <Typography className="mb-2 max-w-[530px] text-center text-sm text-secondary">
-            This meeting will be recorded and transcribed for note-taking. Be
-            sure to confirm that everyone present is aware and has agreed to
-            recording.
+            {isOnline
+              ? "This meeting will be recorded and transcribed for note-taking. Be sure to confirm that everyone present is aware and has agreed to recording."
+              : "Your meeting is being recorded locally and will upload automatically upon reconnection. Be sure to confirm that everyone present is aware and has agreed to recording."}
           </Typography>
           <Typography className="mb-2 max-w-[530px] text-center text-sm italic text-secondary">
             Please note: Summaries and other notes are generated for meetings
             containing 50 words or more.
           </Typography>
-
           <TouchableOpacity
             className="h-14 w-full max-w-[240px] flex-row items-center justify-center gap-2 rounded-full bg-brand aria-disabled:opacity-40"
             onPress={onStartMeeting}

@@ -76,6 +76,15 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
+jest.mock("../../shared/ui/OfflineIndicator", () => ({
+  OfflineIndicator: () => <div>Mocked Indicator</div>,
+}));
+jest.mock("../../features/recording", () => ({
+  useRecording: () => ({
+    status: "idle",
+  }),
+}));
+
 describe("Header", () => {
   beforeEach(() => {
     jest.clearAllMocks();

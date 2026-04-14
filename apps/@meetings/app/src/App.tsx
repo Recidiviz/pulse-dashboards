@@ -19,6 +19,7 @@ import "../global.css";
 import "./nativewind-interop";
 
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { PortalHost } from "@rn-primitives/portal";
 import * as Sentry from "@sentry/react-native";
 import React from "react";
 import { Auth0Provider } from "react-native-auth0";
@@ -57,6 +58,7 @@ const App = () => {
           >
             <AppErrorBoundary>
               <AppNavigator />
+              <PortalHost />
             </AppErrorBoundary>
           </Auth0Provider>
         </SnackbarProvider>
