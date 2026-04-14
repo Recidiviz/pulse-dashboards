@@ -73,11 +73,16 @@ export function NewMeetingOptionsModal({
             <MicrophoneIcon className="size-8 fill-tertiary" />
           </View>
           <Typography className="text-center font-libre-baskerville text-3xl font-bold text-primary">
-            New Meeting Recording
+            Meeting Recording
           </Typography>
           <Typography className="mb-2 max-w-[530px] text-center text-sm text-secondary">
-            Choose how to add a meeting, record new or upload audio. Be sure to
-            confirm that everyone present is aware and has agreed to recording.
+            This meeting will be recorded and transcribed for note-taking. Be
+            sure to confirm that everyone present is aware and has agreed to
+            recording.
+          </Typography>
+          <Typography className="mb-2 max-w-[530px] text-center text-sm italic text-secondary">
+            Please note: Summaries and other notes are generated for meetings
+            containing 50 words or more.
           </Typography>
 
           <TouchableOpacity
