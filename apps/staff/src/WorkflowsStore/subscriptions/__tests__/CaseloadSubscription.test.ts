@@ -138,6 +138,64 @@ test("dataSource can be unset and reset", () => {
   expect(queryMock).toHaveBeenCalled();
 });
 
+test("client dataSource only tracks client search manager, not resident", () => {
+  const clientConstraints = {};
+  const residentConstraints = {};
+
+  runInAction(() => {
+    workflowsStoreMock.searchStore.clientSearchManager = {
+      // @ts-ignore
+      queryConstraints: clientConstraints,
+    };
+    workflowsStoreMock.searchStore.residentSearchManager = {
+      // @ts-ignore
+      queryConstraints: residentConstraints,
+    };
+  });
+
+  sub.subscribe();
+  queryMock.mockClear();
+
+  // Changing resident constraints should NOT trigger a re-query for the client subscription
+  runInAction(() => {
+    workflowsStoreMock.searchStore.residentSearchManager = {
+      // @ts-ignore
+      queryConstraints: { different: true },
+    };
+  });
+
+  expect(queryMock).not.toHaveBeenCalled();
+});
+
+test("resident dataSource only tracks resident search manager, not client", () => {
+  const clientConstraints = {};
+  const residentConstraints = {};
+
+  runInAction(() => {
+    workflowsStoreMock.searchStore.clientSearchManager = {
+      // @ts-ignore
+      queryConstraints: clientConstraints,
+    };
+    workflowsStoreMock.searchStore.residentSearchManager = {
+      // @ts-ignore
+      queryConstraints: residentConstraints,
+    };
+  });
+
+  residentSub.subscribe();
+  queryMock.mockClear();
+
+  // Changing client constraints should NOT trigger a re-query for the resident subscription
+  runInAction(() => {
+    workflowsStoreMock.searchStore.clientSearchManager = {
+      // @ts-ignore
+      queryConstraints: { different: true },
+    };
+  });
+
+  expect(queryMock).not.toHaveBeenCalled();
+});
+
 test("FirestoreConverter inserts inferred properties when reading snapshot", () => {
   runInAction(() => {
     workflowsStoreMock.searchStore.clientSearchManager = {

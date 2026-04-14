@@ -123,16 +123,45 @@ test("subscription responds to observation", async () => {
   await waitFor(() => expect(sub.unsubscribe).toHaveBeenCalled());
 });
 
-test("reactive query", () => {
-  sub.subscribe();
+test("reactive query debounces rapid changes", async () => {
+  vi.useFakeTimers();
 
-  vi.spyOn(sub, "subscribe");
-  vi.spyOn(sub, "unsubscribe");
+  sub.subscribe();
+  expect(onSnapshotMock).toHaveBeenCalledTimes(1);
+  onSnapshotMock.mockClear();
+
+  // Rapidly change the observable multiple times
+  observableParam.set("TEST2");
+  observableParam.set("TEST3");
+  observableParam.set("TEST4");
+
+  // No re-subscription yet due to debounce
+  expect(onSnapshotMock).not.toHaveBeenCalled();
+
+  // After debounce delay, should re-subscribe exactly once
+  vi.advanceTimersByTime(300);
+  expect(onSnapshotMock).toHaveBeenCalledTimes(1);
+
+  vi.useRealTimers();
+});
+
+test("reactive query fires after debounce delay", async () => {
+  vi.useFakeTimers();
+
+  sub.subscribe();
+  onSnapshotMock.mockClear();
 
   observableParam.set("TEST2");
 
-  expect(sub.unsubscribe).toHaveBeenCalled();
-  expect(sub.subscribe).toHaveBeenCalled();
+  // Not yet fired
+  vi.advanceTimersByTime(200);
+  expect(onSnapshotMock).not.toHaveBeenCalled();
+
+  // Fires after full delay
+  vi.advanceTimersByTime(100);
+  expect(onSnapshotMock).toHaveBeenCalledTimes(1);
+
+  vi.useRealTimers();
 });
 
 test("no query", () => {
@@ -143,6 +172,8 @@ test("no query", () => {
 });
 
 test("undefined query resets data", () => {
+  vi.useFakeTimers();
+
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
   const mockData = [
     {
@@ -163,11 +194,16 @@ test("undefined query resets data", () => {
 
   observableParam.set(undefined);
 
+  // After debounce, the reaction fires and re-subscribes with undefined dataSource
+  vi.advanceTimersByTime(300);
+
   expect(sub.data).toEqual([]);
   expect(sub.unsubscribe).toHaveBeenCalled();
   expect(sub.subscribe).toHaveBeenCalled();
   expect(sub.isActive).toBe(false);
   expect(sub.hydrationState.status).toBe("needs hydration");
+
+  vi.useRealTimers();
 });
 
 test("no duplicate listeners", () => {

@@ -47,17 +47,16 @@ export class CaseloadSubscription<
   get dataSource(): Query | undefined {
     const {
       rootStore: { firestoreStore },
-      searchStore: {
-        clientSearchManager: { queryConstraints: clientQueryConstraints },
-        residentSearchManager: { queryConstraints: residentQueryConstraints },
-      },
+      searchStore,
     } = this.workflowsStore;
 
     const { firestoreCollectionKey, personType } = this;
+    // Only access the relevant search manager to avoid MobX tracking both
+    // as dependencies, which would cause unnecessary re-subscriptions
     const queryConstraints =
       personType === "RESIDENT"
-        ? residentQueryConstraints
-        : clientQueryConstraints;
+        ? searchStore.residentSearchManager.queryConstraints
+        : searchStore.clientSearchManager.queryConstraints;
 
     if (!queryConstraints) return undefined;
 

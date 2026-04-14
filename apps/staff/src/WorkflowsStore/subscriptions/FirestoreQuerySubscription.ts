@@ -129,13 +129,15 @@ export abstract class FirestoreQuerySubscription<
   subscribe(): void {
     super.subscribe();
 
-    // watches dataSource for changes and re-subscribes accordingly
+    // watches dataSource for changes and re-subscribes accordingly;
+    // debounce to batch rapid consecutive changes during initialization
     this.disposeDynamicDataSource = reaction(
       () => this.dataSource,
       () => {
         this.unsubscribe();
         this.subscribe();
       },
+      { delay: 300 },
     );
   }
 
