@@ -81,8 +81,11 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
           setSearchQuery("");
         }}
       />
-      {filteredTranscriptions.map((u) => (
-        <View key={u.startTimeMs} className="mt-3 flex flex-col gap-1">
+      {filteredTranscriptions.map((u, index) => (
+        <View
+          key={`${u.startTimeMs}-${index}`}
+          className="mt-3 flex flex-col gap-1"
+        >
           <View className="flex flex-row gap-2">
             <Typography className="text-sm font-normal text-secondary">
               {formatSpeakerStartTime(u.startTimeMs)}

@@ -15,14 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Pressable, View } from "react-native";
+import { Pressable, ScrollView } from "react-native";
 import LockClosedIcon from "react-native-heroicons/solid/LockClosedIcon";
 
 import { Typography } from "../shared/ui/Typography";
 
 export enum Tab {
-  Notes = "Notes",
-  Transcription = "Transcription",
+  DraftCaseNotes = "Draft Case Notes",
+  ActionItems = "Action Items",
+  CriticalUpdates = "Critical Updates",
+  Transcript = "Transcript",
 }
 
 type Props = {
@@ -40,35 +42,43 @@ const MeetingTabs = ({
 }: Props) => {
   const visibleTabs = showTranscription
     ? Object.values(Tab)
-    : Object.values(Tab).filter((tab) => tab !== Tab.Transcription);
-
-  // Hide tabs entirely if only one tab is visible
-  if (visibleTabs.length <= 1) {
-    return null;
-  }
+    : Object.values(Tab).filter((tab) => tab !== Tab.Transcript);
 
   return (
-    <View className="flex w-full flex-row rounded-full bg-screen p-1">
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerClassName="flex-row gap-1 bg-screen rounded-full p-1"
+    >
       {visibleTabs.map((tab) => (
         <Pressable
           key={tab}
-          className={`flex w-1/2 items-center justify-center rounded-full p-2.5 ${tab === activeTab ? "bg-primary" : "bg-transparent"}`}
+          className={`shrink-0 flex-row items-center justify-center gap-2 rounded-full px-4 py-1.5 ${tab === activeTab ? "bg-primary" : "bg-transparent"}`}
           onPress={() => setActiveTab(tab)}
-          disabled={tab === Tab.Transcription && isTranscriptionUnavailable}
+          disabled={tab === Tab.Transcript && isTranscriptionUnavailable}
+          style={
+            tab === activeTab
+              ? {
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 3, height: 5 },
+                  shadowRadius: 30,
+                  shadowOpacity: 0.05,
+                  elevation: 5,
+                }
+              : undefined
+          }
         >
-          <View className="flex flex-row items-center justify-center gap-1">
-            <Typography
-              className={`text-sm font-medium leading-[16px] ${tab === activeTab ? "text-primary" : "text-tertiary"}`}
-            >
-              {tab}
-            </Typography>
-            {tab === Tab.Transcription && isTranscriptionUnavailable && (
-              <LockClosedIcon className="size-3 fill-disabled" />
-            )}
-          </View>
+          <Typography
+            className={`text-base ${tab === activeTab ? "text-primary" : "text-secondary"}`}
+          >
+            {tab}
+          </Typography>
+          {tab === Tab.Transcript && isTranscriptionUnavailable && (
+            <LockClosedIcon className="size-3 fill-disabled" />
+          )}
         </Pressable>
       ))}
-    </View>
+    </ScrollView>
   );
 };
 

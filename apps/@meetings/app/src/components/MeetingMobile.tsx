@@ -16,14 +16,18 @@
 // =============================================================================
 
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
-import Clipboard from "@react-native-clipboard/clipboard";
 import { Link } from "@react-navigation/native";
-import React, { useCallback, useRef, useState } from "react";
-import { Alert, Share, TouchableOpacity, View } from "react-native";
+import React, { useRef, useState } from "react";
+import {
+  Alert,
+  ImageBackground,
+  Share,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
-import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
-import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 import ShareIcon from "react-native-heroicons/outline/ShareIcon";
 import Animated, {
   interpolate,
@@ -33,19 +37,23 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { MeetingDetails, Person, PersonType } from "../common/types";
 import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
-import MeetingNotesTab from "../components/MeetingNotesTab";
+import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
+import { BulletListTab } from "../components/MeetingDetailTabs";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
-import { useSnackbar } from "../components/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
+  getInitials,
   humanReadableTitleCase,
 } from "../utils/format";
 import MeetingNotesSheet from "./MeetingNotesSheet";
+
+const HEADER_HEIGHT = 64;
 
 type Props = {
   meetingId: string;
@@ -63,67 +71,109 @@ const MeetingMobile = ({
   showTranscription = false,
 }: Props) => {
   const insets = useSafeAreaInsets();
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
+  const { width } = useWindowDimensions();
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
   const scrollY = useSharedValue(0);
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const meetingNotesSheetRef = useRef<BottomSheet>(null);
-  const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
 
-  const handleDraftCaseNoteOpen = useCallback(() => {
-    draftCaseNoteSheetRef.current?.present();
-  }, []);
-
-  const handleMeetingNotesSheetOpen = useCallback(() => {
-    meetingNotesSheetRef.current?.snapToIndex(1);
-  }, []);
-
-  const handleCopyNotes = () => {
-    Clipboard.setString(meetingDetails.caseNote || "");
-    showSnackbar("Case note copied to clipboard");
-  };
-
-  // values are taken from figma for each state of header
   const headerStyle = useAnimatedStyle(() => ({
     height: interpolate(
       scrollY.value,
-      [0, 50, 100, 101],
-      [insets.top + 268, insets.top + 200, insets.top + 164, insets.top + 108],
+      [0, 15, 35, 55],
+      [insets.top + 168, insets.top + 148, insets.top + 120, insets.top + 108],
       "clamp",
     ),
   }));
 
-  const topDateStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 10], [0, 1], "clamp"),
+  const avatarStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [0, 25], [1, 0], "clamp"),
+    transform: [
+      { scale: interpolate(scrollY.value, [0, 25], [1, 0.5], "clamp") },
+    ],
+  }));
+
+  const innerTextWidth = useSharedValue(0);
+  const line1Width = useSharedValue(0);
+  const line2Width = useSharedValue(0);
+
+  const movingTextStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [0, 45],
+      [insets.top + HEADER_HEIGHT, insets.top + 12],
+      "clamp",
+    );
+
+    const textBlockWidth =
+      innerTextWidth.value > 0 ? innerTextWidth.value : 200;
+    const startTranslateX = 58 + textBlockWidth / 2 - width / 2;
+
+    const translateX = interpolate(
+      scrollY.value,
+      [0, 45],
+      [startTranslateX, 0],
+      "clamp",
+    );
+
+    const scale = interpolate(scrollY.value, [0, 45], [1, 0.9], "clamp");
+
+    return {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      alignItems: "center",
+      transform: [{ translateY }, { translateX }, { scale }],
+      zIndex: 20,
+    };
+  });
+
+  const line1CenterStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: interpolate(
+          scrollY.value,
+          [0, 45],
+          [0, (innerTextWidth.value - line1Width.value) / 2],
+          "clamp",
+        ),
+      },
+    ],
+  }));
+
+  const line2CenterStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: interpolate(
+          scrollY.value,
+          [0, 45],
+          [0, (innerTextWidth.value - line2Width.value) / 2],
+          "clamp",
+        ),
+      },
+    ],
+  }));
+
+  const textPlaceholderStyle = useAnimatedStyle(() => ({
+    height: interpolate(scrollY.value, [15, 35], [44, 0], "clamp"),
+    marginBottom: interpolate(scrollY.value, [15, 35], [16, 0], "clamp"),
   }));
 
   const bottomDateStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 10], [1, 0], "clamp"),
-    height: interpolate(scrollY.value, [0, 10], [45, 0], "clamp"),
-    marginBottom: interpolate(scrollY.value, [0, 10], [16, 0], "clamp"),
+    opacity: interpolate(scrollY.value, [0, 15], [1, 0], "clamp"),
+    height: interpolate(scrollY.value, [0, 15], [45, 0], "clamp"),
+    marginBottom: interpolate(scrollY.value, [0, 15], [16, 0], "clamp"),
   }));
 
-  const personNameStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [50, 60], [1, 0], "clamp"),
-    height: interpolate(scrollY.value, [50, 60], [20, 0], "clamp"),
-    marginBottom: interpolate(scrollY.value, [50, 60], [16, 0], "clamp"),
-  }));
-
-  const draftCaseNoteBlockStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [100, 101], [1, 0], "clamp"),
-  }));
-
-  // values are taken from figma for each state of header
-  // note: paddingTop does not contain the safe area inset
-  // that is why initial value of header height and padding top are different
-  // also padding includes space between header and tabs - 8px
   const bottomViewStyles = useAnimatedStyle(() => ({
     marginTop: interpolate(
       scrollY.value,
-      [0, 101],
+      [0, 55],
       [-insets.top + 20, -insets.top],
       "clamp",
     ),
@@ -131,13 +181,13 @@ const MeetingMobile = ({
   }));
 
   const bottomTabsStyle = useAnimatedStyle(() => ({
-    height: interpolate(scrollY.value, [100, 101], [44, 0], "clamp"),
-    opacity: interpolate(scrollY.value, [100, 101], [1, 0], "clamp"),
+    height: interpolate(scrollY.value, [50, 55], [44, 0], "clamp"),
+    opacity: interpolate(scrollY.value, [50, 55], [1, 0], "clamp"),
   }));
 
   const topTabsStyle = useAnimatedStyle(() => ({
-    height: interpolate(scrollY.value, [100, 101], [0, 44], "clamp"),
-    opacity: interpolate(scrollY.value, [100, 101], [0, 1], "clamp"),
+    height: interpolate(scrollY.value, [50, 55], [0, 44], "clamp"),
+    opacity: interpolate(scrollY.value, [50, 55], [0, 1], "clamp"),
   }));
 
   const onShare = async () => {
@@ -183,7 +233,10 @@ const MeetingMobile = ({
         className="fixed flex flex-col rounded-b-[24px] bg-white p-4"
         style={[{ top: -insets.top, paddingTop: insets.top }, headerStyle]}
       >
-        <View className="flex h-16 flex-row items-center justify-between">
+        <View
+          className="flex flex-row items-center justify-between"
+          style={{ height: HEADER_HEIGHT }}
+        >
           <Link
             screen={
               personType === "client" ? "ClientProfile" : "ResidentProfile"
@@ -193,45 +246,71 @@ const MeetingMobile = ({
             <ChevronLeftIcon className="text-muted" />
           </Link>
 
-          <Animated.View
-            className="flex flex-col items-center gap-0.5"
-            style={[topDateStyle]}
-          >
-            <Typography className="text-lg font-semibold leading-[22px] text-primary">
-              {meetingDate}
-            </Typography>
-            <Typography className="text-sm font-normal leading-[16px] text-gray-500">
-              {person.fullName}
-            </Typography>
-          </Animated.View>
+          <View className="flex-1" />
 
           <TouchableOpacity onPress={onShare}>
             <ShareIcon className="text-muted" />
           </TouchableOpacity>
         </View>
 
+        <Animated.View style={movingTextStyle}>
+          <View
+            className="flex flex-col items-start"
+            onLayout={(e) => {
+              innerTextWidth.value = e.nativeEvent.layout.width;
+            }}
+          >
+            <Animated.View
+              style={line1CenterStyle}
+              onLayout={(e) => {
+                line1Width.value = e.nativeEvent.layout.width;
+              }}
+            >
+              <Typography className="text-lg font-semibold leading-[22px] text-primary">
+                {person.fullName}
+              </Typography>
+            </Animated.View>
+            <Animated.View
+              style={line2CenterStyle}
+              onLayout={(e) => {
+                line2Width.value = e.nativeEvent.layout.width;
+              }}
+            >
+              <Typography className="text-sm font-normal leading-[16px] text-gray-500">
+                ID: {person.displayPersonExternalId} •{" "}
+                {humanReadableTitleCase(person.primaryMetadata)}
+              </Typography>
+            </Animated.View>
+          </View>
+        </Animated.View>
+
         <View className="flex flex-col">
           <Animated.View style={[topTabsStyle]}>
             <MeetingTabs
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              isTranscriptionUnavailable={!meetingDetails.transcription}
+              isTranscriptionUnavailable={!meetingDetails?.transcription}
               showTranscription={showTranscription}
             />
           </Animated.View>
 
-          <Animated.View
-            className="flex flex-row flex-wrap items-baseline gap-x-2 gap-y-1"
-            style={[personNameStyle]}
-          >
-            <Typography className="text-base font-semibold leading-[20px] text-primary">
-              {person.fullName}
-            </Typography>
-            <Typography className="text-sm font-normal leading-[16px] text-gray-500">
-              ID: {person.displayPersonExternalId} •{" "}
-              {humanReadableTitleCase(person.primaryMetadata)}
-            </Typography>
+          <Animated.View style={textPlaceholderStyle}>
+            <Animated.View
+              className="flex flex-row items-center gap-3"
+              style={[avatarStyle]}
+            >
+              <ImageBackground
+                source={BgAvatarImage}
+                className="size-10 items-center justify-center overflow-hidden rounded-full"
+                imageClassName="!size-full"
+              >
+                <Typography className="text-base text-on-brand">
+                  {getInitials(person.fullName)}
+                </Typography>
+              </ImageBackground>
+            </Animated.View>
           </Animated.View>
+
           <Animated.View
             className="flex flex-col gap-2"
             style={[bottomDateStyle]}
@@ -245,41 +324,6 @@ const MeetingMobile = ({
                 {time}
                 {duration ? ` • ${duration}` : ""}
               </Typography>
-            </View>
-          </Animated.View>
-
-          <Animated.View
-            className="w-full flex-1"
-            style={[draftCaseNoteBlockStyle]}
-          >
-            <View className="flex min-h-full w-full flex-col gap-1.5 rounded-xl bg-[#F4F5F5] px-[14px] py-3">
-              <View className="flex flex-row items-center justify-between">
-                <View className="flex flex-row items-center gap-1">
-                  <Typography className="text-title-default text-xs font-semibold">
-                    Draft case note
-                  </Typography>
-                  <ChevronRightIcon className="text-muted size-3" />
-                </View>
-                <TouchableOpacity
-                  onPress={handleCopyNotes}
-                  disabled={isSnackbarShowing}
-                >
-                  <DocumentDuplicateIcon className="text-muted size-4" />
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity
-                onPress={handleDraftCaseNoteOpen}
-                className="size-full flex-1"
-              >
-                <Typography
-                  numberOfLines={4}
-                  ellipsizeMode="tail"
-                  className="text-sm font-normal text-primary"
-                >
-                  {meetingDetails.caseNote ?? "Type your notes here..."}
-                </Typography>
-              </TouchableOpacity>
             </View>
           </Animated.View>
         </View>
@@ -304,13 +348,19 @@ const MeetingMobile = ({
           scrollEventThrottle={16}
         >
           <View className="mx-auto mt-4 w-full max-w-[960px] flex-1">
-            {activeTab === Tab.Notes && (
-              <MeetingNotesTab
-                meetingDetails={meetingDetails}
-                onMeetingNotesSheetOpen={handleMeetingNotesSheetOpen}
+            {activeTab === Tab.DraftCaseNotes && (
+              <DraftCaseNoteTab
+                meetingId={meetingId}
+                caseNote={meetingDetails.caseNote || ""}
               />
             )}
-            {activeTab === Tab.Transcription &&
+            {activeTab === Tab.ActionItems && (
+              <BulletListTab items={meetingDetails.actionItems} />
+            )}
+            {activeTab === Tab.CriticalUpdates && (
+              <BulletListTab items={meetingDetails.criticalUpdates} />
+            )}
+            {activeTab === Tab.Transcript &&
               showTranscription &&
               meetingDetails?.transcription && (
                 <MeetingTranscriptionTab
