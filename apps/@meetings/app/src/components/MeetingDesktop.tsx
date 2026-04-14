@@ -136,7 +136,10 @@ const MeetingDesktop = ({
               <MeetingTabs
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
-                isTranscriptionUnavailable={!meetingDetails.transcription}
+                isTranscriptionUnavailable={
+                  !meetingDetails.transcription &&
+                  !meetingDetails.transcriptDeletedAt
+                }
                 showTranscription={showTranscription}
               />
             </View>
@@ -181,6 +184,7 @@ const MeetingDesktop = ({
                         }),
                       ),
                     }}
+                    transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
                   />
                 )}
             </View>

@@ -58,6 +58,7 @@ export const meetingRouter = router({
             meetingSummary: true,
             postMeetingProcessingStatus: true,
             durationMs: true,
+            transcriptDeletedAt: true,
             transcriptions: {
               orderBy: {
                 confidence: "desc",

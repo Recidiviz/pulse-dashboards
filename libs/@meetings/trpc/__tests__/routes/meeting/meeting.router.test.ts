@@ -64,6 +64,7 @@ describe("meeting router", () => {
         criticalUpdates: [],
         meetingSummary: [],
         validationErrorType: null,
+        transcriptDeletedAt: null,
         transcription: {
           confidence: 0.95,
           summary: "This is a sample summary of the meeting.",
@@ -115,6 +116,7 @@ describe("meeting router", () => {
           criticalUpdates: [],
           meetingSummary: [],
           validationErrorType: null,
+          transcriptDeletedAt: null,
         });
       } finally {
         delete AGENCY_CONFIGS["US_NE"];

@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
+import MenuAlt2Icon from "react-native-heroicons/outline/MenuAlt2Icon";
 import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 
 import { Typography } from "../shared/ui/Typography";
@@ -34,7 +35,35 @@ type Props = {
       endTimeMs: number;
     }[];
   };
+  transcriptDeleted?: boolean;
 };
+
+const TranscriptUnavailable = ({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <>
+    <Typography className="text-xl font-semibold text-primary">
+      Transcript
+    </Typography>
+    <View className="flex flex-col items-center gap-6 pt-[100px]">
+      <View className="flex w-fit items-center justify-center rounded-2xl border-2 border-subtle bg-secondary p-[14px]">
+        {icon}
+      </View>
+      <View className="flex flex-col gap-[14px]">
+        <Typography className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-primary">
+          Transcript unavailable
+        </Typography>
+        <Typography className="text-center text-sm font-normal text-secondary">
+          {children}
+        </Typography>
+      </View>
+    </View>
+  </>
+);
 
 const formatSpeakerStartTime = (startTimeMs: number) => {
   const totalSeconds = startTimeMs / 1000;
@@ -45,24 +74,29 @@ const formatSpeakerStartTime = (startTimeMs: number) => {
   return `${minutes}:${formattedSeconds}`;
 };
 
-const MeetingsTranscriptionTab = ({ transcription }: Props) => {
+const MeetingsTranscriptionTab = ({
+  transcription,
+  transcriptDeleted,
+}: Props) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  if (transcriptDeleted) {
+    return (
+      <TranscriptUnavailable
+        icon={<MenuAlt2Icon className="size-10 stroke-tertiary" />}
+      >
+        {`This meeting’s transcript is no longer\navailable due to department policy`}
+      </TranscriptUnavailable>
+    );
+  }
 
   if (!transcription) {
     return (
-      <View className="flex flex-col items-center gap-6 pt-[60px]">
-        <View className="flex w-fit items-center justify-center rounded-2xl border-2 border-[#2B696908] bg-[#2B696908] p-[14px]">
-          <DocumentSearchIcon className="fill-muted size-10" />
-        </View>
-        <View className="flex flex-col gap-[14px]">
-          <Typography className="text-muted text-center font-libre-baskerville text-[28px] font-bold leading-[32px]">
-            Transcript unavailable
-          </Typography>
-          <Typography className="text-center text-sm font-normal text-gray-500">
-            Transcript unavailable in this state due to legal restrictions.
-          </Typography>
-        </View>
-      </View>
+      <TranscriptUnavailable
+        icon={<DocumentSearchIcon className="size-10 fill-tertiary" />}
+      >
+        Transcript unavailable in this state due to legal restrictions.
+      </TranscriptUnavailable>
     );
   }
 
@@ -73,6 +107,9 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
 
   return (
     <ScrollView className="flex flex-col">
+      <Typography className="mb-3 text-xl font-semibold text-primary">
+        Transcript
+      </Typography>
       <SearchBar
         placeholder="Search by keyword or phrase"
         value={searchQuery}

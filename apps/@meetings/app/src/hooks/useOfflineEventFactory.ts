@@ -97,6 +97,7 @@ export function useOfflineEventFactory() {
             meetingSummary: null,
             postMeetingProcessingStatus: "NOT_STARTED",
             validationErrorType: null,
+            transcriptDeletedAt: null,
             transcription: null,
           },
         );
