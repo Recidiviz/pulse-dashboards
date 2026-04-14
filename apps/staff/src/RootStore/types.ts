@@ -123,6 +123,7 @@ export type FeatureVariant =
 
   //// Tennessee
   | "usTnCompliantReporting2025Policy"
+  | "usTnCompliantReportingWriteback"
   | "usTnDoNotMarkPendingOnDownload"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
@@ -207,6 +208,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   outcomesModule: {},
   mandatoryMinimum: {},
   usTnCompliantReporting2025Policy: {},
+  usTnCompliantReportingWriteback: {},
   usTnDoNotMarkPendingOnDownload: {},
   reportIncorrectRosters: {},
   snoozeCompanions: {},
