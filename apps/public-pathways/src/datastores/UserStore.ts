@@ -36,9 +36,6 @@ export type UserAppMetadata = {
   userHash?: string;
 };
 
-// This will likely change to something more formal, and probably to currentTenantId
-// once we start pulling over more framework, but this gets us off the ground for now
-// TODO (#11618) formalize AllowedStateCode
 type AllowedStateCode = "RECIDIVIZ" | "US_NY";
 
 const METADATA_NAMESPACE = import.meta.env[
