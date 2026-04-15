@@ -15,7 +15,7 @@ runners:
 
   x64:
     image: ubuntu24-stepsecurity-x64
-    family: ["c7i", "m7i"]
+    family: ["m8a", "m8azn"]
     extras: ["s3-cache"]
     # Disable SSH access to the runner instances
     ssh: false
