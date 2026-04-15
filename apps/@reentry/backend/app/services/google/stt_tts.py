@@ -1,7 +1,7 @@
-import structlog
 from pathlib import Path
 
 import google.api_core.exceptions
+import structlog
 from google.cloud import speech_v1 as speech
 from google.cloud import texttospeech
 
@@ -87,62 +87,3 @@ def text_to_speech(
     except Exception as e:
         logger.error(f"Unexpected error writing audio file: {e}")
         raise
-
-
-def speech_to_text(
-    audio_file_abs_path: str,
-    sample_rate_hertz: int,
-    audio_channel_count: int,
-    encoding: speech.RecognitionConfig.AudioEncoding,
-    language_code: str = "en-US",
-) -> str:
-    # Input validation
-    if not audio_file_abs_path or not audio_file_abs_path.strip():
-        raise ValueError("Audio file path cannot be empty")
-
-    audio_path = Path(audio_file_abs_path).resolve()
-
-    if not audio_path.exists():
-        raise FileNotFoundError(f"Audio file not found: {audio_path}")
-
-    # File operations - read audio file
-    try:
-        with open(audio_path, "rb") as audio_file:
-            audio_content = audio_file.read()
-
-    except OSError as e:
-        logger.error(f"File system error reading audio file: {e}")
-        raise
-    except Exception as e:
-        logger.error(f"Unexpected error reading audio file: {e}")
-        raise
-
-    # Google API operations
-    try:
-        client = _clients.stt_client
-
-        audio = speech.RecognitionAudio(content=audio_content)
-        config = speech.RecognitionConfig(
-            encoding=encoding,
-            sample_rate_hertz=sample_rate_hertz,
-            language_code=language_code,
-            audio_channel_count=audio_channel_count,
-        )
-
-        response = client.recognize(config=config, audio=audio)
-
-    except google.api_core.exceptions.GoogleAPIError as e:
-        logger.error(f"Google API error during speech-to-text: {e}")
-        raise
-    except Exception as e:
-        logger.error(f"Unexpected error during speech-to-text API call: {e}")
-        raise
-
-    # Validate response
-    if not response.results:
-        raise ValueError(f"No transcription results found. response: {response}")
-
-    transcribed_text = response.results[0].alternatives[0].transcript
-    logger.info(f"Transcribed text from {audio_path}: '{transcribed_text}'")
-
-    return transcribed_text
