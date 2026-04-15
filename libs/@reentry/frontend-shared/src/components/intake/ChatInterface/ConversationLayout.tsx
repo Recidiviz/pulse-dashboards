@@ -21,6 +21,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import { X } from "lucide-react";
 import { useState } from "react";
 
+import { useApplicationContext } from "../../../contexts/ApplicationContext";
 import { ConnectionErrorAlert } from "../../../websockets/components/ConnectionErrorAlert";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import { AIDisclosure, AIDisclosureType } from "../../AIDisclosure";
@@ -36,6 +37,10 @@ const LinearChatComponent: React.FC = () => {
   const handleDismissDisclosure = () => {
     setDisclosureDismissed(true);
   };
+
+  const {
+    features: { bottomInset },
+  } = useApplicationContext();
 
   const {
     intakeContext: {
@@ -83,7 +88,10 @@ const LinearChatComponent: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-slate-50">
+    <div
+      className="flex flex-col h-full min-h-0 bg-slate-50"
+      style={bottomInset ? { paddingBottom: bottomInset } : undefined}
+    >
       {guardrailDisconnectReason && (
         <GuardrailModal reason={guardrailDisconnectReason} />
       )}

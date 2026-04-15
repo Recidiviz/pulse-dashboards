@@ -30,6 +30,9 @@ import {
 } from "../../constants";
 import { Image } from "../Image";
 
+/** Edovo overlay button: 24px tall, 20px from the bottom of the screen */
+const EDOVO_OVERLAY_BOTTOM_INSET = 44;
+
 /**
  * Provides the application context required by the shared CPA components
  */
@@ -59,7 +62,10 @@ export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(
         value={{
           ...applicationContext,
           analytics: segmentClient,
-          features: { enableSTT: false },
+          features: {
+            enableSTT: false,
+            bottomInset: EDOVO_OVERLAY_BOTTOM_INSET,
+          },
         }}
       >
         {children}

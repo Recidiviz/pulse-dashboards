@@ -73,6 +73,7 @@ export type ApplicationContext = {
   analytics: IntakeAnalytics;
   features: {
     enableSTT: boolean;
+    bottomInset?: number;
   };
   navigateAfterIntake: () => void;
 };
