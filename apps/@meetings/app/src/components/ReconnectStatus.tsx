@@ -22,6 +22,7 @@ import BottomSheet, {
 import clsx from "clsx";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   ImageBackground,
   ScrollView,
   TouchableOpacity,
@@ -29,9 +30,16 @@ import {
   View,
 } from "react-native";
 import CheckIcon from "react-native-heroicons/outline/CheckIcon";
-import { ChevronDownIcon, ChevronUpIcon } from "react-native-heroicons/solid";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  XIcon,
+} from "react-native-heroicons/solid";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import simplur from "simplur";
+import { match } from "ts-pattern";
+
+import CloudOffline from "~@meetings/app/assets/icons/cloud-off.svg";
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { theme } from "../common/theme";
@@ -46,6 +54,7 @@ import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
 import { CircularProgressBar } from "./CircularProgressBar";
 import { Expandable } from "./Expandable";
+import { FadeContainer } from "./FadeContainer";
 import { FloatingCard } from "./FloatingCard";
 import { HorizontalDivider } from "./HorizontalDivider";
 
@@ -55,6 +64,7 @@ type ReconnectRowProps = {
   uploadStatus: ReconnectUploadStatus;
   uploadCurrent?: number;
   uploadTotal?: number;
+  onRetry?: () => void;
 };
 
 function useOfflineUploads() {
@@ -82,16 +92,28 @@ function StatusIndicator({
   uploadCurrent = 0,
   uploadTotal = 1,
   uploadStatus,
+  onRetry,
 }: {
   uploadCurrent?: number;
   uploadTotal?: number;
-  uploadStatus?: "uploading" | "complete" | "failed" | "error" | "pending";
+  uploadStatus?: ReconnectUploadStatus;
+  onRetry?: () => void;
 }) {
   if (uploadStatus === "complete") {
     return (
       <View className="size-8 items-center justify-center rounded-full bg-brand">
         <CheckIcon className="size-4 stroke-[3px] text-white" />
       </View>
+    );
+  }
+
+  if (uploadStatus === "error") {
+    return (
+      <TouchableOpacity onPress={onRetry}>
+        <Typography className="text-signal-error text-sm font-medium">
+          Retry
+        </Typography>
+      </TouchableOpacity>
     );
   }
 
@@ -110,6 +132,7 @@ function ReconnectRow({
   uploadStatus,
   uploadCurrent,
   uploadTotal,
+  onRetry,
 }: ReconnectRowProps) {
   if (!person) return null;
 
@@ -130,10 +153,10 @@ function ReconnectRow({
       <View className={clsx(!isUploading && "opacity-50")}>
         <ImageBackground
           source={BgAvatarImage}
-          className="!size-11 items-center justify-center overflow-hidden rounded-full"
+          className="size-11 items-center justify-center overflow-hidden rounded-full"
           imageClassName="!size-11"
         >
-          <Typography className="text-sm font-semibold text-white">
+          <Typography className="text-base font-medium text-on-brand">
             {getInitials(person.fullName)}
           </Typography>
         </ImageBackground>
@@ -155,27 +178,35 @@ function ReconnectRow({
           uploadCurrent={uploadCurrent}
           uploadTotal={uploadTotal}
           uploadStatus={uploadStatus}
+          onRetry={onRetry}
         />
       </View>
     </View>
   );
 }
 
-export function ReconnectStatus() {
+export function ReconnectStatus({
+  onRetry,
+  isVisible,
+}: {
+  onRetry?: () => void;
+  isVisible?: boolean;
+}) {
   const { width } = useWindowDimensions();
   const isMobile = width < parseInt(theme["screens"]["md"]);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
   const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const { uploads, activeUploadedBytes, activeTotalBytes } =
     useOfflineUploads();
-  const { isOnline } = useIsOnline();
   const timeRemaining = useUploadTimeRemaining(
     activeUploadedBytes,
     activeTotalBytes,
   );
+  const { isOnline } = useIsOnline();
   const { clear: clearUploadStatuses } = useReconnectUploadStore();
 
   const toggleExpanded = () => {
@@ -199,20 +230,38 @@ export function ReconnectStatus() {
     }
   }, [isExpanded]);
 
-  const uploadsComplete = uploads.every((u) => u.uploadStatus === "complete");
+  const uploadsComplete =
+    uploads.length > 0 && uploads.every((u) => u.uploadStatus === "complete");
+  const isFinishing = isVisible && uploadsComplete;
+
   useEffect(
     function onCompleted() {
-      if (uploadsComplete) {
+      // We gate on isVisible here so that we don't show cleared UI
+      // before we're actually done dequeueing our events
+      if (uploadsComplete && !isVisible) {
         clearUploadStatuses();
+        bottomSheetRef.current?.close();
         setIsExpanded(false);
       }
     },
-    [uploadsComplete, clearUploadStatuses, setIsExpanded],
+    [uploadsComplete, isVisible, clearUploadStatuses, setIsExpanded],
   );
 
-  // TODO(#12931): We actually don't want to ALWAYS hide this when offline, as a
-  // user might lose connection during the re-connect process and we need to deal with that.
-  if (uploads.length === 0 || !isOnline) return null;
+  useEffect(
+    function resetDismissalOnReconnect() {
+      if (isOnline) setIsDismissed(false);
+    },
+    [isOnline],
+  );
+
+  const dismiss = () => {
+    bottomSheetRef.current?.close();
+    setIsDismissed(true);
+  };
+
+  const shouldShow =
+    !isDismissed &&
+    (isVisible || uploads.some((u) => u.uploadStatus !== "pending"));
 
   const rowContent = (
     <>
@@ -224,6 +273,7 @@ export function ReconnectStatus() {
             uploadStatus={upload.uploadStatus}
             uploadCurrent={upload.uploadCurrent}
             uploadTotal={upload.uploadTotal}
+            onRetry={onRetry}
           />
           {i < uploads.length - 1 && <HorizontalDivider className="my-4" />}
         </Fragment>
@@ -245,9 +295,7 @@ export function ReconnectStatus() {
     totalUploads: uploads?.length ?? 0,
     percentComplete: uploads?.length
       ? Math.round(
-          (uploads.filter(
-            (u) => u.uploadStatus === "complete" || u.uploadStatus === "error",
-          ).length /
+          (uploads.filter((u) => u.uploadStatus === "complete").length /
             uploads.length) *
             100,
         )
@@ -256,17 +304,40 @@ export function ReconnectStatus() {
       uploads?.filter((u) => u.uploadStatus === "complete").length ?? 0,
   };
 
-  const header = (
-    <View className="flex-row items-center justify-between gap-3">
+  const headerTitle = match({ isOnline, isFinishing })
+    .with({ isOnline: false }, () => (
+      <View className="flex-row items-center gap-3">
+        <View className="size-10 items-center justify-center rounded-full bg-warning-light">
+          <CloudOffline />
+        </View>
+        <View className="flex-1">
+          <Typography className="text-base font-medium">
+            Upload Stopped
+          </Typography>
+          <Typography className="text-sm font-normal text-warning">
+            Will continue automatically when online
+          </Typography>
+        </View>
+      </View>
+    ))
+    .with({ isFinishing: true }, () => (
+      <View className="flex-row items-center gap-3">
+        <ActivityIndicator size="small" />
+        <Typography className="flex-1 text-base font-medium">
+          Finishing sync...
+        </Typography>
+      </View>
+    ))
+    .otherwise(() => (
       <View className="flex-row items-center gap-3">
         <CircularProgressBar
           current={uploadMetaProgress.numberComplete}
           total={uploadMetaProgress.totalUploads}
           showText
         />
-        <View>
+        <View className="flex-1">
           <Typography className="text-base font-medium">
-            {simplur`${uploadMetaProgress.totalUploads} meeting[|s] are uploading...`}
+            {simplur`${uploadMetaProgress.totalUploads} meeting[|s] [is|are] uploading...`}
           </Typography>
           <Typography className="text-sm font-normal text-secondary">
             {uploadMetaProgress.percentComplete}% Uploaded
@@ -274,25 +345,45 @@ export function ReconnectStatus() {
           </Typography>
         </View>
       </View>
-      <TouchableOpacity
-        onPress={toggleExpanded}
-        className="size-8 items-center justify-center rounded-full bg-secondary"
-      >
-        {isExpanded ? (
-          <ChevronDownIcon className="size-4 stroke-[3px] text-secondary" />
-        ) : (
-          <ChevronUpIcon className="size-4 stroke-[3px] text-secondary" />
+    ));
+
+  const header = (
+    <View className="flex-row items-center justify-between gap-3">
+      <View className="flex-1">{headerTitle}</View>
+      <View className="shrink-0 flex-row gap-2">
+        {isOnline && (
+          <TouchableOpacity
+            onPress={toggleExpanded}
+            className="size-8 items-center justify-center rounded-full bg-secondary"
+          >
+            {isExpanded ? (
+              <ChevronDownIcon className="size-4 stroke-[3px] text-secondary" />
+            ) : (
+              <ChevronUpIcon className="size-4 stroke-[3px] text-secondary" />
+            )}
+          </TouchableOpacity>
         )}
-      </TouchableOpacity>
+
+        {!isOnline && (
+          <TouchableOpacity
+            onPress={dismiss}
+            className="size-8 items-center justify-center rounded-full bg-secondary"
+          >
+            <XIcon className="size-4 stroke-[3px] text-secondary" />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 
   if (isMobile) {
     return (
       <>
-        <FloatingCard position="bottom-right" className="max-w-[400px]">
-          {header}
-        </FloatingCard>
+        <FadeContainer isVisible={shouldShow}>
+          <FloatingCard position="bottom-right" className="max-w-[400px]">
+            {header}
+          </FloatingCard>
+        </FadeContainer>
         <BottomSheet
           ref={bottomSheetRef}
           index={-1}
@@ -323,9 +414,11 @@ export function ReconnectStatus() {
   }
 
   return (
-    <FloatingCard position="bottom-right" className="max-w-[400px]">
-      {header}
-      <Expandable isExpanded={isExpanded}>{rows}</Expandable>
-    </FloatingCard>
+    <FadeContainer isVisible={shouldShow}>
+      <FloatingCard position="bottom-right" className="max-w-[400px]">
+        {header}
+        <Expandable isExpanded={isExpanded}>{rows}</Expandable>
+      </FloatingCard>
+    </FadeContainer>
   );
 }

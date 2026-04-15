@@ -20,13 +20,15 @@ import { useEffect, useState } from "react";
 import { ReconnectStatus } from "../components/ReconnectStatus";
 import { AudioUpload } from "../features/audio-upload";
 import { RecordingProvider } from "../features/recording";
-import useIsOnline from "../hooks/useIsOnline.native";
+import useIsOnline from "../hooks/useIsOnline";
 import { useOfflineQueueDrainer } from "../hooks/useOfflineQueueDrainer";
 import DrawerNavigator from "./DrawerNavigator";
 
 export function AuthenticatedContent() {
-  const { drain: forceDrain } = useOfflineQueueDrainer();
   const { isOnline } = useIsOnline();
+  const { drain: forceDrain, isDraining } = useOfflineQueueDrainer({
+    isOnline,
+  });
   const [isFirstRender, setIsFirstRender] = useState(true);
 
   // On fresh login, we want to force-drain the offline event queue in the event
@@ -46,7 +48,7 @@ export function AuthenticatedContent() {
     <RecordingProvider>
       <DrawerNavigator />
       <AudioUpload />
-      <ReconnectStatus />
+      <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
     </RecordingProvider>
   );
 }

@@ -56,7 +56,7 @@ export const useReconnectUploadStore = create<ReconnectUploadStore>((set) => ({
 
   initUpload: (meetingId, entry) =>
     set((s) => {
-      if (s.uploads[meetingId]) {
+      if (s.uploads[meetingId] && s.uploads[meetingId].status !== "error") {
         return s;
       }
       return {

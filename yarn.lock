@@ -49798,6 +49798,7 @@ __metadata:
     timekeeper: "npm:^2.2.0"
     ts-jest: "npm:^29.4.0"
     ts-node: "npm:^10.9.1"
+    ts-pattern: "npm:^5.9.0"
     tslib: "npm:^2.3.0"
     tsx: "npm:^4.17.0"
     twilio: "npm:^5.5.1"
@@ -55096,6 +55097,13 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: 10c0/95187932fb83f3901e22546bd2feeac7d2feb4f412f42ac3a595f049a23e8dcf70516dffb51866391228ea2dbcfaea039e250fb2bb334d48a86ab2b6aea0ae2d
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^5.9.0":
+  version: 5.9.0
+  resolution: "ts-pattern@npm:5.9.0"
+  checksum: 10c0/7640db25c39d29b287471b2b82d4f7b4674a02098c6ba4d10fed180adfb07d0e0c71930d9e59dc0d90654145e02fd320af63cf0df3c41e100d4154658a612a0a
   languageName: node
   linkType: hard
 

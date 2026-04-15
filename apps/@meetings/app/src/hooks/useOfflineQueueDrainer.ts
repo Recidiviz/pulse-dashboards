@@ -15,34 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth0 } from "react-native-auth0";
 
-import useIsOnline from "./useIsOnline";
+import { useSnackbar } from "../components/Snackbar";
 import { useMeetingEventQueue } from "./useMeetingEventQueue";
-import { useOfflineFailureQueue } from "./useOfflineFailureQueue";
 import { useProcessOfflineEvent } from "./useProcessOfflineEvent";
 
 const TIMEOUT_MS = 500;
 const RETRY_MAX = 3;
 
-export function useOfflineQueueDrainer() {
-  const { isOnline } = useIsOnline();
+export function useOfflineQueueDrainer({ isOnline }: { isOnline: boolean }) {
   const wasOnlineRef = useRef<boolean | null>(null);
-  const isDrainingRef = useRef(false);
+  const [isDraining, setIsDraining] = useState(false);
 
   const { head, dequeue, events } = useMeetingEventQueue();
-  const { enqueue: enqueueFailure } = useOfflineFailureQueue();
   const { processEvent } = useProcessOfflineEvent();
   const { clearSession } = useAuth0();
+  const { showSnackbar } = useSnackbar();
 
   // Keep a stable ref so the drain closure always calls the latest version
   // without needing to re-run the effect.
   const processEventRef = useRef(processEvent);
   processEventRef.current = processEvent;
 
+  const isDrainingRef = useRef(false);
+
   const drain = useCallback(async () => {
+    if (isDrainingRef.current) return;
     isDrainingRef.current = true;
+    setIsDraining(true);
 
     let event = head();
     let retryCount = 0;
@@ -54,6 +56,8 @@ export function useOfflineQueueDrainer() {
       if (res.status === "error") {
         // If we've lost auth, force login before dequeueing
         if (res.unauthenticated) {
+          isDrainingRef.current = false;
+          setIsDraining(false);
           clearSession();
           return;
         }
@@ -64,14 +68,17 @@ export function useOfflineQueueDrainer() {
           await new Promise((resolve) => setTimeout(resolve, TIMEOUT_MS));
           continue;
         } else {
-          // We're out of retries, event has failed.
+          // We're out of retries, event has failed. Stop draining and leave
+          // the event at the head of the queue so it can be retried later
+          // (through ReconnectStatus.tsx).
           console.error(
             `Failed to process event after ${RETRY_MAX} attempts:`,
             res.error,
           );
-
-          //TODO AVid - Persist truly-failed events, deal with in future ticket (12931/12928)
-          enqueueFailure(event);
+          showSnackbar(
+            "Offline sync failed. Please retry when your connection is stable.",
+          );
+          break;
         }
       }
 
@@ -81,7 +88,8 @@ export function useOfflineQueueDrainer() {
     }
 
     isDrainingRef.current = false;
-  }, [dequeue, enqueueFailure, clearSession, head]);
+    setIsDraining(false);
+  }, [dequeue, clearSession, head, showSnackbar]);
 
   useEffect(
     function onConnectionRestored() {
@@ -97,5 +105,5 @@ export function useOfflineQueueDrainer() {
     [events.length, isOnline, drain],
   );
 
-  return { drain };
+  return { drain, isDraining };
 }
