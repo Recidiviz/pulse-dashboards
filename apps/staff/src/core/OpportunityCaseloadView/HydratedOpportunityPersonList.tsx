@@ -51,7 +51,7 @@ import { differenceInDays, startOfToday } from "date-fns";
 import { orderBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Accordion,
   AccordionItem,
@@ -81,6 +81,7 @@ import {
   toHumanReadable,
   toTitleCase,
 } from "../../utils";
+import { downloadTableCSV } from "../../utils/downloads/tableToCSV";
 import {
   Client,
   JusticeInvolvedPerson,
@@ -103,6 +104,7 @@ import {
   ReleaseDateCell,
   SupervisingOfficerNameCell,
 } from "../CaseloadTable";
+import { DownloadCaseloadButton } from "../CaseloadTable/DownloadTableButton";
 import InsightsPill from "../InsightsPill";
 import { UsAzMarkSubmittedButton } from "../OpportunityDenial/UsAz/UsAzMenuButton";
 import PersonId from "../PersonId";
@@ -531,7 +533,10 @@ const ReleaseDateWrapper = ({ row }: { row: Row<Opportunity> }) => {
 
 const TableView = observer(function TableView({
   presenter,
-}: OpportunityCaseloadComponentProps) {
+  onRegisterDownload,
+}: OpportunityCaseloadComponentProps & {
+  onRegisterDownload?: (downloadFn: () => void) => void;
+}) {
   // We manually assemble column definitions instead of using createColumnHelper
   // due to not needing display/grouping columns and due to type inference issues:
   // https://github.com/TanStack/table/issues/4302
@@ -1065,6 +1070,21 @@ const TableView = observer(function TableView({
     },
   ];
 
+  // Register download callback so the parent can trigger CSV export
+  // with the correct data and column definitions.
+  const displayedColumns = columns.filter(
+    (col) => presenter.enabledColumnIds[col.id],
+  );
+  const downloadFileName = [presenter.label, presenter.activeTab]
+    .filter(Boolean)
+    .join(" - ");
+  onRegisterDownload?.(() => {
+    const data = presenter.config.enableWorkflowsFilter
+      ? presenter.orderedOpportunitiesForSelectedCategory()
+      : presenter.peopleInActiveTab;
+    downloadTableCSV(data, displayedColumns, downloadFileName);
+  });
+
   const { subcategoryOrder, peopleInActiveTabBySubcategory } = presenter;
 
   // With subcategories: show a table for each subcategory
@@ -1095,6 +1115,10 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   presenter: OpportunityPersonListPresenter;
 }) {
   const { isMobile, isTablet } = useIsMobile(true);
+  const downloadRef = useRef<(() => void) | null>(null);
+  const registerDownload = useCallback((fn: () => void) => {
+    downloadRef.current = fn;
+  }, []);
 
   // Use MouseSensor instead of PointerSensor to disable drag-and-drop on touch screens
   const sensors = useSensors(
@@ -1208,6 +1232,13 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
                 activeTabGroup={presenter.activeTabGroup as string}
                 tabGroups={presenter.displayTabGroups as string[]}
                 sortable={presenter.shouldShowAllTabs}
+                actions={
+                  !presenter.showListView ? (
+                    <DownloadCaseloadButton
+                      onDownload={() => downloadRef.current?.()}
+                    />
+                  ) : undefined
+                }
               />
             </SortableContext>
           </DndContext>
@@ -1234,7 +1265,10 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
       ) : // eslint-disable-next-line no-nested-ternary
       !presenter.showListView ? (
         /* Table view */
-        <TableView presenter={presenter} />
+        <TableView
+          presenter={presenter}
+          onRegisterDownload={registerDownload}
+        />
       ) : peopleInActiveTabBySubcategory ? (
         /* List view subcategories display */
         (presenter.subcategoryOrder ?? [])

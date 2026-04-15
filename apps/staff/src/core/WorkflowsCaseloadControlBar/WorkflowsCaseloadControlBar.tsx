@@ -19,7 +19,7 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
@@ -52,7 +52,7 @@ const TabControls = styled.div`
 `;
 
 type WorkflowsCaseloadControlBarPropsWithoutTabControls<T extends string> =
-  Parameters<typeof WorkflowsCaseloadTabs<T>>[0];
+  Parameters<typeof WorkflowsCaseloadTabs<T>>[0] & { actions?: ReactNode };
 
 type WorkflowsCaseloadControlBarProps<T extends string> =
   WorkflowsCaseloadControlBarPropsWithoutTabControls<T> &
@@ -69,7 +69,15 @@ export function WorkflowsCaseloadControlBar<T extends string>(
     | WorkflowsCaseloadControlBarProps<T>
     | WorkflowsCaseloadControlBarPropsWithoutTabControls<T>,
 ) {
-  const { tabs, tabBadges, activeTab, setActiveTab, sortable, ...rest } = props;
+  const {
+    tabs,
+    tabBadges,
+    activeTab,
+    setActiveTab,
+    sortable,
+    actions,
+    ...rest
+  } = props;
   return (
     <TabControls>
       {tabs && (
@@ -82,6 +90,7 @@ export function WorkflowsCaseloadControlBar<T extends string>(
           {...(rest as Parameters<typeof WorkflowsTabGroupSelector>[0])}
         />
       )}
+      {actions}
     </TabControls>
   );
 }
