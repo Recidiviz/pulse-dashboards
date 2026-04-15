@@ -21,7 +21,7 @@ import { ResponsiveOrdinalFrame } from "semiotic";
 import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 import styled, { css, useTheme } from "styled-components";
 
-import { formatName, getTicks, pluralize, pluralizeWord } from "~utils";
+import { getTicks, pluralize, pluralizeWord } from "~utils";
 
 import { SupervisionPopulationSnapshotRecord } from "../../types";
 import {
@@ -70,6 +70,7 @@ type PopulationSnapshotChartProps = {
   isGeographic: boolean;
   pickedId: string[];
   dataSeries: SupervisionPopulationSnapshotRecord[];
+  horizontalLabelFormatter?: (label: string) => string;
 };
 
 const ChartWrapper = styled.div<{
@@ -152,7 +153,7 @@ const ChartWrapper = styled.div<{
       }
 
       .foreground-graphics {
-        transform: translate(-1rem, -1.2rem) !important;
+        transform: translate(-1rem, 0) !important;
       }
     `}
 `;
@@ -167,14 +168,16 @@ function defaultOLabel(accessorLabel: string) {
   return <text textAnchor="middle">{accessorLabel}</text>;
 }
 
-function horizontalOLabel(accessorLabel: string) {
-  return (
-    <text textAnchor="end">
-      <tspan key={accessorLabel} dy="1.5em" x="0">
-        {formatName(accessorLabel)}
-      </tspan>
-    </text>
-  );
+function makeHorizontalOLabel(formatter: (label: string) => string) {
+  return function horizontalOLabel(accessorLabel: string) {
+    return (
+      <text textAnchor="end" dominantBaseline="central">
+        <tspan key={accessorLabel} x="0">
+          {formatter(accessorLabel)}
+        </tspan>
+      </text>
+    );
+  };
 }
 
 function rotatedOLabel(accessorLabel: string) {
@@ -254,6 +257,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   isGeographic,
   pickedId,
   dataSeries,
+  horizontalLabelFormatter,
 }) => {
   const theme = useTheme() as PathwaysTheme;
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -357,7 +361,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
       projection: "horizontal",
       size: [558, data.length * 25 + 150],
       margin: {
-        left: 120,
+        left: 80,
         bottom: 75,
         right: 50,
         top: 56,
@@ -369,7 +373,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
           tickValues,
         },
       ],
-      oLabel: horizontalOLabel,
+      oLabel: makeHorizontalOLabel(horizontalLabelFormatter ?? ((l) => l)),
       tooltipContent: makeHorizontalTooltipContent(isRate, dataSeries),
     }),
     ...(rotateLabels && {

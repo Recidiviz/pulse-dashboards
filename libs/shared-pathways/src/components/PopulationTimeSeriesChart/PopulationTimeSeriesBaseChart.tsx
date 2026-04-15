@@ -20,6 +20,8 @@ import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 import styled, { useTheme } from "styled-components";
 
+import useIsMobile from "~utils/react/useIsMobile";
+
 import {
   ScrollLayout,
   ScrollWrapper,
@@ -66,7 +68,7 @@ type Props = {
   [k: string]: unknown;
 };
 
-const SCROLL_THRESHOLD = 40;
+const SCROLL_THRESHOLD = 20;
 const MIN_POINT_WIDTH = 40;
 const SCROLL_LEFT_MARGIN = 40;
 const MARGIN_RIGHT = 50;
@@ -97,6 +99,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   ...chartProps
 }) => {
   const theme = useTheme() as PathwaysTheme;
+  const { isMobile } = useIsMobile(true);
   const charWidth = theme.chart.axisLabel.charWidth;
   const leftMargin = (chartTop.toString().length + 1.5) * charWidth;
 
@@ -116,7 +119,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
 
   const tickValues = getTickValues(allPoints, dateSpacing);
 
-  const needsScroll = allPoints.length > SCROLL_THRESHOLD;
+  const needsScroll = isMobile && allPoints.length > SCROLL_THRESHOLD;
   const scrollWidth = needsScroll
     ? allPoints.length * MIN_POINT_WIDTH + SCROLL_LEFT_MARGIN + MARGIN_RIGHT
     : undefined;

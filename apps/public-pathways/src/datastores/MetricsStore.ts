@@ -171,7 +171,7 @@ export default class MetricsStore implements PathwaysMetricStore {
       fetchMetrics: this.fetchMetrics,
       accessor: "facility" as keyof SnapshotDataRecord,
       enableMetricModeToggle: true,
-      rotateLabels: true,
+      isHorizontal: true,
     });
   }
 
@@ -267,7 +267,7 @@ export default class MetricsStore implements PathwaysMetricStore {
       fetchMetrics: this.fetchMetrics,
       accessor: "chargeCountyCode",
       enableMetricModeToggle: true,
-      rotateLabels: true,
+      isHorizontal: true,
     });
   }
 

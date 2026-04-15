@@ -253,8 +253,8 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       accessor: "facility",
       enableMetricModeToggle: true,
-      rotateLabels: true,
       isGeographic: true,
+      isHorizontal: true,
     });
   }
 
@@ -340,7 +340,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       accessor: "chargeCountyCode",
       enableMetricModeToggle: true,
-      rotateLabels: true,
+      isHorizontal: true,
     });
   }
 

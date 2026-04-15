@@ -36,11 +36,13 @@ import { SnapshotDataPoint } from "../PopulationSnapshotChart/PopulationSnapshot
 type VizPopulationSnapshotProps = {
   metric: SnapshotMetric;
   filtersStore: FiltersStoreBase;
+  horizontalLabelFormatter?: (label: string) => string;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
   metric,
   filtersStore,
+  horizontalLabelFormatter,
 }) => {
   const {
     filters,
@@ -143,6 +145,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       isGeographic={metric.isGeographic}
       pickedId={pickedId}
       dataSeries={dataSeries as SupervisionPopulationSnapshotRecord[]}
+      horizontalLabelFormatter={horizontalLabelFormatter}
     />
   );
 };

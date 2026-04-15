@@ -23,6 +23,7 @@ import {
   defaultPathwaysTheme,
   VizPopulationSnapshot as SharedVizPopulationSnapshot,
 } from "~shared-pathways";
+import { formatName } from "~utils";
 
 import { useCoreStore } from "../CoreStoreProvider";
 import StaffSnapshotMetric from "../models/SnapshotMetric";
@@ -42,6 +43,9 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       <SharedVizPopulationSnapshot
         metric={metric}
         filtersStore={filtersStore}
+        horizontalLabelFormatter={
+          metric.accessor === "officerName" ? formatName : undefined
+        }
       />
     </ThemeProvider>
   );
