@@ -21,11 +21,19 @@ import { insightImportSchema } from "~@sentencing/import/models";
 import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
 
 type TransformedRecidivismSeries = {
-  recommendationType: string | null | undefined;
-  sentenceLengthBucketStart: number | undefined;
-  sentenceLengthBucketEnd: number | undefined;
+  recommendationType: string | undefined;
+  // Match the schema defaults so the values are identical to what is stored
+  // after the DB round-trip, enabling reliable key-based correlation.
+  sentenceLengthBucketStart: number;
+  sentenceLengthBucketEnd: number;
   dataPoints: Prisma.RecidvismSeriesDataPointCreateManyRecidivismSeriesInput[];
 };
+
+// Schema defaults for sentenceLengthBucketStart / sentenceLengthBucketEnd.
+// 0 to -1 represents an unbounded range (0 to infinity), used when no
+// sentence-length bucket is specified (e.g. flat types like Probation/Rider).
+const BUCKET_START_DEFAULT = 0;
+const BUCKET_END_DEFAULT = -1;
 
 function transformRecidivismSeries(
   rawRecidivismSeries: z.infer<typeof insightImportSchema>["recidivism_series"],
@@ -38,8 +46,10 @@ function transformRecidivismSeries(
 
       return {
         recommendationType: series.sentence_type,
-        sentenceLengthBucketStart: series.sentence_length_bucket_start,
-        sentenceLengthBucketEnd: series.sentence_length_bucket_end,
+        sentenceLengthBucketStart:
+          series.sentence_length_bucket_start ?? BUCKET_START_DEFAULT,
+        sentenceLengthBucketEnd:
+          series.sentence_length_bucket_end ?? BUCKET_END_DEFAULT,
         dataPoints: series.data_points.map((s) => ({
           cohortMonths: s.cohort_months,
           eventRate: s.event_rate,
@@ -148,32 +158,54 @@ export async function transformAndLoadInsightData(
       })),
     });
 
-    // Create each recidivism series and its data points in separate operations.
-    // Sequential loop to avoid overwhelming the connection pool.
+    // Use createManyAndReturn to bulk-insert all series in one query and get back
+    // their IDs, then bulk-insert all data points in one more query. This avoids
+    // the 2-round-trips-per-series pattern that caused connection termination on
+    // large datasets like ND.
     const recidivismSeries = transformRecidivismSeries(
       insightData.recidivism_series,
     );
-    for (const series of recidivismSeries) {
-      // eslint-disable-next-line no-await-in-loop
-      const createdSeries = await prismaClient.recidivismSeries.create({
-        data: {
+
+    const createdSeries =
+      await prismaClient.recidivismSeries.createManyAndReturn({
+        data: recidivismSeries.map((series) => ({
           recommendationType: series.recommendationType,
           sentenceLengthBucketStart: series.sentenceLengthBucketStart,
           sentenceLengthBucketEnd: series.sentenceLengthBucketEnd,
           insightId: createdInsight.id,
-        },
+        })),
       });
 
-      if (series.dataPoints.length > 0) {
-        // eslint-disable-next-line no-await-in-loop
-        await prismaClient.recidvismSeriesDataPoint.createMany({
-          data: series.dataPoints.map((dp) => ({
-            ...dp,
-            recidivismSeriesId: createdSeries.id,
-          })),
-        });
-      }
-    }
+    // createManyAndReturn does not guarantee return order, so match each
+    // created series back to its input by composite natural key rather than
+    // by index position. Both sides are always numbers after transformRecidivismSeries
+    // normalizes missing bucket values to their schema defaults.
+    const seriesKey = (s: {
+      recommendationType: string | null | undefined;
+      sentenceLengthBucketStart: number;
+      sentenceLengthBucketEnd: number;
+    }) =>
+      `${s.recommendationType ?? null}|${s.sentenceLengthBucketStart}|${s.sentenceLengthBucketEnd}`;
+
+    const seriesIdByKey = new Map(
+      createdSeries.map((s) => [seriesKey(s), s.id]),
+    );
+
+    await prismaClient.recidvismSeriesDataPoint.createMany({
+      data: recidivismSeries.flatMap((series) => {
+        const seriesId = seriesIdByKey.get(seriesKey(series));
+        if (!seriesId) {
+          console.warn(
+            `Skipping data points: no created series found for key "${seriesKey(series)}"`,
+          );
+          return [];
+        }
+        return series.dataPoints.map((dp) => ({
+          ...dp,
+          recidivismSeriesId: seriesId,
+        }));
+      }),
+    });
 
     newInsights.push(createdInsight);
   }
