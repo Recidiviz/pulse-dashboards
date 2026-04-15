@@ -15,77 +15,74 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Pill, typography } from "@recidiviz/design-system";
+import { Pill } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-// TODO(#11717) Unify this with other pills
-const RNAPill = styled(Pill)<{ $borderColor: string }>`
-  ${typography.Sans12}
-  font-weight: 600;
-
+export const BadgePillStyled = styled(Pill)<{
+  $borderColor: string;
+}>`
   border-radius: ${rem(4)};
   border: 1px solid ${(props) => props.$borderColor};
-
+  font-size: ${rem(12)};
+  font-weight: 600;
   height: ${rem(20)};
   padding: 0 ${rem(6)};
   vertical-align: text-top;
 `;
 
-const badgeSettings = {
-  UPCOMING: {
+const statusStyles = {
+  SLATE: {
     backgroundColor: palette.slate05,
     borderColor: palette.slate20,
-    textColor: palette.slate80,
-    text: "Upcoming",
+    color: palette.slate80,
   },
-  DUE: {
-    backgroundColor: palette.slate05,
-    borderColor: palette.slate20,
-    textColor: palette.slate80,
-    text: "Due",
-  },
-  NOT_STARTED: {
+  PURPLE: {
     backgroundColor: "rgb(242,240,245)",
     borderColor: "rgb(137,115,165)",
-    textColor: "rgb(98,68,136)",
-    text: "Not Started",
+    color: "rgb(98,68,136)",
   },
-  IN_PROGRESS: {
+  BLUE: {
     backgroundColor: "rgb(239,243,255)",
     borderColor: "rgb(162,179,239)",
-    textColor: "rgb(0,56,124)",
-    text: "In Progress",
+    color: "rgb(0,56,124)",
   },
-  COMPLETE: {
+  YELLOW: {
+    color: "rgb(168,44,0)",
     backgroundColor: "rgb(255,248,222)",
     borderColor: "rgb(252,213,121)",
-    textColor: "rgb(168,44,0)",
-    text: "Complete – Review",
   },
-  SUBMITTED_BY_STAFF: {
+  GREEN: {
     backgroundColor: "rgb(239,255,229)",
     borderColor: "rgb(166,235,132)",
-    textColor: "rgb(0,105,8)",
-    text: "Submitted",
+    color: "rgb(0,105,8)",
+  },
+  RED: {
+    backgroundColor: "rgb(255,244,249)",
+    borderColor: "rgb(255,204,223)",
+    color: "rgb(179,9,60)",
   },
 } as const;
 
-export type RNAStatus = keyof typeof badgeSettings;
-
-export const RNABadge = function ({ kind }: { kind: RNAStatus }) {
-  const { backgroundColor, borderColor, textColor, text } = badgeSettings[kind];
-
+export const WorkflowsBadgePill = observer(function WorkflowsBadgePill({
+  text,
+  palette,
+}: {
+  text: string;
+  palette: keyof typeof statusStyles;
+}) {
+  const { color, borderColor, backgroundColor } = statusStyles[palette];
   return (
-    <RNAPill
+    <BadgePillStyled
       filled={true}
       color={backgroundColor}
-      textColor={textColor}
+      textColor={color}
       $borderColor={borderColor}
     >
       {text}
-    </RNAPill>
+    </BadgePillStyled>
   );
-};
+});

@@ -28,10 +28,10 @@ import { palette, spacing } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";
+import { WorkflowsBadgePill } from "../BadgePill/BadgePill";
 import { CaseloadTable, PersonIdCell, PersonNameCell } from "../CaseloadTable";
 import { workflowsUrl } from "../views";
 import { WorkflowsFilterDropdown } from "../WorkflowsFilters/WorkflowsFilterDropdown";
-import { RNABadge, RNAStatus } from "./RNABadge";
 import { RNAFilterPresenter } from "./RNAFilterPresenter";
 import { RNARowData, RNAStatusList } from "./RNAFilterPresenter";
 import { useRNAFilterStore } from "./RNAFilterStoreProvider";
@@ -108,9 +108,43 @@ const FormattedRNADueDate = ({ row }: { row: Row<RNARowData> }) => {
   return formatWorkflowsDate(row.original.rnaDueDate);
 };
 
+export const RNA_BADGE_STYLING = {
+  UPCOMING: {
+    palette: "SLATE",
+    text: "Upcoming",
+  },
+  DUE: {
+    palette: "SLATE",
+    text: "Due",
+  },
+  NOT_STARTED: {
+    palette: "PURPLE",
+    text: "Not Started",
+  },
+  IN_PROGRESS: {
+    palette: "BLUE",
+    text: "In Progress",
+  },
+  COMPLETE: {
+    palette: "YELLOW",
+    text: "Complete – Review",
+  },
+  SUBMITTED_BY_STAFF: {
+    palette: "GREEN",
+    text: "Submitted",
+  },
+} as const;
+
 const StatusBadgeCell = ({ row }: { row: Row<RNARowData> }) => {
-  return <RNABadge kind={row.original.status} />;
+  return (
+    <WorkflowsBadgePill
+      palette={RNA_BADGE_STYLING[row.original.status].palette}
+      text={RNA_BADGE_STYLING[row.original.status].text}
+    />
+  );
 };
+
+export type RNAStatus = keyof typeof RNA_BADGE_STYLING;
 
 export const EnableCell = observer(function EnableCell({
   row,

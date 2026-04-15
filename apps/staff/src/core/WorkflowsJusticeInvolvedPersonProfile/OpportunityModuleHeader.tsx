@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Pill, Sans16, spacing } from "@recidiviz/design-system";
+import { Sans16, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useMatch } from "react-router-dom";
@@ -24,6 +24,7 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import { Opportunity } from "../../WorkflowsStore";
+import { WorkflowsBadgePill } from "../BadgePill/BadgePill";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { WORKFLOWS_PATHS } from "../views";
 
@@ -31,19 +32,6 @@ const TitleText = styled(Sans16)`
   color: ${palette.pine1};
   line-height: 1.5;
   display: inline-block;
-`;
-
-// TODO(#11717) Unify this with other pills
-export const EligibilityStatusPillStyled = styled(Pill)<{
-  $borderColor: string;
-}>`
-  border-radius: ${rem(4)};
-  border: 1px solid ${(props) => props.$borderColor};
-  font-size: ${rem(12)};
-  font-weight: 600;
-  height: ${rem(20)};
-  padding: 0 ${rem(6)};
-  vertical-align: text-top;
 `;
 
 const OpportunityLabelWithPill = styled.span`
@@ -60,19 +48,12 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
 }: {
   opportunity: Opportunity;
 }) {
-  const colors = useStatusColors(opportunity);
+  const { palette } = useStatusColors(opportunity);
+  const text = opportunity.eligibilityStatusLabel();
 
-  return (
-    <EligibilityStatusPillStyled
-      className="EligibilityStatus"
-      filled
-      color={colors.badgeBackground}
-      textColor={colors.badgeText}
-      $borderColor={colors.badgeBorder}
-    >
-      {opportunity.eligibilityStatusLabel()}
-    </EligibilityStatusPillStyled>
-  );
+  if (text !== null) {
+    return <WorkflowsBadgePill text={text} palette={palette} />;
+  }
 });
 
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =

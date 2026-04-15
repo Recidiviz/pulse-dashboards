@@ -33,9 +33,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.signal.links,
-    badgeBackground: "rgb(239,255,229)",
-    badgeBorder: "rgb(166,235,132)",
-    badgeText: "rgb(0,105,8)",
+    palette: "GREEN",
   },
   almostEligible: {
     icon: palette.signal.highlight,
@@ -46,9 +44,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.data.gold1,
-    badgeBackground: "rgb(255,248,222)",
-    badgeBorder: "rgb(252,213,121)",
-    badgeText: "rgb(168,44,0)",
+    palette: "YELLOW",
   },
   ineligible: {
     icon: palette.signal.highlight,
@@ -59,9 +55,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.signal.error,
-    badgeBackground: "rgb(255,244,249)",
-    badgeBorder: "rgb(255,204,223)",
-    badgeText: "rgb(179,9,60)",
+    palette: "RED",
   },
   denied: {
     icon: palette.signal.highlight,
@@ -72,9 +66,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.signal.error,
-    badgeBackground: "rgb(255,244,249)",
-    badgeBorder: "rgb(255,204,223)",
-    badgeText: "rgb(179,9,60)",
+    palette: "RED",
   },
   submitted: {
     icon: palette.signal.highlight,
@@ -85,9 +77,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.data.gold1,
-    badgeBackground: "rgb(239,243,255)",
-    badgeBorder: "rgb(162,179,239)",
-    badgeText: "rgb(0,56,124)",
+    palette: "BLUE",
   },
   pendingOverdue: {
     icon: palette.signal.error,
@@ -101,6 +91,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     badgeBackground: "rgb(255,244,249)",
     badgeBorder: "rgb(255,204,223)",
     badgeText: "rgb(179,9,60)",
+    palette: "RED",
   },
   alert: {
     icon: palette.signal.error,
@@ -111,9 +102,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.signal.error,
     buttonFill: palette.data.gold1,
     link: palette.data.gold1,
-    badgeBackground: "rgb(255,244,249)",
-    badgeBorder: "rgb(255,204,223)",
-    badgeText: "rgb(179,9,60)",
+    palette: "RED",
   },
   alertOverride: {
     icon: rgba(palette.slate, 0.4),
@@ -124,9 +113,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.slate85,
     buttonFill: palette.signal.links,
     link: palette.pine1,
-    badgeBackground: "rgb(255,244,249)",
-    badgeBorder: "rgb(255,204,223)",
-    badgeText: "rgb(179,9,60)",
+    palette: "RED",
   },
   eligibleOverride: {
     icon: palette.signal.highlight,
@@ -137,9 +124,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.signal.links,
-    badgeBackground: "rgb(255,244,249)",
-    badgeBorder: "rgb(255,204,223)",
-    badgeText: "rgb(179,9,60)",
+    palette: "RED",
   },
 } as const;
 

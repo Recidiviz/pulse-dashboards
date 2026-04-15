@@ -19,11 +19,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 
 import { Resident } from "../../../WorkflowsStore/Resident";
+import { WorkflowsBadgePill } from "../../BadgePill/BadgePill";
 import { OPPORTUNITY_STATUS_COLORS } from "../../utils/workflowsUtils";
-import {
-  EligibilityStatusPill,
-  EligibilityStatusPillStyled,
-} from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
+import { EligibilityStatusPill } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
 import { CaseloadRowProps } from "./types";
 import { usTnPrioritizedOpportunity } from "./utils";
 
@@ -35,19 +33,9 @@ const StatusWrapper = observer(function StatusWrapper({
     return <EligibilityStatusPill opportunity={opp} />;
   }
 
-  const { badgeBackground, badgeText, badgeBorder } =
-    OPPORTUNITY_STATUS_COLORS.almostEligible;
+  const { palette } = OPPORTUNITY_STATUS_COLORS.almostEligible;
 
-  return (
-    <EligibilityStatusPillStyled
-      filled
-      color={badgeBackground}
-      textColor={badgeText}
-      $borderColor={badgeBorder}
-    >
-      Not Eligible
-    </EligibilityStatusPillStyled>
-  );
+  return <WorkflowsBadgePill text="Not Eligible" palette={palette} />;
 });
 
 export const usTnStatusColumn = {

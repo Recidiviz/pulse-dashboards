@@ -22,10 +22,11 @@ import styled from "styled-components";
 
 import { palette, spacing } from "~design-system";
 
+import { WorkflowsBadgePill } from "../../BadgePill/BadgePill";
 import PersonId from "../../PersonId";
 import { WorkflowsBackButton } from "../../WorkflowsLayouts/WorkflowsBackButton";
-import { RNABadge } from "../RNABadge";
 import { RNAMarkSubmittedButton } from "../RNAMarkSubmittedButton";
+import { RNA_BADGE_STYLING } from "../UsNcRNATable";
 import { PaddedRNAContent } from "./ResultsPage";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { RNAPrintButton } from "./RNAPrintButton";
@@ -102,7 +103,10 @@ export const RNAResultsHeader = observer(function RNAResultsHeader({
             <RNAMarkSubmittedButton presenter={presenter} />
           </Right>
           <Left>
-            <RNABadge kind={status} />
+            <WorkflowsBadgePill
+              palette={RNA_BADGE_STYLING[status].palette}
+              text={RNA_BADGE_STYLING[status].text}
+            />
           </Left>
           <Right>
             <SubmissionDateandUndo presenter={presenter} />

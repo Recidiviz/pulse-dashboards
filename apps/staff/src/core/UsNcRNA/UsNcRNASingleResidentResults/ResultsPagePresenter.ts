@@ -27,7 +27,7 @@ import { JiiStaffAppRouter, JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
 
 import { formatWorkflowsDate } from "../../../utils";
 import { Resident } from "../../../WorkflowsStore/Resident";
-import { RNAStatus } from "../RNABadge";
+import { RNAStatus } from "../UsNcRNATable";
 
 export class ResultsPagePresenter {
   constructor(
