@@ -20,7 +20,7 @@ exports[`transform record for initial CR 1`] = `
   },
   "eligibleCriteria": {
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
-      "requiresSoRegistration": null,
+      "mediumIsLowestSupervisionLevelAllowed": null,
       "supervisionLevel": "MAXIMUM",
     },
     "usMiPastInitialClassificationReviewDate": {
@@ -69,7 +69,7 @@ exports[`transform record for six-month CR 1`] = `
   },
   "eligibleCriteria": {
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
-      "requiresSoRegistration": null,
+      "mediumIsLowestSupervisionLevelAllowed": null,
       "supervisionLevel": "MAXIMUM",
     },
     "usMiSixMonthsPastLastClassificationReviewDate": {
@@ -107,7 +107,7 @@ exports[`transforms records with eligible and ineligible criteria 1`] = `
   },
   "eligibleCriteria": {
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
-      "requiresSoRegistration": null,
+      "mediumIsLowestSupervisionLevelAllowed": true,
       "supervisionLevel": "MAXIMUM",
     },
   },

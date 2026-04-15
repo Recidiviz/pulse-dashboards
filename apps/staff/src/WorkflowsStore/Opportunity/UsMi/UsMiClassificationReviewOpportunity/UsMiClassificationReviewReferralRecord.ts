@@ -29,7 +29,7 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: z
         .object({
           supervisionLevel: z.string().transform(formatter).nullable(),
-          requiresSoRegistration: z.boolean().nullable(),
+          mediumIsLowestSupervisionLevelAllowed: z.boolean().nullish(),
         })
         .nullable(),
       usMiPastInitialClassificationReviewDate: eligibleDateSchema,

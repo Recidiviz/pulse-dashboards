@@ -26,7 +26,7 @@ export const UsMiClassificationReviewReferralsFixture =
       eligibleCriteria: {
         usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
           supervisionLevel: "MAXIMUM",
-          requiresSoRegistration: null,
+          mediumIsLowestSupervisionLevelAllowed: null,
         },
         usMiPastInitialClassificationReviewDate: {
           eligibleDate: "2022-12-12",

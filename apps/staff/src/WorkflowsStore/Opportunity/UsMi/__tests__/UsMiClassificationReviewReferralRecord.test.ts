@@ -41,7 +41,7 @@ test("transform record for initial CR", () => {
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
         supervisionLevel: "MAXIMUM",
-        requiresSoRegistration: null,
+        mediumIsLowestSupervisionLevelAllowed: null,
       },
       usMiPastInitialClassificationReviewDate: {
         eligibleDate: "2022-12-12",
@@ -79,7 +79,7 @@ test("transform record for six-month CR", () => {
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
         supervisionLevel: "MAXIMUM",
-        requiresSoRegistration: null,
+        mediumIsLowestSupervisionLevelAllowed: null,
       },
       usMiSixMonthsPastLastClassificationReviewDate: {
         eligibleDate: "2019-01-12",
@@ -162,7 +162,7 @@ test("transforms records with eligible and ineligible criteria", () => {
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
         supervisionLevel: "MAXIMUM",
-        requiresSoRegistration: null,
+        mediumIsLowestSupervisionLevelAllowed: true,
       },
     },
     ineligibleCriteria: {
