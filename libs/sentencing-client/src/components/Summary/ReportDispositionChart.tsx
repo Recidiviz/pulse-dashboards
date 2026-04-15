@@ -24,6 +24,7 @@ import {
   formatOffenseLabel,
   printFormattedRecordString,
 } from "../../utils/utils";
+import FlagIcon from "../assets/flag-icon.svg?react";
 import {
   getDescriptionGender,
   getSentenceLengthBucketLabel,
@@ -218,6 +219,14 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
 
   return (
     <SentencingAssessmentReportSection title={SECTION_TITLE}>
+      <Styled.DispositionDisclaimerRow>
+        <FlagIcon />
+        <Styled.DispositionDisclaimerText>
+          The following data represents historical trends, which do not predict
+          or guarantee the outcome of any individual case.
+        </Styled.DispositionDisclaimerText>
+      </Styled.DispositionDisclaimerRow>
+
       <Styled.DispositionChipsRow>
         <Styled.InsightChip>{genderChip}</Styled.InsightChip>
         <Styled.InsightChip>{orasChip}</Styled.InsightChip>
@@ -251,7 +260,9 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
           </Styled.DispositionRecordBadge>
 
           <Styled.DispositionChartRow>
-            <DispositionDonutSVG pieData={pieData} />
+            <Styled.DispositionDonutWrapper>
+              <DispositionDonutSVG pieData={pieData} />
+            </Styled.DispositionDonutWrapper>
 
             <Styled.DispositionLegendList>
               {LEGEND_LABELS.map((label) => {

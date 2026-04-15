@@ -496,6 +496,23 @@ export const HomePlanTitle = styled.h5`
 
 // ─── Historical Outcome Reference ─────────────────────────────────────────────
 
+export const DispositionDisclaimerRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+`;
+
+export const DispositionDisclaimerText = styled.div`
+  color: ${customPalette.black};
+  font-family: "Public Sans";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120%;
+`;
+
 export const DispositionChipsRow = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -577,11 +594,17 @@ export const DispositionRecordBadge = styled.div`
 
 export const DispositionChartRow = styled.div`
   display: flex;
-  padding: 0 40px;
   justify-content: center;
   align-items: center;
   gap: 24px;
   align-self: stretch;
+`;
+
+export const DispositionDonutWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const DispositionLegendList = styled.div`
@@ -609,6 +632,7 @@ export const DispositionLegendSwatch = styled.div<{ $color: string }>`
 
 export const DispositionLegendLabel = styled.div`
   ${typography.Sans12}
+  font-size: 14px;
   font-weight: 500;
   line-height: 150%;
   white-space: nowrap;
