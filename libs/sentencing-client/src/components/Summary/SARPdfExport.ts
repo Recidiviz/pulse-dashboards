@@ -57,6 +57,13 @@ type PageImages = {
 const CANVAS_SCALE = 2;
 const JPEG_QUALITY = 0.9;
 
+// JPEG's 8×8 DCT blocks can spread a card's border/background color up to
+// ~1 mm above its geometric boundary after encoding. Snapping the cut this
+// far before a no-split block's top ensures the white mask on the previous
+// page fully covers any such bleed. The inset lands within the ~8 mm
+// inter-block gap, so no visible content is affected.
+const SNAP_INSET_MM = 1.0;
+
 const HTML2CANVAS_OPTS = {
   scale: CANVAS_SCALE,
   useCORS: true,
@@ -215,14 +222,17 @@ function computePageCutPoint(
 ): number {
   let cutPoint = Math.min(bodyOffset + sliceMM, bodyMM);
 
-  // Snap back to the top of the first no-split block that straddles the cut.
+  // Snap back to just before the first no-split block that straddles the cut.
+  // Use an inset rather than the exact block top so the white mask on the
+  // previous page covers any JPEG DCT bleed from the card's border/background.
   for (const block of blocks) {
     if (
       block.top < cutPoint &&
       block.bottom > cutPoint &&
       block.top > bodyOffset
     ) {
-      cutPoint = block.top;
+      const insetSnap = block.top - SNAP_INSET_MM;
+      cutPoint = insetSnap > bodyOffset ? insetSnap : block.top;
       break;
     }
   }
