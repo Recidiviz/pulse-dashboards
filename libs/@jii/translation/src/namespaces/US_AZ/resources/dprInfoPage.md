@@ -1,55 +1,23 @@
-Because of your specific charges, you have a sentence structure that **may** allow you to leave prison sooner.
+## Did I lose my early release?
 
-<div class="important">
-<Icon kind="Error" size={16} />
+No. Nothing about your sentence has changed. We just changed what this app shows you.
 
-**Important:** To qualify for DPR, your sentence must _only_ be for drug possession or use. If you are doing time for other charges (like drug sales or other felonies), you will not qualify. You also cannot have past convictions for violent or aggravated felonies.
+## What changed?
 
-If you qualify, you will still need to complete or be exempt from other release requirements, such as Mandatory Literacy.
+This page used to say you might qualify for Drug Program Release (DPR). We found out that message was showing up for some people it should not have. We took it down while we work on fixing it.
 
-</div>
+## What is DPR?
 
-Right now, your release dates are calculated based on serving **85.7%** of your sentence. However, if you complete a **Major Program**, you can earn more release credits. This would allow you to be released after serving as little as **70%** of your sentence, if you don't get any disciplinary infractions.
+DPR is one way to get out early. It is only for people whose _only_ charges are for drug use or having drugs. If you have _any other charges_ too — like drug sales, assault, or anything else — DPR does not apply to you.
 
-**To get these earlier dates, you must finish a Major Program.** Until you finish the program, your dates will stay the same.
+## DPR is not the same as the Transition Program.
 
-## What do I need to do?
+A lot of people mix these up. They are two different things with different rules.
 
-You must complete two steps to secure these earlier dates:
+DPR is about your charges. It may allow you to serve 70% of your sentence instead of 85%, but only if your only charges are for drug use or possession, and only if you finish a Major Program.
 
-### 1. FINISH A MAJOR PROGRAM
+The [Transition Program](../more-information/important-dates#transition-program-releases) is about meeting certain requirements — like finishing Mandatory Literacy — so you can serve the last part of your sentence in the community. Other names for the Transition Program include TPR, STP, and DTP.
 
-You must complete a program that qualifies for DPR.
+## What should I do?
 
-### 2. STAY OUT OF TROUBLE
-
-You must continue earning your release credits by avoiding disciplinary tickets.
-
-Note: Once you finish, your dates will move up, but your SED (100% date) will always stay the same.
-
-## How do I find a Major Program?
-
-Not every program counts toward DPR. To see the official list of major programs:
-
-1. Go to the FYI App on your tablet.
-1. Open the Departmental Orders section.
-1. Open D.O. 1002 and look at Attachment E.
-
-## Who can possibly qualify for DPR?
-
-You **can** earn a DPR date if your sentence is for **only** one of these drug possession or use offenses:
-
-- Possession or use of Marijuana (A.R.S. §13-3405(A)(1))
-- Possession or use of Dangerous Drug (A.R.S. §13-3407(A)(1))
-- Possession or use of a Narcotic Drug (A.R.S. §13-3408(A)(1))
-- Possession or use of Drug Paraphernalia (A.R.S. §13-3415(A))
-
-Note: You are ineligible if you have any past convictions for a violent or aggravated felony. Additionally, you cannot have any past or current convictions for the specific offenses listed in D.O. 1002, Attachment C (you can find this document on your tablet, in the FYI app, under the Department Orders section).
-
-## What do I need to do to be released on DPR?
-
-While qualifying for DPR moves your release date earlier, the rules for getting out stay the same. You still have to meet all the standard requirements for your specific release type (like having an approved home plan or meeting literacy goals). You can find the full list of these rules on [this page](../more-information/important-dates).
-
-## What else should I know?
-
-If you qualify for DPR, you might also qualify for the [Drug Transition Program, or DTP](../more-information/important-dates#dtpDate). This program could allow you to leave prison up to 90 days earlier than your new DPR date.
+Talk to your COIII. They can look at your sentence and tell you which early release options are real for you.

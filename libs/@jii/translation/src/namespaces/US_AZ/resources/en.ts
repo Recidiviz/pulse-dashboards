@@ -33,13 +33,13 @@ export default {
   goLinkFull: "Read into full list of release types",
   dprInfoPage: {
     heading:
-      "You may qualify for earlier release through Drug Program Release (DPR). What does that mean?",
+      "What changed about Drug Program Release (DPR) information on this app",
     body: dprInfoPage,
   },
   importantDates: {
     dprBanner: {
       message:
-        "**You may qualify for Drug Program Release (DPR).** See how finishing a Major Program could move up your release dates.",
+        "**We’ve changed what the app shows about Drug Program Release (DPR) early release.** Tap “Learn more” to see why.",
       linkText: "Learn more",
     },
     sectionHeader: "Your Important Dates",
