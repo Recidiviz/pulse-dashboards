@@ -4,12 +4,33 @@
 # The creation_rules are selected in list-order priority. The first match is the one that is used
 creation_rules:
   # Contractor-specific rules (more specific patterns)
+  - path_regex: libs/@meetings/trpc-types/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
+  - path_regex: libs/@meetings/trpc/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
+  - path_regex: libs/@meetings/tasks/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
+  - path_regex: apps/@meetings/seed-demo/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
+  - path_regex: libs/@meetings/prisma/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
+  - path_regex: apps/@meetings/import/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
+  - path_regex: libs/@meetings/config/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
   - path_regex: apps/@meetings/app/.*\.contractor\.enc\.yaml$
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
-    age: age1j9nh8pk54l790m4km3zjemzgqhaytkfcjwya6js6pj3mhuz5xvwqxmhvup,age1huen0n38gr3v2xypee52t3yndtf7sjqws70rn8yhspupw0hqwu9s0e52vw
+    age: age1j9nh8pk54l790m4km3zjemzgqhaytkfcjwya6js6pj3mhuz5xvwqxmhvup,age1huen0n38gr3v2xypee52t3yndtf7sjqws70rn8yhspupw0hqwu9s0e52vw,age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
   - path_regex: apps/@meetings/server/.*\.contractor\.enc\.yaml$
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
-    age: age1j9nh8pk54l790m4km3zjemzgqhaytkfcjwya6js6pj3mhuz5xvwqxmhvup,age1huen0n38gr3v2xypee52t3yndtf7sjqws70rn8yhspupw0hqwu9s0e52vw
+    age: age1j9nh8pk54l790m4km3zjemzgqhaytkfcjwya6js6pj3mhuz5xvwqxmhvup,age1huen0n38gr3v2xypee52t3yndtf7sjqws70rn8yhspupw0hqwu9s0e52vw,age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
   # General rules
   - path_regex: apps/@jii/.+\.enc\.yaml$
     gcp_kms: projects/recidiviz-jii-staging/locations/us-central1/keyRings/recidiviz-jii-staging-sops/cryptoKeys/recidiviz-jii-staging-sops-key
