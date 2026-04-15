@@ -61,7 +61,7 @@ import { clearAllLoaders } from "./utils";
 
     test.beforeEach(async ({ page }) => {
       // the contents of this page are affected by the current date
-      await page.clock.setFixedTime("2025-10-28");
+      await page.clock.setFixedTime("2021-12-16");
     });
 
     test("with translator permission", async ({ page }) => {

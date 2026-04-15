@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { RawResidentRecord, ResidentRecord } from "./schema";
 import { rawUsArResidents, usArResidents } from "./US_AR/fixtures";
 import { rawUsAzResidents, usAzResidents } from "./US_AZ/fixtures";
 import { rawUsCoResidents, usCoResidents } from "./US_CO/fixtures";
@@ -36,7 +37,7 @@ export {
   usMeResidents,
 };
 
-export const allResidents = [
+export const allResidents: ResidentRecord[] = [
   ...usArResidents,
   ...usAzResidents,
   ...usCoResidents,
@@ -48,7 +49,7 @@ export const allResidents = [
   ...usTnResidents,
 ];
 
-export const rawAllResidents = [
+export const rawAllResidents: RawResidentRecord[] = [
   ...rawUsArResidents,
   ...rawUsAzResidents,
   ...rawUsCoResidents,

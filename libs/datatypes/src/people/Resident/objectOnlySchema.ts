@@ -40,6 +40,21 @@ import { usUtResidentMetadataSchema } from "./US_UT/metadata/schema";
  */
 const MISSING_DATE_SENTINEL = new Date(9999, 11, 1);
 
+export const stateMetadataSchemas = [
+  usArResidentMetadataSchema,
+  usAzResidentMetadataSchema,
+  usIdResidentMetadataSchema,
+  usMeResidentMetadataSchema,
+  usMaResidentMetadataSchema,
+  usMiResidentMetadataSchema,
+  usMoResidentMetadataSchema,
+  usNcResidentMetadataSchema,
+  usNdResidentMetadataSchema,
+  usNeResidentMetadataSchema,
+  usTnResidentMetadataSchema,
+  usUtResidentMetadataSchema,
+] as const;
+
 /**
  * This is an intermediate schema that should not be included in the public ~datatypes API.
  * It is separated out to support Zod operations on the object schema before transforms are applied
@@ -63,19 +78,6 @@ export const residentRecordObjectSchema =
       usTnFacilityAdmissionDate: nullishAsUndefined(dateStringSchema),
       usMePortionNeededEligibleDate: dateStringSchema.nullish(),
       gender: nullishAsUndefined(z.string()),
-      metadata: personMetadataSchema([
-        usArResidentMetadataSchema,
-        usAzResidentMetadataSchema,
-        usIdResidentMetadataSchema,
-        usMeResidentMetadataSchema,
-        usMaResidentMetadataSchema,
-        usMiResidentMetadataSchema,
-        usMoResidentMetadataSchema,
-        usNcResidentMetadataSchema,
-        usNdResidentMetadataSchema,
-        usNeResidentMetadataSchema,
-        usTnResidentMetadataSchema,
-        usUtResidentMetadataSchema,
-      ]),
+      metadata: personMetadataSchema([...stateMetadataSchemas]),
     }),
   );

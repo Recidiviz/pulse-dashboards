@@ -22,16 +22,16 @@ import { HOMEPAGE_URL } from "./utils";
 
 test.beforeEach(async ({ page }) => {
   // the contents of this page are affected by the current date
-  await page.clock.setFixedTime("2025-09-01");
+  await page.clock.setFixedTime("2021-12-16");
 
   await page.goto(HOMEPAGE_URL);
-  await page.getByRole("link", { name: "See August report" }).click();
+  await page.getByRole("link", { name: "See November report" }).click();
   await expect(
     page.getByRole("heading", { name: "Monthly Report" }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
-      name: "Earned time and program participation in August",
+      name: "Earned time and program participation in November",
     }),
   ).toBeVisible();
 });
@@ -41,5 +41,5 @@ test("accessibility", async ({ page }) => {
 });
 
 test("page title", async ({ page }) => {
-  expect(await page.title()).toBe("August 2025 Report – Opportunities");
+  expect(await page.title()).toBe("November 2021 Report – Opportunities");
 });

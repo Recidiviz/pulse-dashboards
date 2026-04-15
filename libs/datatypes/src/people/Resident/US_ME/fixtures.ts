@@ -43,7 +43,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "2/3" as const,
     recordId: "us_me_001",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "2/3",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -66,7 +70,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: 2 }),
     recordId: "us_me_002",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "2/3",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -88,7 +96,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "1/2" as const,
     recordId: "us_me_003",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "1/2",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -112,7 +124,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "1/2" as const,
     recordId: "us_me_004",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "1/2",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -134,7 +150,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "1/2" as const,
     recordId: "us_me_005",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "1/2",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -156,7 +176,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "2/3" as const,
     recordId: "us_me_006",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "2/3",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -178,7 +202,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "1/2" as const,
     recordId: "us_me_007",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "1/2",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -200,7 +228,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "2/3" as const,
     recordId: "us_me_008",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "2/3",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -225,7 +257,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "1/2" as const,
     recordId: "us_me_009",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "1/2",
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -244,7 +280,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
     recordId: "us_me_998",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: null,
+      sccpEligibilityDate: null,
+    },
   },
   {
     officerId: "OFFICER5",
@@ -266,7 +306,11 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     portionServedNeeded: "1/2" as const,
     recordId: "us_me_999",
     allEligibleOpportunities: [],
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      portionServedNeeded: "1/2",
+      sccpEligibilityDate: null,
+    },
   },
 ];
 

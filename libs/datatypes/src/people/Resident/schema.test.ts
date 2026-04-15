@@ -16,11 +16,22 @@
 // =============================================================================
 
 import { rawAllResidents } from "./fixtures";
+import { stateMetadataSchemas } from "./objectOnlySchema";
 import { residentRecordSchema } from "./schema";
+
+const statesWithMetadata: string[] = stateMetadataSchemas.map(
+  (s) => s.shape.stateCode.value,
+);
 
 test.each(rawAllResidents)(
   "schema for $stateCode $personExternalId",
   (input) => {
-    expect(residentRecordSchema.parse(input)).toMatchSnapshot();
+    const output = residentRecordSchema.parse(input);
+    expect(output).toMatchSnapshot();
+
+    // Residents in state with defined metadata schemas must have non-empty metadata
+    if (statesWithMetadata.includes(input.stateCode)) {
+      expect(output.metadata.stateCode).toBeDefined();
+    }
   },
 );
