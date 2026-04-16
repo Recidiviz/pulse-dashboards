@@ -5,8 +5,8 @@
 1. Follow the instructions for using the [Android Emulator](https://docs.expo.dev/workflow/android-studio-emulator/) with Expo
 1. Follow the instructions for using the [iOS Emulator](https://docs.expo.dev/workflow/ios-simulator/) with Expo
 1. Run `adb reverse tcp:3002 tcp:3002` to allow the Android Emulator to talk to a local backend server
-1. [Optional] To be able to run locally against real data or submit builds:
-   1. [Sign up](https://expo.dev/signup) for an Expo account and ask in the #meeting-assistant slack channel to be added to the Recidiviz org.
+1. [Optional] To be able to submit builds:
+   1. [Sign up](https://expo.dev/signup) for an Expo account and file an access request at [go/access](http://go/access) to be added to the Recidiviz Expo org.
    1. Install the EAS cli: `npm install -g eas-cli`
    1. Log in to expo: `eas login`
 
@@ -48,8 +48,8 @@ nx sync-env-to-eas @meetings/app --configuration production
 ## Running locally
 
 1. Follow [instructions](../../@meetings/server/README.md) for running a local server
-1. There are three development targets: `web`, `ios`, and `android`. Run them using `nx` i.e. `nx run @meetings/app:web`
-   1. To run against the live staging backend specify `--configuration=staging`
+1. There are three development targets: `web`, `dev:ios` (or `dev:ios:device` for a physical device), and `dev:android`. Run them using `nx` i.e. `nx web @meetings/app`
+   1. To run against the live staging backend specify `-c staging`
 
 ### Running locally on a physical device
 

@@ -11,12 +11,8 @@ Some technical details:
 
 If you haven't already, follow the setup instructions in the root README to install dependencies.
 
-1. Get env variables by running `nx load-env-files @meetings/server`
-
-   This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
-
-2. Make sure you have your Docker daemon running.
-3. To point to your own GCS bucket for local development:
+1. Make sure you have your Docker daemon running.
+2. To point to your own GCS bucket for local development:
 
    1. Create a GCS bucket in the recidiviz-dashboard-staging project with the pattern `recidiviz-dashboard-staging-[your-name]-meetings-test-bucket`
    1. Set the CORS policy on the bucket by running `gcloud storage buckets update gs://[your-bucket-name] --cors-file=apps/@meetings/server/gcs-cors.json`
@@ -29,24 +25,13 @@ If you haven't already, follow the setup instructions in the root README to inst
 
    Replace `your-bucket-name` with the name of your GCS bucket.
 
-4. Get the service account key JSON file for the `recidiviz-dashboard-staging` GCP project from your team lead and put it in this directory. Name the file `recidiviz-dashboard-staging-22598baea1a7.json`.
-5. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx run @meetings/prisma:docker && nx run @meetings/prisma:prisma-seed` to seed the database with initial data.
-6. Start the server with `nx dev @meetings/server`.
+3. Get the service account key JSON file for the `recidiviz-dashboard-staging` GCP project from your team lead and put it in this directory. Name the file `recidiviz-dashboard-staging-22598baea1a7.json`.
+4. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx prisma-seed @meetings/prisma` to seed the database with initial data (Docker starts automatically as a dependency).
+5. Start the server with `nx dev @meetings/server`.
 
 ### Local Mode (No GCS)
 
-If you want to run the meeting assistant without connecting to Google Cloud Storage (useful for local development or testing), you can enable local mode:
-
-1. In your `.env.dev` file, add the following:
-
-   ```
-   IS_LOCAL_MODE=true
-   LOCAL_STORAGE_DIR=/path/to/local/storage  # Optional, defaults to system temp directory
-   ```
-
-2. Start the server with `nx dev @meetings/server`.
-
-**How Local Mode Works:**
+When running locally via `nx dev @meetings/server`, local mode is enabled automatically. This means:
 
 - Audio recordings are stored locally on your file system instead of GCS
 - The signed URL endpoint returns a local HTTP endpoint (`/upload-audio/:meetingId/:filename`)
@@ -54,10 +39,7 @@ If you want to run the meeting assistant without connecting to Google Cloud Stor
 - Files are automatically cleaned up after transcription completes
 - No GCS bucket or service account credentials needed
 
-**Environment Variables:**
-
-- `IS_LOCAL_MODE`: Set to `"true"` to enable local mode (default: `false`)
-- `LOCAL_STORAGE_DIR`: Directory for storing audio files locally (default: `{system-temp}/meetings-local`)
+The `LOCAL_STORAGE_DIR` environment variable can optionally be set to control where local audio files are stored (default: `{system-temp}/meetings-local`). To disable local mode and connect to GCS instead, set `IS_LOCAL_MODE=false` in your `.env.dev` file.
 
 ### Updating the prisma schema
 
@@ -65,17 +47,14 @@ Instructions for updating the prisma schema are in the [prisma README](../../lib
 
 ### Add support for a new state
 
-Note: This is just for the application to support a new state. You will still need to add metric exports + Cloud Storage notifications for the new state in order for data to be be imported for the new state.
+See [PR #13148](https://github.com/Recidiviz/pulse-dashboards/pull/13148) for the most up-to-date example of what's involved in adding a new state (as of April 2026). At a high level:
 
-Note: this process is the same for both staging and production.
-
-1. For the new state, create a new database in the Cloud SQL instance. The naming convention for these databases is the tenant id in all lowercase, like `us_ca` for California.
-
-2. Next, add a new environment variable for the new state's database connection string to `env_[prod/staging]_meetings_server` in Google Secrets. The naming convention for these environment variables is `DATABASE_URL_{STATE_ABBREVIATION}`. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA` with the connection string for the California database.
-
-3. Under the `migrate-db` target in the `meetings` `project.json` file, append `DATABASE_URL_{STATE_ABBREVIATION}=$DATABASE_URL_{STATE_ABBREVIATION}` to the `--set-env-vars` portion of the `command`. This will ensure that the database migration job has the correct environment variables.
-
-4. Under the `deploy-app` target in the `meetings` `project.json` file, add `"DATABASE_URL_{STATE_ABBREVIATION}": "$DATABASE_URL_{STATE_ABBREVIATION}"` to the `envVars` dictionary. This will ensure that the server has the correct environment variables.
+1. Create a state config file at `libs/@meetings/config/src/US_XX.ts` with the state's name, state code, and department keyword(s).
+2. Register it in `libs/@meetings/config/src/configs.ts` (import + add to `AGENCY_CONFIGS`).
+3. Add it to `AVAILABLE_STATE_CODES` in `StateContext.tsx`.
+4. Add the lowercase state code to `additional_databases` in `libs/atmos/components/terraform/apps/meetings/main.tf`.
+5. Update `DATABASE_STATE_CODES` in `libs/atmos/components/terraform/env-secrets/secrets/meetings.enc.yaml` for staging and production.
+6. Add the state's meetings export in `recidiviz-data` — see [recidiviz-data PR #71761](https://github.com/Recidiviz/recidiviz-data/pull/71761) as an example.
 
 ### Why the Prisma schema and migration files are included in the build
 
@@ -89,15 +68,12 @@ We have integration tests for the server + database.
 
 In order to run these tests:
 
-1. Get any necessary env variables from [GSM](https://console.cloud.google.com/security/secret-manager/secret/env_test_meetings_server/versions?project=recidiviz-dashboard-staging) and put them in an `.env.test` file (the name must match exactly for nx to pick up on the variables) in the `apps/@meetings/server` directory.
-2. Make sure you have your Docker daemon running.
-3. Run `nx test @meetings/server` to run the tests.
+1. Make sure you have your Docker daemon running.
+2. Run `nx test @meetings/server` to run the tests.
 
 ## Previews
 
-Whenever you create a PR with changes to the meetings server, a preview deployment will be created with a preview database, preview migrate job, and preview cloud run server using your PRs code. The preview `staff` app will also be initialized to point to the preview server, so you can test any changes end to end!
-
-NOTE: The preview server is great for testing changes to the TRPC routes, but it does not currently have any functionality for testing data imports.
+Whenever you create a meetings-related PR, a preview frontend will be deployed to Firebase Hosting. A dedicated preview server and database are not yet created automatically for PRs.
 
 ### Debugging Preview Database issues
 
