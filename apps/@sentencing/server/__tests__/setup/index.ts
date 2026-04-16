@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { init } from "@sentry/node";
-import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
-import { beforeAll, beforeEach } from "vitest";
+import { beforeEach } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@sentencing/prisma";
 import { StateCode } from "~@sentencing/prisma/client";
@@ -33,63 +33,50 @@ export const testPort = process.env["PORT"]
   : 3003;
 export const testHost = process.env["HOST"] ?? "localhost";
 
-export let testTRPCClient: TRPCClient<AppRouter>;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
 const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
-beforeAll(async () => {
-  init({
-    dsn: process.env["SENTRY_DSN"],
-    transport: sentryTransport,
-    maxValueLength: 10000,
-  });
+export const testServer = buildServer();
 
-  const testServer = buildServer();
+init({
+  dsn: process.env["SENTRY_DSN"],
+  transport: sentryTransport,
+  maxValueLength: 10000,
+});
 
-  // Override he jwtVerify function to always pass
-  testServer.addHook("preHandler", (req, reply, done) => {
-    req.jwtVerify = async () => {
-      return;
-    };
+// Override he jwtVerify function to always pass
+testServer.addHook("preHandler", (req, reply, done) => {
+  req.jwtVerify = async () => {
+    return;
+  };
 
-    req.user = {
-      "https://dashboard.recidiviz.org/app_metadata": {
-        stateCode: "us_id",
-        allowedStates: [],
+  req.user = {
+    "https://dashboard.recidiviz.org/app_metadata": {
+      stateCode: "us_id",
+      allowedStates: [],
+    },
+    "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
+  };
+  done();
+});
+
+export const testTRPCClient = createTRPCClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: `http://${testHost}:${testPort}`,
+      headers() {
+        return {
+          Authorization: "Bearer test-token",
+          StateCode: "US_ID",
+        };
       },
-      "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
-    };
-    done();
-  });
-
-  // Start listening.
-  testServer.listen({ port: testPort, host: testHost }, (err) => {
-    if (err) {
-      testServer.log.error(err);
-      process.exit(1);
-    } else {
-      console.log(`[ ready ] http://${testHost}:${testPort}`);
-    }
-  });
-
-  testTRPCClient = createTRPCClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: `http://${testHost}:${testPort}`,
-        headers() {
-          return {
-            Authorization: "Bearer test-token",
-            StateCode: "US_ID",
-          };
-        },
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
-      }),
-    ],
-  });
+      // Required to get Date objects to serialize correctly.
+      transformer: superjson,
+    }),
+  ],
 });
 
 beforeEach(async () => {

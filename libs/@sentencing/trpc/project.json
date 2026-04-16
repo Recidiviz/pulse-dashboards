@@ -3,19 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@sentencing/trpc/src",
   "projectType": "library",
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@sentencing/server"
+    }
+  },
   "tags": ["sentencing", "scope:server"],
   "targets": {
     "update-findhelp-labels": {
       "executor": "nx:run-commands",
       "options": {
         "command": "tsx findhelp-taxonomy/update-findhelp-labels.mts",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_sentencing_server --env_test env_test_sentencing_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -29,23 +27,23 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
           "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        },
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "docker"
+          "target": "custom-prisma-deploy"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/libs/@sentencing/trpc"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @sentencing/prisma && cd libs/@sentencing/trpc && vitest",
-        "cwd": "{workspaceRoot}"
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     }
   }

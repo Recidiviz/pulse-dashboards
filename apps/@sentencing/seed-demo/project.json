@@ -4,13 +4,6 @@
   "sourceRoot": "apps/@sentencing/seed-demo/src",
   "projectType": "application",
   "targets": {
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_sentencing_server --env_demo env_demo_sentencing_server",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "dependsOn": [
@@ -50,8 +43,7 @@
         {
           "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
-        },
-        "load-env-files"
+        }
       ],
       "options": {
         "platform": "node",

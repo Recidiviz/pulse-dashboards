@@ -16,12 +16,10 @@
 // =============================================================================
 
 /* Disabling these rules for the entire file since this is a seed script*/
-/* eslint-disable no-await-in-loop, no-restricted-imports */
+/* eslint-disable no-await-in-loop */
 import * as readline from "node:readline";
 
 import { faker } from "@faker-js/faker";
-
-import { getPrismaClientForStateCode } from "~@sentencing/prisma/utils";
 
 import {
   AsamLevelOfCareRecommendationCriterion,
@@ -40,7 +38,8 @@ import {
   StateCode,
   SubstanceUseDiagnosis,
   TreatmentProgramCategory,
-} from "./client/client";
+} from "~@sentencing/prisma/client";
+import { getPrismaClientForStateCode } from "~@sentencing/prisma/utils";
 interface Auth0TokenResponse {
   access_token: string;
   scope: string;

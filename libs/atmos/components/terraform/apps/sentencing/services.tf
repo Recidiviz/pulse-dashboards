@@ -31,7 +31,7 @@ resource "google_project_iam_member" "workflowsinvoker" {
   member  = "serviceAccount:${google_service_account.default.email}"
 
   # Only create this resource if the import job is configured
-  count = local.can_configure_import ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 }
 
 # Grant Eventarc eventReceiver so the service account can receive events
@@ -41,7 +41,7 @@ resource "google_project_iam_member" "eventarceventreceiver" {
   member  = "serviceAccount:${google_service_account.default.email}"
 
   # Only create this resource if the import job is configured
-  count = local.can_configure_import ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 }
 
 # Grant Iam service account user so the service account can orchestrate the internal cloud run service accounts
@@ -72,7 +72,7 @@ resource "google_project_iam_member" "storageobjectviewer" {
   member  = "serviceAccount:${google_service_account.default.email}"
 
   # Only create this resource if the import job is configured
-  count = local.can_configure_import ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 }
 
 resource "google_pubsub_topic" "sentencing_export_success_topic" {
@@ -80,5 +80,5 @@ resource "google_pubsub_topic" "sentencing_export_success_topic" {
   project = var.project_id
 
   # Only create this resource if the import job is configured
-  count = local.can_configure_import ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 }

@@ -27,9 +27,7 @@ components:
         artifact_registry_project_id: '{{ (atmos.Component "apps/sentencing" "recidiviz-dashboard-staging--sentencing").vars.project_id }}'
         database_availability_type: REGIONAL
         database_secondary_zone: us-central1-c
-        server_env_key: env_prod_sentencing_server
-        migrate_db_env_key: env_prod_sentencing_migrate_db
-        data_import_env_key: env_prod_sentencing_data_import
+        environment: production
         private_network: projects/recidiviz-dashboard-production/global/networks/default
 
     postgres-bq-data-transfer:

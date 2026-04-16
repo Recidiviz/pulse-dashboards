@@ -89,26 +89,20 @@ variable "migrate_db_name" {
   default     = "sentencing-migrate-db"
 }
 
-variable "configure_import" {
+variable "demo_mode" {
   type        = bool
-  description = "Whether to include the import-related resources"
-  default     = true
+  description = "Whether or not to configure demo resources"
+  default     = false
 }
 
-variable "server_env_key" {
+variable "environment" {
   type        = string
-  description = "The key for the server env"
-}
+  description = "The environment name to load its corresponding environment file from ./secrets/ from"
 
-variable "migrate_db_env_key" {
-  type        = string
-  description = "The key for the migrate db env"
-}
-
-variable "data_import_env_key" {
-  type        = string
-  description = "The key for the import data env"
-  default     = null
+  validation {
+    condition     = contains(["demo", "staging", "production"], var.environment)
+    error_message = "ERROR: Valid values for 'environment' are \"demo\", \"staging\", and \"production\"!"
+  }
 }
 
 variable "service_account_id" {

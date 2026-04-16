@@ -1,54 +1,28 @@
-data "sops_file" "env" {
-  source_file = "../../env-secrets/secrets/sentencing_server.enc.yaml"
+data "sops_file" "shared_env" {
+  source_file = "./secrets/env.shared.enc.yaml"
 }
 
+data "sops_file" "env" {
+  source_file = "./secrets/env.${var.environment}.enc.yaml"
+}
+
+
 locals {
+  shared_env  = yamldecode(data.sops_file.shared_env.raw)
   env_secrets = yamldecode(data.sops_file.env.raw)
 
-  shared_server_env = local.env_secrets["env_sentencing_server"]
-  server_env        = local.env_secrets[var.server_env_key]
-
-  migrate_db_env = local.env_secrets[var.migrate_db_env_key]
-
-  shared_data_import_env = local.env_secrets["env_sentencing_data_import"]
-  can_configure_import   = var.configure_import && var.data_import_env_key != null
-  data_import_env        = local.can_configure_import ? local.env_secrets[var.data_import_env_key] : {}
-
-  server_image_name = "sentencing-server"
-
-  migrate_db_image_name = "sentencing-server"
-
-  import_image_name = "sentencing-data-import"
-  import_job_name   = "sentencing-data-import"
+  server_image     = "${var.artifact_registry_repo}/sentencing-server:${var.server_container_version}"
+  migrate_db_image = "${var.artifact_registry_repo}/sentencing-server:${var.migrate_db_container_version}"
+  import_job_image = "${var.artifact_registry_repo}/sentencing-data-import:${var.import_container_version}"
+  import_job_name  = "sentencing-data-import"
 
   etl_bucket_name     = "sentencing-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  server_env_vars = nonsensitive([
-    for key, value in merge(local.shared_server_env, local.server_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  migrate_db_env_vars = nonsensitive([
-    for key, value in local.migrate_db_env : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  data_import_env_vars = nonsensitive([
-    for key, value in merge(local.shared_data_import_env, local.data_import_env) : {
+  env_vars = nonsensitive([
+    for key, value in merge(local.shared_env, local.env_secrets) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -92,9 +66,12 @@ module "server" {
 
   containers = [
     {
-      container_image = "${var.artifact_registry_repo}/${local.server_image_name}:${var.server_container_version}"
+      container_image = local.server_image
 
-      env_vars = local.server_env_vars
+      env_vars = concat([
+        { name = "SENTRY_DSN", value = "https://4dfb7cc349417f57a791991bfd3173f5@o432474.ingest.us.sentry.io/4507227545010176" },
+        { name = "SENTRY_PROJECT", value = "sentencing-server" },
+      ], local.env_vars)
 
       volume_mounts = [{
         name       = "cloudsql"
@@ -103,14 +80,12 @@ module "server" {
     }
   ]
 
-
   volumes = [{
     name = "cloudsql"
     cloud_sql_instance = {
       instances = [module.database.connection_name]
     }
-    }
-  ]
+  }]
 
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
 }
@@ -120,21 +95,21 @@ module "migrate_db_job" {
   source                        = "../../vendor/cloud-run-job-exec"
   exec                          = true
   name                          = var.migrate_db_name
-  image                         = "${var.artifact_registry_repo}/${local.migrate_db_image_name}:${var.migrate_db_container_version}"
+  image                         = local.migrate_db_image
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.migrate_db_env_vars
+  env_vars                      = local.env_vars
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   container_command             = ["./scripts/migrate-dbs.sh"]
+  max_retries                   = 1
 
   volumes = [{
     name = "cloudsql"
     cloud_sql_instance = {
       instances = [module.database.connection_name]
     }
-    }
-  ]
+  }]
 
   volume_mounts = [{
     name       = "cloudsql"
@@ -142,26 +117,25 @@ module "migrate_db_job" {
   }]
 }
 
-moved {
-  from = module.migrate-db-job
-  to   = module.migrate_db_job
-}
 # Configure a job that will import data
 # We don't execute it on deploy - it will be run when the workflow is triggered
 module "import_job" {
   source = "../../vendor/cloud-run-job-exec"
 
   # Don't create an import job for demo
-  count = local.can_configure_import ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 
-  exec                          = false
-  name                          = local.import_job_name
-  image                         = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_container_version}"
-  project_id                    = var.project_id
-  location                      = var.location
-  env_vars                      = local.data_import_env_vars
+  name       = local.import_job_name
+  image      = local.import_job_image
+  project_id = var.project_id
+  location   = var.location
+  env_vars = concat([
+    { name = "SENTRY_DSN", value = "https://324bfceba46756ff2b971747e423abc6@o432474.ingest.us.sentry.io/4508914785714176" },
+    { name = "SENTRY_PROJECT", value = "sentencing-data-import" },
+  ], local.env_vars)
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
+  exec                          = false
   timeout                       = "3600s"
   max_retries                   = 1
 
@@ -170,8 +144,7 @@ module "import_job" {
     cloud_sql_instance = {
       instances = [module.database.connection_name]
     }
-    }
-  ]
+  }]
 
   volume_mounts = [{
     name       = "cloudsql"
@@ -180,15 +153,11 @@ module "import_job" {
 }
 
 
-moved {
-  from = module.import-job
-  to   = module.import_job
-}
 module "gcs_bucket" {
   source = "../../vendor/submodules/cloud-storage-bucket"
 
   # Don't create a bucket for demo
-  count = local.can_configure_import ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 
   project_id = var.project_id
   location   = var.location
@@ -231,7 +200,7 @@ module "handle_sentencing_gcs_upload" {
   source = "../../vendor/google-workflows-workflow"
 
   # Don't create a workflow for demo
-  count = local.can_configure_import ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 
   project_id            = var.project_id
   region                = var.location
@@ -257,9 +226,4 @@ module "handle_sentencing_gcs_upload" {
     ARCHIVE_BUCKET_ID = module.gcs_bucket[0].names[local.archive_bucket_name]
     ETL_BUCKET_ID     = module.gcs_bucket[0].names[local.etl_bucket_name]
   }
-}
-
-moved {
-  from = module.handle-sentencing-gcs-upload
-  to   = module.handle_sentencing_gcs_upload
 }

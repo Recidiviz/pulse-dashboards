@@ -3,26 +3,30 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@sentencing/prisma/src",
   "projectType": "library",
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@sentencing/server"
+    }
+  },
   "tags": ["sentencing", "scope:server"],
   "targets": {
-    "load-env-files": {
+    "typecheck": {
       "executor": "nx:run-commands",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
+      "dependsOn": ["prisma-generate"],
       "options": {
-        "command": "../../../tools/load_env_files.sh --env env_sentencing_server --env_test env_test_sentencing_server",
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
         "cwd": "{projectRoot}"
       }
     },
-    "typecheck": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        }
-      ]
-    },
-    "test": {
-      "executor": "nx:run-commands",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "dependsOn": ["prisma-generate"],
       "outputs": ["{workspaceRoot}/coverage/libs/@sentencing/prisma"],
       "cache": true,
@@ -38,105 +42,145 @@
       },
       "configurations": {
         "dev": {
-          "command": "docker compose up --wait"
+          "command": "docker compose up --remove-orphans --wait"
         },
-        "ci": {
+        "test": {
           "command": "echo 'No docker for CI'"
         }
       },
       "defaultConfiguration": "dev"
     },
-    "prisma": {
+    "requires-sops-env:prisma": {
       "executor": "nx:run-commands",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
-        "commands": [
-          "yarn prisma"
-        ],
+        "commands": ["yarn prisma"],
         "forwardAllArgs": true,
         "cwd": "{projectRoot}"
       }
     },
-    "prisma-generate": {
+    "requires-sops-env:prisma-generate": {
       "inputs": ["{projectRoot}/prisma/schema.prisma"],
       "executor": "@nx-tools/nx-prisma:generate",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-format": {
+    "requires-sops-env:prisma-format": {
       "executor": "@nx-tools/nx-prisma:format",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-migrate": {
+    "requires-sops-env:prisma-migrate": {
       "dependsOn": ["docker"],
       "executor": "@nx-tools/nx-prisma:migrate",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-pull": {
+    "requires-sops-env:prisma-pull": {
       "executor": "@nx-tools/nx-prisma:pull",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-push": {
+    "requires-sops-env:prisma-push": {
       "executor": "@nx-tools/nx-prisma:push",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "dependsOn": ["docker"],
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-deploy": {
+    "requires-sops-env:prisma-deploy": {
       "executor": "@nx-tools/nx-prisma:deploy",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-status": {
+    "requires-sops-env:prisma-status": {
       "executor": "@nx-tools/nx-prisma:status",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-studio": {
+    "requires-sops-env:prisma-studio": {
       "executor": "@nx-tools/nx-prisma:studio",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-reset": {
+    "requires-sops-env:prisma-reset": {
       "executor": "@nx-tools/nx-prisma:reset",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-resolve": {
+    "requires-sops-env:prisma-resolve": {
       "executor": "@nx-tools/nx-prisma:resolve",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "prisma-seed": {
+    "requires-sops-env:prisma-seed": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "load-env-files",
-        "docker",
-        "prisma-deploy",
-        "prisma-generate"
-      ],
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
+      "dependsOn": ["docker", "prisma-deploy", "prisma-generate"],
       "options": {
-        "cwd": "{projectRoot}",
-        "command": "yarn tsx --tsconfig tsconfig.json src/seed.ts"
+        "command": "tsx src/run-seed.ts",
+        "cwd": "{projectRoot}"
       }
     },
-    "prisma-validate": {
+    "requires-sops-env:prisma-validate": {
       "executor": "@nx-tools/nx-prisma:validate",
+      "configurations": { "dev": {}, "test": {} },
+      "defaultConfiguration": "dev",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
+    },
+    "requires-sops-env:custom-prisma-deploy": {
+      "executor": "nx:run-commands",
+      "configurations": {
+        "dev": {},
+        "test": {
+          "command": "echo 'Migrations are run by Github actions - skipping in CI'"
+        }
+      },
+      "defaultConfiguration": "dev",
+      "dependsOn": [{ "target": "docker" }, { "target": "prisma-generate" }],
+      "options": {
+        "command": "sh scripts/migrate-dbs.sh",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/prisma/schema.prisma",
+        "{projectRoot}/prisma/migrations/**",
+        "{projectRoot}/scripts/migrate-dbs.sh"
+      ],
+      "outputs": []
     }
   }
 }

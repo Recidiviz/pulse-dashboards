@@ -5,13 +5,6 @@
   "projectType": "application",
   "tags": ["sentencing", "scope:server"],
   "targets": {
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_sentencing_server --env_staging env_staging_sentencing_server --env_prod env_prod_sentencing_server --env_test env_test_sentencing_server --env_preview env_preview_sentencing_server --env_demo env_demo_sentencing_server",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "dependsOn": [
@@ -28,7 +21,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "dev": {
+    "requires-sops-env:dev": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
@@ -60,8 +53,7 @@
         {
           "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
-        },
-        "load-env-files"
+        }
       ],
       "options": {
         "platform": "node",
@@ -119,23 +111,23 @@
         "buildTarget": "@sentencing/server:build"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
           "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        },
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "docker"
+          "target": "custom-prisma-deploy"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/sentencing"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @sentencing/prisma && cd apps/@sentencing/server && vitest",
-        "cwd": "{workspaceRoot}"
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     },
     "requires-sops-env:upload-sourcemaps": {},
@@ -188,7 +180,6 @@
     },
     "migrate-preview-db": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-files"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "../../../tools/migrate_sentencing_preview_db.sh"
@@ -196,7 +187,7 @@
     },
     "deploy-preview-app": {
       "executor": "@nx-extend/gcp-cloud-run:deploy",
-      "dependsOn": ["load-env-files", "migrate-preview-db"],
+      "dependsOn": ["migrate-preview-db"],
       "options": {
         "name": "ss-preview-$VERSION",
         "region": "us-central1",

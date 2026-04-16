@@ -8,14 +8,6 @@ Some technical details:
 - The server uses [Prisma](https://www.prisma.io/) to interact with the database.
 
 Resource links:
-Env Files
-
-- [env_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_staging_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_staging_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_prod_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_prod_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_test_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_preview_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_preview_sentencing_server/versions?project=recidiviz-dashboard-staging)
-
 Staging
 
 - [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing/metrics?project=recidiviz-dashboard-staging)
@@ -42,16 +34,7 @@ The PSI/Sentencing features are currently configured for certain states. You nee
 
 Submit an access request through the Security team to be granted access to North Dakota (ND), Idaho (ID), or Missouri (MO) via our Auth0 staging tenant.
 
-**Step 2: Load Environment Variables**
-Before running the server, you must securely fetch the necessary secrets (like `AUTH0_CLIENT_SECRET` and database URLs) from Google Cloud Secret Manager.
-
-First, run `gcloud auth login` to authenticate.
-
-Next, run the following command to load the environment variables into your local .env files:
-
-`nx run @sentencing/server:load-env-files`
-
-**Step 3: Seed the Database (First Run or Reset)**
+**Step 2: Seed the Database (First Run or Reset)**
 The seed command performs a full database reset, creates all test fixture data, and crucially, links that data to your Auth0 pseudonymizedId.
 
 Database Scope: Locally, we only seed the database for Idaho (ID). You must always develop and test locally using your ID credentials.
@@ -60,7 +43,7 @@ Run the Command: Execute the seed command below. It will prompt you for your Rec
 
 `nx run @sentencing/prisma:prisma-seed`
 
-**Step 4: Start the Backend and Frontend**
+**Step 3: Start the Backend and Frontend**
 Run the required services in separate terminal tabs.
 
 Start the Backend:
@@ -111,9 +94,8 @@ We have integration tests for the server + database.
 
 In order to run these tests:
 
-1. Get any necessary env variables from [GSM](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging) and put them in an `.env.test` file (the name must match exactly for nx to pick up on the variables) in the `apps/sentencing` directory.
-2. Make sure you have your Docker daemon running.
-3. Run `nx test sentencing` to run the tests.
+1. Make sure you have your Docker daemon running.
+2. Run `nx test @sentencing/server` to run the tests.
 
 ## Previews
 
