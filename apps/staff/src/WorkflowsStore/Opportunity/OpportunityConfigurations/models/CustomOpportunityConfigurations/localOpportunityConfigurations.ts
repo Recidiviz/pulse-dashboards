@@ -20,6 +20,7 @@ import { OpportunityType } from "~datatypes";
 import { TenantId } from "../../../../../RootStore/types";
 import { PartialRecord } from "../../../../../utils/typeUtils";
 import { IApiOpportunityConfiguration } from "../../interfaces";
+import { usTnBiannualOtherReclassificationConfiguration } from "./UsTn/raw/UsTnBiannualOtherReclassificationConfiguration";
 import { usTnSeriousMisconductUpgradeConfiguration } from "./UsTn/raw/UsTnSeriousMisconductUpgradeConfiguration";
 import { usTnTrusteeTransferConfiguration } from "./UsTn/raw/UsTnTrusteeTransferConfiguration";
 
@@ -34,6 +35,7 @@ export const localOpportunityConfigParams: PartialRecord<
 > = {
   US_TN: {
     usTnTrusteeTransfer: usTnTrusteeTransferConfiguration,
+    usTnBiannualOther: usTnBiannualOtherReclassificationConfiguration,
     usTnSeriousMisconductUpgrade: usTnSeriousMisconductUpgradeConfiguration,
   },
 };

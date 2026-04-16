@@ -105,6 +105,7 @@ export const constructedOpportunityTypes = [
   "usTnInitialClassification2026Policy",
   "usTnCustodyLevelDowngrade2026Policy",
   "usTnSpecialCustodyLevelUpgrade2026Policy",
+  "usTnBiannualOther",
   "usTnTrusteeTransfer",
   "usTnSeriousMisconductUpgrade",
 

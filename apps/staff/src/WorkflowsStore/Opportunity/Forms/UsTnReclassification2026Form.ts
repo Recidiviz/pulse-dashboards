@@ -25,6 +25,7 @@ import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyRe
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import {
   UsTnAnnualReclassification2026Opportunity,
+  UsTnBiAnnualOtherReclassificationOpportunity,
   UsTnSeriousMisconductUpgradeOpportunity,
   UsTnTrusteeTransferOpportunity,
 } from "../UsTn";
@@ -45,6 +46,7 @@ const QUESTION_TEMPLATE_MAP = {
 export class UsTnReclassification2026Form extends FormBase<
   UsTnReclassification2026DraftData,
   | UsTnAnnualReclassification2026Opportunity
+  | UsTnBiAnnualOtherReclassificationOpportunity
   | UsTnTrusteeTransferOpportunity
   | UsTnSeriousMisconductUpgradeOpportunity
 > {

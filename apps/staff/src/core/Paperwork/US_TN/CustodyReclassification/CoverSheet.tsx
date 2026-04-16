@@ -30,6 +30,7 @@ import FormDropdown from "./FormDropdown";
 import FormInput from "./FormInput";
 import FormRadioButton from "./FormRadioButton";
 import { FormContainer, Label } from "./styles";
+import { CLASSIFICATION_TYPE_BY_OPPORTUNITY } from "./utils";
 
 const CUSTODY_LEVELS = ["TRUSTEE", "LOW", "MEDIUM", "CLOSE", "MAX"];
 const OVERRIDE_TYPES = [
@@ -42,14 +43,7 @@ const OVERRIDE_TYPES = [
   "Parole Grant/Technical Violator's Program(s)/SAIU (C3DEC)",
   "Vulnerability (C5DEC)",
 ];
-const CLASSIFICATION_TYPES = [
-  "Diagnostic Classification",
-  "Annual Reclassification",
-  "Special Reclassification: Upgrade Due to Updated CAF Scoring",
-  "Special Reclassification: Upgrade for Serious Misconduct",
-  "Special Reclassification: Transfer to Trustee or Transition Center",
-  "Special Reclassification: Downgrade",
-];
+const CLASSIFICATION_TYPES = Object.values(CLASSIFICATION_TYPE_BY_OPPORTUNITY);
 
 const Container = styled.div`
   font-family: monospace;

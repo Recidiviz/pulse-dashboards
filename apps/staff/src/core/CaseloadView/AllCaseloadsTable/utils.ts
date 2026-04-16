@@ -26,6 +26,7 @@ export const US_TN_CLASSIFICATION_OPPORTUNITIES = [
   "usTnInitialClassification2026Policy",
   "usTnSpecialCustodyLevelUpgrade2026Policy",
   "usTnTrusteeTransfer",
+  "usTnBiannualOther",
   "usTnSeriousMisconductUpgrade",
 ] satisfies OpportunityType[];
 

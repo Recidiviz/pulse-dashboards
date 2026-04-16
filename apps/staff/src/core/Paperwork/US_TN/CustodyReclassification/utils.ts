@@ -24,8 +24,25 @@ import {
 } from "~datatypes";
 import { formatDate } from "~utils";
 
+import { PartialRecord } from "../../../../utils/typeUtils";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import { DocxTemplateFormContents } from "../../DOCXFormGenerator";
+
+export const CLASSIFICATION_TYPE_BY_OPPORTUNITY: PartialRecord<
+  OpportunityType,
+  string
+> = {
+  usTnInitialClassification2026Policy: "Diagnostic Classification",
+  usTnAnnualReclassification2026Policy: "Annual Reclassification",
+  usTnSpecialCustodyLevelUpgrade2026Policy:
+    "Special Reclassification: Upgrade Due to Updated CAF Scoring",
+  usTnSeriousMisconductUpgrade:
+    "Special Reclassification: Upgrade for Serious Misconduct",
+  usTnTrusteeTransfer:
+    "Special Reclassification: Transfer to Trustee or Transition Center",
+  usTnCustodyLevelDowngrade2026Policy: "Special Reclassification: Downgrade",
+  usTnBiannualOther: "Bi-annual/Other",
+};
 
 export function prefilledCoverSheetData(
   resident: Resident,
@@ -46,32 +63,9 @@ export function prefilledCoverSheetData(
     ?.map(({ incompatibleOffenderId }) => incompatibleOffenderId)
     .join(", ");
 
-  switch (opportunityType) {
-    case "usTnInitialClassification":
-    case "usTnAnnualReclassification":
-      // neither of these populate this field in the cover sheet
-      break;
-    case "usTnInitialClassification2026Policy":
-      out.classificationType = "Diagnostic Classification";
-      break;
-    case "usTnAnnualReclassification2026Policy":
-      out.classificationType = "Annual Reclassification";
-      break;
-    case "usTnSpecialCustodyLevelUpgrade2026Policy":
-      out.classificationType =
-        "Special Reclassification: Upgrade Due to Updated CAF Scoring";
-      break;
-    case "usTnSeriousMisconductUpgrade":
-      out.classificationType =
-        "Special Reclassification: Upgrade for Serious Misconduct";
-      break;
-    case "usTnTrusteeTransfer":
-      out.classificationType =
-        "Special Reclassification: Transfer to Trustee or Transition Center";
-      break;
-    case "usTnCustodyLevelDowngrade2026Policy":
-      out.classificationType = "Special Reclassification: Downgrade";
-      break;
+  if (opportunityType in CLASSIFICATION_TYPE_BY_OPPORTUNITY) {
+    out.classificationType =
+      CLASSIFICATION_TYPE_BY_OPPORTUNITY[opportunityType];
   }
 
   if (

@@ -16,6 +16,7 @@
 // =============================================================================
 
 export * from "./UsTnAnnualReclassification2026Opportunity";
+export * from "./UsTnBiAnnualOtherReclassificationOpportunity";
 export * from "./UsTnCustodyLevelDowngrade2026Opportunity";
 export * from "./UsTnCustodyLevelUpgrade2026Opportunity";
 export * from "./UsTnInitialClassification2026Opportunity";

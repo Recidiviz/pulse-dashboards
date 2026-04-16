@@ -18,14 +18,14 @@
 import { IApiOpportunityConfiguration } from "../../../../interfaces";
 import { usTnUntrackedEligibilityConfigBase } from "../utils";
 
-export const usTnSeriousMisconductUpgradeConfiguration: IApiOpportunityConfiguration =
+export const usTnBiannualOtherReclassificationConfiguration: IApiOpportunityConfiguration =
   {
     ...usTnUntrackedEligibilityConfigBase,
-    displayName: "Special Reclassification: Upgrade for Serious Misconduct",
+    displayName: "Bi-Annual/Other",
     firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
     dynamicEligibilityText:
-      "[person|people] have paperwork in progress for an upgrade due to serious misconduct",
-    urlSection: "specialUpgradeMisconduct",
+      "[person|people] have paperwork in progress for a bi-annual or other reclassification",
+    urlSection: "biannual",
     // Place at the bottom
-    homepagePosition: 22,
+    homepagePosition: 21,
   };

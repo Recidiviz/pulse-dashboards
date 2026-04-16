@@ -483,6 +483,12 @@ async function getUpdatedRecords() {
       "US_TN-initialClassification2026PolicyReferrals",
     )),
   );
+  entries.push(
+    ...(await getFormUpdateDocs(
+      "usTnBiannualOther",
+      "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+    )),
+  );
 
   return entries;
 }

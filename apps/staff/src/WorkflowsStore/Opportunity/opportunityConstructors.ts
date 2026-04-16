@@ -95,6 +95,7 @@ import {
 import {
   UsTnAnnualReclassification2026Opportunity,
   UsTnAnnualReclassificationReviewOpportunity,
+  UsTnBiAnnualOtherReclassificationOpportunity,
   UsTnCompliantReporting2025PolicyOpportunity,
   UsTnCustodyLevelDowngrade2026Opportunity,
   UsTnCustodyLevelUpgrade2026Opportunity,
@@ -209,6 +210,7 @@ export const opportunityConstructors = {
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionOfDirectSupervisionOpportunity,
+  usTnBiannualOther: UsTnBiAnnualOtherReclassificationOpportunity,
   usTnTrusteeTransfer: UsTnTrusteeTransferOpportunity,
   usTnSeriousMisconductUpgrade: UsTnSeriousMisconductUpgradeOpportunity,
 
