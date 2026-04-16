@@ -153,12 +153,12 @@ export const trusteeFormSchema = z.object({
   trusteeNoEscapeFromMediumCloseMaxPast10Years: booleanToString,
   trusteeNoViolentFelonyConvictionPast5YearsIncarceration: booleanToString,
   trusteeNotConvictedOfFirstDegreeMurder: booleanToString,
-  trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: booleanToString,
   trusteeNotScoredHighForViolence: booleanToString,
   trusteeNotServingForSexualOffense: booleanToString,
 });
 
 export type TrusteeFormAdditionalFields = {
+  trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: string;
   trusteeNoFelonyDetainers: string;
   trusteeNoPendingFelonyCharges: string;
   trusteeNoPendingImmigrationActions: string;
@@ -257,5 +257,6 @@ export type UsTnCoverSheetSharedDraftData = {
   trusteeNotConvictedOfFirstDegreeMurder: string;
   isServingLife: string;
   trusteeHas10YearsOrLessRemaining: string;
+  trusteeNotServingForSexualOffense: string;
   checklistCompletedOnOverride: string;
 };

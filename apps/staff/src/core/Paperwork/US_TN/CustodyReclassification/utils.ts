@@ -159,6 +159,7 @@ export function getCoverSheetTemplateArgs(
     isServingLife,
     trusteeNotConvictedOfFirstDegreeMurder,
     trusteeHas10YearsOrLessRemaining,
+    trusteeNotServingForSexualOffense,
   } = formData;
 
   formContents.residentFullName = resident.displayName;
@@ -194,18 +195,22 @@ export function getCoverSheetTemplateArgs(
   formContents.ccN = checklistCompletedOnOverride === "N" ? "_X_" : "___";
   formContents.ccNA = checklistCompletedOnOverride === "NA" ? "_X_" : "___";
 
-  formContents.pq1Y =
-    trusteeNotConvictedOfFirstDegreeMurder === "false" ? "_X_" : "___";
-  formContents.pq1N =
-    trusteeNotConvictedOfFirstDegreeMurder === "true" ? "_X_" : "___";
+  [formContents.pq1Y, formContents.pq1N] = coverSheetTFFields(
+    trusteeNotConvictedOfFirstDegreeMurder,
+  );
 
-  formContents.pq2Y = isServingLife === "true" ? "_X_" : "___";
-  formContents.pq2N = isServingLife === "false" ? "_X_" : "___";
+  [formContents.pq2Y, formContents.pq2N] = coverSheetTFFields(
+    isServingLife,
+    false,
+  );
 
-  formContents.pq3Y =
-    trusteeHas10YearsOrLessRemaining === "false" ? "_X_" : "___";
-  formContents.pq3N =
-    trusteeHas10YearsOrLessRemaining === "true" ? "_X_" : "___";
+  [formContents.pq3Y, formContents.pq3N] = coverSheetTFFields(
+    trusteeHas10YearsOrLessRemaining,
+  );
+
+  [formContents.pq4Y, formContents.pq4N] = coverSheetTFFields(
+    trusteeNotServingForSexualOffense,
+  );
 
   // Add tabs before newlines so the underlining looks right in these big blocks
   (
@@ -229,4 +234,21 @@ export function getCoverSheetTemplateArgs(
   });
 
   return { ...formData, ...formContents };
+}
+
+function coverSheetTFFields(
+  fieldValue: string | undefined,
+  invert = true,
+): [string, string] {
+  if (invert) {
+    return [
+      fieldValue === "false" ? "_X_" : "___",
+      fieldValue === "true" ? "_X_" : "___",
+    ];
+  }
+
+  return [
+    fieldValue === "true" ? "_X_" : "___",
+    fieldValue === "false" ? "_X_" : "___",
+  ];
 }

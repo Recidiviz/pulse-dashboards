@@ -126,6 +126,7 @@ export function showTrusteeChecklist(
     formData.trusteeNotConvictedOfFirstDegreeMurder === "true" &&
     formData.trusteeHas10YearsOrLessRemaining === "true" &&
     formData.isServingLife === "false" &&
+    formData.trusteeNotServingForSexualOffense === "true" &&
     (totalText === "LOW" ||
       formData.counselorRecommendedCustody === "LOW" ||
       formData.recommendationCustodyLevel === "LOW")

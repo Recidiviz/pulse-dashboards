@@ -18,7 +18,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 
-import { UsTnCoverSheetSharedDraftData } from "~datatypes";
+import { OpportunityType, UsTnCoverSheetSharedDraftData } from "~datatypes";
 
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { US_TN_CLASSIFICATION_OPPORTUNITIES } from "../../../CaseloadView/AllCaseloadsTable/utils";
@@ -113,15 +113,19 @@ const SigBlock = styled.div`
 
 const FormTextarea = DOCXFormTextArea<UsTnCoverSheetSharedDraftData>;
 
+function getIsPilotVersion(oppType: OpportunityType): boolean {
+  return US_TN_CLASSIFICATION_OPPORTUNITIES.includes(
+    // @ts-expect-error Yeah, I know opportunity.type might not be in US_TN_CLASSIFICATION_OPPORTUNITIES. That's why I'm checking it
+    oppType,
+  );
+}
+
 const CoverSheet: React.FC = () => {
   const { formData, derivedData, opportunity } =
     useOpportunityFormContext() as UsTnReclassificationReviewForm;
   const formViewerContext = useContext(FormViewerContext);
 
-  const isPilotVersion = US_TN_CLASSIFICATION_OPPORTUNITIES.includes(
-    // @ts-expect-error Yeah, I know opportunity.type might not be in US_TN_CLASSIFICATION_OPPORTUNITIES. That's why I'm checking it
-    opportunity.type,
-  );
+  const isPilotVersion = getIsPilotVersion(opportunity.type);
 
   return (
     <PrintablePage stretchable>
@@ -129,96 +133,7 @@ const CoverSheet: React.FC = () => {
         <Container>
           <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
           <Headline>OFFENDER CLASSIFICATION SUMMARY</Headline>
-          {isPilotVersion && (
-            <>
-              <hr />
-              FOR 2026 CLASSIFICATION PILOT PURPOSES
-              <br />
-              Name of Chief Counselor Finalizing Classification Form:{" "}
-              <FormInput name="finalizingCounselor" />
-              <br />
-              Date of Final Approval and Entry in OMS / Recidiviz Tool, with any
-              edits: <FormInput name="finalApprovalDate" />
-              <br />
-              If Offender scored or overridden to LOW:
-              <HeaderList>
-                <li>
-                  <HeaderItem>
-                    <div className="Question">
-                      Were they ever convicted of First Degree Murder (or
-                      facilitation, solicitation, attempt, or conspiracy to
-                      commit first degree murder)?
-                    </div>
-                    <FormRadioButton
-                      name="trusteeNotConvictedOfFirstDegreeMurder"
-                      targetValue="false"
-                      label="Yes"
-                    />
-                    <FormRadioButton
-                      name="trusteeNotConvictedOfFirstDegreeMurder"
-                      targetValue="true"
-                      label="No"
-                    />
-                  </HeaderItem>
-                </li>
-                <li>
-                  <HeaderItem>
-                    <div className="Question">
-                      Are they serving a Life Sentence?
-                    </div>
-                    <FormRadioButton
-                      name="isServingLife"
-                      targetValue="true"
-                      label="Yes"
-                    />
-                    <FormRadioButton
-                      name="isServingLife"
-                      targetValue="false"
-                      label="No"
-                    />
-                  </HeaderItem>
-                </li>
-                <li>
-                  <HeaderItem>
-                    <div className="Question">
-                      Do they have more than 10 years remaining on their
-                      sentence?
-                    </div>
-                    <FormRadioButton
-                      name="trusteeHas10YearsOrLessRemaining"
-                      targetValue="false"
-                      label="Yes"
-                    />
-                    <FormRadioButton
-                      name="trusteeHas10YearsOrLessRemaining"
-                      targetValue="true"
-                      label="No"
-                    />
-                  </HeaderItem>
-                </li>
-              </HeaderList>
-              <HeaderItem>
-                If all are No, please confirm that Trustee Checklist was
-                completed:
-                <FormRadioButton
-                  name="checklistCompletedOnOverride"
-                  targetValue={"Y"}
-                  label="Yes"
-                />
-                <FormRadioButton
-                  name="checklistCompletedOnOverride"
-                  targetValue={"N"}
-                  label="No"
-                />
-                <FormRadioButton
-                  name="checklistCompletedOnOverride"
-                  targetValue={"NA"}
-                  label="N/A"
-                />
-              </HeaderItem>
-              <hr />
-            </>
-          )}
+          <HeaderSection oppType={opportunity.type} />
           <br />
           <Row>
             <Label>
@@ -475,5 +390,118 @@ const CoverSheet: React.FC = () => {
     </PrintablePage>
   );
 };
+
+function HeaderSection({ oppType }: { oppType: OpportunityType }) {
+  if (!getIsPilotVersion(oppType)) return null;
+
+  const showTrusteeSection = oppType !== "usTnInitialClassification2026Policy";
+  return (
+    <>
+      <hr />
+      FOR 2026 CLASSIFICATION PILOT PURPOSES
+      <br />
+      Name of Chief Counselor Finalizing Classification Form:{" "}
+      <FormInput name="finalizingCounselor" />
+      <br />
+      Date of Final Approval and Entry in OMS / Recidiviz Tool, with any edits:{" "}
+      <FormInput name="finalApprovalDate" />
+      {showTrusteeSection && (
+        <>
+          <br />
+          If Offender scored or overridden to LOW:
+          <HeaderList>
+            <li>
+              <HeaderItem>
+                <div className="Question">
+                  Were they ever convicted of First Degree Murder (or
+                  facilitation, solicitation, attempt, or conspiracy to commit
+                  first degree murder)?
+                </div>
+                <FormRadioButton
+                  name="trusteeNotConvictedOfFirstDegreeMurder"
+                  targetValue="false"
+                  label="Yes"
+                />
+                <FormRadioButton
+                  name="trusteeNotConvictedOfFirstDegreeMurder"
+                  targetValue="true"
+                  label="No"
+                />
+              </HeaderItem>
+            </li>
+            <li>
+              <HeaderItem>
+                <div className="Question">
+                  Are they serving a Life Sentence?
+                </div>
+                <FormRadioButton
+                  name="isServingLife"
+                  targetValue="true"
+                  label="Yes"
+                />
+                <FormRadioButton
+                  name="isServingLife"
+                  targetValue="false"
+                  label="No"
+                />
+              </HeaderItem>
+            </li>
+            <li>
+              <HeaderItem>
+                <div className="Question">
+                  Do they have more than 10 years remaining on their sentence?
+                </div>
+                <FormRadioButton
+                  name="trusteeHas10YearsOrLessRemaining"
+                  targetValue="false"
+                  label="Yes"
+                />
+                <FormRadioButton
+                  name="trusteeHas10YearsOrLessRemaining"
+                  targetValue="true"
+                  label="No"
+                />
+              </HeaderItem>
+            </li>
+            <li>
+              <HeaderItem>
+                <div className="Question">Are they a sex offender?</div>
+                <FormRadioButton
+                  name="trusteeNotServingForSexualOffense"
+                  targetValue="false"
+                  label="Yes"
+                />
+                <FormRadioButton
+                  name="trusteeNotServingForSexualOffense"
+                  targetValue="true"
+                  label="No"
+                />
+              </HeaderItem>
+            </li>
+          </HeaderList>
+          <HeaderItem>
+            If all are No, please confirm that Trustee Checklist was completed:
+            <FormRadioButton
+              name="checklistCompletedOnOverride"
+              targetValue={"Y"}
+              label="Yes"
+            />
+            <FormRadioButton
+              name="checklistCompletedOnOverride"
+              targetValue={"N"}
+              label="No"
+            />
+            <FormRadioButton
+              name="checklistCompletedOnOverride"
+              targetValue={"NA"}
+              label="N/A"
+            />
+          </HeaderItem>
+        </>
+      )}
+      <hr />
+    </>
+  );
+}
 
 export default CoverSheet;
