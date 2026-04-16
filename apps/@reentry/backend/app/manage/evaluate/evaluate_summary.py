@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
+import sqlalchemy as sa
 import structlog
 from dotenv import load_dotenv
 from langsmith.schemas import Example, Run
@@ -78,6 +79,7 @@ class EvalItem:
     conversation_messages: list[dict]
     summary: str
     meta: dict  # {plan_id, intake_id, client_pseudo_id, config}
+    system_prompt: Optional[str] = None  # system prompt used by the summary LLM
 
 
 def format_conversation_from_messages(messages: List[Dict[str, Any]]) -> str:
@@ -143,32 +145,37 @@ async def _evaluate_assets(
     summary: str,
     conversation_messages: List[Dict[str, Any]],
     meta: Dict,
+    system_prompt: Optional[str] = None,
 ) -> Dict:
     """Run grounding and coverage evaluations and return the result dict.
 
     Callers are responsible for printing the intake and summary before calling this.
     """
-    print("\n" + "=" * 60)
-    print("🔍 RUNNING EVALUATIONS")
-    print("=" * 60)
+    logger.info("Running evaluations")
     formatted = format_conversation_from_messages(conversation_messages)
-    eval_results = await _run_evaluations(summary, formatted)
+    eval_results = await _run_evaluations(
+        summary, formatted, system_prompt=system_prompt
+    )
     return {**meta, **eval_results}
 
 
 async def _run_pipeline(
-    items: List[EvalItem], output_format: str, max_messages: Optional[int] = None
+    items: List[EvalItem],
+    output_format: str,
+    max_messages: Optional[int] = None,
+    report_file: Optional[str] = None,
 ) -> None:
-    """Print and evaluate each item, then output all results."""
+    """Evaluate each item, then output all results."""
     results = []
     for item in items:
-        _print_intake_conversation(item.conversation_messages, max_messages)
-        _print_summary_text(item.summary)
+        if output_format == "console":
+            _print_intake_conversation(item.conversation_messages, max_messages)
+            _print_summary_text(item.summary)
         result = await _evaluate_assets(
-            item.summary, item.conversation_messages, item.meta
+            item.summary, item.conversation_messages, item.meta, item.system_prompt
         )
         results.append(result)
-    _output_results(results, output_format)
+    _output_results(results, output_format, items=items, report_file=report_file)
 
 
 @cli.command()
@@ -185,6 +192,7 @@ async def evaluate_summary(
     output: str = "console",
     env: str = "prod",
     max_messages: Optional[int] = None,
+    report_file: Optional[str] = None,
 ):
     """
     Evaluate summary generation with fake data or real data from database.
@@ -201,6 +209,10 @@ async def evaluate_summary(
         python -m app.manage evaluate-summary db --client-pseudo-id <id> --limit 5
         python -m app.manage evaluate-summary db --client-pseudo-id <id> --env staging
         python -m app.manage evaluate-summary db --since-date 2025-01-01 --output json
+        python -m app.manage evaluate-summary db --since-date 2025-01-01 --output report
+        python -m app.manage evaluate-summary db --since-date 2025-01-01 --output report --report-file my_report.md
+        python -m app.manage evaluate-summary db --since-date 2025-01-01 --output html
+        python -m app.manage evaluate-summary db --since-date 2025-01-01 --output html --report-file my_report.html
 
     Args:
         mode: Evaluation mode: db, test, or fake
@@ -212,9 +224,11 @@ async def evaluate_summary(
         client_pseudo_id: Filter by client pseudo ID (database mode)
         since_date: Filter by creation date YYYY-MM-DD (database mode)
         limit: Maximum number of intakes/plans to evaluate (default: 10)
-        output: Output format: console (default), json, csv
+        output: Output format: console (default), json, csv, report, html
         env: Database environment: prod (default), staging, demo, dev, local
         max_messages: Truncate conversation display to this many messages (default: show all)
+        report_file: Path for report output file (only used with --output report/html,
+            defaults to eval_report_YYYY-MM-DD_HHMMSS.md/.html in current directory)
     """
     logger.info("Starting summary evaluation")
 
@@ -238,8 +252,10 @@ async def evaluate_summary(
             )
         elif mode == "fake":
             if not output_config_name:
-                print("❌ Error: --output-config-name is required for fake mode")
-                print("Usage: evaluate-summary fake --output-config-name <name>")
+                logger.error(
+                    "--output-config-name is required for fake mode",
+                    usage="evaluate-summary fake --output-config-name <name>",
+                )
                 return
 
             logger.info("Running in FAKE DATA mode")
@@ -249,30 +265,24 @@ async def evaluate_summary(
                 conversation_file=conversation_file,
             )
         else:
-            print(f"❌ Error: Unknown mode '{mode}'. Choose from: db, test, fake")
+            logger.error("Unknown mode", mode=mode, valid_modes=["db", "test", "fake"])
             return
 
-        await _run_pipeline(items, output, max_messages)
+        await _run_pipeline(items, output, max_messages, report_file=report_file)
 
     except FileNotFoundError as e:
-        logger.error(f"File not found: {e}")
-        print(f"❌ Error: {e}")
+        logger.error("File not found", error=str(e))
         if mode == "fake":
-            print(
-                "\n💡 Tip: Config YAML files are now managed via the Config Management UI."
-            )
-            print(
-                "   Export a config from the UI at /config, then provide the exported file name."
+            logger.info(
+                "Tip: Config YAML files are now managed via the Config Management UI. "
+                "Export a config from the UI at /config, then provide the exported file name."
             )
     except json.JSONDecodeError as e:
-        logger.error(f"Invalid JSON: {e}")
-        print(f"❌ Error: Invalid JSON in input file: {e}")
+        logger.error("Invalid JSON in input file", error=str(e))
     except ValueError as e:
-        logger.error(f"Invalid input: {e}")
-        print(f"❌ Error: {e}")
+        logger.error("Invalid input", error=str(e))
     except Exception as e:
-        logger.error(f"Error during evaluation: {e}")
-        print(f"❌ Error: {e}")
+        logger.error("Error during evaluation", error=str(e))
         raise
 
 
@@ -302,9 +312,7 @@ async def _collect_fake_data(
 
     formatted_conversation = format_conversation_from_messages(conversation_messages)
 
-    print("\n" + "=" * 60)
-    print("📝 GENERATING SUMMARY")
-    print("=" * 60)
+    logger.info("Generating summary")
     summary = await generate_summary(formatted_conversation, output_config)
 
     return [
@@ -317,6 +325,7 @@ async def _collect_fake_data(
                 "client_pseudo_id": "fake-client",
                 "config": output_config_name,
             },
+            system_prompt=output_config.prompts.system,
         )
     ]
 
@@ -356,9 +365,7 @@ async def _collect_test_summary(
             f"Using conversation from summary file ({len(conversation_messages)} messages)"
         )
 
-    print("\n" + "=" * 60)
-    print("📝 TEST SCENARIO")
-    print("=" * 60)
+    logger.info("Loaded test scenario")
 
     return [
         EvalItem(
@@ -410,14 +417,12 @@ async def _collect_database(
                 )
                 plan = result.scalar_one_or_none()
                 if not plan:
-                    print(f"❌ Error: Plan not found: {plan_id}")
+                    logger.error("Plan not found", plan_id=plan_id)
                     return []
                 plans = [plan]
             elif intake_id:
-                from sqlalchemy import text
-
                 row = await session.execute(
-                    text(
+                    sa.text(
                         "SELECT id, intake_type, assessment_config_id, client_pseudo_id"
                         " FROM intake WHERE id = :id"
                     ),
@@ -425,7 +430,7 @@ async def _collect_database(
                 )
                 intake_row = row.fetchone()
                 if not intake_row:
-                    print(f"❌ Error: Intake not found: {intake_id}")
+                    logger.error("Intake not found", intake_id=intake_id)
                     return []
 
                 result = await session.execute(
@@ -436,8 +441,9 @@ async def _collect_database(
                 plan = result.scalar_one_or_none()
                 plans = [plan] if plan else []
                 if not plans:
-                    print(
-                        f"⚠️  No plan found for intake {intake_id}, will generate summary"
+                    logger.warning(
+                        "No plan found for intake, will generate summary",
+                        intake_id=intake_id,
                     )
                     plans = [None]  # Sentinel to trigger summary generation
             else:
@@ -456,10 +462,10 @@ async def _collect_database(
                 plans = list(result.scalars().all())
 
             if not plans:
-                print("No plans found matching filters")
+                logger.info("No plans found matching filters")
                 return []
 
-            print(f"Found {len(plans)} plan(s) to evaluate\n")
+            logger.info(f"Found {len(plans)} plan(s) to evaluate")
 
             items = []
             for idx, plan in enumerate(plans, 1):
@@ -485,21 +491,35 @@ async def _collect_item_from_plan(
     session, plan, idx: int, total: int
 ) -> Optional[EvalItem]:
     """Load a single plan's summary and messages into an EvalItem."""
-    print(f"\n[{idx}/{total}] Evaluating Plan: {plan.id}")
+    logger.info(f"[{idx}/{total}] Evaluating plan", plan_id=str(plan.id))
 
     summary_asset = await get_asset_by_filename(session, plan.id, "summary.md")
     if not summary_asset or not summary_asset.file_blob:
-        print("  ⚠️  Skipping: no summary found")
+        logger.warning("Skipping plan: no summary found", plan_id=str(plan.id))
         return None
 
     summary = summary_asset.file_blob.decode("utf-8")
 
     messages_asset = await get_asset_by_filename(session, plan.id, "messages.json")
     if not messages_asset or not messages_asset.file_blob:
-        print("  ⚠️  Skipping: no messages found")
+        logger.warning("Skipping plan: no messages found", plan_id=str(plan.id))
         return None
 
     messages_json = json.loads(messages_asset.file_blob.decode("utf-8"))
+
+    system_prompt = None
+    if plan.intake_id:
+        row = await session.execute(
+            sa.text("SELECT assessment_config_id FROM intake WHERE id = :id"),
+            {"id": plan.intake_id},
+        )
+        assessment_config_id = row.scalar_one_or_none()
+        if assessment_config_id:
+            summary_config = await ConfigLoader.load_summary_config(
+                assessment_config_id, session
+            )
+            if summary_config:
+                system_prompt = summary_config.prompts.system
 
     return EvalItem(
         conversation_messages=messages_json,
@@ -510,6 +530,7 @@ async def _collect_item_from_plan(
             "client_pseudo_id": plan.client_pseudo_id,
             "config": "existing",
         },
+        system_prompt=system_prompt,
     )
 
 
@@ -527,7 +548,7 @@ async def _collect_item_from_intake(
     assessment_config_id = row["assessment_config_id"]
     client_pseudo_id = row["client_pseudo_id"]
 
-    print(f"[{idx}/{total}] Evaluating Intake: {intake_id}")
+    logger.info(f"[{idx}/{total}] Evaluating intake", intake_id=str(intake_id))
 
     if intake_type == IntakeType.CONVERSATION.value:
         intake_messages = await get_intake_messages(session, intake_id=intake_id)
@@ -539,7 +560,11 @@ async def _collect_item_from_intake(
             for msg in intake_messages
         ]
     else:
-        print(f"  ⚠️  Skipping: intake type {intake_type} not supported yet")
+        logger.warning(
+            "Skipping intake: unsupported type",
+            intake_type=intake_type,
+            intake_id=str(intake_id),
+        )
         return None
 
     summary_config = await ConfigLoader.load_summary_config(
@@ -561,10 +586,13 @@ async def _collect_item_from_intake(
             "client_pseudo_id": client_pseudo_id,
             "config": summary_config.metadata.code if summary_config else "unknown",
         },
+        system_prompt=summary_config.prompts.system if summary_config else None,
     )
 
 
-async def _run_evaluations(summary: str, intake_messages: str) -> Dict:
+async def _run_evaluations(
+    summary: str, intake_messages: str, system_prompt: Optional[str] = None
+) -> Dict:
     """Run grounding and coverage evaluations on a summary."""
     from uuid import uuid4
 
@@ -579,7 +607,10 @@ async def _run_evaluations(summary: str, intake_messages: str) -> Dict:
     example = Example(
         id=uuid4(),
         created_at=datetime.now(),
-        inputs={"intake_messages": intake_messages},
+        inputs={
+            "intake_messages": intake_messages,
+            "system_prompt": system_prompt or "",
+        },
         outputs={},
     )
 
@@ -593,13 +624,18 @@ async def _run_evaluations(summary: str, intake_messages: str) -> Dict:
     }
 
 
-def _output_results(results: List[Dict], output_format: str):
+def _output_results(
+    results: List[Dict],
+    output_format: str,
+    items: Optional[List[EvalItem]] = None,
+    report_file: Optional[str] = None,
+):
     """Output evaluation results in the specified format."""
     if output_format == "json":
         print(json.dumps(results, indent=2))
     elif output_format == "csv":
         if not results:
-            print("No results to output")
+            logger.info("No results to output")
             return
 
         # Flatten results for CSV
@@ -687,6 +723,10 @@ def _output_results(results: List[Dict], output_format: str):
         writer.writeheader()
         writer.writerows(csv_rows)
         print(output.getvalue())
+    elif output_format == "report":
+        _write_report(results, items or [], report_file)
+    elif output_format == "html":
+        _write_html_report(results, items or [], report_file)
     else:
         # Console format (default)
         print("\n" + "=" * 60)
@@ -777,6 +817,426 @@ def _output_results(results: List[Dict], output_format: str):
         print("\n" + "=" * 60)
         print(f"Overall: {passed_checks}/{total_checks} checks passed")
         print("=" * 60)
+
+
+def _write_report(
+    results: List[Dict],
+    items: List[EvalItem],
+    report_file: Optional[str] = None,
+) -> None:
+    """Write a human-readable markdown report of evaluation results."""
+    if not report_file:
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        report_file = f"eval_report_{timestamp}.md"
+
+    timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    lines: List[str] = [f"# Eval Report — {timestamp_str}", ""]
+
+    for result, item in zip(results, items):
+        plan_id = result.get("plan_id")
+        intake_id = result.get("intake_id")
+        client_pseudo_id = result.get("client_pseudo_id", "")
+
+        id_str = f"Plan: {plan_id}" if plan_id else f"Intake: {intake_id}"
+        lines += ["---", "", f"## {id_str} | Client: {client_pseudo_id}", ""]
+
+        # Intake conversation
+        lines += ["### Intake Conversation", ""]
+        for msg in item.conversation_messages:
+            role = msg.get("role", "unknown")
+            content = msg.get("content", "")
+            if role in ("assistant", "case manager"):
+                display_role = "**Caseworker**"
+            elif role in ("user", "client"):
+                display_role = "**Client**"
+            else:
+                display_role = f"**{role.capitalize()}**"
+            lines += [f"{display_role}: {content}", ""]
+
+        # Summary
+        lines += ["### Summary", "", item.summary, ""]
+
+        # Evaluation results
+        lines += ["### Evaluation Results", ""]
+
+        if "grounding" in result:
+            grounding = result["grounding"]
+            passed = grounding["score"] == 1
+            status = "✓ PASS" if passed else "✗ FAIL"
+            lines += [f"#### Grounding: {status} ({grounding['score']}/1)", ""]
+            lines += [f"**Explanation:** {grounding.get('explanation', '')}", ""]
+
+            correct_facts = grounding.get("correct_facts", [])
+            if correct_facts:
+                lines.append(f"**Correct Facts ({len(correct_facts)}):**")
+                for fact in correct_facts:
+                    lines.append(f"- {fact['fact']} _({fact['explanation']})_")
+                lines.append("")
+
+            interpretive = grounding.get("interpretive_additions", [])
+            if interpretive:
+                lines.append(f"**Interpretive Additions ({len(interpretive)}):**")
+                for fact in interpretive:
+                    lines.append(f"- {fact['fact']} _({fact['explanation']})_")
+                lines.append("")
+
+            hallucinated = grounding.get("hallucinated_facts", [])
+            if hallucinated:
+                lines.append(f"**Hallucinated Facts ({len(hallucinated)}):**")
+                for fact in hallucinated:
+                    lines.append(f"- {fact['fact']} _({fact['explanation']})_")
+                lines.append("")
+
+        if "coverage" in result:
+            coverage = result["coverage"]
+            passed = coverage["score"] >= COVERAGE_PASS_THRESHOLD
+            status = "✓ PASS" if passed else "✗ FAIL"
+            lines += [f"#### Coverage: {status} ({coverage['score']}/10)", ""]
+            lines += [f"**Explanation:** {coverage.get('explanation', '')}", ""]
+
+            missing = coverage.get("missing_details", [])
+            if missing:
+                lines.append(f"**Missing Details ({len(missing)}):**")
+                for detail in missing:
+                    lines.append(f"- {detail}")
+                lines.append("")
+
+    Path(report_file).write_text("\n".join(lines))
+    logger.info("Report written", path=report_file)
+
+
+def _write_html_report(
+    results: List[Dict],
+    items: List[EvalItem],
+    report_file: Optional[str] = None,
+) -> None:
+    """Write a self-contained interactive HTML report of evaluation results."""
+    if not report_file:
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        report_file = f"eval_report_{timestamp}.html"
+
+    entries = []
+    for result, item in zip(results, items):
+        entries.append(
+            {
+                "plan_id": result.get("plan_id"),
+                "intake_id": result.get("intake_id"),
+                "client_pseudo_id": result.get("client_pseudo_id", ""),
+                "config": result.get("config", ""),
+                "conversation_messages": item.conversation_messages,
+                "summary": item.summary,
+                "grounding": result.get("grounding", {}),
+                "coverage": result.get("coverage", {}),
+            }
+        )
+
+    safe_data = json.dumps(entries).replace("</script>", "<\\/script>")
+    html = _HTML_TEMPLATE.replace("__DATA__", safe_data)
+    Path(report_file).write_text(html)
+    logger.info("HTML report written", path=report_file)
+
+
+_HTML_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+
+    /* ── Main view ── */
+    #main-view { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+    .subtitle { color: #888; font-size: 13px; margin-bottom: 28px; }
+
+    .stats-bar { display: flex; gap: 12px; margin-bottom: 28px; }
+    .stat-card { background: white; border-radius: 8px; padding: 16px 20px; flex: 1;
+                 box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase;
+                  letter-spacing: 0.6px; margin-bottom: 6px; }
+    .stat-value { font-size: 26px; font-weight: 700; }
+
+    table { width: 100%; background: white; border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-collapse: collapse; }
+    th { text-align: left; padding: 11px 16px; font-size: 11px; text-transform: uppercase;
+         letter-spacing: 0.5px; color: #888; border-bottom: 1px solid #eee; }
+    td { padding: 13px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    tr:last-child td { border-bottom: none; }
+    tr.intake-row:hover { background: #fafafa; cursor: pointer; }
+
+    /* ── Detail view ── */
+    #detail-view { display: none; height: 100vh; flex-direction: column; }
+    .detail-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+                     background: white; border-bottom: 1px solid #e5e5e5; flex-shrink: 0; }
+    .back-btn { background: none; border: 1px solid #ddd; border-radius: 6px;
+                padding: 5px 12px; cursor: pointer; font-size: 13px; color: #555; }
+    .back-btn:hover { background: #f5f5f5; }
+    .detail-title { font-weight: 600; font-size: 14px; flex: 1;
+                    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-btn { background: none; border: 1px solid #ddd; border-radius: 6px;
+               padding: 5px 11px; cursor: pointer; font-size: 13px; color: #555; }
+    .nav-btn:hover:not(:disabled) { background: #f5f5f5; }
+    .nav-btn:disabled { opacity: 0.35; cursor: default; }
+    .nav-info { font-size: 12px; color: #aaa; white-space: nowrap; }
+
+    .panes { display: flex; flex: 1; overflow: hidden; }
+    .pane { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #e5e5e5; min-width: 0; }
+    .pane:last-child { border-right: none; }
+    .pane-header { padding: 10px 14px; font-size: 11px; font-weight: 600;
+                   text-transform: uppercase; letter-spacing: 0.5px; color: #777;
+                   background: #fafafa; border-bottom: 1px solid #eee; flex-shrink: 0; }
+    .pane-body { flex: 1; overflow-y: auto; padding: 14px; }
+
+    /* ── Transcript ── */
+    .message { margin-bottom: 10px; }
+    .message-role { font-size: 10px; font-weight: 700; text-transform: uppercase;
+                    letter-spacing: 0.5px; margin-bottom: 3px; }
+    .message-role.caseworker { color: #2563eb; }
+    .message-role.client { color: #7c3aed; }
+    .message-content { font-size: 13px; line-height: 1.55; background: white;
+                       padding: 9px 12px; border-radius: 6px; border: 1px solid #eee; }
+    .message.caseworker .message-content { border-left: 3px solid #2563eb; }
+    .message.client .message-content { border-left: 3px solid #7c3aed; }
+
+    /* ── Summary ── */
+    .summary-text { font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+
+    /* ── Eval results ── */
+    .eval-section { margin-bottom: 18px; }
+    .eval-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .eval-title { font-weight: 600; font-size: 14px; }
+    .eval-explanation { font-size: 12px; color: #555; line-height: 1.5; margin-bottom: 10px;
+                        padding: 9px 11px; background: #f9f9f9; border-radius: 6px; }
+    .fact-group { margin-bottom: 10px; }
+    .fact-group-title { font-size: 11px; font-weight: 700; text-transform: uppercase;
+                        letter-spacing: 0.5px; color: #777; margin-bottom: 5px; }
+    .fact-item { font-size: 12px; padding: 7px 10px; border-radius: 5px;
+                 margin-bottom: 4px; line-height: 1.4; }
+    .fact-text { margin-bottom: 2px; }
+    .fact-expl { font-size: 11px; color: #777; font-style: italic; }
+    .fact-item.correct { background: #f0fdf4; border-left: 3px solid #16a34a; }
+    .fact-item.interpretive { background: #fffbeb; border-left: 3px solid #d97706; }
+    .fact-item.hallucinated { background: #fef2f2; border-left: 3px solid #dc2626; }
+    .missing-item { font-size: 12px; padding: 6px 10px; background: #fef2f2;
+                    border-left: 3px solid #dc2626; border-radius: 5px; margin-bottom: 4px; }
+    .divider { border: none; border-top: 1px solid #eee; margin: 16px 0; }
+
+    /* ── Shared badges / scores ── */
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 10px;
+             font-size: 11px; font-weight: 700; }
+    .badge.pass { background: #dcfce7; color: #16a34a; }
+    .badge.fail { background: #fee2e2; color: #dc2626; }
+    .score.pass { color: #16a34a; font-weight: 600; }
+    .score.warn { color: #d97706; font-weight: 600; }
+    .score.fail { color: #dc2626; font-weight: 600; }
+    .stat-value.pass { color: #16a34a; }
+    .stat-value.warn { color: #d97706; }
+    .stat-value.fail { color: #dc2626; }
+  </style>
+</head>
+<body>
+
+<div id="main-view">
+  <h1>Eval Report</h1>
+  <div class="subtitle" id="report-subtitle"></div>
+  <div class="stats-bar" id="stats-bar"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Client</th>
+        <th>Plan / Intake ID</th>
+        <th>Grounding</th>
+        <th>Coverage</th>
+        <th>Config</th>
+      </tr>
+    </thead>
+    <tbody id="intake-table"></tbody>
+  </table>
+</div>
+
+<div id="detail-view">
+  <div class="detail-header">
+    <button class="back-btn" onclick="showMain()">← Back</button>
+    <div class="detail-title" id="detail-title"></div>
+    <span class="nav-info" id="nav-info"></span>
+    <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next →</button>
+  </div>
+  <div class="panes">
+    <div class="pane">
+      <div class="pane-header">Transcript</div>
+      <div class="pane-body" id="pane-transcript"></div>
+    </div>
+    <div class="pane">
+      <div class="pane-header">Summary</div>
+      <div class="pane-body" id="pane-summary"></div>
+    </div>
+    <div class="pane">
+      <div class="pane-header">Eval Results</div>
+      <div class="pane-body" id="pane-eval"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const DATA = __DATA__;
+  const COVERAGE_PASS = 7;
+  let currentIndex = 0;
+
+  function scoreClass(val, max) {
+    const r = val / max;
+    return r >= 0.8 ? 'pass' : r >= 0.5 ? 'warn' : 'fail';
+  }
+
+  function esc(s) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function init() {
+    const n = DATA.length;
+    const gPassed = DATA.filter(d => d.grounding?.score === 1).length;
+    const cScores = DATA.map(d => d.coverage?.score ?? 0);
+    const cPassed = DATA.filter(d => (d.coverage?.score ?? 0) >= COVERAGE_PASS).length;
+    const avgC = cScores.length ? (cScores.reduce((a, b) => a + b, 0) / cScores.length).toFixed(1) : '—';
+
+    document.getElementById('report-subtitle').textContent =
+      `${n} intake${n !== 1 ? 's' : ''} evaluated`;
+
+    document.getElementById('stats-bar').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-label">Intakes Evaluated</div>
+        <div class="stat-value">${n}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Grounding Passed</div>
+        <div class="stat-value ${scoreClass(gPassed, n)}">${gPassed}/${n}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Coverage Passed</div>
+        <div class="stat-value ${scoreClass(cPassed, n)}">${cPassed}/${n}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Coverage Score</div>
+        <div class="stat-value ${scoreClass(parseFloat(avgC) || 0, 10)}">${avgC}<span style="font-size:15px;color:#bbb">/10</span></div>
+      </div>`;
+
+    document.getElementById('intake-table').innerHTML = DATA.map((d, i) => {
+      const gOk = d.grounding?.score === 1;
+      const cScore = d.coverage?.score ?? 0;
+      const cOk = cScore >= COVERAGE_PASS;
+      const id = d.plan_id || d.intake_id || '—';
+      const shortId = id.length > 12 ? id.slice(0, 12) + '…' : id;
+      return `<tr class="intake-row" onclick="showDetail(${i})">
+        <td>${esc(d.client_pseudo_id) || '—'}</td>
+        <td title="${esc(id)}" style="font-family:monospace;font-size:12px;color:#888">${esc(shortId)}</td>
+        <td><span class="badge ${gOk ? 'pass' : 'fail'}">${gOk ? '✓ PASS' : '✗ FAIL'}</span></td>
+        <td><span class="score ${cOk ? 'pass' : scoreClass(cScore, 10)}">${cScore}/10</span></td>
+        <td style="color:#aaa;font-size:12px">${esc(d.config) || '—'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function showDetail(i) {
+    currentIndex = i;
+    const d = DATA[i];
+
+    document.getElementById('main-view').style.display = 'none';
+    document.getElementById('detail-view').style.display = 'flex';
+
+    const id = d.plan_id || d.intake_id || '—';
+    document.getElementById('detail-title').textContent = `${d.client_pseudo_id || '—'} · ${id}`;
+    document.getElementById('nav-info').textContent = `${i + 1} / ${DATA.length}`;
+    document.getElementById('prev-btn').disabled = i === 0;
+    document.getElementById('next-btn').disabled = i === DATA.length - 1;
+
+    // Transcript
+    document.getElementById('pane-transcript').innerHTML =
+      (d.conversation_messages || []).map(msg => {
+        const cw = msg.role === 'assistant' || msg.role === 'case manager';
+        const cls = cw ? 'caseworker' : 'client';
+        return `<div class="message ${cls}">
+          <div class="message-role ${cls}">${cw ? 'Caseworker' : 'Client'}</div>
+          <div class="message-content">${esc(msg.content)}</div>
+        </div>`;
+      }).join('');
+
+    // Summary
+    document.getElementById('pane-summary').innerHTML =
+      `<div class="summary-text">${esc(d.summary)}</div>`;
+
+    // Eval
+    const g = d.grounding || {};
+    const c = d.coverage || {};
+    const gOk = g.score === 1;
+    const cScore = c.score ?? 0;
+    const cOk = cScore >= COVERAGE_PASS;
+
+    const factGroup = (title, facts, cls) => {
+      if (!facts?.length) return '';
+      return `<div class="fact-group">
+        <div class="fact-group-title">${title} (${facts.length})</div>
+        ${facts.map(f => `<div class="fact-item ${cls}">
+          <div class="fact-text">${esc(f.fact)}</div>
+          <div class="fact-expl">${esc(f.explanation)}</div>
+        </div>`).join('')}
+      </div>`;
+    };
+
+    document.getElementById('pane-eval').innerHTML = `
+      <div class="eval-section">
+        <div class="eval-header">
+          <div class="eval-title">Grounding</div>
+          <span class="badge ${gOk ? 'pass' : 'fail'}">${gOk ? '✓ PASS' : '✗ FAIL'}</span>
+        </div>
+        <div class="eval-explanation">${esc(g.explanation)}</div>
+        ${factGroup('✓ Correct Facts', g.correct_facts, 'correct')}
+        ${factGroup('⚡ Interpretive Additions', g.interpretive_additions, 'interpretive')}
+        ${factGroup('✗ Hallucinated Facts', g.hallucinated_facts, 'hallucinated')}
+      </div>
+      <hr class="divider">
+      <div class="eval-section">
+        <div class="eval-header">
+          <div class="eval-title">Coverage</div>
+          <span class="badge ${cOk ? 'pass' : 'fail'}">${cOk ? '✓ PASS' : '✗ FAIL'}</span>
+          <span class="score ${cOk ? 'pass' : scoreClass(cScore, 10)}">${cScore}/10</span>
+        </div>
+        <div class="eval-explanation">${esc(c.explanation)}</div>
+        ${(c.missing_details?.length) ? `<div class="fact-group">
+          <div class="fact-group-title">Missing Details (${c.missing_details.length})</div>
+          ${c.missing_details.map(m => `<div class="missing-item">${esc(m)}</div>`).join('')}
+        </div>` : ''}
+      </div>`;
+
+    ['pane-transcript', 'pane-summary', 'pane-eval'].forEach(id =>
+      { document.getElementById(id).scrollTop = 0; });
+  }
+
+  function showMain() {
+    document.getElementById('detail-view').style.display = 'none';
+    document.getElementById('main-view').style.display = 'block';
+  }
+
+  function navigate(dir) {
+    const next = currentIndex + dir;
+    if (next >= 0 && next < DATA.length) showDetail(next);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('detail-view').style.display !== 'none') {
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'ArrowRight') navigate(1);
+      if (e.key === 'Escape') showMain();
+    }
+  });
+
+  init();
+</script>
+</body>
+</html>"""
 
 
 if __name__ == "__main__":

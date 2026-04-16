@@ -19,6 +19,7 @@ async def grounding_check(run: Run, example: Example) -> dict:
     """
     summary = run.outputs.get("summary", "")
     intake_messages = example.inputs.get("intake_messages", "")
+    system_prompt = example.inputs.get("system_prompt", "")
 
     eval_llm = create_model_from_config(
         settings.EVAL_MODEL_PROVIDER,
@@ -104,6 +105,13 @@ async def grounding_check(run: Run, example: Example) -> dict:
     Score 1 if NO hallucinations detected (interpretive additions are allowed).
     Score 0 if ANY hallucinated facts are present."""
 
+    system_context_section = (
+        "System context provided to the summary LLM (facts from this context are "
+        "CORRECT, not hallucinations):\n\n{system_prompt}\n\n"
+        if system_prompt
+        else ""
+    )
+
     prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -118,14 +126,20 @@ async def grounding_check(run: Run, example: Example) -> dict:
             ),
             (
                 "human",
-                "Intake Conversation:\n\n{intake_messages}\n\nSummary:\n\n{summary}",
+                system_context_section
+                + "Intake Conversation:\n\n{intake_messages}\n\nSummary:\n\n{summary}",
             ),
         ]
     )
 
     chain = prompt | structured_llm_grader
     score = await chain.ainvoke(
-        {"criterium": criterium, "intake_messages": intake_messages, "summary": summary}
+        {
+            "criterium": criterium,
+            "intake_messages": intake_messages,
+            "summary": summary,
+            "system_prompt": system_prompt,
+        }
     )
 
     return {
