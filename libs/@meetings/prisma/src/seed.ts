@@ -88,6 +88,12 @@ export async function main(prisma: PrismaClient) {
     // Generate sample action items as string array
     const actionItems = Array.from({ length: 3 }, () => faker.lorem.sentence());
 
+    // Generate structured action items with task + context
+    const structuredActionItems = actionItems.map((task) => ({
+      task,
+      context: faker.lorem.sentence(),
+    }));
+
     // Generate sample critical updates as formatted string array
     const criticalUpdates = Array.from({ length: 2 }, () => {
       const category = faker.helpers.arrayElement([
@@ -143,6 +149,7 @@ export async function main(prisma: PrismaClient) {
         recordingsFolderPath: `meeting-${createdClient.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),
         actionItems: actionItems,
+        structuredActionItems: structuredActionItems,
         criticalUpdates: criticalUpdates,
         meetingSummary: meetingSummary,
         caseNote: faker.lorem.paragraphs(3),
@@ -204,6 +211,12 @@ export async function main(prisma: PrismaClient) {
     // Generate sample action items as string array
     const actionItems = Array.from({ length: 3 }, () => faker.lorem.sentence());
 
+    // Generate structured action items with task + context
+    const structuredActionItems = actionItems.map((task) => ({
+      task,
+      context: faker.lorem.sentence(),
+    }));
+
     // Generate sample critical updates as formatted string array
     const criticalUpdates = Array.from({ length: 2 }, () => {
       const category = faker.helpers.arrayElement([
@@ -259,6 +272,7 @@ export async function main(prisma: PrismaClient) {
         recordingsFolderPath: `resident-meeting-${createdResident.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),
         actionItems: actionItems,
+        structuredActionItems: structuredActionItems,
         criticalUpdates: criticalUpdates,
         meetingSummary: meetingSummary,
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,

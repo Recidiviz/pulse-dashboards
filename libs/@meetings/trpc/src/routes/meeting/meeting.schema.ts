@@ -32,6 +32,9 @@ export const getDetailsOutputSchema = z.object({
   caseNote: z.string().nullable(),
   userNotepadNotes: z.string().nullable(),
   actionItems: z.array(z.string()).nullable(),
+  structuredActionItems: z
+    .array(z.object({ task: z.string(), context: z.string().nullable() }))
+    .nullable(),
   criticalUpdates: z.array(z.string()).nullable(),
   meetingSummary: z.array(MinuteSectionSchema).nullable(),
   durationMs: z.number().nullable(),

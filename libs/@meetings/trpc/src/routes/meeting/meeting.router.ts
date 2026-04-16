@@ -54,6 +54,7 @@ export const meetingRouter = router({
             caseNote: true,
             userNotepadNotes: true,
             actionItems: true,
+            structuredActionItems: true,
             criticalUpdates: true,
             meetingSummary: true,
             postMeetingProcessingStatus: true,
@@ -115,6 +116,13 @@ export const meetingRouter = router({
           ..._.omit(meeting, ["transcriptions"]),
           actionItems:
             validateJsonField(meeting.actionItems, z.array(z.string())) || [],
+          structuredActionItems:
+            validateJsonField(
+              meeting.structuredActionItems,
+              z.array(
+                z.object({ task: z.string(), context: z.string().nullable() }),
+              ),
+            ) || [],
           criticalUpdates:
             validateJsonField(meeting.criticalUpdates, z.array(z.string())) ||
             [],

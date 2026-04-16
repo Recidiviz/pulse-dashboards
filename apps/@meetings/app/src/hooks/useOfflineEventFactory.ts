@@ -93,6 +93,7 @@ export function useOfflineEventFactory() {
             caseNote: null,
             userNotepadNotes: null,
             actionItems: null,
+            structuredActionItems: null,
             criticalUpdates: null,
             meetingSummary: null,
             postMeetingProcessingStatus: "NOT_STARTED",

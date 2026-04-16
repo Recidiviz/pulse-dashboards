@@ -516,6 +516,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const criticalUpdates = formatCriticalUpdates(
           result.output.statusUpdates,
         );
+        const structuredActionItems = result.output.actionItems.map((item) => ({
+          task: item.task,
+          context: item.context ?? null,
+        }));
 
         // Update status through drafting and verification stages
         const completedMeeting = await prisma.meeting.update({
@@ -525,6 +529,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           data: {
             caseNote: result.output.caseNote,
             actionItems: actionItems,
+            structuredActionItems,
             criticalUpdates: criticalUpdates,
             meetingSummary: result.output.meetingMinutes,
             postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
