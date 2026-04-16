@@ -40,7 +40,9 @@ const basePalette = {
      Used mainly for UI elements such as text, icons, and borders */
   slate,
   slate05: rgba(slate, 0.05),
+  slate06: rgba(slate, 0.06),
   slate10: rgba(slate, 0.1),
+  slate12: rgba(slate, 0.12),
   slate15: rgba(slate, 0.15),
   slate20: rgba(slate, 0.2),
   slate30: rgba(slate, 0.3),

@@ -15,18 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
 import React from "react";
+import styled from "styled-components";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
+import { PersonLookup } from "../PersonLookup";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { AllCaseloads } from "./AllCaseloads";
 
+const SelectRow = styled.div<{ $isMobile: boolean }>`
+  display: flex;
+  flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
+  gap: ${rem(8)};
+  align-items: ${({ $isMobile }) => ($isMobile ? "stretch" : "flex-start")};
+`;
+
 export const CaseloadView: React.FC = () => {
+  const { isMobile } = useIsMobile(true);
+
   return (
     <WorkflowsNavLayout>
       <CaseloadTypeSelect />
-      <CaseloadSelect />
+      <SelectRow $isMobile={isMobile}>
+        <CaseloadSelect />
+        <PersonLookup />
+      </SelectRow>
       <AllCaseloads />
     </WorkflowsNavLayout>
   );

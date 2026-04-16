@@ -314,9 +314,13 @@ export const MenuListWithShadow = (
   };
 
 const CaseloadSelectContainer = styled(Sans14)`
+  height: ${rem(40)};
+  justify-content: space-between;
+  align-items: center;
+  flex: 1 0 0;
+
   color: ${palette.slate85};
   margin-bottom: ${rem(spacing.lg)};
-  flex: 1;
 `;
 
 const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
@@ -441,25 +445,24 @@ export const caseloadSelectStyles = (
   }),
   control: (base, state) => ({
     ...base,
-    borderWidth: state.menuIsOpen ? "0" : `1px`,
     borderStyle: "solid",
-    borderColor: `${palette.slate10} !important`,
-    borderRadius: state.menuIsOpen ? "8px 8px 0 0" : rem(8),
-    minHeight: rem(48),
-    padding: `${rem(isMobile ? spacing.md : spacing.sm)} ${rem(spacing.md)}`,
+    borderColor: `${palette.slate30} !important`,
+    borderWidth: "1px",
+    borderBottomWidth: state.menuIsOpen ? "0" : "1px",
+    borderRadius: state.menuIsOpen ? "4px 4px 0 0" : rem(4),
+    background: "#fff",
+    height: rem(40),
+    padding: rem(5),
     margin: 0,
-    boxShadow:
-      state.menuIsOpen && !isMobile
-        ? `0px 10px 40px ${palette.slate30}`
-        : "none",
+    boxShadow: "none",
   }),
   menu: (base) => ({
     ...base,
     zIndex: zindex.tooltip - 1,
     margin: 0,
-    border: "none",
+    border: `1px solid rgba(43, 84, 105, 0.30)`,
     borderTop: `1px solid ${palette.slate20}`,
-    borderRadius: "0 0 8px 8px",
+    borderRadius: "0 0 4px 4px",
     boxShadow: !isMobile ? `0px 10px 40px ${palette.slate20}` : "none",
 
     // By default the menu is absolutely positioned, but on mobile devices

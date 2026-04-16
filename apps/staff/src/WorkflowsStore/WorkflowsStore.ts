@@ -16,6 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
+import Fuse from "fuse.js";
 import { intersection, pick, sortBy } from "lodash";
 import {
   action,
@@ -458,6 +459,47 @@ export class WorkflowsStore implements Hydratable {
     runInAction(() => {
       this.selectedOpportunityOnFullProfile = opportunity;
     });
+  }
+
+  /**
+   * Fuzzy search across display ID, external ID, and name fields,
+   * scoped to the current active system (clients or residents).
+   */
+  searchPersons(searchTerm: string, limit = 10): JusticeInvolvedPerson[] {
+    if (!searchTerm.trim()) {
+      return [];
+    }
+
+    const personsToSearch = Object.values(this.justiceInvolvedPersons).filter(
+      (p) => {
+        if (this.activeSystem === "SUPERVISION") {
+          return isClient(p);
+        }
+        if (this.activeSystem === "INCARCERATION") {
+          return !isClient(p);
+        }
+        return true;
+      },
+    );
+
+    const fuse = new Fuse(personsToSearch, {
+      keys: [
+        { name: "displayId", weight: 3 },
+        { name: "externalId", weight: 2.5 },
+        { name: "displayName", weight: 2 }, // Pre-formatted "First Last"
+        { name: "fullName.surname", weight: 1.8 },
+        { name: "fullName.givenNames", weight: 1.5 },
+      ],
+      threshold: 0.4, // 0 = exact match, 1 = match anything
+      ignoreLocation: true, // Search entire string, not just beginning
+      minMatchCharLength: 2,
+      includeScore: true,
+    });
+
+    const results = fuse.search(searchTerm, { limit });
+
+    // Fuse results are pre-sorted by relevance
+    return results.map((result) => result.item);
   }
 
   /** List of supported systems based on the user's permissions. */
