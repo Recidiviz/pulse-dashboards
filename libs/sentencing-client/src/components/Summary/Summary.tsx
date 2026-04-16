@@ -61,6 +61,20 @@ const FieldOrMissing: React.FC<{
   </Styled.InlineRow>
 );
 
+const SummaryOrMissing: React.FC<{
+  summary: string | null | undefined;
+  labeled?: boolean;
+}> = ({ summary, labeled = false }) => {
+  if (summary) return <div>{summary}</div>;
+  if (labeled)
+    return (
+      <Styled.InlineRow>
+        Summary: <MissingBadge />
+      </Styled.InlineRow>
+    );
+  return <MissingBadge />;
+};
+
 const SummaryOffenseCard: React.FC<{
   charge: SARDetailsPresenter["charges"][number];
   presenter: SARDetailsPresenter;
@@ -368,16 +382,16 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                       <Styled.SubsectionTitle>
                         Risk Category Summary
                       </Styled.SubsectionTitle>
-                      <Styled.RiskCategoryRow>
+                      <Styled.CategoryRow>
                         {RISK_LEVEL_KEYS.map((level) => (
-                          <Styled.RiskColumn key={level}>
-                            <Styled.RiskColumnHeader>
+                          <Styled.CategoryColumn key={level}>
+                            <Styled.CategoryColumnHeader>
                               Scored {RISK_LEVELS[level]}
-                            </Styled.RiskColumnHeader>
+                            </Styled.CategoryColumnHeader>
                             <div>{groupedByRisk[level].join(", ") || "—"}</div>
-                          </Styled.RiskColumn>
+                          </Styled.CategoryColumn>
                         ))}
-                      </Styled.RiskCategoryRow>
+                      </Styled.CategoryRow>
                     </Styled.DetailSubsection>
                   )}
 
@@ -391,17 +405,27 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                           {domain.title}
                         </Styled.SubsectionTitle>
                         <Styled.SectionBody>
-                          <div>{summary || NONE_LISTED}</div>
+                          <SummaryOrMissing
+                            summary={summary}
+                            labeled={
+                              domain.key === "educationEmployment" ||
+                              domain.key === "familySocialSupport"
+                            }
+                          />
                           {domain.key === "educationEmployment" && (
                             <>
                               <div>
                                 Highest Level of Education:{" "}
-                                {sarData?.levelOfEducation ?? "—"}
+                                {sarData?.levelOfEducation || <MissingBadge />}
                               </div>
                               <div>
                                 Employed at Time of Offense:{" "}
-                                {formatBooleanDisplay(
-                                  sarData?.employedAtOffense,
+                                {sarData?.employedAtOffense != null ? (
+                                  formatBooleanDisplay(
+                                    sarData.employedAtOffense,
+                                  )
+                                ) : (
+                                  <MissingBadge />
                                 )}
                               </div>
                               {sarData?.employmentHistories &&
@@ -442,35 +466,28 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                                 )}
                             </>
                           )}
-                          {domain.key === "familySocialSupport" &&
-                            (fatherName || motherName || guardianName) && (
-                              <Styled.AssessmentTable>
-                                {fatherName && (
-                                  <Styled.FamilyFieldRow>
-                                    <Styled.FamilyFieldLabel>
-                                      Father:
-                                    </Styled.FamilyFieldLabel>
-                                    <span>{fatherName}</span>
-                                  </Styled.FamilyFieldRow>
-                                )}
-                                {motherName && (
-                                  <Styled.FamilyFieldRow>
-                                    <Styled.FamilyFieldLabel>
-                                      Mother:
-                                    </Styled.FamilyFieldLabel>
-                                    <span>{motherName}</span>
-                                  </Styled.FamilyFieldRow>
-                                )}
-                                {guardianName && (
-                                  <Styled.FamilyFieldRow>
-                                    <Styled.FamilyFieldLabel>
-                                      Who Raised Offender:
-                                    </Styled.FamilyFieldLabel>
-                                    <span>{guardianName}</span>
-                                  </Styled.FamilyFieldRow>
-                                )}
-                              </Styled.AssessmentTable>
-                            )}
+                          {domain.key === "familySocialSupport" && (
+                            <Styled.AssessmentTable>
+                              <Styled.FamilyFieldRow>
+                                <Styled.FamilyFieldLabel>
+                                  Father:
+                                </Styled.FamilyFieldLabel>
+                                {fatherName || <MissingBadge />}
+                              </Styled.FamilyFieldRow>
+                              <Styled.FamilyFieldRow>
+                                <Styled.FamilyFieldLabel>
+                                  Mother:
+                                </Styled.FamilyFieldLabel>
+                                {motherName || <MissingBadge />}
+                              </Styled.FamilyFieldRow>
+                              <Styled.FamilyFieldRow>
+                                <Styled.FamilyFieldLabel>
+                                  Who Raised Offender:
+                                </Styled.FamilyFieldLabel>
+                                {guardianName || <MissingBadge />}
+                              </Styled.FamilyFieldRow>
+                            </Styled.AssessmentTable>
+                          )}
                         </Styled.SectionBody>
                       </Styled.DetailSubsection>
                     );
@@ -490,13 +507,10 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                       Community Treatments and Programming
                     </Styled.SubsectionTitle>
                     <Styled.SectionBody>
-                      {sarData?.priorTreatmentHistorySummary && (
-                        <div>{sarData.priorTreatmentHistorySummary}</div>
-                      )}
-                      {!sarData?.priorTreatmentHistorySummary &&
-                        priorTreatmentHistories.length === 0 && (
-                          <div>{NONE_LISTED}</div>
-                        )}
+                      <SummaryOrMissing
+                        summary={sarData?.priorTreatmentHistorySummary}
+                        labeled
+                      />
                       {priorTreatmentHistories.length > 0 && (
                         <Styled.AssessmentTable>
                           <Styled.TableHeaderRow>
@@ -539,7 +553,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                       </Styled.SubsectionTitle>
                       <Styled.SectionBody>
                         <div>{DOC_INCARCERATION_DESCRIPTION}</div>
-                        <Styled.RiskCategoryRow>
+                        <Styled.CategoryRow>
                           {docCategoryEntries.map(([category, histories]) => {
                             const labels =
                               TREATMENT_PROGRAM_CATEGORY_LABELS[category];
@@ -554,10 +568,10 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                             const remaining =
                               histories.length - displayed.length;
                             return (
-                              <Styled.RiskColumn key={category}>
-                                <Styled.RiskColumnHeader>
+                              <Styled.CategoryColumn key={category}>
+                                <Styled.CategoryColumnHeader>
                                   {histories.length} {label}
-                                </Styled.RiskColumnHeader>
+                                </Styled.CategoryColumnHeader>
                                 {displayed.map((history) => (
                                   <React.Fragment key={history.id}>
                                     {history.completedOn && (
@@ -573,10 +587,10 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                                     and {remaining} more
                                   </Styled.MoreText>
                                 )}
-                              </Styled.RiskColumn>
+                              </Styled.CategoryColumn>
                             );
                           })}
-                        </Styled.RiskCategoryRow>
+                        </Styled.CategoryRow>
                       </Styled.SectionBody>
                     </Styled.DetailSubsection>
                   )}
@@ -584,7 +598,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
               </Styled.SectionCard>
 
               {/* Recommendation */}
-              <Styled.SectionCard>
+              <Styled.LastSectionCard>
                 <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
                 {recommendationSkipped ? (
                   <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
@@ -610,7 +624,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                     </Styled.SectionBody>
                   </Styled.RecommendationSection>
                 )}
-              </Styled.SectionCard>
+              </Styled.LastSectionCard>
             </>
           )}
         </Styled.Container>

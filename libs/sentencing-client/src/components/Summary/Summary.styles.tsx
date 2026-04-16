@@ -138,6 +138,11 @@ export const SectionCard = styled.div`
   padding: 24px 24px 0;
 `;
 
+/** Last section in the Container, restores the bottom padding. */
+export const LastSectionCard = styled(SectionCard)`
+  padding-bottom: 24px;
+`;
+
 export const SectionTitle = styled.h3`
   align-self: stretch;
   color: ${palette.pine1};
@@ -293,17 +298,17 @@ export const OffenseCardContainer = styled.div`
   padding: 24px 24px 0;
 `;
 
-export const RiskCategoryRow = styled.div`
+export const CategoryRow = styled.div`
   ${flexRow}
   align-items: flex-start;
   gap: 1rem;
 `;
 
-export const RiskColumnHeader = styled.span`
+export const CategoryColumnHeader = styled.span`
   ${tableHeaderCellStyle}
 `;
 
-export const RiskColumn = styled.div`
+export const CategoryColumn = styled.div`
   ${flexColumn}
   ${baseTextStyle}
   flex: 1;
