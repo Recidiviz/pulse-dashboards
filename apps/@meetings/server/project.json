@@ -50,8 +50,7 @@
         {
           "projects": ["@meetings/prisma"],
           "target": "prisma-generate"
-        },
-        "load-env-files"
+        }
       ],
       "options": {
         "platform": "node",
@@ -184,7 +183,6 @@
     },
     "migrate-preview-db": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-files"],
       "options": {
         "command": "gcloud run jobs deploy m-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/meetings/meetings-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_USER=$DATABASE_USER,DATABASE_PASSWORD=$DATABASE_PASSWORD,DATABASE_INSTANCE_CONNECTION_NAME=$DATABASE_INSTANCE_CONNECTION_NAME,DATABASE_STATE_CODES=$DATABASE_STATE_CODES",
         "args": [
@@ -196,7 +194,7 @@
     },
     "deploy-preview-app": {
       "executor": "@nx-extend/gcp-cloud-run:deploy",
-      "dependsOn": ["load-env-files", "migrate-db"],
+      "dependsOn": ["migrate-db"],
       "options": {
         "name": "m-preview-$VERSION",
         "region": "us-central1",

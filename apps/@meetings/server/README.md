@@ -15,12 +15,11 @@ If you haven't already, follow the setup instructions in the root README to inst
 2. To point to your own GCS bucket for local development:
 
    1. Create a GCS bucket in the recidiviz-dashboard-staging project with the pattern `recidiviz-dashboard-staging-[your-name]-meetings-test-bucket`
-   1. Set the CORS policy on the bucket by running `gcloud storage buckets update gs://[your-bucket-name] --cors-file=apps/@meetings/server/gcs-cors.json`
-   1. create an `.env.dev` file in this directory with the following contents:
+   2. Set the CORS policy on the bucket by running `gcloud storage buckets update gs://[your-bucket-name] --cors-file=apps/@meetings/server/gcs-cors.json`
+   3. create an `.env.dev` file in this directory with the following contents:
 
    ```
    AUDIO_RECORDINGS_BUCKET_NAME=your-bucket-name
-
    ```
 
    Replace `your-bucket-name` with the name of your GCS bucket.
