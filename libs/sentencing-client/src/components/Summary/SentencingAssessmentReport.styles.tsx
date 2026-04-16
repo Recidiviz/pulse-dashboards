@@ -17,8 +17,7 @@
 
 import { typography } from "@recidiviz/design-system";
 import { Property } from "csstype";
-import { css } from "styled-components";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -758,6 +757,38 @@ export const TimeServedStatsRow = styled.div`
 
 export const TimeServedStat = styled.div`
   ${typography.Sans14}
+  font-weight: 500;
+  line-height: 150%;
+
+  strong {
+    font-weight: 700;
+  }
+`;
+
+// ─── Learn More Banner ────────────────────────────────────────────────────────
+
+/**
+ * Wrapper around the learn-more banner. Hidden by default; the PDF exporter
+ * toggles it visible only when capturing the last-page footer image.
+ * Matches the page content horizontal padding so the banner aligns with the
+ * report body, with a 20px gap above the footer separator line.
+ */
+export const LearnMoreBannerWrapper = styled.div`
+  display: none;
+  padding: 0 50px 20px 50px;
+`;
+
+export const LearnMoreBanner = styled.div`
+  display: flex;
+  padding: 8px 16px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 3px;
+  background: #e9edee;
+`;
+
+export const LearnMoreBannerText = styled.div`
+  ${typography.Sans12}
   font-weight: 500;
   line-height: 150%;
 

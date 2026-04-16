@@ -20,6 +20,7 @@ import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { formatJudgeName } from "../../utils/utils";
+import LearnMoreBannerIcon from "../assets/learn-more-banner-icon.svg?react";
 import { SARSection } from "../SARDetails/constants";
 import {
   ReportBlock,
@@ -38,7 +39,11 @@ import { ReportPriorTreatmentHistory } from "./ReportPriorTreatmentHistory";
 import { ReportRecommendation } from "./ReportRecommendation";
 import { ReportRequestedOf } from "./ReportRequestedOf";
 import { ReportTimeServed, ReportTimeServedEmpty } from "./ReportTimeServed";
-import { BLOCK_GAP, CHIP_GAP } from "./SentencingAssessmentReport.constants";
+import {
+  BLOCK_GAP,
+  CHIP_GAP,
+  LEARN_MORE_BANNER_ATTR,
+} from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const OFFENDER_COURT_SECTION_TITLE = "Offender / Court Information";
@@ -154,7 +159,20 @@ export const SentencingAssessmentReport: React.FC<
       </thead>
       <tfoot>
         <tr>
-          <Styled.FooterCell>{footer}</Styled.FooterCell>
+          <Styled.FooterCell>
+            <Styled.LearnMoreBannerWrapper
+              {...{ [LEARN_MORE_BANNER_ATTR]: "" }}
+            >
+              <Styled.LearnMoreBanner>
+                <LearnMoreBannerIcon />
+                <Styled.LearnMoreBannerText>
+                  Visit <strong>https://www.recidiviz.org/sentencing/mo</strong>{" "}
+                  to learn more about the information presented in this report.
+                </Styled.LearnMoreBannerText>
+              </Styled.LearnMoreBanner>
+            </Styled.LearnMoreBannerWrapper>
+            {footer}
+          </Styled.FooterCell>
         </tr>
       </tfoot>
       <tbody>

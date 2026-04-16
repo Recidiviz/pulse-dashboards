@@ -19,6 +19,7 @@ import { palette } from "~design-system";
 
 import {
   CONTINUATION_HEADER_CLASS,
+  LEARN_MORE_BANNER_ATTR,
   NO_SPLIT_CLASS,
   PAGE_START_CLASS,
 } from "./SentencingAssessmentReport.constants";
@@ -44,7 +45,6 @@ type PageDimensions = {
   pageWidth: number;
   pageHeight: number;
   headerMM: number;
-  footerMM: number;
   bodyMM: number;
 };
 
@@ -255,6 +255,9 @@ function computePageCutPoint(
 /**
  * Composites one PDF page: body canvas (offset to show the correct slice),
  * white mask to hide content past the cut point, then header and footer on top.
+ *
+ * `footerMM` is passed explicitly (rather than read from `dims`) because the
+ * last page uses a taller footer that includes the learn-more banner.
  */
 function renderPdfPage(
   page: PdfPage,
@@ -262,8 +265,9 @@ function renderPdfPage(
   dims: PageDimensions,
   bodyOffset: number,
   cutPoint: number,
+  footerMM: number,
 ): void {
-  const { pageWidth, pageHeight, headerMM, footerMM, bodyMM } = dims;
+  const { pageWidth, pageHeight, headerMM, bodyMM } = dims;
 
   // Place the full body canvas shifted so the current slice fills the content zone.
   page.addImage(
@@ -328,12 +332,12 @@ function computePageCutPoints(
  * Captures a footer image for each PDF page, injecting the current page
  * number into the [data-sar-page-number] placeholder before each capture.
  *
- * This ensures the page number renders with the same typography, size, and
- * padding as the rest of the footer rather than being stamped as a jsPDF
- * text overlay in a different font.
+ * On the last page, the learn-more banner (hidden by default via CSS) is made
+ * visible before capture so it appears only in the last-page footer image.
  *
- * The placeholder is restored to a non-breaking space afterwards so it keeps
- * its line height on screen.
+ * The last-page footer height for rendering is computed separately via
+ * getBoundingClientRect in exportSARtoPDF and passed to renderPdfPage directly,
+ * keeping the same measurement source as the overflow-cut logic.
  */
 async function captureFooterImagesPerPage(
   tfootEl: HTMLElement,
@@ -343,19 +347,25 @@ async function captureFooterImagesPerPage(
   const pageNumberEl = tfootEl.querySelector<HTMLElement>(
     "[data-sar-page-number]",
   );
+  const bannerEl = tfootEl.querySelector<HTMLElement>(
+    `[${LEARN_MORE_BANNER_ATTR}]`,
+  );
 
   const images: string[] = [];
+
   for (let i = 1; i <= totalPages; i++) {
     if (pageNumberEl) pageNumberEl.textContent = `Page ${i}`;
+    if (bannerEl) bannerEl.style.display = i === totalPages ? "block" : "";
     // Sequential awaits are required: the DOM must be mutated between captures
-    // so each footer image contains the correct page number.
+    // so each footer image contains the correct page number and banner state.
     // eslint-disable-next-line no-await-in-loop
     const canvas = await html2canvas(tfootEl, HTML2CANVAS_OPTS);
     images.push(canvasToJpeg(canvas));
   }
 
-  // Restore placeholder so the element keeps its line height on screen.
+  // Restore both placeholders so they keep their natural state on screen.
   if (pageNumberEl) pageNumberEl.textContent = "\u00a0";
+  if (bannerEl) bannerEl.style.display = "";
 
   return images;
 }
@@ -386,6 +396,20 @@ export async function exportSARtoPDF(
   const headerMM = canvasHeightToMM(headerCanvas, pageWidth);
   const footerMM = canvasHeightToMM(footerCanvas, pageWidth);
   const sliceMM = pageHeight - headerMM - footerMM;
+
+  // Measure the tall (last-page) footer height — with the learn-more banner
+  // visible — so we can detect whether the last page's content would overflow
+  // into the banner zone before committing to the final cut points.
+  const bannerEl = tfootEl.querySelector<HTMLElement>(
+    `[${LEARN_MORE_BANNER_ATTR}]`,
+  );
+  const mmPerCSSPxTable = pageWidth / table.getBoundingClientRect().width;
+  if (bannerEl) bannerEl.style.display = "block";
+  const tallFooterHeightCSS = tfootEl.getBoundingClientRect().height;
+  if (bannerEl) bannerEl.style.display = "";
+  const lastPageFooterMM = tallFooterHeightCSS * mmPerCSSPxTable;
+  // Effective body area on the last page (with banner in the footer).
+  const sliceTallMM = pageHeight - headerMM - lastPageFooterMM;
 
   // Hide ALL continuation headings first so block measurements are accurate
   // (not inflated by heading heights). Measuring with all headings visible causes
@@ -464,6 +488,26 @@ export async function exportSARtoPDF(
     pageStartPositions,
   );
 
+  // If the last page's content height exceeds the available body area once the
+  // taller (banner-inclusive) footer is in place, insert an extra cut so that
+  // the overflow content lands on a new last page rather than being hidden under
+  // the banner. The new cut is snapped to a no-split block boundary via the
+  // same logic used for all other cuts.
+  if (sliceTallMM < sliceMM && cutPoints.length > 0) {
+    const lastPageStart =
+      cutPoints.length >= 2 ? cutPoints[cutPoints.length - 2] : 0;
+    if (effectiveBodyMM - lastPageStart > sliceTallMM) {
+      const overflowCut = computePageCutPoint(
+        lastPageStart,
+        sliceTallMM,
+        effectiveBodyMM,
+        blocks,
+        pageStartPositions,
+      );
+      cutPoints.splice(cutPoints.length - 1, 0, overflowCut);
+    }
+  }
+
   const footerImages = await captureFooterImagesPerPage(
     tfootEl,
     cutPoints.length,
@@ -473,7 +517,6 @@ export async function exportSARtoPDF(
     pageWidth,
     pageHeight,
     headerMM,
-    footerMM,
     bodyMM,
   };
   const headerImage = canvasToJpeg(headerCanvas);
@@ -487,7 +530,9 @@ export async function exportSARtoPDF(
       body: bodyImage,
       footer: footerImages[i],
     };
-    renderPdfPage(pdf, images, dims, bodyOffset, cutPoints[i]);
+    const pageFooterMM =
+      i === cutPoints.length - 1 ? lastPageFooterMM : footerMM;
+    renderPdfPage(pdf, images, dims, bodyOffset, cutPoints[i], pageFooterMM);
     bodyOffset = cutPoints[i];
   }
 

@@ -54,3 +54,9 @@ export const CHARGE_COLUMN_PADDING = 10;
 
 /** Gap between an icon and its adjacent label/content column. */
 export const ICON_LABEL_GAP = 5;
+
+/**
+ * Data attribute on the learn-more banner inside <tfoot>. The PDF exporter
+ * queries this selector to show the banner only on the last-page footer capture.
+ */
+export const LEARN_MORE_BANNER_ATTR = "data-sar-learn-more-banner";
