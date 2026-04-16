@@ -33,6 +33,25 @@ export const convertDecimalToPercentage = (decimal: number) => {
 };
 
 /**
+ * Formats the avg_pct_served value from BigQuery for display (rounds to 1 decimal).
+ * e.g. avgPctServed=16.3 → "16.3"
+ */
+export function formatTimeServedPct(avgPctServed: number): string {
+  return String(Math.round(avgPctServed * 10) / 10);
+}
+
+/**
+ * Computes the average time served in years from a percentage and sentence length.
+ * e.g. avgPctServed=16.3, avgSentenceLengthYears=8.6 → 1.4
+ */
+export function computeAvgTimeServedYears(
+  avgPctServed: number,
+  avgSentenceLengthYears: number,
+): number {
+  return Math.round((avgPctServed / 100) * avgSentenceLengthYears * 10) / 10;
+}
+
+/**
  * Displays the human-readable format of a report type.
  * If the `reportType` is `null` or `undefined`, returns "Unknown"
  */

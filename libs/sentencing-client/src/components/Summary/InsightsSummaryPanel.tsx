@@ -20,38 +20,14 @@ import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { printFormattedRecordString, titleCase } from "../../utils/utils";
-import { getDescriptionGender } from "../CaseDetails/components/charts/common/utils";
 import * as CommonStyled from "../CaseDetails/components/charts/components/Styles";
 import { SENTENCE_DISTRIBUTION_TEXT } from "../CaseDetails/components/charts/constants";
 import { DispositionDonutChart } from "../CaseDetails/components/charts/DispositionChart/DispositionDonutChart";
 import { SARDispositionChartExplanation } from "../CaseDetails/components/charts/DispositionChart/SARDispositionChartExplanation";
-import {
-  BUCKET_TO_RISK_LEVEL,
-  getSARDispositionChartSubtitle,
-} from "../CaseDetails/components/charts/DispositionChart/sarUtils";
-import {
-  getAssessmentTypeShortName,
-  getOrasBucketScoreRange,
-  ORAS_TOOL_KEYS,
-} from "../OffenderAssessment/assessmentTypeUtils";
+import { getSARDispositionChartSubtitle } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
 import { InfoIconWithTooltip } from "../Tooltip/Tooltip";
+import { buildInsightsFootnoteText } from "./insightsUtils";
 import * as Styled from "./Summary.styles";
-
-function buildInsightsFootnoteText(
-  numRecords: number,
-  gender: Parameters<typeof getDescriptionGender>[0],
-  bucket: number,
-): string {
-  const genderString = getDescriptionGender(gender).trim();
-  const riskLevel = BUCKET_TO_RISK_LEVEL[bucket] ?? "unknown risk";
-  const rangeFragments = ORAS_TOOL_KEYS.map((tool, i) => {
-    const range = getOrasBucketScoreRange(bucket, tool);
-    const shortName = getAssessmentTypeShortName(tool);
-    const prefix = i === ORAS_TOOL_KEYS.length - 1 ? "or " : "";
-    return `${prefix}${range} for the ${shortName}`;
-  });
-  return `*These rates are based on ${numRecords.toLocaleString()} records of ${genderString} with ${riskLevel} scores (${rangeFragments.join(", ")})`;
-}
 
 interface InsightsSummaryPanelProps {
   presenter: SARDetailsPresenter;
@@ -73,11 +49,12 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
         {insightData && insightData.dispositionNumRecords > 0 && (
           <Styled.InsightsSubtitle>
             This information represents outcomes for cases similar to that of
-            the current client, {titleCase(clientFullName) || "this client"},
-            based on gender, risk score, and type of conviction. The statistics
-            below are pulled from historical sentencing data and will appear in
-            the report to provide context for judges, attorneys, and others
-            involved in the case.
+            the current client
+            {clientFullName ? `, ${titleCase(clientFullName)},` : ""} based on
+            gender, risk score, and type of conviction. The statistics below are
+            pulled from historical sentencing data and will appear in the report
+            to provide context for judges, attorneys, and others involved in the
+            case.
           </Styled.InsightsSubtitle>
         )}
         <Styled.InsightsChartCard
@@ -133,15 +110,17 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
             </>
           )}
         </Styled.InsightsChartCard>
-        {insightData && insightData.dispositionNumRecords > 0 && (
-          <Styled.InsightsFootnote>
-            {buildInsightsFootnoteText(
-              insightData.dispositionNumRecords,
-              insightData.gender,
-              insightData.assessmentScoreBucketStart,
-            )}
-          </Styled.InsightsFootnote>
-        )}
+        {insightData &&
+          insightData.dispositionNumRecords > 0 &&
+          insightData.assessmentScoreBucketStart != null && (
+            <Styled.InsightsFootnote>
+              {buildInsightsFootnoteText(
+                insightData.dispositionNumRecords,
+                insightData.gender,
+                insightData.assessmentScoreBucketStart,
+              )}
+            </Styled.InsightsFootnote>
+          )}
       </Styled.InsightsSidePanel>
     );
   });

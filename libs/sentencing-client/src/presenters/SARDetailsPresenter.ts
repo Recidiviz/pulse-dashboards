@@ -51,7 +51,7 @@ import {
   type SARSectionName,
 } from "../components/SARDetails/constants";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
-import { InsightDescriptionContext } from "../components/Summary/ReportDispositionChart";
+import { InsightDescriptionContext } from "../components/Summary/insightsUtils";
 import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSummaryCard";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";

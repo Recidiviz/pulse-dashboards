@@ -520,6 +520,11 @@ model Insight {
   dispositionNumRecords Int
   dispositionData       Disposition[]
 
+  // Time Served Data
+  avgSentenceLengthYears Float?
+  avgPctServed           Float?
+  timeServedNumRecords   Int?
+
   @@unique([gender, offenseId, assessmentScoreBucketStart, assessmentScoreBucketEnd])
 }
 

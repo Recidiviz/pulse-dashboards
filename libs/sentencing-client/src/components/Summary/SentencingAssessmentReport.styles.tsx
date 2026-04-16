@@ -17,6 +17,7 @@
 
 import { typography } from "@recidiviz/design-system";
 import { Property } from "csstype";
+import { css } from "styled-components";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -27,6 +28,13 @@ import {
   CHARGE_COLUMN_PADDING,
   ICON_LABEL_GAP,
 } from "./SentencingAssessmentReport.constants";
+
+/** Shared base for 12px report body text with tight tracking. */
+const text12Style = css`
+  ${typography.Sans12}
+  line-height: 120%;
+  letter-spacing: -0.12px;
+`;
 
 // Table-based layout so <thead> and <tfoot> repeat on every printed page.
 export const ReportTable = styled.table`
@@ -376,11 +384,9 @@ export const ReportHistoryTableCell = styled.div`
 `;
 
 export const ReportHistoryTableFootnote = styled.div`
-  ${typography.Sans12}
+  ${text12Style}
   color: ${customPalette.black};
   font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.12px;
   align-self: stretch;
   margin-top: 15px;
 `;
@@ -426,10 +432,8 @@ export const DOCCategoryBoxHeader = styled.div`
 
 /** Date or program name row inside a DOC category box. */
 export const DOCCategoryBoxItem = styled.div`
-  ${typography.Sans12}
+  ${text12Style}
   font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.12px;
 `;
 
 /** "and N more" overflow indicator — italic. */
@@ -544,7 +548,7 @@ export const DispositionLeftPanel = styled.div`
   padding: 20px 16px 24px 16px;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
+  gap: 35px;
   flex-shrink: 0;
   align-self: stretch;
   background: ${palette.slate05};
@@ -552,7 +556,7 @@ export const DispositionLeftPanel = styled.div`
 
 export const DispositionLeftPanelTitle = styled.h4`
   ${typography.Sans16}
-  width: 158px;
+  width: 110px;
   color: ${customPalette.black};
   font-weight: 600;
   line-height: 18px;
@@ -572,10 +576,11 @@ export const DispositionLeftPanelText = styled.div`
 
 export const DispositionRightPanel = styled.div`
   display: flex;
-  width: 576px;
+  flex: 1;
+  min-width: 0;
   padding: 30px 16px 24px 16px;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
 `;
 
@@ -646,6 +651,12 @@ export const DispositionSVG = styled.svg`
   flex-shrink: 0;
 `;
 
+export const TimeServedSVG = styled.svg`
+  display: block;
+  overflow: visible;
+  width: 100%;
+`;
+
 export const DispositionEmptyContainer = styled.div`
   display: flex;
 `;
@@ -655,7 +666,7 @@ export const DispositionEmptyContent = styled.div`
   flex: 1;
   flex-direction: column;
   gap: 15px;
-  padding: 20px 16px 24px 16px;
+  padding: 10px 0 12px 0;
 `;
 
 export const DispositionEmptyTitle = styled.h4`
@@ -696,6 +707,61 @@ export const DispositionEmptyText = styled.div`
   color: ${customPalette.black};
 
   span {
+    font-weight: 700;
+  }
+`;
+
+export const TimeServedFootnoteContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+`;
+
+export const TimeServedFootnoteText = styled.p`
+  ${text12Style}
+  color: ${customPalette.black};
+  font-weight: 600;
+  margin: 0;
+
+  a {
+    text-decoration: underline;
+    color: inherit;
+  }
+`;
+
+export const KeyFindingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: -15px;
+  padding-top: 10px;
+`;
+
+export const KeyFindingText = styled.p`
+  ${text12Style}
+  color: ${customPalette.black};
+  font-weight: 500;
+  margin: 0;
+
+  strong {
+    font-weight: 700;
+  }
+`;
+
+export const TimeServedStatsRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+`;
+
+export const TimeServedStat = styled.div`
+  ${typography.Sans14}
+  font-weight: 500;
+  line-height: 150%;
+
+  strong {
     font-weight: 700;
   }
 `;

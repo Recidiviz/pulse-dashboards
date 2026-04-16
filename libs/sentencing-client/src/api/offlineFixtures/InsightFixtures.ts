@@ -242,4 +242,7 @@ export const SARInsightFixture: NonNullable<SARInsight> = {
       percentage: 0.06,
     },
   ],
+  avgSentenceLengthYears: null,
+  avgPctServed: null,
+  timeServedNumRecords: null,
 };

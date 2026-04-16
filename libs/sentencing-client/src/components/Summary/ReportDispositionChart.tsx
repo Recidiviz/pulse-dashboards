@@ -21,16 +21,15 @@ import React from "react";
 import { SARInsight } from "../../api";
 import {
   convertDecimalToPercentage,
-  formatOffenseLabel,
   printFormattedRecordString,
 } from "../../utils/utils";
 import FlagIcon from "../assets/flag-icon.svg?react";
-import {
-  getDescriptionGender,
-  getSentenceLengthBucketLabel,
-} from "../CaseDetails/components/charts/common/utils";
-import { BUCKET_TO_RISK_LEVEL } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
+import { getSentenceLengthBucketLabel } from "../CaseDetails/components/charts/common/utils";
 import { GenderToDisplayName } from "../CaseDetails/constants";
+import {
+  InsightDescriptionContext,
+  InsightSubjectSpans,
+} from "./insightsUtils";
 import { SentencingAssessmentReportSection } from "./ReportBlock";
 import {
   arcFill,
@@ -64,52 +63,6 @@ const pieGenerator = pie<DataPoint>()
 const arcGenerator = arc<PieArcDatum<DataPoint>>()
   .innerRadius(INNER_RADIUS)
   .outerRadius(DONUT_RADIUS);
-
-export type InsightDescriptionContext = {
-  gender: NonNullable<SARInsight>["gender"];
-  assessmentScoreBucketStart: number | null;
-  offense: NonNullable<SARInsight>["offense"];
-  offenseCategory: NonNullable<SARInsight>["offenseCategory"];
-};
-
-interface InsightSubjectSpansProps extends InsightDescriptionContext {
-  asterisk?: boolean;
-}
-
-/** Renders the bold inline subject segment shared by the full and empty chart states. */
-function InsightSubjectSpans({
-  gender,
-  assessmentScoreBucketStart,
-  offense,
-  offenseCategory,
-  asterisk = false,
-}: InsightSubjectSpansProps) {
-  const genderString = getDescriptionGender(gender);
-  const offenseDescriptor =
-    offenseCategory ?? formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
-
-  // Omit risk level clause when no valid bucket is available (e.g. no ORAS assessment).
-  if (assessmentScoreBucketStart == null) {
-    return (
-      <>
-        <span>{genderString.trim()}</span> with{" "}
-        <span>{offenseDescriptor} convictions</span>
-      </>
-    );
-  }
-
-  const riskLevel =
-    BUCKET_TO_RISK_LEVEL[assessmentScoreBucketStart] ?? "unknown risk";
-  return (
-    <>
-      <span>{genderString.trim()}</span> with{" "}
-      <span>
-        {riskLevel} scores{asterisk ? "*" : ""}
-      </span>{" "}
-      with <span>{offenseDescriptor} convictions</span>
-    </>
-  );
-}
 
 interface DonutChartProps {
   pieData: DataPoint[];
@@ -154,6 +107,7 @@ export const ReportDispositionChartEmpty: React.FC<
   <SentencingAssessmentReportSection
     title={SECTION_TITLE}
     noHeaderMargin
+    splittable
     titleRight={
       <Styled.DispositionEmptyBadge>0 Records</Styled.DispositionEmptyBadge>
     }
@@ -248,7 +202,6 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
               assessmentScoreBucketStart={assessmentScoreBucketStart}
               offense={offense}
               offenseCategory={offenseCategory}
-              asterisk
             />
             , using MODOC data from 2020-present.
           </Styled.DispositionLeftPanelText>

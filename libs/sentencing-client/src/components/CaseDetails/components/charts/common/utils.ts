@@ -113,7 +113,8 @@ export function getSentenceLengthBucketLabel(
   return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years Incarceration`;
 }
 
-function sentenceLengthLabelFilter(d: {
+/** Returns true for flat-type (non-incarceration) disposition buckets (Probation, Treatment). */
+export function sentenceLengthLabelFilter(d: {
   sentenceLengthBucketStart: number;
   sentenceLengthBucketEnd: number;
 }) {

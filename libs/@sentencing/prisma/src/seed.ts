@@ -649,6 +649,17 @@ async function addOffenses() {
             // exercise the "zero values" excluded-data note in the Summary Insights section.
             create: MO_DISPOSITION_DATA([0.02, 0.12, 0.001, 0.789, 0.07]),
           },
+          avgSentenceLengthYears: faker.number.float({
+            min: 2,
+            max: 15,
+            fractionDigits: 1,
+          }),
+          avgPctServed: faker.number.float({
+            min: 15,
+            max: 80,
+            fractionDigits: 1,
+          }),
+          timeServedNumRecords: faker.number.int({ min: 5, max: 500 }),
         },
       });
 
@@ -662,6 +673,17 @@ async function addOffenses() {
           dispositionData: {
             create: MO_DISPOSITION_DATA([0.02, 0.1, 0.06, 0.76, 0.06]),
           },
+          avgSentenceLengthYears: faker.number.float({
+            min: 2,
+            max: 15,
+            fractionDigits: 1,
+          }),
+          avgPctServed: faker.number.float({
+            min: 15,
+            max: 80,
+            fractionDigits: 1,
+          }),
+          timeServedNumRecords: faker.number.int({ min: 5, max: 500 }),
         },
       });
     }

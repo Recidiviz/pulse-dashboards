@@ -32,10 +32,12 @@ import {
   ReportDispositionChartEmpty,
 } from "./ReportDispositionChart";
 import { ReportKeyConsiderations } from "./ReportKeyConsiderations";
+import { ReportKeyFinding } from "./ReportKeyFinding";
 import { ReportOffenderAssessment } from "./ReportOffenderAssessment";
 import { ReportPriorTreatmentHistory } from "./ReportPriorTreatmentHistory";
 import { ReportRecommendation } from "./ReportRecommendation";
 import { ReportRequestedOf } from "./ReportRequestedOf";
+import { ReportTimeServed, ReportTimeServedEmpty } from "./ReportTimeServed";
 import { BLOCK_GAP, CHIP_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
@@ -54,6 +56,18 @@ export const SentencingAssessmentReport: React.FC<
   const { dateRequested, updatedAt, staff } = sarData;
   const charges = sarData.charges;
   const { needsDisplayItems, factorsDisplayItems } = presenter;
+  const insightData = presenter.insightData;
+  const insightDescriptionContext = presenter.emptyStateDescriptionContext;
+  const timeServedData =
+    insightData?.avgSentenceLengthYears != null &&
+    insightData?.avgPctServed != null &&
+    insightData?.timeServedNumRecords != null
+      ? {
+          avgSentenceLengthYears: insightData.avgSentenceLengthYears,
+          avgPctServed: insightData.avgPctServed,
+          timeServedNumRecords: insightData.timeServedNumRecords,
+        }
+      : null;
 
   const header = (
     <Styled.Header>
@@ -211,16 +225,31 @@ export const SentencingAssessmentReport: React.FC<
                   )}
                 </>
               )}
-              {presenter.insightData?.dispositionNumRecords ? (
+              {insightData?.dispositionNumRecords ? (
                 <ReportDispositionChart
-                  insight={presenter.insightData}
+                  insight={insightData}
                   sortedDispositionData={presenter.sortedDispositionData}
                 />
               ) : (
                 <ReportDispositionChartEmpty
-                  descriptionContext={presenter.emptyStateDescriptionContext}
+                  descriptionContext={insightDescriptionContext}
                 />
               )}
+              {insightData &&
+                insightDescriptionContext &&
+                (timeServedData ? (
+                  <ReportTimeServed
+                    descriptionContext={insightDescriptionContext}
+                    {...timeServedData}
+                  />
+                ) : (
+                  <ReportTimeServedEmpty
+                    descriptionContext={insightDescriptionContext}
+                  />
+                ))}
+              {insightData?.dispositionNumRecords ? (
+                <ReportKeyFinding insight={insightData} />
+              ) : null}
             </Styled.PageContent>
           </td>
         </tr>
