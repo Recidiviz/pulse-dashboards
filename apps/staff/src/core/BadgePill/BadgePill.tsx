@@ -65,14 +65,21 @@ const statusStyles = {
     borderColor: "rgb(255,204,223)",
     color: "rgb(179,9,60)",
   },
+  ORANGE: {
+    backgroundColor: "rgb(255, 234, 208)",
+    borderColor: "rgb(250, 187, 135)",
+    color: "rgb(152, 61, 1)",
+  },
 } as const;
+
+export type PaletteKey = keyof typeof statusStyles;
 
 export const WorkflowsBadgePill = observer(function WorkflowsBadgePill({
   text,
   palette,
 }: {
   text: string;
-  palette: keyof typeof statusStyles;
+  palette: PaletteKey;
 }) {
   const { color, borderColor, backgroundColor } = statusStyles[palette];
   return (

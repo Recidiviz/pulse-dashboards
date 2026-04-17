@@ -53,6 +53,8 @@ const jsonRecentNonbondableOffenseSchema = z.object({
   nonbondableIncidentDate: dateStringSchema,
 });
 
+export type UsMiSolitarySessionType = z.output<typeof solitarySessionType>;
+
 const solitarySessionType = z
   .literal("Administrative Segregation")
   .or(z.literal("Temporary Segregation"));

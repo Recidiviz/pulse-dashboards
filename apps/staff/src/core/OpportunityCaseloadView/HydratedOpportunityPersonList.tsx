@@ -120,6 +120,7 @@ import { OpportunityPreviewPanel } from "./OpportunityPreviewPanel";
 import OpportunitySubheading from "./OpportunitySubheading";
 import { OpportunityTypeSelect } from "./OpportunityTypeSelect";
 import { TableViewToggle } from "./TableViewToggle";
+import { UsMiSegDurationCellWrapper } from "./UsMi/UsMiSegDurationCell";
 
 // US_ID supervision level data comes in as raw internal identifiers (e.g.
 // "MEDIUM") rather than preferred human-readable labels. This
@@ -784,20 +785,7 @@ const TableView = observer(function TableView({
           return opp.record.metadata.daysInSolitarySession;
         }
       },
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        if (
-          [
-            "usMiSecurityClassificationCommitteeReviewV2",
-            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
-            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-          ].includes(row.original.type) &&
-          row.original.record
-        ) {
-          return formatDurationFromOptionalDays(
-            row.original.record.metadata.daysInSolitarySession,
-          );
-        }
-      },
+      cell: UsMiSegDurationCellWrapper,
     },
     {
       header: "Latest Classification",
