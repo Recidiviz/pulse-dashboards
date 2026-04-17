@@ -275,6 +275,7 @@ export async function main(prisma: PrismaClient) {
         structuredActionItems: structuredActionItems,
         criticalUpdates: criticalUpdates,
         meetingSummary: meetingSummary,
+        caseNote: faker.lorem.paragraphs(3),
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [
