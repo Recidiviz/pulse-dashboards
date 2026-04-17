@@ -21,6 +21,8 @@ import { useState } from "react";
 
 import AddressSection from "~@reentry/frontend/components/action-plan/AddressSection";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
+import type { ResourceSearchPanelProps } from "~@reentry/frontend/components/action-plan/resource-bank/ResourceSearchPanel";
+import ResourceSearchPanel from "~@reentry/frontend/components/action-plan/resource-bank/ResourceSearchPanel";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
@@ -38,12 +40,14 @@ interface ResourceBankSidePanelProps {
     state: string;
   }) => void;
   disabled?: boolean;
+  searchPanelProps: ResourceSearchPanelProps;
 }
 
 const ResourceBankSidePanel = ({
   clientRecord,
   onAddressSave,
   disabled = false,
+  searchPanelProps,
 }: ResourceBankSidePanelProps) => {
   const { getAccessToken } = useAuth();
 
@@ -65,11 +69,7 @@ const ResourceBankSidePanel = ({
 
         {isExpanded && (
           <>
-            {/* Placeholder for ResourceSearchPanel */}
-            <div className={styles["searchPlaceholder"]}>
-              SECTION FOR RESOURCE SEARCH PANEL (TBD)
-            </div>
-
+            <ResourceSearchPanel {...searchPanelProps} />
             <AddressSection
               initialAddress={clientRecord?.address}
               onSave={onAddressSave}

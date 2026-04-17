@@ -1,0 +1,97 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+.results {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noResults {
+  font-size: 13px;
+  color: var(--gray-1);
+  text-align: center;
+  padding: 12px 0;
+  margin: 16px 0 0;
+}
+
+.card {
+  background-color: var(--color-white);
+  border: 1px solid var(--gray-4);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-1);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.categoryBadge {
+  display: inline-block;
+  background-color: var(--color-teal-9);
+  color: var(--color-teal-2);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.distance {
+  font-size: 11px;
+  color: var(--gray-1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cardDescription {
+  font-size: 12px;
+  color: var(--color-ink-3);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cardAddress {
+  font-size: 11px;
+  color: var(--color-navy-3);
+  margin: 0;
+}

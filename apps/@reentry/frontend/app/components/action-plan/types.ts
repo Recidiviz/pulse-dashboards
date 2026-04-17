@@ -20,3 +20,7 @@ export interface PlanSection {
   title: string;
   markdown: string;
 }
+
+export interface SectionTitle {
+  title: string;
+}

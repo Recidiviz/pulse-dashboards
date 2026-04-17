@@ -1,0 +1,84 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+.container {
+  align-self: stretch;
+  border-bottom: 1px solid var(--ink-2-a20);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 8px 12px;
+}
+
+@media (min-width: 768px) {
+  .header {
+    padding: 16px 32px 12px;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.headerTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink-1);
+}
+
+.infoIcon {
+  display: flex;
+  align-items: center;
+  color: var(--gray-1);
+  cursor: default;
+}
+
+.collapseButton {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: var(--gray-1);
+  border-radius: 4px;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.collapseButton:hover {
+  color: var(--color-teal-2);
+  background-color: rgba(0, 51, 49, 0.06);
+}
+
+/* Body */
+.body {
+  padding: 0 8px 20px;
+}
+
+@media (min-width: 768px) {
+  .body {
+    padding: 0 32px 20px;
+  }
+}

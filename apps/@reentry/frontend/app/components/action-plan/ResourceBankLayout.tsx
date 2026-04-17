@@ -21,7 +21,9 @@ import PlanContent from "~@reentry/frontend/components/action-plan/PlanContent";
 import ResourceBankSidePanel from "~@reentry/frontend/components/action-plan/ResourceBankSidePanel";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import { useMockResourceBankPlan } from "~@reentry/frontend/hooks/useMockRessourceAPICall";
+import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
 
+import { CATEGORY_SUBCATEGORY_MAP } from "./resource-bank/categorySubcategoryMap";
 import styles from "./styles/ResourceBankLayout.module.css";
 import usePlanSections from "./usePlanSections";
 
@@ -38,6 +40,12 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
     isError,
   } = useMockResourceBankPlan(planId);
 
+  const {
+    sections,
+    isLoading: isResourceBankLoading,
+    isError: didResourceBankError,
+  } = useResourceBank();
+
   const handleAddressSave = (address: {
     street_address: string | null;
     city: string;
@@ -51,14 +59,27 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
   if (isLoading) return <LoadingState />;
   if (isError || !planDetail) return null;
 
+  const resourceSearchPanelProps = {
+    sectionTitles: sections.map((item) => ({ title: item.title })),
+    categorySubcategoryMap: CATEGORY_SUBCATEGORY_MAP,
+  };
+
+  const renderSidePanel = () => {
+    if (isResourceBankLoading) return <LoadingState />;
+    if (didResourceBankError) return null;
+
+    return (
+      <ResourceBankSidePanel
+        clientRecord={planDetail?.client_record}
+        onAddressSave={handleAddressSave}
+        searchPanelProps={resourceSearchPanelProps}
+      />
+    );
+  };
+
   return (
     <div className={styles["container"]}>
-      <div className={styles["sidebar"]}>
-        <ResourceBankSidePanel
-          clientRecord={planDetail?.client_record}
-          onAddressSave={handleAddressSave}
-        />
-      </div>
+      <div className={styles["sidebar"]}>{renderSidePanel()}</div>
       <div className={styles["content"]}>
         <PlanContent planDetail={planDetail} planSections={planSections} />
       </div>
