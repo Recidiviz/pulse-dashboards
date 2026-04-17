@@ -63,7 +63,7 @@
         "sourcemap": true,
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
-        "target": "node20",
+        "target": "node22",
         "minify": true,
         "external": ["@prisma/client"],
         "assets": ["{workspaceRoot}/.yarnrc.yml"]

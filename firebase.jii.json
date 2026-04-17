@@ -105,6 +105,6 @@
   ],
   "functions": {
     "source": "dist/apps/jii-functions",
-    "runtime": "nodejs20"
+    "runtime": "nodejs22"
   }
 }

@@ -23,7 +23,7 @@
         "main": "apps/staff-functions/src/index.ts",
         "tsConfig": "apps/staff-functions/tsconfig.app.json",
         "generatePackageJson": true,
-        "target": "node20",
+        "target": "node22",
         "esbuildConfig": "{projectRoot}/esbuild.config.js"
       },
       "configurations": {

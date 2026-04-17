@@ -28,7 +28,7 @@
       ],
       "options": {
         "platform": "node",
-        "target": "node20",
+        "target": "node22",
         "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",

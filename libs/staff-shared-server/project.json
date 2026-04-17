@@ -110,7 +110,7 @@
           },
           "{workspaceRoot}/.yarnrc.yml"
         ],
-        "target": "node20"
+        "target": "node22"
       },
       "configurations": {
         "deploy": {

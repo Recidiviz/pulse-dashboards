@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /usr/src/app
 
 RUN corepack enable
@@ -10,7 +10,7 @@ RUN yarn workspaces focus --production
 COPY dist/apps/@meetings/seed-demo .
 
 # Production stage
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production

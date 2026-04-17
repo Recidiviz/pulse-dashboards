@@ -23,7 +23,7 @@
         "main": "apps/jii-functions/src/main.ts",
         "tsConfig": "apps/jii-functions/tsconfig.app.json",
         "generatePackageJson": true,
-        "target": "node20",
+        "target": "node22",
         "sourcemap": true,
         "esbuildConfig": "{projectRoot}/esbuild.config.js",
         "assets": ["{workspaceRoot}/.yarnrc.yml"]

@@ -102,7 +102,7 @@
         "sourcemap": true,
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
-        "target": "node20",
+        "target": "node22",
         "minify": true,
         "esbuildConfig": "{projectRoot}/esbuild.config.js",
         "external": ["@prisma/client"],
