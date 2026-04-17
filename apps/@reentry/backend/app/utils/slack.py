@@ -16,18 +16,19 @@
 # =============================================================================
 
 import json
-import logging
 from urllib.parse import urlparse
 
 import httpx
 import sentry_sdk
+import structlog
 
 from app.core.config import settings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _GUARDRAIL_ALERT_COPY: dict[str, tuple[str, str]] = {
     "crisis": ("🚨", "Crisis detected"),
+    "openai_moderation": ("🚨", "Crisis detected (OpenAI Moderation)"),
     "prompt_injection": ("⚠️", "Prompt injection detected"),
 }
 
@@ -86,6 +87,7 @@ async def send_guardrail_alert(
     client_pseudo_id: str,
     intake_id: str | None = None,
     state_code: str | None = None,
+    categories: list[str] | None = None,
 ) -> None:
     """Send a Slack alert when a hard-stop guardrail fires. Silently no-ops if not configured."""
     if not settings.SLACK_GUARDRAIL_ALERT_WEBHOOK_URL:
@@ -102,9 +104,12 @@ async def send_guardrail_alert(
     )
     text = (
         f"{icon} *{label}*\n"
+        f"*Environment:* {settings.ENV_NAME}  |  "
         f"*State:* {state_code or '?'}  |  "
         f"*Client:* {client_pseudo_id}  |  "
         f"*Intake:* {intake_id or '?'}  |  "
         f"*Guardrail:* {guardrail_type}"
     )
+    if categories:
+        text += f"\n*Categories:* {', '.join(categories)}"
     await _post_slack_message(settings.SLACK_GUARDRAIL_ALERT_WEBHOOK_URL, text)

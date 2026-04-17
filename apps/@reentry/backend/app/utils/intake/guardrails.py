@@ -16,31 +16,60 @@
 # =============================================================================
 
 """
-Deterministic guardrails for the CPA chatbot.
+Guardrails for the CPA chatbot. All checks run before the message reaches the LLM.
 
-These checks run on every incoming user message before it reaches the LLM —
-zero latency, no model call, hard-coded behavior.
+Call run_guardrails() — it runs sync checks first, then awaits the OpenAI moderation
+call, and returns the full list of triggered guardrail names.
 
 TODO: This entire module is a candidate for a shared library if other apps
 (e.g. JII texting, future chat features) need the same guardrail checks.
 """
 
-import logging
+import asyncio
 import re
 from enum import StrEnum
 
-logger = logging.getLogger(__name__)
+import structlog
+from openai import AsyncOpenAI
+
+from app.core.config import settings
+
+logger = structlog.get_logger(__name__)
 
 CHAR_LIMIT = 2500
+MODERATION_TIMEOUT_SECONDS = 5.0
+MODERATION_BLOCK_CATEGORIES = {
+    "self-harm/intent",
+}
+# Minimum score required to block. Calibrated against test messages:
+# active/present-tense intent clusters above 0.83, past-tense/recovery sits at 0.66 and below.
+MODERATION_BLOCK_THRESHOLD = 0.75
+
+_openai_client: AsyncOpenAI | None = None
+
+
+def _get_openai_client() -> AsyncOpenAI:
+    global _openai_client
+    if _openai_client is None:
+        _openai_client = AsyncOpenAI(
+            api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_BASE_URL or None,
+        )
+    return _openai_client
 
 
 class HardStopGuardrailType(StrEnum):
     PROMPT_INJECTION = "prompt_injection"
     CRISIS = "crisis"
+    OPENAI_MODERATION = "openai_moderation"
 
 
 HARD_STOP_GUARDRAIL_TYPES: frozenset[HardStopGuardrailType] = frozenset(
-    {HardStopGuardrailType.PROMPT_INJECTION, HardStopGuardrailType.CRISIS}
+    {
+        HardStopGuardrailType.PROMPT_INJECTION,
+        HardStopGuardrailType.CRISIS,
+        HardStopGuardrailType.OPENAI_MODERATION,
+    }
 )
 
 # Prompt injection patterns
@@ -116,6 +145,43 @@ INJECTION_PATTERNS = [
 ]
 
 
+async def check_openai_moderation(
+    content: str,
+) -> tuple[str, list[str]] | None:
+    """Check content for crisis signals via the OpenAI Moderation API.
+
+    Returns ("openai_moderation", [flagged_categories]) if a self-harm category is flagged,
+    None otherwise. Fails open on timeout or API error so outages never block legitimate users.
+    """
+    try:
+        async with asyncio.timeout(MODERATION_TIMEOUT_SECONDS):
+            response = await _get_openai_client().moderations.create(input=content)
+            result = response.results[0]
+            scores = result.category_scores.model_dump()
+            logger.debug(
+                "OpenAI moderation scores",
+                scores={
+                    cat: scores[cat]
+                    for cat in MODERATION_BLOCK_CATEGORIES
+                    if cat in scores
+                },
+            )
+            flagged_categories = [
+                cat
+                for cat in MODERATION_BLOCK_CATEGORIES
+                if scores.get(cat, 0) >= MODERATION_BLOCK_THRESHOLD
+            ]
+            if flagged_categories:
+                logger.warning(
+                    "OpenAI moderation flagged message",
+                    categories=flagged_categories,
+                )
+                return ("openai_moderation", flagged_categories)
+    except Exception as e:
+        logger.error("OpenAI moderation check failed (fail-open)", exc_info=e)
+    return None
+
+
 def check_char_limit(text: str) -> bool:
     return len(text) > CHAR_LIMIT
 
@@ -147,12 +213,7 @@ def check_crisis(text: str) -> bool:
     return any(pattern.search(text) for pattern in CRISIS_PATTERNS)
 
 
-def run_guardrails(text: str) -> list[str]:
-    """Run all guardrail checks and return every triggered guardrail.
-
-    Returns a list of triggered guardrail names, or an empty list if all pass.
-    All checks run regardless of prior hits — a message can trigger multiple.
-    """
+def _run_sync_checks(text: str) -> list[str]:
     triggered = []
     if check_char_limit(text):
         triggered.append("char_limit")
@@ -161,3 +222,31 @@ def run_guardrails(text: str) -> list[str]:
     if check_crisis(text):
         triggered.append("crisis")
     return triggered
+
+
+async def run_guardrails(
+    text: str,
+) -> tuple[list[str], dict[str, list[str]]]:
+    """Run all guardrail checks and return every triggered guardrail.
+
+    Returns (triggered, categories) where triggered is a list of guardrail names and
+    categories maps guardrail type → flagged category names (currently only populated
+    for "openai_moderation"). All checks run regardless of prior hits.
+    """
+    sync_results = _run_sync_checks(text)
+    hard_stop_already_triggered = any(
+        t in HARD_STOP_GUARDRAIL_TYPES for t in sync_results
+    )
+    if hard_stop_already_triggered:
+        logger.debug(
+            "Skipping OpenAI moderation — sync hard-stop already triggered",
+            triggered=sync_results,
+        )
+    moderation_result = (
+        None if hard_stop_already_triggered else await check_openai_moderation(text)
+    )
+    triggered = sync_results + ([moderation_result[0]] if moderation_result else [])
+    categories = (
+        {moderation_result[0]: moderation_result[1]} if moderation_result else {}
+    )
+    return triggered, categories

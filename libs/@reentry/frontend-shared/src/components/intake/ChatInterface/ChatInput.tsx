@@ -85,10 +85,11 @@ const ChatInput = ({
   }, []);
 
   const onSend = async () => {
-    if (!inputValue.trim() || isSending) return;
+    const message = inputValue.trim();
+    if (!message || isSending) return;
     setIsSending(true);
-    await sendMessage(inputValue.trim());
     setInputValue("");
+    await sendMessage(message);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !isInputDisabled) {

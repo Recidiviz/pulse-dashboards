@@ -23,24 +23,29 @@ import Modal from "react-modal";
 import { useApplicationContext } from "../../contexts/ApplicationContext";
 import { clearIntakeSession } from "../../utils/clearIntakeSession";
 import type { HardStopGuardrailType } from "../../websockets/eventTypes";
-import styles from "./GuardrailModal.module.css";
+import styles from "./styles/GuardrailModal.module.css";
 
-const CONTENT: Record<HardStopGuardrailType, { title: string; body: string }> =
-  {
-    prompt_injection: {
-      title: "Session ended",
-      body: "This session has been ended because a restricted message was detected.",
-    },
-    crisis: {
-      title: "We're here to help",
-      body: "It looks like you may need immediate support. Please speak with your caseworker or call 988 (Suicide & Crisis Lifeline) for help.",
-    },
-  };
+const PROMPT_INJECTION_CONTENT = {
+  title: "Session ended",
+  body: "This session has been ended because a restricted message was detected.",
+};
+
+const CRISIS_CONTENT = {
+  title: "We're here to help",
+  body: "It looks like you may need immediate support. Please speak with your caseworker or call 988 (Suicide & Crisis Lifeline) for help.",
+};
 
 const DEFAULT_CONTENT = {
   title: "Session ended",
   body: "This session has been ended. Please speak with your caseworker to continue.",
 };
+
+const CONTENT: Record<HardStopGuardrailType, { title: string; body: string }> =
+  {
+    prompt_injection: PROMPT_INJECTION_CONTENT,
+    crisis: CRISIS_CONTENT,
+    openai_moderation: CRISIS_CONTENT,
+  };
 
 interface GuardrailModalProps {
   reason: HardStopGuardrailType;

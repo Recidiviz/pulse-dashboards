@@ -49,6 +49,7 @@ export interface ForceDisconnectContent {
 /** Guardrail types that trigger a hard stop (socket disconnected, modal shown) */
 export const HARD_STOP_GUARDRAIL_TYPES = [
   "crisis",
+  "openai_moderation",
   "prompt_injection",
 ] as const;
 export type HardStopGuardrailType = (typeof HARD_STOP_GUARDRAIL_TYPES)[number];

@@ -25,6 +25,7 @@ from app.models.intake import (
 )
 from app.routes.shared_models import IntakeMessageResponse
 from app.services.client_data.types import ClientDataRecord
+from app.utils.feature_flags import is_feature_enabled
 from app.utils.intake.client_connection_manager import ClientConnectionManager
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.db_manager import DatabaseManager
@@ -388,7 +389,9 @@ class SocketIOManager:
 
         # Store the graph and state_code for future reference
         self.conversation_graphs[client_pseudo_id] = graph
-        self.state_codes[client_pseudo_id] = assessment_config.state_code
+        self.state_codes[client_pseudo_id] = (
+            intake.assessment_config.state_code if intake.assessment_config else ""
+        )
 
         try:
             await graph.run_assessment()
@@ -560,13 +563,24 @@ class SocketIOManager:
             logger.error(f"Error handling disconnect for {sid}: {e}")
 
     async def _handle_guardrail_response(
-        self, sid: str, client_pseudo_id: str, triggered: list[str], content: str
+        self,
+        sid: str,
+        client_pseudo_id: str,
+        triggered: list[str],
+        content: str,
+        guardrail_categories: dict[str, list[str]],
     ) -> None:
         logger.warning(f"Guardrail(s) triggered for {client_pseudo_id}: {triggered}")
 
         hard_stop = next((t for t in triggered if t in HARD_STOP_GUARDRAIL_TYPES), None)
         if hard_stop:
-            # Persist the blocked message with guardrailed_by set for querying and auditing.
+            # TODO(OBT-12591): Remove the GUARDRAILS_HARD_STOP flag gate once crisis copy is ready.
+            # prompt_injection always disconnects; crisis/moderation are suppressed until the flag is enabled.
+            will_disconnect = (
+                is_feature_enabled("GUARDRAILS_HARD_STOP")
+                or hard_stop == "prompt_injection"
+            )
+            # Always persist with guardrailed_by for observability, regardless of whether we disconnect.
             intake = await self.db_manager.get_intake(client_pseudo_id)
             if intake:
                 await self.db_manager.store_message(
@@ -580,22 +594,29 @@ class SocketIOManager:
                     f"Hard-stop guardrail fired but no intake found for {client_pseudo_id} — "
                     f"message not persisted and alert will be missing intake_id/state_code"
                 )
-            # Cancel graph before closing socket — prevents a window where the socket
-            # is dead but the graph is still running and attempting to emit.
-            if client_pseudo_id in self.conversation_graphs:
-                del self.conversation_graphs[client_pseudo_id]
             intake_id = str(intake.id) if intake else None
             state_code = self.state_codes.get(client_pseudo_id)
-            event = ForceDisconnectEvent(reason=hard_stop)
-            await self.sio.emit(event.type, event.model_dump(), room=sid)
             asyncio.create_task(
                 send_guardrail_alert(
                     guardrail_type=hard_stop,
                     client_pseudo_id=client_pseudo_id,
                     intake_id=intake_id,
                     state_code=state_code,
+                    categories=guardrail_categories.get(hard_stop),
                 )
             )
+            if will_disconnect:
+                # Cancel graph before closing socket — prevents a window where the socket
+                # is dead but the graph is still running and attempting to emit.
+                if client_pseudo_id in self.conversation_graphs:
+                    del self.conversation_graphs[client_pseudo_id]
+                event = ForceDisconnectEvent(reason=hard_stop)
+                await self.sio.emit(event.type, event.model_dump(), room=sid)
+            else:
+                logger.info(
+                    "Guardrail hard-stop suppressed (GUARDRAILS_HARD_STOP disabled)",
+                    guardrail=hard_stop,
+                )
         else:
             event = GuardrailTriggeredEvent(guardrails=triggered)
             await self.sio.emit(event.type, event.model_dump(mode="json"), room=sid)
@@ -628,10 +649,22 @@ class SocketIOManager:
                 logger.debug(f"Empty content received from sid {sid}")
                 return
 
-            if triggered := run_guardrails(content):
+            triggered, guardrail_categories = await run_guardrails(content)
+            if triggered:
                 await self._handle_guardrail_response(
-                    sid, client_pseudo_id, triggered, content
+                    sid, client_pseudo_id, triggered, content, guardrail_categories
                 )
+                # Crisis and moderation hard-stops are suppressed when the flag is off —
+                # let the conversation continue. Prompt injection and non-hard-stops always stop.
+                gated_hard_stops = {"crisis", "openai_moderation"}
+                hard_stops = {t for t in triggered if t in HARD_STOP_GUARDRAIL_TYPES}
+                if hard_stops.issubset(gated_hard_stops) and not is_feature_enabled(
+                    "GUARDRAILS_HARD_STOP"
+                ):
+                    # Message already stored with guardrailed_by. Just unblock the AI pipeline.
+                    pending_response = self.pending_responses.get(client_pseudo_id)
+                    if pending_response and not pending_response.done():
+                        pending_response.set_result(content)
                 return
 
             intake = await self.db_manager.get_intake(client_pseudo_id)

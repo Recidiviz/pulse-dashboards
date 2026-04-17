@@ -142,6 +142,12 @@ type AddHumanMessageAction = {
   content: components["schemas"]["IntakeMessageResponse"];
 };
 
+type ConfirmHumanMessageAction = {
+  type: "confirmHumanMessage";
+  tempId: string;
+  content: components["schemas"]["IntakeMessageResponse"];
+};
+
 type IntakeErrorType = {
   type: "api" | "socket";
   message?: string;
@@ -193,6 +199,7 @@ type IntakeAction =
   | IntakeApiAction
   | ReceiveMessageAction
   | AddHumanMessageAction
+  | ConfirmHumanMessageAction
   | ErrorAction
   | SectionChangeAction
   | InitializeIntakeMetaAction
@@ -240,6 +247,7 @@ const intakeReducer = (
       return {
         ...state,
         connectionStatus: "disconnected",
+        waitingForAIInput: false,
         disconnectReason,
         guardrailDisconnectReason,
       };
@@ -319,6 +327,14 @@ const intakeReducer = (
         ...state,
         messages: [...state.messages, action.content],
         waitingForAIInput: true,
+      };
+    }
+    case "confirmHumanMessage": {
+      return {
+        ...state,
+        messages: state.messages.map((m) =>
+          m.id === action.tempId ? action.content : m,
+        ),
       };
     }
     case "error": {
@@ -652,7 +668,6 @@ export function IntakeSocketProvider({
       });
     });
     socket.on("forceDisconnect", (content) => {
-      console.log(content.reason);
       dispatch({
         type: "disconnect",
         reason: content.reason,
@@ -854,19 +869,30 @@ export function IntakeSocketProvider({
       if (intakeContext.waitingForAIInput) return;
 
       try {
-        console.log("Sending message:", message);
         logWebsocketEvent("info", "WebSocket sending human message", {
           messageLength: message.length,
           socketId: socket.id,
           connectionStatus: intakeContext.connectionStatus,
         });
 
-        // Use emitWithAck to get the response back from the server
-        // Maybe it would be better for the backend to send an error event if this didn't go through
-        // but in the meantime just show the message
-        const response = await socket.emitWithAck("humanMessage", message);
+        // Show message immediately before the ack returns (optimistic UI).
+        // Replaced with the server-confirmed version once the ack arrives.
+        const tempId = crypto.randomUUID();
+        const now = new Date().toISOString();
+        dispatch({
+          type: "addHumanMessage",
+          content: {
+            id: tempId,
+            content: message,
+            from_role: "client",
+            section: intakeContext.currentSection,
+            requires_response: false,
+            created_at: now,
+            updated_at: now,
+          },
+        });
 
-        console.log("Received acknowledgment response:", response);
+        const response = await socket.emitWithAck("humanMessage", message);
 
         if (response) {
           // Parse the response if it's a string
@@ -874,7 +900,6 @@ export function IntakeSocketProvider({
           if (typeof response === "string") {
             try {
               parsedMessage = JSON.parse(response);
-              console.log("Parsed JSON response:", parsedMessage);
             } catch (e) {
               console.warn(
                 "Response is a string but not valid JSON:",
@@ -888,17 +913,19 @@ export function IntakeSocketProvider({
             socketId: socket.id,
           });
 
-          // Update state with the acknowledged message from the server
+          // Swap the optimistic placeholder with the persisted server message
           dispatch({
-            type: "addHumanMessage",
+            type: "confirmHumanMessage",
+            tempId,
             content: parsedMessage,
           });
         } else {
-          console.error("Failed to receive message acknowledgment");
           logWebsocketEvent("error", "WebSocket message not acknowledged", {
             socketId: socket.id,
             connectionStatus: intakeContext.connectionStatus,
           });
+          // No ack: optimistic message stays visible. If a guardrail fired,
+          // forceDisconnect will arrive and the GuardrailModal covers the chat.
         }
       } catch (error) {
         console.error("Error sending message:", error);
@@ -910,7 +937,12 @@ export function IntakeSocketProvider({
         // Could add error handling state here
       }
     },
-    [intakeContext.waitingForAIInput, intakeContext.connectionStatus, socket],
+    [
+      intakeContext.waitingForAIInput,
+      intakeContext.connectionStatus,
+      intakeContext.currentSection,
+      socket,
+    ],
   );
 
   const reconnect = useCallback(() => {
