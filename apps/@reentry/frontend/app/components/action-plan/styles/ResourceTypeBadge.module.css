@@ -1,0 +1,114 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2025 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+.badge {
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 4px;
+  outline: 1px solid;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: "Public Sans", sans-serif;
+  line-height: 16px;
+}
+
+/* New categories */
+.housing {
+  background-color: #fff4e6;
+  outline-color: #ffb366;
+  color: #b35900;
+}
+
+.employment {
+  background-color: #e6f7f0;
+  outline-color: #66d9a8;
+  color: #006644;
+}
+
+.basicNeeds {
+  background-color: #eff3ff;
+  outline-color: #a2b3ef;
+  color: #00387c;
+}
+
+.mentalHealth {
+  background-color: #f3e6ff;
+  outline-color: #c299ff;
+  color: #5200b3;
+}
+
+.substanceUse {
+  background-color: #ffe6f0;
+  outline-color: #ff99c2;
+  color: #b30044;
+}
+
+.physicalHealth {
+  background-color: #e6fff9;
+  outline-color: #66ffd9;
+  color: #00664c;
+}
+
+.legalAid {
+  background-color: #ffe6e6;
+  outline-color: #ff9999;
+  color: #b30000;
+}
+
+.education {
+  background-color: #e6f9ff;
+  outline-color: #66ccff;
+  color: #005c99;
+}
+
+.familyReconnection {
+  background-color: #fff0e6;
+  outline-color: #ffcc99;
+  color: #995200;
+}
+
+.peerSupport {
+  background-color: #f0e6ff;
+  outline-color: #cc99ff;
+  color: #5200b3;
+}
+
+/* Legacy categories */
+.transportation {
+  background-color: #e6f0ff;
+  outline-color: #99b3ff;
+  color: #002699;
+}
+
+.specializedServices {
+  background-color: #ffe6ff;
+  outline-color: #ff99ff;
+  color: #99008c;
+}
+
+.unknown {
+  background-color: #f0f0f0;
+  outline-color: #cccccc;
+  color: #666666;
+}

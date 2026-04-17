@@ -97,8 +97,16 @@ export function extractOriginalCSS(
   function processRules(rules: CSSRuleList, elements: Element[]) {
     Array.from(rules).forEach((rule) => {
       try {
-        if (rule instanceof CSSStyleRule) {
-          if (checkRuleAgainstElements(rule, elements)) {
+        if (rule instanceof CSSFontFaceRule) {
+          // Always include @font-face rules — they are never element-scoped
+          matchingRules.add(rule.cssText);
+        } else if (rule instanceof CSSStyleRule) {
+          // Always include :root / html / body rules so CSS custom properties
+          // and base styles are available in the PDF renderer
+          const isBaseSelector = /^(:root|html|body)$/.test(
+            rule.selectorText?.trim() ?? "",
+          );
+          if (isBaseSelector || checkRuleAgainstElements(rule, elements)) {
             matchingRules.add(rule.cssText);
           }
         } else if (rule instanceof CSSMediaRule && includeMediaQueries) {

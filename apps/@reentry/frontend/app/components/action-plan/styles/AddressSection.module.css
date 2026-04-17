@@ -1,0 +1,108 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+.container {
+  align-self: stretch;
+  height: auto;
+  padding: 24px 8px;
+  border-bottom: 1px solid var(--ink-2-a20);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 24px 32px;
+  }
+}
+
+.header {
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.title {
+  color: var(--color-teal-1);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16.8px;
+  white-space: nowrap;
+}
+
+.toggleContainer {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.toggleArrow {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.toggleArrowCollapsed {
+  transform: rotate(-90deg);
+}
+
+.editForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editActions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.cancelButton {
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2-a85);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.cancelButton:hover {
+  color: var(--color-ink-2);
+}
+
+.displayContent {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.addressText {
+  font-size: 14px;
+  color: var(--gray-2);
+}

@@ -36,6 +36,8 @@ nx test @sentencing/server
 
 # Run a specific test file
 nx test staff --testPathPattern="MyComponent.test"
+nx test  @reentry/frontend -- MyComponent.test.ts
+
 
 # Run E2E tests (Playwright)
 nx e2e staff

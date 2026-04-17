@@ -27,8 +27,7 @@ import {
 } from "react-icons/md";
 
 import MdxEditor from "~@reentry/frontend/components/mdxEditor/MdxEditor";
-
-import styles from "./markdown.module.css";
+import styles from "~@reentry/frontend/components/shared/styles/markdown.module.css";
 
 interface ActionPlanViewerProps {
   markDownPlan: string;

@@ -1,0 +1,342 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--gray-4);
+  border-radius: 8px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.tile:hover {
+  border-color: var(--gray-300);
+  box-shadow: 0 1px 4px var(--shadow-10);
+}
+
+.tileHousing {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-housing-bg) 50%,
+    transparent
+  );
+}
+.tileEmployment {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-employment-bg) 50%,
+    transparent
+  );
+}
+.tileHealth {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-health-bg) 50%,
+    transparent
+  );
+}
+.tileEducation {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-education-bg) 50%,
+    transparent
+  );
+}
+.tileBasicNeeds {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-basic-needs-bg) 50%,
+    transparent
+  );
+}
+.tileLegal {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-legal-bg) 50%,
+    transparent
+  );
+}
+.tileFamily {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-family-bg) 50%,
+    transparent
+  );
+}
+.tilePeer {
+  background-color: color-mix(
+    in srgb,
+    var(--color-chip-peer-bg) 50%,
+    transparent
+  );
+}
+.tileDefault {
+  background-color: var(--color-white);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.titleArea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink-1);
+}
+
+.categoryChip {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-public-sans);
+  white-space: nowrap;
+}
+
+.chipHousing {
+  background-color: var(--color-chip-housing-bg);
+  color: var(--color-chip-housing-text);
+}
+.chipEmployment {
+  background-color: var(--color-chip-employment-bg);
+  color: var(--color-chip-employment-text);
+}
+.chipHealth {
+  background-color: var(--color-chip-health-bg);
+  color: var(--color-chip-health-text);
+}
+.chipEducation {
+  background-color: var(--color-chip-education-bg);
+  color: var(--color-chip-education-text);
+}
+.chipBasicNeeds {
+  background-color: var(--color-chip-basic-needs-bg);
+  color: var(--color-chip-basic-needs-text);
+}
+.chipLegal {
+  background-color: var(--color-chip-legal-bg);
+  color: var(--color-chip-legal-text);
+}
+.chipFamily {
+  background-color: var(--color-chip-family-bg);
+  color: var(--color-chip-family-text);
+}
+.chipPeer {
+  background-color: var(--color-chip-peer-bg);
+  color: var(--color-chip-peer-text);
+}
+.chipDefault {
+  background-color: var(--color-chip-default-bg);
+  color: var(--color-chip-default-text);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.onlineBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-public-sans);
+  color: var(--electric-blue-700);
+  background-color: var(--electric-blue-100);
+  white-space: nowrap;
+}
+
+.removeButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gray-600);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.15s,
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.tile:hover .removeButton {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.removeButton:hover {
+  background-color: var(--gray-100);
+  color: var(--color-error-1);
+}
+
+.description {
+  font-size: 13px;
+  color: var(--color-ink-2);
+  font-family: var(--font-public-sans);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px 2px;
+}
+
+.onlineMetaGrid {
+  display: flex;
+  flex-direction: column;
+}
+
+.metaRow {
+  font-size: 12px;
+  color: var(--color-ink-2);
+  font-family: var(--font-public-sans);
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 4px;
+}
+
+.metaIcon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.metaLink {
+  font-size: 12px;
+  color: var(--color-navy-1);
+  font-family: var(--font-public-sans);
+  text-decoration: underline;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.metaText {
+  flex: 1;
+  min-width: 0;
+}
+
+.metaLink .metaText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.metaText {
+  flex: 1;
+  min-width: 0;
+}
+
+.metaLink .metaText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.distanceWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: default;
+}
+
+.distanceWarning {
+  font-size: 12px;
+  font-family: var(--font-public-sans);
+  color: var(--color-warning-distance);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tooltipText {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  width: max-content;
+  max-width: 260px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--color-ink-1);
+  color: var(--color-white);
+  font-size: 12px;
+  font-family: var(--font-public-sans);
+  line-height: 1.4;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.distanceWrapper:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media print {
+  .tile {
+    box-shadow: none;
+  }
+
+  .metaGrid {
+    display: flex;
+    flex-direction: column;
+  }
+}

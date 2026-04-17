@@ -43,7 +43,7 @@ import {
   MdOutlineLocationOn,
 } from "react-icons/md";
 
-import styles from "../ActionPlanViewer/markdown.module.css";
+import styles from "../shared/styles/markdown.module.css";
 
 interface MdxEditorProps {
   markDownPlan: string;

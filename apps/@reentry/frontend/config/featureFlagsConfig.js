@@ -23,6 +23,10 @@
  * and during runtime.
  *
  */
+
+// The flags are set up to be environment specific.
+// To set a flag to false everywhere, use "" as the value for the environment.
+
 const FEATURE_FLAGS_CONFIG = {
   ENABLE_SOURCE_MAPS: "development,dev,demo,pilot,staging",
   CLIENT_ADDITION: "development,dev,demo,pilot",
@@ -34,6 +38,7 @@ const FEATURE_FLAGS_CONFIG = {
   UPLOAD_AUDIO: "development,dev,demo,pilot,staging",
   TOGGLE_ENABLED_OUTPUTS: "development,dev,staging,prod",
   IMPERSONATION: "development,dev,demo,pilot,staging",
+  RESOURCE_BANK: "development",
 };
 
 module.exports = { FEATURE_FLAGS_CONFIG };

@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import Planner from "~@reentry/frontend/components/action-plan/Planner";
+import ResourceBankLayout from "~@reentry/frontend/components/action-plan/ResourceBankLayout";
 import SidePanel from "~@reentry/frontend/components/action-plan/SidePanel";
 import UpdateResource from "~@reentry/frontend/components/action-plan/UpdateResource";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
@@ -29,6 +30,7 @@ import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
@@ -41,7 +43,6 @@ const ActionPlanPage = () => {
 
   // Track if outputs are disabled (403 error)
   const [outputsDisabled, setOutputsDisabled] = useState(false);
-
 
   // ----------- Loading and regeneration reloading ------------
   const [regenerationMessage, setRegenerationMessage] = useState("");
@@ -100,7 +101,10 @@ const ActionPlanPage = () => {
     if (errorDetailPlan) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const error = errorDetailPlan as any;
-      if (error?.detail === "Outputs are disabled for this assessment because they are under revision") {
+      if (
+        error?.detail ===
+        "Outputs are disabled for this assessment because they are under revision"
+      ) {
         setOutputsDisabled(true);
       }
     }
@@ -124,17 +128,22 @@ const ActionPlanPage = () => {
 
   // Get current plan resources - from the API instead of parsing from markdown
   const { data: planResourcesData, refetch: refetchPlanResources } =
-    $api.useQuery("get", "/plans/{id}/resources", {
-      params: {
-        path: {
-          id: dataDetailPlan?.id as string,
+    $api.useQuery(
+      "get",
+      "/plans/{id}/resources",
+      {
+        params: {
+          path: {
+            id: dataDetailPlan?.id as string,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
         },
       },
-      headers: {
-        Authorization: `Bearer ${getAccessToken()}`,
-        "Content-Type": "application/json",
-      },
-    }, { enabled: !!dataDetailPlan?.id, });// Only enable when plan ID is available
+      { enabled: !!dataDetailPlan?.id },
+    ); // Only enable when plan ID is available
 
   useEffect(() => {
     if (planResourcesData) {
@@ -290,6 +299,15 @@ const ActionPlanPage = () => {
         </span>
       </div>
     );
+  if (isFeatureEnabled("RESOURCE_BANK")) {
+    return (
+      <>
+        <PageView />
+        <ResourceBankLayout planId={planId} />
+      </>
+    );
+  }
+
   return (
     <>
       <PageView />

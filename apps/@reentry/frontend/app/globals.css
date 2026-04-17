@@ -66,6 +66,42 @@
   --color-error-1: #b91c1c;
   --color-green-1: #2f855a;
 
+  /* Electric blue palette */
+  --electric-blue-50: #eef5ff;
+  --electric-blue-100: #d9eaff;
+  --electric-blue-200: #bcd7ff;
+  --electric-blue-300: #8dbcff;
+  --electric-blue-400: #5597ff;
+  --electric-blue-500: #2f74ff;
+  --electric-blue-600: #1a52f5;
+  --electric-blue-700: #1540e1;
+  --electric-blue-800: #1836b6;
+  --electric-blue-900: #1a318f;
+
+  /* Resource Bank: category chip colors */
+  --color-chip-housing-bg: #e0f2f1;
+  --color-chip-housing-text: #003331;
+  --color-chip-employment-bg: #e8f5e9;
+  --color-chip-employment-text: #2f855a;
+  --color-chip-health-bg: #fff3e0;
+  --color-chip-health-text: #f08c00;
+  --color-chip-education-bg: #e3f2fd;
+  --color-chip-education-text: #285386;
+  --color-chip-basic-needs-bg: #dbeafe;
+  --color-chip-basic-needs-text: #1d4ed8;
+  --color-chip-legal-bg: #ede9fe;
+  --color-chip-legal-text: #5b21b6;
+  --color-chip-family-bg: #ffe4e6;
+  --color-chip-family-text: #9f1239;
+  --color-chip-peer-bg: #fef9c3;
+  --color-chip-peer-text: #713f12;
+  --color-chip-default-bg: #f1f5f9;
+  --color-chip-default-text: #4a5568;
+
+  /* Resource Bank: badge and warning */
+  --color-badge-online: var(--color-green-1);
+  --color-warning-distance: var(--color-error-1);
+
   --gray-50: #f9fafb;
   --gray-50-a: #f9fafa;
   --gray-100: #f1f5f9;

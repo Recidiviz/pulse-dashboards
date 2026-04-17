@@ -1,0 +1,51 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+.container {
+  align-self: stretch;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.searchPlaceholder {
+  align-self: stretch;
+  padding: 24px 8px;
+  border-bottom: 1px solid var(--ink-2-a20);
+}
+
+@media (min-width: 768px) {
+  .searchPlaceholder {
+    padding: 24px 32px;
+  }
+}
+
+.aiDisclosure {
+  width: 100%;
+  margin-top: auto;
+  margin-bottom: 20px;
+}
