@@ -24,11 +24,18 @@
         "cwd": "{projectRoot}"
       }
     },
-    "sync-resource": {
+    "requires-sops-env:sync-resource": {
       "executor": "nx:run-commands",
       "options": {
         "command": "vite-node scripts/syncResource.ts",
         "cwd": "{projectRoot}"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": [
+            "{workspaceRoot}/apps/@jii/server/env.dev.enc.yaml"
+          ]
+        }
       }
     },
     "ts-to-csv": {

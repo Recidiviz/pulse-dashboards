@@ -1,0 +1,54 @@
+{
+  "moreInformation": {
+    "pages": {
+      "earnedTime": {
+        "heading": "[US_CO]moreInformation.pages.earnedTime.heading",
+        "body": "[US_CO]moreInformation.pages.earnedTime.body"
+      }
+    }
+  },
+  "programs": {
+    "lastUpdated": "[US_CO]programs.lastUpdated",
+    "pageTitle": "[US_CO]programs.pageTitle",
+    "pageDescription": "[US_CO]programs.pageDescription",
+    "learnMoreLink": "[US_CO]programs.learnMoreLink",
+    "resultsCount_one": "[US_CO]programs.resultsCount_one",
+    "resultsCount_other": "[US_CO]programs.resultsCount_other",
+    "resultsHint": "[US_CO]programs.resultsHint",
+    "filters": {
+      "button": "[US_CO]programs.filters.button",
+      "categoryLabel": "[US_CO]programs.filters.categoryLabel",
+      "facilityLabel": "[US_CO]programs.filters.facilityLabel",
+      "allCategories": "[US_CO]programs.filters.allCategories",
+      "allFacilities": "[US_CO]programs.filters.allFacilities",
+      "onlyEarnCredits": "[US_CO]programs.filters.onlyEarnCredits",
+      "onlyStarred": "[US_CO]programs.filters.onlyStarred",
+      "clearAll": "[US_CO]programs.filters.clearAll"
+    },
+    "card": {
+      "earnLabel": "[US_CO]programs.card.earnLabel",
+      "daysOfCredit_zero": "[US_CO]programs.card.daysOfCredit_zero",
+      "daysOfCredit_one": "[US_CO]programs.card.daysOfCredit_one",
+      "daysOfCredit_other": "[US_CO]programs.card.daysOfCredit_other",
+      "newBadge": "[US_CO]programs.card.newBadge"
+    },
+    "category": {
+      "programCount_one": "[US_CO]programs.category.programCount_one",
+      "programCount_other": "[US_CO]programs.category.programCount_other",
+      "programCountFiltered_one": "[US_CO]programs.category.programCountFiltered_one",
+      "programCountFiltered_other": "[US_CO]programs.category.programCountFiltered_other"
+    },
+    "modal": {
+      "earnSubtitle_zero": "[US_CO]programs.modal.earnSubtitle_zero",
+      "earnSubtitle_one": "[US_CO]programs.modal.earnSubtitle_one",
+      "earnSubtitle_other": "[US_CO]programs.modal.earnSubtitle_other",
+      "programDescription": "[US_CO]programs.modal.programDescription",
+      "eligibility": "[US_CO]programs.modal.eligibility",
+      "eligibilityPrereq": "[US_CO]programs.modal.eligibilityPrereq",
+      "eligibilityNone": "[US_CO]programs.modal.eligibilityNone",
+      "availableFacilities": "[US_CO]programs.modal.availableFacilities",
+      "callToAction": "[US_CO]programs.modal.callToAction",
+      "closeWindow": "[US_CO]programs.modal.closeWindow"
+    }
+  }
+}

@@ -32,7 +32,7 @@ creation_rules:
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
     age: age1j9nh8pk54l790m4km3zjemzgqhaytkfcjwya6js6pj3mhuz5xvwqxmhvup,age1huen0n38gr3v2xypee52t3yndtf7sjqws70rn8yhspupw0hqwu9s0e52vw,age1m59ar48xre9wd6pyeaurpxk5fk6mqm2w799sx2n2jnc37nzc7gzskz8aza
   # General rules
-  - path_regex: apps/@jii/.+\.enc\.yaml$
+  - path_regex: (apps|libs)/@jii/.+\.enc\.yaml$
     gcp_kms: projects/recidiviz-jii-staging/locations/us-central1/keyRings/recidiviz-jii-staging-sops/cryptoKeys/recidiviz-jii-staging-sops-key
   - path_regex: apps/public-pathways/.+\.enc\.yaml$
     gcp_kms: projects/public-pathways-staging/locations/us-central1/keyRings/public-pathways-staging-sops/cryptoKeys/public-pathways-staging-sops-key

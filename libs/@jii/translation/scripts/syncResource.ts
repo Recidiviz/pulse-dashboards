@@ -16,10 +16,12 @@
 // =============================================================================
 
 import { ArgumentParser } from "argparse";
-import { csvParse } from "d3-dsv";
 import { unflatten } from "flat";
-import { readFile, writeFile } from "fs/promises";
+import { writeFile } from "fs/promises";
+import { google, sheets_v4 } from "googleapis";
+import { check } from "language-tags";
 import { join } from "path";
+import { format } from "prettier";
 import { exit } from "process";
 
 import { TRANSLATOR_MODE_LANGUAGE_CODE } from "../src/constants";
@@ -27,15 +29,18 @@ import { TRANSLATOR_MODE_LANGUAGE_CODE } from "../src/constants";
 // ======================
 // How to use this script
 // ======================
-// For input you will need a CSV whose contents correspond to an i18next namespace
-// (e.g., "common"). Its output will be JSON resource files for the languages in that
-// namespace as defined in the CSV.
-// There is one required column: "path", which defines the path to each translation segment
-// in dot notation. For each additional column whose headers are valid language codes (e.g.,
-// "en", "en-US", "es", "fr", etc) the script will generate a JSON file with all non-empty paths.
-// Additional columns will be ignored.
+// $ nx sync-resource @jii/translation [-n namespace]
+// ============
+// Reads a Google Sheets document and converts each sheet into JSON resource files
+// for i18next. The spreadsheet ID is read from the TRANSLATIONS_SHEET_ID environment
+// variable. Each sheet tab represents one namespace (e.g., "common"). Its contents
+// must match the same column layout as the CSV format:
+// There are two required columns: "path", which defines the path to each translation
+// segment in dot notation, and "en", the English base translation. For each additional
+// column whose header is a valid language code (e.g., "es", "fr", etc) the script will
+// generate a JSON file with all non-empty paths. Additional columns will be ignored.
 // =============
-// Example input
+// Example sheet contents
 // =============
 // | path    | en      | es    | notes             |
 // | ------- | ------- | ----- | ----------------- |
@@ -51,79 +56,158 @@ import { TRANSLATOR_MODE_LANGUAGE_CODE } from "../src/constants";
 
 const parser = new ArgumentParser({
   description:
-    "Converts a CSV of translation strings into JSON resources for i18next",
+    "Reads a Google Sheets document and converts each sheet into JSON resources for i18next",
 });
 
 parser.add_argument("-n", "--namespace", {
   dest: "namespace",
-  required: true,
-  help: "Target namespace. See src/namespaces for options",
-});
-
-parser.add_argument("-f", "--file", {
-  dest: "file",
-  required: true,
-  help: "Path to CSV file",
+  required: false,
+  help: "Target namespace (sheet tab name). If omitted, all tabs are processed.",
 });
 
 type Args = {
-  namespace: string;
-  file: string;
+  namespace: string | undefined;
 };
 
 const args = parser.parse_args() as Args;
 
-const resourceDirectory = `src/namespaces/${args.namespace}/resources`;
+const spreadsheetId = process.env["TRANSLATIONS_SHEET_ID"];
+if (!spreadsheetId)
+  throw new Error("TRANSLATIONS_SHEET_ID environment variable is required");
+
+function getSheetsClient(): sheets_v4.Sheets {
+  const credentials = process.env["SHEET_API_SERVICE_ACCOUNT"]
+    ? {
+        client_email: process.env["SHEET_API_SERVICE_ACCOUNT"],
+        private_key: process.env["SHEET_API_SERVICE_ACCOUNT_PRIVATE_KEY"],
+      }
+    : undefined;
+
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
+  });
+
+  return google.sheets({ version: "v4", auth });
+}
+
+async function getSheetTitles(id: string): Promise<string[]> {
+  const sheets = getSheetsClient();
+  const response = await sheets.spreadsheets.get({ spreadsheetId: id });
+  return (response.data.sheets ?? [])
+    .map((s) => s.properties?.title ?? "")
+    .filter(Boolean);
+}
+
+async function fetchSheetData(id: string, namespace: string) {
+  const sheets = getSheetsClient();
+  let response;
+  try {
+    response = await sheets.spreadsheets.values.get({
+      spreadsheetId: id,
+      range: `${namespace}!A:ZZ`,
+    });
+  } catch {
+    throw new Error(
+      `Sheet "${namespace}" could not be read. Are you sure it exists?`,
+    );
+  }
+
+  const rows = response.data.values ?? [];
+  if (rows.length === 0) throw new Error(`Sheet "${namespace}" is empty`);
+
+  const [columns, ...dataRows] = rows;
+
+  const data = dataRows.map((row) =>
+    Object.fromEntries(columns.map((h, i) => [h, row[i] ?? ""])),
+  );
+
+  return { data, columns };
+}
 
 /**
  * Validates a purported language/locale tag and canonicalizes it
  * @returns Canonical locale string if valid, undefined if not
  */
 function validLanguageTag(tag: string) {
-  try {
-    const [code] = Intl.getCanonicalLocales(tag);
-    return code;
-  } catch {
-    return;
-  }
+  return check(tag) ? Intl.getCanonicalLocales(tag)[0] : undefined;
+}
+
+async function writeToJson(data: unknown, path: string) {
+  return writeFile(
+    path,
+    await format(JSON.stringify(data, undefined, 2), {
+      parser: "json",
+    }),
+  );
 }
 
 const PATH_COLUMN = "path";
+const EN_COLUMN = "en";
 
-async function makeResourcesFromCsv() {
-  const inputData = csvParse(await readFile(args.file, { encoding: "utf8" }));
+async function makeResources(id: string, namespace: string): Promise<Error[]> {
+  const resourceDirectory = `src/namespaces/${namespace}/resources`;
 
-  const languages = inputData.columns
+  const { data: inputData, columns } = await fetchSheetData(id, namespace);
+
+  const missingColumns = [PATH_COLUMN, EN_COLUMN].filter(
+    (c) => !columns.includes(c),
+  );
+  if (missingColumns.length)
+    throw new Error(
+      `Sheet "${namespace}" is missing required columns: ${missingColumns.join(", ")}`,
+    );
+
+  const languages = columns
     .map((cn) => validLanguageTag(cn))
     .filter((v): v is string => !!v);
-  console.log(`Detected languages: ${languages.join(", ")}`);
+  console.log(`[${namespace}] Detected languages: ${languages.join(", ")}`);
 
-  const ignoredColumns = inputData.columns
+  const ignoredColumns = columns
     .filter((cn) => cn !== PATH_COLUMN)
     .filter((cn) => !validLanguageTag(cn));
-  console.log(`Ignored columns: ${ignoredColumns.join(", ") || "none"}`);
+  console.log(
+    `[${namespace}] Ignored columns: ${ignoredColumns.join(", ") || "none"}`,
+  );
 
-  // generate a resource file for each language
-  await Promise.all(
+  // generate a resource file for each language, collecting errors rather than
+  // short-circuiting so all languages are attempted regardless of individual failures
+  const langResults = await Promise.allSettled(
     languages.map(async (lang) => {
       // skip empty cells rather than including empty strings
       // (missing keys support extra behaviors such as fallback to another language)
       const nonEmptySegments = inputData.filter((row) => !!row[lang]);
+
+      // if the sheet has a language column but no translations yet, leave any
+      // existing output file untouched rather than overwriting it with {}
+      if (nonEmptySegments.length === 0) {
+        console.log(
+          `[${namespace}] No translations found for ${lang}, skipping`,
+        );
+        return;
+      }
 
       // we expect that paths are flattened into dot notation
       const flattenedObjectEntries = nonEmptySegments.map((row) => {
         return [row["path"], row[lang]];
       });
       if (flattenedObjectEntries.some((e) => !e[0]))
-        throw new Error(`source data is missing paths for language ${lang}`);
+        throw new Error("source data is missing paths");
 
       // unflattening will produce the expected nesting
       const outputData = unflatten(Object.fromEntries(flattenedObjectEntries));
+
       const outputFile = join(resourceDirectory, `${lang}.json`);
 
-      await writeFile(outputFile, JSON.stringify(outputData, undefined, 2));
+      await writeToJson(outputData, outputFile);
     }),
   );
+
+  const errors = langResults.flatMap((r, i) => {
+    if (r.status === "fulfilled") return [];
+    const lang = languages[i];
+    return [new Error(`[ns: ${namespace}, lang: ${lang}] ${r.reason}`)];
+  });
 
   // generate the "translator mode" resource that lets a user see all keys in context
   // (there is default behavior in i18next that kind of does this but it has some gaps,
@@ -134,7 +218,7 @@ async function makeResourcesFromCsv() {
       const path = inputData[index]["path"];
       // ignore empty paths. any that caused actual problems will have already thrown
       if (path) {
-        yield [path, `[${args.namespace}]${path}`];
+        yield [path, `[${namespace}]${path}`];
       }
 
       index++;
@@ -147,12 +231,32 @@ async function makeResourcesFromCsv() {
     `${TRANSLATOR_MODE_LANGUAGE_CODE}.json`,
   );
 
-  await writeFile(devOutputFile, JSON.stringify(devOutputData, undefined, 2));
+  await writeToJson(devOutputData, devOutputFile);
+
+  return errors;
 }
 
-await makeResourcesFromCsv();
+const namespaces = args.namespace
+  ? [args.namespace]
+  : await getSheetTitles(spreadsheetId);
+
+const nsResults = await Promise.allSettled(
+  namespaces.map((ns) => makeResources(spreadsheetId, ns)),
+);
+
+const allErrors = nsResults.flatMap((r, i) => {
+  if (r.status === "fulfilled") return r.value;
+  const ns = namespaces[i];
+  const cause = r.reason instanceof Error ? r.reason.message : String(r.reason);
+  return [new Error(`[${ns}] ${cause}`)];
+});
+
+if (allErrors.length > 0) {
+  console.error(`\n${allErrors.length} error(s) occurred:`);
+  allErrors.forEach((e) => console.error(` ${e.message}`));
+}
 
 // process hangs if we don't manually exit,
 // for reasons unclear it holds onto a bunch of file handles.
 // everything should be done by now anyway
-exit();
+exit(allErrors.length > 0 ? 1 : 0);
