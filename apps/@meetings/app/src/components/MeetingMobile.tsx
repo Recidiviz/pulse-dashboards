@@ -322,7 +322,7 @@ const MeetingMobile = ({
               <ClockIcon className="text-muted size-4" />
               <Typography className="text-sm font-normal leading-[14px] text-gray-500">
                 {time}
-                {duration ? ` • ${duration}` : ""}
+                {duration ? ` • ${duration}` : ""} • {meetingDetails.staffEmail}
               </Typography>
             </View>
           </Animated.View>

@@ -41,6 +41,7 @@ export const getDetailsOutputSchema = z.object({
   postMeetingProcessingStatus: z.nativeEnum(PostMeetingProcessingStatus),
   transcriptDeletedAt: z.date().nullable(),
   validationErrorType: z.nativeEnum(ValidationError).nullable(),
+  staffEmail: z.string(),
   transcription: z
     .object({
       confidence: z.number().nullable(),

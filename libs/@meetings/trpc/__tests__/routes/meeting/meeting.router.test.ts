@@ -60,6 +60,7 @@ describe("meeting router", () => {
         postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
         userNotepadNotes: "Sample meeting notes.",
         caseNote: fakeActiveMeeting.caseNote,
+        staffEmail: fakeActiveMeeting.staffEmail,
         actionItems: [],
         structuredActionItems: [],
         criticalUpdates: [],
@@ -113,12 +114,14 @@ describe("meeting router", () => {
           postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
           userNotepadNotes: "Sample meeting notes.",
           caseNote: fakeActiveMeeting.caseNote,
+          staffEmail: fakeActiveMeeting.staffEmail,
           actionItems: [],
           structuredActionItems: [],
           criticalUpdates: [],
           meetingSummary: [],
           validationErrorType: null,
           transcriptDeletedAt: null,
+          transcription: undefined,
         });
       } finally {
         delete AGENCY_CONFIGS["US_NE"];

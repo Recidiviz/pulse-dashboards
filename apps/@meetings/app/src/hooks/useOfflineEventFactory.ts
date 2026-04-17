@@ -100,6 +100,7 @@ export function useOfflineEventFactory() {
             validationErrorType: null,
             transcriptDeletedAt: null,
             transcription: null,
+            staffEmail: "",
           },
         );
         break;

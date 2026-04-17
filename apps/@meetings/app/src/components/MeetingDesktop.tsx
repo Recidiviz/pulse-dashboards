@@ -126,7 +126,7 @@ const MeetingDesktop = ({
               <ClockIcon className="size-4 stroke-tertiary" />
               <Typography className="text-secondary">
                 {time}
-                {duration ? ` • ${duration}` : ""}
+                {duration ? ` • ${duration}` : ""} • {meetingDetails.staffEmail}
               </Typography>
             </View>
           </View>
