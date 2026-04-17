@@ -23,7 +23,7 @@ import {
 } from "../../utils/utils";
 import * as Styled from "../Summary/SentencingAssessmentReport.styles";
 
-const CHART_COLOR = "rgba(0, 0, 0, 0.30)";
+const DEFAULT_CHART_COLOR = "rgba(0, 0, 0, 0.30)";
 const LABEL_FONT_SIZE = 11;
 const LINE_HEIGHT = 14;
 
@@ -33,13 +33,29 @@ interface TimeServedProps {
   avgPctServed: number;
   /** Bar fill height in px. Defaults to 31 (SAR PDF). Pass 100 for CaseDetails. */
   barHeight?: number;
+  /** Fill color for the served portion rect. Defaults to rgba(0,0,0,0.30). */
+  fillColor?: string;
+  /** Color for all SVG text labels. Defaults to "black". */
+  labelColor?: string;
+  /** Style applied to all SVG text labels. Defaults to 11px. */
+  labelStyle?: React.CSSProperties;
+  /**
+   * When false, the "Start"/"End" labels are omitted from above the bar and
+   * "Start" is rendered below-left instead (panel view). Defaults to true (PDF).
+   */
+  showLabelsAbove?: boolean;
 }
 
 export const TimeServed: React.FC<TimeServedProps> = ({
   avgSentenceLengthYears,
   avgPctServed,
   barHeight = 31,
+  fillColor,
+  labelColor = "black",
+  labelStyle = { fontSize: `${LABEL_FONT_SIZE}px` },
+  showLabelsAbove = true,
 }) => {
+  const chartColor = fillColor ?? DEFAULT_CHART_COLOR;
   const avgTimeServedYears = computeAvgTimeServedYears(
     avgPctServed,
     avgSentenceLengthYears,
@@ -48,7 +64,7 @@ export const TimeServed: React.FC<TimeServedProps> = ({
   const filledPct = `${avgPctServed}%`;
 
   const labelAboveY = LABEL_FONT_SIZE;
-  const barY = labelAboveY + 6;
+  const barY = showLabelsAbove ? labelAboveY + 6 : 0;
   const barMidY = barY + barHeight / 2;
   const labelBelowY1 = barY + barHeight + LINE_HEIGHT;
   const labelBelowY2 = labelBelowY1 + LINE_HEIGHT;
@@ -56,25 +72,29 @@ export const TimeServed: React.FC<TimeServedProps> = ({
 
   return (
     <Styled.TimeServedSVG height={svgHeight}>
-      {/* Labels above bar */}
-      <text
-        x="0"
-        y={labelAboveY}
-        fontSize={LABEL_FONT_SIZE}
-        textAnchor="start"
-        fill="black"
-      >
-        Start
-      </text>
-      <text
-        x="100%"
-        y={labelAboveY}
-        fontSize={LABEL_FONT_SIZE}
-        textAnchor="end"
-        fill="black"
-      >
-        End
-      </text>
+      {/* Labels above bar (PDF mode only) */}
+      {showLabelsAbove && (
+        <>
+          <text
+            x="0"
+            y={labelAboveY}
+            textAnchor="start"
+            fill={labelColor}
+            style={labelStyle}
+          >
+            Start
+          </text>
+          <text
+            x="100%"
+            y={labelAboveY}
+            textAnchor="end"
+            fill={labelColor}
+            style={labelStyle}
+          >
+            End
+          </text>
+        </>
+      )}
 
       {/* Filled (served) rect */}
       <rect
@@ -82,7 +102,7 @@ export const TimeServed: React.FC<TimeServedProps> = ({
         y={barY}
         width={filledPct}
         height={barHeight}
-        fill={CHART_COLOR}
+        fill={chartColor}
       />
       {/* 3px black borders on left and right edges of the filled rect */}
       <line
@@ -102,13 +122,13 @@ export const TimeServed: React.FC<TimeServedProps> = ({
         strokeWidth={3}
       />
 
-      {/* Dotted line for unserved portion — 2px, centered on bar mid */}
+      {/* Dotted line for unserved portion — always black, 2px, centered on bar mid */}
       <line
         x1={filledPct}
         y1={barMidY}
         x2="100%"
         y2={barMidY}
-        stroke={CHART_COLOR}
+        stroke="black"
         strokeWidth={2}
         strokeDasharray="4 4"
       />
@@ -123,22 +143,35 @@ export const TimeServed: React.FC<TimeServedProps> = ({
         strokeWidth={2}
       />
 
+      {/* "Start" label below-left (panel mode only) */}
+      {!showLabelsAbove && (
+        <text
+          x="0"
+          y={labelBelowY1}
+          textAnchor="start"
+          fill={labelColor}
+          style={labelStyle}
+        >
+          Start
+        </text>
+      )}
+
       {/* Labels below — served endpoint */}
       <text
         x={filledPct}
         y={labelBelowY1}
-        fontSize={LABEL_FONT_SIZE}
         textAnchor="middle"
-        fill="black"
+        fill={labelColor}
+        style={labelStyle}
       >
         {avgTimeServedYears} years
       </text>
       <text
         x={filledPct}
         y={labelBelowY2}
-        fontSize={LABEL_FONT_SIZE}
         textAnchor="middle"
-        fill="black"
+        fill={labelColor}
+        style={labelStyle}
       >
         ({pct}%)
       </text>
@@ -147,18 +180,18 @@ export const TimeServed: React.FC<TimeServedProps> = ({
       <text
         x="100%"
         y={labelBelowY1}
-        fontSize={LABEL_FONT_SIZE}
         textAnchor="end"
-        fill="black"
+        fill={labelColor}
+        style={labelStyle}
       >
         {avgSentenceLengthYears} years
       </text>
       <text
         x="100%"
         y={labelBelowY2}
-        fontSize={LABEL_FONT_SIZE}
         textAnchor="end"
-        fill="black"
+        fill={labelColor}
+        style={labelStyle}
       >
         (100%)
       </text>

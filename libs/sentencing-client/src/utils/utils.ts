@@ -41,6 +41,14 @@ export function formatTimeServedPct(avgPctServed: number): string {
 }
 
 /**
+ * Rounds a years value to one decimal place for display.
+ * e.g. 8.123456 → 8.1
+ */
+export function roundToOneDecimal(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
+/**
  * Computes the average time served in years from a percentage and sentence length.
  * e.g. avgPctServed=16.3, avgSentenceLengthYears=8.6 → 1.4
  */

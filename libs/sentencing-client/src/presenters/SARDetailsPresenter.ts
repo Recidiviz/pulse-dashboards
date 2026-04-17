@@ -55,7 +55,12 @@ import { InsightDescriptionContext } from "../components/Summary/insightsUtils";
 import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSummaryCard";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
-import { formatJudgeName, formatLongDate, titleCase } from "../utils/utils";
+import {
+  formatJudgeName,
+  formatLongDate,
+  roundToOneDecimal,
+  titleCase,
+} from "../utils/utils";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
@@ -252,6 +257,12 @@ export class SARDetailsPresenter implements Hydratable {
 
   get insightData() {
     return this.insight ?? undefined;
+  }
+
+  /** Average prison sentence length rounded to 1 decimal for display. */
+  get avgSentenceLengthYears(): number | null {
+    const val = this.insight?.avgSentenceLengthYears;
+    return val != null ? roundToOneDecimal(val) : null;
   }
 
   get emptyStateDescriptionContext(): InsightDescriptionContext | null {

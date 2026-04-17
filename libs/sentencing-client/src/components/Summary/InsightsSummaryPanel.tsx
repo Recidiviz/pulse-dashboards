@@ -16,21 +16,53 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useState } from "react";
+
+import { palette } from "~design-system";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { printFormattedRecordString, titleCase } from "../../utils/utils";
+import {
+  computeAvgTimeServedYears,
+  formatTimeServedPct,
+  printFormattedRecordString,
+  titleCase,
+} from "../../utils/utils";
+import ChevronLeft from "../assets/chevron-left.svg?react";
+import ChevronRight from "../assets/chevron-right.svg?react";
 import * as CommonStyled from "../CaseDetails/components/charts/components/Styles";
 import { SENTENCE_DISTRIBUTION_TEXT } from "../CaseDetails/components/charts/constants";
 import { DispositionDonutChart } from "../CaseDetails/components/charts/DispositionChart/DispositionDonutChart";
 import { SARDispositionChartExplanation } from "../CaseDetails/components/charts/DispositionChart/SARDispositionChartExplanation";
 import { getSARDispositionChartSubtitle } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
+import { TimeServed } from "../TimeServed/TimeServed";
 import { InfoIconWithTooltip } from "../Tooltip/Tooltip";
-import { buildInsightsFootnoteText } from "./insightsUtils";
+import {
+  buildInsightsFootnoteText,
+  InsightSubjectSpans,
+} from "./insightsUtils";
 import * as Styled from "./Summary.styles";
 
 interface InsightsSummaryPanelProps {
   presenter: SARDetailsPresenter;
+}
+
+const ORAS_REQUIRED_MESSAGE =
+  "An ORAS assessment score is required to generate this data for this client.";
+
+function InsightsChartEmptyState({
+  hasOrasAssessment,
+  noDataMessage,
+}: {
+  hasOrasAssessment: boolean;
+  noDataMessage: string;
+}) {
+  return (
+    <Styled.InsightsEmptyState>
+      <Styled.InsightsEmptyText>
+        {hasOrasAssessment ? noDataMessage : ORAS_REQUIRED_MESSAGE}
+      </Styled.InsightsEmptyText>
+    </Styled.InsightsEmptyState>
+  );
 }
 
 export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
@@ -41,12 +73,141 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
     const emptyStateContext = presenter.emptyStateDescriptionContext;
     const clientFullName = presenter.SARData?.client?.fullName;
 
+    const [activeSlide, setActiveSlide] = useState(0);
+
     if (!insightData && !emptyStateContext) return null;
+
+    const hasDispositionData =
+      !!insightData && insightData.dispositionNumRecords > 0;
+
+    const avgSentenceLengthYears = presenter.avgSentenceLengthYears;
+    const avgPctServed = insightData?.avgPctServed ?? null;
+    const hasTimeServedData =
+      insightData?.timeServedNumRecords != null &&
+      insightData.timeServedNumRecords > 0;
+
+    const showTimeServedChart =
+      hasTimeServedData &&
+      avgSentenceLengthYears != null &&
+      avgPctServed != null;
+
+    const sentenceDistributionSlide = hasDispositionData ? (
+      <>
+        <CommonStyled.ChartTitle>
+          Sentence Distribution{" "}
+          <InfoIconWithTooltip
+            headerText={SENTENCE_DISTRIBUTION_TEXT}
+            content={
+              <CommonStyled.ChartTooltipContentSection>
+                <SARDispositionChartExplanation insight={insightData} />
+              </CommonStyled.ChartTooltipContentSection>
+            }
+          />
+        </CommonStyled.ChartTitle>
+        <CommonStyled.ChartSubTitle>
+          {getSARDispositionChartSubtitle(insightData)}{" "}
+          <span>
+            (Based on {insightData.dispositionNumRecords.toLocaleString()}{" "}
+            {printFormattedRecordString(insightData.dispositionNumRecords)})
+          </span>
+        </CommonStyled.ChartSubTitle>
+        <Styled.InsightsDonutWrapper>
+          <DispositionDonutChart
+            datapoints={sortedDispositionData}
+            numberOfRecords={insightData.dispositionNumRecords}
+            selectedRecommendation={null}
+            inlineLayout
+          />
+        </Styled.InsightsDonutWrapper>
+        <Styled.InsightsSimilarCases>Similar cases</Styled.InsightsSimilarCases>
+      </>
+    ) : (
+      <>
+        <CommonStyled.ChartTitle>Sentence Distribution</CommonStyled.ChartTitle>
+        <InsightsChartEmptyState
+          hasOrasAssessment={hasOrasAssessment}
+          noDataMessage="There are no previous sentencing records matching this client's gender, risk score, and offense."
+        />
+      </>
+    );
+
+    const timeServedSlide = (
+      <>
+        <CommonStyled.ChartTitle>
+          Average Time Served{" "}
+          <InfoIconWithTooltip
+            headerText="Average Time Served"
+            content={
+              <CommonStyled.ChartTooltipContentSection>
+                Average Time Served shows the average amount of time served in
+                prison for{" "}
+                {insightData ? (
+                  <InsightSubjectSpans
+                    gender={insightData.gender}
+                    assessmentScoreBucketStart={
+                      insightData.assessmentScoreBucketStart
+                    }
+                    offense={insightData.offense}
+                    offenseCategory={insightData.offenseCategory}
+                  />
+                ) : (
+                  "similar individuals"
+                )}{" "}
+                before being granted parole, using MODOC data from 2017-present.
+              </CommonStyled.ChartTooltipContentSection>
+            }
+          />
+        </CommonStyled.ChartTitle>
+        {showTimeServedChart ? (
+          <>
+            <Styled.TimeServedPanelStatsRow>
+              <Styled.TimeServedPanelStatColumn>
+                <Styled.TimeServedPanelStatLabel>
+                  Average prison sentence:
+                </Styled.TimeServedPanelStatLabel>
+                <Styled.TimeServedPanelStatValue>
+                  {avgSentenceLengthYears} years
+                </Styled.TimeServedPanelStatValue>
+              </Styled.TimeServedPanelStatColumn>
+              <Styled.TimeServedPanelStatColumn>
+                <Styled.TimeServedPanelStatLabel>
+                  Average time served:
+                </Styled.TimeServedPanelStatLabel>
+                <Styled.TimeServedPanelStatValue>
+                  {formatTimeServedPct(avgPctServed)}% (~
+                  {computeAvgTimeServedYears(
+                    avgPctServed,
+                    avgSentenceLengthYears,
+                  )}{" "}
+                  years)
+                </Styled.TimeServedPanelStatValue>
+              </Styled.TimeServedPanelStatColumn>
+            </Styled.TimeServedPanelStatsRow>
+            <Styled.TimeServedChartWrapper>
+              <TimeServed
+                avgSentenceLengthYears={avgSentenceLengthYears}
+                avgPctServed={avgPctServed}
+                fillColor={palette.data.cornflower1}
+                barHeight={100}
+                labelColor={palette.slate70}
+                labelStyle={Styled.timeServedPanelLabelStyle}
+                showLabelsAbove={false}
+              />
+            </Styled.TimeServedChartWrapper>
+          </>
+        ) : (
+          <InsightsChartEmptyState
+            hasOrasAssessment={hasOrasAssessment}
+            noDataMessage="There are not enough historical records of time served to show this data."
+          />
+        )}
+      </>
+    );
 
     return (
       <Styled.InsightsSidePanel>
         <Styled.SectionTitle>Insights</Styled.SectionTitle>
-        {insightData && insightData.dispositionNumRecords > 0 && (
+        {hasDispositionData && (
           <Styled.InsightsSubtitle>
             This information represents outcomes for cases similar to that of
             the current client
@@ -58,69 +219,38 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
           </Styled.InsightsSubtitle>
         )}
         <Styled.InsightsChartCard
-          $isEmpty={!insightData || insightData.dispositionNumRecords === 0}
+          $isEmpty={
+            (activeSlide === 0 && !hasDispositionData) ||
+            (activeSlide === 1 && !showTimeServedChart)
+          }
         >
-          {insightData && insightData.dispositionNumRecords > 0 ? (
-            <>
-              <CommonStyled.ChartTitle>
-                Sentence Distribution{" "}
-                <InfoIconWithTooltip
-                  headerText={SENTENCE_DISTRIBUTION_TEXT}
-                  content={
-                    <CommonStyled.ChartTooltipContentSection>
-                      <SARDispositionChartExplanation insight={insightData} />
-                    </CommonStyled.ChartTooltipContentSection>
-                  }
-                />
-              </CommonStyled.ChartTitle>
-              <CommonStyled.ChartSubTitle>
-                {getSARDispositionChartSubtitle(insightData)}{" "}
-                <span>
-                  (Based on {insightData.dispositionNumRecords.toLocaleString()}{" "}
-                  {printFormattedRecordString(
-                    insightData.dispositionNumRecords,
-                  )}
-                  )
-                </span>
-              </CommonStyled.ChartSubTitle>
-              <Styled.InsightsDonutWrapper>
-                <DispositionDonutChart
-                  datapoints={sortedDispositionData}
-                  numberOfRecords={insightData.dispositionNumRecords}
-                  selectedRecommendation={null}
-                  inlineLayout
-                />
-              </Styled.InsightsDonutWrapper>
-              <Styled.InsightsSimilarCases>
-                Similar cases
-              </Styled.InsightsSimilarCases>
-            </>
-          ) : (
-            <>
-              <CommonStyled.ChartTitle>
-                Sentence Distribution
-              </CommonStyled.ChartTitle>
-              <Styled.InsightsEmptyState>
-                <Styled.InsightsEmptyText>
-                  {hasOrasAssessment
-                    ? "There are no previous sentencing records matching this client's gender, risk score, and offense."
-                    : "An ORAS assessment score is required to generate sentence distribution data for this client."}
-                </Styled.InsightsEmptyText>
-              </Styled.InsightsEmptyState>
-            </>
-          )}
+          {activeSlide === 0 ? sentenceDistributionSlide : timeServedSlide}
         </Styled.InsightsChartCard>
-        {insightData &&
-          insightData.dispositionNumRecords > 0 &&
-          insightData.assessmentScoreBucketStart != null && (
-            <Styled.InsightsFootnote>
-              {buildInsightsFootnoteText(
-                insightData.dispositionNumRecords,
-                insightData.gender,
-                insightData.assessmentScoreBucketStart,
-              )}
-            </Styled.InsightsFootnote>
-          )}
+        <Styled.CarouselNav>
+          <Styled.CarouselArrowButton
+            onClick={() => setActiveSlide(0)}
+            disabled={activeSlide === 0}
+            aria-label="View sentence distribution"
+          >
+            <ChevronLeft />
+          </Styled.CarouselArrowButton>
+          <Styled.CarouselArrowButton
+            onClick={() => setActiveSlide(1)}
+            disabled={activeSlide === 1}
+            aria-label="View time served"
+          >
+            <ChevronRight />
+          </Styled.CarouselArrowButton>
+        </Styled.CarouselNav>
+        {hasDispositionData && activeSlide === 0 && (
+          <Styled.InsightsFootnote>
+            {buildInsightsFootnoteText(
+              insightData.dispositionNumRecords,
+              insightData.gender,
+              insightData.assessmentScoreBucketStart,
+            )}
+          </Styled.InsightsFootnote>
+        )}
       </Styled.InsightsSidePanel>
     );
   });

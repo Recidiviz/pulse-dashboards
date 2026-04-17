@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { CSSProperties } from "react";
 import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
@@ -381,3 +382,69 @@ export const MoreText = styled.span`
   ${baseTextStyle}
   font-style: italic;
 `;
+
+export const CarouselNav = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-self: stretch;
+  gap: 5px;
+`;
+
+export const CarouselArrowButton = styled.button`
+  display: flex;
+  padding: 7.326px 6.94px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3.085px;
+  border-radius: 3.085px;
+  border: 0.771px solid ${palette.data.forest1};
+  background: #f1fffd;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+`;
+
+export const TimeServedPanelStatsRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-self: stretch;
+  margin-top: -16px;
+`;
+
+export const TimeServedPanelStatColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const timeServedPanelStatBase = css`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+`;
+
+export const TimeServedPanelStatLabel = styled.p`
+  ${timeServedPanelStatBase}
+`;
+
+export const TimeServedPanelStatValue = styled.p`
+  ${timeServedPanelStatBase}
+`;
+
+export const TimeServedChartWrapper = styled.div`
+  margin-top: 76px;
+  width: 100%;
+`;
+
+export const timeServedPanelLabelStyle: CSSProperties = {
+  fontFamily: '"Public Sans"',
+  fontSize: "14px",
+  fontStyle: "normal",
+  fontWeight: 500,
+  letterSpacing: "-0.14px",
+};
