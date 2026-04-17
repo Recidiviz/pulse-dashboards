@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing_extensions import TypedDict
 
 from app.routes.shared_models import IntakeMessageResponse
+from app.utils.intake.guardrails import HardStopGuardrailType
 
 
 class UserAction(StrEnum):
@@ -142,7 +143,7 @@ class SectionChangeEvent(BaseModel):
 
 class ForceDisconnectEvent(BaseModel):
     type: Literal["forceDisconnect"] = "forceDisconnect"
-    reason: Literal["duplicate_session", "crisis", "prompt_injection", "timeout"]
+    reason: Literal["duplicate_session", "timeout"] | HardStopGuardrailType
 
 
 class TokenExpiredEvent(BaseModel):

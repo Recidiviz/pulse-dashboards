@@ -22,6 +22,7 @@ import pytest
 from app.utils.intake.guardrails import (
     CHAR_LIMIT,
     check_char_limit,
+    check_crisis,
     check_injection,
     run_guardrails,
 )
@@ -88,6 +89,53 @@ class TestCheckInjection:
     )
     def test_injection_phrases(self, text: str):
         assert check_injection(text) is True
+
+
+class TestCheckCrisis:
+    def test_clean_message(self):
+        assert check_crisis("I need help finding housing") is False
+
+    def test_empty_string(self):
+        assert check_crisis("") is False
+
+    def test_kill_myself(self):
+        assert check_crisis("I want to kill myself") is True
+
+    def test_end_my_life(self):
+        assert check_crisis("I want to end my life") is True
+
+    def test_ending_my_life(self):
+        assert check_crisis("I have been thinking about ending my life") is True
+
+    def test_take_my_own_life(self):
+        assert check_crisis("I want to take my own life") is True
+
+    def test_taking_my_own_life(self):
+        assert check_crisis("I have been thinking about taking my own life") is True
+
+    def test_commit_suicide(self):
+        assert check_crisis("I want to commit suicide") is True
+
+    def test_committing_suicide(self):
+        assert check_crisis("I have been thinking about committing suicide") is True
+
+    def test_i_am_suicidal(self):
+        assert check_crisis("I am suicidal") is True
+
+    def test_im_suicidal(self):
+        assert check_crisis("I'm suicidal") is True
+
+    def test_want_to_die(self):
+        assert check_crisis("I want to die") is True
+
+    def test_wanting_to_die(self):
+        assert check_crisis("I have been wanting to die") is True
+
+    def test_case_insensitive(self):
+        assert check_crisis("I WANT TO KILL MYSELF") is True
+
+    def test_substring_within_message(self):
+        assert check_crisis("honestly I just want to end my life at this point") is True
 
 
 class TestRunGuardrails:

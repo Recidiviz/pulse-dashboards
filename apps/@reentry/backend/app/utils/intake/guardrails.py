@@ -27,10 +27,21 @@ TODO: This entire module is a candidate for a shared library if other apps
 
 import logging
 import re
+from enum import StrEnum
 
 logger = logging.getLogger(__name__)
 
 CHAR_LIMIT = 2500
+
+
+class HardStopGuardrailType(StrEnum):
+    PROMPT_INJECTION = "prompt_injection"
+    CRISIS = "crisis"
+
+
+HARD_STOP_GUARDRAIL_TYPES: frozenset[HardStopGuardrailType] = frozenset(
+    {HardStopGuardrailType.PROMPT_INJECTION, HardStopGuardrailType.CRISIS}
+)
 
 # Prompt injection patterns
 # Each pattern targets a distinct class of injection attempt - tightened to minimize false positive
@@ -113,6 +124,29 @@ def check_injection(text: str) -> bool:
     return any(pattern.search(text) for pattern in INJECTION_PATTERNS)
 
 
+# Crisis detection patterns
+# Conservative set — near-zero false positive rate given the reentry intake context.
+# Broader signal is handled by layers 2 and 3.
+CRISIS_PATTERNS = [
+    # "kill myself" / "killing myself"
+    re.compile(r"\bkill(?:ing)?\s+myself\b", re.IGNORECASE),
+    # "end my life" / "ending my life"
+    re.compile(r"\bend(?:ing)?\s+my\s+life\b", re.IGNORECASE),
+    # "take my own life" / "taking my own life"
+    re.compile(r"\btak(?:e|ing)\s+my\s+own\s+life\b", re.IGNORECASE),
+    # "commit suicide" / "committing suicide"
+    re.compile(r"\bcommit(?:ting)?\s+suicide\b", re.IGNORECASE),
+    # "I'm suicidal" / "I am suicidal"
+    re.compile(r"\bI(?:'m|\s+am)\s+suicidal\b", re.IGNORECASE),
+    # "want to die" / "wanting to die"
+    re.compile(r"\bwant(?:ing)?\s+to\s+die\b", re.IGNORECASE),
+]
+
+
+def check_crisis(text: str) -> bool:
+    return any(pattern.search(text) for pattern in CRISIS_PATTERNS)
+
+
 def run_guardrails(text: str) -> list[str]:
     """Run all guardrail checks and return every triggered guardrail.
 
@@ -124,5 +158,6 @@ def run_guardrails(text: str) -> list[str]:
         triggered.append("char_limit")
     if check_injection(text):
         triggered.append("prompt_injection")
-    # TODO: add crisis check here
+    if check_crisis(text):
+        triggered.append("crisis")
     return triggered

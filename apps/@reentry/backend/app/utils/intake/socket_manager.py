@@ -28,7 +28,7 @@ from app.services.client_data.types import ClientDataRecord
 from app.utils.intake.client_connection_manager import ClientConnectionManager
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.db_manager import DatabaseManager
-from app.utils.intake.guardrails import run_guardrails
+from app.utils.intake.guardrails import HARD_STOP_GUARDRAIL_TYPES, run_guardrails
 from app.utils.intake.schemas import (
     AIMessageEvent,
     Auth,
@@ -560,7 +560,8 @@ class SocketIOManager:
     ) -> None:
         logger.warning(f"Guardrail(s) triggered for {client_pseudo_id}: {triggered}")
 
-        if "prompt_injection" in triggered:
+        hard_stop = next((t for t in triggered if t in HARD_STOP_GUARDRAIL_TYPES), None)
+        if hard_stop:
             # Persist the blocked message with guardrailed_by set for querying and auditing.
             intake = await self.db_manager.get_intake(client_pseudo_id)
             if intake:
@@ -574,7 +575,7 @@ class SocketIOManager:
             # is dead but the graph is still running and attempting to emit.
             if client_pseudo_id in self.conversation_graphs:
                 del self.conversation_graphs[client_pseudo_id]
-            event = ForceDisconnectEvent(reason="prompt_injection")
+            event = ForceDisconnectEvent(reason=hard_stop)
             await self.sio.emit(event.type, event.model_dump(), room=sid)
         else:
             event = GuardrailTriggeredEvent(guardrails=triggered)
