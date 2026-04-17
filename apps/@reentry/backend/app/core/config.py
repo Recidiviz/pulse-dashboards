@@ -117,6 +117,8 @@ class Settings(BaseSettings):
 
     # Slack webhook URLs for intake completion notifications (JSON: {"US_NE": "url", "default": "url"})
     SLACK_INTAKE_WEBHOOK_URLS: str | None = None
+    # Slack webhook URL for guardrail hard-stop alerts (crisis, prompt_injection)
+    SLACK_GUARDRAIL_ALERT_WEBHOOK_URL: str | None = None
 
     @property
     def DATABASE_URL(self):

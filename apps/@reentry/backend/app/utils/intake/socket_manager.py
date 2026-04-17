@@ -43,6 +43,7 @@ from app.utils.intake.schemas import (
     ServerEvent,
     TokenExpiredEvent,
 )
+from app.utils.slack import send_guardrail_alert
 
 logger = structlog.get_logger(__name__)
 
@@ -90,6 +91,7 @@ class SocketIOManager:
         self.db_manager = database_manager
         self.conversation_graphs: Dict[str, IntakeConversationGraph | None] = {}
         self.pending_responses = {}
+        self.state_codes: Dict[str, str] = {}
 
         self._register_event_handlers()
 
@@ -384,14 +386,16 @@ class SocketIOManager:
         # Initialize it asynchronously
         await graph.initialize(intake)
 
-        # Store the graph for future reference
+        # Store the graph and state_code for future reference
         self.conversation_graphs[client_pseudo_id] = graph
+        self.state_codes[client_pseudo_id] = assessment_config.state_code
 
         try:
             await graph.run_assessment()
         finally:
             # Cleanup when done (success, error, or cancellation)
             logger.info(f"Graph execution finished for {client_pseudo_id}")
+            self.state_codes.pop(client_pseudo_id, None)
             if client_pseudo_id in self.conversation_graphs:
                 if self.conversation_graphs[client_pseudo_id] is graph:
                     del self.conversation_graphs[client_pseudo_id]
@@ -571,12 +575,27 @@ class SocketIOManager:
                     content=content,
                     guardrailed_by=triggered,
                 )
+            else:
+                logger.warning(
+                    f"Hard-stop guardrail fired but no intake found for {client_pseudo_id} — "
+                    f"message not persisted and alert will be missing intake_id/state_code"
+                )
             # Cancel graph before closing socket — prevents a window where the socket
             # is dead but the graph is still running and attempting to emit.
             if client_pseudo_id in self.conversation_graphs:
                 del self.conversation_graphs[client_pseudo_id]
+            intake_id = str(intake.id) if intake else None
+            state_code = self.state_codes.get(client_pseudo_id)
             event = ForceDisconnectEvent(reason=hard_stop)
             await self.sio.emit(event.type, event.model_dump(), room=sid)
+            asyncio.create_task(
+                send_guardrail_alert(
+                    guardrail_type=hard_stop,
+                    client_pseudo_id=client_pseudo_id,
+                    intake_id=intake_id,
+                    state_code=state_code,
+                )
+            )
         else:
             event = GuardrailTriggeredEvent(guardrails=triggered)
             await self.sio.emit(event.type, event.model_dump(mode="json"), room=sid)
