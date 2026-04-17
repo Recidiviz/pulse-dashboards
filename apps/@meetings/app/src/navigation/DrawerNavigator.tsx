@@ -18,12 +18,11 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
 
+import { AGENCY_CONFIGS } from "~@meetings/config";
+
 import DrawerContent from "../components/DrawerContent";
 import Loading from "../components/Loading";
-import {
-  AVAILABLE_STATE_CODES,
-  useStateSelection,
-} from "../context/StateContext";
+import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import ClientMeetingScreen from "../screens/ClientMeetingScreen";
 import ClientNewMeetingScreen from "../screens/ClientNewMeetingScreen";
@@ -89,9 +88,7 @@ export default function DrawerNavigator() {
   // Only check for state users (non-Recidiviz) since Recidiviz users can select any state
   if (stateCode && stateCode !== "recidiviz") {
     const normalizedStateCode = stateCode.toUpperCase();
-    const isSupported = AVAILABLE_STATE_CODES.some(
-      (s) => s.code === normalizedStateCode,
-    );
+    const isSupported = normalizedStateCode in AGENCY_CONFIGS;
     if (!isSupported) {
       return <NoAccessScreen />;
     }

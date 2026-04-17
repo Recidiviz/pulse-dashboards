@@ -59,10 +59,14 @@ describe("AgencyConfigSchema", () => {
 
 describe("AGENCY_CONFIGS", () => {
   test.each(Object.entries(AGENCY_CONFIGS))(
-    "%s has audioTTLDays and transcriptTTLDays >= 7",
+    "%s has audioTTLDays and transcriptTTLDays >= 7 when set",
     (_, config) => {
-      expect(config.audioTTLDays).toBeGreaterThanOrEqual(7);
-      expect(config.transcriptTTLDays).toBeGreaterThanOrEqual(7);
+      if (config.audioTTLDays !== null) {
+        expect(config.audioTTLDays).toBeGreaterThanOrEqual(7);
+      }
+      if (config.transcriptTTLDays !== null) {
+        expect(config.transcriptTTLDays).toBeGreaterThanOrEqual(7);
+      }
     },
   );
 });

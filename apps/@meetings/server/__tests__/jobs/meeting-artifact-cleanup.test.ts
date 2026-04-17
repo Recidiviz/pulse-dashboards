@@ -509,8 +509,7 @@ describe("cleanupMeetingData", () => {
 
     const configsWithTTL = Object.values(AGENCY_CONFIGS).filter(
       (config) =>
-        config.audioTTLDays !== undefined ||
-        config.transcriptTTLDays !== undefined,
+        config.audioTTLDays !== null || config.transcriptTTLDays !== null,
     );
     expect(mockGetPrismaClientForStateCode).toHaveBeenCalledTimes(
       configsWithTTL.length,

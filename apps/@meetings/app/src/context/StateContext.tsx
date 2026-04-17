@@ -17,23 +17,12 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+import { AGENCY_CONFIGS } from "~@meetings/config";
+
 import { getItem, saveItem } from "../utils/storage";
 import { useUserContext } from "./UserContext";
 
-// Available state codes with meetings databases
-// TODO(#12340): Read from AgencyConfig instead
-export const AVAILABLE_STATE_CODES = [
-  { code: "US_AZ", name: "Arizona" },
-  { code: "US_CO", name: "Colorado" },
-  { code: "US_ME", name: "Maine" },
-  { code: "US_NC", name: "North Carolina" },
-  { code: "US_ND", name: "North Dakota" },
-  { code: "US_NE", name: "Nebraska" },
-  { code: "US_TN", name: "Tennessee" },
-  { code: "US_DEMO", name: "Demo" },
-] as const;
-
-export type StateCode = (typeof AVAILABLE_STATE_CODES)[number]["code"];
+export type StateCode = keyof typeof AGENCY_CONFIGS;
 
 export const DEFAULT_STATE_CODE: StateCode = "US_NE";
 
@@ -77,9 +66,7 @@ export const StateCodeProvider: React.FC<{
   // State users have exactly one allowed state and cannot select others.
   const canSelectStateCode =
     isSkipAuthUser || recidivizAllowedStates.length > 1;
-  const currentStateName = AVAILABLE_STATE_CODES.find(
-    (s) => s.code === selectedStateCode,
-  )?.name;
+  const currentStateName = AGENCY_CONFIGS[selectedStateCode]?.name;
 
   // Load saved state code on mount, or initialize to user's state code if not a Recidiviz user
   useEffect(() => {
@@ -88,9 +75,7 @@ export const StateCodeProvider: React.FC<{
         // For state users, initialize to their state code
         if (!canSelectStateCode) {
           const normalizedStateCode = userStateCode?.toUpperCase() as StateCode;
-          if (
-            AVAILABLE_STATE_CODES.some((s) => s.code === normalizedStateCode)
-          ) {
+          if (normalizedStateCode in AGENCY_CONFIGS) {
             setSelectedStateCodeInternal(normalizedStateCode);
           }
           // If unsupported, keep the default - DrawerNavigator will handle showing NoAccessScreen
@@ -100,7 +85,7 @@ export const StateCodeProvider: React.FC<{
 
         // For Recidiviz users and skip auth, try to load from storage
         const saved = await getItem(SELECTED_STATE_KEY);
-        if (saved && AVAILABLE_STATE_CODES.some((s) => s.code === saved)) {
+        if (saved && saved in AGENCY_CONFIGS) {
           setSelectedStateCodeInternal(saved as StateCode);
         }
         // If no saved state code or invalid, keep the default

@@ -15,23 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AgencyConfig } from "~@meetings/config/types";
-import US_AZ_CONFIG from "~@meetings/config/US_AZ";
-import US_CO_CONFIG from "~@meetings/config/US_CO";
-import US_DEMO_CONFIG from "~@meetings/config/US_DEMO";
-import US_ME_CONFIG from "~@meetings/config/US_ME";
-import US_NC_CONFIG from "~@meetings/config/US_NC";
-import US_ND_CONFIG from "~@meetings/config/US_ND";
-import US_NE_CONFIG from "~@meetings/config/US_NE";
-import US_TN_CONFIG from "~@meetings/config/US_TN";
+import { AgencyConfigSchema } from "~@meetings/config/types";
 
-export const AGENCY_CONFIGS: Record<string, AgencyConfig> = {
-  US_AZ: US_AZ_CONFIG,
-  US_CO: US_CO_CONFIG,
-  US_DEMO: US_DEMO_CONFIG,
-  US_ME: US_ME_CONFIG,
-  US_NC: US_NC_CONFIG,
-  US_ND: US_ND_CONFIG,
-  US_NE: US_NE_CONFIG,
-  US_TN: US_TN_CONFIG,
-};
+const US_DEMO_CONFIG = AgencyConfigSchema.parse({
+  name: "Demo",
+  stateCode: "US_DEMO",
+  audioTTLDays: null,
+  transcriptTTLDays: null,
+});
+
+export default US_DEMO_CONFIG;

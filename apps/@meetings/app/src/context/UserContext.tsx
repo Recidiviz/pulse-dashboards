@@ -18,8 +18,9 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 
+import { AGENCY_CONFIGS } from "~@meetings/config";
+
 import env from "../env";
-import { AVAILABLE_STATE_CODES } from "./StateContext";
 
 interface UserContextType {
   isLoading: boolean;
@@ -67,9 +68,7 @@ export const UserContextProvider: React.FC<{
           isLoading: false,
           stateCode: "US_NE",
           isSkipAuthUser: true,
-          recidivizAllowedStates: AVAILABLE_STATE_CODES.map(
-            (state) => state.code,
-          ),
+          recidivizAllowedStates: Object.keys(AGENCY_CONFIGS),
           hasSupervisionAccess: true,
           hasFacilitiesAccess: true,
           hasSupervisionAssistantAccess: true,

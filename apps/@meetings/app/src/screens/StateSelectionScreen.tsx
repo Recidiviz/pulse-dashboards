@@ -29,13 +29,11 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
+import { AGENCY_CONFIGS } from "~@meetings/config";
+
 import { theme } from "../common/theme";
 import Header from "../components/Header";
-import {
-  AVAILABLE_STATE_CODES,
-  StateCode,
-  useStateSelection,
-} from "../context/StateContext";
+import { StateCode, useStateSelection } from "../context/StateContext";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { Typography } from "../shared/ui/Typography";
@@ -82,10 +80,12 @@ const StateSelectionScreen = () => {
           </Typography>
 
           <View className="rounded-lg bg-primary p-4 shadow-sm">
-            {AVAILABLE_STATE_CODES.map((stateCodeOption, index) => (
-              <React.Fragment key={stateCodeOption.code}>
+            {Object.values(AGENCY_CONFIGS).map((stateCodeOption, index) => (
+              <React.Fragment key={stateCodeOption.stateCode}>
                 <TouchableOpacity
-                  onPress={() => handleStateCodeSelect(stateCodeOption.code)}
+                  onPress={() =>
+                    handleStateCodeSelect(stateCodeOption.stateCode)
+                  }
                   disabled={isSaving}
                   className="flex-row items-center justify-between py-4"
                 >
@@ -94,11 +94,11 @@ const StateSelectionScreen = () => {
                       {stateCodeOption.name}
                     </Typography>
                     <Typography className="text-sm text-secondary">
-                      {stateCodeOption.code}
+                      {stateCodeOption.stateCode}
                     </Typography>
                   </View>
                   <View className="flex-row items-center gap-x-3">
-                    {selectedStateCode === stateCodeOption.code && (
+                    {selectedStateCode === stateCodeOption.stateCode && (
                       <View className="rounded-full bg-brand px-3 py-1">
                         <Typography className="text-xs text-on-brand">
                           Current
@@ -112,14 +112,14 @@ const StateSelectionScreen = () => {
                       />
                     ) : (
                       <View className="size-6 items-center justify-center rounded-full border-2 border-subtle">
-                        {selectedStateCode === stateCodeOption.code && (
+                        {selectedStateCode === stateCodeOption.stateCode && (
                           <View className="size-3 rounded-full bg-brand" />
                         )}
                       </View>
                     )}
                   </View>
                 </TouchableOpacity>
-                {index < AVAILABLE_STATE_CODES.length - 1 && (
+                {index < Object.values(AGENCY_CONFIGS).length - 1 && (
                   <View className="h-px border-b border-subtle" />
                 )}
               </React.Fragment>
@@ -127,11 +127,7 @@ const StateSelectionScreen = () => {
           </View>
 
           <Typography className="mt-4 text-sm text-secondary">
-            Currently viewing data for{" "}
-            {
-              AVAILABLE_STATE_CODES.find((s) => s.code === selectedStateCode)
-                ?.name
-            }
+            Currently viewing data for {AGENCY_CONFIGS[selectedStateCode]?.name}
           </Typography>
         </View>
       </ScrollView>
