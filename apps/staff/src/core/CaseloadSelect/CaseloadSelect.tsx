@@ -314,7 +314,7 @@ export const MenuListWithShadow = (
   };
 
 const CaseloadSelectContainer = styled(Sans14)`
-  height: ${rem(40)};
+  min-height: ${rem(40)};
   justify-content: space-between;
   align-items: center;
   flex: 1 0 0;
@@ -451,7 +451,7 @@ export const caseloadSelectStyles = (
     borderBottomWidth: state.menuIsOpen ? "0" : "1px",
     borderRadius: state.menuIsOpen ? "4px 4px 0 0" : rem(4),
     background: "#fff",
-    height: rem(40),
+    minheight: rem(40),
     padding: rem(5),
     margin: 0,
     boxShadow: "none",
