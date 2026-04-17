@@ -17,10 +17,10 @@
 
 import { TooltipTrigger } from "@recidiviz/design-system";
 import { Row } from "@tanstack/react-table";
+import simplur from "simplur";
 
 import { UsMiSolitarySessionType } from "~datatypes";
 
-import { formatDurationFromOptionalDays } from "../../../utils";
 import { Opportunity } from "../../../WorkflowsStore";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../../../WorkflowsStore/Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "../../../WorkflowsStore/Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
@@ -90,9 +90,7 @@ function UsMiSegDurationCell({ opp }: { opp: usMiSCCOppV2 }) {
     solitarySessionType,
   );
 
-  const duration = formatDurationFromOptionalDays(
-    opp.record.metadata.daysInSolitarySession,
-  );
+  const duration = simplur`${opp.record.metadata.daysInSolitarySession} day[|s]`;
   if (!pillSettings) return duration;
   const { tooltip, palette } = pillSettings;
 
