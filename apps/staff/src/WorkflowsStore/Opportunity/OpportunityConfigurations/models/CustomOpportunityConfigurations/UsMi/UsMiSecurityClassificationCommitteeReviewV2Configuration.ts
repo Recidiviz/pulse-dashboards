@@ -33,4 +33,8 @@ export class UsMiSecurityClassificationCommitteeReviewV2Configuration extends Ap
   get allSubcategoriesOfSubmitted() {
     return undefined;
   }
+
+  get markSubmittedOnFormDownload() {
+    return false;
+  }
 }
