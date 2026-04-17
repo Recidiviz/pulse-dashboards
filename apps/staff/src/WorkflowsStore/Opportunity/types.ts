@@ -328,7 +328,10 @@ export type OpportunityTab =
   | "Not Due"
 
   // For US_ID CRC
-  | "Medical-Ineligible";
+  | "Medical-Ineligible"
+
+  // For US_ID Full Term Discharge
+  | "Pending Violation";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

@@ -19,6 +19,13 @@ import { z } from "zod";
 
 import { basePastFTRDSchema } from "../../PastFTRDReferralRecord";
 
-export const usIdPastFTRDSchema = basePastFTRDSchema;
+export const usIdPastFTRDSchema = basePastFTRDSchema.extend({
+  metadata: z
+    .object({
+      tabName: z.string().optional(),
+    })
+    .passthrough()
+    .default({}),
+});
 export type UsIdPastFTRDReferralRecord = z.infer<typeof usIdPastFTRDSchema>;
 export type UsIdPastFTRDReferralRecordRaw = z.input<typeof usIdPastFTRDSchema>;

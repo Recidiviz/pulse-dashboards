@@ -19,6 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
 import { PastFTRDOpportunityBase } from "../../PastFTRDOpportunityBase";
+import { OpportunityTab } from "../../types";
 import {
   UsIdPastFTRDReferralRecord,
   usIdPastFTRDSchema,
@@ -27,5 +28,20 @@ import {
 export class UsIdPastFTRDOpportunity extends PastFTRDOpportunityBase<UsIdPastFTRDReferralRecord> {
   constructor(client: Client, record: DocumentData) {
     super(client, "pastFTRD", usIdPastFTRDSchema.parse(record));
+  }
+
+  tabTitle(): OpportunityTab {
+    if (this.isSubmitted) return this.submittedTabTitle;
+    if (this.denied) return this.deniedTabTitle;
+
+    switch (this.record.metadata.tabName) {
+      case "PENDING_VIOLATION":
+        return "Pending Violation";
+      case "ALMOST_ELIGIBLE":
+        return "Almost Eligible";
+      case "ELIGIBLE":
+      default:
+        return super.tabTitle();
+    }
   }
 }
