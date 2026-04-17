@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -143,6 +143,18 @@ const VizPathways: React.FC<Props> = ({
   withPadding = true,
   children,
 }) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    el.querySelectorAll<HTMLObjectElement>(
+      'object[data="about:blank"]',
+    ).forEach((obj) => {
+      obj.setAttribute("title", "Chart contents");
+    });
+  });
+
   const screenReaderTitle = [
     `Chart: ${title}. `,
     latestUpdate && `as of ${latestUpdate}`,
@@ -151,7 +163,7 @@ const VizPathways: React.FC<Props> = ({
     .join(" ");
 
   return (
-    <Wrapper className={className}>
+    <Wrapper className={className} ref={wrapperRef}>
       <Header>
         <Title
           id="chart-title"

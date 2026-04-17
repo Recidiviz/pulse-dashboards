@@ -177,8 +177,10 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
               metricModeOptions={metricModeOptions}
             />
           </NavigationRow>
-          <MetricVizMapper metric={metricsStore.current} />
-          <ChartNote note={metricsStore.current?.note} />
+          <div aria-live="polite">
+            <MetricVizMapper metric={metricsStore.current} />
+            <ChartNote note={metricsStore.current?.note} />
+          </div>
         </PageMain>
         <Footer />
       </PageContainer>

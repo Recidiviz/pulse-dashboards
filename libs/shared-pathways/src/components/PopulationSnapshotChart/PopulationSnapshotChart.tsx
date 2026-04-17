@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 import styled, { css, useTheme } from "styled-components";
@@ -76,6 +76,7 @@ type PopulationSnapshotChartProps = {
 const ChartWrapper = styled.div<{
   $rotateLabels: boolean;
   $isHorizontal: boolean;
+  $tooltipSuppressed: boolean;
 }>`
   background: #fff;
   ${typography.Sans14}
@@ -154,6 +155,14 @@ const ChartWrapper = styled.div<{
 
       .foreground-graphics {
         transform: translate(-1rem, 0) !important;
+      }
+    `}
+
+  ${({ $tooltipSuppressed }) =>
+    $tooltipSuppressed &&
+    css`
+      .annotation-layer {
+        display: none;
       }
     `}
 `;
@@ -261,6 +270,22 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
 }) => {
   const theme = useTheme() as PathwaysTheme;
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [tooltipSuppressed, setTooltipSuppressed] = useState(false);
+
+  const handleEsc = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape" && hoveredId !== null) {
+        setHoveredId(null);
+        setTooltipSuppressed(true);
+      }
+    },
+    [hoveredId],
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [handleEsc]);
 
   const { maxTickValue, tickValues, ticksMargin } = getTicks(
     Math.max(...data.map((d) => Number(d.value))),
@@ -308,6 +333,10 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
     oAccessor: "accessorLabel",
     projection: "vertical",
     customHoverBehavior: (piece: OrdinalPiece | undefined) => {
+      if (tooltipSuppressed) {
+        setTooltipSuppressed(false);
+        return;
+      }
       if (piece) {
         setHoveredId(piece.index);
       } else {
@@ -421,6 +450,10 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
         ref={wrapperRef}
         $rotateLabels={rotateLabels}
         $isHorizontal={isHorizontal}
+        $tooltipSuppressed={tooltipSuppressed}
+        onMouseMove={
+          tooltipSuppressed ? () => setTooltipSuppressed(false) : undefined
+        }
       >
         {needsScroll ? (
           <ScrollLayout>

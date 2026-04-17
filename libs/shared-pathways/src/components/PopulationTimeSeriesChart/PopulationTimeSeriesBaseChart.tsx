@@ -16,9 +16,9 @@
 // =============================================================================
 
 import { scaleTime } from "d3-scale";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ResponsiveXYFrame } from "semiotic";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import useIsMobile from "~utils/react/useIsMobile";
 
@@ -33,7 +33,9 @@ import VizPathways from "../VizPathways";
 import { ChartPoint, formatMonthAndYear, getTickValues } from "./helpers";
 import PopulationTimeSeriesTooltip from "./PopulationTimeSeriesTooltip";
 
-const ChartWrapper = styled(VizPathways)`
+const ChartWrapper = styled(VizPathways)<{
+  $tooltipSuppressed: boolean;
+}>`
   .PopulationTimeSeriesChart__projectedLine {
     stroke: ${({ theme }) => theme.palette.data.indigo1};
     stroke-width: 2;
@@ -48,6 +50,14 @@ const ChartWrapper = styled(VizPathways)`
     fill: ${({ theme }) => theme.palette.marble4};
     fill-opacity: 0;
   }
+
+  ${({ $tooltipSuppressed }) =>
+    $tooltipSuppressed &&
+    css`
+      .annotation-layer {
+        display: none;
+      }
+    `}
 `;
 
 type PlotLine = {
@@ -100,6 +110,19 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
 }) => {
   const theme = useTheme() as PathwaysTheme;
   const { isMobile } = useIsMobile(true);
+  const [tooltipSuppressed, setTooltipSuppressed] = useState(false);
+
+  const handleEsc = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setTooltipSuppressed(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [handleEsc]);
+
   const charWidth = theme.chart.axisLabel.charWidth;
   const leftMargin = (chartTop.toString().length + 1.5) * charWidth;
 
@@ -199,8 +222,17 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     : undefined;
 
   return (
-    <ChartWrapper title={title} subtitle={subtitle}>
-      <div ref={wrapperRef}>
+    <ChartWrapper
+      title={title}
+      subtitle={subtitle}
+      $tooltipSuppressed={tooltipSuppressed}
+    >
+      <div
+        ref={wrapperRef}
+        onMouseMove={
+          tooltipSuppressed ? () => setTooltipSuppressed(false) : undefined
+        }
+      >
         {needsScroll ? (
           <ScrollLayout>
             <StickyAxis width={leftMargin} height={CHART_HEIGHT}>

@@ -51,6 +51,9 @@ const LearnMoreLink = styled.a`
   color: ${publicPathwaysPalette.signal.links};
   text-decoration: underline;
   margin-left: ${rem(spacing.xs)};
+  display: inline-flex;
+  align-items: center;
+  min-height: ${rem(24)};
 
   &:focus-visible {
     outline: 2px solid ${publicPathwaysPalette.focusColor};
