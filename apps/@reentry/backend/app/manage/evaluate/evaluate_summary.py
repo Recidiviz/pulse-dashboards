@@ -36,6 +36,7 @@ from app.utils.intake_summary_runner import generate_summary
 
 from ..base import cli
 from ..extract_intake_conversation import get_postgres_engine
+from ._html_utils import write_html_report
 from .summary_evals import COVERAGE_PASS_THRESHOLD, coverage_check, grounding_check
 
 load_dotenv()
@@ -930,10 +931,7 @@ def _write_html_report(
             }
         )
 
-    safe_data = json.dumps(entries).replace("</script>", "<\\/script>")
-    html = _HTML_TEMPLATE.replace("__DATA__", safe_data)
-    Path(report_file).write_text(html)
-    logger.info("HTML report written", path=report_file)
+    write_html_report(_HTML_TEMPLATE, entries, report_file)
 
 
 _HTML_TEMPLATE = """<!DOCTYPE html>

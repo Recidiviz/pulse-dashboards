@@ -1,18 +1,32 @@
+import json
 import uuid
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+from uuid import UUID, uuid4
 
 import inquirer
 import orjson
+import structlog
 from langchain_core.document_loaders import LangSmithLoader
 from langsmith import Client
 from langsmith.evaluation import aevaluate
+from langsmith.schemas import Example, Run
 from pydantic import BaseModel
+from sqlalchemy.orm import noload, sessionmaker
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.core.data_config.output_configs.loader import OutputFileLoader
+from app.crud.plan_asset import get_asset_by_filename
 from app.manage.base import cli
+from app.manage.extract_intake_conversation import get_postgres_engine
+from app.models.models import Plan, PlanGeneration
 from app.utils.llm_agent_gen_plan import LLMAgentGenerate
 
+from ._html_utils import write_html_report
 from .markdown_evals import (
     actionable,
     addressed_to_client,
@@ -24,6 +38,8 @@ from .markdown_evals import (
     timeline,
     tone,
 )
+
+logger = structlog.get_logger(__name__)
 
 langsmith_client = Client(
     api_key=settings.LANGCHAIN_API_KEY,
@@ -387,3 +403,713 @@ async def evaluate(output_config_file: str = "exported-config.yaml"):
 
     print(f"\nMarkdown files saved to: {markdown_dir}")
     print(results.to_pandas())
+
+
+# ---------------------------------------------------------------------------
+# DB-mode action plan evaluation pipeline
+# (mirrors evaluate_summary.py: collect → evaluate → output)
+# ---------------------------------------------------------------------------
+
+_SCORE_EVALUATORS = [
+    "addressed_to_client",
+    "clarity",
+    "actionable",
+    "structure",
+    "tone",
+    "timeline",
+    "no_judgments",
+]
+_BINARY_EVALUATORS = [
+    "citations_source_is_transcript",
+    "citations_text_verified",
+]
+_ALL_EVALUATOR_KEYS = _SCORE_EVALUATORS + _BINARY_EVALUATORS
+
+_EVALUATOR_LABELS = {
+    "addressed_to_client": "Addressed",
+    "clarity": "Clarity",
+    "actionable": "Actionable",
+    "structure": "Structure",
+    "tone": "Tone",
+    "timeline": "Timeline",
+    "no_judgments": "No Judgments",
+    "citations_source_is_transcript": "Cite Source",
+    "citations_text_verified": "Cite Text",
+}
+
+
+@dataclass
+class GenEvalItem:
+    """Holds one existing action plan and its context for evaluation."""
+
+    messages: List[Dict]  # from messages.json asset
+    summary: str  # from summary.md asset
+    action_plan: str  # from PlanGeneration.markdown_result
+    structured_plan: (
+        Any  # ActionPlan pydantic obj from gen_data_json; None if unavailable
+    )
+    meta: Dict  # {plan_id, client_pseudo_id, gen_id}
+
+
+async def _collect_database_gen(
+    plan_id: Optional[str],
+    client_pseudo_id: Optional[str],
+    since_date: Optional[str],
+    limit: int,
+    env: str,
+) -> List[GenEvalItem]:
+    """Fetch plans from the database and build GenEvalItems."""
+    connector = None
+    try:
+        engine, connector = await get_postgres_engine(env)
+        async_session_factory = sessionmaker(
+            engine, class_=AsyncSession, expire_on_commit=False
+        )
+
+        async with async_session_factory() as session:
+            NO_LAZY = [noload(Plan.intake), noload(Plan.create_execution)]
+
+            if plan_id:
+                result = await session.execute(
+                    select(Plan).where(Plan.id == UUID(plan_id)).options(*NO_LAZY)
+                )
+                plan = result.scalar_one_or_none()
+                if not plan:
+                    print(f"Error: Plan not found: {plan_id}")
+                    return []
+                plans = [plan]
+            else:
+                query = select(Plan).options(*NO_LAZY)
+                if client_pseudo_id:
+                    query = query.where(Plan.client_pseudo_id == client_pseudo_id)
+                if since_date:
+                    since_dt = datetime.fromisoformat(since_date)
+                    query = query.where(Plan.created_at >= since_dt)
+                query = query.order_by(Plan.created_at.desc()).limit(limit)
+                result = await session.execute(query)
+                plans = list(result.scalars().all())
+
+            if not plans:
+                print("No plans found matching filters")
+                return []
+
+            print(f"Found {len(plans)} plan(s) to evaluate\n")
+
+            items = []
+            for idx, plan in enumerate(plans, 1):
+                item = await _collect_item_from_plan_gen(session, plan, idx, len(plans))
+                if item:
+                    items.append(item)
+
+            return items
+
+    finally:
+        if connector:
+            await connector.close_async()
+
+
+async def _collect_item_from_plan_gen(
+    session: AsyncSession, plan: Plan, idx: int, total: int
+) -> Optional[GenEvalItem]:
+    """Load assets and latest generation for one plan into a GenEvalItem."""
+    logger.info("Collecting plan", idx=idx, total=total, plan_id=str(plan.id))
+
+    messages_asset = await get_asset_by_filename(session, plan.id, "messages.json")
+    if not messages_asset or not messages_asset.file_blob:
+        logger.warning("Skipping plan: no messages.json", plan_id=str(plan.id))
+        return None
+    messages = json.loads(messages_asset.file_blob.decode("utf-8"))
+
+    summary_asset = await get_asset_by_filename(session, plan.id, "summary.md")
+    summary = (
+        summary_asset.file_blob.decode("utf-8")
+        if summary_asset and summary_asset.file_blob
+        else ""
+    )
+
+    # Fetch the most recently finished generation that has a markdown result
+    stmt = (
+        select(PlanGeneration)
+        .where(PlanGeneration.plan_id == plan.id)
+        .where(PlanGeneration.markdown_result.isnot(None))
+        .order_by(PlanGeneration.finished_at.desc())
+        .limit(1)
+    )
+    result = await session.execute(stmt)
+    gen = result.scalar_one_or_none()
+
+    if not gen or not gen.markdown_result:
+        logger.warning("Skipping plan: no generated action plan", plan_id=str(plan.id))
+        return None
+
+    # Parse structured plan for the citations evaluators (attribute access required)
+    structured_plan = None
+    if gen.gen_data_json:
+        try:
+            from app.utils.llm_agent_gen_plan import ActionPlanMarkdown
+
+            gen_data = ActionPlanMarkdown.model_validate_json(gen.gen_data_json)
+            structured_plan = gen_data.structured_action_plan
+        except Exception as e:
+            logger.warning(
+                "Could not parse gen_data_json for citations eval",
+                plan_id=str(plan.id),
+                error=str(e),
+            )
+
+    return GenEvalItem(
+        messages=messages,
+        summary=summary,
+        action_plan=gen.markdown_result,
+        structured_plan=structured_plan,
+        meta={
+            "plan_id": str(plan.id),
+            "client_pseudo_id": plan.client_pseudo_id or "",
+            "gen_id": str(gen.id),
+        },
+    )
+
+
+async def _run_evaluations_gen(item: GenEvalItem) -> Dict[str, Any]:
+    """Run all 9 markdown evaluators against a GenEvalItem."""
+    from .markdown_evals import (
+        actionable,
+        addressed_to_client,
+        citations_source_is_transcript,
+        citations_text_verified,
+        clarity,
+        no_judgments,
+        structure,
+        timeline,
+        tone,
+    )
+
+    run = Run(
+        id=uuid4(),
+        name="eval_run",
+        start_time=datetime.now(),
+        run_type="chain",
+        outputs={
+            "markdown": item.action_plan,
+            "structured_plan": item.structured_plan,
+        },
+    )
+    example = Example(
+        id=uuid4(),
+        created_at=datetime.now(),
+        inputs={"messages": item.messages},
+        outputs={},
+    )
+
+    scores: Dict[str, Any] = {}
+    for evaluator in [
+        addressed_to_client,
+        clarity,
+        actionable,
+        structure,
+        tone,
+        timeline,
+        no_judgments,
+        citations_source_is_transcript,
+        citations_text_verified,
+    ]:
+        try:
+            r = await evaluator(run, example)
+            scores[r["key"]] = r
+        except Exception as e:
+            logger.error("Evaluator failed", evaluator=evaluator.__name__, error=str(e))
+            scores[evaluator.__name__] = {
+                "key": evaluator.__name__,
+                "score": None,
+                "error": str(e),
+            }
+
+    return scores
+
+
+async def _run_pipeline_gen(
+    items: List[GenEvalItem],
+    output_format: str,
+    report_file: Optional[str],
+) -> None:
+    """Evaluate each item and hand off to output."""
+    all_scores: List[Dict] = []
+    for item in items:
+        logger.info("Running evaluations", plan_id=item.meta.get("plan_id"))
+        scores = await _run_evaluations_gen(item)
+        all_scores.append({**item.meta, "scores": scores})
+    _output_results_gen(all_scores, items, output_format, report_file)
+
+
+def _output_results_gen(
+    all_scores: List[Dict],
+    items: List[GenEvalItem],
+    output_format: str,
+    report_file: Optional[str],
+) -> None:
+    """Print and/or save evaluation results."""
+    if output_format == "json":
+        payload = json.dumps(all_scores, indent=2)
+        if report_file:
+            Path(report_file).write_text(payload)
+            logger.info("Results saved", path=report_file)
+            print(f"\nResults saved to: {report_file}")
+        else:
+            print(payload)
+        return
+
+    if output_format == "html":
+        _write_html_report_gen(all_scores, items, report_file)
+        return
+
+    # Console format (default)
+    print("\n" + "=" * 60)
+    print("ACTION PLAN EVALUATION RESULTS")
+    print("=" * 60)
+
+    for entry in all_scores:
+        plan_id = entry.get("plan_id", "?")
+        client = entry.get("client_pseudo_id", "?")
+        scores = entry.get("scores", {})
+
+        print(f"\n  Plan: {plan_id}  |  Client: {client}")
+
+        col_w = 26
+        print(f"\n  {'Evaluator':<{col_w}} {'Score':>6}")
+        print(f"  {'-' * col_w} {'------':>6}")
+
+        for key in _ALL_EVALUATOR_KEYS:
+            label = _EVALUATOR_LABELS.get(key, key)
+            result = scores.get(key, {})
+            score = result.get("score")
+            if score is None:
+                score_str = "ERROR"
+            elif key in _BINARY_EVALUATORS:
+                score_str = "PASS" if score == 1 else "FAIL"
+            else:
+                score_str = f"{score}/10"
+            print(f"  {label:<{col_w}} {score_str:>6}")
+
+    print("\n" + "=" * 60)
+
+
+def _write_html_report_gen(
+    all_scores: List[Dict],
+    items: List[GenEvalItem],
+    report_file: Optional[str] = None,
+) -> None:
+    """Write a self-contained interactive HTML report of action plan evaluations."""
+    if not report_file:
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        report_file = f"action_plan_eval_{timestamp}.html"
+
+    entries = []
+    for entry, item in zip(all_scores, items):
+        entries.append(
+            {
+                "plan_id": entry.get("plan_id"),
+                "client_pseudo_id": entry.get("client_pseudo_id", ""),
+                "gen_id": entry.get("gen_id"),
+                "conversation_messages": item.messages,
+                "action_plan": item.action_plan,
+                "scores": {
+                    k: {
+                        "score": v.get("score"),
+                        "explanation": v.get("explanation"),
+                    }
+                    for k, v in entry.get("scores", {}).items()
+                },
+            }
+        )
+
+    write_html_report(_HTML_TEMPLATE_GEN, entries, report_file)
+    print(f"\nHTML report written to: {report_file}")
+
+
+_HTML_TEMPLATE_GEN = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Action Plan Eval Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+
+    /* ── Main view ── */
+    #main-view { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+    .subtitle { color: #888; font-size: 13px; margin-bottom: 28px; }
+
+    .stats-bar { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .stat-card { background: white; border-radius: 8px; padding: 14px 18px; flex: 1; min-width: 120px;
+                 box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .stat-label { font-size: 10px; color: #888; text-transform: uppercase;
+                  letter-spacing: 0.6px; margin-bottom: 5px; }
+    .stat-value { font-size: 22px; font-weight: 700; }
+
+    table { width: 100%; background: white; border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-collapse: collapse; overflow: hidden; }
+    th { text-align: left; padding: 10px 12px; font-size: 10px; text-transform: uppercase;
+         letter-spacing: 0.5px; color: #888; border-bottom: 1px solid #eee; white-space: nowrap; }
+    td { padding: 11px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+    tr:last-child td { border-bottom: none; }
+    tr.plan-row:hover { background: #fafafa; cursor: pointer; }
+
+    /* ── Detail view ── */
+    #detail-view { display: none; height: 100vh; flex-direction: column; }
+    .detail-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+                     background: white; border-bottom: 1px solid #e5e5e5; flex-shrink: 0; }
+    .back-btn { background: none; border: 1px solid #ddd; border-radius: 6px;
+                padding: 5px 12px; cursor: pointer; font-size: 13px; color: #555; }
+    .back-btn:hover { background: #f5f5f5; }
+    .detail-title { font-weight: 600; font-size: 14px; flex: 1;
+                    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-btn { background: none; border: 1px solid #ddd; border-radius: 6px;
+               padding: 5px 11px; cursor: pointer; font-size: 13px; color: #555; }
+    .nav-btn:hover:not(:disabled) { background: #f5f5f5; }
+    .nav-btn:disabled { opacity: 0.35; cursor: default; }
+    .nav-info { font-size: 12px; color: #aaa; white-space: nowrap; }
+
+    .panes { display: flex; flex: 1; overflow: hidden; }
+    .pane { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #e5e5e5; min-width: 0; }
+    .pane:last-child { border-right: none; }
+    .pane-header { padding: 10px 14px; font-size: 11px; font-weight: 600;
+                   text-transform: uppercase; letter-spacing: 0.5px; color: #777;
+                   background: #fafafa; border-bottom: 1px solid #eee; flex-shrink: 0; }
+    .pane-body { flex: 1; overflow-y: auto; padding: 14px; }
+
+    /* ── Transcript ── */
+    .message { margin-bottom: 10px; }
+    .message-role { font-size: 10px; font-weight: 700; text-transform: uppercase;
+                    letter-spacing: 0.5px; margin-bottom: 3px; }
+    .message-role.caseworker { color: #2563eb; }
+    .message-role.client { color: #7c3aed; }
+    .message-content { font-size: 13px; line-height: 1.55; background: white;
+                       padding: 9px 12px; border-radius: 6px; border: 1px solid #eee; }
+    .message.caseworker .message-content { border-left: 3px solid #2563eb; }
+    .message.client .message-content { border-left: 3px solid #7c3aed; }
+
+    /* ── Action plan ── */
+    .plan-text { font-size: 12px; line-height: 1.7; white-space: pre-wrap; font-family: monospace; }
+
+    /* ── Eval scores ── */
+    .score-block { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f0f0f0; }
+    .score-block:last-child { border-bottom: none; }
+    .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .score-label { font-size: 12px; font-weight: 600; width: 110px; flex-shrink: 0; }
+    .score-bar-wrap { flex: 1; background: #f0f0f0; border-radius: 4px; height: 8px; }
+    .score-bar { height: 8px; border-radius: 4px; }
+    .score-val { font-size: 12px; font-weight: 700; width: 40px; text-align: right; flex-shrink: 0; }
+    .score-explanation { font-size: 11px; color: #666; line-height: 1.5; margin-top: 3px;
+                         padding: 6px 9px; background: #f9f9f9; border-radius: 5px; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 10px;
+             font-size: 11px; font-weight: 700; }
+    .badge.pass { background: #dcfce7; color: #16a34a; }
+    .badge.fail { background: #fee2e2; color: #dc2626; }
+
+    /* ── Colors ── */
+    .pass { color: #16a34a; font-weight: 600; }
+    .warn { color: #d97706; font-weight: 600; }
+    .fail { color: #dc2626; font-weight: 600; }
+    .stat-value.pass { color: #16a34a; }
+    .stat-value.warn { color: #d97706; }
+    .stat-value.fail { color: #dc2626; }
+    .bar-pass { background: #16a34a; }
+    .bar-warn { background: #d97706; }
+    .bar-fail { background: #dc2626; }
+  </style>
+</head>
+<body>
+
+<div id="main-view">
+  <h1>Action Plan Eval Report</h1>
+  <div class="subtitle" id="report-subtitle"></div>
+  <div class="stats-bar" id="stats-bar"></div>
+  <table id="main-table">
+    <thead id="table-head"></thead>
+    <tbody id="plan-table"></tbody>
+  </table>
+</div>
+
+<div id="detail-view">
+  <div class="detail-header">
+    <button class="back-btn" onclick="showMain()">← Back</button>
+    <div class="detail-title" id="detail-title"></div>
+    <span class="nav-info" id="nav-info"></span>
+    <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next →</button>
+  </div>
+  <div class="panes">
+    <div class="pane">
+      <div class="pane-header">Transcript</div>
+      <div class="pane-body" id="pane-transcript"></div>
+    </div>
+    <div class="pane">
+      <div class="pane-header">Action Plan</div>
+      <div class="pane-body" id="pane-plan"></div>
+    </div>
+    <div class="pane">
+      <div class="pane-header">Eval Scores</div>
+      <div class="pane-body" id="pane-eval"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const DATA = __DATA__;
+  const SCORE_EVALS = ["addressed_to_client","clarity","actionable","structure","tone","timeline","no_judgments"];
+  const BINARY_EVALS = ["citations_source_is_transcript","citations_text_verified"];
+  const LABELS = {
+    addressed_to_client: "Addressed",
+    clarity: "Clarity",
+    actionable: "Actionable",
+    structure: "Structure",
+    tone: "Tone",
+    timeline: "Timeline",
+    no_judgments: "No Judgments",
+    citations_source_is_transcript: "Cite Source",
+    citations_text_verified: "Cite Text",
+  };
+  let currentIndex = 0;
+
+  function scoreClass(val, max) {
+    const r = val / max;
+    return r >= 0.8 ? 'pass' : r >= 0.5 ? 'warn' : 'fail';
+  }
+
+  function esc(s) {
+    return String(s ?? '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function avgScore(scores) {
+    const vals = SCORE_EVALS.map(k => (scores[k] || {}).score).filter(v => v != null);
+    if (!vals.length) return null;
+    return vals.reduce((a,b) => a+b, 0) / vals.length;
+  }
+
+  function init() {
+    const n = DATA.length;
+    document.getElementById('report-subtitle').textContent =
+      `${n} action plan${n !== 1 ? 's' : ''} evaluated`;
+
+    // Stats bar: avg per score evaluator
+    const statCards = SCORE_EVALS.map(key => {
+      const vals = DATA.map(d => (d.scores[key] || {}).score).filter(v => v != null);
+      const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+      const cls = avg != null ? scoreClass(avg, 10) : '';
+      return `<div class="stat-card">
+        <div class="stat-label">${LABELS[key]}</div>
+        <div class="stat-value ${cls}">${avg != null ? avg.toFixed(1) : '—'}<span style="font-size:12px;color:#bbb">/10</span></div>
+      </div>`;
+    }).join('');
+    document.getElementById('stats-bar').innerHTML = statCards;
+
+    // Table header
+    const allKeys = [...SCORE_EVALS, ...BINARY_EVALS];
+    document.getElementById('table-head').innerHTML = `<tr>
+      <th>Client</th>
+      <th>Plan ID</th>
+      <th>Avg Score</th>
+      ${allKeys.map(k => `<th>${LABELS[k]}</th>`).join('')}
+    </tr>`;
+
+    // Table rows
+    document.getElementById('plan-table').innerHTML = DATA.map((d, i) => {
+      const avg = avgScore(d.scores);
+      const avgStr = avg != null ? avg.toFixed(1) : '—';
+      const avgCls = avg != null ? scoreClass(avg, 10) : '';
+      const id = d.plan_id || '—';
+      const shortId = id.length > 12 ? id.slice(0, 12) + '…' : id;
+
+      const scoreCells = SCORE_EVALS.map(k => {
+        const v = (d.scores[k] || {}).score;
+        if (v == null) return `<td style="color:#ccc">—</td>`;
+        return `<td><span class="${scoreClass(v,10)}">${v}/10</span></td>`;
+      }).join('');
+      const binaryCells = BINARY_EVALS.map(k => {
+        const v = (d.scores[k] || {}).score;
+        if (v == null) return `<td style="color:#ccc">—</td>`;
+        return `<td><span class="badge ${v===1?'pass':'fail'}">${v===1?'PASS':'FAIL'}</span></td>`;
+      }).join('');
+
+      return `<tr class="plan-row" onclick="showDetail(${i})">
+        <td>${esc(d.client_pseudo_id)||'—'}</td>
+        <td title="${esc(id)}" style="font-family:monospace;font-size:12px;color:#888">${esc(shortId)}</td>
+        <td><span class="${avgCls}">${avgStr}</span></td>
+        ${scoreCells}${binaryCells}
+      </tr>`;
+    }).join('');
+  }
+
+  function showDetail(i) {
+    currentIndex = i;
+    const d = DATA[i];
+    document.getElementById('main-view').style.display = 'none';
+    const dv = document.getElementById('detail-view');
+    dv.style.display = 'flex';
+
+    const id = d.plan_id || '—';
+    document.getElementById('detail-title').textContent =
+      `Plan ${id} — ${d.client_pseudo_id || 'unknown client'}`;
+    document.getElementById('nav-info').textContent = `${i+1} / ${DATA.length}`;
+    document.getElementById('prev-btn').disabled = i === 0;
+    document.getElementById('next-btn').disabled = i === DATA.length - 1;
+
+    // Transcript
+    const msgs = (d.conversation_messages || []).map(m => {
+      const role = m.role || 'unknown';
+      const isCw = role === 'assistant' || role === 'case manager';
+      const cls = isCw ? 'caseworker' : 'client';
+      const label = isCw ? 'Caseworker' : 'Client';
+      return `<div class="message ${cls}">
+        <div class="message-role ${cls}">${label}</div>
+        <div class="message-content">${esc(m.content)}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('pane-transcript').innerHTML = msgs || '<em style="color:#aaa">No messages</em>';
+
+    // Action plan
+    document.getElementById('pane-plan').innerHTML =
+      `<div class="plan-text">${esc(d.action_plan || '')}</div>`;
+
+    // Eval scores
+    const allKeys = [...SCORE_EVALS, ...BINARY_EVALS];
+    const scoreRows = allKeys.map(key => {
+      const scoreData = d.scores[key] || {};
+      const v = scoreData.score;
+      const expl = scoreData.explanation;
+      const label = LABELS[key];
+      const isBinary = BINARY_EVALS.includes(key);
+      const explHtml = expl ? `<div class="score-explanation">${esc(expl)}</div>` : '';
+
+      if (v == null) {
+        return `<div class="score-block">
+          <div class="score-row">
+            <div class="score-label">${label}</div>
+            <div style="color:#ccc;font-size:12px">error</div>
+          </div>
+        </div>`;
+      }
+
+      if (isBinary) {
+        const cls = v === 1 ? 'pass' : 'fail';
+        return `<div class="score-block">
+          <div class="score-row">
+            <div class="score-label">${label}</div>
+            <span class="badge ${cls}">${v===1?'PASS':'FAIL'}</span>
+          </div>
+          ${explHtml}
+        </div>`;
+      }
+
+      const pct = (v / 10) * 100;
+      const barCls = scoreClass(v, 10) === 'pass' ? 'bar-pass' : scoreClass(v, 10) === 'warn' ? 'bar-warn' : 'bar-fail';
+      const valCls = scoreClass(v, 10);
+      return `<div class="score-block">
+        <div class="score-row">
+          <div class="score-label">${label}</div>
+          <div class="score-bar-wrap"><div class="score-bar ${barCls}" style="width:${pct}%"></div></div>
+          <div class="score-val ${valCls}">${v}/10</div>
+        </div>
+        ${explHtml}
+      </div>`;
+    }).join('');
+    document.getElementById('pane-eval').innerHTML = scoreRows;
+  }
+
+  function showMain() {
+    document.getElementById('detail-view').style.display = 'none';
+    document.getElementById('main-view').style.display = 'block';
+  }
+
+  function navigate(dir) {
+    const next = currentIndex + dir;
+    if (next >= 0 && next < DATA.length) showDetail(next);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('detail-view').style.display !== 'none') {
+      if (e.key === 'ArrowRight') navigate(1);
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'Escape') showMain();
+    }
+  });
+
+  init();
+</script>
+</body>
+</html>"""
+
+
+@cli.command()
+async def evaluate_action_plan(
+    plan_id: Optional[str] = None,
+    client_pseudo_id: Optional[str] = None,
+    since_date: Optional[str] = None,
+    limit: int = 10,
+    output: str = "console",
+    env: str = "prod",
+    report_file: Optional[str] = None,
+):
+    """
+    Evaluate existing action plans from the database using the markdown quality evaluators.
+
+    Scores the plan text already stored in PlanGeneration.markdown_result — no re-generation.
+
+    DATABASE MODE (reads RECIDIVIZ_POSTGRES_PASSWORD_<ENV> from .env):
+        python -m app.manage evaluate-action-plan --plan-id <uuid>
+        python -m app.manage evaluate-action-plan --client-pseudo-id <id>
+        python -m app.manage evaluate-action-plan --since-date 2025-01-01 --limit 10
+        python -m app.manage evaluate-action-plan --since-date 2025-01-01 --output html
+        python -m app.manage evaluate-action-plan --plan-id <uuid> --output json
+
+    Args:
+        plan_id: UUID of a specific plan to evaluate
+        client_pseudo_id: Filter plans by client pseudo ID
+        since_date: Filter by creation date YYYY-MM-DD
+        limit: Maximum number of plans to evaluate (default: 10)
+        output: Output format: console (default), json, html
+        env: Database environment: prod (default), staging, demo, dev, local
+        report_file: Path to save json/html output (auto-named if omitted)
+    """
+    if output not in ("console", "json", "html"):
+        print("Error: --output must be console, json, or html")
+        return
+
+    if not plan_id and not client_pseudo_id and not since_date:
+        print(
+            "Error: provide at least one of --plan-id, --client-pseudo-id, --since-date"
+        )
+        return
+
+    logger.info(
+        "Starting action plan evaluation",
+        env=env,
+        plan_id=plan_id,
+        client_pseudo_id=client_pseudo_id,
+        since_date=since_date,
+        limit=limit,
+        output=output,
+    )
+
+    try:
+        items = await _collect_database_gen(
+            plan_id=plan_id,
+            client_pseudo_id=client_pseudo_id,
+            since_date=since_date,
+            limit=limit,
+            env=env,
+        )
+    except Exception as e:
+        logger.exception("Error collecting plans from database")
+        print(f"Error: {e}")
+        return
+
+    if not items:
+        print("No plans with action plans found.")
+        return
+
+    await _run_pipeline_gen(items, output, report_file)

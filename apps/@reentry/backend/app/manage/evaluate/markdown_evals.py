@@ -76,7 +76,11 @@ async def addressed_to_client(run: Run, example: Example):
         }
     )
 
-    return {"key": "addressed_to_client", "score": int(score.one_to_ten_score)}
+    return {
+        "key": "addressed_to_client",
+        "score": int(score.one_to_ten_score),
+        "explanation": score.explanation,
+    }
 
 
 # The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the caseworker
@@ -117,7 +121,11 @@ async def clarity(run: Run, example: Example):
         }
     )
 
-    return {"key": "clarity", "score": int(score.one_to_ten_score)}
+    return {
+        "key": "clarity",
+        "score": int(score.one_to_ten_score),
+        "explanation": score.explanation,
+    }
 
 
 # Recommended steps should be actionable
@@ -164,7 +172,11 @@ async def actionable(run: Run, example: Example):
         }
     )
 
-    return {"key": "actionable", "score": int(score.one_to_ten_score)}
+    return {
+        "key": "actionable",
+        "score": int(score.one_to_ten_score),
+        "explanation": score.explanation,
+    }
 
 
 # The action plan has the expected structure. We might need o rework this in case we split the action plan generation into multiple passes.
@@ -211,7 +223,11 @@ async def structure(run: Run, example: Example):
         }
     )
 
-    return {"key": "structure", "score": int(score.one_to_ten_score)}
+    return {
+        "key": "structure",
+        "score": int(score.one_to_ten_score),
+        "explanation": score.explanation,
+    }
 
 
 # The report has the expected tone: kind, supportive, down-to-earth (not false friendly), but objective tone.
@@ -252,7 +268,11 @@ async def tone(run: Run, example: Example):
         }
     )
 
-    return {"key": "tone", "score": int(score.one_to_ten_score)}
+    return {
+        "key": "tone",
+        "score": int(score.one_to_ten_score),
+        "explanation": score.explanation,
+    }
 
 
 # The timeline is properly formed (no repetitions, all steps noted down, dates are in the right order…)
@@ -293,7 +313,11 @@ async def timeline(run: Run, example: Example):
         }
     )
 
-    return {"key": "timeline", "score": int(score.one_to_ten_score)}
+    return {
+        "key": "timeline",
+        "score": int(score.one_to_ten_score),
+        "explanation": score.explanation,
+    }
 
 
 # Not mention judgments or subjective statement
@@ -334,7 +358,11 @@ async def no_judgments(run: Run, example: Example):
         }
     )
 
-    return {"key": "no_judgments", "score": int(score.one_to_ten_score)}
+    return {
+        "key": "no_judgments",
+        "score": int(score.one_to_ten_score),
+        "explanation": score.explanation,
+    }
 
 
 # Helper function to extract all annotations from structured plan
@@ -451,4 +479,8 @@ async def citations_text_verified(run: Run, example: Example):
         }
     )
 
-    return {"key": "citations_text_verified", "score": int(score.binary_score)}
+    return {
+        "key": "citations_text_verified",
+        "score": int(score.binary_score),
+        "explanation": score.explanation,
+    }
