@@ -28,8 +28,6 @@ import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "../utils";
  * TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
  */
 class UsIdHomeVisitTask extends Task<"homeVisit"> {
-  displayName = "Home contact";
-
   get currentAddress(): string | undefined {
     return this.details.currentAddress;
   }

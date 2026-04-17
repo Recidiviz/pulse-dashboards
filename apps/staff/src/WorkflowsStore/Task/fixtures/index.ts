@@ -64,4 +64,5 @@ export const homeVisitTaskRecord: SupervisionTaskRecord<"homeVisit"> = {
     lastHomeVisit: "2023-01-02",
   },
   dueDate: "2023-03-04",
+  taskDisplayName: "Home Visit",
 };

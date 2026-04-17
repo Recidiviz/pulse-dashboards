@@ -23,7 +23,6 @@ import { formatDate } from "~utils";
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdHomeVisitTaskV2 extends UsIdTaskBase<"usIdHomeVisit"> {
-  displayName = "Home Visit";
   taskAction = "home visit";
 
   get addressChangeDueDate() {

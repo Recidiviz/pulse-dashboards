@@ -23,8 +23,6 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoPositiveHomeVisitTask extends Task<"usMoPositiveHomeVisit"> {
-  displayName = "Positive Home Visit";
-
   get supplementaryContacts() {
     const contacts = sortBy(this.details.supplementaryContacts, "contactDate");
     return contacts.map(

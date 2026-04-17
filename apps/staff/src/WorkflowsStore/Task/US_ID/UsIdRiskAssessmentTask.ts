@@ -24,7 +24,6 @@ import { Task } from "../Task";
  * TODO (#10615): Delete once UsIdTasksV2 is fully rolled out.
  */
 class UsIdRiskAssessmentTask extends Task<"assessment"> {
-  displayName = "Risk assessment";
   vitalsMetricId = "timely_risk_assessment" as const;
 
   get dueDateDisplayLong() {

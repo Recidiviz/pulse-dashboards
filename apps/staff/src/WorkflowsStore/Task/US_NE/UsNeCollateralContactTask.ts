@@ -21,8 +21,6 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import UsNeTaskBase from "./UsNeTaskBase";
 
 class UsNeCollateralContactTask extends UsNeTaskBase<"usNeCollateralContact"> {
-  displayName = "Collateral Contact";
-
   get additionalDetails() {
     const { lastContactDate } = this.details;
     return lastContactDate

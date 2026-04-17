@@ -22,9 +22,7 @@ import { toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 import { UsTxSimpleContactTaskType } from "../types";
 
-abstract class UsTxContactTask<
-  T extends UsTxSimpleContactTaskType,
-> extends Task<T> {
+class UsTxContactTask<T extends UsTxSimpleContactTaskType> extends Task<T> {
   vitalsMetricId = "timely_contact_due_date_based" as const;
 
   get lastContactDate(): string | undefined {

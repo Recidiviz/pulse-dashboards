@@ -19,8 +19,6 @@ import { toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoInitialPositiveContactWithSignificantOtherIapTask extends Task<"usMoInitialPositiveContactWithSignificantOtherIap"> {
-  displayName = "Initial Positive Contact with Significant Other (IAP)";
-
   get additionalDetails() {
     return "No initial positive contact with significant other recorded since starting IAP.";
   }

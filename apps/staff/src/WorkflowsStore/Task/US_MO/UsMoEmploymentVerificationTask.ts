@@ -21,8 +21,6 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoEmploymentVerificationTask extends Task<"usMoEmploymentVerification"> {
-  displayName = "Employment Verification";
-
   get additionalDetails() {
     const { lastContactDate } = this.details;
     return lastContactDate

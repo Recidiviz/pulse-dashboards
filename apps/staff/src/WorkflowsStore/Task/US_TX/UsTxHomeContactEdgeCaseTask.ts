@@ -24,7 +24,6 @@ import {
 import { Task } from "../Task";
 
 class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
-  displayName = "Residence Validation";
   vitalsMetricId = "timely_contact_due_date_based" as const;
 
   get additionalDetails(): string {

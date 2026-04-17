@@ -21,8 +21,6 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import UsNeTaskBase from "./UsNeTaskBase";
 
 class UsNeNCJISCheckContactTask extends UsNeTaskBase<"usNeNCJISCheckContact"> {
-  displayName = "NCJIS Check";
-
   get additionalDetails() {
     const { lastContactDate } = this.details;
     return lastContactDate

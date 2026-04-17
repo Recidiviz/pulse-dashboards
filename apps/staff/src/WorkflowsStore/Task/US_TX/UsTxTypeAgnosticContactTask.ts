@@ -26,9 +26,6 @@ class UsTxTypeAgnosticContactTask<
   T extends UsTxAgnosticContactTaskType,
 > extends Task<T> {
   vitalsMetricId = "timely_contact_due_date_based" as const;
-  get displayName() {
-    return this.allowedContactTypes;
-  }
 
   get allowedContactTypes(): string {
     const rawTypes = this.details.officerInCriticallyUnderstaffedLocation

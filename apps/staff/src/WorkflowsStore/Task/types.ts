@@ -305,6 +305,7 @@ export type ClientTasksSummary = {
 export type TasksRowEntity = SupervisionTask | ClientTasksSummary;
 
 export type SupervisionTaskRecord<T extends SupervisionTaskType> = {
+  taskDisplayName: string;
   type: T;
   details: SupervisionDetailsForTask[T];
   dueDate: string;

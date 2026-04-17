@@ -21,8 +21,6 @@ import { formatWorkflowsDate } from "../../../utils";
 import UsNeTaskBase from "./UsNeTaskBase";
 
 class UsNeStableAssessmentTask extends UsNeTaskBase<"usNeStableAssessment"> {
-  displayName = "STABLE Assessment";
-
   get additionalDetails() {
     const { mostRecentAssessmentDate } = this.details;
     return mostRecentAssessmentDate

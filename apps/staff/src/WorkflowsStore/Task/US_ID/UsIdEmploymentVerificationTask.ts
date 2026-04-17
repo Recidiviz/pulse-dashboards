@@ -28,8 +28,6 @@ import { US_ID_SUPERVISION_EMPLOYMENT_VERIFICATION_COMPLIANCE } from "../utils";
  * TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
  */
 class UsIdEmploymentVerificationTask extends Task<"employment"> {
-  displayName = "Employment";
-
   get dueDateDisplayLong() {
     return `Employment Verification recommended ${this.dueDateFromToday}`;
   }

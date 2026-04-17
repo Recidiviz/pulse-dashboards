@@ -21,8 +21,6 @@ import { formatWorkflowsDate } from "../../../utils";
 import UsNeTaskBase from "./UsNeTaskBase";
 
 class UsNeOrasAssessmentTask extends UsNeTaskBase<"usNeOrasAssessment"> {
-  displayName = "ORAS Assessment";
-
   get additionalDetails() {
     const { mostRecentAssessmentDate } = this.details;
     return mostRecentAssessmentDate

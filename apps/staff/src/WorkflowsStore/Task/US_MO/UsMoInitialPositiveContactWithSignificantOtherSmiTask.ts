@@ -19,8 +19,6 @@ import { toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoInitialPositiveContactWithSignificantOtherSmiTask extends Task<"usMoInitialPositiveContactWithSignificantOtherSmi"> {
-  displayName = "Initial Positive Contact with Significant Other (SMI)";
-
   get additionalDetails() {
     return "No initial positive contact with significant other recorded since assignment to SMI caseload.";
   }

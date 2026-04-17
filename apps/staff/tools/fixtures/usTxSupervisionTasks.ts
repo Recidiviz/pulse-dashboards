@@ -25,6 +25,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
+        taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactScheduled",
         // overdue
         dueDate: "2022-01-03",
@@ -39,6 +40,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         },
       },
       {
+        taskDisplayName: "Collateral Contact",
         type: "usTxCollateralContactScheduled",
         dueDate: "2023-02-10",
         details: {
@@ -58,6 +60,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
+        taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactScheduled",
         // overdue
         dueDate: "2022-03-09",
@@ -72,6 +75,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         },
       },
       {
+        taskDisplayName: "Assessment",
         type: "usTxAssessment",
         // overdue
         dueDate: "2022-10-09",
@@ -91,6 +95,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER2",
     tasks: [
       {
+        taskDisplayName: "Home Contact",
         type: "usTxHomeContactEdgeCase",
         dueDate: "2022-03-12",
         details: {
@@ -100,6 +105,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         },
       },
       {
+        taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactScheduled",
         dueDate: "2022-03-26",
         details: {
@@ -122,6 +128,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER2",
     tasks: [
       {
+        taskDisplayName: "Home Contact",
         type: "usTxHomeContactEdgeCase",
         dueDate: "2022-03-18",
         details: {
@@ -131,6 +138,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         },
       },
       {
+        taskDisplayName: "Unscheduled Field or Unscheduled Home",
         type: "usTxHomeContactUnscheduled",
         dueDate: "2024-06-12",
         details: {
@@ -152,6 +160,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER2",
     tasks: [
       {
+        taskDisplayName: "Unscheduled Field or Unscheduled Home",
         type: "usTxHomeContactUnscheduled",
         dueDate: "2020-03-19",
         details: {
@@ -173,6 +182,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
+        taskDisplayName: "Unscheduled Field or Unscheduled Home",
         type: "usTxInCustodyContact",
         dueDate: "2022-03-19",
         details: {
@@ -185,6 +195,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         },
       },
       {
+        taskDisplayName: "Office Contact",
         type: "usTxOfficeContactScheduled",
         dueDate: "2024-06-01",
         details: {
@@ -204,6 +215,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER3",
     tasks: [
       {
+        taskDisplayName: "Field Contact (Scheduled)",
         type: "usTxFieldContactScheduled",
         dueDate: "2022-12-12",
         details: {
@@ -229,6 +241,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER4",
     tasks: [
       {
+        taskDisplayName: "Office Contact",
         type: "usTxVirtualOfficeContactScheduled",
         dueDate: "2022-02-10",
         details: {
@@ -248,6 +261,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER4",
     tasks: [
       {
+        taskDisplayName: "Office Contact",
         type: "usTxVirtualOfficeContactScheduled",
         dueDate: "2022-11-23",
         details: {
@@ -267,6 +281,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER4",
     tasks: [
       {
+        taskDisplayName: "Assessment",
         type: "usTxAssessment",
         dueDate: "2022-12-30",
         details: {
@@ -285,6 +300,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER5",
     tasks: [
       {
+        taskDisplayName: "Collateral Contact",
         type: "usTxCollateralContactScheduled",
         dueDate: "2022-08-13",
         details: {
@@ -304,6 +320,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER5",
     tasks: [
       {
+        taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactScheduled",
         dueDate: "2020-09-14",
         details: {
@@ -324,6 +341,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER5",
     tasks: [
       {
+        taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactUnscheduled",
         dueDate: "2020-12-01",
         details: {
@@ -345,6 +363,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
+        taskDisplayName: "Home Contact",
         type: "usTxHomeContactEdgeCase",
         dueDate: "2023-11-30",
         details: {
@@ -361,6 +380,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER2",
     tasks: [
       {
+        taskDisplayName: "Office Contact",
         type: "usTxOfficeContactScheduled",
         dueDate: "2022-06-01",
         details: {
@@ -380,6 +400,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER3",
     tasks: [
       {
+        taskDisplayName: "Virtual Contact",
         type: "usTxVirtualOrOfficeContact",
         dueDate: "2022-01-01",
         details: {
@@ -399,6 +420,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER4",
     tasks: [
       {
+        taskDisplayName: "Assessment",
         type: "usTxAssessment",
         dueDate: "2021-12-21",
         details: {

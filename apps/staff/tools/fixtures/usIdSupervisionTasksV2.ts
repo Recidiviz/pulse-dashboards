@@ -27,6 +27,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
+        taskDisplayName: "Home Visit",
         type: "usIdHomeVisit",
         dueDate: relativeFixtureDate({ days: -10 }),
         details: {
@@ -35,6 +36,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Employment Verification",
         type: "usIdEmploymentVerification",
         dueDate: relativeFixtureDate({ days: 20 }),
         details: {
@@ -43,6 +45,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Contact",
         type: "usIdFaceToFaceContact",
         dueDate: relativeFixtureDate({ days: 3 }),
         details: {
@@ -59,6 +62,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
+        taskDisplayName: "Home Visit",
         type: "usIdHomeVisit",
         dueDate: relativeFixtureDate({ days: -10 }),
         details: {
@@ -67,6 +71,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Assessment",
         type: "usIdLsirAssessment",
         dueDate: relativeFixtureDate({ days: 365 }),
         details: {
@@ -75,6 +80,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Employment Verification",
         type: "usIdEmploymentVerification",
         dueDate: relativeFixtureDate({ days: 20 }),
         details: {
@@ -83,6 +89,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Contact",
         type: "usIdFaceToFaceContact",
         dueDate: relativeFixtureDate({ days: 20 }),
         details: {
@@ -99,6 +106,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
+        taskDisplayName: "Assessment",
         type: "usIdLsirAssessment",
         dueDate: relativeFixtureDate({ days: 365 }),
         details: {
@@ -107,6 +115,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Home Visit",
         type: "usIdHomeVisit",
         dueDate: relativeFixtureDate({ days: 0 }),
         details: {
@@ -115,6 +124,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Employment Verification",
         type: "usIdEmploymentVerification",
         dueDate: relativeFixtureDate({ days: 20 }),
         details: {
@@ -123,6 +133,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Contact",
         type: "usIdFaceToFaceContact",
         dueDate: relativeFixtureDate({ days: 20 }),
         details: {

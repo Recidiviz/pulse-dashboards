@@ -19,8 +19,6 @@ import { toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoInitialEmploymentVerificationIapTask extends Task<"usMoInitialEmploymentVerificationIap"> {
-  displayName = "Initial Employment Verification (IAP)";
-
   get additionalDetails() {
     return "No initial employment verification recorded since starting IAP.";
   }

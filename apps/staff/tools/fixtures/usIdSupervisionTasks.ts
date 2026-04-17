@@ -25,6 +25,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
+        taskDisplayName: "Home Visit",
         type: "homeVisit",
         // overdue
         dueDate: "2021-11-28",
@@ -36,6 +37,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Employment",
         type: "employment",
         dueDate: "2021-12-18",
         details: {
@@ -52,6 +54,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
+        taskDisplayName: "Contact",
         type: "contact",
         // upcoming
         dueDate: "2022-01-17",
@@ -62,6 +65,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Employment",
         type: "employment",
         dueDate: "2021-12-09",
         details: {
@@ -78,6 +82,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
+        taskDisplayName: "Home Visit",
         type: "homeVisit",
         // overdue
         dueDate: "2021-12-19",
@@ -89,6 +94,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Contact",
         type: "contact",
         // upcoming
         dueDate: "2022-01-12",
@@ -99,6 +105,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Assessment",
         type: "assessment",
         dueDate: "2021-12-22",
         details: {
@@ -107,6 +114,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
+        taskDisplayName: "Employment",
         type: "employment",
         dueDate: "2022-01-09",
         details: {

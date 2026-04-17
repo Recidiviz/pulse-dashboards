@@ -18,7 +18,6 @@
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdFaceToFaceContactTask extends UsIdTaskBase<"usIdFaceToFaceContact"> {
-  displayName = "Contact";
   vitalsMetricId = "timely_contact" as const;
   taskAction = "contact";
 }

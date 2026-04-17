@@ -49,7 +49,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
   updates?: SupervisionTaskUpdate[TaskType];
 
   /* ex: Risk assessment */
-  abstract displayName: string;
+  displayName: string;
 
   vitalsMetricId?: VitalsMetricId = undefined;
 
@@ -69,6 +69,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     this.task = task;
     this.person = person;
     this.updates = updates;
+    this.displayName = this.getDisplayName;
   }
 
   get type(): TaskType {
@@ -95,6 +96,10 @@ export abstract class Task<TaskType extends SupervisionTaskType>
 
   get details(): SupervisionDetailsForTask[TaskType] {
     return this.task.details;
+  }
+
+  get getDisplayName(): string {
+    return this.task.taskDisplayName;
   }
 
   /* ex: Risk assessment due 3 days ago */

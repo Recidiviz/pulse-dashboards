@@ -21,7 +21,6 @@ import { formatDate } from "~utils";
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdLsirAssessmentTask extends UsIdTaskBase<"usIdLsirAssessment"> {
-  displayName = "Assessment";
   vitalsMetricId = "timely_risk_assessment" as const;
   taskAction = "assessment";
 

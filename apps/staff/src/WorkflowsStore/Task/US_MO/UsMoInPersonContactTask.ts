@@ -21,8 +21,6 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoInPersonContactTask extends Task<"usMoInPersonContact"> {
-  displayName = "In-person Contact";
-
   get additionalDetails() {
     const { lastContactDate } = this.details;
     return lastContactDate

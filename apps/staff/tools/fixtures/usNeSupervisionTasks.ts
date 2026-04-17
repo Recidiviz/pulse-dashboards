@@ -27,6 +27,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
     officerId: "NEOFFICER1",
     tasks: [
       {
+        taskDisplayName: "Personal Contact",
         type: "usNePersonalContact",
         dueDate: relativeFixtureDate({ days: 7 }),
         details: {
@@ -40,6 +41,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
         },
       },
       {
+        taskDisplayName: "ORAS Assessment",
         type: "usNeOrasAssessment",
         dueDate: relativeFixtureDate({ days: 14 }),
         details: {
@@ -56,6 +58,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
     officerId: "NEOFFICER1",
     tasks: [
       {
+        taskDisplayName: "Personal Contact",
         type: "usNePersonalContact",
         dueDate: relativeFixtureDate({ days: -3 }),
         details: {
@@ -69,6 +72,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
         },
       },
       {
+        taskDisplayName: "Collateral Contact",
         type: "usNeCollateralContact",
         dueDate: relativeFixtureDate({ days: 21 }),
         details: {
@@ -82,6 +86,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
         },
       },
       {
+        taskDisplayName: "NCJIS Check",
         type: "usNeNCJISCheckContact",
         dueDate: relativeFixtureDate({ days: 30 }),
         details: {
@@ -102,6 +107,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
     officerId: "NEOFFICER1",
     tasks: [
       {
+        taskDisplayName: "Personal Contact",
         type: "usNePersonalContact",
         dueDate: relativeFixtureDate({ days: 2 }),
         details: {
@@ -122,6 +128,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
     officerId: "NEOFFICER1",
     tasks: [
       {
+        taskDisplayName: "Personal Contact",
         type: "usNePersonalContact",
         dueDate: relativeFixtureDate({ days: -5 }),
         details: {
@@ -135,6 +142,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
         },
       },
       {
+        taskDisplayName: "STABLE Assessment",
         type: "usNeStableAssessment",
         dueDate: relativeFixtureDate({ days: 45 }),
         details: {
@@ -144,6 +152,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
         },
       },
       {
+        taskDisplayName: "Collateral Contact",
         type: "usNeCollateralContact",
         dueDate: relativeFixtureDate({ days: 10 }),
         details: {
@@ -164,6 +173,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
     officerId: "NEOFFICER1",
     tasks: [
       {
+        taskDisplayName: "Personal Contact",
         type: "usNePersonalContact",
         dueDate: relativeFixtureDate({ days: 12 }),
         details: {
@@ -177,6 +187,7 @@ const data: SupervisionTasksRecord<"US_NE">[] = [
         },
       },
       {
+        taskDisplayName: "NCJIS Check",
         type: "usNeNCJISCheckContact",
         dueDate: relativeFixtureDate({ days: 60 }),
         details: {

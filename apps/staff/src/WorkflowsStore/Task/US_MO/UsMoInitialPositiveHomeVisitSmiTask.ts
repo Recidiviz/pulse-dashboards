@@ -19,8 +19,6 @@ import { toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoInitialPositiveHomeVisitSmiTask extends Task<"usMoInitialPositiveHomeVisitSmi"> {
-  displayName = "Initial Positive Home Visit (SMI)";
-
   get additionalDetails() {
     return "No initial positive home visit recorded since assignment to SMI caseload.";
   }

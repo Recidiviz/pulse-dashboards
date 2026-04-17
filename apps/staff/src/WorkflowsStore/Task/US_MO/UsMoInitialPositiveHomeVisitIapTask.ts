@@ -19,8 +19,6 @@ import { toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoInitialPositiveHomeVisitIapTask extends Task<"usMoInitialPositiveHomeVisitIap"> {
-  displayName = "Initial Positive Home Visit (IAP)";
-
   get additionalDetails() {
     return "No initial positive home visit recorded since starting IAP.";
   }

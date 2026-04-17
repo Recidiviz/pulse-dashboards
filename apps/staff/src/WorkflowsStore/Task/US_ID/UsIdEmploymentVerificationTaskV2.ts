@@ -17,7 +17,6 @@
 
 import UsIdTaskBase from "./UsIdTaskBase";
 class UsIdEmploymentVerificationTask extends UsIdTaskBase<"usIdEmploymentVerification"> {
-  displayName = "Employment Verification";
   taskAction = "verified";
 }
 

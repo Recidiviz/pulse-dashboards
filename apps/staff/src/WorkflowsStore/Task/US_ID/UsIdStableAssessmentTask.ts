@@ -21,7 +21,6 @@ import { formatDate } from "~utils";
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdStableAssessmentTask extends UsIdTaskBase<"usIdStableAssessment"> {
-  displayName = "STABLE Assessment";
   taskAction = "assessment";
 
   get lastContacted(): string | undefined {

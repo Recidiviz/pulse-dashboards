@@ -21,8 +21,6 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 
 class UsMoPositiveContactWithSignificantOtherTask extends Task<"usMoPositiveContactWithSignificantOther"> {
-  displayName = "Positive Contact with Significant Other";
-
   get additionalDetails() {
     const { lastContactDate } = this.details;
     return lastContactDate

@@ -19,15 +19,9 @@ import { TenantConfig } from "../core/models/types";
 import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/US_TX/UsTxAssessmentTask";
-import usTxCollateralContactScheduled from "../WorkflowsStore/Task/US_TX/UsTxCollateralContactScheduled";
-import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxFieldContactScheduledTask";
+import UsTxContactTask from "../WorkflowsStore/Task/US_TX/UsTxContactTask";
 import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactEdgeCaseTask";
-import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactScheduledTask";
-import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactUnscheduledTask";
-import UsTxInCustodyContactTask from "../WorkflowsStore/Task/US_TX/UsTxInCustodyContactTask";
-import UsTxOfficeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxOfficeContactScheduledTask";
 import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/US_TX/UsTxTypeAgnosticContactTask";
-import UsTxVirtualOfficeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxVirtualOfficeContactScheduledTask";
 
 const US_TX_CONFIG = {
   name: "Texas",
@@ -66,7 +60,7 @@ const US_TX_CONFIG = {
           To read official TDCJ policy about the Initial Interview and Final Summary, click [here](https://www.tdcj.texas.gov/documents/pd/03.01.01_parole_policy.pdf).`,
     tasks: {
       usTxCollateralContactScheduled: {
-        constructor: usTxCollateralContactScheduled,
+        constructor: UsTxContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxTypeAgnosticContact: {
@@ -74,11 +68,11 @@ const US_TX_CONFIG = {
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxHomeContactScheduled: {
-        constructor: usTxHomeContactScheduledTask,
+        constructor: UsTxContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxHomeContactUnscheduled: {
-        constructor: usTxHomeContactUnscheduledTask,
+        constructor: UsTxContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxHomeContactEdgeCase: {
@@ -86,19 +80,19 @@ const US_TX_CONFIG = {
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxInCustodyContact: {
-        constructor: UsTxInCustodyContactTask,
+        constructor: UsTxContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxOfficeContactScheduled: {
-        constructor: UsTxOfficeContactScheduledTask,
+        constructor: UsTxContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxFieldContactScheduled: {
-        constructor: UsTxFieldContactScheduledTask,
+        constructor: UsTxContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxVirtualOfficeContactScheduled: {
-        constructor: UsTxVirtualOfficeContactScheduledTask,
+        constructor: UsTxContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxVirtualOrOfficeContact: {

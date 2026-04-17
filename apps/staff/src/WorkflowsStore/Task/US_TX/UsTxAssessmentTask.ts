@@ -21,9 +21,6 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
 class UsTxAssessmentTask extends Task<"usTxAssessment"> {
-  displayName = this.details.dueAssessmentType
-    ? `TRAS - ${this.details.dueAssessmentType.replaceAll("TX_", "")}`
-    : "TRAS";
   vitalsMetricId = "timely_risk_assessment" as const;
 
   get lastEventDate(): string | undefined {
