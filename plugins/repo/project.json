@@ -37,7 +37,7 @@
     "validate-contractor-env-sync": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx src/scripts/validate-contractor-env-sync.ts",
+        "command": "tsx src/scripts/validate-contractor-env-sync.mts",
         "cwd": "{projectRoot}"
       }
     }

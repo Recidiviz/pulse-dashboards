@@ -16,10 +16,12 @@
 // =============================================================================
 
 /// <reference types='vitest' />
+import { workspaceRoot } from "@nx/devkit";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/case-notes-server",
 
@@ -35,18 +37,9 @@ export default defineConfig(() => ({
       reportsDirectory: "../../coverage/apps/case-notes-server",
       provider: "v8",
     },
-    env: {
-      AUTH0_DOMAIN: "test",
-      AUTH0_AUDIENCE: "test",
-      VERTEX_PROJECT_ID: "project-id",
-      VERTEX_ENGINE_ID: "engine-id",
-      CASE_NOTES_BQ_TABLE_ADDRESS: "bq-table",
-      LOGS_BQ_PROJECT_ID: "logs-project-id",
-      LOGS_BQ_DATASET_ID: "logs-dataset-id",
-      LOGS_BQ_TABLE_ID: "logs-table-id",
-      SENTRY_DSN:
-        "https://f9d293e9c6d5b26b5393edc64b666052@o432474.ingest.us.sentry.io/4508207193128960",
-      SENTRY_ENV: "test",
-    },
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/case-notes-server"), "")
+        : undefined,
   },
 }));

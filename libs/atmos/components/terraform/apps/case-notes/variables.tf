@@ -31,7 +31,12 @@ variable "service_account_id" {
   default     = "case-notes-server"
 }
 
-variable "server_env_key" {
+variable "environment" {
   type        = string
-  description = "The key for the server env"
+  description = "The environment name used to load its corresponding env file from ./environments/"
+
+  validation {
+    condition     = contains(["demo", "staging", "production"], var.environment)
+    error_message = "ERROR: Valid values for 'environment' are \"demo\", \"staging\", and \"production\"!"
+  }
 }

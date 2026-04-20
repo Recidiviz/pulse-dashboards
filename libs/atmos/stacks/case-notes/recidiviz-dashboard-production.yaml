@@ -27,4 +27,4 @@ components:
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
         artifact_registry_repo: '{{ (atmos.Component "apps/case-notes" "recidiviz-dashboard-staging--case-notes").vars.artifact_registry_repo }}'
         artifact_registry_project_id: '{{ (atmos.Component "apps/case-notes" "recidiviz-dashboard-staging--case-notes").vars.project_id }}'
-        server_env_key: env_prod_case_notes_server
+        environment: production

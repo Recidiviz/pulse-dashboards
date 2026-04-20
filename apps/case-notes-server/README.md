@@ -19,11 +19,8 @@ Production
 
 If you haven't already, follow the setup instructions in the root README to install dependencies.
 
-1. Get env variables by running `nx load-env-files case-notes-server`
-   This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
-
-2. Make sure you have your Docker daemon running.
-3. Start the server with `nx dev case-notes-server`.
+1. Make sure you have your Docker daemon running.
+2. Start the server with `nx dev case-notes-server`. The dev target decrypts `env.dev.enc.yaml` via the `requires-sops-env:` delegate and injects the values into the child process.
 
 ## Testing
 
@@ -31,9 +28,8 @@ We have unit tests for the server.
 
 In order to run these tests:
 
-1. Get any necessary env variables from [GSM](https://console.cloud.google.com/security/secret-manager/secret/env_test_case_notes_server/versions?project=recidiviz-dashboard-staging) and put them in an `.env.test` file (the name must match exactly for nx to pick up on the variables) in the `apps/case-notes-server` directory.
-2. Make sure you have your Docker daemon running.
-3. Run `nx test case-notes-server` to run the tests.
+1. Make sure you have your Docker daemon running.
+2. Run `nx test case-notes-server` to run the tests. The committed `.env.test` file supplies dummy test values.
 
 ### Connecting to the staging Vertex engine using a local instance
 

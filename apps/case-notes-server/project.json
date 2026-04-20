@@ -12,13 +12,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../tools/load_env_files.sh --env env_case_notes_server --env_staging env_staging_case_notes_server --env_prod env_prod_case_notes_server --env_test env_test_case_notes_server --env_demo env_demo_case_notes_server",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
@@ -29,7 +22,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "dev": {
+    "requires-sops-env:dev": {
       "executor": "nx:run-commands",
       "dependsOn": ["docker"],
       "options": {
@@ -40,7 +33,7 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": ["create-base-package-json", "load-env-files"],
+      "dependsOn": ["create-base-package-json"],
       "options": {
         "platform": "node",
         "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
@@ -72,13 +65,17 @@
         "buildTarget": "case-notes-server:build"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/apps/case-notes-server"],
       "cache": true,
       "options": {
         "command": "vitest",
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     },
     "requires-sops-env:upload-sourcemaps": {},

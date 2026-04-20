@@ -1,12 +1,14 @@
+data "sops_file" "shared_env" {
+  source_file = "./environments/shared.enc.yaml"
+}
+
 data "sops_file" "env" {
-  source_file = "../../env-secrets/secrets/case_notes_server.enc.yaml"
+  source_file = "./environments/${var.environment}.enc.yaml"
 }
 
 locals {
-  env_secrets = yamldecode(data.sops_file.env.raw)
-
-  shared_server_env = local.env_secrets["env_case_notes_server"]
-  server_env        = local.env_secrets[var.server_env_key]
+  shared_server_env = yamldecode(data.sops_file.shared_env.raw)
+  server_env        = yamldecode(data.sops_file.env.raw)
 
   server_image_name = "case-notes-server"
 
