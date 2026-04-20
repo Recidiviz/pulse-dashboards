@@ -20,8 +20,8 @@
 import { useRef, useState } from "react";
 
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { ResourceSection } from "~@reentry/frontend/hooks/resourceBank.types";
 import { usePlanPdf } from "~@reentry/frontend/hooks/usePlanPdf";
-import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
 import { components } from "~@reentry/openapi-types";
 
 import PlanSectionView from "./PlanSectionView";
@@ -31,14 +31,22 @@ import styles from "./styles/PlanContent.module.css";
 import { PlanSection } from "./types";
 
 interface PlanContentProps {
+  isResourceBankLoading: boolean;
   planDetail: components["schemas"]["PlanResponseGet"];
   planSections: PlanSection[];
+  removeResource: (sectionTitle: string, resourceId: string) => void;
+  sections: ResourceSection[];
 }
 
 type PendingRemoval = { id: string; name: string; sectionTitle: string };
 
-const PlanContent = ({ planDetail, planSections }: PlanContentProps) => {
-  const { sections, removeResource, isLoading } = useResourceBank();
+const PlanContent = ({
+  isResourceBankLoading,
+  planDetail,
+  planSections,
+  removeResource,
+  sections,
+}: PlanContentProps) => {
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
     null,
   );
@@ -98,7 +106,7 @@ const PlanContent = ({ planDetail, planSections }: PlanContentProps) => {
             Resource bank content placeholder
           </div>
           <div className={styles["sections"]}>
-            {isLoading ? (
+            {isResourceBankLoading ? (
               <>
                 <ResourceBankSectionSkeleton />
                 <ResourceBankSectionSkeleton />

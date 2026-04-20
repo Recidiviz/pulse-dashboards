@@ -17,7 +17,11 @@
 
 import { useEffect, useState } from "react";
 
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import {
+  showErrorToast,
+  showInfoToast,
+  showSuccessToast,
+} from "~@reentry/frontend-shared";
 
 import type { ResourceSection, ResourceWithMeta } from "./resourceBank.types";
 import { useMockRessourceAPICall } from "./useMockRessourceAPICall";
@@ -85,7 +89,10 @@ export const useResourceBank = () => {
   ): void => {
     const current =
       sections.find((s) => s.title === sectionTitle)?.resources ?? [];
-    if (current.some((r) => r.id === resource.id)) return;
+    if (current.some((r) => r.id === resource.id)) {
+      showInfoToast(`${resource.name} is already in ${sectionTitle}.`);
+      return;
+    }
     if (current.length >= 20) {
       showErrorToast("Cannot add more than 20 resources per section.");
       return;
@@ -95,7 +102,7 @@ export const useResourceBank = () => {
     mockAddResourceApi(sectionTitle, resource).then(
       () =>
         showSuccessToast(
-          `${resource.name} added to ${sectionTitle} resources."`,
+          `${resource.name} added to ${sectionTitle} resources.`,
         ),
       () => {
         showErrorToast(

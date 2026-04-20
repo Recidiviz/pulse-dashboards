@@ -1,0 +1,13 @@
+.iconButton {
+  color: var(--gray-1);
+  flex-shrink: 0;
+}
+
+.iconButton:hover {
+  color: var(--color-teal-2);
+  background-color: rgba(0, 51, 49, 0.06);
+}
+
+.menuItem {
+  font-size: 14px;
+}

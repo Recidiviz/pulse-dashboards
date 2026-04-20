@@ -19,13 +19,21 @@
 
 import type { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
 
+import { SectionTitle } from "../types";
+import AddToSectionButton from "./AddToSectionButton";
 import styles from "./styles/SearchResults.module.css";
 
 interface SearchResultsProps {
+  addResource: (sectionTitle: string, resource: ResourceWithMeta) => void;
+  sectionTitles: SectionTitle[];
   results: ResourceWithMeta[];
 }
 
-const SearchResults = ({ results }: SearchResultsProps) => {
+const SearchResults = ({
+  addResource,
+  results,
+  sectionTitles,
+}: SearchResultsProps) => {
   if (results.length === 0) {
     return (
       <p className={styles["noResults"]}>
@@ -40,6 +48,11 @@ const SearchResults = ({ results }: SearchResultsProps) => {
         <div key={resource.id} className={styles["card"]}>
           <div className={styles["cardHeader"]}>
             <span className={styles["cardName"]}>{resource.name}</span>
+            <AddToSectionButton
+              addResource={addResource}
+              resource={resource}
+              sectionTitles={sectionTitles}
+            />
           </div>
           <div className={styles["cardMeta"]}>
             <span className={styles["categoryBadge"]}>

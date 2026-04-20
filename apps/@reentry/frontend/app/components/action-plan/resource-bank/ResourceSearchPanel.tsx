@@ -21,6 +21,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
 import { MdExpandLess, MdExpandMore, MdInfoOutline } from "react-icons/md";
 
+import { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
 import useResourceSearch from "~@reentry/frontend/hooks/useResourceSearch";
 
 import type { SectionTitle } from "../types";
@@ -30,13 +31,15 @@ import SearchResults from "./SearchResults";
 import styles from "./styles/ResourceSearchPanel.module.css";
 
 export interface ResourceSearchPanelProps {
-  sectionTitles: SectionTitle[];
+  addResource: (sectionTitle: string, resource: ResourceWithMeta) => void;
   categorySubcategoryMap: Record<string, string[]>;
+  sectionTitles: SectionTitle[];
 }
 
 const ResourceSearchPanel = ({
-  sectionTitles,
+  addResource,
   categorySubcategoryMap,
+  sectionTitles,
 }: ResourceSearchPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -97,27 +100,33 @@ const ResourceSearchPanel = ({
       {isExpanded && (
         <div className={styles["body"]}>
           <FilterForm
-            categoryOptions={categoryOptions}
-            subcategoryOptions={subcategoryOptions}
-            radiusOptions={radiusOptions}
-            selectedCategory={selectedCategory}
-            selectedSubcategory={selectedSubcategory}
-            selectedRadius={String(selectedRadius)}
             canSearch={Boolean(selectedCategory) && !isLoading}
+            categoryOptions={categoryOptions}
             onCategoryChange={(value) => {
               setSelectedCategory(value);
               setSelectedSubcategory("");
-            }}
-            onSubcategoryChange={(value) => {
-              setSelectedSubcategory(value);
             }}
             onRadiusChange={(value) => {
               setSelectedRadius(Number(value));
             }}
             onSearch={handleSearch}
+            onSubcategoryChange={(value) => {
+              setSelectedSubcategory(value);
+            }}
+            radiusOptions={radiusOptions}
+            selectedCategory={selectedCategory}
+            selectedRadius={String(selectedRadius)}
+            selectedSubcategory={selectedSubcategory}
+            subcategoryOptions={subcategoryOptions}
           />
 
-          {results !== null && <SearchResults results={results} />}
+          {results !== null && (
+            <SearchResults
+              addResource={addResource}
+              results={results}
+              sectionTitles={sectionTitles}
+            />
+          )}
         </div>
       )}
     </div>

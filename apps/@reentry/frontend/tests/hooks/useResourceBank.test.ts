@@ -24,11 +24,16 @@ import type {
 } from "~@reentry/frontend/hooks/resourceBank.types";
 import { useMockRessourceAPICall } from "~@reentry/frontend/hooks/useMockRessourceAPICall";
 import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import {
+  showErrorToast,
+  showInfoToast,
+  showSuccessToast,
+} from "~@reentry/frontend-shared";
 
 import { mockResourceBank } from "../mocks/mockResourceBank";
 
 vi.mock("~@reentry/frontend-shared", () => ({
+  showInfoToast: vi.fn(),
   showSuccessToast: vi.fn(),
   showErrorToast: vi.fn(),
 }));
@@ -109,6 +114,10 @@ describe("useResourceBank", () => {
           housingResources[0] as ResourceWithMeta,
         );
       });
+
+      expect(vi.mocked(showInfoToast)).toHaveBeenCalledWith(
+        `${housingResources[0].name} is already in ${HOUSING_SECTION}.`,
+      );
 
       expect(getSectionResources(result, HOUSING_SECTION)).toHaveLength(
         housingResources.length,

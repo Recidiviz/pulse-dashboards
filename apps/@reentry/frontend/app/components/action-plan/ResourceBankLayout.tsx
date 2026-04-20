@@ -42,6 +42,8 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
 
   const {
     sections,
+    addResource,
+    removeResource,
     isLoading: isResourceBankLoading,
     isError: didResourceBankError,
   } = useResourceBank();
@@ -60,8 +62,9 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
   if (isError || !planDetail) return null;
 
   const resourceSearchPanelProps = {
-    sectionTitles: sections.map((item) => ({ title: item.title })),
+    addResource,
     categorySubcategoryMap: CATEGORY_SUBCATEGORY_MAP,
+    sectionTitles: sections.map((item) => ({ title: item.title })),
   };
 
   const renderSidePanel = () => {
@@ -81,7 +84,13 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
     <div className={styles["container"]}>
       <div className={styles["sidebar"]}>{renderSidePanel()}</div>
       <div className={styles["content"]}>
-        <PlanContent planDetail={planDetail} planSections={planSections} />
+        <PlanContent
+          isResourceBankLoading={isResourceBankLoading}
+          planDetail={planDetail}
+          planSections={planSections}
+          removeResource={removeResource}
+          sections={sections}
+        />
       </div>
     </div>
   );
