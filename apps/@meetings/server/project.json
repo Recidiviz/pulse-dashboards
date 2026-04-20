@@ -233,6 +233,17 @@
         "staging": {},
         "production": {}
       }
+    },
+    "requires-sops-env:export-label-studio-tasks": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/export-label-studio-tasks.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
     }
   }
 }
