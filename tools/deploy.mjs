@@ -941,6 +941,7 @@ console.log("Posting the deploy notification to Slack...");
 
 $.verbose = false;
 const deployer = (await $`gcloud config get-value account`).stdout.trim();
+const deployDurationMinutes = Math.floor((Date.now() - startTime) / 60000);
 
 const polarisChannelId = "C026UPMAX4G";
 const polarisEngChannelId = "C04LC0VH78B";
@@ -954,7 +955,7 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
   let revisionText = "`" + currentRevision + "`";
   if (!deployingLatestMain) revisionText += " (not the tip of main)";
 
-  slackMessage = `${deployer} deployed ${revisionText} to staging!`;
+  slackMessage = `${deployer} deployed ${revisionText} to staging in ${deployDurationMinutes} minutes!`;
 
   // Add a github link when a stable one exists, i.e. when the commit just deployed
   // exists on origin/main, even if it is not the tip
@@ -969,7 +970,7 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
     slackMessage += ` (<${githubLink}|view on GitHub>)`;
   }
 } else if (deployEnv === "production" && successfullyDeployed.length > 0) {
-  let message = `${deployer} deployed ${nextVersion} to production!`;
+  let message = `${deployer} deployed ${nextVersion} to production in ${deployDurationMinutes} minutes!`;
 
   const releaseNotesMessage = releaseNotes
     .split("\n")
