@@ -54,6 +54,17 @@ export class APIStore {
     );
   }
 
+  async postExternalRequest(
+    stateCode: string,
+    requestType: string,
+    body: Record<string, unknown>,
+  ): Promise<any> {
+    return this.client.post(
+      `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/${stateCode}/${requestType}`,
+      body,
+    );
+  }
+
   async optimizeRoute(body: {
     origin: string;
     destination?: string;

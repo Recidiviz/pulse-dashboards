@@ -18,6 +18,7 @@
 import { Opportunity } from "../../WorkflowsStore";
 import { DenialCaseNoteModal } from "./UsMe/DenialCaseNoteModal";
 import { DocstarsDenialModal } from "./UsNd/DocstarsDenialModal";
+import { TomisDenialModal } from "./UsTn/TomisDenialModal";
 
 export type DenialConfirmationModalProps = {
   opportunity: Opportunity;
@@ -39,6 +40,7 @@ const TestingStub = ({ showModal }: DenialConfirmationModalProps) => (
 export const DenialConfirmationModals = {
   DenialCaseNoteModal,
   DocstarsDenialModal,
+  TomisDenialModal,
   TestingStub,
 } satisfies Record<string, React.ComponentType<DenialConfirmationModalProps>>;
 

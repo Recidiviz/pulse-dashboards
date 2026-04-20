@@ -21,6 +21,7 @@ import { DocumentData } from "firebase/firestore";
 import { OpportunityType } from "~datatypes";
 import { formatDate, pluralizeWord } from "~utils";
 
+import { DenialConfirmationModalName } from "../../../../core/OpportunityDenial/DenialConfirmationModals";
 import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatWorkflowsDate } from "../../../../utils";
@@ -155,6 +156,20 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     super(client, "compliantReporting", client.rootStore, parsedRecord);
 
     this.form = new CompliantReportingForm(this, client.rootStore);
+  }
+
+  get denialConfirmationModalName(): DenialConfirmationModalName | undefined {
+    return this.rootStore?.userStore?.activeFeatureVariants
+      ?.usTnCompliantReportingWriteback
+      ? "TomisDenialModal"
+      : undefined;
+  }
+
+  get opportunityDenialViewButtonText(): string | undefined {
+    return this.rootStore?.userStore?.activeFeatureVariants
+      ?.usTnCompliantReportingWriteback
+      ? "Review Submission"
+      : undefined;
   }
 
   get reviewStatus(): OpportunityStatus {

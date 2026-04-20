@@ -17,6 +17,7 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { DenialConfirmationModalName } from "../../../../core/OpportunityDenial/DenialConfirmationModals";
 import { Client } from "../../../Client";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -42,6 +43,20 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
     );
 
     this.form = new CompliantReportingForm(this, client.rootStore);
+  }
+
+  get denialConfirmationModalName(): DenialConfirmationModalName | undefined {
+    return this.rootStore?.userStore?.activeFeatureVariants
+      ?.usTnCompliantReportingWriteback
+      ? "TomisDenialModal"
+      : undefined;
+  }
+
+  get opportunityDenialViewButtonText(): string | undefined {
+    return this.rootStore?.userStore?.activeFeatureVariants
+      ?.usTnCompliantReportingWriteback
+      ? "Review Submission"
+      : undefined;
   }
 
   // This is needed for a field in the shared form. The original CR Opportunity and this 2025 Opportunity use different
