@@ -28,7 +28,7 @@ async def save_to_gcs(bucket_name: str, object_name: str, data: dict) -> None:
         await service.storage.upload(
             bucket=bucket_name,
             object_name=object_name,
-            file_data=json.dumps(data, indent=2, ensure_ascii=False),
+            file_data=json.dumps(data, indent=2, ensure_ascii=False).encode("utf-8"),
             content_type="application/json",
         )
     finally:

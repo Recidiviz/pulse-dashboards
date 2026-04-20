@@ -283,7 +283,9 @@ class RecordingSession(BaseModel, table=True):
             await service.storage.upload(
                 bucket=self.gcs_bucket_name,
                 object_name=object_name,
-                file_data=json.dumps(transcription_data, indent=2, ensure_ascii=False),
+                file_data=json.dumps(
+                    transcription_data, indent=2, ensure_ascii=False
+                ).encode("utf-8"),
                 content_type="application/json",
             )
         finally:
