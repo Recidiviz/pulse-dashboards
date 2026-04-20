@@ -126,7 +126,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         "expo-audio",
         {
           microphonePermission:
-            "Allow $(PRODUCT_NAME) to access your microphone.",
+            "The app uses the microphone to record your meeting.",
         },
       ],
       [
