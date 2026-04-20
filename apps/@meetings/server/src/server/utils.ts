@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { SyncPrerecordedResponse } from "@deepgram/sdk";
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
 import { captureException } from "@sentry/node";
 
@@ -106,6 +107,66 @@ export async function queueTranscriptionTask(
   }
 }
 
+type DeepgramUtterance = NonNullable<
+  SyncPrerecordedResponse["results"]["utterances"]
+>[number];
+
+type DeepgramWord = NonNullable<DeepgramUtterance["words"]>[number];
+
+type CleanedUtterance = {
+  text: string;
+  speaker: string;
+  startTimeMs: number;
+  endTimeMs: number;
+  confidence: number;
+};
+
+// Deepgram's utterance-level `speaker` is pinned to a single value, but
+// `words[]` within an utterance can cross speakers — so we split the utterance
+// at speaker boundaries while preserving the utterance boundary (a natural
+// pause in the conversation) when there's only one speaker.
+function splitDeepgramUtteranceBySpeaker(
+  utterance: DeepgramUtterance,
+): CleanedUtterance[] {
+  const groups: DeepgramWord[][] = [];
+  for (const word of utterance.words ?? []) {
+    const currentGroup = groups.at(-1);
+    if (currentGroup && currentGroup[0].speaker === word.speaker) {
+      currentGroup.push(word);
+    } else {
+      groups.push([word]);
+    }
+  }
+
+  // No speaker transitions in this utterance — keep the utterance intact so we
+  // preserve the original transcript text (spacing, punctuation, casing).
+  if (groups.length <= 1) {
+    return [
+      {
+        text: utterance.transcript,
+        speaker: utterance.speaker?.toString() ?? "unknown",
+        startTimeMs: utterance.start,
+        endTimeMs: utterance.end,
+        confidence: utterance.confidence,
+      },
+    ];
+  }
+
+  return groups.map((group) => {
+    const first = group[0];
+    const last = group[group.length - 1];
+    const avgConfidence =
+      group.reduce((sum, w) => sum + w.confidence, 0) / group.length;
+    return {
+      text: group.map((w) => w.punctuated_word ?? w.word).join(" "),
+      speaker: first.speaker?.toString() ?? "unknown",
+      startTimeMs: first.start,
+      endTimeMs: last.end,
+      confidence: Math.round(avgConfidence * 10000) / 10000,
+    };
+  });
+}
+
 type HandleTranscriptionParams = {
   meetingId: string;
   recordingsGCSBucket: string;
@@ -180,13 +241,7 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
     const deepgramTranscriptionResult = deepgramResult.value;
     const cleanedDeepgramUtterances = (
       deepgramTranscriptionResult.results.utterances ?? []
-    ).map((utterance) => ({
-      text: utterance.transcript,
-      speaker: utterance.speaker?.toString() ?? "unknown",
-      startTimeMs: utterance.start,
-      endTimeMs: utterance.end,
-      confidence: utterance.confidence,
-    }));
+    ).flatMap(splitDeepgramUtteranceBySpeaker);
 
     transcriptions.push({
       provider: TranscriptionProvider.DEEPGRAM,

@@ -588,6 +588,111 @@ describe("tasks", () => {
       );
     });
 
+    test("Should split a Deepgram utterance when its words span multiple speakers", async () => {
+      // Real-world example from Deepgram where a single utterance mixes two
+      // speakers mid-sentence (see issue #13153). The utterance-level speaker
+      // is 0 but the words split 3/2 between speakers 0 and 1.
+      const splitSpeakerDeepgramResult = {
+        results: {
+          channels: [{ alternatives: [{ confidence: 0.99 }] }],
+          summary: { result: "A brief exchange." },
+          utterances: [
+            {
+              confidence: 0.99,
+              end: 4240,
+              speaker: 0,
+              start: 2240,
+              transcript: "How are things? I'm sick.",
+              words: [
+                {
+                  word: "how",
+                  start: 2240,
+                  end: 2480,
+                  confidence: 0.99,
+                  speaker: 0,
+                  punctuated_word: "How",
+                },
+                {
+                  word: "are",
+                  start: 2480,
+                  end: 2720,
+                  confidence: 0.99,
+                  speaker: 0,
+                  punctuated_word: "are",
+                },
+                {
+                  word: "things",
+                  start: 2720,
+                  end: 3280,
+                  confidence: 0.99,
+                  speaker: 0,
+                  punctuated_word: "things?",
+                },
+                {
+                  word: "i'm",
+                  start: 3280,
+                  end: 3520,
+                  confidence: 0.95,
+                  speaker: 1,
+                  punctuated_word: "I'm",
+                },
+                {
+                  word: "sick",
+                  start: 3520,
+                  end: 4240,
+                  confidence: 0.99,
+                  speaker: 1,
+                  punctuated_word: "sick.",
+                },
+              ],
+            },
+          ],
+        },
+      };
+      mockTranscribeAudioWithDeepgram.mockImplementationOnce(
+        vi.fn().mockResolvedValue(splitSpeakerDeepgramResult),
+      );
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+        include: {
+          transcriptions: {
+            include: { utterances: { orderBy: { startTimeMs: "asc" } } },
+          },
+        },
+      });
+
+      const deepgram = meeting.transcriptions.find(
+        (t) => t.provider === TranscriptionProvider.DEEPGRAM,
+      );
+      expect(deepgram?.utterances).toEqual([
+        expect.objectContaining({
+          text: "How are things?",
+          speaker: "0",
+          startTimeMs: 2240,
+          endTimeMs: 3280,
+        }),
+        expect.objectContaining({
+          text: "I'm sick.",
+          speaker: "1",
+          startTimeMs: 3280,
+          endTimeMs: 4240,
+        }),
+      ]);
+    });
+
     test("Should succeed if called a second time for the same meeting (retry/duplicate delivery)", async () => {
       const body = {
         stateCode: "US_NE",
