@@ -386,7 +386,7 @@ export async function transcribeAudioWithDeepgram(
         summarize: true,
         utterances: true,
         mip_opt_out: true,
-        ...(keywords.length > 0 && { keywords: keywords }),
+        ...(keywords.length > 0 && { keyterm: keywords }),
       });
   } else {
     const storage = new Storage();
@@ -411,7 +411,7 @@ export async function transcribeAudioWithDeepgram(
         summarize: true,
         utterances: true,
         mip_opt_out: true,
-        ...(keywords.length > 0 && { keywords: keywords }),
+        ...(keywords.length > 0 && { keyterm: keywords }),
       },
     );
   }
