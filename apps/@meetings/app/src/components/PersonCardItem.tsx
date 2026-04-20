@@ -22,6 +22,7 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
+import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { Typography } from "../shared/ui/Typography";
 import {
   formatPersonLastMeetingDate,
@@ -38,7 +39,10 @@ interface ItemProps {
 
 const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
   const hasActiveMeeting = !!person.activeMeetingId;
+  const hasValidationError =
+    !hasActiveMeeting && !!person.meetingDetails.validationErrorType;
   const hasLastMeeting =
+    !hasValidationError &&
     !!person.meetingDetails.id &&
     !!person.meetingDetails.lastCompletedMeetingTime;
 
@@ -80,6 +84,11 @@ const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
             endTime={null}
             person={{ ...person, personId: person.personId }}
             meetingId={person.activeMeetingId}
+          />
+        )}
+        {hasValidationError && (
+          <ProcessingErrorBanner
+            validationErrorType={person.meetingDetails.validationErrorType}
           />
         )}
         {hasLastMeeting && !hasActiveMeeting && (

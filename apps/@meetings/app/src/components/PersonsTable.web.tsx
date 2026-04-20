@@ -21,12 +21,12 @@ import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
-import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
@@ -134,47 +134,45 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                       {person.displayPersonExternalId}
                     </TooltipText>
                   </TableCell>
-                  <TableCell>
-                    <TooltipText
-                      tooltipText={person.primaryMetadata}
-                      textClassName="text-secondary"
-                    >
-                      {person.primaryMetadata}
-                    </TooltipText>
-                  </TableCell>
-                  <TableCell>
-                    {person.activeMeetingId && (
-                      <View className="flex-row items-center pb-2">
-                        <RecordingIndicator status={status} />
-                        <Typography className="px-2 text-secondary">
-                          In progress
-                        </Typography>
-                      </View>
-                    )}
-                    {!person.activeMeetingId &&
-                      person.meetingDetails.validationErrorType && (
-                        <View className="flex-row items-center gap-3">
-                          <ExclamationCircleIcon className="size-5 fill-attention" />
-                          <View className="flex-1">
-                            <Typography className="text-sm font-semibold text-attention">
-                              Processing Failed
-                            </Typography>
-                            <Typography className="text-xs font-normal text-secondary">
-                              {person.meetingDetails.validationErrorType ===
-                              "Length"
-                                ? "Less than 50 words identified, too short to generate results"
-                                : "Contact our support team for assistance"}
+                  {!person.activeMeetingId &&
+                  person.meetingDetails.validationErrorType ? (
+                    <TableCell colSpan={2}>
+                      <ProcessingErrorBanner
+                        validationErrorType={
+                          person.meetingDetails.validationErrorType
+                        }
+                        className="h-[90%]"
+                      />
+                    </TableCell>
+                  ) : (
+                    <>
+                      <TableCell>
+                        <TooltipText
+                          tooltipText={person.primaryMetadata}
+                          textClassName="text-secondary"
+                        >
+                          {person.primaryMetadata}
+                        </TooltipText>
+                      </TableCell>
+                      <TableCell>
+                        {person.activeMeetingId && (
+                          <View className="flex-row items-center pb-2">
+                            <RecordingIndicator status={status} />
+                            <Typography className="px-2 text-secondary">
+                              In progress
                             </Typography>
                           </View>
-                        </View>
-                      )}
-                    {!person.activeMeetingId &&
-                      !person.meetingDetails.validationErrorType && (
-                        <Typography className="text-base font-medium text-secondary">
-                          {upperFirst(person.lastMeeting)}
-                        </Typography>
-                      )}
-                  </TableCell>
+                        )}
+                        {!person.activeMeetingId &&
+                          !person.meetingDetails.validationErrorType && (
+                            <Typography className="text-base font-medium text-secondary">
+                              {upperFirst(person.lastMeeting)}
+                            </Typography>
+                          )}
+                      </TableCell>
+                    </>
+                  )}
+
                   <TableCell>
                     <View className="invisible size-5 items-center justify-center group-hover:visible">
                       <ChevronRightIcon className="stroke-secondary stroke-[3px]" />

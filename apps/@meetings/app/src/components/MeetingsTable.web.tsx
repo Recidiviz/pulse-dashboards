@@ -20,7 +20,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
-import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
@@ -29,6 +28,7 @@ import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
@@ -113,21 +113,10 @@ const MeetingRow = ({
       <TableCell textClassName="text-secondary">{duration}</TableCell>
       {isError ? (
         <TableCell colSpan={2}>
-          <View className="h-[90%] flex-row items-center gap-3 rounded-xl bg-attention-light p-4">
-            <View className="size-7 items-center justify-center rounded-full bg-attention-light-secondary">
-              <ExclamationCircleIcon className="size-5 fill-attention" />
-            </View>
-            <View className="flex-1">
-              <Typography className="text-sm font-semibold text-attention">
-                Processing Failed
-              </Typography>
-              <Typography className="text-xs font-normal text-secondary">
-                {meeting.validationErrorType === "Length"
-                  ? "Less than 50 words identified, too short to generate results"
-                  : "Contact our support team for assistance"}
-              </Typography>
-            </View>
-          </View>
+          <ProcessingErrorBanner
+            validationErrorType={meeting.validationErrorType}
+            className="h-[90%]"
+          />
         </TableCell>
       ) : (
         <>

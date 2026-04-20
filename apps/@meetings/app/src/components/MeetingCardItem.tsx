@@ -36,6 +36,7 @@ import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
+import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { Typography } from "../shared/ui/Typography";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
@@ -50,6 +51,7 @@ type MeetingCardItemProps = {
     duration: string | null;
     content: string;
     status: PostMeetingProcessingStatus;
+    validationErrorType: string | null;
     recordingState: string;
     start: Date;
     end: Date | null;
@@ -73,10 +75,11 @@ const MeetingCardItem = ({
   const isInProgress =
     recordingState !== "idle" && meeting.status === "NOT_STARTED";
   const isProcessing = isMeetingProcessing(meeting.status);
+  const isError = !!meeting.validationErrorType;
   const isFinishedWithoutNote =
-    !isInProgress && !isProcessing && !meeting.caseNote;
+    !isInProgress && !isProcessing && !isError && !meeting.caseNote;
   const isFinishedWithNote =
-    !isInProgress && !isProcessing && !!meeting.caseNote;
+    !isInProgress && !isProcessing && !isError && !!meeting.caseNote;
 
   const linkProps =
     meeting.status === "NOT_STARTED"
@@ -119,37 +122,57 @@ const MeetingCardItem = ({
   return (
     <View key={meeting.id} className="mb-2 w-full px-4">
       <View className="w-full flex-1 rounded-[20px] bg-primary p-3">
-        <Link {...linkProps}>
-          <View
-            className={clsx(
-              "w-full flex-row items-center justify-between",
-              isInProgress || isFinishedWithoutNote
-                ? "border-b-0 pb-0"
-                : "border-b border-subtle pb-3",
-            )}
-          >
+        {isError ? (
+          <View className="w-full flex-row items-center justify-between border-b border-subtle pb-3">
             <View className="flex flex-col gap-1">
-              <View className="flex flex-row items-center gap-2">
-                <Typography className="mr-1 text-base font-medium text-primary">
-                  {meeting.date}
-                </Typography>
-                {isInProgress && (
-                  <>
-                    <RecordingIndicator status={status} />
-                    <Typography className="text-sm font-medium text-primary">
-                      In progress
-                    </Typography>
-                  </>
-                )}
-              </View>
+              <Typography className="mr-1 text-base font-medium text-primary">
+                {meeting.date}
+              </Typography>
               <Typography className="text-sm leading-4 text-secondary">
                 {meeting.time}
                 {meeting.duration && ` • ${meeting.duration}`}
               </Typography>
             </View>
-            <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
           </View>
-        </Link>
+        ) : (
+          <Link {...linkProps}>
+            <View
+              className={clsx(
+                "w-full flex-row items-center justify-between",
+                isInProgress || isFinishedWithoutNote
+                  ? "border-b-0 pb-0"
+                  : "border-b border-subtle pb-3",
+              )}
+            >
+              <View className="flex flex-col gap-1">
+                <View className="flex flex-row items-center gap-2">
+                  <Typography className="mr-1 text-base font-medium text-primary">
+                    {meeting.date}
+                  </Typography>
+                  {isInProgress && (
+                    <>
+                      <RecordingIndicator status={status} />
+                      <Typography className="text-sm font-medium text-primary">
+                        In progress
+                      </Typography>
+                    </>
+                  )}
+                </View>
+                <Typography className="text-sm leading-4 text-secondary">
+                  {meeting.time}
+                  {meeting.duration && ` • ${meeting.duration}`}
+                </Typography>
+              </View>
+              <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
+            </View>
+          </Link>
+        )}
+        {isError && (
+          <ProcessingErrorBanner
+            validationErrorType={meeting.validationErrorType}
+            className="mt-3"
+          />
+        )}
         {isProcessing && (
           <View className="mt-3 rounded-xl bg-brand-light px-3 py-2">
             <View className="flex-row items-center">

@@ -32,6 +32,7 @@ type Meeting = {
   duration: string | null;
   content: string;
   status: PostMeetingProcessingStatus;
+  validationErrorType: string | null;
   recordingState: string;
   start: Date;
   end: Date | null;
