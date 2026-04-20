@@ -26,7 +26,9 @@ import {
   opportunityImportSchema,
   SARImportSchema,
   staffImportSchema,
+  timeServedImportSchema,
 } from "~@sentencing/import/models";
+import { transformAndLoadTimeServedData } from "~@sentencing/import/utils/averageTimeServed";
 import { transformAndLoadCaseData } from "~@sentencing/import/utils/cases";
 import { transformAndLoadChargeData } from "~@sentencing/import/utils/charges";
 import { transformAndLoadClientData } from "~@sentencing/import/utils/clients";
@@ -49,6 +51,8 @@ export const OPPORTUNITIES_FILE_NAME =
   "sentencing_community_opportunity_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_insights.py
 export const INSIGHTS_FILE_NAME = "case_insights_record.json";
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/us_mo_sentencing_time_served.py
+export const TIME_SERVED_FILE_NAME = "us_mo_sentencing_time_served.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/charge_record.py
 export const OFFENSES_FILE_NAME = "sentencing_charge_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/counties_and_districts.py
@@ -121,6 +125,10 @@ export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     schema: insightImportSchema,
     loaderFn: transformAndLoadInsightData,
   },
+  [TIME_SERVED_FILE_NAME]: {
+    schema: timeServedImportSchema,
+    loaderFn: transformAndLoadTimeServedData,
+  },
 };
 
 /**
@@ -148,4 +156,5 @@ export const SAR_FILES = [
   CHARGES_FILE_NAME,
   DOC_TREATMENT_HISTORY_FILE_NAME,
   INSIGHTS_FILE_NAME,
+  TIME_SERVED_FILE_NAME,
 ];

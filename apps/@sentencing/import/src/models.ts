@@ -335,6 +335,21 @@ export const insightImportSchema = z.object({
   dispositions: dispositionsSchema,
 });
 
+export const timeServedImportSchema = z.object({
+  state_code: stateCode,
+  most_severe_description: z.string(),
+  sex: gender,
+  assessment_level: z.string().nullish(),
+  // Sentence length stats: all incarceration cases since 2017
+  n_all: z.coerce.number(),
+  avg_sentence_length_yrs: z.coerce.number(),
+  avg_credit_days: z.coerce.number(),
+  // Pct served stats: elapsed sentences only — null when n_elapsed = 0
+  n_elapsed: z.coerce.number(),
+  avg_pct_served: z.coerce.number().nullish(),
+  ci95: z.coerce.number().nullish(),
+});
+
 const mandatoryMinimumsSchema = z.array(
   z.object({
     SentenceType: z.string(),

@@ -147,6 +147,8 @@ export async function transformAndLoadInsightData(
         rollupRecidivismNumRecords: insightData.recidivism_num_records,
         // If this is missing, assume it is zero
         dispositionNumRecords: insightData.disposition_num_records ?? 0,
+        // Time served fields (avgSentenceLengthYears, avgPctServed, timeServedNumRecords)
+        // are populated separately by the time served import — not by the insights import.
       },
     });
 
