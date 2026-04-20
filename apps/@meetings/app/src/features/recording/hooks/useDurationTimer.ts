@@ -19,61 +19,48 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useDurationTimer() {
   const [durationMs, setDurationMs] = useState(0);
+
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const lastTickRef = useRef<number | null>(null);
-  // Ref mirror of durationMs to avoid stale closures in stop()
-  const durationMsRef = useRef(0);
+  const startTimeRef = useRef<number>(0);
+  const accumulatedMsRef = useRef<number>(0);
 
   const start = useCallback(() => {
-    // No-op if already running
     if (intervalRef.current !== null) return;
 
-    lastTickRef.current = Date.now();
+    startTimeRef.current = Date.now();
 
     intervalRef.current = setInterval(() => {
-      const now = Date.now();
-      // Use actual elapsed wall time rather than assuming exactly 1000ms per tick
-      const elapsed = now - (lastTickRef.current ?? now);
-
-      setDurationMs((prev) => {
-        const next = prev + elapsed;
-        durationMsRef.current = next;
-        return next;
-      });
-
-      lastTickRef.current = now;
-    }, 1000);
+      const elapsedSinceStart = Date.now() - startTimeRef.current;
+      setDurationMs(accumulatedMsRef.current + elapsedSinceStart);
+    }, 100);
   }, []);
 
   const stop = useCallback(() => {
+    if (intervalRef.current === null) return null;
+
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
+
+    const elapsedSinceStart = Date.now() - startTimeRef.current;
+    const finalDuration = accumulatedMsRef.current + elapsedSinceStart;
+
+    accumulatedMsRef.current = finalDuration;
+    setDurationMs(finalDuration);
+
+    return finalDuration;
+  }, []);
+
+  const reset = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-
-    if (lastTickRef.current !== null) {
-      // Capture the partial interval since the last tick
-      const delta = Date.now() - lastTickRef.current;
-      const finalDuration = durationMsRef.current + delta;
-
-      durationMsRef.current = finalDuration;
-      setDurationMs(finalDuration);
-      lastTickRef.current = null;
-
-      return finalDuration;
-    }
-
-    return null;
+    accumulatedMsRef.current = 0;
+    setDurationMs(0);
   }, []);
 
-  const reset = useCallback(() => {
-    stop();
-    durationMsRef.current = 0;
-    setDurationMs(0);
-  }, [stop]);
-
   const setInitialDurationMs = useCallback((ms: number) => {
-    durationMsRef.current = ms;
+    accumulatedMsRef.current = ms;
     setDurationMs(ms);
   }, []);
 

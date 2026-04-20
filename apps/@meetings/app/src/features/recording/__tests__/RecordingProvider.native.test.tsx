@@ -90,7 +90,7 @@ const mockSetNote = jest.fn();
 const mockUploadSegment = jest.fn().mockResolvedValue(undefined);
 const mockEndMeeting = jest.fn().mockResolvedValue(undefined);
 const mockDiscardMeeting = jest.fn().mockResolvedValue(undefined);
-const mockUpdateNotes = jest.fn().mockResolvedValue(undefined);
+const mockUpdateNotes = jest.fn();
 const mockTimerStart = jest.fn();
 const mockTimerStop = jest.fn().mockReturnValue(5000);
 const mockTimerReset = jest.fn();
@@ -150,7 +150,7 @@ describe("RecordingProvider (native)", () => {
     });
     (useRecordingStoreHydrated as unknown as jest.Mock).mockReturnValue(true);
     (useUpdateNotes as jest.Mock).mockReturnValue({
-      mutateAsync: mockUpdateNotes,
+      mutate: mockUpdateNotes,
     });
 
     (
@@ -312,10 +312,13 @@ describe("RecordingProvider (native)", () => {
         await result.current.togglePauseResume();
       });
 
-      expect(mockUpdateNotes).toHaveBeenCalledWith({
-        meetingId: MEETING_ID,
-        userNotepadNotes: "my notes",
-      });
+      expect(mockUpdateNotes).toHaveBeenCalledWith(
+        {
+          meetingId: MEETING_ID,
+          userNotepadNotes: "my notes",
+        },
+        expect.objectContaining({ onError: expect.any(Function) }),
+      );
       expect(mockTimerStop).toHaveBeenCalled();
       expect(mockUploadSegment).toHaveBeenCalled();
       expect(mockSetStatus).toHaveBeenCalledWith("paused");

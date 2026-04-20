@@ -167,12 +167,14 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const pauseRecording = async () => {
     setStatus("uploading");
+
+    const duration = timer.stop();
+    if (duration) setPersistedDurationMs(duration);
+
     const blob = await stopAndUploadRecording();
     if (blob) {
       pendingOfflineBlobRef.current = blob;
     }
-    const duration = timer.stop();
-    if (duration) setPersistedDurationMs(duration);
   };
 
   const resumeRecording = async () => {

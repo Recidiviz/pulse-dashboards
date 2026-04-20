@@ -267,14 +267,16 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await startRecording();
     } else if (status === "recording") {
       // Sync notes to server when pausing
-      try {
-        await updateNotesMutation.mutateAsync({
+      updateNotesMutation.mutate(
+        {
           meetingId,
           userNotepadNotes: note,
-        });
-      } catch (err) {
-        console.error("Failed to update notes:", err);
-      }
+        },
+        {
+          onError: (err) => console.error("Failed to update notes:", err),
+        },
+      );
+
       const duration = timer.stop();
       if (duration) setPersistedDurationMs(duration);
 
