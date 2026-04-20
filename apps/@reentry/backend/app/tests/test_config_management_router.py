@@ -31,6 +31,28 @@ outputs:
     - plan_default
 """
 
+# Sample YAML content for testing (matches actual schema requirements)
+VALID_ASSESSMENT_YAML_UPDATED = """
+metadata:
+  state_code: US_UT
+  code: TEST_API
+  version: 1
+  display_name: Updated Name
+  description: A test assessment configuration for API tests
+
+intake:
+  intake_type: transcription
+  transcription_post_processing_model:
+    provider: openai
+    name: gpt-4o
+    version: "2024-11-20"
+
+outputs:
+  codes:
+    - intake_summary_default
+    - plan_default
+"""
+
 VALID_OUTPUT_YAML = """
 metadata:
   output_type: intake_summary
@@ -294,8 +316,6 @@ class TestCreateAssessmentConfig:
         request_data = {
             "state_code": "US_AZ",
             "code": "NEW_CONFIG",
-            "display_name": "New Test Config",
-            "description": "A newly created config",
             "config_yaml": VALID_ASSESSMENT_YAML,
         }
 
@@ -340,7 +360,7 @@ class TestUpdateAssessmentConfig:
     ):
         """Test successfully updating a draft config."""
         request_data = {
-            "display_name": "Updated Name",
+            "config_yaml": VALID_ASSESSMENT_YAML_UPDATED,
             "change_note": "Updated the display name for testing",
         }
 

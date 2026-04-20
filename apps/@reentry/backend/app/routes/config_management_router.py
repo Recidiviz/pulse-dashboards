@@ -259,6 +259,13 @@ async def create_assessment_config_draft(
             status_code=400,
             detail=f"Invalid YAML: {'; '.join(validation.errors)}",
         )
+    # Parse YAML to extract and update display_name from the YAML content
+    parsed_config = ValidationService.parse_assessment_yaml(request.config_yaml)
+    if parsed_config:
+        display_name = parsed_config.metadata.display_name
+        description = parsed_config.metadata.description
+    else:
+        raise HTTPException(status_code=422, detail="Invalid YAML: missing metadata")
 
     state_code = normalize_state_code_format(request.state_code)
     code = request.code
@@ -274,8 +281,8 @@ async def create_assessment_config_draft(
         state_code=state_code,
         code=code,
         version=next_version,
-        display_name=request.display_name,
-        description=request.description,
+        display_name=display_name,
+        description=description,
         config_yaml=request.config_yaml,
         status=ConfigStatus.DRAFT.value,
         is_active=False,
@@ -339,10 +346,12 @@ async def update_assessment_config_draft(
             )
         config.config_yaml = request.config_yaml
 
-    if request.display_name is not None:
-        config.display_name = request.display_name
-    if request.description is not None:
-        config.description = request.description
+        # Parse YAML to extract and update display_name from the YAML content
+        parsed_config = ValidationService.parse_assessment_yaml(request.config_yaml)
+        if parsed_config:
+            config.display_name = parsed_config.metadata.display_name
+            if parsed_config.metadata.description:
+                config.description = parsed_config.metadata.description
 
     updated_config = await update_assessment_config(session, config)
 
@@ -692,9 +701,17 @@ async def create_output_config_draft(
     validation = ValidationService.validate_output_yaml(request.config_yaml)
     if not validation.valid:
         raise HTTPException(
-            status_code=400,
+            status_code=422,
             detail=f"Invalid YAML: {'; '.join(validation.errors)}",
         )
+
+    # Parse YAML to extract and update display_name from the YAML content
+    parsed_config = ValidationService.parse_output_yaml(request.config_yaml)
+    if parsed_config:
+        display_name = parsed_config.metadata.display_name
+        description = parsed_config.metadata.description
+    else:
+        raise HTTPException(status_code=422, detail="Invalid YAML: missing metadata")
 
     code = request.code
 
@@ -707,8 +724,8 @@ async def create_output_config_draft(
         output_type=request.output_type,
         code=code,
         version=next_version,
-        display_name=request.display_name,
-        description=request.description,
+        display_name=display_name,
+        description=description,
         config_yaml=request.config_yaml,
         status=ConfigStatus.DRAFT.value,
         is_active=False,
@@ -771,10 +788,12 @@ async def update_output_config_draft(
             )
         config.config_yaml = request.config_yaml
 
-    if request.display_name is not None:
-        config.display_name = request.display_name
-    if request.description is not None:
-        config.description = request.description
+        # Parse YAML to extract and update display_name from the YAML content
+        parsed_config = ValidationService.parse_output_yaml(request.config_yaml)
+        if parsed_config:
+            config.display_name = parsed_config.metadata.display_name
+            if parsed_config.metadata.description:
+                config.description = parsed_config.metadata.description
 
     updated_config = await update_output_config(session, config)
 

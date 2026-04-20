@@ -2635,16 +2635,6 @@ export interface components {
              */
             code: string;
             /**
-             * Display Name
-             * @description Human-readable name
-             */
-            display_name: string;
-            /**
-             * Description
-             * @description Optional description
-             */
-            description?: string | null;
-            /**
              * Config Yaml
              * @description YAML configuration content
              */
@@ -2737,16 +2727,6 @@ export interface components {
          * @description Schema for updating an existing draft assessment config.
          */
         AssessmentConfigUpdate: {
-            /**
-             * Display Name
-             * @description Human-readable name
-             */
-            display_name?: string | null;
-            /**
-             * Description
-             * @description Optional description
-             */
-            description?: string | null;
             /**
              * Config Yaml
              * @description YAML configuration content
@@ -3729,16 +3709,6 @@ export interface components {
              */
             code: string;
             /**
-             * Display Name
-             * @description Human-readable name
-             */
-            display_name: string;
-            /**
-             * Description
-             * @description Optional description
-             */
-            description?: string | null;
-            /**
              * Config Yaml
              * @description YAML configuration content
              */
@@ -3839,16 +3809,6 @@ export interface components {
          * @description Schema for updating an existing draft output config.
          */
         OutputConfigUpdate: {
-            /**
-             * Display Name
-             * @description Human-readable name
-             */
-            display_name?: string | null;
-            /**
-             * Description
-             * @description Optional description
-             */
-            description?: string | null;
             /**
              * Config Yaml
              * @description YAML configuration content

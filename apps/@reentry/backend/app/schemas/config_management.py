@@ -15,26 +15,17 @@ from app.routes.base import ORMResponse
 # ============================================================================
 
 
-class AssessmentConfigBase(BaseModel):
-    """Base schema for assessment config fields."""
+class AssessmentConfigCreate(BaseModel):
+    """Schema for creating a new assessment config draft."""
 
     state_code: str = Field(description="State code (e.g., 'US_UT')")
     code: str = Field(description="Config code (e.g., 'CCCI')")
-    display_name: str = Field(description="Human-readable name")
-    description: Optional[str] = Field(default=None, description="Optional description")
-
-
-class AssessmentConfigCreate(AssessmentConfigBase):
-    """Schema for creating a new assessment config draft."""
-
     config_yaml: str = Field(description="YAML configuration content")
 
 
 class AssessmentConfigUpdate(BaseModel):
     """Schema for updating an existing draft assessment config."""
 
-    display_name: Optional[str] = Field(default=None, description="Human-readable name")
-    description: Optional[str] = Field(default=None, description="Optional description")
     config_yaml: Optional[str] = Field(
         default=None, description="YAML configuration content"
     )
@@ -80,28 +71,19 @@ class AssessmentConfigDetailResponse(AssessmentConfigResponse):
 # ============================================================================
 
 
-class OutputConfigBase(BaseModel):
-    """Base schema for output config fields."""
+class OutputConfigCreate(BaseModel):
+    """Schema for creating a new output config draft."""
 
     output_type: OutputType = Field(
         description="Type of output (intake_summary or action_plan)"
     )
     code: str = Field(description="Config code")
-    display_name: str = Field(description="Human-readable name")
-    description: Optional[str] = Field(default=None, description="Optional description")
-
-
-class OutputConfigCreate(OutputConfigBase):
-    """Schema for creating a new output config draft."""
-
     config_yaml: str = Field(description="YAML configuration content")
 
 
 class OutputConfigUpdate(BaseModel):
     """Schema for updating an existing draft output config."""
 
-    display_name: Optional[str] = Field(default=None, description="Human-readable name")
-    description: Optional[str] = Field(default=None, description="Optional description")
     config_yaml: Optional[str] = Field(
         default=None, description="YAML configuration content"
     )
