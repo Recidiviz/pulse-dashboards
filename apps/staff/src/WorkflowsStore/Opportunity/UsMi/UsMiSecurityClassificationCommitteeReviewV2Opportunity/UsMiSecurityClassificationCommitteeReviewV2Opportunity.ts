@@ -51,9 +51,8 @@ export class usMiSecurityClassificationCommitteeReviewV2Opportunity extends Oppo
       case "OVERDUE":
         return "Overdue";
       case "DUE":
-        return "Due";
       case "UPCOMING":
-        return "Upcoming";
+        return "Due";
       case "NOT_DUE":
         return "Not Due";
       default:
