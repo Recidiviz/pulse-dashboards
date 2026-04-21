@@ -81,6 +81,108 @@ it("returns labels from workflowsStore", () => {
   });
 });
 
+describe("populateCaseloads", () => {
+  const testThreshold = 3;
+  let testPersons: JusticeInvolvedPerson[];
+
+  const createMockPerson = (
+    oppCount: number,
+    alreadyHydrated = false,
+    hydrateMock: any = undefined,
+  ) => {
+    return {
+      opportunityManager: {
+        hydrationState: alreadyHydrated
+          ? { status: "hydrated" }
+          : { status: "needs hydration" },
+        incomingOpportunityTypes: Array(oppCount).fill("oppType"),
+        hydrate: vi.fn().mockReturnValue(hydrateMock),
+      },
+    } as unknown as JusticeInvolvedPerson;
+  };
+
+  const setCaseloadPersons = (persons: JusticeInvolvedPerson[]) => {
+    vi.spyOn(
+      // @ts-ignore protected property
+      presenter.workflowsStore,
+      "caseloadPersons",
+      "get",
+    ).mockReturnValue(persons);
+  };
+
+  beforeEach(() => {
+    vi.spyOn(presenter, "oppHydrationThreshold", "get").mockReturnValue(
+      testThreshold,
+    );
+  });
+
+  it("does nothing when all persons are already hydrated", async () => {
+    const hydratedPerson1 = createMockPerson(1, true);
+    const hydratedPerson2 = createMockPerson(2, true);
+    testPersons = [hydratedPerson1, hydratedPerson2];
+    setCaseloadPersons(testPersons);
+
+    await presenter.populateCaseloads();
+
+    testPersons.map((p) =>
+      expect(p.opportunityManager.hydrate).not.toHaveBeenCalled(),
+    );
+  });
+
+  it("skips already-hydrated persons", async () => {
+    const hydratedPerson = createMockPerson(1, true);
+    const unhydratedPerson = createMockPerson(1);
+    setCaseloadPersons([hydratedPerson, unhydratedPerson]);
+
+    await presenter.populateCaseloads();
+
+    expect(hydratedPerson.opportunityManager.hydrate).not.toHaveBeenCalled();
+    expect(unhydratedPerson.opportunityManager.hydrate).toHaveBeenCalledOnce();
+  });
+
+  it("hydrates all persons even when opp threshold is not reached", async () => {
+    // Total opp count doesn't hit threshold
+    testPersons = [createMockPerson(1), createMockPerson(1)];
+    setCaseloadPersons(testPersons);
+
+    await presenter.populateCaseloads();
+
+    testPersons.map((p) =>
+      expect(p.opportunityManager.hydrate).toHaveBeenCalledOnce(),
+    );
+  });
+
+  it("resolves hydration batch by batch", async () => {
+    // set up promise resolution mocks
+    let resolveBatch1!: () => void;
+    const batch1Promise = new Promise<void>((resolve) => {
+      resolveBatch1 = resolve;
+    });
+
+    // P0 and P1 will hydrate in initial batch (their opp count hits threshold)
+    // P2 will hydrate in final batch.
+    const p0 = createMockPerson(2, false, batch1Promise);
+    const p1 = createMockPerson(2, false, batch1Promise);
+    const p2 = createMockPerson(1);
+    setCaseloadPersons([p0, p1, p2]);
+
+    const caseloadHydration = presenter.populateCaseloads();
+
+    // batch 2 does not kick off while batch 1 is still pending
+    expect(p0.opportunityManager.hydrate).toHaveBeenCalledOnce();
+    expect(p1.opportunityManager.hydrate).toHaveBeenCalledOnce();
+    expect(p2.opportunityManager.hydrate).not.toHaveBeenCalled();
+
+    // resolve batch 1 promises
+    resolveBatch1();
+
+    // wait for final batch to run
+    await caseloadHydration;
+
+    expect(p2.opportunityManager.hydrate).toHaveBeenCalledOnce();
+  });
+});
+
 describe("compositeHydrationState for caseload opportunities presenter", () => {
   const statuses = {
     needsHydration: { status: "needs hydration" },

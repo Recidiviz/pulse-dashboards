@@ -87,11 +87,45 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
   // Population Methods
   // =========================
 
+  // Threshold based on local testing with large facilities.
+  get oppHydrationThreshold() {
+    return 4000;
+  }
+
   async populateCaseloads() {
-    this.workflowsStore.caseloadPersons.forEach((person) => {
-      if (!isHydrated(person.opportunityManager))
-        person.opportunityManager.hydrate();
-    });
+    const unhydratedPersons = this.workflowsStore.caseloadPersons.filter(
+      (person) => !isHydrated(person.opportunityManager),
+    );
+
+    // Batched hydration
+    let batchStartIndex = 0,
+      i = 0,
+      opportunityCount = 0;
+    while (i <= unhydratedPersons.length) {
+      // Kick off hydration once we've hit the threshold or when we've reached the end
+      // of the persons list.
+      if (
+        opportunityCount >= this.oppHydrationThreshold ||
+        i === unhydratedPersons.length
+      ) {
+        // We have to use await to batch the requests.
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.all(
+          unhydratedPersons
+            .slice(batchStartIndex, i)
+            .map((person) => person.opportunityManager.hydrate()),
+        );
+        if (i === unhydratedPersons.length) break;
+
+        // Reset batching info
+        opportunityCount = 0;
+        batchStartIndex = i;
+      }
+      const currPerson = unhydratedPersons[i];
+      opportunityCount +=
+        currPerson.opportunityManager.incomingOpportunityTypes.length;
+      i++;
+    }
   }
 
   hydrate() {
