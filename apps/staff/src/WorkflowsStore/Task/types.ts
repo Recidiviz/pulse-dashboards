@@ -135,6 +135,8 @@ type UsTxAssessmentDetails = {
 export type UsIdTaskBaseDetails = {
   contactCadence: string;
   lastContactDate: string | null;
+  contactPeriodStart?: string;
+  contactPeriodEnd?: string;
 };
 
 type UsIdLsirAssessmentDetails = UsIdTaskBaseDetails & {
@@ -283,6 +285,7 @@ export type SupervisionTask<
   dueDateDisplayLong: string;
   dueDateDisplayShort: string;
   frequency: string;
+  contactWindow: string | undefined;
 
   // these fields refer to appointments, rather than whether the contact is called a
   // "scheduled contact" or "unscheduled contact"

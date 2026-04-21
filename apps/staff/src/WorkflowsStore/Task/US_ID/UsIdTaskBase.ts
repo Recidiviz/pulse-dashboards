@@ -20,7 +20,7 @@ import simplur from "simplur";
 import { fieldToDate } from "~datatypes";
 import { formatDate } from "~utils";
 
-import { toTitleCase } from "../../../utils";
+import { formatISODateString, toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 import { UsIdAgnosticTaskType } from "../types";
 
@@ -36,6 +36,18 @@ abstract class UsIdTaskBase<T extends UsIdAgnosticTaskType> extends Task<T> {
   get lastActionTaskText(): string | undefined {
     if (!this.lastContacted) return;
     return simplur`Last ${this.taskAction} on ${this.lastContacted}.`;
+  }
+
+  get contactWindow(): string | undefined {
+    const { contactPeriodStart, contactPeriodEnd } = this.details;
+    // this will only render if the contact periods are in the system
+    // and if they are not null
+    if (contactPeriodStart && contactPeriodEnd) {
+      const start = formatISODateString(contactPeriodStart);
+      const end = formatISODateString(contactPeriodEnd);
+
+      return `Period ${start} - ${end}`;
+    }
   }
 
   get frequency() {

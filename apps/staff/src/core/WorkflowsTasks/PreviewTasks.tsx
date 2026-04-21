@@ -230,6 +230,18 @@ const TaskTimelineDonut = ({
   );
 };
 
+const Wrapper = styled.div`
+  color: ${palette.slate50};
+  font-weight: 500;
+  font-size: ${rem(14)};
+  letting-spacing: -1%;
+  line-height: 120%;
+`;
+
+const ContactWindow = ({ task }: { task: SupervisionTask }) => {
+  return <Wrapper>{task.contactWindow}</Wrapper>;
+};
+
 const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
   if (!task.isSnoozed || !task.snoozeInfo) return null;
   const { snoozedBy, snoozedUntil, snoozedOn } = task.snoozeInfo;
@@ -298,6 +310,7 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
       <TaskItemV2>
         <TaskInfo>
           <TaskName>{task.displayName}</TaskName>
+          <ContactWindow task={task} />
           <TaskFrequency>
             <i className="fa fa-refresh" /> {task.frequency}
           </TaskFrequency>

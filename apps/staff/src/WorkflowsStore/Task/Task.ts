@@ -117,6 +117,11 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     return "";
   }
 
+  get contactWindow(): string | undefined {
+    // This is reimplemented directly on the classes for the tasks that currently use it
+    return;
+  }
+
   get supplementaryContacts(): string[] {
     // Additional contacts to show in the preview timeline (e.g. attempted contacts).
     return [];
