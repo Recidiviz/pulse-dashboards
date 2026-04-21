@@ -26,8 +26,8 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
  */
 export class UsMiSecurityClassificationCommitteeReviewV2Configuration extends ApiOpportunityConfiguration {
   get hydrateIneligibleRecordsInOpportunityManager() {
-    // TODO(#OBT-12006): Fix load issues
-    return false;
+    return !!this.userStore.activeFeatureVariants
+      .usMiRestrictiveHousingV2Ineligible;
   }
 
   get allSubcategoriesOfSubmitted() {

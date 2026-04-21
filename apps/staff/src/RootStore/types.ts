@@ -109,6 +109,7 @@ export type FeatureVariant =
   | "usMiCustodyLevelDowngrade"
   | "usMiSecurityClassificationCommittee"
   | "usMiRestrictiveHousingV2"
+  | "usMiRestrictiveHousingV2Ineligible"
 
   //// Missouri
   | "usMoSearchByUnit"
@@ -229,6 +230,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMiSecurityClassificationCommittee: {},
   usMiFacilitySearch: {},
   usMiRestrictiveHousingV2: {},
+  usMiRestrictiveHousingV2Ineligible: {},
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
