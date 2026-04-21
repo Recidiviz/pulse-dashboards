@@ -63,7 +63,7 @@ export const US_MI: InsightsConfig = {
       eventNameSingular: "incarceration",
       eventNamePastTense: "were incarcerated",
       descriptionMarkdown:
-        "All transitions to incarceration (state prison or county jail) from supervision in the given time period, regardless of whether the final decision was a revocation or sanction admission. This also includes transitions from Probation to the Special Alternative for Incarceration (SAI) and transitions from supervision to incarceration due to any “New Commitment” movement reasons from OMNI.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
+        'All transitions to incarceration (state prison or county jail) from supervision in the given time period, regardless of whether the final decision was a revocation or sanction admission. This also includes transitions from Probation to the Special Alternative for Incarceration (SAI) and transitions from supervision to incarceration due to any "New Commitment" movement reasons from OMNI.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.',
       topXPct: null,
       listTableText:
         "Clients will appear on this list multiple times if they have been incarcerated more than once under this agent in the time period.",

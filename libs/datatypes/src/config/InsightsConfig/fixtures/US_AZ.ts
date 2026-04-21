@@ -75,6 +75,30 @@ export const US_AZ: InsightsConfig = {
       listTableText:
         "Clients will appear on this list multiple times if they have had more than one absconsion under this officer in the time period.",
     },
+    {
+      name: "incarceration_starts_technical_violation",
+      outcomeType: "ADVERSE",
+      titleDisplayName: "Technical Incarceration Rate",
+      bodyDisplayName: "technical incarceration rate",
+      eventName: "technical incarcerations",
+      eventNameSingular: "technical incarceration",
+      eventNamePastTense: "had a technical incarceration",
+      descriptionMarkdown:
+        'Transitions to incarceration from supervision due to technical violations, regardless of whether the final decision was a revocation or sanction admission. It is considered a technical incarceration only if the most serious violation type across all violations in the prior 24 months was a technical violation. We use this logic even if someone’s return to prison is labeled a "new admission", as long as they were previously on supervision. For incarceration transitions where we don’t find any associated violations, we infer violations and their type by looking at admission reasons implying a Technical or New Crime reason for returning to prison."\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.',
+      topXPct: null,
+    },
+    {
+      name: "incarceration_starts",
+      outcomeType: "ADVERSE",
+      titleDisplayName: "New Crime Incarceration Rate",
+      bodyDisplayName: "new crime incarceration rate",
+      eventName: "new crime incarcerations",
+      eventNameSingular: "new crime incarceration",
+      eventNamePastTense: "had a new crime incarceration",
+      descriptionMarkdown:
+        "Transitions to incarceration from supervision due to new crime violations, regardless of whether the final decision was a revocation or sanction admission. It is considered a new crime incarceration only if the most serious violation type across all violations in the prior 24 months was a new crime (felony, misdemeanor, or law violation).\n\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.",
+      topXPct: null,
+    },
   ],
   noneAreOutliersLabel: "--",
   officerHasNoEligibleClientsLabel:
