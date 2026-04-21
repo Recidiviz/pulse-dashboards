@@ -283,7 +283,18 @@ export const mockApiOpportunityConfigurationResponse = {
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
-      tabGroups: null,
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible Now",
+            "Almost Eligible",
+            "Pending",
+            "Overridden",
+            "Pending Violation",
+          ],
+        },
+      ],
       tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
