@@ -5,8 +5,10 @@ from typing import Dict, List, Optional
 from uuid import UUID
 
 from pydantic import computed_field
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped
-from sqlmodel import JSON, Field, Relationship
+import sqlalchemy as sa
+from sqlmodel import JSON, Column, Field, Relationship, SQLModel
 
 from app.models.intake import Intake
 
@@ -14,6 +16,11 @@ from ..utils.config_loader import ConfigLoader
 from .base import BaseModel
 from .execution import Execution, ExecutionStatus
 from .plan_decision_tree import PlanDecisionTree
+
+
+class ResourceAssociationAction(StrEnum):
+    ADD = "ADD"
+    REMOVE = "REMOVE"
 
 
 class PlanGenerationStatus(StrEnum):
@@ -169,6 +176,48 @@ class PlanAsset(BaseModel, table=True):
         return self.file_blob.decode("utf-8")
 
 
+class PlanGenerationResourceAssociation(SQLModel, table=True):
+    """
+    Ledger table tracking resource associations for a PlanGeneration.
+
+    Intentionally does not inherit from BaseModel — this is an append-only
+    ledger where each row represents a discrete ADD/REMOVE event. The UUID
+    primary key and created_at/updated_at fields from BaseModel are not
+    appropriate here; action_at serves as the event timestamp, and a plain
+    auto-increment integer id is sufficient.
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    # Foreign key to PlanGeneration (cascade on delete)
+    plan_generation_id: UUID = Field(
+        foreign_key="plangeneration.id", ondelete="CASCADE", index=True
+    )
+
+    # External resource identifier (not a FK — Resource is not a DB table)
+    resource_id: str
+
+    # Which markdown section this resource belongs to
+    section_title: str
+
+    # Ledger / event metadata
+    action: ResourceAssociationAction = Field(
+        sa_column=Column(
+            SAEnum(
+                ResourceAssociationAction,
+                name="resource_association_action_enum",
+                native_enum=True,
+                values_callable=lambda obj: [e.value for e in obj],
+            ),
+            nullable=False,
+        )
+    )
+    action_by: str  # "SYSTEM" | <user_id>
+    action_at: datetime = Field(
+        sa_column=sa.Column(sa.DateTime(timezone=True), nullable=False)
+    )
+
+
 class PlanGeneration(BaseModel, table=True):
     plan_id: UUID = Field(foreign_key="plan.id", ondelete="CASCADE")
     plan: Mapped[Optional[Plan]] = Relationship(back_populates="generations")
@@ -183,6 +232,14 @@ class PlanGeneration(BaseModel, table=True):
     gen_type: str = Field(default=GenerationType.AUTOMATED)
     resources_associations_map: Optional[Dict] = Field(
         sa_type=JSON, nullable=True, default=None
+    )
+
+    # Ordered ledger of ADD/REMOVE events for external resources tied to this generation.
+    # Rows are never updated in place — each change appends a new event row.
+    resource_associations: Mapped[
+        list[PlanGenerationResourceAssociation]
+    ] = Relationship(
+        sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete-orphan"}
     )
 
     # actual internal generation data
@@ -203,6 +260,32 @@ class PlanGeneration(BaseModel, table=True):
     execution: Mapped[Optional[Execution]] = Relationship(
         sa_relationship_kwargs={"lazy": "selectin"}
     )
+
+    @property
+    def active_resource_associations(
+        self,
+    ) -> list[PlanGenerationResourceAssociation]:
+        """Returns the currently active resource associations for this generation.
+
+        Processes the ledger by grouping events per (resource_id, section_title),
+        keeping only the latest event (by action_at), and returning those where
+        action == "ADD". The same resource can be active in multiple sections
+        simultaneously; events are tracked independently per (resource, section) pair.
+        """
+        sorted_events = sorted(self.resource_associations, key=lambda a: a.action_at)
+
+        # For each (resource_id, section_title) pair, keep only the most recent event
+        latest_by_resource: dict[
+            tuple[str, str], PlanGenerationResourceAssociation
+        ] = {}
+        for event in sorted_events:
+            latest_by_resource[(event.resource_id, event.section_title)] = event
+
+        return [
+            event
+            for event in latest_by_resource.values()
+            if event.action == ResourceAssociationAction.ADD
+        ]
 
     @computed_field
     def status(self) -> str:
