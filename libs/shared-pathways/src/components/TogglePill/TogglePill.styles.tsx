@@ -98,6 +98,8 @@ export const TogglePillRadioGroup = styled(DSRadioGroup)`
   .ds-radio__label {
     position: relative;
     pointer-events: none;
+    line-height: 1;
+    margin: 0;
   }
 
   .ds-radio:first-child {

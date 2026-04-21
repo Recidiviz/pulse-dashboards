@@ -24,12 +24,14 @@ import styled from "styled-components";
 import { isHydrationUntouched } from "../Hydratable/utils";
 import { HydratorProps } from "./types";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div.attrs({ className: "Hydrator__Wrapper" })`
   position: relative;
   height: 100%;
 `;
 
-const StatusWrapper = styled.div`
+const StatusWrapper = styled.div.attrs({
+  className: "Hydrator__StatusWrapper",
+})`
   align-items: center;
   display: flex;
   height: 100%;
@@ -42,7 +44,9 @@ const StatusWrapper = styled.div`
   }
 `;
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.div.attrs({
+  className: "Hydrator__ContentWrapper",
+})`
   height: 100%;
   width: 100%;
 `;

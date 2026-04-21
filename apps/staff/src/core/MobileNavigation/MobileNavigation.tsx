@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import Drawer from "../../components/Drawer";
 import useIsMobile from "../../hooks/useIsMobile";
 import MobileViewNavigation from "../MobileViewNavigation";
 import PageNavigation from "../PageNavigation";
-import SectionNavigation from "../SectionNavigation";
 import { DASHBOARD_VIEWS } from "../views";
 import VitalsSummaryBreadcrumbs from "../VitalsSummaryBreadcrumbs";
 
@@ -73,15 +72,9 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
               open ? "Close page navigation menu" : "Open page navigation menu"
             }
           />
-          <div className="MobileNavigation__title" aria-live="polite">
-            {title}
-          </div>
-          {currentView === DASHBOARD_VIEWS.system ? (
-            <div
-              className="MobileNavigation__system"
-              aria-label="Section navigation"
-            >
-              <SectionNavigation />
+          {currentView !== DASHBOARD_VIEWS.system ? (
+            <div className="MobileNavigation__title" aria-live="polite">
+              {title}
             </div>
           ) : (
             <div />

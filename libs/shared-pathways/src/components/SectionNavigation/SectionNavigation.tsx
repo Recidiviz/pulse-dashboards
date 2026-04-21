@@ -44,7 +44,7 @@ const StyledMenubar = styled(Menubar)<{ $focusColor: string }>`
   && > [role="menuitem"]:focus-visible,
   && > * > [role="menuitem"]:focus-visible {
     box-shadow: none;
-    outline: 2px solid ${({ $focusColor }) => $focusColor};
+    outline: 2px solid ${({ $focusColor }) => $focusColor} !important;
     outline-offset: 2px;
     border-radius: 50px;
   }

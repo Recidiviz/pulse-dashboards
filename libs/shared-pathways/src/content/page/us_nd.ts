@@ -23,10 +23,10 @@ const content: StateSpecificPageCopy = {
     summary:
       "These charts show people incarcerated in an ND DOCR facility or serving their prison sentence in the community through the Community Placement Program. It does not include individuals incarcerated in county jails.",
     sections: {
-      countOverTime: "Incarceration population over time",
-      countByLocation: "Incarceration population by facility",
-      countByRace: "Incarceration population by race",
-      personLevelDetail: "List of people incarcerated",
+      countOverTime: "Overview",
+      countByLocation: "Facility",
+      countByRace: "Race",
+      personLevelDetail: "People",
     },
     methodology:
       "These charts show people incarcerated in a ND DOCR facility or serving their prison sentence in the community through the Community Placement Program. It does not include individuals incarcerated in county jails unless the individual is temporarily transferred to a county jail while already incarcerated.",
@@ -43,13 +43,12 @@ const content: StateSpecificPageCopy = {
     summary:
       "These charts include events where people are admitted to incarceration status from a new court commitment. Admissions are counted when the person was admitted to incarceration. All charts on this page are event-based, so if a single person has two admissions during the selected time period, two events are counted on this page.",
     sections: {
-      countOverTime: "Admissions from liberty to incarceration over time",
-      countByLocation: "Admissions from liberty to incarceration by district",
-      countBySex: "Admissions from liberty to incarceration by sex",
-      countByAgeGroup: "Admissions from liberty to incarceration by age",
-      countByRace: "Admissions from liberty to incarceration by race",
-      countByPriorLengthOfIncarceration:
-        "Admissions from liberty to incarceration by prior length of incarceration",
+      countOverTime: "Overview",
+      countByLocation: "District",
+      countBySex: "Sex",
+      countByAgeGroup: "Age",
+      countByRace: "Race",
+      countByPriorLengthOfIncarceration: "Prior Incarceration",
     },
     methodology:
       "These charts include events where people are admitted to incarceration status from a new court commitment. Admissions are counted when the person was admitted to incarceration. All charts on this page are event-based, so if a single person has two admissions during the selected time period, two events are counted on this page.",
@@ -59,11 +58,11 @@ const content: StateSpecificPageCopy = {
     summary:
       "These charts include events where people are released from incarceration to supervision. Releases are counted on the day a person leaves incarceration. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
     sections: {
-      countOverTime: "Releases from incarceration to supervision over time",
-      countByLocation: "Releases from incarceration to supervision by facility",
-      countByAgeGroup: "Releases from incarceration to supervision by age",
-      countByRace: "List of releases from incarceration to supervision by race",
-      personLevelDetail: "List of releases from incarceration to supervision",
+      countOverTime: "Overview",
+      countByLocation: "Facility",
+      countByAgeGroup: "Age",
+      countByRace: "Race",
+      personLevelDetail: "People",
     },
     methodology:
       "These charts include events where people are released from incarceration to supervision. Releases are counted on the day a person leaves incarceration. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",

@@ -23,25 +23,24 @@ const content: PageCopy = {
     summary:
       "Includes people who were sentenced to prison from a new court commitment.",
     sections: {
-      countOverTime: "Admissions from liberty to prison over time",
-      countByLocation: "Admissions from liberty to prison by judicial district",
-      countBySex: "Admissions from liberty to prison by sex",
-      countByAgeGroup: "Admissions from liberty to prison by age",
-      countByRace: "Admissions from liberty to prison by race",
-      countByPriorLengthOfIncarceration:
-        "Admissions from liberty to prison by prior length of incarceration",
+      countOverTime: "Overview",
+      countByLocation: "Judicial District",
+      countBySex: "Sex",
+      countByAgeGroup: "Age",
+      countByRace: "Race",
+      countByPriorLengthOfIncarceration: "Prior Incarceration",
     },
   },
   prison: {
     title: "Prison",
     summary: "This page shows all people in state prison facilities.",
     sections: {
-      countOverTime: "Prison population over time",
-      countByLocation: "Prison population by facility",
-      countByRace: "Prison population by race",
-      countBySex: "Prison population by sex",
-      countByAgeGroup: "Prison population by age group",
-      personLevelDetail: "List of people in prison",
+      countOverTime: "Overview",
+      countByLocation: "Facility",
+      countByRace: "Race",
+      countBySex: "Sex",
+      countByAgeGroup: "Age",
+      personLevelDetail: "People",
     },
     methodology: "Includes individuals who are admitted to state facilities.",
   },
@@ -50,21 +49,21 @@ const content: PageCopy = {
     summary:
       "Includes people who were released from state prison facilities to supervision.",
     sections: {
-      countOverTime: "Releases from prison to supervision over time",
-      countByLocation: "Releases from prison to supervision by facility",
-      countByAgeGroup: "Releases from prison to supervision by age",
-      countByRace: "Releases from prison to supervision by race",
-      personLevelDetail: "List of releases from prison to supervision",
+      countOverTime: "Overview",
+      countByLocation: "Facility",
+      countByAgeGroup: "Age",
+      countByRace: "Race",
+      personLevelDetail: "People",
     },
   },
   supervision: {
     title: "Supervision",
     summary: "Includes all people supervised by the state.",
     sections: {
-      countOverTime: "Supervision population over time",
-      countByLocation: "Supervision population by district",
-      countBySupervisionLevel: "Supervision population by supervision level",
-      countByRace: "Supervision population by race",
+      countOverTime: "Overview",
+      countByLocation: "District",
+      countBySupervisionLevel: "Supervision Level",
+      countByRace: "Race",
     },
   },
   supervisionToPrison: {
@@ -72,18 +71,15 @@ const content: PageCopy = {
     summary:
       "Includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
     sections: {
-      countOverTime: "Admissions from supervision over time",
-      countByLocation: "Admissions from supervision by district",
-      countByLengthOfStay: "Length of stay on supervision before admission",
-      countBySex: "Admissions from supervision by sex",
-      countByRace: "Admissions from supervision by race",
-      countBySupervisionLevel:
-        "Admissions from supervision by supervision level",
-      countByMostSevereViolation:
-        "Admissions from supervision by most severe violation",
-      countByNumberOfViolations:
-        "Admissions from supervision by number of violations",
-      countByOfficer: "Admissions from supervision by officer",
+      countOverTime: "Overview",
+      countByLocation: "District",
+      countByLengthOfStay: "Length of Stay",
+      countBySex: "Sex",
+      countByRace: "Race",
+      countBySupervisionLevel: "Supervision Level",
+      countByMostSevereViolation: "Most Severe Violation",
+      countByNumberOfViolations: "Number of Violations",
+      countByOfficer: "Officer",
     },
     methodology:
       "These charts include details of all admissions from supervision to prison.",
@@ -93,12 +89,12 @@ const content: PageCopy = {
     summary:
       "Includes people who were discharged from supervision positively or if their supervision period expired.",
     sections: {
-      countOverTime: "Releases from supervision over time",
-      countByLengthOfStay: "Length of stay on supervision before release",
-      countByLocation: "Releases from supervision by district",
-      countByRace: "Releases from supervision by race",
-      countBySex: "Releases from supervision by sex",
-      countByAgeGroup: "Releases from supervision by age",
+      countOverTime: "Overview",
+      countByLengthOfStay: "Length of Stay",
+      countByLocation: "District",
+      countByRace: "Race",
+      countBySex: "Sex",
+      countByAgeGroup: "Age",
     },
     methodology:
       "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",

@@ -41,7 +41,7 @@ const FiltersTrigger = styled(Button)`
     background-color 0.15s,
     border-color 0.15s,
     color 0.15s;
-  outline: none;
+  outline: none !important;
 
   &:hover,
   &:focus-visible {
@@ -51,13 +51,13 @@ const FiltersTrigger = styled(Button)`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
+    outline: 2px solid ${({ theme }) => theme.palette.focusColor} !important;
     outline-offset: 2px;
   }
 
   &:active,
   &[aria-expanded="true"] {
-    border-color: ${({ theme }) => theme.palette.focusColor};
+    border-color: ${({ theme }) => theme.palette.focusColor} !important;
     color: ${({ theme }) => theme.palette.focusColor};
     background: white;
   }

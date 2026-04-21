@@ -50,6 +50,8 @@ export const PathwaysCheckboxGroup = styled(DSCheckboxGroup)`
 
   .ds-checkbox__label {
     ${({ theme }) => theme.checkbox?.labelTypography}
+    line-height: 1;
+    margin: 0;
   }
 
   /* The indicator IS the input. Use background-color (not the background

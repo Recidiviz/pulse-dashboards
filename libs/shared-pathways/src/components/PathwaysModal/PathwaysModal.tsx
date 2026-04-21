@@ -94,11 +94,11 @@ const CloseButton = styled.button`
   cursor: pointer;
   color: ${({ theme }) => theme.modal.closeButtonColor};
   margin-left: auto;
-  outline: none;
+  outline: none !important;
 
   &:focus-visible {
     color: ${({ theme }) => theme.modal.closeFocusColor};
-    outline: 2px solid ${({ theme }) => theme.modal.closeFocusColor};
+    outline: 2px solid ${({ theme }) => theme.modal.closeFocusColor} !important;
     outline-offset: 2px;
     border-radius: 2px;
   }

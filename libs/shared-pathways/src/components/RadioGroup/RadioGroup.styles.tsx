@@ -51,12 +51,15 @@ export const PathwaysRadioGroup = styled(DSRadioGroup)`
 
   .ds-radio__label {
     ${({ theme }) => theme.checkbox?.labelTypography}
+    line-height: 1;
+    margin: 0;
   }
 
   /* The indicator IS the input. */
   .ds-radio__indicator {
     border-color: ${({ theme }) =>
       theme.checkbox?.borderColor ?? palette.slate30};
+    margin: 0;
   }
 
   .ds-radio__indicator:checked {

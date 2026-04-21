@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,26 +20,18 @@ import "./PageTemplate.scss";
 
 interface PageTemplateProps {
   children: React.ReactNode;
-  filters?: React.ReactNode;
-  leftPanel?: React.ReactNode;
   mobileNavigation?: React.ReactNode;
 }
 
 function PageTemplate({
   children,
-  filters = null,
-  leftPanel = null,
   mobileNavigation = null,
 }: PageTemplateProps) {
   return (
     <div className="PageTemplate">
       {mobileNavigation}
-      {leftPanel && <div className="PageTemplate__left-panel">{leftPanel}</div>}
       <main className="PageTemplate__body">
-        {filters}
-        <div className="row gap-20 pos-r">
-          <div className="PageTemplate__content">{children}</div>
-        </div>
+        <div className="PageTemplate__content">{children}</div>
       </main>
     </div>
   );

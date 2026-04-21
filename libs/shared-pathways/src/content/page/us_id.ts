@@ -22,9 +22,9 @@ const content: StateSpecificPageCopy = {
     summary:
       'Includes individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails. Our county jail population includes both beds paid for by the IDOC as well as beds not paid for by the IDOC. All people in work centers are grouped into a "WC" category.\n',
     sections: {
-      projectedCountOverTime: "Prison population over time",
-      countByLocation: "Prison population by facility",
-      personLevelDetail: "List of people in prison",
+      projectedCountOverTime: "Overview",
+      countByLocation: "Facility",
+      personLevelDetail: "People",
     },
     methodology:
       'Includes individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails. Our county jail population includes both beds paid for by the IDOC as well as beds not paid for by the IDOC. All people in work centers are grouped into a "WC" category.\n',
@@ -33,9 +33,9 @@ const content: StateSpecificPageCopy = {
     summary:
       "Includes all people on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant.",
     sections: {
-      projectedCountOverTime: "Supervision population over time",
-      countByLocation: "Supervision population by district",
-      countBySupervisionLevel: "Supervision population by supervision level",
+      projectedCountOverTime: "Overview",
+      countByLocation: "District",
+      countBySupervisionLevel: "Supervision Level",
     },
     methodology:
       "Includes all people on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant.",

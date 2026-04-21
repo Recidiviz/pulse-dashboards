@@ -32,10 +32,14 @@ type withPathwaysMetricHelperProps = {
 const MetricVizHydrator = styled(ModelHydrator)`
   ${typography.Sans14}
   width: 100%;
-  min-height: 40rem;
+  height: auto;
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: ${styles.insetShadow30};
+
+  .Hydrator__StatusWrapper {
+    min-height: 40rem;
+  }
 `;
 
 const withPathwaysMetricHelpers = <Props extends withPathwaysMetricHelperProps>(

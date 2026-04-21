@@ -17,46 +17,24 @@
 
 import { StateSpecificPageCopy } from "../types";
 
-const isPublicPathways = !!import.meta.env["VITE_PUBLIC_PATHWAYS_API_URL_BASE"];
-
 const content: StateSpecificPageCopy = {
   prison: {
     title: "Population Under Custody",
     summary:
       "This dashboard shows data on individuals who are under custody of New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly.",
     sections: {
-      countOverTime: isPublicPathways
-        ? "Overview"
-        : "Prison population over time",
-      countByLocation: isPublicPathways
-        ? "Facility"
-        : "Prison population by facility",
-      countByGender: isPublicPathways
-        ? "Gender Identity"
-        : "Prison population by gender identity",
-      countByAgeGroup: isPublicPathways
-        ? "Age Group"
-        : "Prison population by age group",
-      countByRace: isPublicPathways ? "Race" : "Prison population by race",
-      countBySex: isPublicPathways ? "Sex" : "Prison population by sex",
-      countByEthnicity: isPublicPathways
-        ? "Ethnicity"
-        : "Prison population by ethnic status",
-      personLevelDetail: isPublicPathways
-        ? "People"
-        : "List of people in prison",
-      countBySentenceLengthMin: isPublicPathways
-        ? "Min Sentence"
-        : "Prison population by min sentence",
-      countBySentenceLengthMax: isPublicPathways
-        ? "Max Sentence"
-        : "Prison population by max sentence",
-      countByChargeCountyCode: isPublicPathways
-        ? "Conviction County"
-        : "Prison population by conviction county",
-      countByOffenseType: isPublicPathways
-        ? "Offense Type"
-        : "Prison population by offense type",
+      countOverTime: "Overview",
+      countByLocation: "Facility",
+      countByGender: "Gender Identity",
+      countByAgeGroup: "Age Group",
+      countByRace: "Race",
+      countBySex: "Sex",
+      countByEthnicity: "Ethnicity",
+      personLevelDetail: "People",
+      countBySentenceLengthMin: "Min Sentence",
+      countBySentenceLengthMax: "Max Sentence",
+      countByChargeCountyCode: "Conviction County",
+      countByOffenseType: "Offense Type",
     },
     methodology:
       "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly. \n- For more reports, please see: https://doccs.ny.gov/research-and-reports \n- For questions, please contact NYS DOCCS. \n",
