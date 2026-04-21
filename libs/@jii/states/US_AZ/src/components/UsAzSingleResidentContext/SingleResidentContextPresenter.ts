@@ -37,6 +37,21 @@ const US_AZ_DATE_KEYS = [
  */
 export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
 
+/**
+ * Maps each normalized date ID to the resident_metadata field that holds
+ * the corresponding non-DPR (TIS) date.
+ */
+const TIS_METADATA_FIELD_BY_DATE_KEY = {
+  tprDate: "acisTprDate",
+  dtpDate: "acisDtpDate",
+  csbdDate: "csbdDateV2",
+  ercdDate: "ercdDateV2",
+  sedDate: "sedDate",
+  csedDate: "csedDate",
+  addDate: "addDate",
+  trToAddDate: "trToAddDate",
+} as const satisfies Record<UsAzDateField, keyof ResidentMetadata<"US_AZ">>;
+
 function parseDate(value: string | Date | undefined): Date | undefined {
   if (typeof value === "string") {
     return dateStringSchema.parse(value);
@@ -90,18 +105,15 @@ export class SingleResidentContextPresenter {
         let dateValue: Date | undefined;
         // SED is unaffected by DPR status
         if (key === "sedDate") {
-          dateValue = parseDate(this.metadata.sedDateRaw);
-          // all other dates come from fields whose names can be derived from the original key
-          // using string transformations that vary by key and DPR status
+          dateValue = parseDate(this.metadata.sedDate);
+          // DPR-active residents read from the standalone ingested DPR date fields.
         } else if (this.isDprActive) {
-          dateValue = parseDate(this.metadata[`dpr${capitalize(key)}Raw`]);
+          dateValue = parseDate(this.metadata[`dpr${capitalize(key)}`]);
         } else {
-          // these dates have a prefix we have to include
-          if (key === "tprDate" || key === "dtpDate") {
-            dateValue = parseDate(this.metadata[`acis${capitalize(key)}Raw`]);
-          } else {
-            dateValue = parseDate(this.metadata[`${key}Raw`]);
-          }
+          // Non-DPR case: read from the standalone ingested fields.
+          dateValue = parseDate(
+            this.metadata[TIS_METADATA_FIELD_BY_DATE_KEY[key]],
+          );
         }
         return [key, dateValue];
       }),

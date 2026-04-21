@@ -33,21 +33,23 @@ export const usAzResidentMetadataSchema = z.object({
   ercdOrAdd: nullishAsUndefined(z.string()),
   csbdOrTrToAdd: nullishAsUndefined(z.string()),
   lastUpdatedDate: nullishAsUndefined(dateStringSchema),
-  csbdDateRaw: nullishAsUndefined(z.string()),
-  csedDateRaw: nullishAsUndefined(z.string()),
-  ercdDateRaw: nullishAsUndefined(z.string()),
-  sedDateRaw: nullishAsUndefined(z.string()),
-  acisTprDateRaw: nullishAsUndefined(z.string()),
-  acisDtpDateRaw: nullishAsUndefined(z.string()),
-  trToAddDateRaw: nullishAsUndefined(z.string()),
-  addDateRaw: nullishAsUndefined(z.string()),
+  // Standalone ingested date fields (sourced from person_projected_date_sessions).
+  // These are the preferred fields for single-date consumers like the JII app.
+  // The V2 suffix on ercd/csbd avoids collision with the "combined" ercdDate/csbdDate
+  // fields above, which pack two mutually-exclusive dates into one column and are
+  // consumed by workflows.
+  ercdDateV2: nullishAsUndefined(z.string()),
+  csbdDateV2: nullishAsUndefined(z.string()),
+  addDate: nullishAsUndefined(z.string()),
+  trToAddDate: nullishAsUndefined(z.string()),
   isDprEligible: nullishAsUndefined(z.boolean()),
   hasAnyDprProgramCompleted: nullishAsUndefined(z.boolean()),
-  dprCsbdDateRaw: nullishAsUndefined(dateStringSchema),
-  dprCsedDateRaw: nullishAsUndefined(dateStringSchema),
-  dprErcdDateRaw: nullishAsUndefined(dateStringSchema),
-  dprTprDateRaw: nullishAsUndefined(dateStringSchema),
-  dprDtpDateRaw: nullishAsUndefined(dateStringSchema),
-  dprTrToAddDateRaw: nullishAsUndefined(dateStringSchema),
-  dprAddDateRaw: nullishAsUndefined(dateStringSchema),
+  // Standalone ingested DPR date fields (no V2 suffix needed — no name collision).
+  dprCsbdDate: nullishAsUndefined(dateStringSchema),
+  dprCsedDate: nullishAsUndefined(dateStringSchema),
+  dprErcdDate: nullishAsUndefined(dateStringSchema),
+  dprTprDate: nullishAsUndefined(dateStringSchema),
+  dprDtpDate: nullishAsUndefined(dateStringSchema),
+  dprTrToAddDate: nullishAsUndefined(dateStringSchema),
+  dprAddDate: nullishAsUndefined(dateStringSchema),
 });
