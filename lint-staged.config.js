@@ -47,7 +47,7 @@ module.exports = {
   "**/*.{js,jsx,mjs}": [lintCommand, formatCommand],
   "**/*.{!ts,tsx,js,jsx,mjs,mts}": [formatCommand],
   "tsconfig.base.json": [() => "nx lint-import-paths"],
-  "**/*.{yaml,yml}": [lintCommand],
+  "**/*.{yaml,yml}": [lintCommand, formatCommand],
   "**/project.json": [
     (files) => `nx affected -t projectTags --files=${files.join(",")}`,
   ],

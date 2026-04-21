@@ -10,6 +10,11 @@ services:
       - 6508:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "$${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 1s
+      retries: 5
   test-db:
     image: postgres:17
     environment:
@@ -20,6 +25,11 @@ services:
       - 6509:5432
     volumes:
       - postgres_data:/var/lib/postgresql/test-data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "$${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 1s
+      retries: 5
   offline-db:
     image: postgres:17
     environment:
@@ -30,6 +40,11 @@ services:
       - 6510:5432
     volumes:
       - postgres_data:/var/lib/postgresql/offline-data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "$${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 1s
+      retries: 5
 
 volumes:
   postgres_data:
