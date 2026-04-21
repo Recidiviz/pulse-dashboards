@@ -6,8 +6,12 @@ import pytest
 from langchain_core.messages import AIMessage as LCAIMessage
 from langchain_core.messages import HumanMessage as LCHumanMessage
 from langchain_core.messages import SystemMessage
+from langchain_openai.chat_models.base import (
+    OpenAIRefusalError as LangChainRefusalError,
+)
 from langgraph.graph import END
 from langgraph.types import Command
+from openai import ContentFilterFinishReasonError
 
 from app.core.data_config.assessment_configs.assessment_config import (
     IntakeBotPromptsConfig,
@@ -487,6 +491,191 @@ class TestEvaluateSection:
 
         with pytest.raises(ValueError, match="Empty current section"):
             await initialized_graph._evaluate_section(state)
+
+
+class TestCallModelWithRefusalRetry:
+    @pytest.mark.asyncio
+    async def test_succeeds_on_first_attempt(self, initialized_graph):
+        """Returns immediately when the first call succeeds."""
+        expected = LCAIMessage("Hello!")
+        initialized_graph.call_model = AsyncMock(return_value=expected)
+
+        result = await initialized_graph._call_model_with_refusal_retry([])
+
+        assert result == expected
+        assert initialized_graph.call_model.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_retries_once_on_refusal_then_succeeds(self, initialized_graph):
+        """First call raises LangChainRefusalError, second call succeeds."""
+        expected = LCAIMessage("Retry succeeded!")
+        initialized_graph.call_model = AsyncMock(
+            side_effect=[
+                LangChainRefusalError("refused"),
+                expected,
+            ]
+        )
+
+        result = await initialized_graph._call_model_with_refusal_retry([])
+
+        assert result == expected
+        assert initialized_graph.call_model.call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_raises_after_two_refusals(self, initialized_graph):
+        """Both attempts raise — exception propagates to caller."""
+        initialized_graph.call_model = AsyncMock(
+            side_effect=LangChainRefusalError("refused every time")
+        )
+
+        with pytest.raises(LangChainRefusalError):
+            await initialized_graph._call_model_with_refusal_retry([])
+
+        assert initialized_graph.call_model.call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_non_refusal_error_is_not_retried(self, initialized_graph):
+        """Non-refusal exceptions propagate immediately without retry."""
+        initialized_graph.call_model = AsyncMock(
+            side_effect=ValueError("unrelated error")
+        )
+
+        with pytest.raises(ValueError, match="unrelated error"):
+            await initialized_graph._call_model_with_refusal_retry([])
+
+        assert initialized_graph.call_model.call_count == 1
+
+
+class TestEvaluateSectionRefusal:
+    @pytest.mark.asyncio
+    async def test_refusal_sends_fallback_waits_for_user_and_loops(
+        self, initialized_graph, mock_wait_for_user_response
+    ):
+        """LangChainRefusalError (raised by structured output calls) sends a fallback, waits for user, then loops."""
+        initialized_graph.call_model = AsyncMock(
+            side_effect=LangChainRefusalError("I'm sorry, but I can't share that.")
+        )
+        mock_fallback_message = _make_mock_message(
+            content="I'm not able to respond to that."
+        )
+        initialized_graph.db_manager.store_message = AsyncMock(
+            return_value=mock_fallback_message
+        )
+        mock_wait_for_user_response.return_value = "Okay, let's move on."
+
+        state = _make_state()
+        result = await initialized_graph._evaluate_section(state)
+
+        # Generic fallback is stored and sent to client
+        initialized_graph.db_manager.store_message.assert_called_once()
+        initialized_graph.send_message.assert_called_once()
+
+        # User was asked to respond
+        mock_wait_for_user_response.assert_called_once()
+
+        # Graph loops back to re-evaluate the section
+        assert isinstance(result, Command)
+        assert result.goto == "intake_evaluate_section"
+
+        # User's response appended to state messages
+        human_messages = [
+            m for m in result.update["messages"] if isinstance(m, LCHumanMessage)
+        ]
+        assert any(m.content == "Okay, let's move on." for m in human_messages)
+
+    @pytest.mark.asyncio
+    async def test_refusal_timeout_ends_conversation(
+        self, initialized_graph, mock_wait_for_user_response
+    ):
+        """If user times out after a refusal fallback, conversation ends."""
+        initialized_graph.call_model = AsyncMock(
+            side_effect=LangChainRefusalError("I'm sorry, but I can't share that.")
+        )
+        mock_fallback_message = _make_mock_message(
+            content="I'm not able to respond to that."
+        )
+        initialized_graph.db_manager.store_message = AsyncMock(
+            return_value=mock_fallback_message
+        )
+        mock_wait_for_user_response.return_value = None  # timeout
+
+        state = _make_state()
+        result = await initialized_graph._evaluate_section(state)
+
+        assert isinstance(result, Command)
+        assert result.goto == END
+
+    @pytest.mark.asyncio
+    async def test_langchain_refusal_does_not_reraise(self, initialized_graph):
+        """LangChainRefusalError (structured output path) must not propagate out of _evaluate_section."""
+        initialized_graph.call_model = AsyncMock(
+            side_effect=LangChainRefusalError("I'm sorry, but I can't share that.")
+        )
+        mock_fallback_message = _make_mock_message(content="fallback")
+        initialized_graph.db_manager.store_message = AsyncMock(
+            return_value=mock_fallback_message
+        )
+        initialized_graph.wait_for_user_response = AsyncMock(return_value="ok")
+
+        state = _make_state()
+        # Should not raise
+        await initialized_graph._evaluate_section(state)
+
+    @pytest.mark.asyncio
+    async def test_openai_refusal_does_not_reraise(self, initialized_graph):
+        """ContentFilterFinishReasonError (raw openai path) must not propagate out of _evaluate_section."""
+        initialized_graph.call_model = AsyncMock(
+            side_effect=ContentFilterFinishReasonError()
+        )
+        mock_fallback_message = _make_mock_message(content="fallback")
+        initialized_graph.db_manager.store_message = AsyncMock(
+            return_value=mock_fallback_message
+        )
+        initialized_graph.wait_for_user_response = AsyncMock(return_value="ok")
+
+        state = _make_state()
+        # Should not raise
+        await initialized_graph._evaluate_section(state)
+
+
+class TestOpeningRemarksRefusal:
+    @pytest.mark.asyncio
+    async def test_refusal_sends_fallback_and_returns_state(self, initialized_graph):
+        """LangChainRefusalError in _opening_remarks sends a fallback and continues."""
+        initialized_graph.db_manager.get_section_titles = AsyncMock(
+            return_value=["Education / Employment", "Housing"]
+        )
+        initialized_graph.call_model = AsyncMock(
+            side_effect=LangChainRefusalError("I'm sorry, but I can't share that.")
+        )
+        initialized_graph.save_and_send_AI_message = AsyncMock()
+
+        state = _make_state()
+        result = await initialized_graph._opening_remarks(state)
+
+        # Generic fallback is sent (not the raw exception string which may include JSON)
+        initialized_graph.save_and_send_AI_message.assert_called_once()
+        sent_text = initialized_graph.save_and_send_AI_message.call_args[0][0]
+        assert (
+            "not able to respond" in sent_text.lower() or "sorry" in sent_text.lower()
+        )
+
+        # State is returned so the graph can continue
+        assert result is not None
+        assert "messages" in result
+
+    @pytest.mark.asyncio
+    async def test_refusal_does_not_reraise(self, initialized_graph):
+        """LangChainRefusalError must not propagate out of _opening_remarks."""
+        initialized_graph.db_manager.get_section_titles = AsyncMock(return_value=[])
+        initialized_graph.call_model = AsyncMock(
+            side_effect=LangChainRefusalError("I'm sorry, but I can't share that.")
+        )
+        initialized_graph.save_and_send_AI_message = AsyncMock()
+
+        state = _make_state()
+        # Should not raise
+        await initialized_graph._opening_remarks(state)
 
 
 class TestOpeningRemarks:

@@ -5,9 +5,13 @@ from typing import Any, Callable, Coroutine, Dict, Optional
 import structlog
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.messages.human import HumanMessage
+from langchain_openai.chat_models.base import (
+    OpenAIRefusalError as LangChainRefusalError,
+)
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 from langgraph.types import Command
+from openai import ContentFilterFinishReasonError as OpenAIRefusalError
 
 from app.core.config import tracer
 from app.core.data_config.assessment_configs.assessment_config import (
@@ -44,6 +48,12 @@ from app.utils.intake.utils import (
 )
 from app.utils.langsmith_utils import create_langsmith_metadata, create_langsmith_tags
 from app.utils.llm_retry_config import INTAKE_ERRORS_TO_RETRY_ON
+
+_REFUSAL_ERRORS = (OpenAIRefusalError, LangChainRefusalError)
+_REFUSAL_FALLBACK = (
+    "I'm not able to respond to that. Let's move on — "
+    "is there anything else you'd like to share about this topic?"
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -267,7 +277,7 @@ class IntakeConversationGraph:
         try:
             client_pseudo_id = self.session.client_pseudo_id
 
-            response = await self.call_model(state["messages"])
+            response = await self._call_model_with_refusal_retry(state["messages"])
             ai_message_str = response if isinstance(response, str) else response.content
             state["messages"].append(AIMessage(ai_message_str))
             message = await self.db_manager.store_message(
@@ -287,6 +297,14 @@ class IntakeConversationGraph:
 
             return state
 
+        except _REFUSAL_ERRORS as e:
+            logger.warning(
+                "OpenAI refused to respond in _opening_remarks, sending fallback message",
+                client_pseudo_id=self.session.client_pseudo_id,
+                error=str(e),
+            )
+            await self.save_and_send_AI_message(_REFUSAL_FALLBACK)
+            return state
         except Exception as e:
             traceback.print_exc()
             error_info: ErrorInfo = {
@@ -332,7 +350,7 @@ class IntakeConversationGraph:
 
             # Evaluate section completion
             logger.info("🔄 EVALUATING SECTION: IsSectionComplete")
-            section_response = await self.call_model(
+            section_response = await self._call_model_with_refusal_retry(
                 state["messages"] + [section_prompt], IsSectionComplete
             )
 
@@ -377,6 +395,38 @@ class IntakeConversationGraph:
             state["messages"].append(HumanMessage(client_response))
 
             # Loop back to this same node to check again with the new user response
+            return Command(update=state, goto="intake_evaluate_section")
+
+        except _REFUSAL_ERRORS as e:
+            logger.warning(
+                "OpenAI refused to respond in _evaluate_section, sending fallback message",
+                client_pseudo_id=self.session.client_pseudo_id,
+                section=current_section_title,
+                error=str(e),
+            )
+            fallback_message = await self.db_manager.store_message(
+                intake_id=self.intake_id,
+                from_role=IntakeMessageRole.CASEWORKER,
+                content=_REFUSAL_FALLBACK,
+            )
+            if fallback_message:
+                await self.send_message(
+                    self.session.client_pseudo_id,
+                    AIMessageEvent(
+                        content=IntakeMessageResponse(**fallback_message.model_dump())
+                    ),
+                )
+                state["messages"].append(AIMessage(_REFUSAL_FALLBACK))
+
+                client_response = await self.wait_for_user_response(
+                    self.session.client_pseudo_id,
+                    fallback_message,
+                )
+                if not client_response:
+                    return Command(goto=END)
+
+                state["messages"].append(HumanMessage(client_response))
+
             return Command(update=state, goto="intake_evaluate_section")
 
         except Exception as e:
@@ -550,6 +600,25 @@ class IntakeConversationGraph:
         await self.send_message(self.session.client_pseudo_id, section_change_event)
 
         return state
+
+    async def _call_model_with_refusal_retry(
+        self,
+        messages: list[AnyMessage],
+        output_type: Optional[Any] = None,
+    ):
+        """Call the model, retrying once on a refusal before raising."""
+        for attempt in range(2):
+            try:
+                return await self.call_model(messages, output_type)
+            except _REFUSAL_ERRORS as e:
+                if attempt == 0:
+                    logger.warning(
+                        "OpenAI refused, retrying once",
+                        client_pseudo_id=self.session.client_pseudo_id,
+                        error=str(e),
+                    )
+                else:
+                    raise
 
     async def save_and_send_AI_message(self, content: str):
         message = await self.db_manager.store_message(
