@@ -15,8 +15,26 @@
         "cwd": "{projectRoot}"
       }
     },
+    "sync-cpa-intake-videos": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/libs/@reentry/media/src/videos/**/*"],
+      "outputs": [
+        "{projectRoot}/public/videos/*.mp4",
+        "{projectRoot}/public/videos/*.vtt"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "commands": [
+          "mkdir -p apps/jii/public/videos",
+          "cp -f libs/@reentry/media/src/videos/*.mp4 libs/@reentry/media/src/videos/*.vtt apps/jii/public/videos/"
+        ],
+        "parallel": false
+      }
+    },
     "dev-spa": {
       "executor": "nx:run-commands",
+      "dependsOn": ["sync-cpa-intake-videos"],
       "options": {
         "commands": ["vite dev"],
         "cwd": "{projectRoot}"
@@ -44,7 +62,8 @@
         {
           "projects": ["@jii/prisma"],
           "target": "prisma-generate"
-        }
+        },
+        "sync-cpa-intake-videos"
       ],
       "cache": true,
       "options": {
@@ -112,7 +131,10 @@
     },
     "offline": {
       "executor": "nx:run-commands",
-      "dependsOn": [{ "projects": ["@jii/server"], "target": "offline" }],
+      "dependsOn": [
+        { "projects": ["@jii/server"], "target": "offline" },
+        "sync-cpa-intake-videos"
+      ],
       "options": {
         "commands": ["vite dev"],
         "cwd": "{projectRoot}"
@@ -120,7 +142,10 @@
     },
     "offline-e2e": {
       "executor": "nx:run-commands",
-      "dependsOn": [{ "projects": ["@jii/server"], "target": "offline-e2e" }],
+      "dependsOn": [
+        { "projects": ["@jii/server"], "target": "offline-e2e" },
+        "sync-cpa-intake-videos"
+      ],
       "options": {
         "commands": ["vite dev"],
         "cwd": "{projectRoot}",

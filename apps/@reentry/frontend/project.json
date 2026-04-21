@@ -12,6 +12,23 @@
         "cwd": "{projectRoot}"
       }
     },
+    "sync-cpa-intake-videos": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/libs/@reentry/media/src/videos/**/*"],
+      "outputs": [
+        "{projectRoot}/public/videos/*.mp4",
+        "{projectRoot}/public/videos/*.vtt"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "commands": [
+          "mkdir -p apps/@reentry/frontend/public/videos",
+          "cp -f libs/@reentry/media/src/videos/*.mp4 libs/@reentry/media/src/videos/*.vtt apps/@reentry/frontend/public/videos/"
+        ],
+        "parallel": false
+      }
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
@@ -21,7 +38,7 @@
     },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-env-files"],
+      "dependsOn": ["load-env-files", "sync-cpa-intake-videos"],
       "options": {
         "command": "next dev",
         "cwd": "{projectRoot}"
@@ -29,6 +46,7 @@
     },
     "dev:with-staging-proxy": {
       "executor": "nx:run-commands",
+      "dependsOn": ["sync-cpa-intake-videos"],
       "options": {
         "commands": ["node proxy-staging.js", "next dev"],
         "parallel": true,
@@ -44,7 +62,11 @@
     "build": {
       "executor": "@nx/next:build",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": ["load-env-files", "^prisma-generate"],
+      "dependsOn": [
+        "load-env-files",
+        "^prisma-generate",
+        "sync-cpa-intake-videos"
+      ],
       "options": {
         "outputPath": "dist/apps/@reentry/frontend",
         "cwd": "{workspaceRoot}"

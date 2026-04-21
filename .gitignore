@@ -121,6 +121,12 @@ logs/*
 # @reentry backend generated output configs
 apps/@reentry/backend/app/core/data_config/output_configs/*.yaml
 
+# Synced CPA intake videos (canonical source is libs/@reentry/media, synced by the `sync-cpa-intake-videos` nx target)
+apps/@reentry/frontend/public/videos/*.mp4
+apps/@reentry/frontend/public/videos/*.vtt
+apps/jii/public/videos/*.mp4
+apps/jii/public/videos/*.vtt
+
 # Claude
 .claude/settings.local.json
 .claude/rules
