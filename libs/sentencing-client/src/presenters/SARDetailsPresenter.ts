@@ -56,6 +56,7 @@ import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSumm
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
 import {
+  formatDisplayDate,
   formatJudgeName,
   formatLongDate,
   roundToOneDecimal,
@@ -340,17 +341,13 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /** Formatted birth date for display */
-  get formattedBirthDate(): string | undefined {
-    const birthDate = this.SARData?.client?.birthDate;
-    return birthDate ? moment(birthDate).format("MM/DD/YYYY") : undefined;
+  get formattedBirthDate(): string {
+    return formatDisplayDate(this.SARData?.client?.birthDate);
   }
 
   /** Formatted date requested for display */
-  get formattedDateRequested(): string | undefined {
-    const dateRequested = this.SARData?.dateRequested;
-    return dateRequested
-      ? moment(dateRequested).format("MM/DD/YYYY")
-      : undefined;
+  get formattedDateRequested(): string {
+    return formatDisplayDate(this.SARData?.dateRequested);
   }
 
   /** Formatted gender for display */
@@ -711,9 +708,9 @@ export class SARDetailsPresenter implements Hydratable {
           prosecutingAttorney: c.prosecutingAttorney ?? null,
           defenseAttorney: c.defenseAttorney ?? null,
           pleaAgreement: c.pleaAgreement ?? null,
-          pleaDate: c.pleaDate ? moment(c.pleaDate).toDate() : null,
+          pleaDate: c.pleaDate ? moment.utc(c.pleaDate).toDate() : null,
           sentencingDate: c.sentencingDate
-            ? moment(c.sentencingDate).toDate()
+            ? moment.utc(c.sentencingDate).toDate()
             : null,
         })),
         status: this.statusForUpdate,

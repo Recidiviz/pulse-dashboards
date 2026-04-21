@@ -59,7 +59,7 @@ export const SentencingAssessmentReport: React.FC<
   if (!sarData) return null;
 
   const { dateRequested, updatedAt, staff } = sarData;
-  const charges = sarData.charges;
+  const charges = presenter.charges;
   const { needsDisplayItems, factorsDisplayItems } = presenter;
   const insightData = presenter.insightData;
   const insightDescriptionContext = presenter.emptyStateDescriptionContext;

@@ -36,7 +36,7 @@ export const ReportRequestedOf: React.FC<ReportRequestedOfProps> = ({
 }) => (
   <SentencingAssessmentReportSection
     title="Requested Of"
-    note={`Requested ${dateRequested ? moment(dateRequested).format("MM/DD/YY") : "—"} | Completed ${updatedAt ? moment(updatedAt).format("MM/DD/YY") : "—"}`}
+    note={`Requested ${dateRequested ? moment(dateRequested).utc().format("MM/DD/YY") : "—"} | Completed ${updatedAt ? moment(updatedAt).utc().format("MM/DD/YY") : "—"}`}
   >
     <Styled.RowFlexContainer gap={SECTION_COLUMN_GAP}>
       <Styled.ColumnFlexContainer>

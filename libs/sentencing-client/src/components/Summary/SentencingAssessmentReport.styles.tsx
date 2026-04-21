@@ -72,6 +72,7 @@ export const DOCHeader = styled(HeaderContainers)`
 export const DateTimeHeader = styled(HeaderContainers)`
   font-weight: 500;
   letter-spacing: -0.115px;
+  text-align: right;
 `;
 
 export const Footer = styled.div`

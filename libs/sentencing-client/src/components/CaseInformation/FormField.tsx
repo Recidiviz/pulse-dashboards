@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
 import React, { useState } from "react";
 
+import { localDateFromUtcDate, localDateToUtcIsoDate } from "../../utils/utils";
 import { SharedDatePicker } from "../shared/SharedDatePicker";
 import * as Styled from "./FormField.styles";
 
@@ -44,20 +44,15 @@ export const FormField: React.FC<FormFieldProps> = ({
     onChange(e.target.value);
   };
 
-  // Handle date picker
   const [pickerDate, setPickerDate] = useState<Date | null>(
-    value && type === "date" ? new Date(value as string) : null,
+    typeof value === "string" && type === "date"
+      ? localDateFromUtcDate(value)
+      : null,
   );
 
   const handleDateChange = (date: Date | null) => {
     setPickerDate(date);
-    if (date) {
-      // Format as YYYY-MM-DD
-      const formatted = moment(date).utc().format("YYYY-MM-DD");
-      onChange(formatted);
-    } else {
-      onChange("");
-    }
+    onChange(date ? localDateToUtcIsoDate(date) : "");
   };
 
   const inputElement =

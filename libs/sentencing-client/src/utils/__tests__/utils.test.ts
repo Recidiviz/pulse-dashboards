@@ -24,6 +24,8 @@ import {
   formatPercentage,
   formatPossessiveName,
   formatWithArticle,
+  localDateFromUtcDate,
+  localDateToUtcIsoDate,
   pluralizeDuplicates,
   titleCase,
   trimExtraSpaces,
@@ -174,4 +176,34 @@ test("formatPercentage", () => {
 
   // Negative numbers
   expect(formatPercentage(-5)).toBe("-5%");
+});
+
+test("localDateFromUtcDate returns a local Date with the same calendar day as the UTC date", () => {
+  // UTC midnight for 2025-11-06 — would be Nov 5 in US timezones without the conversion
+  const result = localDateFromUtcDate("2025-11-06");
+  expect(result.getFullYear()).toBe(2025);
+  expect(result.getMonth()).toBe(10); // 0-indexed
+  expect(result.getDate()).toBe(6);
+
+  // Also accepts a Date object
+  const dateObj = new Date("2025-01-15T00:00:00.000Z");
+  const result2 = localDateFromUtcDate(dateObj);
+  expect(result2.getFullYear()).toBe(2025);
+  expect(result2.getMonth()).toBe(0);
+  expect(result2.getDate()).toBe(15);
+});
+
+test("localDateToUtcIsoDate converts a local picker Date to a UTC YYYY-MM-DD string", () => {
+  // Local date Nov 6 → stored as "2025-11-06" (UTC midnight)
+  const local = new Date(2025, 10, 6); // Nov 6 local
+  expect(localDateToUtcIsoDate(local)).toBe("2025-11-06");
+
+  const local2 = new Date(2025, 0, 15); // Jan 15 local
+  expect(localDateToUtcIsoDate(local2)).toBe("2025-01-15");
+});
+
+test("localDateFromUtcDate and localDateToUtcIsoDate round-trip correctly", () => {
+  const original = "2025-06-30";
+  const localDate = localDateFromUtcDate(original);
+  expect(localDateToUtcIsoDate(localDate)).toBe(original);
 });

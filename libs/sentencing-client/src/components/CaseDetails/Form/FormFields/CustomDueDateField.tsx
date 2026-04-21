@@ -20,6 +20,7 @@ import { useState } from "react";
 
 import { Icon, IconSVG } from "~design-system";
 
+import { localDateFromUtcDate } from "../../../../utils/utils";
 import { SharedDatePicker } from "../../../shared/SharedDatePicker";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
@@ -31,17 +32,8 @@ function CustomDueDateField({ isRequired }: FormFieldProps) {
   const { PSIStore } = useStore();
   const caseAttributes = PSIStore.caseAttributes;
 
-  // The backend and data imports use UTC-midnight for date-only values.
-  // To display the same calendar day in the local DatePicker we
-  // construct a local Date whose Y/M/D match the stored UTC date's
-  // UTC components. This way a stored UTC midnight for 2025-11-06
-  // displays as Nov 6 in the calendar instead of Nov 5 in US zones.
   const initialPickerDate: Date | undefined = caseAttributes.dueDate
-    ? new Date(
-        caseAttributes.dueDate.getUTCFullYear(),
-        caseAttributes.dueDate.getUTCMonth(),
-        caseAttributes.dueDate.getUTCDate(),
-      )
+    ? localDateFromUtcDate(caseAttributes.dueDate)
     : undefined;
 
   const [pickerDate, setPickerDate] = useState<Date | null | undefined>(
@@ -50,26 +42,12 @@ function CustomDueDateField({ isRequired }: FormFieldProps) {
 
   function updateCustomDueDate(date: Date | null | undefined) {
     if (date) {
-      // Keep the visible picker value as the local Date the user chose.
       setPickerDate(date);
-
-      // Interpret the calendar Y/M/D the user selected (local values)
-      // as a UTC calendar day and construct a UTC-midnight instant for
-      // storage. This matches upstream imports which use UTC midnight.
       const utcNormalized = new Date(
-        Date.UTC(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-          0,
-          0,
-          0,
-          0,
-        ),
+        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
       );
       form.updateForm(CUSTOM_DUE_DATE_KEY, utcNormalized);
     } else {
-      // Reset to the case's stored dueDate (display and form).
       setPickerDate(initialPickerDate);
       form.updateForm(CUSTOM_DUE_DATE_KEY, caseAttributes.dueDate);
     }

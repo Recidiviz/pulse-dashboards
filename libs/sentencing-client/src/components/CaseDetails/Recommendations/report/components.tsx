@@ -253,7 +253,7 @@ export function ReportHeader() {
   return (
     <Styled.Header>
       <div>Report Attachment</div>
-      <div>{moment().utc().format("MMMM DD, YYYY")}</div>
+      <div>{moment().format("MMMM DD, YYYY")}</div>
     </Styled.Header>
   );
 }

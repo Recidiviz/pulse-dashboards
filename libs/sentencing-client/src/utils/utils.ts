@@ -358,10 +358,28 @@ export const formatMonthYear = (date: Date | string): string =>
     year: "numeric",
   });
 
+/**
+ * Converts a UTC-midnight Date/string to a local Date with matching Y/M/D,
+ * so a date picker (which renders in local time) displays the correct calendar day.
+ */
+export const localDateFromUtcDate = (d: Date | string): Date => {
+  const utc = new Date(d);
+  return new Date(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate());
+};
+
+/**
+ * Converts a local picker Date to a YYYY-MM-DD string interpreted as UTC midnight,
+ * matching how date-only values are stored on the backend.
+ */
+export const localDateToUtcIsoDate = (d: Date): string =>
+  new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+    .toISOString()
+    .split("T")[0];
+
 /** Format a date for display as MM/DD/YYYY, returning a dash for empty values */
 export const formatDisplayDate = (
   date: string | Date | null | undefined,
 ): string => {
   if (!date) return "—";
-  return moment(date).format("MM/DD/YYYY");
+  return moment(date).utc().format("MM/DD/YYYY");
 };

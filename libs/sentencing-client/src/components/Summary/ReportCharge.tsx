@@ -17,7 +17,7 @@
 
 import React from "react";
 
-import { Charge } from "../../datastores/types";
+import { FormCharge } from "../../datastores/types";
 import {
   formatDisplayDate,
   formatInlineClassification,
@@ -27,7 +27,7 @@ import { FIELD_ROW_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 interface ReportChargeProps {
-  charge: Charge;
+  charge: FormCharge;
   index: number;
 }
 
