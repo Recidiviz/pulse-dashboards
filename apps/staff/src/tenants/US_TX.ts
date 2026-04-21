@@ -159,6 +159,7 @@ const US_TX_CONFIG = {
           },
           {
             value: "usTxVirtualOrOfficeContact",
+            shortLabel: "Virtual or Addnl. Office Contact",
             label: "Virtual or Additional Office Contact",
           },
           {
@@ -232,10 +233,14 @@ const US_TX_CONFIG = {
             value: "Day/district resource center",
           },
           {
-            value: "Terminally ill / Physically handicapped",
+            value: "Terminally ill / physically handicapped",
+            shortLabel: "Term. ill / Phys. handicapped",
+            label: "Terminally ill / Physically handicapped",
           },
           {
             value: "Medically recommended intensive supervision",
+            shortLabel: "Medically rec'd intensive supv.",
+            label: "Medically recommended intensive supervision",
           },
           {
             value: "Non-reporting",
