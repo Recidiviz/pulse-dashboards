@@ -30,6 +30,7 @@ import styles from "./styles/PlanContent.module.css";
 
 interface PlanContentProps {
   isResourceBankLoading: boolean;
+  isErrorResources: boolean;
   planDetail: components["schemas"]["PlanResponseGet"];
   removeResource: (sectionTitle: string, resourceId: string) => void;
   sections: ResourceSection[];
@@ -39,6 +40,7 @@ type PendingRemoval = { id: string; name: string; sectionTitle: string };
 
 const PlanContent = ({
   isResourceBankLoading,
+  isErrorResources,
   planDetail,
   removeResource,
   sections,
@@ -64,8 +66,6 @@ const PlanContent = ({
     `${clientFullName}_action_plan.pdf`,
   );
 
-  if (isResourceBankLoading) return null;
-
   return (
     <div className={styles["container"]}>
       <div className={styles["inner"]}>
@@ -87,6 +87,8 @@ const PlanContent = ({
               setPendingRemoval({ id, name, sectionTitle })
             }
             allResources={sections}
+            isLoadingResources={isResourceBankLoading}
+            isErrorResources={isErrorResources}
           />
         </div>
       </div>

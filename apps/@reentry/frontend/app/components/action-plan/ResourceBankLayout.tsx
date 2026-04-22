@@ -18,13 +18,39 @@
 "use client";
 
 import PlanContent from "~@reentry/frontend/components/action-plan/PlanContent";
+import {
+  PlanContentSkeleton,
+  PlanErrorContent,
+  SidePanelSkeleton,
+} from "~@reentry/frontend/components/action-plan/PlanContentSkeleton";
 import ResourceBankSidePanel from "~@reentry/frontend/components/action-plan/ResourceBankSidePanel";
-import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import { useMockResourceBankPlan } from "~@reentry/frontend/hooks/useMockRessourceAPICall";
 import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
 
 import { CATEGORY_SUBCATEGORY_MAP } from "./resource-bank/categorySubcategoryMap";
 import styles from "./styles/ResourceBankLayout.module.css";
+
+const LoadingState = () => (
+  <div className={styles["container"]}>
+    <div className={styles["sidebar"]}>
+      <SidePanelSkeleton />
+    </div>
+    <div className={styles["content"]}>
+      <PlanContentSkeleton />
+    </div>
+  </div>
+);
+
+const ErrorState = () => (
+  <div className={styles["container"]}>
+    <div className={styles["sidebar"]}>
+      <SidePanelSkeleton />
+    </div>
+    <div className={styles["content"]}>
+      <PlanErrorContent />
+    </div>
+  </div>
+);
 
 interface ResourceBankLayoutProps {
   planId: string;
@@ -56,19 +82,19 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
   };
 
   if (isLoading) return <LoadingState />;
-  if (isError || !planDetail || didResourceBankError) return null;
 
   const resourceSearchPanelProps = {
     addResource,
     categorySubcategoryMap: CATEGORY_SUBCATEGORY_MAP,
     sectionTitles: sections.map((item) => ({ title: item.title })),
   };
+  if (isError || !planDetail) return <ErrorState />;
 
   return (
     <div className={styles["container"]}>
       <div className={styles["sidebar"]}>
         <ResourceBankSidePanel
-          clientRecord={planDetail?.client_record}
+          clientRecord={planDetail.client_record}
           onAddressSave={handleAddressSave}
           searchPanelProps={resourceSearchPanelProps}
         />
@@ -76,6 +102,7 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
       <div className={styles["content"]}>
         <PlanContent
           isResourceBankLoading={isResourceBankLoading}
+          isErrorResources={didResourceBankError}
           planDetail={planDetail}
           removeResource={removeResource}
           sections={sections}

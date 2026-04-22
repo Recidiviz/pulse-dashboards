@@ -15,38 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { mockResourceBankPlan } from "../../tests/mocks/mockPlan";
 import { mockResourceBank } from "../../tests/mocks/mockResourceBank";
 
-// Toggle these to test loading/error states during development.
-const MOCK_IS_LOADING = false;
 const MOCK_IS_ERROR = false;
 
 export const useMockResourceBankPlan = (planId: string) => {
-  // useState keeps isLoading/isError easy to toggle dynamically if needed.
-  const [isLoading] = useState(MOCK_IS_LOADING);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError] = useState(MOCK_IS_ERROR);
   console.log(`${planId} replaced by mock data`);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 5000);
+    return () => clearTimeout(t);
+  }, []);
+
   return {
     data: isLoading || isError ? null : mockResourceBankPlan,
-    // In a real API call, you can have data and loading, when re-fetching.
-    // here, for simplicity, we remove data when loading to view loading state easily
     isLoading,
     isError,
   };
 };
 
 export const useMockRessourceAPICall = () => {
-  // useState keeps isLoading/isError easy to toggle dynamically if needed.
-  const [isLoading] = useState(MOCK_IS_LOADING);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError] = useState(MOCK_IS_ERROR);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 10000);
+    return () => clearTimeout(t);
+  }, []);
 
   return {
     data: isLoading || isError ? null : mockResourceBank,
-    // In a real API call, you can have data and loading, when re-fetching.
-    // here, for simplicity, we remove data when loading to view loading state easily
     isLoading,
     isError,
   };

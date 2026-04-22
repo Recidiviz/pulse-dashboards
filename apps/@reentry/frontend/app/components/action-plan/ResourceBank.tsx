@@ -18,6 +18,8 @@
 import type { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
 
 import ResourceBankEmptyState from "./ResourceBankEmptyState";
+import ResourceBankErrorState from "./ResourceBankErrorState";
+import { ResourceBankTilesSkeleton } from "./ResourceBankSkeleton";
 import ResourceBankTile from "./ResourceBankTile";
 import styles from "./styles/ResourceBank.module.css";
 
@@ -26,40 +28,17 @@ type ResourceBankProps = {
   allResources: { title: string; resources: ResourceWithMeta[] }[];
   clientFirstName: string;
   onRemove: (id: string, name: string, sectionTitle: string) => void;
+  isLoadingResources?: boolean;
+  isErrorResources?: boolean;
 };
-
-const SkeletonTile = () => (
-  <div className={styles["skeletonTile"]}>
-    <div
-      className={`${styles["skeletonLine"]} ${styles["skeletonLineLong"]}`}
-    />
-    <div
-      className={`${styles["skeletonLine"]} ${styles["skeletonLineMedium"]}`}
-    />
-    <div
-      className={`${styles["skeletonLine"]} ${styles["skeletonLineShort"]}`}
-    />
-  </div>
-);
-
-export const ResourceBankSectionSkeleton = () => (
-  <div className={styles["section"]}>
-    <div
-      className={`${styles["skeletonLine"]} ${styles["skeletonLineLong"]} ${styles["skeletonTitle"]}`}
-    />
-    <div className={styles["tileList"]}>
-      <SkeletonTile />
-      <SkeletonTile />
-      <SkeletonTile />
-    </div>
-  </div>
-);
 
 const ResourceBank = ({
   section,
   allResources,
   clientFirstName,
   onRemove,
+  isLoadingResources,
+  isErrorResources,
 }: ResourceBankProps) => {
   const resources = allResources.find((ra) => ra.title === section)?.resources;
   return (
@@ -69,18 +48,21 @@ const ResourceBank = ({
         <span className={styles["printHidden"]}> to explore</span>
       </div>
       <div className={styles["tileList"]}>
-        {!resources || resources.length === 0 ? (
-          <ResourceBankEmptyState />
-        ) : (
-          resources.map((resource) => (
+        {isLoadingResources && <ResourceBankTilesSkeleton />}
+        {!isLoadingResources && isErrorResources && <ResourceBankErrorState />}
+        {!isLoadingResources &&
+          !isErrorResources &&
+          (!resources || resources.length === 0) && <ResourceBankEmptyState />}
+        {!isLoadingResources &&
+          !isErrorResources &&
+          resources?.map((resource) => (
             <ResourceBankTile
               key={resource.id}
               resource={resource}
               clientFirstName={clientFirstName}
               onRemove={(id, name) => onRemove(id, name, section)}
             />
-          ))
-        )}
+          ))}
       </div>
     </div>
   );

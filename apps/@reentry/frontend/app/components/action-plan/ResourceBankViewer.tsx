@@ -52,6 +52,8 @@ interface ResourceBankViewerProps {
   clientName?: components["schemas"]["FullNameModel"] | null;
   allResources?: ResourceSection[];
   onResourceRemove?: (id: string, name: string, sectionTitle: string) => void;
+  isLoadingResources?: boolean;
+  isErrorResources?: boolean;
 }
 
 const ResourceBankViewer = ({
@@ -59,6 +61,8 @@ const ResourceBankViewer = ({
   clientName,
   onResourceRemove,
   allResources,
+  isLoadingResources,
+  isErrorResources,
 }: ResourceBankViewerProps) => {
   const fullName = clientName
     ? `${clientName.given_names} ${clientName.surname}`
@@ -83,6 +87,8 @@ const ResourceBankViewer = ({
                 allResources,
                 clientFirstName: clientName?.given_names || "the client",
                 onRemove: onResourceRemove,
+                isLoadingResources,
+                isErrorResources,
               },
             },
           },

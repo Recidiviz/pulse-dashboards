@@ -1,0 +1,179 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.skeletonLine {
+  height: 12px;
+  border-radius: 4px;
+  margin: 2px 0;
+  background: linear-gradient(
+    90deg,
+    var(--gray-100) 25%,
+    var(--gray-200) 50%,
+    var(--gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Width variants ─────────────────────────────────────────────────────────── */
+
+.w18 {
+  width: 18%;
+}
+
+.w40 {
+  width: 40%;
+}
+
+.w55 {
+  width: 55%;
+}
+
+.w65 {
+  width: 65%;
+}
+
+.w80 {
+  width: 80%;
+}
+
+.w95 {
+  width: 95%;
+}
+
+/* ── Height variants ────────────────────────────────────────────────────────── */
+
+.h18 {
+  height: 18px;
+}
+
+.h28 {
+  height: 28px;
+}
+
+.h36 {
+  height: 36px;
+  border-radius: 4px;
+  width: 140px;
+}
+
+/* ── Avatar ─────────────────────────────────────────────────────────────────── */
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    var(--gray-100) 25%,
+    var(--gray-200) 50%,
+    var(--gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Plan header ────────────────────────────────────────────────────────────── */
+
+.planHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+/* ── Text block (heading + paragraph lines) ─────────────────────────────────── */
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+/* ── Plan error ─────────────────────────────────────────────────────────────── */
+
+.planError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex: 1;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+  font-family: var(--font-public-sans);
+  text-align: center;
+  padding: 48px 24px;
+}
+
+/* ── Button row ─────────────────────────────────────────────────────────────── */
+
+.buttonRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+/* ── Sidebar profile row ────────────────────────────────────────────────────── */
+
+.profileRow {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 8px;
+  border-bottom: 1px solid var(--ink-2-a20);
+}
+
+@media (min-width: 768px) {
+  .profileRow {
+    padding: 32px;
+  }
+}
+
+.profileAvatarRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profileName {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* ── Sidebar address section ────────────────────────────────────────────────── */
+
+.addressBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px;
+}
