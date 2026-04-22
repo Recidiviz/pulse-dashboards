@@ -314,6 +314,12 @@ export class OpportunityPersonListPresenter
         return {
           sorting: [{ id: "US_TN_LATEST_CLASSIFICATION_DATE", desc: true }],
         };
+      case "usMiSecurityClassificationCommitteeReviewV2":
+      case "usMiWardenInPersonSecurityClassificationCommitteeReviewV2":
+      case "usMiAddInPersonSecurityClassificationCommitteeReviewV2":
+        return {
+          sorting: [{ id: "US_MI_NEXT_SCC_DATE", desc: false }],
+        };
     }
     return undefined;
   }

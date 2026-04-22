@@ -441,7 +441,9 @@ const MultiTableView = observer(function MultiTableView({
   allColumns: OpportunityTableColumnDef[];
 }) {
   // synchronize sorting state between all displayed tables
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(
+    presenter.initialTableState?.sorting ?? [],
+  );
   const displayedSubcategories = subcategoryOrder.filter(
     (category) => peopleInActiveTabBySubcategory[category],
   );
@@ -752,6 +754,22 @@ const TableView = observer(function TableView({
       enableSorting: true,
       sortingFn: "datetime",
       accessorFn: (opp: Opportunity) => {
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReview",
+            "usMiAddInPersonSecurityClassificationCommitteeReview",
+            "usMiWardenInPersonSecurityClassificationCommitteeReview",
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.metadata.nextSccDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
         if (
           [
             "usMiSecurityClassificationCommitteeReview",
