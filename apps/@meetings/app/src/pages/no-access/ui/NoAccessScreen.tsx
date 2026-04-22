@@ -19,12 +19,12 @@ import React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useUserContext } from "../context/UserContext";
-import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
-import PrimaryButton from "../shared/ui/PrimaryButton";
-import { Typography } from "../shared/ui/Typography";
+import { useUserContext } from "~@meetings/app/context/UserContext";
+import { useSetDocumentTitle } from "~@meetings/app/hooks/useSetDocumentTitle";
+import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-const NoAccessScreen = () => {
+export function NoAccessScreen() {
   useSetDocumentTitle("Access Denied - Recidiviz Meetings");
   const { onLogout } = useUserContext();
 
@@ -44,6 +44,4 @@ const NoAccessScreen = () => {
       </View>
     </SafeAreaView>
   );
-};
-
-export default NoAccessScreen;
+}
