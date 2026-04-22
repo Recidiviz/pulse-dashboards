@@ -66,25 +66,6 @@
   text-align: center;
 }
 
-.planHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.planLabel {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--ink-2-a85);
-}
-
-.planTitle {
-  font-size: 1.875rem;
-  font-weight: 500;
-  color: var(--color-teal-2);
-}
-
 .editorWrapper {
   width: 100%;
   margin: 16px 0;

@@ -141,7 +141,7 @@ const customLink = ({ children, handleSelectResource, ...props }) => {
     return (
       <a
         {...props}
-        className="text-blue-600 underline hover:text-blue-800 visited:text-purple-600"
+        className="text-blue-600 underline hover:text-blue-800 visited:text-purple-600 res-link"
         target="_blank"
         rel="noopener noreferrer" // to improve security and privacy
       >

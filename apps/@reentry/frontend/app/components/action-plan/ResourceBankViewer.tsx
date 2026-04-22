@@ -18,12 +18,11 @@
 import Markdown from "markdown-to-jsx";
 
 import markdownStyles from "~@reentry/frontend/components/shared/styles/markdown.module.css";
+import type { ResourceSection } from "~@reentry/frontend/hooks/resourceBank.types";
+import type { components } from "~@reentry/openapi-types";
 
+import ResourceBank from "./ResourceBank";
 import styles from "./styles/ResourceBankViewer.module.css";
-
-interface ResourceBankViewerProps {
-  markDownPlan: string;
-}
 
 const Annotation = ({ ...props }) => (
   <div className={markdownStyles["annotation"]}>
@@ -48,9 +47,29 @@ const Notes = ({ children }) => (
   </div>
 );
 
-const ResourceBankViewer = ({ markDownPlan }: ResourceBankViewerProps) => {
+interface ResourceBankViewerProps {
+  markDownPlan: string | null | undefined;
+  clientName?: components["schemas"]["FullNameModel"] | null;
+  allResources?: ResourceSection[];
+  onResourceRemove?: (id: string, name: string, sectionTitle: string) => void;
+}
+
+const ResourceBankViewer = ({
+  markDownPlan,
+  clientName,
+  onResourceRemove,
+  allResources,
+}: ResourceBankViewerProps) => {
+  const fullName = clientName
+    ? `${clientName.given_names} ${clientName.surname}`
+    : "";
+  if (!markDownPlan) return null;
   return (
-    <div>
+    <>
+      <div className={styles["planHeader"]}>
+        <div className={styles["planLabel"]}>Action plan</div>
+        <div className={styles["planTitle"]}>{fullName}</div>
+      </div>
       <Markdown
         className={`${markdownStyles["markdown"]} ${styles["markdownWrapper"]}`}
         options={{
@@ -58,12 +77,20 @@ const ResourceBankViewer = ({ markDownPlan }: ResourceBankViewerProps) => {
             annotations: { component: Annotations },
             annotation: { component: Annotation },
             notes: { component: Notes },
+            resources: {
+              component: ResourceBank,
+              props: {
+                allResources,
+                clientFirstName: clientName?.given_names || "the client",
+                onRemove: onResourceRemove,
+              },
+            },
           },
         }}
       >
         {markDownPlan}
       </Markdown>
-    </div>
+    </>
   );
 };
 

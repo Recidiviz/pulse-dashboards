@@ -25,15 +25,12 @@ import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
 
 import { CATEGORY_SUBCATEGORY_MAP } from "./resource-bank/categorySubcategoryMap";
 import styles from "./styles/ResourceBankLayout.module.css";
-import usePlanSections from "./usePlanSections";
 
 interface ResourceBankLayoutProps {
   planId: string;
 }
 
 const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
-  const planSections = usePlanSections(planId);
-
   const {
     data: planDetail,
     isLoading,
@@ -59,7 +56,7 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
   };
 
   if (isLoading) return <LoadingState />;
-  if (isError || !planDetail) return null;
+  if (isError || !planDetail || didResourceBankError) return null;
 
   const resourceSearchPanelProps = {
     addResource,
@@ -67,27 +64,19 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
     sectionTitles: sections.map((item) => ({ title: item.title })),
   };
 
-  const renderSidePanel = () => {
-    if (isResourceBankLoading) return <LoadingState />;
-    if (didResourceBankError) return null;
-
-    return (
-      <ResourceBankSidePanel
-        clientRecord={planDetail?.client_record}
-        onAddressSave={handleAddressSave}
-        searchPanelProps={resourceSearchPanelProps}
-      />
-    );
-  };
-
   return (
     <div className={styles["container"]}>
-      <div className={styles["sidebar"]}>{renderSidePanel()}</div>
+      <div className={styles["sidebar"]}>
+        <ResourceBankSidePanel
+          clientRecord={planDetail?.client_record}
+          onAddressSave={handleAddressSave}
+          searchPanelProps={resourceSearchPanelProps}
+        />
+      </div>
       <div className={styles["content"]}>
         <PlanContent
           isResourceBankLoading={isResourceBankLoading}
           planDetail={planDetail}
-          planSections={planSections}
           removeResource={removeResource}
           sections={sections}
         />

@@ -54,7 +54,7 @@
   list-style-type: disc;
 }
 
-.markdown a {
+.markdown .res-link {
   border-bottom: 3px dashed #f08c00;
 }
 

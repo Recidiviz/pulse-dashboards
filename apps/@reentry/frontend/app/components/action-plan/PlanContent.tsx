@@ -17,23 +17,20 @@
 
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ResourceSection } from "~@reentry/frontend/hooks/resourceBank.types";
 import { usePlanPdf } from "~@reentry/frontend/hooks/usePlanPdf";
 import { components } from "~@reentry/openapi-types";
 
-import PlanSectionView from "./PlanSectionView";
 import RemoveResourceDialog from "./RemoveResourceDialog";
-import ResourceBank, { ResourceBankSectionSkeleton } from "./ResourceBank";
+import ResourceBankViewer from "./ResourceBankViewer";
 import styles from "./styles/PlanContent.module.css";
-import { PlanSection } from "./types";
 
 interface PlanContentProps {
   isResourceBankLoading: boolean;
   planDetail: components["schemas"]["PlanResponseGet"];
-  planSections: PlanSection[];
   removeResource: (sectionTitle: string, resourceId: string) => void;
   sections: ResourceSection[];
 }
@@ -43,31 +40,31 @@ type PendingRemoval = { id: string; name: string; sectionTitle: string };
 const PlanContent = ({
   isResourceBankLoading,
   planDetail,
-  planSections,
   removeResource,
   sections,
 }: PlanContentProps) => {
+  const [internalMarkdown, setInternalMarkdown] = useState<string>("");
+
+  const markDownPlan = planDetail.latest_generation?.markdown_result;
+  useEffect(() => {
+    setInternalMarkdown(markDownPlan || "");
+  }, [markDownPlan, setInternalMarkdown]);
+
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
     null,
   );
 
   const contentRef = useRef<HTMLDivElement>(null);
   const clientFullName = planDetail.client_record?.full_name
-    ? `${planDetail.client_record.full_name.given_names} ${planDetail.client_record.full_name.surname}`
+    ? `${planDetail.client_record.full_name.given_names}_${planDetail.client_record.full_name.surname}`
     : "";
-  const clientFirstName =
-    planDetail?.client_record?.full_name?.given_names ?? "the client";
+
   const { generatePdf, isGenerating } = usePlanPdf(
     contentRef,
     `${clientFullName}_action_plan.pdf`,
   );
-  const [savedMarkdownBySectionId, setSavedMarkdownBySectionId] = useState<
-    Record<string, string>
-  >({});
 
-  const handleSave = (sectionId: string, markdown: string) => {
-    setSavedMarkdownBySectionId((prev) => ({ ...prev, [sectionId]: markdown }));
-  };
+  if (isResourceBankLoading) return null;
 
   return (
     <div className={styles["container"]}>
@@ -81,51 +78,16 @@ const PlanContent = ({
             className={styles["downloadButton"]}
           />
         </div>
-        <div className={styles["planHeader"]}>
-          <div className={styles["planLabel"]}>Action plan</div>
-          <div className={styles["planTitle"]}>{clientFullName}</div>
-        </div>
 
         <div id="contentToDownload" ref={contentRef}>
-          {planSections.map((section) => (
-            <PlanSectionView
-              key={section.id}
-              section={section}
-              currentMarkdown={
-                savedMarkdownBySectionId[section.id] ?? section.markdown
-              }
-              onSave={handleSave}
-            />
-          ))}
-          <div className={styles["header"]}>
-            <div className={styles["subtitle"]}>Action plan</div>
-            <div className={styles["title"]}>{clientFullName}</div>
-          </div>
-          {/* Resource sections will be rendered here in future tickets */}
-          <div className={styles["placeholder"]}>
-            Resource bank content placeholder
-          </div>
-          <div className={styles["sections"]}>
-            {isResourceBankLoading ? (
-              <>
-                <ResourceBankSectionSkeleton />
-                <ResourceBankSectionSkeleton />
-                <ResourceBankSectionSkeleton />
-              </>
-            ) : (
-              sections.map((section) => (
-                <ResourceBank
-                  key={section.title}
-                  title={section.title}
-                  resources={section.resources}
-                  clientFirstName={clientFirstName}
-                  onRemove={(id, name, sectionTitle) =>
-                    setPendingRemoval({ id, name, sectionTitle })
-                  }
-                />
-              ))
-            )}
-          </div>
+          <ResourceBankViewer
+            clientName={planDetail?.client_record?.full_name}
+            markDownPlan={internalMarkdown}
+            onResourceRemove={(id, name, sectionTitle) =>
+              setPendingRemoval({ id, name, sectionTitle })
+            }
+            allResources={sections}
+          />
         </div>
       </div>
 

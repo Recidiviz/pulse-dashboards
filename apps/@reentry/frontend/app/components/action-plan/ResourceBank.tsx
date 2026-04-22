@@ -22,8 +22,8 @@ import ResourceBankTile from "./ResourceBankTile";
 import styles from "./styles/ResourceBank.module.css";
 
 type ResourceBankProps = {
-  title: string;
-  resources: ResourceWithMeta[];
+  section: string;
+  allResources: { title: string; resources: ResourceWithMeta[] }[];
   clientFirstName: string;
   onRemove: (id: string, name: string, sectionTitle: string) => void;
 };
@@ -56,31 +56,34 @@ export const ResourceBankSectionSkeleton = () => (
 );
 
 const ResourceBank = ({
-  title,
-  resources,
+  section,
+  allResources,
   clientFirstName,
   onRemove,
-}: ResourceBankProps) => (
-  <div className={styles["section"]}>
-    <div className={styles["sectionTitle"]}>
-      {title} resources
-      <span className={styles["printHidden"]}> to explore</span>
+}: ResourceBankProps) => {
+  const resources = allResources.find((ra) => ra.title === section)?.resources;
+  return (
+    <div className={styles["section"]}>
+      <div className={styles["sectionTitle"]}>
+        {section} resources
+        <span className={styles["printHidden"]}> to explore</span>
+      </div>
+      <div className={styles["tileList"]}>
+        {!resources || resources.length === 0 ? (
+          <ResourceBankEmptyState />
+        ) : (
+          resources.map((resource) => (
+            <ResourceBankTile
+              key={resource.id}
+              resource={resource}
+              clientFirstName={clientFirstName}
+              onRemove={(id, name) => onRemove(id, name, section)}
+            />
+          ))
+        )}
+      </div>
     </div>
-    <div className={styles["tileList"]}>
-      {resources.length === 0 ? (
-        <ResourceBankEmptyState />
-      ) : (
-        resources.map((resource) => (
-          <ResourceBankTile
-            key={resource.id}
-            resource={resource}
-            clientFirstName={clientFirstName}
-            onRemove={(id, name) => onRemove(id, name, title)}
-          />
-        ))
-      )}
-    </div>
-  </div>
-);
+  );
+};
 
 export default ResourceBank;
