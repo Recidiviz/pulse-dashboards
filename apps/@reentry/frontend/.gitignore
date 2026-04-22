@@ -34,3 +34,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# Check in public .env
+!.env.demo
+!.env.dev_gcp
+!.env.pilot
+!.env.production
+!.env.staging

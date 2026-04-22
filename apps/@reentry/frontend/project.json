@@ -5,10 +5,26 @@
   "projectType": "application",
   "tags": ["scope:client"],
   "targets": {
-    "load-env-files": {
+    "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../../tools/load_env_files.sh --env env_reentry_frontend --env_dev_gcp env_dev_gcp_reentry_frontend --env_pilot env_pilot_reentry_frontend --env_demo env_demo_reentry_frontend --env_staging env_staging_reentry_frontend --env_prod env_prod_reentry_frontend",
+        "commands": ["tsc -p ./tsconfig.json"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "requires-sops-env:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next dev",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "requires-sops-env:dev:with-staging-proxy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["sync-cpa-intake-videos"],
+      "options": {
+        "commands": ["node proxy-staging.js", "next dev"],
+        "parallel": true,
         "cwd": "{projectRoot}"
       }
     },
@@ -29,44 +45,10 @@
         "parallel": false
       }
     },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["tsc -p ./tsconfig.json"],
-        "cwd": "{projectRoot}"
-      }
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["load-env-files", "sync-cpa-intake-videos"],
-      "options": {
-        "command": "next dev",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "dev:with-staging-proxy": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["sync-cpa-intake-videos"],
-      "options": {
-        "commands": ["node proxy-staging.js", "next dev"],
-        "parallel": true,
-        "cwd": "{projectRoot}"
-      }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'No tests yet'"
-      }
-    },
     "build": {
       "executor": "@nx/next:build",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": [
-        "load-env-files",
-        "^prisma-generate",
-        "sync-cpa-intake-videos"
-      ],
+      "dependsOn": ["^prisma-generate", "sync-cpa-intake-videos"],
       "options": {
         "outputPath": "dist/apps/@reentry/frontend",
         "cwd": "{workspaceRoot}"

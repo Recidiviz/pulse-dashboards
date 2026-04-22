@@ -52,4 +52,8 @@ module.exports = {
     (files) => `nx affected -t projectTags --files=${files.join(",")}`,
   ],
   "libs/atmos/**/*.tf": [terraformFormatCommand],
+  "apps/@reentry/frontend/.env*": [
+    (files) =>
+      `node tools/lint-reentry-frontend-env.mjs ${files.map(quote).join(" ")}`,
+  ],
 };
