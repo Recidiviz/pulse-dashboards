@@ -17,7 +17,7 @@
 
 import { parseISO } from "date-fns";
 
-import { residentsConfigByState } from "~@jii/data";
+import { residentsConfigByState } from "~@jii/configs";
 import {
   creditActivityFixture,
   creditActivitySchema,

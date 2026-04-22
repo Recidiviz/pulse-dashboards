@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { residentsConfigByState } from "~@jii/configs";
 import { outputFixture, usAzResidents, usMeSccpFixtures } from "~datatypes";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
 import { RootStore } from "../../datastores/RootStore";
 import { OfflineAPIClient } from "./OfflineAPIClient";
 

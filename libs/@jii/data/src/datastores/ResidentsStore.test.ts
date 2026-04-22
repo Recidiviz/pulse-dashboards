@@ -19,6 +19,7 @@ import { formatISO } from "date-fns";
 import { flowResult } from "mobx";
 import tk from "timekeeper";
 
+import { residentsConfigByState } from "~@jii/configs";
 import {
   outputFixture,
   usAzResidents,
@@ -29,7 +30,6 @@ import { FilterParams } from "~firestore-api";
 
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { createTrpcClientForApi } from "../apis/data/trpcMixin";
-import { residentsConfigByState } from "../configs/residentsConfig";
 import { ResidentsStore } from "./ResidentsStore";
 import { RootStore } from "./RootStore";
 

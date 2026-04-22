@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "~@jii/configs";
-
+import { StateCode } from "../stateCodes";
 import { ResidentsConfig } from "./types";
 import { usArResidentsConfig } from "./US_AR/residents/residentsConfig";
 import { usAzResidentsConfig } from "./US_AZ/residents/residentsConfig";

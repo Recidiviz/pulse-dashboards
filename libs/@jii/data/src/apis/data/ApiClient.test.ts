@@ -19,11 +19,11 @@ import { waitFor } from "@testing-library/react";
 import { FirebaseApp } from "firebase/app";
 import { z } from "zod";
 
+import { residentsConfigByState } from "~@jii/configs";
 import { usAzResidents, usMeSccpFixtures } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
 import { proxyHost } from "../../utils/proxy";
 import type { AuthManager } from "../auth/AuthManager";
 import { ApiClient } from "./ApiClient";

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { LandingPageConfig } from "./types";
+import { LandingPageConfig } from "~@jii/configs";
 
 export const landingPageConfig: LandingPageConfig = {
   copy: {

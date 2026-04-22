@@ -17,8 +17,9 @@
 
 import { flowResult } from "mobx";
 
+import { residentsConfigByState } from "~@jii/configs";
+
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
-import { residentsConfigByState } from "../configs/residentsConfig";
 import { RootStore } from "./RootStore";
 
 let store: RootStore;

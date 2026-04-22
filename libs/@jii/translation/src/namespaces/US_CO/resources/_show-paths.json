@@ -50,5 +50,12 @@
       "callToAction": "[US_CO]programs.modal.callToAction",
       "closeWindow": "[US_CO]programs.modal.closeWindow"
     }
+  },
+  "sentenceDates": {
+    "dates": {
+      "TK": {
+        "label": "[US_CO]sentenceDates.dates.TK.label"
+      }
+    }
   }
 }

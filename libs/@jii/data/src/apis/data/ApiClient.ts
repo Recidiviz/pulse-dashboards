@@ -19,16 +19,17 @@ import type { TRPCClient } from "@trpc/client";
 import { makeObservable, when } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
-import { StateCode } from "~@jii/configs";
+import {
+  IncarcerationOpportunityId,
+  ResidentsConfig,
+  residentsConfigByState,
+  StateCode,
+} from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
-import {
-  IncarcerationOpportunityId,
-  ResidentsConfig,
-} from "../../configs/types";
 import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
@@ -92,9 +93,6 @@ export class ApiClient implements DataAPI {
    * This comes from a local static file, not an API backend
    */
   async residentsConfig(stateCode: StateCode) {
-    const { residentsConfigByState } = await import(
-      "../../configs/residentsConfig"
-    );
     return residentsConfigByState[stateCode];
   }
 

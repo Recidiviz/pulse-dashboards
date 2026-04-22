@@ -22,17 +22,14 @@ import omit from "lodash/omit";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
 import { StateCode } from "~@jii/configs";
+import { IncarcerationOpportunityId, ResidentsConfig } from "~@jii/configs";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../apis/data/interface";
-import {
-  IncarcerationOpportunityId,
-  OpportunityRecord,
-  ResidentsConfig,
-} from "../configs/types";
+import { OpportunityRecord } from "../configs/residentsOpportunitySchemas";
 import type { RootStore } from "./RootStore";
 
 // because we use a mapped type to ensure key-value agreement, this can't be an ES6 Map

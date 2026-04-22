@@ -15,14 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig } from "~@jii/data";
+import { ResidentsConfig } from "./types";
 
-import { home } from "../../defaults";
-
-export const usTnResidentsConfig: ResidentsConfig = {
-  home,
-  translation: {
-    additionalLanguages: [],
+export const home: ResidentsConfig["home"] = {
+  footer: {
+    about: {
+      title: "About this app",
+      body: `This app is made by Recidiviz, a technology nonprofit.
+      It is free to access. The information updates daily.`,
+    },
+    contact: {
+      title: "Contact us",
+      body: `1322 Webster St, Suite 402
+      Oakland, CA 94612`,
+    },
   },
-  limitDistrictSearchOptions: true,
 };

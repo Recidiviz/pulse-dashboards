@@ -14,5 +14,19 @@
   "infoPage": {
     "tocHeading": "En esta página"
   },
-  "lastUpdated": "Esta información se actualizó por última vez en {{lastUpdatedDate, formatFullDate}}."
+  "lastUpdated": "Esta información se actualizó por última vez en {{lastUpdatedDate, formatFullDate}}.",
+  "sentenceDates": {
+    "dateFormats": {
+      "dateDistanceFromToday": {
+        "now": "Hoy",
+        "past": "Hace {{date, formatDateRangeFromToday(delimiter: ' y ')}}",
+        "future": "Dentro de {{date, formatDateRangeFromToday(delimiter: ' y ')}}"
+      },
+      "dateFormatted": "{{date, formatFullDate}}",
+      "missingDateMessage": "Sin fecha registrada"
+    },
+    "general": {
+      "heading": "Fechas importantes"
+    }
+  }
 }

@@ -18,8 +18,7 @@
 import { keyBy } from "lodash";
 
 import { StateCode, stateCodes } from "~@jii/configs";
-
-import { StateConfig } from "./types";
+import { StateConfig } from "~@jii/configs";
 
 /**
  * Given all state codes in tuple form, expects a corresponding tuple of config objects

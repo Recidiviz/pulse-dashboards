@@ -17,10 +17,10 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { LandingPageConfig } from "~@jii/configs";
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../apis/data/interface";
-import { LandingPageConfig } from "../configs/types";
 
 export type LoginConfigStoreExternals = { apiClient: DataAPI };
 

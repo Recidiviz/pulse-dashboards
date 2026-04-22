@@ -15,9 +15,18 @@
     "tocHeading": "On this page"
   },
   "lastUpdated": "This information was last updated on {{lastUpdatedDate, formatFullDate}}.",
-  "dateDistanceFromToday": {
-    "now": "Today",
-    "past": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} ago",
-    "future": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} from today"
+  "sentenceDates": {
+    "dateFormats": {
+      "dateDistanceFromToday": {
+        "now": "Today",
+        "past": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} ago",
+        "future": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} from today"
+      },
+      "dateFormatted": "{{date, formatFullDate}}",
+      "missingDateMessage": "No date on record"
+    },
+    "general": {
+      "heading": "Important dates"
+    }
   }
 }

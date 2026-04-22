@@ -19,7 +19,7 @@ import { rollup } from "d3-array";
 import { format, isAfter } from "date-fns";
 import { DeepNonNullable } from "utility-types";
 
-import { EarnedGoodTimeConfig } from "~@jii/data";
+import { EarnedGoodTimeConfig } from "~@jii/configs";
 import { UsMaTranslationsObject } from "~@jii/translation";
 import {
   UsMaCreditActivity,

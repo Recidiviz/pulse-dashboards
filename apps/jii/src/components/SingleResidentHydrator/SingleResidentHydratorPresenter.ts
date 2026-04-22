@@ -20,9 +20,8 @@ import { flowResult, makeAutoObservable, when } from "mobx";
 import {
   EligibilityModuleConfig,
   IncarcerationOpportunityId,
-  ResidentsStore,
-  SingleResidentContext,
-} from "~@jii/data";
+} from "~@jii/configs";
+import { ResidentsStore, SingleResidentContext } from "~@jii/data";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 export class SingleResidentHydratorPresenter implements Hydratable {

@@ -19,7 +19,11 @@ import type { TRPCClient } from "@trpc/client";
 import assertNever from "assert-never";
 import isMatch from "lodash/isMatch";
 
-import { StateCode } from "~@jii/configs";
+import {
+  IncarcerationOpportunityId,
+  residentsConfigByState,
+  StateCode,
+} from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import {
   outputFixture,
@@ -29,10 +33,7 @@ import {
 } from "~datatypes";
 import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 
-import {
-  IncarcerationOpportunityId,
-  OpportunityRecord,
-} from "../../configs/types";
+import { OpportunityRecord } from "../../configs/residentsOpportunitySchemas";
 import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
 import { createTrpcClientForApi } from "./trpcMixin";
@@ -64,9 +65,6 @@ export class OfflineAPIClient implements DataAPI {
    * Fetches residents config object matching `stateCode`
    */
   async residentsConfig(stateCode: StateCode) {
-    const { residentsConfigByState } = await import(
-      "../../configs/residentsConfig"
-    );
     return residentsConfigByState[stateCode];
   }
 

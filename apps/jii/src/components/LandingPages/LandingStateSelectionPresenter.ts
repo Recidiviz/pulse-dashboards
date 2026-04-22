@@ -17,7 +17,8 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { LoginConfigStore, StateConfig, stateConfigs } from "~@jii/data";
+import { StateConfig } from "~@jii/configs";
+import { LoginConfigStore, stateConfigs } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 

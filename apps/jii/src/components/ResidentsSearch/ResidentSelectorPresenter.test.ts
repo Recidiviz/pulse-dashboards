@@ -19,7 +19,8 @@ import { waitFor } from "@testing-library/react";
 import { keyBy } from "lodash";
 import { configure, set } from "mobx";
 
-import { residentsConfigByState, ResidentsStore, RootStore } from "~@jii/data";
+import { residentsConfigByState } from "~@jii/configs";
+import { ResidentsStore, RootStore } from "~@jii/data";
 import { usMaResidents } from "~datatypes";
 
 import { ResidentSelectorPresenter } from "./ResidentSelectorPresenter";

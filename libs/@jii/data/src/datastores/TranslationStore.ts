@@ -18,13 +18,13 @@
 import type { i18n } from "i18next";
 import { action, makeAutoObservable } from "mobx";
 
+import { TranslationConfig } from "~@jii/configs";
 import {
   SupportedLanguagesOption,
   TRANSLATOR_MODE_LANGUAGE_CODE,
 } from "~@jii/translation";
 import { createI18nInstance } from "~@jii/translation";
 
-import { TranslationConfig } from "../configs/types";
 import { UserStore } from "./UserStore";
 
 export class TranslationStore {

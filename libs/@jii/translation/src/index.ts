@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export type { I18nResources } from "./@types/i18next";
 export * from "./constants";
 export * from "./createI18nInstance";
 export * from "./namespaces/common/useCommonTranslations";
@@ -26,5 +27,7 @@ export * from "./namespaces/US_MA/useUsMaTranslations";
 export * from "./namespaces/US_NC/useUsNcTranslations";
 export * from "./namespaces/US_NE/useUsNeTranslations";
 export * from "./namespaces/US_TN/useUsTnTranslations";
+export * from "./sentenceDates/types";
 export * from "./utils/date";
-export * from "./utils/useDateDistanceTranslation";
+export * from "./utils/dateDistanceTranslation";
+export * from "./utils/types";

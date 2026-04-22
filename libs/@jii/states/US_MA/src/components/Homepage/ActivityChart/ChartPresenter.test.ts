@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { residentsConfigByState } from "~@jii/data";
+import { residentsConfigByState } from "~@jii/configs";
 import { UsMaResidentMetadata, usMaResidents } from "~datatypes";
 
 import { populateUsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";

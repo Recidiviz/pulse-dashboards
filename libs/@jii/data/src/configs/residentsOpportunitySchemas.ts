@@ -15,18 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ZodTypeAny } from "zod";
+import { z, ZodTypeAny } from "zod";
 
+import { IncarcerationOpportunityId } from "~@jii/configs";
 import {
   usMeSCCPSchema,
   usMeWorkReleaseSchema,
   usNeGoodTimeRestorationSchema,
 } from "~datatypes";
 
-import { IncarcerationOpportunityId } from "./types";
-
 export const residentOpportunitySchemas = {
   usMeSCCP: usMeSCCPSchema,
   usMeWorkRelease: usMeWorkReleaseSchema,
   usNeGoodTimeRestoration: usNeGoodTimeRestorationSchema,
 } satisfies Record<IncarcerationOpportunityId, ZodTypeAny>;
+
+type ResidentOpportunitySchemaMapping = typeof residentOpportunitySchemas;
+
+/**
+ * Maps opportunity ID to its successfully parsed record format
+ */
+export type OpportunityRecord<O extends IncarcerationOpportunityId> = z.infer<
+  ResidentOpportunitySchemaMapping[O]
+>;

@@ -17,14 +17,12 @@
 
 import { createContext, useContext } from "react";
 
-import {
-  IncarcerationOpportunityId,
-  OpportunityConfig,
-  OpportunityRecord,
-  ResidentFlags,
-} from "~@jii/data";
+import { IncarcerationOpportunityId, OpportunityConfig } from "~@jii/configs";
+import { ResidentFlags } from "~@jii/data";
 import { ResidentRecord } from "~datatypes";
 import { useRequiredContext } from "~utils";
+
+import { OpportunityRecord } from "../configs/residentsOpportunitySchemas";
 
 export type OpportunityData = {
   opportunityId: IncarcerationOpportunityId;

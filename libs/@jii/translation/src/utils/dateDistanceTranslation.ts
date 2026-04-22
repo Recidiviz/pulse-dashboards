@@ -16,6 +16,7 @@
 // =============================================================================
 
 import isSameDay from "date-fns/isSameDay";
+import { TFunction } from "i18next";
 
 import { useCommonTranslations } from "../namespaces/common/useCommonTranslations";
 
@@ -24,23 +25,25 @@ import { useCommonTranslations } from "../namespaces/common/useCommonTranslation
  * today. The value is returned in either months & days or years & months,
  * depending on how far the date is from today.
  *
- * For convenience this hook returns undefined if given an undefined date.
+ * For convenience this function returns undefined if given an undefined date.
  */
-export function useDateDistanceTranslation(
+export function dateDistanceTranslation(
   date: Date | undefined,
-): string | undefined {
-  const { t } = useCommonTranslations();
-
+  t: TFunction<"common">,
+) {
   if (!date) return;
 
   const today = new Date();
   const isToday = isSameDay(date, today);
 
   // Determine which distance translation to use based on whether date is today/past/future
-  const distanceTranslations = t(($) => $.dateDistanceFromToday, {
-    date,
-    returnObjects: true,
-  });
+  const distanceTranslations = t(
+    ($) => $.sentenceDates.dateFormats.dateDistanceFromToday,
+    {
+      date,
+      returnObjects: true,
+    },
+  );
   if (isToday) {
     return distanceTranslations.now;
   } else if (date < today) {
@@ -48,4 +51,15 @@ export function useDateDistanceTranslation(
   } else {
     return distanceTranslations.future;
   }
+}
+
+/**
+ * React hook wrapper around {@link dateDistanceTranslation}.
+ */
+export function useDateDistanceTranslation(
+  date: Date | undefined,
+): string | undefined {
+  const { t } = useCommonTranslations();
+
+  return dateDistanceTranslation(date, t);
 }

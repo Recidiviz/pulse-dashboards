@@ -50,6 +50,10 @@ export function createI18nInstance(
     .use(ChainedBackend)
     .use(LanguageDetector)
     .init({
+      // the typedefs for this library expect and depend on this fallback configuration;
+      // do not change it without also verifying the resource type assertions are still accurate.
+      // there is also a corresponding type that should be set to match this value
+      fallbackNS: "common",
       fallbackLng: "en",
       supportedLngs,
       // this lets missing langauges fall back to a base version, e.g. es-ES > es

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./residents/residentsConfig";
+export * from "./residents/types";
 export * from "./stateCodes";
 export * from "./usNcRNAFormSpec";
 export * from "./usNcRNASchema";

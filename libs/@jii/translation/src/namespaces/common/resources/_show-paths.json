@@ -15,9 +15,18 @@
     "tocHeading": "[common]infoPage.tocHeading"
   },
   "lastUpdated": "[common]lastUpdated",
-  "dateDistanceFromToday": {
-    "now": "[common]dateDistanceFromToday.now",
-    "past": "[common]dateDistanceFromToday.past",
-    "future": "[common]dateDistanceFromToday.future"
+  "sentenceDates": {
+    "dateFormats": {
+      "dateDistanceFromToday": {
+        "now": "[common]sentenceDates.dateFormats.dateDistanceFromToday.now",
+        "past": "[common]sentenceDates.dateFormats.dateDistanceFromToday.past",
+        "future": "[common]sentenceDates.dateFormats.dateDistanceFromToday.future"
+      },
+      "dateFormatted": "[common]sentenceDates.dateFormats.dateFormatted",
+      "missingDateMessage": "[common]sentenceDates.dateFormats.missingDateMessage"
+    },
+    "general": {
+      "heading": "[common]sentenceDates.general.heading"
+    }
   }
 }

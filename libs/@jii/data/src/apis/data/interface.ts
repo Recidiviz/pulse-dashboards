@@ -18,16 +18,16 @@
 import type { TRPCClient } from "@trpc/client";
 
 import { StateCode } from "~@jii/configs";
+import {
+  IncarcerationOpportunityId,
+  LandingPageConfig,
+  ResidentsConfig,
+} from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
-import {
-  IncarcerationOpportunityId,
-  LandingPageConfig,
-  OpportunityRecord,
-  ResidentsConfig,
-} from "../../configs/types";
+import { OpportunityRecord } from "../../configs/residentsOpportunitySchemas";
 
 export interface DataAPI {
   /**
