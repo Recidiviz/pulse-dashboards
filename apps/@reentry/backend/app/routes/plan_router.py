@@ -1003,6 +1003,20 @@ async def router_set_generation_notify(
     return Response(status_code=200)
 
 
+# Allowlist of safe WeasyPrint write_pdf options. The 'target' parameter is
+# explicitly excluded because it writes the PDF to a server filesystem path
+# instead of returning bytes, enabling arbitrary file write attacks.
+_SAFE_PDF_OPTIONS = frozenset({
+    "presentational_hints",
+    "optimize_images",
+    "pdf_version",
+    "pdf_variant",
+    "pdf_identifier",
+    "pdf_forms",
+    "uncompressed_pdf",
+})
+
+
 class PDFRequest(BaseModel):
     html: str
     css: Optional[List[str]] = []
@@ -1034,15 +1048,23 @@ async def generate_pdf(
                 print(f"Warning: Failed to load CSS content: {str(e)}")
                 continue
 
-        # Default PDF options
+        # Default PDF options — only allowlisted keys from request.options are merged
         pdf_options = {
             "presentational_hints": True,
             "optimize_images": True,
             "pdf_version": "1.7",
         }
-        pdf_options.update(request.options)
+        if request.options:
+            rejected = set(request.options) - _SAFE_PDF_OPTIONS
+            if rejected:
+                logger.warning(
+                    "Rejected disallowed PDF options",
+                    rejected_keys=sorted(rejected),
+                )
+            for key in _SAFE_PDF_OPTIONS & set(request.options):
+                pdf_options[key] = request.options[key]
 
-        # Generate PDF
+        # Always render to memory — never pass 'target' to write_pdf
         pdf_bytes = html_doc.write_pdf(stylesheets=css_objects, **pdf_options)
 
         return Response(
@@ -1052,7 +1074,7 @@ async def generate_pdf(
         )
     except Exception as e:
         logger.exception(f"PDF generation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="PDF generation failed")
 
 
 @router.patch(
