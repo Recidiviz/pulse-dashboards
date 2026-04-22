@@ -20,9 +20,9 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 import { v1 } from "@google-cloud/firestore";
-import { pubsub } from "firebase-functions";
 import { info } from "firebase-functions/logger";
 import { defineString } from "firebase-functions/params";
+import { pubsub } from "firebase-functions/v1";
 
 import { throwErrorCustom } from "./utils";
 

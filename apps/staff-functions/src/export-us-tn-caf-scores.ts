@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable no-console */
-
 import { Connector, IpAddressTypes } from "@google-cloud/cloud-sql-connector";
 import { Firestore } from "@google-cloud/firestore";
 import { firestore } from "firebase-admin";
@@ -28,6 +26,7 @@ import {
   OpportunityType,
   prefillDcafFormData,
   prefillRcafFormData,
+  RawResidentRecord,
   TRUSTEE_FORM_QUESTION_ORDER,
   UsTnInitialClassification2026DraftData,
   usTnInitialClassification2026Schema,
@@ -36,36 +35,32 @@ import {
   usTnReclassification2026Schema,
 } from "~datatypes";
 
-import { FormUpdate } from "../src/FirestoreStore";
 import QueryDocumentSnapshot = firestore.QueryDocumentSnapshot;
+import { subHours } from "date-fns";
+import type { Timestamp } from "firebase/firestore";
+import { defineJsonSecret } from "firebase-functions/params";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 
-const {
-  FIREBASE_PROJECT,
-  FIREBASE_CREDENTIAL,
-  PERSISTENCE_DB_CONNECTION,
-  PERSISTENCE_DB_USER,
-  PERSISTENCE_DB_PASSWORD,
-} = process.env;
+const LOOKBACK_HOURS = 2;
+const persistenceDbConfigSecrets = defineJsonSecret("PERSISTENCE_DB_CONFIG");
 
-function getDb() {
-  const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL
-    ? {
-        projectId: FIREBASE_PROJECT,
-        keyFilename: FIREBASE_CREDENTIAL,
-      }
-    : {
-        projectId: "demo-dev",
-        host: "localhost:8080",
-        credentials: {},
-        ssl: false,
-        keyFilename: "",
-        ignoreUndefinedProperties: true,
-      };
+const EXECUTION_OPTIONS = {
+  // Run every 20 minutes
+  // If you edit this, please check your cron syntax with a tool
+  // such as https://crontab.guru/#*/20_*_*_*_*
+  schedule: "*/20 * * * *",
+  // Allow 5 minutes for it to run
+  timeoutSeconds: 300,
+  secrets: [persistenceDbConfigSecrets],
+};
 
-  return new Firestore(fsSettings);
-}
-
-type DocData = FormUpdate<UsTnReclassification2026DraftData>;
+type DocData = {
+  data?: Partial<UsTnReclassification2026DraftData>;
+  updated: {
+    date: Timestamp;
+    by: string;
+  };
+};
 
 const getTrusteeQuestionValue = (data: DocData["data"], index: number) => {
   switch (data?.[TRUSTEE_FORM_QUESTION_ORDER[index]]) {
@@ -288,11 +283,13 @@ function processRecord(
   baseSnapshot: QueryDocumentSnapshot<
     UsTnReclassification2026ReferralRecord["output"]
   >,
-  personSnapshot: QueryDocumentSnapshot,
+  personSnapshot: QueryDocumentSnapshot<RawResidentRecord>,
 ) {
   // Set up an output record
-  const out: Record<string, string | string[] | number | boolean | undefined> =
-    {};
+  const out: Record<
+    string,
+    string | string[] | number | boolean | undefined | null
+  > = {};
 
   // Set flag to use dcaf vs rcaf helpers
   const isDcaf = opportunityType === "usTnInitialClassification2026Policy";
@@ -307,10 +304,13 @@ function processRecord(
   // Drop out if any record is missing
   if (!formUpdateData || !baseRecord || !personRecord) return out;
 
+  const { metadata } = personRecord;
+
   // Safety checks for person record
   if (
     personRecord.stateCode !== "US_TN" ||
-    personRecord.metadata.latestClassificationDate === undefined
+    metadata.stateCode !== "US_TN" ||
+    metadata.latestClassificationDate === undefined
   )
     return out;
 
@@ -334,7 +334,7 @@ function processRecord(
     .split("T")[0];
   out.LastModifiedDate = updateRecord.updated.date.toDate().toISOString();
   out.LastModifiedBy = updateRecord.updated.by;
-  out.LastClassificationDate = personRecord.metadata.latestClassificationDate;
+  out.LastClassificationDate = metadata.latestClassificationDate;
   switch (opportunityType) {
     case "usTnInitialClassification2026Policy":
       out.ClassificationFormType = "Initial";
@@ -370,7 +370,7 @@ function processRecord(
 
   // Loop over the columns that can be derived directly from the update record
   Object.entries(COLUMN_MAPPING).forEach(([field, getter]) => {
-    // @ts-expect-error
+    // @ts-expect-error The type of q3Notes does not align, but we don't access that field
     const value = getter(combinedRecord);
     if (value !== undefined) out[field] = value;
   });
@@ -409,17 +409,22 @@ function processRecord(
   return out;
 }
 
-const db = getDb();
-
 async function getFormUpdateDocs(
+  db: Firestore,
   opportunityType: OpportunityType,
   collectionName: string,
 ) {
+  const lastUpdatedThreshold = subHours(new Date(), LOOKBACK_HOURS);
+
+  console.info(`Fetching update documents for ${opportunityType}`);
+
   const updatesRes = await db
     .collectionGroup("clientFormUpdates")
     .where("opportunity", "==", opportunityType)
-    .where("updated.date", ">=", new Date("2026-04-06"))
+    .where("updated.date", ">=", lastUpdatedThreshold)
     .get();
+
+  console.info(`Found ${updatesRes.docs.length} updates`);
 
   const entries = [];
 
@@ -449,114 +454,117 @@ async function getFormUpdateDocs(
 }
 
 async function getUpdatedRecords() {
+  const db = firestore();
+
   const entries = await getFormUpdateDocs(
+    db,
     "usTnTrusteeTransfer",
     "US_TN-custodyLevelDowngrade2026PolicyReferrals",
   );
   entries.push(
     ...(await getFormUpdateDocs(
+      db,
       "usTnSeriousMisconductUpgrade",
       "US_TN-custodyLevelDowngrade2026PolicyReferrals",
     )),
   );
   entries.push(
     ...(await getFormUpdateDocs(
+      db,
       "usTnSpecialCustodyLevelUpgrade2026Policy",
       "US_TN-specialCustodyLevelUpgrade2026PolicyReferrals",
     )),
   );
   entries.push(
     ...(await getFormUpdateDocs(
+      db,
       "usTnAnnualReclassification2026Policy",
       "US_TN-annualReclassification2026PolicyReferrals",
     )),
   );
   entries.push(
     ...(await getFormUpdateDocs(
+      db,
       "usTnCustodyLevelDowngrade2026Policy",
       "US_TN-custodyLevelDowngrade2026PolicyReferrals",
     )),
   );
   entries.push(
     ...(await getFormUpdateDocs(
+      db,
       "usTnInitialClassification2026Policy",
       "US_TN-initialClassification2026PolicyReferrals",
-    )),
-  );
-  entries.push(
-    ...(await getFormUpdateDocs(
-      "usTnBiannualOther",
-      "US_TN-custodyLevelDowngrade2026PolicyReferrals",
     )),
   );
 
   return entries;
 }
 
-// check arguments
-const opts = {
-  doUpdates: process.argv.includes("--execute"),
-};
+async function runTransfer() {
+  const dryRun = false;
 
-if (!opts.doUpdates) {
-  console.log();
-  console.log("Note: Dry run");
-  console.log("Run with --execute to write to postgres");
+  const updatesToUpload = await getUpdatedRecords();
+
+  if (dryRun) {
+    console.warn("Note: Dry run");
+  }
+
+  console.info(`Found ${updatesToUpload.length} updates to upload.`);
+
+  // Insert every column in CSV_COLUMN order into us_tn_caf_edits
+  let query = `INSERT INTO us_tn_caf_edits (${CSV_COLUMN_ORDER.map((c) => `"${c}"`).join(", ")})`;
+  // With templated values ($1, $2, $3, ..., $(CSV_COLUMN_ORDER+length))
+  // Note that by unsing templated values here, we get two things:
+  // 1. We only need to generate the query string once
+  // 2. The server will sanitize all the values for SQL injection for us
+  query += ` VALUES (${CSV_COLUMN_ORDER.map((_, i) => `$${i + 1}`).join(", ")})`;
+  // If there is a PK conflict,
+  query += ` ON CONFLICT ("state_code", "OFFENDERID", "ClassificationType", "ClassificationFormType", "AssessmentDate") DO UPDATE SET `;
+  // replace all columns with the values from the new (EXCLUDED) entry
+  query += CSV_COLUMN_ORDER.map((c) => `"${c}" = EXCLUDED."${c}"`).join(", ");
+
+  console.debug("Query to execute:");
+  console.debug(query);
+
+  if (dryRun) {
+    console.warn("Dry run. Exiting without connecting to postgres.");
+    process.exit(0);
+  }
+
+  const connector = new Connector();
+  const { user, password, connection } = persistenceDbConfigSecrets.value();
+
+  console.info(`Connecting to postgres instance ${connection}`);
+
+  const clientOpts = await connector.getOptions({
+    instanceConnectionName: connection,
+    ipType: IpAddressTypes.PUBLIC,
+  });
+
+  const pool = new Pool({
+    stream: clientOpts.stream(),
+    user,
+    password,
+    database: "postgres",
+    max: 5,
+  });
+
+  const res = [];
+  for (const update of updatesToUpload) {
+    res.push(
+      // eslint-disable-next-line no-await-in-loop
+      await pool.query(
+        query,
+        //
+        CSV_COLUMN_ORDER.map((c) => update[c]),
+      ),
+    );
+  }
+
+  console.info("Updates written to postgres. Exiting.");
+
+  await pool.end();
+  connector.close();
 }
 
-const updatesToUpload = await getUpdatedRecords();
-
-console.log();
-console.log(`Found ${updatesToUpload.length} updates to upload.`);
-
-// Insert every column in CSV_COLUMN order into us_tn_caf_edits
-let query = `INSERT INTO us_tn_caf_edits (${CSV_COLUMN_ORDER.map((c) => `"${c}"`).join(", ")})`;
-// With templated values ($1, $2, $3, ..., $(CSV_COLUMN_ORDER+length))
-// Note that by unsing templated values here, we get two things:
-// 1. We only need to generate the query string once
-// 2. The server will sanitize all the values for SQL injection for us
-query += ` VALUES (${CSV_COLUMN_ORDER.map((_, i) => `$${i + 1}`).join(", ")})`;
-// If there is a PK conflict,
-query += ` ON CONFLICT ("state_code", "OFFENDERID", "ClassificationType", "ClassificationFormType", "AssessmentDate") DO UPDATE SET `;
-// replace all columns with the values from the new (EXCLUDED) entry
-query += CSV_COLUMN_ORDER.map((c) => `"${c}" = EXCLUDED."${c}"`).join(", ");
-
-console.log();
-console.log("Query to execute:");
-console.log(query);
-
-if (!opts.doUpdates) {
-  console.log();
-  console.log("Dry run. Exiting without connecting to postgres.");
-  process.exit(0);
-}
-
-const connector = new Connector();
-const clientOpts = await connector.getOptions({
-  // @ts-expect-error will check for existence when I wrap this in a function
-  instanceConnectionName: PERSISTENCE_DB_CONNECTION,
-  ipType: IpAddressTypes.PUBLIC,
-});
-
-const pool = new Pool({
-  stream: clientOpts.stream(),
-  user: PERSISTENCE_DB_USER,
-  password: PERSISTENCE_DB_PASSWORD,
-  database: "postgres",
-  max: 5,
-});
-
-const res = [];
-for (const update of updatesToUpload) {
-  res.push(
-    // eslint-disable-next-line no-await-in-loop
-    await pool.query(
-      query,
-      //
-      CSV_COLUMN_ORDER.map((c) => update[c]),
-    ),
-  );
-}
-
-await pool.end();
-connector.close();
+exports.exportUsTnCafData = onSchedule(EXECUTION_OPTIONS, runTransfer);

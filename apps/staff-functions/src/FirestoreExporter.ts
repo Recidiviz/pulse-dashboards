@@ -32,7 +32,7 @@ import { formatDate } from "./utils";
  * Usage:
  *  1. Extend this class in a function file, overriding the abstract methods
  *  2. Create an instance of the child class, e.g. `exporter`
- *  3. Export the result of createScheduledFunction, e.g. `exports.myFunctionnName = exporter.createScheduledFunction()`
+ *  3. Export the result of createScheduledFunction, e.g. `exports.myFunctionName = exporter.createScheduledFunction()`
  *
  * @type T the type of the exported data
  */
