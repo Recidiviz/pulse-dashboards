@@ -17,7 +17,7 @@
 
 import { css, CSSProp } from "styled-components";
 
-import * as sassVars from "../scss/typography/_variables.scss";
+import sassVars from "../scss/typography/_variables.module.scss";
 
 const TYPOGRAPHY_LEVELS = [
   "Sans12",
@@ -50,25 +50,25 @@ export const typography: TypographyStyles = TYPOGRAPHY_LEVELS.reduce(
 
     if (level.startsWith("Body")) {
       additionalStyles = css`
-        margin-bottom: ${sassVars.paragraphSpacingBody};
+        margin-bottom: ${sassVars["paragraphSpacingBody"]};
 
         p {
-          margin-bottom: ${sassVars.paragraphSpacingBody};
+          margin-bottom: ${sassVars["paragraphSpacingBody"]};
         }
 
         a {
-          color: ${sassVars.linkColorBody};
+          color: ${sassVars["linkColorBody"]};
           text-decoration: underline;
         }
 
         ul {
-          list-style: ${sassVars.listStyleBody};
-          margin-top: ${sassVars.paragraphSpacingBody};
-          padding-left: ${sassVars.listPaddingBody};
+          list-style: ${sassVars["listStyleBody"]};
+          margin-top: ${sassVars["paragraphSpacingBody"]};
+          padding-left: ${sassVars["listPaddingBody"]};
         }
 
         li {
-          margin: ${sassVars.listItemSpacingBody} 0;
+          margin: ${sassVars["listItemSpacingBody"]} 0;
         }
 
         strong {
@@ -79,10 +79,10 @@ export const typography: TypographyStyles = TYPOGRAPHY_LEVELS.reduce(
 
     if (level.startsWith("Header")) {
       additionalStyles = css`
-        margin-bottom: ${sassVars.paragraphSpacingHeader};
+        margin-bottom: ${sassVars["paragraphSpacingHeader"]};
 
         a {
-          color: ${sassVars.linkColorBody};
+          color: ${sassVars["linkColorBody"]};
           text-decoration: underline;
         }
       `;

@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
 import * as React from "react";
 import { type JSX, useRef, useState } from "react";
 import styled from "styled-components";
 
-import { palette } from "../../styles";
+import { palette, typography } from "../../styles";
 import ToolbarContext from "./ToolbarContext";
 import ToolbarFocusManager from "./ToolbarFocusManager";
 

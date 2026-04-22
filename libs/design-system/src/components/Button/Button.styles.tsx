@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, spacing, typography } from "@recidiviz/design-system";
+import { animation, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled, { css } from "styled-components";
 
+import { typography } from "../../styles";
 import { palette } from "../../styles/palette";
 import { ButtonProps } from "./Button.types";
 
