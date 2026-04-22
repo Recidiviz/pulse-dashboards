@@ -20,17 +20,19 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { BACKEND_URL } from "~@reentry/frontend/constants";
+import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { AuditLog, AuditLogEntry } from "../components/AuditLog";
 import { ChangeNoteModal } from "../components/ChangeNoteModal";
+import { EvalResultsPanel } from "../components/EvalResultsPanel";
 import { StatusBadge } from "../components/StatusBadge";
 import { TemplateVariableGuide } from "../components/TemplateVariableGuide";
 import { ValidationStatus } from "../components/ValidationStatus";
@@ -66,6 +68,22 @@ const ConfigDetailPage = () => {
   const [showNewVersionModal, setShowNewVersionModal] = useState(false);
   const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Eval state
+  const [evalRefetchKey, setEvalRefetchKey] = useState(0);
+  const {
+    isPolling: isEvalRunning,
+    isCompleted: isEvalCompleted,
+    progress: evalProgress,
+    message: evalMessage,
+    startPolling: startEvalPolling,
+  } = useExecutionPolling({});
+
+  useEffect(() => {
+    if (isEvalCompleted) {
+      setEvalRefetchKey((k) => k + 1);
+    }
+  }, [isEvalCompleted]);
+
   // Fetch assessment config using openapi-react-query
   const {
     data: assessmentConfig,
@@ -82,7 +100,7 @@ const ConfigDetailPage = () => {
     },
     {
       enabled: isInternalUser(userEmail) && !isOutputConfig,
-    }
+    },
   );
 
   // Fetch output config using openapi-react-query
@@ -101,7 +119,7 @@ const ConfigDetailPage = () => {
     },
     {
       enabled: isInternalUser(userEmail) && isOutputConfig,
-    }
+    },
   );
 
   // Fetch audit logs using openapi-react-query
@@ -124,7 +142,7 @@ const ConfigDetailPage = () => {
     },
     {
       enabled: isInternalUser(userEmail),
-    }
+    },
   );
 
   // Mutations
@@ -134,41 +152,78 @@ const ConfigDetailPage = () => {
   const { mutateAsync: updateOutputConfig, isPending: isSavingOutput } =
     $api.useMutation("patch", "/config-management/outputs/{config_id}");
 
-  const { mutateAsync: activateAssessmentConfig, isPending: isActivatingAssessment } =
-    $api.useMutation("post", "/config-management/assessments/{config_id}/activate");
+  const {
+    mutateAsync: activateAssessmentConfig,
+    isPending: isActivatingAssessment,
+  } = $api.useMutation(
+    "post",
+    "/config-management/assessments/{config_id}/activate",
+  );
 
   const { mutateAsync: activateOutputConfig, isPending: isActivatingOutput } =
     $api.useMutation("post", "/config-management/outputs/{config_id}/activate");
 
-  const { mutateAsync: deactivateAssessmentConfig, isPending: isDeactivatingAssessment } =
-    $api.useMutation("post", "/config-management/assessments/{config_id}/deactivate");
+  const {
+    mutateAsync: deactivateAssessmentConfig,
+    isPending: isDeactivatingAssessment,
+  } = $api.useMutation(
+    "post",
+    "/config-management/assessments/{config_id}/deactivate",
+  );
 
-  const { mutateAsync: deactivateOutputConfig, isPending: isDeactivatingOutput } =
-    $api.useMutation("post", "/config-management/outputs/{config_id}/deactivate");
+  const {
+    mutateAsync: deactivateOutputConfig,
+    isPending: isDeactivatingOutput,
+  } = $api.useMutation(
+    "post",
+    "/config-management/outputs/{config_id}/deactivate",
+  );
 
-  const { mutateAsync: createNewAssessmentVersion, isPending: isCreatingAssessmentVersion } =
-    $api.useMutation("post", "/config-management/assessments/{config_id}/new-version");
+  const {
+    mutateAsync: createNewAssessmentVersion,
+    isPending: isCreatingAssessmentVersion,
+  } = $api.useMutation(
+    "post",
+    "/config-management/assessments/{config_id}/new-version",
+  );
 
-  const { mutateAsync: createNewOutputVersion, isPending: isCreatingOutputVersion } =
-    $api.useMutation("post", "/config-management/outputs/{config_id}/new-version");
+  const {
+    mutateAsync: createNewOutputVersion,
+    isPending: isCreatingOutputVersion,
+  } = $api.useMutation(
+    "post",
+    "/config-management/outputs/{config_id}/new-version",
+  );
 
-  const { mutateAsync: validateAssessmentYaml } =
-    $api.useMutation("post", "/config-management/assessments/validate");
+  const { mutateAsync: validateAssessmentYaml } = $api.useMutation(
+    "post",
+    "/config-management/assessments/validate",
+  );
 
-  const { mutateAsync: validateOutputYaml } =
-    $api.useMutation("post", "/config-management/outputs/validate");
+  const { mutateAsync: validateOutputYaml } = $api.useMutation(
+    "post",
+    "/config-management/outputs/validate",
+  );
 
   // Unified config data
   const config = isOutputConfig ? outputConfig : assessmentConfig;
   const isLoading = isOutputConfig ? outputLoading : assessmentLoading;
   const error = isOutputConfig ? outputError : assessmentError;
-  const refetchConfig = isOutputConfig ? refetchOutputConfig : refetchAssessmentConfig;
+  const refetchConfig = isOutputConfig
+    ? refetchOutputConfig
+    : refetchAssessmentConfig;
 
   // Unified pending states
   const isSaving = isOutputConfig ? isSavingOutput : isSavingAssessment;
-  const isActivating = isOutputConfig ? isActivatingOutput : isActivatingAssessment;
-  const isDeactivating = isOutputConfig ? isDeactivatingOutput : isDeactivatingAssessment;
-  const isCreatingVersion = isOutputConfig ? isCreatingOutputVersion : isCreatingAssessmentVersion;
+  const isActivating = isOutputConfig
+    ? isActivatingOutput
+    : isActivatingAssessment;
+  const isDeactivating = isOutputConfig
+    ? isDeactivatingOutput
+    : isDeactivatingAssessment;
+  const isCreatingVersion = isOutputConfig
+    ? isCreatingOutputVersion
+    : isCreatingAssessmentVersion;
 
   // Wait for auth to finish loading before checking access
   if (auth.state.isLoading) {
@@ -219,7 +274,9 @@ const ConfigDetailPage = () => {
 
     setIsValidating(true);
     try {
-      const validateMutation = isOutputConfig ? validateOutputYaml : validateAssessmentYaml;
+      const validateMutation = isOutputConfig
+        ? validateOutputYaml
+        : validateAssessmentYaml;
       const result = await validateMutation({
         body: { yaml_content: yamlContent },
       });
@@ -229,7 +286,8 @@ const ConfigDetailPage = () => {
         warnings: result.warnings ?? [],
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Validation request failed";
+      const errorMessage =
+        err instanceof Error ? err.message : "Validation request failed";
       setValidationResult({
         valid: false,
         errors: [errorMessage],
@@ -260,7 +318,9 @@ const ConfigDetailPage = () => {
     if (!editedYaml) return;
 
     try {
-      const updateMutation = isOutputConfig ? updateOutputConfig : updateAssessmentConfig;
+      const updateMutation = isOutputConfig
+        ? updateOutputConfig
+        : updateAssessmentConfig;
       await updateMutation({
         params: { path: { config_id: configId } },
         body: { config_yaml: editedYaml, change_note: changeNote },
@@ -273,7 +333,8 @@ const ConfigDetailPage = () => {
       refetchConfig();
       refetchAuditLogs();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to save draft";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to save draft";
       showErrorToast(errorMessage);
     }
   };
@@ -286,7 +347,9 @@ const ConfigDetailPage = () => {
   // Actual activate with optional change note using mutations
   const handleActivateConfirm = async (changeNote: string) => {
     try {
-      const activateMutation = isOutputConfig ? activateOutputConfig : activateAssessmentConfig;
+      const activateMutation = isOutputConfig
+        ? activateOutputConfig
+        : activateAssessmentConfig;
       await activateMutation({
         params: { path: { config_id: configId } },
         body: changeNote ? { change_note: changeNote } : {},
@@ -308,7 +371,9 @@ const ConfigDetailPage = () => {
   // Actual deactivate with required change note using mutations
   const handleDeactivateConfirm = async (changeNote: string) => {
     try {
-      const deactivateMutation = isOutputConfig ? deactivateOutputConfig : deactivateAssessmentConfig;
+      const deactivateMutation = isOutputConfig
+        ? deactivateOutputConfig
+        : deactivateAssessmentConfig;
       await deactivateMutation({
         params: { path: { config_id: configId } },
         body: { change_note: changeNote },
@@ -331,7 +396,9 @@ const ConfigDetailPage = () => {
   // Actual create new version with required change note using mutations
   const handleNewVersionConfirm = async (changeNote: string) => {
     try {
-      const createVersionMutation = isOutputConfig ? createNewOutputVersion : createNewAssessmentVersion;
+      const createVersionMutation = isOutputConfig
+        ? createNewOutputVersion
+        : createNewAssessmentVersion;
       const result = await createVersionMutation({
         params: { path: { config_id: configId } },
         body: { change_note: changeNote },
@@ -364,8 +431,11 @@ const ConfigDetailPage = () => {
       const contentDisposition = response.headers.get("content-disposition");
       // Extract filename from Content-Disposition header
       // Handles both: filename="name.yaml" and filename=name.yaml
-      const filenameMatch = contentDisposition?.match(/filename="([^"]+)"|filename=([^\s;]+)/);
-      const filename = filenameMatch?.[1] || filenameMatch?.[2] || "config.yaml";
+      const filenameMatch = contentDisposition?.match(
+        /filename="([^"]+)"|filename=([^\s;]+)/,
+      );
+      const filename =
+        filenameMatch?.[1] || filenameMatch?.[2] || "config.yaml";
 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -416,6 +486,25 @@ const ConfigDetailPage = () => {
     };
   }, []);
 
+  const handleRunEval = useCallback(async () => {
+    try {
+      const token = await auth.getAccessToken();
+      const response = await fetch(
+        `${BACKEND_URL}/config-management/outputs/${configId}/eval`,
+        { method: "POST", headers: configHeaders(token) },
+      );
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        showErrorToast(body.detail ?? "Failed to start eval");
+        return;
+      }
+      const { execution_id } = await response.json();
+      startEvalPolling(execution_id);
+    } catch {
+      showErrorToast("Failed to start eval");
+    }
+  }, [auth, configId, startEvalPolling]);
+
   if (isLoading) {
     return (
       <Box
@@ -456,14 +545,20 @@ const ConfigDetailPage = () => {
   const isDraft = config.status === "draft";
   const isActive = config.status === "active" || config.is_active;
   const isInactive = config.status === "inactive";
+  const isIntakeSummary =
+    isOutputConfig &&
+    "output_type" in config &&
+    config.output_type === "intake_summary";
 
   const currentYaml = editedYaml ?? config.config_yaml;
 
   // Transform audit entries to handle null details
-  const auditEntries: AuditLogEntry[] = (auditData?.items || []).map((item) => ({
-    ...item,
-    details: item.details ?? undefined,
-  }));
+  const auditEntries: AuditLogEntry[] = (auditData?.items || []).map(
+    (item) => ({
+      ...item,
+      details: item.details ?? undefined,
+    }),
+  );
 
   return (
     <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] min-h-screen">
@@ -505,7 +600,18 @@ const ConfigDetailPage = () => {
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            {isIntakeSummary && (
+              <button
+                onClick={handleRunEval}
+                disabled={isEvalRunning}
+                className="px-4 py-2 bg-white border border-purple-300 text-purple-700 rounded-full hover:bg-purple-50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isEvalRunning
+                  ? `Running eval… ${evalProgress ? `${evalProgress}%` : ""}${evalMessage ? ` — ${evalMessage}` : ""}`
+                  : "Run Eval"}
+              </button>
+            )}
             {isDraft && (
               <>
                 <button
@@ -607,7 +713,9 @@ const ConfigDetailPage = () => {
                 {new Date(config.created_at).toLocaleDateString()}
               </p>
               {config.created_by_email && (
-                <p className="text-gray-500 text-xs">{config.created_by_email}</p>
+                <p className="text-gray-500 text-xs">
+                  {config.created_by_email}
+                </p>
               )}
             </div>
             {config.activated_at && (
@@ -646,14 +754,16 @@ const ConfigDetailPage = () => {
               <label className="text-gray-500">Code</label>
               <p className="font-medium">{config.code}</p>
             </div>
-            {isOutputConfig && "output_type" in config && config.output_type && (
-              <div>
-                <label className="text-gray-500">Output Type</label>
-                <p className="font-medium capitalize">
-                  {config.output_type.replace("_", " ")}
-                </p>
-              </div>
-            )}
+            {isOutputConfig &&
+              "output_type" in config &&
+              config.output_type && (
+                <div>
+                  <label className="text-gray-500">Output Type</label>
+                  <p className="font-medium capitalize">
+                    {config.output_type.replace("_", " ")}
+                  </p>
+                </div>
+              )}
             <div>
               <label className="text-gray-500">Display Name</label>
               <p className="font-medium">{config.display_name}</p>
@@ -704,15 +814,18 @@ const ConfigDetailPage = () => {
             </div>
           </div>
         )}
-        {isDraft && editedYaml !== null && !isValidating && validationResult && (
-          <div className="w-full">
-            <ValidationStatus
-              valid={validationResult.valid}
-              errors={validationResult.errors}
-              warnings={validationResult.warnings}
-            />
-          </div>
-        )}
+        {isDraft &&
+          editedYaml !== null &&
+          !isValidating &&
+          validationResult && (
+            <div className="w-full">
+              <ValidationStatus
+                valid={validationResult.valid}
+                errors={validationResult.errors}
+                warnings={validationResult.warnings}
+              />
+            </div>
+          )}
 
         {/* YAML Editor */}
         <div className="w-full">
@@ -731,6 +844,11 @@ const ConfigDetailPage = () => {
             height="500px"
           />
         </div>
+
+        {/* Eval Results (intake_summary output configs only) */}
+        {isIntakeSummary && (
+          <EvalResultsPanel configId={configId} refetchKey={evalRefetchKey} />
+        )}
 
         {/* Audit History */}
         <div className="w-full p-4 bg-white rounded-lg border border-gray-200">

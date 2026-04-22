@@ -29,6 +29,7 @@ from app.auth.config_access import (
 )
 from app.auth.dependencies import require_internal_user
 from app.core.db import AsyncSession, get_session
+from app.core.eval_config import get_eval_intake_ids
 from app.crud.config_management import (
     create_assessment_config,
     create_output_config,
@@ -44,9 +45,15 @@ from app.crud.config_management import (
     update_assessment_config,
     update_output_config,
 )
+from app.crud.execution import get_execution_by_id
+from app.crud.output_config_eval_result import (
+    create_output_config_eval_result,
+    get_eval_results_by_config_id,
+)
 from app.models.assessment_config import AssessmentConfig, ConfigStatus
 from app.models.config_audit_log import ConfigType
 from app.models.output_config import OutputConfig, OutputType
+from app.models.output_config_eval_result import OutputConfigEvalResult
 from app.routes.base import DeletionResponse, DeletionStatus
 from app.schemas.config_management import (
     ActivateRequest,
@@ -57,6 +64,9 @@ from app.schemas.config_management import (
     AssessmentConfigUpdate,
     AuditLogResponse,
     DeactivateRequest,
+    EvalExecutionSummary,
+    EvalResultResponse,
+    EvalTriggerResponse,
     ImportResult,
     ImportValidationResult,
     NewVersionRequest,
@@ -75,6 +85,8 @@ from app.services.config_management.audit import AuditService
 from app.services.config_management.import_export import ImportExportService
 from app.services.config_management.lifecycle import LifecycleService
 from app.services.config_management.validation import ValidationService
+from app.tasks.output_config_eval_task import output_config_eval_task
+from app.tasks.scheduler import schedule_task
 from app.utils.string_utils import normalize_state_code_format
 
 
@@ -1089,6 +1101,115 @@ async def import_output_config(
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+# =============================================================================
+# Output Config Eval Endpoints
+# =============================================================================
+
+
+@router.post(
+    "/outputs/{config_id}/eval",
+    response_model=EvalTriggerResponse,
+    summary="Trigger Output Config Eval",
+    description="Generate a summary with this config against a hardcoded intake and run LLM-as-judge evaluations. Only supported for intake_summary configs.",
+    tags=["Output Configs"],
+)
+async def trigger_summary_output_config_eval(
+    config_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    auth_user_context: dict = Depends(require_internal_user),
+):
+    email = get_email_from_context(auth_user_context)
+
+    config = await get_output_config_by_id(session, config_id)
+    if not config:
+        raise HTTPException(status_code=404, detail="Output config not found")
+
+    if config.output_type != OutputType.intake_summary:
+        raise HTTPException(
+            status_code=400,
+            detail="Eval is only supported for intake_summary output configs",
+        )
+
+    intake_ids = get_eval_intake_ids()
+    if not intake_ids:
+        raise HTTPException(
+            status_code=404,
+            detail="No eval intakes configured for this environment",
+        )
+
+    eval_result = OutputConfigEvalResult(
+        output_config_id=config_id,
+        created_by_email=email,
+    )
+    eval_result = await create_output_config_eval_result(session, eval_result)
+
+    try:
+        execution = await schedule_task(
+            session,
+            "output_config_eval_result",
+            eval_result.id,
+            output_config_eval_task,
+            {
+                "eval_result_id": eval_result.id,
+                "output_config_yaml": config.config_yaml,
+                "intake_ids": [str(i) for i in intake_ids],
+            },
+        )
+        eval_result.execution_id = execution.id
+        session.add(eval_result)
+        await session.commit()
+    except Exception:
+        logger.exception("Failed to schedule eval task", eval_result_id=eval_result.id)
+        await session.delete(eval_result)
+        await session.commit()
+        raise HTTPException(status_code=500, detail="Failed to schedule eval task")
+
+    return EvalTriggerResponse(
+        execution_id=execution.id,
+        eval_result_id=eval_result.id,
+    )
+
+
+@router.get(
+    "/outputs/{config_id}/eval",
+    response_model=list[EvalResultResponse],
+    summary="Get Output Config Eval Results",
+    description="Retrieve the most recent eval results for an output config.",
+    tags=["Output Configs"],
+)
+async def get_output_config_eval_results(
+    config_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    _: dict = Depends(require_internal_user),
+):
+    results = await get_eval_results_by_config_id(session, config_id)
+
+    responses = []
+    for result in results:
+        execution_summary = None
+        if result.execution_id:
+            execution = await get_execution_by_id(session, result.execution_id)
+            if execution:
+                execution_summary = EvalExecutionSummary(
+                    status=execution.status,
+                    progress=execution.progress,
+                    message=execution.message,
+                )
+        responses.append(
+            EvalResultResponse(
+                id=result.id,
+                created_at=result.created_at,
+                updated_at=result.updated_at,
+                output_config_id=result.output_config_id,
+                metrics=result.metrics,
+                created_by_email=result.created_by_email,
+                ran_at=result.ran_at,
+                execution=execution_summary,
+            )
+        )
+    return responses
 
 
 # =============================================================================

@@ -326,3 +326,36 @@ class TemplateVariableSchemaResponse(BaseModel):
     fields: list[TemplateFieldSchema] = Field(
         description="List of template fields with their variable information"
     )
+
+
+# ============================================================================
+# Output Config Eval Schemas
+# ============================================================================
+
+
+class EvalTriggerResponse(BaseModel):
+    """Response returned immediately when an eval is triggered."""
+
+    execution_id: UUID
+    eval_result_id: UUID
+
+
+class EvalExecutionSummary(BaseModel):
+    """Execution status snapshot embedded in eval result responses."""
+
+    status: str
+    progress: int
+    message: Optional[str] = None
+
+
+class EvalResultResponse(ORMResponse):
+    """Response schema for a single eval result."""
+
+    output_config_id: UUID
+    metrics: Optional[dict] = None
+    created_by_email: Optional[str] = None
+    ran_at: Optional[datetime] = None
+    execution: Optional[EvalExecutionSummary] = None
+
+    class Config:
+        from_attributes = True
