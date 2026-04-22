@@ -10,6 +10,9 @@
     ]
   },
   "exclude": [
+    "src/fixtures/*.ts",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",
@@ -32,11 +35,13 @@
     "src/**/*.spec.jsx",
     "vite.config.mts",
     "src/setupTests.ts",
-    "src/setupTestsGlobal.ts",
-    "**/*.stories.ts",
-    "**/*.stories.js",
-    "**/*.stories.jsx",
-    "**/*.stories.tsx"
+    "src/setupTestsGlobal.ts"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": [
+    "../translation/**/*.d.ts",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
 }

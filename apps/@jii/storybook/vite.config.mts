@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2026 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,5 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/SentenceDates/SentenceDates";
-export * from "./data/types";
+/// <reference types='vitest' />
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import { defineConfig } from "vite";
+
+export default defineConfig(() => ({
+  root: __dirname,
+  cacheDir: "../../node_modules/.vite/apps/@jii/storybook",
+  plugins: [nxViteTsPaths()],
+}));

@@ -15,5 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/SentenceDates/SentenceDates";
-export * from "./data/types";
+import { addDays, startOfDay } from "date-fns";
+
+import { SentenceDatesData } from "../data/types";
+
+/**
+ * Returns a set of fake date objects useful for tests and stories.
+ * Dates should be always relative to the current date (including frozen
+ * dates in test suites)
+ */
+export function getSentenceDatesFixtureData(): SentenceDatesData {
+  return {
+    dates: [
+      {
+        id: "projected_release_date",
+        date: startOfDay(addDays(new Date(), 7)),
+      },
+      { id: "parole_eligibility_date", date: undefined },
+      { id: "max_discharge_date", date: startOfDay(addDays(new Date(), 400)) },
+    ],
+  };
+}

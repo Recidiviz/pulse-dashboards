@@ -15,22 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Meta, StoryObj } from "@storybook/react";
-
-function HelloWorld({ message }: { message: string }) {
-  return <div>{message}</div>;
-}
-
-const meta: Meta<typeof HelloWorld> = {
-  component: HelloWorld,
-  title: "SentenceDates/HelloWorld",
+export type SentenceDate = {
+  id: string;
+  date: Date | undefined;
 };
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  args: {
-    message: "Hello, world!",
-  },
+export type SentenceDatesData = {
+  dates: Array<SentenceDate>;
 };
