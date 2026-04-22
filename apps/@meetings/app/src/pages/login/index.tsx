@@ -26,14 +26,15 @@ import {
 import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import LogoSvg from "../assets/icons/logo.svg";
-import { LearnMoreModal, LearnMoreSheet } from "../components/LearnMore";
-import env from "../env";
-import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
-import PrimaryButton from "../shared/ui/PrimaryButton";
-import { Typography } from "../shared/ui/Typography";
+import LogoSvg from "~@meetings/app/assets/icons/logo.svg";
+import env from "~@meetings/app/env";
+import { useSetDocumentTitle } from "~@meetings/app/hooks/useSetDocumentTitle";
+import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
+import { LearnMoreModal, LearnMoreSheet } from "./ui/LearnMore";
+
+export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
   useSetDocumentTitle("Login - Recidiviz Meetings");
   const { authorize } = useAuth0();
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -106,6 +107,4 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
       <LearnMoreSheet ref={bottomSheetRef} />
     </SafeAreaView>
   );
-};
-
-export default LoginScreen;
+}

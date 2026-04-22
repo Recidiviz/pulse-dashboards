@@ -21,9 +21,9 @@ import { ScrollView, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import { theme } from "../common/theme";
-import Modal from "../shared/ui/Modal";
-import { Typography } from "../shared/ui/Typography";
+import { theme } from "~@meetings/app/common/theme";
+import Modal from "~@meetings/app/shared/ui/Modal";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 const title = "Restricted to authorized users";
 const content = `Recidiviz applications are restricted to authorized individuals in the performance of their assigned duties.

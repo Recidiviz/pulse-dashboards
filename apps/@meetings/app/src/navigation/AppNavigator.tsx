@@ -31,7 +31,7 @@ import superjson from "superjson";
 import AppUpdateModal from "../components/AppUpdateModal";
 import { UserContextProvider } from "../context/UserContext";
 import env from "../env";
-import LoginScreen from "../screens/LoginScreen";
+import { LoginScreen } from "../pages/login";
 import { publicTrpc } from "../trpc/client";
 import AuthenticatedApp from "./AuthenticatedApp";
 import { RootStackParamList } from "./DrawerNavigator";
