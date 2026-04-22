@@ -226,7 +226,25 @@ async def router_list_plans(
         is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
     query = await get_plans(session, client_pseudo_id=client_pseudo_id, query_only=True)
-    return await paginate(session, query)
+    result = await paginate(session, query)
+
+    # Defense-in-depth: reject response if any item belongs to a different client.
+    # The query already filters by client_pseudo_id, but this catches regressions
+    # in the ORM layer or pagination library.
+    for item in result.items:
+        if item.client_pseudo_id != client_pseudo_id:
+            logger.error(
+                "Cross-client data leak detected in GET /plans",
+                requested_client=client_pseudo_id,
+                leaked_client=item.client_pseudo_id,
+                staff_id=pseudonymized_id,
+            )
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error",
+            )
+
+    return result
 
 
 @router.post(
