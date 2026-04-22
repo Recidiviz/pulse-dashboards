@@ -50,7 +50,8 @@ export const getAuthSettings = (): AuthSettings => {
         : "http://localhost:3000/auth/callback",
     useRefreshTokens: true,
     cacheLocation: "localstorage",
-    scope: "openid profile email",
+    scope:
+      "openid profile email read:users read:current_user read:user_idp_tokens",
     audience: process.env["NEXT_PUBLIC_AUTH0_AUDIENCE"],
   };
 
