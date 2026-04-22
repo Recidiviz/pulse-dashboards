@@ -420,7 +420,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                               </div>
                               <div>
                                 Employed at Time of Offense:{" "}
-                                {sarData?.employedAtOffense != null ? (
+                                {sarData?.employedAtOffense !== undefined ? (
                                   formatBooleanDisplay(
                                     sarData.employedAtOffense,
                                   )
