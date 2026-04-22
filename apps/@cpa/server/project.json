@@ -5,13 +5,6 @@
   "projectType": "application",
   "tags": ["cpa", "scope:server"],
   "targets": {
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_reentry_server --env_staging env_staging_reentry_server --env_test env_test_reentry_server",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "dependsOn": [
@@ -28,7 +21,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "dev": {
+    "requires-sops-env:dev": {
       "executor": "nx:run-commands",
       "dependsOn": [
         "checkpointer-setup",
@@ -61,8 +54,7 @@
         {
           "projects": ["@reentry/prisma"],
           "target": "prisma-generate"
-        },
-        "load-env-files"
+        }
       ],
       "options": {
         "platform": "node",
@@ -120,23 +112,23 @@
         "buildTarget": "@cpa/server:build"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
           "projects": ["@reentry/prisma"],
-          "target": "prisma-generate"
-        },
-        {
-          "projects": ["@reentry/prisma"],
-          "target": "docker"
+          "target": "custom-prisma-deploy"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/cpa"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @reentry/prisma && cd apps/@cpa/server && vitest",
-        "cwd": "{workspaceRoot}"
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     },
     "requires-sops-env:upload-sourcemaps": {},

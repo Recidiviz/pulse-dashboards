@@ -16,10 +16,12 @@
 // =============================================================================
 
 /// <reference types='vitest' />
+import { workspaceRoot } from "@nx/devkit";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@reentry/trpc",
 
@@ -42,26 +44,9 @@ export default defineConfig(() => ({
       reportsDirectory: "../../../coverage/libs/@reentry/trpc",
       provider: "v8",
     },
-    // We need to set this up this way because:
-    // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
-    // 2. The env variables for local testing and CI are different
-    // NOTE: none of these are true secrets, they are all fine to put in this file
-    env: {
-      AUTH0_AUDIENCE: process.env["AUTH0_AUDIENCE"] ?? "test",
-      AUTH0_DOMAIN: process.env["AUTH0_DOMAIN"] ?? "test",
-      DATABASE_URL:
-        process.env["DATABASE_URL"] ??
-        "postgresql://postgres:postgres@localhost:6505/reentry-test?schema=public",
-      DATABASE_URL_US_ID:
-        process.env["DATABASE_URL_US_ID"] ??
-        "postgresql://postgres:postgres@localhost:6505/reentry-test?schema=public",
-      SENTRY_DSN:
-        process.env["SENTRY_DSN"] ??
-        "https://83072d6dfc09bb6ad83c79324f7953bb@o432474.ingest.us.sentry.io/4509667951968256",
-      SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
-      INTAKE_PRIVATE_JWT_KEY:
-        process.env["INTAKE_PRIVATE_JWT_KEY"] ??
-        "0d9e4eb91b3bc1ad85a6f39c7070a6dc30c003da1eb83d86e8fdabdb4e96761f",
-    },
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/@cpa/server"), "")
+        : undefined,
   },
 }));

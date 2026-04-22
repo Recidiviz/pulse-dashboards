@@ -3,15 +3,13 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@reentry/trpc/src",
   "projectType": "library",
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@cpa/server"
+    }
+  },
   "tags": ["reentry", "scope:server"],
   "targets": {
-    "load-env-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../../tools/load_env_files.sh --env env_reentry_server --env_test env_test_reentry_server",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
@@ -22,26 +20,26 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "dependsOn": [
         {
           "projects": ["@reentry/prisma"],
-          "target": "prisma-generate"
-        },
-        {
-          "projects": ["@reentry/prisma"],
-          "target": "docker"
+          "target": "custom-prisma-deploy"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/libs/@reentry/trpc"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @reentry/prisma && cd libs/@reentry/trpc && vitest",
-        "cwd": "{workspaceRoot}",
+        "command": "vitest",
+        "cwd": "{projectRoot}",
         "env": {
           "NODE_OPTIONS": "--experimental-websocket"
         }
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
       }
     }
   }

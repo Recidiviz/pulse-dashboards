@@ -16,10 +16,12 @@
 // =============================================================================
 
 /// <reference types='vitest' />
+import { workspaceRoot } from "@nx/devkit";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@reentry/intake-agent",
 
@@ -41,5 +43,9 @@ export default defineConfig(() => ({
       reportsDirectory: "../../coverage/libs/@reentry/intake-agent",
       provider: "v8",
     },
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/@cpa/server"), "")
+        : undefined,
   },
 }));
