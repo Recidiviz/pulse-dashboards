@@ -213,16 +213,22 @@ export class SARDetailsPresenter implements Hydratable {
     const sarData = this.SARData;
     if (!sarData) return;
 
+    if (!this.hasOrasAssessment) {
+      this.insight = null;
+      return;
+    }
+
     // Uses the most severe charge (highest classificationType + lowest subtype letter).
     const offense = this.charges[0]?.offense;
     const gender = sarData.client?.gender;
     const score = sarData.assessmentScore;
     const assessmentType = sarData.assessmentType;
 
-    if (!offense || !gender || score == null) {
+    if (!offense || !gender || score == null || assessmentType == null) {
       let missingField = "assessment score";
       if (!offense) missingField = "offense";
       else if (!gender) missingField = "gender";
+      else if (assessmentType == null) missingField = "assessment type";
       console.warn(
         `[SARDetailsPresenter] Cannot load insight: missing ${missingField}`,
       );
@@ -407,6 +413,16 @@ export class SARDetailsPresenter implements Hydratable {
   /** Check if defendant declined to participate */
   get defendantDeclinedToParticipate(): boolean {
     return this.SARData?.defendantDeclinedToParticipate ?? false;
+  }
+
+  /**
+   * True when a full ORAS assessment was performed and the defendant participated.
+   * False when assessmentDate is absent or the defendant declined to participate.
+   */
+  get hasOrasAssessment(): boolean {
+    return (
+      !!this.SARData?.assessmentDate && !this.defendantDeclinedToParticipate
+    );
   }
 
   /** Extract unique judge name/division pairs from all imported charges */
@@ -1286,11 +1302,12 @@ export class SARDetailsPresenter implements Hydratable {
   /**
    * Data for the Risk Profile Summary card in the SAR report.
    * Groups domains by risk level (HIGH/MODERATE/LOW) for display.
-   * Returns null when assessmentType is missing.
+   * Returns null when assessmentType is missing, no ORAS was administered,
+   * or the defendant declined to participate.
    */
   get riskProfileCardData(): RiskProfileCardData | null {
     const sarData = this.SARData;
-    if (!sarData?.assessmentType) return null;
+    if (!sarData?.assessmentType || !this.hasOrasAssessment) return null;
 
     const domains = getDomainsForAssessmentType(sarData.assessmentType);
     const grouped: Record<RiskLevelKey, string[]> = {

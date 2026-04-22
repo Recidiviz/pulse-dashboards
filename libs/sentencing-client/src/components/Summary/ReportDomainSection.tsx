@@ -46,6 +46,7 @@ function extractRiskLevel(
 interface ReportDomainSectionProps {
   domain: DomainConfig;
   sarData: SAR;
+  hasOrasAssessment: boolean;
   extraContent?: React.ReactNode;
   tableContent?: React.ReactNode;
   /** When set, renders a "Continued..." section heading at the top of this
@@ -57,6 +58,7 @@ interface ReportDomainSectionProps {
 export const ReportDomainSection: React.FC<ReportDomainSectionProps> = ({
   domain,
   sarData,
+  hasOrasAssessment,
   extraContent,
   tableContent,
   continuationTitle,
@@ -72,7 +74,7 @@ export const ReportDomainSection: React.FC<ReportDomainSectionProps> = ({
       )}
       <Styled.ReportCardHeader>
         <span>{domain.title}</span>
-        {riskLevel && riskChipConfig && (
+        {riskLevel && riskChipConfig && hasOrasAssessment && (
           <Styled.RiskLevelIndicator>
             {[0, 1, 2].map((i) => (
               <Styled.RiskLevelBox

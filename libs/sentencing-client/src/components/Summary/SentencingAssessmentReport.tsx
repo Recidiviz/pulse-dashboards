@@ -61,6 +61,7 @@ export const SentencingAssessmentReport: React.FC<
   const { dateRequested, updatedAt, staff } = sarData;
   const charges = presenter.charges;
   const { needsDisplayItems, factorsDisplayItems } = presenter;
+  const declined = presenter.defendantDeclinedToParticipate;
   const insightData = presenter.insightData;
   const insightDescriptionContext = presenter.emptyStateDescriptionContext;
   const timeServedData =
@@ -203,7 +204,7 @@ export const SentencingAssessmentReport: React.FC<
                   ))}
                 </Styled.ColumnFlexContainer>
               </SentencingAssessmentReportSection>
-              {!presenter.defendantDeclinedToParticipate && (
+              {!declined && (
                 <ReportKeyConsiderations
                   needsDisplayItems={needsDisplayItems}
                   factorsDisplayItems={factorsDisplayItems}
@@ -230,11 +231,14 @@ export const SentencingAssessmentReport: React.FC<
                     </Styled.FreeTextContent>
                   </SentencingAssessmentReportSection>
                 )}
-              {!presenter.defendantDeclinedToParticipate && (
+              {(sarData.assessmentType || !presenter.hasOrasAssessment) && (
+                <ReportOffenderAssessment
+                  sarData={sarData}
+                  hasOrasAssessment={presenter.hasOrasAssessment}
+                />
+              )}
+              {!declined && (
                 <>
-                  {sarData.assessmentType && (
-                    <ReportOffenderAssessment sarData={sarData} />
-                  )}
                   <ReportPriorTreatmentHistory
                     presenter={presenter.priorTreatmentHistory}
                   />

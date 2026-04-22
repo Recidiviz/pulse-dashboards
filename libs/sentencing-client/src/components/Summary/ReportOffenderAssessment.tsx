@@ -40,6 +40,7 @@ import * as Styled from "./SentencingAssessmentReport.styles";
 
 interface ReportOffenderAssessmentProps {
   sarData: SAR;
+  hasOrasAssessment?: boolean;
 }
 
 function getEducationExtraContent(sarData: SAR): React.ReactNode {
@@ -128,9 +129,12 @@ function getDomainTableContent(
 
 export const ReportOffenderAssessment: React.FC<
   ReportOffenderAssessmentProps
-> = ({ sarData }) => {
+> = ({ sarData, hasOrasAssessment = true }) => {
   const { assessmentType } = sarData;
-  const domains = getDomainsForAssessmentType(assessmentType);
+  const allDomains = getDomainsForAssessmentType(assessmentType);
+  const domains = !hasOrasAssessment
+    ? allDomains.filter((d) => d.key === "criminalHistory")
+    : allDomains;
 
   if (!domains.length) return null;
 
@@ -162,6 +166,7 @@ export const ReportOffenderAssessment: React.FC<
             key={domain.key}
             domain={domain}
             sarData={sarData}
+            hasOrasAssessment={hasOrasAssessment}
             extraContent={getDomainExtraContent(domain.key, sarData)}
             tableContent={getDomainTableContent(domain.key, sarData)}
             continuationTitle={
