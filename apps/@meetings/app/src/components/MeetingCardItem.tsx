@@ -38,10 +38,10 @@ import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
+import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import DraftCaseNoteSheet from "./DraftCaseNoteSheet";
-import { useSnackbar } from "./Snackbar";
 
 type MeetingCardItemProps = {
   meeting: {
@@ -151,7 +151,9 @@ const MeetingCardItem = ({
                   </Typography>
                   {isInProgress && (
                     <>
-                      <RecordingIndicator status={status} />
+                      <RecordingIndicator
+                        isRecording={status === "recording"}
+                      />
                       <Typography className="text-sm font-medium text-primary">
                         In progress
                       </Typography>

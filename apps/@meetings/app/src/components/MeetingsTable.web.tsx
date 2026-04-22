@@ -30,9 +30,6 @@ import { useProcessingText } from "../hooks/useProcessingText";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
-import { Typography } from "../shared/ui/Typography";
-import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
-import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 import {
   Table,
   TABLE_CELL_HEIGHT,
@@ -43,8 +40,11 @@ import {
   TableHeadCell,
   TableHeadRow,
   TableRow,
-} from "./Table.web";
-import { TablePagination } from "./TablePagination";
+} from "../shared/ui/Table.web";
+import { TablePagination } from "../shared/ui/TablePagination";
+import { Typography } from "../shared/ui/Typography";
+import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
+import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 
 type ProfileMeetingNavProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -123,7 +123,7 @@ const MeetingRow = ({
           <TableCell>
             {isMeetingInProgress && (
               <View className="flex-row items-center pb-2">
-                <RecordingIndicator status={status} />
+                <RecordingIndicator isRecording={status === "recording"} />
                 <Typography className="px-2 text-secondary">
                   In progress
                 </Typography>

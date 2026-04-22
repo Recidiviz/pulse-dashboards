@@ -29,7 +29,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "./Typography";
 interface SnackbarContextType {
   showSnackbar: (text: string, duration?: number) => void;
   isShowing: boolean;

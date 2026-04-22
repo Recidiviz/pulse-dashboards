@@ -18,7 +18,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth0 } from "react-native-auth0";
 
-import { useSnackbar } from "../components/Snackbar";
+import { useSnackbar } from "../shared/ui/Snackbar";
 import { useMeetingEventQueue } from "./useMeetingEventQueue";
 import { useProcessOfflineEvent } from "./useProcessOfflineEvent";
 

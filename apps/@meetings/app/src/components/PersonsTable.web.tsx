@@ -28,8 +28,6 @@ import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
-import { Typography } from "../shared/ui/Typography";
-import { getInitials } from "../utils/format";
 import {
   Table,
   TABLE_CELL_HEIGHT,
@@ -40,9 +38,11 @@ import {
   TableHeadCell,
   TableHeadRow,
   TableRow,
-} from "./Table.web";
-import { TablePagination } from "./TablePagination";
-import { TooltipText } from "./TooltipText";
+} from "../shared/ui/Table.web";
+import { TablePagination } from "../shared/ui/TablePagination";
+import { TooltipText } from "../shared/ui/TooltipText";
+import { Typography } from "../shared/ui/Typography";
+import { getInitials } from "../utils/format";
 
 const PAGE_SIZE = 7;
 const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
@@ -157,7 +157,9 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                       <TableCell>
                         {person.activeMeetingId && (
                           <View className="flex-row items-center pb-2">
-                            <RecordingIndicator status={status} />
+                            <RecordingIndicator
+                              isRecording={status === "recording"}
+                            />
                             <Typography className="px-2 text-secondary">
                               In progress
                             </Typography>

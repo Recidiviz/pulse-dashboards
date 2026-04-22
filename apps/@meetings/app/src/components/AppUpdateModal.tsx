@@ -19,8 +19,8 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
 import { useAppVersionCheck } from "../hooks/useAppVersionCheck";
+import Modal from "../shared/ui/Modal";
 import { Typography } from "../shared/ui/Typography";
-import Modal from "./Modal";
 
 const AppUpdateModal = () => {
   const { isModalVisible, hideModal, openStore, options } =
@@ -51,7 +51,7 @@ const AppUpdateModal = () => {
 
         <TouchableOpacity
           onPress={openStore}
-          className="mb-3 items-center rounded-full bg-[#006C67] py-4"
+          className="mb-3 items-center rounded-full bg-brand py-4"
           accessibilityRole="button"
           accessibilityLabel="Update app"
         >

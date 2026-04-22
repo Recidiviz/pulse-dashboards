@@ -38,9 +38,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { theme } from "../common/theme";
 import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
+import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
-import { useSnackbar } from "./Snackbar";
 
 type Props = {
   meetingId: string;

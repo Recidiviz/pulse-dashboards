@@ -22,8 +22,8 @@ import { TouchableOpacity } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { theme } from "../common/theme";
+import Modal from "../shared/ui/Modal";
 import { Typography } from "../shared/ui/Typography";
-import Modal from "./Modal";
 
 const title = "Restricted to authorized users";
 const content = `Recidiviz applications are restricted to authorized individuals in the performance of their assigned duties.

@@ -18,7 +18,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "./Typography";
 
 interface PrimaryButtonProps {
   label: string;

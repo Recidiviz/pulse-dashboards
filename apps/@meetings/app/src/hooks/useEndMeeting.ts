@@ -22,7 +22,7 @@ import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import type { AppRouter } from "~@meetings/trpc-types";
 
 import { Person, PersonType } from "../common/types";
-import { useSnackbar } from "../components/Snackbar";
+import { useSnackbar } from "../shared/ui/Snackbar";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";

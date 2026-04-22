@@ -36,10 +36,10 @@ import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplic
 import { theme } from "../common/theme";
 import { MeetingDetails } from "../common/types";
 import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
+import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";
-import { useSnackbar } from "./Snackbar";
 
 type Props = {
   meetingDetails: MeetingDetails;

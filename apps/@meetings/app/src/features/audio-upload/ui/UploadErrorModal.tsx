@@ -19,7 +19,7 @@ import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
-import Modal from "~@meetings/app/components/Modal";
+import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {

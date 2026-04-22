@@ -18,7 +18,7 @@
 import clsx from "clsx";
 import { View } from "react-native";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "./Typography";
 
 export const TABLE_HEAD_CELL_HEIGHT = 44;
 export const TABLE_CELL_HEIGHT = 72;

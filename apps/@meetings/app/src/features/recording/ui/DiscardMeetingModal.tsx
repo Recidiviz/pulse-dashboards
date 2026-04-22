@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 
 import { Person } from "../../../common/types";
-import Modal from "../../../components/Modal";
+import Modal from "../../../shared/ui/Modal";
 import { Typography } from "../../../shared/ui/Typography";
 import { ModalConfirmationBackdrop } from "./ModalConfirmationBackdrop";
 

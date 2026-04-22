@@ -25,8 +25,8 @@ import Animated, {
 } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 
-import { theme } from "../common/theme";
-import { Typography } from "../shared/ui/Typography";
+import { theme } from "../../common/theme";
+import { Typography } from "./Typography";
 
 const TRACK_COLOR = theme["backgroundColor"]["disabled"];
 const PROGRESS_COLOR = theme["colors"]["brand"];

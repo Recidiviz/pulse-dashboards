@@ -40,12 +40,4 @@ export default defineConfig([
     files: ["./src/entities/upload-segment/**"],
     rules: { "fsd/no-segmentless-slices": "off" },
   },
-  {
-    // TODO: remove the block after refactoring
-    files: ["./src/shared/ui/RecordingIndicator.tsx"],
-    rules: {
-      "fsd/forbidden-imports": "off",
-      "fsd/no-public-api-sidestep": "off",
-    },
-  },
 ]);

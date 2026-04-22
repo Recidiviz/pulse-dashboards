@@ -22,7 +22,7 @@ import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 import MinimizeSvg from "~@meetings/app/assets/icons/arrows-pointing-in.svg";
 import PlaySvg from "~@meetings/app/assets/icons/play.svg";
 import { Person } from "~@meetings/app/common/types";
-import Modal from "~@meetings/app/components/Modal";
+import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import useIsOnline from "../hooks/useIsOnline";

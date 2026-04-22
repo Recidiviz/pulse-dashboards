@@ -17,7 +17,7 @@
 
 import { TouchableOpacity, View } from "react-native";
 
-import Modal from "~@meetings/app/components/Modal";
+import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {

@@ -20,9 +20,9 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
+import Modal from "../shared/ui/Modal";
 import { Typography } from "../shared/ui/Typography";
 import { trpc } from "../trpc/client";
-import Modal from "./Modal";
 
 type Props = {
   meetingId: string;

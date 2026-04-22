@@ -19,9 +19,9 @@ import React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import PrimaryButton from "../components/PrimaryButton";
 import { useUserContext } from "../context/UserContext";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
+import PrimaryButton from "../shared/ui/PrimaryButton";
 import { Typography } from "../shared/ui/Typography";
 
 const NoAccessScreen = () => {

@@ -21,7 +21,6 @@ import React from "react";
 import { AGENCY_CONFIGS } from "~@meetings/config";
 
 import DrawerContent from "../components/DrawerContent";
-import Loading from "../components/Loading";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import ClientMeetingScreen from "../screens/ClientMeetingScreen";
@@ -34,6 +33,7 @@ import ResidentNewMeetingScreen from "../screens/ResidentNewMeetingScreen";
 import ResidentProfileScreen from "../screens/ResidentProfileScreen";
 import ResidentsScreen from "../screens/ResidentsScreen";
 import StateSelectionScreen from "../screens/StateSelectionScreen";
+import Loading from "../shared/ui/Loading";
 
 export type RootStackParamList = {
   Clients: undefined;

@@ -17,11 +17,11 @@
 
 import { RouteProp, useRoute } from "@react-navigation/native";
 
-import Loading from "../components/Loading";
 import Meeting from "../components/Meeting";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import Loading from "../shared/ui/Loading";
 import { trpc } from "../trpc/client";
 import {
   deserializeClient,

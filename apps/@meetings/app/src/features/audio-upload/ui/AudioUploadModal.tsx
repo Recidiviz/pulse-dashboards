@@ -22,7 +22,7 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import CalendarIcon from "react-native-heroicons/solid/CalendarIcon";
 import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
-import Modal from "~@meetings/app/components/Modal";
+import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { useAudioUploadStore } from "../store";

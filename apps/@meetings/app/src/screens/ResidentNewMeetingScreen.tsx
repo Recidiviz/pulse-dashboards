@@ -19,10 +19,10 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Loading from "../components/Loading";
 import NewMeeting from "../components/NewMeeting";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import Loading from "../shared/ui/Loading";
 import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
 import { formatPersonTitle } from "../utils/format";

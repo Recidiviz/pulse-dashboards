@@ -28,9 +28,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import LogoSvg from "../assets/icons/logo.svg";
 import { LearnMoreModal, LearnMoreSheet } from "../components/LearnMore";
-import PrimaryButton from "../components/PrimaryButton";
 import env from "../env";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
+import PrimaryButton from "../shared/ui/PrimaryButton";
 import { Typography } from "../shared/ui/Typography";
 
 const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {

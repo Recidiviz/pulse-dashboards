@@ -18,7 +18,7 @@
 import React, { useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "./Typography";
 
 type Props = {
   tooltipText: string;

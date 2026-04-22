@@ -50,13 +50,13 @@ import {
   useReconnectUploadStore,
 } from "../hooks/useReconnectUploadStore";
 import { useUploadTimeRemaining } from "../hooks/useUploadTimeRemaining";
+import { CircularProgressBar } from "../shared/ui/CircularProgressBar";
+import { Expandable } from "../shared/ui/Expandable";
+import { FadeContainer } from "../shared/ui/FadeContainer";
+import { FloatingCard } from "../shared/ui/FloatingCard";
+import { HorizontalDivider } from "../shared/ui/HorizontalDivider";
 import { Typography } from "../shared/ui/Typography";
 import { getInitials } from "../utils/format";
-import { CircularProgressBar } from "./CircularProgressBar";
-import { Expandable } from "./Expandable";
-import { FadeContainer } from "./FadeContainer";
-import { FloatingCard } from "./FloatingCard";
-import { HorizontalDivider } from "./HorizontalDivider";
 
 type ReconnectRowProps = {
   person?: Person;

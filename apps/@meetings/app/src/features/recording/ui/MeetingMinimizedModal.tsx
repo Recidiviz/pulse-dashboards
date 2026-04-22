@@ -23,8 +23,8 @@ import PauseSvg from "../../../assets/icons/pause.svg";
 import PlaySvg from "../../../assets/icons/play.svg";
 import StopSvg from "../../../assets/icons/stop.svg";
 import { Person } from "../../../common/types";
-import { FloatingCard } from "../../../components/FloatingCard";
-import LinearProgressBar from "../../../components/LinearProgressBar";
+import { FloatingCard } from "../../../shared/ui/FloatingCard";
+import LinearProgressBar from "../../../shared/ui/LinearProgressBar";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { formatDurationNumeric } from "../../../utils/format";
@@ -64,7 +64,7 @@ export function MeetingMinimizedModal({
           </TouchableOpacity>
         </View>
         <View className="flex-row items-center gap-2">
-          <RecordingIndicator status={status} />
+          <RecordingIndicator isRecording={status === "recording"} />
           <Typography className="font-medium text-primary">
             {status === "recording" ? "Recording in progress" : "Paused"}
           </Typography>

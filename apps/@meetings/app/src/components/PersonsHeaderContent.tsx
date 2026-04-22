@@ -20,10 +20,10 @@ import { useMemo } from "react";
 import { View } from "react-native";
 
 import { PersonType } from "../common/types";
+import Dropdown from "../shared/ui/Dropdown";
+import SearchBar from "../shared/ui/SearchBar";
 import { Typography } from "../shared/ui/Typography";
 import { SortOption } from "../utils/sort";
-import Dropdown from "./Dropdown";
-import SearchBar from "./SearchBar";
 
 type Props = {
   personType: PersonType;

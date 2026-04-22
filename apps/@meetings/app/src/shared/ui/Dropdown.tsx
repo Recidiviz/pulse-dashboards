@@ -33,8 +33,8 @@ import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { theme } from "../common/theme";
-import { Typography } from "../shared/ui/Typography";
+import { theme } from "../../common/theme";
+import { Typography } from "./Typography";
 
 type DropdownProps = {
   options: string[];

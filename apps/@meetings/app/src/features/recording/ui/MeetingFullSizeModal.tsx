@@ -26,8 +26,8 @@ import PauseSvg from "../../../assets/icons/pause.svg";
 import PlaySvg from "../../../assets/icons/play.svg";
 import StopSvg from "../../../assets/icons/stop.svg";
 import { Person } from "../../../common/types";
-import LinearProgressBar from "../../../components/LinearProgressBar";
-import Modal from "../../../components/Modal";
+import LinearProgressBar from "../../../shared/ui/LinearProgressBar";
+import Modal from "../../../shared/ui/Modal";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { formatDurationNumeric } from "../../../utils/format";
@@ -207,7 +207,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
                 {formatDurationNumeric(durationMs)}
               </Typography>
               <View className="flex-row items-center gap-2">
-                <RecordingIndicator status={status} />
+                <RecordingIndicator isRecording={status === "recording"} />
                 <Typography className="font-medium text-secondary">
                   {status === "recording"
                     ? "Recording in progress"

@@ -22,9 +22,9 @@ import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicat
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
 import { theme } from "../common/theme";
+import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { EditDraftCaseNoteModal } from "./EditDraftCaseNoteModal";
-import { useSnackbar } from "./Snackbar";
 
 type Props = {
   meetingId: string;

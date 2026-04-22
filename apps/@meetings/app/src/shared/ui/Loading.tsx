@@ -17,7 +17,7 @@
 
 import { View } from "react-native";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "./Typography";
 
 type Props = {
   message: string;

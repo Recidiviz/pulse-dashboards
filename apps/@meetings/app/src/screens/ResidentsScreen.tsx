@@ -26,13 +26,13 @@ import {
 
 import { Resident } from "../common/types";
 import Header from "../components/Header";
-import Loading from "../components/Loading";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsPlaceholder from "../components/PersonsPlaceholder";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../features/recording";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
+import Loading from "../shared/ui/Loading";
 import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
 import { SortOption, sortUsers } from "../utils/sort";

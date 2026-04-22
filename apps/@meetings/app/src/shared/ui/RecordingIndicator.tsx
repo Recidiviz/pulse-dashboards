@@ -18,16 +18,12 @@
 import clsx from "clsx";
 import { View } from "react-native";
 
-import { Status } from "~@meetings/app/features/recording/model";
-
 type Props = {
-  status: Status;
+  isRecording: boolean;
   className?: string;
 };
 
-export function RecordingIndicator({ status, className }: Props) {
-  const isRecording = status === "recording";
-
+export function RecordingIndicator({ isRecording, className }: Props) {
   return (
     <View
       className={clsx(

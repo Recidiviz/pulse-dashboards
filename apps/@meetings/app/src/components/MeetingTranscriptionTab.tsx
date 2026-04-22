@@ -20,8 +20,8 @@ import { ScrollView, View } from "react-native";
 import MenuAlt2Icon from "react-native-heroicons/outline/MenuAlt2Icon";
 import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 
+import SearchBar from "../shared/ui/SearchBar";
 import { Typography } from "../shared/ui/Typography";
-import SearchBar from "./SearchBar";
 
 type Props = {
   transcription?: {

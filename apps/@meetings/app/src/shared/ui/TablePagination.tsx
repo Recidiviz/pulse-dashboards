@@ -19,7 +19,7 @@ import { TouchableOpacity, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "./Typography";
 
 const PAGE_SIZE = 7;
 

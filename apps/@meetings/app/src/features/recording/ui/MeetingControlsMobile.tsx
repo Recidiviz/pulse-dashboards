@@ -78,7 +78,7 @@ export function MeetingControlsMobile() {
           </Link>
         )}
         <View className="mt-1 flex flex-row items-center gap-2">
-          <RecordingIndicator status={status} />
+          <RecordingIndicator isRecording={status === "recording"} />
           <Typography className="text-sm font-medium text-primary">
             Recording in progress
           </Typography>
