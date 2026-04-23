@@ -70,14 +70,14 @@ const FAKE_DEEPGRAM_TRANSCRIPT_OBJECT = {
     utterances: [
       {
         confidence: 0.98,
-        end: 3800,
+        end: 3.8,
         speaker: 0,
-        start: 1800,
+        start: 1.8,
         transcript: "This is the second mock transcription sentence.",
       },
       {
         confidence: 0.96,
-        end: 1800,
+        end: 1.8,
         speaker: 1,
         start: 0,
         transcript: "This is the first mock transcription sentence.",
@@ -599,47 +599,47 @@ describe("tasks", () => {
           utterances: [
             {
               confidence: 0.99,
-              end: 4240,
+              end: 4.24,
               speaker: 0,
-              start: 2240,
+              start: 2.24,
               transcript: "How are things? I'm sick.",
               words: [
                 {
                   word: "how",
-                  start: 2240,
-                  end: 2480,
+                  start: 2.24,
+                  end: 2.48,
                   confidence: 0.99,
                   speaker: 0,
                   punctuated_word: "How",
                 },
                 {
                   word: "are",
-                  start: 2480,
-                  end: 2720,
+                  start: 2.48,
+                  end: 2.72,
                   confidence: 0.99,
                   speaker: 0,
                   punctuated_word: "are",
                 },
                 {
                   word: "things",
-                  start: 2720,
-                  end: 3280,
+                  start: 2.72,
+                  end: 3.28,
                   confidence: 0.99,
                   speaker: 0,
                   punctuated_word: "things?",
                 },
                 {
                   word: "i'm",
-                  start: 3280,
-                  end: 3520,
+                  start: 3.28,
+                  end: 3.52,
                   confidence: 0.95,
                   speaker: 1,
                   punctuated_word: "I'm",
                 },
                 {
                   word: "sick",
-                  start: 3520,
-                  end: 4240,
+                  start: 3.52,
+                  end: 4.24,
                   confidence: 0.99,
                   speaker: 1,
                   punctuated_word: "sick.",
@@ -728,7 +728,7 @@ describe("tasks", () => {
           utterances: [
             {
               confidence: 0.91,
-              end: 5000,
+              end: 5,
               speaker: 0,
               start: 0,
               transcript:

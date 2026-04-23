@@ -145,8 +145,8 @@ function splitDeepgramUtteranceBySpeaker(
       {
         text: utterance.transcript,
         speaker: utterance.speaker?.toString() ?? "unknown",
-        startTimeMs: utterance.start,
-        endTimeMs: utterance.end,
+        startTimeMs: utterance.start * 1000,
+        endTimeMs: utterance.end * 1000,
         confidence: utterance.confidence,
       },
     ];
@@ -160,8 +160,8 @@ function splitDeepgramUtteranceBySpeaker(
     return {
       text: group.map((w) => w.punctuated_word ?? w.word).join(" "),
       speaker: first.speaker?.toString() ?? "unknown",
-      startTimeMs: first.start,
-      endTimeMs: last.end,
+      startTimeMs: first.start * 1000,
+      endTimeMs: last.end * 1000,
       confidence: Math.round(avgConfidence * 10000) / 10000,
     };
   });
