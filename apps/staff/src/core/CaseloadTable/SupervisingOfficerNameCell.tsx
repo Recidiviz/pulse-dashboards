@@ -20,12 +20,13 @@ import WorkflowsOfficerName from "../WorkflowsOfficerName/WorkflowsOfficerName";
 
 export function SupervisingOfficerNameCell({
   person,
+  staffTitle = "supervisor",
 }: {
   person: JusticeInvolvedPerson;
+  staffTitle?: string;
 }) {
-  return person.assignedStaffId ? (
-    <WorkflowsOfficerName officerId={person.assignedStaffId} />
-  ) : (
-    "No supervisor on record"
-  );
+  if (person.assignedStaffId) {
+    return <WorkflowsOfficerName officerId={person.assignedStaffId} />;
+  }
+  return `No ${staffTitle} on record`;
 }

@@ -56,6 +56,7 @@ export const usMiResidents: ResidentFixture[] = [
     ],
     stateCode: "US_MI",
     personExternalId: "RES020",
+    officerId: "MIOFFICER1",
     displayId: "dRES020",
     personName: {
       givenNames: "Wendy",

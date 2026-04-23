@@ -58,6 +58,15 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     surname: "Gomez",
     pseudonymizedId: "p005",
   },
+  // US_MI - MICHIGAN
+  {
+    email: "test-officer-6@example.com",
+    id: "MIOFFICER1",
+    stateCode: "US_MI",
+    givenNames: "Mike",
+    surname: "Martin",
+    pseudonymizedId: "mi001",
+  },
   // US_UT - UTAH
   {
     email: "ut-officer-1@example.com",

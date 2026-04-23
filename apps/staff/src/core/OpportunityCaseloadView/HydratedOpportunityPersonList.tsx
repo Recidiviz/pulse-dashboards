@@ -347,7 +347,19 @@ function EligibilityDateCell({
 }
 
 function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
-  return <SupervisingOfficerNameCell person={row.original.person} />;
+  const {
+    tenantStore: { labels },
+  } = useRootStore();
+  const staffTitle =
+    row.original.config.systemType === "INCARCERATION"
+      ? labels.incarcerationStaffTitle.toLowerCase()
+      : "supervisor";
+  return (
+    <SupervisingOfficerNameCell
+      person={row.original.person}
+      staffTitle={staffTitle}
+    />
+  );
 }
 
 export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
