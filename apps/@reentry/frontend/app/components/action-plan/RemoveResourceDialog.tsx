@@ -44,7 +44,11 @@ const RemoveResourceDialog = ({
       <p className={styles["body"]}>
         Remove <span className={styles["bold"]}>{resourceName}</span> from{" "}
         <span className={styles["bold"]}>{sectionTitle}</span> resources?
+        <br />
+        <br />
+        This change will apply immediately.
       </p>
+
       <div className={styles["actions"]}>
         <PrimaryButton
           buttonText="Cancel"

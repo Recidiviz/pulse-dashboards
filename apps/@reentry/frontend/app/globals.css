@@ -137,7 +137,15 @@ body {
 
 .mdxeditor-toolbar.larger-toolbar {
   color: #171717 !important;
-  top: -30px !important;
+  position: sticky !important;
+  top: 0px;
+  z-index: 1;
+}
+
+@media (max-width: 1080px) {
+  .mdxeditor-toolbar.larger-toolbar {
+    top: 56px !important;
+  }
 }
 
 .markdown-edit-content {

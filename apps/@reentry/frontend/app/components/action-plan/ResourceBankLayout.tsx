@@ -17,16 +17,21 @@
 
 "use client";
 
+import { useState } from "react";
+
 import PlanContent from "~@reentry/frontend/components/action-plan/PlanContent";
 import {
   PlanContentSkeleton,
   PlanErrorContent,
   SidePanelSkeleton,
 } from "~@reentry/frontend/components/action-plan/PlanContentSkeleton";
+import PlanEdit from "~@reentry/frontend/components/action-plan/PlanEdit";
 import ResourceBankSidePanel from "~@reentry/frontend/components/action-plan/ResourceBankSidePanel";
 import { useMockResourceBankPlan } from "~@reentry/frontend/hooks/useMockRessourceAPICall";
+import { usePlanMarkdown } from "~@reentry/frontend/hooks/usePlanMarkdown";
 import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
 
+import RemoveResourceDialog from "./RemoveResourceDialog";
 import { CATEGORY_SUBCATEGORY_MAP } from "./resource-bank/categorySubcategoryMap";
 import styles from "./styles/ResourceBankLayout.module.css";
 
@@ -55,6 +60,7 @@ const ErrorState = () => (
 interface ResourceBankLayoutProps {
   planId: string;
 }
+type PendingRemoval = { id: string; name: string; sectionTitle: string };
 
 const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
   const {
@@ -70,6 +76,21 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
     isLoading: isResourceBankLoading,
     isError: didResourceBankError,
   } = useResourceBank();
+
+  const {
+    displayMarkdown,
+    draftMarkdown,
+    setDraftMarkdown,
+    isEditing,
+    isSaving,
+    startEdit,
+    cancelEdit,
+    saveMarkdown,
+  } = usePlanMarkdown(planDetail?.latest_generation?.markdown_result);
+
+  const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
+    null,
+  );
 
   const handleAddressSave = (address: {
     street_address: string | null;
@@ -90,22 +111,56 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
   };
   if (isError || !planDetail) return <ErrorState />;
 
+  const clientFirstName =
+    planDetail?.client_record?.full_name?.given_names ?? "the client";
+
   return (
     <div className={styles["container"]}>
       <div className={styles["sidebar"]}>
         <ResourceBankSidePanel
-          clientRecord={planDetail.client_record}
+          clientRecord={planDetail?.client_record}
           onAddressSave={handleAddressSave}
           searchPanelProps={resourceSearchPanelProps}
         />
       </div>
       <div className={styles["content"]}>
-        <PlanContent
-          isResourceBankLoading={isResourceBankLoading}
-          isErrorResources={didResourceBankError}
-          planDetail={planDetail}
-          removeResource={removeResource}
-          sections={sections}
+        {!isEditing ? (
+          <PlanContent
+            planDetail={planDetail}
+            setMarkdownEdit={startEdit}
+            internalMarkdown={displayMarkdown}
+            onResourceRemove={(id, name, sectionTitle) =>
+              setPendingRemoval({ id, name, sectionTitle })
+            }
+            allResources={sections}
+            isErrorResources={didResourceBankError}
+            isResourceBankLoading={isResourceBankLoading}
+          />
+        ) : (
+          <PlanEdit
+            internalMarkdown={draftMarkdown}
+            setInternalMarkdown={setDraftMarkdown}
+            allResources={sections}
+            clientFirstName={clientFirstName}
+            onResourceRemove={(id, name, sectionTitle) =>
+              setPendingRemoval({ id, name, sectionTitle })
+            }
+            onSave={saveMarkdown}
+            onCancel={cancelEdit}
+            isSaving={isSaving}
+          />
+        )}
+        <RemoveResourceDialog
+          isOpen={pendingRemoval !== null}
+          resourceName={pendingRemoval?.name ?? ""}
+          sectionTitle={pendingRemoval?.sectionTitle ?? ""}
+          onClose={() => setPendingRemoval(null)}
+          onConfirm={() => {
+            if (pendingRemoval) {
+              removeResource(pendingRemoval.sectionTitle, pendingRemoval.id);
+            }
+            setPendingRemoval(null);
+          }}
         />
       </div>
     </div>

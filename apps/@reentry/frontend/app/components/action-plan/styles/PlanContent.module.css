@@ -75,6 +75,24 @@
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
+  position: sticky;
+  top: 0px;
+  z-index: 2;
+  padding: 12px 0;
+}
+
+@media (max-width: 1080px) {
+  .buttonRow.edit {
+    background-color: var(--color-white);
+  }
+}
+
+@media (min-width: 1080px) {
+  .buttonRow.edit {
+    padding-top: 4px;
+    padding-right: 12px;
+  }
 }
 
 @media print {
@@ -85,4 +103,5 @@
 
 .downloadButton {
   max-width: 200px !important;
+  background-color: var(--color-white);
 }

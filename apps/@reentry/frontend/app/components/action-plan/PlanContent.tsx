@@ -17,14 +17,13 @@
 
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ResourceSection } from "~@reentry/frontend/hooks/resourceBank.types";
 import { usePlanPdf } from "~@reentry/frontend/hooks/usePlanPdf";
 import { components } from "~@reentry/openapi-types";
 
-import RemoveResourceDialog from "./RemoveResourceDialog";
 import ResourceBankViewer from "./ResourceBankViewer";
 import styles from "./styles/PlanContent.module.css";
 
@@ -32,30 +31,21 @@ interface PlanContentProps {
   isResourceBankLoading: boolean;
   isErrorResources: boolean;
   planDetail: components["schemas"]["PlanResponseGet"];
-  removeResource: (sectionTitle: string, resourceId: string) => void;
-  sections: ResourceSection[];
+  setMarkdownEdit: () => void;
+  internalMarkdown: string;
+  allResources?: ResourceSection[];
+  onResourceRemove?: (id: string, name: string, sectionTitle: string) => void;
 }
 
-type PendingRemoval = { id: string; name: string; sectionTitle: string };
-
 const PlanContent = ({
+  planDetail,
+  setMarkdownEdit,
+  internalMarkdown,
+  allResources,
+  onResourceRemove,
   isResourceBankLoading,
   isErrorResources,
-  planDetail,
-  removeResource,
-  sections,
 }: PlanContentProps) => {
-  const [internalMarkdown, setInternalMarkdown] = useState<string>("");
-
-  const markDownPlan = planDetail.latest_generation?.markdown_result;
-  useEffect(() => {
-    setInternalMarkdown(markDownPlan || "");
-  }, [markDownPlan, setInternalMarkdown]);
-
-  const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
-    null,
-  );
-
   const contentRef = useRef<HTMLDivElement>(null);
   const clientFullName = planDetail.client_record?.full_name
     ? `${planDetail.client_record.full_name.given_names}_${planDetail.client_record.full_name.surname}`
@@ -71,6 +61,13 @@ const PlanContent = ({
       <div className={styles["inner"]}>
         <div className={styles["buttonRow"]}>
           <PrimaryButton
+            buttonText="Edit"
+            onClick={setMarkdownEdit}
+            disabled={isGenerating}
+            ignoreCapabilities={true}
+            className={styles["downloadButton"]}
+          />
+          <PrimaryButton
             buttonText={isGenerating ? "Generating..." : "Download PDF"}
             onClick={generatePdf}
             disabled={isGenerating}
@@ -83,28 +80,13 @@ const PlanContent = ({
           <ResourceBankViewer
             clientName={planDetail?.client_record?.full_name}
             markDownPlan={internalMarkdown}
-            onResourceRemove={(id, name, sectionTitle) =>
-              setPendingRemoval({ id, name, sectionTitle })
-            }
-            allResources={sections}
+            onResourceRemove={onResourceRemove}
+            allResources={allResources}
             isLoadingResources={isResourceBankLoading}
             isErrorResources={isErrorResources}
           />
         </div>
       </div>
-
-      <RemoveResourceDialog
-        isOpen={pendingRemoval !== null}
-        resourceName={pendingRemoval?.name ?? ""}
-        sectionTitle={pendingRemoval?.sectionTitle ?? ""}
-        onClose={() => setPendingRemoval(null)}
-        onConfirm={() => {
-          if (pendingRemoval) {
-            removeResource(pendingRemoval.sectionTitle, pendingRemoval.id);
-          }
-          setPendingRemoval(null);
-        }}
-      />
     </div>
   );
 };
