@@ -29,12 +29,13 @@ import dedent from "dedent";
 import { wrapOpenAI } from "langsmith/wrappers";
 import OpenAI from "openai";
 
+import { generateConfigKey } from "~@meetings/config/loader";
+import type { AgencyConfig } from "~@meetings/config/types";
 import type { Person } from "~@meetings/prisma/types";
 import { generateContentWithZodSchema } from "~@meetings/tasks/llm/clients/gemini";
 import { completeChatWithZodSchema } from "~@meetings/tasks/llm/clients/openai";
 import { PROMPTS } from "~@meetings/tasks/llm/prompts";
 import {
-  AgencyConfig,
   DraftingOutput,
   DraftingOutputSchema,
   ExtractionOutput,
@@ -110,12 +111,10 @@ export class SpecialistCore {
       transcript_duration_seconds: transcript.durationSeconds,
     });
 
-    const agencyRulesStr = agency.operationalRules
-      .map((r) => `- ${r}`)
-      .join("\n");
+    const agencySpecificRules = agency.rules.map((r) => `- ${r}`).join("\n");
 
     const userMessage = PROMPTS.EXTRACTION.USER({
-      agencySpecificRules: agencyRulesStr,
+      agencySpecificRules,
       transcript: transcript.rawText,
     });
 
@@ -160,9 +159,10 @@ export class SpecialistCore {
     });
 
     agentLogger.info("Starting drafting agent", {
-      note_structure: agency.noteConfig.structureName,
+      outputs_count: agency.outputs.length,
       action_items_count: facts.actionItems.length,
       updates_count: facts.criticalUpdates.length,
+      config_version: generateConfigKey(agency),
     });
 
     const glossaryStr = Object.entries(agency.glossary)
@@ -178,9 +178,9 @@ export class SpecialistCore {
       ENTITIES: ${JSON.stringify(entityDict)}`;
     const clientContextStr = `Client: ${person.givenNames} ${person.surname}`;
 
-    let structureDesc = `Structure Name: ${agency.noteConfig.structureName}\n`;
-    for (const section of agency.noteConfig.sections) {
-      structureDesc += `- ${section.sectionId}: ${section.instruction}\n`;
+    let structureStr = "";
+    for (const output of agency.outputs) {
+      structureStr += `- ${output.id} (${output.label}): ${output.promptGuidance}\n`;
     }
 
     const userMessage = PROMPTS.WRITER.USER({
@@ -188,7 +188,7 @@ export class SpecialistCore {
       extracted: factsStr,
       glossary: glossaryStr,
       client: clientContextStr,
-      structure: structureDesc,
+      structure: structureStr,
       poNotes: transcript.poNotes,
     });
 

@@ -21,6 +21,7 @@ import { httpBatchLink } from "@trpc/client";
 import React from "react";
 import superjson from "superjson";
 
+import { AgencyConfigProvider } from "../context/AgencyConfigContext";
 import {
   DEFAULT_STATE_CODE,
   StateCode,
@@ -94,9 +95,11 @@ const AuthenticatedApp: React.FC = () => {
         client={queryClient}
         persistOptions={{ persister: queryCachePersister, maxAge: ONE_WEEK_MS }}
       >
-        <StateCodeProvider selectedStateRef={selectedStateRef}>
-          <AuthenticatedContent />
-        </StateCodeProvider>
+        <AgencyConfigProvider>
+          <StateCodeProvider selectedStateRef={selectedStateRef}>
+            <AuthenticatedContent />
+          </StateCodeProvider>
+        </AgencyConfigProvider>
       </PersistQueryClientProvider>
     </trpc.Provider>
   );

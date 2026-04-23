@@ -18,7 +18,7 @@
 import { subDays } from "date-fns";
 import { describe, expect, test, vi } from "vitest";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { TranscriptionProvider } from "~@meetings/prisma/client";
 import {
   cleanupMeetingData,

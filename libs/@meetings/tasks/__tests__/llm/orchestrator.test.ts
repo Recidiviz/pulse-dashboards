@@ -17,13 +17,13 @@
 
 import { beforeEach, describe, expect, MockInstance, test, vi } from "vitest";
 
+import { AgencyConfig } from "~@meetings/config/types";
 import type { PrismaClient } from "~@meetings/prisma/client";
 import { Client } from "~@meetings/prisma/client";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import * as evaluationStore from "~@meetings/tasks/llm/evaluation-store";
 import { ProductionPipeline } from "~@meetings/tasks/llm/orchestrator";
 import {
-  AgencyConfig,
   DraftingOutput,
   ExtractionOutput,
   TranscriptInput,
@@ -52,23 +52,25 @@ describe("ProductionPipeline", () => {
   };
 
   const mockAgency: AgencyConfig = {
-    agencyName: "Test Probation Department",
+    name: "Test Probation Department",
+    stateCode: "US_XX",
+    version: 1,
+    baseVersion: 1,
+    showTranscriptions: true,
+    audioTTLDays: 30,
+    transcriptTTLDays: 30,
     glossary: {
       PO: "Probation Officer",
       UA: "Urinalysis",
     },
-    operationalRules: [
+    rules: [
       "Document all client interactions",
       "Note changes in housing or employment",
     ],
-    noteConfig: {
-      structureName: "Standard Case Note",
-      combineOutput: true,
-      sections: [
-        { sectionId: "SUMMARY", instruction: "Brief overview" },
-        { sectionId: "DISCUSSION", instruction: "Detailed points" },
-      ],
-    },
+    keywords: [],
+    outputs: [
+      { id: "case_note", label: "Case Note", promptGuidance: "Brief overview" },
+    ],
   };
 
   const mockTranscript: TranscriptInput = {
@@ -562,6 +564,7 @@ describe("ProductionPipeline", () => {
           personPseudonymizedId: "PSEUDO_123",
           status: "SUCCESS",
           errorDetails: null,
+          configVersion: "US_XX@v1-base@v1",
         });
 
       createAgentExecutionSpy = vi
@@ -586,6 +589,7 @@ describe("ProductionPipeline", () => {
           personPseudonymizedId: "PSEUDO_123",
           status: "FAILURE",
           errorDetails: null,
+          configVersion: "US_XX@v1-base@v1",
         });
     });
 
@@ -628,6 +632,7 @@ describe("ProductionPipeline", () => {
       expect(createPipelineRunSpy).toHaveBeenCalledWith(mockPrisma, {
         meetingId: "meeting-456",
         personPseudonymizedId: "PSEUDO_123",
+        configVersion: "US_XX@v1-base@v1",
         status: "IN_PROGRESS",
       });
     });

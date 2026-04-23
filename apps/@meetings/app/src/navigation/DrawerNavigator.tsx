@@ -18,9 +18,8 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
-
 import DrawerContent from "../components/DrawerContent";
+import { useAgencyConfigs } from "../context/AgencyConfigContext";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import { NoAccessScreen } from "../pages/no-access";
@@ -78,9 +77,10 @@ export default function DrawerNavigator() {
   const { hasSupervisionAccess, hasFacilitiesAccess, isLoading, stateCode } =
     useUserContext();
   const { isLoading: isStateLoading } = useStateSelection();
+  const { agencyConfigs, isLoading: isLoadingConfigs } = useAgencyConfigs();
 
   // Wait for user metadata and state context to load before checking access
-  if (isLoading || isStateLoading) {
+  if (isLoading || isStateLoading || isLoadingConfigs) {
     return <Loading message="Loading..." />;
   }
 
@@ -88,7 +88,7 @@ export default function DrawerNavigator() {
   // Only check for state users (non-Recidiviz) since Recidiviz users can select any state
   if (stateCode && stateCode !== "recidiviz") {
     const normalizedStateCode = stateCode.toUpperCase();
-    const isSupported = normalizedStateCode in AGENCY_CONFIGS;
+    const isSupported = normalizedStateCode in agencyConfigs;
     if (!isSupported) {
       return <NoAccessScreen />;
     }

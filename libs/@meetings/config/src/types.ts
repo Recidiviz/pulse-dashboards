@@ -17,15 +17,73 @@
 
 import { z } from "zod";
 
-const MIN_TTL_DAYS = 7;
-
-export const AgencyConfigSchema = z.object({
-  name: z.string(),
-  stateCode: z.string(),
-  showTranscriptions: z.boolean().default(true),
-  audioTTLDays: z.number().int().min(MIN_TTL_DAYS).default(30).nullable(),
-  transcriptTTLDays: z.number().int().min(MIN_TTL_DAYS).default(30).nullable(),
-  keywords: z.array(z.string()).optional(),
+export const OutputSpecSchema = z.object({
+  id: z.string().describe("Unique identifier for this output section"),
+  label: z.string().describe("Human-readable label"),
+  promptGuidance: z
+    .string()
+    .describe("LLM instructions for producing this output section"),
 });
 
+/**
+ * Schema for a raw agency YAML file.
+ *
+ * Use plain fields (`glossary`, `keywords`, etc.) to fully replace the base.
+ * Use `additional*` variants to extend the base instead — the loader merges
+ * them on top before validation.
+ */
+export const AgencyConfigFileSchema = z.object({
+  // ── Metadata ──────────────────────────────────────────────
+  name: z.string(),
+  stateCode: z.string(),
+  version: z.number().int().positive().default(1),
+
+  // ── Infrastructure ────────────────────────────────────────
+  showTranscriptions: z.boolean().optional(),
+  audioTTLDays: z.number().int().min(7).nullable().optional(),
+  transcriptTTLDays: z.number().int().min(7).nullable().optional(),
+  /** Replaces base keywords entirely */
+  keywords: z.array(z.string()).optional(),
+  /** Appended to base keywords */
+  additionalKeywords: z.array(z.string()).optional(),
+
+  // ── LLM ───────────────────────────────────────────────────
+  /** Replaces base glossary entirely */
+  glossary: z.record(z.string()).optional(),
+  /** Merged on top of base glossary */
+  additionalGlossary: z.record(z.string()).optional(),
+  /** Replaces base rules entirely */
+  rules: z.array(z.string()).optional(),
+  /** Appended to base rules */
+  additionalRules: z.array(z.string()).optional(),
+  /** Replaces base outputs entirely */
+  outputs: z.array(OutputSpecSchema).optional(),
+  /** Appended to base outputs */
+  additionalOutputs: z.array(OutputSpecSchema).optional(),
+});
+
+/**
+ * The result of merging the base config with an agency YAML
+ */
+export const AgencyConfigSchema = z.object({
+  // ── Metadata ──────────────────────────────────────────────
+  name: z.string(),
+  stateCode: z.string(),
+  version: z.number().int().positive().default(1),
+  baseVersion: z.number().int().positive().default(1),
+
+  // ── Infrastructure ────────────────────────────────────────
+  showTranscriptions: z.boolean().default(true),
+  audioTTLDays: z.number().int().min(7).default(30).nullable(),
+  transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
+  keywords: z.array(z.string()).default([]),
+
+  // ── LLM ───────────────────────────────────────────────────
+  glossary: z.record(z.string()).default({}),
+  rules: z.array(z.string()).default([]),
+  outputs: z.array(OutputSpecSchema).default([]),
+});
+
+export type AgencyConfigFile = z.infer<typeof AgencyConfigFileSchema>;
 export type AgencyConfig = z.infer<typeof AgencyConfigSchema>;
+export type OutputSpec = z.infer<typeof OutputSpecSchema>;

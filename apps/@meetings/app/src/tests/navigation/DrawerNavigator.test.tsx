@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
+import * as AgencyConfigContext from "../../context/AgencyConfigContext";
 import * as StateContext from "../../context/StateContext";
 import * as UserContext from "../../context/UserContext";
 import DrawerNavigator from "../../navigation/DrawerNavigator";
@@ -60,6 +61,22 @@ jest.mock("../../components/DrawerContent", () => null);
 describe("DrawerNavigator", () => {
   const mockUseUserContext = jest.spyOn(UserContext, "useUserContext");
   const mockUseStateSelection = jest.spyOn(StateContext, "useStateSelection");
+  const mockUseAgencyConfigs = jest.spyOn(
+    AgencyConfigContext,
+    "useAgencyConfigs",
+  );
+
+  mockUseAgencyConfigs.mockReturnValue({
+    agencyConfigs: {
+      US_NE: {
+        name: "Nebraska",
+        stateCode: "US_NE",
+        version: 1,
+        baseVersion: 1,
+      },
+    } as never,
+    isLoading: false,
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();

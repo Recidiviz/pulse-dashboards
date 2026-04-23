@@ -26,6 +26,8 @@
 
 import { traceable } from "langsmith/traceable";
 
+import { generateConfigKey } from "~@meetings/config/loader";
+import type { AgencyConfig } from "~@meetings/config/types";
 import type { PrismaClient } from "~@meetings/prisma/client";
 import { Person } from "~@meetings/prisma/types";
 import { TranscriptValidationError } from "~@meetings/tasks/errors";
@@ -42,7 +44,6 @@ import {
   transcriptGuard,
 } from "~@meetings/tasks/llm/guards";
 import {
-  AgencyConfig,
   DraftingOutputSchema,
   ExtractionOutputSchema,
   PipelineOutput,
@@ -98,6 +99,7 @@ export class ProductionPipeline {
         meetingId,
         personPseudonymizedId: person.pseudonymizedId,
         status: "IN_PROGRESS", // Will update on error
+        configVersion: generateConfigKey(agency),
       });
 
       try {
@@ -163,11 +165,7 @@ export class ProductionPipeline {
             person,
           );
 
-          const draftingResult = draftingGuard(
-            DraftingOutputSchema,
-            draft,
-            agency.noteConfig,
-          );
+          const draftingResult = draftingGuard(DraftingOutputSchema, draft);
 
           // Store each drafting attempt
           // eslint-disable-next-line no-await-in-loop

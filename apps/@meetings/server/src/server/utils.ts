@@ -19,6 +19,7 @@ import { SyncPrerecordedResponse } from "@deepgram/sdk";
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
 import { captureException } from "@sentry/node";
 
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   PostMeetingProcessingStatus,
   PrismaClient,
@@ -29,11 +30,7 @@ import {
   transcribeAudioWithAssemblyAI,
   transcribeAudioWithDeepgram,
 } from "~@meetings/tasks";
-import {
-  AgencyConfig,
-  ProductionPipeline,
-  TranscriptInput,
-} from "~@meetings/tasks/llm";
+import { ProductionPipeline, TranscriptInput } from "~@meetings/tasks/llm";
 
 export async function queueTranscriptionTaskLocal(
   stateCode: string,
@@ -391,39 +388,6 @@ export async function handleNotetakingProcessing(
     poNotes: meeting.userNotepadNotes || "",
   };
 
-  // Build agency config - hardcoded for now
-  const agencyConfig: AgencyConfig = {
-    agencyName: "Default Agency",
-    glossary: {
-      UA: "Urinalysis drug test",
-      PO: "Probation Officer",
-      IOP: "Intensive Outpatient Program",
-    },
-    operationalRules: [
-      "Document all client interactions",
-      "Note any changes in housing or employment status",
-      "Record all action items with clear deadlines",
-    ],
-    noteConfig: {
-      structureName: "Standard Case Note",
-      combineOutput: true,
-      sections: [
-        {
-          sectionId: "SUMMARY",
-          instruction: "Brief overview of the meeting",
-        },
-        {
-          sectionId: "DISCUSSION",
-          instruction: "Detailed discussion points",
-        },
-        {
-          sectionId: "ACTION_ITEMS",
-          instruction: "Tasks and follow-ups",
-        },
-      ],
-    },
-  };
-
   const meetingPerson = meeting.client ?? meeting.resident;
 
   if (!meetingPerson) {
@@ -435,6 +399,13 @@ export async function handleNotetakingProcessing(
   if (meeting.client && meeting.resident) {
     throw new Error(
       "Meeting cannot have both an associated client and an associated resident",
+    );
+  }
+
+  const agencyConfig = AGENCY_CONFIGS[meetingPerson.stateCode];
+  if (!agencyConfig) {
+    throw new Error(
+      `No agency config found for state code: ${meetingPerson.stateCode}`,
     );
   }
 

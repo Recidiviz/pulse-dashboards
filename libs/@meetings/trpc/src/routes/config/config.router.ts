@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AgencyConfigSchema } from "~@meetings/config/types";
+import type { AgencyConfig } from "~@meetings/config";
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
+import { auth0Procedure, router } from "~@meetings/trpc/init";
 
-const US_AZ_CONFIG = AgencyConfigSchema.parse({
-  name: "Arizona",
-  stateCode: "US_AZ",
-  keywords: ["ADCRR"],
+export const configRouter = router({
+  getAll: auth0Procedure.query((): Record<string, AgencyConfig> => {
+    return AGENCY_CONFIGS;
+  }),
 });
-
-export default US_AZ_CONFIG;

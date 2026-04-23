@@ -1,0 +1,34 @@
+# Base agency config — inherited by all agencies.
+# Agency-specific YAMLs override individual fields on top of these defaults.
+# This file is not a valid AgencyConfig on its own (no name/stateCode).
+
+version: 1
+
+# ── Infrastructure defaults ──────────────────────────────────
+audioTTLDays: 30
+transcriptTTLDays: 30
+showTranscriptions: true
+
+# ── LLM defaults ─────────────────────────────────────────────
+glossary:
+  UA: Urinalysis drug test
+  PO: Probation Officer
+  IOP: Intensive Outpatient Program
+
+rules:
+  - Document all client interactions
+  - Note any changes in housing or employment status
+  - Record all action items with clear deadlines
+
+outputs:
+  - id: case_note
+    label: Case Note
+    # Drawn from WRITER prompt in libs/@meetings/tasks/src/llm/prompts.ts
+    promptGuidance: |
+      Write a professional, third-person, objective case note.
+      Use CAPS LABELS for sub-topics (e.g. "HOUSING: ...", "EMPLOYMENT: ...").
+      Use double line breaks to separate sections. No giant paragraphs.
+      Incorporate all points from staff member notes. If any notes are unclear,
+      paste them at the bottom under "ADD'L NOTES:".
+      If INTAKE: focus on risk, needs, and initial stability.
+      If ROUTINE: focus on changes since last visit and progress.

@@ -17,7 +17,8 @@
 
 import { describe, expect, test, vi } from "vitest";
 
-import { AGENCY_CONFIGS, AUDIO_FORMATS } from "~@meetings/config";
+import { AUDIO_FORMATS } from "~@meetings/config";
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
 import {
   mockCloudTasksClient,
@@ -94,11 +95,17 @@ describe("meeting router", () => {
     test("Should return meeting details if it exists without transcription", async () => {
       // Set showTranscriptions: false for US_NE via the agency config
       AGENCY_CONFIGS["US_NE"] = {
+        baseVersion: 1,
         name: "Nebraska",
         stateCode: "US_NE",
+        version: 1,
         showTranscriptions: false,
         audioTTLDays: 30,
         transcriptTTLDays: 30,
+        keywords: [],
+        glossary: {},
+        rules: [],
+        outputs: [],
       };
 
       try {

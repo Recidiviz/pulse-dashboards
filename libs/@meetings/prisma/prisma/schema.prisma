@@ -267,6 +267,8 @@ model NotetakingPipelineRun {
   langsmithTraceId      String?
   personPseudonymizedId String
 
+  configVersion String?
+
   status NotetakingPipelineStatus
 
   /// [ErrorDetails]

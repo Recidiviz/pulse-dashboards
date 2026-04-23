@@ -17,12 +17,14 @@
 
 import { router } from "~@meetings/trpc/init";
 import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
+import { configRouter } from "~@meetings/trpc/routes/config/config.router";
 import { meetingRouter } from "~@meetings/trpc/routes/meeting/meeting.router";
 import { metadataRouter } from "~@meetings/trpc/routes/metadata/metadata.router";
 import { residentRouter } from "~@meetings/trpc/routes/resident/resident.router";
 
 const v1Router = router({
   client: clientRouter,
+  config: configRouter,
   meeting: meetingRouter,
   metadata: metadataRouter,
   resident: residentRouter,

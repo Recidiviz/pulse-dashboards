@@ -20,7 +20,7 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { z } from "zod";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import {
   deleteRecordingFiles,

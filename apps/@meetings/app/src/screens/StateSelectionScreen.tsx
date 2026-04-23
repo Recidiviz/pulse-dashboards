@@ -29,10 +29,9 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
-
 import { theme } from "../common/theme";
 import Header from "../components/Header";
+import { useAgencyConfigs } from "../context/AgencyConfigContext";
 import { StateCode, useStateSelection } from "../context/StateContext";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -48,6 +47,7 @@ const StateSelectionScreen = () => {
   const utils = trpc.useUtils();
   const { selectedStateCode, setSelectedStateCode } = useStateSelection();
   const [isSaving, setIsSaving] = useState(false);
+  const { agencyConfigs } = useAgencyConfigs();
 
   const handleStateCodeSelect = async (stateCode: StateCode) => {
     try {
@@ -80,7 +80,7 @@ const StateSelectionScreen = () => {
           </Typography>
 
           <View className="rounded-lg bg-primary p-4 shadow-sm">
-            {Object.values(AGENCY_CONFIGS).map((stateCodeOption, index) => (
+            {Object.values(agencyConfigs).map((stateCodeOption, index) => (
               <React.Fragment key={stateCodeOption.stateCode}>
                 <TouchableOpacity
                   onPress={() =>
@@ -119,7 +119,7 @@ const StateSelectionScreen = () => {
                     )}
                   </View>
                 </TouchableOpacity>
-                {index < Object.values(AGENCY_CONFIGS).length - 1 && (
+                {index < Object.values(agencyConfigs).length - 1 && (
                   <View className="h-px border-b border-subtle" />
                 )}
               </React.Fragment>
@@ -127,7 +127,7 @@ const StateSelectionScreen = () => {
           </View>
 
           <Typography className="mt-4 text-sm text-secondary">
-            Currently viewing data for {AGENCY_CONFIGS[selectedStateCode]?.name}
+            Currently viewing data for {agencyConfigs[selectedStateCode]?.name}
           </Typography>
         </View>
       </ScrollView>

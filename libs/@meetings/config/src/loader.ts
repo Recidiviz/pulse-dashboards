@@ -1,0 +1,108 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import fs from "fs";
+import path from "path";
+import { parse } from "yaml";
+
+import {
+  AgencyConfig,
+  AgencyConfigFile,
+  AgencyConfigFileSchema,
+  AgencyConfigSchema,
+} from "~@meetings/config/types";
+
+// Base YAML omits name/stateCode — make them optional for parsing
+const BaseConfigFileSchema = AgencyConfigFileSchema.omit({
+  name: true,
+  stateCode: true,
+});
+
+const YAML_DIR = path.join(__dirname, "yaml");
+
+function loadYaml(filename: string): unknown {
+  const filePath = path.join(YAML_DIR, filename);
+  return parse(fs.readFileSync(filePath, "utf8"));
+}
+
+export function mergeWithBase(
+  base: Omit<AgencyConfigFile, "name" | "stateCode">,
+  agency: AgencyConfigFile,
+): Record<string, unknown> {
+  return {
+    ...base,
+    ...agency,
+    baseVersion: base.version,
+    keywords: agency.keywords ?? [
+      ...(base.keywords ?? []),
+      ...(agency.additionalKeywords ?? []),
+    ],
+    glossary: agency.glossary ?? {
+      ...(base.glossary ?? {}),
+      ...(agency.additionalGlossary ?? {}),
+    },
+    rules: agency.rules ?? [
+      ...(base.rules ?? []),
+      ...(agency.additionalRules ?? []),
+    ],
+    outputs: agency.outputs ?? [
+      ...(base.outputs ?? []),
+      ...(agency.additionalOutputs ?? []),
+    ],
+    // Strip additional* fields — not part of resolved AgencyConfig
+    additionalKeywords: undefined,
+    additionalGlossary: undefined,
+    additionalRules: undefined,
+    additionalOutputs: undefined,
+  };
+}
+
+export function loadAgencyConfig(stateCode: string): AgencyConfig {
+  const filename = `${stateCode.toLowerCase()}.yaml`;
+
+  const rawBase = BaseConfigFileSchema.parse(loadYaml("base.yaml"));
+  const rawAgency = AgencyConfigFileSchema.parse(loadYaml(filename));
+
+  const merged = mergeWithBase(rawBase, rawAgency);
+  return AgencyConfigSchema.parse(merged);
+}
+
+/**
+ * Loads and validates all agency configs at startup.
+ * Fails loudly on any invalid YAML or schema violation.
+ */
+function loadAllAgencyConfigs(): Record<string, AgencyConfig> {
+  const files = fs
+    .readdirSync(YAML_DIR)
+    .filter((f) => f.endsWith(".yaml") && f !== "base.yaml");
+
+  const configs: Record<string, AgencyConfig> = {};
+
+  for (const file of files) {
+    const stateCode = path.basename(file, ".yaml").toUpperCase();
+    configs[stateCode] = loadAgencyConfig(stateCode);
+  }
+
+  return configs;
+}
+
+export const AGENCY_CONFIGS: Record<string, AgencyConfig> =
+  loadAllAgencyConfigs();
+
+export function generateConfigKey(config: AgencyConfig): string {
+  return `${config.stateCode}@v${config.version}-base@v${config.baseVersion}`;
+}

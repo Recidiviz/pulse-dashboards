@@ -18,8 +18,6 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
-
 import env from "../env";
 
 interface UserContextType {
@@ -68,7 +66,10 @@ export const UserContextProvider: React.FC<{
           isLoading: false,
           stateCode: "US_NE",
           isSkipAuthUser: true,
-          recidivizAllowedStates: Object.keys(AGENCY_CONFIGS),
+          // Agency configs are loaded asynchronously via AgencyConfigContext (which lives inside
+          // the tRPC provider, below UserContextProvider in the tree). Skip-auth state selection
+          // is still enabled via isSkipAuthUser, so this can safely be empty here.
+          recidivizAllowedStates: [],
           hasSupervisionAccess: true,
           hasFacilitiesAccess: true,
           hasSupervisionAssistantAccess: true,

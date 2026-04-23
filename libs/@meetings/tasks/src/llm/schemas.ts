@@ -27,26 +27,6 @@ import { z } from "zod";
 // INPUT SCHEMAS
 // ==========================================
 
-export const NoteSectionSchema = z.object({
-  sectionId: z.string().describe("JSON key or Header title"),
-  instruction: z.string().describe("Prompt instructions for this section"),
-});
-
-export const NoteStructureSchema = z.object({
-  structureName: z.string(),
-  combineOutput: z
-    .boolean()
-    .describe("True = Monolithic Text, False = Structured JSON"),
-  sections: z.array(NoteSectionSchema),
-});
-
-export const AgencyConfigSchema = z.object({
-  agencyName: z.string(),
-  glossary: z.record(z.string()),
-  operationalRules: z.array(z.string()),
-  noteConfig: NoteStructureSchema,
-});
-
 export const TranscriptInputSchema = z.object({
   rawText: z.string(),
   recordingDate: z.string().describe("YYYY-MM-DD"),
@@ -165,9 +145,6 @@ export const AssemblyOutputSchema = PipelineOutputSchema;
 // TYPE EXPORTS
 // ==========================================
 
-export type AgencyConfig = z.infer<typeof AgencyConfigSchema>;
-export type NoteStructure = z.infer<typeof NoteStructureSchema>;
-export type NoteSection = z.infer<typeof NoteSectionSchema>;
 export type TranscriptInput = z.infer<typeof TranscriptInputSchema>;
 export type ActionItem = z.infer<typeof ActionItemSchema>;
 export type CriticalUpdate = z.infer<typeof CriticalUpdateSchema>;

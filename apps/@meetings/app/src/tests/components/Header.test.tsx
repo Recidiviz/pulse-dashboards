@@ -27,6 +27,12 @@ import Header from "../../components/Header";
 import { StateCode, StateCodeProvider } from "../../context/StateContext";
 import { UserContextProvider } from "../../context/UserContext";
 
+jest.mock("../../context/AgencyConfigContext", () => ({
+  useAgencyConfigs: () => ({ agencyConfigs: {}, isLoading: false }),
+  AgencyConfigProvider: ({ children }: { children: React.ReactNode }) =>
+    children,
+}));
+
 jest.mock("react-native", () => {
   const RN = jest.requireActual("react-native");
   RN.Platform.OS = "web";

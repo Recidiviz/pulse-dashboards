@@ -17,10 +17,10 @@
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { AgencyConfig } from "~@meetings/config/types";
 import { Client } from "~@meetings/prisma/client";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import {
-  AgencyConfig,
   ExtractionOutput,
   TranscriptInput,
 } from "~@meetings/tasks/llm/schemas";
@@ -53,17 +53,22 @@ describe("SpecialistCore", () => {
   };
 
   const mockAgency: AgencyConfig = {
-    agencyName: "Test Agency",
+    baseVersion: 1,
+    name: "Test Agency",
+    stateCode: "US_XX",
+    version: 1,
+    showTranscriptions: true,
+    audioTTLDays: 30,
+    transcriptTTLDays: 30,
     glossary: {
       PO: "Probation Officer",
       UA: "Urinalysis",
     },
-    operationalRules: ["Document all interactions", "Note status changes"],
-    noteConfig: {
-      structureName: "Standard",
-      combineOutput: true,
-      sections: [{ sectionId: "SUMMARY", instruction: "Brief summary" }],
-    },
+    rules: ["Document all interactions", "Note status changes"],
+    keywords: [],
+    outputs: [
+      { id: "case_note", label: "Case Note", promptGuidance: "Brief summary" },
+    ],
   };
 
   beforeEach(() => {

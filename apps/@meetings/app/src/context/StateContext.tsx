@@ -17,12 +17,11 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
-
 import { getItem, saveItem } from "../utils/storage";
+import { useAgencyConfigs } from "./AgencyConfigContext";
 import { useUserContext } from "./UserContext";
 
-export type StateCode = keyof typeof AGENCY_CONFIGS;
+export type StateCode = string;
 
 export const DEFAULT_STATE_CODE: StateCode = "US_NE";
 
@@ -56,6 +55,7 @@ export const StateCodeProvider: React.FC<{
     recidivizAllowedStates,
     stateCode: userStateCode,
   } = useUserContext();
+  const { agencyConfigs } = useAgencyConfigs();
   const [selectedStateCode, setSelectedStateCodeInternal] =
     useState<StateCode>(DEFAULT_STATE_CODE);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,7 +66,7 @@ export const StateCodeProvider: React.FC<{
   // State users have exactly one allowed state and cannot select others.
   const canSelectStateCode =
     isSkipAuthUser || recidivizAllowedStates.length > 1;
-  const currentStateName = AGENCY_CONFIGS[selectedStateCode]?.name;
+  const currentStateName = agencyConfigs[selectedStateCode]?.name;
 
   // Load saved state code on mount, or initialize to user's state code if not a Recidiviz user
   useEffect(() => {
@@ -75,7 +75,7 @@ export const StateCodeProvider: React.FC<{
         // For state users, initialize to their state code
         if (!canSelectStateCode) {
           const normalizedStateCode = userStateCode?.toUpperCase() as StateCode;
-          if (normalizedStateCode in AGENCY_CONFIGS) {
+          if (normalizedStateCode in agencyConfigs) {
             setSelectedStateCodeInternal(normalizedStateCode);
           }
           // If unsupported, keep the default - DrawerNavigator will handle showing NoAccessScreen
@@ -85,7 +85,7 @@ export const StateCodeProvider: React.FC<{
 
         // For Recidiviz users and skip auth, try to load from storage
         const saved = await getItem(SELECTED_STATE_KEY);
-        if (saved && saved in AGENCY_CONFIGS) {
+        if (saved && saved in agencyConfigs) {
           setSelectedStateCodeInternal(saved as StateCode);
         }
         // If no saved state code or invalid, keep the default
@@ -98,7 +98,7 @@ export const StateCodeProvider: React.FC<{
     };
 
     loadSavedStateCode();
-  }, [canSelectStateCode, userStateCode]);
+  }, [canSelectStateCode, userStateCode, agencyConfigs]);
 
   const setSelectedStateCode = async (stateCode: StateCode) => {
     if (!canSelectStateCode) {

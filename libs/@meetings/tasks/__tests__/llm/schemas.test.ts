@@ -17,9 +17,9 @@
 
 import { describe, expect, test } from "vitest";
 
+import { AgencyConfigSchema } from "~@meetings/config/types";
 import {
   ActionItemSchema,
-  AgencyConfigSchema,
   CriticalUpdateSchema,
   DraftingOutputSchema,
   ExtractionOutputSchema,
@@ -318,36 +318,31 @@ describe("LLM Pipeline Schemas", () => {
   describe("AgencyConfigSchema", () => {
     test("should validate complete agency config", () => {
       const validConfig = {
-        agencyName: "State Parole Department",
-        glossary: {
-          PO: "Probation Officer",
-          UA: "Urinalysis",
-        },
-        operationalRules: [
-          "Document all client interactions",
-          "Record changes in housing or employment",
+        name: "State Parole Department",
+        stateCode: "US_XX",
+        version: 1,
+        showTranscriptions: true,
+        audioTTLDays: 30,
+        transcriptTTLDays: 30,
+        glossary: { PO: "Probation Officer", UA: "Urinalysis" },
+        rules: ["Document all client interactions"],
+        keywords: [],
+        outputs: [
+          {
+            id: "case_note",
+            label: "Case Note",
+            promptGuidance: "Brief overview of meeting",
+          },
         ],
-        noteConfig: {
-          structureName: "Standard Case Note",
-          combineOutput: true,
-          sections: [
-            {
-              sectionId: "SUMMARY",
-              instruction: "Brief overview of meeting",
-            },
-          ],
-        },
       };
 
       expect(AgencyConfigSchema.safeParse(validConfig).success).toBe(true);
     });
 
-    test("should fail for missing noteConfig", () => {
+    test("should fail when required fields are missing", () => {
       const invalidConfig = {
-        agencyName: "State Parole Department",
-        glossary: {},
-        operationalRules: [],
-        // missing noteConfig
+        name: "State Parole Department",
+        // missing stateCode, glossary, rules, outputs, etc.
       };
 
       expect(AgencyConfigSchema.safeParse(invalidConfig).success).toBe(false);

@@ -97,7 +97,9 @@ describe("UserContext", () => {
         hasFacilitiesAssistantAccess: true,
         hasCasePlanningAssistantAccess: true,
       });
-      expect(result.current.recidivizAllowedStates.length).toBeGreaterThan(0);
+      // Skip-auth allowed states are populated from AgencyConfigContext (async tRPC),
+      // not from UserContext, so this is always empty here.
+      expect(result.current.recidivizAllowedStates).toEqual([]);
     });
   });
 

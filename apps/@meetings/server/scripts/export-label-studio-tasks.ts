@@ -39,7 +39,7 @@ import { Command } from "@commander-js/extra-typings";
 import { Storage } from "@google-cloud/storage";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   Prisma,
   PrismaClient,

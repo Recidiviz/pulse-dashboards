@@ -18,7 +18,7 @@
 import { Storage } from "@google-cloud/storage";
 import { subDays } from "date-fns";
 
-import { AGENCY_CONFIGS } from "~@meetings/config";
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { logger } from "~server-setup-plugin/logger";
 

@@ -24,10 +24,10 @@
 
 import { getCurrentRunTree } from "langsmith/traceable";
 
-import type { PrismaClient } from "~@meetings/prisma/client";
 import type {
   NotetakingAgentType,
   NotetakingPipelineStatus,
+  PrismaClient,
 } from "~@meetings/prisma/client";
 import { TranscriptValidationError } from "~@meetings/tasks/errors";
 import type { ValidationResult } from "~@meetings/tasks/llm/guards";
@@ -55,6 +55,7 @@ export interface CreatePipelineRunParams {
   personPseudonymizedId: string;
   status: NotetakingPipelineStatus;
   errorDetails?: ErrorDetails;
+  configVersion?: string;
 }
 
 export interface CreateAgentExecutionParams {
@@ -133,6 +134,7 @@ export async function createPipelineRun(
       personPseudonymizedId: params.personPseudonymizedId,
       status: params.status,
       errorDetails: params.errorDetails,
+      configVersion: params.configVersion,
     },
   });
 }
