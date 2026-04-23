@@ -253,7 +253,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         actionStrategies: { activeTenants: ["US_MI"] },
         crcLikeBeds: {},
         insightsOnboarding: {},
-        outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
+        outcomesModule: {
+          activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
+        },
         supervisionUnrestrictedSearch: {},
         supervisorHomepageReviewCard: { activeTenants: ["US_IA"] },
         supervisorHomepageWorkflows: {},
@@ -298,7 +300,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usOrEarnedDischargeSentence: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
         outcomesModule: {
-          activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
+          activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
