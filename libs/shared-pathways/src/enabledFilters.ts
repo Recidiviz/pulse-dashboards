@@ -39,7 +39,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByDistrict: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -48,7 +47,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByPriorLengthOfIncarceration: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -57,7 +55,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationBySex: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -66,7 +63,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByAgeGroup: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -75,7 +71,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByRace: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -132,7 +127,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonToSupervisionPopulationByAge: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -141,7 +135,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonToSupervisionPopulationByFacility: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -150,7 +143,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonToSupervisionPopulationByRace: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -159,7 +151,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   prisonToSupervisionPopulationPersonLevel: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -209,7 +200,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByLengthOfStay: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -219,7 +209,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByDistrict: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -229,7 +218,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationBySupervisionLevel: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -239,7 +227,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationBySex: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -249,7 +236,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByRace: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -259,7 +245,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByOfficer: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -270,7 +255,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByMostSevereViolation: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -280,7 +264,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -301,7 +284,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToLibertyPopulationByLengthOfStay: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -310,7 +292,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToLibertyPopulationByLocation: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -320,7 +301,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToLibertyPopulationBySex: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -330,7 +310,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToLibertyPopulationByAgeGroup: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,
@@ -340,7 +319,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToLibertyPopulationByRace: {
     enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SEX,
       FILTER_TYPES.RACE,

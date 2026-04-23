@@ -45,6 +45,10 @@ const Logo = styled.img`
   height: ${rem(40)};
 `;
 
+const RecidivizLogo = styled(Logo)`
+  margin-top: ${rem(spacing.xs)};
+`;
+
 export function Footer() {
   return (
     <FooterWrapper>
@@ -62,7 +66,7 @@ export function Footer() {
         rel="noopener noreferrer"
         aria-label="Visit the Recidiviz website"
       >
-        <Logo src="/recidiviz_logo_192x192.png" alt="Recidiviz logo" />
+        <RecidivizLogo src="/recidiviz_logo_1.png" alt="Recidiviz logo" />
       </LogoLink>
     </FooterWrapper>
   );

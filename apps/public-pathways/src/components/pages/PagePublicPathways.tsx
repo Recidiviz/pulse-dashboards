@@ -55,7 +55,6 @@ function usePageViews() {
 const TABLET_MAX_VISIBLE = 3;
 const MOBILE_MAX_VISIBLE = 1;
 
-const OSWALD_FONT_FAMILY = '"Oswald", sans-serif';
 const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
 
 const publicPathwaysTheme: PathwaysTheme = {
@@ -70,13 +69,13 @@ const publicPathwaysTheme: PathwaysTheme = {
     titleColor: "black",
     subtitleColor: rgba("black", 0.6),
     axisLabel: {
-      fontFamily: OSWALD_FONT_FAMILY,
+      fontFamily: PROXIMA_NOVA_FONT_FAMILY,
       fontWeight: 500,
       fontSize: "11px",
       lineHeight: "16px",
       letterSpacing: "1%",
       color: rgba("black", 0.75),
-      charWidth: 8.5,
+      charWidth: 10,
     },
   },
   checkbox: {

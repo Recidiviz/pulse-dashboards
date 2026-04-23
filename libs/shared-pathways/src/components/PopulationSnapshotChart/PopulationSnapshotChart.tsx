@@ -238,7 +238,7 @@ function makeHorizontalTooltipContent(
             : Number(pieceData.value).toLocaleString()
         }
         average={
-          isRate
+          isRate && caseloadData.caseload != null
             ? `(${pluralize(caseloadData.count, "admission")} / ${
                 caseloadData.caseload
               } unique ${pluralizeWord({
@@ -390,7 +390,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
       projection: "horizontal",
       size: [558, data.length * 25 + 150],
       margin: {
-        left: 80,
+        left: 90,
         bottom: 75,
         right: 50,
         top: 56,

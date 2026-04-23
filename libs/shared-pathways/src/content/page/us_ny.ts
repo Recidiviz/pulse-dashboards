@@ -21,7 +21,7 @@ const content: StateSpecificPageCopy = {
   prison: {
     title: "Population Under Custody",
     summary:
-      "This dashboard shows data on individuals who are under custody of New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly.",
+      "Individuals who are under custody of New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly.",
     sections: {
       countOverTime: "Overview",
       countByLocation: "Facility",
