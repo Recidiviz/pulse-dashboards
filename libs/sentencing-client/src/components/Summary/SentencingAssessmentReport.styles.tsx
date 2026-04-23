@@ -797,3 +797,65 @@ export const LearnMoreBannerText = styled.div`
     font-weight: 700;
   }
 `;
+
+// ─── Signature Block ──────────────────────────────────────────────────────────
+
+const signatureText12 = css`
+  ${typography.Sans12}
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.12px;
+`;
+
+export const SignatureContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  margin-top: 40px;
+`;
+
+export const SignatureSubmittedText = styled.div`
+  ${typography.Sans14}
+  font-weight: 500;
+  line-height: 150%;
+`;
+
+export const SignatureColumnsRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 50px;
+`;
+
+export const SignatureColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 18px;
+`;
+
+export const SignatureLine = styled.div`
+  border-bottom: 1px solid ${customPalette.black};
+`;
+
+export const SignatureRoleLabel = styled.div`
+  ${signatureText12}
+`;
+
+export const SignatureFieldRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 4px;
+`;
+
+export const SignatureFieldLabel = styled(SignatureRoleLabel)`
+  white-space: nowrap;
+  flex-shrink: 0;
+`;
+
+export const SignatureFieldBlank = styled.div`
+  flex: 1;
+  border-bottom: 1px solid ${customPalette.black};
+  min-width: 80px;
+`;

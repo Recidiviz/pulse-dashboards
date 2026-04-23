@@ -38,6 +38,7 @@ import { ReportOffenderAssessment } from "./ReportOffenderAssessment";
 import { ReportPriorTreatmentHistory } from "./ReportPriorTreatmentHistory";
 import { ReportRecommendation } from "./ReportRecommendation";
 import { ReportRequestedOf } from "./ReportRequestedOf";
+import { ReportSignature } from "./ReportSignature";
 import { ReportTimeServed, ReportTimeServedEmpty } from "./ReportTimeServed";
 import {
   BLOCK_GAP,
@@ -272,6 +273,7 @@ export const SentencingAssessmentReport: React.FC<
               {insightData?.dispositionNumRecords ? (
                 <ReportKeyFinding insight={insightData} />
               ) : null}
+              <ReportSignature />
             </Styled.PageContent>
           </td>
         </tr>
