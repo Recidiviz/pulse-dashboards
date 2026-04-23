@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
+import { INSIGHTS_PAGES } from "../core/views";
 import { US_NC } from "../RootStore/TenantStore/dashboardTenants";
 
 const US_NC_CONFIG: TenantConfig<"US_NC"> = {
@@ -55,6 +56,7 @@ const US_NC_CONFIG: TenantConfig<"US_NC"> = {
   },
   navigation: {
     workflows: ["home", "clients", "rna"],
+    insights: [INSIGHTS_PAGES.supervision],
   },
 };
 
