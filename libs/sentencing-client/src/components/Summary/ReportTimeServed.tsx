@@ -18,7 +18,6 @@
 import React from "react";
 
 import {
-  computeAvgTimeServedYears,
   formatTimeServedPct,
   printFormattedRecordString,
 } from "../../utils/utils";
@@ -65,7 +64,6 @@ export const ReportTimeServedEmpty: React.FC<ReportTimeServedEmptyProps> = ({
 
 interface ReportTimeServedProps {
   descriptionContext: InsightDescriptionContext;
-  avgSentenceLengthYears: number;
   /** Percentage of sentence served (0–100), as returned by BigQuery avg_pct_served. */
   avgPctServed: number;
   timeServedNumRecords: number;
@@ -73,15 +71,10 @@ interface ReportTimeServedProps {
 
 export const ReportTimeServed: React.FC<ReportTimeServedProps> = ({
   descriptionContext,
-  avgSentenceLengthYears,
   avgPctServed,
   timeServedNumRecords,
 }) => {
   const pct = formatTimeServedPct(avgPctServed);
-  const avgTimeServedYears = computeAvgTimeServedYears(
-    avgPctServed,
-    avgSentenceLengthYears,
-  );
 
   return (
     <ReportBlock>
@@ -95,11 +88,10 @@ export const ReportTimeServed: React.FC<ReportTimeServedProps> = ({
             Average Time Served shows the average amount of time{" "}
             <InsightSubjectSpans {...descriptionContext} /> were incarcerated
             before being granted parole. Incarceration includes jail time
-            credited as well as time spent in prison. This is based on the
-            average sentence length for the{" "}
+            credited as well as time spent in prison. The rates are based on{" "}
             {timeServedNumRecords.toLocaleString()}{" "}
             {printFormattedRecordString(timeServedNumRecords)} of such cases,
-            using MODOC data from 2020 to present.
+            using MODOC data from 2017 to present.
           </Styled.DispositionLeftPanelText>
         </Styled.DispositionLeftPanel>
 
@@ -109,18 +101,10 @@ export const ReportTimeServed: React.FC<ReportTimeServedProps> = ({
           </Styled.DispositionRecordBadge>
           <Styled.TimeServedStatsRow>
             <Styled.TimeServedStat>
-              <strong>Average prison sentence:</strong> {avgSentenceLengthYears}{" "}
-              years
-            </Styled.TimeServedStat>
-            <Styled.TimeServedStat>
-              <strong>Average time served:</strong> {pct}% (~
-              {avgTimeServedYears} years)
+              <strong>Average time served:</strong> {pct}%
             </Styled.TimeServedStat>
           </Styled.TimeServedStatsRow>
-          <TimeServed
-            avgSentenceLengthYears={avgSentenceLengthYears}
-            avgPctServed={avgPctServed}
-          />
+          <TimeServed avgPctServed={avgPctServed} />
         </Styled.DispositionRightPanel>
       </Styled.DispositionTwoColumnRow>
       <Styled.TimeServedFootnoteContainer>

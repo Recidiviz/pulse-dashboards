@@ -24,7 +24,10 @@ import {
   printFormattedRecordString,
 } from "../../utils/utils";
 import FlagIcon from "../assets/flag-icon.svg?react";
-import { getSentenceLengthBucketLabel } from "../CaseDetails/components/charts/common/utils";
+import {
+  getSentenceLengthBucketLabel,
+  LEGEND_LABELS,
+} from "../CaseDetails/components/charts/common/utils";
 import { GenderToDisplayName } from "../CaseDetails/constants";
 import {
   InsightDescriptionContext,
@@ -36,19 +39,17 @@ import {
   DISPOSITION_FILL,
   DonutPatternDefs,
   FALLBACK_FILL,
-  LEGEND_LABELS,
   LegendSwatch,
 } from "./ReportDispositionPatterns";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const SECTION_TITLE = "Historical Outcome Reference";
 
-// Maps assessmentScoreBucketStart to chip label and description-level risk string
-const BUCKET_TO_ORAS_CHIP: Record<number, string> = {
-  0: "ORAS LOW RISK SCORE",
-  1: "ORAS MODERATE RISK SCORE",
-  2: "ORAS HIGH RISK SCORE",
-  3: "ORAS VERY HIGH RISK SCORE",
+const BUCKET_TO_RISK_CHIP: Record<number, string> = {
+  0: "Low Risk Score",
+  1: "Moderate Risk Score",
+  2: "High Risk Score",
+  3: "Very High Risk Score",
 };
 
 const DONUT_SIZE = 260;
@@ -154,9 +155,9 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
   } = insight;
 
   const genderChip = GenderToDisplayName[gender] ?? gender;
-  const orasChip =
-    BUCKET_TO_ORAS_CHIP[assessmentScoreBucketStart] ?? "ORAS RISK SCORE";
-  const offenseChip = `Category: ${(offenseCategory ?? offense).toUpperCase()}`;
+  const riskChip =
+    BUCKET_TO_RISK_CHIP[assessmentScoreBucketStart] ?? "RISK SCORE";
+  const offenseChip = (offenseCategory ?? offense).toUpperCase();
 
   const percentageByLabel = Object.fromEntries(
     sortedDispositionData.map((dp) => [
@@ -183,7 +184,7 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
 
       <Styled.DispositionChipsRow>
         <Styled.InsightChip>{genderChip}</Styled.InsightChip>
-        <Styled.InsightChip>{orasChip}</Styled.InsightChip>
+        <Styled.InsightChip>{riskChip}</Styled.InsightChip>
         <Styled.InsightChip>{offenseChip}</Styled.InsightChip>
       </Styled.DispositionChipsRow>
 
@@ -193,8 +194,8 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
             Sentence Distribution
           </Styled.DispositionLeftPanelTitle>
           <Styled.DispositionLeftPanelText>
-            Historical precedent represents the percentage of cases sentenced to
-            a particular disposition. The rates are based on{" "}
+            Sentence Distribution represents the percentage of cases sentenced
+            to a particular disposition. The rates are based on{" "}
             {dispositionNumRecords.toLocaleString()}{" "}
             {printFormattedRecordString(dispositionNumRecords)} of{" "}
             <InsightSubjectSpans
@@ -219,8 +220,9 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
 
             <Styled.DispositionLegendList>
               {LEGEND_LABELS.map((label) => {
-                const rawPct = percentageByLabel[label] ?? 0;
-                const pct = convertDecimalToPercentage(rawPct);
+                const pct = convertDecimalToPercentage(
+                  percentageByLabel[label] ?? 0,
+                );
                 const config = DISPOSITION_FILL[label] ?? FALLBACK_FILL;
                 return (
                   <Styled.DispositionLegendItem key={label}>

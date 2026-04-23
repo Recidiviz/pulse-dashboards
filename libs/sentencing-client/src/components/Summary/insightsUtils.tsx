@@ -98,15 +98,14 @@ export function buildInsightsFootnoteText(
 
 /**
  * Builds the Key Finding paragraph for the time-served section.
- * The most common sentence label, incarceration %, avg sentence length, and avg pct served are bolded.
+ * The most common sentence label, incarceration %, and avg pct served are bolded.
  * e.g. "The most common sentence given for previous, similar cases was probation. Of the 23% of
- *       defendants sentenced to incarceration, the average sentence length was 8.6 years and on
- *       average individuals served 16% of their sentence in custody before being granted parole."
+ *       defendants sentenced to incarceration, on average individuals served 16% of their sentence
+ *       in custody before being granted parole."
  * e.g. "The most common sentence given for previous, similar cases was probation." (no time-served data)
  */
 export function buildKeyFindingText(
   dispositionData: NonNullable<SARInsight>["dispositionData"],
-  avgSentenceLengthYears?: number | null,
   avgPctServed?: number | null,
 ): React.ReactNode {
   if (dispositionData.length === 0) return null;
@@ -127,7 +126,7 @@ export function buildKeyFindingText(
     </>
   );
 
-  if (avgSentenceLengthYears == null || avgPctServed == null) {
+  if (avgPctServed == null) {
     return baseText;
   }
 
@@ -141,10 +140,9 @@ export function buildKeyFindingText(
   return (
     <>
       {baseText} Of the <strong>{incarcerationPct}%</strong> of defendants
-      sentenced to incarceration, the average sentence length was{" "}
-      <strong>{avgSentenceLengthYears} years</strong> and on average individuals
-      served <strong>{pct}%</strong> of their sentence in custody before being
-      granted parole.
+      sentenced to incarceration, on average individuals served{" "}
+      <strong>{pct}%</strong> of their sentence in custody before being granted
+      parole.
     </>
   );
 }

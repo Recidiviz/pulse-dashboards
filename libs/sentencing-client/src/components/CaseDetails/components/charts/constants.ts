@@ -17,5 +17,4 @@
 
 export const RECIDIVISM_RATES_TEXT = "Recidivism Rates";
 export const SENTENCE_DISTRIBUTION_TEXT = "Sentence Distribution";
-export const HISTORICAL_PRECEDENT_TEXT = "Historical Precedent";
 export const RECIDIVISM_RATES_CHART_TITLE = `${RECIDIVISM_RATES_TEXT} (36 months)`;

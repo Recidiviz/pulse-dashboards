@@ -17,10 +17,7 @@
 
 import React from "react";
 
-import {
-  computeAvgTimeServedYears,
-  formatTimeServedPct,
-} from "../../utils/utils";
+import { formatTimeServedPct } from "../../utils/utils";
 import * as Styled from "../Summary/SentencingAssessmentReport.styles";
 
 const DEFAULT_CHART_COLOR = "rgba(0, 0, 0, 0.30)";
@@ -28,7 +25,6 @@ const LABEL_FONT_SIZE = 11;
 const LINE_HEIGHT = 14;
 
 interface TimeServedProps {
-  avgSentenceLengthYears: number;
   /** Percentage of sentence served (0–100), as returned by BigQuery avg_pct_served. */
   avgPctServed: number;
   /** Bar fill height in px. Defaults to 31 (SAR PDF). Pass 100 for CaseDetails. */
@@ -47,7 +43,6 @@ interface TimeServedProps {
 }
 
 export const TimeServed: React.FC<TimeServedProps> = ({
-  avgSentenceLengthYears,
   avgPctServed,
   barHeight = 31,
   fillColor,
@@ -56,19 +51,14 @@ export const TimeServed: React.FC<TimeServedProps> = ({
   showLabelsAbove = true,
 }) => {
   const chartColor = fillColor ?? DEFAULT_CHART_COLOR;
-  const avgTimeServedYears = computeAvgTimeServedYears(
-    avgPctServed,
-    avgSentenceLengthYears,
-  );
   const pct = formatTimeServedPct(avgPctServed);
   const filledPct = `${avgPctServed}%`;
 
   const labelAboveY = LABEL_FONT_SIZE;
   const barY = showLabelsAbove ? labelAboveY + 6 : 0;
   const barMidY = barY + barHeight / 2;
-  const labelBelowY1 = barY + barHeight + LINE_HEIGHT;
-  const labelBelowY2 = labelBelowY1 + LINE_HEIGHT;
-  const svgHeight = labelBelowY2 + 4;
+  const labelBelowY = barY + barHeight + LINE_HEIGHT;
+  const svgHeight = labelBelowY + 4;
 
   return (
     <Styled.TimeServedSVG height={svgHeight}>
@@ -147,7 +137,7 @@ export const TimeServed: React.FC<TimeServedProps> = ({
       {!showLabelsAbove && (
         <text
           x="0"
-          y={labelBelowY1}
+          y={labelBelowY}
           textAnchor="start"
           fill={labelColor}
           style={labelStyle}
@@ -156,44 +146,26 @@ export const TimeServed: React.FC<TimeServedProps> = ({
         </text>
       )}
 
-      {/* Labels below — served endpoint */}
+      {/* Label below — served endpoint */}
       <text
         x={filledPct}
-        y={labelBelowY1}
+        y={labelBelowY}
         textAnchor="middle"
         fill={labelColor}
         style={labelStyle}
       >
-        {avgTimeServedYears} years
-      </text>
-      <text
-        x={filledPct}
-        y={labelBelowY2}
-        textAnchor="middle"
-        fill={labelColor}
-        style={labelStyle}
-      >
-        ({pct}%)
+        {pct}%
       </text>
 
-      {/* Labels below — full sentence endpoint */}
+      {/* Label below — full sentence endpoint */}
       <text
         x="100%"
-        y={labelBelowY1}
+        y={labelBelowY}
         textAnchor="end"
         fill={labelColor}
         style={labelStyle}
       >
-        {avgSentenceLengthYears} years
-      </text>
-      <text
-        x="100%"
-        y={labelBelowY2}
-        textAnchor="end"
-        fill={labelColor}
-        style={labelStyle}
-      >
-        (100%)
+        100%
       </text>
     </Styled.TimeServedSVG>
   );

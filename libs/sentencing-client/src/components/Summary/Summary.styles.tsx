@@ -232,15 +232,9 @@ export const InsightsDonutWrapper = styled.div`
   overflow: hidden;
 `;
 
-export const InsightsSimilarCases = styled.p`
-  color: ${palette.slate80};
-  font-family: "Public Sans";
-  font-size: 14px;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 20px;
-  letter-spacing: 0.14px;
-  margin: 0;
+export const InsightsChartTitleRow = styled.div`
+  position: relative;
+  z-index: 1;
 `;
 
 export const InsightsEmptyState = styled.div`

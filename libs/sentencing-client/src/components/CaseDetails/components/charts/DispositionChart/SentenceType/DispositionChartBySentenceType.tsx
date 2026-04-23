@@ -23,6 +23,7 @@ import {
   RECOMMENDATION_TYPE_TO_BORDER_COLOR,
   SENTENCE_TYPE_TO_COLOR,
 } from "../../common/constants";
+import { getSentenceLengthBucketLabel } from "../../common/utils";
 import * as Styled from "../DispositionChart.styles";
 
 const MIN_CIRCLE_HEIGHT = 60;
@@ -48,13 +49,24 @@ export function DispositionChartBySentenceType({
   return (
     <>
       {dataPoints.map(
-        ({ percentage, recommendationType }) =>
-          recommendationType &&
-          recommendationType !== NONE_OPTION && (
+        ({
+          percentage,
+          recommendationType,
+          sentenceLengthBucketStart,
+          sentenceLengthBucketEnd,
+        }) => {
+          if (!recommendationType || recommendationType === NONE_OPTION)
+            return null;
+          const label = getSentenceLengthBucketLabel(
+            recommendationType,
+            sentenceLengthBucketStart,
+            sentenceLengthBucketEnd,
+          );
+          return (
             <Styled.DispositionChartCircleContainer key={recommendationType}>
               <Styled.DispositionChartCircle
                 $height={getChartCircleHeight(percentage, scale)}
-                $backgroundColor={SENTENCE_TYPE_TO_COLOR[recommendationType]}
+                $backgroundColor={SENTENCE_TYPE_TO_COLOR[label]}
                 $borderColor={
                   recommendationType === selectedRecommendation
                     ? RECOMMENDATION_TYPE_TO_BORDER_COLOR[recommendationType]
@@ -71,11 +83,11 @@ export function DispositionChartBySentenceType({
                     : "#2B546999"
                 }
               >
-                {convertDecimalToPercentage(percentage) > 0 &&
-                  recommendationType}
+                {convertDecimalToPercentage(percentage) > 0 && label}
               </Styled.DispositionChartCircleLabel>
             </Styled.DispositionChartCircleContainer>
-          ),
+          );
+        },
       )}
     </>
   );

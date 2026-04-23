@@ -645,9 +645,7 @@ async function addOffenses() {
           ...moBucketData,
           dispositionNumRecords: faker.number.int({ min: 100, max: 1000 }),
           dispositionData: {
-            // 6+ Years Incarceration is intentionally sub-threshold (< 0.5%) to
-            // exercise the "zero values" excluded-data note in the Summary Insights section.
-            create: MO_DISPOSITION_DATA([0.02, 0.12, 0.001, 0.789, 0.07]),
+            create: MO_DISPOSITION_DATA([0.02, 0.12, 0, 0.789, 0.07]),
           },
           avgSentenceLengthYears: faker.number.float({
             min: 2,

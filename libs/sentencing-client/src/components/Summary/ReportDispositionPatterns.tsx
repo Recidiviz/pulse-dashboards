@@ -30,7 +30,7 @@ export type DispositionFill =
 // Fill config used in both the donut arcs and legend swatches
 export const DISPOSITION_FILL: Record<string, DispositionFill> = {
   Probation: { type: "solid", color: customPalette.grey.grey5 },
-  "Court Ordered Treatment": { type: "solid", color: customPalette.grey.grey6 },
+  "Court-Ordered Treatment": { type: "solid", color: customPalette.grey.grey6 },
   "< 1 Year Incarceration": { type: "pattern", patternId: "pdf-dis-dots" },
   "1-2 Years Incarceration": {
     type: "pattern",
@@ -44,16 +44,6 @@ export const FALLBACK_FILL: DispositionFill = {
   type: "solid",
   color: customPalette.grey.grey7,
 };
-
-// Fixed 6-category legend — always rendered, even at 0%
-export const LEGEND_LABELS: ReadonlyArray<string> = [
-  "Probation",
-  "Court Ordered Treatment",
-  "< 1 Year Incarceration",
-  "1-2 Years Incarceration",
-  "3-5 Years Incarceration",
-  "6+ Years Incarceration",
-];
 
 /** Returns the SVG fill attribute value (color or url(#id)) for an arc path. */
 export function arcFill(config: DispositionFill): string {

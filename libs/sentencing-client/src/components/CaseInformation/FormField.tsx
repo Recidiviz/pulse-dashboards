@@ -45,7 +45,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   };
 
   const [pickerDate, setPickerDate] = useState<Date | null>(
-    typeof value === "string" && type === "date"
+    typeof value === "string" && value !== "" && type === "date"
       ? localDateFromUtcDate(value)
       : null,
   );

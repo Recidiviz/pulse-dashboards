@@ -113,6 +113,62 @@ export function getSentenceLengthBucketLabel(
   return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years Incarceration`;
 }
 
+// The 5 disposition categories that production data always contains, one row
+// per insight. Flat types (Probation, Treatment_in_prison) use {0, -1} as the
+// convention for "no sentence length bucket".
+export const CANONICAL_DISPOSITION_SLOTS = [
+  {
+    recommendationType: "Probation",
+    sentenceLengthBucketStart: 0,
+    sentenceLengthBucketEnd: -1,
+  },
+  {
+    recommendationType: "Treatment_in_prison",
+    sentenceLengthBucketStart: 0,
+    sentenceLengthBucketEnd: -1,
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 1,
+    sentenceLengthBucketEnd: 2,
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 3,
+    sentenceLengthBucketEnd: 5,
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 6,
+    sentenceLengthBucketEnd: -1,
+  },
+] satisfies Array<{
+  recommendationType: string;
+  sentenceLengthBucketStart: number;
+  sentenceLengthBucketEnd: number;
+}>;
+
+export const LEGEND_LABELS: ReadonlyArray<string> =
+  CANONICAL_DISPOSITION_SLOTS.map((s) =>
+    getSentenceLengthBucketLabel(
+      s.recommendationType,
+      s.sentenceLengthBucketStart,
+      s.sentenceLengthBucketEnd,
+    ),
+  );
+
+export function getDispositionSlotKey(slot: {
+  recommendationType: string | null;
+  sentenceLengthBucketStart: number;
+  sentenceLengthBucketEnd: number;
+}) {
+  return getSentenceLengthBucketLabel(
+    slot.recommendationType,
+    slot.sentenceLengthBucketStart,
+    slot.sentenceLengthBucketEnd,
+  );
+}
+
 /** Returns true for flat-type (non-incarceration) disposition buckets (Probation, Treatment). */
 export function sentenceLengthLabelFilter(d: {
   sentenceLengthBucketStart: number;

@@ -127,7 +127,7 @@ export const InsightFixture: Insight = {
 };
 
 // MO-appropriate SAR insight fixture: uses sentence-length buckets and MO-specific
-// disposition types (Court Ordered Treatment, Treatment In Prison) instead of PSI types
+// disposition types (Court-Ordered Treatment) instead of PSI types
 // (Rider, Term). rollupRecidivismSeries uses 12/24/36-month cohorts per MO data schema.
 export const SARInsightFixture: NonNullable<SARInsight> = {
   gender: "MALE",

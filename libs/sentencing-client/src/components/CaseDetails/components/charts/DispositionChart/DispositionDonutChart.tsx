@@ -19,7 +19,6 @@ import { arc, pie, PieArcDatum } from "d3-shape";
 import { useState } from "react";
 
 import { convertDecimalToPercentage } from "../../../../../utils/utils";
-import { ExcludedDataPointsLegend } from "../../../Recommendations/report/components";
 import { DispositionData } from "../../../Recommendations/types";
 import { BW_COLOR_SCHEME, SENTENCE_TYPE_TO_COLOR } from "../common/constants";
 import { getSentenceLengthBucketLabel } from "../common/utils";
@@ -58,14 +57,8 @@ export function DispositionDonutChart({
 }: DispositionDonutChartProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
-  const [includedDataPoints, excludedDataPoints] = datapoints.reduce(
-    (acc, dataPoint) => {
-      acc[
-        dataPoint.percentage >= DISPOSITION_VISIBILITY_THRESHOLD ? 0 : 1
-      ].push(dataPoint);
-      return acc;
-    },
-    [[], []] as [DispositionData[], DispositionData[]],
+  const includedDataPoints = datapoints.filter(
+    (dp) => dp.percentage >= DISPOSITION_VISIBILITY_THRESHOLD,
   );
 
   const pieGenerator = pie<DispositionData>().value((d) => d.percentage);
@@ -148,16 +141,11 @@ export function DispositionDonutChart({
           <div>
             <CommonStyled.ChartLegend>
               <ChartLegend
-                datapoints={includedDataPoints}
+                datapoints={datapoints}
                 isReport={isReport}
                 inlineLayout={inlineLayout}
               />
             </CommonStyled.ChartLegend>
-            {!isReport && (
-              <ExcludedDataPointsLegend
-                excludedDataPoints={excludedDataPoints}
-              />
-            )}
           </div>
         </CommonStyled.ChartLegendWrapper>
       </Styled.DonutChartRow>

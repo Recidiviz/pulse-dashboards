@@ -33,11 +33,7 @@ export const ReportKeyFinding: React.FC<ReportKeyFindingProps> = ({
     <Styled.KeyFindingContainer>
       <Styled.DispositionEmptyTitle>Key Finding</Styled.DispositionEmptyTitle>
       <Styled.KeyFindingText>
-        {buildKeyFindingText(
-          insight.dispositionData,
-          insight.avgSentenceLengthYears,
-          insight.avgPctServed,
-        )}
+        {buildKeyFindingText(insight.dispositionData, insight.avgPctServed)}
       </Styled.KeyFindingText>
     </Styled.KeyFindingContainer>
   </ReportBlock>

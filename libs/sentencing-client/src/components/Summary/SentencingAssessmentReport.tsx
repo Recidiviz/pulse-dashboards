@@ -66,11 +66,9 @@ export const SentencingAssessmentReport: React.FC<
   const insightData = presenter.insightData;
   const insightDescriptionContext = presenter.emptyStateDescriptionContext;
   const timeServedData =
-    presenter.avgSentenceLengthYears != null &&
     insightData?.avgPctServed != null &&
     insightData?.timeServedNumRecords != null
       ? {
-          avgSentenceLengthYears: presenter.avgSentenceLengthYears,
           avgPctServed: insightData.avgPctServed,
           timeServedNumRecords: insightData.timeServedNumRecords,
         }

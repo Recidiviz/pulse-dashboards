@@ -59,12 +59,17 @@ import {
   formatDisplayDate,
   formatJudgeName,
   formatLongDate,
-  roundToOneDecimal,
   titleCase,
 } from "../utils/utils";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
+
+// Flat disposition types sorted before incarceration buckets in the legend.
+const DISPOSITION_TYPE_ORDER: Record<string, number> = {
+  Probation: 0,
+  Treatment_in_prison: 1,
+};
 
 // Severity ordering for charge classification: FELONY > MISDEMEANOR > INFRACTION > null
 const CLASSIFICATION_TYPE_ORDER: Record<string, number> = {
@@ -266,12 +271,6 @@ export class SARDetailsPresenter implements Hydratable {
     return this.insight ?? undefined;
   }
 
-  /** Average prison sentence length rounded to 1 decimal for display. */
-  get avgSentenceLengthYears(): number | null {
-    const val = this.insight?.avgSentenceLengthYears;
-    return val != null ? roundToOneDecimal(val) : null;
-  }
-
   get emptyStateDescriptionContext(): InsightDescriptionContext | null {
     if (this.insight) {
       const { gender, assessmentScoreBucketStart, offense, offenseCategory } =
@@ -299,16 +298,10 @@ export class SARDetailsPresenter implements Hydratable {
 
   get sortedDispositionData() {
     if (!this.insight?.dispositionData) return [];
-    // ChartLegend internally re-sorts length buckets by sentenceLengthBucketStart,
-    // so we only need to control the flat-type order here.
-    const TYPE_ORDER: Record<string, number> = {
-      Probation: 0,
-      Treatment_in_prison: 1,
-    };
     return [...this.insight.dispositionData].sort(
       (a, b) =>
-        (TYPE_ORDER[a.recommendationType ?? ""] ?? 2) -
-        (TYPE_ORDER[b.recommendationType ?? ""] ?? 2),
+        (DISPOSITION_TYPE_ORDER[a.recommendationType ?? ""] ?? 2) -
+        (DISPOSITION_TYPE_ORDER[b.recommendationType ?? ""] ?? 2),
     );
   }
 

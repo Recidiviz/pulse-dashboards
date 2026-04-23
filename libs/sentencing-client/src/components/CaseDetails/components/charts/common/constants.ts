@@ -30,12 +30,11 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
   Probation: palette.data.gold1,
   Rider: "#D9A95F",
   Term: "#BA4F4F",
-  "Court Ordered Treatment": palette.data.spring1,
+  "Court-Ordered Treatment": palette.data.spring1,
   "< 1 Year Incarceration": palette.data.teal1,
   "1-2 Years Incarceration": palette.data.cornflower1,
   "3-5 Years Incarceration": palette.data.indigo1,
   "6+ Years Incarceration": palette.data.forest2,
-  "Treatment In Prison": palette.data.spring1,
 };
 
 // TODO(#12402): Remove this map once write_case_insights_data_to_bq.py is fixed
@@ -44,7 +43,7 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
 // Maps raw sentence type strings (as they come from the DB/BigQuery) to their
 // display-formatted equivalents. Used by getSentenceLengthBucketLabel.
 export const SENTENCE_TYPE_DISPLAY_NAMES: Record<string, string> = {
-  Treatment_in_prison: "Treatment In Prison",
+  Treatment_in_prison: "Court-Ordered Treatment",
 };
 
 export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {

@@ -22,7 +22,6 @@ import { palette } from "~design-system";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import {
-  computeAvgTimeServedYears,
   formatTimeServedPct,
   printFormattedRecordString,
   titleCase,
@@ -80,15 +79,10 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
     const hasDispositionData =
       !!insightData && insightData.dispositionNumRecords > 0;
 
-    const avgSentenceLengthYears = presenter.avgSentenceLengthYears;
     const avgPctServed = insightData?.avgPctServed ?? null;
     const hasTimeServedData =
       insightData?.timeServedNumRecords != null &&
-      insightData.timeServedNumRecords > 0;
-
-    const showTimeServedChart =
-      hasTimeServedData &&
-      avgSentenceLengthYears != null &&
+      insightData.timeServedNumRecords > 0 &&
       avgPctServed != null;
 
     const sentenceDistributionSlide = hasDispositionData ? (
@@ -119,7 +113,6 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
             inlineLayout
           />
         </Styled.InsightsDonutWrapper>
-        <Styled.InsightsSimilarCases>Similar cases</Styled.InsightsSimilarCases>
       </>
     ) : (
       <>
@@ -131,78 +124,76 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
       </>
     );
 
-    const timeServedSlide = (
-      <>
-        <CommonStyled.ChartTitle>
-          Average Time Served{" "}
-          <InfoIconWithTooltip
-            headerText="Average Time Served"
-            content={
-              <CommonStyled.ChartTooltipContentSection>
-                Average Time Served shows the average amount of time served in
-                prison for{" "}
-                {insightData ? (
-                  <InsightSubjectSpans
-                    gender={insightData.gender}
-                    assessmentScoreBucketStart={
-                      insightData.assessmentScoreBucketStart
-                    }
-                    offense={insightData.offense}
-                    offenseCategory={insightData.offenseCategory}
-                  />
-                ) : (
-                  "similar individuals"
-                )}{" "}
-                before being granted parole, using MODOC data from 2017-present.
-              </CommonStyled.ChartTooltipContentSection>
-            }
-          />
-        </CommonStyled.ChartTitle>
-        {showTimeServedChart ? (
-          <>
-            <Styled.TimeServedPanelStatsRow>
-              <Styled.TimeServedPanelStatColumn>
-                <Styled.TimeServedPanelStatLabel>
-                  Average prison sentence:
-                </Styled.TimeServedPanelStatLabel>
-                <Styled.TimeServedPanelStatValue>
-                  {avgSentenceLengthYears} years
-                </Styled.TimeServedPanelStatValue>
-              </Styled.TimeServedPanelStatColumn>
-              <Styled.TimeServedPanelStatColumn>
-                <Styled.TimeServedPanelStatLabel>
-                  Average time served:
-                </Styled.TimeServedPanelStatLabel>
-                <Styled.TimeServedPanelStatValue>
-                  {formatTimeServedPct(avgPctServed)}% (~
-                  {computeAvgTimeServedYears(
-                    avgPctServed,
-                    avgSentenceLengthYears,
-                  )}{" "}
-                  years)
-                </Styled.TimeServedPanelStatValue>
-              </Styled.TimeServedPanelStatColumn>
-            </Styled.TimeServedPanelStatsRow>
-            <Styled.TimeServedChartWrapper>
-              <TimeServed
-                avgSentenceLengthYears={avgSentenceLengthYears}
-                avgPctServed={avgPctServed}
-                fillColor={palette.data.cornflower1}
-                barHeight={100}
-                labelColor={palette.slate70}
-                labelStyle={Styled.timeServedPanelLabelStyle}
-                showLabelsAbove={false}
+    const timeServedSlide =
+      hasTimeServedData &&
+      insightData &&
+      insightData.timeServedNumRecords != null ? (
+        <>
+          <Styled.InsightsChartTitleRow>
+            <CommonStyled.ChartTitle>
+              Average Time Served{" "}
+              <InfoIconWithTooltip
+                headerText="Average Time Served"
+                content={
+                  <CommonStyled.ChartTooltipContentSection>
+                    Average Time Served shows the average amount of time served
+                    in prison for{" "}
+                    <InsightSubjectSpans
+                      gender={insightData.gender}
+                      assessmentScoreBucketStart={
+                        insightData.assessmentScoreBucketStart
+                      }
+                      offense={insightData.offense}
+                      offenseCategory={insightData.offenseCategory}
+                    />{" "}
+                    before being granted parole, using MODOC data from 2017 to
+                    present.
+                  </CommonStyled.ChartTooltipContentSection>
+                }
               />
-            </Styled.TimeServedChartWrapper>
-          </>
-        ) : (
+            </CommonStyled.ChartTitle>
+          </Styled.InsightsChartTitleRow>
+          <CommonStyled.ChartSubTitle>
+            {getSARDispositionChartSubtitle(insightData)}{" "}
+            <span>
+              (Based on {insightData.timeServedNumRecords.toLocaleString()}{" "}
+              {printFormattedRecordString(insightData.timeServedNumRecords)})
+            </span>
+          </CommonStyled.ChartSubTitle>
+          <Styled.TimeServedPanelStatsRow>
+            <Styled.TimeServedPanelStatColumn>
+              <Styled.TimeServedPanelStatLabel>
+                Average time served:
+              </Styled.TimeServedPanelStatLabel>
+              <Styled.TimeServedPanelStatValue>
+                {formatTimeServedPct(avgPctServed)}%
+              </Styled.TimeServedPanelStatValue>
+            </Styled.TimeServedPanelStatColumn>
+          </Styled.TimeServedPanelStatsRow>
+          <Styled.TimeServedChartWrapper>
+            <TimeServed
+              avgPctServed={avgPctServed}
+              fillColor={palette.data.cornflower1}
+              barHeight={100}
+              labelColor={palette.slate70}
+              labelStyle={Styled.timeServedPanelLabelStyle}
+              showLabelsAbove={false}
+            />
+          </Styled.TimeServedChartWrapper>
+        </>
+      ) : (
+        <>
+          <Styled.InsightsChartTitleRow>
+            <CommonStyled.ChartTitle>
+              Average Time Served
+            </CommonStyled.ChartTitle>
+          </Styled.InsightsChartTitleRow>
           <InsightsChartEmptyState
             hasOrasAssessment={hasOrasAssessment}
             noDataMessage="There are not enough historical records of time served to show this data."
           />
-        )}
-      </>
-    );
+        </>
+      );
 
     return (
       <Styled.InsightsSidePanel>
@@ -221,7 +212,7 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
         <Styled.InsightsChartCard
           $isEmpty={
             (activeSlide === 0 && !hasDispositionData) ||
-            (activeSlide === 1 && !showTimeServedChart)
+            (activeSlide === 1 && !hasTimeServedData)
           }
         >
           {activeSlide === 0 ? sentenceDistributionSlide : timeServedSlide}
@@ -251,6 +242,18 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
             )}
           </Styled.InsightsFootnote>
         )}
+        {hasTimeServedData &&
+          insightData &&
+          insightData.timeServedNumRecords != null &&
+          activeSlide === 1 && (
+            <Styled.InsightsFootnote>
+              {buildInsightsFootnoteText(
+                insightData.timeServedNumRecords,
+                insightData.gender,
+                insightData.assessmentScoreBucketStart,
+              )}
+            </Styled.InsightsFootnote>
+          )}
       </Styled.InsightsSidePanel>
     );
   });
