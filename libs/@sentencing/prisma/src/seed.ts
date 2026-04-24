@@ -446,7 +446,8 @@ async function addOpportunities() {
   await prisma.opportunity.createMany({ data: opportunities });
 }
 
-// MO SAR disposition buckets match the sentence types used by case_insights_record for US_MO
+// MO SAR disposition buckets match the sentence types used by case_insights_record for US_MO.
+// Must stay in sync with CANONICAL_DISPOSITION_SLOTS in sentencing-client.
 const MO_DISPOSITION_DATA = (malePercentages: number[]) => [
   {
     recommendationType: "Incarceration",
@@ -477,6 +478,12 @@ const MO_DISPOSITION_DATA = (malePercentages: number[]) => [
     sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
     percentage: malePercentages[4],
+  },
+  {
+    recommendationType: "SUSPENDED",
+    sentenceLengthBucketStart: 0,
+    sentenceLengthBucketEnd: -1,
+    percentage: malePercentages[5],
   },
 ];
 
@@ -645,7 +652,7 @@ async function addOffenses() {
           ...moBucketData,
           dispositionNumRecords: faker.number.int({ min: 100, max: 1000 }),
           dispositionData: {
-            create: MO_DISPOSITION_DATA([0.02, 0.12, 0, 0.789, 0.07]),
+            create: MO_DISPOSITION_DATA([0.02, 0.12, 0, 0.65, 0.07, 0.139]),
           },
           avgSentenceLengthYears: faker.number.float({
             min: 2,
@@ -669,7 +676,7 @@ async function addOffenses() {
           ...moBucketData,
           dispositionNumRecords: faker.number.int({ min: 50, max: 800 }),
           dispositionData: {
-            create: MO_DISPOSITION_DATA([0.02, 0.1, 0.06, 0.76, 0.06]),
+            create: MO_DISPOSITION_DATA([0.02, 0.1, 0.06, 0.62, 0.06, 0.14]),
           },
           avgSentenceLengthYears: faker.number.float({
             min: 2,

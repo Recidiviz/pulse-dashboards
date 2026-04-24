@@ -113,8 +113,7 @@ export function getSentenceLengthBucketLabel(
   return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years Incarceration`;
 }
 
-// The 5 disposition categories that production data always contains, one row
-// per insight. Flat types (Probation, Treatment_in_prison) use {0, -1} as the
+// Flat types (Probation, Treatment_in_prison, SUSPENDED) use {0, -1} as the
 // convention for "no sentence length bucket".
 export const CANONICAL_DISPOSITION_SLOTS = [
   {
@@ -124,6 +123,11 @@ export const CANONICAL_DISPOSITION_SLOTS = [
   },
   {
     recommendationType: "Treatment_in_prison",
+    sentenceLengthBucketStart: 0,
+    sentenceLengthBucketEnd: -1,
+  },
+  {
+    recommendationType: "SUSPENDED",
     sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
   },

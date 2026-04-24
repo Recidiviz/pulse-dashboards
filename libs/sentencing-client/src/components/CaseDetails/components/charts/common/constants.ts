@@ -35,6 +35,7 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
   "1-2 Years Incarceration": palette.data.cornflower1,
   "3-5 Years Incarceration": palette.data.indigo1,
   "6+ Years Incarceration": palette.data.forest2,
+  "Suspended Sentence": palette.data.salmon1,
 };
 
 // TODO(#12402): Remove this map once write_case_insights_data_to_bq.py is fixed
@@ -44,6 +45,7 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
 // display-formatted equivalents. Used by getSentenceLengthBucketLabel.
 export const SENTENCE_TYPE_DISPLAY_NAMES: Record<string, string> = {
   Treatment_in_prison: "Court-Ordered Treatment",
+  SUSPENDED: "Suspended Sentence",
 };
 
 export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {
