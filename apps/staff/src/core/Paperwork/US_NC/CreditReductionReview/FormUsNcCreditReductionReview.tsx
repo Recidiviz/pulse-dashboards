@@ -29,6 +29,7 @@ import { PrintablePage } from "../../styles";
 import form183Template from "./form183_template.docx";
 import FormBody from "./FormBody";
 import FormHeading from "./FormHeading";
+import FormSignatures from "./FormSignatures";
 
 const formDownloader = async (
   opportunity: UsNcCreditReductionReviewOpportunity,
@@ -82,7 +83,7 @@ export const FormUsNcCreditReductionReview = observer(
           <PrintablePage>
             <FormHeading />
             <FormBody />
-            {/* TODO(#obt4602): add signature component */}
+            <FormSignatures form={opportunity.form} />
           </PrintablePage>
         </FormViewer>
       </FormContainer>

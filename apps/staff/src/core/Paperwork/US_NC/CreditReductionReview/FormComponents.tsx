@@ -31,7 +31,7 @@ export const UsNcCRRInput = (
   return (
     <DOCXFormInput<UsNcCreditReductionReviewDraftData>
       {...props}
-      style={{ minWidth: "50px" }}
+      style={{ ...props.style, minWidth: "50px" }}
     />
   );
 };
