@@ -411,40 +411,33 @@ async def test_get_current_user_not_authenticated():
 async def test_get_pseudonymized_id_success(
     mock_async_client, auth0_config, mock_jwt_payload, mock_redis
 ):
+    # Create a token that embeds pseudonymizedId in the app_metadata claim
+    app_metadata_token = jwt.encode(
+        {
+            **create_jwt_payload(),
+            "https://dashboard.recidiviz.org/app_metadata": {
+                "pseudonymizedId": "test-pseudonymized-id"
+            },
+        },
+        "dummy-secret-key-for-testing",
+        algorithm="HS256",
+        headers={"kid": "test-kid", "typ": "JWT"},
+    )
+
     # set request mock — use a dict-like headers so impersonation header returns None
-    headers_data = {"Authorization": "Bearer test-token"}
+    headers_data = {"Authorization": f"Bearer {app_metadata_token}"}
     request = MagicMock()
     request.state.user = mock_jwt_payload
     request.headers.get.side_effect = lambda key, default=None: headers_data.get(
         key, default
     )
 
-    # set up httpx client mock
+    # set up httpx client mock for the userinfo endpoint only
     mock_client = AsyncMock()
-
-    # First response for userinfo endpoint
     userinfo_response = MagicMock()
     userinfo_response.status_code = 200
-    userinfo_response.json.return_value = {
-        "sub": mock_jwt_payload["sub"],
-    }
-
-    # Second response for user metadata endpoint
-    extra_info_response = MagicMock()
-    extra_info_response.status_code = 200
-    extra_info_response.json.return_value = {
-        "app_metadata": {"pseudonymizedId": "test-pseudonymized-id"}
-    }
-
-    # Configure mock to return different responses based on URL
-    def get_side_effect(url, **kwargs):
-        if "/userinfo" in url:
-            return userinfo_response
-        elif "/api/v2/users/" in url:
-            return extra_info_response
-        return MagicMock(status_code=404)
-
-    mock_client.get.side_effect = get_side_effect
+    userinfo_response.json.return_value = {"sub": mock_jwt_payload["sub"]}
+    mock_client.get.return_value = userinfo_response
     mock_async_client.return_value.__aenter__.return_value = mock_client
 
     # Patch settings
@@ -453,15 +446,11 @@ async def test_get_pseudonymized_id_success(
 
         pseudonymized_id = await get_pseudonymized_id(request)
 
-        # verify both API calls were made with correct parameters
-        assert mock_client.get.call_count == 2
-        mock_client.get.assert_any_call(
+        # verify only the userinfo call was made (metadata comes from the JWT)
+        assert mock_client.get.call_count == 1
+        mock_client.get.assert_called_once_with(
             "https://test-domain.auth0.com/userinfo",
-            headers={"Authorization": "Bearer test-token"},
-        )
-        mock_client.get.assert_any_call(
-            f"https://test-domain.auth0.com/api/v2/users/{mock_jwt_payload['sub']}",
-            headers={"Authorization": "Bearer test-token"},
+            headers={"Authorization": f"Bearer {app_metadata_token}"},
         )
 
         # verify that the pseudonymized id is correct
@@ -473,34 +462,31 @@ async def test_get_pseudonymized_id_success(
 async def test_get_pseudonymized_id_missing(
     mock_async_client, auth0_config, mock_jwt_payload, mock_redis
 ):
+    # Create a token with an empty app_metadata (no pseudonymizedId)
+    no_id_token = jwt.encode(
+        {
+            **create_jwt_payload(),
+            "https://dashboard.recidiviz.org/app_metadata": {},
+        },
+        "dummy-secret-key-for-testing",
+        algorithm="HS256",
+        headers={"kid": "test-kid", "typ": "JWT"},
+    )
+
     # set request mock — use a dict-like headers so impersonation header returns None
-    headers_data = {"Authorization": "Bearer test-token"}
+    headers_data = {"Authorization": f"Bearer {no_id_token}"}
     request = MagicMock()
     request.state.user = mock_jwt_payload
     request.headers.get.side_effect = lambda key, default=None: headers_data.get(
         key, default
     )
 
-    # set up httpx client mock
+    # set up httpx client mock for the userinfo endpoint only
     mock_client = AsyncMock()
-
-    # First response for userinfo endpoint
     userinfo_response = MagicMock()
     userinfo_response.status_code = 200
-    userinfo_response.json.return_value = {
-        "sub": mock_jwt_payload["sub"],
-    }
-
-    # Second response for user metadata endpoint missing pseudonymizedId
-    extra_info_response = MagicMock()
-    extra_info_response.status_code = 200
-    extra_info_response.json.return_value = {"app_metadata": {}}
-
-    mock_client.get.side_effect = (
-        lambda url, **kwargs: userinfo_response
-        if "/userinfo" in url
-        else extra_info_response
-    )
+    userinfo_response.json.return_value = {"sub": mock_jwt_payload["sub"]}
+    mock_client.get.return_value = userinfo_response
     mock_async_client.return_value.__aenter__.return_value = mock_client
 
     # Patch settings
