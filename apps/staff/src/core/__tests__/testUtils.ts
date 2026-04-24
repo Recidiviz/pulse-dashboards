@@ -204,6 +204,7 @@ export const mockOpportunity: Opportunity<Client> = {
     snoozeReviewStatusMessage: "Snooze Review",
     grantReviewStatusMessage: "Under Review",
     grantApprovedStatusMessage: "Approved by Supervisor",
+    grantReviewDropdownLabel: "Submit for Supervisor",
     excludeIndefiniteSnoozesFromTableView: true,
     enableWorkflowsFilter: false,
   },

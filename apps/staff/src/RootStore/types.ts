@@ -118,6 +118,9 @@ export type FeatureVariant =
   //// Oregon
   | "usOrEarnedDischargeSentence"
 
+  //// North Carolina
+  | "usNcCrrApprovalFlow"
+
   //// Pennsylvania
   | "usPaSpecialCircumstances"
   | "usPaUnclearEligibility"
@@ -231,6 +234,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMiFacilitySearch: {},
   usMiRestrictiveHousingV2: {},
   usMiRestrictiveHousingV2Ineligible: {},
+  usNcCrrApprovalFlow: {},
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},

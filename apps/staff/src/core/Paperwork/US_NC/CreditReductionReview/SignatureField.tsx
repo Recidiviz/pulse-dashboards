@@ -86,7 +86,7 @@ const SignatureField = observer(function SignatureField({
         readOnly
       />
       <SignatureButton
-        disabled={!enableSignatureButton}
+        disabled={!enableSignatureButton && !isSigned}
         onClick={onClickButton}
       >
         {buttonText}

@@ -15,10 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsNcCreditReductionReviewConfiguration extends ApiOpportunityConfiguration {
   get markSubmittedOnFormDownload(): boolean {
     return false;
+  }
+
+  get sidebarComponents(): string[] {
+    return [...super.sidebarComponents, "actionHistory"];
+  }
+
+  get supportsSupervisorReviewOnGrants(): boolean {
+    return !!this.userStore.activeFeatureVariants.usNcCrrApprovalFlow;
+  }
+
+  get supervisorReviewTabTitle(): OpportunityTab {
+    return "Submitted for Chief Review";
+  }
+
+  get grantApprovedTabTitle(): OpportunityTab {
+    return "Approved by Chief";
+  }
+
+  get grantApprovedStatusMessage(): string {
+    return "Approved by Chief";
+  }
+
+  get grantReviewDropdownLabel(): string {
+    return "Submit for Chief Review";
   }
 }

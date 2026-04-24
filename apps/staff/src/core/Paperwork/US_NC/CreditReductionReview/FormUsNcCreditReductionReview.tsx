@@ -80,7 +80,7 @@ export const FormUsNcCreditReductionReview = observer(
         opportunity={opportunity}
       >
         <FormViewer formRef={formRef}>
-          <PrintablePage>
+          <PrintablePage stretchable>
             <FormHeading />
             <FormBody />
             <FormSignatures form={opportunity.form} />

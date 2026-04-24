@@ -331,7 +331,11 @@ export type OpportunityTab =
   | "Medical-Ineligible"
 
   // For US_ID Full Term Discharge
-  | "Pending Violation";
+  | "Pending Violation"
+
+  // For US_NC
+  | "Submitted for Chief Review"
+  | "Approved by Chief";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

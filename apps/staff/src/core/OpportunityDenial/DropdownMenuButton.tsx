@@ -178,7 +178,7 @@ const OfficerGrantRequestItem = observer(function OfficerGrantRequestItem({
         await requestGrant(opportunity);
       }}
     >
-      {"Submit for Supervisor Approval"}
+      {opportunity.config.grantReviewDropdownLabel}
     </OpportunityStatusDropdownMenuItem>
   );
 });

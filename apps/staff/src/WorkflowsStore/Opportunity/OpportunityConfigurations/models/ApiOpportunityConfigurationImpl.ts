@@ -504,6 +504,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     );
   }
 
+  get grantReviewDropdownLabel() {
+    return "Submit for Supervisor Approval";
+  }
+
   get snoozeReviewStatusMessage() {
     return this.configurationObject.snoozeReviewStatusMessage ?? "Under Review";
   }

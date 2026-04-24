@@ -115,6 +115,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   grantReviewStatusMessage: "Discharge Review",
   grantApprovedStatusMessage: "Approved by Supervisor",
   grantApprovedTabTitle: "Approved by Supervisor",
+  grantReviewDropdownLabel: "Submit for Supervisor",
   excludeIndefiniteSnoozesFromTableView: true,
   enableWorkflowsFilter: false,
 };

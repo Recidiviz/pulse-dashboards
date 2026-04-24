@@ -169,7 +169,7 @@ const FormHeading: React.FC = () => {
       </IndentedBlock>
       <IndentedBlock>
         If yes, what were the violations?
-        <UsNcCRRTextArea name="comment6" />
+        <UsNcCRRTextArea name="violations" />
       </IndentedBlock>
       <IndentedBlock>
         <Row>
