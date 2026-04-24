@@ -36,7 +36,7 @@ import {
 } from "~datatypes";
 
 import QueryDocumentSnapshot = firestore.QueryDocumentSnapshot;
-import { subHours } from "date-fns";
+import { isValid, subHours } from "date-fns";
 import type { Timestamp } from "firebase/firestore";
 import { defineJsonSecret } from "firebase-functions/params";
 import { onSchedule } from "firebase-functions/v2/scheduler";
@@ -76,6 +76,14 @@ function removeNewlines(input: string | undefined): string | undefined {
   return input?.replaceAll("\n", "; ");
 }
 
+function validateDate(input: string | undefined): string | undefined {
+  if (input === undefined) return undefined;
+
+  if (!isValid(new Date(input))) return undefined;
+
+  return input;
+}
+
 // This record defines a map from fields in the combined draft record to output
 // fields with minimal transformation or need to map dependencies.
 const COLUMN_MAPPING: Record<
@@ -106,7 +114,7 @@ const COLUMN_MAPPING: Record<
   TrusteeApprovedOrDenied: (doc) => doc["trusteeCustodyApproved"],
   TrusteeDenialReasons: (doc) => doc["trusteeDenialReasons"],
   ChiefCounselorFinalizingForm: (doc) => doc["finalizingCounselor"],
-  DateOfFinalApprovalAndEntry: (doc) => doc["finalApprovalDate"],
+  DateOfFinalApprovalAndEntry: (doc) => validateDate(doc["finalApprovalDate"]),
 
   Question1_notes: (doc) =>
     removeNewlines(doc["q1aNotes"] + "; " + doc["q1bNotes"]),
@@ -126,12 +134,13 @@ const COLUMN_MAPPING: Record<
 
   Warden_TrusteeSignaturesAcquired: (doc) => doc["trusteeWardenSignature"],
   Warden_TrusteeSignaturesAcquiredDate: (doc) =>
-    doc["trusteeWardenSignatureDate"],
+    validateDate(doc["trusteeWardenSignatureDate"]),
   ContractMonitor_TrusteeSignaturesAcquired: (doc) => doc["trusteeCMSignature"],
   ContractMonitor_TrusteeSignaturesAcquiredDate: (doc) =>
-    doc["trusteeCMSignatureDate"],
+    validateDate(doc["trusteeCMSignatureDate"]),
   AC_TrusteeSignaturesAcquired: (doc) => doc["trusteeACSignature"],
-  AC_TrusteeSignaturesAcquiredDate: (doc) => doc["trusteeACSignatureDate"],
+  AC_TrusteeSignaturesAcquiredDate: (doc) =>
+    validateDate(doc["trusteeACSignatureDate"]),
 };
 
 // We can combine the RCAF and DCAF fields into one list since we are
@@ -174,6 +183,7 @@ const DERIVED_DATA_MAPPING_DCAF: DerivedDataMapping = {
   Question4: { sourceField: "q4Score", relevantFields: ["q4Selection"] },
   Question5: { sourceField: "q5Score", relevantFields: ["q5Selection"] },
   Question6: { sourceField: "q6Score", relevantFields: ["q6Selection"] },
+  Question7: { sourceField: "q7Score", relevantFields: ["q7Selection"] },
   OverallScore: {
     sourceField: "totalScore",
     relevantFields: allScoredQuestionFields,
@@ -209,7 +219,6 @@ const DERIVED_DATA_MAPPING_RCAF: DerivedDataMapping = {
       "q5Selection_36_60",
     ],
   },
-  Question7: { sourceField: "q7Score", relevantFields: ["q7Selection"] },
 };
 
 const CSV_COLUMN_ORDER = [
@@ -346,8 +355,13 @@ function processRecord(
       out.ClassificationFormType = "Downgrade";
       break;
     case "usTnSpecialCustodyLevelUpgrade2026Policy":
-    case "usTnSeriousMisconductUpgrade":
       out.ClassificationFormType = "Upgrade";
+      break;
+    case "usTnSeriousMisconductUpgrade":
+      out.ClassificationFormType = "SeriousMisconduct";
+      break;
+    case "usTnBiannualOther":
+      out.ClassificationFormType = "BiannualOther";
       break;
     case "usTnTrusteeTransfer":
       out.ClassificationFormType = "Transfer";
@@ -465,6 +479,13 @@ async function getUpdatedRecords() {
     ...(await getFormUpdateDocs(
       db,
       "usTnSeriousMisconductUpgrade",
+      "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+    )),
+  );
+  entries.push(
+    ...(await getFormUpdateDocs(
+      db,
+      "usTnBiannualOther",
       "US_TN-custodyLevelDowngrade2026PolicyReferrals",
     )),
   );
