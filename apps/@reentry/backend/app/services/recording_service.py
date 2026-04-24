@@ -649,6 +649,20 @@ class RecordingService:
         )
         return uploaded_groups
 
+    async def file_exists(self, file_path: str) -> bool:
+        """Returns True if the file exists in GCS, False if it does not. Re-raises on transient errors."""
+        try:
+            await self.storage.download(
+                bucket=self.bucket_name,
+                object_name=file_path,
+                headers={"Range": "bytes=0-0"},
+            )
+            return True
+        except Exception as e:
+            if "404" in str(e):
+                return False
+            raise
+
     async def generate_signed_url(
         self, file_path: str, expiration_minutes: int = 5
     ) -> str:

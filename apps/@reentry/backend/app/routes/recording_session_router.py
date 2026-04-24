@@ -418,6 +418,12 @@ async def get_upload_url(
         # Generate the GCS path for the file
         file_path = f"recordings/{session_id}/final/{request.file_name}"
 
+        # Store the expected file path in the database for validation during confirm-upload
+        # This prevents attackers from binding arbitrary GCS objects to their session
+        recording_session.gcs_final_file_path = file_path
+        session.add(recording_session)
+        await session.commit()
+
         # Generate signed upload URL
         async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
             upload_url = await recording_service.generate_upload_signed_url(
@@ -472,8 +478,70 @@ async def confirm_upload(
     )
 
     try:
+        # SECURITY: Validate that the file_path matches what was issued during get-upload-url
+        # This prevents attackers from binding arbitrary GCS objects to their session
+        expected_file_path = recording_session.gcs_final_file_path
+        if not expected_file_path:
+            logger.error(
+                f"No expected file path found for session {session_id}. "
+                "Client must call get-upload-url before confirm-upload."
+            )
+            raise HTTPException(
+                status_code=400,
+                detail="No upload URL was requested for this session. Call get-upload-url first.",
+            )
+
+        if request.file_path != expected_file_path:
+            logger.error(
+                f"File path mismatch for session {session_id}. "
+                f"Expected: {expected_file_path}, Got: {request.file_path}"
+            )
+            raise HTTPException(
+                status_code=403,
+                detail="File path does not match the issued upload URL. Potential unauthorized access attempt.",
+            )
+
+        # SECURITY: Validate that the file_path belongs to this session
+        # This is a defense-in-depth measure in case the above check is bypassed
+        expected_prefix = f"recordings/{session_id}/"
+        if not request.file_path.startswith(expected_prefix):
+            logger.error(
+                f"File path does not belong to session {session_id}. "
+                f"Path: {request.file_path}, Expected prefix: {expected_prefix}"
+            )
+            raise HTTPException(
+                status_code=403,
+                detail="File path does not belong to this recording session.",
+            )
+
+        # SECURITY: Verify the file actually exists in GCS before binding it
+        # This prevents binding non-existent files or files the client didn't actually upload
+        async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
+            try:
+                # Attempt to download just the first byte to verify existence
+                await recording_service.storage.download(
+                    bucket=settings.GCS_BUCKET_NAME,
+                    object_name=request.file_path,
+                    headers={"Range": "bytes=0-0"},
+                )
+            except Exception as e:
+                if "404" in str(e):
+                    logger.warning(
+                        f"File not found in GCS for session {session_id}: {request.file_path}"
+                    )
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Uploaded file not found in cloud storage. Please upload the file first.",
+                    )
+                logger.error(
+                    f"GCS error checking file for session {session_id}: {request.file_path}. Error: {e}"
+                )
+                raise HTTPException(
+                    status_code=503,
+                    detail="Cloud storage temporarily unavailable. Please try again.",
+                )
+
         # Update recording session with file metadata
-        recording_session.gcs_final_file_path = request.file_path
         recording_session.audio_file_url = (
             f"gs://{settings.GCS_BUCKET_NAME}/{request.file_path}"
         )
@@ -509,6 +577,9 @@ async def confirm_upload(
             message="Upload confirmed and processing started",
         )
 
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
         await session.rollback()
         logger.error(f"Error confirming upload for session {session_id}: {e}")

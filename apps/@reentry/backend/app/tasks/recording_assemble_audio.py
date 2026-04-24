@@ -24,18 +24,22 @@ async def assemble_audio(
     if not recording_session:
         raise ValueError(f"Recording session {recording_session_id} not found")
 
-    if recording_session.gcs_final_file_path:
-        task_logger.info("Final audio file already exists, skipping assembly.")
-        return recording_session
-
-    await execution.log_progress(
-        session,
-        10,
-        "Processing audio chunks into one final audio file.",
-        logger=task_logger,
-    )
-
     async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
+        if (
+            recording_session.gcs_final_file_path
+            and await recording_service.file_exists(
+                recording_session.gcs_final_file_path
+            )
+        ):
+            task_logger.info("Final audio file already exists, skipping assembly.")
+            return recording_session
+
+        await execution.log_progress(
+            session,
+            10,
+            "Processing audio chunks into one final audio file.",
+            logger=task_logger,
+        )
         final_path = await recording_service.process_chunks_to_final_audio(
             str(recording_session_id)
         )

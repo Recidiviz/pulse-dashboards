@@ -227,6 +227,12 @@ async def test_confirm_upload_success(
     mock_execution_id = uuid4()
     mock_gcs_path = f"recordings/{recording_session.id}/final/test_audio.webm"
 
+    # Set the expected file path (simulating what get-upload-url does)
+    recording_session.gcs_final_file_path = mock_gcs_path
+    async_session.add(recording_session)
+    await async_session.commit()
+    await async_session.refresh(recording_session)
+
     # Create a real Execution object in the database for the foreign key constraint
     mock_execution = Execution(
         id=mock_execution_id,
@@ -239,9 +245,21 @@ async def test_confirm_upload_success(
 
     with patch(
         "app.routes.recording_session_router.schedule_task"
-    ) as mock_schedule_task:
+    ) as mock_schedule_task, patch(
+        "app.routes.recording_session_router.RecordingService"
+    ) as mock_recording_service_class:
         # Mock schedule_task to return the execution we created
         mock_schedule_task.return_value = mock_execution
+
+        # Mock RecordingService to simulate file existence check
+        mock_service_instance = AsyncMock()
+        mock_service_instance.storage.download = AsyncMock(return_value=b"\x00")
+        mock_recording_service_class.return_value.__aenter__ = AsyncMock(
+            return_value=mock_service_instance
+        )
+        mock_recording_service_class.return_value.__aexit__ = AsyncMock(
+            return_value=None
+        )
 
         # Make the request
         response = await client.post(
@@ -264,6 +282,13 @@ async def test_confirm_upload_success(
 
         # Verify schedule_task was called
         mock_schedule_task.assert_called_once()
+
+        # Verify GCS existence check was called
+        mock_service_instance.storage.download.assert_called_once_with(
+            bucket=settings.GCS_BUCKET_NAME,
+            object_name=mock_gcs_path,
+            headers={"Range": "bytes=0-0"},
+        )
 
     # Verify database was updated
     await async_session.refresh(recording_session)
@@ -388,8 +413,20 @@ async def test_direct_upload_complete_flow(
 
     with patch(
         "app.routes.recording_session_router.schedule_task"
-    ) as mock_schedule_task:
+    ) as mock_schedule_task, patch(
+        "app.routes.recording_session_router.RecordingService"
+    ) as mock_recording_service_class:
         mock_schedule_task.return_value = mock_execution
+
+        # Mock RecordingService to simulate file existence check
+        mock_service_instance = AsyncMock()
+        mock_service_instance.storage.download = AsyncMock(return_value=b"\x00")
+        mock_recording_service_class.return_value.__aenter__ = AsyncMock(
+            return_value=mock_service_instance
+        )
+        mock_recording_service_class.return_value.__aexit__ = AsyncMock(
+            return_value=None
+        )
 
         confirm_response = await client.post(
             f"/recordings/sessions/{recording_session.id}/confirm-upload",
@@ -411,3 +448,273 @@ async def test_direct_upload_complete_flow(
     assert recording_session.gcs_final_file_path == file_path
     assert recording_session.status == RecordingStatus.PROCESSING
     assert recording_session.execution_id == mock_execution_id
+
+
+# ============================================================================
+# Security tests for confirm-upload validation
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_confirm_upload_without_get_upload_url(
+    async_session: AsyncSession,
+    client,
+    mock_clientdata_service,
+    mock_intake,
+    monkeypatch,
+):
+    """Test that confirm-upload fails if get-upload-url was not called first."""
+
+    # Mock check_access to allow access
+    def mock_check_access(
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
+    ):
+        return mock_clientdata_service["clients_by_pseudo_id"].get(
+            client_pseudo_id, mock_clientdata_service["clients"][0]
+        )
+
+    monkeypatch.setattr(permission_utils, "check_access", mock_check_access)
+
+    # Setup: Create a transcription intake with a recording session
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+
+    recording_session = RecordingSession(
+        client_pseudo_id=client_pseudo_id,
+        intake_id=mock_intake.id,
+        status=RecordingStatus.CREATED,
+        # Note: gcs_final_file_path is NOT set, simulating no get-upload-url call
+    )
+    async_session.add(recording_session)
+    await async_session.commit()
+    await async_session.refresh(recording_session)
+
+    # Attempt to confirm upload without calling get-upload-url first
+    response = await client.post(
+        f"/recordings/sessions/{recording_session.id}/confirm-upload",
+        json={
+            "file_path": f"recordings/{recording_session.id}/final/test_audio.webm",
+            "file_name": "test_audio.webm",
+            "content_type": "audio/webm",
+            "duration_ms": 60000,
+        },
+    )
+
+    # Should fail with 400 Bad Request
+    assert response.status_code == 400
+    assert "No upload URL was requested" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_confirm_upload_with_mismatched_file_path(
+    async_session: AsyncSession,
+    client,
+    mock_clientdata_service,
+    mock_intake,
+    monkeypatch,
+):
+    """Test that confirm-upload fails if file_path doesn't match the issued path."""
+
+    # Mock check_access to allow access
+    def mock_check_access(
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
+    ):
+        return mock_clientdata_service["clients_by_pseudo_id"].get(
+            client_pseudo_id, mock_clientdata_service["clients"][0]
+        )
+
+    monkeypatch.setattr(permission_utils, "check_access", mock_check_access)
+
+    # Setup: Create a transcription intake with a recording session
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+
+    recording_session = RecordingSession(
+        client_pseudo_id=client_pseudo_id,
+        intake_id=mock_intake.id,
+        status=RecordingStatus.CREATED,
+    )
+    async_session.add(recording_session)
+    await async_session.commit()
+    await async_session.refresh(recording_session)
+
+    # Set expected file path (simulating get-upload-url)
+    expected_path = f"recordings/{recording_session.id}/final/expected_audio.webm"
+    recording_session.gcs_final_file_path = expected_path
+    async_session.add(recording_session)
+    await async_session.commit()
+
+    # Attempt to confirm upload with a DIFFERENT file path (potential attack)
+    different_path = f"recordings/{recording_session.id}/final/different_audio.webm"
+    response = await client.post(
+        f"/recordings/sessions/{recording_session.id}/confirm-upload",
+        json={
+            "file_path": different_path,
+            "file_name": "different_audio.webm",
+            "content_type": "audio/webm",
+            "duration_ms": 60000,
+        },
+    )
+
+    # Should fail with 403 Forbidden
+    assert response.status_code == 403
+    assert "does not match the issued upload URL" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_confirm_upload_with_other_session_file_path(
+    async_session: AsyncSession,
+    client,
+    mock_clientdata_service,
+    mock_intake,
+    monkeypatch,
+):
+    """Test that confirm-upload fails if file_path belongs to another session (IDOR attack)."""
+
+    # Mock check_access to allow access
+    def mock_check_access(
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
+    ):
+        return mock_clientdata_service["clients_by_pseudo_id"].get(
+            client_pseudo_id, mock_clientdata_service["clients"][0]
+        )
+
+    monkeypatch.setattr(permission_utils, "check_access", mock_check_access)
+
+    # Setup: Create a transcription intake with a recording session
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+
+    recording_session = RecordingSession(
+        client_pseudo_id=client_pseudo_id,
+        intake_id=mock_intake.id,
+        status=RecordingStatus.CREATED,
+    )
+    async_session.add(recording_session)
+    await async_session.commit()
+    await async_session.refresh(recording_session)
+
+    # Set expected file path for this session
+    expected_path = f"recordings/{recording_session.id}/final/audio.webm"
+    recording_session.gcs_final_file_path = expected_path
+    async_session.add(recording_session)
+    await async_session.commit()
+
+    # Create a victim session ID
+    victim_session_id = uuid4()
+
+    # Attempt to confirm upload with a file path from ANOTHER session (IDOR attack)
+    victim_path = f"recordings/{victim_session_id}/final/victim_audio.webm"
+
+    # First, update the expected path to match (bypassing first check)
+    recording_session.gcs_final_file_path = victim_path
+    async_session.add(recording_session)
+    await async_session.commit()
+
+    response = await client.post(
+        f"/recordings/sessions/{recording_session.id}/confirm-upload",
+        json={
+            "file_path": victim_path,
+            "file_name": "victim_audio.webm",
+            "content_type": "audio/webm",
+            "duration_ms": 60000,
+        },
+    )
+
+    # Should fail with 403 Forbidden due to prefix check
+    assert response.status_code == 403
+    assert "does not belong to this recording session" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_confirm_upload_with_nonexistent_file(
+    async_session: AsyncSession,
+    client,
+    mock_clientdata_service,
+    mock_intake,
+    monkeypatch,
+):
+    """Test that confirm-upload fails if the file doesn't exist in GCS."""
+
+    # Mock check_access to allow access
+    def mock_check_access(
+        client_pseudo_id,
+        pseudonymized_staff_id,
+        cpa_client_locations=None,
+        is_zero_caseload_user=False,
+    ):
+        return mock_clientdata_service["clients_by_pseudo_id"].get(
+            client_pseudo_id, mock_clientdata_service["clients"][0]
+        )
+
+    monkeypatch.setattr(permission_utils, "check_access", mock_check_access)
+
+    # Setup: Create a transcription intake with a recording session
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+
+    recording_session = RecordingSession(
+        client_pseudo_id=client_pseudo_id,
+        intake_id=mock_intake.id,
+        status=RecordingStatus.CREATED,
+    )
+    async_session.add(recording_session)
+    await async_session.commit()
+    await async_session.refresh(recording_session)
+
+    # Set expected file path
+    expected_path = f"recordings/{recording_session.id}/final/audio.webm"
+    recording_session.gcs_final_file_path = expected_path
+    async_session.add(recording_session)
+    await async_session.commit()
+
+    # Mock RecordingService to simulate file NOT existing in GCS
+    with patch(
+        "app.routes.recording_session_router.RecordingService"
+    ) as mock_recording_service_class:
+        mock_service_instance = AsyncMock()
+        # Simulate 404 error when checking file existence
+        mock_service_instance.storage.download = AsyncMock(
+            side_effect=Exception("404 Not Found")
+        )
+        mock_recording_service_class.return_value.__aenter__ = AsyncMock(
+            return_value=mock_service_instance
+        )
+        mock_recording_service_class.return_value.__aexit__ = AsyncMock(
+            return_value=None
+        )
+
+        response = await client.post(
+            f"/recordings/sessions/{recording_session.id}/confirm-upload",
+            json={
+                "file_path": expected_path,
+                "file_name": "audio.webm",
+                "content_type": "audio/webm",
+                "duration_ms": 60000,
+            },
+        )
+
+        # Should fail with 404 Not Found
+        assert response.status_code == 404
+        assert "not found in cloud storage" in response.json()["detail"]
