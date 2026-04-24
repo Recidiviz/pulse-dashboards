@@ -562,42 +562,15 @@ async def get_pseudonymized_id(
     # Try to get user metadata from cache
     extra_info = await _get_cached_auth0_user_metadata(sub, token)
     if not extra_info:
-        if settings.ENV_NAME in ["staging", "prod", "demo", "dev"]:
-            try:
-                payload = jwt.decode(token, options={"verify_signature": False})
-                logger.info(f"decoded token payload: {payload}")
-                app_metadata = payload.get(
-                    "https://dashboard.recidiviz.org/app_metadata"
-                )
-            except (KeyError, AttributeError):
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail=f"Failed to decode token access in {settings.ENV_NAME} environment.",
-                )
-        else:
-            # Cache miss, fetch from Auth0 Management API
-            logger.info(
-                f"Cache miss for Auth0 user metadata in get_pseudonymized_id for sub: {sub}, fetching from API"
+        try:
+            payload = jwt.decode(token, options={"verify_signature": False})
+            logger.info(f"decoded token payload: {payload}")
+            app_metadata = payload.get("https://dashboard.recidiviz.org/app_metadata")
+        except (KeyError, AttributeError):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Failed to decode token access in {settings.ENV_NAME} environment.",
             )
-            async with httpx.AsyncClient() as client:
-                extra_info_resp = await client.get(
-                    f"https://{settings.AUTH0_DOMAIN}/api/v2/users/{sub}",
-                    headers={"Authorization": f"Bearer {token}"},
-                )
-
-                if extra_info_resp.status_code != 200:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Failed to get user metadata",
-                    )
-
-                extra_info = extra_info_resp.json()
-
-                # Cache the user metadata response
-                await _cache_auth0_user_metadata(sub, token, extra_info)
-
-                # Extract pseudonymized ID from app_metadata
-                app_metadata = extra_info.get("app_metadata", {})
     else:
         app_metadata = extra_info.get("app_metadata", {})
 
