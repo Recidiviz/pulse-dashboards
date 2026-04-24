@@ -84,6 +84,7 @@ describe("SAR router", () => {
             fakeSAR.institutionalStrategyRecommendation,
           responsivityLevel: fakeSAR.responsivityLevel,
           metadata: null,
+          mostSevereOffenseName: null,
           client: {
             ..._.pick(fakeSARClient, [
               "fullName",

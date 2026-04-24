@@ -67,3 +67,19 @@ export const SectionHeader = styled.h3`
   line-height: 120%; /* 1.2rem */
   letter-spacing: -0.01rem;
 `;
+
+export const MostSevereOffenseBadge = styled.div`
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6.25rem;
+  background: ${palette.pink};
+  color: ${palette.darkPink};
+  font-family: "Public Sans";
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.0075rem;
+  white-space: nowrap;
+`;

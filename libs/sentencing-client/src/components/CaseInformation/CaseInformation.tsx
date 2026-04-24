@@ -31,6 +31,7 @@ interface CaseInformationProps {
 export const CaseInformation: React.FC<CaseInformationProps> = observer(
   function CaseInformation({ presenter }) {
     const { charges, defendantDeclinedToParticipate } = presenter;
+    const mostSevereOffenseName = presenter.SARData?.mostSevereOffenseName;
 
     const handleChargeUpdate = async (
       chargeId: string,
@@ -106,13 +107,16 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
 
         {/* Each charge in its own card */}
         {charges.map((charge, index) => (
-          <React.Fragment key={charge.id}>
-            <OffenseCard
-              showTitle={index === 0}
-              charge={charge}
-              onUpdate={handleChargeUpdate}
-            />
-          </React.Fragment>
+          <OffenseCard
+            key={charge.id}
+            showTitle={index === 0}
+            isMostSevere={
+              !!mostSevereOffenseName &&
+              charge.offense === mostSevereOffenseName
+            }
+            charge={charge}
+            onUpdate={handleChargeUpdate}
+          />
         ))}
       </Styled.Container>
     );

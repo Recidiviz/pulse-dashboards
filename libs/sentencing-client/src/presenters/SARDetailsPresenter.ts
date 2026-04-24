@@ -19,6 +19,12 @@ import { flowResult, makeAutoObservable, runInAction } from "mobx";
 import moment from "moment";
 
 import {
+  compareSeverityRanks,
+  getChargeSeverityRank,
+  getMostSevereCharges,
+  MostSevereCharge,
+} from "~@sentencing/trpc-types";
+import {
   Hydratable,
   HydratesFromSource,
   HydrationState,
@@ -65,59 +71,10 @@ import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
 
-// Flat disposition types sorted before incarceration buckets in the legend.
 const DISPOSITION_TYPE_ORDER: Record<string, number> = {
   Probation: 0,
   Treatment_in_prison: 1,
 };
-
-// Severity ordering for charge classification: FELONY > MISDEMEANOR > INFRACTION > null
-const CLASSIFICATION_TYPE_ORDER: Record<string, number> = {
-  FELONY: 0,
-  MISDEMEANOR: 1,
-  INFRACTION: 2,
-};
-
-// Severity ordering for charge classification subtype: A > B > C > D > E > U > null
-const CLASSIFICATION_SUBTYPE_ORDER: Record<string, number> = {
-  A: 0,
-  B: 1,
-  C: 2,
-  D: 3,
-  E: 4,
-  U: 5,
-};
-
-// Sorts charges from most severe to least severe: FELONY > MISDEMEANOR > INFRACTION > null,
-// with subtypes ordered A > B > C within each type.
-function sortChargesBySeverity<
-  T extends {
-    classificationType: string | null | undefined;
-    classificationSubtype: string | null | undefined;
-  },
->(charges: T[]): T[] {
-  return [...charges].sort((a, b) => {
-    const typeA =
-      a.classificationType != null
-        ? CLASSIFICATION_TYPE_ORDER[a.classificationType] ?? Infinity
-        : Infinity;
-    const typeB =
-      b.classificationType != null
-        ? CLASSIFICATION_TYPE_ORDER[b.classificationType] ?? Infinity
-        : Infinity;
-    if (typeA !== typeB) return typeA - typeB;
-
-    const subtypeA =
-      a.classificationSubtype != null
-        ? CLASSIFICATION_SUBTYPE_ORDER[a.classificationSubtype] ?? Infinity
-        : Infinity;
-    const subtypeB =
-      b.classificationSubtype != null
-        ? CLASSIFICATION_SUBTYPE_ORDER[b.classificationSubtype] ?? Infinity
-        : Infinity;
-    return subtypeA - subtypeB;
-  });
-}
 
 // Type for SAR metadata structure
 type SARMetadataSections = {
@@ -384,7 +341,14 @@ export class SARDetailsPresenter implements Hydratable {
   /** Get charges array sorted by severity (FELONY A first, null classification last) */
   get charges(): FormCharge[] {
     if (!this.SARData?.charges) return [];
-    return sortChargesBySeverity(this.SARData.charges);
+    return [...this.SARData.charges].sort((a, b) =>
+      compareSeverityRanks(getChargeSeverityRank(a), getChargeSeverityRank(b)),
+    );
+  }
+
+  /** Most severe charge(s). Length > 1 means a tie requiring user input. */
+  get mostSevereCharges(): MostSevereCharge[] {
+    return getMostSevereCharges(this.SARData?.charges ?? []);
   }
 
   /** Get officer (staff) info */

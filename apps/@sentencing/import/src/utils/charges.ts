@@ -20,6 +20,63 @@ import { z } from "zod";
 import { chargeImportSchema } from "~@sentencing/import/models";
 import { getMOCountyFullName } from "~@sentencing/import/utils/helpers";
 import { PrismaClient } from "~@sentencing/prisma/client";
+import { getMostSevereCharges } from "~@sentencing/trpc-types";
+
+async function updateMostSevereOffenses(
+  prismaClient: PrismaClient,
+  sarExternalIds: string[],
+) {
+  const sars = await prismaClient.sentencingAssessmentReport.findMany({
+    where: { externalId: { in: sarExternalIds } },
+    select: {
+      id: true,
+      mostSevereOffenseName: true,
+      charges: {
+        select: {
+          offense: true,
+          classificationType: true,
+          classificationSubtype: true,
+        },
+      },
+    },
+  });
+
+  const updates: { id: string; mostSevereOffenseName: string | null }[] = [];
+
+  for (const sar of sars) {
+    if (sar.charges.length === 0) continue;
+
+    const mostSevere = getMostSevereCharges(sar.charges);
+
+    // If the current most severe offense matches the calculated one, skip update
+    if (
+      mostSevere.length === 1 &&
+      sar.mostSevereOffenseName === mostSevere[0].offenseName
+    )
+      continue;
+    // If the most severe offense is a tie and the current most severe offense is one of the tied offenses, skip update
+    if (
+      mostSevere.length > 1 &&
+      sar.mostSevereOffenseName &&
+      mostSevere.map((c) => c.offenseName).includes(sar.mostSevereOffenseName)
+    ) {
+      continue;
+    }
+
+    // In the other case (i.e newly calculated most severe offense(s) is more severe than the current offense, update)
+    const newValue = mostSevere.length === 1 ? mostSevere[0].offenseName : null;
+    updates.push({ id: sar.id, mostSevereOffenseName: newValue });
+  }
+
+  await prismaClient.$transaction(
+    updates.map(({ id, mostSevereOffenseName }) =>
+      prismaClient.sentencingAssessmentReport.update({
+        where: { id },
+        data: { mostSevereOffenseName },
+      }),
+    ),
+  );
+}
 
 export async function transformAndLoadChargeData(
   prismaClient: PrismaClient,
@@ -144,4 +201,6 @@ export async function transformAndLoadChargeData(
       });
     }
   }
+
+  await updateMostSevereOffenses(prismaClient, [...sarExternalIds]);
 }

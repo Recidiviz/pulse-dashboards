@@ -40,6 +40,7 @@ const ReadOnlyField: React.FC<{
 
 interface OffenseCardProps {
   showTitle?: boolean;
+  isMostSevere?: boolean;
   charge: FormCharge;
   onUpdate: (
     chargeId: string,
@@ -49,7 +50,7 @@ interface OffenseCardProps {
 }
 
 export const OffenseCard: React.FC<OffenseCardProps> = observer(
-  function OffenseCard({ charge, onUpdate, showTitle }) {
+  function OffenseCard({ charge, onUpdate, showTitle, isMostSevere }) {
     // Create debounced save function
     const debouncedSave = useDebouncedCallback(
       (chargeId: string, fieldId: EditableChargeField, value: string) => {
@@ -80,6 +81,11 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
             <Styled.SectionHeader>Offense Information</Styled.SectionHeader>
             <ReadOnlyField label="Offense" value={charge.offense || "—"} />
             <ReadOnlyField label="Class" value={classificationDisplay || "—"} />
+            {isMostSevere && (
+              <Styled.MostSevereOffenseBadge>
+                Most Severe Offense
+              </Styled.MostSevereOffenseBadge>
+            )}
           </Styled.ColumnSection>
 
           {/* Column 2: Case Information */}

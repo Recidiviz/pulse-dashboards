@@ -665,6 +665,9 @@ model SentencingAssessmentReport {
   institutionalStrategyRecommendation String?
   priorTreatmentHistorySummary  String?
 
+  // Matches Offense.name. Set by ingest when unambiguous, by user when tied. Same convention as Charge.offense.
+  mostSevereOffenseName String?
+
   // Relationships
   charges      Charge[]
   drugHistories DrugHistory[]
