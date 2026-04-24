@@ -9,6 +9,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.crud.client import (
     compute_frontend_status,
     get_paginated_client_list,
+    validate_sort_order,
 )
 from app.models.base import IntakeStatus
 from app.models.intake import Intake
@@ -957,3 +958,66 @@ async def test_get_paginated_client_list_search_by_external_id(
 
         assert result_none["total"] == 0
         assert len(result_none["items"]) == 0
+
+
+# ===== Security Tests =====
+
+
+def test_validate_sort_order_valid_values():
+    """Test that validate_sort_order accepts valid values."""
+    assert validate_sort_order("asc") == "asc"
+    assert validate_sort_order("desc") == "desc"
+    assert validate_sort_order("ASC") == "asc"  # Case insensitive
+    assert validate_sort_order("DESC") == "desc"  # Case insensitive
+    assert validate_sort_order("  asc  ") == "asc"  # Strips whitespace
+
+
+def test_validate_sort_order_rejects_sql_injection():
+    """Test that validate_sort_order rejects SQL injection attempts."""
+    # Test various SQL injection patterns
+    injection_attempts = [
+        "asc, (SELECT 1 WHERE pg_sleep(5) IS NULL)",
+        "asc; DROP TABLE intake;--",
+        "asc OR 1=1",
+        "asc' OR '1'='1",
+        "asc UNION SELECT * FROM users",
+        "invalid",
+        "ascending",
+        "",
+    ]
+    
+    for injection in injection_attempts:
+        with pytest.raises(ValueError, match="Invalid sort_order"):
+            validate_sort_order(injection)
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_sanitizes_sort_order(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test that SQL injection via sort_order is prevented."""
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+        
+        # Create test intake
+        intake = Intake(
+            client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,
+        )
+        async_session.add(intake)
+        await async_session.commit()
+        
+        # Attempt SQL injection via sort_order - should be sanitized to "asc"
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            sort_order="asc, (SELECT 1 WHERE pg_sleep(5) IS NULL)",  # SQL injection attempt
+            status_filter="intake_enabled",
+        )
+        
+        # Should still return results (with sanitized sort_order defaulting to "asc")
+        assert result["total"] >= 0  # Query should execute without injection

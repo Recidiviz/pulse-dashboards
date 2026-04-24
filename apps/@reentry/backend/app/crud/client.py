@@ -44,6 +44,32 @@ class ClientSort(StrEnum):
     INTAKE_COUNT = "intake_count"
 
 
+class SortOrder(StrEnum):
+    """Valid sort order values."""
+
+    ASC = "asc"
+    DESC = "desc"
+
+
+def validate_sort_order(sort_order: str) -> str:
+    """
+    Validate and normalize sort_order parameter to prevent SQL injection.
+
+    Args:
+        sort_order: The sort order string to validate
+
+    Returns:
+        Normalized sort order ("asc" or "desc")
+
+    Raises:
+        ValueError: If sort_order is not valid
+    """
+    normalized = sort_order.lower().strip()
+    if normalized not in ("asc", "desc"):
+        raise ValueError(f"Invalid sort_order: {sort_order}. Must be 'asc' or 'desc'.")
+    return normalized
+
+
 def compute_frontend_status(
     intake_status: str | None, processing_status: ProcessingStatus
 ) -> str:
@@ -100,6 +126,13 @@ async def get_paginated_client_list(
 
     If staff_id is provided, only returns clients assigned to that staff member.
     """
+    # Validate sort_order to prevent SQL injection
+    try:
+        sort_order = validate_sort_order(sort_order)
+    except ValueError as e:
+        logger.warning(f"Invalid sort_order parameter: {e}")
+        sort_order = "asc"  # Default to safe value
+
     # 1. No staff ID, empty response
     if not pseudonymized_staff_id:
         return empty_paginated_response(page, page_size)
@@ -238,6 +271,9 @@ async def handle_simple_status_filter(
     When status_filter is None, includes all BQ clients (even those without intakes).
     When status_filter is set, only includes clients with matching intake status.
     """
+    # Validate sort_order to prevent SQL injection
+    sort_order = validate_sort_order(sort_order)
+
     intake_status = None
     if status_filter:
         # Map frontend status to intake.status
@@ -247,32 +283,57 @@ async def handle_simple_status_filter(
         }
         intake_status = intake_status_map[status_filter]
 
-    placeholders = ", ".join([f"'{cid}'" for cid in bq_client_ids])
-
-    # Build ORDER BY clause
+    # Use parameterized query for client IDs to prevent SQL injection
+    # Build ORDER BY clause with validated sort_order
     order_clause = ""
     if sort_by == ClientSort.NAME:
         # Will sort in-memory with BQ data
         order_clause = ""
     elif sort_by == ClientSort.INTAKE_COUNT:
+        # sort_order is validated, safe to use in SQL
         order_clause = f"ORDER BY intake_count {sort_order.upper()}"
     elif sort_by == ClientSort.LAST_ASSESSMENT_DATE:
+        # sort_order is validated, safe to use in SQL
         order_clause = f"ORDER BY last_completed_date {sort_order.upper()} NULLS LAST"
 
-    # SQL query with aggregates
-    stmt = sqlalchemy.text(
-        f"""
-        SELECT
-            client_pseudo_id,
-            COUNT(*) as intake_count,
-            MAX(completed_at) as last_completed_date
-        FROM intake
-        WHERE client_pseudo_id IN ({placeholders})
-          {f"AND status = '{intake_status}'" if intake_status else ""}
-        GROUP BY client_pseudo_id
-        {order_clause}
-    """
-    )
+    # Build SQL query with parameterized values
+    # Use bind parameters for client IDs and status to prevent SQL injection
+    if intake_status:
+        stmt = sqlalchemy.text(
+            f"""
+            SELECT
+                client_pseudo_id,
+                COUNT(*) as intake_count,
+                MAX(completed_at) as last_completed_date
+            FROM intake
+            WHERE client_pseudo_id IN :client_ids
+              AND status::text = :intake_status
+            GROUP BY client_pseudo_id
+            {order_clause}
+        """
+        ).bindparams(
+            sqlalchemy.bindparam(
+                "client_ids", value=tuple(bq_client_ids), expanding=True
+            ),
+            sqlalchemy.bindparam("intake_status", value=intake_status),
+        )
+    else:
+        stmt = sqlalchemy.text(
+            f"""
+            SELECT
+                client_pseudo_id,
+                COUNT(*) as intake_count,
+                MAX(completed_at) as last_completed_date
+            FROM intake
+            WHERE client_pseudo_id IN :client_ids
+            GROUP BY client_pseudo_id
+            {order_clause}
+        """
+        ).bindparams(
+            sqlalchemy.bindparam(
+                "client_ids", value=tuple(bq_client_ids), expanding=True
+            )
+        )
 
     result = await session.exec(stmt)
     query_results = [
@@ -371,16 +432,20 @@ async def handle_new_client_filter(
     Handle "new" status - clients with no intake in the database.
     This is the expected state for newly created clients.
     """
-    placeholders = ", ".join([f"'{cid}'" for cid in bq_client_ids])
+    # Validate sort_order to prevent SQL injection
+    sort_order = validate_sort_order(sort_order)
 
-    # Find clients that have intakes
+    # Use parameterized query to prevent SQL injection
     stmt = sqlalchemy.text(
-        f"""
+        """
         SELECT DISTINCT client_pseudo_id
         FROM intake
-        WHERE client_pseudo_id IN ({placeholders})
+        WHERE client_pseudo_id IN :client_ids
     """
+    ).bindparams(
+        sqlalchemy.bindparam("client_ids", value=tuple(bq_client_ids), expanding=True)
     )
+
     result = await session.exec(stmt)
     existing_ids = set(row[0] for row in result)
 
@@ -447,6 +512,8 @@ async def handle_complex_status_filter(
     For "error" filter: includes both completed intakes with error processing status
     AND intakes with status="error".
     """
+    # Validate sort_order to prevent SQL injection
+    sort_order = validate_sort_order(sort_order)
 
     from datetime import datetime
 

@@ -12,7 +12,7 @@ from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.crud.address import get_latest_address_client_pseudo_id
 from app.crud.ai_persona import get_latest_ai_intake_trigger_by_intake_id
-from app.crud.client import ClientSort, get_paginated_client_list
+from app.crud.client import ClientSort, SortOrder, get_paginated_client_list
 from app.crud.client import reset_client_data as crud_reset_client_data
 from app.crud.intake import (
     get_all_intakes_by_client_pseudo_id,
@@ -66,7 +66,7 @@ async def router_list_clients(
     page: int = 1,
     size: int = 20,
     sort_by: None | ClientSort = None,
-    sort_order: str = "asc",  # "asc" or "desc"
+    sort_order: SortOrder = SortOrder.ASC,  # Use enum for type safety
     search: str | None = None,  # Search by client name
     status_filter: str | None = None,  # Filter by status
     pseudonymized_id: str = Depends(get_pseudonymized_id),
@@ -79,7 +79,7 @@ async def router_list_clients(
         size,
         pseudonymized_id,
         sort_by,
-        sort_order,
+        sort_order.value,  # Convert enum to string value
         search,
         status_filter,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
