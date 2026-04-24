@@ -69,7 +69,7 @@ steps:
         RECIDIVIZ_LANGCHAIN_PROJECT=demo-recidiviz,
         RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resource-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
-        RECIDIVIZ_AUTH0_AUDIENCE=https://recidiviz-rnd.us.auth0.com/api/v2/,
+        RECIDIVIZ_AUTH0_AUDIENCE=https://api-demo.recidiviz.org,
         RECIDIVIZ_AUTH0_DOMAIN=recidiviz-rnd.us.auth0.com,
         RECIDIVIZ_JWT_ALGORITHM=HS256,
         RECIDIVIZ_BQ_CASE_MANAGER_TABLE=case_manager_demo,

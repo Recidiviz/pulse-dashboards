@@ -562,7 +562,7 @@ async def get_pseudonymized_id(
     # Try to get user metadata from cache
     extra_info = await _get_cached_auth0_user_metadata(sub, token)
     if not extra_info:
-        if settings.ENV_NAME in ["staging", "prod"]:
+        if settings.ENV_NAME in ["staging", "prod", "demo", "dev"]:
             try:
                 payload = jwt.decode(token, options={"verify_signature": False})
                 logger.info(f"decoded token payload: {payload}")
