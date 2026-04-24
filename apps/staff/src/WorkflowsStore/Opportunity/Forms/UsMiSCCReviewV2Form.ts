@@ -17,12 +17,12 @@
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatWorkflowsDate } from "../../../utils";
-import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
-import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
-import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
+import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
+import { usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { FormBase } from "./FormBase";
 
-export type UsMiSCCReviewDraftData = {
+export type UsMiSCCReviewV2DraftData = {
   // Data-populated fields
   prisonerNumber: string;
   prisonerName: string;
@@ -31,6 +31,7 @@ export type UsMiSCCReviewDraftData = {
   facility: string;
   lock: string;
   OPT: boolean;
+  SMI: boolean;
   STG1: boolean;
   STG2: boolean;
   STG_NA: boolean;
@@ -73,24 +74,7 @@ export type UsMiSCCReviewDraftData = {
   IISP4: boolean;
   IISP5: boolean;
   IISP6: boolean;
-  amOfficer: string;
-  pmOfficer: string;
-  never1: boolean;
-  never2: boolean;
-  never3: boolean;
-  never4: boolean;
-  rarely1: boolean;
-  rarely2: boolean;
-  rarely3: boolean;
-  rarely4: boolean;
-  sometimes1: boolean;
-  sometimes2: boolean;
-  sometimes3: boolean;
-  sometimes4: boolean;
-  regularly1: boolean;
-  regularly2: boolean;
-  regularly3: boolean;
-  regularly4: boolean;
+  officerName: string;
   good1: boolean;
   good2: boolean;
   adequate1: boolean;
@@ -106,17 +90,51 @@ export type UsMiSCCReviewDraftData = {
   comment: string;
   misconductFree: boolean;
   IISP: boolean;
-  other: boolean;
-  otherText: string;
+  other1: boolean;
+  otherText1: string;
+  low: boolean;
+  medium: boolean;
+  high: boolean;
   potential: string;
   continue: boolean;
   reclassify: boolean;
   transfer: boolean;
   protection: boolean;
+  SER: boolean;
+  CCBD: boolean;
+  UIOA: boolean;
+  MRTD: boolean;
+  PAP: boolean;
+  PRPS: boolean;
+  other2: boolean;
   reason: string;
+  otherText2: string;
   staffName1: string;
   staffName2: string;
   QMHP: string;
+
+  // Communication method fields
+  none: boolean;
+  BLV: boolean;
+  DHH: boolean;
+  other3: boolean;
+  ASL: boolean;
+  VWHA: boolean;
+  VWOHA: boolean;
+  slate: boolean;
+  staffRead: boolean;
+  other4: boolean;
+  emergency: boolean;
+  security: boolean;
+  other5: boolean;
+  methodASL: boolean;
+  methodVWHA: boolean;
+  methodVWOHA: boolean;
+  methodSlate: boolean;
+  methodStaffRead: boolean;
+  other6: boolean;
+  VA: boolean;
+  responded: boolean;
 
   // Miscellaneous footer fields
   wardenApproval: boolean;
@@ -129,17 +147,16 @@ export type UsMiSCCReviewDraftData = {
   addDist: boolean;
 };
 
-// TODO(OBT9920): Deprecate V1 forms
-export class UsMiSCCReviewForm extends FormBase<
-  UsMiSCCReviewDraftData,
-  | usMiSecurityClassificationCommitteeReviewOpportunity
-  | usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity
-  | usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity
+export class UsMiSCCReviewV2Form extends FormBase<
+  UsMiSCCReviewV2DraftData,
+  | usMiSecurityClassificationCommitteeReviewV2Opportunity
+  | usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity
+  | usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity
 > {
   navigateToFormText = "Automate 283 Form";
 
   get formContents(): OpportunityFormComponentName {
-    return "FormUsMiSCCReview";
+    return "FormUsMiSCCReviewV2";
   }
 
   get shareFormUpdates(): boolean {
@@ -147,10 +164,10 @@ export class UsMiSCCReviewForm extends FormBase<
   }
 
   get formType(): string {
-    return "UsMiSCCReviewForm";
+    return "UsMiSCCReviewFormV2";
   }
 
-  prefilledDataTransformer(): Partial<UsMiSCCReviewDraftData> {
+  prefilledDataTransformer(): Partial<UsMiSCCReviewV2DraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
     const { externalId: prisonerNumber } = this.person;
@@ -161,6 +178,7 @@ export class UsMiSCCReviewForm extends FormBase<
       facility,
       lock,
       OPT,
+      SMI,
       STG,
       segregationType,
       segregationClassificationDate,
@@ -195,6 +213,7 @@ export class UsMiSCCReviewForm extends FormBase<
       facility,
       lock,
       OPT,
+      SMI,
       STG1: STG === "1",
       STG2: STG === "2",
       adminSeg: segregationType === "ADMINISTRATIVE_SOLITARY_CONFINEMENT",

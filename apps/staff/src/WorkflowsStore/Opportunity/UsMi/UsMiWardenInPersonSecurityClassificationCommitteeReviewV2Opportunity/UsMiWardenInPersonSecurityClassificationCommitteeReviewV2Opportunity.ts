@@ -24,7 +24,7 @@ import {
 } from "~datatypes";
 
 import { Resident } from "../../../Resident";
-import { UsMiSCCReviewForm } from "../../Forms/UsMiSCCReviewForm";
+import { UsMiSCCReviewV2Form } from "../../Forms/UsMiSCCReviewV2Form";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab, OpportunityTabGroup } from "../../types";
 
@@ -32,7 +32,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunit
   Resident,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2Record["output"]
 > {
-  form: UsMiSCCReviewForm;
+  form: UsMiSCCReviewV2Form;
 
   criteriaFormatters = {
     monthsInRH: ({ record }: Record<string, any>) => {
@@ -55,7 +55,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunit
       ),
     );
 
-    this.form = new UsMiSCCReviewForm(this, resident.rootStore);
+    this.form = new UsMiSCCReviewV2Form(this, resident.rootStore);
   }
 
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {

@@ -18,12 +18,16 @@
 import * as React from "react";
 
 import { UsMiSCCReviewDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewForm";
+import { UsMiSCCReviewV2DraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
 import { DOCXFormDropdown } from "../../DOCXFormDropdown";
 import DOCXFormInput from "../../DOCXFormInput";
 import DOCXFormCheckbox from "../../FormCheckbox";
 
+type MergedUsMiSCCReviewDraftData = UsMiSCCReviewDraftData &
+  UsMiSCCReviewV2DraftData;
+
 type InputProps = {
-  name: Extract<keyof UsMiSCCReviewDraftData, string>;
+  name: Extract<keyof MergedUsMiSCCReviewDraftData, string>;
   placeholder?: string;
   maxWidth?: string;
 };
@@ -36,7 +40,7 @@ export const FormInput: React.FC<InputProps> = ({
   ...props
 }: InputProps) => {
   return (
-    <DOCXFormInput<UsMiSCCReviewDraftData>
+    <DOCXFormInput<MergedUsMiSCCReviewDraftData>
       {...props}
       style={{ maxWidth: maxWidth ?? "90px", minWidth: "50px" }}
     />
@@ -44,7 +48,7 @@ export const FormInput: React.FC<InputProps> = ({
 };
 
 type CheckboxProps = {
-  name: Extract<keyof UsMiSCCReviewDraftData, string>;
+  name: Extract<keyof MergedUsMiSCCReviewDraftData, string>;
   invert?: boolean;
   toggleable?: boolean;
   label?: string;
@@ -54,7 +58,9 @@ type CheckboxProps = {
  * A wrapper for the DOCX checkbox for the MI SCC review form.
  */
 export const FormCheckbox: React.FC<CheckboxProps> = (props: CheckboxProps) => {
-  const checkbox = <DOCXFormCheckbox<UsMiSCCReviewDraftData> {...props} />;
+  const checkbox = (
+    <DOCXFormCheckbox<MergedUsMiSCCReviewDraftData> {...props} />
+  );
   return props.label ? (
     <label style={{ marginBottom: 0 }}>
       {checkbox}
@@ -66,7 +72,7 @@ export const FormCheckbox: React.FC<CheckboxProps> = (props: CheckboxProps) => {
 };
 
 type DropdownProps = {
-  name: Extract<keyof UsMiSCCReviewDraftData, string>;
+  name: Extract<keyof MergedUsMiSCCReviewDraftData, string>;
   menuItems: string[];
 };
 
@@ -74,5 +80,5 @@ type DropdownProps = {
  * A wrapper for the DOCX dropdown for the MI SCC review form.
  */
 export const FormDropdown = (props: DropdownProps) => {
-  return <DOCXFormDropdown<UsMiSCCReviewDraftData> {...props} />;
+  return <DOCXFormDropdown<MergedUsMiSCCReviewDraftData> {...props} />;
 };

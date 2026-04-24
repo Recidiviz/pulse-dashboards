@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,15 +28,16 @@ import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
-import FormFooter from "./FormFooter";
-import FormGeneralInfo from "./FormGeneralInfo";
-import FormHeading from "./FormHeading";
-import FormHistory from "./FormHistory";
-import FormInterviews from "./FormInterviews";
-import FormReview from "./FormReview";
-import FormSCCAction from "./FormSCCAction";
-import FormTeamEvaluation from "./FormTeamEvaluation";
-import sccReviewTemplate from "./scc_review_template.docx";
+import FormFooter from "../SCCReview/FormFooter";
+import FormHistory from "../SCCReview/FormHistory";
+import FormInterviews from "../SCCReview/FormInterviews";
+import FormReview from "../SCCReview/FormReview";
+import FormHeadingV2 from "../SCCReviewV2/FormHeadingV2";
+import sccReviewTemplate from "../SCCReviewV2/scc_review_template_v2.docx";
+import FormCommunicationMethod from "./FormCommunicationMethod";
+import FormGeneralInfoV2 from "./FormGeneralInfoV2";
+import FormSCCActionV2 from "./FormSCCActionV2";
+import FormTeamEvaluationV2 from "./FormTeamEvaluationV2";
 
 const FormPage = styled.div`
   font-family: "Arial";
@@ -72,8 +73,7 @@ const formDownloader = async (
   return;
 };
 
-// TODO(OBT9920): Deprecate V1 forms
-export const FormUsMiSCCReview = observer(function FormUsMiSCCReview({
+export const FormUsMiSCCReviewV2 = observer(function FormUsMiSCCReviewV2({
   opportunity,
 }: {
   opportunity: Opportunity;
@@ -92,18 +92,19 @@ export const FormUsMiSCCReview = observer(function FormUsMiSCCReview({
       agencyName="MDOC"
       onClickDownload={() => formDownloader(opportunityForm)}
       opportunity={opportunity}
-      downloadButtonLabel="Download as .DOCX"
+      downloadButtonLabel="Download as .DOC"
     >
       <FormViewer formRef={formRef}>
         <PrintablePage>
           <FormPage>
-            <FormHeading />
-            <FormGeneralInfo />
+            <FormHeadingV2 />
+            <FormGeneralInfoV2 />
             <FormHistory />
-            <FormTeamEvaluation />
-            <FormSCCAction />
+            <FormTeamEvaluationV2 />
+            <FormSCCActionV2 />
             <FormReview />
             <FormInterviews />
+            <FormCommunicationMethod />
             <FormFooter />
           </FormPage>
         </PrintablePage>

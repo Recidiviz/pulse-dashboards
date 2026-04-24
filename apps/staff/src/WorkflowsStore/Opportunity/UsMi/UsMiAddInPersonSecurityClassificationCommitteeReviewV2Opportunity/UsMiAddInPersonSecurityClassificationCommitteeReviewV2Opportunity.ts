@@ -23,7 +23,7 @@ import {
 } from "~datatypes";
 
 import { Resident } from "../../../Resident";
-import { UsMiSCCReviewForm } from "../../Forms/UsMiSCCReviewForm";
+import { UsMiSCCReviewV2Form } from "../../Forms/UsMiSCCReviewV2Form";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab, OpportunityTabGroup } from "../../types";
 
@@ -31,7 +31,7 @@ export class usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity e
   Resident,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2Record["output"]
 > {
-  form: UsMiSCCReviewForm;
+  form: UsMiSCCReviewV2Form;
 
   constructor(resident: Resident, record: DocumentData) {
     super(
@@ -43,7 +43,7 @@ export class usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity e
       ),
     );
 
-    this.form = new UsMiSCCReviewForm(this, resident.rootStore);
+    this.form = new UsMiSCCReviewV2Form(this, resident.rootStore);
   }
 
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {

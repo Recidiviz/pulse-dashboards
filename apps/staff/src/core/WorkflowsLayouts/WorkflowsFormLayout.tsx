@@ -44,6 +44,7 @@ import MediumTrustee from "../Paperwork/US_ME/MediumTrustee/MediumTrustee";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCReview";
+import { FormUsMiSCCReviewV2 } from "../Paperwork/US_MI/SCCReviewV2/FormUsMiSCCReviewV2";
 import { FormUsMoWorkRelease } from "../Paperwork/US_MO/WorkRelease/FormUsMoWorkRelease";
 import { FormUsNcCreditReductionReview } from "../Paperwork/US_NC/CreditReductionReview/FormUsNcCreditReductionReview";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
@@ -127,6 +128,7 @@ const FormComponents = {
   FormUsIaEarlyDischargeProbation,
   AnnualClassificationReview,
   FormUsMiSCCReview,
+  FormUsMiSCCReviewV2,
   MediumTrustee,
   WorkflowsUsAzReleaseToTransitionProgramForm,
   WorkflowsFormUsTnSuspensionOfDirectSupervision,
