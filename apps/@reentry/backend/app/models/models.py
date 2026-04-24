@@ -195,7 +195,7 @@ class PlanGenerationResourceAssociation(SQLModel, table=True):
     )
 
     # External resource identifier (not a FK — Resource is not a DB table)
-    resource_id: str
+    resource_id: int
 
     # Which markdown section this resource belongs to
     section_title: str
