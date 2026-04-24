@@ -31,23 +31,28 @@ const PillWrapper = styled(Pill)`
   vertical-align: middle;
 `;
 
-interface InsightsPillProps {
+type InsightsPillProps = {
   label: string;
   tooltipCopy?: string;
-}
+  color?: string;
+  textColor?: string;
+};
 
 /**
- * A small pink pill with a optional tooltip used to flag certain
- * officers and opportunities from the insights supervisor homepage views.
+ * A small pill with an optional tooltip used to flag certain officers and
+ * opportunities from the insights supervisor homepage views. Defaults to pink;
+ * callers can override via `color` / `textColor` (e.g. green for the
+ * Consistent Login pill).
  */
-const InsightsPill: FC<InsightsPillProps> = ({ tooltipCopy, label }) => {
+const InsightsPill: FC<InsightsPillProps> = ({
+  tooltipCopy,
+  label,
+  color = palette.pink,
+  textColor = palette.darkPink,
+}) => {
   return (
     <InsightsTooltip contents={tooltipCopy}>
-      <PillWrapper
-        color={palette.pink}
-        textColor={palette.darkPink}
-        filled={true}
-      >
+      <PillWrapper color={color} textColor={textColor} filled={true}>
         {label}
       </PillWrapper>
     </InsightsTooltip>
