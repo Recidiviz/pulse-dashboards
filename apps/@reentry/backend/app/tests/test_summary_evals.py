@@ -13,7 +13,15 @@ from uuid import uuid4
 import pytest
 from langsmith.schemas import Example, Run
 
-from app.manage.evaluate.summary_evals import coverage_check, grounding_check
+from app.manage.evaluate.summary_evals import (
+    coverage_check,
+    grounding_check,
+    has_section_headers,
+    no_judgments,
+    not_toxic,
+    section_length,
+    tone,
+)
 
 # ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -52,6 +60,11 @@ DETAILED_GOOD_SUMMARY = (
 )
 
 INCOMPLETE_SUMMARY = "The client has a high school education."
+
+TOXIC_SUMMARY = (
+    "The client is a dangerous individual who has repeatedly shown poor judgment "
+    "and cannot be trusted to make good decisions."
+)
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -517,3 +530,400 @@ class TestTestDataFiles:
             assert (
                 fabricated not in summary
             ), f"Good summary contains hallucinated detail: '{fabricated}'"
+
+
+# ─── Has Section Headers Tests ────────────────────────────────────────────────
+
+SUMMARY_NO_HEADERS = "This is a summary with no headers at all."
+
+SUMMARY_ONE_HEADER = "# Background\nThe client has a high school education."
+
+SUMMARY_TWO_HEADERS = (
+    "# Background\nHigh school graduate.\n\n"
+    "# Employment\nWorked at a factory for 5 years."
+)
+
+SUMMARY_THREE_HEADERS = (
+    "# Background\nHigh school graduate.\n\n"
+    "# Employment\nFactory work.\n\n"
+    "# Housing\nLiving with mother."
+)
+
+SUMMARY_FOUR_HEADERS = (
+    "# Background\nHigh school graduate.\n\n"
+    "# Employment\nFactory work.\n\n"
+    "# Housing\nLiving with mother.\n\n"
+    "# Goals\nWants to reconnect with children."
+)
+
+
+class TestHasSectionHeaders:
+    def test_no_headers_scores_1(self):
+        result = has_section_headers(make_run(SUMMARY_NO_HEADERS), make_example(""))
+        assert result["key"] == "has_section_headers"
+        assert result["score"] == 1
+        assert result["header_count"] == 0
+
+    def test_one_header_scores_5(self):
+        result = has_section_headers(make_run(SUMMARY_ONE_HEADER), make_example(""))
+        assert result["score"] == 5
+        assert result["header_count"] == 1
+
+    def test_two_headers_scores_5(self):
+        result = has_section_headers(make_run(SUMMARY_TWO_HEADERS), make_example(""))
+        assert result["score"] == 5
+        assert result["header_count"] == 2
+
+    def test_three_headers_scores_7(self):
+        result = has_section_headers(make_run(SUMMARY_THREE_HEADERS), make_example(""))
+        assert result["score"] == 7
+        assert result["header_count"] == 3
+
+    def test_four_headers_scores_10(self):
+        result = has_section_headers(make_run(SUMMARY_FOUR_HEADERS), make_example(""))
+        assert result["score"] == 10
+        assert result["header_count"] == 4
+
+    def test_result_has_all_keys(self):
+        result = has_section_headers(make_run(SUMMARY_THREE_HEADERS), make_example(""))
+        assert set(result.keys()) == {"key", "score", "header_count", "explanation"}
+
+    def test_empty_summary_scores_1(self):
+        result = has_section_headers(make_run(""), make_example(""))
+        assert result["score"] == 1
+        assert result["header_count"] == 0
+
+
+# ─── Section Length Tests ─────────────────────────────────────────────────────
+
+SHORT_SECTION = "# Intro\nShort."  # well under 30 words
+
+NORMAL_SECTIONS = (
+    "# Background\n"
+    + " ".join(["word"] * 50)
+    + "\n\n# Employment\n"
+    + " ".join(["word"] * 60)
+)
+
+LONG_SECTION = "# Background\n" + " ".join(["word"] * 350)
+
+TWO_FLAGGED = (
+    "# Intro\nShort.\n\n"
+    "# Middle\n" + " ".join(["word"] * 50) + "\n\n"
+    "# End\n" + " ".join(["word"] * 350)
+)
+
+
+class TestSectionLength:
+    def test_normal_sections_score_10(self):
+        result = section_length(make_run(NORMAL_SECTIONS), make_example(""))
+        assert result["key"] == "section_length"
+        assert result["score"] == 10
+        assert result["flagged_sections"] == []
+
+    def test_short_section_reduces_score(self):
+        result = section_length(make_run(SHORT_SECTION), make_example(""))
+        assert result["score"] == 8
+        assert len(result["flagged_sections"]) == 1
+        assert result["flagged_sections"][0]["reason"] == "too short"
+
+    def test_long_section_reduces_score(self):
+        result = section_length(make_run(LONG_SECTION), make_example(""))
+        assert result["score"] == 8
+        assert len(result["flagged_sections"]) == 1
+        assert result["flagged_sections"][0]["reason"] == "too long"
+
+    def test_two_flagged_sections_score_6(self):
+        result = section_length(make_run(TWO_FLAGGED), make_example(""))
+        assert result["score"] == 6
+        assert len(result["flagged_sections"]) == 2
+
+    def test_score_minimum_is_1(self):
+        many_short = "\n\n".join([f"# Section{i}\nShort." for i in range(10)])
+        result = section_length(make_run(many_short), make_example(""))
+        assert result["score"] == 1
+
+    def test_flagged_sections_have_required_keys(self):
+        result = section_length(make_run(SHORT_SECTION), make_example(""))
+        for entry in result["flagged_sections"]:
+            assert "header" in entry
+            assert "word_count" in entry
+            assert "reason" in entry
+
+    def test_result_has_all_keys(self):
+        result = section_length(make_run(NORMAL_SECTIONS), make_example(""))
+        assert set(result.keys()) == {
+            "key",
+            "score",
+            "flagged_sections",
+            "explanation",
+        }
+
+    def test_empty_summary_returns_score_8(self):
+        # Empty string produces one zero-word phantom section, flagged as too short.
+        result = section_length(make_run(""), make_example(""))
+        assert result["score"] == 8
+        assert len(result["flagged_sections"]) == 1
+
+
+# ─── Helpers for LLM evaluator mocking ───────────────────────────────────────
+
+
+def make_binary_grade(binary_score, explanation="Test explanation."):
+    grade = MagicMock()
+    grade.binary_score = binary_score
+    grade.explanation = explanation
+    return grade
+
+
+def make_score_grade(score, explanation="Test explanation."):
+    grade = MagicMock()
+    grade.one_to_ten_score = score
+    grade.explanation = explanation
+    return grade
+
+
+# ─── not_toxic Tests ─────────────────────────────────────────────────────────
+
+
+class TestNotToxic:
+    @pytest.mark.asyncio
+    async def test_clean_summary_scores_1(self):
+        grade = make_binary_grade(
+            binary_score=1, explanation="No toxic language found."
+        )
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await not_toxic(make_run(GOOD_SUMMARY), make_example(""))
+        assert result["key"] == "not_toxic"
+        assert result["score"] == 1
+        assert "explanation" in result
+
+    @pytest.mark.asyncio
+    async def test_toxic_summary_scores_0(self):
+        grade = make_binary_grade(
+            binary_score=0, explanation="Derogatory language found."
+        )
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await not_toxic(make_run(TOXIC_SUMMARY), make_example(""))
+        assert result["score"] == 0
+
+    @pytest.mark.asyncio
+    async def test_result_has_all_keys(self):
+        grade = make_binary_grade(binary_score=1)
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await not_toxic(make_run(GOOD_SUMMARY), make_example(""))
+        assert set(result.keys()) == {"key", "score", "explanation"}
+        assert result["score"] in (0, 1)
+
+    @pytest.mark.asyncio
+    async def test_empty_summary_returns_valid_dict(self):
+        grade = make_binary_grade(binary_score=1)
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await not_toxic(make_run(""), make_example(""))
+        assert set(result.keys()) == {"key", "score", "explanation"}
+
+
+# ─── tone Tests ───────────────────────────────────────────────────────────────
+
+
+class TestTone:
+    @pytest.mark.asyncio
+    async def test_good_tone_scores_high(self):
+        grade = make_score_grade(score=9, explanation="Kind and objective.")
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await tone(make_run(GOOD_SUMMARY), make_example(""))
+        assert result["key"] == "tone"
+        assert result["score"] == 9
+
+    @pytest.mark.asyncio
+    async def test_result_has_all_keys(self):
+        grade = make_score_grade(score=7)
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await tone(make_run(GOOD_SUMMARY), make_example(""))
+        assert set(result.keys()) == {"key", "score", "explanation"}
+        assert 1 <= result["score"] <= 10
+
+    @pytest.mark.asyncio
+    async def test_empty_summary_returns_valid_dict(self):
+        grade = make_score_grade(score=5)
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await tone(make_run(""), make_example(""))
+        assert set(result.keys()) == {"key", "score", "explanation"}
+
+
+# ─── no_judgments Tests ───────────────────────────────────────────────────────
+
+
+class TestNoJudgments:
+    @pytest.mark.asyncio
+    async def test_objective_summary_scores_high(self):
+        grade = make_score_grade(score=10, explanation="No moral judgments found.")
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await no_judgments(make_run(GOOD_SUMMARY), make_example(""))
+        assert result["key"] == "no_judgments"
+        assert result["score"] == 10
+
+    @pytest.mark.asyncio
+    async def test_judgmental_summary_scores_low(self):
+        grade = make_score_grade(score=2, explanation="Contains subjective statements.")
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await no_judgments(make_run(GOOD_SUMMARY), make_example(""))
+        assert result["score"] == 2
+
+    @pytest.mark.asyncio
+    async def test_result_has_all_keys(self):
+        grade = make_score_grade(score=8)
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await no_judgments(make_run(GOOD_SUMMARY), make_example(""))
+        assert set(result.keys()) == {"key", "score", "explanation"}
+        assert 1 <= result["score"] <= 10
+
+    @pytest.mark.asyncio
+    async def test_empty_summary_returns_valid_dict(self):
+        grade = make_score_grade(score=5)
+        mock_chain = AsyncMock()
+        mock_chain.ainvoke = AsyncMock(return_value=grade)
+        with patch(
+            "app.manage.evaluate.summary_evals.create_model_from_config"
+        ) as mock_create:
+            mock_create.return_value.with_structured_output.return_value.__ror__ = (
+                MagicMock(return_value=mock_chain)
+            )
+            with patch(
+                "app.manage.evaluate.summary_evals.ChatPromptTemplate"
+            ) as mock_pt:
+                mock_pt.from_messages.return_value.__or__ = MagicMock(
+                    return_value=mock_chain
+                )
+                result = await no_judgments(make_run(""), make_example(""))
+        assert set(result.keys()) == {"key", "score", "explanation"}

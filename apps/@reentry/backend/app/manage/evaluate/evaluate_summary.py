@@ -37,7 +37,16 @@ from app.utils.intake_summary_runner import generate_summary
 from ..base import cli
 from ..extract_intake_conversation import get_postgres_engine
 from ._html_utils import write_html_report
-from .summary_evals import COVERAGE_PASS_THRESHOLD, coverage_check, grounding_check
+from .summary_evals import (
+    COVERAGE_PASS_THRESHOLD,
+    coverage_check,
+    grounding_check,
+    has_section_headers,
+    no_judgments,
+    not_toxic,
+    section_length,
+    tone,
+)
 
 load_dotenv()
 
@@ -594,10 +603,9 @@ async def _collect_item_from_intake(
 async def _run_evaluations(
     summary: str, intake_messages: str, system_prompt: Optional[str] = None
 ) -> Dict:
-    """Run grounding and coverage evaluations on a summary."""
+    """Run all evaluations on a summary."""
     from uuid import uuid4
 
-    # Create Run and Example objects to satisfy the LangSmith evaluator interface
     run = Run(
         id=uuid4(),
         name="eval_run",
@@ -615,13 +623,22 @@ async def _run_evaluations(
         outputs={},
     )
 
-    # Run evaluators
     grounding_result = await grounding_check(run, example)
     coverage_result = await coverage_check(run, example)
+    headers_result = has_section_headers(run, example)
+    length_result = section_length(run, example)
+    toxic_result = await not_toxic(run, example)
+    tone_result = await tone(run, example)
+    judgments_result = await no_judgments(run, example)
 
     return {
         "grounding": grounding_result,
         "coverage": coverage_result,
+        "has_section_headers": headers_result,
+        "section_length": length_result,
+        "not_toxic": toxic_result,
+        "tone": tone_result,
+        "no_judgments": judgments_result,
     }
 
 
@@ -815,6 +832,51 @@ def _output_results(
 
                 print(f"\n   Explanation: {coverage.get('explanation', '')}")
 
+            # has_section_headers
+            if "has_section_headers" in result:
+                h = result["has_section_headers"]
+                print(
+                    f"\n   Has Section Headers (score {h['score']}/10, {h['header_count']} headers)"
+                )
+                print(f"   Explanation: {h.get('explanation', '')}")
+
+            # section_length
+            if "section_length" in result:
+                sl = result["section_length"]
+                flagged_count = len(sl.get("flagged_sections", []))
+                print(
+                    f"\n   Section Length (score {sl['score']}/10, {flagged_count} flagged)"
+                )
+                if sl.get("flagged_sections"):
+                    for entry in sl["flagged_sections"]:
+                        print(
+                            f"      • {entry['header'] or '(no header)'}: {entry['word_count']} words — {entry['reason']}"
+                        )
+                print(f"   Explanation: {sl.get('explanation', '')}")
+
+            # not_toxic
+            if "not_toxic" in result:
+                nt = result["not_toxic"]
+                total_checks += 1
+                passed = nt["score"] == 1
+                if passed:
+                    passed_checks += 1
+                status = "✓ PASS" if passed else "✗ FAIL"
+                print(f"\n   {status}  Not Toxic ({nt['score']}/1)")
+                print(f"   Explanation: {nt.get('explanation', '')}")
+
+            # tone
+            if "tone" in result:
+                t = result["tone"]
+                print(f"\n   Tone (score {t['score']}/10)")
+                print(f"   Explanation: {t.get('explanation', '')}")
+
+            # no_judgments
+            if "no_judgments" in result:
+                nj = result["no_judgments"]
+                print(f"\n   No Judgments (score {nj['score']}/10)")
+                print(f"   Explanation: {nj.get('explanation', '')}")
+
         print("\n" + "=" * 60)
         print(f"Overall: {passed_checks}/{total_checks} checks passed")
         print("=" * 60)
@@ -928,6 +990,11 @@ def _write_html_report(
                 "summary": item.summary,
                 "grounding": result.get("grounding", {}),
                 "coverage": result.get("coverage", {}),
+                "has_section_headers": result.get("has_section_headers", {}),
+                "section_length": result.get("section_length", {}),
+                "not_toxic": result.get("not_toxic", {}),
+                "tone": result.get("tone", {}),
+                "no_judgments": result.get("no_judgments", {}),
             }
         )
 
@@ -1047,6 +1114,11 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
         <th>Plan / Intake ID</th>
         <th>Grounding</th>
         <th>Coverage</th>
+        <th>Headers</th>
+        <th>Sec Len</th>
+        <th>Not Toxic</th>
+        <th>Tone</th>
+        <th>No Judg</th>
         <th>Config</th>
       </tr>
     </thead>
@@ -1100,6 +1172,9 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
     const cScores = DATA.map(d => d.coverage?.score ?? 0);
     const cPassed = DATA.filter(d => (d.coverage?.score ?? 0) >= COVERAGE_PASS).length;
     const avgC = cScores.length ? (cScores.reduce((a, b) => a + b, 0) / cScores.length).toFixed(1) : '—';
+    const ntPassed = DATA.filter(d => d.not_toxic?.score === 1).length;
+    const avgTone = (() => { const s = DATA.filter(d => d.tone?.score != null).map(d => d.tone.score); return s.length ? (s.reduce((a,b)=>a+b,0)/s.length).toFixed(1) : '—'; })();
+    const avgNJ = (() => { const s = DATA.filter(d => d.no_judgments?.score != null).map(d => d.no_judgments.score); return s.length ? (s.reduce((a,b)=>a+b,0)/s.length).toFixed(1) : '—'; })();
 
     document.getElementById('report-subtitle').textContent =
       `${n} intake${n !== 1 ? 's' : ''} evaluated`;
@@ -1120,19 +1195,41 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
       <div class="stat-card">
         <div class="stat-label">Avg Coverage Score</div>
         <div class="stat-value ${scoreClass(parseFloat(avgC) || 0, 10)}">${avgC}<span style="font-size:15px;color:#bbb">/10</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Not Toxic Passed</div>
+        <div class="stat-value ${scoreClass(ntPassed, n)}">${ntPassed}/${n}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Tone</div>
+        <div class="stat-value ${scoreClass(parseFloat(avgTone) || 0, 10)}">${avgTone}<span style="font-size:15px;color:#bbb">/10</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg No Judgments</div>
+        <div class="stat-value ${scoreClass(parseFloat(avgNJ) || 0, 10)}">${avgNJ}<span style="font-size:15px;color:#bbb">/10</span></div>
       </div>`;
 
     document.getElementById('intake-table').innerHTML = DATA.map((d, i) => {
       const gOk = d.grounding?.score === 1;
       const cScore = d.coverage?.score ?? 0;
       const cOk = cScore >= COVERAGE_PASS;
+      const hScore = d.has_section_headers?.score ?? 0;
+      const slScore = d.section_length?.score ?? 0;
+      const ntOk = d.not_toxic?.score === 1;
+      const tScore = d.tone?.score ?? 0;
+      const njScore = d.no_judgments?.score ?? 0;
       const id = d.plan_id || d.intake_id || '—';
       const shortId = id.length > 12 ? id.slice(0, 12) + '…' : id;
       return `<tr class="intake-row" onclick="showDetail(${i})">
         <td>${esc(d.client_pseudo_id) || '—'}</td>
         <td title="${esc(id)}" style="font-family:monospace;font-size:12px;color:#888">${esc(shortId)}</td>
-        <td><span class="badge ${gOk ? 'pass' : 'fail'}">${gOk ? '✓ PASS' : '✗ FAIL'}</span></td>
+        <td><span class="badge ${gOk ? 'pass' : 'fail'}">${gOk ? '✓' : '✗'}</span></td>
         <td><span class="score ${cOk ? 'pass' : scoreClass(cScore, 10)}">${cScore}/10</span></td>
+        <td><span class="score ${scoreClass(hScore, 10)}">${hScore}/10</span></td>
+        <td><span class="score ${scoreClass(slScore, 10)}">${slScore}/10</span></td>
+        <td><span class="badge ${ntOk ? 'pass' : 'fail'}">${ntOk ? '✓' : '✗'}</span></td>
+        <td><span class="score ${scoreClass(tScore, 10)}">${tScore}/10</span></td>
+        <td><span class="score ${scoreClass(njScore, 10)}">${njScore}/10</span></td>
         <td style="color:#aaa;font-size:12px">${esc(d.config) || '—'}</td>
       </tr>`;
     }).join('');
@@ -1169,9 +1266,15 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
     // Eval
     const g = d.grounding || {};
     const c = d.coverage || {};
+    const h = d.has_section_headers || {};
+    const sl = d.section_length || {};
+    const nt = d.not_toxic || {};
+    const t = d.tone || {};
+    const nj = d.no_judgments || {};
     const gOk = g.score === 1;
     const cScore = c.score ?? 0;
     const cOk = cScore >= COVERAGE_PASS;
+    const ntOk = nt.score === 1;
 
     const factGroup = (title, facts, cls) => {
       if (!facts?.length) return '';
@@ -1207,6 +1310,51 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
           <div class="fact-group-title">Missing Details (${c.missing_details.length})</div>
           ${c.missing_details.map(m => `<div class="missing-item">${esc(m)}</div>`).join('')}
         </div>` : ''}
+      </div>
+      <hr class="divider">
+      <div class="eval-section">
+        <div class="eval-header">
+          <div class="eval-title">Has Section Headers</div>
+          <span class="score ${scoreClass(h.score ?? 0, 10)}">${h.score ?? '—'}/10</span>
+          <span style="font-size:12px;color:#aaa">${h.header_count ?? 0} header(s)</span>
+        </div>
+        <div class="eval-explanation">${esc(h.explanation)}</div>
+      </div>
+      <hr class="divider">
+      <div class="eval-section">
+        <div class="eval-header">
+          <div class="eval-title">Section Length</div>
+          <span class="score ${scoreClass(sl.score ?? 0, 10)}">${sl.score ?? '—'}/10</span>
+        </div>
+        <div class="eval-explanation">${esc(sl.explanation)}</div>
+        ${(sl.flagged_sections?.length) ? `<div class="fact-group">
+          <div class="fact-group-title">Flagged Sections (${sl.flagged_sections.length})</div>
+          ${sl.flagged_sections.map(s => `<div class="missing-item">${esc(s.header || '(no header)')}: ${s.word_count} words — ${esc(s.reason)}</div>`).join('')}
+        </div>` : ''}
+      </div>
+      <hr class="divider">
+      <div class="eval-section">
+        <div class="eval-header">
+          <div class="eval-title">Not Toxic</div>
+          <span class="badge ${ntOk ? 'pass' : 'fail'}">${ntOk ? '✓ PASS' : '✗ FAIL'}</span>
+        </div>
+        <div class="eval-explanation">${esc(nt.explanation)}</div>
+      </div>
+      <hr class="divider">
+      <div class="eval-section">
+        <div class="eval-header">
+          <div class="eval-title">Tone</div>
+          <span class="score ${scoreClass(t.score ?? 0, 10)}">${t.score ?? '—'}/10</span>
+        </div>
+        <div class="eval-explanation">${esc(t.explanation)}</div>
+      </div>
+      <hr class="divider">
+      <div class="eval-section">
+        <div class="eval-header">
+          <div class="eval-title">No Judgments</div>
+          <span class="score ${scoreClass(nj.score ?? 0, 10)}">${nj.score ?? '—'}/10</span>
+        </div>
+        <div class="eval-explanation">${esc(nj.explanation)}</div>
       </div>`;
 
     ['pane-transcript', 'pane-summary', 'pane-eval'].forEach(id =>

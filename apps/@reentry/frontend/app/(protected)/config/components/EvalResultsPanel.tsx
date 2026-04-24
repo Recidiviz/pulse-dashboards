@@ -28,6 +28,11 @@ interface EvalExecution {
   message?: string;
 }
 
+interface SimpleEvalResult {
+  score: number;
+  explanation?: string;
+}
+
 interface IntakeEvalResult {
   intake_id: string;
   error?: string;
@@ -43,6 +48,13 @@ interface IntakeEvalResult {
     explanation?: string;
     missing_details?: string[];
   };
+  has_section_headers?: SimpleEvalResult & { header_count?: number };
+  section_length?: SimpleEvalResult & {
+    flagged_sections?: { header: string; word_count: number; reason: string }[];
+  };
+  not_toxic?: SimpleEvalResult;
+  tone?: SimpleEvalResult;
+  no_judgments?: SimpleEvalResult;
 }
 
 interface EvalSummary {
@@ -52,6 +64,11 @@ interface EvalSummary {
   grounding_pass_rate: number | null;
   coverage_mean: number | null;
   coverage_pass_rate: number | null;
+  not_toxic_pass_rate?: number | null;
+  tone_mean?: number | null;
+  no_judgments_mean?: number | null;
+  has_section_headers_mean?: number | null;
+  section_length_mean?: number | null;
 }
 
 interface EvalResult {
@@ -124,7 +141,17 @@ const SummaryStats = ({ summary }: { summary: EvalSummary }) => {
       ? Math.round(summary.coverage_pass_rate * 100)
       : null;
   const coverageMean =
-    summary.coverage_mean !== null ? summary.coverage_mean.toFixed(1) : null;
+    summary.coverage_mean !== null ? summary.coverage_mean?.toFixed(1) : null;
+  const notToxicPct =
+    summary.not_toxic_pass_rate != null
+      ? Math.round(summary.not_toxic_pass_rate * 100)
+      : null;
+  const toneMean =
+    summary.tone_mean != null ? summary.tone_mean.toFixed(1) : null;
+  const njMean =
+    summary.no_judgments_mean != null
+      ? summary.no_judgments_mean.toFixed(1)
+      : null;
 
   return (
     <div className="flex flex-wrap gap-3 mb-4">
@@ -143,6 +170,27 @@ const SummaryStats = ({ summary }: { summary: EvalSummary }) => {
           label={`Coverage avg ${coverageMean}/10`}
           value={`${coveragePct}% pass`}
           pass={coveragePct >= 70}
+        />
+      )}
+      {notToxicPct !== null && (
+        <ScoreBadge
+          label="Not toxic"
+          value={`${notToxicPct}% pass`}
+          pass={notToxicPct >= 90}
+        />
+      )}
+      {toneMean !== null && (
+        <ScoreBadge
+          label={`Tone avg ${toneMean}/10`}
+          value={parseFloat(toneMean) >= 7 ? "Good" : "Low"}
+          pass={parseFloat(toneMean) >= 7}
+        />
+      )}
+      {njMean !== null && (
+        <ScoreBadge
+          label={`No judgments avg ${njMean}/10`}
+          value={parseFloat(njMean) >= 7 ? "Good" : "Low"}
+          pass={parseFloat(njMean) >= 7}
         />
       )}
     </div>
@@ -173,6 +221,9 @@ const IntakeRow = ({
 
   const groundingScore = result.grounding?.score;
   const coverageScore = result.coverage?.score;
+  const notToxicScore = result.not_toxic?.score;
+  const toneScore = result.tone?.score;
+  const njScore = result.no_judgments?.score;
 
   return (
     <div className="border-b border-gray-100 last:border-0">
@@ -191,6 +242,27 @@ const IntakeRow = ({
               label="C"
               value={`${coverageScore}/10`}
               pass={coverageScore >= coveragePassThreshold}
+            />
+          )}
+          {notToxicScore !== undefined && (
+            <ScoreBadge
+              label="NT"
+              value={notToxicScore === 1 ? "Pass" : "Fail"}
+              pass={notToxicScore === 1}
+            />
+          )}
+          {toneScore !== undefined && (
+            <ScoreBadge
+              label="T"
+              value={`${toneScore}/10`}
+              pass={toneScore >= 7}
+            />
+          )}
+          {njScore !== undefined && (
+            <ScoreBadge
+              label="NJ"
+              value={`${njScore}/10`}
+              pass={njScore >= 7}
             />
           )}
           <button
@@ -255,6 +327,80 @@ const IntakeRow = ({
                     ))}
                   </ul>
                 </div>
+              )}
+            </div>
+          )}
+          {result.not_toxic && (
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-1">
+                Not Toxic ({result.not_toxic.score === 1 ? "Pass" : "Fail"})
+              </p>
+              {result.not_toxic.explanation && (
+                <p className="text-xs text-gray-600">
+                  {result.not_toxic.explanation}
+                </p>
+              )}
+            </div>
+          )}
+          {result.tone && (
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-1">
+                Tone ({result.tone.score}/10)
+              </p>
+              {result.tone.explanation && (
+                <p className="text-xs text-gray-600">
+                  {result.tone.explanation}
+                </p>
+              )}
+            </div>
+          )}
+          {result.no_judgments && (
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-1">
+                No Judgments ({result.no_judgments.score}/10)
+              </p>
+              {result.no_judgments.explanation && (
+                <p className="text-xs text-gray-600">
+                  {result.no_judgments.explanation}
+                </p>
+              )}
+            </div>
+          )}
+          {result.has_section_headers && (
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-1">
+                Section Headers ({result.has_section_headers.score}/10
+                {result.has_section_headers.header_count !== undefined
+                  ? `, ${result.has_section_headers.header_count} found`
+                  : ""}
+                )
+              </p>
+              {result.has_section_headers.explanation && (
+                <p className="text-xs text-gray-600">
+                  {result.has_section_headers.explanation}
+                </p>
+              )}
+            </div>
+          )}
+          {result.section_length && (
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-1">
+                Section Length ({result.section_length.score}/10)
+              </p>
+              {result.section_length.explanation && (
+                <p className="text-xs text-gray-600 mb-1">
+                  {result.section_length.explanation}
+                </p>
+              )}
+              {!!result.section_length.flagged_sections?.length && (
+                <ul className="list-disc list-inside space-y-0.5">
+                  {result.section_length.flagged_sections.map((s, i) => (
+                    <li key={i} className="text-xs text-gray-600">
+                      {s.header || "(no header)"}: {s.word_count} words —{" "}
+                      {s.reason}
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           )}

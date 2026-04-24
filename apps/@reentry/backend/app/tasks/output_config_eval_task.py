@@ -93,31 +93,38 @@ async def output_config_eval_task(
         await execution.log_progress(session, 90, "Aggregating results")
 
         successful = [r for r in per_intake_results if "error" not in r]
-        grounding_scores = [
-            r["grounding"]["score"] for r in successful if r.get("grounding")
-        ]
-        coverage_scores = [
-            r["coverage"]["score"] for r in successful if r.get("coverage")
-        ]
+
+        def _scores(key: str) -> list[int]:
+            return [r[key]["score"] for r in successful if r.get(key)]
+
+        def _mean(scores: list[int]) -> float | None:
+            return sum(scores) / len(scores) if scores else None
+
+        grounding_scores = _scores("grounding")
+        coverage_scores = _scores("coverage")
+        not_toxic_scores = _scores("not_toxic")
+        tone_scores = _scores("tone")
+        no_judgments_scores = _scores("no_judgments")
+        has_section_headers_scores = _scores("has_section_headers")
+        section_length_scores = _scores("section_length")
 
         summary_stats = {
             "n": n,
             "n_successful": len(successful),
             "coverage_pass_threshold": COVERAGE_PASS_THRESHOLD,
-            "grounding_pass_rate": (
-                sum(grounding_scores) / len(grounding_scores)
-                if grounding_scores
-                else None
-            ),
-            "coverage_mean": (
-                sum(coverage_scores) / len(coverage_scores) if coverage_scores else None
-            ),
+            "grounding_pass_rate": _mean(grounding_scores),
+            "coverage_mean": _mean(coverage_scores),
             "coverage_pass_rate": (
                 sum(1 for s in coverage_scores if s >= COVERAGE_PASS_THRESHOLD)
                 / len(coverage_scores)
                 if coverage_scores
                 else None
             ),
+            "not_toxic_pass_rate": _mean(not_toxic_scores),
+            "tone_mean": _mean(tone_scores),
+            "no_judgments_mean": _mean(no_judgments_scores),
+            "has_section_headers_mean": _mean(has_section_headers_scores),
+            "section_length_mean": _mean(section_length_scores),
         }
 
         metrics = {"summary": summary_stats, "intakes": per_intake_results}
