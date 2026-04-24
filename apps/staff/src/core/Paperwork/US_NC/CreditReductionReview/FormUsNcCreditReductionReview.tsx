@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,49 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components";
+import React from "react";
 
 import { Opportunity } from "../../../../WorkflowsStore";
+import { UsNcCreditReductionReviewDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsNcCreditReductionReviewForm";
+import { UsNcCreditReductionReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsNc/UsNcCreditReductionReviewOpportunity";
+import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
-import { fillAndSavePDF } from "../../PDFFormFiller";
-import dcs183Template from "./assets/DCS-183.pdf";
-import p1 from "./assets/page1.png";
-import p2 from "./assets/page2.png";
-const FormPreviewPage = styled.img`
-  height: auto;
-  width: 100%;
-`;
+import FormViewer from "../../FormViewer";
+import { PrintablePage } from "../../styles";
+import form183Template from "./form183_template.docx";
+import FormBody from "./FormBody";
+import FormHeading from "./FormHeading";
+
+const formDownloader = async (
+  opportunity: UsNcCreditReductionReviewOpportunity,
+): Promise<void> => {
+  let contents: Partial<UsNcCreditReductionReviewDraftData> = {};
+  // we are not mutating any observables here, just telling Mobx not to track this access
+  runInAction(() => {
+    contents = {
+      ...toJS(opportunity?.form?.formData),
+    };
+  });
+
+  const client = opportunity.person;
+
+  // Extra fields to distingish a checked `NO` from no check
+  contents.no1 = contents.yn1 === false;
+  contents.no2 = contents.yn2 === false;
+  contents.no3 = contents.yn3 === false;
+  contents.no4 = contents.yn4 === false;
+  contents.neg = contents.np === false;
+
+  await downloadSingle(
+    `${client?.displayName} - Form DCS-183.docx`,
+    form183Template,
+    {
+      ...contents,
+    },
+  );
+};
 
 export const FormUsNcCreditReductionReview = observer(
   function FormUsNcCreditReductionReview({
@@ -35,31 +65,26 @@ export const FormUsNcCreditReductionReview = observer(
   }: {
     opportunity: Opportunity;
   }) {
+    const formRef = React.useRef<HTMLDivElement>(null);
+    if (!(opportunity instanceof UsNcCreditReductionReviewOpportunity)) {
+      return null;
+    }
+
     return (
       <FormContainer
-        hideLastEditedMessage={true}
         agencyName="OPUS"
         heading="Form DCS-183"
-        onClickDownload={async () => {
-          await fillAndSavePDF(
-            `${opportunity.person.displayName} - Form DCS-183.pdf`,
-            dcs183Template,
-            async () => {
-              /* We're not actually filling this form, so the filler func does nothing. */
-            },
-            {},
-          );
-        }}
-        downloadButtonLabel="Download Form"
+        onClickDownload={() => formDownloader(opportunity)}
+        downloadButtonLabel="Download .DOCX"
         opportunity={opportunity}
       >
-        {[p1, p2].map((imageUrl, index) => (
-          <FormPreviewPage
-            key={imageUrl}
-            src={imageUrl}
-            alt={`Form preview, page ${index + 1}`}
-          />
-        ))}
+        <FormViewer formRef={formRef}>
+          <PrintablePage>
+            <FormHeading />
+            <FormBody />
+            {/* TODO(#obt4602): add signature component */}
+          </PrintablePage>
+        </FormViewer>
       </FormContainer>
     );
   },

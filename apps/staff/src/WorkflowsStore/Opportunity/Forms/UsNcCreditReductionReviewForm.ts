@@ -16,15 +16,65 @@
 // =============================================================================
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
+import { formatWorkflowsDate } from "../../../utils";
 import { UsNcCreditReductionReviewOpportunity } from "../UsNc/UsNcCreditReductionReviewOpportunity";
 import { FormBase } from "./FormBase";
 
+export type UsNcCreditReductionReviewDraftData = {
+  // Data-populated fields
+  offenderName: string;
+  OPUS: string;
+  supStart: string;
+  supEnd: string;
+
+  // Conditions
+  condition1: boolean;
+  comment1: string;
+  start1: string;
+  condition2: boolean;
+  comment2: string;
+  start2: string;
+  condition3: boolean;
+  comment3: string;
+  start3: string;
+  condition4: boolean;
+  comment4: string;
+  start4: string;
+  condition5: boolean;
+  comment5: string;
+  start5: string;
+  comment6: string;
+  yn1: boolean;
+  no1: boolean;
+  violations: string;
+  yn2: boolean;
+  no2: boolean;
+  yn3: boolean;
+  no3: boolean;
+  np: boolean;
+  neg: boolean;
+  comment7: string;
+
+  // Client history fields
+  supLevel: string;
+  yn4: boolean;
+  no4: boolean;
+  restitution: string;
+  arrears: string;
+
+  // Signature fields
+  ppoName: string;
+  ppoSignature: string;
+  ppoSignDate: string;
+  cppoName: string;
+  cppoSignature: string;
+  cppoSignDate: string;
+};
 export class UsNcCreditReductionReviewForm extends FormBase<
   any,
   UsNcCreditReductionReviewOpportunity
 > {
   navigateToFormText = "Go to Form DCS-183";
-  allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {
     return "FormUsNcCreditReductionReview";
@@ -32,5 +82,22 @@ export class UsNcCreditReductionReviewForm extends FormBase<
 
   get formType(): string {
     return "UsNcCreditReductionReviewForm";
+  }
+
+  prefilledDataTransformer(): Partial<UsNcCreditReductionReviewDraftData> {
+    const {
+      externalId: OPUS,
+      displayName: offenderName,
+      supervisionStartDate,
+      expirationDate,
+      supervisionLevel: supLevel,
+    } = this.person;
+    return {
+      OPUS,
+      offenderName,
+      supStart: formatWorkflowsDate(supervisionStartDate),
+      supEnd: formatWorkflowsDate(expirationDate),
+      supLevel,
+    };
   }
 }
