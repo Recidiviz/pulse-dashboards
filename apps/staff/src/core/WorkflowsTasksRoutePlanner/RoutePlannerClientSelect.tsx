@@ -74,8 +74,8 @@ export const RoutePlannerClientSelect = observer(
         <TasksDescription>
           You can pre-plan your driving route for home contacts before you head
           out. Search across one or more caseloads to find clients who have home
-          contacts due for the month, select and re-order clients to optimize
-          your route, and track your estimated driving time & distance.
+          contacts due for the month, optimize your route, and track your
+          estimated driving time & distance.
         </TasksDescription>
         <RoutePlannerPlacePicker presenter={presenter} />
 
