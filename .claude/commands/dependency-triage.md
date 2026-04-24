@@ -155,23 +155,28 @@ Save the test output to a file so you can include it in the PR body later:
 
 **For Tier 1 npm lockfile-only changes (no code changes):**
 
-The CI pipeline on the PR will run the full test suite. Your job is to verify
-the lockfile is consistent and the vulnerable version is gone:
+You MUST verify the lockfile passes the immutable install check that CI runs.
+A PR whose lockfile fails `yarn install --immutable` will always fail CI.
 
 ```bash
-# Verify the lockfile regenerated correctly (no install needed)
-grep "<package>@npm:<patched_version>" yarn.lock | head -5 > /tmp/test-results-<package>.txt
+# 1. Verify the lockfile is consistent (this is what CI runs)
+YARN_ENABLE_IMMUTABLE_INSTALLS=true yarn install --immutable 2>&1 | tail -20 > /tmp/test-results-<package>.txt
+echo "Exit code: $?" >> /tmp/test-results-<package>.txt
 
-# Verify no vulnerable versions remain
+# 2. Verify the patched version is present
+echo "Patched version check:" >> /tmp/test-results-<package>.txt
+grep "<package>@npm:<patched_version>" yarn.lock | head -5 >> /tmp/test-results-<package>.txt
+
+# 3. Verify no vulnerable versions remain
 echo "Vulnerable version check:" >> /tmp/test-results-<package>.txt
 grep "<package>@npm:<vulnerable_version>" yarn.lock >> /tmp/test-results-<package>.txt || echo "No vulnerable versions found" >> /tmp/test-results-<package>.txt
 
 cat /tmp/test-results-<package>.txt
 ```
 
-Do NOT run `yarn install`, `nx affected -t test`, or `nx affected -t typecheck`
-for lockfile-only changes. These take too long in large monorepos (30+ min)
-and CI will validate them on the PR. Focus on lockfile correctness.
+If `yarn install --immutable` fails, your lockfile is inconsistent. Fix it by
+running `yarn install` (without `--immutable`) to regenerate, then re-verify.
+Do NOT open a PR with a lockfile that fails the immutable check.
 
 **For Tier 2+ npm changes (code modified):**
 
@@ -245,7 +250,7 @@ git push -u origin security/fix-<cve>-<package>
 Then open the PR:
 
 ```bash
-gh pr create --draft --title "[Security] Fix <cve>: Upgrade <package> to <patched_version>" --body "$(cat <<'PREOF'
+gh pr create --draft --label "Type: Dependency Upgrade" --title "[Security] Fix <cve>: Upgrade <package> to <patched_version>" --body "$(cat <<'PREOF'
 ## Vulnerability
 
 | Field | Value |
