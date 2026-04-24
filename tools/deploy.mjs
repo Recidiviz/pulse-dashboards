@@ -206,7 +206,8 @@ const opportunitiesFrontendDisplayName = "Opportunities Frontend";
 const opportunitiesCloudFunctionsDisplayName = "Opportunities Cloud Functions";
 const opportunitiesBackendDisplayName = "Opportunities Backend Services";
 const opportunitiesStorybookDisplayName = "Opportunities Storybook";
-const meetingAssistantDisplayName = "Meeting Assistant Backend Services";
+const meetingsBackendDisplayName = "Meetings Backend Services";
+const meetingsFrontendDisplayName = "Meetings Frontend";
 const demoFixturesDisplayName = "Demo fixtures";
 const opportunitiesTestDataDisplayName = "Opportunities test data";
 const envSecretsDisplayName = "Env Secrets";
@@ -222,7 +223,8 @@ const deployServicesChoices = [
   { name: opportunitiesCloudFunctionsDisplayName, checked: inStagingOrProd },
   { name: opportunitiesBackendDisplayName, checked: inStagingOrProd },
   { name: opportunitiesStorybookDisplayName, checked: inStagingOrProd },
-  { name: meetingAssistantDisplayName, checked: inStagingOrProd },
+  { name: meetingsBackendDisplayName, checked: inStagingOrProd },
+  { name: meetingsFrontendDisplayName, checked: inStagingOrProd },
   { name: envSecretsDisplayName, checked: inStagingOrProd },
 ];
 
@@ -278,7 +280,10 @@ const deployOppsTestData = deployServicesPrompt.deployServices.includes(
   opportunitiesTestDataDisplayName,
 );
 const deployMeetingAssistant = deployServicesPrompt.deployServices.includes(
-  meetingAssistantDisplayName,
+  meetingsBackendDisplayName,
+);
+const deployMeetingsFrontend = deployServicesPrompt.deployServices.includes(
+  meetingsFrontendDisplayName,
 );
 
 const deployEnvSecrets = deployServicesPrompt.deployServices.includes(
@@ -835,7 +840,7 @@ if (
 
   do {
     // Deploy the app
-    console.log(`Deploying ${meetingAssistantDisplayName} backend services...`);
+    console.log(`Deploying ${meetingsBackendDisplayName} backend services...`);
 
     try {
       let projects;
@@ -886,12 +891,43 @@ if (
       );
 
       retryDeploy = false;
-      successfullyDeployed.push(meetingAssistantDisplayName);
+      successfullyDeployed.push(meetingsBackendDisplayName);
     } catch (e) {
       const retryDeployPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryDeploy",
-        message: `${meetingAssistantDisplayName} deploy failed with error: ${e}. Retry?`,
+        message: `${meetingsBackendDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
+}
+
+if (
+  deployMeetingsFrontend &&
+  (deployEnv === "staging" || deployEnv === "production")
+) {
+  let retryDeploy = false;
+
+  do {
+    console.log(`Deploying ${meetingsFrontendDisplayName}...`);
+
+    try {
+      // Remove .env.local if it exists, as it interferes with the deploy target
+      await $`rm -f apps/@meetings/app/.env.local`.pipe(process.stdout);
+
+      await $`nx deploy:web @meetings/app --configuration ${deployEnv}`.pipe(
+        process.stdout,
+      );
+
+      retryDeploy = false;
+      successfullyDeployed.push(meetingsFrontendDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${meetingsFrontendDisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;
