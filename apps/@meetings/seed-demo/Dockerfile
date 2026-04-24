@@ -30,4 +30,4 @@ EXPOSE ${PORT}
 # Make sure to:
 # 1. Use the extensionless package so directory imports can be resolved
 # 2. import the sentry module before the main.js file in order for packages to be instrumented
-CMD ["dumb-init", "node", "--import=extensionless/register", "seed.js"]
+CMD ["dumb-init", "node", "--import=extensionless/register", "--import", "./sentry/index.js", "seed.js"]

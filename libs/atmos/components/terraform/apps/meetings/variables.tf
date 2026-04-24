@@ -87,9 +87,14 @@ variable "service_account_id" {
   default     = "meetings"
 }
 
-variable "server_env_key" {
+variable "environment" {
   type        = string
-  description = "The key for the server env"
+  description = "The environment name to load its corresponding environment file from ./secrets/ from"
+
+  validation {
+    condition     = contains(["staging", "production"], var.environment)
+    error_message = "ERROR: Valid values for 'environment' are \"staging\" and \"production\"!"
+  }
 }
 
 variable "migrate_db_name" {
@@ -102,16 +107,6 @@ variable "migrate_db_container_version" {
   type        = string
   description = "The version tag of the image that will be used for the database migration job"
   default     = "latest"
-}
-variable "migrate_db_env_key" {
-  type        = string
-  description = "The key for the migrate db env"
-}
-
-variable "data_import_env_key" {
-  type        = string
-  description = "The key for the import data env"
-  default     = null
 }
 
 variable "import_container_version" {
@@ -135,11 +130,6 @@ variable "artifact_cleanup_schedule" {
   type        = string
   description = "Cron schedule for the artifact cleanup job (UTC)"
   default     = "0 2 * * *"
-}
-
-variable "seed_demo_env_key" {
-  type        = string
-  description = "The key for the seed demo env"
 }
 
 variable "seed_demo_container_version" {

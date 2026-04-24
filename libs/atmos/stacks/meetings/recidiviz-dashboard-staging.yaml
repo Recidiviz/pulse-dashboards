@@ -32,10 +32,7 @@ components:
         data_platform_project_id: "{{ .settings.context.data_platform_project_id }}"
         artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
         artifact_registry_project_id: "{{ .settings.context.project_id }}"
-        server_env_key: env_staging_meetings_server
-        migrate_db_env_key: env_staging_meetings_migrate_db
-        data_import_env_key: env_staging_meetings_data_import
-        seed_demo_env_key: env_staging_meetings_seed_demo
+        environment: staging
         meetings_bucket_cors_origins:
           - "*"
 

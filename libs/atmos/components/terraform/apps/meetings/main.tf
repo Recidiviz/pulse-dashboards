@@ -1,20 +1,5 @@
-data "sops_file" "env" {
-  source_file = "../../env-secrets/secrets/meetings.enc.yaml"
-}
-
 locals {
-  env_secrets = yamldecode(data.sops_file.env.raw)
-
-  shared_server_env = local.env_secrets["env_meetings_server"]
-  server_env        = local.env_secrets[var.server_env_key]
-
-  migrate_db_env = local.env_secrets[var.migrate_db_env_key]
-
-  shared_data_import_env = local.env_secrets["env_meetings_data_import"]
-  can_configure_import   = var.configure_import && var.data_import_env_key != null
-  data_import_env        = local.can_configure_import ? local.env_secrets[var.data_import_env_key] : {}
-
-  seed_demo_env = local.env_secrets[var.seed_demo_env_key]
+  can_configure_import = var.configure_import
 
   server_image_name = "meetings-server"
 
@@ -31,47 +16,6 @@ locals {
   etl_bucket_name     = "meetings-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
   audio_bucket_name   = "meetings-audio-data"
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  server_env_vars = nonsensitive([
-    for key, value in merge(local.shared_server_env, local.server_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  migrate_db_env_vars = nonsensitive([
-    for key, value in local.migrate_db_env : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  data_import_env_vars = nonsensitive([
-    for key, value in merge(local.shared_data_import_env, local.data_import_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  seed_demo_env_vars = nonsensitive([
-    for key, value in local.seed_demo_env : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
 }
 
 module "database" {
@@ -100,6 +44,15 @@ module "database" {
   }
 }
 
+
+module "envs" {
+  source      = "../../modules/sops-env"
+  secrets_dir = "${path.module}/environments"
+  environment = var.environment
+  components  = ["server", "job.artifact_cleanup", "job.import", "job.migrate_db", "job.seed_demo"]
+}
+
+
 module "server" {
   source = "../../vendor/cloud-run"
 
@@ -112,7 +65,14 @@ module "server" {
     {
       container_image = "${var.artifact_registry_repo}/${local.server_image_name}:${var.server_container_version}"
 
-      env_vars = local.server_env_vars
+      env_vars = concat([
+        { name = "AUDIO_RECORDINGS_BUCKET_NAME", value = module.audio_gcs_bucket.names[local.audio_bucket_name] },
+        { name = "STITCHING_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/stitch-audio" },
+        { name = "NOTETAKING_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/process-notetaking" },
+        { name = "TRANSCRIPTION_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/transcribe-audio" },
+        { name = "CLOUD_TASKS_PROJECT", value = var.project_id },
+        { name = "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL", value = google_service_account.default.email },
+      ], module.envs.env_vars_by_component["server"])
 
       volume_mounts = [{
         name       = "cloudsql"
@@ -134,8 +94,7 @@ module "server" {
     cloud_sql_instance = {
       instances = [module.database.connection_name]
     }
-    }
-  ]
+  }]
 
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
 
@@ -152,7 +111,7 @@ module "migrate_db_job" {
   image                         = "${var.artifact_registry_repo}/${local.migrate_db_image_name}:${var.migrate_db_container_version}"
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.migrate_db_env_vars
+  env_vars                      = module.envs.env_vars_by_component["job.migrate_db"]
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   container_command             = ["./scripts/migrate-dbs.sh"]
@@ -163,8 +122,7 @@ module "migrate_db_job" {
     cloud_sql_instance = {
       instances = [module.database.connection_name]
     }
-    }
-  ]
+  }]
 
   volume_mounts = [{
     name       = "cloudsql"
@@ -172,10 +130,6 @@ module "migrate_db_job" {
   }]
 }
 
-moved {
-  from = module.migrate-db-job
-  to   = module.migrate_db_job
-}
 # Configure a job that will import data
 # We don't execute it on deploy - it will be run when the workflow is triggered
 module "import_job" {
@@ -184,12 +138,14 @@ module "import_job" {
   # Don't create an import job for demo
   count = local.can_configure_import ? 1 : 0
 
-  exec                          = false
-  name                          = local.import_job_name
-  image                         = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_container_version}"
-  project_id                    = var.project_id
-  location                      = var.location
-  env_vars                      = local.data_import_env_vars
+  exec       = false
+  name       = local.import_job_name
+  image      = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_container_version}"
+  project_id = var.project_id
+  location   = var.location
+  env_vars = concat([
+    { name = "IMPORT_BUCKET_ID", value = module.gcs_bucket[0].names[local.etl_bucket_name] }
+  ], module.envs.env_vars_by_component["job.import"])
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   timeout                       = "3600s"
@@ -200,8 +156,7 @@ module "import_job" {
     cloud_sql_instance = {
       instances = [module.database.connection_name]
     }
-    }
-  ]
+  }]
 
   volume_mounts = [{
     name       = "cloudsql"
@@ -215,10 +170,6 @@ module "import_job" {
 }
 
 
-moved {
-  from = module.import-job
-  to   = module.import_job
-}
 module "audio_gcs_bucket" {
   source = "../../vendor/submodules/cloud-storage-bucket"
 
@@ -310,10 +261,6 @@ module "handle_meetings_gcs_upload" {
   }
 }
 
-moved {
-  from = module.handle-meetings-gcs-upload
-  to   = module.handle_meetings_gcs_upload
-}
 
 # Configure a job that will clean up expired meeting audio recordings and transcriptions
 module "artifact_cleanup_job" {
@@ -324,7 +271,7 @@ module "artifact_cleanup_job" {
   image                         = "${var.artifact_registry_repo}/${local.server_image_name}:${var.artifact_cleanup_container_version}"
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.server_env_vars
+  env_vars                      = module.envs.env_vars_by_component["job.artifact_cleanup"]
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   container_command             = ["./scripts/run-artifact-cleanup.sh"]
@@ -378,7 +325,7 @@ module "seed_demo_job" {
   image                         = "${var.artifact_registry_repo}/${local.seed_demo_image_name}:${var.seed_demo_container_version}"
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.seed_demo_env_vars
+  env_vars                      = module.envs.env_vars_by_component["job.seed_demo"]
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   max_retries                   = 1
