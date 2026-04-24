@@ -7,6 +7,7 @@ from fastapi_pagination import Page
 from pydantic import BaseModel
 
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
+from app.auth.dependencies import require_internal_user
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.crud.address import get_latest_address_client_pseudo_id
@@ -309,6 +310,7 @@ class RemoveClientResponse(BaseModel):
 async def add_client_route(
     request: AddClientRequest,
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    _: dict = Depends(require_internal_user),
 ):
     if not is_feature_enabled("CLIENT_ADDITION"):
         raise HTTPException(
@@ -363,6 +365,7 @@ async def add_client_route(
 async def remove_client_route(
     request: RemoveClientRequest,
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    _: dict = Depends(require_internal_user),
 ):
     if not is_feature_enabled("CLIENT_DELETION"):
         raise HTTPException(
