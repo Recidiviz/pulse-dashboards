@@ -20,7 +20,7 @@ import "i18next";
 
 // import all namespaces (for the default language, only)
 import common from "../namespaces/common/resources/en.json";
-import US_AR from "../namespaces/US_AR/resources/en";
+import US_AR from "../namespaces/US_AR/resources/en.json";
 import US_AZ from "../namespaces/US_AZ/resources/en";
 import US_CO from "../namespaces/US_CO/resources/en.json";
 import US_ID from "../namespaces/US_ID/resources/en";

@@ -41,7 +41,11 @@ export const usArResidentMetadataSchema = z.object({
   currentLocation: z.string(),
   currentSentences: z.array(usArCurrentSentencesSchema),
   eligibilityDate: nullishAsUndefined(dateStringSchema),
-  eligibilityDateName: z.string(),
+  eligibilityDateName: z.enum([
+    "Parole Eligibility Date",
+    "Transfer Eligibility Date",
+    "Release Eligibility Date",
+  ]),
   gedCompletionDate: nullishAsUndefined(dateStringSchema),
   lastUpdatedDate: dateStringSchema,
   maximumReleaseDate: nullishAsUndefined(dateStringSchema),

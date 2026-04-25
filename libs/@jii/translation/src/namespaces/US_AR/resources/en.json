@@ -1,0 +1,85 @@
+{
+  "moreInformation": {
+    "backLink": {
+      "home": "Back to Home",
+      "programs": "Back to Programs"
+    }
+  },
+  "importantDates": {
+    "sectionHeader": "Your Important Dates",
+    "eligibilityDate": {
+      "labels": {
+        "Transfer Eligibility Date": "Transfer Eligibility Date",
+        "Parole Eligibility Date": "Parole Eligibility Date",
+        "Release Eligibility Date": "Release Eligibility Date"
+      },
+      "description": {
+        "Transfer Eligibility Date": "The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
+        "Parole Eligibility Date": "The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.",
+        "Release Eligibility Date": "The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks."
+      }
+    },
+    "maximumReleaseDate": {
+      "label": "Maximum Release Date",
+      "description": "The latest date you can be held in custody, marking the full completion of your sentence."
+    },
+    "formatFullDate": "{{date, formatFullDate}}",
+    "moreInfoLink": "Learn more about dates",
+    "moreInfo": {
+      "heading": "Understanding Release Dates & Time",
+      "body": "## Understanding Your Release Dates\n\nArkansas laws and policies have changed the names of release dates over the years. You can use the guide below to understand the specific terms used for your sentence.\n\n### If Your Offense Was Committed Before 1994\n\n<dl>\n<dt>Parole Eligibility Date</dt>\n<dd>The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>\n<dt>Maximum Release Date</dt>\n<dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>\n<dt>Good Time</dt>\n<dd>Days of credit that change your Parole Eligibility Date (PED) based on behavior, participation in work programs, Class level or program completion.</dd>\n</dl>\n\n### If Your Offense Was Committed Between 1994-2024\n\n<dl>\n<dt>Transfer Eligibility Date</dt>\n<dd>The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back regularly.</dd>\n<dt>Maximum Release Date</dt>\n<dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>\n<dt>Good Time</dt>\n<dd>Days of credit that change your Transfer Eligibility Date (TED) based on behavior, participation in work programs, Class level or programs completion.</dd>\n</dl>\n\n### If Your Offense Was Committed January 1, 2025 or After\n\n<dl>\n<dt>Release Eligibility Date</dt>\n<dd>The date you are currently eligible for transfer to community supervision. This date may change based on your behavior, participation in work programs, Class assignment or program completion. If you have recently completed programming, this date might not yet have been updated, so please continue to check back over the coming weeks.</dd>\n<dt>Maximum Release Date</dt>\n<dd>The latest date you can be held in custody, marking the full completion of your sentence.</dd>\n<dt>Good Time</dt>\n<dd>Days of credit that change your Release Eligibility Date (RED) based on behavior, participation in work programs, Class level or program completion.</dd>\n</dl>\n\n#### Why does my time card say Parole Eligibility Date, but this app says Release Eligibility Date?\n\nThe term “Release Eligibility Date” is the updated term for when you become eligible to appear before the Parole Board (Post-Prison Transfer Board), based on the amount of earned time and good time you have accumulated.\n\nIf you have previously seen a Parole Eligibility Date on your time card, this date serves the same purpose. The terminology has been updated to “Release Eligibility Date” for individuals whose offense occurred on or after January 1, 2025.\n\n## Good Time / Earned Release Credits\n\n### How many days do I reduce my sentence by for my Class level?\n\n<section class=\"callout\">\n#### If Your Offense Was Committed Before 1994 OR Between 1994-2024\n\n<dl>\n<dt>Class I (one)</dt>\n<dd>Your sentence is reduced by 30 days every month.</dd>\n<dt>Class II (two)</dt>\n<dd>Your sentence is reduced by 20 days every month.</dd>\n<dt>Class III (three)</dt>\n<dd>Your sentence is reduced by 10 days every month.</dd>\n<dt>Class IV (four)</dt>\n<dd>Your sentence is not reduced.</dd>\n</dl>\n\n#### If Your Offense Was Committed On or After January 1, 2025\n\n<dl>\n<dt>Class I (one)</dt>\n<dd>You earn 1 day of earned release credit for **every day** you are Class I (one).</dd>\n<dt>Class II (two)</dt>\n<dd>You earn 1 day of earned release credit for **every three days** you are Class II (two).</dd>\n<dt>Class III (three)</dt>\n<dd>You earn 1 day of earned release credit for **every seven days** you are Class III (three).</dd>\n<dt>Class IV (four)</dt>\n<dd>Your sentence is not reduced.</dd>\n</dl>\n\n</section>\n\n### When do I not earn Good Time?\n\nYou will not earn Good Time if:\n\n- You are in punitive\n- You are at Class IV (four)\n- You have a Life without Parole sentence\n\n### How do I know what programs are available for me?\n\nTo learn what programs are available for you, you can do any of the following:\n\n- Check the kiosk if available\n- Reach out to your unit’s program services\n\n### I’m completing programs but my transfer/parole/release eligibility date isn’t moving. Why is that happening?\n\nYou have a limit on how much earned time you can receive through programming. If you are continuing to complete programs but have not seen your transfer/parole/release eligibility date move, you can ask the records office if you have hit your maximum for earned time.\n"
+    },
+    "missingDateMessage": "No date on record"
+  },
+  "programs": {
+    "homepageCta": {
+      "sectionHeader": "Programming",
+      "heading": "Browse Available Programs",
+      "description": "Explore available programs, filter by facility, and star the ones that are interesting to you.",
+      "link": "View full list of programs"
+    },
+    "lastUpdated": "This information was last updated {{date, formatFullDate}}.",
+    "backLink": "Back to Home",
+    "pageTitle": "Earn Time Off Your Sentence",
+    "pageDescription": "This page helps you find programs and activities that can provide Good Time off of your Parole/Transfer/Release Eligibility Date. \n\nThis list will update from time to time—look for the “New” label to see what was recently updated. If you are eligible for a particular program, please follow your facility’s process for signing up.",
+    "learnMoreLink": "Learn about Good Time and Programs",
+    "resultsCount_one": "{{count}} result below.",
+    "resultsCount_other": "{{count}} results below.",
+    "resultsHint": "Tap on each card to view more information.",
+    "filters": {
+      "button": "Filters",
+      "categoryLabel": "Select by Category",
+      "facilityLabel": "Select by Facility",
+      "allCategories": "All categories",
+      "allFacilities": "All facilities",
+      "onlyEarnCredits": "Only show programs that earn credits",
+      "onlyStarred": "Only show my starred programs",
+      "clearAll": "Clear all"
+    },
+    "card": {
+      "earnLabel": "EARN",
+      "daysOfCredit_zero": "no achievement credits earned",
+      "daysOfCredit_one": "up to {{count}} day of achievement credit",
+      "daysOfCredit_other": "up to {{count}} days of achievement credit",
+      "newBadge": "New"
+    },
+    "category": {
+      "programCount_one": "{{count}} program",
+      "programCount_other": "{{count}} programs",
+      "programCountFiltered_one": "{{count}} program (out of {{total}} total)",
+      "programCountFiltered_other": "{{count}} programs (out of {{total}} total)"
+    },
+    "modal": {
+      "earnSubtitle_zero": "No achievement credits earned",
+      "earnSubtitle_one": "Earn up to {{count}} day of achievement credit",
+      "earnSubtitle_other": "Earn up to {{count}} days of achievement credit",
+      "programDescription": "Program Description",
+      "eligibility": "Eligibility",
+      "eligibilityPrereq": "Prerequisite: {{prereq}}",
+      "eligibilityNone": "No requirements needed",
+      "availableFacilities": "Available Facilities",
+      "callToAction": "Sound interesting? Reach out to your unit’s program services to see if this might be a good fit.",
+      "closeWindow": "Close window"
+    }
+  }
+}
