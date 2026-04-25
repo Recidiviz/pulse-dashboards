@@ -50,16 +50,19 @@ export type CommonSentenceDatesResources = z.infer<
 >;
 
 /**
+ * Expected copy for any given date in a state resource bundle
+ */
+export const singleSentenceDateResourceSchema = z.object({
+  label: z.string(),
+  description: z.string().optional(),
+});
+
+/**
  * Resources that should appear only in the state namespaces. In real usage
  * these will be combined with other resources to produce the final shapes as seen below
  */
 const stateOnlySentenceDatesResourcesSchema = z.object({
-  dates: z.record(
-    z.object({
-      label: z.string(),
-      description: z.string().optional(),
-    }),
-  ),
+  dates: z.record(singleSentenceDateResourceSchema),
 });
 
 /**

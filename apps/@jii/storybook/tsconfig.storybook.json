@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "emitDecoratorMetadata": true,
-    "outDir": ""
+    "outDir": "",
+    "lib": ["esnext", "dom"]
   },
   "exclude": [
     "src/**/*.spec.ts",

@@ -15,38 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TFunction } from "i18next";
-import { PickByValue } from "utility-types";
-
-import {
-  dateDistanceTranslation,
-  I18nResources,
-  StateSentenceDatesResources,
-} from "~@jii/translation";
-
 import { SentenceDatesData } from "../../data/types";
-
-export type StateCodeWithSentenceDates = keyof PickByValue<
-  I18nResources,
-  StateSentenceDatesResources
->;
-
-type TFn = TFunction<[StateCodeWithSentenceDates, "common"]>;
+import { defaultComponents } from "../defaultComponents";
+import { DatePresenter } from "./DatePresenter";
+import { SentenceDatesComponents, TFn } from "./types";
 
 export class SentenceDatesPresenter {
-  copy: ReturnType<typeof this.createCopy>;
-
   data: SentenceDatesData;
 
   constructor(
     private inputData: SentenceDatesData,
     private t: TFn,
+    private componentOverrides?: Partial<SentenceDatesComponents>,
   ) {
     this.data = {
       ...inputData,
       dates: this.getValidatedDatesData(),
     };
-    this.copy = this.createCopy();
   }
 
   private getValidatedDatesData() {
@@ -72,38 +57,19 @@ export class SentenceDatesPresenter {
     return inputData.dates.filter((d) => datesInCopy.includes(d.id));
   }
 
-  private createCopy() {
-    const { data, t } = this;
+  /**
+   * The final set of descendant components to be composed by the main SentenceDates component,
+   * consisting of default components plus any overrides that may have been passed in
+   */
+  get components(): SentenceDatesComponents {
+    return { ...defaultComponents, ...this.componentOverrides };
+  }
 
-    const dates = data.dates.map((d) => {
-      const copy = {
-        ...t(($) => $.sentenceDates.dates[d.id], {
-          returnObjects: true,
-        }),
-        dateFormatted: t(
-          ($) =>
-            d.date
-              ? $.sentenceDates.dateFormats.dateFormatted
-              : $.sentenceDates.dateFormats.missingDateMessage,
-          {
-            date: d.date,
-          },
-        ),
-        dateRelative: d.date
-          ? (dateDistanceTranslation(
-              d.date,
-              // @ts-expect-error the fallback to common namespace will satisfy this usage
-              t,
-            ) as string)
-          : undefined,
-      };
-      return copy;
-    });
+  get datePresenters() {
+    return this.data.dates.map((d) => new DatePresenter(d, this.t));
+  }
 
-    const general = t(($) => $.sentenceDates.general, {
-      returnObjects: true,
-    });
-
-    return { general, dates };
+  get sectionHeadingText() {
+    return this.t(($) => $.sentenceDates.general.heading);
   }
 }

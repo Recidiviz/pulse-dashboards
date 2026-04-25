@@ -18,28 +18,61 @@
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
-import { withPresenterManager } from "~hydration-utils";
-
 import type { SentenceDatesData } from "../../data/types";
-import {
-  SentenceDatesPresenter,
-  StateCodeWithSentenceDates,
-} from "./SentenceDatesPresenter";
+import { SentenceDatesPresenter } from "./SentenceDatesPresenter";
+import { StateCodeWithSentenceDates } from "./types";
 
 type SentenceDatesProps = {
   data: SentenceDatesData;
   stateCode: StateCodeWithSentenceDates;
 };
 
-export const ManagedComponent = ({
+export const SentenceDatesWithPresenter = ({
   presenter,
 }: {
   presenter: SentenceDatesPresenter;
 }) => {
+  const {
+    components: {
+      SectionWrapper,
+      SectionHeading,
+      CardsWrapper,
+      DateCard,
+      DateLabel,
+      DateValue,
+      DateValueSupplemental,
+      DateDescription,
+      DateCardHeadingWrapper,
+      DateCardBodyWrapper,
+    },
+    datePresenters,
+    sectionHeadingText,
+  } = presenter;
+
   return (
-    <div>
-      <pre>{JSON.stringify(presenter.copy, undefined, 2)}</pre>
-    </div>
+    <SectionWrapper>
+      <SectionHeading>{sectionHeadingText}</SectionHeading>
+      <CardsWrapper>
+        {datePresenters.map((datePresenter) => (
+          <DateCard key={datePresenter.id} datePresenter={datePresenter}>
+            <DateCardHeadingWrapper>
+              <DateLabel>{datePresenter.cardLabelText}</DateLabel>
+              <DateValue>{datePresenter.cardValueText.primary}</DateValue>
+              <DateValueSupplemental>
+                {datePresenter.cardValueText.supplemental}
+              </DateValueSupplemental>
+            </DateCardHeadingWrapper>
+            <DateCardBodyWrapper>
+              {datePresenter.cardDescriptionText && (
+                <DateDescription>
+                  {datePresenter.cardDescriptionText}
+                </DateDescription>
+              )}
+            </DateCardBodyWrapper>
+          </DateCard>
+        ))}
+      </CardsWrapper>
+    </SectionWrapper>
   );
 };
 
@@ -51,9 +84,14 @@ function usePresenter({ stateCode, data }: SentenceDatesProps) {
 
 /**
  * Entry point for the Sentence Dates module.
+ *
+ * Default behavior is based on a combination of the data passed in here
+ * and the corresponding copy (which is accessed via the translation framework).
  */
-export const SentenceDates: FC<SentenceDatesProps> = withPresenterManager({
-  usePresenter,
-  ManagedComponent,
-  managerIsObserver: false,
-});
+export const SentenceDates: FC<SentenceDatesProps> = (
+  props: SentenceDatesProps,
+) => {
+  const presenter = usePresenter(props);
+
+  return <SentenceDatesWithPresenter presenter={presenter} />;
+};

@@ -15,28 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays, startOfDay } from "date-fns";
+import { FC } from "react";
+import styled from "styled-components";
 
-import { SentenceDatesData } from "../data/types";
+import { CopyWrapper } from "~@jii/common-ui";
 
-/**
- * Returns a set of fake date objects useful for tests and stories.
- * Dates should be always relative to the current date (including frozen
- * dates in test suites)
- */
-export function getSentenceDatesFixtureData(): SentenceDatesData {
-  return {
-    dates: [
-      {
-        id: "earliest_release_date",
-        date: startOfDay(addDays(new Date(), -30)),
-      },
-      {
-        id: "projected_release_date",
-        date: startOfDay(addDays(new Date(), 7)),
-      },
-      { id: "parole_eligibility_date", date: undefined },
-      { id: "max_discharge_date", date: startOfDay(addDays(new Date(), 400)) },
-    ],
-  };
-}
+import { DefaultProps } from "./types";
+
+export type DateDescriptionProps = Omit<DefaultProps, "children"> & {
+  children: string | undefined;
+};
+
+const StyledCopyWrapper = styled(CopyWrapper)`
+  &,
+  & > p:last-child {
+    // prevents extra space at the bottom of the card
+    margin-bottom: 0;
+  }
+`;
+
+export const DateDescription: FC<DateDescriptionProps> = ({
+  children,
+  className,
+}) => {
+  return children ? (
+    <StyledCopyWrapper
+      {...{ children, className }}
+      options={{ forceBlock: true }}
+    />
+  ) : null;
+};

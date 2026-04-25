@@ -39,13 +39,7 @@ const meta: Meta<
   }
 > = {
   component: SentenceDates,
-  title: "SentenceDates/SentenceDates",
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+  title: "SentenceDates",
   args: {
     data: getSentenceDatesFixtureData(),
     stateCode: "US_OZ",
@@ -74,3 +68,8 @@ export const Default: Story = {
     },
   ],
 };
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};

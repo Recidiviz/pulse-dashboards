@@ -24,10 +24,8 @@ import {
   prepareUsOzTranslations,
 } from "../../fixtures/copy";
 import { getSentenceDatesFixtureData } from "../../fixtures/data";
-import {
-  SentenceDatesPresenter,
-  StateCodeWithSentenceDates,
-} from "./SentenceDatesPresenter";
+import { SentenceDatesPresenter } from "./SentenceDatesPresenter";
+import { StateCodeWithSentenceDates } from "./types";
 
 describe("SentenceDatesPresenter", () => {
   let i18n: ReturnType<typeof prepareUsOzTranslations>;
@@ -62,35 +60,11 @@ describe("SentenceDatesPresenter", () => {
       });
 
       it("returns the correct copy", () => {
-        const { copy } = new SentenceDatesPresenter(sentenceDatesFixture, t);
+        const presenter = new SentenceDatesPresenter(sentenceDatesFixture, t);
 
-        expect(copy).toMatchInlineSnapshot(`
-          {
-            "dates": [
-              {
-                "dateFormatted": "April 22, 2026",
-                "dateRelative": "7 days from today",
-                "description": "The estimated date you will be released from incarceration based on your sentence and time served.",
-                "label": "Projected Release (PR)",
-              },
-              {
-                "dateFormatted": "No date on record",
-                "dateRelative": undefined,
-                "description": "The earliest date you are eligible to be considered for release on parole.",
-                "label": "Parole Eligibility Date",
-              },
-              {
-                "dateFormatted": "May 20, 2027",
-                "dateRelative": "1 year and 1 month from today",
-                "description": "The latest date by which you must be released, representing the full length of your sentence.",
-                "label": "Maximum Discharge Date",
-              },
-            ],
-            "general": {
-              "heading": "Important dates",
-            },
-          }
-        `);
+        expect(presenter.sectionHeadingText).toMatchInlineSnapshot(
+          `"Important dates"`,
+        );
       });
 
       it("can override values from the common translation resource", () => {
@@ -103,9 +77,9 @@ describe("SentenceDatesPresenter", () => {
           },
         });
 
-        const { copy } = new SentenceDatesPresenter(sentenceDatesFixture, t);
+        const presenter = new SentenceDatesPresenter(sentenceDatesFixture, t);
 
-        expect(copy.general.heading).toBe(specialHeading);
+        expect(presenter.sectionHeadingText).toBe(specialHeading);
       });
     });
 
@@ -115,35 +89,11 @@ describe("SentenceDatesPresenter", () => {
       });
 
       it("returns the correct copy", () => {
-        const { copy } = new SentenceDatesPresenter(sentenceDatesFixture, t);
+        const presenter = new SentenceDatesPresenter(sentenceDatesFixture, t);
 
-        expect(copy).toMatchInlineSnapshot(`
-          {
-            "dates": [
-              {
-                "dateFormatted": "22 de abril de 2026",
-                "dateRelative": "Dentro de 7 días",
-                "description": "La fecha estimada en que será liberado de la encarcelación según su sentencia y el tiempo cumplido.",
-                "label": "Liberación Proyectada (LP)",
-              },
-              {
-                "dateFormatted": "Sin fecha registrada",
-                "dateRelative": undefined,
-                "description": "La fecha más temprana en que puede ser considerado para su liberación bajo libertad condicional.",
-                "label": "Fecha de Elegibilidad para la Libertad Condicional",
-              },
-              {
-                "dateFormatted": "20 de mayo de 2027",
-                "dateRelative": "Dentro de 1 año y 1 mes",
-                "description": "La fecha límite en la que debe ser liberado, que representa la duración total de su sentencia.",
-                "label": "Fecha Máxima de Liberación",
-              },
-            ],
-            "general": {
-              "heading": "Fechas importantes",
-            },
-          }
-        `);
+        expect(presenter.sectionHeadingText).toMatchInlineSnapshot(
+          `"Fechas importantes"`,
+        );
       });
     });
   });
@@ -151,6 +101,14 @@ describe("SentenceDatesPresenter", () => {
   describe("data validation", () => {
     beforeEach(() => {
       t = i18n.getFixedT("en", ["US_OZ", "common"]);
+    });
+
+    it("returns a date presenter for each valid date in order", () => {
+      const presenter = new SentenceDatesPresenter(sentenceDatesFixture, t);
+
+      expect(presenter.datePresenters.map((dp) => dp.id)).toEqual(
+        sentenceDatesFixture.dates.map((d) => d.id),
+      );
     });
 
     it("returns all dates unchanged when fixture data matches copy", () => {
@@ -169,7 +127,7 @@ describe("SentenceDatesPresenter", () => {
             t,
           ),
       ).toThrow(
-        "Expected sentence dates are missing from data: projected_release_date",
+        "Expected sentence dates are missing from data: earliest_release_date",
       );
     });
 

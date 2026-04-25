@@ -23,6 +23,11 @@ import {
 export const copyFixtureEnglish: StateSentenceDatesResources = {
   sentenceDates: {
     dates: {
+      earliest_release_date: {
+        label: "Earliest Release Date",
+        description:
+          "The earliest date you can be released from incarceration.",
+      },
       projected_release_date: {
         label: "Projected Release (PR)",
         description:
@@ -46,6 +51,11 @@ export const copyFixtureEnglish: StateSentenceDatesResources = {
 export const copyFixtureSpanish: StateSentenceDatesResources = {
   sentenceDates: {
     dates: {
+      earliest_release_date: {
+        label: "Fecha de Liberación Más Temprana",
+        description:
+          "La fecha más temprana en que puede ser liberado de la encarcelación.",
+      },
       projected_release_date: {
         label: "Liberación Proyectada (LP)",
         description:
