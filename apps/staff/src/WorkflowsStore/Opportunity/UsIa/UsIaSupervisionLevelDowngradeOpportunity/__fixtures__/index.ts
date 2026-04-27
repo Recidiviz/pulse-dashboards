@@ -63,7 +63,7 @@ export const usIaEarlyDischargeRecordFixture: UsIaEarlyDischargeReferralRecordRa
     stateCode: "US_IA",
     externalId: "001",
     eligibleCriteria: {
-      noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+      usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
       notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
       notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
         eligibleDate: relativeFixtureDate({ months: -11 }),

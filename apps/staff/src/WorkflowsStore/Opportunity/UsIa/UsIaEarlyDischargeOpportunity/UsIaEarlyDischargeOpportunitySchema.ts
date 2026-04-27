@@ -34,7 +34,7 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
             supervisionLevelRawText: z.string().nullable(),
           })
           .nullable(),
-        noSupervisionViolationReportWithin6MonthsUsingResponseDate: z
+        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: z
           .object({
             latestViolationReportDates: z.array(dateStringSchema).nullable(),
             violationExpirationDate: dateStringSchema.nullable(),

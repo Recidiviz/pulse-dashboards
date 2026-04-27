@@ -26,7 +26,7 @@ export const usIaEarlyDischargeReferralsFixture =
       stateCode: "US_IA",
       externalId: "001",
       eligibleCriteria: {
-        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
         notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -11 }),
@@ -111,7 +111,7 @@ export const usIaEarlyDischargeReferralsFixture =
       stateCode: "US_IA",
       externalId: "002",
       eligibleCriteria: {
-        noSupervisionViolationReportWithin6MonthsUsingResponseDate: {
+        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: {
           latestViolationReportDates: null,
           violationExpirationDate: relativeFixtureDate({ months: -6 }),
         },
@@ -212,7 +212,7 @@ export const usIaEarlyDischargeReferralsFixture =
       stateCode: "US_IA",
       externalId: "003",
       eligibleCriteria: {
-        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
         notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -1 }),
@@ -303,7 +303,7 @@ export const usIaEarlyDischargeReferralsFixture =
       stateCode: "US_IA",
       externalId: "004",
       eligibleCriteria: {
-        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
           lifeSentence: false,
           ineligibleOffenses: null,
@@ -377,7 +377,7 @@ export const usIaEarlyDischargeReferralsFixture =
       stateCode: "US_IA",
       externalId: "005",
       eligibleCriteria: {
-        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
           lifeSentence: false,
           ineligibleOffenses: null,

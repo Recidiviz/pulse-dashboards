@@ -226,7 +226,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Case assignment is defined as whenever a client began supervision or began serving a new sentence",
         },
         {
-          key: "noSupervisionViolationReportWithin6MonthsUsingResponseDate",
+          key: "usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate",
           text: "Has no violation reports in the past 6 months",
           tooltip:
             "This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. This does not include reports that resulted in a final decision of “Reinstate”,  “Dismissed”, “No hearing held”, “Not filed with the court”, or “Probable cause not found”",
