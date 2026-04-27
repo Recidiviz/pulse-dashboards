@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+from google.api_core.exceptions import GoogleAPIError
 from google.cloud import speech_v1 as speech
 from google.cloud import texttospeech
 from pydantic import BaseModel, Field
@@ -218,10 +219,26 @@ async def convert_text_to_speech(request: TextToSpeechRequest):
         )
 
     except ValueError as e:
+        # Client errors (validation failures) - safe to expose
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
+    except GoogleAPIError as e:
+        # Google API errors - log details but return generic message
+        logger.error(
+            "Google Text-to-Speech API error",
+            error=str(e),
+            language_code=request.language_code,
+            voice_name=request.voice_name,
+        )
         raise HTTPException(
-            status_code=500, detail=f"Error generating speech: {str(e)}"
+            status_code=500,
+            detail="Failed to generate speech. Please try again or contact support.",
+        )
+    except Exception as e:
+        # Unexpected errors - log details but return generic message
+        logger.error("Unexpected error during text-to-speech conversion", error=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to generate speech. Please try again or contact support.",
         )
     finally:
         if temp_path:
