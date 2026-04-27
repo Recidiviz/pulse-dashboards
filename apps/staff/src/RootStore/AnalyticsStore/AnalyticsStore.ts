@@ -81,6 +81,14 @@ type StaffMetricTrackingMetadata = {
   metricId: string;
 };
 
+type OperationsDrilldownViewedMetadata = {
+  stateCode: string;
+  staffPseudonymizedId: string;
+  supervisorPseudonymizedId?: string;
+  viewedBy?: string;
+  metricId: string;
+};
+
 type ClientPageTrackingMetadata = {
   clientPseudonymizedId: string;
   outcomeDate: Date;
@@ -481,6 +489,12 @@ export default class AnalyticsStore {
       "frontend.outliers_roster_change_request_form_submitted",
       metadata,
     );
+  }
+
+  trackInsightsOperationsDrilldownViewed(
+    metadata: OperationsDrilldownViewedMetadata,
+  ): void {
+    this.track("frontend.outliers_operations_drilldown_viewed", metadata);
   }
 
   trackUserDataDownloadButtonClicked(

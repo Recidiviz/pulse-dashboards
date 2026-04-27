@@ -79,6 +79,7 @@ export const InsightsStaffVitals = withPresenter(
       officerRecord,
       isNumeratorDenominatorEnabled,
       officerVitalsContacts,
+      trackOperationsDrilldownViewed,
     } = presenter;
 
     if (vitalsMetricDetails.length === 0) return;
@@ -86,6 +87,7 @@ export const InsightsStaffVitals = withPresenter(
     const handleCardClick = (metricId: string) => {
       setSelectedMetricId(metricId);
       setModalOpen(true);
+      trackOperationsDrilldownViewed(metricId);
     };
 
     const showVitalsContactsDrilldownModal =

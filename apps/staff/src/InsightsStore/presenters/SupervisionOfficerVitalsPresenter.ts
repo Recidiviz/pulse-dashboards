@@ -246,4 +246,19 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
   get labels(): ConfigLabels {
     return this.supervisionStore.labels;
   }
+
+  trackOperationsDrilldownViewed = (metricId: string): void => {
+    const { userPseudoId, stateCode } =
+      this.supervisionStore.insightsStore.rootStore.userStore;
+
+    this.supervisionStore.insightsStore.rootStore.analyticsStore.trackInsightsOperationsDrilldownViewed(
+      {
+        stateCode: stateCode,
+        staffPseudonymizedId: this.officerPseudoId,
+        supervisorPseudonymizedId: this.goToSupervisorInfo?.pseudonymizedId,
+        viewedBy: userPseudoId,
+        metricId,
+      },
+    );
+  };
 }
