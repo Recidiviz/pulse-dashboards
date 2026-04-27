@@ -311,7 +311,7 @@ function processRecord(
   const personRecord = personSnapshot.data();
 
   // Drop out if any record is missing
-  if (!formUpdateData || !baseRecord || !personRecord) return out;
+  if (!formUpdateData || !baseRecord || !personRecord) return undefined;
 
   const { metadata } = personRecord;
 
@@ -321,14 +321,14 @@ function processRecord(
     metadata.stateCode !== "US_TN" ||
     metadata.latestClassificationDate === undefined
   )
-    return out;
+    return undefined;
 
   const safeParsedBaseRecord = isDcaf
     ? usTnInitialClassification2026Schema.safeParse(baseRecord)
     : usTnReclassification2026Schema.safeParse(baseRecord);
 
   // Drop out if we could not parse the base record
-  if (!safeParsedBaseRecord.success) return out;
+  if (!safeParsedBaseRecord.success) return undefined;
 
   const parsedBaseRecord = safeParsedBaseRecord.data;
 
@@ -461,7 +461,8 @@ async function getFormUpdateDocs(
       baseRecordDoc,
       personRecordDoc,
     );
-    entries.push(processed);
+
+    if (processed) entries.push(processed);
   }
 
   return entries;
