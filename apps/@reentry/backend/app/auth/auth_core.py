@@ -629,18 +629,25 @@ async def get_auth_user_context(request: Request, skip_impersonation: bool = Fal
 
     caller_email = user_info.get("email")
 
-    # Impersonation
+    # Impersonation - use validate_impersonation_request for security checks
     if not skip_impersonation:
         impersonated_email = request.headers.get("X-Impersonated-Email")
 
-        if impersonated_email and is_internal_user(caller_email):
-            from app.auth.impersonation import get_impersonated_user_metadata
+        if impersonated_email:
+            # Import here to avoid circular dependency
+            from app.auth.impersonation import (
+                validate_impersonation_request,
+                get_impersonated_user_metadata,
+            )
 
-            target_metadata = await get_impersonated_user_metadata(impersonated_email)
+            # Raises HTTPException on any authorization failure
+            target_email = await validate_impersonation_request(request)
+
+            target_metadata = await get_impersonated_user_metadata(target_email)
             feature_variants = target_metadata.get("featureVariants", {})
 
             return await _build_user_context(
-                impersonated_email,
+                target_email,
                 feature_variants,
                 is_impersonating=True,
             )

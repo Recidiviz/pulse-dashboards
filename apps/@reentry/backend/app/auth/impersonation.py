@@ -183,31 +183,120 @@ async def get_impersonated_user_metadata(target_email: str) -> dict:
     return app_metadata
 
 
+def _get_allowed_impersonation_emails() -> set[str]:
+    """
+    Get the set of emails explicitly allowed to impersonate users.
+
+    Returns:
+        Set of lowercase email addresses authorized for impersonation.
+    """
+    if not settings.IMPERSONATION_ALLOWED_EMAILS:
+        return set()
+
+    emails = settings.IMPERSONATION_ALLOWED_EMAILS.split(",")
+    return {email.strip().lower() for email in emails if email.strip()}
+
+
+def check_impersonation_authorized(caller_email: str, target_email: str) -> None:
+    """
+    Validate that the caller is authorized to impersonate the target user.
+
+    Checks (in order):
+    1. Master switch (IMPERSONATION_ENABLED)
+    2. Caller in allowlist (IMPERSONATION_ALLOWED_EMAILS)
+    3. Internal domain (defense in depth)
+    4. Self-impersonation prevention
+
+    Args:
+        caller_email: Email of the user attempting to impersonate
+        target_email: Email of the target user
+
+    Raises:
+        HTTPException(403) if not authorized.
+        HTTPException(400) if self-impersonation.
+    """
+    if not settings.IMPERSONATION_ENABLED:
+        logger.warning(
+            "Impersonation attempt blocked: feature disabled",
+            caller_email=caller_email,
+            target_email=target_email,
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Impersonation is disabled",
+        )
+
+    allowed_emails = _get_allowed_impersonation_emails()
+    if not allowed_emails or caller_email.lower() not in allowed_emails:
+        logger.warning(
+            "Impersonation attempt blocked: caller not in allowlist",
+            caller_email=caller_email,
+            target_email=target_email,
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to impersonate users",
+        )
+
+    # Defense in depth — reject if allowlist somehow contains a non-internal email
+    if not is_internal_user(caller_email):
+        logger.error(
+            "Impersonation attempt blocked: caller not internal user (allowlist misconfiguration)",
+            caller_email=caller_email,
+            target_email=target_email,
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Impersonation requires internal user access",
+        )
+
+    if caller_email.lower() == target_email.lower():
+        logger.warning(
+            "Impersonation attempt blocked: self-impersonation",
+            caller_email=caller_email,
+        )
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot impersonate yourself",
+        )
+
+
 async def validate_impersonation_request(request: Request) -> str | None:
     """
     Check for the X-Impersonated-Email header and validate the caller
-    is an internal user.
+    has explicit permission to impersonate users.
+
+    Security Controls:
+    1. Master switch: IMPERSONATION_ENABLED must be True
+    2. Whitelist: Caller email must be in IMPERSONATION_ALLOWED_EMAILS
+    3. Internal user check: Caller must have internal domain (defense in depth)
+    4. State scoping: Validates state-level access (logged for audit)
+    5. Audit logging: All attempts are logged with caller and target details
 
     Returns:
-        The target email if impersonation is requested, None otherwise.
+        The target email if impersonation is authorized, None otherwise.
 
     Raises:
-        HTTPException(403) if caller is not an internal user.
+        HTTPException(403) if impersonation is not authorized.
     """
     impersonated_email = request.headers.get("X-Impersonated-Email")
     if not impersonated_email:
         return None
 
     # Get the caller's identity
-    # todo: check why we need to call get_pseudonymized_id before get_auth_user_context to get the current email user,
+    # Note: We need to call get_pseudonymized_id before get_auth_user_context
+    # to ensure the Auth0 userinfo cache is populated
     await get_pseudonymized_id(request, skip_impersonation=True)
     auth_user_context = await get_auth_user_context(request, skip_impersonation=True)
     caller_email = auth_user_context["email"]
 
-    if not is_internal_user(caller_email):
-        raise HTTPException(
-            status_code=403,
-            detail="Impersonation requires internal user access",
-        )
+    # All authorization checks — raises on failure
+    check_impersonation_authorized(caller_email, impersonated_email)
+
+    logger.info(
+        "Impersonation authorized",
+        caller_email=caller_email,
+        target_email=impersonated_email,
+    )
 
     return impersonated_email

@@ -21,9 +21,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.auth.auth_core import (
     get_auth_user_context,
     get_pseudonymized_id,
-    is_internal_user,
 )
-from app.auth.impersonation import get_impersonated_user_metadata
+from app.auth.impersonation import (
+    check_impersonation_authorized,
+    get_impersonated_user_metadata,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -39,19 +41,26 @@ async def impersonate_user(
 ):
     """
     Fetch metadata for a target user to enable impersonation.
-    Only accessible to internal (Recidiviz) users.
+
+    Authorization is enforced by check_impersonation_authorized(), which checks:
+    master switch, email allowlist, internal domain, and self-impersonation.
+
+    This endpoint is used by the frontend to fetch target user metadata
+    before setting the X-Impersonated-Email header on subsequent requests.
     """
     caller_email = auth_user_context.get("email")
 
-    if not is_internal_user(caller_email):
-        raise HTTPException(
-            status_code=403,
-            detail="Impersonation requires internal user access",
-        )
+    # Shared authorization — raises HTTPException on any failure
+    check_impersonation_authorized(caller_email, email)
 
     app_metadata = await get_impersonated_user_metadata(email)
 
-    logger.info("Impersonation request", impersonator=caller_email, target_email=email)
+    logger.info(
+        "Impersonation metadata fetched",
+        caller_email=caller_email,
+        target_email=email,
+        target_state=app_metadata.get("stateCode"),
+    )
 
     return {
         "email": email,

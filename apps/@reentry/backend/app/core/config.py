@@ -115,6 +115,16 @@ class Settings(BaseSettings):
     DATA_API_URL: str = ""
     GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE: str = ""
 
+    # Impersonation Security Controls
+    # Comma-separated list of emails authorized to impersonate users
+    # If empty, impersonation is disabled for all users
+    # Example: "admin@recidiviz.org,superuser@recidiviz.org"
+    IMPERSONATION_ALLOWED_EMAILS: str = ""
+
+    # Enable impersonation feature (master switch)
+    # Even if emails are whitelisted, this must be True to enable impersonation
+    IMPERSONATION_ENABLED: bool = False
+
     # Slack webhook URLs for intake completion notifications (JSON: {"US_NE": "url", "default": "url"})
     SLACK_INTAKE_WEBHOOK_URLS: str | None = None
     # Slack webhook URL for guardrail hard-stop alerts (crisis, prompt_injection)
