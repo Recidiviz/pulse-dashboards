@@ -23,6 +23,10 @@ export const OutputSpecSchema = z.object({
   promptGuidance: z
     .string()
     .describe("LLM instructions for producing this output section"),
+  subheaders: z
+    .array(z.string())
+    .optional()
+    .describe("Optional subheaders to include in the output"),
 });
 
 /**
@@ -60,6 +64,10 @@ export const AgencyConfigFileSchema = z.object({
   outputs: z.array(OutputSpecSchema).optional(),
   /** Appended to base outputs */
   additionalOutputs: z.array(OutputSpecSchema).optional(),
+  /** Patches specific fields of existing outputs by id, without replacing them */
+  outputPatches: z
+    .record(OutputSpecSchema.omit({ id: true }).partial())
+    .optional(),
 });
 
 /**

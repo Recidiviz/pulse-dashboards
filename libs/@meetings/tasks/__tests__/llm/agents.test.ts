@@ -67,7 +67,12 @@ describe("SpecialistCore", () => {
     rules: ["Document all interactions", "Note status changes"],
     keywords: [],
     outputs: [
-      { id: "case_note", label: "Case Note", promptGuidance: "Brief summary" },
+      {
+        id: "case_note",
+        label: "Case Note",
+        promptGuidance: "Brief summary",
+        subheaders: ["Housing", "Mental Health"],
+      },
     ],
   };
 
@@ -394,6 +399,43 @@ describe("SpecialistCore", () => {
             expect.objectContaining({
               role: "user",
               content: expect.stringContaining("John Doe"),
+            }),
+          ]),
+        }),
+      );
+    });
+
+    test("should include subheaders in user message when configured", async () => {
+      vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+        id: "test-completion",
+        object: "chat.completion",
+        created: Date.now(),
+        model: "gpt-4o-mini",
+        choices: [
+          {
+            index: 0,
+            message: {
+              role: "assistant",
+              content: JSON.stringify({ caseNote: "Test note", minutes: [] }),
+            },
+            finish_reason: "stop",
+          },
+        ],
+      } as never);
+
+      await core.runDrafting(
+        mockTranscript,
+        { actionItems: [], criticalUpdates: [], entities: [] },
+        mockAgency, // has subheaders: ["Housing", "Mental Health"]
+        mockClient,
+      );
+
+      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          messages: expect.arrayContaining([
+            expect.objectContaining({
+              role: "user",
+              content: expect.stringContaining("Housing"),
             }),
           ]),
         }),

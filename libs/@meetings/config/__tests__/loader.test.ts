@@ -168,6 +168,65 @@ describe("config loader", () => {
       expect(result["additionalOutputs"]).toBeUndefined();
     });
 
+    describe("outputPatches", () => {
+      test("merges patch fields onto matched output without replacing other fields", () => {
+        const result = mergeWithBase(BASE, {
+          ...AGENCY,
+          outputPatches: {
+            case_note: { subheaders: ["Housing", "Employment"] },
+          },
+        });
+        const outputs = result["outputs"] as {
+          id: string;
+          promptGuidance: string;
+          subheaders?: string[];
+        }[];
+        expect(outputs).toHaveLength(1);
+        expect(outputs[0].promptGuidance).toBe("Base guidance");
+        expect(outputs[0].subheaders).toEqual(["Housing", "Employment"]);
+      });
+
+      test("leaves unpatched outputs unchanged", () => {
+        const baseWithTwo = {
+          ...BASE,
+          outputs: [
+            ...BASE.outputs,
+            {
+              id: "minutes",
+              label: "Minutes",
+              promptGuidance: "Minutes guidance",
+            },
+          ],
+        };
+        const result = mergeWithBase(baseWithTwo, {
+          ...AGENCY,
+          outputPatches: { case_note: { subheaders: ["Housing"] } },
+        });
+        const outputs = result["outputs"] as {
+          id: string;
+          subheaders?: string[];
+        }[];
+        const minutes = outputs.find((o) => o.id === "minutes");
+        expect(minutes?.subheaders).toBeUndefined();
+      });
+
+      test("outputPatches is stripped from resolved result", () => {
+        const result = mergeWithBase(BASE, {
+          ...AGENCY,
+          outputPatches: { case_note: { subheaders: ["Housing"] } },
+        });
+        expect(result["outputPatches"]).toBeUndefined();
+      });
+
+      test("patch for unknown output id is silently ignored", () => {
+        const result = mergeWithBase(BASE, {
+          ...AGENCY,
+          outputPatches: { nonexistent: { subheaders: ["Housing"] } },
+        });
+        expect(result["outputs"]).toEqual(BASE.outputs);
+      });
+    });
+
     test("agency infrastructure fields override base", () => {
       const result = mergeWithBase(
         { ...BASE, showTranscriptions: true, audioTTLDays: 30 },

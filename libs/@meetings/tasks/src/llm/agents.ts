@@ -178,9 +178,17 @@ export class SpecialistCore {
       ENTITIES: ${JSON.stringify(entityDict)}`;
     const clientContextStr = `Client: ${person.givenNames} ${person.surname}`;
 
+    // Build our case note output structure instructions
     let structureStr = "";
     for (const output of agency.outputs) {
-      structureStr += `- ${output.id} (${output.label}): ${output.promptGuidance}\n`;
+      let promptGuidance = output.promptGuidance;
+      if (output.subheaders?.length) {
+        promptGuidance += `\nUse the following subheaders to organize 
+          the output: ${output.subheaders.join(", ")}. Do not insert 
+          a subheader if it is not relevant, factual information retrieved
+          from the transcription.`;
+      }
+      structureStr += `- ${output.id} (${output.label}): ${promptGuidance}\n`;
     }
 
     const userMessage = PROMPTS.WRITER.USER({

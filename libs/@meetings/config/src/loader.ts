@@ -64,15 +64,28 @@ export function mergeWithBase(
       ...(base.rules ?? []),
       ...(agency.additionalRules ?? []),
     ],
-    outputs: agency.outputs ?? [
-      ...(base.outputs ?? []),
-      ...(agency.additionalOutputs ?? []),
-    ],
+    outputs: (() => {
+      const resolved = agency.outputs ?? [
+        ...(base.outputs ?? []),
+        ...(agency.additionalOutputs ?? []),
+      ];
+      return resolved.map((output) => {
+        if (
+          !agency.outputPatches ||
+          agency.outputPatches[output.id] === undefined
+        ) {
+          return output;
+        }
+        const patch = agency.outputPatches[output.id];
+        return patch ? { ...output, ...patch } : output;
+      });
+    })(),
     // Strip additional* fields — not part of resolved AgencyConfig
     additionalKeywords: undefined,
     additionalGlossary: undefined,
     additionalRules: undefined,
     additionalOutputs: undefined,
+    outputPatches: undefined,
   };
 }
 

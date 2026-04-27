@@ -1,3 +1,19 @@
 name: North Carolina
 stateCode: US_NC
-version: 1
+version: 2
+
+outputPatches:
+  case_note:
+    subheaders:
+      - Employment
+      - Family Situation / Friends & Associates
+      - Pro-social behavior
+      - Substance Abuse
+      - Sex Offender
+      - Victim
+      - Mental Health
+      - Housing / Current Living Situation
+      - Financial
+      - Academic / Vocational
+      - Legal
+      - Physical Health

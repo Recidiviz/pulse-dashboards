@@ -1,7 +1,21 @@
 name: Nebraska
 stateCode: US_NE
-version: 1
+version: 2
 
 additionalKeywords:
   - NDCS
   - Edovo
+
+outputPatches:
+  case_note:
+    subheaders:
+      - Housing
+      - Mental Health
+      - Substance Use
+      - Medical
+      - Education
+      - Employment
+      - Family/Social Support
+      - Hobbies/Leisure
+      - Transportation
+      - Identification
