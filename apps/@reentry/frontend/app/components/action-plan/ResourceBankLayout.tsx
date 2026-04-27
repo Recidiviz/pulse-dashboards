@@ -75,7 +75,7 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
     removeResource,
     isLoading: isResourceBankLoading,
     isError: didResourceBankError,
-  } = useResourceBank();
+  } = useResourceBank(planDetail?.latest_generation?.id ?? undefined);
 
   const {
     displayMarkdown,

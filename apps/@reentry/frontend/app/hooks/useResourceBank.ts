@@ -23,17 +23,9 @@ import {
   showSuccessToast,
 } from "~@reentry/frontend-shared";
 
+import { $api } from "../api";
 import type { ResourceSection, ResourceWithMeta } from "./resourceBank.types";
 import { useMockRessourceAPICall } from "./useMockRessourceAPICall";
-
-// Phase 2: replace with real $api.useMutation calls.
-const mockAddResourceApi = async (
-  section: string,
-  resource: ResourceWithMeta,
-): Promise<void> => {
-  console.log("[mock] addResource", { section, resource });
-  return new Promise((resolve) => setTimeout(resolve, 500));
-};
 
 const mockRemoveResourceApi = async (
   section: string,
@@ -43,11 +35,16 @@ const mockRemoveResourceApi = async (
   return new Promise((resolve) => setTimeout(resolve, 500));
 };
 
-export const useResourceBank = () => {
+export const useResourceBank = (planGenerationId: string | undefined) => {
   const { data, isLoading, isError } = useMockRessourceAPICall();
 
   const [sections, setSections] = useState<ResourceSection[]>(
     () => data?.resources_by_sections ?? [],
+  );
+
+  const { mutateAsync: addResourceMutation } = $api.useMutation(
+    "post",
+    "/add-resource",
   );
 
   // Re-initialise when mock data becomes available (e.g. after loading state).
@@ -99,7 +96,21 @@ export const useResourceBank = () => {
     }
     appendResourceToSection(sectionTitle, resource);
 
-    mockAddResourceApi(sectionTitle, resource).then(
+    if (!planGenerationId) {
+      showErrorToast(
+        `Failed to add ${resource.name} to ${sectionTitle} resources.`,
+      );
+      removeResourceFromSection(sectionTitle, resource.id);
+      return;
+    }
+
+    addResourceMutation({
+      body: {
+        resource_id: Number(resource.id),
+        section_title: sectionTitle,
+        plan_generation_id: planGenerationId,
+      },
+    }).then(
       () =>
         showSuccessToast(
           `${resource.name} added to ${sectionTitle} resources.`,

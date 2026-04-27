@@ -1,7 +1,7 @@
 import ipaddress
 import socket
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from io import BytesIO
 from typing import List, Optional
 from urllib.parse import urlparse
@@ -37,6 +37,7 @@ from app.crud.plan_asset import (
     get_assets_by_plan_id,
 )
 from app.crud.plan_generation import (
+    add_resource_association,
     create_plan_generation,
     get_gen_by_id,
     get_gen_by_plan_id,
@@ -46,7 +47,9 @@ from app.models.models import (
     Plan,
     PlanAsset,
     PlanGeneration,
+    PlanGenerationResourceAssociation,
     PlanGenerationStatus,
+    ResourceAssociationAction,
 )
 from app.routes.base import (
     DeletionResponse,
@@ -123,7 +126,9 @@ def _safe_url_fetcher(url, timeout=10, ssl_context=None):
 
     # Resolve DNS and block if it points to a private/internal IP
     try:
-        resolved_ips = socket.getaddrinfo(hostname, parsed.port or 80, proto=socket.IPPROTO_TCP)
+        resolved_ips = socket.getaddrinfo(
+            hostname, parsed.port or 80, proto=socket.IPPROTO_TCP
+        )
         for family, _, _, _, sockaddr in resolved_ips:
             ip_str = sockaddr[0]
             if _is_blocked_ip(ip_str):
@@ -892,6 +897,61 @@ async def search_resources(
         )
 
 
+class AddResourceRequest(BaseModel):
+    resource_id: int
+    section_title: str
+    plan_generation_id: UUID
+
+
+class AddResourceResponse(BaseModel):
+    id: int
+    plan_generation_id: UUID
+    resource_id: int
+    section_title: str
+    action: str
+    action_by: str
+    action_at: datetime
+
+
+@router.post(
+    "/add-resource",
+    response_model=AddResourceResponse,
+    summary="Add resource to plan generation",
+    description="Record a resource addition event for a plan generation.",
+    tags=["Plans"],
+)
+async def router_add_resource(
+    request: AddResourceRequest,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    gen = await get_gen_by_id(session, request.plan_generation_id)
+    if gen is None:
+        raise HTTPException(status_code=404, detail="Plan generation not found")
+
+    plan = await get_plan_by_id(session, gen.plan_id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
+
+    association = PlanGenerationResourceAssociation(
+        plan_generation_id=request.plan_generation_id,
+        resource_id=request.resource_id,
+        section_title=request.section_title,
+        action=ResourceAssociationAction.ADD,
+        action_by=auth_user_context["email"],
+        action_at=datetime.now(UTC),
+    )
+    result = await add_resource_association(session, association)
+    return result
+
+
 @router.get(
     "/plans/{id}/suggested-resources",
     response_model=list[Resource],
@@ -1006,15 +1066,17 @@ async def router_set_generation_notify(
 # Allowlist of safe WeasyPrint write_pdf options. The 'target' parameter is
 # explicitly excluded because it writes the PDF to a server filesystem path
 # instead of returning bytes, enabling arbitrary file write attacks.
-_SAFE_PDF_OPTIONS = frozenset({
-    "presentational_hints",
-    "optimize_images",
-    "pdf_version",
-    "pdf_variant",
-    "pdf_identifier",
-    "pdf_forms",
-    "uncompressed_pdf",
-})
+_SAFE_PDF_OPTIONS = frozenset(
+    {
+        "presentational_hints",
+        "optimize_images",
+        "pdf_version",
+        "pdf_variant",
+        "pdf_identifier",
+        "pdf_forms",
+        "uncompressed_pdf",
+    }
+)
 
 
 class PDFRequest(BaseModel):

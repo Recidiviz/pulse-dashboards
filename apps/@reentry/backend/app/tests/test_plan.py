@@ -1,11 +1,19 @@
 import asyncio
 import uuid
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from sqlmodel import select
 
 from app.crud.address import update_intake_address
+from app.models.models import (
+    GenerationType,
+    Plan,
+    PlanGeneration,
+    PlanGenerationResourceAssociation,
+)
 from app.routes.shared_models import AddressSubmission
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
@@ -1044,3 +1052,124 @@ async def test_plan_create_summary_only_workflow(
     # Verify the error message indicates no action plan support
     error_data = response.json()
     assert "does not support action plan generation" in error_data["detail"].lower()
+
+
+# ---------------------------------------------------------------------------
+# POST /add-resource
+# ---------------------------------------------------------------------------
+
+
+async def _create_plan_with_generation(async_session, client_pseudo_id, intake_id):
+    """Create a plan and a manual generation directly in the DB."""
+    plan = Plan(client_pseudo_id=client_pseudo_id, intake_id=intake_id)
+    async_session.add(plan)
+    await async_session.commit()
+    await async_session.refresh(plan)
+
+    gen = PlanGeneration(
+        plan_id=plan.id,
+        markdown_result="# Test Plan",
+        finished_at=datetime.utcnow(),
+        gen_type=GenerationType.MANUAL,
+    )
+    async_session.add(gen)
+    await async_session.commit()
+    await async_session.refresh(gen)
+
+    return plan, gen
+
+
+@pytest.mark.asyncio
+async def test_add_resource_success(
+    mock_clientdata_service,
+    mock_intake,
+    client,
+    async_session,
+    assert_response,
+):
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    plan, gen = await _create_plan_with_generation(
+        async_session, client_pseudo_id, mock_intake.id
+    )
+
+    response = await client.post(
+        "/add-resource",
+        json={
+            "resource_id": 123,
+            "section_title": "Housing",
+            "plan_generation_id": str(gen.id),
+        },
+    )
+
+    assert_response(response, 200)
+    data = response.json()
+    assert data["resource_id"] == 123
+    assert data["section_title"] == "Housing"
+    assert data["action"] == "ADD"
+    assert data["action_by"] == "test@recidiviz.org"  # from mock auth context
+    assert data["plan_generation_id"] == str(gen.id)
+    assert data["id"] is not None
+
+    # Verify the row was persisted to the database
+    result = await async_session.exec(
+        select(PlanGenerationResourceAssociation).where(
+            PlanGenerationResourceAssociation.plan_generation_id == gen.id
+        )
+    )
+    rows = result.all()
+    assert len(rows) == 1
+    assert rows[0].resource_id == 123
+    assert rows[0].section_title == "Housing"
+    assert rows[0].action_by == "test@recidiviz.org"
+
+
+@pytest.mark.asyncio
+async def test_add_resource_gen_not_found(
+    mock_clientdata_service,
+    client,
+    async_session,
+    assert_response,
+):
+    response = await client.post(
+        "/add-resource",
+        json={
+            "user_email": "staff@recidiviz.org",
+            "resource_id": 123,
+            "section_title": "Housing",
+            "plan_generation_id": str(uuid.uuid4()),
+        },
+    )
+
+    assert_response(response, 404)
+
+
+@pytest.mark.asyncio
+async def test_add_resource_appends_multiple_rows(
+    mock_clientdata_service,
+    mock_intake,
+    client,
+    async_session,
+    assert_response,
+):
+    """Each call appends a new ledger row — duplicates are allowed."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    plan, gen = await _create_plan_with_generation(
+        async_session, client_pseudo_id, mock_intake.id
+    )
+
+    payload = {
+        "resource_id": 123,
+        "section_title": "Housing",
+        "plan_generation_id": str(gen.id),
+    }
+
+    assert_response(await client.post("/add-resource", json=payload), 200)
+    assert_response(await client.post("/add-resource", json=payload), 200)
+
+    result = await async_session.exec(
+        select(PlanGenerationResourceAssociation).where(
+            PlanGenerationResourceAssociation.plan_generation_id == gen.id
+        )
+    )
+    rows = result.all()
+    assert len(rows) == 2

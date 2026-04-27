@@ -5,7 +5,13 @@ from uuid import uuid4
 import pytest
 
 from app.core.db import AsyncSession
-from app.models.models import Plan, PlanAsset, PlanGeneration, PlanGenerationResourceAssociation, ResourceAssociationAction
+from app.models.models import (
+    Plan,
+    PlanAsset,
+    PlanGeneration,
+    PlanGenerationResourceAssociation,
+    ResourceAssociationAction,
+)
 
 
 @pytest.mark.asyncio
@@ -66,7 +72,7 @@ async def test_create_plan_generation(async_session: AsyncSession):
 
 
 def _make_event(
-    resource_id: str,
+    resource_id: int,
     action: ResourceAssociationAction,
     action_at: datetime,
     section_title: str = "Housing",
@@ -94,46 +100,84 @@ def _call_property(gen) -> list:
 
 
 def test_active_resource_associations_returns_added_resources():
-    gen = _gen_with_events([
-        _make_event("r1", ResourceAssociationAction.ADD, datetime(2024, 1, 1, tzinfo=timezone.utc)),
-        _make_event("r2", ResourceAssociationAction.ADD, datetime(2024, 1, 2, tzinfo=timezone.utc)),
-    ])
+    gen = _gen_with_events(
+        [
+            _make_event(
+                1,
+                ResourceAssociationAction.ADD,
+                datetime(2024, 1, 1, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                2,
+                ResourceAssociationAction.ADD,
+                datetime(2024, 1, 2, tzinfo=timezone.utc),
+            ),
+        ]
+    )
 
-    assert {a.resource_id for a in _call_property(gen)} == {"r1", "r2"}
+    assert {a.resource_id for a in _call_property(gen)} == {1, 2}
 
 
 def test_active_resource_associations_excludes_removed_resources():
-    gen = _gen_with_events([
-        _make_event("r1", ResourceAssociationAction.ADD, datetime(2024, 1, 1, tzinfo=timezone.utc)),
-        _make_event("r1", ResourceAssociationAction.REMOVE, datetime(2024, 1, 2, tzinfo=timezone.utc)),
-    ])
+    gen = _gen_with_events(
+        [
+            _make_event(
+                1,
+                ResourceAssociationAction.ADD,
+                datetime(2024, 1, 1, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                1,
+                ResourceAssociationAction.REMOVE,
+                datetime(2024, 1, 2, tzinfo=timezone.utc),
+            ),
+        ]
+    )
 
     assert _call_property(gen) == []
 
 
 def test_active_resource_associations_re_added_resource_is_active():
-    gen = _gen_with_events([
-        _make_event("r1", ResourceAssociationAction.ADD, datetime(2024, 1, 1, tzinfo=timezone.utc)),
-        _make_event("r1", ResourceAssociationAction.REMOVE, datetime(2024, 1, 2, tzinfo=timezone.utc)),
-        _make_event("r1", ResourceAssociationAction.ADD, datetime(2024, 1, 3, tzinfo=timezone.utc)),
-    ])
+    gen = _gen_with_events(
+        [
+            _make_event(
+                1,
+                ResourceAssociationAction.ADD,
+                datetime(2024, 1, 1, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                1,
+                ResourceAssociationAction.REMOVE,
+                datetime(2024, 1, 2, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                1,
+                ResourceAssociationAction.ADD,
+                datetime(2024, 1, 3, tzinfo=timezone.utc),
+            ),
+        ]
+    )
 
     active = _call_property(gen)
 
     assert len(active) == 1
-    assert active[0].resource_id == "r1"
+    assert active[0].resource_id == 1
 
 
 def test_active_resource_associations_reflects_latest_section_title():
     """When a resource is re-added to a different section, the new section is returned."""
-    t1, t2, t3 = (
-        datetime(2024, 1, d, tzinfo=timezone.utc) for d in (1, 2, 3)
+    t1, t2, t3 = (datetime(2024, 1, d, tzinfo=timezone.utc) for d in (1, 2, 3))
+    gen = _gen_with_events(
+        [
+            _make_event(1, ResourceAssociationAction.ADD, t1, section_title="Housing"),
+            _make_event(
+                1, ResourceAssociationAction.REMOVE, t2, section_title="Housing"
+            ),
+            _make_event(
+                1, ResourceAssociationAction.ADD, t3, section_title="Employment"
+            ),
+        ]
     )
-    gen = _gen_with_events([
-        _make_event("r1", ResourceAssociationAction.ADD, t1, section_title="Housing"),
-        _make_event("r1", ResourceAssociationAction.REMOVE, t2, section_title="Housing"),
-        _make_event("r1", ResourceAssociationAction.ADD, t3, section_title="Employment"),
-    ])
 
     active = _call_property(gen)
 
@@ -143,10 +187,14 @@ def test_active_resource_associations_reflects_latest_section_title():
 def test_active_resource_associations_same_resource_in_multiple_sections():
     """A resource added to two different sections should appear as active in both."""
     t1, t2 = (datetime(2024, 1, d, tzinfo=timezone.utc) for d in (1, 2))
-    gen = _gen_with_events([
-        _make_event("r1", ResourceAssociationAction.ADD, t1, section_title="Housing"),
-        _make_event("r1", ResourceAssociationAction.ADD, t2, section_title="Employment"),
-    ])
+    gen = _gen_with_events(
+        [
+            _make_event(1, ResourceAssociationAction.ADD, t1, section_title="Housing"),
+            _make_event(
+                1, ResourceAssociationAction.ADD, t2, section_title="Employment"
+            ),
+        ]
+    )
 
     active = _call_property(gen)
 

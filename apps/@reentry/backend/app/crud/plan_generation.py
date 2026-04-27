@@ -7,7 +7,7 @@ from sqlmodel.sql.expression import SelectOfScalar
 
 from app.core.db import AsyncSession
 from app.crud.utils import statement_or_result
-from app.models.models import PlanGeneration
+from app.models.models import PlanGeneration, PlanGenerationResourceAssociation
 
 
 async def create_plan_generation(
@@ -99,3 +99,13 @@ async def update_plan_generation(session: AsyncSession, gen: PlanGeneration):
     session.add(gen)
     await session.commit()
     await session.refresh(gen)
+
+
+async def add_resource_association(
+    session: AsyncSession,
+    association: PlanGenerationResourceAssociation,
+) -> PlanGenerationResourceAssociation:
+    session.add(association)
+    await session.commit()
+    await session.refresh(association)
+    return association

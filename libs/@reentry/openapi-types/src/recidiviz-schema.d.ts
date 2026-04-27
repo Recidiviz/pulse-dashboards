@@ -872,6 +872,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/config-management/outputs/{config_id}/eval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Output Config Eval Results
+         * @description Retrieve the most recent eval results for an output config.
+         */
+        get: operations["get_output_config_eval_results_config_management_outputs__config_id__eval_get"];
+        put?: never;
+        /**
+         * Trigger Output Config Eval
+         * @description Generate a summary with this config against a hardcoded intake and run LLM-as-judge evaluations. Only supported for intake_summary configs.
+         */
+        post: operations["trigger_summary_output_config_eval_config_management_outputs__config_id__eval_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/config-management/audit": {
         parameters: {
             query?: never;
@@ -2131,6 +2155,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/add-resource": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add resource to plan generation
+         * @description Record a resource addition event for a plan generation.
+         */
+        post: operations["router_add_resource_add_resource_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/plans/{id}/suggested-resources": {
         parameters: {
             query?: never;
@@ -2560,6 +2604,41 @@ export interface components {
             pseudonymized_client_id: string;
             /** Message */
             message: string;
+        };
+        /** AddResourceRequest */
+        AddResourceRequest: {
+            /** Resource Id */
+            resource_id: number;
+            /** Section Title */
+            section_title: string;
+            /**
+             * Plan Generation Id
+             * Format: uuid
+             */
+            plan_generation_id: string;
+        };
+        /** AddResourceResponse */
+        AddResourceResponse: {
+            /** Id */
+            id: number;
+            /**
+             * Plan Generation Id
+             * Format: uuid
+             */
+            plan_generation_id: string;
+            /** Resource Id */
+            resource_id: number;
+            /** Section Title */
+            section_title: string;
+            /** Action */
+            action: string;
+            /** Action By */
+            action_by: string;
+            /**
+             * Action At
+             * Format: date-time
+             */
+            action_at: string;
         };
         /** AddressSubmission */
         AddressSubmission: {
@@ -3227,6 +3306,67 @@ export interface components {
          * @enum {string}
          */
         DeletionStatus: "success" | "failed";
+        /**
+         * EvalExecutionSummary
+         * @description Execution status snapshot embedded in eval result responses.
+         */
+        EvalExecutionSummary: {
+            /** Status */
+            status: string;
+            /** Progress */
+            progress: number;
+            /** Message */
+            message?: string | null;
+        };
+        /**
+         * EvalResultResponse
+         * @description Response schema for a single eval result.
+         */
+        EvalResultResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Output Config Id
+             * Format: uuid
+             */
+            output_config_id: string;
+            /** Metrics */
+            metrics?: Record<string, never> | null;
+            /** Created By Email */
+            created_by_email?: string | null;
+            /** Ran At */
+            ran_at?: string | null;
+            execution?: components["schemas"]["EvalExecutionSummary"] | null;
+        };
+        /**
+         * EvalTriggerResponse
+         * @description Response returned immediately when an eval is triggered.
+         */
+        EvalTriggerResponse: {
+            /**
+             * Execution Id
+             * Format: uuid
+             */
+            execution_id: string;
+            /**
+             * Eval Result Id
+             * Format: uuid
+             */
+            eval_result_id: string;
+        };
         /** ExecutionResponse */
         ExecutionResponse: {
             /**
@@ -6966,6 +7106,76 @@ export interface operations {
             };
         };
     };
+    get_output_config_eval_results_config_management_outputs__config_id__eval_get: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalResultResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trigger_summary_output_config_eval_config_management_outputs__config_id__eval_post: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalTriggerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_audit_logs_config_management_audit_get: {
         parameters: {
             query?: {
@@ -9265,6 +9475,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetResourcesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_add_resource_add_resource_post: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddResourceResponse"];
                 };
             };
             /** @description Validation Error */

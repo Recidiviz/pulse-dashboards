@@ -40,6 +40,13 @@ vi.mock("~@reentry/frontend-shared", () => ({
 
 vi.mock("../../app/hooks/useMockRessourceAPICall");
 
+const mockMutateAsync = vi.hoisted(() => vi.fn().mockResolvedValue({}));
+vi.mock("../../app/api", () => ({
+  $api: {
+    useMutation: () => ({ mutateAsync: mockMutateAsync }),
+  },
+}));
+
 const makeResource = (id: string, name: string): ResourceWithMeta =>
   ({ id, name, origin: "GOOGLE" }) as ResourceWithMeta;
 
@@ -62,18 +69,17 @@ beforeEach(() => {
     isLoading: false,
     isError: false,
   });
-  vi.useFakeTimers();
 });
 
 afterEach(() => {
-  vi.useRealTimers();
   vi.clearAllMocks();
+  mockMutateAsync.mockResolvedValue({});
 });
 
 describe("useResourceBank", () => {
   describe("initial state", () => {
     it("populates sections from plan data", () => {
-      const { result } = renderHook(() => useResourceBank());
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       expect(getSectionResources(result, HOUSING_SECTION)).toEqual(
         housingResources,
       );
@@ -85,7 +91,7 @@ describe("useResourceBank", () => {
         isLoading: true,
         isError: false,
       });
-      const { result } = renderHook(() => useResourceBank());
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       expect(result.current.isLoading).toBe(true);
       expect(result.current.isError).toBe(false);
     });
@@ -93,7 +99,7 @@ describe("useResourceBank", () => {
 
   describe("addResource", () => {
     it("optimistically appends the resource", () => {
-      const { result } = renderHook(() => useResourceBank());
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       const newResource = makeResource("r-new", "New Shelter");
 
       act(() => {
@@ -106,7 +112,7 @@ describe("useResourceBank", () => {
     });
 
     it("does nothing when the resource is already in the section", () => {
-      const { result } = renderHook(() => useResourceBank());
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
 
       act(() => {
         result.current.addResource(
@@ -138,7 +144,7 @@ describe("useResourceBank", () => {
         isError: false,
       });
 
-      const { result } = renderHook(() => useResourceBank());
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
 
       act(() => {
         result.current.addResource(
@@ -154,26 +160,40 @@ describe("useResourceBank", () => {
     });
 
     it("shows a success toast after the API resolves", async () => {
-      const { result } = renderHook(() => useResourceBank());
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       const newResource = makeResource("r-new", "New Shelter");
 
-      act(() => {
-        result.current.addResource(HOUSING_SECTION, newResource);
-      });
-
       await act(async () => {
-        await vi.runAllTimersAsync();
+        result.current.addResource(HOUSING_SECTION, newResource);
       });
 
       expect(vi.mocked(showSuccessToast)).toHaveBeenCalledWith(
         expect.stringContaining("New Shelter"),
       );
     });
+
+    it("rolls back and shows error toast when the API rejects", async () => {
+      mockMutateAsync.mockRejectedValue(new Error("network error"));
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
+      const newResource = makeResource("r-new", "New Shelter");
+
+      await act(async () => {
+        result.current.addResource(HOUSING_SECTION, newResource);
+      });
+
+      expect(vi.mocked(showErrorToast)).toHaveBeenCalledWith(
+        expect.stringContaining("New Shelter"),
+      );
+      expect(getSectionResources(result, HOUSING_SECTION)).not.toContainEqual(
+        newResource,
+      );
+    });
   });
 
   describe("removeResource", () => {
     it("optimistically removes the resource", () => {
-      const { result } = renderHook(() => useResourceBank());
+      vi.useFakeTimers();
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       const [first] = housingResources;
 
       act(() => {
@@ -186,10 +206,12 @@ describe("useResourceBank", () => {
       expect(getSectionResources(result, HOUSING_SECTION)).toHaveLength(
         housingResources.length - 1,
       );
+      vi.useRealTimers();
     });
 
     it("shows a success toast with name and section after the API resolves", async () => {
-      const { result } = renderHook(() => useResourceBank());
+      vi.useFakeTimers();
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       const [first] = housingResources;
 
       act(() => {
@@ -206,10 +228,12 @@ describe("useResourceBank", () => {
       expect(vi.mocked(showSuccessToast)).toHaveBeenCalledWith(
         expect.stringContaining(HOUSING_SECTION),
       );
+      vi.useRealTimers();
     });
 
     it("does nothing when the section does not exist", () => {
-      const { result } = renderHook(() => useResourceBank());
+      vi.useFakeTimers();
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
 
       act(() => {
         result.current.removeResource("Nonexistent Section", "res-housing-001");
@@ -218,6 +242,7 @@ describe("useResourceBank", () => {
       expect(getSectionResources(result, HOUSING_SECTION)).toHaveLength(
         housingResources.length,
       );
+      vi.useRealTimers();
     });
   });
 });
