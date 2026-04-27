@@ -277,6 +277,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usMiCustodyLevelDowngrade: {},
         usMiSecurityClassificationCommittee: { activeTenants: ["US_MI"] },
         usMiFacilitySearch: {},
+        usMiRestrictiveHousingV2: {},
         usMoOverdueRHPilot: {},
         usOrEarnedDischargeSentence: {},
         usTnExpiration: {},
