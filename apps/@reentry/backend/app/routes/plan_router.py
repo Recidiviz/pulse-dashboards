@@ -10,13 +10,6 @@ from uuid import UUID
 import orjson
 import structlog
 import weasyprint
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
-from fastapi.responses import StreamingResponse
-from fastapi_pagination import Page
-from fastapi_pagination.ext.sqlmodel import paginate
-from pydantic import BaseModel, computed_field
-from weasyprint import CSS, HTML
-
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
 from app.crud.address import update_intake_address
@@ -50,11 +43,7 @@ from app.models.models import (
     PlanGeneration,
     PlanGenerationStatus,
 )
-from app.routes.base import (
-    DeletionResponse,
-    DeletionStatus,
-    ORMResponse,
-)
+from app.routes.base import DeletionResponse, DeletionStatus, ORMResponse
 from app.routes.shared_models import (
     AddressSubmission,
     ClientAddressResponse,
@@ -63,6 +52,7 @@ from app.routes.shared_models import (
 from app.routes.shared_models import PlanResponse as BasePlanResponse
 from app.services.client_data.queries import Queries
 from app.services.resources import (
+    BatchGetResources,
     GetPlanResourcesRequest,
     GetResourcesRequest,
     GetResourcesResponse,
@@ -71,8 +61,10 @@ from app.services.resources import (
     ResourceCategoryLegacy,
     ResourceSubcategory,
     ResourceSubcategoryLegacy,
+    TravelMode,
     list_resources,
 )
+from app.services.resources.api import batch_get_resources
 from app.utils.address_autocomplete import (
     AutocompleteAddressResponse,
     AutocompleteCityResponse,
@@ -80,10 +72,14 @@ from app.utils.address_autocomplete import (
 from app.utils.address_autocomplete import (
     autocomplete_address as autocomplete_address_util,
 )
-from app.utils.address_autocomplete import (
-    autocomplete_city as autocomplete_city_util,
-)
+from app.utils.address_autocomplete import autocomplete_city as autocomplete_city_util
 from app.utils.permission_utils import check_access
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
+from fastapi.responses import StreamingResponse
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlmodel import paginate
+from pydantic import BaseModel, computed_field
+from weasyprint import CSS, HTML
 
 from ..utils.PrometheusBackgroundThreadManager import (
     llm_plan_creation_total_counter,
@@ -1308,3 +1304,56 @@ async def autocomplete_city(
     Filters for US cities only, with optional state filter
     """
     return await autocomplete_city_util(input, state, address_suggestion_selected)
+
+
+@router.get(
+    "/plan-generation/{plan_gen_id}/active-resources",
+    response_model=list[Resource],
+    summary="Get active resources for the given plan generation",
+    description="Get all information on active resource information for a given plan generation",
+    tags=["Plans"],
+)
+async def get_active_resources(
+    plan_gen_id: uuid.UUID,
+    travel_mode: TravelMode | None = TravelMode.DRIVING,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    plan_gen = await get_gen_by_id(session, plan_gen_id)
+    if plan_gen is None:
+        raise HTTPException(status_code=404, detail="Plan generation not found")
+
+    plan = await get_plan_by_id(session, plan_gen.plan_id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
+
+    active_associations = plan_gen.active_resource_associations
+    if not active_associations:
+        return []
+
+    if not plan.intake or not plan.intake.address:
+        raise HTTPException(status_code=400, detail="Client address not available")
+
+    try:
+        return await batch_get_resources(
+            BatchGetResources(
+                address=plan.intake.address.as_formatted_string(),
+                ids=[int(a.resource_id) for a in active_associations],
+                travel_mode=travel_mode,
+            )
+        )
+    except Exception as e:
+        logger.exception(
+            f"Error fetching active resources for plan generation {plan_gen_id}: {str(e)}"
+        )
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching resources: {str(e)}"
+        )

@@ -6,6 +6,7 @@ import pytest
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     ApiSearchResult,
+    BatchGetResources,
     GetResourcesRequest,
     Location,
     ResourceCategory,
@@ -20,6 +21,7 @@ from app.services.resources import (
     is_subcategory,
     list_resources,
 )
+from app.services.resources.api import batch_get_resources
 from app.utils.disallowed_resources import DISALLOWED_RESOURCE_NAMES
 
 CHICAGO = "Chicago, IL"
@@ -788,3 +790,145 @@ async def test_use_search_parameter(mock_httpx):
     assert "/api/v0/search" in captured_urls[0]
     assert response.resources
     assert len(response.resources) == 1
+
+
+# ============================================================================
+# Tests for BatchGetResources model and batch_get_resources function
+# ============================================================================
+
+
+def test_batch_get_resources_default_travel_mode():
+    request = BatchGetResources(address="123 Main St, Portland, OR", resource_ids=[1, 2])
+    assert request.travel_mode == TravelMode.DRIVING
+
+
+def test_batch_get_resources_explicit_travel_mode():
+    request = BatchGetResources(
+        address="123 Main St, Portland, OR",
+        resource_ids=[1, 2],
+        travel_mode=TravelMode.TRANSIT,
+    )
+    assert request.travel_mode == TravelMode.TRANSIT
+
+
+def test_batch_get_resources_allows_none_travel_mode():
+    request = BatchGetResources(
+        address="123 Main St, Portland, OR",
+        resource_ids=[1],
+        travel_mode=None,
+    )
+    assert request.travel_mode is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+@patch("httpx.AsyncClient")
+async def test_batch_get_resources_success(mock_httpx):
+    """Returns a list of Resource objects on a 200 response."""
+    from unittest.mock import MagicMock
+
+    mock_response_data = [
+        {
+            "google_place_id": "place_42",
+            "name": "Portland Housing Resource",
+            "category": "Housing",
+            "subcategory": "Emergency housing and shelters",
+            "origin": "TEST",
+            "location": {"latitude": 45.5051, "longitude": -122.6750},
+            "address": "100 NW 1st Ave, Portland, OR 97209",
+            "phone": "503-555-0100",
+            "travel_mode": "DRIVE",
+            "travel_duration_minutes": 12,
+        }
+    ]
+
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = mock_response_data
+    mock_httpx.return_value.__aenter__.return_value.post = AsyncMock(
+        return_value=mock_response
+    )
+
+    request = BatchGetResources(
+        address="123 Main St, Portland, OR",
+        resource_ids=[42],
+        travel_mode=TravelMode.DRIVING,
+    )
+    result = await batch_get_resources(request)
+
+    assert len(result) == 1
+    assert result[0].id == "place_42"
+    assert result[0].name == "Portland Housing Resource"
+    assert result[0].transport_minutes == 12
+    assert result[0].transport_mode == TravelMode.DRIVING
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+@patch("httpx.AsyncClient")
+async def test_batch_get_resources_no_content_returns_empty(mock_httpx):
+    """204 No Content response returns an empty list without raising."""
+    from unittest.mock import MagicMock
+
+    mock_response = MagicMock()
+    mock_response.status_code = 204
+    mock_httpx.return_value.__aenter__.return_value.post = AsyncMock(
+        return_value=mock_response
+    )
+
+    result = await batch_get_resources(
+        BatchGetResources(address="123 Main St, Portland, OR", resource_ids=[1])
+    )
+    assert result == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+@patch("httpx.AsyncClient")
+async def test_batch_get_resources_api_error_raises(mock_httpx):
+    """Non-200/204 response raises an Exception."""
+    from unittest.mock import MagicMock
+
+    mock_response = MagicMock()
+    mock_response.status_code = 500
+    mock_response.text = "Internal Server Error"
+    mock_httpx.return_value.__aenter__.return_value.post = AsyncMock(
+        return_value=mock_response
+    )
+
+    with pytest.raises(Exception, match="API request failed with status 500"):
+        await batch_get_resources(
+            BatchGetResources(address="123 Main St, Portland, OR", resource_ids=[1])
+        )
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+@patch("httpx.AsyncClient")
+async def test_batch_get_resources_calls_correct_endpoint(mock_httpx):
+    """Verifies the POST is sent to /api/v0/resources with the right payload."""
+    from unittest.mock import MagicMock
+
+    captured_calls: list[dict] = []
+
+    async def mock_post(url, **kwargs):
+        captured_calls.append({"url": url, "json": kwargs.get("json")})
+        mock_response = MagicMock()
+        mock_response.status_code = 204
+        return mock_response
+
+    mock_httpx.return_value.__aenter__.return_value.post = mock_post
+
+    request = BatchGetResources(
+        address="123 Main St, Portland, OR",
+        resource_ids=[10, 20],
+        travel_mode=TravelMode.WALKING,
+    )
+    await batch_get_resources(request)
+
+    assert len(captured_calls) == 1
+    assert "/api/v0/resources" in captured_calls[0]["url"]
+    payload = captured_calls[0]["json"]
+    assert payload["address"] == "123 Main St, Portland, OR"
+    assert payload["resource_ids"] == [10, 20]
+    assert payload["travel_mode"] == TravelMode.WALKING

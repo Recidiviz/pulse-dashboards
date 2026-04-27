@@ -7,6 +7,7 @@ from fastapi import status
 from app.core.config import settings
 from app.services.resources import (
     ApiSearchResult,
+    BatchGetResources,
     GetResourcesRequest,
     GetResourcesResponse,
     Resource,
@@ -89,6 +90,40 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
         score=None,
     )
     return resource
+
+
+async def batch_get_resources(request: BatchGetResources) -> list[Resource]:
+    """
+    Fetch enriched details for a specific set of resources by ID from the external API.
+
+    POSTs to /api/v0/resources with the client address and resource IDs so the
+    external service can compute travel time/mode for each resource.
+
+    Args:
+        request: Address, resource IDs, and optional travel mode
+
+    Returns:
+        List of Resource objects with travel and contact details populated
+    """
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{settings.EXTERNAL_RESOURCES_API_URL}/api/v0/resources",
+            json={
+                "address": request.address,
+                "ids": request.ids,
+                "travel_mode": request.travel_mode,
+            },
+            headers={"x-api-key": settings.RESOURCES_API_KEY},
+            timeout=30.0,
+        )
+        if response.status_code == status.HTTP_204_NO_CONTENT:
+            return []
+        if response.status_code != 200:
+            raise Exception(
+                f"API request failed with status {response.status_code}: {response.text}"
+            )
+        results = [ApiSearchResult.model_validate(data) for data in response.json()]
+        return [_convert_to_internal_resource(r) for r in results]
 
 
 async def list_external_resources(request: GetResourcesRequest) -> GetResourcesResponse:

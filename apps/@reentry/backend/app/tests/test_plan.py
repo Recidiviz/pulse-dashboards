@@ -1,6 +1,6 @@
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -24,6 +24,7 @@ from app.services.resources import (
     ResourceCategoryLegacy,
     ResourceSubcategory,
     ResourceSubcategoryLegacy,
+    TravelMode,
 )
 from app.utils.action_plan_types import ActionPlan, ActionPlanMarkdown
 
@@ -1269,3 +1270,244 @@ async def test_remove_resource_appends_multiple_rows(
     )
     rows = result.all()
     assert len(rows) == 2
+
+
+# ============================================================================
+# Tests for GET /plan-generation/{plan_gen_id}/active-resources
+# ============================================================================
+
+
+async def _create_plan_with_address(client, async_session, mock_clientdata_service, mock_intake):
+    """Helper: create a plan and add an address to the intake, return plan_id."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    response = await client.post(
+        "/plans",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "intake_id": str(mock_intake.id),
+            "no_initial_generation": True,
+        },
+    )
+    assert response.status_code == 200
+    plan_id = response.json()["id"]
+    await update_intake_address(
+        async_session,
+        mock_intake.id,
+        AddressSubmission(street_address="123 Main St", city="Portland", state="OR"),
+    )
+    return plan_id
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_plan_gen_not_found(
+    mock_clientdata_service, client, async_session, assert_response
+):
+    """404 when the plan generation ID does not exist."""
+    response = await client.get(f"/plan-generation/{uuid.uuid4()}/active-resources")
+    assert_response(response, 404)
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_no_associations(
+    mock_clientdata_service, mock_intake, client, async_session, assert_response
+):
+    """Returns [] when the plan generation has no active resource associations."""
+    plan_id = await _create_plan_with_address(
+        client, async_session, mock_clientdata_service, mock_intake
+    )
+
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    async_session.add(plan_gen)
+    await async_session.commit()
+    await async_session.refresh(plan_gen)
+
+    response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
+    assert_response(response, 200)
+    assert response.json() == []
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_no_address(
+    mock_clientdata_service, mock_intake, client, async_session, assert_response
+):
+    """400 when the plan's intake has no address but active associations exist."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    response = await client.post(
+        "/plans",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "intake_id": str(mock_intake.id),
+            "no_initial_generation": True,
+        },
+    )
+    assert response.status_code == 200
+    plan_id = response.json()["id"]
+
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    async_session.add(plan_gen)
+    await async_session.commit()
+    await async_session.refresh(plan_gen)
+
+    assoc = PlanGenerationResourceAssociation(
+        plan_generation_id=plan_gen.id,
+        resource_id="42",
+        section_title="Housing",
+        action=ResourceAssociationAction.ADD,
+        action_by="SYSTEM",
+        action_at=datetime.now(tz=timezone.utc),
+    )
+    async_session.add(assoc)
+    await async_session.commit()
+
+    response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
+    assert_response(response, 400)
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_success(
+    mock_clientdata_service, mock_intake, client, async_session, assert_response
+):
+    """Happy path: returns resources from batch_get_resources for active associations."""
+    plan_id = await _create_plan_with_address(
+        client, async_session, mock_clientdata_service, mock_intake
+    )
+
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    async_session.add(plan_gen)
+    await async_session.commit()
+    await async_session.refresh(plan_gen)
+
+    assoc = PlanGenerationResourceAssociation(
+        plan_generation_id=plan_gen.id,
+        resource_id="42",
+        section_title="Housing",
+        action=ResourceAssociationAction.ADD,
+        action_by="SYSTEM",
+        action_at=datetime.now(tz=timezone.utc),
+    )
+    async_session.add(assoc)
+    await async_session.commit()
+
+    mock_resource = Resource(
+        id="42",
+        category=ResourceCategory.HOUSING,
+        name="Portland Housing Resource",
+    )
+
+    with patch(
+        "app.routes.plan_router.batch_get_resources",
+        new_callable=AsyncMock,
+        return_value=[mock_resource],
+    ) as mock_batch:
+        response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
+        assert_response(response, 200)
+
+        data = response.json()
+        assert len(data) == 1
+        assert data[0]["id"] == "42"
+        assert data[0]["name"] == "Portland Housing Resource"
+
+        call_args = mock_batch.call_args[0][0]
+        assert call_args.resource_ids == [42]
+        assert call_args.address == "123 Main St, Portland, OR"
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_travel_mode_query_param(
+    mock_clientdata_service, mock_intake, client, async_session, assert_response
+):
+    """travel_mode query param is forwarded to batch_get_resources."""
+    plan_id = await _create_plan_with_address(
+        client, async_session, mock_clientdata_service, mock_intake
+    )
+
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    async_session.add(plan_gen)
+    await async_session.commit()
+    await async_session.refresh(plan_gen)
+
+    assoc = PlanGenerationResourceAssociation(
+        plan_generation_id=plan_gen.id,
+        resource_id="7",
+        section_title="Employment",
+        action=ResourceAssociationAction.ADD,
+        action_by="SYSTEM",
+        action_at=datetime.now(tz=timezone.utc),
+    )
+    async_session.add(assoc)
+    await async_session.commit()
+
+    with patch(
+        "app.routes.plan_router.batch_get_resources",
+        new_callable=AsyncMock,
+        return_value=[],
+    ) as mock_batch:
+        response = await client.get(
+            f"/plan-generation/{plan_gen.id}/active-resources",
+            params={"travel_mode": "TRANSIT"},
+        )
+        assert_response(response, 200)
+
+        call_args = mock_batch.call_args[0][0]
+        assert call_args.travel_mode == TravelMode.TRANSIT
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_only_active_associations_sent(
+    mock_clientdata_service, mock_intake, client, async_session, assert_response
+):
+    """Only ADD associations with no subsequent REMOVE are included in the request."""
+    plan_id = await _create_plan_with_address(
+        client, async_session, mock_clientdata_service, mock_intake
+    )
+
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    async_session.add(plan_gen)
+    await async_session.commit()
+    await async_session.refresh(plan_gen)
+
+    now = datetime.now(tz=timezone.utc)
+    # Resource 10 added then removed — should NOT appear
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=plan_gen.id,
+            resource_id="10",
+            section_title="Housing",
+            action=ResourceAssociationAction.ADD,
+            action_by="SYSTEM",
+            action_at=now,
+        )
+    )
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=plan_gen.id,
+            resource_id="10",
+            section_title="Housing",
+            action=ResourceAssociationAction.REMOVE,
+            action_by="SYSTEM",
+            action_at=now.replace(second=now.second + 1),
+        )
+    )
+    # Resource 99 added — should appear
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=plan_gen.id,
+            resource_id="99",
+            section_title="Employment",
+            action=ResourceAssociationAction.ADD,
+            action_by="SYSTEM",
+            action_at=now,
+        )
+    )
+    await async_session.commit()
+
+    with patch(
+        "app.routes.plan_router.batch_get_resources",
+        new_callable=AsyncMock,
+        return_value=[],
+    ) as mock_batch:
+        response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
+        assert_response(response, 200)
+
+        call_args = mock_batch.call_args[0][0]
+        assert call_args.resource_ids == [99]

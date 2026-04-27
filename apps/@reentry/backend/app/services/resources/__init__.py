@@ -575,6 +575,21 @@ class GetResourcesRequest(BaseModel):
         )
 
 
+class BatchGetResources(BaseModel):
+    """
+    Request model for fetching enriched details on a specific set of resources by ID.
+    Makes a GET request to /api/v0/resources in the external resources API.
+
+    """
+
+    address: str = Field(description="Client address used to compute travel time/mode.")
+    ids: list[int] = Field(description="IDs of resources to fetch.")
+    travel_mode: TravelMode | None = Field(
+        default=TravelMode.DRIVING,
+        description="Preferred travel mode (DRIVE, WALK, BICYCLE, TRANSIT)",
+    )
+
+
 class Resource(BaseModel):
     id: str = Field(description="Unique identifier for the resource.")
 
