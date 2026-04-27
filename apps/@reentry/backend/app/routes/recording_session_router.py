@@ -720,19 +720,18 @@ async def get_signed_url(
     structlog.contextvars.bind_contextvars(
         client_pseudo_id=recording_session.client_pseudo_id
     )
-
-    if recording_session.status != RecordingStatus.COMPLETED:
-        raise HTTPException(status_code=400, detail="Recording not completed yet")
-
-    if not recording_session.gcs_final_file_path:
-        raise HTTPException(status_code=400, detail="No final audio file available")
-
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
         cpa_client_locations=auth_user_context["cpa_client_locations"],
         is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
+
+    if recording_session.status != RecordingStatus.COMPLETED:
+        raise HTTPException(status_code=400, detail="Recording not completed yet")
+
+    if not recording_session.gcs_final_file_path:
+        raise HTTPException(status_code=400, detail="No final audio file available")
 
     try:
         async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
