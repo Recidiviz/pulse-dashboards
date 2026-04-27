@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans12, Sans24, spacing } from "@recidiviz/design-system";
+import {
+  Sans12,
+  Sans24,
+  spacing,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
@@ -90,6 +95,7 @@ export type FormHeaderProps = {
   heading: string;
   isMissingContent?: boolean;
   onClickDownload: () => Promise<void>;
+  downloadTooltip?: string;
   downloadButtonLabel: string;
   opportunity: Opportunity;
   children: React.ReactNode;
@@ -102,6 +108,7 @@ export const FormContainer = observer(function FormContainer({
   heading,
   isMissingContent,
   onClickDownload,
+  downloadTooltip,
   agencyName,
   hideLastEditedMessage,
   dataProviso,
@@ -162,17 +169,19 @@ export const FormContainer = observer(function FormContainer({
               {form.formIsReverting ? "Reverting..." : "Revert All Edits"}
             </RevertButton>
           )}
-          <DownloadButton
-            className="WorkflowsFormDownloadButton"
-            disabled={isDownloadButtonDisabled || form.formIsDownloading}
-            onClick={handleDownloadClick}
-          >
-            {createDownloadLabel(
-              form.formIsDownloading,
-              isDownloadButtonDisabled,
-              downloadButtonLabel,
-            )}
-          </DownloadButton>
+          <TooltipTrigger contents={downloadTooltip}>
+            <DownloadButton
+              className="WorkflowsFormDownloadButton"
+              disabled={isDownloadButtonDisabled || form.formIsDownloading}
+              onClick={handleDownloadClick}
+            >
+              {createDownloadLabel(
+                form.formIsDownloading,
+                isDownloadButtonDisabled,
+                downloadButtonLabel,
+              )}
+            </DownloadButton>
+          </TooltipTrigger>
         </FormHeaderSection>
       </FormHeaderBar>
       <FormPreviewContainer>{children}</FormPreviewContainer>

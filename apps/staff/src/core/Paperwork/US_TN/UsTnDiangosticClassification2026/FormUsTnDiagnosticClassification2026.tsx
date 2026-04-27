@@ -20,6 +20,7 @@ import React, { useState } from "react";
 
 import { dcafAssessmentQuestions } from "~datatypes";
 
+import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
 import { Resident } from "../../../../WorkflowsStore/Resident";
@@ -32,6 +33,7 @@ import { downloadZipFile } from "../../utils";
 import { CafScoreSourceModal } from "../common/cafScoreSourceModal";
 import {
   AGE_SUPPORTING_TEXT,
+  BLOCKED_DOWNLOAD_TOOLTIP,
   ClassificationFormPage,
   DISCIPLINARY_RECORD_SUPPORTING_TEXT,
   DoubleNotes,
@@ -63,6 +65,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
       useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
+    const { usTn2026PreventDownloadWhenNotCompleted } = useFeatureVariants();
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
@@ -91,12 +94,18 @@ export const FormUsTnDiagnosticClassification2026 = observer(
       setPostDownloadModalIsOpen(true);
     };
 
+    const missingContent =
+      usTn2026PreventDownloadWhenNotCompleted &&
+      derivedData.totalScore === undefined;
+
     return (
       <FormContainer
         heading="DCAF"
         agencyName="TDOC"
         onClickDownload={() => onClickDownload()}
         opportunity={opportunity}
+        isMissingContent={missingContent}
+        downloadTooltip={missingContent ? BLOCKED_DOWNLOAD_TOOLTIP : undefined}
         downloadButtonLabel="Download as .DOCX"
       >
         <CafScoreSourceModal latestRecordQs={[3, 4, 5, 6]} jobHistoryQs={[7]} />

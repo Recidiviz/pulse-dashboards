@@ -35,3 +35,6 @@ export const AGE_SUPPORTING_TEXT =
 
 export const PROGRAM_COMPLETION_SUPPORTING_TEXT =
   "Recidiviz is auto-filling this score based on the resident’s class and job history in eTOMIS.";
+
+export const BLOCKED_DOWNLOAD_TOOLTIP =
+  "Please fill out CAF questions 1 thru 7 before downloading";

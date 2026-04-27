@@ -135,6 +135,7 @@ export type FeatureVariant =
   | "usTnSuspensionOfDirectSupervision"
   | "usTnTEPENotesForAll"
   | "usTn2026ClassificationPolicyPilot"
+  | "usTn2026PreventDownloadWhenNotCompleted"
 
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -224,6 +225,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   operationsNumeratorDenominatorIsEnabled: {},
   usTnInitialClassification: {},
   usTn2026ClassificationPolicyPilot: {},
+  usTn2026PreventDownloadWhenNotCompleted: {},
   insightsStaffUsage: {},
   usTnTEPENotesForAll: {},
   usMoSearchByUnit: {},
