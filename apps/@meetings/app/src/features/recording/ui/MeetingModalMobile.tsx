@@ -41,10 +41,23 @@ export function MeetingModalMobile() {
   if (!isRecordingViewOpened) return null;
 
   const navigateToProfile = () => {
-    navigation.navigate("Main", {
-      screen: personType === "client" ? "ClientProfile" : "ResidentProfile",
-      params: { personId: person.personId.toString() },
-    });
+    if (personType === "client") {
+      navigation.navigate("Main", {
+        screen: "ClientsRoot",
+        params: {
+          screen: "ClientProfile",
+          params: { personId: person.personId.toString() },
+        },
+      });
+    } else {
+      navigation.navigate("Main", {
+        screen: "ResidentsRoot",
+        params: {
+          screen: "ResidentProfile",
+          params: { personId: person.personId.toString() },
+        },
+      });
+    }
   };
 
   return (

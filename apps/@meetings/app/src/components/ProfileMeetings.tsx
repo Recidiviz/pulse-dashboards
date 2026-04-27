@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link, useNavigation } from "@react-navigation/native";
+import {
+  CompositeNavigationProp,
+  Link,
+  useNavigation,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { format } from "date-fns";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -40,15 +44,18 @@ import { NewMeetingOptionsModal } from "../components/NewMeetingOptionsModal";
 import { NewMeetingRecordingSheet } from "../components/NewMeetingRecordingSheet";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import { useCreateMeeting } from "../hooks/useCreateMeeting";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import {
+  ClientsStackParamList,
+  ResidentsStackParamList,
+} from "../navigation/DrawerNavigator";
 import { Typography } from "../shared/ui/Typography";
 import MeetingsHeaderContent from "./MeetingsHeaderContent";
 import MeetingsMobileList from "./MeetingsMobileList";
 import MeetingsPlaceholder from "./MeetingsPlaceholder";
 
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "ClientProfile" | "ResidentProfile"
+type ProfileNavProp = CompositeNavigationProp<
+  NativeStackNavigationProp<ClientsStackParamList, "ClientProfile">,
+  NativeStackNavigationProp<ResidentsStackParamList, "ResidentProfile">
 >;
 
 enum MeetingsSort {

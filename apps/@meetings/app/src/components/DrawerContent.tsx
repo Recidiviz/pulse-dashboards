@@ -84,7 +84,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           <MobileMenuItem
             icon={UsersIcon}
             title="Clients"
-            screen="Clients"
+            screen="ClientsRoot"
             onPress={navigation.closeDrawer}
           />
         )}
@@ -92,7 +92,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           <MobileMenuItem
             icon={UsersIcon}
             title="Residents"
-            screen="Residents"
+            screen="ResidentsRoot"
             onPress={navigation.closeDrawer}
           />
         )}

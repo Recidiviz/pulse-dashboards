@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
@@ -25,7 +28,10 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import {
+  ClientsStackParamList,
+  ResidentsStackParamList,
+} from "../navigation/DrawerNavigator";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import {
@@ -47,9 +53,9 @@ import { getInitials } from "../utils/format";
 const PAGE_SIZE = 7;
 const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
 
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "ClientProfile" | "ResidentProfile"
+type ProfileNavProp = CompositeNavigationProp<
+  NativeStackNavigationProp<ClientsStackParamList, "ClientProfile">,
+  NativeStackNavigationProp<ResidentsStackParamList, "ResidentProfile">
 >;
 
 interface PersonsProps {

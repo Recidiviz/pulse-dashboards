@@ -20,7 +20,7 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import Meeting from "../components/Meeting";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { ResidentsStackParamList } from "../navigation/DrawerNavigator";
 import Loading from "../shared/ui/Loading";
 import { trpc } from "../trpc/client";
 import {
@@ -29,7 +29,7 @@ import {
   formatPersonTitle,
 } from "../utils/format";
 
-type MeetingRouteProp = RouteProp<RootStackParamList, "ResidentMeeting">;
+type MeetingRouteProp = RouteProp<ResidentsStackParamList, "ResidentMeeting">;
 
 const ResidentMeetingScreen = () => {
   const route = useRoute<MeetingRouteProp>();

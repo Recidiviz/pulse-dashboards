@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { View } from "react-native";
@@ -27,7 +30,10 @@ import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import {
+  ClientsStackParamList,
+  ResidentsStackParamList,
+} from "../navigation/DrawerNavigator";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import {
@@ -46,9 +52,9 @@ import { Typography } from "../shared/ui/Typography";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 
-type ProfileMeetingNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "ClientMeeting" | "ResidentMeeting"
+type ProfileMeetingNavProp = CompositeNavigationProp<
+  NativeStackNavigationProp<ClientsStackParamList, "ClientMeeting">,
+  NativeStackNavigationProp<ResidentsStackParamList, "ResidentMeeting">
 >;
 
 type Meeting = {

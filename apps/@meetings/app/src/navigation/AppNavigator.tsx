@@ -53,14 +53,22 @@ const linking: LinkingOptions<AppStackParamList> = {
       Login: "login",
       Main: {
         screens: {
-          Clients: "clients",
-          Residents: "residents",
-          ClientProfile: "clients/:personId",
-          ResidentProfile: "residents/:personId",
-          ClientNewMeeting: "clients/:personId/new-meeting",
-          ResidentNewMeeting: "residents/:personId/new-meeting",
-          ClientMeeting: "clients/:personId/meetings/:meetingId",
-          ResidentMeeting: "residents/:personId/meetings/:meetingId",
+          ClientsRoot: {
+            screens: {
+              Clients: "clients",
+              ClientProfile: "clients/:personId",
+              ClientNewMeeting: "clients/:personId/new-meeting",
+              ClientMeeting: "clients/:personId/meetings/:meetingId",
+            },
+          },
+          ResidentsRoot: {
+            screens: {
+              Residents: "residents",
+              ResidentProfile: "residents/:personId",
+              ResidentNewMeeting: "residents/:personId/new-meeting",
+              ResidentMeeting: "residents/:personId/meetings/:meetingId",
+            },
+          },
           StateSelection: "settings",
         },
       },
@@ -116,7 +124,9 @@ const AppNavigator = () => {
           linking={linking}
           documentTitle={{ enabled: false }}
         >
-          <Drawer.Navigator screenOptions={{ headerShown: false }}>
+          <Drawer.Navigator
+            screenOptions={{ headerShown: false, swipeEnabled: false }}
+          >
             {!loggedIn ? (
               <Drawer.Screen name="Login">
                 {(props) => (

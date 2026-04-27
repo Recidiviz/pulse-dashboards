@@ -16,6 +16,8 @@
 // =============================================================================
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 import DrawerContent from "../components/DrawerContent";
@@ -34,27 +36,12 @@ import ResidentsScreen from "../screens/ResidentsScreen";
 import StateSelectionScreen from "../screens/StateSelectionScreen";
 import Loading from "../shared/ui/Loading";
 
-export type RootStackParamList = {
+export type ClientsStackParamList = {
   Clients: undefined;
-  Residents: undefined;
-  StateSelection: undefined;
-  // Messages: undefined;
-  // Schedule: undefined;
-  // Resources: undefined;
   ClientProfile: {
     personId: string;
   };
-  ResidentProfile: {
-    personId: string;
-  };
   ClientNewMeeting: {
-    personId: string;
-    fullName: string;
-    displayPersonExternalId: string;
-    primaryMetadata: string;
-    meetingId: string;
-  };
-  ResidentNewMeeting: {
     personId: string;
     fullName: string;
     displayPersonExternalId: string;
@@ -65,13 +52,37 @@ export type RootStackParamList = {
     personId: string;
     meetingId: string;
   };
+};
+
+export type ResidentsStackParamList = {
+  Residents: undefined;
+  ResidentProfile: {
+    personId: string;
+  };
+  ResidentNewMeeting: {
+    personId: string;
+    fullName: string;
+    displayPersonExternalId: string;
+    primaryMetadata: string;
+    meetingId: string;
+  };
   ResidentMeeting: {
     personId: string;
     meetingId: string;
   };
 };
 
+export type RootStackParamList = {
+  ClientsRoot: NavigatorScreenParams<ClientsStackParamList>;
+  ResidentsRoot: NavigatorScreenParams<ResidentsStackParamList>;
+  StateSelection: undefined;
+};
+
 const Drawer = createDrawerNavigator<RootStackParamList>();
+const ClientsStackNavigator =
+  createNativeStackNavigator<ClientsStackParamList>();
+const ResidentsStackNavigator =
+  createNativeStackNavigator<ResidentsStackParamList>();
 
 export default function DrawerNavigator() {
   const { hasSupervisionAccess, hasFacilitiesAccess, isLoading, stateCode } =
@@ -99,45 +110,90 @@ export default function DrawerNavigator() {
     return <NoAccessScreen />;
   }
 
+  const getInitialRouteName = () => {
+    if (hasSupervisionAccess) {
+      return "ClientsRoot";
+    }
+    if (hasFacilitiesAccess) {
+      return "ResidentsRoot";
+    }
+    return undefined;
+  };
+
   return (
     <Drawer.Navigator
+      initialRouteName={getInitialRouteName()}
       screenOptions={{
         headerShown: false,
         drawerType: "front",
         drawerStyle: { width: "100%" },
+        swipeEnabled: true,
       }}
       backBehavior="fullHistory"
       drawerContent={(props) => <DrawerContent {...props} />}
     >
       {hasSupervisionAccess && (
-        <>
-          <Drawer.Screen name="Clients" component={ClientsScreen} />
-          <Drawer.Screen name="ClientProfile" component={ClientProfileScreen} />
-          <Drawer.Screen
-            name="ClientNewMeeting"
-            component={ClientNewMeetingScreen}
-          />
-          <Drawer.Screen name="ClientMeeting" component={ClientMeetingScreen} />
-        </>
+        <Drawer.Screen name="ClientsRoot" component={ClientsStack} />
       )}
       {hasFacilitiesAccess && (
-        <>
-          <Drawer.Screen name="Residents" component={ResidentsScreen} />
-          <Drawer.Screen
-            name="ResidentProfile"
-            component={ResidentProfileScreen}
-          />
-          <Drawer.Screen
-            name="ResidentNewMeeting"
-            component={ResidentNewMeetingScreen}
-          />
-          <Drawer.Screen
-            name="ResidentMeeting"
-            component={ResidentMeetingScreen}
-          />
-        </>
+        <Drawer.Screen name="ResidentsRoot" component={ResidentsStack} />
       )}
       <Drawer.Screen name="StateSelection" component={StateSelectionScreen} />
     </Drawer.Navigator>
   );
 }
+
+const ClientsStack = () => (
+  <ClientsStackNavigator.Navigator
+    initialRouteName="Clients"
+    screenOptions={{
+      gestureEnabled: true,
+      gestureDirection: "horizontal",
+      headerShown: false,
+      fullScreenGestureEnabled: true,
+    }}
+  >
+    <ClientsStackNavigator.Screen name="Clients" component={ClientsScreen} />
+    <ClientsStackNavigator.Screen
+      name="ClientProfile"
+      component={ClientProfileScreen}
+    />
+    <ClientsStackNavigator.Screen
+      name="ClientNewMeeting"
+      component={ClientNewMeetingScreen}
+    />
+    <ClientsStackNavigator.Screen
+      name="ClientMeeting"
+      component={ClientMeetingScreen}
+    />
+  </ClientsStackNavigator.Navigator>
+);
+
+const ResidentsStack = () => (
+  <ResidentsStackNavigator.Navigator
+    initialRouteName="Residents"
+    screenOptions={{
+      gestureEnabled: true,
+      gestureDirection: "horizontal",
+      headerShown: false,
+      fullScreenGestureEnabled: true,
+    }}
+  >
+    <ResidentsStackNavigator.Screen
+      name="Residents"
+      component={ResidentsScreen}
+    />
+    <ResidentsStackNavigator.Screen
+      name="ResidentProfile"
+      component={ResidentProfileScreen}
+    />
+    <ResidentsStackNavigator.Screen
+      name="ResidentNewMeeting"
+      component={ResidentNewMeetingScreen}
+    />
+    <ResidentsStackNavigator.Screen
+      name="ResidentMeeting"
+      component={ResidentMeetingScreen}
+    />
+  </ResidentsStackNavigator.Navigator>
+);

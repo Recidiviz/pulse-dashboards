@@ -55,7 +55,7 @@ const StateSelectionScreen = () => {
       await setSelectedStateCode(stateCode);
       utils.v1.client.list.reset();
       // Navigate back to Clients screen after selecting
-      navigation.navigate("Clients");
+      navigation.navigate("ClientsRoot", { screen: "Clients" });
     } catch (error) {
       console.error("Failed to save state code selection:", error);
     } finally {

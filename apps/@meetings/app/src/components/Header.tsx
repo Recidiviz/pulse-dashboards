@@ -160,7 +160,9 @@ const Header: React.FC<HeaderProps> = ({
             <View className="hidden h-16 flex-row items-center justify-between bg-primary px-4 md:flex lg:px-10">
               <TouchableOpacity
                 testID="logo-button"
-                onPress={() => navigation.navigate("Clients")}
+                onPress={() =>
+                  navigation.navigate("ClientsRoot", { screen: "Clients" })
+                }
               >
                 <WordmarkSvg />
               </TouchableOpacity>
@@ -173,7 +175,7 @@ const Header: React.FC<HeaderProps> = ({
                 {hasSupervisionAccess && (
                   <DesktopMenuItem
                     isActive={route.name.includes("Client")}
-                    screen="Clients"
+                    screen="ClientsRoot"
                   >
                     Clients
                   </DesktopMenuItem>
@@ -181,7 +183,7 @@ const Header: React.FC<HeaderProps> = ({
                 {hasFacilitiesAccess && (
                   <DesktopMenuItem
                     isActive={route.name.includes("Resident")}
-                    screen="Residents"
+                    screen="ResidentsRoot"
                   >
                     Residents
                   </DesktopMenuItem>

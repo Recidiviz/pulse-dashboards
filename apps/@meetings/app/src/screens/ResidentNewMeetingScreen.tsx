@@ -21,17 +21,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import NewMeeting from "../components/NewMeeting";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { ResidentsStackParamList } from "../navigation/DrawerNavigator";
 import Loading from "../shared/ui/Loading";
 import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
 import { formatPersonTitle } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
+  ResidentsStackParamList,
   "Residents"
 >;
-type NewMeetingRouteProp = RouteProp<RootStackParamList, "ResidentNewMeeting">;
+type NewMeetingRouteProp = RouteProp<
+  ResidentsStackParamList,
+  "ResidentNewMeeting"
+>;
 
 const ResidentNewMeetingScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();

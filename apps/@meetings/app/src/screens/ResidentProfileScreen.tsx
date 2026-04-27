@@ -21,11 +21,11 @@ import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
 import { useMeetings } from "../hooks/useMeetings";
 import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { ResidentsStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeResident, formatPersonTitle } from "../utils/format";
 
-type ProfileRouteProp = RouteProp<RootStackParamList, "ResidentProfile">;
+type ProfileRouteProp = RouteProp<ResidentsStackParamList, "ResidentProfile">;
 
 const ResidentProfileScreenContainer = () => {
   const route = useRoute<ProfileRouteProp>();

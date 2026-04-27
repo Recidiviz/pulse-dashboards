@@ -62,8 +62,8 @@ jest.mock("react-native-auth0", () => ({
 // Mock navigation
 const mockNavigate = jest.fn();
 const mockRoute = {
-  name: "Clients" as const,
-  params: undefined,
+  name: "ClientsRoot" as const,
+  params: { screen: "Clients" },
 };
 
 jest.mock("@react-navigation/native", () => {
@@ -123,7 +123,9 @@ describe("Header", () => {
       const logoButton = getByTestId("logo-button");
       fireEvent.press(logoButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith("Clients");
+      expect(mockNavigate).toHaveBeenCalledWith("ClientsRoot", {
+        screen: "Clients",
+      });
     });
   });
 });
