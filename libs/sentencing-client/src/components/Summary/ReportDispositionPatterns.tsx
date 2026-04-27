@@ -17,8 +17,6 @@
 
 import React from "react";
 
-import { palette } from "~design-system";
-
 import { customPalette } from "../styles/palette";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
@@ -30,14 +28,14 @@ export type DispositionFill =
         | "pdf-dis-dots"
         | "pdf-dis-crosshatch"
         | "pdf-dis-grid"
-        | "pdf-dis-gray-dots";
+        | "pdf-dis-horiz-lines";
     };
 
 // Fill config used in both the donut arcs and legend swatches
 export const DISPOSITION_FILL: Record<string, DispositionFill> = {
   Probation: { type: "solid", color: customPalette.grey.grey5 },
   "Court-Ordered Treatment": { type: "solid", color: customPalette.grey.grey6 },
-  "Suspended Sentence": { type: "pattern", patternId: "pdf-dis-gray-dots" },
+  "Suspended Sentence": { type: "pattern", patternId: "pdf-dis-horiz-lines" },
   "< 1 Year Incarceration": { type: "pattern", patternId: "pdf-dis-dots" },
   "1-2 Years Incarceration": {
     type: "pattern",
@@ -62,7 +60,7 @@ export function DonutPatternDefs() {
   return (
     <defs>
       <pattern
-        id="pdf-dis-gray-dots"
+        id="pdf-dis-horiz-lines"
         x="0"
         y="0"
         width="6"
@@ -70,7 +68,7 @@ export function DonutPatternDefs() {
         patternUnits="userSpaceOnUse"
       >
         <rect width="6" height="6" fill="white" />
-        <circle cx="3" cy="3" r="1.5" fill={palette.slate} />
+        <path d="M0,0L6,6M-1,5L1,7M5,-1L7,1" stroke="black" strokeWidth="0.8" />
       </pattern>
       <pattern
         id="pdf-dis-dots"
@@ -152,15 +150,15 @@ function PatternSwatch({
 export function LegendSwatch({ config }: { config: DispositionFill }) {
   if (config.type === "solid")
     return <Styled.DispositionLegendSwatch $color={config.color} />;
-  if (config.patternId === "pdf-dis-gray-dots")
+  if (config.patternId === "pdf-dis-horiz-lines")
     return (
       <PatternSwatch
-        patternId="ls-gray-dots"
+        patternId="pdf-dis-horiz-lines"
         patternWidth={4}
         patternHeight={4}
       >
-        <rect width="4" height="4" fill="white" />
-        <circle cx="2" cy="2" r="1" fill={palette.slate} />
+        <rect width="6" height="6" fill="white" />
+        <path d="M0,0L6,6M-1,5L1,7M5,-1L7,1" stroke="black" strokeWidth="0.8" />
       </PatternSwatch>
     );
   if (config.patternId === "pdf-dis-dots")

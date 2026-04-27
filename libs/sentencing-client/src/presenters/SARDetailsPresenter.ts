@@ -74,6 +74,7 @@ import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter
 const DISPOSITION_TYPE_ORDER: Record<string, number> = {
   Probation: 0,
   Treatment_in_prison: 1,
+  SUSPENDED: 2,
 };
 
 // Type for SAR metadata structure
@@ -257,8 +258,8 @@ export class SARDetailsPresenter implements Hydratable {
     if (!this.insight?.dispositionData) return [];
     return [...this.insight.dispositionData].sort(
       (a, b) =>
-        (DISPOSITION_TYPE_ORDER[a.recommendationType ?? ""] ?? 2) -
-        (DISPOSITION_TYPE_ORDER[b.recommendationType ?? ""] ?? 2),
+        (DISPOSITION_TYPE_ORDER[a.recommendationType ?? ""] ?? 3) -
+        (DISPOSITION_TYPE_ORDER[b.recommendationType ?? ""] ?? 3),
     );
   }
 

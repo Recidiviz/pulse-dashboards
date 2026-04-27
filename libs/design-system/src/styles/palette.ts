@@ -116,6 +116,7 @@ const data = {
   salmon2: rgb(200, 116, 123),
   spring1: rgb(183, 212, 144),
   cornflower1: rgb(83, 128, 198),
+  bermuda: rgba(159, 91, 132, 1),
   defaultOrder: [] as string[],
   profileColorOrder,
 };
