@@ -1,18 +1,5 @@
-data "sops_file" "env" {
-  source_file = "../../env-secrets/secrets/reentry.enc.yaml"
-}
-
 locals {
-  env_secrets = yamldecode(data.sops_file.env.raw)
-
-  shared_server_env = local.env_secrets["env_reentry_server"]
-  server_env        = local.env_secrets[var.server_env_key]
-
-  migrate_db_env = local.env_secrets[var.migrate_db_env_key]
-
-  shared_data_import_env = local.env_secrets["env_reentry_data_import"]
-  can_configure_import   = var.configure_import && var.data_import_env_key != null
-  data_import_env        = local.can_configure_import ? local.env_secrets[var.data_import_env_key] : {}
+  can_configure_import = var.configure_import
 
   server_image_name = "reentry-server"
 
@@ -23,36 +10,13 @@ locals {
 
   etl_bucket_name     = "reentry-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
+}
 
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  server_env_vars = nonsensitive([
-    for key, value in merge(local.shared_server_env, local.server_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  migrate_db_env_vars = nonsensitive([
-    for key, value in local.migrate_db_env : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
-
-  # This list needs to be marked as nonsensitive so it can be used in `for_each`
-  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  data_import_env_vars = nonsensitive([
-    for key, value in merge(local.shared_data_import_env, local.data_import_env) : {
-      # The values are sensitive so we want to omit them from the plans
-      value = sensitive(value)
-      name  = key
-    }
-  ])
+module "sops_env" {
+  source      = "../../modules/sops-env"
+  secrets_dir = "${path.module}/environments"
+  environment = var.environment
+  components  = ["server", "job.import", "job.migrate_db"]
 }
 
 module "database" {
@@ -93,7 +57,7 @@ module "server" {
     {
       container_image = "${var.artifact_registry_repo}/${local.server_image_name}:${var.server_container_version}"
 
-      env_vars = local.server_env_vars
+      env_vars = module.sops_env.env_vars_by_component["server"]
 
       volume_mounts = [{
         name       = "cloudsql"
@@ -122,7 +86,7 @@ module "migrate_db_job" {
   image                         = "${var.artifact_registry_repo}/${local.migrate_db_image_name}:${var.migrate_db_container_version}"
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.migrate_db_env_vars
+  env_vars                      = module.sops_env.env_vars_by_component["job.migrate_db"]
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   container_command             = ["./scripts/migrate-dbs.sh"]
@@ -154,12 +118,14 @@ module "import_job" {
   # Don't create an import job for demo
   count = local.can_configure_import ? 1 : 0
 
-  exec                          = false
-  name                          = local.import_job_name
-  image                         = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_container_version}"
-  project_id                    = var.project_id
-  location                      = var.location
-  env_vars                      = local.data_import_env_vars
+  exec       = false
+  name       = local.import_job_name
+  image      = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_container_version}"
+  project_id = var.project_id
+  location   = var.location
+  env_vars = concat([
+    { name = "IMPORT_BUCKET_ID", value = module.gcs_bucket[0].names[local.etl_bucket_name] }
+  ], module.sops_env.env_vars_by_component["job.import"])
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   timeout                       = "3600s"
