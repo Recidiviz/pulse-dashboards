@@ -42,7 +42,6 @@ import {
   MethodOfUseLabels,
 } from "../OffenderAssessment/SubstanceUse/constants";
 import { SARSection } from "../SARDetails/constants";
-import { useStore } from "../StoreProvider/StoreProvider";
 import { InsightsSummaryPanel } from "./InsightsSummaryPanel";
 import { MissingBadge } from "./MissingBadge";
 import { exportSARtoPDF } from "./SARPdfExport";
@@ -165,9 +164,6 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
     sectionStatuses,
   } = presenter;
 
-  const { activeFeatureVariants } = useStore();
-  const hasSARDownload = Boolean(activeFeatureVariants["SARBuilder"]);
-
   const isReadyForDownload = Object.values(sectionStatuses).every(
     (s) => s === "complete",
   );
@@ -229,7 +225,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
   const [isDownloading, setIsDownloading] = React.useState(false);
 
   const handleClickToDownload = async () => {
-    if (!hasSARDownload || !targetRef.current || isDownloading) return;
+    if (!targetRef.current || isDownloading) return;
     setIsDownloading(true);
     try {
       await exportSARtoPDF(targetRef.current, fileName);
@@ -254,7 +250,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
               </Styled.DownloadSubtitle>
             </Styled.DownloadHeaderText>
             <Styled.DownloadButton
-              disabled={!isReadyForDownload || !hasSARDownload || isDownloading}
+              disabled={!isReadyForDownload || isDownloading}
               aria-label="Download SAR report"
               onClick={handleClickToDownload}
             >
