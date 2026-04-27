@@ -15,29 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useRef, useState } from "react";
-import { Pressable, View } from "react-native";
+import * as TooltipPrimitive from "@rn-primitives/tooltip";
+import clsx from "clsx";
+import { useRef, useState } from "react";
 
 import { Typography } from "./Typography";
 
 type Props = {
-  tooltipText: string;
   children: React.ReactNode;
-  containerClassName?: string;
-  textClassName?: string;
-  tooltipClassName?: string;
-  tooltipTextClassName?: string;
+  rootClassName?: string;
+  triggerClassName?: string;
+  triggerTextClassName?: string;
+  side?: "top" | "bottom";
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
 };
 
-export const TooltipText = ({
-  tooltipText,
+export function TooltipText({
   children,
-  containerClassName = "",
-  textClassName = "",
-  tooltipClassName = "",
-  tooltipTextClassName = "",
-}: Props) => {
-  const [visible, setVisible] = useState(false);
+  rootClassName,
+  triggerClassName,
+  triggerTextClassName,
+  side = "bottom",
+  align = "center",
+  alignOffset = 0,
+}: Props) {
   const containerWidthRef = useRef(0);
   const fullTextWidthRef = useRef(0);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -49,48 +51,47 @@ export const TooltipText = ({
   };
 
   return (
-    <Pressable
-      className={`relative flex size-full flex-1 flex-row items-center ${containerClassName}`}
-      onHoverIn={() => setVisible(true)}
-      onHoverOut={() => setVisible(false)}
-      onFocus={() => setVisible(true)}
-      onBlur={() => setVisible(false)}
-      onLayout={(e) => {
-        containerWidthRef.current = e.nativeEvent.layout.width;
-        checkOverflow();
-      }}
-    >
-      {/* Hidden text to measure full width for tooltip */}
-      <Typography
-        className={`pointer-events-none absolute text-base opacity-0 ${textClassName} max-w-fit`}
-        numberOfLines={1}
+    <TooltipPrimitive.Root className={clsx(rootClassName)}>
+      <TooltipPrimitive.Trigger
+        className={clsx("relative flex w-full", triggerClassName)}
         onLayout={(e) => {
-          fullTextWidthRef.current = e.nativeEvent.layout.width;
+          containerWidthRef.current = e.nativeEvent.layout.width;
           checkOverflow();
         }}
       >
-        {children}
-      </Typography>
-      <Typography
-        className={`text-base text-primary ${textClassName}`}
-        ellipsizeMode="tail"
-        numberOfLines={1}
-      >
-        {children}
-      </Typography>
-      {isOverflowing && visible && (
-        <View className="absolute left-0 top-11 w-[50vw]">
-          <View
-            className={`w-fit rounded-md bg-strong px-2 py-1 shadow-md ${tooltipClassName}`}
+        <Typography
+          className={`pointer-events-none absolute text-base opacity-0 ${triggerTextClassName} max-w-fit`}
+          numberOfLines={1}
+          onLayout={(e) => {
+            fullTextWidthRef.current = e.nativeEvent.layout.width;
+            checkOverflow();
+          }}
+        >
+          {children}
+        </Typography>
+        <Typography
+          className={`text-base text-primary ${triggerTextClassName}`}
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {children}
+        </Typography>
+      </TooltipPrimitive.Trigger>
+      {isOverflowing && (
+        <TooltipPrimitive.Portal>
+          <TooltipPrimitive.Content
+            className="z-100 relative flex w-fit flex-col gap-1 rounded-xl bg-strong p-2"
+            side={side}
+            align={align}
+            sideOffset={8}
+            alignOffset={alignOffset}
           >
-            <Typography
-              className={`text-xs text-on-brand ${tooltipTextClassName}`}
-            >
-              {tooltipText}
+            <Typography className="text-sm font-normal text-on-brand">
+              {children}
             </Typography>
-          </View>
-        </View>
+          </TooltipPrimitive.Content>
+        </TooltipPrimitive.Portal>
       )}
-    </Pressable>
+    </TooltipPrimitive.Root>
   );
-};
+}

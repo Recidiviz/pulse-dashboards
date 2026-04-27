@@ -78,6 +78,7 @@ describe("server", () => {
           caseNote: null,
           lastCompletedMeetingTime: null,
           validationErrorType: null,
+          staffEmail: null,
         },
         staffEmails: [fakeStaff.email],
       },

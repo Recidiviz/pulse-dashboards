@@ -150,6 +150,7 @@ export async function extractLastCompletedMeetingInfo({
     endTime: Date | null;
     startTime: Date;
     caseNote: string | null;
+    staffEmail: string;
   }[];
 }) {
   const latestMeeting = meetingsOrderedByDateDesc.find(
@@ -162,6 +163,7 @@ export async function extractLastCompletedMeetingInfo({
       lastCompletedMeetingTime: null,
       caseNote: null,
       validationErrorType: null,
+      staffEmail: null,
     };
   }
 
@@ -179,6 +181,7 @@ export async function extractLastCompletedMeetingInfo({
     lastCompletedMeetingTime: latestMeeting.startTime,
     caseNote: latestMeeting?.caseNote ?? null,
     validationErrorType: pipelineValidationErrorType ?? null,
+    staffEmail: latestMeeting.staffEmail,
   };
 }
 

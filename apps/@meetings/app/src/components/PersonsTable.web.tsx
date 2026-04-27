@@ -118,19 +118,13 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                           {getInitials(person.fullName)}
                         </Typography>
                       </ImageBackground>
-                      <TooltipText
-                        tooltipText={person.fullName.toLowerCase()}
-                        textClassName="text-base font-medium capitalize text-primary"
-                      >
+                      <TooltipText triggerTextClassName="text-base font-medium capitalize text-primary">
                         {person.fullName.toLowerCase()}
                       </TooltipText>
                     </View>
                   </TableCell>
                   <TableCell>
-                    <TooltipText
-                      tooltipText={person.displayPersonExternalId}
-                      textClassName="text-secondary"
-                    >
+                    <TooltipText triggerTextClassName="text-secondary">
                       {person.displayPersonExternalId}
                     </TooltipText>
                   </TableCell>
@@ -147,10 +141,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                   ) : (
                     <>
                       <TableCell>
-                        <TooltipText
-                          tooltipText={person.primaryMetadata}
-                          textClassName="text-secondary"
-                        >
+                        <TooltipText triggerTextClassName="text-secondary">
                           {person.primaryMetadata}
                         </TooltipText>
                       </TableCell>
@@ -167,9 +158,14 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                         )}
                         {!person.activeMeetingId &&
                           !person.meetingDetails.validationErrorType && (
-                            <Typography className="text-base font-medium text-secondary">
-                              {upperFirst(person.lastMeeting)}
-                            </Typography>
+                            <View className="flex flex-col">
+                              <Typography className="text-base font-medium text-secondary">
+                                {upperFirst(person.lastMeeting)} by
+                              </Typography>
+                              <TooltipText triggerTextClassName="text-base font-medium text-secondary">
+                                {person.meetingDetails.staffEmail}
+                              </TooltipText>
+                            </View>
                           )}
                       </TableCell>
                     </>
