@@ -80,8 +80,9 @@ export type ConfigLabels = Pick<
   | "outliersHover"
   | "vitalsMetricsMethodologyUrl"
 > & {
-  // Computed from tenantStore.DOCName
+  // Computed from tenantStore
   DOCName: string;
+  supervisionDisplayIdCopy: string;
 };
 export type SupervisionDetails = Pick<
   SupervisionOfficerMetricEvent,
@@ -149,9 +150,9 @@ export type OfficerVitalsMetricDetail = VitalsMetricForOfficer & {
 };
 
 export type NotificationsByType = PartialRecord<
-OpportunityType,
-{
-  notifications: OpportunityNotification[];
-  seeMoreLink: string;
-}
->
+  OpportunityType,
+  {
+    notifications: OpportunityNotification[];
+    seeMoreLink: string;
+  }
+>;

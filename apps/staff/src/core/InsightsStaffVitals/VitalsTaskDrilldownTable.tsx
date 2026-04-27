@@ -143,7 +143,7 @@ export const VitalsTaskDrilldownTable = observer(
         },
         {
           accessorKey: "person.displayId",
-          header: `${labels.DOCName} ID`,
+          header: labels.supervisionDisplayIdCopy,
           // react-table wants the columns memoized, so I think this is ok
           // eslint-disable-next-line react/no-unstable-nested-components
           cell: (info) => {
@@ -191,7 +191,7 @@ export const VitalsTaskDrilldownTable = observer(
           },
         },
       ],
-      [labels.DOCName, bodyDisplayName],
+      [labels.supervisionDisplayIdCopy, bodyDisplayName],
     );
 
     const table = useReactTable({

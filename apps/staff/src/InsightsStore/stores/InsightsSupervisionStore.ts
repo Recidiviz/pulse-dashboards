@@ -296,6 +296,10 @@ export class InsightsSupervisionStore {
       DOCName: this.insightsStore.rootStore.tenantStore.DOCName,
       outliersHover: this.config.outliersHover,
       vitalsMetricsMethodologyUrl: this.config.vitalsMetricsMethodologyUrl,
+      supervisionDisplayIdCopy:
+        this.insightsStore.rootStore.tenantStore.getDisplayIdCopy(
+          "SUPERVISION",
+        ),
     };
   }
 
