@@ -78,6 +78,11 @@
             "input": "{workspaceRoot}/libs/@meetings/prisma",
             "output": "."
           },
+          {
+            "glob": "src/yaml/**/*.yaml",
+            "input": "{workspaceRoot}/libs/@meetings/config",
+            "output": "./yaml"
+          },
           "{projectRoot}/scripts/*",
           "{workspaceRoot}/.yarnrc.yml"
         ]

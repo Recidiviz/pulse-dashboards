@@ -17,6 +17,7 @@
 
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { parse } from "yaml";
 
 import {
@@ -32,7 +33,11 @@ const BaseConfigFileSchema = AgencyConfigFileSchema.omit({
   stateCode: true,
 });
 
-const YAML_DIR = path.join(__dirname, "yaml");
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- @ts-expect-error can't be used here: the error only appears when
+// checked under a tsconfig with module:commonjs; under this lib's own esm tsconfig
+// import.meta.url is valid and no error exists, so @ts-expect-error would itself error.
+const YAML_DIR = fileURLToPath(new URL("yaml", import.meta.url).href);
 
 function loadYaml(filename: string): unknown {
   const filePath = path.join(YAML_DIR, filename);
