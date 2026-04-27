@@ -53,14 +53,6 @@ export function Footer() {
   return (
     <FooterWrapper>
       <LogoLink
-        href="https://doccs.ny.gov/"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Visit the DOCCS website"
-      >
-        <Logo src="/DOCCS_logo.png" alt="DOCCS logo" />
-      </LogoLink>
-      <LogoLink
         href="https://recidiviz.org"
         target="_blank"
         rel="noopener noreferrer"

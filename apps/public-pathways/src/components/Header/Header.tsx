@@ -34,6 +34,28 @@ const HeaderWrapper = styled.header`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 `;
 
+const Brand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.sm)};
+`;
+
+const LogoLink = styled.a`
+  display: flex;
+  align-items: center;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+`;
+
+const Logo = styled.img`
+  height: ${rem(40)};
+  margin-top: -${rem(spacing.sm)};
+`;
+
 const Title = styled.p`
   ${publicPathwaysTypography.Header24}
   margin: 0;
@@ -97,7 +119,17 @@ export const Header = observer(function Header() {
 
   return (
     <HeaderWrapper>
-      <Title>NYS DOCCS</Title>
+      <Brand>
+        <LogoLink
+          href="https://doccs.ny.gov/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit the DOCCS website"
+        >
+          <Logo src="/DOCCS_logo.png" alt="DOCCS logo" />
+        </LogoLink>
+        <Title>NYS DOCCS</Title>
+      </Brand>
       <HeaderActions>
         <SiteNav aria-label="Site navigation">
           <NavLink
