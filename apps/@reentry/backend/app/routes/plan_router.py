@@ -1,7 +1,7 @@
 import ipaddress
 import socket
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime
 from io import BytesIO
 from typing import List, Optional
 from urllib.parse import urlparse
@@ -41,15 +41,14 @@ from app.crud.plan_generation import (
     create_plan_generation,
     get_gen_by_id,
     get_gen_by_plan_id,
+    remove_resource_association,
 )
 from app.models.models import (
     GenerationType,
     Plan,
     PlanAsset,
     PlanGeneration,
-    PlanGenerationResourceAssociation,
     PlanGenerationStatus,
-    ResourceAssociationAction,
 )
 from app.routes.base import (
     DeletionResponse,
@@ -940,15 +939,66 @@ async def router_add_resource(
         is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
-    association = PlanGenerationResourceAssociation(
+    result = await add_resource_association(
+        session,
         plan_generation_id=request.plan_generation_id,
         resource_id=request.resource_id,
         section_title=request.section_title,
-        action=ResourceAssociationAction.ADD,
         action_by=auth_user_context["email"],
-        action_at=datetime.now(UTC),
     )
-    result = await add_resource_association(session, association)
+    return result
+
+
+class RemoveResourceRequest(BaseModel):
+    resource_id: int
+    section_title: str
+    plan_generation_id: UUID
+
+
+class RemoveResourceResponse(BaseModel):
+    id: int
+    plan_generation_id: UUID
+    resource_id: int
+    section_title: str
+    action: str
+    action_by: str
+    action_at: datetime
+
+
+@router.post(
+    "/remove-resource",
+    response_model=RemoveResourceResponse,
+    summary="Remove resource from plan generation",
+    description="Record a resource removal event for a plan generation.",
+    tags=["Plans"],
+)
+async def router_remove_resource(
+    request: RemoveResourceRequest,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    gen = await get_gen_by_id(session, request.plan_generation_id)
+    if gen is None:
+        raise HTTPException(status_code=404, detail="Plan generation not found")
+
+    plan = await get_plan_by_id(session, gen.plan_id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
+
+    result = await remove_resource_association(
+        session,
+        plan_generation_id=request.plan_generation_id,
+        resource_id=request.resource_id,
+        section_title=request.section_title,
+        action_by=auth_user_context["email"],
+    )
     return result
 
 

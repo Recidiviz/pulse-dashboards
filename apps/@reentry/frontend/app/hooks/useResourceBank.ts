@@ -27,14 +27,6 @@ import { $api } from "../api";
 import type { ResourceSection, ResourceWithMeta } from "./resourceBank.types";
 import { useMockRessourceAPICall } from "./useMockRessourceAPICall";
 
-const mockRemoveResourceApi = async (
-  section: string,
-  resourceId: string,
-): Promise<void> => {
-  console.log("[mock] removeResource", { section, resourceId });
-  return new Promise((resolve) => setTimeout(resolve, 500));
-};
-
 export const useResourceBank = (planGenerationId: string | undefined) => {
   const { data, isLoading, isError } = useMockRessourceAPICall();
 
@@ -45,6 +37,11 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
   const { mutateAsync: addResourceMutation } = $api.useMutation(
     "post",
     "/add-resource",
+  );
+
+  const { mutateAsync: removeResourceMutation } = $api.useMutation(
+    "post",
+    "/remove-resource",
   );
 
   // Re-initialise when mock data becomes available (e.g. after loading state).
@@ -129,18 +126,34 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
       .find((s) => s.title === sectionTitle)
       ?.resources.find((r) => r.id === resourceId);
 
+    if (!removed) return;
+
     removeResourceFromSection(sectionTitle, resourceId);
 
-    mockRemoveResourceApi(sectionTitle, resourceId).then(
+    if (!planGenerationId) {
+      showErrorToast(
+        `Failed to remove ${removed.name} from ${sectionTitle} resources.`,
+      );
+      appendResourceToSection(sectionTitle, removed);
+      return;
+    }
+
+    removeResourceMutation({
+      body: {
+        resource_id: Number(resourceId),
+        section_title: sectionTitle,
+        plan_generation_id: planGenerationId,
+      },
+    }).then(
       () =>
         showSuccessToast(
-          `${removed?.name} removed from ${sectionTitle} resources.`,
+          `${removed.name} removed from ${sectionTitle} resources.`,
         ),
       () => {
         showErrorToast(
-          `Failed to remove ${removed?.name} from ${sectionTitle} resources.`,
+          `Failed to remove ${removed.name} from ${sectionTitle} resources.`,
         );
-        if (removed) appendResourceToSection(sectionTitle, removed);
+        appendResourceToSection(sectionTitle, removed);
       },
     );
   };

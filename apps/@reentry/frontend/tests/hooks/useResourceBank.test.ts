@@ -192,7 +192,6 @@ describe("useResourceBank", () => {
 
   describe("removeResource", () => {
     it("optimistically removes the resource", () => {
-      vi.useFakeTimers();
       const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       const [first] = housingResources;
 
@@ -206,20 +205,14 @@ describe("useResourceBank", () => {
       expect(getSectionResources(result, HOUSING_SECTION)).toHaveLength(
         housingResources.length - 1,
       );
-      vi.useRealTimers();
     });
 
     it("shows a success toast with name and section after the API resolves", async () => {
-      vi.useFakeTimers();
       const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
       const [first] = housingResources;
 
-      act(() => {
-        result.current.removeResource(HOUSING_SECTION, first.id);
-      });
-
       await act(async () => {
-        await vi.runAllTimersAsync();
+        result.current.removeResource(HOUSING_SECTION, first.id);
       });
 
       expect(vi.mocked(showSuccessToast)).toHaveBeenCalledWith(
@@ -228,11 +221,9 @@ describe("useResourceBank", () => {
       expect(vi.mocked(showSuccessToast)).toHaveBeenCalledWith(
         expect.stringContaining(HOUSING_SECTION),
       );
-      vi.useRealTimers();
     });
 
-    it("does nothing when the section does not exist", () => {
-      vi.useFakeTimers();
+    it("does nothing when the resource is not found", () => {
       const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
 
       act(() => {
@@ -242,7 +233,23 @@ describe("useResourceBank", () => {
       expect(getSectionResources(result, HOUSING_SECTION)).toHaveLength(
         housingResources.length,
       );
-      vi.useRealTimers();
+    });
+
+    it("rolls back and shows error toast when the API rejects", async () => {
+      mockMutateAsync.mockRejectedValue(new Error("network error"));
+      const { result } = renderHook(() => useResourceBank("mock-gen-id-001"));
+      const [first] = housingResources;
+
+      await act(async () => {
+        result.current.removeResource(HOUSING_SECTION, first.id);
+      });
+
+      expect(vi.mocked(showErrorToast)).toHaveBeenCalledWith(
+        expect.stringContaining(first.name),
+      );
+      expect(getSectionResources(result, HOUSING_SECTION)).toContainEqual(
+        first,
+      );
     });
   });
 });

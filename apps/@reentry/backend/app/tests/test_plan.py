@@ -13,6 +13,7 @@ from app.models.models import (
     Plan,
     PlanGeneration,
     PlanGenerationResourceAssociation,
+    ResourceAssociationAction,
 )
 from app.routes.shared_models import AddressSubmission
 from app.services.resources import (
@@ -1165,6 +1166,101 @@ async def test_add_resource_appends_multiple_rows(
 
     assert_response(await client.post("/add-resource", json=payload), 200)
     assert_response(await client.post("/add-resource", json=payload), 200)
+
+    result = await async_session.exec(
+        select(PlanGenerationResourceAssociation).where(
+            PlanGenerationResourceAssociation.plan_generation_id == gen.id
+        )
+    )
+    rows = result.all()
+    assert len(rows) == 2
+
+
+@pytest.mark.asyncio
+async def test_remove_resource_success(
+    mock_clientdata_service,
+    mock_intake,
+    client,
+    async_session,
+    assert_response,
+):
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    plan, gen = await _create_plan_with_generation(
+        async_session, client_pseudo_id, mock_intake.id
+    )
+
+    response = await client.post(
+        "/remove-resource",
+        json={
+            "resource_id": 123,
+            "section_title": "Housing",
+            "plan_generation_id": str(gen.id),
+        },
+    )
+
+    assert_response(response, 200)
+    data = response.json()
+    assert data["resource_id"] == 123
+    assert data["section_title"] == "Housing"
+    assert data["action"] == "REMOVE"
+    assert data["action_by"] == "test@recidiviz.org"
+    assert data["plan_generation_id"] == str(gen.id)
+    assert data["id"] is not None
+
+    result = await async_session.exec(
+        select(PlanGenerationResourceAssociation).where(
+            PlanGenerationResourceAssociation.plan_generation_id == gen.id
+        )
+    )
+    rows = result.all()
+    assert len(rows) == 1
+    assert rows[0].resource_id == 123
+    assert rows[0].action == ResourceAssociationAction.REMOVE
+    assert rows[0].section_title == "Housing"
+    assert rows[0].action_by == "test@recidiviz.org"
+
+
+@pytest.mark.asyncio
+async def test_remove_resource_gen_not_found(
+    mock_clientdata_service,
+    client,
+    async_session,
+    assert_response,
+):
+    response = await client.post(
+        "/remove-resource",
+        json={
+            "resource_id": 123,
+            "section_title": "Housing",
+            "plan_generation_id": str(uuid.uuid4()),
+        },
+    )
+
+    assert_response(response, 404)
+
+
+@pytest.mark.asyncio
+async def test_remove_resource_appends_multiple_rows(
+    mock_clientdata_service,
+    mock_intake,
+    client,
+    async_session,
+    assert_response,
+):
+    """Each call appends a new ledger row — duplicates are allowed."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    plan, gen = await _create_plan_with_generation(
+        async_session, client_pseudo_id, mock_intake.id
+    )
+
+    payload = {
+        "resource_id": 123,
+        "section_title": "Housing",
+        "plan_generation_id": str(gen.id),
+    }
+
+    assert_response(await client.post("/remove-resource", json=payload), 200)
+    assert_response(await client.post("/remove-resource", json=payload), 200)
 
     result = await async_session.exec(
         select(PlanGenerationResourceAssociation).where(

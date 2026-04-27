@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from typing import Literal, overload
 from uuid import UUID
 
@@ -7,7 +8,11 @@ from sqlmodel.sql.expression import SelectOfScalar
 
 from app.core.db import AsyncSession
 from app.crud.utils import statement_or_result
-from app.models.models import PlanGeneration, PlanGenerationResourceAssociation
+from app.models.models import (
+    PlanGeneration,
+    PlanGenerationResourceAssociation,
+    ResourceAssociationAction,
+)
 
 
 async def create_plan_generation(
@@ -103,8 +108,40 @@ async def update_plan_generation(session: AsyncSession, gen: PlanGeneration):
 
 async def add_resource_association(
     session: AsyncSession,
-    association: PlanGenerationResourceAssociation,
+    plan_generation_id: UUID,
+    resource_id: int,
+    section_title: str,
+    action_by: str,
 ) -> PlanGenerationResourceAssociation:
+    association = PlanGenerationResourceAssociation(
+        plan_generation_id=plan_generation_id,
+        resource_id=resource_id,
+        section_title=section_title,
+        action=ResourceAssociationAction.ADD,
+        action_by=action_by,
+        action_at=datetime.now(UTC),
+    )
+    session.add(association)
+    await session.commit()
+    await session.refresh(association)
+    return association
+
+
+async def remove_resource_association(
+    session: AsyncSession,
+    plan_generation_id: UUID,
+    resource_id: int,
+    section_title: str,
+    action_by: str,
+) -> PlanGenerationResourceAssociation:
+    association = PlanGenerationResourceAssociation(
+        plan_generation_id=plan_generation_id,
+        resource_id=resource_id,
+        section_title=section_title,
+        action=ResourceAssociationAction.REMOVE,
+        action_by=action_by,
+        action_at=datetime.now(UTC),
+    )
     session.add(association)
     await session.commit()
     await session.refresh(association)

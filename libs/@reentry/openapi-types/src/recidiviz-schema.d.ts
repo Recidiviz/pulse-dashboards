@@ -2175,6 +2175,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/remove-resource": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Remove resource from plan generation
+         * @description Record a resource removal event for a plan generation.
+         */
+        post: operations["router_remove_resource_remove_resource_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/plans/{id}/suggested-resources": {
         parameters: {
             query?: never;
@@ -2619,6 +2639,41 @@ export interface components {
         };
         /** AddResourceResponse */
         AddResourceResponse: {
+            /** Id */
+            id: number;
+            /**
+             * Plan Generation Id
+             * Format: uuid
+             */
+            plan_generation_id: string;
+            /** Resource Id */
+            resource_id: number;
+            /** Section Title */
+            section_title: string;
+            /** Action */
+            action: string;
+            /** Action By */
+            action_by: string;
+            /**
+             * Action At
+             * Format: date-time
+             */
+            action_at: string;
+        };
+        /** RemoveResourceRequest */
+        RemoveResourceRequest: {
+            /** Resource Id */
+            resource_id: number;
+            /** Section Title */
+            section_title: string;
+            /**
+             * Plan Generation Id
+             * Format: uuid
+             */
+            plan_generation_id: string;
+        };
+        /** RemoveResourceResponse */
+        RemoveResourceResponse: {
             /** Id */
             id: number;
             /**
@@ -9510,6 +9565,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AddResourceResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_remove_resource_remove_resource_post: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RemoveResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveResourceResponse"];
                 };
             };
             /** @description Validation Error */
