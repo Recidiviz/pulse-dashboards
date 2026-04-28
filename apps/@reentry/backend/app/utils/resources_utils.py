@@ -16,15 +16,74 @@
 # =============================================================================
 """Utilities for working with resources in action plans."""
 
-import structlog
+import asyncio
 
-from app.services.resources import CATEGORY_SUBCATEGORY_MAP
+import structlog
+from langsmith import traceable
+
+from app.services.resources import (
+    CATEGORY_SUBCATEGORY_MAP,
+    GetResourcesRequest,
+    ResourceFailureReason,
+)
+from app.services.resources.api import list_external_resources
 from app.utils.action_plan_types import (
     ActionPlanResourcesAssociations,
     ResourceAssociation,
 )
 
 logger = structlog.get_logger(__name__)
+
+
+@traceable(name="fetch_resources_with_retry")
+async def fetch_resources_with_retry(
+    request: GetResourcesRequest, max_retries: int = 2
+) -> list:
+    """Fetch resources from the external API with exponential-backoff retry.
+
+    Retries only on API errors or unexpected exceptions. Returns an empty list
+    immediately on NO_RESULTS_FOUND (broadening the search is out of scope here)
+    and after exhausting all retry attempts.
+
+    Args:
+        request: Parameters for the resource lookup (category, subcategory, address, etc.)
+        max_retries: Maximum number of additional attempts after the first (default: 2,
+                     giving up to 3 total attempts with 1s and 2s backoff gaps).
+
+    Returns:
+        List of matching Resource objects, or [] if none found or all attempts fail.
+    """
+    for attempt in range(max_retries + 1):
+        if attempt > 0:
+            wait_time = 2 ** (attempt - 1)
+            logger.debug("Retrying resource fetch", attempt=attempt, wait_s=wait_time)
+            await asyncio.sleep(wait_time)
+
+        try:
+            result = await list_external_resources(request)
+        except Exception as e:
+            logger.warning(
+                "Unexpected error fetching resources", attempt=attempt, error=str(e)
+            )
+            continue
+
+        if result.failure_reason == ResourceFailureReason.SUCCESS:
+            logger.debug(
+                "Resources fetched", attempt=attempt, count=len(result.resources)
+            )
+            return result.resources
+        elif result.failure_reason == ResourceFailureReason.NO_RESULTS_FOUND:
+            logger.debug("No resources found", attempt=attempt)
+            return []
+        else:
+            logger.warning(
+                "API error fetching resources",
+                attempt=attempt,
+                error=result.error_message,
+            )
+
+    logger.error("Max retries reached, returning empty resources")
+    return []
 
 
 def transform_resources_associations_to_map(

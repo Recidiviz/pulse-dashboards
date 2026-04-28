@@ -418,6 +418,17 @@ class ApiSearchResult(BaseModel):
     subcategory: Optional[ResourceSubcategory | ResourceSubcategoryLegacy] = None
     origin: str
     description: Optional[str] = None
+    resource_id: Optional[int] = None
+
+    @field_validator("resource_id", mode="before")
+    @classmethod
+    def coerce_resource_id(cls, v):
+        if v is None:
+            return None
+        try:
+            return int(v)
+        except (ValueError, TypeError):
+            return None
 
     # Location
     location: Location
@@ -591,7 +602,8 @@ class BatchGetResources(BaseModel):
 
 
 class Resource(BaseModel):
-    id: str = Field(description="Unique identifier for the resource.")
+    id: str = Field(description="Unique identifier for the resource, currently the Google Place ID.")
+    resource_id: Optional[int] = Field(default=None, description="The ID of the resource in the Resources API")
 
     category: ResourceCategory | ResourceCategoryLegacy = Field(
         description="Category of the resource."

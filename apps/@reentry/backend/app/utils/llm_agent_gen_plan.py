@@ -1,4 +1,3 @@
-import asyncio
 from typing import Literal
 
 import structlog
@@ -10,12 +9,6 @@ from pydantic import ValidationError
 
 from app.core.config import create_model_from_config
 from app.core.data_config.output_configs.output_config import ActionPlanConfigFile
-from app.services.resources import (
-    CATEGORY_SUBCATEGORY_MAP,
-    GetResourcesRequest,
-    ResourceFailureReason,
-    list_resources,
-)
 from app.utils.action_plan_types import (
     ActionPlan,
     ActionPlanMarkdown,
@@ -59,54 +52,6 @@ def call_generate_sections(state: ExtendedMessagesState) -> Literal["gen_section
         for section in state["sections_to_generate"]
     ]
 
-
-@traceable(name="fetch_resources_with_retry")
-async def fetch_resources_with_retry(
-    request: GetResourcesRequest, max_retries: int = 2
-):
-    """
-    Fetch resources with retry logic for both API errors and no results found.
-
-    Args:
-        request: The original resource request
-        max_retries: Maximum number of retry attempts (default: 2)
-
-    Returns:
-        List of resources (empty list if all attempts fail)
-    """
-    current_request = request
-
-    for attempt in range(max_retries + 1):  # +1 for the initial attempt
-        try:
-            if attempt > 0:
-                # Wait between retries (exponential backoff 1s, 2s, 4s...)
-                wait_time = 2 ** (attempt - 1)
-                logger.debug(f"Waiting {wait_time}s before retry attempt {attempt}")
-                await asyncio.sleep(wait_time)
-
-            logger.debug(f"Resource fetch attempt {attempt + 1}/{max_retries + 1}")
-            result = await list_resources(current_request)
-
-            if result.failure_reason == ResourceFailureReason.SUCCESS:
-                resources = result.resources
-                logger.debug(
-                    f"Successfully fetched {len(resources)} resources on attempt {attempt + 1}"
-                )
-                return resources
-            elif result.failure_reason == ResourceFailureReason.API_ERROR:
-                logger.warning(
-                    f"API error on attempt {attempt + 1}: {result.error_message}"
-                )
-            elif result.failure_reason == ResourceFailureReason.NO_RESULTS_FOUND:
-                # if there were not results we can modify the request to broaden the search, pending to define with the client
-                # but in theory this should be done for the resources api
-                # current_request = modified_request_with_broader_search
-                logger.debug(f"No results found on attempt {attempt + 1}")
-        except Exception as e:
-            logger.exception(f"Unexpected error on attempt {attempt + 1}: {str(e)}")
-
-    logger.error("Max attempt reached, no resources found")
-    return []
 
 
 @traceable(name="call_generate_section")

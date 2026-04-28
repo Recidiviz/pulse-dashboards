@@ -58,6 +58,7 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
     # Convert external API result to internal Resource model
     resource = Resource(
         id=result.google_place_id,
+        resource_id=result.resource_id,
         category=result.category,
         subcategory=result.subcategory,
         name=result.name,
@@ -69,7 +70,7 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
         transport_mode=result.travel_mode,
         rating=result.rating,
         ratingCount=result.rating_count,
-        score=None,
+        score=None
     )
     return resource
 

@@ -2,8 +2,6 @@ from typing import List
 
 import httpx
 import structlog
-from fastapi import status
-
 from app.core.config import settings
 from app.services.resources import (
     ApiSearchResult,
@@ -13,6 +11,7 @@ from app.services.resources import (
     Resource,
     ResourceFailureReason,
 )
+from fastapi import status
 
 logger = structlog.get_logger(__name__)
 
@@ -37,12 +36,12 @@ async def _call_resource_api(request: GetResourcesRequest) -> List[ApiSearchResu
             "distance_miles": request.distance_miles,
             "travel_mode": request.travel_mode,
             "ids_to_exclude": request.exclude_ids if request.exclude_ids else None,
-            "addresses_to_exclude": request.exclude_addresses
-            if request.exclude_addresses
-            else None,
-            "keywords_to_exclude": request.exclude_names
-            if request.exclude_names
-            else None,
+            "addresses_to_exclude": (
+                request.exclude_addresses if request.exclude_addresses else None
+            ),
+            "keywords_to_exclude": (
+                request.exclude_names if request.exclude_names else None
+            ),
             "limit": request.limit,
         }
 
@@ -88,6 +87,7 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
         rating=result.rating,
         ratingCount=result.rating_count,
         score=None,
+        resource_id=result.resource_id
     )
     return resource
 

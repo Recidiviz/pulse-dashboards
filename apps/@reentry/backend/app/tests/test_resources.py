@@ -170,6 +170,7 @@ async def test_get_resources_success_status():
             category=ResourceCategory.HOUSING,
             subcategory=ResourceSubcategory.EMERGENCY,
             origin="TEST",
+            resource_id=1,
             location=Location(latitude=40.2969, longitude=-111.6946),
             address="123 Test St, Orem, UT 84057",
             phone="555-1234",
@@ -211,42 +212,123 @@ async def test_get_resources_success_status():
 
 
 @pytest.mark.asyncio
-async def test_fetch_resources_with_retry():
-    """Test the retry functionality"""
-    from app.services.resources import GetResourcesRequest
-    from app.utils.llm_agent_gen_plan import fetch_resources_with_retry
+async def test_fetch_resources_with_retry_success():
+    """Returns resources immediately when the first API call succeeds."""
+    from app.services.resources import GetResourcesResponse, Resource
+    from app.utils.resources_utils import fetch_resources_with_retry
 
-    request = GetResourcesRequest(
-        category=ResourceCategory.BASIC_NEEDS.value,
-        subcategory=ResourceSubcategory.FOOD_ASSISTANCE.value,
-        address="123 Anywhere St, UT 84057",
-        limit=10,
+    resource = Resource(id="res-001", resource_id=1, category=ResourceCategory.HOUSING, name="Test Shelter")
+    response = GetResourcesResponse(
+        resources=[resource], failure_reason=ResourceFailureReason.SUCCESS
     )
 
-    resources = await fetch_resources_with_retry(request, max_retries=2)
+    with patch(
+        "app.utils.resources_utils.list_external_resources",
+        new_callable=AsyncMock,
+        return_value=response,
+    ) as mock_api:
+        result = await fetch_resources_with_retry(
+            GetResourcesRequest(
+                category=ResourceCategory.HOUSING.value,
+                subcategory=ResourceSubcategory.EMERGENCY.value,
+                address="123 Main St, Chicago, IL",
+            )
+        )
 
-    # Should return a list of resources
-    assert isinstance(resources, list)
-    # In test environment, should get some resources
-    assert len(resources) >= 0
+    assert result == [resource]
+    mock_api.assert_called_once()
 
 
 @pytest.mark.asyncio
-async def test_fetch_resources_with_retry_no_results():
-    from app.services.resources import GetResourcesRequest
-    from app.utils.llm_agent_gen_plan import fetch_resources_with_retry
+async def test_fetch_resources_with_retry_no_results_returns_immediately():
+    """Returns an empty list on NO_RESULTS_FOUND without making additional attempts."""
+    from app.services.resources import GetResourcesResponse
+    from app.utils.resources_utils import fetch_resources_with_retry
 
-    request = GetResourcesRequest(
-        category=ResourceCategory.BASIC_NEEDS.value,
-        subcategory=ResourceSubcategory.FOOD_ASSISTANCE.value,
-        address="This Address Does Not Exist 12345",
-        limit=10,
+    no_results_response = GetResourcesResponse(
+        resources=[], failure_reason=ResourceFailureReason.NO_RESULTS_FOUND
     )
 
-    resources = await fetch_resources_with_retry(request, max_retries=1)
+    with patch(
+        "app.utils.resources_utils.list_external_resources",
+        new_callable=AsyncMock,
+        return_value=no_results_response,
+    ) as mock_api:
+        result = await fetch_resources_with_retry(
+            GetResourcesRequest(
+                category=ResourceCategory.HOUSING.value,
+                subcategory=ResourceSubcategory.EMERGENCY.value,
+                address="123 Main St, Chicago, IL",
+            ),
+            max_retries=2,
+        )
 
-    # Should still return a list (even if empty)
-    assert isinstance(resources, list)
+    assert result == []
+    # Called exactly once — no retry on NO_RESULTS_FOUND
+    mock_api.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_fetch_resources_with_retry_retries_on_api_error():
+    """Retries on API_ERROR and returns resources when a subsequent attempt succeeds."""
+    from app.services.resources import GetResourcesResponse, Resource
+    from app.utils.resources_utils import fetch_resources_with_retry
+
+    resource = Resource(id="res-002", resource_id=2, category=ResourceCategory.HOUSING, name="Test Shelter")
+    error_response = GetResourcesResponse(
+        resources=[], failure_reason=ResourceFailureReason.API_ERROR, error_message="500"
+    )
+    success_response = GetResourcesResponse(
+        resources=[resource], failure_reason=ResourceFailureReason.SUCCESS
+    )
+
+    with patch(
+        "app.utils.resources_utils.list_external_resources",
+        new_callable=AsyncMock,
+        side_effect=[error_response, success_response],
+    ) as mock_api:
+        with patch("asyncio.sleep", new_callable=AsyncMock):
+            result = await fetch_resources_with_retry(
+                GetResourcesRequest(
+                    category=ResourceCategory.HOUSING.value,
+                    subcategory=ResourceSubcategory.EMERGENCY.value,
+                    address="123 Main St, Chicago, IL",
+                ),
+                max_retries=2,
+            )
+
+    assert result == [resource]
+    assert mock_api.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_fetch_resources_with_retry_exhausted_returns_empty():
+    """Returns an empty list after all retry attempts fail with API_ERROR."""
+    from app.services.resources import GetResourcesResponse
+    from app.utils.resources_utils import fetch_resources_with_retry
+
+    error_response = GetResourcesResponse(
+        resources=[], failure_reason=ResourceFailureReason.API_ERROR, error_message="503"
+    )
+
+    with patch(
+        "app.utils.resources_utils.list_external_resources",
+        new_callable=AsyncMock,
+        return_value=error_response,
+    ) as mock_api:
+        with patch("asyncio.sleep", new_callable=AsyncMock):
+            result = await fetch_resources_with_retry(
+                GetResourcesRequest(
+                    category=ResourceCategory.HOUSING.value,
+                    subcategory=ResourceSubcategory.EMERGENCY.value,
+                    address="123 Main St, Chicago, IL",
+                ),
+                max_retries=2,
+            )
+
+    assert result == []
+    # 1 initial attempt + 2 retries = 3 total
+    assert mock_api.call_count == 3
 
 
 async def test_get_resources_with_exclusion_api(client):
@@ -326,6 +408,7 @@ def test_resource_is_allowed():
 
     allowed = Resource(
         id="1",
+        resource_id=1,
         category=ResourceCategory.BASIC_NEEDS,
         name="test name",
         address="test address",
@@ -335,6 +418,7 @@ def test_resource_is_allowed():
     # disallowed by name
     disallowed_name = Resource(
         id="2",
+        resource_id=2,
         category=ResourceCategory.BASIC_NEEDS,
         name="Bonneville Community Correctional Center",
         address="test address",
@@ -344,6 +428,7 @@ def test_resource_is_allowed():
     # disallowed by address
     disallowed_address = Resource(
         id="3",
+        resource_id=3,
         category=ResourceCategory.BASIC_NEEDS,
         name="test name",
         address="80 South Orange Street, Salt Lake City, UT",
@@ -356,6 +441,7 @@ def test_resource_is_allowed():
     # default to allow if resource only has partial data.
     incomplete_resource = Resource(
         id="4",
+        resource_id=4,
         category=ResourceCategory.BASIC_NEEDS,
         name="test name",
         address=None,
@@ -546,6 +632,7 @@ async def test_routing_to_new_api():
             category=ResourceCategory.HOUSING,
             subcategory=ResourceSubcategory.EMERGENCY,
             origin="TEST",
+            resource_id=1,
             location=Location(latitude=40.2969, longitude=-111.6946),
             address="123 Test St, Orem, UT 84057",
         )
@@ -599,6 +686,7 @@ async def test_routing_to_legacy_api():
             category=ResourceCategory.BASIC_NEEDS,
             subcategory=ResourceSubcategory.FOOD_ASSISTANCE,
             origin="TEST",
+            resource_id=1,
             location=Location(latitude=40.2969, longitude=-111.6946),
             address="456 Test St, Orem, UT 84057",
         )
@@ -737,6 +825,7 @@ async def test_use_search_parameter(mock_httpx):
             "category": "Housing",
             "subcategory": "Emergency housing and shelters",
             "origin": "TEST",
+            "resource_id": 1,
             "location": {"latitude": 40.2969, "longitude": -111.6946},
             "address": "123 Test St, Orem, UT 84057",
         }

@@ -3,8 +3,9 @@ Action Plan generator
 =====================
 """
 
+import asyncio
 import textwrap
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 import orjson
@@ -22,18 +23,26 @@ from app.crud.plan_generation import (
     get_gen_by_plan_id,
     update_plan_generation,
 )
-from app.models.models import PlanGeneration
+from app.models.models import (
+    PlanGeneration,
+    PlanGenerationResourceAssociation,
+    ResourceAssociationAction,
+)
 from app.services.client_data.queries import Queries
-from app.services.resources import Resource
+from app.services.resources import GetResourcesRequest, Resource, TravelMode
 from app.utils.action_plan_types import (
     ActionPlanMilestones,
     ActionPlanSection,
     ActionPlanTimelines,
+    ResourceAssociation,
 )
 from app.utils.config_loader import ConfigLoader
 from app.utils.llm_agent_edit_plan import LLMAgentEdit
 from app.utils.llm_agent_gen_plan import LLMAgentGenerate
-from app.utils.resources_utils import transform_resources_associations_to_map
+from app.utils.resources_utils import (
+    fetch_resources_with_retry,
+    transform_resources_associations_to_map,
+)
 
 from .base import broker
 from .plan_decision_tree import get_plan_asset
@@ -387,6 +396,111 @@ async def _generate_new_action_plan(
     return action_plan
 
 
+async def hydrate_resource_associations(
+    gen: PlanGeneration,
+    session: AsyncSession,
+    task_logger: structlog.BoundLogger,
+) -> None:
+    """Populate PlanGenerationResourceAssociation rows for a freshly-saved generation.
+
+    For each (section, subcategory) pair in resources_associations_map, queries the
+    external resources API in parallel and writes an ADD event row per resource returned.
+    Rows are deduplicated by (resource_id, section_title) before insertion.
+
+    This is a non-critical post-processing step — errors are logged but never re-raised
+    so that a resource API failure cannot fail an otherwise-complete plan generation.
+    """
+    if not gen.resources_associations_map:
+        return
+
+    if not gen.plan or not gen.plan.intake or not gen.plan.intake.address:
+        task_logger.warning("Cannot hydrate resources: missing address")
+        return
+
+    client_address = gen.plan.intake.address.as_formatted_string()
+
+    # Build one fetch job per (section, subcategory) pair. Each job carries its
+    # section title so results can be attributed back to the correct section after
+    # the parallel gather.
+    fetch_jobs: list[tuple[str, GetResourcesRequest]] = []
+    for section_title, assoc_dicts in gen.resources_associations_map.items():
+        for assoc_dict in assoc_dicts:
+            assoc = ResourceAssociation.model_validate(assoc_dict)
+            fetch_jobs.append(
+                (
+                    section_title,
+                    GetResourcesRequest(
+                        category=assoc.resource_category,
+                        subcategory=assoc.resource_subcategory,
+                        address=client_address,
+                        distance_miles=50,
+                        travel_mode=TravelMode.DRIVING,
+                        use_search=True,
+                        limit=2
+                    ),
+                )
+            )
+
+    if not fetch_jobs:
+        return
+
+    task_logger.debug(
+        "Fetching resources for plan generation in parallel",
+        num_requests=len(fetch_jobs),
+        gen_id=gen.id,
+    )
+
+    # Fire all requests concurrently; return_exceptions=True ensures one failure
+    # doesn't cancel the rest — we handle each result individually below.
+    results = await asyncio.gather(
+        *[fetch_resources_with_retry(request) for _, request in fetch_jobs],
+        return_exceptions=True,
+    )
+
+    now = datetime.now(timezone.utc)
+    # Track (resource_id, section_title) pairs already queued to avoid inserting
+    # duplicate rows when two subcategory requests return the same resource.
+    seen: set[tuple[str, str]] = set()
+    new_rows: list[PlanGenerationResourceAssociation] = []
+
+    for (section_title, _), result in zip(fetch_jobs, results):
+        if isinstance(result, BaseException):
+            # Log and skip — a single failed subcategory lookup shouldn't block the rest.
+            task_logger.warning(
+                "Resource fetch failed for section",
+                section=section_title,
+                error=str(result),
+            )
+            continue
+        for resource in result:
+            # TODO: Remove when legacy `list_resources` method is no longer used in endpoints
+            if resource.resource_id is None:
+                continue
+            key = (resource.id, section_title)
+            if key in seen:
+                continue
+            seen.add(key)
+            new_rows.append(
+                PlanGenerationResourceAssociation(
+                    plan_generation_id=gen.id,
+                    # store the ids as `int`, as a way to validate the IDs since
+                    # they are integers in the Resources API database
+                    resource_id=int(resource.resource_id),
+                    section_title=section_title,
+                    action=ResourceAssociationAction.ADD.value,
+                    action_by="SYSTEM",
+                    action_at=now,
+                )
+            )
+
+    if new_rows:
+        session.add_all(new_rows)
+        await session.commit()
+        task_logger.info(
+            "Resource associations hydrated", count=len(new_rows), gen_id=gen.id
+        )
+
+
 async def _get_latest_plan_generation(
     session: AsyncSession,
     gen: PlanGeneration,
@@ -508,3 +622,8 @@ async def generate_action_plan(
             }
 
     await update_plan_generation(session, gen)
+
+    try:
+        await hydrate_resource_associations(gen, session, task_logger)
+    except Exception as e:
+        task_logger.error("Failed to hydrate resource associations", error=str(e))

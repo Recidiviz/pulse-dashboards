@@ -40,6 +40,7 @@ def test_convert_to_markdown_replaces_quotes():
                 "resources": [
                     {
                         "id": "84d81c07-7c7a-4356-a689-75d496faf691",
+                        "resource_id": 1,
                         "category": "Basic Needs",
                         "subcategory": "Housing",
                         "name": "Boise City/Ada County Housing Authorities",

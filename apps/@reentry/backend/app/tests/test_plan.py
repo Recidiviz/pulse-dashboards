@@ -543,6 +543,7 @@ async def test_suggested_resources_legacy(
     mock_resources = [
         Resource(
             id="res-1",
+            resource_id=1,
             category=ResourceCategoryLegacy.BASIC_NEEDS.value,
             subcategory=ResourceSubcategoryLegacy.HOUSING.value,
             name="Test Housing Resource",
@@ -550,6 +551,7 @@ async def test_suggested_resources_legacy(
         ),
         Resource(
             id="res-2",
+            resource_id=2,
             category=ResourceCategoryLegacy.EMPLOYMENT_AND_CAREER.value,
             subcategory=ResourceSubcategoryLegacy.JOB_PLACEMENT.value,
             name="Test Employment Resource",
@@ -677,6 +679,7 @@ async def test_suggested_resources(
     mock_resources = [
         Resource(
             id="res-1",
+            resource_id=1,
             category=ResourceCategory.HOUSING.value,
             subcategory=ResourceSubcategory.EMERGENCY.value,
             name="Test Housing Resource",
@@ -684,6 +687,7 @@ async def test_suggested_resources(
         ),
         Resource(
             id="res-2",
+            resource_id=2,
             category=ResourceCategory.EMPLOYMENT.value,
             subcategory=ResourceSubcategory.SECOND_CHANCE.value,
             name="Test Employment Resource",
