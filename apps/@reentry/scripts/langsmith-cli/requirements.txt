@@ -1,3 +1,0 @@
-langsmith 
-python-dotenv 
-pandas

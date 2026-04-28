@@ -55,21 +55,6 @@ services:
     networks:
       - net
 
-  # chat-or-simulate:
-  #   image: chat-simulator
-  #   env_file:
-  #     - backend/.env
-  #   build:
-  #     context: .
-  #     dockerfile: backend/Dockerfile.chat
-  #   stdin_open: true  # Keeps stdin open for interactive input
-  #   tty: true  # Allows colored output and better terminal handling
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #   networks:
-  #     - net
-
 volumes:
   pg_data:
 
