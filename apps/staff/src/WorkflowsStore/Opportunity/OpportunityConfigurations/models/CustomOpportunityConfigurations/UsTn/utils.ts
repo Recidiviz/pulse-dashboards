@@ -62,4 +62,5 @@ export const usTnUntrackedEligibilityConfigBase = {
   highlightCasesOnHomepage: false,
   snoozeCompanionOpportunityTypes: [],
   enableWorkflowsFilter: false,
+  skipFormPreview: false,
 } satisfies Partial<IApiOpportunityConfiguration>;

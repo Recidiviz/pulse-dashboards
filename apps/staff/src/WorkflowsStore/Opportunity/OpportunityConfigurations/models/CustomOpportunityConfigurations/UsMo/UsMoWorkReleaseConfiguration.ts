@@ -23,10 +23,6 @@ export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
     return false;
   }
 
-  get skipFormPreview(): boolean {
-    return true;
-  }
-
   get showIneligibleFormButtons() {
     return false;
   }

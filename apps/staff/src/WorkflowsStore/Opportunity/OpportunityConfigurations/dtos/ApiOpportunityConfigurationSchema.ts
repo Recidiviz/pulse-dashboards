@@ -162,6 +162,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   markSubmittedOnFormDownload: nullishAsUndefined(z.boolean()),
   indefiniteSnoozeSectionHeader: nullishAsUndefined(z.string()),
   indefiniteSnoozeSectionSubheading: nullishAsUndefined(z.string()),
+  skipFormPreview: z.boolean().default(false),
 
   // TODO(#10028): Add supervisor review fields to admin panel
   supervisorReviewTabTitle: nullishAsUndefined(z.string()),

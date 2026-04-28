@@ -213,7 +213,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get skipFormPreview() {
-    return false;
+    return this.configurationObject.skipFormPreview;
   }
 
   get eligibleCriteriaCopy() {
