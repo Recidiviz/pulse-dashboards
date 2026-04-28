@@ -22,6 +22,7 @@ import uniqBy from "lodash/uniqBy";
 import {
   PostMeetingProcessingStatus,
   PrismaClient,
+  StateCode,
 } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 import { AuthUser } from "~@meetings/trpc/types";
@@ -33,6 +34,7 @@ export async function createMeetingForPerson({
   startTime,
   personType,
   meetingId,
+  stateCode,
 }: {
   prisma: PrismaClient;
   user: AuthUser;
@@ -40,11 +42,16 @@ export async function createMeetingForPerson({
   startTime: Date;
   personType: "client" | "resident";
   meetingId: string;
+  stateCode: StateCode;
 }) {
-  if (env.DEPLOY_ENV === "production" && user.isRecidivizUser) {
+  if (
+    env.DEPLOY_ENV === "production" &&
+    user.isRecidivizUser &&
+    stateCode !== "US_DEMO"
+  ) {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: "Recidiviz users may not create meetings in production",
+      message: "Recidiviz users may not create non-demo meetings in production",
     });
   }
 

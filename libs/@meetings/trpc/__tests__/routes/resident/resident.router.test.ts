@@ -229,7 +229,7 @@ describe("resident router", () => {
         );
       });
 
-      test("Blocks recidiviz users from creating meetings in production", async () => {
+      test("Blocks recidiviz users from creating non-demo meetings in production", async () => {
         const originalDeployEnv = env.DEPLOY_ENV;
         env.DEPLOY_ENV = "production";
 
@@ -241,8 +241,41 @@ describe("resident router", () => {
               meetingId: createId(),
             }),
           ).rejects.toThrow(
-            "Recidiviz users may not create meetings in production",
+            "Recidiviz users may not create non-demo meetings in production",
           );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+
+      test("Allows recidiviz users to create meetings in US_DEMO in production", async () => {
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
+
+        await initFastifyAndSetUser(
+          {
+            "https://dashboard.recidiviz.org/email_address":
+              "test@recidiviz.org",
+            "https://dashboard.recidiviz.org/app_metadata": {
+              stateCode: "recidiviz",
+              allowedStates: ["US_DEMO"],
+            },
+          },
+          { stateCode: "US_DEMO" },
+        );
+
+        try {
+          const startTime = faker.date.future();
+          const result = await testTRPCClient.v1.resident.createMeeting.mutate({
+            residentId: fakeResidents[0].personId,
+            startTime,
+            meetingId: createId(),
+          });
+
+          expect(result).toEqual({
+            id: expect.any(String),
+            startTime,
+          });
         } finally {
           env.DEPLOY_ENV = originalDeployEnv;
         }
