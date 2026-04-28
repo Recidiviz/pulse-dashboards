@@ -46,7 +46,6 @@
       "Read(.token)",
       "Read(oauth.json)",
       "Read(dump.rdb)",
-      "Read(node_modules/**)",
       "Read(.atmos/**)",
       "Read(.terraform/**)",
       "Read(.terraform.lock.hcl)",
