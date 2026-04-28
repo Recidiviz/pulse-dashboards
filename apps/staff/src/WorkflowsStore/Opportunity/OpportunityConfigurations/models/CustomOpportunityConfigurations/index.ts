@@ -31,10 +31,12 @@ import { UsIdEarnedDischargeConfiguration } from "./UsId/UsIdEarnedDischargeConf
 import { UsIdTransferToCRCLikeBedConfiguration } from "./UsId/UsIdTransferToCRCLikeBedConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
+import { UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration";
+import { UsMiSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiSecurityClassificationCommitteeReviewV2Configuration";
+import { UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration";
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
 import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTelephoneReporting";
-import { UsMiSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/UsMiSecurityClassificationCommitteeReviewV2Configuration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNcCreditReductionReviewConfiguration } from "./UsNc/UsNcCreditReductionReviewConfiguration";
@@ -84,9 +86,9 @@ const customOpportunityConfigurations: Partial<
   usMiSecurityClassificationCommitteeReviewV2:
     UsMiSecurityClassificationCommitteeReviewV2Configuration,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2:
-    UsMiSecurityClassificationCommitteeReviewV2Configuration,
+    UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
-    UsMiSecurityClassificationCommitteeReviewV2Configuration,
+    UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration,
 
   // Missouri
   usMoOutsideClearance: UsMoWorkReleaseConfiguration,

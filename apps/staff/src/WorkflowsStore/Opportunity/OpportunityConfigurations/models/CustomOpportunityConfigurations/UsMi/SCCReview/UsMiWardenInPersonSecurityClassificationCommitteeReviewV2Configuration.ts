@@ -15,21 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
+import { ApiOpportunityConfiguration } from "../../../ApiOpportunityConfigurationImpl";
 
-/**
- * For now, we use this single custom configuration for the three MI restrictive
- * housing V2 opportunities:
- * - UsMiSecurityClassificationCommitteeReviewV2
- * - UsMiWardenInPersonSecurityClassificationCommitteeReviewV2
- * - UsMiAddInPersonSecurityClassificationCommitteeReviewV2
- */
-export class UsMiSecurityClassificationCommitteeReviewV2Configuration extends ApiOpportunityConfiguration {
-  get hydrateIneligibleRecordsInOpportunityManager() {
-    return !!this.userStore.activeFeatureVariants
-      .usMiRestrictiveHousingV2Ineligible;
-  }
-
+export class UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration extends ApiOpportunityConfiguration {
   get allSubcategoriesOfSubmitted() {
     return undefined;
   }
