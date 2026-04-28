@@ -20,16 +20,17 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { BACKEND_URL } from "~@reentry/frontend/constants";
-import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
+import { useEvalRunner } from "~@reentry/frontend/hooks/useEvalRunner";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
+import { ActionPlanEvalResultsPanel } from "../components/ActionPlanEvalResultsPanel";
 import { AuditLog, AuditLogEntry } from "../components/AuditLog";
 import { ChangeNoteModal } from "../components/ChangeNoteModal";
 import { EvalResultsPanel } from "../components/EvalResultsPanel";
@@ -68,21 +69,21 @@ const ConfigDetailPage = () => {
   const [showNewVersionModal, setShowNewVersionModal] = useState(false);
   const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Eval state
-  const [evalRefetchKey, setEvalRefetchKey] = useState(0);
   const {
-    isPolling: isEvalRunning,
-    isCompleted: isEvalCompleted,
-    progress: evalProgress,
-    message: evalMessage,
-    startPolling: startEvalPolling,
-  } = useExecutionPolling({});
+    isRunning: isSummaryEvalRunning,
+    progress: summaryEvalProgress,
+    message: summaryEvalMessage,
+    refetchKey: summaryEvalRefetchKey,
+    run: handleRunSummaryEval,
+  } = useEvalRunner(`/config-management/outputs/${configId}/eval`);
 
-  useEffect(() => {
-    if (isEvalCompleted) {
-      setEvalRefetchKey((k) => k + 1);
-    }
-  }, [isEvalCompleted]);
+  const {
+    isRunning: isActionPlanEvalRunning,
+    progress: actionPlanEvalProgress,
+    message: actionPlanEvalMessage,
+    refetchKey: actionPlanEvalRefetchKey,
+    run: handleRunActionPlanEval,
+  } = useEvalRunner(`/config-management/outputs/${configId}/action-plan-eval`);
 
   // Fetch assessment config using openapi-react-query
   const {
@@ -486,25 +487,6 @@ const ConfigDetailPage = () => {
     };
   }, []);
 
-  const handleRunEval = useCallback(async () => {
-    try {
-      const token = await auth.getAccessToken();
-      const response = await fetch(
-        `${BACKEND_URL}/config-management/outputs/${configId}/eval`,
-        { method: "POST", headers: configHeaders(token) },
-      );
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        showErrorToast(body.detail ?? "Failed to start eval");
-        return;
-      }
-      const { execution_id } = await response.json();
-      startEvalPolling(execution_id);
-    } catch {
-      showErrorToast("Failed to start eval");
-    }
-  }, [auth, configId, startEvalPolling]);
-
   if (isLoading) {
     return (
       <Box
@@ -549,6 +531,11 @@ const ConfigDetailPage = () => {
     isOutputConfig &&
     "output_type" in config &&
     config.output_type === "intake_summary";
+
+  const isActionPlan =
+    isOutputConfig &&
+    "output_type" in config &&
+    config.output_type === "action_plan";
 
   const currentYaml = editedYaml ?? config.config_yaml;
 
@@ -603,12 +590,23 @@ const ConfigDetailPage = () => {
           <div className="flex gap-2 flex-wrap">
             {isIntakeSummary && (
               <button
-                onClick={handleRunEval}
-                disabled={isEvalRunning}
+                onClick={handleRunSummaryEval}
+                disabled={isSummaryEvalRunning}
                 className="px-4 py-2 bg-white border border-purple-300 text-purple-700 rounded-full hover:bg-purple-50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isEvalRunning
-                  ? `Running eval… ${evalProgress ? `${evalProgress}%` : ""}${evalMessage ? ` — ${evalMessage}` : ""}`
+                {isSummaryEvalRunning
+                  ? `Running eval… ${summaryEvalProgress ? `${summaryEvalProgress}%` : ""}${summaryEvalMessage ? ` — ${summaryEvalMessage}` : ""}`
+                  : "Run Eval"}
+              </button>
+            )}
+            {isActionPlan && (
+              <button
+                onClick={handleRunActionPlanEval}
+                disabled={isActionPlanEvalRunning}
+                className="px-4 py-2 bg-white border border-purple-300 text-purple-700 rounded-full hover:bg-purple-50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isActionPlanEvalRunning
+                  ? `Running eval… ${actionPlanEvalProgress ? `${actionPlanEvalProgress}%` : ""}${actionPlanEvalMessage ? ` — ${actionPlanEvalMessage}` : ""}`
                   : "Run Eval"}
               </button>
             )}
@@ -847,7 +845,18 @@ const ConfigDetailPage = () => {
 
         {/* Eval Results (intake_summary output configs only) */}
         {isIntakeSummary && (
-          <EvalResultsPanel configId={configId} refetchKey={evalRefetchKey} />
+          <EvalResultsPanel
+            configId={configId}
+            refetchKey={summaryEvalRefetchKey}
+          />
+        )}
+
+        {/* Eval Results (action_plan output configs only) */}
+        {isActionPlan && (
+          <ActionPlanEvalResultsPanel
+            configId={configId}
+            refetchKey={actionPlanEvalRefetchKey}
+          />
         )}
 
         {/* Audit History */}

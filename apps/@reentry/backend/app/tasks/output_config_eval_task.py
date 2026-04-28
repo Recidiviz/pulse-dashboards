@@ -21,6 +21,7 @@ from app.crud.output_config_eval_result import (
     get_output_config_eval_result_by_id,
     update_output_config_eval_result,
 )
+from app.manage.evaluate.evaluate_generation import _mean
 from app.manage.evaluate.evaluate_summary import (
     _run_evaluations,
     format_conversation_from_messages,
@@ -96,9 +97,6 @@ async def output_config_eval_task(
 
         def _scores(key: str) -> list[int]:
             return [r[key]["score"] for r in successful if r.get(key)]
-
-        def _mean(scores: list[int]) -> float | None:
-            return sum(scores) / len(scores) if scores else None
 
         grounding_scores = _scores("grounding")
         coverage_scores = _scores("coverage")

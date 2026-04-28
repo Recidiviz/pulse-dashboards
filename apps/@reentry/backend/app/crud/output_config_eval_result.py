@@ -37,13 +37,16 @@ async def get_output_config_eval_result_by_id(
 
 
 async def get_eval_results_by_config_id(
-    session: AsyncSession, config_id: UUID, limit: int = 10
+    session: AsyncSession,
+    config_id: UUID,
+    limit: int = 10,
+    eval_type: str | None = None,
 ) -> List[OutputConfigEvalResult]:
-    query = (
-        select(OutputConfigEvalResult)
-        .where(OutputConfigEvalResult.output_config_id == config_id)
-        .order_by(OutputConfigEvalResult.created_at.desc())
-        .limit(limit)
+    query = select(OutputConfigEvalResult).where(
+        OutputConfigEvalResult.output_config_id == config_id
     )
+    if eval_type is not None:
+        query = query.where(OutputConfigEvalResult.eval_type == eval_type)
+    query = query.order_by(OutputConfigEvalResult.created_at.desc()).limit(limit)
     result = await session.exec(query)
     return list(result.all())

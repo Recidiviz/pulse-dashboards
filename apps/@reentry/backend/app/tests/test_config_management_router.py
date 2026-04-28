@@ -661,6 +661,185 @@ class TestValidateOutputYaml:
 
 
 # =============================================================================
+# Tests for Action Plan Eval Endpoints
+# =============================================================================
+
+ACTION_PLAN_OUTPUT_YAML = """
+metadata:
+  output_type: action_plan
+  code: test_api_action_plan
+  version: 1
+  display_name: Test API Action Plan Output
+
+model:
+  provider: openai
+  name: gpt-4o
+  version: "2024-11-20"
+
+prompts:
+  system: You are a helpful assistant.
+"""
+
+
+@pytest_asyncio.fixture
+async def draft_action_plan_output_config(async_session: AsyncSession):
+    """Create a draft action_plan output config for testing."""
+    config = OutputConfig(
+        output_type=OutputType.action_plan,
+        code="apitestactionplan",
+        version=1,
+        display_name="API Test Action Plan Output Config",
+        description="Test action plan output config for API tests",
+        config_yaml=ACTION_PLAN_OUTPUT_YAML,
+        status=ConfigStatus.DRAFT.value,
+        is_active=False,
+        created_by_email="test@recidiviz.org",
+    )
+    async_session.add(config)
+    await async_session.commit()
+    await async_session.refresh(config)
+    return config
+
+
+class TestTriggerActionPlanOutputConfigEval:
+    """Tests for POST /config-management/outputs/{config_id}/action-plan-eval."""
+
+    @pytest.mark.asyncio
+    async def test_trigger_returns_404_when_no_intakes_configured(
+        self, config_client: AsyncClient, draft_action_plan_output_config
+    ):
+        """When no eval intakes are configured, endpoint returns 404."""
+        from unittest.mock import patch
+
+        with (
+            patch(
+                "app.routes.config_management_router.get_eval_action_plan_intake_ids",
+                return_value=[],
+            ),
+        ):
+            response = await config_client.post(
+                f"/config-management/outputs/{draft_action_plan_output_config.id}/action-plan-eval"
+            )
+
+        assert response.status_code == 404
+
+    @pytest.mark.asyncio
+    async def test_trigger_returns_400_for_wrong_output_type(
+        self, config_client: AsyncClient, draft_output_config
+    ):
+        """When config is not action_plan type, endpoint returns 400."""
+        response = await config_client.post(
+            f"/config-management/outputs/{draft_output_config.id}/action-plan-eval"
+        )
+
+        assert response.status_code == 400
+        assert "action_plan" in response.json()["detail"]
+
+    @pytest.mark.asyncio
+    async def test_trigger_returns_404_for_unknown_config(
+        self, config_client: AsyncClient
+    ):
+        """When config_id does not exist, endpoint returns 404."""
+        from uuid import uuid4
+
+        response = await config_client.post(
+            f"/config-management/outputs/{uuid4()}/action-plan-eval"
+        )
+
+        assert response.status_code == 404
+
+    @pytest.mark.asyncio
+    async def test_trigger_schedules_task_and_returns_ids(
+        self,
+        config_client: AsyncClient,
+        draft_action_plan_output_config,
+        async_session: AsyncSession,
+    ):
+        """Happy path: task is scheduled and execution/eval result IDs are returned."""
+        from unittest.mock import AsyncMock, MagicMock, patch
+        from uuid import UUID, uuid4
+
+        from app.models.execution import Execution, ExecutionStatus
+
+        mock_execution_id = uuid4()
+        mock_execution = MagicMock()
+        mock_execution.id = mock_execution_id
+
+        # Pre-create an Execution row so the FK on eval_result.execution_id is satisfied
+        execution_row = Execution(
+            id=mock_execution_id,
+            status=ExecutionStatus.NOT_STARTED,
+            table_name="output_config_eval_result",
+            table_entity_id=None,
+            output=None,
+        )
+        async_session.add(execution_row)
+        await async_session.commit()
+
+        with (
+            patch(
+                "app.routes.config_management_router.get_eval_action_plan_intake_ids",
+                return_value=[uuid4()],
+            ),
+            patch(
+                "app.routes.config_management_router.schedule_task",
+                new_callable=AsyncMock,
+                return_value=mock_execution,
+            ),
+        ):
+            response = await config_client.post(
+                f"/config-management/outputs/{draft_action_plan_output_config.id}/action-plan-eval"
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "execution_id" in data
+        assert "eval_result_id" in data
+        assert UUID(data["execution_id"]) == mock_execution_id
+
+    @pytest.mark.asyncio
+    async def test_trigger_returns_500_and_cleans_up_when_scheduling_fails(
+        self, config_client: AsyncClient, draft_action_plan_output_config
+    ):
+        """When schedule_task raises, endpoint returns 500 and deletes the eval result row."""
+        from unittest.mock import patch
+        from uuid import uuid4
+
+        with (
+            patch(
+                "app.routes.config_management_router.get_eval_action_plan_intake_ids",
+                return_value=[uuid4()],
+            ),
+            patch(
+                "app.routes.config_management_router.schedule_task",
+                side_effect=RuntimeError("broker unavailable"),
+            ),
+        ):
+            response = await config_client.post(
+                f"/config-management/outputs/{draft_action_plan_output_config.id}/action-plan-eval"
+            )
+
+        assert response.status_code == 500
+        assert "Failed to schedule eval task" in response.json()["detail"]
+
+
+class TestGetActionPlanOutputConfigEvalResults:
+    """Tests for GET /config-management/outputs/{config_id}/action-plan-eval."""
+
+    @pytest.mark.asyncio
+    async def test_get_returns_empty_list_when_no_results(
+        self, config_client: AsyncClient, draft_action_plan_output_config
+    ):
+        """When no eval results exist for config, endpoint returns empty list."""
+        response = await config_client.get(
+            f"/config-management/outputs/{draft_action_plan_output_config.id}/action-plan-eval"
+        )
+
+        assert response.status_code == 200
+        assert response.json() == []
+
+
+# =============================================================================
 # Tests for Audit Log Endpoints
 # =============================================================================
 

@@ -13,3 +13,18 @@ eval_intake_ids:
     - "f852b6ff-5fc6-4ed7-90fd-fa8ee496c944"
   staging: []
   prod: []
+
+# Hardcoded intake IDs used for action plan config evaluation (list per environment).
+# Fill in real intake UUIDs for each environment before running evals in that env.
+eval_action_plan_intake_ids:
+  dev:
+    - "64eb330a-6c2c-4b03-970c-45044e0dd547"
+  demo: []
+  pilot:
+    - "de86adc4-564e-47fd-981d-7bb358ef6b00"
+    - "15d929e9-4e17-4d13-aaf1-e84771a4e47f"
+    - "26e60ea6-1758-4517-8fa2-5d89b094f766"
+    - "40d7d320-6df7-4d55-a066-5c6f25e72841"
+    - "f852b6ff-5fc6-4ed7-90fd-fa8ee496c944"
+  staging: []
+  prod: []

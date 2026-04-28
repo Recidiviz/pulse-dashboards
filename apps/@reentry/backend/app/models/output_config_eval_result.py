@@ -15,6 +15,7 @@ class OutputConfigEvalResult(BaseModel, table=True):
     )
 
     output_config_id: UUID
+    eval_type: str = Field(default="intake_summary")
     metrics: Optional[dict] = Field(default=None, sa_column=Column(JSON))
     execution_id: Optional[UUID] = Field(default=None, foreign_key="execution.id")
     created_by_email: Optional[str] = None

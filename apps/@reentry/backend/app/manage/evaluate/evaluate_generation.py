@@ -425,6 +425,11 @@ _BINARY_EVALUATORS = [
 ]
 _ALL_EVALUATOR_KEYS = _SCORE_EVALUATORS + _BINARY_EVALUATORS
 
+
+def _mean(values: list) -> float | None:
+    return sum(values) / len(values) if values else None
+
+
 _EVALUATOR_LABELS = {
     "addressed_to_client": "Addressed",
     "clarity": "Clarity",
