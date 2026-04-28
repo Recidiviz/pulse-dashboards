@@ -798,14 +798,14 @@ async def test_use_search_parameter(mock_httpx):
 
 
 def test_batch_get_resources_default_travel_mode():
-    request = BatchGetResources(address="123 Main St, Portland, OR", resource_ids=[1, 2])
+    request = BatchGetResources(address="123 Main St, Portland, OR", ids=[1, 2])
     assert request.travel_mode == TravelMode.DRIVING
 
 
 def test_batch_get_resources_explicit_travel_mode():
     request = BatchGetResources(
         address="123 Main St, Portland, OR",
-        resource_ids=[1, 2],
+        ids=[1, 2],
         travel_mode=TravelMode.TRANSIT,
     )
     assert request.travel_mode == TravelMode.TRANSIT
@@ -814,7 +814,7 @@ def test_batch_get_resources_explicit_travel_mode():
 def test_batch_get_resources_allows_none_travel_mode():
     request = BatchGetResources(
         address="123 Main St, Portland, OR",
-        resource_ids=[1],
+        ids=[1],
         travel_mode=None,
     )
     assert request.travel_mode is None
@@ -851,7 +851,7 @@ async def test_batch_get_resources_success(mock_httpx):
 
     request = BatchGetResources(
         address="123 Main St, Portland, OR",
-        resource_ids=[42],
+        ids=[42],
         travel_mode=TravelMode.DRIVING,
     )
     result = await batch_get_resources(request)
@@ -877,7 +877,7 @@ async def test_batch_get_resources_no_content_returns_empty(mock_httpx):
     )
 
     result = await batch_get_resources(
-        BatchGetResources(address="123 Main St, Portland, OR", resource_ids=[1])
+        BatchGetResources(address="123 Main St, Portland, OR", ids=[1])
     )
     assert result == []
 
@@ -898,7 +898,7 @@ async def test_batch_get_resources_api_error_raises(mock_httpx):
 
     with pytest.raises(Exception, match="API request failed with status 500"):
         await batch_get_resources(
-            BatchGetResources(address="123 Main St, Portland, OR", resource_ids=[1])
+            BatchGetResources(address="123 Main St, Portland, OR", ids=[1])
         )
 
 
@@ -921,7 +921,7 @@ async def test_batch_get_resources_calls_correct_endpoint(mock_httpx):
 
     request = BatchGetResources(
         address="123 Main St, Portland, OR",
-        resource_ids=[10, 20],
+        ids=[10, 20],
         travel_mode=TravelMode.WALKING,
     )
     await batch_get_resources(request)
@@ -930,5 +930,5 @@ async def test_batch_get_resources_calls_correct_endpoint(mock_httpx):
     assert "/api/v0/resources" in captured_calls[0]["url"]
     payload = captured_calls[0]["json"]
     assert payload["address"] == "123 Main St, Portland, OR"
-    assert payload["resource_ids"] == [10, 20]
+    assert payload["ids"] == [10, 20]
     assert payload["travel_mode"] == TravelMode.WALKING

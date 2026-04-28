@@ -1350,7 +1350,7 @@ async def test_get_active_resources_no_address(
 
     assoc = PlanGenerationResourceAssociation(
         plan_generation_id=plan_gen.id,
-        resource_id="42",
+        resource_id=42,
         section_title="Housing",
         action=ResourceAssociationAction.ADD,
         action_by="SYSTEM",
@@ -1379,7 +1379,7 @@ async def test_get_active_resources_success(
 
     assoc = PlanGenerationResourceAssociation(
         plan_generation_id=plan_gen.id,
-        resource_id="42",
+        resource_id=42,
         section_title="Housing",
         action=ResourceAssociationAction.ADD,
         action_by="SYSTEM",
@@ -1408,7 +1408,7 @@ async def test_get_active_resources_success(
         assert data[0]["name"] == "Portland Housing Resource"
 
         call_args = mock_batch.call_args[0][0]
-        assert call_args.resource_ids == [42]
+        assert call_args.ids == [42]
         assert call_args.address == "123 Main St, Portland, OR"
 
 
@@ -1428,7 +1428,7 @@ async def test_get_active_resources_travel_mode_query_param(
 
     assoc = PlanGenerationResourceAssociation(
         plan_generation_id=plan_gen.id,
-        resource_id="7",
+        resource_id=7,
         section_title="Employment",
         action=ResourceAssociationAction.ADD,
         action_by="SYSTEM",
@@ -1471,17 +1471,17 @@ async def test_get_active_resources_only_active_associations_sent(
     async_session.add(
         PlanGenerationResourceAssociation(
             plan_generation_id=plan_gen.id,
-            resource_id="10",
+            resource_id=10,
             section_title="Housing",
             action=ResourceAssociationAction.ADD,
-            action_by="SYSTEM",
             action_at=now,
+            action_by="SYSTEM",
         )
     )
     async_session.add(
         PlanGenerationResourceAssociation(
             plan_generation_id=plan_gen.id,
-            resource_id="10",
+            resource_id=10,
             section_title="Housing",
             action=ResourceAssociationAction.REMOVE,
             action_by="SYSTEM",
@@ -1492,7 +1492,7 @@ async def test_get_active_resources_only_active_associations_sent(
     async_session.add(
         PlanGenerationResourceAssociation(
             plan_generation_id=plan_gen.id,
-            resource_id="99",
+            resource_id=99,
             section_title="Employment",
             action=ResourceAssociationAction.ADD,
             action_by="SYSTEM",
@@ -1510,4 +1510,4 @@ async def test_get_active_resources_only_active_associations_sent(
         assert_response(response, 200)
 
         call_args = mock_batch.call_args[0][0]
-        assert call_args.resource_ids == [99]
+        assert call_args.ids == [99]
