@@ -1,14 +1,16 @@
 """
-Headless conversation evaluation that runs multiple clients simultaneously using LLM-generated responses.
-This allows testing the conversation flow without manual input by simulating client responses with an AI model.
+Headless conversation evaluation that runs a conversation through LLM-as-judge scoring.
+Supports evaluating sample conversations, synthetically generated conversations, or
+real intake conversations fetched from the database.
 """
 
 import json
-import logging
 import uuid
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from uuid import UUID
 
 import structlog
 from langchain_core.messages import HumanMessage
@@ -27,14 +29,18 @@ from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.schemas import ClientContext, ServerEvent
 
 from ..base import cli
+from ..extract_intake_conversation import (
+    fetch_conversation,
+    fetch_conversation_by_intake_id,
+    to_environment,
+)
 from ..types import (
     ConversationEvaluation,
     ConversationExchange,
     IntakeConversationData,
 )
+from ._html_utils import write_html_report
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(name)s - %(message)s")
 logger = structlog.get_logger(__name__)
 
 
@@ -267,9 +273,9 @@ class HeadlessIntakeClient:
 You are roleplaying as {self.client_name}, a reluctant person going through an intake assessment.
 
 Your background:
-- Age: {self.persona.get('age', 'unknown')}
-- Background: {self.persona.get('background', 'No specific background provided')}
-- Challenges: {self.persona.get('challenges', 'General life challenges')}
+- Age: {self.persona.get("age", "unknown")}
+- Background: {self.persona.get("background", "No specific background provided")}
+- Challenges: {self.persona.get("challenges", "General life challenges")}
 
 CRITICAL INSTRUCTIONS:
 - You don't want to be here and show it through extremely brief responses
@@ -285,9 +291,9 @@ CRITICAL INSTRUCTIONS:
 You are roleplaying as {self.client_name}, a person with severe communication difficulties going through an intake assessment.
 
 Your background:
-- Age: {self.persona.get('age', 'unknown')}
-- Background: {self.persona.get('background', 'No specific background provided')}
-- Challenges: {self.persona.get('challenges', 'General life challenges')}
+- Age: {self.persona.get("age", "unknown")}
+- Background: {self.persona.get("background", "No specific background provided")}
+- Challenges: {self.persona.get("challenges", "General life challenges")}
 
 CRITICAL INSTRUCTIONS:
 - Respond with nonsensical, incoherent, or completely random answers
@@ -303,10 +309,10 @@ CRITICAL INSTRUCTIONS:
 You are roleplaying as {self.client_name}, a person going through an intake assessment.
 
 Your background:
-- Age: {self.persona.get('age', 'unknown')}
-- Background: {self.persona.get('background', 'No specific background provided')}
-- Challenges: {self.persona.get('challenges', 'General life challenges')}
-- Communication style: {self.persona.get('communication_style', 'Direct and honest')}
+- Age: {self.persona.get("age", "unknown")}
+- Background: {self.persona.get("background", "No specific background provided")}
+- Challenges: {self.persona.get("challenges", "General life challenges")}
+- Communication style: {self.persona.get("communication_style", "Direct and honest")}
 
 Current section being discussed: {current_section}
 
@@ -571,44 +577,52 @@ SAMPLE_PERSONAS = [
 ]
 
 
+@dataclass
+class ConversationEvalItem:
+    """Holds a single conversation and its context for evaluation."""
+
+    conversation_history: List[ConversationExchange]
+    completed_sections: List[str]
+    sections: List[IntakeSectionConfig]
+    meta: Dict[str, Any]  # {intake_id, client_pseudo_id, intake_type, source}
+
+
 async def get_conversation(
-    use_sample_conversation: bool,
-    use_sample_failed_conversation: bool,
-    generate_conversation: bool,
+    mode: str,
     client_pseudo_id: Optional[str],
     environment: str,
-    sections: list[IntakeSectionConfig],
+    sections: List[IntakeSectionConfig],
     assessment_config: AssessmentConfigFile,
-) -> IntakeConversationData:
-    """
-    Get a conversation from different sources: sample, generated, or real intake from database.
+    config_file_name: str,
+    intake_id: Optional[str] = None,
+) -> ConversationEvalItem:
+    """Load a conversation from the appropriate source based on mode."""
+    if mode in ("sample", "sample-failed"):
+        filename = (
+            "sample_failed_conversation.json"
+            if mode == "sample-failed"
+            else "sample_generated_conversation.json"
+        )
+        logger.info(f"Loading sample conversation from file: {filename}")
+        sample_path = Path(__file__).parent.parent.parent / "tests" / "data" / filename
+        with open(sample_path, "r") as f:
+            conversation = IntakeConversationData(**json.load(f))
+        meta: Dict[str, Any] = {
+            "intake_id": None,
+            "client_pseudo_id": conversation.client_pseudo_id,
+            "intake_type": config_file_name,
+            "source": "sample",
+        }
+        if conversation.error:
+            meta["conversation_error"] = conversation.error
+        return ConversationEvalItem(
+            conversation_history=conversation.conversation_history or [],
+            completed_sections=conversation.completed_sections or [],
+            sections=sections,
+            meta=meta,
+        )
 
-    Args:
-        use_sample_conversation: Load from sample JSON file
-        use_sample_failed_conversation: Load from sample failed conversation JSON file
-        generate_conversation: Generate new conversation with first LLM persona
-        client_pseudo_id: Fetch real intake from database
-        environment: Environment for database fetch (dev, demo, staging, prod)
-        sections: Intake sections configuration
-
-    Returns:
-        IntakeConversationData object
-    """
-    from ..extract_intake_conversation import fetch_conversation, to_environment
-
-    # Handle real intake conversation from database
-    if client_pseudo_id:
-        logger.info(f"Fetching real intake conversation for client: {client_pseudo_id}")
-        env = to_environment(environment)
-        intake_data = await fetch_conversation(client_pseudo_id, env)
-
-        if intake_data.error:
-            raise ValueError(f"Error fetching intake: {intake_data.error}")
-
-        return intake_data
-
-    # Handle generated conversation (use first persona)
-    elif generate_conversation:
+    if mode == "generate":
         persona = SAMPLE_PERSONAS[0]
         logger.info(f"Generating conversation for simulated client: {persona['name']}")
         conversation = await generate_client_conversation(
@@ -618,112 +632,92 @@ async def get_conversation(
             sections=sections,
             assessment_config=assessment_config,
         )
-        return conversation
-
-    # Handle sample conversation
-    elif use_sample_conversation:
-        logger.info("Loading sample conversation from file")
-        sample_conversation_path = (
-            Path(__file__).parent.parent.parent
-            / "tests"
-            / "data"
-            / "sample_generated_conversation.json"
+        return ConversationEvalItem(
+            conversation_history=conversation.conversation_history or [],
+            completed_sections=conversation.completed_sections or [],
+            sections=sections,
+            meta={
+                "intake_id": None,
+                "client_pseudo_id": conversation.client_pseudo_id,
+                "intake_type": config_file_name,
+                "source": "generate",
+            },
         )
-        with open(sample_conversation_path, "r") as file:
-            json_data = json.load(file)
-            conversation = IntakeConversationData(**json_data)
-            return conversation
 
-    elif use_sample_failed_conversation:
-        logger.info("Loading sample failed conversation from file")
-        sample_failed_conversation_path = (
-            Path(__file__).parent.parent.parent
-            / "tests"
-            / "data"
-            / "sample_failed_conversation.json"
+    # db mode
+    env = to_environment(environment)
+    if intake_id:
+        logger.info(f"Fetching intake by ID: {intake_id} (env: {environment})")
+        intake_data = await fetch_conversation_by_intake_id(UUID(intake_id), env)
+    else:
+        logger.info(
+            f"Fetching intake by client_pseudo_id: {client_pseudo_id} (env: {environment})"
         )
-        with open(sample_failed_conversation_path, "r") as file:
-            json_data = json.load(file)
-            conversation = IntakeConversationData(**json_data)
-            return conversation
+        intake_data = await fetch_conversation(client_pseudo_id, env)
 
-    raise ValueError("No conversation source specified")
+    if intake_data.error:
+        raise ValueError(f"Error fetching intake: {intake_data.error}")
+
+    return ConversationEvalItem(
+        conversation_history=intake_data.conversation_history or [],
+        completed_sections=intake_data.completed_sections or [],
+        sections=sections,
+        meta={
+            "intake_id": None,
+            "client_pseudo_id": intake_data.client_pseudo_id,
+            "intake_type": config_file_name,
+            "source": "db",
+        },
+    )
 
 
-async def evaluate_single_conversation(
-    conversation: IntakeConversationData,
-    sections: list[IntakeSectionConfig],
-    start_time: datetime,
-) -> Dict[str, Any]:
-    """
-    Evaluate a single conversation and return results summary.
-
-    Args:
-        conversation: IntakeConversationData object
-        sections: Intake sections configuration
-        start_time: Start time of the evaluation
-
-    Returns:
-        Dictionary with evaluation summary including result or error
-    """
-    logger.info("Starting conversation evaluation...")
-
-    # Extract fields
-    client_identifier = conversation.client_pseudo_id
-    conversation_history = conversation.conversation_history
-    completed_sections = conversation.completed_sections
-    has_error = conversation.error is not None
+async def evaluate_single_conversation(item: ConversationEvalItem) -> Dict[str, Any]:
+    """Run LLM-as-judge evaluation on a single ConversationEvalItem."""
+    client_identifier = item.meta.get("client_pseudo_id", "unknown")
+    conversation_history = item.conversation_history
+    completed_sections = item.completed_sections
+    start_time = datetime.now()
+    has_error = bool(item.meta.get("conversation_error"))
 
     evaluation_result = ConversationEvaluation()
+    evaluation_result.conversation_data = IntakeConversationData(
+        client_pseudo_id=client_identifier,
+        conversation_history=conversation_history,
+        completed_sections=completed_sections,
+    )
 
-    # Check for errors (log but continue to evaluate available conversation data)
-    if has_error:
-        error_msg = conversation.error
-        logger.warning(
-            f"Conversation has error: {error_msg}. Will attempt to evaluate available conversation data."
-        )
-        evaluation_result.error = error_msg
-
-    # Debug the evaluation conditions
     logger.info(
         f"Evaluating {client_identifier}: conversation_history length={len(conversation_history)}, completed_sections={completed_sections}"
     )
 
-    # Run evaluation if there's any conversation data
     if conversation_history and len(conversation_history) > 0:
         logger.info(f"Evaluating conversation for {client_identifier}...")
         try:
             evaluation = await evaluate_conversation(
                 conversation_history=conversation_history,
                 completed_sections=completed_sections if completed_sections else [],
-                sections=sections,
+                sections=item.sections,
             )
             evaluation_result.ai_evaluation = evaluation
-
-            # Store the conversation data
-            evaluation_result.conversation_data = conversation
 
             logger.info(
                 f"Evaluation complete for {client_identifier} - Overall: {evaluation.get('overall_score', 'N/A')}/10"
             )
 
             evaluation_end_time = datetime.now()
-            result = {
+            return {
                 "evaluation_id": str(uuid.uuid4()),
                 "timestamp": start_time.isoformat(),
                 "duration_seconds": (evaluation_end_time - start_time).total_seconds(),
                 "status": "partial_success" if has_error else "success",
                 "result": evaluation_result.model_dump(),
+                **item.meta,
             }
-            if has_error:
-                result["error"] = evaluation_result.error
-            return result
         except Exception as e:
             logger.error(
                 f"Failed to evaluate conversation for {client_identifier}: {e}"
             )
             evaluation_result.error = str(e)
-            evaluation_result.conversation_data = conversation
 
             evaluation_end_time = datetime.now()
             return {
@@ -733,11 +727,11 @@ async def evaluate_single_conversation(
                 "status": "failed",
                 "error": str(e),
                 "result": evaluation_result.model_dump(),
+                **item.meta,
             }
     else:
         logger.warning(f"No conversation data to evaluate for {client_identifier}")
         evaluation_result.error = "No conversation data for evaluation"
-        evaluation_result.conversation_data = conversation
 
         evaluation_end_time = datetime.now()
         return {
@@ -747,6 +741,7 @@ async def evaluate_single_conversation(
             "status": "failed",
             "error": "No conversation data for evaluation",
             "result": evaluation_result.model_dump(),
+            **item.meta,
         }
 
 
@@ -787,197 +782,439 @@ def get_assessment_config(
         raise
 
 
+async def _run_pipeline(
+    items: List[ConversationEvalItem],
+    output_format: str,
+    report_file: Optional[Path],
+    pipeline_start_time: datetime,
+) -> None:
+    """Evaluate each item then hand off to output."""
+    results = []
+    for item in items:
+        result = await evaluate_single_conversation(item)
+        results.append(result)
+    _output_results(results, output_format, report_file, pipeline_start_time)
+
+
+def _output_results(
+    results: List[Dict],
+    output_format: str,
+    report_file: Optional[Path],
+    pipeline_start_time: datetime,
+) -> None:
+    """Print and/or save evaluation results."""
+    if output_format == "html":
+        path = (
+            str(report_file)
+            if report_file
+            else f"headless_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        )
+        _write_html_report_headless(results, path)
+        print(f"\nHTML report written to: {path}")
+        return
+
+    if output_format == "json":
+        output_path = report_file
+        if output_path:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_path, "w") as f:
+                json.dump(results, f, indent=2)
+            logger.info(f"Results saved to: {output_path}")
+            print(f"\nResults saved to: {output_path}")
+        else:
+            print(json.dumps(results, indent=2))
+        return
+
+    # Console format (default)
+    total_duration = (datetime.now() - pipeline_start_time).total_seconds()
+    print("\n" + "=" * 60)
+    print(" HEADLESS CONVERSATION EVALUATION COMPLETE")
+    print("=" * 60)
+    print(f" Total duration: {total_duration:.1f} seconds")
+    print(f" Evaluated {len(results)} conversation(s)")
+
+    for result in results:
+        print("\n" + "-" * 60)
+        source = result.get("source", "unknown")
+        client_id = result.get("client_pseudo_id", "unknown")
+        status = result.get("status", "unknown")
+
+        print(f" Source: {source} | Client: {client_id} | Status: {status}")
+
+        if status == "failed":
+            print(f" Error: {result.get('error', 'Unknown error')}")
+            continue
+
+        if status == "partial_success":
+            print(
+                f" Conversation Error: {result.get('conversation_error', 'Unknown error')}"
+            )
+
+        evaluation = ConversationEvaluation(**result["result"])
+        eval_scores = evaluation.ai_evaluation
+
+        if not eval_scores or "error" in eval_scores:
+            err = eval_scores.get("error", "Unknown") if eval_scores else "No scores"
+            print(f" Evaluation failed: {err}")
+            continue
+
+        overall = eval_scores.get("overall_score", "N/A")
+        tone = eval_scores.get("tone_score", "N/A")
+        repetition = eval_scores.get("repetition_score", "N/A")
+        politeness = eval_scores.get("politeness_score", "N/A")
+        flow = eval_scores.get("flow_score", "N/A")
+
+        conv_data = evaluation.conversation_data
+        total_exchanges = conv_data.total_exchanges if conv_data else 0
+        completed_sections = conv_data.completed_sections if conv_data else []
+
+        print(
+            f"\n  {total_exchanges} exchanges, {len(completed_sections)} sections completed"
+        )
+        print("\n  Scores:")
+        print(f"    Overall:     {overall}/10")
+        print(f"    Tone:        {tone}/10")
+        print(f"    Repetition:  {repetition}/10")
+        print(f"    Politeness:  {politeness}/10")
+        print(f"    Flow:        {flow}/10")
+
+        section_coverage = eval_scores.get("section_coverage", {})
+        if section_coverage:
+            print("\n  Section Coverage:")
+            for section, coverage in section_coverage.items():
+                pct = coverage.get("coverage_percentage", 0)
+                print(f"    - {section}: {pct}%")
+
+        overall_feedback = eval_scores.get("overall_feedback", "")
+        if overall_feedback:
+            print(f"\n  Overall feedback: {overall_feedback}")
+
+        recommendations = eval_scores.get("recommendations", [])
+        if recommendations:
+            print("\n  Recommendations:")
+            for rec in recommendations:
+                print(f"    • {rec}")
+
+    print("\n" + "=" * 60)
+
+    if report_file and output_format != "json":
+        report_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(report_file, "w") as f:
+            json.dump(results, f, indent=2)
+        print(f" Results saved to: {report_file}")
+        print("=" * 60)
+
+
+# ---------------------------------------------------------------------------
+# CLI command
+# ---------------------------------------------------------------------------
+
+
 @cli.command()
 async def headless_conversation_eval(
     config_file_name: str = Option(
         "UT-CCCI-v0.yaml",
-        "--config_file_name",
+        "--config-file-name",
         help="Name of the YAML config file such as UT-CCCI-v0.yaml",
     ),
-    use_sample_conversation: bool = Option(
-        False,
-        "--use-sample-conversation",
-        help="Use a pre-generated sample conversation",
+    mode: str = Option(
+        ...,
+        "--mode",
+        help="Conversation source: sample | generate | db",
     ),
-    use_sample_failed_conversation: bool = Option(
-        False,
-        "--use-sample-failed-conversation",
-        help="Use a pre-generated sample conversation with error",
+    intake_id: Optional[str] = Option(
+        None,
+        "--intake-id",
+        help="UUID of the intake to evaluate (db mode)",
     ),
-    generate_conversation: bool = Option(
-        False,
-        "--generate-conversation",
-        help="Generate new conversation with LLM persona",
-    ),
-    client_pseudo_id: str = Option(
-        None, help="Client pseudo ID to evaluate real intake from database"
+    client_pseudo_id: Optional[str] = Option(
+        None,
+        "--client-pseudo-id",
+        help="Client pseudo ID to look up intake (db mode, alternative to --intake-id)",
     ),
     environment: str = Option(
-        "local", help="Environment for real intake (local, dev, demo, staging, prod)"
+        "prod",
+        "--environment",
+        help="Database environment for db mode: local, dev, demo, staging, prod",
+    ),
+    output: str = Option(
+        "console",
+        "--output",
+        help="Output format: console (default) | json | html",
+    ),
+    report_file: Optional[str] = Option(
+        None,
+        "--report-file",
+        help="Output file path (auto-named if omitted for json/html)",
     ),
 ):
     """
     Run headless conversation evaluation for a single conversation.
 
-    This evaluation assesses the tone and quality of the questions that AI asks a client.
+    This evaluation assesses the tone and quality of the questions that the AI case
+    manager asks during an intake conversation, using an LLM as judge.
 
-    Sample Usage:
+    SAMPLE MODE (pre-generated test data):
+        uv run python -m app.manage headless-conversation-eval \\
+            --config-file-name ID-FACR-v0.yaml --mode sample
 
-    uv run python -m app.manage headless-conversation-eval --config_file_name ID-FACR-v0.yaml --use-sample-conversation
+    SAMPLE-FAILED MODE (pre-generated sample with a mid-conversation error):
+        uv run python -m app.manage headless-conversation-eval \\
+            --config-file-name ID-FACR-v0.yaml --mode sample-failed
 
-    uv run python -m app.manage headless-conversation-eval --config_file_name ID-FACR-v0.yaml --use-sample-failed-conversation
+    GENERATE MODE (synthesize a new conversation with a simulated client):
+        uv run python -m app.manage headless-conversation-eval \\
+            --config-file-name UT-CCCI-v0.yaml --mode generate
 
-    uv run python -m app.manage headless-conversation-eval --config_file_name UT-CCCI-v0.yaml --client-pseudo-id 1234 --environment demo
+    DB MODE (evaluate a real intake from the database):
+        uv run python -m app.manage headless-conversation-eval \\
+            --config-file-name UT-CCCI-v0.yaml --mode db \\
+            --intake-id <uuid> --environment prod
 
-    uv run python -m app.manage headless-conversation-eval --config_file_name UT-CCCI-v0.yaml --client-pseudo-id 1234 --environment prod
+        uv run python -m app.manage headless-conversation-eval \\
+            --config-file-name UT-CCCI-v0.yaml --mode db \\
+            --client-pseudo-id <id> --environment staging
 
-    Provide ONE of the following conversation sources:
-    - --use-sample-conversation: Load pre-generated sample
-    - --use-sample-failed-conversation: Load pre-generated sample with error
-    - --generate-conversation: Generate new simulated conversation
-    - --client-pseudo-id: Evaluate real intake from database
+    JSON output:
+        uv run python -m app.manage headless-conversation-eval \\
+            --config-file-name UT-CCCI-v0.yaml --mode db \\
+            --intake-id <uuid> --environment prod \\
+            --output json --report-file my_eval.json
     """
-    logger.info("Starting headless conversation evaluation...")
-
-    # Validate mutually exclusive arguments
-    options_provided = sum(
-        [
-            use_sample_conversation,
-            use_sample_failed_conversation,
-            generate_conversation,
-            client_pseudo_id is not None,
-        ]
-    )
-
-    if options_provided == 0:
-        print("Error: Must provide one of:")
-        print("  --use-sample-conversation")
-        print("  --use-sample-failed-conversation")
-        print("  --generate-conversation")
-        print("  --client-pseudo-id <id>")
+    valid_modes = {"sample", "sample-failed", "generate", "db"}
+    if mode not in valid_modes:
+        print(f"Error: --mode must be one of: {', '.join(sorted(valid_modes))}")
         return
 
-    if options_provided > 1:
-        print("Error: Options are mutually exclusive. Provide only one of:")
-        print("  --use-sample-conversation")
-        print("  --use-sample-failed-conversation")
-        print("  --generate-conversation")
-        print("  --client-pseudo-id <id>")
+    if mode == "db" and not intake_id and not client_pseudo_id:
+        print("Error: db mode requires --intake-id or --client-pseudo-id")
         return
+
+    if output not in ("console", "json", "html"):
+        print("Error: --output must be 'console', 'json', or 'html'")
+        return
+
+    logger.info(f"Starting headless conversation evaluation (mode={mode})")
 
     assessment_config, sections = get_assessment_config(config_file_name)
 
-    if not client_pseudo_id:
-        environment = None
+    pipeline_start_time = datetime.now()
 
-    start_time = datetime.now()
+    # Determine report file path
+    resolved_report_file: Optional[Path] = None
+    if report_file:
+        resolved_report_file = Path(report_file)
+    elif output in ("json", "html"):
+        results_dir = (
+            Path(__file__).parent.parent.parent.parent
+            / "experiments"
+            / "headless_evaluations"
+        )
+        timestamp_str = pipeline_start_time.strftime("%Y%m%d_%H%M%S")
+        slug = intake_id or client_pseudo_id or mode.replace("-", "_")
+        ext = "html" if output == "html" else "json"
+        resolved_report_file = (
+            results_dir
+            / f"headless_eval_{slug}_{config_file_name}_{timestamp_str}.{ext}"
+        )
 
-    # Get conversation from the appropriate source
+    # Collect the conversation
     try:
-        conversation = await get_conversation(
-            use_sample_conversation=use_sample_conversation,
-            use_sample_failed_conversation=use_sample_failed_conversation,
-            generate_conversation=generate_conversation,
+        item = await get_conversation(
+            mode=mode,
             client_pseudo_id=client_pseudo_id,
             environment=environment,
             sections=sections,
             assessment_config=assessment_config,
+            config_file_name=config_file_name,
+            intake_id=intake_id,
         )
     except Exception as e:
-        logger.exception("Error getting conversation")
+        logger.exception("Error collecting conversation")
         print(f"Error getting conversation: {e}")
         return
 
-    # Evaluate the conversation
-    evaluation_summary = await evaluate_single_conversation(
-        conversation=conversation,
-        sections=sections,
-        start_time=start_time,
+    await _run_pipeline(
+        items=[item],
+        output_format=output,
+        report_file=resolved_report_file,
+        pipeline_start_time=pipeline_start_time,
     )
 
-    # Save results
-    results_dir = (
-        Path(__file__).parent.parent.parent.parent
-        / "experiments"
-        / "headless_evaluations"
-    )
-    results_dir.mkdir(parents=True, exist_ok=True)
 
-    timestamp_str = start_time.strftime("%Y%m%d_%H%M%S")
+def _write_html_report_headless(results: List[Dict], report_file: str) -> None:
+    entries = []
+    for result in results:
+        eval_scores: Dict = {}
+        if result.get("result"):
+            ev = ConversationEvaluation(**result["result"])
+            eval_scores = ev.ai_evaluation or {}
 
-    # Generate filename based on conversation source
-    if client_pseudo_id:
-        results_file = (
-            results_dir
-            / f"headless_eval_client_pseudo_id_{client_pseudo_id}_assessment_config_{config_file_name}_{timestamp_str}.json"
-        )
-    elif use_sample_conversation:
-        results_file = (
-            results_dir
-            / f"headless_eval_sample_conversation__assessment_config__{config_file_name}_{timestamp_str}.json"
-        )
-    else:  # generate_conversation
-        results_file = (
-            results_dir
-            / f"headless_eval_generated_conversation_assessment_config__{config_file_name}_{timestamp_str}.json"
-        )
+        conv_data = None
+        if result.get("result"):
+            ev = ConversationEvaluation(**result["result"])
+            conv_data = ev.conversation_data
 
-    with open(results_file, "w") as f:
-        json.dump(evaluation_summary, f, indent=2)
-
-    # Print summary
-    print("\n" + "=" * 60)
-    print(" HEADLESS CONVERSATION EVALUATION COMPLETE")
-    print("=" * 60)
-    print(f" Status: {evaluation_summary['status']}")
-    print(f" Total duration: {evaluation_summary['duration_seconds']:.1f} seconds")
-
-    # Extract evaluation result
-    evaluation = ConversationEvaluation(**evaluation_summary["result"])
-
-    if evaluation_summary["status"] in ["success", "partial_success"]:
-        if evaluation_summary["status"] == "partial_success":
-            print("\n PARTIAL SUCCESS DETAILS:")
-            print(
-                f"  Conversation Error: {evaluation_summary.get('error', 'Unknown error')}"
-            )
-        else:
-            print("\n SUCCESS DETAILS:")
-
-        eval_scores = evaluation.ai_evaluation
-
-        # Get conversation data
-        conv_data = evaluation.conversation_data
-        client_identifier = conv_data.client_pseudo_id
-        total_exchanges = conv_data.total_exchanges
-        completed_sections = conv_data.completed_sections
-
-        overall_score = eval_scores.get("overall_score", "N/A")
-        tone_score = eval_scores.get("tone_score", "N/A")
-        repetition_score = eval_scores.get("repetition_score", "N/A")
-
-        print(
-            f"  • {client_identifier}: {total_exchanges} exchanges, "
-            f"{len(completed_sections)} sections completed"
+        entries.append(
+            {
+                "client_pseudo_id": result.get("client_pseudo_id", "unknown"),
+                "status": result.get("status", "unknown"),
+                "duration_seconds": result.get("duration_seconds", 0),
+                "conversation": [
+                    {"question": e.question, "answer": e.answer, "section": e.section}
+                    for e in (conv_data.conversation_history if conv_data else [])
+                ],
+                "scores": {
+                    "overall": {
+                        "score": eval_scores.get("overall_score", 0),
+                        "feedback": eval_scores.get("overall_feedback", ""),
+                    },
+                    "tone": {
+                        "score": eval_scores.get("tone_score", 0),
+                        "feedback": eval_scores.get("tone_feedback", ""),
+                    },
+                    "repetition": {
+                        "score": eval_scores.get("repetition_score", 0),
+                        "feedback": eval_scores.get("repetition_feedback", ""),
+                        "examples": eval_scores.get("repetition_examples", []),
+                    },
+                    "politeness": {
+                        "score": eval_scores.get("politeness_score", 0),
+                        "feedback": eval_scores.get("politeness_feedback", ""),
+                    },
+                    "flow": {
+                        "score": eval_scores.get("flow_score", 0),
+                        "feedback": eval_scores.get("flow_feedback", ""),
+                    },
+                },
+                "section_coverage": eval_scores.get("section_coverage", {}),
+                "recommendations": eval_scores.get("recommendations", []),
+                "conversation_failure_reason": eval_scores.get(
+                    "conversation_failure_reason", ""
+                ),
+            }
         )
 
-        if eval_scores and "error" not in eval_scores:
-            print(
-                f"    AI Evaluation: Overall {overall_score}/10, Tone {tone_score}/10, No-Repetition {repetition_score}/10"
-            )
+    write_html_report(_HTML_TEMPLATE_HEADLESS, entries, report_file)
 
-            # Show section coverage
-            section_coverage = eval_scores.get("section_coverage", {})
-            if section_coverage:
-                print("    Section Coverage:")
-                for section, coverage in section_coverage.items():
-                    percentage = coverage.get("coverage_percentage", 0)
-                    print(f"      - {section}: {percentage}%")
-        else:
-            print(f"    AI Evaluation: {eval_scores.get('error', 'Failed')}")
-    else:
-        print("\n FAILURE DETAILS:")
-        print(f"  • Error: {evaluation_summary.get('error', 'Unknown error')}")
 
-    print(f"\n💾 Results saved to: {results_file}")
-    print("=" * 60)
+_HTML_TEMPLATE_HEADLESS = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversation Eval</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+    header { background: #1a1a2e; color: #fff; padding: 14px 24px; display: flex; align-items: center; gap: 16px; }
+    header h1 { font-size: 16px; font-weight: 600; flex: 1; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-partial_success { background: #fff3cd; color: #856404; }
+    .badge-failed { background: #f8d7da; color: #721c24; }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; height: calc(100vh - 48px); }
+    .pane { overflow-y: auto; padding: 20px; }
+    .pane + .pane { border-left: 1px solid #ddd; }
+    .pane-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #999; margin-bottom: 14px; }
+    .exchange { background: #fff; border: 1px solid #e8e8e8; border-radius: 6px; padding: 12px; margin-bottom: 10px; }
+    .ex-section { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #aaa; margin-bottom: 6px; }
+    .ex-q { font-size: 13px; color: #555; padding-left: 8px; border-left: 2px solid #bbb; margin-bottom: 6px; }
+    .ex-a { font-size: 13px; color: #222; padding-left: 8px; border-left: 2px solid #1a1a2e; }
+    .score-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 6px; padding: 13px; margin-bottom: 10px; }
+    .sc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .sc-name { font-size: 13px; font-weight: 600; text-transform: capitalize; flex: 1; }
+    .sc-pill { padding: 2px 9px; border-radius: 10px; font-size: 13px; font-weight: 700; }
+    .score-hi { background: #d4edda; color: #155724; }
+    .score-mid { background: #fff3cd; color: #856404; }
+    .score-lo { background: #f8d7da; color: #721c24; }
+    .sc-bar { height: 4px; background: #eee; border-radius: 2px; margin-bottom: 8px; }
+    .sc-bar-fill { height: 100%; border-radius: 2px; }
+    .sc-feedback { font-size: 12px; color: #555; line-height: 1.5; }
+    .sc-examples { margin-top: 5px; font-size: 11px; color: #888; font-style: italic; }
+    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #999; margin: 18px 0 10px; }
+    .cov-item { margin-bottom: 10px; }
+    .cov-label { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+    .cov-bar { height: 7px; background: #eee; border-radius: 3px; margin-bottom: 3px; }
+    .recs { list-style: disc; padding-left: 18px; }
+    .recs li { font-size: 13px; margin-bottom: 5px; color: #444; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const DATA = __DATA__;
+const d = DATA[0] || {};
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function scoreClass(n) { return n >= 8 ? 'score-hi' : n >= 5 ? 'score-mid' : 'score-lo'; }
+function barColor(n) { return n >= 8 ? '#28a745' : n >= 5 ? '#ffc107' : '#dc3545'; }
+
+const status = d.status || 'unknown';
+document.getElementById('root').innerHTML = `
+<header>
+  <h1>Conversation Eval \u2014 ${esc(d.client_pseudo_id)}</h1>
+  <span class="badge badge-${esc(status)}">${esc(status)}</span>
+  <span style="font-size:12px;opacity:.7">${(d.duration_seconds||0).toFixed(1)}s \u00b7 ${(d.conversation||[]).length} exchanges</span>
+</header>
+<div class="layout">
+  <div class="pane" id="left"></div>
+  <div class="pane" id="right"></div>
+</div>`;
+
+let left = '<div class="pane-title">Conversation</div>';
+(d.conversation || []).forEach(ex => {
+  left += `<div class="exchange">
+    <div class="ex-section">${esc(ex.section)}</div>
+    ${ex.question ? `<div class="ex-q">${esc(ex.question)}</div>` : ''}
+    ${ex.answer ? `<div class="ex-a">${esc(ex.answer)}</div>` : ''}
+  </div>`;
+});
+document.getElementById('left').innerHTML = left;
+
+const scoreKeys = ['overall','tone','repetition','politeness','flow'];
+let right = '<div class="pane-title">Evaluation</div>';
+scoreKeys.forEach(key => {
+  const s = (d.scores || {})[key] || {};
+  const n = s.score || 0;
+  right += `<div class="score-card">
+    <div class="sc-header">
+      <span class="sc-name">${key}</span>
+      <span class="sc-pill ${scoreClass(n)}">${n}/10</span>
+    </div>
+    <div class="sc-bar"><div class="sc-bar-fill" style="width:${n*10}%;background:${barColor(n)}"></div></div>
+    <div class="sc-feedback">${esc(s.feedback)}</div>
+    ${(s.examples||[]).length ? `<div class="sc-examples">Examples: ${s.examples.map(esc).join('; ')}</div>` : ''}
+  </div>`;
+});
+
+const cov = d.section_coverage || {};
+if (Object.keys(cov).length) {
+  right += '<div class="section-title">Section Coverage</div>';
+  Object.entries(cov).forEach(([sec, c]) => {
+    const pct = c.coverage_percentage || 0;
+    const col = pct >= 80 ? '#28a745' : pct >= 50 ? '#ffc107' : '#dc3545';
+    right += `<div class="cov-item">
+      <div class="cov-label">${esc(sec)} \u2014 ${pct}%</div>
+      <div class="cov-bar"><div style="width:${pct}%;height:100%;border-radius:3px;background:${col}"></div></div>
+    </div>`;
+  });
+}
+
+const recs = d.recommendations || [];
+if (recs.length) {
+  right += '<div class="section-title">Recommendations</div>';
+  right += '<ul class="recs">' + recs.map(r => `<li>${esc(r)}</li>`).join('') + '</ul>';
+}
+
+if (d.conversation_failure_reason) {
+  right += `<div class="section-title">Failure Reason</div><p style="font-size:13px;color:#555;margin-top:6px">${esc(d.conversation_failure_reason)}</p>`;
+}
+
+document.getElementById('right').innerHTML = right;
+</script>
+</body>
+</html>"""

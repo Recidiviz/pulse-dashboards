@@ -1,9 +1,9 @@
 import asyncio
-import structlog
 import os
 from typing import List, Literal, Optional, Tuple, cast, get_args
 from uuid import UUID
 
+import structlog
 from dotenv import load_dotenv
 from google.cloud.sql.connector import Connector
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
@@ -178,6 +178,95 @@ async def fetch_conversation(
         logger.error(f"Error fetching conversation: {e}", exc_info=True)
         return IntakeConversationData(
             client_pseudo_id=client_pseudo_id,
+            environment=env,
+            error=str(e),
+        )
+    finally:
+        await engine.dispose()
+        if connector:
+            await connector.close_async()
+
+
+async def fetch_conversation_by_intake_id(
+    intake_id: UUID, env: Environment
+) -> IntakeConversationData:
+    """Fetch a conversation by intake UUID (as opposed to client_pseudo_id)."""
+    engine, connector = await get_postgres_engine(env)
+    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+    try:
+        async with async_session() as session:
+            intake_stmt = select(
+                Intake.id,
+                Intake.client_pseudo_id,
+                Intake.created_at,
+                Intake.intake_type,
+                Intake.status,
+            ).where(Intake.id == intake_id)
+            result = await session.execute(intake_stmt)
+            intake_row = result.first()
+
+            if not intake_row:
+                return IntakeConversationData(
+                    client_pseudo_id="",
+                    environment=env,
+                    error=f"No intake found for id: {intake_id}",
+                )
+
+            client_pseudo_id = intake_row[1]
+            intake_created_at = str(intake_row[2])
+            intake_type = intake_row[3]
+            intake_status = intake_row[4]
+
+            if intake_type != "conversation":
+                return IntakeConversationData(
+                    client_pseudo_id=client_pseudo_id,
+                    environment=env,
+                    intake_type=intake_type,
+                    status=intake_status,
+                    error=f"Conversation evaluation is only supported on intake_type 'conversation'. This intake has type '{intake_type}'.",
+                )
+
+            messages_stmt = (
+                select(IntakeMessage)
+                .where(IntakeMessage.intake_id == intake_id)
+                .order_by(IntakeMessage.created_at)
+            )
+            result = await session.execute(messages_stmt)
+            messages = result.scalars().all()
+
+            if not messages:
+                return IntakeConversationData(
+                    client_pseudo_id=client_pseudo_id,
+                    environment=env,
+                    intake_type=intake_type,
+                    status=intake_status,
+                    error=f"No messages found for intake: {intake_id}",
+                )
+
+            conversation_history = intake_messages_to_conversation_history(messages)
+            sections_data = await get_intake_sections(intake_id, session)
+            completed_sections = get_completed_sections(sections_data)
+
+            return IntakeConversationData(
+                client_pseudo_id=client_pseudo_id,
+                conversation_history=conversation_history,
+                created_at=intake_created_at,
+                environment=env,
+                intake_type=intake_type,
+                status=intake_status,
+                sections_data=sections_data,
+                completed_sections=completed_sections,
+            )
+
+    except Exception as e:
+        logger.error(
+            "Error fetching conversation by intake_id",
+            intake_id=str(intake_id),
+            error=str(e),
+        )
+        return IntakeConversationData(
+            client_pseudo_id="",
             environment=env,
             error=str(e),
         )
