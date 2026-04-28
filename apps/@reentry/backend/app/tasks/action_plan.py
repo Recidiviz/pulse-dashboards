@@ -527,6 +527,7 @@ async def generate_action_plan(
     progress: ProgressTracker[int],
     session: AsyncSession,
     task_logger: structlog.BoundLogger,
+    action_plan_config=None,
 ):
     await execution.log_progress(session, 1, "Fetching plan", logger=task_logger)
     gen = await get_gen_by_id(session, gen_id, with_plan=True)
@@ -537,7 +538,7 @@ async def generate_action_plan(
         session, 5, "Generating action plan", logger=task_logger
     )
 
-    # Load action plan config from assessment
+    # Load action plan config from assessment (unless an override was provided)
     if not gen.plan.intake:
         raise ValueError(
             f"Cannot generate action plan: plan {gen.plan.id} has no associated intake"
@@ -545,24 +546,25 @@ async def generate_action_plan(
 
     intake = gen.plan.intake
 
-    if not intake.assessment_config_id:
-        raise ValueError(
-            f"Cannot generate action plan: intake {intake.id} has no assessment_config_id"
+    if action_plan_config is None:
+        if not intake.assessment_config_id:
+            raise ValueError(
+                f"Cannot generate action plan: intake {intake.id} has no assessment_config_id"
+            )
+
+        action_plan_config = await ConfigLoader.load_plan_config(
+            intake.assessment_config_id, session
         )
 
-    action_plan_config = await ConfigLoader.load_plan_config(
-        intake.assessment_config_id, session
-    )
-
-    if not action_plan_config:
-        task_logger.error(
-            "No action plan config found for assessment",
-            assessment_config_id=intake.assessment_config_id,
-        )
-        raise ValueError(
-            f"Cannot generate action plan: no action plan config found for assessment_config_id={intake.assessment_config_id}. "
-            f"This assessment config only supports intake summary generation."
-        )
+        if not action_plan_config:
+            task_logger.error(
+                "No action plan config found for assessment",
+                assessment_config_id=intake.assessment_config_id,
+            )
+            raise ValueError(
+                f"Cannot generate action plan: no action plan config found for assessment_config_id={intake.assessment_config_id}. "
+                f"This assessment config only supports intake summary generation."
+            )
 
     task_logger.debug(
         "Loaded action plan config",
@@ -613,7 +615,9 @@ async def generate_action_plan(
 
     # Transform and save resources associations
     if action_plan.resources_associations:
-        resources_map = transform_resources_associations_to_map(action_plan.resources_associations)
+        resources_map = transform_resources_associations_to_map(
+            action_plan.resources_associations
+        )
         if resources_map:
             # Convert Pydantic models to dict for JSON serialization
             gen.resources_associations_map = {

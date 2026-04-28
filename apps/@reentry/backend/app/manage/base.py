@@ -56,3 +56,4 @@ import app.manage.requeue_pending_executions  # noqa
 import app.manage.update_recording_status  # noqa
 import app.manage.refresh_configs  # noqa
 import app.manage.populate_intake  # noqa
+import app.manage.reprocess_outputs  # noqa

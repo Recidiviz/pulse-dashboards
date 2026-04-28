@@ -120,6 +120,8 @@ logs/*
 
 # @reentry backend generated output configs
 apps/@reentry/backend/app/core/data_config/output_configs/*.yaml
+#@reentry plan backups
+backups/
 
 # Synced CPA intake videos (canonical source is libs/@reentry/media, synced by the `sync-cpa-intake-videos` nx target)
 apps/@reentry/frontend/public/videos/*.mp4
