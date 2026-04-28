@@ -78,9 +78,23 @@ export const US_MI: InsightsConfig = {
       eventNamePastTense: "had an absconder warrant",
       descriptionMarkdown:
         "All reported absconder warrants from supervision in the given time period as captured by the following supervision levels in OMNI and COMS: Probation Absconder Warrant Status,  Parole Absconder Warrant Status, Absconder Warrant Status. Additionally, we use the following movement reasons from OMNI: Absconder from Parole, Absconder from Probation, and the COMS modifier Absconded.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
-      topXPct: null,
+      topXPct: 10,
       listTableText:
         "Clients will appear on this list multiple times if they have had more than one absconder warrant under this agent in the time period.",
+    },
+    {
+      name: "task_completions_early_discharge",
+      outcomeType: "FAVORABLE",
+      titleDisplayName: "Early Discharge Rate",
+      bodyDisplayName: "early discharge rate",
+      eventName: "early discharges",
+      eventNameSingular: "early discharge",
+      eventNamePastTense: "had an early discharge",
+      descriptionMarkdown:
+        "All early discharges completed for clients under this agent in the given time period, as recorded by Workflows task completions.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
+      topXPct: 10,
+      listTableText:
+        "Clients will appear on this list multiple times if they have had more than one early discharge under this agent in the time period.",
     },
   ],
   noneAreOutliersLabel: "are outliers on any metrics",

@@ -42,7 +42,7 @@ export const US_AZ: InsightsConfig = {
       body: "Try pairing agents up to shadow each other on a regular basis:\n1. Identify agents who have a track record of following agency policy, have a growth mindset for their clients, and have a positive rapport with clients.\n 2. Offer outlying agents and/or new agents the opportunity for on-the-job shadowing to learn different approaches, skills, and response techniques when interacting with clients.\n 3. Reinforce the notion among your staff that this presents a valuable opportunity for learning and growth.\n\nSee more details on this and other action strategies [here](https://www.recidiviz.org).",
     },
   },
-  atOrAboveRateLabel: "--",
+  atOrAboveRateLabel: " At or above statewide rate",
   atOrBelowRateLabel: "--",
   caseloadCategories: [],
   clientEvents: [],
@@ -50,17 +50,6 @@ export const US_AZ: InsightsConfig = {
   learnMoreUrl:
     "https://docs.google.com/document/d/e/2PACX-1vRmhDnaMChRWXChmkIFVK5MgOhBXL8qO_juVKM3hg9YdHlajCmK1n6BIerxlI09-DaIjjbL7hYGbAPr/pub",
   metrics: [
-    {
-      name: "task_completions_transfer_to_limited_supervision",
-      outcomeType: "FAVORABLE",
-      titleDisplayName: "Transfer Rate",
-      bodyDisplayName: "transfer rate",
-      eventName: "transfers",
-      eventNameSingular: "transfer",
-      eventNamePastTense: "were transferred",
-      descriptionMarkdown: "",
-      topXPct: null,
-    },
     {
       name: "absconsions_bench_warrants",
       outcomeType: "ADVERSE",
@@ -103,7 +92,8 @@ export const US_AZ: InsightsConfig = {
   noneAreOutliersLabel: "--",
   officerHasNoEligibleClientsLabel:
     "Nice! No outstanding Administrative Supervision cases for now.",
-  officerHasNoOutlierMetricsLabel: "--",
+  officerHasNoOutlierMetricsLabel:
+    "Nice! No metrics far from the statewide rate this month",
   outliersHover: "--",
   slightlyWorseThanRateLabel: "--",
   supervisionDistrictLabel: "regional office",
@@ -114,7 +104,8 @@ export const US_AZ: InsightsConfig = {
   supervisionUnitLabel: "--",
   supervisorHasNoOfficersWithEligibleClientsLabel:
     "Nice! No outstanding Administrative Supervision cases for now.",
-  supervisorHasNoOutlierOfficersLabel: "--",
+  supervisorHasNoOutlierOfficersLabel:
+    " Nice! No staff have metrics far from the statewide rate this month",
   vitalsMetrics: [],
   vitalsMetricsMethodologyUrl: "--",
   worseThanRateLabel: "--",
