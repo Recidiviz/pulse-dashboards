@@ -16,6 +16,7 @@
 // =============================================================================
 
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
+import * as Sentry from "@sentry/react-native";
 import { onlineManager } from "@tanstack/react-query";
 
 import env from "../env";
@@ -28,11 +29,25 @@ NetInfo.configure({
   reachabilityRequestTimeout: 10 * 1000,
 });
 
+let previousIsOnline: boolean | null = null;
+
 // Override react-query's online management status with netinfo's so that
 // connection status is 1:1
 onlineManager.setEventListener((setOnline) =>
   NetInfo.addEventListener((state) => {
-    setOnline(state.isInternetReachable ?? state.isConnected ?? true);
+    const isOnline = state.isInternetReachable ?? state.isConnected ?? true;
+
+    if (previousIsOnline !== null && previousIsOnline !== isOnline) {
+      Sentry.logger.info(isOnline ? "network.online" : "network.offline", {
+        trigger: "native",
+        isInternetReachable: state.isInternetReachable,
+        isConnected: state.isConnected,
+        type: state.type,
+      });
+    }
+
+    previousIsOnline = isOnline;
+    setOnline(isOnline);
   }),
 );
 

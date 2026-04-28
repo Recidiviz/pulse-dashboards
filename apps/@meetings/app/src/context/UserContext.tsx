@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import React, { createContext, useContext, useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 
@@ -58,6 +59,18 @@ export const UserContextProvider: React.FC<{
       });
     }
   }, [isSkipAuthUser, user, isLoading, getCredentials]);
+
+  useEffect(() => {
+    if (isSkipAuthUser) {
+      Sentry.setUser({ email: "skip-auth-user" });
+      return;
+    }
+    if (user?.email) {
+      Sentry.setUser({ email: user.email });
+    } else {
+      Sentry.setUser(null);
+    }
+  }, [user?.email, isSkipAuthUser]);
 
   if (isSkipAuthUser) {
     return (

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import { createContext, useRef } from "react";
 
 import { getPersonType, Person } from "~@meetings/app/common/types";
@@ -22,6 +23,7 @@ import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import { extractError } from "~@meetings/app/shared/lib/extractError";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
@@ -99,18 +101,31 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   };
 
   const startRecording = async () => {
+    Sentry.setTag("meetingId", meetingId);
     try {
       await recorder.start();
       timer.start();
       setStatus("recording");
+      Sentry.logger.info("recording.start", { meetingId, status: "recording" });
     } catch (err) {
-      console.error(err);
-      alert(err);
+      const errorMessage = extractError(err);
+      Sentry.logger.error("recording.start.error", {
+        meetingId,
+        error: errorMessage,
+      });
+      console.error(errorMessage);
+      alert(errorMessage);
     }
   };
 
   const stopAndUploadRecording = async (): Promise<Blob | null> => {
-    if (!meetingId) throw new Error("meetingId is required for uploading");
+    if (!meetingId) {
+      Sentry.logger.error("upload.segment.error", {
+        meetingId,
+        error: "meetingId is required for uploading",
+      });
+      throw new Error("meetingId is required for uploading");
+    }
 
     try {
       const blob = await recorder.stop();
@@ -125,6 +140,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
       const uriToUpload = URL.createObjectURL(blob);
 
+      Sentry.logger.info("upload.segment.start", { meetingId });
+
       await uploadSegment({
         uri: uriToUpload,
         meetingId,
@@ -132,11 +149,23 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         fileExtension: AUDIO_FORMATS.webm.extension,
       });
 
+      Sentry.logger.info("upload.segment.done", {
+        meetingId,
+        bytes: blob.size,
+      });
+
       await recorder.cleanup();
       URL.revokeObjectURL(uriToUpload);
       return null;
     } catch (err) {
+      const errorMessage = extractError(err);
+      Sentry.logger.error("upload.segment.error", {
+        meetingId,
+        error: errorMessage,
+      });
       setStatus("paused");
+      console.error(errorMessage);
+      alert(errorMessage);
       throw err;
     }
   };
@@ -147,12 +176,16 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
 
     if (isPaused) {
+      Sentry.logger.info("recording.pause", { meetingId });
       await resumeRecording();
+      Sentry.logger.info("recording.resume", { meetingId });
       return;
     }
 
     if (isRecording) {
+      Sentry.logger.info("recording.resume", { meetingId });
       await pauseRecording();
+      Sentry.logger.info("recording.pause", { meetingId });
       setStatus("paused");
     }
   };
@@ -201,6 +234,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const handleFinishAndSave = async () => {
     if (!meetingId || !person) {
+      Sentry.logger.error("meeting.end.error", {
+        meetingId,
+        error: "Cannot end meeting without a meeting ID and person",
+      });
       throw new Error("Cannot end meeting without a meeting ID and person");
     }
 
@@ -226,27 +263,51 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         endTime: new Date(),
         person,
       });
+      Sentry.logger.info("meeting.end", { meetingId });
       await cleanupRecording();
+      Sentry.setTag("meetingId", null);
       closeRecordingView();
     } catch (err) {
-      console.error("Failed to end meeting:", err);
-      window.alert("Failed to end meeting. Please try again.");
+      const errorMessage = extractError(err);
+      Sentry.logger.error("meeting.end.error", {
+        meetingId,
+        error: errorMessage,
+      });
+      console.error("Failed to end meeting:", errorMessage);
+      alert("Failed to end meeting. Please try again.");
       setStatus("idle");
     }
   };
 
   const handleFinalDiscard = async () => {
     if (!meetingId || !person) {
+      Sentry.logger.error("meeting.discard.error", {
+        meetingId,
+        error: "Cannot discard meeting without a meeting ID and person",
+      });
       throw new Error("Cannot discard meeting without a meeting ID and person");
     }
 
-    await cleanupRecording();
-    closeRecordingView();
-    await discardMeeting({
-      meetingId,
-      personId: person.personId,
-      personType: getPersonType(person),
-    });
+    try {
+      await cleanupRecording();
+      closeRecordingView();
+      await discardMeeting({
+        meetingId,
+        personId: person.personId,
+        personType: getPersonType(person),
+      });
+      Sentry.logger.info("meeting.discard", { meetingId });
+      Sentry.setTag("meetingId", null);
+    } catch (err) {
+      const errorMessage = extractError(err);
+      Sentry.logger.error("meeting.discard.error", {
+        meetingId,
+        error: errorMessage,
+      });
+      console.error("Failed to end meeting:", errorMessage);
+      alert("Failed to discard meeting. Please try again.");
+      throw err;
+    }
   };
 
   return (

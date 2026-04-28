@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import { onlineManager } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -40,6 +41,12 @@ let onlineState = navigator.onLine;
 const listeners = new Set<(online: boolean) => void>();
 
 function setOnlineState(online: boolean) {
+  if (onlineState !== online) {
+    Sentry.logger.info(online ? "network.online" : "network.offline", {
+      trigger: "web",
+    });
+  }
+
   onlineState = online;
   // We're going to use this state to manage tanstack's online manager
   onlineManager.setOnline(online);

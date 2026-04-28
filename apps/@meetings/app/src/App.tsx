@@ -28,6 +28,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import config from "./auth0-config";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 import env from "./env";
+import { useSentryAppLifecycle } from "./hooks/useSentryAppLifecycle";
 import AppNavigator from "./navigation/AppNavigator";
 import { SnackbarProvider } from "./shared/ui/Snackbar";
 
@@ -38,6 +39,7 @@ Sentry.init({
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
+  enableLogs: true,
 });
 
 // @ts-expect-error BigInt may not have toJSON in all environments
@@ -48,6 +50,7 @@ BigInt.prototype.toJSON = function () {
 };
 
 const App = () => {
+  useSentryAppLifecycle();
   return (
     <GestureHandlerRootView>
       <BottomSheetModalProvider>

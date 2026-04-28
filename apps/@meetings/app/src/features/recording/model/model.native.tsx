@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import {
   AudioModule,
   RecordingPresets,
@@ -38,6 +39,7 @@ import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
+import { extractError } from "~@meetings/app/shared/lib/extractError";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useDurationTimer } from "../hooks/useDurationTimer";
@@ -192,14 +194,26 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    * Starts fresh recording and persists the URI immediately.
    */
   const startRecording = async () => {
-    await audioRecorder.prepareToRecordAsync();
-    audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
-    if (audioRecorder.uri) {
-      await saveRecordingUri(audioRecorder.uri);
-    }
+    Sentry.setTag("meetingId", meetingId);
+    try {
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
+      if (audioRecorder.uri) {
+        await saveRecordingUri(audioRecorder.uri);
+      }
 
-    timer.start();
-    await setStatus("recording");
+      timer.start();
+      await setStatus("recording");
+      Sentry.logger.info("recording.start", { meetingId, status: "recording" });
+    } catch (err) {
+      const errorMessage = extractError(err);
+      Sentry.logger.error("recording.start.error", {
+        meetingId,
+        error: errorMessage,
+      });
+      Alert.alert("Recording Start Failed", errorMessage);
+      throw err;
+    }
   };
 
   /**
@@ -207,7 +221,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    * Stops recorder, uploads file, removes saved URI.
    */
   const stopAndUploadRecording = async () => {
-    if (!meetingId) throw new Error("meetingId is required for uploading");
+    if (!meetingId) {
+      Sentry.logger.error("upload.segment.error", {
+        meetingId,
+        error: "meetingId is required for uploading",
+      });
+      throw new Error("meetingId is required for uploading");
+    }
 
     try {
       const savedUri = await getRecordingUri();
@@ -225,18 +245,34 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       }
 
       if (uri) {
+        Sentry.logger.info("upload.segment.start", { meetingId });
+
         await uploadSegment({
           uri,
           meetingId,
           contentType: AUDIO_FORMATS.m4a.contentType,
           fileExtension: AUDIO_FORMATS.m4a.extension,
         });
+
+        const fileInfo = await FileSystem.getInfoAsync(uri);
+        const bytes = fileInfo.exists ? fileInfo.size : 0;
+
+        Sentry.logger.info("upload.segment.done", {
+          meetingId,
+          bytes,
+        });
+
         await removeRecordingUri();
       } else {
+        Sentry.logger.warn("upload.segment.no_uri", { meetingId });
         console.warn("No recording URI found; nothing to upload.");
         await removeRecordingUri();
       }
     } catch (err) {
+      Sentry.logger.error("upload.segment.error", {
+        meetingId,
+        error: extractError(err),
+      });
       console.error("Upload failed:", err);
       Alert.alert("Upload Recording Failed");
       await setStatus("paused"); // fallback safe state
@@ -264,7 +300,11 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     if (status === "uploading" || !meetingId) return;
 
     if (status && ["paused", "stopping", "discarding"].includes(status)) {
+      if (status === "paused") {
+        Sentry.logger.info("recording.pause", { meetingId });
+      }
       await startRecording();
+      Sentry.logger.info("recording.resume", { meetingId });
     } else if (status === "recording") {
       // Sync notes to server when pausing
       updateNotesMutation.mutate(
@@ -295,7 +335,15 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       }
 
       await setStatus("uploading");
+
+      Sentry.logger.info("recording.resume", { meetingId });
+
       await stopAndUploadRecording();
+
+      Sentry.logger.info("recording.pause", { meetingId });
+
+      setStatus("paused");
+
       await setStatus("paused");
     }
   };
@@ -314,6 +362,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const handleFinishAndSave = async (onComplete?: () => void) => {
     if (!meetingId || !person) {
+      Sentry.logger.error("meeting.end.error", {
+        meetingId,
+        error: "Cannot end meeting without a meeting ID and person",
+      });
       throw new Error("Cannot end meeting without a meeting ID and person");
     }
 
@@ -336,9 +388,15 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         endTime: new Date(),
         person,
       });
+      Sentry.logger.info("meeting.end", { meetingId });
       await cleanupRecording();
       onComplete?.();
+      Sentry.setTag("meetingId", null);
     } catch (err) {
+      Sentry.logger.error("meeting.end.error", {
+        meetingId,
+        error: extractError(err),
+      });
       console.error("Failed to end meeting:", err);
       Alert.alert("Error", "Failed to end meeting. Please try again.");
       setStatus("idle");
@@ -346,16 +404,33 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   };
 
   const handleFinalDiscard = async (onComplete?: () => void) => {
-    if (!meetingId || !person)
+    if (!meetingId || !person) {
+      Sentry.logger.error("meeting.discard.error", {
+        meetingId,
+        error: "Cannot discard meeting without a meeting ID and person",
+      });
       throw new Error("Cannot discard meeting without a meeting ID and person");
+    }
 
-    await cleanupRecording();
-    onComplete?.();
-    await discardMeeting({
-      meetingId,
-      personId: person.personId,
-      personType: getPersonType(person),
-    });
+    try {
+      await cleanupRecording();
+      onComplete?.();
+      await discardMeeting({
+        meetingId,
+        personId: person.personId,
+        personType: getPersonType(person),
+      });
+      Sentry.logger.info("meeting.discard", { meetingId });
+      Sentry.setTag("meetingId", null);
+    } catch (err) {
+      const errorMessage = extractError(err);
+      Sentry.logger.error("meeting.discard.error", {
+        meetingId,
+        error: errorMessage,
+      });
+      Alert.alert("Failed to discard meeting", errorMessage);
+      throw err;
+    }
   };
 
   // Auto-stop recording when 90-minute limit is reached
