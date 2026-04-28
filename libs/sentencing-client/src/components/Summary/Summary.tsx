@@ -26,7 +26,6 @@ import {
   formatDisplayDate,
   formatJudgeAndDivision,
   formatMonthYear,
-  titleCase,
 } from "../../utils/utils";
 import DownloadIcon from "../assets/download-icon.svg?react";
 import { RISK_LEVEL_KEYS, RISK_LEVELS } from "../OffenderAssessment/constants";
@@ -221,7 +220,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
     sarData?.institutionalStrategyRecommendation?.trim();
 
   const targetRef = React.useRef<HTMLDivElement>(null);
-  const fileName = `Sentencing Assessment Report - ${titleCase(sarData?.client?.fullName ?? "")}`;
+  const fileName = `Sentencing Assessment Report - ${presenter.SARAttributes.client?.fullName ?? ""}`;
   const [isDownloading, setIsDownloading] = React.useState(false);
 
   const handleClickToDownload = async () => {

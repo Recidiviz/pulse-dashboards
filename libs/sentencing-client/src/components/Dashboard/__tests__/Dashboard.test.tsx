@@ -123,17 +123,11 @@ test("shows cases default sorted by last name", async () => {
   );
 
   // Blanda Furman
-  const client1 = await screen.findByText(
-    data[0].client!.fullName.toLocaleLowerCase(),
-  );
+  const client1 = await screen.findByText(data[0].client!.fullName);
   // Xavier Smith
-  const client2 = await screen.findByText(
-    data[1].client!.fullName.toLocaleLowerCase(),
-  );
+  const client2 = await screen.findByText(data[1].client!.fullName);
   // Bob Thornburg
-  const client3 = await screen.findByText(
-    data[3].client!.fullName.toLocaleLowerCase(),
-  );
+  const client3 = await screen.findByText(data[3].client!.fullName);
 
   expect(client1).toBeInTheDocument();
   expect(client2).toBeInTheDocument();

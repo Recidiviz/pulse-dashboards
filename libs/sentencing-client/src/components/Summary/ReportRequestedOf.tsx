@@ -19,6 +19,7 @@ import moment from "moment";
 import React from "react";
 
 import { SARAttributes } from "../../datastores/types";
+import { formatPersonName } from "../../utils/utils";
 import { SentencingAssessmentReportSection } from "./ReportBlock";
 import { SECTION_COLUMN_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
@@ -42,7 +43,7 @@ export const ReportRequestedOf: React.FC<ReportRequestedOfProps> = ({
       <Styled.ColumnFlexContainer>
         <Styled.Label>Officer:</Styled.Label>
         <Styled.Value>{staff?.externalId}</Styled.Value>
-        <Styled.Value>{staff?.fullName}</Styled.Value>
+        <Styled.Value>{formatPersonName(staff?.fullName)}</Styled.Value>
       </Styled.ColumnFlexContainer>
       <Styled.ColumnFlexContainer>
         <Styled.Label>District:</Styled.Label>

@@ -198,7 +198,7 @@ test("shows archived case when filter is checked", async () => {
   let archivedCase: HTMLElement | HTMLElement[] | null =
     await screen.queryByText(ARCHIVED_STATUS);
   let pastDueCaseName: HTMLElement | HTMLElement[] | null =
-    await screen.queryByText(pastDueCase!.client!.fullName.toLocaleLowerCase());
+    await screen.queryByText(pastDueCase!.client!.fullName);
   const statusFilter = await screen.findByText("Status (3)");
 
   expect(archivedCase).toBeNull();
@@ -217,9 +217,7 @@ test("shows archived case when filter is checked", async () => {
   fireEvent.click(statusFilter);
 
   archivedCase = await screen.getByText(ARCHIVED_STATUS);
-  pastDueCaseName = await screen.getByText(
-    pastDueCase!.client!.fullName.toLocaleLowerCase(),
-  );
+  pastDueCaseName = await screen.getByText(pastDueCase!.client!.fullName);
   notYetStartedCase = await screen.getByText(CaseStatusToDisplay.NotYetStarted);
   completeCase = await screen.getByText(CaseStatusToDisplay.Complete);
   inProgressCase = await screen.getByText(CaseStatusToDisplay.InProgress);
@@ -254,9 +252,8 @@ test("show/hide cases when 'Not yet started' filter is checked/unchecked", async
 
   fireEvent.click(statusFilter); // Open filter dropdown
 
-  const notYetStartedName = data
-    .find((user) => user.status === "NotYetStarted")
-    ?.client?.fullName.toLocaleLowerCase();
+  const notYetStartedName = data.find((user) => user.status === "NotYetStarted")
+    ?.client?.fullName;
   let notYetStartedCase: HTMLElement | null = await screen.queryByText(
     notYetStartedName!,
   );
@@ -304,9 +301,8 @@ test("show/hide cases when 'In Progress' filter is checked/unchecked", async () 
 
   fireEvent.click(statusFilter); // Open filter dropdown
 
-  const inProgressName = data
-    .find((user) => user.status === "InProgress")
-    ?.client?.fullName.toLocaleLowerCase();
+  const inProgressName = data.find((user) => user.status === "InProgress")
+    ?.client?.fullName;
   let inProgressCase: HTMLElement | null = await screen.queryByText(
     inProgressName!,
   );
@@ -354,13 +350,11 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
 
   fireEvent.click(statusFilter); // Open filter dropdown
 
-  const completeName = data
-    .find(
-      (caseBrief) =>
-        caseBrief.status === CaseStatusToDisplay.Complete &&
-        moment().utc() < moment(caseBrief.dueDate).utc(),
-    )
-    ?.client?.fullName.toLocaleLowerCase();
+  const completeName = data.find(
+    (caseBrief) =>
+      caseBrief.status === CaseStatusToDisplay.Complete &&
+      moment().utc() < moment(caseBrief.dueDate).utc(),
+  )?.client?.fullName;
   let completeCase: HTMLElement | null = await screen.queryByText(
     completeName!,
   );

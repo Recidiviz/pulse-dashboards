@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { nameCase } from "@foundernest/namecase";
 import { startCase } from "lodash";
 import moment from "moment";
 import Pluralize from "pluralize";
@@ -199,15 +200,23 @@ export const titleCase = (str?: string | null) => {
  */
 export const formatJudgeName = (raw: string): string => {
   const commaIdx = raw.indexOf(",");
-  if (commaIdx === -1) return titleCase(raw);
+  if (commaIdx === -1) return formatPersonName(raw);
   const lastName = raw.slice(0, commaIdx).trim();
   const firstName = raw.slice(commaIdx + 1).trim();
-  return `${titleCase(firstName)} ${titleCase(lastName)}`;
+  return `${formatPersonName(firstName)} ${formatPersonName(lastName)}`;
 };
 
 /** Capitalizes human names (accounting for things like hyphens and apostrophes)  */
 export const capitalizeName = (name: string) =>
   name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+
+/**
+ * Formats a full name for display, handling Mc/Mac prefixes, Roman numeral
+ * suffixes, O' prefixes, hyphenated names, and particles (van, de, etc.).
+ * e.g. "JOHN DOE III" → "John Doe III", "MCDONALD" → "McDonald"
+ */
+export const formatPersonName = (name?: string | null): string =>
+  nameCase(name ?? "");
 
 /**
  * Splits a full name into firstName and lastName.
@@ -317,7 +326,7 @@ export const formatJudgeAndDivision = (charge: {
 }): string | null => {
   const judgeNames =
     charge.judgeNames && charge.judgeNames.length > 0
-      ? charge.judgeNames.map(capitalizeName).join(", ")
+      ? charge.judgeNames.map(formatJudgeName).join(", ")
       : null;
   if (judgeNames && charge.division) {
     return `${judgeNames} / ${charge.division}`;

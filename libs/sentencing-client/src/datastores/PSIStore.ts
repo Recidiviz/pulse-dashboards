@@ -35,7 +35,7 @@ import {
 } from "../api/APIClient";
 import { FormAttributes } from "../components/CaseDetails/types";
 import { filterExcludedAttributes } from "../geoConfigs/utils";
-import { titleCase } from "../utils/utils";
+import { formatPersonName } from "../utils/utils";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { SentencingStore } from "./SentencingStore";
 import { CaseAttributes } from "./types";
@@ -77,13 +77,18 @@ export class PSIStore {
   get caseAttributes(): CaseAttributes {
     if (!this.activeCaseId) return {};
     const currentCase = this.caseDetailsById[this.activeCaseId];
-    if (currentCase.client?.fullName) {
-      currentCase.client.fullName = titleCase(currentCase.client?.fullName);
-    }
     const config = this.sentencingStore.geoConfig;
+
+    const formattedClient = currentCase.client
+      ? {
+          ...currentCase.client,
+          fullName: formatPersonName(currentCase.client.fullName),
+        }
+      : currentCase.client;
 
     const caseAttributes: CaseAttributes = {
       ...currentCase,
+      client: formattedClient,
       clientGender: currentCase.client?.gender,
     };
 

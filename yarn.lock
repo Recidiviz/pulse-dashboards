@@ -7471,6 +7471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@foundernest/namecase@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "@foundernest/namecase@npm:1.0.5"
+  checksum: 10c0/f46ead105a9a6d7e91c65aae37cb6fb68b7893f9cab5e19427fab94c6f48fb99cf67fdb2df06afb7a1b7e4c352999a38b4c898911e4ab529f250c5ae44fcaac6
+  languageName: node
+  linkType: hard
+
 "@google-cloud/bigquery@npm:^7.9.1":
   version: 7.9.1
   resolution: "@google-cloud/bigquery@npm:7.9.1"
@@ -49480,6 +49487,7 @@ __metadata:
     "@fastify/websocket": "npm:^11.2.0"
     "@firebase/rules-unit-testing": "npm:^2.0.2"
     "@floating-ui/react": "npm:^0.26.1"
+    "@foundernest/namecase": "npm:^1.0.5"
     "@google-cloud/bigquery": "npm:^7.9.1"
     "@google-cloud/cloud-sql-connector": "npm:^1.9.2"
     "@google-cloud/discoveryengine": "npm:^1.14.0"

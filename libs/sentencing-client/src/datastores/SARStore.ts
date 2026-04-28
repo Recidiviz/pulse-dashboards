@@ -24,7 +24,7 @@ import { FlowMethod } from "~hydration-utils";
 
 import { APIClient, SAR } from "../api/APIClient";
 import { MutableSARAttributes } from "../components/CaseDetails/types";
-import { titleCase } from "../utils/utils";
+import { formatPersonName } from "../utils/utils";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { SentencingStore } from "./SentencingStore";
 import { SARAttributes } from "./types";
@@ -47,12 +47,16 @@ export class SARStore {
   get SARAttributes(): SARAttributes {
     if (!this.activeSARId) return {};
     const currentSAR = this.SARDetailsById[this.activeSARId];
-    if (currentSAR.client?.fullName) {
-      currentSAR.client.fullName = titleCase(currentSAR.client?.fullName);
-    }
+
+    const formattedClient = currentSAR.client
+      ? {
+          ...currentSAR.client,
+          fullName: formatPersonName(currentSAR.client.fullName),
+        }
+      : currentSAR.client;
 
     const SARAttributes: SARAttributes = {
-      client: currentSAR.client,
+      client: formattedClient,
       externalId: currentSAR.client?.externalId,
       age: currentSAR.age,
       clientGender: currentSAR.client?.gender,

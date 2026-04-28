@@ -24,7 +24,6 @@ import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import {
   formatTimeServedPct,
   printFormattedRecordString,
-  titleCase,
 } from "../../utils/utils";
 import ChevronLeft from "../assets/chevron-left.svg?react";
 import ChevronRight from "../assets/chevron-right.svg?react";
@@ -70,7 +69,7 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
     const sortedDispositionData = presenter.sortedDispositionData;
     const hasOrasAssessment = presenter.offenderAssessment.hasOrasAssessment;
     const emptyStateContext = presenter.emptyStateDescriptionContext;
-    const clientFullName = presenter.SARData?.client?.fullName;
+    const clientFullName = presenter.SARAttributes.client?.fullName;
 
     const [activeSlide, setActiveSlide] = useState(0);
 
@@ -202,11 +201,10 @@ export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
           <Styled.InsightsSubtitle>
             This information represents outcomes for cases similar to that of
             the current client
-            {clientFullName ? `, ${titleCase(clientFullName)},` : ""} based on
-            gender, risk score, and type of conviction. The statistics below are
-            pulled from historical sentencing data and will appear in the report
-            to provide context for judges, attorneys, and others involved in the
-            case.
+            {clientFullName ? `, ${clientFullName},` : ""} based on gender, risk
+            score, and type of conviction. The statistics below are pulled from
+            historical sentencing data and will appear in the report to provide
+            context for judges, attorneys, and others involved in the case.
           </Styled.InsightsSubtitle>
         )}
         <Styled.InsightsChartCard

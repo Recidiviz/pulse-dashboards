@@ -19,7 +19,11 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import moment from "moment";
 
 import { sortFullNameByLastNameDescending } from "../../../utils/sorting";
-import { capitalizeName, displayReportType } from "../../../utils/utils";
+import {
+  capitalizeName,
+  displayReportType,
+  formatPersonName,
+} from "../../../utils/utils";
 import { REPORT_TYPE_KEY } from "../../CaseDetails/constants";
 import {
   stripFreeTextHelper,
@@ -49,11 +53,7 @@ export const NAME_COLUMN: ColumnDef<CaseListTableCase> = {
     ),
   cell: (info) => {
     const clientName = (info.getValue() as string) ?? "No name found";
-    return (
-      <div style={{ textTransform: "capitalize" }}>
-        {clientName.toLocaleLowerCase()}
-      </div>
-    );
+    return formatPersonName(clientName);
   },
 };
 

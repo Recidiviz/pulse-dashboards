@@ -65,6 +65,7 @@ import {
   formatDisplayDate,
   formatJudgeName,
   formatLongDate,
+  formatPersonName,
   titleCase,
 } from "../utils/utils";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
@@ -270,8 +271,15 @@ export class SARDetailsPresenter implements Hydratable {
   get SARAttributes() {
     if (!this.SARData) return {};
 
+    const formattedClient = this.SARData.client
+      ? {
+          ...this.SARData.client,
+          fullName: formatPersonName(this.SARData.client.fullName),
+        }
+      : this.SARData.client;
+
     return {
-      client: this.SARData.client,
+      client: formattedClient,
       externalId: this.SARData.client?.externalId,
       age: this.SARData.age,
       charges: this.SARData.charges,
@@ -292,9 +300,8 @@ export class SARDetailsPresenter implements Hydratable {
     return result;
   }
 
-  /** Formatted full name for display */
   get formattedClientName(): string {
-    return titleCase(this.SARData?.client?.fullName) || "Unknown";
+    return this.SARAttributes.client?.fullName || "Unknown";
   }
 
   /** Formatted birth date for display */
@@ -356,7 +363,7 @@ export class SARDetailsPresenter implements Hydratable {
   get officerInfo() {
     const staff = this.SARData?.staff;
     return {
-      name: staff?.fullName,
+      name: staff?.fullName ? formatPersonName(staff.fullName) : undefined,
       district: staff?.district?.name,
       address: staff?.officeAddress,
       phoneNumber: staff?.officePhoneNumber,
