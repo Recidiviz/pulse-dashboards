@@ -17,7 +17,10 @@ def mock_session():
 
 @pytest.fixture
 def mock_request():
-    return MagicMock()
+    mock_req = MagicMock()
+    # Add redis_client to app.state for endpoints that need it
+    mock_req.app.state.redis_client = MagicMock()
+    return mock_req
 
 
 @pytest.fixture

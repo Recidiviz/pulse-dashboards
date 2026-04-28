@@ -1,3 +1,4 @@
+import hashlib
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
 from venv import logger
@@ -7,7 +8,10 @@ import redis.asyncio as redis
 from app.core.config import settings
 
 # Rate limiting settings
-MAX_ATTEMPTS = getattr(settings, "INTAKE_VERIFICATION_MAX_ATTEMPTS", 3)
+# NOTE: Two users who share the same DOC ID (a known edge case) will exhaust this
+# budget together. Accepted as a known limitation.
+MAX_ATTEMPTS = getattr(settings, "INTAKE_VERIFICATION_MAX_ATTEMPTS", 5)
+IP_MAX_ATTEMPTS = getattr(settings, "INTAKE_VERIFICATION_IP_MAX_ATTEMPTS", 20)
 COOLOFF_TIME = getattr(settings, "INTAKE_VERIFICATION_COOLOFF_TIME", 10)
 REDIS_PREFIX = getattr(settings, "REDIS_PREFIX", "dob_verify:")
 
@@ -17,6 +21,25 @@ def get_token_key(token_id: str) -> str:
     Get Redis key for a token's failed attempt tracking.
     """
     return f"{REDIS_PREFIX}token:{token_id}:failed_attempts"
+
+
+def get_state_docid_key(state_code: str, doc_id: str) -> str:
+    """
+    Get Redis key for a state+docid combination's failed attempt tracking.
+    Uses a hash of the combination to create a unique key for rate limiting.
+    """
+    combined = f"{state_code}:{doc_id}"
+    key_hash = hashlib.sha256(combined.encode()).hexdigest()
+    return f"{REDIS_PREFIX}state_docid:{key_hash}:failed_attempts"
+
+
+def get_ip_key(ip_address: str) -> str:
+    """
+    Get Redis key for an IP address's failed attempt tracking.
+    Uses a hash of the IP to avoid storing raw addresses in Redis.
+    """
+    key_hash = hashlib.sha256(ip_address.encode()).hexdigest()
+    return f"{REDIS_PREFIX}ip:{key_hash}:failed_attempts"
 
 
 async def record_failed_attempt(

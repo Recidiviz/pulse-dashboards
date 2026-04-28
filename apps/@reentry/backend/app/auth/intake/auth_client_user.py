@@ -1,10 +1,15 @@
-import logging
 from datetime import date
 from typing import Callable, List, Optional, Tuple
 
 import redis.asyncio as redis
 import sentry_sdk
 import structlog
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.security import HTTPBearer
+from firebase_admin import auth
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
+
 from app.auth.intake.utils import (
     ValidationResult,
     create_client_response,
@@ -12,32 +17,44 @@ from app.auth.intake.utils import (
     validate_credentials_and_dob,
 )
 from app.auth.intake.verification_attempts import (
+    IP_MAX_ATTEMPTS,
     check_cooloff_status,
+    count_recent_failed_attempts,
     get_attempts_remaining,
+    get_ip_key,
     record_failed_attempt,
 )
 from app.core.db import AsyncSession
 from app.crud.intake import get_intake_by_token, get_latest_active_conversation_intake
 from app.services.client_data.queries import Queries
-from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.security import HTTPBearer
-from firebase_admin import auth
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
 
 logger = structlog.get_logger(__name__)
 security = HTTPBearer()
 
 
 async def handle_rate_limiting(
-    redis_client: redis.Redis, token_from_url: str
+    redis_client: Optional[redis.Redis],
+    rate_limit_key: str,
+    ip_address: Optional[str] = None,
 ) -> Tuple[bool, Optional[str], bool]:
-    # Early rate limit check using token
+    if redis_client is None:
+        return True, None, False
     try:
-        is_blocked, remaining_minutes, next_attempt_time = await check_cooloff_status(
-            redis_client, token_from_url
-        )
+        # Check per-IP bucket first to catch enumeration across many credentials
+        if ip_address:
+            ip_key = get_ip_key(ip_address)
+            ip_attempts = await count_recent_failed_attempts(redis_client, ip_key)
+            if ip_attempts >= IP_MAX_ATTEMPTS:
+                return (
+                    False,
+                    "Too many failed attempts. Please wait a few minutes before you try again.",
+                    True,
+                )
 
+        # Check per-credential bucket
+        is_blocked, _, next_attempt_time = await check_cooloff_status(
+            redis_client, rate_limit_key
+        )
         if is_blocked and next_attempt_time:
             return (
                 False,
@@ -46,24 +63,27 @@ async def handle_rate_limiting(
             )
         return True, None, False
     except Exception as e:
-        logger.error(f"Rate limiting error: {e}")
-        return (
-            False,
-            "Service temporarily unavailable. Please try again later.",
-            False,
-        )
+        logger.warning(f"Rate limiting check failed, failing open: {e}")
+        return True, None, False
 
 
 async def record_validation_failure(
-    request: Request, redis_client: redis.Redis, rate_limit_key: str
+    request: Request,
+    redis_client: Optional[redis.Redis],
+    rate_limit_key: str,
+    error_message: str = "Incorrect. Please try again.",
 ) -> ValidationResult:
+    if redis_client is None:
+        return ValidationResult.error_result(error_message)
     try:
         client_ip = request.client.host if hasattr(request, "client") else None
         await record_failed_attempt(redis_client, rate_limit_key, client_ip)
+        if client_ip:
+            await record_failed_attempt(redis_client, get_ip_key(client_ip), client_ip)
 
         (
             is_blocked,
-            remaining_minutes,
+            _,
             next_attempt_time,
         ) = await check_cooloff_status(redis_client, rate_limit_key)
 
@@ -71,18 +91,16 @@ async def record_validation_failure(
             return ValidationResult.error_result(
                 "Too many failed attempts. Please wait a few minutes before you try again."
             )
-        else:
-            attempts_remaining = await get_attempts_remaining(
-                redis_client, rate_limit_key
-            )
-            error_msg = f"Incorrect; Please try again; {attempts_remaining} attempt"
-            error_msg += "s" if attempts_remaining > 1 else ""
-            error_msg += " remaining."
-            return ValidationResult.error_result(error_msg)
+
+        attempts_remaining = await get_attempts_remaining(redis_client, rate_limit_key)
+        suffix = f" {attempts_remaining} attempt"
+        suffix += "s" if attempts_remaining != 1 else ""
+        suffix += " remaining."
+        return ValidationResult.error_result(error_message + suffix)
 
     except Exception as e:
         logger.error(f"Failed to record attempt: {e}")
-        return ValidationResult.error_result("Verification failed. Please try again.")
+        return ValidationResult.error_result(error_message)
 
 
 async def validate_dob_urltoken(
@@ -96,8 +114,9 @@ async def validate_dob_urltoken(
     Validate client using date of birth and token.
     """
     # Early rate limit check
+    ip_address = request.client.host if request.client else None
     should_continue, error_message, is_attempt_error = await handle_rate_limiting(
-        redis_client, token_from_url
+        redis_client, token_from_url, ip_address
     )
     if not should_continue:
         return ValidationResult.error_result(error_message)
@@ -168,18 +187,35 @@ async def validate_state_docid(
     doc_id: str,
     state_code: str,
     session: AsyncSession,
+    redis_client: redis.Redis,
 ) -> ValidationResult:
     """
     Validate client existing in the bigquery database using DOC ID and state code.
     """
+    from app.auth.intake.verification_attempts import get_state_docid_key
+
+    # Generate rate limit key for this state+docid combination
+    rate_limit_key = get_state_docid_key(state_code, doc_id)
+
+    # Early rate limit check
+    ip_address = request.client.host if request.client else None
+    should_continue, error_message, is_attempt_error = await handle_rate_limiting(
+        redis_client, rate_limit_key, ip_address
+    )
+    if not should_continue:
+        return ValidationResult.error_result(error_message)
+
     record = Queries.get_client_by_doc_id_and_state(
         doc_id=doc_id,
         state_code=state_code,
     )
 
     if not record:
-        return ValidationResult.error_result(
-            "No match for the provided DOC ID and state. Please try again."
+        return await record_validation_failure(
+            request,
+            redis_client,
+            rate_limit_key,
+            "No match for the provided DOC ID and state. Please try again.",
         )
 
     client_pseudo_id = record.pseudonymized_client_id
@@ -192,14 +228,20 @@ async def validate_state_docid(
         logger.error(
             f"Intake record not found for client pseudo ID: {client_pseudo_id}"
         )
-        return ValidationResult.error_result(
-            "Intake not enabled. Please contact your case worker for assistance."
+        return await record_validation_failure(
+            request,
+            redis_client,
+            rate_limit_key,
+            "Intake not enabled. Please contact your case worker for assistance.",
         )
 
     if not intake_record.internal_access:
         logger.error(f"Intake not enabled for client pseudo ID: {client_pseudo_id}")
-        return ValidationResult.error_result(
-            "Internal access is not enabled. Please contact your case worker for assistance."
+        return await record_validation_failure(
+            request,
+            redis_client,
+            rate_limit_key,
+            "Internal access is not enabled. Please contact your case worker for assistance.",
         )
 
     token_data = create_client_response(client_pseudo_id, record.full_name)
@@ -228,7 +270,7 @@ async def verify_client_from_firebase_token(
         )
 
     state_code = decoded_token.get("stateCode")
-    external_id = decoded_token.get("externalId")
+
     user_pseudo_id = decoded_token.get("pseudonymizedId", "")
     permissions_list = decoded_token.get("permissions", [])
     has_elevated_access = "global_write" in permissions_list

@@ -45,7 +45,7 @@ async def verify_date_of_birth(
     session=Depends(get_session),
 ):
     try:
-        redis_client = request.app.state.redis_client
+        redis_client = getattr(request.app.state, "redis_client", None)
 
         result = await validate_dob_urltoken(
             request, data.token_from_url, data.date_of_birth, session, redis_client
@@ -139,11 +139,14 @@ async def verify_state_doc_id(
     session: AsyncSession = Depends(get_session),
 ):
     try:
+        redis_client = getattr(request.app.state, "redis_client", None)
+
         result = await validate_state_docid(
             request=request,
             doc_id=data.doc_id,
             state_code=data.state_code,
             session=session,
+            redis_client=redis_client,
         )
 
         if not result.success:
