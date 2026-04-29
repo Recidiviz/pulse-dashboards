@@ -481,7 +481,7 @@ const MO_DISPOSITION_DATA = (malePercentages: number[]) => [
     percentage: malePercentages[4],
   },
   {
-    recommendationType: "SUSPENDED",
+    recommendationType: "Suspended",
     sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
     percentage: malePercentages[5],

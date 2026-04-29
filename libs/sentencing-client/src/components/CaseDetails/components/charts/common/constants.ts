@@ -45,7 +45,7 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
 // display-formatted equivalents. Used by getSentenceLengthBucketLabel.
 export const SENTENCE_TYPE_DISPLAY_NAMES: Record<string, string> = {
   Treatment_in_prison: "Court-Ordered Treatment",
-  SUSPENDED: "Suspended Sentence",
+  Suspended: "Suspended Sentence",
 };
 
 export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {

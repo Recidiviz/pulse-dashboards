@@ -75,7 +75,7 @@ import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter
 const DISPOSITION_TYPE_ORDER: Record<string, number> = {
   Probation: 0,
   Treatment_in_prison: 1,
-  SUSPENDED: 2,
+  Suspended: 2,
 };
 
 // Type for SAR metadata structure

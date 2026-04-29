@@ -113,7 +113,7 @@ export function getSentenceLengthBucketLabel(
   return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years Incarceration`;
 }
 
-// Flat types (Probation, Treatment_in_prison, SUSPENDED) use {0, -1} as the
+// Flat types (Probation, Treatment_in_prison, Suspended) use {0, -1} as the
 // convention for "no sentence length bucket".
 export const CANONICAL_DISPOSITION_SLOTS = [
   {
@@ -127,7 +127,7 @@ export const CANONICAL_DISPOSITION_SLOTS = [
     sentenceLengthBucketEnd: -1,
   },
   {
-    recommendationType: "SUSPENDED",
+    recommendationType: "Suspended",
     sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
   },
