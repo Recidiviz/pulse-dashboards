@@ -41,7 +41,7 @@ import {
 } from "../constants";
 import * as Styled from "../Dashboard.styles";
 import { CaseListTableCase, CaseStatus, CaseStatusToDisplay } from "../types";
-import { isBeforeDueDateWithExtraDayOffset } from "../utils";
+import { isPSICaseArchived, isSARArchived } from "../utils";
 
 export const NAME_COLUMN: ColumnDef<CaseListTableCase> = {
   header: "Name",
@@ -74,77 +74,63 @@ export const DUE_DATE_COLUMN: ColumnDef<CaseListTableCase> = {
   },
 };
 
-const createStatusColumn = (header: string): ColumnDef<CaseListTableCase> => ({
-  header,
-  accessorKey: STATUS_KEY,
-  cell: (info) => {
-    const statusValue = info.getValue() as CaseStatus;
-    // isCancelled only exists on PSI Cases (StaffCase), not SARs (StaffSAR)
-    const isCancelledStatus =
-      "isCancelled" in info.cell.row.original
-        ? info.cell.row.original.isCancelled
-        : false;
-    const statusOrArchived =
-      !info.cell.row.original.dueDate ||
-      isBeforeDueDateWithExtraDayOffset(info.cell.row.original.dueDate)
-        ? CaseStatusToDisplay[statusValue]
-        : ARCHIVED_STATUS;
-    const statusToDisplay = isCancelledStatus
-      ? CANCELLED_STATUS
-      : statusOrArchived;
+const createStatusColumn = (
+  header: string,
+  isSAR = false,
+): ColumnDef<CaseListTableCase> => {
+  const checkArchived = isSAR ? isSARArchived : isPSICaseArchived;
 
-    return (
-      <Styled.StatusChip status={statusToDisplay}>
-        {statusToDisplay}
-      </Styled.StatusChip>
-    );
-  },
-  sortingFn: (a: Row<CaseListTableCase>, b: Row<CaseListTableCase>) => {
-    // Access dueDate and status directly instead of via bracket notation
-    // to avoid TypeScript union type issues
-    const dueDateStringA = String(a.original.dueDate);
-    const dueDateStringB = String(b.original.dueDate);
-    const dueDateA = moment.utc(dueDateStringA);
-    const dueDateB = moment.utc(dueDateStringB);
+  return {
+    header,
+    accessorKey: STATUS_KEY,
+    cell: (info) => {
+      const statusValue = info.getValue() as CaseStatus;
+      // isCancelled only exists on PSI Cases (StaffCase), not SARs (StaffSAR)
+      const isCancelledStatus =
+        "isCancelled" in info.cell.row.original
+          ? info.cell.row.original.isCancelled
+          : false;
+      const statusOrArchived = checkArchived(info.cell.row.original)
+        ? ARCHIVED_STATUS
+        : CaseStatusToDisplay[statusValue];
+      const statusToDisplay = isCancelledStatus
+        ? CANCELLED_STATUS
+        : statusOrArchived;
 
-    const statusOrder = {
-      InProgress: 0,
-      NotYetStarted: 1,
-      Complete: 2,
-    };
+      return (
+        <Styled.StatusChip status={statusToDisplay}>
+          {statusToDisplay}
+        </Styled.StatusChip>
+      );
+    },
+    sortingFn: (a: Row<CaseListTableCase>, b: Row<CaseListTableCase>) => {
+      const statusOrder = {
+        InProgress: 0,
+        NotYetStarted: 1,
+        Complete: 2,
+      };
 
-    const isArchivedA = !!a.original.dueDate && moment.utc().isAfter(dueDateA);
-    const isArchivedB = !!b.original.dueDate && moment.utc().isAfter(dueDateB);
+      const isArchivedA = checkArchived(a.original);
+      const isArchivedB = checkArchived(b.original);
 
-    // If both are archived, return 0
-    if (isArchivedA && isArchivedB) {
-      return 0;
-    }
+      if (isArchivedA && isArchivedB) return 0;
+      if (isArchivedA) return 1;
+      if (isArchivedB) return -1;
 
-    // If A is archived and B is not, put A at the bottom of the list
-    if (isArchivedA) {
-      return 1;
-    }
+      const caseStatusA = a.original.status as CaseStatus;
+      const caseStatusB = b.original.status as CaseStatus;
+      const statusComparison =
+        caseStatusA &&
+        caseStatusB &&
+        statusOrder[caseStatusA] - statusOrder[caseStatusB];
 
-    // If B is archived and A is not, put B at the bottom of the list
-    if (isArchivedB) {
-      return -1;
-    }
-
-    // Sort by status
-    const caseStatusA = a.original.status as CaseStatus;
-    const caseStatusB = b.original.status as CaseStatus;
-    const statusComparison =
-      caseStatusA &&
-      caseStatusB &&
-      statusOrder[caseStatusA] - statusOrder[caseStatusB];
-
-    return statusComparison ?? 0;
-  },
-});
+      return statusComparison ?? 0;
+    },
+  };
+};
 
 export const PSI_STATUS_COLUMN = createStatusColumn("Recommendation Status");
-export const SAR_STATUS_COLUMN = createStatusColumn("Status");
+export const SAR_STATUS_COLUMN = createStatusColumn("Status", true);
 
 export const ASSIGNED_TO_COLUMN: ColumnDef<CaseListTableCase> = {
   header: "Assigned To",

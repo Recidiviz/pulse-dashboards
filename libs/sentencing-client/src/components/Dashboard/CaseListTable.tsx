@@ -46,7 +46,7 @@ import {
   CaseStatusToDisplay,
   RecommendationStatusFilter,
 } from "./types";
-import { isBeforeDueDateWithExtraDayOffset } from "./utils";
+import { isPSICaseArchived, isSARArchived } from "./utils";
 
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
@@ -121,11 +121,10 @@ export const CaseListTable = ({
   } = analytics;
   const navigate = useNavigate();
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
+  const checkArchived = isSAR ? isSARArchived : isPSICaseArchived;
 
   const [data, setData] = useState(
-    caseTableData.filter(
-      (dp) => !dp.dueDate || isBeforeDueDateWithExtraDayOffset(dp.dueDate),
-    ), // Hide archived cases on initial load; show cases with no due date
+    caseTableData.filter((dp) => !checkArchived(dp)),
   );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
@@ -191,10 +190,7 @@ export const CaseListTable = ({
             // Include the case if it is cancelled and the CANCELLED_STATUS filter is active
             return includesCancelled;
           }
-          if (
-            datapoint.dueDate &&
-            !isBeforeDueDateWithExtraDayOffset(datapoint.dueDate)
-          ) {
+          if (checkArchived(datapoint)) {
             // Include the case if it is archived and the ARCHIVED_STATUS filter is active
             return includesArchived;
           }

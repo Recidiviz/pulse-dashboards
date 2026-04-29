@@ -37,3 +37,13 @@ export const isBeforeDueDateWithExtraDayOffset = (dueDate: Date | null) => {
    */
   return isBeforeDueDate(dueDate, 2);
 };
+
+// SAR: archived when completionDate has passed (investigation closed in OPII).
+export const isSARArchived = (sar: { completionDate?: Date | null }): boolean =>
+  !!sar.completionDate && moment.utc().isAfter(sar.completionDate);
+
+// PSI: archived when dueDate has passed (with extra day grace period).
+export const isPSICaseArchived = (psiCase: {
+  dueDate?: Date | null;
+}): boolean =>
+  !!psiCase.dueDate && !isBeforeDueDateWithExtraDayOffset(psiCase.dueDate);

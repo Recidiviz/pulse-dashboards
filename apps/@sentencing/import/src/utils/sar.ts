@@ -133,6 +133,7 @@ export async function transformAndLoadSARData(
     const newSAR: Record<string, unknown> = {
       externalId: sarData.external_id,
       dueDate: sarData.due_date,
+      completionDate: sarData.completion_date,
       assessmentScore,
       dateRequested: sarData.assigned_date,
       assessmentAdministeredBy: sarData.assessment_administered_by,
