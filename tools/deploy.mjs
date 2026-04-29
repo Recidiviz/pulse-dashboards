@@ -884,6 +884,7 @@ if (
 
       await $`yarn atmos:apply apps/meetings -s ${stack} -- -auto-approve \
           -var server_container_version=${currentRevision} \
+          -var artifact_cleanup_container_version=${currentRevision} \
           -var migrate_db_container_version=${currentRevision} \
           -var import_container_version=${currentRevision} \
           -var seed_demo_container_version=${currentRevision}`.pipe(
