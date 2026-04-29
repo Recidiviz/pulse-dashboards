@@ -618,6 +618,14 @@ class SocketIOManager:
                     guardrail=hard_stop,
                 )
         else:
+            intake = await self.db_manager.get_intake(client_pseudo_id)
+            if intake:
+                await self.db_manager.store_message(
+                    intake_id=intake.id,
+                    from_role=IntakeMessageRole.CLIENT,
+                    content=content,
+                    guardrailed_by=triggered,
+                )
             event = GuardrailTriggeredEvent(guardrails=triggered)
             await self.sio.emit(event.type, event.model_dump(mode="json"), room=sid)
 
@@ -654,17 +662,6 @@ class SocketIOManager:
                 await self._handle_guardrail_response(
                     sid, client_pseudo_id, triggered, content, guardrail_categories
                 )
-                # Crisis and moderation hard-stops are suppressed when the flag is off —
-                # let the conversation continue. Prompt injection and non-hard-stops always stop.
-                gated_hard_stops = {"crisis", "openai_moderation"}
-                hard_stops = {t for t in triggered if t in HARD_STOP_GUARDRAIL_TYPES}
-                if hard_stops.issubset(gated_hard_stops) and not is_feature_enabled(
-                    "GUARDRAILS_HARD_STOP"
-                ):
-                    # Message already stored with guardrailed_by. Just unblock the AI pipeline.
-                    pending_response = self.pending_responses.get(client_pseudo_id)
-                    if pending_response and not pending_response.done():
-                        pending_response.set_result(content)
                 return
 
             intake = await self.db_manager.get_intake(client_pseudo_id)

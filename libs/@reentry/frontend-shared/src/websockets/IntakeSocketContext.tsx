@@ -26,6 +26,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState,
 } from "react";
@@ -39,8 +40,20 @@ import type {
   HardStopGuardrailType,
   PongEventContent,
   SectionChangeContent,
+  SoftStopGuardrailType,
 } from "./eventTypes";
-import { isHardStopGuardrail } from "./eventTypes";
+import { isHardStopGuardrail, isSoftStopGuardrail } from "./eventTypes";
+
+/**
+ * Returns true if a message should be shown in the UI — i.e. it was not flagged
+ * by a guardrail. Guardrailed messages stay in raw reducer state so the
+ * soft-stop case can retroactively mark the optimistic chat message, but are stripped
+ * from context before any consumer sees them, matching what the DB returns after
+ * a page refresh.
+ */
+export const isVisibleMessage = (
+  m: components["schemas"]["IntakeMessageResponse"],
+): boolean => !m.guardrailed_by || m.guardrailed_by.length === 0;
 
 const DUPLICATE_ACTIVITY_MESSAGE = "This intake is active elsewhere";
 // Warn the user this many ms before their session expires. Set to 1 minute to
@@ -88,7 +101,8 @@ export interface IntakeSocketContextType {
   has_address: boolean;
   has_survey: boolean;
   disconnectReason?: string | null;
-  guardrailDisconnectReason?: HardStopGuardrailType | null;
+  guardrailHardStopReason?: HardStopGuardrailType | null;
+  guardrailSoftStopReason?: SoftStopGuardrailType | null;
   intakeId?: string | null;
   sessionExpiring?: boolean;
 }
@@ -193,6 +207,10 @@ type SetStatusAction = {
 
 type SetSessionExpiringAction = { type: "setSessionExpiring" };
 type ResetSessionExpiringAction = { type: "resetSessionExpiring" };
+type GuardrailSoftStopAction = {
+  type: "guardrailSoftStop";
+  reason: SoftStopGuardrailType;
+};
 
 type IntakeAction =
   | ConnectionAction
@@ -208,7 +226,8 @@ type IntakeAction =
   | SetWaitingForAIInputAction
   | SetStatusAction
   | SetSessionExpiringAction
-  | ResetSessionExpiringAction;
+  | ResetSessionExpiringAction
+  | GuardrailSoftStopAction;
 
 const intakeReducer = (
   state: IntakeSocketContextType,
@@ -241,7 +260,7 @@ const intakeReducer = (
         action.reason === "duplicate_session"
           ? DUPLICATE_ACTIVITY_MESSAGE
           : null;
-      const guardrailDisconnectReason = isHardStopGuardrail(action.reason)
+      const guardrailHardStopReason = isHardStopGuardrail(action.reason)
         ? action.reason
         : null;
       return {
@@ -249,7 +268,30 @@ const intakeReducer = (
         connectionStatus: "disconnected",
         waitingForAIInput: false,
         disconnectReason,
-        guardrailDisconnectReason,
+        guardrailHardStopReason,
+      };
+    }
+    case "guardrailSoftStop": {
+      /**
+       * Retroactively mark the last unguardrailed client message so isVisibleMessage
+       * hides it immediately. The backend persists it with guardrailed_by set, so
+       * a page refresh produces the same filtered view via the DB.
+       */
+      const messages = [...state.messages];
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].from_role === "client" && !messages[i].guardrailed_by) {
+          messages[i] = {
+            ...messages[i],
+            guardrailed_by: [action.reason],
+          };
+          break;
+        }
+      }
+      return {
+        ...state,
+        messages,
+        guardrailSoftStopReason: action.reason,
+        waitingForAIInput: false,
       };
     }
     case "setStatus": {
@@ -448,7 +490,8 @@ export function IntakeSocketProvider({
     has_address: false,
     has_survey: false,
     disconnectReason: null,
-    guardrailDisconnectReason: null,
+    guardrailHardStopReason: null,
+    guardrailSoftStopReason: null,
   };
 
   const { socket, $api } = useApplicationContext();
@@ -684,6 +727,12 @@ export function IntakeSocketProvider({
     socket.on("connectionAck", connectionAckHandler);
     socket.on("pong", pongHandler);
     socket.on("sectionChange", sectionChangeHandler);
+    socket.on("guardrailTriggered", (content) => {
+      const softStop = content.guardrails.find(isSoftStopGuardrail);
+      if (softStop) {
+        dispatch({ type: "guardrailSoftStop", reason: softStop });
+      }
+    });
     // Cleanup on unmount
     return () => {
       socket.off("connect");
@@ -695,6 +744,7 @@ export function IntakeSocketProvider({
       socket.off("sectionChange");
       socket.off("forceDisconnect");
       socket.off("tokenExpired");
+      socket.off("guardrailTriggered");
     };
   }, [
     aiMessageHandler,
@@ -1001,8 +1051,21 @@ export function IntakeSocketProvider({
     setIntakeComplete,
   };
 
+  /**
+   * Strip guardrailed messages before exposing context to consumers so every
+   * component gets a consistent filtered view without needing to call
+   * isVisibleMessage themselves.
+   */
+  const visibleContext = useMemo(
+    () => ({
+      ...intakeContext,
+      messages: intakeContext.messages.filter(isVisibleMessage),
+    }),
+    [intakeContext],
+  );
+
   return (
-    <IntakeContext.Provider value={intakeContext}>
+    <IntakeContext.Provider value={visibleContext}>
       <IntakeDispatchContext.Provider value={dispatchContext}>
         {children}
       </IntakeDispatchContext.Provider>

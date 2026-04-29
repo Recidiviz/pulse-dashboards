@@ -3745,6 +3745,8 @@ export interface components {
              * @default false
              */
             requires_response: boolean;
+            /** Guardrailed By */
+            guardrailed_by?: string[] | null;
         };
         /**
          * IntakeMessageRole
