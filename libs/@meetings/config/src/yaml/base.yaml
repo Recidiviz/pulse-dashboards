@@ -2,7 +2,7 @@
 # Agency-specific YAMLs override individual fields on top of these defaults.
 # This file is not a valid AgencyConfig on its own (no name/stateCode).
 
-version: 1
+version: 2
 
 # ── Infrastructure defaults ──────────────────────────────────
 audioTTLDays: 30
@@ -25,7 +25,8 @@ outputs:
     label: Case Note
     # Drawn from WRITER prompt in libs/@meetings/tasks/src/llm/prompts.ts
     promptGuidance: |
-      Write a professional, third-person, objective case note.
+      Write a professional, third-person, objective case note. Open with a quick
+      meeting summary, with a "SUMMARY:" header.
       Use CAPS LABELS for sub-topics (e.g. "HOUSING: ...", "EMPLOYMENT: ...").
       Use double line breaks to separate sections. No giant paragraphs.
       Incorporate all points from staff member notes. If any notes are unclear,

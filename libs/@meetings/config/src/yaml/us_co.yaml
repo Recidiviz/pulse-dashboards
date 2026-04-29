@@ -1,7 +1,17 @@
 name: Colorado
 stateCode: US_CO
-version: 1
+version: 2
 
 additionalKeywords:
   - CDOC
   - Edovo
+
+outputPatches:
+  case_note:
+    subheaders:
+      - Current Housing
+      - Recent Policy Contact
+      - Treatment
+      - Urine Analysis
+      - Employment
+      - Restitution

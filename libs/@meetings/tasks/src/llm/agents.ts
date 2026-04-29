@@ -183,13 +183,14 @@ export class SpecialistCore {
     for (const output of agency.outputs) {
       let promptGuidance = output.promptGuidance;
       if (output.subheaders?.length) {
-        promptGuidance += `\nUse the following subheaders to organize 
-          the output: ${output.subheaders.join(", ")}. Do not insert 
-          a subheader if it is not relevant, factual information retrieved
-          from the transcription.`;
+        promptGuidance += dedent`\nUse these subheaders where relevant: 
+        ${output.subheaders.join(", ")}. Omit any that don't apply, 
+        and add others if they'd better organize the content.`;
       }
-      structureStr += `- ${output.id} (${output.label}): ${promptGuidance}\n`;
+      structureStr += `- (${output.label}): ${promptGuidance}\n`;
     }
+
+    structureStr = dedent(structureStr);
 
     const userMessage = PROMPTS.WRITER.USER({
       transcript: transcript.rawText,
