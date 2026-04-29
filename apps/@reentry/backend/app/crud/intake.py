@@ -153,6 +153,7 @@ async def get_latest_active_conversation_intake(
             selectinload(Intake.intake_token),
             selectinload(Intake.address),
             selectinload(Intake.survey),
+            selectinload(Intake.assessment_config),
         )
         .where(
             and_(

@@ -572,6 +572,25 @@ class SocketIOManager:
     ) -> None:
         logger.warning(f"Guardrail(s) triggered for {client_pseudo_id}: {triggered}")
 
+        intake = await self.db_manager.get_intake(client_pseudo_id)
+        intake_id = str(intake.id) if intake else None
+        state_code = (
+            intake.assessment_config.state_code
+            if intake and intake.assessment_config
+            else self.state_codes.get(client_pseudo_id)
+        )
+
+        for guardrail in triggered:
+            asyncio.create_task(
+                send_guardrail_alert(
+                    guardrail_type=guardrail,
+                    client_pseudo_id=client_pseudo_id,
+                    intake_id=intake_id,
+                    state_code=state_code,
+                    categories=guardrail_categories.get(guardrail),
+                )
+            )
+
         hard_stop = next((t for t in triggered if t in HARD_STOP_GUARDRAIL_TYPES), None)
         if hard_stop:
             # TODO(OBT-12591): Remove the GUARDRAILS_HARD_STOP flag gate once crisis copy is ready.
@@ -580,8 +599,6 @@ class SocketIOManager:
                 is_feature_enabled("GUARDRAILS_HARD_STOP")
                 or hard_stop == "prompt_injection"
             )
-            # Always persist with guardrailed_by for observability, regardless of whether we disconnect.
-            intake = await self.db_manager.get_intake(client_pseudo_id)
             if intake:
                 await self.db_manager.store_message(
                     intake_id=intake.id,
@@ -592,19 +609,8 @@ class SocketIOManager:
             else:
                 logger.warning(
                     f"Hard-stop guardrail fired but no intake found for {client_pseudo_id} — "
-                    f"message not persisted and alert will be missing intake_id/state_code"
+                    f"message not persisted"
                 )
-            intake_id = str(intake.id) if intake else None
-            state_code = self.state_codes.get(client_pseudo_id)
-            asyncio.create_task(
-                send_guardrail_alert(
-                    guardrail_type=hard_stop,
-                    client_pseudo_id=client_pseudo_id,
-                    intake_id=intake_id,
-                    state_code=state_code,
-                    categories=guardrail_categories.get(hard_stop),
-                )
-            )
             if will_disconnect:
                 # Cancel graph before closing socket — prevents a window where the socket
                 # is dead but the graph is still running and attempting to emit.
@@ -618,7 +624,6 @@ class SocketIOManager:
                     guardrail=hard_stop,
                 )
         else:
-            intake = await self.db_manager.get_intake(client_pseudo_id)
             if intake:
                 await self.db_manager.store_message(
                     intake_id=intake.id,
