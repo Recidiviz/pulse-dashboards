@@ -66,6 +66,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "ClientProfileDetails",
         "FinesAndFees",
       ],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -129,6 +130,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -191,6 +193,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
         "UsTnCommonlyUsedOverrideCodes",
       ],
+      skipFormPreview: false,
       snooze: null,
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -252,6 +255,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -324,7 +328,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "noSupervisionViolationReportSinceIntakeSupervisionLevel",
-          text: "No violations since being placed on Community Supervision",
+          text: "No violations since being placed on community supervision",
         },
         {
           key: "usTnNoSupervisionSanctionWithin3Months",
@@ -332,17 +336,23 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnNoSupervisionSanctionSinceIntakeSupervisionLevel",
-          text: "No sanctions since being placed on Community Supervision",
+          text: "No sanctions since being placed on community supervision",
+        },
+        {
+          key: "usTnNoArrestsSinceIntakeSupervisionLevel",
+          text: "No positive arrest checks (ARRP) since being placed on community supervision",
+          tooltip:
+            "Client has had no arrests since being placed on supervision",
         },
         {
           key: "latestDrugTestIsNegativeOrMissing",
-          text: ' {{#if  (eq latestDrugScreenDate "")}}\nNo recent drug screens\n{{else}}\nPassed most recent drug screen on {{date latestDrugScreenDate}}\n{{/if}}',
+          text: ' {{#if (eq latestDrugScreenDate "")}}\nNo recent drug screens\n{{else}}\nPassed most recent drug screen on {{date latestDrugScreenDate}}\n{{/if}}',
           tooltip:
             "Tested negative on their most recent drug screen or have no drug tests",
         },
         {
           key: "noPositiveDrugScreensSinceIntakeSupervisionLevel",
-          text: "No positive drug screens since being placed on Community\nSupervision",
+          text: "No positive drug screens since being placed on community\nsupervision",
         },
         {
           key: "usTnNoArrestsInPast6Months",
@@ -358,21 +368,11 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnAssessedNotHighOnStrongRDomains",
           text: "No high needs as of {{date assessmentDate}}",
           tooltip:
-            "Have addressed or are addressing any highly assessed criminogenic needs.",
-        },
-        {
-          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
-          text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first two months of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
-        },
-        {
-          key: "usTnHomeVisitSinceIntakeSupervisionLevel",
-          text: "First home visit since intake on {{date eligibleDate}}",
+            "Have addressed or are addressing any highly assessed criminogenic needs",
         },
         {
           key: "usTnFeeScheduleOrPermanentExemption",
-          text: " {{#if (eq latestFeeContactDate null)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if (eq currentExemptions null)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
+          text: " {{#if (eq latestFeeContactDate null)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if (eq currentExemptions null)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}",
           tooltip:
             "Clients who've had a FEEP code in the last 90 days are surfaced as eligible or have a permanent exemption",
         },
@@ -385,6 +385,20 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnNotInDayReportingCenter",
           text: "Not in day reporting center",
         },
+        {
+          key: "usTnSupervisionTypeIsMisdemeanorProbationer",
+          text: "On supervision as a misdemeanor probationer",
+        },
+        {
+          key: "usTnHomeVisitSinceIntakeSupervisionLevel",
+          text: "First home visit since intake on {{date eligibleDate}}",
+        },
+        {
+          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
+          text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first two months of being placed on community supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "usTnCompliantReporting2025PolicyReferrals",
@@ -396,11 +410,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "onMinimumSupervisionAtLeastSixMonths",
           text: "Needs {{daysUntil minimumTimeServedDate}} more days on Low",
-        },
-        {
-          key: "onIntakeFor60Days",
-          text: "Needs {{daysUntil minimumTimeServedDate}} more days on Intake",
-          tooltip: "Clients must be on intake for 60 days",
+          tooltip: "Must be on Low supervision level for 6+ months",
         },
         {
           key: "usTnFeeScheduleOrPermanentExemption",
@@ -412,18 +422,23 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnAssessedNotHighOnStrongRDomains",
           text: "Has at least one high need domain",
           tooltip:
-            "Have addressed or are addressing any highly assessed criminogenic needs.",
-        },
-        {
-          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
-          text: "Did not have 3 face to face contacts within 2 months of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first two months of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
+            "Have addressed or are addressing any highly assessed criminogenic needs",
         },
         {
           key: "usTnNegativeArrestCheckInPast6Months",
           text: "{{#if record.metadata.latestNegativeArrestCheck.contactDate}} Latest ARRN ({{date record.metadata.latestNegativeArrestCheck.contactDate}}) is more than 6 months old\n{{else}}\nNo recent ARRNs found\n{{/if}}",
           tooltip: "Client has had no arrests in the past 6 months",
+        },
+        {
+          key: "onIntakeFor60Days",
+          text: "Needs {{daysUntil minimumTimeServedDate}} more days on Intake",
+          tooltip: "Clients must be on intake for 60 days",
+        },
+        {
+          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
+          text: "Did not have 3 face to face contacts within 2 months of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first two months of being placed on community supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
         },
       ],
       initialHeader:
@@ -434,30 +449,44 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view",
       nonOmsCriteria: [
         {
-          text: "No pending felony charges",
+          text: '{{#if (eq record.metadata.taskName "MINIMUM (LOW)")}}No pending felony charges{{/if}}',
           tooltip:
-            "See VWARs submitted on current supervision period for information on potential pending felony charges",
+            "See VWARs submitted in current supervision period for information on potential pending felony charges",
         },
         {
-          text: "Has reported as instructed for the past 3 months (unless excused or documented)",
+          text: '{{#if (eq record.metadata.taskName "MINIMUM (LOW)")}}Has reported as instructed for the past 3 months (unless excused and documented){{/if}}',
+          tooltip: "",
         },
         {
-          text: "Able to comply with any Court/Board of Parole ordered special conditions",
+          text: '{{#if (eq record.metadata.taskName "MINIMUM (LOW)")}}Able to comply with any court / Board of Parole ordered special conditions{{/if}}',
+          tooltip: "",
         },
         {
-          text: "Not currently on supervision for highly publicized case",
+          text: '{{#if (eq record.metadata.taskName "INTAKE")}}No pending felony charges{{/if}}',
           tooltip:
-            "For reference, all current offenses are listed in client record.",
+            "See VWARs submitted in current supervision period for information on potential pending felony charges",
+        },
+        {
+          text: '{{#if (eq record.metadata.taskName "INTAKE")}}Able to comply with any court / Board of Parole ordered special conditions{{/if}}',
+        },
+        {
+          text: '{{#if (eq record.metadata.taskName "INTAKE")}}Has reported as instructed since placement on community supervision (unless excused and documented){{/if}}',
+        },
+        {
+          text: '{{#if (eq record.metadata.taskName "INTAKE")}}Has completed required intake activities{{/if}}',
+        },
+        {
+          text: '{{#if (eq record.metadata.taskName "MISDEMEANOR PROBATIONER")}}Has completed required intake activities{{/if}}',
         },
         {
           text: "Approved by judge if in relevant county or judicial district",
           tooltip:
-            "Certain judicial districts and counties require case-by-case judge approval.",
+            "Certain judicial districts and counties require case-by-case judge approval",
         },
         {
           text: "Upcoming sentence expiration date checked",
           tooltip:
-            "There's no official policy cutoff for sentence expiration dates that are too soon for someone to be moved to Compliant  Reporting.",
+            "There's no official policy cutoff for sentence expiration dates that are too soon for someone to be moved to Compliant Reporting",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
@@ -471,6 +500,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "FinesAndFees",
         "CaseNotes",
       ],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -555,6 +585,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
         "UsTnCommonlyUsedOverrideCodes",
       ],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -614,6 +645,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -696,6 +728,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -765,6 +798,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
         "UsTnCommonlyUsedOverrideCodes",
       ],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -829,6 +863,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -896,6 +931,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",
@@ -1057,6 +1093,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "FinesAndFees",
         "CaseNotes",
       ],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TN",

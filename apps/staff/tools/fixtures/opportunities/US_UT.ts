@@ -201,6 +201,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "Contact",
         "CaseNotes",
       ],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_UT",

@@ -112,6 +112,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: ["usMoWorkRelease"],
       stateCode: "US_MO",
@@ -213,6 +214,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
+      skipFormPreview: false,
       snooze: {
         autoSnoozeParams: {
           params: { weekday: "Sunday" },
@@ -299,6 +301,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
+      skipFormPreview: false,
       snooze: {
         autoSnoozeParams: {
           params: { weekday: "Sunday" },
@@ -379,6 +382,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
+      skipFormPreview: false,
       snooze: {
         autoSnoozeParams: {
           params: { weekday: "Sunday" },
@@ -537,6 +541,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MO",

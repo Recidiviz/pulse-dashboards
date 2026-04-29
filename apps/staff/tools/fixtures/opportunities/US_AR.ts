@@ -81,6 +81,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration"],
+      skipFormPreview: false,
       snooze: null,
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AR",
