@@ -86,7 +86,14 @@ async def output_config_eval_task(
             try:
                 summary = await generate_summary(formatted, config_file)
                 eval_metrics = await _run_evaluations(summary, formatted, system_prompt)
-                per_intake_results.append({"intake_id": intake_id_str, **eval_metrics})
+                per_intake_results.append(
+                    {
+                        "intake_id": intake_id_str,
+                        "transcript": formatted,
+                        "summary": summary,
+                        **eval_metrics,
+                    }
+                )
             except Exception as e:
                 logger.exception("Eval failed for intake", intake_id=intake_id_str)
                 per_intake_results.append({"intake_id": intake_id_str, "error": str(e)})

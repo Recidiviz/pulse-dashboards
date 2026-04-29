@@ -55,6 +55,8 @@ interface IntakeEvalResult {
   not_toxic?: SimpleEvalResult;
   tone?: SimpleEvalResult;
   no_judgments?: SimpleEvalResult;
+  transcript?: string;
+  summary?: string;
 }
 
 interface EvalSummary {
@@ -403,6 +405,26 @@ const IntakeRow = ({
                 </ul>
               )}
             </div>
+          )}
+          {result.transcript && (
+            <details>
+              <summary className="text-xs font-medium text-gray-500 cursor-pointer hover:text-gray-700">
+                Intake Transcript
+              </summary>
+              <pre className="mt-1 text-xs text-gray-600 whitespace-pre-wrap font-sans bg-gray-50 rounded p-2 max-h-64 overflow-y-auto">
+                {result.transcript}
+              </pre>
+            </details>
+          )}
+          {result.summary && (
+            <details>
+              <summary className="text-xs font-medium text-gray-500 cursor-pointer hover:text-gray-700">
+                Generated Summary
+              </summary>
+              <pre className="mt-1 text-xs text-gray-600 whitespace-pre-wrap font-sans bg-gray-50 rounded p-2 max-h-64 overflow-y-auto">
+                {result.summary}
+              </pre>
+            </details>
           )}
         </div>
       )}

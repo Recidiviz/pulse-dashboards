@@ -29,7 +29,7 @@ interface UseEvalRunnerResult {
   progress: number | null | undefined;
   message: string | null | undefined;
   refetchKey: number;
-  run: () => Promise<void>;
+  run: (body?: object) => Promise<void>;
 }
 
 export function useEvalRunner(endpoint: string): UseEvalRunnerResult {
@@ -45,24 +45,30 @@ export function useEvalRunner(endpoint: string): UseEvalRunnerResult {
     }
   }, [isCompleted]);
 
-  const run = useCallback(async () => {
-    try {
-      const token = await auth.getAccessToken();
-      const response = await fetch(`${BACKEND_URL}${endpoint}`, {
-        method: "POST",
-        headers: configHeaders(token),
-      });
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        showErrorToast(body.detail ?? "Failed to start eval");
-        return;
+  const run = useCallback(
+    async (body?: object) => {
+      try {
+        const token = await auth.getAccessToken();
+        const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+          method: "POST",
+          headers: body
+            ? { ...configHeaders(token), "Content-Type": "application/json" }
+            : configHeaders(token),
+          ...(body ? { body: JSON.stringify(body) } : {}),
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          showErrorToast(errorBody.detail ?? "Failed to start eval");
+          return;
+        }
+        const { execution_id } = await response.json();
+        startPolling(execution_id);
+      } catch {
+        showErrorToast("Failed to start eval");
       }
-      const { execution_id } = await response.json();
-      startPolling(execution_id);
-    } catch {
-      showErrorToast("Failed to start eval");
-    }
-  }, [auth, endpoint, startPolling]);
+    },
+    [auth, endpoint, startPolling],
+  );
 
   return { isRunning: isPolling, progress, message, refetchKey, run };
 }

@@ -34,6 +34,7 @@ import { ActionPlanEvalResultsPanel } from "../components/ActionPlanEvalResultsP
 import { AuditLog, AuditLogEntry } from "../components/AuditLog";
 import { ChangeNoteModal } from "../components/ChangeNoteModal";
 import { EvalResultsPanel } from "../components/EvalResultsPanel";
+import { IntakeSelectionModal } from "../components/IntakeSelectionModal";
 import { StatusBadge } from "../components/StatusBadge";
 import { TemplateVariableGuide } from "../components/TemplateVariableGuide";
 import { ValidationStatus } from "../components/ValidationStatus";
@@ -63,6 +64,7 @@ const ConfigDetailPage = () => {
   const [isValidating, setIsValidating] = useState(false);
   const [showDiffViewer, setShowDiffViewer] = useState(false);
   // Modal states for change notes
+  const [isIntakeModalOpen, setIsIntakeModalOpen] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showActivateModal, setShowActivateModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
@@ -487,6 +489,9 @@ const ConfigDetailPage = () => {
     };
   }, []);
 
+  const handleRunEval = (intakeIds: string[]) =>
+    handleRunSummaryEval({ intake_ids: intakeIds });
+
   if (isLoading) {
     return (
       <Box
@@ -590,7 +595,7 @@ const ConfigDetailPage = () => {
           <div className="flex gap-2 flex-wrap">
             {isIntakeSummary && (
               <button
-                onClick={handleRunSummaryEval}
+                onClick={() => setIsIntakeModalOpen(true)}
                 disabled={isSummaryEvalRunning}
                 className="px-4 py-2 bg-white border border-purple-300 text-purple-700 rounded-full hover:bg-purple-50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -928,6 +933,17 @@ const ConfigDetailPage = () => {
           onClose={() => setShowDiffViewer(false)}
         />
       )}
+
+      {/* Intake Selection Modal */}
+      <IntakeSelectionModal
+        configId={configId}
+        isOpen={isIntakeModalOpen}
+        onClose={() => setIsIntakeModalOpen(false)}
+        onConfirm={(intakeIds) => {
+          setIsIntakeModalOpen(false);
+          handleRunEval(intakeIds);
+        }}
+      />
     </div>
   );
 };

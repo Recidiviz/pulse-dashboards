@@ -31,8 +31,10 @@ from app.auth.dependencies import require_internal_user
 from app.core.db import AsyncSession, get_session
 from app.core.eval_config import (
     get_eval_action_plan_intake_ids,
+    get_eval_intake_groups,
     get_eval_summary_intake_ids,
 )
+from app.crud.ai_persona import get_ai_persona_by_id, get_all_template_triggers
 from app.crud.config_management import (
     create_assessment_config,
     create_output_config,
@@ -68,7 +70,11 @@ from app.schemas.config_management import (
     AuditLogResponse,
     DeactivateRequest,
     EvalExecutionSummary,
+    EvalIntakeGroup,
+    EvalIntakeOptions,
     EvalResultResponse,
+    EvalTemplateIntake,
+    EvalTriggerRequest,
     EvalTriggerResponse,
     ImportResult,
     ImportValidationResult,
@@ -1112,15 +1118,57 @@ async def import_output_config(
 # =============================================================================
 
 
+@router.get(
+    "/outputs/{config_id}/eval/intake-options",
+    response_model=EvalIntakeOptions,
+    summary="Get Eval Intake Options",
+    description="Returns named intake groups from config and template intakes from the AI Test Harness.",
+    tags=["Output Configs"],
+)
+async def get_eval_intake_options(
+    config_id: UUID,  # noqa: ARG001
+    session: AsyncSession = Depends(get_session),
+    _: dict = Depends(require_internal_user),
+):
+    groups = get_eval_intake_groups()
+    triggers = await get_all_template_triggers(session)
+
+    persona_ids = {t.persona_id for t in triggers if t.persona_id}
+    personas: dict = {}
+    for pid in persona_ids:
+        persona = await get_ai_persona_by_id(session, pid)
+        if persona:
+            personas[pid] = persona.name
+
+    templates = [
+        EvalTemplateIntake(
+            trigger_id=str(t.id),
+            intake_id=str(t.intake_id),
+            persona_name=personas.get(t.persona_id),
+            label=personas.get(t.persona_id)
+            or f"Template ({t.created_at.strftime('%Y-%m-%d')})",
+        )
+        for t in triggers
+    ]
+    return EvalIntakeOptions(
+        groups=[
+            EvalIntakeGroup(name=g.name, intake_ids=[str(i) for i in g.ids])
+            for g in groups
+        ],
+        templates=templates,
+    )
+
+
 @router.post(
     "/outputs/{config_id}/eval",
     response_model=EvalTriggerResponse,
     summary="Trigger Output Config Eval",
-    description="Generate a summary with this config against a hardcoded intake and run LLM-as-judge evaluations. Only supported for intake_summary configs.",
+    description="Generate a summary with this config against selected intakes and run LLM-as-judge evaluations. Only supported for intake_summary configs.",
     tags=["Output Configs"],
 )
 async def trigger_summary_output_config_eval(
     config_id: UUID,
+    request: EvalTriggerRequest = None,
     session: AsyncSession = Depends(get_session),
     auth_user_context: dict = Depends(require_internal_user),
 ):
@@ -1136,7 +1184,10 @@ async def trigger_summary_output_config_eval(
             detail="Eval is only supported for intake_summary output configs",
         )
 
-    intake_ids = get_eval_summary_intake_ids()
+    if request and request.intake_ids:
+        intake_ids = [UUID(i) for i in request.intake_ids]
+    else:
+        intake_ids = get_eval_summary_intake_ids()
     if not intake_ids:
         raise HTTPException(
             status_code=404,

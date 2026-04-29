@@ -359,3 +359,24 @@ class EvalResultResponse(ORMResponse):
 
     class Config:
         from_attributes = True
+
+
+class EvalIntakeGroup(BaseModel):
+    name: str
+    intake_ids: list[str]
+
+
+class EvalTemplateIntake(BaseModel):
+    trigger_id: str
+    intake_id: str
+    label: str
+    persona_name: str | None = None
+
+
+class EvalIntakeOptions(BaseModel):
+    groups: list[EvalIntakeGroup]
+    templates: list[EvalTemplateIntake]
+
+
+class EvalTriggerRequest(BaseModel):
+    intake_ids: list[str] = []
