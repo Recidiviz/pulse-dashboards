@@ -78,7 +78,40 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
     }
   }, [filters, accessor, isNotFilter]);
 
-  const data: SnapshotDataPoint[] = dataSeries.map(
+  // This means when a filter for the rendered dimension chart is currently filtered
+  const isExplicitlyFiltered = pickedId.length > 0 && pickedId[0] !== "ALL";
+
+  const expectedAccessorValues: string[] = (() => {
+    if (isNotFilter) return [];
+    if (isExplicitlyFiltered) return pickedId;
+    const options =
+      filtersStore.filterOptions[accessor as keyof PopulationFilterLabels]
+        ?.options;
+    return options
+      ? options.filter((o) => o.value !== "ALL").map((o) => o.value)
+      : [];
+  })();
+
+  // Allows the chart to render bars with "0" count
+  const sourceRecords: SnapshotDataRecord[] =
+    expectedAccessorValues.length > 0
+      ? expectedAccessorValues.map(
+          (value) =>
+            dataSeries.find(
+              (d: SnapshotDataRecord) =>
+                String(
+                  (d as Record<string, unknown>)[accessor as string] ?? "",
+                ) === value,
+            ) ??
+            ({
+              [accessor as string]: value,
+              count: 0,
+              populationProportion: "0",
+            } as unknown as SnapshotDataRecord),
+        )
+      : dataSeries;
+
+  const data: SnapshotDataPoint[] = sourceRecords.map(
     (d: SnapshotDataRecord, index: number) => {
       const accessorValue = String(
         (d as Record<string, unknown>)[accessor as string] ?? "",
@@ -143,7 +176,6 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       isHorizontal={metric.isHorizontal}
       rotateLabels={metric.rotateLabels}
       isGeographic={metric.isGeographic}
-      pickedId={pickedId}
       dataSeries={dataSeries as SupervisionPopulationSnapshotRecord[]}
       horizontalLabelFormatter={horizontalLabelFormatter}
     />

@@ -68,7 +68,6 @@ type PopulationSnapshotChartProps = {
   isHorizontal: boolean;
   rotateLabels: boolean;
   isGeographic: boolean;
-  pickedId: string[];
   dataSeries: SupervisionPopulationSnapshotRecord[];
   horizontalLabelFormatter?: (label: string) => string;
 };
@@ -264,7 +263,6 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   isHorizontal,
   rotateLabels,
   isGeographic,
-  pickedId,
   dataSeries,
   horizontalLabelFormatter,
 }) => {
@@ -353,16 +351,8 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
     },
     oPadding: data.length > 25 ? 2 : 15,
     style: (d: OrdinalPiece) => {
-      const isPicked = pickedId.includes(d.accessorValue);
       const isHovered = d.index === hoveredId;
-      const opacity =
-        (hoveredId === null && pickedId[0] === "ALL") ||
-        (hoveredId === null && pickedId.length === 0) ||
-        isHovered ||
-        isPicked
-          ? 1
-          : 0.75;
-
+      const opacity = hoveredId === null || isHovered ? 1 : 0.75;
       return { fill: barColor, fillOpacity: opacity };
     },
     rAccessor: "value",

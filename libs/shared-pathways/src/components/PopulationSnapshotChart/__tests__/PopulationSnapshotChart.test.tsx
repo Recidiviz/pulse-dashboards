@@ -47,7 +47,6 @@ const defaultProps = {
   isHorizontal: false,
   rotateLabels: false,
   isGeographic: false,
-  pickedId: ["ALL"],
   dataSeries: [],
 };
 
