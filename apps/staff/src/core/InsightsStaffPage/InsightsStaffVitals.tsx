@@ -132,6 +132,7 @@ export const InsightsStaffVitals = withPresenter(
             contacts={officerVitalsContacts ?? []}
             labels={labels}
             officer={officerRecord}
+            metricDate={selectedMetricDetails.metricDate}
           />
         )}
         {showVitalsTasksDrilldownModal && (

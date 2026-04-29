@@ -16,12 +16,12 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import { subMonths } from "date-fns";
 import { rem } from "polished";
 import styled, { css } from "styled-components";
 
 import { Icon, palette } from "~design-system";
 import { formatDate } from "~utils";
+import { monthBefore } from "~utils/formatStrings";
 
 import { OfficerVitalsMetricDetail } from "../../InsightsStore/presenters/types";
 import InsightsPill from "../InsightsPill";
@@ -105,11 +105,6 @@ const DeltaValue = styled.div<{ delta: number }>`
   }};
 `;
 
-function monthBefore(date: Date) {
-  const previousMonth = subMonths(date, 1);
-  return formatDate(previousMonth, "MMMM");
-}
-
 function deltaText({
   metricId,
   delta,
@@ -191,13 +186,19 @@ export const InsightsStaffVitalsDetailCard: React.FC<
   const delta = Math.round(metric30DDelta);
   const showPill = metricValue < 80;
   const hasOverdueClients = tasks.some((task) => task.isOverdue);
-  const hoverCta = `See ${hasOverdueClients ? "Overdue " : ""}${bodyDisplayName}s`;
 
   const showNumberatorDenominator =
     isNumeratorDenominatorEnabled && metricNumerator && metricDenominator;
 
+  let hoverCta = `See ${hasOverdueClients ? "Overdue " : ""}${bodyDisplayName}s`;
+  let metricValueAdditionalText = ` clients with on-time ${bodyDisplayName.toLowerCase()}s`;
+  if (["timely_contact", "timely_contact_due_date_based"].includes(metricId)) {
+    hoverCta = `See ${bodyDisplayName}s Due Last Month`;
+    metricValueAdditionalText = ` ${bodyDisplayName.toLowerCase()}s completed on-time`;
+  }
+
   const metricValueString = showNumberatorDenominator
-    ? `${metricValue}% (${metricNumerator} out of ${metricDenominator} on-time)`
+    ? `${metricValue}% (${metricNumerator} out of ${metricDenominator}${metricValueAdditionalText})`
     : `${metricValue}%`;
 
   return (

@@ -15,13 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 import ceil from "lodash/ceil";
 import Pluralize from "pluralize";
 
 export function formatDate(date?: Date | null, pattern = "M/d/yy"): string {
   if (!date) return "Unknown";
   return format(date, pattern);
+}
+
+export function monthBefore(date: Date) {
+  const previousMonth = subMonths(date, 1);
+  return formatDate(previousMonth, "MMMM");
 }
 
 /**

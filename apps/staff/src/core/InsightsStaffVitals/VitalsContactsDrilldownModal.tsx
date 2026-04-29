@@ -23,6 +23,7 @@ import styled from "styled-components";
 
 import { SupervisionOfficer, VitalsSupervisionContacts } from "~datatypes";
 import { Button, Icon, palette } from "~design-system";
+import { monthBefore } from "~utils/formatStrings";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
@@ -81,6 +82,7 @@ interface VitalsContactsDrilldownModalProps {
   contacts: VitalsSupervisionContacts[];
   labels: ConfigLabels;
   officer?: SupervisionOfficer;
+  metricDate?: Date | undefined;
 }
 
 export const VitalsContactsDrilldownModal = observer(
@@ -90,6 +92,7 @@ export const VitalsContactsDrilldownModal = observer(
     contacts,
     labels,
     officer,
+    metricDate,
   }: VitalsContactsDrilldownModalProps) {
     const { isMobile } = useIsMobile(true);
     if (!officer || contacts.length === 0) return null;
@@ -99,6 +102,8 @@ export const VitalsContactsDrilldownModal = observer(
       (contact) => contact.contactCompleted === true,
     ).length;
     const totalContactsCount = contacts.length;
+
+    const monthBeforeText = metricDate ? ` in ${monthBefore(metricDate)}` : "";
 
     return (
       <StyledDrawerModalV2
@@ -114,7 +119,9 @@ export const VitalsContactsDrilldownModal = observer(
         </ModalControls>
 
         <ModalHeader>
-          <ModalTitle>{officer.fullName.givenNames}’s Contacts Due</ModalTitle>
+          <ModalTitle>
+            {officer.fullName.givenNames}’s Contacts Due{monthBeforeText}
+          </ModalTitle>
           <ModalSubtitle>{simplur`${totalContactsCompleted} out of ${totalContactsCount} ${bodyDisplayName}[|s] completed`}</ModalSubtitle>
         </ModalHeader>
 
@@ -125,7 +132,7 @@ export const VitalsContactsDrilldownModal = observer(
             labels={labels}
           />
           <FooterText>
-            Contacts due before the previous calendar month are not shown.
+            Only contacts from the previous calendar month are displayed.
           </FooterText>
         </ModalContent>
       </StyledDrawerModalV2>

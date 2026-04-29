@@ -116,7 +116,7 @@ export const VitalsTaskDrilldownModal = observer(
           <ModalTitle>
             {officer.fullName.givenNames}’s {titleDisplayName}s
           </ModalTitle>
-          <ModalSubtitle>{simplur`${overdueCount} Overdue ${bodyDisplayName}[|s]`}</ModalSubtitle>
+          <ModalSubtitle>{simplur`${overdueCount} Clients With Overdue ${bodyDisplayName}[|s]`}</ModalSubtitle>
         </ModalHeader>
 
         <ModalContent>
