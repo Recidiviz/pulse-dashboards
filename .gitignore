@@ -131,7 +131,5 @@ apps/jii/public/videos/*.vtt
 
 # Claude
 .claude/settings.local.json
-.claude/rules
-
 
 storybook-static
