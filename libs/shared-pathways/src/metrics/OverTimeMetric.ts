@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { eachMonthOfInterval, startOfMonth } from "date-fns";
+import { eachMonthOfInterval, format, startOfMonth } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { formatMonthAndYear } from "../components/PopulationTimeSeriesChart/helpers";
 import {
   DownloadableData,
   DownloadableDataset,
@@ -67,7 +66,7 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
         "3-month rolling average": Math.round(d.avg90day),
       });
 
-      labels.push(formatMonthAndYear(getRecordDate(d)));
+      labels.push(format(getRecordDate(d), "MMMM d, yyyy"));
     });
 
     datasets.push({ data, label: "" });
@@ -76,7 +75,7 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: "Month",
+      dataExportLabel: "Date",
     };
   }
 

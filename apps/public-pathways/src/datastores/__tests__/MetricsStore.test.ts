@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { autorun, when } from "mobx";
+
+import { isHydrated } from "~hydration-utils";
 import {
+  downloadChartAsData,
   OverTimeMetric,
   PATHWAYS_SECTIONS,
   type PathwaysSection,
@@ -25,6 +29,14 @@ import {
 import FiltersStore from "../FiltersStore";
 import MetricsStore from "../MetricsStore";
 import type { RootStore } from "../RootStore";
+
+vi.mock("~shared-pathways", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("~shared-pathways")>();
+  return {
+    ...actual,
+    downloadChartAsData: vi.fn().mockResolvedValue(undefined),
+  };
+});
 
 const mockRootStore = {
   currentTenantId: "US_NY",
@@ -138,6 +150,48 @@ describe("MetricsStore", () => {
     it("falls back to prisonPopulationOverTime for unknown sections", () => {
       mockRootStore.section = "nonExistentSection" as PathwaysSection;
       expect(metricsStore.current).toBeInstanceOf(OverTimeMetric);
+    });
+  });
+
+  describe("download", () => {
+    beforeEach(() => {
+      mockRootStore.section = PATHWAYS_SECTIONS["countOverTime"];
+      vi.mocked(downloadChartAsData).mockClear();
+    });
+
+    it("strips the rolling average and renames Population in OverTimeMetric downloads", async () => {
+      fetchMock.mockResponse(
+        JSON.stringify({
+          data: [
+            { year: 2022, month: 1, count: 1000, avg90day: 1000 },
+            { year: 2022, month: 2, count: 2000, avg90day: 1500 },
+            { year: 2022, month: 3, count: 3000, avg90day: 2000 },
+          ],
+          metadata: { lastUpdated: "2022-04-01" },
+        }),
+      );
+
+      const dispose = autorun(() => metricsStore.current);
+      const metric = metricsStore.current as OverTimeMetric;
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+
+      await metricsStore.download();
+
+      expect(downloadChartAsData).toHaveBeenCalledOnce();
+      const { fileContents } = vi.mocked(downloadChartAsData).mock.calls[0][0];
+      const rows = fileContents[0]?.chartDatasets[0].data as Record<
+        string,
+        number
+      >[];
+
+      expect(rows).toEqual([
+        { "NYS DOCCS Population Under Custody": 1000 },
+        { "NYS DOCCS Population Under Custody": 2000 },
+        { "NYS DOCCS Population Under Custody": 3000 },
+      ]);
+
+      dispose();
     });
   });
 });

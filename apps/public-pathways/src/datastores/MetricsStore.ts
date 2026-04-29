@@ -84,6 +84,26 @@ export default class MetricsStore implements PathwaysMetricStore {
     }
 
     const isOverTime = metric instanceof OverTimeMetric;
+    const fileContents = isOverTime
+      ? [
+          {
+            ...downloadableData,
+            chartDatasets: downloadableData.chartDatasets.map((dataset) => ({
+              ...dataset,
+              data: dataset.data.map(
+                ({
+                  "3-month rolling average": _omitted,
+                  Population,
+                  ...rest
+                }: Record<string, number>) => ({
+                  "NYS DOCCS Population Under Custody": Population,
+                  ...rest,
+                }),
+              ),
+            })),
+          },
+        ]
+      : [downloadableData];
     const dateInPopulationValues =
       this.rootStore.filtersStore.filters[FILTER_TYPES.DATE_IN_POPULATION];
     const dateInPopulation =
@@ -103,7 +123,7 @@ export default class MetricsStore implements PathwaysMetricStore {
     }
 
     return downloadChartAsData({
-      fileContents: [downloadableData],
+      fileContents,
       chartTitle: metric.chartTitle,
       filters: filtersDescription,
       includeFiltersDescriptionInCSV: true,

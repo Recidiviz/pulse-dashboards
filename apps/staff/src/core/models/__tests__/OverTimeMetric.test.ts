@@ -327,8 +327,13 @@ describe("OverTimeMetric", () => {
         },
       ],
       chartId: "Admissions from liberty to prison over time",
-      chartLabels: ["Jan '22", "Feb '22", "Mar '22", "Apr '22"],
-      dataExportLabel: "Month",
+      chartLabels: [
+        "January 1, 2022",
+        "February 1, 2022",
+        "March 1, 2022",
+        "April 1, 2022",
+      ],
+      dataExportLabel: "Date",
     };
     expect(metric.downloadableData).toEqual(expected);
   });
