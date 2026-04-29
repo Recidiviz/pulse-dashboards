@@ -353,7 +353,9 @@ class LLMAgentGenerate:
         # Create a new plan
         workflow.add_node("gen_reflexion", call_reflexion)
         workflow.add_node("gen_area_of_needs", call_area_of_needs)
-        workflow.add_node("gen_resources", call_resources_options)
+
+        if self.include_resources:
+            workflow.add_node("gen_resources", call_resources_options)
 
         workflow.add_node("gen_section", call_generate_section_node)
 
@@ -370,8 +372,11 @@ class LLMAgentGenerate:
         # Links
         workflow.add_edge(START, "gen_reflexion")
         workflow.add_edge("gen_reflexion", "gen_area_of_needs")
-        workflow.add_edge("gen_area_of_needs", "gen_resources")
-        workflow.add_conditional_edges("gen_resources", call_generate_sections)
+        if self.include_resources:
+            workflow.add_edge("gen_area_of_needs", "gen_resources")
+            workflow.add_conditional_edges("gen_resources", call_generate_sections)
+        else:
+            workflow.add_conditional_edges("gen_area_of_needs", call_generate_sections)
 
         # Conditionally connect section -> timeline -> milestones -> assemble
         # based on which features are enabled
@@ -496,7 +501,7 @@ class LLMAgentGenerate:
             ),
             structured_action_plan=plan,
             suggested_resources=final_resources,
-            resources_associations=final_state.get("resources_associations"),
+            resources_associations=(final_state.get("resources_associations")),
         )
 
 

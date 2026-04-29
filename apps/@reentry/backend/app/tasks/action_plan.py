@@ -613,7 +613,9 @@ async def generate_action_plan(
     gen.gen_data_json = str(action_plan.model_dump_json())
     gen.finished_at = datetime.utcnow()
 
-    # Transform and save resources associations
+    await update_plan_generation(session, gen)
+
+    # Transform and save resources associations if they exist
     if action_plan.resources_associations:
         resources_map = transform_resources_associations_to_map(
             action_plan.resources_associations
@@ -625,9 +627,7 @@ async def generate_action_plan(
                 for section, associations in resources_map.items()
             }
 
-    await update_plan_generation(session, gen)
-
-    try:
-        await hydrate_resource_associations(gen, session, task_logger)
-    except Exception as e:
-        task_logger.error("Failed to hydrate resource associations", error=str(e))
+        try:
+            await hydrate_resource_associations(gen, session, task_logger)
+        except Exception as e:
+            task_logger.error("Failed to hydrate resource associations", error=str(e))
