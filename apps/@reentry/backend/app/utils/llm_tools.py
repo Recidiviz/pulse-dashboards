@@ -12,7 +12,7 @@ def strip_markdown(markdown: str):
 
 
 ### Rendering template
-def convert_to_markdown(plan: ActionPlan):
+def convert_to_markdown(plan: ActionPlan, resource_bank_enabled: bool = False):
     # plan = ActionPlan as dict
     from jinja2 import Template
 
@@ -30,5 +30,5 @@ def convert_to_markdown(plan: ActionPlan):
         m.markdown_content = strip_markdown(m.markdown_content)
     for t in plan.timeline:
         t.markdown_content = strip_markdown(t.markdown_content)
-    markdown_output = template.render(plan=plan)
+    markdown_output = template.render(plan=plan, resource_bank_enabled=resource_bank_enabled)
     return markdown_output.strip()

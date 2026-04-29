@@ -1,12 +1,6 @@
 from typing import Literal
 
 import structlog
-from langchain_core.messages import AIMessage
-from langgraph.graph import END, START, MessagesState, StateGraph
-from langgraph.types import RetryPolicy, Send
-from langsmith import traceable
-from pydantic import ValidationError
-
 from app.core.config import create_model_from_config
 from app.core.data_config.output_configs.output_config import ActionPlanConfigFile
 from app.utils.action_plan_types import (
@@ -23,6 +17,11 @@ from app.utils.action_plan_types import (
 )
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.langsmith_utils import build_langsmith_config
+from langchain_core.messages import AIMessage
+from langgraph.graph import END, START, MessagesState, StateGraph
+from langgraph.types import RetryPolicy, Send
+from langsmith import traceable
+from pydantic import ValidationError
 
 from .llm_agent_gen_plan_prompts import ActionPlanPrompts
 from .llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
@@ -44,14 +43,15 @@ def call_generate_sections(state: ExtendedMessagesState) -> Literal["gen_section
             {
                 "messages": state["messages"],
                 "section_to_generate": section,
-                "resources_associations": state["resources_associations"]
-                if state.get("resources_associations")
-                else None,
+                "resources_associations": (
+                    state["resources_associations"]
+                    if state.get("resources_associations")
+                    else None
+                ),
             },
         )
         for section in state["sections_to_generate"]
     ]
-
 
 
 @traceable(name="call_generate_section")
@@ -69,7 +69,7 @@ async def call_generate_section(
         raise ValueError("Error generating section")
 
     message = prompts.get_section_generation_prompt_without_resources(section)
-        
+
     result_messages = []
     messages = state["messages"] + [message]
 
@@ -491,7 +491,9 @@ class LLMAgentGenerate:
         return ActionPlanMarkdown(
             messages=final_state["messages"],
             user_prompt=user_prompt,
-            action_plan=convert_to_markdown(plan),
+            action_plan=convert_to_markdown(
+                plan, resource_bank_enabled=self.include_resources
+            ),
             structured_action_plan=plan,
             suggested_resources=final_resources,
             resources_associations=final_state.get("resources_associations"),

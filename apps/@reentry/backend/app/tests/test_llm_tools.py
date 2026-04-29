@@ -221,3 +221,63 @@ def test_convert_to_markdown_excludes_timeline_when_empty():
     # But sections should still be present
     assert "# Housing" in result
     assert "Housing content" in result
+
+
+def test_convert_to_markdown_excludes_resource_bank_for_immediate_needs():
+    """Test that <resourceBank> is not rendered for the immediate_needs section."""
+    structure_plan = {
+        "immediate_needs": {
+            "annotations": [],
+            "notes": None,
+            "title": "Immediate Needs",
+            "markdown_content": "Test content",
+        },
+        "quick_summary_circumstances": "test summary",
+        "overview": "test overview",
+        "sections_order": ["Housing"],
+        "sections": [
+            {
+                "annotations": [],
+                "notes": None,
+                "title": "Housing",
+                "markdown_content": "Housing content",
+                "resources": [],
+            },
+        ],
+        "milestones": [],
+        "timeline": [],
+    }
+    plan = ActionPlan(**structure_plan)
+    result = convert_to_markdown(plan, resource_bank_enabled=True)
+
+    assert '<resourceBank section_title="Immediate Needs" />' not in result
+
+
+def test_convert_to_markdown_includes_resource_bank_for_regular_sections():
+    """Test that <resourceBank> is rendered for regular (non-immediate-needs) sections."""
+    structure_plan = {
+        "immediate_needs": {
+            "annotations": [],
+            "notes": None,
+            "title": "Immediate Needs",
+            "markdown_content": "Test content",
+        },
+        "quick_summary_circumstances": "test summary",
+        "overview": "test overview",
+        "sections_order": ["Housing"],
+        "sections": [
+            {
+                "annotations": [],
+                "notes": None,
+                "title": "Housing",
+                "markdown_content": "Housing content",
+                "resources": [],
+            },
+        ],
+        "milestones": [],
+        "timeline": [],
+    }
+    plan = ActionPlan(**structure_plan)
+    result = convert_to_markdown(plan, resource_bank_enabled=True)
+
+    assert '<resourceBank section_title="Housing" />' in result

@@ -64,7 +64,7 @@
 {#
 #   Section rendering
 #}
-{% macro render_section(section) %}
+{% macro render_section(section, include_resource_bank=True) %}
 # {{ section.title }}
 
 {{ section.markdown_content }}
@@ -72,7 +72,9 @@
 {{- render_notes(section.notes) -}}
 {{- render_annotations(section.annotations) -}}
 {{- render_resources(section.resources) -}}
+{%- if include_resource_bank and resource_bank_enabled %}
 <resourceBank section_title="{{section.title}}" />
+{%- endif %}
 
 {%- endmacro %}
 
@@ -94,7 +96,7 @@ I'm here to guide you, advocate for you, and ensure you have the tools and resou
 
 {{ plan.quick_summary_circumstances }}
 
-{{ render_section(plan.immediate_needs) }}
+{{ render_section(plan.immediate_needs, include_resource_bank=False) }}
 
 {%- for section in plan.sections %}
 {{ render_section(section) -}}
