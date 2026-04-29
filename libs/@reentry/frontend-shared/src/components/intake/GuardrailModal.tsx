@@ -25,11 +25,6 @@ import { clearIntakeSession } from "../../utils/clearIntakeSession";
 import type { HardStopGuardrailType } from "../../websockets/eventTypes";
 import styles from "./styles/GuardrailModal.module.css";
 
-const PROMPT_INJECTION_CONTENT = {
-  title: "Session ended",
-  body: "This session has been ended because a restricted message was detected.",
-};
-
 const CRISIS_CONTENT = {
   title: "We're here to help",
   body: "It looks like you may need immediate support. Please speak with your caseworker or call 988 (Suicide & Crisis Lifeline) for help.",
@@ -42,9 +37,10 @@ const DEFAULT_CONTENT = {
 
 const CONTENT: Record<HardStopGuardrailType, { title: string; body: string }> =
   {
-    prompt_injection: PROMPT_INJECTION_CONTENT,
     crisis: CRISIS_CONTENT,
-    openai_moderation: CRISIS_CONTENT,
+    harm_to_others: DEFAULT_CONTENT,
+    "openai_moderation:self-harm": CRISIS_CONTENT,
+    "openai_moderation:harm_to_others": DEFAULT_CONTENT,
   };
 
 interface GuardrailModalProps {

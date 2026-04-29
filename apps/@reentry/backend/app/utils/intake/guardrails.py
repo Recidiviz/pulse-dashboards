@@ -38,10 +38,7 @@ logger = structlog.get_logger(__name__)
 
 CHAR_LIMIT = 2500
 MODERATION_TIMEOUT_SECONDS = 5.0
-MODERATION_BLOCK_CATEGORIES = {
-    "self-harm/intent",
-}
-# Minimum score required to block. Calibrated against test messages:
+# Default threshold — calibrated against test messages:
 # active/present-tense intent clusters above 0.83, past-tense/recovery sits at 0.66 and below.
 MODERATION_BLOCK_THRESHOLD = 0.75
 
@@ -58,19 +55,37 @@ def _get_openai_client() -> AsyncOpenAI:
     return _openai_client
 
 
-class HardStopGuardrailType(StrEnum):
+class SoftStopGuardrailType(StrEnum):
     PROMPT_INJECTION = "prompt_injection"
+    CHAR_LIMIT = "char_limit"
+
+
+class HardStopGuardrailType(StrEnum):
     CRISIS = "crisis"
-    OPENAI_MODERATION = "openai_moderation"
+    HARM_TO_OTHERS = "harm_to_others"
+    # openai_moderation variants: prefix encodes the API source, suffix encodes the category
+    OPENAI_MODERATION_SELF_HARM = "openai_moderation:self-harm"
+    OPENAI_MODERATION_HARM_TO_OTHERS = "openai_moderation:harm_to_others"
 
 
 HARD_STOP_GUARDRAIL_TYPES: frozenset[HardStopGuardrailType] = frozenset(
-    {
-        HardStopGuardrailType.PROMPT_INJECTION,
-        HardStopGuardrailType.CRISIS,
-        HardStopGuardrailType.OPENAI_MODERATION,
-    }
+    HardStopGuardrailType
 )
+
+# Maps each OpenAI-detected guardrail type to the categories it watches and its block threshold.
+# To add a new category group: add a tuple here — no logic changes required.
+MODERATION_CATEGORY_MAP: list[tuple[HardStopGuardrailType, set[str], float]] = [
+    (
+        HardStopGuardrailType.OPENAI_MODERATION_SELF_HARM,
+        {"self-harm/intent"},
+        MODERATION_BLOCK_THRESHOLD,
+    ),
+    (
+        HardStopGuardrailType.OPENAI_MODERATION_HARM_TO_OTHERS,
+        {"harassment/threatening", "violence"},
+        MODERATION_BLOCK_THRESHOLD,
+    ),
+]
 
 # Prompt injection patterns
 # Each pattern targets a distinct class of injection attempt - tightened to minimize false positive
@@ -147,12 +162,13 @@ INJECTION_PATTERNS = [
 
 async def check_openai_moderation(
     content: str,
-) -> tuple[str, list[str]] | None:
-    """Check content for crisis signals via the OpenAI Moderation API.
+) -> list[tuple[HardStopGuardrailType, list[str]]]:
+    """Check content via the OpenAI Moderation API against all entries in MODERATION_CATEGORY_MAP.
 
-    Returns ("openai_moderation", [flagged_categories]) if a self-harm category is flagged,
-    None otherwise. Fails open on timeout or API error so outages never block legitimate users.
+    Returns all matching (guardrail_type, flagged_categories) tuples (may be empty). Fails open on timeout or API error.
     """
+    all_watched = {cat for _, cats, _ in MODERATION_CATEGORY_MAP for cat in cats}
+    results: list[tuple[HardStopGuardrailType, list[str]]] = []
     try:
         async with asyncio.timeout(MODERATION_TIMEOUT_SECONDS):
             response = await _get_openai_client().moderations.create(input=content)
@@ -160,26 +176,20 @@ async def check_openai_moderation(
             scores = result.category_scores.model_dump()
             logger.debug(
                 "OpenAI moderation scores",
-                scores={
-                    cat: scores[cat]
-                    for cat in MODERATION_BLOCK_CATEGORIES
-                    if cat in scores
-                },
+                scores={cat: scores[cat] for cat in all_watched if cat in scores},
             )
-            flagged_categories = [
-                cat
-                for cat in MODERATION_BLOCK_CATEGORIES
-                if scores.get(cat, 0) >= MODERATION_BLOCK_THRESHOLD
-            ]
-            if flagged_categories:
-                logger.warning(
-                    "OpenAI moderation flagged message",
-                    categories=flagged_categories,
-                )
-                return ("openai_moderation", flagged_categories)
+            for guardrail_type, categories, threshold in MODERATION_CATEGORY_MAP:
+                flagged = [c for c in categories if scores.get(c, 0) >= threshold]
+                if flagged:
+                    logger.warning(
+                        "OpenAI moderation flagged message",
+                        guardrail=guardrail_type,
+                        categories=flagged,
+                    )
+                    results.append((guardrail_type, flagged))
     except Exception as e:
         logger.error("OpenAI moderation check failed (fail-open)", exc_info=e)
-    return None
+    return results
 
 
 def check_char_limit(text: str) -> bool:
@@ -213,14 +223,51 @@ def check_crisis(text: str) -> bool:
     return any(pattern.search(text) for pattern in CRISIS_PATTERNS)
 
 
+# Harm-to-others detection patterns
+# Conservative set — near-zero false positive rate. Only match explicit, first-person statements
+# of intent to harm a specific or general other person.
+HARM_TO_OTHERS_PATTERNS = [
+    # "going to kill [someone/them/him/her/my cellmate]"
+    re.compile(
+        r"\bgo(?:ing)?\s+to\s+kill\s+(?:someone|him|her|them|my\s+\w+)\b", re.IGNORECASE
+    ),
+    # "want to kill [someone]" / "wanting to kill [someone]"
+    re.compile(
+        r"\bwant(?:ing)?\s+to\s+kill\s+(?:someone|him|her|them|my\s+\w+)\b",
+        re.IGNORECASE,
+    ),
+    # "going to hurt / attack / stab [someone]"
+    re.compile(
+        r"\bgo(?:ing)?\s+to\s+(?:hurt|attack|stab|beat\s+up|shoot)\s+(?:someone|him|her|them|my\s+\w+)\b",
+        re.IGNORECASE,
+    ),
+    # "I will hurt / kill / attack [someone]"
+    re.compile(
+        r"\bI\s+will\s+(?:hurt|kill|attack|stab|shoot)\s+(?:someone|him|her|them|my\s+\w+)\b",
+        re.IGNORECASE,
+    ),
+    # "plan to kill / hurt / attack [someone]"
+    re.compile(
+        r"\bplan(?:ning)?\s+to\s+(?:kill|hurt|attack|stab|shoot)\s+(?:someone|him|her|them|my\s+\w+)\b",
+        re.IGNORECASE,
+    ),
+]
+
+
+def check_harm_to_others(text: str) -> bool:
+    return any(pattern.search(text) for pattern in HARM_TO_OTHERS_PATTERNS)
+
+
 def _run_sync_checks(text: str) -> list[str]:
-    triggered = []
+    triggered: list[str] = []
     if check_char_limit(text):
-        triggered.append("char_limit")
+        triggered.append(SoftStopGuardrailType.CHAR_LIMIT)
     if check_injection(text):
-        triggered.append("prompt_injection")
+        triggered.append(SoftStopGuardrailType.PROMPT_INJECTION)
     if check_crisis(text):
-        triggered.append("crisis")
+        triggered.append(HardStopGuardrailType.CRISIS)
+    if check_harm_to_others(text):
+        triggered.append(HardStopGuardrailType.HARM_TO_OTHERS)
     return triggered
 
 
@@ -242,11 +289,9 @@ async def run_guardrails(
             "Skipping OpenAI moderation — sync hard-stop already triggered",
             triggered=sync_results,
         )
-    moderation_result = (
-        None if hard_stop_already_triggered else await check_openai_moderation(text)
+    moderation_results = (
+        [] if hard_stop_already_triggered else await check_openai_moderation(text)
     )
-    triggered = sync_results + ([moderation_result[0]] if moderation_result else [])
-    categories = (
-        {moderation_result[0]: moderation_result[1]} if moderation_result else {}
-    )
+    triggered = sync_results + [r[0] for r in moderation_results]
+    categories = {r[0]: r[1] for r in moderation_results}
     return triggered, categories

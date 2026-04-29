@@ -30,6 +30,7 @@ export interface PongEventContent {
 export interface ConnectionAckEventContent {
   accepted: boolean;
   status: "error" | "created" | "in_progress" | "completed";
+  locked?: boolean;
 }
 
 export interface SectionChangeContent {
@@ -46,19 +47,34 @@ export interface ForceDisconnectContent {
   reason: ForceDisconnectReason;
 }
 
-/** Guardrail types that trigger a hard stop (socket disconnected, modal shown) */
+/** Guardrail types that trigger a hard stop (socket disconnected, intake locked) */
 export const HARD_STOP_GUARDRAIL_TYPES = [
   "crisis",
-  "openai_moderation",
-  "prompt_injection",
+  "harm_to_others",
+  "openai_moderation:self-harm",
+  "openai_moderation:harm_to_others",
 ] as const;
 export type HardStopGuardrailType = (typeof HARD_STOP_GUARDRAIL_TYPES)[number];
-export type GuardrailType = HardStopGuardrailType | "char_limit";
+
+/** Guardrail types that trigger a soft stop (modal shown, user can continue) */
+export const SOFT_STOP_GUARDRAIL_TYPES = ["prompt_injection"] as const;
+export type SoftStopGuardrailType = (typeof SOFT_STOP_GUARDRAIL_TYPES)[number];
+
+export type GuardrailType =
+  | HardStopGuardrailType
+  | SoftStopGuardrailType
+  | "char_limit";
 
 export function isHardStopGuardrail(
   reason: ForceDisconnectReason | undefined,
 ): reason is HardStopGuardrailType {
   return HARD_STOP_GUARDRAIL_TYPES.some((t) => t === reason);
+}
+
+export function isSoftStopGuardrail(
+  guardrail: GuardrailType,
+): guardrail is SoftStopGuardrailType {
+  return SOFT_STOP_GUARDRAIL_TYPES.some((t) => t === guardrail);
 }
 
 export interface GuardrailTriggeredContent {

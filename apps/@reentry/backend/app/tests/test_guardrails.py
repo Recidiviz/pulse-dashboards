@@ -26,6 +26,7 @@ from app.utils.intake.guardrails import (
     CHAR_LIMIT,
     check_char_limit,
     check_crisis,
+    check_harm_to_others,
     check_injection,
     check_openai_moderation,
     run_guardrails,
@@ -128,6 +129,35 @@ class TestCheckCrisis:
         assert check_crisis(text) is True
 
 
+class TestCheckHarmToOthers:
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "I need help finding housing",
+            "I used to get into fights but I've changed",
+            "I want to kill myself",  # crisis, not harm-to-others
+            "",
+        ],
+    )
+    def test_clean_messages(self, text: str):
+        assert check_harm_to_others(text) is False
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "I'm going to kill my cellmate",
+            "I want to kill someone",
+            "I'm going to hurt him",
+            "I will attack her",
+            "I plan to shoot someone",
+            "I'm planning to stab my roommate",
+            "I WILL HURT THEM",
+        ],
+    )
+    def test_harm_to_others_phrases(self, text: str):
+        assert check_harm_to_others(text) is True
+
+
 def _make_moderation_response(category_scores: dict) -> MagicMock:
     """Build a minimal mock of the OpenAI moderation API response.
 
@@ -161,22 +191,45 @@ class TestCheckOpenAIModeration:
         mock_client.moderations.create = AsyncMock(
             return_value=_make_moderation_response(category_scores)
         )
-        assert await check_openai_moderation("any message") is None
+        assert await check_openai_moderation("any message") == []
 
     @patch("app.utils.intake.guardrails._openai_client")
-    async def test_above_threshold_returns_guardrail(self, mock_client):
+    async def test_self_harm_above_threshold_returns_guardrail(self, mock_client):
         mock_client.moderations.create = AsyncMock(
             return_value=_make_moderation_response({"self-harm/intent": 0.90})
         )
-        assert await check_openai_moderation("I want to hurt myself") == (
-            "openai_moderation",
-            ["self-harm/intent"],
+        assert await check_openai_moderation("I want to hurt myself") == [
+            ("openai_moderation:self-harm", ["self-harm/intent"]),
+        ]
+
+    @patch("app.utils.intake.guardrails._openai_client")
+    async def test_harm_to_others_above_threshold_returns_guardrail(self, mock_client):
+        mock_client.moderations.create = AsyncMock(
+            return_value=_make_moderation_response({"harassment/threatening": 0.90})
+        )
+        assert await check_openai_moderation("I'm going to hurt my cellmate") == [
+            ("openai_moderation:harm_to_others", ["harassment/threatening"]),
+        ]
+
+    @patch("app.utils.intake.guardrails._openai_client")
+    async def test_both_categories_above_threshold_returns_all(self, mock_client):
+        mock_client.moderations.create = AsyncMock(
+            return_value=_make_moderation_response(
+                {"self-harm/intent": 0.90, "harassment/threatening": 0.90}
+            )
+        )
+        results = await check_openai_moderation("I want to hurt myself and others")
+        assert len(results) == 2
+        assert results[0] == ("openai_moderation:self-harm", ["self-harm/intent"])
+        assert results[1] == (
+            "openai_moderation:harm_to_others",
+            ["harassment/threatening"],
         )
 
     @patch("app.utils.intake.guardrails._openai_client")
     async def test_api_error_fails_open(self, mock_client):
         mock_client.moderations.create = AsyncMock(side_effect=Exception("API down"))
-        assert await check_openai_moderation("any message") is None
+        assert await check_openai_moderation("any message") == []
 
     @patch("app.utils.intake.guardrails._openai_client")
     async def test_timeout_fails_open(self, mock_client):
@@ -185,7 +238,7 @@ class TestCheckOpenAIModeration:
 
         mock_client.moderations.create = slow_response
         with patch("app.utils.intake.guardrails.MODERATION_TIMEOUT_SECONDS", 0.01):
-            assert await check_openai_moderation("any message") is None
+            assert await check_openai_moderation("any message") == []
 
 
 @pytest.mark.asyncio
@@ -238,15 +291,27 @@ class TestRunGuardrails:
         assert categories == {}
 
     @patch("app.utils.intake.guardrails._openai_client")
-    async def test_openai_moderation_triggered(self, mock_client):
+    async def test_openai_moderation_self_harm_triggered(self, mock_client):
         mock_client.moderations.create = AsyncMock(
             return_value=_make_moderation_response({"self-harm/intent": 0.90})
         )
         triggered, categories = await run_guardrails(
             "I've been thinking about self-harm"
         )
-        assert triggered == ["openai_moderation"]
-        assert categories == {"openai_moderation": ["self-harm/intent"]}
+        assert triggered == ["openai_moderation:self-harm"]
+        assert categories == {"openai_moderation:self-harm": ["self-harm/intent"]}
+
+    @patch("app.utils.intake.guardrails._openai_client")
+    async def test_openai_moderation_harm_to_others_triggered(self, mock_client):
+        mock_client.moderations.create = AsyncMock(
+            return_value=_make_moderation_response({"harassment/threatening": 0.90})
+        )
+        # Message that doesn't match harm_to_others regex but scores high on OpenAI
+        triggered, categories = await run_guardrails("He better watch out or else")
+        assert triggered == ["openai_moderation:harm_to_others"]
+        assert categories == {
+            "openai_moderation:harm_to_others": ["harassment/threatening"]
+        }
 
     @patch("app.utils.intake.guardrails._openai_client")
     async def test_openai_moderation_below_threshold_passes(self, mock_client):
@@ -258,3 +323,20 @@ class TestRunGuardrails:
         )
         assert triggered == []
         assert categories == {}
+
+    @patch("app.utils.intake.guardrails._openai_client")
+    async def test_both_openai_moderation_types_surfaced(self, mock_client):
+        mock_client.moderations.create = AsyncMock(
+            return_value=_make_moderation_response(
+                {"self-harm/intent": 0.90, "harassment/threatening": 0.90}
+            )
+        )
+        triggered, categories = await run_guardrails(
+            "I want to hurt myself and my cellmate"
+        )
+        assert "openai_moderation:self-harm" in triggered
+        assert "openai_moderation:harm_to_others" in triggered
+        assert categories == {
+            "openai_moderation:self-harm": ["self-harm/intent"],
+            "openai_moderation:harm_to_others": ["harassment/threatening"],
+        }
