@@ -593,7 +593,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
               </Styled.SectionCard>
 
               {/* Recommendation */}
-              <Styled.LastSectionCard>
+              <Styled.SectionCard>
                 <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
                 {recommendationSkipped ? (
                   <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
@@ -619,13 +619,25 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                     </Styled.SectionBody>
                   </Styled.RecommendationSection>
                 )}
-              </Styled.LastSectionCard>
+              </Styled.SectionCard>
+
+              {!sarData?.mostSevereOffenseName && (
+                <Styled.SectionCard>
+                  <Styled.SectionTitle>Insights</Styled.SectionTitle>
+                  <Styled.SectionBody>
+                    <MissingBadge />
+                    Most severe offense must be selected in Case Information.
+                  </Styled.SectionBody>
+                </Styled.SectionCard>
+              )}
             </>
           )}
         </Styled.Container>
 
-        {/* Insights — separate card, below the sticky summary panel */}
-        <InsightsSummaryPanel presenter={presenter} />
+        {/* Insights — rendered outside the container so it gets the SummaryWrapper gap */}
+        {sarData?.mostSevereOffenseName && (
+          <InsightsSummaryPanel presenter={presenter} />
+        )}
       </Styled.SummaryWrapper>
 
       {/* PDF report — off-screen, captured by html2canvas + jsPDF on download */}

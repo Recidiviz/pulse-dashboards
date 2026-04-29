@@ -48,23 +48,22 @@ async function updateMostSevereOffenses(
 
     const mostSevere = getMostSevereCharges(sar.charges);
 
-    // If the current most severe offense matches the calculated one, skip update
+    const newValue = mostSevere.length === 1 ? mostSevere[0].offenseName : null;
+
+    // Skip if no update is needed, to avoid bloating the transaction:
+    // - value unchanged (covers single-charge match and null → null tie no-ops)
+    // - tie where the current value is already one of the tied offenses (preserve existing choice)
     if (
-      mostSevere.length === 1 &&
-      sar.mostSevereOffenseName === mostSevere[0].offenseName
-    )
-      continue;
-    // If the most severe offense is a tie and the current most severe offense is one of the tied offenses, skip update
-    if (
-      mostSevere.length > 1 &&
-      sar.mostSevereOffenseName &&
-      mostSevere.map((c) => c.offenseName).includes(sar.mostSevereOffenseName)
+      sar.mostSevereOffenseName === newValue ||
+      (mostSevere.length > 1 &&
+        sar.mostSevereOffenseName &&
+        mostSevere
+          .map((c) => c.offenseName)
+          .includes(sar.mostSevereOffenseName))
     ) {
       continue;
     }
 
-    // In the other case (i.e newly calculated most severe offense(s) is more severe than the current offense, update)
-    const newValue = mostSevere.length === 1 ? mostSevere[0].offenseName : null;
     updates.push({ id: sar.id, mostSevereOffenseName: newValue });
   }
 

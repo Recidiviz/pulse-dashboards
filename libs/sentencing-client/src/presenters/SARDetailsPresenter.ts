@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable, runInAction } from "mobx";
+import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 import moment from "moment";
 
 import {
@@ -120,6 +120,8 @@ type ProgressSection = Exclude<SARSectionName, SARSection.SUMMARY>;
 export class SARDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
+  private disposeInsightReaction: () => void;
+
   SARData?: SAR;
 
   insight?: SARInsight | null;
@@ -160,9 +162,20 @@ export class SARDetailsPresenter implements Hydratable {
           this.sentencingStore.apiClient.getSARDetails(this.sarId),
         );
         this.SARData = data;
-        await flowResult(this.loadInsight());
       },
     });
+
+    this.disposeInsightReaction = reaction(
+      () => this.SARData?.mostSevereOffenseName,
+      (offenseName) => {
+        if (offenseName) this.loadInsight();
+      },
+      { fireImmediately: true },
+    );
+  }
+
+  dispose(): void {
+    this.disposeInsightReaction();
   }
 
   get hydrationState(): HydrationState {
@@ -177,13 +190,12 @@ export class SARDetailsPresenter implements Hydratable {
     const sarData = this.SARData;
     if (!sarData) return;
 
-    if (!this.hasOrasAssessment) {
+    if (!sarData.assessmentDate) {
       this.insight = null;
       return;
     }
 
-    // Uses the most severe charge (highest classificationType + lowest subtype letter).
-    const offense = this.charges[0]?.offense;
+    const offense = sarData.mostSevereOffenseName;
     const gender = sarData.client?.gender;
     const score = sarData.assessmentScore;
     const assessmentType = sarData.assessmentType;
@@ -359,6 +371,24 @@ export class SARDetailsPresenter implements Hydratable {
     return getMostSevereCharges(this.SARData?.charges ?? []);
   }
 
+  get hasTie(): boolean {
+    return this.mostSevereCharges.length > 1;
+  }
+
+  async updateMostSevereOffenseName(offenseName: string): Promise<void> {
+    if (!this.SARData) return;
+
+    const sarData = this.SARData;
+    runInAction(() => {
+      sarData.mostSevereOffenseName = offenseName;
+    });
+
+    await this.sentencingStore.apiClient.updateSARDetails(this.SARData.id, {
+      mostSevereOffenseName: offenseName,
+      status: this.statusForUpdate,
+    });
+  }
+
   /** Get officer (staff) info */
   get officerInfo() {
     const staff = this.SARData?.staff;
@@ -451,6 +481,12 @@ export class SARDetailsPresenter implements Hydratable {
     // Judge name is required at the SAR level
     total++;
     if (this.SARData?.requestingJudgeName) completed++;
+
+    // When charges tie on severity, the user must pick the driving offense
+    if (this.hasTie) {
+      total++;
+      if (this.SARData?.mostSevereOffenseName) completed++;
+    }
 
     this.charges.forEach((charge) => {
       REQUIRED_FIELD_IDS.forEach((fieldId) => {

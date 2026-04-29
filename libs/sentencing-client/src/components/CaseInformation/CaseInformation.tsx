@@ -23,6 +23,7 @@ import * as Styled from "./CaseInformation.styles";
 import { EditableChargeField } from "./constants";
 import { JudgeSelector } from "./JudgeSelector";
 import { OffenseCard } from "./OffenseCard";
+import { TieBreakerPicker } from "./TieBreakerPicker";
 
 interface CaseInformationProps {
   presenter: SARDetailsPresenter;
@@ -118,6 +119,13 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
             onUpdate={handleChargeUpdate}
           />
         ))}
+        {presenter.hasTie && (
+          <TieBreakerPicker
+            candidates={presenter.mostSevereCharges}
+            selectedOffenseName={mostSevereOffenseName}
+            onSelect={presenter.updateMostSevereOffenseName}
+          />
+        )}
       </Styled.Container>
     );
   },

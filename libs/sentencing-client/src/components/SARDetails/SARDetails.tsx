@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SentencingStore } from "../../datastores/SentencingStore";
@@ -167,6 +167,10 @@ export const SARDetails: React.FC<{
     () => (sarId ? new SARDetailsPresenter(sentencingStore, sarId) : null),
     [sentencingStore, sarId],
   );
+
+  useEffect(() => {
+    return () => presenter?.dispose();
+  }, [presenter]);
 
   if (!presenter) {
     return <Styled.PageContainer>No SAR ID found.</Styled.PageContainer>;
