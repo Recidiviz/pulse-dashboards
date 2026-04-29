@@ -80,6 +80,7 @@ export const InsightsStaffVitals = withPresenter(
       isNumeratorDenominatorEnabled,
       officerVitalsContacts,
       trackOperationsDrilldownViewed,
+      vitalsMetricsMethodologyUrl,
     } = presenter;
 
     if (vitalsMetricDetails.length === 0) return;
@@ -104,7 +105,11 @@ export const InsightsStaffVitals = withPresenter(
       showVitalsContactsDrilldownModal || showVitalsTasksDrilldownModal;
 
     return (
-      <InsightsPageSection sectionTitle="Operations">
+      <InsightsPageSection
+        sectionTitle="Operations"
+        methodologyLinkCta="How did we calculate this rate?"
+        methodologyLink={vitalsMetricsMethodologyUrl}
+      >
         <Body>
           <Grid>
             {vitalsMetricDetails.map((metric) => {

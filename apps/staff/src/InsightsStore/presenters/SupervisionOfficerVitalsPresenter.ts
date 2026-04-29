@@ -261,4 +261,8 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
       },
     );
   };
+
+  get vitalsMetricsMethodologyUrl() {
+    return this.supervisionStore.labels.vitalsMetricsMethodologyUrl;
+  }
 }
