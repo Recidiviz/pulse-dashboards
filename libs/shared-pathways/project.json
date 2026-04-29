@@ -28,7 +28,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vite-node tools/syncContentFromSheets.ts && prettier --write src/content/*"
+        "command": "vite-node tools/syncContentFromSheets.ts && cd ../.. && nx format"
       }
     }
   }

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { Mock } from "vitest";
 
@@ -32,7 +33,9 @@ const mockTrackMethodologyLinkClicked = vi.fn();
 const mockUseRootStore = useRootStore as Mock;
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <ThemeProvider theme={defaultPathwaysTheme}>{children}</ThemeProvider>
+  <MemoryRouter>
+    <ThemeProvider theme={defaultPathwaysTheme}>{children}</ThemeProvider>
+  </MemoryRouter>
 );
 
 describe("Header", () => {

@@ -22,9 +22,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { Icon, IconSVG } from "~design-system";
+import { convertToSlug } from "~ui";
 
 import { useRootStore } from "../components/StoreProvider";
-import { convertToSlug } from "../utils/navigation";
 import styles from "./CoreConstants.module.scss";
 import { useCoreStore } from "./CoreStoreProvider";
 

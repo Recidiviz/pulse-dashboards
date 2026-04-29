@@ -22,7 +22,7 @@ const content: StateSpecificMetricCopy = {
     title: "Prison population over time",
     note: "Data labeled May 1, 2024 was actually generated May 4, 2024.",
     methodology:
-      'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. \n- Please note that data labelled May 1, 2024 was actually generated May 4, 2024.',
+      'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020.',
   },
   prisonPopulationBySex: {
     title: "Prison population by sex",
@@ -37,7 +37,7 @@ const content: StateSpecificMetricCopy = {
   prisonPopulationByEthnicity: {
     title: "Prison population by ethnic status",
     methodology:
-      "The chart describes the number of people from each ethnicity as of the date specified in the chart title. ",
+      "The chart describes the number of people from each ethnicity as of the date specified in the chart title.",
   },
   prisonPopulationBySentenceLengthMin: {
     title: "Prison population by minimum sentence (months)",
@@ -52,12 +52,12 @@ const content: StateSpecificMetricCopy = {
   prisonPopulationByChargeCountyCode: {
     title: "Prison population by conviction county",
     methodology:
-      "The chart describes the number of people from each conviction county as of the date specified in the chart title. ",
+      "The chart describes the number of people from each conviction county as of the date specified in the chart title.",
   },
   prisonPopulationByOffenseType: {
     title: "Prison population by offense type",
     methodology:
-      "The chart describes the number of people from each offense type as of the date specified in the chart title. ",
+      "The chart describes the number of people from each offense type as of the date specified in the chart title.",
   },
 };
 

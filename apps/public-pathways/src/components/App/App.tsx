@@ -20,12 +20,13 @@ import "./global.css";
 import { GlobalStyle as GlobalStyleBase } from "@recidiviz/design-system";
 import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 
 import { initializeSentry } from "../../initializeSentry";
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
+import { publicPathwaysTheme } from "../../styles/publicPathwaysTheme";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
 import { PageMethodology } from "../pages/PageMethodology";
 import { PagePublicPathways } from "../pages/PagePublicPathways";
@@ -46,6 +47,10 @@ const GlobalStyle = createGlobalStyle`
     background: ${publicPathwaysPalette.white};
     color: black;
   }
+
+  a {
+    color: ${({ theme }) => theme.palette.signal.links};
+  }
 `;
 
 initializeSentry();
@@ -57,21 +62,23 @@ export function App() {
   return (
     <ErrorBoundary>
       <StoreProvider>
-        <GlobalStyleBase />
-        <GlobalStyle />
-        <StyledApp>
-          <QueryParamProvider adapter={ReactRouter6Adapter}>
-            <SentryRoutes>
-              <Route path="/" element={<PageRoot />}>
-                <Route index element={<Navigate to="/prison" replace />} />
-                <Route element={<PublicPathwaysLayout />}>
-                  <Route path="methodology" element={<PageMethodology />} />
-                  <Route path=":pageId" element={<PagePublicPathways />} />
+        <ThemeProvider theme={publicPathwaysTheme}>
+          <GlobalStyleBase />
+          <GlobalStyle />
+          <StyledApp>
+            <QueryParamProvider adapter={ReactRouter6Adapter}>
+              <SentryRoutes>
+                <Route path="/" element={<PageRoot />}>
+                  <Route index element={<Navigate to="/prison" replace />} />
+                  <Route element={<PublicPathwaysLayout />}>
+                    <Route path="methodology" element={<PageMethodology />} />
+                    <Route path=":pageId" element={<PagePublicPathways />} />
+                  </Route>
                 </Route>
-              </Route>
-            </SentryRoutes>
-          </QueryParamProvider>
-        </StyledApp>
+              </SentryRoutes>
+            </QueryParamProvider>
+          </StyledApp>
+        </ThemeProvider>
       </StoreProvider>
     </ErrorBoundary>
   );

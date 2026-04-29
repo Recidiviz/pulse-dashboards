@@ -16,10 +16,8 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { rgba } from "polished";
 import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { ThemeProvider } from "styled-components";
 
 import type { Sections } from "~shared-pathways";
 import {
@@ -27,14 +25,12 @@ import {
   FiltersButton,
   metricModeOptions,
   PathwaysSection,
-  PathwaysTheme,
   SectionNavigation,
   usePageContent,
 } from "~shared-pathways";
 import useIsMobile from "~utils/react/useIsMobile";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
-import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
 import { useRouteSync } from "../../useRouteSync";
 import { Footer } from "../Footer/Footer";
 import { Header } from "../Header/Header";
@@ -54,60 +50,6 @@ function usePageViews() {
 
 const TABLET_MAX_VISIBLE = 3;
 const MOBILE_MAX_VISIBLE = 1;
-
-const PROXIMA_NOVA_FONT_FAMILY = '"Proxima Nova", sans-serif';
-
-const publicPathwaysTheme: PathwaysTheme = {
-  palette: {
-    ...publicPathwaysPalette,
-  },
-  typography: {
-    ...publicPathwaysTypography,
-    fontFamily: PROXIMA_NOVA_FONT_FAMILY,
-  },
-  chart: {
-    titleColor: "black",
-    subtitleColor: rgba("black", 0.6),
-    axisLabel: {
-      fontFamily: PROXIMA_NOVA_FONT_FAMILY,
-      fontWeight: 500,
-      fontSize: "11px",
-      lineHeight: "16px",
-      letterSpacing: "1%",
-      color: rgba("black", 0.75),
-      charWidth: 10,
-    },
-  },
-  checkbox: {
-    badgeBorderColor: "rgba(0, 0, 0, 0.15)",
-    badgeColor: "rgba(0, 0, 0, 0.4)",
-    badgeFontFamily: PROXIMA_NOVA_FONT_FAMILY,
-    borderColor: "black",
-    checkedColor: publicPathwaysPalette.signal.links,
-    labelColor: publicPathwaysPalette.pine1,
-    labelTypography: publicPathwaysTypography.Sans14,
-    titleColor: publicPathwaysPalette.pine1,
-  },
-  modal: {
-    headerFontFamily: PROXIMA_NOVA_FONT_FAMILY,
-    headerFontSize: "18px",
-    headerFontWeight: 400,
-    headerColor: "black",
-    backgroundColor: "white",
-    closeButtonColor: "rgba(0, 0, 0, 0.60)",
-    closeFocusColor: publicPathwaysPalette.focusColor,
-    footerBorderColor: "rgba(0, 0, 0, 0.15)",
-    resetColor: "black",
-  },
-  togglePill: {
-    borderColor: "rgba(0, 0, 0, 0.15)",
-    selectedBackgroundColor: publicPathwaysPalette.focusColor,
-    selectedTextColor: "white",
-    textColor: "black",
-    focusBorderColor: publicPathwaysPalette.focusColor,
-    labelTypography: publicPathwaysTypography.Sans14,
-  },
-};
 
 export const PagePublicPathways = observer(function PagePublicPathways() {
   usePageViews();
@@ -137,52 +79,48 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
   }, [metricsStore.map, pageContent.sections]);
 
   return (
-    <ThemeProvider theme={publicPathwaysTheme}>
-      <PageContainer $isMobile={isMobile}>
-        <Header />
-        <PageMain>
-          <PageTitle
-            title={pageContent.title}
-            description={pageContent.summary}
-            methodologyUrl="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
-          />
-          <NavigationRow>
-            <SectionNav aria-label="Section navigation">
-              <SectionNavigation
-                sections={sections}
-                activeSection={section}
-                onSectionSelect={(id) => {
-                  rootStore.setSection(id);
-                  const metric = metricsStore.map[id];
-                  if (metric) {
-                    analyticsStore.trackMetricSelected({ metricId: metric.id });
-                  }
-                }}
-                accentColor={publicPathwaysPalette.signal.links}
-                maxVisible={maxVisible}
-              />
-            </SectionNav>
-            <FiltersButton
-              filtersStore={rootStore.filtersStore}
-              trackApplyFilters={(filters) =>
-                analyticsStore.trackApplyFilters({
-                  metricId: metricsStore.current.id,
-                  filters,
-                })
-              }
-              enableMetricModeToggle={
-                metricsStore.current.enableMetricModeToggle
-              }
-              metricModeOptions={metricModeOptions}
+    <PageContainer $isMobile={isMobile}>
+      <Header />
+      <PageMain>
+        <PageTitle
+          title={pageContent.title}
+          description={pageContent.summary}
+          methodologyTo="/methodology"
+        />
+        <NavigationRow>
+          <SectionNav aria-label="Section navigation">
+            <SectionNavigation
+              sections={sections}
+              activeSection={section}
+              onSectionSelect={(id) => {
+                rootStore.setSection(id);
+                const metric = metricsStore.map[id];
+                if (metric) {
+                  analyticsStore.trackMetricSelected({ metricId: metric.id });
+                }
+              }}
+              accentColor={publicPathwaysPalette.signal.links}
+              maxVisible={maxVisible}
             />
-          </NavigationRow>
-          <div aria-live="polite">
-            <MetricVizMapper metric={metricsStore.current} />
-            <ChartNote note={metricsStore.current?.note} />
-          </div>
-        </PageMain>
-        <Footer />
-      </PageContainer>
-    </ThemeProvider>
+          </SectionNav>
+          <FiltersButton
+            filtersStore={rootStore.filtersStore}
+            trackApplyFilters={(filters) =>
+              analyticsStore.trackApplyFilters({
+                metricId: metricsStore.current.id,
+                filters,
+              })
+            }
+            enableMetricModeToggle={metricsStore.current.enableMetricModeToggle}
+            metricModeOptions={metricModeOptions}
+          />
+        </NavigationRow>
+        <div aria-live="polite">
+          <MetricVizMapper metric={metricsStore.current} />
+          <ChartNote note={metricsStore.current?.note} />
+        </div>
+      </PageMain>
+      <Footer />
+    </PageContainer>
   );
 });

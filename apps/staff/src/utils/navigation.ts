@@ -69,10 +69,6 @@ export function getPathWithoutParams(pathname: string): string {
   return `/${basePath}`;
 }
 
-export function convertToSlug(text: string): string {
-  return text.trim().replace(/:/g, "").replace(/_|\s/g, "-").toLowerCase();
-}
-
 export function convertSlugToId(slug: string): string {
   return slug.replace(/-/g, "_").toUpperCase();
 }

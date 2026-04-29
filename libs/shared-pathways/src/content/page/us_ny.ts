@@ -25,19 +25,19 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Overview",
       countByLocation: "Facility",
-      countByGender: "Gender Identity",
-      countByAgeGroup: "Age Group",
       countByRace: "Race",
+      countByGender: "Gender Identity",
       countBySex: "Sex",
-      countByEthnicity: "Ethnicity",
+      countByAgeGroup: "Age",
       personLevelDetail: "People",
+      countByEthnicity: "Ethnicity",
       countBySentenceLengthMin: "Min Sentence",
       countBySentenceLengthMax: "Max Sentence",
       countByChargeCountyCode: "Conviction County",
       countByOffenseType: "Offense Type",
     },
     methodology:
-      "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly. \n- For more reports, please see: https://doccs.ny.gov/research-and-reports \n- For questions, please contact NYS DOCCS. \n",
+      "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly. \n- For more reports, please see: https://doccs.ny.gov/research-and-reports \n- For questions, please contact NYS DOCCS. \n\n<br/>\n<strong>Notes:</strong>\n- Please note that data labelled May 1, 2024 was actually generated May 4, 2024.\n- Individuals labelled with \"Not Coded\" for some dimensions (such as offense type) are primarily individuals who haven't yet completed the coding process. Those are generally resolved within 1 month.\n",
   },
 };
 

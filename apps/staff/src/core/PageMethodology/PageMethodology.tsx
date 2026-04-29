@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./PageMethodology.scss";
-
 import React from "react";
 import { AnchorProvider } from "react-anchor-navigation";
 import { useLocation, useNavigate, useParams } from "react-router-dom";

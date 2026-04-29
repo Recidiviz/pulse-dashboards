@@ -17,6 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { Icon, spacing } from "~design-system";
@@ -72,11 +73,12 @@ const SiteNav = styled.nav`
   align-items: center;
 `;
 
-const NavLink = styled.a`
+const NavLink = styled(Link)`
   ${publicPathwaysTypography.Sans14}
   padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
   color: inherit;
   text-decoration: none;
+  outline: none !important;
 
   &:hover {
     text-decoration: underline;
@@ -114,7 +116,13 @@ const DownloadButton = styled.button`
   }
 `;
 
-export const Header = observer(function Header() {
+type HeaderProps = {
+  hideActions?: boolean;
+};
+
+export const Header = observer(function Header({
+  hideActions = false,
+}: HeaderProps) {
   const { analyticsStore, metricsStore } = useRootStore();
 
   return (
@@ -130,30 +138,32 @@ export const Header = observer(function Header() {
         </LogoLink>
         <Title>NYS DOCCS</Title>
       </Brand>
-      <HeaderActions>
-        <SiteNav aria-label="Site navigation">
-          <NavLink
-            href="https://drive.google.com/file/d/1AkFPJP7721NudPWua39C5F0-Xiz1_b89/view"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => analyticsStore.trackMethodologyLinkClicked()}
+      {!hideActions && (
+        <HeaderActions>
+          <SiteNav aria-label="Site navigation">
+            <NavLink
+              to="/methodology"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => analyticsStore.trackMethodologyLinkClicked()}
+            >
+              How it works
+            </NavLink>
+          </SiteNav>
+          <DownloadButton
+            type="button"
+            onClick={() => {
+              metricsStore.download();
+              analyticsStore.trackDownloadClicked({
+                metricId: metricsStore.current.id,
+              });
+            }}
           >
-            How it works
-          </NavLink>
-        </SiteNav>
-        <DownloadButton
-          type="button"
-          onClick={() => {
-            metricsStore.download();
-            analyticsStore.trackDownloadClicked({
-              metricId: metricsStore.current.id,
-            });
-          }}
-        >
-          <Icon kind="DownloadArrowThin" color="white" size={12} />
-          Download
-        </DownloadButton>
-      </HeaderActions>
+            <Icon kind="DownloadArrowThin" color="white" size={12} />
+            Download
+          </DownloadButton>
+        </HeaderActions>
+      )}
     </HeaderWrapper>
   );
 });

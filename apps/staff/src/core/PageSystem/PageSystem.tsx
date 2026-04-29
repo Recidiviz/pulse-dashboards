@@ -33,13 +33,13 @@ import {
   Sections,
   usePageContent,
 } from "~shared-pathways";
+import { convertToSlug } from "~ui";
 
 import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { convertToSlug } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import DownloadDataButton from "../DownloadDataButton";
 import MethodologyLink from "../MethodologyLink";

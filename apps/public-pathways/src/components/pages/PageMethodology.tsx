@@ -15,6 +15,70 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export function PageMethodology() {
-  return null;
-}
+import { observer } from "mobx-react-lite";
+import { AnchorProvider } from "react-anchor-navigation";
+
+import {
+  getMethodologyCopy,
+  getMetricIdsForPage,
+  PathwaysPage,
+} from "~shared-pathways";
+import { Methodology, MethodologySection } from "~ui";
+import useIsMobile from "~utils/react/useIsMobile";
+
+import { Footer } from "../Footer/Footer";
+import { Header } from "../Header/Header";
+import { useRootStore } from "../StoreProvider";
+import { PageContainer, PageMain } from "./styles";
+
+export const PageMethodology = observer(function PageMethodology() {
+  const { currentTenantId, metricsStore } = useRootStore();
+  const { isMobile } = useIsMobile(true);
+
+  const methodologyCopy = getMethodologyCopy(currentTenantId).system;
+  if (!methodologyCopy) return null;
+
+  const { title, description, descriptionSecondary, pageCopy, metricCopy } =
+    methodologyCopy;
+
+  const enabledMetricIds = new Set(
+    Object.values(metricsStore.map).map((metric) => metric.id),
+  );
+
+  const sections: MethodologySection[] = [];
+  for (const pageId of Object.keys(pageCopy) as PathwaysPage[]) {
+    const page = pageCopy[pageId];
+    if (!page?.title) continue;
+    const subsections = getMetricIdsForPage(pageId)
+      .filter(
+        (metricId) =>
+          enabledMetricIds.has(metricId) && metricCopy[metricId]?.title,
+      )
+      .map((metricId) => metricCopy[metricId]);
+    if (subsections.length === 0) continue;
+    sections.push({ page, subsections });
+  }
+
+  return (
+    <PageContainer $isMobile={isMobile}>
+      <Header hideActions />
+      <PageMain>
+        <AnchorProvider offset={75}>
+          {/* per types this needs to be an array */}
+          {[
+            <Methodology
+              key="methodology"
+              title={title}
+              description={description}
+              descriptionSecondary={descriptionSecondary}
+              sections={sections}
+              hideTitle
+              hideToc
+            />,
+          ]}
+        </AnchorProvider>
+      </PageMain>
+      <Footer />
+    </PageContainer>
+  );
+});

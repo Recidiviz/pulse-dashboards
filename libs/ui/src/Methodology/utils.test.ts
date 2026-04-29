@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,5 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./Methodology";
-export * from "./PersonInitialsAvatar/PersonInitialsAvatar";
+import { convertToSlug } from "./utils";
+
+describe("convertToSlug", () => {
+  it("returns the id with dashes instead of underscore and lower case", () => {
+    const id = "123_OFFICER_JONES";
+    expect(convertToSlug(id)).toEqual("123-officer-jones");
+  });
+
+  it("returns a slug for text", () => {
+    expect(convertToSlug("Over-Time Calculations: ")).toEqual(
+      "over-time-calculations",
+    );
+  });
+});

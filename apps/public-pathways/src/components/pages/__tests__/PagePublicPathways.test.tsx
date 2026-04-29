@@ -17,9 +17,10 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
 import { Mock } from "vitest";
 
-import { usePageContent } from "~shared-pathways";
+import { defaultPathwaysTheme, usePageContent } from "~shared-pathways";
 
 import { useRootStore } from "../../StoreProvider";
 import { PagePublicPathways } from "../PagePublicPathways";
@@ -93,7 +94,9 @@ describe("PagePublicPathways", () => {
   it("calls trackMetricSelected when a section is selected", () => {
     render(
       <MemoryRouter>
-        <PagePublicPathways />
+        <ThemeProvider theme={defaultPathwaysTheme}>
+          <PagePublicPathways />
+        </ThemeProvider>
       </MemoryRouter>,
     );
 

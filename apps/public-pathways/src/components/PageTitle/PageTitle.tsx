@@ -18,6 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
@@ -46,7 +47,7 @@ const Description = styled.p`
   margin: 0;
 `;
 
-const LearnMoreLink = styled.a`
+const LearnMoreLink = styled(Link)`
   ${publicPathwaysTypography.Sans16}
   color: ${publicPathwaysPalette.signal.links};
   text-decoration: underline;
@@ -54,6 +55,7 @@ const LearnMoreLink = styled.a`
   display: inline-flex;
   align-items: center;
   min-height: ${rem(24)};
+  outline: none;
 
   &:focus-visible {
     outline: 2px solid ${publicPathwaysPalette.focusColor};
@@ -64,13 +66,13 @@ const LearnMoreLink = styled.a`
 interface PageTitleProps {
   title: string;
   description: string;
-  methodologyUrl?: string;
+  methodologyTo?: string;
 }
 
 export function PageTitle({
   title,
   description,
-  methodologyUrl,
+  methodologyTo,
 }: PageTitleProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -90,9 +92,9 @@ export function PageTitle({
       </Title>
       <Description id="page-description">
         {description}
-        {methodologyUrl && (
+        {methodologyTo && (
           <LearnMoreLink
-            href={methodologyUrl}
+            to={methodologyTo}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Learn more about our methodology"

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,5 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./Methodology";
-export * from "./PersonInitialsAvatar/PersonInitialsAvatar";
+import "styled-components";
+
+import { palette, TypographyStyles } from "~design-system";
+
+declare module "styled-components" {
+  // Components in ~ui read typography/palette from the styled-components theme
+  // so consumer apps can supply their own (e.g. defaultPathwaysTheme,
+  // publicPathwaysTheme). This minimum shape is structurally satisfied by
+  // PathwaysTheme in ~shared-pathways, so consumer apps do not need to adapt.
+
+  interface DefaultTheme {
+    palette: typeof palette;
+    typography: TypographyStyles;
+  }
+}

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,42 @@
 import Markdown from "markdown-to-jsx";
 import React from "react";
 import { AnchorSection } from "react-anchor-navigation";
+import styled from "styled-components";
 
-import { MethodologyContent } from "~shared-pathways";
+import { convertToSlug } from "./utils";
 
-import { convertToSlug } from "../../utils/navigation";
+export type MethodologyBlockContent = {
+  title: string;
+  methodology?: string;
+};
+
+const BlockWrapper = styled.div`
+  margin-bottom: 1rem;
+`;
+
+const BlockTitle = styled.h3`
+  ${({ theme }) => theme.typography.Header34};
+  margin: 0;
+  padding-top: 4.5rem;
+  letter-spacing: -0.04em;
+`;
+
+const BlockTitleRule = styled.hr`
+  margin: 1rem 0;
+`;
+
+const SubBlockTitle = styled.h4`
+  ${({ theme }) => theme.typography.Header24};
+  padding: 2rem 0 1rem;
+  letter-spacing: -0.04em;
+`;
+
+const BlockContent = styled.div`
+  ${({ theme }) => theme.typography.Body16};
+`;
 
 type Props = {
-  content: MethodologyContent;
+  content: MethodologyBlockContent;
   subBlock?: boolean;
 };
 
@@ -36,19 +65,19 @@ const ContentBlock: React.FC<Props> = ({ content, subBlock = false }) => {
       // when there is new content to ensure the correct #id for TOC navigation
       key={convertToSlug(content.title)}
     >
-      <div className="Methodology__block">
+      <BlockWrapper>
         {subBlock ? (
-          <h4 className="Methodology__sub-block--title ">{content.title}</h4>
+          <SubBlockTitle>{content.title}</SubBlockTitle>
         ) : (
           <>
-            <h3 className="Methodology__block--title ">{content.title}</h3>
-            <hr />
+            <BlockTitle>{content.title}</BlockTitle>
+            <BlockTitleRule />
           </>
         )}
-        <div className="Methodology__block--content">
+        <BlockContent>
           <Markdown>{content.methodology || ""}</Markdown>
-        </div>
-      </div>
+        </BlockContent>
+      </BlockWrapper>
     </AnchorSection>
   );
 };

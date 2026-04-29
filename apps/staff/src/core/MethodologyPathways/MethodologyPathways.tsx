@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,36 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import styled, { ThemeProvider } from "styled-components";
 
-import { Menubar } from "~design-system";
 import {
+  defaultPathwaysTheme,
   getMethodologyCopy,
   getMetricIdsForPage,
   getSectionIdForMetric,
   PathwaysPage,
   PathwaysPageIdList,
 } from "~shared-pathways";
+import { Methodology, MethodologySection } from "~ui";
 
 import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
-import { convertToSlug } from "../../utils/navigation";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import { DASHBOARD_VIEWS } from "../views";
-import ContentBlock from "./ContentBlock";
+
+const PineColors = styled.div`
+  color: ${({ theme }) => theme.palette.pine2};
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: ${({ theme }) => theme.palette.pine3};
+  }
+`;
 
 // Opens all external links in a new window
 const updateExternalLinks = (): void => {
@@ -60,8 +71,8 @@ const MethodologyPathways: React.FC = () => {
   });
 
   // @ts-ignore
-  const Methodology = getMethodologyCopy(currentTenantId)[view];
-  const { pageCopy, metricCopy } = Methodology;
+  const methodologyCopy = getMethodologyCopy(currentTenantId)[view];
+  const { pageCopy, metricCopy } = methodologyCopy ?? {};
 
   if (!pageCopy || !metricCopy) return <div />;
 
@@ -73,89 +84,42 @@ const MethodologyPathways: React.FC = () => {
       ? navigationLayout.system
       : ["vitalsPercentMethodology", "vitalsOverTimeMethodology"];
 
+  const sections: MethodologySection[] = Object.keys(pageCopy)
+    .filter((pageId) => {
+      const page = pageCopy[pageId as PathwaysPage];
+      return page?.title && enabledPages.includes(pageId);
+    })
+    .map((pageId) => {
+      const page = pageCopy[pageId as PathwaysPage];
+      // Vitals Practices methodology does not have the concept of sections
+      const metrics = PathwaysPageIdList.includes(pageId)
+        ? getMetricIdsForPage(pageId as PathwaysPage)
+        : [];
+      const enabledSections = navigationLayout[pageId] ?? [];
+      const subsections = metrics
+        .filter((metricId) => {
+          const metric = metricCopy[metricId];
+          return (
+            metric?.title &&
+            enabledSections.includes(getSectionIdForMetric(metricId))
+          );
+        })
+        .map((metricId) => metricCopy[metricId]);
+      return { page, subsections };
+    });
+
   return (
     <PageTemplate mobileNavigation={<MobileNavigation />}>
-      <div className="Methodology">
-        <div className="container col-md-9 col-12">
-          <section>
-            <h1 className="Methodology__main-title">{Methodology.title}</h1>
-            <h2
-              className="Methodology__main-description"
-              id="primary-description"
-            >
-              {Methodology.description}
-            </h2>
-            <br aria-hidden="true" />
-            {Methodology.descriptionSecondary && (
-              <h2
-                className="Methodology__main-description"
-                id="secondary-description"
-              >
-                {Methodology.descriptionSecondary}
-              </h2>
-            )}
-          </section>
-
-          <div className=" Methodology__toc">
-            <h5 className="Methodology__toc--title" aria-hidden="true">
-              CONTENTS
-            </h5>
-            <Menubar vertical ariaLabel="Methodology table of contents">
-              <div className="d-flex flex-column">
-                {Object.keys(pageCopy).map((pageId) => {
-                  const page = pageCopy[pageId];
-                  if (!page?.title || !enabledPages.includes(pageId))
-                    return <div key={`link${page.title}`} />;
-                  return (
-                    <a
-                      className="Methodology__toc--link"
-                      key={`link${page.title}`}
-                      href={`#${convertToSlug(page.title)}`}
-                      role="menuitem"
-                    >
-                      {page.title}
-                    </a>
-                  );
-                })}
-              </div>
-            </Menubar>
-          </div>
-          <div>
-            {Object.keys(pageCopy).map((pageId) => {
-              const page = pageCopy[pageId as PathwaysPage];
-              if (!page?.title || !enabledPages.includes(pageId))
-                return <div key={`content${page.title}`} />;
-              // Vitals Practices methodology does not have the concept of sections
-              const metrics = PathwaysPageIdList.includes(pageId)
-                ? getMetricIdsForPage(pageId as PathwaysPage)
-                : [];
-              const enabledSections = navigationLayout[pageId];
-              const metricMethodologies = metrics.map((metricId) => {
-                const metric = metricCopy[metricId];
-                if (
-                  !metric?.title ||
-                  !enabledSections.includes(getSectionIdForMetric(metricId))
-                )
-                  return <div key={`metric${metricId}`} />;
-                return (
-                  <ContentBlock
-                    content={metric}
-                    subBlock
-                    key={`metric${metricId}`}
-                  />
-                );
-              });
-
-              return (
-                <React.Fragment key={`block${page.title}`}>
-                  <ContentBlock content={page} />
-                  {metricMethodologies}
-                </React.Fragment>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <ThemeProvider theme={defaultPathwaysTheme}>
+        <PineColors>
+          <Methodology
+            title={methodologyCopy.title}
+            description={methodologyCopy.description}
+            descriptionSecondary={methodologyCopy.descriptionSecondary}
+            sections={sections}
+          />
+        </PineColors>
+      </ThemeProvider>
     </PageTemplate>
   );
 };

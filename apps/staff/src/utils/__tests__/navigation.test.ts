@@ -17,7 +17,6 @@
 
 import {
   convertSlugToId,
-  convertToSlug,
   getPathsFromNavigation,
   getPathWithoutParams,
 } from "../navigation";
@@ -74,19 +73,6 @@ describe("getPathWithoutParams", () => {
   it("returns /workflows/tasks for route planner", () => {
     const basePath = "/workflows/tasks";
     expect(getPathWithoutParams(`${basePath}/route-planner`)).toEqual(basePath);
-  });
-});
-
-describe("convertToSlug", () => {
-  it("returns the id with dashes instead of underscore and lower case", () => {
-    const id = "123_OFFICER_JONES";
-    expect(convertToSlug(id)).toEqual("123-officer-jones");
-  });
-
-  it("returns a slug for text", () => {
-    expect(convertToSlug("Over-Time Calculations: ")).toEqual(
-      "over-time-calculations",
-    );
   });
 });
 
