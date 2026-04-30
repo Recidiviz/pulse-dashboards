@@ -1396,40 +1396,31 @@ export async function processWelcomeText(
     return ScriptAction.SKIPPED;
   }
 
-  // TODO(#SPE-2462) Refactor unreachable condition / branch
   if (latestInitialMessageAttemptStatus === MessageAttemptStatus.FAILURE) {
-    if (
-      initialMessageSeries.messageAttempts.filter(
-        (a) => a.phoneNumber === jii.phoneNumber,
-      ).length >= MAX_RETRY_ATTEMPTS
-    ) {
-      return ScriptAction.SKIPPED;
-    } else {
-      if (dryRun) {
-        console.log(
-          `Skipped resending initial message for ${jii.pseudonymizedId}`,
-        );
-        return ScriptAction.INITIAL_MESSAGE_SENT;
-      }
-
-      const message = await sendWelcomeText(
-        personMetadata,
-        workflowExecutionId,
-        prisma,
-        twilio,
-        i18n,
-        initialMessageSeries.id,
-      );
-
+    if (dryRun) {
       console.log(
-        `Executed sendText logic for resending initial text to ${jii.pseudonymizedId}`,
+        `Skipped resending initial message for ${jii.pseudonymizedId}`,
       );
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    }
 
-      if (message) {
-        return ScriptAction.INITIAL_MESSAGE_SENT;
-      } else {
-        return ScriptAction.ERROR;
-      }
+    const message = await sendWelcomeText(
+      personMetadata,
+      workflowExecutionId,
+      prisma,
+      twilio,
+      i18n,
+      initialMessageSeries.id,
+    );
+
+    console.log(
+      `Executed sendText logic for resending initial text to ${jii.pseudonymizedId}`,
+    );
+
+    if (message) {
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    } else {
+      return ScriptAction.ERROR;
     }
   }
 
