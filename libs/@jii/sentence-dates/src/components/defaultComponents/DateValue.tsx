@@ -22,9 +22,9 @@ import { CardValue } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import { dateCardModifierClassesEnum } from "../SentenceDates/DatePresenter";
-import { DefaultProps } from "./types";
+import { DateComponentDefaultProps } from "./types";
 
-export type DateValueProps = DefaultProps;
+export type DateValueProps = DateComponentDefaultProps;
 
 const ValueWrapper = styled(CardValue)`
   .${dateCardModifierClassesEnum.enum["DateCard--is-upcoming"]} & {
@@ -36,6 +36,6 @@ const ValueWrapper = styled(CardValue)`
   }
 `;
 
-export const DateValue: FC<DateValueProps> = (props) => {
-  return <ValueWrapper {...props} />;
+export const DateValue: FC<DateValueProps> = ({ children, className }) => {
+  return <ValueWrapper {...{ children, className }} />;
 };

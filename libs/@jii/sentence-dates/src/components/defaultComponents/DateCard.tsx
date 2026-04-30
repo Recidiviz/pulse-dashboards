@@ -23,11 +23,8 @@ import styled from "styled-components";
 import { Card } from "~@jii/common-ui";
 import { palette, spacing } from "~design-system";
 
-import {
-  dateCardModifierClassesEnum,
-  DatePresenter,
-} from "../SentenceDates/DatePresenter";
-import { DefaultProps } from "./types";
+import { dateCardModifierClassesEnum } from "../SentenceDates/DatePresenter";
+import { DateComponentDefaultProps } from "./types";
 
 const DashedBorderSvg = styled.svg`
   position: absolute;
@@ -74,7 +71,7 @@ const CardWrapper = styled(Card)`
   }
 `;
 
-export type DateCardProps = DefaultProps & { datePresenter: DatePresenter };
+export type DateCardProps = DateComponentDefaultProps;
 
 export const DateCard: FC<DateCardProps> = ({
   children,

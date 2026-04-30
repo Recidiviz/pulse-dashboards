@@ -95,6 +95,8 @@ const borderlessStyles = css`
 `;
 
 export const baseButtonStyles = css`
+  ${typography.Sans14}
+
   align-items: center;
   cursor: pointer;
   display: flex;
@@ -104,8 +106,6 @@ export const baseButtonStyles = css`
 `;
 
 export const BaseButton = styled.button<Pick<ButtonProps, "kind" | "shape">>`
-  ${typography.Sans14}
-
   ${baseButtonStyles};
 
   &:disabled {

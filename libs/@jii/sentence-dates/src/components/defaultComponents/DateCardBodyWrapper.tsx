@@ -15,31 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { CopyWrapper } from "~@jii/common-ui";
+import { spacing } from "~design-system";
 
-import { DateTextComponentProps } from "./types";
+import { DateComponentDefaultProps } from "./types";
+import { Wrapper } from "./Wrapper";
 
-export type DateDescriptionProps = DateTextComponentProps;
+export type DateCardBodyWrapperProps = DateComponentDefaultProps;
 
-const StyledCopyWrapper = styled(CopyWrapper)`
-  &,
-  & > p:last-child {
-    // prevents extra space at the bottom of the card
-    margin-bottom: 0;
-  }
+/**
+ * provides some default spacing between elements, mostly for common override scenarios
+ * where we are appending extra elements below the description
+ */
+const StyledWrapper = styled(Wrapper)`
+  display: grid;
+  row-gap: ${rem(spacing.md)};
 `;
 
-export const DateDescription: FC<DateDescriptionProps> = ({
+export const DateCardBodyWrapper: FC<DateCardBodyWrapperProps> = ({
   children,
   className,
 }) => {
-  return children ? (
-    <StyledCopyWrapper
-      {...{ children, className }}
-      options={{ forceBlock: true }}
-    />
-  ) : null;
+  return children ? <StyledWrapper {...{ children, className }} /> : null;
 };

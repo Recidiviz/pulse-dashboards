@@ -15,47 +15,63 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Meta, StoryObj } from "@storybook/react";
+import { Description, Stories, Title } from "@storybook/addon-docs/blocks";
+import type { Meta } from "@storybook/react";
 import { ComponentProps, Suspense } from "react";
 import { I18nextProvider } from "react-i18next";
-
-import { StateSentenceDatesResources } from "~@jii/translation";
 
 import {
   copyFixtureEnglish,
   copyFixtureSpanish,
   prepareUsOzTranslations,
-} from "../../fixtures/copy";
-import { getSentenceDatesFixtureData } from "../../fixtures/data";
-import { SentenceDates } from "./SentenceDates";
+  TranslationsFixture,
+} from "../../../fixtures/copy";
+import { getSentenceDatesFixtureData } from "../../../fixtures/data";
+import { SentenceDates } from "../SentenceDates";
 
-const meta: Meta<
+export type SentenceDatesMeta = Meta<
   ComponentProps<typeof SentenceDates> & {
-    copy: {
-      englishCopy: StateSentenceDatesResources;
-      spanishCopy: StateSentenceDatesResources;
-    };
+    copy?: TranslationsFixture;
     language: "en" | "es";
   }
-> = {
+>;
+
+/**
+ * Provides a set of default Storybook options that apply to most stories
+ * about this component. It's recommended to extend this with at least a
+ * `title` prop when using it in your module.
+ */
+export const baseMeta: SentenceDatesMeta = {
   component: SentenceDates,
-  title: "SentenceDates",
   args: {
-    data: getSentenceDatesFixtureData(),
     stateCode: "US_OZ",
     language: "en",
     copy: {
       englishCopy: copyFixtureEnglish,
       spanishCopy: copyFixtureSpanish,
     },
+    data: getSentenceDatesFixtureData(),
   },
   argTypes: {
     stateCode: { table: { disable: true } },
-    language: { options: ["en", "es"], control: "select" },
+    // override this if you want to enable Spanish in your stories;
+    // it's convenient to disable it by default so you can opt in to
+    // adding extra copy fixtures only when necessary
+    language: { table: { disable: true } },
+  },
+  // prevents extra args from being passed to the component itself and causing errors
+  render: ({ data, componentOverrides, stateCode }) => {
+    return (
+      <SentenceDates
+        data={data}
+        componentOverrides={componentOverrides}
+        stateCode={stateCode}
+      />
+    );
   },
   decorators: [
     (Story, ctx) => {
-      const i18n = prepareUsOzTranslations(ctx.args.copy);
+      const i18n = prepareUsOzTranslations({ ...ctx.args.copy });
       i18n.changeLanguage(ctx.args.language);
 
       return (
@@ -69,7 +85,14 @@ const meta: Meta<
   ],
 };
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
+/**
+ * Alternate template for autodocs that omits the "primary" story and controls
+ * at the top of the page, including only the list of individual stories.
+ */
+export const SecondaryStoryPage = () => (
+  <>
+    <Title />
+    <Description />
+    <Stories />
+  </>
+);

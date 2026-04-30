@@ -18,16 +18,19 @@
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import type { SentenceDatesData } from "../../data/types";
 import { SentenceDatesPresenter } from "./SentenceDatesPresenter";
-import { StateCodeWithSentenceDates } from "./types";
+import { SentenceDatesComponents, StateCodeWithSentenceDates } from "./types";
 
-type SentenceDatesProps = {
+export type SentenceDatesProps = {
   data: SentenceDatesData;
   stateCode: StateCodeWithSentenceDates;
+  componentOverrides?: Partial<SentenceDatesComponents>;
 };
 
-export const SentenceDatesWithPresenter = ({
+const ManagedComponent = ({
   presenter,
 }: {
   presenter: SentenceDatesPresenter;
@@ -55,16 +58,20 @@ export const SentenceDatesWithPresenter = ({
       <CardsWrapper>
         {datePresenters.map((datePresenter) => (
           <DateCard key={datePresenter.id} datePresenter={datePresenter}>
-            <DateCardHeadingWrapper>
-              <DateLabel>{datePresenter.cardLabelText}</DateLabel>
-              <DateValue>{datePresenter.cardValueText.primary}</DateValue>
-              <DateValueSupplemental>
+            <DateCardHeadingWrapper datePresenter={datePresenter}>
+              <DateLabel datePresenter={datePresenter}>
+                {datePresenter.cardLabelText}
+              </DateLabel>
+              <DateValue datePresenter={datePresenter}>
+                {datePresenter.cardValueText.primary}
+              </DateValue>
+              <DateValueSupplemental datePresenter={datePresenter}>
                 {datePresenter.cardValueText.supplemental}
               </DateValueSupplemental>
             </DateCardHeadingWrapper>
-            <DateCardBodyWrapper>
+            <DateCardBodyWrapper datePresenter={datePresenter}>
               {datePresenter.cardDescriptionText && (
-                <DateDescription>
+                <DateDescription datePresenter={datePresenter}>
                   {datePresenter.cardDescriptionText}
                 </DateDescription>
               )}
@@ -76,10 +83,14 @@ export const SentenceDatesWithPresenter = ({
   );
 };
 
-function usePresenter({ stateCode, data }: SentenceDatesProps) {
+function usePresenter({
+  stateCode,
+  data,
+  componentOverrides,
+}: SentenceDatesProps) {
   const { t } = useTranslation([stateCode, "common"]);
 
-  return new SentenceDatesPresenter(data, t);
+  return new SentenceDatesPresenter(data, t, componentOverrides);
 }
 
 /**
@@ -88,10 +99,8 @@ function usePresenter({ stateCode, data }: SentenceDatesProps) {
  * Default behavior is based on a combination of the data passed in here
  * and the corresponding copy (which is accessed via the translation framework).
  */
-export const SentenceDates: FC<SentenceDatesProps> = (
-  props: SentenceDatesProps,
-) => {
-  const presenter = usePresenter(props);
-
-  return <SentenceDatesWithPresenter presenter={presenter} />;
-};
+export const SentenceDates: FC<SentenceDatesProps> = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
+});

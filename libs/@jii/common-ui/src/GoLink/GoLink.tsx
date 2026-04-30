@@ -19,13 +19,15 @@ import { FC, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { Icon, palette } from "~design-system";
+import { Icon, palette, typography } from "~design-system";
 
 /**
  * A text-styled link with an arrow icon, for inline "go to" links
  * as opposed to GoButton which is button-styled
  */
 const StyledGoLink = styled(Link)`
+  ${typography.Sans16}
+
   display: flex;
   align-items: center;
   column-gap: 4px;

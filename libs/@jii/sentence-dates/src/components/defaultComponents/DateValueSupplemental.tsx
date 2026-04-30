@@ -22,11 +22,9 @@ import { SlateCopy } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import { dateCardModifierClassesEnum } from "../SentenceDates/DatePresenter";
-import { DefaultProps } from "./types";
+import { DateTextComponentProps } from "./types";
 
-export type DateValueSupplementalProps = Omit<DefaultProps, "children"> & {
-  children: string | undefined;
-};
+export type DateValueSupplementalProps = DateTextComponentProps;
 
 const StyledCopyWrapper = styled(SlateCopy)`
   .${dateCardModifierClassesEnum.enum["DateCard--is-past"]} & {

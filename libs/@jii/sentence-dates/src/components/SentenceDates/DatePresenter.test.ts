@@ -21,12 +21,20 @@ import {
   copyFixtureEnglish,
   prepareUsOzTranslations,
 } from "../../fixtures/copy";
-import { getSentenceDatesFixtureData } from "../../fixtures/data";
+import {
+  DateGenerator,
+  getDatesWithMissing,
+  getDatesWithPast,
+  getDatesWithUpcoming,
+  getDefaultDates,
+  getSentenceDatesFixtureData,
+} from "../../fixtures/data";
 import { DatePresenter } from "./DatePresenter";
 import { StateCodeWithSentenceDates } from "./types";
 
 describe("DatePresenter", () => {
   let t: TFunction<[StateCodeWithSentenceDates, "common"]>;
+  let presenter: DatePresenter;
 
   beforeEach(async () => {
     const i18n = prepareUsOzTranslations();
@@ -40,68 +48,70 @@ describe("DatePresenter", () => {
     vi.useRealTimers();
   });
 
-  function getPresenter(id: string) {
-    const { dates } = getSentenceDatesFixtureData();
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return new DatePresenter(dates.find((d) => d.id === id)!, t);
+  function getPresenter(datesFn: DateGenerator, index = 0) {
+    const { dates } = getSentenceDatesFixtureData(datesFn);
+
+    return new DatePresenter(dates[index], t);
   }
 
-  describe("past date (earliest_release_date)", () => {
+  describe("past date", () => {
+    beforeEach(() => {
+      presenter = getPresenter(getDatesWithPast);
+    });
+
     it("is marked as past", () => {
-      expect(getPresenter("earliest_release_date").cardModifierClasses).toEqual(
-        ["DateCard--is-past"],
-      );
+      expect(presenter.cardModifierClasses).toEqual(["DateCard--is-past"]);
     });
 
     it("returns the correct label and description", () => {
-      const presenter = getPresenter("earliest_release_date");
       expect(presenter.cardLabelText).toMatchInlineSnapshot(
-        `"Earliest Release Date"`,
+        `"Parole Eligibility Date"`,
       );
       expect(presenter.cardDescriptionText).toMatchInlineSnapshot(
-        `"The earliest date you can be released from incarceration."`,
+        `"The earliest date you are eligible to be considered for release on parole."`,
       );
     });
 
     it("shows formatted date as primary value and relative as supplemental", () => {
-      expect(getPresenter("earliest_release_date").cardValueText)
-        .toMatchInlineSnapshot(`
+      expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
-          "primary": "March 16, 2026",
-          "supplemental": "30 days ago",
+          "primary": "April 8, 2026",
+          "supplemental": "7 days ago",
         }
       `);
     });
   });
 
-  describe("upcoming date (projected_release_date)", () => {
+  describe("upcoming date", () => {
+    beforeEach(() => {
+      presenter = getPresenter(getDatesWithUpcoming);
+    });
+
     it("is marked as upcoming", () => {
-      expect(
-        getPresenter("projected_release_date").cardModifierClasses,
-      ).toEqual(["DateCard--is-upcoming"]);
+      expect(presenter.cardModifierClasses).toEqual(["DateCard--is-upcoming"]);
     });
 
     it("shows relative date as primary value and formatted as supplemental", () => {
-      expect(getPresenter("projected_release_date").cardValueText)
-        .toMatchInlineSnapshot(`
+      expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
-          "primary": "7 days from today",
-          "supplemental": "April 22, 2026",
+          "primary": "23 days from today",
+          "supplemental": "May 8, 2026",
         }
       `);
     });
   });
 
   describe("missing date (parole_eligibility_date)", () => {
+    beforeEach(() => {
+      presenter = getPresenter(getDatesWithMissing);
+    });
+
     it("has no modifier classes", () => {
-      expect(
-        getPresenter("parole_eligibility_date").cardModifierClasses,
-      ).toEqual([]);
+      expect(presenter.cardModifierClasses).toEqual([]);
     });
 
     it("shows the missing date message with no supplemental value", () => {
-      expect(getPresenter("parole_eligibility_date").cardValueText)
-        .toMatchInlineSnapshot(`
+      expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
           "primary": "No date on record",
           "supplemental": undefined,
@@ -110,19 +120,20 @@ describe("DatePresenter", () => {
     });
   });
 
-  describe("future non-upcoming date (max_discharge_date)", () => {
+  describe("future non-upcoming date", () => {
+    beforeEach(() => {
+      presenter = getPresenter(getDefaultDates);
+    });
+
     it("has no modifier classes", () => {
-      expect(getPresenter("max_discharge_date").cardModifierClasses).toEqual(
-        [],
-      );
+      expect(presenter.cardModifierClasses).toEqual([]);
     });
 
     it("shows formatted date as primary value and relative as supplemental", () => {
-      expect(getPresenter("max_discharge_date").cardValueText)
-        .toMatchInlineSnapshot(`
+      expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
-          "primary": "May 20, 2027",
-          "supplemental": "1 year and 1 month from today",
+          "primary": "July 19, 2026",
+          "supplemental": "3 months and 4 days from today",
         }
       `);
     });
@@ -136,14 +147,15 @@ describe("DatePresenter", () => {
           dates: {
             ...copyFixtureEnglish.sentenceDates.dates,
             // dropping description field from this fixture
-            earliest_release_date: { label: "Earliest Release Date" },
+            parole_eligibility_date: { label: "Earliest Release Date" },
           },
         },
       },
     });
     await i18n.reloadResources(["en"], ["common"]);
     t = i18n.getFixedT("en", ["US_OZ", "common"]);
-    const presenter = getPresenter("earliest_release_date");
+
+    const presenter = getPresenter(getDefaultDates);
 
     expect(presenter.cardDescriptionText).toBeUndefined();
   });

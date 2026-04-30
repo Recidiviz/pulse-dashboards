@@ -23,16 +23,6 @@ import {
 export const copyFixtureEnglish: StateSentenceDatesResources = {
   sentenceDates: {
     dates: {
-      earliest_release_date: {
-        label: "Earliest Release Date",
-        description:
-          "The earliest date you can be released from incarceration.",
-      },
-      projected_release_date: {
-        label: "Projected Release (PR)",
-        description:
-          "The estimated date you will be released from incarceration based on your sentence and time served.",
-      },
       parole_eligibility_date: {
         label: "Parole Eligibility Date",
         description:
@@ -51,16 +41,6 @@ export const copyFixtureEnglish: StateSentenceDatesResources = {
 export const copyFixtureSpanish: StateSentenceDatesResources = {
   sentenceDates: {
     dates: {
-      earliest_release_date: {
-        label: "Fecha de Liberación Más Temprana",
-        description:
-          "La fecha más temprana en que puede ser liberado de la encarcelación.",
-      },
-      projected_release_date: {
-        label: "Liberación Proyectada (LP)",
-        description:
-          "La fecha estimada en que será liberado de la encarcelación según su sentencia y el tiempo cumplido.",
-      },
       parole_eligibility_date: {
         label: "Fecha de Elegibilidad para la Libertad Condicional",
         description:
@@ -75,13 +55,15 @@ export const copyFixtureSpanish: StateSentenceDatesResources = {
   },
 };
 
+export type TranslationsFixture = {
+  englishCopy?: StateSentenceDatesResources;
+  spanishCopy?: Partial<StateSentenceDatesResources>;
+};
+
 export function prepareUsOzTranslations({
   englishCopy = copyFixtureEnglish,
   spanishCopy = copyFixtureSpanish,
-}: {
-  englishCopy?: StateSentenceDatesResources;
-  spanishCopy?: Partial<StateSentenceDatesResources>;
-} = {}) {
+}: TranslationsFixture = {}) {
   const i = createI18nInstance(["es"]);
   i.addResourceBundle("en", "US_OZ", englishCopy);
   i.addResourceBundle("es", "US_OZ", spanishCopy);

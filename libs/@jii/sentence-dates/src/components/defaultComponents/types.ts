@@ -17,4 +17,30 @@
 
 import type { ReactNode } from "react";
 
+import type { DatePresenter } from "../SentenceDates/DatePresenter";
+
+/**
+ * Most components should at least require this or something similar to it.
+ * `className` allows style overrides via styled-components.
+ */
 export type DefaultProps = { children: ReactNode; className?: string };
+
+/**
+ * Extends {@link DefaultProps} to include a {@link DatePresenter}. All components
+ * that are concerned with a single date should require this or something similar to it.
+ * Most of the default components don't actually use this presenter, but it can
+ * be useful context for component overrides.
+ */
+export type DateComponentDefaultProps = DefaultProps & {
+  datePresenter: DatePresenter;
+};
+
+/**
+ * Variant of {@link DateComponentDefaultProps} that only accepts string children
+ */
+export type DateTextComponentProps = Omit<
+  DateComponentDefaultProps,
+  "children"
+> & {
+  children: string | undefined;
+};

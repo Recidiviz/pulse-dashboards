@@ -16,30 +16,15 @@
 // =============================================================================
 
 import { FC } from "react";
-import styled from "styled-components";
 
-import { CopyWrapper } from "~@jii/common-ui";
+import { DateComponentDefaultProps } from "./types";
+import { Wrapper } from "./Wrapper";
 
-import { DateTextComponentProps } from "./types";
+export type DateCardHeadingWrapperProps = DateComponentDefaultProps;
 
-export type DateDescriptionProps = DateTextComponentProps;
-
-const StyledCopyWrapper = styled(CopyWrapper)`
-  &,
-  & > p:last-child {
-    // prevents extra space at the bottom of the card
-    margin-bottom: 0;
-  }
-`;
-
-export const DateDescription: FC<DateDescriptionProps> = ({
+export const DateCardHeadingWrapper: FC<DateCardHeadingWrapperProps> = ({
   children,
   className,
 }) => {
-  return children ? (
-    <StyledCopyWrapper
-      {...{ children, className }}
-      options={{ forceBlock: true }}
-    />
-  ) : null;
+  return <Wrapper {...{ children, className }} />;
 };

@@ -10,9 +10,6 @@
     ]
   },
   "exclude": [
-    "src/fixtures/*.ts",
-    "src/**/*.stories.ts",
-    "src/**/*.stories.tsx",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",

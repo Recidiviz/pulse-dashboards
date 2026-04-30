@@ -22,6 +22,8 @@ import { PickByValue } from "utility-types";
 import { I18nResources, StateSentenceDatesResources } from "~@jii/translation";
 
 import { DateCardProps } from "../defaultComponents/DateCard";
+import { DateCardBodyWrapperProps } from "../defaultComponents/DateCardBodyWrapper";
+import { DateCardHeadingWrapperProps } from "../defaultComponents/DateCardHeadingWrapper";
 import { DateDescriptionProps } from "../defaultComponents/DateDescription";
 import { DateLabelProps } from "../defaultComponents/DateLabel";
 import { DateValueProps } from "../defaultComponents/DateValue";
@@ -39,12 +41,12 @@ export type SentenceDatesComponents = {
   SectionHeading: ComponentType<SectionHeadingProps>;
   CardsWrapper: ComponentType<WrapperProps>;
   DateCard: ComponentType<DateCardProps>;
-  DateCardHeadingWrapper: ComponentType<WrapperProps>;
+  DateCardHeadingWrapper: ComponentType<DateCardHeadingWrapperProps>;
   DateDescription: ComponentType<DateDescriptionProps>;
   DateLabel: ComponentType<DateLabelProps>;
   DateValue: ComponentType<DateValueProps>;
   DateValueSupplemental: ComponentType<DateValueSupplementalProps>;
-  DateCardBodyWrapper: ComponentType<WrapperProps>;
+  DateCardBodyWrapper: ComponentType<DateCardBodyWrapperProps>;
 };
 
 export type TFn = TFunction<[StateCodeWithSentenceDates, "common"]>;

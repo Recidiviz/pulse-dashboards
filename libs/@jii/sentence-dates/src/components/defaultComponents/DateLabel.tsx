@@ -21,9 +21,9 @@ import styled from "styled-components";
 
 import { spacing, typography } from "~design-system";
 
-import { DefaultProps } from "./types";
+import { DateComponentDefaultProps } from "./types";
 
-export type DateLabelProps = DefaultProps;
+export type DateLabelProps = DateComponentDefaultProps;
 
 const Heading = styled.h3`
   ${typography.Sans18}
@@ -31,6 +31,6 @@ const Heading = styled.h3`
   margin: 0 0 ${rem(spacing.sm)};
 `;
 
-export const DateLabel: FC<DateLabelProps> = (props) => {
-  return <Heading {...props} />;
+export const DateLabel: FC<DateLabelProps> = ({ children, className }) => {
+  return <Heading {...{ children, className }} />;
 };

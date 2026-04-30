@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Replace your-framework with the framework you are using, e.g. react-vite, nextjs, vue3-vite, etc.
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import "../../../../libs/@jii/common-ui/src/global.css";
+
 import type { Preview } from "@storybook/react-vite";
 import { MINIMAL_VIEWPORTS } from "storybook/viewport";
 
@@ -25,6 +27,9 @@ const preview: Preview = {
     viewport: { value: "edovoMostCommon", isRotated: false },
   },
   parameters: {
+    docs: {
+      toc: true,
+    },
     viewport: {
       options: {
         ...MINIMAL_VIEWPORTS,

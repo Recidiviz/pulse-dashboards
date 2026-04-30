@@ -127,7 +127,7 @@ describe("SentenceDatesPresenter", () => {
             t,
           ),
       ).toThrow(
-        "Expected sentence dates are missing from data: earliest_release_date",
+        "Expected sentence dates are missing from data: parole_eligibility_date",
       );
     });
 
@@ -148,8 +148,11 @@ describe("SentenceDatesPresenter", () => {
     });
 
     it("does not filter out a date if only the Spanish translation is missing", () => {
-      const { max_discharge_date: _, ...datesWithoutMaxDischarge } =
+      const { max_discharge_date, ...datesWithoutMaxDischarge } =
         copyFixtureSpanish.sentenceDates.dates;
+
+      // sanity check since the object keys are weakly typed
+      expect(max_discharge_date).toBeDefined();
 
       i18n = prepareUsOzTranslations({
         spanishCopy: {
