@@ -41,6 +41,7 @@ import {
   MethodOfUseLabels,
 } from "../OffenderAssessment/SubstanceUse/constants";
 import { SARSection } from "../SARDetails/constants";
+import { useStore } from "../StoreProvider/StoreProvider";
 import { InsightsSummaryPanel } from "./InsightsSummaryPanel";
 import { MissingBadge } from "./MissingBadge";
 import { exportSARtoPDF } from "./SARPdfExport";
@@ -151,6 +152,7 @@ interface SummaryProps {
 export const Summary: React.FC<SummaryProps> = observer(function Summary({
   presenter,
 }) {
+  const { activeFeatureVariants } = useStore();
   const {
     charges,
     formattedBirthDate,
@@ -621,23 +623,25 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                 )}
               </Styled.SectionCard>
 
-              {!sarData?.mostSevereOffenseName && (
-                <Styled.SectionCard>
-                  <Styled.SectionTitle>Insights</Styled.SectionTitle>
-                  <Styled.SectionBody>
-                    <MissingBadge />
-                    Most severe offense must be selected in Case Information.
-                  </Styled.SectionBody>
-                </Styled.SectionCard>
-              )}
+              {activeFeatureVariants["SARBuilder"] &&
+                !sarData?.mostSevereOffenseName && (
+                  <Styled.SectionCard>
+                    <Styled.SectionTitle>Insights</Styled.SectionTitle>
+                    <Styled.SectionBody>
+                      <MissingBadge />
+                      Most severe offense must be selected in Case Information.
+                    </Styled.SectionBody>
+                  </Styled.SectionCard>
+                )}
             </>
           )}
         </Styled.Container>
 
         {/* Insights — rendered outside the container so it gets the SummaryWrapper gap */}
-        {sarData?.mostSevereOffenseName && (
-          <InsightsSummaryPanel presenter={presenter} />
-        )}
+        {activeFeatureVariants["SARBuilder"] &&
+          sarData?.mostSevereOffenseName && (
+            <InsightsSummaryPanel presenter={presenter} />
+          )}
       </Styled.SummaryWrapper>
 
       {/* PDF report — off-screen, captured by html2canvas + jsPDF on download */}
