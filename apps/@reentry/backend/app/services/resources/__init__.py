@@ -641,6 +641,7 @@ class Resource(BaseModel):
 
     transport_mode: TravelMode | None = None
     transport_minutes: int | None = None
+    travel_distance_miles: Optional[float] = None
 
 
 ResourcesList: TypeAlias = list[Resource]

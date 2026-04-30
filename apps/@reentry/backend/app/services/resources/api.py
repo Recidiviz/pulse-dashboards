@@ -82,12 +82,13 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
         address=result.address,
         website=result.website,
         email=result.email,
+        travel_distance_miles=result.travel_distance_miles,
         transport_minutes=result.travel_duration_minutes,
         transport_mode=result.travel_mode,
         rating=result.rating,
         ratingCount=result.rating_count,
         score=None,
-        resource_id=result.resource_id
+        resource_id=result.resource_id,
     )
     return resource
 
