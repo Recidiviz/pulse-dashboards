@@ -38,6 +38,8 @@ import {
   AI_DISCLOSURE_PRINT_TEXT,
   AIDisclosure,
   AIDisclosureType,
+  formatGuardrailDisplayNames,
+  isGuardrailType,
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
@@ -175,9 +177,11 @@ const IntakeManagementPage = () => {
     messageDiv.className = "mb-3";
     const isClient = message.from_role === "client";
     const senderLabel = isClient ? "Client" : "Chatbot";
+    const guardrailedBy = message.guardrailed_by;
+    const isGuardrailed = !!guardrailedBy && guardrailedBy.length > 0;
 
     const contentDiv = document.createElement("div");
-    contentDiv.className = "text-gray-900 pl-[20px]";
+    contentDiv.className = `pl-[20px] ${isGuardrailed ? "text-red-700" : "text-gray-900"}`;
 
     const senderSpan = document.createElement("span");
     senderSpan.className = "font-bold";
@@ -185,6 +189,13 @@ const IntakeManagementPage = () => {
 
     contentDiv.appendChild(senderSpan);
     contentDiv.appendChild(document.createTextNode(message.content ?? ""));
+
+    if (isGuardrailed) {
+      const flagSpan = document.createElement("span");
+      flagSpan.className = "ml-2 text-xs font-medium text-red-600";
+      flagSpan.textContent = `⚠️ Flagged: ${formatGuardrailDisplayNames(guardrailedBy.filter(isGuardrailType))}`;
+      contentDiv.appendChild(flagSpan);
+    }
 
     messageDiv.appendChild(contentDiv);
     return messageDiv;

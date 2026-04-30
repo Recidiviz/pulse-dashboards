@@ -26,7 +26,6 @@ from app.routes.client_router import ClientRecordResponse
 from app.routes.shared_models import (
     AddressSubmission,
     IntakeMessageResponse,
-    IntakeMessageRole,
     SurveySubmission,
 )
 from app.services.client_data.queries import Queries
@@ -51,6 +50,7 @@ class IntakeResponse(ORMResponse):
     has_address: bool = False
     has_survey: bool = False
     locked: bool = False
+    locked_at: datetime | None = None
 
 
 class IntakeWithSectionsResponse(IntakeResponse):

@@ -1315,8 +1315,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Unlock intake
-         * @description Unlocks a locked intake so the client can reconnect
+         * Unlock a locked intake
+         * @description Clears the locked flag on an intake so the client can reconnect
          */
         patch: operations["unlock_intake_intake_admin__intake_id__unlock_patch"];
         trace?: never;
@@ -3740,6 +3740,8 @@ export interface components {
              * @default false
              */
             locked: boolean;
+            /** Locked At */
+            locked_at?: string | null;
             /** Trigger Id */
             trigger_id?: string | null;
         };
@@ -3779,6 +3781,49 @@ export interface components {
          * @enum {string}
          */
         IntakeMessageRole: "client" | "caseworker" | "system";
+        /** IntakeResponse */
+        IntakeResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Client Pseudo Id */
+            client_pseudo_id: string;
+            /** Status */
+            status: string;
+            /** Token */
+            token?: string | null;
+            /** Internal Access */
+            internal_access?: boolean | null;
+            /** Completed At */
+            completed_at?: string | null;
+            address?: components["schemas"]["ClientAddressResponse"] | null;
+            intake_type: components["schemas"]["IntakeType"];
+            /** Has Address */
+            has_address?: boolean | null;
+            /** Has Survey */
+            has_survey?: boolean | null;
+            /**
+             * Locked
+             * @default false
+             */
+            locked: boolean;
+            /** Locked At */
+            locked_at?: string | null;
+            /** Locked Reason */
+            locked_reason?: string | null;
+        };
         /** IntakeSectionResponse */
         IntakeSectionResponse: {
             /** Title */
@@ -3848,6 +3893,8 @@ export interface components {
              * @default false
              */
             locked: boolean;
+            /** Locked At */
+            locked_at?: string | null;
             /** Intake Sections */
             intake_sections: components["schemas"]["IntakeSectionResponse"][];
             /** Current Section Messages */
@@ -3895,6 +3942,15 @@ export interface components {
             has_address?: boolean | null;
             /** Has Survey */
             has_survey?: boolean | null;
+            /**
+             * Locked
+             * @default false
+             */
+            locked: boolean;
+            /** Locked At */
+            locked_at?: string | null;
+            /** Locked Reason */
+            locked_reason?: string | null;
             /** Current Section */
             current_section?: string | null;
             /** Intake Sections */
@@ -8028,7 +8084,9 @@ export interface operations {
     };
     unlock_intake_intake_admin__intake_id__unlock_patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -8043,7 +8101,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["IntakeHistoryResponse"];
+                    "application/json": components["schemas"]["IntakeResponse"];
                 };
             };
             /** @description Validation Error */

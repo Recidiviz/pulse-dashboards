@@ -117,6 +117,12 @@ const SectionChatInterface = ({
     return true;
   });
 
+  useEffect(() => {
+    if (formattedMessages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [formattedMessages]);
+
   if (!isActive) return null;
 
   const renderContent = () => {

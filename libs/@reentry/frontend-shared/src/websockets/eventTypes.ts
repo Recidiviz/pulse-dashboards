@@ -77,6 +77,14 @@ export function isSoftStopGuardrail(
   return SOFT_STOP_GUARDRAIL_TYPES.some((t) => t === guardrail);
 }
 
+export function isGuardrailType(
+  s: string,
+): s is HardStopGuardrailType | SoftStopGuardrailType {
+  return [...HARD_STOP_GUARDRAIL_TYPES, ...SOFT_STOP_GUARDRAIL_TYPES].some(
+    (t) => t === s,
+  );
+}
+
 export interface GuardrailTriggeredContent {
   guardrails: GuardrailType[];
 }

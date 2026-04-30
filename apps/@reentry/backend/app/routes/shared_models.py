@@ -128,6 +128,7 @@ class IntakeHistoryResponse(ORMResponse):
     completed_at: datetime | None = None
     outputs_enabled: bool = True
     locked: bool = False
+    locked_at: datetime | None = None
     trigger_id: UUID | None = None
 
 

@@ -20,6 +20,11 @@ import type React from "react";
 
 import type { components } from "~@reentry/openapi-types";
 
+import { formatGuardrailDisplayNames } from "../../../configs/overrides/utils";
+import type {
+  HardStopGuardrailType,
+  SoftStopGuardrailType,
+} from "../../../websockets/eventTypes";
 import { CaseWorkerAvatar, ClientAvatar } from "./CustomAvatar";
 import { TTSButton } from "./TTSButton";
 interface MessageBubbleProps {
@@ -112,6 +117,8 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   const isUser = message?.from_role === "client";
   // Disable TTS button for staff members viewing chat history
   const showTTSButton = !disableTTS && !isTyping && message?.content;
+  const guardrailedBy = message?.guardrailed_by;
+  const isGuardrailed = !!guardrailedBy && guardrailedBy.length > 0;
 
   return (
     <div
@@ -125,14 +132,31 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
 
           <div className="relative inline-flex flex-col items-end">
-            <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-[#2B6C75] text-white break-words">
+            <div
+              className={`py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md break-words ${
+                isGuardrailed
+                  ? "bg-red-100 text-red-900 ring-1 ring-red-300"
+                  : "bg-[#2B6C75] text-white"
+              }`}
+            >
               <Typography
                 className={`break-words whitespace-pre-wrap ${smallText ? "!text-sm" : "md:!text-[18px] xs:!text-[16px]"}`}
               >
                 {isTyping ? <TypingDots /> : message?.content}
               </Typography>
             </div>
-            <UserBubbleTail />
+            {isGuardrailed && (
+              <span className="mt-1 text-xs text-red-600 font-medium">
+                ⚠️ Flagged:{" "}
+                {formatGuardrailDisplayNames(
+                  guardrailedBy as (
+                    | HardStopGuardrailType
+                    | SoftStopGuardrailType
+                  )[],
+                )}
+              </span>
+            )}
+            {!isGuardrailed && <UserBubbleTail />}
           </div>
 
           {/* Client Avatar - Right side for desktop */}

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Lock } from "lucide-react";
+import moment from "moment";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
 
@@ -236,7 +237,11 @@ export default function IntakeAssessment({
                     aria-hidden
                   />
                   <p className="text-sm text-amber-900">
-                    This assessment was locked by our safety system. Review the{" "}
+                    This assessment was locked by our safety system
+                    {intakeInfo.locked_at
+                      ? ` on ${moment.utc(intakeInfo.locked_at).local().format("MMMM D, YYYY [at] h:mm A")}`
+                      : ""}
+                    . Review the{" "}
                     <Link
                       href={`/intake/${intakeInfo.id}/chat-history`}
                       className="underline hover:no-underline"

@@ -45,11 +45,12 @@ const AdminIntakeHistory = ({
 
   useEffect(() => {
     if (intake?.intake_sections?.length && !activeSection) {
-      const activeSection = intake.intake_sections[0].title;
-      setActiveSection(activeSection);
+      const defaultSection =
+        intake.current_section ?? intake.intake_sections[0].title;
+      setActiveSection(defaultSection);
       trackClientIntakeChatHistoryViewed({
         justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
-        section: activeSection,
+        section: defaultSection,
       });
     }
   }, [intake, activeSection]);
