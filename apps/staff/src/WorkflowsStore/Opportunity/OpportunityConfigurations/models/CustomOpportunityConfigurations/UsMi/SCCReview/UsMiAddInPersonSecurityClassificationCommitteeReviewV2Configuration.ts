@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DenialInputSettings } from "../../../../../types";
 import { ApiOpportunityConfiguration } from "../../../ApiOpportunityConfigurationImpl";
 
 export class UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration extends ApiOpportunityConfiguration {
@@ -24,5 +25,16 @@ export class UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration
 
   get markSubmittedOnFormDownload() {
     return false;
+  }
+
+  get denialInputSettings(): Record<string, DenialInputSettings> {
+    return {
+      "START DATE INCORRECT": {
+        required: true,
+        inputType: "text",
+        placeholder: "Please specify the start date you expected to see",
+        heading: "Start Date:",
+      },
+    };
   }
 }
