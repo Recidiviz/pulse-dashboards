@@ -38,3 +38,16 @@ class BaseModel(SQLModel):
     )
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class SQLModelWithValidation(BaseModel):
+    def __init__(self, **data):
+        is_table = self.model_config["table"]
+        self.model_config["table"] = False
+        try:
+            super().__init__(**data)
+        finally:
+            # Always restore the original value.
+            # If validation raises during super().__init__, leaving this mutated will
+            # corrupt the class-level config and can make later tests/orderings fail.
+            self.model_config["table"] = is_table

@@ -4,16 +4,17 @@ from json import loads
 from typing import Dict, List, Optional
 from uuid import UUID
 
-from pydantic import computed_field
+import sqlalchemy as sa
+from html_sanitizer import Sanitizer
+from pydantic import computed_field, field_validator
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped
-import sqlalchemy as sa
 from sqlmodel import JSON, Column, Field, Relationship, SQLModel
 
 from app.models.intake import Intake
 
 from ..utils.config_loader import ConfigLoader
-from .base import BaseModel
+from .base import BaseModel, SQLModelWithValidation
 from .execution import Execution, ExecutionStatus
 from .plan_decision_tree import PlanDecisionTree
 
@@ -65,7 +66,7 @@ class Plan(BaseModel, table=True):
         back_populates="plan",
         cascade_delete=True,
     )
-    create_execution_id: Optional[UUID] = Field(
+    create_execution_id: Optional[UUID] | None = Field(
         foreign_key="execution.id", nullable=True
     )
     create_execution: Mapped[Optional[Execution]] = Relationship(
@@ -218,16 +219,48 @@ class PlanGenerationResourceAssociation(SQLModel, table=True):
     )
 
 
-class PlanGeneration(BaseModel, table=True):
+_MARKDOWN_ALLOWED_TAGS = {
+    "note",
+    "notes",
+    "resources",
+    "annotation",
+    "annotations",
+    "resourceBank",
+}
+
+_markdown_sanitizer = Sanitizer(
+    {
+        "tags": _MARKDOWN_ALLOWED_TAGS,
+        "attributes": {},
+        "keep_typographic_whitespace": True,
+        "empty": set(),
+        "separate": set(),
+    }
+)
+
+
+def sanitize_markdown(value: Optional[str]) -> Optional[str]:
+    """Strip all HTML except the allowed structural tags; remove JavaScript."""
+    if value is None:
+        return value
+    return _markdown_sanitizer.sanitize(value)
+
+
+class PlanGeneration(SQLModelWithValidation, table=True):
     plan_id: UUID = Field(foreign_key="plan.id", ondelete="CASCADE")
     plan: Mapped[Optional[Plan]] = Relationship(back_populates="generations")
+    markdown_result: Optional[str] = None
+
+    @field_validator("markdown_result", mode="before")
+    @classmethod
+    def sanitize_markdown_result(cls, v: Optional[str]) -> Optional[str]:
+        return sanitize_markdown(v)
 
     prompt: Optional[str] = None
     resource_to_remove_id: Optional[str] = None
     resource_to_add_content: Optional[Dict] = Field(
         sa_type=JSON, nullable=True, default=None
     )
-    markdown_result: Optional[str] = None
     finished_at: Optional[datetime] = None
     gen_type: str = Field(default=GenerationType.AUTOMATED)
     resources_associations_map: Optional[Dict] = Field(
@@ -236,10 +269,10 @@ class PlanGeneration(BaseModel, table=True):
 
     # Ordered ledger of ADD/REMOVE events for external resources tied to this generation.
     # Rows are never updated in place — each change appends a new event row.
-    resource_associations: Mapped[
-        list[PlanGenerationResourceAssociation]
-    ] = Relationship(
-        sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete-orphan"}
+    resource_associations: Mapped[list[PlanGenerationResourceAssociation]] = (
+        Relationship(
+            sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete-orphan"}
+        )
     )
 
     # actual internal generation data

