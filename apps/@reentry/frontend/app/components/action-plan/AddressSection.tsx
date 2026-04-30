@@ -34,7 +34,7 @@ interface AddressSectionProps {
     street_address: string | null;
     city: string;
     state: string;
-  }) => void;
+  }) => Promise<void>;
   getAccessToken: () => string | undefined | null;
   disabled?: boolean;
 }
@@ -51,19 +51,25 @@ const AddressSection = ({
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [displayAddress, setDisplayAddress] = useState(
     formatAddress(initialAddress),
   );
 
-  const handleSave = () => {
-    onSave({ street_address: addressInput || null, city, state });
-    setDisplayAddress(
-      [addressInput, city, state].filter(Boolean).join(", ") || null,
-    );
-    setIsEditing(false);
-    setAddressInput("");
-    setCity("");
-    setState("");
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave({ street_address: addressInput || null, city, state });
+      setDisplayAddress(
+        [addressInput, city, state].filter(Boolean).join(", ") || null,
+      );
+      setIsEditing(false);
+      setAddressInput("");
+      setCity("");
+      setState("");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -113,15 +119,17 @@ const AddressSection = ({
               <button
                 type="button"
                 onClick={handleCancel}
-                disabled={disabled}
+                disabled={disabled || isSaving}
                 className={styles["cancelButton"]}
               >
                 Cancel
               </button>
               <PrimaryButton
-                buttonText="Save"
+                buttonText={isSaving ? "Saving..." : "Save"}
                 onClick={handleSave}
-                disabled={disabled || !isFormValid || !city || !state}
+                disabled={
+                  disabled || isSaving || !isFormValid || !city || !state
+                }
                 className="!max-w-[150px]"
               />
             </div>

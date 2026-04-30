@@ -2339,9 +2339,9 @@ export interface paths {
         head?: never;
         /**
          * Update Client Home Address
-         * @description Update the client's home address in their plan. This is for admin use to update the address used for resource recommendations. It will trigger a new generation.
+         * @description Update the client's home address in their plan. No plan regeneration is triggered; resource distances are refreshed by the client re-fetching the resource bank.
          */
-        patch: operations["update_intake_address_and_regenerate_plan_plans__id__address_patch"];
+        patch: operations["update_intake_address_plans__id__address_patch"];
         trace?: never;
     };
     "/plan/{plan_id}/address": {
@@ -5264,6 +5264,11 @@ export interface components {
          * @enum {string}
          */
         TravelMode: "DRIVE" | "WALK" | "BICYCLE" | "TRANSIT";
+        /** UpdateAddressResponse */
+        UpdateAddressResponse: {
+            /** Updated */
+            updated: boolean;
+        };
         /** UpdateRecordingSessionStatusRequest */
         UpdateRecordingSessionStatusRequest: {
             status: components["schemas"]["RecordingStatus"];
@@ -10079,7 +10084,7 @@ export interface operations {
             };
         };
     };
-    update_intake_address_and_regenerate_plan_plans__id__address_patch: {
+    update_intake_address_plans__id__address_patch: {
         parameters: {
             query?: {
                 skip_impersonation?: boolean;
@@ -10102,7 +10107,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PlanGenerationResponseCreate"];
+                    "application/json": components["schemas"]["UpdateAddressResponse"];
                 };
             };
             /** @description Validation Error */

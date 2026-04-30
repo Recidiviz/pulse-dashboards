@@ -32,7 +32,7 @@ type Resource = components["schemas"]["Resource"];
 
 export const useResourceBank = (planGenerationId: string | undefined) => {
   const { getAccessToken } = useAuth();
-  const { data, isLoading, isError } = $api.useQuery(
+  const { data, isLoading, isError, refetch } = $api.useQuery(
     "get",
     "/plan-generation/{plan_gen_id}/active-resources",
     {
@@ -189,6 +189,7 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
     sections,
     addResource,
     removeResource,
+    refetch,
     isLoading,
     isError,
   };

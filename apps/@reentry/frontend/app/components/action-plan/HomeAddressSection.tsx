@@ -47,7 +47,6 @@ interface HomeAddressSectionProps {
 const HomeAddressSection = ({
   planId,
   onAddressUpdate,
-  startPolling,
   isPolling = false,
   clientRecord,
 }: HomeAddressSectionProps) => {
@@ -105,7 +104,7 @@ const HomeAddressSection = ({
 
     setIsLoading(true);
     try {
-      const response = await updateAddressMutation({
+      await updateAddressMutation({
         params: { path: { id: planId } },
         body: {
           street_address: addressInput || null,
@@ -127,10 +126,6 @@ const HomeAddressSection = ({
 
       if (onAddressUpdate) {
         onAddressUpdate();
-      }
-
-      if (response.execution_id && startPolling) {
-        startPolling(response.execution_id);
       }
     } catch {
       showErrorToast("Failed to update address");

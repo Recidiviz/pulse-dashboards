@@ -19,7 +19,7 @@ from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
-from app.crud.address import update_intake_address
+from app.crud.address import update_intake_address as update_intake_address_crud
 from app.crud.intake import get_intake_by_id
 from app.crud.plan import (
     create_plan,
@@ -992,6 +992,10 @@ class RemoveResourceResponse(BaseModel):
     action_at: datetime
 
 
+class UpdateAddressResponse(BaseModel):
+    updated: bool
+
+
 @router.post(
     "/remove-resource",
     response_model=RemoveResourceResponse,
@@ -1218,25 +1222,21 @@ async def generate_pdf(
 
 @router.patch(
     "/plans/{id}/address",
-    response_model=PlanGenerationResponseCreate,
+    response_model=UpdateAddressResponse,
     summary="Update Client Home Address",
     description=(
-        "Update the client's home address in their plan. This is for admin use "
-        "to update the address used for resource recommendations. It will trigger a new generation."
+        "Update the client's home address in their plan. "
+        "No plan regeneration is triggered; resource distances are refreshed "
+        "by the client re-fetching the resource bank."
     ),
 )
-async def update_intake_address_and_regenerate_plan(
+async def update_intake_address(
     id: uuid.UUID,
     address_data: AddressSubmission,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
     auth_user_context=Depends(get_auth_user_context),
 ):
-    """
-    This function updates the client address, which is accessed through the
-    client's intake.
-    It then generates a new plan based on the updated address.
-    """
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
@@ -1252,17 +1252,10 @@ async def update_intake_address_and_regenerate_plan(
             status_code=404, detail="Could not identify client from plan."
         )
 
-    await update_intake_address(
+    await update_intake_address_crud(
         session, intake_id=plan.intake_id, address_data=address_data
     )
-    llm_regenerations_total_counter.inc()
-    plan_gen = PlanGeneration(
-        plan_id=id,
-        force_generation=True,
-    )
-    gen = await create_plan_generation(session, plan_gen)
-    await gen.schedule_execution(session)
-    return gen
+    return UpdateAddressResponse(updated=True)
 
 
 @router.get(

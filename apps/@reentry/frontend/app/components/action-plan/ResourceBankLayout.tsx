@@ -19,14 +19,18 @@
 
 import { useState } from "react";
 
+import { $api } from "~@reentry/frontend/api";
 import PlanContent from "~@reentry/frontend/components/action-plan/PlanContent";
 import PlanEdit from "~@reentry/frontend/components/action-plan/PlanEdit";
 import ResourceBankSidePanel from "~@reentry/frontend/components/action-plan/ResourceBankSidePanel";
 import { usePlanMarkdown } from "~@reentry/frontend/hooks/usePlanMarkdown";
 import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { showErrorToast } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 import RemoveResourceDialog from "./RemoveResourceDialog";
+import { CATEGORY_SUBCATEGORY_MAP } from "./resource-bank/categorySubcategoryMap";
 import styles from "./styles/ResourceBankLayout.module.css";
 
 interface ResourceBankLayoutProps {
@@ -35,13 +39,39 @@ interface ResourceBankLayoutProps {
 type PendingRemoval = { id: string; name: string; sectionTitle: string };
 
 const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
+  const { getAccessToken } = useAuth();
+
   const {
     sections,
     addResource,
     removeResource,
+    refetch: refetchResourceBank,
     isLoading: isResourceBankLoading,
     isError: didResourceBankError,
   } = useResourceBank(planDetail.latest_generation?.id ?? undefined);
+
+  const { mutateAsync: updateAddress } = $api.useMutation(
+    "patch",
+    "/plans/{id}/address",
+  );
+
+  const { data: addressData } = $api.useQuery(
+    "get",
+    "/plan/{plan_id}/address",
+    {
+      params: { path: { plan_id: planDetail.id ?? "" } },
+      headers: { Authorization: `Bearer ${getAccessToken()}` },
+    },
+    { enabled: Boolean(planDetail.id) },
+  );
+
+  const clientAddress = [
+    addressData?.street_address,
+    addressData?.city,
+    addressData?.state,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   const {
     displayMarkdown,
@@ -61,16 +91,43 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
     null,
   );
 
+  const handleAddressSave = async (address: {
+    street_address: string | null;
+    city: string;
+    state: string;
+  }) => {
+    try {
+      await updateAddress({
+        params: { path: { id: planDetail.id ?? "" } },
+        body: address,
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+      refetchResourceBank();
+    } catch {
+      showErrorToast("Failed to update address. Please try again.");
+      throw new Error("Address update failed");
+    }
+  };
+
+  const resourceSearchPanelProps = {
+    addResource,
+    categorySubcategoryMap: CATEGORY_SUBCATEGORY_MAP,
+    clientAddress,
+    sectionTitles: sections.map((item) => ({ title: item.title })),
+  };
+
   const clientFirstName =
     planDetail.client_record?.full_name?.given_names ?? "the client";
   return (
     <div className={styles["container"]}>
       <div className={styles["sidebar"]}>
         <ResourceBankSidePanel
-          planId={planDetail?.id}
-          clientRecord={planDetail?.client_record ?? null}
-          addResource={addResource}
-          sectionTitles={sections.map((item) => ({ title: item.title }))}
+          clientRecord={planDetail.client_record}
+          onAddressSave={handleAddressSave}
+          searchPanelProps={resourceSearchPanelProps}
         />
       </div>
       <div className={styles["content"]}>
