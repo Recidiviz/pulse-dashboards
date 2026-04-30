@@ -32,6 +32,7 @@ import { ChatHeader } from "./ChatInterface/ChatHeader";
 import ConversationLayout from "./ChatInterface/ConversationLayout";
 import IntakeCompleted from "./IntakeCompleted";
 import IntakeSurvey from "./IntakeSurvey";
+import { LockedInterstitial } from "./LockedInterstitial";
 import {
   PreIntakeNoteOne,
   PreIntakeNoteTwo,
@@ -48,6 +49,7 @@ export function IntakeRouter() {
     has_address,
     has_survey,
     intakeId,
+    isLocked,
   } = intakeContext;
   const { startConversation } = intakeDispatchContext;
   const tenantConfig = getIntakeTenantConfig(intakeContext.client_state);
@@ -137,6 +139,7 @@ export function IntakeRouter() {
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-slate-50">
+      {isLocked && <LockedInterstitial />}
       {shouldRenderHeader && (
         <div className="relative max-w-full overflow-x-hidden flex-shrink-0">
           <ChatHeader />
@@ -206,7 +209,7 @@ export function IntakeRouter() {
             </>
           ))}
 
-        {isConversationInProgress && <ConversationLayout />}
+        {isConversationInProgress && !isLocked && <ConversationLayout />}
       </div>
     </div>
   );

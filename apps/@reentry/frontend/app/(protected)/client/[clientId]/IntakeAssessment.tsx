@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Lock } from "lucide-react";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
 
@@ -128,6 +129,25 @@ export default function IntakeAssessment({
       },
     });
 
+  const { mutateAsync: unlockIntakeMutation, isPending: isUnlockingIntake } =
+    $api.useMutation("patch", "/intake/admin/{intake_id}/unlock", {
+      onSuccess: () => {
+        refetchIntakeData();
+      },
+    });
+
+  const handleUnlockIntake = async () => {
+    if (!intakeInfo?.id) return;
+    try {
+      await unlockIntakeMutation({
+        params: { path: { intake_id: intakeInfo.id } },
+      });
+      showSuccessToast("Assessment unlocked successfully");
+    } catch {
+      showErrorToast("Failed to unlock assessment");
+    }
+  };
+
   const handleToggleOutputs = async () => {
     if (!intakeInfo?.id) return;
 
@@ -207,6 +227,35 @@ export default function IntakeAssessment({
           isValidTranscription && <RetryProcessing intakeId={intakeInfo?.id} />}
         {intakeInfo && (
           <div className="flex flex-col justify-center gap-2">
+            {intakeInfo.locked && (
+              <div className="flex flex-col md:flex-row md:items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                <div className="flex items-start gap-2 flex-1">
+                  <Lock
+                    size={16}
+                    className="text-amber-700 mt-0.5 shrink-0"
+                    aria-hidden
+                  />
+                  <p className="text-sm text-amber-900">
+                    This assessment was locked by our safety system. Review the{" "}
+                    <Link
+                      href={`/intake/${intakeInfo.id}/chat-history`}
+                      className="underline hover:no-underline"
+                    >
+                      recent conversation
+                    </Link>{" "}
+                    before unlocking.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleUnlockIntake}
+                  disabled={isUnlockingIntake}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition-colors text-sm font-medium whitespace-nowrap disabled:opacity-50 shrink-0"
+                >
+                  {isUnlockingIntake ? "Unlocking..." : "Unlock Assessment"}
+                </button>
+              </div>
+            )}
             <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:items-center">
               <div className="flex items-center gap-2 md:gap-4">
                 <span className="font-medium text-[24px] leading-[1] text-black">

@@ -103,6 +103,7 @@ export interface IntakeSocketContextType {
   disconnectReason?: string | null;
   guardrailHardStopReason?: HardStopGuardrailType | null;
   guardrailSoftStopReason?: SoftStopGuardrailType | null;
+  isLocked?: boolean;
   intakeId?: string | null;
   sessionExpiring?: boolean;
 }
@@ -113,6 +114,7 @@ interface IntakeSocketDispatchContextType {
   handleClickDisconnect: () => void;
   startConversation: () => void;
   setIntakeComplete: () => void;
+  lockIntake: () => void;
 }
 
 const IntakeContext: Context<IntakeSocketContextType> = createContext(
@@ -227,7 +229,8 @@ type IntakeAction =
   | SetStatusAction
   | SetSessionExpiringAction
   | ResetSessionExpiringAction
-  | GuardrailSoftStopAction;
+  | GuardrailSoftStopAction
+  | { type: "intakeLocked" };
 
 const intakeReducer = (
   state: IntakeSocketContextType,
@@ -294,6 +297,9 @@ const intakeReducer = (
         waitingForAIInput: false,
       };
     }
+    case "intakeLocked": {
+      return { ...state, isLocked: true };
+    }
     case "setStatus": {
       if (state.intakeStatus === action.content) return state;
       return {
@@ -312,6 +318,7 @@ const intakeReducer = (
         allSections: action.content.intake_sections,
         currentSection: action.content.current_section || null,
         intakeStatus: action.content.status,
+        client_state: action.content.client_state || null,
         client_name: action.content.client_name || null,
         clientPseudoId: action.content.client_pseudo_id || null,
         has_accepted_terms: action.content.has_accepted_terms || false,
@@ -492,6 +499,7 @@ export function IntakeSocketProvider({
     disconnectReason: null,
     guardrailHardStopReason: null,
     guardrailSoftStopReason: null,
+    isLocked: false,
   };
 
   const { socket, $api } = useApplicationContext();
@@ -620,7 +628,12 @@ export function IntakeSocketProvider({
               authTokenPresent: !!(auth && auth["auth_token"]),
               urlTokenPresent: !!(auth && auth["token_from_url"]),
             });
-            dispatch({ type: "disconnect" });
+            if (content.locked) {
+              dispatch({ type: "intakeLocked" });
+              socket.disconnect();
+            } else {
+              dispatch({ type: "disconnect" });
+            }
           }
         } else {
           console.error("Unexpected connectionAck format:", content);
@@ -817,11 +830,24 @@ export function IntakeSocketProvider({
   }, [apiError, apiErrorToken, socket, storedToken, logOut]);
 
   // Process intake data when it changes
+  const isLocked = intakeContext.isLocked;
+
   useEffect(() => {
     // Don't process if there's an API error or no data
     const actualIntakeData = intakeData ? intakeData : intakeDataToken;
-    if (apiErrorToken || apiError || !actualIntakeData || socket.connected)
+    if (
+      isLocked ||
+      apiErrorToken ||
+      apiError ||
+      !actualIntakeData ||
+      socket.connected
+    )
       return;
+
+    if (actualIntakeData.locked) {
+      dispatch({ type: "intakeLocked" });
+      return;
+    }
 
     const canConnect =
       actualIntakeData.status === "in_progress" ||
@@ -861,6 +887,7 @@ export function IntakeSocketProvider({
       socket.connect();
     }
   }, [
+    isLocked,
     storedToken,
     intakeData,
     intakeDataToken,
@@ -875,6 +902,11 @@ export function IntakeSocketProvider({
     const actualIntakeData = intakeData ? intakeData : intakeDataToken;
 
     if (!actualIntakeData || apiError || apiErrorToken) return;
+
+    if (actualIntakeData.locked) {
+      dispatch({ type: "intakeLocked" });
+      return;
+    }
 
     if (!conversationStarted) {
       dispatch({
@@ -1043,12 +1075,15 @@ export function IntakeSocketProvider({
     logOut();
   };
 
+  const lockIntake = () => dispatch({ type: "intakeLocked" });
+
   const dispatchContext: IntakeSocketDispatchContextType = {
     sendMessage,
     reconnect,
     handleClickDisconnect,
     startConversation,
     setIntakeComplete,
+    lockIntake,
   };
 
   /**

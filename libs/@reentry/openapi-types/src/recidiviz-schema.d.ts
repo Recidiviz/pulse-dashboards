@@ -1301,6 +1301,26 @@ export interface paths {
         patch: operations["set_outputs_enabled_intake_admin__intake_id__outputs_enabled_patch"];
         trace?: never;
     };
+    "/intake/admin/{intake_id}/unlock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Unlock intake
+         * @description Unlocks a locked intake so the client can reconnect
+         */
+        patch: operations["unlock_intake_intake_admin__intake_id__unlock_patch"];
+        trace?: never;
+    };
     "/intake/admin/{intake_id}/token-access": {
         parameters: {
             query?: never;
@@ -3715,6 +3735,11 @@ export interface components {
              * @default true
              */
             outputs_enabled: boolean;
+            /**
+             * Locked
+             * @default false
+             */
+            locked: boolean;
             /** Trigger Id */
             trigger_id?: string | null;
         };
@@ -3818,6 +3843,11 @@ export interface components {
              * @default false
              */
             has_survey: boolean;
+            /**
+             * Locked
+             * @default false
+             */
+            locked: boolean;
             /** Intake Sections */
             intake_sections: components["schemas"]["IntakeSectionResponse"][];
             /** Current Section Messages */
@@ -7975,6 +8005,37 @@ export interface operations {
                 "application/json": components["schemas"]["OutputsEnabledUpdate"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeHistoryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unlock_intake_intake_admin__intake_id__unlock_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
