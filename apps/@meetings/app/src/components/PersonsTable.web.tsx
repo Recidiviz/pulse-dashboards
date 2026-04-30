@@ -166,7 +166,8 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                           !person.meetingDetails.validationErrorType && (
                             <View className="flex flex-col">
                               <Typography className="text-base font-medium text-secondary">
-                                {upperFirst(person.lastMeeting)} by
+                                {upperFirst(person.lastMeeting)}
+                                {person.meetingDetails.staffEmail && " by"}
                               </Typography>
                               <TooltipText triggerTextClassName="text-base font-medium text-secondary">
                                 {person.meetingDetails.staffEmail}
