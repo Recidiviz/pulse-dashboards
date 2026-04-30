@@ -19,6 +19,8 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
+import { isDemoMode } from "~client-env-utils";
+
 import {
   Opportunity,
   UsTnInitialClassificationOpportunity,
@@ -47,7 +49,7 @@ const WorkflowsUsTnReclassForm = ({
   const formRef = React.useRef<HTMLDivElement>(null);
   const form = opportunity.form as UsTnReclassificationReviewForm;
   const resident = opportunity.person;
-  const [showCafScoresModal, setShowCafScoresModal] = useState(true);
+  const [showCafScoresModal, setShowCafScoresModal] = useState(!isDemoMode());
   if (!(resident instanceof Resident)) {
     return <div />;
   }

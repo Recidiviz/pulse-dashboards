@@ -310,6 +310,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
+        // TODO(recidiviz-data/#75828): Remove once we support 2026 versions in demo mode
+        usTn2026ClassificationPolicyPilot: isDemoMode() ? undefined : {},
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
         operationsNumeratorDenominatorIsEnabled: { activeTenants: ["US_TX"] },

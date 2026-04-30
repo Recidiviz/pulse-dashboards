@@ -17,6 +17,8 @@
 
 import React, { useState } from "react";
 
+import { isDemoMode } from "~client-env-utils";
+
 import { DialogModal, DialogView, ModalText } from "../../../DialogModal";
 
 function joinNumbers(numbers: number[]): string {
@@ -40,7 +42,7 @@ export function CafScoreSourceModal({
   latestRecordQs: number[];
   jobHistoryQs?: number[];
 }) {
-  const [showCafScoresModal, setShowCafScoresModal] = useState(true);
+  const [showCafScoresModal, setShowCafScoresModal] = useState(!isDemoMode());
 
   return (
     <DialogModal isOpen={showCafScoresModal}>
