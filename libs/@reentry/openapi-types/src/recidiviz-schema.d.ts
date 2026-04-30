@@ -872,6 +872,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/config-management/outputs/{config_id}/eval/intake-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Eval Intake Options
+         * @description Returns named intake groups from config and template intakes from the AI Test Harness.
+         */
+        get: operations["get_eval_intake_options_config_management_outputs__config_id__eval_intake_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/config-management/outputs/{config_id}/eval": {
         parameters: {
             query?: never;
@@ -887,9 +907,33 @@ export interface paths {
         put?: never;
         /**
          * Trigger Output Config Eval
-         * @description Generate a summary with this config against a hardcoded intake and run LLM-as-judge evaluations. Only supported for intake_summary configs.
+         * @description Generate a summary with this config against selected intakes and run LLM-as-judge evaluations. Only supported for intake_summary configs.
          */
         post: operations["trigger_summary_output_config_eval_config_management_outputs__config_id__eval_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/{config_id}/action-plan-eval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Action Plan Output Config Eval Results
+         * @description Retrieve the most recent action plan eval results for an output config.
+         */
+        get: operations["get_action_plan_output_config_eval_results_config_management_outputs__config_id__action_plan_eval_get"];
+        put?: never;
+        /**
+         * Trigger Action Plan Output Config Eval
+         * @description Generate an ephemeral action plan with this config against predefined intakes and run LLM-as-judge evaluations. Only supported for action_plan configs.
+         */
+        post: operations["trigger_action_plan_output_config_eval_config_management_outputs__config_id__action_plan_eval_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1626,7 +1670,12 @@ export interface paths {
         /**
          * Impersonate User
          * @description Fetch metadata for a target user to enable impersonation.
-         *     Only accessible to internal (Recidiviz) users.
+         *
+         *     Authorization is enforced by check_impersonation_authorized(), which checks:
+         *     master switch, email allowlist, internal domain, and self-impersonation.
+         *
+         *     This endpoint is used by the frontend to fetch target user metadata
+         *     before setting the X-Impersonated-Email header on subsequent requests.
          */
         get: operations["impersonate_user_impersonate_impersonate_get"];
         put?: never;
@@ -2355,6 +2404,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/plan-generation/{plan_gen_id}/active-resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active resources for the given plan generation
+         * @description Get all information on active resource information for a given plan generation
+         */
+        get: operations["get_active_resources_plan_generation__plan_gen_id__active_resources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/plans/{id}/decisiontrees": {
         parameters: {
             query?: never;
@@ -2621,6 +2690,11 @@ export interface components {
             /** Message */
             message: string;
         };
+        /** ActiveResourcesResponse */
+        ActiveResourcesResponse: {
+            /** Resources By Sections */
+            resources_by_sections: components["schemas"]["ResourceSectionResponse"][];
+        };
         /** AddClientRequest */
         AddClientRequest: {
             /** Given Names */
@@ -2659,41 +2733,6 @@ export interface components {
         };
         /** AddResourceResponse */
         AddResourceResponse: {
-            /** Id */
-            id: number;
-            /**
-             * Plan Generation Id
-             * Format: uuid
-             */
-            plan_generation_id: string;
-            /** Resource Id */
-            resource_id: number;
-            /** Section Title */
-            section_title: string;
-            /** Action */
-            action: string;
-            /** Action By */
-            action_by: string;
-            /**
-             * Action At
-             * Format: date-time
-             */
-            action_at: string;
-        };
-        /** RemoveResourceRequest */
-        RemoveResourceRequest: {
-            /** Resource Id */
-            resource_id: number;
-            /** Section Title */
-            section_title: string;
-            /**
-             * Plan Generation Id
-             * Format: uuid
-             */
-            plan_generation_id: string;
-        };
-        /** RemoveResourceResponse */
-        RemoveResourceResponse: {
             /** Id */
             id: number;
             /**
@@ -3393,6 +3432,20 @@ export interface components {
             /** Message */
             message?: string | null;
         };
+        /** EvalIntakeGroup */
+        EvalIntakeGroup: {
+            /** Name */
+            name: string;
+            /** Intake Ids */
+            intake_ids: string[];
+        };
+        /** EvalIntakeOptions */
+        EvalIntakeOptions: {
+            /** Groups */
+            groups: components["schemas"]["EvalIntakeGroup"][];
+            /** Templates */
+            templates: components["schemas"]["EvalTemplateIntake"][];
+        };
         /**
          * EvalResultResponse
          * @description Response schema for a single eval result.
@@ -3425,6 +3478,25 @@ export interface components {
             /** Ran At */
             ran_at?: string | null;
             execution?: components["schemas"]["EvalExecutionSummary"] | null;
+        };
+        /** EvalTemplateIntake */
+        EvalTemplateIntake: {
+            /** Trigger Id */
+            trigger_id: string;
+            /** Intake Id */
+            intake_id: string;
+            /** Label */
+            label: string;
+            /** Persona Name */
+            persona_name?: string | null;
+        };
+        /** EvalTriggerRequest */
+        EvalTriggerRequest: {
+            /**
+             * Intake Ids
+             * @default []
+             */
+            intake_ids: string[];
         };
         /**
          * EvalTriggerResponse
@@ -4737,13 +4809,53 @@ export interface components {
             /** Pseudonymized Client Id */
             pseudonymized_client_id: string;
         };
+        /** RemoveResourceRequest */
+        RemoveResourceRequest: {
+            /** Resource Id */
+            resource_id: number;
+            /** Section Title */
+            section_title: string;
+            /**
+             * Plan Generation Id
+             * Format: uuid
+             */
+            plan_generation_id: string;
+        };
+        /** RemoveResourceResponse */
+        RemoveResourceResponse: {
+            /** Id */
+            id: number;
+            /**
+             * Plan Generation Id
+             * Format: uuid
+             */
+            plan_generation_id: string;
+            /** Resource Id */
+            resource_id: number;
+            /** Section Title */
+            section_title: string;
+            /** Action */
+            action: string;
+            /** Action By */
+            action_by: string;
+            /**
+             * Action At
+             * Format: date-time
+             */
+            action_at: string;
+        };
         /** Resource */
         Resource: {
             /**
              * Id
-             * @description Unique identifier for the resource.
+             * @description Unique identifier for the resource, currently the Google Place ID.
              */
             id: string;
+            /**
+             * Resource Id
+             * @description The ID of the resource in the Resources API
+             */
+            resource_id?: number | null;
             /**
              * Category
              * @description Category of the resource.
@@ -4805,6 +4917,8 @@ export interface components {
             transport_mode?: components["schemas"]["TravelMode"] | null;
             /** Transport Minutes */
             transport_minutes?: number | null;
+            /** Travel Distance Miles */
+            travel_distance_miles?: number | null;
         };
         /**
          * ResourceCategory
@@ -4843,6 +4957,13 @@ export interface components {
          * @enum {string}
          */
         ResourceFailureReason: "api_error" | "no_results_found" | "success";
+        /** ResourceSectionResponse */
+        ResourceSectionResponse: {
+            /** Title */
+            title: string;
+            /** Resources */
+            resources: components["schemas"]["Resource"][];
+        };
         /**
          * ResourceSubcategory
          * @enum {string}
@@ -4962,6 +5083,12 @@ export interface components {
             /** Expires In Seconds */
             expires_in_seconds: number;
         };
+        /**
+         * SortOrder
+         * @description Valid sort order values.
+         * @enum {string}
+         */
+        SortOrder: "asc" | "desc";
         /** SpeakerStats */
         SpeakerStats: {
             /** Turns */
@@ -7249,6 +7376,41 @@ export interface operations {
             };
         };
     };
+    get_eval_intake_options_config_management_outputs__config_id__eval_intake_options_get: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalIntakeOptions"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_output_config_eval_results_config_management_outputs__config_id__eval_get: {
         parameters: {
             query?: {
@@ -7285,6 +7447,80 @@ export interface operations {
         };
     };
     trigger_summary_output_config_eval_config_management_outputs__config_id__eval_post: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["EvalTriggerRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalTriggerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_action_plan_output_config_eval_results_config_management_outputs__config_id__action_plan_eval_get: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalResultResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trigger_action_plan_output_config_eval_config_management_outputs__config_id__action_plan_eval_post: {
         parameters: {
             query?: {
                 skip_impersonation?: boolean;
@@ -7537,7 +7773,7 @@ export interface operations {
                 /** @description Page size */
                 size?: number;
                 sort_by?: components["schemas"]["ClientSort"] | null;
-                sort_order?: string;
+                sort_order?: components["schemas"]["SortOrder"];
                 search?: string | null;
                 status_filter?: string | null;
                 skip_impersonation?: boolean;
@@ -7707,7 +7943,9 @@ export interface operations {
             query?: {
                 skip_impersonation?: boolean;
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -7742,7 +7980,9 @@ export interface operations {
             query?: {
                 skip_impersonation?: boolean;
             };
-            header?: never;
+            header?: {
+                "x-config-access-token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -9962,6 +10202,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AutocompleteCityResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_active_resources_plan_generation__plan_gen_id__active_resources_get: {
+        parameters: {
+            query?: {
+                travel_mode?: components["schemas"]["TravelMode"] | null;
+                skip_impersonation?: boolean;
+            };
+            header?: never;
+            path: {
+                plan_gen_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActiveResourcesResponse"];
                 };
             };
             /** @description Validation Error */

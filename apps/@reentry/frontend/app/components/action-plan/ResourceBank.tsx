@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
+import type { components } from "~@reentry/openapi-types";
 
 import ResourceBankEmptyState from "./ResourceBankEmptyState";
 import ResourceBankErrorState from "./ResourceBankErrorState";
@@ -23,9 +23,11 @@ import { ResourceBankTilesSkeleton } from "./ResourceBankSkeleton";
 import ResourceBankTile from "./ResourceBankTile";
 import styles from "./styles/ResourceBank.module.css";
 
+type Resource = components["schemas"]["Resource"];
+
 type ResourceBankProps = {
-  section: string;
-  allResources: { title: string; resources: ResourceWithMeta[] }[];
+  sectionTitle: string;
+  allResources: { title: string; resources: Resource[] }[];
   clientFirstName: string;
   onRemove: (id: string, name: string, sectionTitle: string) => void;
   isLoadingResources?: boolean;
@@ -33,18 +35,21 @@ type ResourceBankProps = {
 };
 
 const ResourceBank = ({
-  section,
+  sectionTitle,
   allResources,
   clientFirstName,
   onRemove,
   isLoadingResources,
   isErrorResources,
 }: ResourceBankProps) => {
-  const resources = allResources.find((ra) => ra.title === section)?.resources;
+  const resources = allResources.find(
+    (ra) => ra.title === sectionTitle,
+  )?.resources;
+
   return (
     <div className={styles["section"]}>
       <div className={styles["sectionTitle"]}>
-        {section} resources
+        {sectionTitle} resources
         <span className={styles["printHidden"]}> to explore</span>
       </div>
       <div className={styles["tileList"]}>
@@ -60,7 +65,7 @@ const ResourceBank = ({
               key={resource.id}
               resource={resource}
               clientFirstName={clientFirstName}
-              onRemove={(id, name) => onRemove(id, name, section)}
+              onRemove={(id, name) => onRemove(id, name, sectionTitle)}
             />
           ))}
       </div>

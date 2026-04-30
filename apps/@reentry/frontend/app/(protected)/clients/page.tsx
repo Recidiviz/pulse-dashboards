@@ -98,7 +98,7 @@ const ClientsPage = () => {
 
   const [sortConfig, setSortConfig] = useState<{
     sortBy: components["schemas"]["ClientSort"];
-    sortOrder: string;
+    sortOrder: components["schemas"]["SortOrder"];
   } | null>(null);
 
   const { sortBy, sortOrder } = sortConfig ?? {};
@@ -191,11 +191,11 @@ const ClientsPage = () => {
 
     const apiSortBy = columnMapping[column.id as string];
     if (apiSortBy) {
-      let newSortOrder = "asc";
+      let newSortOrder: components["schemas"]["SortOrder"] = "asc";
       if (apiSortBy === sortBy) {
         newSortOrder = sortOrder === "asc" ? "desc" : "asc";
       }
-      setSortConfig({ sortBy: apiSortBy, sortOrder: newSortOrder ?? "asc" });
+      setSortConfig({ sortBy: apiSortBy, sortOrder: newSortOrder });
     }
   };
 

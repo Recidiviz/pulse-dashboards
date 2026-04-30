@@ -303,7 +303,7 @@ const ActionPlanPage = () => {
     return (
       <>
         <PageView />
-        <ResourceBankLayout planId={planId} />
+        <ResourceBankLayout planDetail={dataDetailPlan} />
       </>
     );
   }

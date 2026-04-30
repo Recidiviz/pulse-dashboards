@@ -18,19 +18,17 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type {
-  ResourceBankResponse,
-  ResourceWithMeta,
-} from "~@reentry/frontend/hooks/resourceBank.types";
-import { useMockRessourceAPICall } from "~@reentry/frontend/hooks/useMockRessourceAPICall";
 import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
 import {
   showErrorToast,
   showInfoToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
+import type { components } from "~@reentry/openapi-types";
 
 import { mockResourceBank } from "../mocks/mockResourceBank";
+
+type Resource = components["schemas"]["Resource"];
 
 vi.mock("~@reentry/frontend-shared", () => ({
   showInfoToast: vi.fn(),
@@ -38,17 +36,21 @@ vi.mock("~@reentry/frontend-shared", () => ({
   showErrorToast: vi.fn(),
 }));
 
-vi.mock("../../app/hooks/useMockRessourceAPICall");
+vi.mock("~@reentry/frontend/lib/auth/authContext", () => ({
+  useAuth: () => ({ getAccessToken: () => "mock-token" }),
+}));
 
+const mockUseQuery = vi.hoisted(() => vi.fn());
 const mockMutateAsync = vi.hoisted(() => vi.fn().mockResolvedValue({}));
 vi.mock("../../app/api", () => ({
   $api: {
+    useQuery: mockUseQuery,
     useMutation: () => ({ mutateAsync: mockMutateAsync }),
   },
 }));
 
-const makeResource = (id: string, name: string): ResourceWithMeta =>
-  ({ id, name, origin: "GOOGLE" }) as ResourceWithMeta;
+const makeResource = (id: string, name: string): Resource =>
+  ({ id, name, category: "Housing", resource_id: 999 }) as Resource;
 
 const HOUSING_SECTION = "Housing Stability";
 const housingSection = mockResourceBank.resources_by_sections.find(
@@ -64,7 +66,7 @@ const getSectionResources = (
 ) => result.current.sections.find((s) => s.title === title)?.resources;
 
 beforeEach(() => {
-  vi.mocked(useMockRessourceAPICall).mockReturnValue({
+  mockUseQuery.mockReturnValue({
     data: mockResourceBank,
     isLoading: false,
     isError: false,
@@ -85,8 +87,8 @@ describe("useResourceBank", () => {
       );
     });
 
-    it("reflects isLoading and isError from useMockRessourceAPICall", () => {
-      vi.mocked(useMockRessourceAPICall).mockReturnValue({
+    it("reflects isLoading and isError from the API query", () => {
+      mockUseQuery.mockReturnValue({
         data: null,
         isLoading: true,
         isError: false,
@@ -117,7 +119,7 @@ describe("useResourceBank", () => {
       act(() => {
         result.current.addResource(
           HOUSING_SECTION,
-          housingResources[0] as ResourceWithMeta,
+          housingResources[0] as Resource,
         );
       });
 
@@ -134,12 +136,12 @@ describe("useResourceBank", () => {
       const fullResources = Array.from({ length: 20 }, (_, i) =>
         makeResource(`full-${i}`, `Resource ${i}`),
       );
-      vi.mocked(useMockRessourceAPICall).mockReturnValue({
+      mockUseQuery.mockReturnValue({
         data: {
           resources_by_sections: [
             { title: HOUSING_SECTION, resources: fullResources },
           ],
-        } as ResourceBankResponse,
+        },
         isLoading: false,
         isError: false,
       });

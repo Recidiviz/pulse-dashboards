@@ -58,7 +58,7 @@ const SearchResults = ({
             <span className={styles["categoryBadge"]}>
               {resource.subcategory}
             </span>
-            {resource.travel_distance_miles !== undefined && (
+            {resource.travel_distance_miles && (
               <span className={styles["distance"]}>
                 {resource.travel_distance_miles.toFixed(1)} mi
               </span>

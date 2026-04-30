@@ -20,62 +20,29 @@
 import { useState } from "react";
 
 import PlanContent from "~@reentry/frontend/components/action-plan/PlanContent";
-import {
-  PlanContentSkeleton,
-  PlanErrorContent,
-  SidePanelSkeleton,
-} from "~@reentry/frontend/components/action-plan/PlanContentSkeleton";
 import PlanEdit from "~@reentry/frontend/components/action-plan/PlanEdit";
 import ResourceBankSidePanel from "~@reentry/frontend/components/action-plan/ResourceBankSidePanel";
-import { useMockResourceBankPlan } from "~@reentry/frontend/hooks/useMockRessourceAPICall";
 import { usePlanMarkdown } from "~@reentry/frontend/hooks/usePlanMarkdown";
 import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
+import type { components } from "~@reentry/openapi-types";
 
 import RemoveResourceDialog from "./RemoveResourceDialog";
 import { CATEGORY_SUBCATEGORY_MAP } from "./resource-bank/categorySubcategoryMap";
 import styles from "./styles/ResourceBankLayout.module.css";
 
-const LoadingState = () => (
-  <div className={styles["container"]}>
-    <div className={styles["sidebar"]}>
-      <SidePanelSkeleton />
-    </div>
-    <div className={styles["content"]}>
-      <PlanContentSkeleton />
-    </div>
-  </div>
-);
-
-const ErrorState = () => (
-  <div className={styles["container"]}>
-    <div className={styles["sidebar"]}>
-      <SidePanelSkeleton />
-    </div>
-    <div className={styles["content"]}>
-      <PlanErrorContent />
-    </div>
-  </div>
-);
-
 interface ResourceBankLayoutProps {
-  planId: string;
+  planDetail: components["schemas"]["PlanResponseGet"];
 }
 type PendingRemoval = { id: string; name: string; sectionTitle: string };
 
-const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
-  const {
-    data: planDetail,
-    isLoading,
-    isError,
-  } = useMockResourceBankPlan(planId);
-
+const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
   const {
     sections,
     addResource,
     removeResource,
     isLoading: isResourceBankLoading,
     isError: didResourceBankError,
-  } = useResourceBank(planDetail?.latest_generation?.id ?? undefined);
+  } = useResourceBank(planDetail.latest_generation?.id ?? undefined);
 
   const {
     displayMarkdown,
@@ -86,7 +53,7 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
     startEdit,
     cancelEdit,
     saveMarkdown,
-  } = usePlanMarkdown(planDetail?.latest_generation?.markdown_result);
+  } = usePlanMarkdown(planDetail.latest_generation?.markdown_result);
 
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
     null,
@@ -102,23 +69,20 @@ const ResourceBankLayout = ({ planId }: ResourceBankLayoutProps) => {
     // TODO: refresh resources after address change in a future ticket - update distances
   };
 
-  if (isLoading) return <LoadingState />;
-
   const resourceSearchPanelProps = {
     addResource,
     categorySubcategoryMap: CATEGORY_SUBCATEGORY_MAP,
     sectionTitles: sections.map((item) => ({ title: item.title })),
   };
-  if (isError || !planDetail) return <ErrorState />;
 
   const clientFirstName =
-    planDetail?.client_record?.full_name?.given_names ?? "the client";
+    planDetail.client_record?.full_name?.given_names ?? "the client";
 
   return (
     <div className={styles["container"]}>
       <div className={styles["sidebar"]}>
         <ResourceBankSidePanel
-          clientRecord={planDetail?.client_record}
+          clientRecord={planDetail.client_record}
           onAddressSave={handleAddressSave}
           searchPanelProps={resourceSearchPanelProps}
         />

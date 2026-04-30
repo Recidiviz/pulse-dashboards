@@ -42,7 +42,7 @@ const useResourceSearch = () => {
         if (subcategory && resource.subcategory !== subcategory) return false;
         if (
           radiusMi &&
-          resource.travel_distance_miles !== undefined &&
+          resource.travel_distance_miles &&
           resource.travel_distance_miles > radiusMi
         )
           return false;

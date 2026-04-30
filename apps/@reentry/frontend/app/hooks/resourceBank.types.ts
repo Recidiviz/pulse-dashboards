@@ -17,20 +17,13 @@
 
 import type { components } from "~@reentry/openapi-types";
 
-export type ResourceOrigin = "GOOGLE" | "CRAWLER" | "CURATED" | "PARTNER";
-
-export type ResourceWithMeta = components["schemas"]["Resource"] & {
-  origin: ResourceOrigin;
-  travel_distance_miles?: number;
-};
+export type ResourceWithMeta = components["schemas"]["Resource"];
 
 export type ResourceSection = {
   title: string;
-  resources: ResourceWithMeta[];
+  resources: components["schemas"]["Resource"][];
 };
 
-// Extends PlanResponseGet with the resources_by_sections field that will be
-// returned by the real GET /plans/{id}/resources-by-section endpoint in Phase 2.
 export type ResourceBankResponse = {
   resources_by_sections: ResourceSection[];
 };

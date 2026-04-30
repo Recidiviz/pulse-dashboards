@@ -201,7 +201,7 @@ const MdxEditor = ({
       return (
         <div className="resources-content">
           <ResourceBank
-            section={section ?? ""}
+            sectionTitle={section ?? ""}
             clientFirstName={clientFirstName}
             onRemove={onResourceRemove}
             allResources={allResources ?? []}

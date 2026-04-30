@@ -21,9 +21,11 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import PlaceIcon from "@mui/icons-material/Place";
 import React from "react";
 
-import type { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
+import type { components } from "~@reentry/openapi-types";
 
 import styles from "./styles/ResourceBankTile.module.css";
+
+type Resource = components["schemas"]["Resource"];
 
 const DISTANCE_WARNING_MILES = 50;
 
@@ -84,7 +86,7 @@ const DEFAULT_CLASSES = {
 };
 
 type ResourceBankTileProps = {
-  resource: ResourceWithMeta;
+  resource: Resource;
   clientFirstName: string;
   onRemove: (id: string, name: string) => void;
 };
@@ -97,7 +99,10 @@ const ResourceBankTile = ({
   const { chip: chipClass, tileBg } =
     CATEGORY_CLASSES[resource.category] ?? DEFAULT_CLASSES;
   const chipLabel = resource.subcategory ?? resource.category;
-  const isOnline = resource.origin === "PARTNER";
+  const isOnline = false;
+  const travelDistanceMiles = (
+    resource as Resource & { travel_distance_miles?: number }
+  ).travel_distance_miles;
   return (
     <div className={`${styles["tile"]} ${tileBg}`}>
       <div className={styles["header"]}>
@@ -143,12 +148,12 @@ const ResourceBankTile = ({
           </a>
         )}
 
-        {resource.travel_distance_miles !== undefined &&
-          (resource.travel_distance_miles > DISTANCE_WARNING_MILES ? (
+        {travelDistanceMiles !== undefined &&
+          (travelDistanceMiles > DISTANCE_WARNING_MILES ? (
             <span className={styles["distanceWrapper"]}>
               <span className={styles["distanceWarning"]}>
                 <PlaceIcon className={styles["metaIcon"]} />
-                {resource.travel_distance_miles} mi away
+                {travelDistanceMiles} mi away
               </span>
               <span className={styles["tooltipText"]}>
                 This resource exceeds 50 miles from {clientFirstName}&apos;s
@@ -159,7 +164,7 @@ const ResourceBankTile = ({
             <span className={styles["metaRow"]}>
               <PlaceIcon className={styles["metaIcon"]} />
               <span className={styles["metaText"]}>
-                {resource.travel_distance_miles} mi away
+                {travelDistanceMiles} mi away
               </span>
             </span>
           ))}

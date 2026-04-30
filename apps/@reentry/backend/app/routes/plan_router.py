@@ -204,6 +204,15 @@ class PlanAssetResponse(ORMResponse):
     data: Optional[bytes] = None
 
 
+class ResourceSectionResponse(BaseModel):
+    title: str
+    resources: list[Resource]
+
+
+class ActiveResourcesResponse(BaseModel):
+    resources_by_sections: list[ResourceSectionResponse]
+
+
 #
 # Plan management
 @router.get(
@@ -1308,7 +1317,7 @@ async def autocomplete_city(
 
 @router.get(
     "/plan-generation/{plan_gen_id}/active-resources",
-    response_model=list[Resource],
+    response_model=ActiveResourcesResponse,
     summary="Get active resources for the given plan generation",
     description="Get all information on active resource information for a given plan generation",
     tags=["Plans"],
@@ -1337,16 +1346,21 @@ async def get_active_resources(
 
     active_associations = plan_gen.active_resource_associations
     if not active_associations:
-        return []
+        return ActiveResourcesResponse(resources_by_sections=[])
 
     if not plan.intake or not plan.intake.address:
         raise HTTPException(status_code=400, detail="Client address not available")
 
+    section_map: dict[str, list[int]] = {}
+    for assoc in active_associations:
+        section_map.setdefault(assoc.section_title, []).append(int(assoc.resource_id))
+
+    all_ids = [int(a.resource_id) for a in active_associations]
     try:
-        return await batch_get_resources(
+        all_resources = await batch_get_resources(
             BatchGetResources(
                 address=plan.intake.address.as_formatted_string(),
-                ids=[int(a.resource_id) for a in active_associations],
+                ids=all_ids,
                 travel_mode=travel_mode,
             )
         )
@@ -1357,3 +1371,16 @@ async def get_active_resources(
         raise HTTPException(
             status_code=500, detail=f"Error fetching resources: {str(e)}"
         )
+
+    resource_by_id = {int(r.resource_id): r for r in all_resources if r.resource_id}
+    return ActiveResourcesResponse(
+        resources_by_sections=[
+            ResourceSectionResponse(
+                title=section_title,
+                resources=[
+                    resource_by_id[rid] for rid in rids if rid in resource_by_id
+                ],
+            )
+            for section_title, rids in section_map.items()
+        ]
+    )

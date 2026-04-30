@@ -1327,7 +1327,7 @@ async def test_get_active_resources_no_associations(
 
     response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
     assert_response(response, 200)
-    assert response.json() == []
+    assert response.json() == {"resources_by_sections": []}
 
 
 @pytest.mark.asyncio
@@ -1394,6 +1394,7 @@ async def test_get_active_resources_success(
 
     mock_resource = Resource(
         id="42",
+        resource_id=42,
         category=ResourceCategory.HOUSING,
         name="Portland Housing Resource",
     )
@@ -1407,9 +1408,12 @@ async def test_get_active_resources_success(
         assert_response(response, 200)
 
         data = response.json()
-        assert len(data) == 1
-        assert data[0]["id"] == "42"
-        assert data[0]["name"] == "Portland Housing Resource"
+        assert len(data["resources_by_sections"]) == 1
+        section = data["resources_by_sections"][0]
+        assert section["title"] == "Housing"
+        assert len(section["resources"]) == 1
+        assert section["resources"][0]["id"] == "42"
+        assert section["resources"][0]["name"] == "Portland Housing Resource"
 
         call_args = mock_batch.call_args[0][0]
         assert call_args.ids == [42]

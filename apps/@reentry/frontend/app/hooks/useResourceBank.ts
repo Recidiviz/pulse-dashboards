@@ -17,21 +17,36 @@
 
 import { useEffect, useState } from "react";
 
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
   showErrorToast,
   showInfoToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
+import type { components } from "~@reentry/openapi-types";
 
 import { $api } from "../api";
-import type { ResourceSection, ResourceWithMeta } from "./resourceBank.types";
-import { useMockRessourceAPICall } from "./useMockRessourceAPICall";
+import type { ResourceSection } from "./resourceBank.types";
+
+type Resource = components["schemas"]["Resource"];
 
 export const useResourceBank = (planGenerationId: string | undefined) => {
-  const { data, isLoading, isError } = useMockRessourceAPICall();
+  const { getAccessToken } = useAuth();
+  const { data, isLoading, isError } = $api.useQuery(
+    "get",
+    "/plan-generation/{plan_gen_id}/active-resources",
+    {
+      params: { path: { plan_gen_id: planGenerationId ?? "" } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+    { enabled: Boolean(planGenerationId) },
+  );
 
   const [sections, setSections] = useState<ResourceSection[]>(
-    () => data?.resources_by_sections ?? [],
+    () => (data?.resources_by_sections as ResourceSection[]) ?? [],
   );
 
   const { mutateAsync: addResourceMutation } = $api.useMutation(
@@ -44,16 +59,15 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
     "/remove-resource",
   );
 
-  // Re-initialise when mock data becomes available (e.g. after loading state).
   useEffect(() => {
     if (data) {
-      setSections(data.resources_by_sections);
+      setSections(data.resources_by_sections as ResourceSection[]);
     }
   }, [data]);
 
   const appendResourceToSection = (
     sectionTitle: string,
-    resource: ResourceWithMeta,
+    resource: Resource,
   ) => {
     setSections((prev) =>
       prev.map((s) =>
@@ -77,10 +91,7 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
     );
   };
 
-  const addResource = (
-    sectionTitle: string,
-    resource: ResourceWithMeta,
-  ): void => {
+  const addResource = (sectionTitle: string, resource: Resource): void => {
     const current =
       sections.find((s) => s.title === sectionTitle)?.resources ?? [];
     if (current.some((r) => r.id === resource.id)) {
@@ -101,9 +112,17 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
       return;
     }
 
+    if (resource.resource_id == null) {
+      showErrorToast(
+        `Failed to add ${resource.name} to ${sectionTitle} resources.`,
+      );
+      removeResourceFromSection(sectionTitle, resource.id);
+      return;
+    }
+
     addResourceMutation({
       body: {
-        resource_id: Number(resource.id),
+        resource_id: resource.resource_id,
         section_title: sectionTitle,
         plan_generation_id: planGenerationId,
       },
@@ -138,9 +157,17 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
       return;
     }
 
+    if (removed.resource_id == null) {
+      showErrorToast(
+        `Failed to remove ${removed.name} from ${sectionTitle} resources.`,
+      );
+      appendResourceToSection(sectionTitle, removed);
+      return;
+    }
+
     removeResourceMutation({
       body: {
-        resource_id: Number(resourceId),
+        resource_id: removed.resource_id,
         section_title: sectionTitle,
         plan_generation_id: planGenerationId,
       },
