@@ -30,6 +30,7 @@ export type UsMiSCCReviewV2DraftData = {
   AMX: string;
   facility: string;
   lock: string;
+  lockDate: string;
   OPT: boolean;
   SMI: boolean;
   STG1: boolean;
@@ -177,6 +178,7 @@ export class UsMiSCCReviewV2Form extends FormBase<
       maxReleaseDate,
       facility,
       lock,
+      lockDate,
       OPT,
       SMI,
       STG,
@@ -205,6 +207,8 @@ export class UsMiSCCReviewV2Form extends FormBase<
       ? formatWorkflowsDate(segregationClassificationDate)
       : "";
 
+    const formattedLockDate = lockDate ? formatWorkflowsDate(lockDate) : "";
+
     return {
       prisonerName,
       prisonerNumber,
@@ -212,6 +216,7 @@ export class UsMiSCCReviewV2Form extends FormBase<
       AMX: maxReleaseDate ? formatWorkflowsDate(maxReleaseDate) : "",
       facility,
       lock,
+      lockDate: formattedLockDate,
       OPT,
       SMI,
       STG1: STG === "1",

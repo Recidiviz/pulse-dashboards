@@ -137,6 +137,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
         prisonerNumber: "RES020",
         facility: "FACILITY2",
         lock: "LOCKID2",
+        lockDate: relativeFixtureDate({ months: -15 }),
         STG: "2",
         SMI: true,
         bondableOffensesWithin6Months:

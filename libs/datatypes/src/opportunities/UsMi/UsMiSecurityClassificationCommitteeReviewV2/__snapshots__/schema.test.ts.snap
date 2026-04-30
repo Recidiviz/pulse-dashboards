@@ -184,6 +184,7 @@ exports[`schema for fullyEligible2 1`] = `
     "bondableOffensesWithin6Months": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
     "facility": "FACILITY2",
     "lock": "LOCKID2",
+    "lockDate": 2020-09-16T00:00:00.000Z,
     "maxReleaseDate": 2024-06-16T00:00:00.000Z,
     "minReleaseDate": 2022-05-16T00:00:00.000Z,
     "nonbondableOffensesWithin1Year": "(008, 2023-05-31)",

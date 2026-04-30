@@ -92,7 +92,7 @@ export const FormUsMiSCCReviewV2 = observer(function FormUsMiSCCReviewV2({
       agencyName="MDOC"
       onClickDownload={() => formDownloader(opportunityForm)}
       opportunity={opportunity}
-      downloadButtonLabel="Download as .DOC"
+      downloadButtonLabel="Download as .DOCX"
     >
       <FormViewer formRef={formRef}>
         <PrintablePage>

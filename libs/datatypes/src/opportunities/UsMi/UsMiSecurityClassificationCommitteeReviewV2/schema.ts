@@ -72,6 +72,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Schema =
       minReleaseDate: dateStringSchema.nullish(),
       facility: z.string().optional(),
       lock: z.string().optional(),
+      lockDate: dateStringSchema.nullish(),
       OPT: z.boolean().optional(),
       SMI: z.boolean(),
       STG: z.string().optional(),

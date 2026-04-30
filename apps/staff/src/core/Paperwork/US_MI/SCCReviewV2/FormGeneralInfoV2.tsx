@@ -174,9 +174,13 @@ const FormGeneralInfoV2: React.FC = () => {
         maxWidth="80px"
       />
       <InputField row={4} col={4} title="Lock:" name="lock" maxWidth="80px" />
-      <Cell row={4} col={5}>
-        Date:
-      </Cell>
+      <InputField
+        row={4}
+        col={5}
+        title="Date:"
+        name="lockDate"
+        maxWidth="80px"
+      />
       <Cell row={5} col={5} />
       <SegTypeHeading>
         <b>Type of Segregation:</b> (Check All That Apply):
