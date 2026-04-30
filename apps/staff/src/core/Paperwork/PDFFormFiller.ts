@@ -44,9 +44,7 @@ export type PDFFillerFunc<FormData = any> = (
   doc: PDFDocument,
 ) => Promise<void>;
 
-export type FillPDFFunc = (
-  formData: any,
-) => Promise<Uint8Array<ArrayBufferLike>>;
+export type FillPDFFunc = (formData: any) => Promise<Uint8Array<ArrayBuffer>>;
 
 type PDFLib = {
   PDFCheckBox: typeof PDFCheckBox;
@@ -114,8 +112,18 @@ const fillPDF: (
     }
 
     // Step 4: Save without re-generating appearances
-    const pdfBytes = await doc.save({ updateFieldAppearances: false });
-    return pdfBytes;
+    const pdfBytes = (await doc.save({
+      updateFieldAppearances: false,
+    })) satisfies Uint8Array;
+
+    // PDFDocument.save() returns a Uint8Array<ArrayBufferLike> which could theoretically
+    // be backed by a SharedArrayBuffer. In practice it's not, but to be able to create a blob
+    // and save the file we need to verify this.
+    if (pdfBytes.buffer instanceof ArrayBuffer) {
+      return pdfBytes as Uint8Array<ArrayBuffer>;
+    }
+
+    throw new Error("PDFDocument.save() returned an unexpected data type");
   };
 
 // fillerFunc() is the callback responsible for actually filling out the form.
