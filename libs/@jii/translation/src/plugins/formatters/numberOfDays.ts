@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2026 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type SentenceDate = {
-  id: string;
-  date: Date | undefined;
-  originalDate?: Date;
-};
+// this is a polyfill since older browsers and Node versions may not have it on Intl
+import { DurationFormat } from "@formatjs/intl-durationformat";
 
-export type SentenceDatesData = {
-  dates: Array<SentenceDate>;
+import { CachedFormatFunction } from "./types";
+
+export const numberOfDaysFormatter: CachedFormatFunction = (lng) => {
+  const formatter = new DurationFormat(lng, { style: "long" });
+
+  return (value) => formatter.format({ days: value });
 };

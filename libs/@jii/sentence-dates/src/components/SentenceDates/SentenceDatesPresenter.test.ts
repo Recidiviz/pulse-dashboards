@@ -19,7 +19,7 @@ import { TFunction } from "i18next";
 
 import { SentenceDatesData } from "../../data/types";
 import {
-  copyFixtureEnglish,
+  copyFixtureEnglishWithCustomHeading,
   copyFixtureSpanish,
   prepareUsOzTranslations,
 } from "../../fixtures/copy";
@@ -68,18 +68,17 @@ describe("SentenceDatesPresenter", () => {
       });
 
       it("can override values from the common translation resource", () => {
-        const specialHeading = "Special heading for Oz";
-
-        i18n.addResourceBundle("en", "US_OZ", {
-          sentenceDates: {
-            ...copyFixtureEnglish.sentenceDates,
-            general: { heading: specialHeading },
-          },
-        });
+        i18n.addResourceBundle(
+          "en",
+          "US_OZ",
+          copyFixtureEnglishWithCustomHeading,
+        );
 
         const presenter = new SentenceDatesPresenter(sentenceDatesFixture, t);
 
-        expect(presenter.sectionHeadingText).toBe(specialHeading);
+        expect(presenter.sectionHeadingText).toBe(
+          copyFixtureEnglishWithCustomHeading.sentenceDates.general?.heading,
+        );
       });
     });
 

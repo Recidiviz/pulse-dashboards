@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { cloneDeep } from "lodash";
+
 import {
   createI18nInstance,
   StateSentenceDatesResources,
@@ -37,6 +39,31 @@ export const copyFixtureEnglish: StateSentenceDatesResources = {
   },
 };
 
+export const copyFixtureEnglishWithoutDescriptions =
+  cloneDeep(copyFixtureEnglish);
+delete copyFixtureEnglishWithoutDescriptions.sentenceDates.dates[
+  "parole_eligibility_date"
+].description;
+delete copyFixtureEnglishWithoutDescriptions.sentenceDates.dates[
+  "max_discharge_date"
+].description;
+
+export const copyFixtureEnglishWithAdjustedDate = cloneDeep(copyFixtureEnglish);
+copyFixtureEnglishWithAdjustedDate.sentenceDates.dates[
+  "max_discharge_date"
+].adjusted = {
+  originalDateLabel: "Original Max Date",
+  adjustedDateLabel: "Adjusted Max Date",
+};
+
+export const copyFixtureEnglishWithCustomHeading: StateSentenceDatesResources =
+  {
+    sentenceDates: {
+      ...copyFixtureEnglish.sentenceDates,
+      general: { heading: "Your possible release dates" },
+    },
+  };
+
 // These are just machine translations for testing purposes, may contain inaccuracies
 export const copyFixtureSpanish: StateSentenceDatesResources = {
   sentenceDates: {
@@ -54,6 +81,31 @@ export const copyFixtureSpanish: StateSentenceDatesResources = {
     },
   },
 };
+
+export const copyFixtureSpanishWithoutDescriptions =
+  cloneDeep(copyFixtureSpanish);
+delete copyFixtureSpanishWithoutDescriptions.sentenceDates.dates[
+  "parole_eligibility_date"
+].description;
+delete copyFixtureSpanishWithoutDescriptions.sentenceDates.dates[
+  "max_discharge_date"
+].description;
+
+export const copyFixtureSpanishWithAdjustedDate = cloneDeep(copyFixtureSpanish);
+copyFixtureSpanishWithAdjustedDate.sentenceDates.dates[
+  "max_discharge_date"
+].adjusted = {
+  originalDateLabel: "Fecha Máxima Original",
+  adjustedDateLabel: "Fecha Máxima Ajustada",
+};
+
+export const copyFixtureSpanishWithCustomHeading: StateSentenceDatesResources =
+  {
+    sentenceDates: {
+      ...copyFixtureSpanish.sentenceDates,
+      general: { heading: "Sus posibles fechas de liberación" },
+    },
+  };
 
 export type TranslationsFixture = {
   englishCopy?: StateSentenceDatesResources;

@@ -17,20 +17,24 @@
 
 import { observer } from "mobx-react-lite";
 import { FC, memo, MemoExoticComponent } from "react";
+import { Assign } from "utility-types";
 
 import { Hydratable } from "../Hydratable/types";
 import { HydratorProps } from "../Hydrator/types";
 
 type HydratorComponentProps = Pick<HydratorProps, "children" | "hydratable">;
 
-type ManagerOptsBase<Presenter, Props, HC> = {
-  ManagedComponent: FC<{ presenter: Presenter }>;
+type ManagerOptsBase<Presenter, Props extends object, HC> = {
+  ManagedComponent: FC<Assign<{ presenter: Presenter }, Props>>;
   usePresenter: (props: Props) => Presenter | null;
   managerIsObserver: boolean;
   HydratorComponent?: HC;
 };
 
-type PresenterManagerOpts<Presenter, Props> = Presenter extends Hydratable
+type PresenterManagerOpts<
+  Presenter,
+  Props extends object,
+> = Presenter extends Hydratable
   ? ManagerOptsBase<Presenter, Props, FC<HydratorComponentProps>>
   : ManagerOptsBase<Presenter, Props, never>;
 
@@ -45,6 +49,7 @@ type PresenterManagerOpts<Presenter, Props> = Presenter extends Hydratable
  * - `usePresenter` can return `null` to silently bail out of rendering (e.g. for type safety
  * or when waiting for an observable to populate)
  * @param opts.ManagedComponent - Component that will consume the presenter created by `usePresenter`.
+ * Props from the outer component will also be passed through to this one for convenience.
  * @param opts.managerIsObserver - If `usePresenter` references any MobX observables, this **must** be
  * set to `true` to ensure `PresenterManager` is properly annotated with MobX.
  * @param opts.HydratorComponent - if provided, will be wrapped around `this.ManagedComponent` and
@@ -52,7 +57,7 @@ type PresenterManagerOpts<Presenter, Props> = Presenter extends Hydratable
  * @returns a `PresenterManager` component that takes the same props as `opts.usePresenter`and renders
  * `ManagedComponent` as its children.
  */
-export function withPresenterManager<Presenter, Props>({
+export function withPresenterManager<Presenter, Props extends object>({
   usePresenter,
   ManagedComponent,
   managerIsObserver,
@@ -65,14 +70,16 @@ export function withPresenterManager<Presenter, Props>({
 
     if (!presenter) return null;
 
-    const wrapped = <ManagedComponent presenter={presenter} />;
+    const wrapped = (
+      <ManagedComponent {...managerProps} presenter={presenter} />
+    );
 
     return HydratorComponent ? (
       // asserting Hydratable because `PresenterManagerOpts` ensures this component only
       // exists if the presenter is Hydratable, even though TS can't infer that here
-      (<HydratorComponent hydratable={presenter as unknown as Hydratable}>
+      <HydratorComponent hydratable={presenter as unknown as Hydratable}>
         {wrapped}
-      </HydratorComponent>)
+      </HydratorComponent>
     ) : (
       wrapped
     );

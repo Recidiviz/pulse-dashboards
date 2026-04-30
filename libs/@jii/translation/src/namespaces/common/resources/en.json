@@ -23,9 +23,11 @@
         "future": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} from today"
       },
       "dateFormatted": "{{date, formatFullDate}}",
-      "missingDateMessage": "No date on record"
+      "missingDateMessage": "No date on record",
+      "differenceInDays": "{{count, numberOfDays}}"
     },
     "general": {
+      "dateReductionLabel": "Total reduction",
       "heading": "Important dates"
     }
   }

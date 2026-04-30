@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { SentenceDatesComponents } from "../SentenceDates/types";
+import { DateAdjustment } from "./DateAdjustment";
 import { DateCard } from "./DateCard";
 import { DateCardBodyWrapper } from "./DateCardBodyWrapper";
 import { DateCardHeadingWrapper } from "./DateCardHeadingWrapper";
@@ -37,4 +38,5 @@ export const defaultComponents: SentenceDatesComponents = {
   DateValueSupplemental,
   DateCardHeadingWrapper,
   DateCardBodyWrapper,
+  DateAdjustment,
 };

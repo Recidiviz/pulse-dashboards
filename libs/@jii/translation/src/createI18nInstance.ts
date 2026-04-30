@@ -24,6 +24,7 @@ import { formatDateRangeFromTodayFormatter } from "./plugins/formatters/dateRang
 import { formatDistanceFromTodayFormatter } from "./plugins/formatters/distanceFromToday";
 import { fullDateFormatter } from "./plugins/formatters/fullDate";
 import { monthYearFormatter } from "./plugins/formatters/monthYear";
+import { numberOfDaysFormatter } from "./plugins/formatters/numberOfDays";
 
 export type SupportedLanguagesOption = Array<string> | "_ALL_";
 
@@ -99,6 +100,10 @@ export function createI18nInstance(
   newInstance.services.formatter?.addCached(
     "formatDateRangeFromToday",
     formatDateRangeFromTodayFormatter,
+  );
+  newInstance.services.formatter?.addCached(
+    "numberOfDays",
+    numberOfDaysFormatter,
   );
 
   return newInstance;

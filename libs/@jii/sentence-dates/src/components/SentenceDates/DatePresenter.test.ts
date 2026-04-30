@@ -18,7 +18,7 @@
 import { TFunction } from "i18next";
 
 import {
-  copyFixtureEnglish,
+  copyFixtureEnglishWithoutDescriptions,
   prepareUsOzTranslations,
 } from "../../fixtures/copy";
 import {
@@ -48,10 +48,10 @@ describe("DatePresenter", () => {
     vi.useRealTimers();
   });
 
-  function getPresenter(datesFn: DateGenerator, index = 0) {
+  function getPresenter(datesFn: DateGenerator) {
     const { dates } = getSentenceDatesFixtureData(datesFn);
 
-    return new DatePresenter(dates[index], t);
+    return new DatePresenter(dates[0], t);
   }
 
   describe("past date", () => {
@@ -91,6 +91,15 @@ describe("DatePresenter", () => {
       expect(presenter.cardModifierClasses).toEqual(["DateCard--is-upcoming"]);
     });
 
+    it("returns the correct label and description", () => {
+      expect(presenter.cardLabelText).toMatchInlineSnapshot(
+        `"Parole Eligibility Date"`,
+      );
+      expect(presenter.cardDescriptionText).toMatchInlineSnapshot(
+        `"The earliest date you are eligible to be considered for release on parole."`,
+      );
+    });
+
     it("shows relative date as primary value and formatted as supplemental", () => {
       expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
@@ -108,6 +117,15 @@ describe("DatePresenter", () => {
 
     it("has no modifier classes", () => {
       expect(presenter.cardModifierClasses).toEqual([]);
+    });
+
+    it("returns the correct label and description", () => {
+      expect(presenter.cardLabelText).toMatchInlineSnapshot(
+        `"Parole Eligibility Date"`,
+      );
+      expect(presenter.cardDescriptionText).toMatchInlineSnapshot(
+        `"The earliest date you are eligible to be considered for release on parole."`,
+      );
     });
 
     it("shows the missing date message with no supplemental value", () => {
@@ -129,6 +147,15 @@ describe("DatePresenter", () => {
       expect(presenter.cardModifierClasses).toEqual([]);
     });
 
+    it("returns the correct label and description", () => {
+      expect(presenter.cardLabelText).toMatchInlineSnapshot(
+        `"Parole Eligibility Date"`,
+      );
+      expect(presenter.cardDescriptionText).toMatchInlineSnapshot(
+        `"The earliest date you are eligible to be considered for release on parole."`,
+      );
+    });
+
     it("shows formatted date as primary value and relative as supplemental", () => {
       expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
@@ -141,16 +168,7 @@ describe("DatePresenter", () => {
 
   it("returns undefined for cardDescriptionText when the date has no description", async () => {
     const i18n = prepareUsOzTranslations({
-      englishCopy: {
-        sentenceDates: {
-          ...copyFixtureEnglish.sentenceDates,
-          dates: {
-            ...copyFixtureEnglish.sentenceDates.dates,
-            // dropping description field from this fixture
-            parole_eligibility_date: { label: "Earliest Release Date" },
-          },
-        },
-      },
+      englishCopy: copyFixtureEnglishWithoutDescriptions,
     });
     await i18n.reloadResources(["en"], ["common"]);
     t = i18n.getFixedT("en", ["US_OZ", "common"]);

@@ -17,7 +17,12 @@
 
 import type { StoryObj } from "@storybook/react";
 
-import { copyFixtureEnglish } from "../../../fixtures/copy";
+import {
+  copyFixtureEnglishWithCustomHeading,
+  copyFixtureEnglishWithoutDescriptions,
+  copyFixtureSpanishWithCustomHeading,
+  copyFixtureSpanishWithoutDescriptions,
+} from "../../../fixtures/copy";
 import { baseMeta, SecondaryStoryPage, SentenceDatesMeta } from "./utils";
 
 /**
@@ -50,17 +55,8 @@ export type SentenceDateStory = StoryObj<typeof meta>;
 export const OptionalDescriptions: SentenceDateStory = {
   args: {
     copy: {
-      englishCopy: {
-        sentenceDates: {
-          dates: {
-            ...Object.fromEntries(
-              Object.entries(copyFixtureEnglish.sentenceDates.dates).map(
-                ([key, { label }]) => [key, { label }],
-              ),
-            ),
-          },
-        },
-      },
+      englishCopy: copyFixtureEnglishWithoutDescriptions,
+      spanishCopy: copyFixtureSpanishWithoutDescriptions,
     },
   },
 };
@@ -76,12 +72,8 @@ export const OptionalDescriptions: SentenceDateStory = {
 export const CustomizeSharedCopy: SentenceDateStory = {
   args: {
     copy: {
-      englishCopy: {
-        sentenceDates: {
-          ...copyFixtureEnglish.sentenceDates,
-          general: { heading: "Your possible release dates" },
-        },
-      },
+      englishCopy: copyFixtureEnglishWithCustomHeading,
+      spanishCopy: copyFixtureSpanishWithCustomHeading,
     },
   },
 };

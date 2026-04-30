@@ -91,3 +91,12 @@ export function getDatesWithMissing() {
     ...defaultDates.slice(1),
   ];
 }
+
+export function getDatesWithOriginal() {
+  const defaultDates = getDefaultDates();
+  defaultDates.splice(1, 1, {
+    ...defaultDates[1],
+    originalDate: startOfDay(addDays(new Date(), 1745)),
+  });
+  return defaultDates;
+}

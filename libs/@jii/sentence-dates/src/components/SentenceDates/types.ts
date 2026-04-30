@@ -21,6 +21,7 @@ import { PickByValue } from "utility-types";
 
 import { I18nResources, StateSentenceDatesResources } from "~@jii/translation";
 
+import { DateAdjustmentProps } from "../defaultComponents/DateAdjustment";
 import { DateCardProps } from "../defaultComponents/DateCard";
 import { DateCardBodyWrapperProps } from "../defaultComponents/DateCardBodyWrapper";
 import { DateCardHeadingWrapperProps } from "../defaultComponents/DateCardHeadingWrapper";
@@ -47,6 +48,7 @@ export type SentenceDatesComponents = {
   DateValue: ComponentType<DateValueProps>;
   DateValueSupplemental: ComponentType<DateValueSupplementalProps>;
   DateCardBodyWrapper: ComponentType<DateCardBodyWrapperProps>;
+  DateAdjustment: ComponentType<DateAdjustmentProps>;
 };
 
 export type TFn = TFunction<[StateCodeWithSentenceDates, "common"]>;

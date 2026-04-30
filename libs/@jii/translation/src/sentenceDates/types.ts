@@ -23,6 +23,7 @@ import { z } from "zod";
 export const commonSentenceDatesResourceContentsSchema = z.object({
   general: z.object({
     heading: z.string(),
+    dateReductionLabel: z.string(),
   }),
   dateFormats: z.object({
     dateFormatted: z.string(),
@@ -32,6 +33,7 @@ export const commonSentenceDatesResourceContentsSchema = z.object({
       future: z.string(),
     }),
     missingDateMessage: z.string(),
+    differenceInDays: z.string(),
   }),
 });
 
@@ -55,6 +57,12 @@ export type CommonSentenceDatesResources = z.infer<
 export const singleSentenceDateResourceSchema = z.object({
   label: z.string(),
   description: z.string().optional(),
+  adjusted: z
+    .object({
+      originalDateLabel: z.string(),
+      adjustedDateLabel: z.string(),
+    })
+    .optional(),
 });
 
 /**

@@ -15,34 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import { FC } from "react";
-import styled from "styled-components";
+import { singleSentenceDateResourceSchema } from "~@jii/translation";
 
-import { spacing } from "~design-system";
-
-import { DateComponentDefaultProps } from "./types";
-import { Wrapper } from "./Wrapper";
-
-export type DateCardBodyWrapperProps = DateComponentDefaultProps;
+import { TFn } from "./types";
 
 /**
- * provides some default spacing between elements, mostly for common override scenarios
- * where we are appending extra elements below the description
+ * i18next doesn't really support the concept of optional keys well,
+ * but we rely on them for some display logic. This runs the translated object
+ * through a Zod schema to produce a more useful output type.
  */
-const StyledWrapper = styled(Wrapper)`
-  display: grid;
-  row-gap: ${rem(spacing.md)};
-
-  // this prevents extra padding in the card when the body is empty
-  &:empty {
-    display: none;
-  }
-`;
-
-export const DateCardBodyWrapper: FC<DateCardBodyWrapperProps> = ({
-  children,
-  className,
-}) => {
-  return <StyledWrapper {...{ children, className }} />;
-};
+export function getDateCopy(t: TFn, dateId: string) {
+  // we don't expect this parse to fail since the resources should already be validated
+  return singleSentenceDateResourceSchema.parse(
+    t(($) => $.sentenceDates.dates[dateId], { returnObjects: true }),
+  );
+}

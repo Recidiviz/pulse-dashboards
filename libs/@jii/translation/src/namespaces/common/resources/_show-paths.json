@@ -23,9 +23,11 @@
         "future": "[common]sentenceDates.dateFormats.dateDistanceFromToday.future"
       },
       "dateFormatted": "[common]sentenceDates.dateFormats.dateFormatted",
-      "missingDateMessage": "[common]sentenceDates.dateFormats.missingDateMessage"
+      "missingDateMessage": "[common]sentenceDates.dateFormats.missingDateMessage",
+      "differenceInDays": "[common]sentenceDates.dateFormats.differenceInDays"
     },
     "general": {
+      "dateReductionLabel": "[common]sentenceDates.general.dateReductionLabel",
       "heading": "[common]sentenceDates.general.heading"
     }
   }

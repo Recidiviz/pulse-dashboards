@@ -18,13 +18,11 @@
 import { startOfDay } from "date-fns";
 import { z } from "zod";
 
-import {
-  dateDistanceTranslation,
-  singleSentenceDateResourceSchema,
-} from "~@jii/translation";
+import { dateDistanceTranslation } from "~@jii/translation";
 
 import { SentenceDate } from "../../data/types";
 import { TFn } from "./types";
+import { getDateCopy } from "./utils";
 
 export const dateCardModifierClassesEnum = z.enum([
   "DateCard--is-upcoming",
@@ -36,21 +34,20 @@ export class DatePresenter {
   private translatedCopy: ReturnType<typeof this.processTranslations>;
 
   constructor(
-    private data: SentenceDate,
-    private t: TFn,
+    public data: SentenceDate,
+    public t: TFn,
   ) {
     this.translatedCopy = this.processTranslations();
   }
 
   private processTranslations() {
     const { t, data } = this;
+
+    const { label, description } = getDateCopy(t, data.id);
+
     return {
-      // because i18next doesn't really support the concept of optional keys well,
-      // we run the result through Zod to get a more useful output type. In practice
-      // we don't expect this parse to fail since the resources should already be validated
-      ...singleSentenceDateResourceSchema.parse(
-        t(($) => $.sentenceDates.dates[data.id], { returnObjects: true }),
-      ),
+      label,
+      description,
       dateFormatted: t(
         ($) =>
           data.date

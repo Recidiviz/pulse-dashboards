@@ -54,10 +54,7 @@ export const baseMeta: SentenceDatesMeta = {
   },
   argTypes: {
     stateCode: { table: { disable: true } },
-    // override this if you want to enable Spanish in your stories;
-    // it's convenient to disable it by default so you can opt in to
-    // adding extra copy fixtures only when necessary
-    language: { table: { disable: true } },
+    language: { options: ["en", "es"], control: "select" },
   },
   // prevents extra args from being passed to the component itself and causing errors
   render: ({ data, componentOverrides, stateCode }) => {

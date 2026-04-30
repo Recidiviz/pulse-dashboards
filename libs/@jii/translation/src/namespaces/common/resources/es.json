@@ -23,9 +23,11 @@
         "future": "Dentro de {{date, formatDateRangeFromToday(delimiter: ' y ')}}"
       },
       "dateFormatted": "{{date, formatFullDate}}",
-      "missingDateMessage": "Sin fecha registrada"
+      "missingDateMessage": "Sin fecha registrada",
+      "differenceInDays": "{{count, numberOfDays}}"
     },
     "general": {
+      "dateReductionLabel": "Reducción total",
       "heading": "Fechas importantes"
     }
   }

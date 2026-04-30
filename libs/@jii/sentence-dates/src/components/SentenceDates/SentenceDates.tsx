@@ -47,6 +47,7 @@ const ManagedComponent = ({
       DateDescription,
       DateCardHeadingWrapper,
       DateCardBodyWrapper,
+      DateAdjustment,
     },
     datePresenters,
     sectionHeadingText,
@@ -75,6 +76,7 @@ const ManagedComponent = ({
                   {datePresenter.cardDescriptionText}
                 </DateDescription>
               )}
+              <DateAdjustment datePresenter={datePresenter} />
             </DateCardBodyWrapper>
           </DateCard>
         ))}

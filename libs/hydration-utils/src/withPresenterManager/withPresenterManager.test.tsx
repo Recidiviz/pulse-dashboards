@@ -19,6 +19,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { makeObservable, runInAction } from "mobx";
 import * as mrl from "mobx-react-lite";
 import { FC, memo, ReactNode } from "react";
+import { MockedFunction } from "vitest";
 
 import { Hydratable, HydrationState } from "../Hydratable/types";
 import { Hydrator } from "../Hydrator/Hydrator";
@@ -45,7 +46,7 @@ const TestComponent: FC<{ presenter: TestPresenter }> = ({ presenter }) => {
   return presenter.content;
 };
 
-const testHook = vi.fn();
+const testHook: MockedFunction<() => TestPresenter> = vi.fn();
 
 let presenterInstance: TestPresenter;
 

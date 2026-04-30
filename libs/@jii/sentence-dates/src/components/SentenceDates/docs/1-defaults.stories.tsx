@@ -18,7 +18,12 @@
 import type { StoryObj } from "@storybook/react";
 
 import {
+  copyFixtureEnglishWithAdjustedDate,
+  copyFixtureSpanishWithAdjustedDate,
+} from "../../../fixtures/copy";
+import {
   getDatesWithMissing,
+  getDatesWithOriginal,
   getDatesWithPast,
   getDatesWithToday,
   getDatesWithUpcoming,
@@ -84,4 +89,21 @@ export const PastDates: SentenceDateStory = {
  */
 export const MissingDates: SentenceDateStory = {
   args: { data: getSentenceDatesFixtureData(getDatesWithMissing) },
+};
+
+/**
+ * When dates have been adjusted by earned or good time, the date cards can display this.
+ *
+ * To activate this feature, just include the original date in the input data and the
+ * date-specific labels for original and adjusted dates in the date's copy.
+ *
+ */
+export const AdjustedDates: SentenceDateStory = {
+  args: {
+    data: getSentenceDatesFixtureData(getDatesWithOriginal),
+    copy: {
+      englishCopy: copyFixtureEnglishWithAdjustedDate,
+      spanishCopy: copyFixtureSpanishWithAdjustedDate,
+    },
+  },
 };
