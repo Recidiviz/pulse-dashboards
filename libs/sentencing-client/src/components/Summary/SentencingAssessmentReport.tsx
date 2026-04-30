@@ -166,8 +166,8 @@ export const SentencingAssessmentReport: React.FC<
               <Styled.LearnMoreBanner>
                 <LearnMoreBannerIcon />
                 <Styled.LearnMoreBannerText>
-                  Visit <strong>https://www.recidiviz.org/sentencing/mo</strong>{" "}
-                  to learn more about the information presented in this report.
+                  Visit <strong>https://www.mosac.mo.gov/sar-pilot</strong> to
+                  learn more about the information presented in this report.
                 </Styled.LearnMoreBannerText>
               </Styled.LearnMoreBanner>
             </Styled.LearnMoreBannerWrapper>
