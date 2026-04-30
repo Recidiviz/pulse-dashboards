@@ -19,13 +19,15 @@ import jsPDF from "jspdf";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { FormContainer } from "../Paperwork/FormContainer";
+import { DownloadButton, FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import { generate } from "../Paperwork/PDFFormGenerator";
 import { PrintablePageContainer } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN/CompliantReporting";
+import { ReioSubmissionModal } from "./ReioSubmissionModal";
 
 const WorkflowsCompliantReportingForm = ({
   opportunity,
@@ -35,6 +37,8 @@ const WorkflowsCompliantReportingForm = ({
   const form = useOpportunityFormContext();
   const formRef = React.useRef<HTMLDivElement>(null);
   const [isMissingContent, setIsMissingContent] = useState(false);
+  const [showReioModal, setShowReioModal] = useState(false);
+  const { usTnCompliantReportingWriteback } = useFeatureVariants();
 
   useEffect(() => {
     const pages = formRef.current?.querySelectorAll(PrintablePageContainer);
@@ -54,6 +58,12 @@ const WorkflowsCompliantReportingForm = ({
     );
   };
 
+  const reioButton = usTnCompliantReportingWriteback ? (
+    <DownloadButton onClick={() => setShowReioModal(true)}>
+      Download or Submit REIO Note
+    </DownloadButton>
+  ) : null;
+
   return (
     <FormContainer
       heading="Compliant Reporting"
@@ -62,10 +72,19 @@ const WorkflowsCompliantReportingForm = ({
       isMissingContent={isMissingContent}
       onClickDownload={async () => onClickDownload()}
       opportunity={opportunity}
+      additionalHeaderButtons={reioButton}
     >
       <FormViewer formRef={formRef}>
         <FormCR3947Rev0518 />
       </FormViewer>
+      {usTnCompliantReportingWriteback && (
+        <ReioSubmissionModal
+          opportunity={opportunity}
+          isOpen={showReioModal}
+          onClose={() => setShowReioModal(false)}
+          onDownload={onClickDownload}
+        />
+      )}
     </FormContainer>
   );
 };

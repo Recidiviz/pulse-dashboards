@@ -112,6 +112,11 @@ export type UsTnContactNote = {
   error?: string;
 };
 
+export type UsTnContactNoteHistory = Record<
+  string,
+  ExternalRequestUpdate<UsTnContactNote & { contactTypeCodes: string[] }>
+>;
+
 export type UsTnExpirationOpportunityUpdate =
   OpportunityUpdateWithForm<UsTnExpirationDraftData> & {
     contactNote: ExternalRequestUpdate<UsTnContactNote>;

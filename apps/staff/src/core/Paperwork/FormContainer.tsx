@@ -99,6 +99,7 @@ export type FormHeaderProps = {
   downloadButtonLabel: string;
   opportunity: Opportunity;
   children: React.ReactNode;
+  additionalHeaderButtons?: React.ReactNode;
 };
 
 export const RevertButton = DownloadButton;
@@ -114,6 +115,7 @@ export const FormContainer = observer(function FormContainer({
   dataProviso,
   opportunity,
   children,
+  additionalHeaderButtons,
 }: FormHeaderProps): React.ReactElement<any> {
   const { form } = opportunity;
   const isDownloadButtonDisabled = isMissingContent || false;
@@ -169,6 +171,7 @@ export const FormContainer = observer(function FormContainer({
               {form.formIsReverting ? "Reverting..." : "Revert All Edits"}
             </RevertButton>
           )}
+          {additionalHeaderButtons}
           <TooltipTrigger contents={downloadTooltip}>
             <DownloadButton
               className="WorkflowsFormDownloadButton"

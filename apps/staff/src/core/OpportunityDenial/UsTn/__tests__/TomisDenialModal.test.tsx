@@ -31,6 +31,7 @@ vi.mock("../../../../components/StoreProvider");
 vi.mock("react-hot-toast");
 
 const mockRootStore = () => {
+  const doc = vi.fn().mockReturnValue("mock-doc-ref");
   const postExternalRequest = vi.fn();
   const updateClientUpdatesV2Document = vi.fn().mockResolvedValue(undefined);
 
@@ -42,16 +43,17 @@ const mockRootStore = () => {
     userStore: { stateCode: "US_TN" },
     apiStore: { postExternalRequest },
     firestoreStore: {
-      doc: vi.fn().mockReturnValue("mock-doc-ref"),
+      doc,
       updateClientUpdatesV2Document,
     },
   });
 
-  return { postExternalRequest, updateClientUpdatesV2Document };
+  return { doc, postExternalRequest, updateClientUpdatesV2Document };
 };
 
 const tomisMockOpportunity = (): Opportunity => ({
   ...mockOpportunity,
+  firestoreUpdateDocId: "usTnCompliantReporting2025Policy",
   person: {
     ...mockOpportunity.person,
     stateCode: "US_TN",
@@ -128,8 +130,9 @@ describe("TomisDenialModal", () => {
     expect(submitButton).not.toBeDisabled();
   });
 
-  it("makes single API call with contactTypeCodes array and shared comment", async () => {
-    const { postExternalRequest } = mockRootStore();
+  it("makes single API call and pre-creates the stable status doc", async () => {
+    const { doc, postExternalRequest, updateClientUpdatesV2Document } =
+      mockRootStore();
     postExternalRequest.mockResolvedValue({});
     const opp = tomisMockOpportunity();
     const onSuccessFn = vi.fn();
@@ -159,11 +162,31 @@ describe("TomisDenialModal", () => {
     expect(requestType).toBe("insert_contact_note");
     expect(body.contactTypeCodes).toEqual(["DECF", "DEIO"]);
     expect(body.contactNote).toBeDefined();
+    expect(body.contactNoteId).toMatch(/^[A-Za-z0-9_-]+$/);
     expect(body.stateCode).toBe("US_TN");
     expect(body.personExternalId).toBe("00431278");
     expect(body).not.toHaveProperty("contactTypeCode");
     expect(body).not.toHaveProperty("shouldQueueTask");
     expect(body).not.toHaveProperty("votersRightsCode");
+    expect(doc).toHaveBeenCalledWith(
+      { key: "clientUpdatesV2" },
+      expect.stringMatching(
+        /\/clientOpportunityUpdates\/usTnCompliantReporting2025Policy$/,
+      ),
+    );
+    const [, , update] = updateClientUpdatesV2Document.mock.calls[0];
+    const contactNoteId = body.contactNoteId;
+    expect(update).toMatchObject({
+      contactNote: {
+        [contactNoteId]: {
+          status: "PENDING",
+          noteStatus: {},
+          submitted: { date: expect.anything() },
+          note: body.contactNote,
+          contactTypeCodes: ["DECF", "DEIO"],
+        },
+      },
+    });
   });
 
   it("filters out Other from TOMIS codes", async () => {

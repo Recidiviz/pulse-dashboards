@@ -17,6 +17,7 @@
 
 import { Loading, Sans16, Sans24, spacing } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
+import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { type JSX, useEffect, useState } from "react";
@@ -24,6 +25,7 @@ import toast from "react-hot-toast";
 import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField";
 import { useRootStore } from "../../../components/StoreProvider";
@@ -34,7 +36,9 @@ import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast
 import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
 import {
   buildContactNoteRequestBody,
+  chunkCommentToContactNote,
   contactNoteFirestoreDocId,
+  generateContactNoteId,
   TOMIS_COMMENT_MAX_CHARS,
   TOMIS_COMMENT_MIN_CHARS,
 } from "./utils";
@@ -127,16 +131,26 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     setPhase("SUBMITTING");
 
     const contactNoteDateTime = new Date();
-    const docId = contactNoteFirestoreDocId(contactNoteDateTime);
+    const contactNoteId = generateContactNoteId();
+    const contactNote = chunkCommentToContactNote(comment);
+    const docId = contactNoteFirestoreDocId(opportunity);
     const { recordId } = opportunity.person;
     const docRef = firestoreStore.doc(
-      { key: "clientUpdatesV2" },
-      `${recordId}/clientOpportunityUpdates/${docId}`,
+      { key: FIRESTORE_GENERAL_COLLECTION_MAP.clientUpdatesV2 },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates}/${docId}`,
     );
 
     try {
       await firestoreStore.updateClientUpdatesV2Document(recordId, docRef, {
-        contactNote: { status: "PENDING", noteStatus: {} },
+        contactNote: {
+          [contactNoteId]: {
+            status: "PENDING",
+            submitted: { date: Timestamp.fromDate(contactNoteDateTime) },
+            noteStatus: {},
+            note: contactNote,
+            contactTypeCodes: tomisCodes,
+          },
+        },
       });
 
       const requestBody = buildContactNoteRequestBody(
@@ -144,6 +158,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
         staffId,
         tomisCodes,
         comment,
+        contactNoteId,
         contactNoteDateTime.toISOString(),
       );
 
@@ -164,7 +179,14 @@ export const TomisDenialModal = observer(function TomisDenialModal({
       Sentry.captureException(e);
       await firestoreStore
         .updateClientUpdatesV2Document(recordId, docRef, {
-          contactNote: { status: "FAILURE" },
+          contactNote: {
+            [contactNoteId]: {
+              status: "FAILURE",
+              submitted: { date: Timestamp.fromDate(contactNoteDateTime) },
+              note: contactNote,
+              contactTypeCodes: tomisCodes,
+            },
+          },
         })
         .catch(Sentry.captureException);
       setPhase("FAILED");

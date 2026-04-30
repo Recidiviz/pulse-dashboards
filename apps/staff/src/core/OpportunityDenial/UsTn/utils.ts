@@ -42,35 +42,21 @@ export function chunkCommentToContactNote(
 }
 
 /**
- * Converts a JS Date to the string format produced by Python's
- * `datetime.isoformat()`. The backend uses this format in Firestore
- * document paths for contact note status tracking.
- *
- * JS toISOString():     "2026-04-13T21:30:00.123Z"
- * Python isoformat():   "2026-04-13T21:30:00.123000+00:00"
- *
- * When milliseconds are zero, Python omits the fractional part entirely:
- * JS: "2026-04-13T21:30:00.000Z" → Python: "2026-04-13T21:30:00+00:00"
+ * Returns a Firestore-safe identifier for one TOMIS writeback attempt.
  */
-export function toPythonIsoformat(date: Date): string {
-  const iso = date.toISOString();
-  const match = iso.match(/^(.+)\.(\d{3})Z$/);
-  if (!match) throw new Error(`Unexpected ISO format: ${iso}`);
-  const [, prefix, ms] = match;
-  if (ms === "000") {
-    return `${prefix}+00:00`;
-  }
-  return `${prefix}.${ms}000+00:00`;
+export function generateContactNoteId(): string {
+  return crypto.randomUUID();
 }
 
 /**
- * Returns the Firestore document ID that the backend uses for non-TEPE
- * contact note status tracking (denial codes, REIO).
+ * Returns the opportunity update document ID that the backend uses for non-TEPE
+ * contact note status tracking (denial codes, REIO). This keeps the writeback
+ * history on the opportunity update instead of a separate contact-note doc.
  * Must match `UsTnContactNoteStatusTracker._firestore_path()` in
  * `recidiviz-data/recidiviz/case_triage/workflows/writeback/us_tn_contact_note.py`.
  */
-export function contactNoteFirestoreDocId(contactNoteDateTime: Date): string {
-  return `usTnContactNote_${toPythonIsoformat(contactNoteDateTime)}`;
+export function contactNoteFirestoreDocId(opportunity: Opportunity): string {
+  return opportunity.firestoreUpdateDocId;
 }
 
 export function buildContactNoteRequestBody(
@@ -78,6 +64,7 @@ export function buildContactNoteRequestBody(
   staffId: string,
   contactTypeCodes: string[],
   comment: string,
+  contactNoteId: string,
   contactNoteDateTime?: string,
 ): Record<string, unknown> {
   return {
@@ -87,6 +74,7 @@ export function buildContactNoteRequestBody(
     staffId,
     staffIdType: "US_TN_STAFF_TOMIS",
     contactNoteDateTime: contactNoteDateTime ?? new Date().toISOString(),
+    contactNoteId,
     contactTypeCodes,
     contactNote: chunkCommentToContactNote(comment),
   };

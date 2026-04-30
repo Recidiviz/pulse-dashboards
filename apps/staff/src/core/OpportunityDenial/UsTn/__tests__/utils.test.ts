@@ -19,7 +19,8 @@ import { Opportunity } from "../../../../WorkflowsStore";
 import {
   buildContactNoteRequestBody,
   chunkCommentToContactNote,
-  toPythonIsoformat,
+  contactNoteFirestoreDocId,
+  generateContactNoteId,
 } from "../utils";
 
 describe("chunkCommentToContactNote", () => {
@@ -67,14 +68,21 @@ describe("chunkCommentToContactNote", () => {
   });
 });
 
-describe("toPythonIsoformat", () => {
-  it("matches Python datetime.isoformat() output", () => {
-    expect(toPythonIsoformat(new Date("2026-04-13T21:30:00.123Z"))).toBe(
-      "2026-04-13T21:30:00.123000+00:00",
+describe("contactNoteFirestoreDocId", () => {
+  it("returns the opportunity update document ID", () => {
+    const mockOpp = {
+      firestoreUpdateDocId: "usTnCompliantReporting2025Policy",
+    } as unknown as Opportunity;
+
+    expect(contactNoteFirestoreDocId(mockOpp)).toBe(
+      "usTnCompliantReporting2025Policy",
     );
-    expect(toPythonIsoformat(new Date("2026-04-13T21:30:00.000Z"))).toBe(
-      "2026-04-13T21:30:00+00:00",
-    );
+  });
+});
+
+describe("generateContactNoteId", () => {
+  it("returns a Firestore-safe ID", () => {
+    expect(generateContactNoteId()).toMatch(/^[A-Za-z0-9_-]+$/);
   });
 });
 
@@ -89,6 +97,7 @@ describe("buildContactNoteRequestBody", () => {
       "STAFF123",
       ["DECF"],
       "Test comment",
+      "contact-note-id",
     );
 
     expect(result).toMatchObject({
@@ -97,6 +106,7 @@ describe("buildContactNoteRequestBody", () => {
       personExternalIdType: "US_TN_DOC",
       staffId: "STAFF123",
       staffIdType: "US_TN_STAFF_TOMIS",
+      contactNoteId: "contact-note-id",
       contactTypeCodes: ["DECF"],
     });
     expect(result.contactNote).toBeDefined();
@@ -113,6 +123,7 @@ describe("buildContactNoteRequestBody", () => {
       "STAFF123",
       ["DECF", "DEIO", "DEDU"],
       "Multiple denial codes",
+      "contact-note-id",
     );
 
     expect(result.contactTypeCodes).toEqual(["DECF", "DEIO", "DEDU"]);
@@ -128,6 +139,7 @@ describe("buildContactNoteRequestBody", () => {
       "STAFF123",
       ["REIO"],
       "comment",
+      "contact-note-id",
     );
 
     expect(result).not.toHaveProperty("shouldQueueTask");
