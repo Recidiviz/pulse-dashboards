@@ -1086,6 +1086,79 @@ async def _create_plan_with_generation(async_session, client_pseudo_id, intake_i
 
 
 @pytest.mark.asyncio
+async def test_plan_edit_copies_resource_associations(
+    mock_clientdata_service,
+    mock_intake,
+    client,
+    async_session,
+    assert_response,
+):
+    """Editing markdown creates a new generation whose resource associations
+    are copied from the previous generation's active associations."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    plan, gen = await _create_plan_with_generation(
+        async_session, client_pseudo_id, mock_intake.id
+    )
+
+    now = datetime.now(tz=timezone.utc)
+    # Two active resources on the original generation
+    for resource_id, section in [(10, "Housing"), (20, "Employment")]:
+        async_session.add(
+            PlanGenerationResourceAssociation(
+                plan_generation_id=gen.id,
+                resource_id=resource_id,
+                section_title=section,
+                action=ResourceAssociationAction.ADD,
+                action_by="SYSTEM",
+                action_at=now,
+            )
+        )
+    # One resource that was added then removed — should NOT be copied
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=gen.id,
+            resource_id=99,
+            section_title="Housing",
+            action=ResourceAssociationAction.ADD,
+            action_by="SYSTEM",
+            action_at=now,
+        )
+    )
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=gen.id,
+            resource_id=99,
+            section_title="Housing",
+            action=ResourceAssociationAction.REMOVE,
+            action_by="SYSTEM",
+            action_at=now.replace(second=now.second + 1),
+        )
+    )
+    await async_session.commit()
+
+    response = await client.post(
+        f"/plans/{plan.id}/edit", json={"markdown": "## Updated Plan"}
+    )
+    assert_response(response, 200)
+    new_gen_id = response.json()["id"]
+    assert new_gen_id != str(gen.id)
+
+    result = await async_session.exec(
+        select(PlanGenerationResourceAssociation).where(
+            PlanGenerationResourceAssociation.plan_generation_id
+            == uuid.UUID(new_gen_id)
+        )
+    )
+    new_assocs = result.all()
+    assert len(new_assocs) == 2
+    assert all(a.action == ResourceAssociationAction.ADD for a in new_assocs)
+    assert {(a.resource_id, a.section_title) for a in new_assocs} == {
+        (10, "Housing"),
+        (20, "Employment"),
+    }
+
+
+@pytest.mark.asyncio
 async def test_add_resource_success(
     mock_clientdata_service,
     mock_intake,
@@ -1281,7 +1354,9 @@ async def test_remove_resource_appends_multiple_rows(
 # ============================================================================
 
 
-async def _create_plan_with_address(client, async_session, mock_clientdata_service, mock_intake):
+async def _create_plan_with_address(
+    client, async_session, mock_clientdata_service, mock_intake
+):
     """Helper: create a plan and add an address to the intake, return plan_id."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     response = await client.post(

@@ -19,17 +19,23 @@ import { useEffect, useState } from "react";
 
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
-// Phase 2: replace with real PATCH /plans/{id}/markdown call.
-const mockSavePlanMarkdownApi = async (markdown: string): Promise<void> => {
-  console.log("[mock] savePlanMarkdown", { markdown });
-  return new Promise((resolve) => setTimeout(resolve, 500));
-};
+import { $api } from "../api";
+import { useAuth } from "../lib/auth/authContext";
 
-export const usePlanMarkdown = (initialMarkdown: string | null | undefined) => {
+export const usePlanMarkdown = (
+  planId: string,
+  initialMarkdown: string | null | undefined,
+) => {
+  const { getAccessToken } = useAuth();
   const [displayMarkdown, setDisplayMarkdown] = useState(initialMarkdown ?? "");
   const [draftMarkdown, setDraftMarkdown] = useState(initialMarkdown ?? "");
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  const { mutateAsync: editPlanMutation } = $api.useMutation(
+    "post",
+    "/plans/{id}/edit",
+  );
 
   // Re-initialise when data becomes available (e.g. after loading state).
   useEffect(() => {
@@ -54,7 +60,14 @@ export const usePlanMarkdown = (initialMarkdown: string | null | undefined) => {
     setIsEditing(false);
     setIsSaving(true);
 
-    mockSavePlanMarkdownApi(draftMarkdown).then(
+    editPlanMutation({
+      params: { path: { id: planId } },
+      body: { markdown: draftMarkdown },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    }).then(
       () => {
         setIsSaving(false);
         showSuccessToast("Plan saved.");

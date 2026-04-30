@@ -10,6 +10,13 @@ from uuid import UUID
 import orjson
 import structlog
 import weasyprint
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
+from fastapi.responses import StreamingResponse
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlmodel import paginate
+from pydantic import BaseModel, computed_field
+from weasyprint import CSS, HTML
+
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
 from app.crud.address import update_intake_address
@@ -41,7 +48,9 @@ from app.models.models import (
     Plan,
     PlanAsset,
     PlanGeneration,
+    PlanGenerationResourceAssociation,
     PlanGenerationStatus,
+    ResourceAssociationAction,
 )
 from app.routes.base import DeletionResponse, DeletionStatus, ORMResponse
 from app.routes.shared_models import (
@@ -74,12 +83,6 @@ from app.utils.address_autocomplete import (
 )
 from app.utils.address_autocomplete import autocomplete_city as autocomplete_city_util
 from app.utils.permission_utils import check_access
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
-from fastapi.responses import StreamingResponse
-from fastapi_pagination import Page
-from fastapi_pagination.ext.sqlmodel import paginate
-from pydantic import BaseModel, computed_field
-from weasyprint import CSS, HTML
 
 from ..utils.PrometheusBackgroundThreadManager import (
     llm_plan_creation_total_counter,
@@ -573,6 +576,22 @@ async def router_generate_plan_manually(
         gen_data_json=gen_data_json,
     )
     gen = await create_plan_generation(session, plan_gen)
+
+    # Carry over active resource associations from the previous generation
+    if latest_generation:
+        for assoc in latest_generation.active_resource_associations:
+            session.add(
+                PlanGenerationResourceAssociation(
+                    plan_generation_id=gen.id,
+                    resource_id=assoc.resource_id,
+                    section_title=assoc.section_title,
+                    action=ResourceAssociationAction.ADD,
+                    action_by="SYSTEM",
+                    action_at=datetime.utcnow(),
+                )
+            )
+        await session.commit()
+        await session.refresh(gen)
 
     # update plan generated manually field
     await update_plan_field(

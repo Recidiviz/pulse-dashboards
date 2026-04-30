@@ -65,14 +65,14 @@ const PlanContent = ({
             onClick={setMarkdownEdit}
             disabled={isGenerating}
             ignoreCapabilities={true}
-            className={styles["downloadButton"]}
+            className={styles["actionButton"]}
           />
           <PrimaryButton
             buttonText={isGenerating ? "Generating..." : "Download PDF"}
             onClick={generatePdf}
             disabled={isGenerating}
             ignoreCapabilities={true}
-            className={styles["downloadButton"]}
+            className={styles["actionButton"]}
           />
         </div>
 

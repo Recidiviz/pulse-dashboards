@@ -52,14 +52,14 @@ const PlanEdit = ({
             buttonText="Cancel"
             onClick={onCancel}
             ignoreCapabilities={true}
-            className={styles["downloadButton"]}
+            className={styles["actionButton"]}
           />
           <PrimaryButton
             buttonText={isSaving ? "Saving..." : "Save"}
             onClick={onSave}
             disabled={isSaving}
             ignoreCapabilities={true}
-            className={styles["downloadButton"]}
+            className={styles["actionButton"]}
           />
         </div>
         <div className={styles["editorWrapper"]}>

@@ -72,7 +72,6 @@
 }
 
 .buttonRow {
-  width: 100%;
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -92,6 +91,7 @@
   .buttonRow.edit {
     padding-top: 4px;
     padding-right: 12px;
+    align-self: flex-end;
   }
 }
 
@@ -101,7 +101,7 @@
   }
 }
 
-.downloadButton {
+.actionButton {
   max-width: 200px !important;
   background-color: var(--color-white);
 }

@@ -197,11 +197,11 @@ const MdxEditor = ({
   const jsxComponentDescriptors: JsxComponentDescriptor[] = useMemo(() => {
     const ResourcesEditor = (props: JsxEditorProps) => {
       const nodeProps = getNodeProps(props);
-      const { section } = nodeProps;
+      const { sectionTitle } = nodeProps;
       return (
         <div className="resources-content">
           <ResourceBank
-            sectionTitle={section ?? ""}
+            sectionTitle={sectionTitle ?? ""}
             clientFirstName={clientFirstName}
             onRemove={onResourceRemove}
             allResources={allResources ?? []}
@@ -220,7 +220,7 @@ const MdxEditor = ({
         Editor: NotesEditor,
       },
       {
-        name: "resources",
+        name: "resourceBank",
         kind: "flow",
         source: "./components",
         props: [{ name: "section", type: "string" }],

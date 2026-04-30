@@ -53,7 +53,10 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
     startEdit,
     cancelEdit,
     saveMarkdown,
-  } = usePlanMarkdown(planDetail.latest_generation?.markdown_result);
+  } = usePlanMarkdown(
+    planDetail.id,
+    planDetail?.latest_generation?.markdown_result,
+  );
 
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
     null,
