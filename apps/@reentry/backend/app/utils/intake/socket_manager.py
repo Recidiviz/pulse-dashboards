@@ -203,6 +203,26 @@ class SocketIOManager:
                                     "reattaching to existing graph"
                                 )
 
+                            if intake and intake.locked:
+                                logger.info(
+                                    "Rejecting connection — intake is locked",
+                                    intake_id=str(intake.id),
+                                    locked_reason=intake.locked_reason,
+                                )
+                                await self.send_event_client_pseudo_id(
+                                    client_pseudo_id,
+                                    ConnectionAckEvent(
+                                        content=ConnectionAckContent(
+                                            accepted=False,
+                                            status=intake.status,
+                                            locked=True,
+                                        )
+                                    ),
+                                )
+                                raise ConnectionRefusedError(
+                                    {"message": "Intake is locked"}
+                                )
+
                             if intake and intake.status == IntakeStatus.COMPLETED:
                                 raise ConnectionRefusedError(
                                     {"message": "Intake is already completed"}
@@ -612,6 +632,10 @@ class SocketIOManager:
                     f"message not persisted"
                 )
             if will_disconnect:
+                if intake:
+                    asyncio.create_task(
+                        self.db_manager.lock_intake(intake.id, reason=hard_stop)
+                    )
                 # Cancel graph before closing socket — prevents a window where the socket
                 # is dead but the graph is still running and attempting to emit.
                 if client_pseudo_id in self.conversation_graphs:

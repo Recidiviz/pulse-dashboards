@@ -115,6 +115,7 @@ class PongEvent(BaseModel):
 class ConnectionAckContent(BaseModel):
     accepted: bool
     status: Optional[str] = None
+    locked: bool = False
 
 
 class ConnectionAckEvent(BaseModel):

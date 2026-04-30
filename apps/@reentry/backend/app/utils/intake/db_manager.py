@@ -4,6 +4,7 @@ This manager is focused solely on database operations and data persistence.
 """
 
 import traceback
+from datetime import datetime
 from typing import Dict, List, Literal, Optional
 from uuid import UUID
 
@@ -396,6 +397,42 @@ class DatabaseManager:
             logger.error(f"Error checking survey for intake {intake_id}: {e}")
             traceback.print_exc()
             return False
+
+    async def lock_intake(self, intake_id: UUID, reason: str) -> None:
+        """Lock an intake after a hard-stop guardrail fires."""
+        try:
+            async with await self._get_session() as session:
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
+                )
+                intake: Intake | None = result.scalar_one_or_none()
+                if intake:
+                    intake.locked = True
+                    intake.locked_at = datetime.utcnow()
+                    intake.locked_reason = reason
+                    session.add(intake)
+                    await session.commit()
+        except Exception as e:
+            logger.error(f"Error locking intake {intake_id}: {e}")
+
+    async def unlock_intake(self, intake_id: UUID) -> Optional[Intake]:
+        """Unlock an intake — called by staff to re-enable access."""
+        try:
+            async with await self._get_session() as session:
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
+                )
+                intake: Intake | None = result.scalar_one_or_none()
+                if not intake:
+                    return None
+                intake.locked = False
+                session.add(intake)
+                await session.commit()
+                await session.refresh(intake)
+                return intake
+        except Exception as e:
+            logger.error(f"Error unlocking intake {intake_id}: {e}")
+            return None
 
     async def get_section_titles(self, intake_id: UUID) -> list[str]:
         """

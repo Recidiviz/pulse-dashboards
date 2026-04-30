@@ -50,6 +50,7 @@ class IntakeResponse(ORMResponse):
     internal_access: Optional[bool] = None
     has_address: bool = False
     has_survey: bool = False
+    locked: bool = False
 
 
 class IntakeWithSectionsResponse(IntakeResponse):

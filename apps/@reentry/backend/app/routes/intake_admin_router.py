@@ -559,6 +559,42 @@ async def set_outputs_enabled(
     return intake
 
 
+@router.patch(
+    "/{intake_id}/unlock",
+    summary="Unlock a locked intake",
+    description="Clears the locked flag on an intake so the client can reconnect",
+    tags=["Intake assessment - Admin"],
+    response_model=IntakeResponse,
+)
+async def unlock_intake(
+    intake_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    intake = await get_intake_by_id(session, intake_id)
+
+    if not intake:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Intake with ID {intake_id} not found",
+        )
+
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
+
+    intake.locked = False
+    session.add(intake)
+    await session.commit()
+    await session.refresh(intake)
+    return intake
+
+
 @router.post(
     "/{intake_id}/token-access",
     summary="Generate a client access token",

@@ -213,6 +213,7 @@ async def get_client_intakes(
                 completed_at=intake.completed_at,
                 assessment_config_outputs_action_plan_activated=plan_config is not None,
                 outputs_enabled=intake.outputs_enabled,
+                locked=intake.locked,
                 trigger_id=trigger.id if trigger else None,
             )
         )

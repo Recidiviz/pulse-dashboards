@@ -79,6 +79,7 @@ def mock_intake_and_client():
     intake.client_pseudo_id = "test_client"
     intake.status = "IN_PROGRESS"
     intake.current_section = "Test Section"
+    intake.locked = False
 
     # Mock client_intake_sections as an empty list for now
     intake.client_intake_sections = []

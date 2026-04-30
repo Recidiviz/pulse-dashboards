@@ -153,6 +153,12 @@ class Intake(BaseModel, table=True):
         nullable=False,
         description="Enable outputs (summary and action plan) for this intake",
     )
+    # Intake locking — set on hard-stop guardrail, cleared by staff to re-enable.
+    # locked_at and locked_reason always reflect the most recent lock event and are
+    # never cleared on unlock, preserving a permanent audit record of the last trigger.
+    locked: bool = Field(default=False, nullable=False)
+    locked_at: Optional[datetime] = Field(default=None, nullable=True)
+    locked_reason: Optional[str] = Field(default=None, nullable=True)
     # For shareable token authentication
     intake_token: Mapped[Optional["IntakeToken"]] = Relationship(
         back_populates="intake",

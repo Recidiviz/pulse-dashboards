@@ -31,6 +31,8 @@ class IntakeMessageResponse(ORMResponse):
     from_role: IntakeMessageRole
     section: str | None = None
     requires_response: bool = False
+    # Exposed here so the staff chat history view can visually distinguish flagged messages.
+    guardrailed_by: list[str] | None = None
 
 
 class ClientRecordResponse(BaseModel):
@@ -64,6 +66,9 @@ class IntakeResponse(ORMResponse):
     intake_type: IntakeType
     has_address: bool | None = None
     has_survey: bool | None = None
+    locked: bool = False
+    locked_at: datetime | None = None
+    locked_reason: str | None = None
 
 
 class PlanResponse(ORMResponse):
@@ -122,6 +127,7 @@ class IntakeHistoryResponse(ORMResponse):
     assessment_config_outputs_action_plan_activated: bool | None = None
     completed_at: datetime | None = None
     outputs_enabled: bool = True
+    locked: bool = False
     trigger_id: UUID | None = None
 
 
