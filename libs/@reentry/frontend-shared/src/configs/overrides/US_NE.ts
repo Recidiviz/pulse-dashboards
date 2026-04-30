@@ -16,6 +16,7 @@
 // =============================================================================
 
 import type { IntakeTenantOverride } from "../types";
+import { buildGuardrailCopy } from "./utils";
 
 export const US_NE_OVERRIDES: IntakeTenantOverride = {
   preIntakeFlow: "text+video",
@@ -23,6 +24,7 @@ export const US_NE_OVERRIDES: IntakeTenantOverride = {
     src: "/videos/us-ne-intake-video.mp4",
     subtitlesSrc: "/videos/us-ne-intake-subtitles.vtt",
   },
+  guardrails: buildGuardrailCopy("NDCS"),
   preIntakeCopy: `This intake is designed to help your institutional parole officer learn more about your reentry goals, plans, and needs before you meet to discuss your personalized reentry plan.`,
   noteOneCopy: {
     title: "Your 120-Day Reentry Prep",

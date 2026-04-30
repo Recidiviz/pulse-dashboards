@@ -115,6 +115,7 @@ interface IntakeSocketDispatchContextType {
   startConversation: () => void;
   setIntakeComplete: () => void;
   lockIntake: () => void;
+  clearGuardrailSoftStop: () => void;
 }
 
 const IntakeContext: Context<IntakeSocketContextType> = createContext(
@@ -230,7 +231,8 @@ type IntakeAction =
   | SetSessionExpiringAction
   | ResetSessionExpiringAction
   | GuardrailSoftStopAction
-  | { type: "intakeLocked" };
+  | { type: "intakeLocked" }
+  | { type: "clearGuardrailSoftStop" };
 
 const intakeReducer = (
   state: IntakeSocketContextType,
@@ -299,6 +301,9 @@ const intakeReducer = (
     }
     case "intakeLocked": {
       return { ...state, isLocked: true };
+    }
+    case "clearGuardrailSoftStop": {
+      return { ...state, guardrailSoftStopReason: null };
     }
     case "setStatus": {
       if (state.intakeStatus === action.content) return state;
@@ -1076,6 +1081,8 @@ export function IntakeSocketProvider({
   };
 
   const lockIntake = () => dispatch({ type: "intakeLocked" });
+  const clearGuardrailSoftStop = () =>
+    dispatch({ type: "clearGuardrailSoftStop" });
 
   const dispatchContext: IntakeSocketDispatchContextType = {
     sendMessage,
@@ -1084,6 +1091,7 @@ export function IntakeSocketProvider({
     startConversation,
     setIntakeComplete,
     lockIntake,
+    clearGuardrailSoftStop,
   };
 
   /**

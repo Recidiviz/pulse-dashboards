@@ -43,7 +43,14 @@ const LinearChatComponent: React.FC = () => {
   } = useApplicationContext();
 
   const {
-    intakeContext: { isLoading, error, intakeStatus, guardrailHardStopReason },
+    intakeContext: {
+      isLoading,
+      error,
+      intakeStatus,
+      guardrailHardStopReason,
+      guardrailSoftStopReason,
+    },
+    intakeDispatchContext: { lockIntake, clearGuardrailSoftStop },
   } = useSocket();
 
   if ((error && error.type === "api") || intakeStatus === "error") {
@@ -88,7 +95,16 @@ const LinearChatComponent: React.FC = () => {
       style={bottomInset ? { paddingBottom: bottomInset } : undefined}
     >
       {guardrailHardStopReason && (
-        <GuardrailModal reason={guardrailHardStopReason} />
+        <GuardrailModal
+          reason={guardrailHardStopReason}
+          onAction={lockIntake}
+        />
+      )}
+      {guardrailSoftStopReason && (
+        <GuardrailModal
+          reason={guardrailSoftStopReason}
+          onAction={clearGuardrailSoftStop}
+        />
       )}
       <ConnectionErrorAlert />
       {/* Header */}

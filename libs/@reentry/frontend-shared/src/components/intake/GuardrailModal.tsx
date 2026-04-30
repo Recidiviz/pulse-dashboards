@@ -20,41 +20,28 @@
 import type React from "react";
 import Modal from "react-modal";
 
-import { useApplicationContext } from "../../contexts/ApplicationContext";
-import { clearIntakeSession } from "../../utils/clearIntakeSession";
-import type { HardStopGuardrailType } from "../../websockets/eventTypes";
+import { getGuardrailCopy } from "../../configs/overrides/utils";
+import type {
+  HardStopGuardrailType,
+  SoftStopGuardrailType,
+} from "../../websockets/eventTypes";
+import { useSocket } from "../../websockets/IntakeSocketContext";
 import styles from "./styles/GuardrailModal.module.css";
 
-const CRISIS_CONTENT = {
-  title: "We're here to help",
-  body: "It looks like you may need immediate support. Please speak with your caseworker or call 988 (Suicide & Crisis Lifeline) for help.",
-};
-
-const DEFAULT_CONTENT = {
-  title: "Session ended",
-  body: "This session has been ended. Please speak with your caseworker to continue.",
-};
-
-const CONTENT: Record<HardStopGuardrailType, { title: string; body: string }> =
-  {
-    crisis: CRISIS_CONTENT,
-    harm_to_others: DEFAULT_CONTENT,
-    "openai_moderation:self-harm": CRISIS_CONTENT,
-    "openai_moderation:harm_to_others": DEFAULT_CONTENT,
-  };
-
 interface GuardrailModalProps {
-  reason: HardStopGuardrailType;
+  reason: HardStopGuardrailType | SoftStopGuardrailType;
+  onAction: () => void;
 }
 
-export const GuardrailModal: React.FC<GuardrailModalProps> = ({ reason }) => {
-  const { navigateAfterIntake } = useApplicationContext();
-  const { title, body } = CONTENT[reason] ?? DEFAULT_CONTENT;
+export const GuardrailModal: React.FC<GuardrailModalProps> = ({
+  reason,
+  onAction,
+}) => {
+  const {
+    intakeContext: { client_state },
+  } = useSocket();
 
-  const handleReturnHome = () => {
-    clearIntakeSession();
-    navigateAfterIntake();
-  };
+  const { title, body, buttonLabel } = getGuardrailCopy(reason, client_state);
 
   return (
     <Modal
@@ -72,10 +59,10 @@ export const GuardrailModal: React.FC<GuardrailModalProps> = ({ reason }) => {
           <p className={styles["message"]}>{body}</p>
           <button
             type="button"
-            className={styles["returnHomeButton"]}
-            onClick={handleReturnHome}
+            className={styles["actionButton"]}
+            onClick={onAction}
           >
-            Return home
+            {buttonLabel}
           </button>
         </div>
       </div>

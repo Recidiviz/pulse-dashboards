@@ -16,6 +16,7 @@
 // =============================================================================
 
 import type { IntakeTenantOverride } from "../types";
+import { buildGuardrailCopy } from "./utils";
 
 export const US_IX_OVERRIDES: IntakeTenantOverride = {
   preIntakeFlow: "text+video",
@@ -23,6 +24,7 @@ export const US_IX_OVERRIDES: IntakeTenantOverride = {
     src: "/videos/us-id-intake-video.mp4",
     subtitlesSrc: "/videos/us-id-intake-subtitles.vtt",
   },
+  guardrails: buildGuardrailCopy("IDOC"),
   noteOneCopy: {
     title: "Your Reentry Prep",
     paragraphs: [

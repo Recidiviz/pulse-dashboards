@@ -15,6 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { ReactNode } from "react";
+
+import type { GuardrailType } from "../websockets/eventTypes";
+
+export interface GuardrailModalContent {
+  title: string;
+  body: ReactNode;
+  buttonLabel: string;
+}
+
+export type GuardrailCopyMap = Partial<
+  Record<GuardrailType, GuardrailModalContent>
+>;
+
 export interface PreIntakeNoteOneCopy {
   title: string;
   paragraphs: string[];
@@ -28,6 +42,7 @@ export interface PreIntakeNoteTwoCopy {
 
 export interface IntakeConfigBase {
   preIntakeCopy: string;
+  guardrails?: GuardrailCopyMap;
   docId: {
     label: string;
     placeholder: string;

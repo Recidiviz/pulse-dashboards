@@ -61,7 +61,7 @@
   margin: 0;
 }
 
-.returnHomeButton {
+.actionButton {
   width: 100%;
   padding: 0.5rem 1rem;
   background: var(--color-teal-3);
@@ -75,6 +75,6 @@
   transition: background-color 150ms ease;
 }
 
-.returnHomeButton:hover {
+.actionButton:hover {
   background: var(--color-teal-4);
 }
