@@ -58,11 +58,20 @@ const SearchResults = ({
             <span className={styles["categoryBadge"]}>
               {resource.subcategory}
             </span>
+            {resource.origin === "PARTNER" && (
+              <span className={styles["onlineBadge"]}>Online</span>
+            )}
             {resource.travel_distance_miles && (
               <span className={styles["distance"]}>
                 {resource.travel_distance_miles.toFixed(1)} mi
               </span>
             )}
+            {!(resource.origin === "GOOGLE") &&
+              resource.travel_distance_miles != null && (
+                <span className={styles["distance"]}>
+                  {Number(resource.travel_distance_miles.toPrecision(2))} mi
+                </span>
+              )}
           </div>
           {resource.description && (
             <p className={styles["cardDescription"]}>{resource.description}</p>

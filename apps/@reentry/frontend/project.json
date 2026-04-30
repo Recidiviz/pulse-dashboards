@@ -202,7 +202,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/@reentry/frontend"],
       "cache": true,
       "options": {
-        "command": "vitest",
+        "command": "vitest run",
         "cwd": "{projectRoot}"
       }
     },

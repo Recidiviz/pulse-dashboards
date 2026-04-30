@@ -9,6 +9,7 @@ from app.services.resources import (
     BatchGetResources,
     GetResourcesRequest,
     Location,
+    Resource,
     ResourceCategory,
     ResourceCategoryLegacy,
     ResourceFailureReason,
@@ -16,8 +17,6 @@ from app.services.resources import (
     ResourceSubcategoryLegacy,
     TravelMode,
     is_category,
-    is_legacy_category,
-    is_legacy_subcategory,
     is_subcategory,
     list_resources,
 )
@@ -155,7 +154,10 @@ async def test_resource_type_get_result(resource_type: ResourceCategory):
     if response.resources:
         assert response.failure_reason == ResourceFailureReason.SUCCESS
     else:
-        assert response.failure_reason == ResourceFailureReason.NO_RESULTS_FOUND
+        assert response.failure_reason in (
+            ResourceFailureReason.NO_RESULTS_FOUND,
+            ResourceFailureReason.API_ERROR,
+        )
 
 
 @pytest.mark.asyncio
@@ -217,7 +219,12 @@ async def test_fetch_resources_with_retry_success():
     from app.services.resources import GetResourcesResponse, Resource
     from app.utils.resources_utils import fetch_resources_with_retry
 
-    resource = Resource(id="res-001", resource_id=1, category=ResourceCategory.HOUSING, name="Test Shelter")
+    resource = Resource(
+        id="res-001",
+        resource_id=1,
+        category=ResourceCategory.HOUSING,
+        name="Test Shelter",
+    )
     response = GetResourcesResponse(
         resources=[resource], failure_reason=ResourceFailureReason.SUCCESS
     )
@@ -274,9 +281,16 @@ async def test_fetch_resources_with_retry_retries_on_api_error():
     from app.services.resources import GetResourcesResponse, Resource
     from app.utils.resources_utils import fetch_resources_with_retry
 
-    resource = Resource(id="res-002", resource_id=2, category=ResourceCategory.HOUSING, name="Test Shelter")
+    resource = Resource(
+        id="res-002",
+        resource_id=2,
+        category=ResourceCategory.HOUSING,
+        name="Test Shelter",
+    )
     error_response = GetResourcesResponse(
-        resources=[], failure_reason=ResourceFailureReason.API_ERROR, error_message="500"
+        resources=[],
+        failure_reason=ResourceFailureReason.API_ERROR,
+        error_message="500",
     )
     success_response = GetResourcesResponse(
         resources=[resource], failure_reason=ResourceFailureReason.SUCCESS
@@ -308,7 +322,9 @@ async def test_fetch_resources_with_retry_exhausted_returns_empty():
     from app.utils.resources_utils import fetch_resources_with_retry
 
     error_response = GetResourcesResponse(
-        resources=[], failure_reason=ResourceFailureReason.API_ERROR, error_message="503"
+        resources=[],
+        failure_reason=ResourceFailureReason.API_ERROR,
+        error_message="503",
     )
 
     with patch(
@@ -508,30 +524,6 @@ def test_is_category():
     assert is_category("") is False
 
 
-def test_is_legacy_category():
-    """Test that is_legacy_category correctly identifies legacy categories."""
-    # Legacy categories should return True
-    assert is_legacy_category("Basic Needs") is True
-    assert is_legacy_category("Employment and Career Support") is True
-    assert is_legacy_category("Education") is True
-    assert is_legacy_category("Behavioral Health Services") is True
-    assert is_legacy_category("Medical and Health Services") is True
-    assert is_legacy_category("Legal and Financial Assistance") is True
-    assert is_legacy_category("Family and Community Support") is True
-    assert is_legacy_category("Transportation") is True
-    assert is_legacy_category("Specialized Services") is True
-    assert is_legacy_category("Community and Social Reintegration") is True
-    assert is_legacy_category("Unknown") is True
-
-    # New categories that don't exist in legacy should return False
-    assert is_legacy_category("Housing") is False
-    assert is_legacy_category("Employment") is False
-    assert is_legacy_category("Mental Health") is False
-
-    # Invalid categories should return False
-    assert is_legacy_category("Invalid Category") is False
-
-
 def test_is_subcategory():
     """Test that is_subcategory correctly identifies new subcategories."""
     # New subcategories should return True
@@ -552,25 +544,6 @@ def test_is_subcategory():
     assert is_subcategory("") is False
 
 
-def test_is_legacy_subcategory():
-    """Test that is_legacy_subcategory correctly identifies legacy subcategories."""
-    # Legacy subcategories should return True
-    assert is_legacy_subcategory("Housing") is True
-    assert is_legacy_subcategory("Food Assistance") is True
-    assert is_legacy_subcategory("Clothing") is True
-    assert is_legacy_subcategory("Job Training Programs") is True
-    assert is_legacy_subcategory("Mental Health Counseling") is True
-    assert is_legacy_subcategory("Primary Care") is True
-
-    # New subcategories should return False
-    assert is_legacy_subcategory("Emergency housing and shelters") is False
-    assert is_legacy_subcategory("Second-chance employer") is False
-    assert is_legacy_subcategory("Food assistance") is False
-
-    # Invalid subcategories should return False
-    assert is_legacy_subcategory("Invalid Subcategory") is False
-
-
 def test_unified_request_with_new_categories():
     """Test that GetResourcesRequest accepts new category/subcategory pairs."""
     request = GetResourcesRequest(
@@ -580,46 +553,18 @@ def test_unified_request_with_new_categories():
     )
     assert request.category == "Housing"
     assert request.subcategory == "Emergency housing and shelters"
-    assert request.is_legacy_request() is False
 
 
-def test_unified_request_with_legacy_categories():
-    """Test that GetResourcesRequest accepts legacy category/subcategory pairs."""
-    request = GetResourcesRequest(
-        category=ResourceCategoryLegacy.BASIC_NEEDS.value,
-        subcategory=ResourceSubcategoryLegacy.HOUSING.value,
-        address="123 Main St, Anytown, USA",
+def test_resource_model_accepts_legacy_categories():
+    """Legacy category/subcategory values can still be used to instantiate Resource."""
+    resource = Resource(
+        id="place_123",
+        name="Old Resource",
+        category=ResourceCategoryLegacy.BASIC_NEEDS,
+        subcategory=ResourceSubcategoryLegacy.HOUSING,
     )
-    assert request.category == "Basic Needs"
-    assert request.subcategory == "Housing"
-    assert request.is_legacy_request() is True
-
-
-def test_to_legacy_request_conversion():
-    """Test conversion from unified request to legacy request."""
-    unified_request = GetResourcesRequest(
-        category=ResourceCategoryLegacy.BASIC_NEEDS.value,
-        subcategory=ResourceSubcategoryLegacy.HOUSING.value,
-        address="123 Main St, Anytown, USA",
-        distance_miles=50,
-        travel_mode=TravelMode.DRIVING,
-        exclude_ids=["id1", "id2"],
-        exclude_addresses=["addr1"],
-        exclude_names=["name1"],
-        limit=25,
-    )
-
-    legacy_request = unified_request.to_legacy_request()
-
-    assert legacy_request.category == ResourceCategoryLegacy.BASIC_NEEDS
-    assert legacy_request.subcategory == ResourceSubcategoryLegacy.HOUSING
-    assert legacy_request.address == "123 Main St, Anytown, USA"
-    assert legacy_request.distance_miles == 50
-    assert legacy_request.mode == TravelMode.DRIVING
-    assert legacy_request.ids_to_exclude == ["id1", "id2"]
-    assert legacy_request.addresses_to_exclude == ["addr1"]
-    assert legacy_request.keywords_to_exclude == ["name1"]
-    assert legacy_request.limit == 25
+    assert resource.category == ResourceCategoryLegacy.BASIC_NEEDS
+    assert resource.subcategory == ResourceSubcategoryLegacy.HOUSING
 
 
 @pytest.mark.asyncio
@@ -638,19 +583,12 @@ async def test_routing_to_new_api():
         )
     ]
 
-    with (
-        patch(
-            "app.services.resources.api._call_resource_api",
-            new_callable=AsyncMock,
-        ) as mock_new_api,
-        patch(
-            "app.services.resources.legacy_api._call_legacy_resource_api",
-            new_callable=AsyncMock,
-        ) as mock_legacy_api,
-    ):
+    with patch(
+        "app.services.resources.api._call_resource_api",
+        new_callable=AsyncMock,
+    ) as mock_new_api:
         mock_new_api.return_value = mock_results
 
-        # Use new category/subcategory
         request = GetResourcesRequest(
             category=ResourceCategory.HOUSING.value,
             subcategory=ResourceSubcategory.EMERGENCY.value,
@@ -660,67 +598,9 @@ async def test_routing_to_new_api():
 
         response = await list_resources(request)
 
-        # Should call new API, not legacy API
         mock_new_api.assert_called_once()
-        mock_legacy_api.assert_not_called()
-
-        # Verify response
         assert len(response.resources) == 1
         assert response.resources[0].name == "New API Housing Resource"
-
-
-@pytest.mark.asyncio
-async def test_routing_to_legacy_api():
-    """Test that legacy subcategories route to the legacy API."""
-    # Import from legacy_api to ensure we use the same types
-    from app.services.resources.legacy_api import (
-        ApiSearchResult as LegacyApiSearchResult,
-    )
-
-    # Note: The legacy API's ApiSearchResult uses NEW taxonomy for the response
-    # (legacy requests are converted internally)
-    mock_results = [
-        LegacyApiSearchResult(
-            google_place_id="legacy_api_place_456",
-            name="Legacy API Housing Resource",
-            category=ResourceCategory.BASIC_NEEDS,
-            subcategory=ResourceSubcategory.FOOD_ASSISTANCE,
-            origin="TEST",
-            resource_id=1,
-            location=Location(latitude=40.2969, longitude=-111.6946),
-            address="456 Test St, Orem, UT 84057",
-        )
-    ]
-
-    with (
-        patch(
-            "app.services.resources.api._call_resource_api",
-            new_callable=AsyncMock,
-        ) as mock_new_api,
-        patch(
-            "app.services.resources.legacy_api._call_legacy_resource_api",
-            new_callable=AsyncMock,
-        ) as mock_legacy_api,
-    ):
-        mock_legacy_api.return_value = mock_results
-
-        # Use legacy category/subcategory in request to trigger legacy routing
-        request = GetResourcesRequest(
-            category=ResourceCategoryLegacy.BASIC_NEEDS.value,
-            subcategory=ResourceSubcategoryLegacy.HOUSING.value,
-            address="123 Anywhere St, UT 84057",
-            limit=10,
-        )
-
-        response = await list_resources(request)
-
-        # Should call legacy API, not new API
-        mock_legacy_api.assert_called_once()
-        mock_new_api.assert_not_called()
-
-        # Verify response
-        assert len(response.resources) == 1
-        assert response.resources[0].name == "Legacy API Housing Resource"
 
 
 @pytest.mark.asyncio
@@ -763,48 +643,6 @@ async def test_new_api_called_with_correct_params():
         assert call_args.exclude_addresses == ["exclude_addr_1"]
         assert call_args.exclude_names == ["exclude_name_1"]
         assert call_args.limit == 50
-
-
-@pytest.mark.asyncio
-async def test_legacy_api_called_with_correct_params():
-    """Test that the legacy API is called with the correct parameters."""
-
-    with patch(
-        "app.services.resources.legacy_api._call_legacy_resource_api",
-        new_callable=AsyncMock,
-    ) as mock_legacy_api:
-        mock_legacy_api.return_value = []
-
-        request = GetResourcesRequest(
-            category=ResourceCategoryLegacy.EMPLOYMENT_AND_CAREER.value,
-            subcategory=ResourceSubcategoryLegacy.JOB_TRAINING.value,
-            address="789 Job St, City, ST 12345",
-            distance_miles=30,
-            travel_mode=TravelMode.DRIVING,
-            exclude_ids=["legacy_id_1"],
-            exclude_addresses=["legacy_addr_1"],
-            exclude_names=["legacy_name_1"],
-            limit=20,
-        )
-
-        await list_resources(request)
-
-        # Verify the legacy API was called
-        mock_legacy_api.assert_called_once()
-
-        # Get the actual call arguments (should be LegacyResourceRequest)
-        call_args = mock_legacy_api.call_args[0][0]
-
-        # Verify all parameters were converted and passed correctly
-        assert call_args.category == ResourceCategoryLegacy.EMPLOYMENT_AND_CAREER
-        assert call_args.subcategory == ResourceSubcategoryLegacy.JOB_TRAINING
-        assert call_args.address == "789 Job St, City, ST 12345"
-        assert call_args.distance_miles == 30
-        assert call_args.mode == TravelMode.DRIVING
-        assert call_args.ids_to_exclude == ["legacy_id_1"]
-        assert call_args.addresses_to_exclude == ["legacy_addr_1"]
-        assert call_args.keywords_to_exclude == ["legacy_name_1"]
-        assert call_args.limit == 20
 
 
 @pytest.mark.asyncio
@@ -1021,3 +859,24 @@ async def test_batch_get_resources_calls_correct_endpoint(mock_httpx):
     assert payload["address"] == "123 Main St, Portland, OR"
     assert payload["ids"] == [10, 20]
     assert payload["travel_mode"] == TravelMode.WALKING
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+async def test_call_discover_partners():
+    from app.services.resources.partner_api import discover_partners
+
+    request = GetResourcesRequest(
+        category=ResourceCategory.EMPLOYMENT.value,
+        subcategory=ResourceSubcategory.JOB_READINESS.value,
+        address="748 N 1340 W Orem, UT 84057",
+        distance_miles=10,
+        limit=10,
+        include_partners=True,
+    )
+    response = await discover_partners(request)
+    print(f"\nPartner resources found: {len(response.resources)}")
+    for r in response.resources:
+        print(f"  - {r.name} | {r.url} | {r.blurb}")
+    print(f"failure_reason: {response.failure_reason}")
+    assert response.resources

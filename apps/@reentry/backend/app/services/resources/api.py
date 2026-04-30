@@ -2,6 +2,8 @@ from typing import List
 
 import httpx
 import structlog
+from fastapi import status
+
 from app.core.config import settings
 from app.services.resources import (
     ApiSearchResult,
@@ -11,7 +13,6 @@ from app.services.resources import (
     Resource,
     ResourceFailureReason,
 )
-from fastapi import status
 
 logger = structlog.get_logger(__name__)
 
@@ -89,6 +90,7 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
         ratingCount=result.rating_count,
         score=None,
         resource_id=result.resource_id,
+        origin=result.origin,
     )
     return resource
 

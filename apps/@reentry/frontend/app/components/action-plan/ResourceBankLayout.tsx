@@ -27,7 +27,6 @@ import { useResourceBank } from "~@reentry/frontend/hooks/useResourceBank";
 import type { components } from "~@reentry/openapi-types";
 
 import RemoveResourceDialog from "./RemoveResourceDialog";
-import { CATEGORY_SUBCATEGORY_MAP } from "./resource-bank/categorySubcategoryMap";
 import styles from "./styles/ResourceBankLayout.module.css";
 
 interface ResourceBankLayoutProps {
@@ -55,39 +54,23 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
     saveMarkdown,
   } = usePlanMarkdown(
     planDetail.id,
-    planDetail?.latest_generation?.markdown_result,
+    planDetail.latest_generation?.markdown_result,
   );
 
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
     null,
   );
 
-  const handleAddressSave = (address: {
-    street_address: string | null;
-    city: string;
-    state: string;
-  }) => {
-    // TODO: Wire to PATCH /plans/{id}/address in a future ticket
-    console.log("Address saved:", address);
-    // TODO: refresh resources after address change in a future ticket - update distances
-  };
-
-  const resourceSearchPanelProps = {
-    addResource,
-    categorySubcategoryMap: CATEGORY_SUBCATEGORY_MAP,
-    sectionTitles: sections.map((item) => ({ title: item.title })),
-  };
-
   const clientFirstName =
     planDetail.client_record?.full_name?.given_names ?? "the client";
-
   return (
     <div className={styles["container"]}>
       <div className={styles["sidebar"]}>
         <ResourceBankSidePanel
-          clientRecord={planDetail.client_record}
-          onAddressSave={handleAddressSave}
-          searchPanelProps={resourceSearchPanelProps}
+          planId={planDetail?.id}
+          clientRecord={planDetail?.client_record ?? null}
+          addResource={addResource}
+          sectionTitles={sections.map((item) => ({ title: item.title }))}
         />
       </div>
       <div className={styles["content"]}>

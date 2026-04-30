@@ -23,44 +23,65 @@ import { MdExpandLess, MdExpandMore, MdInfoOutline } from "react-icons/md";
 
 import { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
 import useResourceSearch from "~@reentry/frontend/hooks/useResourceSearch";
+import type { components } from "~@reentry/openapi-types";
 
 import type { SectionTitle } from "../types";
-import { RADIUS_OPTIONS } from "./categorySubcategoryMap";
+import {
+  CATEGORY_SUBCATEGORY_MAP,
+  RADIUS_OPTIONS,
+  type RadiusOption,
+} from "./categorySubcategoryMap";
 import FilterForm from "./FilterForm";
 import SearchResults from "./SearchResults";
 import styles from "./styles/ResourceSearchPanel.module.css";
 
+type ResourceCategory = components["schemas"]["ResourceCategory"];
+type ResourceSubcategory = components["schemas"]["ResourceSubcategory"];
+
+const isResourceCategory = (value: string): value is ResourceCategory =>
+  value in CATEGORY_SUBCATEGORY_MAP;
+
+const ALL_SUBCATEGORIES: readonly string[] = Object.values(
+  CATEGORY_SUBCATEGORY_MAP,
+).flat();
+const isResourceSubcategory = (value: string): value is ResourceSubcategory =>
+  ALL_SUBCATEGORIES.includes(value);
+
+const isRadiusOption = (value: number): value is RadiusOption =>
+  (RADIUS_OPTIONS as readonly number[]).includes(value);
+
 export interface ResourceSearchPanelProps {
   addResource: (sectionTitle: string, resource: ResourceWithMeta) => void;
-  categorySubcategoryMap: Record<string, string[]>;
   sectionTitles: SectionTitle[];
+  clientAddress: string;
 }
 
 const ResourceSearchPanel = ({
   addResource,
-  categorySubcategoryMap,
   sectionTitles,
+  clientAddress,
 }: ResourceSearchPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
-  const [selectedRadius, setSelectedRadius] = useState(50);
+  const [selectedCategory, setSelectedCategory] = useState<
+    ResourceCategory | ""
+  >("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<
+    ResourceSubcategory | ""
+  >("");
+  const [selectedRadius, setSelectedRadius] = useState<RadiusOption>(50);
 
-  const { isLoading, results, search } = useResourceSearch();
+  const { searchError, isLoading, results, search } =
+    useResourceSearch(clientAddress);
 
-  const categoryOptions = Object.keys(categorySubcategoryMap)
-    .filter((cat) =>
-      sectionTitles.some((s) =>
-        s.title.toLowerCase().startsWith(cat.toLowerCase()),
-      ),
-    )
+  const categoryOptions = Object.keys(CATEGORY_SUBCATEGORY_MAP)
+    .sort()
     .map((cat) => ({ value: cat, label: cat, disabled: false }));
 
   const subcategoryOptions = selectedCategory
-    ? (categorySubcategoryMap[selectedCategory] ?? []).map((sub) => ({
-        value: sub,
-        label: sub,
-      }))
+    ? (CATEGORY_SUBCATEGORY_MAP[selectedCategory] ?? [])
+        .slice()
+        .sort()
+        .map((sub) => ({ value: sub, label: sub }))
     : [];
 
   const radiusOptions = RADIUS_OPTIONS.map((r) => ({
@@ -69,7 +90,7 @@ const ResourceSearchPanel = ({
   }));
 
   const handleSearch = () => {
-    if (!selectedCategory) return;
+    if (!selectedCategory || !selectedSubcategory || !selectedRadius) return;
     search(selectedCategory, selectedSubcategory, selectedRadius);
   };
 
@@ -100,25 +121,35 @@ const ResourceSearchPanel = ({
       {isExpanded && (
         <div className={styles["body"]}>
           <FilterForm
-            canSearch={Boolean(selectedCategory) && !isLoading}
+            canSearch={
+              Boolean(selectedCategory) &&
+              Boolean(selectedSubcategory) &&
+              !isLoading
+            }
             categoryOptions={categoryOptions}
             onCategoryChange={(value) => {
-              setSelectedCategory(value);
-              setSelectedSubcategory("");
+              if (isResourceCategory(value)) {
+                setSelectedCategory(value);
+              }
             }}
             onRadiusChange={(value) => {
-              setSelectedRadius(Number(value));
+              const num = Number(value);
+              if (isRadiusOption(num)) setSelectedRadius(num);
             }}
             onSearch={handleSearch}
             onSubcategoryChange={(value) => {
-              setSelectedSubcategory(value);
+              if (isResourceSubcategory(value)) setSelectedSubcategory(value);
             }}
             radiusOptions={radiusOptions}
             selectedCategory={selectedCategory}
-            selectedRadius={String(selectedRadius)}
+            selectedRadius={selectedRadius}
             selectedSubcategory={selectedSubcategory}
             subcategoryOptions={subcategoryOptions}
           />
+
+          {searchError && (
+            <p className={styles["errorMessage"]}>{searchError}</p>
+          )}
 
           {results !== null && (
             <SearchResults

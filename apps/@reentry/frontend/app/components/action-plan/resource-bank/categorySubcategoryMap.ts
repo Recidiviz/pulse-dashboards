@@ -18,36 +18,86 @@
 // See the reference list in the backend here.
 // apps/@reentry/backend/app/services/resources/__init__.py
 
-export const CATEGORY_SUBCATEGORY_MAP: Record<string, string[]> = {
-  Housing: [
-    "Emergency housing and shelters",
-    "Transitional housing",
-    "Sober living and recovery program",
-    "Rental assistance",
-    "Subsidized housing or vouchers",
-    "Youth housing",
-  ],
-  Employment: [
-    "Second-chance employer",
-    "Temporary staffing agency",
-    "Job readiness training",
-    "Job certification and licensing",
-  ],
+import type { components } from "~@reentry/openapi-types";
+
+type ResourceCategory = components["schemas"]["ResourceCategory"];
+type ResourceSubcategory = components["schemas"]["ResourceSubcategory"];
+
+export const CATEGORY_SUBCATEGORY_MAP: Record<
+  ResourceCategory,
+  ResourceSubcategory[]
+> = {
   "Basic Needs": [
+    "Financial assistance",
     "Food assistance",
     "Hygiene products",
     "Second hand clothing",
     "State ID, Driver's License",
-    "Financial assistance",
+  ],
+  "Education & Vocational Training": [
+    "College re-entry programs",
+    "Digital literacy programs",
+    "Financial literacy programs",
+    "GED preparation and testing",
+    "Literacy programs",
+    "Vocational trade school programs",
+  ],
+  Employment: [
+    "Job certification and licensing",
+    "Job readiness training",
+    "Second-chance employer",
+    "Temporary staffing agency",
+  ],
+  "Family Reconnection & Parenting": [
+    "Child protective services",
+    "Family reunification services",
+    "Family services",
+    "Family therapy or counseling",
+    "Parenting skills classes",
+  ],
+  Housing: [
+    "Emergency housing and shelters",
+    "Rental assistance",
+    "Sober living and recovery program",
+    "Subsidized housing or vouchers",
+    "Transitional housing",
+    "Youth housing",
+  ],
+  "Legal Aid & Rights Restoration": [
+    "Child support assistance",
+    "Criminal record expungement",
+    "Legal aid",
+    "Voting rights restoration",
+    "Youth legal aid",
   ],
   "Mental Health": [
-    "Therapy and counseling",
-    "Psychiatric care",
-    "Trauma-informed care",
-    "Crisis intervention services",
     "Anger management",
+    "Crisis intervention services",
     "Domestic violence treatment",
+    "Psychiatric care",
+    "Therapy and counseling",
+    "Trauma-informed care",
     "Youth mental health services",
+  ],
+  "Peer Support & Community Integration": [
+    "Civic engagement",
+    "Community center",
+    "Faith-based support",
+    "Mentorship programs",
+    "Reentry support groups",
+    "Volunteer opportunities",
+    "Youth community programs",
+  ],
+  "Physical Health": [
+    "Community clinic",
+    "Emergency dental care",
+    "HIV/AIDS and Hepatitis C services",
+    "Medicaid enrollment assistance",
+    "Prescription assistance",
+    "Primary care",
+    "Urgent care",
+    "Veterans health care",
+    "Youth health care",
   ],
   "Substance Use": [
     "Detoxification centers",
@@ -57,48 +107,7 @@ export const CATEGORY_SUBCATEGORY_MAP: Record<string, string[]> = {
     "Substance use support",
     "Youth substance use support",
   ],
-  "Physical Health": [
-    "HIV/AIDS and Hepatitis C services",
-    "Medicaid enrollment assistance",
-    "Community clinic",
-    "Urgent care",
-    "Prescription assistance",
-    "Emergency dental care",
-    "Youth health care",
-    "Primary care",
-    "Veterans health care",
-  ],
-  "Legal Aid & Rights Restoration": [
-    "Criminal record expungement",
-    "Child support assistance",
-    "Voting rights restoration",
-    "Legal aid",
-    "Youth legal aid",
-  ],
-  "Education & Vocational Training": [
-    "GED preparation and testing",
-    "Vocational trade school programs",
-    "College re-entry programs",
-    "Literacy programs",
-    "Digital literacy programs",
-    "Financial literacy programs",
-  ],
-  "Family Reconnection & Parenting": [
-    "Family therapy or counseling",
-    "Parenting skills classes",
-    "Family services",
-    "Family reunification services",
-    "Child protective services",
-  ],
-  "Peer Support & Community Integration": [
-    "Mentorship programs",
-    "Faith-based support",
-    "Reentry support groups",
-    "Community center",
-    "Volunteer opportunities",
-    "Civic engagement",
-    "Youth community programs",
-  ],
 };
 
-export const RADIUS_OPTIONS: number[] = [1, 5, 10, 25, 50, 100, 200];
+export const RADIUS_OPTIONS = [1, 5, 10, 25, 50, 100, 200] as const;
+export type RadiusOption = (typeof RADIUS_OPTIONS)[number];

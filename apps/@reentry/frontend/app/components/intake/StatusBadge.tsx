@@ -28,7 +28,7 @@ const getStatusText = (status: string | undefined): string => {
     case "intake_enabled":
       return "Enabled";
     case "intake_in_progress":
-      return "In Progress";
+      return `In${"\u00A0"}Progress`;
     case "processing":
       return "Processing";
     case "intake_complete":

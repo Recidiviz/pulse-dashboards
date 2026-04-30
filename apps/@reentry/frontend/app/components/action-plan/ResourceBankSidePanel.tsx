@@ -19,37 +19,61 @@
 
 import { useState } from "react";
 
+import { $api } from "~@reentry/frontend/api";
 import AddressSection from "~@reentry/frontend/components/action-plan/AddressSection";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
-import type { ResourceSearchPanelProps } from "~@reentry/frontend/components/action-plan/resource-bank/ResourceSearchPanel";
 import ResourceSearchPanel from "~@reentry/frontend/components/action-plan/resource-bank/ResourceSearchPanel";
+import { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 import styles from "./styles/ResourceBankSidePanel.module.css";
+import { SectionTitle } from "./types";
 
-interface ResourceBankSidePanelProps {
-  clientRecord:
-    | components["schemas"]["ClientRecordResponse"]
-    | null
-    | undefined;
-  onAddressSave: (address: {
+type ResourceBankSidePanelProps = {
+  addResource: (sectionTitle: string, resource: ResourceWithMeta) => void;
+  clientRecord: components["schemas"]["ClientRecordResponse"] | null;
+  disabled?: boolean;
+  planId: string;
+  sectionTitles: SectionTitle[];
+};
+
+const ResourceBankSidePanel = ({
+  addResource,
+  clientRecord,
+  disabled = false,
+  planId,
+  sectionTitles,
+}: ResourceBankSidePanelProps) => {
+  const { getAccessToken } = useAuth();
+
+  const { data: addressData } = $api.useQuery(
+    "get",
+    "/plan/{plan_id}/address",
+    {
+      params: { path: { plan_id: planId } },
+      headers: { Authorization: `Bearer ${getAccessToken()}` },
+    },
+  );
+
+  const clientAddress = [
+    addressData?.street_address,
+    addressData?.city,
+    addressData?.state,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const handleAddressSave = (address: {
     street_address: string | null;
     city: string;
     state: string;
-  }) => void;
-  disabled?: boolean;
-  searchPanelProps: ResourceSearchPanelProps;
-}
-
-const ResourceBankSidePanel = ({
-  clientRecord,
-  onAddressSave,
-  disabled = false,
-  searchPanelProps,
-}: ResourceBankSidePanelProps) => {
-  const { getAccessToken } = useAuth();
+  }) => {
+    // TODO: Wire to PATCH /plans/{id}/address in a future ticket
+    console.log("Address saved:", address);
+    // TODO: invalidate /plan/{planId}/address query here after address change
+  };
 
   const [isExpanded, setIsExpanded] = useState(() => {
     if (typeof window !== "undefined") {
@@ -69,10 +93,14 @@ const ResourceBankSidePanel = ({
 
         {isExpanded && (
           <>
-            <ResourceSearchPanel {...searchPanelProps} />
+            <ResourceSearchPanel
+              addResource={addResource}
+              sectionTitles={sectionTitles}
+              clientAddress={clientAddress}
+            />
             <AddressSection
               initialAddress={clientRecord?.address}
-              onSave={onAddressSave}
+              onSave={handleAddressSave}
               getAccessToken={getAccessToken}
               disabled={disabled}
             />

@@ -15,46 +15,90 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { mockResourceBank } from "../../tests/mocks/mockResourceBank";
+import { $api } from "~@reentry/frontend/api";
+import type { RadiusOption } from "~@reentry/frontend/components/action-plan/resource-bank/categorySubcategoryMap";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import type { components } from "~@reentry/openapi-types";
+
 import type { ResourceWithMeta } from "./resourceBank.types";
 
-const MOCK_SEARCH_RESOURCES: ResourceWithMeta[] =
-  mockResourceBank.resources_by_sections.flatMap(
-    (section) => section.resources,
-  );
+type ResourceCategory = components["schemas"]["ResourceCategory"];
+type ResourceSubcategory = components["schemas"]["ResourceSubcategory"];
 
-const useResourceSearch = () => {
-  const [isLoading, setIsLoading] = useState(false);
+const useResourceSearch = (clientAddress: string) => {
+  const { getAccessToken } = useAuth();
   const [results, setResults] = useState<ResourceWithMeta[] | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
+
+  const { mutateAsync: searchResources, isPending: isLoading } =
+    $api.useMutation("post", "/resources");
+
+  useEffect(() => {
+    setResults(null);
+  }, [clientAddress]);
 
   const search = async (
-    category: string,
-    subcategory: string,
-    radiusMi: number,
+    category: ResourceCategory,
+    subcategory: ResourceSubcategory,
+    radiusMi: RadiusOption,
   ): Promise<void> => {
-    setIsLoading(true);
+    if (!clientAddress) return;
 
-    const data = await Promise.resolve(
-      MOCK_SEARCH_RESOURCES.filter((resource) => {
-        if (resource.category !== category) return false;
-        if (subcategory && resource.subcategory !== subcategory) return false;
-        if (
-          radiusMi &&
-          resource.travel_distance_miles &&
-          resource.travel_distance_miles > radiusMi
-        )
-          return false;
-        return true;
-      }),
-    );
+    setSearchError(null);
+    setResults(null);
 
-    setResults(data);
-    setIsLoading(false);
+    try {
+      const result = await searchResources({
+        body: {
+          category,
+          subcategory,
+          address: clientAddress,
+          distance_miles: radiusMi,
+          travel_mode: "DRIVE",
+          use_search: true,
+          limit: 50,
+          include_physical_resources: true,
+          include_digital_resources: false,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (result.failure_reason === "api_error") {
+        console.error("Resource search failed:", result.error_message);
+        setSearchError("Search error.");
+        return;
+      }
+
+      if (result.failure_reason === "partial_failure") {
+        console.error(
+          "Resource search partially failed; some sources are unavailable.",
+        );
+      }
+
+      const partners = [...(result.resources ?? [])].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
+
+      const local = [...(result.resources ?? [])].sort(
+        (a, b) =>
+          (a.travel_distance_miles ?? Infinity) -
+          (b.travel_distance_miles ?? Infinity),
+      );
+
+      const sorted = [...partners, ...local];
+      setResults(sorted as ResourceWithMeta[]);
+    } catch (e) {
+      console.error("Resource search failed:", e);
+      setSearchError("Search error.");
+    }
   };
 
-  return { isLoading, results, search };
+  return { searchError, isLoading, results, search };
 };
 
 export default useResourceSearch;

@@ -26,7 +26,7 @@ import styles from "./styles/ResourceBank.module.css";
 type Resource = components["schemas"]["Resource"];
 
 type ResourceBankProps = {
-  sectionTitle: string;
+  section_title: string;
   allResources: { title: string; resources: Resource[] }[];
   clientFirstName: string;
   onRemove: (id: string, name: string, sectionTitle: string) => void;
@@ -35,7 +35,7 @@ type ResourceBankProps = {
 };
 
 const ResourceBank = ({
-  sectionTitle,
+  section_title,
   allResources,
   clientFirstName,
   onRemove,
@@ -43,13 +43,13 @@ const ResourceBank = ({
   isErrorResources,
 }: ResourceBankProps) => {
   const resources = allResources.find(
-    (ra) => ra.title === sectionTitle,
+    (ra) => ra.title === section_title,
   )?.resources;
 
   return (
     <div className={styles["section"]}>
-      <div className={styles["sectionTitle"]}>
-        {sectionTitle} resources
+      <div className={styles["section_title"]}>
+        {section_title} resources
         <span className={styles["printHidden"]}> to explore</span>
       </div>
       <div className={styles["tileList"]}>
@@ -65,7 +65,7 @@ const ResourceBank = ({
               key={resource.id}
               resource={resource}
               clientFirstName={clientFirstName}
-              onRemove={(id, name) => onRemove(id, name, sectionTitle)}
+              onRemove={(id, name) => onRemove(id, name, section_title)}
             />
           ))}
       </div>

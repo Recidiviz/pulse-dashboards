@@ -1,3 +1,4 @@
+import asyncio
 from enum import Enum
 from typing import List, Optional, Set, TypeAlias
 
@@ -123,67 +124,6 @@ class ResourceSubcategoryLegacy(str, Enum):
     VOLUNTEER = "Volunteer Opportunities"
     RECREATION = "Recreation"
     CIVIC_ENGAGEMENT = "Civic Engagement"
-
-
-CATEGORY_SUBCATEGORY_MAP_LEGACY = {
-    ResourceCategoryLegacy.BASIC_NEEDS: [
-        ResourceSubcategoryLegacy.HOUSING,
-        ResourceSubcategoryLegacy.FOOD_ASSISTANCE,
-        ResourceSubcategoryLegacy.CLOTHING,
-    ],
-    ResourceCategoryLegacy.EMPLOYMENT_AND_CAREER: [
-        ResourceSubcategoryLegacy.JOB_TRAINING,
-        ResourceSubcategoryLegacy.JOB_PLACEMENT,
-        ResourceSubcategoryLegacy.RESUME_INTERVIEW,
-        ResourceSubcategoryLegacy.CERTIFICATION,
-    ],
-    ResourceCategoryLegacy.EDUCATION: [
-        ResourceSubcategoryLegacy.HIGH_SCHOOL_EQUIV,
-        ResourceSubcategoryLegacy.POST_SECONDARY,
-        ResourceSubcategoryLegacy.LITERACY,
-        ResourceSubcategoryLegacy.DIGITAL_LITERACY,
-    ],
-    ResourceCategoryLegacy.BEHAVIORAL_HEALTH: [
-        ResourceSubcategoryLegacy.MENTAL_HEALTH,
-        ResourceSubcategoryLegacy.SUBSTANCE_ABUSE,
-        ResourceSubcategoryLegacy.TRAUMA_CARE,
-    ],
-    ResourceCategoryLegacy.MEDICAL_AND_HEALTH: [
-        ResourceSubcategoryLegacy.PRIMARY_CARE,
-        ResourceSubcategoryLegacy.SPECIALIZED_CARE,
-        ResourceSubcategoryLegacy.ADDICTION_MEDICINE,
-        ResourceSubcategoryLegacy.HIV_AIDS,
-    ],
-    ResourceCategoryLegacy.LEGAL_AND_FINANCIAL: [
-        ResourceSubcategoryLegacy.ID_SERVICES,
-        ResourceSubcategoryLegacy.LEGAL_AID,
-        ResourceSubcategoryLegacy.FINANCIAL_LITERACY,
-        ResourceSubcategoryLegacy.EMERGENCY_FINANCIAL,
-    ],
-    ResourceCategoryLegacy.FAMILY_AND_COMMUNITY: [
-        ResourceSubcategoryLegacy.FAMILY_REUNIFICATION,
-        ResourceSubcategoryLegacy.MENTORSHIP,
-        ResourceSubcategoryLegacy.FAITH_BASED,
-        ResourceSubcategoryLegacy.REENTRY_GROUPS,
-    ],
-    ResourceCategoryLegacy.TRANSPORTATION: [
-        ResourceSubcategoryLegacy.PUBLIC_TRANSIT,
-        ResourceSubcategoryLegacy.DRIVERS_LICENSE,
-        ResourceSubcategoryLegacy.TRANSPORT_SERVICES,
-    ],
-    ResourceCategoryLegacy.SPECIALIZED_SERVICES: [
-        ResourceSubcategoryLegacy.DOMESTIC_VIOLENCE,
-        ResourceSubcategoryLegacy.SEX_OFFENDER,
-        ResourceSubcategoryLegacy.YOUTH_RESOURCES,
-        ResourceSubcategoryLegacy.CULTURAL_PROGRAMS,
-    ],
-    ResourceCategoryLegacy.COMMUNITY_REINTEGRATION: [
-        ResourceSubcategoryLegacy.VOLUNTEER,
-        ResourceSubcategoryLegacy.RECREATION,
-        ResourceSubcategoryLegacy.CIVIC_ENGAGEMENT,
-    ],
-    ResourceCategoryLegacy.UNKNOWN: [],
-}
 
 
 class ResourceCategory(str, Enum):
@@ -449,54 +389,9 @@ class ApiSearchResult(BaseModel):
     travel_distance_miles: Optional[float] = None
 
 
-class LegacyResourceRequest(BaseModel):
-    # Required Parameters
-    category: ResourceCategoryLegacy = Field(
-        description="Category (e.g. 'BASIC_NEEDS')"
-    )
-    address: str = Field(
-        description="Full address (e.g. '123 Main St, Cityville, CA 12345')"
-    )
-
-    # Optional Parameters
-    subcategory: Optional[ResourceSubcategoryLegacy] = Field(
-        None, description="Subcategory (e.g. 'HOUSING')"
-    )
-    distance_miles: int = Field(
-        default=100, description="Distance in miles (default: 100)"
-    )
-    mode: TravelMode | None = Field(
-        default=None, description="Travel mode: DRIVE, WALK, BICYCLE, TRANSIT"
-    )
-    ids_to_exclude: Optional[List[str]] = Field(
-        default=None,
-        description="List of provider IDs to exclude from results (case sensitive)",
-    )
-    addresses_to_exclude: Optional[List[str]] = Field(
-        default=None,
-        description="List of addresses to exclude from results (case insensitive)",
-    )
-    keywords_to_exclude: Optional[List[str]] = Field(
-        default=None,
-        description="List of keywords to exclude from results (case insensitive)",
-    )
-    limit: int = Field(default=20, description="Results limit (default: 20)")
-
-    # Validation
-    @field_validator("mode")
-    def validate_mode(cls, v, info):
-        if info.data.get("time") is not None and v is None:
-            raise ValueError("If time is provided, mode is required")
-        return v
-
-
 class GetPlanResourcesRequest(BaseModel):
-    category: ResourceCategory | ResourceCategoryLegacy = Field(
-        description="Resource category"
-    )
-    subcategory: Optional[ResourceSubcategory | ResourceSubcategoryLegacy] = Field(
-        None, description="Resource subcategory"
-    )
+    category: ResourceCategory = Field(description="Resource category")
+    subcategory: ResourceSubcategory = Field(description="Resource subcategory")
 
     exclude: List[str] = Field(
         [],
@@ -509,14 +404,8 @@ class GetPlanResourcesRequest(BaseModel):
 
 
 class GetResourcesRequest(BaseModel):
-    """Unified request model that accepts both new and legacy category/subcategory values."""
-
-    category: ResourceCategory | ResourceCategoryLegacy = Field(
-        description="Resource category"
-    )
-    subcategory: ResourceSubcategory | ResourceSubcategoryLegacy = Field(
-        description="Resource subcategory"
-    )
+    category: ResourceCategory = Field(description="Resource category")
+    subcategory: ResourceSubcategory = Field(description="Resource subcategory")
     address: str = Field(
         description="Full address to find resources near. (e.g. '123 Main St, Cityville, CA 12345')"
     )
@@ -542,48 +431,12 @@ class GetResourcesRequest(BaseModel):
         default=False,
         description="If True, use /search endpoint instead of /discover for new resources",
     )
-
-    @field_validator("category")
-    def validate_category(cls, v):
-        """Validate that category is either new or legacy."""
-        if not is_category(v) and not is_legacy_category(v):
-            raise ValueError(
-                f"Category '{v}' is not a valid ResourceCategory or ResourceCategoryLegacy"
-            )
-        return v
-
-    @field_validator("subcategory")
-    def validate_subcategory(cls, v):
-        """Validate that subcategory is either new or legacy."""
-        if not is_subcategory(v) and not is_legacy_subcategory(v):
-            raise ValueError(
-                f"Subcategory '{v}' is not a valid ResourceSubcategory or ResourceSubcategoryLegacy"
-            )
-        return v
-
-    def is_legacy_request(self) -> bool:
-        """Determine if this request uses legacy API.
-
-        Returns False if subcategory is in new definitions (new API will be used).
-        Returns True otherwise (legacy API will be used).
-        """
-        return not is_subcategory(self.subcategory)
-
-    def to_legacy_request(self) -> LegacyResourceRequest:
-        """Convert to legacy request format."""
-        return LegacyResourceRequest(
-            category=ResourceCategoryLegacy(self.category),
-            subcategory=ResourceSubcategoryLegacy(self.subcategory),
-            address=self.address,
-            distance_miles=self.distance_miles,
-            mode=self.travel_mode,
-            ids_to_exclude=self.exclude_ids if self.exclude_ids else None,
-            addresses_to_exclude=self.exclude_addresses
-            if self.exclude_addresses
-            else None,
-            keywords_to_exclude=self.exclude_names if self.exclude_names else None,
-            limit=self.limit,
-        )
+    include_physical_resources: bool = Field(
+        default=True, description="Include standard community resources"
+    )
+    include_digital_resources: bool = Field(
+        default=False, description="Include digital partner resources"
+    )
 
 
 class BatchGetResources(BaseModel):
@@ -602,8 +455,12 @@ class BatchGetResources(BaseModel):
 
 
 class Resource(BaseModel):
-    id: str = Field(description="Unique identifier for the resource, currently the Google Place ID.")
-    resource_id: Optional[int] = Field(default=None, description="The ID of the resource in the Resources API")
+    id: str = Field(
+        description="Unique identifier for the resource, currently the Google Place ID."
+    )
+    resource_id: Optional[int] = Field(
+        default=None, description="The ID of the resource in the Resources API"
+    )
 
     category: ResourceCategory | ResourceCategoryLegacy = Field(
         description="Category of the resource."
@@ -641,7 +498,13 @@ class Resource(BaseModel):
 
     transport_mode: TravelMode | None = None
     transport_minutes: int | None = None
+    origin: Optional[str] = None
     travel_distance_miles: Optional[float] = None
+
+    # Digital resource fields
+    url: Optional[str] = None
+    blurb: Optional[str] = None
+    provider_description: Optional[str] = None
 
 
 ResourcesList: TypeAlias = list[Resource]
@@ -652,6 +515,7 @@ ResourcesListModel = TypeAdapter(ResourcesList)
 class ResourceFailureReason(Enum):
     API_ERROR = "api_error"
     NO_RESULTS_FOUND = "no_results_found"
+    PARTIAL_FAILURE = "partial_failure"
     SUCCESS = "success"
 
 
@@ -666,48 +530,50 @@ class GetResourcesResponse(BaseModel):
 
 @traceable(name="fetch_resources_api")
 async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
-    """
-    Unified resource listing that routes to appropriate API based on category/subcategory type.
-
-    If the subcategory is in the new ResourceSubcategory enum, routes to the new API.
-    Otherwise, routes to the legacy API.
-
-    Args:
-        request: The unified resources request
-
-    Returns:
-        GetResourcesResponse with resources
-    """
     # Import exists here to avoid circular imports.
     # TODO: Refactor module to avoid this
     from app.services.resources.api import list_external_resources
-    from app.services.resources.legacy_api import list_legacy_resources
+    from app.services.resources.partner_api import discover_partners
 
-    # Route based on whether subcategory is in new taxonomy
-    # Test for new subcategories first
-    if is_subcategory(request.subcategory):
-        logger.info(
-            "Routing to new API",
-            category=request.category,
-            subcategory=request.subcategory,
-            use_search=request.use_search,
+    if not request.include_physical_resources and not request.include_digital_resources:
+        raise ValueError(
+            "At least one of include_physical_resources or include_digital_resources must be True"
         )
-        response = await list_external_resources(request)
+
+    tasks = []
+    if request.include_physical_resources:
+        tasks.append(list_external_resources(request))
+
+    if request.include_digital_resources:
+        tasks.append(discover_partners(request))
+
+    responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+    all_resources: List[Resource] = []
+    had_error = False
+    for resp in responses:
+        if isinstance(resp, Exception):
+            logger.exception("Resource fetch task failed", error=str(resp))
+            had_error = True
+        elif resp.failure_reason == ResourceFailureReason.API_ERROR:
+            logger.error("Resource fetch task returned error", error=resp.error_message)
+            had_error = True
+        else:
+            all_resources.extend(resp.resources)
+
+    filtered_resources = [r for r in all_resources if resource_is_allowed(r)]
+
+    if filtered_resources and had_error:
+        failure_reason = ResourceFailureReason.PARTIAL_FAILURE
+    elif filtered_resources:
+        failure_reason = ResourceFailureReason.SUCCESS
+    elif had_error:
+        failure_reason = ResourceFailureReason.API_ERROR
     else:
-        logger.info(
-            "Routing to legacy API",
-            category=request.category,
-            subcategory=request.subcategory,
-        )
-        response = await list_legacy_resources(request.to_legacy_request())
+        failure_reason = ResourceFailureReason.NO_RESULTS_FOUND
 
-    filtered_resources = [r for r in response.resources if resource_is_allowed(r)]
     return GetResourcesResponse(
-        resources=filtered_resources,
-        failure_reason=response.failure_reason
-        if filtered_resources
-        else ResourceFailureReason.NO_RESULTS_FOUND,
-        error_message=response.error_message,
+        resources=filtered_resources, failure_reason=failure_reason
     )
 
 

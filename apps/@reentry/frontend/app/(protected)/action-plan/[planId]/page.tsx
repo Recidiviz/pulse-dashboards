@@ -158,46 +158,6 @@ const ActionPlanPage = () => {
     }
   }, [isCompleted, refetchDetailPlan, refetchPlanResources]);
 
-  // Mutation for searching resources with client info
-  const { mutateAsync: searchResourcesMutation } = $api.useMutation(
-    "post",
-    "/plans/{id}/search-resources",
-  );
-
-  // Function to load related resources using search-resources endpoint with client info
-  const loadRelatedResources = async (
-    resource: components["schemas"]["Resource"],
-  ) => {
-    if (!dataDetailPlan) return;
-    try {
-      const searchResult = await searchResourcesMutation({
-        params: {
-          path: {
-            id: dataDetailPlan?.id, // Use plan ID, not client ID
-          },
-        },
-        body: {
-          category: resource.category,
-          subcategory: resource.subcategory,
-          exclude: [resource.id], // Exclude the current resource
-        },
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (searchResult.resources) {
-        setRelatedResources(searchResult.resources);
-        setRelatedResourcesLoading(false);
-      }
-    } catch (error) {
-      console.error("Error loading related resources:", error);
-      setRelatedResources([]);
-      setRelatedResourcesLoading(false);
-    }
-  };
-
   const handleSelectResource = (resource: ResourceType | string) => {
     track("action_plan_resource_selected", {
       justiceInvolvedPersonId:
@@ -218,7 +178,6 @@ const ActionPlanPage = () => {
       selectedResource?.subcategory !== foundResource?.subcategory
     ) {
       setSelectedResource(foundResource);
-      loadRelatedResources(foundResource);
       setRelatedResourcesLoading(true);
       setOpenResourceSection(true);
     } else {

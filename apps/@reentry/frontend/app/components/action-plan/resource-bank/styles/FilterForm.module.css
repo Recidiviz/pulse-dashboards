@@ -25,6 +25,6 @@
 }
 
 .searchButton:disabled {
-  background-color: var(--color-teal-2);
+  background-color: var(--color-teal-7);
   cursor: not-allowed;
 }

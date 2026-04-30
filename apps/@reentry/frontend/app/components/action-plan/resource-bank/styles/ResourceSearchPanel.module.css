@@ -55,6 +55,12 @@
   background-color: rgba(0, 51, 49, 0.06);
 }
 
+.errorMessage {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--color-error-1);
+}
+
 /* Body */
 .body {
   padding: 0 8px 20px;

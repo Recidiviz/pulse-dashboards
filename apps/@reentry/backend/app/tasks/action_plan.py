@@ -436,7 +436,7 @@ async def hydrate_resource_associations(
                         distance_miles=50,
                         travel_mode=TravelMode.DRIVING,
                         use_search=True,
-                        limit=2
+                        limit=2,
                     ),
                 )
             )
@@ -473,7 +473,6 @@ async def hydrate_resource_associations(
             )
             continue
         for resource in result:
-            # TODO: Remove when legacy `list_resources` method is no longer used in endpoints
             if resource.resource_id is None:
                 continue
             key = (resource.id, section_title)

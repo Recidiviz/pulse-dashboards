@@ -2215,7 +2215,7 @@ export interface paths {
         put?: never;
         /**
          * Search for resources using client info
-         * @description Search for resources based on the client's information from their plan generation data. Uses /search for new resources, /legacy for legacy resources.
+         * @description Search for resources based on the client's information from their plan generation data.
          */
         post: operations["search_resources_plans__id__search_resources_post"];
         delete?: never;
@@ -3576,21 +3576,10 @@ export interface components {
         };
         /** GetPlanResourcesRequest */
         GetPlanResourcesRequest: {
-            /**
-             * Category
-             * @description Resource category
-             */
-            category:
-                | components["schemas"]["ResourceCategory"]
-                | components["schemas"]["ResourceCategoryLegacy"];
-            /**
-             * Subcategory
-             * @description Resource subcategory
-             */
-            subcategory?:
-                | components["schemas"]["ResourceSubcategory"]
-                | components["schemas"]["ResourceSubcategoryLegacy"]
-                | null;
+            /** @description Resource category */
+            category: components["schemas"]["ResourceCategory"];
+            /** @description Resource subcategory */
+            subcategory: components["schemas"]["ResourceSubcategory"];
             /**
              * Exclude
              * @description Keywords to exclude in the resource names, if a specific resource for one of the resource types is mentioned. For example, if the client was banned from a specific shelter.
@@ -3598,25 +3587,12 @@ export interface components {
              */
             exclude: string[];
         };
-        /**
-         * GetResourcesRequest
-         * @description Unified request model that accepts both new and legacy category/subcategory values.
-         */
+        /** GetResourcesRequest */
         GetResourcesRequest: {
-            /**
-             * Category
-             * @description Resource category
-             */
-            category:
-                | components["schemas"]["ResourceCategory"]
-                | components["schemas"]["ResourceCategoryLegacy"];
-            /**
-             * Subcategory
-             * @description Resource subcategory
-             */
-            subcategory:
-                | components["schemas"]["ResourceSubcategory"]
-                | components["schemas"]["ResourceSubcategoryLegacy"];
+            /** @description Resource category */
+            category: components["schemas"]["ResourceCategory"];
+            /** @description Resource subcategory */
+            subcategory: components["schemas"]["ResourceSubcategory"];
             /**
              * Address
              * @description Full address to find resources near. (e.g. '123 Main St, Cityville, CA 12345')
@@ -3657,6 +3633,18 @@ export interface components {
              * @default false
              */
             use_search: boolean;
+            /**
+             * Include Physical Resources
+             * @description Include standard community resources
+             * @default true
+             */
+            include_physical_resources: boolean;
+            /**
+             * Include Digital Resources
+             * @description Include digital partner resources
+             * @default false
+             */
+            include_digital_resources: boolean;
         };
         /** GetResourcesResponse */
         GetResourcesResponse: {
@@ -4917,8 +4905,16 @@ export interface components {
             transport_mode?: components["schemas"]["TravelMode"] | null;
             /** Transport Minutes */
             transport_minutes?: number | null;
+            /** Origin */
+            origin?: string | null;
             /** Travel Distance Miles */
             travel_distance_miles?: number | null;
+            /** Url */
+            url?: string | null;
+            /** Blurb */
+            blurb?: string | null;
+            /** Provider Description */
+            provider_description?: string | null;
         };
         /**
          * ResourceCategory
@@ -4956,7 +4952,11 @@ export interface components {
          * ResourceFailureReason
          * @enum {string}
          */
-        ResourceFailureReason: "api_error" | "no_results_found" | "success";
+        ResourceFailureReason:
+            | "api_error"
+            | "no_results_found"
+            | "partial_failure"
+            | "success";
         /** ResourceSectionResponse */
         ResourceSectionResponse: {
             /** Title */

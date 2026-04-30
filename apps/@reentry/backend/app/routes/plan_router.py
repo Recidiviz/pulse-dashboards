@@ -812,6 +812,7 @@ async def router_download_asset(
     )
 
 
+# TODO Remove once old plans edition is prevented.
 @router.get(
     "/plans/{id}/resources",
     response_model=list[Resource],
@@ -869,11 +870,13 @@ async def get_plan_resources(
         )
 
 
+# TODO: This endpoint is only used for resource swapping (loadRelatedResources in the frontend).
+# Consider removing it in favor of POST /resources with the address passed from the frontend.
 @router.post(
     "/plans/{id}/search-resources",
     response_model=GetResourcesResponse,
     summary="Search for resources using client info",
-    description="Search for resources based on the client's information from their plan generation data. Uses /search for new resources, /legacy for legacy resources.",
+    description="Search for resources based on the client's information from their plan generation data.",
 )
 async def search_resources(
     id: uuid.UUID,

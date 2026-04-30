@@ -87,6 +87,8 @@ const formatName = (row: ClientResponse) => {
   return `${row.client.full_name.given_names} ${row.client.full_name.surname}`;
 };
 
+type SortOrder = components["schemas"]["SortOrder"];
+
 const ClientsPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -98,7 +100,7 @@ const ClientsPage = () => {
 
   const [sortConfig, setSortConfig] = useState<{
     sortBy: components["schemas"]["ClientSort"];
-    sortOrder: components["schemas"]["SortOrder"];
+    sortOrder: SortOrder | undefined;
   } | null>(null);
 
   const { sortBy, sortOrder } = sortConfig ?? {};
@@ -191,7 +193,7 @@ const ClientsPage = () => {
 
     const apiSortBy = columnMapping[column.id as string];
     if (apiSortBy) {
-      let newSortOrder: components["schemas"]["SortOrder"] = "asc";
+      let newSortOrder: SortOrder = "asc";
       if (apiSortBy === sortBy) {
         newSortOrder = sortOrder === "asc" ? "desc" : "asc";
       }

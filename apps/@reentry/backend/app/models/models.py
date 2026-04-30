@@ -233,7 +233,7 @@ _markdown_sanitizer = Sanitizer(
         "tags": _MARKDOWN_ALLOWED_TAGS,
         "attributes": {},
         "keep_typographic_whitespace": True,
-        "empty": set(),
+        "empty": {"resourceBank"},
         "separate": set(),
     }
 )

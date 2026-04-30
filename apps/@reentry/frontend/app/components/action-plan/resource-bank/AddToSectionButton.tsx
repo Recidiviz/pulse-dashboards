@@ -78,15 +78,17 @@ const AddToSectionButton = ({
         {sectionTitles.length === 0 ? (
           <MenuItem disabled> No Sections Available </MenuItem>
         ) : (
-          sectionTitles.map((section) => (
-            <MenuItem
-              key={section.title}
-              onClick={() => handleSelect(section.title)}
-              className={styles["menuItem"]}
-            >
-              Add to {section.title}
-            </MenuItem>
-          ))
+          [...sectionTitles]
+            .sort((a, b) => a.title.localeCompare(b.title))
+            .map((section) => (
+              <MenuItem
+                key={section.title}
+                onClick={() => handleSelect(section.title)}
+                className={styles["menuItem"]}
+              >
+                Add to {section.title}
+              </MenuItem>
+            ))
         )}
       </Menu>
     </>

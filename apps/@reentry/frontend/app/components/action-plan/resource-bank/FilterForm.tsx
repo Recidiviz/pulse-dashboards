@@ -18,16 +18,21 @@
 "use client";
 
 import DropdownSelect from "~@reentry/frontend/components/base/DropdownSelect/DropdownSelect";
+import { components } from "~@reentry/openapi-types";
 
+import { type RadiusOption } from "./categorySubcategoryMap";
 import styles from "./styles/FilterForm.module.css";
+
+type ResourceCategory = components["schemas"]["ResourceCategory"];
+type ResourceSubcategory = components["schemas"]["ResourceSubcategory"];
 
 interface FilterFormProps {
   categoryOptions: Array<{ value: string; label: string; disabled: boolean }>;
   subcategoryOptions: Array<{ value: string; label: string }>;
   radiusOptions: Array<{ value: string; label: string }>;
-  selectedCategory: string;
-  selectedSubcategory: string;
-  selectedRadius: string;
+  selectedCategory: ResourceCategory | "";
+  selectedSubcategory: ResourceSubcategory | "";
+  selectedRadius: RadiusOption;
   canSearch: boolean;
   onCategoryChange: (value: string) => void;
   onSubcategoryChange: (value: string) => void;
@@ -70,7 +75,7 @@ const FilterForm = ({
 
         <DropdownSelect
           label="Radius"
-          value={selectedRadius}
+          value={selectedRadius.toString()}
           options={radiusOptions}
           onChange={onRadiusChange}
         />

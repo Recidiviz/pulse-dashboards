@@ -46,15 +46,6 @@ def prevent_resource_api_call(request, monkeypatch):
                 )
             ),
         )
-        # Mock the legacy API call
-        monkeypatch.setattr(
-            "app.services.resources.legacy_api._call_legacy_resource_api",
-            MagicMock(
-                side_effect=RuntimeError(
-                    "The legacy Resource API should not be called for unit tests, please mock it for your test."
-                )
-            ),
-        )
 
 
 @pytest.fixture

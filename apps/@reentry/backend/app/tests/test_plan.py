@@ -18,7 +18,6 @@ from app.models.models import (
 from app.routes.shared_models import AddressSubmission
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
-    CATEGORY_SUBCATEGORY_MAP_LEGACY,
     Resource,
     ResourceCategory,
     ResourceCategoryLegacy,
@@ -421,61 +420,6 @@ async def test_resource_type_get_result(
     plan_id = cplan_r.json()["id"]
 
     subcategories = CATEGORY_SUBCATEGORY_MAP[category]
-    subcategory = subcategories[0] if subcategories else None
-    # Convert enum to string value
-    category_str = category.value if category else None
-    subcategory_str = subcategory.value if subcategory else None
-
-    response = await client.get(
-        f"/plans/{plan_id}/resources",
-        params={
-            "filter_category": category_str,
-            "filter_subcategory": subcategory_str,
-        },
-    )
-    assert response.status_code == 200
-
-    result = response.json()
-
-    assert result is not None
-
-    for resource in result:
-        assert resource["category"] == category_str
-        assert resource["subcategory"] == subcategory_str
-        assert resource["name"] is not None
-        assert resource["address"] is not None
-
-
-@pytest.mark.parametrize(
-    "category",
-    list(CATEGORY_SUBCATEGORY_MAP_LEGACY.keys()),
-)
-@pytest.mark.asyncio
-async def test_resource_type_get_result_legacy(
-    mock_clientdata_service,
-    mock_intake,
-    client,
-    async_session,
-    assert_response,
-    category: ResourceCategoryLegacy,
-):
-    if category == ResourceCategoryLegacy.UNKNOWN:
-        pytest.skip()
-
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    # create a plan
-    cplan_r = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "intake_id": str(mock_intake.id),
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(cplan_r, 200)
-    plan_id = cplan_r.json()["id"]
-
-    subcategories = CATEGORY_SUBCATEGORY_MAP_LEGACY[category]
     subcategory = subcategories[0] if subcategories else None
     # Convert enum to string value
     category_str = category.value if category else None

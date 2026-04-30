@@ -148,7 +148,7 @@ const ResourceBankTile = ({
           </a>
         )}
 
-        {travelDistanceMiles !== undefined &&
+        {travelDistanceMiles &&
           (travelDistanceMiles > DISTANCE_WARNING_MILES ? (
             <span className={styles["distanceWrapper"]}>
               <span className={styles["distanceWarning"]}>
