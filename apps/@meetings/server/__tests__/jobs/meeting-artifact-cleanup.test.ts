@@ -34,16 +34,25 @@ vi.mock("~@meetings/prisma", () => ({
 }));
 
 const mockGetFiles = vi.fn();
-const mockDeleteFiles = vi.fn().mockResolvedValue(undefined);
+const mockListedFileDelete = vi.fn().mockResolvedValue(undefined);
 const mockFileDelete = vi.fn().mockResolvedValue(undefined);
+const mockFileExists = vi.fn().mockResolvedValue([false]);
+const mockFileDownload = vi.fn();
+const mockFileSave = vi.fn().mockResolvedValue(undefined);
+
+function fakeListedFile(name: string) {
+  return { name, delete: mockListedFileDelete };
+}
 
 vi.mock("@google-cloud/storage", () => ({
   Storage: vi.fn().mockImplementation(() => ({
     bucket: vi.fn().mockReturnValue({
       getFiles: mockGetFiles,
-      deleteFiles: mockDeleteFiles,
       file: vi.fn().mockReturnValue({
         delete: mockFileDelete,
+        exists: mockFileExists,
+        download: mockFileDownload,
+        save: mockFileSave,
       }),
     }),
   })),
@@ -90,7 +99,7 @@ describe("cleanupStateData", () => {
   beforeEach(() => {
     // Default: bucket has 2 audio chunks
     mockGetFiles.mockResolvedValue([
-      [{ name: "chunk-1.m4a" }, { name: "chunk-2.m4a" }],
+      [fakeListedFile("chunk-1.m4a"), fakeListedFile("chunk-2.m4a")],
     ]);
   });
 
@@ -110,7 +119,7 @@ describe("cleanupStateData", () => {
       transcriptionsDeleted: 0,
       errors: [],
     });
-    expect(mockDeleteFiles).not.toHaveBeenCalled();
+    expect(mockListedFileDelete).not.toHaveBeenCalled();
     expect(mockFileDelete).not.toHaveBeenCalled();
   });
 
@@ -128,7 +137,7 @@ describe("cleanupStateData", () => {
     );
 
     expect(stats.meetingsProcessed).toBe(0);
-    expect(mockDeleteFiles).not.toHaveBeenCalled();
+    expect(mockListedFileDelete).not.toHaveBeenCalled();
   });
 
   test("only cleans transcripts when audioDeletedAt is already set", async () => {
@@ -154,7 +163,7 @@ describe("cleanupStateData", () => {
     expect(stats.meetingsProcessed).toBe(1);
     expect(stats.gcsFilesDeleted).toBe(0); // audio already cleaned, GCS not touched
     expect(stats.transcriptionsDeleted).toBe(1);
-    expect(mockDeleteFiles).not.toHaveBeenCalled();
+    expect(mockListedFileDelete).not.toHaveBeenCalled();
   });
 
   test("does not clean up meetings within the TTL window", async () => {
@@ -168,10 +177,10 @@ describe("cleanupStateData", () => {
     );
 
     expect(stats.meetingsProcessed).toBe(0);
-    expect(mockDeleteFiles).not.toHaveBeenCalled();
+    expect(mockListedFileDelete).not.toHaveBeenCalled();
   });
 
-  test("deletes recordings folder for expired meetings", async () => {
+  test("deletes audio files in the recordings folder for expired meetings", async () => {
     await createExpiredMeeting("expired-meeting", 60);
 
     const stats = await cleanupStateData(
@@ -183,9 +192,32 @@ describe("cleanupStateData", () => {
 
     expect(stats.meetingsProcessed).toBe(1);
     expect(stats.gcsFilesDeleted).toBe(2);
-    expect(mockDeleteFiles).toHaveBeenCalledWith({
-      prefix: "meetings/expired-meeting",
+    expect(mockListedFileDelete).toHaveBeenCalledTimes(2);
+  });
+
+  test("preserves the label-studio-task.json file when deleting audio", async () => {
+    mockGetFiles.mockResolvedValueOnce([
+      [
+        fakeListedFile("meetings/keep-json/chunk-1.m4a"),
+        fakeListedFile("meetings/keep-json/chunk-2.m4a"),
+        fakeListedFile("meetings/keep-json/label-studio-task.json"),
+      ],
+    ]);
+    await createExpiredMeeting("keep-json", 60, {
+      recordingsFolderPath: "meetings/keep-json",
     });
+
+    const stats = await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      // Disable transcript cleanup so the JSON isn't scrubbed/touched here.
+      null,
+      false,
+    );
+
+    expect(stats.gcsFilesDeleted).toBe(2);
+    expect(mockListedFileDelete).toHaveBeenCalledTimes(2);
+    expect(mockFileSave).not.toHaveBeenCalled();
   });
 
   test("deletes the final stitched recording file when present", async () => {
@@ -244,6 +276,51 @@ describe("cleanupStateData", () => {
       where: { meetingId: meeting.id },
     });
     expect(remaining).toHaveLength(0);
+  });
+
+  test("scrubs transcript fields from Label Studio task JSON when cleaning transcripts", async () => {
+    const meeting = await createExpiredMeeting("expired-scrub-ls", 60);
+    await testPrismaClient.transcription.create({
+      data: {
+        meetingId: meeting.id,
+        provider: TranscriptionProvider.ASSEMBLYAI,
+        transcriptObject: {} as PrismaJson.TranscriptType,
+        confidence: 0.95,
+      },
+    });
+
+    const originalTask = {
+      audio: "gs://test-bucket/meetings/expired-scrub-ls/final.m4a",
+      transcript_assemblyai: "[A]: Hello",
+      transcript_deepgram: "[0]: Hello",
+      transcript_best_provider: "assemblyai",
+      transcript_best_confidence: 0.95,
+      case_note: "Some notes",
+      meta: { "Meeting ID": meeting.id },
+    };
+    mockFileExists.mockResolvedValueOnce([true]);
+    mockFileDownload.mockResolvedValueOnce([
+      Buffer.from(JSON.stringify(originalTask)),
+    ]);
+
+    await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
+
+    expect(mockFileSave).toHaveBeenCalled();
+    const savedJson = JSON.parse(mockFileSave.mock.calls[0][0]);
+    expect(savedJson.transcript_assemblyai).toBeNull();
+    expect(savedJson.transcript_deepgram).toBeNull();
+    expect(savedJson.transcript_best_provider).toBeNull();
+    expect(savedJson.transcript_best_confidence).toBeNull();
+    // Non-transcript fields should be preserved
+    expect(savedJson.case_note).toBe("Some notes");
+    expect(savedJson.audio).toBe(
+      "gs://test-bucket/meetings/expired-scrub-ls/final.m4a",
+    );
   });
 
   test("sets audioDeletedAt, transcriptDeletedAt, and clears finalRecordingGCSPath after cleanup", async () => {
@@ -331,7 +408,7 @@ describe("cleanupStateData", () => {
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(0);
       expect(stats.transcriptionsDeleted).toBe(1);
-      expect(mockDeleteFiles).not.toHaveBeenCalled();
+      expect(mockListedFileDelete).not.toHaveBeenCalled();
 
       const updated = await testPrismaClient.meeting.findUniqueOrThrow({
         where: { id: "transcript-ttl-only" },
@@ -363,7 +440,7 @@ describe("cleanupStateData", () => {
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(0);
       expect(stats.transcriptionsDeleted).toBe(1);
-      expect(mockDeleteFiles).not.toHaveBeenCalled();
+      expect(mockListedFileDelete).not.toHaveBeenCalled();
 
       const updated = await testPrismaClient.meeting.findUniqueOrThrow({
         where: { id: "null-audio-ttl-meeting" },
@@ -423,7 +500,7 @@ describe("cleanupStateData", () => {
         errors: [],
       });
       expect(mockGetPrismaClientForStateCode).not.toHaveBeenCalled();
-      expect(mockDeleteFiles).not.toHaveBeenCalled();
+      expect(mockListedFileDelete).not.toHaveBeenCalled();
     });
   });
 
@@ -440,7 +517,7 @@ describe("cleanupStateData", () => {
 
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(2);
-      expect(mockDeleteFiles).not.toHaveBeenCalled();
+      expect(mockListedFileDelete).not.toHaveBeenCalled();
       expect(mockFileDelete).not.toHaveBeenCalled();
     });
 
@@ -479,8 +556,8 @@ describe("cleanupStateData", () => {
       await createExpiredMeeting("failing-meeting", 60);
       await createExpiredMeeting("succeeding-meeting", 60);
 
-      // Make GCS deleteFiles fail once (for whichever meeting runs first)
-      mockDeleteFiles.mockRejectedValueOnce(new Error("GCS error"));
+      // Make a per-file delete fail once (for whichever meeting runs first)
+      mockListedFileDelete.mockRejectedValueOnce(new Error("GCS error"));
 
       const stats = await cleanupStateData(
         STATE_CODE,

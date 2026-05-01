@@ -31,9 +31,11 @@ interface CleanupStats {
 }
 
 /**
- * Delete all files in a GCS folder
+ * Delete non-JSON files (audio chunks, stitched recordings) in a GCS folder.
+ * JSON files like label-studio-task.json are preserved so transcript fields
+ * can be scrubbed in-place during transcript cleanup.
  */
-async function deleteGCSFolder(
+async function deleteAudioFilesInFolder(
   storage: Storage,
   bucket: string,
   folderPath: string,
@@ -44,26 +46,29 @@ async function deleteGCSFolder(
       .bucket(bucket)
       .getFiles({ prefix: folderPath });
 
+    const audioFiles = files.filter((file) => !file.name.endsWith(".json"));
+
     if (dryRun) {
       logger.info(
-        `[DRY RUN] Would delete ${files.length} files from gs://${bucket}/${folderPath}`,
+        `[DRY RUN] Would delete ${audioFiles.length} non-JSON files from gs://${bucket}/${folderPath}`,
       );
-      return files.length;
+      return audioFiles.length;
     }
 
-    if (files.length === 0) {
+    if (audioFiles.length === 0) {
       return 0;
     }
 
-    await storage.bucket(bucket).deleteFiles({ prefix: folderPath });
+    await Promise.all(audioFiles.map((file) => file.delete()));
     logger.info(
-      `Deleted ${files.length} files from gs://${bucket}/${folderPath}`,
+      `Deleted ${audioFiles.length} non-JSON files from gs://${bucket}/${folderPath}`,
     );
-    return files.length;
+    return audioFiles.length;
   } catch (error) {
-    logger.error(`Failed to delete GCS folder gs://${bucket}/${folderPath}`, {
-      error,
-    });
+    logger.error(
+      `Failed to delete audio files in gs://${bucket}/${folderPath}`,
+      { error },
+    );
     throw error;
   }
 }
@@ -98,6 +103,48 @@ async function deleteGCSFile(
     });
     throw error;
   }
+}
+
+const LABEL_STUDIO_TASK_FILENAME = "label-studio-task.json";
+
+/**
+ * Remove transcript fields from the Label Studio task JSON in GCS.
+ * The file is re-uploaded with transcript fields set to null.
+ */
+async function scrubTranscriptsFromLabelStudioTask(
+  storage: Storage,
+  bucket: string,
+  recordingsFolderPath: string,
+  dryRun: boolean,
+): Promise<void> {
+  const filePath = `${recordingsFolderPath}/${LABEL_STUDIO_TASK_FILENAME}`;
+  const file = storage.bucket(bucket).file(filePath);
+
+  const [exists] = await file.exists();
+  if (!exists) {
+    return;
+  }
+
+  if (dryRun) {
+    logger.info(
+      `[DRY RUN] Would scrub transcripts from gs://${bucket}/${filePath}`,
+    );
+    return;
+  }
+
+  const [content] = await file.download();
+  const task = JSON.parse(content.toString());
+
+  task.transcript_assemblyai = null;
+  task.transcript_deepgram = null;
+  task.transcript_best_provider = null;
+  task.transcript_best_confidence = null;
+
+  await file.save(JSON.stringify(task, null, 2), {
+    contentType: "application/json",
+  });
+
+  logger.info(`Scrubbed transcripts from gs://${bucket}/${filePath}`);
 }
 
 interface MeetingCleanupResult {
@@ -155,9 +202,11 @@ async function cleanupMeeting(
       if (deleted) filesDeleted += 1;
     }
 
-    // Delete recordings folder (contains individual audio chunks)
+    // Delete audio files in the recordings folder (individual chunks).
+    // The label-studio-task.json file is preserved so it can be scrubbed
+    // when transcripts are cleaned up.
     if (meeting.recordingsFolderPath) {
-      filesDeleted += await deleteGCSFolder(
+      filesDeleted += await deleteAudioFilesInFolder(
         storage,
         meeting.recordingsGCSBucket,
         meeting.recordingsFolderPath,
@@ -195,6 +244,14 @@ async function cleanupMeeting(
       }
       transcriptionsDeleted = transcriptionCount;
     }
+
+    // Scrub transcript data from the Label Studio task JSON in GCS
+    await scrubTranscriptsFromLabelStudioTask(
+      storage,
+      meeting.recordingsGCSBucket,
+      meeting.recordingsFolderPath,
+      dryRun,
+    );
 
     if (!dryRun) {
       await prisma.meeting.update({
