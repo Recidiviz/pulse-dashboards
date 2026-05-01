@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "~@meetings/tasks/label-studio";
 export * from "~@meetings/tasks/llm";
 export * from "~@meetings/tasks/types";
 export * from "~@meetings/tasks/utils";

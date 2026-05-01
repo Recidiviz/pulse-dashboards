@@ -51,12 +51,14 @@ import {
   ActionItem,
   cleanupLocalFiles,
   CriticalUpdate,
+  exportLabelStudioTask,
+  labelStudioMeetingInclude,
   stitchAudio,
 } from "~@meetings/tasks";
 import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 import {
-  postMeetingCreatedNotification,
+  postMeetingCompletedNotification,
   postMeetingErrorNotification,
 } from "~@meetings/trpc/services/slack";
 
@@ -304,9 +306,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
           meetingId,
           stateCode,
           errorStep: "stitching",
-        }).catch((err) =>
-          console.error("Failed to post Slack error notification", err),
-        );
+        }).catch((err) => {
+          captureException(err);
+          console.error("Failed to post Slack error notification", err);
+        });
 
         // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
         throw e;
@@ -463,9 +466,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
           meetingId,
           stateCode,
           errorStep: "transcription",
-        }).catch((err) =>
-          console.error("Failed to post Slack error notification", err),
-        );
+        }).catch((err) => {
+          captureException(err);
+          console.error("Failed to post Slack error notification", err);
+        });
 
         // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
         throw e;
@@ -497,6 +501,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
         },
       });
 
+      let completedMeeting;
       try {
         await prisma.meeting.update({
           where: {
@@ -522,7 +527,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
         }));
 
         // Update status through drafting and verification stages
-        const completedMeeting = await prisma.meeting.update({
+        completedMeeting = await prisma.meeting.update({
           where: {
             id: meetingId,
           },
@@ -540,23 +545,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
             resident: { select: { pseudonymizedId: true } },
           },
         });
-
-        const personPseudoId =
-          completedMeeting.client?.pseudonymizedId ??
-          completedMeeting.resident?.pseudonymizedId ??
-          meetingId;
-
-        postMeetingCreatedNotification({
-          staffEmail: completedMeeting.staffEmail,
-          stateCode,
-          personPseudoId,
-          meetingId,
-        }).catch((e) => {
-          console.error(
-            "Failed to post meeting completed Slack notification",
-            e,
-          );
-        });
       } catch (e) {
         // Set error status at the current stage
         await prisma.meeting.update({
@@ -573,12 +561,49 @@ export function registerTaskRoutes(app: FastifyInstance) {
           meetingId,
           stateCode,
           errorStep: "notetaking",
-        }).catch((err) =>
-          console.error("Failed to post Slack error notification", err),
-        );
+        }).catch((err) => {
+          captureException(err);
+          console.error("Failed to post Slack error notification", err);
+        });
 
         // Rethrow the error so the task fails and can be retried
         throw e;
+      }
+
+      // Post-completion side effects — these run after the meeting is already
+      // marked COMPLETED, so failures here must not revert the status.
+      const personPseudoId =
+        completedMeeting.client?.pseudonymizedId ??
+        completedMeeting.resident?.pseudonymizedId ??
+        meetingId;
+
+      postMeetingCompletedNotification({
+        staffEmail: completedMeeting.staffEmail,
+        stateCode,
+        personPseudoId,
+        meetingId,
+      }).catch((e) => {
+        captureException(e);
+        console.error("Failed to post meeting completed Slack notification", e);
+      });
+
+      // Export Label Studio task JSON to GCS. Skip US_DEMO in production only —
+      // staging US_DEMO meetings should still flow to Label Studio.
+      if (stateCode !== StateCode.US_DEMO || env.DEPLOY_ENV !== "production") {
+        try {
+          const meetingWithRelations = await prisma.meeting.findUniqueOrThrow({
+            where: { id: meetingId },
+            include: labelStudioMeetingInclude,
+          });
+
+          exportLabelStudioTask(meetingWithRelations, stateCode).catch((e) => {
+            captureException(e);
+            console.error("Failed to export Label Studio task to GCS", e);
+          });
+        } catch (e) {
+          captureException(e);
+          console.error("Failed to fetch meeting for Label Studio export", e);
+        }
       }
 
       reply.code(200).send("Notetaking process completed successfully");

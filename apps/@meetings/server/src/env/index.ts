@@ -46,6 +46,7 @@ const envSchema = z.object({
   STITCHING_TASK_REQUEST_URL: z
     .string()
     .min(1, "STITCHING_TASK_REQUEST_URL is required"),
+  DEPLOY_ENV: z.string().min(1, "DEPLOY_ENV is required"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

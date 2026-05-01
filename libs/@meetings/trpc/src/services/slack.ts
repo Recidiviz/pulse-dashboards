@@ -57,7 +57,7 @@ async function postSlackMessage(text: string): Promise<void> {
   }
 }
 
-export async function postMeetingCreatedNotification({
+export async function postMeetingCompletedNotification({
   staffEmail,
   stateCode,
   personPseudoId,
@@ -69,7 +69,7 @@ export async function postMeetingCreatedNotification({
   meetingId: string;
 }): Promise<void> {
   const text = [
-    "New meeting created",
+    "Meeting completed",
     `• Staff: ${staffEmail}`,
     `• State: ${stateCode}`,
     `• Client/Resident ID: ${personPseudoId}`,

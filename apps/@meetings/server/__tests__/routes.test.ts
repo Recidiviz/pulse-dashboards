@@ -96,12 +96,16 @@ const mockTranscribeAudioWithDeepgram = vi.spyOn(
   "transcribeAudioWithDeepgram",
 );
 const mockCleanupLocalFiles = vi.spyOn(tasks, "cleanupLocalFiles");
+const mockExportLabelStudioTask = vi.spyOn(tasks, "exportLabelStudioTask");
 
 // Make these succeed by default
 mockStitchAudio.mockImplementation(async () => {
   return { outputFileName: "final-path.m4a", durationMs: 1000 };
 });
 mockCleanupLocalFiles.mockImplementation(vi.fn().mockResolvedValue(undefined));
+mockExportLabelStudioTask.mockImplementation(
+  vi.fn().mockResolvedValue(undefined),
+);
 mockTranscribeAudioWithAssemblyAI.mockImplementation(
   vi.fn().mockResolvedValue(FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT),
 );
@@ -1542,6 +1546,125 @@ describe("tasks", () => {
 
       expect(updatedMeeting.postMeetingProcessingStatus).toBe(
         PostMeetingProcessingStatus.NOTETAKING_ERROR,
+      );
+    });
+
+    /** Create a meeting with a transcription ready for notetaking */
+    async function createMeetingForNotetaking(id: string) {
+      return testPrismaClient.meeting.create({
+        data: {
+          ...fakeMeeting,
+          id,
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.NOTETAKING_QUEUED,
+          transcriptions: {
+            create: {
+              provider: TranscriptionProvider.ASSEMBLYAI,
+              transcriptObject: {} as PrismaJson.TranscriptType,
+              confidence: 0.95,
+              utterances: {
+                create: [
+                  {
+                    speaker: "A",
+                    text: "Hello",
+                    startTimeMs: 0,
+                    endTimeMs: 1000,
+                    confidence: 0.95,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      });
+    }
+
+    test("Should export Label Studio task to GCS after successful notetaking", async () => {
+      const meeting = await createMeetingForNotetaking("ls-export-meeting");
+      mockExportLabelStudioTask.mockClear();
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+        expect.objectContaining({ id: meeting.id }),
+        "US_NE",
+      );
+    });
+
+    test("Should not export Label Studio task for US_DEMO in production", async () => {
+      const meeting = await createMeetingForNotetaking("ls-demo-meeting");
+      mockExportLabelStudioTask.mockClear();
+
+      const originalDeployEnv = env.DEPLOY_ENV;
+      env.DEPLOY_ENV = "production";
+
+      try {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_DEMO", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+      } finally {
+        env.DEPLOY_ENV = originalDeployEnv;
+      }
+    });
+
+    test("Should export Label Studio task for US_DEMO outside of production", async () => {
+      const meeting = await createMeetingForNotetaking("ls-demo-staging");
+      mockExportLabelStudioTask.mockClear();
+
+      const originalDeployEnv = env.DEPLOY_ENV;
+      env.DEPLOY_ENV = "staging";
+
+      try {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_DEMO", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+          expect.objectContaining({ id: meeting.id }),
+          "US_DEMO",
+        );
+      } finally {
+        env.DEPLOY_ENV = originalDeployEnv;
+      }
+    });
+
+    test("Should remain COMPLETED if Label Studio export fails", async () => {
+      mockExportLabelStudioTask.mockRejectedValueOnce(
+        new Error("GCS upload failed"),
+      );
+      const meeting = await createMeetingForNotetaking("ls-fail-meeting");
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const updatedMeeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: meeting.id },
+      });
+
+      expect(updatedMeeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.COMPLETED,
       );
     });
   });

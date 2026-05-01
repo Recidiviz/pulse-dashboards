@@ -40,12 +40,12 @@ import { Storage } from "@google-cloud/storage";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
+import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 import {
-  Prisma,
-  PrismaClient,
-  StateCode,
-  TranscriptionProvider,
-} from "~@meetings/prisma/client";
+  buildLabelStudioTask,
+  LabelStudioMeeting,
+  labelStudioMeetingInclude,
+} from "~@meetings/tasks";
 
 interface ScriptArgs {
   stateCodes: StateCode[];
@@ -104,37 +104,6 @@ function parseArgs(): ScriptArgs {
   };
 }
 
-const meetingInclude = {
-  client: true,
-  resident: true,
-  transcriptions: {
-    include: {
-      utterances: {
-        orderBy: { startTimeMs: "asc" as const },
-      },
-    },
-    orderBy: { confidence: "desc" as const },
-  },
-} satisfies Prisma.MeetingInclude;
-
-type MeetingWithRelations = Prisma.MeetingGetPayload<{
-  include: typeof meetingInclude;
-}>;
-
-/** Format utterances from a transcription into the same text input used for the LLM. */
-function utterancesToRawText(
-  utterances: { speaker: string; text: string }[],
-): string {
-  return utterances.map((u) => `[${u.speaker}]: ${u.text}`).join("\n");
-}
-
-/** Format a duration in seconds as "Xm Ys". */
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}m ${s}s`;
-}
-
 async function exportMeetingsForStateCode(
   stateCode: StateCode,
   meetingId: string | undefined,
@@ -151,13 +120,13 @@ async function exportMeetingsForStateCode(
     }),
   });
 
-  const meetings: MeetingWithRelations[] = await prisma.meeting.findMany({
+  const meetings: LabelStudioMeeting[] = await prisma.meeting.findMany({
     where: {
       ...(meetingId
         ? { id: meetingId }
         : { postMeetingProcessingStatus: "COMPLETED" }),
     },
-    include: meetingInclude,
+    include: labelStudioMeetingInclude,
     orderBy: { startTime: "asc" },
   });
 
@@ -175,65 +144,7 @@ async function exportMeetingsForStateCode(
         continue;
       }
 
-      const person = meeting.client ?? meeting.resident;
-
-      // Build per-provider transcript texts
-      const transcriptsByProvider: Partial<
-        Record<"assemblyai" | "deepgram", string>
-      > = {};
-      for (const transcription of meeting.transcriptions) {
-        const providerKey =
-          transcription.provider === TranscriptionProvider.ASSEMBLYAI
-            ? "assemblyai"
-            : "deepgram";
-        transcriptsByProvider[providerKey] = utterancesToRawText(
-          transcription.utterances,
-        );
-      }
-
-      // Best transcription is first (ordered by confidence desc)
-      const bestTranscription = meeting.transcriptions[0];
-
-      const durationSeconds =
-        meeting.endTime && meeting.startTime
-          ? Math.floor(
-              (meeting.endTime.getTime() - meeting.startTime.getTime()) / 1000,
-            )
-          : null;
-
-      const task = {
-        audio: meeting.finalRecordingGCSPath
-          ? `gs://${meeting.recordingsGCSBucket}/${meeting.finalRecordingGCSPath}`
-          : null,
-
-        // ── Transcripts (formatted as LLM input) ────────────────────────────
-        transcript_assemblyai: transcriptsByProvider["assemblyai"] ?? null,
-        transcript_deepgram: transcriptsByProvider["deepgram"] ?? null,
-        transcript_best_provider:
-          bestTranscription.provider === TranscriptionProvider.ASSEMBLYAI
-            ? "assemblyai"
-            : "deepgram",
-        transcript_best_confidence: bestTranscription.confidence ?? null,
-
-        // ── LLM outputs ─────────────────────────────────────────────────────
-        case_note: meeting.caseNote ?? null,
-        action_items:
-          (meeting.actionItems as string[] | null)?.join("\n") ?? null,
-        critical_updates:
-          (meeting.criticalUpdates as string[] | null)?.join("\n") ?? null,
-
-        // ── Meta (human-readable labels for Label Studio <Table> widget) ────
-        meta: {
-          State: stateCode,
-          "Recording date": meeting.startTime.toISOString().split("T")[0],
-          Duration:
-            durationSeconds !== null ? formatDuration(durationSeconds) : null,
-          "Meeting ID": meeting.id,
-          "Person Display ID": person?.displayPersonExternalId ?? null,
-          "Processing status": meeting.postMeetingProcessingStatus,
-        },
-      };
-
+      const task = buildLabelStudioTask(meeting, stateCode);
       const outputPath = `${meeting.recordingsFolderPath}/label-studio-task.json`;
       const taskJson = JSON.stringify(task, null, 2);
 
