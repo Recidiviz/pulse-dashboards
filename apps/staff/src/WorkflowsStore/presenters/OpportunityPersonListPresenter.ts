@@ -248,6 +248,24 @@ export class OpportunityPersonListPresenter
           "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
           "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
         ].includes(this.opportunityType),
+      US_MI_LAST_SCC_DATE:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        ["usMiSecurityClassificationCommitteeReviewV2"].includes(
+          this.opportunityType,
+        ),
+      US_MI_ADD_LAST_SCC_DATE:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        ["usMiAddInPersonSecurityClassificationCommitteeReviewV2"].includes(
+          this.opportunityType,
+        ),
+      US_MI_WARDEN_LAST_SCC_DATE:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        ["usMiWardenInPersonSecurityClassificationCommitteeReviewV2"].includes(
+          this.opportunityType,
+        ),
       US_MI_SEG_DURATION:
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&

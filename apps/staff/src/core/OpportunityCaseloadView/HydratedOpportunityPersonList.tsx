@@ -276,6 +276,9 @@ export type OpportunityTableColumnId =
   | "US_MI_SEG_START_DATE"
   | "US_MI_SEG_DURATION"
   | "US_MI_NEXT_SCC_DATE"
+  | "US_MI_LAST_SCC_DATE"
+  | "US_MI_ADD_LAST_SCC_DATE"
+  | "US_MI_WARDEN_LAST_SCC_DATE"
   | "US_TN_LATEST_CLASSIFICATION_DATE"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
@@ -797,7 +800,83 @@ const TableView = observer(function TableView({
         }
       },
     },
-
+    {
+      header: "Last SCC Review Date",
+      id: "US_MI_LAST_SCC_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          ["usMiSecurityClassificationCommitteeReviewV2"].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.metadata.latestSccReviewDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (
+          ["usMiSecurityClassificationCommitteeReviewV2"].includes(opp.type) &&
+          opp.record
+        ) {
+          return formatWorkflowsDate(opp.record.metadata.latestSccReviewDate);
+        }
+      },
+    },
+    {
+      header: "Last Warden Review Date",
+      id: "US_MI_WARDEN_LAST_SCC_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          [
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.metadata.latestSccReviewDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (
+          [
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return formatWorkflowsDate(opp.record.metadata.latestSccReviewDate);
+        }
+      },
+    },
+    {
+      header: "Last ADD Review Date",
+      id: "US_MI_ADD_LAST_SCC_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          ["usMiAddInPersonSecurityClassificationCommitteeReviewV2"].includes(
+            opp.type,
+          ) &&
+          opp.record
+        ) {
+          return opp.record.metadata.latestSccReviewDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (
+          ["usMiAddInPersonSecurityClassificationCommitteeReviewV2"].includes(
+            opp.type,
+          ) &&
+          opp.record
+        ) {
+          return formatWorkflowsDate(opp.record.metadata.latestSccReviewDate);
+        }
+      },
+    },
     {
       header: "Time in Segregation",
       id: "US_MI_SEG_DURATION",

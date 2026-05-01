@@ -66,6 +66,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         },
         ineligibleCriteria: {},
         metadata: {
+          latestSccReviewDate: relativeFixtureDate({ months: 10 }),
+
           tabName: "DUE",
           solitarySessionType: "Administrative Segregation",
           daysInSolitarySession: 25,
@@ -150,6 +152,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
         },
         ineligibleCriteria: {},
         metadata: {
+          latestSccReviewDate: relativeFixtureDate({ months: 10 }),
+
           solitarySessionType: "Administrative Segregation",
           tabName: "UPCOMING",
           daysInSolitarySession: 50,
@@ -206,6 +210,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         metadata: {
+          latestSccReviewDate: relativeFixtureDate({ months: 10 }),
+
           solitarySessionType: "Temporary Segregation",
           tabName: "OVERDUE",
           daysInSolitarySession: 30,
@@ -266,6 +272,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           },
         },
         metadata: {
+          latestSccReviewDate: relativeFixtureDate({ months: -10 }),
+
           solitarySessionType: "Temporary Segregation",
           tabName: "DUE",
           daysInSolitarySession: 30,
