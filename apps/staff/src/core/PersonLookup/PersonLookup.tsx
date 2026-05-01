@@ -25,6 +25,7 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { toTitleCase } from "../../utils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
 
 const LookupWrapper = styled.div`
@@ -37,7 +38,7 @@ const LookupInput = styled.input<{
   $isFocused: boolean;
 }>`
   display: flex;
-  width: ${rem(160)};
+  width: ${rem(240)};
   height: ${rem(40)};
   padding: ${rem(12)} ${rem(16)};
   align-items: center;
@@ -61,8 +62,7 @@ const LookupInput = styled.input<{
   }
 
   &::placeholder {
-    color: ${({ $isFocused }) =>
-      $isFocused ? palette.slate40 : palette.pine3};
+    color: ${palette.text.secondary};
     font-size: 14px;
     font-style: normal;
     font-weight: 500;
@@ -72,7 +72,7 @@ const LookupInput = styled.input<{
 
 const ResultsDropdown = styled.div`
   display: flex;
-  width: ${rem(160)};
+  width: ${rem(240)};
   padding: ${rem(12)} 0;
   flex-direction: column;
   align-items: stretch;
@@ -263,6 +263,9 @@ export const PersonLookup = observer(function PersonLookup() {
     return;
   }
 
+  const personTitle = toTitleCase(workflowsStore.justiceInvolvedPersonTitle);
+  const placeholderText = `Search by ${personTitle} ID or Name`;
+
   return (
     <LookupWrapper>
       <LookupInput
@@ -276,8 +279,8 @@ export const PersonLookup = observer(function PersonLookup() {
           if (results.length > 0) setShowDropdown(true);
         }}
         onBlur={() => setIsFocused(false)}
-        placeholder={isFocused ? "Start typing..." : "Search…"}
-        aria-label="Person ID or Name lookup"
+        placeholder={placeholderText}
+        aria-label={`${personTitle} ID or Name lookup`}
         $showDropdown={showDropdown && results.length > 0}
         $isFocused={isFocused}
       />
