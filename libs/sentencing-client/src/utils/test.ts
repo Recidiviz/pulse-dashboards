@@ -90,6 +90,12 @@ export const createMockRootStore = (
         null,
       trackCaseStatusCompleteClicked: (metadata: PageOrClickTrackingMetadata) =>
         null,
+      trackSARDashboardPageViewed: (metadata: PageOrClickTrackingMetadata) =>
+        null,
+      trackSARCaseDetailsPageViewed: (metadata: PageOrClickTrackingMetadata) =>
+        null,
+      trackSARDownloadReportClicked: (metadata: PageOrClickTrackingMetadata) =>
+        null,
     },
   };
   return mockRootStore;

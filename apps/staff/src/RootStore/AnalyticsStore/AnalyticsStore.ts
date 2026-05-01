@@ -949,6 +949,22 @@ export default class AnalyticsStore {
     this.track("frontend.sentencing_case_status_complete_clicked", metadata);
   }
 
+  /****************************
+   * SAR Application Tracking *
+   ****************************/
+
+  trackSARDashboardPageViewed(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_sar_dashboard_page_viewed", metadata);
+  }
+
+  trackSARCaseDetailsPageViewed(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_sar_case_details_page_viewed", metadata);
+  }
+
+  trackSARDownloadReportClicked(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_sar_download_report_clicked", metadata);
+  }
+
   trackUsTnExpirationFormGenerationReason(
     metadata: UsTnExpirationFormMetadata,
   ) {

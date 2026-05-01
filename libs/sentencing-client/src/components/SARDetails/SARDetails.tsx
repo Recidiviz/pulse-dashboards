@@ -117,6 +117,10 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
   const { staffPseudoId, SARAttributes, formattedGender, offenseNames } =
     presenter;
 
+  useEffect(() => {
+    presenter.trackSARCaseDetailsPageViewed();
+  }, [presenter]);
+
   const handleBackToDashboard = () => {
     if (staffPseudoId) {
       navigate(

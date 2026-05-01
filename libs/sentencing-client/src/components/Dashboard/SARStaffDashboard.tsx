@@ -36,7 +36,7 @@ const ManagedComponent = observer(function SARStaffDashboard({
     staffPseudoId,
     sarTableData,
     geoConfig,
-    trackDashboardPageViewed,
+    trackSARDashboardPageViewed,
     trackIndividualCaseClicked,
     trackRecommendationStatusFilterChanged,
     trackDashboardSortOrderChanged,
@@ -47,10 +47,9 @@ const ManagedComponent = observer(function SARStaffDashboard({
   if (!staffPseudoId || !sarTableData) return null;
 
   if (initialPageLoad) {
-    trackDashboardPageViewed();
+    trackSARDashboardPageViewed();
     setInitialPageLoad(false);
   }
-
 
   return (
     <Styled.PageContainer>
@@ -73,7 +72,11 @@ const ManagedComponent = observer(function SARStaffDashboard({
   );
 });
 
-function usePresenter({ sentencingStore }: { sentencingStore: SentencingStore }) {
+function usePresenter({
+  sentencingStore,
+}: {
+  sentencingStore: SentencingStore;
+}) {
   const { staffStore } = sentencingStore;
   return new StaffPresenter(staffStore);
 }

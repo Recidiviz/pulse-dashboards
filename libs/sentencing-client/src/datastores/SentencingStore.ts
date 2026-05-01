@@ -103,6 +103,15 @@ export interface RootStore {
     trackCaseStatusCompleteClicked: (
       metadata: PageOrClickTrackingMetadata,
     ) => void;
+    trackSARDashboardPageViewed: (
+      metadata: PageOrClickTrackingMetadata,
+    ) => void;
+    trackSARCaseDetailsPageViewed: (
+      metadata: PageOrClickTrackingMetadata,
+    ) => void;
+    trackSARDownloadReportClicked: (
+      metadata: PageOrClickTrackingMetadata,
+    ) => void;
   };
 }
 

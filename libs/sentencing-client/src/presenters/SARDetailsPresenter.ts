@@ -280,6 +280,20 @@ export class SARDetailsPresenter implements Hydratable {
     return this.sentencingStore.staffPseudoId;
   }
 
+  trackSARCaseDetailsPageViewed(): void {
+    this.sentencingStore.analyticsStore.trackSARCaseDetailsPageViewed({
+      viewedBy: this.staffPseudoId,
+      caseId: this.sarId,
+    });
+  }
+
+  trackSARDownloadReportClicked(): void {
+    this.sentencingStore.analyticsStore.trackSARDownloadReportClicked({
+      viewedBy: this.staffPseudoId,
+      caseId: this.sarId,
+    });
+  }
+
   get SARAttributes() {
     if (!this.SARData) return {};
 

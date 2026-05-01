@@ -228,6 +228,8 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
   const handleClickToDownload = async () => {
     if (!targetRef.current || isDownloading) return;
     setIsDownloading(true);
+    // Track the click intent before the async export so failures are still captured.
+    presenter.trackSARDownloadReportClicked();
     try {
       await exportSARtoPDF(targetRef.current, fileName);
     } catch (e) {

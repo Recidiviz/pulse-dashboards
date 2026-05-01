@@ -100,6 +100,12 @@ export class StaffPresenter implements Hydratable {
     });
   }
 
+  trackSARDashboardPageViewed(): void {
+    this.staffStore.sentencingStore.analyticsStore.trackSARDashboardPageViewed({
+      viewedBy: this.staffPseudoId,
+    });
+  }
+
   trackRecommendationStatusFilterChanged(
     filters: RecommendationStatusFilter[],
   ): void {
