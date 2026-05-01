@@ -137,19 +137,35 @@ describe("tableToCSV", () => {
 });
 
 describe("downloadTableCSV", () => {
-  it("triggers saveAs with a CSV blob and .csv filename", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 3, 21, 15, 5)); // 2026-04-21 15:05
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  it("triggers saveAs with a CSV blob and timestamped .csv filename", () => {
     downloadTableCSV(testData, columns, "test-export");
 
-    expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), "test-export.csv");
+    expect(saveAs).toHaveBeenCalledWith(
+      expect.any(Blob),
+      "test-export 2026-04-21-1505.csv",
+    );
 
     const blob = (saveAs as unknown as ReturnType<typeof vi.fn>).mock
       .calls[0][0] as Blob;
     expect(blob.type).toBe("text/csv;charset=utf-8");
   });
 
-  it("does not double-append .csv extension", () => {
+  it("inserts timestamp before the .csv extension when filename already ends with .csv", () => {
     downloadTableCSV(testData, columns, "test-export.csv");
 
-    expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), "test-export.csv");
+    expect(saveAs).toHaveBeenCalledWith(
+      expect.any(Blob),
+      "test-export 2026-04-21-1505.csv",
+    );
   });
 });

@@ -108,5 +108,7 @@ export function downloadTableCSV<TData>(
 ): void {
   const csv = tableToCSV(data, columns);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-  saveAs(blob, filename.endsWith(".csv") ? filename : `${filename}.csv`);
+  const base = filename.endsWith(".csv") ? filename.slice(0, -4) : filename;
+  const timestamp = formatDate(new Date(), "yyyy-MM-dd-HHmm");
+  saveAs(blob, `${base} ${timestamp}.csv`);
 }
