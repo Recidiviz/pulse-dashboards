@@ -39,6 +39,7 @@ import {
 } from "./routes/paramsValidation";
 import { validateStateCode } from "./utils/validateStateCode";
 import { getFirebaseToken } from "./workflows/firebaseToken";
+import { acquireSession, generateTokens } from "./workflows/lookerEmbed";
 
 config();
 
@@ -62,10 +63,8 @@ Sentry.init({
   tracesSampleRate: 0.25,
 });
 
-// The Sentry request handler must be the first middleware on the app
-Sentry.setupExpressErrorHandler(app);
-
 app.use(cors());
+app.use(express.json());
 
 export const port =
   process.env.NODE_ENV === "test" ? 3002 : process.env.PORT || 3001;
@@ -164,6 +163,13 @@ function validateOfflineRequest(req, res, next) {
   }
 }
 
+// Express 4 silently drops rejected promises from async handlers, so an
+// unhandled error would hang the request rather than reach errorHandler.
+// This wrapper catches any error — sync or async, before or after an await —
+// and forwards it to next() so errorHandler can respond with a 500.
+const asyncHandler = (fn) => (req, res, next) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
+
 function errorHandler(err, _req, res, next) {
   if (err && err.message) {
     res
@@ -207,7 +213,7 @@ app.get("/file/:name", api.upload);
 app.get(
   `${stateApiBaseRoute}workflows/dataDownload`,
   filenameNotEmptyValidation,
-  api.userDataDownload,
+  asyncHandler(api.userDataDownload),
 );
 
 // An App Engine-specific API for handling warmup requests on new instance initialization
@@ -223,8 +229,21 @@ app.get("/health", (req, res) => {
 });
 
 // authenticates the user to Firestore with Auth0 credential
-app.get("/token", getFirebaseToken);
+app.get("/token", asyncHandler(getFirebaseToken));
 
-app.get("/api/impersonateAuth0User", api.getImpersonatedUserRestrictions);
+app.get(
+  "/api/impersonateAuth0User",
+  asyncHandler(api.getImpersonatedUserRestrictions),
+);
 
+app.get(
+  `${stateApiBaseRoute}looker/acquireSession`,
+  asyncHandler(acquireSession),
+);
+app.post(
+  `${stateApiBaseRoute}looker/generateTokens`,
+  asyncHandler(generateTokens),
+);
+
+Sentry.setupExpressErrorHandler(app);
 app.use(errorHandler);

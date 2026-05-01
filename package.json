@@ -49,6 +49,7 @@
     "@langchain/langgraph": "^0.4.9",
     "@langchain/langgraph-checkpoint-postgres": "^0.1.2",
     "@langchain/openai": "^0.6.13",
+    "@looker/sdk-node": "^26.6.1",
     "@material/select": "^14.0.0",
     "@material/textfield": "^14.0.0",
     "@mdxeditor/editor": "^3.30.1",

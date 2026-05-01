@@ -98,6 +98,10 @@ Expected backend environment variables include:
 - `METADATA_NAMESPACE` - String used to access the user app metadata from the token
 - `FIREBASE_PROJECT` - Name of the TCP project where Firebase is hosted
 - `FIREBASE_CREDENTIAL` - Service account used to authenticate/authorize access to Firebase
+- `LOOKER_BASE_URL` - Base URL of the Looker instance
+- `LOOKER_CLIENT_ID` - OAuth client ID for the Looker API credentials
+- `LOOKER_CLIENT_SECRET` - OAuth client secret for the Looker API credentials
+- `LOOKER_EMBED_MODEL_ID` - Looker model that embed users are scoped to
 
 The build process, as described below, ensures that the proper values are compiled and included in the static bundle at build time, for the right environment.
 
