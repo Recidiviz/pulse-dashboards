@@ -79,13 +79,13 @@
             "output": "."
           },
           {
-            "glob": "src/yaml/**/*.yaml",
-            "input": "{workspaceRoot}/libs/@meetings/config",
+            "glob": "**/*.yaml",
+            "input": "{workspaceRoot}/libs/@meetings/config/src/yaml",
             "output": "./yaml"
           },
           {
-            "glob": "src/yaml/**/*.yaml",
-            "input": "{workspaceRoot}/libs/@meetings/config",
+            "glob": "**/*.yaml",
+            "input": "{workspaceRoot}/libs/@meetings/config/src/yaml",
             "output": "./jobs/yaml"
           },
           "{projectRoot}/scripts/*",
