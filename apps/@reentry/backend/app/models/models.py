@@ -24,6 +24,12 @@ class ResourceAssociationAction(StrEnum):
     REMOVE = "REMOVE"
 
 
+class ResourceAssociationType(StrEnum):
+    COMMUNITY = "COMMUNITY"
+    DIGITAL = "DIGITAL"
+
+
+
 class PlanGenerationStatus(StrEnum):
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
@@ -198,6 +204,19 @@ class PlanGenerationResourceAssociation(SQLModel, table=True):
     # External resource identifier (not a FK — Resource is not a DB table)
     resource_id: int
 
+    # External resource type
+    resource_type: ResourceAssociationType = Field(
+        sa_column=Column(
+            SAEnum(
+                ResourceAssociationType,
+                name="resource_association_type_enum",
+                native_enum=True,
+                values_callable=lambda obj: [e.value for e in obj],
+            ),
+            nullable=False,
+        ),
+    )
+    
     # Which markdown section this resource belongs to
     section_title: str
 

@@ -51,6 +51,7 @@ from app.models.models import (
     PlanGenerationResourceAssociation,
     PlanGenerationStatus,
     ResourceAssociationAction,
+    ResourceAssociationType,
 )
 from app.routes.base import DeletionResponse, DeletionStatus, ORMResponse
 from app.routes.shared_models import (
@@ -588,6 +589,7 @@ async def router_generate_plan_manually(
                     action=ResourceAssociationAction.ADD,
                     action_by="SYSTEM",
                     action_at=datetime.utcnow(),
+                    resource_type=assoc.resource_type,
                 )
             )
         await session.commit()
@@ -927,6 +929,7 @@ class AddResourceRequest(BaseModel):
     resource_id: int
     section_title: str
     plan_generation_id: UUID
+    resource_type: ResourceAssociationType
 
 
 class AddResourceResponse(BaseModel):
@@ -937,6 +940,7 @@ class AddResourceResponse(BaseModel):
     action: str
     action_by: str
     action_at: datetime
+    resource_type: ResourceAssociationType
 
 
 @router.post(
@@ -972,6 +976,7 @@ async def router_add_resource(
         resource_id=request.resource_id,
         section_title=request.section_title,
         action_by=auth_user_context["email"],
+        resource_type=request.resource_type,
     )
     return result
 
@@ -980,6 +985,7 @@ class RemoveResourceRequest(BaseModel):
     resource_id: int
     section_title: str
     plan_generation_id: UUID
+    resource_type: ResourceAssociationType
 
 
 class RemoveResourceResponse(BaseModel):
@@ -990,6 +996,7 @@ class RemoveResourceResponse(BaseModel):
     action: str
     action_by: str
     action_at: datetime
+    resource_type: ResourceAssociationType
 
 
 class UpdateAddressResponse(BaseModel):
@@ -1029,6 +1036,7 @@ async def router_remove_resource(
         resource_id=request.resource_id,
         section_title=request.section_title,
         action_by=auth_user_context["email"],
+        resource_type=request.resource_type,
     )
     return result
 

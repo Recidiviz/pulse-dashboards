@@ -12,6 +12,7 @@ from app.models.models import (
     PlanGeneration,
     PlanGenerationResourceAssociation,
     ResourceAssociationAction,
+    ResourceAssociationType,
 )
 
 
@@ -112,6 +113,7 @@ async def add_resource_association(
     resource_id: int,
     section_title: str,
     action_by: str,
+    resource_type: ResourceAssociationType,
 ) -> PlanGenerationResourceAssociation:
     association = PlanGenerationResourceAssociation(
         plan_generation_id=plan_generation_id,
@@ -120,6 +122,7 @@ async def add_resource_association(
         action=ResourceAssociationAction.ADD,
         action_by=action_by,
         action_at=datetime.now(UTC),
+        resource_type=resource_type,
     )
     session.add(association)
     await session.commit()
@@ -133,6 +136,7 @@ async def remove_resource_association(
     resource_id: int,
     section_title: str,
     action_by: str,
+    resource_type: ResourceAssociationType,
 ) -> PlanGenerationResourceAssociation:
     association = PlanGenerationResourceAssociation(
         plan_generation_id=plan_generation_id,
@@ -141,6 +145,7 @@ async def remove_resource_association(
         action=ResourceAssociationAction.REMOVE,
         action_by=action_by,
         action_at=datetime.now(UTC),
+        resource_type=resource_type
     )
     session.add(association)
     await session.commit()

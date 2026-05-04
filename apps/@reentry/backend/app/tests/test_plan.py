@@ -14,6 +14,7 @@ from app.models.models import (
     PlanGeneration,
     PlanGenerationResourceAssociation,
     ResourceAssociationAction,
+    ResourceAssociationType,
 )
 from app.routes.shared_models import AddressSubmission
 from app.services.resources import (
@@ -1055,6 +1056,7 @@ async def test_plan_edit_copies_resource_associations(
                 action=ResourceAssociationAction.ADD,
                 action_by="SYSTEM",
                 action_at=now,
+                resource_type=ResourceAssociationType.COMMUNITY,
             )
         )
     # One resource that was added then removed — should NOT be copied
@@ -1066,6 +1068,7 @@ async def test_plan_edit_copies_resource_associations(
             action=ResourceAssociationAction.ADD,
             action_by="SYSTEM",
             action_at=now,
+            resource_type=ResourceAssociationType.COMMUNITY,
         )
     )
     async_session.add(
@@ -1076,6 +1079,7 @@ async def test_plan_edit_copies_resource_associations(
             action=ResourceAssociationAction.REMOVE,
             action_by="SYSTEM",
             action_at=now.replace(second=now.second + 1),
+            resource_type=ResourceAssociationType.COMMUNITY,
         )
     )
     await async_session.commit()
@@ -1121,6 +1125,7 @@ async def test_add_resource_success(
             "resource_id": 123,
             "section_title": "Housing",
             "plan_generation_id": str(gen.id),
+            "resource_type": ResourceAssociationType.COMMUNITY.value,
         },
     )
 
@@ -1160,6 +1165,7 @@ async def test_add_resource_gen_not_found(
             "resource_id": 123,
             "section_title": "Housing",
             "plan_generation_id": str(uuid.uuid4()),
+            "resource_type": ResourceAssociationType.COMMUNITY.value,
         },
     )
 
@@ -1184,6 +1190,7 @@ async def test_add_resource_appends_multiple_rows(
         "resource_id": 123,
         "section_title": "Housing",
         "plan_generation_id": str(gen.id),
+        "resource_type": ResourceAssociationType.COMMUNITY.value,
     }
 
     assert_response(await client.post("/add-resource", json=payload), 200)
@@ -1217,6 +1224,7 @@ async def test_remove_resource_success(
             "resource_id": 123,
             "section_title": "Housing",
             "plan_generation_id": str(gen.id),
+            "resource_type": ResourceAssociationType.COMMUNITY.value,
         },
     )
 
@@ -1255,6 +1263,7 @@ async def test_remove_resource_gen_not_found(
             "resource_id": 123,
             "section_title": "Housing",
             "plan_generation_id": str(uuid.uuid4()),
+            "resource_type": ResourceAssociationType.COMMUNITY.value,
         },
     )
 
@@ -1279,6 +1288,7 @@ async def test_remove_resource_appends_multiple_rows(
         "resource_id": 123,
         "section_title": "Housing",
         "plan_generation_id": str(gen.id),
+            "resource_type": ResourceAssociationType.COMMUNITY.value,
     }
 
     assert_response(await client.post("/remove-resource", json=payload), 200)
@@ -1378,6 +1388,7 @@ async def test_get_active_resources_no_address(
         action=ResourceAssociationAction.ADD,
         action_by="SYSTEM",
         action_at=datetime.now(tz=timezone.utc),
+        resource_type=ResourceAssociationType.COMMUNITY,
     )
     async_session.add(assoc)
     await async_session.commit()
@@ -1407,6 +1418,7 @@ async def test_get_active_resources_success(
         action=ResourceAssociationAction.ADD,
         action_by="SYSTEM",
         action_at=datetime.now(tz=timezone.utc),
+        resource_type=ResourceAssociationType.COMMUNITY,
     )
     async_session.add(assoc)
     await async_session.commit()
@@ -1460,6 +1472,7 @@ async def test_get_active_resources_travel_mode_query_param(
         action=ResourceAssociationAction.ADD,
         action_by="SYSTEM",
         action_at=datetime.now(tz=timezone.utc),
+        resource_type=ResourceAssociationType.COMMUNITY,
     )
     async_session.add(assoc)
     await async_session.commit()
@@ -1503,6 +1516,7 @@ async def test_get_active_resources_only_active_associations_sent(
             action=ResourceAssociationAction.ADD,
             action_at=now,
             action_by="SYSTEM",
+            resource_type=ResourceAssociationType.COMMUNITY,
         )
     )
     async_session.add(
@@ -1513,6 +1527,7 @@ async def test_get_active_resources_only_active_associations_sent(
             action=ResourceAssociationAction.REMOVE,
             action_by="SYSTEM",
             action_at=now.replace(second=now.second + 1),
+            resource_type=ResourceAssociationType.COMMUNITY,
         )
     )
     # Resource 99 added — should appear
@@ -1524,6 +1539,7 @@ async def test_get_active_resources_only_active_associations_sent(
             action=ResourceAssociationAction.ADD,
             action_by="SYSTEM",
             action_at=now,
+            resource_type=ResourceAssociationType.COMMUNITY,
         )
     )
     await async_session.commit()
