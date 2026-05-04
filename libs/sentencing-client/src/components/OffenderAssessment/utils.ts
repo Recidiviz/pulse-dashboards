@@ -171,9 +171,14 @@ export function getDomainsForAssessmentType(
   assessmentType: string | null | undefined,
 ): DomainConfig[] {
   if (!assessmentType) {
-    // Default to CST (most comprehensive) if no type provided
-    return ORAS_DOMAIN_CONFIG["ORAS_CST"];
+    // When no ORAS is on file, show Criminal History only with no score or risk level
+    return [
+      {
+        key: DOMAIN.CRIMINAL_HISTORY.key,
+        title: DOMAIN.CRIMINAL_HISTORY.title,
+        summaryField: DOMAIN.CRIMINAL_HISTORY.summaryField,
+      },
+    ];
   }
-  // Return configured domains, or empty array for unknown types
   return ORAS_DOMAIN_CONFIG[assessmentType] ?? [];
 }
