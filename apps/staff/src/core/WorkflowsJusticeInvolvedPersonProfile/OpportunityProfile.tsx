@@ -47,6 +47,7 @@ import {
   UsMiSecondaryOfficersAndDockets,
   UsMoIncarceration,
 } from "./OpportunityDetailSidebarComponents";
+import { Programming } from "./OpportunityDetailSidebarComponents/Programming";
 import UsMiLastAssessment from "./OpportunityDetailSidebarComponents/US_MI/UsMiLastAssessment";
 import UsMoAssessmentScores from "./OpportunityDetailSidebarComponents/US_MO/UsMoAssessmentScores";
 import UsMoC3Sanctions from "./OpportunityDetailSidebarComponents/US_MO/UsMoC3Sanctions";
@@ -111,6 +112,7 @@ export const OpportunityDetailSidebarComponents = {
   UsIaVictimContactInfo,
   UsIaEarlyDischargeIcOutDetails,
   UsMiLastAssessment,
+  Programming,
 };
 
 export const ResidentDetailSidebarComponents = {

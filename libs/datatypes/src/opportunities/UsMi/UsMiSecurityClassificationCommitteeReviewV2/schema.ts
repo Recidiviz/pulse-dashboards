@@ -53,7 +53,17 @@ const jsonRecentNonbondableOffenseSchema = z.object({
   nonbondableIncidentDate: dateStringSchema,
 });
 
+const jsonProgrammingSchema = z.object({
+  endDate: dateStringSchema.nullable(),
+  program: z.string(),
+  programEndReason: z.string().nullable(),
+  programStatus: z.string().nullable(),
+  referralDate: dateStringSchema.nullable(),
+  startDate: dateStringSchema.nullable(),
+});
+
 export type UsMiSolitarySessionType = z.output<typeof solitarySessionType>;
+export type ProgrammingMetadata = z.output<typeof jsonProgrammingSchema>;
 
 const solitarySessionType = z
   .literal("Administrative Segregation")
@@ -82,6 +92,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Schema =
     }),
     metadata: z.object({
       latestSccReviewDate: dateStringSchema.optional(),
+      programming: z.array(jsonProgrammingSchema),
       daysInSolitarySession: z.coerce.number(),
       lessThan24MonthsFromErd: z.boolean().optional(),
       neededProgramming: z.string().optional(),

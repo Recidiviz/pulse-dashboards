@@ -42,4 +42,8 @@ export class UsMiSecurityClassificationCommitteeReviewV2Configuration extends Ap
       },
     };
   }
+
+  get sidebarComponents() {
+    return [...super.sidebarComponents, "Programming"];
+  }
 }

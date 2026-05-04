@@ -37,4 +37,8 @@ export class UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configurat
       },
     };
   }
+
+  get sidebarComponents() {
+    return [...super.sidebarComponents, "Programming"];
+  }
 }

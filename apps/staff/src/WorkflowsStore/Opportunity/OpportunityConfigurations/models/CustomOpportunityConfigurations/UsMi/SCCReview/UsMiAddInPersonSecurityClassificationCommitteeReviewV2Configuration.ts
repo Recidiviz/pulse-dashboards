@@ -37,4 +37,8 @@ export class UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration
       },
     };
   }
+
+  get sidebarComponents() {
+    return [...super.sidebarComponents, "Programming"];
+  }
 }

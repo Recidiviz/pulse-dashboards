@@ -64,7 +64,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
       ineligibleCriteria: {},
       metadata: {
         latestSccReviewDate: relativeFixtureDate({ months: 10 }),
-
+        programming: [],
         solitarySessionType: "Administrative Segregation",
         tabName: "OVERDUE",
         daysInSolitarySession: 25,
@@ -148,7 +148,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
       ineligibleCriteria: {},
       metadata: {
         latestSccReviewDate: relativeFixtureDate({ months: 10 }),
-
+        programming: [],
         solitarySessionType: "Administrative Segregation",
         tabName: "OVERDUE",
         daysInSolitarySession: 50,
@@ -203,6 +203,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
       },
       metadata: {
         latestSccReviewDate: relativeFixtureDate({ months: -10 }),
+        programming: [],
         solitarySessionType: "Administrative Segregation",
         tabName: "DUE",
         daysInSolitarySession: 30,
@@ -259,7 +260,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures = {
       },
       metadata: {
         latestSccReviewDate: relativeFixtureDate({ months: 10 }),
-
+        programming: [],
         solitarySessionType: "Temporary Segregation",
         tabName: "UPCOMING",
         daysInSolitarySession: 30,
