@@ -14,6 +14,7 @@ exports[`outlierOfficersData 1`] = `
       "givenNames": "Walter",
       "surname": "Harris",
     },
+    "hasConsistentLoginActivity": true,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "outlierMetrics": [
@@ -3671,6 +3672,7 @@ exports[`outlierOfficersData 1`] = `
       "givenNames": "Harriet",
       "surname": "Boyd",
     },
+    "hasConsistentLoginActivity": false,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-11-16T00:00:00.000Z,
     "outlierMetrics": [
@@ -6581,6 +6583,7 @@ exports[`outlierOfficersData 1`] = `
       "givenNames": "Stephen",
       "surname": "Mann",
     },
+    "hasConsistentLoginActivity": false,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-11-15T00:00:00.000Z,
     "outlierMetrics": [

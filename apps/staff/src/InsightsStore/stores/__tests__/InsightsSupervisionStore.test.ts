@@ -446,6 +446,27 @@ test.each([
   },
 );
 
+test.each([
+  [true, true],
+  [false, false],
+])(
+  "%s that user can view the Consistent Login pill (hasFeatureVariant: %s)",
+  (expected, hasFeatureVariant) => {
+    vi.spyOn(
+      store.insightsStore.rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue(
+      hasFeatureVariant
+        ? {
+            insightsConsistentLoginPill: {},
+          }
+        : {},
+    );
+    expect(store.userCanViewConsistentLoginPill).toBe(expected);
+  },
+);
+
 test("current user record for an enriched user", async () => {
   vi.useFakeTimers().setSystemTime(
     parseISO("2025-10-04T12:45:04.570Z").getTime(),

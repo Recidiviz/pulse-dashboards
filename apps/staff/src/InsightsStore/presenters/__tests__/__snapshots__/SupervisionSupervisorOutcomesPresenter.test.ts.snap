@@ -14,6 +14,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
       "givenNames": "Walter",
       "surname": "Harris",
     },
+    "hasConsistentLoginActivity": true,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "outlierMetrics": [
@@ -3671,6 +3672,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
       "givenNames": "Harriet",
       "surname": "Boyd",
     },
+    "hasConsistentLoginActivity": false,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-11-16T00:00:00.000Z,
     "outlierMetrics": [
@@ -6581,6 +6583,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
       "givenNames": "Stephen",
       "surname": "Mann",
     },
+    "hasConsistentLoginActivity": false,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-11-15T00:00:00.000Z,
     "outlierMetrics": [
@@ -9118,6 +9121,7 @@ Map {
             "givenNames": "Walter",
             "surname": "Harris",
           },
+          "hasConsistentLoginActivity": true,
           "includeInOutcomes": true,
           "latestLoginDate": 2021-12-16T00:00:00.000Z,
           "outlierMetrics": [
@@ -14194,6 +14198,7 @@ Map {
             "givenNames": "Harriet",
             "surname": "Boyd",
           },
+          "hasConsistentLoginActivity": false,
           "includeInOutcomes": true,
           "latestLoginDate": 2021-11-16T00:00:00.000Z,
           "outlierMetrics": [
@@ -18267,6 +18272,7 @@ Map {
             "givenNames": "Stephen",
             "surname": "Mann",
           },
+          "hasConsistentLoginActivity": false,
           "includeInOutcomes": true,
           "latestLoginDate": 2021-11-15T00:00:00.000Z,
           "outlierMetrics": [
@@ -20810,6 +20816,7 @@ Map {
             "givenNames": "Walter",
             "surname": "Harris",
           },
+          "hasConsistentLoginActivity": true,
           "includeInOutcomes": true,
           "latestLoginDate": 2021-12-16T00:00:00.000Z,
           "outlierMetrics": [
@@ -23564,6 +23571,7 @@ Map {
             "givenNames": "Harriet",
             "surname": "Boyd",
           },
+          "hasConsistentLoginActivity": false,
           "includeInOutcomes": true,
           "latestLoginDate": 2021-11-16T00:00:00.000Z,
           "outlierMetrics": [
@@ -27577,6 +27585,7 @@ Map {
             "givenNames": "Stephen",
             "surname": "Mann",
           },
+          "hasConsistentLoginActivity": false,
           "includeInOutcomes": true,
           "latestLoginDate": 2021-11-15T00:00:00.000Z,
           "outlierMetrics": [
@@ -30732,6 +30741,7 @@ Map {
             "givenNames": "Walter",
             "surname": "Harris",
           },
+          "hasConsistentLoginActivity": true,
           "includeInOutcomes": true,
           "latestLoginDate": 2021-12-16T00:00:00.000Z,
           "outlierMetrics": [
@@ -35214,6 +35224,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "givenNames": "Walter",
       "surname": "Harris",
     },
+    "hasConsistentLoginActivity": true,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "pseudonymizedId": "hashed-so1",
@@ -35236,6 +35247,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "givenNames": "Jack",
       "surname": "Hernandez",
     },
+    "hasConsistentLoginActivity": false,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-12-15T00:00:00.000Z,
     "pseudonymizedId": "hashed-so2",
@@ -35270,6 +35282,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "givenNames": "Harriet",
       "surname": "Boyd",
     },
+    "hasConsistentLoginActivity": false,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-11-16T00:00:00.000Z,
     "pseudonymizedId": "hashed-so9",
@@ -35287,6 +35300,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "givenNames": "Stephen",
       "surname": "Mann",
     },
+    "hasConsistentLoginActivity": false,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-11-15T00:00:00.000Z,
     "pseudonymizedId": "hashed-so10",
@@ -35304,6 +35318,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "givenNames": "Antonia",
       "surname": "Bonilla",
     },
+    "hasConsistentLoginActivity": true,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "pseudonymizedId": "hashed-so8",

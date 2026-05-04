@@ -38,6 +38,7 @@ export const rawSupervisionOfficerFixture = [
     email: "officer1@recidiviz.org",
     district: "Unit 1",
     latestLoginDate: relativeFixtureDate({ days: 0 }),
+    hasConsistentLoginActivity: true,
   },
   {
     externalId: "so2",
@@ -52,6 +53,7 @@ export const rawSupervisionOfficerFixture = [
     email: null,
     district: "Unit 1",
     latestLoginDate: relativeFixtureDate({ days: -1 }),
+    hasConsistentLoginActivity: false,
   },
   {
     externalId: "so3",
@@ -81,6 +83,7 @@ export const rawSupervisionOfficerFixture = [
     email: "officer4@recidiviz.org",
     district: "Unit 1",
     latestLoginDate: relativeFixtureDate({ days: -7 }),
+    hasConsistentLoginActivity: true,
   },
   {
     externalId: "so5",
@@ -123,6 +126,7 @@ export const rawSupervisionOfficerFixture = [
     email: "officer9@recidiviz.org",
     district: "Unit 1",
     latestLoginDate: relativeFixtureDate({ days: -30 }),
+    hasConsistentLoginActivity: false,
   },
   {
     externalId: "so10",
@@ -137,6 +141,7 @@ export const rawSupervisionOfficerFixture = [
     email: "officer10@recidiviz.org",
     district: "Unit 1",
     latestLoginDate: relativeFixtureDate({ days: -31 }),
+    hasConsistentLoginActivity: false,
   },
   // Officers excluded from outcomes
   {
@@ -209,6 +214,7 @@ export const rawSupervisionOfficerFixture = [
     email: "officer8@recidiviz.org",
     district: "Unit 1",
     latestLoginDate: relativeFixtureDate({ days: 0 }),
+    hasConsistentLoginActivity: true,
   },
 ] satisfies RawSupervisionOfficer[];
 

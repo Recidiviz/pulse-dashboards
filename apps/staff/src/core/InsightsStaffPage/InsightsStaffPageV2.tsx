@@ -27,12 +27,9 @@ import { SupervisionOfficerPagePresenter } from "../../InsightsStore/presenters/
 import { ManagedStaffHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner/InsightsManagedStaffHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { Title } from "../InsightsPageLayout/InsightsPageLayout";
-import InsightsPill from "../InsightsPill";
 import {
   getLatestLoginDate,
-  hasNoLoginActivityInNumDays,
-  noLoginLabel,
-  noLoginTooltip,
+  loginActivityPill,
 } from "../InsightsStaffUsage/InsightsStaffUsageCard";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import ModelHydrator from "../ModelHydrator";
@@ -56,6 +53,7 @@ const ManagedComponent = observer(function StaffPage({
     numClientsOnCaseload,
     shouldShowAvgDailyCaseload,
     userCanViewUsageActivity,
+    userCanViewConsistentLoginPill,
     isCurrentOfficerUserRestrictedFromSupervisorsList,
     previousPages,
   } = presenter;
@@ -105,16 +103,10 @@ const ManagedComponent = observer(function StaffPage({
               {officerRecord?.displayName}
             </div>{" "}
             {officerRecord &&
-              hasNoLoginActivityInNumDays(
+              loginActivityPill(
                 officerRecord,
                 presenter.insightsNumDaysWithoutLogin,
-              ) && (
-                <InsightsPill
-                  label={noLoginLabel(presenter.insightsNumDaysWithoutLogin)}
-                  tooltipCopy={noLoginTooltip(
-                    presenter.insightsNumDaysWithoutLogin,
-                  )}
-                />
+                userCanViewConsistentLoginPill,
               )}
           </Title>
         ) : (

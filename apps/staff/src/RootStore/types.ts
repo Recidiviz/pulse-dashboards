@@ -150,6 +150,7 @@ export type FeatureVariant =
   | "operationsContactsDrilldown"
   | "operationsNumeratorDenominatorIsEnabled"
   | "insightsStaffUsage"
+  | "insightsConsistentLoginPill"
   | "supervisorHomepageReviewCard"
   | "insightsSupervisorOpportunityNotifications"
 
@@ -227,6 +228,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTn2026ClassificationPolicyPilot: {},
   usTn2026PreventDownloadWhenNotCompleted: {},
   insightsStaffUsage: {},
+  insightsConsistentLoginPill: {},
   usTnTEPENotesForAll: {},
   usMoSearchByUnit: {},
   usMoWorkRelease: {},
@@ -271,7 +273,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
         operationsNumeratorDenominatorIsEnabled: { activeTenants: ["US_TX"] },
-        insightsStaffUsage: { activeTenants: ["US_ID", "US_UT", "US_IA"] },
+        insightsStaffUsage: {
+          activeTenants: ["US_ID", "US_UT", "US_IA", "US_MI"],
+        },
+        insightsConsistentLoginPill: { activeTenants: ["US_MI"] },
         usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},

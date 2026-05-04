@@ -203,6 +203,10 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     return this.supervisionStore.userCanViewUsageActivity;
   }
 
+  get userCanViewConsistentLoginPill(): boolean {
+    return this.supervisionStore.userCanViewConsistentLoginPill;
+  }
+
   /**
    * Tracks the event when a supervisor's page is viewed by the user.
    */

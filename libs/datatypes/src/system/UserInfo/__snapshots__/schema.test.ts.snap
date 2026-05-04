@@ -22,6 +22,7 @@ exports[`supervision officer transformation 1`] = `
       "givenNames": "Walter",
       "surname": "Harris",
     },
+    "hasConsistentLoginActivity": true,
     "includeInOutcomes": true,
     "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "pseudonymizedId": "hashed-so1",

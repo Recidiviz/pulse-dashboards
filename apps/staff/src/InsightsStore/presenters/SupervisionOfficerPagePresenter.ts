@@ -108,6 +108,10 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
     return this.supervisionStore.userCanViewUsageActivity;
   }
 
+  get userCanViewConsistentLoginPill(): boolean {
+    return this.supervisionStore.userCanViewConsistentLoginPill;
+  }
+
   protected expectMetricsPopulated() {
     if (
       isExcludedSupervisionOfficer(this.fetchedOfficerRecord) ||

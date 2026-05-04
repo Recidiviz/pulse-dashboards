@@ -44,6 +44,7 @@ export const supervisionOfficerSchema = z
       .transform((avgDailyPopulation) => Math.round(avgDailyPopulation))
       .nullable(),
     latestLoginDate: dateStringSchema.nullable().default(null),
+    hasConsistentLoginActivity: nullishAsUndefined(z.boolean()),
   })
   .transform(addDisplayName);
 

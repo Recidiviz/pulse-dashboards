@@ -21,6 +21,7 @@ import { observer } from "mobx-react-lite";
 import pluralize from "pluralize";
 
 import { SupervisionOfficer } from "~datatypes";
+import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -52,6 +53,41 @@ export const noLoginLabel = (insightsNumDaysWithoutLogin: number) =>
 export const noLoginTooltip = (insightsNumDaysWithoutLogin: number) =>
   `It has been more than ${insightsNumDaysWithoutLogin} days since the last login.`;
 
+export const hasConsistentLoginActivity = (
+  { hasConsistentLoginActivity: hasConsistent }: SupervisionOfficer,
+  consistentLoginPillEnabled: boolean,
+) => consistentLoginPillEnabled && hasConsistent === true;
+
+export const consistentLoginLabel = "Consistent Login";
+export const consistentLoginTooltip =
+  "Has logged in each month for the last 12 months.";
+
+export const loginActivityPill = (
+  officer: SupervisionOfficer,
+  insightsNumDaysWithoutLogin: number,
+  consistentLoginPillEnabled: boolean,
+) => {
+  if (hasConsistentLoginActivity(officer, consistentLoginPillEnabled)) {
+    return (
+      <InsightsPill
+        label={consistentLoginLabel}
+        tooltipCopy={consistentLoginTooltip}
+        color={palette.signal.highlight}
+        textColor={palette.white}
+      />
+    );
+  }
+  if (hasNoLoginActivityInNumDays(officer, insightsNumDaysWithoutLogin)) {
+    return (
+      <InsightsPill
+        label={noLoginLabel(insightsNumDaysWithoutLogin)}
+        tooltipCopy={noLoginTooltip(insightsNumDaysWithoutLogin)}
+      />
+    );
+  }
+  return null;
+};
+
 export const getLatestLoginDate = ({ latestLoginDate }: SupervisionOfficer) =>
   latestLoginDate ? formatWorkflowsDate(latestLoginDate) : "Never";
 
@@ -66,6 +102,7 @@ const InsightsUsageCard: React.FC<{
     numOfficersWithNoLoginActivityInLastXDays,
     pluralizeAcronym,
     labelIsAcronym,
+    userCanViewConsistentLoginPill,
   },
 }) {
   if (allOfficers.length === 0) return null;
@@ -106,19 +143,24 @@ const InsightsUsageCard: React.FC<{
               officerName={officer.displayName}
               officerPseudoId={officer.pseudonymizedId}
               officerValue={getLatestLoginDate(officer)}
-              showPill={hasNoLoginActivityInNumDays(
-                officer,
-                insightsNumDaysWithoutLogin,
-              )}
+              // `showPill` reserves layout space in the row's styled-components
+              // (see InsightsSupervisorDetailCardListItem); it must mirror
+              // whether `loginActivityPill` will actually render a pill below.
+              showPill={
+                hasConsistentLoginActivity(
+                  officer,
+                  userCanViewConsistentLoginPill,
+                ) ||
+                hasNoLoginActivityInNumDays(
+                  officer,
+                  insightsNumDaysWithoutLogin,
+                )
+              }
             >
-              {hasNoLoginActivityInNumDays(
+              {loginActivityPill(
                 officer,
                 insightsNumDaysWithoutLogin,
-              ) && (
-                <InsightsPill
-                  label={noLoginLabel(insightsNumDaysWithoutLogin)}
-                  tooltipCopy={noLoginTooltip(insightsNumDaysWithoutLogin)}
-                />
+                userCanViewConsistentLoginPill,
               )}
             </InsightsSupervisorDetailCardListItem>
           ))}
