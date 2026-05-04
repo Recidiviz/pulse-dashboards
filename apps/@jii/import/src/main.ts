@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./utils";
+import { getImportHandler } from "./handler";
+
+async function importData() {
+  if (!process.env["STATE_CODE"]) {
+    throw new Error("Missing state code environment variable");
+  }
+
+  const files = process.env["FILES"]?.split(",");
+
+  const importHandler = getImportHandler();
+
+  await importHandler.import(process.env["STATE_CODE"], files);
+}
+
+await importData();

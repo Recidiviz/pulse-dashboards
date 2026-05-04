@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./utils";
+import { z } from "zod";
+
+import { dateStringSchema } from "~datatypes";
+
+export const rnaWritebackSchema = z.object({
+  pseudonymized_id: z.string(),
+  seq_number: z.string().nullable(),
+  opus_id: z.string(),
+  admit_date: dateStringSchema.nullable(),
+});

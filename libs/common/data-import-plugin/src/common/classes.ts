@@ -50,24 +50,23 @@ export abstract class ImportHandlerBase<T, M> {
     lineErrorList: string[],
   ) {
     const data = this.getDataFromGCS(bucket, file);
-    let count = 1;
+    let lineNumber = 0;
     for await (const datum of data) {
+      lineNumber++;
       try {
         yield schema.parse(datum) as z.infer<K>;
       } catch (e) {
         // Instead of throwing an error immediately, we log the error and continue processing the next record.
         lineErrorList.push(
-          `Unable to parse data for line ${count}. Error: ${e}`,
+          `Unable to parse data for line ${lineNumber}. Error: ${e}`,
         );
       }
 
-      if (count % 100 === 0) {
-        console.log(`Processed ${count} records from ${file}...`);
+      if (lineNumber % 100 === 0) {
+        console.log(`Processed ${lineNumber} records from ${file}...`);
       }
-      count++;
     }
-
-    console.log(`Processed ${count} records from ${file}.`);
+    console.log(`Processed ${lineNumber} records from ${file}.`);
   }
 
   /**

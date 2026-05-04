@@ -15,6 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./utils";
+import { rnaWritebackSchema } from "./models";
+import { transformAndLoadRNAWritebackData } from "./utils/usNcRNA";
+
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/jii/us_nc_rna_writeback.py
+export const NC_RNA_FILE_NAME = "us_nc_rna_writeback.json";
+
+export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
+  [NC_RNA_FILE_NAME]: {
+    schema: rnaWritebackSchema,
+    loaderFn: transformAndLoadRNAWritebackData,
+  },
+};

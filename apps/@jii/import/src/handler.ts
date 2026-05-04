@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./utils";
+import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { ImportHandler } from "~data-import-plugin";
+
+import { FILE_NAME_TO_SCHEMA_AND_LOADER_FN } from "./constants";
+
+export function getImportHandler() {
+  if (!process.env["IMPORT_BUCKET_ID"]) {
+    throw new Error("Missing import bucket id environment variable");
+  }
+
+  const bucket = process.env["IMPORT_BUCKET_ID"];
+
+  return new ImportHandler({
+    bucket,
+    getPrismaClientForStateCode,
+    filesToSchemasAndLoaderFns: FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
+  });
+}

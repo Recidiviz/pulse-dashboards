@@ -62,6 +62,15 @@ model UsNcRNA {
     answers Json
 }
 
+// Supplemental data for RNA writeback about a resident's RNA status
+model UsNcRNAWritebackData {
+    pseudonymizedId    String    @unique
+    opusId             String
+    seqNumber          String?
+    admitDate          DateTime?
+    importedAt         DateTime
+}
+
 // US_NE (Nebraska) reentry checklist questions
 model usNeReentryChecklistQuestion {
     pseudonymizedId String

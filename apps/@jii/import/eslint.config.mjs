@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./utils";
+// @ts-check
+
+import tseslint from "typescript-eslint";
+
+import baseConfig, { esmRestrictedImports } from "../../../eslint.config.mjs";
+
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [...esmRestrictedImports],
+      },
+    ],
+  },
+});
