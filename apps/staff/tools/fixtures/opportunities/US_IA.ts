@@ -143,6 +143,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_IA",
@@ -227,6 +228,12 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate",
+          text: "Has no violation reports in the past 6 months",
+          tooltip:
+            "This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. This does not include reports that resulted in a final decision of “Reinstate”,  “Dismissed”, “No hearing held”, “Not filed with the court”, or “Probable cause not found”",
+        },
+        {
+          key: "noSupervisionViolationReportWithin6MonthsUsingResponseDate",
           text: "Has no violation reports in the past 6 months",
           tooltip:
             "This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. This does not include reports that resulted in a final decision of “Reinstate”,  “Dismissed”, “No hearing held”, “Not filed with the court”, or “Probable cause not found”",
@@ -330,6 +337,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
         "UsIaVictimContactInfo",
       ],
+      skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_IA",

@@ -212,13 +212,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Overdue",
-            "Due",
-            "Not Due",
-            "Marked Ineligible",
-            "SCC Scheduled",
-          ],
+          tabs: ["Overdue", "Due", "Marked Ineligible", "SCC Scheduled"],
         },
       ],
       tabPrefaceCopy: [
@@ -228,15 +222,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Due",
-          text: "This tab shows people who are Due for an ADD review. This means that they are 2 weeks away from having spent 12 months in continuous Administrative Segregation, or 12 months since their last ADD review.",
-        },
-        {
-          tab: "Upcoming",
-          text: "This tab shows people who are Upcoming for an ADD review. This means they have been in Administrative Segregation for over 10 months or it has been 10 months since their last ADD review and are approaching 12 months in continuous Administrative Segregation.",
-        },
-        {
-          tab: "Not Due",
-          text: "This tab shows people who are in Administrative Segregation but are not currently due for an ADD review. ",
+          text: "This tab shows people who are Upcoming or Due for an ADD review. This means they have been in Administrative Segregation for over 10 months or it has been 10 months since their last ADD review and are approaching 12 months in continuous Administrative Segregation.",
         },
         {
           tab: "Marked Ineligible",
@@ -280,6 +266,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Noncompliant with the order of supervision",
         },
         { key: "ABSCONSION", text: "Chronic missing of reporting dates" },
+        {
+          key: "SPECIALTY COURT PARTICIPATION",
+          text: "Client is enrolled in a specialty court that prohibits supervision at a lower level.",
+        },
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
@@ -1188,13 +1178,13 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usMiPastAdSegSecurityClassificationCommitteeReviewDate",
           text: "{{record.metadata.daysInSolitarySession}} consecutive days in {{record.metadata.solitarySessionType}};{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "An SCC review shall be conducted within 14 calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status\n",
+            "An SCC review shall be conducted within 14 calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
         {
           key: "usMiPastTempSegSecurityClassificationCommitteeReviewDate",
           text: "{{record.metadata.daysInSolitarySession}} consecutive days in {{record.metadata.solitarySessionType}};{{#if lastSccReviewDate}} last SCC review recorded on {{date lastSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "An SCC review shall be conducted within seven business days of the prisoner being classified to temporary segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status",
+            "An SCC review shall be conducted within seven business days of the prisoner being classified to temporary segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
       ],
       emptyTabCopy: [],
@@ -1230,13 +1220,13 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usMiPastAdSegSecurityClassificationCommitteeReviewDate",
           text: "Next SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "An SCC review shall be conducted within 14 calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status\n",
+            "An SCC review shall be conducted within 14 calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.\n",
         },
         {
           key: "usMiPastTempSegSecurityClassificationCommitteeReviewDate",
           text: "Next SCC review due on or before {{date nextSccDueDate}}",
           tooltip:
-            "An SCC review shall be conducted within seven business days of the prisoner being classified to temporary segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status",
+            "An SCC review shall be conducted within seven business days of the prisoner being classified to temporary segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
       ],
       subcategoryHeadings: [
@@ -1247,10 +1237,6 @@ export const mockApiOpportunityConfigurationResponse = {
         { subcategory: "Temporary Segregation", text: "Temporary Segregation" },
       ],
       subcategoryOrderings: [
-        {
-          tab: "Upcoming",
-          texts: ["Temporary Segregation", "Administrative Segregation"],
-        },
         {
           tab: "Due",
           texts: ["Temporary Segregation", "Administrative Segregation"],
@@ -1269,6 +1255,10 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Marked Ineligible",
+          texts: ["Temporary Segregation", "Administrative Segregation"],
+        },
+        {
+          tab: "SCC Scheduled",
           texts: ["Temporary Segregation", "Administrative Segregation"],
         },
       ],
@@ -1297,11 +1287,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Due",
-          text: "This tab shows people who are Due for an SCC review, based on their segregation type. For people in Temporary Segregation awaiting initial review, they will show up in this tab on business days 3 to 7 after their segregation starts. For people in Temporary Segregation awaiting a follow-up review, they will show up in this tab on business days 28 to 30 after their last review. For people in Administrative Segregation awaiting initial review, they will show in this tab on calendar days 8 to 14 after their segregation starts. For people in Administrative Segregation awaiting a follow-up review, they will show in this tab on days 28 to 30 after their last review.",
-        },
-        {
-          tab: "Upcoming",
-          text: "This tab shows people who are Upcoming for an SCC review, based on their segregation type. For people in Temporary Segregation awaiting initial review, they will show up in this tab on business days 1 to 2 after their segregation starts. For people in Temporary Segregation awaiting a follow-up review, they will show up in this tab on business days 24 to 27 after their last review. For people in Administrative Segregation awaiting initial review, they will show in this tab on calendar days 1 to 7 after their segregation starts. For people in Administrative Segregation awaiting a follow-up review, they will show in this tab on days 24 to 27 after their last review.",
+          text: "This tab shows people who are Upcoming or Due for an SCC review, based on their segregation type.  For people in Temporary Segregation awaiting initial review, they will show up in this tab on business days 1 to 7 after their segregation starts.  For people in Temporary Segregation awaiting a follow-up review, they will show up in this tab on calendar days 24  to 30 after their last review.  For people in Administrative Segregation awaiting initial review, they will show in this tab on calendar days 1 to 14 after their segregation starts.  For people in Administrative Segregation awaiting a follow-up review, they will show in this tab on calendar days 24 to 30 after their last review.",
         },
         {
           tab: "Not Due",
@@ -1335,6 +1321,14 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "EXCLUDED CHARGE",
           text: "Client is required to be supervised at a higher level of supervision by policy",
+        },
+        {
+          key: "SPECIALTY COURT PARTICIPATION",
+          text: "Client is enrolled in a specialty court that prohibits supervision at a lower level.",
+        },
+        {
+          key: "ELECTRONIC MONITORING",
+          text: "Client is enrolled in electronic monitoring which prohibits supervision at a lower level.",
         },
         { key: "Other", text: "Other: please specify a reason" },
       ],
@@ -1598,13 +1592,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Overdue",
-            "Due",
-            "Not Due",
-            "Marked Ineligible",
-            "SCC Scheduled",
-          ],
+          tabs: ["Overdue", "Due", "Marked Ineligible", "SCC Scheduled"],
         },
       ],
       tabPrefaceCopy: [
@@ -1614,15 +1602,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Due",
-          text: "This tab shows people who are Due for an Warden review. This means that they are 2 weeks away from having spent 6 months in continuous Administrative Segregation, or 6 months since their last Warden review.",
-        },
-        {
-          tab: "Upcoming",
-          text: "This tab shows people who are Upcoming for a Warden review. This means they have been in Administrative Segregation for over 4 months or it has been 4 months since their last Warden review and are approaching 6 months in continuous Administrative Segregation.",
-        },
-        {
-          tab: "Not Due",
-          text: "This tab shows people who are in Administrative Segregation but do not currently have an upcoming Warden review.",
+          text: "This tab shows people who are Upcoming or Due for an Warden review. This means they have been in Administrative Segregation for over 4 months or it has been 4 months since their last Warden review and are approaching 6 months in continuous Administrative Segregation.",
         },
         {
           tab: "Marked Ineligible",

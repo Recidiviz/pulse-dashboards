@@ -308,7 +308,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Compliant Reporting - 2025 Policy",
+      displayName: "TN-STEPS Compliant Reporting",
       dynamicEligibilityText:
         "client[|s] may be eligible for Compliant Reporting",
       eligibilityDateText: null,
@@ -467,10 +467,10 @@ export const mockApiOpportunityConfigurationResponse = {
             "See VWARs submitted in current supervision period for information on potential pending felony charges",
         },
         {
-          text: '{{#if (eq record.metadata.taskName "INTAKE")}}Able to comply with any court / Board of Parole ordered special conditions{{/if}}',
+          text: '{{#if (eq record.metadata.taskName "INTAKE")}}Has reported as instructed since placement on community supervision (unless excused and documented){{/if}}',
         },
         {
-          text: '{{#if (eq record.metadata.taskName "INTAKE")}}Has reported as instructed since placement on community supervision (unless excused and documented){{/if}}',
+          text: '{{#if (eq record.metadata.taskName "INTAKE")}}Able to comply with any court / Board of Parole ordered special conditions{{/if}}',
         },
         {
           text: '{{#if (eq record.metadata.taskName "INTAKE")}}Has completed required intake activities{{/if}}',
