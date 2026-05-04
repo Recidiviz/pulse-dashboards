@@ -75,9 +75,10 @@ export const highlightedOfficerText = (
   generateLinks: boolean,
   staffPage: boolean,
 ) => {
+  const direction = detail.outcomeType === "ADVERSE" ? "lowest" : "highest";
   const commonText = simplur`${[detail.numOfficers]} [is|are] in the top ${
     detail.topXPct
-  }% of ${officerLabel}s in the state for highest ${detail.metricName} rate this year.`;
+  }% of ${officerLabel}s in the state for ${direction} ${detail.metricName} rate this year.`;
 
   if (staffPage) {
     const firstName = getFirstName(detail.officers[0].displayName);

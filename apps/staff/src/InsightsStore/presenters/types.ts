@@ -99,6 +99,7 @@ export type HighlightedOfficersDetail = {
   officers: SupervisionOfficerIdentifiers[];
   topXPct: number | null;
   numOfficers: number;
+  outcomeType: MetricConfig["outcomeType"];
 };
 
 /**

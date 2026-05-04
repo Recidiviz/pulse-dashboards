@@ -167,6 +167,7 @@ export function getHighlightedOfficersByMetric(
           officers: highlightedOfficers,
           numOfficers: highlightedOfficers.length,
           topXPct: m.topXPct,
+          outcomeType: m.outcomeType,
         };
       }
       return;

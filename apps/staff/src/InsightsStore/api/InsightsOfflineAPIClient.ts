@@ -147,8 +147,9 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   /**
    * We will adjust the fixture data returned from the outcomes methods based on the current state and current environment.
    * test environment: don't filter at all
-   * offline & demo mode: filter outcomes metrics to be only the metric types specified in the state's config
-   * States other than US_CA: filter out topXPctMetrics since the "Positive Highlights" are only enabled in CA
+   * offline & demo mode: filter outcomes metrics to be only the metric types specified in the state's config.
+   *   topXPctMetrics are similarly filtered to those whose metricId appears with `topXPct != null`
+   *   on the state's config, so the "Positive Highlights" banner is config-driven, like in the real BE.
    */
   filterForStateAndEnv(
     data: SupervisionOfficerOutcomes,
@@ -175,8 +176,12 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
             stateConfig.metrics.map((m) => m.name).includes(metric.metricId),
           )
         : [],
-      topXPctMetrics:
-        currentTenantId.toUpperCase() === "US_CA" ? data.topXPctMetrics : [],
+      topXPctMetrics: data.topXPctMetrics.filter((m) =>
+        stateConfig.metrics.some(
+          (configMetric) =>
+            configMetric.name === m.metricId && configMetric.topXPct != null,
+        ),
+      ),
     };
     return returnValue;
   }

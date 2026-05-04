@@ -17,6 +17,7 @@
 
 import { rawSupervisionOfficerMetricOutlierFixtures } from "../../../../../metrics/SupervisionOfficerMetricOutlier/fixture";
 import {
+  ADVERSE_METRIC_IDS,
   CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
 } from "../../../../../metrics/utils/constants";
@@ -49,6 +50,7 @@ export const rawSupervisionOfficerOutcomesFixture: RawSupervisionOfficerOutcomes
       outlierMetrics: [],
       topXPctMetrics: [
         { metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts, topXPct: 10 },
+        { metricId: "task_completions_early_discharge", topXPct: 10 },
       ],
     },
     {
@@ -87,7 +89,12 @@ export const rawSupervisionOfficerOutcomesFixture: RawSupervisionOfficerOutcomes
       outlierMetrics: [
         rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
       ],
-      topXPctMetrics: [],
+      topXPctMetrics: [
+        {
+          metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
+          topXPct: 10,
+        },
+      ],
     },
     {
       externalId: "so9",

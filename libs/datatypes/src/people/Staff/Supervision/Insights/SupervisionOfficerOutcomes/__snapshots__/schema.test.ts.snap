@@ -107,6 +107,10 @@ exports[`transformations 2`] = `
       "metricId": "treatment_starts",
       "topXPct": 10,
     },
+    {
+      "metricId": "task_completions_early_discharge",
+      "topXPct": 10,
+    },
   ],
 }
 `;
@@ -325,7 +329,12 @@ exports[`transformations 6`] = `
     },
   ],
   "pseudonymizedId": "hashed-so8",
-  "topXPctMetrics": [],
+  "topXPctMetrics": [
+    {
+      "metricId": "absconsions_bench_warrants",
+      "topXPct": 10,
+    },
+  ],
 }
 `;
 
