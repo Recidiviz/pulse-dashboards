@@ -52,6 +52,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_BQ_DATASET=RECIDIVIZ_BQ_DATASET_DEMO:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY_ID=RECIDIVIZ_DEEPGRAM_API_KEY_IDENTIFIER:latest"
+      - "--set-secrets=RECIDIVIZ_SLACK_GUARDRAIL_ALERT_WEBHOOK_URL=RECIDIVIZ_SLACK_GUARDRAIL_ALERT_WEBHOOK_URL_PROD:latest"
       - "--set-env-vars"
       - |
         ENTRYPOINT=api,
@@ -117,6 +118,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_BQ_PROJECT_ID=RECIDIVIZ_BQ_PROJECT_ID_DEMO:latest"
       - "--set-secrets=RECIDIVIZ_BQ_DATASET=RECIDIVIZ_BQ_DATASET_DEMO:latest"
+      - "--set-secrets=RECIDIVIZ_SLACK_GUARDRAIL_ALERT_WEBHOOK_URL=RECIDIVIZ_SLACK_GUARDRAIL_ALERT_WEBHOOK_URL_PROD:latest"
       - "--set-env-vars"
       - |
         ENTRYPOINT=worker,
@@ -133,7 +135,7 @@ steps:
         RECIDIVIZ_LANGCHAIN_PROJECT=demo-recidiviz,
         RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resource-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
-        RECIDIVIZ_AUTH0_AUDIENCE=https://recidiviz-rnd.us.auth0.com/api/v2/,
+        RECIDIVIZ_AUTH0_AUDIENCE=https://api-demo.recidiviz.org,
         RECIDIVIZ_AUTH0_DOMAIN=recidiviz-rnd.us.auth0.com,
         RECIDIVIZ_JWT_ALGORITHM=HS256,
         RECIDIVIZ_BQ_CASE_MANAGER_TABLE=case_manager_demo,
