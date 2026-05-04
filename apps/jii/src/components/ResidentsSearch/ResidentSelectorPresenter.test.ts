@@ -70,6 +70,17 @@ describe("hydration", () => {
     expect(presenter.hydrationState.status).toBe("hydrated");
   });
 
+  test("needs hydration when store contains only one resident", () => {
+    // there can be one already in the store when your session starts
+    // on a single resident's page; we want to check for more
+    set(
+      residentsStore.residentsByExternalId,
+      keyBy([usMaResidents[0]], "personExternalId"),
+    );
+
+    expect(presenter.hydrationState.status).toBe("needs hydration");
+  });
+
   test("hydrate", async () => {
     vi.spyOn(residentsStore, "populateResidents");
     expect(presenter.hydrationState.status).toBe("needs hydration");
@@ -98,5 +109,46 @@ describe("hydration", () => {
       [["facilityId", "==", TEST_FACILITY_ID]],
       true,
     );
+  });
+
+  test("hydrate with one resident", async () => {
+    vi.spyOn(rootStore.apiClient, "residents").mockResolvedValue([
+      usMaResidents[0],
+    ]);
+
+    expect(presenter.hydrationState.status).toBe("needs hydration");
+
+    presenter.hydrate();
+
+    await waitFor(() =>
+      expect(presenter.hydrationState.status).toBe("hydrated"),
+    );
+
+    expect(presenter.selectOptions).toHaveLength(1);
+  });
+
+  test("hydrate with one resident only after the fetch", async () => {
+    // this is a real corner case: if we initialize with only one resident,
+    // we will still try to fetch more. but if it turns out there is only one
+    // to fetch, hydration should still succeed
+    set(
+      residentsStore.residentsByExternalId,
+      keyBy([usMaResidents[0]], "personExternalId"),
+    );
+    expect(presenter.hydrationState.status).toBe("needs hydration");
+    expect(presenter.selectOptions).toHaveLength(1);
+
+    // API only returns one resident (the same one that's already populated)
+    vi.spyOn(rootStore.apiClient, "residents").mockResolvedValue([
+      usMaResidents[0],
+    ]);
+
+    presenter.hydrate();
+
+    await waitFor(() =>
+      expect(presenter.hydrationState.status).toBe("hydrated"),
+    );
+
+    expect(presenter.selectOptions).toHaveLength(1);
   });
 });

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ascending } from "d3-array";
-import { flowResult, makeAutoObservable } from "mobx";
+import { flowResult, makeAutoObservable, runInAction } from "mobx";
 
 import { ResidentsStore } from "~@jii/data";
 import { ResidentRecord } from "~datatypes";
@@ -29,6 +29,10 @@ import {
 export class ResidentSelectorPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;
 
+  // if by some chance we encounter a facility that contains exactly one resident,
+  // we can flip this to avoid an infinite loading loop
+  private isHydratedWithOneResident = false;
+
   constructor(
     private residentsStore: ResidentsStore,
     private facilityId: string,
@@ -37,20 +41,31 @@ export class ResidentSelectorPresenter implements Hydratable {
 
     this.hydrationSource = new HydratesFromSource({
       populate: async () => {
-        await flowResult(
+        const numFetched = await flowResult(
           this.residentsStore.populateResidents(
             [["facilityId", "==", facilityId]],
             // force because store doesn't expect partial hydrations
             true,
           ),
         );
+        runInAction(() => {
+          // if we fetched exactly one resident we have to tell the
+          // hydration status check that it should accept this. normally it won't
+          if (numFetched === 1) {
+            this.isHydratedWithOneResident = true;
+          }
+        });
       },
       expectPopulated: [this.expectResidentsPopulated],
     });
   }
 
   private expectResidentsPopulated() {
-    if (!this.allResidents.some((r) => r.facilityId === this.facilityId)) {
+    // one item is a special case that arises from starting your session
+    // on a resident's page. we ignore it here unless it's explicitly overridden
+    const hydrationThreshold = this.isHydratedWithOneResident ? 1 : 2;
+
+    if (this.filteredResidents.length < hydrationThreshold) {
       throw new Error(`Residents data for ${this.facilityId} is not populated`);
     }
   }

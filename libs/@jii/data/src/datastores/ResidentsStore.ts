@@ -90,16 +90,19 @@ export class ResidentsStore {
   /**
    * Populates {@link residentsByExternalId} with the API response for all available residents
    * (or the subset indicated by {@link filters}).
-   * Will not refetch if data is already populated, unless `forceRefresh` is true
+   * Will not refetch if data is already populated, unless `forceRefresh` is true.
+   * Returns the number of residents fetched, if applicable.
    */
   *populateResidents(
     filters?: Array<FilterParams>,
     forceRefresh = false,
-  ): FlowMethod<DataAPI["residents"], void> {
+  ): FlowMethod<DataAPI["residents"], number | undefined> {
     if (!forceRefresh && this.areAllResidentsPopulated()) return;
 
     const residents = yield this.apiClient.residents(this.stateCode, filters);
     set(this.residentsByExternalId, keyBy(residents, "personExternalId"));
+
+    return residents.length;
   }
 
   /**
