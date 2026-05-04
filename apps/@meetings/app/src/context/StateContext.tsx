@@ -56,8 +56,18 @@ export const StateCodeProvider: React.FC<{
     stateCode: userStateCode,
   } = useUserContext();
   const { agencyConfigs } = useAgencyConfigs();
+  // For state users, initialize directly to their state code so the ref is correct before the
+  // sync effect runs and overwrites it. Recidiviz users and skip-auth users start at the default
+  // and load from storage in the effect below.
+  const initialStateCode =
+    !isSkipAuthUser &&
+    userStateCode &&
+    userStateCode !== "recidiviz" &&
+    recidivizAllowedStates.length <= 1
+      ? (userStateCode.toUpperCase() as StateCode)
+      : DEFAULT_STATE_CODE;
   const [selectedStateCode, setSelectedStateCodeInternal] =
-    useState<StateCode>(DEFAULT_STATE_CODE);
+    useState<StateCode>(initialStateCode);
   const [isLoading, setIsLoading] = useState(true);
 
   // Show settings for skip auth users or users who have access to multiple states.

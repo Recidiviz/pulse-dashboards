@@ -38,10 +38,13 @@ export const AgencyConfigProvider: React.FC<{ children: React.ReactNode }> = ({
     data: agencyConfigs = {},
     isLoading,
     isError,
+    isFetching,
     refetch,
   } = trpc.v1.config.getAll.useQuery();
 
-  if (isError) {
+  // Don't show the error screen while a refetch is in flight — a persisted failed query
+  // will have isError=true on mount until the background refetch succeeds.
+  if (isError && !isFetching) {
     return <ConfigErrorScreen onRetry={() => void refetch()} />;
   }
 
