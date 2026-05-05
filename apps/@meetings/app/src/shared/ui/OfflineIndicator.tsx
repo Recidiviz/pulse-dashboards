@@ -20,9 +20,8 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 
-import CloudOffline from "~@meetings/app/assets/icons/cloud-off.svg";
-import useIsOnline from "~@meetings/app/hooks/useIsOnline";
-
+import CloudOffline from "../assets/icons/cloud-off.svg";
+import useIsOnline from "../lib/useIsOnline";
 import { Typography } from "./Typography";
 
 type Props = {

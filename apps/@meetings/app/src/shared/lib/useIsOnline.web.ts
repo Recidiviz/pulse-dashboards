@@ -19,7 +19,7 @@ import * as Sentry from "@sentry/react-native";
 import { onlineManager } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
-import env from "../env";
+import { env } from "../config/env";
 
 const HEALTH_URL = `${env.EXPO_PUBLIC_SERVER_URL}health`;
 

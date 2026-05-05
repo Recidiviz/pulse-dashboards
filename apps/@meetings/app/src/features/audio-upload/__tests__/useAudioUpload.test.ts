@@ -17,13 +17,12 @@
 
 import { act, renderHook } from "@testing-library/react-native";
 
-import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import { AbortError } from "~@meetings/app/shared/errors";
-import { trpc } from "~@meetings/app/trpc/client";
+import { AbortError } from "~@meetings/app/shared/lib/errors";
 
+import { trpc, useUploadSegment } from "../../../shared/api";
 import { useAudioUpload } from "../hooks/useAudioUpload";
 import { useAudioUploadStore } from "../store";
 import { RawFileInfo } from "../types";
@@ -31,11 +30,11 @@ import { RawFileInfo } from "../types";
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
-jest.mock("~@meetings/app/entities/upload-segment");
+jest.mock("~@meetings/app/shared/api/upload-segment");
 jest.mock("~@meetings/app/hooks/useCreateMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
-jest.mock("~@meetings/app/trpc/client", () => ({
+jest.mock("~@meetings/app/shared/api/trpc", () => ({
   __esModule: true,
   trpc: {
     v1: {

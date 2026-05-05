@@ -21,7 +21,7 @@ import { Platform } from "react-native";
 import { AUDIO_FORMATS } from "~@meetings/config";
 import type { AppRouter } from "~@meetings/trpc-types";
 
-import { useUploadSegment } from "../entities/upload-segment/hooks/useUploadSegment";
+import { useUploadSegment } from "../shared/api";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType, OfflineEvent } from "./useMeetingEventQueue";
 import { useReconnectUploadStore } from "./useReconnectUploadStore";

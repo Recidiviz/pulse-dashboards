@@ -31,9 +31,9 @@ import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsPlaceholder from "../components/PersonsPlaceholder";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../features/recording";
-import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
+import { trpc } from "../shared/api";
+import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
-import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
 import { SortOption, sortUsers } from "../utils/sort";
 

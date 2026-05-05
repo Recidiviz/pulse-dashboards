@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { MeetingDetails, Person } from "../common/types";
-import { humanReadableTitleCase } from "../utils/format";
+import { humanReadableTitleCase } from "../shared/lib/format";
 
 type Params = {
   person: Person;

@@ -19,7 +19,7 @@ import Constants from "expo-constants";
 import { useCallback, useEffect, useState } from "react";
 import { Linking, Platform } from "react-native";
 
-import { publicTrpc } from "../trpc/client";
+import { publicTrpc } from "../shared/api";
 
 interface VersionCheckOptions {
   title?: string;

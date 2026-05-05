@@ -18,7 +18,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { inferRouterInputs } from "@trpc/server";
 
-import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import type { AppRouter } from "~@meetings/trpc-types";
 
 import { Person, PersonType } from "../common/types";

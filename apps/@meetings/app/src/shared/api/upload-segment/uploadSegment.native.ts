@@ -17,9 +17,9 @@
 
 import * as FileSystem from "expo-file-system/legacy";
 
-import { AbortError } from "~@meetings/app/shared/errors";
+import { AbortError } from "~@meetings/app/shared/lib/errors";
 
-import { UploadSegmentParams } from "../types";
+import { UploadSegmentParams } from "../../../shared/api";
 
 export async function uploadSegment({
   uri,

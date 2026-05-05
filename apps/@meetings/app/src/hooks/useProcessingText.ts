@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import useIsOnline from "./useIsOnline";
+import useIsOnline from "../shared/lib/useIsOnline";
 
 export function useProcessingText() {
   const { isOnline } = useIsOnline();

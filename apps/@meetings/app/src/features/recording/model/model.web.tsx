@@ -19,11 +19,11 @@ import * as Sentry from "@sentry/react-native";
 import { createContext, useRef } from "react";
 
 import { getPersonType, Person } from "~@meetings/app/common/types";
-import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import { useUploadSegment } from "~@meetings/app/shared/api";
 import { extractError } from "~@meetings/app/shared/lib/extractError";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";

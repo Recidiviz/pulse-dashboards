@@ -18,12 +18,12 @@
 import { act, renderHook } from "@testing-library/react-native";
 import React from "react";
 
-import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import useIsOnline from "~@meetings/app/hooks/useIsOnline";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
+import { useUploadSegment } from "../../../shared/api";
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useInitialization } from "../hooks/useInitialization.web";
@@ -38,7 +38,7 @@ jest.mock("../hooks/useAudioRecorder.web");
 jest.mock("../utils/webRecorderDb.web");
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
-jest.mock("~@meetings/app/hooks/useIsOnline", () => ({
+jest.mock("~@meetings/app/shared/lib/useIsOnline", () => ({
   __esModule: true,
   default: jest.fn().mockReturnValue({ isOnline: true }),
 }));
@@ -46,7 +46,7 @@ jest.mock("../hooks/useDurationTimer");
 jest.mock("../hooks/useInitialization.web", () => ({
   useInitialization: jest.fn(),
 }));
-jest.mock("~@meetings/app/entities/upload-segment");
+jest.mock("~@meetings/app/shared/api/upload-segment");
 jest.mock("../ui/MeetingModal", () => ({
   MeetingModal: () => null,
 }));

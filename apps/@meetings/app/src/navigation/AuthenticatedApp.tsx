@@ -28,9 +28,9 @@ import {
   StateCodeProvider,
 } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
-import env from "../env";
-import { trpc } from "../trpc/client";
-import { queryCachePersister } from "../utils/queryCachePersister";
+import { trpc } from "../shared/api";
+import { env } from "../shared/config";
+import { queryCachePersister } from "../shared/lib/queryCachePersister";
 import { AuthenticatedContent } from "./AuthenticatedContent";
 
 const ONE_WEEK_MS = 1000 * 60 * 60 * 24 * 7;

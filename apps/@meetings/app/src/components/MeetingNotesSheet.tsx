@@ -33,9 +33,9 @@ import {
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 
-import { theme } from "../common/theme";
 import { MeetingDetails } from "../common/types";
 import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
+import { theme } from "../shared/config";
 import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { copyMeetingNotes } from "../utils/copyMeetingNotes";

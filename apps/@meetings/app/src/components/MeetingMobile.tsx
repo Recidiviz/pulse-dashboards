@@ -37,20 +37,16 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { MeetingDetails, Person, PersonType } from "../common/types";
 import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
 import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
 import { BulletListTab } from "../components/MeetingDetailTabs";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
-import {
-  formatMeetingDuration,
-  formatMeetingStartDate,
-  getInitials,
-  humanReadableTitleCase,
-} from "../utils/format";
+import { formatMeetingDuration, formatMeetingStartDate } from "../utils/format";
 import MeetingNotesSheet from "./MeetingNotesSheet";
 
 const HEADER_HEIGHT = 64;

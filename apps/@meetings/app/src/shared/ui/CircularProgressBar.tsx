@@ -25,7 +25,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 
-import { theme } from "../../common/theme";
+import { theme } from "../config/theme";
 import { Typography } from "./Typography";
 
 const TRACK_COLOR = theme["backgroundColor"]["disabled"];

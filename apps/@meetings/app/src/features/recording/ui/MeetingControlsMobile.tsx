@@ -21,12 +21,12 @@ import { ChevronRightIcon } from "react-native-heroicons/outline";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import PauseSvg from "../../../assets/icons/pause.svg";
-import PlaySvg from "../../../assets/icons/play.svg";
-import StopSvg from "../../../assets/icons/stop.svg";
+import PauseSvg from "../../../shared/assets/icons/pause.svg";
+import PlaySvg from "../../../shared/assets/icons/play.svg";
+import StopSvg from "../../../shared/assets/icons/stop.svg";
+import { formatDurationNumeric } from "../../../shared/lib/format";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
-import { formatDurationNumeric } from "../../../utils/format";
 import { useRecording } from "../model";
 
 export function MeetingControlsMobile() {

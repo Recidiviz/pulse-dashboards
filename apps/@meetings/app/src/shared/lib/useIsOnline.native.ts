@@ -19,7 +19,7 @@ import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 import * as Sentry from "@sentry/react-native";
 import { onlineManager } from "@tanstack/react-query";
 
-import env from "../env";
+import { env } from "../config/env";
 
 NetInfo.configure({
   reachabilityUrl: `${env.EXPO_PUBLIC_SERVER_URL}health`,

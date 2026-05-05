@@ -15,4 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { useUploadSegment } from "./hooks/useUploadSegment";
+export * from "./types";
+export * from "./uploadSegment";
+export * from "./useUploadSegment";

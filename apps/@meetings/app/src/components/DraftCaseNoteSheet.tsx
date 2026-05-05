@@ -36,8 +36,8 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { theme } from "../common/theme";
 import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
+import { theme } from "../shared/config";
 import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { formatDraftCaseNoteMeetingDate } from "../utils/format";

@@ -20,7 +20,7 @@ import type { inferRouterInputs } from "@trpc/server";
 
 import type { AppRouter } from "~@meetings/trpc-types";
 
-import useIsOnline from "./useIsOnline";
+import useIsOnline from "../shared/lib/useIsOnline";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";

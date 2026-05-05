@@ -30,13 +30,13 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import PlaySvg from "../assets/icons/play.svg";
-import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person } from "../common/types";
-import useIsOnline from "../hooks/useIsOnline";
+import PlaySvg from "../shared/assets/icons/play.svg";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
+import useIsOnline from "../shared/lib/useIsOnline";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
-import { getInitials, humanReadableTitleCase } from "../utils/format";
 
 type NewMeetingRecordingSheetProps = {
   person: Person;

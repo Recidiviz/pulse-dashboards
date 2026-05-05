@@ -20,9 +20,9 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
 import { useMeetings } from "../hooks/useMeetings";
-import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { ResidentsStackParamList } from "../navigation/DrawerNavigator";
-import { trpc } from "../trpc/client";
+import { trpc } from "../shared/api";
+import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import { deserializeResident, formatPersonTitle } from "../utils/format";
 
 type ProfileRouteProp = RouteProp<ResidentsStackParamList, "ResidentProfile">;

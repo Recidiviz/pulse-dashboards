@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import env from "./env";
+import { env } from "./shared/config";
 
 const config = {
   clientId: env.EXPO_PUBLIC_AUTH0_CLIENT_ID,

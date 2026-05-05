@@ -29,14 +29,14 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { theme } from "../common/theme";
 import Header from "../components/Header";
 import { useAgencyConfigs } from "../context/AgencyConfigContext";
 import { StateCode, useStateSelection } from "../context/StateContext";
-import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { trpc } from "../shared/api";
+import { theme } from "../shared/config";
+import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import { Typography } from "../shared/ui/Typography";
-import { trpc } from "../trpc/client";
 
 type StateSelectionNavProp = NativeStackNavigationProp<RootStackParamList>;
 

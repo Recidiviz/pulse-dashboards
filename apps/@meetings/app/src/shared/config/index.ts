@@ -15,23 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback } from "react";
-
-import { trpc } from "~@meetings/app/trpc/client";
-
-import { UploadParams } from "../types";
-import { uploadSegment } from "../utils/uploadSegment";
-
-export function useUploadSegment() {
-  const { mutateAsync: createSignedUrlForRecording } =
-    trpc.v1.meeting.createSignedUrlForRecording.useMutation();
-
-  const upload = useCallback(
-    async (params: UploadParams) => {
-      return await uploadSegment({ ...params, createSignedUrlForRecording });
-    },
-    [createSignedUrlForRecording],
-  );
-
-  return upload;
-}
+export * from "./constants";
+export * from "./env";
+export * from "./theme";

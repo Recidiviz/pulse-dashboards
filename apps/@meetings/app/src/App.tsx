@@ -27,9 +27,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import config from "./auth0-config";
 import AppErrorBoundary from "./components/AppErrorBoundary";
-import env from "./env";
 import { useSentryAppLifecycle } from "./hooks/useSentryAppLifecycle";
 import AppNavigator from "./navigation/AppNavigator";
+import { env } from "./shared/config/env";
 import { SnackbarProvider } from "./shared/ui/Snackbar";
 
 Sentry.init({

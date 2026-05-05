@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FileValidationError } from "~@meetings/app/shared/errors";
+import { FileValidationError } from "~@meetings/app/shared/lib/errors";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { MAX_FILE_SIZE_BYTES } from "../constants";

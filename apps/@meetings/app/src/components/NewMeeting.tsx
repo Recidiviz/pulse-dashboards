@@ -24,9 +24,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import NotesSvg from "../assets/icons/notes.svg";
 import { Person, PersonType } from "../common/types";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
+import NotesSvg from "../shared/assets/icons/arrows-poin-outting-in.svg";
 import { Typography } from "../shared/ui/Typography";
 import Header from "./Header";
 

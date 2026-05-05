@@ -39,24 +39,24 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import simplur from "simplur";
 import { match } from "ts-pattern";
 
-import CloudOffline from "~@meetings/app/assets/icons/cloud-off.svg";
+import CloudOffline from "~@meetings/app/shared/assets/icons/cloud-off.svg";
 
-import BgAvatarImage from "../assets/images/bg-avatar.png";
-import { theme } from "../common/theme";
 import { Person } from "../common/types";
-import useIsOnline from "../hooks/useIsOnline";
 import {
   ReconnectUploadStatus,
   useReconnectUploadStore,
 } from "../hooks/useReconnectUploadStore";
 import { useUploadTimeRemaining } from "../hooks/useUploadTimeRemaining";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { theme } from "../shared/config";
+import { getInitials } from "../shared/lib/format";
+import useIsOnline from "../shared/lib/useIsOnline";
 import { CircularProgressBar } from "../shared/ui/CircularProgressBar";
 import { Expandable } from "../shared/ui/Expandable";
 import { FadeContainer } from "../shared/ui/FadeContainer";
 import { FloatingCard } from "../shared/ui/FloatingCard";
 import { HorizontalDivider } from "../shared/ui/HorizontalDivider";
 import { Typography } from "../shared/ui/Typography";
-import { getInitials } from "../utils/format";
 
 type ReconnectRowProps = {
   person?: Person;

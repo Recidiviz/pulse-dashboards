@@ -26,7 +26,6 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
@@ -34,6 +33,11 @@ import {
   ClientsStackParamList,
   ResidentsStackParamList,
 } from "../navigation/DrawerNavigator";
+import ProcessingSvg from "../shared/assets/icons/processing.svg";
+import {
+  formatDurationCompact,
+  formatDurationNumeric,
+} from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import {
@@ -49,7 +53,6 @@ import {
 } from "../shared/ui/Table.web";
 import { TablePagination } from "../shared/ui/TablePagination";
 import { Typography } from "../shared/ui/Typography";
-import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 
 type ProfileMeetingNavProp = CompositeNavigationProp<

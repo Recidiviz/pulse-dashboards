@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "../trpc/client";
+import { trpc } from "../shared/api";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 
 export function useMeetingDetails(meetingId?: string) {

@@ -17,7 +17,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { getItem, saveItem } from "../utils/storage";
+import { getItem, saveItem } from "../shared/lib/storage";
 import { useAgencyConfigs } from "./AgencyConfigContext";
 import { useUserContext } from "./UserContext";
 

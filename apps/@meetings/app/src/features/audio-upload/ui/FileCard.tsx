@@ -21,7 +21,7 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import CheckCircleIcon from "react-native-heroicons/solid/CheckCircleIcon";
 import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
-import { theme } from "~@meetings/app/common/theme";
+import { theme } from "~@meetings/app/shared/config";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { AudioUploadStatus, FileInfo } from "../types";

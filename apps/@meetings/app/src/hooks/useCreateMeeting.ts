@@ -20,7 +20,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Alert } from "react-native";
 
 import { Person, PersonType } from "../common/types";
-import useIsOnline from "./useIsOnline";
+import useIsOnline from "../shared/lib/useIsOnline";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";

@@ -21,7 +21,7 @@ import { TouchableOpacity, useWindowDimensions, View } from "react-native";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
-import { theme } from "../common/theme";
+import { theme } from "../shared/config";
 import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { EditDraftCaseNoteModal } from "./EditDraftCaseNoteModal";

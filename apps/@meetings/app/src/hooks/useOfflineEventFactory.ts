@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { PersonType } from "../common/types";
-import { trpc } from "../trpc/client";
+import { trpc } from "../shared/api";
 import {
   CreateMeetingEvent,
   DiscardMeetingEvent,

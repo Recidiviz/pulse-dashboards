@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AbortError } from "~@meetings/app/shared/errors";
+import { AbortError } from "~@meetings/app/shared/lib/errors";
 
-import { UploadSegmentParams } from "../types";
+import { UploadSegmentParams } from "../../../shared/api";
 
 export async function uploadSegment({
   uri,

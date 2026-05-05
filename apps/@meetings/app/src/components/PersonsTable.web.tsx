@@ -25,13 +25,14 @@ import React, { useEffect } from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
 } from "../navigation/DrawerNavigator";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { getInitials } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import {
@@ -48,7 +49,6 @@ import {
 import { TablePagination } from "../shared/ui/TablePagination";
 import { TooltipText } from "../shared/ui/TooltipText";
 import { Typography } from "../shared/ui/Typography";
-import { getInitials } from "../utils/format";
 
 const PAGE_SIZE = 7;
 const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;

@@ -17,13 +17,15 @@
 
 import { useCallback, useRef } from "react";
 
-import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import { AbortError, FileValidationError } from "~@meetings/app/shared/errors";
-import { trpc } from "~@meetings/app/trpc/client";
+import {
+  AbortError,
+  FileValidationError,
+} from "~@meetings/app/shared/lib/errors";
 
+import { trpc, useUploadSegment } from "../../../shared/api";
 import { useAudioUploadStore } from "../store";
 import { RawFileInfo } from "../types";
 import { deserializeFile } from "../utils/deserializeFile";

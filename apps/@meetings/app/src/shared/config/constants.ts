@@ -15,37 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { env } from "./env";
 
-import { getItem, saveItem } from "../../../shared/lib/storage";
-
-export function useNote() {
-  const [note, setNote] = useState("");
-  const debouncedSave = useRef(
-    debounce((noteToSave: string) => {
-      saveItem("note", noteToSave);
-    }, 1000),
-  ).current;
-
-  const updateNote = (newNote: string) => {
-    setNote(newNote);
-    debouncedSave(newNote);
-  };
-
-  useEffect(() => {
-    async function loadNote() {
-      const persistedNote = await getItem("note");
-      setNote(persistedNote ?? "");
-    }
-    loadNote();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      debouncedSave.cancel();
-    };
-  }, [debouncedSave]);
-
-  return [note, updateNote] as const;
-}
+export const IS_PROD = env.EXPO_PUBLIC_DEPLOY_ENV === "production";

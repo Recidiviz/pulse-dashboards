@@ -20,15 +20,12 @@ import React from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { Person, PersonType } from "../common/types";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { Typography } from "../shared/ui/Typography";
-import {
-  formatPersonLastMeetingDate,
-  getInitials,
-  humanReadableTitleCase,
-} from "../utils/format";
+import { formatPersonLastMeetingDate } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
 interface ItemProps {

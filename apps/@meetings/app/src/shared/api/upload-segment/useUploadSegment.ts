@@ -15,37 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 
-import { getItem, saveItem } from "../../../shared/lib/storage";
+import { trpc, UploadParams, uploadSegment } from "~@meetings/app/shared/api";
 
-export function useNote() {
-  const [note, setNote] = useState("");
-  const debouncedSave = useRef(
-    debounce((noteToSave: string) => {
-      saveItem("note", noteToSave);
-    }, 1000),
-  ).current;
+export function useUploadSegment() {
+  const { mutateAsync: createSignedUrlForRecording } =
+    trpc.v1.meeting.createSignedUrlForRecording.useMutation();
 
-  const updateNote = (newNote: string) => {
-    setNote(newNote);
-    debouncedSave(newNote);
-  };
+  const upload = useCallback(
+    async (params: UploadParams) => {
+      return await uploadSegment({ ...params, createSignedUrlForRecording });
+    },
+    [createSignedUrlForRecording],
+  );
 
-  useEffect(() => {
-    async function loadNote() {
-      const persistedNote = await getItem("note");
-      setNote(persistedNote ?? "");
-    }
-    loadNote();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      debouncedSave.cancel();
-    };
-  }, [debouncedSave]);
-
-  return [note, updateNote] as const;
+  return upload;
 }

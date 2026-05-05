@@ -38,16 +38,16 @@ import MenuIcon from "react-native-heroicons/outline/MenuIcon";
 import ArrowLeftIcon from "react-native-heroicons/solid/ArrowLeftIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import WordmarkSvg from "../assets/icons/wordmark.svg";
-import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
-import { IS_PROD } from "../env";
 import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import WordmarkSvg from "../shared/assets/icons/wordmark.svg";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { IS_PROD } from "../shared/config";
+import { getInitials } from "../shared/lib/format";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
-import { getInitials } from "../utils/format";
 import DesktopMenuItem from "./DesktopMenuItem";
 import { ProfileMenuItem } from "./ProfileMenuItem";
 

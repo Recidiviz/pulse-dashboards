@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import FileSvg from "~@meetings/app/assets/icons/file.svg";
-import FileAacSvg from "~@meetings/app/assets/icons/file-aac.svg";
-import FileM4aSvg from "~@meetings/app/assets/icons/file-m4a.svg";
-import FileMp3Svg from "~@meetings/app/assets/icons/file-mp3.svg";
-import FileWavSvg from "~@meetings/app/assets/icons/file-wav.svg";
-import FileWebmSvg from "~@meetings/app/assets/icons/file-webm.svg";
+import FileSvg from "~@meetings/app/shared/assets/icons/file.svg";
+import FileAacSvg from "~@meetings/app/shared/assets/icons/file-aac.svg";
+import FileM4aSvg from "~@meetings/app/shared/assets/icons/file-m4a.svg";
+import FileMp3Svg from "~@meetings/app/shared/assets/icons/file-mp3.svg";
+import FileWavSvg from "~@meetings/app/shared/assets/icons/file-wav.svg";
+import FileWebmSvg from "~@meetings/app/shared/assets/icons/file-webm.svg";
 
 const iconsMap = {
   aac: FileAacSvg,

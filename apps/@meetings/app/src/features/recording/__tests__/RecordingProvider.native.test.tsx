@@ -27,13 +27,13 @@ import * as FileSystem from "expo-file-system/legacy";
 import React from "react";
 import { Alert } from "react-native";
 
-import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import useIsOnline from "~@meetings/app/hooks/useIsOnline";
 import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
+import { useUploadSegment } from "../../../shared/api";
 import { useDurationTimer } from "../hooks/useDurationTimer";
 import { useNote } from "../hooks/useNote";
 import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
@@ -61,7 +61,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
-jest.mock("~@meetings/app/hooks/useIsOnline", () => ({
+jest.mock("~@meetings/app/shared/lib/useIsOnline", () => ({
   __esModule: true,
   default: jest.fn().mockReturnValue({ isOnline: true }),
 }));
@@ -72,7 +72,7 @@ jest.mock("../hooks/usePersistedFileDuration.native", () => ({
   usePersistedFileDuration: jest.fn(),
 }));
 jest.mock("../hooks/useRecordingStatus");
-jest.mock("~@meetings/app/entities/upload-segment");
+jest.mock("~@meetings/app/shared/api/upload-segment");
 jest.mock("../utils/notifications");
 jest.mock("../utils/storage");
 jest.mock("../model/store");

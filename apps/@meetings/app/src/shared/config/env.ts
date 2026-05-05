@@ -36,7 +36,7 @@ const envSchema = z.object({
   EXPO_PUBLIC_TRANSCRIPTION_ENABLED_STATES: z.string().default(""),
 });
 
-const env = {
+const envObj = {
   EXPO_PUBLIC_AUTH0_AUDIENCE: process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"],
   EXPO_PUBLIC_AUTH0_CLIENT_ID: process.env["EXPO_PUBLIC_AUTH0_CLIENT_ID"],
   EXPO_PUBLIC_AUTH0_DOMAIN: process.env["EXPO_PUBLIC_AUTH0_DOMAIN"],
@@ -48,8 +48,4 @@ const env = {
     process.env["EXPO_PUBLIC_TRANSCRIPTION_ENABLED_STATES"],
 };
 
-const parsedEnv = envSchema.parse(env);
-
-export default parsedEnv;
-
-export const IS_PROD = parsedEnv.EXPO_PUBLIC_DEPLOY_ENV === "production";
+export const env = envSchema.parse(envObj);

@@ -26,9 +26,9 @@ import {
 import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import LogoSvg from "~@meetings/app/assets/icons/logo.svg";
-import env from "~@meetings/app/env";
-import { useSetDocumentTitle } from "~@meetings/app/hooks/useSetDocumentTitle";
+import LogoSvg from "~@meetings/app/shared/assets/icons/logo.svg";
+import { env } from "~@meetings/app/shared/config";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
 import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 

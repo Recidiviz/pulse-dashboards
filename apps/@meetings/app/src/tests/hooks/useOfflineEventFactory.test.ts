@@ -22,7 +22,7 @@ import {
   useMeetingEventQueue,
 } from "~@meetings/app/hooks/useMeetingEventQueue";
 import { useOfflineEventFactory } from "~@meetings/app/hooks/useOfflineEventFactory";
-import { trpc } from "~@meetings/app/trpc/client";
+import { trpc } from "~@meetings/app/shared/api";
 
 jest.mock("~@meetings/app/hooks/useMeetingEventQueue", () => ({
   MeetingEventType: {
@@ -34,7 +34,7 @@ jest.mock("~@meetings/app/hooks/useMeetingEventQueue", () => ({
   useMeetingEventQueue: jest.fn(),
 }));
 
-jest.mock("~@meetings/app/trpc/client", () => ({
+jest.mock("~@meetings/app/shared/api/trpc", () => ({
   __esModule: true,
   trpc: {
     useUtils: jest.fn(),

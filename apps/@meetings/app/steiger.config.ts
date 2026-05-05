@@ -23,21 +23,14 @@ export default defineConfig([
   { rules: { "fsd/insignificant-slice": "off" } },
   {
     // TODO: remove the block after refactoring
-    files: ["./src/env/**", "./src/trpc/**"],
-    rules: { "fsd/typo-in-layer-name": "off" },
-  },
-  {
-    // TODO: remove the block after refactoring
-    files: [
-      "./src/features/recording/**",
-      "./src/features/audio-upload/**",
-      "./src/entities/upload-segment/**",
-    ],
+    files: ["./src/features/recording/**", "./src/features/audio-upload/**"],
     rules: { "fsd/segments-by-purpose": "off" },
   },
   {
-    // TODO: remove the block after refactoring
-    files: ["./src/entities/upload-segment/**"],
-    rules: { "fsd/no-segmentless-slices": "off" },
+    // These folders don't contain JS files, so it's okay not to have a public API there
+    files: ["./src/shared/assets/**"],
+    rules: {
+      "fsd/public-api": "off",
+    },
   },
 ]);

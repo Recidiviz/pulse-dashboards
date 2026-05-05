@@ -18,13 +18,13 @@
 import { renderHook } from "@testing-library/react-native";
 
 import { useMeetings } from "../../hooks/useMeetings";
-import { trpc } from "../../trpc/client";
+import { trpc } from "../../shared/api";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("../../trpc/client", () => ({
+jest.mock("../../shared/api/trpc", () => ({
   __esModule: true,
   trpc: {
     v1: {

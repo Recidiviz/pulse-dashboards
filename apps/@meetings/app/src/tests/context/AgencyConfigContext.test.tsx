@@ -19,13 +19,13 @@ import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
 import { AgencyConfigProvider } from "../../context/AgencyConfigContext";
-import { trpc } from "../../trpc/client";
+import { trpc } from "../../shared/api";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("../../trpc/client", () => ({
+jest.mock("../../shared/api/trpc", () => ({
   trpc: {
     v1: {
       config: {

@@ -25,12 +25,12 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import BgAvatarImage from "../assets/images/bg-avatar.png";
 import MobileMenuItem from "../components/MobileMenuItem";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { getInitials } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
-import { getInitials } from "../utils/format";
 import MobileMenuTextItem from "./MobileMenuTextItem";
 
 const DrawerContent = (props: DrawerContentComponentProps) => {

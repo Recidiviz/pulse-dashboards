@@ -21,7 +21,7 @@ import { ScrollView, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import { theme } from "~@meetings/app/common/theme";
+import { theme } from "~@meetings/app/shared/config";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 

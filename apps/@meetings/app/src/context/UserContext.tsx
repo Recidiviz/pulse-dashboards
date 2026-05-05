@@ -19,7 +19,7 @@ import * as Sentry from "@sentry/react-native";
 import React, { createContext, useContext, useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 
-import env from "../env";
+import { env } from "../shared/config/env";
 
 interface UserContextType {
   isLoading: boolean;

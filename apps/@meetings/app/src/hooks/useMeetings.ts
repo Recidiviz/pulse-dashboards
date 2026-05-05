@@ -18,7 +18,7 @@
 import { keepPreviousData } from "@tanstack/react-query";
 
 import { ClientMeetings, PersonType, ResidentMeetings } from "../common/types";
-import { trpc } from "../trpc/client";
+import { trpc } from "../shared/api";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 
 type Params = {

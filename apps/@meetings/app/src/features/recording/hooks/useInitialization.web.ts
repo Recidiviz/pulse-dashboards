@@ -17,7 +17,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-import { useUploadSegment } from "~@meetings/app/entities/upload-segment";
+import { useUploadSegment } from "~@meetings/app/shared/api";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { Status } from "../model";

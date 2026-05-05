@@ -20,8 +20,8 @@ import { useEffect, useState } from "react";
 import { ReconnectStatus } from "../components/ReconnectStatus";
 import { AudioUpload } from "../features/audio-upload";
 import { RecordingProvider } from "../features/recording";
-import useIsOnline from "../hooks/useIsOnline";
 import { useOfflineQueueDrainer } from "../hooks/useOfflineQueueDrainer";
+import useIsOnline from "../shared/lib/useIsOnline";
 import DrawerNavigator from "./DrawerNavigator";
 
 export function AuthenticatedContent() {

@@ -20,7 +20,7 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from "react-native-heroicons/outline/ArrowLeftIcon";
 import SearchIcon from "react-native-heroicons/outline/SearchIcon";
 
-import { theme } from "../../common/theme";
+import { theme } from "../config/theme";
 import { Typography } from "./Typography";
 
 interface SearchBarProps {

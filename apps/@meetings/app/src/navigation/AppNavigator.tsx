@@ -30,9 +30,9 @@ import superjson from "superjson";
 
 import AppUpdateModal from "../components/AppUpdateModal";
 import { UserContextProvider } from "../context/UserContext";
-import env from "../env";
 import { LoginScreen } from "../pages/login";
-import { publicTrpc } from "../trpc/client";
+import { publicTrpc } from "../shared/api";
+import { env } from "../shared/config";
 import AuthenticatedApp from "./AuthenticatedApp";
 import { RootStackParamList } from "./DrawerNavigator";
 
@@ -94,8 +94,8 @@ const AppNavigator = () => {
   );
 
   const [, fontsLoadingError] = useFonts({
-    Inter: require("./../assets/fonts/Inter.ttf"),
-    "LibreBaskerville-Bold": require("./../assets/fonts/LibreBaskerville-Bold.ttf"),
+    Inter: require("./../shared/assets/fonts/Inter.ttf"),
+    "LibreBaskerville-Bold": require("./../shared/assets/fonts/LibreBaskerville-Bold.ttf"),
   });
 
   useEffect(() => {

@@ -20,7 +20,7 @@ import React, { createContext, useContext } from "react";
 import type { AgencyConfig } from "~@meetings/config";
 
 import ConfigErrorScreen from "../screens/ConfigErrorScreen";
-import { trpc } from "../trpc/client";
+import { trpc } from "../shared/api";
 
 interface AgencyConfigContextType {
   agencyConfigs: Record<string, AgencyConfig>;

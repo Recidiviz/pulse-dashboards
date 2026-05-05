@@ -19,10 +19,10 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 
 import Meeting from "../components/Meeting";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
-import { useSetDocumentTitle } from "../hooks/useSetDocumentTitle";
 import { ClientsStackParamList } from "../navigation/DrawerNavigator";
+import { trpc } from "../shared/api";
+import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
-import { trpc } from "../trpc/client";
 import {
   deserializeClient,
   formatMeetingStartDateTitle,

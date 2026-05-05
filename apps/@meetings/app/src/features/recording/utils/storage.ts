@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getItem, removeItem, saveItem } from "../../../utils/storage";
+import { getItem, removeItem, saveItem } from "../../../shared/lib/storage";
 import { Status } from "./../model";
 
 // --- Helpers for recording state persistence ---

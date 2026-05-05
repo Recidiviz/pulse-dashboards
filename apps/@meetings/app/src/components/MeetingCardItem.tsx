@@ -32,10 +32,10 @@ import {
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import ProcessingSvg from "../assets/icons/processing.svg";
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
+import ProcessingSvg from "../shared/assets/icons/processing.svg";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { useSnackbar } from "../shared/ui/Snackbar";

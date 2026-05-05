@@ -15,60 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { format, formatDistanceToNow, isYesterday } from "date-fns";
-import { startCase } from "lodash";
+import { format } from "date-fns";
 
 import { Client, RawClient, RawResident, Resident } from "../common/types";
-
-export const getInitials = (name: string) => {
-  const parts = name.trim().split(" ");
-  if (!parts[0]) return "";
-  return (parts[0][0] + (parts.pop() || "")[0]).toUpperCase();
-};
-
-// duration: hh:mm:ss
-export const formatDurationCompact = (duration: string) => {
-  const [hours, minutes, seconds] = duration.split(":").map(Number);
-
-  if (hours > 0) return `${hours}h`;
-  if (minutes > 0) return `${minutes}m`;
-  return `${seconds}s`;
-};
-
-export const formatDurationNumeric = (ms: number) => {
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  }
-  if (minutes > 0) {
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  }
-  return `0:${seconds.toString().padStart(2, "0")}`;
-};
-
-export const humanReadableTitleCase = (str: string): string =>
-  startCase(str.toLowerCase());
+import { formatRelativeTime } from "../shared/lib/format";
 
 export const formatDraftCaseNoteMeetingDate = (date: Date) => {
   return format(date, "MMM d");
-};
-
-export const formatRelativeTime = (date: Date): string => {
-  const now = new Date();
-  const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (secondsAgo < 60) {
-    return "Just now";
-  }
-
-  if (isYesterday(date)) {
-    return "Yesterday";
-  }
-
-  return formatDistanceToNow(date, { addSuffix: true });
 };
 
 export const deserializeClient = (rawClient: RawClient): Client => {

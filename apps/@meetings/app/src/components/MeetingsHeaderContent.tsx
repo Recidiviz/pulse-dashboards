@@ -22,7 +22,7 @@ import { PlusIcon } from "react-native-heroicons/outline";
 
 import { Person } from "../common/types";
 import { useRecording } from "../features/recording";
-import { usePlatform } from "../hooks/usePlatform";
+import { usePlatform } from "../shared/lib/usePlatform";
 import Dropdown from "../shared/ui/Dropdown";
 import SearchBar from "../shared/ui/SearchBar";
 import { Typography } from "../shared/ui/Typography";

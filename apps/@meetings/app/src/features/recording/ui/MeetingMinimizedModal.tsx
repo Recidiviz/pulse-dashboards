@@ -18,16 +18,16 @@
 import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import MaximizeSvg from "../../../assets/icons/arrows-poin-outting-in.svg";
-import PauseSvg from "../../../assets/icons/pause.svg";
-import PlaySvg from "../../../assets/icons/play.svg";
-import StopSvg from "../../../assets/icons/stop.svg";
 import { Person } from "../../../common/types";
+import MaximizeSvg from "../../../shared/assets/icons/arrows-poin-outting-in.svg";
+import PauseSvg from "../../../shared/assets/icons/pause.svg";
+import PlaySvg from "../../../shared/assets/icons/play.svg";
+import StopSvg from "../../../shared/assets/icons/stop.svg";
+import { formatDurationNumeric } from "../../../shared/lib/format";
 import { FloatingCard } from "../../../shared/ui/FloatingCard";
 import LinearProgressBar from "../../../shared/ui/LinearProgressBar";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
-import { formatDurationNumeric } from "../../../utils/format";
 import { useRecording } from "../model";
 
 type Props = {

@@ -27,20 +27,16 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
-import BgAvatarImage from "../assets/images/bg-avatar.png";
 import { MeetingDetails, Person, PersonType } from "../common/types";
 import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
 import { BulletListTab } from "../components/MeetingDetailTabs";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { usePrintMeetingDetails } from "../hooks/usePrintMeetingDetails";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
-import {
-  formatMeetingDuration,
-  formatMeetingStartDate,
-  getInitials,
-  humanReadableTitleCase,
-} from "../utils/format";
+import { formatMeetingDuration, formatMeetingStartDate } from "../utils/format";
 import Header from "./Header";
 
 type Props = {
