@@ -24,7 +24,7 @@ RUN curl -o /usr/local/bin/cloud-sql-proxy https://storage.googleapis.com/cloud-
 
 RUN mkdir -p /cloudsql && chmod 777 /cloudsql
 
-COPY --from=ghcr.io/astral-sh/uv:0.9.25 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.11.8 /uv /usr/local/bin/uv
 
 WORKDIR /app
 COPY pyproject.toml uv.lock /app/
