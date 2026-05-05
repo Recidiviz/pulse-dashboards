@@ -69,6 +69,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY_ID=RECIDIVIZ_DEEPGRAM_API_KEY_IDENTIFIER:latest"
       - "--set-secrets=RECIDIVIZ_SLACK_GUARDRAIL_ALERT_WEBHOOK_URL=RECIDIVIZ_SLACK_GUARDRAIL_ALERT_WEBHOOK_URL_PROD:latest"
+      - "--set-secrets=RECIDIVIZ_IMPERSONATION_ALLOWED_EMAILS=RECIDIVIZ_IMPERSONATION_ALLOWED_EMAILS:latest"
       - "--set-env-vars"
       - |
         ENTRYPOINT=api,
@@ -99,6 +100,7 @@ steps:
         RECIDIVIZ_BASE_URL=https://backend-api-dev-773019812766.us-central1.run.app,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-staging,
+        RECIDIVIZ_IMPERSONATION_ENABLED=true,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
 
   # Deploy Worker service

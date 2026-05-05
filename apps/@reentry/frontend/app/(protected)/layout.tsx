@@ -58,7 +58,11 @@ export default function ProtectedLayout({ children }) {
     return <AccessDeniedState />;
   }
 
-  if (!hasCPAPermission(auth.userAppMetadata) && !isInternalUser(userEmail)) {
+  if (
+    !hasCPAPermission(auth.userAppMetadata) &&
+    !isInternalUser(userEmail) &&
+    !localStorage.getItem("impersonated_email")
+  ) {
     return <AccessDeniedState />;
   }
 
