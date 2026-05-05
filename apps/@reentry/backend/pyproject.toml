@@ -63,6 +63,7 @@ lint.extend-select = ["I"]
 RECIDIVIZ_ENV_NAME = "pytest"
 
 [tool.uv]
+required-version = ">=0.11.8"
 exclude-newer = "3 days"
 
 [tool.uv.sources]
