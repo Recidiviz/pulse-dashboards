@@ -227,7 +227,7 @@ const FormSCCActionV2: React.FC = () => {
             <FormCheckbox name="other2" label="Other: " />
           </div>
           <div>
-            <FormInput name="otherText2" maxWidth="400px" />
+            <FormInput name="otherText2" />
           </div>
         </div>
       </Cell>
