@@ -274,7 +274,8 @@ model NotetakingPipelineRun {
   /// [ErrorDetails]
   errorDetails Json?
 
-  agentExecutions NotetakingAgentExecution[]
+  agentExecutions  NotetakingAgentExecution[]
+  evaluationRuns   NotetakingEvaluationRun[]
 }
 
 model NotetakingAgentExecution {
@@ -295,4 +296,27 @@ model NotetakingAgentExecution {
   validationResult Json
 
   @@index([pipelineRunId])
+}
+
+model NotetakingEvaluationRun {
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+
+  pipelineRunId String
+  pipelineRun   NotetakingPipelineRun @relation(fields: [pipelineRunId], references: [id], onDelete: Cascade)
+
+  // String constant defined in the evaluator module; bump when any prompt changes.
+  // Bumping this causes the evaluation script to re-run on all historical pipeline runs,
+  // since it queries for runs not yet evaluated at the current version.
+  evaluatorVersion String
+
+  /// [EvaluationScores]
+  scores Json
+
+  // The evaluator's own LangSmith trace (separate from the pipeline trace)
+  langsmithTraceId String?
+
+  @@index([pipelineRunId])
+  @@index([evaluatorVersion])
 }
