@@ -158,4 +158,5 @@ structure:
   milestones: false
 
 external_api:
-  resources_pipeline_enabled: false
+  resources_pipeline_enabled: true
+  digital_resources_enabled: true

@@ -6,6 +6,7 @@ import structlog
 from langsmith import traceable
 from pydantic import BaseModel, Field, TypeAdapter, field_validator
 
+from app.models.models import ResourceAssociationType
 from app.utils.disallowed_resources import (
     DISALLOWED_RESOURCE_ADDRESSES,
     DISALLOWED_RESOURCE_NAMES,
@@ -506,6 +507,8 @@ class Resource(BaseModel):
     blurb: Optional[str] = None
     provider_description: Optional[str] = None
 
+    resource_type: ResourceAssociationType = ResourceAssociationType.COMMUNITY
+
 
 ResourcesList: TypeAlias = list[Resource]
 
@@ -533,7 +536,7 @@ async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
     # Import exists here to avoid circular imports.
     # TODO: Refactor module to avoid this
     from app.services.resources.api import list_external_resources
-    from app.services.resources.partner_api import discover_partners
+    from app.services.resources.digital_resource_api import discover_digital_resources
 
     if not request.include_physical_resources and not request.include_digital_resources:
         raise ValueError(
@@ -545,7 +548,7 @@ async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
         tasks.append(list_external_resources(request))
 
     if request.include_digital_resources:
-        tasks.append(discover_partners(request))
+        tasks.append(discover_digital_resources(request))
 
     responses = await asyncio.gather(*tasks, return_exceptions=True)
 

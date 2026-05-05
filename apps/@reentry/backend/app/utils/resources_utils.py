@@ -25,8 +25,8 @@ from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     GetResourcesRequest,
     ResourceFailureReason,
+    list_resources,
 )
-from app.services.resources.api import list_external_resources
 from app.utils.action_plan_types import (
     ActionPlanResourcesAssociations,
     ResourceAssociation,
@@ -60,14 +60,17 @@ async def fetch_resources_with_retry(
             await asyncio.sleep(wait_time)
 
         try:
-            result = await list_external_resources(request)
+            result = await list_resources(request)
         except Exception as e:
             logger.warning(
                 "Unexpected error fetching resources", attempt=attempt, error=str(e)
             )
             continue
 
-        if result.failure_reason == ResourceFailureReason.SUCCESS:
+        if result.failure_reason in (
+            ResourceFailureReason.SUCCESS,
+            ResourceFailureReason.PARTIAL_FAILURE,
+        ):
             logger.debug(
                 "Resources fetched", attempt=attempt, count=len(result.resources)
             )

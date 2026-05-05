@@ -400,6 +400,7 @@ async def hydrate_resource_associations(
     gen: PlanGeneration,
     session: AsyncSession,
     task_logger: structlog.BoundLogger,
+    include_digital_resources: bool = False,
 ) -> None:
     """Populate PlanGenerationResourceAssociation rows for a freshly-saved generation.
 
@@ -437,6 +438,7 @@ async def hydrate_resource_associations(
                         travel_mode=TravelMode.DRIVING,
                         use_search=True,
                         limit=2,
+                        include_digital_resources=include_digital_resources,
                     ),
                 )
             )
@@ -485,6 +487,7 @@ async def hydrate_resource_associations(
                     # store the ids as `int`, as a way to validate the IDs since
                     # they are integers in the Resources API database
                     resource_id=int(resource.resource_id),
+                    resource_type=resource.resource_type,
                     section_title=section_title,
                     action=ResourceAssociationAction.ADD.value,
                     action_by="SYSTEM",
@@ -627,6 +630,8 @@ async def generate_action_plan(
             }
 
         try:
-            await hydrate_resource_associations(gen, session, task_logger)
+            await hydrate_resource_associations(
+                gen, session, task_logger, action_plan_config.external_api.digital_resources_enabled
+            )
         except Exception as e:
             task_logger.error("Failed to hydrate resource associations", error=str(e))

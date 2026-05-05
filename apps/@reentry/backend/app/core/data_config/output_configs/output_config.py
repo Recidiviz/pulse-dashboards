@@ -23,6 +23,7 @@ class SummaryMetadata(OutputMetadata):
 
 class ExternalApiConfig(BaseModel):
     resources_pipeline_enabled: bool
+    digital_resources_enabled: bool = False
 
 
 class PromptsConfig(BaseModel):

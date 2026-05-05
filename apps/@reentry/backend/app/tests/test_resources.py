@@ -230,7 +230,7 @@ async def test_fetch_resources_with_retry_success():
     )
 
     with patch(
-        "app.utils.resources_utils.list_external_resources",
+        "app.utils.resources_utils.list_resources",
         new_callable=AsyncMock,
         return_value=response,
     ) as mock_api:
@@ -257,7 +257,7 @@ async def test_fetch_resources_with_retry_no_results_returns_immediately():
     )
 
     with patch(
-        "app.utils.resources_utils.list_external_resources",
+        "app.utils.resources_utils.list_resources",
         new_callable=AsyncMock,
         return_value=no_results_response,
     ) as mock_api:
@@ -297,7 +297,7 @@ async def test_fetch_resources_with_retry_retries_on_api_error():
     )
 
     with patch(
-        "app.utils.resources_utils.list_external_resources",
+        "app.utils.resources_utils.list_resources",
         new_callable=AsyncMock,
         side_effect=[error_response, success_response],
     ) as mock_api:
@@ -328,7 +328,7 @@ async def test_fetch_resources_with_retry_exhausted_returns_empty():
     )
 
     with patch(
-        "app.utils.resources_utils.list_external_resources",
+        "app.utils.resources_utils.list_resources",
         new_callable=AsyncMock,
         return_value=error_response,
     ) as mock_api:
@@ -863,8 +863,8 @@ async def test_batch_get_resources_calls_correct_endpoint(mock_httpx):
 
 @pytest.mark.asyncio
 @pytest.mark.integration
-async def test_call_discover_partners():
-    from app.services.resources.partner_api import discover_partners
+async def test_call_discover_digital_resources():
+    from app.services.resources.digital_resource_api import discover_digital_resources
 
     request = GetResourcesRequest(
         category=ResourceCategory.EMPLOYMENT.value,
@@ -872,9 +872,9 @@ async def test_call_discover_partners():
         address="748 N 1340 W Orem, UT 84057",
         distance_miles=10,
         limit=10,
-        include_partners=True,
+        include_digital_resources=True,
     )
-    response = await discover_partners(request)
+    response = await discover_digital_resources(request)
     print(f"\nPartner resources found: {len(response.resources)}")
     for r in response.resources:
         print(f"  - {r.name} | {r.url} | {r.blurb}")

@@ -23,6 +23,7 @@ from fastapi import status
 from pydantic import BaseModel
 
 from app.core.config import settings
+from app.models.models import ResourceAssociationType
 from app.services.resources import (
     GetResourcesRequest,
     GetResourcesResponse,
@@ -34,6 +35,7 @@ logger = structlog.get_logger(__name__)
 
 
 class DigitalResourceResponse(BaseModel):
+    resource_id: int
     category: str
     subcategory: str
     url: str
@@ -44,7 +46,7 @@ class DigitalResourceResponse(BaseModel):
     resource_description: Optional[str] = None
 
 
-async def _call_partner_api(
+async def _call_search_digital_resource_api(
     request: GetResourcesRequest,
 ) -> List[DigitalResourceResponse]:
     async with httpx.AsyncClient() as client:
@@ -65,7 +67,7 @@ async def _call_partner_api(
             request_json["keywords_to_exclude"] = request.exclude_names
 
         response = await client.post(
-            f"{settings.EXTERNAL_RESOURCES_API_URL}/api/v0/partners",
+            f"{settings.EXTERNAL_RESOURCES_API_URL}/api/v0/search-digital-resources",
             json=request_json,
             headers={"x-api-key": settings.RESOURCES_API_KEY},
             timeout=30.0,
@@ -75,7 +77,7 @@ async def _call_partner_api(
             return []
         if response.status_code != 200:
             raise Exception(
-                f"Partner API request failed with status {response.status_code}: {response.text}"
+                f"Digital Resource API request failed with status {response.status_code}: {response.text}"
             )
 
         return [
@@ -85,7 +87,8 @@ async def _call_partner_api(
 
 def _convert_to_internal_resource(result: DigitalResourceResponse) -> Resource:
     return Resource(
-        id=f"partner_{hash(result.url)}",
+        id=f"digital_{hash(result.url)}",
+        resource_id=result.resource_id,
         category=result.category,
         subcategory=result.subcategory,
         name=result.name,
@@ -95,26 +98,29 @@ def _convert_to_internal_resource(result: DigitalResourceResponse) -> Resource:
         provider_description=result.provider_description,
         description=result.resource_description,
         website=result.url,
+        resource_type=ResourceAssociationType.DIGITAL,
     )
 
 
-async def discover_partners(request: GetResourcesRequest) -> GetResourcesResponse:
+async def discover_digital_resources(
+    request: GetResourcesRequest,
+) -> GetResourcesResponse:
     api_url = settings.EXTERNAL_RESOURCES_API_URL
     if not api_url:
         raise ValueError("EXTERNAL_RESOURCES_API_URL is not configured in settings")
 
     logger.debug(
-        "Starting partner resources search",
+        "Starting digital resources search",
         category=request.category,
         subcategory=request.subcategory,
     )
 
     try:
-        results = await _call_partner_api(request)
+        results = await _call_search_digital_resource_api(request)
         resources = [_convert_to_internal_resource(r) for r in results]
 
         logger.info(
-            "Partner resources search completed",
+            "Digital resources search completed",
             category=request.category,
             subcategory=request.subcategory,
             total_found=len(resources),
@@ -122,14 +128,16 @@ async def discover_partners(request: GetResourcesRequest) -> GetResourcesRespons
 
         return GetResourcesResponse(
             resources=resources,
-            failure_reason=ResourceFailureReason.SUCCESS
-            if resources
-            else ResourceFailureReason.NO_RESULTS_FOUND,
+            failure_reason=(
+                ResourceFailureReason.SUCCESS
+                if resources
+                else ResourceFailureReason.NO_RESULTS_FOUND
+            ),
         )
 
     except Exception as error:
         logger.exception(
-            "Failed to fetch partner resources",
+            "Failed to fetch digital resources",
             category=request.category,
             subcategory=request.subcategory,
             error=str(error),

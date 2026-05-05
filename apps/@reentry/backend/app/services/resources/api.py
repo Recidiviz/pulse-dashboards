@@ -5,6 +5,7 @@ import structlog
 from fastapi import status
 
 from app.core.config import settings
+from app.models.models import ResourceAssociationType
 from app.services.resources import (
     ApiSearchResult,
     BatchGetResources,
@@ -91,6 +92,7 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
         score=None,
         resource_id=result.resource_id,
         origin=result.origin,
+        resource_type=ResourceAssociationType.COMMUNITY,
     )
     return resource
 
