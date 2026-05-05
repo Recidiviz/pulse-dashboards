@@ -146,7 +146,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       return (
         <SectionContainer>
           <DomainCard
-            title="ORAS Assessment Score"
+            title="ORAS Assessment"
             summaryValue={presenter.SARData?.defendantStatement ?? null}
             onSummaryChange={(value) =>
               presenter.updateDefendantStatement(value)
