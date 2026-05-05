@@ -41,6 +41,7 @@ import * as Styled from "./SentencingAssessmentReport.styles";
 interface ReportOffenderAssessmentProps {
   sarData: SAR;
   hasOrasAssessment?: boolean;
+  isDeclined?: boolean;
 }
 
 function getEducationExtraContent(sarData: SAR): React.ReactNode {
@@ -129,20 +130,25 @@ function getDomainTableContent(
 
 export const ReportOffenderAssessment: React.FC<
   ReportOffenderAssessmentProps
-> = ({ sarData, hasOrasAssessment = true }) => {
+> = ({ sarData, hasOrasAssessment = true, isDeclined = false }) => {
   const { assessmentType } = sarData;
   const allDomains = getDomainsForAssessmentType(assessmentType);
-  const domains = !hasOrasAssessment
-    ? allDomains.filter((d) => d.key === "criminalHistory")
-    : allDomains;
+  const domains =
+    isDeclined || !hasOrasAssessment
+      ? allDomains.filter((d) => d.key === "criminalHistory")
+      : allDomains;
 
   if (!domains.length) return null;
 
-  const note = formatAssessmentNote(
-    sarData.assessmentAdministeredBy,
-    sarData.assessmentDate ? formatLongDate(sarData.assessmentDate) : null,
-  );
-  const sectionTitle = `Offender Risk Assessment (${getAssessmentTypeShortName(assessmentType)})`;
+  const note = !isDeclined
+    ? formatAssessmentNote(
+        sarData.assessmentAdministeredBy,
+        sarData.assessmentDate ? formatLongDate(sarData.assessmentDate) : null,
+      )
+    : null;
+  const sectionTitle = isDeclined
+    ? "Offender Risk Assessment"
+    : `Offender Risk Assessment (${getAssessmentTypeShortName(assessmentType)})`;
 
   return (
     <Styled.ColumnFlexContainer gap={15}>
@@ -151,6 +157,11 @@ export const ReportOffenderAssessment: React.FC<
           <Styled.SectionTitle>{sectionTitle}</Styled.SectionTitle>
           {note && <Styled.SectionTitleNote>{note}</Styled.SectionTitleNote>}
         </Styled.SectionTitleContainer>
+        {isDeclined && sarData.defendantStatement && (
+          <Styled.FreeTextContent>
+            {sarData.defendantStatement}
+          </Styled.FreeTextContent>
+        )}
       </ReportBlock>
 
       {/* Domain cards — each individually non-splittable, but the collection
@@ -166,7 +177,7 @@ export const ReportOffenderAssessment: React.FC<
             key={domain.key}
             domain={domain}
             sarData={sarData}
-            hasOrasAssessment={hasOrasAssessment}
+            hasOrasAssessment={!isDeclined && hasOrasAssessment}
             extraContent={getDomainExtraContent(domain.key, sarData)}
             tableContent={getDomainTableContent(domain.key, sarData)}
             continuationTitle={

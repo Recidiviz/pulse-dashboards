@@ -27,6 +27,9 @@ import {
   TREATMENT_PROGRAM_CATEGORY_LABELS,
 } from "./constants";
 import {
+  DOCEmptyStateContainer,
+  DOCEmptyStateText,
+  DOCEmptyStateTitle,
   DOCPriorTreatmentCategory,
   DOCPriorTreatmentCategoryContainer,
   DOCPriorTreatmentCategoryContent,
@@ -45,31 +48,19 @@ interface PriorTreatmentHistorySectionProps {
 export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySectionProps> =
   observer(function PriorTreatmentHistorySection({ presenter }) {
     const docHistoriesByCategory = presenter.DOCTreatmentHistoriesByCategory;
+
     const hasDOCHistories = Object.values(docHistoriesByCategory).some(
       (histories) => histories.length > 0,
     );
+    const isDeclined = presenter.defendantDeclinedToParticipate;
 
-    return (
-      <PriorTreatmentHistorySectionContainer>
-        <PriorTreatmentSection>
-          <SectionTitle>Prior Community Treatment History</SectionTitle>
-          <PriorTreatmentHistoryCard presenter={presenter} />
-          <SkippableTextArea
-            label="Summary"
-            value={presenter.SARData?.priorTreatmentHistorySummary ?? null}
-            onChange={(value) =>
-              presenter.updatePriorTreatmentHistorySummary(value)
-            }
-            onLocalChange={() => presenter.markAsEdited()}
-            placeholder="Please enter a summary of prior treatment history"
-            height="6.8125rem"
-          />
-        </PriorTreatmentSection>
-        {hasDOCHistories && (
-          <PriorTreatmentSection>
-            <SectionTitle>
-              Department of Corrections Program Completion History
-            </SectionTitle>
+    const docHistoriesSection = (
+      <PriorTreatmentSection>
+        <SectionTitle>
+          Department of Corrections Incarceration Program Completion History
+        </SectionTitle>
+        {hasDOCHistories ? (
+          <>
             <DOCPriorTreatmentHistorySubheader>
               The treatments below are pulled from DOC records and are just for
               review. They will appear in the report along with any community
@@ -122,8 +113,43 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
                 },
               )}
             </DOCPriorTreatmentCategoryContainer>
-          </PriorTreatmentSection>
+          </>
+        ) : (
+          <DOCEmptyStateContainer>
+            <DOCEmptyStateTitle>None for now</DOCEmptyStateTitle>
+            <DOCEmptyStateText>
+              Verified institutional program completions would appear here.
+            </DOCEmptyStateText>
+          </DOCEmptyStateContainer>
         )}
+      </PriorTreatmentSection>
+    );
+
+    if (isDeclined) {
+      return (
+        <PriorTreatmentHistorySectionContainer>
+          {docHistoriesSection}
+        </PriorTreatmentHistorySectionContainer>
+      );
+    }
+
+    return (
+      <PriorTreatmentHistorySectionContainer>
+        <PriorTreatmentSection>
+          <SectionTitle>Prior Community Treatment History</SectionTitle>
+          <PriorTreatmentHistoryCard presenter={presenter} />
+          <SkippableTextArea
+            label="Summary"
+            value={presenter.SARData?.priorTreatmentHistorySummary ?? null}
+            onChange={(value) =>
+              presenter.updatePriorTreatmentHistorySummary(value)
+            }
+            onLocalChange={() => presenter.markAsEdited()}
+            placeholder="Please enter a summary of prior treatment history"
+            height="6.8125rem"
+          />
+        </PriorTreatmentSection>
+        {docHistoriesSection}
       </PriorTreatmentHistorySectionContainer>
     );
   });

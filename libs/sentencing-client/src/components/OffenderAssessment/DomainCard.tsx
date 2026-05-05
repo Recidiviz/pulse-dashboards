@@ -34,6 +34,7 @@ interface DomainCardProps {
   cardRef?: React.RefObject<HTMLDivElement | null>;
   summaryPlaceholder?: string; // Optional custom placeholder for summary text area
   summaryPlaceholderColor?: string; // Optional custom placeholder color
+  hideSummaryLabel?: boolean;
 }
 
 export const DomainCard: React.FC<DomainCardProps> = ({
@@ -48,6 +49,7 @@ export const DomainCard: React.FC<DomainCardProps> = ({
   cardRef,
   summaryPlaceholder,
   summaryPlaceholderColor,
+  hideSummaryLabel = false,
 }) => {
   return (
     <Styled.ScrollWrapper ref={cardRef}>
@@ -72,7 +74,9 @@ export const DomainCard: React.FC<DomainCardProps> = ({
         {children && <Styled.ContentArea>{children}</Styled.ContentArea>}
 
         <Styled.SummarySection>
-          <Styled.SummaryLabel>Summary</Styled.SummaryLabel>
+          {!hideSummaryLabel && (
+            <Styled.SummaryLabel>Summary</Styled.SummaryLabel>
+          )}
           <SkippableTextArea
             value={summaryValue}
             onChange={onSummaryChange}

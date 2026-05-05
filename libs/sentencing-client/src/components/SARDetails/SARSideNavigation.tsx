@@ -23,6 +23,7 @@ import { getDomainsForAssessmentType } from "../OffenderAssessment/utils";
 import { ArrowIcon } from "./ArrowIcon";
 import {
   OFFENDER_ASSESSMENT_SUBSECTIONS,
+  OffenderAssessmentSubsection,
   SARSection,
   SARSectionName,
   SUBSECTION_TO_DOMAIN_KEY,
@@ -51,15 +52,14 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
     const totalSections = reportSections.length;
     const sectionStatuses = presenter.sectionStatuses;
 
-    // Filter subsections based on ORAS assessment type
     const assessmentType = presenter.SARData?.assessmentType;
     const visibleDomains = getDomainsForAssessmentType(assessmentType);
-    const visibleSubsections = OFFENDER_ASSESSMENT_SUBSECTIONS.filter(
-      (subsection) => {
-        const domainKey = SUBSECTION_TO_DOMAIN_KEY[subsection];
-        return visibleDomains.some((d) => d.key === domainKey);
-      },
-    );
+    const visibleSubsections = presenter.defendantDeclinedToParticipate
+      ? [OffenderAssessmentSubsection.CRIMINAL_HISTORY]
+      : OFFENDER_ASSESSMENT_SUBSECTIONS.filter((subsection) => {
+          const domainKey = SUBSECTION_TO_DOMAIN_KEY[subsection];
+          return visibleDomains.some((d) => d.key === domainKey);
+        });
 
     const handlePrevious = () => {
       if (currentIndex > 0) {

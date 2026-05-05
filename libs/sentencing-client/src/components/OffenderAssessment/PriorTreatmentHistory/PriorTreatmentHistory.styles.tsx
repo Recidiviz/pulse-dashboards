@@ -87,3 +87,37 @@ export const DOCPriorTreatmentCategoryContent = styled.div`
   font-weight: 500;
   line-height: 150%;
 `;
+
+export const DOCEmptyStateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+  padding: 1rem 1.5rem;
+  border-radius: 4px;
+  border: 1px solid ${palette.slate20};
+  background: ${palette.slate05};
+`;
+
+export const DOCEmptyStateTitle = styled.h3`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 120%;
+  letter-spacing: -0.16px;
+  margin: 0;
+`;
+
+export const DOCEmptyStateText = styled.p`
+  color: ${palette.slate85};
+  font-family: "Public Sans";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  letter-spacing: -0.12px;
+  margin: 0;
+`;

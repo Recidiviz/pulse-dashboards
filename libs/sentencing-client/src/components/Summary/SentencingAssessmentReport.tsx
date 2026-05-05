@@ -214,7 +214,8 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     riskProfileCardData={presenter.riskProfileCardData}
                   />
                 )}
-                {sarData.defendantStatement &&
+                {!declined &&
+                  sarData.defendantStatement &&
                   !presenter.defendantStatementSkipped && (
                     <SentencingAssessmentReportSection
                       title={SARSection.DEFENDANTS_VERSION}
@@ -234,23 +235,26 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       </Styled.FreeTextContent>
                     </SentencingAssessmentReportSection>
                   )}
-                {(sarData.assessmentType || !presenter.hasOrasAssessment) && (
+                {(declined ||
+                  sarData.assessmentType ||
+                  !presenter.hasOrasAssessment) && (
                   <ReportOffenderAssessment
                     sarData={sarData}
                     hasOrasAssessment={presenter.hasOrasAssessment}
+                    isDeclined={declined}
                   />
                 )}
-                {!declined && (
-                  <>
-                    <ReportPriorTreatmentHistory
-                      presenter={presenter.priorTreatmentHistory}
-                    />
-                    {!presenter.recommendationSkipped && (
-                      <ReportRecommendation sarData={sarData} />
-                    )}
-                  </>
+                <ReportPriorTreatmentHistory
+                  presenter={presenter.priorTreatmentHistory}
+                />
+                {(declined || !presenter.recommendationSkipped) && (
+                  <ReportRecommendation
+                    sarData={sarData}
+                    isDeclined={declined}
+                  />
                 )}
-                {activeFeatureVariants["SARBuilder"] &&
+                {!declined &&
+                  activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (
                     <ReportDispositionChart
                       insight={insightData}
@@ -261,7 +265,8 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       descriptionContext={insightDescriptionContext}
                     />
                   ))}
-                {activeFeatureVariants["SARBuilder"] &&
+                {!declined &&
+                  activeFeatureVariants["SARBuilder"] &&
                   insightData &&
                   insightDescriptionContext &&
                   (timeServedData ? (
@@ -274,7 +279,8 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       descriptionContext={insightDescriptionContext}
                     />
                   ))}
-                {activeFeatureVariants["SARBuilder"] &&
+                {!declined &&
+                  activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (
                     <ReportKeyFinding insight={insightData} />
                   ) : null)}

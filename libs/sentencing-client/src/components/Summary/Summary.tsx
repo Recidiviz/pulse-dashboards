@@ -20,26 +20,11 @@ import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import {
-  formatBooleanDisplay,
   formatClassification,
-  formatDateRange,
   formatDisplayDate,
   formatJudgeAndDivision,
-  formatMonthYear,
 } from "../../utils/utils";
 import DownloadIcon from "../assets/download-icon.svg?react";
-import { RISK_LEVEL_KEYS, RISK_LEVELS } from "../OffenderAssessment/constants";
-import {
-  DOC_INCARCERATION_DESCRIPTION,
-  MAX_DOC_HISTORIES_PER_CATEGORY,
-  TREATMENT_PROGRAM_CATEGORY_LABELS,
-} from "../OffenderAssessment/PriorTreatmentHistory/constants";
-import {
-  DRUG_HISTORY_COLUMNS,
-  formatSubstanceName,
-  FrequencyOfUseLabels,
-  MethodOfUseLabels,
-} from "../OffenderAssessment/SubstanceUse/constants";
 import { SARSection } from "../SARDetails/constants";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { InsightsSummaryPanel } from "./InsightsSummaryPanel";
@@ -47,6 +32,8 @@ import { MissingBadge } from "./MissingBadge";
 import { exportSARtoPDF } from "./SARPdfExport";
 import { SentencingAssessmentReport } from "./SentencingAssessmentReport";
 import * as Styled from "./Summary.styles";
+import { SummaryOffenderAssessment } from "./SummaryOffenderAssessment";
+import { SummaryPriorTreatmentHistory } from "./SummaryPriorTreatmentHistory";
 
 const NONE_LISTED = "None listed";
 
@@ -59,20 +46,6 @@ const FieldOrMissing: React.FC<{
     {label}: {value || <MissingBadge />}
   </Styled.InlineRow>
 );
-
-const SummaryOrMissing: React.FC<{
-  summary: string | null | undefined;
-  labeled?: boolean;
-}> = ({ summary, labeled = false }) => {
-  if (summary) return <div>{summary}</div>;
-  if (labeled)
-    return (
-      <Styled.InlineRow>
-        Summary: <MissingBadge />
-      </Styled.InlineRow>
-    );
-  return <MissingBadge />;
-};
 
 const SummaryOffenseCard: React.FC<{
   charge: SARDetailsPresenter["charges"][number];
@@ -170,6 +143,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
   );
 
   const sarData = presenter.SARData;
+  const declined = presenter.defendantDeclinedToParticipate;
 
   // --- Key Considerations ---
   const needsComplete =
@@ -199,21 +173,6 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
   const victimImpactDisplay = victimImpactStatementSkipped
     ? NONE_LISTED
     : sarData?.victimImpactStatement;
-
-  // --- Offender Assessment ---
-  const {
-    domainsWithoutSubstanceUse,
-    groupedByRisk,
-    offenderAssessmentDisplay,
-  } = presenter.offenderAssessment;
-
-  const { fatherName, motherName, guardianName } = sarData?.client ?? {};
-
-  // --- Prior Treatment History ---
-  const priorTreatmentHistories =
-    presenter.priorTreatmentHistory.priorTreatmentHistories;
-  const docCategoryEntries =
-    presenter.priorTreatmentHistory.DOCTreatmentHistoriesByCategoryEntries;
 
   // --- Recommendation (per sub-section) ---
   const communityValue = sarData?.communityStrategyRecommendation?.trim();
@@ -281,7 +240,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
           ))}
 
           {/* Key Considerations */}
-          {!presenter.defendantDeclinedToParticipate && (
+          {!declined && (
             <Styled.SectionCard>
               <Styled.SectionTitle>Key Considerations</Styled.SectionTitle>
               <Styled.SectionBody>
@@ -296,13 +255,16 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             </Styled.SectionCard>
           )}
 
-          {/* Defendant's Version */}
-          <Styled.SectionCard>
-            <Styled.SectionTitle>Defendant&apos;s Version</Styled.SectionTitle>
-            <Styled.SectionBody>
-              {isDefendantComplete ? defendantDisplay : <MissingBadge />}
-            </Styled.SectionBody>
-          </Styled.SectionCard>
+          {!declined && (
+            <Styled.SectionCard>
+              <Styled.SectionTitle>
+                Defendant&apos;s Version
+              </Styled.SectionTitle>
+              <Styled.SectionBody>
+                {isDefendantComplete ? defendantDisplay : <MissingBadge />}
+              </Styled.SectionBody>
+            </Styled.SectionCard>
+          )}
 
           {/* Victim Impact */}
           <Styled.SectionCard>
@@ -312,335 +274,55 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             </Styled.SectionBody>
           </Styled.SectionCard>
 
-          {/* Offender Assessment + Prior Treatment History + Recommendation */}
-          {!presenter.defendantDeclinedToParticipate && (
-            <>
-              <Styled.SectionCard>
-                <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
+          <SummaryOffenderAssessment presenter={presenter} />
 
-                {offenderAssessmentDisplay && (
+          <SummaryPriorTreatmentHistory presenter={presenter} />
+
+          {!declined && (
+            <Styled.SectionCard>
+              <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
+              {recommendationSkipped ? (
+                <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
+              ) : (
+                <Styled.RecommendationSection>
+                  <Styled.RecommendationLabel>
+                    Community Strategy
+                  </Styled.RecommendationLabel>
                   <Styled.SectionBody>
-                    {offenderAssessmentDisplay}
+                    {communityValue || <MissingBadge />}
                   </Styled.SectionBody>
-                )}
-
-                <Styled.DetailContainer>
-                  {/* Substance Abuse History */}
-                  <Styled.DetailSubsection>
-                    <Styled.SubsectionTitle>
-                      Substance Abuse History
-                    </Styled.SubsectionTitle>
-                    <Styled.SectionBody>
-                      <div>{sarData?.drugHistorySummary || NONE_LISTED}</div>
-                      {sarData?.drugHistories &&
-                        sarData.drugHistories.length > 0 && (
-                          <Styled.AssessmentTable>
-                            <Styled.TableHeaderRow>
-                              {DRUG_HISTORY_COLUMNS.map((col) => (
-                                <Styled.TableHeaderCell key={col}>
-                                  {col}
-                                </Styled.TableHeaderCell>
-                              ))}
-                            </Styled.TableHeaderRow>
-                            {sarData.drugHistories.map((history) => (
-                              <Styled.TableDataRow key={history.id}>
-                                <Styled.TableDataCell>
-                                  {formatSubstanceName(
-                                    history.substance,
-                                    history.otherSubstanceName,
-                                  ) ?? "—"}
-                                </Styled.TableDataCell>
-                                <Styled.TableDataCell>
-                                  {history.ageOfRegularUse ?? "—"}
-                                </Styled.TableDataCell>
-                                <Styled.TableDataCell>
-                                  {history.lastUse
-                                    ? formatMonthYear(history.lastUse)
-                                    : "—"}
-                                </Styled.TableDataCell>
-                                <Styled.TableDataCell>
-                                  {history.heaviestUse
-                                    ? FrequencyOfUseLabels[history.heaviestUse]
-                                    : "—"}
-                                </Styled.TableDataCell>
-                                <Styled.TableDataCell>
-                                  {history.method
-                                    ? MethodOfUseLabels[history.method]
-                                    : "—"}
-                                </Styled.TableDataCell>
-                              </Styled.TableDataRow>
-                            ))}
-                          </Styled.AssessmentTable>
-                        )}
-                    </Styled.SectionBody>
-                  </Styled.DetailSubsection>
-
-                  {/* Risk Category Summary — only shown when an ORAS assessment was performed */}
-                  {presenter.offenderAssessment.hasOrasAssessment && (
-                    <Styled.DetailSubsection>
-                      <Styled.SubsectionTitle>
-                        Risk Category Summary
-                      </Styled.SubsectionTitle>
-                      <Styled.CategoryRow>
-                        {RISK_LEVEL_KEYS.map((level) => (
-                          <Styled.CategoryColumn key={level}>
-                            <Styled.CategoryColumnHeader>
-                              Scored {RISK_LEVELS[level]}
-                            </Styled.CategoryColumnHeader>
-                            <div>{groupedByRisk[level].join(", ") || "—"}</div>
-                          </Styled.CategoryColumn>
-                        ))}
-                      </Styled.CategoryRow>
-                    </Styled.DetailSubsection>
-                  )}
-
-                  {/* Per-domain subsections — substanceUse is rendered above as Substance Abuse History */}
-                  {domainsWithoutSubstanceUse.map((domain) => {
-                    const summary =
-                      presenter.offenderAssessment.getDomainSummary(domain);
-                    return (
-                      <Styled.DetailSubsection key={domain.key}>
-                        <Styled.SubsectionTitle>
-                          {domain.title}
-                        </Styled.SubsectionTitle>
-                        <Styled.SectionBody>
-                          <SummaryOrMissing
-                            summary={summary}
-                            labeled={
-                              domain.key === "educationEmployment" ||
-                              domain.key === "familySocialSupport"
-                            }
-                          />
-                          {domain.key === "educationEmployment" && (
-                            <>
-                              <div>
-                                Highest Level of Education:{" "}
-                                {sarData?.levelOfEducation || <MissingBadge />}
-                              </div>
-                              <div>
-                                Employed at Time of Offense:{" "}
-                                {sarData?.employedAtOffense !== undefined ? (
-                                  formatBooleanDisplay(
-                                    sarData.employedAtOffense,
-                                  )
-                                ) : (
-                                  <MissingBadge />
-                                )}
-                              </div>
-                              {sarData?.employmentHistories &&
-                                sarData.employmentHistories.length > 0 && (
-                                  <Styled.AssessmentTable>
-                                    <Styled.TableHeaderRow>
-                                      <Styled.TableHeaderCell>
-                                        Name of Employer
-                                      </Styled.TableHeaderCell>
-                                      <Styled.TableHeaderCell>
-                                        Start/End Date
-                                      </Styled.TableHeaderCell>
-                                      <Styled.TableHeaderCell>
-                                        Verified by Report Author
-                                      </Styled.TableHeaderCell>
-                                    </Styled.TableHeaderRow>
-                                    {sarData.employmentHistories.map(
-                                      (history) => (
-                                        <Styled.TableDataRow key={history.id}>
-                                          <Styled.TableDataCell>
-                                            {history.employerName || "—"}
-                                          </Styled.TableDataCell>
-                                          <Styled.TableDataCell>
-                                            {formatDateRange(
-                                              history.startDate,
-                                              history.endDate,
-                                            )}
-                                          </Styled.TableDataCell>
-                                          <Styled.TableDataCell>
-                                            {formatBooleanDisplay(
-                                              history.verifiedByReportAuthor,
-                                            )}
-                                          </Styled.TableDataCell>
-                                        </Styled.TableDataRow>
-                                      ),
-                                    )}
-                                  </Styled.AssessmentTable>
-                                )}
-                            </>
-                          )}
-                          {domain.key === "familySocialSupport" && (
-                            <Styled.AssessmentTable>
-                              <Styled.FamilyFieldRow>
-                                <Styled.FamilyFieldLabel>
-                                  Father:
-                                </Styled.FamilyFieldLabel>
-                                {fatherName || <MissingBadge />}
-                              </Styled.FamilyFieldRow>
-                              <Styled.FamilyFieldRow>
-                                <Styled.FamilyFieldLabel>
-                                  Mother:
-                                </Styled.FamilyFieldLabel>
-                                {motherName || <MissingBadge />}
-                              </Styled.FamilyFieldRow>
-                              <Styled.FamilyFieldRow>
-                                <Styled.FamilyFieldLabel>
-                                  Who Raised Offender:
-                                </Styled.FamilyFieldLabel>
-                                {guardianName || <MissingBadge />}
-                              </Styled.FamilyFieldRow>
-                            </Styled.AssessmentTable>
-                          )}
-                        </Styled.SectionBody>
-                      </Styled.DetailSubsection>
-                    );
-                  })}
-                </Styled.DetailContainer>
-              </Styled.SectionCard>
-
-              {/* Prior Treatment History */}
-              <Styled.SectionCard>
-                <Styled.SectionTitle>
-                  Prior Treatment History
-                </Styled.SectionTitle>
-                <Styled.DetailContainer>
-                  {/* Community Treatments and Programming */}
-                  <Styled.DetailSubsection>
-                    <Styled.SubsectionTitle>
-                      Community Treatments and Programming
-                    </Styled.SubsectionTitle>
-                    <Styled.SectionBody>
-                      <SummaryOrMissing
-                        summary={sarData?.priorTreatmentHistorySummary}
-                        labeled
-                      />
-                      {priorTreatmentHistories.length > 0 && (
-                        <Styled.AssessmentTable>
-                          <Styled.TableHeaderRow>
-                            <Styled.TableHeaderCell>
-                              Year Completed
-                            </Styled.TableHeaderCell>
-                            <Styled.TableHeaderCell>
-                              Program
-                            </Styled.TableHeaderCell>
-                            <Styled.TableHeaderCell>
-                              Verified by Report Author
-                            </Styled.TableHeaderCell>
-                          </Styled.TableHeaderRow>
-                          {priorTreatmentHistories.map((history) => (
-                            <Styled.TableDataRow key={history.id}>
-                              <Styled.TableDataCell>
-                                {history.yearCompleted ?? "—"}
-                              </Styled.TableDataCell>
-                              <Styled.TableDataCell>
-                                {history.programName ?? "—"}
-                              </Styled.TableDataCell>
-                              <Styled.TableDataCell>
-                                {formatBooleanDisplay(
-                                  history.verifiedByReportAuthor,
-                                )}
-                              </Styled.TableDataCell>
-                            </Styled.TableDataRow>
-                          ))}
-                        </Styled.AssessmentTable>
-                      )}
-                    </Styled.SectionBody>
-                  </Styled.DetailSubsection>
-
-                  {/* DOC Incarceration Program Completion History */}
-                  {docCategoryEntries.length > 0 && (
-                    <Styled.DetailSubsection>
-                      <Styled.SubsectionTitle>
-                        Department of Corrections Incarceration Program
-                        Completion History
-                      </Styled.SubsectionTitle>
-                      <Styled.SectionBody>
-                        <div>{DOC_INCARCERATION_DESCRIPTION}</div>
-                        <Styled.CategoryRow>
-                          {docCategoryEntries.map(([category, histories]) => {
-                            const labels =
-                              TREATMENT_PROGRAM_CATEGORY_LABELS[category];
-                            const label =
-                              histories.length === 1
-                                ? labels.singular
-                                : labels.plural;
-                            const displayed = histories.slice(
-                              0,
-                              MAX_DOC_HISTORIES_PER_CATEGORY,
-                            );
-                            const remaining =
-                              histories.length - displayed.length;
-                            return (
-                              <Styled.CategoryColumn key={category}>
-                                <Styled.CategoryColumnHeader>
-                                  {histories.length} {label}
-                                </Styled.CategoryColumnHeader>
-                                {displayed.map((history) => (
-                                  <React.Fragment key={history.id}>
-                                    {history.completedOn && (
-                                      <div>
-                                        {formatDisplayDate(history.completedOn)}
-                                      </div>
-                                    )}
-                                    <div>{history.programName}</div>
-                                  </React.Fragment>
-                                ))}
-                                {remaining > 0 && (
-                                  <Styled.MoreText>
-                                    and {remaining} more
-                                  </Styled.MoreText>
-                                )}
-                              </Styled.CategoryColumn>
-                            );
-                          })}
-                        </Styled.CategoryRow>
-                      </Styled.SectionBody>
-                    </Styled.DetailSubsection>
-                  )}
-                </Styled.DetailContainer>
-              </Styled.SectionCard>
-
-              {/* Recommendation */}
-              <Styled.SectionCard>
-                <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
-                {recommendationSkipped ? (
-                  <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
-                ) : (
-                  <Styled.RecommendationSection>
-                    <Styled.RecommendationLabel>
-                      Community Strategy
-                    </Styled.RecommendationLabel>
-                    <Styled.SectionBody>
-                      {communityValue || <MissingBadge />}
-                    </Styled.SectionBody>
-                    <Styled.RecommendationLabel>
-                      Home Plan
-                    </Styled.RecommendationLabel>
-                    <Styled.SectionBody>
-                      {homePlanValue || <MissingBadge />}
-                    </Styled.SectionBody>
-                    <Styled.RecommendationLabel>
-                      Institutional Strategy
-                    </Styled.RecommendationLabel>
-                    <Styled.SectionBody>
-                      {institutionalValue || <MissingBadge />}
-                    </Styled.SectionBody>
-                  </Styled.RecommendationSection>
-                )}
-              </Styled.SectionCard>
-
-              {activeFeatureVariants["SARBuilder"] &&
-                !sarData?.mostSevereOffenseName && (
-                  <Styled.SectionCard>
-                    <Styled.SectionTitle>Insights</Styled.SectionTitle>
-                    <Styled.SectionBody>
-                      <MissingBadge />
-                      Most severe offense must be selected in Case Information.
-                    </Styled.SectionBody>
-                  </Styled.SectionCard>
-                )}
-            </>
+                  <Styled.RecommendationLabel>
+                    Home Plan
+                  </Styled.RecommendationLabel>
+                  <Styled.SectionBody>
+                    {homePlanValue || <MissingBadge />}
+                  </Styled.SectionBody>
+                  <Styled.RecommendationLabel>
+                    Institutional Strategy
+                  </Styled.RecommendationLabel>
+                  <Styled.SectionBody>
+                    {institutionalValue || <MissingBadge />}
+                  </Styled.SectionBody>
+                </Styled.RecommendationSection>
+              )}
+            </Styled.SectionCard>
           )}
+
+          {!declined &&
+            activeFeatureVariants["SARBuilder"] &&
+            !sarData?.mostSevereOffenseName && (
+              <Styled.SectionCard>
+                <Styled.SectionTitle>Insights</Styled.SectionTitle>
+                <Styled.SectionBody>
+                  <MissingBadge />
+                  Most severe offense must be selected in Case Information.
+                </Styled.SectionBody>
+              </Styled.SectionCard>
+            )}
         </Styled.Container>
 
-        {/* Insights — rendered outside the container so it gets the SummaryWrapper gap */}
-        {activeFeatureVariants["SARBuilder"] &&
+        {!declined &&
+          activeFeatureVariants["SARBuilder"] &&
           sarData?.mostSevereOffenseName && (
             <InsightsSummaryPanel presenter={presenter} />
           )}

@@ -45,6 +45,10 @@ export class PriorTreatmentHistoryPresenter {
     return this.sarDetailsPresenter.SARData;
   }
 
+  get defendantDeclinedToParticipate(): boolean {
+    return this.sarDetailsPresenter.defendantDeclinedToParticipate;
+  }
+
   get priorTreatmentHistories(): PriorTreatmentHistory[] {
     return this.SARData?.priorTreatmentHistories ?? [];
   }

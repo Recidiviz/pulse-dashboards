@@ -24,6 +24,8 @@ import { BLOCK_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const SECTION_TITLE = "Recommendation and Supervision Plan";
+const DECLINED_TEXT =
+  "This officer is unable to complete this section due to the fact that the defendant declined to participate in the assessment process.";
 const CONTINUATION_TITLE = `${SECTION_TITLE} Continued...`;
 
 function splitParagraphs(text: string): string[] {
@@ -32,10 +34,12 @@ function splitParagraphs(text: string): string[] {
 
 interface ReportRecommendationProps {
   sarData: SAR;
+  isDeclined?: boolean;
 }
 
 export const ReportRecommendation: React.FC<ReportRecommendationProps> = ({
   sarData,
+  isDeclined = false,
 }) => {
   const {
     communityStrategyRecommendation,
@@ -45,6 +49,17 @@ export const ReportRecommendation: React.FC<ReportRecommendationProps> = ({
 
   const hasCommunity = !!(communityStrategyRecommendation || homePlan);
   const hasInstitutional = !!institutionalStrategyRecommendation;
+
+  if (isDeclined) {
+    return (
+      <ReportBlock>
+        <Styled.SectionTitleContainer>
+          <Styled.SectionTitle>{SECTION_TITLE}</Styled.SectionTitle>
+        </Styled.SectionTitleContainer>
+        <Styled.FreeTextContent>{DECLINED_TEXT}</Styled.FreeTextContent>
+      </ReportBlock>
+    );
+  }
 
   if (!hasCommunity && !hasInstitutional) return null;
 

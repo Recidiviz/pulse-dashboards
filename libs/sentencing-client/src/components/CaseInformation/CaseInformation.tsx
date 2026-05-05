@@ -119,7 +119,7 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
             onUpdate={handleChargeUpdate}
           />
         ))}
-        {presenter.hasTie && (
+        {presenter.hasTie && !defendantDeclinedToParticipate && (
           <TieBreakerPicker
             candidates={presenter.mostSevereCharges}
             selectedOffenseName={mostSevereOffenseName}

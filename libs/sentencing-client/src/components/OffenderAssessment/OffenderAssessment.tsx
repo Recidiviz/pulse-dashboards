@@ -142,6 +142,38 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       }
     }, [currentSubsection]);
 
+    if (presenter.defendantDeclinedToParticipate) {
+      return (
+        <SectionContainer>
+          <DomainCard
+            title="ORAS Assessment Score"
+            summaryValue={presenter.SARData?.defendantStatement ?? null}
+            onSummaryChange={(value) =>
+              presenter.updateDefendantStatement(value)
+            }
+            summaryPlaceholder="Please briefly describe your attempts to contact the client for participation in this report's preparation."
+            hideSummaryLabel
+          />
+          <DomainCard
+            title={getDomainTitle("criminalHistory")}
+            summaryValue={criminalHistorySummary ?? null}
+            onSummaryChange={(value) =>
+              presenter.updateCriminalHistorySummary(value)
+            }
+            cardRef={criminalHistoryRef}
+          >
+            <DomainCardStyled.InfoBox>
+              Default text provided below. You can customize this language as
+              needed.
+              <br />
+              Remember to export the CBRS screen from OPII and attach it to the
+              completed report.
+            </DomainCardStyled.InfoBox>
+          </DomainCard>
+        </SectionContainer>
+      );
+    }
+
     return (
       <SectionContainer>
         <OrasAssessmentScoreCard

@@ -319,8 +319,9 @@ export class SARDetailsPresenter implements Hydratable {
         ? (SAR_REPORT_SECTIONS as unknown as SARSectionName[])
         : ([
             SARSection.CASE_INFORMATION,
-            SARSection.DEFENDANTS_VERSION,
             SARSection.VICTIM_IMPACT,
+            SARSection.OFFENDER_ASSESSMENT,
+            SARSection.PRIOR_TREATMENT_HISTORY,
             SARSection.SUMMARY,
           ] as SARSectionName[]);
     return result;
@@ -472,7 +473,9 @@ export class SARDetailsPresenter implements Hydratable {
     > = {
       [SARSection.CASE_INFORMATION]: this.caseInfoFieldCounts,
       [SARSection.KEY_CONSIDERATIONS]: this.keyConsiderationsFieldCounts,
-      [SARSection.DEFENDANTS_VERSION]: this.defendantVersionFieldCounts,
+      [SARSection.DEFENDANTS_VERSION]: this.defendantDeclinedToParticipate
+        ? EMPTY_SECTION
+        : this.defendantVersionFieldCounts,
       [SARSection.VICTIM_IMPACT]: this.victimImpactFieldCounts,
       [SARSection.OFFENDER_ASSESSMENT]: this.offenderAssessmentFieldCounts,
       [SARSection.PRIOR_TREATMENT_HISTORY]:
@@ -586,10 +589,6 @@ export class SARDetailsPresenter implements Hydratable {
     completed: number;
     total: number;
   } {
-    if (this.defendantDeclinedToParticipate === true) {
-      return EMPTY_SECTION;
-    }
-
     const { summaries, formFields } = this.offenderAssessmentFields;
     let completed = 0;
     summaries.forEach((s) => {
@@ -606,10 +605,7 @@ export class SARDetailsPresenter implements Hydratable {
     completed: number;
     total: number;
   } {
-    if (this.defendantDeclinedToParticipate === true) {
-      return EMPTY_SECTION;
-    }
-
+    if (this.defendantDeclinedToParticipate) return EMPTY_SECTION;
     const summary = this.SARData?.priorTreatmentHistorySummary;
     const hasContent = !!summary && summary.trim() !== "";
     return { completed: hasContent ? 1 : 0, total: 1 };
@@ -1375,17 +1371,15 @@ export class SARDetailsPresenter implements Hydratable {
       [SARSection.KEY_CONSIDERATIONS]: declined
         ? "complete"
         : this.getKeyConsiderationsStatus(),
-      [SARSection.DEFENDANTS_VERSION]:
-        this.getTextFieldStatus("defendantStatement"),
+      [SARSection.DEFENDANTS_VERSION]: declined
+        ? "complete"
+        : this.getTextFieldStatus("defendantStatement"),
       [SARSection.VICTIM_IMPACT]: this.getTextFieldStatus(
         "victimImpactStatement",
       ),
-      [SARSection.OFFENDER_ASSESSMENT]: declined
-        ? "complete"
-        : this.getOffenderAssessmentStatus(),
-      [SARSection.PRIOR_TREATMENT_HISTORY]: declined
-        ? "complete"
-        : this.getPriorTreatmentHistoryStatus(),
+      [SARSection.OFFENDER_ASSESSMENT]: this.getOffenderAssessmentStatus(),
+      [SARSection.PRIOR_TREATMENT_HISTORY]:
+        this.getPriorTreatmentHistoryStatus(),
       [SARSection.RECOMMENDATION]: declined
         ? "complete"
         : this.getRecommendationStatus(),
@@ -1401,6 +1395,16 @@ export class SARDetailsPresenter implements Hydratable {
     summaries: (string | null | undefined)[];
     formFields: (string | null | undefined)[];
   } {
+    if (this.defendantDeclinedToParticipate) {
+      return {
+        summaries: [
+          this.SARData?.defendantStatement,
+          this.SARData?.criminalHistorySummary,
+        ],
+        formFields: [],
+      };
+    }
+
     const domains = getDomainsForAssessmentType(this.SARData?.assessmentType);
 
     const summaries = domains
@@ -1484,6 +1488,7 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   private getPriorTreatmentHistoryStatus(): SectionStatus {
+    if (this.defendantDeclinedToParticipate) return "complete";
     const summary = this.SARData?.priorTreatmentHistorySummary;
     const hasContent = !!summary && summary.trim() !== "";
     const isEdited =

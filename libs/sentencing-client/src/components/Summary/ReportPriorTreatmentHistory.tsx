@@ -52,10 +52,12 @@ export const ReportPriorTreatmentHistory: React.FC<ReportPriorTreatmentHistoryPr
       (entry): entry is [TreatmentProgramCategory, DOCTreatmentHistory[]] =>
         entry[1] !== undefined,
     );
+    const isDeclined = presenter.defendantDeclinedToParticipate;
     const hasDOC = categorized.length > 0;
     const communityHistories = presenter.priorTreatmentHistories;
     const treatmentSummary = presenter.SARData?.priorTreatmentHistorySummary;
-    const hasCommunity = communityHistories.length > 0 || !!treatmentSummary;
+    const hasCommunity =
+      !isDeclined && (communityHistories.length > 0 || !!treatmentSummary);
 
     if (!hasDOC && !hasCommunity) return null;
 
