@@ -80,7 +80,9 @@ export function UsMiRestrictiveHousingV2({
             {formatWorkflowsDate(solitarySessionStartDate)}
           </SecureDetailsContent>
 
-          <DetailsSubheading>Prior Segregation History</DetailsSubheading>
+          <DetailsSubheading>
+            Prior Administrative Segregation History
+          </DetailsSubheading>
           <SecureDetailsContent>
             <SegregationHistory stays={jsonAdSegStaysAndReasonsWithin3Yrs} />
           </SecureDetailsContent>
