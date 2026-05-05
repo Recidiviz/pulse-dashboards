@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenerativeAI, Schema } from "@google/generative-ai";
+import { GoogleGenerativeAI, Part, Schema } from "@google/generative-ai";
+import { GoogleAIFileManager } from "@google/generative-ai/server";
+import { Storage } from "@google-cloud/storage";
 import { traceable } from "langsmith/traceable";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
@@ -72,18 +74,20 @@ export function zodToGeminiResponseSchema(schema: ZodSchema) {
 type ZodGenerateContentOptions<T extends ZodSchema> = {
   client: GoogleGenerativeAI;
   systemInstruction: string;
-  userMessage: string;
+  /** Plain string or pre-built content parts (e.g. for multimodal input with audio). */
+  parts: Part[] | string;
   schema: T;
   modelName?: string;
 };
 
 /**
- * Generates content with Gemini using a Zod schema for structured output
+ * Generates content with Gemini using a Zod schema for structured output.
+ * Accepts either a plain string message or an array of content Parts for multimodal input.
  */
 const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   client,
   systemInstruction,
-  userMessage,
+  parts,
   schema,
   modelName = "gemini-2.5-flash",
 }: ZodGenerateContentOptions<T>): Promise<T["_output"]> => {
@@ -96,10 +100,12 @@ const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
     },
   });
 
-  const result = await model.generateContent(userMessage);
+  const contents =
+    typeof parts === "string" ? parts : { contents: [{ role: "user", parts }] };
+
+  const result = await model.generateContent(contents);
   const content = result.response.text();
 
-  // Parse and validate with Zod
   return schema.parse(JSON.parse(content));
 };
 
@@ -107,3 +113,35 @@ export const generateContentWithZodSchema = traceable(
   generateContentWithZodSchemaInternal,
   { name: "gemini-generate-content", run_type: "llm" },
 );
+
+/**
+ * Upload audio from GCS to the Gemini Files API and return the file URI.
+ */
+export async function uploadAudioToGemini(
+  fileManager: GoogleAIFileManager,
+  bucketName: string,
+  filePath: string,
+): Promise<string> {
+  const expectedAudioBucket = process.env["AUDIO_RECORDINGS_BUCKET_NAME"];
+  if (bucketName !== expectedAudioBucket) {
+    throw new Error(
+      `Requested upload from bucket ${bucketName}, expected ${expectedAudioBucket}`,
+    );
+  }
+  const storage = new Storage();
+  const file = storage.bucket(bucketName).file(filePath);
+
+  const [[audioBuffer], [metadata]] = await Promise.all([
+    file.download(),
+    file.getMetadata(),
+  ]);
+
+  const mimeType = metadata.contentType ?? "audio/mpeg";
+
+  const uploadResponse = await fileManager.uploadFile(audioBuffer, {
+    mimeType,
+    displayName: "meeting-audio",
+  });
+
+  return uploadResponse.file.uri;
+}

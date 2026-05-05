@@ -269,7 +269,7 @@ export class SpecialistCore {
       const evidence = await generateContentWithZodSchema({
         client: this.gemini,
         systemInstruction: PROMPTS.AUDITOR.SYSTEM(),
-        userMessage,
+        parts: userMessage,
         schema: VerificationPayloadSchema,
       });
 

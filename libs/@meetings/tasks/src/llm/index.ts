@@ -27,6 +27,7 @@ export * from "~@meetings/tasks/llm/guards";
 export * from "~@meetings/tasks/llm/orchestrator";
 export * from "~@meetings/tasks/llm/prompts";
 export * from "~@meetings/tasks/llm/schemas";
+export * from "~@meetings/tasks/llm/utils";
 
 // Re-export main classes for convenience
 export { SpecialistCore } from "~@meetings/tasks/llm/agents";

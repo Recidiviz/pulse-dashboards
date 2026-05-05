@@ -31,6 +31,7 @@ import {
   transcribeAudioWithDeepgram,
 } from "~@meetings/tasks";
 import { ProductionPipeline, TranscriptInput } from "~@meetings/tasks/llm";
+import { utterancesToRawText } from "~@meetings/tasks/llm/utils";
 
 export async function queueTranscriptionTaskLocal(
   stateCode: string,
@@ -373,9 +374,7 @@ export async function handleNotetakingProcessing(
   const bestTranscription = meeting.transcriptions[0];
 
   // Build transcript input from utterances
-  const rawText = bestTranscription.utterances
-    .map((u) => `[${u.speaker}]: ${u.text}`)
-    .join("\n");
+  const rawText = utterancesToRawText(bestTranscription.utterances);
 
   const transcriptInput: TranscriptInput = {
     rawText: rawText,

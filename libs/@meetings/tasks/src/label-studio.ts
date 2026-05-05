@@ -22,6 +22,7 @@ import path from "node:path";
 import { Storage } from "@google-cloud/storage";
 
 import type { Prisma, StateCode } from "~@meetings/prisma/client";
+import { formatTranscripts } from "~@meetings/tasks/llm/utils";
 
 /**
  * Prisma include shape for fetching a meeting with the relations needed
@@ -44,13 +45,6 @@ export type LabelStudioMeeting = Prisma.MeetingGetPayload<{
   include: typeof labelStudioMeetingInclude;
 }>;
 
-/** Format utterances into the same speaker-tagged text used as LLM input. */
-function utterancesToRawText(
-  utterances: { speaker: string; text: string }[],
-): string {
-  return utterances.map((u) => `[${u.speaker}]: ${u.text}`).join("\n");
-}
-
 /** Format a duration in seconds as "Xm Ys". */
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -70,17 +64,9 @@ export function buildLabelStudioTask(
 ) {
   const person = meeting.client ?? meeting.resident;
 
-  // Build per-provider transcript texts
-  const transcriptsByProvider: Partial<
-    Record<"assemblyai" | "deepgram", string>
-  > = {};
-  for (const transcription of meeting.transcriptions) {
-    const providerKey =
-      transcription.provider === "ASSEMBLYAI" ? "assemblyai" : "deepgram";
-    transcriptsByProvider[providerKey] = utterancesToRawText(
-      transcription.utterances,
-    );
-  }
+  const { byProvider: transcriptsByProvider } = formatTranscripts(
+    meeting.transcriptions,
+  );
 
   // Best transcription is first (ordered by confidence desc)
   const bestTranscription = meeting.transcriptions[0];

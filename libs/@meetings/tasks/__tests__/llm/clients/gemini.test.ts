@@ -151,7 +151,7 @@ describe("Gemini Client", () => {
       const result = await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "You are a verification assistant",
-        userMessage: "Verify these claims",
+        parts: "Verify these claims",
         schema,
       });
 
@@ -182,7 +182,7 @@ describe("Gemini Client", () => {
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "Test",
-        userMessage: "Test message",
+        parts: "Test message",
         schema,
         modelName: "gemini-1.5-pro",
       });
@@ -210,7 +210,7 @@ describe("Gemini Client", () => {
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "Test",
-        userMessage: "Test message",
+        parts: "Test message",
         schema,
       });
 
@@ -237,7 +237,7 @@ describe("Gemini Client", () => {
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "System prompt",
-        userMessage: "User prompt with specific content",
+        parts: "User prompt with specific content",
         schema,
       });
 
@@ -265,7 +265,7 @@ describe("Gemini Client", () => {
         generateContentWithZodSchema({
           client: mockGemini,
           systemInstruction: "Test",
-          userMessage: "Test",
+          parts: "Test",
           schema,
         }),
       ).rejects.toThrow();
@@ -302,7 +302,7 @@ describe("Gemini Client", () => {
       const result = await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "Verify claims",
-        userMessage: "Claims and transcript",
+        parts: "Claims and transcript",
         schema: VerificationPayloadSchema,
       });
 
@@ -328,7 +328,7 @@ describe("Gemini Client", () => {
         generateContentWithZodSchema({
           client: mockGemini,
           systemInstruction: "Test",
-          userMessage: "Test",
+          parts: "Test",
           schema,
         }),
       ).rejects.toThrow();
@@ -350,7 +350,7 @@ describe("Gemini Client", () => {
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "Test",
-        userMessage: "Test",
+        parts: "Test",
         schema,
       });
 
@@ -381,7 +381,7 @@ describe("Gemini Client", () => {
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "Test",
-        userMessage: "Test",
+        parts: "Test",
         schema,
       });
 
