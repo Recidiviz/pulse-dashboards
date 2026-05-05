@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
 import { descending } from "d3-array";
+import { rem } from "polished";
 import React from "react";
+import styled from "styled-components";
 
 import { formatWorkflowsDate } from "../../../utils";
 import { WithCaseNotes } from "../../../WorkflowsStore";
@@ -30,6 +33,10 @@ import {
   SecureDetailsContent,
 } from "../styles";
 import { OpportunityProfileProps } from "../types";
+
+const CaseNotesList = styled(DetailsList)`
+  padding-left: ${rem(spacing.xs)};
+`;
 
 export function CaseNotes({
   opportunity,
@@ -77,7 +84,7 @@ export function CaseNotes({
               return (
                 <React.Fragment key={caseNoteHeader}>
                   <DetailsSubheading>{caseNoteHeader}</DetailsSubheading>
-                  <DetailsList className="fs-exclude">
+                  <CaseNotesList className="fs-exclude">
                     {notes
                       .sort((noteA, noteB) =>
                         descending(noteA.eventDate, noteB.eventDate),
@@ -99,7 +106,7 @@ export function CaseNotes({
                           </SecureDetailsContent>
                         );
                       })}
-                  </DetailsList>
+                  </CaseNotesList>
                 </React.Fragment>
               );
             } else {
