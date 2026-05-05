@@ -107,6 +107,7 @@ export type * from "./people/Resident/US_ME/metadata/schema";
 export type * from "./people/Resident/US_MI/metadata/schema";
 export * from "./people/Resident/US_MO/metadata/schema";
 export * from "./people/Resident/US_NC/fixtures";
+export * from "./people/Resident/US_ND/fixtures";
 export type * from "./people/Resident/US_ND/metadata/schema";
 export * from "./people/Resident/US_NE/fixtures";
 export type * from "./people/Resident/US_NE/metadata/schema";

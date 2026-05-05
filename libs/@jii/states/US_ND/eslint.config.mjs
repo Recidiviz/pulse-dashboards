@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+// @ts-check
 
-import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
+import tseslint from "typescript-eslint";
 
-export const usNdResidentMetadataSchema = z.object({
-  stateCode: z.literal("US_ND"),
-  paroleReviewDate: nullishAsUndefined(dateStringSchema),
-  // TODO(recidiviz-data#76978): migrate to camelCase in coordination with backend
-  EIGHTYFIVEPercentDate: nullishAsUndefined(dateStringSchema),
-  paroleDate: nullishAsUndefined(dateStringSchema),
-  initialReviewDate: nullishAsUndefined(dateStringSchema),
-  goodTimeDate: nullishAsUndefined(dateStringSchema),
-  finalSentExpDate: nullishAsUndefined(dateStringSchema),
+import baseConfig, {
+  jiiRestrictedImports,
+  reactConfig,
+} from "../../../../eslint.config.mjs";
+
+export default tseslint.config(baseConfig, reactConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [...jiiRestrictedImports],
+      },
+    ],
+  },
 });

@@ -23,6 +23,7 @@ import { rawUsIdResidents, usIdResidents } from "./US_ID/fixtures";
 import { rawUsMaResidents, usMaResidents } from "./US_MA/fixtures";
 import { rawUsMeResidents, usMeResidents } from "./US_ME/fixtures";
 import { rawUsNcResidents, usNcResidents } from "./US_NC/fixtures";
+import { rawUsNdResidents, usNdResidents } from "./US_ND/fixtures";
 import { rawUsNeResidents, usNeResidents } from "./US_NE/fixtures";
 import { rawUsTnResidents, usTnResidents } from "./US_TN/fixtures";
 
@@ -45,6 +46,7 @@ export const allResidents: ResidentRecord[] = [
   ...usMaResidents,
   ...usMeResidents,
   ...usNcResidents,
+  ...usNdResidents,
   ...usNeResidents,
   ...usTnResidents,
 ];
@@ -57,6 +59,7 @@ export const rawAllResidents: RawResidentRecord[] = [
   ...rawUsMaResidents,
   ...rawUsMeResidents,
   ...rawUsNcResidents,
+  ...rawUsNdResidents,
   ...rawUsNeResidents,
   ...rawUsTnResidents,
 ];

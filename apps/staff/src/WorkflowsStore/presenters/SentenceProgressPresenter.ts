@@ -36,7 +36,7 @@ import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { JusticeInvolvedPerson } from "../types";
-import { fieldToDate, optionalFieldToDate } from "../utils";
+import { optionalFieldToDate } from "../utils";
 import { WorkflowsStore } from "../WorkflowsStore";
 
 export type TimelineDate = Omit<
@@ -330,16 +330,8 @@ export class SentenceProgressPresenter<
     if (resident.metadata.stateCode !== "US_ND") return;
 
     const { paroleReviewDate, EIGHTYFIVEPercentDate } = resident.metadata;
-    this.pushTimelineDate(
-      "Parole Review Date",
-      true,
-      fieldToDate(paroleReviewDate),
-    );
-    this.pushTimelineDate(
-      "85% Date",
-      true,
-      optionalFieldToDate(EIGHTYFIVEPercentDate),
-    );
+    this.pushTimelineDate("Parole Review Date", true, paroleReviewDate);
+    this.pushTimelineDate("85% Date", true, EIGHTYFIVEPercentDate);
   }
 
   /**

@@ -23,6 +23,7 @@ import {
   rawUsIdResidents,
   rawUsMaResidents,
   rawUsNcResidents,
+  rawUsNdResidents,
   rawUsNeResidents,
   rawUsTnResidents,
 } from "~datatypes";
@@ -30,7 +31,6 @@ import {
 import { usMeResidents } from "./residents/usMeResidents";
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
-import { usNdResidents } from "./residents/usNdResidents";
 import { usUtResidents } from "./residents/usUtResidents";
 import { FirestoreFixture, PersonFixture } from "./utils";
 
@@ -46,7 +46,7 @@ const data: Array<ResidentFixture | RawResidentRecord> = [
   ...usMeResidents,
   ...usMiResidents,
   ...usMoResidents,
-  ...usNdResidents,
+  ...rawUsNdResidents,
   ...rawUsNcResidents,
   ...rawUsNeResidents,
   ...rawUsTnResidents,

@@ -17,10 +17,7 @@
 
 import React from "react";
 
-import { fieldToDate } from "~datatypes";
-
 import { formatWorkflowsDate } from "../../../../utils";
-import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";
 import { DetailsSubheading, SecureDetailsContent } from "../../styles";
 import { ResidentProfileProps } from "../../types";
 
@@ -36,14 +33,12 @@ export function UsNdIncarcerationDetails({
     <>
       <DetailsSubheading>Parole Start Date</DetailsSubheading>
       <SecureDetailsContent>
-        {paroleDate
-          ? formatWorkflowsDate(optionalFieldToDate(paroleDate))
-          : "N/A"}
+        {paroleDate ? formatWorkflowsDate(paroleDate) : "N/A"}
       </SecureDetailsContent>
 
       <DetailsSubheading>Parole Review Date</DetailsSubheading>
       <SecureDetailsContent>
-        {formatWorkflowsDate(fieldToDate(paroleReviewDate))}
+        {paroleReviewDate ? formatWorkflowsDate(paroleReviewDate) : "N/A"}
       </SecureDetailsContent>
     </>
   );

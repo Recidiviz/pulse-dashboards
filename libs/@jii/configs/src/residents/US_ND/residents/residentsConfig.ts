@@ -15,17 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { home } from "../../defaults";
+import { ResidentsConfig } from "../../types";
 
-import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
-
-export const usNdResidentMetadataSchema = z.object({
-  stateCode: z.literal("US_ND"),
-  paroleReviewDate: nullishAsUndefined(dateStringSchema),
-  // TODO(recidiviz-data#76978): migrate to camelCase in coordination with backend
-  EIGHTYFIVEPercentDate: nullishAsUndefined(dateStringSchema),
-  paroleDate: nullishAsUndefined(dateStringSchema),
-  initialReviewDate: nullishAsUndefined(dateStringSchema),
-  goodTimeDate: nullishAsUndefined(dateStringSchema),
-  finalSentExpDate: nullishAsUndefined(dateStringSchema),
-});
+export const usNdResidentsConfig: ResidentsConfig = {
+  home,
+  translation: {
+    additionalLanguages: [],
+  },
+};

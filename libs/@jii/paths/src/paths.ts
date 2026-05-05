@@ -95,6 +95,12 @@ export const UsNcRNA = route(
   },
 );
 
+export const UsNdMoreInformation = route("more-information/:pageSlug", {
+  params: {
+    pageSlug: union(["important-dates"] as const),
+  },
+});
+
 export const UsNeMoreInformation = route("more-information/:pageSlug", {
   params: {
     pageSlug: union([

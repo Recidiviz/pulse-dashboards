@@ -183,6 +183,18 @@ export const locationRecordFixtures: Array<LocationRecord> = [
   },
 
   //
+  // North Dakota
+  //
+
+  {
+    stateCode: "US_ND",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "ND_DEMO_FACILITY",
+    name: "Facility 1",
+  },
+
+  //
   // Nebraska
   //
 

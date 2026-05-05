@@ -2017,6 +2017,96 @@ exports[`schema for 'US_NC' 'RES002' 1`] = `
 }
 `;
 
+exports[`schema for 'US_ND' 'ND_RES003' 1`] = `
+{
+  "admissionDate": 2019-06-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usNdTransferToMinFacility",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES003",
+  "facilityId": "ND_DEMO_FACILITY",
+  "gender": "MALE",
+  "metadata": {
+    "stateCode": "US_ND",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "ND_RES003",
+  "personName": {
+    "givenNames": "Dakota",
+    "surname": "Johnson",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres003",
+  "recordId": "us_nd_nd_res003",
+  "releaseDate": 2023-06-16T00:00:00.000Z,
+  "stateCode": "US_ND",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_ND' 'ND_RES004' 1`] = `
+{
+  "admissionDate": 2020-04-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usNdTransferToMinFacility",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES004",
+  "facilityId": "ND_DEMO_FACILITY",
+  "gender": "FEMALE",
+  "metadata": {
+    "EIGHTYFIVEPercentDate": 2022-05-30T00:00:00.000Z,
+    "finalSentExpDate": 2022-10-16T00:00:00.000Z,
+    "goodTimeDate": 2022-07-16T00:00:00.000Z,
+    "initialReviewDate": 2022-02-16T00:00:00.000Z,
+    "paroleReviewDate": 2022-04-16T00:00:00.000Z,
+    "stateCode": "US_ND",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "ND_RES004",
+  "personName": {
+    "givenNames": "Casey",
+    "surname": "Thompson",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres004",
+  "recordId": "us_nd_nd_res004",
+  "releaseDate": 2022-10-16T00:00:00.000Z,
+  "stateCode": "US_ND",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_ND' 'ND_RES005' 1`] = `
+{
+  "admissionDate": 2018-10-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usNdTransferToMinFacility",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES005",
+  "facilityId": "ND_DEMO_FACILITY",
+  "gender": "MALE",
+  "metadata": {
+    "paroleReviewDate": 2022-10-16T00:00:00.000Z,
+    "stateCode": "US_ND",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "ND_RES005",
+  "personName": {
+    "givenNames": "Riley",
+    "surname": "Martinez",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres005",
+  "recordId": "us_nd_nd_res005",
+  "releaseDate": 2024-04-16T00:00:00.000Z,
+  "stateCode": "US_ND",
+  "unitId": "UNIT C",
+}
+`;
+
 exports[`schema for 'US_NE' 'RES001' 1`] = `
 {
   "admissionDate": 2019-09-16T00:00:00.000Z,
