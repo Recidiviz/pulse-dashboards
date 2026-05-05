@@ -16,103 +16,75 @@
 # =============================================================================
 
 locals {
-  base_rules = [
-    {
-      priority    = 900
-      action      = "throttle"
-      description = "Rate limit: 100 requests per minute per IP"
-      expression  = "true"
-      rate_limit_options = {
-        rate_limit_threshold = {
-          count        = 100
-          interval_sec = 60
-        }
-        conform_action = "allow"
-        exceed_action  = "deny(429)"
-        enforce_on_key = "IP"
-      }
-    },
+  deny_403_rules = [
     {
       priority    = 1000
-      action      = "deny(403)"
       description = "SQL Injection"
       expression  = "evaluatePreconfiguredWaf('sqli-v33-stable', {'sensitivity': 1})"
     },
     {
       priority    = 1001
-      action      = "deny(403)"
       description = "Cross-site scripting"
       expression  = "evaluatePreconfiguredWaf('xss-v33-stable', {'sensitivity': 1})"
     },
     {
       priority    = 1002
-      action      = "deny(403)"
       description = "Local file inclusion"
       expression  = "evaluatePreconfiguredWaf('lfi-v33-stable', {'sensitivity': 1})"
     },
     {
       priority    = 1003
-      action      = "deny(403)"
       description = "Remote file inclusion"
       expression  = "evaluatePreconfiguredWaf('rfi-v33-stable', {'sensitivity': 2})"
     },
     {
       priority    = 1004
-      action      = "deny(403)"
       description = "Remote code execution"
       expression  = "evaluatePreconfiguredWaf('rce-v33-stable', {'sensitivity': 3})"
     },
     {
       priority    = 1005
-      action      = "deny(403)"
       description = "Method enforcement"
       expression  = "evaluatePreconfiguredWaf('methodenforcement-v33-stable', {'sensitivity': 1})"
     },
     {
       priority    = 1006
-      action      = "deny(403)"
       description = "Scanner detection"
       expression  = "evaluatePreconfiguredWaf('scannerdetection-v33-stable', {'sensitivity': 1})"
     },
     {
       priority    = 1007
-      action      = "deny(403)"
       description = "Protocol attack"
       expression  = "evaluatePreconfiguredWaf('protocolattack-v33-stable', {'sensitivity': 3})"
     },
     {
       priority    = 1008
-      action      = "deny(403)"
       description = "PHP injection attack"
       expression  = "evaluatePreconfiguredWaf('php-v33-stable', {'sensitivity': 3})"
     },
     {
       priority    = 1009
-      action      = "deny(403)"
       description = "Session fixation attack"
       expression  = "evaluatePreconfiguredWaf('sessionfixation-v33-stable', {'sensitivity': 1})"
     },
     {
       priority    = 1010
-      action      = "deny(403)"
       description = "Java attack"
       expression  = "evaluatePreconfiguredWaf('java-v33-stable', {'sensitivity': 3})"
     },
     {
       priority    = 1011
-      action      = "deny(403)"
       description = "NodeJS attack"
       expression  = "evaluatePreconfiguredWaf('nodejs-v33-stable', {'sensitivity': 1})"
     },
     {
       priority    = 1012
-      action      = "deny(403)"
       description = "Newly discovered vulnerabilities"
       expression  = "evaluatePreconfiguredWaf('cve-canary', {'sensitivity': 4})"
     }
   ]
 
-  all_rules = concat(local.base_rules, var.additional_rules)
+  all_rules = concat(local.deny_403_rules, var.additional_rules)
 }
 
 resource "google_compute_region_security_policy" "waf" {
@@ -129,13 +101,33 @@ resource "google_compute_region_security_policy" "waf" {
     for_each = local.all_rules
     content {
       priority    = rules.value.priority
-      action      = rules.value.action
+      action      = "deny(403)"
       description = rules.value.description
       match {
         expr {
           expression = rules.value.expression
         }
       }
+    }
+  }
+
+  rules {
+    priority    = 900
+    action      = "throttle"
+    description = "Rate limit: 100 requests per minute per IP"
+    match {
+      expr {
+        expression = "true"
+      }
+    }
+    rate_limit_options {
+      rate_limit_threshold {
+        count        = 100
+        interval_sec = 60
+      }
+      conform_action = "allow"
+      exceed_action  = "deny(429)"
+      enforce_on_key = "IP"
     }
   }
 
