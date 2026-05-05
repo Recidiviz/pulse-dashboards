@@ -15,16 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import startOfMonth from "date-fns/startOfMonth";
-
 import {
   fillAndSavePDF,
   PDFFillerFunc,
 } from "../../../../core/Paperwork/PDFFormFiller";
+import {
+  flattenPDFFormSafely,
+  setArsErsSharedPDFFields,
+} from "../../../../core/Paperwork/US_TX/utils";
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
-import { toTitleCase } from "../../../../utils/formatStrings";
 import { UsTxAnnualReportStatusOpportunity } from "../../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
 import { UsTxAnnualReportStatusDraftData } from "../../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
+import { prefilledArsErsSharedDraftData } from "../../UsTx/UsTxArsErsSharedUtils";
 import { FormBase } from "../FormBase";
 import arsTemplate from "./ARS.pdf";
 
@@ -33,9 +35,7 @@ const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   set,
   form,
 ) => {
-  set("clientName", formData.clientName); // PDFTextField
-  set("tdcjNumberAndSid", formData.tdcjNumberAndSid); // PDFTextField
-  set("eligibilityMonthString", formData.eligibilityMonthString); // PDFTextField
+  setArsErsSharedPDFFields(formData, set);
 
   set("threeYearsTRASCheck", formData.threeYearsTRASCheck); // PDFCheckBox
   set("threeYearsTRASCheckNo", !formData.threeYearsTRASCheck); // PDFCheckBox
@@ -63,81 +63,7 @@ const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   set("societyBestInterestCheckNo", !formData.societyBestInterestCheck); // PDFCheckBox
   set("comment5", formData.comment5); // PDFTextField
 
-  set("officerName", formData.officerName); // PDFTextField
-  set("supervisingOfficerDate", formData.supervisingOfficerDate); // PDFTextField
-  set(
-    "supervisingOfficerRecommendCheck",
-    formData.supervisingOfficerRecommendCheckYes,
-  ); // PDFCheckBox
-  set(
-    "supervisingOfficerRecommendCheckNo",
-    formData.supervisingOfficerRecommendCheckNo,
-  ); // PDFCheckBox
-  set("supervisingOfficerSignature", formData.supervisingOfficerSignature); // PDFTextField
-  set("supervisingOfficerRemarks", formData.supervisingOfficerRemarks); // PDFTextField
-
-  set("unitSupervisorName", formData.unitSupervisorName); // PDFTextField
-  set(
-    "unitSupervisorConcurWithSupervisingOfficerCheck",
-    formData.unitSupervisorConcurWithSupervisingOfficerCheckYes,
-  ); // PDFCheckBox
-  set(
-    "unitSupervisorConcurWithSupervisingOfficerCheckNo",
-    formData.unitSupervisorConcurWithSupervisingOfficerCheckNo,
-  ); // PDFCheckBox
-  set("unitSupervisorDate", formData.unitSupervisorDate); // PDFTextField
-  set("unitSupervisorSignature", formData.unitSupervisorSignature); // PDFTextField
-  set("unitSupervisorRemarks", formData.unitSupervisorRemarks); // PDFTextField
-
-  set("paroleSupervisorName", formData.paroleSupervisorName); // PDFTextField
-  set("paroleSupervisorDate", formData.paroleSupervisorDate); // PDFTextField
-  set(
-    "paroleSupervisorConcurWithSupervisingOfficerCheck",
-    formData.paroleSupervisorConcurWithSupervisingOfficerCheckYes,
-  ); // PDFCheckBox
-  set(
-    "paroleSupervisorConcurWithSupervisingOfficerCheckNo",
-    formData.paroleSupervisorConcurWithSupervisingOfficerCheckNo,
-  ); // PDFCheckBox
-  set("paroleSupervisorSignature", formData.paroleSupervisorSignature); // PDFTextField
-  set("paroleSupervisorRemarks", formData.paroleSupervisorRemarks); // PDFTextField
-
-  set("assistantRegionDirectorName", formData.assistantRegionDirectorName); // PDFTextField
-  set("assistantRegionDirectorDate", formData.assistantRegionDirectorDate); // PDFTextField
-  set(
-    "assistantRegionDirectorConcurWithSupervisingOfficerCheck",
-    formData.assistantRegionDirectorConcurWithSupervisingOfficerCheckYes,
-  ); // PDFCheckBox
-  set(
-    "assistantRegionDirectorConcurWithSupervisingOfficerCheckNo",
-    formData.assistantRegionDirectorConcurWithSupervisingOfficerCheckNo,
-  ); // PDFCheckBox
-  set(
-    "assistantRegionDirectorSignature",
-    formData.assistantRegionDirectorSignature,
-  ); // PDFTextField
-  set(
-    "assistantRegionDirectorRemarks",
-    formData.assistantRegionDirectorRemarks,
-  ); // PDFTextField
-
-  set("regionDirectorName", formData.regionDirectorName); // PDFTextField
-  set("regionDirectorDate", formData.regionDirectorDate); // PDFTextField
-  set(
-    "regionDirectorConcurWithSupervisingOfficerCheck",
-    formData.regionDirectorConcurWithSupervisingOfficerCheckYes,
-  ); // PDFCheckBox
-  set(
-    "regionDirectorConcurWithSupervisingOfficerCheckNo",
-    formData.regionDirectorConcurWithSupervisingOfficerCheckNo,
-  ); // PDFCheckBox
-  set("regionDirectorSignature", formData.regionDirectorSignature); // PDFTextField
-  set("regionDirectorRemarks", formData.regionDirectorRemarks); // PDFTextField
-  try {
-    form.flatten();
-  } catch (error) {
-    console.error("Error flattening form:", error);
-  }
+  flattenPDFFormSafely(form);
 };
 
 export class UsTxAnnualReportStatusForm extends FormBase<
@@ -153,50 +79,13 @@ export class UsTxAnnualReportStatusForm extends FormBase<
   prefilledDataTransformer(): Partial<UsTxAnnualReportStatusDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
-    const clientName = this.person.displayName;
-    const clientId = this.person.displayId;
-
-    const {
-      formInformation: { tdcjNumber, unitSupervisor, paroleSupervisor, assistantRegionDirector, regionDirector },
-    } = this.opportunity.record;
-
-    const tdcjNumberAndSid = tdcjNumber
-      ? tdcjNumber + " / " + clientId
-      : clientId;
-
-    const eligibilityMonthString = startOfMonth(new Date()).toLocaleString(
-      "en-US",
-      {
-        month: "long",
-        year: "numeric",
-      },
-    );
-    const threeYearsTRASCheck = true;
-    const complianceFeesAndEducationCheck = true;
-    const restitutionObligationsCheck = true;
-    const warrantCheck = true;
-    const societyBestInterestCheck = true;
-    const officerName = this.person.assignedStaffFullName;
-
-    const unitSupervisorName = unitSupervisor ? toTitleCase(unitSupervisor) : "";
-    const paroleSupervisorName = paroleSupervisor? toTitleCase(paroleSupervisor) : "";
-    const assistantRegionDirectorName = assistantRegionDirector ? toTitleCase(assistantRegionDirector) : "";
-    const regionDirectorName = regionDirector ? toTitleCase(regionDirector) : "";
-
     return {
-      clientName,
-      tdcjNumberAndSid,
-      eligibilityMonthString,
-      threeYearsTRASCheck,
-      complianceFeesAndEducationCheck,
-      restitutionObligationsCheck,
-      warrantCheck,
-      societyBestInterestCheck,
-      officerName,
-      unitSupervisorName,
-      paroleSupervisorName,
-      assistantRegionDirectorName,
-      regionDirectorName
+      ...prefilledArsErsSharedDraftData(
+        this.person,
+        this.opportunity.record.formInformation,
+      ),
+      threeYearsTRASCheck: true,
+      complianceFeesAndEducationCheck: true,
     };
   }
 

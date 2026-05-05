@@ -15,89 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
 import { z } from "zod";
 
 import { opportunitySchemaBase } from "~datatypes";
 
+import type { UsTxArsErsSharedDraftData } from "./UsTxArsErsSharedUtils";
+
+/**
+ * Shared `formInformation` shape for the US_TX ARS and ERS forms. Both forms
+ * pull the same staff hierarchy and TDCJ number off the referral record.
+ */
+export const usTxArsErsSharedFormInformationSchema = z
+  .object({
+    tdcjNumber: z.string(),
+    unitSupervisor: z.string().nullish(),
+    paroleSupervisor: z.string().nullish(),
+    assistantRegionDirector: z.string().nullish(),
+    regionDirector: z.string().nullish(),
+  })
+  .partial();
+
+export type UsTxArsErsSharedFormInformation = z.infer<
+  typeof usTxArsErsSharedFormInformationSchema
+>;
+
 export const usTxEarlyReleaseFromSupervisionSchema =
   opportunitySchemaBase.extend({
-    formInformation: z
-      .object({
-        tdcjNumber: z.string(),
-        unitSupervisor: z.string().nullish(),
-        paroleSupervisor: z.string().nullish(),
-        assistantRegionDirector: z.string().nullish(),
-        regionDirector: z.string().nullish(),
-      })
-      .partial(),
+    formInformation: usTxArsErsSharedFormInformationSchema,
   });
 
 export type UsTxEarlyReleaseFromSupervisionReferralRecord = z.infer<
   typeof usTxEarlyReleaseFromSupervisionSchema
 >;
 
-export type UsTxEarlyReleaseFromSupervisionDraftData = {
-  clientName: string;
-  tdcjNumberAndSid: string;
-  eligibilityMonthString: string;
-  atLeastHalfTimeCheck: boolean;
-  comment1: string;
-  minimumThreeYearsSupervisionCheck: boolean;
-  comment2: string;
-  goodFaithFeesAndEducationCheck: boolean;
-  comment3: string;
-  restitutionObligationsCheck: boolean;
-  comment4: string;
-  warrantCheck: boolean;
-  comment5: string;
-  noViolationsCertificateCheck: boolean;
-  comment6: string;
-  societyBestInterestCheck: boolean;
-  comment7: string;
-  officerName: string;
-  supervisingOfficerDate: string;
-  supervisingOfficerRecommendCheckYes: boolean;
-  supervisingOfficerRecommendCheckNo: boolean;
-  supervisingOfficerSignature: string;
-  supervisingOfficerRemarks: string;
-  unitSupervisorName: string;
-  unitSupervisorDate: string;
-  unitSupervisorConcurWithSupervisingOfficerCheckYes: boolean;
-  unitSupervisorConcurWithSupervisingOfficerCheckNo: boolean;
-  unitSupervisorSignature: string;
-  unitSupervisorRemarks: string;
-  paroleSupervisorName: string;
-  paroleSupervisorDate: string;
-  paroleSupervisorConcurWithSupervisingOfficerCheckYes: boolean;
-  paroleSupervisorConcurWithSupervisingOfficerCheckNo: boolean;
-  paroleSupervisorSignature: string;
-  paroleSupervisorRemarks: string;
-  assistantRegionDirectorName: string;
-  assistantRegionDirectorDate: string;
-  assistantRegionDirectorConcurWithSupervisingOfficerCheckYes: boolean;
-  assistantRegionDirectorConcurWithSupervisingOfficerCheckNo: boolean;
-  assistantRegionDirectorSignature: string;
-  assistantRegionDirectorRemarks: string;
-  regionDirectorName: string;
-  regionDirectorDate: string;
-  regionDirectorConcurWithSupervisingOfficerCheckYes: boolean;
-  regionDirectorConcurWithSupervisingOfficerCheckNo: boolean;
-  regionDirectorSignature: string;
-  regionDirectorRemarks: string;
-};
+export type UsTxEarlyReleaseFromSupervisionDraftData =
+  UsTxArsErsSharedDraftData & {
+    atLeastHalfTimeCheck: boolean;
+    comment1: string;
+    minimumThreeYearsSupervisionCheck: boolean;
+    comment2: string;
+    goodFaithFeesAndEducationCheck: boolean;
+    comment3: string;
+    comment4: string;
+    comment5: string;
+    noViolationsCertificateCheck: boolean;
+    comment6: string;
+    comment7: string;
+  };
