@@ -137,3 +137,8 @@ variable "seed_demo_container_version" {
   description = "The version tag of the image that will be used for the seed demo job"
   default     = "latest"
 }
+
+variable "domain_name" {
+  type        = string
+  description = "The domain name for the meetings server load balancer (e.g. meet-api.recidiviz.org)"
+}

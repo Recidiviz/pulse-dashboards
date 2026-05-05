@@ -28,6 +28,7 @@ components:
         database_availability_type: REGIONAL
         database_secondary_zone: us-central1-c
         environment: production
+        domain_name: meet-api.recidiviz.org
         private_network: projects/recidiviz-dashboard-production/global/networks/default
         meetings_bucket_cors_origins:
           - "https://recidiviz-meetings.web.app"
