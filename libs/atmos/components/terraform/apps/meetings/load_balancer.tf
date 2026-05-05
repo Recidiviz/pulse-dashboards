@@ -19,6 +19,7 @@ module "waf" {
   source  = "../../modules/waf-policy"
   name    = "meetings-server-waf"
   project = var.project_id
+  region  = var.location
 }
 
 resource "google_compute_region_network_endpoint_group" "serverless_neg" {

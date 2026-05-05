@@ -17,5 +17,5 @@
 
 output "id" {
   description = "Self-link of the security policy, suitable for use as security_policy in lb-http backends."
-  value       = google_compute_security_policy.waf.self_link
+  value       = google_compute_region_security_policy.waf.self_link
 }

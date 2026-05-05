@@ -115,30 +115,31 @@ locals {
   all_rules = concat(local.base_rules, var.additional_rules)
 }
 
-resource "google_compute_security_policy" "waf" {
+resource "google_compute_region_security_policy" "waf" {
   name    = var.name
   project = var.project
+  region  = var.region
 
   advanced_options_config {
     json_parsing = "STANDARD"
     log_level    = "VERBOSE"
   }
 
-  dynamic "rule" {
+  dynamic "rules" {
     for_each = local.all_rules
     content {
-      priority    = rule.value.priority
-      action      = rule.value.action
-      description = rule.value.description
+      priority    = rules.value.priority
+      action      = rules.value.action
+      description = rules.value.description
       match {
         expr {
-          expression = rule.value.expression
+          expression = rules.value.expression
         }
       }
     }
   }
 
-  rule {
+  rules {
     priority    = 2147483647
     action      = "allow"
     description = "Default rule, higher priority overrides it"
