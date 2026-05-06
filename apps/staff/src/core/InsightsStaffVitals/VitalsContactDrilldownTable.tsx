@@ -197,6 +197,14 @@ export const VitalsContactrilldownTable = observer(
         {
           accessorKey: "contactCompletedDate",
           header: "Completed",
+          sortingFn: (a, b, colId) => {
+            const aVal = a.getValue<string | null>(colId);
+            const bVal = b.getValue<string | null>(colId);
+            if (!aVal && !bVal) return 0;
+            if (!aVal) return -1;
+            if (!bVal) return 1;
+            return new Date(bVal).getTime() - new Date(aVal).getTime();
+          },
           // eslint-disable-next-line react/no-unstable-nested-components
           cell: (info) => {
             const contactCompletedDate = info.row.getValue(
@@ -218,7 +226,7 @@ export const VitalsContactrilldownTable = observer(
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
       initialState: {
-        sorting: [{ id: "dueDate", desc: false }],
+        sorting: [{ id: "contactCompletedDate", desc: false }],
       },
     });
 
