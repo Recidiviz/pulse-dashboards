@@ -23,7 +23,7 @@ export default defineConfig([
   { rules: { "fsd/insignificant-slice": "off" } },
   {
     // TODO: remove the block after refactoring
-    files: ["./src/features/recording/**", "./src/features/audio-upload/**"],
+    files: ["./src/features/recording/**"],
     rules: { "fsd/segments-by-purpose": "off" },
   },
   {

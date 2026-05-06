@@ -23,10 +23,10 @@ import CloudUploadIcon from "react-native-heroicons/outline/CloudUploadIcon";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { MAX_FILE_SIZE_BYTES } from "../constants";
-import { useFilePicker } from "../hooks/useFilePicker";
-import { RawFileInfo } from "../types";
-import { formatBytes } from "../utils/formatBytes";
+import { MAX_FILE_SIZE_BYTES } from "../config";
+import { formatBytes } from "../lib/formatBytes";
+import { RawFileInfo } from "../model/types";
+import { useFilePicker } from "../model/useFilePicker";
 
 type Props = {
   disabled?: boolean;

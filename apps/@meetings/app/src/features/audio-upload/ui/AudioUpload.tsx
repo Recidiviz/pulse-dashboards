@@ -20,8 +20,8 @@ import { useWindowDimensions } from "react-native";
 
 import { theme } from "~@meetings/app/shared/config";
 
-import { useAudioUpload } from "../hooks/useAudioUpload";
-import { useAudioUploadStore } from "../store";
+import { useAudioUploadStore } from "../model/store";
+import { useAudioUpload } from "../model/useAudioUpload";
 import { AudioUploadModal } from "./AudioUploadModal";
 import { AudioUploadSheet } from "./AudioUploadSheet";
 import { DiscardUploadModal } from "./DiscardUploadModal";

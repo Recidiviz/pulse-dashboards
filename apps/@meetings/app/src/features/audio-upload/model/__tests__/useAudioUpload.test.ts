@@ -22,10 +22,10 @@ import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import { AbortError } from "~@meetings/app/shared/lib/errors";
 
-import { trpc, useUploadSegment } from "../../../shared/api";
-import { useAudioUpload } from "../hooks/useAudioUpload";
+import { trpc, useUploadSegment } from "../../../../shared/api";
 import { useAudioUploadStore } from "../store";
 import { RawFileInfo } from "../types";
+import { useAudioUpload } from "../useAudioUpload";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),

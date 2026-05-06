@@ -28,9 +28,9 @@ import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { useFilePicker } from "../hooks/useFilePicker";
-import { useAudioUploadStore } from "../store";
-import { RawFileInfo } from "../types";
+import { useAudioUploadStore } from "../model/store";
+import { RawFileInfo } from "../model/types";
+import { useFilePicker } from "../model/useFilePicker";
 import { FileCard } from "./FileCard";
 import { PickerTrigger } from "./PickerTrigger";
 import { RecordingDateTimePicker } from "./RecordingDateTimePicker";

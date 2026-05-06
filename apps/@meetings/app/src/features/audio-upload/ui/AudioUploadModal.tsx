@@ -25,8 +25,8 @@ import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { useAudioUploadStore } from "../store";
-import { RawFileInfo } from "../types";
+import { useAudioUploadStore } from "../model/store";
+import { RawFileInfo } from "../model/types";
 import { DropZone } from "./DropZone.web";
 import { FileCard } from "./FileCard";
 import { PickerTrigger } from "./PickerTrigger";

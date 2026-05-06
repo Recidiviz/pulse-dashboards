@@ -24,8 +24,8 @@ import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircl
 import { theme } from "~@meetings/app/shared/config";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { AudioUploadStatus, FileInfo } from "../types";
-import { formatBytes } from "../utils/formatBytes";
+import { formatBytes } from "../lib/formatBytes";
+import { AudioUploadStatus, FileInfo } from "../model/types";
 import { FileIcon } from "./FileIcon";
 
 type FileCardProps = {

@@ -18,8 +18,8 @@
 import { FileValidationError } from "~@meetings/app/shared/lib/errors";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { MAX_FILE_SIZE_BYTES } from "../constants";
-import { FileInfo, RawFileInfo } from "../types";
+import { MAX_FILE_SIZE_BYTES } from "../config";
+import { FileInfo, RawFileInfo } from "../model/types";
 
 export function deserializeFile(params: RawFileInfo): FileInfo {
   if (!params.mimeType) {

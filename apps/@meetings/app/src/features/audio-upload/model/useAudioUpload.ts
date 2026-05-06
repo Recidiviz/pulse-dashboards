@@ -26,9 +26,9 @@ import {
 } from "~@meetings/app/shared/lib/errors";
 
 import { trpc, useUploadSegment } from "../../../shared/api";
-import { useAudioUploadStore } from "../store";
-import { RawFileInfo } from "../types";
-import { deserializeFile } from "../utils/deserializeFile";
+import { deserializeFile } from "../lib/deserializeFile";
+import { useAudioUploadStore } from "./store";
+import { RawFileInfo } from "./types";
 
 export function useAudioUpload() {
   const store = useAudioUploadStore();
