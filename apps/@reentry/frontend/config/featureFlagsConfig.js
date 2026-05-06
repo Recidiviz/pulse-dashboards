@@ -38,7 +38,7 @@ const FEATURE_FLAGS_CONFIG = {
   UPLOAD_AUDIO: "development,dev,demo,pilot,staging",
   TOGGLE_ENABLED_OUTPUTS: "development,dev,staging,prod",
   IMPERSONATION: "development,dev,demo,pilot,staging",
-  RESOURCE_BANK: "development",
+  RESOURCE_BANK: "development,dev",
 };
 
 module.exports = { FEATURE_FLAGS_CONFIG };
