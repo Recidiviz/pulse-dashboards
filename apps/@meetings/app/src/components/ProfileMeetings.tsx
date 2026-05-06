@@ -48,6 +48,7 @@ import {
   ClientsStackParamList,
   ResidentsStackParamList,
 } from "../navigation/DrawerNavigator";
+import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
 import { Typography } from "../shared/ui/Typography";
 import MeetingsHeaderContent from "./MeetingsHeaderContent";
 import MeetingsMobileList from "./MeetingsMobileList";
@@ -82,6 +83,7 @@ const ProfileMeetings = ({
   refetch,
 }: Props) => {
   const insets = useSafeAreaInsets();
+  const isMobileWidth = useIsMobileWidth();
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
   const { setMeetingId, setPerson, setPersonType, startRecording } =
@@ -254,57 +256,67 @@ const ProfileMeetings = ({
           ),
           web: (
             <View className="flex-1 pb-4">
-              <View className="flex-1 md:hidden">
-                <MeetingsMobileList
-                  meetings={filteredMeetings}
-                  person={person}
-                  handleOpenBottomSheet={() => setIsNewMeetingSheetOpen(true)}
-                  handleOpenModal={() => setIsNewMeetingModalOpen(true)}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  sortOptions={Object.values(MeetingsSort)}
-                  setSortBy={setSortBy}
-                  personType={personType}
-                />
-              </View>
-              <ScrollView className="hidden flex-1 md:block">
-                <View className="mx-auto w-full max-w-[960px] flex-1">
-                  <View className="flex flex-1 flex-row pt-10">
-                    <Link
-                      className="flex flex-row items-center gap-2"
-                      screen={personType === "client" ? "Clients" : "Residents"}
-                      params={{}}
-                    >
-                      <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
-                      <Typography className="text-sm font-medium text-primary">
-                        Back
-                      </Typography>
-                    </Link>
-                  </View>
-                  <MeetingsHeaderContent
+              {isMobileWidth && (
+                <View className="flex-1">
+                  <MeetingsMobileList
+                    meetings={filteredMeetings}
                     person={person}
-                    meetingsCount={filteredMeetings.length}
                     handleOpenBottomSheet={() => setIsNewMeetingSheetOpen(true)}
                     handleOpenModal={() => setIsNewMeetingModalOpen(true)}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     sortOptions={Object.values(MeetingsSort)}
                     setSortBy={setSortBy}
+                    personType={personType}
                   />
-                  {filteredMeetings.length === 0 ? (
-                    <MeetingsPlaceholder
-                      handleCreateMeeting={() => setIsNewMeetingModalOpen(true)}
-                      isSearchResultEmpty={searchQuery.trim().length > 0}
-                    />
-                  ) : (
-                    <MeetingsTable
-                      meetings={filteredMeetings}
-                      person={person}
-                      personType={personType}
-                    />
-                  )}
                 </View>
-              </ScrollView>
+              )}
+              {!isMobileWidth && (
+                <ScrollView className="flex-1">
+                  <View className="mx-auto w-full max-w-[960px] flex-1">
+                    <View className="flex flex-1 flex-row pt-10">
+                      <Link
+                        className="flex flex-row items-center gap-2"
+                        screen={
+                          personType === "client" ? "Clients" : "Residents"
+                        }
+                        params={{}}
+                      >
+                        <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
+                        <Typography className="text-sm font-medium text-primary">
+                          Back
+                        </Typography>
+                      </Link>
+                    </View>
+                    <MeetingsHeaderContent
+                      person={person}
+                      meetingsCount={filteredMeetings.length}
+                      handleOpenBottomSheet={() =>
+                        setIsNewMeetingSheetOpen(true)
+                      }
+                      handleOpenModal={() => setIsNewMeetingModalOpen(true)}
+                      searchQuery={searchQuery}
+                      setSearchQuery={setSearchQuery}
+                      sortOptions={Object.values(MeetingsSort)}
+                      setSortBy={setSortBy}
+                    />
+                    {filteredMeetings.length === 0 ? (
+                      <MeetingsPlaceholder
+                        handleCreateMeeting={() =>
+                          setIsNewMeetingModalOpen(true)
+                        }
+                        isSearchResultEmpty={searchQuery.trim().length > 0}
+                      />
+                    ) : (
+                      <MeetingsTable
+                        meetings={filteredMeetings}
+                        person={person}
+                        personType={personType}
+                      />
+                    )}
+                  </View>
+                </ScrollView>
+              )}
             </View>
           ),
         })}

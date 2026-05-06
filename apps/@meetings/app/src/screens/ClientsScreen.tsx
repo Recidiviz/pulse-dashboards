@@ -33,6 +33,7 @@ import PersonsTable from "../components/PersonsTable.web";
 import { useUserContext } from "../context/UserContext";
 import { useRecording } from "../features/recording";
 import { trpc } from "../shared/api";
+import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
 import { deserializeClient } from "../utils/format";
@@ -61,6 +62,7 @@ const filterAndSortClients = (
 const ClientsScreen = () => {
   useSetDocumentTitle("Clients - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
+  const isMobileWidth = useIsMobileWidth();
   const { status: recordingState } = useRecording();
   const { email: userEmail } = useUserContext();
 
@@ -133,53 +135,57 @@ const ClientsScreen = () => {
           ),
           web: (
             <View className="flex-1 pb-4">
-              <View className="flex-1 md:hidden">
-                <PersonsMobileList
-                  persons={[...myCaseloadClients, ...otherCaseloadClients]}
-                  recordingState={recordingState}
-                  searchQuery={search}
-                  setSearchQuery={setSearch}
-                  setSortBy={setSortBy}
-                  personType="client"
-                />
-              </View>
-              <ScrollView className="hidden flex-1 md:block">
-                <View className="mx-auto w-full max-w-[960px] flex-1">
-                  <PersonsHeaderContent
-                    personType="client"
-                    description="Search for clients across all caseloads"
-                    personsCount={
-                      [...myCaseloadClients, ...otherCaseloadClients].length
-                    }
+              {isMobileWidth && (
+                <View className="flex-1">
+                  <PersonsMobileList
+                    persons={[...myCaseloadClients, ...otherCaseloadClients]}
+                    recordingState={recordingState}
                     searchQuery={search}
                     setSearchQuery={setSearch}
                     setSortBy={setSortBy}
+                    personType="client"
                   />
-                  {myCaseloadClients.length > 0 && (
-                    <PersonsTable
-                      persons={myCaseloadClients}
-                      type="client"
-                      sectionTitle="My caseload"
-                    />
-                  )}
-                  {otherCaseloadClients.length > 0 && (
-                    <PersonsTable
-                      persons={otherCaseloadClients}
-                      type="client"
-                      sectionTitle="Results from other caseloads"
-                    />
-                  )}
-                  {[...myCaseloadClients, ...otherCaseloadClients].length ===
-                    0 && (
-                    <View className="flex h-[560px] w-full items-center justify-center">
-                      <PersonsPlaceholder
-                        personType="client"
-                        isSearchResultEmpty={!!search}
-                      />
-                    </View>
-                  )}
                 </View>
-              </ScrollView>
+              )}
+              {!isMobileWidth && (
+                <ScrollView className="flex-1">
+                  <View className="mx-auto w-full max-w-[960px] flex-1">
+                    <PersonsHeaderContent
+                      personType="client"
+                      description="Search for clients across all caseloads"
+                      personsCount={
+                        [...myCaseloadClients, ...otherCaseloadClients].length
+                      }
+                      searchQuery={search}
+                      setSearchQuery={setSearch}
+                      setSortBy={setSortBy}
+                    />
+                    {myCaseloadClients.length > 0 && (
+                      <PersonsTable
+                        persons={myCaseloadClients}
+                        type="client"
+                        sectionTitle="My caseload"
+                      />
+                    )}
+                    {otherCaseloadClients.length > 0 && (
+                      <PersonsTable
+                        persons={otherCaseloadClients}
+                        type="client"
+                        sectionTitle="Results from other caseloads"
+                      />
+                    )}
+                    {[...myCaseloadClients, ...otherCaseloadClients].length ===
+                      0 && (
+                      <View className="flex h-[560px] w-full items-center justify-center">
+                        <PersonsPlaceholder
+                          personType="client"
+                          isSearchResultEmpty={!!search}
+                        />
+                      </View>
+                    )}
+                  </View>
+                </ScrollView>
+              )}
             </View>
           ),
         })}

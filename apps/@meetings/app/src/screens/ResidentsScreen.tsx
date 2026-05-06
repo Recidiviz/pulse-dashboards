@@ -32,6 +32,7 @@ import PersonsPlaceholder from "../components/PersonsPlaceholder";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../features/recording";
 import { trpc } from "../shared/api";
+import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
 import { deserializeResident } from "../utils/format";
@@ -40,6 +41,7 @@ import { SortOption, sortUsers } from "../utils/sort";
 const ResidentsScreen = () => {
   useSetDocumentTitle("Residents - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
+  const isMobileWidth = useIsMobileWidth();
   const { status: recordingState } = useRecording();
 
   const isFocused = useIsFocused();
@@ -113,39 +115,46 @@ const ResidentsScreen = () => {
           ),
           web: (
             <View className="flex-1 pb-4">
-              <View className="flex-1 md:hidden">
-                <PersonsMobileList
-                  persons={filteredResidents}
-                  recordingState={recordingState}
-                  searchQuery={search}
-                  setSearchQuery={setSearch}
-                  setSortBy={setSortBy}
-                  personType="resident"
-                />
-              </View>
-              <ScrollView className="hidden flex-1 md:block">
-                <View className="mx-auto w-full max-w-[960px] flex-1">
-                  <PersonsHeaderContent
-                    personType="resident"
-                    description="All residents are displayed below"
-                    personsCount={filteredResidents.length}
+              {isMobileWidth && (
+                <View className="flex-1">
+                  <PersonsMobileList
+                    persons={filteredResidents}
+                    recordingState={recordingState}
                     searchQuery={search}
                     setSearchQuery={setSearch}
                     setSortBy={setSortBy}
+                    personType="resident"
                   />
-
-                  {filteredResidents.length === 0 ? (
-                    <View className="flex h-[560px] w-full items-center justify-center">
-                      <PersonsPlaceholder
-                        personType="resident"
-                        isSearchResultEmpty={!!search}
-                      />
-                    </View>
-                  ) : (
-                    <PersonsTable persons={filteredResidents} type="resident" />
-                  )}
                 </View>
-              </ScrollView>
+              )}
+              {!isMobileWidth && (
+                <ScrollView className="flex-1">
+                  <View className="mx-auto w-full max-w-[960px] flex-1">
+                    <PersonsHeaderContent
+                      personType="resident"
+                      description="All residents are displayed below"
+                      personsCount={filteredResidents.length}
+                      searchQuery={search}
+                      setSearchQuery={setSearch}
+                      setSortBy={setSortBy}
+                    />
+
+                    {filteredResidents.length === 0 ? (
+                      <View className="flex h-[560px] w-full items-center justify-center">
+                        <PersonsPlaceholder
+                          personType="resident"
+                          isSearchResultEmpty={!!search}
+                        />
+                      </View>
+                    ) : (
+                      <PersonsTable
+                        persons={filteredResidents}
+                        type="resident"
+                      />
+                    )}
+                  </View>
+                </ScrollView>
+              )}
             </View>
           ),
         })}
