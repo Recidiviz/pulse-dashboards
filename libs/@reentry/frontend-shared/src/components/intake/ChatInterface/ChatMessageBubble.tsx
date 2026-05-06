@@ -21,9 +21,10 @@ import type React from "react";
 import type { components } from "~@reentry/openapi-types";
 
 import { formatGuardrailDisplayNames } from "../../../configs/overrides/utils";
-import type {
-  HardStopGuardrailType,
-  SoftStopGuardrailType,
+import {
+  type HardStopGuardrailType,
+  isHardStopGuardrailType,
+  type SoftStopGuardrailType,
 } from "../../../websockets/eventTypes";
 import { CaseWorkerAvatar, ClientAvatar } from "./CustomAvatar";
 import { TTSButton } from "./TTSButton";
@@ -118,7 +119,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   // Disable TTS button for staff members viewing chat history
   const showTTSButton = !disableTTS && !isTyping && message?.content;
   const guardrailedBy = message?.guardrailed_by;
-  const isGuardrailed = !!guardrailedBy && guardrailedBy.length > 0;
+  const isGuardrailed = guardrailedBy?.some(isHardStopGuardrailType) ?? false;
 
   return (
     <div

@@ -58,6 +58,7 @@ def _get_openai_client() -> AsyncOpenAI:
 class SoftStopGuardrailType(StrEnum):
     PROMPT_INJECTION = "prompt_injection"
     CHAR_LIMIT = "char_limit"
+    LLMAJ_PROMPT_INJECTION = "llmaj:prompt-injection"
 
 
 class HardStopGuardrailType(StrEnum):
@@ -66,6 +67,8 @@ class HardStopGuardrailType(StrEnum):
     # openai_moderation variants: prefix encodes the API source, suffix encodes the category
     OPENAI_MODERATION_SELF_HARM = "openai_moderation:self-harm"
     OPENAI_MODERATION_HARM_TO_OTHERS = "openai_moderation:harm_to_others"
+    LLMAJ_SELF_HARM = "llmaj:self-harm"
+    LLMAJ_HARM_TO_OTHERS = "llmaj:harm-to-others"
 
 
 HARD_STOP_GUARDRAIL_TYPES: frozenset[HardStopGuardrailType] = frozenset(

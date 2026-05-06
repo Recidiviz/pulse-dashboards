@@ -28,8 +28,16 @@ logger = structlog.get_logger(__name__)
 
 _GUARDRAIL_ALERT_COPY: dict[str, tuple[str, str]] = {
     "crisis": ("🚨", "Crisis detected"),
-    "openai_moderation": ("🚨", "Crisis detected (OpenAI Moderation)"),
+    "harm_to_others": ("🚨", "Threat to others detected"),
+    "openai_moderation:self-harm": ("🚨", "Crisis detected (OpenAI Moderation)"),
+    "openai_moderation:harm_to_others": (
+        "🚨",
+        "Threat to others detected (OpenAI Moderation)",
+    ),
     "prompt_injection": ("⚠️", "Prompt injection detected"),
+    "llmaj:self-harm": ("🚨", "Crisis detected (LLMAJ)"),
+    "llmaj:harm-to-others": ("🚨", "Threat to others detected (LLMAJ)"),
+    "llmaj:prompt-injection": ("⚠️", "Prompt injection detected (LLMAJ)"),
 }
 
 

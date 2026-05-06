@@ -7,5 +7,5 @@ FEATURE_FLAGS: dict[str, list[str]] = {
     "CLIENT_DELETION": ["pytest", "demo", "dev", "pilot", "development"],
     # Hard-stop guardrails: disconnect the socket and show the GuardrailModal.
     # Disabled everywhere until guardrail behavior is validated in staging.
-    "GUARDRAILS_HARD_STOP": [],
+    "GUARDRAILS_HARD_STOP": ["dev"],
 }

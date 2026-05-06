@@ -163,6 +163,7 @@ type ServerEvent = (
     | SectionChangeEvent
     | TokenExpiredEvent
     | GuardrailTriggeredEvent
+    | ForceDisconnectEvent
 )
 
 ## Front-end Events

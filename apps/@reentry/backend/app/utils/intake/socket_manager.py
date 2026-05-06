@@ -143,15 +143,17 @@ class SocketIOManager:
                     "sid": sid,
                     "headers": headers,
                     "auth_present": auth is not None,
-                    "auth_token_present": bool(auth and auth.get("auth_token"))
-                    if auth
-                    else False,
-                    "auth_token_length": len(auth.get("auth_token", ""))
-                    if auth and auth.get("auth_token")
-                    else 0,
-                    "token_from_url_present": bool(auth and auth.get("token_from_url"))
-                    if auth
-                    else False,
+                    "auth_token_present": (
+                        bool(auth and auth.get("auth_token")) if auth else False
+                    ),
+                    "auth_token_length": (
+                        len(auth.get("auth_token", ""))
+                        if auth and auth.get("auth_token")
+                        else 0
+                    ),
+                    "token_from_url_present": (
+                        bool(auth and auth.get("token_from_url")) if auth else False
+                    ),
                     "remote_addr": environ.get("REMOTE_ADDR"),
                     "user_agent": environ.get("HTTP_USER_AGENT"),
                     "origin": environ.get("HTTP_ORIGIN"),
@@ -296,38 +298,60 @@ class SocketIOManager:
             )
             return False
 
+    def _register_response_future(self, client_pseudo_id: str) -> asyncio.Future:
+        if (
+            client_pseudo_id in self.pending_responses
+            and not self.pending_responses[client_pseudo_id].done()
+        ):
+            self.pending_responses[client_pseudo_id].cancel()
+        future = asyncio.get_running_loop().create_future()
+        self.pending_responses[client_pseudo_id] = future
+        return future
+
+    async def wait_for_next_response(self, client_pseudo_id: str, timeout: int = 1800):
+        """
+        Register a response slot and wait — without re-sending any message.
+        Use this after a soft-stop guardrail, where the AI question is already
+        visible in the chat and resending it would create a duplicate.
+        """
+        try:
+            logger.info(f"Waiting for response from client {client_pseudo_id}")
+            future = self._register_response_future(client_pseudo_id)
+            response = await asyncio.wait_for(future, timeout)
+            logger.info(f"Received response from client {client_pseudo_id}")
+            return response
+        except asyncio.TimeoutError:
+            logger.warning(
+                f"Timeout waiting for response from client {client_pseudo_id}"
+            )
+            await self.handle_disconnect_client(client_pseudo_id)
+            await self.client_connection_manager.disconnect_client_pseudo_id(
+                client_pseudo_id
+            )
+        except asyncio.CancelledError:
+            logger.info(
+                f"Wait for user response cancelled for client {client_pseudo_id}"
+            )
+            raise
+        except Exception as e:
+            traceback.print_exc()
+            logger.error(f"Error waiting for user response: {e}")
+        finally:
+            if client_pseudo_id in self.pending_responses:
+                if not self.pending_responses[client_pseudo_id].done():
+                    self.pending_responses[client_pseudo_id].cancel()
+                del self.pending_responses[client_pseudo_id]
+
     async def wait_for_user_response(
         self, client_pseudo_id: str, message: IntakeMessage, timeout: int = 1800
     ):
         """
-        Wait for a user response with timeout.
-
-        Args:
-            client_pseudo_id: The client ID
-            message: The message to send to the client
-            timeout: Timeout in seconds (default: 30 minutes)
-
-        Returns:
-            The user's response
-
-        Raises:
-            TimeoutError: If the user doesn't respond within the timeout
+        Send an AI message to the client, then register a response slot and wait.
+        Use this for normal conversation turns where the question needs to be delivered.
         """
         try:
-            # Clear any existing future for this client to prevent leaks
-            if (
-                client_pseudo_id in self.pending_responses
-                and not self.pending_responses[client_pseudo_id].done()
-            ):
-                self.pending_responses[client_pseudo_id].cancel()
-
-            response_future = asyncio.get_running_loop().create_future()
-
-            # Track the future
-            self.pending_responses[client_pseudo_id] = response_future
-
-            # Log that we're waiting for a response
             logger.info(f"Waiting for response from client {client_pseudo_id}")
+            future = self._register_response_future(client_pseudo_id)
 
             await self.send_event_client_pseudo_id(
                 client_pseudo_id,
@@ -339,7 +363,7 @@ class SocketIOManager:
             )
 
             # Wait for response with timeout
-            response = await asyncio.wait_for(response_future, timeout)
+            response = await asyncio.wait_for(future, timeout)
 
             logger.info(f"Received response from client {client_pseudo_id}")
             return response
@@ -399,6 +423,7 @@ class SocketIOManager:
             session=client_context,
             db_manager=self.db_manager,
             wait_for_user_response=self.wait_for_user_response,
+            wait_for_next_response=self.wait_for_next_response,
             send_message=self.send_event_client_pseudo_id,
             model=model,
         )
@@ -777,16 +802,31 @@ class SocketIOManager:
             logger.error(f"Error handling client response: {e}")
 
     async def send_event_sid(self, sid: str, event: ServerEvent):
-        # Use model_dump with mode="json" to ensure proper serialization
-        content_json = event.content.model_dump(mode="json") if event.content else None
-        await self.sio.emit(event.type, content_json, room=sid)
+        # Use model_dump with mode="json" to ensure proper serialization (UUIDs, datetimes, etc).
+        # Events with a .content field emit just the content payload; events without one (e.g.
+        # ForceDisconnectEvent) emit the full event shape directly.
+        content = getattr(event, "content", None)
+        data = (
+            content.model_dump(mode="json")
+            if content is not None
+            else event.model_dump(mode="json")
+        )
+        await self.sio.emit(event.type, data, room=sid)
 
     async def send_event_client_pseudo_id(
         self, client_pseudo_id: str, event: ServerEvent
     ):
-        # Use model_dump with mode="json" to ensure proper serialization
-        content_json = event.content.model_dump(mode="json") if event.content else None
-        await self.sio.emit(event.type, content_json, room=f"client_{client_pseudo_id}")
+        content = getattr(event, "content", None)
+        data = (
+            content.model_dump(mode="json")
+            if content is not None
+            else event.model_dump(mode="json")
+        )
+        # Prefer emitting directly to the socket ID (matches L1/L2 behavior and avoids
+        # silent drops when room membership is stale). Fall back to room if SID not found.
+        sid = await self.client_connection_manager.get_client_sid(client_pseudo_id)
+        room = sid if sid else f"client_{client_pseudo_id}"
+        await self.sio.emit(event.type, data, room=room)
 
     async def handle_ping(self, sid: str, data: Dict) -> None:
         """

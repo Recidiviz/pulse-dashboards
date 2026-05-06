@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     EVAL_MODEL_PROVIDER: str = "openai"
     EVAL_MODEL_NAME: str = "o4-mini"
     EVAL_MODEL_VERSION: str = ""
+
+    # LLMAJ (LLM-as-Judge) safety classifier — runs on every client message in parallel with
+    # IsSectionComplete. Fast, low-cost model preferred to alleviate latency impact.
+    LLMAJ_SAFETY_MODEL_NAME: str = "gpt-4o-mini"
+
     # https://platform.openai.com/docs/models
     # https://docs.anthropic.com/en/docs/about-claude/models
     GOOGLE_GENAI_API_KEY: str | None = None

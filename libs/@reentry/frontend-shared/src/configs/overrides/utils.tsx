@@ -103,9 +103,12 @@ export function buildGuardrailCopy(
   return {
     crisis,
     "openai_moderation:self-harm": crisis,
+    "llmaj:self-harm": crisis,
     harm_to_others: harmToOthers,
     "openai_moderation:harm_to_others": harmToOthers,
+    "llmaj:harm-to-others": harmToOthers,
     prompt_injection: promptInjection,
+    "llmaj:prompt-injection": promptInjection,
   };
 }
 
@@ -185,21 +188,33 @@ export function getGuardrailCopy(
     const stateCopy = getIntakeTenantConfig(stateCode).guardrails?.[type];
     if (stateCopy) return stateCopy;
   }
-  if (type === "prompt_injection") return FALLBACK_SOFT_STOP;
-  if (type === "crisis" || type === "openai_moderation:self-harm")
+  if (type === "prompt_injection" || type === "llmaj:prompt-injection")
+    return FALLBACK_SOFT_STOP;
+  if (
+    type === "crisis" ||
+    type === "openai_moderation:self-harm" ||
+    type === "llmaj:self-harm"
+  )
     return FALLBACK_CRISIS;
   return FALLBACK_HARM_TO_OTHERS;
 }
+
+const DISPLAY_CRISIS = "Mental health crisis / intent to self-harm";
+const DISPLAY_HARM_TO_OTHERS = "Intent to harm others";
+const DISPLAY_PROMPT_INJECTION = "Prompt injection / adversarial use";
 
 export const GUARDRAIL_DISPLAY_NAMES: Record<
   HardStopGuardrailType | SoftStopGuardrailType,
   string
 > = {
-  crisis: "Mental health crisis / intent to self-harm",
-  harm_to_others: "Intent to harm others",
-  "openai_moderation:self-harm": "Mental health crisis / intent to self-harm",
-  "openai_moderation:harm_to_others": "Intent to harm others",
-  prompt_injection: "Prompt injection / adversarial use",
+  crisis: DISPLAY_CRISIS,
+  harm_to_others: DISPLAY_HARM_TO_OTHERS,
+  "openai_moderation:self-harm": DISPLAY_CRISIS,
+  "openai_moderation:harm_to_others": DISPLAY_HARM_TO_OTHERS,
+  "llmaj:self-harm": DISPLAY_CRISIS,
+  "llmaj:harm-to-others": DISPLAY_HARM_TO_OTHERS,
+  prompt_injection: DISPLAY_PROMPT_INJECTION,
+  "llmaj:prompt-injection": DISPLAY_PROMPT_INJECTION,
 };
 
 export function getGuardrailDisplayName(

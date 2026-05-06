@@ -40,6 +40,7 @@ import {
   AIDisclosureType,
   formatGuardrailDisplayNames,
   isGuardrailType,
+  isHardStopGuardrailType,
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
@@ -178,10 +179,11 @@ const IntakeManagementPage = () => {
     const isClient = message.from_role === "client";
     const senderLabel = isClient ? "Client" : "Chatbot";
     const guardrailedBy = message.guardrailed_by;
-    const isGuardrailed = !!guardrailedBy && guardrailedBy.length > 0;
+    const hardStopFlags = guardrailedBy?.filter(isHardStopGuardrailType);
+    const isHardStop = !!hardStopFlags && hardStopFlags.length > 0;
 
     const contentDiv = document.createElement("div");
-    contentDiv.className = `pl-[20px] ${isGuardrailed ? "text-red-700" : "text-gray-900"}`;
+    contentDiv.className = `pl-[20px] ${isHardStop ? "text-red-700" : "text-gray-900"}`;
 
     const senderSpan = document.createElement("span");
     senderSpan.className = "font-bold";
@@ -190,10 +192,10 @@ const IntakeManagementPage = () => {
     contentDiv.appendChild(senderSpan);
     contentDiv.appendChild(document.createTextNode(message.content ?? ""));
 
-    if (isGuardrailed) {
+    if (isHardStop) {
       const flagSpan = document.createElement("span");
       flagSpan.className = "ml-2 text-xs font-medium text-red-600";
-      flagSpan.textContent = `⚠️ Flagged: ${formatGuardrailDisplayNames(guardrailedBy.filter(isGuardrailType))}`;
+      flagSpan.textContent = `⚠️ Flagged: ${formatGuardrailDisplayNames(hardStopFlags.filter(isGuardrailType))}`;
       contentDiv.appendChild(flagSpan);
     }
 

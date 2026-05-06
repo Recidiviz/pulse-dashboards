@@ -53,11 +53,16 @@ export const HARD_STOP_GUARDRAIL_TYPES = [
   "harm_to_others",
   "openai_moderation:self-harm",
   "openai_moderation:harm_to_others",
+  "llmaj:self-harm",
+  "llmaj:harm-to-others",
 ] as const;
 export type HardStopGuardrailType = (typeof HARD_STOP_GUARDRAIL_TYPES)[number];
 
 /** Guardrail types that trigger a soft stop (modal shown, user can continue) */
-export const SOFT_STOP_GUARDRAIL_TYPES = ["prompt_injection"] as const;
+export const SOFT_STOP_GUARDRAIL_TYPES = [
+  "prompt_injection",
+  "llmaj:prompt-injection",
+] as const;
 export type SoftStopGuardrailType = (typeof SOFT_STOP_GUARDRAIL_TYPES)[number];
 
 export type GuardrailType =
@@ -65,10 +70,16 @@ export type GuardrailType =
   | SoftStopGuardrailType
   | "char_limit";
 
+export function isHardStopGuardrailType(
+  type: string,
+): type is HardStopGuardrailType {
+  return HARD_STOP_GUARDRAIL_TYPES.some((t) => t === type);
+}
+
 export function isHardStopGuardrail(
   reason: ForceDisconnectReason | undefined,
 ): reason is HardStopGuardrailType {
-  return HARD_STOP_GUARDRAIL_TYPES.some((t) => t === reason);
+  return !!reason && isHardStopGuardrailType(reason);
 }
 
 export function isSoftStopGuardrail(

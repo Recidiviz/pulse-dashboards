@@ -442,6 +442,7 @@ class Intake(BaseModel, table=True):
                 and_(
                     IntakeMessage.intake_id == self.id,
                     IntakeMessage.section == self.current_section,
+                    IntakeMessage.visible_filter(),
                 )
             )
             .order_by(IntakeMessage.created_at)

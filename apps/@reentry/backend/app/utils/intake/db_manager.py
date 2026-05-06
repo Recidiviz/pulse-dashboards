@@ -106,6 +106,44 @@ class DatabaseManager:
             traceback.print_exc()
             return None
 
+    async def get_latest_client_message(
+        self, intake_id: UUID
+    ) -> Optional[IntakeMessage]:
+        try:
+            async with await self._get_session() as session:
+                result = await session.execute(
+                    select(IntakeMessage)
+                    .where(
+                        and_(
+                            IntakeMessage.intake_id == intake_id,
+                            IntakeMessage.from_role == IntakeMessageRole.CLIENT,
+                        )
+                    )
+                    .order_by(IntakeMessage.created_at.desc())
+                    .limit(1)
+                )
+                return result.scalar_one_or_none()
+        except Exception as e:
+            logger.error(f"Error getting latest client message: {e}")
+            traceback.print_exc()
+            return None
+
+    async def update_message_guardrail(
+        self, message_id: UUID, guardrailed_by: list[str]
+    ) -> None:
+        try:
+            async with await self._get_session() as session:
+                result = await session.execute(
+                    select(IntakeMessage).where(IntakeMessage.id == message_id)
+                )
+                message = result.scalar_one_or_none()
+                if message:
+                    message.guardrailed_by = guardrailed_by
+                    await session.commit()
+        except Exception as e:
+            logger.error(f"Error updating message guardrail: {e}")
+            traceback.print_exc()
+
     async def store_message(
         self,
         intake_id: UUID,

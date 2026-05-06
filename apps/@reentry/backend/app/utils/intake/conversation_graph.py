@@ -1,3 +1,4 @@
+import asyncio
 import traceback
 from datetime import datetime
 from typing import Any, Callable, Coroutine, Dict, Optional
@@ -5,6 +6,7 @@ from typing import Any, Callable, Coroutine, Dict, Optional
 import structlog
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.messages.human import HumanMessage
+from langchain_openai import ChatOpenAI
 from langchain_openai.chat_models.base import (
     OpenAIRefusalError as LangChainRefusalError,
 )
@@ -13,7 +15,7 @@ from langgraph.graph import END, StateGraph
 from langgraph.types import Command
 from openai import ContentFilterFinishReasonError as OpenAIRefusalError
 
-from app.core.config import tracer
+from app.core.config import settings, tracer
 from app.core.data_config.assessment_configs.assessment_config import (
     IntakeConfigConversation,
 )
@@ -28,9 +30,16 @@ from app.models.intake import (
 from app.routes.shared_models import IntakeMessageResponse
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.intake import db_manager
+from app.utils.intake.guardrails import (
+    HARD_STOP_GUARDRAIL_TYPES,
+    HardStopGuardrailType,
+    SoftStopGuardrailType,
+)
 from app.utils.intake.prompts import (
     IsSectionComplete,
+    SafetyCheckResult,
     generate_closing_remarks_prompt,
+    generate_llmaj_prompt,
     generate_opening_remarks_prompt,
     generate_question_prompt,
     get_system_message_prompt,
@@ -41,6 +50,8 @@ from app.utils.intake.schemas import (
     ConfigSchema,
     ConversationState,
     ErrorInfo,
+    ForceDisconnectEvent,
+    GuardrailTriggeredEvent,
     ServerEvent,
 )
 from app.utils.intake.utils import (
@@ -48,6 +59,7 @@ from app.utils.intake.utils import (
 )
 from app.utils.langsmith_utils import create_langsmith_metadata, create_langsmith_tags
 from app.utils.llm_retry_config import INTAKE_ERRORS_TO_RETRY_ON
+from app.utils.slack import send_guardrail_alert
 
 _REFUSAL_ERRORS = (OpenAIRefusalError, LangChainRefusalError)
 _REFUSAL_FALLBACK = (
@@ -56,6 +68,11 @@ _REFUSAL_FALLBACK = (
 )
 
 logger = structlog.get_logger(__name__)
+
+
+def _on_slack_alert_done(task: asyncio.Task) -> None:
+    if not task.cancelled() and (exc := task.exception()):
+        logger.error("Slack guardrail alert failed", exc_info=exc)
 
 
 class IntakeConversationGraph:
@@ -72,6 +89,7 @@ class IntakeConversationGraph:
         wait_for_user_response: Callable[
             [str, IntakeMessage], Coroutine[Any, Any, str]
         ],
+        wait_for_next_response: Callable[[str], Coroutine[Any, Any, str]],
         send_message: Callable[[str, ServerEvent], Coroutine[Any, Any, str]],
         model,
     ) -> None:
@@ -82,11 +100,18 @@ class IntakeConversationGraph:
 
         self.memory = MemorySaver()
         self.model = model.bind(timeout=40)
+        self.llmaj_safety_model = ChatOpenAI(
+            model=settings.LLMAJ_SAFETY_MODEL_NAME,
+            temperature=0,
+            api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_BASE_URL or None,
+        )
         self.session = session
         self.db_manager = db_manager
         self.send_message = send_message
         self.log_error = log_error
         self.wait_for_user_response = wait_for_user_response
+        self.wait_for_next_response = wait_for_next_response
 
         # Create semantic thread_id for LangSmith legibility
         client_id_short = (
@@ -128,11 +153,17 @@ class IntakeConversationGraph:
 
             # Store intake_id to pass to db_manager methods
             self.intake_id = intake.id
+            self.state_code = (
+                intake.assessment_config.state_code if intake.assessment_config else ""
+            )
 
             self.assessment_config = await self.db_manager.get_conversation_config(
                 intake.assessment_config_id
             )
-            print(self.assessment_config, intake.assessment_config_id)
+            logger.debug(
+                "Loaded assessment config",
+                assessment_config_id=str(intake.assessment_config_id),
+            )
 
             self.section_data = {}
             if intake.client_intake_sections:
@@ -190,10 +221,12 @@ class IntakeConversationGraph:
         self.workflow.add_edge("intake_chat_introduction", "intake_evaluate_section")
         self.workflow.add_conditional_edges(
             "intake_section_complete",
-            lambda state: "intake_closing_chat"
-            if state["current_section"] == COMPLETION_SECTION
-            or state["current_section"] is None
-            else "intake_evaluate_section",
+            lambda state: (
+                "intake_closing_chat"
+                if state["current_section"] == COMPLETION_SECTION
+                or state["current_section"] is None
+                else "intake_evaluate_section"
+            ),
         )
         self.workflow.add_edge("intake_closing_chat", END)
 
@@ -315,6 +348,126 @@ class IntakeConversationGraph:
             self.log_error(error_info, e)
             raise e
 
+    async def _llmaj_check(self, messages: list[AnyMessage]) -> SafetyCheckResult:
+        prompt = generate_llmaj_prompt()
+        client_pseudo_id = self.session.client_pseudo_id
+        try:
+            result = await self.llmaj_safety_model.with_structured_output(
+                SafetyCheckResult
+            ).ainvoke(messages + [prompt], self.config)
+            logger.debug(
+                "LLMAJ result",
+                result=result.model_dump(),
+                client_pseudo_id=client_pseudo_id,
+            )
+            if triggered := result.triggered_guardrails():
+                logger.warning(
+                    "LLMAJ flagged message",
+                    triggered=triggered,
+                    client_pseudo_id=client_pseudo_id,
+                )
+            return result
+        except Exception:
+            logger.exception(
+                "LLMAJ check failed — failing open", client_pseudo_id=client_pseudo_id
+            )
+            return SafetyCheckResult.empty()
+
+    async def _handle_llmaj_hard_stop(
+        self, triggered: list[HardStopGuardrailType]
+    ) -> None:
+        if not triggered:
+            return
+        client_pseudo_id = self.session.client_pseudo_id
+        try:
+            latest_message = await self.db_manager.get_latest_client_message(
+                self.intake_id
+            )
+            if latest_message:
+                await self.db_manager.update_message_guardrail(
+                    message_id=latest_message.id,
+                    guardrailed_by=[str(g) for g in triggered],
+                )
+        except Exception:
+            logger.exception(
+                "Failed to update guardrailed_by on LLMAJ hard stop — continuing with disconnect",
+                client_pseudo_id=client_pseudo_id,
+                triggered=triggered,
+            )
+
+        try:
+            await self.db_manager.lock_intake(
+                self.intake_id, reason=", ".join(str(t) for t in triggered)
+            )
+        except Exception:
+            logger.exception(
+                "Failed to lock intake on LLMAJ hard stop — disconnect will still fire",
+                client_pseudo_id=client_pseudo_id,
+                intake_id=str(self.intake_id),
+                triggered=triggered,
+            )
+
+        await self.send_message(
+            client_pseudo_id,
+            ForceDisconnectEvent(reason=triggered[0]),
+        )
+        for guardrail_type in triggered:
+            task = asyncio.create_task(
+                send_guardrail_alert(
+                    guardrail_type=str(guardrail_type),
+                    client_pseudo_id=client_pseudo_id,
+                    intake_id=str(self.intake_id),
+                    state_code=self.state_code,
+                )
+            )
+            task.add_done_callback(_on_slack_alert_done)
+
+    async def _handle_llmaj_soft_stop(
+        self,
+        state: ConversationState,
+        triggered: list[SoftStopGuardrailType],
+    ) -> str | None:
+        client_pseudo_id = self.session.client_pseudo_id
+        try:
+            latest_message = await self.db_manager.get_latest_client_message(
+                self.intake_id
+            )
+            if latest_message:
+                await self.db_manager.update_message_guardrail(
+                    message_id=latest_message.id,
+                    guardrailed_by=[str(t) for t in triggered],
+                )
+        except Exception:
+            logger.exception(
+                "Failed to update guardrailed_by on LLMAJ soft stop — continuing with modal",
+                client_pseudo_id=client_pseudo_id,
+                triggered=triggered,
+            )
+
+        state["messages"] = state["messages"][:-1]
+
+        await self.send_message(
+            self.session.client_pseudo_id,
+            GuardrailTriggeredEvent(guardrails=[str(t) for t in triggered]),
+        )
+        for guardrail_type in triggered:
+            task = asyncio.create_task(
+                send_guardrail_alert(
+                    guardrail_type=str(guardrail_type),
+                    client_pseudo_id=self.session.client_pseudo_id,
+                    intake_id=str(self.intake_id),
+                    state_code=self.state_code,
+                )
+            )
+            task.add_done_callback(_on_slack_alert_done)
+
+        # Register a response slot without re-sending the AI question —
+        # the question is already visible in chat. Without a registered slot,
+        # the next user message would hit the "unexpected message" path in
+        # handle_client_response, tear down this graph, and spawn a new one,
+        # producing a duplicate AI response.
+        return await self.wait_for_next_response(self.session.client_pseudo_id)
+
     async def _evaluate_section(self, state: ConversationState) -> Command:
         logger.info("🟢 ENTERING NODE: _evaluate_section")
         """
@@ -348,11 +501,49 @@ class IntakeConversationGraph:
                 self.assessment_config,
             )
 
-            # Evaluate section completion
-            logger.info("🔄 EVALUATING SECTION: IsSectionComplete")
-            section_response = await self._call_model_with_refusal_retry(
-                state["messages"] + [section_prompt], IsSectionComplete
+            # Evaluate section completion and run LLMAJ safety check in parallel.
+            # return_exceptions=True ensures both tasks always complete: if IsSectionComplete
+            # raises a refusal, we still get the LLMAJ result and can route on it first.
+            logger.info("🔄 EVALUATING SECTION: IsSectionComplete + LLMAJ")
+            llmaj_result, section_result = await asyncio.gather(
+                self._llmaj_check(state["messages"]),
+                self._call_model_with_refusal_retry(
+                    state["messages"] + [section_prompt], IsSectionComplete
+                ),
+                return_exceptions=True,
             )
+
+            # LLMAJ check always runs — route on it before handling IsSectionComplete errors
+            if isinstance(llmaj_result, Exception):
+                # Use error level here: if IsSectionComplete also failed (below), the
+                # section exception is what propagates to the caller — this LLMAJ failure
+                # would otherwise be invisible in the post-mortem log.
+                logger.error("LLMAJ check raised unexpectedly", exc_info=llmaj_result)
+                safety_result = SafetyCheckResult.empty()
+            else:
+                safety_result = llmaj_result
+
+            triggered = safety_result.triggered_guardrails()
+            if triggered:
+                hard_triggered = [
+                    t for t in triggered if t in HARD_STOP_GUARDRAIL_TYPES
+                ]
+                if hard_triggered:
+                    await self._handle_llmaj_hard_stop(hard_triggered)
+                    return Command(goto=END)
+                else:
+                    client_response = await self._handle_llmaj_soft_stop(
+                        state, triggered
+                    )
+                    if not client_response:
+                        return Command(goto=END)
+                    state["messages"].append(HumanMessage(client_response))
+                    return Command(update=state, goto="intake_evaluate_section")
+
+            # Re-raise IsSectionComplete failures after LLMAJ routing is done
+            if isinstance(section_result, Exception):
+                raise section_result
+            section_response = section_result
 
             logger.info(
                 f"✅ IsSectionComplete RESPONSE: {section_response.section_complete}"
@@ -410,12 +601,6 @@ class IntakeConversationGraph:
                 content=_REFUSAL_FALLBACK,
             )
             if fallback_message:
-                await self.send_message(
-                    self.session.client_pseudo_id,
-                    AIMessageEvent(
-                        content=IntakeMessageResponse(**fallback_message.model_dump())
-                    ),
-                )
                 state["messages"].append(AIMessage(_REFUSAL_FALLBACK))
 
                 client_response = await self.wait_for_user_response(
@@ -704,12 +889,18 @@ class IntakeConversationGraph:
         )
         system_message = get_system_message_prompt(self.assessment_config)
 
-        # Format messages as LangChain message objects
+        # Format messages as LangChain message objects, excluding any that were
+        # guardrailed (e.g. soft-stop injection messages). Without this filter,
+        # old injection messages reloaded from DB would re-trigger LLMAJ on every
+        # subsequent turn in a new session.
         formatted_messages = [
-            AIMessage(message.content)
-            if message.from_role == IntakeMessageRole.CASEWORKER
-            else HumanMessage(message.content)
+            (
+                AIMessage(message.content)
+                if message.from_role == IntakeMessageRole.CASEWORKER
+                else HumanMessage(message.content)
+            )
             for message in messages
+            if not message.guardrailed_by
         ]
 
         # Create the initial state
