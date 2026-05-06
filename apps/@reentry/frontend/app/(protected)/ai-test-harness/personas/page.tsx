@@ -25,7 +25,7 @@ import { $api } from "~@reentry/frontend/api";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 
 import { PersonaFormModal } from "./components/PersonaFormModal";
 import { PersonaTable } from "./components/PersonaTable";
@@ -69,7 +69,7 @@ const AIPersonaLibraryPage = () => {
       },
     },
     {
-      enabled: isInternalUser(userEmail),
+      enabled: isActiveRecidivizUser(userEmail),
     },
   );
 
@@ -87,7 +87,7 @@ const AIPersonaLibraryPage = () => {
     );
   }
 
-  if (!isInternalUser(userEmail)) {
+  if (!isActiveRecidivizUser(userEmail)) {
     return (
       <Box
         display="flex"

@@ -25,13 +25,16 @@ import { useCallback, useState } from "react";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { BACKEND_URL } from "~@reentry/frontend/constants";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { ValidationStatus } from "../components/ValidationStatus";
 import { configHeaders } from "../utils/configFetch";
 
-const getCharCountColor = (currentLength: number, maxLength: number): string => {
+const getCharCountColor = (
+  currentLength: number,
+  maxLength: number,
+): string => {
   if (currentLength > maxLength) return "text-red-500";
   if (currentLength > maxLength - 50) return "text-amber-500";
   return "text-gray-400";
@@ -58,7 +61,7 @@ const ImportConfigPage = () => {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [configType, setConfigType] = useState<"assessment" | "output">(
-    "assessment"
+    "assessment",
   );
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
@@ -86,7 +89,7 @@ const ImportConfigPage = () => {
   }
 
   // Check internal user access (only after auth is loaded)
-  if (!isInternalUser(userEmail)) {
+  if (!isActiveRecidivizUser(userEmail)) {
     return (
       <Box
         display="flex"
@@ -221,7 +224,7 @@ const ImportConfigPage = () => {
       router.push(`/config/${result.id}${query}`);
     } catch (err) {
       showErrorToast(
-        err instanceof Error ? err.message : "Failed to import config"
+        err instanceof Error ? err.message : "Failed to import config",
       );
     } finally {
       setIsImporting(false);
@@ -421,7 +424,7 @@ const ImportConfigPage = () => {
                       <p className="font-medium capitalize">
                         {validationResult.parsed_config.output_type.replace(
                           "_",
-                          " "
+                          " ",
                         )}
                       </p>
                     </div>
@@ -437,22 +440,26 @@ const ImportConfigPage = () => {
                   Change Note <span className="text-red-500">*</span>
                 </h3>
                 <p className="text-xs text-gray-500 mb-3">
-                  Describe the purpose of this import (e.g., migrating from staging, updating config for new requirements)
+                  Describe the purpose of this import (e.g., migrating from
+                  staging, updating config for new requirements)
                 </p>
                 <textarea
                   value={changeNote}
                   onChange={(e) => setChangeNote(e.target.value)}
                   placeholder="Describe the purpose of this import..."
                   className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#003331] focus:border-transparent resize-none ${
-                    changeNote.length > MAX_CHARS ? "border-red-500" : "border-gray-300"
+                    changeNote.length > MAX_CHARS
+                      ? "border-red-500"
+                      : "border-gray-300"
                   }`}
                   rows={3}
                   maxLength={MAX_CHARS + 50}
                 />
                 <div
-                  className={`flex justify-end text-xs mt-1 ${
-                    getCharCountColor(changeNote.length, MAX_CHARS)
-                  }`}
+                  className={`flex justify-end text-xs mt-1 ${getCharCountColor(
+                    changeNote.length,
+                    MAX_CHARS,
+                  )}`}
                 >
                   {MAX_CHARS - changeNote.length} characters remaining
                 </div>
@@ -519,8 +526,14 @@ const ImportConfigPage = () => {
                 </button>
                 <button
                   onClick={handleImport}
-                  disabled={isImporting || !changeNote.trim() || changeNote.length > MAX_CHARS}
-                  title={!changeNote.trim() ? "Change note is required" : undefined}
+                  disabled={
+                    isImporting ||
+                    !changeNote.trim() ||
+                    changeNote.length > MAX_CHARS
+                  }
+                  title={
+                    !changeNote.trim() ? "Change note is required" : undefined
+                  }
                   className="px-6 py-2 bg-[#003331] text-white rounded-full hover:bg-gray-950 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isImporting ? "Importing..." : "Import Config"}

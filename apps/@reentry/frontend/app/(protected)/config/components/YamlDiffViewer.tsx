@@ -22,7 +22,7 @@ import ReactDiffViewer, { DiffMethod } from "react-diff-viewer-continued";
 
 import { $api } from "~@reentry/frontend/api";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 
 interface ConfigOption {
   id: string;
@@ -66,8 +66,8 @@ export const YamlDiffViewer = ({
         },
       },
       {
-        enabled: isInternalUser(userEmail) && !isOutputConfig,
-      }
+        enabled: isActiveRecidivizUser(userEmail) && !isOutputConfig,
+      },
     );
 
   // Fetch output configs using openapi-react-query
@@ -81,8 +81,8 @@ export const YamlDiffViewer = ({
         },
       },
       {
-        enabled: isInternalUser(userEmail) && isOutputConfig,
-      }
+        enabled: isActiveRecidivizUser(userEmail) && isOutputConfig,
+      },
     );
 
   // Fetch selected assessment config detail
@@ -96,8 +96,11 @@ export const YamlDiffViewer = ({
         },
       },
       {
-        enabled: isInternalUser(userEmail) && !isOutputConfig && !!selectedConfigId,
-      }
+        enabled:
+          isActiveRecidivizUser(userEmail) &&
+          !isOutputConfig &&
+          !!selectedConfigId,
+      },
     );
 
   // Fetch selected output config detail
@@ -111,15 +114,26 @@ export const YamlDiffViewer = ({
         },
       },
       {
-        enabled: isInternalUser(userEmail) && isOutputConfig && !!selectedConfigId,
-      }
+        enabled:
+          isActiveRecidivizUser(userEmail) &&
+          isOutputConfig &&
+          !!selectedConfigId,
+      },
     );
 
   // Unified loading and data states
-  const isLoadingConfigs = isOutputConfig ? isLoadingOutputConfigs : isLoadingAssessmentConfigs;
-  const isLoadingYaml = isOutputConfig ? isLoadingOutputYaml : isLoadingAssessmentYaml;
-  const configsData = isOutputConfig ? outputConfigsData : assessmentConfigsData;
-  const selectedConfigData = isOutputConfig ? selectedOutputConfig : selectedAssessmentConfig;
+  const isLoadingConfigs = isOutputConfig
+    ? isLoadingOutputConfigs
+    : isLoadingAssessmentConfigs;
+  const isLoadingYaml = isOutputConfig
+    ? isLoadingOutputYaml
+    : isLoadingAssessmentYaml;
+  const configsData = isOutputConfig
+    ? outputConfigsData
+    : assessmentConfigsData;
+  const selectedConfigData = isOutputConfig
+    ? selectedOutputConfig
+    : selectedAssessmentConfig;
 
   // Filter out current config from available configs
   const availableConfigs: ConfigOption[] = (configsData?.items || [])
@@ -141,7 +155,7 @@ export const YamlDiffViewer = ({
       const config = availableConfigs.find((c) => c.id === selectedConfigId);
       if (config) {
         setCompareConfigName(
-          `${config.display_name} v${config.version} (${config.status})`
+          `${config.display_name} v${config.version} (${config.status})`,
         );
       }
     } else {
@@ -161,7 +175,7 @@ export const YamlDiffViewer = ({
       acc[key].push(config);
       return acc;
     },
-    {} as Record<string, ConfigOption[]>
+    {} as Record<string, ConfigOption[]>,
   );
 
   return (

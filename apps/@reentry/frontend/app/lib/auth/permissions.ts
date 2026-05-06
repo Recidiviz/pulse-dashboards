@@ -17,36 +17,27 @@
 
 import type { UserAppMetadata } from "./types";
 
+const RECIDIVIZ_DOMAIN = "@recidiviz.org";
+
 export function hasCPAPermission(
   userAppMetadata: UserAppMetadata | undefined,
 ): boolean {
   return userAppMetadata?.routes?.["cpa"] === true;
 }
 
-// Internal domains for access control
-// In production/staging, only Recidiviz domains are allowed
-// In dev/demo/local, Monadical is also allowed for development purposes
-const RECIDIVIZ_DOMAINS = ["@recidiviz.org", "@recidiviz-test.org"];
-const DEV_DOMAINS = ["@monadical.com"];
-
-function getInternalDomains(): string[] {
-  const env = process.env["NEXT_PUBLIC_ENVIRONMENT"];
-  if (env === "staging" || env === "prod" || env === "production") {
-    return RECIDIVIZ_DOMAINS;
-  }
-  return [...RECIDIVIZ_DOMAINS, ...DEV_DOMAINS];
+export function isRecidivizUser(email: string | undefined | null): boolean {
+  return !!email && email.endsWith(RECIDIVIZ_DOMAIN);
 }
 
-export function isInternalUser(email: string | undefined | null): boolean {
-  if (!email) return false;
-  // When impersonating, treat the caller as a non-internal user
-  // so that all dev controls are hidden
-  if (
+export function isImpersonating(): boolean {
+  return (
     typeof window !== "undefined" &&
     !!localStorage.getItem("impersonated_email")
-  ) {
-    return false;
-  }
-  const domains = getInternalDomains();
-  return domains.some((domain) => email.endsWith(domain));
+  );
+}
+
+export function isActiveRecidivizUser(
+  email: string | undefined | null,
+): boolean {
+  return isRecidivizUser(email) && !isImpersonating();
 }

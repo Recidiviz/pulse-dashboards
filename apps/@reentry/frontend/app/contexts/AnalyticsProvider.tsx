@@ -21,6 +21,7 @@ import { captureException } from "@sentry/nextjs";
 import { createContext, ReactNode, useContext, useEffect } from "react";
 
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 import { analytics } from "~@reentry/frontend/lib/segment";
 import { IntakeAnalytics } from "~@reentry/frontend-shared";
 
@@ -77,41 +78,34 @@ const isAnalyticsDisabled = !["staging", "prod"].includes(
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
   const auth = useAuth();
 
-  const isInternalUser = () => {
-    // Wait for auth to fully load before checking internal user status
-    if (auth.state.isLoading || !auth.state.isAuthorized) {
-      return false;
-    }
+  const userEmail = auth.authStore?.user?.email;
+  const pseudonymizedId = auth.userAppMetadata?.pseudonymizedId;
 
-    if (auth.authStore && auth.authStore.user && auth.authStore.user.email) {
-      const userEmail = auth.authStore.user.email.toLowerCase();
-      return (
-        userEmail.includes("recidiviz.org") ||
-        userEmail.includes("recidiviz-test.org") ||
-        userEmail.includes("monadical.com")
-      );
+  useEffect(() => {
+    if (!auth.state.isLoading && auth.state.isAuthorized && !userEmail) {
+      captureException(`Could not resolve email for user ${pseudonymizedId}`);
     }
-
-    // Only log to Sentry if auth is complete but user data is still missing
-    captureException(
-      `Could not determine if user ${auth.userAppMetadata?.pseudonymizedId} is an internal user`,
-    );
-    return false;
-  };
+  }, [
+    auth.state.isLoading,
+    auth.state.isAuthorized,
+    userEmail,
+    pseudonymizedId,
+  ]);
 
   const shouldSkipWriteToSegment = () => {
     return (
       isAnalyticsDisabled ||
-      (isInternalUser() && process.env["NEXT_PUBLIC_ENVIRONMENT"] !== "staging")
+      (isActiveRecidivizUser(userEmail) &&
+        process.env["NEXT_PUBLIC_ENVIRONMENT"] !== "staging")
     );
   };
 
   const shouldLogEvent = () => {
-    return isAnalyticsDisabled || isInternalUser();
+    return isAnalyticsDisabled || isActiveRecidivizUser(userEmail);
   };
 
   const defaultEventProperties = {
-    isInternalUser: isInternalUser(),
+    isInternalUser: isActiveRecidivizUser(userEmail),
   };
 
   const identify = (userId: string) => {

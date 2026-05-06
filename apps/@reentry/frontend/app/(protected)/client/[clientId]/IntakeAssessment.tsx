@@ -31,7 +31,7 @@ import RetryProcessing from "~@reentry/frontend/components/intake/RetryProcessin
 import StatusBadge from "~@reentry/frontend/components/intake/StatusBadge";
 import TranscriptionValidationWarnings from "~@reentry/frontend/components/transcription/TranscriptionValidationWarnings";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 import { formatDateReadableDate } from "~@reentry/frontend/utils";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
@@ -272,7 +272,7 @@ export default function IntakeAssessment({
               </div>
               <div className="flex flex-col md:flex-row gap-2 md:gap-4 md:ml-auto md:items-center w-full md:w-auto">
                 {isFeatureEnabled("TOGGLE_ENABLED_OUTPUTS") &&
-                  isInternalUser(userEmail) && (
+                  isActiveRecidivizUser(userEmail) && (
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="text-xs md:text-sm font-medium text-[#012322] whitespace-nowrap">
                         {intakeInfo.outputs_enabled
@@ -286,7 +286,7 @@ export default function IntakeAssessment({
                       />
                     </div>
                   )}
-                {isInternalUser(userEmail) &&
+                {isActiveRecidivizUser(userEmail) &&
                   intakeStatus?.frontend_status === "intake_enabled" &&
                   intakeInfo.intake_type !== "transcription" && (
                     <button
@@ -296,7 +296,7 @@ export default function IntakeAssessment({
                       Trigger AI Intake
                     </button>
                   )}
-                {isInternalUser(userEmail) &&
+                {isActiveRecidivizUser(userEmail) &&
                   intakeInfo.trigger_id &&
                   intakeInfo.intake_type !== "transcription" && (
                     <Link

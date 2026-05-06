@@ -22,15 +22,12 @@ import { useRef, useState } from "react";
 import { $api } from "~@reentry/frontend/api";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { isImpersonating } from "~@reentry/frontend/lib/auth/permissions";
 
 export default function ImpersonationForm() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const { getAccessToken } = useAuth();
-
-  const isImpersonating =
-    typeof window !== "undefined" &&
-    !!localStorage.getItem("impersonated_email");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { mutateAsync, isPending } = ($api as any).useMutation(
@@ -85,7 +82,7 @@ export default function ImpersonationForm() {
       <div className="flex gap-2 items-start">
         <input
           ref={inputRef}
-          disabled={isImpersonating}
+          disabled={isImpersonating()}
           type="email"
           placeholder="Enter an email to impersonate..."
           className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -102,9 +99,9 @@ export default function ImpersonationForm() {
           onClick={handleSubmit}
           className="px-4 py-2 bg-[#003331] text-white text-sm font-medium rounded-full hover:bg-gray-950 transition-colors whitespace-nowrap"
           ignoreCapabilities={true}
-          disabled={isPending || isImpersonating}
+          disabled={isPending || isImpersonating()}
         />
-        {isImpersonating && (
+        {isImpersonating() && (
           <PrimaryButton
             buttonText={"Stop Impersonating"}
             className="h-10 sm:h-8 px-3 sm:px-4 py-2 bg-red-600 rounded-[32px] text-white text-xs sm:text-[13px] font-medium font-['Public_Sans'] whitespace-nowrap"

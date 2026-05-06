@@ -27,7 +27,7 @@ import { PageView } from "~@reentry/frontend/components/PageView";
 import { BACKEND_URL } from "~@reentry/frontend/constants";
 import { useEvalRunner } from "~@reentry/frontend/hooks/useEvalRunner";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { ActionPlanEvalResultsPanel } from "../components/ActionPlanEvalResultsPanel";
@@ -102,7 +102,7 @@ const ConfigDetailPage = () => {
       },
     },
     {
-      enabled: isInternalUser(userEmail) && !isOutputConfig,
+      enabled: isActiveRecidivizUser(userEmail) && !isOutputConfig,
     },
   );
 
@@ -121,7 +121,7 @@ const ConfigDetailPage = () => {
       },
     },
     {
-      enabled: isInternalUser(userEmail) && isOutputConfig,
+      enabled: isActiveRecidivizUser(userEmail) && isOutputConfig,
     },
   );
 
@@ -144,7 +144,7 @@ const ConfigDetailPage = () => {
       },
     },
     {
-      enabled: isInternalUser(userEmail),
+      enabled: isActiveRecidivizUser(userEmail),
     },
   );
 
@@ -244,7 +244,7 @@ const ConfigDetailPage = () => {
   }
 
   // Check internal user access (only after auth is loaded)
-  if (!isInternalUser(userEmail)) {
+  if (!isActiveRecidivizUser(userEmail)) {
     return (
       <Box
         display="flex"

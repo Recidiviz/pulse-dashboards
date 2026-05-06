@@ -34,7 +34,7 @@ The impersonation UI is gated behind the `IMPERSONATION` feature flag, enabled i
 File: `app/routes/impersonation_router.py`
 
 - Requires a valid Auth0 bearer token
-- Validates the caller is an internal user (`is_internal_user()`)
+- Calls `check_impersonation_authorized(caller_email, target_email)`, which enforces: main switch (`IMPERSONATION_ENABLED`), email allowlist (`IMPERSONATION_ALLOWED_EMAILS`), internal domain (defense-in-depth), and self-impersonation prevention
 - Calls `get_impersonated_user_metadata(email)` to fetch the target's data
 - Returns:
   ```json
@@ -61,7 +61,7 @@ Fetches user metadata with a two-tier strategy based on environment:
 | staging, prod    | Recidiviz Data API (`{DATA_API_URL}/auth/users/{hash}`) | Google ID token     |
 | dev, demo, pilot | BigQuery via `Queries.get_caseworker_by_email()`        | Default credentials |
 
-- Computes `SHA256(email.lower())` -> Base64 as the user hash for API lookups
+- Computes `SHA256(email.lower())` → Base64 as the user hash for API lookups; if the result starts with `/`, the leading character is replaced with `_` to match the convention in `generate_user_hash()` in recidiviz-data
 - Caches results in Redis with key `impersonation:{email}` and a **5-minute TTL**
 - Returns `app_metadata` dict with `pseudonymizedId`, `stateCode`, `featureVariants`
 
@@ -69,8 +69,8 @@ Fetches user metadata with a two-tier strategy based on environment:
 
 - Checks for `X-Impersonated-Email` header
 - If absent, returns `None` (no impersonation)
-- If present, resolves the caller's identity (using `skip_impersonation=True` to avoid recursion) and checks `is_internal_user()`
-- Returns the target email if valid, raises `403` if caller is not internal
+- If present, resolves the caller's real identity (using `skip_impersonation=True` to avoid recursion), then delegates to `check_impersonation_authorized()` for all authorization checks
+- Returns the target email if valid; raises `403` if unauthorized, `400` for self-impersonation
 
 ### Auth integration
 
@@ -121,11 +121,13 @@ After setting the `Authorization` header, the middleware checks `localStorage` f
 
 ## Configuration
 
-| Variable                                         | Required in   | Purpose                            |
-| ------------------------------------------------ | ------------- | ---------------------------------- |
-| `DATA_API_URL`                                   | staging, prod | Base URL of the Recidiviz Data API |
-| `GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE` | staging, prod | Audience for Google ID token auth  |
+| Variable                                         | Required in   | Purpose                                                    |
+| ------------------------------------------------ | ------------- | ---------------------------------------------------------- |
+| `IMPERSONATION_ENABLED`                          | all envs      | Main switch; must be `true` for the feature to work at all |
+| `IMPERSONATION_ALLOWED_EMAILS`                   | all envs      | Comma-separated list of emails authorized to impersonate   |
+| `DATA_API_URL`                                   | staging, prod | Base URL of the Recidiviz Data API                         |
+| `GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE` | staging, prod | Audience for Google ID token auth                          |
 
-Dev/demo/pilot environments do not require these variables -- they use BigQuery for staff lookups.
+Dev/demo/pilot environments do not require `DATA_API_URL` or `GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE` -- they use BigQuery for staff lookups.
 
 ---

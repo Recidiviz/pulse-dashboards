@@ -25,7 +25,7 @@ import { $api } from "~@reentry/frontend/api";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { BACKEND_URL } from "~@reentry/frontend/constants";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { ConfigTable } from "./components/ConfigTable";
@@ -55,7 +55,7 @@ const ConfigManagementPage = () => {
       },
     },
     {
-      enabled: isInternalUser(userEmail),
+      enabled: isActiveRecidivizUser(userEmail),
     },
   );
 
@@ -75,7 +75,7 @@ const ConfigManagementPage = () => {
       },
     },
     {
-      enabled: isInternalUser(userEmail),
+      enabled: isActiveRecidivizUser(userEmail),
     },
   );
 
@@ -84,7 +84,7 @@ const ConfigManagementPage = () => {
     "get",
     "/config-management/assessments/available-states",
     {},
-    { enabled: isInternalUser(userEmail) },
+    { enabled: isActiveRecidivizUser(userEmail) },
   );
 
   const assessmentItems = assessmentData?.items ?? [];
@@ -106,7 +106,7 @@ const ConfigManagementPage = () => {
   }
 
   // Check internal user access (only after auth is loaded)
-  if (!isInternalUser(userEmail)) {
+  if (!isActiveRecidivizUser(userEmail)) {
     return (
       <Box
         display="flex"

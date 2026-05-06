@@ -20,7 +20,7 @@
 import ImpersonationForm from "~@reentry/frontend/components/ImpersonationForm";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 
@@ -77,7 +77,7 @@ export default function Profile() {
           </div>
         )}
 
-        {isInternalUser(state.user?.email) &&
+        {isActiveRecidivizUser(state.user?.email) &&
           isFeatureEnabled("IMPERSONATION") && <ImpersonationForm />}
       </div>
     </ProtectedRoute>

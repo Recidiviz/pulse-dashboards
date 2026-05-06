@@ -27,7 +27,7 @@ import ReadOnlyIndicatorBanner from "~@reentry/frontend/components/ReadOnlyIndic
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
   hasCPAPermission,
-  isInternalUser,
+  isRecidivizUser,
 } from "~@reentry/frontend/lib/auth/permissions";
 import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 
@@ -54,14 +54,9 @@ export default function ProtectedLayout({ children }) {
     return <LoadingState />;
   }
 
-  if (!auth.state.isAuthorized) {
-    return <AccessDeniedState />;
-  }
-
   if (
-    !hasCPAPermission(auth.userAppMetadata) &&
-    !isInternalUser(userEmail) &&
-    !localStorage.getItem("impersonated_email")
+    !auth.state.isAuthorized ||
+    (!hasCPAPermission(auth.userAppMetadata) && !isRecidivizUser(userEmail))
   ) {
     return <AccessDeniedState />;
   }

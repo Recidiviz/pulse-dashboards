@@ -22,7 +22,7 @@ import { usePathname } from "next/navigation";
 
 import UserDropdown from "~@reentry/frontend/components/auth/userDropdown";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
+import { isActiveRecidivizUser } from "~@reentry/frontend/lib/auth/permissions";
 
 const Navbar = () => {
   const { state, login, logout, isRecidivizUser, hasWorkflowsRoute } =
@@ -30,7 +30,7 @@ const Navbar = () => {
   const pathname = usePathname();
 
   const showDashboardsLink = hasWorkflowsRoute || isRecidivizUser;
-  const showConfigLink = isInternalUser(state.user?.email);
+  const showConfigLink = isActiveRecidivizUser(state.user?.email);
 
   return (
     <nav className="w-full h-[65px] px-6 bg-white border-b border-[#2b5469]/20 justify-between items-center inline-flex print:hidden">
