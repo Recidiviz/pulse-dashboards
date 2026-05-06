@@ -30,5 +30,8 @@
       "dateReductionLabel": "[common]sentenceDates.general.dateReductionLabel",
       "heading": "[common]sentenceDates.general.heading"
     }
+  },
+  "backLinks": {
+    "home": "[common]backLinks.home"
   }
 }

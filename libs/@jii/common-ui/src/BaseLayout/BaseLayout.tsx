@@ -35,6 +35,13 @@ export const PageContainer = styled.div`
 `;
 
 /**
+ * Wrapper with some bottom margin useful for e.g. wrapping full pages
+ */
+export const BottomPaddedContainer = styled.div`
+  margin-bottom: ${rem(spacing.xl)};
+`;
+
+/**
  * Breaks out of the left/right padding to let content fill max width
  */
 export const UnpaddedPageContainer = styled.div`

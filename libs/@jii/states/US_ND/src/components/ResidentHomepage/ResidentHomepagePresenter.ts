@@ -15,20 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { makeAutoObservable } from "mobx";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsNdMoreInformation } from "~@jii/paths";
+import { SentenceDatesData } from "~@jii/sentence-dates";
+import { UsNdResidentMetadata } from "~datatypes";
 
-import { DrilldownPage } from "./DrilldownPage/DrilldownPage";
-import { ResidentHomepage } from "./ResidentHomepage/ResidentHomepage";
+export class ResidentHomepagePresenter {
+  constructor(private residentData: UsNdResidentMetadata) {
+    makeAutoObservable(this);
+  }
 
-export function UsNdRouter() {
-  return (
-    <Routes>
-      <Route index element={<ResidentHomepage />} />
-      <Route path={UsNdMoreInformation.path} element={<DrilldownPage />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
+  get sentenceDatesData(): SentenceDatesData {
+    // these are in a fixed order and should not be sorted by date
+    const dateIds = [
+      "initialReview",
+      "paroleReview",
+      "goodTime",
+      "EIGHTYFIVEPercent",
+      "finalSentExp",
+    ] as const;
+
+    return {
+      dates: dateIds.map((id) => ({
+        id,
+        date: this.residentData[`${id}Date`],
+      })),
+    };
+  }
 }

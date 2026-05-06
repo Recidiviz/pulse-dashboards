@@ -15,5 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./components/defaultComponents";
 export * from "./components/SentenceDates/SentenceDates";
+export * from "./components/SentenceDates/types";
 export * from "./data/types";

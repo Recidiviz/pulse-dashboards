@@ -15,20 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsNdMoreInformation } from "~@jii/paths";
+import { TranslationsObject } from "../../utils/types";
 
-import { DrilldownPage } from "./DrilldownPage/DrilldownPage";
-import { ResidentHomepage } from "./ResidentHomepage/ResidentHomepage";
-
-export function UsNdRouter() {
-  return (
-    <Routes>
-      <Route index element={<ResidentHomepage />} />
-      <Route path={UsNdMoreInformation.path} element={<DrilldownPage />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
+export function useUsNdTranslations() {
+  return useTranslation("US_ND");
 }
+
+/**
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_ND namespace
+ */
+export type UsNdTranslationsObject = TranslationsObject<"US_ND">;
+
+export type UsNdTFunction = ReturnType<typeof useUsNdTranslations>["t"];

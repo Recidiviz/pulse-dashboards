@@ -15,20 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
-
-import { NotFound } from "~@jii/common-ui";
+import { GoButton } from "~@jii/common-ui";
 import { UsNdMoreInformation } from "~@jii/paths";
+import {
+  defaultComponents,
+  SentenceDatesComponents,
+} from "~@jii/sentence-dates";
+import { useUsNdTranslations } from "~@jii/translation";
 
-import { DrilldownPage } from "./DrilldownPage/DrilldownPage";
-import { ResidentHomepage } from "./ResidentHomepage/ResidentHomepage";
+export const SectionWrapperOverride: SentenceDatesComponents["SectionWrapper"] =
+  ({ children, ...props }) => {
+    const { t } = useUsNdTranslations();
 
-export function UsNdRouter() {
-  return (
-    <Routes>
-      <Route index element={<ResidentHomepage />} />
-      <Route path={UsNdMoreInformation.path} element={<DrilldownPage />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-}
+    return (
+      <defaultComponents.SectionWrapper {...props}>
+        {children}
+        <GoButton
+          to={UsNdMoreInformation.buildRelativePath({
+            pageSlug: "important-dates",
+          })}
+        >
+          {t(($) => $.pages.sentenceDates.linkText)}
+        </GoButton>
+      </defaultComponents.SectionWrapper>
+    );
+  };

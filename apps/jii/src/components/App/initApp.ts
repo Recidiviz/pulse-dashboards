@@ -16,11 +16,14 @@
 // =============================================================================
 
 import { initializeSentry } from "~@jii/data";
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { isDemoMode } from "~client-env-utils";
 import { setDateshift } from "~datatypes";
 
 export function initApp() {
-  if (isDemoMode() || isOfflineMode()) {
+  // note that this approach doesn't work in offline mode
+  // because the fixtures are imported before this side effect can run;
+  // see solution in FirestoreOfflineAPIClient
+  if (isDemoMode()) {
     setDateshift(true);
   }
 

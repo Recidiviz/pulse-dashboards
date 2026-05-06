@@ -30,5 +30,8 @@
       "dateReductionLabel": "Reducción total",
       "heading": "Fechas importantes"
     }
+  },
+  "backLinks": {
+    "home": "Volver al inicio"
   }
 }

@@ -1,0 +1,33 @@
+{
+  "sentenceDates": {
+    "dates": {
+      "initialReview": {
+        "label": "[US_ND]sentenceDates.dates.initialReview.label",
+        "description": "[US_ND]sentenceDates.dates.initialReview.description"
+      },
+      "paroleReview": {
+        "label": "[US_ND]sentenceDates.dates.paroleReview.label",
+        "description": "[US_ND]sentenceDates.dates.paroleReview.description"
+      },
+      "goodTime": {
+        "label": "[US_ND]sentenceDates.dates.goodTime.label",
+        "description": "[US_ND]sentenceDates.dates.goodTime.description"
+      },
+      "EIGHTYFIVEPercent": {
+        "label": "[US_ND]sentenceDates.dates.EIGHTYFIVEPercent.label",
+        "description": "[US_ND]sentenceDates.dates.EIGHTYFIVEPercent.description"
+      },
+      "finalSentExp": {
+        "label": "[US_ND]sentenceDates.dates.finalSentExp.label",
+        "description": "[US_ND]sentenceDates.dates.finalSentExp.description"
+      }
+    }
+  },
+  "pages": {
+    "sentenceDates": {
+      "linkText": "[US_ND]pages.sentenceDates.linkText",
+      "heading": "[US_ND]pages.sentenceDates.heading",
+      "body": "[US_ND]pages.sentenceDates.body"
+    }
+  }
+}

@@ -40,7 +40,6 @@ export function PageMoreInformationImportantDates() {
         }
       : {
           to: State.Resident.buildPath(params),
-          children: t(($) => $.moreInformation.backLink.home),
         };
 
   return (

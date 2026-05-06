@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,31 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { SimpleLinkProps } from "~@jii/common-ui";
-import { DefinitionPage, InfoPageProps } from "~@jii/layout";
 import { State } from "~@jii/paths";
-import { useUsAzTranslations } from "~@jii/translation";
 
-interface DefinitionViewProps extends InfoPageProps {
-  moreInfoPageLinks: Array<SimpleLinkProps>;
-}
+import { SentenceDatesDrilldownPage } from "./SentenceDatesDrilldownPage";
 
-export const DefinitionView = (props: DefinitionViewProps) => {
-  const params = useTypedParams(State.Resident.UsAzMoreInformation);
-  const { t } = useUsAzTranslations();
-  return (
-    <DefinitionPage
-      backLinkProps={{
-        to: State.Resident.buildPath(params),
-      }}
-      pageLinksFooterProps={{
-        pageLinksHeading: t(($) => $.moreInfoPageLinksHeading),
-        pageLinks: props.moreInfoPageLinks,
-        topLinkText: t(($) => $.backToTopLinkText),
-      }}
-      {...props}
-    />
-  );
+export const DrilldownPage = () => {
+  const { pageSlug } = useTypedParams(State.Resident.UsNdMoreInformation);
+
+  switch (pageSlug) {
+    case "important-dates":
+      return <SentenceDatesDrilldownPage />;
+    default:
+      assertNever(pageSlug);
+  }
 };

@@ -29,7 +29,7 @@ import {
 } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
-import { useUsMaTranslations } from "~@jii/translation";
+import { useCommonTranslations, useUsMaTranslations } from "~@jii/translation";
 
 import { getMonthlyReportPageSlug } from "../../models/UsMaEGTMonthlyReport";
 import { useEGTDataContext } from "../EGTDataContext/context";
@@ -53,6 +53,7 @@ const HeaderRow = styled.div`
 export const MonthlyReport = observer(function MonthlyReport() {
   const { monthlyReports } = useEGTDataContext();
   const { t } = useUsMaTranslations();
+  const common = useCommonTranslations();
 
   const { reportDate, personPseudoId, stateSlug } = useTypedParams(
     State.Resident.EGT.MonthlyReport,
@@ -90,7 +91,7 @@ export const MonthlyReport = observer(function MonthlyReport() {
     <>
       <BackLink
         {...{
-          children: t(($) => $.homeLink),
+          children: common.t(($) => $.backLinks.home),
           to: State.Resident.EGT.buildPath(useTypedParams(State.Resident)),
         }}
       />

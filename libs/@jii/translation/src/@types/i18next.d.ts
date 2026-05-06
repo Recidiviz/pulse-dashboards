@@ -26,6 +26,7 @@ import US_CO from "../namespaces/US_CO/resources/en.json";
 import US_ID from "../namespaces/US_ID/resources/en";
 import US_MA from "../namespaces/US_MA/resources/en.json";
 import US_NC from "../namespaces/US_NC/resources/en.json";
+import US_ND from "../namespaces/US_ND/resources/en.json";
 import US_NE from "../namespaces/US_NE/resources/en";
 import US_TN from "../namespaces/US_TN/resources/en";
 import {
@@ -65,6 +66,7 @@ export interface I18nResources {
   US_ID: WithCorrectedSentenceDates<typeof US_ID>;
   US_MA: WithCorrectedSentenceDates<typeof US_MA>;
   US_NC: WithCorrectedSentenceDates<typeof US_NC>;
+  US_ND: WithCorrectedSentenceDates<typeof US_ND>;
   US_NE: WithCorrectedSentenceDates<typeof US_NE>;
   US_TN: WithCorrectedSentenceDates<typeof US_TN>;
   // this is a fake state that we only use for testing. Its resources have to be

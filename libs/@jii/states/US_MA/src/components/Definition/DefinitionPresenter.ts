@@ -75,9 +75,8 @@ export class DefinitionPagePresenter implements PageLinksFooterProps {
     return this.t(($) => $.topLinkText);
   }
 
-  get backLink(): SimpleLinkProps {
+  get backLink() {
     return {
-      children: this.t(($) => $.homeLink),
       to: State.Resident.EGT.buildPath(this.baseUrlParams),
     };
   }

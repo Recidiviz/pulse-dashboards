@@ -97,7 +97,7 @@ export const UsNcRNA = route(
 
 export const UsNdMoreInformation = route("more-information/:pageSlug", {
   params: {
-    pageSlug: union(["important-dates"] as const),
+    pageSlug: union(["important-dates"] as const).defined(),
   },
 });
 
@@ -138,6 +138,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsCoMoreInformation,
       UsArPrograms,
       UsNcRNA,
+      UsNdMoreInformation,
       UsNeMoreInformation,
       UsNeReentryChecklist,
       UsTnMoreInformation,

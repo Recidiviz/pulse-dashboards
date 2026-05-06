@@ -25,6 +25,7 @@ export * from "./namespaces/US_CO/useUsCoTranslations";
 export * from "./namespaces/US_ID/useUsIdTranslations";
 export * from "./namespaces/US_MA/useUsMaTranslations";
 export * from "./namespaces/US_NC/useUsNcTranslations";
+export * from "./namespaces/US_ND/useUsNdTranslations";
 export * from "./namespaces/US_NE/useUsNeTranslations";
 export * from "./namespaces/US_TN/useUsTnTranslations";
 export * from "./sentenceDates/types";

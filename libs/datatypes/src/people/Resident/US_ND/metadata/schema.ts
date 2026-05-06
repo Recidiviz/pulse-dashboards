@@ -29,3 +29,5 @@ export const usNdResidentMetadataSchema = z.object({
   goodTimeDate: nullishAsUndefined(dateStringSchema),
   finalSentExpDate: nullishAsUndefined(dateStringSchema),
 });
+
+export type UsNdResidentMetadata = z.infer<typeof usNdResidentMetadataSchema>;

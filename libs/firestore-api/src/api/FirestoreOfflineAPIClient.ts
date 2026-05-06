@@ -15,14 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { allResidents, locationRecordFixtures } from "~datatypes";
+import {
+  allResidents,
+  locationRecordFixtures,
+  shiftAllDates,
+} from "~datatypes";
 
 import { MissingRecordError } from "./errors";
 import { FirestoreAPI } from "./interface";
 
 export class FirestoreOfflineAPIClient implements FirestoreAPI {
   async residents(stateCode: string) {
-    return allResidents.filter((r) => r.stateCode === stateCode);
+    return allResidents
+      .filter((r) => r.stateCode === stateCode)
+      .map((r) => shiftAllDates(r));
   }
 
   async residentByPseudoId(stateCode: string, pseudoId: string) {
@@ -35,7 +41,7 @@ export class FirestoreOfflineAPIClient implements FirestoreAPI {
         `Record for ${pseudoId} in ${stateCode} missing from offline data`,
       );
 
-    return residentFixture;
+    return shiftAllDates(residentFixture);
   }
 
   async recordForExternalId() {

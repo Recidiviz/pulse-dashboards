@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { FC } from "react";
+import { Optional } from "utility-types";
 
 import {
   BackLink,
@@ -23,12 +24,13 @@ import {
   PageLinksFooterProps,
   SimpleLinkProps,
 } from "~@jii/common-ui";
+import { useCommonTranslations } from "~@jii/translation";
 
 import { InfoPage, InfoPageProps } from "../InfoPage/InfoPage";
 import { ScreenFillingWrapper } from "../ScreenFillingWrapper/ScreenFillingWrapper";
 
 interface DefinitionPageProps extends InfoPageProps {
-  backLinkProps: SimpleLinkProps;
+  backLinkProps: Optional<SimpleLinkProps, "children">;
   pageLinksFooterProps?: PageLinksFooterProps;
 }
 
@@ -39,11 +41,18 @@ interface DefinitionPageProps extends InfoPageProps {
 export const DefinitionPage: FC<DefinitionPageProps> = (
   props: DefinitionPageProps,
 ) => {
+  const { t } = useCommonTranslations();
+
   return (
     <ScreenFillingWrapper
       top={
         <>
-          <BackLink {...props.backLinkProps} />
+          <BackLink
+            {...{
+              children: t(($) => $.backLinks.home),
+              ...props.backLinkProps,
+            }}
+          />
           <InfoPage {...props} />
         </>
       }

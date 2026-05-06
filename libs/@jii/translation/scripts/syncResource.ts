@@ -17,10 +17,10 @@
 
 import { ArgumentParser } from "argparse";
 import { unflatten } from "flat";
-import { writeFile } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import { google, sheets_v4 } from "googleapis";
 import { check } from "language-tags";
-import { join } from "path";
+import { dirname, join } from "path";
 import { format } from "prettier";
 import { exit } from "process";
 
@@ -134,6 +134,8 @@ function validLanguageTag(tag: string) {
 }
 
 async function writeToJson(data: unknown, path: string) {
+  // make sure the directory exists first; no-op if it does
+  await mkdir(dirname(path), { recursive: true });
   return writeFile(
     path,
     await format(JSON.stringify(data, undefined, 2), {
