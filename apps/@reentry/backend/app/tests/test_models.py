@@ -12,6 +12,7 @@ from app.models.models import (
     PlanGeneration,
     PlanGenerationResourceAssociation,
     ResourceAssociationAction,
+    ResourceAssociationType,
     sanitize_markdown,
 )
 
@@ -78,10 +79,12 @@ def _make_event(
     action: ResourceAssociationAction,
     action_at: datetime,
     section_title: str = "Housing",
+    resource_type: ResourceAssociationType = ResourceAssociationType.COMMUNITY,
 ) -> PlanGenerationResourceAssociation:
     return PlanGenerationResourceAssociation(
         plan_generation_id=uuid4(),
         resource_id=resource_id,
+        resource_type=resource_type,
         section_title=section_title,
         action=action,
         action_by="SYSTEM",
@@ -208,6 +211,94 @@ def test_active_resource_associations_empty_ledger():
     gen = _gen_with_events([])
 
     assert _call_property(gen) == []
+
+
+def test_active_resource_associations_community_and_digital_same_id_tracked_independently():
+    """Community and digital resources sharing a numeric ID are treated as distinct entries."""
+    t1 = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    gen = _gen_with_events(
+        [
+            _make_event(
+                42,
+                ResourceAssociationAction.ADD,
+                t1,
+                resource_type=ResourceAssociationType.COMMUNITY,
+            ),
+            _make_event(
+                42,
+                ResourceAssociationAction.ADD,
+                t1,
+                resource_type=ResourceAssociationType.DIGITAL,
+            ),
+        ]
+    )
+
+    active = _call_property(gen)
+
+    assert len(active) == 2
+    assert {a.resource_type for a in active} == {
+        ResourceAssociationType.COMMUNITY,
+        ResourceAssociationType.DIGITAL,
+    }
+
+
+def test_active_resource_associations_removing_digital_does_not_affect_community():
+    """REMOVE on a DIGITAL resource must not deactivate the COMMUNITY resource with the same ID."""
+    t1, t2 = (datetime(2024, 1, d, tzinfo=timezone.utc) for d in (1, 2))
+    gen = _gen_with_events(
+        [
+            _make_event(
+                42,
+                ResourceAssociationAction.ADD,
+                t1,
+                resource_type=ResourceAssociationType.COMMUNITY,
+            ),
+            _make_event(
+                42,
+                ResourceAssociationAction.ADD,
+                t1,
+                resource_type=ResourceAssociationType.DIGITAL,
+            ),
+            _make_event(
+                42,
+                ResourceAssociationAction.REMOVE,
+                t2,
+                resource_type=ResourceAssociationType.DIGITAL,
+            ),
+        ]
+    )
+
+    active = _call_property(gen)
+
+    assert len(active) == 1
+    assert active[0].resource_type == ResourceAssociationType.COMMUNITY
+
+
+def test_active_resource_associations_type_aware_dedup_within_same_type():
+    """Two ADDs of the same (id, section, type) deduplicate to the latest event."""
+    t1, t2 = (datetime(2024, 1, d, tzinfo=timezone.utc) for d in (1, 2))
+    gen = _gen_with_events(
+        [
+            _make_event(
+                7,
+                ResourceAssociationAction.ADD,
+                t1,
+                resource_type=ResourceAssociationType.DIGITAL,
+            ),
+            _make_event(
+                7,
+                ResourceAssociationAction.ADD,
+                t2,
+                resource_type=ResourceAssociationType.DIGITAL,
+            ),
+        ]
+    )
+
+    active = _call_property(gen)
+
+    assert len(active) == 1
+    assert active[0].resource_type == ResourceAssociationType.DIGITAL
+    assert active[0].action_at == t2
 
 
 # ---------------------------------------------------------------------------

@@ -21,11 +21,20 @@ import asyncio
 import structlog
 from langsmith import traceable
 
+from app.models.models import ResourceAssociationType
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
+    BatchGetResources,
     GetResourcesRequest,
+    Resource,
     ResourceFailureReason,
+    TravelMode,
     list_resources,
+)
+from app.services.resources.api import batch_get_resources
+from app.services.resources.digital_resource_api import (
+    BatchGetDigitalResources,
+    batch_get_digital_resources,
 )
 from app.utils.action_plan_types import (
     ActionPlanResourcesAssociations,
@@ -146,3 +155,49 @@ def transform_resources_associations_to_map(
             result[section_title] = resources_list
 
     return result if result else None
+
+
+async def batch_get_active_resources(
+    community_ids: list[int],
+    digital_ids: list[int],
+    address: str,
+    travel_mode: TravelMode | None,
+) -> dict[tuple[int, ResourceAssociationType], Resource]:
+    """Fetch community and digital resources in parallel and return a combined (id, type)→Resource map.
+
+    Community resources are fetched from /api/v0/resources (travel-time enriched).
+    Digital resources are fetched from /api/v0/digital-resources (no location needed).
+
+    The key is a (resource_id, resource_type) tuple because the two APIs have independent
+    ID namespaces — the same integer ID can appear in both.
+    """
+    tasks: dict[str, object] = {}
+    if community_ids:
+        tasks["community"] = batch_get_resources(
+            BatchGetResources(address=address, ids=community_ids, travel_mode=travel_mode)
+        )
+    if digital_ids:
+        tasks["digital"] = batch_get_digital_resources(
+            BatchGetDigitalResources(ids=digital_ids)
+        )
+
+    if not tasks:
+        return {}
+
+    labels = list(tasks.keys())
+    results = await asyncio.gather(*tasks.values(), return_exceptions=True)
+
+    resource_map: dict[tuple[int, ResourceAssociationType], Resource] = {}
+    for label, result in zip(labels, results):
+        if isinstance(result, BaseException):
+            logger.error(
+                "Failed to fetch resources",
+                resource_type=label,
+                error=str(result),
+            )
+            continue
+        for resource in result:
+            if resource.resource_id is not None:
+                resource_map[(int(resource.resource_id), resource.resource_type)] = resource
+
+    return resource_map

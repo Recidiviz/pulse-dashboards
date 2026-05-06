@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
+from app.models.models import ResourceAssociationType
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     ApiSearchResult,
@@ -880,3 +881,207 @@ async def test_call_discover_digital_resources():
         print(f"  - {r.name} | {r.url} | {r.blurb}")
     print(f"failure_reason: {response.failure_reason}")
     assert response.resources
+
+
+# ============================================================================
+# Tests for batch_get_active_resources
+# ============================================================================
+
+_COMMUNITY_PATCH = "app.utils.resources_utils.batch_get_resources"
+_DIGITAL_PATCH = "app.utils.resources_utils.batch_get_digital_resources"
+
+
+def _make_community_resource(resource_id: int, name: str = "Community Resource") -> Resource:
+    return Resource(
+        id=f"place_{resource_id}",
+        resource_id=resource_id,
+        category=ResourceCategory.HOUSING,
+        name=name,
+        resource_type=ResourceAssociationType.COMMUNITY,
+    )
+
+
+def _make_digital_resource(resource_id: int, name: str = "Digital Resource") -> Resource:
+    return Resource(
+        id=f"digital_{resource_id}",
+        resource_id=resource_id,
+        category=ResourceCategory.EMPLOYMENT,
+        name=name,
+        resource_type=ResourceAssociationType.DIGITAL,
+    )
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_same_id_different_types():
+    """Community and digital resources with the same ID must both be returned."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    community = _make_community_resource(42, "Community Shelter")
+    digital = _make_digital_resource(42, "Digital Job Board")
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[community]):
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock, return_value=[digital]):
+            result = await batch_get_active_resources(
+                community_ids=[42],
+                digital_ids=[42],
+                address="123 Main St, Chicago, IL",
+                travel_mode=TravelMode.DRIVING,
+            )
+
+    assert len(result) == 2
+    assert result[(42, ResourceAssociationType.COMMUNITY)] is community
+    assert result[(42, ResourceAssociationType.DIGITAL)] is digital
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_community_only():
+    """When only community IDs are given, only the community API is called."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    community = _make_community_resource(1)
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[community]) as mock_comm:
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock) as mock_dig:
+            result = await batch_get_active_resources(
+                community_ids=[1],
+                digital_ids=[],
+                address="123 Main St, Chicago, IL",
+                travel_mode=None,
+            )
+
+    mock_comm.assert_called_once()
+    mock_dig.assert_not_called()
+    assert result == {(1, ResourceAssociationType.COMMUNITY): community}
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_digital_only():
+    """When only digital IDs are given, only the digital API is called."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    digital = _make_digital_resource(7)
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock) as mock_comm:
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock, return_value=[digital]) as mock_dig:
+            result = await batch_get_active_resources(
+                community_ids=[],
+                digital_ids=[7],
+                address="123 Main St, Chicago, IL",
+                travel_mode=TravelMode.WALKING,
+            )
+
+    mock_comm.assert_not_called()
+    mock_dig.assert_called_once()
+    assert result == {(7, ResourceAssociationType.DIGITAL): digital}
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_no_ids():
+    """Empty inputs return an empty dict without calling either API."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock) as mock_comm:
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock) as mock_dig:
+            result = await batch_get_active_resources(
+                community_ids=[],
+                digital_ids=[],
+                address="123 Main St, Chicago, IL",
+                travel_mode=None,
+            )
+
+    mock_comm.assert_not_called()
+    mock_dig.assert_not_called()
+    assert result == {}
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_community_error_digital_succeeds():
+    """When the community fetch raises, digital resources are still returned."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    digital = _make_digital_resource(5)
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, side_effect=RuntimeError("API down")):
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock, return_value=[digital]):
+            result = await batch_get_active_resources(
+                community_ids=[99],
+                digital_ids=[5],
+                address="123 Main St, Chicago, IL",
+                travel_mode=None,
+            )
+
+    assert (99, ResourceAssociationType.COMMUNITY) not in result
+    assert result == {(5, ResourceAssociationType.DIGITAL): digital}
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_digital_error_community_succeeds():
+    """When the digital fetch raises, community resources are still returned."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    community = _make_community_resource(3)
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[community]):
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock, side_effect=RuntimeError("API down")):
+            result = await batch_get_active_resources(
+                community_ids=[3],
+                digital_ids=[99],
+                address="123 Main St, Chicago, IL",
+                travel_mode=None,
+            )
+
+    assert (99, ResourceAssociationType.DIGITAL) not in result
+    assert result == {(3, ResourceAssociationType.COMMUNITY): community}
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_resource_id_none_skipped():
+    """Resources with resource_id=None are excluded from the result map."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    no_id = Resource(
+        id="place_no_id",
+        resource_id=None,
+        category=ResourceCategory.HOUSING,
+        name="No ID Resource",
+        resource_type=ResourceAssociationType.COMMUNITY,
+    )
+    with_id = _make_community_resource(10)
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[no_id, with_id]):
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock):
+            result = await batch_get_active_resources(
+                community_ids=[10],
+                digital_ids=[],
+                address="123 Main St, Chicago, IL",
+                travel_mode=None,
+            )
+
+    assert len(result) == 1
+    assert result[(10, ResourceAssociationType.COMMUNITY)] is with_id
+
+
+@pytest.mark.asyncio
+async def test_batch_get_active_resources_distinct_ids_all_returned():
+    """All four resources are returned when community and digital have distinct IDs."""
+    from app.utils.resources_utils import batch_get_active_resources
+
+    c1 = _make_community_resource(1, "Shelter A")
+    c2 = _make_community_resource(2, "Shelter B")
+    d3 = _make_digital_resource(3, "Job Board A")
+    d4 = _make_digital_resource(4, "Job Board B")
+
+    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[c1, c2]):
+        with patch(_DIGITAL_PATCH, new_callable=AsyncMock, return_value=[d3, d4]):
+            result = await batch_get_active_resources(
+                community_ids=[1, 2],
+                digital_ids=[3, 4],
+                address="123 Main St, Chicago, IL",
+                travel_mode=TravelMode.TRANSIT,
+            )
+
+    assert len(result) == 4
+    assert result[(1, ResourceAssociationType.COMMUNITY)] is c1
+    assert result[(2, ResourceAssociationType.COMMUNITY)] is c2
+    assert result[(3, ResourceAssociationType.DIGITAL)] is d3
+    assert result[(4, ResourceAssociationType.DIGITAL)] is d4

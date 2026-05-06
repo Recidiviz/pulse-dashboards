@@ -326,12 +326,15 @@ class PlanGeneration(SQLModelWithValidation, table=True):
         """
         sorted_events = sorted(self.resource_associations, key=lambda a: a.action_at)
 
-        # For each (resource_id, section_title) pair, keep only the most recent event
+        # For each (resource_id, section_title, resource_type) triple, keep only the most
+        # recent event. resource_type is included because community and digital resources
+        # may share the same numeric resource_id.
         latest_by_resource: dict[
-            tuple[str, str], PlanGenerationResourceAssociation
+            tuple[int, str, ResourceAssociationType], PlanGenerationResourceAssociation
         ] = {}
         for event in sorted_events:
-            latest_by_resource[(event.resource_id, event.section_title)] = event
+            key = (event.resource_id, event.section_title, event.resource_type)
+            latest_by_resource[key] = event
 
         return [
             event

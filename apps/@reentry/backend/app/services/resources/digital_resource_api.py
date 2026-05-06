@@ -102,6 +102,30 @@ def _convert_to_internal_resource(result: DigitalResourceResponse) -> Resource:
     )
 
 
+class BatchGetDigitalResources(BaseModel):
+    ids: list[int]
+
+
+async def batch_get_digital_resources(
+    request: BatchGetDigitalResources,
+) -> list[Resource]:
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{settings.EXTERNAL_RESOURCES_API_URL}/api/v0/digital-resources",
+            json={"ids": request.ids},
+            headers={"x-api-key": settings.RESOURCES_API_KEY},
+            timeout=30.0,
+        )
+        if response.status_code == status.HTTP_204_NO_CONTENT:
+            return []
+        if response.status_code != 200:
+            raise Exception(
+                f"Digital resources API request failed with status {response.status_code}: {response.text}"
+            )
+        results = [DigitalResourceResponse.model_validate(data) for data in response.json()]
+        return [_convert_to_internal_resource(r) for r in results]
+
+
 async def discover_digital_resources(
     request: GetResourcesRequest,
 ) -> GetResourcesResponse:

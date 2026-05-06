@@ -62,7 +62,6 @@ from app.routes.shared_models import (
 from app.routes.shared_models import PlanResponse as BasePlanResponse
 from app.services.client_data.queries import Queries
 from app.services.resources import (
-    BatchGetResources,
     GetPlanResourcesRequest,
     GetResourcesRequest,
     GetResourcesResponse,
@@ -74,7 +73,7 @@ from app.services.resources import (
     TravelMode,
     list_resources,
 )
-from app.services.resources.api import batch_get_resources
+from app.utils.resources_utils import batch_get_active_resources
 from app.utils.address_autocomplete import (
     AutocompleteAddressResponse,
     AutocompleteCityResponse,
@@ -1374,18 +1373,26 @@ async def get_active_resources(
     if not plan.intake or not plan.intake.address:
         raise HTTPException(status_code=400, detail="Client address not available")
 
-    section_map: dict[str, list[int]] = {}
+    section_map: dict[str, list[tuple[int, ResourceAssociationType]]] = {}
     for assoc in active_associations:
-        section_map.setdefault(assoc.section_title, []).append(int(assoc.resource_id))
+        section_map.setdefault(assoc.section_title, []).append(
+            (int(assoc.resource_id), assoc.resource_type)
+        )
 
-    all_ids = [int(a.resource_id) for a in active_associations]
+    community_ids: list[int] = []
+    digital_ids: list[int] = []
+    for a in active_associations:
+        if a.resource_type == ResourceAssociationType.DIGITAL:
+            digital_ids.append(int(a.resource_id))
+        else:
+            community_ids.append(int(a.resource_id))
+
     try:
-        all_resources = await batch_get_resources(
-            BatchGetResources(
-                address=plan.intake.address.as_formatted_string(),
-                ids=all_ids,
-                travel_mode=travel_mode,
-            )
+        resource_by_id = await batch_get_active_resources(
+            community_ids=community_ids,
+            digital_ids=digital_ids,
+            address=plan.intake.address.as_formatted_string(),
+            travel_mode=travel_mode,
         )
     except Exception as e:
         logger.exception(
@@ -1394,8 +1401,6 @@ async def get_active_resources(
         raise HTTPException(
             status_code=500, detail=f"Error fetching resources: {str(e)}"
         )
-
-    resource_by_id = {int(r.resource_id): r for r in all_resources if r.resource_id}
     return ActiveResourcesResponse(
         resources_by_sections=[
             ResourceSectionResponse(

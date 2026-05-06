@@ -1401,7 +1401,7 @@ async def test_get_active_resources_no_address(
 async def test_get_active_resources_success(
     mock_clientdata_service, mock_intake, client, async_session, assert_response
 ):
-    """Happy path: returns resources from batch_get_resources for active associations."""
+    """Happy path: returns resources from batch_get_active_resources for active associations."""
     plan_id = await _create_plan_with_address(
         client, async_session, mock_clientdata_service, mock_intake
     )
@@ -1431,9 +1431,9 @@ async def test_get_active_resources_success(
     )
 
     with patch(
-        "app.routes.plan_router.batch_get_resources",
+        "app.routes.plan_router.batch_get_active_resources",
         new_callable=AsyncMock,
-        return_value=[mock_resource],
+        return_value={(42, ResourceAssociationType.COMMUNITY): mock_resource},
     ) as mock_batch:
         response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
         assert_response(response, 200)
@@ -1446,9 +1446,9 @@ async def test_get_active_resources_success(
         assert section["resources"][0]["id"] == "42"
         assert section["resources"][0]["name"] == "Portland Housing Resource"
 
-        call_args = mock_batch.call_args[0][0]
-        assert call_args.ids == [42]
-        assert call_args.address == "123 Main St, Portland, OR"
+        assert mock_batch.call_args.kwargs["community_ids"] == [42]
+        assert mock_batch.call_args.kwargs["digital_ids"] == []
+        assert mock_batch.call_args.kwargs["address"] == "123 Main St, Portland, OR"
 
 
 @pytest.mark.asyncio
@@ -1478,9 +1478,9 @@ async def test_get_active_resources_travel_mode_query_param(
     await async_session.commit()
 
     with patch(
-        "app.routes.plan_router.batch_get_resources",
+        "app.routes.plan_router.batch_get_active_resources",
         new_callable=AsyncMock,
-        return_value=[],
+        return_value={},
     ) as mock_batch:
         response = await client.get(
             f"/plan-generation/{plan_gen.id}/active-resources",
@@ -1488,8 +1488,7 @@ async def test_get_active_resources_travel_mode_query_param(
         )
         assert_response(response, 200)
 
-        call_args = mock_batch.call_args[0][0]
-        assert call_args.travel_mode == TravelMode.TRANSIT
+        assert mock_batch.call_args.kwargs["travel_mode"] == TravelMode.TRANSIT
 
 
 @pytest.mark.asyncio
@@ -1545,12 +1544,159 @@ async def test_get_active_resources_only_active_associations_sent(
     await async_session.commit()
 
     with patch(
-        "app.routes.plan_router.batch_get_resources",
+        "app.routes.plan_router.batch_get_active_resources",
         new_callable=AsyncMock,
-        return_value=[],
+        return_value={},
     ) as mock_batch:
         response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
         assert_response(response, 200)
 
-        call_args = mock_batch.call_args[0][0]
-        assert call_args.ids == [99]
+        assert mock_batch.call_args.kwargs["community_ids"] == [99]
+        assert mock_batch.call_args.kwargs["digital_ids"] == []
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_same_id_different_types(
+    mock_clientdata_service, mock_intake, client, async_session, assert_response
+):
+    """COMMUNITY and DIGITAL resources sharing the same integer ID are both returned."""
+    plan_id = await _create_plan_with_address(
+        client, async_session, mock_clientdata_service, mock_intake
+    )
+
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    async_session.add(plan_gen)
+    await async_session.commit()
+    await async_session.refresh(plan_gen)
+
+    now = datetime.now(tz=timezone.utc)
+    for resource_type in (ResourceAssociationType.COMMUNITY, ResourceAssociationType.DIGITAL):
+        async_session.add(
+            PlanGenerationResourceAssociation(
+                plan_generation_id=plan_gen.id,
+                resource_id=42,
+                section_title="Housing",
+                action=ResourceAssociationAction.ADD,
+                action_by="SYSTEM",
+                action_at=now,
+                resource_type=resource_type,
+            )
+        )
+    await async_session.commit()
+
+    community_resource = Resource(
+        id="42",
+        resource_id=42,
+        category=ResourceCategory.HOUSING,
+        name="Community Housing Resource",
+        resource_type=ResourceAssociationType.COMMUNITY,
+    )
+    digital_resource = Resource(
+        id="42",
+        resource_id=42,
+        category=ResourceCategory.HOUSING,
+        name="Digital Housing Resource",
+        resource_type=ResourceAssociationType.DIGITAL,
+    )
+
+    with patch(
+        "app.routes.plan_router.batch_get_active_resources",
+        new_callable=AsyncMock,
+        return_value={
+            (42, ResourceAssociationType.COMMUNITY): community_resource,
+            (42, ResourceAssociationType.DIGITAL): digital_resource,
+        },
+    ) as mock_batch:
+        response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
+        assert_response(response, 200)
+
+        data = response.json()
+        assert len(data["resources_by_sections"]) == 1
+        section = data["resources_by_sections"][0]
+        assert section["title"] == "Housing"
+        assert len(section["resources"]) == 2
+        names = {r["name"] for r in section["resources"]}
+        assert names == {"Community Housing Resource", "Digital Housing Resource"}
+
+        assert mock_batch.call_args.kwargs["community_ids"] == [42]
+        assert mock_batch.call_args.kwargs["digital_ids"] == [42]
+
+
+@pytest.mark.asyncio
+async def test_get_active_resources_remove_one_type_keeps_other(
+    mock_clientdata_service, mock_intake, client, async_session, assert_response
+):
+    """Removing a COMMUNITY resource with ID X does not affect a DIGITAL resource with the same ID."""
+    plan_id = await _create_plan_with_address(
+        client, async_session, mock_clientdata_service, mock_intake
+    )
+
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    async_session.add(plan_gen)
+    await async_session.commit()
+    await async_session.refresh(plan_gen)
+
+    now = datetime.now(tz=timezone.utc)
+    # COMMUNITY resource 42: added then removed
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=plan_gen.id,
+            resource_id=42,
+            section_title="Housing",
+            action=ResourceAssociationAction.ADD,
+            action_by="SYSTEM",
+            action_at=now,
+            resource_type=ResourceAssociationType.COMMUNITY,
+        )
+    )
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=plan_gen.id,
+            resource_id=42,
+            section_title="Housing",
+            action=ResourceAssociationAction.REMOVE,
+            action_by="SYSTEM",
+            action_at=now.replace(second=now.second + 1),
+            resource_type=ResourceAssociationType.COMMUNITY,
+        )
+    )
+    # DIGITAL resource 42: only added — should remain active
+    async_session.add(
+        PlanGenerationResourceAssociation(
+            plan_generation_id=plan_gen.id,
+            resource_id=42,
+            section_title="Housing",
+            action=ResourceAssociationAction.ADD,
+            action_by="SYSTEM",
+            action_at=now,
+            resource_type=ResourceAssociationType.DIGITAL,
+        )
+    )
+    await async_session.commit()
+
+    digital_resource = Resource(
+        id="42",
+        resource_id=42,
+        category=ResourceCategory.HOUSING,
+        name="Digital Housing Resource",
+        resource_type=ResourceAssociationType.DIGITAL,
+    )
+
+    with patch(
+        "app.routes.plan_router.batch_get_active_resources",
+        new_callable=AsyncMock,
+        return_value={(42, ResourceAssociationType.DIGITAL): digital_resource},
+    ) as mock_batch:
+        response = await client.get(f"/plan-generation/{plan_gen.id}/active-resources")
+        assert_response(response, 200)
+
+        data = response.json()
+        assert len(data["resources_by_sections"]) == 1
+        section = data["resources_by_sections"][0]
+        assert section["title"] == "Housing"
+        assert len(section["resources"]) == 1
+        assert section["resources"][0]["name"] == "Digital Housing Resource"
+
+        # COMMUNITY-42 was removed, so only DIGITAL-42 should be requested
+        assert mock_batch.call_args.kwargs["community_ids"] == []
+        assert mock_batch.call_args.kwargs["digital_ids"] == [42]
