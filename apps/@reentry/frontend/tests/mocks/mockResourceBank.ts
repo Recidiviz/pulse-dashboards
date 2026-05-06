@@ -31,6 +31,7 @@ export const mockResourceBank: ResourceBankResponse = {
           phone: "555-100-0001",
           address: "100 Main St, Springfield",
           description: "Emergency and transitional housing for adults.",
+          resource_type: "COMMUNITY",
         },
         {
           id: "res-housing-002",
@@ -41,6 +42,7 @@ export const mockResourceBank: ResourceBankResponse = {
           phone: "555-100-0002",
           website: "https://example.gov/housing",
           description: "State-administered housing voucher program.",
+          resource_type: "DIGITAL",
         },
         {
           id: "res-housing-003",
@@ -51,6 +53,7 @@ export const mockResourceBank: ResourceBankResponse = {
           description:
             "Online directory of reentry-friendly transitional housing.",
           website: "https://example.org/reentry-housing",
+          resource_type: "DIGITAL",
         },
         {
           id: "res-housing-004",
@@ -60,6 +63,7 @@ export const mockResourceBank: ResourceBankResponse = {
           subcategory: "Rental assistance",
           address: "999 Far Rd, Outskirts",
           description: "Rental assistance for clients in rural counties.",
+          resource_type: "COMMUNITY",
         },
       ],
     },
@@ -75,6 +79,7 @@ export const mockResourceBank: ResourceBankResponse = {
           phone: "555-200-0001",
           address: "200 Work Ave, Springfield",
           description: "Employer network committed to fair-chance hiring.",
+          resource_type: "COMMUNITY",
         },
         {
           id: "res-employment-002",
@@ -85,6 +90,7 @@ export const mockResourceBank: ResourceBankResponse = {
           website: "https://example.org/job-skills",
           description:
             "Free online certification courses for in-demand trades.",
+          resource_type: "COMMUNITY",
         },
       ],
     },
@@ -100,6 +106,7 @@ export const mockResourceBank: ResourceBankResponse = {
           phone: "555-400-0001",
           address: "400 Civic Plaza, Springfield",
           description: "Apply in person for SNAP, cash aid, and Medicaid.",
+          resource_type: "COMMUNITY",
         },
         {
           id: "res-financial-002",
@@ -111,6 +118,7 @@ export const mockResourceBank: ResourceBankResponse = {
           address: "410 Elm St, Springfield",
           description:
             "Free one-on-one budgeting workshops and credit coaching.",
+          resource_type: "COMMUNITY",
         },
       ],
     },
@@ -127,6 +135,7 @@ export const mockResourceBank: ResourceBankResponse = {
           address: "500 Wellness Blvd, Springfield",
           description:
             "Sliding-scale primary care, dental, and vision services.",
+          resource_type: "COMMUNITY",
         },
         {
           id: "res-health-002",
@@ -136,6 +145,7 @@ export const mockResourceBank: ResourceBankResponse = {
           subcategory: "Medicaid enrollment assistance",
           website: "https://example.gov/medicaid",
           description: "Online Medicaid application for eligible residents.",
+          resource_type: "DIGITAL",
         },
       ],
     },

@@ -125,6 +125,7 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
         resource_id: resource.resource_id,
         section_title: sectionTitle,
         plan_generation_id: planGenerationId,
+        resource_type: resource.resource_type,
       },
     }).then(
       () =>
@@ -170,6 +171,7 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
         resource_id: removed.resource_id,
         section_title: sectionTitle,
         plan_generation_id: planGenerationId,
+        resource_type: removed.resource_type,
       },
     }).then(
       () =>

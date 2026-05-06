@@ -2730,6 +2730,7 @@ export interface components {
              * Format: uuid
              */
             plan_generation_id: string;
+            resource_type: components["schemas"]["ResourceAssociationType"];
         };
         /** AddResourceResponse */
         AddResourceResponse: {
@@ -2753,6 +2754,7 @@ export interface components {
              * Format: date-time
              */
             action_at: string;
+            resource_type: components["schemas"]["ResourceAssociationType"];
         };
         /** AddressSubmission */
         AddressSubmission: {
@@ -2963,7 +2965,9 @@ export interface components {
             /** Performed By Email */
             performed_by_email: string;
             /** Details */
-            details?: Record<string, never> | null;
+            details?: {
+                [key: string]: unknown;
+            } | null;
         };
         /** AutocompleteAddressResponse */
         AutocompleteAddressResponse: {
@@ -3472,7 +3476,9 @@ export interface components {
              */
             output_config_id: string;
             /** Metrics */
-            metrics?: Record<string, never> | null;
+            metrics?: {
+                [key: string]: unknown;
+            } | null;
             /** Created By Email */
             created_by_email?: string | null;
             /** Ran At */
@@ -3743,7 +3749,9 @@ export interface components {
              * Parsed Config
              * @description Parsed config metadata if valid
              */
-            parsed_config?: Record<string, never> | null;
+            parsed_config?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * Existing Version
              * @description Existing version number if config family exists
@@ -4203,137 +4211,139 @@ export interface components {
              * Options
              * @default {}
              */
-            options: Record<string, never> | null;
+            options: {
+                [key: string]: unknown;
+            } | null;
         };
         /** Page[AIPersonaResponse] */
         Page_AIPersonaResponse_: {
             /** Items */
             items: components["schemas"]["AIPersonaResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[AssessmentConfigResponse] */
         Page_AssessmentConfigResponse_: {
             /** Items */
             items: components["schemas"]["app__schemas__config_management__AssessmentConfigResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[AuditLogResponse] */
         Page_AuditLogResponse_: {
             /** Items */
             items: components["schemas"]["AuditLogResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[ClientResponse] */
         Page_ClientResponse_: {
             /** Items */
             items: components["schemas"]["ClientResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[DecisionTreeResponse] */
         Page_DecisionTreeResponse_: {
             /** Items */
             items: components["schemas"]["DecisionTreeResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[DecisionTreeRevision] */
         Page_DecisionTreeRevision_: {
             /** Items */
             items: components["schemas"]["DecisionTreeRevision"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[OutputConfigResponse] */
         Page_OutputConfigResponse_: {
             /** Items */
             items: components["schemas"]["OutputConfigResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[PlanAssetResponse] */
         Page_PlanAssetResponse_: {
             /** Items */
             items: components["schemas"]["PlanAssetResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[PlanDecisionTreeResponse] */
         Page_PlanDecisionTreeResponse_: {
             /** Items */
             items: components["schemas"]["PlanDecisionTreeResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /** Page[PlanResponse] */
         Page_PlanResponse_: {
             /** Items */
             items: components["schemas"]["PlanResponse"][];
             /** Total */
-            total: number | null;
+            total: number;
             /** Page */
-            page: number | null;
+            page: number;
             /** Size */
-            size: number | null;
+            size: number;
             /** Pages */
-            pages?: number | null;
+            pages: number;
         };
         /**
          * PasswordGateStatusResponse
@@ -4808,6 +4818,7 @@ export interface components {
              * Format: uuid
              */
             plan_generation_id: string;
+            resource_type: components["schemas"]["ResourceAssociationType"];
         };
         /** RemoveResourceResponse */
         RemoveResourceResponse: {
@@ -4831,6 +4842,7 @@ export interface components {
              * Format: date-time
              */
             action_at: string;
+            resource_type: components["schemas"]["ResourceAssociationType"];
         };
         /** Resource */
         Resource: {
@@ -4915,7 +4927,14 @@ export interface components {
             blurb?: string | null;
             /** Provider Description */
             provider_description?: string | null;
+            /** @default COMMUNITY */
+            resource_type: components["schemas"]["ResourceAssociationType"];
         };
+        /**
+         * ResourceAssociationType
+         * @enum {string}
+         */
+        ResourceAssociationType: "COMMUNITY" | "DIGITAL";
         /**
          * ResourceCategory
          * @enum {string}
