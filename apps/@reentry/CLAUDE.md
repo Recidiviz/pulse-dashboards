@@ -128,3 +128,7 @@ The JII client-facing intake UI is shared with the JII app via `libs/@reentry/fr
 
 Output behavior (prompts, model, version) is driven by YAML config files in `app/core/data_config/`. These are validated at load time via `OutputFileLoader.validate_yaml_content()`. Feature flags for enabling/disabling functionality live in `app/utils/feature_flags.py` and `feature_flags_config.py`. Model use outside of intakes is
 configured in `config.py`
+
+## Intake Chatbot Guardrails
+
+The intake chatbot's safety guardrail system is documented in `app/utils/intake/GUARDRAILS.md`. It covers all three guardrail layers (regex, prompt engineering, AI classifiers), hard/soft stop behavior, message visibility rules, and Slack alerting.

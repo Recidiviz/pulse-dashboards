@@ -25,7 +25,6 @@ from app.models.intake import (
 )
 from app.routes.shared_models import IntakeMessageResponse
 from app.services.client_data.types import ClientDataRecord
-from app.utils.feature_flags import is_feature_enabled
 from app.utils.intake.client_connection_manager import ClientConnectionManager
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.db_manager import DatabaseManager
@@ -638,12 +637,6 @@ class SocketIOManager:
 
         hard_stop = next((t for t in triggered if t in HARD_STOP_GUARDRAIL_TYPES), None)
         if hard_stop:
-            # TODO(OBT-12591): Remove the GUARDRAILS_HARD_STOP flag gate once crisis copy is ready.
-            # prompt_injection always disconnects; crisis/moderation are suppressed until the flag is enabled.
-            will_disconnect = (
-                is_feature_enabled("GUARDRAILS_HARD_STOP")
-                or hard_stop == "prompt_injection"
-            )
             if intake:
                 await self.db_manager.store_message(
                     intake_id=intake.id,
@@ -656,22 +649,16 @@ class SocketIOManager:
                     f"Hard-stop guardrail fired but no intake found for {client_pseudo_id} — "
                     f"message not persisted"
                 )
-            if will_disconnect:
-                if intake:
-                    asyncio.create_task(
-                        self.db_manager.lock_intake(intake.id, reason=hard_stop)
-                    )
-                # Cancel graph before closing socket — prevents a window where the socket
-                # is dead but the graph is still running and attempting to emit.
-                if client_pseudo_id in self.conversation_graphs:
-                    del self.conversation_graphs[client_pseudo_id]
-                event = ForceDisconnectEvent(reason=hard_stop)
-                await self.sio.emit(event.type, event.model_dump(), room=sid)
-            else:
-                logger.info(
-                    "Guardrail hard-stop suppressed (GUARDRAILS_HARD_STOP disabled)",
-                    guardrail=hard_stop,
+            if intake:
+                asyncio.create_task(
+                    self.db_manager.lock_intake(intake.id, reason=hard_stop)
                 )
+            # Cancel graph before closing socket — prevents a window where the socket
+            # is dead but the graph is still running and attempting to emit.
+            if client_pseudo_id in self.conversation_graphs:
+                del self.conversation_graphs[client_pseudo_id]
+            event = ForceDisconnectEvent(reason=hard_stop)
+            await self.sio.emit(event.type, event.model_dump(), room=sid)
         else:
             if intake:
                 await self.db_manager.store_message(
