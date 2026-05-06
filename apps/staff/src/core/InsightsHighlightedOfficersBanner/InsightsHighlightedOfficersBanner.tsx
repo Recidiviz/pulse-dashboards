@@ -99,6 +99,14 @@ export const highlightedOfficerText = (
   return `${formattedNames} ${commonText}`;
 };
 
+export const shouldShowHighlightedOfficersBanner = (
+  currentTenantId: string | undefined,
+  usMiPositiveOutcomesBanner: unknown,
+) => {
+  if (!currentTenantId) return false;
+  return currentTenantId !== "US_MI" || !!usMiPositiveOutcomesBanner;
+};
+
 type InsightsHighlightedOfficersBannerType = {
   highlightedOfficers: HighlightedOfficersDetail[];
   supervisionOfficerLabel: string;

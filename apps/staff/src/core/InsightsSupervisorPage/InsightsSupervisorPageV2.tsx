@@ -30,7 +30,9 @@ import {
 } from "../../components/StoreProvider";
 import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPagePresenter";
 import { toTitleCase } from "../../utils";
-import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
+import InsightsHighlightedOfficersBanner, {
+  shouldShowHighlightedOfficersBanner,
+} from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { InsightsManagedUsageCard } from "../InsightsStaffUsage/InsightsStaffUsageCard";
 import { InsightsManagedSupervisorRosterModal } from "../InsightsSupervisorRosterModal/InsightsManagedSupervisorRosterModal";
@@ -74,7 +76,13 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   presenter: SupervisionSupervisorPagePresenter;
 }) {
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
-  const { outcomesModule } = useFeatureVariants();
+  const { currentTenantId } = useRootStore();
+  const { outcomesModule, usMiPositiveOutcomesBanner } = useFeatureVariants();
+  const userCanViewHighlightedOfficersBanner =
+    shouldShowHighlightedOfficersBanner(
+      currentTenantId,
+      usMiPositiveOutcomesBanner,
+    );
 
   const {
     supervisorInfo,
@@ -176,11 +184,13 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         )
       }
       highlightedOfficers={
-        <InsightsHighlightedOfficersBanner
-          highlightedOfficers={highlightedOfficersByMetric}
-          supervisionOfficerLabel={labels.supervisionOfficerLabel}
-          generateLinks
-        />
+        userCanViewHighlightedOfficersBanner ? (
+          <InsightsHighlightedOfficersBanner
+            highlightedOfficers={highlightedOfficersByMetric}
+            supervisionOfficerLabel={labels.supervisionOfficerLabel}
+            generateLinks
+          />
+        ) : undefined
       }
     >
       <InsightsSupervisorOpportunityNotificationsSection />

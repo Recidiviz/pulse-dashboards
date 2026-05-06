@@ -107,6 +107,7 @@ export type FeatureVariant =
   | "usMiFacilitySearch"
   | "usMiCaseManagerSearch"
   | "usMiCustodyLevelDowngrade"
+  | "usMiPositiveOutcomesBanner"
   | "usMiSecurityClassificationCommittee"
   | "usMiRestrictiveHousingV2"
   | "usMiRestrictiveHousingV2Ineligible"
@@ -234,6 +235,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMoWorkRelease: {},
   usMiCaseManagerSearch: {},
   usMiCustodyLevelDowngrade: {},
+  usMiPositiveOutcomesBanner: {},
   usMiSecurityClassificationCommittee: {},
   usMiFacilitySearch: {},
   usMiRestrictiveHousingV2: {},

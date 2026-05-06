@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { HighlightedOfficersDetail } from "../../../InsightsStore/presenters/types";
-import { highlightedOfficerText } from "../InsightsHighlightedOfficersBanner";
+import {
+  highlightedOfficerText,
+  shouldShowHighlightedOfficersBanner,
+} from "../InsightsHighlightedOfficersBanner";
 
 const baseDetail: HighlightedOfficersDetail = {
   metricName: "early discharges",
@@ -51,5 +54,23 @@ describe("highlightedOfficerText", () => {
   it("prefixes the officer's first name on the staff page", () => {
     const result = highlightedOfficerText(baseDetail, "agent", false, true);
     expect(result).toMatch(/^Jack is in the top 10% of agents/);
+  });
+});
+
+describe("shouldShowHighlightedOfficersBanner", () => {
+  it("preserves the existing CA banner without the new feature variant", () => {
+    expect(shouldShowHighlightedOfficersBanner("US_CA", undefined)).toBe(true);
+  });
+
+  it("hides the banner for MI without the new feature variant", () => {
+    expect(shouldShowHighlightedOfficersBanner("US_MI", undefined)).toBe(false);
+  });
+
+  it("shows the banner for MI with the new feature variant", () => {
+    expect(shouldShowHighlightedOfficersBanner("US_MI", {})).toBe(true);
+  });
+
+  it("keeps non-MI tenants config-driven", () => {
+    expect(shouldShowHighlightedOfficersBanner("US_TN", undefined)).toBe(true);
   });
 });

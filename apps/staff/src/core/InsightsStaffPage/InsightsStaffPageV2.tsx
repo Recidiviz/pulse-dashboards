@@ -22,8 +22,12 @@ import { useState } from "react";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { SupervisionOfficerPagePresenter } from "../../InsightsStore/presenters/SupervisionOfficerPagePresenter";
+import { shouldShowHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner";
 import { ManagedStaffHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner/InsightsManagedStaffHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { Title } from "../InsightsPageLayout/InsightsPageLayout";
@@ -43,6 +47,13 @@ const ManagedComponent = observer(function StaffPage({
   presenter: SupervisionOfficerPagePresenter;
 }) {
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
+  const { currentTenantId } = useRootStore();
+  const { usMiPositiveOutcomesBanner } = useFeatureVariants();
+  const userCanViewHighlightedOfficersBanner =
+    shouldShowHighlightedOfficersBanner(
+      currentTenantId,
+      usMiPositiveOutcomesBanner,
+    );
 
   const {
     officerOutcomesData,
@@ -122,7 +133,11 @@ const ManagedComponent = observer(function StaffPage({
           </InsightsBreadcrumbs>
         )
       }
-      highlightedOfficers={<ManagedStaffHighlightedOfficersBanner />}
+      highlightedOfficers={
+        userCanViewHighlightedOfficersBanner ? (
+          <ManagedStaffHighlightedOfficersBanner />
+        ) : undefined
+      }
     >
       {!isCurrentOfficerUserRestrictedFromSupervisorsList && (
         <InsightsStaffOutcomesSection />

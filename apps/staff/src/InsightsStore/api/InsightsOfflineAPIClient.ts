@@ -51,6 +51,7 @@ import {
 } from "~datatypes";
 
 import type { InsightsStore } from "../InsightsStore";
+import { filterHiddenOutlierMetrics } from "./filterHiddenOutlierMetrics";
 import {
   ActionStrategySurfacedEvent,
   InsightsAPI,
@@ -183,7 +184,7 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
         ),
       ),
     };
-    return returnValue;
+    return filterHiddenOutlierMetrics(returnValue);
   }
 
   async officersForSupervisor(

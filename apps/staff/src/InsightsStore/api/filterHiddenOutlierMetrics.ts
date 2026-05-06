@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  default,
-  shouldShowHighlightedOfficersBanner,
-} from "./InsightsHighlightedOfficersBanner";
+import { SupervisionOfficerOutcomes } from "~datatypes";
+
+// Banner-only metrics that should not surface as negative outliers in Outcomes.
+const HIDDEN_OUTLIER_METRIC_IDS: ReadonlySet<string> = new Set([
+  "task_completions_early_discharge",
+]);
+
+export function filterHiddenOutlierMetrics(
+  outcomes: SupervisionOfficerOutcomes,
+): SupervisionOfficerOutcomes {
+  return {
+    ...outcomes,
+    outlierMetrics: outcomes.outlierMetrics.filter(
+      (m) => !HIDDEN_OUTLIER_METRIC_IDS.has(m.metricId),
+    ),
+  };
+}

@@ -49,6 +49,7 @@ import {
 
 import { formatDateToISO } from "../../utils";
 import type { InsightsStore } from "../InsightsStore";
+import { filterHiddenOutlierMetrics } from "./filterHiddenOutlierMetrics";
 import {
   ActionStrategySurfacedEvent,
   InsightsAPI,
@@ -155,7 +156,9 @@ export class InsightsAPIClient implements InsightsAPI {
     const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/outcomes`;
     const { data } = await this.apiStore.client.get(endpoint);
     const outcomesData = data.outcomes as Array<unknown>;
-    return outcomesData.map((b) => supervisionOfficerOutcomesSchema.parse(b));
+    return outcomesData.map((b) =>
+      filterHiddenOutlierMetrics(supervisionOfficerOutcomesSchema.parse(b)),
+    );
   }
 
   async allSupervisionOfficers(): Promise<Array<SupervisionOfficer>> {
@@ -180,7 +183,9 @@ export class InsightsAPIClient implements InsightsAPI {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/outcomes`;
     const { data } = await this.apiStore.client.get(endpoint);
     const outcomesData = data.outcomes as unknown;
-    return supervisionOfficerOutcomesSchema.parse(outcomesData);
+    return filterHiddenOutlierMetrics(
+      supervisionOfficerOutcomesSchema.parse(outcomesData),
+    );
   }
 
   async supervisionOfficerMetricEvents(
