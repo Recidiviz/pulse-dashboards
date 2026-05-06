@@ -35,7 +35,7 @@ import { Icon, palette } from "~design-system";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
-import { formatWorkflowsDateString } from "../../utils";
+import { formatWorkflowsDate } from "../../utils";
 import { toTitleCase } from "../../utils";
 import PersonId, { PersonIdWithCopyIcon } from "../PersonId/PersonId";
 
@@ -170,9 +170,10 @@ export const VitalsContactrilldownTable = observer(
         {
           accessorKey: "contactDueDate",
           header: "Due",
+          sortingFn: "datetime",
           // eslint-disable-next-line react/no-unstable-nested-components
           cell: (info) => {
-            const contactDueDate = formatWorkflowsDateString(
+            const contactDueDate = formatWorkflowsDate(
               info.row.getValue("contactDueDate"),
             );
 
@@ -201,9 +202,7 @@ export const VitalsContactrilldownTable = observer(
             const contactCompletedDate = info.row.getValue(
               "contactCompletedDate",
             )
-              ? formatWorkflowsDateString(
-                  info.row.getValue("contactCompletedDate"),
-                )
+              ? formatWorkflowsDate(info.row.getValue("contactCompletedDate"))
               : "";
 
             return <span>{contactCompletedDate}</span>;

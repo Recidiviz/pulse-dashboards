@@ -39,9 +39,9 @@ export const vitalsSupervisionContactsSchema = z.object({
   personId: z.number(),
   officerId: z.string(),
   contactType: z.string(),
-  contactDueDate: z.string(),
+  contactDueDate: dateStringSchema,
   contactCompleted: z.boolean(),
-  contactCompletedDate: z.string().nullable(),
+  contactCompletedDate: dateStringSchema.nullable(),
 });
 
 export const supervisionVitalsMetricSchema = z.object({
