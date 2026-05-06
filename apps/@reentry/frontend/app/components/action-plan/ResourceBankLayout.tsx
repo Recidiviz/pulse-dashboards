@@ -55,7 +55,7 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
     "/plans/{id}/address",
   );
 
-  const { data: addressData } = $api.useQuery(
+  const { data: addressData, refetch: refetchAddress } = $api.useQuery(
     "get",
     "/plan/{plan_id}/address",
     {
@@ -105,6 +105,7 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
           "Content-Type": "application/json",
         },
       });
+      await refetchAddress();
       refetchResourceBank();
     } catch {
       showErrorToast("Failed to update address. Please try again.");
@@ -128,6 +129,12 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
           clientRecord={planDetail.client_record}
           onAddressSave={handleAddressSave}
           searchPanelProps={resourceSearchPanelProps}
+          resourcesPipelineEnabled={
+            planDetail.resources_pipeline_enabled ?? false
+          }
+          digitalResourcesEnabled={
+            planDetail.digital_resources_enabled ?? false
+          }
         />
       </div>
       <div className={styles["content"]}>

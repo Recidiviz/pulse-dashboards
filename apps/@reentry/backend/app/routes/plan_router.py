@@ -198,6 +198,7 @@ class PlanResponseGet(PlanResponse):
     latest_generation: PlanGenerationResponseGet | None
     is_create_execution_finished: Optional[bool] = None
     resources_pipeline_enabled: Optional[bool] = None
+    digital_resources_enabled: Optional[bool] = None
 
 
 class PlanAssetResponse(ORMResponse):
@@ -409,11 +410,15 @@ async def router_get_plan(
     resources_pipeline_enabled = (
         action_plan_config.external_api.resources_pipeline_enabled
     )
+    digital_resources_enabled = (
+        action_plan_config.external_api.digital_resources_enabled
+    )
 
     return PlanResponseGet.model_validate(
         {
             "latest_generation": latest_generation,
             "resources_pipeline_enabled": resources_pipeline_enabled,
+            "digital_resources_enabled": digital_resources_enabled,
             **plan.model_dump(),
         }
     )

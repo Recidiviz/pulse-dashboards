@@ -54,12 +54,14 @@ export interface ResourceSearchPanelProps {
   addResource: (sectionTitle: string, resource: ResourceWithMeta) => void;
   sectionTitles: SectionTitle[];
   clientAddress: string;
+  digitalResourcesEnabled?: boolean;
 }
 
 const ResourceSearchPanel = ({
   addResource,
   sectionTitles,
   clientAddress,
+  digitalResourcesEnabled,
 }: ResourceSearchPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<
@@ -70,8 +72,10 @@ const ResourceSearchPanel = ({
   >("");
   const [selectedRadius, setSelectedRadius] = useState<RadiusOption>(50);
 
-  const { searchError, isLoading, results, search } =
-    useResourceSearch(clientAddress);
+  const { searchError, isLoading, results, search } = useResourceSearch(
+    clientAddress,
+    digitalResourcesEnabled,
+  );
 
   const categoryOptions = Object.keys(CATEGORY_SUBCATEGORY_MAP)
     .sort()

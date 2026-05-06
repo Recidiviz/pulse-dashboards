@@ -27,7 +27,10 @@ import type { ResourceWithMeta } from "./resourceBank.types";
 type ResourceCategory = components["schemas"]["ResourceCategory"];
 type ResourceSubcategory = components["schemas"]["ResourceSubcategory"];
 
-const useResourceSearch = (clientAddress: string) => {
+const useResourceSearch = (
+  clientAddress: string,
+  digitalResourcesEnabled = false,
+) => {
   const { getAccessToken } = useAuth();
   const [results, setResults] = useState<ResourceWithMeta[] | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -60,7 +63,7 @@ const useResourceSearch = (clientAddress: string) => {
           use_search: true,
           limit: 50,
           include_physical_resources: true,
-          include_digital_resources: false,
+          include_digital_resources: digitalResourcesEnabled,
         },
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,

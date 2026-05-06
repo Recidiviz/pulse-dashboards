@@ -40,6 +40,8 @@ interface ResourceBankSidePanelProps {
     state: string;
   }) => Promise<void>;
   disabled?: boolean;
+  resourcesPipelineEnabled?: boolean;
+  digitalResourcesEnabled?: boolean;
   searchPanelProps: ResourceSearchPanelProps;
 }
 
@@ -48,6 +50,8 @@ const ResourceBankSidePanel = ({
   onAddressSave,
   disabled = false,
   searchPanelProps,
+  resourcesPipelineEnabled,
+  digitalResourcesEnabled,
 }: ResourceBankSidePanelProps) => {
   const { getAccessToken } = useAuth();
 
@@ -69,7 +73,12 @@ const ResourceBankSidePanel = ({
 
         {isExpanded && (
           <>
-            <ResourceSearchPanel {...searchPanelProps} />
+            {resourcesPipelineEnabled && (
+              <ResourceSearchPanel
+                {...searchPanelProps}
+                digitalResourcesEnabled={digitalResourcesEnabled}
+              />
+            )}
             <AddressSection
               initialAddress={clientRecord?.address}
               onSave={onAddressSave}
