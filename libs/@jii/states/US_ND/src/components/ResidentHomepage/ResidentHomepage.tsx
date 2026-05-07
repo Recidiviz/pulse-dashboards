@@ -20,6 +20,7 @@ import { FC } from "react";
 
 import { BottomPaddedContainer, usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
+import { LastUpdatedBanner } from "~@jii/layout";
 import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsNdTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
@@ -34,6 +35,8 @@ const ManagedComponent: FC<{ presenter: ResidentHomepagePresenter }> = observer(
 
     return (
       <BottomPaddedContainer>
+        <LastUpdatedBanner lastUpdatedDate={presenter.lastUpdatedDate} />
+
         <SentenceDates
           data={presenter.sentenceDatesData}
           stateCode="US_ND"

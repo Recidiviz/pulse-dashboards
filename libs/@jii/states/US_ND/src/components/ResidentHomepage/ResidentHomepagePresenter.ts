@@ -42,4 +42,8 @@ export class ResidentHomepagePresenter {
       })),
     };
   }
+
+  get lastUpdatedDate() {
+    return this.residentData.lastUpdatedDate;
+  }
 }

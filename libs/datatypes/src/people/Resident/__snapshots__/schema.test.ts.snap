@@ -2028,6 +2028,7 @@ exports[`schema for 'US_ND' 'ND_RES003' 1`] = `
   "facilityId": "ND_DEMO_FACILITY",
   "gender": "MALE",
   "metadata": {
+    "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
     "stateCode": "US_ND",
   },
   "officerId": "OFFICER3",
@@ -2060,6 +2061,7 @@ exports[`schema for 'US_ND' 'ND_RES004' 1`] = `
     "finalSentExpDate": 2022-10-16T00:00:00.000Z,
     "goodTimeDate": 2022-07-16T00:00:00.000Z,
     "initialReviewDate": 2022-02-16T00:00:00.000Z,
+    "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
     "paroleReviewDate": 2022-04-16T00:00:00.000Z,
     "stateCode": "US_ND",
   },
@@ -2089,6 +2091,7 @@ exports[`schema for 'US_ND' 'ND_RES005' 1`] = `
   "facilityId": "ND_DEMO_FACILITY",
   "gender": "MALE",
   "metadata": {
+    "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
     "paroleReviewDate": 2022-10-16T00:00:00.000Z,
     "stateCode": "US_ND",
   },

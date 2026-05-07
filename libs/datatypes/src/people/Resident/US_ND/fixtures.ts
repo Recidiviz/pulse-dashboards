@@ -39,6 +39,7 @@ export const rawUsNdResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ years: 1, months: 6 }),
     metadata: {
       stateCode: "US_ND",
+      lastUpdatedDate: relativeFixtureDate(),
     },
   },
   {
@@ -61,6 +62,7 @@ export const rawUsNdResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ months: 10 }),
     metadata: {
       stateCode: "US_ND",
+      lastUpdatedDate: relativeFixtureDate(),
       initialReviewDate: relativeFixtureDate({ months: 2 }),
       paroleReviewDate: relativeFixtureDate({ months: 4 }),
       EIGHTYFIVEPercentDate: relativeFixtureDate({ months: 5, days: 14 }),
@@ -88,6 +90,7 @@ export const rawUsNdResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ years: 2, months: 4 }),
     metadata: {
       stateCode: "US_ND",
+      lastUpdatedDate: relativeFixtureDate(),
       paroleReviewDate: relativeFixtureDate({ months: 10 }),
     },
   },
