@@ -44,8 +44,8 @@ const SearchResults = ({
 
   return (
     <div className={styles["results"]}>
-      {results.map((resource) => (
-        <div key={resource.id} className={styles["card"]}>
+      {results.map((resource, index) => (
+        <div key={index} className={styles["card"]}>
           <div className={styles["cardHeader"]}>
             <span className={styles["cardName"]}>{resource.name}</span>
             <AddToSectionButton

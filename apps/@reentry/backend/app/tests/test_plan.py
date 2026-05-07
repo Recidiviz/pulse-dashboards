@@ -1288,7 +1288,7 @@ async def test_remove_resource_appends_multiple_rows(
         "resource_id": 123,
         "section_title": "Housing",
         "plan_generation_id": str(gen.id),
-            "resource_type": ResourceAssociationType.COMMUNITY.value,
+        "resource_type": ResourceAssociationType.COMMUNITY.value,
     }
 
     assert_response(await client.post("/remove-resource", json=payload), 200)
@@ -1406,7 +1406,7 @@ async def test_get_active_resources_success(
         client, async_session, mock_clientdata_service, mock_intake
     )
 
-    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []})
     async_session.add(plan_gen)
     await async_session.commit()
     await async_session.refresh(plan_gen)
@@ -1564,13 +1564,16 @@ async def test_get_active_resources_same_id_different_types(
         client, async_session, mock_clientdata_service, mock_intake
     )
 
-    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []})
     async_session.add(plan_gen)
     await async_session.commit()
     await async_session.refresh(plan_gen)
 
     now = datetime.now(tz=timezone.utc)
-    for resource_type in (ResourceAssociationType.COMMUNITY, ResourceAssociationType.DIGITAL):
+    for resource_type in (
+        ResourceAssociationType.COMMUNITY,
+        ResourceAssociationType.DIGITAL,
+    ):
         async_session.add(
             PlanGenerationResourceAssociation(
                 plan_generation_id=plan_gen.id,
@@ -1631,7 +1634,7 @@ async def test_get_active_resources_remove_one_type_keeps_other(
         client, async_session, mock_clientdata_service, mock_intake
     )
 
-    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id))
+    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []})
     async_session.add(plan_gen)
     await async_session.commit()
     await async_session.refresh(plan_gen)

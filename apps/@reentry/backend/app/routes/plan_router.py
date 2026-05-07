@@ -1371,9 +1371,20 @@ async def get_active_resources(
         is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
+    all_section_titles = (
+        list(plan_gen.resources_associations_map.keys())
+        if plan_gen.resources_associations_map
+        else []
+    )
+
     active_associations = plan_gen.active_resource_associations
     if not active_associations:
-        return ActiveResourcesResponse(resources_by_sections=[])
+        return ActiveResourcesResponse(
+            resources_by_sections=[
+                ResourceSectionResponse(title=title, resources=[])
+                for title in all_section_titles
+            ]
+        )
 
     if not plan.intake or not plan.intake.address:
         raise HTTPException(status_code=400, detail="Client address not available")
@@ -1411,9 +1422,11 @@ async def get_active_resources(
             ResourceSectionResponse(
                 title=section_title,
                 resources=[
-                    resource_by_id[rid] for rid in rids if rid in resource_by_id
+                    resource_by_id[rid]
+                    for rid in section_map.get(section_title, [])
+                    if rid in resource_by_id
                 ],
             )
-            for section_title, rids in section_map.items()
+            for section_title in all_section_titles
         ]
     )
