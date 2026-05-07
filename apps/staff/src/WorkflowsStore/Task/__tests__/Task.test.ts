@@ -165,6 +165,7 @@ describe("Task", () => {
         },
       });
       vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+      const trackSpy = vi.spyOn(rootStore.analyticsStore, "trackTaskSnoozed");
 
       task.updateSupervisionTask(30);
 
@@ -177,7 +178,90 @@ describe("Task", () => {
           snoozedOn: testDate,
         },
       });
+      expect(trackSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ snoozeForDays: 30, withReason: false }),
+      );
     });
+
+    test("updateSupervisionTask with update and snoozeReason", () => {
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+        info: {
+          email: "test@email.gov",
+        },
+      });
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+      const trackSpy = vi.spyOn(rootStore.analyticsStore, "trackTaskSnoozed");
+
+      task.updateSupervisionTask(30, "Client is currently moving.");
+
+      expect(
+        rootStore.firestoreStore.updateSupervisionTask,
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
+        homeVisit: {
+          snoozeForDays: 30,
+          snoozedBy: "test@email.gov",
+          snoozedOn: testDate,
+          snoozeReason: "Client is currently moving.",
+        },
+      });
+      expect(trackSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ snoozeForDays: 30, withReason: true }),
+      );
+    });
+
+    test("updateSupervisionTask trims surrounding whitespace from snoozeReason", () => {
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+        info: {
+          email: "test@email.gov",
+        },
+      });
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+
+      task.updateSupervisionTask(30, "  spaced reason  ");
+
+      expect(
+        rootStore.firestoreStore.updateSupervisionTask,
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
+        homeVisit: {
+          snoozeForDays: 30,
+          snoozedBy: "test@email.gov",
+          snoozedOn: testDate,
+          snoozeReason: "spaced reason",
+        },
+      });
+    });
+
+    test.each([
+      ["empty string", ""],
+      ["whitespace-only string", "   "],
+      ["undefined", undefined],
+    ])(
+      "updateSupervisionTask omits snoozeReason when reason is %s",
+      (_label, reason) => {
+        vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+          info: {
+            email: "test@email.gov",
+          },
+        });
+        vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+        const trackSpy = vi.spyOn(rootStore.analyticsStore, "trackTaskSnoozed");
+
+        task.updateSupervisionTask(30, reason);
+
+        expect(
+          rootStore.firestoreStore.updateSupervisionTask,
+        ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
+          homeVisit: {
+            snoozeForDays: 30,
+            snoozedBy: "test@email.gov",
+            snoozedOn: testDate,
+          },
+        });
+        expect(trackSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ snoozeForDays: 30, withReason: false }),
+        );
+      },
+    );
 
     test("updateSupervisionTask undoing update", () => {
       vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
@@ -194,6 +278,42 @@ describe("Task", () => {
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
         homeVisit: deleteField(),
       });
+    });
+
+    test("updateSupervisionTask ignores reason when undoing", () => {
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+        info: {
+          email: "test@email.gov",
+        },
+      });
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+
+      task.updateSupervisionTask(undefined, "ignored reason");
+
+      expect(
+        rootStore.firestoreStore.updateSupervisionTask,
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
+        homeVisit: deleteField(),
+      });
+    });
+  });
+
+  describe("Task with snooze update including a reason", () => {
+    beforeEach(() => {
+      mockUpdates = {
+        snoozedBy: "tester@example.com",
+        snoozedOn: testDate,
+        snoozeForDays: 30,
+        snoozeReason: "Client is currently moving.",
+      };
+      createTestUnit(mockUpdates);
+    });
+
+    test("snoozeInfo surfaces the snoozeReason", () => {
+      expect(task.snoozeInfo).not.toBeUndefined();
+      expect(task.snoozeInfo?.snoozeReason).toEqual(
+        "Client is currently moving.",
+      );
     });
   });
 });

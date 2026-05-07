@@ -168,6 +168,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
         parseISO(this.updates.snoozedOn),
         this.updates.snoozeForDays,
       ),
+      snoozeReason: this.updates.snoozeReason,
     };
   }
 
@@ -176,7 +177,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     return this.snoozeInfo.snoozedUntil >= startOfToday();
   }
 
-  updateSupervisionTask(snoozeForDays?: number): void {
+  updateSupervisionTask(snoozeForDays?: number, snoozeReason?: string): void {
     const {
       workflowsStore: { currentUserEmail },
       firestoreStore,
@@ -184,10 +185,13 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     } = this.rootStore;
     if (!currentUserEmail) return;
 
+    const trimmedReason = snoozeReason?.trim() || undefined;
+
     analyticsStore.trackTaskSnoozed({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       taskType: this.type,
       snoozeForDays,
+      withReason: trimmedReason !== undefined,
     });
 
     if (snoozeForDays === undefined) {
@@ -202,6 +206,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
         snoozeForDays,
         snoozedBy: currentUserEmail,
         snoozedOn: formatDate(new Date(), "yyyy-MM-dd"),
+        ...(trimmedReason !== undefined && { snoozeReason: trimmedReason }),
       },
     };
     firestoreStore.updateSupervisionTask(this.person.recordId, update);

@@ -21,5 +21,6 @@ import { SharedSnoozeUpdate } from "./opportunity";
 export type SupervisionTaskUpdate = {
   [key in SupervisionTaskType]?: {
     snoozeForDays: number;
+    snoozeReason?: string;
   } & SharedSnoozeUpdate;
 };

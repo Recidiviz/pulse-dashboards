@@ -159,6 +159,7 @@ type TaskSnoozedMetadata = {
   justiceInvolvedPersonId: string;
   taskType: SupervisionTaskType;
   snoozeForDays?: number;
+  withReason?: boolean;
 };
 
 type TableViewChangedMetadata = {

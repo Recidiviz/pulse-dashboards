@@ -266,6 +266,7 @@ export type SupervisionDetailsForTask = {
 
 export type SnoozeInfo = {
   snoozedUntil: Date; // calculated based on snoozedOn
+  snoozeReason?: string;
 } & SharedSnoozeUpdate;
 
 export type SupervisionTask<
@@ -297,7 +298,10 @@ export type SupervisionTask<
 
   additionalDetails?: string;
   vitalsMetricId?: VitalsMetricId;
-  updateSupervisionTask: (snoozeForDays?: number) => void;
+  updateSupervisionTask: (
+    snoozeForDays?: number,
+    snoozeReason?: string,
+  ) => void;
 };
 
 export type ClientTasksSummary = {

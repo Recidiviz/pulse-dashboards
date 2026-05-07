@@ -75,6 +75,7 @@ export type FeatureVariant =
   | "hideWorkflowsResidentsPage"
   | "indefiniteSnooze"
   | "supervisionUnrestrictedSearch"
+  | "taskSnoozeReason"
   | "tasksOneRowPerClient"
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
@@ -244,6 +245,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
+  taskSnoozeReason: {},
   tasksOneRowPerClient: {},
   tasksRoutePlanner: {},
   usPaUnclearEligibility: {},

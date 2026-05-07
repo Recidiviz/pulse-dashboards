@@ -403,6 +403,23 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    test("updateSupervisionTask persists snoozeReason when provided", async () => {
+      const taskUpdate: SupervisionTaskUpdate = {
+        homeVisit: {
+          snoozedBy: "test@test.org",
+          snoozeForDays: 7,
+          snoozedOn: "2023-01-01",
+          snoozeReason: "Client is currently moving.",
+        },
+      };
+      await store.updateSupervisionTask("us_ca_123", taskUpdate);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        ["test-doc-ref", { stateCode: "us_ca" }, { merge: true }],
+        ["test-doc-ref", { ...taskUpdate }, { merge: true }],
+      ]);
+    });
+
     test("deleteOpportunityDenialAndSnooze", async () => {
       await store.deleteOpportunityDenialAndSnooze(opp);
       expect(mockDoc.mock.calls).toEqual([
