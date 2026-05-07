@@ -62,6 +62,22 @@ spec:
         - "**/README.md"
       targets:
         - components/terraform/vendor/{{.Component}}
+    - component: regional-lb-http-backend
+      source: "github.com/GoogleCloudPlatform/terraform-google-regional-lb-http.git//modules/backend?ref={{.Version}}"
+      version: v0.11.0
+      included_paths:
+        - "**/*.tf"
+        - "**/README.md"
+      targets:
+        - components/terraform/vendor/{{.Component}}
+    - component: regional-lb-http-frontend
+      source: "github.com/GoogleCloudPlatform/terraform-google-regional-lb-http.git//modules/frontend?ref={{.Version}}"
+      version: v0.11.0
+      included_paths:
+        - "**/*.tf"
+        - "**/README.md"
+      targets:
+        - components/terraform/vendor/{{.Component}}
     - component: google-workflows-workflow
       source: "github.com/GoogleCloudPlatform/terraform-google-cloud-workflows.git?ref={{.Version}}"
       version: main

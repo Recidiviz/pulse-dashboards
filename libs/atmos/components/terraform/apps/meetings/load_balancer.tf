@@ -15,6 +15,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
+resource "google_project_service" "certificate_manager" {
+  project            = var.project_id
+  service            = "certificatemanager.googleapis.com"
+  disable_on_destroy = false
+}
+
 module "waf" {
   source  = "../../modules/waf-policy"
   name    = "meetings-server-waf"
@@ -22,59 +28,49 @@ module "waf" {
   region  = var.location
 }
 
-resource "google_compute_region_network_endpoint_group" "serverless_neg" {
-  name                  = "meetings-server-neg"
-  network_endpoint_type = "SERVERLESS"
-  region                = var.location
-  project               = var.project_id
+module "lb_backend" {
+  source = "../../vendor/regional-lb-http-backend"
 
-  cloud_run {
-    service = module.server.service_name
+  name       = "meetings-server"
+  project_id = var.project_id
+  region     = var.location
+
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  protocol              = "HTTPS"
+
+  security_policy = module.waf.id
+
+  serverless_neg_backends = [{
+    region       = var.location
+    type         = "cloud-run"
+    service_name = module.server.service_name
+  }]
+
+  log_config = {
+    enable      = true
+    sample_rate = 1.0
   }
 }
 
-module "load_balancer" {
-  source = "../../vendor/lb-http"
+module "lb_frontend" {
+  source = "../../vendor/regional-lb-http-frontend"
 
-  name    = "meetings-server-lb"
-  project = var.project_id
+  depends_on = [google_project_service.certificate_manager]
+
+  name       = "meetings-server"
+  project_id = var.project_id
+  region     = var.location
+  network    = "default"
+
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  # We have one already created in apps/shared-infra since it's not specific to meetings- every
+  # load balancer in the same region and VPC network uses the same proxy-only subnetwork
+  create_proxy_only_subnet = false
 
   ssl                             = true
   managed_ssl_certificate_domains = [var.domain_name]
   https_redirect                  = true
 
-  backends = {
-    default = {
-      protocol    = "HTTPS"
-      port_name   = "http"
-      description = "Meetings server Cloud Run backend"
-
-      enable_cdn = false
-
-      log_config = {
-        enable      = true
-        sample_rate = 1.0
-      }
-
-      groups = []
-
-      security_policy = module.waf.id
-
-      serverless_neg_backends = [{
-        region = var.location
-        type   = "cloud-run"
-        service = {
-          name = module.server.service_name
-        }
-      }]
-
-      iap_config = {
-        enable = false
-      }
-    }
-  }
-
-  depends_on = [
-    google_compute_region_network_endpoint_group.serverless_neg
-  ]
+  url_map_input = module.lb_backend.backend_service_info
 }

@@ -91,6 +91,7 @@ resource "google_compute_region_security_policy" "waf" {
   name    = var.name
   project = var.project
   region  = var.region
+  type    = "CLOUD_ARMOR"
 
   advanced_options_config {
     json_parsing = "STANDARD"

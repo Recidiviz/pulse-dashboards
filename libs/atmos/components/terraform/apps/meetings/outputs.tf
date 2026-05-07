@@ -15,6 +15,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
+output "load_balancer_ip" {
+  description = "The external IP address of the meetings server load balancer."
+  value       = module.lb_frontend.external_ip
+}
+
 output "database_credentials" {
   description = "A map of credential values for the created database"
   value = {

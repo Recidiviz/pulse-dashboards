@@ -15,6 +15,16 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
+resource "google_compute_subnetwork" "proxy_only" {
+  name          = "regional-lb-proxy-only-subnet"
+  ip_cidr_range = "10.129.0.0/23"
+  network       = "default"
+  purpose       = "REGIONAL_MANAGED_PROXY"
+  region        = var.location
+  project       = var.project_id
+  role          = "ACTIVE"
+}
+
 resource "google_service_account" "workflows" {
   account_id   = "shared-infra-workflows-sa"
   display_name = "Google Workflows Service Account for infrastructure shared between applications"

@@ -19,6 +19,13 @@ import:
 components:
   terraform:
     apps/meetings:
+      settings:
+        # Note: with the way we have atmos set up, this depends_on doesn't actually do anything.
+        # It's here mainly as documentation for the user.
+        depends_on:
+          shared_infra:
+            component: apps/shared-infra
+            stack: recidiviz-dashboard-production--shared-infra
       vars:
         project_number: "{{ .settings.context.project_number }}"
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
