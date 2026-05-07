@@ -22,6 +22,7 @@ import React from "react";
 import superjson from "superjson";
 
 import { AgencyConfigProvider } from "../context/AgencyConfigContext";
+import { AnalyticsProvider } from "../context/AnalyticsContext";
 import {
   DEFAULT_STATE_CODE,
   StateCode,
@@ -96,9 +97,11 @@ const AuthenticatedApp: React.FC = () => {
         persistOptions={{ persister: queryCachePersister, maxAge: ONE_WEEK_MS }}
       >
         <AgencyConfigProvider>
-          <StateCodeProvider selectedStateRef={selectedStateRef}>
-            <AuthenticatedContent />
-          </StateCodeProvider>
+          <AnalyticsProvider>
+            <StateCodeProvider selectedStateRef={selectedStateRef}>
+              <AuthenticatedContent />
+            </StateCodeProvider>
+          </AnalyticsProvider>
         </AgencyConfigProvider>
       </PersistQueryClientProvider>
     </trpc.Provider>

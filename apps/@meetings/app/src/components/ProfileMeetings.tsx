@@ -42,6 +42,7 @@ import Header from "../components/Header";
 import MeetingsTable from "../components/MeetingsTable.web";
 import { NewMeetingOptionsModal } from "../components/NewMeetingOptionsModal";
 import { NewMeetingRecordingSheet } from "../components/NewMeetingRecordingSheet";
+import { useAnalytics } from "../context/AnalyticsContext";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import { useCreateMeeting } from "../hooks/useCreateMeeting";
 import {
@@ -101,10 +102,13 @@ const ProfileMeetings = ({
     openAudioUpload({ person, personType });
   }, [openAudioUpload, person, personType]);
 
+  const { track } = useAnalytics();
+
   const { handleCreateMeeting, isCreating } = useCreateMeeting({
     person,
     personType: personType,
     onSuccess: (meetingId) => {
+      track("meeting_started", { meetingId, personType });
       switch (Platform.OS) {
         case "web":
           openRecordingView({ meetingId, person });
