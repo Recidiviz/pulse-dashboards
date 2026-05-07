@@ -19,27 +19,23 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { palette, spacing, typography } from "~design-system";
+import { spacing } from "~design-system";
 
-import { dateCardModifierClassesEnum } from "../SentenceDates/DatePresenter";
-import { DateTextComponentProps } from "./types";
+import { DefaultProps } from "./types";
+import { Wrapper } from "./Wrapper";
 
-export type DateValueSupplementalProps = DateTextComponentProps;
+export type CardsWrapperProps = DefaultProps;
 
-const Wrapper = styled.div`
-  ${typography.Sans16}
+const StyledWrapper = styled(Wrapper)`
+  display: grid;
+  row-gap: ${rem(spacing.md)};
 
-  margin-top: ${rem(spacing.sm)};
-  color: ${palette.slate85};
-
-  .${dateCardModifierClassesEnum.enum["DateCard--is-past"]} & {
-    color: ${palette.data.gold2};
-  }
+  margin-bottom: ${rem(spacing.lg)};
 `;
 
-export const DateValueSupplemental: FC<DateValueSupplementalProps> = ({
+export const CardsWrapper: FC<CardsWrapperProps> = ({
   children,
   className,
 }) => {
-  return children ? <Wrapper {...{ children, className }} /> : null;
+  return <StyledWrapper {...{ children, className }} />;
 };

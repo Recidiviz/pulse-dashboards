@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -30,7 +31,8 @@ const StyledGoLink = styled(Link)`
 
   display: flex;
   align-items: center;
-  column-gap: 4px;
+  // this isn't a design system value but is tweaked for the inline icons
+  column-gap: ${rem(6)};
   color: ${palette.signal.links};
   text-decoration: none;
 

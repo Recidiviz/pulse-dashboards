@@ -19,7 +19,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { spacing, typography } from "~design-system";
+import { palette, spacing, typography } from "~design-system";
 
 import { DateComponentDefaultProps } from "./types";
 
@@ -28,6 +28,7 @@ export type DateLabelProps = DateComponentDefaultProps;
 const Heading = styled.h3`
   ${typography.Sans18}
 
+  color: ${palette.pine1};
   margin: 0 0 ${rem(spacing.sm)};
 `;
 

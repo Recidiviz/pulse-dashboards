@@ -24,7 +24,7 @@ import { palette } from "~design-system";
 import { preventFlexibleLayoutOverflow } from "./styles";
 
 export const Card = styled.section`
-  border: 1px solid ${palette.slate20};
+  border: 1px solid ${palette.slate30};
   border-radius: ${rem(spacing.sm)};
   margin: ${rem(spacing.sm)} 0;
   padding: ${rem(spacing.lg)};
@@ -41,7 +41,9 @@ export const CardHeading = styled.h3`
 `;
 
 export const CardValue = styled.div`
-  ${typography.Sans24};
+  ${typography.Sans24}
+
+  color: ${palette.pine1};
 
   font-size: ${rem(34)};
 `;

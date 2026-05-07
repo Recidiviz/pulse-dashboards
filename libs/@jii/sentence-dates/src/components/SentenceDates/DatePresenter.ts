@@ -114,7 +114,11 @@ export class DatePresenter {
       : // the normal case for any other future or past dates
         {
           primary: this.translatedCopy.dateFormatted,
-          supplemental: this.translatedCopy.dateRelative,
+          // note an extra bit of behavior: use parentheses in this spot only.
+          // universal enough that we don't need to run it through translation for now
+          supplemental:
+            this.translatedCopy.dateRelative &&
+            `(${this.translatedCopy.dateRelative})`,
         };
   }
 

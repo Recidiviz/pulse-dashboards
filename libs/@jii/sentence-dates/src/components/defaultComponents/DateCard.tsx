@@ -51,6 +51,7 @@ const DashedBorderSvg = styled.svg`
 const CardWrapper = styled(Card)`
   display: grid;
   row-gap: ${rem(spacing.lg)};
+  margin: 0;
 
   ${DashedBorderSvg} {
     display: none;

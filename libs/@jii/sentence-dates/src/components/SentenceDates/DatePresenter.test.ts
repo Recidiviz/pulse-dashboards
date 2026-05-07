@@ -76,7 +76,7 @@ describe("DatePresenter", () => {
       expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
           "primary": "April 8, 2026",
-          "supplemental": "7 days ago",
+          "supplemental": "(7 days ago)",
         }
       `);
     });
@@ -160,7 +160,7 @@ describe("DatePresenter", () => {
       expect(presenter.cardValueText).toMatchInlineSnapshot(`
         {
           "primary": "July 19, 2026",
-          "supplemental": "3 months and 4 days from today",
+          "supplemental": "(3 months and 4 days from today)",
         }
       `);
     });

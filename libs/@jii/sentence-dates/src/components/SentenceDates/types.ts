@@ -21,6 +21,7 @@ import { PickByValue } from "utility-types";
 
 import { I18nResources, StateSentenceDatesResources } from "~@jii/translation";
 
+import { CardsWrapperProps } from "../defaultComponents/CardsWrapper";
 import { DateAdjustmentProps } from "../defaultComponents/DateAdjustment";
 import { DateCardProps } from "../defaultComponents/DateCard";
 import { DateCardBodyWrapperProps } from "../defaultComponents/DateCardBodyWrapper";
@@ -40,7 +41,7 @@ export type StateCodeWithSentenceDates = keyof PickByValue<
 export type SentenceDatesComponents = {
   SectionWrapper: ComponentType<WrapperProps>;
   SectionHeading: ComponentType<SectionHeadingProps>;
-  CardsWrapper: ComponentType<WrapperProps>;
+  CardsWrapper: ComponentType<CardsWrapperProps>;
   DateCard: ComponentType<DateCardProps>;
   DateCardHeadingWrapper: ComponentType<DateCardHeadingWrapperProps>;
   DateDescription: ComponentType<DateDescriptionProps>;
