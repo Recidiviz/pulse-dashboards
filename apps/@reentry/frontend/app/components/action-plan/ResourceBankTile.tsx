@@ -19,7 +19,6 @@ import LanguageIcon from "@mui/icons-material/Language";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PlaceIcon from "@mui/icons-material/Place";
-import React from "react";
 
 import type { components } from "~@reentry/openapi-types";
 
@@ -99,7 +98,7 @@ const ResourceBankTile = ({
   const { chip: chipClass, tileBg } =
     CATEGORY_CLASSES[resource.category] ?? DEFAULT_CLASSES;
   const chipLabel = resource.subcategory ?? resource.category;
-  const isOnline = false;
+  const isOnline = resource.resource_type === "DIGITAL";
   const travelDistanceMiles = (
     resource as Resource & { travel_distance_miles?: number }
   ).travel_distance_miles;
@@ -113,7 +112,11 @@ const ResourceBankTile = ({
           </span>
         </div>
         <div className={styles["headerRight"]}>
-          {isOnline && <span className={styles["onlineBadge"]}>+ Digital</span>}
+          {isOnline && (
+            <span className={`${styles["onlineBadge"]} ${chipClass}`}>
+              + Digital
+            </span>
+          )}
           <button
             className={styles["removeButton"]}
             onClick={() => onRemove(resource.id, resource.name)}
@@ -125,9 +128,7 @@ const ResourceBankTile = ({
         </div>
       </div>
 
-      {resource.description && (
-        <p className={styles["description"]}>{resource.description}</p>
-      )}
+      {resource.blurb && <p className={styles["blurb"]}>{resource.blurb}</p>}
 
       <div className={isOnline ? styles["onlineMetaGrid"] : styles["metaGrid"]}>
         {resource.address && (

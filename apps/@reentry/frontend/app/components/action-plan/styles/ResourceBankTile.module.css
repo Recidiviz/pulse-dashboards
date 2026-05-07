@@ -162,8 +162,6 @@
   font-size: 11px;
   font-weight: 600;
   font-family: var(--font-public-sans);
-  color: var(--electric-blue-700);
-  background-color: var(--electric-blue-100);
   white-space: nowrap;
 }
 
@@ -200,12 +198,12 @@
   color: var(--color-error-1);
 }
 
-.description {
+.blurb {
   font-size: 13px;
   color: var(--color-ink-2);
   font-family: var(--font-public-sans);
   line-height: 1.5;
-  margin: 0;
+  margin-bottom: 0px !important;
 }
 
 .metaGrid {
