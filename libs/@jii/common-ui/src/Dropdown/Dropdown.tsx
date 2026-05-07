@@ -15,30 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// we are restyling and re-exporting the Dropdown components here for the entire app
-/* eslint-disable no-restricted-imports */
+import styled from "styled-components";
+
 import {
   DropdownMenuItem as OriginalDropdownMenuItem,
   DropdownToggle as OriginalDropdownToggle,
   typography,
-} from "@recidiviz/design-system";
-import styled from "styled-components";
-
+} from "~design-system";
 import { palette } from "~design-system";
 
-export {
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuLabel,
-} from "@recidiviz/design-system";
-
-export const DropdownToggle = styled(OriginalDropdownToggle)`
+export const JIIDropdownToggle = styled(OriginalDropdownToggle)`
   color: inherit;
   height: 100%;
   padding: 0;
 `;
 
-export const DropdownMenuItem = styled(OriginalDropdownMenuItem)`
+export const JIIDropdownMenuItem = styled(OriginalDropdownMenuItem)`
   ${typography.Sans14}
 
   color: ${palette.pine3};

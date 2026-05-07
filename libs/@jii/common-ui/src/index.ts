@@ -29,6 +29,7 @@ export * from "./CopyWrapper/ImportantDatesCopyWrapper";
 export * from "./CopyWrapper/ShadowDOM";
 export * from "./CopyWrapper/SlateCopy";
 export * from "./CopyWrapper/withCopyWrapperOverrides";
+export * from "./Dropdown/Dropdown";
 export * from "./GoLink/GoButton";
 export * from "./GoLink/GoLink";
 export * from "./Header/constants";
