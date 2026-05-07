@@ -17,13 +17,14 @@
 
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ResourceSection } from "~@reentry/frontend/hooks/resourceBank.types";
 import { usePlanPdf } from "~@reentry/frontend/hooks/usePlanPdf";
 import { components } from "~@reentry/openapi-types";
 
+import DownloadConfirmModal from "./DownloadConfirmModal";
 import ResourceBankViewer from "./ResourceBankViewer";
 import styles from "./styles/PlanContent.module.css";
 
@@ -56,6 +57,8 @@ const PlanContent = ({
     `${clientFullName}_action_plan.pdf`,
   );
 
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+
   return (
     <div className={styles["container"]}>
       <div className={styles["inner"]}>
@@ -69,12 +72,21 @@ const PlanContent = ({
           />
           <PrimaryButton
             buttonText={isGenerating ? "Generating..." : "Download PDF"}
-            onClick={generatePdf}
+            onClick={() => setShowDownloadModal(true)}
             disabled={isGenerating}
             ignoreCapabilities={true}
             className={styles["actionButton"]}
           />
         </div>
+        <DownloadConfirmModal
+          isOpen={showDownloadModal}
+          onClose={() => setShowDownloadModal(false)}
+          onConfirm={() => {
+            setShowDownloadModal(false);
+            generatePdf();
+          }}
+          isDownloading={isGenerating}
+        />
 
         <div id="contentToDownload" ref={contentRef}>
           <ResourceBankViewer

@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import DownloadConfirmModal from "~@reentry/frontend/components/action-plan/DownloadConfirmModal";
 import LastPrompt from "~@reentry/frontend/components/action-plan/LastPrompt";
 import ActionPlanViewer from "~@reentry/frontend/components/ActionPlanViewer";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
@@ -65,6 +66,7 @@ const Planner = ({
     showRegenerationNotify && !!planPrompt,
   );
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [viewerKey, setViewerKey] = useState(0);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -323,6 +325,15 @@ const Planner = ({
 
   return (
     <div className="w-full md:w-[75%] grow shrink basis-0 self-stretch px-6 md:px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto actionPlanSide">
+      <DownloadConfirmModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
+        onConfirm={() => {
+          setShowDownloadModal(false);
+          handleDownload();
+        }}
+        isDownloading={isDownloading}
+      />
       <div className="mx-auto w-full md:max-w-[800px] h-full flex-col justify-start items-center gap-8 flex">
         <div className="w-full grow shrink basis-0 flex-col justify-start md:items-center gap-8 flex">
           <div className="w-full justify-end items-center gap-2 inline-flex print:hidden">
@@ -354,7 +365,7 @@ const Planner = ({
                 />
                 <PrimaryButton
                   buttonText={isDownloading ? "Downloading..." : "Download"}
-                  onClick={handleDownload}
+                  onClick={() => setShowDownloadModal(true)}
                   disabled={isDownloading}
                   ignoreCapabilities={true}
                 />

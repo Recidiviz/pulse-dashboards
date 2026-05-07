@@ -108,6 +108,7 @@ nx test @reentry/frontend
 ### API Client
 
 The frontend uses **openapi-react-query** (`$api`), generated from the FastAPI OpenAPI schema. This is not React Query or tRPC.
+Types can be found at libs/@reentry/openapi-types/src/recidiviz-schema.d.ts and imported from ~@reentry/openapi-types.
 
 ### Auth
 
@@ -123,6 +124,10 @@ Protected pages live under `app/(protected)/`. Client-facing pages live under `a
 ### Shared Frontend
 
 The JII client-facing intake UI is shared with the JII app via `libs/@reentry/frontend-shared`. Changes there affect both apps.
+
+### Frontend best-practice
+
+New components should always use css modules, the codebase is moving away from tailwinds.
 
 ## LLM Configuration
 
