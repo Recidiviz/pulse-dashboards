@@ -186,7 +186,7 @@ type AddressRowProps =
     }
   | {
       address: string;
-      label: string;
+      label?: string;
       index?: never;
       displayStar: true;
     };
@@ -201,7 +201,8 @@ const AddressRow = function AddressRow({
     <AddressRowContainer>
       <AddressNumber>{displayStar ? <Star /> : index}</AddressNumber>
       <AddressText>
-        {address} <AddressLabel>({label})</AddressLabel>
+        {address}
+        {label && <AddressLabel>({label})</AddressLabel>}
       </AddressText>
     </AddressRowContainer>
   );
@@ -382,11 +383,6 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
           <RouteInfo>
             <AddressRow
               address={presenter.startingAddress}
-              label={
-                presenter.userPickedStartingAddress
-                  ? "Your starting point"
-                  : "Your office"
-              }
               displayStar={true}
             />
             <AddressDivider />

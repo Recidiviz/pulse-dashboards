@@ -152,6 +152,11 @@ const SmallInfoText = styled(Sans14)`
   font-weight: 400;
 `;
 
+const NoAddressFoundText = styled(Sans14)`
+  color: ${palette.slate50};
+  font-weight: 400;
+`;
+
 const SmallInfoLink = styled(Sans14)`
   color: ${palette.signal.selected};
   &:hover,
@@ -408,7 +413,9 @@ export const ClientCard = observer(function ClientCard({
                 )}
               </>
             ) : (
-              <SmallInfoText>No address on file in OIMS</SmallInfoText>
+              <NoAddressFoundText>
+                No address on file in OIMS
+              </NoAddressFoundText>
             )}
           </InfoRow>
           <InfoRow>
@@ -423,7 +430,6 @@ export const ClientCard = observer(function ClientCard({
           >
             {scheduledStatus}
           </SchedulingBadge>
-
           {isMobile && person.phoneNumber && (
             <a
               href={person.phoneNumberUri}
