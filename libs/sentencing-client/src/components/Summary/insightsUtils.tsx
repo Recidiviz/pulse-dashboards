@@ -88,7 +88,7 @@ export function buildInsightsFootnoteText(
   }
   const riskLevel = BUCKET_TO_RISK_LEVEL[bucket] ?? "unknown risk";
   const rangeFragments = ORAS_TOOL_KEYS.map((tool, i) => {
-    const range = getOrasBucketScoreRange(bucket, tool);
+    const range = getOrasBucketScoreRange(bucket, tool, gender);
     const shortName = getAssessmentTypeShortName(tool);
     const prefix = i === ORAS_TOOL_KEYS.length - 1 ? "or " : "";
     return `${prefix}${range} for the ${shortName}`;

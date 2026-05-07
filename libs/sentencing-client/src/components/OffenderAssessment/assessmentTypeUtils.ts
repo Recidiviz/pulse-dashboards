@@ -49,41 +49,60 @@ export function getAssessmentTypeShortName(
   return assessmentType.replace(/_/g, "-");
 }
 
-// Overall max scores derived from observed production data (excluding Age domain)
+// Overall max scores per assessment type
 export const OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE: Record<
   AssessmentTypeKey,
   number | null
 > = {
   ORAS_CST: 49,
-  ORAS_SRT: 44,
-  ORAS_PIT: 39,
-  ORAS_RT: 27,
+  ORAS_SRT: 45,
+  ORAS_PIT: 40,
+  ORAS_RT: 28,
   Other: null,
 };
 
-// Score thresholds per assessment type (male ranges from official ORAS scoring guide)
-// Bucket values: 0 = Low, 1 = Moderate, 2 = High, 3 = Very High
+// Score thresholds per assessment type and gender.
+// Bucket values: 0 = Low, 1 = Moderate, 2 = High (High absorbs Very High).
+// Female norms differ from male norms on all tools.
+type Boundaries = { moderate: number; high: number };
 const SCORE_BUCKET_BOUNDARIES: Partial<
-  Record<
-    AssessmentTypeKey,
-    { moderate: number; high: number; veryHigh?: number }
-  >
+  Record<AssessmentTypeKey, { MALE: Boundaries; FEMALE: Boundaries }>
 > = {
-  ORAS_CST: { moderate: 15, high: 24, veryHigh: 34 },
-  ORAS_SRT: { moderate: 15, high: 21 },
-  ORAS_PIT: { moderate: 9, high: 17, veryHigh: 25 },
-  ORAS_RT: { moderate: 10, high: 16 },
+  ORAS_CST: {
+    MALE: { moderate: 15, high: 24 },
+    FEMALE: { moderate: 15, high: 29 },
+  },
+  ORAS_SRT: {
+    MALE: { moderate: 15, high: 21 },
+    FEMALE: { moderate: 14, high: 22 },
+  },
+  ORAS_PIT: {
+    MALE: { moderate: 9, high: 17 },
+    FEMALE: { moderate: 13, high: 19 },
+  },
+  ORAS_RT: {
+    MALE: { moderate: 10, high: 16 },
+    FEMALE: { moderate: 11, high: 15 },
+  },
 };
+
+function getBoundaries(
+  assessmentType: AssessmentTypeKey,
+  gender: string | null | undefined,
+): Boundaries | null {
+  const byGender = SCORE_BUCKET_BOUNDARIES[assessmentType];
+  if (!byGender) return null;
+  return gender === "FEMALE" ? byGender.FEMALE : byGender.MALE;
+}
 
 export function getAssessmentScoreBucket(
   assessmentType: AssessmentTypeKey | null | undefined,
   score: number,
+  gender?: string | null,
 ): number | null {
   if (!assessmentType) return null;
-  const boundaries = SCORE_BUCKET_BOUNDARIES[assessmentType];
+  const boundaries = getBoundaries(assessmentType, gender);
   if (!boundaries) return null;
-  if (boundaries.veryHigh !== undefined && score >= boundaries.veryHigh)
-    return 3;
   if (score >= boundaries.high) return 2;
   if (score >= boundaries.moderate) return 1;
   return 0;
@@ -91,14 +110,15 @@ export function getAssessmentScoreBucket(
 
 /**
  * Returns a human-readable ORAS score range string for a given bucket number
- * (0=Low, 1=Moderate, 2=High, 3=Very High).
+ * (0=Low, 1=Moderate, 2=High).
  * Returns null if the assessment type is unknown or bucket is invalid.
  */
 export function getOrasBucketScoreRange(
   bucket: number,
   assessmentType: AssessmentTypeKey,
+  gender?: string | null,
 ): string | null {
-  const boundaries = SCORE_BUCKET_BOUNDARIES[assessmentType];
+  const boundaries = getBoundaries(assessmentType, gender);
   if (!boundaries) return null;
   switch (bucket) {
     case 0:
@@ -106,11 +126,7 @@ export function getOrasBucketScoreRange(
     case 1:
       return `${boundaries.moderate}-${boundaries.high - 1}`;
     case 2:
-      return boundaries.veryHigh
-        ? `${boundaries.high}-${boundaries.veryHigh - 1}`
-        : `${boundaries.high}+`;
-    case 3:
-      return boundaries.veryHigh ? `${boundaries.veryHigh}+` : null;
+      return `${boundaries.high}+`;
     default:
       return null;
   }

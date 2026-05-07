@@ -277,6 +277,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   ) : (
                     <ReportTimeServedEmpty
                       descriptionContext={insightDescriptionContext}
+                      dispositionNumRecords={insightData.dispositionNumRecords}
                     />
                   ))}
                 {!declined &&

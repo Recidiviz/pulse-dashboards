@@ -212,7 +212,7 @@ export class SARDetailsPresenter implements Hydratable {
       return;
     }
 
-    const scoreBucket = getAssessmentScoreBucket(assessmentType, score);
+    const scoreBucket = getAssessmentScoreBucket(assessmentType, score, gender);
     if (scoreBucket == null) {
       console.warn(
         `[SARDetailsPresenter] Cannot load insight: could not determine score bucket for assessmentType=${assessmentType}, score=${score}`,
@@ -260,6 +260,7 @@ export class SARDetailsPresenter implements Hydratable {
           ? getAssessmentScoreBucket(
               sarData.assessmentType ?? null,
               sarData.assessmentScore,
+              gender,
             )
           : null,
       offense,

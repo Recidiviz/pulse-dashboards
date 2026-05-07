@@ -36,10 +36,12 @@ const SECTION_TITLE = "Historical Outcome Reference";
 
 interface ReportTimeServedEmptyProps {
   descriptionContext: InsightDescriptionContext;
+  dispositionNumRecords: number;
 }
 
 export const ReportTimeServedEmpty: React.FC<ReportTimeServedEmptyProps> = ({
   descriptionContext,
+  dispositionNumRecords,
 }) => (
   <ReportBlock>
     <SectionContinuationHeader title={`${SECTION_TITLE} Continued...`} />
@@ -59,6 +61,15 @@ export const ReportTimeServedEmpty: React.FC<ReportTimeServedEmptyProps> = ({
         </Styled.DispositionEmptyText>
       </Styled.DispositionEmptyContent>
     </Styled.DispositionEmptyContainer>
+    <Styled.TimeServedFootnoteContainer>
+      <Styled.TimeServedFootnoteText>
+        {buildInsightsFootnoteText(
+          dispositionNumRecords,
+          descriptionContext.gender,
+          descriptionContext.assessmentScoreBucketStart,
+        )}
+      </Styled.TimeServedFootnoteText>
+    </Styled.TimeServedFootnoteContainer>
   </ReportBlock>
 );
 
