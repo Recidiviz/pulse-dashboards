@@ -24,6 +24,17 @@ export default {
     heading: "About the App",
     body: aboutInfoPage,
   },
+  aboutVideo: {
+    homepageCta: {
+      heading: "What is Opportunities?",
+      description:
+        "Want to learn about how the Opportunities App works or how to understand your shown sentence dates? Watch this video to find out.",
+      confirmClose: "Move to “About” page",
+      cancelClose: "Never mind, keep video here",
+      videoButtonAltText: "Open video",
+      closeButtonAltText: "Dismiss video",
+    },
+  },
   homePageLinkText: "Home Page",
   backToHomePageLinkText: "Back to Home",
   moreInfoPageLinksHeading: "More Information",

@@ -11,8 +11,10 @@ datasource db {
 
 // can be used to store random bits of user activity or preferences
 model UserProperties {
-    id                String    @id
-    hasSeenOnboarding DateTime?
+    id    String    @id
+
+    hasSeenOnboarding          DateTime?
+    hideAboutVideoFromHomePage DateTime?
 }
 
 // Resident Flags tell the frontend to behave differently for specific residents
@@ -20,6 +22,7 @@ model UserProperties {
 enum ResidentFlagId {
     usNeGoodTimeAlerts
     usNeChecklistDocuments
+    usAzFslImprovements
 }
 
 model ResidentFlagInstance {

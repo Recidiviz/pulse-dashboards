@@ -21,4 +21,5 @@ import type { Prisma } from "~@jii/prisma";
 
 export const setPropertiesInputSchema = z.object({
   hasSeenOnboarding: z.date().optional(),
+  hideAboutVideoFromHomePage: z.date().optional(),
 }) satisfies z.Schema<Prisma.UserPropertiesUpdateInput>;

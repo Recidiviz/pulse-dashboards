@@ -23,7 +23,10 @@ import { makeAutoObservable, runInAction, set } from "mobx";
 
 import { StateCode } from "~@jii/configs";
 import { IncarcerationOpportunityId, ResidentsConfig } from "~@jii/configs";
-import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
+import type {
+  JiiResidentAppRouterInputs,
+  JiiResidentAppRouterOutputs,
+} from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
@@ -37,8 +40,13 @@ type OpportunityRecordMapping = {
   [O in IncarcerationOpportunityId]?: OpportunityRecord<O>;
 };
 
-export type StateUserProperties =
-  JiiResidentAppRouterOutputs["user"]["getProperties"];
+export type StateUserProperties = Partial<
+  JiiResidentAppRouterOutputs["user"]["getProperties"]
+>;
+
+type StateUserPropertiesInput = Partial<
+  JiiResidentAppRouterInputs["user"]["setProperties"]
+>;
 
 // these are legacy keys from when properties were kept in local storage.
 // we still support them but only to incrementally migrate them to the backend
@@ -204,7 +212,8 @@ export class ResidentsStore {
     if (this.userProperties !== undefined) return;
 
     // state code is implicit in every query, so we don't need to specify it here
-    let properties = await this.apiClient.trpc.user.getProperties.query();
+    let properties: StateUserProperties | undefined =
+      await this.apiClient.trpc.user.getProperties.query();
     if (!properties?.hasSeenOnboarding) {
       const localStorageProperties =
         this.getAndMigrateOldLocalStorageProperties();
@@ -251,27 +260,47 @@ export class ResidentsStore {
     return;
   }
 
-  async setUserOnboardingSeen() {
-    const seenTime = new Date();
+  /**
+   * Try to update the current user properties with some subset of new properties.
+   * Optimistically updates the local state then waits for database response.
+   * If a property is undefined in newProperties, the user property won't be updated.
+   *
+   * If there's an error, onError is called; otherwise, the method fails silently.
+   */
+  private async setUserProperties(
+    newProperties: StateUserPropertiesInput,
+    onError?: () => void,
+  ) {
     // set optimistically
     if (this.userProperties) {
-      this.userProperties.hasSeenOnboarding = seenTime;
+      this.userProperties = { ...this.userProperties, ...newProperties };
     } else {
-      this.userProperties = { hasSeenOnboarding: seenTime };
+      this.userProperties = newProperties;
     }
 
     try {
       const updatedProperties =
-        await this.apiClient.trpc.user.setProperties.mutate({
-          hasSeenOnboarding: seenTime,
-        });
+        await this.apiClient.trpc.user.setProperties.mutate(newProperties);
       // refresh properties again after server response
       runInAction(() => {
         this.userProperties = omit(updatedProperties, "id");
       });
     } catch {
-      // it's OK for this to fail silently, it should be logged elsewhere.
-      // only effect to user is that they'll see onboarding again next time
+      if (onError) onError();
     }
+  }
+
+  async setUserOnboardingSeen() {
+    const seenTime = new Date();
+    // it's OK for this to fail silently, it should be logged elsewhere.
+    // only effect to user is that they'll see onboarding again next time
+    await this.setUserProperties({ hasSeenOnboarding: seenTime });
+  }
+
+  async hideAboutVideoFromHomePage() {
+    const hiddenTime = new Date();
+    // it's OK for this to fail silently, it should be logged elsewhere.
+    // only effect to user is that the video will pop up again on the home page for them
+    await this.setUserProperties({ hideAboutVideoFromHomePage: hiddenTime });
   }
 }

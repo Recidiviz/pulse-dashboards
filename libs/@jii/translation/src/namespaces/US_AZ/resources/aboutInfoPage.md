@@ -2,6 +2,8 @@
 
 This app helps you track and understand your release dates. It has the same release date information as your COIII.
 
+<AboutVideoCta />
+
 ## What information will I see in this app?
 
 The app will show you information about the release dates that ADCRR has calculated for your sentence. Tap on each date in order to see more information about what it means for you. Note that the information shown in the app can change over time, including through the day of your release – for example, if you get a disciplinary infraction that affects your dates.

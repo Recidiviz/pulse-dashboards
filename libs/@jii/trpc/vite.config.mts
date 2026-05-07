@@ -31,7 +31,6 @@ export default defineConfig(() => ({
     setupFiles: ["src/test/setupTests.ts"],
     fileParallelism: false,
     name: "@jii/trpc",
-    watch: false,
     globals: true,
     environment: "node",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],

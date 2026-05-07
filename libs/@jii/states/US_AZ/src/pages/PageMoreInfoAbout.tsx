@@ -17,12 +17,17 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { usePageTitle } from "~@jii/common-ui";
+import { usePageTitle, withCopyWrapperOverrides } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
+import { AboutVideoCta } from "../components/AboutVideoCta/AboutVideoCta";
 import { DefinitionView } from "../components/DefinitionView";
 import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
+
+const CopyWrapperWithCustomComponents = withCopyWrapperOverrides({
+  AboutVideoCta: { component: AboutVideoCta, props: { onHomePage: false } },
+});
 
 export function PageMoreInfoAbout() {
   const { t } = useUsAzTranslations();
@@ -41,6 +46,7 @@ export function PageMoreInfoAbout() {
         },
         ...useInfoPageFooterLinks(),
       ]}
+      CopyWrapperOverride={CopyWrapperWithCustomComponents}
     />
   );
 }

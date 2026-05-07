@@ -38,6 +38,7 @@ describe("get properties for user in auth token", () => {
     expect(await c.getProperties()).toMatchInlineSnapshot(`
       {
         "hasSeenOnboarding": 2025-12-10T11:14:00.000Z,
+        "hideAboutVideoFromHomePage": null,
       }
     `);
   });
@@ -50,6 +51,39 @@ test("set properties for user in auth token", async () => {
   expect(result).toMatchInlineSnapshot(`
     {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hideAboutVideoFromHomePage": null,
+      "id": "abc123",
+    }
+  `);
+  expect(await testPrismaClient.userProperties.findMany()).toEqual([result]);
+});
+
+test("set multiple properties at once", async () => {
+  const result = await c.setProperties({
+    hasSeenOnboarding: new Date(2025, 11, 10, 11, 43),
+    hideAboutVideoFromHomePage: new Date(2025, 11, 10, 12, 44),
+  });
+  expect(result).toMatchInlineSnapshot(`
+    {
+      "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
+      "id": "abc123",
+    }
+  `);
+  expect(await testPrismaClient.userProperties.findMany()).toEqual([result]);
+});
+
+test("setting one property doesn't affect another", async () => {
+  await c.setProperties({
+    hasSeenOnboarding: new Date(2025, 11, 10, 11, 43),
+  });
+  const result = await c.setProperties({
+    hideAboutVideoFromHomePage: new Date(2025, 11, 10, 12, 44),
+  });
+  expect(result).toMatchInlineSnapshot(`
+    {
+      "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
       "id": "abc123",
     }
   `);
