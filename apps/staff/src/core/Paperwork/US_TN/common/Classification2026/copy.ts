@@ -16,7 +16,7 @@
 // =============================================================================
 
 export const Q1_SUPPORTING_TEXT = `Recidiviz is not auto-filling this score. \
-Please refer to Pilot User’s Guide Appendix I: Prior Violent Felonies to score \
+Please refer to Pilot User’s Guide Appendix I: Prior Violent/Assaultive Felonies to score \
 this question. Recidiviz is auto-filling supporting information \
 based on the resident’s sentence history, as found in eTOMIS, where \
 convictions are considered prior if they did not occur on the resident’s most \

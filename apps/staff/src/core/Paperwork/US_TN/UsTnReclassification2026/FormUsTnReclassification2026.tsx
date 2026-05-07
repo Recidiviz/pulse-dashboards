@@ -136,13 +136,13 @@ export const FormUsTnReclassification2026 = observer(
                 <DoubleNotes>
                   <TextboxWithHeader
                     header={
-                      "List prior violent felony convictions (TDOC) in Last 60 Months (imposed date, charge):"
+                      "List prior violent/assaultive felony convictions (TDOC) in Last 60 Months (imposed date, charge):"
                     }
                     name={"q1aNotes"}
                   />
                   <TextboxWithHeader
                     header={
-                      "List prior ISC or Diversion convictions in  the Last 60 Months - Please confirm if they are violent felony convictions (imposed date, charge):"
+                      "List prior ISC or Diversion convictions in  the Last 60 Months - Please confirm if they are violent/assaultive felony convictions (imposed date, charge):"
                     }
                     name={"q1bNotes"}
                   />

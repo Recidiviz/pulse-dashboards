@@ -27,12 +27,12 @@ export type RcafAssessmentQuestionNumber =
 
 export const rcafAssessmentQuestions = [
   {
-    title: "PRIOR VIOLENT FELONY CONVICTIONS",
+    title: "PRIOR VIOLENT/ASSAULTIVE FELONY CONVICTIONS",
     type: "SINGLE",
     canBeNone: true,
     options: [
       {
-        text: "Violent Felony Conviction in Last 60 Months",
+        text: "Violent/Assaultive Felony Conviction in Last 60 Months",
         score: 2,
       },
     ],

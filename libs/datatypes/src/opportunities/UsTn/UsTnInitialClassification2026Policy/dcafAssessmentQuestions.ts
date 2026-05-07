@@ -27,16 +27,16 @@ export type DcafAssessmentQuestionNumber =
 
 export const dcafAssessmentQuestions = [
   {
-    title: "PRIOR VIOLENT FELONY CONVICTIONS",
+    title: "PRIOR VIOLENT/ASSAULTIVE FELONY CONVICTIONS",
     type: "SINGLE",
     canBeNone: true,
     options: [
       {
-        text: "Violent Felony Conviction in Last 24 Months",
+        text: "Violent/Assaultive Felony Conviction in Last 24 Months",
         score: 4,
       },
       {
-        text: "Violent Felony Conviction 24-60 Months Ago",
+        text: "Violent/Assaultive Felony Conviction 24-60 Months Ago",
         score: 3,
       },
     ],

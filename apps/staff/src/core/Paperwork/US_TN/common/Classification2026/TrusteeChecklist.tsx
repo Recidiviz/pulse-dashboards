@@ -358,9 +358,10 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody">
-                <Bold>If</Bold> inmate's current offense is a violent offense
-                (see Classification User’s Guide, Appendix I), the inmate has
-                been in TDOC custody for a <Bold>minimum</Bold> of 12 months
+                <Bold>If</Bold> inmate's current offense is a violent/assaultive
+                offense (see Classification User’s Guide, Appendix I), the
+                inmate has been in TDOC custody for a <Bold>minimum</Bold> of 12
+                months
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNotServingForSexualOffense">
@@ -396,8 +397,9 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               </TrusteeCriteriaRow>
 
               <TrusteeCriteriaRow dataKey="trusteeNoViolentFelonyConvictionPast5YearsIncarceration">
-                Inmate has no court-prosecuted felony convictions for a violent
-                offense committed during the past 5 years of incarceration
+                Inmate has no court-prosecuted felony convictions for a
+                violent/assaultive offense committed during the past 5 years of
+                incarceration
               </TrusteeCriteriaRow>
             </tbody>
           </CriteriaTable>
