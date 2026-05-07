@@ -357,6 +357,20 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     },
   ];
 
+  const staleLastViewedUpdates: Array<{
+    recordId: string;
+    opportunityType: string;
+    stateCode: string;
+    lastViewedDaysAgo: number;
+  }> = [
+    {
+      recordId: "us_ne_RES004",
+      opportunityType: "usNeGoodTimeRestoration",
+      stateCode: "US_NE",
+      lastViewedDaysAgo: 40,
+    },
+  ];
+
   logger(`loading opportunity update fixtures...`);
   const bulkWriter = db.bulkWriter();
 
@@ -370,6 +384,22 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     bulkWriter.set(docRef, {
       submitted: {
         date: Timestamp.fromDate(subDays(new Date(), update.submittedDaysAgo)),
+        by: "staff@recidiviz.org",
+      },
+      stateCode: update.stateCode,
+    });
+  }
+
+  for (const update of staleLastViewedUpdates) {
+    const docRef = db
+      .collection(collectionName)
+      .doc(update.recordId)
+      .collection(subcollection)
+      .doc(update.opportunityType);
+
+    bulkWriter.set(docRef, {
+      lastViewed: {
+        date: Timestamp.fromDate(subDays(new Date(), update.lastViewedDaysAgo)),
         by: "staff@recidiviz.org",
       },
       stateCode: update.stateCode,

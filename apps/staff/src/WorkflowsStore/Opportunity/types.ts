@@ -196,6 +196,7 @@ export interface Opportunity<
   readonly denialConfirmationModalName?: DenialConfirmationModalName;
   isSubmitted: boolean;
   isPendingOverdue: boolean;
+  isEligibleStaleViewed: boolean;
   readonly submittedTabTitle: string;
   readonly submittedButtonText: string;
   readonly undoSubmittedButtonText: string;

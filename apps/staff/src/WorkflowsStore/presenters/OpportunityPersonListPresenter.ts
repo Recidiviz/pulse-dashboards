@@ -52,6 +52,10 @@ import {
   TableViewSelectPresenter,
 } from "./TableViewSelectPresenter";
 
+type OpportunityPersonListPresenterOptions = {
+  initialTab?: string;
+};
+
 /**
  * Responsible for presenting information about the caseload relative to a user's
  * current view of a single opportunity, including who is eligible and the user's
@@ -85,6 +89,7 @@ export class OpportunityPersonListPresenter
     private readonly supervisionPresenter?:
       | SupervisionOpportunityPresenter
       | SupervisionSupervisorOpportunityPresenter,
+    { initialTab }: OpportunityPersonListPresenterOptions = {},
   ) {
     this.isSupervisorHomepage = !!supervisionPresenter;
 
@@ -92,8 +97,10 @@ export class OpportunityPersonListPresenter
       config.tabGroups,
     ) as OpportunityTabGroup[];
     this._activeTabGroup = this.displayTabGroups[0];
-    this.userSelectedTab = undefined;
     this.userOrderedTabs = undefined;
+    if (initialTab) {
+      this.activeTab = initialTab as OpportunityTab;
+    }
 
     this.tableViewSelectPresenter = new TableViewSelectPresenter(
       firestoreStore,
@@ -123,6 +130,7 @@ export class OpportunityPersonListPresenter
     makeAutoObservable(this, {
       updateNavigablePeople: action,
       handleOpportunityClick: action,
+      handleTabClick: action,
     });
   }
 
@@ -386,6 +394,10 @@ export class OpportunityPersonListPresenter
 
   set activeTab(newTab: OpportunityTab) {
     this.userSelectedTab = newTab;
+  }
+
+  handleTabClick(newTab: OpportunityTab) {
+    this.activeTab = newTab;
     this.analyticsStore.trackOpportunityTabClicked({ tab: newTab });
   }
 

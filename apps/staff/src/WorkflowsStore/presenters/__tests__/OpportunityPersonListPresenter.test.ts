@@ -84,6 +84,7 @@ function getPresenter({
   tenantStore: customTenantStore = tenantStore,
   opportunityType = mockOpportunity.type,
   opportunitiesFilterStore = mockFilterStore,
+  initialTab,
 }: {
   config?: OpportunityConfiguration;
   supervisionPresenter?:
@@ -93,6 +94,7 @@ function getPresenter({
   tenantStore?: TenantStore;
   opportunityType?: typeof mockOpportunity.type;
   opportunitiesFilterStore?: OpportunitiesFilterStore;
+  initialTab?: string;
 }): OpportunityPersonListPresenter {
   return new OpportunityPersonListPresenter(
     analyticsStore,
@@ -104,12 +106,14 @@ function getPresenter({
     FEATURE_VARIANTS,
     opportunityType,
     supervisionPresenter,
+    { initialTab },
   );
 }
 
 describe("one tab group, no supervision presenter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    window.history.replaceState(null, "", "/");
 
     presenter = getPresenter({});
   });
@@ -133,10 +137,10 @@ describe("one tab group, no supervision presenter", () => {
     ]);
   });
 
-  test("changing active tab emits a tracking event", () => {
+  test("clicking a tab emits a tracking event and updates the active tab", () => {
     expect(presenter.activeTab).toEqual("Eligible Now");
 
-    presenter.activeTab = "Marked Ineligible";
+    presenter.handleTabClick("Marked Ineligible");
 
     expect(analyticsStore.trackOpportunityTabClicked).toHaveBeenCalledOnce();
     expect(presenter.activeTab).toEqual("Marked Ineligible");
@@ -192,6 +196,21 @@ describe("one tab group, no supervision presenter", () => {
     expect(
       presenter.oppsFromOpportunitiesByTab?.["Marked Ineligible"],
     ).toHaveLength(2);
+  });
+
+  test("seeds activeTab from initialTab when it matches a display tab", () => {
+    presenter = getPresenter({ initialTab: "Submitted" });
+    expect(presenter.activeTab).toEqual("Submitted");
+  });
+
+  test("falls back to defaultTab when initialTab is not a display tab", () => {
+    presenter = getPresenter({ initialTab: "definitely-not-a-tab" });
+    expect(presenter.activeTab).toEqual("Eligible Now");
+  });
+
+  test("falls back to defaultTab when initialTab is undefined", () => {
+    presenter = getPresenter({});
+    expect(presenter.activeTab).toEqual("Eligible Now");
   });
 });
 

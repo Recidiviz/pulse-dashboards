@@ -22,6 +22,10 @@ export class UsNeGoodTimeRestorationConfiguration extends ApiOpportunityConfigur
     return 14;
   }
 
+  get eligibleNotViewedDaysThreshold() {
+    return 14;
+  }
+
   get indefiniteSnoozeSectionSubheading(): string {
     return "";
   }

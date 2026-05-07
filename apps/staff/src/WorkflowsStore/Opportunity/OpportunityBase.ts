@@ -181,6 +181,7 @@ export class OpportunityBase<
       denied: computed,
       isSubmitted: computed,
       isPendingOverdue: computed,
+      isEligibleStaleViewed: computed,
       isDenied: computed,
       isCompleted: computed,
       isInProgress: computed,
@@ -379,6 +380,18 @@ export class OpportunityBase<
     const submittedDate = this.submittedUpdate?.date?.toDate();
     if (!submittedDate) return false;
     return differenceInDays(startOfToday(), submittedDate) >= threshold;
+  }
+
+  get isEligibleStaleViewed(): boolean {
+    const threshold = this.config.eligibleNotViewedDaysThreshold;
+    if (threshold == null) return false;
+    if (this.tabTitle() !== "Eligible Now") return false;
+
+    // Fall back to eligibilityDate so never-viewed cases still count as stale.
+    const clockStart = this.lastViewed?.date?.toDate() ?? this.eligibilityDate;
+    if (!clockStart) return false;
+
+    return differenceInDays(startOfToday(), clockStart) >= threshold;
   }
 
   get isCompleted(): boolean {

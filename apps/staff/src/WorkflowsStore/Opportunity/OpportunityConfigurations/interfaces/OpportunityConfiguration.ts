@@ -150,4 +150,6 @@ export interface OpportunityConfiguration {
   enableWorkflowsFilter: boolean;
 
   pendingOverdueDaysThreshold?: number;
+
+  eligibleNotViewedDaysThreshold?: number;
 }

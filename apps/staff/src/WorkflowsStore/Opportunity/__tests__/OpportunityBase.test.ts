@@ -1198,6 +1198,86 @@ describe("isPendingOverdue", () => {
   });
 });
 
+describe("isEligibleStaleViewed", () => {
+  function mockTimestamp(daysAgo: number) {
+    const date = sub(new Date(), { days: daysAgo });
+    return { toDate: () => date } as unknown as Timestamp;
+  }
+
+  beforeEach(() => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      eligibleNotViewedDaysThreshold: 14,
+    } as any);
+  });
+
+  test("returns false when threshold is not configured", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      eligibleNotViewedDaysThreshold: undefined,
+    } as any);
+    mockHydration({
+      updateData: {
+        lastViewed: { date: mockTimestamp(30), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isEligibleStaleViewed).toBe(false);
+  });
+
+  test("returns false when opportunity is not on the Eligible Now tab", () => {
+    mockHydration({
+      updateData: {
+        denial: {
+          reasons: ["foo"],
+          updated: { by: "x", date: vi.fn() as any },
+        },
+        lastViewed: { date: mockTimestamp(30), by: "test@test.gov" },
+      },
+    });
+    expect(opp.tabTitle()).not.toBe("Eligible Now");
+    expect(opp.isEligibleStaleViewed).toBe(false);
+  });
+
+  test("returns false when last viewed within threshold", () => {
+    mockHydration({
+      updateData: {
+        lastViewed: { date: mockTimestamp(5), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isEligibleStaleViewed).toBe(false);
+  });
+
+  test("returns true when last viewed past threshold", () => {
+    mockHydration({
+      updateData: {
+        lastViewed: { date: mockTimestamp(20), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isEligibleStaleViewed).toBe(true);
+  });
+
+  test("returns true when last viewed exactly at threshold", () => {
+    mockHydration({
+      updateData: {
+        lastViewed: { date: mockTimestamp(14), by: "test@test.gov" },
+      },
+    });
+    expect(opp.isEligibleStaleViewed).toBe(true);
+  });
+
+  test("falls back to eligibilityDate when never viewed", () => {
+    vi.spyOn(opp, "eligibilityDate", "get").mockReturnValue(
+      sub(new Date(), { days: 30 }),
+    );
+    mockHydration();
+    expect(opp.isEligibleStaleViewed).toBe(true);
+  });
+
+  test("returns false when never viewed and no eligibilityDate", () => {
+    vi.spyOn(opp, "eligibilityDate", "get").mockReturnValue(undefined);
+    mockHydration();
+    expect(opp.isEligibleStaleViewed).toBe(false);
+  });
+});
+
 describe("tabTitle", () => {
   test("Under review for snooze", () => {
     const opportunity: Opportunity = {

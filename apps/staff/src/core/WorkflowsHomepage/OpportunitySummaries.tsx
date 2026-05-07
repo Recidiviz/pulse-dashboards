@@ -21,6 +21,7 @@ import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityCaseHighlights } from "./OpportunityCaseHighlights";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
+import { OutstandingItemsAlerts } from "./OutstandingItemsAlerts";
 
 /**
  * A shared component between workflows and the supervisor homepage officer view.
@@ -42,6 +43,10 @@ export const OpportunitySummaries = function OpportunitySummaries({
   return (
     <div>
       <OpportunityCaseHighlights
+        opportunityTypes={opportunityTypes}
+        opportunitiesByType={opportunitiesByType}
+      />
+      <OutstandingItemsAlerts
         opportunityTypes={opportunityTypes}
         opportunitiesByType={opportunitiesByType}
       />

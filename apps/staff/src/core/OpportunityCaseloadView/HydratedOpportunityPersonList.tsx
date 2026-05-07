@@ -60,6 +60,7 @@ import {
   AccordionItemPanel,
   AccordionItemState,
 } from "react-accessible-accordion";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { OpportunityType } from "~datatypes";
@@ -1231,7 +1232,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   );
 
   const handleTabClick = (tab: OpportunityTab) => {
-    presenter.activeTab = tab;
+    presenter.handleTabClick(tab);
   };
 
   const handleTabGroupClick = (newTabGroup: string) => {
@@ -1418,6 +1419,9 @@ function usePresenter({
   const featureVariants = useFeatureVariants();
   const config = opportunityConfigs[opportunityType];
 
+  const { state } = useLocation();
+  const initialTab = (state as { initialTab?: string } | null)?.initialTab;
+
   return new OpportunityPersonListPresenter(
     analyticsStore,
     firestoreStore,
@@ -1428,6 +1432,7 @@ function usePresenter({
     featureVariants,
     opportunityType,
     supervisionPresenter,
+    { initialTab },
   );
 }
 
