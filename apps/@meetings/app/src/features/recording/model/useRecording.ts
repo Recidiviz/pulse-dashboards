@@ -15,26 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 
-import { getRecordingState, setRecordingState } from "../utils/storage";
-import { Status } from "./../model";
+import { RecordingContext } from "./RecordingProvider";
+import { RecordingBase, RecordingNative, RecordingWeb } from "./types";
 
-export function useRecordingStatus() {
-  const [status, setStatus] = useState<Status | null>(null);
+/* eslint-disable no-redeclare */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export function useRecording(): RecordingBase;
+export function useRecording<T extends "web">(): RecordingWeb;
+export function useRecording<T extends "native">(): RecordingNative;
 
-  const updateStatus = async (newStatus: Status) => {
-    setStatus(newStatus);
-    await setRecordingState(newStatus);
-  };
+export function useRecording(): RecordingBase | RecordingWeb | RecordingNative {
+  const ctx = useContext(RecordingContext);
 
-  useEffect(() => {
-    async function loadStatus() {
-      const persistedStatus = await getRecordingState();
-      setStatus(persistedStatus);
-    }
-    loadStatus();
-  }, []);
+  if (!ctx) {
+    throw new Error("useRecording must be used within RecordingProvider");
+  }
 
-  return [status, updateStatus] as const;
+  return ctx;
 }

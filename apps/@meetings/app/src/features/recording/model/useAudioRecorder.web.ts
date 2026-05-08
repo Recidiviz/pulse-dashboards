@@ -19,12 +19,12 @@ import { useCallback, useRef, useState } from "react";
 
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { MAX_RECORDING_MS, WEB_CHUNK_INTERVAL_MS } from "../constants";
+import { MAX_RECORDING_MS, WEB_CHUNK_INTERVAL_MS } from "../config";
 import {
   clearRecordedChunks,
   getAllChunks,
   saveChunk,
-} from "../utils/webRecorderDb.web";
+} from "../lib/webRecorderDb.web";
 
 type Params = {
   onStop: () => void;

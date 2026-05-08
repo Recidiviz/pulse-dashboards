@@ -20,9 +20,9 @@ import { useCallback, useEffect, useRef } from "react";
 import { useUploadSegment } from "~@meetings/app/shared/api";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { Status } from "../model";
-import { getBlobDurationMs } from "../utils/getBlobDurationMs.web";
-import { clearRecordedChunks, getAllChunks } from "../utils/webRecorderDb.web";
+import { getBlobDurationMs } from "../lib/getBlobDurationMs.web";
+import { clearRecordedChunks, getAllChunks } from "../lib/webRecorderDb.web";
+import { Status } from ".";
 
 type Params = {
   status: Status;

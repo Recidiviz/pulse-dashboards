@@ -33,15 +33,15 @@ import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { useUploadSegment } from "../../../shared/api";
-import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useNote } from "../hooks/useNote";
-import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
-import { useRecordingStatus } from "../hooks/useRecordingStatus";
-import { RecordingProvider, useRecording } from "../model";
-import { useRecordingStore, useRecordingStoreHydrated } from "../model/store";
-import * as notifications from "../utils/notifications";
-import * as storage from "../utils/storage";
+import { useUploadSegment } from "../../../../shared/api";
+import * as notifications from "../../lib/notifications";
+import * as storage from "../../lib/storage";
+import { RecordingProvider, useRecording } from "..";
+import { useRecordingStore, useRecordingStoreHydrated } from "../store";
+import { useDurationTimer } from "../useDurationTimer";
+import { useNote } from "../useNote";
+import { usePersistedFileDuration } from "../usePersistedFileDuration.native";
+import { useRecordingStatus } from "../useRecordingStatus";
 
 jest.mock("expo-audio", () => ({
   AudioModule: { requestRecordingPermissionsAsync: jest.fn() },
@@ -66,16 +66,16 @@ jest.mock("~@meetings/app/shared/lib/useIsOnline", () => ({
   default: jest.fn().mockReturnValue({ isOnline: true }),
 }));
 jest.mock("~@meetings/app/hooks/useUpdateNotesMutation");
-jest.mock("../hooks/useDurationTimer");
-jest.mock("../hooks/useNote");
-jest.mock("../hooks/usePersistedFileDuration.native", () => ({
+jest.mock("../useDurationTimer");
+jest.mock("../useNote");
+jest.mock("../usePersistedFileDuration.native", () => ({
   usePersistedFileDuration: jest.fn(),
 }));
-jest.mock("../hooks/useRecordingStatus");
+jest.mock("../useRecordingStatus");
 jest.mock("~@meetings/app/shared/api/upload-segment");
-jest.mock("../utils/notifications");
-jest.mock("../utils/storage");
-jest.mock("../model/store");
+jest.mock("../../lib/notifications");
+jest.mock("../../lib/storage");
+jest.mock("../store");
 
 const mockPerson = {
   personId: "person-1",

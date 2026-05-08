@@ -22,11 +22,6 @@ export default defineConfig([
   ...fsd.configs.recommended,
   { rules: { "fsd/insignificant-slice": "off" } },
   {
-    // TODO: remove the block after refactoring
-    files: ["./src/features/recording/**"],
-    rules: { "fsd/segments-by-purpose": "off" },
-  },
-  {
     // These folders don't contain JS files, so it's okay not to have a public API there
     files: ["./src/shared/assets/**"],
     rules: {

@@ -23,37 +23,40 @@ import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { useUploadSegment } from "../../../shared/api";
-import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
-import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useInitialization } from "../hooks/useInitialization.web";
-import { RecordingProvider, useRecording } from "../model";
-import { useRecordingStore, useRecordingStoreHydrated } from "../model/store";
+import { useUploadSegment } from "../../../../shared/api";
+import { RecordingProvider, useRecording } from "..";
+import { useRecordingStore, useRecordingStoreHydrated } from "../store";
+import { useWebAudioRecorder } from "../useAudioRecorder.web";
+import { useDurationTimer } from "../useDurationTimer";
+import { useInitialization } from "../useInitialization.web";
 
 jest.mock("idb", () => ({ openDB: jest.fn() }));
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
-jest.mock("../hooks/useAudioRecorder.web");
-jest.mock("../utils/webRecorderDb.web");
+jest.mock("../useAudioRecorder.web");
+jest.mock("../../lib/webRecorderDb.web");
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
 jest.mock("~@meetings/app/shared/lib/useIsOnline", () => ({
   __esModule: true,
   default: jest.fn().mockReturnValue({ isOnline: true }),
 }));
-jest.mock("../hooks/useDurationTimer");
-jest.mock("../hooks/useInitialization.web", () => ({
+jest.mock("../useDurationTimer");
+jest.mock("../useInitialization.web", () => ({
   useInitialization: jest.fn(),
 }));
 jest.mock("~@meetings/app/shared/api/upload-segment");
-jest.mock("../ui/MeetingModal", () => ({
+jest.mock("../../ui/MeetingModal", () => ({
   MeetingModal: () => null,
 }));
-jest.mock("../model/store");
+jest.mock("../store");
 // Prevent jest-expo from resolving the barrel to model.native.tsx
-jest.mock("../model", () => {
-  const { RecordingContext, RecordingProvider } = require("../model/model.web");
+jest.mock("../RecordingProvider", () => {
+  const {
+    RecordingContext,
+    RecordingProvider,
+  } = require("../RecordingProvider.web");
   const { useContext } = require("react");
   return {
     RecordingContext,

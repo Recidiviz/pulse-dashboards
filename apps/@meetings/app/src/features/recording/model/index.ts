@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { useRecording } from "./hooks/useRecording";
-export { RecordingProvider } from "./model";
+export { RecordingProvider } from "./RecordingProvider";
 export * from "./types";
+export { useRecording } from "./useRecording";

@@ -26,12 +26,12 @@ import { extractError } from "~@meetings/app/shared/lib/extractError";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
-import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useInitialization } from "../hooks/useInitialization.web";
 import { MeetingModal } from "../ui/MeetingModal";
 import { useRecordingStore, useRecordingStoreHydrated } from "./store";
 import { RecordingProviderProps, RecordingWeb } from "./types";
+import { useWebAudioRecorder } from "./useAudioRecorder.web";
+import { useDurationTimer } from "./useDurationTimer";
+import { useInitialization } from "./useInitialization.web";
 
 export const RecordingContext = createContext<RecordingWeb | null>(null);
 

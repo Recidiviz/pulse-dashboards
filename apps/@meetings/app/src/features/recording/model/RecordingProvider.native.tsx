@@ -42,24 +42,24 @@ import { extractError } from "~@meetings/app/shared/lib/extractError";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useNote } from "../hooks/useNote";
-import { usePersistedFileDuration } from "../hooks/usePersistedFileDuration.native";
-import { useRecordingStatus } from "../hooks/useRecordingStatus";
-import { MeetingModalMobile } from "../ui/MeetingModalMobile";
 import {
   requestNotificationPermissions,
   sendNotification,
-} from "../utils/notifications";
+} from "../lib/notifications";
 import {
   getRecordingState,
   getRecordingUri,
   removeRecordingUri,
   saveRecordingUri,
   setRecordingState,
-} from "../utils/storage";
+} from "../lib/storage";
+import { MeetingModalMobile } from "../ui/MeetingModalMobile";
 import { useRecordingStore, useRecordingStoreHydrated } from "./store";
 import { RecordingNative, RecordingProviderProps, Status } from "./types";
+import { useDurationTimer } from "./useDurationTimer";
+import { useNote } from "./useNote";
+import { usePersistedFileDuration } from "./usePersistedFileDuration.native";
+import { useRecordingStatus } from "./useRecordingStatus";
 
 const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
 
