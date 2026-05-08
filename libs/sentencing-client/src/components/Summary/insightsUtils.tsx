@@ -130,11 +130,9 @@ export function buildKeyFindingText(
     return baseText;
   }
 
-  const incarcerationPct = convertDecimalToPercentage(
-    dispositionData
-      .filter((d) => !sentenceLengthLabelFilter(d))
-      .reduce((sum, d) => sum + d.percentage, 0),
-  );
+  const incarcerationPct = dispositionData
+    .filter((d) => !sentenceLengthLabelFilter(d))
+    .reduce((sum, d) => sum + convertDecimalToPercentage(d.percentage), 0);
   const pct = formatTimeServedPct(avgPctServed);
 
   return (
