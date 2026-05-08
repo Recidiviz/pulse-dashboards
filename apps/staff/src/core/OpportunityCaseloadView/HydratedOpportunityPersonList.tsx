@@ -1145,7 +1145,9 @@ const TableView = observer(function TableView({
       id: "ASSIGNED_STAFF_NAME",
       // Sort by surname if available, full displayed name if not
       accessorFn: (opp: Opportunity) =>
-        opp.person.assignedStaff?.surname ?? opp.person.assignedStaffFullName,
+        opp.person.assignedStaff?.surname ??
+        opp.person.assignedStaffFullName ??
+        "",
       enableSorting: true,
       sortingFn: "text",
       cell: OfficerNameCell,

@@ -46,7 +46,8 @@ export class UsNeSupervisionDowngradeForm extends FormBase<
     const clientId = this.person.displayId;
     const officerName =
       this.rootStore.userStore.userFullName ??
-      this.person.assignedStaffFullName;
+      this.person.assignedStaffFullName ??
+      "";
     const riskLevel =
       this.opportunity.record.metadata.recentOrasScores[0].assessmentLevel?.toLowerCase() ??
       "unknown";

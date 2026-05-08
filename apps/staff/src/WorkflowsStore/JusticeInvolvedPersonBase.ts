@@ -154,11 +154,9 @@ export abstract class JusticeInvolvedPersonBase<
     return this.assignedStaff?.district ?? undefined;
   }
 
-  get assignedStaffFullName(): string {
-    return [
-      this.assignedStaff?.givenNames ?? "",
-      this.assignedStaff?.surname ?? "",
-    ]
+  get assignedStaffFullName(): string | undefined {
+    if (!this.assignedStaff) return undefined;
+    return [this.assignedStaff.givenNames, this.assignedStaff.surname]
       .join(" ")
       .trim();
   }

@@ -109,7 +109,7 @@ const OpportunityRecommendedLanguageModal = ({
     justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
     justiceInvolvedPersonName: opportunity.person.displayPreferredName,
     staffId: opportunity.person.assignedStaffId,
-    staffName: opportunity.person.assignedStaffFullName,
+    staffName: opportunity.person.assignedStaffFullName ?? "",
     opportunityId: opportunity.sentryTrackingId,
   };
 

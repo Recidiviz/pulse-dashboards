@@ -66,7 +66,7 @@ export type JusticeInvolvedPerson = {
   assignedStaff: StaffRecord | undefined;
   assignedStaffId?: string;
   assignedStaffPseudoId?: string;
-  assignedStaffFullName: string;
+  assignedStaffFullName: string | undefined;
   profileUrl: string;
   supervisionTasks?: SupervisionTaskInterface;
   opportunityManager: OpportunityManagerInterface;

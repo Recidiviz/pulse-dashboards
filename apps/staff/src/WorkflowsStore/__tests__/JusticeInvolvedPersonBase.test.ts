@@ -170,6 +170,23 @@ describe("opportunities", () => {
       createTestUnit();
       expect(testPerson.assignedStaffFullName).toEqual("LastName");
     });
+
+    test("assigned staff not found in system returns undefined", () => {
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "availableOfficers",
+        "get",
+      ).mockReturnValue([
+        {
+          id: "OFFICER2",
+          givenNames: "a first name",
+          surname: "a last name",
+        } as unknown as StaffRecord,
+      ]);
+      createTestUnit();
+      expect(testPerson.assignedStaff).toBeUndefined();
+      expect(testPerson.assignedStaffFullName).toBeUndefined();
+    });
   });
 
   describe("displayPreferredName", () => {

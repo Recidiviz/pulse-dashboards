@@ -92,6 +92,14 @@ API calls to the Python backend are made to the staging version of the app.
 
 The development servers will remain active until you either close your terminal or shut down the entire setup at once using `control+c`.
 
+### Running the application with JII features
+
+If you are running an application that points to a JII feature you will need to be running the backend locally using docker. (hint: you can tell if it's a JII dependent feature if it's making calls to localhost:4210 - Self-Report Viewer for NC is one such case)
+
+1. Run `nx dev staff` in one terminal
+2. Run `nx dev jii` in another terminal
+3. Ensure you have docker running for jii to work properly
+
 ### Running the application locally with a local Python backend
 
 If you have not run the Python server (fka "Case Triage backend", fka "new Pathways backend") locally before, run (from your `recidiviz-data` repository):

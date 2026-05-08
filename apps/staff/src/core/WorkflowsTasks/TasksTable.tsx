@@ -292,7 +292,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       id: "assignedTo",
       // Sort by surname if available, full displayed name if not
       accessorFn: ({ person }) =>
-        person.assignedStaff?.surname ?? person.assignedStaffFullName,
+        person.assignedStaff?.surname ?? person.assignedStaffFullName ?? "",
       enableSorting: true,
       sortingFn: "text",
       cell: OfficerNameCell,

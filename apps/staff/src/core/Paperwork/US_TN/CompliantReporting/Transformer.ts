@@ -90,7 +90,7 @@ export const transform = (
     is4035313: client.supervisionType === "Diversion",
     physicalAddress: client.address ?? "",
 
-    poFullName: client.assignedStaffFullName,
+    poFullName: client.assignedStaffFullName ?? "",
     sentenceLengthDaysText: formatSentenceLength(
       formInformation.sentenceStartDate,
       formInformation.sentenceLengthDays,
