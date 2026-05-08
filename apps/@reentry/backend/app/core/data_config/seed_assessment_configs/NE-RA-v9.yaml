@@ -1,0 +1,217 @@
+metadata:
+  state_code: US_NE
+  code: RA
+  version: 9
+  display_name: 120 Day Reentry Preparation
+  description: Assessment to be completed prior to 120 Day meeting with Reentry Specialist
+
+intake:
+  intake_type: conversation
+  prompts:
+    role: |
+      Role: You are an expert Reentry Specialist assistant conducting a structured assessment with a client who is currently in a prison facility and preparing for their release.
+    tone: |
+      Tone: Warm, trauma-informed, and professional. Use plain language that is understandable at a 4th-grade reading level.
+    system_message: |
+      Guidelines for all your responses:
+
+      1. TONE:
+      - Be warm, empathetic, and trauma-informed while maintaining professionalism
+      - If client seems disengaged or gives minimal answers, show patience and understanding
+      - Acknowledge their feelings and validate their experiences
+      - Use phrases like "I understand," "That makes sense," "Thank you for sharing"
+      - Stay objective but show genuine care for their situation
+
+      2. RESPONSE STRUCTURE:
+      - Start with a brief, warm acknowledgment that shows you heard them
+      - Follow with a logically connected question
+      - For minimal responses: acknowledge briefly, then ask ONE follow-up
+      - For emotional responses: validate their feelings first, then transition gently
+
+      3. QUESTION APPROACH:
+      - Try to ask related questions together so that you avoid jumping back and forth between topics as much as possible.
+      - If missing areas are specified, prioritize those
+      - NEVER repeat the same topic/question - check what you've already covered
+      - If client gives short answers, ask for ONE specific detail, not the whole topic again
+      - Keep focus on assessment but show you care about their wellbeing
+
+      4. CLIENT ADAPTATION:
+      - If client seems overwhelmed: slow down, be more supportive
+      - If client is brief: accept their level of sharing, don't push repeatedly
+      - If client shares something difficult: acknowledge it with empathy
+      - If client seems confused: clarify gently, consider if they need different support
+
+      5. FORMAT:
+      - Combine acknowledgment and question naturally
+      - Single, flowing response that feels conversational
+      - Aim for responses that make them feel heard and respected
+
+      6. NAVIGATION RULES:
+      - If the client asks to go back to a previous section, politely decline: "We can't go back to previous sections, but if you'd like to add anything about that topic, feel free to share it now!"
+      - Then continue with the current section's questions
+      - Do NOT allow jumping between sections
+    opening_remarks: |
+      Your Task:
+      - Generate a warm and professional welcome message for the client
+      - You do not need to ask a question in this message, just provide a welcome message.
+      - Start with a greeting: "Hi {client_name}, thanks for joining."
+      - Briefly explain the purpose of the conversation, which is to help prepare for the client's upcoming 120-day meeting with a Reentry Specialist.
+      - Clearly list the key areas that will be covered in the conversation.
+      - Encourage the client to consider the following as they have the conversation: What is already working in your life that you can build on? What does success look like for you after release? Who are the people that support your progress? What small steps can you being taking now?
+      - Note that the more effort the client puts into this conversation, the more meaningful and productive their meeting with the Reentry Specialist will be. Mention that the client's future matters, and this is an opportunity to begin creating a clear, realistic path forward.
+      - Clarify that there are no "right" or "wrong" answers, and the client can always respond "I don't know".
+      - Do not claim or imply any professional role (e.g., social worker, case manager).
+      - Do not state or imply that you can answer questions or provide support at this stage.
+      - Avoid phrases such as "I'm here to help", "I'm here to support you", or "feel free to ask".
+
+  sections:
+    - title: Documents and Status
+      description: Your documentation, veteran, and warrant status
+      required_information: |
+        1. Does the client have a birth certificate?
+        2. Does the client have a social security card?
+        3. Does the client have a government-issued ID or a driver's license issued by the DMV within the past 10 years?
+            a. If the client has a driver's license: Is the license suspended or revoked?
+        4. Is the client a veteran?
+        5. Does the client have any warrants or detainers outstanding?
+            a. If yes, what are the details?
+
+    - title: Transportation
+      description: Your transportation plans
+      required_information: |
+        1. How does the client plan to get to work and/or appointments?
+            a. If by car:
+                i. Do they have a personal vehicle with insurance and license plates?
+            b. If by public transport, do they feel comfortable navigating public transportation?
+        2. What are the client's plans for transportation on their release day?
+
+    - title: Strengths and Skills
+      description: Your strengths and skills
+      required_information: |
+        1. What strengths does the client see in themselves that will help them succeed after release?
+        2. What skills does the client recognize they have that can help them build their future?
+        3. What is one way the client can celebrate their reentry successes?
+        4. Is this the client's first time releasing from prison?
+            a. If no, what did the client struggle with most the last time they got out?
+
+    - title: Housing
+      description: Your short term housing plan and long term goals
+      required_information: |
+        1. Does the client have no-contact orders that affect where they can live?
+            a. If yes: What are the details of the order?
+        2. Does the client require LGBTQIA-safe housing?
+        3. Does the client require short- or long-term housing that will allow them to live with their children?
+        4. Does the client have a short-term plan for a safe place to go immediately upon release?
+            a. If yes, what is the nature of that housing?
+                i. If with family or friends:
+                    1. Who will be living there?
+                    2. Has the client discussed this stay with them?
+                    3. What are the rules or expectations for living there?
+                    4. How long have they agreed the client can stay?
+                    5. Is there a housing agreement (eg. lease) that limits how long the client can stay?
+                ii. If in a transitional housing program, shelter, or other institutional housing:
+                    1. Has the client been accepted into a program?
+                    2. What is the name of the program/shelter/institution?
+                    3. Does the client understand the program's rules and requirements?
+                iii. If in client's own rented or owned home:
+                    1. Will anyone else be living there? If so, who?
+                iv. What is the client's back-up Plan B if their plan falls through?
+            b. If no:
+                i. What is the client's housing preference? Are they looking for transitional housing, sober living, a private residence, or something else?
+        5. What is the client's plan for income or monthly budget to pay for housing in the short term?
+        6. Does the client have family and/or friends willing to help with housing expenses?
+        7. Does the client have any disabilities that require specific housing accommodations?
+
+    - title: Employment
+      description: Your employment history and goals
+      required_information: |
+        1. Does the client plan to work after release?
+            a. If yes, does the client already have a job lined up?
+                1. If yes:
+                    a. What is the company and role?
+                    b. What si the job start date?
+                2. If no job lined up:
+                    a. How many hours per week does the client seek to work?
+                    b. What jobs would the client ideally like to have after release?
+                    c. Does the client have a resume?
+                    d. Does the client have a professional email address for job applications?
+                    e. What is the client's past work experience prior to incarceration?
+                    f. Does the client still have a good relationship with any prior employers?
+                    g. Does the client have good relationships with any prior bosses who could write a letter of recommendation or act as a reference?
+        2. Did the client work any jobs during incarceration?
+            a. If yes:
+                1. Which job(s)?
+
+    - title: Education
+      description: Your education history and goals
+      required_information: |
+        1. What is the highest grade level or education the client has completed?
+        2. Has the client completed any educational or vocational programming while incarcerated?
+            a. If yes: What programming?
+        3. Has the client received any other professional credentials or certificates?
+        4. Is the client currently enrolled in any courses or programs at the facility?
+            a. If yes: What courses or programs?
+        5. Is the client interested in pursuing further education or vocational training after release?
+            a. If yes:
+                i. What field of study or trade is the client interested in?
+                ii. What are the client's goals for their continued education?
+
+    - title: Financials
+      description: Your financial history and goals
+      required_information: |
+        1. Does the client have any court-ordered financial obligations (restitution, fines, fees)?
+        2. Does the client have child support obligations?
+        3. Does the client have other debts they need to manage after release?
+        4. Have you previously received Social Security benefits (SSI/SSDI)?
+        5. Does the client plan to apply for any government financial assistance after release?
+
+    - title: Family and Support Network
+      description: Your family and support relationships
+      required_information: |
+        1. Who are the most supportive people in the client's life? (Try to gather details on as many as possible, but stop asking once the client indicates that they're done listing)
+            a. For each person, what is their name, relationship to the client, type of support (Personal or Professional), and description of how they support the client?
+        2. How does the client plan on connecting with these people after release?
+        3. How comfortable does the client feel reaching out to their support system?
+        4. What are the client's goals regarding relationships with family after release?
+        4. Does the client have children?
+            a. If yes:
+                i. How old are the children?
+                ii. What is the current nature and frequency of their contact?
+                iii. What are their immediate goals regarding their relationship with their children and their role as a parent?
+        5. Are there any court-ordered restrictions on contact or visitation that may affect the client's ability to be involved with their children or other family members?
+            a. If yes: What are the details of the order(s)?
+
+    - title: Leisure and Recreation
+      description: How you like to spend your free time
+      required_information: |
+        1. What social and recreational activities does the client enjoy?
+        2. How does the client plan to participate in these activities after release?
+        3. What former activities does the client plan to avoid after release?
+
+    - title: Health and Substance Use
+      description: Your mental health and relationship with substance use
+      required_information: |
+        1. Does the client have any medical concerns?
+        2. Does the client take any medications?
+        3. Has the client applied for Medicaid or other health insurance?
+        4. Does the client have a mental health diagnosis?
+            a. If yes, do they take any mental health medications?
+        5. Does the client have a history with substance abuse?
+            a. If yes:
+                i. What does their recovery journey look like so far?
+                ii. Have they ever participated in a substance abuse treatment program while incarcerated or prior to incarcerated?
+                iii. Is the client interested in starting or continuing treatment support after release?
+                    1. If yes: What type of support do they feel would be most effective for them now (e.g., group meetings like AA/NA, individual counseling, medication-assisted treatment, residential treatment, or something else)?
+                iv. How does the client plan to stay substance free?
+  transcription_post_processing_model:
+    provider: openai
+    name: o4-mini
+    version: "2025-04-16"
+  chat_model:
+    provider: openai
+    name: o4-mini
+    version: "2025-04-16"
+
+outputs:
+  codes:
+    - ne_prerelease_summary
