@@ -70,7 +70,7 @@ export default function ImpersonationForm() {
   function handleStop() {
     localStorage.removeItem("impersonated_email");
     localStorage.removeItem("impersonation_data");
-    window.location.reload();
+    window.location.href = "/clients";
   }
 
   return (
