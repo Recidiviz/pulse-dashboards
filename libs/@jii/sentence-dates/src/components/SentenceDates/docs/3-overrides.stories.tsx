@@ -18,10 +18,13 @@
 import type { StoryObj } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
 
+import { getDatesWithMissing } from "../../../fixtures/data";
 import renderAddLinksToCards from "./componentOverrides/addLinksToCards";
 import addLinksToCardsSource from "./componentOverrides/addLinksToCards?raw";
 import renderAddLinkToSection from "./componentOverrides/addLinkToSection";
 import addLinkToSectionSource from "./componentOverrides/addLinkToSection?raw";
+import renderDescriptionReflectsData from "./componentOverrides/descriptionReflectsData";
+import descriptionReflectsDataSource from "./componentOverrides/descriptionReflectsData?raw";
 import { baseMeta, SecondaryStoryPage, SentenceDatesMeta } from "./utils";
 
 /**
@@ -65,7 +68,7 @@ function storyWithSource(
 ): SentenceDateStory {
   return {
     decorators: [
-      // necessary because our overrides include React Router components
+      // necessary because our overrides may include React Router components
       (Story) => (
         <MemoryRouter>
           <Story />
@@ -99,3 +102,22 @@ export const AddLinkToSection: SentenceDateStory = storyWithSource(
   renderAddLinkToSection,
   addLinkToSectionSource,
 );
+
+/**
+ * Descriptions are static, but in some cases it may be useful to tailor the cards' content
+ * to provide more specific context about certain conditions when they appear (e.g. if a date
+ * is missing, or in the past).
+ *
+ * You can do this by overriding the description component to conditionally substitute
+ * some other content in place of the default, either generically or using some additional
+ * state-specific data.
+ */
+export const DescriptionReflectsData: SentenceDateStory = {
+  ...storyWithSource(
+    renderDescriptionReflectsData,
+    descriptionReflectsDataSource,
+  ),
+  args: {
+    data: { dates: getDatesWithMissing() },
+  },
+};
