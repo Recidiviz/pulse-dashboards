@@ -112,7 +112,9 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
           <HomepageSectionHeading>
             {t(($) => $.programs.pageTitle)}
           </HomepageSectionHeading>
-          <Description>{t(($) => $.programs.pageDescription)}</Description>
+          <Description options={{ forceBlock: true }}>
+            {t(($) => $.programs.pageDescription)}
+          </Description>
           <ButtonLink
             to={State.Resident.UsCoMoreInformation.EarnedTime.buildPath(
               pathParams,
@@ -136,26 +138,23 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
         </FilterSection>
 
         <CategoriesList>
-          {/* Array.from() because react doesn't like iterators as children */}
-          {Array.from(presenter.programsByCategory.entries()).map(
-            ([category, programs]) => (
-              <CategorySection
-                key={category}
-                categoryName={category}
-                programCount={programs.length}
-                totalCount={presenter.totalProgramsByCategory.get(category)}
-              >
-                {programs.map((program) => (
-                  <ProgramCard
-                    key={`${program.programId}-${program.title}`}
-                    program={program}
-                    onToggleStar={handleToggleStar}
-                    onClick={setSelectedProgram}
-                  />
-                ))}
-              </CategorySection>
-            ),
-          )}
+          {presenter.categories.map(({ name, programs }) => (
+            <CategorySection
+              key={name}
+              categoryName={name}
+              programCount={programs.length}
+              totalCount={presenter.totalProgramsByCategory.get(name)}
+            >
+              {programs.map((program) => (
+                <ProgramCard
+                  key={`${program.programId}-${program.title}`}
+                  program={program}
+                  onToggleStar={handleToggleStar}
+                  onClick={setSelectedProgram}
+                />
+              ))}
+            </CategorySection>
+          ))}
         </CategoriesList>
 
         <ProgramDetailModal

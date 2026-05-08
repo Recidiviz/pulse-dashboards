@@ -16,15 +16,17 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
+import { differenceInDays } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
+import { Chip } from "~@jii/common-ui";
 import { Icon, palette } from "~design-system";
 
-import { UsArProgram } from "../../presenters/UsArProgramsPresenter";
-import { StarButton } from "./StarButton";
+import { Program, TFn } from "../../types";
+import { StarButton } from "../StarButton/StarButton";
 
 const CardContainer = styled.article`
   cursor: pointer;
@@ -67,25 +69,62 @@ const Description = styled.p`
   margin: ${rem(spacing.sm)} 0 0 0;
 `;
 
+const BottomSection = styled.div`
+  background-color: ${palette.marble2};
+  padding: ${rem(spacing.lg)};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${rem(spacing.md)};
+`;
+
+const CreditsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(2)};
+`;
+
+const EarnLabel = styled.span`
+  ${typography.Sans12};
+  font-weight: 700;
+  color: ${palette.slate50};
+  text-transform: uppercase;
+`;
+
+const CreditsText = styled.span`
+  ${typography.Sans14};
+  color: ${palette.pine1};
+`;
+
 export type ProgramCardProps = {
-  program: UsArProgram;
-  isStarred?: boolean;
-  onToggleStar: (program: UsArProgram) => void;
-  onClick: (program: UsArProgram) => void;
+  program: Program;
+  onToggleStar: (program: Program) => void;
+  onClick: (program: Program) => void;
+  showCredits?: boolean;
+  t: TFn;
 };
+
+function isNew(dateAddedOrUpdated?: Date): boolean {
+  if (!dateAddedOrUpdated) return false;
+  return differenceInDays(new Date(), dateAddedOrUpdated) < 90;
+}
 
 const ProgramCardComponent: FC<ProgramCardProps> = ({
   program,
   onToggleStar,
   onClick,
+  showCredits,
+  t,
 }) => {
   const handleStarClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleStar?.(program);
+    onToggleStar(program);
   };
 
+  const showNewBadge = isNew(program.dateAddedOrUpdated);
+
   return (
-    <CardContainer onClick={() => onClick?.(program)}>
+    <CardContainer onClick={() => onClick(program)}>
       <TopSection>
         <TitleRow>
           <Title>
@@ -108,6 +147,21 @@ const ProgramCardComponent: FC<ProgramCardProps> = ({
         </TitleRow>
         <Description>{program.description}</Description>
       </TopSection>
+      {showCredits && (
+        <BottomSection>
+          <CreditsContainer>
+            <EarnLabel>{t(($) => $.programs.card.earnLabel)}</EarnLabel>
+            <CreditsText>
+              {t(($) => $.programs.card.daysOfCredit, {
+                count: program.numberOfDaysThatCanBeEarned,
+              })}
+            </CreditsText>
+          </CreditsContainer>
+          {showNewBadge && (
+            <Chip color="green">{t(($) => $.programs.card.newBadge)}</Chip>
+          )}
+        </BottomSection>
+      )}
     </CardContainer>
   );
 };

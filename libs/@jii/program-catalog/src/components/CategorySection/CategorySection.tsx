@@ -20,8 +20,9 @@ import { rem } from "polished";
 import { FC, ReactNode, useState } from "react";
 import styled from "styled-components";
 
-import { useUsArTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
+
+import { TFn } from "../../types";
 
 const Section = styled.div``;
 
@@ -64,7 +65,7 @@ interface CategorySectionProps {
   programCount: number;
   totalCount?: number;
   children: ReactNode;
-  defaultExpanded?: boolean;
+  t: TFn;
 }
 
 // TODO(#11610) Set this up as details/summary for better accessibility
@@ -73,9 +74,9 @@ export const CategorySection: FC<CategorySectionProps> = ({
   programCount,
   totalCount,
   children,
+  t,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { t } = useUsArTranslations();
 
   const showFilteredCount =
     totalCount !== undefined && totalCount > programCount;

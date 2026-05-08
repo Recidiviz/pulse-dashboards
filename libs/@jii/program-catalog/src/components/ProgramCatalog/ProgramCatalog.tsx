@@ -18,8 +18,8 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, useState } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import {
@@ -34,19 +34,16 @@ import {
   LastUpdatedBanner,
   MainContentHydratorWithErrorLogging,
 } from "~@jii/layout";
-import { State } from "~@jii/paths";
-import { useUsArTranslations } from "~@jii/translation";
 import { Icon, palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import {
-  UsArProgram,
-  UsArProgramsPresenter,
-} from "../../presenters/UsArProgramsPresenter";
-import { CategorySection } from "./CategorySection";
-import { FilterPanel } from "./FilterPanel";
-import { ProgramCard } from "./ProgramCard";
-import { ProgramDetailModal } from "./ProgramDetailModal";
+import { ProgramCatalogPresenter } from "../../presenter/ProgramCatalogPresenter";
+import type { Program } from "../../types";
+import { ProgramCatalogProps } from "../../types";
+import { CategorySection } from "../CategorySection/CategorySection";
+import { FilterSection } from "../FilterSection/FilterSection";
+import { ProgramCard } from "../ProgramCard/ProgramCard";
+import { ProgramDetailModal } from "../ProgramDetailModal/ProgramDetailModal";
 
 const Header = styled.header`
   margin-top: ${rem(spacing.lg)};
@@ -60,28 +57,6 @@ const Description = styled(CopyWrapper)`
   line-height: 1.4;
 `;
 
-const FilterSection = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: ${rem(spacing.sm)};
-  margin-bottom: ${rem(spacing.md)};
-  padding: ${rem(spacing.md)};
-  border-top: 1px solid ${palette.slate20};
-  border-bottom: 1px solid ${palette.slate20};
-  margin-bottom: ${rem(spacing.lg)};
-`;
-
-const ResultsText = styled.p`
-  ${typography.Sans14};
-  color: ${palette.slate70};
-`;
-
-const HighlightedText = styled.span`
-  color: ${palette.opportunitiesAppGreen};
-`;
-
 const CategoriesList = styled.div`
   display: flex;
   flex-direction: column;
@@ -89,16 +64,13 @@ const CategoriesList = styled.div`
   padding-bottom: ${rem(spacing.lg)};
 `;
 
-const ManagedComponent: FC<{ presenter: UsArProgramsPresenter }> = observer(
-  function UsArProgramsList({ presenter }) {
-    const { t } = useUsArTranslations();
-    const pathParams = useTypedParams(State.Resident);
+const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
+  function ProgramCatalogManaged({ presenter }) {
+    const { t } = useTranslation([presenter.config.stateCode, "common"]);
 
-    const [selectedProgram, setSelectedProgram] = useState<
-      UsArProgram | undefined
-    >(undefined);
+    const { showCredits, learnMoreHref, backHref } = presenter.config;
 
-    const handleToggleStar = (program: UsArProgram) => {
+    const handleToggleStar = (program: Program) => {
       presenter.toggleStarred(program);
     };
 
@@ -111,37 +83,22 @@ const ManagedComponent: FC<{ presenter: UsArProgramsPresenter }> = observer(
         />
 
         <Header>
-          <BackLink to={State.Resident.buildPath(pathParams)}>
-            {t(($) => $.programs.backLink)}
-          </BackLink>
+          {backHref && (
+            <BackLink to={backHref}>{t(($) => $.programs.backLink)}</BackLink>
+          )}
           <HomepageSectionHeading>
             {t(($) => $.programs.pageTitle)}
           </HomepageSectionHeading>
           <Description options={{ forceBlock: true }}>
             {t(($) => $.programs.pageDescription)}
           </Description>
-          <ButtonLink
-            to={State.Resident.UsArMoreInformation.ImportantDates.buildPath(
-              pathParams,
-              { backTarget: "programs" },
-            )}
-          >
+          <ButtonLink to={learnMoreHref}>
             {t(($) => $.programs.learnMoreLink)}
             <Icon kind="Arrow" size={12} />
           </ButtonLink>
         </Header>
 
-        <FilterSection>
-          <ResultsText>
-            <HighlightedText>
-              {t(($) => $.programs.resultsCount, {
-                count: presenter.filteredProgramCount,
-              })}
-            </HighlightedText>{" "}
-            {t(($) => $.programs.resultsHint)}
-          </ResultsText>
-          <FilterPanel presenter={presenter} />
-        </FilterSection>
+        <FilterSection presenter={presenter} showCredits={showCredits} t={t} />
 
         <CategoriesList>
           {presenter.categories.map(({ name, programs }) => (
@@ -150,13 +107,16 @@ const ManagedComponent: FC<{ presenter: UsArProgramsPresenter }> = observer(
               categoryName={name}
               programCount={programs.length}
               totalCount={presenter.totalProgramsByCategory.get(name)}
+              t={t}
             >
               {programs.map((program) => (
                 <ProgramCard
                   key={`${program.programId}-${program.title}`}
                   program={program}
                   onToggleStar={handleToggleStar}
-                  onClick={setSelectedProgram}
+                  onClick={presenter.setSelectedProgram}
+                  showCredits={showCredits}
+                  t={t}
                 />
               ))}
             </CategorySection>
@@ -164,23 +124,25 @@ const ManagedComponent: FC<{ presenter: UsArProgramsPresenter }> = observer(
         </CategoriesList>
 
         <ProgramDetailModal
-          program={selectedProgram}
-          isOpen={!!selectedProgram}
-          onClose={() => setSelectedProgram(undefined)}
+          program={presenter.selectedProgram}
+          isOpen={!!presenter.selectedProgram}
+          onClose={() => presenter.setSelectedProgram(undefined)}
           onToggleStar={handleToggleStar}
+          showCredits={showCredits}
+          t={t}
         />
       </PageContainer>
     );
   },
 );
 
-function usePresenter() {
+function usePresenter(props: ProgramCatalogProps): ProgramCatalogPresenter {
   const rootStore = useRootStore();
   const { resident } = useSingleResidentContext();
-  return new UsArProgramsPresenter(resident, rootStore.apiClient);
+  return new ProgramCatalogPresenter(resident, rootStore.apiClient, props);
 }
 
-export const UsArProgramsList = withPresenterManager({
+export const ProgramCatalog = withPresenterManager({
   usePresenter,
   managerIsObserver: false,
   ManagedComponent,

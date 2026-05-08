@@ -15,6 +15,48 @@
     "tocHeading": "On this page"
   },
   "lastUpdated": "This information was last updated on {{lastUpdatedDate, formatFullDate}}.",
+  "programs": {
+    "lastUpdated": "This information was last updated {{date, formatFullDate}}.",
+    "backLink": "Back to Home",
+    "pageTitle": "Earn Time Off Your Sentence",
+    "resultsCount_one": "{{count}} result below.",
+    "resultsCount_other": "{{count}} results below.",
+    "resultsHint": "Tap on each card to view more information.",
+    "filters": {
+      "button": "Filters",
+      "categoryLabel": "Select by Category",
+      "facilityLabel": "Select by Facility",
+      "allCategories": "All categories",
+      "allFacilities": "All facilities",
+      "onlyEarnCredits": "Only show programs that earn credits",
+      "onlyStarred": "Only show my starred programs",
+      "clearAll": "Clear all"
+    },
+    "card": {
+      "earnLabel": "EARN",
+      "daysOfCredit_zero": "no achievement credits earned",
+      "daysOfCredit_one": "up to {{count}} day of achievement credit",
+      "daysOfCredit_other": "up to {{count}} days of achievement credit",
+      "newBadge": "New"
+    },
+    "category": {
+      "programCount_one": "{{count}} program",
+      "programCount_other": "{{count}} programs",
+      "programCountFiltered_one": "{{count}} program (out of {{total}} total)",
+      "programCountFiltered_other": "{{count}} programs (out of {{total}} total)"
+    },
+    "modal": {
+      "earnSubtitle_zero": "No achievement credits earned",
+      "earnSubtitle_one": "Earn up to {{count}} day of achievement credit",
+      "earnSubtitle_other": "Earn up to {{count}} days of achievement credit",
+      "programDescription": "Program Description",
+      "eligibility": "Eligibility",
+      "eligibilityPrereq": "Prerequisite: {{prereq}}",
+      "eligibilityNone": "No requirements needed",
+      "availableFacilities": "Available Facilities",
+      "closeWindow": "Close window"
+    }
+  },
   "sentenceDates": {
     "dateFormats": {
       "dateDistanceFromToday": {

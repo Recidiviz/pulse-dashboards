@@ -17,12 +17,11 @@
 
 import { captureException } from "@sentry/react";
 import { groups, rollup } from "d3-array";
-import { max, parseISO } from "date-fns";
+import { max } from "date-fns";
 import { sortBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI } from "~@jii/data";
-import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { ResidentRecord } from "~datatypes";
 import {
   Hydratable,
@@ -30,11 +29,10 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-export type UsArProgram =
-  JiiResidentAppRouterOutputs["resident"]["getPrograms"][number];
+import type { Program, ProgramCatalogProps } from "../types";
 
-export class UsArProgramsPresenter implements Hydratable {
-  programs?: UsArProgram[];
+export class ProgramCatalogPresenter implements Hydratable {
+  programs?: Program[];
 
   // Filter state (observable)
   selectedCategory?: string;
@@ -42,11 +40,14 @@ export class UsArProgramsPresenter implements Hydratable {
   showOnlyEarnCredits = false;
   showOnlyStarred = false;
 
+  selectedProgram?: Program;
+
   constructor(
     private readonly resident: ResidentRecord,
     private readonly apiClient: DataAPI,
+    readonly config: ProgramCatalogProps,
   ) {
-    makeAutoObservable(this, {}, { autoBind: true });
+    makeAutoObservable(this, { config: false }, { autoBind: true });
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [this.expectProgramsPopulated],
@@ -87,17 +88,20 @@ export class UsArProgramsPresenter implements Hydratable {
   get lastUpdatedDate(): Date | null {
     if (!this.programs || this.programs.length === 0) return null;
 
-    return max([
-      parseISO("2026-02-02"), // Initial data load date
-      ...this.programs
-        .map((p) => p.dateAddedOrUpdated)
-        .filter((d) => d !== undefined && d instanceof Date),
-    ]);
+    const dates: Date[] = this.programs
+      .map((p) => p.dateAddedOrUpdated)
+      .filter((d): d is Date => d instanceof Date);
+
+    if (this.config.dataLoadBaselineDate) {
+      dates.push(this.config.dataLoadBaselineDate);
+    }
+
+    return dates.length ? max(dates) : null;
   }
 
   get categories(): {
     name: string;
-    programs: UsArProgram[];
+    programs: Program[];
   }[] {
     if (!this.programs) return [];
     const unsortedCategories = groups(
@@ -118,12 +122,15 @@ export class UsArProgramsPresenter implements Hydratable {
     return Array.from(facilities).sort();
   }
 
-  get filteredPrograms(): UsArProgram[] {
+  get filteredPrograms(): Program[] {
     if (!this.programs) return [];
 
     return this.programs.filter((program) => {
       // Filter broken programs
-      if (program.title === "") {
+      if (
+        program.title === "" ||
+        (this.config.showCredits && isNaN(program.numberOfDaysThatCanBeEarned))
+      ) {
         return false;
       }
 
@@ -189,7 +196,7 @@ export class UsArProgramsPresenter implements Hydratable {
     this.showOnlyStarred = value;
   }
 
-  async toggleStarred(program: UsArProgram): Promise<void> {
+  async toggleStarred(program: Program): Promise<void> {
     if (!this.programs) return;
 
     const isCurrentlyStarred = program.isStarred;
@@ -212,6 +219,10 @@ export class UsArProgramsPresenter implements Hydratable {
       });
       captureException(error);
     }
+  }
+
+  setSelectedProgram(program?: Program): void {
+    this.selectedProgram = program;
   }
 
   clearAllFilters(): void {

@@ -22,11 +22,10 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { useUsArTranslations } from "~@jii/translation";
 import { Button, Icon, palette } from "~design-system";
 
-import { UsArProgram } from "../../presenters/UsArProgramsPresenter";
-import { StarButton } from "./StarButton";
+import { Program, TFn } from "../../types";
+import { StarButton } from "../StarButton/StarButton";
 
 const StyledModal = styled(ModalBase)`
   .ReactModal__Content {
@@ -74,6 +73,14 @@ const CloseButton = styled.button`
   justify-content: center;
   margin-top: ${rem(6)};
   flex-shrink: 0;
+`;
+
+const EarnSubtitle = styled.p`
+  ${typography.Sans12};
+  font-weight: 700;
+  color: ${palette.slate50};
+  text-transform: uppercase;
+  margin: 0;
 `;
 
 const Divider = styled.hr`
@@ -135,35 +142,37 @@ const FacilityBadge = styled.span`
 `;
 
 type ProgramDetailModalProps = {
-  program?: UsArProgram;
+  program?: Program;
   isOpen: boolean;
   onClose: () => void;
-  onToggleStar: (program: UsArProgram) => void;
+  onToggleStar: (program: Program) => void;
+  showCredits?: boolean;
+  t: TFn;
 };
+
+// TODO: Once Colorado uses this logic too, move it into the server
+function buildEligibilityItems(program: Program, t: TFn): string[] {
+  const { eligibilityRequirements } = program;
+
+  if (["None", ""].includes(eligibilityRequirements)) {
+    return [t(($) => $.programs.modal.eligibilityNone)];
+  }
+
+  return program.eligibilityRequirements
+    .split(/\s*;\s*(?:and\s*)?/)
+    .filter(Boolean)
+    .map(upperFirst);
+}
 
 const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   program,
   isOpen,
   onClose,
   onToggleStar,
+  showCredits,
+  t,
 }) => {
-  const { t } = useUsArTranslations();
-
-  const eligibilityItems: string[] = [];
-
-  const isEmpty = (str: string) => ["None", ""].includes(str);
-
-  if (program) {
-    if (!isEmpty(program.eligibilityRequirements)) {
-      const reqs = program.eligibilityRequirements
-        .split(/\s*;\s*(?:and\s*)?/)
-        .map(upperFirst);
-      eligibilityItems.push(...reqs);
-    }
-    if (eligibilityItems.length === 0) {
-      eligibilityItems.push(t(($) => $.programs.modal.eligibilityNone));
-    }
-  }
+  const eligibilityItems = program ? buildEligibilityItems(program, t) : [];
 
   return (
     <StyledModal isOpen={isOpen} onRequestClose={onClose}>
@@ -186,6 +195,13 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
                 <Icon kind="Close" size={16} color={palette.slate85} />
               </CloseButton>
             </TitleRow>
+            {showCredits && (
+              <EarnSubtitle>
+                {t(($) => $.programs.modal.earnSubtitle, {
+                  count: program.numberOfDaysThatCanBeEarned,
+                })}
+              </EarnSubtitle>
+            )}
           </Header>
 
           <Divider />
@@ -229,7 +245,7 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
               </FacilitiesList>
             </Section>
 
-            {t(($) => $.programs.modal.callToAction)}
+            {t(($) => $.programs.modalCallToAction)}
             <div>
               <Button type="button" kind="secondary" onClick={onClose}>
                 {t(($) => $.programs.modal.closeWindow)}

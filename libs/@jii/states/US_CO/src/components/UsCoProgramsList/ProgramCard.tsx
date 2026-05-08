@@ -52,7 +52,7 @@ const TopSection = styled.div`
 
 const TitleRow = styled.div`
   display: flex;
-  align-items: top;
+  align-items: flex-start;
   justify-content: space-between;
   gap: ${rem(spacing.sm)};
 `;
@@ -128,13 +128,16 @@ const ProgramCardComponent: FC<ProgramCardProps> = ({
       <TopSection>
         <TitleRow>
           <Title>
-            {program.title}{" "}
-            <Icon
-              kind="Next"
-              size={18}
-              color={palette.slate60}
-              style={{ verticalAlign: "top" }}
-            />
+            {program.title.slice(0, program.title.lastIndexOf(" ") + 1)}
+            <span style={{ whiteSpace: "nowrap" }}>
+              {program.title.slice(program.title.lastIndexOf(" ") + 1)}{" "}
+              <Icon
+                kind="Next"
+                size={18}
+                color={palette.slate60}
+                style={{ verticalAlign: "top" }}
+              />
+            </span>
           </Title>
           <StarButton
             isStarred={program.isStarred}

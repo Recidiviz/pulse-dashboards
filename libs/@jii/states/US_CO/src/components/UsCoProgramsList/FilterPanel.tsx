@@ -50,6 +50,7 @@ const Panel = styled.div`
   border-radius: ${rem(8)};
   padding: ${rem(spacing.md)};
   width: 100%;
+  padding-bottom: ${rem(spacing.xl)};
 `;
 
 const FilterRow = styled.div`
@@ -136,6 +137,8 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { t } = useUsCoTranslations();
 
+  const categoryNames = categories.map(({ name }) => name);
+
   const allCategoriesLabel = t(($) => $.programs.filters.allCategories);
   const allFacilitiesLabel = t(($) => $.programs.filters.allFacilities);
 
@@ -179,7 +182,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
                 placeholder={allCategoriesLabel}
                 options={[
                   { label: allCategoriesLabel, value: undefined },
-                  ...categories.map(toOption),
+                  ...categoryNames.map(toOption),
                 ]}
                 value={
                   selectedCategory

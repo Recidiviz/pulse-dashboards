@@ -46,14 +46,15 @@ const Header = styled.div`
 
 const TitleRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: ${rem(12)};
 `;
 
-const TitleLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(12)};
+const InlineStar = styled(StarButton)`
+  display: inline-flex;
+  margin-left: ${rem(12)};
+  vertical-align: ${rem(-2)};
 `;
 
 const Title = styled.h2`
@@ -70,6 +71,8 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: ${rem(6)};
+  flex-shrink: 0;
 `;
 
 const EarnSubtitle = styled.p`
@@ -115,8 +118,12 @@ const EligibilityList = styled.div`
 
 const EligibilityItem = styled.div`
   display: flex;
-  // align-items: center;
+  align-items: flex-start;
   gap: ${rem(8)};
+
+  > svg {
+    flex-shrink: 0;
+  }
 `;
 
 const FacilitiesList = styled.div`
@@ -141,6 +148,8 @@ type ProgramDetailModalProps = {
   onToggleStar: (program: UsCoProgram) => void;
 };
 
+const isEmpty = (str: string) => ["None", ""].includes(str);
+
 const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   program,
   isOpen,
@@ -152,10 +161,10 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   const eligibilityItems: string[] = [];
 
   if (program) {
-    if (program.eligibilityRequirements !== "None") {
+    if (!isEmpty(program.eligibilityRequirements)) {
       eligibilityItems.push(program.eligibilityRequirements);
     }
-    if (program.prerequisites !== "None") {
+    if (!isEmpty(program.prerequisites)) {
       eligibilityItems.push(
         t(($) => $.programs.modal.eligibilityPrereq, {
           prereq: program.prerequisites,
@@ -173,14 +182,17 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
         <>
           <Header>
             <TitleRow>
-              <TitleLeft>
-                <Title>{program.title}</Title>
-                <StarButton
-                  isStarred={program.isStarred}
-                  onClick={() => onToggleStar(program)}
-                  size={20}
-                />
-              </TitleLeft>
+              <Title>
+                {program.title.slice(0, program.title.lastIndexOf(" ") + 1)}
+                <span style={{ whiteSpace: "nowrap" }}>
+                  {program.title.slice(program.title.lastIndexOf(" ") + 1)}
+                  <InlineStar
+                    isStarred={program.isStarred}
+                    onClick={() => onToggleStar(program)}
+                    size={20}
+                  />
+                </span>
+              </Title>
               <CloseButton type="button" onClick={onClose} aria-label="Close">
                 <Icon kind="Close" size={16} color={palette.slate85} />
               </CloseButton>
@@ -233,7 +245,7 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
               </FacilitiesList>
             </Section>
 
-            {t(($) => $.programs.modal.callToAction)}
+            {t(($) => $.programs.modalCallToAction)}
             <div>
               <Button type="button" kind="secondary" onClick={onClose}>
                 {t(($) => $.programs.modal.closeWindow)}

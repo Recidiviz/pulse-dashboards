@@ -15,27 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { parseISO } from "date-fns";
+import { FC } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsArMoreInformation, UsArPrograms } from "~@jii/paths";
+import { State } from "~@jii/paths";
+import { ProgramCatalog } from "~@jii/program-catalog";
 
-import { PageMoreInformationImportantDates } from "./PageMoreInformationImportantDates";
-import { UsArProgramCatalog } from "./UsArProgramCatalog";
-import { UsArSingleResidentHome } from "./UsArSingleResidentHome";
-
-export function UsArRouter() {
+export const UsArProgramCatalog: FC = () => {
+  const pathParams = useTypedParams(State.Resident);
   return (
-    <Routes>
-      <Route index element={<UsArSingleResidentHome />} />
-      <Route path={UsArMoreInformation.path}>
-        <Route
-          path={UsArMoreInformation.ImportantDates.path}
-          element={<PageMoreInformationImportantDates />}
-        />
-      </Route>
-      <Route path={UsArPrograms.path} element={<UsArProgramCatalog />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <ProgramCatalog
+      stateCode="US_AR"
+      showCredits={false}
+      dataLoadBaselineDate={parseISO("2026-02-02")}
+      backHref={State.Resident.buildPath(pathParams)}
+      learnMoreHref={State.Resident.UsArMoreInformation.ImportantDates.buildPath(
+        pathParams,
+        { backTarget: "programs" },
+      )}
+    />
   );
-}
+};

@@ -28,6 +28,7 @@ export * from "./namespaces/US_NC/useUsNcTranslations";
 export * from "./namespaces/US_ND/useUsNdTranslations";
 export * from "./namespaces/US_NE/useUsNeTranslations";
 export * from "./namespaces/US_TN/useUsTnTranslations";
+export * from "./programCatalog/types";
 export * from "./sentenceDates/types";
 export * from "./utils/date";
 export * from "./utils/dateDistanceTranslation";

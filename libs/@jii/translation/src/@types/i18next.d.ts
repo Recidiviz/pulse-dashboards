@@ -30,15 +30,38 @@ import US_ND from "../namespaces/US_ND/resources/en.json";
 import US_NE from "../namespaces/US_NE/resources/en";
 import US_TN from "../namespaces/US_TN/resources/en";
 import {
+  CombinedProgramCatalogResources,
+  CommonProgramCatalogResources,
+  StateProgramCatalogResources,
+} from "../programCatalog/types";
+import {
   CombinedSentenceDatesResources,
   CommonSentenceDatesResources,
   StateSentenceDatesResources,
 } from "../sentenceDates/types";
 
 /**
+ * Helper that manages state-specific typing for the Program Catalog feature.
+ * Inputs that don't include Program Catalog resources are passed through unchanged.
+ * Those that conform to the type for state resources containing Program Catalog translations
+ * are augmented with a type that reflects the final i18next output that merges the
+ * state resources with the common resources; this reflects the fallback configured
+ * in CustomTypeOptions below, which is otherwise not fully inferred by i18next-react.
+ */
+type WithCorrectedProgramCatalog<T> = T extends StateProgramCatalogResources
+  ? Omit<T, "programs"> & {
+      programs: Omit<
+        T["programs"],
+        keyof CombinedProgramCatalogResources["programs"]
+      > &
+        CombinedProgramCatalogResources["programs"];
+    }
+  : T;
+
+/**
  * Helper that manages state-specific typing for the Sentence Dates feature.
  * Inputs that don't include Sentence Dates resources are passed through unchanged.
- * Those that do conform to the type for state resources containing Sentence Dates translations
+ * Those that conform to the type for state resources containing Sentence Dates translations
  * are augmented with a type that reflects the final i18next output that merges the
  * state resources with the common resources; this reflects the fallback configured
  * in CustomTypeOptions below, which is otherwise not fully inferred by i18next-react.
@@ -54,21 +77,31 @@ type WithCorrectedSentenceDates<T> = T extends StateSentenceDatesResources
     }
   : T;
 
+/**
+ * Applies all feature-specific resource corrections to a state's translation resources.
+ * Each helper is a pass-through for states that don't include the relevant feature
+ * resources, so this can be applied uniformly to all states.
+ */
+type WithStateCorrections<T> = WithCorrectedProgramCatalog<
+  WithCorrectedSentenceDates<T>
+>;
+
 export interface I18nResources {
-  // requires the common namespace to include valid sentence dates resources
-  common: typeof common extends CommonSentenceDatesResources
+  // requires the common namespace to include valid program catalog and sentence dates resources
+  common: typeof common extends CommonSentenceDatesResources &
+    CommonProgramCatalogResources
     ? typeof common
     : never;
-  // sentence dates resources are optional for the states but the helper will sort that out
-  US_AZ: WithCorrectedSentenceDates<typeof US_AZ>;
-  US_AR: WithCorrectedSentenceDates<typeof US_AR>;
-  US_CO: WithCorrectedSentenceDates<typeof US_CO>;
-  US_ID: WithCorrectedSentenceDates<typeof US_ID>;
-  US_MA: WithCorrectedSentenceDates<typeof US_MA>;
-  US_NC: WithCorrectedSentenceDates<typeof US_NC>;
-  US_ND: WithCorrectedSentenceDates<typeof US_ND>;
-  US_NE: WithCorrectedSentenceDates<typeof US_NE>;
-  US_TN: WithCorrectedSentenceDates<typeof US_TN>;
+  // feature-specific resources are optional; WithStateCorrections is a no-op for features a state doesn't include
+  US_AZ: WithStateCorrections<typeof US_AZ>;
+  US_AR: WithStateCorrections<typeof US_AR>;
+  US_CO: WithStateCorrections<typeof US_CO>;
+  US_ID: WithStateCorrections<typeof US_ID>;
+  US_MA: WithStateCorrections<typeof US_MA>;
+  US_NC: WithStateCorrections<typeof US_NC>;
+  US_ND: WithStateCorrections<typeof US_ND>;
+  US_NE: WithStateCorrections<typeof US_NE>;
+  US_TN: WithStateCorrections<typeof US_TN>;
   // this is a fake state that we only use for testing. Its resources have to be
   // explicitly injected such that it will not normally work at runtime, but we declare
   // the type here for convenience (otherwise various test cases will fail to typecheck)
