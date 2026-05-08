@@ -18,6 +18,7 @@
 import {
   CompositeNavigationProp,
   Link,
+  useIsFocused,
   useNavigation,
 } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -83,6 +84,7 @@ const ProfileMeetings = ({
   error,
   refetch,
 }: Props) => {
+  const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
   const isMobileWidth = useIsMobileWidth();
   const navigation = useNavigation<ProfileNavProp>();
@@ -260,7 +262,7 @@ const ProfileMeetings = ({
           ),
           web: (
             <View className="flex-1 pb-4">
-              {isMobileWidth && (
+              {isFocused && isMobileWidth && (
                 <View className="flex-1">
                   <MeetingsMobileList
                     meetings={filteredMeetings}
@@ -275,7 +277,7 @@ const ProfileMeetings = ({
                   />
                 </View>
               )}
-              {!isMobileWidth && (
+              {isFocused && !isMobileWidth && (
                 <ScrollView className="flex-1">
                   <View className="mx-auto w-full max-w-[960px] flex-1">
                     <View className="flex flex-1 flex-row pt-10">

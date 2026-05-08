@@ -135,7 +135,7 @@ const ClientsScreen = () => {
           ),
           web: (
             <View className="flex-1 pb-4">
-              {isMobileWidth && (
+              {isFocused && isMobileWidth && (
                 <View className="flex-1">
                   <PersonsMobileList
                     persons={[...myCaseloadClients, ...otherCaseloadClients]}
@@ -147,7 +147,7 @@ const ClientsScreen = () => {
                   />
                 </View>
               )}
-              {!isMobileWidth && (
+              {isFocused && !isMobileWidth && (
                 <ScrollView className="flex-1">
                   <View className="mx-auto w-full max-w-[960px] flex-1">
                     <PersonsHeaderContent
