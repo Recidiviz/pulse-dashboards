@@ -579,6 +579,7 @@ async def router_generate_plan_manually(
         finished_at=datetime.utcnow(),
         gen_type=GenerationType.MANUAL,
         gen_data_json=gen_data_json,
+        resources_associations_map=latest_generation.resources_associations_map
     )
     gen = await create_plan_generation(session, plan_gen)
 
