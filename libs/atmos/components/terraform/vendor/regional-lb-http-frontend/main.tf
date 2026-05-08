@@ -251,7 +251,7 @@ resource "google_certificate_manager_certificate" "default" {
   }
 
   managed {
-    domains            = var.managed_ssl_certificate_domains
+    domains            = flatten([for domain in var.managed_ssl_certificate_domains : [domain, "*.${domain}"]])
     dns_authorizations = values(google_certificate_manager_dns_authorization.default)[*].id
   }
 }

@@ -71,6 +71,7 @@ module "lb_frontend" {
   ssl                             = true
   managed_ssl_certificate_domains = [var.domain_name]
   https_redirect                  = true
+  random_certificate_suffix       = true
 
   url_map_input = module.lb_backend.backend_service_info
 }
