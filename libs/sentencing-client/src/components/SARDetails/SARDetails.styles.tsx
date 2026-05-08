@@ -22,6 +22,7 @@ import { palette } from "~design-system";
 export const PageContainer = styled.div`
   height: 100vh;
   overflow: auto;
+  overflow-anchor: none;
   display: flex;
   flex-direction: column;
   background-color: ${palette.marble1};

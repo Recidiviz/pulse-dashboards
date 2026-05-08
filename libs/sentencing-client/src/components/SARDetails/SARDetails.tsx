@@ -16,7 +16,13 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SentencingStore } from "../../datastores/SentencingStore";
@@ -107,12 +113,18 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
   presenter: SARDetailsPresenter;
 }) {
   const navigate = useNavigate();
+  const pageContainerRef = useRef<HTMLDivElement>(null);
   const [currentSection, setCurrentSection] = useState<SARSectionName>(
     SARSection.CASE_INFORMATION,
   );
   const [currentSubsection, setCurrentSubsection] = useState<
     string | undefined
   >();
+
+  useLayoutEffect(() => {
+    if (pageContainerRef.current) pageContainerRef.current.scrollTop = 0;
+    window.scrollTo(0, 0);
+  }, [currentSection]);
 
   const { staffPseudoId, SARAttributes, formattedGender, offenseNames } =
     presenter;
@@ -132,7 +144,7 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
   };
 
   return (
-    <Styled.PageContainer>
+    <Styled.PageContainer ref={pageContainerRef}>
       <TopProgressBar percentage={presenter.overallProgress} />
 
       <SARHeader
@@ -152,6 +164,7 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
         />
 
         <SARSectionContent
+          key={currentSection}
           currentSection={currentSection}
           currentSubsection={currentSubsection}
           presenter={presenter}
