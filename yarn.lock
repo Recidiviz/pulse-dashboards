@@ -33497,27 +33497,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-jwt@npm:^5.0.0":
-  version: 5.0.5
-  resolution: "fast-jwt@npm:5.0.5"
-  dependencies:
-    "@lukeed/ms": "npm:^2.0.2"
-    asn1.js: "npm:^5.4.1"
-    ecdsa-sig-formatter: "npm:^1.0.11"
-    mnemonist: "npm:^0.39.8"
-  checksum: 10c0/7c329059f51874034eb45efe3d1e3d1845a1d1de6bc499464f05ec650ba23feed9891e2ffa0f23025f1c70527ca9a016ab3ec2517ec3f60b46118bf27ebd986f
-  languageName: node
-  linkType: hard
-
-"fast-jwt@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "fast-jwt@npm:6.0.2"
+"fast-jwt@npm:>=5.0.6":
+  version: 6.2.4
+  resolution: "fast-jwt@npm:6.2.4"
   dependencies:
     "@lukeed/ms": "npm:^2.0.2"
     asn1.js: "npm:^5.4.1"
     ecdsa-sig-formatter: "npm:^1.0.11"
     mnemonist: "npm:^0.40.0"
-  checksum: 10c0/0b87285f0a00081f18bb5708420d1f615e8ca6c9b63b71530725f77c7275f08ef13cd3632fe019a0b7848ed5c10565023fe7b9fba7f0048bb7105b0f0b245f71
+    safe-regex2: "npm:^5.1.0"
+  checksum: 10c0/8997a6751f049aa403f35fc8d439db22149e9d1554f98ae2b1ff23b6f2a89285d919fd02bf446db14ca1c00be100713f9781d89d6340d2e3be50d5f08e282c52
   languageName: node
   linkType: hard
 
@@ -44198,7 +44187,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mnemonist@npm:0.39.8, mnemonist@npm:^0.39.8":
+"mnemonist@npm:0.39.8":
   version: 0.39.8
   resolution: "mnemonist@npm:0.39.8"
   dependencies:
@@ -51044,7 +51033,7 @@ __metadata:
     extensionless: "npm:^1.9.9"
     factory.ts: "npm:^1.4.1"
     fast-glob: "npm:^3.3.3"
-    fast-jwt: "npm:^6.0.2"
+    fast-jwt: "npm:^6.2.4"
     fastify: "npm:5.8.3"
     fastify-auth0-verify: "npm:^3.0.0"
     fastify-type-provider-zod: "npm:^4.0.0"
@@ -52760,6 +52749,17 @@ __metadata:
   dependencies:
     ret: "npm:~0.5.0"
   checksum: 10c0/fe6edc2c0fa9847b572d0f0fc2b1f487c36ae603fec65445ae38cfb40483afa85107d3b6ffe63cbe029fd06e6ccb5c5730415c1595a1011fa00bafa2b866a8f0
+  languageName: node
+  linkType: hard
+
+"safe-regex2@npm:^5.1.0":
+  version: 5.1.1
+  resolution: "safe-regex2@npm:5.1.1"
+  dependencies:
+    ret: "npm:~0.5.0"
+  bin:
+    safe-regex2: bin/safe-regex2.js
+  checksum: 10c0/65c59fb33de8e500fa1d7254cc7f9b6b8b932f925bcfc8d92273ec024c259052a2b3c975bbf5a9f9dd49cd3b0fa394fb56f36d6b10e394404056edfd1223fd17
   languageName: node
   linkType: hard
 
