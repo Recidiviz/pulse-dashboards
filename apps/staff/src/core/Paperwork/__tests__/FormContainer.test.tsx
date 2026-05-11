@@ -111,4 +111,9 @@ describe("FormContainer DownloadButton", () => {
     );
     expect(QueriedDownloadButton).toBeDefined();
   });
+
+  it("hides the download button when hideDownloadButton is true", () => {
+    setup({ hideDownloadButton: true });
+    expect(screen.queryByText("Download Form")).not.toBeInTheDocument();
+  });
 });

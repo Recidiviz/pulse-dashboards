@@ -21,6 +21,7 @@ import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
@@ -38,12 +39,14 @@ import {
   TOMIS_COMMENT_MAX_CHARS,
   TOMIS_COMMENT_MIN_CHARS,
 } from "../OpportunityDenial/UsTn/utils";
+import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 type ReioSubmissionModalProps = {
   opportunity: Opportunity;
   isOpen: boolean;
   onClose: () => void;
   onDownload: () => Promise<void>;
+  isDownloadDisabled?: boolean;
 };
 
 type Phase = "EDITING" | "SUBMITTING" | "SUCCESS" | "FAILED";
@@ -127,8 +130,10 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
   isOpen,
   onClose,
   onDownload,
+  isDownloadDisabled = false,
 }: ReioSubmissionModalProps) {
   const {
+    analyticsStore,
     apiStore,
     firestoreStore,
     workflowsStore: { user },
@@ -154,12 +159,32 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
     onClose();
   };
 
+  const trackDownload = () => {
+    analyticsStore.trackReferralFormDownloaded({
+      justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+      opportunityType: opportunity.type,
+      opportunityId: opportunity.sentryTrackingId,
+    });
+  };
+
   const handleDownloadOnly = async () => {
-    await onDownload();
-    handleClose();
+    if (isDownloadDisabled) return;
+
+    try {
+      await onDownload();
+      trackDownload();
+      handleClose();
+    } catch (e) {
+      captureReioSubmissionException(e, "download_pdf_only", {
+        recordId: opportunity.person.recordId,
+        stateCode: opportunity.person.stateCode,
+      });
+    }
   };
 
   const handleSubmit = async () => {
+    if (isDownloadDisabled) return;
+
     setPhase("SUBMITTING");
 
     const contactNoteDateTime = new Date();
@@ -218,15 +243,8 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
         "insert_contact_note",
         requestBody,
       );
-
-      await onDownload();
-      setPhase("SUCCESS");
     } catch (e) {
-      captureReioSubmissionException(
-        e,
-        "submit_contact_note_or_download_pdf",
-        sentryContext,
-      );
+      captureReioSubmissionException(e, "submit_contact_note", sentryContext);
       await firestoreStore
         .updateClientUpdatesV2Document(recordId, docRef, {
           contactNote: {
@@ -246,7 +264,41 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
           ),
         );
       setPhase("FAILED");
+      return;
     }
+
+    try {
+      analyticsStore.trackReferralFormSubmitted({
+        justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+        opportunityType: opportunity.type,
+        opportunityId: opportunity.sentryTrackingId,
+      });
+
+      const message = await opportunity.markSubmittedAndGenerateToast();
+      if (message) {
+        toast(<OpportunityStatusUpdateToast toastText={message} />, {
+          position: "bottom-left",
+        });
+      }
+    } catch (e) {
+      captureReioSubmissionException(
+        e,
+        "mark_opportunity_submitted",
+        sentryContext,
+      );
+    }
+
+    try {
+      await onDownload();
+      trackDownload();
+    } catch (e) {
+      captureReioSubmissionException(e, "download_pdf_after_submit", {
+        ...sentryContext,
+        tomisSubmissionSucceeded: true,
+      });
+    }
+
+    setPhase("SUCCESS");
   };
 
   const editingContent = (
@@ -268,6 +320,7 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
         <Button
           kind="secondary"
           shape="block"
+          disabled={isDownloadDisabled}
           onClick={handleDownloadOnly}
           data-testid="reio-download-only-button"
         >
@@ -276,7 +329,7 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
         <Button
           kind="primary"
           shape="block"
-          disabled={!isCommentValid}
+          disabled={!isCommentValid || isDownloadDisabled}
           onClick={handleSubmit}
           data-testid="reio-submit-button"
         >

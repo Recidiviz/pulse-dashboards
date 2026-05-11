@@ -16,8 +16,12 @@
 // =============================================================================
 
 import { FeatureVariant } from "../../../../../../RootStore/types";
+import { DenialReasonsMap } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
-import { usTnGateMarkSubmittedOnFormDownloaded } from "./utils";
+import {
+  usTnCompliantReportingWritebackDenialReasons,
+  usTnGateMarkSubmittedOnFormDownloaded,
+} from "./utils";
 
 export class CompliantReportingConfiguration extends ApiOpportunityConfiguration {
   get supportsAlmostEligible() {
@@ -26,6 +30,13 @@ export class CompliantReportingConfiguration extends ApiOpportunityConfiguration
 
   get markSubmittedOnFormDownload(): boolean {
     return usTnGateMarkSubmittedOnFormDownloaded(this.userStore);
+  }
+
+  get denialReasons(): DenialReasonsMap {
+    return usTnCompliantReportingWritebackDenialReasons(
+      this.userStore,
+      super.denialReasons,
+    );
   }
 
   get inverseFeatureVariant() {

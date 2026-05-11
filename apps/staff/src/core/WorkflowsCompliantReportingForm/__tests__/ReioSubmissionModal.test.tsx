@@ -30,9 +30,15 @@ vi.mock("../../../components/StoreProvider");
 const mockRootStore = () => {
   const doc = vi.fn().mockReturnValue("mock-doc-ref");
   const postExternalRequest = vi.fn();
+  const trackReferralFormDownloaded = vi.fn();
+  const trackReferralFormSubmitted = vi.fn();
   const updateClientUpdatesV2Document = vi.fn().mockResolvedValue(undefined);
 
   (useRootStore as Mock).mockReturnValue({
+    analyticsStore: {
+      trackReferralFormDownloaded,
+      trackReferralFormSubmitted,
+    },
     apiStore: { postExternalRequest },
     workflowsStore: { user: { info: { id: "STAFF123" } } },
     firestoreStore: {
@@ -41,7 +47,13 @@ const mockRootStore = () => {
     },
   });
 
-  return { doc, postExternalRequest, updateClientUpdatesV2Document };
+  return {
+    doc,
+    postExternalRequest,
+    trackReferralFormDownloaded,
+    trackReferralFormSubmitted,
+    updateClientUpdatesV2Document,
+  };
 };
 
 const reioMockOpportunity = (): Opportunity => ({
@@ -251,13 +263,18 @@ describe("ReioSubmissionModal", () => {
   });
 
   it("calls onDownload and closes when download only button is clicked", async () => {
-    mockRootStore();
+    const { trackReferralFormDownloaded, trackReferralFormSubmitted } =
+      mockRootStore();
     const onClose = vi.fn();
     const onDownload = vi.fn().mockResolvedValue(undefined);
+    const markSubmittedAndGenerateToast = vi.fn().mockResolvedValue(undefined);
 
     render(
       <ReioSubmissionModal
-        opportunity={reioMockOpportunity()}
+        opportunity={{
+          ...reioMockOpportunity(),
+          markSubmittedAndGenerateToast,
+        }}
         isOpen
         onClose={onClose}
         onDownload={onDownload}
@@ -270,12 +287,52 @@ describe("ReioSubmissionModal", () => {
       expect(onDownload).toHaveBeenCalledOnce();
       expect(onClose).toHaveBeenCalledOnce();
     });
+    expect(trackReferralFormDownloaded).toHaveBeenCalledOnce();
+    expect(trackReferralFormSubmitted).not.toHaveBeenCalled();
+    expect(markSubmittedAndGenerateToast).not.toHaveBeenCalled();
   });
 
   it("triggers download on successful submit", async () => {
-    const { postExternalRequest } = mockRootStore();
+    const {
+      postExternalRequest,
+      trackReferralFormDownloaded,
+      trackReferralFormSubmitted,
+    } = mockRootStore();
     postExternalRequest.mockResolvedValue({});
     const onDownload = vi.fn().mockResolvedValue(undefined);
+    const markSubmittedAndGenerateToast = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <ReioSubmissionModal
+        opportunity={{
+          ...reioMockOpportunity(),
+          markSubmittedAndGenerateToast,
+        }}
+        isOpen
+        onClose={vi.fn()}
+        onDownload={onDownload}
+      />,
+    );
+
+    const textarea = screen.getByPlaceholderText("Please specify a reason...");
+    fireEvent.change(textarea, { target: { value: "Test comment" } });
+    fireEvent.click(screen.getByTestId("reio-submit-button"));
+
+    await waitFor(() => {
+      expect(postExternalRequest).toHaveBeenCalledOnce();
+      expect(onDownload).toHaveBeenCalledOnce();
+      expect(markSubmittedAndGenerateToast).toHaveBeenCalledOnce();
+      expect(screen.getByTestId("reio-success-screen")).toBeInTheDocument();
+    });
+    expect(trackReferralFormDownloaded).toHaveBeenCalledOnce();
+    expect(trackReferralFormSubmitted).toHaveBeenCalledOnce();
+  });
+
+  it("does not mark the contact note failed if PDF download fails after TOMIS submit succeeds", async () => {
+    const { postExternalRequest, updateClientUpdatesV2Document } =
+      mockRootStore();
+    postExternalRequest.mockResolvedValue({});
+    const onDownload = vi.fn().mockRejectedValue(new Error("download failed"));
 
     render(
       <ReioSubmissionModal
@@ -295,6 +352,27 @@ describe("ReioSubmissionModal", () => {
       expect(onDownload).toHaveBeenCalledOnce();
       expect(screen.getByTestId("reio-success-screen")).toBeInTheDocument();
     });
+    expect(updateClientUpdatesV2Document).toHaveBeenCalledOnce();
+  });
+
+  it("disables download and submit actions when download is unavailable", () => {
+    mockRootStore();
+
+    render(
+      <ReioSubmissionModal
+        opportunity={reioMockOpportunity()}
+        isOpen
+        onClose={vi.fn()}
+        onDownload={vi.fn()}
+        isDownloadDisabled
+      />,
+    );
+
+    const textarea = screen.getByPlaceholderText("Please specify a reason...");
+    fireEvent.change(textarea, { target: { value: "Test comment" } });
+
+    expect(screen.getByTestId("reio-download-only-button")).toBeDisabled();
+    expect(screen.getByTestId("reio-submit-button")).toBeDisabled();
   });
 
   it("resets state when modal is closed and reopened", async () => {

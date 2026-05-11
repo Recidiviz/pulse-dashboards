@@ -121,13 +121,18 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     }
   }, [showModal]);
 
-  const tomisCodes = reasons.filter((code) => code !== "Other");
+  const tomisCodes = reasons.filter(
+    (code) => !code.toUpperCase().includes("OTHER"),
+  );
+  const hasTomisCodes = tomisCodes.length > 0;
 
   const isCommentValid =
     comment.length >= TOMIS_COMMENT_MIN_CHARS &&
     comment.length <= TOMIS_COMMENT_MAX_CHARS;
 
   const onSubmitButtonClick = async () => {
+    if (!hasTomisCodes) return;
+
     setPhase("SUBMITTING");
 
     const contactNoteDateTime = new Date();
@@ -225,7 +230,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
         <SubmitButton
           data-testid="tomis-submit-button"
           onClick={onSubmitButtonClick}
-          disabled={!isCommentValid}
+          disabled={!isCommentValid || !hasTomisCodes}
         >
           Submit Denial Codes to TOMIS
         </SubmitButton>

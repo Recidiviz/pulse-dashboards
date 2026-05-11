@@ -39,6 +39,7 @@ const WorkflowsCompliantReportingForm = ({
   const [isMissingContent, setIsMissingContent] = useState(false);
   const [showReioModal, setShowReioModal] = useState(false);
   const { usTnCompliantReportingWriteback } = useFeatureVariants();
+  const showTomisWriteback = !!usTnCompliantReportingWriteback;
 
   useEffect(() => {
     const pages = formRef.current?.querySelectorAll(PrintablePageContainer);
@@ -58,8 +59,11 @@ const WorkflowsCompliantReportingForm = ({
     );
   };
 
-  const reioButton = usTnCompliantReportingWriteback ? (
-    <DownloadButton onClick={() => setShowReioModal(true)}>
+  const reioButton = showTomisWriteback ? (
+    <DownloadButton
+      disabled={isMissingContent}
+      onClick={() => setShowReioModal(true)}
+    >
       Download or Submit REIO Note
     </DownloadButton>
   ) : null;
@@ -73,16 +77,18 @@ const WorkflowsCompliantReportingForm = ({
       onClickDownload={async () => onClickDownload()}
       opportunity={opportunity}
       additionalHeaderButtons={reioButton}
+      hideDownloadButton={showTomisWriteback}
     >
       <FormViewer formRef={formRef}>
         <FormCR3947Rev0518 />
       </FormViewer>
-      {usTnCompliantReportingWriteback && (
+      {showTomisWriteback && (
         <ReioSubmissionModal
           opportunity={opportunity}
           isOpen={showReioModal}
           onClose={() => setShowReioModal(false)}
           onDownload={onClickDownload}
+          isDownloadDisabled={isMissingContent}
         />
       )}
     </FormContainer>

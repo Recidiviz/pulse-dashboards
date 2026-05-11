@@ -214,6 +214,30 @@ describe("TomisDenialModal", () => {
     expect(body.contactTypeCodes).toEqual(["DECF"]);
   });
 
+  it("does not submit when no TOMIS codes are selected", async () => {
+    const { postExternalRequest, updateClientUpdatesV2Document } =
+      mockRootStore();
+    const opp = tomisMockOpportunity();
+
+    render(
+      <TomisDenialModal
+        opportunity={opp}
+        {...defaultProps}
+        reasons={["Other"]}
+      />,
+    );
+
+    const input = screen.getByTestId("character-count-text-field");
+    fireEvent.change(input, { target: { value: "Test comment" } });
+
+    const submitButton = screen.getByTestId("tomis-submit-button");
+    expect(submitButton).toBeDisabled();
+    fireEvent.click(submitButton);
+
+    expect(updateClientUpdatesV2Document).not.toHaveBeenCalled();
+    expect(postExternalRequest).not.toHaveBeenCalled();
+  });
+
   it("shows loading state during submission", async () => {
     const { postExternalRequest } = mockRootStore();
     postExternalRequest.mockReturnValue(new Promise(() => undefined)); // never resolves

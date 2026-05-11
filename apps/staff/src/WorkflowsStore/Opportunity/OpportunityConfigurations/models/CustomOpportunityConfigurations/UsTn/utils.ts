@@ -16,6 +16,7 @@
 // =============================================================================
 
 import UserStore from "../../../../../../RootStore/UserStore";
+import { DenialReasonsMap } from "../../../../types";
 import { IApiOpportunityConfiguration } from "../../../interfaces";
 
 // TODO(#9838):[US_TN][Workflows] Remove usTnDoNotMarkPendingOnDownload post-rollout
@@ -26,6 +27,21 @@ export function usTnGateMarkSubmittedOnFormDownloaded(
 ): boolean {
   const { usTnDoNotMarkPendingOnDownload } = userStore.activeFeatureVariants;
   return !usTnDoNotMarkPendingOnDownload;
+}
+
+export function usTnCompliantReportingWritebackDenialReasons(
+  userStore: UserStore,
+  denialReasons: DenialReasonsMap,
+): DenialReasonsMap {
+  if (!userStore.activeFeatureVariants.usTnCompliantReportingWriteback) {
+    return denialReasons;
+  }
+
+  return Object.fromEntries(
+    Object.entries(denialReasons).filter(
+      ([code]) => !code.toUpperCase().includes("OTHER"),
+    ),
+  );
 }
 
 export const usTnUntrackedEligibilityConfigBase = {

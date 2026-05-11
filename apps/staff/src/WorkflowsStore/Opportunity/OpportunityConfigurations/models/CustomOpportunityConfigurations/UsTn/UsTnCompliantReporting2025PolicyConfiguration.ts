@@ -15,11 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DenialReasonsMap } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
-import { usTnGateMarkSubmittedOnFormDownloaded } from "./utils";
+import {
+  usTnCompliantReportingWritebackDenialReasons,
+  usTnGateMarkSubmittedOnFormDownloaded,
+} from "./utils";
 
 export class UsTnCompliantReporting2025PolicyConfiguration extends ApiOpportunityConfiguration {
   get markSubmittedOnFormDownload(): boolean {
     return usTnGateMarkSubmittedOnFormDownloaded(this.userStore);
+  }
+
+  get denialReasons(): DenialReasonsMap {
+    return usTnCompliantReportingWritebackDenialReasons(
+      this.userStore,
+      super.denialReasons,
+    );
   }
 }

@@ -97,6 +97,7 @@ export type FormHeaderProps = {
   onClickDownload: () => Promise<void>;
   downloadTooltip?: string;
   downloadButtonLabel: string;
+  hideDownloadButton?: boolean;
   opportunity: Opportunity;
   children: React.ReactNode;
   additionalHeaderButtons?: React.ReactNode;
@@ -106,6 +107,7 @@ export const RevertButton = DownloadButton;
 
 export const FormContainer = observer(function FormContainer({
   downloadButtonLabel,
+  hideDownloadButton,
   heading,
   isMissingContent,
   onClickDownload,
@@ -172,19 +174,21 @@ export const FormContainer = observer(function FormContainer({
             </RevertButton>
           )}
           {additionalHeaderButtons}
-          <TooltipTrigger contents={downloadTooltip}>
-            <DownloadButton
-              className="WorkflowsFormDownloadButton"
-              disabled={isDownloadButtonDisabled || form.formIsDownloading}
-              onClick={handleDownloadClick}
-            >
-              {createDownloadLabel(
-                form.formIsDownloading,
-                isDownloadButtonDisabled,
-                downloadButtonLabel,
-              )}
-            </DownloadButton>
-          </TooltipTrigger>
+          {!hideDownloadButton && (
+            <TooltipTrigger contents={downloadTooltip}>
+              <DownloadButton
+                className="WorkflowsFormDownloadButton"
+                disabled={isDownloadButtonDisabled || form.formIsDownloading}
+                onClick={handleDownloadClick}
+              >
+                {createDownloadLabel(
+                  form.formIsDownloading,
+                  isDownloadButtonDisabled,
+                  downloadButtonLabel,
+                )}
+              </DownloadButton>
+            </TooltipTrigger>
+          )}
         </FormHeaderSection>
       </FormHeaderBar>
       <FormPreviewContainer>{children}</FormPreviewContainer>
