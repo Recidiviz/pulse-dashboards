@@ -19,13 +19,17 @@ import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { uniqBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useState } from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
 import { formatDate } from "~utils";
 
 import StopwatchIcon from "../../assets/static/images/stopwatch.svg?react";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
@@ -33,7 +37,9 @@ import { formatDateString } from "../models/utils";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
+import { snoozeTaskToast } from "./snoozeTaskToast";
 import { TaskDueDate } from "./styles";
+import { TaskSnoozeReasonForm } from "./TaskSnoozeReasonForm";
 
 const TasksWrapper = styled.div``;
 const TaskItems = styled.div`
@@ -267,6 +273,33 @@ const TaskPreview = ({
   showSnoozeDropdown: boolean;
 }) => {
   const { isMobile } = useIsMobile(true);
+  const { taskSnoozeReason } = useFeatureVariants();
+  const reasonEnabled = Boolean(taskSnoozeReason);
+  const [pendingSnoozeDays, setPendingSnoozeDays] = useState<number | null>(
+    null,
+  );
+
+  // The parent owns the snooze write + toast so the dropdown and the
+  // reason form can stay presentational.
+  const persistSnooze = (days: number, reason: string | undefined) => {
+    task.updateSupervisionTask(days, reason);
+    snoozeTaskToast(task, days, true, isMobile);
+  };
+
+  if (reasonEnabled && pendingSnoozeDays !== null) {
+    return (
+      <TaskItem showSnoozeDropdown={false} key={task.key}>
+        <TaskSnoozeReasonForm
+          onCancel={() => setPendingSnoozeDays(null)}
+          onSave={(reason) => {
+            persistSnooze(pendingSnoozeDays, reason);
+            setPendingSnoozeDays(null);
+          }}
+        />
+      </TaskItem>
+    );
+  }
+
   return (
     <TaskItem showSnoozeDropdown={showSnoozeDropdown} key={task.key}>
       <TaskContent>
@@ -297,7 +330,13 @@ const TaskPreview = ({
           taskConfig={
             task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
           }
-          operationsInfoInToast={true}
+          onSelectSnoozeDays={(days) => {
+            if (reasonEnabled) {
+              setPendingSnoozeDays(days);
+            } else {
+              persistSnooze(days, undefined);
+            }
+          }}
         />
       )}
     </TaskItem>
@@ -305,6 +344,34 @@ const TaskPreview = ({
 };
 
 const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
+  const { isMobile } = useIsMobile(true);
+  const { taskSnoozeReason } = useFeatureVariants();
+  const reasonEnabled = Boolean(taskSnoozeReason);
+  const [pendingSnoozeDays, setPendingSnoozeDays] = useState<number | null>(
+    null,
+  );
+
+  // V2 (US_TX) intentionally omits the operations-metrics line from the
+  // toast — see snoozeTaskToast's operationsInfoInToast arg.
+  const persistSnooze = (days: number, reason: string | undefined) => {
+    task.updateSupervisionTask(days, reason);
+    snoozeTaskToast(task, days, false, isMobile);
+  };
+
+  if (reasonEnabled && pendingSnoozeDays !== null) {
+    return (
+      <TaskItemWrapper>
+        <TaskSnoozeReasonForm
+          onCancel={() => setPendingSnoozeDays(null)}
+          onSave={(reason) => {
+            persistSnooze(pendingSnoozeDays, reason);
+            setPendingSnoozeDays(null);
+          }}
+        />
+      </TaskItemWrapper>
+    );
+  }
+
   return (
     <TaskItemWrapper>
       <TaskItemV2>
@@ -357,7 +424,13 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
           taskConfig={
             task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
           }
-          operationsInfoInToast={false} // only for Texas
+          onSelectSnoozeDays={(days) => {
+            if (reasonEnabled) {
+              setPendingSnoozeDays(days);
+            } else {
+              persistSnooze(days, undefined);
+            }
+          }}
         />
       </TaskItemV2>
       <SnoozedTaskInfo task={task} />

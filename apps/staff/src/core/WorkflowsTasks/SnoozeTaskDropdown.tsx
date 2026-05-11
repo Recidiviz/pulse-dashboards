@@ -17,7 +17,6 @@
 
 import { Sans14, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import toast from "react-hot-toast";
 import styled from "styled-components";
 
 import {
@@ -28,21 +27,25 @@ import {
   palette,
 } from "~design-system";
 
-import useIsMobile from "../../hooks/useIsMobile";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";
 import { WorkflowsTasksConfig } from "../models/types";
-import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 const Wrapper = styled.div`
   justify-self: end;
   cursor: pointer;
 `;
 
-const SnoozeTaskDropdownButton = styled(DropdownToggle)`
+const SnoozeTaskDropdownButton = styled(DropdownToggle)<{
+  $vertical?: boolean;
+}>`
   border: none;
   align-self: center;
   justify-self: end;
-  align-items: baseline;
+  display: inline-flex;
+  align-items: center;
+  flex-direction: ${({ $vertical }) => ($vertical ? "column" : "row")};
+  gap: 2px;
 
   &:hover,
   &:focus {
@@ -55,13 +58,12 @@ const SnoozeTaskDropdownButton = styled(DropdownToggle)`
     }
   }
 `;
+
 const SnoozeTaskDropdownDot = styled.span`
   height: 4px;
   width: 4px;
   background-color: ${palette.slate60};
   border-radius: 50%;
-  margin-right: 2px;
-  display: inline-block;
 `;
 
 const SnoozeDropdownMenu = styled(DropdownMenu)`
@@ -75,28 +77,18 @@ const SnoozeMenuInstruction = styled(Sans14)`
   color: ${palette.slate70};
 `;
 
-type SnoozeTaskDropdownProps = {
-  task: SupervisionTask<SupervisionTaskType>;
-  taskConfig?: WorkflowsTasksConfig["tasks"][SupervisionTaskType];
-  operationsInfoInToast: boolean;
-};
-
-const ToastWrapper = styled(Sans14)`
+const SnoozedTaskMenu = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  backdrop-filter: blur(40px);
+  flex-flow: column nowrap;
 `;
 
-const UndoButton = styled.button`
+const UnhideTaskButton = styled.button`
   ${typography.Sans14};
   border: none;
   text-align: left;
   background: none;
-  color: #00a1ff;
-  margin-left: 1rem;
-  padding: 0;
+  color: ${palette.pine3};
+  padding: 0.5rem 0;
 
   &:hover,
   &:focus {
@@ -104,63 +96,29 @@ const UndoButton = styled.button`
   }
 `;
 
-const snoozeTaskToast = (
-  task: SupervisionTask<SupervisionTaskType>,
-  snoozeForDays: number,
-  operationsInfoInToast: boolean,
-  isMobile: boolean,
-) => {
-  const personName = task.person.displayName;
-  let toastText = `${personName}'s ${task.displayName} will be hidden from this list for ${snoozeForDays} days.`;
-  if (operationsInfoInToast)
-    toastText += ` This will not change the officer's timeliness Operations metrics.`;
-  return toast(
-    (t) => (
-      <ToastWrapper>
-        <OpportunityStatusUpdateToast toastText={toastText} />
-        <UndoButton
-          type="submit"
-          onClick={() => {
-            task.updateSupervisionTask(undefined);
-            toast.dismiss(t.id);
-          }}
-        >
-          Undo
-        </UndoButton>
-      </ToastWrapper>
-    ),
-    {
-      className: "SnoozeTaskToast",
-      duration: isMobile ? 4000 : 7000,
-      style: { zIndex: 99999 },
-    },
-  );
+type SnoozeTaskDropdownProps = {
+  task: SupervisionTask<SupervisionTaskType>;
+  taskConfig?: WorkflowsTasksConfig["tasks"][SupervisionTaskType];
+  onSelectSnoozeDays: (snoozeForDays: number) => void;
 };
-
-const SnoozedTaskMenu = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const UnhideTaskButton = styled(UndoButton)`
-  color: ${palette.pine3};
-  padding: 0.5rem 0;
-  margin-left: 0;
-`;
 
 export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
   task,
   taskConfig,
-  operationsInfoInToast,
+  onSelectSnoozeDays,
 }: SnoozeTaskDropdownProps) {
-  const { isMobile } = useIsMobile(true);
+  const { taskSnoozeReason } = useFeatureVariants();
+  const verticalKebab = Boolean(taskSnoozeReason);
 
   if (!taskConfig || !taskConfig?.snoozeForOptionsInDays) return null;
 
   return (
     <Wrapper>
       <Dropdown>
-        <SnoozeTaskDropdownButton className="SnoozeTaskDropdownButton">
+        <SnoozeTaskDropdownButton
+          className="SnoozeTaskDropdownButton"
+          $vertical={verticalKebab}
+        >
           <SnoozeTaskDropdownDot />
           <SnoozeTaskDropdownDot />
           <SnoozeTaskDropdownDot />
@@ -187,15 +145,7 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
                 return (
                   <SnoozeMenuItem
                     key={`snooze-days-${option}`}
-                    onClick={() => {
-                      task.updateSupervisionTask(option);
-                      snoozeTaskToast(
-                        task,
-                        option,
-                        operationsInfoInToast,
-                        isMobile,
-                      );
-                    }}
+                    onClick={() => onSelectSnoozeDays(option)}
                   >
                     {option} days
                   </SnoozeMenuItem>
