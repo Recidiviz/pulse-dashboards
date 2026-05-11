@@ -80,6 +80,7 @@ export type FeatureVariant =
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
   | "sentenceProgressV2"
+  | "useRecordForIneligibleOpps"
 
   //// Arizona
   | "usAzFacilitySearch"
@@ -260,6 +261,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},
+  useRecordForIneligibleOpps: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

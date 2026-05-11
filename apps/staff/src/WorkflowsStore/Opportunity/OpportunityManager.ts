@@ -86,14 +86,24 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
         },
       } = this.rootStore;
 
-      return (
-        configs[opp].hydrateIneligibleRecordsInOpportunityManager ||
-        this.eligibleOpportunityTypes.indexOf(opp) !== -1
-      );
+      const isIneligibleOppType =
+        configs[opp].hydrateIneligibleRecordsInOpportunityManager &&
+        this.ineligibleOpportunityTypes.indexOf(opp) !== -1;
+
+      const isEligibleOrAlmostOppType =
+        this.eligibleOpportunityTypes.indexOf(opp) !== -1;
+      return isIneligibleOppType || isEligibleOrAlmostOppType;
     });
   }
 
   get ineligibleOpportunityTypes(): OpportunityType[] {
+    if (
+      this.rootStore.userStore.activeFeatureVariants
+        .useRecordForIneligibleOpps &&
+      this.person.record.allIneligibleOpportunities
+    ) {
+      return this.person.record.allIneligibleOpportunities;
+    }
     return difference(
       this.enabledOpportunityTypes,
       this.eligibleOpportunityTypes,

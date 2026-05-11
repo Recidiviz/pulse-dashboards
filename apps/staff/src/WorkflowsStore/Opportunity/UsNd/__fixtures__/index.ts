@@ -51,6 +51,7 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
     phoneNumber: "5555555678",
     expirationDate: new Date("2024-12-31"),
     allEligibleOpportunities: ["earlyTermination"],
+    allIneligibleOpportunities: [],
     supervisionStartDate: new Date("2020-02-22"),
     currentBalance: 0,
     lastPaymentAmount: 125.75,

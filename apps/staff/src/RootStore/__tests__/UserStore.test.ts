@@ -1314,6 +1314,7 @@ describe("feature variants", () => {
         "usTnRcafV2": {},
         "usTnSuspensionOfDirectSupervision": {},
         "usTnTEPENotesForAll": {},
+        "useRecordForIneligibleOpps": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }
@@ -1389,6 +1390,7 @@ describe("feature variants", () => {
         "usTnRcafV2": {},
         "usTnSuspensionOfDirectSupervision": {},
         "usTnTEPENotesForAll": {},
+        "useRecordForIneligibleOpps": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }
@@ -1462,6 +1464,7 @@ describe("feature variants", () => {
         "usTnRcafV2": {},
         "usTnSuspensionOfDirectSupervision": {},
         "usTnTEPENotesForAll": {},
+        "useRecordForIneligibleOpps": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }

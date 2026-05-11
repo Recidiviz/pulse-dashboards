@@ -62,6 +62,7 @@ function initializePresenter({
     {
       ...mockIneligibleClient,
       allEligibleOpportunities: ["LSU"],
+      allIneligibleOpportunities: ["pastFTRD"],
     },
     rootStore,
   );

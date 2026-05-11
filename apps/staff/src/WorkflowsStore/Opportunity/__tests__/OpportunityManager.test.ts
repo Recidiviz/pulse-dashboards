@@ -69,11 +69,26 @@ describe("instantiation", () => {
   });
 
   test("ineligible client", () => {
-    person = new Client(ineligibleClientRecord, rootStore);
+    vi.spyOn(
+      rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue({ useRecordForIneligibleOpps: {} });
+    person = new Client(
+      {
+        ...ineligibleClientRecord,
+        allIneligibleOpportunities: ["usTnAnnualReclassification2026Policy"],
+      },
+      rootStore,
+    );
 
     const supportedIneligibleOpps = Object.entries(mockOpportunityConfigs)
       .filter(
-        ([_, config]) => config.hydrateIneligibleRecordsInOpportunityManager,
+        ([oppType, config]) =>
+          config.hydrateIneligibleRecordsInOpportunityManager &&
+          person.record.allIneligibleOpportunities?.includes(
+            oppType as OpportunityType,
+          ),
       )
       .map(([oppType, _]) => oppType);
 
@@ -382,7 +397,13 @@ describe("instantiateOpportunitiesByType", () => {
 
     rootStore.tenantStore.currentTenantId = "US_ID";
     rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
-    person = new Client(ineligibleClientRecord, rootStore);
+    person = new Client(
+      {
+        ...ineligibleClientRecord,
+        allIneligibleOpportunities: ["usTnInitialClassification2026Policy"],
+      },
+      rootStore,
+    );
 
     const spy = vi
       .spyOn(

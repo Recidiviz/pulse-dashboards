@@ -28,6 +28,9 @@ export const workflowsJusticeInvolvedPersonRecordSchema =
       allEligibleOpportunities: z.array(
         z.string().transform((val) => val as OpportunityType),
       ),
+      allIneligibleOpportunities: z.optional(
+        z.array(z.string().transform((val) => val as OpportunityType)),
+      ),
     }),
   );
 
