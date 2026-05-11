@@ -17,11 +17,11 @@
 
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ResourceSection } from "~@reentry/frontend/hooks/resourceBank.types";
-import { useActionPlanPDF } from "~@reentry/frontend/hooks/usePDFDownload";
+import { usePlanPdf } from "~@reentry/frontend/hooks/usePlanPdf";
 import { components } from "~@reentry/openapi-types";
 
 import DownloadConfirmModal from "./DownloadConfirmModal";
@@ -47,12 +47,13 @@ const PlanContent = ({
   isResourceBankLoading,
   isErrorResources,
 }: PlanContentProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
   const clientFullName = planDetail.client_record?.full_name
     ? `${planDetail.client_record.full_name.given_names}_${planDetail.client_record.full_name.surname}`
     : "";
 
-  const { handleDownload, isDownloading } = useActionPlanPDF(
-    planDetail.id,
+  const { generatePdf, isGenerating } = usePlanPdf(
+    contentRef,
     `${clientFullName}_action_plan.pdf`,
   );
 
@@ -65,14 +66,14 @@ const PlanContent = ({
           <PrimaryButton
             buttonText="Edit"
             onClick={setMarkdownEdit}
-            disabled={isDownloading}
+            disabled={isGenerating}
             ignoreCapabilities={true}
             className={styles["actionButton"]}
           />
           <PrimaryButton
-            buttonText={isDownloading ? "Generating..." : "Download PDF"}
+            buttonText={isGenerating ? "Generating..." : "Download PDF"}
             onClick={() => setShowDownloadModal(true)}
-            disabled={isDownloading}
+            disabled={isGenerating}
             ignoreCapabilities={true}
             className={styles["actionButton"]}
           />
@@ -82,12 +83,12 @@ const PlanContent = ({
           onClose={() => setShowDownloadModal(false)}
           onConfirm={() => {
             setShowDownloadModal(false);
-            handleDownload();
+            generatePdf();
           }}
-          isDownloading={isDownloading}
+          isDownloading={isGenerating}
         />
 
-        <div>
+        <div id="contentToDownload" ref={contentRef}>
           <ResourceBankViewer
             clientName={planDetail?.client_record?.full_name}
             markDownPlan={internalMarkdown}

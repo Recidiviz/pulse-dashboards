@@ -1,4 +1,3 @@
-import html as html_lib
 import urllib
 from datetime import datetime, timezone
 from typing import List, Optional
@@ -6,7 +5,6 @@ from uuid import UUID
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlalchemy.exc import DBAPIError
 from sqlmodel import select
@@ -29,25 +27,21 @@ from app.crud.intake import (
 from app.crud.plan import create_plan, get_plan_by_intake_id, retry_plan_creation
 from app.models.base import IntakeStatus, IntakeType
 from app.models.execution import Execution, ExecutionStatus
-from app.models.intake import ClientAddress, Intake, IntakeMessage
+from app.models.intake import ClientAddress, Intake
 from app.models.models import Plan
 from app.models.recording import RecordingSession
-from app.pdf.renderer import pdf_renderer
 from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
     AddressSubmission,
     ClientAddressResponse,
     IntakeHistoryResponse,
     IntakeMessageResponse,
-    IntakeMessageRole,
     IntakeResponse,
     ProcessingStatusResponse,
 )
-from app.services.client_data.queries import Queries
 from app.utils.assessment_config_utils import enrich_sections_with_status
 from app.utils.config_loader import ConfigLoader
 from app.utils.execution_utils import is_execution_stuck
-from app.utils.intake.guardrails import displayable_guardrail_flags
 from app.utils.lock_utils import acquire_intake_lock
 from app.utils.permission_utils import check_access
 from app.utils.processing_status_utils import compute_processing_status_by_intake_id
@@ -939,76 +933,3 @@ async def retry_intake_processing(
 
     # Fallback: no current executions found
     raise HTTPException(status_code=400, detail="No retryable operations found")
-
-
-@router.get("/{intake_id}/chat-history-pdf")
-async def generate_chat_history_pdf(
-    intake_id: UUID,
-    session: AsyncSession = Depends(get_session),
-    pseudonymized_id: str = Depends(get_pseudonymized_id),
-    auth_user_context=Depends(get_auth_user_context),
-):
-    intake = await get_intake_by_id(session, intake_id)
-    if intake is None:
-        raise HTTPException(status_code=404, detail="Intake not found")
-    check_access(
-        intake.client_pseudo_id,
-        pseudonymized_id,
-        cpa_client_locations=auth_user_context["cpa_client_locations"],
-        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
-    )
-
-    result = await session.execute(
-        select(IntakeMessage)
-        .where(
-            IntakeMessage.intake_id == intake_id,
-            IntakeMessage.from_role.in_(
-                [IntakeMessageRole.CLIENT, IntakeMessageRole.CASEWORKER]
-            ),
-        )
-        .order_by(IntakeMessage.section, IntakeMessage.created_at)
-    )
-    messages = result.scalars().all()
-
-    sections: dict[str, list[dict]] = {}
-    for msg in messages:
-        section_key = msg.section or "General"
-        sections.setdefault(section_key, []).append(
-            {
-                "sender": msg.from_role.capitalize(),
-                "content": html_lib.escape(msg.content or ""),
-                "guardrailed_by": displayable_guardrail_flags(msg.guardrailed_by or []),
-            }
-        )
-
-    sections_list = [
-        {"title": title, "messages": msgs} for title, msgs in sections.items()
-    ]
-
-    client_record = Queries.get_client_by_pseudonymized_id_unsafe(
-        intake.client_pseudo_id
-    )
-    client_name = html_lib.escape(
-        client_record.full_name.formatted_full_name()
-        if client_record and client_record.full_name
-        else ""
-    )
-
-    completed_at = (
-        intake.completed_at.strftime("%B %d, %Y") if intake.completed_at else None
-    )
-
-    pdf_bytes = pdf_renderer.render(
-        "chat_history.html",
-        {
-            "client_name": client_name,
-            "completed_at": completed_at,
-            "sections": sections_list,
-        },
-        "chat_history.pdf.css",
-    )
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=chat_history.pdf"},
-    )

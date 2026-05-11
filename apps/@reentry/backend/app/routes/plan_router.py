@@ -1,18 +1,21 @@
-import re
+import ipaddress
+import socket
 import uuid
 from datetime import datetime
 from io import BytesIO
 from typing import List, Optional
+from urllib.parse import urlparse
 from uuid import UUID
 
-import markdown as markdown_lib
 import orjson
 import structlog
+import weasyprint
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel, computed_field
+from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
@@ -50,7 +53,6 @@ from app.models.models import (
     ResourceAssociationAction,
     ResourceAssociationType,
 )
-from app.pdf.renderer import pdf_renderer
 from app.routes.base import DeletionResponse, DeletionStatus, ORMResponse
 from app.routes.shared_models import (
     AddressSubmission,
@@ -71,6 +73,7 @@ from app.services.resources import (
     TravelMode,
     list_resources,
 )
+from app.utils.resources_utils import batch_get_active_resources
 from app.utils.address_autocomplete import (
     AutocompleteAddressResponse,
     AutocompleteCityResponse,
@@ -80,7 +83,6 @@ from app.utils.address_autocomplete import (
 )
 from app.utils.address_autocomplete import autocomplete_city as autocomplete_city_util
 from app.utils.permission_utils import check_access
-from app.utils.resources_utils import batch_get_active_resources
 
 from ..utils.PrometheusBackgroundThreadManager import (
     llm_plan_creation_total_counter,
@@ -90,6 +92,51 @@ from .execution_router import ExecutionResponse
 
 router = APIRouter()
 logger = structlog.get_logger(__name__)
+
+_BLOCKED_HOSTS = frozenset({"metadata.google.internal", "metadata", "169.254.169.254"})
+
+
+def _is_blocked_ip(addr_str: str) -> bool:
+    """Check if an IP address is private, loopback, or link-local."""
+    try:
+        addr = ipaddress.ip_address(addr_str)
+        return addr.is_private or addr.is_loopback or addr.is_link_local
+    except ValueError:
+        return False
+
+
+def _safe_url_fetcher(url, timeout=10, ssl_context=None):
+    """URL fetcher for WeasyPrint that blocks internal/metadata endpoints.
+
+    Resolves DNS before allowing requests to prevent DNS rebinding attacks
+    where attacker-controlled domains point to internal IPs.
+    """
+    parsed = urlparse(url)
+    hostname = parsed.hostname or ""
+
+    # Block known metadata hostnames
+    if hostname in _BLOCKED_HOSTS:
+        raise ValueError(f"URL fetch blocked: {hostname}")
+
+    # Block literal private IPs
+    if _is_blocked_ip(hostname):
+        raise ValueError(f"URL fetch blocked: private IP {hostname}")
+
+    # Resolve DNS and block if it points to a private/internal IP
+    try:
+        resolved_ips = socket.getaddrinfo(
+            hostname, parsed.port or 80, proto=socket.IPPROTO_TCP
+        )
+        for family, _, _, _, sockaddr in resolved_ips:
+            ip_str = sockaddr[0]
+            if _is_blocked_ip(ip_str):
+                raise ValueError(
+                    f"URL fetch blocked: {hostname} resolves to private IP {ip_str}"
+                )
+    except socket.gaierror:
+        raise ValueError(f"URL fetch blocked: cannot resolve {hostname}")
+
+    return weasyprint.default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
 
 
 class PlanRequestCreate(BaseModel):
@@ -1110,195 +1157,80 @@ async def router_set_generation_notify(
     return Response(status_code=200)
 
 
-
-def _markdown_to_html(text: str) -> str:
-    md = markdown_lib.Markdown(extensions=["tables"], tab_length=2)
-    return md.convert(text)
-
-
-_RE_LIST = re.compile(r"[ \t]*(?:\d+[.)]\s|[-*+]\s)")
-_RE_HEADING = re.compile(r"#+\s")
-_RE_INDENTED_CONT = re.compile(r"^ {2}\S")
-
-
-def _convert_unicode_bullets(text: str) -> str:
-    result = []
-    for line in text.splitlines():
-        stripped = line.lstrip()
-        if stripped.startswith("•"):
-            indent = " " * (len(line) - len(stripped))
-            result.append(f"{indent}- {stripped[1:].lstrip()}")
-        else:
-            result.append(line)
-    return "\n".join(result)
+# Allowlist of safe WeasyPrint write_pdf options. The 'target' parameter is
+# explicitly excluded because it writes the PDF to a server filesystem path
+# instead of returning bytes, enabling arbitrary file write attacks.
+_SAFE_PDF_OPTIONS = frozenset(
+    {
+        "presentational_hints",
+        "optimize_images",
+        "pdf_version",
+        "pdf_variant",
+        "pdf_identifier",
+        "pdf_forms",
+        "uncompressed_pdf",
+    }
+)
 
 
-def _insert_blanks_before_lists(text: str) -> str:
-    lines = []
-    for line in text.splitlines():
-        if lines:
-            prev = lines[-1]
-            if _RE_LIST.match(line) and prev.strip():
-                prev_is_list = bool(_RE_LIST.match(prev))
-                prev_is_heading = bool(_RE_HEADING.match(prev))
-                if not prev_is_list and not prev_is_heading:
-                    lines.append("")
-                elif prev_is_list:
-                    if len(line) - len(line.lstrip()) < len(prev) - len(prev.lstrip()):
-                        lines.append("")
-        lines.append(line)
-    return "\n".join(lines)
+class PDFRequest(BaseModel):
+    html: str
+    css: Optional[List[str]] = []
+    options: Optional[dict] = {}
 
 
-def _insert_blanks_between_continuations(text: str) -> str:
-    lines_in = text.splitlines()
-    lines_out = []
-    for i, line in enumerate(lines_in):
-        lines_out.append(line)
-        if i + 1 < len(lines_in):
-            nxt = lines_in[i + 1]
-            nxt_is_cont = bool(_RE_INDENTED_CONT.match(nxt)) and not bool(
-                _RE_LIST.match(nxt)
-            )
-            cur_is_cont = bool(_RE_INDENTED_CONT.match(line)) and not bool(
-                _RE_LIST.match(line)
-            )
-            if (
-                nxt_is_cont
-                and (cur_is_cont or bool(_RE_LIST.match(line)))
-                and line.strip()
-            ):
-                lines_out.append("")
-    return "\n".join(lines_out)
+@router.post("/generate-pdf")
+async def generate_pdf(
+    request: PDFRequest,
+    _: str = Depends(
+        get_pseudonymized_id
+    ),  # authentication only; no client-level check needed since PDF is generated from caller-provided HTML
+):
+    """Generate PDF from HTML using WeasyPrint"""
+    try:
+        # Create HTML document with restricted URL fetcher
+        html_doc = HTML(string=request.html, url_fetcher=_safe_url_fetcher)
 
+        # Process CSS content from frontend (now includes PDF-specific CSS)
+        css_objects = []
 
-def _preprocess_markdown_common(text: str) -> str:
-    text = re.sub(r"\\\$", "$", text)
-    text = "\n".join(line.rstrip() for line in text.splitlines())
-    text = _convert_unicode_bullets(text)
-    text = _insert_blanks_before_lists(text)
-    text = _insert_blanks_between_continuations(text)
-    return text
+        for css_content in request.css:
+            try:
+                if isinstance(css_content, str) and css_content.strip():
+                    # All CSS from frontend should now be content strings
+                    css_objects.append(CSS(string=css_content))
+            except Exception as e:
+                # Skip any CSS that fails to load
+                print(f"Warning: Failed to load CSS content: {str(e)}")
+                continue
 
+        # Default PDF options — only allowlisted keys from request.options are merged
+        pdf_options = {
+            "presentational_hints": True,
+            "optimize_images": True,
+            "pdf_version": "1.7",
+        }
+        if request.options:
+            rejected = set(request.options) - _SAFE_PDF_OPTIONS
+            if rejected:
+                logger.warning(
+                    "Rejected disallowed PDF options",
+                    rejected_keys=sorted(rejected),
+                )
+            for key in _SAFE_PDF_OPTIONS & set(request.options):
+                pdf_options[key] = request.options[key]
 
-def _preprocess_action_plan_markdown(text: str) -> str:
-    text = _preprocess_markdown_common(text)
-    # Strip annotation/resource XML blocks (frontend-only display artifacts)
-    text = re.sub(r"<annotations>.*?</annotations>", "", text, flags=re.DOTALL)
-    text = re.sub(r"<resources>.*?</resources>", "", text, flags=re.DOTALL)
-    text = re.sub(r"<resourceBank\b[^/]*/?>", "", text)
-    # Strip caseworker-only notes entirely (not client-facing)
-    text = re.sub(r"<notes>.*?</notes>", "", text, flags=re.DOTALL)
-    # Convert <readonlylink href="url">label</readonlylink> to plain [label](url)
-    text = re.sub(
-        r"""<readonlylink[^>]*href=(["'])([^"']*)\1[^>]*>(.*?)</readonlylink>""",
-        r"[\3](\2)",
-        text,
-        flags=re.DOTALL,
-    )
+        # Always render to memory — never pass 'target' to write_pdf
+        pdf_bytes = html_doc.write_pdf(stylesheets=css_objects, **pdf_options)
 
-    # Normalize labels that must always appear bold regardless of LLM consistency.
-    # Strips any partial bolding the LLM may have applied, then re-applies uniformly.
-    _BOLD_LABELS = ["Goal"]
-    for label in _BOLD_LABELS:
-        text = re.sub(
-            rf"\*{{0,2}}{re.escape(label)}\*{{0,2}}\s*:\*{{0,2}}", f"**{label}:**", text
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=document.pdf"},
         )
-
-    return text
-
-
-def _get_client_name(client_pseudo_id: str) -> str:
-    record = Queries.get_client_by_pseudonymized_id_unsafe(client_pseudo_id)
-    if record and record.full_name:
-        return record.full_name.formatted_full_name()
-    return ""
-
-
-async def _check_plan_access_and_outputs(
-    plan_id: UUID,
-    session: AsyncSession,
-    pseudonymized_id: str,
-    auth_user_context: dict,
-):
-    plan = await get_plan_by_id(session, plan_id)
-    if plan is None:
-        raise HTTPException(status_code=404, detail="Plan not found")
-    check_access(
-        plan.client_pseudo_id,
-        pseudonymized_id,
-        cpa_client_locations=auth_user_context["cpa_client_locations"],
-        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
-    )
-    if plan.intake_id:
-        intake = await get_intake_by_id(session, plan.intake_id)
-        if intake and not intake.outputs_enabled:
-            raise HTTPException(
-                status_code=403,
-                detail="Outputs are disabled for this assessment because they are under revision",
-            )
-    return plan
-
-
-@router.get("/plans/{id}/intake-summary-pdf")
-async def generate_intake_summary_pdf(
-    id: UUID,
-    session: AsyncSession = Depends(get_session),
-    pseudonymized_id: str = Depends(get_pseudonymized_id),
-    auth_user_context=Depends(get_auth_user_context),
-):
-    plan = await _check_plan_access_and_outputs(
-        id, session, pseudonymized_id, auth_user_context
-    )
-    asset = await get_asset_by_filename(session, id, "summary.md")
-    if not asset:
-        raise HTTPException(status_code=404, detail="Intake summary not found")
-
-    content_html = _markdown_to_html(_preprocess_markdown_common(asset.data_as_text()))
-    pdf_bytes = pdf_renderer.render(
-        "intake_summary.html",
-        {
-            "client_name": _get_client_name(plan.client_pseudo_id),
-            "content": content_html,
-        },
-        "intake_summary.pdf.css",
-    )
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=intake_summary.pdf"},
-    )
-
-
-@router.get("/plans/{id}/action-plan-pdf")
-async def generate_action_plan_pdf(
-    id: UUID,
-    session: AsyncSession = Depends(get_session),
-    pseudonymized_id: str = Depends(get_pseudonymized_id),
-    auth_user_context=Depends(get_auth_user_context),
-):
-    plan = await _check_plan_access_and_outputs(
-        id, session, pseudonymized_id, auth_user_context
-    )
-    gen = await plan.get_latest_generation(session)
-    if not gen or not gen.markdown_result:
-        raise HTTPException(status_code=404, detail="Action plan not found")
-
-    preprocessed = _preprocess_action_plan_markdown(gen.markdown_result)
-    content_html = _markdown_to_html(preprocessed)
-    pdf_bytes = pdf_renderer.render(
-        "action_plan.html",
-        {
-            "client_name": _get_client_name(plan.client_pseudo_id),
-            "content": content_html,
-        },
-        "action_plan.pdf.css",
-    )
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=action_plan.pdf"},
-    )
+    except Exception as e:
+        logger.exception(f"PDF generation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="PDF generation failed")
 
 
 @router.patch(

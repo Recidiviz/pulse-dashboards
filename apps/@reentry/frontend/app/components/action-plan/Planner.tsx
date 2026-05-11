@@ -17,7 +17,7 @@
 
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import DownloadConfirmModal from "~@reentry/frontend/components/action-plan/DownloadConfirmModal";
@@ -25,9 +25,16 @@ import LastPrompt from "~@reentry/frontend/components/action-plan/LastPrompt";
 import ActionPlanViewer from "~@reentry/frontend/components/ActionPlanViewer";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import { useActionPlanPDF } from "~@reentry/frontend/hooks/usePDFDownload";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import {
+  createPDFPageStyles,
+  extractCompleteCSS,
+} from "~@reentry/frontend/utils/pdfGenerator";
+import {
+  AI_DISCLOSURE_PRINT_TEXT,
+  showErrorToast,
+  showSuccessToast,
+} from "~@reentry/frontend-shared";
 
 interface PlannerProps {
   markDownText: string;
@@ -51,37 +58,149 @@ const Planner = ({
   showRegenerationNotify,
 }: PlannerProps) => {
   const { track } = useAnalytics();
-  const { getAccessToken } = useAuth();
+  const { getAccessToken, refreshToken } = useAuth();
   const [markDownPlan, setMarkdownPlan] = useState<string>(markDownText);
   const [update, setUpdate] = useState(false);
   const [internalMarkdown, setInternalMarkdown] = useState<string>("");
   const [showLastPrompt, setShowLastPrompt] = useState(
     showRegenerationNotify && !!planPrompt,
   );
+  const [isDownloading, setIsDownloading] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [viewerKey, setViewerKey] = useState(0);
 
-  const {
-    handleDownload: downloadPDF,
-    handlePrint: printPDF,
-    isDownloading,
-  } = useActionPlanPDF(planId, `${clientFullName}_action_plan.pdf`);
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
-  const handleDownload = async () => {
-    track("action_plan_downloaded", {
-      justiceInvolvedPersonId: clientPseudoId,
-      planId,
+  function convertButtonsToSpansPreserveText(
+    containerElement: HTMLElement | Document = document,
+  ): string[] {
+    const customLinkButtons =
+      containerElement.querySelectorAll("button.custom-link");
+    const customLinkButtonsHtmlContent: string[] = [];
+    customLinkButtons.forEach((button) => {
+      customLinkButtonsHtmlContent.push(button.innerHTML);
+      const originalText = button.textContent;
+
+      const span = document.createElement("span");
+
+      for (const attr of button.attributes) {
+        span.setAttribute(attr.name, attr.value);
+      }
+
+      span.textContent = originalText;
+
+      if (button.parentNode) {
+        button.parentNode.replaceChild(span, button);
+      }
     });
-    await downloadPDF();
+
+    return customLinkButtonsHtmlContent;
+  }
+
+  const generatePDFBlob = async (
+    addAiDisclosure = false,
+  ): Promise<Blob | null> => {
+    const element = document.getElementById("contentToDownload");
+    if (!element) {
+      return null;
+    }
+
+    convertButtonsToSpansPreserveText(element);
+    const extractedCSSResult = extractCompleteCSS(element, {
+      includeChildren: true,
+      includeMediaQueries: true,
+      includeAnimations: true,
+    });
+    const pdfCSS = `
+      ${extractedCSSResult.combined}
+      ${createPDFPageStyles(AI_DISCLOSURE_PRINT_TEXT)}
+    `;
+
+    const aiDisclosureHTML = addAiDisclosure
+      ? `<div style="background-color: #F3F4F6; padding: 12px 16px; margin-bottom: 16px; border-radius: 4px;">
+           <p style="margin: 0; color: #374151; font-size: 14px; line-height: 1.5;">
+             ${AI_DISCLOSURE_PRINT_TEXT}
+           </p>
+         </div>`
+      : "";
+
+    const actionPlan = {
+      html: aiDisclosureHTML + element.innerHTML,
+      css: [pdfCSS],
+      options: {
+        printBackground: true,
+      } as Record<string, unknown>,
+    };
+
+    let accessToken = getAccessToken();
+    if (!accessToken) {
+      await refreshToken();
+      accessToken = getAccessToken();
+    }
+    if (!accessToken) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:8000"}/api/generate-pdf`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(actionPlan),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      return await response.blob();
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      return null;
+    }
   };
 
   const handlePrint = async () => {
     track("action_plan_printed", {
       justiceInvolvedPersonId: clientPseudoId,
-      planId,
+      planId: planId,
     });
-    await printPDF();
-  };
 
+    try {
+      const pdfBlob = await generatePDFBlob(true);
+
+      if (!pdfBlob) {
+        showErrorToast("Failed to generate PDF for printing");
+        return;
+      }
+
+      const blobUrl = URL.createObjectURL(pdfBlob);
+
+      const iframe = document.createElement("iframe");
+      iframe.style.position = "absolute";
+      iframe.style.left = "-9999px";
+      iframe.src = blobUrl;
+      document.body.appendChild(iframe);
+
+      iframe.onload = () => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+
+        setTimeout(() => {
+          iframe.remove();
+          URL.revokeObjectURL(blobUrl);
+        }, 1000);
+      };
+    } catch (error) {
+      console.error("Failed to print:", error);
+      showErrorToast("Failed to print action plan");
+    }
+  };
   const router = useRouter();
 
   useEffect(() => {
@@ -138,6 +257,41 @@ const Planner = ({
     const processedMarkdown = postprocessMarkdown(markDownPlan);
     setInternalMarkdown(processedMarkdown);
     setUpdate(false);
+  };
+
+  const handleDownload = async (): Promise<void> => {
+    track("action_plan_downloaded", {
+      justiceInvolvedPersonId: clientPseudoId,
+      planId: planId,
+    });
+    setIsDownloading(true);
+
+    try {
+      const pdfBlob = await generatePDFBlob();
+
+      if (!pdfBlob) {
+        showErrorToast("Failed to generate PDF");
+        setIsDownloading(false);
+        return;
+      }
+
+      const fileName = `${clientFullName}_action_plan.pdf`;
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+
+      showSuccessToast("PDF downloaded successfully");
+      setViewerKey((prev) => prev + 1);
+    } catch {
+      showErrorToast("Failed to download PDF");
+    }
+
+    setIsDownloading(false);
   };
 
   useEffect(() => {
@@ -224,7 +378,11 @@ const Planner = ({
               onDismiss={handleDismissPrompt}
             />
           )}
-          <div className="max-w-[800px]">
+          <div
+            ref={contentRef}
+            id={"contentToDownload"}
+            className="max-w-[800px]"
+          >
             <div className="w-full flex-col justify-start items-center gap-3 flex">
               <div className="w-full text-[#2a5469]/90 text-sm font-medium leading-[16.80px]">
                 Action plan
@@ -234,6 +392,7 @@ const Planner = ({
               </div>
             </div>
             <ActionPlanViewer
+              key={viewerKey}
               markDownPlan={markDownPlan}
               update={update}
               internalMarkdown={internalMarkdown}
