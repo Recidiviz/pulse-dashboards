@@ -113,7 +113,7 @@ resource "google_compute_region_security_policy" "waf" {
   }
 
   rules {
-    priority    = 900
+    priority    = 2000
     action      = "throttle"
     description = "Rate limit: 100 requests per minute per IP"
     match {

@@ -31,7 +31,7 @@ variable "region" {
 }
 
 variable "additional_rules" {
-  description = "Extra rules to append to the base OWASP rule set. Priority must not conflict with the base rules (1000–1012) or the default allow rule (2147483647)."
+  description = "Extra rules to append to the base OWASP rule set. Priority must not conflict with the base rules (1000–1012), the rate limiter (2000), or the default allow rule (2147483647)."
   type = list(object({
     priority    = number
     action      = string
