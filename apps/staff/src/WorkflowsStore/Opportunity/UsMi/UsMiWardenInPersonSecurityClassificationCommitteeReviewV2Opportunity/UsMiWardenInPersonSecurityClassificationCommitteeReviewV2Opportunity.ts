@@ -23,6 +23,7 @@ import {
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
 } from "~datatypes";
 
+import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { Resident } from "../../../Resident";
 import { UsMiSCCReviewV2Form } from "../../Forms/UsMiSCCReviewV2Form";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -75,5 +76,18 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunit
   }
   eligibilityStatusLabel(_?: boolean) {
     return this.tabTitle();
+  }
+
+  get customStatusPalette() {
+    switch (this.tabTitle()) {
+      case this.deniedTabTitle:
+        return OPPORTUNITY_STATUS_COLORS.ineligible;
+      case this.submittedTabTitle:
+        return OPPORTUNITY_STATUS_COLORS.submitted;
+      case "Not Due":
+        return OPPORTUNITY_STATUS_COLORS.almostEligible;
+      default:
+        return OPPORTUNITY_STATUS_COLORS.eligible;
+    }
   }
 }
