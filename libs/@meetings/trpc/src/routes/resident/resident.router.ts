@@ -15,21 +15,58 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import _ from "lodash";
 import { z } from "zod";
 
-import { Prisma } from "~@meetings/prisma/client/client";
+import { Prisma } from "~@meetings/prisma/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createMeetingForPerson,
-  extractActiveMeetingId,
-  extractLastCompletedMeetingInfo,
+  enrichPersonWithMeetingInfo,
   getMeetingsForPerson,
+  listPersonsWithMeetingInfo,
 } from "~@meetings/trpc/routes/meeting.helpers";
 import {
   createMeetingInputSchema,
   getMeetingsInputSchema,
+  listInputSchema,
+  residentSortBySchema,
 } from "~@meetings/trpc/routes/resident/resident.schema";
+
+const querySelect = {
+  givenNames: true,
+  surname: true,
+  displayPersonExternalId: true,
+  personId: true,
+  facilityId: true,
+  meetings: {
+    orderBy: {
+      startTime: "desc",
+    },
+    select: {
+      id: true,
+      staffEmail: true,
+      endTime: true,
+      startTime: true,
+      caseNote: true,
+    },
+  },
+} satisfies Prisma.ResidentSelect;
+
+function getSecondaryOrderBy(
+  sortBy: z.infer<typeof residentSortBySchema> | undefined,
+): Prisma.Sql {
+  switch (sortBy) {
+    case "lastMeeting":
+      return Prisma.sql`MAX(m."startTime") DESC NULLS LAST, p."personId" ASC`;
+    case "id":
+      return Prisma.sql`p."displayPersonExternalId" ASC`;
+    case "facility":
+      return Prisma.sql`p."facilityId" ASC`;
+    case "name":
+    default:
+      return Prisma.sql`p."givenNames" ASC, p."surname" ASC`;
+  }
+}
 
 export const residentRouter = router({
   createMeeting: auth0Procedure
@@ -63,26 +100,6 @@ export const residentRouter = router({
   get: auth0Procedure
     .input(z.object({ personId: z.bigint() }))
     .query(async ({ input: { personId }, ctx: { prisma, user } }) => {
-      const querySelect = {
-        givenNames: true,
-        surname: true,
-        displayPersonExternalId: true,
-        personId: true,
-        facilityId: true,
-        meetings: {
-          orderBy: {
-            startTime: "desc",
-          },
-          select: {
-            id: true,
-            staffEmail: true,
-            endTime: true,
-            startTime: true,
-            caseNote: true,
-          },
-        },
-      } satisfies Prisma.ResidentSelect;
-
       const resident = await prisma.resident.findUnique({
         where: { personId },
         select: querySelect,
@@ -92,58 +109,38 @@ export const residentRouter = router({
         throw new Error("Resident not found");
       }
 
-      const meetingDetails = await extractLastCompletedMeetingInfo({
+      return enrichPersonWithMeetingInfo({ prisma, user, person: resident });
+    }),
+  list: auth0Procedure
+    .input(listInputSchema)
+    .query(async ({ input, ctx: { prisma, user } }) => {
+      const { cursor, filters, ...rest } = input ?? {};
+      // `cursor` from the client is actually a page number (see schema). Map
+      // it onto `page` so downstream code uses the accurate name.
+      const effectiveInput = {
+        ...rest,
+        filters,
+        ...(cursor !== undefined ? { page: cursor } : {}),
+      };
+
+      const result = await listPersonsWithMeetingInfo({
         prisma,
-        meetingsOrderedByDateDesc: resident.meetings,
+        user,
+        personType: "resident",
+        input: effectiveInput,
+        getSecondaryOrderBy,
+        findManyByIds: (personIds) =>
+          prisma.resident.findMany({
+            select: querySelect,
+            where: { personId: { in: personIds } },
+          }),
       });
 
-      return {
-        ..._.omit(resident, ["meetings"]),
-        activeMeetingId: extractActiveMeetingId({
-          user,
-          meetingsOrderedByDateDesc: resident.meetings,
-        }),
-        meetingDetails,
-      };
-    }),
-  list: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
-    const residents = await prisma.resident.findMany({
-      select: {
-        givenNames: true,
-        surname: true,
-        displayPersonExternalId: true,
-        personId: true,
-        facilityId: true,
-        meetings: {
-          orderBy: {
-            startTime: "desc",
-          },
-          select: {
-            id: true,
-            staffEmail: true,
-            endTime: true,
-            startTime: true,
-            caseNote: true,
-          },
-        },
-      },
-      where: {
-        isActive: true,
-      },
-    });
+      // Returned as `nextCursor` to match the convention `useInfiniteQuery`
+      // expects, but it's just the next page number.
+      const nextCursor =
+        result.page < result.totalPages ? result.page + 1 : undefined;
 
-    return Promise.all(
-      residents.map(async (resident) => ({
-        ..._.omit(resident, ["meetings"]),
-        activeMeetingId: extractActiveMeetingId({
-          user: user,
-          meetingsOrderedByDateDesc: resident.meetings,
-        }),
-        meetingDetails: await extractLastCompletedMeetingInfo({
-          prisma,
-          meetingsOrderedByDateDesc: resident.meetings,
-        }),
-      })),
-    );
-  }),
+      return { ...result, nextCursor };
+    }),
 });

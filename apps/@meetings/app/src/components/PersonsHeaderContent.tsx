@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import debounce from "lodash/debounce";
 import startCase from "lodash/startCase";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 
 import { PersonType } from "../common/types";
@@ -42,6 +43,26 @@ const PersonsHeaderContent = ({
   setSearchQuery,
   setSortBy,
 }: Props) => {
+  const [inputValue, setInputValue] = useState(searchQuery);
+
+  const debouncedSetSearchQuery = useMemo(
+    () => debounce(setSearchQuery, 500),
+    [setSearchQuery],
+  );
+
+  useEffect(
+    () => () => debouncedSetSearchQuery.cancel(),
+    [debouncedSetSearchQuery],
+  );
+
+  const handleChange = useCallback(
+    (value: string) => {
+      setInputValue(value);
+      debouncedSetSearchQuery(value);
+    },
+    [debouncedSetSearchQuery],
+  );
+
   const options = useMemo(() => {
     if (personType === "client") {
       return Object.values(SortOption).filter(
@@ -87,10 +108,12 @@ const PersonsHeaderContent = ({
         <View className="mt-3 w-full flex-1 flex-row items-center justify-end sm:mt-0">
           <View className="flex-1 sm:max-w-[300px]">
             <SearchBar
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={inputValue}
+              onChange={handleChange}
               placeholder="Search by name or ID"
               onExit={() => {
+                debouncedSetSearchQuery.cancel();
+                setInputValue("");
                 setSearchQuery("");
               }}
             />

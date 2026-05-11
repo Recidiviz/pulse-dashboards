@@ -17,11 +17,13 @@
 
 import {
   CompositeNavigationProp,
+  useIsFocused,
   useNavigation,
 } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { keepPreviousData } from "@tanstack/react-query";
 import upperFirst from "lodash/upperFirst";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
@@ -31,6 +33,7 @@ import {
   ClientsStackParamList,
   ResidentsStackParamList,
 } from "../navigation/DrawerNavigator";
+import { trpc } from "../shared/api";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
@@ -49,6 +52,8 @@ import {
 import { TablePagination } from "../shared/ui/TablePagination";
 import { TooltipText } from "../shared/ui/TooltipText";
 import { Typography } from "../shared/ui/Typography";
+import { deserializeClient, deserializeResident } from "../utils/format";
+import { serializeSort, SortOption } from "../utils/sort";
 
 const PAGE_SIZE = 7;
 const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
@@ -58,20 +63,73 @@ type ProfileNavProp = CompositeNavigationProp<
   NativeStackNavigationProp<ResidentsStackParamList, "ResidentProfile">
 >;
 
-interface PersonsProps {
-  persons: Person[];
-  type: PersonType;
-  sectionTitle?: string;
-}
+type CaseloadFilter = "mine" | "others" | "all";
 
-const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
-  const [page, setPage] = React.useState(1);
+type Props = {
+  type: PersonType;
+  caseload?: CaseloadFilter;
+  search: string;
+  sortBy: SortOption;
+  sectionTitle?: string;
+};
+
+const PersonsTable = ({
+  type,
+  caseload = "all",
+  search,
+  sortBy,
+  sectionTitle,
+}: Props) => {
+  const [page, setPage] = useState(1);
+  const isFocused = useIsFocused();
   const navigation = useNavigation<ProfileNavProp>();
   const { status } = useRecording<"web">();
 
   useEffect(() => {
     setPage(1);
-  }, [persons]);
+  }, [search, sortBy, caseload]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const serializedSort = serializeSort(sortBy) as any;
+
+  const clientQuery = trpc.v1.client.list.useQuery(
+    {
+      size: PAGE_SIZE,
+      sortBy: serializedSort,
+      cursor: page,
+      filters: { search, caseload },
+    },
+    {
+      enabled: isFocused && type === "client",
+      placeholderData: keepPreviousData,
+    },
+  );
+
+  const residentQuery = trpc.v1.resident.list.useQuery(
+    {
+      size: PAGE_SIZE,
+      sortBy: serializedSort,
+      cursor: page,
+      filters: { search },
+    },
+    {
+      enabled: isFocused && type === "resident",
+      placeholderData: keepPreviousData,
+    },
+  );
+
+  const persons: Person[] = useMemo(() => {
+    if (type === "client") {
+      return (clientQuery.data?.data ?? []).map(deserializeClient);
+    }
+    return (residentQuery.data?.data ?? []).map(deserializeResident);
+  }, [clientQuery.data, residentQuery.data, type]);
+
+  if (persons.length === 0) return null;
+
+  const rawData = type === "client" ? clientQuery.data : residentQuery.data;
+  const totalPages = rawData?.totalPages ?? 1;
+  const total = rawData?.total ?? 0;
 
   const handleNavigateToProfile = (personId: string) => {
     navigation.navigate(
@@ -101,100 +159,98 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
             </TableHeadRow>
           </TableHead>
           <TableBody>
-            {persons
-              .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-              .map((person) => (
-                <TableRow
-                  key={person.personId}
-                  // onClickCapture allows row to be clicked instead of Pressable inside TooltipText,
-                  // If inside row by design we have to add something clickable
-                  // then this solution has to be changed
-                  onClickCapture={() =>
-                    handleNavigateToProfile(person.personId.toString())
-                  }
-                >
-                  <TableCell>
-                    <View className="flex size-full flex-row items-center gap-3">
-                      <ImageBackground
-                        source={BgAvatarImage}
-                        className="size-11 items-center justify-center overflow-hidden rounded-full"
-                        imageClassName="!size-11"
-                      >
-                        <Typography className="text-base font-medium text-on-brand">
-                          {getInitials(person.fullName)}
-                        </Typography>
-                      </ImageBackground>
-                      <TooltipText triggerTextClassName="text-base font-medium capitalize text-primary">
-                        {person.fullName.toLowerCase()}
-                      </TooltipText>
-                    </View>
-                  </TableCell>
-                  <TableCell>
-                    <TooltipText triggerTextClassName="text-secondary">
-                      {person.displayPersonExternalId}
+            {persons.map((person) => (
+              <TableRow
+                key={person.personId}
+                // onClickCapture allows row to be clicked instead of Pressable inside TooltipText,
+                // If inside row by design we have to add something clickable
+                // then this solution has to be changed
+                onClickCapture={() =>
+                  handleNavigateToProfile(person.personId.toString())
+                }
+              >
+                <TableCell>
+                  <View className="flex size-full flex-row items-center gap-3">
+                    <ImageBackground
+                      source={BgAvatarImage}
+                      className="size-11 items-center justify-center overflow-hidden rounded-full"
+                      imageClassName="!size-11"
+                    >
+                      <Typography className="text-base font-medium text-on-brand">
+                        {getInitials(person.fullName)}
+                      </Typography>
+                    </ImageBackground>
+                    <TooltipText triggerTextClassName="text-base font-medium capitalize text-primary">
+                      {person.fullName.toLowerCase()}
                     </TooltipText>
+                  </View>
+                </TableCell>
+                <TableCell>
+                  <TooltipText triggerTextClassName="text-secondary">
+                    {person.displayPersonExternalId}
+                  </TooltipText>
+                </TableCell>
+                {!person.activeMeetingId &&
+                person.meetingDetails.validationErrorType ? (
+                  <TableCell colSpan={2}>
+                    <ProcessingErrorBanner
+                      validationErrorType={
+                        person.meetingDetails.validationErrorType
+                      }
+                      className="h-[90%]"
+                    />
                   </TableCell>
-                  {!person.activeMeetingId &&
-                  person.meetingDetails.validationErrorType ? (
-                    <TableCell colSpan={2}>
-                      <ProcessingErrorBanner
-                        validationErrorType={
-                          person.meetingDetails.validationErrorType
-                        }
-                        className="h-[90%]"
-                      />
+                ) : (
+                  <>
+                    <TableCell>
+                      <TooltipText triggerTextClassName="text-secondary">
+                        {person.primaryMetadata}
+                      </TooltipText>
                     </TableCell>
-                  ) : (
-                    <>
-                      <TableCell>
-                        <TooltipText triggerTextClassName="text-secondary">
-                          {person.primaryMetadata}
-                        </TooltipText>
-                      </TableCell>
-                      <TableCell>
-                        {person.activeMeetingId && (
-                          <View className="flex-row items-center pb-2">
-                            <RecordingIndicator
-                              isRecording={status === "recording"}
-                            />
-                            <Typography className="px-2 text-secondary">
-                              In progress
+                    <TableCell>
+                      {person.activeMeetingId && (
+                        <View className="flex-row items-center pb-2">
+                          <RecordingIndicator
+                            isRecording={status === "recording"}
+                          />
+                          <Typography className="px-2 text-secondary">
+                            In progress
+                          </Typography>
+                        </View>
+                      )}
+                      {!person.activeMeetingId &&
+                        !person.meetingDetails.validationErrorType && (
+                          <View className="flex flex-col">
+                            <Typography className="text-base font-medium text-secondary">
+                              {upperFirst(person.lastMeeting)}
+                              {person.meetingDetails.staffEmail && " by"}
                             </Typography>
+                            <TooltipText triggerTextClassName="text-base font-medium text-secondary">
+                              {person.meetingDetails.staffEmail}
+                            </TooltipText>
                           </View>
                         )}
-                        {!person.activeMeetingId &&
-                          !person.meetingDetails.validationErrorType && (
-                            <View className="flex flex-col">
-                              <Typography className="text-base font-medium text-secondary">
-                                {upperFirst(person.lastMeeting)}
-                                {person.meetingDetails.staffEmail && " by"}
-                              </Typography>
-                              <TooltipText triggerTextClassName="text-base font-medium text-secondary">
-                                {person.meetingDetails.staffEmail}
-                              </TooltipText>
-                            </View>
-                          )}
-                      </TableCell>
-                    </>
-                  )}
+                    </TableCell>
+                  </>
+                )}
 
-                  <TableCell>
-                    <View className="invisible size-5 items-center justify-center group-hover:visible">
-                      <ChevronRightIcon className="stroke-secondary stroke-[3px]" />
-                    </View>
-                  </TableCell>
-                </TableRow>
-              ))}
+                <TableCell>
+                  <View className="invisible size-5 items-center justify-center group-hover:visible">
+                    <ChevronRightIcon className="stroke-secondary stroke-[3px]" />
+                  </View>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </View>
-      {persons.length > PAGE_SIZE && (
+      {totalPages > 1 && (
         <View className="mt-2 w-full border-spacing-0 overflow-hidden rounded-[20px] border border-subtle">
           <TablePagination
             page={page}
             setPrevPage={() => setPage((p) => Math.max(1, p - 1))}
-            setNextPage={() => setPage((p) => p + 1)}
-            tableItemsLength={persons.length}
+            setNextPage={() => setPage((p) => Math.min(totalPages, p + 1))}
+            tableItemsLength={total}
           />
         </View>
       )}

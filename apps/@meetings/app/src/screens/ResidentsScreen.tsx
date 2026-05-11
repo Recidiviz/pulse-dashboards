@@ -17,14 +17,13 @@
 
 import { useIsFocused } from "@react-navigation/native";
 import clsx from "clsx";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { Resident } from "../common/types";
 import Header from "../components/Header";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsMobileList from "../components/PersonsMobileList";
@@ -35,48 +34,29 @@ import { trpc } from "../shared/api";
 import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
-import { deserializeResident } from "../utils/format";
-import { SortOption, sortUsers } from "../utils/sort";
+import { SortOption } from "../utils/sort";
 
 const ResidentsScreen = () => {
   useSetDocumentTitle("Residents - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
   const isMobileWidth = useIsMobileWidth();
   const { status: recordingState } = useRecording();
-
   const isFocused = useIsFocused();
-  const {
-    data: rawResidents,
-    isLoading,
-    error,
-    refetch,
-  } = trpc.v1.resident.list.useQuery(undefined, { enabled: isFocused });
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState(SortOption.Name as string);
 
-  const residents: Resident[] = React.useMemo(() => {
-    if (!rawResidents) return [];
-    return rawResidents.map(deserializeResident);
-  }, [rawResidents]);
-
-  // filtering and sorting residents
-  const filteredResidents = React.useMemo(() => {
-    let results = residents;
-    if (search) {
-      const lowerSearch = search.toLowerCase();
-      results = results.filter(
-        (e) =>
-          e.fullName.toLowerCase().includes(lowerSearch) ||
-          e.displayPersonExternalId?.toLowerCase().includes(lowerSearch),
-      );
-    }
-
-    results = sortUsers(results, sortBy as SortOption);
-    return results.sort(
-      (a, b) => Number(!!b.activeMeetingId) - Number(!!a.activeMeetingId),
-    );
-  }, [residents, search, sortBy]);
+  // Drives screen-level loading / empty states. PersonsTable / PersonsMobileList
+  // run their own paginated queries for the actual rows.
+  const {
+    data: countData,
+    isLoading,
+    error,
+    refetch,
+  } = trpc.v1.resident.list.useQuery(
+    { size: 1, filters: { search } },
+    { enabled: isFocused },
+  );
 
   useEffect(() => {
     if (recordingState) {
@@ -90,14 +70,14 @@ const ResidentsScreen = () => {
 
   if (error) throw error;
 
+  const total = countData?.total ?? 0;
+
   return (
     <SafeAreaView className="flex-1">
       <View
         className={clsx(
           "flex-1",
-          Platform.OS !== "web" &&
-            filteredResidents.length === 0 &&
-            "bg-primary",
+          Platform.OS !== "web" && total === 0 && "bg-primary",
         )}
         style={{ marginTop: -insets.top }}
       >
@@ -105,12 +85,12 @@ const ResidentsScreen = () => {
         {Platform.select({
           native: (
             <PersonsMobileList
-              persons={filteredResidents}
+              personType="resident"
+              sortBy={sortBy as SortOption}
               recordingState={recordingState}
               searchQuery={search}
               setSearchQuery={setSearch}
               setSortBy={setSortBy}
-              personType="resident"
             />
           ),
           web: (
@@ -118,12 +98,12 @@ const ResidentsScreen = () => {
               {isFocused && isMobileWidth && (
                 <View className="flex-1">
                   <PersonsMobileList
-                    persons={filteredResidents}
+                    personType="resident"
+                    sortBy={sortBy as SortOption}
                     recordingState={recordingState}
                     searchQuery={search}
                     setSearchQuery={setSearch}
                     setSortBy={setSortBy}
-                    personType="resident"
                   />
                 </View>
               )}
@@ -133,13 +113,12 @@ const ResidentsScreen = () => {
                     <PersonsHeaderContent
                       personType="resident"
                       description="All residents are displayed below"
-                      personsCount={filteredResidents.length}
+                      personsCount={total}
                       searchQuery={search}
                       setSearchQuery={setSearch}
                       setSortBy={setSortBy}
                     />
-
-                    {filteredResidents.length === 0 ? (
+                    {total === 0 ? (
                       <View className="flex h-[560px] w-full items-center justify-center">
                         <PersonsPlaceholder
                           personType="resident"
@@ -148,8 +127,9 @@ const ResidentsScreen = () => {
                       </View>
                     ) : (
                       <PersonsTable
-                        persons={filteredResidents}
                         type="resident"
+                        search={search}
+                        sortBy={sortBy as SortOption}
                       />
                     )}
                   </View>
@@ -162,9 +142,7 @@ const ResidentsScreen = () => {
       <View
         className={clsx(
           "absolute inset-x-0 bottom-0",
-          Platform.OS !== "web" &&
-            filteredResidents.length === 0 &&
-            "bg-primary",
+          Platform.OS !== "web" && total === 0 && "bg-primary",
         )}
         style={{ height: insets.bottom }}
       />

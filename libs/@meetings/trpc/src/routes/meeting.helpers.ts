@@ -21,6 +21,7 @@ import uniqBy from "lodash/uniqBy";
 
 import {
   PostMeetingProcessingStatus,
+  Prisma,
   PrismaClient,
   StateCode,
 } from "~@meetings/prisma/client";
@@ -129,17 +130,20 @@ export async function getMeetingsForPerson({
   }));
 }
 
-export function extractActiveMeetingId({
+type PersonMeeting = {
+  id: string;
+  endTime: Date | null;
+  startTime: Date;
+  staffEmail: string;
+  caseNote: string | null;
+};
+
+function extractActiveMeetingId({
   user,
   meetingsOrderedByDateDesc,
 }: {
   user: AuthUser;
-  meetingsOrderedByDateDesc: {
-    endTime: Date | null;
-    startTime: Date;
-    staffEmail: string;
-    id: string;
-  }[];
+  meetingsOrderedByDateDesc: PersonMeeting[];
 }) {
   const activeMeeting = meetingsOrderedByDateDesc.find(
     (meeting) => meeting.endTime == null && meeting.staffEmail == user.email,
@@ -147,18 +151,12 @@ export function extractActiveMeetingId({
   return activeMeeting?.id ?? null;
 }
 
-export async function extractLastCompletedMeetingInfo({
+async function extractLastCompletedMeetingInfo({
   prisma,
   meetingsOrderedByDateDesc,
 }: {
   prisma: PrismaClient;
-  meetingsOrderedByDateDesc: {
-    id: string;
-    endTime: Date | null;
-    startTime: Date;
-    caseNote: string | null;
-    staffEmail: string;
-  }[];
+  meetingsOrderedByDateDesc: PersonMeeting[];
 }) {
   const latestMeeting = meetingsOrderedByDateDesc.find(
     (meeting) => meeting.endTime != null,
@@ -189,6 +187,143 @@ export async function extractLastCompletedMeetingInfo({
     caseNote: latestMeeting?.caseNote ?? null,
     validationErrorType: pipelineValidationErrorType ?? null,
     staffEmail: latestMeeting.staffEmail,
+  };
+}
+
+export async function enrichPersonWithMeetingInfo<
+  T extends { meetings: PersonMeeting[] },
+>({
+  prisma,
+  user,
+  person,
+}: {
+  prisma: PrismaClient;
+  user: AuthUser;
+  person: T;
+}) {
+  const { meetings, ...rest } = person;
+  return {
+    ...rest,
+    activeMeetingId: extractActiveMeetingId({
+      user,
+      meetingsOrderedByDateDesc: meetings,
+    }),
+    meetingDetails: await extractLastCompletedMeetingInfo({
+      prisma,
+      meetingsOrderedByDateDesc: meetings,
+    }),
+  };
+}
+
+export async function listPersonsWithMeetingInfo<
+  T extends { personId: bigint; meetings: PersonMeeting[] },
+  S extends string = string,
+  F extends { search?: string } = { search?: string },
+>({
+  prisma,
+  user,
+  personType,
+  input,
+  getSecondaryOrderBy,
+  findManyByIds,
+  additionalWhere,
+}: {
+  prisma: PrismaClient;
+  user: AuthUser;
+  personType: "client" | "resident";
+  input:
+    | {
+        page?: number;
+        size?: number;
+        sortBy?: S;
+        filters?: F;
+      }
+    | undefined;
+  getSecondaryOrderBy: (sortBy: S | undefined) => Prisma.Sql;
+  findManyByIds: (personIds: bigint[]) => Promise<T[]>;
+  additionalWhere?: Prisma.Sql;
+}) {
+  const { page = 1, size = 20, sortBy, filters } = input ?? {};
+  const { search } = filters ?? {};
+
+  const tableSql = Prisma.raw(
+    personType === "client" ? `"Client"` : `"Resident"`,
+  );
+  const fkSql = Prisma.raw(
+    personType === "client" ? `"clientId"` : `"residentId"`,
+  );
+
+  const lastMeetingJoin =
+    sortBy === "lastMeeting"
+      ? Prisma.sql`LEFT JOIN "Meeting" m ON m.${fkSql} = p."personId" AND m."endTime" IS NOT NULL`
+      : Prisma.empty;
+
+  const searchFilter = search
+    ? Prisma.sql`AND (
+        (p."givenNames" || ' ' || p."surname") ILIKE ${`%${search}%`}
+        OR p."displayPersonExternalId" ILIKE ${`%${search}%`}
+      )`
+    : Prisma.empty;
+
+  const extraWhere = additionalWhere ?? Prisma.empty;
+
+  // We use raw SQL to compute the page of person IDs (paginated, sorted, and
+  // filtered) plus a windowed total in a single round-trip, then hydrate those
+  // IDs through Prisma to keep the rest of the result type-safe. Doing the
+  // full query through Prisma would require expressing things like
+  // `BOOL_OR(activeMeeting IS NOT NULL) DESC` and a windowed COUNT, which
+  // Prisma doesn't support cleanly; doing the full query through raw SQL
+  // would lose type safety on every selected field. This split keeps each
+  // half doing what it's good at.
+  const orderedIds = await prisma.$queryRaw<
+    { personId: bigint; total: bigint }[]
+  >`
+    SELECT p."personId", COUNT(*) OVER() AS total
+    FROM ${tableSql} p
+    LEFT JOIN "Meeting" am
+      ON am.${fkSql} = p."personId"
+      AND am."endTime" IS NULL
+      AND am."staffEmail" = ${user.email}
+    ${lastMeetingJoin}
+    WHERE p."isActive" = true
+    ${searchFilter}
+    ${extraWhere}
+    GROUP BY p."personId"
+    ORDER BY
+      BOOL_OR(am."id" IS NOT NULL) DESC,
+      ${getSecondaryOrderBy(sortBy)}
+    LIMIT ${size}
+    OFFSET ${(page - 1) * size}
+  `;
+
+  const total = orderedIds.length > 0 ? Number(orderedIds[0].total) : 0;
+  const personIds = orderedIds.map((r) => r.personId);
+
+  // Raw SQL handles the complex sorting and filtering logic (e.g. "has active meeting"
+  // priority, search, secondary sort), but we use Prisma for the full person fetch to
+  // keep type safety. We then re-order by the SQL-returned IDs to restore the sort.
+  const unordered = await findManyByIds(personIds);
+
+  const byId = new Map(unordered.map((p) => [p.personId, p]));
+  const persons = personIds.map((id) => {
+    const person = byId.get(id);
+    if (!person) {
+      throw new Error(`${personType} ${id} not found during sort`);
+    }
+    return person;
+  });
+
+  const data = await Promise.all(
+    persons.map((person) =>
+      enrichPersonWithMeetingInfo({ prisma, user, person }),
+    ),
+  );
+
+  return {
+    data,
+    page,
+    total,
+    totalPages: Math.ceil(total / size),
   };
 }
 

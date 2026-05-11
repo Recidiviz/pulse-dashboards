@@ -65,7 +65,7 @@ describe("server", () => {
     // If the trpc routes are not properly set up, this query will fail.
     const returnedClients = await testTRPCClient.v1.client.list.query();
 
-    expect(returnedClients).toEqual([
+    expect(returnedClients.data).toEqual([
       {
         personId: fakeClient.personId,
         givenNames: fakeClient.givenNames,

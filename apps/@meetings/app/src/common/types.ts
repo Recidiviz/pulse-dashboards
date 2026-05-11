@@ -19,7 +19,7 @@ import type { AppRouter } from "~@meetings/trpc-types";
 
 export type RawClient = Awaited<
   ReturnType<AppRouter["v1"]["client"]["list"]>
->[0];
+>["data"][0];
 
 export type Client = RawClient & {
   primaryMetadata: string;

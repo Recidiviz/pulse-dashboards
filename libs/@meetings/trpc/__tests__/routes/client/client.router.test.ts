@@ -149,10 +149,10 @@ describe("client router", () => {
 
         // Should return all active clients (fakeClients[0], fakeClients[1], fakeClients[3])
         // but not fakeClients[2] which has isActive: false
-        expect(result).toHaveLength(3);
+        expect(result.data).toHaveLength(3);
 
         // Verify all expected clients are present with correct structure
-        expect(result).toIncludeSameMembers([
+        expect(result.data).toIncludeSameMembers([
           {
             personId: fakeClients[0].personId,
             givenNames: fakeClients[0].givenNames,
@@ -209,8 +209,115 @@ describe("client router", () => {
 
         // Should not include fakeClients[2] which has isActive: false
         expect(
-          result.every((client) => client.personId !== fakeClients[2].personId),
+          result.data.every(
+            (client) => client.personId !== fakeClients[2].personId,
+          ),
         ).toBe(true);
+      });
+
+      describe("pagination", () => {
+        test("returns pagination metadata", async () => {
+          const result = await testTRPCClient.v1.client.list.query({ size: 2 });
+          expect(result.page).toBe(1);
+          expect(result.total).toBe(3);
+          expect(result.totalPages).toBe(2);
+          expect(result.nextCursor).toBe(2);
+        });
+
+        test("pages via cursor and omits nextCursor on last page", async () => {
+          const page2 = await testTRPCClient.v1.client.list.query({
+            size: 2,
+            cursor: 2,
+          });
+          expect(page2.data).toHaveLength(1);
+          expect(page2.page).toBe(2);
+          expect(page2.nextCursor).toBeUndefined();
+        });
+
+        test("pages cover all active clients without overlap", async () => {
+          const page1 = await testTRPCClient.v1.client.list.query({ size: 2 });
+          const page2 = await testTRPCClient.v1.client.list.query({
+            size: 2,
+            cursor: 2,
+          });
+          const allIds = [
+            ...page1.data.map((c) => c.personId),
+            ...page2.data.map((c) => c.personId),
+          ];
+          expect(allIds).toIncludeSameMembers([
+            fakeClients[0].personId,
+            fakeClients[1].personId,
+            fakeClients[3].personId,
+          ]);
+        });
+      });
+
+      describe("search", () => {
+        test("filters by displayPersonExternalId", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            filters: { search: fakeClients[1].displayPersonExternalId },
+          });
+          expect(result.total).toBe(1);
+          expect(result.data[0].personId).toBe(fakeClients[1].personId);
+          expect(result.nextCursor).toBeUndefined();
+        });
+      });
+
+      describe("caseload filter", () => {
+        test("caseload=mine returns only clients assigned to the current user", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            filters: { caseload: "mine" },
+          });
+          const ids = result.data.map((c) => c.personId);
+          expect(ids).toContain(fakeClients[0].personId);
+          expect(ids).toContain(fakeClients[3].personId);
+          expect(ids).not.toContain(fakeClients[1].personId);
+          expect(result.total).toBe(2);
+        });
+
+        test("caseload=others returns only clients not assigned to the current user", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            filters: { caseload: "others" },
+          });
+          const ids = result.data.map((c) => c.personId);
+          expect(ids).toContain(fakeClients[1].personId);
+          expect(ids).not.toContain(fakeClients[0].personId);
+          expect(ids).not.toContain(fakeClients[3].personId);
+          expect(result.total).toBe(1);
+        });
+      });
+
+      describe("sortBy", () => {
+        test("sortBy=id orders by displayPersonExternalId ascending", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            sortBy: "id",
+          });
+          const ids = result.data.map((c) => c.personId);
+          // fakeClients[0] has an active meeting with the current user → first
+          // remaining sorted by displayPersonExternalId ASC:
+          //   fakeClients[1]: "client-display-ext-2"
+          //   fakeClients[3]: "client-display-ext-4"
+          expect(ids).toEqual([
+            fakeClients[0].personId,
+            fakeClients[1].personId,
+            fakeClients[3].personId,
+          ]);
+        });
+
+        test("sortBy=lastMeeting orders by most recent completed meeting, nulls last", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            sortBy: "lastMeeting",
+          });
+          const ids = result.data.map((c) => c.personId);
+          // fakeClients[0]: active meeting with current user → first
+          // fakeClients[3]: has fakeInactiveMeeting (completed) → second
+          // fakeClients[1]: no completed meetings → last (NULLS LAST)
+          expect(ids).toEqual([
+            fakeClients[0].personId,
+            fakeClients[3].personId,
+            fakeClients[1].personId,
+          ]);
+        });
       });
     });
 

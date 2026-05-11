@@ -15,31 +15,84 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useIsFocused } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { View } from "react-native";
 
 import { Person, PersonType } from "../common/types";
+import { trpc } from "../shared/api";
+import { deserializeClient, deserializeResident } from "../utils/format";
+import { serializeSort, SortOption } from "../utils/sort";
 import PersonCardItem from "./PersonCardItem";
 import PersonsHeaderContent from "./PersonsHeaderContent";
 import PersonsPlaceholder from "./PersonsPlaceholder";
 
+const PAGE_SIZE = 20;
+
 type Props = {
-  persons: Person[];
+  personType: PersonType;
+  sortBy: SortOption;
   recordingState: string;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   setSortBy: (option: string) => void;
-  personType: PersonType;
 };
 
 const PersonsMobileList = ({
-  persons,
+  personType,
+  sortBy,
   recordingState,
   searchQuery,
   setSearchQuery,
   setSortBy,
-  personType,
 }: Props) => {
+  const isFocused = useIsFocused();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const serializedSort = serializeSort(sortBy) as any;
+
+  const clientQuery = trpc.v1.client.list.useInfiniteQuery(
+    {
+      size: PAGE_SIZE,
+      sortBy: serializedSort,
+      filters: { search: searchQuery },
+    },
+    {
+      enabled: isFocused && personType === "client",
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? null,
+      placeholderData: keepPreviousData,
+    },
+  );
+
+  const residentQuery = trpc.v1.resident.list.useInfiniteQuery(
+    {
+      size: PAGE_SIZE,
+      sortBy: serializedSort,
+      filters: { search: searchQuery },
+    },
+    {
+      enabled: isFocused && personType === "resident",
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? null,
+      placeholderData: keepPreviousData,
+    },
+  );
+
+  const activeQuery = personType === "client" ? clientQuery : residentQuery;
+
+  const persons: Person[] = useMemo(() => {
+    if (personType === "client") {
+      return (clientQuery.data?.pages ?? [])
+        .flatMap((p) => p.data)
+        .map(deserializeClient);
+    }
+    return (residentQuery.data?.pages ?? [])
+      .flatMap((p) => p.data)
+      .map(deserializeResident);
+  }, [clientQuery.data, residentQuery.data, personType]);
+
+  const total = activeQuery.data?.pages[0]?.total ?? 0;
+
   const headerDescription =
     personType === "client"
       ? "All clients on your caseload are displayed below"
@@ -56,6 +109,12 @@ const PersonsMobileList = ({
           personType={personType}
         />
       )}
+      onEndReached={() => {
+        if (activeQuery.hasNextPage && !activeQuery.isFetchingNextPage) {
+          activeQuery.fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.5}
       ListEmptyComponent={
         <PersonsPlaceholder
           personType={personType}
@@ -68,7 +127,7 @@ const PersonsMobileList = ({
           <PersonsHeaderContent
             personType={personType}
             description={headerDescription}
-            personsCount={persons.length}
+            personsCount={total}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setSortBy={setSortBy}

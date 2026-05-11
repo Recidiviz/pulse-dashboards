@@ -26,3 +26,29 @@ export const createMeetingInputSchema = z.object({
 export const getMeetingsInputSchema = z.object({
   residentId: z.bigint(),
 });
+
+export const residentSortBySchema = z.enum([
+  "name",
+  "id",
+  "facility",
+  "lastMeeting",
+]);
+
+export const listFiltersSchema = z
+  .object({
+    search: z.string().trim().optional(),
+  })
+  .optional();
+
+export const listInputSchema = z
+  .object({
+    // Despite the name, this is a page number, not a true cursor — pagination
+    // here is offset-based (see `meeting.helpers.ts`). The field is named
+    // `cursor` because tRPC's `useInfiniteQuery` integration requires an input
+    // field with that exact name.
+    cursor: z.number().int().min(1).optional(),
+    size: z.number().int().min(1).default(20),
+    sortBy: residentSortBySchema.default("name"),
+    filters: listFiltersSchema,
+  })
+  .optional();

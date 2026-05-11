@@ -143,7 +143,7 @@ describe("resident router", () => {
     describe("list", () => {
       test("returns list of all residents", async () => {
         const result = await testTRPCClient.v1.resident.list.query();
-        expect(result).toIncludeSameMembers([
+        expect(result.data).toIncludeSameMembers([
           {
             personId: fakeResidents[0].personId,
             givenNames: fakeResidents[0].givenNames,
@@ -181,12 +181,91 @@ describe("resident router", () => {
         const result = await testTRPCClient.v1.resident.list.query();
         // Should only include active residents (fakeResidents[0] and fakeResidents[1])
         // and not fakeResidents[2] which has isActive: false
-        expect(result).toHaveLength(2);
+        expect(result.data).toHaveLength(2);
         expect(
-          result.every(
+          result.data.every(
             (resident) => resident.personId !== fakeResidents[2].personId,
           ),
         ).toBe(true);
+      });
+
+      describe("pagination", () => {
+        test("returns pagination metadata", async () => {
+          const result = await testTRPCClient.v1.resident.list.query({
+            size: 1,
+          });
+          expect(result.page).toBe(1);
+          expect(result.total).toBe(2);
+          expect(result.totalPages).toBe(2);
+          expect(result.nextCursor).toBe(2);
+        });
+
+        test("pages via cursor and omits nextCursor on last page", async () => {
+          const page2 = await testTRPCClient.v1.resident.list.query({
+            size: 1,
+            cursor: 2,
+          });
+          expect(page2.data).toHaveLength(1);
+          expect(page2.page).toBe(2);
+          expect(page2.nextCursor).toBeUndefined();
+        });
+
+        test("pages cover all active residents without overlap", async () => {
+          const page1 = await testTRPCClient.v1.resident.list.query({
+            size: 1,
+          });
+          const page2 = await testTRPCClient.v1.resident.list.query({
+            size: 1,
+            cursor: 2,
+          });
+          const allIds = [
+            ...page1.data.map((r) => r.personId),
+            ...page2.data.map((r) => r.personId),
+          ];
+          expect(allIds).toIncludeSameMembers([
+            fakeResidents[0].personId,
+            fakeResidents[1].personId,
+          ]);
+        });
+      });
+
+      describe("search", () => {
+        test("filters by displayPersonExternalId", async () => {
+          const result = await testTRPCClient.v1.resident.list.query({
+            filters: { search: fakeResidents[1].displayPersonExternalId },
+          });
+          expect(result.total).toBe(1);
+          expect(result.data[0].personId).toBe(fakeResidents[1].personId);
+          expect(result.nextCursor).toBeUndefined();
+        });
+      });
+
+      describe("sortBy", () => {
+        test("sortBy=id orders by displayPersonExternalId ascending", async () => {
+          const result = await testTRPCClient.v1.resident.list.query({
+            sortBy: "id",
+          });
+          const ids = result.data.map((r) => r.personId);
+          // fakeResidents[0] has an active meeting with the current user → first
+          // fakeResidents[1]: "resident-display-ext-2" → second
+          expect(ids).toEqual([
+            fakeResidents[0].personId,
+            fakeResidents[1].personId,
+          ]);
+        });
+
+        test("sortBy=lastMeeting orders by most recent completed meeting, nulls last", async () => {
+          const result = await testTRPCClient.v1.resident.list.query({
+            sortBy: "lastMeeting",
+          });
+          const ids = result.data.map((r) => r.personId);
+          // fakeResidents[0]: active meeting with current user → first
+          // fakeResidents[1]: has fakeResidentMeetingCompleted → second
+          expect(ids).toEqual([
+            fakeResidents[0].personId,
+            fakeResidents[1].personId,
+          ]);
+        });
       });
     });
   });
