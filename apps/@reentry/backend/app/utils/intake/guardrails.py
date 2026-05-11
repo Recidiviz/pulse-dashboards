@@ -75,6 +75,12 @@ HARD_STOP_GUARDRAIL_TYPES: frozenset[HardStopGuardrailType] = frozenset(
     HardStopGuardrailType
 )
 
+
+def displayable_guardrail_flags(guardrailed_by: list[str]) -> list[str]:
+    """Returns only hard-stop flags for staff-facing documents (e.g. chat history PDFs)."""
+    return [g for g in guardrailed_by if g in HARD_STOP_GUARDRAIL_TYPES]
+
+
 # Maps each OpenAI-detected guardrail type to the categories it watches and its block threshold.
 # To add a new category group: add a tuple here — no logic changes required.
 MODERATION_CATEGORY_MAP: list[tuple[HardStopGuardrailType, set[str], float]] = [

@@ -1,0 +1,147 @@
+@page {
+  size: A4;
+  margin: 40px 40px 70px 40px;
+  orphans: 2;
+  widows: 2;
+  @bottom-center {
+    content: "This document was generated using artificial intelligence. Please review carefully and verify important information.";
+    font-size: 10px;
+    color: #666;
+    text-align: center;
+  }
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.875rem;
+  color: #2b5469;
+}
+
+.doc-header {
+  margin-bottom: 24px;
+}
+
+.doc-label {
+  color: #2b5469;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+}
+
+.client-name {
+  color: #003331;
+  font-size: 1.875rem;
+  font-weight: 500;
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+h1,
+h2,
+h3 {
+  color: #003331;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+h2 {
+  font-size: 1.1rem;
+}
+h3 {
+  font-size: 1rem;
+}
+
+h1 + *,
+h2 + *,
+h3 + * {
+  break-before: avoid;
+  page-break-before: avoid;
+}
+
+p {
+  margin: 0 0 16px 0;
+  line-height: 1.4rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+ul,
+ol {
+  padding-left: 1rem;
+  margin: 0 0 16px 0;
+}
+
+ul li {
+  list-style-type: disc;
+  margin-bottom: 0.5rem;
+  line-height: 1.4rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+ol li {
+  list-style-type: decimal;
+  line-height: 1.4rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+ol ol,
+ul ul,
+ol ul,
+ul ol {
+  margin: 0.25rem 0 0.25rem 0.5rem;
+}
+
+ol ol li {
+  list-style-type: disc;
+}
+ol ul li {
+  list-style-type: disc;
+}
+ol ol ol li {
+  list-style-type: disc;
+}
+ul ul li {
+  list-style-type: disc;
+}
+ul ul ul li {
+  list-style-type: disc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+
+th {
+  font-weight: 600;
+  color: #003331;
+}
+
+strong {
+  font-weight: 600;
+  color: #003331;
+}
+
+a {
+  color: #003331;
+  text-decoration: none;
+}
