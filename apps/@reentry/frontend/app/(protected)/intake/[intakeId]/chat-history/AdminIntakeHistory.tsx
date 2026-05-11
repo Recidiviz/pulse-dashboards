@@ -45,8 +45,11 @@ const AdminIntakeHistory = ({
 
   useEffect(() => {
     if (intake?.intake_sections?.length && !activeSection) {
+      const sectionTitles = new Set(intake.intake_sections.map((s) => s.title));
       const defaultSection =
-        intake.current_section ?? intake.intake_sections[0].title;
+        intake.current_section && sectionTitles.has(intake.current_section)
+          ? intake.current_section
+          : intake.intake_sections[0].title;
       setActiveSection(defaultSection);
       trackClientIntakeChatHistoryViewed({
         justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,

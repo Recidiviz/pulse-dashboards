@@ -13,7 +13,6 @@ from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel, computed_field
-from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
@@ -51,7 +50,7 @@ from app.models.models import (
     ResourceAssociationAction,
     ResourceAssociationType,
 )
-from app.pdf.renderer import _safe_url_fetcher, pdf_renderer
+from app.pdf.renderer import pdf_renderer
 from app.routes.base import DeletionResponse, DeletionStatus, ORMResponse
 from app.routes.shared_models import (
     AddressSubmission,
@@ -1110,81 +1109,6 @@ async def router_set_generation_notify(
 
     return Response(status_code=200)
 
-
-# Allowlist of safe WeasyPrint write_pdf options. The 'target' parameter is
-# explicitly excluded because it writes the PDF to a server filesystem path
-# instead of returning bytes, enabling arbitrary file write attacks.
-_SAFE_PDF_OPTIONS = frozenset(
-    {
-        "presentational_hints",
-        "optimize_images",
-        "pdf_version",
-        "pdf_variant",
-        "pdf_identifier",
-        "pdf_forms",
-        "uncompressed_pdf",
-    }
-)
-
-
-class PDFRequest(BaseModel):
-    html: str
-    css: Optional[List[str]] = []
-    options: Optional[dict] = {}
-
-
-@router.post("/generate-pdf")
-async def generate_pdf(
-    request: PDFRequest,
-    _: str = Depends(
-        get_pseudonymized_id
-    ),  # authentication only; no client-level check needed since PDF is generated from caller-provided HTML
-):
-    """Generate PDF from HTML using WeasyPrint"""
-    try:
-        # Create HTML document with restricted URL fetcher
-        html_doc = HTML(string=request.html, url_fetcher=_safe_url_fetcher)
-
-        # Process CSS content from frontend (now includes PDF-specific CSS)
-        css_objects = []
-
-        for css_content in request.css:
-            try:
-                if isinstance(css_content, str) and css_content.strip():
-                    # All CSS from frontend should now be content strings
-                    css_objects.append(CSS(string=css_content))
-            except Exception as e:
-                # Skip any CSS that fails to load
-                print(f"Warning: Failed to load CSS content: {str(e)}")
-                continue
-
-        # Default PDF options — only allowlisted keys from request.options are merged
-        pdf_options = {
-            "presentational_hints": True,
-            "optimize_images": True,
-            "pdf_version": "1.7",
-        }
-        if request.options:
-            rejected = set(request.options) - _SAFE_PDF_OPTIONS
-            if rejected:
-                logger.warning(
-                    "Rejected disallowed PDF options",
-                    rejected_keys=sorted(rejected),
-                )
-            for key in _SAFE_PDF_OPTIONS & set(request.options):
-                pdf_options[key] = request.options[key]
-
-        # Always render to memory — never pass 'target' to write_pdf
-        pdf_bytes = html_doc.write_pdf(stylesheets=css_objects, **pdf_options)
-
-        return Response(
-            content=pdf_bytes,
-            media_type="application/pdf",
-            headers={"Content-Disposition": "attachment; filename=document.pdf"},
-        )
-    except Exception as e:
-        logger.exception(f"PDF generation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail="PDF generation failed")
 
 
 def _markdown_to_html(text: str) -> str:
