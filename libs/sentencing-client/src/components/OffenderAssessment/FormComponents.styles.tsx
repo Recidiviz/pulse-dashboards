@@ -21,6 +21,7 @@ import styled from "styled-components";
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
 import { SelectOption } from "../CaseDetails/Form/types";
+import { hasErrorStyles } from "../shared/styles/ValidationStyles";
 
 export const CHEVRON_DOWN_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG["ChevronDown"]} color={palette.pine1} />,
@@ -65,9 +66,10 @@ const inputStyles = `
   }
 `;
 
-export const Input = styled.input<{ halfWidth?: boolean }>`
+export const Input = styled.input<{ halfWidth?: boolean; $hasError?: boolean }>`
   ${inputStyles}
   ${({ halfWidth }) => halfWidth && "width: 50%;"}
+  ${({ $hasError }) => $hasError && hasErrorStyles()}
 `;
 
 export const Select = styled.select`

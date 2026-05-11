@@ -61,10 +61,10 @@ export function MultiSelectRadioInput({
   // Determine if "Other" is selected
   const showOtherTextField = selections.includes(OTHER_OPTION) && !isDisabled;
 
-  // Local state for "Other" text input to provide instant UI feedback
   const [localOtherValue, setLocalOtherValue] = useState(otherValue ?? "");
 
-  // Sync local state with prop changes
+  // localOtherValue drifts from otherValue during typing (debounced saves),
+  // so force-sync when the parent resets it (e.g. "Other" deselected).
   useEffect(() => {
     setLocalOtherValue(otherValue ?? "");
   }, [otherValue]);

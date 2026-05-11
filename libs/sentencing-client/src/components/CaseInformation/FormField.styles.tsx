@@ -21,6 +21,7 @@ import styled, { css } from "styled-components";
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
 import * as Styled from "../CaseDetails/CaseDetails.styles";
+import { hasErrorStyles } from "../shared/styles/ValidationStyles";
 
 export const EDIT_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG["Edit"]} color={palette.signal.links} />,
@@ -68,7 +69,7 @@ export const pencilInputBase = css`
   background-size: 0.75em;
   background-image: ${EDIT_BACKGROUND};
   &:focus {
-    border: 1px solid ${rgba(palette.pine4, 0.15)};
+    border: 1px solid ${palette.pine4};
     border-radius: 4px;
   }
   &::placeholder {
@@ -76,7 +77,10 @@ export const pencilInputBase = css`
   }
 `;
 
-export const InputBase = styled.input<{ $inline?: boolean }>`
+export const InputBase = styled.input<{
+  $inline?: boolean;
+  $hasError?: boolean;
+}>`
   ${pencilInputBase}
   font-weight: inherit;
   padding: 2px 9px 2px 1.5em;
@@ -84,6 +88,8 @@ export const InputBase = styled.input<{ $inline?: boolean }>`
   font-size: 0.8rem;
   width: 100%;
   min-width: 1px;
+
+  ${({ $hasError }) => $hasError && hasErrorStyles("4px")}
 `;
 
 export const HelperText = styled.div`
@@ -95,7 +101,9 @@ export const HelperText = styled.div`
   font-style: italic;
 `;
 
-export const CustomDatePickerWrapper = styled(Styled.DatePickerWrapper)`
+export const CustomDatePickerWrapper = styled(Styled.DatePickerWrapper)<{
+  $hasError?: boolean;
+}>`
   /* Override the input styles to match InputBase but with calendar icon */
   .react-datepicker__input-container input {
     border: 1px solid white;
@@ -119,6 +127,16 @@ export const CustomDatePickerWrapper = styled(Styled.DatePickerWrapper)`
       color: ${palette.pine4};
     }
   }
+
+  ${({ $hasError }) =>
+    $hasError &&
+    css`
+      .react-datepicker__input-container input:not(:focus) {
+        border: 1px solid ${palette.signal.error};
+        background-color: ${palette.pink};
+        border-radius: 4px;
+      }
+    `}
 
   /* Hide the default calendar icon since we're using background image */
   .react-datepicker__calendar-icon {

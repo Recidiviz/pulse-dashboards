@@ -20,6 +20,8 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
+import { hasErrorStyles } from "../styles/ValidationStyles";
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -41,6 +43,7 @@ export const Label = styled.label`
 export const StyledTextArea = styled.textarea<{
   height: string;
   $placeholderColor?: string;
+  $hasError?: boolean;
 }>`
   ${typography.Sans14}
   display: flex;
@@ -54,9 +57,12 @@ export const StyledTextArea = styled.textarea<{
   background: rgba(43, 105, 105, 0.03);
   resize: vertical;
 
+  ${({ $hasError }) => $hasError && hasErrorStyles()}
+
   &:focus {
     outline: none;
-    border-color: ${palette.pine4};
+    border: 1px solid ${palette.pine4};
+    background: rgba(43, 105, 105, 0.03);
   }
 
   &::placeholder {

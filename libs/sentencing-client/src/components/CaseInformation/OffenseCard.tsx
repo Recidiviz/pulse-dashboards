@@ -129,6 +129,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
               type="text"
               placeholder="Add Agreement"
               inline
+              showValidation={false}
             />
             <FormField
               label="Date of Plea: "
@@ -141,6 +142,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
               type="date"
               placeholder="Enter Date"
               inline
+              showValidation={false}
             />
             <FormField
               label="Date of Sentencing: "

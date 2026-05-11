@@ -44,6 +44,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   halfWidth = false,
 }) => {
   const [localValue, setLocalValue] = useState(value ?? "");
+  const [touched, setTouched] = useState(false);
 
   useEffect(() => {
     setLocalValue(value ?? "");
@@ -63,8 +64,10 @@ export const TextField: React.FC<TextFieldProps> = ({
         type="text"
         value={localValue}
         onChange={(e) => handleChange(e.target.value)}
+        onBlur={() => setTouched(true)}
         placeholder={placeholder}
         halfWidth={halfWidth}
+        $hasError={touched && !localValue.trim()}
       />
     </Styled.FieldContainer>
   );

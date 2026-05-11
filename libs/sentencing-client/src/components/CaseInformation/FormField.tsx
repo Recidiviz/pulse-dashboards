@@ -29,6 +29,7 @@ interface FormFieldProps {
   helperText?: string;
   placeholder?: string;
   inline?: boolean;
+  showValidation?: boolean;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -39,16 +40,24 @@ export const FormField: React.FC<FormFieldProps> = ({
   helperText,
   placeholder,
   inline = false,
+  showValidation = true,
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
-  };
-
+  const [touched, setTouched] = useState(false);
   const [pickerDate, setPickerDate] = useState<Date | null>(
     typeof value === "string" && value !== "" && type === "date"
       ? localDateFromUtcDate(value)
       : null,
   );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
+  };
+
+  const isEmpty =
+    type === "date"
+      ? pickerDate === null
+      : !value || String(value).trim() === "";
+  const hasError = showValidation && touched && isEmpty;
 
   const handleDateChange = (date: Date | null) => {
     setPickerDate(date);
@@ -57,10 +66,11 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   const inputElement =
     type === "date" ? (
-      <Styled.CustomDatePickerWrapper>
+      <Styled.CustomDatePickerWrapper $hasError={hasError}>
         <SharedDatePicker
           selected={pickerDate}
           onChange={handleDateChange}
+          onCalendarClose={() => setTouched(true)}
           placeholder={placeholder}
         />
       </Styled.CustomDatePickerWrapper>
@@ -71,7 +81,9 @@ export const FormField: React.FC<FormFieldProps> = ({
           type={type}
           value={value || ""}
           onChange={handleChange}
+          onBlur={() => setTouched(true)}
           placeholder={placeholder}
+          $hasError={hasError}
         />
       </Styled.InputWrapper>
     );

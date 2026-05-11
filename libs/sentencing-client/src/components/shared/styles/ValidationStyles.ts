@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,21 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Field IDs tracked for SAR progress calculation. Plea fields are excluded
- * because they are optional — users fill them in post-sentencing.
- */
-export const REQUIRED_FIELD_IDS = [
-  "prosecutingAttorney",
-  "defenseAttorney",
-  "sentencingDate",
-] as const;
+import { css } from "styled-components";
 
-/** All charge fields the user can edit (superset of REQUIRED_FIELD_IDS). */
-export const ALL_EDITABLE_FIELD_IDS = [
-  ...REQUIRED_FIELD_IDS,
-  "pleaAgreement",
-  "pleaDate",
-] as const;
+import { palette } from "~design-system";
 
-export type EditableChargeField = (typeof ALL_EDITABLE_FIELD_IDS)[number];
+// Shared error styles for inputs when touched and empty.
+// Pass borderRadius when the component's base styles don't already set one.
+export const hasErrorStyles = (borderRadius?: string) => css`
+  &:not(:focus) {
+    border: 1px solid ${palette.signal.error};
+    background-color: ${palette.pink};
+    ${borderRadius ? `border-radius: ${borderRadius};` : ""}
+  }
+`;

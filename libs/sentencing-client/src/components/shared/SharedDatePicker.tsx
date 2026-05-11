@@ -109,6 +109,7 @@ interface SharedDatePickerProps {
   resetButton?: ReactNode;
   placeholder?: string;
   monthYearOnly?: boolean;
+  onCalendarClose?: () => void;
 }
 
 export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
@@ -119,6 +120,7 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
   resetButton,
   placeholder,
   monthYearOnly = false,
+  onCalendarClose,
 }) => {
   return (
     <>
@@ -138,6 +140,7 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
           placeholderText={placeholder}
           showMonthYearPicker={monthYearOnly}
           dateFormat={monthYearOnly ? "MM/yyyy" : undefined}
+          onCalendarClose={onCalendarClose}
         />
       </CaseDetailsStyled.DatePickerWrapper>
       {resetButton}

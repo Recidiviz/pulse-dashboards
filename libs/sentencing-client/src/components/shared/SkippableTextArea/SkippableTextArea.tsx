@@ -42,8 +42,8 @@ export function SkippableTextArea({
   onLocalChange,
   placeholderColor,
 }: SkippableTextAreaProps) {
-  // Local state for text input to provide instant UI feedback
   const [localValue, setLocalValue] = useState(value ?? "");
+  const [touched, setTouched] = useState(false);
 
   // Sync local state with prop changes
   useEffect(() => {
@@ -69,9 +69,11 @@ export function SkippableTextArea({
         placeholder={placeholder}
         value={localValue}
         onChange={(e) => handleTextChange(e.target.value)}
+        onBlur={() => setTouched(true)}
         disabled={disabled}
         height={height}
         $placeholderColor={placeholderColor}
+        $hasError={!disabled && touched && !localValue.trim()}
       />
     </Styled.Container>
   );
