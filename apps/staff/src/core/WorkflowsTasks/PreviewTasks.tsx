@@ -209,6 +209,12 @@ const SnoozedTaskInfoBox = styled.div`
   gap: ${rem(10)};
 `;
 
+const SnoozedTaskReason = styled.div`
+  display: block;
+  margin-top: ${rem(4)};
+  color: ${palette.slate85};
+`;
+
 const TaskTimelineDonut = ({
   filled = false,
   lineBelow = false,
@@ -248,9 +254,9 @@ const ContactWindow = ({ task }: { task: SupervisionTask }) => {
   return <Wrapper>{task.contactWindow}</Wrapper>;
 };
 
-const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
+export const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
   if (!task.isSnoozed || !task.snoozeInfo) return null;
-  const { snoozedBy, snoozedUntil, snoozedOn } = task.snoozeInfo;
+  const { snoozedBy, snoozedUntil, snoozedOn, snoozeReason } = task.snoozeInfo;
 
   const snoozeText = `This task is hidden until ${formatWorkflowsDate(snoozedUntil)}. Marked as hidden by ${snoozedBy} on ${formatWorkflowsDate(formatDateString(snoozedOn))}.`;
   return (
@@ -258,7 +264,12 @@ const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
       <SnoozedTaskIcon>
         <StopwatchIcon />
       </SnoozedTaskIcon>
-      <SnoozedTaskText>{snoozeText}</SnoozedTaskText>
+      <SnoozedTaskText>
+        {snoozeText}
+        {snoozeReason && (
+          <SnoozedTaskReason>Reason: {snoozeReason}</SnoozedTaskReason>
+        )}
+      </SnoozedTaskText>
     </SnoozedTaskInfoBox>
   );
 };
