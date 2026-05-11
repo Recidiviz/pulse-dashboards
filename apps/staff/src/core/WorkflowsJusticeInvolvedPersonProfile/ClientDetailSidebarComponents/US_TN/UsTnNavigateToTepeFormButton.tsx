@@ -146,6 +146,7 @@ export function UsTnNavigateToTepeFormButton({
               to={linkToForm}
               aria-label="Navigate to form link"
               className="NavigateToFormLink"
+              key={key}
             >
               <StyledDropdownMenuItem onClick={(event) => handleOnClick(key)}>
                 {value}

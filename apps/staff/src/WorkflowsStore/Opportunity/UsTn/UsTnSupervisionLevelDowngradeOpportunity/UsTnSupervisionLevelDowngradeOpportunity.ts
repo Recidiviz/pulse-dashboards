@@ -17,10 +17,12 @@
 
 import { captureException } from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 
 import { OpportunityValidationError } from "../../../../errors";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
+import { SupervisionLevelDowngradeReferralRecord } from "../../SupervisionLevelDowngradeReferralRecord";
 import {
   getSLDValidator,
   UsTnSupervisionLevelDowngradeReferralRecord,
@@ -37,24 +39,40 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
         (raw) => client.rootStore.workflowsStore.formatSupervisionLevel(raw),
       ).parse(record);
 
-    if (parsedRecord !== undefined) {
-      try {
-        const validateRecord = getSLDValidator(client);
-        validateRecord(parsedRecord);
-      } catch (e) {
-        if (e instanceof OpportunityValidationError) {
-          // If the opportunity record and client supervision levels differ, capture it in
-          // sentry and update the opportunity with the client's formatted supervision level
-          captureException(e);
-          parsedRecord.eligibleCriteria.supervisionLevelHigherThanAssessmentLevel.supervisionLevel =
-            client.supervisionLevel;
-        } else {
-          // If there's some other kind of error, abort creating this opportunity
-          throw e;
-        }
-      }
-    }
+    const validatedRecord = validateParsedRecord(client, parsedRecord);
 
-    super(client, "supervisionLevelDowngrade", client.rootStore, parsedRecord);
+    super(
+      client,
+      "supervisionLevelDowngrade",
+      client.rootStore,
+      validatedRecord,
+    );
   }
+}
+
+export function validateParsedRecord(
+  client: Client,
+  parsedRecord: SupervisionLevelDowngradeReferralRecord,
+) {
+  const recordCopy = cloneDeep(parsedRecord);
+  try {
+    const validateRecord = getSLDValidator(client);
+    validateRecord(recordCopy);
+  } catch (e) {
+    if (e instanceof OpportunityValidationError) {
+      if (!e.message.includes("Medium") || !e.message.includes("Moderate")) {
+        // If the opportunity record and client supervision levels differ, and it is
+        // not an issue of Medium vs Moderate which is a quirk of TN's system, capture it in sentry
+        captureException(e);
+      }
+      // Regardless, update the opportunity with the client's formatted supervision level
+      recordCopy.eligibleCriteria.supervisionLevelHigherThanAssessmentLevel.supervisionLevel =
+        client.supervisionLevel;
+    } else {
+      // If there's some other kind of error, abort creating this opportunity
+      throw e;
+    }
+  }
+
+  return recordCopy;
 }
