@@ -46,5 +46,11 @@ eval_intake_groups:
         - "26e60ea6-1758-4517-8fa2-5d89b094f766"
         - "40d7d320-6df7-4d55-a066-5c6f25e72841"
         - "f852b6ff-5fc6-4ed7-90fd-fa8ee496c944"
+    - name: Utah Synthetic v1
+      ids:
+        - 0ccf3de5-f457-4495-a236-5bd40c44cf47
+        - 5d1b0166-cbd7-429e-92d2-05e04127aec1
+        - c4e25f27-4bcc-48f2-a6a6-5a11f6438d98
+        - 05b36883-031a-49fd-aa19-b4e984dc118b
   staging: []
   prod: []
