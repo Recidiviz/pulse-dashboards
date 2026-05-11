@@ -13,6 +13,7 @@ exports.onExecutePostLogin = async (event, api) => {
   // Skip email verification on OpenID and SAML connections
   if (
     event.connection.name.includes("OpenID") ||
+    event.connection.name.includes("Ping") ||
     event.connection.name.includes("SAML")
   ) {
     return;
