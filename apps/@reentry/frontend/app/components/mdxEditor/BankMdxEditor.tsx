@@ -15,22 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2026 Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
 "use client";
 
 import "@mdxeditor/editor/style.css";
@@ -188,8 +172,14 @@ const MdxEditor = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
-  const handleChange = (newMarkdown) => {
-    // clean up the markdown
+  const handleChange = (
+    newMarkdown: string,
+    initialMarkdownNormalize: boolean,
+  ) => {
+    // Skip the initial normalization pass MDXEditor fires on mount — it can
+    // drop custom JSX nodes (e.g. <resourcebank>) before Lexical has fully
+    // imported them. User-triggered edits always arrive with false.
+    if (initialMarkdownNormalize) return;
     const pureMarkdown = newMarkdown.replace(/^import\s+.*?[;\n]/gm, "").trim();
     setInternalMarkdown(pureMarkdown);
   };
@@ -220,10 +210,10 @@ const MdxEditor = ({
         Editor: NotesEditor,
       },
       {
-        name: "resourceBank",
+        name: "resourcebank",
         kind: "flow",
         source: "./components",
-        props: [{ name: "section", type: "string" }],
+        props: [{ name: "section_title", type: "string" }],
         hasChildren: false,
         Editor: ResourcesEditor,
       },

@@ -224,7 +224,7 @@ def test_convert_to_markdown_excludes_timeline_when_empty():
 
 
 def test_convert_to_markdown_excludes_resource_bank_for_immediate_needs():
-    """Test that <resourceBank> is not rendered for the immediate_needs section."""
+    """Test that <resourcebank> is not rendered for the immediate_needs section."""
     structure_plan = {
         "immediate_needs": {
             "annotations": [],
@@ -250,11 +250,11 @@ def test_convert_to_markdown_excludes_resource_bank_for_immediate_needs():
     plan = ActionPlan(**structure_plan)
     result = convert_to_markdown(plan, resource_bank_enabled=True)
 
-    assert '<resourceBank section_title="Immediate Needs" />' not in result
+    assert '<resourcebank section_title="Immediate Needs" />' not in result
 
 
 def test_convert_to_markdown_includes_resource_bank_for_regular_sections():
-    """Test that <resourceBank> is rendered for regular (non-immediate-needs) sections."""
+    """Test that <resourcebank> is rendered for regular (non-immediate-needs) sections."""
     structure_plan = {
         "immediate_needs": {
             "annotations": [],
@@ -280,4 +280,4 @@ def test_convert_to_markdown_includes_resource_bank_for_regular_sections():
     plan = ActionPlan(**structure_plan)
     result = convert_to_markdown(plan, resource_bank_enabled=True)
 
-    assert '<resourceBank section_title="Housing" />' in result
+    assert '<resourcebank section_title="Housing" />' in result

@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from enum import StrEnum
 from json import loads
@@ -244,15 +245,18 @@ _MARKDOWN_ALLOWED_TAGS = {
     "resources",
     "annotation",
     "annotations",
-    "resourceBank",
+    "resourcebank",
 }
 
 _markdown_sanitizer = Sanitizer(
     {
         "tags": _MARKDOWN_ALLOWED_TAGS,
-        "attributes": {},
+        "attributes": {
+            "annotation": {"source", "location", "text"},
+            "resourcebank": {"section_title"},
+        },
         "keep_typographic_whitespace": True,
-        "empty": {"resourceBank"},
+        "empty": {"resourcebank", "annotation"},
         "separate": set(),
     }
 )
@@ -262,7 +266,14 @@ def sanitize_markdown(value: Optional[str]) -> Optional[str]:
     """Strip all HTML except the allowed structural tags; remove JavaScript."""
     if value is None:
         return value
-    return _markdown_sanitizer.sanitize(value)
+
+    sanitized = _markdown_sanitizer.sanitize(value)
+    # lxml emits <resourcebank ...></resourcebank>; collapse to self-closing form
+    return re.sub(
+        r"<resourcebank([^>]*)></resourcebank>",
+        lambda m: f"<resourcebank{m.group(1)} />",
+        sanitized,
+    )
 
 
 class PlanGeneration(SQLModelWithValidation, table=True):

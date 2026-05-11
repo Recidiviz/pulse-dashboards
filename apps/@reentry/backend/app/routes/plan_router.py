@@ -593,7 +593,7 @@ async def router_generate_plan_manually(
                     section_title=assoc.section_title,
                     action=ResourceAssociationAction.ADD,
                     action_by="SYSTEM",
-                    action_at=datetime.utcnow(),
+                    action_at=assoc.action_at,
                     resource_type=assoc.resource_type,
                 )
             )

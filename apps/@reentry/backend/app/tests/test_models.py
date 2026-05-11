@@ -274,6 +274,18 @@ def test_active_resource_associations_removing_digital_does_not_affect_community
     assert active[0].resource_type == ResourceAssociationType.COMMUNITY
 
 
+def test_active_resource_associations_user_remove_overrides_older_system_add():
+    t_seed = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    t_remove = datetime(2024, 1, 2, tzinfo=timezone.utc)
+    gen = _gen_with_events(
+        [
+            _make_event(42, ResourceAssociationAction.ADD, t_seed),
+            _make_event(42, ResourceAssociationAction.REMOVE, t_remove),
+        ]
+    )
+    assert _call_property(gen) == []
+
+
 def test_active_resource_associations_type_aware_dedup_within_same_type():
     """Two ADDs of the same (id, section, type) deduplicate to the latest event."""
     t1, t2 = (datetime(2024, 1, d, tzinfo=timezone.utc) for d in (1, 2))

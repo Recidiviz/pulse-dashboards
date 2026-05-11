@@ -81,7 +81,7 @@ const ResourceBankViewer = ({
             annotations: { component: Annotations },
             annotation: { component: Annotation },
             notes: { component: Notes },
-            resourceBank: {
+            resourcebank: {
               component: ResourceBank,
               props: {
                 allResources,

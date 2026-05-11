@@ -1,6 +1,6 @@
 import asyncio
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -1078,7 +1078,7 @@ async def test_plan_edit_copies_resource_associations(
             section_title="Housing",
             action=ResourceAssociationAction.REMOVE,
             action_by="SYSTEM",
-            action_at=now.replace(second=now.second + 1),
+            action_at=now + timedelta(seconds=1),
             resource_type=ResourceAssociationType.COMMUNITY,
         )
     )
