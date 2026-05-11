@@ -28,7 +28,7 @@ export const BW_COLOR_SCHEME = [
 
 export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
   Probation: palette.data.gold1,
-  Rider: "#D9A95F",
+  Rider: palette.data.gold2,
   Term: "#BA4F4F",
   "Court-Ordered Treatment": palette.data.spring1,
   "< 1 Year Incarceration": palette.data.teal1,

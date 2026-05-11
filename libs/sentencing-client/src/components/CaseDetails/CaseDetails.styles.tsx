@@ -1628,7 +1628,8 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
     },
   }),
   singleValue: (styles) => ({ ...styles, color: palette.pine3 }),
-  menuPortal: (styles) => ({ ...styles, zIndex: 10 }),
+  // Must exceed modal overlay z-index (1000) since the menu is portaled to document.body
+  menuPortal: (styles) => ({ ...styles, zIndex: 9999 }),
 };
 
 export const multiDropdownStyles: StylesConfig<SelectOption, true> = {
