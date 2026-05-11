@@ -60,7 +60,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNcReportingAsDirected",
-          text: "Client reports as directed. ",
+          text: "Client reports as directed.",
           tooltip:
             "If you believe this is incorrect, please email feedback@recidiviz.org.",
         },
@@ -91,8 +91,13 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1cPba5k8U16EF-xBqo9pCZkCqaddk3j_Y/view?usp=sharing",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        {
+          text: "Completed sex offender treatment on {{#each dischargeDates}}{{#if @last}}{{this}}.{{/if}}{{/each}}",
+          tooltip: "Test",
+        },
+      ],
+      nonOmsCriteriaHeader: "Criteria to Check",
       notifications: [],
       omsCriteriaHeader: "Credit Review Requirements",
       overdueOpportunityCalloutCopy: null,

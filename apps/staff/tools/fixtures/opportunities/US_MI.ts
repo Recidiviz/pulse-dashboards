@@ -1291,7 +1291,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Not Due",
-          text: "This tab shows people who are in Administrative or Temporary Segregation, but not currently due for an SCC review. For anyone awaiting an initial review, they will show up in this tab when they begin segregation. For anyone awaiting a follow up review, they will show up in this tab on calendar day 1 to 23 since their last review.",
+          text: "This tab shows people who are in Administrative or Temporary Segregation, but not currently due for an SCC review. For anyone awaiting a follow up review, they will show up in this tab on calendar day 1 to 23 since their last review.",
         },
         {
           tab: "Marked Ineligible",
