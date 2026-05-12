@@ -24,13 +24,11 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
 
    `nvm use`
 
-1. Install Yarn package manager:
+1. Install [Yarn package manager](https://yarnpkg.com/getting-started/install):
 
-   `brew install yarn`
+   `npm install -g corepack`
 
    For alternative Yarn installation options, see [Yarn Installation](https://yarnpkg.com/en/docs/install).
-
-   If you have classic Yarn (currently v1.22.22) and are struggling to get brew to upgrade, you may need to install corepack and yarn [as described here]([url](https://yarnpkg.com/getting-started/install#updating-yarn))).
 
 1. Install dependencies:
 
@@ -66,22 +64,22 @@ NOTE: If your test need certain environment variables to be set, you can add the
 
 #### Running `nx affected` in CI checks
 
- It can be helpful to run Nx tasks in CI, e.g. to validate that files in a certain directory follow a given format. `nx affected` is a useful command to run tasks on projects with changes ([docs](https://nx.dev/nx-api/nx/documents/affected)).
+It can be helpful to run Nx tasks in CI, e.g. to validate that files in a certain directory follow a given format. `nx affected` is a useful command to run tasks on projects with changes ([docs](https://nx.dev/nx-api/nx/documents/affected)).
 
- In order to do this successfully, set up your target in the right `project.json` and add a job to the `build.yml` file that has the following steps in order:
+In order to do this successfully, set up your target in the right `project.json` and add a job to the `build.yml` file that has the following steps in order:
 
- 1. Checkout the repo
+1.  Checkout the repo
 
- ```
+```
 - uses: actions/checkout@v4
-   with:
-      # By default, the 'pull_request' action checks out the merge commit, which doesn't
-      # necessarily have the latest changes for the branch. This will run the action on the
-      # latest commit in the branch.
-      # It is possible this workflow is triggered manually, so use the GITHUB_SHA in that case
-      ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      # 'nx affected' requires the full git history to determine affected projects
-      fetch-depth: 0
+  with:
+     # By default, the 'pull_request' action checks out the merge commit, which doesn't
+     # necessarily have the latest changes for the branch. This will run the action on the
+     # latest commit in the branch.
+     # It is possible this workflow is triggered manually, so use the GITHUB_SHA in that case
+     ref: ${{ github.event.pull_request.head.sha || github.sha }}
+     # 'nx affected' requires the full git history to determine affected projects
+     fetch-depth: 0
 ```
 
 2. Set up Node and Yarn
@@ -137,7 +135,7 @@ with the development flow.
    ```
 
    - If you want to lint this type of file across the entire codebase, add this to the top-level `.eslintrc.json`. However, if you want to lint files from a certain project, you can add this override to the `.eslintrc.json` for the given project. See `/libs/atmos/.eslintrc.json` to see the
-   ESLint config for linting YAML only in this project
+     ESLint config for linting YAML only in this project
 
 We use Husky to run our pre-commit checks, which are configured at `.husky/_/pre-commit`. The pre-commit check we have is `lint-staged` and is configured at `lint-staged.config.js`.
 
@@ -182,7 +180,8 @@ The below instructions apply to creating an app that doesn't have a UI as the cl
    ```
 
    1. This creates a new directory named {server_name} in apps without adding a directory for e2e tests. The second argument
-   ensures nx doesn't set up our testing framework with jest automatically, since we use vitest.
+      ensures nx doesn't set up our testing framework with jest automatically, since we use vitest.
+
 2. Inspect any changes to the <code>yarn.lock</code> and <code>package.json</code> to look for any unnecessary changes made by the nx generator. You
    might also want to check if the Fastify version was updated by searching for <code>fastify@</code> in <code>yarn.lock</code>.
 
@@ -197,12 +196,13 @@ This repository implements a 72-hour minimum package age gate to protect against
 Packages must be at least 72 hours old before installation. This protection is automatically enforced by Yarn 4.10.3+.
 
 ```yaml
-npmMinimalAgeGate: 4320  # 72 hours in minutes - NOW WORKING
+npmMinimalAgeGate: 4320 # 72 hours in minutes - NOW WORKING
 ```
 
 #### Verification
 
 To verify the 72-hour age gate is active:
+
 ```bash
 yarn config get npmMinimalAgeGate
 # Should return: 4320
