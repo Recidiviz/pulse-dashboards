@@ -17,7 +17,11 @@
 
 import { describe, expect, test } from "vitest";
 
-import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
+import { ValidationError } from "~@meetings/tasks";
+import {
+  deriveValidationErrorType,
+  getPersonNameTokens,
+} from "~@meetings/trpc/routes/meeting.helpers";
 
 describe("getPersonNameTokens", () => {
   test("returns given name and surname as tokens", () => {
@@ -80,5 +84,49 @@ describe("getPersonNameTokens", () => {
         surname: "Smith",
       }),
     ).toEqual(["John", "Smith"]);
+  });
+});
+
+describe("deriveValidationErrorType", () => {
+  test("returns null when errorDetails is null", () => {
+    expect(deriveValidationErrorType(null)).toBeNull();
+  });
+
+  test("returns null when errorDetails is undefined", () => {
+    expect(deriveValidationErrorType(undefined)).toBeNull();
+  });
+
+  test("returns validationErrorType when set on errorDetails", () => {
+    expect(
+      deriveValidationErrorType({
+        message: "anything",
+        validationErrorType: ValidationError.SECURITY,
+      }),
+    ).toBe(ValidationError.SECURITY);
+  });
+
+  test("falls back to Length when legacy errorDetails has a 'Transcript too short' message", () => {
+    expect(
+      deriveValidationErrorType({
+        message: "Transcript too short: 12 words (minimum 50)",
+      }),
+    ).toBe(ValidationError.LENGTH);
+  });
+
+  test("returns null for legacy errorDetails with an unrelated message", () => {
+    expect(
+      deriveValidationErrorType({
+        message: "Drafting failed after all retry attempts",
+      }),
+    ).toBeNull();
+  });
+
+  test("prefers validationErrorType over message-based inference", () => {
+    expect(
+      deriveValidationErrorType({
+        message: "Transcript too short: 12 words (minimum 50)",
+        validationErrorType: ValidationError.SECURITY,
+      }),
+    ).toBe(ValidationError.SECURITY);
   });
 });

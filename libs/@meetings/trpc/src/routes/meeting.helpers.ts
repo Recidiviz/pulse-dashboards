@@ -25,8 +25,33 @@ import {
   PrismaClient,
   StateCode,
 } from "~@meetings/prisma/client";
+import { ValidationError } from "~@meetings/tasks";
 import env from "~@meetings/trpc/env";
 import { AuthUser } from "~@meetings/trpc/types";
+
+// Pipeline runs from before PR #12855 don't have validationErrorType in
+// errorDetails — for "transcript too short" failures, infer it from the
+// message produced by validateWordCount in libs/@meetings/tasks/llm/guards.ts.
+const LEGACY_TRANSCRIPT_TOO_SHORT_PREFIX = "Transcript too short";
+
+type PipelineErrorDetails = {
+  message?: unknown;
+  validationErrorType?: ValidationError | null;
+};
+
+export function deriveValidationErrorType(
+  errorDetails: PipelineErrorDetails | null | undefined,
+): ValidationError | null {
+  if (!errorDetails) return null;
+  if (errorDetails.validationErrorType) return errorDetails.validationErrorType;
+  if (
+    typeof errorDetails.message === "string" &&
+    errorDetails.message.startsWith(LEGACY_TRANSCRIPT_TOO_SHORT_PREFIX)
+  ) {
+    return ValidationError.LENGTH;
+  }
+  return null;
+}
 
 export async function createMeetingForPerson({
   prisma,
@@ -124,9 +149,9 @@ export async function getMeetingsForPerson({
 
   return meetings.map((meeting) => ({
     ...meeting,
-    validationErrorType:
-      latestRunByMeetingId[meeting.id]?.errorDetails?.validationErrorType ??
-      null,
+    validationErrorType: deriveValidationErrorType(
+      latestRunByMeetingId[meeting.id]?.errorDetails,
+    ),
   }));
 }
 
@@ -178,14 +203,13 @@ async function extractLastCompletedMeetingInfo({
     select: { meetingId: true, errorDetails: true },
   });
 
-  const pipelineValidationErrorType =
-    latestPipelineRun?.errorDetails?.validationErrorType;
-
   return {
     id: latestMeeting.id,
     lastCompletedMeetingTime: latestMeeting.startTime,
     caseNote: latestMeeting?.caseNote ?? null,
-    validationErrorType: pipelineValidationErrorType ?? null,
+    validationErrorType: deriveValidationErrorType(
+      latestPipelineRun?.errorDetails,
+    ),
     staffEmail: latestMeeting.staffEmail,
   };
 }

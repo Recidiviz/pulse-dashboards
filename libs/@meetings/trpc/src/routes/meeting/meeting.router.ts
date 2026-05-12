@@ -28,6 +28,7 @@ import {
   MinuteSectionSchema,
 } from "~@meetings/tasks";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
+import { deriveValidationErrorType } from "~@meetings/trpc/routes/meeting.helpers";
 import {
   createSignedUrlForRecordingInputSchema,
   deleteRecordingsInputSchema,
@@ -106,8 +107,9 @@ export const meetingRouter = router({
           select: { status: true, errorDetails: true },
         });
 
-        const pipelineValidationErrorType =
-          latestPipelineRun?.errorDetails?.validationErrorType || null;
+        const pipelineValidationErrorType = deriveValidationErrorType(
+          latestPipelineRun?.errorDetails,
+        );
 
         const stateConfig = AGENCY_CONFIGS[stateCode];
 
