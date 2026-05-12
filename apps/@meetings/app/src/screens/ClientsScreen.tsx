@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { useIsFocused } from "@react-navigation/native";
+import { keepPreviousData } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
@@ -51,11 +52,12 @@ const ClientsScreen = () => {
   const {
     data: countData,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = trpc.v1.client.list.useQuery(
     { size: 1, filters: { search } },
-    { enabled: isFocused },
+    { enabled: isFocused, placeholderData: keepPreviousData },
   );
 
   useEffect(() => {
@@ -117,6 +119,7 @@ const ClientsScreen = () => {
                       searchQuery={search}
                       setSearchQuery={setSearch}
                       setSortBy={setSortBy}
+                      isFetching={isFetching}
                     />
                     <PersonsTable
                       type="client"

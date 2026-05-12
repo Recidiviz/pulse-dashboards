@@ -18,7 +18,7 @@
 import debounce from "lodash/debounce";
 import startCase from "lodash/startCase";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 import { PersonType } from "../common/types";
 import Dropdown from "../shared/ui/Dropdown";
@@ -33,6 +33,7 @@ type Props = {
   searchQuery: string;
   setSearchQuery: (value: string) => void;
   setSortBy: (value: string) => void;
+  isFetching?: boolean;
 };
 
 const PersonsHeaderContent = ({
@@ -42,6 +43,7 @@ const PersonsHeaderContent = ({
   searchQuery,
   setSearchQuery,
   setSortBy,
+  isFetching,
 }: Props) => {
   const [inputValue, setInputValue] = useState(searchQuery);
 
@@ -121,9 +123,12 @@ const PersonsHeaderContent = ({
         </View>
       </View>
       <View className="z-10 mb-3 flex-row items-center justify-between px-4 md:my-0 md:px-0">
-        <Typography className="text-sm leading-4 text-secondary">
-          {personsCountString}
-        </Typography>
+        <View className="flex-row items-center gap-x-2">
+          <Typography className="text-sm leading-4 text-secondary">
+            {personsCountString}
+          </Typography>
+          {isFetching && <ActivityIndicator size="small" />}
+        </View>
         <Dropdown label="Sort by" options={options} onSelect={setSortBy} />
       </View>
     </>

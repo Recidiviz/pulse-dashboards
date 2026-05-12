@@ -131,6 +131,7 @@ const PersonsMobileList = ({
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setSortBy={setSortBy}
+            isFetching={activeQuery.isFetching}
           />
         </View>
       }
