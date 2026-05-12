@@ -48,6 +48,19 @@ const ResourceBank = ({
     (ra) => ra.title === section_title,
   )?.resources;
 
+  // Display "DIGITAL" resources before "COMMUNITY"
+  // When non-partner digital resources are included in the table, update this logic
+  // to prioritize partners. https://linear.app/recidiviz/issue/OBT-18107/update-display-logic-to-differentiate-partners-in-fe
+  const RESOURCE_TYPE_ORDER: Record<
+    components["schemas"]["ResourceAssociationType"],
+    number
+  > = { DIGITAL: 0, COMMUNITY: 1 };
+  const sortedResources = [...(resources ?? [])].sort(
+    (r1, r2) =>
+      RESOURCE_TYPE_ORDER[r1.resource_type] -
+      RESOURCE_TYPE_ORDER[r2.resource_type],
+  );
+
   return (
     <div className={styles["section"]}>
       <div className={styles["section_title"]}>
@@ -62,7 +75,7 @@ const ResourceBank = ({
           (!resources || resources.length === 0) && <ResourceBankEmptyState />}
         {!isLoadingResources &&
           !isErrorResources &&
-          resources?.map((resource) => (
+          sortedResources.map((resource) => (
             <ResourceBankTile
               key={resource.id}
               resource={resource}
