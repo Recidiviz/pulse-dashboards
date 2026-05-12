@@ -81,20 +81,6 @@ const DownloadConfirmModal = ({
             accurate
           </span>
         </label>
-
-        <label
-          className={`${styles["checkboxLabel"]} ${verifiedResources ? styles["checked"] : ""}`}
-        >
-          <input
-            type="checkbox"
-            checked={verifiedResources}
-            onChange={(e) => setVerifiedResources(e.target.checked)}
-            className={styles["checkboxInput"]}
-          />
-          <span className={styles["checkboxText"]}>
-            All resources and contact information have been verified
-          </span>
-        </label>
       </div>
 
       <div className={styles["actions"]}>
