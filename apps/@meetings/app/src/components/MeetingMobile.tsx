@@ -370,6 +370,7 @@ const MeetingMobile = ({
                       }),
                     ),
                   }}
+                  transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
                 />
               )}
           </View>
