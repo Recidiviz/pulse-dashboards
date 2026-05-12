@@ -37,6 +37,41 @@ eval_intake_groups:
       ids:
         - "0e1ea73b-da80-4268-a870-fdb42d1eb54f"
         - "b3f86598-ded4-4c06-b5ff-bf5860503294"
+    - name: "Utah Synthetic v1"
+      ids:
+        - "ed5f15b2-9e9b-45a2-bca2-dea5fbec929a"
+        - "9ce67e4e-0ca8-44f5-b69e-d0b478195902"
+        - "7b2e25b6-53b0-4001-ae5f-7779d143d27c"
+        - "37b9e21c-b83f-408b-b1f8-5a10f87c6f5f"
+      attrs_by_id:
+        ed5f15b2-9e9b-45a2-bca2-dea5fbec929a:
+          age_bracket: young_adult
+          offense_type: non_violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          communication_style: verbose
+        9ce67e4e-0ca8-44f5-b69e-d0b478195902:
+          age_bracket: young_adult
+          offense_type: violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          communication_style: verbose
+        7b2e25b6-53b0-4001-ae5f-7779d143d27c:
+          age_bracket: older_adult
+          offense_type: non_violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          communication_style: terse
+        37b9e21c-b83f-408b-b1f8-5a10f87c6f5f:
+          age_bracket: older_adult
+          offense_type: violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          communication_style: terse
   demo: []
   pilot:
     - name: "Default"
@@ -52,5 +87,38 @@ eval_intake_groups:
         - 5d1b0166-cbd7-429e-92d2-05e04127aec1
         - c4e25f27-4bcc-48f2-a6a6-5a11f6438d98
         - 05b36883-031a-49fd-aa19-b4e984dc118b
+      attrs_by_id:
+        0ccf3de5-f457-4495-a236-5bd40c44cf47:
+          age_bracket: young_adult
+          offense_type: non_violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          family: has_support
+          communication_style: verbose
+        5d1b0166-cbd7-429e-92d2-05e04127aec1:
+          age_bracket: young_adult
+          offense_type: violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          family: has_support
+          communication_style: verbose
+        c4e25f27-4bcc-48f2-a6a6-5a11f6438d98:
+          age_bracket: older_adult
+          offense_type: non_violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          family: has_support
+          communication_style: verbose
+        05b36883-031a-49fd-aa19-b4e984dc118b:
+          age_bracket: older_adult
+          offense_type: violent
+          substance_use: none
+          employment: has_work_history
+          housing: stable
+          family: has_support
+          communication_style: verbose
   staging: []
   prod: []

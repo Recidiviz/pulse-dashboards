@@ -356,6 +356,7 @@ class EvalResultResponse(ORMResponse):
     created_by_email: Optional[str] = None
     ran_at: Optional[datetime] = None
     execution: Optional[EvalExecutionSummary] = None
+    attrs_by_id: Optional[dict[str, dict[str, str]]] = None
 
     class Config:
         from_attributes = True
@@ -364,6 +365,7 @@ class EvalResultResponse(ORMResponse):
 class EvalIntakeGroup(BaseModel):
     name: str
     intake_ids: list[str]
+    attrs_by_id: dict[str, dict[str, str]] | None = None
 
 
 class EvalTemplateIntake(BaseModel):

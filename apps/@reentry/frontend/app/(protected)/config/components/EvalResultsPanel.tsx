@@ -83,6 +83,7 @@ interface EvalResult {
     intakes?: IntakeEvalResult[];
   };
   execution?: EvalExecution;
+  attrs_by_id?: Record<string, Record<string, string>>;
 }
 
 const FACT_LIST_COLORS: Record<string, string> = {
@@ -204,18 +205,27 @@ const IntakeRow = ({
   expanded,
   onToggle,
   coveragePassThreshold,
+  attrs,
 }: {
   result: IntakeEvalResult;
   expanded: boolean;
   onToggle: () => void;
   coveragePassThreshold: number;
+  attrs?: Record<string, string>;
 }) => {
   const shortId = result.intake_id.slice(0, 8);
 
   if (result.error) {
     return (
       <div className="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
-        <span className="text-xs text-gray-500 font-mono">{shortId}…</span>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xs text-gray-500 font-mono">{shortId}…</span>
+          {attrs && (
+            <span className="text-xs text-gray-400">
+              {Object.values(attrs).join(" · ")}
+            </span>
+          )}
+        </div>
         <span className="text-xs text-red-600">{result.error}</span>
       </div>
     );
@@ -230,7 +240,14 @@ const IntakeRow = ({
   return (
     <div className="border-b border-gray-100 last:border-0">
       <div className="flex items-center justify-between py-1.5">
-        <span className="text-xs text-gray-500 font-mono">{shortId}…</span>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xs text-gray-500 font-mono">{shortId}…</span>
+          {attrs && (
+            <span className="text-xs text-gray-400">
+              {Object.values(attrs).join(" · ")}
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {groundingScore !== undefined && (
             <ScoreBadge
@@ -435,9 +452,11 @@ const IntakeRow = ({
 const EvalResultCard = ({
   result,
   isLatest,
+  attrsById,
 }: {
   result: EvalResult;
   isLatest?: boolean;
+  attrsById?: Record<string, Record<string, string>>;
 }) => {
   const [expandedIntakeId, setExpandedIntakeId] = useState<string | null>(null);
 
@@ -495,6 +514,7 @@ const EvalResultCard = ({
                     expandedIntakeId === r.intake_id ? null : r.intake_id,
                   )
                 }
+                attrs={attrsById?.[r.intake_id]}
               />
             ))}
           </div>
@@ -565,7 +585,7 @@ export const EvalResultsPanel = ({
     <div className="w-full p-4 bg-white rounded-lg border border-gray-200">
       <h2 className="text-sm font-medium text-gray-700 mb-4">Eval Results</h2>
 
-      <EvalResultCard result={latest} isLatest />
+      <EvalResultCard result={latest} isLatest attrsById={latest.attrs_by_id} />
 
       {prior.length > 0 && (
         <details className="mt-4">

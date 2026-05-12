@@ -1152,7 +1152,11 @@ async def get_eval_intake_options(
     ]
     return EvalIntakeOptions(
         groups=[
-            EvalIntakeGroup(name=g.name, intake_ids=[str(i) for i in g.ids])
+            EvalIntakeGroup(
+                name=g.name,
+                intake_ids=[str(i) for i in g.ids],
+                attrs_by_id=g.attrs_by_id,
+            )
             for g in groups
         ],
         templates=templates,
@@ -1244,6 +1248,12 @@ async def get_output_config_eval_results(
         session, config_id, eval_type="intake_summary"
     )
 
+    merged_attrs: dict[str, dict[str, str]] = {}
+    for group in get_eval_intake_groups():
+        if group.attrs_by_id:
+            merged_attrs.update(group.attrs_by_id)
+    attrs_by_id = merged_attrs or None
+
     responses = []
     for result in results:
         execution_summary = None
@@ -1265,6 +1275,7 @@ async def get_output_config_eval_results(
                 created_by_email=result.created_by_email,
                 ran_at=result.ran_at,
                 execution=execution_summary,
+                attrs_by_id=attrs_by_id,
             )
         )
     return responses

@@ -12,6 +12,7 @@ from app.core.config import settings
 class IntakeGroup:
     name: str
     ids: list[UUID]
+    attrs_by_id: dict[str, dict[str, str]] | None = None
 
 
 def _get_eval_ids(yaml_key: str) -> List[UUID]:
@@ -34,5 +35,10 @@ def get_eval_intake_groups() -> list[IntakeGroup]:
     data = yaml.safe_load(path.read_text())
     raw = data.get("eval_intake_groups", {}).get(settings.ENV_NAME) or []
     return [
-        IntakeGroup(name=g["name"], ids=[UUID(str(i)) for i in g["ids"]]) for g in raw
+        IntakeGroup(
+            name=g["name"],
+            ids=[UUID(str(i)) for i in g["ids"]],
+            attrs_by_id=g.get("attrs_by_id") or None,
+        )
+        for g in raw
     ]
