@@ -45,12 +45,17 @@ const AdminIntakeHistory = ({
 
   useEffect(() => {
     if (intake?.intake_sections?.length && !activeSection) {
-      const defaultSection =
-        intake.current_section ?? intake.intake_sections[0].title;
-      setActiveSection(defaultSection);
+      const sections = intake.intake_sections;
+      const firstSection = sections[0].title;
+      const lastActiveSection = sections.findLast(
+        (s) => s.status !== "not_started",
+      )?.title;
+      const currentSection = lastActiveSection ?? firstSection;
+
+      setActiveSection(currentSection);
       trackClientIntakeChatHistoryViewed({
         justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
-        section: defaultSection,
+        section: currentSection,
       });
     }
   }, [intake, activeSection]);
