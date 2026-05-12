@@ -15,6 +15,25 @@
     "tocHeading": "On this page"
   },
   "lastUpdated": "This information was last updated on {{lastUpdatedDate, formatFullDate}}.",
+  "sentenceDates": {
+    "dateFormats": {
+      "dateDistanceFromToday": {
+        "now": "Today",
+        "past": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} ago",
+        "future": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} from today"
+      },
+      "dateFormatted": "{{date, formatFullDate}}",
+      "missingDateMessage": "No date on record",
+      "differenceInDays": "{{count, numberOfDays}}"
+    },
+    "general": {
+      "dateReductionLabel": "Total reduction",
+      "heading": "Important dates"
+    }
+  },
+  "backLinks": {
+    "home": "Back to home"
+  },
   "programs": {
     "lastUpdated": "This information was last updated {{date, formatFullDate}}.",
     "backLink": "Back to Home",
@@ -56,24 +75,5 @@
       "availableFacilities": "Available Facilities",
       "closeWindow": "Close window"
     }
-  },
-  "sentenceDates": {
-    "dateFormats": {
-      "dateDistanceFromToday": {
-        "now": "Today",
-        "past": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} ago",
-        "future": "{{date, formatDateRangeFromToday(delimiter: ' and ')}} from today"
-      },
-      "dateFormatted": "{{date, formatFullDate}}",
-      "missingDateMessage": "No date on record",
-      "differenceInDays": "{{count, numberOfDays}}"
-    },
-    "general": {
-      "dateReductionLabel": "Total reduction",
-      "heading": "Important dates"
-    }
-  },
-  "backLinks": {
-    "home": "Back to home"
   }
 }

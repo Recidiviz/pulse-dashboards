@@ -18,7 +18,7 @@
 import { captureException } from "@sentry/react";
 import { groups, rollup } from "d3-array";
 import { max, parseISO } from "date-fns";
-import { sortBy } from "lodash";
+import { isUndefined, sortBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI } from "~@jii/data";
@@ -95,13 +95,22 @@ export class UsCoProgramsPresenter implements Hydratable {
     ]);
   }
 
-  get categories(): { name: string; programs: UsCoProgram[] }[] {
+  get filteredProgramsByCategory(): {
+    name: string;
+    programs: UsCoProgram[];
+  }[] {
     if (!this.programs) return [];
     const unsortedCategories = groups(
       this.filteredPrograms,
       (p) => p.category,
     ).map(([name, programs]) => ({ name, programs }));
     return sortBy(unsortedCategories, "name");
+  }
+
+  get categories(): string[] {
+    if (!this.programs) return [];
+    const categories = new Set(this.programs.map((p) => p.category));
+    return Array.from(categories).sort();
   }
 
   get facilities(): string[] {
@@ -120,7 +129,10 @@ export class UsCoProgramsPresenter implements Hydratable {
 
     return this.programs.filter((program) => {
       // Filter broken programs
-      if (program.title === "" || isNaN(program.numberOfDaysThatCanBeEarned)) {
+      if (
+        program.title === "" ||
+        isUndefined(program.numberOfDaysThatCanBeEarned)
+      ) {
         return false;
       }
 

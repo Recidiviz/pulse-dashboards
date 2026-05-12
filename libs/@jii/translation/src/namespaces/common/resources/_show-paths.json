@@ -33,5 +33,47 @@
   },
   "backLinks": {
     "home": "[common]backLinks.home"
+  },
+  "programs": {
+    "lastUpdated": "[common]programs.lastUpdated",
+    "backLink": "[common]programs.backLink",
+    "pageTitle": "[common]programs.pageTitle",
+    "resultsCount_one": "[common]programs.resultsCount_one",
+    "resultsCount_other": "[common]programs.resultsCount_other",
+    "resultsHint": "[common]programs.resultsHint",
+    "filters": {
+      "button": "[common]programs.filters.button",
+      "categoryLabel": "[common]programs.filters.categoryLabel",
+      "facilityLabel": "[common]programs.filters.facilityLabel",
+      "allCategories": "[common]programs.filters.allCategories",
+      "allFacilities": "[common]programs.filters.allFacilities",
+      "onlyEarnCredits": "[common]programs.filters.onlyEarnCredits",
+      "onlyStarred": "[common]programs.filters.onlyStarred",
+      "clearAll": "[common]programs.filters.clearAll"
+    },
+    "card": {
+      "earnLabel": "[common]programs.card.earnLabel",
+      "daysOfCredit_zero": "[common]programs.card.daysOfCredit_zero",
+      "daysOfCredit_one": "[common]programs.card.daysOfCredit_one",
+      "daysOfCredit_other": "[common]programs.card.daysOfCredit_other",
+      "newBadge": "[common]programs.card.newBadge"
+    },
+    "category": {
+      "programCount_one": "[common]programs.category.programCount_one",
+      "programCount_other": "[common]programs.category.programCount_other",
+      "programCountFiltered_one": "[common]programs.category.programCountFiltered_one",
+      "programCountFiltered_other": "[common]programs.category.programCountFiltered_other"
+    },
+    "modal": {
+      "earnSubtitle_zero": "[common]programs.modal.earnSubtitle_zero",
+      "earnSubtitle_one": "[common]programs.modal.earnSubtitle_one",
+      "earnSubtitle_other": "[common]programs.modal.earnSubtitle_other",
+      "programDescription": "[common]programs.modal.programDescription",
+      "eligibility": "[common]programs.modal.eligibility",
+      "eligibilityPrereq": "[common]programs.modal.eligibilityPrereq",
+      "eligibilityNone": "[common]programs.modal.eligibilityNone",
+      "availableFacilities": "[common]programs.modal.availableFacilities",
+      "closeWindow": "[common]programs.modal.closeWindow"
+    }
   }
 }

@@ -15,10 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ProgramFromSheet } from "./schema";
+import { parseISO } from "date-fns";
+import { FC } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-export type ProgramsConfig = {
-  spreadsheetEnvVar: string;
-  sheetRange: string;
-  fixtures: ProgramFromSheet[];
+import { State } from "~@jii/paths";
+import { ProgramCatalog } from "~@jii/program-catalog";
+
+export const PageUsMaProgramCatalog: FC = () => {
+  const pathParams = useTypedParams(State.Resident);
+  return (
+    <ProgramCatalog
+      stateCode="US_MA"
+      showCredits={false}
+      showStars={false}
+      dataLoadBaselineDate={parseISO("2026-05-08")}
+      learnMoreHref={State.Resident.EGT.Definition.buildPath({
+        ...pathParams,
+        pageSlug: "credits",
+      })}
+      backHref={State.Resident.buildPath(pathParams)}
+    />
+  );
 };

@@ -132,5 +132,10 @@
     "heading": "Rastree su reducción de pena por buen comportamiento (EGT, Earned Good Time)",
     "body": "Esta aplicación te ayuda a seguir el tiempo que has ganado por programas y trabajo. También te muestra cómo esa reducción de pena cambia tus fechas importantes, como tu fecha máxima de liberación y tu fecha de liberación bajo supervisión (RTS), si las tienes.\n\nLa información se actualiza una vez al mes. Solo verás información después de empezar a ganar tiempo.",
     "continueLink": "Mira su tiempo ganado"
+  },
+  "programs": {
+    "pageDescription": "This page helps you find programs and activities that can provide Earned Good Time, Boosts, or Completion Credits off of your sentence.\n\nThis list will update from time to time. Look for the New label to see what was recently updated. If you are eligible for a particular program, please follow your facility process for signing up.",
+    "learnMoreLink": "Learn about Earned Good Time and Programs",
+    "modalCallToAction": "Sound interesting? Reach out to your unit program services to see if this might be a good fit."
   }
 }

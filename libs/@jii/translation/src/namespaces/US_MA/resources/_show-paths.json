@@ -132,5 +132,10 @@
     "heading": "[US_MA]onboarding.heading",
     "body": "[US_MA]onboarding.body",
     "continueLink": "[US_MA]onboarding.continueLink"
+  },
+  "programs": {
+    "pageDescription": "[US_MA]programs.pageDescription",
+    "learnMoreLink": "[US_MA]programs.learnMoreLink",
+    "modalCallToAction": "[US_MA]programs.modalCallToAction"
   }
 }

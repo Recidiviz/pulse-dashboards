@@ -15,14 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 
 import { createCachedCall } from "../../../../helpers/createCachedCall";
 import { getSheetData } from "../../../../helpers/googleSheets";
-import { parseProgram, SPREADSHEET_FIELDS } from "./parseProgram";
+import { ProgramFromSheet, programFromSheetSchema } from "./schema";
 import { US_AR_CONFIG } from "./stateConfigs/US_AR";
 import { US_CO_CONFIG } from "./stateConfigs/US_CO";
-import type { ProgramFromSheet, ProgramsConfig } from "./types";
+import { US_MA_CONFIG } from "./stateConfigs/US_MA";
+import type { ProgramsConfig } from "./types";
 
 async function fetchProgramsForConfig(
   config: ProgramsConfig,
@@ -37,17 +39,20 @@ async function fetchProgramsForConfig(
     throw new Error(`${config.spreadsheetEnvVar} is not set`);
   }
 
-  const rows = await getSheetData(
-    spreadsheetId,
-    config.sheetRange,
-    SPREADSHEET_FIELDS,
-  );
-  return rows.map(parseProgram);
+  const rows = await getSheetData(spreadsheetId, config.sheetRange);
+  return rows.flatMap((row) => {
+    const result = programFromSheetSchema.safeParse(row);
+    if (result.error) {
+      captureException(result.error);
+      return [];
+    }
+    return [result.data];
+  });
 }
-
 const PROGRAMS_CONFIG = {
   US_AR: US_AR_CONFIG,
   US_CO: US_CO_CONFIG,
+  US_MA: US_MA_CONFIG,
 };
 
 // Google Sheets rate limits are per-minute, so we use a TTL of 1 minute

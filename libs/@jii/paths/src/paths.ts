@@ -72,6 +72,8 @@ export const UsArMoreInformation = route(
 
 export const UsArPrograms = route("programs");
 
+export const UsMaPrograms = route("programs");
+
 export const UsAzMoreInformation = route(
   "more-information",
   {},
@@ -137,6 +139,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsAzMoreInformation,
       UsCoMoreInformation,
       UsArPrograms,
+      UsMaPrograms,
       UsNcRNA,
       UsNdMoreInformation,
       UsNeMoreInformation,

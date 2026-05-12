@@ -147,6 +147,7 @@ type ProgramDetailModalProps = {
   onClose: () => void;
   onToggleStar: (program: Program) => void;
   showCredits?: boolean;
+  showStars?: boolean;
   t: TFn;
 };
 
@@ -170,6 +171,7 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   onClose,
   onToggleStar,
   showCredits,
+  showStars,
   t,
 }) => {
   const eligibilityItems = program ? buildEligibilityItems(program, t) : [];
@@ -184,11 +186,13 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
                 {program.title.slice(0, program.title.lastIndexOf(" ") + 1)}
                 <span style={{ whiteSpace: "nowrap" }}>
                   {program.title.slice(program.title.lastIndexOf(" ") + 1)}
-                  <InlineStar
-                    isStarred={program.isStarred}
-                    onClick={() => onToggleStar(program)}
-                    size={20}
-                  />
+                  {showStars && (
+                    <InlineStar
+                      isStarred={program.isStarred}
+                      onClick={() => onToggleStar(program)}
+                      size={20}
+                    />
+                  )}
                 </span>
               </Title>
               <CloseButton type="button" onClick={onClose} aria-label="Close">

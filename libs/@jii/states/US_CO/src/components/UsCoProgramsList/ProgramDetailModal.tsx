@@ -164,7 +164,7 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
     if (!isEmpty(program.eligibilityRequirements)) {
       eligibilityItems.push(program.eligibilityRequirements);
     }
-    if (!isEmpty(program.prerequisites)) {
+    if (!isEmpty(program.prerequisites ?? "")) {
       eligibilityItems.push(
         t(($) => $.programs.modal.eligibilityPrereq, {
           prereq: program.prerequisites,

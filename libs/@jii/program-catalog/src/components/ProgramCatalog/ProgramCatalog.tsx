@@ -68,7 +68,8 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
   function ProgramCatalogManaged({ presenter }) {
     const { t } = useTranslation([presenter.config.stateCode, "common"]);
 
-    const { showCredits, learnMoreHref, backHref } = presenter.config;
+    const { showCredits, showStars, learnMoreHref, backHref } =
+      presenter.config;
 
     const handleToggleStar = (program: Program) => {
       presenter.toggleStarred(program);
@@ -98,10 +99,15 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
           </ButtonLink>
         </Header>
 
-        <FilterSection presenter={presenter} showCredits={showCredits} t={t} />
+        <FilterSection
+          presenter={presenter}
+          showCredits={showCredits}
+          showStars={showStars}
+          t={t}
+        />
 
         <CategoriesList>
-          {presenter.categories.map(({ name, programs }) => (
+          {presenter.filteredProgramsByCategory.map(({ name, programs }) => (
             <CategorySection
               key={name}
               categoryName={name}
@@ -116,6 +122,7 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
                   onToggleStar={handleToggleStar}
                   onClick={presenter.setSelectedProgram}
                   showCredits={showCredits}
+                  showStars={showStars}
                   t={t}
                 />
               ))}
@@ -129,6 +136,7 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
           onClose={() => presenter.setSelectedProgram(undefined)}
           onToggleStar={handleToggleStar}
           showCredits={showCredits}
+          showStars={showStars}
           t={t}
         />
       </PageContainer>

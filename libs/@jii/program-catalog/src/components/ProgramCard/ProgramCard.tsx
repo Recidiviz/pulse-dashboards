@@ -101,6 +101,7 @@ export type ProgramCardProps = {
   onToggleStar: (program: Program) => void;
   onClick: (program: Program) => void;
   showCredits?: boolean;
+  showStars?: boolean;
   t: TFn;
 };
 
@@ -114,6 +115,7 @@ const ProgramCardComponent: FC<ProgramCardProps> = ({
   onToggleStar,
   onClick,
   showCredits,
+  showStars,
   t,
 }) => {
   const handleStarClick = (e: React.MouseEvent) => {
@@ -139,13 +141,17 @@ const ProgramCardComponent: FC<ProgramCardProps> = ({
               />
             </span>
           </Title>
-          <StarButton
-            isStarred={program.isStarred}
-            onClick={handleStarClick}
-            size={20}
-          />
+          {showStars && (
+            <StarButton
+              isStarred={program.isStarred}
+              onClick={handleStarClick}
+              size={20}
+            />
+          )}
         </TitleRow>
-        <Description>{program.description}</Description>
+        <Description>
+          {program.abbreviatedDescription ?? program.description}
+        </Description>
       </TopSection>
       {showCredits && (
         <BottomSection>

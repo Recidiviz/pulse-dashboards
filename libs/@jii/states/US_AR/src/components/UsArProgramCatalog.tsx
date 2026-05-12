@@ -28,6 +28,7 @@ export const UsArProgramCatalog: FC = () => {
     <ProgramCatalog
       stateCode="US_AR"
       showCredits={false}
+      showStars={true}
       dataLoadBaselineDate={parseISO("2026-02-02")}
       backHref={State.Resident.buildPath(pathParams)}
       learnMoreHref={State.Resident.UsArMoreInformation.ImportantDates.buildPath(

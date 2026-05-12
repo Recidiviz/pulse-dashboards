@@ -138,7 +138,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
         </FilterSection>
 
         <CategoriesList>
-          {presenter.categories.map(({ name, programs }) => (
+          {presenter.filteredProgramsByCategory.map(({ name, programs }) => (
             <CategorySection
               key={name}
               categoryName={name}

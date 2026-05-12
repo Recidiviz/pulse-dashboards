@@ -46,12 +46,19 @@ export type ProgramCatalogProps = {
   dataLoadBaselineDate?: Date;
 
   /**
-   * Enables all earned-time UI in one flag:
+   * Enables all earned-time UI:
    *   - ProgramCard bottom section (earn label, days count, "New" badge)
    *   - FilterPanel "Only show earn credits" checkbox
    *   - ProgramDetailModal earn subtitle
    */
   showCredits: boolean;
+
+  /**
+   * Enables star/favorite UI:
+   *   - StarButton on ProgramCard and ProgramDetailModal
+   *   - FilterPanel "Only show starred" checkbox
+   */
+  showStars: boolean;
 
   /** Pre-built href for the "Learn more" ButtonLink. */
   learnMoreHref: string;

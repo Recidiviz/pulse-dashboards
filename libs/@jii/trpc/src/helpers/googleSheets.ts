@@ -41,19 +41,17 @@ function getSheetsClient(): sheets_v4.Sheets {
 }
 
 /**
- * Fetches data from a Google Sheet and returns it as an array of typed objects.
- * The first row is treated as headers. Throws if any required headers are missing.
+ * Fetches data from a Google Sheet and returns it as an array of row objects.
+ * The first row is treated as headers; each subsequent row becomes a Record
+ * keyed by header name.
  *
  * @param spreadsheetId - The ID of the Google Sheet (from the URL)
  * @param range - The A1 notation range to fetch (e.g., "Sheet1!A:Z")
- * @param fieldNames - Array of header names that must be present
- * @returns Array of objects with keys from requiredHeaders
  */
-export async function getSheetData<const FieldName extends string>(
+export async function getSheetData(
   spreadsheetId: string,
   range: string,
-  fieldNames: readonly FieldName[],
-): Promise<Record<FieldName, string>[]> {
+): Promise<Record<string, string>[]> {
   const sheets = getSheetsClient();
 
   const response = await sheets.spreadsheets.values.get({
@@ -68,17 +66,9 @@ export async function getSheetData<const FieldName extends string>(
 
   const [headers, ...dataRows] = rows;
 
-  const headerIndices = fieldNames.map((h) => {
-    const index = headers.indexOf(h);
-    if (index === -1) throw new Error(`Missing required header: ${h}`);
-    return index;
-  });
-
-  return dataRows.map((row) => {
-    const obj = {} as Record<FieldName, string>;
-    fieldNames.forEach((header, i) => {
-      obj[header] = row[headerIndices[i]] ?? "";
-    });
-    return obj;
-  });
+  return dataRows.map((row) =>
+    Object.fromEntries(
+      headers.map((header: string, i: number) => [header, row[i] ?? ""]),
+    ),
+  );
 }

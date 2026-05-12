@@ -31,54 +31,14 @@
     "missingDateMessage": "[US_AR]importantDates.missingDateMessage"
   },
   "programs": {
+    "pageDescription": "[US_AR]programs.pageDescription",
+    "learnMoreLink": "[US_AR]programs.learnMoreLink",
+    "modalCallToAction": "[US_AR]programs.modalCallToAction",
     "homepageCta": {
       "sectionHeader": "[US_AR]programs.homepageCta.sectionHeader",
       "heading": "[US_AR]programs.homepageCta.heading",
       "description": "[US_AR]programs.homepageCta.description",
       "link": "[US_AR]programs.homepageCta.link"
-    },
-    "lastUpdated": "[US_AR]programs.lastUpdated",
-    "backLink": "[US_AR]programs.backLink",
-    "pageTitle": "[US_AR]programs.pageTitle",
-    "pageDescription": "[US_AR]programs.pageDescription",
-    "learnMoreLink": "[US_AR]programs.learnMoreLink",
-    "resultsCount_one": "[US_AR]programs.resultsCount_one",
-    "resultsCount_other": "[US_AR]programs.resultsCount_other",
-    "resultsHint": "[US_AR]programs.resultsHint",
-    "filters": {
-      "button": "[US_AR]programs.filters.button",
-      "categoryLabel": "[US_AR]programs.filters.categoryLabel",
-      "facilityLabel": "[US_AR]programs.filters.facilityLabel",
-      "allCategories": "[US_AR]programs.filters.allCategories",
-      "allFacilities": "[US_AR]programs.filters.allFacilities",
-      "onlyEarnCredits": "[US_AR]programs.filters.onlyEarnCredits",
-      "onlyStarred": "[US_AR]programs.filters.onlyStarred",
-      "clearAll": "[US_AR]programs.filters.clearAll"
-    },
-    "card": {
-      "earnLabel": "[US_AR]programs.card.earnLabel",
-      "daysOfCredit_zero": "[US_AR]programs.card.daysOfCredit_zero",
-      "daysOfCredit_one": "[US_AR]programs.card.daysOfCredit_one",
-      "daysOfCredit_other": "[US_AR]programs.card.daysOfCredit_other",
-      "newBadge": "[US_AR]programs.card.newBadge"
-    },
-    "category": {
-      "programCount_one": "[US_AR]programs.category.programCount_one",
-      "programCount_other": "[US_AR]programs.category.programCount_other",
-      "programCountFiltered_one": "[US_AR]programs.category.programCountFiltered_one",
-      "programCountFiltered_other": "[US_AR]programs.category.programCountFiltered_other"
-    },
-    "modal": {
-      "earnSubtitle_zero": "[US_AR]programs.modal.earnSubtitle_zero",
-      "earnSubtitle_one": "[US_AR]programs.modal.earnSubtitle_one",
-      "earnSubtitle_other": "[US_AR]programs.modal.earnSubtitle_other",
-      "programDescription": "[US_AR]programs.modal.programDescription",
-      "eligibility": "[US_AR]programs.modal.eligibility",
-      "eligibilityPrereq": "[US_AR]programs.modal.eligibilityPrereq",
-      "eligibilityNone": "[US_AR]programs.modal.eligibilityNone",
-      "availableFacilities": "[US_AR]programs.modal.availableFacilities",
-      "callToAction": "[US_AR]programs.modal.callToAction",
-      "closeWindow": "[US_AR]programs.modal.closeWindow"
     }
   }
 }

@@ -31,14 +31,14 @@
     "missingDateMessage": "No date on record"
   },
   "programs": {
+    "pageDescription": "This page helps you find programs and activities that can provide Good Time off of your Parole/Transfer/Release Eligibility Date. \n\nThis list will update from time to time—look for the “New” label to see what was recently updated. If you are eligible for a particular program, please follow your facility’s process for signing up.",
+    "learnMoreLink": "Learn about Good Time and Programs",
+    "modalCallToAction": "Sound interesting? Reach out to your unit’s program services to see if this might be a good fit.",
     "homepageCta": {
       "sectionHeader": "Programming",
       "heading": "Browse Available Programs",
       "description": "Explore available programs, filter by facility, and star the ones that are interesting to you.",
       "link": "View full list of programs"
-    },
-    "pageDescription": "This page helps you find programs and activities that can provide Good Time off of your Parole/Transfer/Release Eligibility Date. \n\nThis list will update from time to time—look for the “New” label to see what was recently updated. If you are eligible for a particular program, please follow your facility’s process for signing up.",
-    "learnMoreLink": "Learn about Good Time and Programs",
-    "modalCallToAction": "Sound interesting? Reach out to your unit’s program services to see if this might be a good fit."
+    }
   }
 }

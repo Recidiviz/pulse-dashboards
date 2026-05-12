@@ -178,12 +178,14 @@ const ClearAllLink = styled.button`
 interface FilterSectionProps {
   presenter: ProgramCatalogPresenter;
   showCredits?: boolean;
+  showStars?: boolean;
   t: TFn;
 }
 
 export const FilterSection: FC<FilterSectionProps> = ({
   presenter,
   showCredits,
+  showStars,
   t,
 }) => {
   const {
@@ -201,8 +203,6 @@ export const FilterSection: FC<FilterSectionProps> = ({
     setShowOnlyStarred,
     clearAllFilters,
   } = presenter;
-
-  const categoryNames = categories.map(({ name }) => name);
 
   const allCategoriesLabel = t(($) => $.programs.filters.allCategories);
   const allFacilitiesLabel = t(($) => $.programs.filters.allFacilities);
@@ -248,7 +248,7 @@ export const FilterSection: FC<FilterSectionProps> = ({
               placeholder={allCategoriesLabel}
               options={[
                 { label: allCategoriesLabel, value: undefined },
-                ...categoryNames.map(toOption),
+                ...categories.map(toOption),
               ]}
               value={
                 selectedCategory
@@ -295,16 +295,18 @@ export const FilterSection: FC<FilterSectionProps> = ({
               </CheckboxLabel>
             )}
 
-            <CheckboxLabel>
-              <Checkbox
-                {...checkboxProps}
-                checked={showOnlyStarred}
-                onChange={(e) => setShowOnlyStarred(e.target.checked)}
-              />
-              <CheckboxText>
-                {t(($) => $.programs.filters.onlyStarred)}
-              </CheckboxText>
-            </CheckboxLabel>
+            {showStars && (
+              <CheckboxLabel>
+                <Checkbox
+                  {...checkboxProps}
+                  checked={showOnlyStarred}
+                  onChange={(e) => setShowOnlyStarred(e.target.checked)}
+                />
+                <CheckboxText>
+                  {t(($) => $.programs.filters.onlyStarred)}
+                </CheckboxText>
+              </CheckboxLabel>
+            )}
           </CheckboxRow>
 
           <ClearAllLink type="button" onClick={clearAllFilters}>

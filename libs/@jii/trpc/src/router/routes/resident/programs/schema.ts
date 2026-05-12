@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { camelCase, isObject, mapKeys } from "lodash-es";
 import { z } from "zod";
 
 export const getProgramsInputSchema = z.object({
@@ -27,3 +28,29 @@ export const setStarredProgramInputSchema = z.object({
   title: z.string(),
   isStarred: z.boolean(),
 });
+
+export const programFromSheetSchema = z.preprocess(
+  (row) => isObject(row) && mapKeys(row, (v, k) => camelCase(k)),
+  z.object({
+    dateAddedOrUpdated: z.preprocess(
+      (v) => (v === "" ? undefined : v),
+      z.coerce.date().optional(),
+    ),
+    programId: z.string(),
+    category: z.string(),
+    title: z.string(),
+    description: z.string(),
+    abbreviatedDescription: z.string().optional(),
+    facilitiesOffered: z
+      .string()
+      .transform((raw) => raw.split(",").map((s) => s.trim())),
+    numberOfDaysThatCanBeEarned: z.preprocess(
+      (v) => (v === "" ? undefined : v),
+      z.coerce.number().optional(),
+    ),
+    eligibilityRequirements: z.string(),
+    prerequisites: z.string().optional(),
+  }),
+);
+
+export type ProgramFromSheet = z.output<typeof programFromSheetSchema>;

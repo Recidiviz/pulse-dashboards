@@ -47,15 +47,8 @@
       "eligibilityPrereq": "[US_CO]programs.modal.eligibilityPrereq",
       "eligibilityNone": "[US_CO]programs.modal.eligibilityNone",
       "availableFacilities": "[US_CO]programs.modal.availableFacilities",
-      "callToAction": "[US_CO]programs.modal.callToAction",
       "closeWindow": "[US_CO]programs.modal.closeWindow"
-    }
-  },
-  "sentenceDates": {
-    "dates": {
-      "TK": {
-        "label": "[US_CO]sentenceDates.dates.TK.label"
-      }
-    }
+    },
+    "modalCallToAction": "[US_CO]programs.modalCallToAction"
   }
 }

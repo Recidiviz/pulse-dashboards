@@ -132,5 +132,10 @@
     "heading": "Track your Earned Good Time",
     "body": "This app helps you to track the time you’ve earned from programs and work. It also shows how your earned time changes important dates, like your maximum release date and release-to-supervision dates (if you have them).\n\nThe information updates once per month. You will only see information after you start earning time.\n",
     "continueLink": "See your earned time"
+  },
+  "programs": {
+    "pageDescription": "This page helps you find programs and activities that can provide Earned Good Time, Boosts, or Completion Credits off of your sentence.\n\nThis list will update from time to time. Look for the New label to see what was recently updated. If you are eligible for a particular program, please follow your facility process for signing up.",
+    "learnMoreLink": "Learn about Earned Good Time and Programs",
+    "modalCallToAction": "Sound interesting? Reach out to your unit program services to see if this might be a good fit."
   }
 }

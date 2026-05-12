@@ -18,7 +18,7 @@
 import { captureException } from "@sentry/react";
 import { groups, rollup } from "d3-array";
 import { max } from "date-fns";
-import { sortBy } from "lodash";
+import { isUndefined, sortBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI } from "~@jii/data";
@@ -99,7 +99,7 @@ export class ProgramCatalogPresenter implements Hydratable {
     return dates.length ? max(dates) : null;
   }
 
-  get categories(): {
+  get filteredProgramsByCategory(): {
     name: string;
     programs: Program[];
   }[] {
@@ -109,6 +109,12 @@ export class ProgramCatalogPresenter implements Hydratable {
       (p) => p.category,
     ).map(([name, programs]) => ({ name, programs }));
     return sortBy(unsortedCategories, "name");
+  }
+
+  get categories(): string[] {
+    if (!this.programs) return [];
+    const categories = new Set(this.programs.map((p) => p.category));
+    return Array.from(categories).sort();
   }
 
   get facilities(): string[] {
@@ -129,7 +135,8 @@ export class ProgramCatalogPresenter implements Hydratable {
       // Filter broken programs
       if (
         program.title === "" ||
-        (this.config.showCredits && isNaN(program.numberOfDaysThatCanBeEarned))
+        (this.config.showCredits &&
+          isUndefined(program.numberOfDaysThatCanBeEarned))
       ) {
         return false;
       }
@@ -150,10 +157,7 @@ export class ProgramCatalogPresenter implements Hydratable {
       }
 
       // Earn credits filter
-      if (
-        this.showOnlyEarnCredits &&
-        program.numberOfDaysThatCanBeEarned <= 0
-      ) {
+      if (this.showOnlyEarnCredits && !program.numberOfDaysThatCanBeEarned) {
         return false;
       }
 

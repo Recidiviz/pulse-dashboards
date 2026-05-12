@@ -18,13 +18,14 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { EGT } from "~@jii/paths";
+import { EGT, UsMaPrograms } from "~@jii/paths";
 
 import { EGTDataRouteContext } from "../EGTDataContext/RouteContext";
 import { PageDefinition } from "../pages/PageDefinition";
 import { PageEGT } from "../pages/PageEGT";
 import { PageIntro } from "../pages/PageIntro";
 import { PageMonthlyReport } from "../pages/PageMonthlyReport";
+import { PageUsMaProgramCatalog } from "../pages/PageUsMaProgramCatalog";
 import { PageUsMaResidentHome } from "../pages/PageUsMaResidentHome";
 
 export const UsMaRouter = () => {
@@ -37,6 +38,7 @@ export const UsMaRouter = () => {
         <Route path={EGT.Definition.path} element={<PageDefinition />} />
         <Route path={EGT.MonthlyReport.path} element={<PageMonthlyReport />} />
       </Route>
+      <Route path={UsMaPrograms.path} element={<PageUsMaProgramCatalog />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

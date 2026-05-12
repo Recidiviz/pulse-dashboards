@@ -137,8 +137,6 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { t } = useUsCoTranslations();
 
-  const categoryNames = categories.map(({ name }) => name);
-
   const allCategoriesLabel = t(($) => $.programs.filters.allCategories);
   const allFacilitiesLabel = t(($) => $.programs.filters.allFacilities);
 
@@ -182,7 +180,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
                 placeholder={allCategoriesLabel}
                 options={[
                   { label: allCategoriesLabel, value: undefined },
-                  ...categoryNames.map(toOption),
+                  ...categories.map(toOption),
                 ]}
                 value={
                   selectedCategory
