@@ -54,6 +54,7 @@ interface ResourceBankViewerProps {
   onResourceRemove?: (id: string, name: string, sectionTitle: string) => void;
   isLoadingResources?: boolean;
   isErrorResources?: boolean;
+  planGenerationId?: string;
 }
 
 const ResourceBankViewer = ({
@@ -63,6 +64,7 @@ const ResourceBankViewer = ({
   allResources,
   isLoadingResources,
   isErrorResources,
+  planGenerationId,
 }: ResourceBankViewerProps) => {
   const fullName = clientName
     ? `${clientName.given_names} ${clientName.surname}`
@@ -89,6 +91,7 @@ const ResourceBankViewer = ({
                 onRemove: onResourceRemove,
                 isLoadingResources,
                 isErrorResources,
+                planGenerationId,
               },
             },
           },

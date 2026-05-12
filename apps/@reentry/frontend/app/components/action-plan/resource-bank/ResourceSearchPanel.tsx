@@ -21,6 +21,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
 import { MdExpandLess, MdExpandMore, MdInfoOutline } from "react-icons/md";
 
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
 import useResourceSearch from "~@reentry/frontend/hooks/useResourceSearch";
 import type { components } from "~@reentry/openapi-types";
@@ -54,6 +55,7 @@ export interface ResourceSearchPanelProps {
   addResource: (sectionTitle: string, resource: ResourceWithMeta) => void;
   sectionTitles: SectionTitle[];
   clientAddress: string;
+  planGenerationId?: string;
   digitalResourcesEnabled?: boolean;
 }
 
@@ -61,6 +63,7 @@ const ResourceSearchPanel = ({
   addResource,
   sectionTitles,
   clientAddress,
+  planGenerationId,
   digitalResourcesEnabled,
 }: ResourceSearchPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -71,6 +74,8 @@ const ResourceSearchPanel = ({
     ResourceSubcategory | ""
   >("");
   const [selectedRadius, setSelectedRadius] = useState<RadiusOption>(50);
+
+  const { track } = useAnalytics();
 
   const { searchError, isLoading, results, search } = useResourceSearch(
     clientAddress,
@@ -95,6 +100,12 @@ const ResourceSearchPanel = ({
 
   const handleSearch = () => {
     if (!selectedCategory || !selectedSubcategory || !selectedRadius) return;
+    track("searched_resources", {
+      category: selectedCategory,
+      subcategory: selectedSubcategory,
+      radiusMiles: selectedRadius,
+      planGenerationId,
+    });
     search(selectedCategory, selectedSubcategory, selectedRadius);
   };
 

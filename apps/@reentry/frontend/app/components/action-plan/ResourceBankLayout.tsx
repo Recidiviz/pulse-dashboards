@@ -40,6 +40,7 @@ type PendingRemoval = { id: string; name: string; sectionTitle: string };
 
 const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
   const { getAccessToken } = useAuth();
+  const planGenerationId = planDetail.latest_generation?.id;
 
   const {
     sections,
@@ -48,7 +49,7 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
     refetch: refetchResourceBank,
     isLoading: isResourceBankLoading,
     isError: didResourceBankError,
-  } = useResourceBank(planDetail.latest_generation?.id ?? undefined);
+  } = useResourceBank(planGenerationId ?? undefined);
 
   const { mutateAsync: updateAddress } = $api.useMutation(
     "patch",
@@ -85,6 +86,7 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
   } = usePlanMarkdown(
     planDetail.id,
     planDetail.latest_generation?.markdown_result,
+    { planGenerationId },
   );
 
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
@@ -117,6 +119,7 @@ const ResourceBankLayout = ({ planDetail }: ResourceBankLayoutProps) => {
     addResource,
     categorySubcategoryMap: CATEGORY_SUBCATEGORY_MAP,
     clientAddress,
+    planGenerationId,
     sectionTitles: sections.map((item) => ({ title: item.title })),
   };
 

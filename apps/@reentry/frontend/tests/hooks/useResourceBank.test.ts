@@ -40,6 +40,10 @@ vi.mock("~@reentry/frontend/lib/auth/authContext", () => ({
   useAuth: () => ({ getAccessToken: () => "mock-token" }),
 }));
 
+vi.mock("~@reentry/frontend/contexts/AnalyticsProvider", () => ({
+  useAnalytics: () => ({ track: vi.fn() }),
+}));
+
 const mockUseQuery = vi.hoisted(() => vi.fn());
 const mockMutateAsync = vi.hoisted(() => vi.fn().mockResolvedValue({}));
 vi.mock("../../app/api", () => ({

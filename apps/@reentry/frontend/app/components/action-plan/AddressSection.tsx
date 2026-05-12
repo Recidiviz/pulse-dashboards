@@ -22,11 +22,16 @@ import { useState } from "react";
 
 import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { formatAddress } from "~@reentry/frontend/utils/addressUtils";
 import { FullAddressForm } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 import styles from "./styles/AddressSection.module.css";
+
+type AnalyticsContext = {
+  planGenerationId?: string;
+};
 
 interface AddressSectionProps {
   initialAddress?: components["schemas"]["ClientAddressResponse"] | null;
@@ -35,6 +40,7 @@ interface AddressSectionProps {
     city: string;
     state: string;
   }) => Promise<void>;
+  analyticsContext?: AnalyticsContext;
   getAccessToken: () => string | undefined | null;
   disabled?: boolean;
 }
@@ -42,9 +48,11 @@ interface AddressSectionProps {
 const AddressSection = ({
   initialAddress,
   onSave,
+  analyticsContext,
   getAccessToken,
   disabled = false,
 }: AddressSectionProps) => {
+  const { track } = useAnalytics();
   const [isEditing, setIsEditing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   const [addressInput, setAddressInput] = useState("");
@@ -60,6 +68,9 @@ const AddressSection = ({
     setIsSaving(true);
     try {
       await onSave({ street_address: addressInput || null, city, state });
+      track("address_updated", {
+        planGenerationId: analyticsContext?.planGenerationId,
+      });
       setDisplayAddress(
         [addressInput, city, state].filter(Boolean).join(", ") || null,
       );

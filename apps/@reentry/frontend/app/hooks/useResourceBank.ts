@@ -17,6 +17,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
   showErrorToast,
@@ -32,6 +33,7 @@ type Resource = components["schemas"]["Resource"];
 
 export const useResourceBank = (planGenerationId: string | undefined) => {
   const { getAccessToken } = useAuth();
+  const { track } = useAnalytics();
   const { data, isLoading, isError, refetch } = $api.useQuery(
     "get",
     "/plan-generation/{plan_gen_id}/active-resources",
@@ -128,10 +130,18 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
         resource_type: resource.resource_type,
       },
     }).then(
-      () =>
+      () => {
         showSuccessToast(
           `${resource.name} added to ${sectionTitle} resources.`,
-        ),
+        );
+
+        track("resource_added", {
+          resourceId: resource.id,
+          resourceType: resource.resource_type,
+          sectionTitle,
+          planGenerationId,
+        });
+      },
       () => {
         showErrorToast(
           `Failed to add ${resource.name} to ${sectionTitle} resources.`,
@@ -174,10 +184,18 @@ export const useResourceBank = (planGenerationId: string | undefined) => {
         resource_type: removed.resource_type,
       },
     }).then(
-      () =>
+      () => {
         showSuccessToast(
           `${removed.name} removed from ${sectionTitle} resources.`,
-        ),
+        );
+
+        track("resource_removed", {
+          resourceId: removed.id,
+          resourceType: removed.resource_type,
+          sectionTitle,
+          planGenerationId,
+        });
+      },
       () => {
         showErrorToast(
           `Failed to remove ${removed.name} from ${sectionTitle} resources.`,

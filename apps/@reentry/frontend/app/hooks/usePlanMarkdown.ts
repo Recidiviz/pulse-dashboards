@@ -17,16 +17,20 @@
 
 import { useEffect, useState } from "react";
 
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { $api } from "../api";
 import { useAuth } from "../lib/auth/authContext";
+import type { AnalyticsContext } from "./analytics.types";
 
 export const usePlanMarkdown = (
   planId: string,
   initialMarkdown: string | null | undefined,
+  analyticsContext?: AnalyticsContext,
 ) => {
   const { getAccessToken } = useAuth();
+  const { track } = useAnalytics();
   const [displayMarkdown, setDisplayMarkdown] = useState(initialMarkdown ?? "");
   const [draftMarkdown, setDraftMarkdown] = useState(initialMarkdown ?? "");
   const [isEditing, setIsEditing] = useState(false);
@@ -46,6 +50,9 @@ export const usePlanMarkdown = (
   }, [initialMarkdown]);
 
   const startEdit = () => {
+    track("action_plan_edit_started", {
+      planGenerationId: analyticsContext?.planGenerationId,
+    });
     setDraftMarkdown(displayMarkdown);
     setIsEditing(true);
   };
@@ -55,6 +62,9 @@ export const usePlanMarkdown = (
   };
 
   const saveMarkdown = () => {
+    track("action_plan_edited", {
+      planGenerationId: analyticsContext?.planGenerationId,
+    });
     const previousDisplay = displayMarkdown;
     setDisplayMarkdown(draftMarkdown);
     setIsEditing(false);

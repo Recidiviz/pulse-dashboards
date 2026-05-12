@@ -55,6 +55,9 @@ const PlanContent = ({
   const { generatePdf, isGenerating } = usePlanPdf(
     contentRef,
     `${clientFullName}_action_plan.pdf`,
+    {
+      planGenerationId: planDetail.latest_generation?.id,
+    },
   );
 
   const [showDownloadModal, setShowDownloadModal] = useState(false);
@@ -96,6 +99,7 @@ const PlanContent = ({
             allResources={allResources}
             isLoadingResources={isResourceBankLoading}
             isErrorResources={isErrorResources}
+            planGenerationId={planDetail.latest_generation?.id}
           />
         </div>
       </div>

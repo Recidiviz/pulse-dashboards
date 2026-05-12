@@ -32,6 +32,7 @@ type ResourceBankProps = {
   onRemove: (id: string, name: string, sectionTitle: string) => void;
   isLoadingResources?: boolean;
   isErrorResources?: boolean;
+  planGenerationId?: string;
 };
 
 const ResourceBank = ({
@@ -41,6 +42,7 @@ const ResourceBank = ({
   onRemove,
   isLoadingResources,
   isErrorResources,
+  planGenerationId,
 }: ResourceBankProps) => {
   const resources = allResources.find(
     (ra) => ra.title === section_title,
@@ -66,6 +68,7 @@ const ResourceBank = ({
               resource={resource}
               clientFirstName={clientFirstName}
               onRemove={(id, name) => onRemove(id, name, section_title)}
+              planGenerationId={planGenerationId}
             />
           ))}
       </div>

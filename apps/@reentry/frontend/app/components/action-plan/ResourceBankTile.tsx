@@ -20,6 +20,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PlaceIcon from "@mui/icons-material/Place";
 
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import type { components } from "~@reentry/openapi-types";
 
 import styles from "./styles/ResourceBankTile.module.css";
@@ -88,13 +89,16 @@ type ResourceBankTileProps = {
   resource: Resource;
   clientFirstName: string;
   onRemove: (id: string, name: string) => void;
+  planGenerationId?: string;
 };
 
 const ResourceBankTile = ({
   resource,
   clientFirstName,
   onRemove,
+  planGenerationId,
 }: ResourceBankTileProps) => {
+  const { track } = useAnalytics();
   const { chip: chipClass, tileBg } =
     CATEGORY_CLASSES[resource.category] ?? DEFAULT_CLASSES;
   const chipLabel = resource.subcategory ?? resource.category;
@@ -143,6 +147,13 @@ const ResourceBankTile = ({
             href={resource.website}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() =>
+              track("resource_link_clicked", {
+                resourceId: resource.id,
+                resourceType: resource.resource_type,
+                planGenerationId,
+              })
+            }
           >
             <LanguageIcon className={styles["metaIcon"]} />
             <span className={styles["metaText"]}>{resource.website}</span>

@@ -17,6 +17,7 @@
 
 import { type RefObject, useState } from "react";
 
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
   createPDFPageStyles,
@@ -27,6 +28,8 @@ import {
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
+
+import type { AnalyticsContext } from "./analytics.types";
 
 function convertButtonsToSpansPreserveText(
   containerElement: HTMLElement,
@@ -101,8 +104,10 @@ async function generatePDFBlob(
 export function usePlanPdf(
   contentRef: RefObject<HTMLElement | null>,
   fileName = "action_plan.pdf",
+  analyticsContext?: AnalyticsContext,
 ): { generatePdf: () => Promise<void>; isGenerating: boolean } {
   const { getAccessToken, refreshToken } = useAuth();
+  const { track } = useAnalytics();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generatePdf = async () => {
@@ -139,6 +144,9 @@ export function usePlanPdf(
       URL.revokeObjectURL(blobUrl);
 
       showSuccessToast("PDF downloaded successfully");
+      track("action_plan_downloaded", {
+        planGenerationId: analyticsContext?.planGenerationId,
+      });
     } catch {
       showErrorToast("Failed to download PDF");
     } finally {
