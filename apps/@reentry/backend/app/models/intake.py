@@ -658,7 +658,8 @@ class ClientAddress(BaseModel, table=True):
     intake: Mapped["Intake"] = Relationship(back_populates="address")
 
     def as_formatted_string(self):
-        return f"{self.street_address}, {self.city}, {self.state}".strip()
+        street = f"{self.street_address}, " if self.street_address else ""
+        return f"{street}{self.city}, {self.state}".strip()
 
 
 # ------------------------------ Intake Survey ------------------------------------------
