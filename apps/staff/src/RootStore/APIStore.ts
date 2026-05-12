@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  LookerEmbedCookielessSessionData,
+  LookerEmbedCookielessTokenData,
+} from "@looker/embed-sdk";
 import axios, { AxiosInstance } from "axios";
 
 import UserStore from "./UserStore";
@@ -85,5 +89,41 @@ export class APIStore {
       body,
     );
     return response.data;
+  }
+
+  // NB: These Looker endpoints hit the Node staff-server backend, not the Python case-triage backend
+  async getLookerConfig(): Promise<{ host: string; model: string }> {
+    const stateCode = this.userStore.isRecidivizUser
+      ? this.userStore.rootStore?.currentTenantId
+      : this.userStore.stateCode;
+    const res = await this.client.get(
+      `${import.meta.env.VITE_API_URL}/api/${stateCode}/looker/config`,
+    );
+    return res.data;
+  }
+
+  async acquireLookerSession(): Promise<
+    LookerEmbedCookielessSessionData & { session_id: string }
+  > {
+    const stateCode = this.userStore.isRecidivizUser
+      ? this.userStore.rootStore?.currentTenantId
+      : this.userStore.stateCode;
+    const res = await this.client.get(
+      `${import.meta.env.VITE_API_URL}/api/${stateCode}/looker/acquireSession`,
+    );
+    return res.data;
+  }
+
+  async generateLookerTokens(
+    body: LookerEmbedCookielessTokenData & { session_id: string | null },
+  ): Promise<LookerEmbedCookielessSessionData> {
+    const stateCode = this.userStore.isRecidivizUser
+      ? this.userStore.rootStore?.currentTenantId
+      : this.userStore.stateCode;
+    const res = await this.client.post(
+      `${import.meta.env.VITE_API_URL}/api/${stateCode}/looker/generateTokens`,
+      body,
+    );
+    return res.data;
   }
 }

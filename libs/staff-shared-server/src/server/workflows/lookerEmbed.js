@@ -44,15 +44,47 @@ function getSDK() {
 const sessionReferenceTokenStore = new Map();
 
 /**
- * Checks whether the requesting user is allowed to access the Looker embed.
- * Permitted when the user is a Recidiviz employee or has
- * the director_dashboard route enabled in their app metadata.
+ * Validates offline mode and user access for all Looker embed endpoints.
+ * Writes the appropriate error response and returns false if the request
+ * should be rejected; returns true if the handler should proceed.
  */
-function isAllowed(appMetadata) {
-  return (
+function shouldAllowAccess(req, res) {
+  if (isOfflineMode()) {
+    res.status(503).json({
+      status: 503,
+      errors: ["Looker embed not available in offline mode"],
+    });
+    return false;
+  }
+
+  const appMetadata = getAppMetadata(req);
+
+  const isAllowed =
     appMetadata.state_code === "recidiviz" ||
-    !!appMetadata.routes?.director_dashboard
-  );
+    !!appMetadata.routes?.director_dashboard;
+
+  if (!isAllowed) respondWithForbidden(res);
+  return isAllowed;
+}
+
+/**
+ * GET /api/:stateCode/looker/config
+ *
+ * Returns the Looker host and embed model name for the current environment.
+ * The frontend uses these to initialise the embed SDK without hardcoding values
+ * that must stay in sync with the backend.
+ */
+export async function getLookerConfig(req, res) {
+  if (!shouldAllowAccess(req, res)) return;
+
+  const baseUrl = process.env.LOOKER_BASE_URL ?? "";
+  const host = baseUrl.replace(/^https?:\/\//, "");
+
+  res.set("Cache-Control", "no-store, max-age=0");
+  res.json({
+    host,
+    model: process.env.LOOKER_EMBED_MODEL_ID,
+  });
 }
 
 /**
@@ -72,26 +104,13 @@ function isAllowed(appMetadata) {
  * See: https://docs.cloud.google.com/looker/docs/cookieless-embed#application_server_implementation
  */
 export async function acquireSession(req, res) {
-  if (isOfflineMode()) {
-    res.status(503).json({
-      status: 503,
-      errors: ["Looker embed not available in offline mode"],
-    });
-    return;
-  }
-
-  const appMetadata = getAppMetadata(req);
-
-  if (!isAllowed(appMetadata)) {
-    respondWithForbidden(res);
-    return;
-  }
+  if (!shouldAllowAccess(req, res)) return;
 
   // Before this handler is called, the validateStateCode middleware checks that req.params.stateCode
   // matches the user's token, or that the token's state code is recidiviz. The latter case is why we
   // get the state code from the URL in the first place.
   const { stateCode } = req.params;
-  const normalizedStateCode = stateCode.toLowerCase();
+  const normalizedStateCode = stateCode.toUpperCase();
   const externalUserId = `external-embed-${normalizedStateCode}`;
   const sessionId = randomUUID();
 
@@ -149,20 +168,7 @@ export async function acquireSession(req, res) {
  * See: https://docs.cloud.google.com/looker/docs/cookieless-embed#application_server_implementation
  */
 export async function generateTokens(req, res) {
-  if (isOfflineMode()) {
-    res.status(503).json({
-      status: 503,
-      errors: ["Looker embed not available in offline mode"],
-    });
-    return;
-  }
-
-  const appMetadata = getAppMetadata(req);
-
-  if (!isAllowed(appMetadata)) {
-    respondWithForbidden(res);
-    return;
-  }
+  if (!shouldAllowAccess(req, res)) return;
 
   const { session_id, api_token, navigation_token } = req.body;
 

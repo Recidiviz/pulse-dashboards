@@ -28,7 +28,12 @@ import {
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
-import { DASHBOARD_VIEWS, WorkflowsPathSection, workflowsUrl } from "../views";
+import {
+  DASHBOARD_VIEWS,
+  DIRECTOR_DASHBOARD_PATHS,
+  WorkflowsPathSection,
+  workflowsUrl,
+} from "../views";
 
 export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPathSection> = {
   SUPERVISION: "clients",
@@ -61,6 +66,8 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
     "milestones",
   );
   const enabledInsights = (userAllowedNavigation?.insights || []).length > 0;
+  const enabledDirectorDashboard =
+    (userAllowedNavigation?.directorDashboard || []).length > 0;
   const enableSystems = !supportsMultipleSystems || !isMobile;
   const enableRNA =
     activeSystem !== "SUPERVISION" &&
@@ -72,6 +79,11 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   // and/or consider using userAllowedNavigation.workflows[0] instead of homepage
   return (
     <>
+      {enabledDirectorDashboard && (
+        <NavLink to={DIRECTOR_DASHBOARD_PATHS.supervision} role="menuitem">
+          Director Dashboard
+        </NavLink>
+      )}
       {enabledInsights && (
         <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem">
           Overview

@@ -39,7 +39,11 @@ import {
 } from "./routes/paramsValidation";
 import { validateStateCode } from "./utils/validateStateCode";
 import { getFirebaseToken } from "./workflows/firebaseToken";
-import { acquireSession, generateTokens } from "./workflows/lookerEmbed";
+import {
+  acquireSession,
+  generateTokens,
+  getLookerConfig,
+} from "./workflows/lookerEmbed";
 
 config();
 
@@ -236,6 +240,7 @@ app.get(
   asyncHandler(api.getImpersonatedUserRestrictions),
 );
 
+app.get(`${stateApiBaseRoute}looker/config`, asyncHandler(getLookerConfig));
 app.get(
   `${stateApiBaseRoute}looker/acquireSession`,
   asyncHandler(acquireSession),

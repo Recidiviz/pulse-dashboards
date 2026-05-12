@@ -36,6 +36,7 @@ export const DASHBOARD_VIEWS = {
   profile: "profile",
   workflows: "workflows",
   insights: "insights",
+  directorDashboard: "directorDashboard",
   psi: psiRootPath,
   sar: sarRootPath,
   cpa: cpaRootPath,
@@ -48,6 +49,15 @@ export const isValidDashboardRootPath = (str: string): boolean => {
 };
 
 export type ViewRootPath = DashboardViewRootPath;
+
+export const DIRECTOR_DASHBOARD_PAGES = {
+  supervision: "supervision",
+} as const;
+
+export const DIRECTOR_DASHBOARD_PATHS: Record<string, string> = {
+  directorDashboard: `/${DASHBOARD_VIEWS.directorDashboard}`,
+  supervision: `/${DASHBOARD_VIEWS.directorDashboard}/supervision`,
+};
 
 export const DASHBOARD_PATHS: Record<string, string> = {
   system: `/${DASHBOARD_VIEWS.system}/:pageId/:sectionId?`,

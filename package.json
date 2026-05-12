@@ -49,6 +49,7 @@
     "@langchain/langgraph": "^0.4.9",
     "@langchain/langgraph-checkpoint-postgres": "^0.1.2",
     "@langchain/openai": "^0.6.13",
+    "@looker/embed-sdk": "^2.0.8",
     "@looker/sdk-node": "^26.6.1",
     "@material/select": "^14.0.0",
     "@material/textfield": "^14.0.0",
@@ -474,6 +475,7 @@
     "zx": "^7.2.1"
   },
   "resolutions": {
+    "@looker/embed-sdk/@typescript/lib-dom": "npm:@types/web@*",
     "react": "19.1.4",
     "react-dom": "19.1.4",
     "react-native": "0.81.6",

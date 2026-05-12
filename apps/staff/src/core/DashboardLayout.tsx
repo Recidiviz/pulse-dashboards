@@ -43,6 +43,7 @@ import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
 import { PageCPA } from "./PageCPA";
+import PageDirectorDashboard from "./PageDirectorDashboard";
 import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
 import PagePSI from "./PagePSI";
@@ -55,6 +56,7 @@ import { Redirect } from "./Redirect";
 import {
   DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
+  DIRECTOR_DASHBOARD_PATHS,
   INSIGHTS_PATHS,
   WORKFLOWS_PATHS,
 } from "./views";
@@ -113,6 +115,8 @@ const DashboardLayout: React.FC = () => {
             PSI: currentView === DASHBOARD_VIEWS.psi,
             SAR: currentView === DASHBOARD_VIEWS.sar,
             CPA: currentView === DASHBOARD_VIEWS.cpa,
+            DirectorDashboard:
+              currentView === DASHBOARD_VIEWS.directorDashboard,
           })}
         >
           {currentView === DASHBOARD_VIEWS.operations && !isMobile ? (
@@ -148,6 +152,10 @@ const DashboardLayout: React.FC = () => {
               <Route
                 path={`${WORKFLOWS_PATHS.workflows}/*`}
                 element={<PageWorkflows />}
+              />
+              <Route
+                path={`${DIRECTOR_DASHBOARD_PATHS.directorDashboard}/*`}
+                element={<PageDirectorDashboard />}
               />
               <Route path={`${PSI_PATHS.psi}/*`} element={<PagePSI />} />
               <Route path={`${SAR_PATHS.sar}/*`} element={<PageSAR />} />

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
-import { INSIGHTS_PAGES } from "../core/views";
+import { DIRECTOR_DASHBOARD_PAGES, INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import { usMiFilterByUserDistrict } from "../WorkflowsStore/utils";
 
@@ -61,6 +61,7 @@ const US_MI_CONFIG = {
   insightsLanternState: true,
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
+    directorDashboard: [DIRECTOR_DASHBOARD_PAGES.supervision],
     workflows: ["home", "clients", "residents"],
   },
   featureVariants: {

@@ -1,5 +1,3 @@
-
-
 @use "./CoreConstants.module.scss" as constants;
 
 .DashboardLayout {
@@ -33,7 +31,8 @@
   &.Operations,
   &.Insights,
   &.PSI,
-  &.SAR {
+  &.SAR,
+  &.DirectorDashboard {
     .IE11Banner {
       padding-top: 0;
     }
