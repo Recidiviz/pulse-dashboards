@@ -33,3 +33,4 @@ components:
       vars:
         project_id: "{{ .settings.context.project_id }}"
         location: "{{ .settings.context.location }}"
+        proxy_only_subnet_cidr: 10.129.0.0/23

@@ -25,3 +25,4 @@ components:
     apps/shared-infra:
       vars:
         location: "{{ .settings.context.location }}"
+        proxy_only_subnet_cidr: 10.127.0.0/23

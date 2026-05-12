@@ -17,7 +17,7 @@
 
 resource "google_compute_subnetwork" "proxy_only" {
   name          = "regional-lb-proxy-only-subnet"
-  ip_cidr_range = "10.129.0.0/23"
+  ip_cidr_range = var.proxy_only_subnet_cidr
   network       = "default"
   purpose       = "REGIONAL_MANAGED_PROXY"
   region        = var.location

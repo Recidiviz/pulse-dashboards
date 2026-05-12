@@ -24,3 +24,8 @@ variable "location" {
   type        = string
   description = "The GCP location (us-east1, us-central1, etc) that we are deploying the service to"
 }
+
+variable "proxy_only_subnet_cidr" {
+  type        = string
+  description = "CIDR range for the regional managed proxy-only subnet. Must not overlap with 10.128.0.0/9 in auto-mode VPCs (prod). Staging uses a custom-mode VPC so 10.129.0.0/23 is valid there."
+}
