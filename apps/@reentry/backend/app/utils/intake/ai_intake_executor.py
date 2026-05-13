@@ -169,6 +169,16 @@ async def run_ai_intake(
 
         return response
 
+    async def wait_for_next_response(client_pseudo_id: str) -> str:
+        return await wait_for_user_response(
+            client_pseudo_id,
+            IntakeMessage(
+                intake_id=intake.id,
+                from_role=IntakeMessageRole.CASEWORKER,
+                content="",
+            ),
+        )
+
     async def send_message(client_pseudo_id: str, event: ServerEvent) -> str:
         """Handle server events like section changes."""
         if event.type == "sectionChange":
@@ -191,6 +201,7 @@ async def run_ai_intake(
         session=client_context,
         db_manager=db_manager,
         wait_for_user_response=wait_for_user_response,
+        wait_for_next_response=wait_for_next_response,
         send_message=send_message,
         model=model,
     )
