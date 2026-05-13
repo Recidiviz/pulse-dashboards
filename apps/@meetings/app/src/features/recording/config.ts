@@ -17,3 +17,4 @@
 
 export const MAX_RECORDING_MS = 90 * 60 * 1000; // 90min
 export const WEB_CHUNK_INTERVAL_MS = 5000;
+export const AUDIO_LEVEL_INTERVAL_MS = 50;

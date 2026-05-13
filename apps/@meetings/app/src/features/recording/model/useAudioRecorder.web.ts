@@ -19,12 +19,18 @@ import { useCallback, useRef, useState } from "react";
 
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { MAX_RECORDING_MS, WEB_CHUNK_INTERVAL_MS } from "../config";
+import {
+  AUDIO_LEVEL_INTERVAL_MS,
+  MAX_RECORDING_MS,
+  WEB_CHUNK_INTERVAL_MS,
+} from "../config";
 import {
   clearRecordedChunks,
   getAllChunks,
   saveChunk,
 } from "../lib/webRecorderDb.web";
+
+const SILENCE_THRESHOLD = 0.005;
 
 type Params = {
   onStop: () => void;
@@ -37,7 +43,11 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const autoStopTimerRef = useRef<number | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const levelIntervalRef = useRef<number | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const stop = useCallback(async (): Promise<Blob | null> => {
     // Clear auto-stop timer
@@ -45,6 +55,18 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
       clearTimeout(autoStopTimerRef.current);
       autoStopTimerRef.current = null;
     }
+
+    // Clear audio level monitoring
+    if (levelIntervalRef.current) {
+      clearInterval(levelIntervalRef.current);
+      levelIntervalRef.current = null;
+    }
+    if (audioCtxRef.current) {
+      audioCtxRef.current.close();
+      audioCtxRef.current = null;
+    }
+    analyserRef.current = null;
+    setIsSpeaking(false);
 
     setIsRecording(false);
 
@@ -100,6 +122,33 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
     });
     streamRef.current = stream;
 
+    // Set up audio level monitoring
+    const audioCtx = new AudioContext();
+    audioCtxRef.current = audioCtx;
+    const source = audioCtx.createMediaStreamSource(stream);
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 1024;
+    source.connect(analyser);
+    analyserRef.current = analyser;
+
+    // it is calculations to measure mic volume level
+    // against a threshold which we consider low enough to determine
+    // that mic is getting enough sound
+    // -------- or another explanation ----------
+    // it samples the microphone 1024 times, computes RMS loudness,
+    // and flags it as "speaking" if loud enough.
+    const buffer = new Float32Array(analyser.fftSize);
+    levelIntervalRef.current = window.setInterval(() => {
+      analyser.getFloatTimeDomainData(buffer);
+      let sum = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        sum += buffer[i] * buffer[i];
+      }
+      const rms = Math.sqrt(sum / buffer.length);
+      const speaking = rms > SILENCE_THRESHOLD;
+      setIsSpeaking((prev) => (prev === speaking ? prev : speaking));
+    }, AUDIO_LEVEL_INTERVAL_MS);
+
     const isOpusCodecSupported = MediaRecorder.isTypeSupported(
       `${contentType};codecs=opus`,
     );
@@ -141,5 +190,5 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
     await clearRecordedChunks();
   }, [stop]);
 
-  return { start, stop, cleanup, isRecording };
+  return { start, stop, cleanup, isRecording, isSpeaking };
 };

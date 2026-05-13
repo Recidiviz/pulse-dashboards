@@ -28,6 +28,8 @@ import { formatDurationNumeric } from "../../../shared/lib/format";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { useRecording } from "../model";
+import { useAudioErrorDetection } from "../model/useAudioErrorDetection";
+import { MicIndicator } from "./MicIndicator";
 
 export function MeetingControlsMobile() {
   const insets = useSafeAreaInsets();
@@ -37,11 +39,16 @@ export function MeetingControlsMobile() {
     personType,
     status,
     durationMs,
+    isSpeaking,
     meetingId,
     stopRecording,
     discardRecording,
     togglePauseResume,
   } = useRecording<"native">();
+  const { micStatus } = useAudioErrorDetection({
+    isRecording: status === "recording",
+    isSpeaking,
+  });
 
   if (status === "idle" || !meetingId || !person) return null;
 
@@ -63,20 +70,28 @@ export function MeetingControlsMobile() {
   return (
     <>
       <View className="flex flex-col items-center rounded-t-3xl bg-primary p-4">
-        {isNewMeetingScreen ? (
-          <Typography className="text-lg font-semibold leading-[26px] text-primary">
-            {person.fullName}
-          </Typography>
-        ) : (
-          <Link {...linkProps}>
-            <View className="flex flex-row items-center gap-1">
+        <View className="flex-row items-center self-stretch">
+          <View className="h-[24px] w-[42px] items-center justify-center rounded-full bg-secondary">
+            <MicIndicator variant="compact" status={micStatus} />
+          </View>
+          <View className="flex-1 items-center">
+            {isNewMeetingScreen ? (
               <Typography className="text-lg font-semibold leading-[26px] text-primary">
                 {person.fullName}
               </Typography>
-              <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
-            </View>
-          </Link>
-        )}
+            ) : (
+              <Link {...linkProps}>
+                <View className="flex flex-row items-center gap-1">
+                  <Typography className="text-lg font-semibold leading-[26px] text-primary">
+                    {person.fullName}
+                  </Typography>
+                  <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
+                </View>
+              </Link>
+            )}
+          </View>
+          <View className="w-[42px]" />
+        </View>
         <View className="mt-1 flex flex-row items-center gap-2">
           <RecordingIndicator isRecording={status === "recording"} />
           <Typography className="text-sm font-medium text-primary">

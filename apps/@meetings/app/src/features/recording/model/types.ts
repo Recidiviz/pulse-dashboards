@@ -40,6 +40,7 @@ export type RecordingBase = {
 
   isRecording: boolean;
   durationMs: number;
+  isSpeaking: boolean;
 
   note: string;
   setNote: (note: string) => void;

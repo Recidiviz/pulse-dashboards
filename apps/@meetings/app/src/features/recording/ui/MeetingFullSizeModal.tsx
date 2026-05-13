@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as TooltipPrimitive from "@rn-primitives/tooltip";
+import { useRef } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
@@ -31,6 +33,8 @@ import { OfflineIndicator } from "../../../shared/ui/OfflineIndicator";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { useRecording } from "..";
+import { useAudioErrorDetection } from "../model/useAudioErrorDetection";
+import { MicIndicator } from "./MicIndicator";
 
 type Props = {
   person: Person;
@@ -42,11 +46,25 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
     note,
     setNote,
     durationMs,
+    isSpeaking,
     setIsRecordingViewMinimized,
     stopRecording,
     discardRecording,
     togglePauseResume,
   } = useRecording<"web">();
+  const { micStatus, hasAudioError, setHasAudioError } = useAudioErrorDetection(
+    {
+      isRecording: status === "recording",
+      isSpeaking,
+    },
+  );
+
+  const tooltipTriggerRef = useRef<TooltipPrimitive.TriggerRef>(null);
+
+  const tooltipContainer =
+    typeof document !== "undefined"
+      ? document.getElementById("rnmodal")
+      : undefined;
 
   // TODO: live transcript will be added in next releases
   // const [showLiveTranscript, setShowLiveTranscript] = useState(false);
@@ -225,6 +243,35 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
               alignOffset={-8}
               isInsideModal
             />
+            <TooltipPrimitive.Root>
+              <TooltipPrimitive.Trigger
+                ref={tooltipTriggerRef}
+                asChild
+                onPress={() => setHasAudioError(false)}
+                disabled={!hasAudioError}
+                className="mr-6"
+              >
+                <View>
+                  <MicIndicator variant="full" status={micStatus} />
+                </View>
+              </TooltipPrimitive.Trigger>
+              <TooltipPrimitive.Portal container={tooltipContainer}>
+                <TooltipPrimitive.Content
+                  className="z-100 relative flex w-52 flex-col gap-1 rounded-xl bg-strong p-4"
+                  side="top"
+                  align="start"
+                  sideOffset={12}
+                >
+                  <Typography className="text-sm font-semibold text-on-brand">
+                    No audio detected
+                  </Typography>
+                  <Typography className="text-sm font-normal text-on-brand">
+                    Check your microphone
+                  </Typography>
+                  <View className="absolute bottom-0 -z-10 size-4 rotate-45 bg-strong" />
+                </TooltipPrimitive.Content>
+              </TooltipPrimitive.Portal>
+            </TooltipPrimitive.Root>
             {status === "recording" ? (
               <TouchableOpacity
                 className="w-[150px] flex-row items-center justify-center rounded-full bg-primary py-3 aria-disabled:opacity-40"

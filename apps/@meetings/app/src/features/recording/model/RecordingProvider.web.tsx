@@ -323,6 +323,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         closeRecordingView,
         isRecording: recorder.isRecording,
         durationMs: timer.durationMs,
+        isSpeaking: recorder.isSpeaking,
         note,
         setNote,
         hasHydrated,

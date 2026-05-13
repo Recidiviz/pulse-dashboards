@@ -42,6 +42,7 @@ import { extractError } from "~@meetings/app/shared/lib/extractError";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
+import { AUDIO_LEVEL_INTERVAL_MS } from "../config";
 import {
   requestNotificationPermissions,
   sendNotification,
@@ -62,6 +63,7 @@ import { usePersistedFileDuration } from "./usePersistedFileDuration.native";
 import { useRecordingStatus } from "./useRecordingStatus";
 
 const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
+const SILENCE_THRESHOLD_DB = -40;
 
 export const RecordingContext = createContext<RecordingNative | null>(null);
 
@@ -74,8 +76,19 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    */
   const [status, setStatus] = useRecordingStatus();
   const [note, setNote] = useNote();
-  const audioRecorder = useAudioRecorder(RecordingPresets["HIGH_QUALITY"]);
-  const recorderState = useAudioRecorderState(audioRecorder);
+  const audioRecorder = useAudioRecorder({
+    ...RecordingPresets["HIGH_QUALITY"],
+    isMeteringEnabled: true,
+  });
+  const recorderState = useAudioRecorderState(
+    audioRecorder,
+    AUDIO_LEVEL_INTERVAL_MS,
+  );
+
+  const isSpeaking =
+    recorderState.isRecording &&
+    (recorderState.metering ?? -Infinity) > SILENCE_THRESHOLD_DB;
+
   const [persistedRecordingUri, setPersistedRecordingUri] = useState<
     string | null
   >(null);
@@ -483,6 +496,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         setPersonType,
         isRecording: recorderState.isRecording,
         durationMs: timer.durationMs,
+        isSpeaking,
         note,
         setNote,
         hasHydrated,
