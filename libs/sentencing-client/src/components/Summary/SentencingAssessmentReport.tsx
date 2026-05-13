@@ -240,6 +240,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   !presenter.hasOrasAssessment) && (
                   <ReportOffenderAssessment
                     sarData={sarData}
+                    administeredBy={presenter.assessmentAdministeredBy}
                     hasOrasAssessment={presenter.hasOrasAssessment}
                     isDeclined={declined}
                   />

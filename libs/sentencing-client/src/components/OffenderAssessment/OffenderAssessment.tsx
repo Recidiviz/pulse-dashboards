@@ -58,7 +58,6 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       assessmentScore,
       assessmentType,
       assessmentDate,
-      assessmentAdministeredBy,
       criminalHistoryLevel,
       criminalHistorySummary,
       educationLevelScore,
@@ -84,6 +83,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       peerAssociatesRiskLevel,
       criminalBehaviorRiskLevel,
     } = presenter.SARData ?? {};
+
+    const assessmentAdministeredBy = presenter.assessmentAdministeredBy;
 
     // Extract client data
     const { fatherName, motherName, guardianName } =

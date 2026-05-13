@@ -40,6 +40,7 @@ import * as Styled from "./SentencingAssessmentReport.styles";
 
 interface ReportOffenderAssessmentProps {
   sarData: SAR;
+  administeredBy: string | null;
   hasOrasAssessment?: boolean;
   isDeclined?: boolean;
 }
@@ -130,7 +131,12 @@ function getDomainTableContent(
 
 export const ReportOffenderAssessment: React.FC<
   ReportOffenderAssessmentProps
-> = ({ sarData, hasOrasAssessment = true, isDeclined = false }) => {
+> = ({
+  sarData,
+  administeredBy,
+  hasOrasAssessment = true,
+  isDeclined = false,
+}) => {
   const { assessmentType } = sarData;
   const allDomains = getDomainsForAssessmentType(assessmentType);
   const domains =
@@ -139,10 +145,9 @@ export const ReportOffenderAssessment: React.FC<
       : allDomains;
 
   if (!domains.length) return null;
-
   const note = !isDeclined
     ? formatAssessmentNote(
-        sarData.assessmentAdministeredBy,
+        administeredBy,
         sarData.assessmentDate ? formatLongDate(sarData.assessmentDate) : null,
       )
     : null;

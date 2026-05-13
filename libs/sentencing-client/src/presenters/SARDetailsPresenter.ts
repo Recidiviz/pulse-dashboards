@@ -436,6 +436,11 @@ export class SARDetailsPresenter implements Hydratable {
     );
   }
 
+  get assessmentAdministeredBy(): string | null {
+    const value = this.SARData?.assessmentAdministeredBy;
+    return value === "Mismatched Offenders" ? "Unknown" : value ?? null;
+  }
+
   /** Extract unique judge name/division pairs from all imported charges */
   get judgeOptions(): JudgeOption[] {
     const judgeMap = new Map<string, string | null>();
@@ -1342,7 +1347,7 @@ export class SARDetailsPresenter implements Hydratable {
 
     return {
       assessmentType: sarData.assessmentType as AssessmentTypeKey,
-      administeredBy: sarData.assessmentAdministeredBy ?? null,
+      administeredBy: this.assessmentAdministeredBy,
       assessmentDate: sarData.assessmentDate
         ? formatLongDate(sarData.assessmentDate)
         : null,
