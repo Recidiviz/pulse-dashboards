@@ -92,6 +92,7 @@ export async function main(prisma: PrismaClient) {
     const structuredActionItems = actionItems.map((task) => ({
       task,
       context: faker.lorem.sentence(),
+      evidenceQuotes: [faker.lorem.sentence(), faker.lorem.sentence()],
     }));
 
     // Generate sample critical updates as formatted string array
@@ -215,6 +216,7 @@ export async function main(prisma: PrismaClient) {
     const structuredActionItems = actionItems.map((task) => ({
       task,
       context: faker.lorem.sentence(),
+      evidenceQuotes: [faker.lorem.sentence(), faker.lorem.sentence()],
     }));
 
     // Generate sample critical updates as formatted string array

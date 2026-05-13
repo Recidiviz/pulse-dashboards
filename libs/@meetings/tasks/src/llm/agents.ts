@@ -282,10 +282,7 @@ export class SpecialistCore {
         const key = `ACT_${i}`;
         const audit = auditMap.get(key);
         if (audit) {
-          const quotes = audit.evidenceQuotes
-            .map((q: string) => `> "${q}"`)
-            .join("\n");
-          item.context = (item.context || "") + `\n\n[EVIDENCE]:\n${quotes}`;
+          item.evidenceQuotes = audit.evidenceQuotes;
         }
       });
 
@@ -293,10 +290,7 @@ export class SpecialistCore {
         const key = `UPD_${i}`;
         const audit = auditMap.get(key);
         if (audit) {
-          const quotes = audit.evidenceQuotes
-            .map((q: string) => `> "${q}"`)
-            .join("\n");
-          item.evidence = quotes;
+          item.evidenceQuotes = audit.evidenceQuotes;
         }
       });
 

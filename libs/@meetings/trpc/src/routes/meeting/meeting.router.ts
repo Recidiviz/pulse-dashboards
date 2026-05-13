@@ -123,7 +123,11 @@ export const meetingRouter = router({
             validateJsonField(
               meeting.structuredActionItems,
               z.array(
-                z.object({ task: z.string(), context: z.string().nullable() }),
+                z.object({
+                  task: z.string(),
+                  context: z.string().nullable(),
+                  evidenceQuotes: z.array(z.string()).nullable().optional(),
+                }),
               ),
             ) || [],
           criticalUpdates:

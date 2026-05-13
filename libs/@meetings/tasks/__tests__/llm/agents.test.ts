@@ -522,13 +522,13 @@ describe("SpecialistCore", () => {
         mockClient,
       );
 
-      expect(result.actionItems[0]?.context).toContain("[EVIDENCE]");
-      expect(result.actionItems[0]?.context).toContain(
+      expect(result.actionItems[0]?.evidenceQuotes).toEqual([
         "I'll get that proof to you by Friday",
-      );
-      expect(result.criticalUpdates[0]?.evidence).toContain(
+      ]);
+      expect(result.actionItems[0]?.context).toBeUndefined();
+      expect(result.criticalUpdates[0]?.evidenceQuotes).toEqual([
         "I'm staying at my mom's place now",
-      );
+      ]);
     });
 
     test("should skip verification when no claims exist", async () => {

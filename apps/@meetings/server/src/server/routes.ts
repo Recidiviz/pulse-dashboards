@@ -524,6 +524,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const structuredActionItems = result.output.actionItems.map((item) => ({
           task: item.task,
           context: item.context ?? null,
+          evidenceQuotes: item.evidenceQuotes ?? null,
         }));
 
         // Update status through drafting and verification stages

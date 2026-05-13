@@ -55,6 +55,10 @@ export const ActionItemSchema = z.object({
   task: z.string(),
   deadline: z.string().nullable().optional().describe("Due date if specified"),
   context: z.string().optional().describe("Context/Reasoning for the task"),
+  evidenceQuotes: z
+    .array(z.string())
+    .optional()
+    .describe("Verbatim quotes from the transcript supporting this item"),
 });
 
 export const CriticalUpdateSchema = z.object({
@@ -70,7 +74,10 @@ export const CriticalUpdateSchema = z.object({
   ]),
   updateType: z.enum(["New", "Change", "Stable/Status Quo"]),
   details: z.string(),
-  evidence: z.string().nullable().optional(),
+  evidenceQuotes: z
+    .array(z.string())
+    .optional()
+    .describe("Verbatim quotes from the transcript supporting this update"),
 });
 
 // Define the base schema first to avoid circular type issues
