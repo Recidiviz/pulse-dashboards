@@ -105,12 +105,12 @@ import { usTxSupervisionTasksData } from "./fixtures/usTxSupervisionTasks";
 import { usUtEarlyTerminationReferrals } from "./fixtures/usUtEarlyTerminationReferrals";
 import { FirestoreFixture, fixtureFromParsedRecords } from "./fixtures/utils";
 
-const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
+const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL_JSON } = process.env;
 
-const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL
+const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL_JSON
   ? {
       projectId: FIREBASE_PROJECT,
-      keyFilename: FIREBASE_CREDENTIAL,
+      credentials: JSON.parse(FIREBASE_CREDENTIAL_JSON),
       ignoreUndefinedProperties: true,
     }
   : {
@@ -259,7 +259,7 @@ const FIXTURES_TO_LOAD = [
 ];
 
 // If we're writing to the real firestore, don't clobber the real data
-const collectionPrefix = FIREBASE_CREDENTIAL ? "DEMO" : null;
+const collectionPrefix = FIREBASE_CREDENTIAL_JSON ? "DEMO" : null;
 
 function generateCollectionName(c: FirestoreCollectionKey) {
   const collectionName = c.key

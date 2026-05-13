@@ -19,10 +19,8 @@
 
 import { Firestore } from "@google-cloud/firestore";
 import { ArgumentParser } from "argparse";
-import fs from "fs";
 import prompts from "prompts";
 import { z } from "zod";
-import { $ } from "zx";
 
 import {
   clientRecordSchema,
@@ -88,35 +86,13 @@ import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFor
 import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
 import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt/UsUtEarlyTerminationOpportunity/UsUtEarlyTerminationReferralRecord";
 
-const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
-
-async function ensureServiceAccountExists(): Promise<void> {
-  if (FIREBASE_CREDENTIAL && !fs.existsSync(FIREBASE_CREDENTIAL)) {
-    console.log(`Service account file not found: ${FIREBASE_CREDENTIAL}`);
-    console.log("Attempting to refresh service account files...");
-    try {
-      await $`nx copy-service-accounts staff`;
-      if (!fs.existsSync(FIREBASE_CREDENTIAL)) {
-        throw new Error(
-          `Service account file still not found after refresh: ${FIREBASE_CREDENTIAL}`,
-        );
-      }
-      console.log("Service account files refreshed successfully");
-    } catch (error) {
-      console.error("Failed to refresh service account files:", error);
-      console.log(
-        "Please run: nx load-dev-config-files staff-shared-server && nx copy-service-accounts staff",
-      );
-      throw error;
-    }
-  }
-}
+const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL_JSON } = process.env;
 
 function getDb() {
-  const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL
+  const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL_JSON
     ? {
         projectId: FIREBASE_PROJECT,
-        keyFilename: FIREBASE_CREDENTIAL,
+        credentials: JSON.parse(FIREBASE_CREDENTIAL_JSON),
       }
     : {
         projectId: "demo-dev",
@@ -500,8 +476,6 @@ type Args = {
 const args = parser.parse_args() as Args;
 
 async function main() {
-  await ensureServiceAccountExists();
-
   if (args.all) {
     await automatic(args);
   } else {

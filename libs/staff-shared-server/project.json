@@ -24,38 +24,8 @@
         "cwd": "{projectRoot}"
       }
     },
-    "load-dev-config-files": {
+    "requires-sops-env:dev": {
       "executor": "nx:run-commands",
-      "options": {
-        "commands": ["vite-node tools/loadDevConfigFiles.ts"],
-        "cwd": "{projectRoot}"
-      }
-    },
-    "load-env": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts"
-      },
-      "configurations": {
-        "dev": {
-          "args": ["--env env_dev_server", "--filename .env.dev.dev"]
-        },
-        "demo": {
-          "args": [
-            "--env env_dev_server env_dev_demo_server",
-            "--filename .env.dev.demo"
-          ]
-        }
-      },
-      "defaultConfiguration": "dev"
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "dependsOn": [
-        "load-dev-config-files",
-        { "target": "load-env", "params": "forward" }
-      ],
       "options": {
         "commands": [
           "redis-server --port 6380",
@@ -63,8 +33,8 @@
         ],
         "cwd": "{projectRoot}"
       },
-      "configurations": { "dev": {}, "demo": {} },
-      "defaultConfiguration": "dev"
+      "configurations": { "development": {}, "demo": {} },
+      "defaultConfiguration": "development"
     },
     "offline": {
       "executor": "nx:run-commands",
@@ -73,13 +43,6 @@
           "redis-server --port 6380",
           "node --experimental-default-type=module --import=extensionless/register --watch src/server/index.js"
         ],
-        "cwd": "{projectRoot}"
-      }
-    },
-    "load-build-config-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["vite-node tools/loadBuildConfigFiles.ts"],
         "cwd": "{projectRoot}"
       }
     },
@@ -121,7 +84,7 @@
       "defaultConfiguration": "deploy"
     },
     "build": {
-      "dependsOn": ["load-build-config-files", "create-build-package-json"],
+      "dependsOn": ["create-build-package-json"],
       "command": "nx esbuild staff-shared-server -c deploy && cd dist/libs/staff-shared-server && yarn"
     },
     "build-e2e": {

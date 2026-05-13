@@ -20,9 +20,13 @@ import jestExtendedMatchers from "jest-extended";
 expect.extend(jestExtendedMatchers);
 
 // these are not stubbed with vi because they need to be set before any imports happen
-// these are not stubbed with vi because they need to be set before any imports happen
-process.env["GOOGLE_APPLICATION_CREDENTIALS"] = "test-service-account.json";
+process.env["GOOGLE_APPLICATION_CREDENTIALS_JSON"] = JSON.stringify({
+  type: "service_account",
+});
 process.env["GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE"] =
   "test-target-audience";
+process.env["FIREBASE_CREDENTIAL_JSON"] = JSON.stringify({
+  type: "service_account",
+});
 
 vi.mock("ioredis", async () => vi.importActual("ioredis-mock"));

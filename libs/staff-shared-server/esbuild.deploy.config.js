@@ -35,22 +35,14 @@ const copyConfigsPlugin = {
     build.onEnd(async () => {
       const outputDir = await getBuildPath();
 
-      const configsDir = path.join(__dirname, "deploy-configs");
+      const files = (await fs.readdir(__dirname)).filter(
+        (fname) => fname.startsWith("gae-") && fname.endsWith(".enc.yaml"),
+      );
 
-      const files = await fs.readdir(configsDir);
       await Promise.all(
         files.map(async (fname) => {
           console.log(`Copying config file ${fname} to build directory ...`);
-          await fs.cp(
-            path.join(configsDir, fname),
-            path.join(outputDir, fname),
-          );
-          if (fname.match("service-account")) {
-            await fs.cp(
-              path.join(configsDir, fname),
-              path.join(outputDir, "configs", fname),
-            );
-          }
+          await fs.cp(path.join(__dirname, fname), path.join(outputDir, fname));
         }),
       );
     });

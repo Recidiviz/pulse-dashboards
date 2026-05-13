@@ -17,7 +17,8 @@
 
 /** **************************************************
  * Sample command:
- * nx delete-data-from-state staff --dbEnv staging --stateCode US_OR
+ * nx delete-data-from-state staff -c staging --stateCode US_OR
+ * nx delete-data-from-state staff -c production --stateCode US_OR
  *************************************************** */
 
 import { Firestore, Query } from "@google-cloud/firestore";
@@ -27,19 +28,32 @@ import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import { deleteQueryBatch } from "./firestoreUtils";
 
-const env = process.argv[2];
-const stateCode = process.argv[3];
+const env = process.env.NX_CONFIGURATION;
+const stateCode = process.argv[2];
+
+if (!env) {
+  throw new Error(
+    "NX_CONFIGURATION not set. Run with -c staging or -c production",
+  );
+}
 
 function getFirebaseSettings() {
+  const credentialsJson = process.env.FIREBASE_CREDENTIAL_JSON;
+  if (!credentialsJson) {
+    throw new Error("FIREBASE_CREDENTIAL_JSON environment variable not set");
+  }
+
+  const credentials = JSON.parse(credentialsJson);
+
   if (env === "staging")
     return {
       projectId: "recidiviz-dashboard-staging",
-      keyFilename: "./recidiviz-dev-firebase-service-account.json",
+      credentials,
     };
   if (env === "production")
     return {
       projectId: "recidiviz-dashboard-production",
-      keyFilename: "./recidiviz-production-firebase-service-account.json",
+      credentials,
     };
   throw new Error(`Unknown environment ${env}`);
 }

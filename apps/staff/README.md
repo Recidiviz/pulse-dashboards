@@ -223,12 +223,12 @@ TEST_AUTH_RESTRICTED_ACCESS_USER_2_PASSWORD=
 To run E2E tests that involve logging in:
 
 1. Start your dev server: `nx dev staff`
-2. Run the test suites: `nx test-e2e-lantern staff` or `nx test-e2e-login staff` or `nx test-e2e-users staff`
+2. Run the test suites: `nx staff:test-e2e --suite SUITE` with suite: `lantern`, `login`, `userAccess`, or `workflows`
 
 To run E2E tests that do not involve logging in:
 
 1. Start the offline server `nx offline staff`
-2. Run the test suites: `nx test-e2e-workflows staff`
+2. Run the test suites: `nx staff:test-e2e --suite login`
 
 #### Playwright specs
 

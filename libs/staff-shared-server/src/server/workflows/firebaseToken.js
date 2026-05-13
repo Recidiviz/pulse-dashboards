@@ -16,7 +16,6 @@
 // =============================================================================
 
 import firebaseAdmin from "firebase-admin";
-import fs from "fs";
 
 import { stateCodes } from "../constants/stateCodes";
 import { fetchOfflineUser } from "../core";
@@ -27,12 +26,11 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 const { METADATA_NAMESPACE } = process.env;
 
 const projectId = process.env.FIREBASE_PROJECT || "demo-dev";
-const credentialFile = process.env.FIREBASE_CREDENTIAL;
 
 const appOptions = { projectId };
-if (!isOfflineMode() && credentialFile) {
+if (!isOfflineMode()) {
   appOptions.credential = firebaseAdmin.credential.cert(
-    JSON.parse(fs.readFileSync(credentialFile).toString()),
+    JSON.parse(process.env.FIREBASE_CREDENTIAL_JSON),
   );
 }
 

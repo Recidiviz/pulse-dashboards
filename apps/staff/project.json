@@ -25,122 +25,48 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test-e2e-lantern": {
+    "requires-sops-env:test-e2e": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_e2e && wdio ./wdio.conf.js --suite lantern --retry 2'"
+        "command": "wdio ./wdio.conf.js --retry 2"
       }
     },
-    "test-e2e-login": {
+    "requires-sops-env:test-zod": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_e2e && wdio ./wdio.conf.js --suite login --retry 2'"
+        "command": "vite-node tools/testZodSchema.ts {args}"
+      },
+      "configurations": {
+        "development": {}
+      },
+      "defaultConfiguration": "development",
+      "metadata": {
+        "sops-env": {
+          "override-sops-env-project": "staff-shared-server"
+        }
       }
     },
-    "test-e2e-users": {
+    "requires-sops-env:dev-spa": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_e2e && wdio ./wdio.conf.js --suite userAccess --retry 2'"
-      }
+      "options": { "command": "vite dev --force", "cwd": "{projectRoot}" },
+      "configurations": {
+        "development": {}
+      },
+      "defaultConfiguration": "development"
     },
-    "test-e2e-workflows": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "env-cmd -f .env.offline wdio ./wdio.conf.js --suite workflows --retry 2"
-      }
-    },
-    "copy-service-accounts": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "cp ../../libs/staff-shared-server/recidiviz-*-firebase-service-account.json . 2>/dev/null || echo 'No service account files found to copy'"
-        ],
-        "cwd": "{projectRoot}"
-      }
-    },
-    "validate-service-accounts": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "test -f recidiviz-dev-firebase-service-account.json || (echo 'Missing service account file. Run: nx load-dev-config-files staff-shared-server && nx copy-service-accounts staff' && exit 1)",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "test-zod": {
-      "executor": "nx:run-commands",
-      "dependsOn": [
-        {
-          "projects": ["staff-shared-server"],
-          "target": "load-dev-config-files"
-        },
-        "copy-service-accounts"
-      ],
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/testZodSchema.ts {args}'"
-      }
-    },
-    "env-dev-spa": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts --env env_dev_spa --filename .env.dev-spa"
-      }
-    },
-    "dev-spa": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["env-dev-spa"],
-      "options": { "command": "vite dev --force", "cwd": "{projectRoot}" }
-    },
-    "dev-cpa": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "commands": [
-          "nx dev staff",
-          "nx dev @cpa/server",
-          "bash -c 'npx wait-on http://localhost:3000 && open http://localhost:3000/cpa'"
-        ]
-      }
-    },
-    "dev": {
+    "requires-sops-env:dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
+      },
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {},
+        "demo": {}
       }
     },
-    "env-dev-be": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts --env env_dev_spa env_dev_be_spa --filename .env.dev-be"
-      }
-    },
-    "dev-be": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["env-dev-be"],
-      "options": {
-        "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
-      }
-    },
-
-    "env-dev-demo": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts --env env_dev_spa env_dev_demo_spa --filename .env.demo"
-      }
-    },
-    "demo": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["env-dev-demo"],
-      "options": {
-        "commands": ["nx dev-spa staff", "nx dev staff-shared-server -c demo"]
-      }
-    },
-
     "update-workflows-fixture": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -189,107 +115,40 @@
         "cwd": "{workspaceRoot}"
       }
     },
-    "env-prod": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts --env env_production --filename .env.build"
-      }
-    },
-    "build": {
+    "requires-sops-env:build": {
       "executor": "@nx/vite:build",
-      "dependsOn": ["^prisma-generate", "env-prod"],
+      "dependsOn": ["^prisma-generate"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
-      }
-    },
-    "env-staging": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts --env env_staging --filename .env.build-staging"
-      }
-    },
-    "build-staging": {
-      "executor": "@nx/vite:build",
-      "dependsOn": ["^prisma-generate", "env-staging"],
-      "options": {
-        "outputPath": "{workspaceRoot}/dist/apps/staff"
-      }
-    },
-    "env-preview-ci": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts --env env_staging --filename .env.build-preview-ci"
-      }
-    },
-    "build-preview-ci": {
-      "executor": "@nx/vite:build",
-      "dependsOn": ["^prisma-generate", "env-preview-ci"],
-      "options": {
-        "outputPath": "{workspaceRoot}/dist/apps/staff"
-      }
-    },
-    "env-demo": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts --env env_staging_demo --filename .env.build-demo"
-      }
-    },
-    "build-demo": {
-      "executor": "@nx/vite:build",
-      "dependsOn": ["^prisma-generate", "env-demo"],
-      "options": {
-        "outputPath": "{workspaceRoot}/dist/apps/staff"
-      }
-    },
-    "env-build-e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "commands": ["cp .env.offline .env.build-e2e"]
-      }
-    },
-    "build-e2e": {
-      "executor": "@nx/vite:build",
-      "dependsOn": ["^prisma-generate", "env-build-e2e"],
-      "options": {
-        "outputPath": "{workspaceRoot}/dist/apps/staff"
-      }
-    },
-    "verify-feature-variant-documentation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_sync_content && vite-node tools/verifyFeatureVariantDocumentation.ts'"
-      }
-    },
-    "env-demo-fixtures": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/loadEnvironment.ts"
       },
       "configurations": {
-        "staging": {
-          "args": [
-            "--env env_demo_fixtures_staging",
-            "--filename .env.load-demo-fixtures.staging"
-          ]
-        },
-        "production": {
-          "args": [
-            "--env env_demo_fixtures_production",
-            "--filename .env.load-demo-fixtures.production"
-          ]
+        "development": {},
+        "demo": {},
+        "staging": {},
+        "production": {}
+      }
+    },
+    "requires-sops-env:build-e2e": {
+      "executor": "@nx/vite:build",
+      "dependsOn": ["^prisma-generate"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/staff"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-dotenv-files": ["{projectRoot}/.env.offline"]
         }
       }
     },
-    "load-demo-fixtures": {
+    "requires-sops-env:verify-feature-variant-documentation": {
       "executor": "nx:run-commands",
-      "dependsOn": [{ "target": "env-demo-fixtures", "params": "forward" }],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node tools/verifyFeatureVariantDocumentation.ts"
+      }
+    },
+    "requires-sops-env:load-demo-fixtures": {
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
         "command": "vite-node tools/loadWorkflowsFixtures.ts"
@@ -299,12 +158,6 @@
         "production": {}
       }
     },
-    "load-prod-fixtures": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "vite-node tools/loadProdTestFixtures.mjs"
-      }
-    },
     "pdfformfiller-boilerplate": {
       "executor": "nx:run-commands",
       "options": {
@@ -312,38 +165,15 @@
         "command": "vite-node tools/pdfFormFillerBoilerplate.mjs"
       }
     },
-    "update-missing-snooze-staging": {
+    "requires-sops-env:delete-data-from-state": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/updateMissingSnooze.ts'"
-      }
-    },
-    "update-missing-snooze-local": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_dev_demo_server && vite-node tools/updateMissingSnooze.ts'"
-      }
-    },
-    "migrate-form-updates-staging": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "bash -c '. load_environment.sh env_dev_server && ts-node tools/migrate-formUpdates.ts'"
-      }
-    },
-    "migrate-form-updates-local": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_dev_demo_server && ts-node tools/migrate-formUpdates.ts'"
-      }
-    },
-    "delete-data-from-state": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vite-node tools/deleteDataFromState.ts {args.dbEnv} {args.stateCode}"
+        "command": "vite-node tools/deleteDataFromState.ts {args.stateCode}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
       }
     }
   }

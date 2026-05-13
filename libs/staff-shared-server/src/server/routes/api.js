@@ -29,7 +29,6 @@ import csvExport from "jsonexport/dist";
 import snakeCase from "lodash/snakeCase";
 import path from "path";
 import sanitizeFilename from "sanitize-filename";
-import { fileURLToPath } from "url";
 import { v4 as uuidV4 } from "uuid";
 
 import {
@@ -52,19 +51,10 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 import { mergeUserDataWithClientUpdates } from "../utils/mergeUserDataWithClientUpdates";
 import { fetchClientUpdatesV2 } from "../workflows/fetchClientUpdatesV2";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 let serviceAccount;
 
 if (!isOfflineMode()) {
-  serviceAccount = JSON.parse(
-    fs.readFileSync(
-      path.join(
-        __dirname,
-        `../../configs/${process.env.GOOGLE_APPLICATION_CREDENTIALS}`,
-      ),
-    ),
-  );
+  serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
 }
 
 const BAD_REQUEST = 400;
