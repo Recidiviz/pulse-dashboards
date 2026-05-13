@@ -91,10 +91,6 @@ export class UsNeTodosPresenter implements Hydratable {
   get goodTimeRestorationOpportunityRecord():
     | GoodTimeOpportunity["opportunityRecord"]
     | undefined {
-    if (!this.residentFlags.usNeGoodTimeAlerts) {
-      return;
-    }
-
     return this.opportunities.find(
       // This type guard only asserts what OpportunityData guarantees (that opportunityRecord's
       // type matches the opportunityId) but TypeScript is unable to deduce on its own.

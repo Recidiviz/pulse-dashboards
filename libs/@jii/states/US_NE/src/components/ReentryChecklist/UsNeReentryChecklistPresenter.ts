@@ -140,7 +140,6 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
    */
   get sections(): UsNeReentryChecklistSectionState[] {
     const { residentDocuments } = this;
-    const documentsEnabled = !!this.residentFlags.usNeChecklistDocuments;
 
     return usNeReentryChecklistSpec.sections.map((section) => ({
       id: section.id,
@@ -150,9 +149,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
           residentDocuments.has(dt),
         );
         const isVerifiable =
-          documentsEnabled &&
-          !!item.documentTypes &&
-          (!item.onlyVerifiableIfTrue || docExists);
+          !!item.documentTypes && (!item.onlyVerifiableIfTrue || docExists);
         const isChecked = isVerifiable
           ? docExists
           : this.liveState[item.id] ?? false;
