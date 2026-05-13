@@ -100,7 +100,7 @@ export class OffenderAssessmentPresenter {
       (level) => grouped[level].length > 0,
     ).map(
       (level) =>
-        `${RISK_LEVELS[level].toLowerCase()} in ${grouped[level].join(", ")}`,
+        `${RISK_LEVELS[level].toLowerCase()} in ${grouped[level].join("; ")}`,
     );
     return parts.length > 0 ? `Offender scored ${parts.join(" and ")}.` : null;
   }

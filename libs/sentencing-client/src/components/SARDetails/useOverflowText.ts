@@ -24,13 +24,13 @@ import { useEffect, useRef, useState } from "react";
  */
 export function useOverflowText(items: string[]) {
   const containerRef = useRef<HTMLSpanElement>(null);
-  const [displayText, setDisplayText] = useState(items.join(", "));
+  const [displayText, setDisplayText] = useState(items.join("; "));
 
   useEffect(() => {
     if (!containerRef.current || items.length === 0) return;
 
     const container = containerRef.current;
-    const fullText = items.join(", ");
+    const fullText = items.join("; ");
 
     // Temporarily show full text to measure
     container.textContent = fullText;
@@ -46,7 +46,7 @@ export function useOverflowText(items: string[]) {
 
     while (visibleCount > 0) {
       const remaining = items.length - visibleCount;
-      const testText = `${items.slice(0, visibleCount).join(", ")} + ${remaining} more`;
+      const testText = `${items.slice(0, visibleCount).join("; ")} + ${remaining} more`;
       container.textContent = testText;
 
       if (container.scrollWidth <= container.clientWidth) {
