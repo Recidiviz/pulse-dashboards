@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import styled from "styled-components";
 
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";
+import { type SnoozeOptions } from "../../WorkflowsStore/Task/types";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 const ToastWrapper = styled(Sans14)`
@@ -47,12 +48,15 @@ const UndoButton = styled.button`
 
 export const snoozeTaskToast = (
   task: SupervisionTask<SupervisionTaskType>,
-  snoozeForDays: number,
+  snoozeForDays: SnoozeOptions,
   operationsInfoInToast: boolean,
   isMobile: boolean,
 ) => {
   const personName = task.person.displayName;
-  let toastText = `${personName}'s ${task.displayName} will be hidden from this list for ${snoozeForDays} days.`;
+  let toastText =
+    snoozeForDays === "FOREVER"
+      ? `${personName}'s ${task.displayName} will be hidden from this list permanently.`
+      : `${personName}'s ${task.displayName} will be hidden from this list for ${snoozeForDays} days.`;
   if (operationsInfoInToast)
     toastText += ` This will not change the officer's timeliness Operations metrics.`;
   return toast(

@@ -49,6 +49,7 @@ import {
   type UTMParams,
 } from "../../utils/utmParams";
 import { OpportunityStatus, OpportunityTab } from "../../WorkflowsStore";
+import type { SnoozeOptions } from "../../WorkflowsStore/Task/types";
 import {
   SupervisionNeedType,
   SupervisionTaskType,
@@ -158,7 +159,7 @@ type TasksTrackingMetadata = {
 type TaskSnoozedMetadata = {
   justiceInvolvedPersonId: string;
   taskType: SupervisionTaskType;
-  snoozeForDays?: number;
+  snoozeForDays?: SnoozeOptions;
   withReason?: boolean;
 };
 

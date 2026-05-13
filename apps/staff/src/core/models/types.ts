@@ -44,13 +44,14 @@ import {
   TenantId,
 } from "../../RootStore/types";
 import { Leaves } from "../../utils/typeUtils";
-import {
+import type {
   Client,
   StaffFilterFunction,
   SupervisionTask,
 } from "../../WorkflowsStore";
-import { Task } from "../../WorkflowsStore/Task/Task";
-import {
+import type { Task } from "../../WorkflowsStore/Task/Task";
+import type {
+  SnoozeOptions,
   SupervisionTaskRecord,
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
@@ -118,8 +119,6 @@ export type StaffFilter = {
   filterValues: string[];
 };
 
-type ValidSnoozeForDays = 7 | 30 | 90;
-
 export interface FilterConfig {
   filters?: FilterSection[];
 }
@@ -135,7 +134,7 @@ export interface WorkflowsTasksConfig extends FilterConfig {
         person: Client,
         updates?: SupervisionTaskUpdate[K],
       ) => Task<K>;
-      snoozeForOptionsInDays?: Array<ValidSnoozeForDays>;
+      snoozeForOptionsInDays?: Array<SnoozeOptions>;
     };
   };
   columns?: TaskTableColumnId[];

@@ -264,7 +264,8 @@ export type SupervisionDetailsForTask = {
 };
 
 export type SnoozeInfo = {
-  snoozedUntil: Date; // calculated based on snoozedOn
+  // Calculated from snoozedOn + snoozeForDays for numeric snoozes; "FOREVER" for permanent snoozes.
+  snoozedUntil: Date | "FOREVER";
   snoozeReason?: string;
 } & SharedSnoozeUpdate;
 
@@ -298,7 +299,7 @@ export type SupervisionTask<
   additionalDetails?: string;
   vitalsMetricId?: VitalsMetricId;
   updateSupervisionTask: (
-    snoozeForDays?: number,
+    snoozeForDays?: SnoozeOptions,
     snoozeReason?: string,
   ) => void;
 };

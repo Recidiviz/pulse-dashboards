@@ -181,9 +181,13 @@ export const VitalsTaskDrilldownTable = observer(
                 {task.isSnoozed && (
                   <StatusIcon
                     kind="Clock"
-                    tooltip={`${bodyDisplayName} is snoozed until ${formatWorkflowsDate(
-                      task.snoozeInfo?.snoozedUntil,
-                    )}`}
+                    tooltip={
+                      task.snoozeInfo?.snoozedUntil === "FOREVER"
+                        ? `${bodyDisplayName} is snoozed permanently`
+                        : `${bodyDisplayName} is snoozed until ${formatWorkflowsDate(
+                            task.snoozeInfo?.snoozedUntil,
+                          )}`
+                    }
                   />
                 )}
               </span>

@@ -316,4 +316,173 @@ describe("Task", () => {
       );
     });
   });
+
+  describe("Task with FOREVER snooze and tasksPermasnooze ON", () => {
+    beforeEach(() => {
+      mockUpdates = {
+        snoozedBy: "tester@example.com",
+        snoozedOn: testDate,
+        snoozeForDays: "FOREVER",
+      };
+      createTestUnit(mockUpdates);
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({ tasksPermasnooze: {} });
+    });
+
+    test("snoozeInfo carries snoozedUntil = FOREVER and preserves metadata", () => {
+      expect(task.snoozeInfo).not.toBeUndefined();
+      expect(task.snoozeInfo?.snoozedBy).toEqual("tester@example.com");
+      expect(task.snoozeInfo?.snoozedOn).toEqual(testDate);
+      expect(task.snoozeInfo?.snoozedUntil).toEqual("FOREVER");
+    });
+
+    test("isSnoozed is true for a FOREVER snooze", () => {
+      expect(task.isSnoozed).toBeTrue();
+    });
+
+    test("isSnoozed remains true for a FOREVER snooze with an old snoozedOn", () => {
+      mockUpdates = {
+        snoozedBy: "tester@example.com",
+        snoozedOn: "2000-01-01",
+        snoozeForDays: "FOREVER",
+      };
+      createTestUnit(mockUpdates);
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({ tasksPermasnooze: {} });
+      expect(task.isSnoozed).toBeTrue();
+    });
+
+    test("snoozeInfo surfaces a snoozeReason alongside FOREVER", () => {
+      mockUpdates = {
+        snoozedBy: "tester@example.com",
+        snoozedOn: testDate,
+        snoozeForDays: "FOREVER",
+        snoozeReason: "Client is retired.",
+      };
+      createTestUnit(mockUpdates);
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({ tasksPermasnooze: {} });
+      expect(task.snoozeInfo?.snoozedUntil).toEqual("FOREVER");
+      expect(task.snoozeInfo?.snoozeReason).toEqual("Client is retired.");
+    });
+
+    test("updateSupervisionTask writes FOREVER as snoozeForDays", () => {
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+        info: { email: "test@email.gov" },
+      });
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+      const trackSpy = vi.spyOn(rootStore.analyticsStore, "trackTaskSnoozed");
+
+      task.updateSupervisionTask("FOREVER");
+
+      expect(
+        rootStore.firestoreStore.updateSupervisionTask,
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
+        homeVisit: {
+          snoozeForDays: "FOREVER",
+          snoozedBy: "test@email.gov",
+          snoozedOn: testDate,
+        },
+      });
+      expect(trackSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          snoozeForDays: "FOREVER",
+          withReason: false,
+        }),
+      );
+    });
+
+    test("updateSupervisionTask writes FOREVER with a snoozeReason", () => {
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+        info: { email: "test@email.gov" },
+      });
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+      const trackSpy = vi.spyOn(rootStore.analyticsStore, "trackTaskSnoozed");
+
+      task.updateSupervisionTask("FOREVER", "Client is retired.");
+
+      expect(
+        rootStore.firestoreStore.updateSupervisionTask,
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
+        homeVisit: {
+          snoozeForDays: "FOREVER",
+          snoozedBy: "test@email.gov",
+          snoozedOn: testDate,
+          snoozeReason: "Client is retired.",
+        },
+      });
+      expect(trackSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          snoozeForDays: "FOREVER",
+          withReason: true,
+        }),
+      );
+    });
+
+    test("updateSupervisionTask(undefined) clears a FOREVER snooze via deleteField", () => {
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+        info: { email: "test@email.gov" },
+      });
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+
+      task.updateSupervisionTask(undefined);
+
+      expect(
+        rootStore.firestoreStore.updateSupervisionTask,
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
+        homeVisit: deleteField(),
+      });
+    });
+  });
+
+  describe("Task with FOREVER snooze and tasksPermasnooze OFF", () => {
+    beforeEach(() => {
+      mockUpdates = {
+        snoozedBy: "tester@example.com",
+        snoozedOn: testDate,
+        snoozeForDays: "FOREVER",
+      };
+      createTestUnit(mockUpdates);
+      // No featureVariants override — the flag defaults to off in tests.
+    });
+
+    test("snoozeInfo returns undefined for a FOREVER record when the flag is off", () => {
+      expect(task.snoozeInfo).toBeUndefined();
+    });
+
+    test("isSnoozed is false for a FOREVER record when the flag is off", () => {
+      expect(task.isSnoozed).toBeFalse();
+    });
+
+    test("flipping the flag on makes the same record snoozed again", () => {
+      expect(task.isSnoozed).toBeFalse();
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({ tasksPermasnooze: {} });
+      expect(task.isSnoozed).toBeTrue();
+      expect(task.snoozeInfo?.snoozedUntil).toEqual("FOREVER");
+    });
+
+    test("numeric snoozes are unaffected by the flag", () => {
+      mockUpdates = {
+        snoozedBy: "tester@example.com",
+        snoozedOn: testDate,
+        snoozeForDays: 30,
+      };
+      createTestUnit(mockUpdates);
+      expect(task.isSnoozed).toBeTrue();
+      expect(task.snoozeInfo?.snoozedUntil).toEqual(new Date(2023, 5, 17));
+    });
+  });
 });

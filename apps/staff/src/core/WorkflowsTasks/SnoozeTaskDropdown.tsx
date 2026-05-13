@@ -29,6 +29,7 @@ import {
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";
+import { type SnoozeOptions } from "../../WorkflowsStore/Task/types";
 import { WorkflowsTasksConfig } from "../models/types";
 
 const Wrapper = styled.div`
@@ -99,7 +100,7 @@ const UnhideTaskButton = styled.button`
 type SnoozeTaskDropdownProps = {
   task: SupervisionTask<SupervisionTaskType>;
   taskConfig?: WorkflowsTasksConfig["tasks"][SupervisionTaskType];
-  onSelectSnoozeDays: (snoozeForDays: number) => void;
+  onSelectSnoozeDays: (snoozeForDays: SnoozeOptions) => void;
 };
 
 export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
@@ -107,10 +108,16 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
   taskConfig,
   onSelectSnoozeDays,
 }: SnoozeTaskDropdownProps) {
-  const { taskSnoozeReason } = useFeatureVariants();
+  const { taskSnoozeReason, tasksPermasnooze } = useFeatureVariants();
   const verticalKebab = Boolean(taskSnoozeReason);
 
   if (!taskConfig || !taskConfig?.snoozeForOptionsInDays) return null;
+
+  const visibleOptions = tasksPermasnooze
+    ? taskConfig.snoozeForOptionsInDays
+    : taskConfig.snoozeForOptionsInDays.filter(
+        (option) => option !== "FOREVER",
+      );
 
   return (
     <Wrapper>
@@ -141,13 +148,13 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
               )}
             </SnoozeMenuInstruction>
             {!task.isSnoozed &&
-              taskConfig.snoozeForOptionsInDays.map((option) => {
+              visibleOptions.map((option) => {
                 return (
                   <SnoozeMenuItem
                     key={`snooze-days-${option}`}
                     onClick={() => onSelectSnoozeDays(option)}
                   >
-                    {option} days
+                    {option === "FOREVER" ? "Forever" : `${option} days`}
                   </SnoozeMenuItem>
                 );
               })}

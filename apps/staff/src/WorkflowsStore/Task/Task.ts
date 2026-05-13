@@ -27,11 +27,12 @@ import { RootStore } from "../../RootStore";
 import { formatDueDateFromToday } from "../../utils";
 import { Client } from "../Client";
 import {
-  SnoozeInfo,
-  SupervisionDetailsForTask,
-  SupervisionTask,
-  SupervisionTaskRecord,
-  SupervisionTaskType,
+  type SnoozeInfo,
+  type SnoozeOptions,
+  type SupervisionDetailsForTask,
+  type SupervisionTask,
+  type SupervisionTaskRecord,
+  type SupervisionTaskType,
 } from "./types";
 
 /**
@@ -161,23 +162,37 @@ export abstract class Task<TaskType extends SupervisionTaskType>
 
   get snoozeInfo(): SnoozeInfo | undefined {
     if (!this.updates?.snoozedOn) return;
+    const { snoozeForDays, snoozedBy, snoozedOn, snoozeReason } = this.updates;
+    if (snoozeForDays === "FOREVER") {
+      const {
+        workflowsStore: {
+          featureVariants: { tasksPermasnooze },
+        },
+      } = this.rootStore;
+      // Ignore a persisted "FOREVER" record when the feature is disabled —
+      // the rest of the system will treat the task as not snoozed and it
+      // will reappear in the upcoming list.
+      if (!tasksPermasnooze) return undefined;
+      return { snoozedBy, snoozedOn, snoozedUntil: "FOREVER", snoozeReason };
+    }
     return {
-      snoozedBy: this.updates.snoozedBy,
-      snoozedOn: this.updates.snoozedOn,
-      snoozedUntil: addDays(
-        parseISO(this.updates.snoozedOn),
-        this.updates.snoozeForDays,
-      ),
-      snoozeReason: this.updates.snoozeReason,
+      snoozedBy,
+      snoozedOn,
+      snoozedUntil: addDays(parseISO(snoozedOn), snoozeForDays),
+      snoozeReason,
     };
   }
 
   get isSnoozed(): boolean {
     if (!this.snoozeInfo) return false;
+    if (this.snoozeInfo.snoozedUntil === "FOREVER") return true;
     return this.snoozeInfo.snoozedUntil >= startOfToday();
   }
 
-  updateSupervisionTask(snoozeForDays?: number, snoozeReason?: string): void {
+  updateSupervisionTask(
+    snoozeForDays?: SnoozeOptions,
+    snoozeReason?: string,
+  ): void {
     const {
       workflowsStore: { currentUserEmail },
       firestoreStore,

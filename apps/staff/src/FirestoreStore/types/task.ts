@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { SupervisionTaskType } from "../../WorkflowsStore/Task/types";
+import type {
+  SnoozeOptions,
+  SupervisionTaskType,
+} from "../../WorkflowsStore/Task/types";
 import { SharedSnoozeUpdate } from "./opportunity";
 
 export type SupervisionTaskUpdate = {
   [key in SupervisionTaskType]?: {
-    snoozeForDays: number;
+    snoozeForDays: SnoozeOptions;
     snoozeReason?: string;
   } & SharedSnoozeUpdate;
 };

@@ -33,6 +33,7 @@ import {
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
+import { type SnoozeOptions } from "../../WorkflowsStore/Task/types";
 import { formatDateString } from "../models/utils";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
@@ -257,8 +258,11 @@ const ContactWindow = ({ task }: { task: SupervisionTask }) => {
 export const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
   if (!task.isSnoozed || !task.snoozeInfo) return null;
   const { snoozedBy, snoozedUntil, snoozedOn, snoozeReason } = task.snoozeInfo;
-
-  const snoozeText = `This task is hidden until ${formatWorkflowsDate(snoozedUntil)}. Marked as hidden by ${snoozedBy} on ${formatWorkflowsDate(formatDateString(snoozedOn))}.`;
+  const formattedSnoozedOn = formatWorkflowsDate(formatDateString(snoozedOn));
+  const snoozeText =
+    snoozedUntil === "FOREVER"
+      ? `This task is hidden permanently. Marked as hidden by ${snoozedBy} on ${formattedSnoozedOn}.`
+      : `This task is hidden until ${formatWorkflowsDate(snoozedUntil)}. Marked as hidden by ${snoozedBy} on ${formattedSnoozedOn}.`;
   return (
     <SnoozedTaskInfoBox>
       <SnoozedTaskIcon>
@@ -286,13 +290,12 @@ const TaskPreview = ({
   const { isMobile } = useIsMobile(true);
   const { taskSnoozeReason } = useFeatureVariants();
   const reasonEnabled = Boolean(taskSnoozeReason);
-  const [pendingSnoozeDays, setPendingSnoozeDays] = useState<number | null>(
-    null,
-  );
+  const [pendingSnoozeDays, setPendingSnoozeDays] =
+    useState<SnoozeOptions | null>(null);
 
   // The parent owns the snooze write + toast so the dropdown and the
   // reason form can stay presentational.
-  const persistSnooze = (days: number, reason: string | undefined) => {
+  const persistSnooze = (days: SnoozeOptions, reason: string | undefined) => {
     task.updateSupervisionTask(days, reason);
     snoozeTaskToast(task, days, true, isMobile);
   };
@@ -329,8 +332,10 @@ const TaskPreview = ({
         </TaskTitle>
         {task.snoozeInfo?.snoozedUntil && (
           <TaskSnoozedDate>
-            {"Hidden from Tasks list until " +
-              formatDate(task.snoozeInfo.snoozedUntil)}
+            {task.snoozeInfo.snoozedUntil === "FOREVER"
+              ? "Hidden from Tasks list permanently"
+              : "Hidden from Tasks list until " +
+                formatDate(task.snoozeInfo.snoozedUntil)}
           </TaskSnoozedDate>
         )}
         <TaskDetails>{task.additionalDetails}</TaskDetails>
@@ -358,13 +363,12 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
   const { isMobile } = useIsMobile(true);
   const { taskSnoozeReason } = useFeatureVariants();
   const reasonEnabled = Boolean(taskSnoozeReason);
-  const [pendingSnoozeDays, setPendingSnoozeDays] = useState<number | null>(
-    null,
-  );
+  const [pendingSnoozeDays, setPendingSnoozeDays] =
+    useState<SnoozeOptions | null>(null);
 
   // V2 (US_TX) intentionally omits the operations-metrics line from the
   // toast — see snoozeTaskToast's operationsInfoInToast arg.
-  const persistSnooze = (days: number, reason: string | undefined) => {
+  const persistSnooze = (days: SnoozeOptions, reason: string | undefined) => {
     task.updateSupervisionTask(days, reason);
     snoozeTaskToast(task, days, false, isMobile);
   };

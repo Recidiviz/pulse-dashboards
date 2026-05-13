@@ -49,6 +49,10 @@ const taskConfig = {
   snoozeForOptionsInDays: [7, 30, 90],
 } as unknown as WorkflowsTasksConfig["tasks"][SupervisionTaskType];
 
+const taskConfigWithForever = {
+  snoozeForOptionsInDays: [7, 30, "FOREVER"],
+} as unknown as WorkflowsTasksConfig["tasks"][SupervisionTaskType];
+
 function findKebabButton(): HTMLElement {
   const button = document
     .querySelector(".SnoozeTaskDropdownButton")
@@ -133,6 +137,50 @@ describe("SnoozeTaskDropdown", () => {
       );
       const button = findKebabButton();
       expect(button).toHaveStyleRule("flex-direction", "column");
+    });
+  });
+
+  describe("FOREVER (tasksPermasnooze)", () => {
+    test("filters FOREVER out of the menu when the flag is OFF", () => {
+      render(
+        <SnoozeTaskDropdown
+          task={makeTask()}
+          taskConfig={taskConfigWithForever}
+          onSelectSnoozeDays={vi.fn()}
+        />,
+      );
+      expect(screen.getByText("7 days")).toBeInTheDocument();
+      expect(screen.getByText("30 days")).toBeInTheDocument();
+      expect(screen.queryByText("Forever")).not.toBeInTheDocument();
+    });
+
+    test("renders a 'Forever' item when the flag is ON", () => {
+      setActiveFeatureVariants({ tasksPermasnooze: {} });
+      render(
+        <SnoozeTaskDropdown
+          task={makeTask()}
+          taskConfig={taskConfigWithForever}
+          onSelectSnoozeDays={vi.fn()}
+        />,
+      );
+      expect(screen.getByText("Forever")).toBeInTheDocument();
+    });
+
+    test("clicking 'Forever' delegates FOREVER to onSelectSnoozeDays", () => {
+      setActiveFeatureVariants({ tasksPermasnooze: {} });
+      const task = makeTask();
+      const onSelectSnoozeDays = vi.fn();
+      render(
+        <SnoozeTaskDropdown
+          task={task}
+          taskConfig={taskConfigWithForever}
+          onSelectSnoozeDays={onSelectSnoozeDays}
+        />,
+      );
+      fireEvent.click(findKebabButton());
+      fireEvent.click(screen.getByText("Forever"));
+      expect(onSelectSnoozeDays).toHaveBeenCalledWith("FOREVER");
+      expect(task.updateSupervisionTask).not.toHaveBeenCalled();
     });
   });
 });
