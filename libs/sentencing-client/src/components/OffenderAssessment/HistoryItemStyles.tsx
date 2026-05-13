@@ -49,8 +49,8 @@ export const EditButton = styled.button`
   outline: none;
 
   svg {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.75rem;
+    height: 0.75rem;
     display: block;
   }
 
@@ -84,8 +84,8 @@ export const DeleteIconButton = styled.button`
   outline: none;
 
   svg {
-    width: 0.75rem;
-    height: 0.75rem;
+    width: 1rem;
+    height: 1rem;
     display: block;
   }
 
