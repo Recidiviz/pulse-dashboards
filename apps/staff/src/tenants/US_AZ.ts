@@ -29,7 +29,7 @@ const US_AZ_CONFIG = {
   facilitiesDisplayIdCopy: "ADC number",
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
-    "https://docs.google.com/document/d/e/2PACX-1vQdaopTwajMs7exIRMLm6OtZQuPXI_gOb7W96CHNcpJ0Wez5a2qd3Ag_mpOpOcHobXo1FOnmnfF2JnL/pub",
+    "https://docs.google.com/document/d/e/2PACX-1vTUcDC7U_T-u1vch4wQNB8POs1-TJhaUFodbv0srptCdQzHX7yRItEOYzlSyY2CNu8eDIlWibGeFvY-/pub",
   workflowsSystemConfigs: {
     INCARCERATION: {
       search: [
