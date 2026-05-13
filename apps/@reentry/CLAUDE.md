@@ -137,3 +137,7 @@ configured in `config.py`
 ## Intake Chatbot Guardrails
 
 The intake chatbot's safety guardrail system is documented in `app/utils/intake/GUARDRAILS.md`. It covers all three guardrail layers (regex, prompt engineering, AI classifiers), hard/soft stop behavior, message visibility rules, and Slack alerting.
+
+## PDF Generation
+
+PDF rendering for all three document types (action plan, intake summary, chat history) is handled entirely by the backend. See `app/pdf/README.md` for architecture, how to add a new PDF endpoint, security requirements (URL fetcher, content escaping), and the markdown preprocessing pipeline.

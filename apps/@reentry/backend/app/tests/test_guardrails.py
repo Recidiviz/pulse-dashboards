@@ -29,6 +29,7 @@ from app.utils.intake.guardrails import (
     check_harm_to_others,
     check_injection,
     check_openai_moderation,
+    displayable_guardrail_flags,
     run_guardrails,
 )
 
@@ -340,3 +341,27 @@ class TestRunGuardrails:
             "openai_moderation:self-harm": ["self-harm/intent"],
             "openai_moderation:harm_to_others": ["harassment/threatening"],
         }
+
+
+class TestDisplayableGuardrailFlags:
+    def test_hard_stops_pass_through(self):
+        flags = ["crisis", "harm_to_others", "openai_moderation:self-harm"]
+        assert displayable_guardrail_flags(flags) == flags
+
+    def test_soft_stops_filtered(self):
+        assert (
+            displayable_guardrail_flags(
+                ["prompt_injection", "char_limit", "llmaj:prompt-injection"]
+            )
+            == []
+        )
+
+    def test_mixed_returns_only_hard_stops(self):
+        flags = ["crisis", "prompt_injection", "llmaj:self-harm", "char_limit"]
+        assert displayable_guardrail_flags(flags) == ["crisis", "llmaj:self-harm"]
+
+    def test_empty_list(self):
+        assert displayable_guardrail_flags([]) == []
+
+    def test_unknown_type_filtered(self):
+        assert displayable_guardrail_flags(["some_future_soft_stop"]) == []

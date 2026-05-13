@@ -19,25 +19,16 @@
 
 import Markdown from "markdown-to-jsx";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
+import { useIntakeSummaryPDF } from "~@reentry/frontend/hooks/usePDFDownload";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import {
-  createPDFPageStyles,
-  extractCompleteCSS,
-} from "~@reentry/frontend/utils/pdfGenerator";
-import {
-  AI_DISCLOSURE_PRINT_TEXT,
-  AIDisclosure,
-  AIDisclosureType,
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend-shared";
+import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
 
 import styles from "./markdown.module.css";
 
@@ -46,14 +37,10 @@ const IntakeSummaryPage = () => {
     planId: string;
     clientId: string;
   };
-  const { getAccessToken, refreshToken } = useAuth();
+  const { getAccessToken } = useAuth();
   const { track } = useAnalytics();
   const router = useRouter();
-  const [isDownloading, setIsDownloading] = useState(false);
 
-  const contentRef = useRef<HTMLDivElement | null>(null);
-
-  // Track if outputs are disabled (403 error)
   const [outputsDisabled, setOutputsDisabled] = useState(false);
 
   const { data: clientData } = $api.useQuery(
@@ -126,159 +113,20 @@ const IntakeSummaryPage = () => {
       ? `${givenNames} ${surname}`
       : givenNames || surname || "";
 
-  function convertButtonsToSpansPreserveText(
-    containerElement: HTMLElement | Document = document,
-  ): string[] {
-    const customLinkButtons =
-      containerElement.querySelectorAll("button.custom-link");
-    const customLinkButtonsHtmlContent: string[] = [];
-    customLinkButtons.forEach((button) => {
-      customLinkButtonsHtmlContent.push(button.innerHTML);
-      const originalText = button.textContent;
-      const span = document.createElement("span");
-      for (const attr of button.attributes) {
-        span.setAttribute(attr.name, attr.value);
-      }
-      span.textContent = originalText;
-      if (button.parentNode) {
-        button.parentNode.replaceChild(span, button);
-      }
-    });
+  const {
+    handleDownload: downloadPDF,
+    handlePrint: printPDF,
+    isDownloading,
+  } = useIntakeSummaryPDF(planId, `${clientFullName}_intake_summary.pdf`);
 
-    return customLinkButtonsHtmlContent;
-  }
-
-  const generatePDFBlob = async (
-    addAiDisclosure = false,
-  ): Promise<Blob | null> => {
-    const element = document.getElementById("contentToDownload");
-    if (!element) {
-      return null;
-    }
-
-    convertButtonsToSpansPreserveText(element);
-    const extractedCSSResult = extractCompleteCSS(element, {
-      includeChildren: true,
-      includeMediaQueries: true,
-      includeAnimations: true,
-    });
-    const pdfCSS = `
-      ${extractedCSSResult.combined}
-      ${createPDFPageStyles(AI_DISCLOSURE_PRINT_TEXT)}
-    `;
-
-    const aiDisclosureHTML = addAiDisclosure
-      ? `<div style="background-color: #F3F4F6; padding: 12px 16px; margin-bottom: 16px; border-radius: 4px;">
-           <p style="margin: 0; color: #374151; font-size: 14px; line-height: 1.5;">
-             ${AI_DISCLOSURE_PRINT_TEXT}
-           </p>
-         </div>`
-      : "";
-
-    const intakeSummaryData = {
-      html: aiDisclosureHTML + element.innerHTML,
-      css: [pdfCSS],
-      options: {
-        printBackground: true,
-      } as Record<string, unknown>,
-    };
-
-    let accessToken = getAccessToken();
-    if (!accessToken) {
-      await refreshToken();
-      accessToken = getAccessToken();
-    }
-    if (!accessToken) {
-      return null;
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:8000"}/api/generate-pdf`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify(intakeSummaryData),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to generate PDF");
-      }
-
-      return await response.blob();
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      return null;
-    }
+  const handleDownload = async () => {
+    track("intake_summary_downloaded", { justiceInvolvedPersonId: clientId });
+    await downloadPDF();
   };
 
   const handlePrint = async () => {
     track("intake_summary_printed", { justiceInvolvedPersonId: clientId });
-
-    try {
-      const pdfBlob = await generatePDFBlob(true);
-
-      if (!pdfBlob) {
-        showErrorToast("Failed to generate PDF for printing");
-        return;
-      }
-
-      const blobUrl = URL.createObjectURL(pdfBlob);
-
-      const iframe = document.createElement("iframe");
-      iframe.style.position = "absolute";
-      iframe.style.left = "-9999px";
-      iframe.src = blobUrl;
-      document.body.appendChild(iframe);
-
-      iframe.onload = () => {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-
-        setTimeout(() => {
-          iframe.remove();
-          URL.revokeObjectURL(blobUrl);
-        }, 1000);
-      };
-    } catch (error) {
-      console.error("Failed to print:", error);
-      showErrorToast("Failed to print intake summary");
-    }
-  };
-
-  const handleDownload = async (): Promise<void> => {
-    track("intake_summary_downloaded", { justiceInvolvedPersonId: clientId });
-    setIsDownloading(true);
-
-    try {
-      const pdfBlob = await generatePDFBlob();
-
-      if (!pdfBlob) {
-        showErrorToast("Failed to generate PDF");
-        setIsDownloading(false);
-        return;
-      }
-
-      const fileName = `${clientFullName}_intake_summary.pdf`;
-      const blobUrl = URL.createObjectURL(pdfBlob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
-
-      showSuccessToast("PDF downloaded successfully");
-    } catch {
-      showErrorToast("Failed to download PDF");
-    }
-
-    setIsDownloading(false);
+    await printPDF();
   };
 
   return (
@@ -338,11 +186,7 @@ const IntakeSummaryPage = () => {
                   </div>
                 )}
                 {!errorIntakeSummary && intakeSummary && (
-                  <div
-                    ref={contentRef}
-                    id={"contentToDownload"}
-                    className="max-w-[800px]"
-                  >
+                  <div className="max-w-[800px]">
                     <div className="w-full flex-col justify-start items-center gap-3 flex">
                       <div className="w-full text-[#2a5469]/90 text-sm font-medium leading-[16.80px]">
                         Intake Summary

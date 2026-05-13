@@ -1,21 +1,16 @@
-import ipaddress
-import socket
 import uuid
 from datetime import datetime
 from io import BytesIO
-from typing import List, Optional
-from urllib.parse import urlparse
+from typing import Optional
 from uuid import UUID
 
 import orjson
 import structlog
-import weasyprint
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel, Field, computed_field
-from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
@@ -53,6 +48,13 @@ from app.models.models import (
     ResourceAssociationAction,
     ResourceAssociationType,
 )
+from app.pdf.action_plan import (
+    ResourceForPDF,
+    markdown_to_html,
+    preprocess_action_plan_markdown,
+    preprocess_markdown_common,
+)
+from app.pdf.renderer import pdf_renderer
 from app.routes.base import DeletionResponse, DeletionStatus, ORMResponse
 from app.routes.shared_models import (
     AddressSubmission,
@@ -73,7 +75,6 @@ from app.services.resources import (
     TravelMode,
     list_resources,
 )
-from app.utils.resources_utils import batch_get_active_resources
 from app.utils.address_autocomplete import (
     AutocompleteAddressResponse,
     AutocompleteCityResponse,
@@ -83,6 +84,7 @@ from app.utils.address_autocomplete import (
 )
 from app.utils.address_autocomplete import autocomplete_city as autocomplete_city_util
 from app.utils.permission_utils import check_access
+from app.utils.resources_utils import batch_get_active_resources
 
 from ..utils.PrometheusBackgroundThreadManager import (
     llm_plan_creation_total_counter,
@@ -92,51 +94,6 @@ from .execution_router import ExecutionResponse
 
 router = APIRouter()
 logger = structlog.get_logger(__name__)
-
-_BLOCKED_HOSTS = frozenset({"metadata.google.internal", "metadata", "169.254.169.254"})
-
-
-def _is_blocked_ip(addr_str: str) -> bool:
-    """Check if an IP address is private, loopback, or link-local."""
-    try:
-        addr = ipaddress.ip_address(addr_str)
-        return addr.is_private or addr.is_loopback or addr.is_link_local
-    except ValueError:
-        return False
-
-
-def _safe_url_fetcher(url, timeout=10, ssl_context=None):
-    """URL fetcher for WeasyPrint that blocks internal/metadata endpoints.
-
-    Resolves DNS before allowing requests to prevent DNS rebinding attacks
-    where attacker-controlled domains point to internal IPs.
-    """
-    parsed = urlparse(url)
-    hostname = parsed.hostname or ""
-
-    # Block known metadata hostnames
-    if hostname in _BLOCKED_HOSTS:
-        raise ValueError(f"URL fetch blocked: {hostname}")
-
-    # Block literal private IPs
-    if _is_blocked_ip(hostname):
-        raise ValueError(f"URL fetch blocked: private IP {hostname}")
-
-    # Resolve DNS and block if it points to a private/internal IP
-    try:
-        resolved_ips = socket.getaddrinfo(
-            hostname, parsed.port or 80, proto=socket.IPPROTO_TCP
-        )
-        for family, _, _, _, sockaddr in resolved_ips:
-            ip_str = sockaddr[0]
-            if _is_blocked_ip(ip_str):
-                raise ValueError(
-                    f"URL fetch blocked: {hostname} resolves to private IP {ip_str}"
-                )
-    except socket.gaierror:
-        raise ValueError(f"URL fetch blocked: cannot resolve {hostname}")
-
-    return weasyprint.default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
 
 
 class PlanRequestCreate(BaseModel):
@@ -600,7 +557,7 @@ async def router_generate_plan_manually(
         finished_at=datetime.utcnow(),
         gen_type=GenerationType.MANUAL,
         gen_data_json=gen_data_json,
-        resources_associations_map=latest_generation.resources_associations_map
+        resources_associations_map=latest_generation.resources_associations_map,
     )
     gen = await create_plan_generation(session, plan_gen)
 
@@ -1136,6 +1093,15 @@ class SetNotificationRequest(BaseModel):
     notify: bool
 
 
+class ResourceSectionForPDF(BaseModel):
+    title: str
+    resources: list[ResourceForPDF] = []
+
+
+class ActionPlanPDFRequest(BaseModel):
+    resource_sections: list[ResourceSectionForPDF] = []
+
+
 @router.post(
     "/plans/{id}/set-notify",
     summary="Set Generation Notification",
@@ -1178,80 +1144,104 @@ async def router_set_generation_notify(
     return Response(status_code=200)
 
 
-# Allowlist of safe WeasyPrint write_pdf options. The 'target' parameter is
-# explicitly excluded because it writes the PDF to a server filesystem path
-# instead of returning bytes, enabling arbitrary file write attacks.
-_SAFE_PDF_OPTIONS = frozenset(
-    {
-        "presentational_hints",
-        "optimize_images",
-        "pdf_version",
-        "pdf_variant",
-        "pdf_identifier",
-        "pdf_forms",
-        "uncompressed_pdf",
-    }
-)
+def _get_client_name(client_pseudo_id: str) -> str:
+    record = Queries.get_client_by_pseudonymized_id_unsafe(client_pseudo_id)
+    if record and record.full_name:
+        return record.full_name.formatted_full_name()
+    return ""
 
 
-class PDFRequest(BaseModel):
-    html: str
-    css: Optional[List[str]] = []
-    options: Optional[dict] = {}
-
-
-@router.post("/generate-pdf")
-async def generate_pdf(
-    request: PDFRequest,
-    _: str = Depends(
-        get_pseudonymized_id
-    ),  # authentication only; no client-level check needed since PDF is generated from caller-provided HTML
+async def _check_plan_access_and_outputs(
+    plan_id: UUID,
+    session: AsyncSession,
+    pseudonymized_id: str,
+    auth_user_context: dict,
 ):
-    """Generate PDF from HTML using WeasyPrint"""
-    try:
-        # Create HTML document with restricted URL fetcher
-        html_doc = HTML(string=request.html, url_fetcher=_safe_url_fetcher)
+    plan = await get_plan_by_id(session, plan_id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+        is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
+    )
+    if plan.intake_id:
+        intake = await get_intake_by_id(session, plan.intake_id)
+        if intake and not intake.outputs_enabled:
+            raise HTTPException(
+                status_code=403,
+                detail="Outputs are disabled for this assessment because they are under revision",
+            )
+    return plan
 
-        # Process CSS content from frontend (now includes PDF-specific CSS)
-        css_objects = []
 
-        for css_content in request.css:
-            try:
-                if isinstance(css_content, str) and css_content.strip():
-                    # All CSS from frontend should now be content strings
-                    css_objects.append(CSS(string=css_content))
-            except Exception as e:
-                # Skip any CSS that fails to load
-                print(f"Warning: Failed to load CSS content: {str(e)}")
-                continue
+@router.get("/plans/{id}/intake-summary-pdf")
+async def generate_intake_summary_pdf(
+    id: UUID,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    plan = await _check_plan_access_and_outputs(
+        id, session, pseudonymized_id, auth_user_context
+    )
+    asset = await get_asset_by_filename(session, id, "summary.md")
+    if not asset:
+        raise HTTPException(status_code=404, detail="Intake summary not found")
 
-        # Default PDF options — only allowlisted keys from request.options are merged
-        pdf_options = {
-            "presentational_hints": True,
-            "optimize_images": True,
-            "pdf_version": "1.7",
-        }
-        if request.options:
-            rejected = set(request.options) - _SAFE_PDF_OPTIONS
-            if rejected:
-                logger.warning(
-                    "Rejected disallowed PDF options",
-                    rejected_keys=sorted(rejected),
-                )
-            for key in _SAFE_PDF_OPTIONS & set(request.options):
-                pdf_options[key] = request.options[key]
+    content_html = markdown_to_html(preprocess_markdown_common(asset.data_as_text()))
+    pdf_bytes = pdf_renderer.render(
+        "intake_summary.html",
+        {
+            "client_name": _get_client_name(plan.client_pseudo_id),
+            "content": content_html,
+        },
+        "intake_summary.pdf.css",
+    )
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=intake_summary.pdf"},
+    )
 
-        # Always render to memory — never pass 'target' to write_pdf
-        pdf_bytes = html_doc.write_pdf(stylesheets=css_objects, **pdf_options)
 
-        return Response(
-            content=pdf_bytes,
-            media_type="application/pdf",
-            headers={"Content-Disposition": "attachment; filename=document.pdf"},
-        )
-    except Exception as e:
-        logger.exception(f"PDF generation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail="PDF generation failed")
+@router.post("/plans/{id}/action-plan-pdf")
+async def generate_action_plan_pdf(
+    id: UUID,
+    body: ActionPlanPDFRequest = Body(default_factory=ActionPlanPDFRequest),
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    plan = await _check_plan_access_and_outputs(
+        id, session, pseudonymized_id, auth_user_context
+    )
+    gen = await plan.get_latest_generation(session)
+    if not gen or not gen.markdown_result:
+        raise HTTPException(status_code=404, detail="Action plan not found")
+
+    resources_by_section: dict[str, list[ResourceForPDF]] | None = None
+    if body.resource_sections:
+        resources_by_section = {s.title: s.resources for s in body.resource_sections}
+
+    preprocessed = preprocess_action_plan_markdown(
+        gen.markdown_result, resources_by_section
+    )
+    content_html = markdown_to_html(preprocessed)
+    pdf_bytes = pdf_renderer.render(
+        "action_plan.html",
+        {
+            "client_name": _get_client_name(plan.client_pseudo_id),
+            "content": content_html,
+        },
+        "action_plan.pdf.css",
+    )
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=action_plan.pdf"},
+    )
 
 
 @router.patch(
