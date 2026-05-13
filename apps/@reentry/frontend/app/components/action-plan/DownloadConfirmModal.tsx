@@ -35,20 +35,17 @@ const DownloadConfirmModal = ({
   isDownloading = false,
 }: DownloadConfirmModalProps) => {
   const [reviewedPlan, setReviewedPlan] = useState(false);
-  const [verifiedResources, setVerifiedResources] = useState(false);
 
-  const allChecked = reviewedPlan && verifiedResources;
+  const allChecked = reviewedPlan;
 
   const handleClose = () => {
     setReviewedPlan(false);
-    setVerifiedResources(false);
     onClose();
   };
 
   const handleConfirm = () => {
     if (!allChecked) return;
     setReviewedPlan(false);
-    setVerifiedResources(false);
     onConfirm();
   };
 
