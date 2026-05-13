@@ -131,5 +131,6 @@ apps/jii/public/videos/*.vtt
 
 # Claude
 .claude/settings.local.json
+.claude/worktrees/
 
 storybook-static
