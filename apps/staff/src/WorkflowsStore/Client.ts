@@ -52,7 +52,8 @@ import {
 } from "../utils/formatStrings";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
-import { SupervisionTaskInterface, SupervisionTasks } from "./Task/types";
+import { SupervisionTasks } from "./Task/SupervisionTasks";
+import { SupervisionTaskInterface } from "./Task/types";
 import { JusticeInvolvedPerson, PersonType } from "./types";
 import {
   clearPhoneNumberFormatting,

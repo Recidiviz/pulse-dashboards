@@ -15,20 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { VitalsMetricId } from "~datatypes";
-import { Hydratable } from "~hydration-utils";
+import type { VitalsMetricId } from "~datatypes";
+import type { Hydratable } from "~hydration-utils";
 
-import { WorkflowsTasksConfig } from "../../core/models/types";
-import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
-import {
-  SharedSnoozeUpdate,
-  SupervisionTaskUpdate,
-} from "../../FirestoreStore";
-import { RootStore } from "../../RootStore";
-import { SpecificTenantConfigs } from "../../tenants";
-import { Expect, Extends } from "../../utils/typeUtils";
-import { Client } from "../Client";
-import { TasksBase } from "./TasksBase";
+import type { WorkflowsTasksConfig } from "../../core/models/types";
+import type { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
+import type { SharedSnoozeUpdate } from "../../FirestoreStore";
+import type { RootStore } from "../../RootStore";
+import type { SpecificTenantConfigs } from "../../tenants";
+import type { Expect, Extends } from "../../utils/typeUtils";
+import type { Client } from "../Client";
 
 export type SupervisionTasksCaseType = "GENERAL" | "SEX_OFFENSE";
 
@@ -207,6 +203,9 @@ export const SUPERVISION_TASK_TYPES = [
 ] as const;
 
 export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
+
+export type SnoozeOptions = number | "FOREVER";
+
 export type SupervisionDetails =
   | UsIdHomeVisitDetails
   | UsIdAssessmentDetails
@@ -342,7 +341,7 @@ export type UsIdAgnosticTaskType =
   | "usIdLsirAssessment"
   | "usIdStableAssessment";
 
-type TasksStateCode = {
+export type TasksStateCode = {
   [K in keyof SpecificTenantConfigs]: SpecificTenantConfigs[K] extends {
     workflowsTasksConfig: WorkflowsTasksConfig;
   }
@@ -374,27 +373,4 @@ export interface SupervisionTaskInterface extends Hydratable {
   readyOrderedTasks: SupervisionTask[];
   tasksConfig?: WorkflowsTasksConfig;
   trackPreviewed: (task: SupervisionTaskCategory) => void;
-}
-
-export class SupervisionTasks<T extends TasksStateCode> extends TasksBase<
-  Client,
-  SupervisionTasksRecord<T>,
-  SupervisionTaskUpdate
-> {
-  constructor(stateCode: T, client: Client) {
-    const {
-      rootStore,
-      rootStore: {
-        tenantStore: { tasksConfiguration },
-      },
-    } = client;
-
-    if (!tasksConfiguration) {
-      throw new Error(
-        `State ${stateCode} missing taskConfiguration in TenantConfig`,
-      );
-    }
-
-    super(rootStore, client, tasksConfiguration);
-  }
 }

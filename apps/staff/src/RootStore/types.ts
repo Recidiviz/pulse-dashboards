@@ -77,6 +77,7 @@ export type FeatureVariant =
   | "supervisionUnrestrictedSearch"
   | "taskSnoozeReason"
   | "tasksOneRowPerClient"
+  | "tasksPermasnooze"
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
   | "sentenceProgressV2"
@@ -250,6 +251,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIaFinesAndFees: {},
   taskSnoozeReason: {},
   tasksOneRowPerClient: {},
+  tasksPermasnooze: {},
   tasksRoutePlanner: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
@@ -331,6 +333,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },
+        tasksPermasnooze: { activeTenants: ["US_MO"] },
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },

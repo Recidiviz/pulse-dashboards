@@ -17,6 +17,7 @@
 
 export * from "./Client";
 export * from "./Opportunity";
+export * from "./Task/SupervisionTasks";
 export * from "./Task/types";
 export * from "./types";
 export * from "./WorkflowsStore";
