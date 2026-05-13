@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFi
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, Field, computed_field
 from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
@@ -199,6 +199,17 @@ class PlanResponseGet(PlanResponse):
     is_create_execution_finished: Optional[bool] = None
     resources_pipeline_enabled: Optional[bool] = None
     digital_resources_enabled: Optional[bool] = None
+    intake_address: Optional[ClientAddressResponse] = Field(default=None, exclude=True)
+
+    @computed_field()
+    def client_record(self) -> ClientRecordResponse | None:
+        record = Queries.get_client_by_pseudonymized_id_unsafe(
+            pseudonymized_id=self.client_pseudo_id
+        )
+        if record:
+            result = ClientRecordResponse.model_validate(record.model_dump())
+            result.address = self.intake_address
+            return result
 
 
 class PlanAssetResponse(ORMResponse):
@@ -387,6 +398,7 @@ async def router_get_plan(
         is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
 
+    intake = None
     if plan.intake_id:
         intake = await get_intake_by_id(session, plan.intake_id)
         if intake and not intake.outputs_enabled:
@@ -414,11 +426,20 @@ async def router_get_plan(
         action_plan_config.external_api.digital_resources_enabled
     )
 
+    intake_address = None
+    if intake and intake.address:
+        intake_address = ClientAddressResponse(
+            street_address=intake.address.street_address,
+            city=intake.address.city,
+            state=intake.address.state,
+        )
+
     return PlanResponseGet.model_validate(
         {
             "latest_generation": latest_generation,
             "resources_pipeline_enabled": resources_pipeline_enabled,
             "digital_resources_enabled": digital_resources_enabled,
+            "intake_address": intake_address,
             **plan.model_dump(),
         }
     )

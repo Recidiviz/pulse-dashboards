@@ -4674,8 +4674,6 @@ export interface components {
             resources_pipeline_enabled?: boolean | null;
             /** Digital Resources Enabled */
             digital_resources_enabled?: boolean | null;
-            /** @description Gets the client record data for this plan.
-             *     Renamed from 'oms' to better reflect its content and source. */
             readonly client_record:
                 | components["schemas"]["ClientRecordResponse"]
                 | null;
