@@ -96,6 +96,7 @@ describe("DrawerNavigator", () => {
         recidivizAllowedStates: [],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
+        isRecidivizUser: false,
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
@@ -122,6 +123,7 @@ describe("DrawerNavigator", () => {
         recidivizAllowedStates: ["US_NE"],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
+        isRecidivizUser: false,
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: true,
@@ -150,6 +152,7 @@ describe("DrawerNavigator", () => {
         recidivizAllowedStates: ["US_TX"],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
+        isRecidivizUser: false,
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
@@ -176,6 +179,7 @@ describe("DrawerNavigator", () => {
         recidivizAllowedStates: ["US_NE", "US_ME", "US_NC"],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
+        isRecidivizUser: false,
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
@@ -202,6 +206,7 @@ describe("DrawerNavigator", () => {
         recidivizAllowedStates: ["US_NE"],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
+        isRecidivizUser: false,
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
@@ -228,6 +233,7 @@ describe("DrawerNavigator", () => {
         recidivizAllowedStates: ["us_ne"],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
+        isRecidivizUser: false,
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
@@ -256,6 +262,7 @@ describe("DrawerNavigator", () => {
         recidivizAllowedStates: ["US_NE"],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
+        isRecidivizUser: false,
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,

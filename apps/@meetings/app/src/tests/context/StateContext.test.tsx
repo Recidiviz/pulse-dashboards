@@ -48,6 +48,7 @@ const baseUserContext: ReturnType<typeof UserContext.useUserContext> = {
   hasCasePlanningAssistantAccess: false,
   onLogout: jest.fn(),
   getCredentials: jest.fn(),
+  isRecidivizUser: false,
 };
 
 const agencyConfigs = {

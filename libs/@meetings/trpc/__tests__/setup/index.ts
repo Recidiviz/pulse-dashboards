@@ -88,6 +88,7 @@ export async function initFastifyAndSetUser(
     omitAuth?: boolean;
     stateCode?: string;
     omitStateCode?: boolean;
+    extraHeaders?: Record<string, string>;
   },
 ) {
   if (testServer) {
@@ -134,7 +135,7 @@ export async function initFastifyAndSetUser(
       httpBatchLink({
         url: `http://${testHost}:${testPort}`,
         headers() {
-          const headers: Record<string, string> = {};
+          let headers: Record<string, string> = {};
 
           // Add stateCode header unless explicitly omitted
           if (!options?.omitStateCode) {
@@ -150,6 +151,7 @@ export async function initFastifyAndSetUser(
             }
           }
 
+          headers = { ...headers, ...options?.extraHeaders };
           return headers;
         },
         // Required to get Date objects to serialize correctly.

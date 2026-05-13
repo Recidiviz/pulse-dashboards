@@ -19,6 +19,7 @@ import { faker } from "@faker-js/faker";
 import { createId } from "@paralleldrive/cuid2";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+import { IMPERSONATED_EMAIL_HEADER_KEY } from "~@meetings/trpc/context";
 import env from "~@meetings/trpc/env";
 import {
   initFastifyAndSetUser,
@@ -495,6 +496,107 @@ describe("client router", () => {
         // fakeActiveMeeting belongs to fakeStaff[0], not the recidiviz user — excluded
         expect(resultIds).not.toContain(fakeActiveMeeting.id);
         expect(result.length).toBe(2);
+      });
+    });
+  });
+
+  describe("impersonation", () => {
+    describe("createMeeting", () => {
+      test("Blocks recidiviz users from creating meetings in production even when impersonating", async () => {
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
+
+        await initFastifyAndSetUser(
+          {
+            "https://dashboard.recidiviz.org/email_address":
+              "test@recidiviz.org",
+            "https://dashboard.recidiviz.org/app_metadata": {
+              stateCode: "recidiviz",
+              allowedStates: ["US_NE"],
+            },
+          },
+          {
+            extraHeaders: {
+              [IMPERSONATED_EMAIL_HEADER_KEY]: fakeStaff[0].email,
+            },
+          },
+        );
+
+        try {
+          await expect(
+            testTRPCClient.v1.client.createMeeting.mutate({
+              clientId: fakeClients[0].personId,
+              startTime: faker.date.future(),
+              meetingId: createId(),
+            }),
+          ).rejects.toThrow(
+            "Recidiviz users may not create non-demo meetings in production",
+          );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+    });
+
+    describe("list", () => {
+      test("caseload=mine returns the impersonated user's clients, not the actual user's", async () => {
+        // Recidiviz user impersonates fakeStaff[1], who owns fakeClients[1]
+        await initFastifyAndSetUser(
+          {
+            "https://dashboard.recidiviz.org/email_address":
+              "test@recidiviz.org",
+            "https://dashboard.recidiviz.org/app_metadata": {
+              stateCode: "recidiviz",
+              allowedStates: ["US_NE"],
+            },
+          },
+          {
+            extraHeaders: {
+              [IMPERSONATED_EMAIL_HEADER_KEY]: fakeStaff[1].email,
+            },
+          },
+        );
+
+        const result = await testTRPCClient.v1.client.list.query({
+          filters: { caseload: "mine" },
+        });
+
+        const ids = result.data.map((c) => c.personId);
+        // Should see fakeStaff[1]'s client
+        expect(ids).toContain(fakeClients[1].personId);
+        // Should NOT see fakeStaff[0]'s clients (those would be shown without impersonation)
+        expect(ids).not.toContain(fakeClients[0].personId);
+        expect(ids).not.toContain(fakeClients[3].personId);
+        expect(result.total).toBe(1);
+      });
+
+      test("switching who is impersonated changes the client list", async () => {
+        // Recidiviz user impersonates fakeStaff[0], who owns fakeClients[0] and fakeClients[3]
+        await initFastifyAndSetUser(
+          {
+            "https://dashboard.recidiviz.org/email_address":
+              "test@recidiviz.org",
+            "https://dashboard.recidiviz.org/app_metadata": {
+              stateCode: "recidiviz",
+              allowedStates: ["US_NE"],
+            },
+          },
+          {
+            extraHeaders: {
+              [IMPERSONATED_EMAIL_HEADER_KEY]: fakeStaff[0].email,
+            },
+          },
+        );
+
+        const result = await testTRPCClient.v1.client.list.query({
+          filters: { caseload: "mine" },
+        });
+
+        const ids = result.data.map((c) => c.personId);
+        expect(ids).toContain(fakeClients[0].personId);
+        expect(ids).toContain(fakeClients[3].personId);
+        expect(ids).not.toContain(fakeClients[1].personId);
+        expect(result.total).toBe(2);
       });
     });
   });

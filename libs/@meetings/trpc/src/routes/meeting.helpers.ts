@@ -72,7 +72,7 @@ export async function createMeetingForPerson({
 }) {
   if (
     env.DEPLOY_ENV === "production" &&
-    user.isRecidivizUser &&
+    (user.isRecidivizUser || user.impersonatedBy) &&
     stateCode !== "US_DEMO"
   ) {
     throw new TRPCError({

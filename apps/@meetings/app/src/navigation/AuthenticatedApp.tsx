@@ -18,7 +18,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { httpBatchLink } from "@trpc/client";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import superjson from "superjson";
 
 import { AgencyConfigProvider } from "../context/AgencyConfigContext";
@@ -29,6 +29,7 @@ import {
   StateCodeProvider,
 } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
+import { useImpersonationStore } from "../hooks/useImpersonationStore";
 import { trpc } from "../shared/api";
 import { env } from "../shared/config";
 import { queryCachePersister } from "../shared/lib/queryCachePersister";
@@ -50,23 +51,40 @@ const queryClient = new QueryClient({
  */
 const AuthenticatedApp: React.FC = () => {
   const { isLoading, isSkipAuthUser, getCredentials } = useUserContext();
+  const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
 
   // State code ref is managed here since it's only needed for authenticated requests. StateContext
   // will initialize this to the user's state for state users, or allow Recidiviz users to change it
   // via settings.
-  const selectedStateRef = React.useRef<StateCode>(DEFAULT_STATE_CODE);
+  const selectedStateRef = useRef<StateCode>(DEFAULT_STATE_CODE);
+  const impersonatedEmailRef = useRef(impersonatedEmail);
+  const impersonatedStateCodeRef = useRef(impersonatedStateCode);
 
-  const [trpcClient] = React.useState(() =>
+  useEffect(() => {
+    impersonatedEmailRef.current = impersonatedEmail;
+    impersonatedStateCodeRef.current = impersonatedStateCode;
+  }, [impersonatedEmail, impersonatedStateCode]);
+
+  const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
         httpBatchLink({
           url: env.EXPO_PUBLIC_SERVER_URL,
           async headers() {
+            let statecode = selectedStateRef.current;
+            const impersonationHeaders: Record<string, string> = {};
+            if (impersonatedEmailRef.current) {
+              impersonationHeaders["X-Impersonated-Email"] =
+                impersonatedEmailRef.current;
+              statecode = impersonatedStateCodeRef.current;
+            }
+
             // In skip auth mode, send a special header
             if (isSkipAuthUser) {
               return {
+                ...impersonationHeaders,
                 "X-Skip-Auth": "true",
-                statecode: selectedStateRef.current,
+                statecode,
               };
             }
 
@@ -77,7 +95,8 @@ const AuthenticatedApp: React.FC = () => {
 
             return {
               Authorization: `Bearer ${creds?.accessToken}`,
-              statecode: selectedStateRef.current,
+              statecode,
+              ...impersonationHeaders,
             };
           },
           transformer: superjson,

@@ -41,6 +41,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import { useRecording } from "../features/recording";
+import { useImpersonationStore } from "../hooks/useImpersonationStore";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import WordmarkSvg from "../shared/assets/icons/wordmark.svg";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
@@ -49,6 +50,7 @@ import { getInitials } from "../shared/lib/format";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
 import DesktopMenuItem from "./DesktopMenuItem";
+import { ImpersonationModal } from "./ImpersonationModal";
 import { ProfileMenuItem } from "./ProfileMenuItem";
 
 type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
@@ -122,9 +124,12 @@ const Header: React.FC<HeaderProps> = ({
     hasSupervisionAssistantAccess,
     hasFacilitiesAssistantAccess,
     hasCasePlanningAssistantAccess,
+    isRecidivizUser,
   } = useUserContext();
+  const [showImpersonationModal, setShowImpersonationModal] = useState(false);
   const { canSelectStateCode, currentStateName, selectedStateCode } =
     useStateSelection();
+  const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
 
   const dashboardUrl = IS_PROD
     ? "https://dashboard.recidiviz.org"
@@ -302,6 +307,16 @@ const Header: React.FC<HeaderProps> = ({
                             }
                           />
                         )}
+                        {isRecidivizUser && (
+                          <ProfileMenuItem
+                            pressable={{
+                              onPress: () => {
+                                setShowImpersonationModal(true);
+                              },
+                            }}
+                            label="Impersonate User"
+                          />
+                        )}
                         <ProfileMenuItem
                           pressable={{
                             onPress: () => handleDropdownMenuPress(onLogout),
@@ -318,7 +333,7 @@ const Header: React.FC<HeaderProps> = ({
         ),
       })}
       {selectedStateCode === "US_DEMO" && (
-        <View className="bg-warning-light px-4 py-2.5">
+        <View className="z-[-1] bg-warning-light px-4 py-2.5">
           <Typography className="text-center text-sm font-medium text-warning">
             NOTE: You are currently viewing the Demo state, which is shared
             externally to Recidiviz and our state agencies. DO NOT create
@@ -326,6 +341,17 @@ const Header: React.FC<HeaderProps> = ({
           </Typography>
         </View>
       )}
+      {impersonatedEmail && (
+        <View className="z-[-1] bg-warning-light px-4 py-2.5">
+          <Typography className="text-center text-sm font-medium text-warning">
+            Impersonating: {impersonatedEmail} in {impersonatedStateCode}
+          </Typography>
+        </View>
+      )}
+      <ImpersonationModal
+        visible={showImpersonationModal}
+        onClose={() => setShowImpersonationModal(false)}
+      />
     </SafeAreaView>
   );
 };

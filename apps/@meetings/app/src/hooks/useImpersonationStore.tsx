@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,23 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FastifyReply, FastifyRequest } from "fastify";
+import { create } from "zustand";
 
-import { PrismaClient, StateCode } from "~@meetings/prisma/client";
-
-export type AuthUser = {
-  email: string;
-  isRecidivizUser: boolean;
-  allowedStates?: string[];
-  impersonatedBy?: string;
+export type ImpersonationMetadata = {
+  impersonatedEmail: string;
+  impersonatedStateCode: string;
+  startImpersonating: (email: string, stateCode: string) => void;
+  stopImpersonating: () => void;
 };
 
-export type Context = {
-  req: FastifyRequest;
-  res: FastifyReply;
-  isAuth0Authorized: boolean;
-  user?: AuthUser;
-  prisma?: PrismaClient;
-  stateCode?: StateCode;
-  impersonatedEmail?: string;
-};
+export const useImpersonationStore = create<ImpersonationMetadata>((set) => {
+  return {
+    impersonatedEmail: "",
+    impersonatedStateCode: "",
+    startImpersonating: (email: string, stateCode: string) =>
+      set({ impersonatedEmail: email, impersonatedStateCode: stateCode }),
+    stopImpersonating: () =>
+      set({ impersonatedEmail: "", impersonatedStateCode: "" }),
+  };
+});

@@ -37,7 +37,21 @@ export type Auth0User = {
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
-const SKIP_AUTH_HEADER_KEY = "x-skip-auth";
+
+export const SKIP_AUTH_HEADER_KEY = "x-skip-auth";
+export const IMPERSONATED_EMAIL_HEADER_KEY = "X-Impersonated-Email";
+
+function getImpersonatedUserFromHeader(
+  req: CreateFastifyContextOptions["req"],
+): string | undefined {
+  // toLower() the key cuz of fastify
+  const impersonatedEmailHeader =
+    req.headers[IMPERSONATED_EMAIL_HEADER_KEY.toLowerCase()];
+  if (typeof impersonatedEmailHeader === "string") {
+    return impersonatedEmailHeader;
+  }
+  return undefined;
+}
 
 function formatAndVerifyUser(
   user: Auth0User | undefined,
@@ -89,6 +103,7 @@ function formatAndVerifyUser(
   return {
     email: userEmail.toLowerCase(),
     isRecidivizUser,
+    allowedStates,
   };
 }
 
@@ -131,6 +146,7 @@ export async function createContext(
   const skipAuthHeader = req.headers[SKIP_AUTH_HEADER_KEY];
   const isDevMode = env.NODE_ENV === "development";
   const shouldSkipAuth = skipAuthHeader === "true";
+  const impersonatedEmail = getImpersonatedUserFromHeader(req);
   if (shouldSkipAuth && !isDevMode) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
@@ -151,6 +167,21 @@ export async function createContext(
     // Cast since the returned object from verifyAuth0Token has no type information
     const auth0User = (await verifyAuth0Token(opts)) as Auth0User | undefined;
     formattedUser = formatAndVerifyUser(auth0User, stateCode);
+
+    if (impersonatedEmail) {
+      if (!formattedUser?.isRecidivizUser) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only Recidiviz users can impersonate other users",
+        });
+      }
+
+      formattedUser = {
+        ...formattedUser,
+        impersonatedBy: formattedUser.email,
+        email: impersonatedEmail.toLowerCase(),
+      };
+    }
   }
 
   console.log(`formattedUser: ${JSON.stringify(formattedUser)}`);
@@ -174,5 +205,6 @@ export async function createContext(
     user: formattedUser,
     prisma: prismaClient,
     stateCode: stateCode as StateCode,
+    impersonatedEmail,
   };
 }

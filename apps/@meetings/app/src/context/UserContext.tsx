@@ -38,6 +38,7 @@ interface UserContextType {
   hasSupervisionAssistantAccess: boolean;
   hasFacilitiesAssistantAccess: boolean;
   hasCasePlanningAssistantAccess: boolean;
+  isRecidivizUser: boolean;
   onLogout: ReturnType<typeof useAuth0>["clearSession"];
   getCredentials: ReturnType<typeof useAuth0>["getCredentials"];
 }
@@ -90,6 +91,7 @@ export const UserContextProvider: React.FC<{
           hasCasePlanningAssistantAccess: true,
           onLogout: () => Promise.resolve(),
           getCredentials,
+          isRecidivizUser: true,
         }}
       >
         {children}
@@ -134,6 +136,7 @@ export const UserContextProvider: React.FC<{
           await clearSession();
         },
         getCredentials,
+        isRecidivizUser: isRecidiviz,
       }}
     >
       {children}

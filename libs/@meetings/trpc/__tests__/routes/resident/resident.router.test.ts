@@ -19,6 +19,7 @@ import { faker } from "@faker-js/faker";
 import { createId } from "@paralleldrive/cuid2";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+import { IMPERSONATED_EMAIL_HEADER_KEY } from "~@meetings/trpc/context";
 import env from "~@meetings/trpc/env";
 import {
   initFastifyAndSetUser,
@@ -401,6 +402,45 @@ describe("resident router", () => {
         // fakeResidentMeeting belongs to fakeStaff[0], not the recidiviz user — excluded
         expect(resultIds).not.toContain(fakeResidentMeeting.id);
         expect(result.length).toBe(2);
+      });
+    });
+  });
+
+  describe("impersonation", () => {
+    describe("createMeeting", () => {
+      test("Blocks recidiviz users from creating meetings in production even when impersonating", async () => {
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
+
+        await initFastifyAndSetUser(
+          {
+            "https://dashboard.recidiviz.org/email_address":
+              "test@recidiviz.org",
+            "https://dashboard.recidiviz.org/app_metadata": {
+              stateCode: "recidiviz",
+              allowedStates: ["US_NE"],
+            },
+          },
+          {
+            extraHeaders: {
+              [IMPERSONATED_EMAIL_HEADER_KEY]: fakeStaff[0].email,
+            },
+          },
+        );
+
+        try {
+          await expect(
+            testTRPCClient.v1.resident.createMeeting.mutate({
+              residentId: fakeResidents[0].personId,
+              startTime: faker.date.future(),
+              meetingId: createId(),
+            }),
+          ).rejects.toThrow(
+            "Recidiviz users may not create non-demo meetings in production",
+          );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
       });
     });
   });

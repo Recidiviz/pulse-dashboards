@@ -34,6 +34,14 @@ const envSchema = z.object({
     .min(1, "STITCHING_TASK_REQUEST_URL is required"),
   NODE_ENV: z.string().min(1, "NODE_ENV is required"),
   DEPLOY_ENV: z.string().min(1, "DEPLOY_ENV is required"),
+  RECIDIVIZ_DATA_API_URL: z
+    .string()
+    .min(1, "RECIDIVIZ_DATA_API_URL is required")
+    .default(""),
+  GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE: z
+    .string()
+    .min(1, "GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE is required")
+    .default(""),
   TRANSCRIPTION_DISABLED_STATES: z.string().default(""),
 });
 
