@@ -131,5 +131,13 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
 
     // Metadata
     metadata: {},
+
+    // E-signatures
+    officerSignature: null,
+    officerTitle: null,
+    officerLastSignedAt: null,
+    supervisorSignature: null,
+    supervisorTitle: null,
+    supervisorLastSignedAt: null,
   },
 };

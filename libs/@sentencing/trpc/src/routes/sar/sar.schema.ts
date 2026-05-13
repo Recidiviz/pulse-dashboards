@@ -124,6 +124,12 @@ export const updateSARSchema = z.object({
     institutionalStrategyRecommendation: z.string().nullable().optional(),
     mostSevereOffenseName: z.string().nullish(),
     metadata: SARMetadataSchema.optional(),
+    officerSignature: z.string().nullish(),
+    officerTitle: z.string().nullish(),
+    officerLastSignedAt: z.date().nullish(),
+    supervisorSignature: z.string().nullish(),
+    supervisorTitle: z.string().nullish(),
+    supervisorLastSignedAt: z.date().nullish(),
   }) satisfies z.ZodType<UpsertSARInput>,
 });
 

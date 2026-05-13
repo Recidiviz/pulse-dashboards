@@ -681,6 +681,15 @@ model SentencingAssessmentReport {
   // - sectionsSkipped: string[] - Sections that were intentionally skipped
   // - sectionsInProgress: string[] - Sections that were started but not completed
   metadata Json?
+
+  // E-signature fields: store the typed name, title, and timestamp for both the officer and supervisor.
+  // The officer signs first, then the supervisor reviews and signs to approve the report for court submission.
+  officerSignature String?
+  officerTitle String?
+  officerLastSignedAt DateTime?
+  supervisorSignature String?
+  supervisorTitle String?
+  supervisorLastSignedAt DateTime?
 }
 
 model Charge {
