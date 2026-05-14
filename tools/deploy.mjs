@@ -107,7 +107,7 @@ if (deployEnv === "preview") {
       type: "list",
     },
   ]);
-  await $`nx build-staging staff`.pipe(process.stdout);
+  await $`nx build staff --configuration staging`.pipe(process.stdout);
   await $`firebase hosting:channel:deploy ${previewAppName} -P staging --expires ${expiration}`.pipe(
     process.stdout,
   );
@@ -372,13 +372,13 @@ if (deployFrontend) {
   console.log(`Building ${staffFrontendDisplayName}...`);
   switch (deployEnv) {
     case "production":
-      await $`nx build staff`.pipe(process.stdout);
+      await $`nx build staff --configuration production`.pipe(process.stdout);
       break;
     case "demo":
-      await $`nx build-demo staff`.pipe(process.stdout);
+      await $`nx build staff --configuration demo`.pipe(process.stdout);
       break;
     default:
-      await $`nx build-staging staff`.pipe(process.stdout);
+      await $`nx build staff --configuration staging`.pipe(process.stdout);
   }
 
   let retryFrontend = false;
