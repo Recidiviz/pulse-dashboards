@@ -376,4 +376,8 @@ export default class TenantStore {
   get insightsNumDaysWithoutLogin(): number {
     return this.currentTenantConfig?.insightsNumDaysWithoutLogin ?? 30;
   }
+
+  get directorDashboardConfig() {
+    return this.currentTenantConfig?.directorDashboard;
+  }
 }

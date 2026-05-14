@@ -45,6 +45,10 @@ const US_IA_CONFIG = {
     directorDashboard: [DIRECTOR_DASHBOARD_PAGES.supervision],
     workflows: ["home", "clients"],
   },
+  directorDashboard: {
+    navTitle: "District Dashboard",
+    lookerDashboard: "iowa_district_metrics",
+  },
 } satisfies TenantConfig<"US_IA">;
 
 export default US_IA_CONFIG;

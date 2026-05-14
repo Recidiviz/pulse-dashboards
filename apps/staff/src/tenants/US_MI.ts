@@ -76,6 +76,10 @@ const US_MI_CONFIG = {
     EXTERNAL_UNKNOWN: "Unknown Security Level",
     null: "Unknown Security Level",
   },
+  directorDashboard: {
+    navTitle: "Regional Dashboard",
+    lookerDashboard: "michigan_region_metrics",
+  },
 } satisfies TenantConfig<"US_MI">;
 
 export default US_MI_CONFIG;

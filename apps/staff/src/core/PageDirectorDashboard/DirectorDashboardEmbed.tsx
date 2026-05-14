@@ -15,35 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { format, startOfMonth, startOfToday, subMonths } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components";
 
 import { useRootStore } from "../../components/StoreProvider/StoreProvider";
-import { US_IA, US_MI } from "../../RootStore/TenantStore/dashboardTenants";
+import LookerEmbed from "../LookerEmbed/LookerEmbed";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
-import LookerEmbed from "./LookerEmbed";
-
-const TENANT_DASHBOARD: Partial<Record<string, string>> = {
-  [US_MI]: "michigan_region_metrics",
-  [US_IA]: "iowa_district_metrics",
-};
 
 const StyledLookerEmbed = styled(LookerEmbed)`
   width: 100%;
   height: calc(100vh - ${rem(NAV_BAR_HEIGHT)});
 `;
 
+const lookerDate = (d: Date) => format(d, "yyyy/MM/dd");
+
 const TenantLookerEmbed: React.FC = observer(function TenantLookerEmbed() {
-  const { currentTenantId, userStore } = useRootStore();
-  const dashboardName = currentTenantId
-    ? TENANT_DASHBOARD[currentTenantId]
-    : undefined;
+  const {
+    tenantStore: { directorDashboardConfig },
+    userStore,
+  } = useRootStore();
+  const dashboardName = directorDashboardConfig?.lookerDashboard;
 
   if (!dashboardName) return null;
 
-  const filters: Record<string, string> = {};
+  const thisMonthStart = startOfMonth(startOfToday());
+
+  const filters: Record<string, string> = {
+    "Population Start Date": lookerDate(subMonths(thisMonthStart, 3)),
+    "Population End Date": lookerDate(thisMonthStart),
+  };
+
   if (userStore.district) {
     filters["Region"] = userStore.district;
     filters["District Name"] = userStore.district;

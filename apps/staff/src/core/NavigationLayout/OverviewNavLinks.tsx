@@ -57,6 +57,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       activeSystem,
     },
     userStore: { userAllowedNavigation },
+    tenantStore: { directorDashboardConfig },
   } = useRootStore();
 
   const enableWorkflows =
@@ -79,9 +80,9 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   // and/or consider using userAllowedNavigation.workflows[0] instead of homepage
   return (
     <>
-      {enabledDirectorDashboard && (
+      {enabledDirectorDashboard && directorDashboardConfig && (
         <NavLink to={DIRECTOR_DASHBOARD_PATHS.supervision} role="menuitem">
-          Director Dashboard
+          {directorDashboardConfig.navTitle}
         </NavLink>
       )}
       {enabledInsights && (

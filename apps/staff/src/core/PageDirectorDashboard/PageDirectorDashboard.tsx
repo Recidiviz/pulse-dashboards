@@ -21,7 +21,7 @@ import { Route, Routes } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
 import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
-import TenantLookerEmbed from "./TenantLookerEmbed";
+import DirectorDashboardEmbed from "./DirectorDashboardEmbed";
 
 const PageDirectorDashboard: React.FC = observer(
   function PageDirectorDashboard() {
@@ -31,7 +31,7 @@ const PageDirectorDashboard: React.FC = observer(
           <OverviewNavLinks />
         </NavigationLayout>
         <Routes>
-          <Route path="supervision" element={<TenantLookerEmbed />} />
+          <Route path="supervision" element={<DirectorDashboardEmbed />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </>

@@ -108,6 +108,10 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   insightsUnitState?: boolean;
   // For Last Login Module. Number of days without a login where we flag someone for not having logged in in that amount of time
   insightsNumDaysWithoutLogin?: number;
+  directorDashboard?: {
+    navTitle: string;
+    lookerDashboard: string;
+  };
 };
 
 /**
