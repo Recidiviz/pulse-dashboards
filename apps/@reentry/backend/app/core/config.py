@@ -106,6 +106,12 @@ class Settings(BaseSettings):
     # Used for client authentication for clients logging in from the Edovo platform
     FIREBASE_ADMIN_PROJECT_ID: str = "recidiviz-dashboard-staging"
 
+    # Cloud SQL staging instance for local dev seeding (--from-staging in seed-db)
+    STAGING_INSTANCE: str = ""  # e.g. recidiviz-rnd-planner:us-central1:recidiviz-staging
+    STAGING_DB: str = "recidiviz"
+    STAGING_POSTGRES_USER: str = "postgres"
+    STAGING_POSTGRES_PASSWORD: str = ""
+
     # Config Management password protection
     # In demo/staging/prod, this should be set via Secret Manager.
     # When set, users must enter this password to access config management.

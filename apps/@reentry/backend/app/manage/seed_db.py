@@ -2,8 +2,10 @@ from pathlib import Path
 from uuid import uuid4
 
 import structlog
+import typer
 import yaml
 from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.core.db import get_session_async_manager
@@ -173,6 +175,124 @@ async def seed_db_selective():
     print("All user data (intakes, plans) has been preserved.")
 
 
+async def seed_configs_from_staging():
+    """
+    Fetch active assessment and output configs from the staging Cloud SQL DB and insert locally.
+    Requires RECIDIVIZ_STAGING_INSTANCE to be set in .env and gcloud ADC configured.
+    """
+    from google.cloud.sql.connector import create_async_connector
+    from sqlalchemy.ext.asyncio import create_async_engine
+    from sqlalchemy.orm import sessionmaker
+
+    if not settings.STAGING_INSTANCE:
+        raise ValueError(
+            "RECIDIVIZ_STAGING_INSTANCE must be set in your .env file "
+            "(e.g. recidiviz-rnd-planner:us-central1:recidiviz-staging)"
+        )
+    if not settings.STAGING_POSTGRES_PASSWORD:
+        raise ValueError(
+            "RECIDIVIZ_STAGING_POSTGRES_PASSWORD must be set in your .env file "
+            "(get it from GCP Secret Manager: recidiviz-rnd-planner > postgres-password-staging)"
+        )
+
+    print(f"Connecting to staging ({settings.STAGING_INSTANCE})...")
+
+    connector = await create_async_connector()
+
+    async def getconn():
+        return await connector.connect_async(
+            settings.STAGING_INSTANCE,
+            "asyncpg",
+            user=settings.STAGING_POSTGRES_USER,
+            password=settings.STAGING_POSTGRES_PASSWORD,
+            db=settings.STAGING_DB,
+        )
+
+    staging_engine = create_async_engine("postgresql+asyncpg://", async_creator=getconn)
+    staging_session_maker = sessionmaker(
+        staging_engine, class_=AsyncSession, expire_on_commit=False
+    )
+
+    try:
+        async with staging_session_maker() as staging_session:
+            staging_assessment_configs = (
+                await staging_session.exec(
+                    select(AssessmentConfig).where(AssessmentConfig.status == "active")
+                )
+            ).all()
+            staging_output_configs = (
+                await staging_session.exec(
+                    select(OutputConfig).where(OutputConfig.status == "active")
+                )
+            ).all()
+    finally:
+        await staging_engine.dispose()
+        await connector.close_async()
+
+    async with get_session_async_manager() as local_session:
+        for cfg in staging_assessment_configs:
+            existing = await local_session.exec(
+                select(AssessmentConfig).where(
+                    AssessmentConfig.state_code == cfg.state_code,
+                    AssessmentConfig.code == cfg.code,
+                    AssessmentConfig.version == cfg.version,
+                )
+            )
+            if existing.first():
+                print(
+                    f"  Assessment config already exists: {cfg.state_code}/{cfg.code} v{cfg.version}"
+                )
+                continue
+            local_session.add(
+                AssessmentConfig(
+                    id=uuid4(),
+                    state_code=cfg.state_code,
+                    code=cfg.code,
+                    version=cfg.version,
+                    display_name=cfg.display_name,
+                    description=cfg.description,
+                    config_yaml=cfg.config_yaml,
+                    status="active",
+                    is_active=True,
+                    created_by_email=cfg.created_by_email,
+                    imported_from_env="staging",
+                )
+            )
+            print(
+                f"  Created assessment config from staging: {cfg.state_code}/{cfg.code} v{cfg.version}"
+            )
+
+        for cfg in staging_output_configs:
+            existing = await local_session.exec(
+                select(OutputConfig).where(
+                    OutputConfig.code == cfg.code,
+                    OutputConfig.version == cfg.version,
+                )
+            )
+            if existing.first():
+                print(f"  Output config already exists: {cfg.code} v{cfg.version}")
+                continue
+            local_session.add(
+                OutputConfig(
+                    id=uuid4(),
+                    output_type=cfg.output_type,
+                    code=cfg.code,
+                    version=cfg.version,
+                    display_name=cfg.display_name,
+                    description=cfg.description,
+                    config_yaml=cfg.config_yaml,
+                    status="active",
+                    is_active=True,
+                    created_by_email=cfg.created_by_email,
+                    imported_from_env="staging",
+                )
+            )
+            print(f"  Created output config from staging: {cfg.code} v{cfg.version}")
+
+        await local_session.commit()
+        print("Staging config import complete.")
+
+
 async def seed_ai_personas():
     """
     Seed the database with default AI personas from headless_conversation_eval.py.
@@ -233,17 +353,25 @@ async def seed_personas():
 
 
 @cli.command()
-async def seed_db():
+async def seed_db(
+    from_staging: bool = typer.Option(
+        False,
+        "--from-staging",
+        help="Fetch active configs from staging Cloud SQL instead of local YAML files. "
+        "Requires RECIDIVIZ_STAGING_INSTANCE in .env and gcloud ADC configured.",
+    ),
+):
     """
     Seed the database with system components.
 
     This command seeds:
     - Decision trees from mermaid files
-    - Default assessment configs from seed_assessment_configs/
-    - Default output configs from seed_output_configs/
+    - Default assessment configs from seed_assessment_configs/ (or staging with --from-staging)
+    - Default output configs from seed_output_configs/ (or staging with --from-staging)
 
     Existing data is preserved - only missing configs are added.
     """
-
-    await seed_db_selective()
-    return
+    if from_staging:
+        await seed_configs_from_staging()
+    else:
+        await seed_db_selective()
