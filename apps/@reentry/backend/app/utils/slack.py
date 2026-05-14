@@ -60,6 +60,8 @@ async def send_intake_completion_notification(
     intake_type: str,
 ) -> None:
     """Send a Slack notification when an intake completes. Silently no-ops if not configured."""
+    if settings.ENV_NAME != "prod":
+        return
     if not settings.SLACK_INTAKE_WEBHOOK_URLS:
         return
 

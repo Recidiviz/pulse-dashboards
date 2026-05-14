@@ -7,6 +7,7 @@ intakes, runs grounding and coverage LLM-as-judge evaluations for each, and
 persists aggregated results.
 """
 
+import asyncio
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -55,25 +56,19 @@ async def output_config_eval_task(
         system_prompt = config_file.prompts.system if config_file.prompts else None
 
         n = len(intake_ids)
-        per_intake_results = []
 
-        for i, intake_id_str in enumerate(intake_ids):
+        # Fetch all transcripts upfront using the shared session (sequential, fast).
+        await execution.log_progress(session, 10, "Loading intake transcripts")
+        intake_transcripts: list[tuple[str, str | None]] = []
+        for intake_id_str in intake_ids:
             intake_uuid = UUID(intake_id_str)
-            progress = 10 + int(80 * i / n)
-            await execution.log_progress(
-                session, progress, f"Evaluating intake {i + 1}/{n}"
-            )
-
             intake_messages = await get_intake_messages(session, intake_id=intake_uuid)
             if not intake_messages:
                 logger.warning(
                     "No messages for intake, skipping", intake_id=intake_id_str
                 )
-                per_intake_results.append(
-                    {"intake_id": intake_id_str, "error": "No messages found"}
-                )
+                intake_transcripts.append((intake_id_str, None))
                 continue
-
             conversation_messages = [
                 {
                     "role": "client" if m.from_role == "client" else "assistant",
@@ -81,22 +76,44 @@ async def output_config_eval_task(
                 }
                 for m in intake_messages
             ]
-            formatted = format_conversation_from_messages(conversation_messages)
+            intake_transcripts.append(
+                (
+                    intake_id_str,
+                    format_conversation_from_messages(conversation_messages),
+                )
+            )
 
-            try:
-                summary = await generate_summary(formatted, config_file)
-                eval_metrics = await _run_evaluations(summary, formatted, system_prompt)
-                per_intake_results.append(
-                    {
+        # Run LLM-heavy work (summary generation + evaluators) in parallel.
+        # Cap at 10 concurrent to avoid rate limits.
+        await execution.log_progress(
+            session, 20, f"Running evals for {n} intakes in parallel"
+        )
+        _sem = asyncio.Semaphore(10)
+
+        async def _eval_one(intake_id_str: str, formatted: str | None) -> dict:
+            if formatted is None:
+                return {"intake_id": intake_id_str, "error": "No messages found"}
+            async with _sem:
+                try:
+                    summary = await generate_summary(formatted, config_file)
+                    eval_metrics = await _run_evaluations(
+                        summary, formatted, system_prompt
+                    )
+                    return {
                         "intake_id": intake_id_str,
                         "transcript": formatted,
                         "summary": summary,
                         **eval_metrics,
                     }
-                )
-            except Exception as e:
-                logger.exception("Eval failed for intake", intake_id=intake_id_str)
-                per_intake_results.append({"intake_id": intake_id_str, "error": str(e)})
+                except Exception as e:
+                    logger.exception("Eval failed for intake", intake_id=intake_id_str)
+                    return {"intake_id": intake_id_str, "error": str(e)}
+
+        per_intake_results = list(
+            await asyncio.gather(
+                *[_eval_one(iid, fmt) for iid, fmt in intake_transcripts]
+            )
+        )
 
         await execution.log_progress(session, 90, "Aggregating results")
 

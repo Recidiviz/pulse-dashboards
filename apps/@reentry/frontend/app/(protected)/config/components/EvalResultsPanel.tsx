@@ -134,7 +134,13 @@ const ScoreBadge = ({
   </span>
 );
 
-const SummaryStats = ({ summary }: { summary: EvalSummary }) => {
+const SummaryStats = ({
+  summary,
+  compact,
+}: {
+  summary: EvalSummary;
+  compact?: boolean;
+}) => {
   const groundingPct =
     summary.grounding_pass_rate !== null
       ? Math.round(summary.grounding_pass_rate * 100)
@@ -155,12 +161,22 @@ const SummaryStats = ({ summary }: { summary: EvalSummary }) => {
     summary.no_judgments_mean != null
       ? summary.no_judgments_mean.toFixed(1)
       : null;
+  const sectionHeadersMean =
+    summary.has_section_headers_mean != null
+      ? summary.has_section_headers_mean.toFixed(1)
+      : null;
+  const sectionLengthMean =
+    summary.section_length_mean != null
+      ? summary.section_length_mean.toFixed(1)
+      : null;
 
   return (
     <div className="flex flex-wrap gap-3 mb-4">
-      <div className="text-xs text-gray-500">
-        {summary.n_successful}/{summary.n} intakes evaluated
-      </div>
+      {!compact && (
+        <div className="text-xs text-gray-500">
+          {summary.n_successful}/{summary.n} intakes evaluated
+        </div>
+      )}
       {groundingPct !== null && (
         <ScoreBadge
           label="Grounding pass"
@@ -196,7 +212,124 @@ const SummaryStats = ({ summary }: { summary: EvalSummary }) => {
           pass={parseFloat(njMean) >= 7}
         />
       )}
+      {sectionHeadersMean !== null && (
+        <ScoreBadge
+          label={`Section headers avg ${sectionHeadersMean}/10`}
+          value={parseFloat(sectionHeadersMean) >= 7 ? "Good" : "Low"}
+          pass={parseFloat(sectionHeadersMean) >= 7}
+        />
+      )}
+      {sectionLengthMean !== null && (
+        <ScoreBadge
+          label={`Section length avg ${sectionLengthMean}/10`}
+          value={parseFloat(sectionLengthMean) >= 7 ? "Good" : "Low"}
+          pass={parseFloat(sectionLengthMean) >= 7}
+        />
+      )}
     </div>
+  );
+};
+
+function computeSummaryFromIntakes(
+  intakes: IntakeEvalResult[],
+  coveragePassThreshold: number,
+): EvalSummary {
+  const successful = intakes.filter((r) => !r.error);
+  const mean = (vals: number[]) =>
+    vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+  const passRate = (vals: number[], passes: (v: number) => boolean) =>
+    vals.length ? vals.filter(passes).length / vals.length : null;
+
+  const g = successful.map((r) => r.grounding?.score).filter((s) => s != null);
+  const c = successful.map((r) => r.coverage?.score).filter((s) => s != null);
+  const nt = successful.map((r) => r.not_toxic?.score).filter((s) => s != null);
+  const t = successful.map((r) => r.tone?.score).filter((s) => s != null);
+  const nj = successful
+    .map((r) => r.no_judgments?.score)
+    .filter((s) => s != null);
+  const sh = successful
+    .map((r) => r.has_section_headers?.score)
+    .filter((s) => s != null);
+  const sl = successful
+    .map((r) => r.section_length?.score)
+    .filter((s) => s != null);
+
+  return {
+    n: intakes.length,
+    n_successful: successful.length,
+    coverage_pass_threshold: coveragePassThreshold,
+    grounding_pass_rate: passRate(g, (v) => v === 1),
+    coverage_mean: mean(c),
+    coverage_pass_rate: passRate(c, (v) => v >= coveragePassThreshold),
+    not_toxic_pass_rate: passRate(nt, (v) => v === 1),
+    tone_mean: mean(t),
+    no_judgments_mean: mean(nj),
+    has_section_headers_mean: mean(sh),
+    section_length_mean: mean(sl),
+  };
+}
+
+const AttributeBreakdown = ({
+  intakes,
+  attrsById,
+  coveragePassThreshold,
+}: {
+  intakes: IntakeEvalResult[];
+  attrsById: Record<string, Record<string, string>>;
+  coveragePassThreshold: number;
+}) => {
+  const attrKeys = Array.from(
+    new Set(Object.values(attrsById).flatMap((a) => Object.keys(a))),
+  ).filter((key) => key !== "persona_name");
+  if (attrKeys.length === 0) return null;
+
+  const sections = attrKeys
+    .map((key) => {
+      const groups: Record<string, IntakeEvalResult[]> = {};
+      for (const intake of intakes) {
+        const val = attrsById[intake.intake_id]?.[key];
+        if (val !== undefined) {
+          groups[val] = groups[val] ?? [];
+          groups[val].push(intake);
+        }
+      }
+      return { key, groups };
+    })
+    .filter(({ groups }) => Object.keys(groups).length > 1);
+
+  if (sections.length === 0) return null;
+
+  return (
+    <details className="mt-2">
+      <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700 mb-1">
+        Breakdown by attribute
+      </summary>
+      <div className="mt-2 space-y-3">
+        {sections.map(({ key, groups }) => (
+          <div key={key}>
+            <p className="text-xs font-semibold text-gray-600 mb-1">
+              {key.replace(/_/g, " ")}
+            </p>
+            <div className="space-y-1 pl-2">
+              {Object.entries(groups).map(([value, groupIntakes]) => {
+                const groupSummary = computeSummaryFromIntakes(
+                  groupIntakes,
+                  coveragePassThreshold,
+                );
+                return (
+                  <div key={value}>
+                    <span className="text-xs text-gray-400 mr-2">
+                      {value.replace(/_/g, " ")} ({groupIntakes.length})
+                    </span>
+                    <SummaryStats summary={groupSummary} compact />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </details>
   );
 };
 
@@ -494,6 +627,14 @@ const EvalResultCard = ({
       </div>
 
       {metrics?.summary && <SummaryStats summary={metrics.summary} />}
+
+      {metrics?.intakes && attrsById && (
+        <AttributeBreakdown
+          intakes={metrics.intakes}
+          attrsById={attrsById}
+          coveragePassThreshold={metrics.summary?.coverage_pass_threshold ?? 7}
+        />
+      )}
 
       {metrics?.intakes && metrics.intakes.length > 0 && (
         <details>

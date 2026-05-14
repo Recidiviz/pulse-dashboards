@@ -10,6 +10,7 @@ To use this command, first export a config from the UI at /config, then provide
 the exported file name as the output_config_name parameter.
 """
 
+import asyncio
 import csv
 import json
 import logging
@@ -623,13 +624,21 @@ async def _run_evaluations(
         outputs={},
     )
 
-    grounding_result = await grounding_check(run, example)
-    coverage_result = await coverage_check(run, example)
+    (
+        grounding_result,
+        coverage_result,
+        toxic_result,
+        tone_result,
+        judgments_result,
+    ) = await asyncio.gather(
+        grounding_check(run, example),
+        coverage_check(run, example),
+        not_toxic(run, example),
+        tone(run, example),
+        no_judgments(run, example),
+    )
     headers_result = has_section_headers(run, example)
     length_result = section_length(run, example)
-    toxic_result = await not_toxic(run, example)
-    tone_result = await tone(run, example)
-    judgments_result = await no_judgments(run, example)
 
     return {
         "grounding": grounding_result,

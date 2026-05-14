@@ -396,9 +396,9 @@ async def no_judgments(run: Run, example: Example) -> dict:
 
 
 def has_section_headers(run: Run, example: Example) -> dict:
-    """Count H1 headers and score based on expected structure."""
+    """Count markdown headers (any level) and score based on expected structure."""
     summary = run.outputs.get("summary", "")
-    headers = re.findall(r"^# ", summary, re.MULTILINE)
+    headers = re.findall(r"^#{1,6} ", summary, re.MULTILINE)
     count = len(headers)
     if count == 0:
         score = 1
@@ -412,7 +412,7 @@ def has_section_headers(run: Run, example: Example) -> dict:
         "key": "has_section_headers",
         "score": score,
         "header_count": count,
-        "explanation": f"Found {count} H1 header(s).",
+        "explanation": f"Found {count} header(s).",
     }
 
 
