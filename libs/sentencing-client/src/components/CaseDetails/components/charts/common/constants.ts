@@ -36,6 +36,7 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
   "3-5 Years Incarceration": palette.data.indigo1,
   "6+ Years Incarceration": palette.data.forest2,
   "Suspended Sentence": palette.data.bermuda,
+  "Treatment Court/Deferred Prosecution": palette.data.forest1,
 };
 
 // TODO(#12402): Remove this map once write_case_insights_data_to_bq.py is fixed
@@ -46,6 +47,7 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
 export const SENTENCE_TYPE_DISPLAY_NAMES: Record<string, string> = {
   Treatment_in_prison: "Court-Ordered Treatment",
   Suspended: "Suspended Sentence",
+  Deferred_prosecution: "Treatment Court/Deferred Prosecution",
 };
 
 export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {

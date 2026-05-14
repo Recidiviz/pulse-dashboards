@@ -39,6 +39,7 @@ export const customPalette = {
     grey5: "#DFDFDF",
     grey6: "#B0B0B0",
     grey7: "#AAAAAA",
+    grey8: "#5D5D5D",
     dark: "#505050",
   },
   teal: "rgba(204, 242, 235, 1)",

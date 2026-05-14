@@ -33,6 +33,10 @@ export type DispositionFill =
 
 // Fill config used in both the donut arcs and legend swatches
 export const DISPOSITION_FILL: Record<string, DispositionFill> = {
+  "Treatment Court/Deferred Prosecution": {
+    type: "solid",
+    color: customPalette.grey.grey8,
+  },
   Probation: { type: "solid", color: customPalette.grey.grey5 },
   "Court-Ordered Treatment": { type: "solid", color: customPalette.grey.grey6 },
   "Suspended Sentence": { type: "pattern", patternId: "pdf-dis-horiz-lines" },

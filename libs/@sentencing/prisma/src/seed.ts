@@ -449,42 +449,48 @@ async function addOpportunities() {
 
 // MO SAR disposition buckets match the sentence types used by case_insights_record for US_MO.
 // Must stay in sync with CANONICAL_DISPOSITION_SLOTS in sentencing-client.
-const MO_DISPOSITION_DATA = (malePercentages: number[]) => [
+const MO_DISPOSITION_DATA = (percentages: number[]) => [
   {
-    recommendationType: "Incarceration",
-    sentenceLengthBucketStart: 1,
-    sentenceLengthBucketEnd: 2,
-    percentage: malePercentages[0],
-  },
-  {
-    recommendationType: "Incarceration",
-    sentenceLengthBucketStart: 3,
-    sentenceLengthBucketEnd: 5,
-    percentage: malePercentages[1],
-  },
-  {
-    recommendationType: "Incarceration",
-    sentenceLengthBucketStart: 6,
+    recommendationType: "Deferred_prosecution",
+    sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
-    percentage: malePercentages[2],
+    percentage: percentages[0],
   },
   {
     recommendationType: "Probation",
     sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
-    percentage: malePercentages[3],
+    percentage: percentages[1],
   },
   {
     recommendationType: "Treatment_in_prison",
     sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
-    percentage: malePercentages[4],
+    percentage: percentages[2],
   },
   {
     recommendationType: "Suspended",
     sentenceLengthBucketStart: 0,
     sentenceLengthBucketEnd: -1,
-    percentage: malePercentages[5],
+    percentage: percentages[3],
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 1,
+    sentenceLengthBucketEnd: 2,
+    percentage: percentages[4],
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 3,
+    sentenceLengthBucketEnd: 5,
+    percentage: percentages[5],
+  },
+  {
+    recommendationType: "Incarceration",
+    sentenceLengthBucketStart: 6,
+    sentenceLengthBucketEnd: -1,
+    percentage: percentages[6],
   },
 ];
 
@@ -653,7 +659,9 @@ async function addOffenses() {
           ...moBucketData,
           dispositionNumRecords: faker.number.int({ min: 100, max: 1000 }),
           dispositionData: {
-            create: MO_DISPOSITION_DATA([0.02, 0.12, 0, 0.65, 0.07, 0.139]),
+            create: MO_DISPOSITION_DATA([
+              0.05, 0.6, 0.07, 0.139, 0.02, 0.12, 0,
+            ]),
           },
           avgSentenceLengthYears: faker.number.float({
             min: 2,
@@ -677,7 +685,9 @@ async function addOffenses() {
           ...moBucketData,
           dispositionNumRecords: faker.number.int({ min: 50, max: 800 }),
           dispositionData: {
-            create: MO_DISPOSITION_DATA([0.02, 0.1, 0.06, 0.62, 0.06, 0.14]),
+            create: MO_DISPOSITION_DATA([
+              0.05, 0.57, 0.06, 0.14, 0.02, 0.1, 0.06,
+            ]),
           },
           avgSentenceLengthYears: faker.number.float({
             min: 2,
