@@ -61,6 +61,8 @@ export const TableViewToggle = observer(function TableViewToggle({
     <ButtonGroup>
       <ButtonTooltipTrigger contents={!isMobile && "List View"}>
         <ViewTypeButton
+          aria-label="List View"
+          aria-pressed={presenter.showListView}
           kind={presenter.showListView ? "primary" : "secondary"}
           shape={"block"}
           $selected={presenter.showListView}
@@ -73,6 +75,8 @@ export const TableViewToggle = observer(function TableViewToggle({
       </ButtonTooltipTrigger>
       <ButtonTooltipTrigger contents={!isMobile && "Table View"}>
         <ViewTypeButton
+          aria-label="Table View"
+          aria-pressed={!presenter.showListView}
           kind={presenter.showListView ? "secondary" : "primary"}
           shape={"block"}
           $selected={!presenter.showListView}

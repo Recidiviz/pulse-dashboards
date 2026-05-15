@@ -988,6 +988,24 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    test("updateClientsResidentsViewPreference", () => {
+      const userEmail = "user@domain.gov";
+      store.updateClientsResidentsViewPreference(false);
+      expect(mockDoc.mock.calls).toEqual([
+        [undefined, "userUpdates", userEmail],
+      ]);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { clientsResidentsShowListView: false },
+          {
+            merge: true,
+          },
+        ],
+      ]);
+    });
+
     test("updateDismissedOpportunityNotificationIds", () => {
       const dismissedOpportunityNotificationIds = [
         "july_2024_update",

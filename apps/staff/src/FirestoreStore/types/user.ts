@@ -39,6 +39,8 @@ export type UserUpdateRecord = {
   >;
   // If false or undefined, shows Workflows table view
   showListView?: boolean;
+  // If false, shows table view on the Clients and Residents pages
+  clientsResidentsShowListView?: boolean;
 };
 export type UserRecord = Omit<StaffRecord, "email"> & { email: string };
 export function isUserRecord(

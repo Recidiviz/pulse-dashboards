@@ -16,3 +16,4 @@
 // =============================================================================
 
 export * from "./AllCaseloadsTable";
+export * from "./ClientsResidentsAllCaseloadsTable";

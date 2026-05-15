@@ -15,73 +15,104 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
+import styled from "styled-components";
 
-import { pluralizeWord } from "~utils";
+import { palette } from "~design-system";
+import { withPresenterManager } from "~hydration-utils";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
-import { toTitleCase } from "../../utils";
+import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
+import { AllCaseloadsPresenter } from "../../WorkflowsStore/presenters/AllCaseloadsPresenter";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
+import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
 import WorkflowsResults from "../WorkflowsResults";
 import { AllCaseloadsList } from "./AllCaseloadsList";
-import { AllCaseloadsTable } from "./AllCaseloadsTable";
+import {
+  AllCaseloadsTable,
+  ClientsResidentsAllCaseloadsTable,
+} from "./AllCaseloadsTable";
 
-function AllCaseloadsViz() {
-  const { usTn2026ClassificationPolicyPilot } = useFeatureVariants();
-  const {
-    currentTenantId,
-    workflowsStore: { activeSystem },
-  } = useRootStore();
+const HeaderRow = styled.div<{ $isMobile: boolean }>`
+  align-items: ${({ $isMobile }) => ($isMobile ? "flex-start" : "center")};
+  display: flex;
+  flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
+  gap: ${rem(spacing.md)};
+  justify-content: space-between;
+  margin-bottom: ${rem(spacing.lg)};
+`;
 
-  if (
-    usTn2026ClassificationPolicyPilot &&
-    currentTenantId === "US_TN" &&
-    activeSystem === "INCARCERATION"
-  ) {
+const HeaderText = styled.div<{ $isMobile: boolean }>`
+  ${({ $isMobile }) => ($isMobile ? typography.Serif24 : typography.Serif34)}
+  color: ${palette.pine2};
+  flex: 1;
+  margin-right: ${({ $isMobile }) => ($isMobile ? 0 : "20%")};
+`;
+
+const AllCaseloadsViz = observer(function AllCaseloadsViz({
+  presenter,
+}: {
+  presenter: AllCaseloadsPresenter;
+}) {
+  if (presenter.showTnPilotTable) {
     return <AllCaseloadsTable />;
   }
 
+  if (presenter.showClientsResidentsTable) {
+    return <ClientsResidentsAllCaseloadsTable presenter={presenter} />;
+  }
+
   return <AllCaseloadsList />;
-}
+});
 
-export const AllCaseloads = observer(function AllCaseloads() {
-  const {
-    workflowsStore: {
-      justiceInvolvedPersonTitle,
-      activeSystemConfig,
-      searchStore: { caseloadPersons, workflowsSearchFieldTitle, searchType },
-    },
-  } = useRootStore();
+const ManagedComponent = observer(function AllCaseloads({
+  presenter,
+}: {
+  presenter: AllCaseloadsPresenter;
+}) {
+  const { isMobile } = useIsMobile(true);
 
-  const searchTitleIgnoreCase = activeSystemConfig?.search.filter(
-    (search) => search.searchType === searchType,
-  )[0]?.searchTitleIgnoreCase;
+  const hydratedHeader = (
+    <HeaderRow $isMobile={isMobile}>
+      <HeaderText $isMobile={isMobile}>
+        {presenter.hydratedHeaderText}
+      </HeaderText>
+      {presenter.showTableViewToggle && (
+        <TableViewToggle presenter={presenter} />
+      )}
+    </HeaderRow>
+  );
 
   return (
     <CaseloadHydrator
       initial={
         <WorkflowsResults
-          headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
-          callToActionText={`Search for ${pluralizeWord({
-            term: workflowsSearchFieldTitle,
-            justAppendS: searchTitleIgnoreCase,
-          })} above to view their entire caseload.`}
+          headerText={presenter.initialHeaderText}
+          callToActionText={presenter.initialCallToActionText}
         />
       }
       hydrated={
-        <WorkflowsResults
-          headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
-            caseloadPersons.length
-          })`}
-        >
-          <AllCaseloadsViz />
+        <WorkflowsResults>
+          {hydratedHeader}
+          <AllCaseloadsViz presenter={presenter} />
         </WorkflowsResults>
       }
       empty={null}
     />
   );
+});
+
+function usePresenter() {
+  const rootStore = useRootStore();
+
+  return new AllCaseloadsPresenter(rootStore);
+}
+
+export const AllCaseloads = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
 });

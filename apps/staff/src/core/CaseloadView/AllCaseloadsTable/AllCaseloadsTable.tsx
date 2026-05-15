@@ -23,12 +23,7 @@ import { withPresenterManager } from "~hydration-utils";
 import { useRootStore } from "../../../components/StoreProvider";
 import { NavigateToFormButtonStyle } from "../../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { Resident } from "../../../WorkflowsStore/Resident";
-import {
-  CaseloadTable,
-  PersonIdCell,
-  PersonNameCell,
-  ReleaseDateCell,
-} from "../../CaseloadTable";
+import { CaseloadTable } from "../../CaseloadTable";
 import { FacilityUnitIdCell } from "../../CaseloadTable/FacilityUnitIdCell";
 import ModelHydrator from "../../ModelHydrator";
 import { OPPORTUNITY_STATUS_COLORS } from "../../utils/workflowsUtils";
@@ -40,18 +35,11 @@ import { AllCaseloadsPreviewModal } from "./AllCaseloadsPreviewModal";
 import { AllCaseloadsTablePresenter } from "./AllCaseloadsTablePresenter";
 import { CaseloadRowProps } from "./types";
 import { usTnOpportunityColumn, usTnStatusColumn } from "./UsTnColumns";
-
-function PersonNameWrapper({ row }: CaseloadRowProps) {
-  return <PersonNameCell person={row.original} />;
-}
-
-function PersonIdCellWrapper({ row }: CaseloadRowProps) {
-  return <PersonIdCell person={row.original} />;
-}
-
-function ReleaseDateWrapper({ row }: CaseloadRowProps) {
-  return <ReleaseDateCell person={row.original} />;
-}
+import {
+  PersonDateCell,
+  PersonIdCellWrapper,
+  PersonNameWrapper,
+} from "./utils";
 
 function FacilityUnitItWrapper({ row }: CaseloadRowProps) {
   return <FacilityUnitIdCell person={row.original} />;
@@ -102,7 +90,7 @@ const columns = [
     accessorFn: (person) => person.releaseDate,
     enableSorting: true,
     sortingFn: "datetime",
-    cell: ReleaseDateWrapper,
+    cell: PersonDateCell,
   },
   usTnStatusColumn,
   usTnOpportunityColumn,

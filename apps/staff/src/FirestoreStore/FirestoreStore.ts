@@ -586,6 +586,12 @@ export default class FirestoreStore {
     });
   }
 
+  async updateClientsResidentsViewPreference(showListView: boolean) {
+    return this.updateUserUpdatesDocument({
+      clientsResidentsShowListView: showListView,
+    });
+  }
+
   async updateUsTnExpirationContactNoteStatus(
     opportunity: UsTnExpirationOpportunity,
     currentUserEmail: string,

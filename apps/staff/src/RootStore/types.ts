@@ -69,6 +69,7 @@ export type FeatureVariant =
 
   //// General
   | "caseNoteSearch"
+  | "clientsResidentsTableViewToggle"
   | "formRevertButton"
   | "hideDenialRevert"
   | "hideWorkflowsOpportunities"
@@ -206,6 +207,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepageVitals: {},
   usPaSpecialCircumstances: {},
   caseNoteSearch: {},
+  clientsResidentsTableViewToggle: {},
   actionStrategies: {},
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
@@ -287,6 +289,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_ID", "US_UT", "US_IA", "US_MI"],
         },
         insightsConsistentLoginPill: { activeTenants: ["US_MI"] },
+        clientsResidentsTableViewToggle: {},
         usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
