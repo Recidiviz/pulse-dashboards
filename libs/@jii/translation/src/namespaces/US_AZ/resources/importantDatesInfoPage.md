@@ -78,11 +78,19 @@ Please note that in order to qualify for DTP, your current sentence can _only_ b
 
 The Department typically begins reviewing cases for eligibility up to 7 months before the next earliest release date. If you want to read the statutes like A.R.S. §13-3405(A)(1), you can find them in the Law Library or on your tablet through LexisNexis.
 
+#### Do I need to complete my Mandatory in order to be released on this date?
+
+If you want to be released as early as possible — yes, you need to finish it.
+
+DTP lets you out up to 90 days before your next earliest release date. For most people, that date is your [CSBD](#csbdDate-trToAddDate) or [ERCD](#ercdDate-addDate) (your 85.7% date). But your CSBD/ERCD only count if you meet the Mandatory Literacy requirement. If you don't (or, if you're just enrolled), you lose your CSBD/ERCD.
+
+You can still qualify for DTP if you're enrolled but haven't finished Mandatory Literacy. However, the earliest you could be released would be 90 days before your SED (your 100% sentence date) — which is much later than if you had completed Mandatory Literacy.
+
 #### What do I need to do in order to be released on this date?
 
 - You must sign the Transition Program agreement form.
 - You must be classified as Medium or Minimum custody.
-- You must at least be enrolled in Functional Literacy.
+- You must at least be enrolled in Functional Literacy — but to be released on your earliest possible date, you must complete it (see previous question).
 - You can’t have any felony holds, felony detainers, or felony warrants.
 - You can’t be found guilty of any Class A or Class B major disciplinary rule violations within 6 months of your CSBD / TR to ADD. Even if you qualified, getting a new major disciplinary infraction could cause you to lose your DTP date.
 - You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you later successfully reenrolled and completed it.
