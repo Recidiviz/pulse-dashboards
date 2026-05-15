@@ -32,6 +32,18 @@ import AppNavigator from "./navigation/AppNavigator";
 import { env } from "./shared/config/env";
 import { SnackbarProvider } from "./shared/ui/Snackbar";
 
+// Strip URL hash fragments before sending to Sentry to prevent OAuth token leakage.
+function sanitizeUrl(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    urlObj.hash = "";
+    return urlObj.toString();
+  } catch {
+    // If URL parsing fails, attempt basic string replacement as fallback
+    return url.replace(/#.*$/, "");
+  }
+}
+
 Sentry.init({
   dsn: env.EXPO_PUBLIC_SENTRY_DSN,
   tracesSampleRate: 0,
@@ -40,6 +52,30 @@ Sentry.init({
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
   enableLogs: true,
+  beforeSend(event) {
+    if (event.request?.url) {
+      event.request.url = sanitizeUrl(event.request.url);
+    }
+
+    if (event.breadcrumbs) {
+      event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => {
+        if (!breadcrumb.data) return breadcrumb;
+        const data = { ...breadcrumb.data };
+        if (data["url"]) data["url"] = sanitizeUrl(data["url"]);
+        if (data["to"]) data["to"] = sanitizeUrl(data["to"]);
+        if (data["from"]) data["from"] = sanitizeUrl(data["from"]);
+        return { ...breadcrumb, data };
+      });
+    }
+
+    if (event.contexts?.["browser"]?.["url"]) {
+      event.contexts["browser"]["url"] = sanitizeUrl(
+        event.contexts["browser"]["url"] as string,
+      );
+    }
+
+    return event;
+  },
 });
 
 // @ts-expect-error BigInt may not have toJSON in all environments
