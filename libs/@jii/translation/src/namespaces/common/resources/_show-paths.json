@@ -74,6 +74,12 @@
       "eligibilityNone": "[common]programs.modal.eligibilityNone",
       "availableFacilities": "[common]programs.modal.availableFacilities",
       "closeWindow": "[common]programs.modal.closeWindow"
+    },
+    "homepageCta": {
+      "sectionHeader": "[common]programs.homepageCta.sectionHeader",
+      "heading": "[common]programs.homepageCta.heading",
+      "description": "[common]programs.homepageCta.description",
+      "link": "[common]programs.homepageCta.link"
     }
   }
 }

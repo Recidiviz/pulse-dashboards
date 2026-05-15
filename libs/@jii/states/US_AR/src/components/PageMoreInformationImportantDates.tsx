@@ -35,7 +35,7 @@ export function PageMoreInformationImportantDates() {
   const backLinkProps =
     backTarget === "programs"
       ? {
-          to: State.Resident.UsArPrograms.buildPath(params),
+          to: State.Resident.ProgramCatalog.buildPath(params),
           children: t(($) => $.moreInformation.backLink.programs),
         }
       : {

@@ -18,7 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
-import { UserStore } from "~@jii/data";
+import { ResidentFlags, UserStore } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";
 
 export class ResidentNavBarPresenter {
@@ -27,6 +27,7 @@ export class ResidentNavBarPresenter {
     private routeParams:
       | RouteParams<typeof State.Resident>
       | RouteParams<typeof State>,
+    private residentFlags?: ResidentFlags,
   ) {
     makeAutoObservable(this);
   }
@@ -66,11 +67,14 @@ export class ResidentNavBarPresenter {
       ];
     }
 
-    if (this.routeParams.stateSlug === "arkansas") {
+    if (
+      this.routeParams.stateSlug === "arkansas" ||
+      this.routeParams.stateSlug === "mass"
+    ) {
       return [
         {
           label: "Programs",
-          to: State.Resident.UsArPrograms.buildPath(this.routeParams),
+          to: State.Resident.ProgramCatalog.buildPath(this.routeParams),
         },
       ];
     }

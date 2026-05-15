@@ -18,7 +18,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { EGT, UsMaPrograms } from "~@jii/paths";
+import { EGT, ProgramCatalog } from "~@jii/paths";
 
 import { EGTDataRouteContext } from "../EGTDataContext/RouteContext";
 import { PageDefinition } from "../pages/PageDefinition";
@@ -38,7 +38,7 @@ export const UsMaRouter = () => {
         <Route path={EGT.Definition.path} element={<PageDefinition />} />
         <Route path={EGT.MonthlyReport.path} element={<PageMonthlyReport />} />
       </Route>
-      <Route path={UsMaPrograms.path} element={<PageUsMaProgramCatalog />} />
+      <Route path={ProgramCatalog.path} element={<PageUsMaProgramCatalog />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

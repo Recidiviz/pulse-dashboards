@@ -33,12 +33,6 @@
   "programs": {
     "pageDescription": "[US_AR]programs.pageDescription",
     "learnMoreLink": "[US_AR]programs.learnMoreLink",
-    "modalCallToAction": "[US_AR]programs.modalCallToAction",
-    "homepageCta": {
-      "sectionHeader": "[US_AR]programs.homepageCta.sectionHeader",
-      "heading": "[US_AR]programs.homepageCta.heading",
-      "description": "[US_AR]programs.homepageCta.description",
-      "link": "[US_AR]programs.homepageCta.link"
-    }
+    "modalCallToAction": "[US_AR]programs.modalCallToAction"
   }
 }

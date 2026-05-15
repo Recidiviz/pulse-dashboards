@@ -136,6 +136,9 @@
   "programs": {
     "pageDescription": "This page helps you find programs and activities that can provide Earned Good Time, Boosts, or Completion Credits off of your sentence.\n\nThis list will update from time to time. Look for the New label to see what was recently updated. If you are eligible for a particular program, please follow your facility process for signing up.",
     "learnMoreLink": "Learn about Earned Good Time and Programs",
-    "modalCallToAction": "Sound interesting? Reach out to your unit program services to see if this might be a good fit."
+    "modalCallToAction": "Sound interesting? Reach out to your unit program services to see if this might be a good fit.",
+    "homepageCta": {
+      "description": "Explore available programs, filter by facility, and find ones that are interesting to you."
+    }
   }
 }

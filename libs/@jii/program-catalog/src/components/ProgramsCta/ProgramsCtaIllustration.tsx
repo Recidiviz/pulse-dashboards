@@ -24,10 +24,7 @@ const ProgramsCtaIllustration: React.FC = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <path
-      d="M0 8C0 3.58172 3.58172 0 8 0H206V187H8C3.58172 187 0 183.418 0 179V8Z"
-      fill="#012322"
-    />
+    <rect width="206" height="187" fill="#012322" />
     <rect
       x="25.5"
       y="25.5"

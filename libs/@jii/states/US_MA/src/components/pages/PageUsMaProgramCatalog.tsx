@@ -24,6 +24,7 @@ import { ProgramCatalog } from "~@jii/program-catalog";
 
 export const PageUsMaProgramCatalog: FC = () => {
   const pathParams = useTypedParams(State.Resident);
+
   return (
     <ProgramCatalog
       stateCode="US_MA"

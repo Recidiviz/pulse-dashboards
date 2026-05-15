@@ -18,7 +18,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { UsArMoreInformation, UsArPrograms } from "~@jii/paths";
+import { ProgramCatalog, UsArMoreInformation } from "~@jii/paths";
 
 import { PageMoreInformationImportantDates } from "./PageMoreInformationImportantDates";
 import { UsArProgramCatalog } from "./UsArProgramCatalog";
@@ -34,7 +34,7 @@ export function UsArRouter() {
           element={<PageMoreInformationImportantDates />}
         />
       </Route>
-      <Route path={UsArPrograms.path} element={<UsArProgramCatalog />} />
+      <Route path={ProgramCatalog.path} element={<UsArProgramCatalog />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

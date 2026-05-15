@@ -16,3 +16,7 @@
 // =============================================================================
 
 export { ProgramCatalog } from "./components/ProgramCatalog/ProgramCatalog";
+export {
+  ProgramsCtaCard,
+  ProgramsCtaSection,
+} from "./components/ProgramsCta/ProgramsCta";

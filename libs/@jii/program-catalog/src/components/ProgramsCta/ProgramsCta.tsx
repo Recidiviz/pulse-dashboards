@@ -17,22 +17,26 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import { Card, GoLink, HomepageSectionHeading } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
-import { useUsArTranslations } from "~@jii/translation";
 
+import { StateCodeWithProgramCatalog } from "../../types";
 import ProgramsCtaIllustration from "./ProgramsCtaIllustration";
 
 const CtaCard = styled(Card)`
   padding: 0;
   display: flex;
+  overflow: hidden;
 `;
 
 const Illustration = styled(ProgramsCtaIllustration)`
   flex-shrink: 0;
+  display: block;
 `;
 
 const CardContent = styled.div`
@@ -55,30 +59,47 @@ const CardDescription = styled.p`
   margin-bottom: ${rem(spacing.lg)};
 `;
 
-export function ProgramsCta() {
-  const { t } = useUsArTranslations();
+export function ProgramsCtaCard({
+  stateCode,
+}: {
+  stateCode: StateCodeWithProgramCatalog;
+}) {
+  const { t } = useTranslation([stateCode, "common"]);
+  const pathParams = useTypedParams(State.Resident);
 
-  const linkTo = State.Resident.$.UsArPrograms.buildRelativePath({});
+  const linkTo = State.Resident.ProgramCatalog.buildPath(pathParams);
+
+  return (
+    <CtaCard>
+      <Link to={linkTo} aria-hidden="true" tabIndex={-1}>
+        <Illustration />
+      </Link>
+      <CardContent>
+        <CardHeading>
+          <Link to={linkTo}>{t(($) => $.programs.homepageCta.heading)}</Link>
+        </CardHeading>
+        <CardDescription>
+          {t(($) => $.programs.homepageCta.description)}
+        </CardDescription>
+        <GoLink to={linkTo}>{t(($) => $.programs.homepageCta.link)}</GoLink>
+      </CardContent>
+    </CtaCard>
+  );
+}
+
+export function ProgramsCtaSection({
+  stateCode,
+}: {
+  stateCode: StateCodeWithProgramCatalog;
+}) {
+  const { t } = useTranslation([stateCode, "common"]);
 
   return (
     <section>
       <HomepageSectionHeading>
         {t(($) => $.programs.homepageCta.sectionHeader)}
       </HomepageSectionHeading>
-      <CtaCard>
-        <Link to={linkTo}>
-          <Illustration />
-        </Link>
-        <CardContent>
-          <CardHeading>
-            <Link to={linkTo}>{t(($) => $.programs.homepageCta.heading)}</Link>
-          </CardHeading>
-          <CardDescription>
-            {t(($) => $.programs.homepageCta.description)}
-          </CardDescription>
-          <GoLink to={linkTo}>{t(($) => $.programs.homepageCta.link)}</GoLink>
-        </CardContent>
-      </CtaCard>
+      <ProgramsCtaCard stateCode={stateCode} />
     </section>
   );
 }

@@ -58,6 +58,12 @@ const commonProgramCatalogContentsSchema = z.object({
     availableFacilities: z.string(),
     closeWindow: z.string(),
   }),
+  homepageCta: z.object({
+    sectionHeader: z.string(),
+    heading: z.string(),
+    description: z.string(),
+    link: z.string(),
+  }),
 });
 
 /**

@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 
 import { usePageTitle } from "~@jii/common-ui";
 import { LastUpdatedBanner } from "~@jii/layout";
+import { ProgramsCtaSection } from "~@jii/program-catalog";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
@@ -35,12 +36,12 @@ import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTi
 export const Homepage = observer(function Homepage() {
   const { data } = useEGTDataContext();
   const { t } = useUsMaTranslations();
-
   usePageTitle(t(($) => $.home.pageTitle));
 
   return (
     <div>
       <LastUpdatedBanner overrideCopy={t(($) => $.lastUpdated, data)} />
+      <ProgramsCtaSection stateCode="US_MA" />
       {data.isEgtDisabled ? (
         <>
           <EmptyState />

@@ -105,7 +105,16 @@ function usePresenter() {
 
   const routeParams = useParamsResidentOptional();
 
-  return new ResidentNavBarPresenter(residentsStore.userStore, routeParams);
+  const residentFlags =
+    "personPseudoId" in routeParams
+      ? residentsStore.residentFlagsByPseudoId.get(routeParams.personPseudoId)
+      : undefined;
+
+  return new ResidentNavBarPresenter(
+    residentsStore.userStore,
+    routeParams,
+    residentFlags,
+  );
 }
 
 export const ResidentNavBar = withPresenterManager({

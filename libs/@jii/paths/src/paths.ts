@@ -50,6 +50,8 @@ export const EGT = route(
   },
 );
 
+export const ProgramCatalog = route("programs");
+
 export const UsTnMoreInformation = route(
   "more-information",
   {},
@@ -69,10 +71,6 @@ export const UsArMoreInformation = route(
     }),
   },
 );
-
-export const UsArPrograms = route("programs");
-
-export const UsMaPrograms = route("programs");
 
 export const UsAzMoreInformation = route(
   "more-information",
@@ -134,12 +132,11 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
     {},
     {
       EGT,
+      ProgramCatalog,
       ReentryAssessment,
       UsArMoreInformation,
       UsAzMoreInformation,
       UsCoMoreInformation,
-      UsArPrograms,
-      UsMaPrograms,
       UsNcRNA,
       UsNdMoreInformation,
       UsNeMoreInformation,

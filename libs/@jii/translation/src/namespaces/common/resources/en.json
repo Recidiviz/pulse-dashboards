@@ -74,6 +74,12 @@
       "eligibilityNone": "No requirements needed",
       "availableFacilities": "Available Facilities",
       "closeWindow": "Close window"
+    },
+    "homepageCta": {
+      "sectionHeader": "Programming",
+      "heading": "Browse Available Programs",
+      "description": "Explore available programs, filter by facility, and star the ones that are interesting to you.",
+      "link": "View full list of programs"
     }
   }
 }

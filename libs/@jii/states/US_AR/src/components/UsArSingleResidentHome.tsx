@@ -21,9 +21,9 @@ import styled from "styled-components";
 import { usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
+import { ProgramsCtaSection } from "~@jii/program-catalog";
 import { spacing } from "~design-system";
 
-import { ProgramsCta } from "./ProgramsCta/ProgramsCta";
 import { UsArImportantDates } from "./UsArImportantDates";
 
 const Wrapper = styled.div`
@@ -38,7 +38,7 @@ export function UsArSingleResidentHome() {
     <Wrapper>
       <LastUpdatedBanner lastUpdatedDate={metadata.lastUpdatedDate} />
       <UsArImportantDates metadata={metadata} />
-      <ProgramsCta />
+      <ProgramsCtaSection stateCode="US_AR" />
     </Wrapper>
   );
 }
