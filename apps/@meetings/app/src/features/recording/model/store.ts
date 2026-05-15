@@ -82,8 +82,15 @@ export const useRecordingStore = create<RecordingStore>()(
       partialize: (state) => omit(state, ["note"]), // we save `debouncedNote` instead of `note`
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.note = state.debouncedNote;
+        if (!state) return;
+
+        state.note = state.debouncedNote;
+
+        if (state.person) {
+          state.person = {
+            ...state.person,
+            personId: BigInt(state.person.personId),
+          };
         }
       },
     },

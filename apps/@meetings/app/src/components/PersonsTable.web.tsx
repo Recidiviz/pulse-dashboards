@@ -83,7 +83,11 @@ const PersonsTable = ({
   const [page, setPage] = useState(1);
   const isFocused = useIsFocused();
   const navigation = useNavigation<ProfileNavProp>();
-  const { status } = useRecording<"web">();
+  const {
+    status,
+    meetingId: activeMeetingId,
+    person: recordingPerson,
+  } = useRecording<"web">();
 
   useEffect(() => {
     setPage(1);
@@ -159,88 +163,95 @@ const PersonsTable = ({
             </TableHeadRow>
           </TableHead>
           <TableBody>
-            {persons.map((person) => (
-              <TableRow
-                key={person.personId}
-                // onClickCapture allows row to be clicked instead of Pressable inside TooltipText,
-                // If inside row by design we have to add something clickable
-                // then this solution has to be changed
-                onClickCapture={() =>
-                  handleNavigateToProfile(person.personId.toString())
-                }
-              >
-                <TableCell>
-                  <View className="flex size-full flex-row items-center gap-3">
-                    <ImageBackground
-                      source={BgAvatarImage}
-                      className="size-11 items-center justify-center overflow-hidden rounded-full"
-                      imageClassName="!size-11"
-                    >
-                      <Typography className="text-base font-medium text-on-brand">
-                        {getInitials(person.fullName)}
-                      </Typography>
-                    </ImageBackground>
-                    <TooltipText triggerTextClassName="text-base font-medium capitalize text-primary">
-                      {person.fullName.toLowerCase()}
-                    </TooltipText>
-                  </View>
-                </TableCell>
-                <TableCell>
-                  <TooltipText triggerTextClassName="text-secondary">
-                    {person.displayPersonExternalId}
-                  </TooltipText>
-                </TableCell>
-                {!person.activeMeetingId &&
-                person.meetingDetails.validationErrorType ? (
-                  <TableCell colSpan={2}>
-                    <ProcessingErrorBanner
-                      validationErrorType={
-                        person.meetingDetails.validationErrorType
-                      }
-                      className="h-[90%]"
-                    />
-                  </TableCell>
-                ) : (
-                  <>
-                    <TableCell>
-                      <TooltipText triggerTextClassName="text-secondary">
-                        {person.primaryMetadata}
+            {persons.map((person) => {
+              const isPersonInActiveMeeting =
+                status !== "idle" &&
+                recordingPerson?.personId === person.personId &&
+                !!activeMeetingId;
+
+              return (
+                <TableRow
+                  key={person.personId}
+                  // onClickCapture allows row to be clicked instead of Pressable inside TooltipText,
+                  // If inside row by design we have to add something clickable
+                  // then this solution has to be changed
+                  onClickCapture={() =>
+                    handleNavigateToProfile(person.personId.toString())
+                  }
+                >
+                  <TableCell>
+                    <View className="flex size-full flex-row items-center gap-3">
+                      <ImageBackground
+                        source={BgAvatarImage}
+                        className="size-11 items-center justify-center overflow-hidden rounded-full"
+                        imageClassName="!size-11"
+                      >
+                        <Typography className="text-base font-medium text-on-brand">
+                          {getInitials(person.fullName)}
+                        </Typography>
+                      </ImageBackground>
+                      <TooltipText triggerTextClassName="text-base font-medium capitalize text-primary">
+                        {person.fullName.toLowerCase()}
                       </TooltipText>
+                    </View>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipText triggerTextClassName="text-secondary">
+                      {person.displayPersonExternalId}
+                    </TooltipText>
+                  </TableCell>
+                  {!isPersonInActiveMeeting &&
+                  person.meetingDetails.validationErrorType ? (
+                    <TableCell colSpan={2}>
+                      <ProcessingErrorBanner
+                        validationErrorType={
+                          person.meetingDetails.validationErrorType
+                        }
+                        className="h-[90%]"
+                      />
                     </TableCell>
-                    <TableCell>
-                      {person.activeMeetingId && (
-                        <View className="flex-row items-center pb-2">
-                          <RecordingIndicator
-                            isRecording={status === "recording"}
-                          />
-                          <Typography className="px-2 text-secondary">
-                            In progress
-                          </Typography>
-                        </View>
-                      )}
-                      {!person.activeMeetingId &&
-                        !person.meetingDetails.validationErrorType && (
-                          <View className="flex flex-col">
-                            <Typography className="text-base font-medium text-secondary">
-                              {upperFirst(person.lastMeeting)}
-                              {person.meetingDetails.staffEmail && " by"}
+                  ) : (
+                    <>
+                      <TableCell>
+                        <TooltipText triggerTextClassName="text-secondary">
+                          {person.primaryMetadata}
+                        </TooltipText>
+                      </TableCell>
+                      <TableCell>
+                        {isPersonInActiveMeeting && (
+                          <View className="flex-row items-center pb-2">
+                            <RecordingIndicator
+                              isRecording={status === "recording"}
+                            />
+                            <Typography className="px-2 text-secondary">
+                              In progress
                             </Typography>
-                            <TooltipText triggerTextClassName="text-base font-medium text-secondary">
-                              {person.meetingDetails.staffEmail}
-                            </TooltipText>
                           </View>
                         )}
-                    </TableCell>
-                  </>
-                )}
+                        {!isPersonInActiveMeeting &&
+                          !person.meetingDetails.validationErrorType && (
+                            <View className="flex flex-col">
+                              <Typography className="text-base font-medium text-secondary">
+                                {upperFirst(person.lastMeeting)}
+                                {person.meetingDetails.staffEmail && " by"}
+                              </Typography>
+                              <TooltipText triggerTextClassName="text-base font-medium text-secondary">
+                                {person.meetingDetails.staffEmail}
+                              </TooltipText>
+                            </View>
+                          )}
+                      </TableCell>
+                    </>
+                  )}
 
-                <TableCell>
-                  <View className="invisible size-5 items-center justify-center group-hover:visible">
-                    <ChevronRightIcon className="stroke-secondary stroke-[3px]" />
-                  </View>
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell>
+                    <View className="invisible size-5 items-center justify-center group-hover:visible">
+                      <ChevronRightIcon className="stroke-secondary stroke-[3px]" />
+                    </View>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </View>

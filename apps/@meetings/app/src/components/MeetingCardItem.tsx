@@ -66,14 +66,13 @@ const MeetingCardItem = ({
   person,
   personType,
 }: MeetingCardItemProps) => {
-  const { status: recordingState, status } = useRecording<"native">();
+  const { status: recordingState, meetingId } = useRecording<"native">();
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const [canEditNote, setCanEditNote] = useState(false);
-  const isInProgress =
-    recordingState !== "idle" && meeting.status === "NOT_STARTED";
+  const isInProgress = recordingState !== "idle" && meeting.id === meetingId;
   const isProcessing = isMeetingProcessing(meeting.status);
   const isError = !!meeting.validationErrorType;
   const isFinishedWithoutNote =
@@ -152,7 +151,7 @@ const MeetingCardItem = ({
                   {isInProgress && (
                     <>
                       <RecordingIndicator
-                        isRecording={status === "recording"}
+                        isRecording={recordingState === "recording"}
                       />
                       <Typography className="text-sm font-medium text-primary">
                         In progress

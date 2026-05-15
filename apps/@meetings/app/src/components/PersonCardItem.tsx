@@ -21,6 +21,7 @@ import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import { Person, PersonType } from "../common/types";
+import { useRecording } from "../features/recording";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
@@ -35,7 +36,12 @@ interface ItemProps {
 }
 
 const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
-  const hasActiveMeeting = !!person.activeMeetingId;
+  const { meetingId: activeMeetingId, person: recordingPerson } =
+    useRecording<"native">();
+  const hasActiveMeeting =
+    recordingState !== "idle" &&
+    recordingPerson?.personId === person.personId &&
+    !!activeMeetingId;
   const hasValidationError =
     !hasActiveMeeting && !!person.meetingDetails.validationErrorType;
   const hasLastMeeting =
@@ -74,13 +80,13 @@ const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
             <ChevronRightIcon className="ml-auto !size-6 stroke-tertiary stroke-[2px]" />
           </View>
         </Link>
-        {!!person.activeMeetingId && (
+        {hasActiveMeeting && (
           <MeetingInProgressBar
             recordingState={recordingState || "recording"}
             startTime={new Date()} // TODO: Replace with API value
             endTime={null}
             person={{ ...person, personId: person.personId }}
-            meetingId={person.activeMeetingId}
+            meetingId={activeMeetingId}
           />
         )}
         {hasValidationError && (
