@@ -35,6 +35,7 @@ import PlaySvg from "../shared/assets/icons/play.svg";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import useIsOnline from "../shared/lib/useIsOnline";
+import Dropdown from "../shared/ui/Dropdown";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
 
@@ -44,6 +45,9 @@ type NewMeetingRecordingSheetProps = {
   onStartMeeting: () => void;
   onUploadFile: () => void;
   isMeetingCreating: boolean;
+  meetingTypes: string[];
+  setMeetingType: (meetingType: string) => void;
+  meetingTypeError: string | null;
 };
 
 export function NewMeetingRecordingSheet({
@@ -52,6 +56,9 @@ export function NewMeetingRecordingSheet({
   onStartMeeting,
   onUploadFile,
   isMeetingCreating,
+  meetingTypes,
+  setMeetingType,
+  meetingTypeError,
 }: NewMeetingRecordingSheetProps) {
   const insets = useSafeAreaInsets();
   const { isOnline } = useIsOnline();
@@ -118,7 +125,17 @@ export function NewMeetingRecordingSheet({
               </Typography>
             </View>
           </View>
-
+          <View className="mb-4 w-full">
+            <Dropdown
+              className="mb-2"
+              variant="outline"
+              options={meetingTypes}
+              onSelect={setMeetingType}
+              placeholder="Select meeting type"
+              defaultEmptyValue
+              errorMessage={meetingTypeError}
+            />
+          </View>
           <TouchableOpacity
             className="mb-3 h-14 w-full flex-row items-center justify-center gap-2 rounded-full bg-brand p-4"
             onPress={onStartMeeting}

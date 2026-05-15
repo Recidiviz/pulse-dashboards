@@ -1,6 +1,11 @@
 name: Demo
 stateCode: US_DEMO
-version: 1
+version: 2
 
 audioTTLDays: null
 transcriptTTLDays: null
+meetingTypes:
+  - Assessment
+  - Contact
+  - Collateral Contact
+  - 120-Day Meeting

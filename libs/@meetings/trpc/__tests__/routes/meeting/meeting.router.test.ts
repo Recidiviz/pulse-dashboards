@@ -29,6 +29,7 @@ import {
 import {
   fakeActiveMeeting,
   fakeInactiveMeeting,
+  pseudoMeetingType,
 } from "~@meetings/trpc/test/setup/seed";
 
 const FAKE_DATE = new Date("2025-10-19");
@@ -55,6 +56,7 @@ describe("meeting router", () => {
 
       expect(result).toEqual({
         id: fakeActiveMeeting.id,
+        meetingType: pseudoMeetingType,
         startTime: fakeActiveMeeting.startTime,
         endTime: null,
         durationMs: null,
@@ -102,6 +104,7 @@ describe("meeting router", () => {
         showTranscriptions: false,
         audioTTLDays: 30,
         transcriptTTLDays: 30,
+        meetingTypes: [],
         keywords: [],
         glossary: {},
         rules: [],
@@ -115,6 +118,7 @@ describe("meeting router", () => {
 
         expect(result).toEqual({
           id: fakeActiveMeeting.id,
+          meetingType: pseudoMeetingType,
           startTime: fakeActiveMeeting.startTime,
           endTime: null,
           durationMs: null,

@@ -81,7 +81,6 @@ const ResidentNewMeetingScreen = () => {
     <SafeAreaView className="flex-1 bg-primary">
       <NewMeeting
         person={deserializeResident(resident)}
-        personType="resident"
         navigateToPersonProfile={navigateToResidentProfile}
       />
     </SafeAreaView>

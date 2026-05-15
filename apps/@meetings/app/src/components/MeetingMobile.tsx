@@ -43,6 +43,7 @@ import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
 import { BulletListTab } from "../components/MeetingDetailTabs";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
+import { MeetingTypeTag } from "../entities/meeting-type";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
@@ -315,6 +316,7 @@ const MeetingMobile = ({
               Meeting: {meetingDate}
             </Typography>
             <View className="flex flex-row items-center gap-1">
+              <MeetingTypeTag type={meetingDetails.meetingType} />
               <ClockIcon className="text-muted size-4" />
               <Typography className="text-sm font-normal leading-[14px] text-gray-500">
                 {time}

@@ -50,6 +50,8 @@ export const AgencyConfigFileSchema = z.object({
   keywords: z.array(z.string()).optional(),
   /** Appended to base keywords */
   additionalKeywords: z.array(z.string()).optional(),
+  /** Each state has its own meeting types list */
+  meetingTypes: z.array(z.string()).optional(),
 
   // ── LLM ───────────────────────────────────────────────────
   /** Replaces base glossary entirely */
@@ -85,6 +87,7 @@ export const AgencyConfigSchema = z.object({
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
   keywords: z.array(z.string()).default([]),
+  meetingTypes: z.array(z.string()).default([]),
 
   // ── LLM ───────────────────────────────────────────────────
   glossary: z.record(z.string()).default({}),

@@ -57,12 +57,13 @@ export function useOfflineEventFactory() {
 
     switch (event.type) {
       case MeetingEventType.Created: {
-        const { meetingId, personId, personType, startTime } =
+        const { meetingId, meetingType, personId, personType, startTime } =
           event as CreateMeetingEvent;
         if (!personId || !personType) break;
 
         const newMeeting = {
           id: meetingId,
+          meetingType,
           startTime,
           endTime: null,
           durationMs: null,
@@ -87,6 +88,7 @@ export function useOfflineEventFactory() {
           { meetingId },
           {
             id: meetingId,
+            meetingType,
             startTime,
             endTime: null,
             durationMs: null,

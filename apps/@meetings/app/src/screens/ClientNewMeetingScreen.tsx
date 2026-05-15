@@ -77,7 +77,6 @@ const ClientNewMeetingScreen = () => {
     <SafeAreaView className="flex-1 bg-primary">
       <NewMeeting
         person={deserializeClient(person)}
-        personType="client"
         navigateToPersonProfile={navigateToClientProfile}
       />
     </SafeAreaView>

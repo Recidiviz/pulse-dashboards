@@ -27,6 +27,7 @@ type AudioUploadStore = {
   // Persisted fields
   status: AudioUploadStatus;
   meetingId: string | null;
+  meetingType: string | null;
   person: Person | null;
   personType: PersonType | null;
   file: FileInfo | null;
@@ -42,12 +43,17 @@ type AudioUploadStore = {
   setStatus: (status: AudioUploadStatus) => void;
   setDialog: (dialog: AudioUploadDialog) => void;
   setMeetingId: (meetingId: string | null) => void;
+  setMeetingType: (meetingType: string | null) => void;
   setFile: (file: FileInfo | null) => void;
   setError: (error: string | null) => void;
   setUploadProgress: (uploaded: number, total: number) => void;
   setRecordingDate: (date: Date | null) => void;
   setRecordingTime: (time: Date | null) => void;
-  open: (params: { person: Person; personType: PersonType }) => void;
+  open: (params: {
+    person: Person;
+    personType: PersonType;
+    meetingType: string;
+  }) => void;
   reset: () => void;
 };
 
@@ -55,6 +61,7 @@ const initialState = {
   status: null,
   dialog: null,
   meetingId: null,
+  meetingType: null,
   personType: null,
   person: null,
   file: null,
@@ -73,17 +80,19 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       setStatus: (status) => set({ status }),
       setDialog: (dialog) => set({ dialog }),
       setMeetingId: (meetingId) => set({ meetingId }),
+      setMeetingType: (meetingType) => set({ meetingType }),
       setFile: (file) => set({ file }),
       setError: (error) => set({ error }),
       setUploadProgress: (uploadedBytes, totalBytes) =>
         set({ uploadedBytes, totalBytes }),
       setRecordingDate: (recordingDate) => set({ recordingDate }),
       setRecordingTime: (recordingTime) => set({ recordingTime }),
-      open: ({ person, personType }) =>
+      open: ({ person, personType, meetingType }) =>
         set({
           ...initialState,
           person,
           personType,
+          meetingType,
           status: "selecting",
         }),
       reset: () => set(initialState),

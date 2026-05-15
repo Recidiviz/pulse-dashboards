@@ -47,6 +47,7 @@ const mockResidentSetData = jest.fn();
 const mockMeetingDetailsSetData = jest.fn();
 
 const MEETING_ID = "meeting-123";
+const MEETING_TYPE = "TEST_TYPE";
 const PERSON_ID = BigInt(456);
 const START_TIME = new Date("2026-01-01T10:00:00Z");
 const END_TIME = new Date("2026-01-01T11:00:00Z");
@@ -80,6 +81,7 @@ describe("useOfflineEventFactory", () => {
       result.current.dispatch({
         type: MeetingEventType.Created,
         meetingId: MEETING_ID,
+        meetingType: MEETING_TYPE,
         personId: PERSON_ID,
         personType: "client",
         startTime: START_TIME,
@@ -89,6 +91,7 @@ describe("useOfflineEventFactory", () => {
         meetingId: MEETING_ID,
         personId: PERSON_ID,
         personType: "client",
+        meetingType: MEETING_TYPE,
         startTime: START_TIME,
       });
     });
@@ -98,6 +101,7 @@ describe("useOfflineEventFactory", () => {
       result.current.dispatch({
         type: MeetingEventType.Created,
         meetingId: MEETING_ID,
+        meetingType: MEETING_TYPE,
         personId: PERSON_ID,
         personType: "client",
         startTime: START_TIME,
@@ -127,6 +131,7 @@ describe("useOfflineEventFactory", () => {
       result.current.dispatch({
         type: MeetingEventType.Created,
         meetingId: MEETING_ID,
+        meetingType: MEETING_TYPE,
         personId: PERSON_ID,
         personType: "resident",
         startTime: START_TIME,
@@ -144,6 +149,7 @@ describe("useOfflineEventFactory", () => {
       result.current.dispatch({
         type: MeetingEventType.Created,
         meetingId: MEETING_ID,
+        meetingType: MEETING_TYPE,
         personId: PERSON_ID,
         personType: "client",
         startTime: START_TIME,

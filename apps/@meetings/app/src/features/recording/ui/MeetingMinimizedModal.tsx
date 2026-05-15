@@ -18,6 +18,8 @@
 import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
+import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+
 import { Person } from "../../../common/types";
 import MaximizeSvg from "../../../shared/assets/icons/arrows-poin-outting-in.svg";
 import PauseSvg from "../../../shared/assets/icons/pause.svg";
@@ -45,7 +47,8 @@ export function MeetingMinimizedModal({
   onStop,
   onDiscard,
 }: Props) {
-  const { status, setIsRecordingViewMinimized } = useRecording<"web">();
+  const { meetingType, status, setIsRecordingViewMinimized } =
+    useRecording<"web">();
 
   const isControlsDisabled = status === "uploading" || status === "ending";
 
@@ -53,8 +56,8 @@ export function MeetingMinimizedModal({
     <FloatingCard position="bottom-right" className="h-[150px] w-[360px]">
       <View className="grow">
         <View className="mb-1 w-full flex-row justify-between">
-          <Typography className="text-lg font-medium text-primary">
-            {person.fullName}
+          <Typography className="flex flex-row items-center gap-2 text-lg font-medium text-primary">
+            {person.fullName} <MeetingTypeTag type={meetingType} />
           </Typography>
           <TouchableOpacity
             className="relative -right-1 -top-1"

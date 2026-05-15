@@ -22,6 +22,7 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import CalendarIcon from "react-native-heroicons/solid/CalendarIcon";
 import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
+import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -45,6 +46,7 @@ export function AudioUploadModal({
   onCancel,
 }: Props) {
   const {
+    meetingType,
     status,
     file,
     error,
@@ -101,8 +103,8 @@ export function AudioUploadModal({
     <Modal visible transparent onClickOutside={onCancel}>
       <View className="w-[520px] p-6">
         <View className="mb-1 flex-row items-center justify-between">
-          <Typography className="text-xl font-semibold text-primary">
-            Upload audio
+          <Typography className="flex flex-row items-center gap-2 text-xl font-semibold text-primary">
+            Upload audio <MeetingTypeTag type={meetingType} />
           </Typography>
           <TouchableOpacity onPress={onCancel} className="p-1">
             <XIcon className="size-5 stroke-tertiary" />

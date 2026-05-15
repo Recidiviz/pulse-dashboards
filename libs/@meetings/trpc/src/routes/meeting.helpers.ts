@@ -60,6 +60,7 @@ export async function createMeetingForPerson({
   startTime,
   personType,
   meetingId,
+  meetingType,
   stateCode,
 }: {
   prisma: PrismaClient;
@@ -68,6 +69,7 @@ export async function createMeetingForPerson({
   startTime: Date;
   personType: "client" | "resident";
   meetingId: string;
+  meetingType: string;
   stateCode: StateCode;
 }) {
   if (
@@ -84,6 +86,7 @@ export async function createMeetingForPerson({
   return await prisma.meeting.create({
     data: {
       id: meetingId,
+      meetingType,
       [personType]: {
         connect: {
           personId,
@@ -128,6 +131,7 @@ export async function getMeetingsForPerson({
     },
     select: {
       id: true,
+      meetingType: true,
       startTime: true,
       endTime: true,
       postMeetingProcessingStatus: true,

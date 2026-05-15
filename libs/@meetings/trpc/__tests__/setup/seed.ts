@@ -33,6 +33,7 @@ export const clientPseudoId4 = "client-pid-4";
 export const residentPseudoId1 = "resident-pid-1";
 export const residentPseudoId2 = "resident-pid-2";
 export const residentPseudoId3 = "resident-pid-3";
+export const pseudoMeetingType = "pseudo-meeting-type";
 
 export const fakeStaff = [
   {
@@ -177,6 +178,7 @@ const millisecondsInOneHour = 60 * 60 * 1000;
 
 export const fakeActiveMeeting = {
   id: "meeting-1",
+  meetingType: pseudoMeetingType,
   staffEmail: fakeStaff[0].email,
   client: {
     connect: {

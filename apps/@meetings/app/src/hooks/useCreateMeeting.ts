@@ -27,11 +27,17 @@ import { useOfflineEventFactory } from "./useOfflineEventFactory";
 
 type Params = {
   person?: Person | null;
+  meetingType: string | null;
   personType?: PersonType | null;
   onSuccess: (meetingId: string) => void;
 };
 
-export function useCreateMeeting({ person, personType, onSuccess }: Params) {
+export function useCreateMeeting({
+  person,
+  meetingType,
+  personType,
+  onSuccess,
+}: Params) {
   const { isOnline } = useIsOnline();
   const { dispatch: dispatchOfflineEvent } = useOfflineEventFactory();
   const { createMeeting } = useMeetingActions();
@@ -46,12 +52,13 @@ export function useCreateMeeting({ person, personType, onSuccess }: Params) {
       const meetingId = createId();
       const startTime = new Date();
 
-      if (!person || !personType) return meetingId;
+      if (!person || !personType || !meetingType) return meetingId;
 
       if (!isOnline) {
         dispatchOfflineEvent({
           type: MeetingEventType.Created,
           meetingId,
+          meetingType,
           personId: person.personId,
           personType,
           startTime,
@@ -64,6 +71,7 @@ export function useCreateMeeting({ person, personType, onSuccess }: Params) {
         personId: person.personId,
         personType,
         meetingId,
+        meetingType,
         startTime,
       });
 

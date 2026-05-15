@@ -33,6 +33,7 @@ import {
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { Person, PersonType } from "../common/types";
+import { MeetingTypeTag } from "../entities/meeting-type";
 import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
 import ProcessingSvg from "../shared/assets/icons/processing.svg";
@@ -46,6 +47,7 @@ import DraftCaseNoteSheet from "./DraftCaseNoteSheet";
 type MeetingCardItemProps = {
   meeting: {
     id: string;
+    meetingType: string | null;
     date: string;
     time: string;
     duration: string | null;
@@ -124,9 +126,12 @@ const MeetingCardItem = ({
         {isError ? (
           <View className="w-full flex-row items-center justify-between border-b border-subtle pb-3">
             <View className="flex flex-col gap-1">
-              <Typography className="mr-1 text-base font-medium text-primary">
-                {meeting.date}
-              </Typography>
+              <View className="flex flex-row items-center gap-1">
+                <Typography className="mr-1 flex flex-row items-center gap-2 text-base font-medium text-primary">
+                  {meeting.date}
+                </Typography>
+                <MeetingTypeTag type={meeting.meetingType} />
+              </View>
               <Typography className="text-sm leading-4 text-secondary">
                 {meeting.time}
                 {meeting.duration && ` • ${meeting.duration}`}
@@ -145,9 +150,12 @@ const MeetingCardItem = ({
             >
               <View className="flex flex-col gap-1">
                 <View className="flex flex-row items-center gap-2">
-                  <Typography className="mr-1 text-base font-medium text-primary">
-                    {meeting.date}
-                  </Typography>
+                  <View className="flex flex-row items-center gap-1">
+                    <Typography className="mr-1 flex flex-row items-center gap-2 text-base font-medium text-primary">
+                      {meeting.date}
+                    </Typography>
+                    <MeetingTypeTag type={meeting.meetingType} />
+                  </View>
                   {isInProgress && (
                     <>
                       <RecordingIndicator

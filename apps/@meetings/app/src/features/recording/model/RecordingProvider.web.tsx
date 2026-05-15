@@ -42,12 +42,14 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     status,
     note,
     meetingId,
+    meetingType,
     person,
     isRecordingViewMinimized,
     durationMs: persistedDurationMs,
     setStatus,
     setNote,
     setMeetingId,
+    setMeetingType,
     setPerson,
     setIsRecordingViewMinimized,
     setDurationMs: setPersistedDurationMs,
@@ -86,16 +88,20 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const openRecordingView = ({
     meetingId,
     person,
+    meetingType,
   }: {
     meetingId: string;
     person: Person;
+    meetingType: string;
   }) => {
     setMeetingId(meetingId);
     setPerson(person);
+    setMeetingType(meetingType);
   };
 
   const closeRecordingView = () => {
     setMeetingId(null);
+    setMeetingType(null);
     setPerson(null);
     setIsRecordingViewMinimized(false);
   };
@@ -318,6 +324,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         isRecordingViewMinimized,
         setIsRecordingViewMinimized,
         meetingId,
+        meetingType,
         person,
         openRecordingView,
         closeRecordingView,

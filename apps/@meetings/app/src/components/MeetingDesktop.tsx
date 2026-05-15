@@ -32,6 +32,7 @@ import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
 import { BulletListTab } from "../components/MeetingDetailTabs";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
+import { MeetingTypeTag } from "../entities/meeting-type";
 import { usePrintMeetingDetails } from "../hooks/usePrintMeetingDetails";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
@@ -119,6 +120,7 @@ const MeetingDesktop = ({
               Meeting: {meetingDate}
             </Typography>
             <View className="flex flex-row items-center gap-1">
+              <MeetingTypeTag type={meetingDetails.meetingType} />
               <ClockIcon className="size-4 stroke-tertiary" />
               <Typography className="text-secondary">
                 {time}

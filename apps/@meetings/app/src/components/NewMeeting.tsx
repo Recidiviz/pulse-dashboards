@@ -24,7 +24,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Person, PersonType } from "../common/types";
+import { Person } from "../common/types";
+import { MeetingTypeTag } from "../entities/meeting-type";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import NotesSvg from "../shared/assets/icons/arrows-poin-outting-in.svg";
 import { Typography } from "../shared/ui/Typography";
@@ -32,14 +33,14 @@ import Header from "./Header";
 
 type Props = {
   person: Person;
-  personType: PersonType;
   navigateToPersonProfile: () => void;
 };
 
-const NewMeeting = ({ person, personType, navigateToPersonProfile }: Props) => {
+const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const insets = useSafeAreaInsets();
 
   const {
+    meetingType,
     status,
     note,
     setNote,
@@ -83,9 +84,12 @@ const NewMeeting = ({ person, personType, navigateToPersonProfile }: Props) => {
             <Typography className="text-base text-primary">
               {person.fullName.toUpperCase()}
             </Typography>
-            <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
-              New Meeting
-            </Typography>
+            <View className="flex flex-row items-center justify-between">
+              <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
+                New Meeting
+              </Typography>
+              <MeetingTypeTag type={meetingType} />
+            </View>
             <Typography className="text-base text-secondary">
               ID: {person.displayPersonExternalId} • {person.primaryMetadata}
             </Typography>

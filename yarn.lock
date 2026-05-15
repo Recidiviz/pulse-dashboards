@@ -166,6 +166,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@auth0/auth0-auth-js@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@auth0/auth0-auth-js@npm:1.6.0"
+  dependencies:
+    jose: "npm:^6.0.8"
+    openid-client: "npm:^6.8.0"
+  checksum: 10c0/0f5672ea77045d1172dac8a2571f1a7111045677191fa6105c0458a720fab3db385384b302535a6694c16dfe82ef0e9a3510d2113d5c35ca0f5ecd1bb1d96c05
+  languageName: node
+  linkType: hard
+
 "@auth0/auth0-react@npm:^2.11.0":
   version: 2.11.0
   resolution: "@auth0/auth0-react@npm:2.11.0"
@@ -178,14 +188,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@auth0/auth0-spa-js@npm:2.7.0":
-  version: 2.7.0
-  resolution: "@auth0/auth0-spa-js@npm:2.7.0"
+"@auth0/auth0-spa-js@npm:2.18.2":
+  version: 2.18.2
+  resolution: "@auth0/auth0-spa-js@npm:2.18.2"
   dependencies:
-    browser-tabs-lock: "npm:^1.2.15"
-    dpop: "npm:^2.1.1"
-    es-cookie: "npm:~1.3.2"
-  checksum: 10c0/ee0f7f5c34374bf102c595a63a84b8a50eb6dfb06b9483bb28580ab48dedb328e57276b799b18f2e3171c3bd15fb1e5710ab1a26b5e422f4ac685147709aaf85
+    "@auth0/auth0-auth-js": "npm:1.6.0"
+    browser-tabs-lock: "npm:1.3.0"
+    dpop: "npm:2.1.1"
+    es-cookie: "npm:1.3.2"
+  checksum: 10c0/b100778d4896ceb9cb88684f13c5ab0d45cf71430cbb4184530da32aaa1081b91ab6fa4621c56b184d8b488be4adc2570ac1ae5c0dd7d89f0e4a8f6a2616eae9
   languageName: node
   linkType: hard
 
@@ -10284,7 +10295,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-native: "npm:^0.81.0"
-    react-native-auth0: "npm:^5.1.0"
+    react-native-auth0: "npm:^5.5.1"
     react-native-css-interop: "npm:^0.2.1"
     react-native-error-boundary: "npm:^2.0.0"
     react-native-gesture-handler: "npm:^2.29.1"
@@ -25545,7 +25556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browser-tabs-lock@npm:^1.2.15":
+"browser-tabs-lock@npm:1.3.0, browser-tabs-lock@npm:^1.2.15":
   version: 1.3.0
   resolution: "browser-tabs-lock@npm:1.3.0"
   dependencies:
@@ -30437,7 +30448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dpop@npm:^2.1.1":
+"dpop@npm:2.1.1, dpop@npm:^2.1.1":
   version: 2.1.1
   resolution: "dpop@npm:2.1.1"
   checksum: 10c0/e46dfd62325dd63372a17492c1867f79cdaf235645d32b87c3be8a09d4c7b03b8b44efec26688ba19e8279c77497a08deb302a9a4704b432795efd1163519611
@@ -31080,7 +31091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-cookie@npm:~1.3.2":
+"es-cookie@npm:1.3.2, es-cookie@npm:~1.3.2":
   version: 1.3.2
   resolution: "es-cookie@npm:1.3.2"
   checksum: 10c0/26eb6e06b25b5569d8763fcb23b5335a5098e354b0a9a7bc5122e8c8705003307187a165ddaeda5cff08fa4cc8e1675dbddd5709279fb27cfa8875514dc3eccb
@@ -39830,6 +39841,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^6.0.8, jose@npm:^6.2.2":
+  version: 6.2.3
+  resolution: "jose@npm:6.2.3"
+  checksum: 10c0/aa91bccba22cc84d86308f833749bcb0b00441e35c24e0ac79abeac5f76dc62d47bdef9c1da6a0c609f5da6478595f52b252085888b89dbdb163861e40ea4188
+  languageName: node
+  linkType: hard
+
 "joycon@npm:^3.1.1":
   version: 3.1.1
   resolution: "joycon@npm:3.1.1"
@@ -45422,6 +45440,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oauth4webapi@npm:^3.8.5":
+  version: 3.8.6
+  resolution: "oauth4webapi@npm:3.8.6"
+  checksum: 10c0/479810716702c5616e4a0eb80d4f1c264a6a2b63b04061a62a59375e195d2726e947507ede98e41ee3f9ca800f159621ea371c36f5c4346d015b6ec03e477440
+  languageName: node
+  linkType: hard
+
 "ob1@npm:0.83.2":
   version: 0.83.2
   resolution: "ob1@npm:0.83.2"
@@ -45902,6 +45927,16 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/bbeac214a2d38f358cdbd83f9f5773ae8143a90887c2b39737485867b4bd45dad1471facf6d3d05cb7092748dc5788de785a1ec40a0ec3cc65e582884f9d238b
+  languageName: node
+  linkType: hard
+
+"openid-client@npm:^6.8.0":
+  version: 6.8.4
+  resolution: "openid-client@npm:6.8.4"
+  dependencies:
+    jose: "npm:^6.2.2"
+    oauth4webapi: "npm:^3.8.5"
+  checksum: 10c0/bb062df77d48368f99f776f26d94e11053da80b89d2baeea9f069b7a2b359ef5dc10e0c9b0f9a90fb361eded7ff02dba3f5419b8909ec3f0c379d09807824c49
   languageName: node
   linkType: hard
 
@@ -49851,11 +49886,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-auth0@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "react-native-auth0@npm:5.1.0"
+"react-native-auth0@npm:^5.5.1":
+  version: 5.5.1
+  resolution: "react-native-auth0@npm:5.5.1"
   dependencies:
-    "@auth0/auth0-spa-js": "npm:2.7.0"
+    "@auth0/auth0-spa-js": "npm:2.18.2"
     base-64: "npm:^1.0.0"
     jwt-decode: "npm:^4.0.0"
     url: "npm:^0.11.4"
@@ -49865,7 +49900,7 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/3e01a32c7848bc61d776ec03f2dac5970d548870181140f3d72d80f8d803c695230a4b58b20c3792d2667e5d2ea96412bb6482f7272e96cc203693b08339f632
+  checksum: 10c0/0aa2b96dd598890cfa1559f9336f500775f9622327360cb24bfbbfdec0f8bf98c0fe4f14268574e1586dc48ed862db1a01bc8ab97c7bd4ff4984d24a1017a94f
   languageName: node
   linkType: hard
 
@@ -51200,7 +51235,7 @@ __metadata:
     react-minimal-pie-chart: "npm:^9.1.0"
     react-modal: "npm:^3.12.1"
     react-native: "npm:0.81.6"
-    react-native-auth0: "npm:^5.1.0"
+    react-native-auth0: "npm:^5.5.1"
     react-native-error-boundary: "npm:^2.0.0"
     react-native-gesture-handler: "npm:^2.29.1"
     react-native-reanimated: "npm:^4.1.5"

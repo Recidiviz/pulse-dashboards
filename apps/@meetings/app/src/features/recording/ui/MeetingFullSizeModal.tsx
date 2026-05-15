@@ -20,6 +20,8 @@ import { useRef } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
+import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+
 import { Person } from "../../../common/types";
 import MinimizeSvg from "../../../shared/assets/icons/arrows-pointing-in.svg";
 import NotesSvg from "../../../shared/assets/icons/notes.svg";
@@ -42,6 +44,7 @@ type Props = {
 
 export const MeetingFullSizeModal = ({ person }: Props) => {
   const {
+    meetingType,
     status,
     note,
     setNote,
@@ -101,8 +104,8 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
       <View className="h-full flex-1 grow md:h-auto">
         <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3 pt-5">
           <View className="gap-1">
-            <Typography className="text-xl font-semibold text-primary">
-              New Meeting
+            <Typography className="flex flex-row items-center gap-2 text-xl font-semibold text-primary">
+              New Meeting <MeetingTypeTag type={meetingType} />
             </Typography>
             <Typography className="text-base font-medium text-primary">
               {person.fullName}{" "}

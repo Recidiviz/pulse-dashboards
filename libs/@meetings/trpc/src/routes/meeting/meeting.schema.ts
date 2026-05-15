@@ -48,6 +48,7 @@ export const getDetailsOutputSchema = z.object({
   transcriptDeletedAt: z.date().nullable(),
   validationErrorType: z.nativeEnum(ValidationError).nullable(),
   staffEmail: z.string(),
+  meetingType: z.string().nullable(),
   transcription: z
     .object({
       confidence: z.number().nullable(),

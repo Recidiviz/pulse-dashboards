@@ -72,11 +72,13 @@ jest.mock("../RecordingProvider", () => {
 
 const mockPerson = { personId: "person-1", fullName: "John Doe" };
 const MEETING_ID = "meeting-1";
+const MEETING_TYPE = "Assessment";
 const BLOB_URL = "blob:test-url";
 
 const mockSetStatus = jest.fn();
 const mockSetNote = jest.fn();
 const mockSetMeetingId = jest.fn();
+const mockSetMeetingType = jest.fn();
 const mockSetPerson = jest.fn();
 const mockSetMinimized = jest.fn();
 const mockSetPersistedDurationMs = jest.fn();
@@ -106,6 +108,7 @@ const defaultStoreValues = {
   setStatus: mockSetStatus,
   setNote: mockSetNote,
   setMeetingId: mockSetMeetingId,
+  setMeetingType: mockSetMeetingType,
   setPerson: mockSetPerson,
   setIsRecordingViewMinimized: mockSetMinimized,
   setDurationMs: mockSetPersistedDurationMs,
@@ -179,11 +182,13 @@ describe("RecordingProvider (web)", () => {
         result.current.openRecordingView({
           meetingId: "m2",
           person: mockPerson as never,
+          meetingType: MEETING_TYPE,
         });
       });
 
       expect(mockSetMeetingId).toHaveBeenCalledWith("m2");
       expect(mockSetPerson).toHaveBeenCalledWith(mockPerson);
+      expect(mockSetMeetingType).toHaveBeenCalledWith(MEETING_TYPE);
     });
 
     it("clears meetingId, person and minimized flag when closing", () => {

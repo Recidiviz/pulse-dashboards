@@ -35,6 +35,7 @@ type RecordingStore = {
   person: Person | null;
   personType: PersonType | null;
   meetingId: string | null;
+  meetingType: string | null;
   isRecordingViewMinimized: boolean;
   durationMs: number;
 
@@ -43,6 +44,7 @@ type RecordingStore = {
   setPerson: (person: Person | null) => void;
   setPersonType: (personType: PersonType | null) => void;
   setMeetingId: (meetingId: string | null) => void;
+  setMeetingType: (meetingType: string | null) => void;
   setIsRecordingViewMinimized: (isMinimized: boolean) => void;
   setDurationMs: (durationMs: number) => void;
 };
@@ -61,6 +63,7 @@ export const useRecordingStore = create<RecordingStore>()(
         person: null,
         personType: null,
         meetingId: null,
+        meetingType: null,
         isRecordingViewMinimized: false,
         durationMs: 0,
 
@@ -70,6 +73,7 @@ export const useRecordingStore = create<RecordingStore>()(
           debouncedSaveNote(note);
         },
         setMeetingId: (meetingId: string | null) => set({ meetingId }),
+        setMeetingType: (meetingType: string | null) => set({ meetingType }),
         setPerson: (person: Person | null) => set({ person }),
         setPersonType: (personType: PersonType | null) => set({ personType }),
         setIsRecordingViewMinimized: (isMinimized: boolean) =>

@@ -74,7 +74,7 @@ export const clientRouter = router({
     .input(createMeetingInputSchema)
     .mutation(
       async ({
-        input: { clientId, startTime, meetingId },
+        input: { clientId, startTime, meetingId, meetingType },
         ctx: { prisma, user, stateCode },
       }) => {
         return createMeetingForPerson({
@@ -82,6 +82,7 @@ export const clientRouter = router({
           user,
           personId: clientId,
           meetingId,
+          meetingType,
           startTime,
           personType: "client",
           stateCode,

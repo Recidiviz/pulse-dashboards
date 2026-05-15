@@ -28,6 +28,7 @@ export type CreateMeetingParams = {
   personId: bigint;
   personType: PersonType;
   meetingId: string;
+  meetingType: string;
   startTime: Date;
 };
 
@@ -56,6 +57,7 @@ export function useMeetingActions() {
     personId,
     personType,
     meetingId,
+    meetingType,
     startTime,
   }: CreateMeetingParams) => {
     if (personType === "client") {
@@ -63,12 +65,14 @@ export function useMeetingActions() {
         clientId: personId,
         startTime,
         meetingId,
+        meetingType,
       });
     } else {
       await utils.client.v1.resident.createMeeting.mutate({
         residentId: personId,
         startTime,
         meetingId,
+        meetingType,
       });
     }
 

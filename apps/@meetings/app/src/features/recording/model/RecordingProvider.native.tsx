@@ -95,7 +95,9 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const {
     meetingId,
+    meetingType,
     setMeetingId,
+    setMeetingType,
     person,
     personType,
     setPerson,
@@ -489,7 +491,9 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         status: status || "idle",
         setStatus,
         meetingId,
+        meetingType,
         setMeetingId,
+        setMeetingType,
         person,
         personType,
         setPerson,

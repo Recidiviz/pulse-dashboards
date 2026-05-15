@@ -206,6 +206,10 @@ model Meeting {
   residentId BigInt?
 
   staffEmail String
+
+  // This field is required but adding it as optional ensures old meetings are not affected
+  // In backend and frontend this will be a required field
+  meetingType String?
 }
 
 enum TranscriptionProvider {

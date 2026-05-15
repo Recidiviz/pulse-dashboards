@@ -41,6 +41,7 @@ export function useAudioUpload() {
   const { createMeetingAsync } = useCreateMeeting({
     person,
     personType: store.personType,
+    meetingType: store.meetingType,
     onSuccess: () => undefined,
   });
   const abortControllerRef = useRef<AbortController | null>(null);

@@ -26,6 +26,7 @@ import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import useIsOnline from "../shared/lib/useIsOnline";
+import Dropdown from "../shared/ui/Dropdown";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 
 type NewMeetingOptionsModalProps = {
@@ -34,6 +35,10 @@ type NewMeetingOptionsModalProps = {
   onStartMeeting: () => void;
   onUploadFile: () => void;
   isMeetingCreating: boolean;
+  meetingTypeValue: string | null;
+  meetingTypes: string[];
+  setMeetingType: (meetingType: string) => void;
+  meetingTypeError: string | null;
 };
 
 export function NewMeetingOptionsModal({
@@ -42,6 +47,10 @@ export function NewMeetingOptionsModal({
   onStartMeeting,
   onUploadFile,
   isMeetingCreating,
+  meetingTypeValue,
+  meetingTypes,
+  setMeetingType,
+  meetingTypeError,
 }: NewMeetingOptionsModalProps) {
   const { isOnline } = useIsOnline();
   return (
@@ -93,6 +102,14 @@ export function NewMeetingOptionsModal({
             Please note: Summaries and other notes are generated for meetings
             containing 50 words or more.
           </Typography>
+          <Dropdown
+            variant="outline"
+            options={meetingTypes}
+            onSelect={setMeetingType}
+            placeholder="Select meeting type"
+            defaultEmptyValue
+            errorMessage={meetingTypeError}
+          />
           <TouchableOpacity
             className="h-14 w-full max-w-[240px] flex-row items-center justify-center gap-2 rounded-full bg-brand aria-disabled:opacity-40"
             onPress={onStartMeeting}

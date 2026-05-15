@@ -27,6 +27,7 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { Person, PersonType } from "../common/types";
+import { MeetingTypeTag } from "../entities/meeting-type";
 import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
 import {
@@ -62,6 +63,7 @@ type ProfileMeetingNavProp = CompositeNavigationProp<
 
 type Meeting = {
   id: string;
+  meetingType: string | null;
   date: string;
   time: string;
   duration: string | null;
@@ -117,7 +119,12 @@ const MeetingRow = ({
         pointerEvents: isMeetingInProgress || isError ? "none" : "auto",
       }}
     >
-      <TableCell textClassName="text-secondary">{meeting.date}</TableCell>
+      <TableCell textClassName="flex flex-col gap-1">
+        <Typography className="text-sm text-secondary">
+          {meeting.date}
+        </Typography>
+        <MeetingTypeTag type={meeting.meetingType} />
+      </TableCell>
       <TableCell textClassName="text-secondary">{meeting.time}</TableCell>
       <TableCell textClassName="text-secondary">{duration}</TableCell>
       {isError ? (

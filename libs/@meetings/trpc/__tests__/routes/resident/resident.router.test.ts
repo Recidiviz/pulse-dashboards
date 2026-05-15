@@ -31,6 +31,7 @@ import {
   fakeResidentMeetingCompleted,
   fakeResidents,
   fakeStaff,
+  pseudoMeetingType,
 } from "~@meetings/trpc/test/setup/seed";
 
 describe("resident router", () => {
@@ -43,6 +44,7 @@ describe("resident router", () => {
           residentId: fakeResidents[0].personId,
           startTime,
           meetingId: createId(),
+          meetingType: pseudoMeetingType,
         });
 
         // Check expected fields are returned
@@ -290,6 +292,7 @@ describe("resident router", () => {
           residentId: fakeResidents[0].personId,
           startTime,
           meetingId: createId(),
+          meetingType: pseudoMeetingType,
         });
 
         expect(result).toEqual({
@@ -319,6 +322,7 @@ describe("resident router", () => {
               residentId: fakeResidents[0].personId,
               startTime: faker.date.future(),
               meetingId: createId(),
+              meetingType: pseudoMeetingType,
             }),
           ).rejects.toThrow(
             "Recidiviz users may not create non-demo meetings in production",
@@ -350,6 +354,7 @@ describe("resident router", () => {
             residentId: fakeResidents[0].personId,
             startTime,
             meetingId: createId(),
+            meetingType: pseudoMeetingType,
           });
 
           expect(result).toEqual({
@@ -434,6 +439,7 @@ describe("resident router", () => {
               residentId: fakeResidents[0].personId,
               startTime: faker.date.future(),
               meetingId: createId(),
+              meetingType: pseudoMeetingType,
             }),
           ).rejects.toThrow(
             "Recidiviz users may not create non-demo meetings in production",

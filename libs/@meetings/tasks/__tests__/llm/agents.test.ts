@@ -60,6 +60,7 @@ describe("SpecialistCore", () => {
     showTranscriptions: true,
     audioTTLDays: 30,
     transcriptTTLDays: 30,
+    meetingTypes: [],
     glossary: {
       PO: "Probation Officer",
       UA: "Urinalysis",
