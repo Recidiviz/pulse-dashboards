@@ -17,9 +17,8 @@
 
 import * as objectStorage from "./objectStorage";
 
-const userDataDownloadBucketName = process.env.USER_DATA_DOWNLOAD_BUCKET;
-
 export async function downloadUserData(stateCode, fileName) {
+  const userDataDownloadBucketName = process.env.USER_DATA_DOWNLOAD_BUCKET;
   try {
     const downloadResponse = await objectStorage.downloadFile(
       userDataDownloadBucketName,
