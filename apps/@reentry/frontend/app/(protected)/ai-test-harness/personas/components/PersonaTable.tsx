@@ -250,6 +250,9 @@ export const PersonaTable = ({
           noHeader
           highlightOnHover
           pointerOnHover
+          pagination
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 25, 50, 100]}
           noDataComponent={
             <div className="py-8 text-center text-gray-500">
               No AI personas found. Click "Add New Persona" to create one.

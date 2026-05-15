@@ -21,8 +21,9 @@ from datetime import datetime
 from uuid import UUID
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_pagination import Page
+from fastapi_pagination.customization import CustomizedPage, UseParamsFields
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel
 
@@ -59,6 +60,13 @@ from app.tasks.scheduler import schedule_task
 
 router = APIRouter(prefix="/ai-personas", tags=["AI Personas"])
 logger = structlog.get_logger(__name__)
+
+
+LargePersonaPage = CustomizedPage[
+    Page,
+    # Allow for fetching up to 10k personas (overriding the default of 100)
+    UseParamsFields(size=Query(100, ge=1, le=10000)),
+]
 
 
 # Request/Response Models
@@ -106,7 +114,7 @@ class AIIntakeTriggerSummary(BaseModel):
 # Endpoints
 @router.get(
     "",
-    response_model=Page[AIPersonaResponse],
+    response_model=LargePersonaPage[AIPersonaResponse],
     summary="List AI Personas",
 )
 async def list_ai_personas(

@@ -60,7 +60,7 @@ const AIPersonaLibraryPage = () => {
       params: {
         query: {
           page: 1,
-          size: 100,
+          size: 10000,
         },
       },
       headers: {
