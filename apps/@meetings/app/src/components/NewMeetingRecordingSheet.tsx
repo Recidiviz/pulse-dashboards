@@ -126,15 +126,17 @@ export function NewMeetingRecordingSheet({
             </View>
           </View>
           <View className="mb-4 w-full">
-            <Dropdown
-              className="mb-2"
-              variant="outline"
-              options={meetingTypes}
-              onSelect={setMeetingType}
-              placeholder="Select meeting type"
-              defaultEmptyValue
-              errorMessage={meetingTypeError}
-            />
+            {meetingTypes?.length > 0 && (
+              <Dropdown
+                className="mb-2"
+                variant="outline"
+                options={meetingTypes}
+                onSelect={setMeetingType}
+                placeholder="Select meeting type"
+                defaultEmptyValue
+                errorMessage={meetingTypeError}
+              />
+            )}
           </View>
           <TouchableOpacity
             className="mb-3 h-14 w-full flex-row items-center justify-center gap-2 rounded-full bg-brand p-4"

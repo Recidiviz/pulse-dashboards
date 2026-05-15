@@ -102,14 +102,16 @@ export function NewMeetingOptionsModal({
             Please note: Summaries and other notes are generated for meetings
             containing 50 words or more.
           </Typography>
-          <Dropdown
-            variant="outline"
-            options={meetingTypes}
-            onSelect={setMeetingType}
-            placeholder="Select meeting type"
-            defaultEmptyValue
-            errorMessage={meetingTypeError}
-          />
+          {meetingTypes?.length > 0 && (
+            <Dropdown
+              variant="outline"
+              options={meetingTypes}
+              onSelect={setMeetingType}
+              placeholder="Select meeting type"
+              defaultEmptyValue
+              errorMessage={meetingTypeError}
+            />
+          )}
           <TouchableOpacity
             className="h-14 w-full max-w-[240px] flex-row items-center justify-center gap-2 rounded-full bg-brand aria-disabled:opacity-40"
             onPress={onStartMeeting}
