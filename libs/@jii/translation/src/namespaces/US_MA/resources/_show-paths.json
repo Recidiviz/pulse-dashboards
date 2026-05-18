@@ -136,6 +136,9 @@
   "programs": {
     "pageDescription": "[US_MA]programs.pageDescription",
     "learnMoreLink": "[US_MA]programs.learnMoreLink",
-    "modalCallToAction": "[US_MA]programs.modalCallToAction"
+    "modalCallToAction": "[US_MA]programs.modalCallToAction",
+    "homepageCta": {
+      "description": "[US_MA]programs.homepageCta.description"
+    }
   }
 }
