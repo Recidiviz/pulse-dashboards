@@ -110,6 +110,18 @@ nx test @reentry/frontend
 The frontend uses **openapi-react-query** (`$api`), generated from the FastAPI OpenAPI schema. This is not React Query or tRPC.
 Types can be found at libs/@reentry/openapi-types/src/recidiviz-schema.d.ts and imported from ~@reentry/openapi-types.
 
+For endpoints not covered by the OpenAPI schema (e.g. PDF blob endpoints), use `fetchWithAuth` instead of raw `fetch()`. It injects `Authorization` and `X-Impersonated-Email` automatically, mirroring what `authMiddleware` does for `$api` calls.
+
+```typescript
+import { fetchWithAuth } from "~@reentry/frontend-shared";
+
+const response = await fetchWithAuth(`${API_URL}/api/some/endpoint`, {
+  method: "GET",
+});
+```
+
+Never use raw `fetch()` for backend calls — it silently drops auth and impersonation headers.
+
 ### Auth
 
 ```typescript

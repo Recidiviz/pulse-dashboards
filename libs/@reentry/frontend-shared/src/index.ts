@@ -16,6 +16,7 @@
 // =============================================================================
 
 export { createApiClient } from "./api";
+export * from "./auth/fetchWithAuth";
 export * from "./auth/globalAuthStore";
 export * from "./components/AIDisclosure";
 export { FullAddressForm } from "./components/FullAddressForm";

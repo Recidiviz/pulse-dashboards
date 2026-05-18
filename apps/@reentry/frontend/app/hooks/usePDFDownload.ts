@@ -23,9 +23,12 @@ import {
   ResourceSection,
   ResourceWithMeta,
 } from "~@reentry/frontend/hooks/resourceBank.types";
-import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { sortResourcesDigitalFirst } from "~@reentry/frontend/utils/resourceSort";
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import {
+  fetchWithAuth,
+  showErrorToast,
+  showSuccessToast,
+} from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 const API_URL = process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:8000";
@@ -61,28 +64,16 @@ function printBlob(blob: Blob): void {
 }
 
 function usePDFDownload(endpoint: string, filename: string, body?: object) {
-  const { getAccessToken, refreshToken } = useAuth();
   const [isDownloading, setIsDownloading] = useState(false);
 
   const fetchBlob = async (): Promise<Blob> => {
-    let token = getAccessToken();
-    if (!token) {
-      await refreshToken();
-      token = getAccessToken();
-    }
-    if (!token) throw new Error("Authentication required");
-
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${token}`,
-    };
-    const requestOptions: RequestInit = { method: "GET", headers };
+    const init: RequestInit = { method: "GET" };
     if (body) {
-      requestOptions.method = "POST";
-      headers["Content-Type"] = "application/json";
-      requestOptions.body = JSON.stringify(body);
+      init.method = "POST";
+      init.headers = { "Content-Type": "application/json" };
+      init.body = JSON.stringify(body);
     }
-
-    const response = await fetch(`${API_URL}${endpoint}`, requestOptions);
+    const response = await fetchWithAuth(`${API_URL}${endpoint}`, init);
     if (!response.ok) throw new Error("PDF generation failed");
     return response.blob();
   };
