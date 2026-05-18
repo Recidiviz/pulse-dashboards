@@ -18,6 +18,13 @@
 locals {
   deny_403_rules = [
     {
+      # 405 Method Not Allowed would be the semantically correct response, but Cloud Armor's
+      # deny() action only supports 400/403/404/429/502, so 403 is the closest available option.
+      priority    = 999
+      description = "Block PURGE method (unauthenticated cache invalidation)"
+      expression  = "request.method == \"PURGE\""
+    },
+    {
       priority    = 1000
       description = "SQL Injection"
       expression  = "evaluatePreconfiguredWaf('sqli-v33-stable', {'sensitivity': 1})"
