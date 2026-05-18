@@ -24,7 +24,7 @@ import React, {
 } from "react";
 import styled from "styled-components";
 
-import ChevronIcon from "../assets/chevron-down.svg?react";
+import ChevronIcon from "../assets/chevron-left.svg?react";
 import * as Styled from "../CaseDetails/CaseDetails.styles";
 
 const ScrollControlsContainer = styled.div`

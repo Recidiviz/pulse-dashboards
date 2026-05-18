@@ -114,6 +114,13 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
   menuPortal: (styles) => ({ ...styles, zIndex: 1100 }),
 };
 
+export const inlineDropdownBase: StylesConfig<SelectOption, boolean> = {
+  ...dropdownStyles,
+  indicatorSeparator: () => ({ display: "none" }),
+  input: (base) => ({ ...base, margin: 0, padding: 0 }),
+  placeholder: (base) => ({ ...base, color: palette.pine4, margin: 0 }),
+};
+
 // Shared button styles for modals and confirmations
 const Button = styled.button`
   padding: 0.75rem 2rem;

@@ -15,9 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StylesConfig } from "react-select";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
+
+import { SelectOption } from "../CaseDetails/Form/types";
+import { inlineDropdownBase } from "../OffenderAssessment/FormComponents.styles";
 
 export const CardContainer = styled.div`
   display: flex;
@@ -67,6 +71,39 @@ export const SectionHeader = styled.h3`
   line-height: 120%; /* 1.2rem */
   letter-spacing: -0.01rem;
 `;
+
+export const pleaDropdownStyles: StylesConfig<SelectOption, boolean> = {
+  ...inlineDropdownBase,
+  container: (base) => ({ ...base, flex: 1, maxWidth: "50%" }),
+  control: (_base, { isFocused }) => ({
+    border: `1px solid ${isFocused ? palette.pine4 : palette.white}`,
+    borderRadius: isFocused ? "4px" : "0",
+    boxShadow: "none",
+    minHeight: "unset",
+    backgroundColor: "transparent",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    margin: "-5px 0 0 -5px",
+  }),
+  valueContainer: (base) => ({
+    ...base,
+    padding: "1px 4px",
+    fontSize: "0.8rem",
+    fontFamily: "inherit",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: palette.pine1,
+    fontSize: "0.8rem",
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    padding: "0 4px",
+    color: palette.pine1,
+    svg: { width: "0.75em", height: "0.75em" },
+  }),
+};
 
 export const MostSevereOffenseBadge = styled.div`
   display: flex;

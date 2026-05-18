@@ -22,7 +22,7 @@ import styled from "styled-components";
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
 import { SelectOption } from "../CaseDetails/Form/types";
-import { dropdownStyles as employmentDropdownStyles } from "../OffenderAssessment/FormComponents.styles";
+import { inlineDropdownBase } from "../OffenderAssessment/FormComponents.styles";
 import {
   HelperText as FormFieldHelperText,
   Label,
@@ -38,7 +38,7 @@ const CHEVRON_BACKGROUND = iconToDataURI(
 // Dropdown control styled like the offense card inputs (inline, no border, chevron icon),
 // but options styled like the employment history modal dropdown.
 export const judgeDropdownStyles: StylesConfig<SelectOption, boolean> = {
-  ...employmentDropdownStyles,
+  ...inlineDropdownBase,
   control: (_base, { isFocused }) => ({
     border: isFocused
       ? `1px solid ${rgba(palette.pine4, 0.15)}`
@@ -68,9 +68,6 @@ export const judgeDropdownStyles: StylesConfig<SelectOption, boolean> = {
     lineHeight: "normal",
   }),
   singleValue: (base) => ({ ...base, color: palette.pine3, margin: 0 }),
-  placeholder: (base) => ({ ...base, color: palette.pine4, margin: 0 }),
-  input: (base) => ({ ...base, margin: 0, padding: 0 }),
-  indicatorSeparator: () => ({ display: "none" }),
   dropdownIndicator: () => ({ display: "none" }),
 };
 

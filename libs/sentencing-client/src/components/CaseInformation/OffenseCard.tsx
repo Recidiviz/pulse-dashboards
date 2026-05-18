@@ -17,6 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { MultiValue, SingleValue } from "react-select";
 
 import { FormCharge } from "../../datastores/types";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
@@ -24,10 +25,19 @@ import {
   formatClassification,
   formatJudgeAndDivision,
 } from "../../utils/utils";
+import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
+import { SelectOption } from "../CaseDetails/Form/types";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
 import { EditableChargeField } from "./constants";
 import { FormField } from "./FormField";
+import * as FormFieldStyled from "./FormField.styles";
 import * as Styled from "./OffenseCard.styles";
+
+const PLEA_OPTIONS: SelectOption[] = [
+  { value: "Yes", label: "Yes" },
+  { value: "No", label: "No" },
+  { value: "Unknown", label: "Unknown" },
+];
 
 const ReadOnlyField: React.FC<{
   label: string;
@@ -66,6 +76,18 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
       // Trigger debounced save
       debouncedSave(charge.id, fieldId, value);
     };
+
+    const handlePleaChange = (
+      option: MultiValue<SelectOption> | SingleValue<SelectOption> | null,
+    ) => {
+      if (!option || Array.isArray(option) || !("value" in option)) return;
+      const value = typeof option.value === "string" ? option.value : "";
+      if (value === charge.pleaAgreement) return;
+      handleFieldChange("pleaAgreement", value);
+    };
+
+    const pleaOption =
+      PLEA_OPTIONS.find((opt) => opt.value === charge.pleaAgreement) ?? null;
 
     const judgeAndDivision = formatJudgeAndDivision(charge);
     const classificationDisplay = formatClassification(charge);
@@ -122,15 +144,22 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
               placeholder="Add Name"
               inline
             />
-            <FormField
-              label="Plea Agreement: "
-              value={charge.pleaAgreement}
-              onChange={(value) => handleFieldChange("pleaAgreement", value)}
-              type="text"
-              placeholder="Add Agreement"
-              inline
-              showValidation={false}
-            />
+            <FormFieldStyled.FieldContainer>
+              <FormFieldStyled.InlineRow>
+                <FormFieldStyled.Label>Plea Agreement: </FormFieldStyled.Label>
+                <Dropdown
+                  value={pleaOption}
+                  options={PLEA_OPTIONS}
+                  onChange={handlePleaChange}
+                  placeholder={
+                    !pleaOption && charge.pleaAgreement
+                      ? charge.pleaAgreement
+                      : "Select..."
+                  }
+                  styles={Styled.pleaDropdownStyles}
+                />
+              </FormFieldStyled.InlineRow>
+            </FormFieldStyled.FieldContainer>
             <FormField
               label="Date of Plea: "
               value={
