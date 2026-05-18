@@ -22,8 +22,11 @@ import "zx/globals"; // get access to $ function
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { Octokit } from "@octokit/rest";
 import { WebClient as SlackClient } from "@slack/web-api";
+import dedent from "dedent";
 import inquirer from "inquirer";
 import { inc } from "semver";
+
+import { getImageRef } from "./get-image-ref.mjs";
 
 // The default is true, but we explicitly set it here because it needs to be set to true
 // in order for the gcloud stderr to display (used for the backend deploy)
@@ -307,24 +310,115 @@ if (deployEnvSecrets && deployEnv === "staging") {
   );
 }
 
-// Start docker and configure docker to upload to container registry
-// Only needed for staging deploys
+// Verify Docker images are available before deploying
+// Images are built in GitHub Actions, so we need to ensure they exist
 if (
-  (deployEnv === "staging" ||
-    (deployEnv === "production" && isCpDeploy) ||
-    deployEnv === "demo") &&
+  deployEnv !== "preview" &&
   (deploySentencing ||
     deployJiiTexting ||
-    deployCaseNotes ||
+    deployMeetingAssistant ||
     deployOppsBackend ||
-    deployMeetingAssistant)
+    deployCaseNotes)
 ) {
-  try {
-    await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
-      process.stdout,
+  console.log("\nVerifying Docker images are available...");
+
+  // Verify required images exist in Artifact Registry
+  const imageProjects = [];
+
+  if (deploySentencing) {
+    imageProjects.push("@sentencing/server", "@sentencing/import");
+    if (deployEnv === "demo") imageProjects.push("@sentencing/seed-demo");
+  }
+
+  if (deployJiiTexting) {
+    imageProjects.push(
+      "@jii-texting/server",
+      "@jii-texting/processor",
+      "@jii-texting/import",
     );
-  } catch (e) {
-    console.error("Failed to configure docker for gcloud", e);
+    if (deployEnv === "demo") imageProjects.push("@jii-texting/seed-demo");
+  }
+
+  if (deployMeetingAssistant) {
+    imageProjects.push(
+      "@meetings/server",
+      "@meetings/import",
+      "@meetings/seed-demo",
+    );
+  }
+
+  if (deployOppsBackend) {
+    imageProjects.push("@jii/server");
+  }
+
+  if (deployCaseNotes) {
+    imageProjects.push("case-notes-server");
+  }
+
+  const requiredImages = await Promise.all(imageProjects.map(getImageRef));
+
+  // Check for images with retry prompt
+  let allImagesFound = false;
+
+  while (!allImagesFound) {
+    const missingImages = [];
+
+    // Check each image once
+    for (const image of requiredImages) {
+      try {
+        await $`gcloud artifacts docker images describe ${image}:${currentRevision} --quiet`;
+        console.log(`✅ Found ${image}:${currentRevision}`);
+      } catch (e) {
+        console.error(`❌ Image not found: ${image}:${currentRevision}`, e);
+        missingImages.push(image);
+      }
+    }
+
+    // If any images are missing, ask user what to do
+    if (missingImages.length > 0) {
+      console.error(
+        dedent`
+          \n⚠️  Some Docker images are not available:
+          ${missingImages.map((img) => `   - ${img}:${currentRevision}`).join("\n")}
+
+          The images may still be building or the build may have failed.
+          Check the GitHub Actions workflow: https://github.com/${owner}/${repo}/actions/workflows/build-images.yml
+        `,
+      );
+
+      const { action } = await inquirer.prompt({
+        type: "list",
+        name: "action",
+        message: "What would you like to do?",
+        choices: [
+          { name: "Retry checking for images", value: "retry" },
+          { name: "Build images manually", value: "build" },
+          { name: "Exit deployment", value: "exit" },
+        ],
+        default: "retry",
+      });
+
+      if (action === "exit") {
+        console.log("Deployment cancelled.");
+        process.exit(1);
+      }
+
+      if (action === "build") {
+        console.log("Building Docker images manually...");
+        for (const project of imageProjects) {
+          console.log(`Building ${project}...`);
+          await $`COMMIT_SHA=${currentRevision} nx container ${project} -c ${deployEnv}`.pipe(
+            process.stdout,
+          );
+        }
+      } else {
+        console.log("Retrying image checks...");
+      }
+    } else {
+      // All images found
+      allImagesFound = true;
+      console.log("✅ All required Docker images verified");
+    }
   }
 }
 
@@ -424,30 +518,8 @@ if (
     console.log(`Deploying ${sentencingAssistantDisplayName}...`);
 
     try {
-      // We only need to build and push the docker containers if we are
-      // 1. deploying to staging
-      // 2. deploying a cherry-pick
-      // 3. deploying to demo
-      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
-
-      let projects;
-      let configuration;
-      if (deployEnv === "staging") {
-        projects = ["@sentencing/server", "@sentencing/import"];
-        configuration = "staging";
-      } else if (deployEnv === "production" && isCpDeploy) {
-        projects = ["@sentencing/server", "@sentencing/import"];
-        configuration = "cherry-pick";
-      } else if (deployEnv === "demo") {
-        projects = ["@sentencing/server", "@sentencing/seed-demo"];
-        configuration = "demo";
-      }
-
-      if (projects) {
-        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-          process.stdout,
-        );
-      }
+      // Docker images are built in GitHub Actions and should already exist
+      // The verification step above ensures all images are available
 
       // Deploy any changes to the artifact registry if we're on staging
       if (deployEnv === "staging") {
@@ -510,36 +582,8 @@ if (
     console.log(`Deploying ${jiiTextingDisplayName}...`);
 
     try {
-      let projects;
-      let configuration;
-      if (deployEnv === "staging") {
-        projects = [
-          "@jii-texting/server",
-          "@jii-texting/processor",
-          "@jii-texting/import",
-        ];
-        configuration = "staging";
-      } else if (deployEnv === "production" && isCpDeploy) {
-        projects = [
-          "@jii-texting/server",
-          "@jii-texting/processor",
-          "@jii-texting/import",
-        ];
-        configuration = "cherry-pick";
-      } else if (deployEnv === "demo") {
-        projects = [
-          "@jii-texting/server",
-          "@jii-texting/processor",
-          "@jii-texting/seed-demo",
-        ];
-        configuration = "demo";
-      }
-
-      if (projects) {
-        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-          process.stdout,
-        );
-      }
+      // Docker images are built in GitHub Actions and should already exist
+      // The verification step above ensures all images are available
 
       // Deploy the import, migration, processor, and server infrastructure changes for the applicable environment
       let stack;
@@ -592,22 +636,8 @@ if (
     console.log(`Deploying ${caseNotesDisplayName}...`);
 
     try {
-      // We only need to build and push the docker container if we are
-      // 1. deploying to staging.
-      // 2. deploying a cherry-pick
-      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
-      let configuration;
-      if (deployEnv === "staging") {
-        configuration = "staging";
-      } else if (deployEnv === "production" && isCpDeploy) {
-        configuration = "cherry-pick";
-      } else if (deployEnv === "demo") {
-        configuration = "demo";
-      }
-
-      await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration ${configuration}`.pipe(
-        process.stdout,
-      );
+      // Docker images are built in GitHub Actions and should already exist
+      // The verification step above ensures all images are available
 
       // Deploy the import, migration, and server infrastructure changes for the applicable environment
       let stack;
@@ -677,26 +707,9 @@ if (
     // Deploy the app
     console.log(`Deploying ${opportunitiesBackendDisplayName}...`);
 
-    // for staging or CP deploys we need to build a new docker image
-    // (for normal prod deploys we should be using the image built for the previous staging deploy)
     try {
-      let projects;
-      let configuration;
-      if (deployEnv === "staging") {
-        // this looks a little redundant now but it's consistent with other backends
-        // and we may have more projects eventually
-        projects = ["@jii/server"];
-        configuration = "staging";
-      } else if (deployEnv === "production" && isCpDeploy) {
-        projects = ["@jii/server"];
-        configuration = "cherry-pick";
-      }
-
-      if (projects) {
-        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-          process.stdout,
-        );
-      }
+      // Docker images are built in GitHub Actions and should already exist
+      // The verification step above ensures all images are available
 
       // Deploy the server infrastructure changes for the applicable environment
       await $`yarn atmos:apply apps/jii -s recidiviz-jii-${deployEnv}--jii -- -auto-approve \
@@ -843,29 +856,8 @@ if (
     console.log(`Deploying ${meetingsBackendDisplayName} backend services...`);
 
     try {
-      let projects;
-      let configuration;
-      if (deployEnv === "staging") {
-        projects = [
-          "@meetings/server",
-          "@meetings/import",
-          "@meetings/seed-demo",
-        ];
-        configuration = "staging";
-      } else if (deployEnv === "production" && isCpDeploy) {
-        projects = [
-          "@meetings/server",
-          "@meetings/import",
-          "@meetings/seed-demo",
-        ];
-        configuration = "cherry-pick";
-      }
-
-      if (projects) {
-        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-          process.stdout,
-        );
-      }
+      // Docker images are built in GitHub Actions and should already exist
+      // The verification step above ensures all images are available
 
       // Deploy any changes to the artifact registry if we're on staging
       if (deployEnv === "staging") {

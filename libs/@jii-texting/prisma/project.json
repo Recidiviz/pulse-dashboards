@@ -57,7 +57,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "requires-sops-env:prisma-generate": {
+    "prisma-generate": {
       "inputs": ["{projectRoot}/prisma/schema.prisma"],
       "executor": "@nx-tools/nx-prisma:generate",
       "configurations": { "dev": {}, "test": {} },
