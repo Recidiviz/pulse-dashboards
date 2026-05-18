@@ -63,7 +63,7 @@ export function NavigateToFormButton({
       e.stopPropagation();
     } else {
       desktopLinkGate({
-        headline: "Referral Unavailable in Mobile View",
+        headline: "Screen size is too small for this feature",
       })(e);
     }
   };
