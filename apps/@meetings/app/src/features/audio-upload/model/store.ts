@@ -34,6 +34,7 @@ type AudioUploadStore = {
   error: string | null; // file uploading error
   recordingDate: Date | null;
   recordingTime: Date | null;
+  userNotepadNotes: string | null;
 
   // Non-persisted fields (progress resets on reload)
   dialog: AudioUploadDialog;
@@ -49,6 +50,7 @@ type AudioUploadStore = {
   setUploadProgress: (uploaded: number, total: number) => void;
   setRecordingDate: (date: Date | null) => void;
   setRecordingTime: (time: Date | null) => void;
+  setUserNotepadNotes: (notes: string | null) => void;
   open: (params: {
     person: Person;
     personType: PersonType;
@@ -70,6 +72,7 @@ const initialState = {
   totalBytes: 0,
   recordingDate: null,
   recordingTime: null,
+  userNotepadNotes: null,
 };
 
 export const useAudioUploadStore = create<AudioUploadStore>()(
@@ -87,6 +90,7 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
         set({ uploadedBytes, totalBytes }),
       setRecordingDate: (recordingDate) => set({ recordingDate }),
       setRecordingTime: (recordingTime) => set({ recordingTime }),
+      setUserNotepadNotes: (userNotepadNotes) => set({ userNotepadNotes }),
       open: ({ person, personType, meetingType }) =>
         set({
           ...initialState,
@@ -111,6 +115,7 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
         error: state.error,
         recordingDate: state.recordingDate,
         recordingTime: state.recordingTime,
+        userNotepadNotes: state.userNotepadNotes,
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;

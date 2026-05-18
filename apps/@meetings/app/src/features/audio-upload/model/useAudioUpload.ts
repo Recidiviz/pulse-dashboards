@@ -157,6 +157,7 @@ export function useAudioUpload() {
         personId: store.person.personId,
         personType: store.personType,
         startTime,
+        userNotepadNotes: store.userNotepadNotes ?? undefined,
       });
       store.setDialog("success");
     } catch (error) {

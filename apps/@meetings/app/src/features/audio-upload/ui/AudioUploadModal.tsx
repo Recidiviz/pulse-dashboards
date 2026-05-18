@@ -23,6 +23,7 @@ import CalendarIcon from "react-native-heroicons/solid/CalendarIcon";
 import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import NotesSvg from "~@meetings/app/shared/assets/icons/notes.svg";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -30,6 +31,7 @@ import { useAudioUploadStore } from "../model/store";
 import { RawFileInfo } from "../model/types";
 import { DropZone } from "./DropZone.web";
 import { FileCard } from "./FileCard";
+import { NotesModal } from "./NotesModal";
 import { PickerTrigger } from "./PickerTrigger";
 
 type Props = {
@@ -46,6 +48,7 @@ export function AudioUploadModal({
   onCancel,
 }: Props) {
   const {
+    meetingId,
     meetingType,
     status,
     file,
@@ -61,6 +64,7 @@ export function AudioUploadModal({
   const [isConfirming, setIsConfirming] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const timeInputRef = useRef<HTMLInputElement>(null);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
 
   const handleDateChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,6 +160,28 @@ export function AudioUploadModal({
 
         <DropZone onAddFile={onAddFile} disabled={isUploading} />
 
+        {meetingId && (
+          <View className="mt-5 flex w-full flex-row items-center gap-3">
+            <NotesSvg className="size-6 text-secondary" />
+            <View className="flex flex-col">
+              <Typography className="text-base font-medium text-primary">
+                Notes from this meeting (optional)
+              </Typography>
+              <Typography className="text-sm font-normal text-secondary">
+                Add any notes you took during the meeting
+              </Typography>
+            </View>
+            <TouchableOpacity
+              className="ml-auto rounded-full bg-secondary px-3 py-2"
+              onPress={() => setIsNotesModalOpen(true)}
+            >
+              <Typography className="text-sm leading-4 text-primary">
+                Add
+              </Typography>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {file && (
           <FileCard
             file={file}
@@ -197,6 +223,9 @@ export function AudioUploadModal({
           </TouchableOpacity>
         </View>
       </View>
+      {isNotesModalOpen && (
+        <NotesModal onClose={() => setIsNotesModalOpen(false)} />
+      )}
     </Modal>
   );
 }
