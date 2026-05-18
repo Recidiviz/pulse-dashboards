@@ -765,6 +765,20 @@ async def test_get_paginated_client_list_sort_by_last_assessment_date(
         assert result["items"][0]["last_completed_date"] == newer_date
         assert result["items"][1]["last_completed_date"] == older_date
 
+        # Test default sort order (should be descending)
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            sort_by=ClientSort.LAST_ASSESSMENT_DATE,
+            status_filter="intake_enabled",
+        )
+
+        assert len(result["items"]) == 2
+        assert result["items"][0]["last_completed_date"] == newer_date
+        assert result["items"][1]["last_completed_date"] == older_date
+
 
 @pytest.mark.asyncio
 async def test_get_paginated_client_list_filter_intake_complete(
@@ -985,7 +999,7 @@ def test_validate_sort_order_rejects_sql_injection():
         "ascending",
         "",
     ]
-    
+
     for injection in injection_attempts:
         with pytest.raises(ValueError, match="Invalid sort_order"):
             validate_sort_order(injection)
@@ -1000,7 +1014,7 @@ async def test_get_paginated_client_list_sanitizes_sort_order(
         "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
     ) as mock_get_clients:
         mock_get_clients.return_value = mock_clientdata
-        
+
         # Create test intake
         intake = Intake(
             client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
@@ -1008,7 +1022,7 @@ async def test_get_paginated_client_list_sanitizes_sort_order(
         )
         async_session.add(intake)
         await async_session.commit()
-        
+
         # Attempt SQL injection via sort_order - should be sanitized to "asc"
         result = await get_paginated_client_list(
             session=async_session,
@@ -1018,6 +1032,6 @@ async def test_get_paginated_client_list_sanitizes_sort_order(
             sort_order="asc, (SELECT 1 WHERE pg_sleep(5) IS NULL)",  # SQL injection attempt
             status_filter="intake_enabled",
         )
-        
+
         # Should still return results (with sanitized sort_order defaulting to "asc")
         assert result["total"] >= 0  # Query should execute without injection

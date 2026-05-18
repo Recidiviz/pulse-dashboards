@@ -110,7 +110,7 @@ async def get_paginated_client_list(
     page_size: int = 20,
     pseudonymized_staff_id: str | None = None,
     sort_by: ClientSort | None = ClientSort.LAST_ASSESSMENT_DATE,
-    sort_order: str = "asc",
+    sort_order: str = "desc",
     search: str | None = None,
     status_filter: ClientStatusFilter | None = None,
     is_zero_caseload_user: bool = False,
