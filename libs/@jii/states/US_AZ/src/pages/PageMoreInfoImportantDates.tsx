@@ -16,15 +16,19 @@
 // =============================================================================
 
 import { usePageTitle } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { useUsAzTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
 import { importantDateHeadingsAggregator } from "../components/ImportantDatesInfoPage/importantDateHeadingsAggregator";
 import { TPRCopyWrapper } from "../components/ImportantDatesInfoPage/TPRCopyWrapper";
 import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
+import { PageMoreInfoImportantDatesV2 } from "./PageMoreInfoImportantDatesV2";
 
 export function PageMoreInfoImportantDates() {
   const { t } = useUsAzTranslations();
+  const { residentFlags } = useSingleResidentContext();
+  const footerLinks = useInfoPageFooterLinks();
 
   const { heading, body } = t(($) => $.importantDates.moreInfo, {
     returnObjects: true,
@@ -32,13 +36,17 @@ export function PageMoreInfoImportantDates() {
 
   usePageTitle(heading);
 
+  if (residentFlags.usAzFslImprovements) {
+    return <PageMoreInfoImportantDatesV2 />;
+  }
+
   return (
     <DefinitionView
       heading={heading}
       body={body}
       CopyWrapperOverride={TPRCopyWrapper}
       tocHeadingsAggregatorOverride={importantDateHeadingsAggregator}
-      moreInfoPageLinks={useInfoPageFooterLinks()}
+      moreInfoPageLinks={footerLinks}
     />
   );
 }

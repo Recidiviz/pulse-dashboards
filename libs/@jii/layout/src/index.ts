@@ -23,6 +23,7 @@ export * from "./ErrorPage/ErrorPageMainContent";
 export * from "./GenericLayout/GenericLayout";
 export * from "./InfoPage/InfoPage";
 export type * from "./InfoPage/TableOfContents";
+export * from "./InfoPage/useScrollToHash";
 export * from "./LastUpdatedBanner/LastUpdatedBanner";
 export * from "./MainContentHydrator/MainContentHydratorWithErrorLogging";
 export * from "./MainContentHydrator/MainContentHydratorWithoutErrorLogging";
