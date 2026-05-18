@@ -17,7 +17,11 @@
 
 import { Connector, IpAddressTypes } from "@google-cloud/cloud-sql-connector";
 import { Firestore } from "@google-cloud/firestore";
+import { isValid, startOfDay, subHours } from "date-fns";
+import type { Timestamp } from "firebase/firestore";
 import { firestore } from "firebase-admin";
+import { defineJsonSecret } from "firebase-functions/params";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import { Pool } from "pg";
 
 import {
@@ -35,12 +39,6 @@ import {
   usTnReclassification2026Schema,
 } from "~datatypes";
 
-import QueryDocumentSnapshot = firestore.QueryDocumentSnapshot;
-import { isValid, subHours } from "date-fns";
-import type { Timestamp } from "firebase/firestore";
-import { defineJsonSecret } from "firebase-functions/params";
-import { onSchedule } from "firebase-functions/v2/scheduler";
-
 const LOOKBACK_HOURS = 2;
 const persistenceDbConfigSecrets = defineJsonSecret("PERSISTENCE_DB_CONFIG");
 
@@ -54,7 +52,22 @@ const EXECUTION_OPTIONS = {
   secrets: [persistenceDbConfigSecrets],
 };
 
-type DocData = {
+const OPP_TYPE_TO_COLLECTION = {
+  usTnTrusteeTransfer: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+  usTnSeriousMisconductUpgrade:
+    "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+  usTnBiannualOther: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+  usTnSpecialCustodyLevelUpgrade2026Policy:
+    "US_TN-specialCustodyLevelUpgrade2026PolicyReferrals",
+  usTnAnnualReclassification2026Policy:
+    "US_TN-annualReclassification2026PolicyReferrals",
+  usTnCustodyLevelDowngrade2026Policy:
+    "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+  usTnInitialClassification2026Policy:
+    "US_TN-initialClassification2026PolicyReferrals",
+};
+
+type FormUpdateData = {
   data?: Partial<UsTnReclassification2026DraftData>;
   updated: {
     date: Timestamp;
@@ -62,7 +75,17 @@ type DocData = {
   };
 };
 
-const getTrusteeQuestionValue = (data: DocData["data"], index: number) => {
+type OpportunityUpdateData = {
+  submitted: {
+    date: Timestamp;
+    by: string;
+  };
+};
+
+const getTrusteeQuestionValue = (
+  data: FormUpdateData["data"],
+  index: number,
+) => {
   switch (data?.[TRUSTEE_FORM_QUESTION_ORDER[index]]) {
     case "true":
       return "T";
@@ -288,11 +311,12 @@ const CSV_COLUMN_ORDER = [
 function processRecord(
   opportunityType: OpportunityType,
   personRecordKey: string,
-  updateSnapshot: QueryDocumentSnapshot<DocData>,
-  baseSnapshot: QueryDocumentSnapshot<
-    UsTnReclassification2026ReferralRecord["output"]
-  >,
-  personSnapshot: QueryDocumentSnapshot<RawResidentRecord>,
+  updateRecord: FormUpdateData,
+  baseRecord: UsTnReclassification2026ReferralRecord["output"],
+  personRecord: RawResidentRecord,
+  assessmentDate: Date,
+  lastModifiedBy: string,
+  lastModifiedDate: Date,
 ) {
   // Set up an output record
   const out: Record<
@@ -303,15 +327,10 @@ function processRecord(
   // Set flag to use dcaf vs rcaf helpers
   const isDcaf = opportunityType === "usTnInitialClassification2026Policy";
 
-  // Pull data from the firestore wrappers
-  const updateRecord = updateSnapshot.data();
-  const formUpdateData = updateRecord.data;
-  const baseRecord = baseSnapshot.data();
+  const formUpdateData = updateRecord.data ?? {};
 
-  const personRecord = personSnapshot.data();
-
-  // Drop out if any record is missing
-  if (!formUpdateData || !baseRecord || !personRecord) return undefined;
+  // Drop out if the base opportunity record or person record is missing
+  if (!baseRecord || !personRecord) return undefined;
 
   const { metadata } = personRecord;
 
@@ -337,12 +356,9 @@ function processRecord(
   // slice off the leading us_tn_
   out.OFFENDERID = personRecordKey.slice(6);
   out.ClassificationType = isDcaf ? "DCAF" : "RCAF";
-  out.AssessmentDate = updateRecord.updated.date
-    .toDate()
-    .toISOString()
-    .split("T")[0];
-  out.LastModifiedDate = updateRecord.updated.date.toDate().toISOString();
-  out.LastModifiedBy = updateRecord.updated.by;
+  out.AssessmentDate = assessmentDate.toISOString().split("T")[0];
+  out.LastModifiedDate = lastModifiedDate.toISOString();
+  out.LastModifiedBy = lastModifiedBy;
   out.LastClassificationDate = metadata.latestClassificationDate;
   switch (opportunityType) {
     case "usTnInitialClassification2026Policy":
@@ -426,12 +442,21 @@ function processRecord(
 async function getFormUpdateDocs(
   db: Firestore,
   opportunityType: OpportunityType,
-  collectionName: string,
 ) {
   const lastUpdatedThreshold = subHours(new Date(), LOOKBACK_HOURS);
+  // @ts-expect-error We know we are limited to just the defined opportuities here
+  const collectionName = OPP_TYPE_TO_COLLECTION[opportunityType];
+
+  if (collectionName === undefined) {
+    console.error(
+      `No entry in OPP_TYPE_TO_COLLECTION for ${opportunityType}. Skipping.`,
+    );
+    return [];
+  }
 
   console.info(`Fetching update documents for ${opportunityType}`);
 
+  // Query for updated forms
   const updatesRes = await db
     .collectionGroup("clientFormUpdates")
     .where("opportunity", "==", opportunityType)
@@ -452,14 +477,22 @@ async function getFormUpdateDocs(
       db.collection(collectionName).doc(personFirestoreKey).get(),
       db.collection("residents").doc(personFirestoreKey).get(),
     ]);
+    // Pull data from the firestore wrappers
+    const updateRecord = updateDoc.data() as FormUpdateData;
+    const baseRecord = baseRecordDoc.data();
+
+    const personRecord = personRecordDoc.data();
 
     const processed = processRecord(
       opportunityType,
       personFirestoreKey,
+      updateRecord,
       // @ts-expect-error we know the data type matches
-      updateDoc,
-      baseRecordDoc,
-      personRecordDoc,
+      baseRecord,
+      personRecord,
+      updateRecord.updated.date.toDate(),
+      updateRecord.updated.by,
+      updateRecord.updated.date.toDate(),
     );
 
     if (processed) entries.push(processed);
@@ -468,56 +501,121 @@ async function getFormUpdateDocs(
   return entries;
 }
 
+async function getDownloadOnlyDocs(db: Firestore) {
+  const lastUpdatedThreshold = subHours(new Date(), LOOKBACK_HOURS);
+
+  // Query for downloaded forms
+  const opportunityUpdatesRes = await db
+    .collectionGroup("clientOpportunityUpdates")
+    .where("stateCode", "==", "US_TN")
+    .where("submitted.date", ">=", lastUpdatedThreshold)
+    .get();
+
+  console.info(
+    `${opportunityUpdatesRes.docs.length} opportunity updates found in TN`,
+  );
+
+  const entries = [];
+
+  for (let i = 0; i < opportunityUpdatesRes.docs.length; i++) {
+    const opportunityUpdateDoc = opportunityUpdatesRes.docs[i];
+
+    const personFirestoreKey = opportunityUpdateDoc.ref.path.split("/")[1];
+    const opportunityType = opportunityUpdateDoc.ref.path
+      .split("/")
+      // take the last entry in the path which will be of the form
+      // usTnSomeOpportunityType_YYYY-MM-DD
+      .slice(-1)[0]
+      // slice off the date and keep the first part
+      .split("_")[0];
+
+    if (!(opportunityType in OPP_TYPE_TO_COLLECTION)) {
+      continue;
+    }
+
+    // @ts-expect-error We check on the line above to ensure it is a valid key
+    const collectionName = OPP_TYPE_TO_COLLECTION[opportunityType];
+
+    // eslint-disable-next-line no-await-in-loop
+    const [baseRecordDoc, personRecordDoc, formUpdateDoc] = await Promise.all([
+      db.collection(collectionName).doc(personFirestoreKey).get(),
+      db.collection("residents").doc(personFirestoreKey).get(),
+      // db.doc(formUpdatePath).get(),
+      db
+        .collection("clientUpdatesV2")
+        .doc(personFirestoreKey)
+        .collection("clientFormUpdates")
+        .doc(`-${opportunityType}`)
+        .get(),
+    ]);
+
+    // Pull data from the firestore wrappers
+    const opportunityUpdateRecord =
+      opportunityUpdateDoc.data() as OpportunityUpdateData;
+    const formUpdateRecord = formUpdateDoc.data() as FormUpdateData;
+
+    const lastFormUpdate = formUpdateRecord?.updated.date.toDate();
+    const opportunityLastSubmitted =
+      opportunityUpdateRecord?.submitted.date.toDate();
+
+    if (formUpdateDoc.exists) {
+      // If the form has been updated since the start of the last day the form was downloaded,
+      // skip this record since it will be picked up in getFormUpdateDocs()
+      if (lastFormUpdate >= startOfDay(opportunityLastSubmitted)) {
+        continue;
+      }
+    }
+
+    const baseRecord = baseRecordDoc.data();
+    const personRecord = personRecordDoc.data();
+
+    const processed = processRecord(
+      // @ts-expect-error we ensure this string is a valid type when we check for its existence in OPP_TYPE_TO_COLLECTION
+      opportunityType,
+      personFirestoreKey,
+      formUpdateRecord ?? {},
+      baseRecord,
+      personRecord,
+      lastFormUpdate ?? opportunityLastSubmitted,
+      formUpdateRecord?.updated.by ?? opportunityUpdateRecord?.submitted.by,
+      lastFormUpdate ?? opportunityLastSubmitted,
+    );
+
+    if (processed) entries.push(processed);
+  }
+
+  console.info(`Found ${entries.length} download-only entries to save.`);
+
+  return entries;
+}
+
 async function getUpdatedRecords() {
   const db = firestore();
 
-  const entries = await getFormUpdateDocs(
-    db,
-    "usTnTrusteeTransfer",
-    "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-  );
+  // Find updates to forms associated with these opportuinities
+  const entries = await getFormUpdateDocs(db, "usTnTrusteeTransfer");
   entries.push(
-    ...(await getFormUpdateDocs(
-      db,
-      "usTnSeriousMisconductUpgrade",
-      "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-    )),
+    ...(await getFormUpdateDocs(db, "usTnSeriousMisconductUpgrade")),
   );
-  entries.push(
-    ...(await getFormUpdateDocs(
-      db,
-      "usTnBiannualOther",
-      "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-    )),
-  );
+  entries.push(...(await getFormUpdateDocs(db, "usTnBiannualOther")));
   entries.push(
     ...(await getFormUpdateDocs(
       db,
       "usTnSpecialCustodyLevelUpgrade2026Policy",
-      "US_TN-specialCustodyLevelUpgrade2026PolicyReferrals",
     )),
   );
   entries.push(
-    ...(await getFormUpdateDocs(
-      db,
-      "usTnAnnualReclassification2026Policy",
-      "US_TN-annualReclassification2026PolicyReferrals",
-    )),
+    ...(await getFormUpdateDocs(db, "usTnAnnualReclassification2026Policy")),
   );
   entries.push(
-    ...(await getFormUpdateDocs(
-      db,
-      "usTnCustodyLevelDowngrade2026Policy",
-      "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-    )),
+    ...(await getFormUpdateDocs(db, "usTnCustodyLevelDowngrade2026Policy")),
   );
   entries.push(
-    ...(await getFormUpdateDocs(
-      db,
-      "usTnInitialClassification2026Policy",
-      "US_TN-initialClassification2026PolicyReferrals",
-    )),
+    ...(await getFormUpdateDocs(db, "usTnInitialClassification2026Policy")),
   );
+
+  // Find instances where the form was downloaded without being modified in the last day
+  entries.push(...(await getDownloadOnlyDocs(db)));
 
   return entries;
 }
@@ -532,6 +630,13 @@ async function runTransfer() {
   }
 
   console.info(`Found ${updatesToUpload.length} updates to upload.`);
+
+  if (updatesToUpload.length === 0) {
+    console.info(
+      `No updates found to save. Exiting without connecting to postgres`,
+    );
+    return;
+  }
 
   // Insert every column in CSV_COLUMN order into us_tn_caf_edits
   let query = `INSERT INTO us_tn_caf_edits (${CSV_COLUMN_ORDER.map((c) => `"${c}"`).join(", ")})`;
@@ -549,8 +654,8 @@ async function runTransfer() {
   console.debug(query);
 
   if (dryRun) {
-    console.warn("Dry run. Exiting without connecting to postgres.");
-    process.exit(0);
+    console.info("Dry run. Exiting without connecting to postgres.");
+    return;
   }
 
   const connector = new Connector();
