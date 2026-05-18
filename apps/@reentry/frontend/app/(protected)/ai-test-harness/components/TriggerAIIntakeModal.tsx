@@ -108,7 +108,7 @@ export const TriggerAIIntakeModal = ({
   const [showPersonaDetails, setShowPersonaDetails] = useState(false);
 
   const { data: personasData } = $api.useQuery("get", "/ai-personas", {
-    params: { query: { page: 1, size: 100 } },
+    params: { query: { page: 1, size: 1000 } },
     headers: {
       Authorization: `Bearer ${getAccessToken()}`,
       "Content-Type": "application/json",
