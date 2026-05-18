@@ -53,7 +53,7 @@ const LookerEmbed: React.FC<Props> = observer(function LookerEmbed({
     if (!container) return;
 
     const sdk = getEmbedSDK();
-    let sessionId: string | null = null;
+    let sessionKey: string | null = null;
 
     (async () => {
       const { host, model } = await apiStore.getLookerConfig();
@@ -64,11 +64,11 @@ const LookerEmbed: React.FC<Props> = observer(function LookerEmbed({
         host,
         async () => {
           const session = await apiStore.acquireLookerSession();
-          sessionId = session.session_id;
+          sessionKey = session.session_key;
           return session;
         },
         async (tokens) =>
-          apiStore.generateLookerTokens({ ...tokens, session_id: sessionId }),
+          apiStore.generateLookerTokens({ ...tokens, session_key: sessionKey }),
       );
 
       sdk

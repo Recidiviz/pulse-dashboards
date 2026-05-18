@@ -160,7 +160,7 @@ describe("acquireSession", () => {
 
       const body = res.json.mock.calls[0][0];
       expect(body).toEqual({
-        session_id: expect.any(String),
+        session_key: expect.any(String),
         authentication_token: "at",
         authentication_token_ttl: 30,
         navigation_token: "nt",
@@ -263,7 +263,7 @@ describe("generateTokens", () => {
 
   describe("with an active session", () => {
     const stateCode = "us_nd";
-    let sessionId;
+    let sessionKey;
 
     beforeEach(async () => {
       // Seed the session store by calling acquireSession first
@@ -283,7 +283,7 @@ describe("generateTokens", () => {
       });
       const res = makeRes();
       await acquireSession(makeReq(stateCode), res);
-      sessionId = res.json.mock.calls[0][0].session_id;
+      sessionKey = res.json.mock.calls[0][0].session_key;
     });
 
     it("returns refreshed tokens without session_reference_token", async () => {
@@ -304,7 +304,7 @@ describe("generateTokens", () => {
       const res = makeRes();
       await generateTokens(
         makeReq(stateCode, {
-          session_id: sessionId,
+          session_key: sessionKey,
           api_token: "apt-old",
           navigation_token: "nt-old",
           authentication_token: "at-old",
@@ -339,7 +339,10 @@ describe("generateTokens", () => {
       });
 
       const res = makeRes();
-      await generateTokens(makeReq(stateCode, { session_id: sessionId }), res);
+      await generateTokens(
+        makeReq(stateCode, { session_key: sessionKey }),
+        res,
+      );
 
       expect(res.set).toHaveBeenCalledWith(
         "Cache-Control",
@@ -363,7 +366,7 @@ describe("generateTokens", () => {
       });
 
       await generateTokens(
-        makeReq(stateCode, { session_id: sessionId }),
+        makeReq(stateCode, { session_key: sessionKey }),
         makeRes(),
       );
 
@@ -382,7 +385,7 @@ describe("generateTokens", () => {
         },
       });
       await generateTokens(
-        makeReq(stateCode, { session_id: sessionId }),
+        makeReq(stateCode, { session_key: sessionKey }),
         makeRes(),
       );
 
@@ -400,7 +403,10 @@ describe("generateTokens", () => {
       });
 
       const res = makeRes();
-      await generateTokens(makeReq(stateCode, { session_id: sessionId }), res);
+      await generateTokens(
+        makeReq(stateCode, { session_key: sessionKey }),
+        res,
+      );
 
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).toHaveBeenCalledWith({ session_reference_token_ttl: 0 });
@@ -413,7 +419,7 @@ describe("generateTokens", () => {
 
       await expect(
         generateTokens(
-          makeReq(stateCode, { session_id: sessionId }),
+          makeReq(stateCode, { session_key: sessionKey }),
           makeRes(),
         ),
       ).rejects.toThrow("Network error");

@@ -94,8 +94,8 @@ export async function getLookerConfig(req, res) {
  * always creates a fresh Looker session (no rejoin), so multiple windows for
  * the same user each get their own isolated session with independent TTLs.
  *
- * Returns a server-generated session_id alongside the authentication,
- * navigation, and API tokens. The client must echo session_id in all subsequent
+ * Returns a server-generated session_key alongside the authentication,
+ * navigation, and API tokens. The client must echo session_key in all subsequent
  * generateTokens calls so the server can locate the right session_reference_token.
  *
  * The browser's User-Agent is forwarded to Looker so the token it issues is
@@ -112,7 +112,7 @@ export async function acquireSession(req, res) {
   const { stateCode } = req.params;
   const normalizedStateCode = stateCode.toUpperCase();
   const externalUserId = `external-embed-${normalizedStateCode}`;
-  const sessionId = randomUUID();
+  const sessionKey = randomUUID();
 
   const sessionResp = await getSDK().acquire_embed_cookieless_session(
     {
@@ -134,7 +134,7 @@ export async function acquireSession(req, res) {
   const session = sessionResp.value;
 
   if (session.session_reference_token) {
-    sessionReferenceTokenStore.set(sessionId, {
+    sessionReferenceTokenStore.set(sessionKey, {
       sessionReferenceToken: session.session_reference_token,
       email: getUserEmail(req),
     });
@@ -142,7 +142,7 @@ export async function acquireSession(req, res) {
 
   res.set("Cache-Control", "no-store, max-age=0");
   res.json({
-    session_id: sessionId,
+    session_key: sessionKey,
     authentication_token: session.authentication_token,
     authentication_token_ttl: session.authentication_token_ttl,
     navigation_token: session.navigation_token,
@@ -157,8 +157,8 @@ export async function acquireSession(req, res) {
  * POST /api/:stateCode/looker/generateTokens
  *
  * Refreshes Looker embed tokens before they expire. The client sends its
- * current tokens and the session_id received from acquireSession; the server
- * uses session_id to look up the stored session_reference_token and exchanges
+ * current tokens and the session_key received from acquireSession; the server
+ * uses session_key to look up the stored session_reference_token and exchanges
  * the tokens with Looker for a fresh set.
  *
  * Returns { session_reference_token_ttl: 0 } if we don't have a valid session
@@ -170,9 +170,9 @@ export async function acquireSession(req, res) {
 export async function generateTokens(req, res) {
   if (!shouldAllowAccess(req, res)) return;
 
-  const { session_id, api_token, navigation_token } = req.body;
+  const { session_key, api_token, navigation_token } = req.body;
 
-  const entry = sessionReferenceTokenStore.get(session_id);
+  const entry = sessionReferenceTokenStore.get(session_key);
   if (!entry || entry.email !== getUserEmail(req)) {
     res.json({ session_reference_token_ttl: 0 });
     return;
@@ -191,7 +191,7 @@ export async function generateTokens(req, res) {
   // Any Looker error means the session is gone. Return session_reference_token_ttl: 0
   // so the embed SDK recognises it as a graceful session end and can re-acquire.
   if (!tokensResp.ok) {
-    sessionReferenceTokenStore.delete(session_id);
+    sessionReferenceTokenStore.delete(session_key);
     res.json({ session_reference_token_ttl: 0 });
     return;
   }
@@ -199,7 +199,7 @@ export async function generateTokens(req, res) {
   const tokens = tokensResp.value;
 
   if (tokens.session_reference_token) {
-    sessionReferenceTokenStore.set(session_id, {
+    sessionReferenceTokenStore.set(session_key, {
       sessionReferenceToken: tokens.session_reference_token,
       email: entry.email,
     });

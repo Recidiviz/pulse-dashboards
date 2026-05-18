@@ -103,7 +103,7 @@ export class APIStore {
   }
 
   async acquireLookerSession(): Promise<
-    LookerEmbedCookielessSessionData & { session_id: string }
+    LookerEmbedCookielessSessionData & { session_key: string }
   > {
     const stateCode = this.userStore.isRecidivizUser
       ? this.userStore.rootStore?.currentTenantId
@@ -115,7 +115,7 @@ export class APIStore {
   }
 
   async generateLookerTokens(
-    body: LookerEmbedCookielessTokenData & { session_id: string | null },
+    body: LookerEmbedCookielessTokenData & { session_key: string | null },
   ): Promise<LookerEmbedCookielessSessionData> {
     const stateCode = this.userStore.isRecidivizUser
       ? this.userStore.rootStore?.currentTenantId
