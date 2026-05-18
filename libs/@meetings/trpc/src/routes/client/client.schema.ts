@@ -28,19 +28,19 @@ export const getMeetingsInputSchema = z.object({
   clientId: z.bigint(),
 });
 
-export const clientSortBySchema = z.enum([
-  "name",
-  "id",
-  "supervisionType",
-  "lastMeeting",
-]);
-
 export const caseloadFilterSchema = z.enum(["mine", "others", "all"]);
 
 export const listFiltersSchema = z
   .object({
     search: z.string().trim().optional(),
     caseload: caseloadFilterSchema.default("all"),
+  })
+  .optional();
+
+export const listSortSchema = z
+  .object({
+    sortBy: z.enum(["name", "id", "supervisionType", "lastMeeting"]).optional(),
+    sortDirection: z.enum(["asc", "desc"]).optional(),
   })
   .optional();
 
@@ -52,7 +52,7 @@ export const listInputSchema = z
     // field with that exact name.
     cursor: z.number().int().min(1).optional(),
     size: z.number().int().min(1).default(20),
-    sortBy: clientSortBySchema.default("name"),
     filters: listFiltersSchema,
+    sort: listSortSchema,
   })
   .optional();

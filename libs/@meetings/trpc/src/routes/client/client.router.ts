@@ -20,10 +20,10 @@ import { z } from "zod";
 import { Prisma } from "~@meetings/prisma/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
-  clientSortBySchema,
   createMeetingInputSchema,
   getMeetingsInputSchema,
   listInputSchema,
+  listSortSchema,
 } from "~@meetings/trpc/routes/client/client.schema";
 import {
   createMeetingForPerson,
@@ -53,19 +53,24 @@ const querySelect = {
   },
 } satisfies Prisma.ClientSelect;
 
+type ListSort = z.infer<typeof listSortSchema> | undefined;
 function getSecondaryOrderBy(
-  sortBy: z.infer<typeof clientSortBySchema> | undefined,
+  sortBy: NonNullable<ListSort>["sortBy"],
+  sortDirection: NonNullable<ListSort>["sortDirection"],
 ): Prisma.Sql {
+  const dirSql = sortDirection === "asc" ? Prisma.sql`ASC` : Prisma.sql`DESC`;
+
   switch (sortBy) {
     case "lastMeeting":
-      return Prisma.sql`MAX(m."startTime") DESC NULLS LAST, p."personId" ASC`;
+      return Prisma.sql`MAX(m."startTime") ${dirSql} NULLS LAST, p."personId" ASC`;
     case "id":
-      return Prisma.sql`p."displayPersonExternalId" ASC`;
+      return Prisma.sql`p."displayPersonExternalId" ${dirSql}`;
     case "supervisionType":
-      return Prisma.sql`p."supervisionType" ASC`;
+      return Prisma.sql`p."supervisionType" ${dirSql}`;
     case "name":
+      return Prisma.sql`p."givenNames" ${dirSql}, p."surname" ${dirSql}`;
     default:
-      return Prisma.sql`p."givenNames" ASC, p."surname" ASC`;
+      return Prisma.sql`p."givenNames" ${dirSql}, p."surname" ${dirSql}`;
   }
 }
 
@@ -103,12 +108,13 @@ export const clientRouter = router({
   list: auth0Procedure
     .input(listInputSchema)
     .query(async ({ input, ctx: { prisma, user } }) => {
-      const { cursor, filters, ...rest } = input ?? {};
+      const { cursor, filters, sort, ...rest } = input ?? {};
       // `cursor` from the client is actually a page number (see schema). Map
       // it onto `page` so downstream code uses the accurate name.
       const effectiveInput = {
         ...rest,
         filters,
+        sort,
         ...(cursor !== undefined ? { page: cursor } : {}),
       };
 

@@ -293,7 +293,7 @@ describe("client router", () => {
       describe("sortBy", () => {
         test("sortBy=id orders by displayPersonExternalId ascending", async () => {
           const result = await testTRPCClient.v1.client.list.query({
-            sortBy: "id",
+            sort: { sortBy: "id", sortDirection: "asc" },
           });
           const ids = result.data.map((c) => c.personId);
           // fakeClients[0] has an active meeting with the current user → first
@@ -309,7 +309,7 @@ describe("client router", () => {
 
         test("sortBy=lastMeeting orders by most recent completed meeting, nulls last", async () => {
           const result = await testTRPCClient.v1.client.list.query({
-            sortBy: "lastMeeting",
+            sort: { sortBy: "lastMeeting", sortDirection: "desc" },
           });
           const ids = result.data.map((c) => c.personId);
           // fakeClients[0]: active meeting with current user → first

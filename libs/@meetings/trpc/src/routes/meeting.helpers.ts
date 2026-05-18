@@ -245,8 +245,11 @@ export async function enrichPersonWithMeetingInfo<
 
 export async function listPersonsWithMeetingInfo<
   T extends { personId: bigint; meetings: PersonMeeting[] },
-  S extends string = string,
   F extends { search?: string } = { search?: string },
+  S extends { sortBy?: string; sortDirection?: string } = {
+    sortBy?: string;
+    sortDirection?: string;
+  },
 >({
   prisma,
   user,
@@ -263,16 +266,20 @@ export async function listPersonsWithMeetingInfo<
     | {
         page?: number;
         size?: number;
-        sortBy?: S;
         filters?: F;
+        sort?: S;
       }
     | undefined;
-  getSecondaryOrderBy: (sortBy: S | undefined) => Prisma.Sql;
+  getSecondaryOrderBy: (
+    sortBy: S["sortBy"] | undefined,
+    sortDirection: S["sortDirection"] | undefined,
+  ) => Prisma.Sql;
   findManyByIds: (personIds: bigint[]) => Promise<T[]>;
   additionalWhere?: Prisma.Sql;
 }) {
-  const { page = 1, size = 20, sortBy, filters } = input ?? {};
+  const { page = 1, size = 20, filters, sort } = input ?? {};
   const { search } = filters ?? {};
+  const { sortBy, sortDirection } = sort ?? {};
 
   const tableSql = Prisma.raw(
     personType === "client" ? `"Client"` : `"Resident"`,
@@ -319,7 +326,7 @@ export async function listPersonsWithMeetingInfo<
     GROUP BY p."personId"
     ORDER BY
       BOOL_OR(am."id" IS NOT NULL) DESC,
-      ${getSecondaryOrderBy(sortBy)}
+      ${getSecondaryOrderBy(sortBy, sortDirection)}
     LIMIT ${size}
     OFFSET ${(page - 1) * size}
   `;

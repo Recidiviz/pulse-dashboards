@@ -32,7 +32,7 @@ type Props = {
   personsCount: number;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
-  setSortBy: (value: string) => void;
+  setSortBy?: (value: string) => void;
   isFetching?: boolean;
 };
 
@@ -129,7 +129,9 @@ const PersonsHeaderContent = ({
           </Typography>
           {isFetching && <ActivityIndicator size="small" />}
         </View>
-        <Dropdown label="Sort by" options={options} onSelect={setSortBy} />
+        {setSortBy && (
+          <Dropdown label="Sort by" options={options} onSelect={setSortBy} />
+        )}
       </View>
     </>
   );

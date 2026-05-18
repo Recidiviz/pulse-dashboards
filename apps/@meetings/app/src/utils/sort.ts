@@ -23,6 +23,11 @@ export enum SortOption {
   LastMeeting = "Last Meeting",
 }
 
+export enum SortDirection {
+  Ascending = "asc",
+  Descending = "desc",
+}
+
 export function serializeSort(sort: SortOption) {
   switch (sort) {
     case SortOption.Name:

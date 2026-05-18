@@ -28,16 +28,16 @@ export const getMeetingsInputSchema = z.object({
   residentId: z.bigint(),
 });
 
-export const residentSortBySchema = z.enum([
-  "name",
-  "id",
-  "facility",
-  "lastMeeting",
-]);
-
 export const listFiltersSchema = z
   .object({
     search: z.string().trim().optional(),
+  })
+  .optional();
+
+export const listSortSchema = z
+  .object({
+    sortBy: z.enum(["name", "id", "facility", "lastMeeting"]).optional(),
+    sortDirection: z.enum(["asc", "desc"]).optional(),
   })
   .optional();
 
@@ -49,7 +49,7 @@ export const listInputSchema = z
     // field with that exact name.
     cursor: z.number().int().min(1).optional(),
     size: z.number().int().min(1).default(20),
-    sortBy: residentSortBySchema.default("name"),
     filters: listFiltersSchema,
+    sort: listSortSchema,
   })
   .optional();

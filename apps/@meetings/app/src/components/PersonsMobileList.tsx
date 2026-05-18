@@ -24,7 +24,7 @@ import { View } from "react-native";
 import { Person, PersonType } from "../common/types";
 import { trpc } from "../shared/api";
 import { deserializeClient, deserializeResident } from "../utils/format";
-import { serializeSort, SortOption } from "../utils/sort";
+import { serializeSort, SortDirection, SortOption } from "../utils/sort";
 import PersonCardItem from "./PersonCardItem";
 import PersonsHeaderContent from "./PersonsHeaderContent";
 import PersonsPlaceholder from "./PersonsPlaceholder";
@@ -33,30 +33,31 @@ const PAGE_SIZE = 20;
 
 type Props = {
   personType: PersonType;
-  sortBy: SortOption;
+  sort: { sortBy: string; direction: SortDirection };
   recordingState: string;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  setSortBy: (option: string) => void;
+  setSort: (sort: { sortBy: string; direction: SortDirection }) => void;
 };
 
 const PersonsMobileList = ({
   personType,
-  sortBy,
+  sort,
   recordingState,
   searchQuery,
   setSearchQuery,
-  setSortBy,
+  setSort,
 }: Props) => {
   const isFocused = useIsFocused();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const serializedSort = serializeSort(sortBy) as any;
+  const serializedSortBy = serializeSort(sort.sortBy as SortOption);
 
   const clientQuery = trpc.v1.client.list.useInfiniteQuery(
     {
       size: PAGE_SIZE,
-      sortBy: serializedSort,
-      filters: { search: searchQuery },
+      filters: {
+        search: searchQuery,
+      },
+      sort: { sortBy: serializedSortBy, sortDirection: sort.direction },
     },
     {
       enabled: isFocused && personType === "client",
@@ -68,8 +69,10 @@ const PersonsMobileList = ({
   const residentQuery = trpc.v1.resident.list.useInfiniteQuery(
     {
       size: PAGE_SIZE,
-      sortBy: serializedSort,
-      filters: { search: searchQuery },
+      filters: {
+        search: searchQuery,
+      },
+      sort: { sortBy: serializedSortBy, sortDirection: sort.direction },
     },
     {
       enabled: isFocused && personType === "resident",
@@ -100,6 +103,7 @@ const PersonsMobileList = ({
 
   return (
     <FlashList
+      maintainVisibleContentPosition={{ disabled: true }}
       data={persons}
       keyExtractor={(item: Person) => item.personId.toString()}
       renderItem={({ item }: { item: Person }) => (
@@ -130,7 +134,15 @@ const PersonsMobileList = ({
             personsCount={total}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            setSortBy={setSortBy}
+            setSortBy={(value: string) =>
+              setSort({
+                sortBy: value,
+                direction:
+                  value === SortOption.LastMeeting
+                    ? SortDirection.Descending
+                    : SortDirection.Ascending,
+              })
+            }
             isFetching={activeQuery.isFetching}
           />
         </View>

@@ -35,7 +35,7 @@ import { trpc } from "../shared/api";
 import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
-import { SortOption } from "../utils/sort";
+import { SortDirection, SortOption } from "../utils/sort";
 
 const ResidentsScreen = () => {
   useSetDocumentTitle("Residents - Recidiviz Meetings");
@@ -45,7 +45,10 @@ const ResidentsScreen = () => {
   const isFocused = useIsFocused();
 
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState(SortOption.Name as string);
+  const [sort, setSort] = useState({
+    sortBy: SortOption.Name as string,
+    direction: SortDirection.Ascending,
+  });
 
   // Drives screen-level loading / empty states. PersonsTable / PersonsMobileList
   // run their own paginated queries for the actual rows.
@@ -88,11 +91,11 @@ const ResidentsScreen = () => {
           native: (
             <PersonsMobileList
               personType="resident"
-              sortBy={sortBy as SortOption}
+              sort={sort}
               recordingState={recordingState}
               searchQuery={search}
               setSearchQuery={setSearch}
-              setSortBy={setSortBy}
+              setSort={setSort}
             />
           ),
           web: (
@@ -101,11 +104,11 @@ const ResidentsScreen = () => {
                 <View className="flex-1">
                   <PersonsMobileList
                     personType="resident"
-                    sortBy={sortBy as SortOption}
+                    sort={sort}
+                    setSort={setSort}
                     recordingState={recordingState}
                     searchQuery={search}
                     setSearchQuery={setSearch}
-                    setSortBy={setSortBy}
                   />
                 </View>
               )}
@@ -118,7 +121,6 @@ const ResidentsScreen = () => {
                       personsCount={total}
                       searchQuery={search}
                       setSearchQuery={setSearch}
-                      setSortBy={setSortBy}
                       isFetching={isFetching}
                     />
                     {total === 0 ? (
@@ -132,7 +134,8 @@ const ResidentsScreen = () => {
                       <PersonsTable
                         type="resident"
                         search={search}
-                        sortBy={sortBy as SortOption}
+                        sort={sort}
+                        setSort={setSort}
                       />
                     )}
                   </View>

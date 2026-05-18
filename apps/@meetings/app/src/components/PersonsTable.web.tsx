@@ -38,6 +38,7 @@ import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
+import { SortArrow } from "../shared/ui/SortArrow";
 import {
   Table,
   TABLE_CELL_HEIGHT,
@@ -53,7 +54,7 @@ import { TablePagination } from "../shared/ui/TablePagination";
 import { TooltipText } from "../shared/ui/TooltipText";
 import { Typography } from "../shared/ui/Typography";
 import { deserializeClient, deserializeResident } from "../utils/format";
-import { serializeSort, SortOption } from "../utils/sort";
+import { serializeSort, SortDirection, SortOption } from "../utils/sort";
 
 const PAGE_SIZE = 7;
 const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
@@ -69,7 +70,8 @@ type Props = {
   type: PersonType;
   caseload?: CaseloadFilter;
   search: string;
-  sortBy: SortOption;
+  sort: { sortBy: string; direction: SortDirection };
+  setSort: (sort: { sortBy: string; direction: SortDirection }) => void;
   sectionTitle?: string;
 };
 
@@ -77,7 +79,8 @@ const PersonsTable = ({
   type,
   caseload = "all",
   search,
-  sortBy,
+  sort,
+  setSort,
   sectionTitle,
 }: Props) => {
   const [page, setPage] = useState(1);
@@ -91,17 +94,20 @@ const PersonsTable = ({
 
   useEffect(() => {
     setPage(1);
-  }, [search, sortBy, caseload]);
+  }, [search, sort, caseload]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const serializedSort = serializeSort(sortBy) as any;
+  const serializedSortBy = serializeSort(sort.sortBy as SortOption) as any;
 
   const clientQuery = trpc.v1.client.list.useQuery(
     {
       size: PAGE_SIZE,
-      sortBy: serializedSort,
       cursor: page,
-      filters: { search, caseload },
+      filters: {
+        search,
+        caseload,
+      },
+      sort: { sortBy: serializedSortBy, sortDirection: sort.direction },
     },
     {
       enabled: isFocused && type === "client",
@@ -112,9 +118,11 @@ const PersonsTable = ({
   const residentQuery = trpc.v1.resident.list.useQuery(
     {
       size: PAGE_SIZE,
-      sortBy: serializedSort,
       cursor: page,
-      filters: { search },
+      filters: {
+        search,
+      },
+      sort: { sortBy: serializedSortBy, sortDirection: sort.direction },
     },
     {
       enabled: isFocused && type === "resident",
@@ -153,12 +161,142 @@ const PersonsTable = ({
         <Table className="table-fixed">
           <TableHead>
             <TableHeadRow>
-              <TableHeadCell className="w-[35%]">NAME</TableHeadCell>
-              <TableHeadCell className="w-[15%]">ID</TableHeadCell>
+              <TableHeadCell className="w-[35%]">
+                NAME{" "}
+                <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                  <SortArrow
+                    arrowDirection="up"
+                    isActive={
+                      sort.sortBy === SortOption.Name &&
+                      sort.direction === SortDirection.Ascending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy: SortOption.Name,
+                        direction: SortDirection.Ascending,
+                      })
+                    }
+                  />
+                  <SortArrow
+                    arrowDirection="down"
+                    isActive={
+                      sort.sortBy === SortOption.Name &&
+                      sort.direction === SortDirection.Descending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy: SortOption.Name,
+                        direction: SortDirection.Descending,
+                      })
+                    }
+                  />
+                </View>
+              </TableHeadCell>
+              <TableHeadCell className="w-[15%]">
+                ID
+                <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                  <SortArrow
+                    arrowDirection="up"
+                    isActive={
+                      sort.sortBy === SortOption.Id &&
+                      sort.direction === SortDirection.Ascending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy: SortOption.Id,
+                        direction: SortDirection.Ascending,
+                      })
+                    }
+                  />
+                  <SortArrow
+                    arrowDirection="down"
+                    isActive={
+                      sort.sortBy === SortOption.Id &&
+                      sort.direction === SortDirection.Descending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy: SortOption.Id,
+                        direction: SortDirection.Descending,
+                      })
+                    }
+                  />
+                </View>
+              </TableHeadCell>
               <TableHeadCell className="w-[23%]">
                 {type === "client" ? "SUPERVISION" : "FACILITY"}
+                <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                  <SortArrow
+                    arrowDirection="up"
+                    isActive={
+                      sort.sortBy ===
+                        (type === "client"
+                          ? SortOption.SupervisionType
+                          : SortOption.Facility) &&
+                      sort.direction === SortDirection.Ascending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy:
+                          type === "client"
+                            ? SortOption.SupervisionType
+                            : SortOption.Facility,
+                        direction: SortDirection.Ascending,
+                      })
+                    }
+                  />
+                  <SortArrow
+                    arrowDirection="down"
+                    isActive={
+                      sort.sortBy ===
+                        (type === "client"
+                          ? SortOption.SupervisionType
+                          : SortOption.Facility) &&
+                      sort.direction === SortDirection.Descending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy:
+                          type === "client"
+                            ? SortOption.SupervisionType
+                            : SortOption.Facility,
+                        direction: SortDirection.Descending,
+                      })
+                    }
+                  />
+                </View>
               </TableHeadCell>
-              <TableHeadCell className="w-[23%]">LAST MEETING</TableHeadCell>
+              <TableHeadCell className="w-[23%]">
+                LAST MEETING
+                <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                  <SortArrow
+                    arrowDirection="up"
+                    isActive={
+                      sort.sortBy === SortOption.LastMeeting &&
+                      sort.direction === SortDirection.Ascending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy: SortOption.LastMeeting,
+                        direction: SortDirection.Ascending,
+                      })
+                    }
+                  />
+                  <SortArrow
+                    arrowDirection="down"
+                    isActive={
+                      sort.sortBy === SortOption.LastMeeting &&
+                      sort.direction === SortDirection.Descending
+                    }
+                    onPress={() =>
+                      setSort({
+                        sortBy: SortOption.LastMeeting,
+                        direction: SortDirection.Descending,
+                      })
+                    }
+                  />
+                </View>
+              </TableHeadCell>
               <TableHeadCell className="w-[4%]"></TableHeadCell>
             </TableHeadRow>
           </TableHead>
