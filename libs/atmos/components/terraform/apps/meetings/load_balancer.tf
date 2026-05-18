@@ -52,6 +52,14 @@ module "lb_backend" {
   }
 }
 
+resource "google_compute_region_ssl_policy" "meetings_server" {
+  project         = var.project_id
+  region          = var.location
+  name            = "meetings-server-ssl-policy"
+  profile         = "RESTRICTED"
+  min_tls_version = "TLS_1_2"
+}
+
 module "lb_frontend" {
   source = "../../vendor/regional-lb-http-frontend"
 
@@ -63,6 +71,8 @@ module "lb_frontend" {
   network    = "default"
 
   load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  ssl_policy = google_compute_region_ssl_policy.meetings_server.self_link
 
   # We have one already created in apps/shared-infra since it's not specific to meetings- every
   # load balancer in the same region and VPC network uses the same proxy-only subnetwork
