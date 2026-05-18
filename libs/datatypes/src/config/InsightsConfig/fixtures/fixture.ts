@@ -34,6 +34,7 @@ import { US_CA } from "./US_CA";
 import { US_IA } from "./US_IA";
 import { US_ID } from "./US_ID";
 import { US_MI } from "./US_MI";
+import { US_NC } from "./US_NC";
 import { US_ND } from "./US_ND";
 import { US_PA } from "./US_PA";
 import { US_TN } from "./US_TN";
@@ -180,6 +181,7 @@ export const getMockConfigsByTenantId = (): Record<string, InsightsConfig> => ({
   US_IA,
   US_ID,
   US_MI,
+  US_NC,
   US_ND,
   US_PA,
   US_TN,
