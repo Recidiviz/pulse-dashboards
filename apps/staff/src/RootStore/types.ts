@@ -286,7 +286,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
         operationsNumeratorDenominatorIsEnabled: { activeTenants: ["US_TX"] },
         insightsStaffUsage: {
-          activeTenants: ["US_ID", "US_UT", "US_IA", "US_MI"],
+          activeTenants: ["US_ID", "US_UT", "US_IA", "US_MI", "US_TX"],
         },
         insightsConsistentLoginPill: { activeTenants: ["US_MI"] },
         clientsResidentsTableViewToggle: {},
