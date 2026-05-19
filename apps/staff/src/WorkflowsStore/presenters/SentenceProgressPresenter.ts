@@ -329,9 +329,9 @@ export class SentenceProgressPresenter<
   private pushUsNdResidentDates(resident: Resident) {
     if (resident.metadata.stateCode !== "US_ND") return;
 
-    const { paroleReviewDate, EIGHTYFIVEPercentDate } = resident.metadata;
+    const { paroleReviewDate, eightyFivePercentDate } = resident.metadata;
     this.pushTimelineDate("Parole Review Date", true, paroleReviewDate);
-    this.pushTimelineDate("85% Date", true, EIGHTYFIVEPercentDate);
+    this.pushTimelineDate("85% Date", true, eightyFivePercentDate);
   }
 
   /**

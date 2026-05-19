@@ -13,7 +13,7 @@
         "label": "Good Time Release Date",
         "description": "Your Good Time Release Date is calculated by subtracting 5 days from your maximum release date for every month of your sentence. You get this Good Time up front at the start of your sentence; losing Good Time through infractions will push this date later.\n\nPeople serving life sentences do not have a Good Time Release Date."
       },
-      "EIGHTYFIVEPercent": {
+      "eightyFivePercent": {
         "label": "85% Date",
         "description": "Some sentences require that 85% be served in a facility. If you have an 85% date, that is the earliest that you can be released, even if your Good Time Release Date shows an earlier date.\n\nIf no date is shown, the 85% rule does not apply to your sentence — it applies only to certain violent offenses.\n"
       },

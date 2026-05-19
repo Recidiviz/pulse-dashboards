@@ -42,7 +42,7 @@ describe("sentence dates", () => {
           },
           {
             "date": 2022-05-30T00:00:00.000Z,
-            "id": "EIGHTYFIVEPercent",
+            "id": "eightyFivePercent",
           },
           {
             "date": 2022-10-16T00:00:00.000Z,
@@ -75,7 +75,7 @@ describe("sentence dates", () => {
           },
           {
             "date": undefined,
-            "id": "EIGHTYFIVEPercent",
+            "id": "eightyFivePercent",
           },
           {
             "date": undefined,

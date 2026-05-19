@@ -23,8 +23,7 @@ export const usNdResidentMetadataSchema = z.object({
   stateCode: z.literal("US_ND"),
   lastUpdatedDate: nullishAsUndefined(dateStringSchema),
   paroleReviewDate: nullishAsUndefined(dateStringSchema),
-  // TODO(recidiviz-data#76978): migrate to camelCase in coordination with backend
-  EIGHTYFIVEPercentDate: nullishAsUndefined(dateStringSchema),
+  eightyFivePercentDate: nullishAsUndefined(dateStringSchema),
   paroleDate: nullishAsUndefined(dateStringSchema),
   initialReviewDate: nullishAsUndefined(dateStringSchema),
   goodTimeDate: nullishAsUndefined(dateStringSchema),

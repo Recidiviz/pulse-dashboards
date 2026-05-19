@@ -31,7 +31,7 @@ export class ResidentHomepagePresenter {
       "initialReview",
       "paroleReview",
       "goodTime",
-      "EIGHTYFIVEPercent",
+      "eightyFivePercent",
       "finalSentExp",
     ] as const;
 

@@ -13,9 +13,9 @@
         "label": "[US_ND]sentenceDates.dates.goodTime.label",
         "description": "[US_ND]sentenceDates.dates.goodTime.description"
       },
-      "EIGHTYFIVEPercent": {
-        "label": "[US_ND]sentenceDates.dates.EIGHTYFIVEPercent.label",
-        "description": "[US_ND]sentenceDates.dates.EIGHTYFIVEPercent.description"
+      "eightyFivePercent": {
+        "label": "[US_ND]sentenceDates.dates.eightyFivePercent.label",
+        "description": "[US_ND]sentenceDates.dates.eightyFivePercent.description"
       },
       "finalSentExp": {
         "label": "[US_ND]sentenceDates.dates.finalSentExp.label",

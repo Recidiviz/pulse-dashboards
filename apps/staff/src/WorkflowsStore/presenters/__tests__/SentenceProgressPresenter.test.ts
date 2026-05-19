@@ -62,7 +62,7 @@ const usNDResidentRecord: ResidentRecord = {
   stateCode: "US_ND",
   metadata: {
     stateCode: "US_ND",
-    EIGHTYFIVEPercentDate: fieldToDate("2028-01-01"),
+    eightyFivePercentDate: fieldToDate("2028-01-01"),
     paroleReviewDate: fieldToDate("2024-01-01"),
   },
 };

@@ -65,7 +65,7 @@ export const rawUsNdResidents: Array<RawResidentRecord> = [
       lastUpdatedDate: relativeFixtureDate(),
       initialReviewDate: relativeFixtureDate({ months: 2 }),
       paroleReviewDate: relativeFixtureDate({ months: 4 }),
-      EIGHTYFIVEPercentDate: relativeFixtureDate({ months: 5, days: 14 }),
+      eightyFivePercentDate: relativeFixtureDate({ months: 5, days: 14 }),
       goodTimeDate: relativeFixtureDate({ months: 7 }),
       finalSentExpDate: relativeFixtureDate({ months: 10 }),
     },
