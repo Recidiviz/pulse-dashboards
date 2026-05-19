@@ -110,6 +110,8 @@ interface SharedDatePickerProps {
   placeholder?: string;
   monthYearOnly?: boolean;
   onCalendarClose?: () => void;
+  minDate?: Date | null;
+  maxDate?: Date | null;
 }
 
 export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
@@ -121,6 +123,8 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
   placeholder,
   monthYearOnly = false,
   onCalendarClose,
+  minDate,
+  maxDate,
 }) => {
   return (
     <>
@@ -141,6 +145,8 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
           showMonthYearPicker={monthYearOnly}
           dateFormat={monthYearOnly ? "MM/yyyy" : undefined}
           onCalendarClose={onCalendarClose}
+          minDate={minDate ?? undefined}
+          maxDate={maxDate ?? undefined}
         />
       </CaseDetailsStyled.DatePickerWrapper>
       {resetButton}

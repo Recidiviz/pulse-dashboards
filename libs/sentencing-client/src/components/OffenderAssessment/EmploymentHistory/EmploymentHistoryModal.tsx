@@ -31,6 +31,8 @@ import * as Styled from "./EmploymentHistoryModal.styles";
 
 type SelectOption = { label: string; value: string };
 
+const today = new Date();
+
 interface EmploymentHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -103,6 +105,16 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> = ({
   const hasData =
     !!formData.employerName && formData.verifiedByReportAuthor !== null;
 
+  const startDateObj = formData.startDate ? new Date(formData.startDate) : null;
+
+  const handleStartDateChange = (date: Date | null) => {
+    const parsedEndDate = formData.endDate ? new Date(formData.endDate) : null;
+    // Clear end date if the new start date falls after it
+    const newEndDate =
+      date && parsedEndDate && parsedEndDate < date ? null : formData.endDate;
+    setFormData({ ...formData, startDate: date ?? null, endDate: newEndDate });
+  };
+
   return (
     <Modal isOpen={isOpen} hideModal={handleClose} padding={0}>
       <Styled.Container>
@@ -152,39 +164,43 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> = ({
             />
           </Styled.Field>
 
-          <Styled.DateRow>
-            <Styled.Field>
-              <Styled.Label>Start Date</Styled.Label>
-              <Styled.DatePickerWrapper>
-                <SharedDatePicker
-                  selected={
-                    formData.startDate ? new Date(formData.startDate) : null
-                  }
-                  onChange={(date) =>
-                    setFormData({ ...formData, startDate: date ?? null })
-                  }
-                  placeholder="MM/YYYY"
-                  monthYearOnly
-                />
-              </Styled.DatePickerWrapper>
-            </Styled.Field>
+          <Styled.DateSection>
+            <Styled.DateRow>
+              <Styled.Field>
+                <Styled.Label>Start Date</Styled.Label>
+                <Styled.DatePickerWrapper>
+                  <SharedDatePicker
+                    selected={startDateObj}
+                    onChange={handleStartDateChange}
+                    placeholder="MM/YYYY"
+                    monthYearOnly
+                    maxDate={today}
+                  />
+                </Styled.DatePickerWrapper>
+              </Styled.Field>
 
-            <Styled.Field>
-              <Styled.Label>End Date</Styled.Label>
-              <Styled.DatePickerWrapper>
-                <SharedDatePicker
-                  selected={
-                    formData.endDate ? new Date(formData.endDate) : null
-                  }
-                  onChange={(date) =>
-                    setFormData({ ...formData, endDate: date ?? null })
-                  }
-                  placeholder="MM/YYYY"
-                  monthYearOnly
-                />
-              </Styled.DatePickerWrapper>
-            </Styled.Field>
-          </Styled.DateRow>
+              <Styled.Field>
+                <Styled.Label>End Date</Styled.Label>
+                <Styled.DatePickerWrapper>
+                  <SharedDatePicker
+                    selected={
+                      formData.endDate ? new Date(formData.endDate) : null
+                    }
+                    onChange={(date) =>
+                      setFormData({ ...formData, endDate: date ?? null })
+                    }
+                    placeholder="MM/YYYY"
+                    monthYearOnly
+                    minDate={startDateObj}
+                    maxDate={today}
+                  />
+                </Styled.DatePickerWrapper>
+              </Styled.Field>
+            </Styled.DateRow>
+            <Styled.EndDateHintText>
+              Leave end date blank if employment is ongoing.
+            </Styled.EndDateHintText>
+          </Styled.DateSection>
         </Styled.Form>
 
         <Styled.Footer>

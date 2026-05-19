@@ -17,6 +17,8 @@
 
 import styled from "styled-components";
 
+import { palette } from "~design-system";
+
 import { BaseDatePickerWrapper } from "../ModalStyles";
 
 // Re-export shared modal styles
@@ -39,4 +41,22 @@ export const DatePickerWrapper = styled(BaseDatePickerWrapper)`
     background-position: right 1rem top 60%;
     background-size: 1.3rem;
   }
+
+  .rcd-cal .react-datepicker__month-text--disabled {
+    color: ${palette.slate20};
+    pointer-events: none;
+  }
+`;
+
+export const DateSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+export const EndDateHintText = styled.p`
+  margin: 0;
+  font-family: "Public Sans";
+  font-size: 0.75rem;
+  color: ${palette.slate60};
 `;
