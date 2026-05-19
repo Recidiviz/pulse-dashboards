@@ -213,7 +213,6 @@ const meetingsBackendDisplayName = "Meetings Backend Services";
 const meetingsFrontendDisplayName = "Meetings Frontend";
 const demoFixturesDisplayName = "Demo fixtures";
 const opportunitiesTestDataDisplayName = "Opportunities test data";
-const envSecretsDisplayName = "Env Secrets";
 
 const inStagingOrProd = ["staging", "production"].includes(deployEnv);
 const deployServicesChoices = [
@@ -228,7 +227,6 @@ const deployServicesChoices = [
   { name: opportunitiesStorybookDisplayName, checked: inStagingOrProd },
   { name: meetingsBackendDisplayName, checked: inStagingOrProd },
   { name: meetingsFrontendDisplayName, checked: inStagingOrProd },
-  { name: envSecretsDisplayName, checked: inStagingOrProd },
 ];
 
 if (deployEnv === "demo") {
@@ -289,10 +287,6 @@ const deployMeetingsFrontend = deployServicesPrompt.deployServices.includes(
   meetingsFrontendDisplayName,
 );
 
-const deployEnvSecrets = deployServicesPrompt.deployServices.includes(
-  envSecretsDisplayName,
-);
-
 console.log("Running nx reset...");
 await $`nx reset`.pipe(process.stdout);
 
@@ -301,14 +295,6 @@ await $`yarn install`.pipe(process.stdout);
 
 console.log("Updating atmos...");
 await $`brew install atmos`.pipe(process.stdout);
-
-if (deployEnvSecrets && deployEnv === "staging") {
-  // deploy any updated env secrets
-  console.log("Apply env-secrets");
-  await $`yarn atmos:apply env-secrets -s recidiviz-dashboard-${deployEnv}--shared-infra`.pipe(
-    process.stdout,
-  );
-}
 
 // Verify Docker images are available before deploying
 // Images are built in GitHub Actions, so we need to ensure they exist

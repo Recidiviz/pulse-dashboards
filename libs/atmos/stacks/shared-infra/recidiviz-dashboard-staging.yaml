@@ -10,16 +10,6 @@ import:
 
 components:
   terraform:
-    env-secrets:
-      vars:
-        location: "{{ .settings.context.location }}"
-      metadata:
-        component: env-secrets
-      settings:
-        depends_on:
-          sops_file:
-            file: libs/atmos/components/terraform/env-secrets/env-secrets.enc.yaml
-
     cloud-sql-proxy:
       vars:
         project_id: "{{ .settings.context.project_id }}"
