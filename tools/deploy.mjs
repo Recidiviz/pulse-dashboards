@@ -366,10 +366,16 @@ if (
     // Check each image once
     for (const image of requiredImages) {
       try {
-        await $`gcloud artifacts docker images describe ${image}:${currentRevision} --quiet`;
-        console.log(`✅ Found ${image}:${currentRevision}`);
+        const result =
+          await $`gcloud artifacts docker images list ${image} --quiet --include-tags --filter=tags:${currentRevision} --format=json`;
+        const images = JSON.parse(result.stdout);
+        if (images.length > 0) {
+          console.log(`Found ${image}:${currentRevision}`);
+        } else {
+          throw new Error("Image not found");
+        }
       } catch (e) {
-        console.error(`❌ Image not found: ${image}:${currentRevision}`, e);
+        console.error(`Image not found: ${image}:${currentRevision}`, e);
         missingImages.push(image);
       }
     }
