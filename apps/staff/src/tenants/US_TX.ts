@@ -196,6 +196,9 @@ const US_TX_CONFIG = {
             value: "In-custody",
           },
           {
+            value: "Residential Reentry",
+          },
+          {
             value: "Unassigned",
           },
         ],
