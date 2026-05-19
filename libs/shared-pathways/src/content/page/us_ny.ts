@@ -37,7 +37,7 @@ const content: StateSpecificPageCopy = {
       countByOffenseType: "Offense Type",
     },
     methodology:
-      "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly. \n- For more reports, please see: https://doccs.ny.gov/research-and-reports \n- For questions, please contact NYS DOCCS. \n\n<br/>\n<strong>Notes:</strong>\n- Please note that data labelled May 1, 2024 was actually generated May 4, 2024.\n- Individuals labelled with \"Not Coded\" for some dimensions (such as offense type) are primarily individuals who haven't yet completed the coding process. Those are generally resolved within 1 month.\n",
+      "This dashboard shows data on individuals who are under the custody of New York State Department of Corrections and Community Supervision (DOCCS) at a point in time. First of the month snapshot data is uploaded from DOCCS's systems monthly.\n\nFor more reports on DOCCS' population, please see: : https://doccs.ny.gov/research-and-reports \n\n<br/>\n<strong>Notes:</strong>\n- Please note that data labeled May 1, 2024 was actually generated May 4, 2024.\n- Individuals labeled with \"Not Coded\" for some dimensions (such as offense type) are primarily individuals who are newly admitted to the Department's custody and haven't yet had all information entered on the computer system. Those are generally resolved within 1 month.",
   },
 };
 

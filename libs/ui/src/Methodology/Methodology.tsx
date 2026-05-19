@@ -30,10 +30,9 @@ export type MethodologySection = {
 
 export type MethodologyProps = {
   title: string;
-  description: string;
+  description?: string;
   descriptionSecondary?: string;
   sections: MethodologySection[];
-  hideTitle?: boolean;
   hideToc?: boolean;
 };
 
@@ -87,26 +86,27 @@ export const Methodology: React.FC<MethodologyProps> = ({
   description,
   descriptionSecondary,
   sections,
-  hideTitle = false,
   hideToc = false,
 }) => {
+  const isSingleSection = sections.length === 1;
+
   return (
     <Wrapper>
       <div className="container col-md-9 col-12">
-        {!hideTitle && (
-          <section>
-            <MainTitle>{title}</MainTitle>
+        <section>
+          {!isSingleSection && <MainTitle>{title}</MainTitle>}
+          {description && (
             <MainDescription id="primary-description">
               {description}
             </MainDescription>
-            <br aria-hidden="true" />
-            {descriptionSecondary && (
-              <MainDescription id="secondary-description">
-                {descriptionSecondary}
-              </MainDescription>
-            )}
-          </section>
-        )}
+          )}
+          <br aria-hidden="true" />
+          {descriptionSecondary && (
+            <MainDescription id="secondary-description">
+              {descriptionSecondary}
+            </MainDescription>
+          )}
+        </section>
 
         {!hideToc && (
           <Toc>
@@ -127,18 +127,21 @@ export const Methodology: React.FC<MethodologyProps> = ({
           </Toc>
         )}
         <div>
-          {sections.map(({ page, subsections }) => (
-            <React.Fragment key={`block${page.title}`}>
-              <ContentBlock content={page} />
-              {subsections?.map((subsection) => (
-                <ContentBlock
-                  content={subsection}
-                  subBlock
-                  key={`metric${subsection.title}`}
-                />
-              ))}
-            </React.Fragment>
-          ))}
+          {sections.map(({ page, subsections }) => {
+            const pageContent = isSingleSection ? { ...page, title } : page;
+            return (
+              <React.Fragment key={`block${pageContent.title}`}>
+                <ContentBlock content={pageContent} />
+                {subsections?.map((subsection) => (
+                  <ContentBlock
+                    content={subsection}
+                    subBlock
+                    key={`metric${subsection.title}`}
+                  />
+                ))}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
     </Wrapper>

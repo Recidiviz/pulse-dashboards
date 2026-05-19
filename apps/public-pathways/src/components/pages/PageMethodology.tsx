@@ -17,6 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import { AnchorProvider } from "react-anchor-navigation";
+import styled from "styled-components";
 
 import {
   getMethodologyCopy,
@@ -31,6 +32,22 @@ import { Header } from "../Header/Header";
 import { useRootStore } from "../StoreProvider";
 import { PageContainer, PageMain } from "./styles";
 
+const MethodologyWrapper = styled.div`
+  h3 {
+    padding-top: 1.5rem;
+  }
+`;
+
+const QuestionsTitle = styled.h4`
+  ${({ theme }) => theme.typography.Header24};
+  padding: 0 0 2rem;
+  letter-spacing: -0.04em;
+`;
+
+const QuestionsBody = styled.p`
+  ${({ theme }) => theme.typography.Body16};
+`;
+
 export const PageMethodology = observer(function PageMethodology() {
   const { currentTenantId, metricsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
@@ -38,8 +55,7 @@ export const PageMethodology = observer(function PageMethodology() {
   const methodologyCopy = getMethodologyCopy(currentTenantId).system;
   if (!methodologyCopy) return null;
 
-  const { title, description, descriptionSecondary, pageCopy, metricCopy } =
-    methodologyCopy;
+  const { pageCopy, metricCopy } = methodologyCopy;
 
   const enabledMetricIds = new Set(
     Object.values(metricsStore.map).map((metric) => metric.id),
@@ -66,15 +82,23 @@ export const PageMethodology = observer(function PageMethodology() {
         <AnchorProvider offset={75}>
           {/* per types this needs to be an array */}
           {[
-            <Methodology
-              key="methodology"
-              title={title}
-              description={description}
-              descriptionSecondary={descriptionSecondary}
-              sections={sections}
-              hideTitle
-              hideToc
-            />,
+            <MethodologyWrapper key="methodology">
+              <Methodology
+                title={"DOCCS Dashboard: Methodology"}
+                sections={sections}
+                hideToc
+              />
+            </MethodologyWrapper>,
+            <section key="questions" className="container col-md-9 col-12">
+              <QuestionsTitle>Questions</QuestionsTitle>
+              <QuestionsBody>
+                If you have questions, please contact{" "}
+                <a href="mailto:dashboards@doccs.ny.gov">
+                  dashboards@doccs.ny.gov
+                </a>
+                .
+              </QuestionsBody>
+            </section>,
           ]}
         </AnchorProvider>
       </PageMain>
