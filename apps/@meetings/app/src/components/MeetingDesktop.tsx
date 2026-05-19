@@ -38,6 +38,7 @@ import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
 import { formatMeetingDuration, formatMeetingStartDate } from "../utils/format";
+import { ActionItemsTab } from "./ActionItemsTab";
 import Header from "./Header";
 
 type Props = {
@@ -163,7 +164,7 @@ const MeetingDesktop = ({
                 />
               )}
               {activeTab === Tab.ActionItems && (
-                <BulletListTab items={meetingDetails.actionItems} />
+                <ActionItemsTab items={meetingDetails.structuredActionItems} />
               )}
               {activeTab === Tab.CriticalUpdates && (
                 <BulletListTab items={meetingDetails.criticalUpdates} />

@@ -10262,6 +10262,7 @@ __metadata:
     "@nx/detox": "npm:*"
     "@nx/rollup": "npm:*"
     "@paralleldrive/cuid2": "npm:^3.3.0"
+    "@radix-ui/react-tooltip": "npm:^1.2.8"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-native-clipboard/clipboard": "npm:^1.16.3"
     "@react-native-community/datetimepicker": "npm:^9.1.0"
