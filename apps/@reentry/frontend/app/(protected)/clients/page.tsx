@@ -35,6 +35,7 @@ import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuthUserCapabilities } from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { toUTCDate } from "~@reentry/frontend/utils/date";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import { showSuccessToast } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
@@ -202,8 +203,9 @@ const ClientsPage = () => {
   };
 
   const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("en-US", {
+    const date = toUTCDate(dateString);
+    if (!date) return "-";
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
