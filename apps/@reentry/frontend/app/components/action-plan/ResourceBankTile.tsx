@@ -21,6 +21,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import PlaceIcon from "@mui/icons-material/Place";
 
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
+import { safeHttpUrl } from "~@reentry/frontend/utils/urlUtils";
 import type { components } from "~@reentry/openapi-types";
 
 import styles from "./styles/ResourceBankTile.module.css";
@@ -106,6 +107,7 @@ const ResourceBankTile = ({
   const travelDistanceMiles = (
     resource as Resource & { travel_distance_miles?: number }
   ).travel_distance_miles;
+  const websiteHref = safeHttpUrl(resource.website);
   return (
     <div className={`${styles["tile"]} ${tileBg}`}>
       <div className={styles["header"]}>
@@ -141,10 +143,10 @@ const ResourceBankTile = ({
             <span className={styles["metaText"]}>{resource.address}</span>
           </span>
         )}
-        {resource.website && (
+        {websiteHref && (
           <a
             className={styles["metaLink"]}
-            href={resource.website}
+            href={websiteHref}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() =>
@@ -156,7 +158,7 @@ const ResourceBankTile = ({
             }
           >
             <LanguageIcon className={styles["metaIcon"]} />
-            <span className={styles["metaText"]}>{resource.website}</span>
+            <span className={styles["metaText"]}>{websiteHref}</span>
           </a>
         )}
 

@@ -36,6 +36,43 @@
   color: var(--color-ink-1);
   line-height: 1.4;
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardNameLink {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-navy-1);
+  line-height: 0;
+}
+
+.cardNameLinkIcon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.headerActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.infoButton {
+  color: var(--gray-1) !important;
+}
+
+.infoButton:hover {
+  color: var(--color-teal-2) !important;
+}
+
+.infoIcon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 .cardMeta {
@@ -72,13 +109,6 @@
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-.cardDescription {
-  font-size: 12px;
-  color: var(--color-ink-3);
-  line-height: 1.5;
-  margin: 0;
 }
 
 .cardAddress {

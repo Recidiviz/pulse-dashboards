@@ -17,7 +17,13 @@
 
 "use client";
 
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import LinkIcon from "@mui/icons-material/Link";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+
 import type { ResourceWithMeta } from "~@reentry/frontend/hooks/resourceBank.types";
+import { safeHttpUrl } from "~@reentry/frontend/utils/urlUtils";
 
 import { SectionTitle } from "../types";
 import AddToSectionButton from "./AddToSectionButton";
@@ -44,43 +50,65 @@ const SearchResults = ({
 
   return (
     <div className={styles["results"]}>
-      {results.map((resource, index) => (
-        <div key={index} className={styles["card"]}>
-          <div className={styles["cardHeader"]}>
-            <span className={styles["cardName"]}>{resource.name}</span>
-            <AddToSectionButton
-              addResource={addResource}
-              resource={resource}
-              sectionTitles={sectionTitles}
-            />
-          </div>
-          <div className={styles["cardMeta"]}>
-            <span className={styles["categoryBadge"]}>
-              {resource.subcategory}
-            </span>
-            {resource.origin === "PARTNER" && (
-              <span className={styles["onlineBadge"]}>Online</span>
-            )}
-            {resource.travel_distance_miles && (
-              <span className={styles["distance"]}>
-                {resource.travel_distance_miles.toFixed(1)} mi
+      {results.map((resource) => {
+        const websiteHref = safeHttpUrl(resource.website);
+        const tooltipText = resource.description || resource.blurb;
+        return (
+          <div key={resource.id} className={styles["card"]}>
+            <div className={styles["cardHeader"]}>
+              <span className={styles["cardName"]}>
+                {resource.name}
+                {websiteHref && (
+                  <a
+                    className={styles["cardNameLink"]}
+                    href={websiteHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open ${resource.name} website in a new tab`}
+                  >
+                    <LinkIcon className={styles["cardNameLinkIcon"]} />
+                  </a>
+                )}
               </span>
-            )}
-            {!(resource.origin === "GOOGLE") &&
-              resource.travel_distance_miles != null && (
-                <span className={styles["distance"]}>
-                  {Number(resource.travel_distance_miles.toPrecision(2))} mi
-                </span>
+              <div className={styles["headerActions"]}>
+                <AddToSectionButton
+                  addResource={addResource}
+                  resource={resource}
+                  sectionTitles={sectionTitles}
+                />
+                {tooltipText && (
+                  <Tooltip title={tooltipText} placement="left" arrow>
+                    <IconButton
+                      size="small"
+                      aria-label={`Description for ${resource.name}`}
+                      className={styles["infoButton"]}
+                    >
+                      <InfoOutlinedIcon className={styles["infoIcon"]} />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </div>
+            </div>
+            <div className={styles["cardMeta"]}>
+              <span className={styles["categoryBadge"]}>
+                {resource.subcategory}
+              </span>
+              {resource.resource_type === "DIGITAL" && (
+                <span className={styles["onlineBadge"]}>Online</span>
               )}
+              {resource.origin !== "GOOGLE" &&
+                resource.travel_distance_miles != null && (
+                  <span className={styles["distance"]}>
+                    {resource.travel_distance_miles.toFixed(1)} mi
+                  </span>
+                )}
+            </div>
+            {resource.address && (
+              <p className={styles["cardAddress"]}>{resource.address}</p>
+            )}
           </div>
-          {resource.description && (
-            <p className={styles["cardDescription"]}>{resource.description}</p>
-          )}
-          {resource.address && (
-            <p className={styles["cardAddress"]}>{resource.address}</p>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
