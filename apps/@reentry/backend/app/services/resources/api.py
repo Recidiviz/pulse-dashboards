@@ -45,6 +45,7 @@ async def _call_resource_api(request: GetResourcesRequest) -> List[ApiSearchResu
                 request.exclude_names if request.exclude_names else None
             ),
             "limit": request.limit,
+            "resource_origin": ["CURATED"],
         }
 
         # Use /search endpoint for resource swapping, /discover for general discovery

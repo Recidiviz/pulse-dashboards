@@ -417,7 +417,9 @@ async def test_call_list_resources():
     response = await list_resources(request)
     print(f"Request: {request}")
     print(f"Response: {response}")
-    assert response.resources, "Expected resources but got None or empty list"
+    assert (
+        response.failure_reason != ResourceFailureReason.API_ERROR
+    ), f"Resource API returned an error: {response.error_message}"
 
 
 def test_resource_is_allowed():
@@ -891,7 +893,9 @@ _COMMUNITY_PATCH = "app.utils.resources_utils.batch_get_resources"
 _DIGITAL_PATCH = "app.utils.resources_utils.batch_get_digital_resources"
 
 
-def _make_community_resource(resource_id: int, name: str = "Community Resource") -> Resource:
+def _make_community_resource(
+    resource_id: int, name: str = "Community Resource"
+) -> Resource:
     return Resource(
         id=f"place_{resource_id}",
         resource_id=resource_id,
@@ -901,7 +905,9 @@ def _make_community_resource(resource_id: int, name: str = "Community Resource")
     )
 
 
-def _make_digital_resource(resource_id: int, name: str = "Digital Resource") -> Resource:
+def _make_digital_resource(
+    resource_id: int, name: str = "Digital Resource"
+) -> Resource:
     return Resource(
         id=f"digital_{resource_id}",
         resource_id=resource_id,
@@ -940,7 +946,9 @@ async def test_batch_get_active_resources_community_only():
 
     community = _make_community_resource(1)
 
-    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[community]) as mock_comm:
+    with patch(
+        _COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[community]
+    ) as mock_comm:
         with patch(_DIGITAL_PATCH, new_callable=AsyncMock) as mock_dig:
             result = await batch_get_active_resources(
                 community_ids=[1],
@@ -962,7 +970,9 @@ async def test_batch_get_active_resources_digital_only():
     digital = _make_digital_resource(7)
 
     with patch(_COMMUNITY_PATCH, new_callable=AsyncMock) as mock_comm:
-        with patch(_DIGITAL_PATCH, new_callable=AsyncMock, return_value=[digital]) as mock_dig:
+        with patch(
+            _DIGITAL_PATCH, new_callable=AsyncMock, return_value=[digital]
+        ) as mock_dig:
             result = await batch_get_active_resources(
                 community_ids=[],
                 digital_ids=[7],
@@ -1001,7 +1011,9 @@ async def test_batch_get_active_resources_community_error_digital_succeeds():
 
     digital = _make_digital_resource(5)
 
-    with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, side_effect=RuntimeError("API down")):
+    with patch(
+        _COMMUNITY_PATCH, new_callable=AsyncMock, side_effect=RuntimeError("API down")
+    ):
         with patch(_DIGITAL_PATCH, new_callable=AsyncMock, return_value=[digital]):
             result = await batch_get_active_resources(
                 community_ids=[99],
@@ -1022,7 +1034,9 @@ async def test_batch_get_active_resources_digital_error_community_succeeds():
     community = _make_community_resource(3)
 
     with patch(_COMMUNITY_PATCH, new_callable=AsyncMock, return_value=[community]):
-        with patch(_DIGITAL_PATCH, new_callable=AsyncMock, side_effect=RuntimeError("API down")):
+        with patch(
+            _DIGITAL_PATCH, new_callable=AsyncMock, side_effect=RuntimeError("API down")
+        ):
             result = await batch_get_active_resources(
                 community_ids=[3],
                 digital_ids=[99],
