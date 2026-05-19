@@ -341,7 +341,7 @@ const Header: React.FC<HeaderProps> = ({
           </Typography>
         </View>
       )}
-      {impersonatedEmail && (
+      {!!impersonatedEmail && (
         <View className="z-[-1] bg-warning-light px-4 py-2.5">
           <Typography className="text-center text-sm font-medium text-warning">
             Impersonating: {impersonatedEmail} in {impersonatedStateCode}
