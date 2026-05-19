@@ -147,6 +147,17 @@ const InfoRow = styled.div`
   }
 `;
 
+const TasksRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: ${rem(6)};
+
+  & svg {
+    flex-shrink: 0;
+  }
+`;
+
 const SmallInfoText = styled(Sans14)`
   color: ${palette.pine1};
   font-weight: 400;
@@ -228,18 +239,18 @@ function SupervisionLevelTooltip({ copy }: { copy: string }) {
 
 // A collapsed version of the ClientCard, only for use on mobile
 const CollapsedClientCard = observer(function ClientCard({
-  task,
+  tasks,
   presenter,
   onDropdownClick,
 }: {
-  task: SupervisionTask;
+  tasks: SupervisionTask[];
   presenter: RoutePlannerClientsPresenter;
   onDropdownClick: () => void;
 }) {
-  const person = task.person as Client;
+  const person = tasks[0].person as Client;
 
   const { supervisionLevelShort, supervisionTooltip } =
-    presenter.getClientCardCopy(task);
+    presenter.getClientCardCopy(tasks);
 
   const isSelected = presenter.isPersonSelected(person);
   const ordinalRank = presenter.indexOfPerson(person) + 1;
@@ -298,16 +309,17 @@ const CollapsedClientCard = observer(function ClientCard({
 });
 
 export const ClientCard = observer(function ClientCard({
-  task,
+  tasks,
   presenter,
   isMobile,
 }: {
-  task: SupervisionTask;
+  tasks: SupervisionTask[];
   presenter: RoutePlannerClientsPresenter;
   isMobile: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(true);
-  const person = task.person as Client;
+  const person = tasks[0].person as Client;
+
   usePersonTracking(person, () => {
     presenter.trackRoutePlannerClientEvent(
       RoutePlannerClientEvent.Surfaced,
@@ -315,13 +327,8 @@ export const ClientCard = observer(function ClientCard({
     );
   });
 
-  const {
-    supervisionLevelShort,
-    supervisionTooltip,
-    type,
-    scheduledStatus,
-    isScheduled,
-  } = presenter.getClientCardCopy(task);
+  const { supervisionLevelShort, supervisionTooltip, tasksInfo } =
+    presenter.getClientCardCopy(tasks);
 
   const isSelected = presenter.isPersonSelected(person);
   const ordinalRank = presenter.indexOfPerson(person) + 1;
@@ -333,7 +340,7 @@ export const ClientCard = observer(function ClientCard({
   if (collapsed && isMobile) {
     return (
       <CollapsedClientCard
-        task={task}
+        tasks={tasks}
         presenter={presenter}
         onDropdownClick={() => {
           presenter.trackRoutePlannerClientEvent(
@@ -418,18 +425,24 @@ export const ClientCard = observer(function ClientCard({
               </NoAddressFoundText>
             )}
           </InfoRow>
-          <InfoRow>
-            <TagsIcon />
-            <SmallInfoText>{type}</SmallInfoText>
-          </InfoRow>
+          {tasksInfo.map((task) => (
+            <TasksRow>
+              <InfoRow>
+                <TagsIcon />
+                <SmallInfoText>{task.type}</SmallInfoText>
+              </InfoRow>
+              <SchedulingBadge
+                color={
+                  task.isScheduled ? palette.slate10 : "rgb(244, 233, 215)"
+                }
+              >
+                {task.scheduledStatus}
+              </SchedulingBadge>
+            </TasksRow>
+          ))}
         </AdditionalInfo>
 
         <JustifiedInfo>
-          <SchedulingBadge
-            color={isScheduled ? palette.slate10 : "rgb(244, 233, 215)"}
-          >
-            {scheduledStatus}
-          </SchedulingBadge>
           {isMobile && person.phoneNumber && (
             <a
               href={person.phoneNumberUri}

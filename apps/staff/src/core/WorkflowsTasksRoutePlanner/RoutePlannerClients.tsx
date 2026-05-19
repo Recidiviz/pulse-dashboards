@@ -106,8 +106,8 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
               <ClientCardGrid $isMobile={isMobile}>
                 {contacts[searchId].map((task) => (
                   <ClientCard
-                    key={`${task.person.pseudonymizedId}-${task.type}`}
-                    task={task}
+                    key={`${task[0].person.pseudonymizedId}`}
+                    tasks={task}
                     presenter={presenter}
                     isMobile={isMobile}
                   />

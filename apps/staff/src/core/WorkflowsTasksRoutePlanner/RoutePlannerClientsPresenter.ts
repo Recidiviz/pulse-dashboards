@@ -129,16 +129,18 @@ export class RoutePlannerClientsPresenter implements Hydratable {
    * @returns Record mapping selected caseload IDs to a list of home contact tasks
    * for each caseload.
    */
-  get contacts() {
+  get contacts(): Record<string, SupervisionTask<SupervisionTaskType>[][]> {
     return mapValues(this.searchStore.caseloadPersonsGrouped, (persons) =>
-      persons.flatMap((person) => {
-        if (person.supervisionTasks) {
-          return person.supervisionTasks.readyOrderedTasks.filter(({ type }) =>
-            Object.keys(this.TASK_TYPE_COPY).includes(type),
-          );
-        }
-        return [];
-      }),
+      persons
+        .map((person) => {
+          if (person.supervisionTasks) {
+            return person.supervisionTasks.readyOrderedTasks.filter(
+              ({ type }) => Object.keys(this.TASK_TYPE_COPY).includes(type),
+            );
+          }
+          return [];
+        })
+        .filter((x: any) => x.length !== 0),
     );
   }
 
@@ -150,18 +152,24 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   /**
    * @returns copy and information used in ClientCard for a specific task
    */
-  getClientCardCopy(task: SupervisionTask) {
-    const person = task.person as Client;
+  getClientCardCopy(tasks: SupervisionTask[]) {
+    const person = tasks[0].person as Client;
+
+    const taskInfo = tasks.map((task) => {
+      return {
+        type: this.TASK_TYPE_COPY[task.type] ?? "Other",
+        scheduledStatus: task.hasFutureScheduledContact
+          ? `Scheduled for ${task.futureScheduledContacts?.map((date) => formatWorkflowsDateWithoutYear(date)).join(", ")}`
+          : "To-Do",
+        isScheduled: task.hasFutureScheduledContact,
+      };
+    });
 
     return {
       supervisionLevelShort:
         this.SHORT_SUPERVISION_LEVEL_COPY[person.supervisionLevel] ?? "Other",
       supervisionTooltip: person.supervisionLevel,
-      type: this.TASK_TYPE_COPY[task.type] ?? "Other",
-      scheduledStatus: task.hasFutureScheduledContact
-        ? `Scheduled for ${task.futureScheduledContacts?.map((date) => formatWorkflowsDateWithoutYear(date)).join(", ")}`
-        : "To-Do",
-      isScheduled: task.hasFutureScheduledContact,
+      tasksInfo: taskInfo,
     };
   }
 
