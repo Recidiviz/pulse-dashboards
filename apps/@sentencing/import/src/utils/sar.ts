@@ -132,8 +132,8 @@ export async function transformAndLoadSARData(
     const assessmentScore = parseInt(sarData.assessment_score ?? "0", 10);
     const newSAR: Record<string, unknown> = {
       externalId: sarData.external_id,
-      dueDate: sarData.due_date,
-      completionDate: sarData.completion_date,
+      dueDate: sarData.due_date ?? null,
+      completionDate: sarData.completion_date ?? null,
       assessmentScore,
       dateRequested: sarData.assigned_date,
       assessmentAdministeredBy: sarData.assessment_administered_by,
