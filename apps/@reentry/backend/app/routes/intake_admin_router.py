@@ -966,7 +966,7 @@ async def generate_chat_history_pdf(
                 [IntakeMessageRole.CLIENT, IntakeMessageRole.CASEWORKER]
             ),
         )
-        .order_by(IntakeMessage.section, IntakeMessage.created_at)
+        .order_by(IntakeMessage.created_at)
     )
     messages = result.scalars().all()
 
@@ -975,7 +975,9 @@ async def generate_chat_history_pdf(
         section_key = msg.section or "General"
         sections.setdefault(section_key, []).append(
             {
-                "sender": msg.from_role.capitalize(),
+                "sender": "Chatbot"
+                if msg.from_role == IntakeMessageRole.CASEWORKER
+                else "Client",
                 "content": html_lib.escape(msg.content or ""),
                 "guardrailed_by": displayable_guardrail_flags(msg.guardrailed_by or []),
             }
