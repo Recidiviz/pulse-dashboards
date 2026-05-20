@@ -204,6 +204,9 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usTnCustodyLevelDowngrade2026Policy: usTnReclassification2026Schema,
   usTnSpecialCustodyLevelUpgrade2026Policy: usTnReclassification2026Schema,
   usTnSuspensionOfDirectSupervision: usTnSuspensionOfDirectSupervisionSchema,
+  usTnAnnualReclassification2026PolicyV2: usTnReclassification2026Schema,
+  usTnCustodyLevelDowngrade2026PolicyV2: usTnReclassification2026Schema,
+  usTnSpecialCustodyLevelUpgrade2026PolicyV2: usTnReclassification2026Schema,
 
   // US_UT
   usUtEarlyTermination: usUtEarlyTerminationSchema,

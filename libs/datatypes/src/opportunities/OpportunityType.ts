@@ -108,6 +108,9 @@ export const constructedOpportunityTypes = [
   "usTnBiannualOther",
   "usTnTrusteeTransfer",
   "usTnSeriousMisconductUpgrade",
+  "usTnAnnualReclassification2026PolicyV2",
+  "usTnCustodyLevelDowngrade2026PolicyV2",
+  "usTnSpecialCustodyLevelUpgrade2026PolicyV2",
 
   // US_TX
   "usTxAnnualReportStatus",

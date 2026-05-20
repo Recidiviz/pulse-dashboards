@@ -15,11 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsTnAnnualReclassification2026Opportunity";
-export * from "./UsTnBiAnnualOtherReclassificationOpportunity";
-export * from "./UsTnCustodyLevelDowngrade2026Opportunity";
-export * from "./UsTnCustodyLevelUpgrade2026Opportunity";
-export * from "./UsTnInitialClassification2026Opportunity";
-export * from "./UsTnRCAFV2";
-export * from "./UsTnSeriousMisconductUpgradeOpportunity";
-export * from "./UsTnTrusteeTransferOpportunity";
+import { DocumentData } from "firebase/firestore";
+
+import {
+  UsTnReclassification2026ReferralRecord,
+  usTnReclassification2026Schema,
+} from "~datatypes";
+
+import { Resident } from "../../../../Resident";
+import { UsTnReclassification2026Form } from "../../../Forms/UsTnReclassification2026Form";
+import { UsTn2026ClassificationBase } from "../UsTn2026ClassificationBase";
+
+export class UsTnCustodyLevelUpgrade2026V2Opportunity extends UsTn2026ClassificationBase<
+  UsTnReclassification2026ReferralRecord["output"]
+> {
+  constructor(resident: Resident, record: DocumentData) {
+    super(
+      resident,
+      "usTnSpecialCustodyLevelUpgrade2026PolicyV2",
+      resident.rootStore,
+      usTnReclassification2026Schema.parse(record),
+    );
+
+    this.form = new UsTnReclassification2026Form(this, resident.rootStore);
+  }
+}

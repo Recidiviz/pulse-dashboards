@@ -15,11 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsTnAnnualReclassification2026Opportunity";
-export * from "./UsTnBiAnnualOtherReclassificationOpportunity";
-export * from "./UsTnCustodyLevelDowngrade2026Opportunity";
-export * from "./UsTnCustodyLevelUpgrade2026Opportunity";
-export * from "./UsTnInitialClassification2026Opportunity";
-export * from "./UsTnRCAFV2";
-export * from "./UsTnSeriousMisconductUpgradeOpportunity";
-export * from "./UsTnTrusteeTransferOpportunity";
+export * from "./UsTnAnnualReclassification2026V2Opportunity";
+export * from "./UsTnCustodyLevelDowngrade2026V2Opportunity";
+export * from "./UsTnCustodyLevelUpgrade2026V2Opportunity";
