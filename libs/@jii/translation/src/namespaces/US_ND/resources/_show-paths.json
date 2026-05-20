@@ -29,5 +29,9 @@
       "heading": "[US_ND]pages.sentenceDates.heading",
       "body": "[US_ND]pages.sentenceDates.body"
     }
+  },
+  "osuBanner": {
+    "message": "[US_ND]osuBanner.message",
+    "linkText": "[US_ND]osuBanner.linkText"
   }
 }

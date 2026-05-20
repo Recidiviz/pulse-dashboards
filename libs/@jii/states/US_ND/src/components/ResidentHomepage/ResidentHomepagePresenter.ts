@@ -18,10 +18,13 @@
 import { makeAutoObservable } from "mobx";
 
 import { SentenceDatesData } from "~@jii/sentence-dates";
-import { UsNdResidentMetadata } from "~datatypes";
+import { ResidentRecord, UsNdResidentMetadata } from "~datatypes";
 
 export class ResidentHomepagePresenter {
-  constructor(private residentData: UsNdResidentMetadata) {
+  constructor(
+    private residentData: UsNdResidentMetadata,
+    private residentRecord: ResidentRecord,
+  ) {
     makeAutoObservable(this);
   }
 
@@ -45,5 +48,9 @@ export class ResidentHomepagePresenter {
 
   get lastUpdatedDate() {
     return this.residentData.lastUpdatedDate;
+  }
+
+  get isOSUResident() {
+    return this.residentRecord.unitId?.startsWith("NDSP-ORU");
   }
 }

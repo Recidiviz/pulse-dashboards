@@ -19,13 +19,14 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 
 import { BottomPaddedContainer, usePageTitle } from "~@jii/common-ui";
-import { useResidentMetadata } from "~@jii/data";
+import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsNdTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { SectionWrapperOverride } from "../SentenceDatesOverrides/SectionWrapper";
+import { OSUBanner } from "./OSUBanner";
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 
 const ManagedComponent: FC<{ presenter: ResidentHomepagePresenter }> = observer(
@@ -36,7 +37,7 @@ const ManagedComponent: FC<{ presenter: ResidentHomepagePresenter }> = observer(
     return (
       <BottomPaddedContainer>
         <LastUpdatedBanner lastUpdatedDate={presenter.lastUpdatedDate} />
-
+        {presenter.isOSUResident && <OSUBanner />}
         <SentenceDates
           data={presenter.sentenceDatesData}
           stateCode="US_ND"
@@ -48,7 +49,8 @@ const ManagedComponent: FC<{ presenter: ResidentHomepagePresenter }> = observer(
 );
 
 function usePresenter() {
-  return new ResidentHomepagePresenter(useResidentMetadata("US_ND"));
+  const { resident } = useSingleResidentContext();
+  return new ResidentHomepagePresenter(useResidentMetadata("US_ND"), resident);
 }
 
 export const ResidentHomepage = withPresenterManager({

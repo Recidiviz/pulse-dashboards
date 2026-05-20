@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsNdResidentMetadata, usNdResidents } from "~datatypes";
+import {
+  ResidentRecord,
+  UsNdResidentMetadata,
+  usNdResidents,
+} from "~datatypes";
 
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 
@@ -24,6 +28,7 @@ describe("sentence dates", () => {
     expect(
       new ResidentHomepagePresenter(
         usNdResidents[1].metadata as UsNdResidentMetadata,
+        {} as ResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
       {
@@ -57,6 +62,7 @@ describe("sentence dates", () => {
     expect(
       new ResidentHomepagePresenter(
         usNdResidents[0].metadata as UsNdResidentMetadata,
+        {} as ResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
       {
