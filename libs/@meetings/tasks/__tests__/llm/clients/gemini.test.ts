@@ -163,6 +163,7 @@ describe("Gemini Client", () => {
             responseMimeType: "application/json",
           }),
         }),
+        undefined,
       );
     });
 
@@ -191,6 +192,7 @@ describe("Gemini Client", () => {
         expect.objectContaining({
           model: "gemini-1.5-pro",
         }),
+        undefined,
       );
     });
 
@@ -218,6 +220,52 @@ describe("Gemini Client", () => {
         expect.objectContaining({
           model: "gemini-2.5-flash",
         }),
+        undefined,
+      );
+    });
+
+    test("should omit request options when no timeout is specified", async () => {
+      const schema = z.object({ test: z.string() });
+
+      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
+        generateContent: vi.fn().mockResolvedValue({
+          response: { text: () => JSON.stringify({ test: "value" }) },
+        }),
+      } as never);
+
+      await generateContentWithZodSchema({
+        client: mockGemini,
+        systemInstruction: "Test",
+        parts: "Test",
+        schema,
+      });
+
+      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
+        expect.any(Object),
+        undefined,
+      );
+    });
+
+    test("should pass custom timeout to getGenerativeModel", async () => {
+      const schema = z.object({ test: z.string() });
+
+      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
+        generateContent: vi.fn().mockResolvedValue({
+          response: { text: () => JSON.stringify({ test: "value" }) },
+        }),
+      } as never);
+
+      await generateContentWithZodSchema({
+        client: mockGemini,
+        systemInstruction: "Test",
+        parts: "Test",
+        schema,
+        timeout: 1800000,
+      });
+
+      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
+        expect.any(Object),
+        { timeout: 1800000 },
       );
     });
 
@@ -360,6 +408,7 @@ describe("Gemini Client", () => {
             responseMimeType: "application/json",
           }),
         }),
+        undefined,
       );
     });
 
@@ -391,6 +440,7 @@ describe("Gemini Client", () => {
             responseSchema: expect.any(Object),
           }),
         }),
+        undefined,
       );
     });
   });

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { GoogleGenerativeAI, Part, Schema } from "@google/generative-ai";
-import { GoogleAIFileManager } from "@google/generative-ai/server";
+import { FileState, GoogleAIFileManager } from "@google/generative-ai/server";
 import { Storage } from "@google-cloud/storage";
 import { traceable } from "langsmith/traceable";
 import { ZodSchema } from "zod";
@@ -71,13 +71,15 @@ export function zodToGeminiResponseSchema(schema: ZodSchema) {
   return stripUnsupportedFields(jsonSchema);
 }
 
-type ZodGenerateContentOptions<T extends ZodSchema> = {
+export type ZodGenerateContentOptions<T extends ZodSchema> = {
   client: GoogleGenerativeAI;
   systemInstruction: string;
   /** Plain string or pre-built content parts (e.g. for multimodal input with audio). */
   parts: Part[] | string;
   schema: T;
   modelName?: string;
+  /** Request timeout in milliseconds. Defaults to the Gemini SDK default (~10 minutes). */
+  timeout?: number;
 };
 
 /**
@@ -90,15 +92,21 @@ const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   parts,
   schema,
   modelName = "gemini-2.5-flash",
+  timeout,
 }: ZodGenerateContentOptions<T>): Promise<T["_output"]> => {
-  const model = client.getGenerativeModel({
-    model: modelName,
-    systemInstruction,
-    generationConfig: {
-      responseMimeType: "application/json",
-      responseSchema: zodToGeminiResponseSchema(schema),
+  const model = client.getGenerativeModel(
+    {
+      model: modelName,
+      systemInstruction,
+      generationConfig: {
+        // Use a lower temperature for a more deterministic output
+        temperature: 0,
+        responseMimeType: "application/json",
+        responseSchema: zodToGeminiResponseSchema(schema),
+      },
     },
-  });
+    timeout !== undefined ? { timeout } : undefined,
+  );
 
   const contents =
     typeof parts === "string" ? parts : { contents: [{ role: "user", parts }] };
@@ -121,7 +129,7 @@ export async function uploadAudioToGemini(
   fileManager: GoogleAIFileManager,
   bucketName: string,
   filePath: string,
-): Promise<string> {
+): Promise<{ uri: string; mimeType: string }> {
   const expectedAudioBucket = process.env["AUDIO_RECORDINGS_BUCKET_NAME"];
   if (bucketName !== expectedAudioBucket) {
     throw new Error(
@@ -129,11 +137,11 @@ export async function uploadAudioToGemini(
     );
   }
   const storage = new Storage();
-  const file = storage.bucket(bucketName).file(filePath);
+  const gcsFile = storage.bucket(bucketName).file(filePath);
 
   const [[audioBuffer], [metadata]] = await Promise.all([
-    file.download(),
-    file.getMetadata(),
+    gcsFile.download(),
+    gcsFile.getMetadata(),
   ]);
 
   const mimeType = metadata.contentType ?? "audio/mpeg";
@@ -143,5 +151,19 @@ export async function uploadAudioToGemini(
     displayName: "meeting-audio",
   });
 
-  return uploadResponse.file.uri;
+  let geminiFile = uploadResponse.file;
+  // Poll for processing completed
+  while (geminiFile.state === FileState.PROCESSING) {
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // eslint-disable-next-line no-await-in-loop
+    geminiFile = await fileManager.getFile(geminiFile.name);
+  }
+  if (geminiFile.state === FileState.FAILED) {
+    throw new Error(
+      `Gemini file upload failed: ${JSON.stringify(geminiFile.error)}`,
+    );
+  }
+
+  return { uri: geminiFile.uri, mimeType };
 }
