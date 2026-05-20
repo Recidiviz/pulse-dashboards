@@ -102,7 +102,9 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
         .useRecordForIneligibleOpps &&
       this.person.record.allIneligibleOpportunities
     ) {
-      return this.person.record.allIneligibleOpportunities;
+      return this.person.record.allIneligibleOpportunities.filter((oppType) =>
+        this.enabledOpportunityTypes.includes(oppType),
+      );
     }
     return difference(
       this.enabledOpportunityTypes,

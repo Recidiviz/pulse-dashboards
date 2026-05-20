@@ -69,6 +69,7 @@ describe("instantiation", () => {
   });
 
   test("ineligible client", () => {
+    setTestEnabledOppTypes(["usTnInitialClassification2026Policy"]);
     vi.spyOn(
       rootStore.userStore,
       "activeFeatureVariants",
@@ -77,7 +78,10 @@ describe("instantiation", () => {
     person = new Client(
       {
         ...ineligibleClientRecord,
-        allIneligibleOpportunities: ["usTnAnnualReclassification2026Policy"],
+        allIneligibleOpportunities: [
+          "usTnAnnualReclassification2026Policy",
+          "usTnInitialClassification2026Policy",
+        ],
       },
       rootStore,
     );
@@ -87,6 +91,9 @@ describe("instantiation", () => {
         ([oppType, config]) =>
           config.hydrateIneligibleRecordsInOpportunityManager &&
           person.record.allIneligibleOpportunities?.includes(
+            oppType as OpportunityType,
+          ) &&
+          person.opportunityManager.incomingOpportunityTypes.includes(
             oppType as OpportunityType,
           ),
       )
