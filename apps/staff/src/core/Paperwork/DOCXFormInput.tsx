@@ -34,6 +34,8 @@ export interface DOCXFormInputProps<DraftData> {
   placeholder?: string;
   style?: React.InputHTMLAttributes<HTMLInputElement>["style"];
   readOnly?: boolean;
+  type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
+  min?: React.InputHTMLAttributes<HTMLInputElement>["min"];
 }
 
 const StyledAutosizeInput = styled.span`
@@ -63,6 +65,11 @@ const StyledAutosizeInput = styled.span`
     &::placeholder {
       color: ${palette.slate85};
     }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 `;
 
@@ -79,6 +86,7 @@ const DOCXFormInput = observer(function FormInput<DraftData>({
   const [value, onChange] = useReactiveInput<HTMLInputElement>(
     name,
     opportunityForm,
+    props.type,
   );
 
   const inputRef = useRef<HTMLInputElement>(null);

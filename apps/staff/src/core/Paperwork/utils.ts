@@ -118,7 +118,7 @@ export const useResizeForm = (
   return { layout, resize: () => window.dispatchEvent(new Event("resize")) };
 };
 
-type ReactiveInputValue = string | undefined;
+type ReactiveInputValue = string | number | undefined;
 type ReactiveInputReturnValue<
   E extends
     | HTMLInputElement
@@ -128,27 +128,37 @@ type ReactiveInputReturnValue<
 
 function useReactiveInput<
   E extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
->(name: string, form: FormBase<any>): ReactiveInputReturnValue<E> {
+>(
+  name: string,
+  form: FormBase<any>,
+  inputType?: React.InputHTMLAttributes<HTMLInputElement>["type"],
+): ReactiveInputReturnValue<E> {
   /*
     Hook which integrates a controlled input component and Firestore and MobX.
     Firestore is updated two seconds after the user stops typing.
     When the MobX value is updated (via a Firestore subscription or its onChange handler),
     we update the controlled input's state value.
    */
-  const fetchFromStore = () => (form.formData[name] as string) || "";
+  const fetchFromStore = () => form.formData[name] ?? "";
   const [value, setValue] = useState<ReactiveInputValue>(fetchFromStore());
 
   const updateFirestoreRef = useRef(
-    debounce((valueToStore: string) => {
+    debounce((valueToStore) => {
       form.updateDraftData(name, valueToStore);
     }, REACTIVE_INPUT_UPDATE_DELAY),
   );
 
   const onChange = (event: React.ChangeEvent<E>) => {
-    setValue(event.target.value);
+    let inputValue: ReactiveInputValue;
+    if (inputType === "number") {
+      if (event.target.value) inputValue = parseFloat(event.target.value);
+    } else {
+      inputValue = event.target.value;
+    }
+    setValue(inputValue);
 
     if (updateFirestoreRef.current) {
-      updateFirestoreRef.current(event.target.value);
+      updateFirestoreRef.current(inputValue ?? null);
     }
   };
 

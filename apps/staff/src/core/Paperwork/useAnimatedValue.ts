@@ -25,7 +25,7 @@ export const DEFAULT_ANIMATION_DURATION = 1750;
 
 export const useAnimatedValue = (
   input: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
-  value?: string,
+  value?: string | number,
   duration = DEFAULT_ANIMATION_DURATION,
   delay = 250,
 ): boolean => {
