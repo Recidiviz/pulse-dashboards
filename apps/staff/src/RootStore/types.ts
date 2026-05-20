@@ -112,7 +112,6 @@ export type FeatureVariant =
   | "usMiCaseManagerSearch"
   | "usMiCustodyLevelDowngrade"
   | "usMiPositiveOutcomesBanner"
-  | "usMiSecurityClassificationCommittee"
   | "usMiRestrictiveHousingV2"
   | "usMiRestrictiveHousingV2Ineligible"
 
@@ -243,7 +242,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMiCaseManagerSearch: {},
   usMiCustodyLevelDowngrade: {},
   usMiPositiveOutcomesBanner: {},
-  usMiSecurityClassificationCommittee: {},
   usMiFacilitySearch: {},
   usMiRestrictiveHousingV2: {},
   usMiRestrictiveHousingV2Ineligible: {},
@@ -295,7 +293,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIdCRCFacilitySearch: {},
         usMiCaseManagerSearch: {},
         usMiCustodyLevelDowngrade: {},
-        usMiSecurityClassificationCommittee: { activeTenants: ["US_MI"] },
+        usMiRestrictiveHousingV2Ineligible: { activeTenants: ["US_MI"] },
         usMiFacilitySearch: {},
         usMiRestrictiveHousingV2: {},
         usMoOverdueRHPilot: {},
