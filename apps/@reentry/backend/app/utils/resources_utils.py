@@ -174,7 +174,9 @@ async def batch_get_active_resources(
     tasks: dict[str, object] = {}
     if community_ids:
         tasks["community"] = batch_get_resources(
-            BatchGetResources(address=address, ids=community_ids, travel_mode=travel_mode)
+            BatchGetResources(
+                address=address, ids=community_ids, travel_mode=travel_mode
+            )
         )
     if digital_ids:
         tasks["digital"] = batch_get_digital_resources(
@@ -198,6 +200,8 @@ async def batch_get_active_resources(
             continue
         for resource in result:
             if resource.resource_id is not None:
-                resource_map[(int(resource.resource_id), resource.resource_type)] = resource
+                resource_map[(int(resource.resource_id), resource.resource_type)] = (
+                    resource
+                )
 
     return resource_map

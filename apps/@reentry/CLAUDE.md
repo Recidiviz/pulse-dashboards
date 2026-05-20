@@ -41,7 +41,7 @@ The **worker process** must be started with `uv run taskiq worker -r main:broker
 
 ```bash
 cd apps/@reentry/backend
-uv run pytest                        # unit tests
+DYLD_LIBRARY_PATH=/opt/homebrew/lib uv run pytest   # unit tests (macOS: required for WeasyPrint/libgobject)
 ```
 
 Tests use a real test DB (started by `docker compose up -d postgres-tests`). Do not mock the database.

@@ -147,7 +147,6 @@ class ResourceSubcategory(str, Enum):
     SOBER = "Sober living and recovery program"
     RENTAL = "Rental assistance"
     SUBSIDIZED = "Subsidized housing or vouchers"
-    YOUTH_HOUSING = "Youth housing"
 
     # Employment
     SECOND_CHANCE = "Second-chance employer"
@@ -169,7 +168,6 @@ class ResourceSubcategory(str, Enum):
     CRISIS = "Crisis intervention services"
     ANGER_MGMT = "Anger management"
     DOMESTIC_VIOLENCE_TX = "Domestic violence treatment"
-    YOUTH_MENTAL_HEALTH = "Youth mental health services"
 
     # Substance Use
     DETOX = "Detoxification centers"
@@ -177,16 +175,13 @@ class ResourceSubcategory(str, Enum):
     INTENSIVE_OUTPATIENT = "Intensive outpatient programs"
     MEDICATION_ASSISTED = "Medication-assisted treatment"
     SUBSTANCE_SUPPORT = "Substance use support"
-    YOUTH_SUBSTANCE = "Youth substance use support"
 
     # Physical Health
     HIV_AIDS_HEP_C = "HIV/AIDS and Hepatitis C services"
-    MEDICAID = "Medicaid enrollment assistance"
     COMMUNITY_CLINIC = "Community clinic"
     URGENT_CARE = "Urgent care"
     PRESCRIPTION = "Prescription assistance"
     DENTAL = "Emergency dental care"
-    YOUTH_HEALTH = "Youth health care"
     PRIMARY_CARE = "Primary care"
     VETERANS_HEALTH = "Veterans health care"
 
@@ -194,23 +189,13 @@ class ResourceSubcategory(str, Enum):
     EXPUNGEMENT = "Criminal record expungement"
     CHILD_SUPPORT = "Child support assistance"
     VOTING_RIGHTS = "Voting rights restoration"
-    LEGAL_AID = "Legal aid"
-    YOUTH_LEGAL = "Youth legal aid"
 
     # Education & Vocational Training
     GED = "GED preparation and testing"
-    VOCATIONAL = "Vocational trade school programs"
     COLLEGE_REENTRY = "College re-entry programs"
     LITERACY = "Literacy programs"
     DIGITAL_LITERACY = "Digital literacy programs"
     FINANCIAL_LITERACY = "Financial literacy programs"
-
-    # Family Reconnection & Parenting
-    FAMILY_THERAPY = "Family therapy or counseling"
-    PARENTING = "Parenting skills classes"
-    FAMILY_SERVICES = "Family services"
-    FAMILY_REUNIFICATION = "Family reunification services"
-    CHILD_PROTECTIVE = "Child protective services"
 
     # Peer Support & Community Integration
     MENTORSHIP = "Mentorship programs"
@@ -219,7 +204,6 @@ class ResourceSubcategory(str, Enum):
     COMMUNITY = "Community center"
     VOLUNTEER = "Volunteer opportunities"
     CIVIC_ENGAGEMENT = "Civic engagement"
-    YOUTH_COMMUNITY = "Youth community programs"
 
 
 CATEGORY_SUBCATEGORY_MAP = {
@@ -229,7 +213,6 @@ CATEGORY_SUBCATEGORY_MAP = {
         ResourceSubcategory.SOBER,
         ResourceSubcategory.RENTAL,
         ResourceSubcategory.SUBSIDIZED,
-        ResourceSubcategory.YOUTH_HOUSING,
     ],
     ResourceCategory.EMPLOYMENT: [
         ResourceSubcategory.SECOND_CHANCE,
@@ -251,7 +234,6 @@ CATEGORY_SUBCATEGORY_MAP = {
         ResourceSubcategory.CRISIS,
         ResourceSubcategory.ANGER_MGMT,
         ResourceSubcategory.DOMESTIC_VIOLENCE_TX,
-        ResourceSubcategory.YOUTH_MENTAL_HEALTH,
     ],
     ResourceCategory.SUBSTANCE_USE: [
         ResourceSubcategory.DETOX,
@@ -259,16 +241,13 @@ CATEGORY_SUBCATEGORY_MAP = {
         ResourceSubcategory.INTENSIVE_OUTPATIENT,
         ResourceSubcategory.MEDICATION_ASSISTED,
         ResourceSubcategory.SUBSTANCE_SUPPORT,
-        ResourceSubcategory.YOUTH_SUBSTANCE,
     ],
     ResourceCategory.PHYSICAL_HEALTH: [
         ResourceSubcategory.HIV_AIDS_HEP_C,
-        ResourceSubcategory.MEDICAID,
         ResourceSubcategory.COMMUNITY_CLINIC,
         ResourceSubcategory.URGENT_CARE,
         ResourceSubcategory.PRESCRIPTION,
         ResourceSubcategory.DENTAL,
-        ResourceSubcategory.YOUTH_HEALTH,
         ResourceSubcategory.PRIMARY_CARE,
         ResourceSubcategory.VETERANS_HEALTH,
     ],
@@ -276,23 +255,13 @@ CATEGORY_SUBCATEGORY_MAP = {
         ResourceSubcategory.EXPUNGEMENT,
         ResourceSubcategory.CHILD_SUPPORT,
         ResourceSubcategory.VOTING_RIGHTS,
-        ResourceSubcategory.LEGAL_AID,
-        ResourceSubcategory.YOUTH_LEGAL,
     ],
     ResourceCategory.EDUCATION: [
         ResourceSubcategory.GED,
-        ResourceSubcategory.VOCATIONAL,
         ResourceSubcategory.COLLEGE_REENTRY,
         ResourceSubcategory.LITERACY,
         ResourceSubcategory.DIGITAL_LITERACY,
         ResourceSubcategory.FINANCIAL_LITERACY,
-    ],
-    ResourceCategory.FAMILY: [
-        ResourceSubcategory.FAMILY_THERAPY,
-        ResourceSubcategory.PARENTING,
-        ResourceSubcategory.FAMILY_SERVICES,
-        ResourceSubcategory.FAMILY_REUNIFICATION,
-        ResourceSubcategory.CHILD_PROTECTIVE,
     ],
     ResourceCategory.SUPPORT_INTEGRATION: [
         ResourceSubcategory.MENTORSHIP,
@@ -301,7 +270,6 @@ CATEGORY_SUBCATEGORY_MAP = {
         ResourceSubcategory.COMMUNITY,
         ResourceSubcategory.VOLUNTEER,
         ResourceSubcategory.CIVIC_ENGAGEMENT,
-        ResourceSubcategory.YOUTH_COMMUNITY,
     ],
 }
 

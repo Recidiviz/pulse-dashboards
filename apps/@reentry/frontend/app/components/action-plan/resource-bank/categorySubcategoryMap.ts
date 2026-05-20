@@ -23,9 +23,8 @@ import type { components } from "~@reentry/openapi-types";
 type ResourceCategory = components["schemas"]["ResourceCategory"];
 type ResourceSubcategory = components["schemas"]["ResourceSubcategory"];
 
-export const CATEGORY_SUBCATEGORY_MAP: Record<
-  ResourceCategory,
-  ResourceSubcategory[]
+export const CATEGORY_SUBCATEGORY_MAP: Partial<
+  Record<ResourceCategory, ResourceSubcategory[]>
 > = {
   "Basic Needs": [
     "Financial assistance",
@@ -40,7 +39,6 @@ export const CATEGORY_SUBCATEGORY_MAP: Record<
     "Financial literacy programs",
     "GED preparation and testing",
     "Literacy programs",
-    "Vocational trade school programs",
   ],
   Employment: [
     "Job certification and licensing",
@@ -48,27 +46,17 @@ export const CATEGORY_SUBCATEGORY_MAP: Record<
     "Second-chance employer",
     "Temporary staffing agency",
   ],
-  "Family Reconnection & Parenting": [
-    "Child protective services",
-    "Family reunification services",
-    "Family services",
-    "Family therapy or counseling",
-    "Parenting skills classes",
-  ],
   Housing: [
     "Emergency housing and shelters",
     "Rental assistance",
     "Sober living and recovery program",
     "Subsidized housing or vouchers",
     "Transitional housing",
-    "Youth housing",
   ],
   "Legal Aid & Rights Restoration": [
     "Child support assistance",
     "Criminal record expungement",
-    "Legal aid",
     "Voting rights restoration",
-    "Youth legal aid",
   ],
   "Mental Health": [
     "Anger management",
@@ -77,7 +65,6 @@ export const CATEGORY_SUBCATEGORY_MAP: Record<
     "Psychiatric care",
     "Therapy and counseling",
     "Trauma-informed care",
-    "Youth mental health services",
   ],
   "Peer Support & Community Integration": [
     "Civic engagement",
@@ -86,18 +73,15 @@ export const CATEGORY_SUBCATEGORY_MAP: Record<
     "Mentorship programs",
     "Reentry support groups",
     "Volunteer opportunities",
-    "Youth community programs",
   ],
   "Physical Health": [
     "Community clinic",
     "Emergency dental care",
     "HIV/AIDS and Hepatitis C services",
-    "Medicaid enrollment assistance",
     "Prescription assistance",
     "Primary care",
     "Urgent care",
     "Veterans health care",
-    "Youth health care",
   ],
   "Substance Use": [
     "Detoxification centers",
@@ -105,7 +89,6 @@ export const CATEGORY_SUBCATEGORY_MAP: Record<
     "Intensive outpatient programs",
     "Medication-assisted treatment",
     "Substance use support",
-    "Youth substance use support",
   ],
 };
 
