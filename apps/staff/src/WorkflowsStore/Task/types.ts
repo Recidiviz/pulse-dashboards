@@ -200,6 +200,7 @@ export const SUPERVISION_TASK_TYPES = [
   // TODO(#10067) Deprecate usTxVirtualOrOfficeContact
   "usTxVirtualOrOfficeContact",
   "usTxAssessment",
+  "usTxHomeContactUnscheduledWeekend",
 ] as const;
 
 export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
@@ -261,6 +262,7 @@ export type SupervisionDetailsForTask = {
   usTxVirtualOfficeContactScheduled: UsTxContactDetails;
   usTxVirtualOrOfficeContact: UsTxTypeAgnosticContactDetails;
   usTxAssessment: UsTxAssessmentDetails;
+  usTxHomeContactUnscheduledWeekend: UsTxOverridableContactDetails;
 };
 
 export type SnoozeInfo = {
@@ -329,7 +331,8 @@ export type UsTxSimpleContactTaskType =
   | "usTxInCustodyContact"
   | "usTxOfficeContactScheduled"
   | "usTxFieldContactScheduled"
-  | "usTxVirtualOfficeContactScheduled";
+  | "usTxVirtualOfficeContactScheduled"
+  | "usTxHomeContactUnscheduledWeekend";
 
 export type UsTxAgnosticContactTaskType =
   | "usTxTypeAgnosticContact"

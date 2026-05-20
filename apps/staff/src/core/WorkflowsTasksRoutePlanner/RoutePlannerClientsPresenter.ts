@@ -69,6 +69,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     usTxHomeContactScheduled: "Scheduled Home Contact",
     usTxHomeContactUnscheduled: "Unscheduled Home Contact",
     usTxHomeContactEdgeCase: "Residence Validation",
+    usTxHomeContactUnscheduledWeekend: "Unscheduled Home Contact (Weekend)",
   };
   private SHORT_SUPERVISION_LEVEL_COPY: Record<string, string> = {
     High: "H",

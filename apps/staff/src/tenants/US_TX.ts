@@ -103,6 +103,10 @@ const US_TX_CONFIG = {
         constructor: UsTxAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      usTxHomeContactUnscheduledWeekend: {
+        constructor: UsTxContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
     },
     columns: [
       "name",
@@ -134,6 +138,11 @@ const US_TX_CONFIG = {
             value: "usTxHomeContactUnscheduled",
             shortLabel: "Home Contact, Unsched.",
             label: "Home Contact, Unscheduled",
+          },
+          {
+            value: "usTxHomeContactUnscheduledWeekend",
+            shortLabel: "Home Contact, Unsched. Wknd.",
+            label: "Home Contact, Unscheduled Weekend",
           },
           {
             value: "usTxHomeContactEdgeCase",
