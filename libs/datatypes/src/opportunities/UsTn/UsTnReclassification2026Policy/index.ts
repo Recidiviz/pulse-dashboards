@@ -17,5 +17,6 @@
 
 export * from "./fixtures";
 export * from "./rcafAssessmentQuestions";
+export * from "./rcafAssessmentQuestionsV2";
 export * from "./schema";
 export * from "./utils";

@@ -48,9 +48,19 @@ export type BreakdownAssessmentQuestionSpec = {
   }[];
 };
 
+export type BreakdownAssessmentQuestionSpecV2 = {
+  title: string;
+  type: "BREAKDOWNV2";
+  sections: {
+    period: BreakdownAssessmentQuestionPeriod;
+    multiplier: number;
+  }[];
+};
+
 export type AssessmentQuestionSpec =
   | SingleSectionAssessmentQuestionSpec
-  | BreakdownAssessmentQuestionSpec;
+  | BreakdownAssessmentQuestionSpec
+  | BreakdownAssessmentQuestionSpecV2;
 
 export type TupleWithArity<OutType, InTuple> = {
   [K in keyof InTuple]: OutType;
@@ -94,6 +104,28 @@ export function getBreakdownSectionScore(
   if (selection === undefined || selection === -1) return 0;
 
   return section.scores[selection] ?? 0;
+}
+
+export function getV2BreakdownSectionQuestionCount(
+  section: BreakdownAssessmentQuestionSpecV2["sections"][number],
+  reports: z.output<typeof multiIncidentPeriodReportSchema>,
+): number {
+  const { period } = section;
+  const report = reports.find(
+    (r) => r.incidentTimePeriod === `${period} months`,
+  );
+
+  return report?.numIncidents ?? 0;
+}
+
+export function getBreakdownSectionScoreV2(
+  section: BreakdownAssessmentQuestionSpecV2["sections"][number],
+  disciplinaryCount: number | undefined,
+): number {
+  const { period, multiplier } = section;
+  if (disciplinaryCount === undefined) return 0;
+  if (disciplinaryCount === 0 && period === "0-6") return -1;
+  return disciplinaryCount * multiplier;
 }
 
 export function isEligibleForTrusteeStatus(

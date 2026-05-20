@@ -71,6 +71,9 @@ export type UsTnReclassification2026DraftData =
     TrusteeFormSchema & {
       q1Selection: number;
       q2Selection: number;
+
+      // For V2, Q3-5, the "selection" represents the
+      // count of disciplinary incidents in the given period.
       q3Selection_0_6: number;
       q3Selection_6_12: number;
       q4Selection_0_6: number;
@@ -80,6 +83,7 @@ export type UsTnReclassification2026DraftData =
       q5Selection_12_18: number;
       q5Selection_18_36: number;
       q5Selection_36_60: number;
+
       q6Selection: number;
       q7Selection: number;
       q1aNotes: string;

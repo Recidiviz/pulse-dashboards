@@ -46,13 +46,14 @@ export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
       scoreText="SCORE"
       supportingText={supportingText}
     >
-      {questionSpec.type === "SINGLE" ? (
+      {questionSpec.type === "SINGLE" && (
         <SingleScoredAssessmentQuestion
           questionSpec={questionSpec}
           questionNumber={questionNumber}
           disabled={disabled}
         />
-      ) : (
+      )}
+      {questionSpec.type === "BREAKDOWN" && (
         <BreakdownScoredAssessmentQuestion
           questionSpec={questionSpec}
           questionNumber={questionNumber}
