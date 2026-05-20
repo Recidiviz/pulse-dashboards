@@ -38,7 +38,6 @@ type NewMeetingOptionsModalProps = {
   meetingTypeValue: string | null;
   meetingTypes: string[];
   setMeetingType: (meetingType: string) => void;
-  meetingTypeError: string | null;
 };
 
 export function NewMeetingOptionsModal({
@@ -50,7 +49,6 @@ export function NewMeetingOptionsModal({
   meetingTypeValue,
   meetingTypes,
   setMeetingType,
-  meetingTypeError,
 }: NewMeetingOptionsModalProps) {
   const { isOnline } = useIsOnline();
   return (
@@ -102,14 +100,12 @@ export function NewMeetingOptionsModal({
             Please note: Summaries and other notes are generated for meetings
             containing 50 words or more.
           </Typography>
-          {meetingTypes?.length > 0 && (
+          {meetingTypes?.length > 1 && (
             <Dropdown
               variant="outline"
+              value={meetingTypeValue}
               options={meetingTypes}
               onSelect={setMeetingType}
-              placeholder="Select meeting type"
-              defaultEmptyValue
-              errorMessage={meetingTypeError}
             />
           )}
           <TouchableOpacity

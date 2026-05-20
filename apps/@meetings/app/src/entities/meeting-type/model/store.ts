@@ -17,26 +17,19 @@
 
 import { create } from "zustand";
 
+import { DEFAULT_MEETING_TYPE } from "../config";
+
 type MeetingTypeStore = {
-  meetingType: string | null;
-  meetingTypeError: string | null;
-  setMeetingType: (meetingType: string | null) => void;
-  setMeetingTypeError: () => void;
-  resetMeetingTypeError: () => void;
+  meetingType: string;
+  setMeetingType: (meetingType: string) => void;
 };
 
 const initialState = {
-  meetingType: null,
+  meetingType: DEFAULT_MEETING_TYPE,
   meetingTypeError: null,
 };
 
 export const useMeetingTypeStore = create<MeetingTypeStore>()((set) => ({
   ...initialState,
   setMeetingType: (meetingType) => set({ meetingType }),
-  setMeetingTypeError: () =>
-    set({
-      meetingTypeError:
-        "Please select a meeting type before starting a meeting",
-    }),
-  resetMeetingTypeError: () => set({ meetingTypeError: null }),
 }));

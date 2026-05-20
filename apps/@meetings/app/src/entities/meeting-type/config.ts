@@ -45,3 +45,5 @@ export const meetingTypesStyles = [
   { backgroundColor: "#EAF0F8", color: "#1A407A" },
   { backgroundColor: "#F8EAF0", color: "#7A1A40" },
 ];
+
+export const DEFAULT_MEETING_TYPE = "Default";

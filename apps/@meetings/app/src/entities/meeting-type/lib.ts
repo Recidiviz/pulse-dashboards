@@ -19,6 +19,8 @@ import { meetingTypes, meetingTypesStyles } from "./config";
 
 export const getMeetingTypeStyles = (type: string) => {
   const index = meetingTypes.indexOf(type);
-  if (index > meetingTypesStyles.length - 1) return meetingTypesStyles[0];
+  if (index > meetingTypesStyles.length - 1)
+    return meetingTypesStyles[index % meetingTypesStyles.length];
+  if (index === -1) return meetingTypesStyles[meetingTypesStyles.length - 1];
   return meetingTypesStyles[index];
 };

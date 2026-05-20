@@ -47,6 +47,7 @@ import { useAgencyConfigs } from "../context/AgencyConfigContext";
 import { useAnalytics } from "../context/AnalyticsContext";
 import { useStateSelection } from "../context/StateContext";
 import { useMeetingTypeStore } from "../entities/meeting-type";
+import { DEFAULT_MEETING_TYPE } from "../entities/meeting-type/config";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import { useCreateMeeting } from "../hooks/useCreateMeeting";
 import {
@@ -93,6 +94,7 @@ const ProfileMeetings = ({
   const navigation = useNavigation<ProfileNavProp>();
   const { agencyConfigs } = useAgencyConfigs();
   const { selectedStateCode } = useStateSelection();
+  const meetingTypes = agencyConfigs[selectedStateCode].meetingTypes;
   const { status: recordingState } = useRecording();
   const {
     setMeetingId,
@@ -105,42 +107,18 @@ const ProfileMeetings = ({
     useRecording<"web">();
   const openAudioUpload = useAudioUploadStore((s) => s.open);
   const audioUploadStatus = useAudioUploadStore((s) => s.status);
-  const {
-    meetingType: meetingTypeValue,
-    meetingTypeError,
-    setMeetingType: setMeetingTypeValue,
-    setMeetingTypeError,
-    resetMeetingTypeError,
-  } = useMeetingTypeStore();
+  const { meetingType: meetingTypeValue, setMeetingType: setMeetingTypeValue } =
+    useMeetingTypeStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState(MeetingsSort.NEWEST_FIRST as string);
   const [isNewMeetingSheetOpen, setIsNewMeetingSheetOpen] = useState(false);
   const [isNewMeetingModalOpen, setIsNewMeetingModalOpen] = useState(false);
 
-  const handleSetMeetingTypeValue = (value: string) => {
-    setMeetingTypeValue(value);
-    if (meetingTypeError) {
-      resetMeetingTypeError();
-    }
-  };
-
   const handleAudioUpload = useCallback(() => {
-    if (!meetingTypeValue) {
-      setMeetingTypeError();
-      return;
-    }
     setIsNewMeetingModalOpen(false);
     setIsNewMeetingSheetOpen(false);
     openAudioUpload({ person, personType, meetingType: meetingTypeValue });
-    setMeetingTypeValue(null);
-  }, [
-    meetingTypeValue,
-    openAudioUpload,
-    person,
-    personType,
-    setMeetingTypeError,
-    setMeetingTypeValue,
-  ]);
+  }, [meetingTypeValue, openAudioUpload, person, personType]);
 
   const { track } = useAnalytics();
 
@@ -154,14 +132,10 @@ const ProfileMeetings = ({
         case "web":
           openRecordingView({
             meetingId,
-            // we check for meeting type before handleCreateMeeting is called,
-            // so we can be sure that meetingTypeValue is not null here
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            meetingType: meetingTypeValue!,
+            meetingType: meetingTypeValue,
             person,
           });
           startRecordingWeb();
-          setMeetingTypeValue(null);
           break;
         case "ios":
         case "android":
@@ -170,7 +144,6 @@ const ProfileMeetings = ({
           setPerson(person);
           setPersonType(personType);
           startRecording();
-          setMeetingTypeValue(null);
           break;
       }
     },
@@ -181,6 +154,14 @@ const ProfileMeetings = ({
       refetch();
     }
   }, [recordingState, refetch]);
+
+  useEffect(() => {
+    if (meetingTypes.length > 0) {
+      setMeetingTypeValue(meetingTypes[0]);
+    } else {
+      setMeetingTypeValue(DEFAULT_MEETING_TYPE);
+    }
+  }, [meetingTypes, meetingTypes.length, setMeetingTypeValue]);
 
   useEffect(() => {
     if (isNewMeetingModalOpen && isMobileWidth && Platform.OS === "web") {
@@ -391,48 +372,31 @@ const ProfileMeetings = ({
       {isNewMeetingSheetOpen && !audioUploadStatus && (
         <NewMeetingRecordingSheet
           person={person}
-          onClose={() => {
-            setIsNewMeetingSheetOpen(false);
-            setMeetingTypeValue(null);
-            resetMeetingTypeError();
-          }}
+          onClose={() => setIsNewMeetingSheetOpen(false)}
           onStartMeeting={() => {
-            if (!meetingTypeValue) {
-              setMeetingTypeError();
-              return;
-            }
             setIsNewMeetingSheetOpen(false);
             handleCreateMeeting();
           }}
           onUploadFile={handleAudioUpload}
           isMeetingCreating={isCreating}
-          meetingTypes={agencyConfigs[selectedStateCode].meetingTypes}
-          setMeetingType={handleSetMeetingTypeValue}
-          meetingTypeError={meetingTypeError}
+          meetingTypeValue={meetingTypeValue}
+          meetingTypes={meetingTypes}
+          setMeetingType={setMeetingTypeValue}
         />
       )}
       {isNewMeetingModalOpen && (
         <NewMeetingOptionsModal
           person={person}
-          onClose={() => {
-            setIsNewMeetingModalOpen(false);
-            setMeetingTypeValue(null);
-            resetMeetingTypeError();
-          }}
+          onClose={() => setIsNewMeetingModalOpen(false)}
           onStartMeeting={() => {
-            if (!meetingTypeValue) {
-              setMeetingTypeError();
-              return;
-            }
             setIsNewMeetingModalOpen(false);
             handleCreateMeeting();
           }}
           onUploadFile={handleAudioUpload}
           isMeetingCreating={isCreating}
           meetingTypeValue={meetingTypeValue}
-          meetingTypes={agencyConfigs[selectedStateCode].meetingTypes}
-          setMeetingType={handleSetMeetingTypeValue}
-          meetingTypeError={meetingTypeError}
+          meetingTypes={meetingTypes}
+          setMeetingType={setMeetingTypeValue}
         />
       )}
     </SafeAreaView>

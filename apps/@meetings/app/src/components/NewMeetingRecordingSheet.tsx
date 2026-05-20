@@ -45,9 +45,9 @@ type NewMeetingRecordingSheetProps = {
   onStartMeeting: () => void;
   onUploadFile: () => void;
   isMeetingCreating: boolean;
+  meetingTypeValue: string | null;
   meetingTypes: string[];
   setMeetingType: (meetingType: string) => void;
-  meetingTypeError: string | null;
 };
 
 export function NewMeetingRecordingSheet({
@@ -56,9 +56,9 @@ export function NewMeetingRecordingSheet({
   onStartMeeting,
   onUploadFile,
   isMeetingCreating,
+  meetingTypeValue,
   meetingTypes,
   setMeetingType,
-  meetingTypeError,
 }: NewMeetingRecordingSheetProps) {
   const insets = useSafeAreaInsets();
   const { isOnline } = useIsOnline();
@@ -126,15 +126,13 @@ export function NewMeetingRecordingSheet({
             </View>
           </View>
           <View className="mb-4 w-full">
-            {meetingTypes?.length > 0 && (
+            {meetingTypes?.length > 1 && (
               <Dropdown
                 className="mb-2"
                 variant="outline"
+                value={meetingTypeValue}
                 options={meetingTypes}
                 onSelect={setMeetingType}
-                placeholder="Select meeting type"
-                defaultEmptyValue
-                errorMessage={meetingTypeError}
               />
             )}
           </View>

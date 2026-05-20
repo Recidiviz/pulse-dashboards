@@ -40,6 +40,7 @@ import { Typography } from "./Typography";
 type DropdownProps = {
   className?: string;
   variant?: "text" | "outline";
+  value?: string | null;
   options: string[];
   onSelect?: (value: string) => void;
   label?: string;
@@ -51,6 +52,7 @@ type DropdownProps = {
 const Dropdown = ({
   className,
   variant = "text",
+  value,
   options,
   onSelect,
   label,
@@ -59,9 +61,12 @@ const Dropdown = ({
   errorMessage,
 }: DropdownProps) => {
   const insets = useSafeAreaInsets();
-  const [selected, setSelected] = useState(
-    defaultEmptyValue ? null : options[0],
-  );
+  const [selected, setSelected] = useState(() => {
+    if (value) return value;
+    if (defaultEmptyValue) return null;
+    return options[0];
+  });
+
   const [open, setOpen] = useState(false);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
