@@ -23,7 +23,7 @@ import {
 } from "~datatypes";
 
 import { Resident } from "../../../../Resident";
-import { UsTnReclassification2026Form } from "../../../Forms/UsTnReclassification2026Form";
+import { UsTnReclassification2026FormV2 } from "../../../Forms/UsTnReclassification2026FormV2";
 import { UsTn2026ClassificationBase } from "../UsTn2026ClassificationBase";
 
 export class UsTnCustodyLevelDowngrade2026V2Opportunity extends UsTn2026ClassificationBase<
@@ -37,6 +37,6 @@ export class UsTnCustodyLevelDowngrade2026V2Opportunity extends UsTn2026Classifi
       usTnReclassification2026Schema.parse(record),
     );
 
-    this.form = new UsTnReclassification2026Form(this, resident.rootStore);
+    this.form = new UsTnReclassification2026FormV2(this, resident.rootStore);
   }
 }
