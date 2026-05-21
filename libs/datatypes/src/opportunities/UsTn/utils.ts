@@ -259,4 +259,9 @@ export type UsTnCoverSheetSharedDraftData = {
   trusteeHas10YearsOrLessRemaining: string;
   trusteeNotServingForSexualOffense: string;
   checklistCompletedOnOverride: string;
+
+  // used as part of the hearing notice form
+  hearingDate: string;
+  hearingLocation: string;
+  hearingClassificationDate: string;
 };

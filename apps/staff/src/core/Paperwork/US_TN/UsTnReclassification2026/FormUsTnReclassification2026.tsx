@@ -20,7 +20,6 @@ import React, { useState } from "react";
 
 import { rcafAssessmentQuestions, showTrusteeChecklist } from "~datatypes";
 
-import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { Resident } from "../../../../WorkflowsStore/Resident";
@@ -33,7 +32,7 @@ import { downloadZipFile } from "../../utils";
 import { CafScoreSourceModal } from "../common/cafScoreSourceModal";
 import {
   AGE_SUPPORTING_TEXT,
-  BLOCKED_DOWNLOAD_TOOLTIP,
+  BLOCKED_DOWNLOAD_WRONG_VERSION_OLD,
   ClassificationFormPage,
   DISCIPLINARY_RECORD_SUPPORTING_TEXT,
   DoubleNotes,
@@ -50,6 +49,10 @@ import {
   getTrusteeTemplateArgs,
   TrusteeChecklist,
 } from "../common/Classification2026/TrusteeChecklist";
+import {
+  cafBlockedDownloadTooltip,
+  RCAF_V2_CUTOFF_DATE,
+} from "../common/Classification2026/utils";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
 import HearingNotice from "../CustodyReclassification/HearingNotice";
@@ -68,7 +71,6 @@ export const FormUsTnReclassification2026 = observer(
     const form = useOpportunityFormContext() as UsTnReclassification2026Form;
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
-    const { usTn2026PreventDownloadWhenNotCompleted } = useFeatureVariants();
 
     const includeTrusteeChecklist = showTrusteeChecklist(
       derivedData.totalText,
@@ -106,9 +108,16 @@ export const FormUsTnReclassification2026 = observer(
       setPostDownloadModalIsOpen(true);
     };
 
-    const missingContent =
-      usTn2026PreventDownloadWhenNotCompleted &&
-      derivedData.totalScore === undefined;
+    const wrongFormVersion =
+      formData.date === undefined ||
+      new Date(formData.date) >= RCAF_V2_CUTOFF_DATE;
+
+    let downloadTooltip = cafBlockedDownloadTooltip(
+      derivedData.totalScore,
+      formData.hearingDate,
+    );
+
+    if (wrongFormVersion) downloadTooltip = BLOCKED_DOWNLOAD_WRONG_VERSION_OLD;
 
     return (
       <FormContainer
@@ -116,8 +125,8 @@ export const FormUsTnReclassification2026 = observer(
         agencyName="TDOC"
         onClickDownload={() => onClickDownload()}
         opportunity={opportunity}
-        isMissingContent={missingContent}
-        downloadTooltip={missingContent ? BLOCKED_DOWNLOAD_TOOLTIP : undefined}
+        isMissingContent={downloadTooltip !== undefined}
+        downloadTooltip={downloadTooltip}
         downloadButtonLabel="Download as .DOCX"
       >
         <CafScoreSourceModal latestRecordQs={[3, 4, 5, 6]} jobHistoryQs={[7]} />

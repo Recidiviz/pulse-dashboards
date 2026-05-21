@@ -36,5 +36,14 @@ export const AGE_SUPPORTING_TEXT =
 export const PROGRAM_COMPLETION_SUPPORTING_TEXT =
   "Recidiviz is auto-filling this score based on the resident’s class and job history in eTOMIS.";
 
-export const BLOCKED_DOWNLOAD_TOOLTIP =
+export const BLOCKED_DOWNLOAD_MISSING_FIELDS_TOOLTIP =
   "Please fill out CAF questions 1 thru 7 before downloading";
+
+export const BLOCKED_DOWNLOAD_MISSING_HEARING_DATE =
+  "Please specify a hearing date in the Classification Hearing Notice.";
+
+export const BLOCKED_DOWNLOAD_WRONG_VERSION_OLD =
+  "For June reclassifications and beyond, please use RCAF V2.";
+
+export const BLOCKED_DOWNLOAD_WRONG_VERSION_NEW =
+  "For reclassifications prior to June, please do not use RCAF V2.";
