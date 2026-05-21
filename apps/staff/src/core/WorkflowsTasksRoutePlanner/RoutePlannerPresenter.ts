@@ -99,7 +99,10 @@ export class RoutePlannerPresenter {
     this._userPickedEndingAddress = newAddress;
 
     // Uncheck the matching checkbox if the ending address no longer matches the starting address
-    if (this._isEndingAddressMatchingStart && newAddress !== this.startingAddress) {
+    if (
+      this._isEndingAddressMatchingStart &&
+      newAddress !== this.startingAddress
+    ) {
       this._isEndingAddressMatchingStart = false;
     }
   }
@@ -243,7 +246,9 @@ export class RoutePlannerPresenter {
       origin: this.startingAddress,
       destination: destination ?? "",
       // Only include destination_place_id if we're using a client address as destination
-      ...(destinationPlaceId ? { destination_place_id: destinationPlaceId } : {}),
+      ...(destinationPlaceId
+        ? { destination_place_id: destinationPlaceId }
+        : {}),
       // Only include waypoints if there is at least one; an empty waypoints parameter causes an error
       ...(waypointAddresses.length >= 1
         ? {

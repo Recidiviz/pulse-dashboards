@@ -138,7 +138,7 @@ export const RoutePlannerPlacePicker = observer(
               // @ts-expect-error We don't have types from the extended component library
               onPlaceChange={(e) => {
                 presenter.userPickedStartingAddress =
-                  e.target.value?.formattedAddress;
+                  e.target.value.formattedAddress;
               }}
             />
           </PlacePickerContainer>
@@ -171,7 +171,7 @@ export const RoutePlannerPlacePicker = observer(
             disabled={!hasStartingAddress}
             onChange={handleCheckboxChange}
           >
-            Match starting and ending address
+            Match end address to start address
           </Checkbox>
         </CheckboxContainer>
       </>

@@ -39,6 +39,14 @@ const RoutePlannerContainer = styled.div`
   flex-direction: row;
 `;
 
+const RoutePlannerConditionalView = styled.div<{
+  $isVisible: boolean;
+}>`
+  height: 100%;
+
+  display: ${({ $isVisible }) => ($isVisible ? "block" : "none")};
+`;
+
 const RoutePlannerSelectArea = styled.div<{
   $isMobile: boolean;
 }>`
@@ -55,15 +63,23 @@ const MobileRoutePlannerMain = observer(function RoutePlannerMain({
 }: {
   presenter: RoutePlannerPresenter;
 }) {
-  if (presenter.isMapView) {
-    return <RoutePlannerMap presenter={presenter} isMobile={true} />;
-  } else {
-    return (
-      <RoutePlannerSelectArea $isMobile={true}>
-        <RoutePlannerClientSelect presenter={presenter} isMobile={true} />
-      </RoutePlannerSelectArea>
-    );
-  }
+  // We want to retain the state of the route planner on mobile
+  // as we switch between map and route planner due to the
+  // nature of the Place Picker API that does not take a default
+  // prop for it's inputs - meaning we would have to manually set it
+  // with the value from the presenter layer with a mutationobserver
+  return (
+    <>
+      <RoutePlannerConditionalView $isVisible={presenter.isMapView}>
+        <RoutePlannerMap presenter={presenter} isMobile={true} />
+      </RoutePlannerConditionalView>
+      <RoutePlannerConditionalView $isVisible={!presenter.isMapView}>
+        <RoutePlannerSelectArea $isMobile={true}>
+          <RoutePlannerClientSelect presenter={presenter} isMobile={true} />
+        </RoutePlannerSelectArea>
+      </RoutePlannerConditionalView>
+    </>
+  );
 });
 
 export const ManagedComponent: FC<{
