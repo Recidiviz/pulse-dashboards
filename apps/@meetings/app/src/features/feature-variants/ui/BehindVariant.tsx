@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Put types that need to be exported to other apps here
+import type { FeatureVariantRecord } from "~@meetings/trpc-types";
 
-// intended use of TRPC to share from server to client
-// eslint-disable-next-line @nx/enforce-module-boundaries
-export type { AppRouter } from "~@meetings/trpc";
+import { useFeatureVariants } from "../lib/useFeatureVariants";
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-export type {
-  FeatureVariant,
-  FeatureVariantRecord,
-  FeatureVariantValue,
-} from "~@meetings/trpc/types";
+export function BehindVariant({
+  variant,
+  children,
+}: {
+  variant: keyof FeatureVariantRecord;
+  children: React.ReactNode;
+}) {
+  const { isVariantActive } = useFeatureVariants();
 
-// LLM schema types for notetaker pipeline
-// eslint-disable-next-line @nx/enforce-module-boundaries
-export type {
-  ActionItem,
-  CriticalUpdate,
-  MinuteSection,
-} from "~@meetings/tasks";
+  if (!isVariantActive(variant)) {
+    return null;
+  }
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-export type { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+  return children;
+}

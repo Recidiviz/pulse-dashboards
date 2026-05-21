@@ -24,13 +24,14 @@ import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
-import { AuthUser, Context } from "~@meetings/trpc/types";
+import { AuthUser, Context, FeatureVariantRecord } from "~@meetings/trpc/types";
 import { verifyAuth0Token } from "~server-setup-plugin";
 
 export type Auth0User = {
   "https://dashboard.recidiviz.org/app_metadata": {
     stateCode: "recidiviz" | StateCode;
     allowedStates?: string[];
+    featureVariants?: Record<string, unknown>;
   };
   "https://dashboard.recidiviz.org/email_address": string | undefined;
 };
@@ -62,8 +63,11 @@ function formatAndVerifyUser(
   }
 
   // Grab the fields we want from the metadata since there is more in there than just these
-  const { stateCode: userStateLower, allowedStates } =
-    user["https://dashboard.recidiviz.org/app_metadata"];
+  const {
+    stateCode: userStateLower,
+    allowedStates,
+    featureVariants,
+  } = user["https://dashboard.recidiviz.org/app_metadata"];
   const userEmail = user["https://dashboard.recidiviz.org/email_address"];
   const userState = userStateLower.toUpperCase();
   const isRecidivizUser = userState === "RECIDIVIZ";
@@ -104,6 +108,7 @@ function formatAndVerifyUser(
     email: userEmail.toLowerCase(),
     isRecidivizUser,
     allowedStates,
+    featureVariants: featureVariants as FeatureVariantRecord | undefined,
   };
 }
 

@@ -19,6 +19,8 @@ import * as Sentry from "@sentry/react-native";
 import React, { createContext, useContext, useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 
+import type { FeatureVariantRecord } from "~@meetings/trpc-types";
+
 import { env } from "../shared/config/env";
 
 interface UserContextType {
@@ -41,6 +43,7 @@ interface UserContextType {
   isRecidivizUser: boolean;
   onLogout: ReturnType<typeof useAuth0>["clearSession"];
   getCredentials: ReturnType<typeof useAuth0>["getCredentials"];
+  featureVariants?: FeatureVariantRecord;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -92,6 +95,7 @@ export const UserContextProvider: React.FC<{
           onLogout: () => Promise.resolve(),
           getCredentials,
           isRecidivizUser: true,
+          featureVariants: undefined,
         }}
       >
         {children}
@@ -111,6 +115,9 @@ export const UserContextProvider: React.FC<{
   } else {
     allowedStateCodes = [];
   }
+
+  const featureVariants =
+    userAppMetadata?.featureVariants ?? ({} as FeatureVariantRecord);
 
   const routes = userAppMetadata?.routes as Record<string, boolean> | undefined;
   return (
@@ -137,6 +144,7 @@ export const UserContextProvider: React.FC<{
         },
         getCredentials,
         isRecidivizUser: isRecidiviz,
+        featureVariants,
       }}
     >
       {children}
