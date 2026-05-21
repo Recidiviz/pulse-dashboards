@@ -23,6 +23,7 @@ import { respondWithForbidden } from "../routes/api";
 import { getAppMetadata } from "../utils/getAppMetadata";
 import { getUserEmail } from "../utils/getUserEmail";
 import { isOfflineMode } from "../utils/isOfflineMode";
+import { createRedisStore } from "./lookerSessionStore";
 
 /**
  * Looker SDK instance, lazily initialized from GSM-sourced environment
@@ -41,7 +42,7 @@ function getSDK() {
  * to the client) and the email of the user who created the session, so
  * generateTokens can reject attempts to refresh another user's session.
  */
-const sessionReferenceTokenStore = new Map();
+const sessionReferenceTokenStore = createRedisStore();
 
 /**
  * Validates offline mode and user access for all Looker embed endpoints.
@@ -134,10 +135,14 @@ export async function acquireSession(req, res) {
   const session = sessionResp.value;
 
   if (session.session_reference_token) {
-    sessionReferenceTokenStore.set(sessionKey, {
-      sessionReferenceToken: session.session_reference_token,
-      email: getUserEmail(req),
-    });
+    await sessionReferenceTokenStore.set(
+      sessionKey,
+      {
+        sessionReferenceToken: session.session_reference_token,
+        email: getUserEmail(req),
+      },
+      session.session_reference_token_ttl,
+    );
   }
 
   res.set("Cache-Control", "no-store, max-age=0");
@@ -172,7 +177,7 @@ export async function generateTokens(req, res) {
 
   const { session_key, api_token, navigation_token } = req.body;
 
-  const entry = sessionReferenceTokenStore.get(session_key);
+  const entry = await sessionReferenceTokenStore.get(session_key);
   if (!entry || entry.email !== getUserEmail(req)) {
     res.json({ session_reference_token_ttl: 0 });
     return;
@@ -191,7 +196,7 @@ export async function generateTokens(req, res) {
   // Any Looker error means the session is gone. Return session_reference_token_ttl: 0
   // so the embed SDK recognises it as a graceful session end and can re-acquire.
   if (!tokensResp.ok) {
-    sessionReferenceTokenStore.delete(session_key);
+    await sessionReferenceTokenStore.delete(session_key);
     res.json({ session_reference_token_ttl: 0 });
     return;
   }
@@ -199,10 +204,14 @@ export async function generateTokens(req, res) {
   const tokens = tokensResp.value;
 
   if (tokens.session_reference_token) {
-    sessionReferenceTokenStore.set(session_key, {
-      sessionReferenceToken: tokens.session_reference_token,
-      email: entry.email,
-    });
+    await sessionReferenceTokenStore.set(
+      session_key,
+      {
+        sessionReferenceToken: tokens.session_reference_token,
+        email: entry.email,
+      },
+      tokens.session_reference_token_ttl,
+    );
   }
 
   res.set("Cache-Control", "no-store, max-age=0");

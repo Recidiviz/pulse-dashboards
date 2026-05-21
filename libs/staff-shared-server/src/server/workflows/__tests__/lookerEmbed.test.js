@@ -15,11 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// vi.hoisted ensures mockSdkMethods is initialized before vi.mock factories run
-const mockSdkMethods = vi.hoisted(() => ({
-  acquire_embed_cookieless_session: vi.fn(),
-  generate_tokens_for_cookieless_session: vi.fn(),
-}));
+// vi.hoisted ensures these are initialized before vi.mock factories run
+const { mockSdkMethods, mockStore } = vi.hoisted(() => {
+  let map = new Map();
+  return {
+    mockSdkMethods: {
+      acquire_embed_cookieless_session: vi.fn(),
+      generate_tokens_for_cookieless_session: vi.fn(),
+    },
+    mockStore: {
+      get: async (key) => map.get(key) ?? null,
+      set: async (key, value) => {
+        map.set(key, value);
+      },
+      delete: async (key) => {
+        map.delete(key);
+      },
+      _reset() {
+        map = new Map();
+      },
+    },
+  };
+});
 
 vi.mock("@looker/sdk-node", () => ({
   LookerNodeSDK: { init40: vi.fn().mockReturnValue(mockSdkMethods) },
@@ -27,6 +44,9 @@ vi.mock("@looker/sdk-node", () => ({
 }));
 vi.mock("../../utils/isOfflineMode");
 vi.mock("../../utils/getAppMetadata");
+vi.mock("../lookerSessionStore", () => ({
+  createRedisStore: () => mockStore,
+}));
 
 import { LookerNodeSDK } from "@looker/sdk-node";
 
@@ -48,6 +68,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   LookerNodeSDK.init40.mockReturnValue(mockSdkMethods);
   isOfflineMode.mockReturnValue(false);
+  mockStore._reset();
 });
 
 // ---------------------------------------------------------------------------
