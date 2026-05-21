@@ -44,6 +44,19 @@ export const CLASSIFICATION_TYPE_BY_OPPORTUNITY: PartialRecord<
   usTnBiannualOther: "Bi-annual/Other",
 };
 
+export const CLASSIFICATION_TYPE_SHORTHAND_BY_OPPORTUNITY: PartialRecord<
+  OpportunityType,
+  string
+> = {
+  usTnInitialClassification2026Policy: "DCAF",
+  usTnAnnualReclassification2026Policy: "RCAF",
+  usTnSpecialCustodyLevelUpgrade2026Policy: "SPECIAL INC",
+  usTnSeriousMisconductUpgrade: "MISCONDUCT INC",
+  usTnTrusteeTransfer: "TRUSTEE",
+  usTnCustodyLevelDowngrade2026Policy: "SPECIAL DEC",
+  usTnBiannualOther: "BI-ANNUAL",
+};
+
 export function prefilledCoverSheetData(
   resident: Resident,
   opportunityType: OpportunityType,
@@ -78,34 +91,33 @@ export function prefilledCoverSheetData(
   }
 
   const justifications: string[] = [];
+  const classificationTypeShorthand =
+    CLASSIFICATION_TYPE_SHORTHAND_BY_OPPORTUNITY[opportunityType];
+  if (classificationTypeShorthand) {
+    justifications.push(classificationTypeShorthand);
+  }
   if (formInformation.sentenceExpirationDate) {
     justifications.push(
-      `Release Date: ${formatDate(formInformation.sentenceExpirationDate)}`,
+      `REL DATE: ${formatDate(formInformation.sentenceExpirationDate)}`,
     );
   }
   if (formInformation.sentenceReleaseEligibilityDate) {
     justifications.push(
-      `RED Date: ${formatDate(formInformation.sentenceReleaseEligibilityDate)}`,
+      `RED DATE: ${formatDate(formInformation.sentenceReleaseEligibilityDate)}`,
     );
   }
   if (formInformation.healthClassification) {
-    justifications.push(
-      `Medical Classification: ${formInformation.healthClassification}`,
-    );
+    justifications.push(`MED: ${formInformation.healthClassification}`);
   }
   if (formInformation.levelOfCare) {
-    justifications.push(`Level of Care: ${formInformation.levelOfCare}`);
+    justifications.push(`LOC: ${formInformation.levelOfCare}`);
   }
   if (formInformation.latestVantageRiskLevel) {
-    justifications.push(
-      `Latest Vantage Risk Assessment: ${formInformation.latestVantageRiskLevel}`,
-    );
+    justifications.push(`RISK: ${formInformation.latestVantageRiskLevel}`);
   }
   if (formInformation.latestVantageCompletedDate) {
     justifications.push(
-      `Latest Vantage Risk Assessment Date: ${formatDate(
-        formInformation.latestVantageCompletedDate,
-      )}`,
+      `RNA DATE: ${formatDate(formInformation.latestVantageCompletedDate)}`,
     );
   }
   if (
@@ -113,7 +125,7 @@ export function prefilledCoverSheetData(
     formInformation.activeRecommendations.length
   ) {
     justifications.push(
-      `Active Recommendations: ${uniq(
+      `REC: ${uniq(
         formInformation.activeRecommendations.map(
           ({ Recommendation }) => Recommendation,
         ),
