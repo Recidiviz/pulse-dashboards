@@ -29,6 +29,7 @@ from app.models.intake import (
 )
 from app.routes.shared_models import IntakeMessageResponse
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
+from app.utils.feature_flags import is_feature_enabled
 from app.utils.intake import db_manager
 from app.utils.intake.guardrails import (
     HARD_STOP_GUARDRAIL_TYPES,
@@ -349,6 +350,8 @@ class IntakeConversationGraph:
             raise e
 
     async def _llmaj_check(self, messages: list[AnyMessage]) -> SafetyCheckResult:
+        if not is_feature_enabled("LLMAJ_SAFETY_CHECK"):
+            return SafetyCheckResult.empty()
         prompt = generate_llmaj_prompt()
         client_pseudo_id = self.session.client_pseudo_id
         try:
