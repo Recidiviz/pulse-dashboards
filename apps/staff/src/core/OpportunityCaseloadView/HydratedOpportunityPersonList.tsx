@@ -1178,11 +1178,11 @@ const TableView = observer(function TableView({
   const downloadFileName = [presenter.label, presenter.activeTab]
     .filter(Boolean)
     .join(" - ");
+  const opportunities = presenter.config.enableWorkflowsFilter
+    ? presenter.orderedOpportunitiesForSelectedCategory()
+    : presenter.peopleInActiveTab;
   onRegisterDownload?.(() => {
-    const data = presenter.config.enableWorkflowsFilter
-      ? presenter.orderedOpportunitiesForSelectedCategory()
-      : presenter.peopleInActiveTab;
-    downloadTableCSV(data, displayedColumns, downloadFileName);
+    downloadTableCSV(opportunities, displayedColumns, downloadFileName);
   });
 
   const { subcategoryOrder, peopleInActiveTabBySubcategory } = presenter;
@@ -1203,7 +1203,7 @@ const TableView = observer(function TableView({
   return (
     <OpportunityCaseloadTable
       presenter={presenter}
-      opportunities={presenter.peopleInActiveTab}
+      opportunities={opportunities}
       allColumns={columns}
     />
   );
