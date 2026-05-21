@@ -17,10 +17,11 @@
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { DEFAULT_MEETING_TYPE } from "../config";
 import { getMeetingTypeStyles } from "../lib";
 
 export function MeetingTypeTag({ type }: { type: string | null }) {
-  if (!type) return null;
+  if (!type || type === DEFAULT_MEETING_TYPE) return null;
 
   const tagStyles = getMeetingTypeStyles(type);
 
