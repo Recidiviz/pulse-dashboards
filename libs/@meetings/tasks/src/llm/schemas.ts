@@ -95,6 +95,21 @@ export const MinuteSectionSchema = z.object({
   items: z.array(MinuteItemSchema).default([]),
 });
 
+export const StaffFeedbackOutputSchema = z.object({
+  whatYouDidWell: z
+    .array(z.string())
+    .max(2)
+    .describe(
+      "Up to 2 moments where the Staff Member effectively used an interviewing skill",
+    ),
+  growthOpportunities: z
+    .array(z.string())
+    .max(1)
+    .describe(
+      "Up to 1 moment where an MI/CCP technique could have been used but wasn't. Empty array if none.",
+    ),
+});
+
 // Drafting step - writer agent output
 export const DraftingOutputSchema = z.object({
   caseNote: z
@@ -105,6 +120,9 @@ export const DraftingOutputSchema = z.object({
   minutes: z
     .array(MinuteSectionSchema)
     .describe("Structured meeting minutes with timestamps and nested items"),
+  staffFeedback: StaffFeedbackOutputSchema.describe(
+    "Coaching feedback (MI/CCP) about the Staff Member's communication style",
+  ),
 });
 
 export const PipelineOutputSchema = z.object({
@@ -112,6 +130,8 @@ export const PipelineOutputSchema = z.object({
   meetingMinutes: z.array(MinuteSectionSchema).optional(),
   actionItems: z.array(ActionItemSchema),
   statusUpdates: z.array(CriticalUpdateSchema),
+  staffFeedback: StaffFeedbackOutputSchema,
+  pipelineRunId: z.string(),
 });
 
 // ==========================================
@@ -161,6 +181,7 @@ export type PipelineOutput = z.infer<typeof PipelineOutputSchema>;
 export type EntityItem = z.infer<typeof EntityItemSchema>;
 export type VerificationEntry = z.infer<typeof VerificationEntrySchema>;
 export type VerificationPayload = z.infer<typeof VerificationPayloadSchema>;
+export type StaffFeedbackOutput = z.infer<typeof StaffFeedbackOutputSchema>;
 
 // Pipeline step output types
 export type GatekeeperOutput = z.infer<typeof GatekeeperOutputSchema>;

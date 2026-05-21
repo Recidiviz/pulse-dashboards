@@ -43,6 +43,8 @@ import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
 import { BulletListTab } from "../components/MeetingDetailTabs";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
+import StaffFeedbackTab from "../components/StaffFeedbackTab";
+import { useUserContext } from "../context/UserContext";
 import { MeetingTypeTag } from "../entities/meeting-type";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
@@ -71,6 +73,8 @@ const MeetingMobile = ({
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
+  const { email: currentUserEmail } = useUserContext();
+  const isMeetingCreator = currentUserEmail === meetingDetails.staffEmail;
   const scrollY = useSharedValue(0);
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const meetingNotesSheetRef = useRef<BottomSheet>(null);
@@ -289,6 +293,7 @@ const MeetingMobile = ({
               setActiveTab={setActiveTab}
               isTranscriptionUnavailable={!meetingDetails?.transcription}
               showTranscription={showTranscription}
+              showStaffFeedback={meetingDetails.staffFeedback != null}
             />
           </Animated.View>
 
@@ -337,6 +342,7 @@ const MeetingMobile = ({
             setActiveTab={setActiveTab}
             isTranscriptionUnavailable={!meetingDetails?.transcription}
             showTranscription={showTranscription}
+            showStaffFeedback={meetingDetails.staffFeedback != null}
           />
         </Animated.View>
 
@@ -359,6 +365,15 @@ const MeetingMobile = ({
             {activeTab === Tab.CriticalUpdates && (
               <BulletListTab items={meetingDetails.criticalUpdates} />
             )}
+            {activeTab === Tab.StaffFeedback &&
+              meetingDetails.staffFeedback && (
+                <StaffFeedbackTab
+                  meetingId={meetingId}
+                  staffFeedback={meetingDetails.staffFeedback}
+                  currentVote={meetingDetails.currentFeedbackVote}
+                  canVote={isMeetingCreator}
+                />
+              )}
             {activeTab === Tab.Transcript &&
               showTranscription &&
               meetingDetails?.transcription && (

@@ -145,7 +145,8 @@ export class SpecialistCore {
 
   /**
    * STEP 2: Writer Agent
-   * Synthesizes case notes and minutes using extracted facts
+   * Synthesizes case notes, minutes, and coaching staff feedback using
+   * extracted facts and the transcript.
    */
   async runDrafting(
     transcript: TranscriptInput,
@@ -214,6 +215,9 @@ export class SpecialistCore {
       agentLogger.info("Drafting agent completed", {
         minutes_count: result.minutes.length,
         case_note_length: result.caseNote.length,
+        what_you_did_well_count: result.staffFeedback.whatYouDidWell.length,
+        growth_opportunities_count:
+          result.staffFeedback.growthOpportunities.length,
       });
 
       return result;
@@ -221,7 +225,11 @@ export class SpecialistCore {
       agentLogger.error("Drafting agent failed", {
         err: e instanceof Error ? e : String(e),
       });
-      return { caseNote: "[Error]", minutes: [] };
+      return {
+        caseNote: "[Error]",
+        minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+      };
     }
   }
 

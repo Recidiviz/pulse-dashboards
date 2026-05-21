@@ -44,6 +44,7 @@ export const AgencyConfigFileSchema = z.object({
 
   // ── Infrastructure ────────────────────────────────────────
   showTranscriptions: z.boolean().optional(),
+  staffFeedbackEnabled: z.boolean().optional(),
   audioTTLDays: z.number().int().min(7).nullable().optional(),
   transcriptTTLDays: z.number().int().min(7).nullable().optional(),
   /** Replaces base keywords entirely */
@@ -84,6 +85,7 @@ export const AgencyConfigSchema = z.object({
 
   // ── Infrastructure ────────────────────────────────────────
   showTranscriptions: z.boolean().default(true),
+  staffFeedbackEnabled: z.boolean().default(false),
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
   keywords: z.array(z.string()).default([]),

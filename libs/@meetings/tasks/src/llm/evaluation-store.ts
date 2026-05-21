@@ -34,6 +34,7 @@ import type { ValidationResult } from "~@meetings/tasks/llm/guards";
 import type {
   DraftingOutput,
   ExtractionOutput,
+  StaffFeedbackOutput,
   VerificationOutput,
 } from "~@meetings/tasks/llm/schemas";
 import { ValidationError } from "~@meetings/tasks/types";
@@ -62,7 +63,11 @@ export interface CreateAgentExecutionParams {
   pipelineRunId: string;
   agentType: NotetakingAgentType;
   attemptNumber?: number;
-  outputData: ExtractionOutput | DraftingOutput | VerificationOutput;
+  outputData:
+    | ExtractionOutput
+    | DraftingOutput
+    | VerificationOutput
+    | StaffFeedbackOutput;
   validationResult: ValidationResult;
 }
 

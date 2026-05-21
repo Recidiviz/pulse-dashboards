@@ -316,5 +316,15 @@ describe("config loader", () => {
     test("throws for an unknown state code", () => {
       expect(() => loadAgencyConfig("US_XX")).toThrow();
     });
+
+    test("staffFeedbackEnabled defaults to false for non-demo states", () => {
+      const config = loadAgencyConfig("US_NE");
+      expect(config.staffFeedbackEnabled).toBe(false);
+    });
+
+    test("staffFeedbackEnabled is true for US_DEMO", () => {
+      const config = loadAgencyConfig("US_DEMO");
+      expect(config.staffFeedbackEnabled).toBe(true);
+    });
   });
 });

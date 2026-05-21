@@ -32,6 +32,8 @@ import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
 import { BulletListTab } from "../components/MeetingDetailTabs";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
+import StaffFeedbackTab from "../components/StaffFeedbackTab";
+import { useUserContext } from "../context/UserContext";
 import { MeetingTypeTag } from "../entities/meeting-type";
 import { usePrintMeetingDetails } from "../hooks/usePrintMeetingDetails";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
@@ -57,6 +59,8 @@ const MeetingDesktop = ({
   showTranscription = false,
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
+  const { email: currentUserEmail } = useUserContext();
+  const isMeetingCreator = currentUserEmail === meetingDetails.staffEmail;
 
   const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
@@ -140,6 +144,7 @@ const MeetingDesktop = ({
                   !meetingDetails.transcriptDeletedAt
                 }
                 showTranscription={showTranscription}
+                showStaffFeedback={meetingDetails.staffFeedback != null}
               />
             </View>
             <View className="ml-3 flex-row gap-3">
@@ -169,6 +174,15 @@ const MeetingDesktop = ({
               {activeTab === Tab.CriticalUpdates && (
                 <BulletListTab items={meetingDetails.criticalUpdates} />
               )}
+              {activeTab === Tab.StaffFeedback &&
+                meetingDetails.staffFeedback && (
+                  <StaffFeedbackTab
+                    meetingId={meetingId}
+                    staffFeedback={meetingDetails.staffFeedback}
+                    currentVote={meetingDetails.currentFeedbackVote}
+                    canVote={isMeetingCreator}
+                  />
+                )}
               {activeTab === Tab.Transcript &&
                 showTranscription &&
                 meetingDetails?.transcription && (

@@ -527,7 +527,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
           evidenceQuotes: item.evidenceQuotes ?? null,
         }));
 
-        // Update status through drafting and verification stages
+        // Always persist staff feedback (it's bundled into the writer agent's
+        // single LLM call). The API layer decides whether to surface it based
+        // on the agency's staffFeedbackEnabled flag — storing it
+        // unconditionally lets us backfill existing meetings if a state is
+        // enabled later.
         completedMeeting = await prisma.meeting.update({
           where: {
             id: meetingId,
@@ -538,6 +542,12 @@ export function registerTaskRoutes(app: FastifyInstance) {
             structuredActionItems,
             criticalUpdates: criticalUpdates,
             meetingSummary: result.output.meetingMinutes,
+            staffFeedback: result.output.staffFeedback,
+            staffFeedbackGeneratedAt: new Date(),
+            // Tags this feedback content to the pipeline run that produced it,
+            // so prior FeedbackVote rows are invalidated on reprocess (when
+            // the pipeline run id advances).
+            staffFeedbackPipelineRunId: result.output.pipelineRunId,
             postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
           },
           select: {

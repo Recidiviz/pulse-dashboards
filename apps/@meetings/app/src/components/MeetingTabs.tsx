@@ -25,6 +25,7 @@ export enum Tab {
   ActionItems = "Action Items",
   CriticalUpdates = "Critical Updates",
   Transcript = "Transcript",
+  StaffFeedback = "Staff Feedback",
 }
 
 type Props = {
@@ -32,6 +33,7 @@ type Props = {
   setActiveTab: (tab: Tab) => void;
   isTranscriptionUnavailable?: boolean;
   showTranscription: boolean;
+  showStaffFeedback: boolean;
 };
 
 const MeetingTabs = ({
@@ -39,10 +41,13 @@ const MeetingTabs = ({
   setActiveTab,
   isTranscriptionUnavailable,
   showTranscription,
+  showStaffFeedback,
 }: Props) => {
-  const visibleTabs = showTranscription
-    ? Object.values(Tab)
-    : Object.values(Tab).filter((tab) => tab !== Tab.Transcript);
+  const visibleTabs = Object.values(Tab).filter((tab) => {
+    if (tab === Tab.Transcript) return showTranscription;
+    if (tab === Tab.StaffFeedback) return showStaffFeedback;
+    return true;
+  });
 
   return (
     <ScrollView

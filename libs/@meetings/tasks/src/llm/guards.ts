@@ -208,7 +208,9 @@ export const validateNoRoboticTone: Validator<{
 /**
  * Validates case note has minimum length
  */
-export const validateCaseNoteLength: Validator<DraftingOutput> = (data) => {
+export const validateCaseNoteLength: Validator<
+  Pick<DraftingOutput, "caseNote">
+> = (data) => {
   const totalWords = countWords(data.caseNote);
   const minWords = 150;
 
@@ -226,7 +228,9 @@ export const validateCaseNoteLength: Validator<DraftingOutput> = (data) => {
 /**
  * Validates case note content quality (no template leaks or robotic tone)
  */
-export const validateCaseNoteQuality: Validator<DraftingOutput> = (data) => {
+export const validateCaseNoteQuality: Validator<
+  Pick<DraftingOutput, "caseNote">
+> = (data) => {
   const leakCheck = validateNoTemplateLeaks({ content: data.caseNote });
   if (!leakCheck.valid) return leakCheck;
 
@@ -252,7 +256,9 @@ function countSubItems(item: MinuteItem): number {
 /**
  * Validates minutes have minimum detail
  */
-export const validateMinutesDetail: Validator<DraftingOutput> = (data) => {
+export const validateMinutesDetail: Validator<
+  Pick<DraftingOutput, "minutes">
+> = (data) => {
   const minutes = data.minutes;
 
   if (!minutes || minutes.length === 0) {
@@ -289,7 +295,9 @@ export const validateMinutesDetail: Validator<DraftingOutput> = (data) => {
 /**
  * Validates minutes content quality (checks each item)
  */
-export const validateMinutesQuality: Validator<DraftingOutput> = (data) => {
+export const validateMinutesQuality: Validator<
+  Pick<DraftingOutput, "minutes">
+> = (data) => {
   const minutes = data.minutes;
 
   for (const section of minutes) {

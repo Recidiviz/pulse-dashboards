@@ -216,7 +216,33 @@ export const PROMPTS = {
                     
                     ### OUTPUT 2: MEETING MINUTES
                     ${MINUTES_STYLE}s
-                    
+
+                    ### OUTPUT 3: STAFF FEEDBACK
+                    Review the transcript through a coaching lens (MI / Core Correctional Practices) and produce two sub-sections about the Staff Member's communication style. Write at an 8th-9th grade reading level - clear, plain language. Don't name the formal MI/CCP technique itself. Ground every bullet in a specific moment from the transcript - no generic observations.
+
+                    **SUPERVISION ROLE BOUNDARY (Critical):** This feedback is strictly about *communication style and engagement*, not enforcement decisions. Staff Members in these roles have legal obligations that cannot and should not be softened.
+
+                    **Writing Style (Critical):** Write all feedback in plain, direct sentences. Avoid em dashes, excessive semicolons, and overly tidy cause-and-effect endings. Don't follow a rigid sentence template - vary the structure across bullets. Use "instead of" rather than "rather than." Avoid phrases like "deepened engagement," "de-escalated tension," or "kept the conversation open." Be specific to what actually happened in the transcript. Write like a thoughtful colleague giving feedback, not like a rubric being filled out.
+
+                    - **NEVER** suggest that a Staff Member should have been less direct, less firm, or more lenient when addressing a compliance violation (e.g., drug use, alcohol use, missed appointments, travel violations).
+                    - **NEVER** suggest "rolling with resistance" or any other MI technique as an *alternative* to enforcing a rule or delivering a consequence.
+                    - MI opportunities should only apply to moments *around* enforcement - for example, building rapport *before* delivering a consequence, or checking in on a client's emotional state *after* - never *instead of* it.
+                    - If a Staff Member handled a violation firmly, do NOT flag it as a growth opportunity simply because a warmer tone was possible. Firmness in enforcement is appropriate and expected.
+                    - Look to identify areas where, based on Core Correctional Practices, the staff member could safely become a "coach" instead of a "referee". Do not use the coach versus referee framing in given feedback.
+
+                    #### What You Did Well (staffFeedback.whatYouDidWell)
+                    - Identify **up to 2** moments where the Staff Member effectively used an interviewing skill.
+                    - Each bullet should be under **30 words total**, naming the technique and referencing the moment naturally (e.g., "when the client brought up housing"). Example: "When the client expressed frustration about his curfew, the Staff Member rolled with resistance by acknowledging his frustration rather than correcting him, which kept the conversation open."
+                    - If fewer than 2 strong examples exist, include only genuine ones. Do not manufacture praise.
+
+                    #### Growth Opportunities (staffFeedback.growthOpportunities)
+                    - Identify **strictly 1** moment where an MI/CCP technique could have deepened engagement, supported the client, or de-escalated tension - but wasn't used.
+                    - If MI was applied consistently well throughout with no clear missed opportunities, return an empty array rather than manufacturing criticism.
+                    - The bullet must be under **30 words total**, naming the missed technique and referencing the moment naturally. A clear example of exactly what it would look like to use the technique in that moment must be included. Include where possible the result this would have achieved to better support the client. Example: "When the client expressed frustration about housing, a simple reflection like 'It sounds like this has been really stressful' might have helped them feel heard before moving on."
+                    - Frame all opportunities warmly - use language like "Another approach could have been..." or "This might have been a moment to...". Never use language that implies failure.
+
+                    **MI Techniques Reference (for grounding your analysis):** Open Questions, Affirmations, Reflective Listening (simple & complex), Summaries, Evoking Change Talk, Developing Discrepancy, Exploring Ambivalence, Responding to Sustain Talk.
+
                     Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.`),
     USER: template(dedent`EXTRACTED FACTS:
                           <%= extracted %>

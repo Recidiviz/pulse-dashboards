@@ -58,6 +58,7 @@ describe("SpecialistCore", () => {
     stateCode: "US_XX",
     version: 1,
     showTranscriptions: true,
+    staffFeedbackEnabled: true,
     audioTTLDays: 30,
     transcriptTTLDays: 30,
     meetingTypes: [],
@@ -296,6 +297,7 @@ describe("SpecialistCore", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
@@ -458,6 +460,7 @@ describe("SpecialistCore", () => {
       expect(result).toEqual({
         caseNote: "[Error]",
         minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       });
     });
   });

@@ -254,6 +254,7 @@ describe("LLM Pipeline Schemas", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       expect(DraftingOutputSchema.safeParse(validDrafting).success).toBe(true);
@@ -378,6 +379,11 @@ describe("LLM Pipeline Schemas", () => {
             details: "No changes",
           },
         ],
+        staffFeedback: {
+          whatYouDidWell: [],
+          growthOpportunities: [],
+        },
+        pipelineRunId: "pipeline-run-test",
       };
 
       expect(PipelineOutputSchema.safeParse(validOutput).success).toBe(true);

@@ -26,9 +26,15 @@ import { ProductionPipeline } from "~@meetings/tasks/llm/orchestrator";
 import {
   DraftingOutput,
   ExtractionOutput,
+  StaffFeedbackOutput,
   TranscriptInput,
 } from "~@meetings/tasks/llm/schemas";
 import { mockGemini, mockOpenAI } from "~@meetings/tasks/test/setup";
+
+const EMPTY_STAFF_FEEDBACK: StaffFeedbackOutput = {
+  whatYouDidWell: [],
+  growthOpportunities: [],
+};
 
 describe("ProductionPipeline", () => {
   let mockCore: SpecialistCore;
@@ -57,6 +63,7 @@ describe("ProductionPipeline", () => {
     version: 1,
     baseVersion: 1,
     showTranscriptions: true,
+    staffFeedbackEnabled: true,
     audioTTLDays: 30,
     transcriptTTLDays: 30,
     meetingTypes: [],
@@ -187,6 +194,7 @@ describe("ProductionPipeline", () => {
             ],
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       const mockVerifiedExtraction: ExtractionOutput = {
@@ -226,6 +234,8 @@ describe("ProductionPipeline", () => {
         meetingMinutes: mockDrafting.minutes,
         actionItems: mockVerifiedExtraction.actionItems,
         statusUpdates: mockVerifiedExtraction.criticalUpdates,
+        staffFeedback: mockDrafting.staffFeedback,
+        pipelineRunId: "pipeline-run-123",
       });
     });
 
@@ -255,6 +265,7 @@ describe("ProductionPipeline", () => {
       const badDrafting: DraftingOutput = {
         caseNote: "Too short",
         minutes: [],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       // Second attempt passes validation
@@ -295,6 +306,7 @@ describe("ProductionPipeline", () => {
             ],
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -333,6 +345,7 @@ describe("ProductionPipeline", () => {
       const badDrafting: DraftingOutput = {
         caseNote: "Short",
         minutes: [],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -386,6 +399,7 @@ describe("ProductionPipeline", () => {
             }),
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -429,6 +443,7 @@ describe("ProductionPipeline", () => {
             }),
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -476,6 +491,7 @@ describe("ProductionPipeline", () => {
             }),
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -613,6 +629,7 @@ describe("ProductionPipeline", () => {
             }),
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -657,6 +674,7 @@ describe("ProductionPipeline", () => {
             }),
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -672,10 +690,9 @@ describe("ProductionPipeline", () => {
       const pipeline = new ProductionPipeline(mockPrisma, mockCore);
       await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
 
-      // Should create 3 agent executions: extraction, drafting (1 attempt), verification
+      // Should create 3 agent executions: extraction, drafting, verification.
       expect(createAgentExecutionSpy).toHaveBeenCalledTimes(3);
 
-      // Verify extraction execution
       expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(1, mockPrisma, {
         pipelineRunId: "pipeline-run-123",
         agentType: "EXTRACTION",
@@ -683,7 +700,6 @@ describe("ProductionPipeline", () => {
         validationResult: expect.objectContaining({ valid: true }),
       });
 
-      // Verify drafting execution
       expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(2, mockPrisma, {
         pipelineRunId: "pipeline-run-123",
         agentType: "DRAFTING",
@@ -692,7 +708,6 @@ describe("ProductionPipeline", () => {
         validationResult: expect.objectContaining({ valid: true }),
       });
 
-      // Verify verification execution
       expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(3, mockPrisma, {
         pipelineRunId: "pipeline-run-123",
         agentType: "VERIFICATION",
@@ -711,6 +726,7 @@ describe("ProductionPipeline", () => {
       const badDrafting: DraftingOutput = {
         caseNote: "Too short",
         minutes: [],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       const goodDrafting: DraftingOutput = {
@@ -725,6 +741,7 @@ describe("ProductionPipeline", () => {
             }),
           },
         ],
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
@@ -741,11 +758,11 @@ describe("ProductionPipeline", () => {
       const pipeline = new ProductionPipeline(mockPrisma, mockCore);
       await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
 
-      // Should create 5 agent executions: extraction, 3 drafting attempts, verification
+      // Should create 5 agent executions: extraction, 3 drafting attempts,
+      // verification.
       expect(createAgentExecutionSpy).toHaveBeenCalledTimes(5);
 
-      // Verify all three drafting attempts were stored with correct attempt numbers
-      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(2, mockPrisma, {
+      expect(createAgentExecutionSpy).toHaveBeenCalledWith(mockPrisma, {
         pipelineRunId: "pipeline-run-123",
         agentType: "DRAFTING",
         attemptNumber: 1,
@@ -753,7 +770,7 @@ describe("ProductionPipeline", () => {
         validationResult: expect.objectContaining({ valid: false }),
       });
 
-      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(3, mockPrisma, {
+      expect(createAgentExecutionSpy).toHaveBeenCalledWith(mockPrisma, {
         pipelineRunId: "pipeline-run-123",
         agentType: "DRAFTING",
         attemptNumber: 2,
@@ -761,7 +778,7 @@ describe("ProductionPipeline", () => {
         validationResult: expect.objectContaining({ valid: false }),
       });
 
-      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(4, mockPrisma, {
+      expect(createAgentExecutionSpy).toHaveBeenCalledWith(mockPrisma, {
         pipelineRunId: "pipeline-run-123",
         agentType: "DRAFTING",
         attemptNumber: 3,

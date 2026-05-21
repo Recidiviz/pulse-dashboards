@@ -147,6 +147,7 @@ export class ProductionPipeline {
         }
 
         // STEP 2: WRITER AGENT (Drafting Loop with Retry)
+        // Produces case note, minutes, and coaching staff feedback in one call.
         let finalPayload: Awaited<
           ReturnType<typeof this.core.runDrafting>
         > | null = null;
@@ -221,6 +222,8 @@ export class ProductionPipeline {
           meetingMinutes: finalPayload.minutes,
           actionItems: verification.actionItems,
           statusUpdates: verification.criticalUpdates,
+          staffFeedback: finalPayload.staffFeedback,
+          pipelineRunId: pipelineRun.id,
         };
       } catch (error) {
         // Update pipeline run status on any error

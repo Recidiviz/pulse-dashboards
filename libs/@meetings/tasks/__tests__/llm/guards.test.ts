@@ -154,6 +154,7 @@ describe("Guards - Validators", () => {
       const drafting = {
         caseNote: "Word ".repeat(200), // 200 words
         minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateCaseNoteLength(drafting);
@@ -164,6 +165,7 @@ describe("Guards - Validators", () => {
       const drafting = {
         caseNote: "Short note",
         minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateCaseNoteLength(drafting);
@@ -179,6 +181,7 @@ describe("Guards - Validators", () => {
         caseNote:
           "HOUSING: Client reported stable housing situation at current address.\n\nEMPLOYMENT: Currently employed full-time at construction company.",
         minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateCaseNoteQuality(drafting);
@@ -189,6 +192,7 @@ describe("Guards - Validators", () => {
       const drafting = {
         caseNote: "Meeting on [INSERT DATE] discussed housing.",
         minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateCaseNoteQuality(drafting);
@@ -200,6 +204,7 @@ describe("Guards - Validators", () => {
       const drafting = {
         caseNote: "Based on the transcript, I cannot provide housing details.",
         minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateCaseNoteQuality(drafting);
@@ -249,6 +254,7 @@ describe("Guards - Validators", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateMinutesDetail(drafting);
@@ -281,6 +287,7 @@ describe("Guards - Validators", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateMinutesDetail(drafting);
@@ -291,6 +298,7 @@ describe("Guards - Validators", () => {
       const drafting = {
         caseNote: "Some note",
         minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateMinutesDetail(drafting);
@@ -314,6 +322,7 @@ describe("Guards - Validators", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateMinutesDetail(drafting);
@@ -344,6 +353,7 @@ describe("Guards - Validators", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateMinutesQuality(drafting);
@@ -365,6 +375,7 @@ describe("Guards - Validators", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateMinutesQuality(drafting);
@@ -387,6 +398,7 @@ describe("Guards - Validators", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = validateMinutesQuality(drafting);
@@ -604,6 +616,7 @@ describe("Guards - Predefined Guards", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = draftingGuard(DraftingOutputSchema, data);
@@ -623,6 +636,7 @@ describe("Guards - Predefined Guards", () => {
             }),
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = draftingGuard(DraftingOutputSchema, data);
@@ -645,6 +659,7 @@ describe("Guards - Predefined Guards", () => {
             ],
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = draftingGuard(DraftingOutputSchema, data);
@@ -665,6 +680,7 @@ describe("Guards - Predefined Guards", () => {
             }),
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = draftingGuard(DraftingOutputSchema, data);
@@ -685,6 +701,7 @@ describe("Guards - Predefined Guards", () => {
             }),
           },
         ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = draftingGuard(DraftingOutputSchema, data);

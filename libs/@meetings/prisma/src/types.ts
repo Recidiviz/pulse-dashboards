@@ -24,6 +24,10 @@ declare global {
   namespace PrismaJson {
     // Define a type for a user's profile information.
     type TranscriptType = Transcript | SyncPrerecordedResponse;
+    type StaffFeedback = {
+      whatYouDidWell: string[];
+      growthOpportunities: string[];
+    };
   }
 }
 

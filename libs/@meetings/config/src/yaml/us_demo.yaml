@@ -1,9 +1,10 @@
 name: Demo
 stateCode: US_DEMO
-version: 2
+version: 3
 
 audioTTLDays: null
 transcriptTTLDays: null
+staffFeedbackEnabled: true
 meetingTypes:
   - Assessment
   - Contact

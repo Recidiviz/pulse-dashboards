@@ -191,6 +191,13 @@ model Meeting {
   structuredActionItems Json?
   criticalUpdates       Json?
   meetingSummary        Json?
+  /// [StaffFeedback]
+  staffFeedback              Json?
+  staffFeedbackGeneratedAt   DateTime?
+  // The NotetakingPipelineRun.id that produced the current staffFeedback.
+  // Used to bind FeedbackVote rows to the exact feedback content version,
+  // so prior votes are invalidated when the meeting is reprocessed.
+  staffFeedbackPipelineRunId String?
 
   transcriptDeletedAt DateTime?
   audioDeletedAt      DateTime?
@@ -258,6 +265,31 @@ enum NotetakingAgentType {
   EXTRACTION
   DRAFTING
   VERIFICATION
+}
+
+enum FeedbackVoteValue {
+  UP
+  DOWN
+}
+
+model FeedbackVote {
+  id         String            @id @default(cuid())
+  createdAt  DateTime          @default(now())
+  voterEmail String
+  vote       FeedbackVoteValue
+
+  // The NotetakingPipelineRun.id this vote was cast against. When a meeting is
+  // reprocessed, Meeting.staffFeedbackPipelineRunId advances to the new run
+  // and prior votes no longer match the current feedback content.
+  // Intentionally not a foreign key, matching NotetakingPipelineRun.meetingId:
+  // votes are kept for analytics even if the run is deleted.
+  pipelineRunId String
+
+  // Intentionally not a foreign key, matching NotetakingPipelineRun.meetingId.
+  // Votes are kept for analytics even if the meeting is later deleted.
+  meetingId String
+
+  @@index([meetingId, voterEmail, pipelineRunId])
 }
 
 model NotetakingPipelineRun {

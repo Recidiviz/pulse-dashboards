@@ -26,6 +26,7 @@ import {
   deleteRecordingFiles,
   getSignedUrlForNewRecording,
   MinuteSectionSchema,
+  StaffFeedbackOutputSchema,
 } from "~@meetings/tasks";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import { deriveValidationErrorType } from "~@meetings/trpc/routes/meeting.helpers";
@@ -37,6 +38,7 @@ import {
   getDetailInputSchema,
   getDetailsOutputSchema,
   updateNotesInputSchema,
+  voteFeedbackInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 
@@ -44,121 +46,167 @@ export const meetingRouter = router({
   getDetails: auth0Procedure
     .input(getDetailInputSchema)
     .output(getDetailsOutputSchema)
-    .query(async ({ input: { meetingId }, ctx: { prisma, stateCode } }) => {
-      try {
-        const meeting = await prisma.meeting.findUniqueOrThrow({
-          where: { id: meetingId },
-          select: {
-            id: true,
-            startTime: true,
-            endTime: true,
-            caseNote: true,
-            userNotepadNotes: true,
-            actionItems: true,
-            structuredActionItems: true,
-            criticalUpdates: true,
-            meetingSummary: true,
-            postMeetingProcessingStatus: true,
-            durationMs: true,
-            transcriptDeletedAt: true,
-            staffEmail: true,
-            meetingType: true,
-            transcriptions: {
-              orderBy: {
-                confidence: "desc",
-              },
-              take: 1,
-              select: {
-                confidence: true,
-                summary: true,
-                utterances: {
-                  orderBy: {
-                    startTimeMs: "asc",
-                  },
-                  select: {
-                    confidence: true,
-                    text: true,
-                    speaker: true,
-                    startTimeMs: true,
-                    endTimeMs: true,
+    .query(
+      async ({ input: { meetingId }, ctx: { prisma, stateCode, user } }) => {
+        try {
+          const meeting = await prisma.meeting.findUniqueOrThrow({
+            where: { id: meetingId },
+            select: {
+              id: true,
+              startTime: true,
+              endTime: true,
+              caseNote: true,
+              userNotepadNotes: true,
+              actionItems: true,
+              structuredActionItems: true,
+              criticalUpdates: true,
+              meetingSummary: true,
+              staffFeedback: true,
+              staffFeedbackGeneratedAt: true,
+              staffFeedbackPipelineRunId: true,
+              postMeetingProcessingStatus: true,
+              durationMs: true,
+              transcriptDeletedAt: true,
+              staffEmail: true,
+              meetingType: true,
+              transcriptions: {
+                orderBy: {
+                  confidence: "desc",
+                },
+                take: 1,
+                select: {
+                  confidence: true,
+                  summary: true,
+                  utterances: {
+                    orderBy: {
+                      startTimeMs: "asc",
+                    },
+                    select: {
+                      confidence: true,
+                      text: true,
+                      speaker: true,
+                      startTimeMs: true,
+                      endTimeMs: true,
+                    },
                   },
                 },
               },
             },
-          },
-        });
-
-        // Validate and parse JSON fields
-        const validateJsonField = <T>(
-          fieldValue: unknown,
-          schema: z.ZodType<T>,
-        ): T | null => {
-          if (!fieldValue) return null;
-          try {
-            return schema.parse(fieldValue);
-          } catch (error) {
-            console.error("Failed to validate JSON field:", error);
-            return null;
-          }
-        };
-
-        const latestPipelineRun = await prisma.notetakingPipelineRun.findFirst({
-          where: { meetingId },
-          orderBy: { createdAt: "desc" },
-          select: { status: true, errorDetails: true },
-        });
-
-        const pipelineValidationErrorType = deriveValidationErrorType(
-          latestPipelineRun?.errorDetails,
-        );
-
-        const stateConfig = AGENCY_CONFIGS[stateCode];
-
-        const includeTranscription = stateConfig?.showTranscriptions ?? true;
-
-        return {
-          ..._.omit(meeting, ["transcriptions"]),
-          actionItems:
-            validateJsonField(meeting.actionItems, z.array(z.string())) || [],
-          structuredActionItems:
-            validateJsonField(
-              meeting.structuredActionItems,
-              z.array(
-                z.object({
-                  task: z.string(),
-                  context: z.string().nullable(),
-                  evidenceQuotes: z.array(z.string()).nullable().optional(),
-                }),
-              ),
-            ) || [],
-          criticalUpdates:
-            validateJsonField(meeting.criticalUpdates, z.array(z.string())) ||
-            [],
-          meetingSummary:
-            validateJsonField(
-              meeting.meetingSummary,
-              MinuteSectionSchema.array(),
-            ) || [],
-          transcription: includeTranscription
-            ? meeting.transcriptions[0] || null
-            : undefined,
-          validationErrorType: pipelineValidationErrorType,
-        };
-      } catch (e) {
-        if (
-          e instanceof Prisma.PrismaClientKnownRequestError &&
-          e.code === "P2025"
-        ) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Meeting with that id was not found",
-            cause: e,
           });
-        }
 
-        throw e;
-      }
-    }),
+          // Validate and parse JSON fields
+          const validateJsonField = <T>(
+            fieldValue: unknown,
+            schema: z.ZodType<T>,
+          ): T | null => {
+            if (!fieldValue) return null;
+            try {
+              return schema.parse(fieldValue);
+            } catch (error) {
+              console.error("Failed to validate JSON field:", error);
+              return null;
+            }
+          };
+
+          const latestPipelineRun =
+            await prisma.notetakingPipelineRun.findFirst({
+              where: { meetingId },
+              orderBy: { createdAt: "desc" },
+              select: { status: true, errorDetails: true },
+            });
+
+          const pipelineValidationErrorType = deriveValidationErrorType(
+            latestPipelineRun?.errorDetails,
+          );
+
+          const stateConfig = AGENCY_CONFIGS[stateCode];
+
+          const includeTranscription = stateConfig?.showTranscriptions ?? true;
+          const staffFeedbackEnabled =
+            stateConfig?.staffFeedbackEnabled ?? false;
+
+          const parsedStaffFeedback = staffFeedbackEnabled
+            ? validateJsonField(
+                meeting.staffFeedback,
+                StaffFeedbackOutputSchema,
+              )
+            : null;
+          const staffFeedback =
+            parsedStaffFeedback && meeting.staffFeedbackGeneratedAt
+              ? {
+                  ...parsedStaffFeedback,
+                  generatedAt: meeting.staffFeedbackGeneratedAt,
+                }
+              : null;
+
+          // Find the user's most-recent vote tied to this exact feedback content
+          // version (the pipeline run that produced it). Older votes (against
+          // prior runs) are ignored so the UI shows no current vote when
+          // feedback is reprocessed.
+          const latestVote =
+            staffFeedbackEnabled && meeting.staffFeedbackPipelineRunId
+              ? await prisma.feedbackVote.findFirst({
+                  where: {
+                    meetingId,
+                    voterEmail: user.email,
+                    pipelineRunId: meeting.staffFeedbackPipelineRunId,
+                  },
+                  orderBy: { createdAt: "desc" },
+                  select: { vote: true },
+                })
+              : null;
+
+          return {
+            ..._.omit(meeting, [
+              "transcriptions",
+              "staffFeedback",
+              "staffFeedbackGeneratedAt",
+              "staffFeedbackPipelineRunId",
+            ]),
+            actionItems:
+              validateJsonField(meeting.actionItems, z.array(z.string())) || [],
+            structuredActionItems:
+              validateJsonField(
+                meeting.structuredActionItems,
+                z.array(
+                  z.object({
+                    task: z.string(),
+                    context: z.string().nullable(),
+                    evidenceQuotes: z.array(z.string()).nullable().optional(),
+                  }),
+                ),
+              ) || [],
+            criticalUpdates:
+              validateJsonField(meeting.criticalUpdates, z.array(z.string())) ||
+              [],
+            meetingSummary:
+              validateJsonField(
+                meeting.meetingSummary,
+                MinuteSectionSchema.array(),
+              ) || [],
+            staffFeedback,
+            currentFeedbackVote: latestVote?.vote ?? null,
+            transcription: includeTranscription
+              ? meeting.transcriptions[0] || null
+              : undefined,
+            validationErrorType: pipelineValidationErrorType,
+          };
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Meeting with that id was not found",
+              cause: e,
+            });
+          }
+
+          throw e;
+        }
+      },
+    ),
   createSignedUrlForRecording: auth0Procedure
     .input(createSignedUrlForRecordingInputSchema)
     .mutation(
@@ -314,6 +362,61 @@ export const meetingRouter = router({
 
           throw e;
         }
+      },
+    ),
+  voteFeedback: auth0Procedure
+    .input(voteFeedbackInputSchema)
+    .mutation(
+      async ({
+        input: { meetingId, vote },
+        ctx: { prisma, stateCode, user },
+      }) => {
+        const staffFeedbackEnabled =
+          AGENCY_CONFIGS[stateCode]?.staffFeedbackEnabled ?? false;
+        if (!staffFeedbackEnabled) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Staff feedback is not enabled for this agency",
+          });
+        }
+
+        const meeting = await prisma.meeting.findUnique({
+          where: { id: meetingId },
+          select: { staffFeedbackPipelineRunId: true, staffEmail: true },
+        });
+
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
+
+        // Only the staff member who created the meeting can vote on its feedback.
+        if (meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can vote on staff feedback",
+          });
+        }
+
+        if (!meeting.staffFeedbackPipelineRunId) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "Cannot vote on feedback that has not been generated yet",
+          });
+        }
+
+        // Append a new row every time. We never update or delete so the full
+        // vote history (including thumbs-flips) is preserved for analysis.
+        await prisma.feedbackVote.create({
+          data: {
+            meetingId,
+            voterEmail: user.email,
+            vote,
+            pipelineRunId: meeting.staffFeedbackPipelineRunId,
+          },
+        });
       },
     ),
 });
