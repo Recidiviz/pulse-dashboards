@@ -20,6 +20,7 @@ import { AssessmentQuestionSpec } from "~datatypes";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { AssessmentItem, SubItem } from "./AssessmentItem";
 import { BreakdownScoredAssessmentQuestion } from "./BreakdownScoredAssessmentQuestion";
+import { BreakdownScoredAssessmentQuestionV2 } from "./BreakdownScoredAssessmentQuestionV2";
 import { SingleScoredAssessmentQuestion } from "./SingleScoredAssessmentQuestion";
 
 export type AssessmentQuestionProps<Spec = AssessmentQuestionSpec> = {
@@ -27,12 +28,19 @@ export type AssessmentQuestionProps<Spec = AssessmentQuestionSpec> = {
   questionNumber: number;
   disabled?: boolean;
   supportingText?: string;
+  scoreSubtext?: string;
   children?: React.ReactNode;
 };
 
 export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
-  const { questionNumber, questionSpec, supportingText, disabled, children } =
-    props;
+  const {
+    questionNumber,
+    questionSpec,
+    supportingText,
+    disabled,
+    children,
+    scoreSubtext,
+  } = props;
 
   // @ts-expect-error The opportunities using these components have the derivedData field
   const derivedData = useOpportunityFormContext().derivedData;
@@ -44,6 +52,7 @@ export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
       title={`${questionNumber}. ${questionSpec.title}`}
       score={disabled ? undefined : score}
       scoreText="SCORE"
+      scoreSubtext={scoreSubtext}
       supportingText={supportingText}
     >
       {questionSpec.type === "SINGLE" && (
@@ -55,6 +64,13 @@ export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
       )}
       {questionSpec.type === "BREAKDOWN" && (
         <BreakdownScoredAssessmentQuestion
+          questionSpec={questionSpec}
+          questionNumber={questionNumber}
+          disabled={disabled}
+        />
+      )}
+      {questionSpec.type === "BREAKDOWNV2" && (
+        <BreakdownScoredAssessmentQuestionV2
           questionSpec={questionSpec}
           questionNumber={questionNumber}
           disabled={disabled}

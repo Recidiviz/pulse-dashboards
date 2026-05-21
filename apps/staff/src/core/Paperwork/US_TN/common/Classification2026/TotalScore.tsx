@@ -43,10 +43,10 @@ export function TotalScore({
           <Bold>CUSTODY LEVEL SCALE FOR TOTAL:</Bold>
         </div>
         <div>
-          <Bold>Low:</Bold> 0-11
+          <Bold>Low:</Bold> 0-12
         </div>
         <div>
-          <Bold>Medium:</Bold> 12-{mediumUpper}
+          <Bold>Medium:</Bold> 13-{mediumUpper}
         </div>
         <div>
           <Bold>Close:</Bold> {mediumUpper + 1}-44

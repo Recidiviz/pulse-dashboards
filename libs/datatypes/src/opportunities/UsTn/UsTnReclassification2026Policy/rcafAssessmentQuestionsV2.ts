@@ -101,7 +101,7 @@ export const rcafAssessmentQuestionsV2 = [
     title: "AGE",
     type: "SINGLE",
     options: [
-      { text: "21 or Younger", score: 13 },
+      { text: "21 or Younger", score: 12 },
       { text: "22 - 25", score: 5 },
       { text: "26 - 30", score: 2 },
       {

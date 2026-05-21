@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { rcafAssessmentQuestions, showTrusteeChecklist } from "~datatypes";
+import { rcafAssessmentQuestionsV2, showTrusteeChecklist } from "~datatypes";
 
 import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
@@ -129,7 +129,7 @@ export const FormUsTnReclassification2026V2 = observer(
                 TENNESSEE CLASSIFICATION INSTRUMENT: RECLASSIFICATION
               </Header>
               <ScoredAssessmentQuestion
-                questionSpec={rcafAssessmentQuestions[0]}
+                questionSpec={rcafAssessmentQuestionsV2[0]}
                 questionNumber={1}
                 supportingText={Q1_SUPPORTING_TEXT}
               >
@@ -149,7 +149,7 @@ export const FormUsTnReclassification2026V2 = observer(
                 </DoubleNotes>
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
-                questionSpec={rcafAssessmentQuestions[1]}
+                questionSpec={rcafAssessmentQuestionsV2[1]}
                 questionNumber={2}
                 supportingText={Q2_SUPPORTING_TEXT}
               >
@@ -159,7 +159,8 @@ export const FormUsTnReclassification2026V2 = observer(
                 />
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
-                questionSpec={rcafAssessmentQuestions[2]}
+                questionSpec={rcafAssessmentQuestionsV2[2]}
+                scoreSubtext="(if greater than 6, write 6)"
                 questionNumber={3}
                 supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
@@ -169,8 +170,9 @@ export const FormUsTnReclassification2026V2 = observer(
                 />
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
-                questionSpec={rcafAssessmentQuestions[3]}
+                questionSpec={rcafAssessmentQuestionsV2[3]}
                 questionNumber={4}
+                scoreSubtext="(if greater than 9, write 9)"
                 supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
                 <TextboxWithHeader
@@ -183,7 +185,8 @@ export const FormUsTnReclassification2026V2 = observer(
           <PrintablePage stretchable>
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
-                questionSpec={rcafAssessmentQuestions[4]}
+                questionSpec={rcafAssessmentQuestionsV2[4]}
+                scoreSubtext="(if greater than 33, write 33)"
                 questionNumber={5}
                 supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
@@ -193,12 +196,12 @@ export const FormUsTnReclassification2026V2 = observer(
                 />
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
-                questionSpec={rcafAssessmentQuestions[5]}
+                questionSpec={rcafAssessmentQuestionsV2[5]}
                 questionNumber={6}
                 supportingText={AGE_SUPPORTING_TEXT}
               />
               <ScoredAssessmentQuestion
-                questionSpec={rcafAssessmentQuestions[6]}
+                questionSpec={rcafAssessmentQuestionsV2[6]}
                 questionNumber={7}
                 supportingText={PROGRAM_COMPLETION_SUPPORTING_TEXT}
               >

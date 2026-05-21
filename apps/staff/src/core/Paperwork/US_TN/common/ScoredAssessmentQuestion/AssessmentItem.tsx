@@ -47,6 +47,11 @@ const ScoreText = styled.div`
   text-align: center;
   width: 3rem;
 `;
+const ScoreSubtext = styled.div`
+  text-align: center;
+  font-size: 1em;
+  width: 3rem;
+`;
 
 export const SubItem = styled.div`
   width: 100%;
@@ -68,6 +73,7 @@ type AssessmentItemProps = {
   title: string;
   score?: number;
   scoreText: string;
+  scoreSubtext?: string;
   supportingText?: string;
   children?: React.ReactNode;
 };
@@ -76,6 +82,7 @@ export const AssessmentItem: React.FC<AssessmentItemProps> = ({
   title,
   score,
   scoreText,
+  scoreSubtext,
   children,
   supportingText,
 }) => (
@@ -88,6 +95,7 @@ export const AssessmentItem: React.FC<AssessmentItemProps> = ({
     <ScoreContainer>
       <BigNumber>{score}</BigNumber>
       <ScoreText>{scoreText}</ScoreText>
+      {!!scoreSubtext && <ScoreSubtext>{scoreSubtext}</ScoreSubtext>}
     </ScoreContainer>
   </Item>
 );

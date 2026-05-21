@@ -16,8 +16,8 @@
 // =============================================================================
 
 import {
-  deriveRcafFormData,
-  prefillRcafFormData,
+  deriveRcafFormDataV2,
+  prefillRcafFormDataV2,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
 
@@ -64,7 +64,7 @@ export class UsTnReclassification2026FormV2 extends FormBase<
       person,
     } = this;
 
-    const rcafData = prefillRcafFormData(formInformation);
+    const rcafData = prefillRcafFormDataV2(formInformation);
 
     const coverData = prefilledCoverSheetData(
       person,
@@ -80,7 +80,7 @@ export class UsTnReclassification2026FormV2 extends FormBase<
   }
 
   get derivedData() {
-    return deriveRcafFormData(this.formData);
+    return deriveRcafFormDataV2(this.formData);
   }
 
   get formTemplateData() {
@@ -94,9 +94,6 @@ export class UsTnReclassification2026FormV2 extends FormBase<
       ([templatePrefix, dataKey]) => {
         const selection = formData[dataKey];
         templatedData[`${templatePrefix}0`] = selection === 0 ? "X" : "_";
-        templatedData[`${templatePrefix}1`] = selection === 1 ? "X" : "_";
-        templatedData[`${templatePrefix}2`] = selection === 2 ? "X" : "_";
-        templatedData[`${templatePrefix}3`] = selection === 3 ? "X" : "_";
       },
     );
 
