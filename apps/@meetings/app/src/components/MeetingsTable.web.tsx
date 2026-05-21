@@ -28,19 +28,14 @@ import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { Person, PersonType } from "../common/types";
 import { MeetingTypeTag } from "../entities/meeting-type";
-import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
 } from "../navigation/DrawerNavigator";
 import ProcessingSvg from "../shared/assets/icons/processing.svg";
-import {
-  formatDurationCompact,
-  formatDurationNumeric,
-} from "../shared/lib/format";
+import { formatDurationCompact } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
-import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import {
   Table,
   TABLE_CELL_HEIGHT,
@@ -70,7 +65,6 @@ type Meeting = {
   content: string;
   status: PostMeetingProcessingStatus;
   validationErrorType: string | null;
-  recordingState: string;
   start: Date;
   end: Date | null;
 };
@@ -92,16 +86,13 @@ const MeetingRow = ({
   duration,
 }: MeetingRowProps) => {
   const navigation = useNavigation<ProfileMeetingNavProp>();
-  const { status, meetingId } = useRecording<"web">();
-
-  const isMeetingInProgress = status !== "idle" && meeting.id === meetingId;
   const isProcessing = isMeetingProcessing(meeting.status);
   const isError = !!meeting.validationErrorType;
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
 
   const handleNavigateToMeeting = () => {
-    if (!isMeetingInProgress && !isError) {
+    if (!isError) {
       navigation.navigate(
         personType === "client" ? "ClientMeeting" : "ResidentMeeting",
         {
@@ -116,7 +107,7 @@ const MeetingRow = ({
     <TableRow
       onClick={handleNavigateToMeeting}
       style={{
-        pointerEvents: isMeetingInProgress || isError ? "none" : "auto",
+        pointerEvents: isError ? "none" : "auto",
       }}
     >
       <TableCell textClassName="flex flex-col gap-1">
@@ -137,14 +128,6 @@ const MeetingRow = ({
       ) : (
         <>
           <TableCell>
-            {isMeetingInProgress && (
-              <View className="flex-row items-center pb-2">
-                <RecordingIndicator isRecording={status === "recording"} />
-                <Typography className="px-2 text-secondary">
-                  In progress
-                </Typography>
-              </View>
-            )}
             {isProcessing && (
               <View className="h-full max-h-[64px] overflow-hidden rounded-xl bg-brand-light">
                 <View className="flex flex-row items-center gap-4 px-3 py-2">
@@ -160,7 +143,7 @@ const MeetingRow = ({
                 </View>
               </View>
             )}
-            {!isMeetingInProgress && !isProcessing && (
+            {!isProcessing && (
               <Typography
                 className="text-base text-secondary"
                 style={{ fontStyle: meeting.content ? "normal" : "italic" }}
@@ -194,7 +177,6 @@ const MeetingsTable = ({
   personType,
 }: MeetingsTableProps) => {
   const [page, setPage] = React.useState(1);
-  const { durationMs } = useRecording<"web">();
 
   useEffect(() => {
     setPage(1);
@@ -225,7 +207,7 @@ const MeetingsTable = ({
                   duration={
                     meeting.duration
                       ? formatDurationCompact(meeting.duration)
-                      : formatDurationNumeric(durationMs)
+                      : ""
                   }
                 />
               ))}

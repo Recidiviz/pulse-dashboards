@@ -118,6 +118,7 @@ export async function getMeetingsForPerson({
   const meetings = await prisma.meeting.findMany({
     where: {
       [`${personType}Id`]: personId,
+      endTime: { not: null },
       OR: [
         {
           staffEmail: user.email,

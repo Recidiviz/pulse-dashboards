@@ -85,24 +85,16 @@ describe("client router", () => {
     });
 
     describe("getMeetings", () => {
-      test("Returns own in-progress meetings and all completed meetings", async () => {
-        // fakeActiveMeeting belongs to fakeStaff[0] (the current user) and is in progress
+      test("Does not return in-progress meetings", async () => {
+        // fakeActiveMeeting belongs to fakeStaff[0] (the current user) but has no endTime
         const result = await testTRPCClient.v1.client.getMeetings.query({
           clientId: fakeClients[0].personId,
         });
 
-        // Check expected fields are returned
-        expect(result).toEqual([
-          expect.objectContaining({
-            id: fakeActiveMeeting.id,
-            startTime: fakeActiveMeeting.startTime,
-            endTime: null,
-            caseNote: fakeActiveMeeting.caseNote,
-          }),
-        ]);
+        expect(result).toEqual([]);
       });
 
-      test("Returns own in-progress meetings but not other staff's in-progress meetings, plus all completed meetings", async () => {
+      test("Returns only completed meetings, excluding all in-progress meetings", async () => {
         // Create an in-progress meeting with a different staff member
         const otherStaffInProgressMeeting =
           await testPrismaClient.meeting.create({
@@ -134,15 +126,11 @@ describe("client router", () => {
           clientId: fakeClients[0].personId,
         });
 
-        // State user (fakeStaff[0]) should see:
-        // 1. Their own in-progress meetings (fakeMeeting)
-        // 2. All completed/processing meetings regardless of staff (completedMeeting)
-        // Should NOT see: otherStaffInProgressMeeting (different staff, in-progress)
         const resultIds = result.map((m) => m.id);
-        expect(resultIds).toContain(fakeActiveMeeting.id);
         expect(resultIds).toContain(completedMeeting.id);
+        expect(resultIds).not.toContain(fakeActiveMeeting.id);
         expect(resultIds).not.toContain(otherStaffInProgressMeeting.id);
-        expect(result.length).toBe(2);
+        expect(result.length).toBe(1);
       });
     });
 
@@ -462,7 +450,7 @@ describe("client router", () => {
         expect(result).toEqual([]);
       });
 
-      test("Returns own in-progress meetings but not other staff's in-progress meetings, plus all completed meetings", async () => {
+      test("Returns only completed meetings, excluding all in-progress meetings", async () => {
         // Create an in-progress meeting owned by the recidiviz user
         const ownInProgressMeeting = await testPrismaClient.meeting.create({
           data: {
@@ -494,13 +482,10 @@ describe("client router", () => {
         });
 
         const resultIds = result.map((m) => m.id);
-        // Own in-progress meeting
-        expect(resultIds).toContain(ownInProgressMeeting.id);
-        // Completed meeting from another staff member
         expect(resultIds).toContain(completedMeeting.id);
-        // fakeActiveMeeting belongs to fakeStaff[0], not the recidiviz user — excluded
+        expect(resultIds).not.toContain(ownInProgressMeeting.id);
         expect(resultIds).not.toContain(fakeActiveMeeting.id);
-        expect(result.length).toBe(2);
+        expect(result.length).toBe(1);
       });
     });
   });

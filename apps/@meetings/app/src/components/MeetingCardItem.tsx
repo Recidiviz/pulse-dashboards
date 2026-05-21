@@ -34,11 +34,9 @@ import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { Person, PersonType } from "../common/types";
 import { MeetingTypeTag } from "../entities/meeting-type";
-import { useRecording } from "../features/recording";
 import { useProcessingText } from "../hooks/useProcessingText";
 import ProcessingSvg from "../shared/assets/icons/processing.svg";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
-import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
 import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
@@ -54,7 +52,6 @@ type MeetingCardItemProps = {
     content: string;
     status: PostMeetingProcessingStatus;
     validationErrorType: string | null;
-    recordingState: string;
     start: Date;
     end: Date | null;
     caseNote: string | null;
@@ -68,19 +65,15 @@ const MeetingCardItem = ({
   person,
   personType,
 }: MeetingCardItemProps) => {
-  const { status: recordingState, meetingId } = useRecording<"native">();
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const [canEditNote, setCanEditNote] = useState(false);
-  const isInProgress = recordingState !== "idle" && meeting.id === meetingId;
   const isProcessing = isMeetingProcessing(meeting.status);
   const isError = !!meeting.validationErrorType;
-  const isFinishedWithoutNote =
-    !isInProgress && !isProcessing && !isError && !meeting.caseNote;
-  const isFinishedWithNote =
-    !isInProgress && !isProcessing && !isError && !!meeting.caseNote;
+  const isFinishedWithoutNote = !isProcessing && !isError && !meeting.caseNote;
+  const isFinishedWithNote = !isProcessing && !isError && !!meeting.caseNote;
 
   const linkProps =
     meeting.status === "NOT_STARTED"
@@ -143,7 +136,7 @@ const MeetingCardItem = ({
             <View
               className={clsx(
                 "w-full flex-row items-center justify-between",
-                isInProgress || isFinishedWithoutNote
+                isFinishedWithoutNote
                   ? "border-b-0 pb-0"
                   : "border-b border-subtle pb-3",
               )}
@@ -156,16 +149,6 @@ const MeetingCardItem = ({
                     </Typography>
                     <MeetingTypeTag type={meeting.meetingType} />
                   </View>
-                  {isInProgress && (
-                    <>
-                      <RecordingIndicator
-                        isRecording={recordingState === "recording"}
-                      />
-                      <Typography className="text-sm font-medium text-primary">
-                        In progress
-                      </Typography>
-                    </>
-                  )}
                 </View>
                 <Typography className="text-sm leading-4 text-secondary">
                   {meeting.time}

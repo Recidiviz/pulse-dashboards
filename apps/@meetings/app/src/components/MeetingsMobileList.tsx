@@ -34,7 +34,6 @@ type Meeting = {
   content: string;
   status: PostMeetingProcessingStatus;
   validationErrorType: string | null;
-  recordingState: string;
   start: Date;
   end: Date | null;
   caseNote: string | null;
