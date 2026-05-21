@@ -35,7 +35,6 @@ export const ContentLayout = styled.div`
   padding-left: 7rem;
   padding-top: 1.5rem;
   padding-bottom: 2rem;
-  margin-top: 10.5rem; /* Add space for fixed header (1rem progress bar + ~9.5rem header) */
   background: ${palette.marble3};
   z-index: 0;
   position: relative;

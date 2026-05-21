@@ -24,18 +24,10 @@ import { customPalette } from "../styles/palette";
 
 export { BackLink } from "../styles/shared";
 
-export const NAV_BAR_HEIGHT = 64;
-
 export const SARHeaderContainer = styled.div`
-  position: fixed;
-  top: 1rem;
-  left: 0;
-  right: 0;
-  width: 100%;
-  padding-top: 6rem;
+  padding-top: 2.5rem;
   padding-left: 2rem;
   padding-bottom: 2.2rem;
-  z-index: 100;
   background-color: ${palette.white};
   border-bottom: 1px solid ${palette.slate20};
   display: flex;
