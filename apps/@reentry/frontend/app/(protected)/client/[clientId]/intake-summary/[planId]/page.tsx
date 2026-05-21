@@ -25,12 +25,11 @@ import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { PageView } from "~@reentry/frontend/components/PageView";
+import styles from "~@reentry/frontend/components/shared/styles/markdown.module.css";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useIntakeSummaryPDF } from "~@reentry/frontend/hooks/usePDFDownload";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
-
-import styles from "./markdown.module.css";
 
 const IntakeSummaryPage = () => {
   const { planId, clientId } = useParams() as {

@@ -31,10 +31,10 @@ import { useState } from "react";
 
 import AdminIntakeHistory from "~@reentry/frontend/(protected)/intake/[intakeId]/chat-history/AdminIntakeHistory";
 import { $api } from "~@reentry/frontend/api";
+import styles from "~@reentry/frontend/components/shared/styles/markdown.module.css";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
-import styles from "../../../client/[clientId]/intake-summary/[planId]/markdown.module.css";
 import ChatTemplateEditor from "./ChatTemplateEditor";
 
 type ActiveTab = "chat" | "summary" | "action-plan";

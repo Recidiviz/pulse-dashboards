@@ -6,7 +6,8 @@
 }
 
 .markdown h1,
-.markdown h2 {
+.markdown h2,
+.markdown h3 {
   border: none;
   color: #003331;
   font-size: 1.5rem;
@@ -52,10 +53,26 @@
 
 .markdown ul li {
   list-style-type: disc;
+  margin-bottom: 0.5rem;
 }
 
-.markdown .res-link {
-  border-bottom: 3px dashed #f08c00;
+.markdown table {
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.markdown th,
+.markdown td {
+  border: 1px solid #35536233;
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown th {
+  background: #f5f7f8;
+  font-weight: 600;
 }
 
 .notes,
