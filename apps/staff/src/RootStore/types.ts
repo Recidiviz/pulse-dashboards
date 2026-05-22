@@ -141,6 +141,7 @@ export type FeatureVariant =
   | "usTnTEPENotesForAll"
   | "usTn2026ClassificationPolicyPilot"
   | "usTnRcafV2"
+  | "usTnRcafV1"
 
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -233,6 +234,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnInitialClassification: {},
   usTn2026ClassificationPolicyPilot: {},
   usTnRcafV2: {},
+  usTnRcafV1: {},
   insightsStaffUsage: {},
   insightsConsistentLoginPill: {},
   usTnTEPENotesForAll: {},
@@ -327,8 +329,12 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
+
         // TODO(recidiviz-data/#75828): Remove once we support 2026 versions in demo mode
         usTn2026ClassificationPolicyPilot: isDemoMode() ? undefined : {},
+        usTnRcafV2: isDemoMode() ? undefined : {},
+        usTnRcafV1: isDemoMode() ? undefined : {},
+
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
         operationsNumeratorDenominatorIsEnabled: { activeTenants: ["US_TX"] },
