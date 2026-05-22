@@ -39,6 +39,11 @@ import { trpc } from "../CaseNoteSearch/trpc";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import OpportunityNotifications from "../OpportunityCaseloadView/OpportunityNotifications";
 import { ProfileCapsule } from "../PersonCapsules";
+import {
+  SectionCard,
+  SectionCardBody,
+  SectionCardHeader,
+} from "../SectionCard";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
@@ -339,8 +344,12 @@ export const FullProfile = observer(
       userStore,
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
-    const { caseNoteSearch, hideWorkflowsOpportunities, sentenceProgressV2 } =
-      useFeatureVariants();
+    const {
+      caseNoteSearch,
+      hideWorkflowsOpportunities,
+      sentenceProgressV2,
+      tasksCardLayout,
+    } = useFeatureVariants();
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -436,22 +445,39 @@ export const FullProfile = observer(
           )}
           <Content isMobile={isTablet}>
             <ProfileDetailsWrapper>
-              {person.supervisionTasks?.orderedTasks && (
-                <div>
-                  <SectionHeading>Tasks</SectionHeading>
-                  <Divider />
-                  <CaseloadTasksHydrator
-                    empty={empty}
-                    hydrated={
-                      <PreviewTasks
-                        person={person}
-                        showSnoozeDropdown={false}
+              {person.supervisionTasks?.orderedTasks &&
+                (tasksCardLayout ? (
+                  <SectionCard>
+                    <SectionCardHeader>Tasks</SectionCardHeader>
+                    <SectionCardBody>
+                      <CaseloadTasksHydrator
                         empty={empty}
+                        hydrated={
+                          <PreviewTasks
+                            person={person}
+                            showSnoozeDropdown={false}
+                            empty={empty}
+                          />
+                        }
                       />
-                    }
-                  />
-                </div>
-              )}
+                    </SectionCardBody>
+                  </SectionCard>
+                ) : (
+                  <div>
+                    <SectionHeading>Tasks</SectionHeading>
+                    <Divider />
+                    <CaseloadTasksHydrator
+                      empty={empty}
+                      hydrated={
+                        <PreviewTasks
+                          person={person}
+                          showSnoozeDropdown={false}
+                          empty={empty}
+                        />
+                      }
+                    />
+                  </div>
+                ))}
               {isMoClient ? null : (
                 <div>
                   <SectionHeading>{sidebarHeadingText}</SectionHeading>
