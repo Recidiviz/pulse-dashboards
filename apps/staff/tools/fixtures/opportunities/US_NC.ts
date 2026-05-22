@@ -66,9 +66,15 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNcCompletedSexOffenderTreatmentOrWithin30MonthsOfFullTermCompletionDate",
-          text: "{{#if dischargeDates}}Completed sex offender treatment on {{#each dischargeDates}}{{#if @last}}{{this}}.{{/if}}{{/each}}{{else}}Does not have sex offender treatment assigned.\n{{/if}}",
+          text: "{{#if rawSexOffenseCaseTypes}}{{#if dischargeDates}}Completed sex offender treatment on {{#each dischargeDates}}{{#if @last}}{{this}}.{{/if}}{{/each}}{{else}}Does not have sex offender treatment assigned.\n{{/if}}{{/if}}",
           tooltip:
             "If someone is convicted of a sex offense, they must have completed their training, or they must not have training assigned and have less than 30 months remaining on their sentence.\n\nIf you believe this is incorrect, please email feedback@recidiviz.org.",
+        },
+        {
+          key: "drugScreenOkForCrr",
+          text: "{{#if atLeast30DaysSinceDrugScreen}}Last drug test was within 30 days ({{latestDrugScreenDate}}) and was negative.{{/if}}",
+          tooltip:
+            "If you believe this person's most recent drug test was negative and within 30 days, please email feedback@recidiviz.org.",
         },
       ],
       emptyTabCopy: [],
@@ -93,8 +99,9 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://drive.google.com/file/d/1cPba5k8U16EF-xBqo9pCZkCqaddk3j_Y/view?usp=sharing",
       nonOmsCriteria: [
         {
-          text: "Completed sex offender treatment on {{#each dischargeDates}}{{#if @last}}{{this}}.{{/if}}{{/each}}",
-          tooltip: "Test",
+          text: "{{#unless record.eligibleCriteria.drugScreenOkForCrr.atLeast30DaysSinceDrugScreen}}Needs drug test -- must test negative within the 30 days prior to submitting.{{/unless}}",
+          tooltip:
+            "If you believe this user has had a negative drug test within 30 days that is not appearing here, please email feedback@recidiviz.org.",
         },
       ],
       nonOmsCriteriaHeader: "Criteria to Check",

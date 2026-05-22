@@ -116,9 +116,9 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Supervision clients may be eligible for Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
-      submittedTabTitle: "Submitted for Review",
+      submittedTabTitle: null,
       supportsIneligible: false,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       systemType: "SUPERVISION",
       tabGroups: [
         {
@@ -127,6 +127,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Eligible Now",
             "Almost Eligible",
             "Submitted for Review",
+            "Awaiting Revisions",
             "Approved by Supervisor",
             "Marked Ineligible",
           ],
@@ -135,6 +136,104 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for Annual Report Status",
       urlSection: "AnnualReportStatus",
+      zeroGrantsTooltip: null,
+    },
+    usTxAnnualReportStatusV2: {
+      callToAction: null,
+      caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "FEES",
+          text: "Client has not demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
+        },
+        {
+          key: "RESTITUTION",
+          text: "Client has not maintained compliance with all restitution obligations in accordance to PD/POP-3.1.6 for the preceding two years of supervision",
+        },
+        {
+          key: "DISCRETION",
+          text: "Per the PO’s discretion, it is not in the best interest of society for the client’s reporting status to be modified to Annual Report",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Annual Report Status (Test)",
+      dynamicEligibilityText:
+        "client[|s] may be eligible for Annual Report Status",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [],
+      emptyTabCopy: [],
+      firestoreCollection: "US_TX-annualReportStatusV2Referrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 3,
+      ineligibleCriteriaCopy: [
+        {
+          key: "supervisionLevelIsMinimumFor3Years",
+          text: "Less than one month until 3 years on Low",
+        },
+        {
+          key: "usTxNoWarrantWithSustainedViolationWithin2Years",
+          text: "Less than one month until 2 years with no sustained violation",
+        },
+      ],
+      initialHeader:
+        "Review clients who may be eligible for Annual Report Status",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
+      nonOmsCriteria: [
+        {
+          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement, if applicable",
+          tooltip:
+            "Any supervision, crime victim fees and Post Secondary Education reimbursement which will continue to be due each month, unless paid in advance, while client is on Annual Report status.",
+        },
+        {
+          text: "The client has maintained compliance with all restitution obligations for the preceding two years of supervision",
+          tooltip:
+            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Annual Report status.\n",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
+      notifications: [],
+      omsCriteriaHeader: " Requirements validated by OIMS data",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: ["ClientProfileDetails", "ActionHistory"],
+      skipFormPreview: false,
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: ["usTxEarlyReleaseFromSupervisionV2"],
+      stateCode: "US_TX",
+      strictlyIneligibleCriteriaCopy: [],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading: "",
+      submittedTabTitle: null,
+      supportsIneligible: false,
+      supportsSubmitted: false,
+      systemType: "SUPERVISION",
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible Now",
+            "Almost Eligible",
+            "Submitted for Review",
+            "Awaiting Revisions",
+            "Approved by Supervisor",
+            "Marked Ineligible",
+          ],
+        },
+      ],
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: "Eligible for Annual Report Status",
+      urlSection: "AnnualReportStatusV2",
       zeroGrantsTooltip: null,
     },
     usTxEarlyReleaseFromSupervision: {
@@ -251,9 +350,9 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Supervision clients may be eligible for Early Release from Supervision if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
-      submittedTabTitle: "Submitted for Review",
+      submittedTabTitle: null,
       supportsIneligible: false,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       systemType: "SUPERVISION",
       tabGroups: [
         {
@@ -262,6 +361,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Eligible Now",
             "Almost Eligible",
             "Submitted for Review",
+            "Awaiting Revisions",
             "Approved by Supervisor",
             "Marked Ineligible",
           ],
@@ -270,6 +370,112 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for Early Release from Supervision",
       urlSection: "EarlyReleaseFromSupervision",
+      zeroGrantsTooltip: null,
+    },
+    usTxEarlyReleaseFromSupervisionV2: {
+      callToAction: null,
+      caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "FEES",
+          text: "Client has not demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
+        },
+        {
+          key: "RESTITUTION",
+          text: "Client has not maintained compliance with all restitution obligations in accordance to PD/POP-3.1.6 for the preceding two years of supervision",
+        },
+        {
+          key: "DISCRETION",
+          text: "Per the PO’s discretion, it is not in the best interest of society for the client’s reporting status to be modified to Early Release",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Early Release from Supervision (Test)",
+      dynamicEligibilityText:
+        "client[|s] may be eligible for Early Release from Supervision",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [],
+      emptyTabCopy: [],
+      firestoreCollection: "US_TX-earlyReleaseFromSupervisionV2Referrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 4,
+      ineligibleCriteriaCopy: [
+        {
+          key: "supervisionLevelIsMinimumOrLimitedFor3Years",
+          text: "Less than one month until 3 years on Low",
+        },
+        {
+          key: "usTxServedAtLeastHalfOfRemainingSupervisionSentence",
+          text: "Less than one month until served at least half of remaining sentence",
+        },
+        {
+          key: "noSupervisionSustainedViolationWithin2Years",
+          text: "Less than one month until 2 years without any sustained violations",
+        },
+        {
+          key: "usTxNoWarrantWithSustainedViolationWithin2Years",
+          text: "Less than one month until 2 years without any warrants that sustained a violation",
+        },
+      ],
+      initialHeader:
+        "Review clients who may be eligible for Early Release from Supervision",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
+      nonOmsCriteria: [
+        {
+          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement, if applicable",
+          tooltip:
+            "Any supervision, crime victim fees and Post Secondary Education reimbursement will continue to be due each month, unless paid in advance, while client is on Early Release status.",
+        },
+        {
+          text: "The client has maintained compliance with all restitution obligations for the preceding two years",
+          tooltip:
+            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Early Release status.\n",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
+      notifications: [],
+      omsCriteriaHeader: "Requirements validated by OIMS data",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: ["ClientProfileDetails", "ActionHistory"],
+      skipFormPreview: false,
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_TX",
+      strictlyIneligibleCriteriaCopy: [],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading: null,
+      submittedTabTitle: null,
+      supportsIneligible: false,
+      supportsSubmitted: false,
+      systemType: "SUPERVISION",
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible Now",
+            "Almost Eligible",
+            "Submitted for Review",
+            "Awaiting Revisions",
+            "Approved by Supervisor",
+            "Marked Ineligible",
+          ],
+        },
+      ],
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: "Eligible for Early Release from Supervision",
+      urlSection: "EarlyReleaseFromSupervisionV2",
       zeroGrantsTooltip: null,
     },
   },

@@ -22,11 +22,7 @@ import { ResidentFixture } from "../residents";
 export const usMiResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: [
-      "usMiReclassificationRequest",
-      "usMiSecurityClassificationCommitteeReview",
       "usMiSecurityClassificationCommitteeReviewV2",
-      "usMiWardenInPersonSecurityClassificationCommitteeReview",
-      "usMiAddInPersonSecurityClassificationCommitteeReview",
       "usMiCustodyLevelDowngrade",
     ],
     stateCode: "US_MI",
@@ -47,11 +43,7 @@ export const usMiResidents: ResidentFixture[] = [
   },
   {
     allEligibleOpportunities: [
-      "usMiReclassificationRequest",
-      "usMiSecurityClassificationCommitteeReview",
       "usMiSecurityClassificationCommitteeReviewV2",
-      "usMiWardenInPersonSecurityClassificationCommitteeReview",
-      "usMiAddInPersonSecurityClassificationCommitteeReview",
       "usMiCustodyLevelDowngrade",
     ],
     stateCode: "US_MI",
@@ -73,11 +65,7 @@ export const usMiResidents: ResidentFixture[] = [
   },
   {
     allEligibleOpportunities: [
-      "usMiReclassificationRequest",
-      "usMiSecurityClassificationCommitteeReview",
       "usMiSecurityClassificationCommitteeReviewV2",
-      "usMiWardenInPersonSecurityClassificationCommitteeReview",
-      "usMiAddInPersonSecurityClassificationCommitteeReview",
       "usMiCustodyLevelDowngrade",
     ],
     stateCode: "US_MI",
@@ -97,10 +85,7 @@ export const usMiResidents: ResidentFixture[] = [
     metadata: {},
   },
   {
-    allEligibleOpportunities: [
-      "usMiWardenInPersonSecurityClassificationCommitteeReview",
-      "usMiAddInPersonSecurityClassificationCommitteeReview",
-    ],
+    allEligibleOpportunities: [],
     officerId: "OFFICER8",
     stateCode: "US_MI",
     personExternalId: "RES022",

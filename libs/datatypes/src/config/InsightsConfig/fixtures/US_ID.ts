@@ -110,8 +110,8 @@ export const US_ID: InsightsConfig = {
       bodyDisplayName: "Assessment",
     },
     {
-      metricId: "timely_contact",
-      titleDisplayName: "Timely F2F Contact",
+      metricId: "timely_contact_due_date_based",
+      titleDisplayName: "Timely Contact",
       bodyDisplayName: "Contact",
     },
   ],

@@ -29,13 +29,9 @@ import {
   usMeAnnualReclassificationFixtures,
   usMeMediumTrusteeFixtures,
   usMeSccpFixtures,
-  usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures,
   usMiCustodyLevelDowngradeFixtures,
-  usMiReclassificationRequestFixtures,
-  usMiSecurityClassificationCommitteeReviewFixtures,
   usMiSecurityClassificationCommitteeReviewV2Fixtures,
-  usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures,
   usNeGoodTimeRestorationFixtures,
   usPaSpecialCircumstancesSupervisionFixtures,
@@ -170,17 +166,10 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
       usMeMediumTrusteeReferrals: usMeMediumTrusteeFixtures,
       usMeReclassificationReviewReferrals: usMeAnnualReclassificationFixtures,
       usMiCustodyLevelDowngradeReferrals: usMiCustodyLevelDowngradeFixtures,
-      usMiReclassificationRequestReferrals: usMiReclassificationRequestFixtures,
       usMiSecurityClassificationCommitteeReviewV2Referrals:
         usMiSecurityClassificationCommitteeReviewV2Fixtures,
-      usMiSecurityClassificationCommitteeReviewReferrals:
-        usMiSecurityClassificationCommitteeReviewFixtures,
-      usMiWardenInPersonSecurityClassificationCommitteeReviewReferrals:
-        usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
       usMiWardenInPersonSecurityClassificationCommitteeReviewV2Referrals:
         usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures,
-      usMiAddInPersonSecurityClassificationCommitteeReviewReferrals:
-        usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
       usMiAddInPersonSecurityClassificationCommitteeReviewV2Referrals:
         usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures,
       usPaSpecialCircumstancesSupervisionReferrals:

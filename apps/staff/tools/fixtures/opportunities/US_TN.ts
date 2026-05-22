@@ -761,7 +761,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "usTnCustodyLevelHigherThanRecommended2026Policy",
+          key: "usTnCustodyLevelHigherThanRecommended2026PolicyV2",
           text: "Custody level is higher than latest CAF score suggests",
         },
         {
@@ -793,7 +793,7 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_TN",
       strictlyIneligibleCriteriaCopy: [
         {
-          key: "usTnCustodyLevelHigherThanRecommended2026Policy",
+          key: "usTnCustodyLevelHigherThanRecommended2026PolicyV2",
           text: "Custody level is not higher than latest CAF score suggests",
         },
         {
@@ -1117,7 +1117,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "usTnCustodyLevelLowerThanRecommended2026Policy",
+          key: "usTnCustodyLevelLowerThanRecommended2026PolicyV2",
           text: "Custody level does not match latest CAF score",
         },
         {
@@ -1150,7 +1150,7 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_TN",
       strictlyIneligibleCriteriaCopy: [
         {
-          key: "usTnCustodyLevelLowerThanRecommended2026Policy",
+          key: "usTnCustodyLevelLowerThanRecommended2026PolicyV2",
           text: "Custody level is not lower than latest CAF suggests",
         },
         {

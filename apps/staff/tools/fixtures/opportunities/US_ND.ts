@@ -222,7 +222,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usNdIncarcerationWithin1YearOfFtcdOrPrdOrCppRelease",
           text: "Less than 12 months until release or parole review date",
           tooltip:
-            "Residents must be within 12 months of release to be eligible for ATP",
+            "Residents must be within 12 months of release to qualify for ATP. However, residents with sentences of 2 years or less are eligible for no more than 4 months of ATP placement.",
         },
         {
           key: "usNdNoDetainersOrWarrants",
@@ -304,9 +304,9 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
       nonOmsCriteria: [
         {
-          text: "Must be compliant with programming requirements",
+          text: "Must be compliant with all recommended programming",
           tooltip:
-            "Compliant with all work, education, and programming\nrequirements",
+            "Compliant with all work, education, and programming\nrequirements. Performance programming will be taken into consideration with making a recommendation.",
         },
         {
           text: "Resident must sign ATP Agreement",
@@ -317,6 +317,21 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Must be given medical clearance",
           tooltip:
             "Adults in custody must be given a medical physical and be\ncleared by the appropriate health authority prior to transfer",
+        },
+        {
+          text: "Residents who have refused parole will not be eligible",
+          tooltip:
+            "Adults in custody who have refused parole will not be eligible for work release, education release, or adult transition program.",
+        },
+        {
+          text: "Must be capable of working",
+          tooltip:
+            "Mental health and medical restrictions should be taken into account.",
+        },
+        {
+          text: "Must have identification meeting I-9 requirements",
+          tooltip:
+            "Adults in custody must have identification on the file which meets I-9 requirements prior to their application being reviewed or in the process of receiving these to ensure they are received prior to employment.",
         },
       ],
       nonOmsCriteriaHeader: null,
