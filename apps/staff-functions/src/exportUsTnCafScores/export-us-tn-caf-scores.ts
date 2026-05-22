@@ -18,7 +18,6 @@
 import { Connector, IpAddressTypes } from "@google-cloud/cloud-sql-connector";
 import { Firestore } from "@google-cloud/firestore";
 import { isValid, startOfDay, subHours } from "date-fns";
-import type { Timestamp } from "firebase/firestore";
 import { firestore } from "firebase-admin";
 import { defineJsonSecret } from "firebase-functions/params";
 import { onSchedule } from "firebase-functions/v2/scheduler";
@@ -27,17 +26,27 @@ import { Pool } from "pg";
 import {
   deriveDcafFormData,
   deriveRcafFormData,
+  deriveRcafFormDataV2,
   OpportunityType,
   prefillDcafFormData,
   prefillRcafFormData,
+  prefillRcafFormDataV2,
   RawResidentRecord,
   TRUSTEE_FORM_QUESTION_ORDER,
-  UsTnInitialClassification2026DraftData,
   usTnInitialClassification2026Schema,
   UsTnReclassification2026DraftData,
   UsTnReclassification2026ReferralRecord,
   usTnReclassification2026Schema,
 } from "~datatypes";
+
+import {
+  CSV_COLUMN_ORDER,
+  DERIVED_DATA_MAPPING_DCAF,
+  DERIVED_DATA_MAPPING_RCAF,
+  FormUpdateData,
+  OPP_TYPE_TO_COLLECTION,
+  OpportunityUpdateData,
+} from "./consts";
 
 const LOOKBACK_HOURS = 2;
 const persistenceDbConfigSecrets = defineJsonSecret("PERSISTENCE_DB_CONFIG");
@@ -50,36 +59,6 @@ const EXECUTION_OPTIONS = {
   // Allow 5 minutes for it to run
   timeoutSeconds: 300,
   secrets: [persistenceDbConfigSecrets],
-};
-
-const OPP_TYPE_TO_COLLECTION = {
-  usTnTrusteeTransfer: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-  usTnSeriousMisconductUpgrade:
-    "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-  usTnBiannualOther: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-  usTnSpecialCustodyLevelUpgrade2026Policy:
-    "US_TN-specialCustodyLevelUpgrade2026PolicyReferrals",
-  usTnAnnualReclassification2026Policy:
-    "US_TN-annualReclassification2026PolicyReferrals",
-  usTnCustodyLevelDowngrade2026Policy:
-    "US_TN-custodyLevelDowngrade2026PolicyReferrals",
-  usTnInitialClassification2026Policy:
-    "US_TN-initialClassification2026PolicyReferrals",
-};
-
-type FormUpdateData = {
-  data?: Partial<UsTnReclassification2026DraftData>;
-  updated: {
-    date: Timestamp;
-    by: string;
-  };
-};
-
-type OpportunityUpdateData = {
-  submitted: {
-    date: Timestamp;
-    by: string;
-  };
 };
 
 const getTrusteeQuestionValue = (
@@ -166,148 +145,6 @@ const COLUMN_MAPPING: Record<
     validateDate(doc["trusteeACSignatureDate"]),
 };
 
-// We can combine the RCAF and DCAF fields into one list since we are
-// just checking to see if any of these are populated, not all.
-const allScoredQuestionFields = [
-  "q1Selection",
-  "q2Selection",
-  "q3Selection",
-  "q4Selection",
-  "q5Selection",
-  "q3Selection_0_6",
-  "q3Selection_6_12",
-  "q4Selection_0_6",
-  "q4Selection_6_12",
-  "q5Selection_0_6",
-  "q5Selection_6_12",
-  "q5Selection_12_18",
-  "q5Selection_18_36",
-  "q5Selection_36_60",
-  "q6Selection",
-  "q7Selection",
-] as const;
-
-// This record maps output fields to their source field in the derived data blob
-// as well as which fields affect that field. This allows us to determine
-// when a field was changed by the update record and record the output
-type DerivedDataMapping = Record<
-  string,
-  {
-    sourceField: keyof ReturnType<typeof deriveRcafFormData>;
-    relevantFields: readonly (keyof (UsTnReclassification2026DraftData &
-      UsTnInitialClassification2026DraftData))[];
-  }
->;
-
-const DERIVED_DATA_MAPPING_DCAF: DerivedDataMapping = {
-  Question1: { sourceField: "q1Score", relevantFields: ["q1Selection"] },
-  Question2: { sourceField: "q2Score", relevantFields: ["q2Selection"] },
-  Question3: { sourceField: "q3Score", relevantFields: ["q3Selection"] },
-  Question4: { sourceField: "q4Score", relevantFields: ["q4Selection"] },
-  Question5: { sourceField: "q5Score", relevantFields: ["q5Selection"] },
-  Question6: { sourceField: "q6Score", relevantFields: ["q6Selection"] },
-  Question7: { sourceField: "q7Score", relevantFields: ["q7Selection"] },
-  OverallScore: {
-    sourceField: "totalScore",
-    relevantFields: allScoredQuestionFields,
-  },
-  ScoredCustodyLevel: {
-    sourceField: "totalText",
-    relevantFields: allScoredQuestionFields,
-  },
-
-  TrusteeEligible: {
-    sourceField: "trusteeEligible",
-    relevantFields: TRUSTEE_FORM_QUESTION_ORDER,
-  },
-};
-
-const DERIVED_DATA_MAPPING_RCAF: DerivedDataMapping = {
-  ...DERIVED_DATA_MAPPING_DCAF,
-  Question3: {
-    sourceField: "q3Score",
-    relevantFields: ["q3Selection_0_6", "q3Selection_6_12"],
-  },
-  Question4: {
-    sourceField: "q4Score",
-    relevantFields: ["q4Selection_0_6", "q4Selection_6_12"],
-  },
-  Question5: {
-    sourceField: "q5Score",
-    relevantFields: [
-      "q5Selection_0_6",
-      "q5Selection_6_12",
-      "q5Selection_12_18",
-      "q5Selection_18_36",
-      "q5Selection_36_60",
-    ],
-  },
-};
-
-const CSV_COLUMN_ORDER = [
-  "state_code",
-  "OFFENDERID",
-  "ClassificationType",
-  "ClassificationFormType",
-  "AssessmentDate",
-  "LastClassificationDate",
-  "LastModifiedBy",
-  "Question1",
-  "Question1_notes",
-  "Question2",
-  "Question2_notes",
-  "Question3",
-  "Question3_notes",
-  "Question4",
-  "Question4_notes",
-  "Question5",
-  "Question5_notes",
-  "Question6",
-  "Question6_notes",
-  "Question7",
-  "Question7_notes",
-  "OverallScore",
-  "ScoredCustodyLevel",
-  "CounselorRecommendedOverride",
-  "CounselorRecommendedCustodyLevel",
-  "FinalOverrideCode",
-  "FinalCustodyLevel",
-  "DateOfApprovalAndEntry_CAF",
-  "TrusteeFlag",
-  "Trustee_Question1",
-  "Trustee_Question2",
-  "Trustee_Question3",
-  "Trustee_Question4",
-  "Trustee_Question5",
-  "Trustee_Question6",
-  "Trustee_Question7",
-  "Trustee_Question8",
-  "Trustee_Question9",
-  "Trustee_Question10",
-  "Trustee_Question11",
-  "Trustee_Question12",
-  "Trustee_Question13",
-  "DateOfApprovalAndEntry_Trustee",
-  "TrusteeApprovedOrDenied",
-  "TrusteeEligible",
-  "TrusteeDenialReasons",
-  "Warden_TrusteeSignaturesAcquired",
-  "Warden_TrusteeSignaturesAcquiredDate",
-  "ContractMonitor_TrusteeSignaturesAcquired",
-  "ContractMonitor_TrusteeSignaturesAcquiredDate",
-  "AC_TrusteeSignaturesAcquired",
-  "AC_TrusteeSignaturesAcquiredDate",
-  "ChiefCounselorFinalizingForm",
-  "TrusteeChecklistComplete",
-  "DateOfFinalApprovalAndEntry",
-  "LastModifiedDate",
-  "UpdatedFields",
-  "SummaryTrusteeEverConvictedOfFirstDegreeMurder",
-  "SummaryTrusteeServingLifeSentence",
-  "SummaryTrusteeMoreThan10YearRemaining",
-  "SummaryTrusteeAllNoTrusteeCompleted",
-];
-
 function processRecord(
   opportunityType: OpportunityType,
   personRecordKey: string,
@@ -326,6 +163,7 @@ function processRecord(
 
   // Set flag to use dcaf vs rcaf helpers
   const isDcaf = opportunityType === "usTnInitialClassification2026Policy";
+  const isRcafV2 = opportunityType.includes("V2");
 
   const formUpdateData = updateRecord.data ?? {};
 
@@ -355,7 +193,8 @@ function processRecord(
   out.state_code = "US_TN";
   // slice off the leading us_tn_
   out.OFFENDERID = personRecordKey.slice(6);
-  out.ClassificationType = isDcaf ? "DCAF" : "RCAF";
+  // eslint-disable-next-line no-nested-ternary
+  out.ClassificationType = isDcaf ? "DCAF" : isRcafV2 ? "RCAF_V2" : "RCAF";
   out.AssessmentDate = assessmentDate.toISOString().split("T")[0];
   out.LastModifiedDate = lastModifiedDate.toISOString();
   out.LastModifiedBy = lastModifiedBy;
@@ -365,12 +204,15 @@ function processRecord(
       out.ClassificationFormType = "Initial";
       break;
     case "usTnAnnualReclassification2026Policy":
+    case "usTnAnnualReclassification2026PolicyV2":
       out.ClassificationFormType = "Annual";
       break;
     case "usTnCustodyLevelDowngrade2026Policy":
+    case "usTnCustodyLevelDowngrade2026PolicyV2":
       out.ClassificationFormType = "Downgrade";
       break;
     case "usTnSpecialCustodyLevelUpgrade2026Policy":
+    case "usTnSpecialCustodyLevelUpgrade2026PolicyV2":
       out.ClassificationFormType = "Upgrade";
       break;
     case "usTnSeriousMisconductUpgrade":
@@ -384,13 +226,17 @@ function processRecord(
   }
 
   // transform the record data into the fields stored in the update record
+  // eslint-disable-next-line no-nested-ternary
   const prefilled = isDcaf
     ? // @ts-expect-error We are handling the Dcaf separately from Rcaf via
       // the isDcaf flag, but telling the typesystem that will just be a lot of
       // extra duplicated code
       prefillDcafFormData(parsedBaseRecord.formInformation)
-    : // @ts-expect-error ditto
-      prefillRcafFormData(parsedBaseRecord.formInformation);
+    : isRcafV2
+      ? // @ts-expect-error ditto
+        prefillRcafFormDataV2(parsedBaseRecord.formInformation)
+      : // @ts-expect-error ditto
+        prefillRcafFormData(parsedBaseRecord.formInformation);
 
   const combinedRecord = {
     ...parsedBaseRecord.formInformation,
@@ -405,11 +251,15 @@ function processRecord(
     if (value !== undefined) out[field] = value;
   });
 
+  // eslint-disable-next-line no-nested-ternary
   const derivedData = isDcaf
     ? // @ts-expect-error See note above
       deriveDcafFormData(combinedRecord)
-    : // @ts-expect-error See note above
-      deriveRcafFormData(combinedRecord);
+    : isRcafV2
+      ? // @ts-expect-error See note above
+        deriveRcafFormDataV2(combinedRecord)
+      : // @ts-expect-error See note above
+        deriveRcafFormData(combinedRecord);
 
   out.UpdatedFields = Object.keys(formUpdateData);
 
@@ -540,7 +390,6 @@ async function getDownloadOnlyDocs(db: Firestore) {
     const [baseRecordDoc, personRecordDoc, formUpdateDoc] = await Promise.all([
       db.collection(collectionName).doc(personFirestoreKey).get(),
       db.collection("residents").doc(personFirestoreKey).get(),
-      // db.doc(formUpdatePath).get(),
       db
         .collection("clientUpdatesV2")
         .doc(personFirestoreKey)
@@ -592,30 +441,20 @@ async function getDownloadOnlyDocs(db: Firestore) {
 async function getUpdatedRecords() {
   const db = firestore();
 
-  // Find updates to forms associated with these opportuinities
-  const entries = await getFormUpdateDocs(db, "usTnTrusteeTransfer");
-  entries.push(
-    ...(await getFormUpdateDocs(db, "usTnSeriousMisconductUpgrade")),
-  );
-  entries.push(...(await getFormUpdateDocs(db, "usTnBiannualOther")));
-  entries.push(
-    ...(await getFormUpdateDocs(
-      db,
-      "usTnSpecialCustodyLevelUpgrade2026Policy",
-    )),
-  );
-  entries.push(
-    ...(await getFormUpdateDocs(db, "usTnAnnualReclassification2026Policy")),
-  );
-  entries.push(
-    ...(await getFormUpdateDocs(db, "usTnCustodyLevelDowngrade2026Policy")),
-  );
-  entries.push(
-    ...(await getFormUpdateDocs(db, "usTnInitialClassification2026Policy")),
-  );
-
   // Find instances where the form was downloaded without being modified in the last day
-  entries.push(...(await getDownloadOnlyDocs(db)));
+  const entries = await getDownloadOnlyDocs(db);
+
+  // Find updates to forms associated with these opportunities
+  for (const opportunityType of Object.keys(OPP_TYPE_TO_COLLECTION)) {
+    // We are purposefully awaiting in a loop. There are only a few collections
+    // to check and this prevents us from opening a large number of connections
+    // all at once.
+
+    entries.push(
+      // eslint-disable-next-line no-await-in-loop
+      ...(await getFormUpdateDocs(db, opportunityType as OpportunityType)),
+    );
+  }
 
   return entries;
 }
