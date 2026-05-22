@@ -32,6 +32,7 @@ import {
   FeedbackVoteValue,
   PostMeetingProcessingStatus,
 } from "~@meetings/prisma/client";
+import * as meetingsTasks from "~@meetings/tasks";
 import {
   mockCloudTasksClient,
   testkit,
@@ -59,6 +60,7 @@ function setUSNEStaffFeedback(enabled: boolean) {
     version: 1,
     showTranscriptions: true,
     staffFeedbackEnabled: enabled,
+    audioPlaybackEnabled: enabled,
     audioTTLDays: 30,
     transcriptTTLDays: 30,
     meetingTypes: [],
@@ -107,6 +109,7 @@ describe("meeting router", () => {
         currentFeedbackVote: null,
         validationErrorType: null,
         transcriptDeletedAt: null,
+        audioUrl: null,
         transcription: {
           confidence: 0.95,
           summary: "This is a sample summary of the meeting.",
@@ -140,6 +143,7 @@ describe("meeting router", () => {
         version: 1,
         showTranscriptions: false,
         staffFeedbackEnabled: false,
+        audioPlaybackEnabled: false,
         audioTTLDays: 30,
         transcriptTTLDays: 30,
         meetingTypes: [],
@@ -172,6 +176,7 @@ describe("meeting router", () => {
           currentFeedbackVote: null,
           validationErrorType: null,
           transcriptDeletedAt: null,
+          audioUrl: null,
           transcription: undefined,
         });
       } finally {
@@ -338,6 +343,90 @@ describe("meeting router", () => {
         "Employment - New: Client reported new job opportunity",
         "Legal - Change: Upcoming court date next week",
       ]);
+    });
+
+    describe("audioUrl", () => {
+      function setUSNEAudioPlayback(enabled: boolean) {
+        AGENCY_CONFIGS["US_NE"] = {
+          baseVersion: 1,
+          name: "Nebraska",
+          stateCode: "US_NE",
+          version: 1,
+          showTranscriptions: true,
+          staffFeedbackEnabled: false,
+          audioPlaybackEnabled: enabled,
+          audioTTLDays: 30,
+          transcriptTTLDays: 30,
+          meetingTypes: [],
+          keywords: [],
+          glossary: {},
+          rules: [],
+          outputs: [],
+        };
+      }
+
+      afterEach(() => {
+        delete AGENCY_CONFIGS["US_NE"];
+      });
+
+      test("Should return audioUrl: null when audioPlaybackEnabled is false", async () => {
+        setUSNEAudioPlayback(false);
+        await testPrismaClient.meeting.update({
+          where: { id: fakeActiveMeeting.id },
+          data: { finalRecordingGCSPath: "meeting-1/final.m4a" },
+        });
+
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeActiveMeeting.id,
+        });
+
+        expect(result.audioUrl).toBeNull();
+      });
+
+      test("Should return audioUrl: null when finalRecordingGCSPath is null", async () => {
+        setUSNEAudioPlayback(true);
+
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeActiveMeeting.id,
+        });
+
+        expect(result.audioUrl).toBeNull();
+      });
+
+      test("Should return audioUrl: null when audio has been deleted", async () => {
+        setUSNEAudioPlayback(true);
+        await testPrismaClient.meeting.update({
+          where: { id: fakeActiveMeeting.id },
+          data: {
+            finalRecordingGCSPath: "meeting-1/final.m4a",
+            audioDeletedAt: new Date("2026-01-01"),
+          },
+        });
+
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeActiveMeeting.id,
+        });
+
+        expect(result.audioUrl).toBeNull();
+      });
+
+      test("Should return a signed audioUrl when enabled and recording exists", async () => {
+        setUSNEAudioPlayback(true);
+        await testPrismaClient.meeting.update({
+          where: { id: fakeActiveMeeting.id },
+          data: { finalRecordingGCSPath: "meeting-1/final.m4a" },
+        });
+        vi.spyOn(
+          meetingsTasks,
+          "getSignedUrlForRecording",
+        ).mockResolvedValueOnce("https://signed.example.com/audio.m4a");
+
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeActiveMeeting.id,
+        });
+
+        expect(result.audioUrl).toBe("https://signed.example.com/audio.m4a");
+      });
     });
   });
 

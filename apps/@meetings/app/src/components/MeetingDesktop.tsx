@@ -27,6 +27,8 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
+import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
+
 import { MeetingDetails, Person, PersonType } from "../common/types";
 import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
 import { BulletListTab } from "../components/MeetingDetailTabs";
@@ -41,6 +43,7 @@ import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
 import { formatMeetingDuration, formatMeetingStartDate } from "../utils/format";
 import { ActionItemsTab } from "./ActionItemsTab";
+import AudioPlayer from "./AudioPlayer";
 import Header from "./Header";
 
 type Props = {
@@ -59,6 +62,7 @@ const MeetingDesktop = ({
   showTranscription = false,
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
+  const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const { email: currentUserEmail } = useUserContext();
   const isMeetingCreator = currentUserEmail === meetingDetails.staffEmail;
 
@@ -120,19 +124,42 @@ const MeetingDesktop = ({
             </View>
           </View>
 
-          <View className="gap-3 py-6 pr-10">
-            <Typography className="font-libre-baskerville text-3xl font-bold text-primary">
-              Meeting: {meetingDate}
-            </Typography>
-            <View className="flex flex-row items-center gap-1">
-              <MeetingTypeTag type={meetingDetails.meetingType} />
-              <ClockIcon className="size-4 stroke-tertiary" />
-              <Typography className="text-secondary">
-                {time}
-                {duration ? ` • ${duration}` : ""} • {meetingDetails.staffEmail}
+          <View className="flex-row items-start justify-between gap-3 py-6 pr-10">
+            <View className="flex-1 gap-3">
+              <Typography className="font-libre-baskerville text-3xl font-bold text-primary">
+                Meeting: {meetingDate}
               </Typography>
+              <View className="flex flex-row items-center gap-1">
+                <MeetingTypeTag type={meetingDetails.meetingType} />
+                <ClockIcon className="size-4 stroke-tertiary" />
+                <Typography className="text-secondary">
+                  {time}
+                  {duration ? ` • ${duration}` : ""} •{" "}
+                  {meetingDetails.staffEmail}
+                </Typography>
+              </View>
             </View>
+            {meetingDetails.audioUrl && !isPlayerVisible && (
+              <TouchableOpacity
+                onPress={() => setIsPlayerVisible(true)}
+                className="flex-row items-center gap-1.5 rounded-full bg-brand px-4 py-3"
+              >
+                <PlaySvg className="size-4 fill-white" />
+                <Typography className="text-sm font-medium text-white">
+                  Play meeting
+                </Typography>
+              </TouchableOpacity>
+            )}
           </View>
+
+          {meetingDetails.audioUrl && isPlayerVisible && (
+            <View className="pb-4 pr-10">
+              <AudioPlayer
+                url={meetingDetails.audioUrl}
+                onClose={() => setIsPlayerVisible(false)}
+              />
+            </View>
+          )}
 
           <View className="w-full flex-row items-center justify-between pb-4 pr-14">
             <View className="flex-1">

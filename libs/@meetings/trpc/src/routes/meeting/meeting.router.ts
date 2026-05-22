@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import path from "node:path";
+
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
@@ -25,6 +27,7 @@ import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import {
   deleteRecordingFiles,
   getSignedUrlForNewRecording,
+  getSignedUrlForRecording,
   MinuteSectionSchema,
   StaffFeedbackOutputSchema,
 } from "~@meetings/tasks";
@@ -66,8 +69,12 @@ export const meetingRouter = router({
               staffFeedbackPipelineRunId: true,
               postMeetingProcessingStatus: true,
               durationMs: true,
+              recordingsFolderPath: true,
               transcriptDeletedAt: true,
               staffEmail: true,
+              recordingsGCSBucket: true,
+              finalRecordingGCSPath: true,
+              audioDeletedAt: true,
               meetingType: true,
               transcriptions: {
                 orderBy: {
@@ -122,6 +129,8 @@ export const meetingRouter = router({
           const stateConfig = AGENCY_CONFIGS[stateCode];
 
           const includeTranscription = stateConfig?.showTranscriptions ?? true;
+          const supportsAudioPlayback =
+            stateConfig?.audioPlaybackEnabled ?? false;
           const staffFeedbackEnabled =
             stateConfig?.staffFeedbackEnabled ?? false;
 
@@ -156,12 +165,26 @@ export const meetingRouter = router({
                 })
               : null;
 
+          const audioUrl =
+            supportsAudioPlayback &&
+            meeting.finalRecordingGCSPath &&
+            !meeting.audioDeletedAt
+              ? await getSignedUrlForRecording(
+                  meeting.recordingsFolderPath,
+                  meeting.recordingsGCSBucket,
+                  path.basename(meeting.finalRecordingGCSPath),
+                )
+              : null;
+
           return {
             ..._.omit(meeting, [
               "transcriptions",
               "staffFeedback",
               "staffFeedbackGeneratedAt",
               "staffFeedbackPipelineRunId",
+              "recordingsGCSBucket",
+              "finalRecordingGCSPath",
+              "audioDeletedAt",
             ]),
             actionItems:
               validateJsonField(meeting.actionItems, z.array(z.string())) || [],
@@ -190,6 +213,7 @@ export const meetingRouter = router({
               ? meeting.transcriptions[0] || null
               : undefined,
             validationErrorType: pipelineValidationErrorType,
+            audioUrl,
           };
         } catch (e) {
           if (

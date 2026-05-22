@@ -21,6 +21,7 @@ import React, { useRef, useState } from "react";
 import {
   Alert,
   ImageBackground,
+  Platform,
   Share,
   TouchableOpacity,
   useWindowDimensions,
@@ -37,6 +38,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
+
 import { MeetingDetails, Person, PersonType } from "../common/types";
 import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
 import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
@@ -51,9 +54,11 @@ import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
 import { formatMeetingDuration, formatMeetingStartDate } from "../utils/format";
 import { ActionItemsTab } from "./ActionItemsTab";
+import AudioPlayer from "./AudioPlayer";
 import MeetingNotesSheet from "./MeetingNotesSheet";
 
 const HEADER_HEIGHT = 64;
+const AUDIO_PLAYER_HEIGHT = 72;
 
 type Props = {
   meetingId: string;
@@ -73,6 +78,15 @@ const MeetingMobile = ({
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
+  const [isPlayerVisible, setIsPlayerVisible] = useState(false);
+  const meetingAudioExtension = meetingDetails.audioUrl?.split(".").at(-1);
+  const showPlayButton =
+    !!meetingDetails.audioUrl &&
+    !isPlayerVisible &&
+    (Platform.OS === "ios" ? meetingAudioExtension !== "webm" : true); // ios doesn't support webm
+  const playButtonAreaHeight = insets.bottom + 76;
+  const audioOffset =
+    !!meetingDetails.audioUrl && isPlayerVisible ? AUDIO_PLAYER_HEIGHT : 0;
   const { email: currentUserEmail } = useUserContext();
   const isMeetingCreator = currentUserEmail === meetingDetails.staffEmail;
   const scrollY = useSharedValue(0);
@@ -83,14 +97,21 @@ const MeetingMobile = ({
     scrollY.value = event.contentOffset.y;
   });
 
-  const headerStyle = useAnimatedStyle(() => ({
-    height: interpolate(
+  const headerStyle = useAnimatedStyle(() => {
+    const baseHeight = interpolate(
       scrollY.value,
       [0, 15, 35, 55],
       [insets.top + 168, insets.top + 148, insets.top + 120, insets.top + 108],
       "clamp",
-    ),
-  }));
+    );
+    const playerOffsetAtScroll = interpolate(
+      scrollY.value,
+      [50, 55],
+      [0, audioOffset],
+      "clamp",
+    );
+    return { height: baseHeight + playerOffsetAtScroll };
+  });
 
   const avatarStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY.value, [0, 25], [1, 0], "clamp"),
@@ -183,12 +204,22 @@ const MeetingMobile = ({
   }));
 
   const bottomTabsStyle = useAnimatedStyle(() => ({
-    height: interpolate(scrollY.value, [50, 55], [44, 0], "clamp"),
+    height: interpolate(
+      scrollY.value,
+      [50, 55],
+      [44 + audioOffset, 0],
+      "clamp",
+    ),
     opacity: interpolate(scrollY.value, [50, 55], [1, 0], "clamp"),
   }));
 
   const topTabsStyle = useAnimatedStyle(() => ({
-    height: interpolate(scrollY.value, [50, 55], [0, 44], "clamp"),
+    height: interpolate(
+      scrollY.value,
+      [50, 55],
+      [0, 44 + audioOffset],
+      "clamp",
+    ),
     opacity: interpolate(scrollY.value, [50, 55], [0, 1], "clamp"),
   }));
 
@@ -288,6 +319,14 @@ const MeetingMobile = ({
 
         <View className="flex flex-col">
           <Animated.View style={[topTabsStyle]}>
+            {meetingDetails.audioUrl && isPlayerVisible && (
+              <View className="pb-4">
+                <AudioPlayer
+                  url={meetingDetails.audioUrl}
+                  onClose={() => setIsPlayerVisible(false)}
+                />
+              </View>
+            )}
             <MeetingTabs
               activeTab={activeTab}
               setActiveTab={setActiveTab}
@@ -337,6 +376,14 @@ const MeetingMobile = ({
         style={[bottomViewStyles]}
       >
         <Animated.View className="px-4" style={[bottomTabsStyle]}>
+          {meetingDetails.audioUrl && isPlayerVisible && (
+            <View className="pb-4">
+              <AudioPlayer
+                url={meetingDetails.audioUrl}
+                onClose={() => setIsPlayerVisible(false)}
+              />
+            </View>
+          )}
           <MeetingTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
@@ -350,6 +397,9 @@ const MeetingMobile = ({
           onScroll={scrollHandler}
           className="flex flex-1 flex-col gap-3 px-4"
           contentContainerClassName="grow"
+          contentContainerStyle={{
+            paddingBottom: showPlayButton ? playButtonAreaHeight : 0,
+          }}
           scrollEventThrottle={16}
         >
           <View className="mx-auto mt-4 w-full max-w-[960px] flex-1">
@@ -393,6 +443,23 @@ const MeetingMobile = ({
               )}
           </View>
         </Animated.ScrollView>
+
+        {showPlayButton && (
+          <View
+            className="absolute inset-x-0 items-center"
+            style={{ bottom: insets.bottom + 16 }}
+          >
+            <TouchableOpacity
+              onPress={() => setIsPlayerVisible(true)}
+              className="flex-row items-center gap-2 rounded-full bg-brand px-4 py-3"
+            >
+              <PlaySvg className="size-4 fill-on-brand" />
+              <Typography className="text-base font-semibold text-on-brand">
+                Play meeting
+              </Typography>
+            </TouchableOpacity>
+          </View>
+        )}
       </Animated.View>
       <DraftCaseNoteSheet
         meetingId={meetingId}

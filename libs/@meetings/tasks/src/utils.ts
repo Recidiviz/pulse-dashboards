@@ -72,6 +72,32 @@ export async function getSignedUrlForNewRecording(
   return url;
 }
 
+export async function getSignedUrlForRecording(
+  folderName: string,
+  bucketName: string,
+  fileName: string,
+): Promise<string> {
+  if (isLocalMode()) {
+    const host = process.env["HOST"] ?? "localhost";
+    const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;
+    const serverUrl = `http://${host}:${port}`;
+    return `${serverUrl}/stream-audio/${folderName}/${fileName}`;
+  }
+
+  const filePath = `${folderName}/${fileName}`;
+
+  const storage = new Storage();
+  const [url] = await storage
+    .bucket(bucketName)
+    .file(filePath)
+    .getSignedUrl({
+      version: "v4",
+      action: "read",
+      expires: Date.now() + 60 * 60 * 1000, // 1 hour
+    });
+  return url;
+}
+
 export async function deleteRecordingFiles(
   bucketName: string,
   folderPath: string,

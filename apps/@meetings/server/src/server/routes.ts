@@ -219,6 +219,60 @@ export function registerTaskRoutes(app: FastifyInstance) {
     },
   });
 
+  // Serve audio files from local storage in local mode
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "GET",
+    url: "/stream-audio/:meetingId/:filename",
+    schema: {
+      params: z.object({
+        meetingId: z.string(),
+        filename: z.string(),
+      }),
+    },
+    handler: async (req, reply) => {
+      if (!env.IS_LOCAL_MODE) {
+        return reply.status(400).send("Only available in local mode");
+      }
+
+      const { meetingId, filename } = req.params;
+      const localStorageDir =
+        env.LOCAL_STORAGE_DIR ?? path.join(os.tmpdir(), "meetings-local");
+      const fullPath = path.join(localStorageDir, meetingId, filename);
+
+      if (!fs.existsSync(fullPath)) {
+        return reply.status(404).send("Audio file not found");
+      }
+
+      const ext = path.extname(fullPath).slice(1);
+      const format = AUDIO_FORMATS[ext as keyof typeof AUDIO_FORMATS];
+      const contentType = format?.contentType ?? "application/octet-stream";
+
+      const { size } = fs.statSync(fullPath);
+      const rangeHeader = req.headers.range;
+
+      // Safari requires byte-range support to play audio — it uses Range requests
+      // to read metadata and to seek. Without honoring the range, it refuses to play.
+      if (rangeHeader) {
+        const [startStr, endStr] = rangeHeader.replace(/bytes=/, "").split("-");
+        const start = parseInt(startStr, 10);
+        const end = endStr ? parseInt(endStr, 10) : size - 1;
+        return reply
+          .status(206)
+          .header("Content-Type", contentType)
+          .header("Content-Range", `bytes ${start}-${end}/${size}`)
+          .header("Accept-Ranges", "bytes")
+          .header("Content-Length", end - start + 1)
+          .send(fs.createReadStream(fullPath, { start, end }));
+      }
+
+      return reply
+        .header("Content-Type", contentType)
+        .header("Accept-Ranges", "bytes")
+        .header("Content-Length", size)
+        .send(fs.createReadStream(fullPath));
+    },
+  });
+
   // TODO(#10219): Remove route-level authentication once this is moved to an internal-only service
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",

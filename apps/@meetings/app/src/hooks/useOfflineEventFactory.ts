@@ -105,6 +105,7 @@ export function useOfflineEventFactory() {
             transcriptDeletedAt: null,
             transcription: null,
             staffEmail: "",
+            audioUrl: null,
           },
         );
         break;

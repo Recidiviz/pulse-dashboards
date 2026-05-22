@@ -326,5 +326,15 @@ describe("config loader", () => {
       const config = loadAgencyConfig("US_DEMO");
       expect(config.staffFeedbackEnabled).toBe(true);
     });
+
+    test("audioPlaybackEnabled defaults to false for non-demo states", () => {
+      const config = loadAgencyConfig("US_NE");
+      expect(config.audioPlaybackEnabled).toBe(false);
+    });
+
+    test("audioPlaybackEnabled is true for US_DEMO", () => {
+      const config = loadAgencyConfig("US_DEMO");
+      expect(config.audioPlaybackEnabled).toBe(true);
+    });
   });
 });

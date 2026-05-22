@@ -76,6 +76,7 @@ export const getDetailsOutputSchema = z.object({
     })
     .nullable()
     .optional(),
+  audioUrl: z.string().nullable(),
 });
 
 export type GetDetailsOutput = z.infer<typeof getDetailsOutputSchema>;

@@ -59,6 +59,7 @@ describe("SpecialistCore", () => {
     version: 1,
     showTranscriptions: true,
     staffFeedbackEnabled: true,
+    audioPlaybackEnabled: false,
     audioTTLDays: 30,
     transcriptTTLDays: 30,
     meetingTypes: [],
