@@ -40,10 +40,10 @@ export const BLOCKED_DOWNLOAD_MISSING_FIELDS_TOOLTIP =
   "Please fill out CAF questions 1 thru 7 before downloading";
 
 export const BLOCKED_DOWNLOAD_MISSING_HEARING_DATE =
-  "Please specify a hearing date in the Classification Hearing Notice.";
+  "Please specify a hearing date in the Classification Hearing Notice";
 
 export const BLOCKED_DOWNLOAD_WRONG_VERSION_OLD =
-  "For June reclassifications and beyond, please use RCAF V2.";
+  "Use RCAF V2 for June reclassifications (dated May 26 or later)";
 
 export const BLOCKED_DOWNLOAD_WRONG_VERSION_NEW =
-  "For reclassifications prior to June, please do not use RCAF V2.";
+  "Use RCAF V2 for reclassifications prior to June (dated May 25 or earlier)";

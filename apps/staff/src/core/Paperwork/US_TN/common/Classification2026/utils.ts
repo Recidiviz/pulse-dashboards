@@ -27,6 +27,7 @@ export function cafBlockedDownloadTooltip(
   hearingDate: string | undefined,
 ): string | undefined {
   if (totalScore === undefined) return BLOCKED_DOWNLOAD_MISSING_FIELDS_TOOLTIP;
-  if (hearingDate === undefined) return BLOCKED_DOWNLOAD_MISSING_HEARING_DATE;
+  if (!hearingDate || hearingDate.length === 0)
+    return BLOCKED_DOWNLOAD_MISSING_HEARING_DATE;
   return undefined;
 }
