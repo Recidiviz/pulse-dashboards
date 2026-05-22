@@ -37,6 +37,7 @@ export interface DOCXFormInputProps<DraftData> {
   type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
   min?: React.InputHTMLAttributes<HTMLInputElement>["min"];
   onKeyDown?: React.DOMAttributes<HTMLInputElement>["onKeyDown"];
+  inputUpdateDelayMs?: number;
 }
 
 const StyledAutosizeInput = styled.span`
@@ -77,6 +78,7 @@ const StyledAutosizeInput = styled.span`
 const DOCXFormInput = observer(function FormInput<DraftData>({
   name,
   style,
+  inputUpdateDelayMs,
   ...props
 }: DOCXFormInputProps<DraftData>) {
   /*
@@ -88,6 +90,7 @@ const DOCXFormInput = observer(function FormInput<DraftData>({
     name,
     opportunityForm,
     props.type,
+    inputUpdateDelayMs,
   );
 
   const inputRef = useRef<HTMLInputElement>(null);

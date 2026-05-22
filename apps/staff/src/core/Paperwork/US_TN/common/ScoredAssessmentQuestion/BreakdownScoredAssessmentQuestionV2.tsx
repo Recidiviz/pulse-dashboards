@@ -103,6 +103,7 @@ const BreakdownRow = observer(function BreakdownRow({
             onKeyDown={(event) => {
               if (event.key === "-") event.preventDefault();
             }}
+            inputUpdateDelayMs={500}
           />
           {`  x ${multiplier} points`}
           {period === "0-6" && ` (-1 point if None)`}

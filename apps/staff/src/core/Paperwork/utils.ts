@@ -132,6 +132,7 @@ function useReactiveInput<
   name: string,
   form: FormBase<any>,
   inputType?: React.InputHTMLAttributes<HTMLInputElement>["type"],
+  inputUpdateDelayMs: number = REACTIVE_INPUT_UPDATE_DELAY,
 ): ReactiveInputReturnValue<E> {
   /*
     Hook which integrates a controlled input component and Firestore and MobX.
@@ -145,7 +146,7 @@ function useReactiveInput<
   const updateFirestoreRef = useRef(
     debounce((valueToStore) => {
       form.updateDraftData(name, valueToStore);
-    }, REACTIVE_INPUT_UPDATE_DELAY),
+    }, inputUpdateDelayMs),
   );
 
   const onChange = (event: React.ChangeEvent<E>) => {
