@@ -44,7 +44,7 @@ export const rcafAssessmentQuestionsV2 = [
     ],
   },
   {
-    title: "CLASS B OR C DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    title: "CLASS B OR C DISCIPLINARY REPORTS (COMPLETE ALL THAT APPLY)",
     type: "BREAKDOWNV2",
     sections: [
       {
@@ -58,7 +58,7 @@ export const rcafAssessmentQuestionsV2 = [
     ],
   },
   {
-    title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS (COMPLETE ALL THAT APPLY)",
     type: "BREAKDOWNV2",
     sections: [
       {
@@ -72,7 +72,7 @@ export const rcafAssessmentQuestionsV2 = [
     ],
   },
   {
-    title: "VIOLENT CLASS A DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    title: "VIOLENT CLASS A DISCIPLINARY REPORTS (COMPLETE ALL THAT APPLY)",
     type: "BREAKDOWNV2",
     sections: [
       {
