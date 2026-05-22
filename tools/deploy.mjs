@@ -185,10 +185,15 @@ if (deployEnv === "production") {
   let releaseType;
   let versionToIncrement;
   if (isCpDeploy) {
-    // Get the nearest annotated tag, so that if the minor version is updated and
-    // a CP is needed for a version with a lower minor, then the patch version
-    // is incremented for the correct minor
-    versionToIncrement = (await $`git describe --abbrev=0`).stdout.trim();
+    // Get the nearest annotated tag matching the release version pattern, so
+    // that if the minor version is updated and a CP is needed for a version
+    // with a lower minor, then the patch version is incremented for the
+    // correct minor. The --match filter skips unrelated annotated tags (e.g.
+    // reentry/v*) that would otherwise produce invalid semver input to inc().
+    const releaseTagPattern = "v[0-9]*.[0-9]*.[0-9]*";
+    versionToIncrement = (
+      await $`git describe --abbrev=0 --match ${releaseTagPattern}`
+    ).stdout.trim();
     releaseType = "patch";
   } else {
     versionToIncrement = latestReleaseVersion;
@@ -196,7 +201,14 @@ if (deployEnv === "production") {
   }
 
   // Increment the version
-  nextVersion = `v${inc(versionToIncrement, releaseType)}`;
+  const bumpedVersion = inc(versionToIncrement, releaseType);
+  if (!bumpedVersion) {
+    console.error(
+      `Could not increment ${versionToIncrement} as a ${releaseType} release. Aborting deploy.`,
+    );
+    process.exit(1);
+  }
+  nextVersion = `v${bumpedVersion}`;
 }
 
 // Display names for the services to be deployed
