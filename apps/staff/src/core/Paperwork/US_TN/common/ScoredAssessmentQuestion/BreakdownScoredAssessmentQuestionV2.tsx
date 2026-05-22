@@ -100,6 +100,9 @@ const BreakdownRow = observer(function BreakdownRow({
             type="number"
             min={0}
             style={{ minWidth: rem(spacing.lg) }}
+            onKeyDown={(event) => {
+              if (event.key === "-") event.preventDefault();
+            }}
           />
           {`  x ${multiplier} points`}
           {period === "0-6" && ` (-1 point if None)`}

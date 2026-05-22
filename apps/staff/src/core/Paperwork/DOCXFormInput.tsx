@@ -36,6 +36,7 @@ export interface DOCXFormInputProps<DraftData> {
   readOnly?: boolean;
   type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
   min?: React.InputHTMLAttributes<HTMLInputElement>["min"];
+  onKeyDown?: React.DOMAttributes<HTMLInputElement>["onKeyDown"];
 }
 
 const StyledAutosizeInput = styled.span`
