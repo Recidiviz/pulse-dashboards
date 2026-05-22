@@ -25,6 +25,7 @@ import {
   startTestEnv,
   testAllQueriesUnrestricted,
   testAllReadsForState,
+  testReadCustomTaskForState,
   testUserUpdateRead,
 } from "../utils";
 import {
@@ -164,4 +165,59 @@ describe("app = staff", () => {
       );
     },
   );
+
+  describe("clientUpdatesV2/{clientId}/custom_tasks/{taskId}", () => {
+    // The recursive rule on clientUpdatesV2 covers this subcollection; these
+    // tests confirm the stateCode-prefix policy still gates reads from it.
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([
+      ["TN", getTNUser],
+      ["ND", getNDUser],
+    ])(
+      "%s user can read a custom task on their own state's client",
+      async (userType, getUserContext) => {
+        await testReadCustomTaskForState(
+          getUserContext(testEnv).firestore(),
+          assertSucceeds,
+          `US_${userType}`,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([
+      ["TN", getTNUser, "ND"],
+      ["ND", getNDUser, "TN"],
+    ])(
+      "%s user cannot read a custom task on a cross-state client",
+      async (_userType, getUserContext, otherState) => {
+        await testReadCustomTaskForState(
+          getUserContext(testEnv).firestore(),
+          assertFails,
+          `US_${otherState}`,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("stateless user cannot read a custom task", async () => {
+      await testReadCustomTaskForState(
+        getStatelessUser(testEnv).firestore(),
+        assertFails,
+        "US_TN",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["TN"], ["ND"]])(
+      "Recidiviz user can read %s custom tasks from recidivizAllowedStates",
+      async (userState) => {
+        await testReadCustomTaskForState(
+          getRecidivizUser(testEnv).firestore(),
+          assertSucceeds,
+          `US_${userState}`,
+        );
+      },
+    );
+  });
 });

@@ -34,6 +34,8 @@ export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   usNeSupervisionTasks: "US_NE-supervisionTasks",
   usTxSupervisionTasks: "US_TX-supervisionTasks",
   clientFormUpdates: "clientFormUpdates",
+  // Intentionally snake_case to match the storage convention agreed in the DAS-365 thread.
+  customTasks: "custom_tasks",
 } as const;
 
 export type FirestoreCollectionName =

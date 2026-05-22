@@ -174,3 +174,47 @@ export async function testWriteToPersonalUpdateCollection(
 ) {
   await assertFn(setDoc(doc(db, PERSONAL_UPDATE_COLLECTION_NAME, email), {}));
 }
+
+/**
+ * Helpers exercising the `clientUpdatesV2/{clientId}/custom_tasks/{taskId}`
+ * subcollection. The existing recursive rule at `clientUpdatesV2/{clientId}/{document=**}`
+ * is supposed to cover this path, so these tests confirm the stateCode-prefix
+ * policy still applies once the new subcollection is in use.
+ */
+export async function testWriteToCustomTaskForState(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
+) {
+  await assertFn(
+    setDoc(
+      doc(
+        db,
+        "clientUpdatesV2",
+        `${stateCode}_someID`,
+        "custom_tasks",
+        "task123",
+      ),
+      {},
+    ),
+  );
+}
+
+export async function testReadCustomTaskForState(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
+  collectionsPrefix = "",
+) {
+  await assertFn(
+    getDoc(
+      doc(
+        db,
+        `${collectionsPrefix}clientUpdatesV2`,
+        `${stateCode}_someID`,
+        "custom_tasks",
+        "task123",
+      ),
+    ),
+  );
+}

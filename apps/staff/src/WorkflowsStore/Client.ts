@@ -52,6 +52,7 @@ import {
 } from "../utils/formatStrings";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
+import { CustomTasks } from "./Task/CustomTasks";
 import { SupervisionTasks } from "./Task/SupervisionTasks";
 import { SupervisionTaskInterface } from "./Task/types";
 import { JusticeInvolvedPerson, PersonType } from "./types";
@@ -92,6 +93,18 @@ const createClientSupervisionTasks: TaskFactory<Client> = (
   // but TS currently has no way of knowing that
   // @ts-expect-error
   return new SupervisionTasks(person.rootStore.currentTenantId, person);
+};
+
+/**
+ * Builds the per-client `CustomTasks` store when the `customTasks` feature
+ * variant is active for the current user. Mirrors `createClientSupervisionTasks`
+ * — gated behind a feature flag so the subscription only runs where the
+ * Added Tasks UI (DAS-424) is enabled.
+ */
+const createClientCustomTasks = (person: Client): CustomTasks | undefined => {
+  const { featureVariants } = person.rootStore.workflowsStore;
+  if (!featureVariants?.customTasks) return;
+  return new CustomTasks(person.rootStore, person);
 };
 
 export function isClient(
@@ -154,8 +167,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   milestonesMessageUpdatesSubscription?: MilestonesMessageUpdateSubscription<MilestonesMessage>;
 
+  customTasks?: CustomTasks;
+
   constructor(record: ClientRecord, rootStore: RootStore) {
     super(record, rootStore, createClientSupervisionTasks);
+
+    this.customTasks = createClientCustomTasks(this);
 
     if (
       rootStore.currentTenantId &&

@@ -263,7 +263,8 @@ beforeEach(() => {
 
 afterEach(() => {
   configure({ safeDescriptors: true });
-  window.localStorage.clear();
+  // Optional-chain guards against an unresolved test-pollution leak; see PR #13846.
+  window.localStorage.clear?.();
 
   // clean up any Mobx observers to avoid leaks
   if (testObserver) {

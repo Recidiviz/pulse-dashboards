@@ -27,6 +27,7 @@ import {
   startTestEnv,
   testWriteToCollectionsForStateWithStateCodePrefix,
   testWriteToCollectionsWithoutStateCodePrefix,
+  testWriteToCustomTaskForState,
   testWriteToPersonalUpdateCollection,
 } from "../utils";
 import {
@@ -267,5 +268,50 @@ describe("app = staff", () => {
       assertSucceeds,
       "user@us_tn.gov",
     );
+  });
+
+  describe("clientUpdatesV2/{clientId}/custom_tasks/{taskId}", () => {
+    // The recursive rule on clientUpdatesV2 covers this subcollection; these
+    // tests confirm the stateCode-prefix policy still gates writes to it.
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([
+      ["TN", getTNUser],
+      ["ND", getNDUser],
+      ["Recidiviz", getRecidivizUser],
+    ])(
+      "%s user can write to a custom task on their own state's client",
+      async (userType, getUserContext) => {
+        const stateCode = userType === "Recidiviz" ? "US_TN" : `US_${userType}`;
+        await testWriteToCustomTaskForState(
+          getUserContext(testEnv).firestore(),
+          assertSucceeds,
+          stateCode,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([
+      ["TN", getTNUser, "ND"],
+      ["ND", getNDUser, "TN"],
+    ])(
+      "%s user cannot write to a custom task on a cross-state client",
+      async (_userType, getUserContext, otherState) => {
+        await testWriteToCustomTaskForState(
+          getUserContext(testEnv).firestore(),
+          assertFails,
+          `US_${otherState}`,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("stateless user cannot write to a custom task", async () => {
+      await testWriteToCustomTaskForState(
+        getStatelessUser(testEnv).firestore(),
+        assertFails,
+        "US_TN",
+      );
+    });
   });
 });

@@ -72,6 +72,8 @@ import {
   AutoSnoozeUpdate,
   ClientAddressUpdate,
   ContactMethodType,
+  CustomTaskCreateInput,
+  CustomTaskUpdateInput,
   ExternalSystemRequestStatus,
   FormUpdate,
   ManualSnoozeUpdate,
@@ -327,6 +329,82 @@ export default class FirestoreStore {
     // This is the only place an update should be made to `clientUpdatesV2` without using
     // the `updateClientUpdatesV2` method
     return this.updateDocument(docRef, { ...update });
+  }
+
+  /**
+   * Returns a CollectionReference for the per-person `custom_tasks` subcollection
+   * at `clientUpdatesV2/{recordId}/custom_tasks`, honoring the current env prefix
+   * (DEMO_/DEMO2_).
+   */
+  customTasksCollection(recordId: string) {
+    return collection(
+      this.db,
+      collectionNameForCurrentEnv({ key: "clientUpdatesV2" }),
+      recordId,
+      FIRESTORE_GENERAL_COLLECTION_MAP.customTasks,
+    );
+  }
+
+  /**
+   * Creates a new custom task under `clientUpdatesV2/{recordId}/custom_tasks/{taskId}`.
+   * `taskId` is a client-generated UUID v4. `createdOn` is stamped with
+   * `serverTimestamp()`. Returns the new task id.
+   */
+  async createCustomTask(
+    recordId: string,
+    input: CustomTaskCreateInput,
+  ): Promise<string> {
+    const taskId = crypto.randomUUID();
+    const taskDocRef = this.doc(
+      { key: "clientUpdatesV2" },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.customTasks}/${taskId}`,
+    );
+
+    await this.updateClientUpdatesV2Document(recordId, taskDocRef, {
+      id: taskId,
+      title: input.title,
+      dueDate: input.dueDate,
+      createdOn: serverTimestamp(),
+      stateCode: recordId.slice(0, 5),
+    });
+
+    return taskId;
+  }
+
+  /**
+   * Partial-merge update for a custom task. Always stamps `updatedOn`.
+   * Callers are responsible for stamping `completedOn` on a completion
+   * transition, or passing it as `null` when reopening a completed task.
+   */
+  async updateCustomTask(
+    recordId: string,
+    taskId: string,
+    patch: CustomTaskUpdateInput,
+  ): Promise<void> {
+    const taskDocRef = this.doc(
+      { key: "clientUpdatesV2" },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.customTasks}/${taskId}`,
+    );
+
+    return this.updateClientUpdatesV2Document(recordId, taskDocRef, {
+      ...patch,
+      updatedOn: serverTimestamp(),
+    });
+  }
+
+  /**
+   * Soft-deletes a custom task by stamping `deletedOn`. The subscription
+   * filters these out server-side via `where("deletedOn", "==", null)`.
+   */
+  async softDeleteCustomTask(recordId: string, taskId: string): Promise<void> {
+    const taskDocRef = this.doc(
+      { key: "clientUpdatesV2" },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.customTasks}/${taskId}`,
+    );
+
+    return this.updateClientUpdatesV2Document(recordId, taskDocRef, {
+      deletedOn: serverTimestamp(),
+    });
   }
 
   async updateSupervisionTask(recordId: string, update: SupervisionTaskUpdate) {

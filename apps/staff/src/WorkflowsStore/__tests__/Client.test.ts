@@ -38,6 +38,18 @@ vi.mock("firebase/firestore", () => ({
   serverTimestamp: function serverTimestamp() {
     return "2023-06-12";
   },
+  // Stubbed so the value-import of `Timestamp` inside CustomTasks.ts resolves
+  // (used for `instanceof` checks and `Timestamp.now()` / `Timestamp.fromDate()`).
+  Timestamp: class TimestampStub {
+    static now() {
+      return new TimestampStub();
+    }
+    static fromDate(d: Date) {
+      const ts = new TimestampStub();
+      (ts as unknown as { _date: Date })._date = d;
+      return ts;
+    }
+  },
 }));
 vi.mock("../../FirestoreStore");
 

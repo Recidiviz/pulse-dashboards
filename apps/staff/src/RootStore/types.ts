@@ -117,6 +117,7 @@ export type FeatureVariant =
   | "usMiRestrictiveHousingV2Ineligible"
 
   //// Missouri
+  | "customTasks"
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
 
@@ -250,6 +251,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
+  customTasks: {},
   taskSnoozeReason: {},
   tasksCardLayout: {},
   tasksOneRowPerClient: {},
@@ -315,6 +317,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaSupervisionLevelDowngrade: {},
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         usIdTasksV2: {},
+        customTasks: { activeTenants: ["US_MO"] },
         tasksCardLayout: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
@@ -344,6 +347,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         tasksCardLayout: { activeTenants: ["US_MO"] },
         tasksPermasnooze: { activeTenants: ["US_MO"] },
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
+        customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
