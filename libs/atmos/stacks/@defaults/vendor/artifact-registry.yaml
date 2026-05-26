@@ -12,6 +12,11 @@ components:
             id: delete-untagged
             condition:
               tag_state: UNTAGGED
+          delete-old-images:
+            action: DELETE
+            id: delete-old-images
+            condition:
+              older_than: "63072000s"
           keep-minimum-versions:
             action: KEEP
             id: keep-minimum-versions
