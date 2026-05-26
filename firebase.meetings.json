@@ -35,6 +35,10 @@
           {
             "key": "Pragma",
             "value": "no-cache"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
           }
         ]
       }

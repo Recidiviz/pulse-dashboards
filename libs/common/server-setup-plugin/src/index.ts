@@ -118,6 +118,14 @@ export function buildCommonServer<TRouter extends AnyRouter>(
     credentials: true,
   });
 
+  server.addHook("onSend", (_request, reply, _payload, done) => {
+    reply.header(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains",
+    );
+    done();
+  });
+
   return server;
 }
 
