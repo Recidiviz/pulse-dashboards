@@ -1,7 +1,8 @@
 {
   "detectionRuleUUIDs": ["c414b0c0-f92f-4ebb-ba37-2e928b7be924"],
   "fileExclusionList": ["*.test.*"],
-    "tokenExclusionList": [
-    ".*@developer\\.gserviceaccount\\.com"
+  "tokenExclusionList": [
+    ".*@developer\\.gserviceaccount\\.com",
+    ".*@.*\\.iam\\.gserviceaccount\\.com"
   ]
 }

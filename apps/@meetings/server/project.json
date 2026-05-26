@@ -194,33 +194,48 @@
     "migrate-preview-db": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "gcloud run jobs deploy m-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/meetings/meetings-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_USER=$DATABASE_USER,DATABASE_PASSWORD=$DATABASE_PASSWORD,DATABASE_INSTANCE_CONNECTION_NAME=$DATABASE_INSTANCE_CONNECTION_NAME,DATABASE_STATE_CODES=$DATABASE_STATE_CODES",
+        "command": "gcloud run jobs deploy m-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/meetings/meetings-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --clear-secrets --set-env-vars \"^|^DATABASE_USER=$DATABASE_USER|DATABASE_PASSWORD=$DATABASE_PASSWORD|DATABASE_INSTANCE_CONNECTION_NAME=$DATABASE_INSTANCE_CONNECTION_NAME|DATABASE_STATE_CODES=$DATABASE_STATE_CODES\"",
         "args": [
           "--project recidiviz-dashboard-staging",
-          "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
-          "--service-account meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+          "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:m-db-preview-$VERSION",
+          "--service-account meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com",
+          "--task-timeout 300s"
         ]
       }
     },
     "deploy-preview-app": {
       "executor": "@nx-extend/gcp-cloud-run:deploy",
-      "dependsOn": ["migrate-db"],
+      "dependsOn": ["migrate-preview-db"],
       "options": {
         "name": "m-preview-$VERSION",
         "region": "us-central1",
         "project": "recidiviz-dashboard-staging",
         "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/meetings/meetings-server-preview:$VERSION",
-        "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
+        "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:m-db-preview-$VERSION",
         "memory": "512Mi",
         "envVars": {
           "AUTH0_DOMAIN": "$AUTH0_DOMAIN",
           "AUTH0_AUDIENCE": "$AUTH0_AUDIENCE",
-          "SENTRY_DSN": "$SENTRY_DSN",
           "SENTRY_ENV": "$SENTRY_ENV",
-          "IMPORT_BUCKET_ID": "$IMPORT_BUCKET_ID",
           "DATABASE_USER": "$DATABASE_USER",
           "DATABASE_PASSWORD": "$DATABASE_PASSWORD",
-          "DATABASE_INSTANCE_CONNECTION_NAME": "$DATABASE_INSTANCE_CONNECTION_NAME"
+          "DATABASE_INSTANCE_CONNECTION_NAME": "$DATABASE_INSTANCE_CONNECTION_NAME",
+          "AUDIO_RECORDINGS_BUCKET_NAME": "$AUDIO_RECORDINGS_BUCKET_NAME",
+          "NODE_ENV": "production",
+          "DEPLOY_ENV": "preview",
+          "CLOUD_TASKS_PROJECT": "recidiviz-dashboard-staging",
+          "CLOUD_TASKS_LOCATION": "us-central1",
+          "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL": "meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com",
+          "STITCHING_TASK_QUEUE_NAME": "audio-stitching-task-queue",
+          "STITCHING_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/stitch-audio",
+          "TRANSCRIPTION_TASK_QUEUE_NAME": "transcription-task-queue",
+          "TRANSCRIPTION_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/transcribe-audio",
+          "NOTETAKING_TASK_QUEUE_NAME": "notetaking-task-queue",
+          "NOTETAKING_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/process-notetaking",
+          "ASSEMBLYAI_API_KEY": "$ASSEMBLYAI_API_KEY",
+          "DEEPGRAM_API_KEY": "$DEEPGRAM_API_KEY",
+          "RECIDIVIZ_DATA_API_URL": "$RECIDIVIZ_DATA_API_URL",
+          "GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE": "$GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE"
         },
         "serviceAccount": "meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com"
       }
