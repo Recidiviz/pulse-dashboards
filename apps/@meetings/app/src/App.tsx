@@ -94,6 +94,13 @@ const App = () => {
           <Auth0Provider
             domain={config.domain as string}
             clientId={config.clientId as string}
+            // useRefreshTokens and cacheLocation are web-only props (WebAuth0Options),
+            // not in the shared Auth0Options type, but read by WebAuth0Client on web
+            // and safely ignored on native.
+            {...{
+              useRefreshTokens: true,
+              cacheLocation: "localstorage",
+            }}
           >
             <AppErrorBoundary>
               <AppNavigator />

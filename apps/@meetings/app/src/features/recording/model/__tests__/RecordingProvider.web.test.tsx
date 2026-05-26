@@ -51,6 +51,12 @@ jest.mock("../../ui/MeetingModal", () => ({
   MeetingModal: () => null,
 }));
 jest.mock("../store");
+jest.mock("~@meetings/app/context/UserContext", () => ({
+  useUserContext: jest.fn().mockReturnValue({
+    getCredentials: jest.fn().mockResolvedValue({}),
+    isSkipAuthUser: false,
+  }),
+}));
 // Prevent jest-expo from resolving the barrel to model.native.tsx
 jest.mock("../RecordingProvider", () => {
   const {

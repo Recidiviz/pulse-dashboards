@@ -16,12 +16,14 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react-native";
-import { createContext, useRef } from "react";
+import { createContext, useEffect, useRef } from "react";
 
 import { getPersonType, Person } from "~@meetings/app/common/types";
+import { useUserContext } from "~@meetings/app/context/UserContext";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import { useUploadSegment } from "~@meetings/app/shared/api";
+import { env } from "~@meetings/app/shared/config";
 import { extractError } from "~@meetings/app/shared/lib/extractError";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
@@ -33,10 +35,13 @@ import { useWebAudioRecorder } from "./useAudioRecorder.web";
 import { useDurationTimer } from "./useDurationTimer";
 import { useInitialization } from "./useInitialization.web";
 
+const TOKEN_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
 export const RecordingContext = createContext<RecordingWeb | null>(null);
 
 export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const uploadSegment = useUploadSegment();
+  const { getCredentials, isSkipAuthUser } = useUserContext();
 
   const {
     status,
@@ -74,6 +79,31 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const isRecording = status && status === "recording";
   const isPaused =
     status && ["paused", "stopping", "discarding"].includes(status);
+
+  // Proactively refresh the Auth0 token while a recording is active so it is
+  // always fresh when the user clicks "End Meeting". Auth0 refresh tokens
+  // (enabled via useRefreshTokens on Auth0Provider) handle expiry correctly,
+  // but this ensures the token is renewed ahead of time rather than lazily on
+  // the endMeeting call itself.
+  useEffect(() => {
+    if (!isRecording || isSkipAuthUser) return;
+
+    const refresh = async () => {
+      try {
+        await getCredentials(undefined, undefined, {
+          audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
+        });
+      } catch (err) {
+        Sentry.logger.warn("recording.token_refresh.error", {
+          error: extractError(err),
+        });
+      }
+    };
+
+    refresh();
+    const interval = setInterval(refresh, TOKEN_REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [isRecording, isSkipAuthUser, getCredentials]);
 
   const recorder = useWebAudioRecorder({
     onStop: () => setStatus("paused"),
