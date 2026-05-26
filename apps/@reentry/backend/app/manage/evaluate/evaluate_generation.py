@@ -30,12 +30,8 @@ from ._html_utils import write_html_report
 from .markdown_evals import (
     actionable,
     addressed_to_client,
-    citations_source_is_transcript,
     citations_text_verified,
-    clarity,
-    no_judgments,
-    structure,
-    timeline,
+    grounded,
     tone,
 )
 
@@ -354,8 +350,6 @@ async def evaluate(output_config_file: str = "exported-config.yaml"):
 
         return {
             "markdown": action_plan.action_plan,
-            "gen_data": action_plan.messages,
-            "resources": action_plan.suggested_resources,
             "structured_plan": action_plan.structured_action_plan,
         }
 
@@ -364,13 +358,9 @@ async def evaluate(output_config_file: str = "exported-config.yaml"):
         data=dataset_name,
         evaluators=[
             addressed_to_client,
-            clarity,
-            actionable,
-            structure,
             tone,
-            timeline,
-            no_judgments,
-            citations_source_is_transcript,
+            actionable,
+            grounded,
             citations_text_verified,
         ],
         client=langsmith_client,
@@ -412,15 +402,11 @@ async def evaluate(output_config_file: str = "exported-config.yaml"):
 
 _SCORE_EVALUATORS = [
     "addressed_to_client",
-    "clarity",
-    "actionable",
-    "structure",
     "tone",
-    "timeline",
-    "no_judgments",
+    "actionable",
+    "grounded",
 ]
 _BINARY_EVALUATORS = [
-    "citations_source_is_transcript",
     "citations_text_verified",
 ]
 _ALL_EVALUATOR_KEYS = _SCORE_EVALUATORS + _BINARY_EVALUATORS
@@ -432,14 +418,10 @@ def _mean(values: list) -> float | None:
 
 _EVALUATOR_LABELS = {
     "addressed_to_client": "Addressed",
-    "clarity": "Clarity",
-    "actionable": "Actionable",
-    "structure": "Structure",
     "tone": "Tone",
-    "timeline": "Timeline",
-    "no_judgments": "No Judgments",
-    "citations_source_is_transcript": "Cite Source",
-    "citations_text_verified": "Cite Text",
+    "actionable": "Actionable",
+    "grounded": "Grounded",
+    "citations_text_verified": "Cite Source",
 }
 
 
@@ -580,12 +562,8 @@ async def _run_evaluations_gen(item: GenEvalItem) -> Dict[str, Any]:
     from .markdown_evals import (
         actionable,
         addressed_to_client,
-        citations_source_is_transcript,
         citations_text_verified,
-        clarity,
-        no_judgments,
-        structure,
-        timeline,
+        grounded,
         tone,
     )
 
@@ -609,13 +587,9 @@ async def _run_evaluations_gen(item: GenEvalItem) -> Dict[str, Any]:
     scores: Dict[str, Any] = {}
     for evaluator in [
         addressed_to_client,
-        clarity,
-        actionable,
-        structure,
         tone,
-        timeline,
-        no_judgments,
-        citations_source_is_transcript,
+        actionable,
+        grounded,
         citations_text_verified,
     ]:
         try:
@@ -720,7 +694,7 @@ def _write_html_report_gen(
                 "scores": {
                     k: {
                         "score": v.get("score"),
-                        "explanation": v.get("explanation"),
+                        "comment": v.get("comment"),
                     }
                     for k, v in entry.get("scores", {}).items()
                 },
@@ -985,7 +959,7 @@ _HTML_TEMPLATE_GEN = """<!DOCTYPE html>
     const scoreRows = allKeys.map(key => {
       const scoreData = d.scores[key] || {};
       const v = scoreData.score;
-      const expl = scoreData.explanation;
+      const expl = scoreData.comment;
       const label = LABELS[key];
       const isBinary = BINARY_EVALS.includes(key);
       const explHtml = expl ? `<div class="score-explanation">${esc(expl)}</div>` : '';

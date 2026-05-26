@@ -79,54 +79,8 @@ async def addressed_to_client(run: Run, example: Example):
     return {
         "key": "addressed_to_client",
         "score": int(score.one_to_ten_score),
-        "explanation": score.explanation,
+        "comment": score.explanation,
     }
-
-
-# The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the caseworker
-async def clarity(run: Run, example: Example):
-    prediction = run.outputs["markdown"]
-
-    # Data model
-    class GradeClarity(BaseModel):
-        """One to ten score for the clarity of the plan"""
-
-        explanation: str = Field(description="Explanation of the score")
-        one_to_ten_score: int = Field(
-            description="Plan is clear and actionable, from 1 to 10"
-        )
-
-    # LLM with function call
-    structured_llm_grader = eval_llm.with_structured_output(GradeClarity)
-
-    # Prompt
-    criterium = "clarity: The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the case manager. No step in the plan is without a time and an assignee."
-
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system_prompt),
-            ("human", "Action Plan: \n\n {prediction}"),
-        ]
-    )
-
-    grader = prompt | structured_llm_grader
-    score = await grader.with_retry(
-        stop_after_attempt=DEFAULT_MAX_RETRIES,
-        retry_if_exception_type=ERRORS_TO_RETRY_ON,
-    ).ainvoke(
-        {
-            "prediction": prediction,
-            "criteria": criterium,
-            "type_of_prompt": grade_prompt,
-        }
-    )
-
-    return {
-        "key": "clarity",
-        "score": int(score.one_to_ten_score),
-        "explanation": score.explanation,
-    }
-
 
 # Recommended steps should be actionable
 async def actionable(run: Run, example: Example):
@@ -145,13 +99,12 @@ async def actionable(run: Run, example: Example):
     structured_llm_grader = eval_llm.with_structured_output(GradeActionable)
 
     # Prompt
-    criterium = """actionable: In this plan, all steps should be precise and actionable: the docuemnt should include the name and contact information of the place to contact. The step should be precise and measurable
+    criterium = """actionable: Each action item or goal in the plan should be a concrete suggestion that comes with clear next steps the client can take. Vague goals without any defined steps should score low.
 
-    rejected examples: "Get treatment", "Establish a support network", "Find a job"
+    accepted examples: "Register for the 3-month outpatient treatment program at the community health center", "Apply to 5 jobs this week starting with the positions discussed in your intake"
+    rejected examples: "Find stable housing", "Work on your employment situation", "Build a support network"
 
-    accepted examples: "Register with XYZ  treatment center's 3-month outpatient treatment program", "Attend a support group meeting at the ABC community center every Tuesday at 7pm", "Apply to 5 jobs this week"
-
-    Rate this on a scale of 0-10. If all steps conform to this criteria, assign a 10, if none of them do assign a 0."""
+    Rate 0–10. If every item includes a clear next step for the client, assign 10; if none do, assign 0."""
 
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -175,60 +128,8 @@ async def actionable(run: Run, example: Example):
     return {
         "key": "actionable",
         "score": int(score.one_to_ten_score),
-        "explanation": score.explanation,
+        "comment": score.explanation,
     }
-
-
-# The action plan has the expected structure. We might need o rework this in case we split the action plan generation into multiple passes.
-async def structure(run: Run, example: Example):
-    prediction = run.outputs["markdown"]
-
-    # Data model
-    class GradeTone(BaseModel):
-        """One to ten score for the structure of the plan"""
-
-        explanation: str = Field(description="Explanation of the score")
-        one_to_ten_score: int = Field(
-            description="Plan is conform to the expected structure, from 1 to 10"
-        )
-
-    # LLM with function call
-    structured_llm_grader = eval_llm.with_structured_output(GradeTone)
-
-    # Prompt
-    criterium = """structure: The plan should have the following structure:
-    - Background: Describes briefly the history of the person’s situation and what this action plan is intended to do.
-    - Immediate needs: Which issues should be addressed urgently to create the stability necessary for success
-    - [Plans by section]: Each section should be specific to an area of needs or risks (e.g., housing, employment, etc.)
-    - Milestones: Milestones the case manager and client can check in on together to know whether it’s working / they’re on the right track
-    - Timeline: An enumeration week-by-week, then month-by-month after 2mo, of each of the steps the individual and their case manager should take along the path of the action plan
-    """
-
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system_prompt),
-            ("human", "Action Plan: \n\n {prediction}"),
-        ]
-    )
-
-    grader = prompt | structured_llm_grader
-    score = await grader.with_retry(
-        stop_after_attempt=DEFAULT_MAX_RETRIES,
-        retry_if_exception_type=ERRORS_TO_RETRY_ON,
-    ).ainvoke(
-        {
-            "prediction": prediction,
-            "criteria": criterium,
-            "type_of_prompt": grade_prompt,
-        }
-    )
-
-    return {
-        "key": "structure",
-        "score": int(score.one_to_ten_score),
-        "explanation": score.explanation,
-    }
-
 
 # The report has the expected tone: kind, supportive, down-to-earth (not false friendly), but objective tone.
 async def tone(run: Run, example: Example):
@@ -271,99 +172,8 @@ async def tone(run: Run, example: Example):
     return {
         "key": "tone",
         "score": int(score.one_to_ten_score),
-        "explanation": score.explanation,
+        "comment": score.explanation,
     }
-
-
-# The timeline is properly formed (no repetitions, all steps noted down, dates are in the right order…)
-async def timeline(run: Run, example: Example):
-    prediction = run.outputs["markdown"]
-
-    # Data model
-    class GradeTimeline(BaseModel):
-        """One to ten score for the timeline of the plan"""
-
-        explanation: str = Field(description="Explanation of the score")
-        one_to_ten_score: int = Field(
-            description="Timeline is properly formed, from 1 to 10"
-        )
-
-    # LLM with function call
-    structured_llm_grader = eval_llm.with_structured_output(GradeTimeline)
-
-    # Prompt
-    criterium = "The timeline is properly formed (no repetitions, all steps noted down, dates are in the right order… It should contain a week-by-week enumeration of the steps to take, then a month-by-month enumeration after 2 months. It should include all the steps outlined in the rest of the plan"
-
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system_prompt),
-            ("human", "Action Plan: \n\n {prediction}"),
-        ]
-    )
-
-    grader = prompt | structured_llm_grader
-    score = await grader.with_retry(
-        stop_after_attempt=DEFAULT_MAX_RETRIES,
-        retry_if_exception_type=ERRORS_TO_RETRY_ON,
-    ).ainvoke(
-        {
-            "prediction": prediction,
-            "criteria": criterium,
-            "type_of_prompt": grade_prompt,
-        }
-    )
-
-    return {
-        "key": "timeline",
-        "score": int(score.one_to_ten_score),
-        "explanation": score.explanation,
-    }
-
-
-# Not mention judgments or subjective statement
-async def no_judgments(run: Run, example: Example):
-    prediction = run.outputs["markdown"]
-
-    # Data model
-    class GradeJudgments(BaseModel):
-        """One to ten score for the absence of judgments in the plan"""
-
-        explanation: str = Field(description="Explanation of the score")
-        one_to_ten_score: int = Field(
-            description="Except in the notes and annotations, the plan has no subjective statements, from 1 to 10"
-        )
-
-    # LLM with function call
-    structured_llm_grader = eval_llm.with_structured_output(GradeJudgments)
-
-    # Prompt
-    criterium = "judgment: The plan should not mention judgments or subjective statement, except in the comments"
-
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system_prompt),
-            ("human", "Action Plan: \n\n {prediction}"),
-        ]
-    )
-
-    grader = prompt | structured_llm_grader
-    score = await grader.with_retry(
-        stop_after_attempt=DEFAULT_MAX_RETRIES,
-        retry_if_exception_type=ERRORS_TO_RETRY_ON,
-    ).ainvoke(
-        {
-            "prediction": prediction,
-            "criteria": criterium,
-            "type_of_prompt": grade_prompt,
-        }
-    )
-
-    return {
-        "key": "no_judgments",
-        "score": int(score.one_to_ten_score),
-        "explanation": score.explanation,
-    }
-
 
 # Helper function to extract all annotations from structured plan
 def _extract_all_annotations(structured_plan):
@@ -382,87 +192,68 @@ def _extract_all_annotations(structured_plan):
     return all_annotations
 
 
-# Check that citation sources reference the transcript/conversation
-async def citations_source_is_transcript(run: Run, example: Example):
-    structured_plan = run.outputs.get("structured_plan")
-
-    if not structured_plan:
-        # Fallback if structured plan is not available
-        return {"key": "citations_source_is_transcript", "score": 0}
-
-    # Extract all annotations
-    all_annotations = _extract_all_annotations(structured_plan)
-
-    # If no annotations, return perfect score (nothing to validate)
-    if not all_annotations:
-        return {"key": "citations_source_is_transcript", "score": 1}
-
-    # Check if all sources reference transcript or conversation
-    valid_sources = {"transcript", "conversation", "intake"}
-    invalid_annotations = []
-
-    for i, ann in enumerate(all_annotations):
-        source_lower = ann.source.lower()
-        if not any(valid_src in source_lower for valid_src in valid_sources):
-            invalid_annotations.append(
-                f"Citation {i+1}: Source='{ann.source}' (should reference transcript/conversation)"
-            )
-
-    # Calculate score: 1 if all valid, 0 if any invalid
-    score = 1 if len(invalid_annotations) == 0 else 0
-
-    return {"key": "citations_source_is_transcript", "score": score}
-
-
 # Verify that citation text extracts actually appear in the transcript
 async def citations_text_verified(run: Run, example: Example):
     structured_plan = run.outputs.get("structured_plan")
     messages = example.inputs.get("messages", [])
 
     if not structured_plan:
-        # Fallback if structured plan is not available
         return {"key": "citations_text_verified", "score": 0}
 
-    # Extract all annotations
     all_annotations = _extract_all_annotations(structured_plan)
 
-    # If no annotations, return perfect score (nothing to validate)
     if not all_annotations:
         return {"key": "citations_text_verified", "score": 1}
 
-    # Format annotations for LLM evaluation
-    annotations_text = "\n\n".join(
-        [
-            f'Citation {i+1}:\n- Source: {ann.source}\n- Location: {ann.source_location}\n- Text Extract: "{ann.source_text_extract}"'
-            for i, ann in enumerate(all_annotations)
-        ]
-    )
+    corpus = " ".join(
+        m.get("content", "") for m in messages if m.get("content")
+    ).lower()
 
-    # Data model
-    class GradeCitationVerification(BaseModel):
-        """Binary score for whether citation text extracts are accurate"""
+    failed = []
+    for i, ann in enumerate(all_annotations, 1):
+        if ann.source_text_extract.lower() not in corpus:
+            failed.append(f'Citation {i}: "{ann.source_text_extract}"')
+
+    score = 0 if failed else 1
+    comment = (
+        "All citation text extracts found in transcript."
+        if not failed
+        else f"Citations not found in transcript: {'; '.join(failed)}"
+    )
+    return {"key": "citations_text_verified", "score": score, "comment": comment}
+
+
+async def grounded(run: Run, example: Example):
+    prediction = run.outputs["markdown"]
+    messages = example.inputs.get("messages", [])
+
+    context = (
+        "# Intake conversation\n"
+        + "\n".join(
+            f"{m.get('role', 'unknown')}: {m.get('content', '')}"
+            for m in messages
+            if m.get("content")
+        )
+    ) if messages else "(no conversation provided)"
+
+    class GradeGrounded(BaseModel):
+        """Score for how factually grounded the action plan is in the intake conversation."""
 
         explanation: str = Field(description="Explanation of the score")
-        binary_score: int = Field(
-            description="1 if all citation text extracts are accurate, 0 otherwise"
-        )
+        one_to_ten_score: int = Field(description="Grounded score from 0 to 10")
 
-    # LLM with function call
-    structured_llm_grader = eval_llm.with_structured_output(GradeCitationVerification)
+    structured_llm_grader = eval_llm.with_structured_output(GradeGrounded)
 
-    # Prompt
-    criterium = """citations_text_verified: All citation text extracts must accurately reflect what appears in the transcript. Each "Text Extract" should either directly quote or accurately paraphrase content from the transcript messages. Partial citations are accepted, only factually incorrect ones should be reported.
+    criterium = """grounded: Every claim, recommendation, and detail in the action plan should be traceable to the client's actual intake conversation. The plan should not invent facts, assume circumstances not mentioned, or make generic recommendations unrelated to what this specific client shared.
 
-    For each citation listed, verify that the "Text Extract" can be traced to the transcript. The extract doesn't need to be a verbatim quote, but it should accurately represent what was said. If ALL citation text extracts are accurate and traceable to the transcript, assign a score of 1. If ANY citation text extract is fabricated, misquoted, or cannot be found in the transcript, assign a score of 0.
-    """
+Score 10 if every element of the plan is clearly grounded in the provided conversation.
+Score 0 if the plan reads as a generic template with little connection to the client's specific situation.
+Deduct points for each invented fact or recommendation that has no basis in the conversation."""
 
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),
-            (
-                "human",
-                "Transcript Messages: \n\n {transcript}\n\nCitations to Verify: \n\n {citations}",
-            ),
+            ("human", "Client input:\n\n{context}\n\nAction Plan:\n\n{prediction}"),
         ]
     )
 
@@ -472,15 +263,15 @@ async def citations_text_verified(run: Run, example: Example):
         retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
-            "transcript": str(messages),
-            "citations": annotations_text,
+            "context": context,
+            "prediction": prediction,
             "criteria": criterium,
-            "type_of_prompt": binary_prompt,
+            "type_of_prompt": grade_prompt,
         }
     )
 
     return {
-        "key": "citations_text_verified",
-        "score": int(score.binary_score),
-        "explanation": score.explanation,
+        "key": "grounded",
+        "score": int(score.one_to_ten_score),
+        "comment": score.explanation,
     }

@@ -51,6 +51,7 @@ dependencies = [
     "html-sanitizer>=2.4.4",
     "greenlet>=3.1.1",
     "markdown>=3.7",
+    "pandas>=3.0.3",
 ]
 
 [tool.ruff]

@@ -161,7 +161,6 @@ async def test_task_processes_intake_and_stores_results(
         assert metrics["summary"]["n"] == 1
         assert metrics["summary"]["n_successful"] == 1
         assert metrics["summary"]["addressed_to_client_mean"] == 8
-        assert metrics["summary"]["citations_source_is_transcript_pass_rate"] == 1.0
         assert len(metrics["intakes"]) == 1
         assert metrics["intakes"][0]["intake_id"] == intake_id
 
