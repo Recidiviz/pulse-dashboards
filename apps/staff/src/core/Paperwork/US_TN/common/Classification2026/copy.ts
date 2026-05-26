@@ -46,4 +46,4 @@ export const BLOCKED_DOWNLOAD_WRONG_VERSION_OLD =
   "Use RCAF V2 for June reclassifications (dated May 26 or later)";
 
 export const BLOCKED_DOWNLOAD_WRONG_VERSION_NEW =
-  "Use RCAF V2 for reclassifications prior to June (dated May 25 or earlier)";
+  "Do not use RCAF V2 for reclassifications prior to June (dated May 25 or earlier)";
