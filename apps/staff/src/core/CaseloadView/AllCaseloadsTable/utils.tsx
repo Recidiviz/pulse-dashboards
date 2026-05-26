@@ -38,10 +38,13 @@ export type ClientsResidentsTableColumnId =
   | "level";
 
 export const US_TN_CLASSIFICATION_OPPORTUNITIES = [
+  "usTnInitialClassification2026Policy",
   "usTnAnnualReclassification2026Policy",
   "usTnCustodyLevelDowngrade2026Policy",
-  "usTnInitialClassification2026Policy",
   "usTnSpecialCustodyLevelUpgrade2026Policy",
+  "usTnAnnualReclassification2026PolicyV2",
+  "usTnCustodyLevelDowngrade2026PolicyV2",
+  "usTnSpecialCustodyLevelUpgrade2026PolicyV2",
   "usTnTrusteeTransfer",
   "usTnBiannualOther",
   "usTnSeriousMisconductUpgrade",
