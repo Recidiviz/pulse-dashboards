@@ -182,9 +182,18 @@ describe("AddedTasksSection", () => {
     fireEvent.change(screen.getByLabelText("Task title"), {
       target: { value: "New task" },
     });
-    fireEvent.change(screen.getByLabelText("Enter Date"), {
-      target: { value: "2026-07-04" },
-    });
+    // Open the date popper, advance one year, and click day 15 — any valid
+    // future date is fine for this assertion (we only check that a Date was
+    // passed to addCustomTask).
+    fireEvent.click(screen.getByRole("button", { name: "Enter Date" }));
+    fireEvent.click(screen.getByRole("button", { name: "Next year" }));
+    const nextYear = new Date().getFullYear() + 1;
+    const nextYearMonth = new Date().toLocaleString("en-US", { month: "long" });
+    fireEvent.click(
+      screen.getByLabelText(
+        new RegExp(`Choose .*${nextYearMonth} 15.*${nextYear}`),
+      ),
+    );
     fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
 
     expect(customTasks.addCustomTask).toHaveBeenCalledTimes(1);

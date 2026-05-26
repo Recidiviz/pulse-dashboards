@@ -19,6 +19,41 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 import { AddedTaskForm } from "../AddedTaskForm";
 
+// Day 15 of today's month next year — always a valid future date that's
+// reachable via one "Next year" click on the calendar header. Stable across
+// CI runs (no fixed year that could become "the past").
+const FUTURE_DATE = (() => {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() + 1);
+  d.setDate(15);
+  d.setHours(0, 0, 0, 0);
+  return d;
+})();
+
+const FUTURE_BUTTON_LABEL = formatPickerValue(FUTURE_DATE);
+
+function formatPickerValue(date: Date): string {
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${mm}/${dd}/${date.getFullYear()}`;
+}
+
+/**
+ * Open the date popper, advance one year, and click day 15 of the visible
+ * month. The custom input is a button (Figma 7661-2835), so direct typed
+ * entry isn't supported — the user opens the calendar and picks a day,
+ * which is what we exercise here.
+ */
+function pickFutureDate() {
+  fireEvent.click(screen.getByRole("button", { name: /enter date/i }));
+  fireEvent.click(screen.getByRole("button", { name: "Next year" }));
+  const monthName = FUTURE_DATE.toLocaleString("en-US", { month: "long" });
+  const dayLabel = new RegExp(
+    `Choose .*${monthName} 15.*${FUTURE_DATE.getFullYear()}`,
+  );
+  fireEvent.click(screen.getByLabelText(dayLabel));
+}
+
 describe("AddedTaskForm", () => {
   describe("add mode", () => {
     test("renders with empty fields and Save disabled", () => {
@@ -26,9 +61,8 @@ describe("AddedTaskForm", () => {
       expect(
         screen.getByLabelText("Task title", { selector: "input" }),
       ).toHaveValue("");
-      expect(
-        screen.getByLabelText("Enter Date", { selector: "input" }),
-      ).toHaveValue("");
+      // Date affordance shows the "Enter Date" placeholder copy.
+      expect(screen.getByRole("button", { name: "Enter Date" })).toBeVisible();
       expect(screen.getByRole("button", { name: /^save$/i })).toBeDisabled();
     });
 
@@ -42,9 +76,7 @@ describe("AddedTaskForm", () => {
 
     test("Save remains disabled when only the due date is filled", () => {
       render(<AddedTaskForm mode="add" onSave={vi.fn()} onCancel={vi.fn()} />);
-      fireEvent.change(screen.getByLabelText("Enter Date"), {
-        target: { value: "2026-07-04" },
-      });
+      pickFutureDate();
       expect(screen.getByRole("button", { name: /^save$/i })).toBeDisabled();
     });
 
@@ -53,9 +85,7 @@ describe("AddedTaskForm", () => {
       fireEvent.change(screen.getByLabelText("Task title"), {
         target: { value: "   " },
       });
-      fireEvent.change(screen.getByLabelText("Enter Date"), {
-        target: { value: "2026-07-04" },
-      });
+      pickFutureDate();
       expect(screen.getByRole("button", { name: /^save$/i })).toBeDisabled();
     });
 
@@ -66,9 +96,7 @@ describe("AddedTaskForm", () => {
       fireEvent.change(screen.getByLabelText("Task title"), {
         target: { value: "  Call client  " },
       });
-      fireEvent.change(screen.getByLabelText("Enter Date"), {
-        target: { value: "2026-07-04" },
-      });
+      pickFutureDate();
 
       const submit = screen.getByRole("button", { name: /^save$/i });
       expect(submit).not.toBeDisabled();
@@ -78,10 +106,9 @@ describe("AddedTaskForm", () => {
       const args = onSave.mock.calls[0][0];
       expect(args.title).toBe("Call client");
       expect(args.dueDate).toBeInstanceOf(Date);
-      // Parsed as local midnight on 2026-07-04
-      expect(args.dueDate.getFullYear()).toBe(2026);
-      expect(args.dueDate.getMonth()).toBe(6); // July, zero-indexed
-      expect(args.dueDate.getDate()).toBe(4);
+      expect(args.dueDate.getFullYear()).toBe(FUTURE_DATE.getFullYear());
+      expect(args.dueDate.getMonth()).toBe(FUTURE_DATE.getMonth());
+      expect(args.dueDate.getDate()).toBe(15);
     });
 
     test("Cancel calls onCancel and does not call onSave", () => {
@@ -92,6 +119,14 @@ describe("AddedTaskForm", () => {
       expect(onCancel).toHaveBeenCalledTimes(1);
       expect(onSave).not.toHaveBeenCalled();
     });
+
+    test("clicking the due-date affordance opens the calendar popper", () => {
+      const { container } = render(
+        <AddedTaskForm mode="add" onSave={vi.fn()} onCancel={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Enter Date" }));
+      expect(container.querySelector(".react-datepicker")).not.toBeNull();
+    });
   });
 
   describe("edit mode", () => {
@@ -100,13 +135,16 @@ describe("AddedTaskForm", () => {
         <AddedTaskForm
           mode="edit"
           initialTitle="Send reminder"
-          initialDueDate={new Date(2026, 6, 4)}
+          initialDueDate={FUTURE_DATE}
           onSave={vi.fn()}
           onCancel={vi.fn()}
         />,
       );
       expect(screen.getByLabelText("Task title")).toHaveValue("Send reminder");
-      expect(screen.getByLabelText("Enter Date")).toHaveValue("2026-07-04");
+      // The date affordance now renders the formatted date as its label.
+      expect(
+        screen.getByRole("button", { name: FUTURE_BUTTON_LABEL }),
+      ).toBeVisible();
       expect(
         screen.getByRole("button", { name: /^save$/i }),
       ).not.toBeDisabled();
@@ -118,7 +156,7 @@ describe("AddedTaskForm", () => {
         <AddedTaskForm
           mode="edit"
           initialTitle="Send reminder"
-          initialDueDate={new Date(2026, 6, 4)}
+          initialDueDate={FUTURE_DATE}
           onSave={onSave}
           onCancel={vi.fn()}
         />,

@@ -17,13 +17,13 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { useId, useState } from "react";
+import { forwardRef, useState } from "react";
 import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 
 import { CheckboxInput } from "../../../components/Checkbox";
-import { formatWorkflowsDate } from "../../../utils";
+import { DatePicker } from "../../../components/DatePicker";
 
 const CancelButton = styled(Button).attrs({
   kind: "link" as const,
@@ -48,16 +48,16 @@ const FieldRow = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${rem(spacing.sm)};
-  align-items: stretch;
+  align-items: center;
 
-  > * {
+  > input {
     min-width: 0;
   }
 `;
 
 const TitleInput = styled.input`
   ${typography.Sans14};
-  flex: 2;
+  flex: 1;
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(4)};
   padding: ${rem(spacing.sm)} ${rem(spacing.sm)} ${rem(spacing.sm)}
@@ -70,39 +70,63 @@ const TitleInput = styled.input`
   }
 `;
 
-const DueDatePickerWrapper = styled.label`
-  ${typography.Sans14};
-  align-items: center;
-  color: ${palette.pine4};
-  cursor: pointer;
+// Figma node 7661-2835: a flat, pine-coloured `📅 Enter Date` affordance
+// (no border, sits inline next to the title field). When a date is picked,
+// the same surface displays the formatted date in MM/DD/YYYY.
+//
+// Uses the design-system `Button` with `kind="link"`, which already gives
+// us `padding: 0`, `background: transparent`, `border: none`, and the
+// disabled-cursor treatment. We deliberately keep the link variant's
+// `padding: 0` so the affordance reads as inline text + icon, with no
+// chrome. We only override the color (pine instead of `signal.links`)
+// and swap the link's default hover-underline for a colour shift.
+const DueDateButton = styled(Button).attrs({
+  kind: "link" as const,
+  type: "button" as const,
+})`
   display: inline-flex;
-  flex: 1;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: ${palette.pine4};
   font-weight: 500;
-  gap: ${rem(spacing.xs)};
-  padding: ${rem(spacing.sm)} ${rem(spacing.sm)} ${rem(spacing.sm)}
-    ${rem(spacing.md)};
-  position: relative;
-
-  &:hover,
-  &:focus-within {
-    color: ${palette.pine3};
-  }
-
-  svg {
-    fill: currentColor;
-  }
-
-  input[type="date"] {
-    cursor: pointer;
-    inset: 0;
-    opacity: 0;
-    position: absolute;
-  }
-`;
-
-const DueDateText = styled.span`
   white-space: nowrap;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled),
+  &:active:not(:disabled) {
+    color: ${palette.pine3};
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${palette.signal.links};
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 `;
+
+// `react-datepicker` clones `customInput` with `value`, `onClick`, `onChange`,
+// `onFocus`, `onBlur`, `placeholder`, `disabled`. A button can't emit value
+// changes — we only need `value` (for display) and `onClick` (to open the
+// popper); the rest are ignored.
+type DueDateCustomInputProps = {
+  value?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+};
+
+const DueDateCustomInput = forwardRef<
+  HTMLButtonElement,
+  DueDateCustomInputProps
+>(function DueDateCustomInput({ value, onClick, disabled }, ref) {
+  return (
+    <DueDateButton ref={ref} onClick={onClick} disabled={disabled}>
+      <Icon kind="CalendarSimple" size={15} color="currentColor" />
+      <span>{value || "Enter Date"}</span>
+    </DueDateButton>
+  );
+});
 
 const ButtonRow = styled.div`
   display: flex;
@@ -131,64 +155,6 @@ type AddedTaskFormProps = {
 const MAX_TITLE_LENGTH = 200;
 
 /**
- * Format a `Date` as the `yyyy-MM-dd` literal that `<input type="date">`
- * expects. Uses local-date parts (NOT `toISOString()`) so the rendered
- * picker shows the same calendar day the user picked, regardless of TZ.
- */
-function toDateInputValue(date: Date): string {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-/**
- * Parse a `yyyy-MM-dd` string from `<input type="date">` into a JS Date
- * anchored at local midnight. Returns null when the string is empty or
- * malformed so the caller can keep the Save button disabled.
- */
-function fromDateInputValue(value: string): Date | null {
-  if (!value) return null;
-  // Native `new Date("2026-05-14")` parses as UTC midnight, which can
-  // shift the apparent date by one day in negative-offset zones. Split
-  // the parts and build at local midnight instead.
-  const [y, m, d] = value.split("-").map((part) => Number.parseInt(part, 10));
-  if (!y || !m || !d) return null;
-  const parsed = new Date(y, m - 1, d);
-  if (Number.isNaN(parsed.getTime())) return null;
-  return parsed;
-}
-
-type DueDatePickerProps = {
-  value: string;
-  label: string;
-};
-
-const DueDatePicker = ({
-  label,
-  ...props
-}: DueDatePickerProps & React.InputHTMLAttributes<HTMLInputElement>) => {
-  const parsedDueDate = fromDateInputValue(props.value || "");
-  const id = useId();
-
-  return (
-    <DueDatePickerWrapper
-      htmlFor={props.id ?? id}
-      onClick={(e) => {
-        e.stopPropagation();
-        (e.currentTarget.control as HTMLInputElement)?.showPicker();
-      }}
-    >
-      <Icon kind="CalendarSimple" size={15} />
-      <DueDateText>
-        {parsedDueDate ? formatWorkflowsDate(parsedDueDate) : label}
-      </DueDateText>
-      <input id={props.id ?? id} type="date" aria-label={label} {...props} />
-    </DueDatePickerWrapper>
-  );
-};
-
-/**
  * Inline form used for both adding and editing a custom task. State is
  * fully local — the parent decides when to mount/unmount this form, and
  * just receives the saved values via `onSave`. In "edit" mode the
@@ -203,19 +169,14 @@ export function AddedTaskForm({
   onCancel,
 }: AddedTaskFormProps) {
   const [title, setTitle] = useState(initialTitle);
-  const [dueDateString, setDueDateString] = useState(
-    initialDueDate ? toDateInputValue(initialDueDate) : "",
-  );
+  const [dueDate, setDueDate] = useState<Date | null>(initialDueDate ?? null);
 
-  const isValid = title.trim().length > 0 && dueDateString;
-
-  const minDueDate = toDateInputValue(new Date());
+  const isValid = title.trim().length > 0 && dueDate !== null;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const parsedDueDate = fromDateInputValue(dueDateString);
-    if (!isValid || !parsedDueDate) return;
-    onSave({ title: title.trim(), dueDate: parsedDueDate });
+    if (!isValid || !dueDate) return;
+    onSave({ title: title.trim(), dueDate });
   };
 
   return (
@@ -236,12 +197,12 @@ export function AddedTaskForm({
           maxLength={MAX_TITLE_LENGTH}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <DueDatePicker
+        <DatePicker
           name="due_date"
-          label="Enter Date"
-          value={dueDateString}
-          onChange={(e) => setDueDateString(e.target.value)}
-          min={minDueDate}
+          selected={dueDate}
+          onChange={(d) => setDueDate(d)}
+          minDate={new Date()}
+          customInput={<DueDateCustomInput />}
         />
       </FieldRow>
       <ButtonRow>
