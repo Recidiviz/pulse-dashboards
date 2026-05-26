@@ -73,6 +73,7 @@ import {
   ClientAddressUpdate,
   ContactMethodType,
   CustomTaskCreateInput,
+  customTaskCreatePayloadSchema,
   CustomTaskUpdateInput,
   ExternalSystemRequestStatus,
   FormUpdate,
@@ -360,12 +361,23 @@ export default class FirestoreStore {
       `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.customTasks}/${taskId}`,
     );
 
-    await this.updateClientUpdatesV2Document(recordId, taskDocRef, {
+    // Run the create payload through the Zod schema so every defaulted
+    // field on `customTaskSchema` (e.g. `deletedOn: null`) automatically
+    // lands in the Firestore write — without the create site having to
+    // know which fields are defaulted. `customTaskCreatePayloadSchema`
+    // omits the server-stamped timestamps so the FieldValue sentinel for
+    // `createdOn` doesn't have to pass the Timestamp validator; we layer
+    // it on after the parse.
+    const payload = customTaskCreatePayloadSchema.parse({
       id: taskId,
       title: input.title,
       dueDate: input.dueDate,
-      createdOn: serverTimestamp(),
       stateCode: recordId.slice(0, 5),
+    });
+
+    await this.updateClientUpdatesV2Document(recordId, taskDocRef, {
+      ...payload,
+      createdOn: serverTimestamp(),
     });
 
     return taskId;

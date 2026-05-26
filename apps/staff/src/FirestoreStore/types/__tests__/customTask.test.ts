@@ -17,7 +17,7 @@
 
 import { Timestamp } from "firebase/firestore";
 
-import { customTaskSchema } from "../customTask";
+import { customTaskCreatePayloadSchema, customTaskSchema } from "../customTask";
 
 const VALID_UUID = "8e58e96f-3a8d-4f2a-9fa6-1b1c3b4f0e2a";
 
@@ -138,5 +138,39 @@ describe("customTaskSchema", () => {
       updatedOn,
     });
     expect(parsed.updatedOn).toEqual(updatedOn);
+  });
+});
+
+describe("customTaskCreatePayloadSchema", () => {
+  // This schema is what `FirestoreStore.createCustomTask` runs its payload
+  // through. The tests below pin the create-side invariant that the
+  // subscription's `where("deletedOn", "==", null)` filter relies on:
+  // every defaulted field on the parent schema must land in the parsed
+  // output so it gets written to Firestore.
+  function baseCreatePayload() {
+    return {
+      id: VALID_UUID,
+      title: "Contact employer",
+      dueDate: new Date("2026-06-01"),
+      stateCode: "us_mo",
+    };
+  }
+
+  test("fills deletedOn: null when omitted from the input", () => {
+    const parsed = customTaskCreatePayloadSchema.parse(baseCreatePayload());
+    expect(parsed.deletedOn).toBeNull();
+  });
+
+  test("omits the server-stamped timestamps from the parsed output", () => {
+    const parsed = customTaskCreatePayloadSchema.parse(baseCreatePayload());
+    // `createdOn` and `updatedOn` are stamped with serverTimestamp() after
+    // the parse — they must not appear in the parsed payload.
+    expect(parsed).not.toHaveProperty("createdOn");
+    expect(parsed).not.toHaveProperty("updatedOn");
+  });
+
+  test("rejects missing required caller-supplied fields", () => {
+    const { title, ...withoutTitle } = baseCreatePayload();
+    expect(() => customTaskCreatePayloadSchema.parse(withoutTitle)).toThrow();
   });
 });

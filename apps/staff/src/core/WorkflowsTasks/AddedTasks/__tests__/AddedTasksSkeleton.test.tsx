@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,5 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { default } from "./Checkbox";
-export * from "./CheckboxInput";
+import { render, screen } from "@testing-library/react";
+
+import { AddedTasksSkeleton } from "../AddedTasksSkeleton";
+
+describe("AddedTasksSkeleton", () => {
+  test("renders a status region with an aria-label", () => {
+    render(<AddedTasksSkeleton />);
+    expect(screen.getByRole("status")).toHaveAttribute(
+      "aria-label",
+      "Loading added tasks",
+    );
+  });
+
+  test("renders three skeleton rows", () => {
+    const { container } = render(<AddedTasksSkeleton />);
+    // Three child rows in the wrapper
+    const wrapper = container.firstChild as HTMLElement;
+    expect(wrapper.childElementCount).toBe(3);
+  });
+});

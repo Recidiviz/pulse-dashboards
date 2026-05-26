@@ -18,12 +18,15 @@
 import { Sans12, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { Fragment, useEffect } from "react";
+import React, { Fragment, Suspense, useEffect } from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
@@ -32,7 +35,12 @@ import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile
 import { ClientDetailSidebarComponents } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { PreviewModalFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
+import { AddedTasksSkeleton } from "./AddedTasks/AddedTasksSkeleton";
 import { PreviewTasks } from "./PreviewTasks";
+
+// Lazy-loaded so the Added Tasks bundle is only fetched when the modal
+// is opened for a client with the `customTasks` flag active.
+const AddedTasksSection = React.lazy(() => import("./AddedTasks"));
 
 export const TaskItemDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
@@ -88,6 +96,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
     workflowsStore: { selectedClient },
     tenantStore: { tasksSidebarComponents },
   } = useRootStore();
+  const { customTasks } = useFeatureVariants();
 
   useEffect(() => {
     if (selectedClient) {
@@ -123,6 +132,14 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
           <Heading person={selectedClient} />
           <TaskItemHeader>Tasks</TaskItemHeader>
           <PreviewTasks person={selectedClient} showSnoozeDropdown />
+          {customTasks && (
+            <>
+              <TaskItemHeader>Added Tasks</TaskItemHeader>
+              <Suspense fallback={<AddedTasksSkeleton />}>
+                <AddedTasksSection person={selectedClient} />
+              </Suspense>
+            </>
+          )}
           {opportunitiesToDisplay && (
             <>
               <TaskItemHeader>Opportunities</TaskItemHeader>

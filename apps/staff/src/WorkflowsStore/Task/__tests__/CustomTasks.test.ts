@@ -27,6 +27,7 @@ import { CustomTasks } from "../CustomTasks";
 vi.mock("../../subscriptions/CustomTasksSubscription");
 
 const RECORD_ID = "us_mo_123";
+const PSEUDO_ID = "pseudo-us_mo_123";
 const USER_EMAIL = "officer@recidiviz.org";
 const FROZEN_NOW = new Date("2026-05-14T12:00:00.000Z");
 
@@ -50,6 +51,11 @@ let firestoreStoreMock: {
   createCustomTask: Mock;
   updateCustomTask: Mock;
   softDeleteCustomTask: Mock;
+};
+let analyticsStoreMock: {
+  trackCustomTaskCreated: Mock;
+  trackCustomTaskCompleted: Mock;
+  trackCustomTaskDeleted: Mock;
 };
 let rootStoreMock: any;
 let personMock: any;
@@ -78,11 +84,17 @@ beforeEach(() => {
     updateCustomTask: vi.fn().mockResolvedValue(undefined),
     softDeleteCustomTask: vi.fn().mockResolvedValue(undefined),
   };
+  analyticsStoreMock = {
+    trackCustomTaskCreated: vi.fn(),
+    trackCustomTaskCompleted: vi.fn(),
+    trackCustomTaskDeleted: vi.fn(),
+  };
   rootStoreMock = {
     firestoreStore: firestoreStoreMock,
+    analyticsStore: analyticsStoreMock,
     userStore: { userEmail: USER_EMAIL },
   };
-  personMock = { recordId: RECORD_ID };
+  personMock = { recordId: RECORD_ID, pseudonymizedId: PSEUDO_ID };
 
   customTasks = new CustomTasks(rootStoreMock, personMock);
 });
@@ -205,6 +217,18 @@ describe("CustomTasks", () => {
       const [, input] = firestoreStoreMock.createCustomTask.mock.calls[0];
       expect(input.dueDate).toBe(due);
     });
+
+    test("fires custom_task_created analytics with the new taskId", async () => {
+      await customTasks.addCustomTask({
+        title: "x",
+        dueDate: new Date("2026-07-04"),
+      });
+
+      expect(analyticsStoreMock.trackCustomTaskCreated).toHaveBeenCalledWith({
+        justiceInvolvedPersonId: PSEUDO_ID,
+        taskId: "new-task-id",
+      });
+    });
   });
 
   describe("editCustomTask", () => {
@@ -261,6 +285,26 @@ describe("CustomTasks", () => {
       const [, , patch] = firestoreStoreMock.updateCustomTask.mock.calls[0];
       expect(patch).toEqual({ completedOn: null });
     });
+
+    test("fires custom_task_completed analytics for both directions", async () => {
+      await customTasks.toggleCustomTaskCompleted("task-1", true);
+      expect(
+        analyticsStoreMock.trackCustomTaskCompleted,
+      ).toHaveBeenLastCalledWith({
+        justiceInvolvedPersonId: PSEUDO_ID,
+        taskId: "task-1",
+        completed: true,
+      });
+
+      await customTasks.toggleCustomTaskCompleted("task-1", false);
+      expect(
+        analyticsStoreMock.trackCustomTaskCompleted,
+      ).toHaveBeenLastCalledWith({
+        justiceInvolvedPersonId: PSEUDO_ID,
+        taskId: "task-1",
+        completed: false,
+      });
+    });
   });
 
   describe("deleteCustomTask", () => {
@@ -271,6 +315,15 @@ describe("CustomTasks", () => {
         RECORD_ID,
         "task-1",
       );
+    });
+
+    test("fires custom_task_deleted analytics", async () => {
+      await customTasks.deleteCustomTask("task-1");
+
+      expect(analyticsStoreMock.trackCustomTaskDeleted).toHaveBeenCalledWith({
+        justiceInvolvedPersonId: PSEUDO_ID,
+        taskId: "task-1",
+      });
     });
   });
 });

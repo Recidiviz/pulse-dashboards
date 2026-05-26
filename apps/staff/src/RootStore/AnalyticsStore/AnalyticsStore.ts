@@ -163,6 +163,11 @@ type TaskSnoozedMetadata = {
   withReason?: boolean;
 };
 
+type CustomTaskTrackingMetadata = {
+  justiceInvolvedPersonId: string;
+  taskId: string;
+};
+
 type TableViewChangedMetadata = {
   newViewType: "table" | "list";
   oldViewType: "table" | "list";
@@ -644,6 +649,20 @@ export default class AnalyticsStore {
 
   trackTaskTableCategorySelected(metadata: TasksTableCategoryMetadata): void {
     this.track("frontend.task_table_category_selected", metadata);
+  }
+
+  trackCustomTaskCreated(metadata: CustomTaskTrackingMetadata): void {
+    this.track("frontend.custom_task_created", metadata);
+  }
+
+  trackCustomTaskCompleted(
+    metadata: CustomTaskTrackingMetadata & { completed: boolean },
+  ): void {
+    this.track("frontend.custom_task_completed", metadata);
+  }
+
+  trackCustomTaskDeleted(metadata: CustomTaskTrackingMetadata): void {
+    this.track("frontend.custom_task_deleted", metadata);
   }
 
   trackTaskFilterSelected(metadata: {

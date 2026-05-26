@@ -112,7 +112,12 @@ export class CustomTasks implements Hydratable {
         title: input.title,
         dueDate: toTimestamp(input.dueDate),
       })
-      .then(() => undefined);
+      .then((taskId) => {
+        this.rootStore.analyticsStore.trackCustomTaskCreated({
+          justiceInvolvedPersonId: this.person.pseudonymizedId,
+          taskId,
+        });
+      });
   }
 
   editCustomTask(
@@ -141,18 +146,26 @@ export class CustomTasks implements Hydratable {
       ? { completedOn: Timestamp.now() }
       : { completedOn: null };
 
-    return this.rootStore.firestoreStore.updateCustomTask(
-      this.person.recordId,
-      taskId,
-      patch,
-    );
+    return this.rootStore.firestoreStore
+      .updateCustomTask(this.person.recordId, taskId, patch)
+      .then(() => {
+        this.rootStore.analyticsStore.trackCustomTaskCompleted({
+          justiceInvolvedPersonId: this.person.pseudonymizedId,
+          taskId,
+          completed,
+        });
+      });
   }
 
   deleteCustomTask(taskId: string): Promise<void> {
-    return this.rootStore.firestoreStore.softDeleteCustomTask(
-      this.person.recordId,
-      taskId,
-    );
+    return this.rootStore.firestoreStore
+      .softDeleteCustomTask(this.person.recordId, taskId)
+      .then(() => {
+        this.rootStore.analyticsStore.trackCustomTaskDeleted({
+          justiceInvolvedPersonId: this.person.pseudonymizedId,
+          taskId,
+        });
+      });
   }
 }
 

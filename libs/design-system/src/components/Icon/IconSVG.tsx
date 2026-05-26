@@ -128,6 +128,14 @@ IconSVG["ChevronDown"] = () => (
   </StrokeSVG>
 );
 
+IconSVG["EllipsisVertical"] = () => (
+  <FillSVG viewBox="0 0 16 16">
+    <path d="M8 4C9.10457 4 10 3.10457 10 2C10 0.89543 9.10457 0 8 0C6.89543 0 6 0.89543 6 2C6 3.10457 6.89543 4 8 4Z" />
+    <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z" />
+    <path d="M8 16C9.10457 16 10 15.1046 10 14C10 12.8954 9.10457 12 8 12C6.89543 12 6 12.8954 6 14C6 15.1046 6.89543 16 8 16Z" />
+  </FillSVG>
+);
+
 IconSVG["Envelope"] = () => (
   <StrokeSVG viewBox="0 0 12 10">
     <path d="M11.5 5.5v4a1 1 0 01-1 1h-9a1 1 0 01-1-1v-4" />
@@ -316,7 +324,10 @@ IconSVG["Calendar"] = () => (
 );
 
 IconSVG["CalendarSimple"] = () => (
-  <FillSVG width="16" height="16" viewBox="0 0 16 16">
+  // The path lives in user-coord region (0,0)–(12,12). Offsetting the viewBox
+  // origin by -2 in both axes centres the glyph inside a 16×16 box without
+  // touching the path or changing the rendered size.
+  <FillSVG width="16" height="16" viewBox="-2 -2 16 16">
     <path d="M11.25 2.25H9.75V0.75C9.75 0.336 9.41475 0 9 0C8.58525 0 8.25 0.336 8.25 0.75V2.25H3.75V0.75C3.75 0.336 3.41475 0 3 0C2.58525 0 2.25 0.336 2.25 0.75V2.25H0.75C0.33525 2.25 0 2.586 0 3V11.25C0 11.664 0.33525 12 0.75 12H11.25C11.6648 12 12 11.664 12 11.25V3C12 2.586 11.6648 2.25 11.25 2.25ZM10.5 10.5H1.5V4.5H10.5V10.5Z" />
   </FillSVG>
 );

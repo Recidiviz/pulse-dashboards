@@ -32,10 +32,12 @@ vi.mock("firebase/firestore");
 vi.mock("~client-env-utils");
 
 // `vi.mock("firebase/firestore")` replaces the real `Timestamp` class with a
-// stub, so we use plain placeholder values for `dueDate` / `completedOn` in
-// these tests. The schema's parse-time validation is exercised in
-// `types/__tests__/customTask.test.ts`.
-const FAKE_DUE_DATE = { __mock: "due-date" } as any;
+// stub, so the schema's `z.instanceof(Timestamp)` branch can't be exercised
+// here. We use a plain `Date` for `dueDate` (which the schema accepts on its
+// `z.date()` branch — and is also what the form passes in production), and a
+// plain placeholder for `completedOn` since the partial-update path doesn't
+// re-parse the schema.
+const FAKE_DUE_DATE = new Date("2026-06-01");
 const FAKE_COMPLETED_ON = { __mock: "completed-on" } as any;
 
 const mockSetDoc = setDoc as Mock;
@@ -113,6 +115,12 @@ describe("FirestoreStore custom-task methods", () => {
             id: TEST_UUID,
             title: "Contact employer",
             dueDate: FAKE_DUE_DATE,
+            // `deletedOn: null` is written explicitly because
+            // `CustomTasksSubscription`'s `where("deletedOn", "==", null)`
+            // filter requires the field to exist on the document. The value
+            // flows in via `customTaskCreatePayloadSchema.parse(...)` — this
+            // assertion pins the invariant.
+            deletedOn: null,
             createdOn: "mock-timestamp",
             stateCode: "us_mo",
           },

@@ -42,3 +42,27 @@ export type CustomTaskCreateInput = Pick<CustomTaskRecord, "title" | "dueDate">;
 export type CustomTaskUpdateInput = Partial<
   Pick<CustomTaskRecord, "title" | "dueDate" | "completedOn">
 >;
+
+/**
+ * Subset of `customTaskSchema` used for write-time validation in
+ * `FirestoreStore.createCustomTask`. Omits the server-stamped timestamps
+ * (`createdOn`, `updatedOn`) because those arrive as Firestore `FieldValue`
+ * sentinels — not `Timestamp | Date` — and the FirestoreStore merges them
+ * in *after* this schema's `.parse()`.
+ *
+ * Routing the create through `.parse()` ensures every field with a Zod
+ * `.default(...)` on the parent schema lands in the Firestore document.
+ * Today that's `deletedOn: null` — required by `CustomTasksSubscription`'s
+ * `where("deletedOn", "==", null)` filter. Firestore has no way to match
+ * documents that omit the field, so the create path must always write it.
+ * Any future defaulted field is picked up the same way with no
+ * FirestoreStore change.
+ */
+export const customTaskCreatePayloadSchema = customTaskSchema.omit({
+  createdOn: true,
+  updatedOn: true,
+});
+
+export type CustomTaskCreatePayload = z.infer<
+  typeof customTaskCreatePayloadSchema
+>;
