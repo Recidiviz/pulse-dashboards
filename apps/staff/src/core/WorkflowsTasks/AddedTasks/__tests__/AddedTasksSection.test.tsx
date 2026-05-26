@@ -31,6 +31,7 @@ function makeRecord(
     title: "Default title",
     dueDate: new Date(2026, 5, 1),
     createdOn: new Date("2026-05-14"),
+    recurrence: null,
     deletedOn: null,
     stateCode: "us_mo",
     ...overrides,
@@ -200,11 +201,47 @@ describe("AddedTasksSection", () => {
     const arg = customTasks.addCustomTask.mock.calls[0][0];
     expect(arg.title).toBe("New task");
     expect(arg.dueDate).toBeInstanceOf(Date);
+    // One-off task — no recurrence string written to Firestore.
+    expect(arg.recurrence).toBeNull();
 
     // form closed; CTA back
     expect(
       screen.getByRole("button", { name: /\+ add new task/i }),
     ).toBeInTheDocument();
+  });
+
+  test("saving a recurring form passes the RRULE through to addCustomTask", () => {
+    const customTasks = makeCustomTasksMock({
+      hydrationState: { status: "hydrated" },
+      orderedTasks: [],
+    });
+    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
+    fireEvent.change(screen.getByLabelText("Task title"), {
+      target: { value: "Recurring task" },
+    });
+    // Open the popper, advance one year, click day 15, click "Every week".
+    fireEvent.click(screen.getByRole("button", { name: "Enter Date" }));
+    fireEvent.click(screen.getByRole("button", { name: "Next year" }));
+    const nextYearMonth = new Date().toLocaleString("en-US", { month: "long" });
+    const nextYear = new Date().getFullYear() + 1;
+    const pickedDate = new Date();
+    pickedDate.setFullYear(nextYear);
+    pickedDate.setDate(15);
+    fireEvent.click(
+      screen.getByLabelText(
+        new RegExp(`Choose .*${nextYearMonth} 15.*${nextYear}`),
+      ),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Every week" }));
+    fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+
+    expect(customTasks.addCustomTask).toHaveBeenCalledTimes(1);
+    const arg = customTasks.addCustomTask.mock.calls[0][0];
+    expect(arg.recurrence).toContain("FREQ=WEEKLY");
+    const weekdayCodes = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+    const expectedByDay = weekdayCodes[pickedDate.getDay()];
+    expect(arg.recurrence).toContain(`BYDAY=${expectedByDay}`);
   });
 
   test("cancelling the form closes it without calling addCustomTask", () => {

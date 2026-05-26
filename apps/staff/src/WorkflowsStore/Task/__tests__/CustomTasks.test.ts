@@ -41,6 +41,7 @@ function makeRecord(
     title: "Default title",
     dueDate: new Date("2026-06-01"),
     createdOn: new Date("2026-05-14"),
+    recurrence: null,
     deletedOn: null,
     stateCode: "us_mo",
     ...overrides,
@@ -229,6 +230,25 @@ describe("CustomTasks", () => {
         taskId: "new-task-id",
       });
     });
+
+    test("omitting recurrence persists null (one-off task)", async () => {
+      await customTasks.addCustomTask({
+        title: "One-off",
+        dueDate: new Date("2026-07-04"),
+      });
+      const [, input] = firestoreStoreMock.createCustomTask.mock.calls[0];
+      expect(input.recurrence).toBeNull();
+    });
+
+    test("passes a recurrence RRULE string through to the firestore write", async () => {
+      await customTasks.addCustomTask({
+        title: "Weekly",
+        dueDate: new Date("2026-07-04"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+      });
+      const [, input] = firestoreStoreMock.createCustomTask.mock.calls[0];
+      expect(input.recurrence).toBe("FREQ=WEEKLY;BYDAY=FR");
+    });
   });
 
   describe("editCustomTask", () => {
@@ -261,6 +281,20 @@ describe("CustomTasks", () => {
 
       const [, , patch] = firestoreStoreMock.updateCustomTask.mock.calls[0];
       expect(patch).toEqual({ title: "Both", dueDate: due });
+    });
+
+    test("threads a recurrence RRULE through the patch when supplied", async () => {
+      await customTasks.editCustomTask("task-4", {
+        recurrence: "FREQ=MONTHLY;BYMONTHDAY=18",
+      });
+      const [, , patch] = firestoreStoreMock.updateCustomTask.mock.calls[0];
+      expect(patch).toEqual({ recurrence: "FREQ=MONTHLY;BYMONTHDAY=18" });
+    });
+
+    test("explicit recurrence=null clears the RRULE on an existing recurring task", async () => {
+      await customTasks.editCustomTask("task-5", { recurrence: null });
+      const [, , patch] = firestoreStoreMock.updateCustomTask.mock.calls[0];
+      expect(patch).toEqual({ recurrence: null });
     });
   });
 

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans14, spacing } from "@recidiviz/design-system";
+import { Sans12, Sans14, spacing } from "@recidiviz/design-system";
 import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -25,9 +25,14 @@ import styled from "styled-components";
 import { Button, palette } from "~design-system";
 
 import { CheckboxInput } from "../../../components/Checkbox";
+import { describeRecurrence } from "../../../components/DatePicker";
 import { CustomTaskRecord } from "../../../FirestoreStore";
 import { formatWorkflowsDate } from "../../../utils";
 import { CustomTasks } from "../../../WorkflowsStore/Task/CustomTasks";
+import {
+  getNextDueDate,
+  isTaskCompleted,
+} from "../../../WorkflowsStore/Task/customTaskStatus";
 import { AddedTaskForm, AddedTaskFormValues } from "./AddedTaskForm";
 import { AddedTaskKebab } from "./AddedTaskKebab";
 
@@ -58,8 +63,24 @@ const RowContent = styled.div`
   padding: ${rem(spacing.md)} 0;
 `;
 
+const RowTitleColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+`;
+
 const RowTitle = styled(Sans14)<{ $completed: boolean }>`
   color: ${({ $completed }) => ($completed ? palette.slate70 : palette.pine2)};
+`;
+
+const RowRecurrenceCaption = styled(Sans12)<{ $completed: boolean }>`
+  color: ${({ $completed }) =>
+    $completed ? palette.slate60 : palette.slate70};
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const RowDueDate = styled(Sans14)<{ $completed: boolean }>`
@@ -123,6 +144,13 @@ export const AddedTaskRow = observer(function AddedTaskRow({
 }: AddedTaskRowProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
+  const recurrenceCaption = describeRecurrence(task.recurrence ?? null);
+  // Derived "is this task currently done?" — for recurring tasks this rolls
+  // over automatically once `now` passes the next scheduled occurrence,
+  // without any backend write.
+  const completed = isTaskCompleted(task);
+  const nextDueDate = getNextDueDate(task);
+
   if (isEditing) {
     return (
       <RowWrapper>
@@ -130,11 +158,13 @@ export const AddedTaskRow = observer(function AddedTaskRow({
           mode="edit"
           initialTitle={task.title}
           initialDueDate={dueDateAsDate(task.dueDate)}
+          initialRecurrence={task.recurrence ?? null}
           initialCompleted={task.completedOn != null}
           onSave={(values: AddedTaskFormValues) => {
             customTasks.editCustomTask(task.id, {
               title: values.title,
               dueDate: values.dueDate,
+              recurrence: values.recurrence,
             });
             onEditEnd();
           }}
@@ -165,8 +195,6 @@ export const AddedTaskRow = observer(function AddedTaskRow({
     );
   }
 
-  const completed = task.completedOn != null;
-
   return (
     <RowWrapper>
       <RowContent>
@@ -179,9 +207,16 @@ export const AddedTaskRow = observer(function AddedTaskRow({
             customTasks.toggleCustomTaskCompleted(task.id, e.target.checked)
           }
         />
-        <RowTitle $completed={completed}>{task.title}</RowTitle>
+        <RowTitleColumn>
+          <RowTitle $completed={completed}>{task.title}</RowTitle>
+          {recurrenceCaption && (
+            <RowRecurrenceCaption $completed={completed}>
+              Repeats {recurrenceCaption}
+            </RowRecurrenceCaption>
+          )}
+        </RowTitleColumn>
         <RowDueDate $completed={completed}>
-          Due {formatWorkflowsDate(dueDateAsDate(task.dueDate))}
+          Due {formatWorkflowsDate(nextDueDate)}
         </RowDueDate>
         <AddedTaskKebab
           onEditClick={completed ? undefined : onEditStart}

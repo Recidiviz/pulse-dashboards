@@ -112,6 +112,7 @@ const AddedTasksSection = observer(function AddedTasksSection({
       customTasks.addCustomTask({
         title: values.title,
         dueDate: values.dueDate,
+        recurrence: values.recurrence,
       });
       setPendingAddIds((ids) => ids.filter((id) => id !== pendingId));
     };

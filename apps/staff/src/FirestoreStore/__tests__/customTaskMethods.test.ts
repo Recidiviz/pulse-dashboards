@@ -115,11 +115,13 @@ describe("FirestoreStore custom-task methods", () => {
             id: TEST_UUID,
             title: "Contact employer",
             dueDate: FAKE_DUE_DATE,
-            // `deletedOn: null` is written explicitly because
-            // `CustomTasksSubscription`'s `where("deletedOn", "==", null)`
-            // filter requires the field to exist on the document. The value
-            // flows in via `customTaskCreatePayloadSchema.parse(...)` — this
-            // assertion pins the invariant.
+            // Both `deletedOn` and `recurrence` are written explicitly
+            // because they flow in via `customTaskCreatePayloadSchema.parse`
+            // from the schema's `.default(null)`. `deletedOn` in particular
+            // is what `CustomTasksSubscription`'s
+            // `where("deletedOn", "==", null)` filter requires — without it
+            // the subscription drops the doc entirely. Pin both here.
+            recurrence: null,
             deletedOn: null,
             createdOn: "mock-timestamp",
             stateCode: "us_mo",
@@ -127,6 +129,17 @@ describe("FirestoreStore custom-task methods", () => {
           { merge: true },
         ],
       ]);
+    });
+
+    test("persists the recurrence RRULE when supplied", async () => {
+      await store.createCustomTask("us_mo_123", {
+        title: "Weekly check-in",
+        dueDate: FAKE_DUE_DATE,
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+      });
+
+      const taskWrite = mockSetDoc.mock.calls[1][1];
+      expect(taskWrite.recurrence).toBe("FREQ=WEEKLY;BYDAY=FR");
     });
   });
 

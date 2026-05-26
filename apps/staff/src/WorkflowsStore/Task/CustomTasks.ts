@@ -111,6 +111,7 @@ export class CustomTasks implements Hydratable {
       .createCustomTask(this.person.recordId, {
         title: input.title,
         dueDate: toTimestamp(input.dueDate),
+        recurrence: input.recurrence ?? null,
       })
       .then((taskId) => {
         this.rootStore.analyticsStore.trackCustomTaskCreated({
@@ -122,12 +123,18 @@ export class CustomTasks implements Hydratable {
 
   editCustomTask(
     taskId: string,
-    patch: { title?: string; dueDate?: Timestamp | Date },
+    patch: {
+      title?: string;
+      dueDate?: Timestamp | Date;
+      recurrence?: string | null;
+    },
   ): Promise<void> {
     const normalized: CustomTaskUpdateInput = {};
     if (patch.title !== undefined) normalized.title = patch.title;
     if (patch.dueDate !== undefined)
       normalized.dueDate = toTimestamp(patch.dueDate);
+    if (patch.recurrence !== undefined)
+      normalized.recurrence = patch.recurrence;
 
     return this.rootStore.firestoreStore.updateCustomTask(
       this.person.recordId,

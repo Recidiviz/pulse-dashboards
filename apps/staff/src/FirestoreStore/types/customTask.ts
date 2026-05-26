@@ -31,6 +31,13 @@ export const customTaskSchema = z.object({
   title: z.string().trim().min(1).max(200),
   dueDate: firestoreTimestampSchema,
   completedOn: firestoreTimestampSchema.nullable().optional(),
+  // iCal RFC-5545 RRULE string (e.g. "FREQ=WEEKLY;BYDAY=FR"). Null means a
+  // one-off task. Serialised + parsed by the `rrule` library via helpers in
+  // `components/DatePicker/recurrence.ts`. Defaults to null on parse so the
+  // create path's `customTaskCreatePayloadSchema.parse(...)` writes
+  // `recurrence: null` to Firestore even when the caller omits it — the same
+  // schema-driven-default pattern `deletedOn` uses.
+  recurrence: z.string().nullable().default(null),
   createdOn: firestoreTimestampSchema,
   updatedOn: firestoreTimestampSchema.optional(),
   deletedOn: firestoreTimestampSchema.nullable().default(null),
@@ -38,9 +45,14 @@ export const customTaskSchema = z.object({
 });
 
 export type CustomTaskRecord = z.infer<typeof customTaskSchema>;
-export type CustomTaskCreateInput = Pick<CustomTaskRecord, "title" | "dueDate">;
+export type CustomTaskCreateInput = Pick<
+  CustomTaskRecord,
+  "title" | "dueDate"
+> & {
+  recurrence?: string | null;
+};
 export type CustomTaskUpdateInput = Partial<
-  Pick<CustomTaskRecord, "title" | "dueDate" | "completedOn">
+  Pick<CustomTaskRecord, "title" | "dueDate" | "completedOn" | "recurrence">
 >;
 
 /**

@@ -275,6 +275,7 @@
     "react-window": "^1.8.6",
     "reactstrap": "^8.9.0",
     "resize-observer-polyfill": "^1.5.1",
+    "rrule": "^2.8.1",
     "sanitize-filename": "^1.6.3",
     "sass": "^1.52.2",
     "sass-graph": "^2.2.4",

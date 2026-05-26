@@ -51531,6 +51531,7 @@ __metadata:
     react-window: "npm:^1.8.6"
     reactstrap: "npm:^8.9.0"
     resize-observer-polyfill: "npm:^1.5.1"
+    rrule: "npm:^2.8.1"
     sanitize-filename: "npm:^1.6.3"
     sass: "npm:^1.52.2"
     sass-graph: "npm:^2.2.4"
@@ -52916,6 +52917,15 @@ __metadata:
     points-on-curve: "npm:^0.2.0"
     points-on-path: "npm:^0.2.1"
   checksum: 10c0/68c11bf4516aa014cef2fe52426a9bab237c2f500d13e1a4f13b523cb5723667bf2d92b9619325efdc5bc2a193588ff5af8d51683df17cfb8720e96fe2b92b0c
+  languageName: node
+  linkType: hard
+
+"rrule@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "rrule@npm:2.8.1"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/c9350620bbd57d0cdf99320b576121a2d7ed579fda4ae50891e2779c7dfd6dc7b174b558b6598adefb1f0e053549dc977740e1a265f77dcf0827aaeea60b45e7
   languageName: node
   linkType: hard
 

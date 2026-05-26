@@ -372,6 +372,11 @@ export default class FirestoreStore {
       id: taskId,
       title: input.title,
       dueDate: input.dueDate,
+      // Pass `recurrence` through explicitly so a one-off task (caller
+      // passes `null`) lands as `recurrence: null` and a recurring task
+      // lands with the RRULE string. The schema's `.default(null)` also
+      // covers the case where caller omits the field entirely.
+      recurrence: input.recurrence ?? null,
       stateCode: recordId.slice(0, 5),
     });
 

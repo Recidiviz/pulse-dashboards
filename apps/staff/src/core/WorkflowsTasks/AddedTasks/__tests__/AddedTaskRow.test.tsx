@@ -32,6 +32,7 @@ function makeRecord(
     title: "Default title",
     dueDate: new Date(2026, 5, 1), // June 1, 2026 (local)
     createdOn: new Date("2026-05-14"),
+    recurrence: null,
     deletedOn: null,
     stateCode: "us_mo",
     ...overrides,
@@ -68,6 +69,88 @@ describe("AddedTaskRow", () => {
     expect(screen.getByText("Call client")).toBeInTheDocument();
     expect(screen.getByText(/^Due Jun 1, 2026$/)).toBeInTheDocument();
     expect(findKebabButton()).toBeInTheDocument();
+  });
+
+  test("non-recurring task does NOT render a Repeats caption", () => {
+    render(
+      <AddedTaskRow
+        task={makeRecord({ recurrence: null })}
+        customTasks={makeCustomTasksMock()}
+        isEditing={false}
+        onEditStart={vi.fn()}
+        onEditEnd={vi.fn()}
+      />,
+    );
+    expect(screen.queryByText(/repeats/i)).toBeNull();
+  });
+
+  test("recurring task renders a Repeats caption derived from the stored RRULE", () => {
+    render(
+      <AddedTaskRow
+        task={makeRecord({ recurrence: "FREQ=WEEKLY;BYDAY=FR" })}
+        customTasks={makeCustomTasksMock()}
+        isEditing={false}
+        onEditStart={vi.fn()}
+        onEditEnd={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(/repeats.*friday/i)).toBeInTheDocument();
+  });
+
+  describe("derived completion state for recurring tasks", () => {
+    beforeEach(() => {
+      // Fake just the Date constructor so React's scheduler timers are
+      // untouched. Anchor "now" at Mon Jun 22, 2026.
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date(2026, 5, 22));
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test("recurring task completed in the current cycle renders as completed and shows the next cycle's date", () => {
+      // Weekly on Friday; dueDate = Jun 19; completedOn = Jun 19 17:00.
+      // Current cycle (Jun 19) is done; next cycle is Jun 26.
+      render(
+        <AddedTaskRow
+          task={makeRecord({
+            id: "task-1",
+            dueDate: new Date(2026, 5, 19),
+            recurrence: "FREQ=WEEKLY;BYDAY=FR",
+            completedOn: new Date(2026, 5, 19, 17),
+          })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      expect(screen.getByRole("checkbox")).toBeChecked();
+      expect(screen.getByText(/Due Jun 26, 2026/)).toBeInTheDocument();
+    });
+
+    test("recurring task with completedOn from a past cycle auto-resets to incomplete", () => {
+      // Weekly on Friday; completedOn = Jun 12 (last week). Today is Jun 22,
+      // past the Jun 19 cycle. Task should display incomplete with the most
+      // recently passed due date.
+      render(
+        <AddedTaskRow
+          task={makeRecord({
+            id: "task-1",
+            dueDate: new Date(2026, 5, 12),
+            recurrence: "FREQ=WEEKLY;BYDAY=FR",
+            completedOn: new Date(2026, 5, 12, 17),
+          })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      expect(screen.getByRole("checkbox")).not.toBeChecked();
+      // The "next due" after Jun 12 17:00 is Jun 19; row shows that cycle.
+      expect(screen.getByText(/Due Jun 19, 2026/)).toBeInTheDocument();
+    });
   });
 
   test("checks Timestamp-valued dueDate the same as Date-valued", () => {
@@ -189,7 +272,37 @@ describe("AddedTaskRow", () => {
     expect(taskId).toBe("task-1");
     expect(patch.title).toBe("New title");
     expect(patch.dueDate).toBeInstanceOf(Date);
+    // Non-recurring task being edited — recurrence stays null in the patch.
+    expect(patch.recurrence).toBeNull();
     expect(onEditEnd).toHaveBeenCalledTimes(1);
+  });
+
+  test("editing a recurring task pre-selects the matching chip and round-trips the RRULE", () => {
+    const customTasks = makeCustomTasksMock();
+    render(
+      <AddedTaskRow
+        task={makeRecord({
+          id: "task-1",
+          dueDate: new Date(2026, 5, 19), // Friday
+          recurrence: "FREQ=WEEKLY;BYDAY=FR",
+        })}
+        customTasks={customTasks}
+        isEditing
+        onEditStart={vi.fn()}
+        onEditEnd={vi.fn()}
+      />,
+    );
+    // Open the date popper. The affordance label is the formatted date when
+    // a value is present (06/19/2026 for the seeded Friday).
+    fireEvent.click(screen.getByRole("button", { name: "06/19/2026" }));
+    expect(screen.getByRole("button", { name: "Every week" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+    const [, patch] = (customTasks.editCustomTask as any).mock.calls[0];
+    expect(patch.recurrence).toContain("FREQ=WEEKLY");
+    expect(patch.recurrence).toContain("BYDAY=FR");
   });
 
   test("cancelling the edit form calls onEditEnd without writing", () => {

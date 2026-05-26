@@ -17,6 +17,7 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 
+import { buildRecurrenceRule } from "../../../../components/DatePicker";
 import { AddedTaskForm } from "../AddedTaskForm";
 
 // Day 15 of today's month next year — always a valid future date that's
@@ -109,6 +110,30 @@ describe("AddedTaskForm", () => {
       expect(args.dueDate.getFullYear()).toBe(FUTURE_DATE.getFullYear());
       expect(args.dueDate.getMonth()).toBe(FUTURE_DATE.getMonth());
       expect(args.dueDate.getDate()).toBe(15);
+      // New tasks default to one-off — recurrence is null.
+      expect(args.recurrence).toBeNull();
+    });
+
+    test("selecting Every week and submitting emits the matching RRULE in recurrence", () => {
+      const onSave = vi.fn();
+      render(<AddedTaskForm mode="add" onSave={onSave} onCancel={vi.fn()} />);
+
+      fireEvent.change(screen.getByLabelText("Task title"), {
+        target: { value: "Weekly check-in" },
+      });
+      pickFutureDate();
+      // Popper stays open after the day click (shouldCloseOnSelect=false),
+      // so the recurrence footer is still reachable.
+      fireEvent.click(screen.getByRole("button", { name: "Every week" }));
+
+      fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+
+      expect(onSave).toHaveBeenCalledTimes(1);
+      const args = onSave.mock.calls[0][0];
+      expect(args.recurrence).toContain("FREQ=WEEKLY");
+      const weekdayCodes = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+      const expectedByDay = weekdayCodes[FUTURE_DATE.getDay()];
+      expect(args.recurrence).toContain(`BYDAY=${expectedByDay}`);
     });
 
     test("Cancel calls onCancel and does not call onSave", () => {
@@ -148,6 +173,27 @@ describe("AddedTaskForm", () => {
       expect(
         screen.getByRole("button", { name: /^save$/i }),
       ).not.toBeDisabled();
+    });
+
+    test("pre-populates the recurrence chip from initialRecurrence", () => {
+      render(
+        <AddedTaskForm
+          mode="edit"
+          initialTitle="Weekly check-in"
+          initialDueDate={FUTURE_DATE}
+          initialRecurrence={buildRecurrenceRule("MONTHLY", FUTURE_DATE)}
+          onSave={vi.fn()}
+          onCancel={vi.fn()}
+        />,
+      );
+      // Open the popper via the date-affordance button (label is the
+      // formatted date when there's a selected value).
+      fireEvent.click(
+        screen.getByRole("button", { name: FUTURE_BUTTON_LABEL }),
+      );
+      expect(
+        screen.getByRole("button", { name: "Every month" }),
+      ).toHaveAttribute("aria-pressed", "true");
     });
 
     test("submitting edits calls onSave with the updated values", () => {

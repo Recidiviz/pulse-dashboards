@@ -17,4 +17,17 @@
 
 export { DatePicker, type DatePickerProps } from "./DatePicker";
 export { DatePickerHeader } from "./DatePickerHeader";
+export {
+  DatePickerWithRecurrence,
+  type DatePickerWithRecurrenceProps,
+  type DateWithRecurrence,
+} from "./DatePickerWithRecurrence";
 export { MonthYearHeader } from "./MonthYearHeader";
+export {
+  buildRecurrenceRule,
+  describeRecurrence,
+  getRecurrenceFreq,
+  type Recurrence,
+  type RecurrenceFreq,
+} from "./recurrence";
+export { RecurrenceFooter } from "./RecurrenceFooter";

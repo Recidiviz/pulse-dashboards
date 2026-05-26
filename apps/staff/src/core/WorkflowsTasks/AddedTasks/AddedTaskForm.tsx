@@ -23,7 +23,11 @@ import styled from "styled-components";
 import { Button, Icon, palette } from "~design-system";
 
 import { CheckboxInput } from "../../../components/Checkbox";
-import { DatePicker } from "../../../components/DatePicker";
+import {
+  DatePickerWithRecurrence,
+  type DateWithRecurrence,
+  type Recurrence,
+} from "../../../components/DatePicker";
 
 const CancelButton = styled(Button).attrs({
   kind: "link" as const,
@@ -138,12 +142,14 @@ const ButtonRow = styled.div`
 export type AddedTaskFormValues = {
   title: string;
   dueDate: Date;
+  recurrence: Recurrence;
 };
 
 type AddedTaskFormProps = {
   mode: "add" | "edit";
   initialTitle?: string;
   initialDueDate?: Date;
+  initialRecurrence?: Recurrence;
   // Visual-only: the checkbox lives in the form so its layout mirrors the
   // row layout (checkbox / title / date). The checkbox itself is disabled —
   // completion toggling happens via the row's checkbox, not here.
@@ -164,19 +170,25 @@ export function AddedTaskForm({
   mode,
   initialTitle = "",
   initialDueDate,
+  initialRecurrence,
   initialCompleted = false,
   onSave,
   onCancel,
 }: AddedTaskFormProps) {
   const [title, setTitle] = useState(initialTitle);
-  const [dueDate, setDueDate] = useState<Date | null>(initialDueDate ?? null);
+  const [dateWithRecurrence, setDateWithRecurrence] =
+    useState<DateWithRecurrence>(() => ({
+      date: initialDueDate ?? null,
+      recurrence: initialRecurrence ?? null,
+    }));
 
+  const { date: dueDate, recurrence } = dateWithRecurrence;
   const isValid = title.trim().length > 0 && dueDate !== null;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isValid || !dueDate) return;
-    onSave({ title: title.trim(), dueDate });
+    onSave({ title: title.trim(), dueDate, recurrence });
   };
 
   return (
@@ -197,10 +209,10 @@ export function AddedTaskForm({
           maxLength={MAX_TITLE_LENGTH}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <DatePicker
+        <DatePickerWithRecurrence
           name="due_date"
-          selected={dueDate}
-          onChange={(d) => setDueDate(d)}
+          value={dateWithRecurrence}
+          onChange={setDateWithRecurrence}
           minDate={new Date()}
           customInput={<DueDateCustomInput />}
         />
