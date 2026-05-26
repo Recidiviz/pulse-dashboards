@@ -138,7 +138,16 @@ export const RoutePlannerPlacePicker = observer(
               // @ts-expect-error We don't have types from the extended component library
               onPlaceChange={(e) => {
                 presenter.userPickedStartingAddress =
-                  e.target.value.formattedAddress;
+                  e.target.value?.formattedAddress;
+                // this checks if the input value is undefined and
+                // if it is, the ending picker is cleared
+                if (!e.target.value && presenter.isEndingAddressMatchingStart) {
+                  clearEndingPicker();
+                }
+                // this checks if the matching checkbox is selected
+                // if so, then the ending is updated to match the starting value
+                if (presenter.isEndingAddressMatchingStart)
+                  syncEndingPickerWithStart();
               }}
             />
           </PlacePickerContainer>

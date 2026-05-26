@@ -69,7 +69,10 @@ const Main = styled.main<{
         ${MaxWidth}`}
 `;
 
-const BackButtonWrapper = styled.div<{ $fixed: boolean; $isMobile: boolean }>`
+const BackButtonWrapper = styled.div<{
+  $fixed: boolean;
+  $isMobile: boolean;
+}>`
   max-width: fit-content;
   padding: 0 ${rem(spacing.lg)};
   ${({ $isMobile }) => !$isMobile && `padding-top: ${rem(spacing.lg)}`}

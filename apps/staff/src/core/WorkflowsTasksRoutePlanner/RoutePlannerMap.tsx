@@ -225,7 +225,7 @@ function SwitchToClientViewButton({
         rotate={180}
         $alignment={"middle"}
       />
-      <SwitchToClientViewText>Back to list</SwitchToClientViewText>
+      <SwitchToClientViewText>Edit list</SwitchToClientViewText>
     </SwitchToClientView>
   );
 }

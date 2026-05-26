@@ -18,7 +18,7 @@
 import { Pill, Sans12, Serif24, spacing } from "@recidiviz/design-system";
 import { isThisMonth } from "date-fns";
 import { rem } from "polished";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
@@ -128,11 +128,13 @@ const WorkflowsHomepageCard = function WorkflowsHomepageCard({
 }) {
   const { analyticsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
+  const location = useLocation();
 
   return (
     <ClickableCard
       $isMobile={isMobile}
       to={url}
+      state={{ previousPage: location.pathname }}
       onClick={() => {
         analyticsStore.trackWorkflowsHomepageCardClicked({
           destinationUrl: url,
