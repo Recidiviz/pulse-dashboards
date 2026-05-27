@@ -1,0 +1,49 @@
+{
+  "name": "typesense",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/typesense/src",
+  "projectType": "library",
+  "tags": ["scope:universal"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/typesense"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "offline": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml up",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "offline-down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml down",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "offline-health": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "curl -fsS http://localhost:8108/health",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

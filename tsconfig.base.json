@@ -148,6 +148,7 @@
       "~shared-pathways/*": ["libs/shared-pathways/src/*"],
       "~staff-shared-server": ["libs/staff-shared-server/src/index.ts"],
       "~twilio-api": ["libs/twilio-api/src/index.ts"],
+      "~typesense": ["libs/typesense/src/index.ts"],
       "~ui": ["libs/ui/src/index.ts"],
       "~utils": ["libs/utils/src/index.ts"],
       "~utils/*": ["libs/utils/src/*"]

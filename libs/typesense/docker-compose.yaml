@@ -1,0 +1,27 @@
+# Local Typesense node for offline mode and Firestore-emulator sync experiments.
+# Brought up automatically by `nx offline staff`.
+# Manual control: `nx offline typesense` / `nx offline-down typesense`
+# To wipe the data volume: `docker compose -f libs/typesense/docker-compose.yaml down -v`
+
+services:
+  typesense:
+    # Latest stable as of 2026-05. Align with the GKE cluster's image once
+    # production infrastructure is finalized.
+    image: typesense/typesense:30.2
+    container_name: recidiviz-typesense-offline
+    ports:
+      - "8108:8108"
+    volumes:
+      - typesense_data:/data
+    environment:
+      TYPESENSE_API_KEY: xyz
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_ENABLE_CORS: "true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+volumes:
+  typesense_data:
