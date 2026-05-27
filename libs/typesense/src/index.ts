@@ -15,4 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// export public library API here
+export {
+  createLocalTypesenseClient,
+  createTypesenseClient,
+  type TypesenseClientConfig,
+} from "./client";
+export { collectionNames, schemas } from "./schemas";

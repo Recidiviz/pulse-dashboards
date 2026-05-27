@@ -37,15 +37,34 @@ curl http://localhost:8108/health
 curl http://localhost:8108/collections -H "X-TYPESENSE-API-KEY: xyz"
 ```
 
+## Seeding from the Firestore emulator
+
+Once `nx offline staff` is up (both Typesense and the Firestore emulator running), seed Typesense from the emulator's fixtures:
+
+```bash
+nx offline-seed typesense
+```
+
+This is one-shot and idempotent: it drops and recreates the collections (`clients`, `residents`, `supervisionStaff`, `incarcerationStaff`, `locations`), then imports every doc from the matching Firestore emulator collection. Re-run any time the fixtures change.
+
+Verify:
+
+```bash
+curl 'http://localhost:8108/collections/clients/documents/search?q=*&query_by=stateCode' \
+  -H 'X-TYPESENSE-API-KEY: xyz' | jq '.found, .hits[0].document | keys'
+```
+
+The schemas in [src/schemas/index.ts](src/schemas/index.ts) declare only the fields needed for facet/filter/scope enforcement — any fields not declared here are dropped by Typesense on import. Search-target fields are added in later stacked PRs as the search bar lands.
+
 ## Roadmap
 
 Future additions to this lib:
 
-- Collection schema definitions (clients, residents, staff, locations, opportunities, …)
-- Typesense client wrapper(s) for frontend and backend usage
+- Phase 2 collections (`opportunities`, `opportunityUpdates`, `personUpdates`)
+- Phase 4 collections (`tasks`, `taskUpdates`)
 - Scoped-key minting helpers (consumed by `staff-shared-server`)
 - Shared filter-builder module (state-aware caseload-visibility filters)
-- Local seed / sync scripts for offline mode
+- Firebase extension installation for live Firestore → Typesense sync (Spike 4)
 
 ## Running unit tests
 

@@ -462,6 +462,7 @@
     "tsx": "^4.17.0",
     "typescript": "5.8.3",
     "typescript-eslint": "8.40.0",
+    "typesense": "^1.8.2",
     "utility-types": "^3.10.0",
     "v8r": "^4.2.1",
     "vite": "6.3.5",
