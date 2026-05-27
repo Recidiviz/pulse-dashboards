@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { roleSubtypeEnum } from "../utils/types";
 import { staffRecordBaseSchema } from "./staffRecordBaseSchema";
 
 export const workflowsStaffRecordBaseSchema = staffRecordBaseSchema.extend({
@@ -27,17 +28,7 @@ export const workflowsStaffRecordBaseSchema = staffRecordBaseSchema.extend({
   givenNames: z.string(),
   surname: z.string(),
   // TODO(#4618): Consider getting rid of this and replacing the relevant logic with a feature variant
-  roleSubtype: z
-    .enum([
-      "SUPERVISION_OFFICER",
-      "SUPERVISION_OFFICER_SUPERVISOR",
-      "SUPERVISION_DISTRICT_MANAGER",
-      "SUPERVISION_REGIONAL_MANAGER",
-      "SUPERVISION_STATE_LEADERSHIP",
-      "COUNSELOR",
-    ])
-    .nullish()
-    .catch(null),
+  roleSubtype: roleSubtypeEnum.nullish().catch(null),
   hasCaseload: z.boolean().optional(),
   pseudonymizedId: z.string(),
 });

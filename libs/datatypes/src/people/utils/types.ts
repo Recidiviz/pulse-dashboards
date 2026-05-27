@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import { OpportunityType } from "../../opportunities/OpportunityType";
 import { IncarcerationStaffRecord } from "../Staff/Incarceration/Workflows/schema";
 import { SupervisionOfficer } from "../Staff/Supervision/Insights/SupervisionOfficer/schema";
@@ -27,6 +29,22 @@ import { SupervisionStaffRecord } from "../Staff/Supervision/Workflows/schema";
 export type StaffRecord =
   | IncarcerationStaffRecord["output"]
   | SupervisionStaffRecord["output"];
+
+/**
+ * The role subtype assigned to a staff record. Drives per-state visibility
+ * rules (notably US_CA's `usCaFilterByRoleSubtype`) and Typesense scoped-key
+ * filter resolution.
+ */
+export const roleSubtypeEnum = z.enum([
+  "SUPERVISION_OFFICER",
+  "SUPERVISION_OFFICER_SUPERVISOR",
+  "SUPERVISION_DISTRICT_MANAGER",
+  "SUPERVISION_REGIONAL_MANAGER",
+  "SUPERVISION_STATE_LEADERSHIP",
+  "COUNSELOR",
+]);
+
+export type RoleSubtype = z.infer<typeof roleSubtypeEnum>;
 
 export type SupervisionOfficerWithOpportunityCardDetails =
   SupervisionOfficer & {

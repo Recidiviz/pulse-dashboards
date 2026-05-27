@@ -16,24 +16,22 @@
 // =============================================================================
 
 export {
-  createLocalTypesenseClient,
-  createTypesenseClient,
-  type TypesenseClientConfig,
-} from "./client";
-export { collectionNames, schemas } from "./schemas";
-export {
-  type BaseScope,
   compileUserScopePredicate,
-  type ResolveCrossSystemScopeInput,
-  resolveCrossSystemStaffScopes,
-  type ResolveScopeFeatureVariants,
-  type ResolveScopeInput,
-  type ResolveScopeUser,
-  resolveStaffScope,
-  resolveStateBase,
-  type SingleWorkflowsSystem,
-  type StaffScope,
   toCrossSystemTypesenseFilter,
   toTypesenseFilter,
   type ToTypesenseFilterClauses,
-} from "./scope";
+} from "./compileToTypesense";
+export {
+  resolveCrossSystemStaffScopes,
+  resolveStaffScope,
+} from "./resolveStaffScope";
+export { resolveStateBase } from "./stateScopes";
+export type {
+  BaseScope,
+  ResolveCrossSystemScopeInput,
+  ResolveScopeFeatureVariants,
+  ResolveScopeInput,
+  ResolveScopeUser,
+  SingleWorkflowsSystem,
+  StaffScope,
+} from "./types";
