@@ -314,7 +314,6 @@ export const MenuListWithShadow = (
   };
 
 const CaseloadSelectContainer = styled(Sans14)`
-  min-height: ${rem(40)};
   justify-content: space-between;
   align-items: center;
   flex: 1 0 0;
