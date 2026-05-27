@@ -237,7 +237,7 @@ describe("getSupervisorDashboardStats", () => {
       data: [
         {
           externalId: "staff-under-fake-supervisor",
-          supervisorId: fakeSupervisor.externalId,
+          supervisorId: additionalSupervisor.externalId,
           pseudonymizedId: "staff-under-fake-pseudo-id",
           stateCode: "US_ID",
           fullName: "Staff 1",

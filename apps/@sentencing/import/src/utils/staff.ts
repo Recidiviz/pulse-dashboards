@@ -62,7 +62,9 @@ export async function transformAndLoadStaffData(
       cases: {
         connect: existingCasesForStaff,
       },
-      supervisorId: staffData.supervisor_id,
+      supervisor: staffData.supervisor_id
+        ? { connect: { externalId: staffData.supervisor_id } }
+        : undefined,
       supervisesAll: !!staffData.supervises_all,
       officeAddress: staffData.officeAddress,
       officePhoneNumber: staffData.officePhoneNumber,

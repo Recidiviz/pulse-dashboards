@@ -82,7 +82,6 @@ export const fakeStaff = {
   email: faker.internet.email(),
   stateCode: StateCode.US_ID,
   hasLoggedIn: faker.datatype.boolean(),
-  supervisorId: null,
   supervisesAll: null,
 } satisfies StaffCreateInput;
 
@@ -93,7 +92,6 @@ export const fakeSupervisor = {
   email: faker.internet.email(),
   stateCode: StateCode.US_ID,
   hasLoggedIn: faker.datatype.boolean(),
-  supervisorId: null,
   supervisesAll: null,
 } satisfies StaffCreateInput;
 
@@ -263,7 +261,6 @@ export const fakeSARStaff = {
   email: faker.internet.email(),
   stateCode: StateCode.US_ID,
   hasLoggedIn: true,
-  supervisorId: null,
   supervisesAll: null,
   officeAddress: faker.location.streetAddress(),
   officePhoneNumber: faker.phone.number(),

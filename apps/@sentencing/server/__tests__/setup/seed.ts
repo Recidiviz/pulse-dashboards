@@ -89,7 +89,7 @@ export const fakeStaff = {
   email: faker.internet.email(),
   stateCode: StateCode.US_ID,
   hasLoggedIn: faker.datatype.boolean(),
-  supervisorId: "123",
+  supervisor: { connect: { externalId: fakeSupervisor.externalId } },
   supervisesAll: null,
 } satisfies StaffCreateInput;
 
@@ -301,6 +301,7 @@ export async function seed(prismaClient: PrismaClient) {
     },
   });
 
+  await prismaClient.staff.create({ data: fakeSupervisor });
   await prismaClient.staff.create({ data: fakeStaff });
   await prismaClient.client.create({ data: fakeClient });
   await prismaClient.opportunity.createMany({

@@ -59,7 +59,9 @@ describe("staff router", () => {
               email: faker.internet.email(),
               stateCode: StateCode.US_ID,
               hasLoggedIn: true,
-              supervisorId: fakeSupervisor.externalId,
+              supervisor: {
+                connect: { externalId: fakeSupervisor.externalId },
+              },
             },
           });
 

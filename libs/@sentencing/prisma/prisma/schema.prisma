@@ -85,9 +85,10 @@ model Staff {
   email         String?
   cases         Case[]
   sentencingAssessmentReports SentencingAssessmentReport[]
-  // TODO(Recidiviz/recidiviz-data#40011) Make this a self-relation and update metric exports to include supervisee data
-  supervisorId  String?
-  supervisesAll Boolean?
+  supervisorId    String?
+  supervisor      Staff?  @relation("StaffSupervisor", fields: [supervisorId], references: [externalId], onDelete: SetNull, onUpdate: Cascade)
+  directReports   Staff[] @relation("StaffSupervisor")
+  supervisesAll   Boolean?
 
   // SAR-specific fields for Missouri
   officeAddress     String?
@@ -95,6 +96,8 @@ model Staff {
 
   district      District? @relation(fields: [districtId], references: [id])
   districtId    String?
+
+  @@index([supervisorId])
 }
 
 model Client {
@@ -691,6 +694,8 @@ model SentencingAssessmentReport {
   supervisorSignature String?
   supervisorTitle String?
   supervisorLastSignedAt DateTime?
+
+  @@index([staffId])
 }
 
 model Charge {
