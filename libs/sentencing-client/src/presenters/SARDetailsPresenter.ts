@@ -437,9 +437,8 @@ export class SARDetailsPresenter implements Hydratable {
     );
   }
 
-  get assessmentAdministeredBy(): string | null {
-    const value = this.SARData?.assessmentAdministeredBy;
-    return value === "Mismatched Offenders" ? "Unknown" : value ?? null;
+  get assessmentAdministeredBy(): string {
+    return this.SARData?.assessmentAdministeredBy ?? "Unknown";
   }
 
   /** Extract unique judge name/division pairs from all imported charges */
