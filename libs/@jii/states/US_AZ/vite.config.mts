@@ -43,7 +43,6 @@ export default defineConfig(() => ({
     globalSetup: ["src/setupTestsGlobal.ts"],
     setupFiles: ["src/setupTests.ts"],
     name: "@jii/US_AZ",
-    watch: false,
     globals: true,
     environment: "jsdom",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],

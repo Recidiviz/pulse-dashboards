@@ -19,42 +19,29 @@ import tk from "timekeeper";
 
 import { UsAzTFunction } from "~@jii/translation";
 
-import { UsAzResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
+import { UsAzDisplayedDates } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
-const mockActiveDates: UsAzResidentContext["activeDates"] = {
-  tprDate: new Date("2024-03-15"),
-  dtpDate: undefined,
-  csbdDate: new Date("2024-01-10"), // earliest date
-  ercdDate: new Date("2024-06-01"),
-  sedDate: new Date("2024-12-01"), // latest date
-  csedDate: undefined,
-  addDate: undefined,
-  trToAddDate: undefined,
-};
+const mockSomeDates: UsAzDisplayedDates = [
+  { dateKey: "tprDate", date: new Date("2024-03-15") },
+  { dateKey: "csbdDate", date: new Date("2024-01-10") }, // earliest date
+  { dateKey: "ercdDate", date: new Date("2024-06-01") },
+  { dateKey: "sedDate", date: new Date("2024-12-01") }, // latest date
+];
 
-const mockAzMetadataAllNullDates: UsAzResidentContext["activeDates"] = {
-  tprDate: undefined,
-  csbdDate: undefined,
-  ercdDate: undefined,
-  sedDate: undefined,
-  csedDate: undefined,
-  addDate: undefined,
-  dtpDate: undefined,
-  trToAddDate: undefined,
-};
+const mockNoDates: UsAzDisplayedDates = [];
 
 // not exactly realistic but lets us test some behavior against all possible dates
-const mockAzMetadataWithAllDates: UsAzResidentContext["activeDates"] = {
-  tprDate: new Date("2024-03-15"),
-  dtpDate: new Date("2024-03-15"),
-  csbdDate: new Date("2024-01-10"),
-  trToAddDate: new Date("2024-01-10"),
-  ercdDate: new Date("2024-06-01"),
-  addDate: new Date("2024-06-01"),
-  sedDate: new Date("2024-12-01"),
-  csedDate: new Date("2024-12-01"),
-};
+const mockAllDates: UsAzDisplayedDates = [
+  { dateKey: "tprDate", date: new Date("2024-03-15") },
+  { dateKey: "dtpDate", date: new Date("2024-03-15") },
+  { dateKey: "csbdDate", date: new Date("2024-01-10") },
+  { dateKey: "trToAddDate", date: new Date("2024-01-10") },
+  { dateKey: "ercdDate", date: new Date("2024-06-01") },
+  { dateKey: "addDate", date: new Date("2024-06-01") },
+  { dateKey: "sedDate", date: new Date("2024-12-01") },
+  { dateKey: "csedDate", date: new Date("2024-12-01") },
+];
 
 const t = vi.fn() as unknown as UsAzTFunction;
 
@@ -72,9 +59,11 @@ const mockNestedObject = (() => {
 
 describe("UsAzImportantDatesPresenter", () => {
   describe("dateEntries", () => {
-    it("sorts dates by earliest first and highlights acisTprDate", () => {
-      const presenter = new UsAzImportantDatesPresenter(mockActiveDates, t);
+    it("sorts dates by earliest first", () => {
+      const presenter = new UsAzImportantDatesPresenter(mockSomeDates, t);
       const entries = presenter.dateEntries;
+
+      expect(entries).toHaveLength(4);
 
       // Check sorting order
       expect(entries[0].dateKey).toBe("csbdDate");
@@ -88,26 +77,17 @@ describe("UsAzImportantDatesPresenter", () => {
 
       expect(entries[3].dateKey).toBe("sedDate");
       expect(entries[3].date).toEqual(new Date("2024-12-01"));
-
-      // Should only include dates that have values
-      expect(entries).toHaveLength(4);
     });
 
-    it("handles all null dates correctly", () => {
-      const presenter = new UsAzImportantDatesPresenter(
-        mockAzMetadataAllNullDates,
-        t,
-      );
+    it("passes through nothing when given no dates", () => {
+      const presenter = new UsAzImportantDatesPresenter(mockNoDates, t);
       const entries = presenter.dateEntries;
 
       expect(entries).toHaveLength(0);
     });
 
-    it("hashlink for each date entry", () => {
-      const presenter = new UsAzImportantDatesPresenter(
-        mockAzMetadataWithAllDates,
-        t,
-      );
+    it("creates the right hashlink for each date entry", () => {
+      const presenter = new UsAzImportantDatesPresenter(mockAllDates, t);
       const entries = presenter.dateEntries;
 
       // Verify all entries have the right link URL
@@ -121,6 +101,10 @@ describe("UsAzImportantDatesPresenter", () => {
             {
               "dateKey": "trToAddDate",
               "linkUrl": "more-information/important-dates#csbdDate-trToAddDate",
+            },
+            {
+              "dateKey": "tprDate",
+              "linkUrl": "more-information/important-dates#tprDate",
             },
             {
               "dateKey": "dtpDate",
@@ -147,16 +131,18 @@ describe("UsAzImportantDatesPresenter", () => {
     });
 
     it("includes the current day in upcoming status", () => {
-      // this field should be defined
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const mockNow = new Date(mockActiveDates.csbdDate!);
-      // a naked date will be interpreted the start of the day.
+      const mockNow = new Date(
+        // this field should be defined
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        mockSomeDates.find(({ dateKey }) => dateKey === "csbdDate")!.date,
+      );
+      // a naked date will be interpreted as the start of the day.
       // we want to make sure that doesn't throw off comparisons later in the day
       mockNow.setHours(15, 25);
 
       tk.freeze(mockNow);
 
-      const presenter = new UsAzImportantDatesPresenter(mockActiveDates, t);
+      const presenter = new UsAzImportantDatesPresenter(mockSomeDates, t);
       const todayEntry = presenter.dateEntries.find(
         (e) => e.dateKey === "csbdDate",
       );

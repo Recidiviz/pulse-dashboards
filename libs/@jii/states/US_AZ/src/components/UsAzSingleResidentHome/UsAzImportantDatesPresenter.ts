@@ -15,48 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import assertNever from "assert-never";
 import { startOfDay } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { State } from "~@jii/paths";
 import { UsAzTFunction } from "~@jii/translation";
 
-import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
-import { UsAzResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
-
-export interface DateEntry {
-  dateKey: UsAzDateField;
-  date: Date;
-  isUpcoming: boolean; // Within 31 days
-  isPast: boolean;
-  info: string;
-  linkUrl: string;
-}
+import {
+  DateEntry,
+  UsAzDateField,
+  UsAzDisplayedDates,
+} from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
+import { getInfoPageHashForDateKey } from "../utils/utils";
 
 export class UsAzImportantDatesPresenter {
   constructor(
-    private activeDates: UsAzResidentContext["activeDates"],
+    private displayedDates: UsAzDisplayedDates,
     private t: UsAzTFunction,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
 
   get dateEntries(): DateEntry[] {
-    // Check if DTP exists to determine whether to exclude TPR
-    const hasDtpDate = !!this.activeDates.dtpDate;
-
-    // Filter out undefined dates and prioritize acisDtpDates over acisTprDates
-    const entries = Object.entries(this.activeDates).flatMap((entry) => {
-      // reasserting the type that was lost by Object.entries
-      const [field, date] = entry as [UsAzDateField, Date | undefined];
-      if (!date) return [];
-      if (field === "tprDate" && hasDtpDate) return [];
-      return [{ dateKey: field, date }];
-    });
-
     // Sort by earliest date first
-    const sortedEntries = entries.sort((a, b) => {
+    const sortedEntries = this.displayedDates.toSorted((a, b) => {
       return a.date.getTime() - b.date.getTime();
     });
 
@@ -71,7 +53,7 @@ export class UsAzImportantDatesPresenter {
         entryDate >= today && entryDate <= thirtyOneDaysFromNow;
       const isPast = entryDate < today;
 
-      const infoPageHash = this.getInfoPageHashForDateKey(
+      const infoPageHash = getInfoPageHashForDateKey(
         entry.dateKey as UsAzDateField,
       );
       const linkUrl = `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
@@ -84,7 +66,7 @@ export class UsAzImportantDatesPresenter {
         copyContext["trLinkUrl"] =
           `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
             {},
-          )}#${this.getInfoPageHashForDateKey("trToAddDate")}`;
+          )}#${getInfoPageHashForDateKey("trToAddDate")}`;
       }
       let info = this.t(($) => $.importantDates.dates[entry.dateKey].info, {
         replace: copyContext,
@@ -114,25 +96,5 @@ export class UsAzImportantDatesPresenter {
 
   get hasNoDates(): boolean {
     return this.dateEntries.length === 0;
-  }
-
-  getInfoPageHashForDateKey(dateKey: UsAzDateField): string {
-    //  these headings have been explicitly added to the Markdown document
-    // for this page. You need to ensure they remain in sync if anything changes!
-    switch (dateKey) {
-      case "tprDate":
-      case "dtpDate":
-      case "sedDate":
-      case "csedDate":
-        return dateKey;
-      case "csbdDate":
-      case "trToAddDate":
-        return "csbdDate-trToAddDate";
-      case "ercdDate":
-      case "addDate":
-        return "ercdDate-addDate";
-      default:
-        assertNever(dateKey);
-    }
   }
 }

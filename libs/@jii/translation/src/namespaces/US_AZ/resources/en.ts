@@ -138,7 +138,37 @@ export default {
   },
   openAll: "Open all content",
   closeAll: "Close all content",
-  importantDatesInfoPages: {
+  importantDatesInfoPage: {
+    filterContent: "Filter content by:",
+    personalDates: "My Release Dates",
+    allDates: "All Release Types",
+    generalFAQ: {
+      about: {
+        header: "General Release Information",
+        questions: {
+          whySoMany: {
+            header: "Why do I have so many different release dates?",
+            content: `Arizona has several different ways someone can be released, and each one has its own date. You might see dates for:
+
+- **Transition Release (STP or DTP)** — the earliest possible release, up to 90 days before your ERCD.
+- **CSBD or TR to ADD** — release up to about 77 days before your ERCD.
+- **ERCD or ADD** — release based on earned credits, usually around 85% of your sentence.
+- **SED** — 100% of your sentence.
+- **CSED** — when your community supervision ends.
+
+**Not all of these dates apply to everyone.** The dates you see on your homepage are the ones that apply to you. The page you're on now explains what each one means.`,
+          },
+          datesNotMatchingTimeComp: {
+            header:
+              "The dates in the app don't match my time comp paperwork. Why?",
+            content: `This usually happens because something changed after your time comp paperwork was printed. The app shows what's currently in the computer system that your COIII uses, which is updated more often than printed paperwork.
+If your dates have changed, the app should be the more recent source. But if something looks wrong, talk to your COIII — they can check the system and write to Time Comp if there's a real problem.`,
+          },
+        },
+      },
+    },
+  },
+  importantDatesFAQ: {
     tprDate: {
       header: "Standard Transition Program (STP)",
       questions: {

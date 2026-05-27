@@ -129,3 +129,53 @@ describe("DPR active", () => {
     expect(presenter.activeDates).toEqual(expectedDprDates);
   });
 });
+
+describe("displayedDates", () => {
+  it("filters out missing dates", () => {
+    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+      stateCode: "US_AZ",
+      isDprEligible: false,
+      hasAnyDprProgramCompleted: false,
+    };
+    presenter = new SingleResidentContextPresenter(allMissingDates);
+    expect(presenter.displayedDates).toBeEmpty();
+  });
+
+  it("shows TPR date when DTP date doesn't exist", () => {
+    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+      stateCode: "US_AZ",
+      isDprEligible: false,
+      hasAnyDprProgramCompleted: false,
+      acisTprDate: "2026-03-02",
+    };
+    presenter = new SingleResidentContextPresenter(allMissingDates);
+    expect(presenter.displayedDates).toHaveLength(1);
+    expect(presenter.displayedDates[0].dateKey).toEqual("tprDate");
+  });
+
+  it("picks DTP date over TPR date when DPR ineligible", () => {
+    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+      stateCode: "US_AZ",
+      isDprEligible: false,
+      hasAnyDprProgramCompleted: false,
+      acisTprDate: "2026-03-02",
+      acisDtpDate: "2026-03-03",
+    };
+    presenter = new SingleResidentContextPresenter(allMissingDates);
+    expect(presenter.displayedDates).toHaveLength(1);
+    expect(presenter.displayedDates[0].dateKey).toEqual("dtpDate");
+  });
+
+  it("picks DTP date over TPR date when DPR active", () => {
+    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+      stateCode: "US_AZ",
+      isDprEligible: true,
+      hasAnyDprProgramCompleted: true,
+      dprTprDate: new Date(2027, 2, 2),
+      dprDtpDate: new Date(2027, 2, 3),
+    };
+    presenter = new SingleResidentContextPresenter(allMissingDates);
+    expect(presenter.displayedDates).toHaveLength(1);
+    expect(presenter.displayedDates[0].dateKey).toEqual("dtpDate");
+  });
+});

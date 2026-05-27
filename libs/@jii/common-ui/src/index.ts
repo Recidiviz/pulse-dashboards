@@ -25,6 +25,7 @@ export * from "./Card";
 export * from "./Checkbox";
 export * from "./Chip";
 export * from "./constants";
+export * from "./CopyWrapper/clickableText";
 export * from "./CopyWrapper/CopyWrapper";
 export * from "./CopyWrapper/ImportantDatesCopyWrapper";
 export * from "./CopyWrapper/ShadowDOM";

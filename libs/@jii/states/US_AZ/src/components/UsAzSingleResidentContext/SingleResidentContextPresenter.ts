@@ -36,6 +36,15 @@ const US_AZ_DATE_KEYS = [
  * field names themselves
  */
 export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
+export interface DateEntry {
+  dateKey: UsAzDateField;
+  date: Date;
+  isUpcoming: boolean; // Within 31 days
+  isPast: boolean;
+  info: string;
+  linkUrl: string;
+}
+export type UsAzDisplayedDates = Pick<DateEntry, "dateKey" | "date">[];
 
 /**
  * Maps each normalized date ID to the resident_metadata field that holds
@@ -119,5 +128,25 @@ export class SingleResidentContextPresenter {
       }),
       // TS can't infer the keys correctly, but we have generated this object by mapping the list of constants
     ) as Record<UsAzDateField, Date | undefined>;
+  }
+
+  /**
+   * Dates filtered down to only those that should be displayed for this person on the
+   * home page and the personalized section of the date description page.
+   *
+   * The order of results is not meaningful/guaranteed.
+   */
+  get displayedDates(): UsAzDisplayedDates {
+    // Check if DTP exists to determine whether to exclude TPR
+    const hasDtpDate = !!this.activeDates.dtpDate;
+
+    // Filter out undefined dates and prioritize acisDtpDates over acisTprDates
+    return Object.entries(this.activeDates).flatMap((entry) => {
+      // reasserting the type that was lost by Object.entries
+      const [field, date] = entry as [UsAzDateField, Date | undefined];
+      if (!date) return [];
+      if (field === "tprDate" && hasDtpDate) return [];
+      return [{ dateKey: field, date }];
+    });
   }
 }

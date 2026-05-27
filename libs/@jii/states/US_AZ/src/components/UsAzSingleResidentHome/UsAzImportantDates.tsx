@@ -68,10 +68,10 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   });
 
 function usePresenter() {
-  const { activeDates } = useUsAzSingleResidentContext();
+  const { displayedDates } = useUsAzSingleResidentContext();
   const { t } = useUsAzTranslations();
 
-  return new UsAzImportantDatesPresenter(activeDates, t);
+  return new UsAzImportantDatesPresenter(displayedDates, t);
 }
 
 export const UsAzImportantDates = withPresenterManager({

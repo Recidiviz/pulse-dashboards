@@ -15,36 +15,76 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+
 import { useUsAzTranslations } from "~@jii/translation";
+import { withPresenterManager } from "~hydration-utils";
 
+import { useUsAzSingleResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { AccordionSection } from "./AccordionSection";
+import { ImportantDatesFAQPresenter } from "./ImportantDatesFAQPresenter";
+import { ImportantDatesFilterButtons } from "./ImportantDatesFilterButtons";
+import { ImportantDatesTOC } from "./ImportantDatesTOC";
 
-export function UsAzImportantDatesFAQ() {
+const ManagedComponent = observer(function UsAzImportantDatesFAQ({
+  presenter,
+}: {
+  presenter: ImportantDatesFAQPresenter;
+}) {
   const { t } = useUsAzTranslations();
 
-  const allDateHashes = [
-    "tprDate",
-    "dtpDate",
-    "csbdDate-trToAddDate",
-    "ercdDate-addDate",
-    "sedDate",
-    "csedDate",
-  ] as const;
+  return (
+    <>
+      <ImportantDatesFilterButtons presenter={presenter} />
+      <ImportantDatesTOC presenter={presenter} />
 
-  // TODO(OBT-16919): Enable people to toggle between display of their own dates
-  // and display of all dates
-  return allDateHashes.map((hash) => (
-    <AccordionSection
-      key={hash}
-      id={hash}
-      accordionCopy={t(($) => $.importantDatesInfoPages[hash].questions, {
-        returnObjects: true,
-      })}
-      sectionCopy={{
-        header: t(($) => $.importantDatesInfoPages[hash].header),
-        openAllCopy: t(($) => $.openAll),
-        closeAllCopy: t(($) => $.closeAll),
-      }}
-    />
-  ));
+      {presenter.nonDateSectionHashes.map((hash) => (
+        <AccordionSection
+          key={hash}
+          id={hash}
+          accordionCopy={t(
+            // @ts-expect-error This is a list of keys from the object but the types are lost by Object.keys
+            ($) => $.importantDatesInfoPage.generalFAQ[hash].questions,
+            {
+              returnObjects: true,
+            },
+          )}
+          sectionCopy={{
+            // @ts-expect-error This is a list of keys from the object but the types are lost by Object.keys
+            header: t(($) => $.importantDatesInfoPage.generalFAQ[hash].header),
+            openAllCopy: t(($) => $.openAll),
+            closeAllCopy: t(($) => $.closeAll),
+          }}
+        />
+      ))}
+
+      {presenter.dateHashes.map((hash) => (
+        <AccordionSection
+          key={hash}
+          id={hash}
+          accordionCopy={t(($) => $.importantDatesFAQ[hash].questions, {
+            returnObjects: true,
+          })}
+          sectionCopy={{
+            header: t(($) => $.importantDatesFAQ[hash].header),
+            openAllCopy: t(($) => $.openAll),
+            closeAllCopy: t(($) => $.closeAll),
+          }}
+        />
+      ))}
+    </>
+  );
+});
+
+function usePresenter() {
+  const { displayedDates } = useUsAzSingleResidentContext();
+  const { t } = useUsAzTranslations();
+
+  return new ImportantDatesFAQPresenter(displayedDates, t);
 }
+
+export const UsAzImportantDatesFAQ = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
+});

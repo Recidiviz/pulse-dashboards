@@ -28,7 +28,7 @@ import { SingleResidentContextPresenter } from "./SingleResidentContextPresenter
 
 export type UsAzResidentContext = {
   isDprQualified: boolean;
-  activeDates: SingleResidentContextPresenter["activeDates"];
+  displayedDates: SingleResidentContextPresenter["displayedDates"];
   metadata: ResidentMetadata<"US_AZ">;
 };
 
@@ -46,7 +46,7 @@ const ManagedComponent: FC<{ presenter: SingleResidentContextPresenter }> =
         value={{
           isDprQualified: presenter.isDprQualified,
           metadata: presenter.metadata,
-          activeDates: presenter.activeDates,
+          displayedDates: presenter.displayedDates,
         }}
       >
         <Outlet />
