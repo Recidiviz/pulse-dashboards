@@ -101,7 +101,7 @@ const FormCommunicationMethod: React.FC = () => {
         <FormCheckbox name="security" label="Security" />
       </Cell>
       <Cell row={3} col={6} colSpan={"end"}>
-        <FormCheckbox name="other5" label="Other" />
+        <FormCheckbox name="other5" label="Other Equally Effective Means" />
       </Cell>
       <Cell row={4} col={1} colSpan={"end"}>
         Method used:
