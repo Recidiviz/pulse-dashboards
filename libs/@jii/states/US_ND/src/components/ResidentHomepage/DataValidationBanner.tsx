@@ -19,32 +19,22 @@ import { rem, rgba } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { ButtonLink } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
 import { useUsNdTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 import { Banner, BannerCopy } from "./Banner";
 
 const Wrapper = styled(Banner)`
-  border-left: ${rem(4)} solid ${palette.signal.notification};
-  background: ${rgba(palette.signal.notification, 0.1)};
+  border-left: ${rem(4)} solid ${palette.signal.important};
+  background: ${rgba(palette.signal.important, 0.1)};
 `;
 
-export const OSUBanner: FC = () => {
+export const DataValidationBanner: FC = () => {
   const { t } = useUsNdTranslations();
 
   return (
     <Wrapper>
-      <BannerCopy>{t(($) => $.osuBanner.message)}</BannerCopy>
-      <ButtonLink
-        kind="primary"
-        to={State.Resident.$.UsNdMoreInformation.buildRelativePath({
-          pageSlug: "important-dates",
-        })}
-      >
-        {t(($) => $.osuBanner.linkText)}
-      </ButtonLink>
+      <BannerCopy>{t(($) => $.dataValidationBanner.message)}</BannerCopy>
     </Wrapper>
   );
 };

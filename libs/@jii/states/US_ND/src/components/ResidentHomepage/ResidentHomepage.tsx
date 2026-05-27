@@ -25,7 +25,11 @@ import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsNdTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
+import { DateDescriptionOverride } from "../SentenceDatesOverrides/DateDescription";
+import { DateValueOverride } from "../SentenceDatesOverrides/DateValue";
+import { DateValueSupplementalOverride } from "../SentenceDatesOverrides/DateValueSupplemental";
 import { SectionWrapperOverride } from "../SentenceDatesOverrides/SectionWrapper";
+import { DataValidationBanner } from "./DataValidationBanner";
 import { OSUBanner } from "./OSUBanner";
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 
@@ -38,10 +42,16 @@ const ManagedComponent: FC<{ presenter: ResidentHomepagePresenter }> = observer(
       <BottomPaddedContainer>
         <LastUpdatedBanner lastUpdatedDate={presenter.lastUpdatedDate} />
         {presenter.isOSUResident && <OSUBanner />}
+        <DataValidationBanner />
         <SentenceDates
           data={presenter.sentenceDatesData}
           stateCode="US_ND"
-          componentOverrides={{ SectionWrapper: SectionWrapperOverride }}
+          componentOverrides={{
+            SectionWrapper: SectionWrapperOverride,
+            DateValue: DateValueOverride,
+            DateValueSupplemental: DateValueSupplementalOverride,
+            DateDescription: DateDescriptionOverride,
+          }}
         />
       </BottomPaddedContainer>
     );

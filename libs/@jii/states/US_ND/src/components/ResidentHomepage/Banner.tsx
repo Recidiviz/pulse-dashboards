@@ -15,36 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem, rgba } from "polished";
-import { FC } from "react";
+import { typography } from "@recidiviz/design-system";
+import { rem } from "polished";
 import styled from "styled-components";
 
-import { ButtonLink } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
-import { useUsNdTranslations } from "~@jii/translation";
-import { palette } from "~design-system";
+import { CopyWrapper } from "~@jii/common-ui";
+import { spacing } from "~design-system";
 
-import { Banner, BannerCopy } from "./Banner";
+// TODO(#6719): refactor to design system and combine with other similar components
+export const Banner = styled.div`
+  ${typography.Sans14}
+  margin: ${rem(spacing.xl)} 0;
+  padding: ${rem(spacing.md)};
+  display: flex;
+  gap: ${rem(spacing.xl)};
+  justify-items: space-between;
+  align-items: center;
 
-const Wrapper = styled(Banner)`
-  border-left: ${rem(4)} solid ${palette.signal.notification};
-  background: ${rgba(palette.signal.notification, 0.1)};
+  span {
+    flex: 1 1 auto;
+  }
+
+  a {
+    flex: 0 0 auto;
+  }
 `;
 
-export const OSUBanner: FC = () => {
-  const { t } = useUsNdTranslations();
+export const BannerCopy = styled(CopyWrapper)`
+  ${typography.Body14}
 
-  return (
-    <Wrapper>
-      <BannerCopy>{t(($) => $.osuBanner.message)}</BannerCopy>
-      <ButtonLink
-        kind="primary"
-        to={State.Resident.$.UsNdMoreInformation.buildRelativePath({
-          pageSlug: "important-dates",
-        })}
-      >
-        {t(($) => $.osuBanner.linkText)}
-      </ButtonLink>
-    </Wrapper>
-  );
-};
+  margin: 0;
+`;

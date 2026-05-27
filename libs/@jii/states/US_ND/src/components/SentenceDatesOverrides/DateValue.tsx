@@ -15,36 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem, rgba } from "polished";
-import { FC } from "react";
-import styled from "styled-components";
-
-import { ButtonLink } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
+import {
+  defaultComponents,
+  SentenceDatesComponents,
+} from "~@jii/sentence-dates";
 import { useUsNdTranslations } from "~@jii/translation";
-import { palette } from "~design-system";
 
-import { Banner, BannerCopy } from "./Banner";
+import { isUnavailableDateId } from "../ResidentHomepage/types";
 
-const Wrapper = styled(Banner)`
-  border-left: ${rem(4)} solid ${palette.signal.notification};
-  background: ${rgba(palette.signal.notification, 0.1)};
-`;
-
-export const OSUBanner: FC = () => {
+/**
+ * Displays a placeholder value for unavailable dates
+ */
+export const DateValueOverride: SentenceDatesComponents["DateValue"] = ({
+  datePresenter,
+  children,
+  ...rest
+}) => {
   const { t } = useUsNdTranslations();
 
+  if (isUnavailableDateId(datePresenter.id)) {
+    return (
+      <defaultComponents.DateValue {...{ datePresenter, ...rest }}>
+        {t(($) => $.unavailableDates.placeholderValue)}
+      </defaultComponents.DateValue>
+    );
+  }
   return (
-    <Wrapper>
-      <BannerCopy>{t(($) => $.osuBanner.message)}</BannerCopy>
-      <ButtonLink
-        kind="primary"
-        to={State.Resident.$.UsNdMoreInformation.buildRelativePath({
-          pageSlug: "important-dates",
-        })}
-      >
-        {t(($) => $.osuBanner.linkText)}
-      </ButtonLink>
-    </Wrapper>
+    <defaultComponents.DateValue {...{ datePresenter, children, ...rest }} />
   );
 };
