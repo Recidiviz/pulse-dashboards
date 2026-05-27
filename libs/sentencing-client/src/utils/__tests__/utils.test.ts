@@ -56,7 +56,7 @@ test("formatListWithAnd formats lists correctly", () => {
       ["Case Management", "Family services", "Education"],
       "needs",
     ),
-  ).toBe("Case Management, Family services and Education");
+  ).toBe("Case Management, Family services, and Education");
 
   expect(formatListWithAnd(["Case Management", "Education"], "needs")).toBe(
     "Case Management and Education",
@@ -68,7 +68,7 @@ test("formatListWithAnd formats lists correctly", () => {
       "no needs",
       true, // lowercase everything in the list
     ),
-  ).toBe("case management, family services and education");
+  ).toBe("case management, family services, and education");
 
   expect(formatListWithAnd([], "no needs")).toBe("no needs");
 });

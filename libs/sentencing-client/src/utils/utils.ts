@@ -96,7 +96,7 @@ export const formatListWithAnd = (
   const lastItem = formattedItems[formattedItems.length - 1];
   const firstItems = formattedItems.slice(0, -1).join(", ");
 
-  return `${firstItems} and ${lastItem}`;
+  return `${firstItems}, and ${lastItem}`;
 };
 
 /**

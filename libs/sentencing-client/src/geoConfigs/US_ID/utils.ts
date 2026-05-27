@@ -75,7 +75,7 @@ export const generateIdahoSummary = (props: SummaryProps): string | void => {
   const protectiveFactorsSentence = hasProtectiveFactors
     ? `${salutation} ${name} ${protectiveFactorsList}—${factorsWhichSuggestPhrase} a solid foundation for success in the community.`
     : ``;
-  const riderTermProtectiveFactorsParagraph = `While incarceration is recommended due to the nature of the offense, ${salutation} ${name} has ${protectiveFactorsList}${theseFactorsSuggestPhrase} a solid foundation that may contribute to ${possessive} successful reintegration into the community upon ${possessive} release.\n\n`;
+  const riderTermProtectiveFactorsParagraph = `While incarceration is recommended due to the nature of the offense, ${salutation} ${name} ${protectiveFactorsList}${theseFactorsSuggestPhrase} a solid foundation that may contribute to ${possessive} successful reintegration into the community upon ${possessive} release.\n\n`;
 
   const probationTemplate = {
     default: `
