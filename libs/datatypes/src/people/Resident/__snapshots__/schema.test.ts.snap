@@ -1072,7 +1072,15 @@ exports[`schema for 'US_CO' 'RES001' 1`] = `
   "facilityId": "CO_DEMO_FACILITY",
   "facilityUnitId": null,
   "gender": "MALE",
-  "metadata": {},
+  "metadata": {
+    "creditActivity": [],
+    "incarcerationStartDate": 2020-09-10T00:00:00.000Z,
+    "lastUpdatedDate": 2021-12-09T00:00:00.000Z,
+    "mrdTent": 2023-12-16T00:00:00.000Z,
+    "pedTent": 2023-03-16T00:00:00.000Z,
+    "sddTent": undefined,
+    "stateCode": "US_CO",
+  },
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "John",
@@ -1096,7 +1104,15 @@ exports[`schema for 'US_CO' 'RES002' 1`] = `
   "facilityId": "CO_DEMO_FACILITY",
   "facilityUnitId": null,
   "gender": "FEMALE",
-  "metadata": {},
+  "metadata": {
+    "creditActivity": [],
+    "incarcerationStartDate": 2019-06-16T00:00:00.000Z,
+    "lastUpdatedDate": 2021-12-13T00:00:00.000Z,
+    "mrdTent": 2023-06-16T00:00:00.000Z,
+    "pedTent": 2022-08-16T00:00:00.000Z,
+    "sddTent": 2024-12-16T00:00:00.000Z,
+    "stateCode": "US_CO",
+  },
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Jane",

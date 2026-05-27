@@ -118,6 +118,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
           <ButtonLink
             to={State.Resident.UsCoMoreInformation.EarnedTime.buildPath(
               pathParams,
+              { backTarget: "programs" },
             )}
           >
             {t(($) => $.programs.learnMoreLink)}

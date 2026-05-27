@@ -15,12 +15,56 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
+import { observer } from "mobx-react-lite";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { UsCoProgramsList } from "../components/UsCoProgramsList/UsCoProgramsList";
+import { BottomPaddedContainer, Redirect, usePageTitle } from "~@jii/common-ui";
+import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
+import { LastUpdatedBanner } from "~@jii/layout";
+import { State } from "~@jii/paths";
+import { ProgramsCtaSection } from "~@jii/program-catalog";
+import { SentenceDates } from "~@jii/sentence-dates";
+import { useUsCoTranslations } from "~@jii/translation";
+import { withPresenterManager } from "~hydration-utils";
 
-export function UsCoSingleResidentHome() {
-  usePageTitle("Home");
+import { ResidentHomePresenter } from "../presenters/ResidentHomePresenter";
 
-  return <UsCoProgramsList />;
+const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
+  observer(function UsCoSingleResidentHome({ presenter }) {
+    const { residentFlags } = useSingleResidentContext();
+    const residentUrlParams = useTypedParams(State.Resident);
+    const { t } = useUsCoTranslations();
+
+    usePageTitle(t(($) => $.homepage.pageTitle));
+
+    if (!residentFlags.usCoV1Experience)
+      return (
+        <Redirect
+          to={State.Resident.ProgramCatalog.buildPath(residentUrlParams)}
+        />
+      );
+
+    return (
+      <BottomPaddedContainer>
+        <LastUpdatedBanner
+          overrideCopy={t(($) => $.homepage.lastUpdatedDate, {
+            lastUpdatedDate: presenter.lastUpdatedDate,
+          })}
+        />
+
+        <SentenceDates data={presenter.sentenceDatesData} stateCode="US_CO" />
+
+        <ProgramsCtaSection stateCode="US_CO" />
+      </BottomPaddedContainer>
+    );
+  });
+
+function usePresenter() {
+  return new ResidentHomePresenter(useResidentMetadata("US_CO"));
 }
+
+export const UsCoSingleResidentHome = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+});

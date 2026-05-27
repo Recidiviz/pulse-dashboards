@@ -24,6 +24,7 @@ import { personMetadataSchema } from "../utils/personMetadataSchema";
 import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
 import { usArResidentMetadataSchema } from "./US_AR/metadata/schema";
 import { usAzResidentMetadataSchema } from "./US_AZ/metadata/schema";
+import { usCoResidentMetadataSchema } from "./US_CO/metadata/schema";
 import { usIdResidentMetadataSchema } from "./US_ID/metadata/schema";
 import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
 import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
@@ -43,6 +44,7 @@ const MISSING_DATE_SENTINEL = new Date(9999, 11, 1);
 export const stateMetadataSchemas = [
   usArResidentMetadataSchema,
   usAzResidentMetadataSchema,
+  usCoResidentMetadataSchema,
   usIdResidentMetadataSchema,
   usMeResidentMetadataSchema,
   usMaResidentMetadataSchema,

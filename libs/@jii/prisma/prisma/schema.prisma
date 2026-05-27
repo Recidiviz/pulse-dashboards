@@ -23,6 +23,7 @@ enum ResidentFlagId {
     usNeGoodTimeAlerts
     usNeChecklistDocuments
     usAzFslImprovements
+    usCoV1Experience
 }
 
 model ResidentFlagInstance {

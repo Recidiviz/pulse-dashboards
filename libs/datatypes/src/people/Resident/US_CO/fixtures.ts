@@ -37,7 +37,15 @@ export const rawUsCoResidents: Array<RawResidentRecord> = [
     allEligibleOpportunities: [],
     unitId: null,
     stateCode: "US_CO",
-    metadata: {},
+    metadata: {
+      stateCode: "US_CO",
+      incarcerationStartDate: relativeFixtureDate({ years: -1, days: -97 }),
+      pedTent: relativeFixtureDate({ years: 1, months: 3 }),
+      mrdTent: relativeFixtureDate({ years: 2 }),
+      sddTent: null,
+      creditActivity: [],
+      lastUpdatedDate: relativeFixtureDate({ days: -7 }),
+    },
   },
   {
     displayId: "RES002",
@@ -57,7 +65,15 @@ export const rawUsCoResidents: Array<RawResidentRecord> = [
     allEligibleOpportunities: [],
     unitId: null,
     stateCode: "US_CO",
-    metadata: {},
+    metadata: {
+      stateCode: "US_CO",
+      incarcerationStartDate: relativeFixtureDate({ years: -2, months: -6 }),
+      pedTent: relativeFixtureDate({ months: 8 }),
+      mrdTent: relativeFixtureDate({ years: 1, months: 6 }),
+      sddTent: relativeFixtureDate({ years: 3 }),
+      creditActivity: [],
+      lastUpdatedDate: relativeFixtureDate({ days: -3 }),
+    },
   },
 ];
 

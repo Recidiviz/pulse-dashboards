@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import {
+  useTypedParams,
+  useTypedSearchParams,
+} from "react-router-typesafe-routes/dom";
 
 import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
@@ -28,10 +31,24 @@ type Props = {
 export function PageMoreInformation({ pageSlug }: Props) {
   const { t } = useUsCoTranslations();
   const params = useTypedParams(State.Resident.UsCoMoreInformation);
+  const [{ backTarget }] = useTypedSearchParams(
+    State.Resident.UsCoMoreInformation,
+  );
+
+  const backLinkProps =
+    backTarget === "programs"
+      ? {
+          to: State.Resident.ProgramCatalog.buildPath(params),
+          children: t(($) => $.moreInformation.backLink.programs),
+        }
+      : {
+          to: State.Resident.buildPath(params),
+          children: t(($) => $.moreInformation.backLink.home),
+        };
 
   return (
     <DefinitionPage
-      backLinkProps={{ to: State.Resident.buildPath(params), children: "Home" }}
+      backLinkProps={backLinkProps}
       heading={t(($) => $.moreInformation.pages[pageSlug].heading)}
       body={t(($) => $.moreInformation.pages[pageSlug].body)}
     />

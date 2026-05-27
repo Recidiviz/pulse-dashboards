@@ -1,5 +1,9 @@
 {
   "moreInformation": {
+    "backLink": {
+      "home": "Back to Home",
+      "programs": "Back to Programs"
+    },
     "pages": {
       "earnedTime": {
         "heading": "How Earned Time Works",
@@ -50,5 +54,21 @@
       "closeWindow": "Close window"
     },
     "modalCallToAction": "Sound interesting? Talk to your case manager to see if there might be a good fit."
+  },
+  "homepage": {
+    "pageTitle": "Home",
+    "lastUpdatedDate": "This information was last updated on {{lastUpdatedDate, formatFullDate}}. The following dates are estimated, if you have questions about your dates please reach out to your Case Manager."
+  },
+  "sentenceDates": {
+    "dates": {
+      "mrdTent": {
+        "label": "Mandatory Release Date (MRD)",
+        "description": "The date you must be released to parole if you have not been granted discretionary parole earlier."
+      },
+      "pedTent": {
+        "label": "Parole Eligibility Date (PED)",
+        "description": "The earliest date you are eligible for discretionary release to parole."
+      }
+    }
   }
 }

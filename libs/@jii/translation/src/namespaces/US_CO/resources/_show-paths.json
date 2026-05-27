@@ -1,5 +1,9 @@
 {
   "moreInformation": {
+    "backLink": {
+      "home": "[US_CO]moreInformation.backLink.home",
+      "programs": "[US_CO]moreInformation.backLink.programs"
+    },
     "pages": {
       "earnedTime": {
         "heading": "[US_CO]moreInformation.pages.earnedTime.heading",
@@ -50,5 +54,21 @@
       "closeWindow": "[US_CO]programs.modal.closeWindow"
     },
     "modalCallToAction": "[US_CO]programs.modalCallToAction"
+  },
+  "homepage": {
+    "pageTitle": "[US_CO]homepage.pageTitle",
+    "lastUpdatedDate": "[US_CO]homepage.lastUpdatedDate"
+  },
+  "sentenceDates": {
+    "dates": {
+      "mrdTent": {
+        "label": "[US_CO]sentenceDates.dates.mrdTent.label",
+        "description": "[US_CO]sentenceDates.dates.mrdTent.description"
+      },
+      "pedTent": {
+        "label": "[US_CO]sentenceDates.dates.pedTent.label",
+        "description": "[US_CO]sentenceDates.dates.pedTent.description"
+      }
+    }
   }
 }

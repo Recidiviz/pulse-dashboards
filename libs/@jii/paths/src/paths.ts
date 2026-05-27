@@ -120,7 +120,9 @@ export const ReentryAssessment = route("reentry-assessment");
 
 export const UsCoMoreInformation = route(
   "more-information",
-  {},
+  {
+    searchParams: { backTarget: string() },
+  },
   {
     EarnedTime: route("earned-time"),
   },
