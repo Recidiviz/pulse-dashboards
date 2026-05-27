@@ -179,6 +179,7 @@ export const sarRouter = router({
             externalId: true,
             status: true,
             dueDate: true,
+            courtDate: true,
             completionDate: true,
             client: {
               select: {

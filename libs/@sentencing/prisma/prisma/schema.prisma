@@ -603,6 +603,7 @@ model SentencingAssessmentReport {
   updatedAt DateTime  @updatedAt
   status    CaseStatus @default(NotYetStarted)
   dueDate            DateTime?
+  courtDate          DateTime?
   completionDate     DateTime?
 
   client   Client @relation(fields: [clientId], references: [externalId])

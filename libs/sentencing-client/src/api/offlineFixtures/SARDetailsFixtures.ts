@@ -81,6 +81,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     mitigatingFactors: [],
     otherMitigatingFactor: null,
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    courtDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
     completionDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 2000),
 
     victimImpactStatement: null,

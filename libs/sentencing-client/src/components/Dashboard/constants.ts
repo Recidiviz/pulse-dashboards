@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StaffCase } from "../../api";
+import { StaffCase, StaffSAR } from "../../api";
 
 type StaffCaseClient = StaffCase["client"];
 
 export const DUE_DATE_KEY: keyof StaffCase = "dueDate";
+
+export const COURT_DATE_KEY: keyof StaffSAR = "courtDate";
 
 export const CLIENT_KEY: keyof StaffCase = "client";
 

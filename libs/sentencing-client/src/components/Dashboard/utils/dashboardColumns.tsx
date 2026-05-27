@@ -34,6 +34,7 @@ import {
   ARCHIVED_STATUS,
   CANCELLED_STATUS,
   CLIENT_FULL_NAME_KEY,
+  COURT_DATE_KEY,
   DUE_DATE_KEY,
   ID_KEY,
   OFFENSE_KEY,
@@ -63,16 +64,22 @@ export const ID_COLUMN: ColumnDef<CaseListTableCase> = {
   enableSorting: false,
 };
 
-export const DUE_DATE_COLUMN: ColumnDef<CaseListTableCase> = {
-  header: "Due Date",
-  accessorKey: DUE_DATE_KEY,
+const createDateColumn = (
+  header: string,
+  accessorKey: string,
+): ColumnDef<CaseListTableCase> => ({
+  header,
+  accessorKey,
   cell: (info) => {
-    const value = info.getValue() as Date | null;
-    return value === null
+    const value = info.getValue() as Date | null | undefined;
+    return value == null
       ? UNKNOWN_OPTION
       : moment(value).utc().format("MM/DD/YYYY");
   },
-};
+});
+
+export const DUE_DATE_COLUMN = createDateColumn("Due Date", DUE_DATE_KEY);
+export const COURT_DATE_COLUMN = createDateColumn("Court Date", COURT_DATE_KEY);
 
 const createStatusColumn = (
   header: string,
@@ -159,6 +166,7 @@ export const SAR_DASHBOARD_COLUMNS: ColumnDef<CaseListTableCase>[] = [
   NAME_COLUMN,
   ID_COLUMN,
   DUE_DATE_COLUMN,
+  COURT_DATE_COLUMN,
   SAR_STATUS_COLUMN,
 ];
 
