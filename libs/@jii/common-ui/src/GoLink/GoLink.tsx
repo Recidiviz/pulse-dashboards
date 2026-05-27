@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
-import { FC, ReactNode } from "react";
+import { FC, MouseEventHandler, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -42,13 +42,16 @@ const StyledGoLink = styled(Link)`
   }
 `;
 
-export const GoLink: FC<{
+export type GoLinkProps = {
   children: ReactNode;
   to: string;
   back?: boolean;
-}> = ({ back, children, to }) => {
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+};
+
+export const GoLink: FC<GoLinkProps> = ({ back, children, to, onClick }) => {
   return (
-    <StyledGoLink to={to}>
+    <StyledGoLink {...{ to, onClick }}>
       {back && <Icon kind="Arrow" size={16} rotate={180} />}
       <span>{children}</span>
       {!back && <Icon kind="Arrow" size={16} />}

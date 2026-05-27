@@ -17,6 +17,11 @@
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import "../../../../libs/@jii/common-ui/src/global.css";
+import "@fontsource/libre-baskerville/400.css";
+import "@fontsource/public-sans/400.css";
+import "@fontsource/public-sans/500.css";
+import "@fontsource/public-sans/600.css";
+import "@fontsource/public-sans/700.css";
 
 import type { Preview } from "@storybook/react-vite";
 import { MINIMAL_VIEWPORTS } from "storybook/viewport";

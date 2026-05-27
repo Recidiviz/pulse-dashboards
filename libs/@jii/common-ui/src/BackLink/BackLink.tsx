@@ -20,8 +20,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { GoLink } from "../GoLink/GoLink";
-import { SimpleLinkProps } from "../SimpleLinkProps";
+import { GoLink, GoLinkProps } from "../GoLink/GoLink";
 
 const Wrapper = styled.div`
   margin-bottom: ${rem(spacing.xxl)};
@@ -30,7 +29,7 @@ const Wrapper = styled.div`
 /**
  * A link styled as a button with a margin below (to be used at the top of a page)
  */
-export const BackLink: FC<SimpleLinkProps> = (props) => {
+export const BackLink: FC<Omit<GoLinkProps, "back">> = (props) => {
   return (
     <Wrapper>
       <GoLink back {...props} />

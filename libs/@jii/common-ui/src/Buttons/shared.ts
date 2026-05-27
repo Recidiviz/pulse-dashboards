@@ -31,7 +31,7 @@ export const jiiButtonStyles = css<{ kind?: ButtonKind }>`
 
   ${(props) => {
     // secondary is also the default if no kind is specified,
-    // which is may not be for button-styled links
+    // which it may not be for button-styled links
     if (props.kind === "secondary" || !props.kind) {
       return `
         border: 1px solid ${palette.signal.links};

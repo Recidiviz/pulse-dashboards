@@ -65,12 +65,10 @@ export const UsNcRNAModal = observer(function UsNcRNAModal({
         <ModalTitle>{title}</ModalTitle>
         <SlateCopy>{message}</SlateCopy>
         <ButtonGroup>
-          <JIIButton kind="secondary" shape="pill" onClick={onCancel}>
+          <JIIButton kind="secondary" onClick={onCancel}>
             {cancelButtonText}
           </JIIButton>
-          <JIIButton shape="pill" onClick={onConfirm}>
-            {confirmButtonText}
-          </JIIButton>
+          <JIIButton onClick={onConfirm}>{confirmButtonText}</JIIButton>
         </ButtonGroup>
       </ModalContents>
     </Modal>

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-import { Button, Icon } from "~design-system";
+import { Accordion, type AccordionCopy } from "../Accordion";
 
-/**
- * Rather than linking to an explicit URL, this button simply navigates
- * to the previous entry in the React Router history stack.
- */
-export function HistoryBackButton({
-  children = "Back",
-}: {
-  children?: React.ReactNode;
-}) {
-  const navigate = useNavigate();
+export type AccordionExampleArgs = {
+  copy: AccordionCopy;
+  onToggle: (id: string) => void;
+};
+
+export default function AccordionExample({
+  copy,
+  onToggle,
+}: AccordionExampleArgs) {
+  const [toggledPanels, setToggledPanels] = useState<
+    Partial<Record<string, boolean>>
+  >({});
 
   return (
-    <Button onClick={() => navigate(-1)} role="link">
-      <Icon
-        kind="Arrow"
-        size={12}
-        rotate={180}
-        style={{ marginRight: rem(spacing.xs) }}
-      />
-      {children}
-    </Button>
+    <Accordion
+      copy={copy}
+      toggledPanels={toggledPanels}
+      onToggle={(id) => {
+        setToggledPanels((prev) => ({ ...prev, [id]: !prev[id] }));
+        onToggle(id);
+      }}
+    />
   );
 }

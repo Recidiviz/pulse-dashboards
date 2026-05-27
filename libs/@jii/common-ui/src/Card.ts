@@ -37,7 +37,7 @@ export const CardHeading = styled.h3`
   display: flex;
   gap: 1em;
   justify-content: space-between;
-  margin-bottom: ${rem(spacing.sm)};
+  margin: 0 0 ${rem(spacing.sm)};
 `;
 
 export const CardValue = styled.div`

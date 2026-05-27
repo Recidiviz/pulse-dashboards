@@ -17,22 +17,21 @@
 
 /**
  * Verifies that all Nx projects containing story files matched by the storybook
- * config are listed in implicitDependencies in project.json.
+ * config are registered as dependencies of this project in the Nx project graph.
  *
  * This is necessary because we use a single standalone Storybook project
  * for all JII libraries, using the "one Storybook per scope" pattern described
  * at https://nx.dev/docs/technologies/test-tools/storybook/guides/one-storybook-per-scope
+ *
+ * Projects with no import-based relationship must be listed in implicitDependencies
+ * in project.json so Nx tracks them.
  *
  * Run via: nx run @jii/storybook:check-implicit-dependencies
  */
 
 import { dirname, relative, resolve } from "node:path";
 
-import {
-  readCachedProjectGraph,
-  readJsonFile,
-  workspaceRoot,
-} from "@nx/devkit";
+import { readCachedProjectGraph, workspaceRoot } from "@nx/devkit";
 import fg from "fast-glob";
 
 import storybookConfig from "../.storybook/main";
@@ -102,28 +101,49 @@ for (const file of storyFiles) {
   }
 }
 
-// --- Compare with implicitDependencies ---
+// --- Compare with Nx project graph dependencies ---
 
-const storybookProjectJson = readJsonFile(resolve(projectRoot, "project.json"));
-const implicitDependencies: string[] =
-  storybookProjectJson.implicitDependencies ?? [];
+const storybookWsRelRoot = relative(workspaceRoot, projectRoot);
+const storybookProjectName = projectRootToName[storybookWsRelRoot];
+
+if (!storybookProjectName) {
+  console.error(
+    `Could not find Nx project for storybook root: ${storybookWsRelRoot}`,
+  );
+  process.exit(1);
+}
+
+// follow the project sub-graph starting with the current project to collect all dependencies
+const knownDependencies = new Set<string>();
+const queue = [storybookProjectName];
+let current: string | undefined;
+while ((current = queue.pop()) !== undefined) {
+  for (const dep of projectGraph.dependencies[current] ?? []) {
+    if (!dep.target.startsWith("npm:") && !knownDependencies.has(dep.target)) {
+      knownDependencies.add(dep.target);
+      queue.push(dep.target);
+    }
+  }
+}
 
 const missing = [...projectsWithStories].filter(
-  (p) => !implicitDependencies.includes(p),
+  (p) => !knownDependencies.has(p),
 );
 
 if (missing.length > 0) {
   console.error(
-    "The following projects have stories matched by the storybook config but are missing from implicitDependencies in apps/@jii/storybook/project.json:\n",
+    "The following projects have stories matched by the storybook config but are not dependencies of the storybook project in the Nx project graph:\n",
   );
   for (const dep of missing) {
     console.error(`  - ${dep}`);
   }
-  console.error("\nAdd them to the implicitDependencies array to fix this.\n");
+  console.error(
+    "\nAdd them to implicitDependencies in apps/@jii/storybook/project.json to fix this.\n",
+  );
   process.exit(1);
 }
 
 // eslint-disable-next-line no-console
 console.log(
-  `✓ All ${projectsWithStories.size} project(s) with stories are listed in implicitDependencies.`,
+  `✓ All ${projectsWithStories.size} project(s) with stories are dependencies of the storybook project.`,
 );

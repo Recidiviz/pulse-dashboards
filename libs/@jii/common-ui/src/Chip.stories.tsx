@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import type { Meta, StoryObj } from "@storybook/react";
 
-import { Button, Icon } from "~design-system";
+import { Chip } from "./Chip";
 
-/**
- * Rather than linking to an explicit URL, this button simply navigates
- * to the previous entry in the React Router history stack.
- */
-export function HistoryBackButton({
-  children = "Back",
-}: {
-  children?: React.ReactNode;
-}) {
-  const navigate = useNavigate();
+const meta = {
+  title: "Common UI/Chip",
+  component: Chip,
+  argTypes: {
+    color: {
+      options: ["green", "yellow", "gray", "red"],
+      control: "radio",
+    },
+  },
+  args: {
+    children: "Status label",
+    color: "green",
+  },
+} satisfies Meta<typeof Chip>;
 
-  return (
-    <Button onClick={() => navigate(-1)} role="link">
-      <Icon
-        kind="Arrow"
-        size={12}
-        rotate={180}
-        style={{ marginRight: rem(spacing.xs) }}
-      />
-      {children}
-    </Button>
-  );
-}
+export default meta;
+
+type ChipStory = StoryObj<typeof meta>;
+
+export const Green: ChipStory = {
+  args: { color: "green" },
+};
+
+export const Yellow: ChipStory = {
+  args: { color: "yellow" },
+};
+
+export const Gray: ChipStory = {
+  args: { color: "gray" },
+};
+
+export const Red: ChipStory = {
+  args: { color: "red" },
+};

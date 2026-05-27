@@ -15,19 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FC } from "react";
 import styled from "styled-components";
 
-import { Button } from "~design-system";
+import { Button, ButtonProps } from "~design-system";
 
 import { jiiButtonStyles } from "./shared";
 
-/**
- * A <button> styled consistently with ButtonLink.
- * Should only be used with kind="primary" or "secondary".
- */
-export const JIIButton = styled(Button)`
+const StyledButton = styled(Button)`
   font: inherit;
   min-width: unset;
 
   ${jiiButtonStyles}
 `;
+
+type JIIButtonProps = Omit<ButtonProps, "shape" | "kind"> & {
+  kind?: "primary" | "secondary";
+};
+
+/**
+ * A variant of the design system `Button` styled consistently with ButtonLink.
+ */
+export const JIIButton: FC<JIIButtonProps> = (props) => {
+  return <StyledButton {...props} />;
+};

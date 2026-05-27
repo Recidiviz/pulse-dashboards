@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import type { Meta, StoryObj } from "@storybook/react";
+import { MemoryRouter } from "react-router-dom";
 
-import { Button, Icon } from "~design-system";
+import { SlateCopy } from "./SlateCopy";
 
-/**
- * Rather than linking to an explicit URL, this button simply navigates
- * to the previous entry in the React Router history stack.
- */
-export function HistoryBackButton({
-  children = "Back",
-}: {
-  children?: React.ReactNode;
-}) {
-  const navigate = useNavigate();
+const meta = {
+  title: "Common UI/CopyWrapper/SlateCopy",
+  component: SlateCopy,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+  argTypes: {
+    overrides: { table: { disable: true } },
+    options: { table: { disable: true } },
+  },
+  args: {
+    children: `## Section heading
 
-  return (
-    <Button onClick={() => navigate(-1)} role="link">
-      <Icon
-        kind="Arrow"
-        size={12}
-        rotate={180}
-        style={{ marginRight: rem(spacing.xs) }}
-      />
-      {children}
-    </Button>
-  );
-}
+This is a paragraph rendered with the slate color variant. For more detail,
+[see the full documentation](#).
+
+- First item
+- Second item
+- Third item
+`,
+  },
+} satisfies Meta<typeof SlateCopy>;
+
+export default meta;
+
+export const Default: StoryObj<typeof meta> = {};
