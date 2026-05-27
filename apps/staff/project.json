@@ -101,7 +101,8 @@
           "vite dev",
           "cd ../../ && nx firebase-offline staff",
           "cd ../../ && nx offline staff-shared-server",
-          "cd ../../ && nx offline typesense"
+          "cd ../../ && nx offline typesense",
+          "cd ../../ && nx offline-sync typesense"
         ],
         "cwd": "{projectRoot}"
       }

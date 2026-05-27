@@ -48,7 +48,14 @@
     "offline-seed": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx src/seed/seedFromEmulator.ts",
+        "command": "tsx src/emulator/seed.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "offline-sync": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/emulator/sync.ts",
         "cwd": "{projectRoot}"
       }
     }

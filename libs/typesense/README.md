@@ -37,17 +37,19 @@ curl http://localhost:8108/health
 curl http://localhost:8108/collections -H "X-TYPESENSE-API-KEY: xyz"
 ```
 
-## Seeding from the Firestore emulator
+## Syncing from the Firestore emulator
 
-Once `nx offline staff` is up (both Typesense and the Firestore emulator running), seed Typesense from the emulator's fixtures:
+Two modes:
 
-```bash
-nx offline-seed typesense
-```
+**Live sync (default)** — `nx offline-sync typesense` runs a long-running watcher that drops and recreates the Typesense collections, does an initial bulk import, then subscribes to Firestore emulator changes via `onSnapshot` and mirrors them to Typesense in real time. Started automatically as part of `nx offline staff`.
 
-This is one-shot and idempotent: it drops and recreates the collections (`clients`, `residents`, `supervisionStaff`, `incarcerationStaff`, `locations`), then imports every doc from the matching Firestore emulator collection. Re-run any time the fixtures change.
+**One-shot seed** — `nx offline-seed typesense` does the same drop/recreate/import but exits immediately. Useful when you don't need the watcher running (CI, scripted verification, etc.).
 
-Verify:
+Both modes are idempotent: they drop the target collections before importing, so re-running gives a clean state.
+
+The watcher stands in for the production Firestore→Typesense extension, which is HTTPS-only and can't talk to local HTTP Typesense. The watcher also doubles as a prototype for the custom Cloud Function that production will need for opportunities (the extension doesn't support constant-field discriminator stamping).
+
+### Verification
 
 ```bash
 curl 'http://localhost:8108/collections/clients/documents/search?q=*&query_by=stateCode' \
