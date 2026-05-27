@@ -31,6 +31,8 @@ export const StaffInfoFixture: Staff = {
   stateCode: "US_ID",
   hasLoggedIn: false,
   supervisesAll: null,
+  isSupervisor: false,
+  districtId: null,
   officeAddress: null,
   officePhoneNumber: null,
   cases: [

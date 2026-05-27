@@ -188,10 +188,7 @@ export class SentencingStore {
   }
 
   get isSupervisor(): boolean {
-    const psiSupervisionPermission = this.routePermissions.find(
-      ([route]) => route === ROUTE_PERMISSIONS.psiSupervision,
-    );
-    return psiSupervisionPermission ? psiSupervisionPermission[1] : false;
+    return this.staffStore.staffInfo?.isSupervisor ?? false;
   }
 
   get hasSARAccess(): boolean {

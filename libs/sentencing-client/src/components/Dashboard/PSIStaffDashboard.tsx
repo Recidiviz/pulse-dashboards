@@ -26,7 +26,10 @@ import CloseIcon from "../assets/close-icon.svg?react";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
-import { ASSIGNED_TO_COLUMN, PSI_DASHBOARD_COLUMNS } from "./utils/dashboardColumns";
+import {
+  buildSupervisorColumns,
+  PSI_DASHBOARD_COLUMNS,
+} from "./utils/dashboardColumns";
 
 const ManagedComponent = observer(function PSIStaffDashboard({
   presenter,
@@ -51,18 +54,10 @@ const ManagedComponent = observer(function PSIStaffDashboard({
     !staffInfo?.hasLoggedIn,
   );
 
-  // Conditionally include "Assigned To" column for supervisors
-  const columns = useMemo(() => {
-    if (isSupervisor) {
-      // Insert ASSIGNED_TO_COLUMN before the status column (last column)
-      return [
-        ...PSI_DASHBOARD_COLUMNS.slice(0, -1),
-        ASSIGNED_TO_COLUMN,
-        PSI_DASHBOARD_COLUMNS[PSI_DASHBOARD_COLUMNS.length - 1],
-      ];
-    }
-    return PSI_DASHBOARD_COLUMNS;
-  }, [isSupervisor]);
+  const columns = useMemo(
+    () => buildSupervisorColumns(PSI_DASHBOARD_COLUMNS, isSupervisor),
+    [isSupervisor],
+  );
 
   const dashboardTitle = isSupervisor ? "Team Cases" : "My Cases";
 

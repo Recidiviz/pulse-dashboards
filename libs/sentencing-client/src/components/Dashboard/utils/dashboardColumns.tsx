@@ -198,3 +198,15 @@ export const PSI_DASHBOARD_COLUMNS: ColumnDef<CaseListTableCase>[] = [
   },
   PSI_STATUS_COLUMN,
 ];
+
+export function buildSupervisorColumns(
+  baseColumns: ColumnDef<CaseListTableCase>[],
+  isSupervisor: boolean,
+): ColumnDef<CaseListTableCase>[] {
+  if (!isSupervisor) return baseColumns;
+  return [
+    ...baseColumns.slice(0, -1),
+    ASSIGNED_TO_COLUMN,
+    baseColumns[baseColumns.length - 1],
+  ];
+}

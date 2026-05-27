@@ -20,6 +20,19 @@ import { TRPCError } from "@trpc/server";
 import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
 
 /**
+ * Returns "You" if the assignee is the logged-in user, otherwise their full name.
+ * e.g. resolveAssignedTo("abc", "abc", "Smith, John") → "You"
+ * e.g. resolveAssignedTo("abc", "xyz", "Smith, John") → "Smith, John"
+ */
+export function resolveAssignedTo(
+  assigneePseudonymizedId: string | undefined,
+  loggedInPseudonymizedId: string | undefined,
+  fullName: string | null | undefined,
+): string | null | undefined {
+  return assigneePseudonymizedId === loggedInPseudonymizedId ? "You" : fullName;
+}
+
+/**
  * Fetches a staff member by their pseudonymized ID.
  * @throws TRPCError with NOT_FOUND code if staff doesn't exist
  */
@@ -38,8 +51,12 @@ export async function fetchStaffById(
       hasLoggedIn: true,
       supervisorId: true,
       supervisesAll: true,
+      districtId: true,
       officeAddress: true,
       officePhoneNumber: true,
+      _count: {
+        select: { directReports: true },
+      },
     },
   });
 
@@ -85,14 +102,14 @@ export async function buildStaffCaseFilter(
     return { stateCode: staff.stateCode };
   }
 
-  if (staff.supervisorId === null) {
-    const directReportIds = await getDirectReportIds(prisma, staff.externalId);
-    return {
-      pseudonymizedId: { in: [...directReportIds, staff.pseudonymizedId] },
-    };
+  if (staff._count.directReports === 0) {
+    return { pseudonymizedId: staff.pseudonymizedId };
   }
 
-  return { pseudonymizedId: staff.pseudonymizedId };
+  const directReportIds = await getDirectReportIds(prisma, staff.externalId);
+  return {
+    pseudonymizedId: { in: [...directReportIds, staff.pseudonymizedId] },
+  };
 }
 
 /**
@@ -151,10 +168,11 @@ export function transformCaseForResponse(
     ...rest,
     offense: offense?.name,
     dueDate: caseRecord.customDueDate ?? caseRecord.dueDate,
-    assignedTo:
-      staff?.pseudonymizedId === loggedInStaffPseudonymizedId
-        ? "You"
-        : staff?.fullName,
+    assignedTo: resolveAssignedTo(
+      staff?.pseudonymizedId,
+      loggedInStaffPseudonymizedId,
+      staff?.fullName,
+    ),
   };
 }
 
@@ -162,7 +180,32 @@ export function transformCaseForResponse(
  * Removes sensitive fields from staff data before returning to client.
  */
 export function sanitizeStaffForResponse(staff: StaffInfo) {
-  const { externalId, ...staffWithoutExternalId } = staff;
+  const { externalId, _count, ...rest } = staff;
   void externalId; // Intentionally unused for security
-  return staffWithoutExternalId;
+  return {
+    ...rest,
+    isSupervisor: _count.directReports > 0 || !!rest.supervisesAll,
+  };
+}
+
+/**
+ * Builds a Prisma staff filter for SAR supervisor scoping.
+ * Uses district-based scoping (rather than direct-report IDs like buildStaffCaseFilter)
+ * because SAR supervisors manage all POs in their district, not just direct reports.
+ * e.g. org-wide supervisor → { stateCode: "US_MO" }
+ * e.g. district supervisor → { districtId: "cmlspocl300000bs6d9orxdm6" }
+ * e.g. individual PO      → { pseudonymizedId: "abc123" }
+ */
+export function buildSARStaffFilter(
+  staff: StaffInfo,
+): Prisma.SentencingAssessmentReportWhereInput["staff"] {
+  if (staff.supervisesAll) {
+    return { stateCode: staff.stateCode };
+  }
+
+  if (staff._count.directReports > 0 && staff.districtId) {
+    return { districtId: staff.districtId };
+  }
+
+  return { pseudonymizedId: staff.pseudonymizedId };
 }

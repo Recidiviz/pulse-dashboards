@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { withPresenterManager } from "~hydration-utils";
 
@@ -25,7 +25,10 @@ import { StaffPresenter } from "../../presenters/StaffPresenter";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
-import { SAR_DASHBOARD_COLUMNS } from "./utils/dashboardColumns";
+import {
+  buildSupervisorColumns,
+  SAR_DASHBOARD_COLUMNS,
+} from "./utils/dashboardColumns";
 
 const ManagedComponent = observer(function SARStaffDashboard({
   presenter,
@@ -36,6 +39,7 @@ const ManagedComponent = observer(function SARStaffDashboard({
     staffPseudoId,
     sarTableData,
     geoConfig,
+    isSupervisor,
     trackSARDashboardPageViewed,
     trackIndividualCaseClicked,
     trackRecommendationStatusFilterChanged,
@@ -43,6 +47,10 @@ const ManagedComponent = observer(function SARStaffDashboard({
   } = presenter;
 
   const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const columns = useMemo(
+    () => buildSupervisorColumns(SAR_DASHBOARD_COLUMNS, isSupervisor),
+    [isSupervisor],
+  );
 
   if (!staffPseudoId || !sarTableData) return null;
 
@@ -55,11 +63,15 @@ const ManagedComponent = observer(function SARStaffDashboard({
     <Styled.PageContainer>
       <Styled.Cases>
         <CaseListTable
-          columns={SAR_DASHBOARD_COLUMNS}
+          columns={columns}
           caseTableData={sarTableData}
           staffPseudoId={staffPseudoId}
           isSAR={true}
-          title={"Sentencing Assessment Report Dashboard"}
+          title={
+            isSupervisor
+              ? "Team Sentencing Assessment Reports"
+              : "Sentencing Assessment Reports"
+          }
           excludedAttributeKeys={geoConfig.excludedAttributeKeys}
           analytics={{
             trackIndividualCaseClicked,

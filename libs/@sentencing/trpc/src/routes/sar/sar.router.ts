@@ -37,6 +37,11 @@ import {
   updatePriorTreatmentHistorySchema,
   updateSARSchema,
 } from "~@sentencing/trpc/routes/sar/sar.schema";
+import {
+  buildSARStaffFilter,
+  fetchStaffById,
+  resolveAssignedTo,
+} from "~@sentencing/trpc/routes/staff/staff.helpers";
 
 // Builds a Prisma `where` fragment that restricts a SAR query to the requesting staff member.
 // When staffPseudonymizedId is undefined (e.g. Recidiviz internal users), returns an empty
@@ -158,22 +163,19 @@ export const sarRouter = router({
         input: { staffPseudonymizedId: requestedPseudonymizedId },
         ctx: { prisma, staffPseudonymizedId },
       }) => {
-        // Verify the requesting user is only fetching their own caseload.
-        // If staffPseudonymizedId is undefined in context, the check is skipped.
-        if (
-          staffPseudonymizedId &&
-          staffPseudonymizedId !== requestedPseudonymizedId
-        ) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "You can only view your own caseload",
-          });
+        let staffFilter: Prisma.SentencingAssessmentReportWhereInput["staff"];
+
+        // Regular users: JWT-derived staffPseudonymizedId is always used for scoping.
+        // Recidiviz internal users: no JWT pseudo ID, so fall back to requestedPseudonymizedId
+        // to support impersonation (same pattern as staff.getStaff).
+        const lookupId = staffPseudonymizedId ?? requestedPseudonymizedId;
+        if (lookupId) {
+          const staff = await fetchStaffById(prisma, lookupId);
+          staffFilter = buildSARStaffFilter(staff);
         }
 
-        return prisma.sentencingAssessmentReport.findMany({
-          where: {
-            staff: { pseudonymizedId: requestedPseudonymizedId },
-          },
+        const sars = await prisma.sentencingAssessmentReport.findMany({
+          where: { staff: staffFilter },
           select: {
             id: true,
             externalId: true,
@@ -181,6 +183,12 @@ export const sarRouter = router({
             dueDate: true,
             courtDate: true,
             completionDate: true,
+            staff: {
+              select: {
+                pseudonymizedId: true,
+                fullName: true,
+              },
+            },
             client: {
               select: {
                 externalId: true,
@@ -189,6 +197,15 @@ export const sarRouter = router({
             },
           },
         });
+
+        return sars.map(({ staff: sarStaff, ...rest }) => ({
+          ...rest,
+          assignedTo: resolveAssignedTo(
+            sarStaff?.pseudonymizedId,
+            staffPseudonymizedId,
+            sarStaff?.fullName,
+          ),
+        }));
       },
     ),
 
