@@ -107,6 +107,11 @@ const content: MetricCopy = {
     note: "Incarcerated population by charge description note",
     methodology: "Incarcerated population by charge description methodology",
   },
+  prisonPopulationByAdmissionReason: {
+    title: "Incarcerated Population by Admission Reason",
+    note: "Incarcerated population by admission reason note",
+    methodology: "Incarcerated population by admission reason methodology",
+  },
   prisonPopulationOverTime: {
     title: "Incarcerated Population",
     note: "Incarcerated population note",

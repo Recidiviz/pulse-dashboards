@@ -1459,6 +1459,11 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.CHARGE_DESCRIPTION],
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.ADMISSION_REASON]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.ADMISSION_REASON],
+    title: "Admission type",
+    useDynamicOptions: true,
+  },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION],
     useDynamicOptions: true,

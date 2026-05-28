@@ -74,6 +74,11 @@ const content: StateSpecificMetricCopy = {
     methodology:
       "The chart describes the number of people by specific crime as of the date specified in the chart title.",
   },
+  prisonPopulationByAdmissionReason: {
+    title: "Prison population by latest admission type",
+    methodology:
+      "The chart describes the number of people by latest admission type as of the date specified in the chart title.",
+  },
 };
 
 export default content;

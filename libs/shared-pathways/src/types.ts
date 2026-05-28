@@ -231,6 +231,7 @@ export type MetricId =
   | "prisonPopulationByChargeCountyCode"
   | "prisonPopulationByOffenseType"
   | "prisonPopulationByChargeDescription"
+  | "prisonPopulationByAdmissionReason"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"

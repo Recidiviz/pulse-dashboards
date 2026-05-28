@@ -105,8 +105,8 @@ describe("MetricsStore", () => {
   });
 
   describe("map", () => {
-    it("has 12 entries", () => {
-      expect(Object.keys(metricsStore.map)).toHaveLength(12);
+    it("has 13 entries", () => {
+      expect(Object.keys(metricsStore.map)).toHaveLength(13);
     });
 
     it("maps each section to a metric", () => {
@@ -123,6 +123,7 @@ describe("MetricsStore", () => {
         "countByChargeCountyCode",
         "countByOffenseType",
         "countByChargeDescription",
+        "countByAdmissionReason",
       ];
 
       expectedSections.forEach((section) => {

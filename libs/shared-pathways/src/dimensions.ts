@@ -36,6 +36,7 @@ type Dimensions = {
   [DIMENSION_TYPES.CHARGE_COUNTY_CODE]: string;
   [DIMENSION_TYPES.OFFENSE_TYPE]: string;
   [DIMENSION_TYPES.CHARGE_DESCRIPTION]: string;
+  [DIMENSION_TYPES.ADMISSION_REASON]: string;
 };
 
 export type Dimension = keyof Dimensions;

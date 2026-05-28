@@ -251,6 +251,11 @@ const content: MetricCopy = {
     methodology:
       "The chart describes the number of people from each specific crime type as of the date specified in the chart title.",
   },
+  prisonPopulationByAdmissionReason: {
+    title: "Prison population by latest admission type",
+    methodology:
+      "The chart describes the number of people from each admission type as of the date specified in the chart title.",
+  },
 };
 
 export default content;

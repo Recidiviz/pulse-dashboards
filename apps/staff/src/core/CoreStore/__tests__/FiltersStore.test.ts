@@ -192,6 +192,7 @@ describe("FiltersStore", () => {
         "prisonPopulationByChargeCountyCode",
         "prisonPopulationByOffenseType",
         "prisonPopulationByChargeDescription",
+        "prisonPopulationByAdmissionReason",
       ] as const;
 
       prisonMetricKeys.forEach((metricKey) => {

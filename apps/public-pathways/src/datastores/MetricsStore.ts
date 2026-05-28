@@ -167,6 +167,8 @@ export default class MetricsStore implements PathwaysMetricStore {
           this.prisonPopulationByOffenseType,
         [PATHWAYS_SECTIONS["countByChargeDescription"]]:
           this.prisonPopulationByChargeDescription,
+        [PATHWAYS_SECTIONS["countByAdmissionReason"]]:
+          this.prisonPopulationByAdmissionReason,
       };
     }
     return this._map;
@@ -314,6 +316,18 @@ export default class MetricsStore implements PathwaysMetricStore {
       accessor: "chargeDescription",
       enableMetricModeToggle: true,
       isHorizontal: true,
+    });
+  }
+
+  get prisonPopulationByAdmissionReason(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByAdmissionReason",
+      endpoint: "PrisonPopulationByDimensionCount",
+      store: this,
+      fetchMetrics: this.fetchMetrics,
+      accessor: "admissionReason",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
     });
   }
 }

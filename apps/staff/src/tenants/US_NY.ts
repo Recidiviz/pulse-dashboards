@@ -44,6 +44,7 @@ const US_NY_CONFIG: TenantConfig<"US_NY"> = {
       PATHWAYS_SECTIONS.countByChargeCountyCode,
       PATHWAYS_SECTIONS.countByOffenseType,
       PATHWAYS_SECTIONS.countByChargeDescription,
+      PATHWAYS_SECTIONS.countByAdmissionReason,
     ],
     methodology: ["system"],
   },
