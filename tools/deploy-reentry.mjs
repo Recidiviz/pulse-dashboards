@@ -308,7 +308,7 @@ const [slackToken] = await secretClient.accessSecretVersion({
 });
 
 const slack = new SlackClient(slackToken.payload.data.toString());
-const reentryChannelId = "C0A432T3QUB";
+const reentryChannelId = "C0B6M8D3989";
 
 let slackMessage = null;
 
