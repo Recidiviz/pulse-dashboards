@@ -40,6 +40,7 @@ from app.routes import (
     intake_auth_router,
     intake_client_router,
     intake_config_public_router,
+    intake_internal_router,
     intake_services_router,
     plan_decision_tree_router,
     plan_router,
@@ -219,6 +220,7 @@ app.include_router(execution_router.router, prefix="/executions")
 app.include_router(intake_services_router.router, prefix="/intake/services")
 app.include_router(client_router.router, prefix="/clients")
 app.include_router(intake_admin_router.router, prefix="/intake/admin")
+app.include_router(intake_internal_router.router, prefix="/intake/internal")
 app.include_router(recording_session_router.router, prefix="/recordings")
 app.include_router(transcription_router.router, prefix="/transcription")
 app.include_router(impersonation_router.router, prefix="/impersonate")

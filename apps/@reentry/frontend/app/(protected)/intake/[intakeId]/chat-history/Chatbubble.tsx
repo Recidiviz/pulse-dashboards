@@ -21,7 +21,6 @@ import { MessageSquare } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
-import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { ChatMessageBubble } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
@@ -35,45 +34,64 @@ const SectionChatInterface = ({
   isActive,
   client,
   smallText,
+  isRecidivizInternalView = false,
 }: {
   section: IntakeSection;
   intakeId: string;
   isActive: boolean;
   client: ClientRecord;
   smallText?: boolean;
+  isRecidivizInternalView?: boolean;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const accessToken = useAuth().getAccessToken();
 
   const shouldFetchMessages = isActive && section.status !== "not_started";
-  const encodedSectionTitle = encodeURIComponent(section.title);
   const clientFullName = client?.full_name
     ? `${client.full_name.given_names} ${client.full_name.surname}`.trim()
     : "";
+
+  const adminQuery = $api.useQuery(
+    "get",
+    "/intake/admin/{intake_id}/{section_title}/messages",
+    {
+      params: {
+        path: { intake_id: intakeId, section_title: section.title },
+      },
+    },
+    { enabled: shouldFetchMessages && !isRecidivizInternalView },
+  );
+
+  const internalQuery = $api.useQuery(
+    "get",
+    "/intake/internal/{intake_id}/{section_title}/messages",
+    {
+      params: {
+        path: { intake_id: intakeId, section_title: section.title },
+      },
+    },
+    { enabled: shouldFetchMessages && isRecidivizInternalView },
+  );
 
   const {
     data,
     isLoading: messagesLoading,
     error: messagesError,
-  } = $api.useQuery(
-    "get",
-    "/intake/admin/{intake_id}/{section_title}/messages",
-    {
-      params: {
-        path: {
-          intake_id: intakeId,
-          section_title: encodedSectionTitle,
-        },
-      },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    },
-    { enabled: shouldFetchMessages },
-  );
+    refetch: refetchMessages,
+  } = isRecidivizInternalView ? internalQuery : adminQuery;
+
+  const { mutateAsync: markFalsePositive, isPending: isMarkingFalsePositive } =
+    $api.useMutation(
+      "patch",
+      "/intake/admin/messages/{message_id}/false-positive",
+    );
+
+  const { mutateAsync: undoFalsePositive, isPending: isUndoingFalsePositive } =
+    $api.useMutation(
+      "patch",
+      "/intake/admin/messages/{message_id}/undo-false-positive",
+    );
 
   const messages: IntakeMessage[] = data || [];
 
@@ -92,30 +110,55 @@ const SectionChatInterface = ({
     }
   }, [messagesError]);
 
+  const handleMarkFalsePositive = async (messageId: string) => {
+    await markFalsePositive({ params: { path: { message_id: messageId } } });
+    await refetchMessages();
+  };
+
+  const handleUndoFalsePositive = async (messageId: string) => {
+    await undoFalsePositive({ params: { path: { message_id: messageId } } });
+    await refetchMessages();
+  };
+
   const normalize = (text?: string) => text?.trim().toLowerCase() || "";
 
-  const formattedMessages = messages.filter((msg, index, arr) => {
-    const normalizedContent = normalize(msg.content);
-    const isWelcomeBackMessage = normalizedContent.includes(
-      "thanks for joining again! let's continue our conversation",
-    );
+  /**
+   *  False-positive messages are cleared of their guardrail flag here so that
+   *  ChatMessageBubble and the 'Mark as False Positive' button both appear and
+   *  behave correctly downstream
+   */
+  const formattedMessages = messages
+    .map((msg) =>
+      msg.false_positive
+        ? {
+            ...msg,
+            original_guardrailed_by: msg.guardrailed_by,
+            guardrailed_by: null,
+          }
+        : { ...msg, original_guardrailed_by: null },
+    )
+    .filter((msg, index, arr) => {
+      const normalizedContent = normalize(msg.content);
+      const isWelcomeBackMessage = normalizedContent.includes(
+        "thanks for joining again! let's continue our conversation",
+      );
 
-    // Rule 1: Remove consecutive "welcome back" messages
-    if (isWelcomeBackMessage) {
-      const prev = arr[index - 1];
-      const prevNormalized = normalize(prev?.content);
-      if (prevNormalized === normalizedContent) {
+      // Rule 1: Remove consecutive "welcome back" messages
+      if (isWelcomeBackMessage) {
+        const prev = arr[index - 1];
+        const prevNormalized = normalize(prev?.content);
+        if (prevNormalized === normalizedContent) {
+          return false;
+        }
+      }
+
+      // Rule 2: If intake is completed, remove "welcome back" if it's the last message
+      if (isWelcomeBackMessage && section.status === "completed") {
         return false;
       }
-    }
 
-    // Rule 2: If intake is completed, remove "welcome back" if it's the last message
-    if (isWelcomeBackMessage && section.status === "completed") {
-      return false;
-    }
-
-    return true;
-  });
+      return true;
+    });
 
   useEffect(() => {
     if (formattedMessages.length > 0) {
@@ -157,13 +200,49 @@ const SectionChatInterface = ({
               </div>
             ) : (
               formattedMessages.map((message) => (
-                <ChatMessageBubble
-                  key={message.id}
-                  message={message}
-                  name={clientFullName}
-                  disableTTS
-                  smallText={smallText}
-                />
+                <div key={message.id}>
+                  <ChatMessageBubble
+                    message={message}
+                    name={clientFullName}
+                    disableTTS
+                    smallText={smallText}
+                  />
+                  {isRecidivizInternalView &&
+                    message.guardrailed_by &&
+                    message.guardrailed_by.length > 0 && (
+                      <div className="flex flex-col items-end mt-1 pr-1 gap-0.5">
+                        <button
+                          type="button"
+                          disabled={isMarkingFalsePositive}
+                          className="text-xs text-gray-400 underline hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() => handleMarkFalsePositive(message.id)}
+                        >
+                          Mark as false positive
+                        </button>
+                        <span className="text-xs text-gray-400">
+                          {message.guardrailed_by.join(", ")}
+                        </span>
+                      </div>
+                    )}
+                  {isRecidivizInternalView && message.false_positive && (
+                    <div className="flex flex-col items-end mt-1 pr-1 gap-0.5">
+                      <button
+                        type="button"
+                        disabled={isUndoingFalsePositive}
+                        className="text-xs text-gray-400 underline hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => handleUndoFalsePositive(message.id)}
+                      >
+                        Undo false positive
+                      </button>
+                      {message.original_guardrailed_by &&
+                        message.original_guardrailed_by.length > 0 && (
+                          <span className="text-xs text-gray-400">
+                            {message.original_guardrailed_by.join(", ")}
+                          </span>
+                        )}
+                    </div>
+                  )}
+                </div>
               ))
             )}
             <div ref={messagesEndRef} />

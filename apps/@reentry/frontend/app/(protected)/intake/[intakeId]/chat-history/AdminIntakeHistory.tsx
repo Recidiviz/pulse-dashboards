@@ -33,9 +33,11 @@ type IntakeSection = components["schemas"]["IntakeSectionResponse"];
 const AdminIntakeHistory = ({
   clientRecord,
   intake,
+  isRecidivizInternalView = false,
 }: {
   clientRecord: ClientRecord;
   intake: Intake;
+  isRecidivizInternalView?: boolean;
 }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const { trackClientIntakeChatHistoryViewed } = useAnalytics();
@@ -113,6 +115,7 @@ const AdminIntakeHistory = ({
                     isActive={true}
                     client={clientRecord}
                     smallText
+                    isRecidivizInternalView={isRecidivizInternalView}
                   />
                 </div>
               </div>

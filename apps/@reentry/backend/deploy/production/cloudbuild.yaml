@@ -91,6 +91,7 @@ steps:
         RECIDIVIZ_GCS_BUCKET_NAME=recidiviz-recording-bucket-production,
         RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
+        RECIDIVIZ_FRONTEND_URL=https://plan.recidiviz.org,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840,
         RECIDIVIZ_BASE_URL=https://backend-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
@@ -162,6 +163,7 @@ steps:
         RECIDIVIZ_GCS_BUCKET_NAME=recidiviz-recording-bucket-production,
         RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
+        RECIDIVIZ_FRONTEND_URL=https://plan.recidiviz.org,
         RECIDIVIZ_BASE_URL=https://backend-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840

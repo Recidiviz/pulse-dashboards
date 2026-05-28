@@ -95,6 +95,9 @@ class Settings(BaseSettings):
     # Base URL for the application (used for webhook callbacks)
     BASE_URL: str = "http://localhost:8000"
 
+    # Frontend URL for building deep links (e.g. in Slack alerts).
+    FRONTEND_URL: str = "http://localhost:3000"
+
     # Google Cloud Service account email.
     # In demo-staging-prod this value is populated as an env variable.
     # See the Cloudbuild.yaml files.
@@ -107,7 +110,9 @@ class Settings(BaseSettings):
     FIREBASE_ADMIN_PROJECT_ID: str = "recidiviz-dashboard-staging"
 
     # Cloud SQL staging instance for local dev seeding (--from-staging in seed-db)
-    STAGING_INSTANCE: str = ""  # e.g. recidiviz-rnd-planner:us-central1:recidiviz-staging
+    STAGING_INSTANCE: str = (
+        ""  # e.g. recidiviz-rnd-planner:us-central1:recidiviz-staging
+    )
     STAGING_DB: str = "recidiviz"
     STAGING_POSTGRES_USER: str = "postgres"
     STAGING_POSTGRES_PASSWORD: str = ""

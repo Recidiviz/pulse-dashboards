@@ -112,8 +112,12 @@ async def send_guardrail_alert(
     icon, label = _GUARDRAIL_ALERT_COPY.get(
         guardrail_type, ("⚠️", f"Guardrail triggered: {guardrail_type}")
     )
+    title = f"{icon} *{label}*"
+    if intake_id and settings.FRONTEND_URL:
+        admin_url = f"{settings.FRONTEND_URL}/internal/intake/{intake_id}/chat-history"
+        title += f"  —  <{admin_url}|view conversation>"
     text = (
-        f"{icon} *{label}*\n"
+        f"{title}\n"
         f"*Environment:* {settings.ENV_NAME}  |  "
         f"*State:* {state_code or '?'}  |  "
         f"*Client:* {client_pseudo_id}  |  "

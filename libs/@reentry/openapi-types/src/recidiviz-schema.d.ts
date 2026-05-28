@@ -1305,6 +1305,65 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/intake/internal/{intake_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch intake (internal)
+         * @description Returns intake details for Recidiviz staff. Does not require caseload membership.
+         */
+        get: operations["get_intake_internal_intake_internal__intake_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/internal/{intake_id}/{section_title}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch intake section messages (internal)
+         * @description Returns messages for a section for Recidiviz staff. Does not require caseload membership.
+         */
+        get: operations["get_intake_section_messages_internal_intake_internal__intake_id___section_title__messages_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/admin/messages/{message_id}/false-positive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Mark Message False Positive */
+        patch: operations["mark_message_false_positive_intake_admin_messages__message_id__false_positive_patch"];
+        trace?: never;
+    };
     "/intake/admin/{intake_id}/internal-access": {
         parameters: {
             query?: never;
@@ -8302,6 +8361,100 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IntakeMessageResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intake_internal_intake_internal__intake_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeWithSectionsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intake_section_messages_internal_intake_internal__intake_id___section_title__messages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+                section_title: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeMessageResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_message_false_positive_intake_admin_messages__message_id__false_positive_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeMessageResponse"];
                 };
             };
             /** @description Validation Error */

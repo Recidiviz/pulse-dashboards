@@ -617,6 +617,43 @@ async def _build_user_context(
     }
 
 
+async def require_internal_user(request: Request) -> dict:
+    """FastAPI dependency that validates the caller is a Recidiviz staff member.
+
+    Performs a full cache+fetch flow to obtain the Auth0 email, since
+    internal users have no pseudonymized ID and their userinfo is not
+    pre-populated by other auth paths.
+
+    Raises 401 if the token is missing or the userinfo fetch fails.
+    Raises 403 if the email is not from an internal domain.
+    """
+    if not hasattr(request.state, "user"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    token = _extract_token(request)
+    user_info = await _get_cached_auth0_userinfo(token)
+
+    if not user_info:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"https://{settings.AUTH0_DOMAIN}/userinfo",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+        if response.status_code != 200:
+            raise HTTPException(status_code=401, detail="Userinfo not found")
+        user_info = response.json()
+        await _cache_auth0_userinfo(token, user_info)
+
+    email = user_info.get("email") or ""
+    if not is_internal_user(email):
+        raise HTTPException(
+            status_code=403,
+            detail="This endpoint is only available to Recidiviz staff",
+        )
+
+    return {"email": email}
+
+
 async def get_auth_user_context(request: Request, skip_impersonation: bool = False):
     if not hasattr(request.state, "user"):
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -636,8 +673,8 @@ async def get_auth_user_context(request: Request, skip_impersonation: bool = Fal
         if impersonated_email:
             # Import here to avoid circular dependency
             from app.auth.impersonation import (
-                validate_impersonation_request,
                 get_impersonated_user_metadata,
+                validate_impersonation_request,
             )
 
             # Raises HTTPException on any authorization failure

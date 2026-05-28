@@ -28,21 +28,25 @@ interface ProfileDetailProps {
     | undefined;
   setIsExpanded: (value: boolean) => void;
   isExpanded: boolean | undefined;
+  hideBackButton?: boolean;
 }
 
 const ProfileDetail = ({
   clientRecord,
   setIsExpanded,
   isExpanded,
+  hideBackButton = false,
 }: ProfileDetailProps) => {
   return (
     <div className="self-stretch  md:h-[169px] p-2 md:p-8 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-6 md:gap-8 flex">
-      <div className="justify-start items-center gap-2 inline-flex">
-        <BackButton
-          href={`/client/${clientRecord?.pseudonymized_client_id}`}
-          buttonText={"Back"}
-        />
-      </div>
+      {!hideBackButton && (
+        <div className="justify-start items-center gap-2 inline-flex">
+          <BackButton
+            href={`/client/${clientRecord?.pseudonymized_client_id}`}
+            buttonText={"Back"}
+          />
+        </div>
+      )}
       <div className="self-stretch justify-start items-center gap-2 inline-flex">
         <div className="w-14 h-14 relative bg-white rounded-[56px] bg-[url('/images/profile.png')] md:flex">
           <div className="w-14 left-0 top-[16px] absolute text-center text-white text-[14px] font-bold leading-normal tracking-tight">
