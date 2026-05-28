@@ -528,6 +528,17 @@ class IntakeMessage(BaseModel, table=True):
         return or_(cls.guardrailed_by.is_(None), cls.false_positive.is_(True))
 
 
+# ------------------------------ Intake Moderation Event --------------------------------
+class IntakeModerationEvent(BaseModel, table=True):
+    """Audit log for staff moderation actions on guardrailed messages."""
+
+    __tablename__ = "intakemoderationevent"
+
+    message_id: UUID = Field(foreign_key="intakemessage.id")
+    action: str  # "mark_false_positive" | "undo_false_positive"
+    staff_email: str
+
+
 # ------------------------------ Intake Token ------------------------------------------
 class IntakeToken(BaseModel, table=True):
     """

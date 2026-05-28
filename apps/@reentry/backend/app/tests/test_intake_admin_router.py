@@ -9,6 +9,7 @@ from app.models.intake import (
     Intake,
     IntakeMessage,
     IntakeMessageRole,
+    IntakeModerationEvent,
     IntakeStatus,
 )
 from app.models.intake_sections import CompletionStatus
@@ -418,5 +419,201 @@ async def test_set_internal_access_by_intake_id_not_found(
         json={"internal_access": True},
     )
 
+    assert response.status_code == 404
+
+
+# =============================================================================
+# Tests for PATCH /intake/admin/messages/{message_id}/false-positive
+# =============================================================================
+
+
+@pytest.mark.asyncio
+async def test_mark_message_false_positive_marks_and_unlocks(
+    async_session, client: AsyncClient, mock_clientdata_service, mock_intake
+):
+    """Marks message as false_positive=True and unlocks a locked intake atomically."""
+    mock_intake.locked = True
+    async_session.add(mock_intake)
+    await async_session.commit()
+
+    message = IntakeMessage(
+        id=uuid4(),
+        intake_id=mock_intake.id,
+        section="Housing",
+        from_role=IntakeMessageRole.CLIENT,
+        content="test message",
+        guardrailed_by=["llmaj:self-harm"],
+    )
+    async_session.add(message)
+    await async_session.commit()
+
+    response = await client.patch(f"/intake/admin/messages/{message.id}/false-positive")
+
+    assert response.status_code == 200
+    assert response.json()["false_positive"] is True
+
+    await async_session.refresh(mock_intake)
+    assert mock_intake.locked is False
+
+
+@pytest.mark.asyncio
+async def test_mark_message_false_positive_unlocked_intake_unchanged(
+    async_session, client: AsyncClient, mock_clientdata_service, mock_intake
+):
+    """Marks message as false_positive=True without touching an already-unlocked intake."""
+    message = IntakeMessage(
+        id=uuid4(),
+        intake_id=mock_intake.id,
+        section="Housing",
+        from_role=IntakeMessageRole.CLIENT,
+        content="test message",
+        guardrailed_by=["llmaj:self-harm"],
+    )
+    async_session.add(message)
+    await async_session.commit()
+
+    response = await client.patch(f"/intake/admin/messages/{message.id}/false-positive")
+
+    assert response.status_code == 200
+    assert response.json()["false_positive"] is True
+    await async_session.refresh(mock_intake)
+    assert mock_intake.locked is False
+
+
+@pytest.mark.asyncio
+async def test_mark_message_false_positive_not_found(
+    async_session, client: AsyncClient, mock_clientdata_service
+):
+    """Returns 404 when message does not exist."""
+    response = await client.patch(f"/intake/admin/messages/{uuid4()}/false-positive")
+    assert response.status_code == 404
+    assert "not found" in response.json()["detail"].lower()
+    assert "not found" in response.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_mark_message_false_positive_logs_moderation_event(
+    async_session, client: AsyncClient, mock_clientdata_service, mock_intake
+):
+    """Marking a message as false positive creates an audit event."""
+    message = IntakeMessage(
+        id=uuid4(),
+        intake_id=mock_intake.id,
+        section="Housing",
+        from_role=IntakeMessageRole.CLIENT,
+        content="test message",
+        guardrailed_by=["llmaj:self-harm"],
+    )
+    async_session.add(message)
+    await async_session.commit()
+
+    response = await client.patch(f"/intake/admin/messages/{message.id}/false-positive")
+    assert response.status_code == 200
+
+    from sqlmodel import select
+
+    events = (
+        (
+            await async_session.execute(
+                select(IntakeModerationEvent).where(
+                    IntakeModerationEvent.message_id == message.id
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(events) == 1
+    assert events[0].action == "mark_false_positive"
+    assert events[0].staff_email == "test@recidiviz.org"
+
+
+@pytest.mark.asyncio
+async def test_undo_false_positive_clears_flag_and_relocks(
+    async_session, client: AsyncClient, mock_clientdata_service, mock_intake
+):
+    """Undoing false positive clears the flag and re-locks the intake when locked_reason is set."""
+    mock_intake.locked = False
+    mock_intake.locked_reason = "llmaj:self-harm"
+    async_session.add(mock_intake)
+
+    message = IntakeMessage(
+        id=uuid4(),
+        intake_id=mock_intake.id,
+        section="Housing",
+        from_role=IntakeMessageRole.CLIENT,
+        content="test message",
+        guardrailed_by=["llmaj:self-harm"],
+        false_positive=True,
+    )
+    async_session.add(message)
+    await async_session.commit()
+
+    response = await client.patch(
+        f"/intake/admin/messages/{message.id}/undo-false-positive"
+    )
+    assert response.status_code == 200
+    assert response.json()["false_positive"] is False
+
+    await async_session.refresh(mock_intake)
+    assert mock_intake.locked is True
+    assert mock_intake.locked_reason == "llmaj:self-harm"
+
+    from sqlmodel import select
+
+    events = (
+        (
+            await async_session.execute(
+                select(IntakeModerationEvent).where(
+                    IntakeModerationEvent.message_id == message.id
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(events) == 1
+    assert events[0].action == "undo_false_positive"
+
+
+@pytest.mark.asyncio
+async def test_undo_false_positive_no_locked_reason_does_not_lock(
+    async_session, client: AsyncClient, mock_clientdata_service, mock_intake
+):
+    """Undoing false positive on an intake with no locked_reason leaves the intake unlocked."""
+    mock_intake.locked = False
+    mock_intake.locked_reason = None
+    async_session.add(mock_intake)
+
+    message = IntakeMessage(
+        id=uuid4(),
+        intake_id=mock_intake.id,
+        section="Housing",
+        from_role=IntakeMessageRole.CLIENT,
+        content="test message",
+        guardrailed_by=["llmaj:self-harm"],
+        false_positive=True,
+    )
+    async_session.add(message)
+    await async_session.commit()
+
+    response = await client.patch(
+        f"/intake/admin/messages/{message.id}/undo-false-positive"
+    )
+    assert response.status_code == 200
+    assert response.json()["false_positive"] is False
+
+    await async_session.refresh(mock_intake)
+    assert mock_intake.locked is False
+
+
+@pytest.mark.asyncio
+async def test_undo_false_positive_not_found(
+    async_session, client: AsyncClient, mock_clientdata_service
+):
+    """Returns 404 when message does not exist."""
+    response = await client.patch(
+        f"/intake/admin/messages/{uuid4()}/undo-false-positive"
+    )
     assert response.status_code == 404
     assert "not found" in response.json()["detail"].lower()

@@ -1405,6 +1405,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/intake/admin/messages/{message_id}/false-positive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Mark Message False Positive */
+        patch: operations["mark_message_false_positive_intake_admin_messages__message_id__false_positive_patch"];
+        trace?: never;
+    };
+    "/intake/admin/messages/{message_id}/undo-false-positive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Undo Message False Positive */
+        patch: operations["undo_message_false_positive_intake_admin_messages__message_id__undo_false_positive_patch"];
+        trace?: never;
+    };
     "/recordings/by_intake/{intake_id}": {
         parameters: {
             query?: never;
@@ -3842,6 +3880,11 @@ export interface components {
             requires_response: boolean;
             /** Guardrailed By */
             guardrailed_by?: string[] | null;
+            /**
+             * False Positive
+             * @default false
+             */
+            false_positive: boolean;
         };
         /**
          * IntakeMessageRole
@@ -8432,6 +8475,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ExecutionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_message_false_positive_intake_admin_messages__message_id__false_positive_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeMessageResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    undo_message_false_positive_intake_admin_messages__message_id__undo_false_positive_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeMessageResponse"];
                 };
             };
             /** @description Validation Error */

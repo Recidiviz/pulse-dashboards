@@ -29,7 +29,12 @@ from app.crud.intake import (
 from app.crud.plan import create_plan, get_plan_by_intake_id, retry_plan_creation
 from app.models.base import IntakeStatus, IntakeType
 from app.models.execution import Execution, ExecutionStatus
-from app.models.intake import ClientAddress, Intake, IntakeMessage
+from app.models.intake import (
+    ClientAddress,
+    Intake,
+    IntakeMessage,
+    IntakeModerationEvent,
+)
 from app.models.models import Plan
 from app.models.recording import RecordingSession
 from app.pdf.renderer import pdf_renderer
@@ -1014,3 +1019,64 @@ async def generate_chat_history_pdf(
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=chat_history.pdf"},
     )
+
+
+@router.patch("/messages/{message_id}/false-positive")
+async def mark_message_false_positive(
+    message_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    auth_user_context=Depends(get_auth_user_context),
+) -> IntakeMessageResponse:
+    message = await session.get(IntakeMessage, message_id)
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+    message.false_positive = True
+    session.add(message)
+
+    intake = await session.get(Intake, message.intake_id)
+    if intake and intake.locked:
+        intake.locked = False
+        session.add(intake)
+
+    session.add(
+        IntakeModerationEvent(
+            message_id=message_id,
+            action="mark_false_positive",
+            staff_email=auth_user_context["email"],
+        )
+    )
+
+    await session.commit()
+    await session.refresh(message)
+    return message
+
+
+@router.patch("/messages/{message_id}/undo-false-positive")
+async def undo_message_false_positive(
+    message_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    auth_user_context=Depends(get_auth_user_context),
+) -> IntakeMessageResponse:
+    message = await session.get(IntakeMessage, message_id)
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+    message.false_positive = False
+    session.add(message)
+
+    intake = await session.get(Intake, message.intake_id)
+    if intake and intake.locked_reason:
+        intake.locked = True
+        intake.locked_at = datetime.utcnow()
+        session.add(intake)
+
+    session.add(
+        IntakeModerationEvent(
+            message_id=message_id,
+            action="undo_false_positive",
+            staff_email=auth_user_context["email"],
+        )
+    )
+
+    await session.commit()
+    await session.refresh(message)
+    return message

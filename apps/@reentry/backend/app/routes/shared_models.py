@@ -33,6 +33,7 @@ class IntakeMessageResponse(ORMResponse):
     requires_response: bool = False
     # Exposed here so the staff chat history view can visually distinguish flagged messages.
     guardrailed_by: list[str] | None = None
+    false_positive: bool = False
 
 
 class ClientRecordResponse(BaseModel):

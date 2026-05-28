@@ -974,6 +974,7 @@ export function IntakeSocketProvider({
             from_role: "client",
             section: intakeContext.currentSection,
             requires_response: false,
+            false_positive: false,
             created_at: now,
             updated_at: now,
           },
