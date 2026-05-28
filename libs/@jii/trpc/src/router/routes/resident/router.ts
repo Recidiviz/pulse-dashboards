@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { residentsConfigByState, StateCode } from "~@jii/configs";
 import { ResidentFlagId } from "~@jii/prisma";
 import { typedFromEntries } from "~utils";
 
@@ -47,7 +48,21 @@ export const residentRouter = router({
         },
         select: { flagId: true },
       });
-      return typedFromEntries(rows.map((r) => [r.flagId, true]));
+      const personalFlags = typedFromEntries(rows.map((r) => [r.flagId, true]));
+
+      const now = new Date();
+      const flagsConfig =
+        residentsConfigByState[ctx.stateCode as StateCode]
+          ?.enabledResidentFlags ?? {};
+      const statewideFlags = typedFromEntries(
+        Object.entries(flagsConfig)
+          .filter(([, date]) => date <= now)
+          .map(([id]) => [id as ResidentFlagId, true]),
+      );
+      return {
+        ...personalFlags,
+        ...statewideFlags,
+      };
     }),
 
   getPrograms: firebaseAuthedResidentProcedure

@@ -37,6 +37,13 @@ export type TranslationConfig = {
   additionalLanguages: Array<string>;
 };
 
+// This type must stay in sync with the ResidentFlagId enum
+// defined in the prisma schema.
+type ResidentFlag =
+  | "usNeGoodTimeAlerts"
+  | "usNeChecklistDocuments"
+  | "usAzFslImprovements";
+
 export type ResidentsConfig = {
   home: {
     footer: {
@@ -54,6 +61,7 @@ export type ResidentsConfig = {
   egt?: EarnedGoodTimeConfig;
   translation: TranslationConfig;
   limitDistrictSearchOptions?: boolean;
+  enabledResidentFlags?: Partial<Record<ResidentFlag, Date>>;
 };
 
 export type EligibilityModuleConfig = {

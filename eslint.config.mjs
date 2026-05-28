@@ -148,6 +148,12 @@ export default tseslint.config(
   {
     files: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/*.test.jsx"],
     extends: [eslintPluginVitest.configs.recommended],
+    rules: {
+      "vitest/expect-expect": [
+        "error",
+        { assertFunctionNames: ["expect", "expectTypeOf"] },
+      ],
+    },
   },
   {
     files: ["**/*.mjs", "**/*.mts"],

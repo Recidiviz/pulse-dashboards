@@ -19,6 +19,9 @@ model UserProperties {
 
 // Resident Flags tell the frontend to behave differently for specific residents
 // during testing or rollouts. This enum defines the set of flags that can be set.
+// When adding a flag here, also update ResidentFlag in libs/@jii/configs/src/residents/types.ts.
+// There is a compile-time check in libs/@jii/trpc/src/router/routes/resident/router.ts
+// to ensure that the two remain in sync.
 enum ResidentFlagId {
     usNeGoodTimeAlerts
     usNeChecklistDocuments
