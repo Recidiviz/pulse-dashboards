@@ -269,6 +269,17 @@
         "staging": {},
         "production": {}
       }
+    },
+    "requires-sops-env:run-llmaj-evaluations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/run-llmaj-evaluations.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
     }
   }
 }
