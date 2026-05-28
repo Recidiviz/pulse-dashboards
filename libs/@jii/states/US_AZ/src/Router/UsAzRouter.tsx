@@ -28,25 +28,23 @@ import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
 export function UsAzRouter() {
   return (
-    <div>
-      <Routes>
-        <Route element={<UsAzSingleResidentContextRoute />}>
-          <Route index element={<PageUsAzResidentHome />} />
-          <Route
-            path={UsAzMoreInformation.ImportantDates.path}
-            element={<PageMoreInfoImportantDates />}
-          />
-          <Route
-            path={UsAzMoreInformation.About.path}
-            element={<PageMoreInfoAbout />}
-          />
-          <Route
-            path={UsAzMoreInformation.DPR.path}
-            element={<PageMoreInfoDPR />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </div>
+    <Routes>
+      <Route element={<UsAzSingleResidentContextRoute />}>
+        <Route index element={<PageUsAzResidentHome />} />
+        <Route
+          path={UsAzMoreInformation.ImportantDates.path}
+          element={<PageMoreInfoImportantDates />}
+        />
+        <Route
+          path={UsAzMoreInformation.About.path}
+          element={<PageMoreInfoAbout />}
+        />
+        <Route
+          path={UsAzMoreInformation.DPR.path}
+          element={<PageMoreInfoDPR />}
+        />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }

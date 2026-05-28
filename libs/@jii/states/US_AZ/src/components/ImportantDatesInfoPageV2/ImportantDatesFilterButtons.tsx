@@ -80,7 +80,7 @@ export const ImportantDatesFilterButtons = observer(
             shape={"block"}
             $selected={!presenter.isViewingAllDates}
             onClick={() => {
-              presenter.showPersonalDates();
+              presenter.isViewingAllDates = false;
             }}
           >
             {t(($) => $.importantDatesInfoPage.personalDates)} (
@@ -90,7 +90,7 @@ export const ImportantDatesFilterButtons = observer(
             shape={"block"}
             $selected={presenter.isViewingAllDates}
             onClick={() => {
-              presenter.showAllDates();
+              presenter.isViewingAllDates = true;
             }}
           >
             {t(($) => $.importantDatesInfoPage.allDates)}

@@ -16,19 +16,38 @@
 // =============================================================================
 
 import { makeAutoObservable } from "mobx";
+import { z } from "zod";
 
 import { UsAzTFunction } from "~@jii/translation";
 
 import { UsAzDisplayedDates } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
 import { getInfoPageHashForDateKey, UsAzDateHash } from "../utils/utils";
 
+const toggledPanelsSchema = z.record(z.string(), z.boolean().optional());
+const toggledPanelsBySectionSchema = z.record(z.string(), toggledPanelsSchema);
+export type ToggledPanels = z.output<typeof toggledPanelsSchema>;
+
 /**
  * Manages information about the resident for the Important Dates FAQ page,
  * such as which view someone has selected (their own release dates or all release types)
  * and which release dates they have.
+ *
+ * View state -- whether the user is viewing their own dates or all dates, and
+ * which accordion panels are open -- is stored in SessionStorage. This state is
+ * not tracked within the presenter because we need it to persist even when the FAQ
+ * component is unmounted and remounted (such as when the user clicks a hash/anchor
+ * link, which causes the page to reload), which destroys and re-creates the presenter.
+ * At the same time, we don't need it to persist across user sessions.
  */
 export class ImportantDatesFAQPresenter {
-  isViewingAllDates = false;
+  // Keys used for sessionStorage. These should not be accessed outside of the
+  // presenter in order to ensure Mobx can track updates to these values -
+  // use the presenter setters to change the stored settings.
+  private static VIEWING_ALL_DATES_KEY = "azImportantDatesViewingAll";
+  private static TOGGLED_PANELS_KEY = "azImportantDatesToggledPanels";
+
+  private _isViewingAllDates: boolean;
+  private _toggledPanelsBySection: Record<string, ToggledPanels>;
 
   // The hashes of all date sections, in the order that they should be displayed
   allDateHashes: UsAzDateHash[] = [
@@ -47,6 +66,25 @@ export class ImportantDatesFAQPresenter {
     displayedDates: UsAzDisplayedDates,
     private t: UsAzTFunction,
   ) {
+    // Parse values from session storage on page load
+    this._isViewingAllDates = Boolean(
+      sessionStorage.getItem(ImportantDatesFAQPresenter.VIEWING_ALL_DATES_KEY),
+    );
+    try {
+      const stored = sessionStorage.getItem(
+        ImportantDatesFAQPresenter.TOGGLED_PANELS_KEY,
+      );
+      if (!stored) {
+        this._toggledPanelsBySection = {};
+      } else {
+        this._toggledPanelsBySection = toggledPanelsBySectionSchema.parse(
+          JSON.parse(stored),
+        );
+      }
+    } catch {
+      this._toggledPanelsBySection = {};
+    }
+
     const displayedDateHashes = displayedDates.map(({ dateKey }) =>
       getInfoPageHashForDateKey(dateKey),
     );
@@ -57,12 +95,35 @@ export class ImportantDatesFAQPresenter {
     makeAutoObservable(this);
   }
 
-  showAllDates() {
-    this.isViewingAllDates = true;
+  get isViewingAllDates() {
+    return this._isViewingAllDates;
   }
 
-  showPersonalDates() {
-    this.isViewingAllDates = false;
+  set isViewingAllDates(viewAll: boolean) {
+    this._isViewingAllDates = viewAll;
+    if (viewAll) {
+      // Any truthy string works here
+      sessionStorage.setItem(
+        ImportantDatesFAQPresenter.VIEWING_ALL_DATES_KEY,
+        "all",
+      );
+    } else {
+      sessionStorage.removeItem(
+        ImportantDatesFAQPresenter.VIEWING_ALL_DATES_KEY,
+      );
+    }
+  }
+
+  get toggledPanelsBySection(): Record<string, ToggledPanels> {
+    return this._toggledPanelsBySection;
+  }
+
+  set toggledPanelsBySection(newPanels: Record<string, ToggledPanels>) {
+    this._toggledPanelsBySection = newPanels;
+    sessionStorage.setItem(
+      ImportantDatesFAQPresenter.TOGGLED_PANELS_KEY,
+      JSON.stringify(newPanels),
+    );
   }
 
   get dateHashes(): UsAzDateHash[] {

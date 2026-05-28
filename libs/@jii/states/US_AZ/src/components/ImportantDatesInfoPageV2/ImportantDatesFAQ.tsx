@@ -55,6 +55,7 @@ const ManagedComponent = observer(function UsAzImportantDatesFAQ({
             openAllCopy: t(($) => $.openAll),
             closeAllCopy: t(($) => $.closeAll),
           }}
+          faqPresenter={presenter}
         />
       ))}
 
@@ -70,6 +71,7 @@ const ManagedComponent = observer(function UsAzImportantDatesFAQ({
             openAllCopy: t(($) => $.openAll),
             closeAllCopy: t(($) => $.closeAll),
           }}
+          faqPresenter={presenter}
         />
       ))}
     </>

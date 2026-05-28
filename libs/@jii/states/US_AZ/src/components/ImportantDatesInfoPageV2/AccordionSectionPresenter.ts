@@ -19,6 +19,11 @@ import { makeAutoObservable } from "mobx";
 
 import { AccordionCopy } from "~@jii/common-ui";
 
+import {
+  ImportantDatesFAQPresenter,
+  ToggledPanels,
+} from "./ImportantDatesFAQPresenter";
+
 export type AccordionSectionProps = {
   id: string;
   accordionCopy: AccordionCopy;
@@ -27,36 +32,53 @@ export type AccordionSectionProps = {
     openAllCopy: string;
     closeAllCopy: string;
   };
+  faqPresenter: ImportantDatesFAQPresenter;
 };
 
 export class AccordionSectionPresenter {
-  public toggledPanels: Partial<Record<string, boolean>>;
-
   constructor(
     public id: AccordionSectionProps["id"],
     public accordionCopy: AccordionSectionProps["accordionCopy"],
     public sectionCopy: AccordionSectionProps["sectionCopy"],
+    private faqPresenter: ImportantDatesFAQPresenter,
   ) {
-    this.toggledPanels = {};
-
     makeAutoObservable(this, {}, { autoBind: true });
+  }
+
+  get toggledPanels(): ToggledPanels {
+    return this.faqPresenter.toggledPanelsBySection[this.id] ?? {};
+  }
+
+  /**
+   * Convenience method for setting toggled panels.
+   */
+  private setToggledPanels(newPanels: ToggledPanels) {
+    this.faqPresenter.toggledPanelsBySection = {
+      ...this.faqPresenter.toggledPanelsBySection,
+      [this.id]: newPanels,
+    };
   }
 
   /**
    * Open or close the accordion panel with given ID.
    */
-  toggle(id: string) {
-    this.toggledPanels[id] = !this.toggledPanels[id];
+  toggle(panelId: string) {
+    this.setToggledPanels({
+      ...this.toggledPanels,
+      [panelId]: !this.toggledPanels[panelId],
+    });
   }
 
   private openAll() {
-    this.toggledPanels = Object.fromEntries(
-      Object.keys(this.accordionCopy).map((id) => [id, true]),
+    this.setToggledPanels(
+      Object.fromEntries(
+        Object.keys(this.accordionCopy).map((panelId) => [panelId, true]),
+      ),
     );
   }
 
   private closeAll() {
-    this.toggledPanels = {};
+    this.setToggledPanels({});
   }
 
   /**

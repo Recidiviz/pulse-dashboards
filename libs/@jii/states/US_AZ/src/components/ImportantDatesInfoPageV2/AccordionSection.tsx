@@ -83,8 +83,14 @@ function usePresenter({
   id,
   accordionCopy,
   sectionCopy,
+  faqPresenter,
 }: AccordionSectionProps) {
-  return new AccordionSectionPresenter(id, accordionCopy, sectionCopy);
+  return new AccordionSectionPresenter(
+    id,
+    accordionCopy,
+    sectionCopy,
+    faqPresenter,
+  );
 }
 
 /**

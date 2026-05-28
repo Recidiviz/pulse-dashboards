@@ -26,11 +26,16 @@ const mockSomeDates: UsAzDisplayedDates = [
   { dateKey: "ercdDate", date: new Date("2024-06-01") },
   { dateKey: "sedDate", date: new Date("2024-12-01") },
 ];
+const mockToggledPanels = {
+  testSection: { foo: true, bar: false, baz: undefined },
+  anotherSection: {},
+};
 
 let presenter: ImportantDatesFAQPresenter;
 const t = vi.fn() as unknown as UsAzTFunction;
 
 beforeEach(() => {
+  sessionStorage.clear();
   presenter = new ImportantDatesFAQPresenter(mockSomeDates, t);
 });
 
@@ -45,9 +50,9 @@ describe("personalDates", () => {
   });
 });
 
-describe("toggling isViewingAllDates", () => {
-  it("showAllDates changes to viewing all dates", () => {
-    presenter.showAllDates();
+describe("updating isViewingAllDates and toggledPanelsBySection", () => {
+  it("can change to viewing all dates", () => {
+    presenter.isViewingAllDates = true;
     expect(presenter.dateHashes).toEqual([
       "tprDate",
       "dtpDate",
@@ -58,14 +63,28 @@ describe("toggling isViewingAllDates", () => {
     ]);
   });
 
-  it("showPersonalDates changes to viewing personal dates", () => {
-    presenter.showAllDates();
-    presenter.showPersonalDates();
+  it("can change to viewing personal dates", () => {
+    presenter.isViewingAllDates = true;
+    presenter.isViewingAllDates = false;
     expect(presenter.dateHashes).toEqual([
       "tprDate",
       "csbdDate-trToAddDate",
       "ercdDate-addDate",
       "sedDate",
     ]);
+  });
+
+  test("toggledPanelsBySection getter/setter", () => {
+    presenter.toggledPanelsBySection = mockToggledPanels;
+    expect(presenter.toggledPanelsBySection).toEqual(mockToggledPanels);
+  });
+
+  it("persists changes across sessions", () => {
+    presenter.toggledPanelsBySection = mockToggledPanels;
+    presenter.isViewingAllDates = true;
+
+    const newPresenter = new ImportantDatesFAQPresenter(mockSomeDates, t);
+    expect(newPresenter.toggledPanelsBySection).toEqual(mockToggledPanels);
+    expect(newPresenter.isViewingAllDates).toEqual(true);
   });
 });
