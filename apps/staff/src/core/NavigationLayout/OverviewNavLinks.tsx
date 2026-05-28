@@ -44,7 +44,7 @@ export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPathSection> = {
 export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const { pathname } = useLocation();
   const { isMobile } = useIsMobile(true);
-  const { hideWorkflowsOpportunities } = useFeatureVariants();
+  const { hideWorkflowsOpportunities, usMoMyCaseload } = useFeatureVariants();
 
   const {
     workflowsStore,
@@ -102,7 +102,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
           }
           role="menuitem"
         >
-          {workflowsHomepageName}
+          {usMoMyCaseload ? "My Caseload" : workflowsHomepageName}
         </NavLink>
       )}
       {enableRNA && (
@@ -115,7 +115,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
           Kudos
         </NavLink>
       )}
-      {isSupervisionTasksLinkEnabled && (
+      {isSupervisionTasksLinkEnabled && !usMoMyCaseload && (
         <NavLink
           to={workflowsUrl("tasks")}
           onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
@@ -138,6 +138,12 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
             // Don't show Clients/Residents links when the user does not have access to
             // the page.
             if (!userAllowedNavigation?.workflows?.includes(path)) {
+              return null;
+            }
+
+            // When the US_MO My Caseload page replaces the supervision Clients
+            // tab, hide the Clients link to avoid duplication.
+            if (usMoMyCaseload && path === "clients") {
               return null;
             }
             return (

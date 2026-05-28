@@ -19,7 +19,10 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import isIE11 from "../../../utils/isIE11";
 import { WorkflowsStore } from "../../../WorkflowsStore";
@@ -27,6 +30,7 @@ import { OpportunityConfigurationStore } from "../../../WorkflowsStore/Opportuni
 import { WorkflowsRootStore } from "../../../WorkflowsStore/WorkflowsRootStore";
 import { mockOpportunityConfigs } from "../../__tests__/testUtils";
 import { CaseloadView } from "../../CaseloadView";
+import MyCaseload from "../../MyCaseload";
 import { OpportunityCaseloadView } from "../../OpportunityCaseloadView";
 import { WORKFLOWS_PATHS } from "../../views";
 import WorkflowsHomepage from "../../WorkflowsHomepage";
@@ -41,6 +45,13 @@ vi.mock("../../../utils/isIE11");
 vi.mock("../../../WorkflowsStore");
 vi.mock("../../../components/StoreProvider");
 vi.mock("../../WorkflowsHomepage", () => {
+  return {
+    __esModule: true,
+    default: vi.fn(),
+  };
+});
+
+vi.mock("../../MyCaseload", () => {
   return {
     __esModule: true,
     default: vi.fn(),
@@ -90,6 +101,7 @@ vi.mock("../../WorkflowsLayouts", () => {
 });
 
 const mockUseRootStore = useRootStore as unknown as Mock;
+const mockUseFeatureVariants = vi.mocked(useFeatureVariants);
 
 function mockStores(mockWorkflowsStore: any) {
   const rootStore = {
@@ -118,6 +130,7 @@ function renderRouter(relativePath?: string) {
 describe("PageWorkflows", () => {
   let baseMockWorkflowsStore: any;
   beforeEach(() => {
+    mockUseFeatureVariants.mockReturnValue({});
     mockStores({
       hydrate: vi.fn().mockReturnValue(vi.fn()),
       hydrationState: { status: "needs hydration" },
@@ -201,6 +214,38 @@ describe("PageWorkflows", () => {
       renderRouter(WORKFLOWS_PATHS.home);
 
       expect(screen.getByText("Workflows Homepage")).toBeInTheDocument();
+    });
+
+    it("renders MyCaseload for route /home when usMoMyCaseload is on", () => {
+      mockUseFeatureVariants.mockReturnValue({ usMoMyCaseload: {} });
+      mockStores({
+        ...baseMockWorkflowsStore,
+        activePage: "home",
+      });
+      (MyCaseload as unknown as Mock).mockReturnValue(
+        <div>My Caseload Page</div>,
+      );
+
+      renderRouter(WORKFLOWS_PATHS.home);
+
+      expect(screen.getByText("My Caseload Page")).toBeInTheDocument();
+      expect(screen.queryByText("Workflows Homepage")).not.toBeInTheDocument();
+    });
+
+    it("renders WorkflowsHomepage for route /home when usMoMyCaseload is off", () => {
+      mockUseFeatureVariants.mockReturnValue({});
+      mockStores({
+        ...baseMockWorkflowsStore,
+        activePage: "home",
+      });
+      (MyCaseload as unknown as Mock).mockReturnValue(
+        <div>My Caseload Page</div>,
+      );
+
+      renderRouter(WORKFLOWS_PATHS.home);
+
+      expect(screen.getByText("Workflows Homepage")).toBeInTheDocument();
+      expect(screen.queryByText("My Caseload Page")).not.toBeInTheDocument();
     });
 
     it("renders the milestones page for route /milestones", () => {

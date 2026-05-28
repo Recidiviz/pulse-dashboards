@@ -247,6 +247,76 @@ describe("OverviewNavLinks tests", () => {
     });
   });
 
+  describe("usMoMyCaseload flag", () => {
+    beforeEach(() => {
+      rootStoreMock.workflowsStore.workflowsSupportedSystems = ["SUPERVISION"];
+      rootStoreMock.workflowsStore.isSupervisionTasksLinkEnabled = true;
+      rootStoreMock.userStore.userAllowedNavigation = {
+        workflows: ["home", "clients", "tasks"],
+      };
+    });
+
+    it("renders Opportunities, Tasks, and Clients when the flag is off", async () => {
+      useFeatureVariantsMock.mockReturnValue({});
+      renderLinks();
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("menuitem", { name: "Opportunities" }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("menuitem", { name: "Tasks" }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("menuitem", { name: "Clients" }),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("renames Opportunities to My Caseload and hides Tasks and Clients when the flag is on", async () => {
+      useFeatureVariantsMock.mockReturnValue({ usMoMyCaseload: {} });
+      renderLinks();
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("menuitem", { name: "My Caseload" }),
+        ).toBeInTheDocument();
+        expect(
+          screen.queryByRole("menuitem", { name: "Opportunities" }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("menuitem", { name: "Tasks" }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("menuitem", { name: "Clients" }),
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it("keeps Residents visible when the flag is on", async () => {
+      rootStoreMock.workflowsStore.workflowsSupportedSystems = [
+        "INCARCERATION",
+        "SUPERVISION",
+      ];
+      rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+      rootStoreMock.userStore.userAllowedNavigation = {
+        workflows: ["home", "clients", "residents", "tasks"],
+      };
+      useFeatureVariantsMock.mockReturnValue({ usMoMyCaseload: {} });
+
+      renderLinks();
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("menuitem", { name: "Residents" }),
+        ).toBeInTheDocument();
+        expect(
+          screen.queryByRole("menuitem", { name: "Clients" }),
+        ).not.toBeInTheDocument();
+      });
+    });
+  });
+
   it("Does not render a link for opportunities if hideWorkflowsOpportunities is set", async () => {
     rootStoreMock.workflowsStore.workflowsSupportedSystems = [
       "INCARCERATION",

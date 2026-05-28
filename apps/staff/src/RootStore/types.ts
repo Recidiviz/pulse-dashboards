@@ -117,6 +117,7 @@ export type FeatureVariant =
   | "usMiRestrictiveHousingV2Ineligible"
 
   //// Missouri
+  | "usMoMyCaseload"
   | "customTasks"
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
@@ -239,6 +240,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsStaffUsage: {},
   insightsConsistentLoginPill: {},
   usTnTEPENotesForAll: {},
+  usMoMyCaseload: {},
   usMoSearchByUnit: {},
   usMoWorkRelease: {},
   usMiCaseManagerSearch: {},
@@ -346,6 +348,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         tasksCardLayout: { activeTenants: ["US_MO"] },
         tasksPermasnooze: { activeTenants: ["US_MO"] },
+        usMoMyCaseload: { activeTenants: ["US_MO"] },
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
         customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },

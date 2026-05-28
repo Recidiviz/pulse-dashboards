@@ -21,10 +21,14 @@ import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import isIE11 from "../../utils/isIE11";
 import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
+import MyCaseload from "../MyCaseload";
 import { OpportunityCaseloadView } from "../OpportunityCaseloadView";
 import { UsNcRNASingleResident, UsNcRNAViewer } from "../UsNcRNA";
 import { workflowsRoute } from "../views";
@@ -55,6 +59,7 @@ const PageWorkflows: React.FC = () => {
     });
   });
   const { workflowsStore } = useRootStore();
+  const { usMoMyCaseload } = useFeatureVariants();
   useEffect(() => {
     // Ensure user data remains active and hydrated while we're in the Workflows UI area
     // (this prevents it from automatically unsubscribing and resubscribing to Firestore
@@ -87,7 +92,7 @@ const PageWorkflows: React.FC = () => {
           <Route element={<WorkflowsRoute />}>
             <Route
               path={workflowsRoute({ routeName: "home" })}
-              element={<WorkflowsHomepage />}
+              element={usMoMyCaseload ? <MyCaseload /> : <WorkflowsHomepage />}
             />
 
             <Route
