@@ -213,12 +213,13 @@ describe("MyCaseload (URL ↔ presenter sync)", () => {
     expect(allHref).toContain("tab=all-clients");
   });
 
-  it("preserves tenantId on row anchor hrefs", () => {
+  it("uses the bare profile path as the row link target", () => {
+    // tenantId + previousPage are now added by the shared `Link` inside
+    // CaseloadTable, not by rowLinkUrl — see the Link / CaseloadTable suites.
     setupStoreMock();
     renderApp(["/?tenantId=US_MO"]);
     const rowHref = screen.getByTestId("row-link-href").getAttribute("href");
-    expect(rowHref).toContain("/profile/abc-123");
-    expect(rowHref).toContain("tenantId=US_MO");
+    expect(rowHref).toBe("/profile/abc-123");
   });
 
   it("renders the body once the store mock returns a singleton tasksFilterStore", () => {

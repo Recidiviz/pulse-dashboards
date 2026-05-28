@@ -20,6 +20,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import pluralize from "pluralize";
 import { rem } from "polished";
+import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -367,6 +368,7 @@ export type TaskTableColumnId = ReturnType<typeof getColumnDefs>[number]["id"];
 export const TasksTable = observer(function TasksTable({
   presenter,
   rowLinkUrl,
+  renderEmptyState,
 }: {
   presenter: CaseloadTasksPresenterV2;
   /**
@@ -376,12 +378,26 @@ export const TasksTable = observer(function TasksTable({
    * Default (Tasks page): omit this prop to keep modal-on-click behaviour.
    */
   rowLinkUrl?: (entity: TasksRowEntity) => string;
+  /**
+   * Page-level customization of the empty-tab state. Receives the presenter so
+   * the consumer can vary copy by `selectedTaskCategory`. Default (Tasks page):
+   * omit this prop to keep the standard `EmptyTasksTabView`.
+   */
+  renderEmptyState?: (presenter: CaseloadTasksPresenterV2) => ReactNode;
 }) {
   // Check if there's data to display
   const hasData = presenter.rowEntitiesForSelectedCategory.length > 0;
 
   if (!hasData) {
-    return <EmptyTasksTabView presenter={presenter} />;
+    return (
+      <>
+        {renderEmptyState ? (
+          renderEmptyState(presenter)
+        ) : (
+          <EmptyTasksTabView presenter={presenter} />
+        )}
+      </>
+    );
   }
 
   const columnsById = Object.fromEntries(

@@ -84,6 +84,52 @@ function renderTable(
   };
 }
 
+describe("TasksTable empty state", () => {
+  it("renders the default EmptyTasksTabView when no renderEmptyState is given", () => {
+    const presenter = makePresenter([]);
+    render(
+      <MemoryRouter>
+        <TasksTable presenter={presenter} />
+      </MemoryRouter>,
+    );
+    // EmptyTasksTabView shows presenter.emptyTabText + a contact-support link.
+    expect(screen.getByText("No tasks")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /feedback@recidiviz\.org/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders a custom empty state from renderEmptyState when the tab is empty", () => {
+    const presenter = makePresenter([]);
+    render(
+      <MemoryRouter>
+        <TasksTable
+          presenter={presenter}
+          renderEmptyState={() => <div>No clients here</div>}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText("No clients here")).toBeInTheDocument();
+    // Default copy / support link should NOT render.
+    expect(screen.queryByText("No tasks")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /feedback@recidiviz\.org/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not call renderEmptyState when the tab has rows", () => {
+    const presenter = makePresenter([makeSummary("Doe, J", [])]);
+    const renderEmptyState = vi.fn(() => <div>should not show</div>);
+    render(
+      <MemoryRouter>
+        <TasksTable presenter={presenter} renderEmptyState={renderEmptyState} />
+      </MemoryRouter>,
+    );
+    expect(renderEmptyState).not.toHaveBeenCalled();
+    expect(screen.queryByText("should not show")).not.toBeInTheDocument();
+  });
+});
+
 describe("TasksTable tasks column cell rendering", () => {
   it('renders "None" when the row has zero tasks', () => {
     renderTable([makeSummary("Doe, J", [])]);

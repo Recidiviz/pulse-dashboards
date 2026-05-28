@@ -15,7 +15,44 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parentOf } from "../WorkflowsBackButton";
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { Mock } from "vitest";
+
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
+import { workflowsUrl } from "../../views";
+import { parentOf, WorkflowsBackButton } from "../WorkflowsBackButton";
+
+vi.mock("../../../components/StoreProvider");
+
+const useRootStoreMock = useRootStore as Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
+
+function renderAt(
+  pathname: string,
+  {
+    activePageIsHomepage = false,
+    hideWorkflowsOpportunities = false,
+    homepage = "home",
+  }: {
+    activePageIsHomepage?: boolean;
+    hideWorkflowsOpportunities?: boolean;
+    homepage?: string;
+  } = {},
+) {
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: { homepage, activePageIsHomepage },
+  });
+  useFeatureVariantsMock.mockReturnValue({ hideWorkflowsOpportunities });
+  return render(
+    <MemoryRouter initialEntries={[pathname]}>
+      <WorkflowsBackButton />
+    </MemoryRouter>,
+  );
+}
 
 describe("parentOf", () => {
   it("returns opportunity clients page for opportunity action pages", () => {
@@ -31,5 +68,32 @@ describe("parentOf", () => {
   it("returns /clients and /residents for client/resident profile", () => {
     expect(parentOf(["clients", "personId"])).toEqual("/workflows/clients");
     expect(parentOf(["residents", "personId"])).toEqual("/workflows/residents");
+  });
+});
+
+describe("WorkflowsBackButton", () => {
+  it("renders a 'Back' link to the parent on a subpage (deep link → fallback href)", () => {
+    // No `previousPage` in history state, so the BackLink href is the parent
+    // fallback. (Its click/history behavior is covered in BackLink.test.tsx.)
+    renderAt("/workflows/clients/p1");
+    const link = screen.getByRole("link", { name: /back/i });
+    expect(link).toHaveAttribute("href", "/workflows/clients");
+  });
+
+  it("renders a 'Home' link on a top-level page that isn't the homepage", () => {
+    renderAt("/workflows/clients", { activePageIsHomepage: false });
+    const link = screen.getByRole("link", { name: /home/i });
+    expect(link).toHaveAttribute("href", workflowsUrl("home"));
+  });
+
+  it("renders nothing when hideWorkflowsOpportunities is on", () => {
+    renderAt("/workflows/clients", { hideWorkflowsOpportunities: true });
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("renders nothing on the homepage", () => {
+    renderAt("/workflows/home", { activePageIsHomepage: true });
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 });

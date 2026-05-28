@@ -23,7 +23,9 @@ import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
-const sharedStyles = css`
+// Shared chevron + typography for back controls. Exported so the generic
+// `core/Link/BackLink` can render the identical treatment without duplication.
+export const backLinkStyles = css`
   ${typography.Sans14};
 
   color: ${palette.slate85};
@@ -45,13 +47,13 @@ const sharedStyles = css`
 `;
 
 const BackLink = styled(Link)`
-  ${sharedStyles}
+  ${backLinkStyles}
 
   text-decoration: none !important;
 `;
 
 const BackButton = styled.button`
-  ${sharedStyles}
+  ${backLinkStyles}
 
   border: none;
   background: transparent;

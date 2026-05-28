@@ -16,12 +16,13 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
+import { BackLink } from "../Link";
 import { NavigationBackButton } from "../NavigationBackButton/NavigationBackButton";
 import { isWorkflowsPathSection, workflowsUrl } from "../views";
 
@@ -36,10 +37,14 @@ export function parentOf(pathSections: string[]): string {
 /**
  * General back/home button that can be used anywhere in Workflows.
  *
- * - If the previous path is stored in the location state, navigate to the previous page.
- * - If the current page is a subpage of a core Workflows route
- * (e.g., tasks, clients, residents, or an opportunity page), displays "Back" and navigates to the parent page.
- * - If the user is on a main Workflows page (but not the homepage), displays "Home" and navigates to the Workflows homepage.
+ * - On a subpage of a core Workflows route (e.g. tasks, clients, residents, or
+ *   an opportunity page) displays "Back" via the generic `BackLink`: a plain
+ *   left-click goes back in browser history (returning the user to wherever
+ *   they came from, e.g. My Caseload), while right-click / cmd-click can open
+ *   the origin in a new tab. A deep link with no origin falls back to the
+ *   computed parent route.
+ * - On a main Workflows page (but not the homepage) displays "Home" and links
+ *   to the Workflows homepage.
  * - Returns nothing if already on the homepage.
  */
 export const WorkflowsBackButton = observer(function WorkflowsBackButton() {
@@ -48,26 +53,14 @@ export const WorkflowsBackButton = observer(function WorkflowsBackButton() {
   } = useRootStore();
   const { hideWorkflowsOpportunities } = useFeatureVariants();
   const location = useLocation();
-  const navigate = useNavigate();
-  const { previousPage } = location?.state || {};
 
   // slicing off empty string at 0 caused by leading slash,
   // and 1 which should always be "workflows"
   const pathSections = location.pathname.split("/").slice(2);
   const isSubpage = pathSections.length >= 2;
 
-  if (previousPage || isSubpage) {
-    /**
-     * If the previous path is stored in the location state,
-     * navigate to it.
-     *
-     * Otherwise, navigate to the parent page.
-     */
-    const action = previousPage
-      ? { onClick: () => navigate(previousPage) }
-      : { url: parentOf(pathSections) };
-
-    return <NavigationBackButton action={action}>Back</NavigationBackButton>;
+  if (isSubpage) {
+    return <BackLink fallbackUrl={parentOf(pathSections)}>Back</BackLink>;
   }
 
   // Home button

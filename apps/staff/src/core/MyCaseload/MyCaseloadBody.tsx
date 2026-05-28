@@ -29,6 +29,7 @@ import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
 import { WorkflowsFilterDropdown } from "../WorkflowsFilters/WorkflowsFilterDropdown";
 import { SupervisionTaskCategory } from "../WorkflowsTasks/fixtures";
 import { TasksTable } from "../WorkflowsTasks/TasksTable";
+import { MyCaseloadEmptyTab } from "./MyCaseloadEmptyTab";
 
 // Local — NOT pulled from presenter.displayedTaskCategories. MyCaseload shows
 // a deliberate subset; we don't want DUE_NEXT_MONTH / HIDDEN / state-specific
@@ -150,7 +151,13 @@ export const MyCaseloadBody = observer(function MyCaseloadBody({
           <WorkflowsFilterDropdown presenter={presenter} />
         </MyCaseloadFilterArea>
       </MyCaseloadTabsAndFilterRow>
-      <TasksTable presenter={presenter} rowLinkUrl={rowLinkUrl} />
+      <TasksTable
+        presenter={presenter}
+        rowLinkUrl={rowLinkUrl}
+        renderEmptyState={(p) => (
+          <MyCaseloadEmptyTab category={p.selectedTaskCategory} />
+        )}
+      />
     </>
   );
 });

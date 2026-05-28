@@ -18,7 +18,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { BrowserRouter } from "react-router-dom";
+import {
+  BrowserRouter,
+  MemoryRouter,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 
 import useIsMobile from "../../../hooks/useIsMobile";
 import { CaseloadTable } from "../CaseloadTable";
@@ -111,5 +117,45 @@ describe("CaseloadTable rowLinkUrl prop", () => {
     await user.click(screen.getByText("Alice"));
     // The click bubbles up to the <tr>'s onClick, so the callback still fires.
     expect(handleRowClick).toHaveBeenCalled();
+  });
+});
+
+describe("CaseloadTable row links are tenant-aware and stamp previousPage", () => {
+  function LocationStateProbe() {
+    const location = useLocation();
+    const state = location.state as { previousPage?: string } | null;
+    return <div data-testid="prev">{state?.previousPage ?? "none"}</div>;
+  }
+
+  it("appends the current tenantId to the row href and records previousPage on navigation", async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={["/start?tenantId=US_MO"]}>
+        <Routes>
+          <Route
+            path="/start"
+            element={
+              <CaseloadTable<Row>
+                data={ROWS}
+                columns={COLUMNS}
+                rowLinkUrl={(row) => row.profileUrl}
+              />
+            }
+          />
+          <Route path="/profile/:id" element={<LocationStateProbe />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    // The shared `Link` inside CaseloadTable appends tenantId to the href...
+    expect(screen.getAllByRole("link")[0]).toHaveAttribute(
+      "href",
+      "/profile/a?tenantId=US_MO",
+    );
+    // ...and stamps the originating URL as `previousPage` for the destination.
+    await user.click(screen.getByText("Alice"));
+    expect(screen.getByTestId("prev")).toHaveTextContent(
+      "/start?tenantId=US_MO",
+    );
   });
 });

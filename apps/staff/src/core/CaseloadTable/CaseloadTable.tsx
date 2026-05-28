@@ -30,7 +30,6 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Dispatch, SetStateAction, useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -38,6 +37,7 @@ import { palette } from "~design-system";
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
+import { Link } from "../Link";
 import { StatusAwareButton } from "../OpportunityDenial/MenuButton.styles";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
 import { EnableToggle } from "../UsNcRNA/UsNcRNATable";

@@ -137,17 +137,12 @@ const ManagedComponent = observer(function MyCaseload({
   // yet). Defaults to ALL_TASKS.
   const activeTabForUrl = categoryFromUrl ?? "ALL_TASKS";
 
-  // Row link URL — preserves tenantId and any other live query params on the
-  // profile URL so navigation keeps the tenant context.
+  // Row link target is the bare profile path. The shared <Link> used by
+  // CaseloadTable carries the current `tenantId` and stamps the current URL as
+  // `previousPage` (for the profile's back button) automatically.
   const rowLinkUrl = useCallback(
-    (entity: TasksRowEntity) => {
-      const url = new URL(entity.person.profileUrl, window.location.origin);
-      searchParams.forEach((value, key) => {
-        if (!url.searchParams.has(key)) url.searchParams.set(key, value);
-      });
-      return `${url.pathname}${url.search}`;
-    },
-    [searchParams],
+    (entity: TasksRowEntity) => entity.person.profileUrl,
+    [],
   );
 
   return (
