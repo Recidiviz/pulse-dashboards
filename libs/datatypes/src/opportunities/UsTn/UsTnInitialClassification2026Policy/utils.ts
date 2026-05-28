@@ -27,9 +27,9 @@ import {
   UsTnInitialClassification2026FormInformation,
 } from "./schema";
 
-const LOW_UPPER_THRESHOLD = 11;
-const MEDIUM_UPPER_THRESHOLD = 24;
-const MAXIMUM_UPPER_THRESHOLD = 44;
+export const DCAF_LOW_UPPER_THRESHOLD = 11;
+export const DCAF_MEDIUM_UPPER_THRESHOLD = 24;
+const DCAF_MAXIMUM_UPPER_THRESHOLD = 44;
 
 export function getDerivedDcafCustodyLevel(
   totalScore: number | undefined,
@@ -37,11 +37,11 @@ export function getDerivedDcafCustodyLevel(
   if (totalScore === undefined) return "";
 
   switch (true) {
-    case totalScore <= LOW_UPPER_THRESHOLD:
+    case totalScore <= DCAF_LOW_UPPER_THRESHOLD:
       return "LOW";
-    case totalScore <= MEDIUM_UPPER_THRESHOLD:
+    case totalScore <= DCAF_MEDIUM_UPPER_THRESHOLD:
       return "MEDIUM";
-    case totalScore <= MAXIMUM_UPPER_THRESHOLD:
+    case totalScore <= DCAF_MAXIMUM_UPPER_THRESHOLD:
       return "CLOSE";
     default:
       return "MAXIMUM";
@@ -136,7 +136,7 @@ export function deriveDcafFormData(
 
   const totalScore = getTotalScore(
     [q1Score, q2Score, q3Score, q4Score, q5Score, q6Score, q7Score],
-    MAXIMUM_UPPER_THRESHOLD,
+    DCAF_MAXIMUM_UPPER_THRESHOLD,
   );
 
   const trusteeEligible = isEligibleForTrusteeStatus(formData);

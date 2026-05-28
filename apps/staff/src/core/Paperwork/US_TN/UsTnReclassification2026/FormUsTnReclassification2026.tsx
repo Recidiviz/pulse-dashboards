@@ -18,7 +18,12 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { rcafAssessmentQuestions, showTrusteeChecklist } from "~datatypes";
+import {
+  RCAF_LOW_UPPER_THRESHOLD_V1,
+  RCAF_MEDIUM_UPPER_THRESHOLD_V1,
+  rcafAssessmentQuestions,
+  showTrusteeChecklist,
+} from "~datatypes";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
@@ -216,7 +221,11 @@ export const FormUsTnReclassification2026 = observer(
                   name={"q7Notes"}
                 />
               </ScoredAssessmentQuestion>
-              <TotalScore score={derivedData.totalScore} mediumUpper={25} />
+              <TotalScore
+                score={derivedData.totalScore}
+                lowUpper={RCAF_LOW_UPPER_THRESHOLD_V1}
+                mediumUpper={RCAF_MEDIUM_UPPER_THRESHOLD_V1}
+              />
             </ClassificationFormPage>
           </PrintablePage>
           <TrusteeChecklist display={includeTrusteeChecklist} />

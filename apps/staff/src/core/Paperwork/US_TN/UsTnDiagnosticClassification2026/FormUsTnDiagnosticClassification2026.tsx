@@ -18,7 +18,11 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { dcafAssessmentQuestions } from "~datatypes";
+import {
+  DCAF_LOW_UPPER_THRESHOLD,
+  DCAF_MEDIUM_UPPER_THRESHOLD,
+  dcafAssessmentQuestions,
+} from "~datatypes";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
@@ -192,7 +196,11 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                   name={"q7Notes"}
                 />
               </ScoredAssessmentQuestion>
-              <TotalScore score={derivedData.totalScore} mediumUpper={24} />
+              <TotalScore
+                score={derivedData.totalScore}
+                lowUpper={DCAF_LOW_UPPER_THRESHOLD}
+                mediumUpper={DCAF_MEDIUM_UPPER_THRESHOLD}
+              />
             </ClassificationFormPage>
           </PrintablePage>
           <HearingNotice pilotVersion />

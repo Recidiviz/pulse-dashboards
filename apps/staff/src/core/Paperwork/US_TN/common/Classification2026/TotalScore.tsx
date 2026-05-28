@@ -28,9 +28,11 @@ const Container = styled.div`
 
 export function TotalScore({
   score,
+  lowUpper,
   mediumUpper,
 }: {
   score: number | undefined;
+  lowUpper: number;
   mediumUpper: number;
 }) {
   return (
@@ -43,10 +45,10 @@ export function TotalScore({
           <Bold>CUSTODY LEVEL SCALE FOR TOTAL:</Bold>
         </div>
         <div>
-          <Bold>Low:</Bold> 0-12
+          <Bold>Low:</Bold> 0-{lowUpper}
         </div>
         <div>
-          <Bold>Medium:</Bold> 13-{mediumUpper}
+          <Bold>Medium:</Bold> {lowUpper + 1}-{mediumUpper}
         </div>
         <div>
           <Bold>Close:</Bold> {mediumUpper + 1}-44

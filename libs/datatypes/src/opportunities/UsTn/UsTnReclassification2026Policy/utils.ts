@@ -35,25 +35,45 @@ import {
   UsTnReclassification2026FormInformation,
 } from "./schema";
 
-const LOW_UPPER_THRESHOLD = 11;
-const MEDIUM_UPPER_THRESHOLD = 25;
-const MAXIMUM_UPPER_THRESHOLD = 44;
+export const RCAF_LOW_UPPER_THRESHOLD_V1 = 11;
+export const RCAF_MEDIUM_UPPER_THRESHOLD_V1 = 25;
+const RCAF_MAXIMUM_UPPER_THRESHOLD = 44;
+
+export const RCAF_LOW_UPPER_THRESHOLD_V2 = 12;
+export const RCAF_MEDIUM_UPPER_THRESHOLD_V2 = 24;
 
 const Q3_MAX_SCORE = 6;
 const Q4_MAX_SCORE = 9;
 const Q5_MAX_SCORE = 33;
 
-export function getDerivedRcafCustodyLevel(
+export function getDerivedRcafV1CustodyLevel(
   totalScore: number | undefined,
 ): string {
   if (totalScore === undefined) return "";
 
   switch (true) {
-    case totalScore <= LOW_UPPER_THRESHOLD:
+    case totalScore <= RCAF_LOW_UPPER_THRESHOLD_V1:
       return "LOW";
-    case totalScore <= MEDIUM_UPPER_THRESHOLD:
+    case totalScore <= RCAF_MEDIUM_UPPER_THRESHOLD_V1:
       return "MEDIUM";
-    case totalScore <= MAXIMUM_UPPER_THRESHOLD:
+    case totalScore <= RCAF_MAXIMUM_UPPER_THRESHOLD:
+      return "CLOSE";
+    default:
+      return "MAXIMUM";
+  }
+}
+
+export function getDerivedRcafV2CustodyLevel(
+  totalScore: number | undefined,
+): string {
+  if (totalScore === undefined) return "";
+
+  switch (true) {
+    case totalScore <= RCAF_LOW_UPPER_THRESHOLD_V2:
+      return "LOW";
+    case totalScore <= RCAF_MEDIUM_UPPER_THRESHOLD_V2:
+      return "MEDIUM";
+    case totalScore <= RCAF_MAXIMUM_UPPER_THRESHOLD:
       return "CLOSE";
     default:
       return "MAXIMUM";
@@ -352,12 +372,12 @@ export function deriveRcafFormData(
 
   const totalScore = getTotalScore(
     [q1Score, q2Score, q3Score, q4Score, q5Score, q6Score, q7Score],
-    MAXIMUM_UPPER_THRESHOLD,
+    RCAF_MAXIMUM_UPPER_THRESHOLD,
   );
 
   const trusteeEligible = isEligibleForTrusteeStatus(formData);
 
-  const totalText = getDerivedRcafCustodyLevel(totalScore);
+  const totalText = getDerivedRcafV1CustodyLevel(totalScore);
 
   return {
     q1Score,
@@ -454,12 +474,12 @@ export function deriveRcafFormDataV2(
 
   const totalScore = getTotalScore(
     [q1Score, q2Score, q3Score, q4Score, q5Score, q6Score, q7Score],
-    MAXIMUM_UPPER_THRESHOLD,
+    RCAF_MAXIMUM_UPPER_THRESHOLD,
   );
 
   const trusteeEligible = isEligibleForTrusteeStatus(formData);
 
-  const totalText = getDerivedRcafCustodyLevel(totalScore);
+  const totalText = getDerivedRcafV2CustodyLevel(totalScore);
 
   return {
     q1Score,
