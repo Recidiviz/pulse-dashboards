@@ -19,6 +19,7 @@ import { TooltipTrigger } from "@recidiviz/design-system";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import pluralize from "pluralize";
+import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -142,6 +143,28 @@ function CaseTypeCell({ row }: { row: Row<TasksRowEntity> }) {
 const KeepTogether = styled.span`
   white-space: nowrap;
 `;
+
+const MoreSuffix = styled.span`
+  color: ${palette.slate60};
+  margin-left: ${rem(8)};
+`;
+
+function tasksForEntity(entity: TasksRowEntity) {
+  return "tasks" in entity ? entity.tasks : [entity];
+}
+
+function TasksCell({ row }: { row: Row<TasksRowEntity> }) {
+  const tasks = tasksForEntity(row.original);
+  if (tasks.length === 0) return <>None</>;
+  const first = tasks[0];
+  const rest = tasks.length - 1;
+  return (
+    <>
+      {`${first.displayName} due ${formatDueDateFromToday(first.dueDate)}`}
+      {rest > 0 && <MoreSuffix>+{rest} more</MoreSuffix>}
+    </>
+  );
+}
 
 function TaskNameCell({ row }: { row: Row<TasksRowEntity> }) {
   const entity = row.original;
@@ -298,6 +321,21 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       cell: OfficerNameCell,
     },
     {
+      header: "Tasks",
+      id: "tasks",
+      enableSorting: true,
+      // Sort by the earliest due date so the most-urgent rows surface to the
+      // top on first sort. Zero-task rows are pushed to the bottom by mapping
+      // their absent date to MAX_SAFE_INTEGER.
+      sortDescFirst: false,
+      sortingFn: "basic",
+      accessorFn: (entity) => {
+        const tasks = "tasks" in entity ? entity.tasks : [entity];
+        return tasks[0]?.dueDate.getTime() ?? Number.MAX_SAFE_INTEGER;
+      },
+      cell: TasksCell,
+    },
+    {
       header: "Appointment Status",
       id: "appointmentStatus",
       accessorFn: (entity) => {
@@ -328,8 +366,16 @@ export type TaskTableColumnId = ReturnType<typeof getColumnDefs>[number]["id"];
 
 export const TasksTable = observer(function TasksTable({
   presenter,
+  rowLinkUrl,
 }: {
   presenter: CaseloadTasksPresenterV2;
+  /**
+   * Page-level customization: when provided, rows render as anchors pointing
+   * to the returned URL and `selectPerson` is NOT called on click (the link
+   * navigates to a profile page instead of opening the side-panel modal).
+   * Default (Tasks page): omit this prop to keep modal-on-click behaviour.
+   */
+  rowLinkUrl?: (entity: TasksRowEntity) => string;
 }) {
   // Check if there's data to display
   const hasData = presenter.rowEntitiesForSelectedCategory.length > 0;
@@ -352,9 +398,16 @@ export const TasksTable = observer(function TasksTable({
       expandedLastColumn
       data={presenter.rowEntitiesForSelectedCategory}
       columns={columns}
-      onRowClick={(entity) => {
-        presenter.selectPerson(entity.person);
-      }}
+      // When `rowLinkUrl` is provided the anchor handles navigation; we
+      // intentionally skip `onRowClick` so the side-panel modal never opens.
+      onRowClick={
+        rowLinkUrl
+          ? undefined
+          : (entity) => {
+              presenter.selectPerson(entity.person);
+            }
+      }
+      rowLinkUrl={rowLinkUrl}
       shouldHighlightRow={(entity) => presenter.shouldHighlightRow(entity)}
     />
   );

@@ -20,12 +20,14 @@ import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
 import {
   addDays,
+  differenceInCalendarDays,
   differenceInMonths,
   format,
+  formatDistanceStrict,
   formatDuration,
   intervalToDuration,
-  isToday,
   parseISO,
+  startOfDay,
 } from "date-fns";
 import lowerCase from "lodash/fp/lowerCase";
 import pipe from "lodash/fp/pipe";
@@ -314,9 +316,18 @@ function convertCurlyQuotesToStraight(text: string): string {
   return text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
 }
 
-const formatDueDateFromToday = (dueDate: Date): string => {
-  if (isToday(dueDate)) return "today";
-  return moment(dueDate).from(moment().startOf("day"));
+const formatDueDateFromToday = (
+  dueDate: Date,
+  today: Date = new Date(),
+): string => {
+  // Same calendar day stays "today" regardless of time-of-day on either side.
+  if (differenceInCalendarDays(dueDate, today) === 0) return "today";
+  // Normalize to start-of-day so the distance is whole days (avoids
+  // "in 22 hours"), then let date-fns pick the largest sensible unit
+  // (days → months → years). `addSuffix` adds "in " / " ago".
+  return formatDistanceStrict(startOfDay(dueDate), startOfDay(today), {
+    addSuffix: true,
+  });
 };
 
 function splitAuth0UserName(

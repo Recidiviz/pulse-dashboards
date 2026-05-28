@@ -95,6 +95,21 @@ const RouteSync = observer(function RouteSync({
               .systemType,
           );
           workflowsStore.updateSelectedOpportunityType(opportunityType);
+        } else if (
+          page === "home" &&
+          // Read the feature variant via the MobX-observable getter on UserStore,
+          // NOT via the React `useFeatureVariants()` hook. The autorun isn't a
+          // hook context; the getter is observable so the autorun re-runs if
+          // the flag value changes.
+          workflowsStore.rootStore.userStore.activeFeatureVariants
+            .usMoMyCaseload
+        ) {
+          // MyCaseload is supervision-only. The default page-to-system mapping
+          // puts "home" in the ALL bucket; override here so CaseloadSelect
+          // renders as officer-search instead of falling back to "caseload"
+          // labelling.
+          workflowsStore.updateActiveSystem("SUPERVISION");
+          workflowsStore.updateSelectedOpportunityType(undefined);
         } else {
           // Select active system from the page type or take the first supported system available
           const activeSystem: SystemId | undefined =

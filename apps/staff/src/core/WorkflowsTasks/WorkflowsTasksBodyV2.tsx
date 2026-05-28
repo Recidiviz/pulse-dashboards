@@ -64,12 +64,30 @@ const TableControls = styled.div<{ $isMobile: boolean }>`
   gap: ${({ $isMobile }) => ($isMobile ? rem(spacing.lg) : rem(spacing.md))};
 `;
 
+export type WorkflowsTasksBodyV2Props = {
+  presenter: CaseloadTasksPresenterV2;
+};
+
 export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
   presenter,
-}: {
-  presenter: CaseloadTasksPresenterV2;
-}) {
+}: WorkflowsTasksBodyV2Props) {
   const { isMobile } = useIsMobile(true);
+
+  const tabBadges = {
+    ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
+    OVERDUE: presenter.countForCategory("OVERDUE"),
+    DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
+    DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
+    DUE_NEXT_MONTH: presenter.countForCategory("DUE_NEXT_MONTH"),
+    HIDDEN: presenter.countForCategory("HIDDEN"),
+  } as Partial<Record<SupervisionTaskCategory, number>>;
+
+  const setActiveTab = (tab: SupervisionTaskCategory) => {
+    runInAction(() => {
+      presenter.selectedTaskCategory = tab;
+    });
+  };
+
   return (
     <>
       <TasksHeader>
@@ -91,23 +109,12 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
       ) : (
         <>
           <TasksTabUnderline>
-            <WorkflowsCaseloadTabs
+            <WorkflowsCaseloadTabs<SupervisionTaskCategory>
               tabs={presenter.displayedTaskCategories}
               tabLabels={TASK_SELECTOR_LABELS}
-              tabBadges={{
-                ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
-                OVERDUE: presenter.countForCategory("OVERDUE"),
-                DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
-                DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
-                DUE_NEXT_MONTH: presenter.countForCategory("DUE_NEXT_MONTH"),
-                HIDDEN: presenter.countForCategory("HIDDEN"),
-              }}
+              tabBadges={tabBadges}
               activeTab={presenter.selectedTaskCategory}
-              setActiveTab={(tab: SupervisionTaskCategory) => {
-                runInAction(() => {
-                  presenter.selectedTaskCategory = tab;
-                });
-              }}
+              setActiveTab={setActiveTab}
             />
           </TasksTabUnderline>
           <TasksTable presenter={presenter} />

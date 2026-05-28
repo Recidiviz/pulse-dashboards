@@ -27,12 +27,18 @@ import { useRootStore } from "../../components/StoreProvider";
 type TasksHydrator = {
   initial?: React.ReactNode;
   empty?: React.ReactNode;
+  /**
+   * Page-level skeleton rendered while supervision tasks are loading.
+   * Defaults to a generic <Loading /> spinner when omitted.
+   */
+  loading?: React.ReactNode;
   hydrated: React.ReactNode;
 };
 
 export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
   initial,
   empty,
+  loading,
   hydrated,
 }: TasksHydrator) {
   const { workflowsStore } = useRootStore();
@@ -64,7 +70,7 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
 
   if (displayInitialState) return <>{initial}</>;
 
-  if (displayLoading) return <Loading />;
+  if (displayLoading) return <>{loading ?? <Loading />}</>;
 
   if (displayNoResults) return <>{empty}</>;
 

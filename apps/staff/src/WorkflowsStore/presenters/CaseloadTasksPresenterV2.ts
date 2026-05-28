@@ -261,6 +261,10 @@ export class CaseloadTasksPresenterV2
     return this.filterStore.orderedTasksForCategory(category).length;
   }
 
+  personsCountForCategory(category: SupervisionTaskCategory): number {
+    return this.filterStore.orderedPersonsForCategory(category).length;
+  }
+
   get rowEntitiesForSelectedCategory(): TasksRowEntity[] {
     if (this.showOneRowPerClient) {
       return this.orderedClientsWithTaskSummaries;

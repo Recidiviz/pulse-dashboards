@@ -100,7 +100,10 @@ describe("Task", () => {
     });
 
     test("dueDateFromToday", () => {
-      expect(task.dueDateFromToday).toEqual("2 months ago");
+      // 75 days between dueDate (2023-03-04) and frozen "now" (2023-05-18).
+      // date-fns `formatDistanceStrict` rounds 75 days up to "3 months ago"
+      // (moment.from() previously rounded down to "2 months ago").
+      expect(task.dueDateFromToday).toEqual("3 months ago");
     });
 
     test("details", () => {

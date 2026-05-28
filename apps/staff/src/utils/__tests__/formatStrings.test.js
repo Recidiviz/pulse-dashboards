@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays, subDays } from "date-fns";
 import tk from "timekeeper";
 
 import * as utils from "../formatStrings";
@@ -657,6 +658,71 @@ describe("formatStrings", () => {
       const end = new Date("2024-01-01");
       const result = utils.formatDateRange(start, end);
       expect(result).toBe("2 months and 14 days");
+    });
+  });
+
+  describe("formatDueDateFromToday", () => {
+    // Fixed reference date so the optional `today` arg keeps every assertion
+    // deterministic; the function defaults to `new Date()` for production use.
+    const today = new Date(2026, 4, 22, 12, 0, 0); // 2026-05-22 noon
+
+    it('returns "today" when dueDate is the same calendar day', () => {
+      expect(utils.formatDueDateFromToday(today, today)).toBe("today");
+      // Even with a different time-of-day on the same calendar day.
+      expect(
+        utils.formatDueDateFromToday(new Date(2026, 4, 22, 0, 0, 0), today),
+      ).toBe("today");
+    });
+
+    it('returns "X days ago" for recent past dates', () => {
+      expect(utils.formatDueDateFromToday(subDays(today, 1), today)).toBe(
+        "1 day ago",
+      );
+      expect(utils.formatDueDateFromToday(subDays(today, 7), today)).toBe(
+        "7 days ago",
+      );
+    });
+
+    it("rolls up older past dates into months and years", () => {
+      expect(utils.formatDueDateFromToday(subDays(today, 30), today)).toBe(
+        "1 month ago",
+      );
+      expect(utils.formatDueDateFromToday(subDays(today, 480), today)).toBe(
+        "1 year ago",
+      );
+      expect(utils.formatDueDateFromToday(subDays(today, 908), today)).toBe(
+        "2 years ago",
+      );
+    });
+
+    it('returns "in Y days" for near-future dates', () => {
+      expect(utils.formatDueDateFromToday(addDays(today, 1), today)).toBe(
+        "in 1 day",
+      );
+      expect(utils.formatDueDateFromToday(addDays(today, 5), today)).toBe(
+        "in 5 days",
+      );
+    });
+
+    it("rolls up further-future dates into months", () => {
+      expect(utils.formatDueDateFromToday(addDays(today, 60), today)).toBe(
+        "in 2 months",
+      );
+    });
+
+    it("uses singular vs plural correctly", () => {
+      expect(utils.formatDueDateFromToday(subDays(today, 1), today)).toContain(
+        "1 day ",
+      );
+      expect(utils.formatDueDateFromToday(subDays(today, 2), today)).toContain(
+        "2 days ",
+      );
+      expect(utils.formatDueDateFromToday(addDays(today, 1), today)).toContain(
+        "1 day",
+      );
+      expect(utils.formatDueDateFromToday(addDays(today, 2), today)).toContain(
+        "2 days",
+      );
     });
   });
 });

@@ -119,6 +119,8 @@ export type FeatureVariant =
   //// Missouri
   | "usMoMyCaseload"
   | "customTasks"
+  | "usMoMyCaseload"
+  | "customTasks"
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
 

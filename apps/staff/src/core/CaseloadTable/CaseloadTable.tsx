@@ -30,6 +30,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Dispatch, SetStateAction, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -202,6 +203,21 @@ const LoadMoreRows = styled.button`
   }
 `;
 
+// When `rowLinkUrl` is provided, the row's <td> children are wrapped in this
+// anchor. `display: contents` keeps the <a> from breaking table layout while
+// still surfacing each row as a real anchor — preserving right-click "Open in
+// new tab" and keyboard navigation.
+const RowLink = styled(Link)`
+  display: contents;
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible td {
+    outline: 2px solid ${palette.signal.links};
+    outline-offset: -2px;
+  }
+`;
+
 export type CaseloadTableManualSorting = {
   sorting: SortingState;
   setSorting: Dispatch<SetStateAction<SortingState>>;
@@ -212,6 +228,13 @@ type CaseloadTableProps<TData> = {
   columns: ColumnDef<TData>[];
   expandedLastColumn?: boolean;
   onRowClick?: (row: TData) => void;
+  /**
+   * When provided, each row is wrapped in a `<Link>` to the returned URL.
+   * This makes the row a real anchor (so right-click "Open in new tab" and
+   * keyboard navigation work), and is mutually compatible with `onRowClick`
+   * — callers can use either or both. When omitted, behaviour is unchanged.
+   */
+  rowLinkUrl?: (row: TData) => string;
   shouldHighlightRow?: (row: TData) => boolean;
   onRowRender?: (row: TData) => void;
   manualSorting?: CaseloadTableManualSorting;
@@ -226,6 +249,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   data,
   columns,
   onRowClick,
+  rowLinkUrl,
   shouldHighlightRow = () => false,
   onRowRender = () => undefined,
   manualSorting = undefined,
@@ -314,9 +338,20 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
             </Row>
           ))}
         </TableHeader>
-        <TableBody $clickableRows={!!onRowClick}>
+        <TableBody $clickableRows={!!onRowClick || !!rowLinkUrl}>
           {table.getRowModel().rows.map((row) => {
             onRowRender(row.original);
+            const cells = row.getVisibleCells().map((cell) => (
+              <Cell
+                key={cell.id}
+                className={"fs-exclude"}
+                $expandedLastColumn={expandedLastColumn}
+                $isMobile={isMobile}
+                $columns={columns.length}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Cell>
+            ));
             return (
               <Row
                 key={row.id}
@@ -325,17 +360,11 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
                 }}
                 $isSelected={shouldHighlightRow(row.original)}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <Cell
-                    key={cell.id}
-                    className={"fs-exclude"}
-                    $expandedLastColumn={expandedLastColumn}
-                    $isMobile={isMobile}
-                    $columns={columns.length}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Cell>
-                ))}
+                {rowLinkUrl ? (
+                  <RowLink to={rowLinkUrl(row.original)}>{cells}</RowLink>
+                ) : (
+                  cells
+                )}
               </Row>
             );
           })}

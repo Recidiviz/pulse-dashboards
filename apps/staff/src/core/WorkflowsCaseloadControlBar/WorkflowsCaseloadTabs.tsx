@@ -18,6 +18,9 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Pill, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { useCallback, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -77,10 +80,45 @@ const TabButton = styled.div<{ $active: boolean }>`
   }
 `;
 
+const TabAnchor = styled(Link)<{ $active: boolean }>`
+  ${typography.Sans16}
+
+  background-color: ${palette.marble1};
+  color: ${({ $active }) => ($active ? palette.pine4 : palette.text.secondary)};
+  padding: 0.5rem 0.25rem;
+  border-bottom: 2px solid;
+  border-bottom-color: ${({ $active }) =>
+    $active ? palette.pine4 : "transparent"};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:not(:last-child) {
+    margin-right: 2rem;
+  }
+
+  &:hover {
+    color: ${({ $active }) => !$active && palette.slate80};
+
+    ${TabBadge} {
+      background-color: ${({ $active }) => !$active && palette.slate20};
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${palette.signal.links};
+    outline-offset: 2px;
+    border-radius: ${rem(2)};
+  }
+`;
+
 export interface SortableTabButtonProps<T extends string> {
   tab: T;
   label?: string;
-  badge?: number;
+  badge?: number | string;
   active: boolean;
   onClick: (tab: T) => void;
   sortingEnabled: boolean;
@@ -127,23 +165,55 @@ function SortableTabButton<T extends string>({
   );
 }
 
-export interface WorkflowsCaseloadTabsProps<T extends string> {
+type WorkflowsCaseloadTabsBase<T extends string> = {
   tabs: T[];
   tabLabels?: Partial<Record<T, string>>;
-  tabBadges?: Partial<Record<T, number>>;
+  // Loading placeholders (e.g. MyCaseload's skeleton) pass `"--"` while the
+  // count is still pending; loaded callers pass `number`. `number` remains
+  // assignable to `number | string`, so existing call sites are unaffected.
+  tabBadges?: Partial<Record<T, number | string>>;
   activeTab: T;
   setActiveTab: (tab: T) => void;
   sortable?: boolean;
+};
+
+export type WorkflowsCaseloadTabsButtonProps<T extends string> =
+  WorkflowsCaseloadTabsBase<T> & {
+    mode?: "button";
+    // Make passing tabHref a type error in button mode.
+    tabHref?: never;
+  };
+
+export type WorkflowsCaseloadTabsLinkProps<T extends string> =
+  WorkflowsCaseloadTabsBase<T> & {
+    mode: "link";
+    // Required in link mode; the consumer closes over `useLocation()` to
+    // upsert the active tab into the URL without baking stale params at
+    // construction time.
+    tabHref: (tab: T) => string;
+  };
+
+export type WorkflowsCaseloadTabsProps<T extends string> =
+  | WorkflowsCaseloadTabsButtonProps<T>
+  | WorkflowsCaseloadTabsLinkProps<T>;
+
+function WorkflowsCaseloadTabs<T extends string>(
+  props: WorkflowsCaseloadTabsProps<T>,
+) {
+  if (props.mode === "link") {
+    return <LinkModeTabs {...props} />;
+  }
+  return <ButtonModeTabs {...props} />;
 }
 
-function WorkflowsCaseloadTabs<T extends string>({
+function ButtonModeTabs<T extends string>({
   tabs,
   tabLabels,
   tabBadges,
   activeTab,
   setActiveTab,
   sortable = false,
-}: WorkflowsCaseloadTabsProps<T>) {
+}: WorkflowsCaseloadTabsButtonProps<T>) {
   return (
     <TabWrapper>
       {tabs.map((tab: T) => (
@@ -157,6 +227,98 @@ function WorkflowsCaseloadTabs<T extends string>({
           sortingEnabled={sortable}
         />
       ))}
+    </TabWrapper>
+  );
+}
+
+function LinkModeTabs<T extends string>({
+  tabs,
+  tabLabels,
+  tabBadges,
+  activeTab,
+  setActiveTab,
+  tabHref,
+}: WorkflowsCaseloadTabsLinkProps<T>) {
+  const tabRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+
+  const focusTab = useCallback((index: number) => {
+    const el = tabRefs.current[index];
+    if (el) el.focus();
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLAnchorElement>, index: number) => {
+      let nextIndex: number | null = null;
+      if (e.key === "ArrowRight") {
+        nextIndex = Math.min(index + 1, tabs.length - 1);
+      } else if (e.key === "ArrowLeft") {
+        nextIndex = Math.max(index - 1, 0);
+      } else if (e.key === "Home") {
+        nextIndex = 0;
+      } else if (e.key === "End") {
+        nextIndex = tabs.length - 1;
+      }
+
+      if (nextIndex !== null && nextIndex !== index) {
+        e.preventDefault();
+        setActiveTab(tabs[nextIndex]);
+        focusTab(nextIndex);
+      }
+    },
+    [tabs, setActiveTab, focusTab],
+  );
+
+  // Keep the refs array tight to the current tab count so we never read a
+  // stale ref after an HMR reload that changes the tab set.
+  useEffect(() => {
+    tabRefs.current = tabRefs.current.slice(0, tabs.length);
+  }, [tabs.length]);
+
+  return (
+    <TabWrapper role="tablist" aria-label="Filter caseload">
+      {tabs.map((tab: T, index) => {
+        const isActive = tab === activeTab;
+        const badge = tabBadges?.[tab];
+        return (
+          <TabAnchor
+            key={tab as string}
+            ref={(el) => {
+              tabRefs.current[index] = el;
+            }}
+            to={tabHref(tab)}
+            role="tab"
+            aria-selected={isActive}
+            aria-current={isActive ? "page" : undefined}
+            tabIndex={isActive ? 0 : -1}
+            $active={isActive}
+            onClick={() => {
+              // Let the <Link> handle URL navigation (no preventDefault, so
+              // cmd-click / ctrl-click / middle-click still open in a new
+              // tab). We also notify the parent synchronously so any same-
+              // render presenter reader sees the updated category. The
+              // URL→presenter useEffect in the page component converges on
+              // the next render either way; setActiveTab is belt-and-
+              // suspenders for snappiness.
+              setActiveTab(tab);
+              focusTab(index);
+            }}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+          >
+            {tabLabels?.[tab] ?? (tab as string)}
+            {badge !== undefined && (
+              <TabBadge
+                filled
+                color={isActive ? palette.pine4 : palette.slate10}
+                textColor={isActive ? "white" : palette.slate70}
+                $sortable={false}
+                aria-label={`${badge} clients`}
+              >
+                {badge}
+              </TabBadge>
+            )}
+          </TabAnchor>
+        );
+      })}
     </TabWrapper>
   );
 }
