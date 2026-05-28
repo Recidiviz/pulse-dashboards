@@ -55,9 +55,9 @@ const content: StateSpecificMetricCopy = {
       "The chart describes the number of people from each county of conviction as of the date specified in the chart title.",
   },
   prisonPopulationByOffenseType: {
-    title: "Prison population by offense type",
+    title: "Prison population by crime group",
     methodology:
-      "The chart describes the number of people within each offense type category as of the date specified in the chart title.",
+      "The chart describes the number of people within each crime group category as of the date specified in the chart title.",
   },
   prisonPopulationByRace: {
     title: "Prison population by race",

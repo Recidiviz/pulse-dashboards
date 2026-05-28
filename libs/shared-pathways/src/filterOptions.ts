@@ -1452,6 +1452,7 @@ export const NyPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.OFFENSE_TYPE]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE],
+    title: "Crime group",
     useDynamicOptions: true,
   },
   [FILTER_TYPES.CHARGE_DESCRIPTION]: {
