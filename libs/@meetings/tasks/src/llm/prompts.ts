@@ -121,6 +121,7 @@ export const PROMPTS = {
                             1. **Ignore Metadata:** Do not extract tasks about recording, uploading, or file management. Focus only on the conversation between Agency Staff Member and Client.
                             2. **Be Specific:** Use the exact details found in the text (dates, names, locations).
                             3. Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.
+                            4. **Client Identity (Critical):** The CLIENT PROFILE provided in the input contains the authoritative client name from the case management system. Do NOT override or replace this identity based on names spoken in the transcript. Transcription errors can introduce incorrect names. If a name spoken in the transcript conflicts with the CLIENT PROFILE, discard the spoken name and use the profile name.
                             
                             ### TARGET 1: ACTION ITEMS
                             - List every future task assigned to the Client or Staff Member.
@@ -198,7 +199,8 @@ export const PROMPTS = {
                        - Client "thinking about" doing something -> **Status Update**.
                        - Client "will" do something -> **Action Item**.
                     9. **Narrative Correction:** If a speaker corrects themselves ("I live at X... actually wait, no, I moved to Y"), IGNORE the first statement completely. Use only the final version.
-                    10. **Ambiguity Flagging:** Scan the 'Action Items' for any tasks starting with "CLARIFY:".
+                    10. **Client Identity (Critical):** The CLIENT PROFILE in the input contains the authoritative client name from the case management system. Always use that name in written notes. Transcription errors can introduce wrong names. If a name spoken in the transcript conflicts with the CLIENT PROFILE, discard the spoken name and use the profile name.
+                    11. **Ambiguity Flagging:** Scan the 'Action Items' for any tasks starting with "CLARIFY:".
                        - If found, create a section at the VERY TOP of the note titled "⚠️ CLARIFICATION NEEDED".
                        - List these items there so the Staff Member sees them immediately.
                        - Do *not* list these again in the normal Plan section.
