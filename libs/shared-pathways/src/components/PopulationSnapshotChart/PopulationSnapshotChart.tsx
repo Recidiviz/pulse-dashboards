@@ -176,6 +176,36 @@ function defaultOLabel(accessorLabel: string) {
   return <text textAnchor="middle">{accessorLabel}</text>;
 }
 
+/**
+ * Estimates the left margin needed for horizontal chart axis labels based on
+ * the longest formatted label in the dataset. Semiotic does not auto-size
+ * margins, so we approximate using ~7px per character at 14px sans-serif.
+ *
+ * Limitations:
+ * - Uses character count, not true glyph width, so wide characters (W, M) or
+ *   all-caps labels may be slightly underestimated, and narrow characters
+ *   (i, l) slightly overestimated. The MIN/MAX clamps bound the worst cases.
+ * - An empty dataset yields Math.max() = -Infinity, which the MIN clamp
+ *   handles correctly (returns MIN_MARGIN).
+ */
+function computeHorizontalLeftMargin(
+  data: SnapshotDataPoint[],
+  formatter: ((label: string) => string) | undefined,
+): number {
+  const CHAR_WIDTH_PX = 7; // approximate average glyph width at 14px sans-serif
+  const LABEL_PADDING_PX = 16;
+  const MIN_MARGIN = 60;
+  const MAX_MARGIN = 220;
+  const resolvedFormatter = formatter ?? ((l: string) => l);
+  const maxChars = Math.max(
+    ...data.map((d) => resolvedFormatter(d.accessorLabel).length),
+  );
+  return Math.min(
+    MAX_MARGIN,
+    Math.max(MIN_MARGIN, maxChars * CHAR_WIDTH_PX + LABEL_PADDING_PX),
+  );
+}
+
 function makeHorizontalOLabel(formatter: (label: string) => string) {
   return function horizontalOLabel(accessorLabel: string) {
     return (
@@ -380,7 +410,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
       projection: "horizontal",
       size: [558, data.length * 25 + 150],
       margin: {
-        left: 90,
+        left: computeHorizontalLeftMargin(data, horizontalLabelFormatter),
         bottom: 75,
         right: 50,
         top: 56,
@@ -498,4 +528,5 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
 };
 
 export default PopulationSnapshotChart;
+export { computeHorizontalLeftMargin };
 export type { PopulationSnapshotChartProps, SnapshotDataPoint };

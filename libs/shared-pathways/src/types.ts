@@ -110,6 +110,7 @@ export type PrisonPopulationSnapshotRecord = {
   sentenceLengthMax: string;
   chargeCountyCode: string;
   offenseType: string;
+  chargeDescription: string;
 };
 
 export type PrisonPopulationPersonLevelRecord = {
@@ -229,6 +230,7 @@ export type MetricId =
   | "prisonPopulationBySentenceLengthMax"
   | "prisonPopulationByChargeCountyCode"
   | "prisonPopulationByOffenseType"
+  | "prisonPopulationByChargeDescription"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"

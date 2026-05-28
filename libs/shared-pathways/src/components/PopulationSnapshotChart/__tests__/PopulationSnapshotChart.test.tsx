@@ -16,16 +16,22 @@
 // =============================================================================
 
 import { act, fireEvent, render } from "@testing-library/react";
+import { ResponsiveOrdinalFrame } from "semiotic";
 import { ThemeProvider } from "styled-components";
 import { vi } from "vitest";
 
 import { defaultPathwaysTheme } from "../../PathwaysTheme";
-import type { SnapshotDataPoint } from "../PopulationSnapshotChart";
+import {
+  computeHorizontalLeftMargin,
+  type SnapshotDataPoint,
+} from "../PopulationSnapshotChart";
 import PopulationSnapshotChart from "../PopulationSnapshotChart";
 
 vi.mock("semiotic", () => ({
-  ResponsiveOrdinalFrame: () => <div data-testid="mock-ordinal-frame" />,
+  ResponsiveOrdinalFrame: vi.fn(() => <div data-testid="mock-ordinal-frame" />),
 }));
+
+const MockFrame = vi.mocked(ResponsiveOrdinalFrame);
 
 function makeData(count: number): SnapshotDataPoint[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -57,6 +63,138 @@ function renderChart(dataCount: number) {
     </ThemeProvider>,
   );
 }
+
+// Thresholds derived from the constants in computeHorizontalLeftMargin:
+//   CHAR_WIDTH_PX = 7, LABEL_PADDING_PX = 16, MIN = 60, MAX = 220
+describe("computeHorizontalLeftMargin", () => {
+  function makeHorizontalData(labels: string[]): SnapshotDataPoint[] {
+    return labels.map((label, i) => ({
+      index: i,
+      accessorValue: label,
+      accessorLabel: label,
+      tooltipLabel: label,
+      value: "10",
+    }));
+  }
+
+  it("clamps to MIN_MARGIN when labels are very short", () => {
+    // "Hi" → 2 chars → 2*7+16 = 30, clamped to 60
+    const margin = computeHorizontalLeftMargin(
+      makeHorizontalData(["Hi", "Ok"]),
+      undefined,
+    );
+    expect(margin).toBe(60);
+  });
+
+  it("computes margin proportional to the longest label", () => {
+    // "Hello World" → 11 chars → 11*7+16 = 93
+    const margin = computeHorizontalLeftMargin(
+      makeHorizontalData(["Short", "Hello World"]),
+      undefined,
+    );
+    expect(margin).toBe(93);
+  });
+
+  it("clamps to MAX_MARGIN when labels are very long", () => {
+    // 32-char label → 32*7+16 = 240, clamped to 220
+    const longLabel = "A".repeat(32);
+    const margin = computeHorizontalLeftMargin(
+      makeHorizontalData([longLabel]),
+      undefined,
+    );
+    expect(margin).toBe(220);
+  });
+
+  it("applies the formatter before measuring length", () => {
+    // Raw label is long, but formatter truncates it to 5 chars → 5*7+16=51, clamped to 60
+    const margin = computeHorizontalLeftMargin(
+      makeHorizontalData(["A very long label that would normally be wide"]),
+      () => "Short",
+    );
+    expect(margin).toBe(60);
+  });
+
+  it("uses the formatter output, not the raw label, for margin calculation", () => {
+    // Formatter doubles each label's length
+    // "Hello" → 10 chars → 10*7+16 = 86
+    const margin = computeHorizontalLeftMargin(
+      makeHorizontalData(["Hello"]),
+      (l) => l + l,
+    );
+    expect(margin).toBe(86);
+  });
+
+  it("returns MIN_MARGIN for an empty dataset (Math.max spread edge case)", () => {
+    // Math.max(...[]) === -Infinity; the MIN clamp must rescue it
+    expect(computeHorizontalLeftMargin([], undefined)).toBe(60);
+  });
+
+  it("handles undefined formatter the same as identity formatter", () => {
+    const data = makeHorizontalData(["District One"]);
+    // "District One" → 12 chars → 12*7+16 = 100
+    expect(computeHorizontalLeftMargin(data, undefined)).toBe(100);
+    expect(computeHorizontalLeftMargin(data, (l) => l)).toBe(100);
+  });
+});
+
+describe("PopulationSnapshotChart horizontal margin integration", () => {
+  beforeEach(() => {
+    MockFrame.mockClear();
+  });
+
+  function renderHorizontalChart(labels: string[]) {
+    const data: SnapshotDataPoint[] = labels.map((label, i) => ({
+      index: i,
+      accessorValue: label,
+      accessorLabel: label,
+      tooltipLabel: label,
+      value: "10",
+    }));
+    return render(
+      <ThemeProvider theme={defaultPathwaysTheme}>
+        <PopulationSnapshotChart
+          metricId="test"
+          title="Test"
+          accessor="district"
+          isRate={false}
+          isHorizontal
+          rotateLabels={false}
+          isGeographic={false}
+          dataSeries={[]}
+          data={data}
+        />
+      </ThemeProvider>,
+    );
+  }
+
+  it("passes a smaller left margin for short labels than for long labels", () => {
+    renderHorizontalChart(["Hi", "Ok"]);
+    const shortMargin = (
+      MockFrame.mock.lastCall?.[0] as { margin?: { left: number } }
+    )?.margin?.left;
+
+    MockFrame.mockClear();
+
+    renderHorizontalChart(["A much longer district label"]);
+    const longMargin = (
+      MockFrame.mock.lastCall?.[0] as { margin?: { left: number } }
+    )?.margin?.left;
+
+    if (shortMargin === undefined || longMargin === undefined) {
+      throw new Error("Expected both margins to be defined");
+    }
+    expect(longMargin).toBeGreaterThan(shortMargin);
+  });
+
+  it("passes the computed left margin, not the old hardcoded 135", () => {
+    // "Hi" and "Ok" are 2 chars → clamped to MIN 60, well below the old 135
+    renderHorizontalChart(["Hi", "Ok"]);
+    const margin = (
+      MockFrame.mock.lastCall?.[0] as { margin?: { left: number } }
+    )?.margin?.left;
+    expect(margin).toBe(60);
+  });
+});
 
 describe("PopulationSnapshotChart scroll behavior", () => {
   beforeEach(() => {

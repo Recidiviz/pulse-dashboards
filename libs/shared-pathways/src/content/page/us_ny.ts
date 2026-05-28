@@ -35,6 +35,7 @@ const content: StateSpecificPageCopy = {
       countBySentenceLengthMax: "Max Sentence",
       countByChargeCountyCode: "Conviction County",
       countByOffenseType: "Offense Type",
+      countByChargeDescription: "Specific crime",
     },
     methodology:
       "This dashboard shows data on individuals who are under the custody of New York State Department of Corrections and Community Supervision (DOCCS) at a point in time. First of the month snapshot data is uploaded from DOCCS's systems monthly.\n\nFor more reports on DOCCS' population, please see: : https://doccs.ny.gov/research-and-reports \n\n<br/>\n<strong>Notes:</strong>\n- Please note that data labeled May 1, 2024 was actually generated May 4, 2024.\n- Individuals labeled with \"Not Coded\" for some dimensions (such as offense type) are primarily individuals who are newly admitted to the Department's custody and haven't yet had all information entered on the computer system. Those are generally resolved within 1 month.",

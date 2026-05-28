@@ -69,6 +69,11 @@ const content: StateSpecificMetricCopy = {
     methodology:
       "The chart describes the number of people in each age group as of the date specified in the chart title.",
   },
+  prisonPopulationByChargeDescription: {
+    title: "Prison population by specific crime",
+    methodology:
+      "The chart describes the number of people by specific crime as of the date specified in the chart title.",
+  },
 };
 
 export default content;

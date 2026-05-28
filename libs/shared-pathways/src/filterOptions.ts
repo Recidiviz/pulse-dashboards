@@ -475,6 +475,18 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.CHARGE_DESCRIPTION]: {
+    type: FILTER_TYPES.CHARGE_DESCRIPTION,
+    title: "Specific crime",
+    setFilters: setFilters(FILTER_TYPES.CHARGE_DESCRIPTION),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
     type: FILTER_TYPES.DATE_IN_POPULATION,
     title: "As of",
@@ -1442,6 +1454,10 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE],
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.CHARGE_DESCRIPTION]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.CHARGE_DESCRIPTION],
+    useDynamicOptions: true,
+  },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION],
     useDynamicOptions: true,
@@ -1636,6 +1652,10 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.OFFENSE_TYPE]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE].defaultValue,
+  ],
+  [FILTER_TYPES.CHARGE_DESCRIPTION]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.CHARGE_DESCRIPTION]
+      .defaultValue,
   ],
   [FILTER_TYPES.DATE_IN_POPULATION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION]
