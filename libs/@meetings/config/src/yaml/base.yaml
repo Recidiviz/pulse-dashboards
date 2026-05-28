@@ -2,7 +2,7 @@
 # Agency-specific YAMLs override individual fields on top of these defaults.
 # This file is not a valid AgencyConfig on its own (no name/stateCode).
 
-version: 2
+version: 3
 
 # ── Infrastructure defaults ──────────────────────────────────
 audioTTLDays: 30
@@ -29,7 +29,6 @@ outputs:
       meeting summary, with a "SUMMARY:" header.
       Use CAPS LABELS for sub-topics (e.g. "HOUSING: ...", "EMPLOYMENT: ...").
       Use double line breaks to separate sections. No giant paragraphs.
-      Incorporate all points from staff member notes. If any notes are unclear,
-      paste them at the bottom under "ADD'L NOTES:".
+      Incorporate all points from staff member notes.
       If INTAKE: focus on risk, needs, and initial stability.
       If ROUTINE: focus on changes since last visit and progress.

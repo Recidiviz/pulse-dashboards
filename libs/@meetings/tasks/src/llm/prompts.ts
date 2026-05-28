@@ -207,6 +207,7 @@ export const PROMPTS = {
                     - Structure Config: {note_structure}
                     - Logic: You MUST incorporate all points mentioned in 'STAFF MEMBER NOTES', which are areas the Staff Member thought important enough to definitely include in final case notes.
                     - Logic: If there are any staff member notes you don't understand, just paste them at the bottom of the case note with the heading, 'ADD'L NOTES:'. If there are none, omit that section.
+                    - **DO NOT include a list of action items, next steps, or a plan section at the end of the case note.** Action items are tracked separately and must not appear in this output.
                     - Style: Professional, Third-Person, Objective.
                     - **Formatting:** Use CAPS LABELS for sub-topics (e.g. "HOUSING: ...").
                     - Use double line breaks (\`\\n\\n\`) to separate sections. No giant paragraphs.
