@@ -54,8 +54,8 @@ const baseRawRecord: UsTnAnnualReclassificationReviewReferralRecordRaw = {
   },
   formInformation: {
     currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
-    lastCafDate: "2022-08-22",
-    lastCafTotal: "8",
+    lastAssessmentDate: "2022-08-22",
+    lastAssessmentTotalScore: "8",
     q1Score: 1,
     q2Score: 1,
     q3Score: 1,

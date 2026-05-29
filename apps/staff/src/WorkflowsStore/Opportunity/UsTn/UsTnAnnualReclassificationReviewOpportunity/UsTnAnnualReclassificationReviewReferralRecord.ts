@@ -34,7 +34,7 @@ export const usTnAnnualReclassificationReviewSchema =
         }),
       })
       .passthrough(),
-    formInformation: formInformation.partial(),
+    formInformation,
     formReclassificationDueDate: dateStringSchema.optional(),
   });
 

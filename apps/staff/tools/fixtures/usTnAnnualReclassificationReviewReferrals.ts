@@ -56,8 +56,8 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
     formInformation: {
       currentOffenses: ["POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV"],
       hasIncompatibles: false,
-      lastCafDate: relativeFixtureDate({ days: -363 }),
-      lastCafTotal: "15",
+      lastAssessmentDate: relativeFixtureDate({ days: -363 }),
+      lastAssessmentTotalScore: "15",
       latestClassificationDate: relativeFixtureDate({ days: -355 }),
       latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
       latestVantageRiskLevel: "LOW",
@@ -117,8 +117,8 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
     formInformation: {
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       hasIncompatibles: false,
-      lastCafDate: relativeFixtureDate({ days: -359 }),
-      lastCafTotal: "15",
+      lastAssessmentDate: relativeFixtureDate({ days: -359 }),
+      lastAssessmentTotalScore: "15",
       latestClassificationDate: relativeFixtureDate({ days: -350 }),
       latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
       latestVantageRiskLevel: "LOW",

@@ -19,10 +19,13 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
+import {
+  formInformationBaseSchema,
+  renameLastAssessmentToLastCaf,
+} from "../UsTnSharedCriteria";
 
 export const usTnInitialClassificationSchema = opportunitySchemaBase.extend({
-  formInformation: formInformation
+  formInformation: formInformationBaseSchema
     .extend({
       q3Score: z.null(),
       q4Score: z.null(),
@@ -30,7 +33,8 @@ export const usTnInitialClassificationSchema = opportunitySchemaBase.extend({
       q9Score: z.null(),
     })
     .partial()
-    .or(formInformation.partial()),
+    .or(formInformationBaseSchema.partial())
+    .transform(renameLastAssessmentToLastCaf),
   formReclassificationDueDate: dateStringSchema.optional(),
 });
 

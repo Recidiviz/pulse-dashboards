@@ -20,7 +20,10 @@ import { z } from "zod";
 
 import { opportunitySchemaBase } from "~datatypes";
 
-import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
+import {
+  formInformationBaseSchema,
+  renameLastAssessmentToLastCaf,
+} from "../UsTnSharedCriteria";
 
 export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
   .extend({
@@ -39,7 +42,10 @@ export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
         }),
       })
       .passthrough(),
-    formInformation: formInformation.omit({ isServingLife: true }),
+    formInformation: formInformationBaseSchema
+      .omit({ isServingLife: true })
+      .partial()
+      .transform(renameLastAssessmentToLastCaf),
   })
   .transform((r) => {
     const out = cloneDeep(r);

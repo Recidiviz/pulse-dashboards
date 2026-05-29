@@ -31,11 +31,17 @@ const eventNote = z.object({
   noteBody: z.string(),
 });
 
-export const formInformationSchema = coverSheetInformationSchema.merge(
+// ZodObject base. Exported so consumers that need ZodObject-only methods
+// (`.omit()`, `.extend()`) can apply them before reapplying the rename transform.
+export const formInformationBaseSchema = coverSheetInformationSchema.merge(
   z.object({
     currentOffenses: z.string().array().optional(),
-    lastCafDate: dateStringSchema.optional(),
-    lastCafTotal: z.string().optional(),
+    // These two fields come in from the platform under their new names
+    // (`form_information_last_assessment_date` / `_total_score`) and get
+    // remapped below to the in-app keys `lastCafDate` / `lastCafTotal` that
+    // user form drafts in Firestore are already saved under.
+    lastAssessmentDate: dateStringSchema.optional(),
+    lastAssessmentTotalScore: z.string().optional(),
     latestClassificationDate: dateStringSchema.optional(),
     q1Score: z.coerce.number(),
     q2Score: z.coerce.number(),
@@ -75,6 +81,30 @@ export const formInformationSchema = coverSheetInformationSchema.merge(
     ),
   }),
 );
+
+export const renameLastAssessmentToLastCaf = <
+  T extends {
+    lastAssessmentDate?: Date;
+    lastAssessmentTotalScore?: string;
+  },
+>({
+  lastAssessmentDate,
+  lastAssessmentTotalScore,
+  ...rest
+}: T): Omit<T, "lastAssessmentDate" | "lastAssessmentTotalScore"> & {
+  lastCafDate?: Date;
+  lastCafTotal?: string;
+} => ({
+  ...rest,
+  ...(lastAssessmentDate !== undefined && { lastCafDate: lastAssessmentDate }),
+  ...(lastAssessmentTotalScore !== undefined && {
+    lastCafTotal: lastAssessmentTotalScore,
+  }),
+});
+
+export const formInformationSchema = formInformationBaseSchema
+  .partial()
+  .transform(renameLastAssessmentToLastCaf);
 
 type DraftDataSelections = {
   [I in AssessmentQuestionNumber as `q${I}Selection`]: number;
