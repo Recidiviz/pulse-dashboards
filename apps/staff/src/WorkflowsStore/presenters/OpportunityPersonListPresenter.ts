@@ -282,7 +282,22 @@ export class OpportunityPersonListPresenter
           "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
           "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
         ].includes(this.opportunityType),
-
+      US_MI_OPT:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        [
+          "usMiSecurityClassificationCommitteeReviewV2",
+          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+        ].includes(this.opportunityType),
+      US_MI_SMI:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        [
+          "usMiSecurityClassificationCommitteeReviewV2",
+          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+        ].includes(this.opportunityType),
       US_TN_LATEST_CLASSIFICATION_DATE:
         "usTnCustodyLevelDowngrade2026Policy" === this.opportunityType,
       LAST_VIEWED: this.opportunityType !== "usIdOverdueFaceToFaceContact",

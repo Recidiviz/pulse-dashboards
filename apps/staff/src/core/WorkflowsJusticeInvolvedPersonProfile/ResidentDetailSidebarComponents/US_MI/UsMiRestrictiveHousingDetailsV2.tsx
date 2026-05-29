@@ -66,7 +66,7 @@ export function UsMiRestrictiveHousingV2({
     solitarySessionType,
   } = opportunityRecord.metadata;
 
-  const { SMI } = opportunityRecord.formInformation;
+  const { SMI, OPT } = opportunityRecord.formInformation;
 
   return (
     <DetailsSection>
@@ -104,6 +104,8 @@ export function UsMiRestrictiveHousingV2({
           </SecureDetailsContent>
           <DetailsSubheading>{"SMI?"}</DetailsSubheading>
           <SecureDetailsContent>{SMI ? "Yes" : "No"}</SecureDetailsContent>
+          <DetailsSubheading>{"OPT?"}</DetailsSubheading>
+          <SecureDetailsContent>{OPT ? "Yes" : "No"}</SecureDetailsContent>
         </SecureDetailsList>
       </SecureDetailsContent>
     </DetailsSection>

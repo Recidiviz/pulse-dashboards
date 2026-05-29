@@ -280,6 +280,8 @@ export type OpportunityTableColumnId =
   | "US_MI_LAST_SCC_DATE"
   | "US_MI_ADD_LAST_SCC_DATE"
   | "US_MI_WARDEN_LAST_SCC_DATE"
+  | "US_MI_OPT"
+  | "US_MI_SMI"
   | "US_TN_LATEST_CLASSIFICATION_DATE"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
@@ -898,6 +900,68 @@ const TableView = observer(function TableView({
         }
       },
       cell: UsMiSegDurationCellWrapper,
+    },
+    {
+      header: "OPT",
+      id: "US_MI_OPT",
+      enableSorting: true,
+      sortingFn: "basic",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.formInformation.OPT;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.formInformation.OPT ? "Yes" : "No";
+        }
+      },
+    },
+    {
+      header: "SMI",
+      id: "US_MI_SMI",
+      enableSorting: true,
+      sortingFn: "basic",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.formInformation.SMI;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReviewV2",
+            "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+            "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return opp.record.formInformation.SMI ? "Yes" : "No";
+        }
+      },
     },
     {
       header: "Latest Classification",
