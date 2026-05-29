@@ -820,7 +820,9 @@ const TableView = observer(function TableView({
           ["usMiSecurityClassificationCommitteeReviewV2"].includes(opp.type) &&
           opp.record
         ) {
-          return formatWorkflowsDate(opp.record.metadata.latestSccReviewDate);
+          return opp.record.metadata.latestSccReviewDate
+            ? formatWorkflowsDate(opp.record.metadata.latestSccReviewDate)
+            : "N/A";
         }
       },
     },
