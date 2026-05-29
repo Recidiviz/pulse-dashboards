@@ -71,6 +71,7 @@ const ManagedComponent = observer(function AccordionSection({
       </HeaderRow>
 
       <Accordion
+        id={presenter.id}
         copy={presenter.accordionCopy}
         toggledPanels={presenter.toggledPanels}
         onToggle={presenter.toggle}

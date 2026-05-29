@@ -44,7 +44,7 @@ const FilterButton = styled(Button)<{ $selected: boolean }>`
           border-color: ${palette.pine2};
           color: ${palette.marble1};
 
-          &:hover, &:active {
+          &:hover, &:active, &:focus-visible {
             background-color: ${palette.pine1};
             border-color: ${palette.pine1};
           }
@@ -54,8 +54,8 @@ const FilterButton = styled(Button)<{ $selected: boolean }>`
           border-color: ${palette.slate60};
           color: ${palette.slate85};
 
-          &:hover, &:active {
-            background-color: ${palette.marble2};
+          &:hover, &:active, &:focus-visible {
+            background-color: ${palette.slate20};
             border-color: ${palette.slate60};
           }
         `}

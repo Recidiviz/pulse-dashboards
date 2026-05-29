@@ -16,11 +16,13 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useLocation } from "react-router-dom";
 
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useUsAzSingleResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
+import { UsAzDateHash } from "../utils/utils";
 import { AccordionSection } from "./AccordionSection";
 import { ImportantDatesFAQPresenter } from "./ImportantDatesFAQPresenter";
 import { ImportantDatesFilterButtons } from "./ImportantDatesFilterButtons";
@@ -35,7 +37,10 @@ const ManagedComponent = observer(function UsAzImportantDatesFAQ({
 
   return (
     <>
-      <ImportantDatesFilterButtons presenter={presenter} />
+      {presenter.personalDates.length > 0 && (
+        <ImportantDatesFilterButtons presenter={presenter} />
+      )}
+
       <ImportantDatesTOC presenter={presenter} />
 
       {presenter.nonDateSectionHashes.map((hash) => (
@@ -82,7 +87,13 @@ function usePresenter() {
   const { displayedDates } = useUsAzSingleResidentContext();
   const { t } = useUsAzTranslations();
 
-  return new ImportantDatesFAQPresenter(displayedDates, t);
+  const { hash } = useLocation();
+
+  return new ImportantDatesFAQPresenter(
+    displayedDates,
+    t,
+    hash.slice(1) as UsAzDateHash,
+  );
 }
 
 export const UsAzImportantDatesFAQ = withPresenterManager({

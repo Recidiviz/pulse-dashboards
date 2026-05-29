@@ -15,32 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
-import { Accordion, type AccordionCopy } from "../Accordion";
+import { useAccordionContext } from "~@jii/common-ui";
 
-export type AccordionExampleArgs = {
-  copy: AccordionCopy;
-  onToggle: (id: string) => void;
-};
-
-export default function AccordionExample({
-  copy,
-  onToggle,
-}: AccordionExampleArgs) {
-  const [toggledPanels, setToggledPanels] = useState<
-    Partial<Record<string, boolean>>
-  >({});
-
+/**
+ * A react-router link that jumps to and opens the panel with given ID in this accordion.
+ */
+export const AccordionOpener = function AccordionOpener({
+  panelId,
+  children,
+}: {
+  panelId: string;
+  children: string;
+}) {
+  const { id, onToggle, toggledPanels } = useAccordionContext();
   return (
-    <Accordion
-      id={"testId"}
-      copy={copy}
-      toggledPanels={toggledPanels}
-      onToggle={(id) => {
-        setToggledPanels((prev) => ({ ...prev, [id]: !prev[id] }));
-        onToggle(id);
+    // Note: the ID format in `to` must match the element ID format defined in Accordion
+    <Link
+      to={`#${id}-${panelId}`}
+      onClick={() => {
+        // Open the panel if it's currently closed
+        if (!toggledPanels[panelId]) {
+          onToggle(panelId);
+        }
       }}
-    />
+    >
+      {children}
+    </Link>
   );
-}
+};

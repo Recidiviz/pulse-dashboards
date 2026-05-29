@@ -65,11 +65,8 @@ export class ImportantDatesFAQPresenter {
   constructor(
     displayedDates: UsAzDisplayedDates,
     private t: UsAzTFunction,
+    hash: UsAzDateHash,
   ) {
-    // Parse values from session storage on page load
-    this._isViewingAllDates = Boolean(
-      sessionStorage.getItem(ImportantDatesFAQPresenter.VIEWING_ALL_DATES_KEY),
-    );
     try {
       const stored = sessionStorage.getItem(
         ImportantDatesFAQPresenter.TOGGLED_PANELS_KEY,
@@ -91,6 +88,20 @@ export class ImportantDatesFAQPresenter {
     this.personalDates = this.allDateHashes.filter((hash) =>
       displayedDateHashes.includes(hash),
     );
+
+    // Get whether the user is viewing All Dates or My Dates from session storage.
+    // However, if the person has no dates, or if the requested hash is not visible
+    // on this page but would be if we were viewing all date hashes (such as clicking on
+    // a link from one of My Dates that leads to a section that isn't in My Dates),
+    // switch the user over to view All Dates.
+    this._isViewingAllDates = Boolean(
+      sessionStorage.getItem(ImportantDatesFAQPresenter.VIEWING_ALL_DATES_KEY),
+    );
+    const noPersonalDates = this.personalDates.length === 0;
+    const dateDoesNotApply =
+      !this.personalDates.includes(hash) && this.allDateHashes.includes(hash);
+    this.isViewingAllDates = // use the setter to update the persisted value
+      this._isViewingAllDates || noPersonalDates || dateDoesNotApply;
 
     makeAutoObservable(this);
   }

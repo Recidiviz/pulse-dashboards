@@ -17,14 +17,21 @@
 
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { createContext } from "react";
 import styled, { css } from "styled-components";
 
 import { Icon, palette, spacing } from "~design-system";
+import { useRequiredContext } from "~utils";
 
-import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
+import { withCopyWrapperOverrides } from "../CopyWrapper/withCopyWrapperOverrides";
+import { AccordionOpener } from "./AccordionOpener";
+
+const AccordionCopyWrapper = withCopyWrapperOverrides({
+  AccordionOpener: { component: AccordionOpener },
+});
 
 // this allows us to interpolate this component into styled-components styles
-const AccordionCopyWrapper = styled(CopyWrapper)``;
+const StyledAccordionCopy = styled(AccordionCopyWrapper)``;
 
 const AccordionPanel = styled.div`
   padding: ${rem(spacing.md)};
@@ -55,7 +62,7 @@ const SummaryBar = styled.div<{ $isOpen: boolean }>`
 
   padding: ${rem(spacing.md)};
 
-  ${AccordionCopyWrapper} {
+  ${StyledAccordionCopy} {
     margin: 0;
   }
 
@@ -65,7 +72,7 @@ const SummaryBar = styled.div<{ $isOpen: boolean }>`
           background-color: ${palette.pine2};
           border-radius: ${rem(spacing.xs)};
 
-          ${AccordionCopyWrapper}, ${CaretContainer} {
+          ${StyledAccordionCopy}, ${CaretContainer} {
             color: ${palette.marble1};
           }
         `
@@ -75,6 +82,10 @@ const SummaryBar = styled.div<{ $isOpen: boolean }>`
 export type AccordionCopy = Record<string, { header: string; content: string }>;
 
 type AccordionProps = {
+  /* An ID that should be unique among all Accordions on this page,
+     used for generating HTML element IDs. */
+  id: string;
+
   /* Copy for each accordion panel, keyed by panel ID. Both the header and content
      of a panel can be Markdown. */
   copy: AccordionCopy;
@@ -87,6 +98,19 @@ type AccordionProps = {
   onToggle: (id: string) => void;
 };
 
+const accordionContext = createContext<
+  Omit<AccordionProps, "copy"> | undefined
+>(undefined);
+
+/**
+ * Allows accordion contents, such as AccordionOpener, to access the state of the accordion.
+ */
+const AccordionContextProvider = accordionContext.Provider;
+
+export function useAccordionContext() {
+  return useRequiredContext(accordionContext);
+}
+
 /**
  * An accordion for grouping related sections of Markdown content
  * that can be shown/hidden. Multiple accordion panels can be open at once.
@@ -94,31 +118,34 @@ type AccordionProps = {
  * The accordion expects to be fully controlled by its parent.
  */
 export const Accordion = observer(function Accordion({
+  id,
   copy,
   toggledPanels,
   onToggle,
 }: AccordionProps) {
-  return Object.keys(copy).map((id) => {
-    const isOpen = !!toggledPanels[id];
+  return Object.keys(copy).map((panelId) => {
+    const isOpen = !!toggledPanels[panelId];
     return (
-      <details key={id} open={isOpen}>
-        <AccordionSummary
-          onClick={(e) => {
-            e.preventDefault();
-            onToggle(id);
-          }}
-        >
-          <SummaryBar $isOpen={isOpen}>
-            <AccordionCopyWrapper>{copy[id].header}</AccordionCopyWrapper>
-            <CaretContainer>
-              <Icon kind="DownChevron" rotate={isOpen ? 180 : 0} size={14} />
-            </CaretContainer>
-          </SummaryBar>
-        </AccordionSummary>
+      <details key={panelId} id={`${id}-${panelId}`} open={isOpen}>
+        <AccordionContextProvider value={{ id, toggledPanels, onToggle }}>
+          <AccordionSummary
+            onClick={(e) => {
+              e.preventDefault();
+              onToggle(panelId);
+            }}
+          >
+            <SummaryBar $isOpen={isOpen}>
+              <StyledAccordionCopy>{copy[panelId].header}</StyledAccordionCopy>
+              <CaretContainer>
+                <Icon kind="DownChevron" rotate={isOpen ? 180 : 0} size={14} />
+              </CaretContainer>
+            </SummaryBar>
+          </AccordionSummary>
 
-        <AccordionPanel>
-          <AccordionCopyWrapper>{copy[id].content}</AccordionCopyWrapper>
-        </AccordionPanel>
+          <AccordionPanel>
+            <StyledAccordionCopy>{copy[panelId].content}</StyledAccordionCopy>
+          </AccordionPanel>
+        </AccordionContextProvider>
       </details>
     );
   });

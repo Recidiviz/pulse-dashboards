@@ -255,7 +255,7 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
 - You can’t have any felony holds, felony detainers, or felony warrants.
 - You can’t be found guilty of any Class A or Class B major disciplinary rule violations within 6 months of your CSBD / TR to ADD. Even if you qualified, getting a new major disciplinary infraction could cause you to lose your DTP date.
 - You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you later successfully reenrolled and completed it.
-- You need a home plan that gets approved ASAP (see [next question](#dtp-home-plan)).
+- You need a home plan that gets approved ASAP (see <AccordionOpener panelId="startHomePlanEarly">next question</AccordionOpener>).
 - You can’t have any past arrests, convictions, or requirements to register for sex offenses.
 - You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
 - If you have participated in the Transition Program before, it must have been at least 24 months since your last CSED.
@@ -264,7 +264,7 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
 `,
         },
         startHomePlanEarly: {
-          header: "Why is it important to start my home plan early?",
+          header: `Why is it important to start my home plan early?`,
           content: `To get your full 90-day release, you need an approved home plan. Start working on this as soon as you can to avoid delays. If you don’t have a place to go, you might still be released, but that doesn’t mean you can go anywhere you want. You’ll be taken to the Community Corrections Office (CCO) where you may stay in a reentry center or transitional housing facility until a permanent residence is found. So no matter what, you still need a place that’s approved. **Starting early ensures you know exactly where you are going and prevents any last-minute loss of your early release time.**`,
         },
         ifIAmReleased: {
@@ -282,7 +282,7 @@ You are required to attend mandatory community-based programs, which may include
       questions: {
         whatDoesThisMean: {
           header: "What does this mean?",
-          content: `This is a release up to 90 days earlier than ERCD (for most people, it’s ~77 days earlier), which can be granted if you meet [the criteria](#csbd-criteria).
+          content: `This is a release up to 90 days earlier than ERCD (for most people, it’s ~77 days earlier), which can be granted if you meet <AccordionOpener panelId="toBeReleasedOnThisDate">the criteria</AccordionOpener>.
 
 If your sentence includes a term of Probation following your release, this date is officially called Temporary Release to Absolute Discharge Date (TR to ADD). Be careful not to confuse “Temporary Release” with [“Transition Release” (TPR)](#tprDate), as they are different programs with different rules.`,
         },
@@ -291,7 +291,7 @@ If your sentence includes a term of Probation following your release, this date 
           content: `Most people whose crime was committed on/after January 1, 1994, can qualify if they meet the criteria. The law that created the rules after that date is often called “Truth in Sentencing,” or TIS.`,
         },
         toBeReleasedOnThisDate: {
-          header: "What do I need to do in order to be released on this date?",
+          header: `What do I need to do in order to be released on this date?`,
           content: `In order to be released on your CSBD or TR to ADD, you must meet these requirements:
 
 - You can’t have any past arrests, convictions, or requirements to register for sex offenses.
