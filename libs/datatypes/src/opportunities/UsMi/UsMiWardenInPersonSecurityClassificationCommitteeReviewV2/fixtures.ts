@@ -63,6 +63,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
             "(2022-05-16,014,)",
             "(2022-04-30,012,)",
           ],
+          nMisconductReportsSinceLatestReview: "2",
         },
         ineligibleCriteria: {},
         metadata: {
@@ -149,6 +150,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
             "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
           nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
           adSegStaysAndReasonsWithin3Yrs: [],
+          nMisconductReportsSinceLatestReview: "3",
         },
         ineligibleCriteria: {},
         metadata: {
@@ -201,6 +203,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           bondableOffensesWithin6Months: "(020, 2024-02-26)",
           nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
           adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],
+          nMisconductReportsSinceLatestReview: "1",
         },
         ineligibleCriteria: {
           usMiPastWardenInPersonReviewForSccDate: {
@@ -265,6 +268,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
           bondableOffensesWithin6Months: "(020, 2024-02-26)",
           nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
           adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],
+          nMisconductReportsSinceLatestReview: "1",
         },
         ineligibleCriteria: {
           usMiInSolitaryConfinementAtLeastSixMonths: {

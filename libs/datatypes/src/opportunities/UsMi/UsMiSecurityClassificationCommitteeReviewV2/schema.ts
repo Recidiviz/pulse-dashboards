@@ -73,23 +73,32 @@ export const usMiSecurityClassificationCommitteeReviewV2Schema =
   opportunitySchemaBase.extend({
     eligibleCriteria: possiblyIneligibleCriteria,
     ineligibleCriteria: possiblyIneligibleCriteria,
-    formInformation: z.object({
-      segregationType: z.string().optional(),
-      segregationClassificationDate: dateStringSchema.nullable(),
-      prisonerNumber: z.string(),
-      prisonerName: z.string(),
-      maxReleaseDate: dateStringSchema.nullish(),
-      minReleaseDate: dateStringSchema.nullish(),
-      facility: z.string().optional(),
-      lock: z.string().optional(),
-      lockDate: dateStringSchema.nullish(),
-      OPT: z.boolean().optional(),
-      SMI: z.boolean(),
-      STG: z.string().optional(),
-      bondableOffensesWithin6Months: z.string().nullish(),
-      nonbondableOffensesWithin1Year: z.string().optional(),
-      adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
-    }),
+    formInformation: z
+      .object({
+        segregationType: z.string().optional(),
+        segregationClassificationDate: dateStringSchema.nullable(),
+        prisonerNumber: z.string(),
+        prisonerName: z.string(),
+        maxReleaseDate: dateStringSchema.nullish(),
+        minReleaseDate: dateStringSchema.nullish(),
+        facility: z.string().optional(),
+        lock: z.string().optional(),
+        lockDate: dateStringSchema.nullish(),
+        OPT: z.boolean().optional(),
+        SMI: z.boolean(),
+        STG: z.string().optional(),
+        bondableOffensesWithin6Months: z.string().nullish(),
+        nonbondableOffensesWithin1Year: z.string().optional(),
+        adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
+        nMisconductReportsSinceLatestReview: z.string(),
+      })
+      .transform(({ nMisconductReportsSinceLatestReview, ...rest }) => ({
+        ...rest,
+        // We started auto-filling this field AFTER launch and it was already an
+        // editable form field, so we will rename the data field to avoid having
+        // to migrate the form update field.
+        reportsSinceReview: nMisconductReportsSinceLatestReview,
+      })),
     metadata: z.object({
       latestSccReviewDate: dateStringSchema.optional(),
       programming: z.array(jsonProgrammingSchema),

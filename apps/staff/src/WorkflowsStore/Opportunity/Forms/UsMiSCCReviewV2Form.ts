@@ -52,13 +52,13 @@ export type UsMiSCCReviewV2DraftData = {
   adSegReason2: string;
   adSegReason3: string;
   adSegReason4: string;
+  reportsSinceReview: string;
 
   // General info fields
   reviewType: string;
   segReason: string;
 
   // Resident history fields
-  reportsSinceReview: string;
   segNature: string;
   DD: boolean;
   CMO: boolean;
@@ -188,6 +188,7 @@ export class UsMiSCCReviewV2Form extends FormBase<
       nonbondableOffensesWithin1Year,
       adSegStaysAndReasonsWithin3Yrs,
       prisonerName,
+      reportsSinceReview,
     } = this.opportunity.record.formInformation;
 
     // Parse the string array representing prior RH stays - each entry has the format:
@@ -237,6 +238,7 @@ export class UsMiSCCReviewV2Form extends FormBase<
       adSegReason3: adSegStays?.at(2)?.reasons,
       adSegDate4: adSegStays?.at(3)?.date,
       adSegReason4: adSegStays?.at(3)?.reasons,
+      reportsSinceReview,
     };
   }
 }
