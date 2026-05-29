@@ -381,7 +381,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
                 Inmate has no pending immigration deportation actions
               </TrusteeCriteriaRow>
 
-              <TrusteeCriteriaRow dataKey="trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years">
+              <TrusteeCriteriaRow dataKey="trusteeNoAssaultiveDisciplinaryWithSeriousInjury">
                 Inmate has no disciplinary convictions for assaultive conduct
                 that resulted in serious injury or the death of another
                 individual within the past 5 years of incarceration,{" "}

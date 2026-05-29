@@ -148,7 +148,7 @@ const booleanToString = z.boolean().transform((x) => x.toString());
 
 export const trusteeFormSchema = z.object({
   trusteeHas10YearsOrLessRemaining: booleanToString,
-  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: booleanToString,
+  trusteeNoAssaultiveDisciplinaryWithSeriousInjury: booleanToString,
   trusteeNoEscapeFromLowTrusteePast5Years: booleanToString,
   trusteeNoEscapeFromMediumCloseMaxPast10Years: booleanToString,
   trusteeNoViolentFelonyConvictionPast5YearsIncarceration: booleanToString,
@@ -184,7 +184,7 @@ export const TRUSTEE_FORM_QUESTION_ORDER = [
   "trusteeNoFelonyDetainers",
   "trusteeNoPendingFelonyCharges",
   "trusteeNoPendingImmigrationActions",
-  "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years",
+  "trusteeNoAssaultiveDisciplinaryWithSeriousInjury",
   "trusteeNoViolentFelonyConvictionPast5YearsIncarceration",
   "trusteeNoEscapeFromMediumCloseMaxPast10Years",
   "trusteeNoEscapeFromLowTrusteePast5Years",

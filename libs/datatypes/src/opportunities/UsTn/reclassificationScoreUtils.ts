@@ -133,7 +133,7 @@ export function isEligibleForTrusteeStatus(
 ): boolean {
   return [
     formData.trusteeHas10YearsOrLessRemaining,
-    formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years,
+    formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjury,
     formData.trusteeNoEscapeFromLowTrusteePast5Years,
     formData.trusteeNoEscapeFromMediumCloseMaxPast10Years,
     formData.trusteeNoViolentFelonyConvictionPast5YearsIncarceration,
