@@ -224,7 +224,7 @@ class TestIntakeConversationGraph:
             "error": None,
         }
         result = await graph._get_entry_point(state)
-        assert result == "intake_evaluate_section"
+        assert result == "intake_evaluate_safety_and_section"
 
     # --- compute_initial_state ---
 
@@ -427,7 +427,7 @@ class TestEvaluateSection:
         )
 
         state = _make_state()
-        result = await initialized_graph._evaluate_section(state)
+        result = await initialized_graph._evaluate_safety_and_section(state)
 
         assert isinstance(result, Command)
         assert result.goto == "intake_section_complete"
@@ -444,7 +444,7 @@ class TestEvaluateSection:
         )
 
         state = _make_state()
-        result = await initialized_graph._evaluate_section(state)
+        result = await initialized_graph._evaluate_safety_and_section(state)
 
         assert isinstance(result, Command)
         assert result.goto == "intake_section_complete"
@@ -470,12 +470,12 @@ class TestEvaluateSection:
         mock_wait_for_user_response.return_value = "I finished high school."
 
         state = _make_state()
-        result = await initialized_graph._evaluate_section(state)
+        result = await initialized_graph._evaluate_safety_and_section(state)
 
         initialized_graph.db_manager.store_message.assert_called_once()
         mock_wait_for_user_response.assert_called_once()
         assert isinstance(result, Command)
-        assert result.goto == "intake_evaluate_section"
+        assert result.goto == "intake_evaluate_safety_and_section"
 
     @pytest.mark.asyncio
     async def test_user_timeout_ends_conversation(
@@ -497,7 +497,7 @@ class TestEvaluateSection:
         mock_wait_for_user_response.return_value = None
 
         state = _make_state()
-        result = await initialized_graph._evaluate_section(state)
+        result = await initialized_graph._evaluate_safety_and_section(state)
 
         assert isinstance(result, Command)
         assert result.goto == END
@@ -508,7 +508,7 @@ class TestEvaluateSection:
         state = _make_state(current_section="Nonexistent Section")
 
         with pytest.raises(ValueError, match="Section not found"):
-            await initialized_graph._evaluate_section(state)
+            await initialized_graph._evaluate_safety_and_section(state)
 
     @pytest.mark.asyncio
     async def test_empty_current_section_raises(self, initialized_graph):
@@ -516,7 +516,7 @@ class TestEvaluateSection:
         state = _make_state(current_section=None)
 
         with pytest.raises(ValueError, match="Empty current section"):
-            await initialized_graph._evaluate_section(state)
+            await initialized_graph._evaluate_safety_and_section(state)
 
 
 class TestCallModelWithRefusalRetry:
@@ -590,7 +590,7 @@ class TestEvaluateSectionRefusal:
         mock_wait_for_user_response.return_value = "Okay, let's move on."
 
         state = _make_state()
-        result = await initialized_graph._evaluate_section(state)
+        result = await initialized_graph._evaluate_safety_and_section(state)
 
         # Fallback is stored in DB, then handed to wait_for_user_response which sends it
         initialized_graph.db_manager.store_message.assert_called_once()
@@ -600,7 +600,7 @@ class TestEvaluateSectionRefusal:
 
         # Graph loops back to re-evaluate the section
         assert isinstance(result, Command)
-        assert result.goto == "intake_evaluate_section"
+        assert result.goto == "intake_evaluate_safety_and_section"
 
         # User's response appended to state messages
         human_messages = [
@@ -625,14 +625,14 @@ class TestEvaluateSectionRefusal:
         mock_wait_for_user_response.return_value = None  # timeout
 
         state = _make_state()
-        result = await initialized_graph._evaluate_section(state)
+        result = await initialized_graph._evaluate_safety_and_section(state)
 
         assert isinstance(result, Command)
         assert result.goto == END
 
     @pytest.mark.asyncio
     async def test_langchain_refusal_does_not_reraise(self, initialized_graph):
-        """LangChainRefusalError (structured output path) must not propagate out of _evaluate_section."""
+        """LangChainRefusalError (structured output path) must not propagate out of _evaluate_safety_and_section."""
         initialized_graph.call_model = AsyncMock(
             side_effect=LangChainRefusalError("I'm sorry, but I can't share that.")
         )
@@ -644,11 +644,11 @@ class TestEvaluateSectionRefusal:
 
         state = _make_state()
         # Should not raise
-        await initialized_graph._evaluate_section(state)
+        await initialized_graph._evaluate_safety_and_section(state)
 
     @pytest.mark.asyncio
     async def test_openai_refusal_does_not_reraise(self, initialized_graph):
-        """ContentFilterFinishReasonError (raw openai path) must not propagate out of _evaluate_section."""
+        """ContentFilterFinishReasonError (raw openai path) must not propagate out of _evaluate_safety_and_section."""
         initialized_graph.call_model = AsyncMock(
             side_effect=ContentFilterFinishReasonError()
         )
@@ -660,7 +660,7 @@ class TestEvaluateSectionRefusal:
 
         state = _make_state()
         # Should not raise
-        await initialized_graph._evaluate_section(state)
+        await initialized_graph._evaluate_safety_and_section(state)
 
 
 class TestOpeningRemarksRefusal:
@@ -896,11 +896,13 @@ class TestRunAssessment:
 class TestLLMAJ:
     """Tests for the Layer 3 LLM-as-Judge safety checks."""
 
-    # --- _llmaj_check ---
+    # --- _run_llmaj_safety_check ---
 
     @pytest.mark.asyncio
-    async def test_llmaj_check_returns_safety_result(self, initialized_graph):
-        """_llmaj_check invokes the model and returns the structured SafetyCheckResult."""
+    async def test_run_llmaj_safety_check_returns_safety_result(
+        self, initialized_graph
+    ):
+        """_run_llmaj_safety_check invokes the model and returns the structured SafetyCheckResult."""
         clean_result = SafetyCheckResult(
             self_harm=SelfHarmCategory(
                 reasoning="no signal", confidence_score=0.0, result=None
@@ -919,7 +921,9 @@ class TestLLMAJ:
             return_value=mock_chain
         )
 
-        result = await initialized_graph._llmaj_check([LCHumanMessage("Hello")])
+        result = await initialized_graph._run_llmaj_safety_check(
+            [LCHumanMessage("Hello")]
+        )
 
         initialized_graph.llmaj_safety_model.with_structured_output.assert_called_once_with(
             SafetyCheckResult
@@ -927,8 +931,45 @@ class TestLLMAJ:
         assert result == clean_result
 
     @pytest.mark.asyncio
-    async def test_llmaj_check_returns_empty_on_exception(self, initialized_graph):
-        """_llmaj_check returns SafetyCheckResult.empty() when the model raises — fail open."""
+    async def test_run_llmaj_safety_check_strips_system_messages(
+        self, initialized_graph
+    ):
+        """SystemMessage is filtered out before the classifier sees the conversation."""
+        clean_result = SafetyCheckResult(
+            self_harm=SelfHarmCategory(
+                reasoning="no signal", confidence_score=0.0, result=None
+            ),
+            harm_to_others=HarmToOthersCategory(
+                reasoning="no signal", confidence_score=0.0, result=None
+            ),
+            prompt_injection=PromptInjectionCategory(
+                reasoning="no signal", confidence_score=0.0, result=None
+            ),
+        )
+        mock_chain = MagicMock()
+        mock_chain.ainvoke = AsyncMock(return_value=clean_result)
+        initialized_graph.llmaj_safety_model = MagicMock()
+        initialized_graph.llmaj_safety_model.with_structured_output = MagicMock(
+            return_value=mock_chain
+        )
+
+        await initialized_graph._run_llmaj_safety_check(
+            [
+                SystemMessage("GLOBAL_BEHAVIORAL_RULES…"),
+                LCAIMessage("Q?"),
+                LCHumanMessage("A"),
+            ]
+        )
+
+        invoked_messages = mock_chain.ainvoke.call_args[0][0]
+        assert not any(isinstance(m, SystemMessage) for m in invoked_messages)
+        assert len([m for m in invoked_messages if isinstance(m, LCHumanMessage)]) == 1
+
+    @pytest.mark.asyncio
+    async def test_run_llmaj_safety_check_returns_empty_on_exception(
+        self, initialized_graph
+    ):
+        """_run_llmaj_safety_check returns SafetyCheckResult.empty() when the model raises — fail open."""
         mock_chain = MagicMock()
         mock_chain.ainvoke = AsyncMock(side_effect=Exception("API error"))
         initialized_graph.llmaj_safety_model = MagicMock()
@@ -936,7 +977,9 @@ class TestLLMAJ:
             return_value=mock_chain
         )
 
-        result = await initialized_graph._llmaj_check([LCHumanMessage("Hello")])
+        result = await initialized_graph._run_llmaj_safety_check(
+            [LCHumanMessage("Hello")]
+        )
 
         assert result.triggered_guardrails() == []
         assert result.self_harm.result is None
@@ -1177,13 +1220,13 @@ class TestLLMAJ:
             state_code="US_UT",
         )
 
-    # --- _evaluate_section LLMAJ routing ---
+    # --- _evaluate_safety_and_section LLMAJ routing ---
 
     @pytest.mark.asyncio
-    async def test_evaluate_section_llmaj_hard_stop_returns_end(
+    async def test_evaluate_safety_and_section_llmaj_hard_stop_returns_end(
         self, initialized_graph
     ):
-        """LLMAJ hard stop causes _evaluate_section to return Command(goto=END)."""
+        """LLMAJ hard stop causes _evaluate_safety_and_section to return Command(goto=END)."""
         hard_stop_result = SafetyCheckResult(
             self_harm=SelfHarmCategory(
                 reasoning="crisis",
@@ -1197,7 +1240,9 @@ class TestLLMAJ:
                 reasoning="no", confidence_score=0.0, result=None
             ),
         )
-        initialized_graph._llmaj_check = AsyncMock(return_value=hard_stop_result)
+        initialized_graph._run_llmaj_safety_check = AsyncMock(
+            return_value=hard_stop_result
+        )
         initialized_graph._handle_llmaj_hard_stop = AsyncMock()
         initialized_graph.call_model = AsyncMock(
             return_value=IsSectionComplete(
@@ -1207,17 +1252,17 @@ class TestLLMAJ:
             )
         )
 
-        result = await initialized_graph._evaluate_section(_make_state())
+        result = await initialized_graph._evaluate_safety_and_section(_make_state())
 
         initialized_graph._handle_llmaj_hard_stop.assert_called_once()
         assert isinstance(result, Command)
         assert result.goto == END
 
     @pytest.mark.asyncio
-    async def test_evaluate_section_llmaj_soft_stop_loops_back_with_user_response(
+    async def test_evaluate_safety_and_section_llmaj_soft_stop_loops_back_with_user_response(
         self, initialized_graph
     ):
-        """LLMAJ soft stop loops back to intake_evaluate_section and appends the next user response."""
+        """LLMAJ soft stop loops back to intake_evaluate_safety_and_section and appends the next user response."""
         soft_stop_result = SafetyCheckResult(
             self_harm=SelfHarmCategory(
                 reasoning="no", confidence_score=0.0, result=None
@@ -1231,7 +1276,9 @@ class TestLLMAJ:
                 result=SoftStopGuardrailType.LLMAJ_PROMPT_INJECTION,
             ),
         )
-        initialized_graph._llmaj_check = AsyncMock(return_value=soft_stop_result)
+        initialized_graph._run_llmaj_safety_check = AsyncMock(
+            return_value=soft_stop_result
+        )
         initialized_graph._handle_llmaj_soft_stop = AsyncMock(
             return_value="user reply after modal"
         )
@@ -1243,18 +1290,18 @@ class TestLLMAJ:
             )
         )
 
-        result = await initialized_graph._evaluate_section(_make_state())
+        result = await initialized_graph._evaluate_safety_and_section(_make_state())
 
         initialized_graph._handle_llmaj_soft_stop.assert_called_once()
         assert isinstance(result, Command)
-        assert result.goto == "intake_evaluate_section"
+        assert result.goto == "intake_evaluate_safety_and_section"
         human_messages = [
             m for m in result.update["messages"] if isinstance(m, LCHumanMessage)
         ]
         assert any(m.content == "user reply after modal" for m in human_messages)
 
     @pytest.mark.asyncio
-    async def test_evaluate_section_llmaj_soft_stop_timeout_ends_conversation(
+    async def test_evaluate_safety_and_section_llmaj_soft_stop_timeout_ends_conversation(
         self, initialized_graph
     ):
         """LLMAJ soft stop followed by user timeout (None) returns Command(goto=END)."""
@@ -1271,7 +1318,9 @@ class TestLLMAJ:
                 result=SoftStopGuardrailType.LLMAJ_PROMPT_INJECTION,
             ),
         )
-        initialized_graph._llmaj_check = AsyncMock(return_value=soft_stop_result)
+        initialized_graph._run_llmaj_safety_check = AsyncMock(
+            return_value=soft_stop_result
+        )
         initialized_graph._handle_llmaj_soft_stop = AsyncMock(
             return_value=None
         )  # timeout
@@ -1283,15 +1332,17 @@ class TestLLMAJ:
             )
         )
 
-        result = await initialized_graph._evaluate_section(_make_state())
+        result = await initialized_graph._evaluate_safety_and_section(_make_state())
 
         assert isinstance(result, Command)
         assert result.goto == END
 
     @pytest.mark.asyncio
-    async def test_evaluate_section_llmaj_exception_fails_open(self, initialized_graph):
+    async def test_evaluate_safety_and_section_llmaj_exception_fails_open(
+        self, initialized_graph
+    ):
         """LLMAJ check failure fails open — conversation continues with IsSectionComplete result."""
-        initialized_graph._llmaj_check = AsyncMock(
+        initialized_graph._run_llmaj_safety_check = AsyncMock(
             side_effect=Exception("LLMAJ model error")
         )
         initialized_graph.call_model = AsyncMock(
@@ -1302,13 +1353,13 @@ class TestLLMAJ:
             )
         )
 
-        result = await initialized_graph._evaluate_section(_make_state())
+        result = await initialized_graph._evaluate_safety_and_section(_make_state())
 
         assert isinstance(result, Command)
         assert result.goto == "intake_section_complete"
 
     @pytest.mark.asyncio
-    async def test_evaluate_section_llmaj_hard_stop_wins_over_section_error(
+    async def test_evaluate_safety_and_section_llmaj_hard_stop_wins_over_section_error(
         self, initialized_graph
     ):
         """LLMAJ hard stop takes priority even when IsSectionComplete also raises a refusal."""
@@ -1325,19 +1376,23 @@ class TestLLMAJ:
                 reasoning="no", confidence_score=0.0, result=None
             ),
         )
-        initialized_graph._llmaj_check = AsyncMock(return_value=hard_stop_result)
+        initialized_graph._run_llmaj_safety_check = AsyncMock(
+            return_value=hard_stop_result
+        )
         initialized_graph._handle_llmaj_hard_stop = AsyncMock()
         initialized_graph.call_model = AsyncMock(
             side_effect=LangChainRefusalError("refused")
         )
 
-        result = await initialized_graph._evaluate_section(_make_state())
+        result = await initialized_graph._evaluate_safety_and_section(_make_state())
 
         initialized_graph._handle_llmaj_hard_stop.assert_called_once()
         assert result.goto == END
 
     @pytest.mark.asyncio
-    async def test_evaluate_section_multi_trigger_hard_stop(self, initialized_graph):
+    async def test_evaluate_safety_and_section_multi_trigger_hard_stop(
+        self, initialized_graph
+    ):
         """Self-harm + harm-to-others together both trigger hard stop with two Slack alerts."""
         multi_trigger_result = SafetyCheckResult(
             self_harm=SelfHarmCategory(
@@ -1354,7 +1409,9 @@ class TestLLMAJ:
                 reasoning="no", confidence_score=0.0, result=None
             ),
         )
-        initialized_graph._llmaj_check = AsyncMock(return_value=multi_trigger_result)
+        initialized_graph._run_llmaj_safety_check = AsyncMock(
+            return_value=multi_trigger_result
+        )
         initialized_graph.db_manager.get_latest_client_message = AsyncMock(
             return_value=None
         )
@@ -1371,7 +1428,7 @@ class TestLLMAJ:
             "app.utils.intake.conversation_graph.send_guardrail_alert",
             new_callable=AsyncMock,
         ) as mock_alert:
-            result = await initialized_graph._evaluate_section(_make_state())
+            result = await initialized_graph._evaluate_safety_and_section(_make_state())
             await asyncio.sleep(0)
 
         assert result.goto == END
@@ -1552,7 +1609,7 @@ def initialized_graph(
         },
     }
     # Default: llmaj_safety_model returns clean (no-trigger) result so existing tests that don't
-    # test LLMAJ routing aren't affected. TestLLMAJ tests override _llmaj_check directly.
+    # test LLMAJ routing aren't affected. TestLLMAJ tests override _run_llmaj_safety_check directly.
     clean_llmaj = SafetyCheckResult(
         self_harm=SelfHarmCategory(
             reasoning="no signal", confidence_score=0.0, result=None

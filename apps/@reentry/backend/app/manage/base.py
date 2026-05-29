@@ -45,6 +45,7 @@ import app.manage.force_reset_db  # noqa
 
 import app.manage.evaluate.evaluate_generation  # noqa
 import app.manage.evaluate.evaluate_summary  # noqa
+import app.manage.evaluate.guardrail_eval  # noqa
 import app.manage.evaluate.headless_conversation_eval  # noqa
 import app.manage.extract_intake_conversation  # noqa
 import app.manage.create_plan  # noqa

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Callable, Coroutine, Dict, Optional
 
 import structlog
-from langchain_core.messages import AIMessage, AnyMessage
+from langchain_core.messages import AIMessage, AnyMessage, SystemMessage
 from langchain_core.messages.human import HumanMessage
 from langchain_openai import ChatOpenAI
 from langchain_openai.chat_models.base import (
@@ -40,7 +40,7 @@ from app.utils.intake.prompts import (
     IsSectionComplete,
     SafetyCheckResult,
     generate_closing_remarks_prompt,
-    generate_llmaj_prompt,
+    generate_llmaj_safety_prompt,
     generate_opening_remarks_prompt,
     generate_question_prompt,
     get_system_message_prompt,
@@ -61,6 +61,21 @@ from app.utils.intake.utils import (
 from app.utils.langsmith_utils import create_langsmith_metadata, create_langsmith_tags
 from app.utils.llm_retry_config import INTAKE_ERRORS_TO_RETRY_ON
 from app.utils.slack import send_guardrail_alert
+
+
+async def run_llmaj_safety_check(
+    model: ChatOpenAI,
+    messages: list[AnyMessage],
+    config: Optional[dict] = None,
+) -> SafetyCheckResult:
+    # Module-level so guardrail_eval.py and tests can call it directly without
+    # instantiating the full graph. The instance method _run_llmaj_safety_check
+    # wraps this with SystemMessage filtering, logging, and fail-open error handling.
+    prompt = generate_llmaj_safety_prompt()
+    return await model.with_structured_output(SafetyCheckResult).ainvoke(
+        [prompt] + messages, config or {}
+    )
+
 
 _REFUSAL_ERRORS = (OpenAIRefusalError, LangChainRefusalError)
 _REFUSAL_FALLBACK = (
@@ -208,7 +223,9 @@ class IntakeConversationGraph:
         """Constructs the conversation workflow with evaluation nodes."""
 
         self.workflow.add_node("intake_chat_introduction", self._opening_remarks)
-        self.workflow.add_node("intake_evaluate_section", self._evaluate_section)
+        self.workflow.add_node(
+            "intake_evaluate_safety_and_section", self._evaluate_safety_and_section
+        )
         self.workflow.add_node("intake_section_complete", self._complete_section)
         self.workflow.add_node("intake_closing_chat", self._closing_remarks)
         self.workflow.add_node(
@@ -218,15 +235,19 @@ class IntakeConversationGraph:
         # Set conditional entry point based on conversation state
         self.workflow.set_conditional_entry_point(self._get_entry_point)
 
-        self.workflow.add_edge("intake_resume_conversation", "intake_evaluate_section")
-        self.workflow.add_edge("intake_chat_introduction", "intake_evaluate_section")
+        self.workflow.add_edge(
+            "intake_resume_conversation", "intake_evaluate_safety_and_section"
+        )
+        self.workflow.add_edge(
+            "intake_chat_introduction", "intake_evaluate_safety_and_section"
+        )
         self.workflow.add_conditional_edges(
             "intake_section_complete",
             lambda state: (
                 "intake_closing_chat"
                 if state["current_section"] == COMPLETION_SECTION
                 or state["current_section"] is None
-                else "intake_evaluate_section"
+                else "intake_evaluate_safety_and_section"
             ),
         )
         self.workflow.add_edge("intake_closing_chat", END)
@@ -295,7 +316,7 @@ class IntakeConversationGraph:
             return "intake_resume_conversation"
         else:
             print("Last message was from user - evaluating section")
-            return "intake_evaluate_section"
+            return "intake_evaluate_safety_and_section"
 
     async def _opening_remarks(self, state: ConversationState) -> ConversationState:
         logger.info("🔵 ENTERING NODE: _opening_remarks")
@@ -349,30 +370,40 @@ class IntakeConversationGraph:
             self.log_error(error_info, e)
             raise e
 
-    async def _llmaj_check(self, messages: list[AnyMessage]) -> SafetyCheckResult:
+    async def _run_llmaj_safety_check(
+        self, messages: list[AnyMessage]
+    ) -> SafetyCheckResult:
         if not is_feature_enabled("LLMAJ_SAFETY_CHECK"):
             return SafetyCheckResult.empty()
-        prompt = generate_llmaj_prompt()
+        # Strip system messages before passing to the classifier. The caseworker
+        # system prompt (GLOBAL_BEHAVIORAL_RULES) mentions "suicidal ideation,
+        # self-harm, crisis signal" as instructions to the caseworker — when these
+        # words appear in the LLMAJ context, gpt-4o-mini flags clean messages as
+        # self-harm even when its own reasoning says "no signals."
+        conversation_messages = [
+            m for m in messages if not isinstance(m, SystemMessage)
+        ]
         client_pseudo_id = self.session.client_pseudo_id
         try:
-            result = await self.llmaj_safety_model.with_structured_output(
-                SafetyCheckResult
-            ).ainvoke(messages + [prompt], self.config)
+            result = await run_llmaj_safety_check(
+                self.llmaj_safety_model, conversation_messages, self.config
+            )
             logger.debug(
-                "LLMAJ result",
+                "LLMAJ safety check result",
                 result=result.model_dump(),
                 client_pseudo_id=client_pseudo_id,
             )
             if triggered := result.triggered_guardrails():
                 logger.warning(
-                    "LLMAJ flagged message",
+                    "LLMAJ safety check flagged message",
                     triggered=triggered,
                     client_pseudo_id=client_pseudo_id,
                 )
             return result
         except Exception:
             logger.exception(
-                "LLMAJ check failed — failing open", client_pseudo_id=client_pseudo_id
+                "LLMAJ safety check failed — failing open",
+                client_pseudo_id=client_pseudo_id,
             )
             return SafetyCheckResult.empty()
 
@@ -471,8 +502,8 @@ class IntakeConversationGraph:
         # producing a duplicate AI response.
         return await self.wait_for_next_response(self.session.client_pseudo_id)
 
-    async def _evaluate_section(self, state: ConversationState) -> Command:
-        logger.info("🟢 ENTERING NODE: _evaluate_section")
+    async def _evaluate_safety_and_section(self, state: ConversationState) -> Command:
+        logger.info("🟢 ENTERING NODE: _evaluate_safety_and_section")
         """
         Evaluate if the current section is complete and ask next question if not.
         This is the V3 version that skips the "check if client needs help" step.
@@ -509,7 +540,7 @@ class IntakeConversationGraph:
             # raises a refusal, we still get the LLMAJ result and can route on it first.
             logger.info("🔄 EVALUATING SECTION: IsSectionComplete + LLMAJ")
             llmaj_result, section_result = await asyncio.gather(
-                self._llmaj_check(state["messages"]),
+                self._run_llmaj_safety_check(state["messages"]),
                 self._call_model_with_refusal_retry(
                     state["messages"] + [section_prompt], IsSectionComplete
                 ),
@@ -541,7 +572,9 @@ class IntakeConversationGraph:
                     if not client_response:
                         return Command(goto=END)
                     state["messages"].append(HumanMessage(client_response))
-                    return Command(update=state, goto="intake_evaluate_section")
+                    return Command(
+                        update=state, goto="intake_evaluate_safety_and_section"
+                    )
 
             # Re-raise IsSectionComplete failures after LLMAJ routing is done
             if isinstance(section_result, Exception):
@@ -589,11 +622,11 @@ class IntakeConversationGraph:
             state["messages"].append(HumanMessage(client_response))
 
             # Loop back to this same node to check again with the new user response
-            return Command(update=state, goto="intake_evaluate_section")
+            return Command(update=state, goto="intake_evaluate_safety_and_section")
 
         except _REFUSAL_ERRORS as e:
             logger.warning(
-                "OpenAI refused to respond in _evaluate_section, sending fallback message",
+                "OpenAI refused to respond in _evaluate_safety_and_section, sending fallback message",
                 client_pseudo_id=self.session.client_pseudo_id,
                 section=current_section_title,
                 error=str(e),
@@ -615,11 +648,11 @@ class IntakeConversationGraph:
 
                 state["messages"].append(HumanMessage(client_response))
 
-            return Command(update=state, goto="intake_evaluate_section")
+            return Command(update=state, goto="intake_evaluate_safety_and_section")
 
         except Exception as e:
             traceback.print_exc()
-            print(f"ERROR in _evaluate_section: {e}")
+            print(f"ERROR in _evaluate_safety_and_section: {e}")
             raise e
 
     async def _resume_conversation_user(self, state: ConversationState):

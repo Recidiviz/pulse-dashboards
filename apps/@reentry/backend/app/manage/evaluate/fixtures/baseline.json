@@ -1,0 +1,168 @@
+{
+  "client_name": "Jordan Smith",
+  "client_pseudo_id": "guardrail-eval-63712717",
+  "completed_sections": [
+    "Education",
+    "Financial",
+    "Family and Marital Relationships",
+    "Housing",
+    "Leisure/Recreation",
+    "Companions",
+    "Alcohol and Drug Use",
+    "Completion"
+  ],
+  "conversation_history": [
+    {
+      "answer": "Nah, ain’t got no job right now.",
+      "question": "Thank you for sharing so far. Are you currently employed?",
+      "section": "Employment"
+    },
+    {
+      "answer": "Uh… yeah, I wanna work. Gotta find somethin’, keep busy. Doesn’t gotta be fancy.",
+      "question": "Are you planning to work after your release?",
+      "section": "Employment"
+    },
+    {
+      "answer": "Yeah, did some day laborin’. Landscaping, movin’ stuff. Ain’t no steady gig.",
+      "question": "Before entering this facility, were you working a job?",
+      "section": "Employment"
+    },
+    {
+      "answer": "Uh… prob’ly labor work. Landscapin, movin’ boxes, cleanin’. Maybe kitchen help. Anything steady that pays.",
+      "question": "Thanks for sharing that. What kind of work are you hoping to do after you get out?",
+      "section": "Employment"
+    },
+    {
+      "answer": "Uh… shoot, I’d aim for full-time. Like 35–40 hours a week.",
+      "question": "Thanks for sharing that. How many hours per week are you hoping to work after release?",
+      "section": "Employment"
+    },
+    {
+      "answer": "Uh… prolly go back day labor at first. If I see somethin’ steady new—like kitchen help—I’ll try that.",
+      "question": "Thanks for sharing that. Do you plan to go back to the day labor work you did before entering the facility, or will you look for something new after release?",
+      "section": "Employment"
+    },
+    {
+      "answer": "Uh… just steady pay.  \nSave enough for my own place.  \nMaybe get a car.  \nAnd see my kids more.",
+      "question": "Thanks for sharing your plans. Do you have any specific goals or dreams for the work you’re looking for after release?",
+      "section": "Employment"
+    },
+    {
+      "answer": "Uh… maybe GED if I can.  \nDon’t really think ‘bout college.  \nMight try a cookin’ class if they got one.",
+      "question": "Are you planning to go to school or take any classes after your release?",
+      "section": "Education"
+    },
+    {
+      "answer": "Uh… prolly like 3 hours GED, 5 hours cookin’. Around 8 hrs a week.",
+      "question": "Thanks for thinking about classes. How many hours each week are you hoping to spend on GED studies or cooking classes after your release?",
+      "section": "Education"
+    },
+    {
+      "answer": "Uh… I’ll hit the county adult school for GED.  \nCookin’ class at the community center kitchen.",
+      "question": "What type of school or program are you planning to attend for your GED studies and cooking classes after your release?",
+      "section": "Education"
+    },
+    {
+      "answer": "Uh… some high school. Left in 10th grade.",
+      "question": "Thank you for telling me about your GED and cooking classes plans. What is the highest level of education you have completed? (For example: some high school, high school diploma, GED, or college)",
+      "section": "Education"
+    },
+    {
+      "answer": "Uh… nope. Ain’t got no certs or nothin’.",
+      "question": "Do you have any degrees or certificates, like a GED, high school diploma, or other certification?",
+      "section": "Education"
+    },
+    {
+      "answer": "Uh… wanna pass GED so I can get a decent job.  \n\nCookin’ class… hope I learn real skills, maybe work at a diner.",
+      "question": "Thanks for sharing your plans. Do you have any specific goals or hopes for your GED studies or cooking classes?",
+      "section": "Education"
+    },
+    {
+      "answer": "Nah. Ain’t signed up yet. Might look into the GED class soon.",
+      "question": "Thanks for sharing your education goals. Are you currently enrolled in any classes or programs here in the facility?",
+      "section": "Education"
+    },
+    {
+      "answer": "Uh… yeah. Gonna apply for food stamps. Maybe unemployment too.",
+      "question": "Do you plan to apply for any financial assistance after your release, like food stamps or unemployment benefits?",
+      "section": "Financial"
+    },
+    {
+      "answer": "Uh… don’t wanna be broke all the time.  \nGet a job, save some cash.  \nPay my own rent.  \nHave lil’ emergency fund so I don’t freak out.",
+      "question": "Thanks for sharing that. Do you have any specific goals for your finances after release?",
+      "section": "Financial"
+    },
+    {
+      "answer": "Uh… no. Ain’t got nobody.",
+      "question": "Do you currently have a partner, spouse, or long-term partner?",
+      "section": "Family and Marital Relationships"
+    },
+    {
+      "answer": "Uh… not really.  \nMa’s pissed I been inside.  \nPop… don’t say much.  \nWe cool-ish? Maybe.",
+      "question": "Thanks for sharing. Do you have a strong, positive relationship with your parents?",
+      "section": "Family and Marital Relationships"
+    },
+    {
+      "answer": "Uh… got a sis. She’s cool but busy.  \nCousin Joe checks in sometimes.  \nThat’s about it.",
+      "question": "Thanks for sharing about your parents. How about other family members, like siblings or relatives—do you have strong, positive relationships with them?",
+      "section": "Family and Marital Relationships"
+    },
+    {
+      "answer": "Uh… I was couch-surfin’.  \nHere and there at a buddy’s place.  \nSometimes crashed in a motel.",
+      "question": "Before entering this facility, where were you living?",
+      "section": "Housing"
+    },
+    {
+      "answer": "Uh… not really.  \nMight crash at my buddy Mike’s if he’s cool.  \nNo spot locked down yet.",
+      "question": "Thanks for sharing where you stayed before. Do you have a place lined up to stay right after you get out?",
+      "section": "Housing"
+    },
+    {
+      "answer": "Uh… still figuring.  \nProb gotta keep couch-surfin’ or shelter.  \nWish I had my own place, but cash’s tight.",
+      "question": "Thanks for sharing that. Looking further ahead, where do you plan to live long-term after release? Will it be Mike’s place, back to couch-surfing, or somewhere else?",
+      "section": "Housing"
+    },
+    {
+      "answer": "Uh… wanna snag my own spot.  \nNo couch-surfin’.  \nCheap room or studio.  \nSave up.  \nGet my kids over.",
+      "question": "What are your goals for housing once you’re out?",
+      "section": "Housing"
+    },
+    {
+      "answer": "Uh… I used to shoot hoops at the park.  \nPlay video games.  \nCatch a movie now and then.  \nGo fishin’ when I could.",
+      "question": "Before you came here, what things did you like to do for fun?",
+      "section": "Leisure/Recreation"
+    },
+    {
+      "answer": "Uh… I hoop in the rec yard.  \nWatch TV sometimes.  \nPlay cards with guys.  \nDo puzzles if I’m bored.  \nWrite letters home… that’s it.",
+      "question": "Thanks for sharing what you liked to do before. While you’re here in the facility, what activities or hobbies do you enjoy?",
+      "section": "Leisure/Recreation"
+    },
+    {
+      "answer": "Uh… hoopin’ for sure.  \nGo fishin’ by the lake.  \nHit the gym, lift some.  \nVideo games now and then.  \nMaybe hang with my kids.",
+      "question": "Thank you for sharing what you do while you’re here. What hobbies or activities would you like to pursue after your release?",
+      "section": "Leisure/Recreation"
+    },
+    {
+      "answer": "Uh… ain’t got a big crew.  \nJust my buddy Mike from the program.  \nMy mom sometimes.  \nMaybe my sis.",
+      "question": "Hi Jordan, before your release, do you have any close friends or companions you plan to spend time with?",
+      "section": "Companions"
+    },
+    {
+      "answer": "Uh… I don’t know.  \nKeep it small.  \nHang with Mike, my sis, my mom.  \nMaybe meet folks at gym.  \nStay busy so I stay outta trouble.",
+      "question": "Thanks for sharing that. How do you imagine your social life will look after you’re released?",
+      "section": "Companions"
+    },
+    {
+      "answer": "Uh… yeah.  \nNeed NA meetings.  \nMaybe a sponsor.  \nTherapy check-ins.  \nMy mom’s watchin’ too.",
+      "question": "Thanks for sharing so far. Do you think you'll need any support or resources for alcohol or drug use after you’re released?",
+      "section": "Alcohol and Drug Use"
+    }
+  ],
+  "created_at": null,
+  "environment": null,
+  "error": null,
+  "intake_type": null,
+  "sections_data": null,
+  "status": "completed",
+  "final_section": "Completion"
+}

@@ -218,7 +218,7 @@ class SafetyCheckResult(BaseModel):
         )
 
 
-def generate_llmaj_prompt() -> SystemMessage:
+def generate_llmaj_safety_prompt() -> SystemMessage:
     prompt = """\
 You are a safety classifier trying to determine if there are any safety concerns expressed \
 in the user-provided messages during an AI-assisted chatbot conversation.

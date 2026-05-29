@@ -29,7 +29,7 @@ from .types import (
 
 logger = structlog.get_logger(__name__)
 load_dotenv()
-Environment = Literal["local", "dev", "demo", "staging", "prod"]
+Environment = Literal["local", "dev", "demo", "staging", "pilot", "prod"]
 
 
 def is_valid_environment(value: str) -> bool:
@@ -47,6 +47,7 @@ ENV_INSTANCES: dict[Environment, Optional[str]] = {
     "dev": "recidiviz-rnd-planner:us-central1:recidiviz-dev",
     "demo": "recidiviz-rnd-planner:us-central1:recidiviz-demo",
     "staging": "recidiviz-rnd-planner:us-central1:recidiviz-staging",
+    "pilot": "recidiviz-rnd-planner:us-central1:recidiviz-pilot",
     "prod": "recidiviz-rnd-planner:us-central1:recidiviz-prod",
 }
 
@@ -92,10 +93,13 @@ async def get_postgres_engine(
             "postgresql+asyncpg://",
             async_creator=getconn,
             echo=False,
+            execution_options={"readonly": True},
         )
     else:
         db_url = f"postgresql+asyncpg://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_SERVER}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
-        engine = create_async_engine(db_url, echo=False)
+        engine = create_async_engine(
+            db_url, echo=False, execution_options={"readonly": True}
+        )
 
     return engine, connector
 
@@ -362,7 +366,7 @@ def get_completed_sections(sections_data: IntakeSectionsData) -> List[str]:
 @cli.command()
 async def extract_intake_conversation(
     client_pseudo_id: str = Option(..., help="Client's pseudo id"),
-    env: str = Option(..., help="Environment: local, dev, demo, staging, prod"),
+    env: str = Option(..., help="Environment: local, dev, demo, staging, pilot, prod"),
 ):
     """
     Extract conversation history for a client as JSON.
@@ -371,7 +375,7 @@ async def extract_intake_conversation(
 
     Args:
         client_pseudo_id: The client's pseudo ID
-        env: Environment (local, dev, demo, staging, prod).
+        env: Environment (local, dev, demo, staging, pilot, prod).
 
     Example usage:
         uv run python -m app.manage extract-intake-conversation --client-pseudo-id a1b2c3d4 --env demo

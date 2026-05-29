@@ -7421,5 +7421,261 @@ eval_intake_groups:
           character_name: Tiffany Lee
           city: York
           state: NE
+    - name: "False Positives Guardrail Trigger (May 15-18, 2026)"
+      ids:
+        - a6b002e0-fb54-4bfc-b845-27a999761a31
+        - 6625d2dd-4c95-4604-9640-8bb8c6de54ac
+        - 0888be50-1eb9-4562-8028-2fe34084efb9
   staging: []
-  prod: []
+  prod:
+    - name: Idaho
+      ids:
+        - ed5f15b2-9e9b-45a2-bca2-dea5fbec929a
+        - aba84348-5efa-43fb-bc85-eed410f5c3be
+        - 7b2e25b6-53b0-4001-ae5f-7779d143d27c
+        - 0dc2e3c8-7b97-429d-a3f8-f8936c02d1a7
+        - 72dfff1b-ed73-467c-ade3-3ded4f496c9f
+        - d895386d-d223-48f3-aa93-0c97b8a323dd
+        - 1f34851a-60ab-47dc-b23f-142afd48cb04
+        - db399231-76e0-4063-850b-970d45776526
+        - 4acb37a9-2553-4b63-ae42-df545f500b3b
+        - b96f6c2e-92e2-4212-98c5-5fb69de39667
+        - 666765c6-5dc4-4266-a6cd-e2be4738bc01
+        - 49cb1fcb-d9f4-40ab-9fd1-1afb904fcf46
+        - 82d9a96d-489f-4403-89f9-24e73877747c
+        - 2b096c99-248c-45ff-86d0-80292b8d9077
+        - af1cb06b-7f6f-4f94-bc72-ab671df60c83
+        - bfe82310-060f-4fea-b675-63eda6c5b346
+        - da147aaa-a38b-443f-aa88-a696b2962e95
+        - da9b001b-9648-458f-b9ee-9b43119d040a
+        - e7effaf8-02ad-4f1c-8876-ec8203184520
+    - name: Utah
+      ids:
+        - 5efeb2cc-7f51-4b6b-8c5a-1accc79ce081
+        - 0a6ae7a0-ee16-4c29-9475-6cf8b94b893c
+        - 39120c27-cee2-4cc3-8216-99da6af5626f
+        - e2f61bdb-0051-48f1-856c-47637ee6121b
+        - b74ebc42-70f7-4398-bb77-2f168e814951
+        - 3a4ee066-d224-4ed7-b284-6f647c20f1ff
+        - b3980f1d-0771-4b83-82e8-367d1f642e86
+        - 76dfd8ba-6a90-4d01-8921-2eb4c9f19dc4
+        - 1bd34dea-b472-41e6-9652-45c75c28527d
+        - e1a9411a-c66b-4a53-bf4c-a6c20b091fd4
+        - b60a2491-c2a1-4a03-a75c-f93e2078cc85
+        - 27d17945-f9d3-4737-b258-bb73f49e97d5
+        - 4d4331f8-5371-4802-9c89-730ef23822a0
+        - 592ad200-0681-4d61-9607-a0b1d4c2d562
+        - b1fd1ae8-b209-41a4-bde2-b6a7a2c27a3f
+        - 924c2672-97da-49a9-8f47-f9fa0f3b4b10
+        - 04a68754-4f85-4940-9bba-d121d7335240
+        - cb4bea8c-861f-4b2a-bba0-5a84004411d2
+        - f4460f51-21e7-4d6d-ab89-6dc27dd6707d
+        - dd3dcbdf-1848-4582-9629-84d69d13b63a
+    - name: Nebraska
+      ids:
+        - ac42195c-1a4a-48d4-a936-dd1c6cc4b87f
+        - 9a2b46dd-2363-40e0-98e2-8741b1ef4d48
+        - 86aaee1d-3001-4c23-b15f-a49b3dd8478a
+        - df55cfd0-2563-4667-8377-82bcff76c0f3
+        - ae4c628f-ce1d-438a-90b4-066d7851ff97
+        - d486c5af-5d09-48bf-a4d8-53c788f61f1a
+        - e4e7548f-c8fe-4867-8af4-564deb921804
+        - 82991ab6-6751-4372-95e8-53fc8c83d18f
+        - ef19e139-a94f-40c2-bb22-bd7a7b577bd7
+        - d25a418e-a78f-4cc9-b57a-e414589b24b9
+    - name: "All 2026 Production Intakes"
+      ids:
+        - a336e1d2-5f2c-4bac-9f38-59e8590c4012
+        - 379a6329-c671-498e-bde5-fa050ad77043
+        - a4d2f291-f737-4959-89de-347465b92615
+        - 8e92dcee-9a33-4ba8-adc1-49155d7ce5dc
+        - 3e5eca6e-ae98-471d-86a8-e2c525af0a83
+        - 693de525-51eb-420e-80cd-b19fcd11bf56
+        - 99bb3088-5ef9-458b-ae63-a71c911a0bcf
+        - e1a9411a-c66b-4a53-bf4c-a6c20b091fd4
+        - a98230ce-d907-43a5-9aae-039307e89c30
+        - ef6c5f0b-af9c-4bfb-b0da-e937c77c48a8
+        - 27c16134-b53d-4881-9704-0cf464db1f45
+        - dd3dcbdf-1848-4582-9629-84d69d13b63a
+        - f4460f51-21e7-4d6d-ab89-6dc27dd6707d
+        - 8bfa302a-1afd-4f44-bb0d-c3d56090bd15
+        - bfe82310-060f-4fea-b675-63eda6c5b346
+        - 897e6dd2-10e6-4331-96ae-3d5bdee2572e
+        - d9461079-f044-4342-b0bf-522c9576fad6
+        - e5f2e52b-a7ef-4298-b986-8e2e7611917d
+        - 3ca96438-54c9-4ef2-929c-fa8231f4cd8a
+        - 06bac7de-9aae-41e1-a973-666e6ed67fe2
+        - fedeaf69-dd10-4271-9e95-8948d93e9300
+        - 1bd34dea-b472-41e6-9652-45c75c28527d
+        - 41c0a879-86eb-4fe6-a257-c1c4cd43e1b4
+        - 70e1dad5-69b3-43eb-8548-058a2ca5e7db
+        - 638ee9a7-f9a0-40de-b086-49c618c1d466
+        - 1769081c-4e23-4f63-a8ff-fa4d0d95a6ff
+        - cb4bea8c-861f-4b2a-bba0-5a84004411d2
+        - e9040959-cf58-45d9-9d9a-17fb011dd857
+        - 4f470d4d-1b16-4d5b-9470-e8ac378f4d1e
+        - af1cb06b-7f6f-4f94-bc72-ab671df60c83
+        - 9fa362af-848c-434a-9fa3-bdcd67c90a41
+        - 5b1783f3-3920-4884-a4a4-000073a3fe0e
+        - ae7a6545-01ae-462f-8471-c21183bbdbbc
+        - f7e27674-a66a-49af-9567-57e30ba375a8
+        - bd3f7e20-4786-4dd0-89d7-9dabc299066f
+        - 61bb6a86-881d-4ede-89e3-5642b88c0bc8
+        - 9ac3ca60-2dee-4363-9a7f-5ebbc6d37384
+        - 128ceda4-41a3-4a3a-a7b4-acb19624a99e
+        - 1a321e5f-79fc-4b8a-93ce-ced68b86a133
+        - 249d9e1e-bae7-4e87-af67-b6bbe99b1a19
+        - 924c2672-97da-49a9-8f47-f9fa0f3b4b10
+        - 779d74c3-b3c1-41b2-84b8-b5a449582bef
+        - 04a68754-4f85-4940-9bba-d121d7335240
+        - a64f00e4-b4d5-4c86-9cf5-fb8c3ea7e0ac
+        - 215d5fc3-2983-47f5-8734-02e65b5b32fb
+        - 2009a30c-a4f5-427e-9736-f53a229abb54
+        - 213e4ec1-3486-4329-acc7-49b699307f96
+        - c774c31c-e5f1-42f0-bded-4a69108cdc5d
+        - a7b165a5-e2e8-449c-a531-4ae7de6ba95c
+        - 2e9e5f06-6368-4dd8-abdc-7ce62179955f
+        - 8388a626-d3e8-41ab-a340-10a0ec2dd465
+        - 40689963-69f4-4b2e-a043-ca2f8f111062
+        - b671da8b-3506-4302-834d-828de9ee4352
+        - 49da4d98-05fe-4067-a786-65b22126b4d5
+        - 3325c5b0-862d-4db0-be98-f1fbc719aa65
+        - 523ffe22-bb62-4f4b-b36e-a734f3b2d754
+        - e6bcd249-f12b-4a42-bbf2-7a584ece522c
+        - 0d0a06bb-b4a3-41a3-9da4-9a7dee8348e2
+        - 5298840a-0241-465f-bfb3-427a38d3c3da
+        - f6463940-96c2-4b2e-8ca8-fdef84389a57
+        - ef602c34-b8d2-4469-8d62-684b3810d55a
+        - a1bc2040-eed1-44f8-a4d8-4bae2fd82796
+        - 3190e57b-44d9-4a24-b672-f3d6bf678af5
+        - 3a4ee066-d224-4ed7-b284-6f647c20f1ff
+        - 2bd5b702-c0f0-4410-afd6-d25ff651a12f
+        - da147aaa-a38b-443f-aa88-a696b2962e95
+        - b74ebc42-70f7-4398-bb77-2f168e814951
+        - 82991ab6-6751-4372-95e8-53fc8c83d18f
+        - ce481789-dcf8-48b3-9606-7f88d27e9fb6
+        - 76dfd8ba-6a90-4d01-8921-2eb4c9f19dc4
+        - 6247ce20-d086-47df-a599-894059f05554
+        - 9a2b46dd-2363-40e0-98e2-8741b1ef4d48
+        - 24343472-0227-4835-8e23-a7491f85ab39
+        - e4e7548f-c8fe-4867-8af4-564deb921804
+        - ac42195c-1a4a-48d4-a936-dd1c6cc4b87f
+        - e2f61bdb-0051-48f1-856c-47637ee6121b
+        - d486c5af-5d09-48bf-a4d8-53c788f61f1a
+        - 571167ad-e1be-4dc5-a574-06baedfe2e7b
+        - 9bb62581-645c-4b64-829a-8ab7653485e2
+        - 7fa7213b-cdb5-410f-b016-4a322f6d0990
+        - bd9e7ff9-c987-4573-9ab8-76af988c5eb1
+        - ae4c628f-ce1d-438a-90b4-066d7851ff97
+        - b1fd1ae8-b209-41a4-bde2-b6a7a2c27a3f
+        - df55cfd0-2563-4667-8377-82bcff76c0f3
+        - 39120c27-cee2-4cc3-8216-99da6af5626f
+        - 0a6ae7a0-ee16-4c29-9475-6cf8b94b893c
+        - d25a418e-a78f-4cc9-b57a-e414589b24b9
+        - 592ad200-0681-4d61-9607-a0b1d4c2d562
+        - b3980f1d-0771-4b83-82e8-367d1f642e86
+        - ef19e139-a94f-40c2-bb22-bd7a7b577bd7
+        - 4d4331f8-5371-4802-9c89-730ef23822a0
+        - 86aaee1d-3001-4c23-b15f-a49b3dd8478a
+        - 5efeb2cc-7f51-4b6b-8c5a-1accc79ce081
+        - ae7fd740-acb3-47c7-8e90-dbae11c118b6
+        - 7aa0f645-5716-488f-9ab0-feb8de6d1f55
+        - 8d57a299-0059-4f13-8341-8131548ce56f
+        - 0ef11b70-de05-4eed-9acb-9f762950783d
+        - 27d17945-f9d3-4737-b258-bb73f49e97d5
+        - b60a2491-c2a1-4a03-a75c-f93e2078cc85
+        - 88c90d2d-3144-4789-afa4-5f91a67cb882
+        - 124381c0-91f6-4d5c-b67e-ad13b6d3dd55
+        - 6ac7d2c9-6c01-49e1-ac8e-22c9eae3e3b0
+        - da9b001b-9648-458f-b9ee-9b43119d040a
+        - e7effaf8-02ad-4f1c-8876-ec8203184520
+        - 576bebf3-f272-4690-ba60-eef0e8dea4e6
+        - cbe8d2ab-c08b-4de5-8768-d7c0fc91c78a
+        - 5a2a9269-716f-4335-869c-56bed6c618b4
+        - bff797aa-c6b9-4c02-bb7a-fbc0c6610f2d
+        - 54e9a577-8256-47ce-a00d-a537aa2d6860
+        - 57ac3b20-dcc1-4f7a-800d-0c5899ec4a41
+        - 98e7905b-42d0-4aa0-af2d-d366df2913ff
+        - 7f5576ba-012e-4af2-a27c-394c0865613a
+        - efb6e3b4-abbb-4e1a-8f42-ab1e643a8a83
+        - 53cecec6-0200-44a3-a088-aec026c1027c
+        - 6092347a-4d1a-4b24-b10c-36f8f2639c20
+        - b3415357-223e-4292-a827-7ef4493b22d0
+        - 92b10812-7640-4428-bcc0-bfb5414cd4ea
+        - 2fca6ac4-e612-4f28-8c77-259c9e04f813
+        - 07fddf5e-3e2a-40aa-b93c-457fa205b052
+        - f0d07db0-b61f-4df9-8ad5-5b5da121c3db
+        - b10faea2-0c00-4391-aec8-3fc780d4c705
+        - 73c12864-55d3-490b-b559-e6ef2ffa3a1d
+        - 3c402e92-0045-4719-a780-e3f2042ce05a
+        - 20192d83-f2d1-4cdc-a209-bd99134d09d4
+        - dfa2c77c-2e27-4931-9a46-a2eb250429d3
+        - 4ef360ef-ec29-4779-b5bf-bfa15f679eda
+        - 5eb9fce0-63eb-4c14-aa58-3ddc9f32b045
+        - 414e6dcb-e078-49d5-bc4e-6b1db5b28c19
+        - af87874a-95ff-4ff0-9dc2-68699d091190
+        - 26a78702-29b3-435c-90c7-20fc33d1d1ba
+        - 54d9e4ed-413a-49a7-ae71-478424639d3d
+        - 162a5e8a-8fa3-42ac-a3c4-85e6b948890f
+        - 344e99c9-7219-45d0-b766-c5688ed74559
+        - 44bec633-432d-424c-a943-fa2fa57feaa8
+        - 423e263b-83c1-4541-88cc-67219242157d
+        - 35866362-1c4b-4c4b-91b7-fecc4ffb7641
+        - d6ac8662-81cd-49f2-a9b9-c80b36fb6d13
+        - 2247f87f-477b-42b0-991a-09115ab96367
+        - 46978a20-9510-4c0a-ae5e-f5914a16aa45
+        - 638fe374-dfbf-4807-9ff0-07eb6c9227b1
+        - daeac115-77e5-4d56-80d0-7659e650dc4b
+        - 8d3ec870-263c-496c-884a-548988f4c223
+        - e067bc3f-77a8-4076-a9b2-6c45f7c261db
+        - 7690fb21-56fb-4d0b-afb2-505310a874c1
+        - 671d06df-3652-4811-bd74-2718456ea492
+        - ac461aa2-59ab-4c48-8978-226b1a3df07e
+        - fc2103a0-5635-41d6-998b-3a751099cd57
+
+# Golden fixture groups for guardrail-eval --mode fixture.
+# Files are relative to apps/@reentry/backend/app/manage/evaluate/fixtures/.
+# Generate fixtures with: guardrail-eval --mode generate --persona-key <key> --save-fixture
+eval_fixture_groups:
+  guardrail-golden-triggers:
+    - file: trigger-self-harm.json
+      attrs:
+        { persona_name: "Darnell Washington", persona_key: trigger-self-harm }
+    - file: trigger-self-harm-veiled.json
+      attrs:
+        { persona_name: "Marcus Webb", persona_key: trigger-self-harm-veiled }
+    - file: trigger-self-harm-harm-to-others.json
+      attrs:
+        {
+          persona_name: "Priya Nair",
+          persona_key: trigger-self-harm-harm-to-others,
+        }
+    - file: trigger-harm-to-others.json
+      attrs:
+        { persona_name: "Angela Torres", persona_key: trigger-harm-to-others }
+    - file: trigger-harm-to-others-distributed.json
+      attrs:
+        {
+          persona_name: "Roberto Vega",
+          persona_key: trigger-harm-to-others-distributed,
+        }
+    - file: trigger-prompt-injection.json
+      attrs:
+        { persona_name: "Kevin Park", persona_key: trigger-prompt-injection }
+    - file: trigger-prompt-injection-gradual.json
+      attrs:
+        {
+          persona_name: "Sandra Okafor",
+          persona_key: trigger-prompt-injection-gradual,
+        }
+  guardrail-golden-clean:
+    - file: baseline.json
+      attrs: { persona_name: "Jordan Smith", persona_key: baseline }
+    - file: clean-cooperative.json
+      attrs: { persona_name: "Tamara Fields", persona_key: clean-cooperative }
+    - file: clean-frustrated.json
+      attrs: { persona_name: "Derek Osei", persona_key: clean-frustrated }
+    - file: clean-avoidant.json
+      attrs: { persona_name: "Lucy Barrera", persona_key: clean-avoidant }
+  guardrail-golden-all:
+    extends: [guardrail-golden-triggers, guardrail-golden-clean]
