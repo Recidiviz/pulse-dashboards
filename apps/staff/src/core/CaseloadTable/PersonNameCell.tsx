@@ -40,10 +40,14 @@ export const PersonNameCell = observer(function PersonNameCell({
   person: JusticeInvolvedPerson;
 }) {
   const { isMobile } = useIsMobile(true);
-  const displayName =
-    person.stateCode === "US_TX"
-      ? person.displayPreferredNameLastFirst
-      : person.displayPreferredName;
+  // In TX, all JII are displayed with last name first.
+  // In MI, all residents are displayed with last name first.
+  const shouldDisplayNameLastFirst =
+    person.stateCode === "US_TX" ||
+    (person.stateCode === "US_MI" && person.personType === "RESIDENT");
+  const displayName = shouldDisplayNameLastFirst
+    ? person.displayPreferredNameLastFirst
+    : person.displayPreferredName;
   return (
     <PersonNameElement $isMobile={isMobile}>
       {displayName} <WorkflowsStatusPill person={person} />
