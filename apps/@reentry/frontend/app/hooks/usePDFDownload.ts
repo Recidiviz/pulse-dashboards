@@ -155,9 +155,9 @@ export function useActionPlanPDF(
   filename: string,
   allResources?: ResourceSection[],
 ) {
-  const body = allResources
-    ? { resource_sections: allResources.map(toSectionForPDF) }
-    : undefined;
+  const body = {
+    resource_sections: (allResources ?? []).map(toSectionForPDF),
+  };
   return usePDFDownload(`/api/plans/${planId}/action-plan-pdf`, filename, body);
 }
 
