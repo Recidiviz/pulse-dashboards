@@ -159,7 +159,14 @@ export class RoutePlannerPresenter {
           if (officer?.recordType !== "supervisionStaff") {
             return;
           }
-          return officer?.stateSpecificData?.dpoAddress;
+          switch (officer.stateSpecificData?.stateCode) {
+            case "US_TX":
+              return officer.stateSpecificData.dpoAddress;
+            case "US_ID":
+              return officer.stateSpecificData.officeAddress;
+            default:
+              return;
+          }
         });
     } else {
       // Otherwise, get addresses for all searched-for officers
@@ -171,7 +178,14 @@ export class RoutePlannerPresenter {
           ) {
             return;
           }
-          return searchable.record?.stateSpecificData?.dpoAddress;
+          switch (searchable.record.stateSpecificData?.stateCode) {
+            case "US_TX":
+              return searchable.record.stateSpecificData.dpoAddress;
+            case "US_ID":
+              return searchable.record.stateSpecificData.officeAddress;
+            default:
+              return;
+          }
         },
       );
     }

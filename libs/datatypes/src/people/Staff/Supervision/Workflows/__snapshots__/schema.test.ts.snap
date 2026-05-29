@@ -36,6 +36,14 @@ exports[`supervision staff schema for 'US_ID' 'OFFICER4' 1`] = `
   "pseudonymizedId": "p004",
   "recordType": "supervisionStaff",
   "stateCode": "US_ID",
+  "stateSpecificData": {
+    "officeAddress": {
+      "city": "iowa",
+      "line1": "1234 address lane",
+      "zip": "11123",
+    },
+    "stateCode": "US_ID",
+  },
   "supervisorExternalId": "SUPER847",
   "surname": "Harris",
 }
@@ -50,6 +58,10 @@ exports[`supervision staff schema for 'US_ID' 'OFFICER6' 1`] = `
   "pseudonymizedId": "p006",
   "recordType": "supervisionStaff",
   "stateCode": "US_ID",
+  "stateSpecificData": {
+    "officeAddress": undefined,
+    "stateCode": "US_ID",
+  },
   "supervisorExternalId": "SUPER847",
   "surname": "Schroeder",
 }

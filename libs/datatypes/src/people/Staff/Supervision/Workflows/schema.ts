@@ -22,24 +22,29 @@ import { ParsedRecord } from "~datatypes";
 import { nullishAsUndefined } from "../../../../utils/zod";
 import { workflowsStaffRecordBaseSchema } from "../../staffWorkflowsRecordBaseSchema";
 
+const addressSchema = nullishAsUndefined(
+  z.object({
+    line1: z.string(),
+    line2: nullishAsUndefined(z.string()),
+    city: z.string(),
+    zip: z.string(),
+  }),
+);
+
 const usTxSupervisionStaffStateSpecificSchema = z.object({
   stateCode: z.literal("US_TX"),
   isInUnderstaffedOffice: z.boolean().default(false),
-  dpoAddress: nullishAsUndefined(
-    z.object({
-      line1: z.string(),
-      line2: nullishAsUndefined(z.string()),
-      city: z.string(),
-      zip: z.string(),
-    }),
-  ),
+  dpoAddress: addressSchema,
+});
+
+const usIxSupervisionStaffStateSpecificSchema = z.object({
+  stateCode: z.literal("US_ID"),
+  officeAddress: addressSchema,
 });
 
 const supervisionStaffStateSpecificSchema = z.union([
   usTxSupervisionStaffStateSpecificSchema,
-  // This is here to allow for future state-specific schemas to be added
-  // since z.union requires the first argument to have at least two elements
-  z.undefined(),
+  usIxSupervisionStaffStateSpecificSchema,
 ]);
 
 // TODO: (#6249) Change schema name to `workflowsSupervisionStaffRecordSchema`

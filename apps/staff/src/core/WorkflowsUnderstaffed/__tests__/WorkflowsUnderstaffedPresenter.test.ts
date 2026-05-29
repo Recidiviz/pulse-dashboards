@@ -43,9 +43,11 @@ describe("WorkflowsUnderstaffedPresenter", () => {
       const searchStore = {
         selectedSearchables: [
           generateOfficerRecord("supervisionStaff", {
+            stateCode: "US_TX",
             isInUnderstaffedOffice: false,
           }),
           generateOfficerRecord("supervisionStaff", {
+            stateCode: "US_TX",
             isInUnderstaffedOffice: true,
           }),
         ],
@@ -58,9 +60,11 @@ describe("WorkflowsUnderstaffedPresenter", () => {
       const searchStore = {
         selectedSearchables: [
           generateOfficerRecord("supervisionStaff", {
+            stateCode: "US_TX",
             isInUnderstaffedOffice: false,
           }),
           generateOfficerRecord("supervisionStaff", {
+            stateCode: "US_TX",
             isInUnderstaffedOffice: false,
           }),
         ],
@@ -82,6 +86,18 @@ describe("WorkflowsUnderstaffedPresenter", () => {
               recordType: "location",
             },
           },
+        ],
+      } as unknown as SearchStore;
+      const presenter = new WorkflowsUnderstaffedPresenter(searchStore);
+      expect(presenter.understaffedOfficerSelected).toBe(false);
+    });
+
+    it("returns false is the selected officer is not in tx", () => {
+      const searchStore = {
+        selectedSearchables: [
+          generateOfficerRecord("supervisionStaff", {
+            stateCode: "US_ID",
+          }),
         ],
       } as unknown as SearchStore;
       const presenter = new WorkflowsUnderstaffedPresenter(searchStore);

@@ -32,6 +32,14 @@ export const usIdSupervisionStaffFixtures: Array<
     surname: "Harris",
     supervisorExternalId: "SUPER847",
     pseudonymizedId: "p004",
+    stateSpecificData: {
+      stateCode: "US_ID" as const,
+      officeAddress: {
+        line1: "1234 address lane",
+        city: "iowa",
+        zip: "11123",
+      },
+    },
   },
   {
     email: "test-officer-6@example.com",
@@ -42,6 +50,10 @@ export const usIdSupervisionStaffFixtures: Array<
     surname: "Schroeder",
     supervisorExternalId: "SUPER847",
     pseudonymizedId: "p006",
+    stateSpecificData: {
+      stateCode: "US_ID" as const,
+      officeAddress: null,
+    },
   },
 ];
 

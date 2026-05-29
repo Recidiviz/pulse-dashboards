@@ -32,7 +32,8 @@ export class WorkflowsUnderstaffedPresenter {
 
       return (
         searchable.record.recordType === "supervisionStaff" &&
-        searchable.record?.stateSpecificData?.isInUnderstaffedOffice
+        searchable.record.stateSpecificData?.stateCode === "US_TX" &&
+        searchable.record.stateSpecificData.isInUnderstaffedOffice
       );
     });
   }
