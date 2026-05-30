@@ -21,6 +21,7 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components";
 
+import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { UsNcCreditReductionReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsNcCreditReductionReviewForm";
 import { UsNcCRRInput } from "./FormComponents";
 import SignatureField from "./SignatureField";
@@ -58,6 +59,7 @@ const FormSignatures: React.FC<{ form: UsNcCreditReductionReviewForm }> =
   }: {
     form: UsNcCreditReductionReviewForm;
   }) {
+    const { usNcCrrApprover } = useFeatureVariants();
     return (
       <>
         <Row style={{ justifyContent: "center" }}>
@@ -69,7 +71,7 @@ const FormSignatures: React.FC<{ form: UsNcCreditReductionReviewForm }> =
             <Row>
               <LabeledInput>
                 PPO Name:
-                <UsNcCRRInput name="ppoName" />
+                <UsNcCRRInput name="ppoName" inputUpdateDelayMs={500} />
               </LabeledInput>
               {/* button */}
             </Row>
@@ -94,7 +96,11 @@ const FormSignatures: React.FC<{ form: UsNcCreditReductionReviewForm }> =
             <Row>
               <LabeledInput>
                 CPPO Name:
-                <UsNcCRRInput name="cppoName" />
+                <UsNcCRRInput
+                  name="cppoName"
+                  readOnly={!usNcCrrApprover}
+                  inputUpdateDelayMs={500}
+                />
               </LabeledInput>
               {/* button */}
             </Row>
@@ -104,7 +110,9 @@ const FormSignatures: React.FC<{ form: UsNcCreditReductionReviewForm }> =
                 <SignatureField
                   form={form}
                   signatureType="cppo"
-                  enableSignatureButton={!!form.draftData["cppoName"]}
+                  enableSignatureButton={
+                    !!form.draftData["cppoName"] && !!usNcCrrApprover
+                  }
                 />
               </LabeledInput>
             </Row>

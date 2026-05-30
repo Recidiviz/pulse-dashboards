@@ -129,6 +129,7 @@ export type FeatureVariant =
 
   //// North Carolina
   | "usNcCrrApprovalFlow"
+  | "usNcCrrApprover"
 
   //// Pennsylvania
   | "usPaSpecialCircumstances"
@@ -252,6 +253,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMiRestrictiveHousingV2: {},
   usMiRestrictiveHousingV2Ineligible: {},
   usNcCrrApprovalFlow: {},
+  usNcCrrApprover: {},
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},

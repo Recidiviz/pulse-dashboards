@@ -151,7 +151,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       (opportunity.isSubmitted ||
         opportunity.isInSupervisorReview ||
         opportunity.showRevertLinkFallback ||
-        opportunity.isSnoozed);
+        opportunity.isSnoozed ||
+        opportunity.isGrantApproved);
 
     // If the opportunity is determined to be ineligible by our system (not marked ineligible/denied),
     // and we don't specify otherwise via showIneligibleFormButtons, hide the buttons

@@ -516,6 +516,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.grantReviewStatusMessage ?? "Under Review";
   }
 
+  get reviewerFeatureVariant(): FeatureVariant | undefined {
+    return undefined;
+  }
+
   get customSubmittedText(): string | undefined {
     return undefined;
   }

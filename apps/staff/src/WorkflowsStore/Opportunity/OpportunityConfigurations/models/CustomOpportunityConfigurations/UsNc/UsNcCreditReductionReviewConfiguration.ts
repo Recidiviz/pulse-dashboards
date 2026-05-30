@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FeatureVariant } from "../../../../../../RootStore/types";
 import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
@@ -45,5 +46,9 @@ export class UsNcCreditReductionReviewConfiguration extends ApiOpportunityConfig
 
   get grantReviewDropdownLabel(): string {
     return "Submit for Chief Review";
+  }
+
+  get reviewerFeatureVariant(): FeatureVariant {
+    return "usNcCrrApprover";
   }
 }

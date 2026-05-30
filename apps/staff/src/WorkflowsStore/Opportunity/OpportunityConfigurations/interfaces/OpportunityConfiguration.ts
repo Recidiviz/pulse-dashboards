@@ -144,6 +144,8 @@ export interface OpportunityConfiguration {
   snoozeReviewStatusMessage: string;
   grantReviewStatusMessage: string;
   grantReviewDropdownLabel: string;
+  reviewerFeatureVariant?: FeatureVariant;
+
   excludeIndefiniteSnoozesFromTableView: boolean;
   customSubmittedText?: string;
 

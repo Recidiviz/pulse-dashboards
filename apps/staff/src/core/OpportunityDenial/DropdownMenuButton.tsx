@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 
 import { Dropdown, DropdownMenu } from "~design-system";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 import {
@@ -296,6 +297,7 @@ const MenuItems = observer(function MenuItems({
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
 }) {
+  const featureVariants = useFeatureVariants();
   const shouldShowSubmittedItems =
     !opportunity.config.supportsSupervisorReviewOnGrants ||
     opportunity.isGrantApproved ||
@@ -308,13 +310,29 @@ const MenuItems = observer(function MenuItems({
 
   if (opportunity.isInSnoozeReview)
     return <SupervisorSnoozeReviewItems opportunity={opportunity} />;
-  if (opportunity.isInGrantReview)
+
+  // Some states want only certain users to be able to approve grant requests.
+  // If a reviewerFV is set on the opp config, we check that the user is
+  // eligible to review the request before rendering the relevant items.
+  if (opportunity.isInGrantReview) {
+    const reviewerFV = opportunity.config.reviewerFeatureVariant;
+    const userCanApproveGrants = !reviewerFV || !!featureVariants[reviewerFV];
+    if (!userCanApproveGrants)
+      return (
+        opportunity.config.supportsDenial && (
+          <DenialItem
+            opportunity={opportunity}
+            onDenialButtonClick={onDenialButtonClick}
+          />
+        )
+      );
     return (
       <SupervisorGrantReviewItems
         opportunity={opportunity}
         onDenialButtonClick={onDenialButtonClick}
       />
     );
+  }
 
   return (
     <>

@@ -22,6 +22,7 @@ import styled from "styled-components";
 
 import { Button, spacing } from "~design-system";
 
+import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../../utils";
 import { UsNcCreditReductionReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsNcCreditReductionReviewForm";
 import { UsNcCRRInput } from "./FormComponents";
@@ -50,6 +51,8 @@ const SignatureField = observer(function SignatureField({
   signatureType: "ppo" | "cppo";
   enableSignatureButton: boolean;
 }) {
+  const { usNcCrrApprover } = useFeatureVariants();
+
   const nameField = `${signatureType}Name`;
   const dateField = `${signatureType}SignDate`;
   const signatureField: "ppoSignature" | "cppoSignature" =
@@ -86,7 +89,10 @@ const SignatureField = observer(function SignatureField({
         readOnly
       />
       <SignatureButton
-        disabled={!enableSignatureButton && !isSigned}
+        disabled={
+          (!enableSignatureButton && !isSigned) ||
+          (!usNcCrrApprover && signatureType === "cppo")
+        }
         onClick={onClickButton}
       >
         {buttonText}
