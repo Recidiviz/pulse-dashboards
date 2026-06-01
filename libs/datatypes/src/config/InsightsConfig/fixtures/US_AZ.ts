@@ -43,7 +43,7 @@ export const US_AZ: InsightsConfig = {
     },
   },
   atOrAboveRateLabel: " At or above statewide rate",
-  atOrBelowRateLabel: "--",
+  atOrBelowRateLabel: " At or below statewide rate",
   caseloadCategories: [],
   clientEvents: [],
   exclusionReasonDescription: "--",
@@ -89,13 +89,13 @@ export const US_AZ: InsightsConfig = {
       topXPct: null,
     },
   ],
-  noneAreOutliersLabel: "--",
+  noneAreOutliersLabel: "are outliers",
   officerHasNoEligibleClientsLabel:
     "Nice! No outstanding Administrative Supervision cases for now.",
   officerHasNoOutlierMetricsLabel:
     "Nice! No metrics far from the statewide rate this month",
   outliersHover: "--",
-  slightlyWorseThanRateLabel: "--",
+  slightlyWorseThanRateLabel: " Slightly worse than statewide rate",
   supervisionDistrictLabel: "regional office",
   supervisionDistrictManagerLabel: "group supervisor",
   supervisionJiiLabel: "client",
@@ -108,5 +108,5 @@ export const US_AZ: InsightsConfig = {
     " Nice! No staff have metrics far from the statewide rate this month",
   vitalsMetrics: [],
   vitalsMetricsMethodologyUrl: "--",
-  worseThanRateLabel: "--",
+  worseThanRateLabel: " Far above the statewide rate",
 };

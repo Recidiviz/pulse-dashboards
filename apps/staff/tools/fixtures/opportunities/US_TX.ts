@@ -165,7 +165,19 @@ export const mockApiOpportunityConfigurationResponse = {
       dynamicEligibilityText:
         "client[|s] may be eligible for Annual Report Status",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [],
+      eligibleCriteriaCopy: [
+        {
+          key: "supervisionLevelIsMinimumFor3Years",
+          text: "Has successfully completed three years on Low supervision",
+          tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
+        },
+        {
+          key: "usTxNoWarrantWithSustainedViolationWithin2Years",
+          text: "Has had no warrants issued within the preceding two years of supervision",
+          tooltip:
+            "This does not apply to a warrant issued in which a subsequent investigation or administrative review did not sustain the violation.",
+        },
+      ],
       emptyTabCopy: [],
       firestoreCollection: "US_TX-annualReportStatusV2Referrals",
       hideDenialRevert: false,
@@ -201,7 +213,15 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
-      notifications: [],
+      notifications: [
+        {
+          body: "ARS/ERS Policy changes went into effect on July 21, 2025. Learn what this means for you: [FAQ](https://docs.google.com/document/d/e/2PACX-1vSZ6cUATsrYOH4x72IbC3EnULM651f2taDj-rXDqVMdMrCQC_OIscuqWV0rslrlZfZeLHDQrO2af7QY/pub)",
+          cta: "Acknowledge & Close",
+          id: "25976381-adad-4b37-9313-c6168d509092",
+          pages: ["caseload"],
+          type: "info",
+        },
+      ],
       omsCriteriaHeader: " Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
@@ -213,7 +233,8 @@ export const mockApiOpportunityConfigurationResponse = {
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
-      subheading: "",
+      subheading:
+        "Supervision clients may be eligible for Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: false,
@@ -399,7 +420,27 @@ export const mockApiOpportunityConfigurationResponse = {
       dynamicEligibilityText:
         "client[|s] may be eligible for Early Release from Supervision",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [],
+      eligibleCriteriaCopy: [
+        {
+          key: "usTxServedAtLeastHalfOfRemainingSupervisionSentence",
+          text: "Has been under supervision for at least one half of the time that remained on their sentence when released to parole or mandatory supervision",
+        },
+        {
+          key: "supervisionLevelIsMinimumOrLimitedFor3Years",
+          text: "Has satisfactorily completed three years on Low supervision",
+          tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
+        },
+        {
+          key: "usTxNoWarrantWithSustainedViolationWithin2Years",
+          text: "Has had no warrant issued during the previous two years of the current parole supervision period",
+          tooltip:
+            "This does not apply to a warrant issued where subsequently an investigation or administrative review did not sustain a violation",
+        },
+        {
+          key: "noSupervisionSustainedViolationWithin2Years",
+          text: "Has not committed any violation of rules or conditions of release, as indicated on the release certificate, during the preceding two year period",
+        },
+      ],
       emptyTabCopy: [],
       firestoreCollection: "US_TX-earlyReleaseFromSupervisionV2Referrals",
       hideDenialRevert: false,
@@ -443,7 +484,15 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
-      notifications: [],
+      notifications: [
+        {
+          body: "ARS/ERS Policy changes went into effect on July 21, 2025. Learn what this means for you: [FAQ](https://docs.google.com/document/d/e/2PACX-1vSZ6cUATsrYOH4x72IbC3EnULM651f2taDj-rXDqVMdMrCQC_OIscuqWV0rslrlZfZeLHDQrO2af7QY/pub)",
+          cta: "Acknowledge & Close",
+          id: "3388f7ca-b292-4d92-aa87-54a16b9c2948",
+          pages: ["caseload"],
+          type: "info",
+        },
+      ],
       omsCriteriaHeader: "Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
@@ -455,7 +504,8 @@ export const mockApiOpportunityConfigurationResponse = {
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
-      subheading: null,
+      subheading:
+        "Supervision clients may be eligible for Early Release from Supervision if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: false,
