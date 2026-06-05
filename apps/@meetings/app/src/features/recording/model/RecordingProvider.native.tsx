@@ -414,7 +414,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       });
       console.error("Failed to end meeting:", err);
       Alert.alert("Error", "Failed to end meeting. Please try again.");
-      setStatus("idle");
+      setStatus("paused");
     }
   };
 
@@ -428,13 +428,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
 
     try {
-      await cleanupRecording();
-      onComplete?.();
       await discardMeeting({
         meetingId,
         personId: person.personId,
         personType: getPersonType(person),
       });
+      await cleanupRecording();
+      onComplete?.();
       Sentry.logger.info("meeting.discard", { meetingId });
       Sentry.setTag("meetingId", null);
     } catch (err) {
@@ -444,6 +444,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         error: errorMessage,
       });
       Alert.alert("Failed to discard meeting", errorMessage);
+      setStatus("paused");
       throw err;
     }
   };

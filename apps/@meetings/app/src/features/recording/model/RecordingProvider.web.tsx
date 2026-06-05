@@ -112,6 +112,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       window.alert("Recording error occurred");
       const duration = timer.stop();
       if (duration) setPersistedDurationMs(duration);
+      setStatus("paused");
     },
   });
 
@@ -150,6 +151,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         error: errorMessage,
       });
       console.error(errorMessage);
+      setStatus("paused");
       alert(errorMessage);
     }
   };
@@ -311,7 +313,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       });
       console.error("Failed to end meeting:", errorMessage);
       alert("Failed to end meeting. Please try again.");
-      setStatus("idle");
+      setStatus("paused");
     }
   };
 
@@ -325,13 +327,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
 
     try {
-      await cleanupRecording();
-      closeRecordingView();
       await discardMeeting({
         meetingId,
         personId: person.personId,
         personType: getPersonType(person),
       });
+      await cleanupRecording();
+      closeRecordingView();
       Sentry.logger.info("meeting.discard", { meetingId });
       Sentry.setTag("meetingId", null);
     } catch (err) {
@@ -342,6 +344,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       });
       console.error("Failed to end meeting:", errorMessage);
       alert("Failed to discard meeting. Please try again.");
+      setStatus("paused");
       throw err;
     }
   };

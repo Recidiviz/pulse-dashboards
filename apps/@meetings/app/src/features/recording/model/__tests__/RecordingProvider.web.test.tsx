@@ -575,7 +575,7 @@ describe("RecordingProvider (web)", () => {
       );
     });
 
-    it("shows alert and resets to idle when endMeeting fails", async () => {
+    it("shows alert and resets to paused when endMeeting fails", async () => {
       mockEndMeeting.mockRejectedValueOnce(new Error("Server error"));
       const consoleSpy = jest
         .spyOn(console, "error")
@@ -590,7 +590,7 @@ describe("RecordingProvider (web)", () => {
       });
 
       expect(global.alert).toHaveBeenCalled();
-      expect(mockSetStatus).toHaveBeenCalledWith("idle");
+      expect(mockSetStatus).toHaveBeenCalledWith("paused");
       consoleSpy.mockRestore();
     });
   });
