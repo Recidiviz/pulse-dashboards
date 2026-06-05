@@ -133,6 +133,13 @@ const customOpportunityConfigurations: Partial<
   usTnTrusteeTransfer: UsTn2026ClassificationConfiguration,
   usTnSeriousMisconductUpgrade: UsTn2026ClassificationConfiguration,
   usTnBiannualOther: UsTn2026ClassificationConfiguration,
+  usTnAnnualReclassification2026PolicyV2: UsTn2026ClassificationConfiguration,
+  usTnCustodyLevelDowngrade2026PolicyV2: UsTn2026ClassificationConfiguration,
+  usTnSpecialCustodyLevelUpgrade2026PolicyV2:
+    UsTn2026ClassificationConfiguration,
+  usTnTrusteeTransferV2: UsTn2026ClassificationConfiguration,
+  usTnSeriousMisconductUpgradeV2: UsTn2026ClassificationConfiguration,
+  usTnBiannualOtherV2: UsTn2026ClassificationConfiguration,
 
   // Texas
   usTxAnnualReportStatus: UsTxAnnualReportStatusConfiguration,

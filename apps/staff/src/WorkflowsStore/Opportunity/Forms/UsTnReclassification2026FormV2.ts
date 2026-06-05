@@ -25,9 +25,9 @@ import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyRe
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import {
   UsTnAnnualReclassification2026V2Opportunity,
-  UsTnBiAnnualOtherReclassificationOpportunity,
-  UsTnSeriousMisconductUpgradeOpportunity,
-  UsTnTrusteeTransferOpportunity,
+  UsTnBiAnnualOtherReclassificationV2Opportunity,
+  UsTnSeriousMisconductUpgradeV2Opportunity,
+  UsTnTrusteeTransferV2Opportunity,
 } from "../UsTn";
 import { FormBase } from "./FormBase";
 
@@ -46,9 +46,9 @@ const QUESTION_TEMPLATE_MAP = {
 export class UsTnReclassification2026FormV2 extends FormBase<
   UsTnReclassification2026DraftData,
   | UsTnAnnualReclassification2026V2Opportunity
-  | UsTnBiAnnualOtherReclassificationOpportunity
-  | UsTnTrusteeTransferOpportunity
-  | UsTnSeriousMisconductUpgradeOpportunity
+  | UsTnBiAnnualOtherReclassificationV2Opportunity
+  | UsTnTrusteeTransferV2Opportunity
+  | UsTnSeriousMisconductUpgradeV2Opportunity
 > {
   navigateToFormText = "Auto-fill paperwork";
 

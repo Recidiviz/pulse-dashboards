@@ -21,11 +21,22 @@ import { usTnUntrackedEligibilityConfigBase } from "../utils";
 export const usTnBiannualOtherReclassificationConfiguration: IApiOpportunityConfiguration =
   {
     ...usTnUntrackedEligibilityConfigBase,
-    displayName: "Bi-Annual/Other",
+    displayName: "[2026 Pilot] Bi-Annual/Other",
     firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
     dynamicEligibilityText:
       "[person|people] have paperwork in progress for a bi-annual or other reclassification",
     urlSection: "biannual",
     // Place at the bottom
     homepagePosition: 21,
+  };
+
+export const usTnBiannualOtherReclassificationV2Configuration: IApiOpportunityConfiguration =
+  {
+    ...usTnBiannualOtherReclassificationConfiguration,
+    featureVariant: "usTnRcafV2",
+    displayName: "[2026 Pilot V2] Bi-Annual/Other",
+    firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyV2Referrals",
+    urlSection: "biannualV2",
+    // Place at the bottom
+    homepagePosition: 24,
   };

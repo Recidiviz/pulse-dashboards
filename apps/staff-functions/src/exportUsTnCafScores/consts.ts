@@ -59,6 +59,10 @@ export const OPP_TYPE_TO_COLLECTION = {
     "US_TN-annualReclassification2026PolicyV2Referrals",
   usTnCustodyLevelDowngrade2026PolicyV2:
     "US_TN-custodyLevelDowngrade2026PolicyV2Referrals",
+  usTnTrusteeTransferV2: "US_TN-custodyLevelDowngrade2026PolicyV2Referrals",
+  usTnSeriousMisconductUpgradeV2:
+    "US_TN-custodyLevelDowngrade2026PolicyV2Referrals",
+  usTnBiannualOtherV2: "US_TN-custodyLevelDowngrade2026PolicyV2Referrals",
 } as const;
 
 // We can combine the RCAF and DCAF fields into one list since we are

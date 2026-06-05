@@ -48,6 +48,9 @@ export const US_TN_CLASSIFICATION_OPPORTUNITIES = [
   "usTnTrusteeTransfer",
   "usTnBiannualOther",
   "usTnSeriousMisconductUpgrade",
+  "usTnTrusteeTransferV2",
+  "usTnBiannualOtherV2",
+  "usTnSeriousMisconductUpgradeV2",
 ] satisfies OpportunityType[];
 
 export function usTnPrioritizedOpportunity(

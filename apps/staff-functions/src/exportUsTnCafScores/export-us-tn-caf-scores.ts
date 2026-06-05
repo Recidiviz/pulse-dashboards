@@ -216,12 +216,15 @@ function processRecord(
       out.ClassificationFormType = "Upgrade";
       break;
     case "usTnSeriousMisconductUpgrade":
+    case "usTnSeriousMisconductUpgradeV2":
       out.ClassificationFormType = "SeriousMisconduct";
       break;
     case "usTnBiannualOther":
+    case "usTnBiannualOtherV2":
       out.ClassificationFormType = "BiannualOther";
       break;
     case "usTnTrusteeTransfer":
+    case "usTnTrusteeTransferV2":
       out.ClassificationFormType = "Transfer";
   }
 

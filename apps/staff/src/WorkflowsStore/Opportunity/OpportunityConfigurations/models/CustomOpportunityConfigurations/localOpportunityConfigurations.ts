@@ -20,9 +20,18 @@ import { OpportunityType } from "~datatypes";
 import { TenantId } from "../../../../../RootStore/types";
 import { PartialRecord } from "../../../../../utils/typeUtils";
 import { IApiOpportunityConfiguration } from "../../interfaces";
-import { usTnBiannualOtherReclassificationConfiguration } from "./UsTn/raw/UsTnBiannualOtherReclassificationConfiguration";
-import { usTnSeriousMisconductUpgradeConfiguration } from "./UsTn/raw/UsTnSeriousMisconductUpgradeConfiguration";
-import { usTnTrusteeTransferConfiguration } from "./UsTn/raw/UsTnTrusteeTransferConfiguration";
+import {
+  usTnBiannualOtherReclassificationConfiguration,
+  usTnBiannualOtherReclassificationV2Configuration,
+} from "./UsTn/raw/UsTnBiannualOtherReclassificationConfiguration";
+import {
+  usTnSeriousMisconductUpgradeConfiguration,
+  usTnSeriousMisconductUpgradeV2Configuration,
+} from "./UsTn/raw/UsTnSeriousMisconductUpgradeConfiguration";
+import {
+  usTnTrusteeTransferConfiguration,
+  usTnTrusteeTransferV2Configuration,
+} from "./UsTn/raw/UsTnTrusteeTransferConfiguration";
 
 type LocalConfigMapping = PartialRecord<
   OpportunityType,
@@ -37,6 +46,9 @@ export const localOpportunityConfigParams: PartialRecord<
     usTnTrusteeTransfer: usTnTrusteeTransferConfiguration,
     usTnBiannualOther: usTnBiannualOtherReclassificationConfiguration,
     usTnSeriousMisconductUpgrade: usTnSeriousMisconductUpgradeConfiguration,
+    usTnTrusteeTransferV2: usTnTrusteeTransferV2Configuration,
+    usTnBiannualOtherV2: usTnBiannualOtherReclassificationV2Configuration,
+    usTnSeriousMisconductUpgradeV2: usTnSeriousMisconductUpgradeV2Configuration,
   },
 };
 

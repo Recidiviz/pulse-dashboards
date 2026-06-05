@@ -42,6 +42,16 @@ export const CLASSIFICATION_TYPE_BY_OPPORTUNITY: PartialRecord<
     "Special Reclassification: Transfer to Trustee or Transition Center",
   usTnCustodyLevelDowngrade2026Policy: "Special Reclassification: Downgrade",
   usTnBiannualOther: "Bi-annual/Other",
+
+  usTnAnnualReclassification2026PolicyV2: "Annual Reclassification",
+  usTnSpecialCustodyLevelUpgrade2026PolicyV2:
+    "Special Reclassification: Upgrade Due to Updated CAF Scoring",
+  usTnSeriousMisconductUpgradeV2:
+    "Special Reclassification: Upgrade for Serious Misconduct",
+  usTnTrusteeTransferV2:
+    "Special Reclassification: Transfer to Trustee or Transition Center",
+  usTnCustodyLevelDowngrade2026PolicyV2: "Special Reclassification: Downgrade",
+  usTnBiannualOtherV2: "Bi-annual/Other",
 };
 
 export const CLASSIFICATION_TYPE_SHORTHAND_BY_OPPORTUNITY: PartialRecord<
@@ -55,6 +65,13 @@ export const CLASSIFICATION_TYPE_SHORTHAND_BY_OPPORTUNITY: PartialRecord<
   usTnTrusteeTransfer: "TRUSTEE",
   usTnCustodyLevelDowngrade2026Policy: "SPECIAL DEC",
   usTnBiannualOther: "BI-ANNUAL",
+
+  usTnAnnualReclassification2026PolicyV2: "RCAF",
+  usTnSpecialCustodyLevelUpgrade2026PolicyV2: "SPECIAL INC",
+  usTnSeriousMisconductUpgradeV2: "MISCONDUCT INC",
+  usTnTrusteeTransferV2: "TRUSTEE",
+  usTnCustodyLevelDowngrade2026PolicyV2: "SPECIAL DEC",
+  usTnBiannualOtherV2: "BI-ANNUAL",
 };
 
 export function prefilledCoverSheetData(

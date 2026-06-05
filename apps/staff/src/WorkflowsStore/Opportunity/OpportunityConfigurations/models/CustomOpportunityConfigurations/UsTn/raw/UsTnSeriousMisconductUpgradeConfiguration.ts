@@ -21,11 +21,24 @@ import { usTnUntrackedEligibilityConfigBase } from "../utils";
 export const usTnSeriousMisconductUpgradeConfiguration: IApiOpportunityConfiguration =
   {
     ...usTnUntrackedEligibilityConfigBase,
-    displayName: "Special Reclassification: Upgrade for Serious Misconduct",
+    displayName:
+      "[2026 Pilot] Special Reclassification: Upgrade for Serious Misconduct",
     firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
     dynamicEligibilityText:
       "[person|people] have paperwork in progress for an upgrade due to serious misconduct",
     urlSection: "specialUpgradeMisconduct",
     // Place at the bottom
     homepagePosition: 22,
+  };
+
+export const usTnSeriousMisconductUpgradeV2Configuration: IApiOpportunityConfiguration =
+  {
+    ...usTnSeriousMisconductUpgradeConfiguration,
+    featureVariant: "usTnRcafV2",
+    displayName:
+      "[2026 Pilot V2] Special Reclassification: Upgrade for Serious Misconduct",
+    firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyV2Referrals",
+    urlSection: "specialUpgradeMisconductV2",
+    // Place at the bottom
+    homepagePosition: 25,
   };

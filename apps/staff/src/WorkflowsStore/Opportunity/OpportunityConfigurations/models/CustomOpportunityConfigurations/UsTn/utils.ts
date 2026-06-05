@@ -49,7 +49,7 @@ export const usTnUntrackedEligibilityConfigBase = {
   systemType: "INCARCERATION",
   priority: "NORMAL",
   isAlert: false,
-  featureVariant: "usTn2026ClassificationPolicyPilot",
+  featureVariant: "usTnRcafV1",
   notifications: [],
   denialReasons: {},
   eligibleCriteriaCopy: {},

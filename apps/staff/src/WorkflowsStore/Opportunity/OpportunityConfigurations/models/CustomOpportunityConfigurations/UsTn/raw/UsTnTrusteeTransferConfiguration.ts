@@ -21,7 +21,7 @@ import { usTnUntrackedEligibilityConfigBase } from "../utils";
 export const usTnTrusteeTransferConfiguration: IApiOpportunityConfiguration = {
   ...usTnUntrackedEligibilityConfigBase,
   displayName:
-    "Special Reclassification: Transfer to Trustee or Transition Center",
+    "[2026 Pilot] Special Reclassification: Transfer to Trustee or Transition Center",
   firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
   dynamicEligibilityText:
     "[person|people] may be eligible to Transfer to Trustee or a Transition Center",
@@ -29,3 +29,15 @@ export const usTnTrusteeTransferConfiguration: IApiOpportunityConfiguration = {
   // Place at the bottom
   homepagePosition: 20,
 };
+
+export const usTnTrusteeTransferV2Configuration: IApiOpportunityConfiguration =
+  {
+    ...usTnTrusteeTransferConfiguration,
+    featureVariant: "usTnRcafV2",
+    displayName:
+      "[2026 Pilot V2] Special Reclassification: Transfer to Trustee or Transition Center",
+    firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+    urlSection: "trusteeTransferV2",
+    // Place at the bottom
+    homepagePosition: 23,
+  };
