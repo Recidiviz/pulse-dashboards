@@ -86,7 +86,22 @@ test("admission date", () => {
 });
 
 test("release date", () => {
+  createTestUnit();
   expect(testResident.releaseDate).toEqual(new Date(2029, 5, 1));
+});
+
+test("release date falls back to sedDate for US_AZ when releaseDate is undefined", () => {
+  record = {
+    ...record,
+    stateCode: "US_AZ",
+    releaseDate: undefined,
+    metadata: {
+      stateCode: "US_AZ",
+      sedDate: "2028-03-15",
+    },
+  };
+  createTestUnit();
+  expect(testResident.releaseDate).toEqual(new Date("2028-03-15"));
 });
 
 test("SCCP eligibility date", () => {

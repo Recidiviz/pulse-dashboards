@@ -24,7 +24,7 @@ import { workflowsUrl } from "../core/views";
 import { PortionServedDates } from "../FirestoreStore";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { PersonType } from "./types";
-import { fractionalDateBetweenTwoDates } from "./utils";
+import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
 
@@ -83,7 +83,14 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
   }
 
   get releaseDate(): Date | undefined {
-    return this.record.releaseDate;
+    const { releaseDate, metadata } = this.record;
+
+    // US_AZ stores the release date (SED) only in metadata.sedDate
+    if (metadata.stateCode === "US_AZ") {
+      return optionalFieldToDate(metadata.sedDate);
+    }
+
+    return releaseDate;
   }
 
   get onLifeSentence(): boolean | undefined {
