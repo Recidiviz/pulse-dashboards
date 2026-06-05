@@ -20,7 +20,7 @@ import os from "node:os";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 
-import { captureException } from "@sentry/node";
+import { captureException, withScope } from "@sentry/node";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import {
@@ -287,442 +287,68 @@ export function registerTaskRoutes(app: FastifyInstance) {
     handler: async (req, reply) => {
       const { stateCode, meetingId } = req.body;
 
-      const prisma = getPrismaClientForStateCode(stateCode);
+      return withScope(async (scope) => {
+        scope.setTag("meetingId", meetingId);
 
-      // Try and find the meeting and fail fast if it doesn't exist
-      await prisma.meeting.findUniqueOrThrow({
-        where: {
-          id: meetingId,
-        },
-      });
+        const prisma = getPrismaClientForStateCode(stateCode);
 
-      try {
-        const meeting = await prisma.meeting.update({
+        // Try and find the meeting and fail fast if it doesn't exist
+        await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
           },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.STITCHING_IN_PROGRESS,
-          },
         });
 
-        const stitchResult = await stitchAudio(
-          meeting.recordingsGCSBucket,
-          meeting.recordingsFolderPath,
-        );
-
-        // If there is no audio to stitch, mark the meeting as completed and exit early without queuing transcription
-        if (!stitchResult) {
-          await prisma.meeting.update({
+        try {
+          const meeting = await prisma.meeting.update({
             where: {
               id: meetingId,
             },
             data: {
               postMeetingProcessingStatus:
-                PostMeetingProcessingStatus.COMPLETED,
+                PostMeetingProcessingStatus.STITCHING_IN_PROGRESS,
             },
           });
 
-          return reply
-            .code(200)
-            .send(
-              "No audio files found to stitch; marking meeting as completed.",
-            );
-        }
-
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            finalRecordingGCSPath: stitchResult.outputFileName,
-            durationMs: stitchResult.durationMs,
-            ...(!meeting.endTime && {
-              endTime: new Date(
-                meeting.startTime.getTime() + stitchResult.durationMs,
-              ),
-            }),
-          },
-        });
-      } catch (e) {
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.STITCHING_ERROR,
-          },
-        });
-
-        postMeetingErrorNotification({
-          meetingId,
-          stateCode,
-          errorStep: "stitching",
-        }).catch((err) => {
-          captureException(err);
-          console.error("Failed to post Slack error notification", err);
-        });
-
-        // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
-        throw e;
-      }
-
-      try {
-        await queueTranscriptionTask(stateCode, meetingId, prisma);
-      } catch (e) {
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
-          },
-        });
-
-        // Capture the exception but don't fail the task, since stitching succeeded
-        captureException(e);
-        return reply
-          .code(200)
-          .send(
-            "Audio stitching completed successfully; queuing transcription failed.",
+          const stitchResult = await stitchAudio(
+            meeting.recordingsGCSBucket,
+            meeting.recordingsFolderPath,
           );
-      }
 
-      reply.code(200).send("Audio stitching completed successfully");
-    },
-  });
-
-  app.withTypeProvider<ZodTypeProvider>().route({
-    method: "POST",
-    url: "/transcribe-audio",
-    schema: {
-      body: z.object({
-        stateCode: z.nativeEnum(StateCode),
-        meetingId: z.string(),
-      }),
-    },
-    preHandler: [authenticateInternalRequestPreHandlerFn],
-    handler: async (req, reply) => {
-      const { stateCode, meetingId } = req.body;
-
-      const prisma = getPrismaClientForStateCode(stateCode);
-
-      // Try and find the meeting and fail fast if it doesn't exist
-      await prisma.meeting.findUniqueOrThrow({
-        where: {
-          id: meetingId,
-        },
-      });
-
-      try {
-        const meeting = await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.TRANSCRIPTION_IN_PROGRESS,
-          },
-          include: { client: true, resident: true },
-        });
-
-        if (!meeting.finalRecordingGCSPath) {
-          throw new Error("Final recording GCS path is not set for meeting");
-        }
-
-        const agencyKeywords = AGENCY_CONFIGS[stateCode]?.keywords ?? [];
-
-        const person = meeting.client ?? meeting.resident;
-        const personNameTokens = person ? getPersonNameTokens(person) : [];
-
-        // TODO - AVild: Logged in staff member's name included in list of tokens
-
-        const keywords = [...agencyKeywords, ...personNameTokens];
-
-        const transcriptions = await handleTranscriptions({
-          meetingId,
-          recordingsGCSBucket: meeting.recordingsGCSBucket,
-          finalRecordingGCSPath: meeting.finalRecordingGCSPath,
-          keywords,
-        });
-
-        // Upsert each transcription to handle retries in the case we got here
-        // via the reprocess-meeting script.
-        // Utterances must be handled explicitly here (rather than nested in the
-        // meeting update) because prisma.transcription.upsert operates on the
-        // Transcription model directly, so relation fields like `utterances`
-        // must be passed as explicit relation operations.
-        await Promise.all(
-          transcriptions.map(({ utterances, ...transcription }) =>
-            prisma.transcription.upsert({
+          // If there is no audio to stitch, mark the meeting as completed and exit early without queuing transcription
+          if (!stitchResult) {
+            await prisma.meeting.update({
               where: {
-                provider_meetingId: {
-                  provider: transcription.provider,
-                  meetingId,
-                },
+                id: meetingId,
               },
-              create: {
-                ...transcription,
-                meetingId,
-                utterances,
+              data: {
+                postMeetingProcessingStatus:
+                  PostMeetingProcessingStatus.COMPLETED,
               },
-              update: {
-                ...transcription,
-                utterances: {
-                  deleteMany: {}, // delete all utterances for this transcription (scoped by foreign key)
-                  createMany: utterances.createMany,
-                },
-              },
-            }),
-          ),
-        );
+            });
 
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.NOTETAKING_QUEUED,
-          },
-        });
+            return reply
+              .code(200)
+              .send(
+                "No audio files found to stitch; marking meeting as completed.",
+              );
+          }
 
-        // Queue LLM processing task
-        try {
-          await queueNotetakingTask(stateCode, meetingId, prisma);
-        } catch (e) {
-          // Capture the exception but don't fail the task, since transcription succeeded
-          captureException(e);
-          return reply
-            .code(200)
-            .send(
-              "Transcription completed successfully; queuing LLM processing failed.",
-            );
-        }
-
-        // Clean up local files after successful transcription
-        await cleanupLocalFiles(meetingId);
-      } catch (e) {
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
-          },
-        });
-
-        postMeetingErrorNotification({
-          meetingId,
-          stateCode,
-          errorStep: "transcription",
-        }).catch((err) => {
-          captureException(err);
-          console.error("Failed to post Slack error notification", err);
-        });
-
-        // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
-        throw e;
-      }
-
-      reply.code(200).send("Transcription completed successfully");
-    },
-  });
-
-  app.withTypeProvider<ZodTypeProvider>().route({
-    method: "POST",
-    url: "/process-notetaking",
-    schema: {
-      body: z.object({
-        stateCode: z.nativeEnum(StateCode),
-        meetingId: z.string(),
-      }),
-    },
-    preHandler: [authenticateInternalRequestPreHandlerFn],
-    handler: async (req, reply) => {
-      const { stateCode, meetingId } = req.body;
-
-      const prisma = getPrismaClientForStateCode(stateCode);
-
-      // Try and find the meeting and fail fast if it doesn't exist
-      await prisma.meeting.findUniqueOrThrow({
-        where: {
-          id: meetingId,
-        },
-      });
-
-      let completedMeeting;
-      try {
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.NOTETAKING_IN_PROGRESS,
-          },
-        });
-
-        // Run the LLM processing pipeline
-        const result = await handleNotetakingProcessing({ meetingId, prisma });
-
-        // Transform action items and critical updates to simple string arrays
-        const actionItems = formatActionItems(result.output.actionItems);
-        const criticalUpdates = formatCriticalUpdates(
-          result.output.statusUpdates,
-        );
-        const structuredActionItems = result.output.actionItems.map((item) => ({
-          task: item.task,
-          context: item.context ?? null,
-          evidenceQuotes: item.evidenceQuotes ?? null,
-        }));
-
-        // Always persist staff feedback (it's bundled into the writer agent's
-        // single LLM call). The API layer decides whether to surface it based
-        // on the agency's staffFeedbackEnabled flag — storing it
-        // unconditionally lets us backfill existing meetings if a state is
-        // enabled later.
-        completedMeeting = await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            caseNote: result.output.caseNote,
-            actionItems: actionItems,
-            structuredActionItems,
-            criticalUpdates: criticalUpdates,
-            meetingSummary: result.output.meetingMinutes,
-            staffFeedback: result.output.staffFeedback,
-            staffFeedbackGeneratedAt: new Date(),
-            // Tags this feedback content to the pipeline run that produced it,
-            // so prior FeedbackVote rows are invalidated on reprocess (when
-            // the pipeline run id advances).
-            staffFeedbackPipelineRunId: result.output.pipelineRunId,
-            postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
-          },
-          select: {
-            staffEmail: true,
-            client: { select: { pseudonymizedId: true } },
-            resident: { select: { pseudonymizedId: true } },
-          },
-        });
-      } catch (e) {
-        // Set error status at the current stage
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.NOTETAKING_ERROR,
-          },
-        });
-
-        postMeetingErrorNotification({
-          meetingId,
-          stateCode,
-          errorStep: "notetaking",
-        }).catch((err) => {
-          captureException(err);
-          console.error("Failed to post Slack error notification", err);
-        });
-
-        // Rethrow the error so the task fails and can be retried
-        throw e;
-      }
-
-      // Post-completion side effects — these run after the meeting is already
-      // marked COMPLETED, so failures here must not revert the status.
-      const personPseudoId =
-        completedMeeting.client?.pseudonymizedId ??
-        completedMeeting.resident?.pseudonymizedId ??
-        meetingId;
-
-      postMeetingCompletedNotification({
-        staffEmail: completedMeeting.staffEmail,
-        stateCode,
-        personPseudoId,
-        meetingId,
-      }).catch((e) => {
-        captureException(e);
-        console.error("Failed to post meeting completed Slack notification", e);
-      });
-
-      // Export Label Studio task JSON to GCS. Skip US_DEMO in production only —
-      // staging US_DEMO meetings should still flow to Label Studio.
-      if (stateCode !== StateCode.US_DEMO || env.DEPLOY_ENV !== "production") {
-        try {
-          const meetingWithRelations = await prisma.meeting.findUniqueOrThrow({
-            where: { id: meetingId },
-            include: labelStudioMeetingInclude,
-          });
-
-          exportLabelStudioTask(meetingWithRelations, stateCode).catch((e) => {
-            captureException(e);
-            console.error("Failed to export Label Studio task to GCS", e);
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              finalRecordingGCSPath: stitchResult.outputFileName,
+              durationMs: stitchResult.durationMs,
+              ...(!meeting.endTime && {
+                endTime: new Date(
+                  meeting.startTime.getTime() + stitchResult.durationMs,
+                ),
+              }),
+            },
           });
         } catch (e) {
-          captureException(e);
-          console.error("Failed to fetch meeting for Label Studio export", e);
-        }
-      }
-
-      reply.code(200).send("Notetaking process completed successfully");
-    },
-  });
-
-  app.withTypeProvider<ZodTypeProvider>().route({
-    method: "POST",
-    url: "/reprocess-meeting",
-    schema: {
-      body: z.object({
-        stateCode: z.nativeEnum(StateCode),
-        meetingId: z.string(),
-        step: z.enum(["stitching", "transcription", "notetaking"]).optional(),
-        gcsPath: z.string().optional(),
-      }),
-    },
-    preHandler: [authenticateInternalRequestPreHandlerFn],
-    handler: async (req, reply) => {
-      const { stateCode, meetingId, step, gcsPath } = req.body;
-
-      const prisma = getPrismaClientForStateCode(stateCode);
-
-      // Try and find the meeting and fail fast if it doesn't exist
-      let meeting = await prisma.meeting.findUniqueOrThrow({
-        where: {
-          id: meetingId,
-        },
-      });
-
-      if (gcsPath) {
-        meeting = await prisma.meeting.update({
-          where: { id: meetingId },
-          data: { finalRecordingGCSPath: gcsPath },
-        });
-      }
-
-      const stepToProcess =
-        getStepFromUserSetStep(step) ??
-        getStepFromMeetingStatus(meeting.postMeetingProcessingStatus);
-
-      if (!stepToProcess) {
-        return reply
-          .code(200)
-          .send(
-            "Nothing to queue - meeting is being actively processed or is completed.",
-          );
-      } else if (stepToProcess === "STITCHING") {
-        try {
-          await queueStitchingTask(stateCode, meetingId, prisma);
-        } catch (e) {
-          // Don't throw the error because we want to update the status
-          captureException(e);
-
           await prisma.meeting.update({
             where: {
               id: meetingId,
@@ -733,13 +359,19 @@ export function registerTaskRoutes(app: FastifyInstance) {
             },
           });
 
-          return reply.code(200).send("Audio stitching task queueing failed.");
+          postMeetingErrorNotification({
+            meetingId,
+            stateCode,
+            errorStep: "stitching",
+          }).catch((err) => {
+            captureException(err);
+            console.error("Failed to post Slack error notification", err);
+          });
+
+          // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
+          throw e;
         }
 
-        return reply
-          .code(200)
-          .send("Audio stitching task queued successfully.");
-      } else if (stepToProcess === "TRANSCRIPTION") {
         try {
           await queueTranscriptionTask(stateCode, meetingId, prisma);
         } catch (e) {
@@ -762,22 +394,428 @@ export function registerTaskRoutes(app: FastifyInstance) {
             );
         }
 
-        return reply.code(200).send("Transcription task queued successfully.");
-      } else if (stepToProcess === "NOTETAKING") {
+        return reply.code(200).send("Audio stitching completed successfully");
+      });
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/transcribe-audio",
+    schema: {
+      body: z.object({
+        stateCode: z.nativeEnum(StateCode),
+        meetingId: z.string(),
+      }),
+    },
+    preHandler: [authenticateInternalRequestPreHandlerFn],
+    handler: async (req, reply) => {
+      const { stateCode, meetingId } = req.body;
+
+      return withScope(async (scope) => {
+        scope.setTag("meetingId", meetingId);
+
+        const prisma = getPrismaClientForStateCode(stateCode);
+
+        // Try and find the meeting and fail fast if it doesn't exist
+        await prisma.meeting.findUniqueOrThrow({
+          where: {
+            id: meetingId,
+          },
+        });
+
         try {
-          await queueNotetakingTask(stateCode, meetingId, prisma);
+          const meeting = await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.TRANSCRIPTION_IN_PROGRESS,
+            },
+            include: { client: true, resident: true },
+          });
+
+          if (!meeting.finalRecordingGCSPath) {
+            throw new Error("Final recording GCS path is not set for meeting");
+          }
+
+          const agencyKeywords = AGENCY_CONFIGS[stateCode]?.keywords ?? [];
+
+          const person = meeting.client ?? meeting.resident;
+          const personNameTokens = person ? getPersonNameTokens(person) : [];
+
+          // TODO - AVild: Logged in staff member's name included in list of tokens
+
+          const keywords = [...agencyKeywords, ...personNameTokens];
+
+          const transcriptions = await handleTranscriptions({
+            meetingId,
+            recordingsGCSBucket: meeting.recordingsGCSBucket,
+            finalRecordingGCSPath: meeting.finalRecordingGCSPath,
+            keywords,
+          });
+
+          // Upsert each transcription to handle retries in the case we got here
+          // via the reprocess-meeting script.
+          // Utterances must be handled explicitly here (rather than nested in the
+          // meeting update) because prisma.transcription.upsert operates on the
+          // Transcription model directly, so relation fields like `utterances`
+          // must be passed as explicit relation operations.
+          await Promise.all(
+            transcriptions.map(({ utterances, ...transcription }) =>
+              prisma.transcription.upsert({
+                where: {
+                  provider_meetingId: {
+                    provider: transcription.provider,
+                    meetingId,
+                  },
+                },
+                create: {
+                  ...transcription,
+                  meetingId,
+                  utterances,
+                },
+                update: {
+                  ...transcription,
+                  utterances: {
+                    deleteMany: {}, // delete all utterances for this transcription (scoped by foreign key)
+                    createMany: utterances.createMany,
+                  },
+                },
+              }),
+            ),
+          );
+
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.NOTETAKING_QUEUED,
+            },
+          });
+
+          // Queue LLM processing task
+          try {
+            await queueNotetakingTask(stateCode, meetingId, prisma);
+          } catch (e) {
+            // Capture the exception but don't fail the task, since transcription succeeded
+            captureException(e);
+            return reply
+              .code(200)
+              .send(
+                "Transcription completed successfully; queuing LLM processing failed.",
+              );
+          }
+
+          // Clean up local files after successful transcription
+          await cleanupLocalFiles(meetingId);
         } catch (e) {
-          // Capture the exception
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+            },
+          });
+
+          postMeetingErrorNotification({
+            meetingId,
+            stateCode,
+            errorStep: "transcription",
+          }).catch((err) => {
+            captureException(err);
+            console.error("Failed to post Slack error notification", err);
+          });
+
+          // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
+          throw e;
+        }
+
+        return reply.code(200).send("Transcription completed successfully");
+      });
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/process-notetaking",
+    schema: {
+      body: z.object({
+        stateCode: z.nativeEnum(StateCode),
+        meetingId: z.string(),
+      }),
+    },
+    preHandler: [authenticateInternalRequestPreHandlerFn],
+    handler: async (req, reply) => {
+      const { stateCode, meetingId } = req.body;
+
+      return withScope(async (scope) => {
+        scope.setTag("meetingId", meetingId);
+
+        const prisma = getPrismaClientForStateCode(stateCode);
+
+        // Try and find the meeting and fail fast if it doesn't exist
+        await prisma.meeting.findUniqueOrThrow({
+          where: {
+            id: meetingId,
+          },
+        });
+
+        let completedMeeting;
+        try {
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.NOTETAKING_IN_PROGRESS,
+            },
+          });
+
+          // Run the LLM processing pipeline
+          const result = await handleNotetakingProcessing({
+            meetingId,
+            prisma,
+          });
+
+          // Transform action items and critical updates to simple string arrays
+          const actionItems = formatActionItems(result.output.actionItems);
+          const criticalUpdates = formatCriticalUpdates(
+            result.output.statusUpdates,
+          );
+          const structuredActionItems = result.output.actionItems.map(
+            (item) => ({
+              task: item.task,
+              context: item.context ?? null,
+              evidenceQuotes: item.evidenceQuotes ?? null,
+            }),
+          );
+
+          // Always persist staff feedback (it's bundled into the writer agent's
+          // single LLM call). The API layer decides whether to surface it based
+          // on the agency's staffFeedbackEnabled flag — storing it
+          // unconditionally lets us backfill existing meetings if a state is
+          // enabled later.
+          completedMeeting = await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              caseNote: result.output.caseNote,
+              actionItems: actionItems,
+              structuredActionItems,
+              criticalUpdates: criticalUpdates,
+              meetingSummary: result.output.meetingMinutes,
+              staffFeedback: result.output.staffFeedback,
+              staffFeedbackGeneratedAt: new Date(),
+              // Tags this feedback content to the pipeline run that produced it,
+              // so prior FeedbackVote rows are invalidated on reprocess (when
+              // the pipeline run id advances).
+              staffFeedbackPipelineRunId: result.output.pipelineRunId,
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.COMPLETED,
+            },
+            select: {
+              staffEmail: true,
+              client: { select: { pseudonymizedId: true } },
+              resident: { select: { pseudonymizedId: true } },
+            },
+          });
+        } catch (e) {
+          // Set error status at the current stage
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.NOTETAKING_ERROR,
+            },
+          });
+
+          postMeetingErrorNotification({
+            meetingId,
+            stateCode,
+            errorStep: "notetaking",
+          }).catch((err) => {
+            captureException(err);
+            console.error("Failed to post Slack error notification", err);
+          });
+
+          // Rethrow the error so the task fails and can be retried
+          throw e;
+        }
+
+        // Post-completion side effects — these run after the meeting is already
+        // marked COMPLETED, so failures here must not revert the status.
+        const personPseudoId =
+          completedMeeting.client?.pseudonymizedId ??
+          completedMeeting.resident?.pseudonymizedId ??
+          meetingId;
+
+        postMeetingCompletedNotification({
+          staffEmail: completedMeeting.staffEmail,
+          stateCode,
+          personPseudoId,
+          meetingId,
+        }).catch((e) => {
           captureException(e);
-          return reply
-            .code(200)
-            .send("Notetaking processing task queueing failed.");
+          console.error(
+            "Failed to post meeting completed Slack notification",
+            e,
+          );
+        });
+
+        // Export Label Studio task JSON to GCS. Skip US_DEMO in production only —
+        // staging US_DEMO meetings should still flow to Label Studio.
+        if (
+          stateCode !== StateCode.US_DEMO ||
+          env.DEPLOY_ENV !== "production"
+        ) {
+          try {
+            const meetingWithRelations = await prisma.meeting.findUniqueOrThrow(
+              {
+                where: { id: meetingId },
+                include: labelStudioMeetingInclude,
+              },
+            );
+
+            exportLabelStudioTask(meetingWithRelations, stateCode).catch(
+              (e) => {
+                captureException(e);
+                console.error("Failed to export Label Studio task to GCS", e);
+              },
+            );
+          } catch (e) {
+            captureException(e);
+            console.error("Failed to fetch meeting for Label Studio export", e);
+          }
         }
 
         return reply
           .code(200)
-          .send("Notetaking processing task queued successfully.");
-      }
+          .send("Notetaking process completed successfully");
+      });
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/reprocess-meeting",
+    schema: {
+      body: z.object({
+        stateCode: z.nativeEnum(StateCode),
+        meetingId: z.string(),
+        step: z.enum(["stitching", "transcription", "notetaking"]).optional(),
+        gcsPath: z.string().optional(),
+      }),
+    },
+    preHandler: [authenticateInternalRequestPreHandlerFn],
+    handler: async (req, reply) => {
+      const { stateCode, meetingId, step, gcsPath } = req.body;
+
+      return withScope(async (scope) => {
+        scope.setTag("meetingId", meetingId);
+
+        const prisma = getPrismaClientForStateCode(stateCode);
+
+        // Try and find the meeting and fail fast if it doesn't exist
+        let meeting = await prisma.meeting.findUniqueOrThrow({
+          where: {
+            id: meetingId,
+          },
+        });
+
+        if (gcsPath) {
+          meeting = await prisma.meeting.update({
+            where: { id: meetingId },
+            data: { finalRecordingGCSPath: gcsPath },
+          });
+        }
+
+        const stepToProcess =
+          getStepFromUserSetStep(step) ??
+          getStepFromMeetingStatus(meeting.postMeetingProcessingStatus);
+
+        if (!stepToProcess) {
+          return reply
+            .code(200)
+            .send(
+              "Nothing to queue - meeting is being actively processed or is completed.",
+            );
+        } else if (stepToProcess === "STITCHING") {
+          try {
+            await queueStitchingTask(stateCode, meetingId, prisma);
+          } catch (e) {
+            // Don't throw the error because we want to update the status
+            captureException(e);
+
+            await prisma.meeting.update({
+              where: {
+                id: meetingId,
+              },
+              data: {
+                postMeetingProcessingStatus:
+                  PostMeetingProcessingStatus.STITCHING_ERROR,
+              },
+            });
+
+            return reply
+              .code(200)
+              .send("Audio stitching task queueing failed.");
+          }
+
+          return reply
+            .code(200)
+            .send("Audio stitching task queued successfully.");
+        } else if (stepToProcess === "TRANSCRIPTION") {
+          try {
+            await queueTranscriptionTask(stateCode, meetingId, prisma);
+          } catch (e) {
+            await prisma.meeting.update({
+              where: {
+                id: meetingId,
+              },
+              data: {
+                postMeetingProcessingStatus:
+                  PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+              },
+            });
+
+            // Capture the exception but don't fail the task, since stitching succeeded
+            captureException(e);
+            return reply
+              .code(200)
+              .send(
+                "Audio stitching completed successfully; queuing transcription failed.",
+              );
+          }
+
+          return reply
+            .code(200)
+            .send("Transcription task queued successfully.");
+        } else if (stepToProcess === "NOTETAKING") {
+          try {
+            await queueNotetakingTask(stateCode, meetingId, prisma);
+          } catch (e) {
+            // Capture the exception
+            captureException(e);
+            return reply
+              .code(200)
+              .send("Notetaking processing task queueing failed.");
+          }
+
+          return reply
+            .code(200)
+            .send("Notetaking processing task queued successfully.");
+        }
+      });
     },
   });
 }
