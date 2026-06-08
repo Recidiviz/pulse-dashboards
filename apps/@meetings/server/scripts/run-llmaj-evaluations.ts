@@ -45,7 +45,6 @@ import {
   createEvaluatorClients,
   EVALUATOR_VERSION,
   EvaluatorInputs,
-  langsmithClient,
   MeetingContext,
   runAllEvaluators,
   TextEvaluatorOutput,
@@ -550,7 +549,6 @@ async function main() {
     `\n${c.bold}Done.${c.reset}  ${c.green}${totalSuccess} evaluated${c.reset}  ${c.dim}${totalSkipped} skipped${c.reset}  ${errColor}${totalErrors} errors${c.reset}\n`,
   );
 
-  await langsmithClient.awaitPendingTraceBatches();
   process.exit(totalErrors > 0 ? 1 : 0);
 }
 

@@ -53,6 +53,16 @@ async function runTranscriptComparisonInternal(
     };
   }
 
+  if (process.env["IS_LOCAL_MODE"] === "true") {
+    return {
+      rationale:
+        "Audio file unavailable in local mode (cleaned up before evaluation runs).",
+      winner: "NONE",
+      assemblyAiGrade: "NONE",
+      deepgramGrade: "NONE",
+    };
+  }
+
   const { uri: audioUri, mimeType: audioMimeType } = await uploadAudioToGemini(
     fileManager,
     inputs.audioBucket,

@@ -33,6 +33,7 @@ import {
 } from "~@meetings/server/test/setup";
 import { fakeMeeting } from "~@meetings/server/test/setup/seed";
 import * as tasks from "~@meetings/tasks";
+import * as evaluators from "~@meetings/tasks/llm/evaluators";
 
 const FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT = {
   confidence: 0.95,
@@ -97,6 +98,10 @@ const mockTranscribeAudioWithDeepgram = vi.spyOn(
 );
 const mockCleanupLocalFiles = vi.spyOn(tasks, "cleanupLocalFiles");
 const mockExportLabelStudioTask = vi.spyOn(tasks, "exportLabelStudioTask");
+const mockRunAllEvaluators = vi.spyOn(evaluators, "runAllEvaluators");
+vi.spyOn(evaluators, "createEvaluatorClients").mockReturnValue(
+  {} as ReturnType<typeof evaluators.createEvaluatorClients>,
+);
 
 // Make these succeed by default
 mockStitchAudio.mockImplementation(async () => {
@@ -105,6 +110,18 @@ mockStitchAudio.mockImplementation(async () => {
 mockCleanupLocalFiles.mockImplementation(vi.fn().mockResolvedValue(undefined));
 mockExportLabelStudioTask.mockImplementation(
   vi.fn().mockResolvedValue(undefined),
+);
+mockRunAllEvaluators.mockImplementation(
+  vi.fn().mockResolvedValue({
+    scores: {
+      transcriptComparison: null,
+      caseNote: null,
+      actionItems: null,
+      criticalUpdates: null,
+      overall: null,
+    },
+    langsmithTraceId: undefined,
+  }),
 );
 mockTranscribeAudioWithAssemblyAI.mockImplementation(
   vi.fn().mockResolvedValue(FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT),
@@ -1666,6 +1683,240 @@ describe("tasks", () => {
       expect(updatedMeeting.postMeetingProcessingStatus).toBe(
         PostMeetingProcessingStatus.COMPLETED,
       );
+    });
+
+    test("Should queue LLMAJ evaluation task after successful notetaking", async () => {
+      const meeting = await createMeetingForNotetaking("llmaj-queue");
+      mockCloudTasksClient.createTask.mockClear();
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith(
+        expect.objectContaining({
+          parent: expect.stringContaining("llmaj-task-queue"),
+          task: expect.objectContaining({
+            httpRequest: expect.objectContaining({
+              url: env.LLMAJ_TASK_REQUEST_URL,
+            }),
+          }),
+        }),
+      );
+    });
+
+    test("Should remain COMPLETED if LLMAJ task queueing fails", async () => {
+      const meeting = await createMeetingForNotetaking("llmaj-queue-fail");
+      mockCloudTasksClient.createTask.mockRejectedValueOnce(
+        new Error("Queue error"),
+      );
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const updatedMeeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: meeting.id },
+      });
+      expect(updatedMeeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.COMPLETED,
+      );
+    });
+  });
+
+  describe("/run-llmaj-evaluation", () => {
+    const FAKE_DRAFTING_OUTPUT = {
+      caseNote: "Test case note",
+      minutes: [],
+      staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+    };
+
+    const FAKE_VERIFICATION_OUTPUT = {
+      actionItems: [],
+      criticalUpdates: [],
+      entities: [],
+    };
+
+    async function createMeetingWithSuccessfulPipelineRun(meetingId: string) {
+      const meeting = await testPrismaClient.meeting.create({
+        data: {
+          ...fakeMeeting,
+          id: meetingId,
+          finalRecordingGCSPath: "bucket/audio.m4a",
+          transcriptions: {
+            create: {
+              provider: TranscriptionProvider.ASSEMBLYAI,
+              transcriptObject: {} as PrismaJson.TranscriptType,
+              confidence: 0.95,
+              utterances: {
+                create: [
+                  {
+                    speaker: "A",
+                    text: "Hello",
+                    startTimeMs: 0,
+                    endTimeMs: 1000,
+                    confidence: 0.95,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      });
+
+      await testPrismaClient.notetakingPipelineRun.create({
+        data: {
+          id: `${meetingId}-run`,
+          meetingId,
+          status: "SUCCESS",
+          personPseudonymizedId: "pseudo-1",
+          agentExecutions: {
+            create: [
+              {
+                agentType: "DRAFTING",
+                attemptNumber: 1,
+                outputData: FAKE_DRAFTING_OUTPUT,
+                validationResult: { isValid: true },
+              },
+              {
+                agentType: "VERIFICATION",
+                attemptNumber: 1,
+                outputData: FAKE_VERIFICATION_OUTPUT,
+                validationResult: { isValid: true },
+              },
+            ],
+          },
+        },
+      });
+
+      return meeting;
+    }
+
+    describe("auth", () => {
+      test("Should return authorization error if token is not provided", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          body: { stateCode: "US_NE", meetingId: fakeMeeting.id },
+        });
+
+        expect(response.statusCode).toBe(401);
+      });
+    });
+
+    test("Should return 200 and skip if no successful pipeline run exists", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: fakeMeeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("No successful pipeline run found");
+      expect(mockRunAllEvaluators).not.toHaveBeenCalled();
+    });
+
+    test("Should return 200 and skip if already evaluated at current version", async () => {
+      const meeting = await createMeetingWithSuccessfulPipelineRun(
+        "llmaj-already-evaluated",
+      );
+      const pipelineRun =
+        await testPrismaClient.notetakingPipelineRun.findFirstOrThrow({
+          where: { meetingId: meeting.id },
+        });
+      await testPrismaClient.notetakingEvaluationRun.create({
+        data: {
+          pipelineRunId: pipelineRun.id,
+          evaluatorVersion: "1",
+          scores: {},
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("already evaluated");
+      expect(mockRunAllEvaluators).not.toHaveBeenCalled();
+    });
+
+    test("Should run evaluators and write result to DB on success", async () => {
+      const meeting =
+        await createMeetingWithSuccessfulPipelineRun("llmaj-success");
+      mockRunAllEvaluators.mockClear();
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain(
+        "LLMAJ evaluation completed successfully",
+      );
+      expect(mockRunAllEvaluators).toHaveBeenCalledOnce();
+
+      const pipelineRun =
+        await testPrismaClient.notetakingPipelineRun.findFirstOrThrow({
+          where: { meetingId: meeting.id },
+          include: { evaluationRuns: true },
+        });
+      expect(pipelineRun.evaluationRuns).toHaveLength(1);
+      expect(pipelineRun.evaluationRuns[0].evaluatorVersion).toBe("1");
+    });
+
+    test("Should return 200 and skip if meeting has no audio path", async () => {
+      await testPrismaClient.notetakingPipelineRun.create({
+        data: {
+          id: "run-no-audio",
+          meetingId: fakeMeeting.id,
+          status: "SUCCESS",
+          personPseudonymizedId: "pseudo-1",
+          agentExecutions: {
+            create: [
+              {
+                agentType: "DRAFTING",
+                attemptNumber: 1,
+                outputData: FAKE_DRAFTING_OUTPUT,
+                validationResult: { isValid: true },
+              },
+              {
+                agentType: "VERIFICATION",
+                attemptNumber: 1,
+                outputData: FAKE_VERIFICATION_OUTPUT,
+                validationResult: { isValid: true },
+              },
+            ],
+          },
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: fakeMeeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("Missing audio or transcripts");
+      expect(mockRunAllEvaluators).not.toHaveBeenCalled();
     });
   });
 });

@@ -70,6 +70,8 @@ module "server" {
         { name = "STITCHING_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/stitch-audio" },
         { name = "NOTETAKING_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/process-notetaking" },
         { name = "TRANSCRIPTION_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/transcribe-audio" },
+        { name = "LLMAJ_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/run-llmaj-evaluation" },
+        { name = "LLMAJ_TASK_QUEUE_NAME", value = google_cloud_tasks_queue.llmaj_task_queue.name },
         { name = "CLOUD_TASKS_PROJECT", value = var.project_id },
         { name = "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL", value = google_service_account.default.email },
       ], module.envs.env_vars_by_component["server"])
@@ -378,6 +380,24 @@ resource "google_cloud_tasks_queue" "transcription_task_queue" {
 
 resource "google_cloud_tasks_queue" "notetaking_task_queue" {
   name     = "notetaking-task-queue"
+  project  = var.project_id
+  location = var.location
+
+  rate_limits {
+    max_concurrent_dispatches = 100
+  }
+
+  retry_config {
+    max_attempts = 1
+  }
+
+  stackdriver_logging_config {
+    sampling_ratio = 1.0
+  }
+}
+
+resource "google_cloud_tasks_queue" "llmaj_task_queue" {
+  name     = "llmaj-task-queue"
   project  = var.project_id
   location = var.location
 

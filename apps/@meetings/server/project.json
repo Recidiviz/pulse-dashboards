@@ -232,6 +232,8 @@
           "TRANSCRIPTION_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/transcribe-audio",
           "NOTETAKING_TASK_QUEUE_NAME": "notetaking-task-queue",
           "NOTETAKING_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/process-notetaking",
+          "LLMAJ_TASK_QUEUE_NAME": "llmaj-task-queue",
+          "LLMAJ_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/run-llmaj-evaluation",
           "ASSEMBLYAI_API_KEY": "$ASSEMBLYAI_API_KEY",
           "DEEPGRAM_API_KEY": "$DEEPGRAM_API_KEY",
           "RECIDIVIZ_DATA_API_URL": "$RECIDIVIZ_DATA_API_URL",

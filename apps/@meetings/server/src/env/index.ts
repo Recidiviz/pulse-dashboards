@@ -46,6 +46,10 @@ const envSchema = z.object({
   STITCHING_TASK_REQUEST_URL: z
     .string()
     .min(1, "STITCHING_TASK_REQUEST_URL is required"),
+  LLMAJ_TASK_QUEUE_NAME: z.string().min(1, "LLMAJ_TASK_QUEUE_NAME is required"),
+  LLMAJ_TASK_REQUEST_URL: z
+    .string()
+    .min(1, "LLMAJ_TASK_REQUEST_URL is required"),
   DEPLOY_ENV: z.string().min(1, "DEPLOY_ENV is required"),
 });
 

@@ -44,6 +44,7 @@ import {
   getStepFromUserSetStep,
   handleNotetakingProcessing,
   handleTranscriptions,
+  queueLlmajEvaluationTask,
   queueNotetakingTask,
   queueTranscriptionTask,
 } from "~@meetings/server/server/utils";
@@ -55,6 +56,16 @@ import {
   labelStudioMeetingInclude,
   stitchAudio,
 } from "~@meetings/tasks";
+import {
+  createEvaluatorClients,
+  EVALUATOR_VERSION,
+  runAllEvaluators,
+} from "~@meetings/tasks/llm/evaluators";
+import {
+  DraftingOutputSchema,
+  VerificationOutputSchema,
+} from "~@meetings/tasks/llm/schemas";
+import { formatTranscripts } from "~@meetings/tasks/llm/utils";
 import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 import {
@@ -672,6 +683,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
           );
         });
 
+        queueLlmajEvaluationTask(stateCode, meetingId).catch((e) => {
+          captureException(e);
+          console.error("Failed to queue LLMAJ evaluation task", e);
+        });
+
         // Export Label Studio task JSON to GCS. Skip US_DEMO in production only —
         // staging US_DEMO meetings should still flow to Label Studio.
         if (
@@ -702,6 +718,138 @@ export function registerTaskRoutes(app: FastifyInstance) {
           .code(200)
           .send("Notetaking process completed successfully");
       });
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/run-llmaj-evaluation",
+    schema: {
+      body: z.object({
+        stateCode: z.nativeEnum(StateCode),
+        meetingId: z.string(),
+      }),
+    },
+    preHandler: [authenticateInternalRequestPreHandlerFn],
+    handler: async (req, reply) => {
+      const { stateCode, meetingId } = req.body;
+
+      const prisma = getPrismaClientForStateCode(stateCode);
+
+      const pipelineRun = await prisma.notetakingPipelineRun.findFirst({
+        where: { meetingId, status: "SUCCESS" },
+        include: {
+          agentExecutions: {
+            where: { agentType: { in: ["DRAFTING", "VERIFICATION"] } },
+            orderBy: { attemptNumber: "desc" },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (!pipelineRun) {
+        return reply
+          .code(200)
+          .send("No successful pipeline run found for meeting; skipping.");
+      }
+
+      const alreadyEvaluated = await prisma.notetakingEvaluationRun.findFirst({
+        where: {
+          pipelineRunId: pipelineRun.id,
+          evaluatorVersion: EVALUATOR_VERSION,
+        },
+      });
+
+      if (alreadyEvaluated) {
+        return reply
+          .code(200)
+          .send("Pipeline run already evaluated at current version; skipping.");
+      }
+
+      const draftingExecution = pipelineRun.agentExecutions
+        .filter((e) => e.agentType === "DRAFTING")
+        .find((e) => DraftingOutputSchema.safeParse(e.outputData).success);
+      const draftingOutput = draftingExecution
+        ? DraftingOutputSchema.parse(draftingExecution.outputData)
+        : null;
+
+      const verificationExecution = pipelineRun.agentExecutions.find(
+        (e) => e.agentType === "VERIFICATION",
+      );
+      const verificationParsed = verificationExecution
+        ? VerificationOutputSchema.safeParse(verificationExecution.outputData)
+        : null;
+      const verificationOutput = verificationParsed?.success
+        ? verificationParsed.data
+        : null;
+
+      if (!draftingOutput || !verificationOutput) {
+        return reply
+          .code(200)
+          .send(
+            "Missing drafting or verification output for pipeline run; skipping.",
+          );
+      }
+
+      const meeting = await prisma.meeting.findUnique({
+        where: { id: meetingId },
+        include: {
+          transcriptions: {
+            include: { utterances: { orderBy: { startTimeMs: "asc" } } },
+            orderBy: { confidence: "desc" },
+          },
+          client: { select: { givenNames: true, surname: true } },
+          resident: { select: { givenNames: true, surname: true } },
+        },
+      });
+
+      if (
+        !meeting ||
+        !meeting.finalRecordingGCSPath ||
+        meeting.transcriptions.length === 0
+      ) {
+        return reply
+          .code(200)
+          .send("Missing audio or transcripts for meeting; skipping.");
+      }
+
+      const { byProvider: transcriptsByProvider, best: bestTranscript } =
+        formatTranscripts(meeting.transcriptions);
+
+      const person = meeting.client ?? meeting.resident;
+      const inputs = {
+        audioBucket: meeting.recordingsGCSBucket,
+        audioPath: meeting.finalRecordingGCSPath,
+        transcriptsByProvider,
+        bestTranscript,
+        caseNote: draftingOutput.caseNote,
+        actionItems: verificationOutput.actionItems,
+        criticalUpdates: verificationOutput.criticalUpdates,
+        meetingContext: {
+          personName: person
+            ? [person.givenNames, person.surname].filter(Boolean).join(" ")
+            : undefined,
+          staffEmail: meeting.staffEmail,
+          staffNotes: meeting.userNotepadNotes ?? undefined,
+        },
+      };
+
+      const evaluatorClients = createEvaluatorClients();
+      const { scores, langsmithTraceId } = await runAllEvaluators(
+        evaluatorClients,
+        inputs,
+      );
+
+      await prisma.notetakingEvaluationRun.create({
+        data: {
+          pipelineRunId: pipelineRun.id,
+          evaluatorVersion: EVALUATOR_VERSION,
+          scores,
+          langsmithTraceId,
+        },
+      });
+
+      reply.code(200).send("LLMAJ evaluation completed successfully");
     },
   });
 

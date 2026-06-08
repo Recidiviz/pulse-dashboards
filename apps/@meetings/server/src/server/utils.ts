@@ -33,7 +33,7 @@ import {
 import { ProductionPipeline, TranscriptInput } from "~@meetings/tasks/llm";
 import { utterancesToRawText } from "~@meetings/tasks/llm/utils";
 
-export async function queueTranscriptionTaskLocal(
+export function queueTranscriptionTaskLocal(
   stateCode: string,
   meetingId: string,
 ) {
@@ -332,6 +332,64 @@ export async function queueNotetakingTask(
     queueNotetakingTaskLocal(stateCode, meetingId);
   } else {
     await queueNotetakingTaskCloud(stateCode, meetingId);
+  }
+}
+
+export async function queueLlmajEvaluationTaskLocal(
+  stateCode: string,
+  meetingId: string,
+) {
+  // Don't await the fetch to avoid blocking
+  fetch(env.LLMAJ_TASK_REQUEST_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ stateCode, meetingId }),
+  });
+}
+
+export async function queueLlmajEvaluationTaskCloud(
+  stateCode: string,
+  meetingId: string,
+) {
+  const cloudTaskClient = new CloudTasksClient();
+
+  const parent = cloudTaskClient.queuePath(
+    env.CLOUD_TASKS_PROJECT,
+    env.CLOUD_TASKS_LOCATION,
+    env.LLMAJ_TASK_QUEUE_NAME,
+  );
+
+  const request: protos.google.cloud.tasks.v2.ICreateTaskRequest = {
+    parent,
+    task: {
+      httpRequest: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
+        httpMethod: "POST",
+        url: env.LLMAJ_TASK_REQUEST_URL,
+        oidcToken: {
+          serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
+        },
+      },
+    },
+  };
+
+  await cloudTaskClient.createTask(request);
+}
+
+export async function queueLlmajEvaluationTask(
+  stateCode: string,
+  meetingId: string,
+) {
+  if (env.NODE_ENV === "development") {
+    // Don't await to avoid blocking
+    queueLlmajEvaluationTaskLocal(stateCode, meetingId);
+  } else {
+    await queueLlmajEvaluationTaskCloud(stateCode, meetingId);
   }
 }
 

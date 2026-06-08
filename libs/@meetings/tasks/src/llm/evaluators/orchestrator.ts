@@ -17,7 +17,6 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
-import { Client as LangSmithClient } from "langsmith";
 import { traceable } from "langsmith/traceable";
 
 import { getLangsmithTraceId } from "~@meetings/tasks/llm/evaluation-store";
@@ -35,7 +34,6 @@ import {
 } from "~@meetings/tasks/llm/evaluators/schemas";
 import { createLogger } from "~server-setup-plugin";
 
-export const langsmithClient = new LangSmithClient();
 const logger = createLogger("meetings.llm.evaluators");
 
 /**
@@ -150,7 +148,6 @@ export const runAllEvaluators = traceable(
   {
     name: "evaluator-pipeline",
     run_type: "chain",
-    client: langsmithClient,
   },
 );
 
