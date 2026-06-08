@@ -1,0 +1,113 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Conduct a home visit at 442 Grove Street to verify the living situation and meet Michael",
+      "deadline": "next week",
+      "context": "Verification of client's residence and meeting his brother/co-habitant."
+    },
+    {
+      "assignee": "Client",
+      "task": "Maintain a written income ledger logging the dates worked, tasks performed, and payment received",
+      "deadline": null,
+      "context": "Client is self-employed doing independent landscaping and does not receive standard paystubs."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring the income ledger to the next office visit",
+      "deadline": "Tuesday the 14th",
+      "context": "Required for the PO to verify the client's employment and income."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not operate a motor vehicle without a valid state driver's license",
+      "deadline": null,
+      "context": "Client voluntarily surrendered his license but continues to drive his truck, putting him at high risk of arrest and a parole violation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend the next office appointment",
+      "deadline": "Tuesday the 14th at 10:00 AM",
+      "context": "Routine supervision follow-up."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client confirmed he is currently domiciled at 442 Grove Street. He continues to reside there with his brother, Michael, in a stable living situation.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is self-employed, performing independent landscaping and property maintenance. He exchanges his labor for compensation and will begin tracking this in an income ledger.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Change",
+      "details": "Client signed his intake paperwork 'under duress' while citing 'UCC 1-308' to reserve common law rights. He also voluntarily surrendered his state driver's license last month but intends to continue driving his truck (referred to as a 'personal conveyance'), putting him at imminent risk of police contact and a supervision violation.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live with his brother, Michael. Client states they tolerate each other but have fundamental differences in approach regarding discipline and structure.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client exhibits deeply entrenched sovereign citizen/freeman-on-the-land ideology. He actively rejects corporate and state authority, preferring to abide by what he terms 'natural law,' which creates significant friction with standard parole compliance.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "David"
+    },
+    {
+      "type": "Person",
+      "value": "Michael"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Henderson"
+    },
+    {
+      "type": "Address",
+      "value": "442 Grove Street"
+    },
+    {
+      "type": "Document",
+      "value": "intake paperwork"
+    },
+    {
+      "type": "Document",
+      "value": "UCC 1-308"
+    },
+    {
+      "type": "Document",
+      "value": "income ledger"
+    },
+    {
+      "type": "Document",
+      "value": "state driver's license"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday the 14th"
+    },
+    {
+      "type": "Time",
+      "value": "10:00 AM"
+    },
+    {
+      "type": "Appointment",
+      "value": "next office visit"
+    }
+  ],
+  "next_episode_context": "Client David resides at 442 Grove Street with his brother Michael and is self-employed in independent landscaping. He exhibits strong sovereign citizen ideologies, having signed his intake paperwork under duress (UCC 1-308). Crucially, David surrendered his state driver's license last month but continues to drive his truck based on his belief in his 'right to travel,' putting him at high risk for a traffic stop and parole violation. The PO warned him of the consequences and is scheduled to conduct a home visit next week, followed by an office appointment on Tuesday the 14th at 10:00 AM to review his income ledger."
+}

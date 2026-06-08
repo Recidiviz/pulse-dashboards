@@ -1,0 +1,190 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Pay the mechanic to fix the car's alternator and battery.",
+      "deadline": null,
+      "context": "Client's self-stated plan once she saves the $450 required for the repair."
+    },
+    {
+      "assignee": "Client",
+      "task": "Make monthly $50 minimum payment towards court restitution and fees.",
+      "deadline": "15th of every month",
+      "context": "Required to maintain compliance with court payment plan."
+    },
+    {
+      "assignee": "Client",
+      "task": "Complete the 8-hour online financial management class via Axiom.",
+      "deadline": "End of next month",
+      "context": "A specific condition required by the court."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring current paystubs to next visit",
+      "deadline": "14th"
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring receipt for next $50 court payment to next visit",
+      "deadline": "14th"
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring Axiom course completion certificate to PO",
+      "deadline": "14th"
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client is maintaining two jobs. She is getting 38 hours at La Quinta, but Denny's has reduced her hours due to slow business. Her commute is currently strained because her car broke down, forcing her to take multiple buses.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live in her apartment. Her mother lives in the same apartment complex, which facilitates childcare.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client relies on her mother for childcare. Her 14-year-old son, Mateo, assists by walking the younger children (Sofia and little Leo) home from school.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client successfully set up a payment plan for her $1,250 court fee/restitution balance and made her first $50 payment. She is in compliance with this requirement.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "Client is required to take an 8-hour financial management class. She will be completing the online version of the course through the Axiom program.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports feeling tired and exhausted from her heavy schedule, but no acute health issues were noted. Client's mother's arthritis is currently improving.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "New",
+      "details": "Client's Corolla completely died (needs a $450 alternator and battery repair). The PO provided a 30-day transit pass to help alleviate the financial burden of bus fares while she saves for the repair.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Elena"
+    },
+    {
+      "type": "Person",
+      "value": "Mateo"
+    },
+    {
+      "type": "Person",
+      "value": "Sofia"
+    },
+    {
+      "type": "Person",
+      "value": "Leo"
+    },
+    {
+      "type": "Employer",
+      "value": "La Quinta"
+    },
+    {
+      "type": "Employer",
+      "value": "Denny's"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Vehicle",
+      "value": "Corolla"
+    },
+    {
+      "type": "Amount",
+      "value": "Four hundred and fifty dollars"
+    },
+    {
+      "type": "Amount",
+      "value": "$1,250"
+    },
+    {
+      "type": "Amount",
+      "value": "fifty dollars"
+    },
+    {
+      "type": "Amount",
+      "value": "three dollars"
+    },
+    {
+      "type": "Amount",
+      "value": "a hundred dollars"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "15th"
+    },
+    {
+      "type": "Appointment",
+      "value": "14th"
+    },
+    {
+      "type": "Time",
+      "value": "5:30"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    },
+    {
+      "type": "Document",
+      "value": "paystubs"
+    },
+    {
+      "type": "Document",
+      "value": "social security cards"
+    },
+    {
+      "type": "Document",
+      "value": "receipt"
+    },
+    {
+      "type": "Document",
+      "value": "30-day transit pass"
+    },
+    {
+      "type": "Document",
+      "value": "appointment slip"
+    },
+    {
+      "type": "Document",
+      "value": "certificate"
+    }
+  ],
+  "next_episode_context": "Client is currently working two jobs (La Quinta and Denny's) but is dealing with a broken vehicle (Corolla) that requires a $450 repair. PO issued a 30-day transit pass to assist with her commute. She is in compliance with court payments, having made her first $50 installment towards her $1,250 balance. She has been instructed to complete an 8-hour Axiom financial management class online by the end of next month. Next check-in is scheduled for the 14th at 9:00 AM, where she must present her paystubs, next court payment receipt, and Axiom certificate.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Begin Axiom course modules on the bus"
+    }
+  ]
+}

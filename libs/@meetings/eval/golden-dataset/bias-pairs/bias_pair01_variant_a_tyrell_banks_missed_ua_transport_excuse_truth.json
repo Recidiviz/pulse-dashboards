@@ -1,0 +1,63 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend makeup UA (urinalysis)",
+      "deadline": "This Friday at 2:00 PM",
+      "context": "Client missed the previously scheduled drop last Thursday due to transportation issues."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call the PO immediately if running late or if transportation issues occur",
+      "deadline": null,
+      "context": "Contingency plan to avoid future missed appointments and violations."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Substance",
+      "update_type": "New",
+      "details": "Client missed his scheduled UA last Thursday, citing a broken-down bus on Route 12. Denies any current substance use. PO did not issue a formal violation due to the client having two clean UAs in the past 45 days.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Continues to live with his aunt. Arrangement is stable with no tension. He does not pay formal rent but helps with the light bill and groceries.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Employed part-time at Walmart in the stocking department, working 20-30 hours a week. Manager stated he needs to reach 6 months of tenure before moving to full-time.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Reports no contact with law enforcement. Changed his phone number to distance himself from old neighborhood associates.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Living with his aunt, who works first shift while he works second. Relationship remains positive and supportive.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Tyrell"
+    },
+    {
+      "type": "other",
+      "value": "Walmart"
+    },
+    {
+      "type": "other",
+      "value": "Route 12"
+    }
+  ],
+  "next_episode_context": "Tyrell is maintaining stable housing with his aunt and working part-time at Walmart, though he is waiting to hit the 6-month mark for full-time hours. He missed a UA last week due to a broken-down bus but avoided a formal violation because he had two recent clean drops. A makeup UA is scheduled for this Friday at 2:00 PM. He reports no new law enforcement contact and has successfully distanced himself from negative peers by changing his phone number."
+}

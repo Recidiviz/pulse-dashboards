@@ -1,0 +1,179 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Call the Community Action Agency to set up an intake for utility assistance",
+      "deadline": "Today",
+      "context": "To prevent electricity shut-off due to a $280 balance."
+    },
+    {
+      "assignee": "Client",
+      "task": "Provide shut-off notice and a paystub to the Community Action Agency",
+      "deadline": null,
+      "context": "Required documentation to process the LIHEAP grant."
+    },
+    {
+      "assignee": "Client",
+      "task": "Contact PO if the Community Action Agency cannot assist with the utility bill",
+      "deadline": null,
+      "context": "To explore alternative charity options before electricity is disconnected."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue taking Lisinopril daily without skipping doses",
+      "deadline": null,
+      "context": "To maintain healthy blood pressure levels required for the DOT physical."
+    },
+    {
+      "assignee": "Client",
+      "task": "Complete DOT physical at the clinic",
+      "deadline": "Next Tuesday",
+      "context": "Mandatory requirement before beginning trucking academy classes."
+    },
+    {
+      "assignee": "Client",
+      "task": "Provide the DOT medical card to the PO",
+      "deadline": null,
+      "context": "Proof of passing the DOT physical."
+    },
+    {
+      "assignee": "Client",
+      "task": "Begin classes at Tri-State Trucking Academy",
+      "deadline": "The 28th",
+      "context": "Enrolled for Monday-Thursday evening CDL training classes."
+    },
+    {
+      "assignee": "Client",
+      "task": "Comply with intrastate travel restrictions; do not cross state lines while driving",
+      "deadline": null,
+      "context": "Standard condition of supervision regarding CDL employment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next supervision meeting",
+      "deadline": "The 12th at 9:00 AM",
+      "context": "Routine monthly check-in before the client's work shift."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client maintains residence at County Road 9 but received a $280 electric shut-off notice scheduled for disconnection next Thursday. Applying for LIHEAP assistance to resolve the balance.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is working approximately 35 hours per week at the Co-op, handling feed and inventory. Experiencing financial strain due to a lack of available overtime.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "Client was approved by WIOA for full tuition assistance. Successfully enrolled at Tri-State Trucking Academy for CDL training, with classes starting on the 28th.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "High blood pressure is currently well-managed at 125/80 using daily Lisinopril medication, with no major side effects. A DOT physical is scheduled for next Tuesday.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client remains compliant with supervision conditions. Reports zero law enforcement contact, tickets, or warnings.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports remaining clean with no alcohol or drug use. No missed UAs on file.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Address",
+      "value": "County Road 9"
+    },
+    {
+      "type": "Employer",
+      "value": "the Co-op"
+    },
+    {
+      "type": "Date",
+      "value": "next Thursday"
+    },
+    {
+      "type": "Amount",
+      "value": "$280"
+    },
+    {
+      "type": "Organization",
+      "value": "Community Action Agency"
+    },
+    {
+      "type": "Location",
+      "value": "Main Street"
+    },
+    {
+      "type": "Program",
+      "value": "LIHEAP"
+    },
+    {
+      "type": "Date",
+      "value": "the 14th"
+    },
+    {
+      "type": "Organization",
+      "value": "WIOA office"
+    },
+    {
+      "type": "Person",
+      "value": "Miss Diane"
+    },
+    {
+      "type": "Program",
+      "value": "Tri-State Trucking Academy"
+    },
+    {
+      "type": "Date",
+      "value": "the 28th"
+    },
+    {
+      "type": "Medication",
+      "value": "Lisinopril"
+    },
+    {
+      "type": "Date",
+      "value": "next Tuesday"
+    },
+    {
+      "type": "Document",
+      "value": "medical card"
+    },
+    {
+      "type": "Date",
+      "value": "the 12th"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    },
+    {
+      "type": "Document",
+      "value": "shut-off notice"
+    },
+    {
+      "type": "Document",
+      "value": "paystub"
+    },
+    {
+      "type": "Appointment",
+      "value": "DOT physical"
+    }
+  ],
+  "next_episode_context": "Client is stably housed but facing a $280 electric shut-off next Thursday; applying for LIHEAP via the Community Action Agency. Working ~35 hours/week at the Co-op. Approved for WIOA funding and starts CDL classes at Tri-State Trucking Academy on the 28th. Needs a DOT physical next Tuesday; blood pressure is currently managed well with Lisinopril. Fully compliant with supervision conditions. Next check-in is scheduled for the 12th at 9:00 AM."
+}

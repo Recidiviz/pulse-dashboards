@@ -1,0 +1,125 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Email Mr. Vance to discuss options for the missed chemistry lab",
+      "deadline": "Tonight",
+      "context": "Client missed a critical lab due to transportation issues and needs to see if an override or compromise is possible to avoid failing."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call client's father to pitch a school-only driving arrangement",
+      "deadline": "This afternoon",
+      "context": "Father confiscated client's car keys; PO will attempt to negotiate driving privileges solely for campus commutes."
+    },
+    {
+      "assignee": "PO",
+      "task": "Text client with an update after speaking to his father",
+      "deadline": null,
+      "context": "Keep the client informed about whether the father agreed to the school-only driving compromise."
+    },
+    {
+      "assignee": "Client",
+      "task": "Forward Mr. Vance's email response to the PO",
+      "deadline": null,
+      "context": "To keep the PO updated on the academic situation and whether the lab grade can be salvaged."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue riding the bus and do not take the car without father's permission",
+      "deadline": null,
+      "context": "Ensuring the client does not violate household rules or risk an auto theft charge."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client received a municipal warning for a curfew violation over the weekend. The police incident report confirms he was cooperative and blew a 0.00 BAC. There are no fines or court dates attached to the warning.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to maintain sobriety. He blew a 0.00 on a breathalyzer during his recent police contact at a party, which aligns with his previous clean UA.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "High tension at home. The client's father is highly upset over the curfew violation, is giving the client the silent treatment, and has confiscated the client's car keys as punishment.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Change",
+      "details": "Client's loss of a vehicle forced a 2-hour bus commute, causing him to miss a Chemistry lab. His grade dropped to a D, and he automatically fails if he misses another. Client expressed a desire to drop out but agreed to contact his advisor first.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client mentioned working at a warehouse as a potential full-time fallback if he drops out of school, but he is maintaining his focus on academics for now.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Jayden"
+    },
+    {
+      "type": "Person",
+      "value": "Officer Davis"
+    },
+    {
+      "type": "Person",
+      "value": "Professor Higgins"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Vance"
+    },
+    {
+      "type": "Person",
+      "value": "Sarah"
+    },
+    {
+      "type": "Document",
+      "value": "municipal warning"
+    },
+    {
+      "type": "Document",
+      "value": "police incident report"
+    },
+    {
+      "type": "Document",
+      "value": "syllabus"
+    },
+    {
+      "type": "Course",
+      "value": "Chemistry lab"
+    },
+    {
+      "type": "Transportation Route",
+      "value": "42"
+    },
+    {
+      "type": "Transportation Route",
+      "value": "15"
+    },
+    {
+      "type": "Location",
+      "value": "downtown"
+    },
+    {
+      "type": "Location",
+      "value": "campus"
+    },
+    {
+      "type": "Employer",
+      "value": "warehouse"
+    }
+  ],
+  "next_episode_context": "Client received a curfew warning over the weekend but remained completely sober (verified 0.00 BAC). As punishment, his father confiscated his car keys, forcing a lengthy bus commute that caused the client to miss a critical Chemistry lab. The client's grade dropped to a D, creating high stress and a flight risk from his academic program. The PO is stepping in to mediate with the father to secure a school-only driving compromise, while the client has been directed to contact his academic advisor to salvage his course."
+}

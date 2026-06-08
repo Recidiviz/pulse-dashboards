@@ -1,0 +1,133 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Keep track of extra income from day labor for reporting purposes",
+      "deadline": null,
+      "context": "Client is working under-the-table day labor shifts to pay an electric bill."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend DOT physical",
+      "deadline": "Thursday",
+      "context": "Required to obtain a DOT medical card for trucking academy."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue taking Lisinopril daily",
+      "deadline": null,
+      "context": "Required to maintain healthy blood pressure levels to pass the DOT physical."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next office visit",
+      "deadline": "The 12th at 9:00 AM",
+      "context": "Routine follow-up meeting; client already requested the morning off from the Co-op."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client continues to work 35 hours a week at the Co-op but has started picking up under-the-table day labor shifts on construction sites to earn quick cash for a utility bill.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client received a shut-off notice for a $280 electric bill. He applied for LIHEAP online on Tuesday but is working extra day labor shifts to cover the bill while waiting for the application to process.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "WIOA fully funded the client's tuition for Tri-State Trucking Academy. He will begin evening classes on the 28th to pursue his CDL.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports taking his Lisinopril every morning without missing a day to manage his blood pressure, which is necessary to pass his upcoming DOT physical.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no police contact or legal issues since the last visit.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no alcohol or drug use, stating he is remaining focused on getting his CDL.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Employer",
+      "value": "Co-op"
+    },
+    {
+      "type": "Amount",
+      "value": "two hundred eighty dollars"
+    },
+    {
+      "type": "Amount",
+      "value": "$280"
+    },
+    {
+      "type": "Program",
+      "value": "LIHEAP"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "28th"
+    },
+    {
+      "type": "Program",
+      "value": "Tri-State Trucking Academy"
+    },
+    {
+      "type": "Organization",
+      "value": "WIOA"
+    },
+    {
+      "type": "Appointment",
+      "value": "DOT physical"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday"
+    },
+    {
+      "type": "Medication",
+      "value": "Lisinopril"
+    },
+    {
+      "type": "Document",
+      "value": "DOT medical card"
+    },
+    {
+      "type": "Certification",
+      "value": "CDL"
+    },
+    {
+      "type": "Appointment",
+      "value": "office visit"
+    },
+    {
+      "type": "Date",
+      "value": "12th"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    }
+  ],
+  "next_episode_context": "The client is maintaining 35 hours a week at the Co-op and is currently working day labor to cover a $280 electric shut-off notice, for which he has also applied for LIHEAP. WIOA fully funded his tuition for Tri-State Trucking Academy, and he begins evening classes on the 28th. He is scheduled for a DOT physical next Thursday and is compliant with his Lisinopril medication. No legal or substance issues reported. Next office visit is scheduled for the 12th at 9:00 AM."
+}

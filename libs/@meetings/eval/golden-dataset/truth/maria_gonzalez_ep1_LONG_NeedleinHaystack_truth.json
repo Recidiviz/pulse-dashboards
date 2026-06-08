@@ -1,0 +1,121 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Take a picture of the medical appointment card and upload it in the checking app's messaging center.",
+      "deadline": "Friday",
+      "context": "Required as proof to approve a travel window for the upcoming doctor's appointment."
+    },
+    {
+      "assignee": "PO",
+      "task": "Enter the travel window for Tuesday once the appointment card picture is uploaded.",
+      "deadline": null,
+      "context": "To allow the client to attend her diabetes doctor appointment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Adhere to the baseline rules of home confinement, specifically attending only medical and legal appointments (no church attendance).",
+      "deadline": null,
+      "context": "Standard conditions for the first 30 days of the home confinement phase."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client remains on home confinement. Rent was successfully paid yesterday via money order despite tight finances.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's living situation remains unchanged. She resides with her husband Arturo, her daughter Elena, and Elena's two boys.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client had to leave her job at the bakery due to home confinement monitor restrictions. Husband Arturo works in roofing but his hours were reduced due to rain. Daughter Elena works part-time at a clinic.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client manages diabetes and has a doctor's appointment scheduled for next Tuesday at 2:00 PM.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is currently on a home monitor and requested to attend church on Sunday. The PO denied the request, noting that the first 30 days strictly limit travel to medical and legal appointments. After 30 days of compliance, the PO can request the judge to add religious services.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Maria"
+    },
+    {
+      "type": "Person",
+      "value": "Elena"
+    },
+    {
+      "type": "Person",
+      "value": "Arturo"
+    },
+    {
+      "type": "Person",
+      "value": "Maya"
+    },
+    {
+      "type": "Person",
+      "value": "Beto"
+    },
+    {
+      "type": "Person",
+      "value": "Sister Margaret"
+    },
+    {
+      "type": "Person",
+      "value": "Uncle Hector"
+    },
+    {
+      "type": "Employer",
+      "value": "bakery"
+    },
+    {
+      "type": "Employer",
+      "value": "clinic"
+    },
+    {
+      "type": "Date",
+      "value": "next Tuesday"
+    },
+    {
+      "type": "Time",
+      "value": "2:00 PM"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "Sunday"
+    },
+    {
+      "type": "Document",
+      "value": "appointment card"
+    },
+    {
+      "type": "Document",
+      "value": "money order"
+    },
+    {
+      "type": "Application",
+      "value": "checking app"
+    }
+  ],
+  "next_episode_context": "Maria is currently on home confinement (monitor) living with her husband Arturo, daughter Elena, and her two grandsons. Finances are tight since she left the bakery and Arturo's roofing hours dropped, but rent is paid. She has a diabetes appointment next Tuesday at 2:00 PM; she must upload proof of the appointment by Friday to get her travel window approved. She was denied a pass for Sunday church but can petition the judge after 30 days of compliance."
+}

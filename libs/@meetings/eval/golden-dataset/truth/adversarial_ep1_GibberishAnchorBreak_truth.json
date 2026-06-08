@@ -1,0 +1,20 @@
+{
+  "action_items": [],
+  "critical_updates": [],
+  "entities": [],
+  "next_episode_context": "The transcript contained no meaningful conversation or intelligible content. No updates regarding housing, employment, legal, health, or compliance status were captured.",
+  "acceptable_action_items": [
+    {
+      "assignee": "PO",
+      "task": "Obtain a corrected or complete transcript, or confirm the meeting contents.",
+      "context": "Reasonable meta-action when the pipeline detects the transcript is garbled/unreadable. Not a hallucinated action item."
+    }
+  ],
+  "acceptable_critical_updates": [
+    {
+      "category": "Other",
+      "details": "Transcript is unreadable, garbled, or contains no intelligible content.",
+      "context": "Reasonable meta-observation about transcript quality. Not a hallucinated status update."
+    }
+  ]
+}

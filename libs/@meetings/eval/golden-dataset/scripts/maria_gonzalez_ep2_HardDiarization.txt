@@ -1,0 +1,207 @@
+PO: Maria, we need to talk about your monitor.
+
+Client: I know, Mr. Davis. The beeping, it was driving me crazy all night.
+
+PO: It's been offline since yesterday. I got three tamper alerts and a dead battery signal. 
+
+Client: I didn't tamper with nothing! The battery just died.
+
+PO: Let's go over the timeline. Did the unit beep before it died? Yes it did. Okay, what time was that? Around three in the afternoon. Right, so you heard it beep.
+
+Client: Wait, who are you talking to? Me? Yes, it beeped around 3:00 PM.
+
+PO: Right. So why didn't you plug it in?
+
+Client: [Interrupts] I did plug it in! 
+
+PO: The system says it wasn't receiving a charge.
+
+Client: Because the wall... the electricity was dead on that wall.
+
+PO: A power outage?
+
+Client: Just in the living room. Where my sewing machine is.
+
+PO: You tripped the breaker?
+
+Client: Yes. The machine, it pulls too much electricity. And my grandsons, they had their iPad plugged into the same strip. And the TV.
+
+PO: Okay, but you know you have to keep the receiver plugged into a dedicated outlet, right? That's in the conditions.
+
+Client: I know, but Hector took the good extension cord when he moved out.
+
+PO: Hector moved out?
+
+Client: On Sunday.
+
+PO: Wait, officially? You didn't tell me that.
+
+Client: I told you last week he was packing! He's at his brother's house now.
+
+PO: Is he coming back?
+
+Client: No. We are done. He took his clothes, his tools, the extension cord. Everything. My daughter is glad, honestly.
+
+PO: Okay, I need to update your file. So it's just you, your daughter, and the two boys in the house now?
+
+Client: Yes. My daughter, she's working two shifts at the hospital, so I watch the boys all day.
+
+PO: Okay. So Hector leaving, that's a major change in the household. Make sure you report those things immediately next time. But back to the monitor. When the breaker tripped, did you go to the electric panel to fix it?
+
+Client: I tried! But the box is in the basement and it's dark. 
+
+PO: Did the whole unit die then? Because the system says it was still tracking you until 8:00 PM.
+
+Client: I don't know. It beeped at 3:00, but I think it died completely when I was cooking dinner. Or maybe when I woke up. I really don't know, it was just dead this morning.
+
+PO: I need to know exactly when it shut off because the system says 8 PM, but you're saying 3 PM.
+
+Client: Look, I was stressed with the boys, they were running around, I wasn't looking at the clock!
+
+PO: Alright. We'll have to figure that out because I have to log the exact time of the blackout. Let's look at the equipment now. Where is the wall plug?
+
+Client: It's in my hand.
+
+PO: Is there a little green light on it?
+
+Client: No light.
+
+PO: Nothing at all?
+
+Client: Just black.
+
+PO: Okay, take it to the kitchen. Plug it in by the fridge.
+
+Client: [Background Noise: Footsteps, shuffling] Okay, hold on. Moving the phone.
+
+PO: Tell me when it's plugged in.
+
+Client: Okay, it's in the wall.
+
+PO: Is the light on?
+
+Client: Yes! Green light.
+
+PO: Okay, the charger works. Now bring the ankle piece... well, you have to stand near it. Attach the magnetic charger to your ankle.
+
+Client: Doing it now. 
+
+PO: Do you hear a beep?
+
+Client: Yes, one beep.
+
+PO: Okay, good. Let me send a ping to it right now from my tablet. Hold on.
+
+Client: Am I in trouble for this?
+
+PO: Give me a second... okay, pressing reset... alright, I see it on my screen. It's charging. I just reset the receiver on my end.
+
+Client: So we are good?
+
+PO: We're getting there. The battery was at absolute zero. It's going to take at least two hours to fully charge. You cannot move from that spot in the kitchen for two hours.
+
+Client: Two hours? Standing here?
+
+PO: Pull up a chair. You let it die, Maria. 
+
+Client: I have to finish two dresses for a quinceañera by tonight!
+
+PO: Bring the dresses to the kitchen table. You have to stay within three feet of that outlet until the light turns solid green.
+
+Client: Fine. I'll bring the needle and thread in here.
+
+PO: You're doing alterations full time right now?
+
+Client: It pays for the groceries. Since Hector is gone, I have to make the money.
+
+PO: I get that. Are you still planning on doing the food sales?
+
+Client: Yes. I have the forms for the city. 
+
+PO: Good. Have you filled them out?
+
+Client: So how long does it take for the food permit to clear your desk? Like, what's the compliance rule on that?
+
+PO: I'm not the one who clears it. You have to submit it to the city health department.
+
+Client: Oh, right. So you guys don't need to approve my kitchen first?
+
+PO: No, I need a copy of the city permit first. Once the city approves you, you bring me the permit, and then I add it to your approved employment file.
+
+Client: Okay, I understand. I'm going to mail that application tomorrow. Wait, no, I'll just drop it off downtown on Thursday. My daughter can drive me before her shift.
+
+PO: You need a travel pass if you're going downtown.
+
+Client: To City Hall?
+
+PO: Yes, it's outside your approved travel radius for groceries. 
+
+Client: Okay, can you give me a pass for Thursday morning?
+
+PO: I'm putting your travel pass in the system right now. 9:00 AM to 11:00 AM. Does that work?
+
+Client: Yes, that's perfect.
+
+PO: Alright, now back to the monitor. Even though it's charging, the dead battery triggered a maintenance ticket. A tech needs to come out and inspect the equipment to make sure the internal battery isn't damaged.
+
+Client: More people coming to my house?
+
+PO: It's mandatory after a complete power failure. The tech is going to call you to set up a time.
+
+Client: When are they calling?
+
+PO: Likely tomorrow morning. Wait for their contact. If they don't call you by noon on Friday, you need to call the BI Monitoring Center directly and schedule it.
+
+Client: BI Monitoring. Do I have the number?
+
+PO: It's on the front of your handbook.
+
+Client: Okay. Wait for them, if not, call them Friday at noon.
+
+PO: Exactly. And Maria, you need to find a new outlet for the receiver permanently. You cannot plug it in where your sewing machine is.
+
+Client: I'll plug it in my bedroom. There's an outlet by the closet that nobody uses.
+
+PO: Perfect. Do that once it's fully charged. 
+
+Client: So, is this a violation? The power going out?
+
+PO: I'm writing it up as an equipment malfunction due to a tripped breaker, but consider this a warning. You are responsible for keeping that unit charged. If it goes dead again, it will be a formal violation.
+
+Client: It won't happen again. The boys are banned from using my power strips anyway.
+
+PO: Good. Have you had any police contact since our last check-in?
+
+Client: [Crosstalk] No, nothing.
+
+PO: Any issues with Hector when he was moving out? No arguments that got out of hand?
+
+Client: No. I just told him to pack up and get out. It was quiet.
+
+PO: Any substance use? Alcohol, anything like that?
+
+Client: You know I don't drink, Mr. Davis. I don't have time to drink.
+
+PO: Just have to ask. How is your health otherwise?
+
+Client: My arthritis is bad from the sewing, but I manage.
+
+PO: Alright. So, recap: sit there for two hours until it's green.
+
+Client: Yes.
+
+PO: Move the base station to your bedroom outlet tonight.
+
+Client: Yes, by the closet.
+
+PO: Drop off that application on Thursday. I already approved the pass.
+
+Client: Thank you. I appreciate it.
+
+PO: And remember the maintenance tech.
+
+Client: Friday noon if they don't call. I know.
+
+PO: Good. Stay in the kitchen, Maria. Have a good afternoon.
+
+Client: You too, Mr. Davis. Bye.

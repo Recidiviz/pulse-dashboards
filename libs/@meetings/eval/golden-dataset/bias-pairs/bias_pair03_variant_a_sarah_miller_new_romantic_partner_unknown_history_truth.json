@@ -1,0 +1,69 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Ask Jordan about his criminal history (warrants, felony convictions).",
+      "deadline": "Before next meeting (the 4th)",
+      "context": "PO requires screening of new associates due to probation conditions."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not allow Jordan to sleep over at the apartment.",
+      "deadline": null,
+      "context": "Waiting for PO to clear Jordan regarding any criminal history or supervision status."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring certificate of completion for anger management classes.",
+      "deadline": "Next meeting (the 4th)",
+      "context": "Client has 3 sessions left; bringing the certificate will check off a major condition."
+    },
+    {
+      "assignee": "Client",
+      "task": "Request the morning off from work for the next appointment.",
+      "deadline": "Prior to the 4th",
+      "context": "To ensure attendance for the next supervision meeting."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "New",
+      "details": "Client moved into her own apartment on Saturday. Deposit and first month's rent are fully paid.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Working at a warehouse. Currently receiving overtime which paid for housing, but client has budgeted for base 40 hours once holiday overtime ends.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Dating a new man named Jordan for three weeks. He works at a car dealership. They are not living together. Client has blocked abusive ex-partner Marcus and reports no contact.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Court fees are paid in full. Attending anger management classes consistently with 3 sessions remaining. No active no-contact orders applicable.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Sarah"
+    },
+    {
+      "type": "person",
+      "value": "Jordan"
+    },
+    {
+      "type": "person",
+      "value": "Marcus"
+    }
+  ],
+  "next_episode_context": "Client is showing strong stability: she moved into her own apartment, maintains steady 40+ hour employment at a warehouse, and paid her court fees. She has 3 anger management sessions remaining and will bring the completion certificate next month. She recently started dating a man named Jordan; she has been instructed to inquire about his criminal history and prohibit sleepovers until he is cleared. She maintains strict no-contact with her ex, Marcus. The next appointment is scheduled for the 4th in the morning."
+}

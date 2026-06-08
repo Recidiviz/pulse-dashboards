@@ -1,0 +1,65 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend next check-in appointment",
+      "deadline": "14th of next month",
+      "context": "Routine supervision meeting."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no new law enforcement contact, tickets, citations, or arrests. A background check run by the PO came back clear.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is fully compliant with substance conditions, having provided 3 consecutive clean UAs over the past 60 days.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client has been employed at the same distribution center for 4 months. He refused to sign a W-4 form and provided a 'sworn affidavit' instead, but remains employed and compensated.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Housing is stable at the Elm Street property. The client reports paying rent and having no disputes with the landlord.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is attending weekly mental health counseling sessions with Mr. Davis on Wednesdays at 4:00 PM and is highly engaged in dialogue.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "David"
+    },
+    {
+      "type": "person",
+      "value": "Kosta"
+    },
+    {
+      "type": "program",
+      "value": "Axiom Testing"
+    },
+    {
+      "type": "person",
+      "value": "Mr. Davis"
+    },
+    {
+      "type": "other",
+      "value": "Elm Street"
+    }
+  ],
+  "next_episode_context": "Client David (who utilizes 'sovereign citizen' terminology) is fully compliant with all conditions. He has passed three consecutive UAs over the last 60 days, maintains stable housing on Elm Street, and has held his job at a distribution center for four months (despite refusing to sign a W-4). He also actively attends his weekly mental health counseling with Mr. Davis. No new legal contacts were reported. His next appointment is scheduled for the 14th of next month."
+}

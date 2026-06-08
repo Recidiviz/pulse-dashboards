@@ -1,0 +1,163 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Call Mr. Torres at Apex HR to explain the client's detainment and attempt to extend his suspension.",
+      "deadline": "Today",
+      "context": "Client was unable to turn in his doctor's note due to being arrested and is at risk of termination."
+    },
+    {
+      "assignee": "PO",
+      "task": "Verify with jail medical staff that the client's Flexeril prescription is on file.",
+      "deadline": "Today",
+      "context": "Client is experiencing severe back pain in booking and needs his medication."
+    },
+    {
+      "assignee": "PO",
+      "task": "Follow up on the Physical Therapy referral and put it on hold.",
+      "deadline": null,
+      "context": "Client cannot attend PT due to his current custody status."
+    },
+    {
+      "assignee": "PO",
+      "task": "Pull and read the actual police report from the traffic stop.",
+      "deadline": null,
+      "context": "To verify the client's version of the events leading to his arrest."
+    },
+    {
+      "assignee": "Client",
+      "task": "Stay out of trouble in jail, including avoiding booking fights and arguing with guards.",
+      "deadline": null,
+      "context": "Standard compliance requirement while detained."
+    },
+    {
+      "assignee": "Client",
+      "task": "Politely ask the nurses about receiving the prescribed Flexeril.",
+      "deadline": null,
+      "context": "To ensure the client receives his back pain medication."
+    },
+    {
+      "assignee": "PO",
+      "task": "Review jail UA test results and evaluate recommending lifting the parole hold.",
+      "deadline": null,
+      "context": "Conditional task: PO will only look at lifting the hold if the police report matches the client's story and the jail UA is clean."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client was arrested during a traffic stop on 4th Street for a broken taillight after consenting to a search. He was charged with possession after an officer found one Percocet pill under the passenger seat. A parole hold has been placed, and his arraignment is expected tomorrow morning.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client failed to deliver a required doctor's note to his employer, Mr. Torres at Apex HR, by Friday at 8 AM due to his arrest. He is at immediate risk of termination.",
+      "is_critical": true
+    },
+    {
+      "category": "Substance",
+      "update_type": "Change",
+      "details": "Client was found in possession of a Percocet pill, which he claims rolled off the seat from a previous relapse incident reported last Tuesday. His scheduled UA at Axiom on the 15th was canceled, but he will be tested at the jail.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client is experiencing severe back pain from sleeping on concrete benches in jail. He has not received his prescribed Flexeril and his Physical Therapy referral is being put on hold.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client is currently incarcerated in the county jail booking area.",
+      "is_critical": true
+    },
+    {
+      "category": "Other",
+      "update_type": "New",
+      "details": "Client reported speaking to his sponsor, Dave, on Tuesday night and attending an AA/NA meeting on Wednesday morning prior to his arrest.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Location",
+      "value": "county"
+    },
+    {
+      "type": "Date/Time",
+      "value": "yesterday afternoon"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Torres"
+    },
+    {
+      "type": "Date/Time",
+      "value": "Friday at 8 AM"
+    },
+    {
+      "type": "Location",
+      "value": "4th Street"
+    },
+    {
+      "type": "Substance",
+      "value": "Percocet"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date/Time",
+      "value": "tomorrow morning"
+    },
+    {
+      "type": "Person",
+      "value": "Dave"
+    },
+    {
+      "type": "Date/Time",
+      "value": "Tuesday night"
+    },
+    {
+      "type": "Date/Time",
+      "value": "Wednesday morning"
+    },
+    {
+      "type": "Medication",
+      "value": "Flexeril"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Date",
+      "value": "the 15th"
+    },
+    {
+      "type": "Organization",
+      "value": "Apex HR"
+    },
+    {
+      "type": "Document",
+      "value": "doctor’s note"
+    },
+    {
+      "type": "Document",
+      "value": "police report"
+    },
+    {
+      "type": "Document",
+      "value": "PT referral"
+    }
+  ],
+  "next_episode_context": "Marcus is currently incarcerated in county jail with a parole hold after a traffic stop resulted in a new charge for possession of a Percocet pill. He missed a critical Friday 8 AM deadline to submit a doctor's note to his employer, placing his job at Apex HR at severe risk. The PO is attempting to intervene with the employer, verify his Flexeril prescription with jail medical staff due to his back pain, and review the police report and jail UA to determine whether to recommend lifting the parole hold."
+}

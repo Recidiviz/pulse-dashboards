@@ -1,0 +1,177 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Go to the community pharmacy on 4th Street, see Pharmacist David, and use the voucher for a basic antacid",
+      "deadline": "Tomorrow morning",
+      "context": "Client is experiencing severe heartburn from the greasy food at the halfway house."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call Oak Creek Community Clinic to establish primary care for medication management",
+      "deadline": "Friday",
+      "context": "Needs to ensure continuous supply of blood pressure medicine after the 30-day prison supply runs out."
+    },
+    {
+      "assignee": "Client",
+      "task": "Ask the doctor at Oak Creek for a physical evaluation for work limitations",
+      "deadline": null,
+      "context": "Client is 62 with bad knees and cannot perform heavy manual labor; needs medical documentation to adjust parole work requirements."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue doing internal chores (sweeping front porch, sorting mail) at the halfway house",
+      "deadline": null,
+      "context": "Serves as current work activity participation pending a formal medical evaluation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not leave the county without written permission",
+      "deadline": null,
+      "context": "Standard parole travel restriction."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not go into establishments where the primary sale is alcohol",
+      "deadline": null,
+      "context": "Standard parole condition."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call the UA hotline every morning between 5 AM and 7 AM to check the color code (Brown)",
+      "deadline": null,
+      "context": "Standard drug testing compliance."
+    },
+    {
+      "assignee": "Client",
+      "task": "If color 'Brown' is called, go to the testing center on 8th Street before 4 PM to provide a urine sample",
+      "deadline": null,
+      "context": "Protocol for random drug testing."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next weekly parole appointment",
+      "deadline": "Next Wednesday at 2:00 PM",
+      "context": "Weekly check-in requirement for the first month."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call Mr. Hayes to ask about the halfway house's policy for medical diets and request a different tray",
+      "deadline": "This afternoon",
+      "context": "Client's stomach is being severely irritated by heavy, greasy casseroles served at the house."
+    },
+    {
+      "assignee": "PO",
+      "task": "Note in client's file that he is doing house chores as his current work activity pending a medical evaluation",
+      "deadline": null,
+      "context": "To ensure client is marked as compliant with work efforts despite physical limitations."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "New",
+      "details": "Client has been living at the transitional halfway house for exactly 7 days. Experiencing some overwhelm from noise and younger roommates staying up late, but adjusting by waking up early and strictly following Mr. Hayes' check-in/out rules.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client is suffering from severe heartburn/acid reflux due to the greasy food at the halfway house and requires an alternative medical diet. Also has joint/knee pain that limits mobility. Currently taking a 30-day supply of blood pressure medication provided by the prison and needs to establish primary care to maintain the prescription.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client is 62 with bad knees and a lengthy record, making traditional employment difficult. Temporarily performing internal chores at the halfway house (sweeping, mail sorting) to fulfill work requirements pending a physical evaluation for formal work limitations.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Released from the Wallace Unit 7 days ago after a 20-year sentence. No police contact reported and compliant with curfew/sign-in requirements.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports abstaining from alcohol since 1999. Assigned the color code 'Brown' for daily random urinalysis checks.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "New",
+      "details": "Experiencing minor culture shock and feeling overwhelmed by the fast pace, noise, and changes in society (e.g., pharmacy options, smart phones) after 20 years of incarceration.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Arthur Boone"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Hayes"
+    },
+    {
+      "type": "Person",
+      "value": "David"
+    },
+    {
+      "type": "Location",
+      "value": "Wallace Unit"
+    },
+    {
+      "type": "Location",
+      "value": "pharmacy on 4th Street"
+    },
+    {
+      "type": "Location",
+      "value": "Oak Creek Community Clinic"
+    },
+    {
+      "type": "Location",
+      "value": "testing center on 8th Street"
+    },
+    {
+      "type": "Program",
+      "value": "UA hotline"
+    },
+    {
+      "type": "Document",
+      "value": "voucher"
+    },
+    {
+      "type": "Document",
+      "value": "referral form"
+    },
+    {
+      "type": "Document",
+      "value": "appointment slip"
+    },
+    {
+      "type": "Date",
+      "value": "Next Wednesday"
+    },
+    {
+      "type": "Time",
+      "value": "2:00 PM"
+    },
+    {
+      "type": "Time",
+      "value": "5 AM and 7 AM"
+    },
+    {
+      "type": "Time",
+      "value": "4 PM"
+    }
+  ],
+  "next_episode_context": "Arthur Boone (62) was released from the Wallace Unit 7 days ago after a 20-year sentence. He is living at a transitional house managed by Mr. Hayes and adjusting to the noise and pace. He has severe heartburn from the house food; PO provided a pharmacy voucher for antacids and is contacting Mr. Hayes to request a dietary accommodation. Arthur is tasked with establishing primary care at Oak Creek Community Clinic for blood pressure medication refills and a physical evaluation for work limitations due to bad knees. Meanwhile, he is completing house chores to satisfy employment conditions. He is on the 'Brown' UA color code and must call the hotline daily. Next appointment is scheduled for next Wednesday at 2:00 PM.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Continue taking prescribed blood pressure medication daily"
+    }
+  ]
+}

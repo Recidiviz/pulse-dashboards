@@ -1,0 +1,97 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Keep cell phone powered off",
+      "deadline": null,
+      "context": "To ensure Marcus cannot track her location."
+    },
+    {
+      "assignee": "Client",
+      "task": "Stay strictly inside the YWCA shelter building",
+      "deadline": null,
+      "context": "Mandatory safety precaution until the situation is secure."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call PO from the shelter front desk phone for a safety check",
+      "deadline": "Tomorrow at 9:00 AM",
+      "context": "Daily check-in to confirm safety and review paperwork."
+    },
+    {
+      "assignee": "PO",
+      "task": "Send emergency HR transfer paperwork to Safeway's regional manager",
+      "deadline": "This afternoon",
+      "context": "To transfer the client's work location from Elm Street to Northside for safety."
+    },
+    {
+      "assignee": "Client",
+      "task": "Finish filling out the income history part of the Section 8 application",
+      "deadline": "Tomorrow at 9:00 AM",
+      "context": "To be reviewed with the PO during the morning check-in call."
+    },
+    {
+      "assignee": "PO",
+      "task": "Review final details of the Section 8 paperwork with the client",
+      "deadline": "Tomorrow at 9:00 AM",
+      "context": "Will occur during the scheduled safety check-in."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "New",
+      "details": "Client is currently checked into a bed at the YWCA shelter and is under strict instructions to remain inside the building for her safety.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Client had a physical altercation with Marcus, resulting in her fleeing to a shelter. She has turned off her cell phone to prevent him from tracking her.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client reported aching/bruised ribs and a scraped arm from pushing past Marcus. She explicitly declined medical attention, stating she just needs to sit still.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client is undergoing an emergency HR transfer at Safeway to move from the Elm Street store to the Northside location to prevent Marcus from finding her at work.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Organization",
+      "value": "YWCA"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Employer",
+      "value": "Safeway"
+    },
+    {
+      "type": "Location",
+      "value": "Elm Street"
+    },
+    {
+      "type": "Location",
+      "value": "Northside"
+    },
+    {
+      "type": "Program",
+      "value": "Section 8"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    }
+  ],
+  "next_episode_context": "The client is currently hiding at the YWCA shelter after a physical altercation with Marcus. She sustained minor injuries (bruised ribs, scraped arm) but declined medical care. Her cell phone is powered off to avoid being tracked. The PO is facilitating an emergency employment transfer for her Safeway job (moving her from Elm Street to Northside) to ensure her safety. She is tasked with staying inside the shelter, completing her Section 8 housing application, and calling the PO tomorrow at 9:00 AM from the shelter's landline for a safety check and paperwork review."
+}

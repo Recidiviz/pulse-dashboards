@@ -1,0 +1,102 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Call CVS to follow up on the recent job application.",
+      "deadline": "Tomorrow",
+      "context": "Client needs to secure an income to afford her own housing and move out of her current living situation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call Brenda to inquire about the YWCA transitional housing program apartments.",
+      "deadline": null,
+      "context": "Client needs a stable, safe housing backup plan due to her current roommate's aggressive behavior and her own DV history."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call the PO (leave a message) or the hotline if Marcus gets loud or punches a wall again.",
+      "deadline": null,
+      "context": "Safety planning to ensure the client has immediate support if her roommate's temper escalates."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call Target to follow up on the job application",
+      "deadline": "Tomorrow"
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client moved out of her cousin's house 2-3 weeks ago and is now staying with a friend, Marcus, at 1422 West 4th, Apartment 3B. Marcus has a temper, drinks, and recently punched a wall, which raises safety concerns given the client's past domestic violence history.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Client reported leaving her cousin's house because it was getting crowded due to drama with the cousin's kids and the cousin's boyfriend returning.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is currently unemployed but actively seeking work. She submitted job applications to Target and a local CVS this week and plans to follow up.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client appeared tired and reported not sleeping much due to stress and 'life stuff', though she denied any immediate crisis.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Sarah"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Person",
+      "value": "David"
+    },
+    {
+      "type": "Person",
+      "value": "Brenda"
+    },
+    {
+      "type": "Address",
+      "value": "1422 West 4th, Apartment 3B"
+    },
+    {
+      "type": "Employer",
+      "value": "Target"
+    },
+    {
+      "type": "Employer",
+      "value": "CVS"
+    },
+    {
+      "type": "Program",
+      "value": "YWCA transitional housing program"
+    },
+    {
+      "type": "Timeframe",
+      "value": "two weeks"
+    },
+    {
+      "type": "Timeframe",
+      "value": "tomorrow"
+    }
+  ],
+  "next_episode_context": "Sarah is currently unemployed but actively seeking work, having recently applied to Target and CVS. She moved out of her cousin's house 2-3 weeks ago and is staying with a friend, Marcus. Marcus recently exhibited aggressive behavior (punching a wall while drinking), prompting the PO to discuss safety planning and refer Sarah to the YWCA transitional housing program (contact: Brenda) as a safer alternative, especially given her DV history with her ex, David. Sarah agreed to call the YWCA and follow up with CVS. The next meeting is scheduled in two weeks.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend scheduled follow-up appointment with PO in two weeks"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Log into patient portal at the library to print doctor's clearance note.",
+      "deadline": "Today",
+      "context": "Needs medical proof of clearance for modified lifting for his employer."
+    },
+    {
+      "assignee": "Client",
+      "task": "Provide printed doctor's clearance note to employer (Mr. Torres).",
+      "deadline": "Friday at 8 AM",
+      "context": "Required to avoid termination for no-call no-show policy."
+    },
+    {
+      "assignee": "Client",
+      "task": "Wait for portal access; if patient portal does not work, ride the bus to the clinic and have the front desk print the clearance note.",
+      "deadline": null,
+      "context": "Backup plan for obtaining the required doctor's note."
+    },
+    {
+      "assignee": "Client",
+      "task": "Submit to UA drop test at Axiom.",
+      "deadline": "15th",
+      "context": "Mandatory testing schedule."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call sponsor (Dave).",
+      "deadline": "Today",
+      "context": "Address recent relapse and stop avoiding him."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend 4 NA meetings and obtain a signature slip from the chair at each one.",
+      "deadline": "This week",
+      "context": "Increased meeting requirement due to admitted opiate relapse."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring physical therapy referral to the next meeting.",
+      "deadline": "Next meeting",
+      "context": "To look up in-network PT providers under Medicaid."
+    },
+    {
+      "assignee": "PO",
+      "task": "Put a note in the client's file detailing today's admission of using one Percocet.",
+      "deadline": null,
+      "context": "To align the upcoming UA drop results with the client's admission."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client is currently suspended from his job at Apex due to a missed shift. He must provide a doctor's clearance note for modified lifting to Mr. Torres by Friday at 8 AM, otherwise he will be terminated.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client is experiencing severe back pain that locked up completely on Sunday. Visited the clinic on Tuesday, saw Dr. Evans, and was prescribed Flexeril (muscle relaxer) and given a referral for physical therapy.",
+      "is_critical": true
+    },
+    {
+      "category": "Substance",
+      "update_type": "New",
+      "details": "Client admitted to relapsing on Sunday night by taking one 10mg Percocet for severe back pain. The pill was obtained from his aunt. He has been avoiding his sponsor, Dave.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client lives with his grandmother, who pays the electric bill and is unaware of his relapse. Client's aunt gave him the Percocet while visiting to help the grandmother clean.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Torres"
+    },
+    {
+      "type": "Person",
+      "value": "Dave"
+    },
+    {
+      "type": "Person",
+      "value": "Dr. Evans"
+    },
+    {
+      "type": "Employer",
+      "value": "Apex"
+    },
+    {
+      "type": "Organization",
+      "value": "Axiom"
+    },
+    {
+      "type": "Program",
+      "value": "NA"
+    },
+    {
+      "type": "Organization",
+      "value": "Medicaide"
+    },
+    {
+      "type": "Medication",
+      "value": "Flexeril"
+    },
+    {
+      "type": "Medication",
+      "value": "Percocet"
+    },
+    {
+      "type": "Medication",
+      "value": "oxycodone"
+    },
+    {
+      "type": "Medication",
+      "value": "fentanyl"
+    },
+    {
+      "type": "Document",
+      "value": "doctor's note"
+    },
+    {
+      "type": "Document",
+      "value": "signature slip"
+    },
+    {
+      "type": "Document",
+      "value": "PT referral"
+    },
+    {
+      "type": "Document",
+      "value": "Release of Information form"
+    },
+    {
+      "type": "Date",
+      "value": "Friday at 8 AM"
+    },
+    {
+      "type": "Date",
+      "value": "15th"
+    },
+    {
+      "type": "Date",
+      "value": "Sunday night"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Amount",
+      "value": "10-milligram"
+    }
+  ],
+  "next_episode_context": "Marcus admitted to relapsing on a single 10mg Percocet (provided by his aunt) on Sunday night to cope with severe back pain. He has been avoiding his sponsor, Dave, but texted him during the session and is tasked with calling him today and attending 4 NA meetings this week with signed slips. He is currently suspended from his job at Apex and must provide a doctor's clearance note by Friday at 8 AM to avoid termination. He was prescribed Flexeril by Dr. Evans and needs to bring his PT referral to the next meeting to check Medicaid coverage. His next UA drop is scheduled for the 15th at Axiom."
+}

@@ -1,0 +1,215 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend YWCA intake to secure emergency bed.",
+      "deadline": "2:00 PM today",
+      "context": "Securing safe housing away from abusive partner."
+    },
+    {
+      "assignee": "Client",
+      "task": "Have YWCA medical intake or nurse practitioner examine twisted wrist.",
+      "deadline": null,
+      "context": "Client tripped and fell while fleeing apartment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Keep cell phone completely turned off.",
+      "deadline": null,
+      "context": "Prevent abusive partner from tracking location."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not go back to the apartment alone.",
+      "deadline": null,
+      "context": "Safety precaution; PO noted client can request police standby if absolutely necessary."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call PO from the shelter's landline to check in and get the Safeway job transfer update.",
+      "deadline": "Tomorrow at 10 AM",
+      "context": "Verify client made it safely through the night and provide employment update."
+    },
+    {
+      "assignee": "Client",
+      "task": "Update official address with PO once placed in the shelter.",
+      "deadline": "Friday",
+      "context": "Compliance requirement for tracking client's residence."
+    },
+    {
+      "assignee": "Client",
+      "task": "Wait for SAGE contact; if no contact by Friday, call SAGE directly for emergency hotel vouchers.",
+      "deadline": "Friday",
+      "context": "Backup plan if the YWCA shelter falls through."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not go to the Safeway on 5th Avenue for the stocking job.",
+      "deadline": "Monday",
+      "context": "Partner frequents this location for lunch; poses a safety risk."
+    },
+    {
+      "assignee": "Client",
+      "task": "Work on replacing birth certificate and social security card.",
+      "deadline": null,
+      "context": "Left behind in abusive partner's lockbox."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call Safeway HR to request a transfer of hiring paperwork to the Northside location.",
+      "deadline": "Today",
+      "context": "The 5th Avenue location is unsafe due to domestic violence conflict."
+    },
+    {
+      "assignee": "PO",
+      "task": "Look into vouchers for a cheap prepaid phone.",
+      "deadline": null,
+      "context": "Client needs a safe phone since her current one might be tracked."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client fled her apartment due to threats of domestic violence from her partner. She arrived at the PO office in crisis with bags in her car. She was referred to the YWCA emergency shelter and instructed not to return to the apartment.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client was not hired by CVS but was offered a part-time stocking position at Safeway starting Monday. However, the store is on 5th Avenue where her abuser frequents. PO is intervening to have HR transfer her to the Northside location for safety.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Change",
+      "details": "Neighbors called the police to client's apartment around midnight due to the partner's yelling. The partner answered the door and the client had no direct police contact. PO checked the partner for active warrants and found only old traffic tickets. Client's car registration is expired.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client presented shaking with adrenaline and reported a new twisted, swollen wrist from falling on stairs while fleeing. She also reported bruised ribs and shoulder pain from last week, which she attributed to a previous fall. PO advised having the YWCA nurse examine the wrist.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Client is actively fleeing an abusive relationship with her partner, Marcus Vance. She mentioned having a sister in Marion County, but stated it is unsafe to go there because her partner knows where the sister lives.",
+      "is_critical": true
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "No substance use history or current use was discussed during this emergency safety session.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Stable/Status Quo",
+      "details": "No education, schooling, or certification programs were discussed during the meeting.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client arrived in acute distress. PO successfully de-escalated the situation, coordinated emergency shelter, and printed a verbal travel pass for Marion County as a backup emergency option.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Sarah"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus Vance"
+    },
+    {
+      "type": "Date",
+      "value": "October 12th, 1988"
+    },
+    {
+      "type": "Person",
+      "value": "Aunt Marie"
+    },
+    {
+      "type": "Organization",
+      "value": "YWCA"
+    },
+    {
+      "type": "Location",
+      "value": "Walmart"
+    },
+    {
+      "type": "Location",
+      "value": "Marion County"
+    },
+    {
+      "type": "Location",
+      "value": "Starlight Motel"
+    },
+    {
+      "type": "Location",
+      "value": "Route 9"
+    },
+    {
+      "type": "Employer",
+      "value": "CVS"
+    },
+    {
+      "type": "Employer",
+      "value": "Safeway"
+    },
+    {
+      "type": "Location",
+      "value": "5th Avenue"
+    },
+    {
+      "type": "Location",
+      "value": "Northside"
+    },
+    {
+      "type": "Program",
+      "value": "SAGE"
+    },
+    {
+      "type": "Amount",
+      "value": "forty dollars"
+    },
+    {
+      "type": "Document",
+      "value": "driver's license"
+    },
+    {
+      "type": "Document",
+      "value": "birth certificate"
+    },
+    {
+      "type": "Document",
+      "value": "social security card"
+    },
+    {
+      "type": "Document",
+      "value": "travel pass"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "Monday"
+    },
+    {
+      "type": "Appointment",
+      "value": "tomorrow at 10 AM"
+    },
+    {
+      "type": "Appointment",
+      "value": "2:00 PM"
+    }
+  ],
+  "next_episode_context": "Client is in acute crisis after fleeing her abusive partner, Marcus Vance. She reported physical injuries (twisted wrist, bruised ribs) and was directed to emergency housing at the YWCA. Her part-time job offer at Safeway is being transferred by the PO to a safer location. She is checking in by phone tomorrow at 10 AM to verify her safety and the job transfer status."
+}

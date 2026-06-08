@@ -1,0 +1,149 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Keep a written log of days worked, hours, and cash paid, have Uncle Marcus sign it at the end of the month, and bring it to the next meeting.",
+      "deadline": "The 12th",
+      "context": "Required to prove verifiable employment since he is currently being paid in cash for odd jobs."
+    },
+    {
+      "assignee": "Client",
+      "task": "Inform Uncle Marcus about the mandatory parole class to ensure work does not conflict with attendance.",
+      "deadline": null,
+      "context": "Parole classes take priority over hauling trash."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend the Axiom program orientation.",
+      "deadline": "This Tuesday at 10 AM",
+      "context": "Mandatory cognitive behavioral classes."
+    },
+    {
+      "assignee": "Client",
+      "task": "Maintain verifiable employment.",
+      "deadline": null,
+      "context": "Standard condition of parole."
+    },
+    {
+      "assignee": "Client",
+      "task": "Maintain no contact with any known gang members or associates from the old neighborhood.",
+      "deadline": null,
+      "context": "Standard condition of parole."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to reside with his mother on 43rd Street. No other adults have moved in, and rent is up to date.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client is working odd jobs (property trash-outs) for his Uncle Marcus approximately three days a week (Tuesday-Thursday). He is currently being paid in cash, which requires a logged verification moving forward.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no police contact and asserts he is staying inside playing video games to avoid contact with gang members or people from his old neighborhood.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Change",
+      "details": "Client contacted the Axiom cognitive behavioral program. He is scheduled to begin his mandatory orientation this coming Tuesday at 10 AM.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live with his mother, who is still employed at the hospital but is experiencing some back pain. He is working with his Uncle Marcus.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports he is not taking any medications.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client denies any alcohol or drug use since the last visit. A UA was administered during the session.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client relies on the bus (Route 9) or rides from his uncle for transportation. Next appointment is scheduled for the 12th at 2 PM.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Tyrell"
+    },
+    {
+      "type": "Location",
+      "value": "43rd"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Location",
+      "value": "5th street"
+    },
+    {
+      "type": "Transportation",
+      "value": "9"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Time",
+      "value": "10 AM"
+    },
+    {
+      "type": "Date",
+      "value": "14th"
+    },
+    {
+      "type": "Date",
+      "value": "12th"
+    },
+    {
+      "type": "Time",
+      "value": "2 PM"
+    },
+    {
+      "type": "Document",
+      "value": "work log"
+    },
+    {
+      "type": "Document",
+      "value": "monthly report form"
+    }
+  ],
+  "next_episode_context": "Tyrell is currently living stably with his mother on 43rd Street and working cash-paying odd jobs with his Uncle Marcus. He was instructed to maintain a signed work log to verify his employment. He is slated to begin the Axiom cognitive behavioral program orientation this coming Tuesday at 10 AM. He reported no legal, health, or substance issues, and completed a UA and monthly report during the visit. The next office visit is scheduled for the 12th at 2 PM.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend scheduled next appointment with PO"
+    },
+    {
+      "assignee": "Client",
+      "task": "Report any police contact to PO immediately"
+    }
+  ]
+}

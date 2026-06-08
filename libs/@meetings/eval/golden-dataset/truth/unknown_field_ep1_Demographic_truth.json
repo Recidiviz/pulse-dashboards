@@ -1,0 +1,230 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Complete the WIOA grant application and submit it to the career center.",
+      "deadline": "Tomorrow",
+      "context": "Required to secure funding for the Tri-State Trucking Academy CDL program."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring any WIOA approval letters, trucking school enrollment agreements, or related paperwork to the next appointment.",
+      "deadline": "The 14th",
+      "context": "The PO needs a copy of the job training documents for the client's file."
+    },
+    {
+      "assignee": "Client",
+      "task": "Abide by travel restrictions; do not leave the state without a travel permit and restrict commercial truck driving strictly to intrastate routes.",
+      "deadline": null,
+      "context": "Standard supervision conditions prevent interstate travel without a permit."
+    },
+    {
+      "assignee": "Client",
+      "task": "Take prescribed blood pressure medication (water pill) daily exactly as prescribed.",
+      "deadline": null,
+      "context": "High blood pressure can disqualify the client from obtaining a DOT commercial medical card."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client remains employed at the Co-op loading feed and driving a forklift. He is getting 35-40 hours a week and making $15 an hour. His boss, Mr. Henderson, is supportive of him taking leave or working weekends if he attends trucking school.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "Client is actively pursuing a Class A CDL through Tri-State Trucking Academy to increase his income. The full-time course takes four weeks and costs between $4,000 and $4,500, which he plans to cover using a WIOA grant.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to reside in a trailer on County Road 9, where he has lived for three years. He and his wife are hoping to save up for a house in the future.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's home life is stable. He lives with his wife and children, noting his oldest child just started middle school. His wife is supportive of his plan to get a CDL.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client experiences knee and back pain from his current manual labor job. He was recently prescribed a 'water pill' for high blood pressure, which he takes daily and is trying to improve his diet to manage.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports remaining clean since his incarceration and no longer drinks alcohol. He is fully confident he can pass the strict DOT hair and blood drug screens required for a CDL.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "No new law enforcement contact, tickets, or warnings. The client confirmed there are no firearms in the home, as his brother removed them following his conviction.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Employer",
+      "value": "Co-op"
+    },
+    {
+      "type": "Employer",
+      "value": "lumber yard"
+    },
+    {
+      "type": "Organization",
+      "value": "career center"
+    },
+    {
+      "type": "Organization",
+      "value": "Department of Transportation"
+    },
+    {
+      "type": "Organization",
+      "value": "DOT"
+    },
+    {
+      "type": "Program",
+      "value": "WIOA"
+    },
+    {
+      "type": "Program",
+      "value": "Workforce Innovation and Opportunity Act"
+    },
+    {
+      "type": "Program",
+      "value": "Tri-State Trucking Academy"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Henderson"
+    },
+    {
+      "type": "Location",
+      "value": "County Road 9"
+    },
+    {
+      "type": "Location",
+      "value": "southern counties"
+    },
+    {
+      "type": "Document",
+      "value": "Class A CDL"
+    },
+    {
+      "type": "Document",
+      "value": "Commercial Driver's License"
+    },
+    {
+      "type": "Document",
+      "value": "WIOA paperwork"
+    },
+    {
+      "type": "Document",
+      "value": "commercial medical card"
+    },
+    {
+      "type": "Document",
+      "value": "approval letter"
+    },
+    {
+      "type": "Document",
+      "value": "enrollment agreement"
+    },
+    {
+      "type": "Document",
+      "value": "appointment card"
+    },
+    {
+      "type": "Amount",
+      "value": "fifteen an hour"
+    },
+    {
+      "type": "Amount",
+      "value": "four thousand"
+    },
+    {
+      "type": "Amount",
+      "value": "forty-five hundred dollars"
+    },
+    {
+      "type": "Amount",
+      "value": "thirty-five dollars"
+    },
+    {
+      "type": "Date",
+      "value": "March 2018"
+    },
+    {
+      "type": "Date",
+      "value": "November 2020"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday the 14th"
+    },
+    {
+      "type": "Date",
+      "value": "tomorrow"
+    },
+    {
+      "type": "Date",
+      "value": "first Monday of next month"
+    },
+    {
+      "type": "Time",
+      "value": "10:00 AM"
+    },
+    {
+      "type": "Time",
+      "value": "tonight after supper"
+    }
+  ],
+  "next_episode_context": "The client is currently employed full-time at the Co-op but is applying for WIOA grant funding to attend a 4-week CDL course at Tri-State Trucking Academy. He lives with his wife and children on County Road 9. He is maintaining his sobriety and managing high blood pressure with prescribed medication. His next appointment is scheduled for Tuesday the 14th at 10:00 AM, where he is expected to provide his WIOA and trucking school paperwork.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Focus on getting WIOA application submitted this week"
+    },
+    {
+      "assignee": "Client",
+      "task": "Call PO if work schedule changes immediately"
+    },
+    {
+      "assignee": "PO",
+      "task": "Document WIOA enrollment and job training in client's file"
+    },
+    {
+      "assignee": "Client",
+      "task": "Remain abstinent from drugs and alcohol"
+    },
+    {
+      "assignee": "Client",
+      "task": "Pay supervision fee at the front desk before leaving today.",
+      "context": "Same-session procedural step, not a follow-up action item."
+    },
+    {
+      "assignee": "Client",
+      "task": "Inform employer (Mr. Henderson) about taking an early lunch to attend the next PO appointment.",
+      "context": "Client-stated plan, not a PO directive."
+    },
+    {
+      "assignee": "Client",
+      "task": "Enroll or start at Tri-State Trucking Academy when WIOA funding is approved.",
+      "context": "Client-stated career plan. PO is supportive but did not direct enrollment."
+    }
+  ],
+  "acceptable_critical_updates": [
+    {
+      "category": "Other",
+      "details": "Client paid his $35 supervision fee from last month and is paying the current month's fee at the front desk."
+    }
+  ]
+}

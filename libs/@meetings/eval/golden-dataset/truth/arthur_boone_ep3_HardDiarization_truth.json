@@ -1,0 +1,133 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Pick up Omeprazole/antacids at the pharmacy",
+      "deadline": "Today",
+      "context": "Needed to treat severe heartburn caused by boarding house food."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call Mr. Hayes at the boarding house to request a medical diet with lighter, un-fried foods for the client",
+      "deadline": "Today",
+      "context": "The current heavy meals are causing the client severe acid reflux and interfering with medications."
+    },
+    {
+      "assignee": "Client",
+      "task": "Contact Oak Creek Community Clinic to set up an intake appointment for primary care and a medical work restriction evaluation",
+      "deadline": "Friday",
+      "context": "Required to evaluate back issues and determine suitable employment accommodations."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call the PO if any issues arise with insurance at the pharmacy today",
+      "deadline": "Today",
+      "context": "Contingency plan in case the pharmacy has trouble with the active insurance card."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring Oak Creek Community Clinic paperwork or appointment card to the next visit",
+      "deadline": "In two weeks",
+      "context": "To verify that the medical evaluation process has been initiated."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client is experiencing severe heartburn and acid reflux due to the fried food at the boarding house. Client also reported severe back issues (L4 and L5 discs bone on bone) requiring a work restriction evaluation. A full medication review was conducted.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "External job search remains paused until a medical work restriction evaluation is completed. Client continues to perform light indoor chores (sweeping, wiping tables) at the boarding house to remain mildly active.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is living at Mr. Hayes's boarding house. The environment is quiet and suitable, but the provided meals are too heavy and are causing the client severe medical distress.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Mr. Boone"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Hayes"
+    },
+    {
+      "type": "Organization",
+      "value": "Oak Creek Community Clinic"
+    },
+    {
+      "type": "Location",
+      "value": "4th Street"
+    },
+    {
+      "type": "Location",
+      "value": "4th and Elm"
+    },
+    {
+      "type": "Medication",
+      "value": "Omeprazole"
+    },
+    {
+      "type": "Medication",
+      "value": "Lisinopril"
+    },
+    {
+      "type": "Medication",
+      "value": "Amlodipine"
+    },
+    {
+      "type": "Medication",
+      "value": "Hydrochlorothiazide"
+    },
+    {
+      "type": "Medication",
+      "value": "Gabapentin"
+    },
+    {
+      "type": "Medication",
+      "value": "Flexeril"
+    },
+    {
+      "type": "Medication",
+      "value": "Atorvastatin"
+    },
+    {
+      "type": "Medication",
+      "value": "Baby aspirin"
+    },
+    {
+      "type": "Amount",
+      "value": "20 milligrams"
+    },
+    {
+      "type": "Amount",
+      "value": "10 milligrams"
+    },
+    {
+      "type": "Amount",
+      "value": "12.5 milligrams"
+    },
+    {
+      "type": "Amount",
+      "value": "300 milligrams"
+    },
+    {
+      "type": "Document",
+      "value": "medical work restriction evaluation"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    }
+  ],
+  "next_episode_context": "Client is stably housed at Mr. Hayes's boarding house and performing light indoor chores. His external job search is paused pending a medical work restriction evaluation for severe back pain (L4/L5 discs). He is picking up Omeprazole today to treat severe heartburn caused by the heavy boarding house meals, and the PO is calling Mr. Hayes today to arrange a medical diet. The client must contact Oak Creek Community Clinic by Friday to establish primary care and schedule his work evaluation, and will bring the resulting paperwork to the next appointment in two weeks."
+}

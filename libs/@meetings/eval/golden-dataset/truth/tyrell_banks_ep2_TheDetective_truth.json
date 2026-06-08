@@ -1,0 +1,153 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend mandatory Axiom orientation",
+      "deadline": "Tuesday at 10:00 AM",
+      "context": "Axiom takes attendance and reports back to the PO."
+    },
+    {
+      "assignee": "Client",
+      "task": "Get manual work log signed by Uncle Marcus",
+      "deadline": "Sunday",
+      "context": "Needs Uncle Marcus's signature for every day worked to verify income."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call the PO if Uncle Marcus does not sign the work log by Sunday",
+      "deadline": "Monday morning",
+      "context": "Backup plan in case the signature cannot be obtained over the weekend."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring the completed manual work log with Marcus's signatures",
+      "deadline": "the 12th",
+      "context": "Required to verify income from the property trash-out jobs."
+    },
+    {
+      "assignee": "PO",
+      "task": "Check the system to look into Darius Banks",
+      "deadline": null,
+      "context": "PO needs to verify if Darius Banks is on probation or parole to ensure the client is not associating with a system-involved individual."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not associate with Darius Banks and leave the job site if he is present (conditional upon PO finding Darius on supervision)",
+      "deadline": null,
+      "context": "Standard condition restricting association with individuals involved in criminal activity or on supervision."
+    },
+    {
+      "assignee": "Client",
+      "task": "Stop by the front desk and grab a new bus pass",
+      "deadline": "Today",
+      "context": "Logistical task to be completed before leaving the building."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is still living with his mother. The living situation remains stable with no arguments; the client keeps the place clean and stays out of her way while she works.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is working part-time doing property trash-outs with his Uncle Marcus. He worked Wednesday and Friday of the previous week but forgot to bring his manual work log to the meeting.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client reports no recent police contact. However, the PO noted the client was wearing an $800 Apple Watch Ultra. The client claims it was a gift from his cousin, Darius Banks, who also helps at the eviction trash-out sites. The PO expressed concern that it might be stolen property and is investigating.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live with his mother and works with his Uncle Marcus. The client is also associating with his cousin, Darius Banks, which has prompted the PO to investigate Darius's supervision status.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "Client is scheduled for a mandatory Axiom orientation coming up this Tuesday at 10:00 AM.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Tyrell"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Davis"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Person",
+      "value": "Darius Banks"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Date",
+      "value": "the 4th"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "Sunday"
+    },
+    {
+      "type": "Date",
+      "value": "Monday morning"
+    },
+    {
+      "type": "Date",
+      "value": "the 12th"
+    },
+    {
+      "type": "Time",
+      "value": "10:00 AM"
+    },
+    {
+      "type": "Amount",
+      "value": "eight hundred dollars"
+    },
+    {
+      "type": "Item",
+      "value": "Apple Watch Ultra"
+    },
+    {
+      "type": "Document",
+      "value": "contact sheet"
+    },
+    {
+      "type": "Document",
+      "value": "manual work log"
+    },
+    {
+      "type": "Document",
+      "value": "bus pass"
+    }
+  ],
+  "next_episode_context": "The client is currently living stably with his mother and working part-time property trash-outs with his Uncle Marcus. He has a mandatory Axiom orientation scheduled for Tuesday at 10:00 AM. A potential legal/compliance issue arose when the PO noticed the client wearing an expensive Apple Watch Ultra, which the client claims was a gift from his cousin, Darius Banks. The PO suspects it may be stolen from a job site and is checking to see if Darius is on supervision. The client has been instructed to bring a signed work log to his next appointment on the 12th."
+}

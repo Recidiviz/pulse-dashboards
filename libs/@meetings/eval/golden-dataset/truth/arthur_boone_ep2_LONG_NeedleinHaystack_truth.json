@@ -1,0 +1,361 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Call Mr. Hayes to request approval for a medical diet for the client",
+      "deadline": "Today",
+      "context": "Client is experiencing severe heartburn from the heavy, fried food at the halfway house."
+    },
+    {
+      "assignee": "Client",
+      "task": "Pick up antacids using the provided pharmacy voucher",
+      "deadline": "Today",
+      "context": "To alleviate severe heartburn that is disrupting the client's sleep."
+    },
+    {
+      "assignee": "Client",
+      "task": "Hold off on official job search",
+      "deadline": null,
+      "context": "Waiting until the medical work restriction evaluation is completed."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call Oak Creek Community Clinic to establish primary care",
+      "deadline": "Friday",
+      "context": "Required to set up a medical work restriction evaluation before beginning the official job search."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to reside at the halfway house managed by Mr. Hayes. He is following house rules and completing internal chores, but reports frustration with noise from other residents and severe heartburn caused by the heavy, fried food provided.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is currently holding off on an official job search pending a medical work restriction evaluation. In the meantime, he is sweeping common rooms and cleaning the kitchen to fulfill his internal house duties at the halfway house.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client is taking his 30-day supply of blood pressure pills daily. He is experiencing severe heartburn from the halfway house diet, which is disrupting his sleep. The PO provided a pharmacy voucher for antacids and is pursuing a medical diet approval.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client displays excellent rapport with the PO, engaging in an extensive conversation about sports history, cooking techniques, hunting, and fishing.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Mr. Hayes"
+    },
+    {
+      "type": "Program",
+      "value": "Oak Creek Community Clinic"
+    },
+    {
+      "type": "Document",
+      "value": "pharmacy voucher"
+    },
+    {
+      "type": "Medication",
+      "value": "blood pressure pills"
+    },
+    {
+      "type": "Medication",
+      "value": "antacids"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Person",
+      "value": "Joe Montana"
+    },
+    {
+      "type": "Person",
+      "value": "Ronnie Lott"
+    },
+    {
+      "type": "Person",
+      "value": "Steve Atwater"
+    },
+    {
+      "type": "Person",
+      "value": "Christian Okoye"
+    },
+    {
+      "type": "Person",
+      "value": "Buddy Ryan"
+    },
+    {
+      "type": "Person",
+      "value": "Mike Singletary"
+    },
+    {
+      "type": "Person",
+      "value": "Richard Dent"
+    },
+    {
+      "type": "Person",
+      "value": "Dan Hampton"
+    },
+    {
+      "type": "Person",
+      "value": "Mean Joe Greene"
+    },
+    {
+      "type": "Person",
+      "value": "Jack Lambert"
+    },
+    {
+      "type": "Person",
+      "value": "LC Greenwood"
+    },
+    {
+      "type": "Person",
+      "value": "Bart Starr"
+    },
+    {
+      "type": "Person",
+      "value": "Archie Griffin"
+    },
+    {
+      "type": "Person",
+      "value": "Barry Sanders"
+    },
+    {
+      "type": "Person",
+      "value": "Emmitt Smith"
+    },
+    {
+      "type": "Person",
+      "value": "Larry Allen"
+    },
+    {
+      "type": "Person",
+      "value": "John Lynch"
+    },
+    {
+      "type": "Person",
+      "value": "LeBron James"
+    },
+    {
+      "type": "Person",
+      "value": "Michael Jordan"
+    },
+    {
+      "type": "Person",
+      "value": "Magic Johnson"
+    },
+    {
+      "type": "Person",
+      "value": "Larry Bird"
+    },
+    {
+      "type": "Person",
+      "value": "Isiah Thomas"
+    },
+    {
+      "type": "Person",
+      "value": "Bill Laimbeer"
+    },
+    {
+      "type": "Person",
+      "value": "Chuck Daly"
+    },
+    {
+      "type": "Person",
+      "value": "Hakeem Olajuwon"
+    },
+    {
+      "type": "Person",
+      "value": "Patrick Ewing"
+    },
+    {
+      "type": "Person",
+      "value": "David Robinson"
+    },
+    {
+      "type": "Person",
+      "value": "Shaq"
+    },
+    {
+      "type": "Person",
+      "value": "Steph Curry"
+    },
+    {
+      "type": "Person",
+      "value": "Scottie Pippen"
+    },
+    {
+      "type": "Person",
+      "value": "Willie Mays"
+    },
+    {
+      "type": "Person",
+      "value": "Bob Gibson"
+    },
+    {
+      "type": "Person",
+      "value": "Nolan Ryan"
+    },
+    {
+      "type": "Person",
+      "value": "Robin Ventura"
+    },
+    {
+      "type": "Person",
+      "value": "Jack Morris"
+    },
+    {
+      "type": "Person",
+      "value": "John Smoltz"
+    },
+    {
+      "type": "Person",
+      "value": "Jim Leyland"
+    },
+    {
+      "type": "Person",
+      "value": "Tommy Lasorda"
+    },
+    {
+      "type": "Person",
+      "value": "Earl Weaver"
+    },
+    {
+      "type": "Person",
+      "value": "Floyd Mayweather"
+    },
+    {
+      "type": "Person",
+      "value": "Manny Pacquiao"
+    },
+    {
+      "type": "Person",
+      "value": "Mike Tyson"
+    },
+    {
+      "type": "Person",
+      "value": "Evander Holyfield"
+    },
+    {
+      "type": "Person",
+      "value": "Lennox Lewis"
+    },
+    {
+      "type": "Person",
+      "value": "Michael Spinks"
+    },
+    {
+      "type": "Person",
+      "value": "Jake Paul"
+    },
+    {
+      "type": "Person",
+      "value": "John Wayne"
+    },
+    {
+      "type": "Person",
+      "value": "Silas"
+    },
+    {
+      "type": "Organization",
+      "value": "Jets"
+    },
+    {
+      "type": "Organization",
+      "value": "Patriots"
+    },
+    {
+      "type": "Organization",
+      "value": "Bears"
+    },
+    {
+      "type": "Organization",
+      "value": "Steelers"
+    },
+    {
+      "type": "Organization",
+      "value": "Lions"
+    },
+    {
+      "type": "Organization",
+      "value": "Cowboys"
+    },
+    {
+      "type": "Organization",
+      "value": "Celtics"
+    },
+    {
+      "type": "Organization",
+      "value": "Lakers"
+    },
+    {
+      "type": "Organization",
+      "value": "Mets"
+    },
+    {
+      "type": "Organization",
+      "value": "UFC"
+    },
+    {
+      "type": "Location",
+      "value": "Los Angeles"
+    },
+    {
+      "type": "Location",
+      "value": "Detroit"
+    },
+    {
+      "type": "Location",
+      "value": "Dallas"
+    },
+    {
+      "type": "Location",
+      "value": "Utah"
+    },
+    {
+      "type": "Location",
+      "value": "Texas"
+    },
+    {
+      "type": "Location",
+      "value": "New York"
+    },
+    {
+      "type": "Location",
+      "value": "Green Bay"
+    },
+    {
+      "type": "Location",
+      "value": "Ohio State"
+    },
+    {
+      "type": "Location",
+      "value": "New Mexico"
+    },
+    {
+      "type": "Location",
+      "value": "Tucumcari"
+    },
+    {
+      "type": "Location",
+      "value": "Arkansas"
+    },
+    {
+      "type": "Location",
+      "value": "Ozarks"
+    }
+  ],
+  "next_episode_context": "The client is currently residing at the halfway house managed by Mr. Hayes, adhering to rules and completing internal chores instead of pursuing an official job search. His job search is on hold pending a medical work restriction evaluation. He takes daily blood pressure medication but is suffering from severe heartburn due to the house meals. The PO has provided a pharmacy voucher for antacids and is contacting Mr. Hayes to request a medical diet. The client is tasked with calling Oak Creek Community Clinic by Friday to establish primary care and schedule his medical evaluation."
+}

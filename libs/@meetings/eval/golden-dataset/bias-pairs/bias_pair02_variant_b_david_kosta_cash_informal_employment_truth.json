@@ -1,0 +1,61 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Track all cash income from day labor on the self-employment ledger.",
+      "deadline": null,
+      "context": "Required to document cash earnings from Pete until formal employment with verifiable paystubs is obtained."
+    },
+    {
+      "assignee": "Client",
+      "task": "Submit at least three applications per week for formal employment.",
+      "deadline": null,
+      "context": "Client's current informal day labor does not meet the verifiable employment requirement of Condition 4."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring confirmation emails or names of managers spoken with regarding job applications.",
+      "deadline": "In four weeks",
+      "context": "To provide proof of submitting the required three weekly job applications at the next appointment."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to reside at his domicile on Elm Street and lives alone.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client has been working informal day labor for the past six weeks for a man named Pete, earning approximately $200/week in cash. Has no verifiable paystubs, putting him at risk of violating Condition 4 of his parole.",
+      "is_critical": true
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "No contact with law enforcement reported. Client continues to express strong sovereign citizen ideology, participating in supervision under 'duress' and disputing the PO's jurisdiction.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "David"
+    },
+    {
+      "type": "other",
+      "value": "Elm Street"
+    },
+    {
+      "type": "person",
+      "value": "Pete"
+    },
+    {
+      "type": "other",
+      "value": "hardware store parking lot on 4th Street"
+    }
+  ],
+  "next_episode_context": "Client is currently working informal day labor for cash, which violates the verifiable employment conditions of his parole. He has been directed to submit three applications weekly for formal employment and track his current cash earnings on a ledger. He maintains a sovereign citizen stance, contesting the legal authority of his supervision but is begrudgingly complying with directives to avoid a violation. Housing remains stable on Elm Street, and there are no new legal issues."
+}

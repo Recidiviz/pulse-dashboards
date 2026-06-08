@@ -1,0 +1,155 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Report any police contact, drive-by incidents, or Darius showing up immediately to the PO",
+      "deadline": null,
+      "context": "Client failed to report police contact within 24 hours after a drive-by shooting at his mother's house."
+    },
+    {
+      "assignee": "Client",
+      "task": "Inform Aunt Lisa that the PO will be coming for a home visit",
+      "deadline": null,
+      "context": "PO needs to verify the new living environment is stable."
+    },
+    {
+      "assignee": "Client",
+      "task": "Get work logs signed by Uncle Marcus",
+      "deadline": "Friday",
+      "context": "PO needs signed logs to officially count the client's working hours."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call Axiom every week to check position on the waitlist",
+      "deadline": null,
+      "context": "Client is currently 3rd or 4th on the Axiom waitlist."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend office visit with PO",
+      "deadline": "The 12th at 10 AM",
+      "context": "Next scheduled office sit-down."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring signed work logs to the office visit",
+      "deadline": "The 12th at 10 AM",
+      "context": "Required for the client's employment file."
+    },
+    {
+      "assignee": "PO",
+      "task": "Provide bus passes to the client",
+      "deadline": "The 12th at 10 AM",
+      "context": "Client's commute is now longer and requires two buses from his new address."
+    },
+    {
+      "assignee": "PO",
+      "task": "Schedule and conduct a home visit at Aunt Lisa's place",
+      "deadline": "Next week",
+      "context": "Exact day to be locked in during the office visit on the 12th."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client was present during a drive-by shooting at his mother's house. Police were on the scene and ran everyone's names. Client failed to report this contact to the PO within the required 24 hours.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client relocated to Aunt Lisa's place on 43rd street, sleeping on the couch, due to the drive-by shooting at his mother's residence.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Mother's house was targeted in a shooting. Cousin Darius is suspected by the PO of being involved or bringing trouble to the residence.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is still working landscaping with his Uncle Marcus. His commute has become more difficult from his new address, requiring two buses.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Stable/Status Quo",
+      "details": "Client called Axiom on Monday regarding their program and remains 3rd or 4th on the waitlist.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Tyrell"
+    },
+    {
+      "type": "Person",
+      "value": "Darius"
+    },
+    {
+      "type": "Person",
+      "value": "Mom"
+    },
+    {
+      "type": "Person",
+      "value": "Aunt Lisa"
+    },
+    {
+      "type": "Person",
+      "value": "Uncle Marcus"
+    },
+    {
+      "type": "Location",
+      "value": "courthouse"
+    },
+    {
+      "type": "Location",
+      "value": "mom's house"
+    },
+    {
+      "type": "Location",
+      "value": "43rd"
+    },
+    {
+      "type": "Location",
+      "value": "Aunt Lisa's place"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Date",
+      "value": "Monday"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "next week"
+    },
+    {
+      "type": "Date",
+      "value": "the 12th"
+    },
+    {
+      "type": "Time",
+      "value": "10 AM"
+    },
+    {
+      "type": "Document",
+      "value": "work logs"
+    },
+    {
+      "type": "Document",
+      "value": "bus passes"
+    }
+  ],
+  "next_episode_context": "Client survived a drive-by shooting at his mother's house and failed to report the subsequent police contact within 24 hours. He has relocated to his Aunt Lisa's on 43rd Street, where the PO will conduct a home visit next week. Employment in landscaping with Uncle Marcus is stable, though the commute is now longer. Client is currently waiting on the Axiom waitlist. The next office visit is scheduled for the 12th at 10 AM, where he will bring signed work logs and receive bus passes."
+}

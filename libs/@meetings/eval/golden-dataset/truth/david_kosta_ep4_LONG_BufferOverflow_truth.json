@@ -1,0 +1,101 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Call client's brother to confirm if the client has been formally evicted or locked out.",
+      "deadline": "this afternoon",
+      "context": "Client filed a fraudulent lien against his brother's property, putting his approved housing in immediate jeopardy."
+    },
+    {
+      "assignee": "Third Party",
+      "task": "Review documents and determine whether to file new criminal charges for harassment and the fraudulent lien.",
+      "deadline": null,
+      "context": "Supervisor Harris and the Legal Department are reviewing the documents the client mailed to the Regional Director's home."
+    },
+    {
+      "assignee": "PO",
+      "task": "Notify client once Legal and Supervisor Harris make a final decision on new charges.",
+      "deadline": null,
+      "context": "To update the client on whether additional criminal charges will be filed for harassment and the fraudulent lien."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client was served with a notice of violation, detained during the visit, and a request for revocation was submitted. Violations include bringing a 5-inch fixed-blade knife to the office, driving on a suspended license with fake sovereign plates, mailing documents to the Regional Director's home, and filing a fraudulent lien against his brother's property.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client's housing is in immediate jeopardy. Client may have been formally evicted or locked out by his brother due to a dispute and a fraudulent lien placed on the property.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Client is involved in a severe dispute with his brother, Mike, over a verbal contract regarding domicile, resulting in the client placing a commercial lien on Mike's property.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client demonstrated deeply entrenched sovereign citizen ideation during the meeting, claiming he was 'traveling' rather than driving, referring to himself as a 'living, breathing man', and utilizing terms like 'maritime fraud' and 'color of law'.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "David"
+    },
+    {
+      "type": "Person",
+      "value": "Mike"
+    },
+    {
+      "type": "Person",
+      "value": "Supervisor Harris"
+    },
+    {
+      "type": "Person",
+      "value": "Regional Director"
+    },
+    {
+      "type": "Organization",
+      "value": "Legal Department"
+    },
+    {
+      "type": "Document",
+      "value": "notice of violation"
+    },
+    {
+      "type": "Document",
+      "value": "request for revocation"
+    },
+    {
+      "type": "Document",
+      "value": "notice of liability"
+    },
+    {
+      "type": "Document",
+      "value": "fraudulent lien"
+    },
+    {
+      "type": "Object",
+      "value": "five-inch fixed-blade knife"
+    },
+    {
+      "type": "Object",
+      "value": "fake sovereign plates"
+    },
+    {
+      "type": "Animal",
+      "value": "Barnaby"
+    }
+  ],
+  "next_episode_context": "Client was detained during the office visit and is currently being processed into jail pending a request for revocation. He was cited for multiple severe violations, including bringing a weapon into the probation office, driving on a suspended license with sovereign citizen plates, harassing the Regional Director at their home, and filing a fraudulent lien against his brother's property. His approved housing is essentially lost. Future interactions will likely take place in a custodial setting pending the Legal Department's decision on additional criminal charges.",
+  "acceptable_action_items": [],
+  "acceptable_critical_updates": []
+}

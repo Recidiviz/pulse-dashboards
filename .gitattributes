@@ -1,0 +1,5 @@
+# Collapse hand-curated eval fixtures in GitHub's diff view.
+# These are reviewable by spot-check, not line-by-line.
+libs/@meetings/eval/golden-dataset/scripts/**    linguist-generated=true
+libs/@meetings/eval/golden-dataset/truth/**      linguist-generated=true
+libs/@meetings/eval/golden-dataset/bias-pairs/** linguist-generated=true

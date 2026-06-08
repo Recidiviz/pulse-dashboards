@@ -1,0 +1,167 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Submit UA drop at Axiom first thing in the morning.",
+      "deadline": "Wednesday the 15th",
+      "context": "Client mistakenly believed he missed his test, but his color is scheduled for the 15th."
+    },
+    {
+      "assignee": "Client",
+      "task": "Pick up doctor note from the front desk of the clinic on 4th Street.",
+      "deadline": "Thursday afternoon",
+      "context": "Needed to excuse his absence from work due to a back injury."
+    },
+    {
+      "assignee": "Client",
+      "task": "Take the early bus and deliver the doctor note directly to Mr. Torres before the shift starts.",
+      "deadline": "Friday",
+      "context": "Mandatory to avoid official termination from Torres's crew."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call PO to report whether the supervisor accepted the doctor note.",
+      "deadline": "Friday afternoon",
+      "context": "Follow-up to verify employment status."
+    },
+    {
+      "assignee": "Client",
+      "task": "Write appointment dates and times on a calendar"
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client is temporarily suspended from his job with Torres's crew after missing work on Friday due to back pain. He has been told he will be officially terminated if he does not provide a doctor's note by this Friday.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client is experiencing a severe flare-up of an old back injury caused by heavy lifting at work. He is also experiencing high anxiety and stress regarding his compliance and employment status. He visited the clinic on Monday and must return Thursday for documentation.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reported experiencing opioid cravings exacerbated by work stress and back pain, but explicitly denied any recent use. He successfully attended an NA meeting at the rec center on Saturday. A UA at Axiom is scheduled for the 15th.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues living with his grandmother. The living situation remains stable, and he actively stays in his room and avoids the neighborhood at night to prevent interactions with old associates who use drugs.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client resides with his grandmother. Their relationship is stable, though she has recently been on his case regarding an increase in the electric bill.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client arrived stressed and panicking over a perceived missed UA test, showing a tendency to catastrophize. PO utilized reality-checking to calm the client and verify the actual testing date via the Axiom portal.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Time",
+      "value": "before three"
+    },
+    {
+      "type": "Organization",
+      "value": "Axiom"
+    },
+    {
+      "type": "Date",
+      "value": "the 13th"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday the 14th"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday the 15th"
+    },
+    {
+      "type": "Location",
+      "value": "Axiom portal"
+    },
+    {
+      "type": "Date",
+      "value": "Sunday"
+    },
+    {
+      "type": "Person",
+      "value": "grandmother"
+    },
+    {
+      "type": "Employer",
+      "value": "Torres's crew"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Document",
+      "value": "doctor note"
+    },
+    {
+      "type": "Date",
+      "value": "this Friday"
+    },
+    {
+      "type": "Date",
+      "value": "Monday"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday afternoon"
+    },
+    {
+      "type": "Location",
+      "value": "clinic on 4th Street"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Torres"
+    },
+    {
+      "type": "Time",
+      "value": "early bus Friday"
+    },
+    {
+      "type": "Program",
+      "value": "NA meeting"
+    },
+    {
+      "type": "Location",
+      "value": "rec center"
+    },
+    {
+      "type": "Date",
+      "value": "Saturday"
+    },
+    {
+      "type": "Time",
+      "value": "Friday afternoon"
+    }
+  ],
+  "next_episode_context": "Marcus is currently highly anxious but managing to maintain compliance. He has a UA scheduled at Axiom on the 15th. He is currently suspended from his job with Torres's crew due to an old back injury flaring up, and he must deliver a doctor's note from the 4th Street clinic to his supervisor by Friday to avoid termination. He lives with his grandmother, is avoiding negative neighborhood contacts, and recently attended an NA meeting to cope with stress-induced opioid cravings.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Continue attending NA meetings"
+    }
+  ]
+}

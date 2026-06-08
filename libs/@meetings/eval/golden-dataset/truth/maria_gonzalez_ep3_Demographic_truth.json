@@ -1,0 +1,155 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Travel directly to and from Saint Jude Medical Center without making any stops.",
+      "deadline": "Today, 1:30 PM to 6:30 PM",
+      "context": "Temporary emergency travel pass issued to visit hospitalized mother."
+    },
+    {
+      "assignee": "Client",
+      "task": "Provide proof of hospital visit (visitor pass or parking receipt) at the next appointment.",
+      "deadline": "Next appointment",
+      "context": "To verify compliance with the temporary travel pass to Saint Jude Medical Center."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call PO for approval before visiting the hospital again this weekend or if mother is transferred to a different facility.",
+      "deadline": null,
+      "context": "To ensure any future emergency travel is properly authorized and documented."
+    },
+    {
+      "assignee": "Client",
+      "task": "Wait for instructions from PO or call the on-call number if mother is transferred and it's time to leave.",
+      "deadline": null,
+      "context": "Backup plan if the mother is moved to a rehabilitation center and the client cannot reach the primary PO."
+    },
+    {
+      "assignee": "Client",
+      "task": "Be home for the BI Monitoring inspection.",
+      "deadline": "Friday morning, 9:00 AM",
+      "context": "BI Monitoring needs to verify the new outlet in the kitchen and test signal strength."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call the police if Hector returns and causes any problems.",
+      "deadline": null,
+      "context": "Safety protocol following Hector moving out of the residence."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Client's mother, Elena Gonzalez, suffered a stroke and was hospitalized at Saint Jude Medical Center.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Hector moved out of the residence on Sunday. The client's daughter and two grandsons (ages 4 and 6) have moved in. The daughter is assisting with sewing and purchasing food.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "The ankle monitor base station was moved to the kitchen because the bedroom breaker is broken. The unit has maintained power successfully since the move.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client is currently working full-time doing sewing alterations to cover rent after Hector's departure. She submitted a food sales permit application downtown last Thursday to sell tamales and is awaiting approval (expected in ~2 weeks).",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports morning stiffness in her hands due to arthritis; she is managing the pain with warm water and Tylenol in order to continue sewing.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client was granted a temporary emergency travel pass for today (1:30 PM - 6:30 PM) to visit her mother at the hospital. BI Monitoring is scheduled for an inspection on Friday at 9:00 AM. No police contact reported.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no alcohol or drug use.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Maria"
+    },
+    {
+      "type": "Person",
+      "value": "Elena Gonzalez"
+    },
+    {
+      "type": "Person",
+      "value": "Hector"
+    },
+    {
+      "type": "Organization",
+      "value": "Saint Jude Medical Center"
+    },
+    {
+      "type": "Address",
+      "value": "101 East Valencia Mesa Drive"
+    },
+    {
+      "type": "Location",
+      "value": "Fullerton"
+    },
+    {
+      "type": "Organization",
+      "value": "BI Monitoring"
+    },
+    {
+      "type": "Time",
+      "value": "1:30 PM"
+    },
+    {
+      "type": "Time",
+      "value": "6:30 PM"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    },
+    {
+      "type": "Date",
+      "value": "Friday morning"
+    },
+    {
+      "type": "Date",
+      "value": "Sunday"
+    },
+    {
+      "type": "Document",
+      "value": "travel pass"
+    },
+    {
+      "type": "Document",
+      "value": "visitor pass"
+    },
+    {
+      "type": "Document",
+      "value": "parking receipt"
+    },
+    {
+      "type": "Document",
+      "value": "food sales permit application"
+    },
+    {
+      "type": "Medication",
+      "value": "Tylenol"
+    }
+  ],
+  "next_episode_context": "Maria is currently working full-time from home doing sewing alterations after Hector moved out. Her daughter and two grandsons (ages 4 and 6) have moved in and are helping with food and household tasks. She has applied for a food sales permit to sell tamales legally and expects a response in about two weeks. Her mother recently suffered a stroke and is hospitalized at Saint Jude Medical Center; Maria was issued a temporary travel pass for visitation today. A BI Monitoring inspection of her home base station (recently moved to the kitchen) is scheduled for Friday morning. No legal or substance issues reported."
+}

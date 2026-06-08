@@ -1,0 +1,143 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Conduct a home visit at the client's residence.",
+      "deadline": null,
+      "context": "Required as part of standard probation conditions."
+    },
+    {
+      "assignee": "PO",
+      "task": "Provide the client with a heads-up before the first home visit.",
+      "deadline": null,
+      "context": "To ensure the client's mother can lock up the dogs prior to the visit."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring a printed copy of the official school schedule.",
+      "deadline": "Next Wednesday",
+      "context": "To document the late Thursday lab that interferes with the 10:00 PM curfew."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call the after-hours number and leave a voicemail if returning home past 10:00 PM.",
+      "deadline": null,
+      "context": "Required if the bus runs late after Thursday night labs to avoid a curfew violation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Report to the office on the first and third Wednesday of every month at 2:00 PM.",
+      "deadline": null,
+      "context": "Twice-a-month reporting rotation required for the first 90 days."
+    },
+    {
+      "assignee": "Client",
+      "task": "Adhere to standard probation conditions: 10:00 PM to 6:00 AM curfew, remain in the county, no weapon possession, and keep up with education.",
+      "deadline": null,
+      "context": "Standing obligations reviewed and signed during the meeting."
+    },
+    {
+      "assignee": "Client",
+      "task": "Submit a travel permit request at least two weeks before leaving the state.",
+      "deadline": null,
+      "context": "Required for any out-of-state travel, such as the potential trip to visit family in Texas."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live with his mother and stepdad at his residence on West 4th.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is enrolled in school full-time, taking 12 credits. He has a Thursday lab that runs until 9:30 PM. He reported failing two classes last semester and is currently focused on catching up.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is currently not working in order to focus entirely on his classes and passing school.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's stepdad is financially supporting him with food and living expenses so he can focus on his education. Family may be planning a trip to visit his abuela in Texas.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Location",
+      "value": "West 4th"
+    },
+    {
+      "type": "Person",
+      "value": "mom"
+    },
+    {
+      "type": "Person",
+      "value": "stepdad"
+    },
+    {
+      "type": "Person",
+      "value": "abuela"
+    },
+    {
+      "type": "Location",
+      "value": "Texas"
+    },
+    {
+      "type": "Location",
+      "value": "California"
+    },
+    {
+      "type": "Time",
+      "value": "10:00 PM"
+    },
+    {
+      "type": "Time",
+      "value": "6:00 AM"
+    },
+    {
+      "type": "Time",
+      "value": "9:30"
+    },
+    {
+      "type": "Time",
+      "value": "10:15"
+    },
+    {
+      "type": "Time",
+      "value": "10:30"
+    },
+    {
+      "type": "Document",
+      "value": "official school schedule"
+    },
+    {
+      "type": "Appointment",
+      "value": "next Wednesday"
+    },
+    {
+      "type": "Appointment",
+      "value": "first and third Wednesday of every month"
+    },
+    {
+      "type": "Time",
+      "value": "2:00 PM"
+    },
+    {
+      "type": "Document",
+      "value": "travel permit"
+    },
+    {
+      "type": "Amount",
+      "value": "12 credits"
+    }
+  ],
+  "next_episode_context": "Client is currently stable and living with his parents on West 4th. He is not employed, choosing to focus full-time on his education (12 credits) after failing two classes last semester. He is on a twice-a-month reporting schedule. A 10:00 PM curfew is in effect, but he was instructed to bring his school schedule to the next appointment to document a Thursday lab that runs until 9:30 PM."
+}

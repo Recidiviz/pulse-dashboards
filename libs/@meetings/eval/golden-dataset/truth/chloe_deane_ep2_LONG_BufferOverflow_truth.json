@@ -1,0 +1,127 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Complete 4 hours of community service at the food bank",
+      "deadline": "this weekend",
+      "context": "Progressing toward 50 total required community service hours."
+    },
+    {
+      "assignee": "Client",
+      "task": "Keep physical copy of travel pass with ID while traveling out of state",
+      "deadline": null,
+      "context": "Required condition for attending sister's baby shower out of state."
+    },
+    {
+      "assignee": "Client",
+      "task": "Send a text message to PO upon returning to the state",
+      "deadline": null,
+      "context": "Follow-up protocol for the out-of-state travel pass."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next check-in appointment",
+      "deadline": "Tuesday the 14th at 9:00 AM",
+      "context": "Routine supervision meeting."
+    },
+    {
+      "assignee": "Client",
+      "task": "Notify the temp agency about arriving late to work",
+      "deadline": "Tuesday the 14th",
+      "context": "To accommodate the 9:00 AM check-in appointment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Send PO a message if a ruling from the licensing board is received before the next appointment",
+      "deadline": null,
+      "context": "Awaiting outcome of real estate license appeal."
+    },
+    {
+      "assignee": "PO",
+      "task": "Add client's next check-in appointment to schedule",
+      "deadline": "Tuesday the 14th at 9:00 AM",
+      "context": "Administrative scheduling task."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "Change",
+      "details": "Client is ahead of schedule on fine payments, having made a payment last Friday. Remaining balance is $1,200. Client has also completed 25 out of 50 required community service hours.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to work 40 hours a week at a temp agency performing data entry. They are currently awaiting a ruling from the state board on their real estate license appeal, expected in 30 to 45 days.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is currently able to cover their mortgage but expressed concern about depleting savings in four months and potentially needing to list their condo if the real estate license appeal is denied.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Client is planning to travel out of state to attend their sister's baby shower, for which an official travel pass was approved by the supervisor.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Amount",
+      "value": "$1,200"
+    },
+    {
+      "type": "Employer",
+      "value": "temp agency"
+    },
+    {
+      "type": "Document",
+      "value": "real estate license"
+    },
+    {
+      "type": "Organization",
+      "value": "licensing board"
+    },
+    {
+      "type": "Person",
+      "value": "lawyer"
+    },
+    {
+      "type": "Organization",
+      "value": "food bank"
+    },
+    {
+      "type": "Person",
+      "value": "supervisor"
+    },
+    {
+      "type": "Document",
+      "value": "out-of-state travel pass"
+    },
+    {
+      "type": "Person",
+      "value": "sister"
+    },
+    {
+      "type": "Document",
+      "value": "ID"
+    },
+    {
+      "type": "Date",
+      "value": "the fourteenth"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    }
+  ],
+  "next_episode_context": "Client is maintaining stability but facing financial and professional stress. They are currently working 40 hours a week at a temp agency (data entry) to pay their mortgage while awaiting a state board ruling on their real estate license appeal (expected within 30-45 days). If denied, they may need to sell their condo. Client is ahead on court fines with a balance of $1,200 and has completed exactly half (25/50) of their community service hours, with 4 more planned at a food bank this weekend. They successfully obtained a travel pass for a family baby shower out-of-state. The next supervision check-in is scheduled for Tuesday the 14th at 9:00 AM."
+}

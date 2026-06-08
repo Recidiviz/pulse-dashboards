@@ -1,0 +1,200 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Update travel log for client's early return from Denver.",
+      "deadline": "Friday the 12th",
+      "context": "Client returning from conference early."
+    },
+    {
+      "assignee": "PO",
+      "task": "Draft letter of compliance and email it to the client.",
+      "deadline": "Today",
+      "context": "For the client's real estate licensing board appeal."
+    },
+    {
+      "assignee": "Client",
+      "task": "Print letter of compliance and include it in the board appeal packet.",
+      "deadline": "Monday",
+      "context": "Required for the character and fitness portion of the review."
+    },
+    {
+      "assignee": "Client",
+      "task": "Email PO with the results of the licensing board appeal hearing.",
+      "deadline": "Tuesday",
+      "context": "To update the PO on real estate license status."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring new job offer letter to the next in-person meeting.",
+      "deadline": "Thursday the 25th",
+      "context": "To officially update employment status in the system."
+    },
+    {
+      "assignee": "Client",
+      "task": "Increase voluntary court fine payment to $400 and submit receipt through the portal.",
+      "deadline": "Next Friday",
+      "context": "Client is increasing payments to pay off the $1,200 balance faster."
+    },
+    {
+      "assignee": "PO",
+      "task": "Note in the file that client intends to increase voluntary court fine payments to $400/month.",
+      "deadline": null,
+      "context": "Client proposed increasing payments from $200 to $400/month; PO approved and is recording it."
+    },
+    {
+      "assignee": "PO",
+      "task": "Update client's employment status in the system to reflect new permanent position.",
+      "deadline": null,
+      "context": "Client transitioning from temp agency to full-time Senior Data Coordinator; needs offer letter at next meeting."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring final signed log sheet to meeting once 50 community service hours are completed.",
+      "deadline": null,
+      "context": "To officially close out the community service condition."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next in-person meeting.",
+      "deadline": "Thursday the 25th at 9:00 AM",
+      "context": "Routine office visit."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live alone in her condo. Financial stress regarding the mortgage has been relieved by her new job.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client offered a permanent, full-time position as Senior Data Coordinator starting Wednesday of next week. Hours remain M-F 8-5, but includes a 40% pay increase and health benefits.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Change",
+      "details": "Client's real estate licensing board appeal has been expedited and is scheduled for a hearing this coming Monday at 10:00 AM.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Outstanding court fines balance is $1,200. Client intends to increase voluntary monthly payments from $200 to $400 starting next Friday. Has completed 25 of 50 mandated community service hours. No police contact reported.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports drastically improved mental health due to the new job offer removing financial stress. Uses the condo fitness center regularly for self-care.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client lives alone. Her sister visits occasionally and provides a strong support system.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Chloe"
+    },
+    {
+      "type": "Location",
+      "value": "Denver"
+    },
+    {
+      "type": "Location",
+      "value": "Colorado"
+    },
+    {
+      "type": "Date",
+      "value": "Friday the 12th"
+    },
+    {
+      "type": "Date",
+      "value": "Monday"
+    },
+    {
+      "type": "Time",
+      "value": "10:00 AM"
+    },
+    {
+      "type": "Document",
+      "value": "supplementary tax documents"
+    },
+    {
+      "type": "Document",
+      "value": "previous broker affiliations"
+    },
+    {
+      "type": "Document",
+      "value": "letter of compliance"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Role",
+      "value": "Senior Data Coordinator"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday of next week"
+    },
+    {
+      "type": "Document",
+      "value": "offer letter"
+    },
+    {
+      "type": "Document",
+      "value": "pay stub"
+    },
+    {
+      "type": "Amount",
+      "value": "twelve hundred dollars"
+    },
+    {
+      "type": "Amount",
+      "value": "two hundred a month"
+    },
+    {
+      "type": "Amount",
+      "value": "four hundred a month"
+    },
+    {
+      "type": "Amount",
+      "value": "fifty dollars"
+    },
+    {
+      "type": "Organization",
+      "value": "food bank"
+    },
+    {
+      "type": "Person",
+      "value": "Sarah"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday, the 11th"
+    },
+    {
+      "type": "Appointment",
+      "value": "Thursday the 25th at 9:00 AM"
+    }
+  ],
+  "next_episode_context": "Client is returning early from a conference in Denver. She successfully secured a permanent full-time position as a Senior Data Coordinator starting next Wednesday, relieving her condo mortgage stress. She has an expedited real estate licensing board appeal scheduled for Monday. Client has completed 25 of 50 community service hours and plans to increase her fine payments to $400/mo to clear her $1,200 balance. The next in-person meeting is scheduled for Thursday the 25th at 9:00 AM, where she will provide her new employment documentation.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Continue 5 hours of community service on Saturdays at the food bank.",
+      "context": "PO confirmed existing plan, not a new directive."
+    }
+  ]
+}

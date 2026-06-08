@@ -1,0 +1,136 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Abide by intrastate travel restrictions (do not cross state lines while driving).",
+      "deadline": null,
+      "context": "Supervision rules regarding commercial driving once CDL is obtained."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring WIOA grant approval letter.",
+      "deadline": "Tuesday the 14th at 2:00 PM",
+      "context": "Required for the PO to document progress in the file."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring school enrollment paperwork from Tri-State.",
+      "deadline": "Tuesday the 14th at 2:00 PM",
+      "context": "Required to show official registration for the trucking class."
+    },
+    {
+      "assignee": "Client",
+      "task": "If WIOA letter does not come in the mail, call Maria before the appointment for a printout.",
+      "deadline": "Tuesday the 14th at 2:00 PM",
+      "context": "Contingency plan to ensure client does not show up empty-handed."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend DOT physical and drug test at the clinic near the Co-op",
+      "deadline": "next Thursday"
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is currently working 10-hour days driving an articulated dump truck for a contractor doing site prep through the Co-op. Getting overtime and saving money.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "Client met with caseworker Maria at the workforce office to apply for a WIOA grant to cover Tri-State Trucking Academy tuition. Classes start next month. Waiting on official approval letter.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client reports feeling strong despite heavy labor. Blood pressure is down (recently checked at 128/82). Taking daily medication and stopped drinking energy drinks. DOT physical scheduled for next Thursday.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no drug use, but admits to having one beer on Sundays with dinner. Drug test scheduled to happen with the DOT physical next week.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "No police contact reported. Client was reminded of the standard condition restricting travel strictly to intrastate.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports that everything at home is 'very quiet' and 'good'.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Organization",
+      "value": "Co-op"
+    },
+    {
+      "type": "Program",
+      "value": "Tri-State Trucking Academy"
+    },
+    {
+      "type": "Program",
+      "value": "WIOA"
+    },
+    {
+      "type": "Organization",
+      "value": "workforce office"
+    },
+    {
+      "type": "Person",
+      "value": "Maria"
+    },
+    {
+      "type": "Amount",
+      "value": "128 over... 82"
+    },
+    {
+      "type": "Amount",
+      "value": "140 over 90"
+    },
+    {
+      "type": "Appointment",
+      "value": "DOT physical"
+    },
+    {
+      "type": "Date",
+      "value": "next week. Thursday"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday the 14th"
+    },
+    {
+      "type": "Time",
+      "value": "2:00 PM"
+    },
+    {
+      "type": "Document",
+      "value": "approval letter"
+    },
+    {
+      "type": "Document",
+      "value": "school enrollment paperwork"
+    }
+  ],
+  "next_episode_context": "Client is currently working long hours doing site prep through the Co-op and saving money. He is waiting on a WIOA grant approval letter to begin CDL classes at Tri-State Trucking Academy next month. Health has improved, and he is preparing for a DOT physical next Thursday. The next office visit is scheduled for Tuesday the 14th at 2:00 PM, where he must present his WIOA approval and school enrollment documents.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Continue taking blood pressure medication every morning"
+    },
+    {
+      "assignee": "PO",
+      "task": "Document progress upon receipt of paperwork"
+    }
+  ]
+}

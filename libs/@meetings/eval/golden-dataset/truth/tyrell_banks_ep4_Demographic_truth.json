@@ -1,0 +1,173 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Follow up with Axiom to check the client's waitlist status",
+      "deadline": "This afternoon",
+      "context": "Client attended orientation but has not received a class schedule yet."
+    },
+    {
+      "assignee": "Client",
+      "task": "Get the next work log fully signed by Uncle Marcus",
+      "deadline": "12th",
+      "context": "Client brought the current work log with hours filled in, but it was missing the required signature."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call Uncle Marcus to verify work hours",
+      "deadline": null,
+      "context": "To confirm the hours on the unsigned work log submitted during the visit."
+    },
+    {
+      "assignee": "Client",
+      "task": "Only return to mother's house in broad daylight to quickly grab belongings",
+      "deadline": null,
+      "context": "Safety mandate following a drive-by shooting at the mother's residence."
+    },
+    {
+      "assignee": "Client",
+      "task": "Report any police contact within 24 hours",
+      "deadline": null,
+      "context": "Standard condition reiterated after client failed to immediately report police response to the shooting."
+    },
+    {
+      "assignee": "Client",
+      "task": "Maintain work schedule with Uncle Marcus",
+      "deadline": null,
+      "context": "Commute will be longer from the new west side residence."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not seek revenge or retaliate regarding the drive-by shooting",
+      "deadline": null,
+      "context": "Strict PO directive to prevent further violence and parole violation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next scheduled PO appointment",
+      "deadline": "12th",
+      "context": "Routine reporting requirement."
+    },
+    {
+      "assignee": "PO",
+      "task": "Check on securing bus passes for the client",
+      "deadline": "12th",
+      "context": "To assist with the extended commute to work from the new residence."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call client to schedule a home visit at Aunt Lisa's apartment",
+      "deadline": "Early next week",
+      "context": "To formalize and verify the new temporary living situation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Inform Aunt Lisa about the upcoming PO home visit",
+      "deadline": "Early next week",
+      "context": "Ensure the household is prepared for the address verification visit."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client received emergency approval to move today from his mother's house to his Auntie Lisa's apartment (4421 West Garrison Avenue, Apt 3B) on the west side due to a drive-by shooting at his mother's house.",
+      "is_critical": true
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client had unreported police contact on Tuesday night at 2 AM after a drive-by shooting at his mother's house. Police responded to the scene and spoke with his mother; client was present but did not engage. No arrests were made.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to work at Uncle Marcus's shop. His commute will now increase to 1.5 hours via bus with two transfers due to his change of address.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "Client attended the Axiom program orientation on Tuesday and met with Miss Carla. He completed paperwork and is currently on a waitlist for actual classes.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Mother is temporarily relocating to her sister's house for safety after the shooting. Client is moving in with Auntie Lisa and his 10-year-old cousin Maya. Client blocked the phone number of his cousin Darius, suspecting that Darius's past associations may have provoked the shooting.",
+      "is_critical": true
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Tyrell"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Davis"
+    },
+    {
+      "type": "Person",
+      "value": "Miss Carla"
+    },
+    {
+      "type": "Person",
+      "value": "Uncle Marcus"
+    },
+    {
+      "type": "Person",
+      "value": "Darius"
+    },
+    {
+      "type": "Person",
+      "value": "Auntie Lisa"
+    },
+    {
+      "type": "Person",
+      "value": "Maya"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Address",
+      "value": "4421 West Garrison Avenue, Apartment 3B"
+    },
+    {
+      "type": "Location",
+      "value": "Uncle Marcus's shop"
+    },
+    {
+      "type": "Location",
+      "value": "west side"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "the 12th"
+    },
+    {
+      "type": "Time",
+      "value": "two in the morning"
+    },
+    {
+      "type": "Amount",
+      "value": "$500"
+    },
+    {
+      "type": "Document",
+      "value": "work log"
+    },
+    {
+      "type": "Document",
+      "value": "change of address form"
+    }
+  ],
+  "next_episode_context": "Client survived a drive-by shooting at his mother's house on Tuesday night, prompting an emergency address change to his Aunt Lisa's apartment on the west side. He failed to immediately report the police response to the incident but has been re-instructed on reporting mandates and strictly warned against any retaliation. He continues working for Uncle Marcus despite a newly extended commute, for which the PO is exploring bus passes. He attended Axiom orientation and awaits a class schedule. A home visit to Aunt Lisa's is pending for early next week."
+}

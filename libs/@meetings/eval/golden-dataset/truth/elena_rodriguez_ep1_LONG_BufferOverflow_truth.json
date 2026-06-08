@@ -1,0 +1,111 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Go to the clerk's office on the first floor to request and file a payment plan form for court fees.",
+      "deadline": "Next Wednesday",
+      "context": "Needs to set up a monthly installment for $800 in court fees to avoid missing rent."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring the pink receipt from the clerk's office.",
+      "deadline": "Next meeting",
+      "context": "Proof of filing the payment plan form."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring one recent official paystub from the Days Inn.",
+      "deadline": "Next meeting",
+      "context": "Required for employment verification and fee reduction."
+    },
+    {
+      "assignee": "PO",
+      "task": "Put a note in the file to figure out how to legally document the diner income.",
+      "deadline": null,
+      "context": "Client is paid in cash at the diner and does not receive official paystubs."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is working two jobs: housekeeping at the Days Inn (7:00 AM to 3:00 PM) and at a downtown diner on Tuesdays, Thursdays, and weekends (4:00 PM to 10:00 PM). The diner job pays in cash.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client owes $800 in court fees due by next month. PO instructed her to set up a monthly payment plan at the clerk's office to avoid financial strain.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client expressed anxiety about paying rent, stating she fears losing the apartment if forced to pay the entire $800 court fee at once.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's mother provides childcare for her three children while she works. The oldest child (age 12) goes to the grandmother's apartment after school.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client engaged in extensive positive conversation regarding family bonding over sports, cooking traditions, dealing with local weather and outdoor activities.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Elena"
+    },
+    {
+      "type": "Employer",
+      "value": "Days Inn"
+    },
+    {
+      "type": "Employer",
+      "value": "diner downtown"
+    },
+    {
+      "type": "Amount",
+      "value": "800 dollars"
+    },
+    {
+      "type": "Location",
+      "value": "clerk's office"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday"
+    },
+    {
+      "type": "Time",
+      "value": "3:15"
+    },
+    {
+      "type": "Document",
+      "value": "payment plan form"
+    },
+    {
+      "type": "Document",
+      "value": "pink receipt"
+    },
+    {
+      "type": "Document",
+      "value": "paystubs"
+    },
+    {
+      "type": "Organization",
+      "value": "La Espiga"
+    },
+    {
+      "type": "Location",
+      "value": "4th Street"
+    }
+  ],
+  "next_episode_context": "Elena is managing a heavy workload with two jobs (Days Inn and a downtown diner) to support her three children, relying on her mother for childcare. She was highly stressed about paying $800 in upcoming court fees without missing rent, so the PO guided her to set up a payment plan. For the next visit, Elena needs to provide her Days Inn paystub and the clerk's receipt, while the PO investigates how to appropriately verify her cash income from the diner."
+}

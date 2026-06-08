@@ -1,0 +1,149 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Follow up with CVS manager (Brian) regarding job application.",
+      "deadline": "Friday",
+      "context": "Waiting for payroll to be completed before checking back."
+    },
+    {
+      "assignee": "Client",
+      "task": "Apply for a job at Safeway.",
+      "deadline": "Monday",
+      "context": "Backup plan if CVS does not offer employment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Go to urgent care to have ribs and shoulder evaluated.",
+      "deadline": "By the weekend",
+      "context": "If physical pain and stiffness do not improve in a day or two to rule out fractures."
+    },
+    {
+      "assignee": "Client",
+      "task": "Keep emergency YWCA number handy (saved as 'CVS follow up 2') and call if feeling unsafe.",
+      "deadline": null,
+      "context": "Safety precaution due to concerns about partner's behavior."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next scheduled supervision appointment.",
+      "deadline": "Tuesday the 14th at 10:00 AM",
+      "context": "Routine two-week check-in schedule."
+    },
+    {
+      "assignee": "Client",
+      "task": "Write Brian's name (CVS hiring manager) in phone contacts"
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client presented moving stiffly with bruised shoulder and ribs, claiming she fell down outside stairs. She reports pain when laughing or bending over. Refused medical treatment thus far, using Advil and a heating pad.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Client is living with partner Marcus. Client exhibits signs of fear regarding Marcus finding domestic violence resources (YWCA brochure), noting he gets 'paranoid'. Strong indications of potential domestic violence, though client denies it.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client remains living at her current apartment complex with Marcus. The home environment presents serious safety concerns due to suspected domestic abuse.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client was not hired for the day shift at Target and cannot work nights due to bus schedules. She has a pending application at CVS and plans to apply at Safeway as a backup.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no police contact and no new legal issues since the last visit.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Sarah"
+    },
+    {
+      "type": "Person",
+      "value": "Brian"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Employer",
+      "value": "Target"
+    },
+    {
+      "type": "Employer",
+      "value": "CVS"
+    },
+    {
+      "type": "Employer",
+      "value": "Safeway"
+    },
+    {
+      "type": "Organization",
+      "value": "YWCA"
+    },
+    {
+      "type": "Location",
+      "value": "apartment complex"
+    },
+    {
+      "type": "Location",
+      "value": "4th"
+    },
+    {
+      "type": "Location",
+      "value": "urgent care"
+    },
+    {
+      "type": "Location",
+      "value": "the warehouse"
+    },
+    {
+      "type": "Phone",
+      "value": "555-0199"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "Monday"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday the 14th"
+    },
+    {
+      "type": "Time",
+      "value": "after nine"
+    },
+    {
+      "type": "Time",
+      "value": "10:00 AM"
+    },
+    {
+      "type": "Document",
+      "value": "YWCA brochure"
+    },
+    {
+      "type": "Document",
+      "value": "appointment card"
+    }
+  ],
+  "next_episode_context": "Client is currently presenting with physical injuries (bruised ribs and shoulder) attributed to a fall, though there are strong indicators of potential domestic violence involving her partner, Marcus. She covertly saved a YWCA helpline number in her phone for safety. Client is actively job searching, awaiting a response from CVS and planning to apply to Safeway. Next supervision appointment is scheduled for Tuesday the 14th at 10:00 AM."
+}

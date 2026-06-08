@@ -1,0 +1,235 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Call the financial aid office to ask if dropping the math class affects full-time status and financial aid.",
+      "deadline": "tomorrow",
+      "context": "Client is struggling with Algebra and considering dropping it."
+    },
+    {
+      "assignee": "Client",
+      "task": "Wait for the financial aid office to email back.",
+      "deadline": null,
+      "context": "Follow-up step after initial call."
+    },
+    {
+      "assignee": "Client",
+      "task": "Go to the financial aid office in person if no email response is received.",
+      "deadline": "Wednesday",
+      "context": "Backup plan if financial aid does not respond."
+    },
+    {
+      "assignee": "Client",
+      "task": "Set up direct deposit with HR.",
+      "deadline": "Friday",
+      "context": "To receive pay faster."
+    },
+    {
+      "assignee": "Client",
+      "task": "Print out paystub at the library and bring it to the next meeting.",
+      "deadline": "the 28th",
+      "context": "PO needs the paystub for the client's file."
+    },
+    {
+      "assignee": "Client",
+      "task": "Report for supervision meeting at the new time of 8:00 AM.",
+      "deadline": "the 28th",
+      "context": "Adjusted reporting time to accommodate work and school schedules."
+    },
+    {
+      "assignee": "Client",
+      "task": "Complete required community service hours.",
+      "deadline": "end of the month",
+      "context": "Client has already completed 5 hours at the food bank."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not cross state lines or stay overnight without a travel permit.",
+      "deadline": null,
+      "context": "Standard travel condition discussed regarding a delivery to Shelby County."
+    },
+    {
+      "assignee": "Client",
+      "task": "Submit to random urinalysis and follow exact color code procedures.",
+      "deadline": null,
+      "context": "Client tested a day late due to a misunderstanding."
+    },
+    {
+      "assignee": "PO",
+      "task": "Request client's high school records via fax.",
+      "deadline": null,
+      "context": "Required for the client's file."
+    },
+    {
+      "assignee": "PO",
+      "task": "CLARIFY: Was the restitution review hearing scheduled for the 12th or the 14th?",
+      "deadline": null,
+      "context": "Client's letter got wet and the exact date is unclear."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live at home with his mother and father. No changes to the address or household members.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Ongoing tension with father regarding paying rent. The father's construction hours were cut due to weather, adding financial stress to the household.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Change",
+      "details": "Currently enrolled in English, Intro to Psych, and College Algebra. Midterms are approaching. Client is struggling significantly with Algebra and is considering dropping the class, pending a check on how it impacts financial aid.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client received more hours at the restaurant, but the new shift conflicts with Tuesday afternoon reporting times. The new shift starts at 4:30 PM, so supervision meetings were moved to 8:00 AM.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "No new law enforcement contact reported. Client completed 5 hours of community service at a food bank. A restitution review hearing is upcoming, but the exact date is currently unknown.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Change",
+      "details": "Client submitted a urinalysis at Axiom lab one day late (Thursday instead of Wednesday for the blue color). The test result was negative, and the PO issued a warning rather than a violation.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Previous stomach issues and sleep deprivation have cleared up. Client reports sleeping better now.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Change",
+      "details": "Supervision reporting schedule adjusted to 8:00 AM on Tuesdays to resolve conflicts with client's classes and work.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Jayden"
+    },
+    {
+      "type": "Person",
+      "value": "Mike"
+    },
+    {
+      "type": "Person",
+      "value": "David"
+    },
+    {
+      "type": "Organization",
+      "value": "Axiom lab"
+    },
+    {
+      "type": "Organization",
+      "value": "HR"
+    },
+    {
+      "type": "Organization",
+      "value": "financial aid office"
+    },
+    {
+      "type": "Location",
+      "value": "Shelby County"
+    },
+    {
+      "type": "Location",
+      "value": "food bank"
+    },
+    {
+      "type": "Location",
+      "value": "library"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "Saturday"
+    },
+    {
+      "type": "Date",
+      "value": "the 12th"
+    },
+    {
+      "type": "Date",
+      "value": "the 14th"
+    },
+    {
+      "type": "Date",
+      "value": "the 28th"
+    },
+    {
+      "type": "Time",
+      "value": "8:00 AM"
+    },
+    {
+      "type": "Time",
+      "value": "8:30 AM"
+    },
+    {
+      "type": "Time",
+      "value": "9:30 AM"
+    },
+    {
+      "type": "Time",
+      "value": "4:30 PM"
+    },
+    {
+      "type": "Document",
+      "value": "paystub"
+    },
+    {
+      "type": "Document",
+      "value": "restitution review hearing letter"
+    },
+    {
+      "type": "Document",
+      "value": "high school records"
+    },
+    {
+      "type": "Document",
+      "value": "scheduling agreement"
+    },
+    {
+      "type": "Class",
+      "value": "English"
+    },
+    {
+      "type": "Class",
+      "value": "Intro to Psych"
+    },
+    {
+      "type": "Class",
+      "value": "College Algebra"
+    }
+  ],
+  "next_episode_context": "Jayden continues living at home, experiencing financial tension with his father. He is working at a restaurant and was recently given more hours, prompting a schedule change for supervision meetings to 8:00 AM on Tuesdays. He is enrolled in college but struggling with Algebra, which he may drop pending financial aid implications. He completed 5 hours of community service and tested negative on his recent UA, though he received a warning for testing a day late. A restitution review hearing is upcoming, and his previous stress-related stomach issues have resolved."
+}

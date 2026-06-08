@@ -1,0 +1,117 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Submit another medical kite to jail medical after count to verify Flexeril prescription",
+      "deadline": "Today",
+      "context": "Client needs his legitimate Flexeril prescription for severe back pain instead of illicit Percocet."
+    },
+    {
+      "assignee": "Client",
+      "task": "Stay out of trouble in the jail pod",
+      "deadline": null,
+      "context": "PO advised client to maintain good behavior while incarcerated."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call Mr. Torres to advocate for holding the client's job",
+      "deadline": "This afternoon",
+      "context": "Client missed the deadline for a doctor's note due to a medical emergency and subsequent arrest."
+    },
+    {
+      "assignee": "PO",
+      "task": "Pull and review the police report from the traffic stop",
+      "deadline": "Today",
+      "context": "Need to verify client's claim that he only possessed one Percocet pill and there were no other issues."
+    },
+    {
+      "assignee": "PO",
+      "task": "Evaluate recommending lifting the parole hold",
+      "deadline": null,
+      "context": "Conditional on the police report corroborating the client's story about the single Percocet pill."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client was arrested during a traffic stop for possession of one unprescribed Percocet pill. Currently in county jail on a parole hold.",
+      "is_critical": true
+    },
+    {
+      "category": "Substance",
+      "update_type": "New",
+      "details": "Client possessed and intended to use one unprescribed Percocet pill, claiming it was given to him by another shelter resident for severe back pain.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client is suffering from severe back pain ('locked up') exacerbated by sleeping conditions at the shelter. Has an outside prescription for Flexeril, but jail medical has not yet verified it to dispense medication.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Construction job with Mr. Torres is in jeopardy because client missed the deadline to provide a doctor's note and is now incarcerated.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client was sleeping at the 'shelter on 4th' prior to his arrest, reporting very poor bed conditions. Currently housed in county jail.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Torres"
+    },
+    {
+      "type": "Location",
+      "value": "county"
+    },
+    {
+      "type": "Location",
+      "value": "shelter on 4th"
+    },
+    {
+      "type": "Medication",
+      "value": "Percocet"
+    },
+    {
+      "type": "Medication",
+      "value": "Flexeril"
+    },
+    {
+      "type": "Document",
+      "value": "doctor's note"
+    },
+    {
+      "type": "Document",
+      "value": "medical kite"
+    },
+    {
+      "type": "Document",
+      "value": "police report"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Time",
+      "value": "this afternoon"
+    }
+  ],
+  "next_episode_context": "Marcus is currently in county jail on a parole hold after being arrested for possession of one unprescribed Percocet pill during a traffic stop. He claims he obtained the pill for severe back pain caused by sleeping conditions at his shelter. His construction job with Mr. Torres is at risk because he missed a deadline to submit a doctor's note. The PO is reviewing the police report to consider lifting the parole hold and is contacting Mr. Torres to try and save Marcus's job. Marcus is tasked with submitting medical kites in jail to get his legitimate Flexeril prescription verified."
+}

@@ -1,0 +1,163 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Drop off the six-inch hunting knife at the central evidence lockup.",
+      "deadline": "Tomorrow morning",
+      "context": "The PO secured the weapon from the client and needs to process it into evidence."
+    },
+    {
+      "assignee": "PO",
+      "task": "CLARIFY: What is the exact date the sheriff is coming to execute the eviction and remove the client's property?",
+      "deadline": null,
+      "context": "The client stated the date, but it was obscured by a door slamming and the PO needs it for the housing section of the hearing report."
+    },
+    {
+      "assignee": "PO",
+      "task": "Discuss the case and new criminal charges with Supervisor Harris.",
+      "deadline": "Wednesday",
+      "context": "Supervisor Harris and the legal team are reviewing the client's file based on today's events."
+    },
+    {
+      "assignee": "Client",
+      "task": "File a writ of habeas corpus with the federal court.",
+      "deadline": "Friday",
+      "context": "The client stated his authorized representative will mail this to contest his detainment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Use the correct mailing address for the courthouse when sending documents.",
+      "deadline": null,
+      "context": "PO's directive to ensure the client's legal paperwork is mailed correctly."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client is being detained on a parole hold after bringing a six-inch hunting knife into the probation office. He was also driving on a suspended license with unauthorized homemade plates, resulting in his car being impounded. The client harassed the Regional Director by mailing sovereign documents to his home address. A formal revocation hearing will be set within the week, and new criminal charges are being reviewed.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client is being formally evicted from his brother's home. The client received a notice under his door, and the sheriff is scheduled to come remove his property on an upcoming date that the PO was unable to hear.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Severe conflict with brother, Michael. Michael is proceeding with a formal eviction to remove the client from his house. In retaliation, the client filed a fraudulent commercial lien against Michael's property.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "During the medical portion of the intake questionnaire, the client confirmed he is not experiencing any medical emergencies.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "New",
+      "details": "Client is demonstrating extreme sovereign citizen ideology. He refuses to acknowledge his legal name, claims detainment under maritime law, demands a fee schedule of $5,000 per day for unlawful detainment, and threatened to place a lien on the PO's personal estate after demanding a surety bond number.",
+      "is_critical": true
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "David Kosta"
+    },
+    {
+      "type": "Person",
+      "value": "David of the family Kosta"
+    },
+    {
+      "type": "Person",
+      "value": "Supervisor Harris"
+    },
+    {
+      "type": "Person",
+      "value": "Michael"
+    },
+    {
+      "type": "Role",
+      "value": "Regional Director"
+    },
+    {
+      "type": "Role",
+      "value": "sheriff"
+    },
+    {
+      "type": "Organization",
+      "value": "state probation office"
+    },
+    {
+      "type": "Organization",
+      "value": "central evidence lockup"
+    },
+    {
+      "type": "Organization",
+      "value": "federal court"
+    },
+    {
+      "type": "Weapon",
+      "value": "six-inch hunting knife"
+    },
+    {
+      "type": "Amount",
+      "value": "five thousand dollars a day"
+    },
+    {
+      "type": "Document",
+      "value": "intake questionnaire"
+    },
+    {
+      "type": "Document",
+      "value": "booking form"
+    },
+    {
+      "type": "Document",
+      "value": "fee schedule"
+    },
+    {
+      "type": "Document",
+      "value": "commercial lien"
+    },
+    {
+      "type": "Document",
+      "value": "formal eviction"
+    },
+    {
+      "type": "Document",
+      "value": "sovereign documents"
+    },
+    {
+      "type": "Document",
+      "value": "notice of default"
+    },
+    {
+      "type": "Document",
+      "value": "writ of habeas corpus"
+    },
+    {
+      "type": "Date",
+      "value": "tomorrow morning"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    }
+  ],
+  "next_episode_context": "The client is currently in custody on a parole hold after bringing a knife into the probation office and driving on a suspended license with homemade plates. He is heavily engaged in sovereign citizen rhetoric, has filed a fraudulent commercial lien against his brother (who is in the process of evicting him), and harassed the Regional Director. A revocation hearing will be scheduled within the week, and new criminal charges are under review. The PO needs to confirm the exact date of the client's eviction.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Third Party",
+      "task": "Supervisor Harris and legal team to review client's file for new criminal charges"
+    }
+  ]
+}

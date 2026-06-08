@@ -1,0 +1,85 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend next supervision meeting",
+      "deadline": "14th of next month at 4:00 PM",
+      "context": "Routine monthly check-in"
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue attending weekly counseling sessions",
+      "deadline": "Every Tuesday at 6:00",
+      "context": "Mental health and anxiety support with Ms. Sarah"
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "No police contact or new legal issues. Completing all daily system check-ins on time.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Maintains two jobs (hotel and restaurant). Has been stable at the hotel for four months working mostly day shifts under manager Mr. Davis.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Apartment is stable. Rent is paid, heat is working, and the neighborhood is quiet. The daughters share their own room.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Attending weekly counseling sessions for anxiety with Ms. Sarah. Chose to maintain weekly frequency to stay grounded.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Submitted 3 consecutive clean UAs via Axiom clinic.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Children are doing well. 9-year-old son, Mateo, is starting soccer next week. Daughter Sofia is helping care for the 4-year-old daughter.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Elena"
+    },
+    {
+      "type": "person",
+      "value": "Mateo"
+    },
+    {
+      "type": "person",
+      "value": "Sofia"
+    },
+    {
+      "type": "person",
+      "value": "Mr. Davis"
+    },
+    {
+      "type": "person",
+      "value": "Ms. Sarah"
+    },
+    {
+      "type": "program",
+      "value": "Axiom"
+    },
+    {
+      "type": "phone",
+      "value": "4421"
+    }
+  ],
+  "next_episode_context": "Elena is demonstrating outstanding compliance across all supervision conditions. She maintains stable housing and two jobs (hotel and restaurant) to support her three children. She has submitted 3 consecutive clean UAs at Axiom, completes all daily automated check-ins flawlessly, and attends weekly counseling for anxiety with Ms. Sarah. Due to her perfect compliance, the PO waived her $20 probation fee for the current month. Her next scheduled visit is on the 14th of next month at 4:00 PM."
+}

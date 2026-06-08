@@ -1,0 +1,41 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Call the testing center to reschedule the missed UA",
+      "deadline": "Wednesday",
+      "context": "Client missed the scheduled UA last Thursday due to oversleeping."
+    },
+    {
+      "assignee": "Client",
+      "task": "Provide most recent paystub via employee portal",
+      "deadline": "The 12th",
+      "context": "Required for the next meeting to verify hours and get a screenshot for the file."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is working at a distribution center, doing the 4:00 AM shift and getting around 38 hours a week. Supervisor may move him to second shift next month.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "New",
+      "details": "Client missed a scheduled UA last Thursday because he slept through his alarm after work. Warned of a compliance issue if not rescheduled.",
+      "is_critical": true
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Marcus"
+    },
+    {
+      "type": "other",
+      "value": "distribution center"
+    }
+  ],
+  "next_episode_context": "N/A — adversarial test input."
+}

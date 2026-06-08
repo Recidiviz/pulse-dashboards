@@ -1,0 +1,157 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Text mom to confirm she will pick up the kids on Thursday",
+      "deadline": "Tonight",
+      "context": "To ensure childcare coverage so the client can attend her appointment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend scheduled office visit",
+      "deadline": "Thursday the 12th at 3:00 PM",
+      "context": "Routine monthly reporting."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring first Sysco paystub to the office visit",
+      "deadline": "Thursday the 12th at 3:00 PM",
+      "context": "To verify new employment."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client started a new job at Sysco with early morning hours and is awaiting background check clearance. She quit her job at La Quinta last week but retained weekend shifts at Denny's as a safety net.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is compliant; she paid fifty dollars toward her court fees this month and her completion certificate from Axiom classes was received.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's mother continues to provide critical childcare support in the mornings and will handle school pickup on Thursday due to her clinic being closed.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Change",
+      "details": "Client is without a personal vehicle, needing eight hundred dollars to get her car out of the shop. She is currently relying heavily on the bus system for her commute.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Elena"
+    },
+    {
+      "type": "Person",
+      "value": "Officer Davis"
+    },
+    {
+      "type": "Employer",
+      "value": "Sysco"
+    },
+    {
+      "type": "Employer",
+      "value": "La Quinta"
+    },
+    {
+      "type": "Employer",
+      "value": "Denny's"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Location",
+      "value": "4th and Main"
+    },
+    {
+      "type": "Amount",
+      "value": "eight hundred"
+    },
+    {
+      "type": "Amount",
+      "value": "fifty dollars"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday the 12th"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday the 17th"
+    },
+    {
+      "type": "Time",
+      "value": "3:00 PM"
+    },
+    {
+      "type": "Time",
+      "value": "3:30"
+    },
+    {
+      "type": "Time",
+      "value": "4:15"
+    },
+    {
+      "type": "Time",
+      "value": "9 AM"
+    },
+    {
+      "type": "Time",
+      "value": "2:00"
+    },
+    {
+      "type": "Time",
+      "value": "3:15"
+    },
+    {
+      "type": "Time",
+      "value": "5:00"
+    },
+    {
+      "type": "Document",
+      "value": "completion certificate"
+    },
+    {
+      "type": "Document",
+      "value": "Sysco paystub"
+    },
+    {
+      "type": "Transport",
+      "value": "52 bus"
+    }
+  ],
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Obtain $800 to get the car out of the shop.",
+      "context": "Client self-description of her financial goal, not a PO directive."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue working at Sysco and maintain weekend shifts at Denny's.",
+      "context": "Client-stated employment plan. PO acknowledged but did not direct."
+    }
+  ],
+  "next_episode_context": "Client is compliant with supervision, having paid fifty dollars toward court fees and completed her Axiom classes. She recently started a new job at Sysco (background check pending) and is maintaining weekend shifts at Denny's after quitting La Quinta. She currently relies on the bus system while needing $800 for car repairs. Client is scheduled to attend her next office visit on Thursday the 12th at 3:00 PM, with her mother assisting with childcare.",
+  "acceptable_critical_updates": [
+    {
+      "category": "Health",
+      "details": "Client reports fatigue and lack of sleep from early work schedule"
+    },
+    {
+      "category": "Education",
+      "details": "Completed required classes through Axiom"
+    }
+  ]
+}

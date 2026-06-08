@@ -1,0 +1,171 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Conduct a home visit to verify the living situation.",
+      "deadline": "next week",
+      "context": "Standard procedure to verify client's residence at brother's home."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call the client's landline prior to the home visit.",
+      "deadline": null,
+      "context": "To notify the client before arriving at 442 Grove Street."
+    },
+    {
+      "assignee": "Client",
+      "task": "Maintain a ledger of labor hours for private landscaping work and bring it to the next office visit.",
+      "deadline": "Tuesday the 14th",
+      "context": "To verify self-employment income since client refuses to provide client names."
+    },
+    {
+      "assignee": "Client",
+      "task": "Report in person for the next scheduled office visit.",
+      "deadline": "Tuesday the 14th at 10:00 AM",
+      "context": "Monthly reporting requirement."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not leave the state of Ohio without prior written permission from the PO.",
+      "deadline": null,
+      "context": "Standard parole travel restriction."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not own, possess, or be in the presence of firearms or ammunition.",
+      "deadline": null,
+      "context": "Felony conviction restriction."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is residing at 442 Grove Street as a guest in his brother Michael's domicile. No anticipated expiration date for this living arrangement.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client is self-employed, performing private contracts for landscaping and property maintenance. He is paid in cash and refuses to provide his clients' names due to ideological beliefs, but agreed to provide a ledger of his labor hours.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client heavily utilizes 'sovereign citizen' ideology, referring to himself as a 'natural living man' and challenging the state's jurisdiction and 'corporate statutes'. He does not possess a valid driver's license by choice. Signed supervision intake paperwork but added 'UCC 1-308' and 'under duress' to his signature.",
+      "is_critical": true
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no use of illicit drugs or anything that impairs his faculties, stating he keeps his mind clear. Expressed ideological opposition to random UAs but acknowledged the requirement.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is living with his brother, Michael. PO noted that Michael previously signed a host agreement prior to the client's release.",
+      "is_critical": false
+    }
+  ],
+  "acceptable_critical_updates": [
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client initially refused to sign intake paperwork, viewing it as a 'contract' with a 'corporate fiction', but ultimately complied to avoid a warrant, utilizing Uniform Commercial Code notations.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "David Kosta"
+    },
+    {
+      "type": "Person",
+      "value": "Michael"
+    },
+    {
+      "type": "Location",
+      "value": "442 Grove Street"
+    },
+    {
+      "type": "Phone",
+      "value": "555-0192"
+    },
+    {
+      "type": "Organization",
+      "value": "Department of Corrections"
+    },
+    {
+      "type": "Organization",
+      "value": "State of Ohio"
+    },
+    {
+      "type": "Organization",
+      "value": "Parole Board"
+    },
+    {
+      "type": "Legal Code",
+      "value": "Uniform Commercial Code"
+    },
+    {
+      "type": "Legal Code",
+      "value": "UCC 1-308"
+    },
+    {
+      "type": "Legal Code",
+      "value": "Fourth Amendment"
+    },
+    {
+      "type": "Legal Code",
+      "value": "Second Amendment"
+    },
+    {
+      "type": "Document",
+      "value": "supervision plan"
+    },
+    {
+      "type": "Document",
+      "value": "host agreement"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday, the 14th"
+    },
+    {
+      "type": "Time",
+      "value": "10:00 AM"
+    }
+  ],
+  "next_episode_context": "Client is self-employed in landscaping and currently resides with his brother Michael at 442 Grove Street. He strictly adheres to sovereign citizen ideology, frequently challenging the PO's jurisdiction and state statutes, though he ultimately complies under claimed 'duress.' PO will conduct a home visit next week and will review the client's self-employment labor ledger at the next office visit on Tuesday the 14th at 10:00 AM.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Report to parole office in person once a month"
+    },
+    {
+      "assignee": "PO",
+      "task": "Review client's income ledger at next meeting"
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not operate a motor vehicle without a valid state driver's license.",
+      "deadline": null,
+      "context": "To avoid new criminal charges and parole violation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Submit to random urinalysis testing when called.",
+      "deadline": null,
+      "context": "Standard supervision requirement regarding substance abuse."
+    },
+    {
+      "assignee": "Client",
+      "task": "Inform brother Michael that any firearms on the property must be secured in a safe the client cannot access.",
+      "deadline": null,
+      "context": "To prevent a constructive possession violation for the client."
+    }
+  ]
+}

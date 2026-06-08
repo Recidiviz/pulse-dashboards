@@ -1,0 +1,65 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Track job search log and provide it for review at the next meeting",
+      "deadline": "Next month",
+      "context": "PO requires ongoing documentation of the client's job search efforts."
+    },
+    {
+      "assignee": "Client",
+      "task": "Ask new partner (Jordan) about any criminal history or active supervision status",
+      "deadline": "This weekend",
+      "context": "Client must verify she is not violating the condition against associating with felons or individuals on probation/parole."
+    },
+    {
+      "assignee": "Client",
+      "task": "Email or call the PO to report the outcome of the background conversation with Jordan",
+      "deadline": null,
+      "context": "PO requested an immediate update once the client knows Jordan's criminal history status, rather than waiting for the next meeting."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client's real estate license is suspended. She is pivoting to back-office property management admin roles; sent 14 emails to her network and completed a phone screening for a leasing assistant job in the Valley.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client lives alone in her own apartment, is the sole person on the lease, and has enough savings to cover rent for the next two months.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Client started dating a new partner, Jordan, approximately three weeks ago. They do not live together. Jordan's criminal history is currently unknown.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Ex-business partner is attempting to email client regarding a pending civil suit. Client is ignoring the emails and forwarding them directly to her attorney. PO confirmed there are no active no-contact orders on file.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is managing stress by doing yoga in her living room and drinking chamomile tea.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Chloe"
+    },
+    {
+      "type": "person",
+      "value": "Jordan"
+    }
+  ],
+  "next_episode_context": "Chloe is currently stable in her housing, living alone with two months of rent in savings. Her real estate license is suspended, and she is actively applying for administrative roles in property management. She recently began dating a new partner, Jordan, and has been instructed to ask him about any criminal history to ensure compliance with her association conditions. She is also managing a pending civil suit by forwarding all correspondence from her ex-business partner directly to her attorney."
+}

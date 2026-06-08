@@ -1,0 +1,105 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Submit LIHEAP application online",
+      "deadline": "tonight",
+      "context": "To prevent electric shut-off due next Thursday."
+    },
+    {
+      "assignee": "Client",
+      "task": "Contact PO for help with LIHEAP forms if needed",
+      "deadline": null,
+      "context": "PO offered assistance to ensure utility assistance application is completed."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call clinic to schedule DOT physical",
+      "deadline": "tomorrow",
+      "context": "Required before starting classes at Tri-State Trucking Academy."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next check-in appointment",
+      "deadline": "the 12th at 9:00 AM",
+      "context": "Standard scheduled supervision meeting."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to work 35 hours a week at the Co-op.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "WIOA approved tuition funding. Client is officially starting evening classes at Tri-State Trucking Academy on the 28th.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "New",
+      "details": "Client received an electric shut-off notice for $280 due next Thursday. Applying for LIHEAP assistance.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Health remains stable. Blood pressure is 125/80. Client is taking Lisinopril every morning and needs a DOT physical for school.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "No police contact or new tickets reported.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "No issues with drugs or alcohol reported.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Employer",
+      "value": "Co-op"
+    },
+    {
+      "type": "Amount",
+      "value": "280 bucks"
+    },
+    {
+      "type": "Date",
+      "value": "next Thursday"
+    },
+    {
+      "type": "Program",
+      "value": "LIHEAP"
+    },
+    {
+      "type": "Program",
+      "value": "WIOA"
+    },
+    {
+      "type": "Program",
+      "value": "Tri-State Trucking Academy"
+    },
+    {
+      "type": "Date",
+      "value": "the 28th"
+    },
+    {
+      "type": "Medication",
+      "value": "Lisinopril"
+    },
+    {
+      "type": "Appointment",
+      "value": "the 12th at 9:00 AM"
+    }
+  ],
+  "next_episode_context": "Client is maintaining stable employment at the Co-op (35 hrs/wk) and was approved for WIOA funding to start classes at Tri-State Trucking Academy on the 28th. Currently dealing with financial strain, specifically a $280 electric shut-off notice, and is applying for LIHEAP. Health is stable on Lisinopril, and there are no legal or substance use issues. Needs to complete a DOT physical prior to starting school."
+}

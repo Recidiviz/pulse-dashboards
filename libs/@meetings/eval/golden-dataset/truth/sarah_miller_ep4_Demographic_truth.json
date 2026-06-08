@@ -1,0 +1,178 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Power phone completely down tonight and do not touch it all night.",
+      "deadline": "Tonight",
+      "context": "To prevent Marcus from tracking her location via iCloud or Find My iPhone."
+    },
+    {
+      "assignee": "Client",
+      "task": "Turn phone on at 8:55 AM and call the PO directly at 9:00 AM for a mandatory safety check-in.",
+      "deadline": "Tomorrow at 9:00 AM",
+      "context": "Mandatory safety check; PO will verify she is safe and provide an update on the Safeway transfer."
+    },
+    {
+      "assignee": "Client",
+      "task": "Stay inside the YWCA building for the entire day tomorrow unless explicitly agreed otherwise.",
+      "deadline": "Tomorrow",
+      "context": "Safety precaution to avoid Marcus."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not contact the Elm Street Safeway store.",
+      "deadline": null,
+      "context": "PO will handle all HR communication to ensure safety."
+    },
+    {
+      "assignee": "Client",
+      "task": "Tell YWCA staff immediately if breathing gets sharp or if there is a popping sensation.",
+      "deadline": null,
+      "context": "To have a doctor evaluate her aching ribs."
+    },
+    {
+      "assignee": "Client",
+      "task": "Keep arm bandaged, drink water, and ask for ibuprofen.",
+      "deadline": "Tonight",
+      "context": "To care for minor injuries and dehydration from fleeing."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call Safeway district HR to arrange an emergency employment transfer to the Northside Safeway.",
+      "deadline": "Tomorrow morning",
+      "context": "Ensure client safety from Marcus, who knows her schedule at the Elm Street location."
+    },
+    {
+      "assignee": "PO",
+      "task": "Send Safeway the necessary domestic violence paperwork for the transfer.",
+      "deadline": null,
+      "context": "To process the emergency transfer without the client being fired."
+    },
+    {
+      "assignee": "PO",
+      "task": "Authorize emergency transit funds for the client.",
+      "deadline": null,
+      "context": "To provide bus transportation to the Northside Safeway."
+    },
+    {
+      "assignee": "PO",
+      "task": "If no contact from client by 9:15 AM, call the YWCA to physically verify client is present and safe",
+      "deadline": "tomorrow at 9:15 AM"
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "New",
+      "details": "Client successfully fled a domestic violence situation and is currently checked into the YWCA shelter on the second floor. All personal belongings were left behind at her previous residence.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client was scheduled to start her first shift at the Elm Street Safeway tomorrow but cannot attend due to safety risks. PO is intervening to arrange an emergency transfer to the Northside Safeway.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Client fled her abusive partner, Marcus. He retained her car keys and there is a high risk he may attempt to track her location via shared Apple/Google accounts.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client sustained a badly scraped arm while fleeing, which is currently bandaged. She is also experiencing deep aching in her ribs from a previous injury that flared up, along with nausea, chills, and physical exhaustion.",
+      "is_critical": true
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Sarah"
+    },
+    {
+      "type": "Person",
+      "value": "Officer Davies"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Person",
+      "value": "Miss Helen"
+    },
+    {
+      "type": "Organization",
+      "value": "YWCA"
+    },
+    {
+      "type": "Employer",
+      "value": "Safeway"
+    },
+    {
+      "type": "Organization",
+      "value": "Safeway district HR"
+    },
+    {
+      "type": "Location",
+      "value": "Elm Street store"
+    },
+    {
+      "type": "Location",
+      "value": "Northside Safeway"
+    },
+    {
+      "type": "Location",
+      "value": "Northside transit center"
+    },
+    {
+      "type": "Location",
+      "value": "downtown"
+    },
+    {
+      "type": "Time",
+      "value": "8:55 AM"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    },
+    {
+      "type": "Time",
+      "value": "9:15 AM"
+    },
+    {
+      "type": "Program",
+      "value": "iCloud"
+    },
+    {
+      "type": "Program",
+      "value": "Find My iPhone"
+    },
+    {
+      "type": "Program",
+      "value": "Apple ID"
+    },
+    {
+      "type": "Program",
+      "value": "Google account"
+    }
+  ],
+  "next_episode_context": "Sarah has just fled an abusive situation with her partner, Marcus, and is safely checked into the YWCA shelter, though she sustained minor injuries and is physically exhausted. Due to location-tracking risks, she has been instructed to power down her phone for the night and remain inside the shelter tomorrow. She has a mandatory check-in call scheduled with Officer Davies tomorrow at 9:00 AM. Officer Davies is actively handling an emergency employment transfer for Sarah from the Elm Street Safeway to the Northside Safeway to ensure her safety.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Request a wake-up knock from Miss Helen or front desk staff"
+    },
+    {
+      "assignee": "Client",
+      "task": "Keep the phone off for the entire night"
+    },
+    {
+      "assignee": "Client",
+      "task": "Turn the phone back on at 8:55 AM"
+    }
+  ]
+}

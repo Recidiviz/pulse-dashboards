@@ -1,0 +1,55 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Ask Pete for a letter verifying day labor employment and income.",
+      "deadline": "Tomorrow",
+      "context": "PO requires a paper trail to verify informal cash employment for the file."
+    },
+    {
+      "assignee": "Client",
+      "task": "Visit the Second Chance Job Center on MLK Boulevard and speak with counselor Sarah.",
+      "deadline": "Wednesday",
+      "context": "To get assistance with building a resume and finding formal employment that accepts individuals with a felony record."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client has been working informal, cash-only day labor for a man named Pete for the last six weeks, earning approximately $200 a week. He has struggled to get callbacks from online applications due to his felony record.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is attending the clinic daily and participating in groups on Tuesdays and Thursdays. He successfully managed a trigger last week after seeing an old acquaintance by leaving the situation and discussing it in group. UAs remain clean.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live with his grandmother and assists her with obtaining groceries and medications. He noted that money is currently tight in the household.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Marcus Jenkins"
+    },
+    {
+      "type": "person",
+      "value": "Pete"
+    },
+    {
+      "type": "program",
+      "value": "Second Chance Job Center"
+    },
+    {
+      "type": "person",
+      "value": "Sarah"
+    }
+  ],
+  "next_episode_context": "Client is stable in his recovery, attending his clinic and groups regularly, and successfully navigating triggers. He is currently living with and assisting his grandmother. Financially, money is tight, and his felony record has been a barrier to formal employment via online applications. For the past six weeks, he has been earning about $200/week doing informal cash day labor for a man named Pete. The PO instructed him to get an employment verification letter from Pete and referred him to Sarah at the Second Chance Job Center to secure formal employment. Next visit is scheduled in two weeks, where a UA is anticipated."
+}

@@ -1,0 +1,99 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Bring the ankle monitor charging cord to the next office visit",
+      "deadline": "Wednesday the 14th at 2 PM",
+      "context": "Client misplaced the cord during the home visit; it must be returned to avoid a forty dollar vendor fee."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend scheduled office visit",
+      "deadline": "Wednesday the 14th at 2 PM",
+      "context": "Routine office visit rescheduled from Tuesday due to the PO's court schedule."
+    },
+    {
+      "assignee": "Client",
+      "task": "Abide by regular supervision curfew, returning inside the house by 10 PM daily",
+      "deadline": null,
+      "context": "Ongoing supervision condition following removal from Home Confinement."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "Change",
+      "details": "Client successfully completed Home Confinement. The ankle monitor was removed during the visit. She transitioned to regular supervision with a new curfew of 10 PM. She has been fully compliant with no issues.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reported living alone with no other adults in the home. The neighbor's dog barks constantly, which she ignores by turning up the TV.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Client's daughter recently moved into her own place and works a late shift. The client visits the daughter's home to provide childcare for her grandchildren.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reported minor skin irritation on her ankle from the monitor strap rubbing at night, but noted it improved after applying lotion.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Maria"
+    },
+    {
+      "type": "Person",
+      "value": "Ricky"
+    },
+    {
+      "type": "Pet",
+      "value": "Chico"
+    },
+    {
+      "type": "Time",
+      "value": "10 PM"
+    },
+    {
+      "type": "Amount",
+      "value": "forty bucks"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday the 14th"
+    },
+    {
+      "type": "Time",
+      "value": "2 PM"
+    },
+    {
+      "type": "Appointment",
+      "value": "Wednesday the 14th at 2 PM"
+    }
+  ],
+  "next_episode_context": "Maria successfully completed Home Confinement and had her ankle monitor removed. She is now on regular supervision and must adhere to a 10 PM curfew. She is currently living alone and assists with childcare for her daughter's children. She has an upcoming office visit on Wednesday the 14th at 2 PM, where she is required to return the ankle monitor's charging cord.",
+  "acceptable_action_items": [
+    {
+      "assignee": "PO",
+      "task": "Meet with Maria at the office as scheduled"
+    }
+  ],
+  "acceptable_critical_updates": [
+    {
+      "category": "Other",
+      "details": "Electronic monitoring equipment status: base station collected, charging cord missing"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Fill out the last page of the LIHEAP application.",
+      "deadline": null,
+      "context": "Necessary step to apply for utility assistance to prevent power shut-off."
+    },
+    {
+      "assignee": "Client",
+      "task": "Drop off the completed LIHEAP application after work.",
+      "deadline": "Tomorrow",
+      "context": "Needed to secure funding for a $280 electric bill due next Thursday."
+    },
+    {
+      "assignee": "PO",
+      "task": "Look into emergency community funds if the client's LIHEAP application does not go through.",
+      "deadline": null,
+      "context": "Backup plan to prevent the client's electric power from being shut off."
+    },
+    {
+      "assignee": "Client",
+      "task": "Complete a DOT physical at an urgent care clinic.",
+      "deadline": "Next week",
+      "context": "Mandatory requirement before the client can begin classes at the trucking academy."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue taking Lisinopril medication daily.",
+      "deadline": null,
+      "context": "Ongoing health requirement, specifically noted to ensure passing the blood pressure check for the DOT physical."
+    },
+    {
+      "assignee": "Client",
+      "task": "Abstain from all drugs and alcohol.",
+      "deadline": null,
+      "context": "Standard ongoing condition restated by PO to protect the client's trucking academy opportunity."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next probation check-in meeting.",
+      "deadline": "The 12th at 9:00 AM",
+      "context": "Next scheduled monthly report."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to work at the Co-op, maintaining a steady 35 hours per week. He plans to keep his daytime shifts once his evening schooling begins.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Finances are tight, and the client received an electric shut-off notice for a $280 bill due next Thursday. He is currently applying for LIHEAP assistance to resolve the balance.",
+      "is_critical": true
+    },
+    {
+      "category": "Education",
+      "update_type": "New",
+      "details": "Client received an approval letter on Tuesday for full WIOA funding to attend the Tri-State Trucking Academy. He is enrolled in evening classes starting on the 28th.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports his health is stable. He is consistently taking his daily prescribed Lisinopril to manage his blood pressure.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports no recent police contact. He is spending his free time at home playing video games to avoid getting into trouble.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client denies any drug or alcohol use. He expressed a strong commitment to maintaining sobriety to avoid jeopardizing his upcoming educational program.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Current meeting was held in the basement near holding cells due to lobby painting. The next scheduled meeting is set for the 12th at 9:00 AM.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Location",
+      "value": "probation lobby"
+    },
+    {
+      "type": "Employer",
+      "value": "Co-op"
+    },
+    {
+      "type": "Amount",
+      "value": "two hundred and eighty dollars"
+    },
+    {
+      "type": "Date",
+      "value": "next Thursday"
+    },
+    {
+      "type": "Program",
+      "value": "LIHEAP"
+    },
+    {
+      "type": "Date",
+      "value": "tomorrow"
+    },
+    {
+      "type": "Program",
+      "value": "WIOA"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Program",
+      "value": "Tri-State Trucking Academy"
+    },
+    {
+      "type": "Date",
+      "value": "The 28th"
+    },
+    {
+      "type": "Medical Requirement",
+      "value": "DOT physical"
+    },
+    {
+      "type": "Date",
+      "value": "next week"
+    },
+    {
+      "type": "Medication",
+      "value": "Lisinopril"
+    },
+    {
+      "type": "Product",
+      "value": "Xbox"
+    },
+    {
+      "type": "Product",
+      "value": "Madden"
+    },
+    {
+      "type": "Date",
+      "value": "the 12th"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    },
+    {
+      "type": "Time",
+      "value": "noon"
+    }
+  ],
+  "next_episode_context": "The client is working approximately 35 hours a week at the Co-op but faces short-term financial distress with a $280 electric shut-off notice. He is actively applying for LIHEAP to resolve it. In positive news, he secured full WIOA funding for the Tri-State Trucking Academy and begins evening classes on the 28th, pending a DOT physical next week. He remains compliant with no legal or substance issues and is managing his blood pressure daily with Lisinopril. Next meeting is scheduled for the 12th at 9:00 AM."
+}

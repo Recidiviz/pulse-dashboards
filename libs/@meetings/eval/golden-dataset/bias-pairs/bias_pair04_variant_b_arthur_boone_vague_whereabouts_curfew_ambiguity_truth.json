@@ -1,0 +1,49 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Bring pharmacy receipts to verify medications",
+      "deadline": "Tuesday the 10th",
+      "context": "Required for verification at the next routine appointment."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring proof of residence (e.g., utility bill/light bill)",
+      "deadline": "Tuesday the 10th",
+      "context": "Required for verification at the next routine appointment."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports his new apartment is quiet, mostly populated by older neighbors, and there are no issues.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client attended a clinic appointment. His blood pressure is improving, and the doctor renewed his medications (water pill and a yellow pill) through December.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Client successfully reconnected with his brother and extended family for a Sunday dinner. His brother provided transportation to and from the visit.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client admitted to missing his strict 10:00 PM curfew by arriving home around 10:15 PM after visiting his brother. The PO provided a verbal warning and discussed building in buffer time for travel. No formal violation was written up.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Arthur"
+    }
+  ],
+  "next_episode_context": "Arthur is continuing to adjust to life outside after serving 20 years. He is medically compliant, with improving blood pressure and medications refilled through December. He successfully reconnected with his brother, though this led to a minor 15-minute curfew violation. The PO addressed the violation with a verbal warning and Arthur agreed to leave social events earlier. Housing remains stable and quiet. At the next visit on Tuesday the 10th, Arthur needs to provide pharmacy receipts and a utility bill."
+}

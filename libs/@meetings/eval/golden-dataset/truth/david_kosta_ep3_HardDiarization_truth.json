@@ -1,0 +1,195 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Do not operate a motor vehicle without a valid, state-issued license",
+      "deadline": null,
+      "context": "PO issued a formal written directive to the client to stop driving with a suspended license and fake plates."
+    },
+    {
+      "assignee": "Client",
+      "task": "Stop mailing the regional director's private residence immediately",
+      "deadline": null,
+      "context": "Client was sending 'notice of liability' documents to the staff member's home, which PO identified as harassment."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call client's brother to verify housing status",
+      "deadline": "Today (this afternoon)",
+      "context": "Brother is furious about a mechanic's lien the client filed on his house; PO needs to see if client has been kicked out."
+    },
+    {
+      "assignee": "Client",
+      "task": "Report new address within 24 hours if evicted by brother",
+      "deadline": null,
+      "context": "Contingency mandated by PO in case the client's brother forces him to leave the residence."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not argue with police if brother calls them to remove you from the house",
+      "deadline": null,
+      "context": "PO directive to prevent further legal escalation during potential eviction."
+    },
+    {
+      "assignee": "Client",
+      "task": "Walk or take the bus home; do not drive the car",
+      "deadline": "Today",
+      "context": "Client drove to the appointment illegally. PO threatened to request a warrant if he drove away."
+    },
+    {
+      "assignee": "Client",
+      "task": "Report for next office visit",
+      "deadline": "Next Tuesday",
+      "context": "Scheduled follow-up appointment."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client brought a 5-inch fixed-blade hunting knife to the government building. PO seized it as contraband and placed it in the evidence locker.",
+      "is_critical": true
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client admitted to driving to the office in a Ford with a suspended license, fake 'sovereign' plates, and a homemade ID. PO issued a written directive not to drive.",
+      "is_critical": true
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Supervisor Harris and the Legal Department are reviewing the client's file to determine if his unauthorized filings (false liens) and driving status constitute new criminal behavior.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client's housing is at immediate risk. He filed a fraudulent mechanic's lien on his brother's house (where he sleeps in the guest room). The brother is furious and threatening eviction.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Severe conflict with brother resulting from the client filing a lien against the brother's property.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "New",
+      "details": "Client is exhibiting extreme 'Sovereign Citizen' ideology. He is harassing the regional director via mail, refusing to acknowledge jurisdiction, billing the PO, and arguing common/admiralty law.",
+      "is_critical": true
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "David"
+    },
+    {
+      "type": "Weapon",
+      "value": "fixed-blade hunting knife"
+    },
+    {
+      "type": "Amount",
+      "value": "five hundred dollars"
+    },
+    {
+      "type": "Vehicle",
+      "value": "Ford"
+    },
+    {
+      "type": "Document",
+      "value": "declaration of status"
+    },
+    {
+      "type": "Document",
+      "value": "homemade ID card"
+    },
+    {
+      "type": "Document",
+      "value": "written directive"
+    },
+    {
+      "type": "Document",
+      "value": "mechanic\u2019s lien"
+    },
+    {
+      "type": "Amount",
+      "value": "Five hundred dollars an hour"
+    },
+    {
+      "type": "Organization",
+      "value": "Department of Corrections"
+    },
+    {
+      "type": "Person",
+      "value": "regional director"
+    },
+    {
+      "type": "Document",
+      "value": "affidavit of truth"
+    },
+    {
+      "type": "Person",
+      "value": "Supervisor Harris"
+    },
+    {
+      "type": "Organization",
+      "value": "Legal Department"
+    },
+    {
+      "type": "Document",
+      "value": "writ of habeas corpus"
+    },
+    {
+      "type": "Document",
+      "value": "property receipt"
+    },
+    {
+      "type": "Amount",
+      "value": "twenty dollars a day"
+    },
+    {
+      "type": "Date",
+      "value": "next Tuesday"
+    }
+  ],
+  "next_episode_context": "Client David is deeply entrenched in 'Sovereign Citizen' ideology, causing multiple severe compliance issues. During the current visit, he brought a 5-inch knife to the office (seized), admitted to driving with a suspended license and fake plates (issued written directive), and admitted to mailing harassing documents to the regional director's home. He has also placed a fraudulent mechanic's lien on his brother's home, placing his current housing at immediate risk of eviction. Legal and Supervisor Harris are reviewing his file for potential new criminal charges or revocation. The PO is contacting the brother today to verify housing status.",
+  "acceptable_action_items": [
+    {
+      "assignee": "PO",
+      "task": "Officially verify the client's housing status"
+    },
+    {
+      "assignee": "Client",
+      "task": "Sign the written directive provided by PO.",
+      "context": "PO directed signing in-session; client complied (with sovereign citizen notation). Same-session procedural step, not a follow-up action."
+    },
+    {
+      "assignee": "Client",
+      "task": "File a writ of habeas corpus in federal court.",
+      "context": "Client-stated plan, not a PO directive."
+    },
+    {
+      "assignee": "Client",
+      "task": "Invoice the Department of Corrections for alleged displacement.",
+      "context": "Client-stated plan, not a PO directive."
+    },
+    {
+      "assignee": "Client",
+      "task": "Write 'Accepted for Value' on the property receipt.",
+      "context": "Client-stated plan, not a PO directive."
+    },
+    {
+      "assignee": "PO",
+      "task": "Submit paperwork to initiate possible revocation.",
+      "context": "PO said 'I can submit the paperwork' as a warning/threat, not a firm commitment to act."
+    },
+    {
+      "assignee": "Third Party",
+      "task": "Supervisor Harris and Legal Department to review client's unauthorized filings.",
+      "context": "Already in progress as a status update (captured in critical_updates), not a new action item."
+    }
+  ]
+}

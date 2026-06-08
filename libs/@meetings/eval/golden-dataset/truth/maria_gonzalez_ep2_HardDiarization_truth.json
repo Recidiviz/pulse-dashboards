@@ -1,0 +1,141 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Stay within three feet of the kitchen outlet until the ankle monitor is fully charged (solid green light).",
+      "deadline": "Today (within 2 hours)",
+      "context": "Monitor battery completely died and needs to recharge."
+    },
+    {
+      "assignee": "Client",
+      "task": "Move the ankle monitor base station permanently to the bedroom outlet by the closet.",
+      "deadline": "Tonight",
+      "context": "Ensure the monitor is on a dedicated outlet to prevent tripped breakers."
+    },
+    {
+      "assignee": "Client",
+      "task": "Drop off the food sales permit application at City Hall downtown.",
+      "deadline": "Thursday morning",
+      "context": "Applying for a food permit for additional income."
+    },
+    {
+      "assignee": "Client",
+      "task": "Provide a copy of the approved city food permit to the PO.",
+      "deadline": null,
+      "context": "Required for the PO to add food sales to the client's approved employment file."
+    },
+    {
+      "assignee": "Client",
+      "task": "Wait for maintenance tech contact; if no call by Friday at noon, call BI Monitoring Center directly to schedule inspection.",
+      "deadline": "Friday at noon",
+      "context": "Mandatory equipment inspection is required after a complete power failure."
+    },
+    {
+      "assignee": "PO",
+      "task": "Log the exact time of the monitor blackout and write up the incident as an equipment malfunction warning.",
+      "deadline": null,
+      "context": "Official documentation of the dead monitor and tripped breaker."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client's housemate/partner Hector moved out on Sunday. The household now consists solely of the client, her daughter, and her two grandsons.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "Hector moved out of the home. Client is currently providing full-time childcare for her two grandsons while her daughter works double shifts at the hospital.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Change",
+      "details": "Client's ankle monitor completely died due to a tripped breaker. PO issued an official warning for equipment failure. Client denied any police contact.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client is currently doing sewing and alterations full-time to compensate for lost income after Hector moved out. She is also in the process of applying for a city food sales permit.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client denied any alcohol or substance use.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reported bad arthritis resulting from her sewing work, but stated she is managing it.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Maria"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Davis"
+    },
+    {
+      "type": "Person",
+      "value": "Hector"
+    },
+    {
+      "type": "Organization",
+      "value": "BI Monitoring Center"
+    },
+    {
+      "type": "Organization",
+      "value": "city health department"
+    },
+    {
+      "type": "Location",
+      "value": "City Hall"
+    },
+    {
+      "type": "Time",
+      "value": "3:00 PM"
+    },
+    {
+      "type": "Time",
+      "value": "8:00 PM"
+    },
+    {
+      "type": "Date",
+      "value": "Sunday"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday morning"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM to 11:00 AM"
+    },
+    {
+      "type": "Date",
+      "value": "Friday at noon"
+    },
+    {
+      "type": "Document",
+      "value": "city permit"
+    },
+    {
+      "type": "Document",
+      "value": "travel pass"
+    },
+    {
+      "type": "Document",
+      "value": "handbook"
+    }
+  ],
+  "next_episode_context": "Client had an ankle monitor power failure due to a tripped breaker and received a warning; she is currently tethered to a kitchen outlet while it recharges and must schedule a maintenance inspection by Friday. Her partner Hector moved out recently, causing a major household change. To replace lost income, she is sewing full-time and submitting a food sales permit application to the city on Thursday morning using an approved travel pass."
+}

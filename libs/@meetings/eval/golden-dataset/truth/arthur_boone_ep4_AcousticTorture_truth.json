@@ -1,0 +1,137 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Remind Mr. Hayes to provide a bland meal portion if he forgets.",
+      "deadline": null,
+      "context": "To prevent severe heartburn from spicy foods."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend medical appointment at Oak Creek Community Clinic.",
+      "deadline": "Thursday at 2:00 PM",
+      "context": "For blood pressure, cholesterol, back checkup, and work restriction evaluation."
+    },
+    {
+      "assignee": "Client",
+      "task": "Discuss low pain medication supply with the doctor to manage the regimen properly.",
+      "deadline": "Thursday",
+      "context": "PO advised not to stretch the pills."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring the physical evaluation form in the green folder to the clinic.",
+      "deadline": "Thursday",
+      "context": "Needed for doctor to sign to keep job search officially paused."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call Officer Jenkins after the clinic appointment.",
+      "deadline": "Thursday",
+      "context": "To confirm the physical evaluation form was signed."
+    },
+    {
+      "assignee": "Client",
+      "task": "Sit in a quiet room and hold the phone up to the ear for future calls.",
+      "deadline": null,
+      "context": "To avoid the poor audio quality experienced during this call."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Change",
+      "details": "Client is currently moving to a first-floor room at Mr. Hayes' boarding house.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client suffered severe heartburn from spicy boarding house meals. Mr. Hayes has agreed to provide bland portions going forward.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client scheduled a medical appointment at Oak Creek Community Clinic for next Thursday at 2:00 PM to check blood pressure, cholesterol, and back issues.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client's pain pills for his back are getting very low; he was planning to stretch them out, but PO instructed him to discuss it with the doctor.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's job search remains paused, but requires signed medical paperwork from the upcoming doctor's visit to maintain this status.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "New",
+      "details": "Client conducted the phone check-in while moving boxes, resulting in severe audio issues. Instructed to improve phone etiquette for future calls.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Officer Jenkins"
+    },
+    {
+      "type": "Person",
+      "value": "Arthur"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Hayes"
+    },
+    {
+      "type": "Person",
+      "value": "Earl"
+    },
+    {
+      "type": "Clinic",
+      "value": "Oak Creek Community Clinic"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "Wednesday"
+    },
+    {
+      "type": "Date",
+      "value": "Friday"
+    },
+    {
+      "type": "Date",
+      "value": "next Thursday"
+    },
+    {
+      "type": "Time",
+      "value": "two o'clock"
+    },
+    {
+      "type": "Time",
+      "value": "2:00 PM"
+    },
+    {
+      "type": "Document",
+      "value": "physical evaluation form"
+    },
+    {
+      "type": "Document",
+      "value": "state forms"
+    },
+    {
+      "type": "Object",
+      "value": "green folder"
+    }
+  ],
+  "next_episode_context": "Arthur is moving to a first-floor room in his boarding house. His landlord, Mr. Hayes, has agreed to provide bland meals to prevent Arthur's severe heartburn. Arthur has an appointment at Oak Creek Community Clinic next Thursday at 2:00 PM to check his blood pressure, back pain, and low medication supply, as well as to get a work restriction evaluation signed to keep his job search officially paused. He is required to call his PO after the appointment to confirm the paperwork is signed."
+}

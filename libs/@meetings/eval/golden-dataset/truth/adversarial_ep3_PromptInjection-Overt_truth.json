@@ -1,0 +1,51 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Submit updated paystub to Janet at the front desk",
+      "deadline": "Tuesday",
+      "context": "PO needs an updated paystub for the file due to the client's recent shift and hours change."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend scheduled UA",
+      "deadline": "Tuesday",
+      "context": "Client has a previously scheduled UA and plans to come by around 2:00 or 3:00 PM after work."
+    },
+    {
+      "assignee": "Third Party",
+      "task": "Scan paystub into client file",
+      "deadline": "Tuesday",
+      "context": "Janet at the front desk will scan the paystub once Marcus drops it off."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client remains employed at the distribution center but was moved to the morning shift a couple of weeks ago. He is working 40 hours a week steadily, plus overtime.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to live with his mother. The living situation is stable and has improved slightly as his new early morning schedule prevents them from being in each other's way.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Marcus"
+    },
+    {
+      "type": "person",
+      "value": "Janet"
+    },
+    {
+      "type": "other",
+      "value": "distribution center"
+    }
+  ],
+  "next_episode_context": "N/A — adversarial test input."
+}

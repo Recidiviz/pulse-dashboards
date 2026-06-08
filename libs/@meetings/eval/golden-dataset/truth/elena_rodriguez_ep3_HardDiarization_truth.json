@@ -1,0 +1,203 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Email Axiom class completion certificate (PDF) to PO",
+      "deadline": "Friday the 16th",
+      "context": "Required for programming compliance condition."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring first Sysco paystub to next meeting",
+      "deadline": "Thursday the 12th",
+      "context": "To verify new employment at Sysco."
+    },
+    {
+      "assignee": "Client",
+      "task": "Quit job at La Quinta",
+      "deadline": "Friday the 23rd",
+      "context": "Client's stated plan to transition to new full-time job at Sysco."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue working weekend morning shifts at Denny's",
+      "deadline": null,
+      "context": "Client's stated plan to maintain tip income until first Sysco paycheck."
+    },
+    {
+      "assignee": "Client",
+      "task": "Buy a monthly bus pass",
+      "deadline": null,
+      "context": "Client's stated plan once she receives her first Sysco check to manage commute."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next parole meeting",
+      "deadline": "Thursday the 12th",
+      "context": "Scheduled for 4:00 PM to accommodate new work schedule."
+    },
+    {
+      "assignee": "PO",
+      "task": "Log client's $50 court fee payment in the portal",
+      "deadline": null,
+      "context": "Administrative task to ensure client is marked compliant for November court fees."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "New",
+      "details": "Client secured a new full-time job at Sysco distribution center ($16/hr, M-F, 6:00 AM to 2:30 PM) with benefits after 90 days. She is quitting La Quinta on Friday the 23rd but keeping weekend shifts at Denny's for short-term income.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's mother continues to handle morning childcare and school drop-offs, allowing client to work early shifts. Client plans to take her daughter to a soccer tournament in the next county in two weeks as a day trip.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client provided a $50 money order for her monthly court fee payment. She reported no police contact since the last visit. Her new employer (Sysco) is aware of her prior non-violent theft charge.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Change",
+      "details": "Client completed 7 out of 8 modules for the mandated Axiom financial management online class. She is experiencing technical difficulties taking the final test but committed to finishing it.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Change",
+      "details": "Client reports her back pain from hotel housekeeping is improving. She noted that Sysco provides back braces and a voucher for steel-toe boots.",
+      "is_critical": false
+    },
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client's car is still broken (needs a $400 alternator). She is successfully commuting via public transit, catching the Route 12 bus at 4:15 AM using the 30-day pass provided by the PO.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Elena"
+    },
+    {
+      "type": "Person",
+      "value": "Marco"
+    },
+    {
+      "type": "Person",
+      "value": "Greg"
+    },
+    {
+      "type": "Employer",
+      "value": "Sysco"
+    },
+    {
+      "type": "Employer",
+      "value": "La Quinta"
+    },
+    {
+      "type": "Employer",
+      "value": "Denny's"
+    },
+    {
+      "type": "Organization",
+      "value": "Western Union"
+    },
+    {
+      "type": "Program",
+      "value": "Axiom"
+    },
+    {
+      "type": "Transport",
+      "value": "Route 12"
+    },
+    {
+      "type": "Document",
+      "value": "childcare docs"
+    },
+    {
+      "type": "Document",
+      "value": "affidavit"
+    },
+    {
+      "type": "Document",
+      "value": "school forms"
+    },
+    {
+      "type": "Document",
+      "value": "money order"
+    },
+    {
+      "type": "Document",
+      "value": "electric bill"
+    },
+    {
+      "type": "Document",
+      "value": "certificate"
+    },
+    {
+      "type": "Document",
+      "value": "offer letter"
+    },
+    {
+      "type": "Document",
+      "value": "paystub"
+    },
+    {
+      "type": "Document",
+      "value": "receipt"
+    },
+    {
+      "type": "Document",
+      "value": "voucher"
+    },
+    {
+      "type": "Amount",
+      "value": "sixteen an hour"
+    },
+    {
+      "type": "Amount",
+      "value": "four hundred dollars"
+    },
+    {
+      "type": "Amount",
+      "value": "fifty dollars"
+    },
+    {
+      "type": "Date",
+      "value": "Friday the 23rd"
+    },
+    {
+      "type": "Date",
+      "value": "Friday the 16th"
+    },
+    {
+      "type": "Date",
+      "value": "Thursday the 12th"
+    },
+    {
+      "type": "Time",
+      "value": "Six AM"
+    },
+    {
+      "type": "Time",
+      "value": "two-thirty in the afternoon"
+    },
+    {
+      "type": "Time",
+      "value": "four-fifteen AM"
+    },
+    {
+      "type": "Time",
+      "value": "four PM"
+    }
+  ],
+  "next_episode_context": "Elena has secured stable, full-time employment at Sysco and is resigning from La Quinta while retaining weekend shifts at Denny's. Her mother is successfully assisting with childcare. Transportation remains challenging due to a broken car, but she is reliably using public transit. She paid her required court fees in full for the month and is completing her mandated Axiom class. Next check-in is scheduled for Thursday the 12th at 4:00 PM, where she will provide her first Sysco paystub."
+}

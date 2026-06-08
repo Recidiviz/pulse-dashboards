@@ -1,0 +1,157 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Drop off the yellow paper (warning or citation) from the police at the front desk in an envelope.",
+      "deadline": "Tomorrow",
+      "context": "To determine if the client received a simple warning or a new charge from the police interaction."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call the precinct to pull the incident report regarding the client's police contact.",
+      "deadline": null,
+      "context": "To verify the client's story and ensure there are no hidden minor in possession (MIP) charges."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call the client's father to check in and discuss the situation.",
+      "deadline": "This afternoon",
+      "context": "The father called the PO previously and has grounded the client/taken his car keys out of concern over the incident."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring the school attendance record to the PO if the school contacts him about the missed morning lab.",
+      "deadline": null,
+      "context": "The client missed a lab on Monday because he overslept and had to take the bus; only required if the school flags the absence."
+    },
+    {
+      "assignee": "Client",
+      "task": "Adhere strictly to the mandatory midnight curfew.",
+      "deadline": null,
+      "context": "Client was brought home by police at 1:15 AM, violating this condition."
+    },
+    {
+      "assignee": "Client",
+      "task": "Follow association rules by strictly avoiding people engaging in criminal activity or underage drinking.",
+      "deadline": null,
+      "context": "Client was at a party with underage drinking where police were called."
+    },
+    {
+      "assignee": "Client",
+      "task": "Request PO permission before traveling outside of the county.",
+      "deadline": null,
+      "context": "Standard travel restriction condition reviewed during the session."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client had police contact on Saturday night at 1:15 AM. Officer Davis ran his name, identified him as being on adult probation, and drove him home for violating his midnight curfew. The client was given an unidentified 'yellow paper' (possible citation or warning). The PO issued a formal verbal warning pending review of the paperwork and incident report.",
+      "is_critical": true
+    },
+    {
+      "category": "Substance",
+      "update_type": "New",
+      "details": "Client was present at a party where underage drinking occurred but adamantly denies consuming alcohol himself, claiming he blew zeroes on a police breathalyzer. A urinalysis (UA) was administered at the end of the office visit.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Change",
+      "details": "The client's father is highly upset regarding the weekend police contact. The father has confiscated the client's car keys, grounded him, and is enforcing a strict transportation routine. They had a large argument about phone usage, though the client confirmed it did not become physical.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Change",
+      "details": "Client currently attends Valencia College. He missed his morning lab on Monday due to oversleeping and transportation delays (having to take the bus). Despite this, he is maintaining good grades and recently earned a 'B' on his math midterm.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to reside with his parents. While the household environment is currently tense due to recent disciplinary measures by the father, the client affirmed that the home remains physically safe and there has been no physical violence.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports that he continues to work, stating his father only allows him to leave the house for work and school. No other employment details or changes were discussed.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "No specific physical or mental health changes were reported. The client expressed frustration and embarrassment over his father's strict discipline, but no acute health or mental health risks were identified.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Jayden"
+    },
+    {
+      "type": "Person",
+      "value": "Ricky"
+    },
+    {
+      "type": "Person",
+      "value": "Mateo"
+    },
+    {
+      "type": "Person",
+      "value": "Officer Davis"
+    },
+    {
+      "type": "Person",
+      "value": "Maria"
+    },
+    {
+      "type": "Organization",
+      "value": "Valencia College"
+    },
+    {
+      "type": "Program",
+      "value": "adult probation"
+    },
+    {
+      "type": "Date",
+      "value": "Saturday"
+    },
+    {
+      "type": "Date",
+      "value": "Monday"
+    },
+    {
+      "type": "Time",
+      "value": "two in the morning"
+    },
+    {
+      "type": "Time",
+      "value": "1:15"
+    },
+    {
+      "type": "Time",
+      "value": "midnight"
+    },
+    {
+      "type": "Document",
+      "value": "yellow paper"
+    },
+    {
+      "type": "Document",
+      "value": "incident report form"
+    },
+    {
+      "type": "Document",
+      "value": "attendance record"
+    },
+    {
+      "type": "Grade",
+      "value": "B"
+    }
+  ],
+  "next_episode_context": "Client had police contact over the weekend for a curfew violation (out past midnight) and associating at a party with underage drinking. He claims he blew zeroes on a breathalyzer. PO issued a formal verbal warning pending the review of the police incident report and a 'yellow paper' (warning/citation) the client must submit tomorrow. The client's father confiscated his car keys in response, causing household tension and leading to a missed morning college class due to bus transit delays. A UA was conducted today (results pending). PO plans to contact the precinct to verify the incident and call the client's father to discuss the home situation."
+}

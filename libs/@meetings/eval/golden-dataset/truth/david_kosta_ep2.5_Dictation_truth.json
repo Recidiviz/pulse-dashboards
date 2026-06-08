@@ -1,0 +1,151 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Provide proof of legal income.",
+      "deadline": "15th of this month",
+      "context": "Client refuses to provide pay stubs or a W-2 and claims to be operating under admiralty law."
+    },
+    {
+      "assignee": "PO",
+      "task": "Scan the 'Fee Schedule' document and forward it to the Legal Department.",
+      "deadline": "End of the day",
+      "context": "Client is attempting to charge the Department of Corrections $500 per hour."
+    },
+    {
+      "assignee": "PO",
+      "task": "CLARIFY: Does the Legal Department need the original wet-ink document or is the PDF scan sufficient for their records?",
+      "deadline": null,
+      "context": "Needs clarification before finalizing submission to Legal."
+    },
+    {
+      "assignee": "PO",
+      "task": "Draft a formal Written Directive regarding driving restrictions and present it to the client to sign.",
+      "deadline": "Next visit (the 22nd)",
+      "context": "Client drove without a valid state-issued license and presented a homemade ID."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call Michael to verify the client is actually still living at the approved address and has not been kicked out.",
+      "deadline": "Tomorrow morning",
+      "context": "Client filed a sovereign claim/quiet title action on his brother's property without permission."
+    },
+    {
+      "assignee": "PO",
+      "task": "Enter the 'Fee Schedule' into the physical evidence log.",
+      "deadline": null,
+      "context": "Administrative task to preserve evidence."
+    },
+    {
+      "assignee": "PO",
+      "task": "Email Supervisor Harris to brief him on Kosta's sovereign citizen rhetoric.",
+      "deadline": null,
+      "context": "Ensure the supervisor is aware in case the client files a fraudulent lien against the PO or the department."
+    },
+    {
+      "assignee": "PO",
+      "task": "Print out the exact state statutes regarding parole compliance to physically hand to the client.",
+      "deadline": "Next week",
+      "context": "Client is disputing the PO's jurisdiction and compliance rules."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring a valid, state-issued identification card to the next visit.",
+      "deadline": "The 22nd",
+      "context": "Client presented a homemade laminated ID instead of a valid driver's license."
+    },
+    {
+      "assignee": "Client",
+      "task": "Stop sending certified mail to the regional director's personal home address.",
+      "deadline": null,
+      "context": "PO gave the client a verbal warning regarding this behavior."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client claims to be operating in a private capacity under 'admiralty law' and refuses to provide pay stubs or a W-2. He is officially considered unemployed on paper.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client is heavily utilizing sovereign citizen rhetoric. He presented a 'Fee Schedule' attempting to charge the DOC $500/hr, drove without a valid license claiming he was 'traveling in a personal conveyance', and has been sending certified mail to the regional director's home address.",
+      "is_critical": true
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client states he is still residing at the approved address with his brother, Michael. However, he filed a sovereign claim/quiet title action on the property without permission, which risks his housing stability.",
+      "is_critical": true
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client submitted to a routine drug screen, which was negative for all substances, despite arguing about chain of custody and jurisdiction over his bodily fluids.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to reside with his brother, Michael. The relationship may be jeopardized due to the client filing a quiet title action on Michael's property without permission.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "David Kosta"
+    },
+    {
+      "type": "Person",
+      "value": "Michael"
+    },
+    {
+      "type": "Person",
+      "value": "Supervisor Harris"
+    },
+    {
+      "type": "Organization",
+      "value": "Legal Department"
+    },
+    {
+      "type": "Organization",
+      "value": "Department of Corrections"
+    },
+    {
+      "type": "Amount",
+      "value": "five hundred dollars"
+    },
+    {
+      "type": "Date",
+      "value": "fifteenth of this month"
+    },
+    {
+      "type": "Date",
+      "value": "the twenty-second"
+    },
+    {
+      "type": "Date/Time",
+      "value": "tomorrow morning"
+    },
+    {
+      "type": "Date",
+      "value": "next week"
+    },
+    {
+      "type": "Document",
+      "value": "Fee Schedule"
+    },
+    {
+      "type": "Document",
+      "value": "Written Directive"
+    },
+    {
+      "type": "Document",
+      "value": "W-2"
+    }
+  ],
+  "next_episode_context": "Client David Kosta is exhibiting extreme sovereign citizen ideology, attempting to charge the DOC $500/hour, refusing to provide pay stubs under 'admiralty law', and driving without a valid license using a homemade ID. He provided a negative UA. He is living with his brother, Michael, but has filed an unapproved quiet title action on the property, risking his housing. PO is issuing a written directive on driving restrictions, verifying his housing status, and escalating his sovereign documentation to Legal and Supervisor Harris."
+}

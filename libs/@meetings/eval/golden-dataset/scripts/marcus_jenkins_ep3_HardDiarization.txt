@@ -1,0 +1,129 @@
+PO: Have a seat, Marcus. How are you doing today?
+Client: I'm, uh... I'm hanging in there. Just, you know, surviving. 
+PO: You're walking a little stiff. The back still bothering you?
+Client: Yeah, it's... it's been pretty bad. It flares up real bad in the mornings mostly.
+PO: I know we talked on the phone about the missed shift at Apex. Where do we stand with that right now?
+Client: Well, I'm still suspended. Mr. Torres told me I can't come back on the floor until I give him the paperwork.
+PO: The doctor's note.
+Client: Right, the doctor's note saying I'm cleared for lifting. Or, well, modified lifting.
+PO: And do you have that note?
+Client: I went to the clinic on Tuesday. They, um, they said they'd email it to me through the portal, but I couldn't get the login to work on my phone.
+PO: Okay. Mr. Torres needs that by Friday morning, correct?
+Client: Yeah, Friday at 8 AM. If I don't have it, he said he has to terminate me. It's company policy for no-call no-shows if there's no medical proof.
+PO: So we need to make sure you get that printed out today or tomorrow. 
+Client: I know, I know. I'm gonna go to the library after this and try to log in on a computer. Maybe it's just my phone being stupid.
+PO: Let me know if you need me to call Mr. Torres to verify you sought treatment, but the documentation has to come from you.
+Client: I'll get it. I just... I really can't lose this job. My grandma is already stressing about the electric bill and I told her I had it this month.
+PO: How are things with your grandmother?
+Client: She's good. Keeping me in line. She's just worried about my back. 
+PO: It's good you have her there. Now, let's review your testing schedule. You were pretty panicked on the phone yesterday about missing a drop.
+Client: Yeah, my bad about that. I got my dates mixed up in my head. 
+PO: You verified the date, right? 
+Client: Axiom on the 15th. I got it in my calendar now.
+PO: Good. Because missing a drop is treated as a positive, and you've been doing really well, Marcus. I don't want an administrative mistake setting you back.
+Client: [Crosstalk] Yeah, no, I know. I'm definitely going.
+PO: [Crosstalk] Make sure you bring your ID this time. They won't let you test without it.
+Client: Right. Um. So... 
+PO: So what?
+Client: With the Axiom testing... what's the cutoff level for, like, an automatic violation?
+PO: The cutoff level?
+Client: Yeah, like, is there a certain nanogram level that triggers a report to you right away, or... how does that work?
+PO: Marcus, why are you asking me about nanogram cutoffs?
+Client: Just curious! Just, you know, my buddy in NA was talking about false positives from poppy seeds and stuff, and I wanted to make sure—
+PO: [Interrupts] We don't use a standard panel that trips on a single poppy seed bagel. You know this.
+Client: Right, but if, say, someone took a medication... 
+PO: What kind of medication?
+Client: Like a prescription. But maybe they didn't have the bottle with them.
+PO: Look at me. Did you use?
+Client: No! I mean... I went to the clinic! Like I said.
+PO: Did the clinic prescribe you a narcotic for your back?
+Client: ...They gave me muscle relaxers. Flexeril. 
+PO: Flexeril is not an opiate. It won't pop on your panel. 
+Client: Okay. Good. That's... good.
+PO: Marcus.
+Client: Yeah?
+PO: You're shaking. And you're not making eye contact with me. I'm going to ask you again, and I need you to be completely honest with me right now. This is the time to be honest.
+Client: [Crosstalk] I am being honest, I just—
+PO: [Crosstalk] Did you take an opiate, Marcus? 
+Client: I didn't want to!
+PO: Okay. Take a breath. Tell me what happened.
+Client: [Crosstalk] It was just once. I swear to God, it was just once. 
+PO: [Crosstalk] When was it?
+Client: Sunday night. I was in so much pain, man. I couldn't even stand up to go to the bathroom. My back locked up completely.
+PO: What did you take?
+Client: A Percocet. Just one. 
+PO: Where did you get a Percocet?
+Client: My aunt. She had a surgery last year and had a bottle in the back of the medicine cabinet. She came over to help my grandma with some cleaning, and I... I asked her for one.
+PO: Did she know you're in recovery?
+Client: Yeah, but she saw how bad I was hurting. I was literally crying on the floor. She gave me one 10-milligram pill. That's it. 
+PO: You know you can't do that, Marcus. You have a severe history with opioids. One pill is playing with fire.
+Client: [Interrupts] I know! You think I don't know that? I spent the whole night awake staring at the ceiling hating myself for it. I didn't even feel the pain relief because I was so mad at myself.
+PO: Have you taken any since Sunday?
+Client: No. I swear. I told her to take the bottle home with her and not tell my grandma. 
+PO: Your grandmother doesn't know.
+Client: Please don't tell her. It'll break her heart. She thinks I'm doing so perfect.
+PO: I'm not here to gossip with your grandmother, but I am here to make sure you don't end up back in a cell, or worse, overdosing. 
+Client: It was just a slip. I went to an NA meeting Monday night to try and clear my head. 
+PO: Did you share about it?
+Client: ...No. I was too ashamed. 
+PO: We are going to need to get you into a higher level of care if this is a daily craving issue. 
+Client: [Crosstalk] No, please, I don't need IOP. It wasn't a craving, it was the back pain!
+PO: [Crosstalk] I'm not saying IOP immediately, but we have to address this. Pain management is a huge trigger for relapse. 
+Client: I'm handling it. I got the Flexeril from the clinic, and I bought some of those heat patches. The pain is getting better.
+PO: Let's talk about the UA on the 15th. 
+Client: Am I going to get violated? I mean, Sunday to the 15th... that's like five days. Will it be out of my system?
+PO: I don't know, Marcus. Everyone's metabolism is different. But you are still going to drop on the 15th at Axiom. 
+Client: But what happens if I fail the Axiom drop? Do I go back to jail?
+PO: If you had lied to me today, and I got a surprise positive from Axiom next week, we'd be having a very different, much worse conversation. 
+Client: So I'm not going back?
+PO: Because you admitted it, we can treat this as a therapeutic issue right now. But you have to follow my instructions exactly. 
+Client: Okay. Anything. Tell me what to do.
+PO: First, you are still going to drop on the 15th. I'm putting a note in your file about today's admission. If the test is positive for oxycodone, it aligns with what you told me. 
+Client: What if it's positive for something else?
+PO: Was the pill pressed? Did you buy it off the street?
+Client: No, no, it was from a pharmacy bottle. My aunt's name was on it. 
+PO: Then it should only show oxycodone. If it shows fentanyl, or anything else, that means we have a bigger problem.
+Client: It won't. It was real. 
+PO: Second thing. You said you went to NA Monday but didn't share. Who is your sponsor right now?
+Client: Dave. 
+PO: Have you called Dave?
+Client: No. I've been avoiding his texts.
+PO: You need to call Dave today. As soon as you leave this office. 
+Client: He's going to be so disappointed.
+PO: He's your sponsor, Marcus. His job isn't to be proud of you, his job is to help you when you're slipping. You call him today.
+Client: Okay. I will. I'll call him.
+PO: I also want you to increase your meetings. How many are you going to a week right now?
+Client: Usually two. Mondays and Thursdays.
+PO: I want you at four meetings this week. And I want you to get a signature slip from the chair at each one.
+Client: Four? Man, with trying to get my job back and the physical therapy stuff...
+PO: [Interrupts] Marcus, you took an opiate. Your sobriety has to be the priority right now, because without it, you lose the job and the grandmother's house anyway. Four meetings.
+Client: [Crosstalk] Okay, okay. Four meetings. I understand.
+PO: [Crosstalk] Do I need to sign the release for the clinic today so you can verify the Flexeril?
+Client: Uh, I think I signed one when I was at the clinic, but I can sign another one here if you want.
+PO: I'll print an ROI for the clinic in a minute so we have it on file. I need to verify that they actually examined your back and gave you a safe medication.
+Client: That's fine. You can call them. Dr. Evans was the one I saw.
+PO: Good. Now, what's our plan for Friday?
+Client: Friday? 
+PO: Mr. Torres.
+Client: Oh, right. The doctor's note. I'm going to the library today to log into the patient portal and print the clearance note. 
+PO: And if the portal doesn't work?
+Client: Then I'll ride the bus back to the clinic and make the front desk print it for me. I'll get it to Dave before 8 AM Friday.
+PO: Good. That's a solid backup plan. 
+Client: I really don't want to mess my life up again. I was doing so good for eight months.
+PO: You were. And eight months is a big deal. A slip doesn't erase that time, but it's a warning light on the dashboard. You have to pay attention to it.
+Client: I am. The pain just made me crazy. 
+PO: Have you talked to Dr. Evans about non-narcotic pain management long-term? Physical therapy?
+Client: He gave me a referral for PT, but I haven't called them yet. I don't know if my Medicaid covers the place he sent me to.
+PO: Bring the referral to our next meeting. We can look up the providers in network. 
+Client: Okay. I can do that.
+PO: Let's review the to-do list so we're crystal clear. 
+Client: Library for the doctor's note. Give it to Dave by Friday morning.
+PO: And regarding your recovery?
+Client: Axiom drop on the 15th. Call Dave today. Four NA meetings this week, get the slips signed. 
+PO: Exactly. And no more keeping secrets from your sponsor. 
+Client: I won't. 
+PO: I'm going to go print that Release of Information form for the clinic. While I'm doing that, I want you to pull out your phone and send a text to Dave asking him to call you. 
+Client: Right now?
+PO: Right now. I'll be back in two minutes, and I want to see that the text was sent.
+Client: Alright. I'm doing it. 
+PO: Be right back. Hang tight.

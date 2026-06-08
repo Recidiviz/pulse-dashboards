@@ -1,0 +1,325 @@
+{
+  "action_items": [
+    {
+      "assignee": "PO",
+      "task": "Get the out-of-state travel pass signed by the supervisor and have it ready for client pickup.",
+      "deadline": "This afternoon (signature); next Wednesday (pickup)",
+      "context": "Required for the client's trip to her sister's baby shower. Client will pick up at front desk on Wednesday at noon."
+    },
+    {
+      "assignee": "PO",
+      "task": "Review and add the community service timesheets to the system.",
+      "deadline": "Today",
+      "context": "Client submitted signed logs from the animal shelter."
+    },
+    {
+      "assignee": "PO",
+      "task": "Add the copy of the real estate board appeal packet to the client's file.",
+      "deadline": null,
+      "context": "To maintain a record of the client actively trying to restore her employment status."
+    },
+    {
+      "assignee": "Client",
+      "task": "Pick up the approved travel pass at the front desk.",
+      "deadline": "Next Wednesday at noon",
+      "context": "Client will come in on her lunch break to pick up the pass for her baby shower trip."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend the next scheduled routine appointment.",
+      "deadline": "The 14th at 9:00 AM",
+      "context": "Routine check-in in three weeks."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring updated paystubs.",
+      "deadline": "The 14th at 9:00 AM",
+      "context": "Required documentation for the next meeting."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring the next batch of community service logs.",
+      "deadline": "The 14th at 9:00 AM",
+      "context": "Required documentation for the next meeting to track progress."
+    },
+    {
+      "assignee": "Client",
+      "task": "Bring receipts for any extra court payments made.",
+      "deadline": "The 14th at 9:00 AM",
+      "context": "Helps the PO keep the central database accurate."
+    },
+    {
+      "assignee": "Client",
+      "task": "Notify the PO immediately by phone or through the portal if an update is received from the real estate commission.",
+      "deadline": null,
+      "context": "Client is waiting for a critical ruling on her license appeal."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to reside at her condo, which she reports as quiet and safe. She has four months of savings to cover mortgage costs but noted she will have to sell the property if her real estate license is not reinstated by then.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is currently working 40 hours a week at an administrative temp job for a logistics company, earning slightly above minimum wage. She filed an appeal with the real estate commission on Tuesday to regain her license and expects a decision in 30 to 45 days.",
+      "is_critical": false
+    },
+    {
+      "category": "Legal",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is highly compliant with all court obligations, having completed 25 of 50 community service hours and recently making a $400 payment towards her fines, leaving a balance of $1,200. The PO also formally approved an out-of-state travel pass for an upcoming family trip.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports complete abstinence from alcohol and unprescribed medications since her arrest and is actively avoiding alcohol-fueled real estate networking events. She is successfully applying CBT grounding techniques learned in her substance education classes to manage her current high stress levels without relapsing.",
+      "is_critical": false
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports experiencing significant stress and anxiety related to her pending real estate license appeal and tight financial constraints. She is successfully managing this anxiety by leaning on structured routines and cognitive behavioral grounding exercises.",
+      "is_critical": false
+    },
+    {
+      "category": "Education",
+      "update_type": "Stable/Status Quo",
+      "details": "Client has perfect attendance at her required weekly substance education classes and sits in the front row. She has prepaid the remaining balance for the course and is scheduled to complete her final class on the 22nd of next month.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Client maintains a strong relationship with her sister and requested permission to attend her upcoming baby shower out of state next month. A formal travel request detailing the dates, hotel, and driving arrangements was submitted and approved.",
+      "is_critical": false
+    }
+  ],
+  "acceptable_critical_updates": [
+    {
+      "category": "Other",
+      "update_type": "Stable/Status Quo",
+      "details": "Client demonstrates excellent organization and proactive compliance, arriving with color-coded folders containing all required receipts, paystubs, and logs. She is highly motivated to achieve early termination and submitted to an in-office UA without issue.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Officer Davis"
+    },
+    {
+      "type": "Person",
+      "value": "Chloe"
+    },
+    {
+      "type": "Person",
+      "value": "Mr. Hayes"
+    },
+    {
+      "type": "Person",
+      "value": "Sarah Jenkins"
+    },
+    {
+      "type": "Organization",
+      "value": "real estate commission"
+    },
+    {
+      "type": "Organization",
+      "value": "real estate board"
+    },
+    {
+      "type": "Organization",
+      "value": "clerk of courts"
+    },
+    {
+      "type": "Employer",
+      "value": "temp agency"
+    },
+    {
+      "type": "Employer",
+      "value": "logistics company"
+    },
+    {
+      "type": "Organization",
+      "value": "animal shelter"
+    },
+    {
+      "type": "Program",
+      "value": "substance education classes"
+    },
+    {
+      "type": "Location",
+      "value": "condo"
+    },
+    {
+      "type": "Location",
+      "value": "front desk"
+    },
+    {
+      "type": "Location",
+      "value": "lab"
+    },
+    {
+      "type": "Date",
+      "value": "Tuesday"
+    },
+    {
+      "type": "Date",
+      "value": "the twenty-second of next month"
+    },
+    {
+      "type": "Date",
+      "value": "third week of next month"
+    },
+    {
+      "type": "Date",
+      "value": "next Wednesday"
+    },
+    {
+      "type": "Date",
+      "value": "the fourteenth"
+    },
+    {
+      "type": "Time",
+      "value": "noon"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    },
+    {
+      "type": "Amount",
+      "value": "four hundred dollar"
+    },
+    {
+      "type": "Amount",
+      "value": "one thousand two hundred"
+    },
+    {
+      "type": "Amount",
+      "value": "a hundred a month"
+    },
+    {
+      "type": "Amount",
+      "value": "fifty hours"
+    },
+    {
+      "type": "Amount",
+      "value": "twenty-five"
+    },
+    {
+      "type": "Amount",
+      "value": "eight hours"
+    },
+    {
+      "type": "Amount",
+      "value": "forty hours"
+    },
+    {
+      "type": "Amount",
+      "value": "four months"
+    },
+    {
+      "type": "Document",
+      "value": "blue folder"
+    },
+    {
+      "type": "Document",
+      "value": "red folder"
+    },
+    {
+      "type": "Document",
+      "value": "green folder"
+    },
+    {
+      "type": "Document",
+      "value": "community service logs"
+    },
+    {
+      "type": "Document",
+      "value": "financial receipts"
+    },
+    {
+      "type": "Document",
+      "value": "paystubs"
+    },
+    {
+      "type": "Document",
+      "value": "class attendance sheet"
+    },
+    {
+      "type": "Document",
+      "value": "completion certificate"
+    },
+    {
+      "type": "Document",
+      "value": "court payment receipt"
+    },
+    {
+      "type": "Document",
+      "value": "signed timesheets"
+    },
+    {
+      "type": "Document",
+      "value": "formal travel request"
+    },
+    {
+      "type": "Document",
+      "value": "travel pass"
+    },
+    {
+      "type": "Document",
+      "value": "appeal document"
+    },
+    {
+      "type": "Document",
+      "value": "sixty-page packet"
+    },
+    {
+      "type": "Document",
+      "value": "requisition slip"
+    },
+    {
+      "type": "Document",
+      "value": "ID"
+    }
+  ],
+  "next_episode_context": "Client is highly compliant, proactive, and currently maintaining stability through a 40-hour administrative temp job while waiting for a critical appeal decision from the real estate board. She is ahead on all fines and community service hours, actively utilizing CBT techniques to manage her stress without alcohol, and has been approved for a brief out-of-state trip next month for her sister's baby shower.",
+  "acceptable_action_items": [
+    {
+      "assignee": "Client",
+      "task": "Do not leave the state without permission.",
+      "context": "Standing supervision condition restated during the travel request discussion — not a new directive."
+    },
+    {
+      "assignee": "Client",
+      "task": "Submit to a standard urinalysis at the lab down the hall.",
+      "context": "Same-day after-session task (Rule 11)."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend weekly substance education class.",
+      "context": "Existing court-ordered treatment requirement; PO acknowledged but did not newly assign."
+    },
+    {
+      "assignee": "Client",
+      "task": "Volunteer at the animal shelter to clean dog kennels for community service hours.",
+      "context": "Client's self-stated method for fulfilling court-ordered community service; PO did not direct the specific activity."
+    },
+    {
+      "assignee": "Client",
+      "task": "Continue working administrative temp job.",
+      "context": "Client's self-stated plan, not a PO directive."
+    },
+    {
+      "assignee": "Client",
+      "task": "Make another court payment before the next appointment.",
+      "context": "Client volunteered this; PO only said to bring receipts."
+    }
+  ]
+}

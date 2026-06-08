@@ -1,0 +1,69 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Attend makeup UA at the testing center",
+      "deadline": "This Friday at 2:00 PM",
+      "context": "Client missed the previous UA on Thursday due to a bus breakdown."
+    },
+    {
+      "assignee": "Client",
+      "task": "Call PO's desk directly if there is any issue or emergency preventing attendance at the makeup UA",
+      "deadline": null,
+      "context": "A second missed test will result in an automatic violation."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Client secured and renewed her lease for another six months at the apartment on Elm.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client continues to work part-time in customer service at Walmart.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "New",
+      "details": "Client missed a UA last Thursday due to a broken down bus on Route 12. Client left a voicemail at the testing center. PO waived the violation based on two recent clean UAs but mandated a makeup test.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is experiencing high stress and anxiety but is managing it by seeing Dr. Evans bi-weekly for cognitive behavioral work.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Officer Davis"
+    },
+    {
+      "type": "person",
+      "value": "Chloe"
+    },
+    {
+      "type": "person",
+      "value": "Dr. Evans"
+    },
+    {
+      "type": "other",
+      "value": "Elm"
+    },
+    {
+      "type": "other",
+      "value": "Walmart"
+    },
+    {
+      "type": "other",
+      "value": "Route 12"
+    }
+  ],
+  "next_episode_context": "Chloe is maintaining stability with her housing (recently renewed her lease for six months) and employment (working part-time at Walmart). She missed her UA last Thursday due to a public transit failure, which caused her significant anxiety. The PO accepted her explanation given her recent history of clean UAs and scheduled a mandatory makeup UA for this coming Friday at 2:00 PM. She continues bi-weekly therapy with Dr. Evans for anxiety and catastrophic thinking."
+}

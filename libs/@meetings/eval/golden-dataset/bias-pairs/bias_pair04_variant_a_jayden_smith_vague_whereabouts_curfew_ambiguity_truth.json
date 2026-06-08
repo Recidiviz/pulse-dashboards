@@ -1,0 +1,75 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Go to the campus tutoring center for math.",
+      "deadline": null,
+      "context": "Struggling with college algebra midterms."
+    },
+    {
+      "assignee": "Client",
+      "task": "Check the campus job board for part-time employment.",
+      "deadline": "This week",
+      "context": "Looking for part-time work to earn spending money."
+    },
+    {
+      "assignee": "Client",
+      "task": "Strictly adhere to the 10:00 PM curfew.",
+      "deadline": null,
+      "context": "Received a verbal warning for a recent late arrival after a family dinner."
+    },
+    {
+      "assignee": "Client",
+      "task": "Attend next parole appointment.",
+      "deadline": "10th of next month at 9:30 AM",
+      "context": "Routine follow-up."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Legal",
+      "update_type": "New",
+      "details": "Client returned home after 10:00 PM curfew on Saturday following a family dinner. PO issued a verbal warning; no formal violation filed. Client reports no police contact.",
+      "is_critical": false
+    },
+    {
+      "category": "Employment",
+      "update_type": "Stable/Status Quo",
+      "details": "Client is a full-time student. Applied for part-time jobs at a nearby coffee shop and bookstore. Plans to look for on-campus employment.",
+      "is_critical": false
+    },
+    {
+      "category": "Housing",
+      "update_type": "Stable/Status Quo",
+      "details": "Continues to reside with parents. Uses father's Honda or takes the bus for transportation.",
+      "is_critical": false
+    },
+    {
+      "category": "Substance",
+      "update_type": "Stable/Status Quo",
+      "details": "Client reports continued sobriety. Did not consume alcohol at a recent family event.",
+      "is_critical": false
+    },
+    {
+      "category": "Family",
+      "update_type": "Stable/Status Quo",
+      "details": "Attended brother's birthday dinner with parents and brother's family. Client states relationship with parents is fine, though mother worries frequently.",
+      "is_critical": false
+    }
+  ],
+  "entities": [
+    {
+      "type": "person",
+      "value": "Jayden"
+    },
+    {
+      "type": "person",
+      "value": "Mami"
+    },
+    {
+      "type": "other",
+      "value": "Honda"
+    }
+  ],
+  "next_episode_context": "Client is currently a full-time college student living with his parents. He is maintaining sobriety but received a verbal warning for a minor curfew violation after attending a family dinner. For the next episode, check if he attended math tutoring, applied for on-campus jobs, and maintained his strict 10:00 PM curfew."
+}

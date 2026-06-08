@@ -1,0 +1,125 @@
+{
+  "action_items": [
+    {
+      "assignee": "Client",
+      "task": "Have the intake nurse at the YWCA look at scraped arm.",
+      "deadline": null,
+      "context": "Injured climbing down fire escape."
+    },
+    {
+      "assignee": "Client",
+      "task": "Have the intake nurse at the YWCA check ribs from last week.",
+      "deadline": null,
+      "context": "Previous injury."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not go to the Elm Street Safeway location.",
+      "deadline": "Tomorrow morning",
+      "context": "Partner knows about this job location."
+    },
+    {
+      "assignee": "PO",
+      "task": "Call manager at Northside Safeway to push through job transfer.",
+      "deadline": "Today",
+      "context": "Keep client employed while protecting her from partner."
+    },
+    {
+      "assignee": "Client",
+      "task": "Do not return to the apartment alone under any circumstances.",
+      "deadline": null,
+      "context": "Safety precaution due to violent partner."
+    },
+    {
+      "assignee": "PO",
+      "task": "Arrange police escort for client to retrieve belongings from apartment.",
+      "deadline": null,
+      "context": "If client needs her things later."
+    },
+    {
+      "assignee": "Client",
+      "task": "Power phone completely down inside the shelter and leave it off all night.",
+      "deadline": null,
+      "context": "Prevent partner from tracking shared plan location."
+    },
+    {
+      "assignee": "Client",
+      "task": "Turn phone back on and call PO immediately.",
+      "deadline": "Tomorrow at 9:00 AM",
+      "context": "Confirm safety and get update on job transfer."
+    }
+  ],
+  "critical_updates": [
+    {
+      "category": "Housing",
+      "update_type": "New",
+      "details": "Client fled her apartment via fire escape due to domestic violence and is relocating to the YWCA shelter. Left belongings behind.",
+      "is_critical": true
+    },
+    {
+      "category": "Family",
+      "update_type": "New",
+      "details": "Client fled from partner Marcus who was screaming and throwing things. Risk of him tracking her location via phone.",
+      "is_critical": true
+    },
+    {
+      "category": "Employment",
+      "update_type": "Change",
+      "details": "Client was supposed to start work at Elm Street Safeway tomorrow but cannot go due to safety risks. PO is arranging an emergency transfer to Northside Safeway.",
+      "is_critical": true
+    },
+    {
+      "category": "Health",
+      "update_type": "New",
+      "details": "Client scraped her arm on a brick wall while escaping. Also recovering from injured ribs from last week.",
+      "is_critical": true
+    }
+  ],
+  "entities": [
+    {
+      "type": "Person",
+      "value": "Sarah"
+    },
+    {
+      "type": "Person",
+      "value": "Marcus"
+    },
+    {
+      "type": "Program",
+      "value": "YWCA shelter"
+    },
+    {
+      "type": "Location",
+      "value": "bus stop on 5th"
+    },
+    {
+      "type": "Employer",
+      "value": "Safeway"
+    },
+    {
+      "type": "Location",
+      "value": "Elm Street"
+    },
+    {
+      "type": "Employer",
+      "value": "Northside Safeway"
+    },
+    {
+      "type": "Date/Time",
+      "value": "tomorrow morning"
+    },
+    {
+      "type": "Date/Time",
+      "value": "tomorrow at 9:00 AM"
+    },
+    {
+      "type": "Time",
+      "value": "9:00 AM"
+    },
+    {
+      "type": "Location",
+      "value": "apartment"
+    }
+  ],
+  "next_episode_context": "Client fled apartment due to domestic violence from partner Marcus. She sustained minor injuries and is staying at the YWCA shelter with her phone off to prevent location tracking. PO is processing an emergency employment transfer to Northside Safeway to protect her. Client will call PO tomorrow at 9:00 AM."
+}
