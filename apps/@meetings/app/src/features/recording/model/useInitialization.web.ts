@@ -21,6 +21,7 @@ import { useUploadSegment } from "~@meetings/app/shared/api";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { getBlobDurationMs } from "../lib/getBlobDurationMs.web";
+import { hasEBMLHeader } from "../lib/hasEBMLHeader.web";
 import { clearRecordedChunks, getAllChunks } from "../lib/webRecorderDb.web";
 import { Status } from ".";
 
@@ -32,6 +33,7 @@ type Params = {
   setStatus: (status: Status) => void;
   setInitialDuration: (initialDurationMs: number) => void;
   setPersistedDurationMs: (durationMs: number) => void;
+  onError: (error: unknown) => void;
 };
 
 export function useInitialization({
@@ -42,6 +44,7 @@ export function useInitialization({
   setStatus,
   setInitialDuration,
   setPersistedDurationMs,
+  onError,
 }: Params) {
   const isInitialized = useRef(false);
   const uploadSegment = useUploadSegment();
@@ -57,6 +60,7 @@ export function useInitialization({
       const blob = chunks.length
         ? new Blob(chunks, { type: contentType })
         : null;
+
       const blobDurationMs = blob ? await getBlobDurationMs(blob) : 0;
       const result = blobDurationMs + persistedDurationMs;
       setInitialDuration(result);
@@ -73,9 +77,17 @@ export function useInitialization({
         });
         await clearRecordedChunks();
         URL.revokeObjectURL(uriToUpload);
+
+        const isValidWebM = await hasEBMLHeader(blob);
+
+        if (!isValidWebM) {
+          throw new Error(
+            "Persisted recording chunks are missing or have an invalid WebM header",
+          );
+        }
       }
     } catch (error) {
-      console.error(error);
+      onError(error);
     } finally {
       // STEP 3: set initial status
       switch (restoredStatus) {
@@ -95,6 +107,7 @@ export function useInitialization({
     setInitialDuration,
     persistedDurationMs,
     setPersistedDurationMs,
+    onError,
   ]);
 
   useEffect(() => {

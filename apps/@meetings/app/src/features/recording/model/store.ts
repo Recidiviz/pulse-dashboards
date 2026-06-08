@@ -16,6 +16,7 @@
 // =============================================================================
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Sentry from "@sentry/react-native";
 import { debounce, omit } from "lodash";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
@@ -83,18 +84,35 @@ export const useRecordingStore = create<RecordingStore>()(
     },
     {
       name: "recording-info",
-      partialize: (state) => omit(state, ["note"]), // we save `debouncedNote` instead of `note`
+      partialize: (state) => ({
+        ...omit(state, ["note"]), // we save `debouncedNote` instead of `note`
+        person: state.person
+          ? { ...state.person, personId: state.person.personId.toString() }
+          : null,
+      }),
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
 
-        state.note = state.debouncedNote;
+        try {
+          state.note = state.debouncedNote;
 
-        if (state.person) {
-          state.person = {
-            ...state.person,
-            personId: BigInt(state.person.personId),
-          };
+          if (state.person) {
+            state.person = {
+              ...state.person,
+              personId: BigInt(state.person.personId),
+            };
+          }
+        } catch (error) {
+          console.error(error);
+          Sentry.logger.error("meeting.rehydrateStore.error", {
+            state,
+            error,
+          });
+          // Rehydrating `person` failed (e.g. BigInt(personId) threw on a
+          // corrupted value). Drop the person rather than leaving a string
+          // `personId` where callers expect a bigint.
+          state.person = null;
         }
       },
     },

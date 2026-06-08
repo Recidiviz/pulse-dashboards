@@ -75,6 +75,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    * This drives the active screen state.
    */
   const [status, setStatus] = useRecordingStatus();
+  // Keep the latest status available to stable callbacks (e.g. recoverFromStuckState)
+  // without making it a dependency that re-creates them on every status change.
+  const statusRef = useRef(status);
+  statusRef.current = status;
   const [note, setNote] = useNote();
   const audioRecorder = useAudioRecorder({
     ...RecordingPresets["HIGH_QUALITY"],
@@ -132,110 +136,22 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   ]);
 
   /**
-   * initializeRecording()
-   * - restores persisted state after reload
-   * - validates that stored recording file still exists
+   * cleanupRecording()
+   * Fully resets app state and removes the file.
    */
-  const initializeRecording = useCallback(async () => {
-    const permissionStatus =
-      await AudioModule.requestRecordingPermissionsAsync();
-    if (!permissionStatus.granted) {
-      Alert.alert("Permission to access microphone was denied");
-      return;
-    }
-
-    await setAudioModeAsync({
-      playsInSilentMode: true,
-      allowsRecording: true,
-      shouldPlayInBackground: true,
-    });
-
-    /**
-     * persistedStatus = final saved state from last session
-     * Example: "recording" if app crashed during recording.
-     */
-    const persistedStatus = await getRecordingState();
-
-    // If persisted state says “recording”, ensure file still exists
-    if (persistedStatus === "recording") {
-      const savedUri = await getRecordingUri();
-
-      if (savedUri) {
-        const fileInfo = await FileSystem.getInfoAsync(savedUri);
-
-        if (!fileInfo.exists) {
-          console.warn(
-            "Persisted recording state found but file missing -> reset to idle",
-          );
-          await setRecordingState("idle");
-          await removeRecordingUri();
-          setStatus("idle");
-          return;
-        }
-      } else {
-        console.warn(
-          "Persisted 'recording' state but no URI found -> reset to idle",
-        );
-        await setRecordingState("idle");
-        setStatus("idle");
-        return;
-      }
-    }
-
-    // Hydrate UI state from persisted status
-    setStatus(persistedStatus as Status);
-  }, [setStatus]);
-
-  // Initialize recording + restore previous state on provider mount (once per app session)
-  const isInitialized = useRef(false);
-  useEffect(() => {
-    if (isInitialized.current) return;
-
-    (async () => {
-      // TODO: recordingUri is fetched separately from AsyncStorage via getRecordingUri(),
-      // but the Zustand store already persists to AsyncStorage via the `persist` middleware.
-      // We should add a `recordingUri` field to RecordingStore so it's persisted automatically
-      // alongside the other fields, and remove the manual getRecordingUri/saveRecordingUri calls.
-      const persistedUri = await getRecordingUri();
-      setPersistedRecordingUri(persistedUri);
-      await initializeRecording();
-      requestNotificationPermissions();
-    })();
-    isInitialized.current = true;
-  }, [initializeRecording]);
-
-  /**
-   * startRecording()
-   * Starts fresh recording and persists the URI immediately.
-   */
-  const startRecording = async () => {
-    Sentry.setTag("meetingId", meetingId);
-    try {
-      await audioRecorder.prepareToRecordAsync();
-      audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
-      if (audioRecorder.uri) {
-        await saveRecordingUri(audioRecorder.uri);
-      }
-
-      timer.start();
-      await setStatus("recording");
-      Sentry.logger.info("recording.start", { meetingId, status: "recording" });
-    } catch (err) {
-      const errorMessage = extractError(err);
-      Sentry.logger.error("recording.start.error", {
-        meetingId,
-        error: errorMessage,
-      });
-      Alert.alert("Recording Start Failed", errorMessage);
-      throw err;
-    }
-  };
+  const cleanupRecording = useCallback(async () => {
+    await removeRecordingUri();
+    timer.reset();
+    setPersistedDurationMs(0);
+    setNote("");
+    await setStatus("idle");
+  }, [timer, setPersistedDurationMs, setNote, setStatus]);
 
   /**
    * stopAndUploadRecording()
    * Stops recorder, uploads file, removes saved URI.
    */
-  const stopAndUploadRecording = async () => {
+  const stopAndUploadRecording = useCallback(async () => {
     if (!meetingId) {
       Sentry.logger.error("upload.segment.error", {
         meetingId,
@@ -294,6 +210,179 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       throw err;
     }
     return null;
+  }, [
+    audioRecorder,
+    meetingId,
+    recorderState.isRecording,
+    setStatus,
+    uploadSegment,
+  ]);
+
+  /**
+   * recoverFromStuckState()
+   * previous session left the app in a non-idle
+   * state without a usable recording file (process killed mid-upload, etc.).
+   * Reset local state and discard the backend meeting so the user isn't locked
+   * out of the "New Meeting" button across reloads.
+   */
+  const recoverFromStuckState = useCallback(
+    async (reason: string) => {
+      console.error(reason);
+      Sentry.logger.error("meeting.initialization.error", {
+        status: statusRef.current,
+        meetingId,
+        reason,
+      });
+
+      // Attempt to upload whatever audio we have, but don't let a failed upload
+      // abort recovery: stopAndUploadRecording re-throws on error, and if we
+      // didn't catch it cleanupRecording/endMeeting below would never run and the
+      // user would stay locked out of the "New Meeting" button across reloads.
+      try {
+        await stopAndUploadRecording();
+      } catch (err) {
+        Sentry.logger.error("upload.segment.error", {
+          meetingId,
+          error: extractError(err),
+        });
+      }
+      await setRecordingState("idle");
+      await cleanupRecording();
+
+      if (meetingId && person) {
+        try {
+          await endMeeting({
+            meetingId,
+            personId: person.personId,
+            personType: getPersonType(person),
+          });
+          Alert.alert(
+            `Your meeting with ${person.fullName} ended due to a recording issue`,
+          );
+          Sentry.logger.info("meeting.end", { meetingId });
+        } catch (err) {
+          Sentry.logger.error("meeting.end.error", {
+            meetingId,
+            error: extractError(err),
+          });
+        }
+      }
+
+      setMeetingId(null);
+      setMeetingType(null);
+      setPerson(null);
+      setPersonType(null);
+    },
+    [
+      meetingId,
+      person,
+      endMeeting,
+      setMeetingId,
+      setMeetingType,
+      setPerson,
+      setPersonType,
+      cleanupRecording,
+      stopAndUploadRecording,
+    ],
+  );
+
+  /**
+   * initializeRecording()
+   * - restores persisted state after reload
+   * - validates that the stored recording file still exists for ANY non-idle
+   *   status (not just "recording"), so "uploading"/"paused"/etc. stuck states
+   *   recover instead of locking the UI
+   */
+  const initializeRecording = useCallback(async () => {
+    const permissionStatus =
+      await AudioModule.requestRecordingPermissionsAsync();
+    if (!permissionStatus.granted) {
+      Alert.alert("Permission to access microphone was denied");
+      return;
+    }
+
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      allowsRecording: true,
+      shouldPlayInBackground: true,
+    });
+
+    /**
+     * persistedStatus = final saved state from last session
+     * Example: "recording" if app crashed during recording.
+     */
+    const persistedStatus = await getRecordingState();
+
+    if (persistedStatus !== "idle") {
+      const savedUri = await getRecordingUri();
+
+      if (savedUri) {
+        const fileInfo = await FileSystem.getInfoAsync(savedUri);
+        const hasUsableFile = fileInfo.exists && fileInfo.size > 0;
+
+        if (!hasUsableFile) {
+          await recoverFromStuckState(
+            `Persisted "${persistedStatus}" state but no usable recording file found`,
+          );
+          return;
+        }
+      } else {
+        console.warn(
+          "Persisted 'recording' state but no URI found -> reset to idle",
+        );
+        await setRecordingState("idle");
+        setStatus("idle");
+        return;
+      }
+    }
+
+    // Hydrate UI state from persisted status
+    setStatus(persistedStatus as Status);
+  }, [setStatus, recoverFromStuckState]);
+
+  // Initialize recording + restore previous state on provider mount (once per app session)
+  const isInitialized = useRef(false);
+  useEffect(() => {
+    if (!hasHydrated || isInitialized.current) return;
+
+    (async () => {
+      // TODO: recordingUri is fetched separately from AsyncStorage via getRecordingUri(),
+      // but the Zustand store already persists to AsyncStorage via the `persist` middleware.
+      // We should add a `recordingUri` field to RecordingStore so it's persisted automatically
+      // alongside the other fields, and remove the manual getRecordingUri/saveRecordingUri calls.
+      const persistedUri = await getRecordingUri();
+      setPersistedRecordingUri(persistedUri);
+      await initializeRecording();
+      requestNotificationPermissions();
+    })();
+    isInitialized.current = true;
+  }, [hasHydrated, initializeRecording]);
+
+  /**
+   * startRecording()
+   * Starts fresh recording and persists the URI immediately.
+   */
+  const startRecording = async () => {
+    Sentry.setTag("meetingId", meetingId);
+    try {
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
+      if (audioRecorder.uri) {
+        await saveRecordingUri(audioRecorder.uri);
+      }
+
+      timer.start();
+      await setStatus("recording");
+      Sentry.logger.info("recording.start", { meetingId, status: "recording" });
+    } catch (err) {
+      const errorMessage = extractError(err);
+      Sentry.logger.error("recording.start.error", {
+        meetingId,
+        error: errorMessage,
+      });
+      Alert.alert("Recording Start Failed", errorMessage);
+      throw err;
+    }
   };
 
   const stopRecording = async () => {
@@ -361,18 +450,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
       await setStatus("paused");
     }
-  };
-
-  /**
-   * cleanupRecording()
-   * Fully resets app state and removes the file.
-   */
-  const cleanupRecording = async () => {
-    await removeRecordingUri();
-    timer.reset();
-    setPersistedDurationMs(0);
-    setNote("");
-    await setStatus("idle");
   };
 
   const handleFinishAndSave = async (onComplete?: () => void) => {

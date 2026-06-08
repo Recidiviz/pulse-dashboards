@@ -41,6 +41,8 @@ export const RecordingContext = createContext<RecordingWeb | null>(null);
 
 export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const uploadSegment = useUploadSegment();
+  const { mutateAsync: endMeeting } = useEndMeeting();
+  const { mutateAsync: discardMeeting } = useDiscardMeeting();
   const { getCredentials, isSkipAuthUser } = useUserContext();
 
   const {
@@ -65,16 +67,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const pendingOfflineBlobRef = useRef<Blob | null>(null);
 
   const hasHydrated = useRecordingStoreHydrated();
-
-  useInitialization({
-    status,
-    hasHydrated,
-    persistedDurationMs,
-    meetingId,
-    setStatus,
-    setInitialDuration: timer.setInitialDurationMs,
-    setPersistedDurationMs,
-  });
 
   const isRecording = status && status === "recording";
   const isPaused =
@@ -136,6 +128,54 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     setPerson(null);
     setIsRecordingViewMinimized(false);
   };
+
+  const cleanupRecording = async () => {
+    await recorder.cleanup();
+    timer.reset();
+    setPersistedDurationMs(0);
+    setStatus("idle");
+    setNote("");
+  };
+
+  useInitialization({
+    status,
+    hasHydrated,
+    persistedDurationMs,
+    meetingId,
+    setStatus,
+    setInitialDuration: timer.setInitialDurationMs,
+    setPersistedDurationMs,
+    onError: async (error) => {
+      console.error(error);
+      Sentry.logger.error("meeting.initialization.error", {
+        status,
+        meetingId,
+        error: extractError(error),
+      });
+
+      await cleanupRecording();
+      closeRecordingView();
+
+      if (meetingId && person) {
+        try {
+          await endMeeting({
+            meetingId,
+            personId: person.personId,
+            personType: getPersonType(person),
+          });
+          alert(
+            `Your meeting with ${person.fullName} ended due to a recording issue`,
+          );
+          Sentry.logger.info("meeting.end", { meetingId });
+        } catch (error) {
+          Sentry.logger.error("meeting.end.error", {
+            meetingId,
+            error: extractError(error),
+          });
+        }
+      }
+    },
+  });
 
   const startRecording = async () => {
     Sentry.setTag("meetingId", meetingId);
@@ -228,14 +268,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
-  const cleanupRecording = async () => {
-    await recorder.cleanup();
-    timer.reset();
-    setPersistedDurationMs(0);
-    setStatus("idle");
-    setNote("");
-  };
-
   const pauseRecording = async () => {
     setStatus("uploading");
 
@@ -266,9 +298,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
     setStatus("discarding");
   };
-
-  const { mutateAsync: endMeeting } = useEndMeeting();
-  const { mutateAsync: discardMeeting } = useDiscardMeeting();
 
   const handleFinishAndSave = async () => {
     if (!meetingId || !person) {

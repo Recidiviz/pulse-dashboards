@@ -143,8 +143,12 @@ describe("RecordingProvider (native)", () => {
     (useRecordingStore as unknown as jest.Mock).mockReturnValue({
       meetingId: MEETING_ID,
       setMeetingId: jest.fn(),
+      meetingType: null,
+      setMeetingType: jest.fn(),
       person: mockPerson,
+      personType: null,
       setPerson: jest.fn(),
+      setPersonType: jest.fn(),
       durationMs: 0,
       setDurationMs: mockSetPersistedDurationMs,
     });
@@ -533,6 +537,54 @@ describe("RecordingProvider (native)", () => {
       expect(mockSetStatus).toHaveBeenCalledWith("idle");
     });
 
+    it("ends the meeting when recovering from a stuck non-idle state with a missing file", async () => {
+      (storage.getRecordingState as jest.Mock).mockResolvedValue("uploading");
+      (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
+      (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
+        exists: false,
+      });
+
+      renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await waitFor(() =>
+        expect(mockEndMeeting).toHaveBeenCalledWith({
+          meetingId: MEETING_ID,
+          personId: mockPerson.personId,
+          personType: "resident",
+        }),
+      );
+      expect(storage.setRecordingState).toHaveBeenCalledWith("idle");
+    });
+
+    it("still recovers and ends the meeting when the upload throws during recovery", async () => {
+      (storage.getRecordingState as jest.Mock).mockResolvedValue("uploading");
+      (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
+      (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
+        exists: false,
+      });
+      // Make stopAndUploadRecording re-throw on a failed upload so we exercise
+      // the catch that must still let recovery finish.
+      (useAudioRecorderState as jest.Mock).mockReturnValue({
+        isRecording: true,
+      });
+      mockUploadSegment.mockRejectedValueOnce(new Error("upload failed"));
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+
+      renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await waitFor(() =>
+        expect(storage.setRecordingState).toHaveBeenCalledWith("idle"),
+      );
+      expect(mockEndMeeting).toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+
     it("resets to idle when persisted state is recording but no URI exists", async () => {
       (storage.getRecordingState as jest.Mock).mockResolvedValue("recording");
       (storage.getRecordingUri as jest.Mock).mockResolvedValue(null);
@@ -550,6 +602,11 @@ describe("RecordingProvider (native)", () => {
 
     it("restores persisted non-recording status on mount", async () => {
       (storage.getRecordingState as jest.Mock).mockResolvedValue("paused");
+      (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
+      (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
+        exists: true,
+        size: 1024,
+      });
 
       renderHook(() => useRecording<"native">(), {
         wrapper: buildWrapper(),
