@@ -16,67 +16,29 @@
 // =============================================================================
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { NavigatorScreenParams } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import DrawerContent from "../components/DrawerContent";
-import { useAgencyConfigs } from "../context/AgencyConfigContext";
-import { useStateSelection } from "../context/StateContext";
-import { useUserContext } from "../context/UserContext";
-import { NoAccessScreen } from "../pages/no-access";
-import ClientMeetingScreen from "../screens/ClientMeetingScreen";
-import ClientNewMeetingScreen from "../screens/ClientNewMeetingScreen";
-import ClientProfileScreen from "../screens/ClientProfileScreen";
-import ClientsScreen from "../screens/ClientsScreen";
-import ResidentMeetingScreen from "../screens/ResidentMeetingScreen";
-import ResidentNewMeetingScreen from "../screens/ResidentNewMeetingScreen";
-import ResidentProfileScreen from "../screens/ResidentProfileScreen";
-import ResidentsScreen from "../screens/ResidentsScreen";
-import StateSelectionScreen from "../screens/StateSelectionScreen";
-import Loading from "../shared/ui/Loading";
-
-export type ClientsStackParamList = {
-  Clients: undefined;
-  ClientProfile: {
-    personId: string;
-  };
-  ClientNewMeeting: {
-    personId: string;
-    fullName: string;
-    displayPersonExternalId: string;
-    primaryMetadata: string;
-    meetingId: string;
-  };
-  ClientMeeting: {
-    personId: string;
-    meetingId: string;
-  };
-};
-
-export type ResidentsStackParamList = {
-  Residents: undefined;
-  ResidentProfile: {
-    personId: string;
-  };
-  ResidentNewMeeting: {
-    personId: string;
-    fullName: string;
-    displayPersonExternalId: string;
-    primaryMetadata: string;
-    meetingId: string;
-  };
-  ResidentMeeting: {
-    personId: string;
-    meetingId: string;
-  };
-};
-
-export type RootStackParamList = {
-  ClientsRoot: NavigatorScreenParams<ClientsStackParamList>;
-  ResidentsRoot: NavigatorScreenParams<ResidentsStackParamList>;
-  StateSelection: undefined;
-};
+import DrawerContent from "~@meetings/app/components/DrawerContent";
+import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
+import { useStateSelection } from "~@meetings/app/context/StateContext";
+import { useUserContext } from "~@meetings/app/context/UserContext";
+import { NoAccessScreen } from "~@meetings/app/pages/no-access";
+import ClientMeetingScreen from "~@meetings/app/screens/ClientMeetingScreen";
+import ClientNewMeetingScreen from "~@meetings/app/screens/ClientNewMeetingScreen";
+import ClientProfileScreen from "~@meetings/app/screens/ClientProfileScreen";
+import ClientsScreen from "~@meetings/app/screens/ClientsScreen";
+import ResidentMeetingScreen from "~@meetings/app/screens/ResidentMeetingScreen";
+import ResidentNewMeetingScreen from "~@meetings/app/screens/ResidentNewMeetingScreen";
+import ResidentProfileScreen from "~@meetings/app/screens/ResidentProfileScreen";
+import ResidentsScreen from "~@meetings/app/screens/ResidentsScreen";
+import StateSelectionScreen from "~@meetings/app/screens/StateSelectionScreen";
+import {
+  ClientsStackParamList,
+  ResidentsStackParamList,
+  RootStackParamList,
+} from "~@meetings/app/shared/config";
+import Loading from "~@meetings/app/shared/ui/Loading";
 
 const Drawer = createDrawerNavigator<RootStackParamList>();
 const ClientsStackNavigator =

@@ -16,11 +16,7 @@
 // =============================================================================
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import {
-  LinkingOptions,
-  NavigationContainer,
-  NavigatorScreenParams,
-} from "@react-navigation/native";
+import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useFonts } from "expo-font";
@@ -28,23 +24,18 @@ import React, { useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
-import AppUpdateModal from "../components/AppUpdateModal";
-import { UserContextProvider } from "../context/UserContext";
-import { LoginScreen } from "../pages/login";
-import { publicTrpc } from "../shared/api";
-import { env } from "../shared/config";
-import AuthenticatedApp from "./AuthenticatedApp";
-import { RootStackParamList } from "./DrawerNavigator";
+import AppUpdateModal from "~@meetings/app/components/AppUpdateModal";
+import { UserContextProvider } from "~@meetings/app/context/UserContext";
+import { LoginScreen } from "~@meetings/app/pages/login";
+import { publicTrpc } from "~@meetings/app/shared/api";
+import { AppStackParamList, env } from "~@meetings/app/shared/config";
+
+import AuthenticatedApp from "./../AuthenticatedApp";
 
 const Drawer = createDrawerNavigator();
 const publicQueryClient = new QueryClient();
 
 const trpcUrl = env.EXPO_PUBLIC_SERVER_URL;
-
-export type AppStackParamList = {
-  Login: undefined;
-  Main: NavigatorScreenParams<RootStackParamList>;
-};
 
 const linking: LinkingOptions<AppStackParamList> = {
   prefixes: [],
@@ -94,8 +85,8 @@ const AppNavigator = () => {
   );
 
   const [, fontsLoadingError] = useFonts({
-    Inter: require("./../shared/assets/fonts/Inter.ttf"),
-    "LibreBaskerville-Bold": require("./../shared/assets/fonts/LibreBaskerville-Bold.ttf"),
+    Inter: require("~@meetings/app/shared/assets/fonts/Inter.ttf"),
+    "LibreBaskerville-Bold": require("~@meetings/app/shared/assets/fonts/LibreBaskerville-Bold.ttf"),
   });
 
   useEffect(() => {

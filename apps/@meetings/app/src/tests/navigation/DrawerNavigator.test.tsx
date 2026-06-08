@@ -18,10 +18,10 @@
 import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
+import DrawerNavigator from "../../app/navigation/DrawerNavigator";
 import * as AgencyConfigContext from "../../context/AgencyConfigContext";
 import * as StateContext from "../../context/StateContext";
 import * as UserContext from "../../context/UserContext";
-import DrawerNavigator from "../../navigation/DrawerNavigator";
 
 // Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
 jest.mock("../../shared/lib/useSetDocumentTitle", () => ({

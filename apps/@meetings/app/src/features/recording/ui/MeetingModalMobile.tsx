@@ -18,7 +18,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { AppStackParamList } from "../../../navigation/AppNavigator";
+import { AppStackParamList } from "../../../shared/config";
 import { useRecording } from "../model";
 import { DiscardMeetingModal } from "./DiscardMeetingModal";
 import { EndMeetingModal } from "./EndMeetingModal";

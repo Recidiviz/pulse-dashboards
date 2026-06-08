@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "../global.css";
+import "../../global.css";
 import "./nativewind-interop";
 
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -25,12 +25,11 @@ import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import config from "./auth0-config";
-import AppErrorBoundary from "./components/AppErrorBoundary";
-import { useSentryAppLifecycle } from "./hooks/useSentryAppLifecycle";
+import { useSentryAppLifecycle } from "../hooks/useSentryAppLifecycle";
+import { env } from "../shared/config";
+import { SnackbarProvider } from "../shared/ui/Snackbar";
+import AppErrorBoundary from "./AppErrorBoundary";
 import AppNavigator from "./navigation/AppNavigator";
-import { env } from "./shared/config/env";
-import { SnackbarProvider } from "./shared/ui/Snackbar";
 
 // Strip URL hash fragments before sending to Sentry to prevent OAuth token leakage.
 function sanitizeUrl(url: string): string {
@@ -92,8 +91,8 @@ const App = () => {
       <BottomSheetModalProvider>
         <SnackbarProvider>
           <Auth0Provider
-            domain={config.domain as string}
-            clientId={config.clientId as string}
+            domain={env.EXPO_PUBLIC_AUTH0_DOMAIN}
+            clientId={env.EXPO_PUBLIC_AUTH0_CLIENT_ID}
             // useRefreshTokens and cacheLocation are web-only props (WebAuth0Options),
             // not in the shared Auth0Options type, but read by WebAuth0Client on web
             // and safely ignored on native.

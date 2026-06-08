@@ -29,11 +29,11 @@ import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 import { Person, PersonType } from "../common/types";
 import { MeetingTypeTag } from "../entities/meeting-type";
 import { useProcessingText } from "../hooks/useProcessingText";
+import ProcessingSvg from "../shared/assets/icons/processing.svg";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
-} from "../navigation/DrawerNavigator";
-import ProcessingSvg from "../shared/assets/icons/processing.svg";
+} from "../shared/config/routes";
 import { formatDurationCompact } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import {

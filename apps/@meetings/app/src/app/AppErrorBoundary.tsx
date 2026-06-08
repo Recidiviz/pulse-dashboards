@@ -20,7 +20,7 @@ import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import ErrorBoundary from "react-native-error-boundary";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type FallbackProps = {
   error: Error;
@@ -37,7 +37,7 @@ const MyErrorFallback: React.FC<FallbackProps> = ({ resetError }) => (
     </Typography>
 
     <TouchableOpacity
-      className="mb-3 w-80 items-center self-center rounded-full bg-[#006C67] py-4"
+      className="mb-3 w-80 items-center self-center rounded-full bg-brand py-4"
       onPress={resetError}
     >
       <Typography className="text-lg font-semibold text-white">

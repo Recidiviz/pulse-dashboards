@@ -19,7 +19,7 @@ import { Link } from "@react-navigation/native";
 import { ReactNode } from "react";
 import { Pressable, PressableProps } from "react-native";
 
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { RootStackParamList } from "../shared/config/routes";
 import { Typography } from "../shared/ui/Typography";
 
 type WithLink = {

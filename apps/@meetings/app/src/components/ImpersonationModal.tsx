@@ -23,8 +23,8 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { useImpersonationStore } from "../hooks/useImpersonationStore";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../shared/api";
+import { RootStackParamList } from "../shared/config/routes";
 import { queryCachePersister } from "../shared/lib/queryCachePersister";
 import Modal from "../shared/ui/Modal";
 import PrimaryButton from "../shared/ui/PrimaryButton";

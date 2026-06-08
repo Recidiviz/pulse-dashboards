@@ -21,18 +21,19 @@ import { httpBatchLink } from "@trpc/client";
 import React, { useEffect, useRef, useState } from "react";
 import superjson from "superjson";
 
-import { AgencyConfigProvider } from "../context/AgencyConfigContext";
-import { AnalyticsProvider } from "../context/AnalyticsContext";
+import { AgencyConfigProvider } from "~@meetings/app/context/AgencyConfigContext";
+import { AnalyticsProvider } from "~@meetings/app/context/AnalyticsContext";
 import {
   DEFAULT_STATE_CODE,
   StateCode,
   StateCodeProvider,
-} from "../context/StateContext";
-import { useUserContext } from "../context/UserContext";
-import { useImpersonationStore } from "../hooks/useImpersonationStore";
-import { trpc } from "../shared/api";
-import { env } from "../shared/config";
-import { queryCachePersister } from "../shared/lib/queryCachePersister";
+} from "~@meetings/app/context/StateContext";
+import { useUserContext } from "~@meetings/app/context/UserContext";
+import { useImpersonationStore } from "~@meetings/app/hooks/useImpersonationStore";
+import { trpc } from "~@meetings/app/shared/api";
+import { env } from "~@meetings/app/shared/config";
+import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersister";
+
 import { AuthenticatedContent } from "./AuthenticatedContent";
 
 const ONE_WEEK_MS = 1000 * 60 * 60 * 24 * 7;

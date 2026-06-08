@@ -20,8 +20,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import NewMeeting from "../components/NewMeeting";
-import { ClientsStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../shared/api";
+import { ClientsStackParamList } from "../shared/config/routes";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
 import { deserializeClient } from "../utils/format";

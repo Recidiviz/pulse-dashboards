@@ -29,12 +29,12 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import { Person, PersonType } from "../common/types";
 import { useRecording } from "../features/recording";
+import { trpc } from "../shared/api";
+import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
-} from "../navigation/DrawerNavigator";
-import { trpc } from "../shared/api";
-import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+} from "../shared/config/routes";
 import { getInitials } from "../shared/lib/format";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
 import { RecordingIndicator } from "../shared/ui/RecordingIndicator";

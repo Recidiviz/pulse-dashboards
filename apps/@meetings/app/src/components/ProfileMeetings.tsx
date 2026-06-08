@@ -53,7 +53,7 @@ import { useCreateMeeting } from "../hooks/useCreateMeeting";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
-} from "../navigation/DrawerNavigator";
+} from "../shared/config/routes";
 import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
 import { Typography } from "../shared/ui/Typography";
 import MeetingsHeaderContent from "./MeetingsHeaderContent";

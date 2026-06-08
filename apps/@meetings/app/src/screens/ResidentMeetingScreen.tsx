@@ -19,8 +19,8 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 
 import Meeting from "../components/Meeting";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
-import { ResidentsStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../shared/api";
+import { ResidentsStackParamList } from "../shared/config/routes";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
 import {

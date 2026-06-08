@@ -20,8 +20,8 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
 import { useMeetings } from "../hooks/useMeetings";
-import { ClientsStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../shared/api";
+import { ClientsStackParamList } from "../shared/config/routes";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import { deserializeClient, formatPersonTitle } from "../utils/format";
 

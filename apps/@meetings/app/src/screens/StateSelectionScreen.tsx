@@ -32,9 +32,9 @@ import {
 import Header from "../components/Header";
 import { useAgencyConfigs } from "../context/AgencyConfigContext";
 import { StateCode, useStateSelection } from "../context/StateContext";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../shared/api";
 import { theme } from "../shared/config";
+import { RootStackParamList } from "../shared/config/routes";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import { Typography } from "../shared/ui/Typography";
 

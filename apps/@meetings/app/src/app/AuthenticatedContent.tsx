@@ -17,12 +17,13 @@
 
 import { useEffect, useState } from "react";
 
-import { ReconnectStatus } from "../components/ReconnectStatus";
-import { AudioUpload } from "../features/audio-upload";
-import { RecordingProvider } from "../features/recording";
-import { useOfflineQueueDrainer } from "../hooks/useOfflineQueueDrainer";
-import useIsOnline from "../shared/lib/useIsOnline";
-import DrawerNavigator from "./DrawerNavigator";
+import { ReconnectStatus } from "~@meetings/app/components/ReconnectStatus";
+import { AudioUpload } from "~@meetings/app/features/audio-upload";
+import { RecordingProvider } from "~@meetings/app/features/recording";
+import { useOfflineQueueDrainer } from "~@meetings/app/hooks/useOfflineQueueDrainer";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
+
+import DrawerNavigator from "./navigation/DrawerNavigator";
 
 export function AuthenticatedContent() {
   const { isOnline } = useIsOnline();
