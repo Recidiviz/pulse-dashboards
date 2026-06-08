@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigContext, ExpoConfig } from "expo/config";
+import type { ConfigContext, ExpoConfig } from "expo/config";
 
 const APP_NAME = "Recidiviz";
 const PACKAGE = "org.recidiviz.app";
 const SCHEME = "recidiviz";
+const EAS_PROJECT_ID = "fce0159d-1a8d-493b-a891-e7413b1a8ea5";
 
 type Environment = "development" | "preview" | "staging" | "production";
 
@@ -149,12 +150,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ],
     extra: {
       eas: {
-        projectId: "fce0159d-1a8d-493b-a891-e7413b1a8ea5",
+        projectId: EAS_PROJECT_ID,
       },
     },
     owner: "recidiviz",
     updates: {
-      url: "https://u.expo.dev/6db95bf2-07f3-4753-890d-1950ac2a58fb",
+      url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
     },
     runtimeVersion: {
       policy: "appVersion",
