@@ -67,6 +67,7 @@ const ActionButtons = styled.div<{ isMobile: boolean }>`
   display: flex;
   gap: ${({ isMobile }) => (isMobile ? rem(spacing.sm) : rem(spacing.sm))};
   flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
+  align-items: center;
 `;
 
 const RevertChangesButtonLink = styled(TextLink)`
