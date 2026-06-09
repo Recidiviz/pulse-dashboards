@@ -18,14 +18,14 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { SupervisionTask } from "../../WorkflowsStore";
+import { TaskTableItem } from "../../WorkflowsStore/Task/types";
 
 const FrequencyWrapper = styled.div`
   display: flex;
   gap: ${rem(6)};
 `;
 
-export function TaskFrequency({ task }: { task: SupervisionTask }) {
+export function TaskFrequency({ task }: { task: TaskTableItem }) {
   return (
     <FrequencyWrapper>
       <i className="fa fa-refresh" />

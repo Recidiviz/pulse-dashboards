@@ -385,7 +385,6 @@ export const FullProfile = observer(
       customTasks,
       hideWorkflowsOpportunities,
       sentenceProgressV2,
-      tasksCardLayout,
     } = useFeatureVariants();
 
     usePersonTracking(person, () => {
@@ -483,7 +482,7 @@ export const FullProfile = observer(
           <Content isMobile={isTablet}>
             <ProfileDetailsWrapper>
               {person.supervisionTasks?.orderedTasks &&
-                (tasksCardLayout ? (
+                (customTasks ? (
                   <SectionCard>
                     <SectionCardHeader>Tasks</SectionCardHeader>
                     <SectionCardBody>
@@ -516,9 +515,6 @@ export const FullProfile = observer(
                         />
                       }
                     />
-                    {customTasks && person instanceof Client && (
-                      <AddedTasksBlock client={person} layout="section" />
-                    )}
                   </div>
                 ))}
               {isMoClient ? null : (

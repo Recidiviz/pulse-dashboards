@@ -340,8 +340,12 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       header: "Appointment Status",
       id: "appointmentStatus",
       accessorFn: (entity) => {
-        const { futureScheduledContacts, scheduledContactDates } =
-          mainTaskForEntity(entity);
+        const task = mainTaskForEntity(entity);
+        // Custom tasks don't carry scheduled-contact metadata — render an
+        // em-dash to keep column alignment when a tenant happens to enable
+        // both this column and the customTasks flag.
+        if (task.type === "customTask") return "–";
+        const { futureScheduledContacts, scheduledContactDates } = task;
 
         if (!scheduledContactDates) {
           return "–";

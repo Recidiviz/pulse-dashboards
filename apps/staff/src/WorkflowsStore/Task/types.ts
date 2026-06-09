@@ -20,7 +20,10 @@ import type { Hydratable } from "~hydration-utils";
 
 import type { WorkflowsTasksConfig } from "../../core/models/types";
 import type { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
-import type { SharedSnoozeUpdate } from "../../FirestoreStore";
+import type {
+  CustomTaskRecord,
+  SharedSnoozeUpdate,
+} from "../../FirestoreStore";
 import type { RootStore } from "../../RootStore";
 import type { SpecificTenantConfigs } from "../../tenants";
 import type { Expect, Extends } from "../../utils/typeUtils";
@@ -306,12 +309,57 @@ export type SupervisionTask<
   ) => void;
 };
 
-export type ClientTasksSummary = {
+/**
+ * Synthetic task-type literal used by user-authored custom tasks (created
+ * from a client's FullProfile). It does NOT extend `SUPERVISION_TASK_TYPES`
+ * because no per-state task config maps to it — keeping it outside that
+ * union avoids polluting `SupervisionDetailsForTask` and the per-state
+ * `Task<T>` plumbing. Custom-task rows are recognized via the
+ * discriminator on `TaskTableItem`.
+ */
+export const CUSTOM_TASK_TYPE = "customTask" as const;
+export type CustomTaskType = typeof CUSTOM_TASK_TYPE;
+
+/**
+ * View-model for a single custom task in the Tasks dashboard table. Mirrors
+ * the subset of `SupervisionTask` the bucketing logic in `TasksFilterStore`
+ * and the column renderers in `TasksTable` actually read — `displayName`,
+ * `dueDate`, `isOverdue`, `isSnoozed`, `frequency`, plus the formatted
+ * date strings. RRule-aware: `dueDate` is the next-occurrence resolved
+ * via `getNextDueDate`, not the stored anchor.
+ */
+export type CustomTaskItem = {
+  type: CustomTaskType;
+  key: string;
+  dueDate: Date;
+  isOverdue: boolean;
+  isSnoozed: false;
+  dueDateFromToday: string;
+  dueDateDisplayLong: string;
+  dueDateDisplayShort: string;
+  rootStore: RootStore;
   person: Client;
-  tasks: SupervisionTask[];
+  displayName: string;
+  frequency: string;
+  /**
+   * Original Firestore record. Kept so any future cell renderer needing
+   * to inspect e.g. recurrence text or `completedOn` can reach through.
+   */
+  record: CustomTaskRecord;
 };
 
-export type TasksRowEntity = SupervisionTask | ClientTasksSummary;
+/**
+ * A single row in the Tasks-dashboard table. Either a supervision task or
+ * a custom task; the `type` field discriminates between them.
+ */
+export type TaskTableItem = SupervisionTask | CustomTaskItem;
+
+export type ClientTasksSummary = {
+  person: Client;
+  tasks: TaskTableItem[];
+};
+
+export type TasksRowEntity = TaskTableItem | ClientTasksSummary;
 
 export type SupervisionTaskRecord<T extends SupervisionTaskType> = {
   taskDisplayName: string;

@@ -15,19 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startOfDay } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
 import { Hydratable, HydrationState } from "~hydration-utils";
 
+import { describeRecurrence } from "../../components/DatePicker";
 import type {
   CustomTaskCreateInput,
   CustomTaskRecord,
   CustomTaskUpdateInput,
 } from "../../FirestoreStore";
 import type { RootStore } from "../../RootStore";
+import { formatDueDateFromToday } from "../../utils";
 import { Client } from "../Client";
 import { CustomTasksSubscription } from "../subscriptions/CustomTasksSubscription";
+import { getNextDueDate, isTaskCompleted } from "./customTaskStatus";
+import { CUSTOM_TASK_TYPE, CustomTaskItem } from "./types";
 
 /**
  * Helper that converts a `dueDate` value coming from the UI (either a JS
@@ -67,6 +72,7 @@ export class CustomTasks implements Hydratable {
       hydrate: action,
       hydrationState: computed,
       orderedTasks: computed,
+      activeTaskItems: computed,
       addCustomTask: action,
       editCustomTask: action,
       toggleCustomTaskCompleted: action,
@@ -104,6 +110,42 @@ export class CustomTasks implements Hydratable {
     active.sort(byDueDate);
     completed.sort(byDueDate);
     return [...active, ...completed];
+  }
+
+  /**
+   * View-model projection of `orderedTasks` for the Tasks-dashboard table.
+   * Skips records that are currently completed (for recurring tasks this
+   * uses the auto-rollover logic in `isTaskCompleted`), resolves the
+   * next-occurrence `dueDate` via `getNextDueDate`, and computes the
+   * display strings the column renderers expect. Sorted ascending by
+   * resolved `dueDate` so the earliest-due item is first.
+   */
+  get activeTaskItems(): CustomTaskItem[] {
+    const now = new Date();
+    const startOfToday = startOfDay(now);
+    return (this.taskSubscription.data ?? [])
+      .filter((record) => !isTaskCompleted(record, now))
+      .map((record): CustomTaskItem => {
+        const dueDate = getNextDueDate(record, now);
+        const dueDateFromToday = formatDueDateFromToday(dueDate);
+        return {
+          type: CUSTOM_TASK_TYPE,
+          key: record.id,
+          dueDate,
+          isOverdue: dueDate < startOfToday,
+          isSnoozed: false,
+          dueDateFromToday,
+          dueDateDisplayLong: `${record.title} due ${dueDateFromToday}`,
+          dueDateDisplayShort: `Due ${dueDateFromToday}`,
+          rootStore: this.rootStore,
+          person: this.person,
+          displayName: record.title,
+          frequency:
+            describeRecurrence(record.recurrence ?? null) ?? "One-time",
+          record,
+        };
+      })
+      .sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
   }
 
   addCustomTask(input: CustomTaskCreateInput): Promise<void> {

@@ -22,12 +22,31 @@ import { MemoryRouter } from "react-router-dom";
 import { CaseloadTasksPresenterV2 } from "../../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import {
   ClientTasksSummary,
+  CustomTaskItem,
   SupervisionTask,
 } from "../../../WorkflowsStore/Task/types";
 import { TasksTable } from "../TasksTable";
 
 function makeTask(displayName: string, dueDate: Date): SupervisionTask {
   return { displayName, dueDate } as unknown as SupervisionTask;
+}
+
+function makeCustomTaskItem(
+  overrides: Partial<CustomTaskItem> = {},
+): CustomTaskItem {
+  return {
+    type: "customTask",
+    key: "cust-1",
+    dueDate: new Date(),
+    isOverdue: false,
+    isSnoozed: false,
+    displayName: "Pickup paperwork",
+    frequency: "One-time",
+    dueDateFromToday: "today",
+    dueDateDisplayLong: "Pickup paperwork due today",
+    dueDateDisplayShort: "Due today",
+    ...overrides,
+  } as unknown as CustomTaskItem;
 }
 
 function makeSummary(
@@ -169,6 +188,41 @@ describe("TasksTable tasks column cell rendering", () => {
       screen.getByText(/Risk Assessment due 2 days ago/),
     ).toBeInTheDocument();
     expect(screen.getByText("+2 more")).toBeInTheDocument();
+  });
+
+  it("renders a custom-task-only client row with title + due copy", () => {
+    const inTwoDays = addDays(new Date(), 2);
+    renderTable([
+      makeSummary("Doe, J", [
+        makeCustomTaskItem({
+          displayName: "Pickup paperwork",
+          dueDate: inTwoDays,
+        }) as never,
+      ]),
+    ]);
+    expect(
+      screen.getByText(/Pickup paperwork due in 2 days/),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/more/)).not.toBeInTheDocument();
+  });
+
+  it("renders a mixed-row client showing the earliest-due item first with +n more", () => {
+    // Supervision task in 5 days, custom task in 1 day → custom comes first.
+    const inOneDay = addDays(new Date(), 1);
+    const inFiveDays = addDays(new Date(), 5);
+    renderTable([
+      makeSummary("Doe, J", [
+        makeCustomTaskItem({
+          displayName: "Bring tax forms",
+          dueDate: inOneDay,
+        }) as never,
+        makeTask("Home Visit", inFiveDays),
+      ]),
+    ]);
+    expect(
+      screen.getByText(/Bring tax forms due in 1 day/),
+    ).toBeInTheDocument();
+    expect(screen.getByText("+1 more")).toBeInTheDocument();
   });
 });
 

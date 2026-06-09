@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 
 import * as StoreProvider from "../../../components/StoreProvider";
+import { Client } from "../../../WorkflowsStore/Client";
 import { CaseloadTasksHydrator } from "../TasksHydrator";
 
 vi.mock("../../../components/StoreProvider");
@@ -38,6 +39,11 @@ type WorkflowsStoreMock = {
   caseloadPersons: Array<unknown>;
   supervisionTasksLoaded: () => boolean;
   hasSupervisionTasks: boolean;
+  rootStore: {
+    userStore: {
+      activeFeatureVariants: { customTasks?: object };
+    };
+  };
 };
 
 function setupRootStore({
@@ -45,17 +51,24 @@ function setupRootStore({
   caseloadPersons = [],
   supervisionTasksLoaded = true,
   hasSupervisionTasks = true,
+  customTasksFlagOn = false,
 }: Partial<{
   selectedSearchIds: string[];
   caseloadPersons: Array<unknown>;
   supervisionTasksLoaded: boolean;
   hasSupervisionTasks: boolean;
+  customTasksFlagOn: boolean;
 }> = {}) {
   const workflowsStore: WorkflowsStoreMock = {
     searchStore: { selectedSearchIds },
     caseloadPersons,
     supervisionTasksLoaded: () => supervisionTasksLoaded,
     hasSupervisionTasks,
+    rootStore: {
+      userStore: {
+        activeFeatureVariants: customTasksFlagOn ? { customTasks: {} } : {},
+      },
+    },
   };
   vi.mocked(StoreProvider.useRootStore).mockReturnValue({
     workflowsStore,
@@ -146,5 +159,83 @@ describe("CaseloadTasksHydrator", () => {
     expect(screen.getByTestId("hydrated")).toBeInTheDocument();
     expect(screen.queryByTestId("custom-loading")).not.toBeInTheDocument();
     expect(screen.queryByTestId("generic-loading")).not.toBeInTheDocument();
+  });
+
+  describe("custom tasks hydration", () => {
+    function makePersonWithStores({
+      supervisionHydrated = false,
+      customHydrated = false,
+      hasCustomTasks = true,
+    }: {
+      supervisionHydrated?: boolean;
+      customHydrated?: boolean;
+      hasCustomTasks?: boolean;
+    } = {}) {
+      const person = Object.create(Client.prototype);
+      person.supervisionTasks = {
+        hydrate: vi.fn(),
+        hydrationState: {
+          status: supervisionHydrated ? "hydrated" : "needs hydration",
+        },
+      };
+      if (hasCustomTasks) {
+        person.customTasks = {
+          hydrate: vi.fn(),
+          hydrationState: {
+            status: customHydrated ? "hydrated" : "needs hydration",
+          },
+        };
+      }
+      return person as Client;
+    }
+
+    it("hydrates customTasks for each Client when the flag is on", () => {
+      const person = makePersonWithStores();
+      setupRootStore({
+        caseloadPersons: [person],
+        customTasksFlagOn: true,
+      });
+      render(
+        <CaseloadTasksHydrator hydrated={<div data-testid="hydrated" />} />,
+      );
+      expect(person.customTasks?.hydrate).toHaveBeenCalled();
+    });
+
+    it("does NOT hydrate customTasks when the flag is off", () => {
+      const person = makePersonWithStores();
+      setupRootStore({
+        caseloadPersons: [person],
+        customTasksFlagOn: false,
+      });
+      render(
+        <CaseloadTasksHydrator hydrated={<div data-testid="hydrated" />} />,
+      );
+      expect(person.customTasks?.hydrate).not.toHaveBeenCalled();
+    });
+
+    it("skips customTasks hydration when the subscription is already hydrated", () => {
+      const person = makePersonWithStores({ customHydrated: true });
+      setupRootStore({
+        caseloadPersons: [person],
+        customTasksFlagOn: true,
+      });
+      render(
+        <CaseloadTasksHydrator hydrated={<div data-testid="hydrated" />} />,
+      );
+      expect(person.customTasks?.hydrate).not.toHaveBeenCalled();
+    });
+
+    it("tolerates Clients without a customTasks store (flag off at Client construction time)", () => {
+      const person = makePersonWithStores({ hasCustomTasks: false });
+      setupRootStore({
+        caseloadPersons: [person],
+        customTasksFlagOn: true,
+      });
+      expect(() =>
+        render(
+          <CaseloadTasksHydrator hydrated={<div data-testid="hydrated" />} />,
+        ),
+      ).not.toThrow();
+    });
   });
 });

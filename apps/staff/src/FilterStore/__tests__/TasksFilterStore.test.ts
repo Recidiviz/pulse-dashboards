@@ -15,9 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import tk from "timekeeper";
+
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
+import { Client } from "../../WorkflowsStore/Client";
+import {
+  CustomTaskItem,
+  SupervisionTask,
+} from "../../WorkflowsStore/Task/types";
 import TasksFilterStore from "../TasksFilterStore";
 
 const mockAnalyticsStore = {
@@ -294,5 +301,281 @@ describe("storing filter state", () => {
     // Deselect all
     filterStore.clearFilters();
     expect(filterStore.allFiltersSelected).toBeFalse();
+  });
+});
+
+describe("allTasksForCategory with custom tasks", () => {
+  // Frozen 2026-05-14 is a Thursday in mid-May.
+  const FROZEN_NOW = new Date("2026-05-14T12:00:00.000Z");
+
+  type FakeClient = Partial<Client> & {
+    supervisionTasks?: any;
+    customTasks?: any;
+  };
+
+  function makeSupervisionTask(
+    overrides: Partial<SupervisionTask> = {},
+  ): SupervisionTask {
+    return {
+      type: "assessment",
+      key: "sup-1",
+      dueDate: new Date("2026-05-20"),
+      isOverdue: false,
+      isSnoozed: false,
+      displayName: "Risk Assessment",
+      ...overrides,
+    } as unknown as SupervisionTask;
+  }
+
+  function makeCustomTaskItem(
+    overrides: Partial<CustomTaskItem> = {},
+  ): CustomTaskItem {
+    return {
+      type: "customTask",
+      key: "cust-1",
+      dueDate: new Date("2026-05-20"),
+      isOverdue: false,
+      isSnoozed: false,
+      displayName: "Pickup paperwork",
+      frequency: "One-time",
+      ...overrides,
+    } as unknown as CustomTaskItem;
+  }
+
+  function makeClient({
+    supervisionTasks,
+    customTasks,
+  }: {
+    supervisionTasks?: {
+      orderedTasks: SupervisionTask[];
+      readyOrderedTasks: SupervisionTask[];
+    };
+    customTasks?: { activeTaskItems: CustomTaskItem[] };
+  } = {}): Client {
+    const client = Object.create(Client.prototype) as FakeClient;
+    client.supervisionTasks = supervisionTasks;
+    client.customTasks = customTasks;
+    return client as Client;
+  }
+
+  function buildStore({
+    persons,
+    flagOn,
+  }: {
+    persons: Client[];
+    flagOn: boolean;
+  }) {
+    const ws = {
+      caseloadPersons: persons,
+      searchStore: { selectedSearchIds: ["1"] },
+      rootStore: {
+        userStore: {
+          activeFeatureVariants: flagOn ? { customTasks: {} } : {},
+        },
+      },
+    } as any as WorkflowsStore;
+    return new TasksFilterStore(mockAnalyticsStore, mockTenantStore, ws);
+  }
+
+  beforeEach(() => {
+    tk.freeze(FROZEN_NOW);
+  });
+
+  afterEach(() => {
+    tk.reset();
+  });
+
+  it("ignores custom tasks when the customTasks flag is off", () => {
+    const supervisionTask = makeSupervisionTask({
+      key: "sup-only",
+      dueDate: new Date("2026-05-20"),
+    });
+    const customItem = makeCustomTaskItem({
+      key: "ignored-custom",
+      dueDate: new Date("2026-05-22"),
+    });
+    const client = makeClient({
+      supervisionTasks: {
+        orderedTasks: [supervisionTask],
+        readyOrderedTasks: [supervisionTask],
+      },
+      customTasks: { activeTaskItems: [customItem] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: false });
+    const items = store.allTasksForCategory("DUE_THIS_MONTH", false);
+    expect(items).toEqual([supervisionTask]);
+  });
+
+  it("returns the only custom task for a client when flag is on and no supervision tasks exist", () => {
+    const customItem = makeCustomTaskItem({
+      key: "custom-only",
+      dueDate: new Date("2026-05-20"),
+    });
+    const client = makeClient({
+      supervisionTasks: {
+        orderedTasks: [],
+        readyOrderedTasks: [],
+      },
+      customTasks: { activeTaskItems: [customItem] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: true });
+    expect(store.allTasksForCategory("DUE_THIS_MONTH", false)).toEqual([
+      customItem,
+    ]);
+  });
+
+  it("returns an overdue custom task in OVERDUE for an otherwise-empty client", () => {
+    const customItem = makeCustomTaskItem({
+      key: "custom-overdue",
+      dueDate: new Date("2026-01-01"),
+      isOverdue: true,
+    });
+    const client = makeClient({
+      supervisionTasks: { orderedTasks: [], readyOrderedTasks: [] },
+      customTasks: { activeTaskItems: [customItem] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: true });
+    expect(store.allTasksForCategory("OVERDUE", false)).toEqual([customItem]);
+  });
+
+  it("buckets supervision and custom tasks into separate categories", () => {
+    const supervisionOverdue = makeSupervisionTask({
+      key: "sup-overdue",
+      dueDate: new Date("2026-01-01"),
+      isOverdue: true,
+    });
+    const customDueMonth = makeCustomTaskItem({
+      key: "custom-month",
+      dueDate: new Date("2026-05-20"),
+    });
+    const client = makeClient({
+      supervisionTasks: {
+        orderedTasks: [supervisionOverdue],
+        readyOrderedTasks: [supervisionOverdue],
+      },
+      customTasks: { activeTaskItems: [customDueMonth] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: true });
+    expect(store.allTasksForCategory("OVERDUE", false)).toEqual([
+      supervisionOverdue,
+    ]);
+    expect(store.allTasksForCategory("DUE_THIS_MONTH", false)).toEqual([
+      customDueMonth,
+    ]);
+  });
+
+  it("keeps a client visible when their supervision task is snoozed but they have an active custom task", () => {
+    // Snoozed supervision task is in orderedTasks but NOT readyOrderedTasks
+    // (the bug repro: previously this client would drop out of the table).
+    const snoozedSupervision = makeSupervisionTask({
+      key: "sup-snoozed",
+      dueDate: new Date("2026-05-22"),
+      isSnoozed: true,
+    });
+    const customDueMonth = makeCustomTaskItem({
+      key: "custom-survives",
+      dueDate: new Date("2026-05-20"),
+    });
+    const client = makeClient({
+      supervisionTasks: {
+        orderedTasks: [snoozedSupervision],
+        readyOrderedTasks: [],
+      },
+      customTasks: { activeTaskItems: [customDueMonth] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: true });
+    expect(store.allTasksForCategory("DUE_THIS_MONTH", false)).toEqual([
+      customDueMonth,
+    ]);
+  });
+
+  it("HIDDEN returns only snoozed supervision tasks, not custom tasks", () => {
+    const snoozedSupervision = makeSupervisionTask({
+      key: "sup-snoozed",
+      dueDate: new Date("2026-05-22"),
+      isSnoozed: true,
+    });
+    const customDueMonth = makeCustomTaskItem({
+      key: "custom-active",
+      dueDate: new Date("2026-05-20"),
+    });
+    const client = makeClient({
+      supervisionTasks: {
+        orderedTasks: [snoozedSupervision],
+        readyOrderedTasks: [],
+      },
+      customTasks: { activeTaskItems: [customDueMonth] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: true });
+    expect(store.allTasksForCategory("HIDDEN", false)).toEqual([
+      snoozedSupervision,
+    ]);
+  });
+
+  it("filtering by type='customTask' narrows results to custom tasks only", () => {
+    const supervisionTask = makeSupervisionTask({
+      type: "assessment",
+      key: "sup-1",
+      dueDate: new Date("2026-05-20"),
+    });
+    const customTask = makeCustomTaskItem({
+      key: "cust-1",
+      dueDate: new Date("2026-05-21"),
+    });
+    const client = makeClient({
+      supervisionTasks: {
+        orderedTasks: [supervisionTask],
+        readyOrderedTasks: [supervisionTask],
+      },
+      customTasks: { activeTaskItems: [customTask] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: true });
+    store.setFilter("type", { value: "customTask" });
+    expect(store.allTasksForCategory("ALL_TASKS", true)).toEqual([customTask]);
+    expect(store.allTasksForCategory("DUE_THIS_MONTH", true)).toEqual([
+      customTask,
+    ]);
+  });
+
+  it("personMatchesFilters passes for a custom-only client when flag is on", () => {
+    const customTask = makeCustomTaskItem({
+      type: "customTask",
+      key: "cust-only",
+      dueDate: new Date("2026-05-20"),
+    });
+    const client = makeClient({
+      supervisionTasks: { orderedTasks: [], readyOrderedTasks: [] },
+      customTasks: { activeTaskItems: [customTask] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: true });
+    store.setFilter("type", { value: "customTask" });
+    expect(store.personMatchesFilters(client)).toBe(true);
+  });
+
+  it("personMatchesFilters fails for a custom-only client when flag is off even when filter would match", () => {
+    const customTask = makeCustomTaskItem({
+      type: "customTask",
+      key: "cust-only",
+      dueDate: new Date("2026-05-20"),
+    });
+    const client = makeClient({
+      supervisionTasks: { orderedTasks: [], readyOrderedTasks: [] },
+      customTasks: { activeTaskItems: [customTask] },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: false });
+    // Any supervision-task-typed filter — the client has no supervision tasks
+    // and (with the flag off) no custom tasks are pulled in, so the person
+    // can't match any task-typed filter.
+    store.setFilter("type", { value: "assessment" });
+    expect(store.personMatchesFilters(client)).toBe(false);
   });
 });

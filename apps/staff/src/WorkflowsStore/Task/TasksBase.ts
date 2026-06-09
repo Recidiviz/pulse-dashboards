@@ -221,6 +221,6 @@ export abstract class TasksBase<
 }
 
 export const taskDueDateComparator = (
-  a: SupervisionTask<any>,
-  b: SupervisionTask<any>,
+  a: { dueDate: Date },
+  b: { dueDate: Date },
 ) => +a.dueDate - +b.dueDate;

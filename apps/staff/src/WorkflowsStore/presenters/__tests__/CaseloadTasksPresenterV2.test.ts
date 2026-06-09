@@ -88,9 +88,14 @@ const mockTenantStore = {
   },
 } as any as TenantStore;
 
+const mockRootStore = {
+  userStore: { activeFeatureVariants: {} },
+};
+
 const mockWorkflowsStore = {
   caseloadPersons: [],
   searchStore: { selectedSearchIds: ["1", "2"] },
+  rootStore: mockRootStore,
 } as any as WorkflowsStore;
 
 function makePersonWithTasks(

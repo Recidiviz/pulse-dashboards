@@ -139,6 +139,15 @@ const US_MO_CONFIG = {
             value: "usMoInPersonContact",
             label: "In-Person Contact",
           },
+          {
+            // Synthetic task-type assigned to user-authored custom tasks
+            // by `CustomTasks.activeTaskItems`. Only takes effect when
+            // the `customTasks` feature variant is on for the user —
+            // otherwise no row carries this `type` so selecting the
+            // filter is a no-op.
+            value: "customTask",
+            label: "Custom Tasks",
+          },
         ],
       },
       {

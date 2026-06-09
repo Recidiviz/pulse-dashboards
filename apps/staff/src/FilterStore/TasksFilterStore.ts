@@ -29,8 +29,9 @@ import AnalyticsStore from "../RootStore/AnalyticsStore";
 import TenantStore from "../RootStore/TenantStore";
 import { JusticeInvolvedPerson } from "../WorkflowsStore";
 import { WorkflowsStore } from "../WorkflowsStore";
+import { Client } from "../WorkflowsStore/Client";
 import { taskDueDateComparator } from "../WorkflowsStore/Task/TasksBase";
-import { SupervisionTask } from "../WorkflowsStore/Task/types";
+import { TaskTableItem } from "../WorkflowsStore/Task/types";
 import FilterStoreBase from "./FilterStoreBase";
 
 export default class TasksFilterStore extends FilterStoreBase {
@@ -89,7 +90,7 @@ export default class TasksFilterStore extends FilterStoreBase {
 
   // Tasks Specific Filters
 
-  taskMatchesFilters(task: SupervisionTask): boolean {
+  taskMatchesFilters(task: TaskTableItem): boolean {
     const filtersForType = Object.entries(this.selectedFiltersForType("task"));
 
     return filtersForType.every(([field, options]) =>
@@ -98,9 +99,7 @@ export default class TasksFilterStore extends FilterStoreBase {
     );
   }
 
-  orderedTasksForCategory(
-    category: SupervisionTaskCategory,
-  ): SupervisionTask[] {
+  orderedTasksForCategory(category: SupervisionTaskCategory): TaskTableItem[] {
     return this.allTasksForCategory(category, true).sort(taskDueDateComparator);
   }
 
@@ -112,7 +111,7 @@ export default class TasksFilterStore extends FilterStoreBase {
 
   orderedTasksForSelectedCategory(
     selectedCategory: SupervisionTaskCategory,
-  ): SupervisionTask[] {
+  ): TaskTableItem[] {
     return this.orderedTasksForCategory(selectedCategory);
   }
 
@@ -120,10 +119,43 @@ export default class TasksFilterStore extends FilterStoreBase {
     return this.orderedTasksForCategory(category).length;
   }
 
+  /**
+   * Tasks for a given person that may participate in the dashboard table.
+   * Merges in the client's user-authored custom tasks when the
+   * `customTasks` feature variant is on. When the flag is off, this is
+   * byte-identical to reading `person.supervisionTasks.readyOrderedTasks`
+   * — `Client.customTasks` is only constructed under the flag
+   * ([Client.ts](../WorkflowsStore/Client.ts)), but we still gate
+   * explicitly so the merge intent is legible at this call site.
+   */
+  private candidateTasksForPerson(
+    person: JusticeInvolvedPerson,
+    category: SupervisionTaskCategory,
+  ): TaskTableItem[] {
+    const { supervisionTasks } = person;
+    let supervisionList: TaskTableItem[] = [];
+    if (supervisionTasks) {
+      supervisionList =
+        category === "HIDDEN"
+          ? supervisionTasks.orderedTasks
+          : supervisionTasks.readyOrderedTasks;
+    }
+
+    const customFlagOn =
+      !!this.workflowsStore.rootStore.userStore.activeFeatureVariants
+        .customTasks;
+    const customList: TaskTableItem[] =
+      customFlagOn && person instanceof Client && person.customTasks
+        ? person.customTasks.activeTaskItems
+        : [];
+
+    return [...supervisionList, ...customList];
+  }
+
   allTasksForCategory(
     category: SupervisionTaskCategory,
     applyFilter = true,
-  ): SupervisionTask[] {
+  ): TaskTableItem[] {
     // If applyFilter is true, only return tasks for people that match the currently selected filters
     // If applyFilter is false, return tasks for all people (regardless of filters)
     const people = applyFilter
@@ -131,12 +163,15 @@ export default class TasksFilterStore extends FilterStoreBase {
       : this.workflowsStore.caseloadPersons;
 
     return people.flatMap((person) => {
-      const { supervisionTasks } = person;
-
-      if (!supervisionTasks) return [];
+      const candidates = this.candidateTasksForPerson(person, category);
+      if (!candidates.length) return [];
 
       if (category === "HIDDEN") {
-        return supervisionTasks.orderedTasks.filter(
+        // Custom tasks have no snooze concept (`isSnoozed` is always
+        // false on `CustomTaskItem`), so they're naturally excluded
+        // here — matching how supervision tasks' HIDDEN tab is the
+        // snooze bin.
+        return candidates.filter(
           (t) => (this.taskMatchesFilters(t) || !applyFilter) && t.isSnoozed,
         );
       }
@@ -144,7 +179,7 @@ export default class TasksFilterStore extends FilterStoreBase {
       const hasThisWeekTab =
         this.displayedTaskCategories.includes("DUE_THIS_WEEK");
 
-      return supervisionTasks.readyOrderedTasks.filter((t) => {
+      return candidates.filter((t) => {
         if (applyFilter && !this.taskMatchesFilters(t)) return false;
 
         switch (category) {
@@ -185,12 +220,14 @@ export default class TasksFilterStore extends FilterStoreBase {
 
     if (!matchesPeopleFilters) return false;
 
-    // return true if the person has any tasks that match the filters
-    return person.supervisionTasks?.orderedTasks
-      ? person.supervisionTasks?.orderedTasks.some((task) =>
-          this.taskMatchesFilters(task),
-        )
-      : false;
+    // Person passes if ANY of their tasks (supervision or, under the
+    // `customTasks` flag, custom) match the active task-typed filters.
+    // Custom tasks are pulled in by `candidateTasksForPerson`, which is
+    // already feature-flag-gated; here we just use `ALL_TASKS` to opt
+    // out of category bucketing so a client with only a custom task
+    // still surfaces as a candidate.
+    const candidates = this.candidateTasksForPerson(person, "ALL_TASKS");
+    return candidates.some((task) => this.taskMatchesFilters(task));
   }
 
   // Tab categories used in the new tasks view

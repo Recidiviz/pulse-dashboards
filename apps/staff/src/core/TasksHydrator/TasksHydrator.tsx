@@ -23,6 +23,7 @@ import React, { useEffect } from "react";
 import { isHydrated } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Client } from "../../WorkflowsStore/Client";
 
 type TasksHydrator = {
   initial?: React.ReactNode;
@@ -46,6 +47,9 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
     searchStore: { selectedSearchIds },
   } = workflowsStore;
 
+  const customTaskeEnabled =
+    !!workflowsStore.rootStore.userStore.activeFeatureVariants.customTasks;
+
   useEffect(
     () =>
       autorun(() => {
@@ -53,9 +57,24 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
           if (person.supervisionTasks && !isHydrated(person.supervisionTasks)) {
             person.supervisionTasks.hydrate();
           }
+
+          // Hydrate the per-client `customTasks` subscription so user-authored
+          // custom tasks land in `TasksFilterStore.allTasksForCategory` for
+          // users who haven't first visited the client's FullProfile (the
+          // other site that triggers `customTasks.hydrate()`). Loading state
+          // intentionally stays gated on supervision tasks only — custom
+          // tasks are additive and shouldn't delay the table from showing.
+          if (
+            customTaskeEnabled &&
+            person instanceof Client &&
+            person.customTasks &&
+            !isHydrated(person.customTasks)
+          ) {
+            person.customTasks.hydrate();
+          }
         });
       }),
-    [workflowsStore],
+    [workflowsStore, customTaskeEnabled],
   );
 
   const displayInitialState = !selectedSearchIds.length;

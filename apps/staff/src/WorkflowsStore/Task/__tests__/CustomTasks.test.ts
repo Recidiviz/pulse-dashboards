@@ -360,4 +360,147 @@ describe("CustomTasks", () => {
       });
     });
   });
+
+  describe("activeTaskItems", () => {
+    test("non-recurring task due in the future is active and not overdue", () => {
+      const record = makeRecord({
+        id: "future-1",
+        title: "Future task",
+        dueDate: new Date("2026-06-01"),
+      });
+      subscriptionInstance.data = [record];
+
+      const items = customTasks.activeTaskItems;
+      expect(items).toHaveLength(1);
+      const [item] = items;
+      expect(item.type).toBe("customTask");
+      expect(item.key).toBe(record.id);
+      expect(item.displayName).toBe(record.title);
+      expect(item.isOverdue).toBe(false);
+      expect(item.isSnoozed).toBe(false);
+      expect(item.frequency).toBe("One-time");
+    });
+
+    test("non-recurring task with a dueDate in the past is overdue", () => {
+      const record = makeRecord({
+        id: "past-1",
+        title: "Past task",
+        dueDate: new Date("2026-01-01"),
+      });
+      subscriptionInstance.data = [record];
+
+      const [item] = customTasks.activeTaskItems;
+      expect(item.isOverdue).toBe(true);
+    });
+
+    test("non-recurring task due today (frozen now) is not overdue", () => {
+      const record = makeRecord({
+        id: "today-1",
+        title: "Today task",
+        dueDate: FROZEN_NOW,
+      });
+      subscriptionInstance.data = [record];
+
+      const [item] = customTasks.activeTaskItems;
+      expect(item.isOverdue).toBe(false);
+    });
+
+    test("completed non-recurring task is excluded", () => {
+      subscriptionInstance.data = [
+        makeRecord({
+          id: "done-1",
+          title: "Done task",
+          dueDate: new Date("2026-06-01"),
+          completedOn: FROZEN_NOW,
+        }),
+      ];
+
+      expect(customTasks.activeTaskItems).toEqual([]);
+    });
+
+    test("recurring weekly task never completed resolves to the most-recent past occurrence", () => {
+      const record = makeRecord({
+        id: "weekly-1",
+        title: "Weekly Friday",
+        // 2025-11-14 is a Friday.
+        dueDate: new Date("2025-11-14"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+      });
+      subscriptionInstance.data = [record];
+
+      const [item] = customTasks.activeTaskItems;
+      // Most recent Friday at-or-before 2026-05-14 (Thursday) is 2026-05-08.
+      expect(item.dueDate.toISOString()).toBe("2026-05-08T00:00:00.000Z");
+      expect(item.isOverdue).toBe(true);
+      // From `describeRecurrence` via rrule.toText().
+      expect(item.frequency).toBe("every week on Friday");
+    });
+
+    test("recurring task previously completed with the next cycle still in the future is excluded", () => {
+      // Anchor + completedOn pre-date frozen now; the rrule.after(completedOn)
+      // call returns a Friday that is still > now, so isTaskCompleted -> true
+      // and activeTaskItems filters it out.
+      const record = makeRecord({
+        id: "weekly-completed-recent",
+        title: "Weekly recent",
+        dueDate: new Date("2025-11-14"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+        // Last Friday before frozen now is 2026-05-08; mark completed then.
+        // The next occurrence after 2026-05-08 is 2026-05-15, which is > now,
+        // so the task is considered completed for the current cycle.
+        completedOn: new Date("2026-05-08T13:00:00.000Z"),
+      });
+      subscriptionInstance.data = [record];
+
+      expect(customTasks.activeTaskItems).toEqual([]);
+    });
+
+    test("recurring task previously completed with the cycle rolled over is active", () => {
+      const record = makeRecord({
+        id: "weekly-completed-long-ago",
+        title: "Weekly old completion",
+        dueDate: new Date("2025-11-14"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+        // Completed in early December 2025; many Fridays have elapsed since,
+        // so the next-after-completedOn is in the past and the task has
+        // rolled over.
+        completedOn: new Date("2025-12-01"),
+      });
+      subscriptionInstance.data = [record];
+
+      const items = customTasks.activeTaskItems;
+      expect(items).toHaveLength(1);
+      // rule.after(completedOn=2025-12-01, false) -> 2025-12-05 Friday.
+      expect(items[0].dueDate.toISOString()).toBe("2025-12-05T00:00:00.000Z");
+    });
+
+    test("sorts the returned items ascending by resolved dueDate", () => {
+      const late = makeRecord({
+        id: "sort-late",
+        title: "Late",
+        dueDate: new Date("2026-08-01"),
+      });
+      const early = makeRecord({
+        id: "sort-early",
+        title: "Early",
+        dueDate: new Date("2026-06-01"),
+      });
+      const recurring = makeRecord({
+        id: "sort-recurring",
+        title: "Recurring",
+        // anchor far in past → resolved dueDate is 2026-05-08 (a Friday),
+        // earlier than the other two.
+        dueDate: new Date("2025-11-14"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+      });
+
+      subscriptionInstance.data = [late, early, recurring];
+
+      expect(customTasks.activeTaskItems.map((i) => i.key)).toEqual([
+        "sort-recurring",
+        "sort-early",
+        "sort-late",
+      ]);
+    });
+  });
 });

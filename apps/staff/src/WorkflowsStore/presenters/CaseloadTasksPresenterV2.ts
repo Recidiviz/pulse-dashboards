@@ -31,8 +31,8 @@ import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
 import {
   ClientTasksSummary,
-  SupervisionTask,
   TasksRowEntity,
+  TaskTableItem,
 } from "../Task/types";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
@@ -199,7 +199,7 @@ export class CaseloadTasksPresenterV2
 
   // Filtering
 
-  get orderedTasksForSelectedCategory(): SupervisionTask[] {
+  get orderedTasksForSelectedCategory(): TaskTableItem[] {
     return this.filterStore.orderedTasksForSelectedCategory(
       this.selectedCategory,
     );
@@ -299,7 +299,7 @@ export class CaseloadTasksPresenterV2
   allTasksForCategory(
     category: SupervisionTaskCategory,
     applyFilter = true,
-  ): SupervisionTask[] {
+  ): TaskTableItem[] {
     return this.filterStore.allTasksForCategory(category, applyFilter);
   }
 

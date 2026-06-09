@@ -77,7 +77,6 @@ export type FeatureVariant =
   | "indefiniteSnooze"
   | "supervisionUnrestrictedSearch"
   | "taskSnoozeReason"
-  | "tasksCardLayout"
   | "tasksOneRowPerClient"
   | "tasksPermasnooze"
   | "tasksRoutePlanner"
@@ -114,8 +113,6 @@ export type FeatureVariant =
   | "usMiRestrictiveHousingV2Ineligible"
 
   //// Missouri
-  | "usMoMyCaseload"
-  | "customTasks"
   | "usMoMyCaseload"
   | "customTasks"
   | "usMoSearchByUnit"
@@ -255,7 +252,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIaFinesAndFees: {},
   customTasks: {},
   taskSnoozeReason: {},
-  tasksCardLayout: {},
   tasksOneRowPerClient: {},
   tasksPermasnooze: {},
   tasksRoutePlanner: {},
@@ -318,8 +314,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaSupervisionLevelDowngrade: {},
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         usIdTasksV2: {},
-        customTasks: { activeTenants: ["US_MO"] },
-        tasksCardLayout: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
@@ -345,7 +339,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },
-        tasksCardLayout: { activeTenants: ["US_MO"] },
         tasksPermasnooze: { activeTenants: ["US_MO"] },
         usMoMyCaseload: { activeTenants: ["US_MO"] },
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
