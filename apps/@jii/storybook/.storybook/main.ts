@@ -21,6 +21,8 @@ const config = {
   stories: [
     // stories from @jii libs
     "../../../../libs/@jii/**/src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))",
+    // stories from selected shared libs
+    "../../../../libs/design-system/**/*.@(mdx|stories.@(js|jsx|ts|tsx))",
   ],
   addons: ["@storybook/addon-docs", "@storybook/addon-a11y"],
   framework: {

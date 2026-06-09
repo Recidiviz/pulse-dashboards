@@ -25,6 +25,10 @@ export interface IconProps extends IconSVGProps {
   className?: string;
   color?: string;
   kind: keyof typeof IconSVG | React.FC;
+  /**
+   * Overrides height/width if present.
+   * Numbers will be interpreted as px; alternatively pass a string that includes the unit.
+   */
   size?: string | number;
   rotate?: number;
 }
