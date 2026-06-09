@@ -20,14 +20,20 @@ import React from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import { Person, PersonType } from "../common/types";
-import { useRecording } from "../features/recording";
-import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
-import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
-import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
-import { Typography } from "../shared/ui/Typography";
-import { formatPersonLastMeetingDate } from "../utils/format";
-import MeetingInProgressBar from "./MeetingInProgressBar";
+import MeetingInProgressBar from "~@meetings/app/components/MeetingInProgressBar";
+import {
+  formatPersonLastMeetingDate,
+  Person,
+  PersonType,
+} from "~@meetings/app/entities/person";
+import { useRecording } from "~@meetings/app/features/recording";
+import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
+import {
+  getInitials,
+  humanReadableTitleCase,
+} from "~@meetings/app/shared/lib/format";
+import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 interface ItemProps {
   person: Person;
@@ -35,7 +41,11 @@ interface ItemProps {
   personType: PersonType;
 }
 
-const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
+export function PersonCardItem({
+  person,
+  recordingState,
+  personType,
+}: ItemProps) {
   const { meetingId: activeMeetingId, person: recordingPerson } =
     useRecording<"native">();
   const hasActiveMeeting =
@@ -132,6 +142,4 @@ const PersonCardItem = ({ person, recordingState, personType }: ItemProps) => {
       </View>
     </View>
   );
-};
-
-export default PersonCardItem;
+}

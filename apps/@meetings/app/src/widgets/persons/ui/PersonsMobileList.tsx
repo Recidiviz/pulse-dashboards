@@ -21,13 +21,20 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { View } from "react-native";
 
-import { Person, PersonType } from "../common/types";
-import { trpc } from "../shared/api";
-import { deserializeClient, deserializeResident } from "../utils/format";
-import { serializeSort, SortDirection, SortOption } from "../utils/sort";
-import PersonCardItem from "./PersonCardItem";
-import PersonsHeaderContent from "./PersonsHeaderContent";
-import PersonsPlaceholder from "./PersonsPlaceholder";
+import {
+  deserializeClient,
+  deserializeResident,
+  Person,
+  PersonType,
+  serializeSort,
+  SortDirection,
+  SortOption,
+} from "~@meetings/app/entities/person";
+import { trpc } from "~@meetings/app/shared/api";
+
+import { PersonCardItem } from "./PersonCardItem";
+import { PersonsHeaderContent } from "./PersonsHeaderContent";
+import { PersonsPlaceholder } from "./PersonsPlaceholder";
 
 const PAGE_SIZE = 20;
 
@@ -40,14 +47,14 @@ type Props = {
   setSort: (sort: { sortBy: string; direction: SortDirection }) => void;
 };
 
-const PersonsMobileList = ({
+export function PersonsMobileList({
   personType,
   sort,
   recordingState,
   searchQuery,
   setSearchQuery,
   setSort,
-}: Props) => {
+}: Props) {
   const isFocused = useIsFocused();
   const serializedSortBy = serializeSort(sort.sortBy as SortOption);
 
@@ -149,6 +156,4 @@ const PersonsMobileList = ({
       }
     />
   );
-};
-
-export default PersonsMobileList;
+}

@@ -19,7 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { Person, PersonType } from "~@meetings/app/common/types";
+import { Person, PersonType } from "~@meetings/app/entities/person";
 
 import { AudioUploadDialog, AudioUploadStatus, FileInfo } from "./types";
 

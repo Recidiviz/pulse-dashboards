@@ -20,7 +20,7 @@ import uuid from "react-native-uuid";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { Person, PersonType } from "~@meetings/app/common/types";
+import { Person, PersonType } from "~@meetings/app/entities/person";
 
 import { useUserContext } from "../context/UserContext";
 import { createEventQueueStorage } from "../utils/meetingEventQueueStorage";

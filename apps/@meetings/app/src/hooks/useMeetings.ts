@@ -17,7 +17,9 @@
 
 import { keepPreviousData } from "@tanstack/react-query";
 
-import { ClientMeetings, PersonType, ResidentMeetings } from "../common/types";
+import { PersonType } from "~@meetings/app/entities/person";
+
+import { ClientMeetings, ResidentMeetings } from "../common/types";
 import { trpc } from "../shared/api";
 import { isMeetingProcessing } from "../utils/isMeetingProcessing";
 

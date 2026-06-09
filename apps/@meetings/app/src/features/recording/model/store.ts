@@ -22,7 +22,8 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { Person, PersonType } from "../../../common/types";
+import { Person, PersonType } from "~@meetings/app/entities/person";
+
 import { Status } from "./types";
 
 // TODO(#11571):

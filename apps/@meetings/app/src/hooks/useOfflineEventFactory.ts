@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PersonType } from "../common/types";
+import { PersonType } from "~@meetings/app/entities/person";
+
 import { trpc } from "../shared/api";
 import {
   CreateMeetingEvent,

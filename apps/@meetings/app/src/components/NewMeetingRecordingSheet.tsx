@@ -30,7 +30,7 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Person } from "../common/types";
+import { Person } from "../entities/person";
 import PlaySvg from "../shared/assets/icons/play.svg";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";

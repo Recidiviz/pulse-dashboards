@@ -25,19 +25,21 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import Header from "../components/Header";
-import PersonsHeaderContent from "../components/PersonsHeaderContent";
-import PersonsMobileList from "../components/PersonsMobileList";
-import PersonsPlaceholder from "../components/PersonsPlaceholder";
-import PersonsTable from "../components/PersonsTable.web";
-import { useRecording } from "../features/recording";
-import { trpc } from "../shared/api";
-import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
-import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
-import Loading from "../shared/ui/Loading";
-import { SortDirection, SortOption } from "../utils/sort";
+import Header from "~@meetings/app/components/Header";
+import { SortDirection, SortOption } from "~@meetings/app/entities/person";
+import { useRecording } from "~@meetings/app/features/recording";
+import { trpc } from "~@meetings/app/shared/api";
+import { useIsMobileWidth } from "~@meetings/app/shared/lib/useIsMobileWidth";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import Loading from "~@meetings/app/shared/ui/Loading";
+import {
+  PersonsHeaderContent,
+  PersonsMobileList,
+  PersonsPlaceholder,
+  PersonsTable,
+} from "~@meetings/app/widgets/persons";
 
-const ClientsScreen = () => {
+export function ClientsScreen() {
   useSetDocumentTitle("Clients - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
   const isMobileWidth = useIsMobileWidth();
@@ -163,6 +165,4 @@ const ClientsScreen = () => {
       />
     </SafeAreaView>
   );
-};
-
-export default ClientsScreen;
+}

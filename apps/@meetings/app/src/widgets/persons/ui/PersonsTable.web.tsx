@@ -27,18 +27,26 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import { Person, PersonType } from "../common/types";
-import { useRecording } from "../features/recording";
-import { trpc } from "../shared/api";
-import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import {
+  deserializeClient,
+  deserializeResident,
+  Person,
+  PersonType,
+  serializeSort,
+  SortDirection,
+  SortOption,
+} from "~@meetings/app/entities/person";
+import { useRecording } from "~@meetings/app/features/recording";
+import { trpc } from "~@meetings/app/shared/api";
+import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
-} from "../shared/config/routes";
-import { getInitials } from "../shared/lib/format";
-import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
-import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
-import { SortArrow } from "../shared/ui/SortArrow";
+} from "~@meetings/app/shared/config";
+import { getInitials } from "~@meetings/app/shared/lib/format";
+import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
+import { RecordingIndicator } from "~@meetings/app/shared/ui/RecordingIndicator";
+import { SortArrow } from "~@meetings/app/shared/ui/SortArrow";
 import {
   Table,
   TABLE_CELL_HEIGHT,
@@ -49,12 +57,10 @@ import {
   TableHeadCell,
   TableHeadRow,
   TableRow,
-} from "../shared/ui/Table.web";
-import { TablePagination } from "../shared/ui/TablePagination";
-import { TooltipText } from "../shared/ui/TooltipText";
-import { Typography } from "../shared/ui/Typography";
-import { deserializeClient, deserializeResident } from "../utils/format";
-import { serializeSort, SortDirection, SortOption } from "../utils/sort";
+} from "~@meetings/app/shared/ui/Table.web";
+import { TablePagination } from "~@meetings/app/shared/ui/TablePagination";
+import { TooltipText } from "~@meetings/app/shared/ui/TooltipText";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 const PAGE_SIZE = 7;
 const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
@@ -75,14 +81,14 @@ type Props = {
   sectionTitle?: string;
 };
 
-const PersonsTable = ({
+export function PersonsTable({
   type,
   caseload = "all",
   search,
   sort,
   setSort,
   sectionTitle,
-}: Props) => {
+}: Props) {
   const [page, setPage] = useState(1);
   const isFocused = useIsFocused();
   const navigation = useNavigation<ProfileNavProp>();
@@ -405,6 +411,4 @@ const PersonsTable = ({
       )}
     </>
   );
-};
-
-export default PersonsTable;
+}

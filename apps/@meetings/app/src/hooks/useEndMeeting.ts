@@ -18,10 +18,10 @@
 import { useMutation } from "@tanstack/react-query";
 import type { inferRouterInputs } from "@trpc/server";
 
+import { Person, PersonType } from "~@meetings/app/entities/person";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import type { AppRouter } from "~@meetings/trpc-types";
 
-import { Person, PersonType } from "../common/types";
 import { useSnackbar } from "../shared/ui/Snackbar";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";

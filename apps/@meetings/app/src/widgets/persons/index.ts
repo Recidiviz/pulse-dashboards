@@ -15,25 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AppRouter } from "~@meetings/trpc-types";
-
-export type MeetingDetails = Awaited<
-  ReturnType<AppRouter["v1"]["meeting"]["getDetails"]>
->;
-
-export type ClientMeetings = Awaited<
-  ReturnType<AppRouter["v1"]["client"]["getMeetings"]>
->;
-
-export type ResidentMeetings = Awaited<
-  ReturnType<AppRouter["v1"]["resident"]["getMeetings"]>
->;
-
-export type RecordingStatus =
-  | "idle"
-  | "recording"
-  | "paused"
-  | "uploading"
-  | "stopping"
-  | "discarding"
-  | "ending";
+export { PersonsHeaderContent } from "./ui/PersonsHeaderContent";
+export { PersonsMobileList } from "./ui/PersonsMobileList";
+export { PersonsPlaceholder } from "./ui/PersonsPlaceholder";
+export { PersonsTable } from "./ui/PersonsTable.web";

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { AppRouter } from "~@meetings/trpc-types";
+
+export type RawClient = Awaited<
+  ReturnType<AppRouter["v1"]["client"]["list"]>
+>["data"][0];
+
+export type Client = RawClient & {
+  primaryMetadata: string;
+  lastMeeting: string;
+  fullName: string;
+};
+
+export type RawResident = Awaited<
+  ReturnType<AppRouter["v1"]["resident"]["get"]>
+>;
+
+export type Resident = Awaited<
+  ReturnType<AppRouter["v1"]["resident"]["get"]>
+> & {
+  primaryMetadata: string;
+  lastMeeting: string;
+  fullName: string;
+};
+
+export type Person = Client | Resident;
+
+export type PersonType = "client" | "resident";
+
 export enum SortOption {
   Name = "Name (A-Z)",
   Id = "ID",
@@ -26,19 +54,4 @@ export enum SortOption {
 export enum SortDirection {
   Ascending = "asc",
   Descending = "desc",
-}
-
-export function serializeSort(sort: SortOption) {
-  switch (sort) {
-    case SortOption.Name:
-      return "name";
-    case SortOption.Id:
-      return "id";
-    case SortOption.Facility:
-      return "facility";
-    case SortOption.SupervisionType:
-      return "supervisionType";
-    case SortOption.LastMeeting:
-      return "lastMeeting";
-  }
 }

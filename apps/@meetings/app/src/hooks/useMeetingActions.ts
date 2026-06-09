@@ -17,9 +17,9 @@
 
 import type { inferRouterInputs } from "@trpc/server";
 
+import { PersonType } from "~@meetings/app/entities/person";
 import type { AppRouter } from "~@meetings/trpc-types";
 
-import { PersonType } from "../common/types";
 import { trpc } from "../shared/api";
 
 type RouterInputs = inferRouterInputs<AppRouter>;

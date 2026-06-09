@@ -19,8 +19,8 @@ import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import { Person } from "~@meetings/app/entities/person";
 
-import { Person } from "../../../common/types";
 import MaximizeSvg from "../../../shared/assets/icons/arrows-poin-outting-in.svg";
 import PauseSvg from "../../../shared/assets/icons/pause.svg";
 import PlaySvg from "../../../shared/assets/icons/play.svg";

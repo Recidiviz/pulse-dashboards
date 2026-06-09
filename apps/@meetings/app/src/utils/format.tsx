@@ -17,37 +17,8 @@
 
 import { format } from "date-fns";
 
-import { Client, RawClient, RawResident, Resident } from "../common/types";
-import { formatRelativeTime } from "../shared/lib/format";
-
 export const formatDraftCaseNoteMeetingDate = (date: Date) => {
   return format(date, "MMM d");
-};
-
-export const deserializeClient = (rawClient: RawClient): Client => {
-  return {
-    ...rawClient,
-    fullName: `${rawClient.givenNames} ${rawClient.surname}`,
-    primaryMetadata: rawClient.supervisionType,
-    lastMeeting:
-      rawClient.meetingDetails.lastCompletedMeetingTime == null
-        ? "No meetings"
-        : formatRelativeTime(rawClient.meetingDetails.lastCompletedMeetingTime),
-  };
-};
-
-export const deserializeResident = (rawResident: RawResident): Resident => {
-  return {
-    ...rawResident,
-    fullName: `${rawResident.givenNames} ${rawResident.surname}`,
-    primaryMetadata: rawResident.facilityId,
-    lastMeeting:
-      rawResident.meetingDetails.lastCompletedMeetingTime == null
-        ? "No meetings"
-        : formatRelativeTime(
-            rawResident.meetingDetails.lastCompletedMeetingTime,
-          ),
-  };
 };
 
 export const formatMeetingStartDate = (date: Date) => {
@@ -91,24 +62,3 @@ export const formatMeetingDuration = ({
 
 export const formatMeetingStartDateTitle = (startDate: Date) =>
   `${format(startDate, "MM/dd/yy")} at ${format(startDate, "HH:mm")}`;
-
-export const formatPersonTitle = ({
-  fullName,
-  givenNames,
-  surname,
-  displayPersonExternalId,
-}: {
-  fullName?: string;
-  givenNames?: string;
-  surname?: string;
-  displayPersonExternalId?: string;
-}) => {
-  if (fullName) {
-    return `${fullName} | ${displayPersonExternalId}`;
-  } else {
-    return `${givenNames} ${surname} | ${displayPersonExternalId}`;
-  }
-};
-
-export const formatPersonLastMeetingDate = (date?: Date | null) =>
-  date ? format(date, "EEEE, MMM dd") : null;

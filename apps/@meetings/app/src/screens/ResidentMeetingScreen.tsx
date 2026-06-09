@@ -18,16 +18,13 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 
 import Meeting from "../components/Meeting";
+import { deserializeResident, formatPersonTitle } from "../entities/person";
 import { useMeetingDetails } from "../hooks/useMeetingDetails";
 import { trpc } from "../shared/api";
 import { ResidentsStackParamList } from "../shared/config/routes";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
-import {
-  deserializeResident,
-  formatMeetingStartDateTitle,
-  formatPersonTitle,
-} from "../utils/format";
+import { formatMeetingStartDateTitle } from "../utils/format";
 
 type MeetingRouteProp = RouteProp<ResidentsStackParamList, "ResidentMeeting">;
 

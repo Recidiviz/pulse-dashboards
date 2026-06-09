@@ -20,7 +20,7 @@ import { View } from "react-native";
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import { Person, PersonType } from "../common/types";
+import { Person, PersonType } from "../entities/person";
 import MeetingCardItem from "./MeetingCardItem";
 import MeetingsHeaderContent from "./MeetingsHeaderContent";
 import MeetingsPlaceholder from "./MeetingsPlaceholder";

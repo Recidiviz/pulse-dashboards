@@ -19,15 +19,15 @@ import clsx from "clsx";
 import { View } from "react-native";
 import SearchIcon from "react-native-heroicons/solid/SearchIcon";
 
-import { PersonType } from "../common/types";
-import { Typography } from "../shared/ui/Typography";
+import { PersonType } from "~@meetings/app/entities/person";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   personType: PersonType;
   isSearchResultEmpty: boolean;
 };
 
-const PersonsPlaceholder = ({ personType, isSearchResultEmpty }: Props) => {
+export function PersonsPlaceholder({ personType, isSearchResultEmpty }: Props) {
   const emptyListPlaceholderTitle = `No ${personType}s yet`;
   const emptySearchPlaceholderTitle =
     personType === "client" ? "No clients on caseload" : "No residents found";
@@ -57,6 +57,4 @@ const PersonsPlaceholder = ({ personType, isSearchResultEmpty }: Props) => {
       </Typography>
     </View>
   );
-};
-
-export default PersonsPlaceholder;
+}

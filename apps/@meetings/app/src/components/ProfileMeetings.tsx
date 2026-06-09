@@ -33,12 +33,7 @@ import {
 
 import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
 
-import {
-  ClientMeetings,
-  Person,
-  PersonType,
-  ResidentMeetings,
-} from "../common/types";
+import { ClientMeetings, ResidentMeetings } from "../common/types";
 import Header from "../components/Header";
 import MeetingsTable from "../components/MeetingsTable.web";
 import { NewMeetingOptionsModal } from "../components/NewMeetingOptionsModal";
@@ -48,6 +43,7 @@ import { useAnalytics } from "../context/AnalyticsContext";
 import { useStateSelection } from "../context/StateContext";
 import { useMeetingTypeStore } from "../entities/meeting-type";
 import { DEFAULT_MEETING_TYPE } from "../entities/meeting-type/config";
+import { Person, PersonType } from "../entities/person";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import { useCreateMeeting } from "../hooks/useCreateMeeting";
 import {

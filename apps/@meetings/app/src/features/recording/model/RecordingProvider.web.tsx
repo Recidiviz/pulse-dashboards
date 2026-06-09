@@ -18,8 +18,8 @@
 import * as Sentry from "@sentry/react-native";
 import { createContext, useEffect, useRef } from "react";
 
-import { getPersonType, Person } from "~@meetings/app/common/types";
 import { useUserContext } from "~@meetings/app/context/UserContext";
+import { getPersonType, Person } from "~@meetings/app/entities/person";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import { useUploadSegment } from "~@meetings/app/shared/api";

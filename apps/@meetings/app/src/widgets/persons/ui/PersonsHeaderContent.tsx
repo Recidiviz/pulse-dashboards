@@ -20,11 +20,10 @@ import startCase from "lodash/startCase";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
-import { PersonType } from "../common/types";
-import Dropdown from "../shared/ui/Dropdown";
-import SearchBar from "../shared/ui/SearchBar";
-import { Typography } from "../shared/ui/Typography";
-import { SortOption } from "../utils/sort";
+import { PersonType, SortOption } from "~@meetings/app/entities/person";
+import Dropdown from "~@meetings/app/shared/ui/Dropdown";
+import SearchBar from "~@meetings/app/shared/ui/SearchBar";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   personType: PersonType;
@@ -36,7 +35,7 @@ type Props = {
   isFetching?: boolean;
 };
 
-const PersonsHeaderContent = ({
+export function PersonsHeaderContent({
   personType,
   description,
   personsCount,
@@ -44,7 +43,7 @@ const PersonsHeaderContent = ({
   setSearchQuery,
   setSortBy,
   isFetching,
-}: Props) => {
+}: Props) {
   const [inputValue, setInputValue] = useState(searchQuery);
 
   const debouncedSetSearchQuery = useMemo(
@@ -135,6 +134,4 @@ const PersonsHeaderContent = ({
       </View>
     </>
   );
-};
-
-export default PersonsHeaderContent;
+}

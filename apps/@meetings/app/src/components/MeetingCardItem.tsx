@@ -32,8 +32,8 @@ import {
 
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import { Person, PersonType } from "../common/types";
 import { MeetingTypeTag } from "../entities/meeting-type";
+import { Person, PersonType } from "../entities/person";
 import { useProcessingText } from "../hooks/useProcessingText";
 import ProcessingSvg from "../shared/assets/icons/processing.svg";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";

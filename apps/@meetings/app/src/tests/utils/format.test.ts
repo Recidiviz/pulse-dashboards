@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  formatMeetingStartDateTitle,
-  formatPersonTitle,
-} from "../../utils/format";
+import { formatPersonTitle } from "~@meetings/app/entities/person";
+
+import { formatMeetingStartDateTitle } from "../../utils/format";
 
 describe("Formatting Utilities", () => {
   describe("formatMeetingStartDateTitle", () => {

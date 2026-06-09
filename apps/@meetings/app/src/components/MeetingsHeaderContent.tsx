@@ -20,7 +20,7 @@ import clsx from "clsx";
 import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 
-import { Person } from "../common/types";
+import { Person } from "../entities/person";
 import { useRecording } from "../features/recording";
 import { usePlatform } from "../shared/lib/usePlatform";
 import Dropdown from "../shared/ui/Dropdown";

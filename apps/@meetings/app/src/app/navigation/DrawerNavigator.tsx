@@ -23,15 +23,15 @@ import DrawerContent from "~@meetings/app/components/DrawerContent";
 import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
 import { useStateSelection } from "~@meetings/app/context/StateContext";
 import { useUserContext } from "~@meetings/app/context/UserContext";
+import { ClientsScreen } from "~@meetings/app/pages/clients";
 import { NoAccessScreen } from "~@meetings/app/pages/no-access";
+import { ResidentsScreen } from "~@meetings/app/pages/residents";
 import ClientMeetingScreen from "~@meetings/app/screens/ClientMeetingScreen";
 import ClientNewMeetingScreen from "~@meetings/app/screens/ClientNewMeetingScreen";
 import ClientProfileScreen from "~@meetings/app/screens/ClientProfileScreen";
-import ClientsScreen from "~@meetings/app/screens/ClientsScreen";
 import ResidentMeetingScreen from "~@meetings/app/screens/ResidentMeetingScreen";
 import ResidentNewMeetingScreen from "~@meetings/app/screens/ResidentNewMeetingScreen";
 import ResidentProfileScreen from "~@meetings/app/screens/ResidentProfileScreen";
-import ResidentsScreen from "~@meetings/app/screens/ResidentsScreen";
 import StateSelectionScreen from "~@meetings/app/screens/StateSelectionScreen";
 import {
   ClientsStackParamList,

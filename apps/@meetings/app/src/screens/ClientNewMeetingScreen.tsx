@@ -20,12 +20,11 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import NewMeeting from "../components/NewMeeting";
+import { deserializeClient, formatPersonTitle } from "../entities/person";
 import { trpc } from "../shared/api";
 import { ClientsStackParamList } from "../shared/config/routes";
 import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
 import Loading from "../shared/ui/Loading";
-import { deserializeClient } from "../utils/format";
-import { formatPersonTitle } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<
   ClientsStackParamList,

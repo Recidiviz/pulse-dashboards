@@ -47,8 +47,8 @@ jest.mock("@react-navigation/drawer", () => ({
 }));
 
 // Mock all screen components since they import native modules
-jest.mock("../../screens/ClientsScreen", () => null);
-jest.mock("../../screens/ResidentsScreen", () => null);
+jest.mock("../../pages/clients", () => null);
+jest.mock("../../pages/residents", () => null);
 jest.mock("../../screens/ClientProfileScreen", () => null);
 jest.mock("../../screens/ResidentProfileScreen", () => null);
 jest.mock("../../screens/ClientNewMeetingScreen", () => null);

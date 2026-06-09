@@ -17,7 +17,7 @@
 
 import { create } from "zustand";
 
-import { Person } from "../common/types";
+import { Person } from "~@meetings/app/entities/person";
 
 export type ReconnectUploadStatus =
   | "pending"

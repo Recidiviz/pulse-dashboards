@@ -18,9 +18,10 @@
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { MeetingDetails, Person, PersonType } from "../common/types";
+import { MeetingDetails } from "../common/types";
 import MeetingDesktop from "../components/MeetingDesktop";
 import MeetingMobile from "../components/MeetingMobile";
+import { Person, PersonType } from "../entities/person";
 
 type Props = {
   meetingId: string;

@@ -33,7 +33,7 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 
-import { getPersonType } from "~@meetings/app/common/types";
+import { getPersonType } from "~@meetings/app/entities/person";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";

@@ -41,7 +41,7 @@ import { match } from "ts-pattern";
 
 import CloudOffline from "~@meetings/app/shared/assets/icons/cloud-off.svg";
 
-import { Person } from "../common/types";
+import { Person } from "../entities/person";
 import {
   ReconnectUploadStatus,
   useReconnectUploadStore,
