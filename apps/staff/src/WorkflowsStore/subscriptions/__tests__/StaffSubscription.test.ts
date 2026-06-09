@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { and, or, query, where } from "firebase/firestore";
+import { and, onSnapshot, or, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
@@ -30,6 +30,7 @@ import { CombinedUserRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { filterByUserDistrict } from "../../utils";
 import { StaffSubscription } from "../StaffSubscription";
+import { getMockQuerySnapshotHandler } from "./testUtils";
 
 vi.mock("firebase/firestore");
 
@@ -37,6 +38,7 @@ const queryMock = query as Mock;
 const whereMock = where as Mock;
 const andMock = and as Mock;
 const orMock = or as Mock;
+const onSnapshotMock = onSnapshot as Mock;
 const collectionMock = vi.fn();
 const withConverterMock = vi.fn();
 
@@ -274,6 +276,44 @@ describe("StaffSubscription tests", () => {
       expect(queryMock).toHaveBeenCalled();
       expect(orMock).toHaveBeenCalled();
       expect(andMock).toHaveBeenCalled();
+    });
+
+    describe("hasCaseload filtering", () => {
+      const baseStaffRecord = {
+        id: "OFFICER1",
+        stateCode: "US_TN",
+        givenNames: "Test",
+        surname: "Officer",
+        pseudonymizedId: "p001",
+      };
+
+      beforeEach(() => {
+        withConverterMock.mockReturnValue({});
+      });
+
+      test("staff with hasCaseload: true is returned", () => {
+        const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+        sub.subscribe();
+        mockReceive([{ ...baseStaffRecord, hasCaseload: true }]);
+        expect(sub.data).toHaveLength(1);
+        expect(sub.data[0]).toMatchObject({ id: "OFFICER1" });
+      });
+
+      // hasCaseload is optional in the schema; absent hasCaseload passes through unchanged
+      test("staff without hasCaseload is returned", () => {
+        const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+        sub.subscribe();
+        mockReceive([{ ...baseStaffRecord }]);
+        expect(sub.data).toHaveLength(1);
+        expect(sub.data[0]).toMatchObject({ id: "OFFICER1" });
+      });
+
+      test("staff with hasCaseload: false is excluded", () => {
+        const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+        sub.subscribe();
+        mockReceive([{ ...baseStaffRecord, hasCaseload: false }]);
+        expect(sub.data).toHaveLength(0);
+      });
     });
 
     test("FirestoreConverter inserts inferred properties when reading snapshot", () => {

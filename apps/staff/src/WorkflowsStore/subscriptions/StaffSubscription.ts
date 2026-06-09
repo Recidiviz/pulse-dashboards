@@ -33,7 +33,14 @@ export class StaffSubscription<
     parser: z.ZodType<RecordType, any, any>,
     private systemId?: "SUPERVISION" | "INCARCERATION",
   ) {
-    super(parser.parse);
+    super((data) => {
+      const record = parser.parse(data);
+      // hasCaseload: false cannot be filtered in the Firestore query because Firestore
+      // excludes missing-field documents from any hasCaseload index. Filter here instead.
+      if (record.hasCaseload === false)
+        return undefined as unknown as RecordType;
+      return record;
+    });
   }
 
   get dataSource(): Query {
