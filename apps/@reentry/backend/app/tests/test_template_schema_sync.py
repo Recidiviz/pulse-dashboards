@@ -252,6 +252,7 @@ prompts:
   edit_timeline: "Edit timeline {extra_instructions}"
   edit_milestones: "Edit milestones {extra_instructions}"
   edit_action_plan_generation: "Generate edited plan"
+  unified_section_generation: "Generate"
 
 structure:
   timeline: false
@@ -312,6 +313,7 @@ prompts:
   edit_timeline: "Edit timeline {extra_instructions}"
   edit_milestones: "Edit milestones {extra_instructions}"
   edit_action_plan_generation: "Generate edited plan"
+  unified_section_generation: "Generate"
 
 structure:
   timeline: false
@@ -377,6 +379,7 @@ prompts:
   edit_timeline: "Edit timeline {extra_instructions}"
   edit_milestones: "Edit milestones {extra_instructions}"
   edit_action_plan_generation: "Generate edited plan"
+  unified_section_generation: "Generate"
 
 structure:
   timeline: false

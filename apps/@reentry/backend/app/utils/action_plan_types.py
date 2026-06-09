@@ -51,7 +51,13 @@ class ResourceAssociation(BaseModel):
 
 class ActionPlanSectionPartial(BaseModel):
     annotations: list[Annotation] = Field(
-        description="If the reasoning reference that informed this section includes source documents, the annotations should be provided here"
+        description=(
+            "REQUIRED. For each claim, goal, or action item in the section that is grounded in "
+            "something the client said, include the single quote that most directly supports it. "
+            "Do not include multiple quotes for the same point. "
+            "Only draw from what the client said in the conversation — never from decision tree "
+            "recommendations or intake summaries."
+        )
     )
     notes: str | None = Field(
         description="Optional notes at the destination of the case manager only"
@@ -64,10 +70,9 @@ class ActionPlanSection(ActionPlanSectionPartial):
     title: str = Field(description="The title of the section")
     markdown_content: str = Field(
         description=(
-            "Result of your previous reasoning in Markdown."
-            "1. Always reference a resource using markdown link [name of the resource](#id), the id will be then included in the resources section."
-            "2. Explain first the intention of the section, then introduce an action plan to address the needs or risks of the section."
-            "3. Include both short and long term plan, or only long term is there is no short term."
+            "Result of your reasoning formatted as Markdown."
+            "1. Explain first the intention of the section, then introduce an action plan to address the needs or risks of the section."
+            "2. Include both short and long term plan, or only long term is there is no short term."
         )
     )
     resources: list[Resource] = Field(

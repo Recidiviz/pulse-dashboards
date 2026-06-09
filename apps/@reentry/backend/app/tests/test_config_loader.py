@@ -952,6 +952,7 @@ prompts:
   section_generation_with_resources: "UPDATED"
   section_generation_without_resources: "UPDATED"
   section_annotations: "UPDATED"
+  unified_section_generation: "UPDATED"
   section_refinement: "UPDATED"
   reflexion_initial: "UPDATED"
   reflexion_with_previous_sections: "UPDATED"

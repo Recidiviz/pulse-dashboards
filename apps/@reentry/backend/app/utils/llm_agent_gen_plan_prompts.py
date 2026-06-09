@@ -87,6 +87,13 @@ class ActionPlanPrompts:
         )
         return HumanMessage(content=content)
 
+    def get_unified_section_generation_prompt(self, section: str) -> HumanMessage:
+        """Generate prompt for section generation that includes annotations and notes."""
+        content = self.formatter.format(
+            self.config.unified_section_generation, section=section
+        )
+        return HumanMessage(content=content)
+
     def get_section_annotations_prompt(
         self, section: str, section_content: str
     ) -> HumanMessage:

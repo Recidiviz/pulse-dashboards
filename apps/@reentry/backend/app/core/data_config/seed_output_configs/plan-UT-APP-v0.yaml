@@ -109,6 +109,46 @@ prompts:
     For the notes, provide information about what the agent should be prepared to talk about with the client in order to support them in reaching the goal and completing the action items in this section. This could be about money, time, or any other constraint that could be a barrier to achieving the section's goal or individual action items.
 
     For example, if the action item or goal within the section may incur new costs for the client or are expensive, which may be difficult depending on their financial situation, advise the agent to be prepared to discuss this with the client. In this example, you might recommend that the agent walk through options that are covered by the client's insurance or available for free in the community, or other safe approaches to mitigating the financial burden.
+
+  unified_section_generation: |
+    Let's focus on the section titled: {section} and generate the markdown content.
+
+    **REQUIRED — complete this before generating any content:**
+    For each claim, goal, or action item you will make in this section that is grounded in something the client said, identify the single quote that most directly supports it. Include one annotation per distinct point — do not include multiple quotes for the same claim. Annotations must come only from the client's own words in the intake conversation — never from decision tree recommendations or intake summaries.
+
+    1. Provide a very brief overview (one sentence) of the client's situation and what could be useful for them, and always refer to the client as "you".
+    2. Recall decision tree recommendations about this subject.
+    3. State the primary "Goal" for this area of need. The Goal should encapsulate the outcome the agent would like to see for this client with regard to this area of need at the end of the next 3 months. The Goal should be summarized in a short phrase or sentence. For example: "Goal: Secure short-term housing."
+    4. Below the goal, establish a list of "Action Items" representing tasks that the client can take to accomplish the stated goal. All action items should be tasks that are feasible to complete within a 3 month period of time.
+    5. Each action item should have a due date associated, for example, "**Due Date:** By the end of Week 1".
+    6. The title of the list should simply be "Action Items".
+    Here is an example of a list:
+    ```
+    # Action Items
+    1. Enroll in Intensive Outpatient Treatment
+        - Contact one or more addiction treatment providers
+        - Commit to an intensive outpatient program to address your substance use
+        - **Due Date**: End of Week 2
+    2. Mental Health and Recovery Support
+        - Schedule regular sessions with a youth counselor or therapist
+        - Attend support groups for young adults in recovery, as recommended by Officer Kindra
+        - **Due Date**: End of Month 3
+    ```
+    7. Goals must be concrete and measurable.
+    For example, instead of "Goal: Maintain consistent engagement with mental health support and expand your support network.", write "Goal: By month 3 be ready to review recent work from your mental health routine and any guidance advised by your counselor."
+    8. Do not use the ```markdown tag or such, it's only for the example, the content you'll generate is already in markdown.
+    9. If the client has already indicated that they are engaged with or prefer a particular service provider or community resource, encourage use of that resource if practical.
+    10. Since no specific resources are available, focus on actionable steps the client can take independently or general ways to find appropriate services.
+
+    For the notes, provide information about what the agent should be prepared to talk about with the client in order to support them in reaching the goal and completing the action items in this section. This could be about money, time, or any other constraint that could be a barrier to achieving the section's goal or individual action items.
+    - For example, if the action item or goal within the section may incur new costs for the client or are expensive, which may be difficult depending on their financial situation, advise the agent to be prepared to discuss this with the client. In this example, you might recommend that the agent walk through options that are covered by the client's insurance or available for free in the community, or other safe approaches to mitigating the financial burden.
+
+    Finally, let's refine the markdown content of the section.
+    1. Have an introduction of the section addressed to the client, summarizing what can be done in a brief sentence.
+    2. The content must be markdown, and no title, except for the goal header and action items list header.
+    3. Use ## for the action items list title.
+    4. Use ## for the "Goal" title, and place the goal itself in a new line under the header.
+
   section_refinement: |
     Perfect, now let's refine the content of the section '{section}'.
     1. Have a introduction of the section addressed to the client, summarizing what can be done in a brief sentence.

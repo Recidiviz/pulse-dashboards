@@ -69,49 +69,43 @@ async def call_generate_section(
     if not section:
         raise ValueError("Error generating section")
 
-    message = prompts.get_section_generation_prompt_without_resources(section)
+    message = prompts.get_unified_section_generation_prompt(section)
 
     result_messages = []
     messages = state["messages"] + [message]
 
     try:
-        temp_response = await model.with_retry(
-            stop_after_attempt=DEFAULT_MAX_RETRIES,
-            retry_if_exception_type=ERRORS_TO_RETRY_ON,
-        ).ainvoke(messages, config)
+        response = (
+            await model.with_structured_output(ActionPlanSection)
+            .with_retry(
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON,
+            )
+            .ainvoke(messages, config)
+        )
     except Exception as error:
         logger.error(
-            "Failed to generate initial section content",
+            "Failed to generate unified section content",
             section=section,
             error=str(error),
         )
 
-    # Get annotations and notes
-    logger.debug("Getting annotations and notes for the section", section=section)
-    prompt = prompts.get_section_annotations_prompt(section, temp_response.content)
-    annotations = (
-        await model.with_structured_output(ActionPlanSectionPartial)
-        .with_retry(
-            stop_after_attempt=DEFAULT_MAX_RETRIES,
-            retry_if_exception_type=ERRORS_TO_RETRY_ON,
-        )
-        .ainvoke(messages + [prompt], config)
-    )
+    result_messages.append(AIMessage(content=response.json()))
 
-    logger.debug("Refinining the content of the section", section=section)
-    prompt = prompts.get_section_refinement_prompt(section)
-    final_response = await model.with_retry(
-        stop_after_attempt=DEFAULT_MAX_RETRIES,
-        retry_if_exception_type=ERRORS_TO_RETRY_ON,
-    ).ainvoke(messages + [temp_response] + [prompt], config)
-    result_messages.append(final_response)
+    # Deduplicate annotations by exact quote text before saving
+    seen: set[str] = set()
+    unique_annotations = []
+    for ann in response.annotations:
+        if ann.source_text_extract not in seen:
+            seen.add(ann.source_text_extract)
+            unique_annotations.append(ann)
 
     # Save the section
     action_plan_section = ActionPlanSection(
         title=section,
-        markdown_content=final_response.content,
-        annotations=annotations.annotations,
-        notes=annotations.notes,
+        markdown_content=response.markdown_content,
+        annotations=unique_annotations,
+        notes=response.notes,
         resources=[],
     )
 

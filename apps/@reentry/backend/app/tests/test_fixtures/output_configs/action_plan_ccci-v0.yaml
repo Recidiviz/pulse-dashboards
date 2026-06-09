@@ -20,6 +20,7 @@ prompts:
   section_generation_with_resources: "test"
   section_generation_without_resources: "test"
   section_annotations: "test"
+  unified_section_generation: "test"
   section_refinement: "test"
   reflexion_initial: "test"
   reflexion_with_previous_sections: "test"

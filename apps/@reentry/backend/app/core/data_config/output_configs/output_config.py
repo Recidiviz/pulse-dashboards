@@ -154,6 +154,13 @@ class ActionPlanPromptsConfig(PromptsConfig):
             "required_variables": ["section"],
         },
     )
+    unified_section_generation: str = Field(
+        description="Prompt for generating an individual section with annotations and notes",
+        json_schema_extra={
+            "available_variables": ["section"],
+            "required_variables": ["section"],
+        },
+    )
 
     # Timeline generation
     timeline_generation: str = Field(
