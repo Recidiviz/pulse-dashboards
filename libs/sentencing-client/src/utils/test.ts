@@ -25,6 +25,7 @@ import {
   PageOrClickTrackingMetadata,
   RecommendationStatusFilterMetadata,
   RecommendedDispositionTrackingMetadata,
+  SARSignatureMetadata,
   SortOrderTrackingMetadata,
 } from "../datastores/types";
 import { StateCode } from "../geoConfigs/types";
@@ -96,6 +97,7 @@ export const createMockRootStore = (
         null,
       trackSARDownloadReportClicked: (metadata: PageOrClickTrackingMetadata) =>
         null,
+      trackSARSignatureAdded: (metadata: SARSignatureMetadata) => null,
     },
   };
   return mockRootStore;

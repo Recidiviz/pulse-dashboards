@@ -473,6 +473,11 @@ export class SARDetailsPresenter implements Hydratable {
       });
       runInAction(() => {
         this.updateLocalStatus(this.statusForUpdate);
+        this.sentencingStore.analyticsStore.trackSARSignatureAdded({
+          viewedBy: this.sentencingStore.staffStore.staffInfo?.pseudonymizedId,
+          caseId: sarData.id,
+          signatureRole: "Officer",
+        });
       });
     } catch (e) {
       runInAction(() => {
@@ -510,6 +515,11 @@ export class SARDetailsPresenter implements Hydratable {
       });
       runInAction(() => {
         this.updateLocalStatus(this.statusForUpdate);
+        this.sentencingStore.analyticsStore.trackSARSignatureAdded({
+          viewedBy: this.sentencingStore.staffStore.staffInfo?.pseudonymizedId,
+          caseId: sarData.id,
+          signatureRole: "Supervisor",
+        });
       });
     } catch (e) {
       runInAction(() => {

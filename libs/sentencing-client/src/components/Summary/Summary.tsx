@@ -30,6 +30,7 @@ import { useStore } from "../StoreProvider/StoreProvider";
 import { ESignatureSection } from "./ESignatureSection";
 import { InsightsSummaryPanel } from "./InsightsSummaryPanel";
 import { MissingBadge } from "./MissingBadge";
+import { isSignatureComplete } from "./ReportSignature";
 import { exportSARtoPDF } from "./SARPdfExport";
 import { SentencingAssessmentReport } from "./SentencingAssessmentReport";
 import * as Styled from "./Summary.styles";
@@ -143,6 +144,8 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
     (s) => s === "complete",
   );
 
+  const isOfficerSigned = isSignatureComplete(presenter.officerSignatureData);
+
   const sarData = presenter.SARData;
   const declined = presenter.defendantDeclinedToParticipate;
 
@@ -213,7 +216,9 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
               </Styled.DownloadSubtitle>
             </Styled.DownloadHeaderText>
             <Styled.DownloadButton
-              disabled={!isReadyForDownload || isDownloading}
+              disabled={
+                !isReadyForDownload || !isOfficerSigned || isDownloading
+              }
               aria-label="Download SAR report"
               onClick={handleClickToDownload}
             >

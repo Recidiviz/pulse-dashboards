@@ -86,6 +86,12 @@ export type OpportunityWithOriginTrackingMetadata = {
   origin: "table" | "modal";
 };
 
+export type SARSignatureMetadata = {
+  viewedBy?: string; // staffPseudoId (who performed the action)
+  caseId: string; // sarId
+  signatureRole: "Officer" | "Supervisor";
+};
+
 export type CaseAttributes = Partial<Case> & {
   clientGender?: Client["gender"];
 };

@@ -42,6 +42,7 @@ import {
   RecommendationStatusFilterMetadata,
   RecommendedDispositionTrackingMetadata,
   RoutePermission,
+  SARSignatureMetadata,
   SortOrderTrackingMetadata,
   UserStateCode,
 } from "./types";
@@ -112,6 +113,7 @@ export interface RootStore {
     trackSARDownloadReportClicked: (
       metadata: PageOrClickTrackingMetadata,
     ) => void;
+    trackSARSignatureAdded: (metadata: SARSignatureMetadata) => void;
   };
 }
 

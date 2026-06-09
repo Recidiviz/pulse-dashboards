@@ -35,6 +35,7 @@ import {
   PageOrClickTrackingMetadata,
   RecommendationStatusFilterMetadata,
   RecommendedDispositionTrackingMetadata,
+  SARSignatureMetadata,
   SortOrderTrackingMetadata,
 } from "~sentencing-client";
 
@@ -984,6 +985,10 @@ export default class AnalyticsStore {
 
   trackSARDownloadReportClicked(metadata: PageOrClickTrackingMetadata): void {
     this.track("frontend.sentencing_sar_download_report_clicked", metadata);
+  }
+
+  trackSARSignatureAdded(metadata: SARSignatureMetadata): void {
+    this.track("frontend.sentencing_sar_signature_added", metadata);
   }
 
   trackUsTnExpirationFormGenerationReason(
