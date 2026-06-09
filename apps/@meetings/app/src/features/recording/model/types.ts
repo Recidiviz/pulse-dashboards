@@ -40,7 +40,8 @@ export type RecordingBase = {
 
   isRecording: boolean;
   durationMs: number;
-  isSpeaking: boolean;
+  // Normalized 0–1 microphone loudness, on a shared scale across web and native.
+  audioLevel: number;
 
   note: string;
   setNote: (note: string) => void;

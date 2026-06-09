@@ -43,6 +43,7 @@ import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { AUDIO_LEVEL_INTERVAL_MS } from "../config";
+import { dbToAudioLevel } from "../lib/audioLevel";
 import {
   requestNotificationPermissions,
   sendNotification,
@@ -63,7 +64,6 @@ import { usePersistedFileDuration } from "./usePersistedFileDuration.native";
 import { useRecordingStatus } from "./useRecordingStatus";
 
 const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
-const SILENCE_THRESHOLD_DB = -40;
 
 export const RecordingContext = createContext<RecordingNative | null>(null);
 
@@ -89,9 +89,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     AUDIO_LEVEL_INTERVAL_MS,
   );
 
-  const isSpeaking =
-    recorderState.isRecording &&
-    (recorderState.metering ?? -Infinity) > SILENCE_THRESHOLD_DB;
+  // Normalized 0–1 loudness on the same scale as web. metering is dBFS.
+  const audioLevel = recorderState.isRecording
+    ? dbToAudioLevel(recorderState.metering ?? -Infinity)
+    : 0;
 
   const [persistedRecordingUri, setPersistedRecordingUri] = useState<
     string | null
@@ -578,7 +579,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         setPersonType,
         isRecording: recorderState.isRecording,
         durationMs: timer.durationMs,
-        isSpeaking,
+        audioLevel,
         note,
         setNote,
         hasHydrated,

@@ -39,7 +39,7 @@ export function MeetingControlsMobile() {
     personType,
     status,
     durationMs,
-    isSpeaking,
+    audioLevel,
     meetingId,
     stopRecording,
     discardRecording,
@@ -47,7 +47,7 @@ export function MeetingControlsMobile() {
   } = useRecording<"native">();
   const { micStatus } = useAudioErrorDetection({
     isRecording: status === "recording",
-    isSpeaking,
+    audioLevel,
   });
 
   if (status === "idle" || !meetingId || !person) return null;
@@ -72,7 +72,11 @@ export function MeetingControlsMobile() {
       <View className="flex flex-col items-center rounded-t-3xl bg-primary p-4">
         <View className="flex-row items-center self-stretch">
           <View className="h-[24px] w-[42px] items-center justify-center rounded-full bg-secondary">
-            <MicIndicator variant="compact" status={micStatus} />
+            <MicIndicator
+              variant="compact"
+              status={micStatus}
+              level={audioLevel}
+            />
           </View>
           <View className="flex-1 items-center">
             {isNewMeetingScreen ? (

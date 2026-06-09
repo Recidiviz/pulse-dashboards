@@ -49,7 +49,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
     note,
     setNote,
     durationMs,
-    isSpeaking,
+    audioLevel,
     setIsRecordingViewMinimized,
     stopRecording,
     discardRecording,
@@ -58,7 +58,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
   const { micStatus, hasAudioError, setHasAudioError } = useAudioErrorDetection(
     {
       isRecording: status === "recording",
-      isSpeaking,
+      audioLevel,
     },
   );
 
@@ -255,7 +255,11 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
                 className="mr-6"
               >
                 <View>
-                  <MicIndicator variant="full" status={micStatus} />
+                  <MicIndicator
+                    variant="full"
+                    status={micStatus}
+                    level={audioLevel}
+                  />
                 </View>
               </TooltipPrimitive.Trigger>
               <TooltipPrimitive.Portal container={tooltipContainer}>

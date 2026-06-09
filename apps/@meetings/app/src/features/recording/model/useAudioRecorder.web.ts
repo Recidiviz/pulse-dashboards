@@ -24,13 +24,12 @@ import {
   MAX_RECORDING_MS,
   WEB_CHUNK_INTERVAL_MS,
 } from "../config";
+import { rmsToAudioLevel } from "../lib/audioLevel";
 import {
   clearRecordedChunks,
   getAllChunks,
   saveChunk,
 } from "../lib/webRecorderDb.web";
-
-const SILENCE_THRESHOLD = 0.005;
 
 type Params = {
   onStop: () => void;
@@ -47,7 +46,7 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const levelIntervalRef = useRef<number | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
 
   const stop = useCallback(async (): Promise<Blob | null> => {
     // Clear auto-stop timer
@@ -66,7 +65,7 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
       audioCtxRef.current = null;
     }
     analyserRef.current = null;
-    setIsSpeaking(false);
+    setAudioLevel(0);
 
     setIsRecording(false);
 
@@ -131,12 +130,9 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
     source.connect(analyser);
     analyserRef.current = analyser;
 
-    // it is calculations to measure mic volume level
-    // against a threshold which we consider low enough to determine
-    // that mic is getting enough sound
-    // -------- or another explanation ----------
-    // it samples the microphone 1024 times, computes RMS loudness,
-    // and flags it as "speaking" if loud enough.
+    // Samples the microphone 1024 times, computes RMS loudness, and converts it
+    // to a normalized 0–1 audio level (shared scale with native). Levels below
+    // the silence floor normalize to 0.
     const buffer = new Float32Array(analyser.fftSize);
     levelIntervalRef.current = window.setInterval(() => {
       analyser.getFloatTimeDomainData(buffer);
@@ -145,8 +141,9 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
         sum += buffer[i] * buffer[i];
       }
       const rms = Math.sqrt(sum / buffer.length);
-      const speaking = rms > SILENCE_THRESHOLD;
-      setIsSpeaking((prev) => (prev === speaking ? prev : speaking));
+      // Round to limit re-renders to meaningful level changes.
+      const level = Math.round(rmsToAudioLevel(rms) * 100) / 100;
+      setAudioLevel(level);
     }, AUDIO_LEVEL_INTERVAL_MS);
 
     const isOpusCodecSupported = MediaRecorder.isTypeSupported(
@@ -190,5 +187,5 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
     await clearRecordedChunks();
   }, [stop]);
 
-  return { start, stop, cleanup, isRecording, isSpeaking };
+  return { start, stop, cleanup, isRecording, audioLevel };
 };

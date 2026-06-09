@@ -21,15 +21,17 @@ const NO_AUDIO_WARNING_DELAY_MS = 5_000;
 
 type Params = {
   isRecording: boolean;
-  isSpeaking: boolean;
+  audioLevel: number;
 };
 
-export function useAudioErrorDetection({ isRecording, isSpeaking }: Params): {
+export function useAudioErrorDetection({ isRecording, audioLevel }: Params): {
   micStatus: "error" | "speaking" | "silent";
   hasAudioError: boolean;
   setHasAudioError: (status: boolean) => void;
 } {
   const [hasAudioError, setHasAudioError] = useState(false);
+
+  const isSpeaking = audioLevel > 0;
 
   useEffect(() => {
     if (!isRecording || isSpeaking) {
