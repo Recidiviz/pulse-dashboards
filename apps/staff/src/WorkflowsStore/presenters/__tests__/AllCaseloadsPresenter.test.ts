@@ -219,14 +219,40 @@ describe("AllCaseloadsPresenter", () => {
       activeSystem: "INCARCERATION",
     });
 
-    expect(supervisionPresenter.enabledColumnIds.supervisionType).toBeTrue();
-    expect(incarcerationPresenter.enabledColumnIds.supervisionType).toBeFalse();
+    expect(
+      supervisionPresenter.enabledColumnIds["CLIENT_SUPERVISION_TYPE"],
+    ).toBeTrue();
+    expect(
+      incarcerationPresenter.enabledColumnIds["CLIENT_SUPERVISION_TYPE"],
+    ).toBeFalse();
     expect(supervisionPresenter.enabledColumnIds).toMatchObject({
-      name: true,
-      id: true,
-      date: true,
-      assignedTo: true,
-      level: true,
+      PERSON_NAME: true,
+      PERSON_DISPLAY_ID: true,
+      RELEASE_DATE: true,
+      ASSIGNED_STAFF_NAME: true,
+      LEVEL: true,
     });
+  });
+
+  it("enables MI residents column for MI residents", () => {
+    const { presenter: usMiPresenter } = makePresenter({
+      activeSystem: "INCARCERATION",
+      currentTenantId: "US_MI",
+    });
+    const { presenter: usCaPresenter } = makePresenter({
+      activeSystem: "INCARCERATION",
+      currentTenantId: "US_CA",
+    });
+
+    expect(usMiPresenter.enabledColumnIds["US_MI_RESIDENT_LOCK"]).toBeTrue();
+    expect(
+      usMiPresenter.enabledColumnIds["US_MI_RESIDENT_SEG_TYPE"],
+    ).toBeTrue();
+    expect(
+      usCaPresenter.enabledColumnIds["US_MI_RESIDENT_SEG_TYPE"],
+    ).toBeFalse();
+    expect(
+      usCaPresenter.enabledColumnIds["US_MI_RESIDENT_SEG_TYPE"],
+    ).toBeFalse();
   });
 });

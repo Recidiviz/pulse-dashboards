@@ -24,14 +24,15 @@ import { JusticeInvolvedPerson } from "../../../WorkflowsStore";
 import { AllCaseloadsPresenter } from "../../../WorkflowsStore/presenters/AllCaseloadsPresenter";
 import { getPersonReleaseDate } from "../../../WorkflowsStore/utils";
 import { CaseloadTable, SupervisingOfficerNameCell } from "../../CaseloadTable";
+import { usMiResidentLock, usMiResidentSegregationType } from "./US_MI/utils";
 import {
   ClientsResidentsTableColumnId,
+  clientSupervisionType,
   nameSortValue,
   PersonDateCell,
   PersonIdCellWrapper,
   personLevel,
   PersonNameWrapper,
-  personSupervisionType,
   sortDisplayIds,
   sortOptionalDates,
 } from "./utils";
@@ -69,7 +70,7 @@ function buildColumns({
   return [
     {
       header: "Name",
-      id: "name",
+      id: "PERSON_NAME",
       accessorFn: nameSortValue,
       enableSorting: true,
       sortingFn: "text",
@@ -77,7 +78,7 @@ function buildColumns({
     },
     {
       header: displayIdHeader,
-      id: "id",
+      id: "PERSON_DISPLAY_ID",
       accessorFn: (person) => person.displayId,
       enableSorting: true,
       sortingFn: sortDisplayIds,
@@ -85,7 +86,7 @@ function buildColumns({
     },
     {
       header: dateHeader,
-      id: "date",
+      id: "RELEASE_DATE",
       accessorFn: getPersonReleaseDate,
       enableSorting: true,
       sortingFn: sortOptionalDates,
@@ -93,7 +94,7 @@ function buildColumns({
     },
     {
       header: "Assigned To",
-      id: "assignedTo",
+      id: "ASSIGNED_STAFF_NAME",
       accessorFn: (person) =>
         person.assignedStaffFullName || person.assignedStaffId,
       enableSorting: true,
@@ -104,16 +105,32 @@ function buildColumns({
     },
     {
       header: "Supervision Type",
-      id: "supervisionType",
-      accessorFn: personSupervisionType,
+      id: "CLIENT_SUPERVISION_TYPE",
+      accessorFn: clientSupervisionType,
       enableSorting: true,
       sortingFn: "text",
       cell: TextCell,
     },
     {
       header: levelHeader,
-      id: "level",
+      id: "LEVEL",
       accessorFn: personLevel,
+      enableSorting: true,
+      sortingFn: "text",
+      cell: TextCell,
+    },
+    {
+      header: "Lock",
+      id: "US_MI_RESIDENT_LOCK",
+      accessorFn: usMiResidentLock,
+      enableSorting: true,
+      sortingFn: "text",
+      cell: TextCell,
+    },
+    {
+      header: "Segregation Type",
+      id: "US_MI_RESIDENT_SEG_TYPE",
+      accessorFn: usMiResidentSegregationType,
       enableSorting: true,
       sortingFn: "text",
       cell: TextCell,
@@ -159,7 +176,7 @@ export const ClientsResidentsAllCaseloadsTable = observer(
         columns={columns}
         onRowClick={(person) => navigate(person.profileUrl)}
         initialState={{
-          sorting: [{ id: "name", desc: false }],
+          sorting: [{ id: "PERSON_NAME", desc: false }],
         }}
       />
     );

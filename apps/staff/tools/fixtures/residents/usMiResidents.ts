@@ -39,7 +39,11 @@ export const usMiResidents: ResidentFixture[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -8, months: -1 }),
     releaseDate: relativeFixtureDate({ months: 35 }),
-    metadata: {},
+    metadata: {
+      stateCode: "US_MI",
+      lock: "LOCK #",
+      solitarySessionType: "Administrative Segregation",
+    },
   },
   {
     allEligibleOpportunities: [
@@ -61,7 +65,11 @@ export const usMiResidents: ResidentFixture[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -46, days: 1 }),
     releaseDate: relativeFixtureDate({ months: 26 }),
-    metadata: {},
+    metadata: {
+      stateCode: "US_MI",
+      lock: "LOCK #",
+      solitarySessionType: "Temporary Segregation",
+    },
   },
   {
     allEligibleOpportunities: [

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,21 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { JusticeInvolvedPerson } from "../../../../WorkflowsStore";
+import { Resident } from "../../../../WorkflowsStore/Resident";
 
-import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
+export function usMiResidentLock(person: JusticeInvolvedPerson): string {
+  if (person instanceof Resident && person.metadata.stateCode === "US_MI")
+    return person.metadata.lock ?? "Unknown";
+  return "";
+}
 
-export const solitarySessionType = z
-  .literal("Administrative Segregation")
-  .or(z.literal("Temporary Segregation"));
-
-export const usMiResidentMetadataSchema = z.object({
-  stateCode: z.literal("US_MI"),
-  earliestReleaseDate: nullishAsUndefined(dateStringSchema),
-  maximumReleaseDate: nullishAsUndefined(dateStringSchema),
-  isLife: z.boolean().nullish(),
-  lock: nullishAsUndefined(z.string()),
-  solitarySessionType: nullishAsUndefined(solitarySessionType),
-});
-
-export type UsMiResidentMetadata = z.output<typeof usMiResidentMetadataSchema>;
+export function usMiResidentSegregationType(
+  person: JusticeInvolvedPerson,
+): string {
+  if (person instanceof Resident && person.metadata.stateCode === "US_MI")
+    return person.metadata.solitarySessionType ?? "N/A";
+  return "";
+}

@@ -138,13 +138,19 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
   get enabledColumnIds(): Record<ClientsResidentsTableColumnId, boolean> {
     const isSupervision =
       this.rootStore.workflowsStore.activeSystem === "SUPERVISION";
+    const isUsMiIncarceration =
+      this.rootStore.workflowsStore.activeSystem === "INCARCERATION" &&
+      this.rootStore.currentTenantId === "US_MI";
+
     return {
-      name: true,
-      id: true,
-      date: true,
-      assignedTo: true,
-      supervisionType: isSupervision,
-      level: true,
+      PERSON_NAME: true,
+      PERSON_DISPLAY_ID: true,
+      RELEASE_DATE: true,
+      ASSIGNED_STAFF_NAME: true,
+      CLIENT_SUPERVISION_TYPE: isSupervision,
+      LEVEL: true,
+      US_MI_RESIDENT_LOCK: isUsMiIncarceration,
+      US_MI_RESIDENT_SEG_TYPE: isUsMiIncarceration,
     };
   }
 

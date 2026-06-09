@@ -30,12 +30,14 @@ import { getPersonReleaseDate } from "../../../WorkflowsStore/utils";
 import { PersonIdCell, PersonNameCell } from "../../CaseloadTable";
 
 export type ClientsResidentsTableColumnId =
-  | "name"
-  | "id"
-  | "date"
-  | "assignedTo"
-  | "supervisionType"
-  | "level";
+  | "PERSON_NAME"
+  | "PERSON_DISPLAY_ID"
+  | "RELEASE_DATE"
+  | "ASSIGNED_STAFF_NAME"
+  | "CLIENT_SUPERVISION_TYPE"
+  | "LEVEL"
+  | "US_MI_RESIDENT_LOCK"
+  | "US_MI_RESIDENT_SEG_TYPE";
 
 export const US_TN_CLASSIFICATION_OPPORTUNITIES = [
   "usTnInitialClassification2026Policy",
@@ -111,7 +113,7 @@ export function nameSortValue(person: JusticeInvolvedPerson): string {
     .join(", ");
 }
 
-export function personSupervisionType(person: JusticeInvolvedPerson): string {
+export function clientSupervisionType(person: JusticeInvolvedPerson): string {
   if (!(person instanceof Client)) return "";
   return person.supervisionType;
 }

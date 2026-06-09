@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { solitarySessionType } from "../../../people/Resident/US_MI/metadata/schema";
 import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
@@ -64,10 +65,6 @@ const jsonProgrammingSchema = z.object({
 
 export type UsMiSolitarySessionType = z.output<typeof solitarySessionType>;
 export type ProgrammingMetadata = z.output<typeof jsonProgrammingSchema>;
-
-const solitarySessionType = z
-  .literal("Administrative Segregation")
-  .or(z.literal("Temporary Segregation"));
 
 export const usMiSecurityClassificationCommitteeReviewV2Schema =
   opportunitySchemaBase.extend({
