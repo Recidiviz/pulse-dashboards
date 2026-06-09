@@ -21,39 +21,80 @@ import React from "react";
 import { ReportBlock } from "./ReportBlock";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
-const SignatureColumn: React.FC<{
-  title: string;
-  children?: React.ReactNode;
-}> = ({ title, children }) => (
-  <Styled.SignatureColumn>
-    <Styled.SignatureLine />
-    <Styled.SignatureRoleLabel>{title}</Styled.SignatureRoleLabel>
-    <Styled.SignatureFieldRow>
-      <Styled.SignatureFieldLabel>Printed Name:</Styled.SignatureFieldLabel>
-      <Styled.SignatureFieldBlank />
-    </Styled.SignatureFieldRow>
-    <Styled.SignatureFieldRow>
-      <Styled.SignatureFieldLabel>Date:</Styled.SignatureFieldLabel>
-      <Styled.SignatureFieldBlank />
-    </Styled.SignatureFieldRow>
-    {children}
-  </Styled.SignatureColumn>
-);
+export interface SignatureData {
+  signature: string | null;
+  title: string | null;
+  lastSignedAt: Date | null;
+}
 
-export const ReportSignature: React.FC = () => (
+export function isSignatureComplete(
+  data: SignatureData,
+): data is { signature: string; title: string; lastSignedAt: Date } {
+  return !!data.signature && !!data.title && !!data.lastSignedAt;
+}
+
+const SignatureBlock: React.FC<{
+  data: SignatureData;
+  defaultTitle: string;
+}> = ({ data, defaultTitle }) => {
+  if (isSignatureComplete(data)) {
+    return (
+      <Styled.SignedSignatureColumn>
+        <Styled.SignatureLine />
+        <Styled.SignatureRoleLabel>
+          /s/ {data.signature}
+        </Styled.SignatureRoleLabel>
+        <Styled.SignatureRoleLabel>{data.title}</Styled.SignatureRoleLabel>
+        <Styled.SignatureRoleLabel>
+          Date: {moment(data.lastSignedAt).utc().format("M/D/YY")}
+        </Styled.SignatureRoleLabel>
+      </Styled.SignedSignatureColumn>
+    );
+  }
+
+  return (
+    <Styled.SignatureColumn>
+      <Styled.SignatureLine />
+      <Styled.SignatureRoleLabel>{defaultTitle}</Styled.SignatureRoleLabel>
+      <Styled.SignatureFieldRow>
+        <Styled.SignatureFieldLabel>Printed Name:</Styled.SignatureFieldLabel>
+        <Styled.SignatureFieldBlank />
+      </Styled.SignatureFieldRow>
+      <Styled.SignatureFieldRow>
+        <Styled.SignatureFieldLabel>Date:</Styled.SignatureFieldLabel>
+        <Styled.SignatureFieldBlank />
+      </Styled.SignatureFieldRow>
+    </Styled.SignatureColumn>
+  );
+};
+
+interface ReportSignatureProps {
+  officerSignature: SignatureData;
+  supervisorSignature: SignatureData;
+}
+
+export const ReportSignature: React.FC<ReportSignatureProps> = ({
+  officerSignature,
+  supervisorSignature,
+}) => (
   <ReportBlock>
     <Styled.SignatureContainer>
       <Styled.SignatureSubmittedText>
         Respectfully submitted,
       </Styled.SignatureSubmittedText>
       <Styled.SignatureColumnsRow>
-        <SignatureColumn title="Probation & Parole Officer">
-          <Styled.SignatureFieldLabel>
-            Date Created: {moment().format("M/D/YY")}
-          </Styled.SignatureFieldLabel>
-        </SignatureColumn>
-        <SignatureColumn title="Unit Supervisor" />
+        <SignatureBlock
+          data={officerSignature}
+          defaultTitle="Probation & Parole Officer"
+        />
+        <SignatureBlock
+          data={supervisorSignature}
+          defaultTitle="Unit Supervisor"
+        />
       </Styled.SignatureColumnsRow>
+      <Styled.SignatureFieldLabel>
+        Date Created: {moment().format("M/D/YY")}
+      </Styled.SignatureFieldLabel>
     </Styled.SignatureContainer>
   </ReportBlock>
 );

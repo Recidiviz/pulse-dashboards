@@ -27,6 +27,7 @@ import {
 import DownloadIcon from "../assets/download-icon.svg?react";
 import { SARSection } from "../SARDetails/constants";
 import { useStore } from "../StoreProvider/StoreProvider";
+import { ESignatureSection } from "./ESignatureSection";
 import { InsightsSummaryPanel } from "./InsightsSummaryPanel";
 import { MissingBadge } from "./MissingBadge";
 import { exportSARtoPDF } from "./SARPdfExport";
@@ -326,6 +327,11 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
           sarData?.mostSevereOffenseName && (
             <InsightsSummaryPanel presenter={presenter} />
           )}
+
+        <ESignatureSection
+          presenter={presenter}
+          isReportComplete={isReadyForDownload}
+        />
       </Styled.SummaryWrapper>
 
       {/* PDF report — off-screen, captured by html2canvas + jsPDF on download */}

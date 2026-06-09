@@ -59,6 +59,7 @@ import {
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import { InsightDescriptionContext } from "../components/Summary/insightsUtils";
 import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSummaryCard";
+import { SignatureData } from "../components/Summary/ReportSignature";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
 import {
@@ -415,6 +416,109 @@ export class SARDetailsPresenter implements Hydratable {
       address: staff?.officeAddress,
       phoneNumber: staff?.officePhoneNumber,
     };
+  }
+
+  get SARIsAssignedToCurrentUser(): boolean {
+    const currentUserId =
+      this.sentencingStore.staffStore.staffInfo?.pseudonymizedId;
+    const assignedId = this.SARData?.staff?.pseudonymizedId;
+
+    if (!currentUserId || !assignedId) return false;
+    return currentUserId === assignedId;
+  }
+
+  get isSupervisor(): boolean {
+    return this.sentencingStore.isSupervisor;
+  }
+
+  get officerSignatureData(): SignatureData {
+    return {
+      signature: this.SARData?.officerSignature ?? null,
+      title: this.SARData?.officerTitle ?? null,
+      lastSignedAt: this.SARData?.officerLastSignedAt ?? null,
+    };
+  }
+
+  get supervisorSignatureData(): SignatureData {
+    return {
+      signature: this.SARData?.supervisorSignature ?? null,
+      title: this.SARData?.supervisorTitle ?? null,
+      lastSignedAt: this.SARData?.supervisorLastSignedAt ?? null,
+    };
+  }
+
+  async signOfficer(signature: string, title: string): Promise<void> {
+    const sarData = this.SARData;
+    if (!sarData) return;
+
+    const now = new Date();
+    const prev = {
+      signature: sarData.officerSignature,
+      title: sarData.officerTitle,
+      lastSignedAt: sarData.officerLastSignedAt,
+    };
+
+    runInAction(() => {
+      sarData.officerSignature = signature;
+      sarData.officerTitle = title;
+      sarData.officerLastSignedAt = now;
+    });
+
+    try {
+      await this.sentencingStore.apiClient.updateSARDetails(sarData.id, {
+        officerSignature: signature,
+        officerTitle: title,
+        officerLastSignedAt: now,
+        status: this.statusForUpdate,
+      });
+      runInAction(() => {
+        this.updateLocalStatus(this.statusForUpdate);
+      });
+    } catch (e) {
+      runInAction(() => {
+        sarData.officerSignature = prev.signature;
+        sarData.officerTitle = prev.title;
+        sarData.officerLastSignedAt = prev.lastSignedAt;
+      });
+      throw e;
+    }
+  }
+
+  async signSupervisor(signature: string, title: string): Promise<void> {
+    const sarData = this.SARData;
+    if (!sarData) return;
+
+    const now = new Date();
+    const prev = {
+      signature: sarData.supervisorSignature,
+      title: sarData.supervisorTitle,
+      lastSignedAt: sarData.supervisorLastSignedAt,
+    };
+
+    runInAction(() => {
+      sarData.supervisorSignature = signature;
+      sarData.supervisorTitle = title;
+      sarData.supervisorLastSignedAt = now;
+    });
+
+    try {
+      await this.sentencingStore.apiClient.updateSARDetails(sarData.id, {
+        supervisorSignature: signature,
+        supervisorTitle: title,
+        supervisorLastSignedAt: now,
+        status: this.statusForUpdate,
+      });
+      runInAction(() => {
+        this.updateLocalStatus(this.statusForUpdate);
+      });
+    } catch (e) {
+      runInAction(() => {
+        sarData.supervisorSignature = prev.signature;
+        sarData.supervisorTitle = prev.title;
+        sarData.supervisorLastSignedAt = prev.lastSignedAt;
+      });
+      throw e;
+    }
   }
 
   /** Get client attributes for Case Information section */

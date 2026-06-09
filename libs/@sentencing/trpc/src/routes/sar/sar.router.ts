@@ -84,6 +84,7 @@ export const sarRouter = router({
           staff: {
             select: {
               externalId: true,
+              pseudonymizedId: true,
               fullName: true,
               email: true,
               officeAddress: true,

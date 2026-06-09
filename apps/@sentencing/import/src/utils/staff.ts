@@ -29,15 +29,19 @@ export async function transformAndLoadStaffData(
     select: { externalId: true },
   });
 
-  // Load new staff data
-  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
+  const supervisorUpdates: {
+    externalId: string;
+    supervisorId: string | null;
+  }[] = [];
+
+  // First pass: upsert all staff without supervisor connections so that all
+  // records exist before we attempt to link them (supervisors may appear after
+  // their direct reports in the source data).
   for await (const staffData of data) {
-    // Just get the cases which are already in the database (if a case hasn't been uploaded yet, it will be linked to this client during the case upload process)
     const existingCasesForStaff = existingCases.filter(({ externalId }) =>
       staffData.case_ids.includes(externalId),
     );
 
-    // Only connect district for MO staff (convert acronym to full name)
     const districtConnection =
       staffData.state_code === "US_MO" && staffData.district
         ? {
@@ -62,22 +66,46 @@ export async function transformAndLoadStaffData(
       cases: {
         connect: existingCasesForStaff,
       },
-      supervisor: staffData.supervisor_id
-        ? { connect: { externalId: staffData.supervisor_id } }
-        : undefined,
       supervisesAll: !!staffData.supervises_all,
       officeAddress: staffData.officeAddress,
       officePhoneNumber: staffData.officePhoneNumber,
       district: districtConnection,
     };
 
-    // Load data
     await prismaClient.staff.upsert({
-      where: {
-        externalId: newStaff.externalId,
-      },
+      where: { externalId: newStaff.externalId },
       create: newStaff,
       update: newStaff,
     });
+
+    supervisorUpdates.push({
+      externalId: staffData.external_id,
+      supervisorId: staffData.supervisor_id ?? null,
+    });
   }
+
+  // Second pass: now that all staff records exist, wire up (or clear) supervisor
+  // links. Promise.allSettled isolates failures so one bad reference doesn't
+  // abort the remaining updates.
+  const results = await Promise.allSettled(
+    supervisorUpdates.map(({ externalId, supervisorId }) =>
+      prismaClient.staff.update({
+        where: { externalId },
+        data: {
+          supervisor: supervisorId
+            ? { connect: { externalId: supervisorId } }
+            : { disconnect: true },
+        },
+      }),
+    ),
+  );
+
+  results.forEach((result, i) => {
+    if (result.status === "rejected") {
+      console.error(
+        `Failed to update supervisor link for staff ${supervisorUpdates[i].externalId}:`,
+        result.reason,
+      );
+    }
+  });
 }

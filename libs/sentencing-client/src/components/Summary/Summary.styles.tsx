@@ -26,7 +26,7 @@ const flexColumn = css`
   gap: 0.5rem;
 `;
 
-const flexRow = css`
+export const flexRow = css`
   display: flex;
 `;
 
@@ -189,10 +189,9 @@ export const SummaryWrapper = styled.div`
   width: 50rem;
 `;
 
-export const InsightsSidePanel = styled.div`
+const SummarySidePanel = styled.div`
   display: flex;
   padding: 32px 24px;
-  flex-direction: column;
   align-items: flex-start;
   gap: 24px;
   align-self: stretch;
@@ -200,6 +199,12 @@ export const InsightsSidePanel = styled.div`
   border: 1px solid ${palette.slate10};
   background: ${palette.white};
 `;
+
+export const InsightsSidePanel = styled(SummarySidePanel)`
+  flex-direction: column;
+`;
+
+export const SignatureSidePanel = styled(InsightsSidePanel)``;
 
 export const InsightsChartCard = styled.div<{ $isEmpty?: boolean }>`
   display: flex;

@@ -286,7 +286,10 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   (insightData?.dispositionNumRecords ? (
                     <ReportKeyFinding insight={insightData} />
                   ) : null)}
-                <ReportSignature />
+                <ReportSignature
+                  officerSignature={presenter.officerSignatureData}
+                  supervisorSignature={presenter.supervisorSignatureData}
+                />
               </Styled.PageContent>
             </td>
           </tr>

@@ -44,6 +44,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     },
     staff: {
       externalId: "STAFF-001",
+      pseudonymizedId: "STAFF-PSEUDO-001",
       fullName: "Jane Smith",
       email: "jane.smith@example.com",
       officeAddress: "123 Main St, Jefferson City, MO 65101",
