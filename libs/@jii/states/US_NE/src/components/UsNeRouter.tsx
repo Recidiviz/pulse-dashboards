@@ -28,20 +28,23 @@ import { Definition } from "./Definition/Definition";
 import UsNeSingleResidentHome from "./Home/UsNeSingleResidentHome";
 import { UsNeReentryAssessmentPage } from "./ReentryAssessment/UsNeReentryAssessmentPage";
 import UsNeReentryChecklistPage from "./ReentryChecklist/UsNeReentryChecklistPage";
+import { UsNeLayout } from "./UsNeLayout/UsNeLayout";
 export const UsNeRouter = () => {
   return (
     <Routes>
-      <Route index element={<UsNeSingleResidentHome />} />
-      <Route path={UsNeMoreInformation.path} element={<Definition />} />
-      <Route
-        path={UsNeReentryChecklist.path}
-        element={<UsNeReentryChecklistPage />}
-      />
-      <Route
-        path={ReentryAssessment.path}
-        element={<UsNeReentryAssessmentPage />}
-      />
-      <Route path="*" element={<NotFound />} />
+      <Route element={<UsNeLayout />}>
+        <Route index element={<UsNeSingleResidentHome />} />
+        <Route path={UsNeMoreInformation.path} element={<Definition />} />
+        <Route
+          path={UsNeReentryChecklist.path}
+          element={<UsNeReentryChecklistPage />}
+        />
+        <Route
+          path={ReentryAssessment.path}
+          element={<UsNeReentryAssessmentPage />}
+        />
+        <Route path="*" element={<NotFound />} />
+      </Route>
     </Routes>
   );
 };

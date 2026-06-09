@@ -25,23 +25,37 @@ import { useRootStore } from "~@jii/data";
 
 import { PAGE_LAYOUT_HEADER_GAP } from "../constants";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $flushBottom: boolean }>`
   display: grid;
+  // there is only one column but overriding auto width prevents full-bleed
+  // children (e.g. a 100vw FullWidthBanner) from stretching the column and
+  // pushing centered content sideways by the scrollbar width
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 1fr auto;
-  row-gap: ${rem(spacing.xxl)};
+  row-gap: ${({ $flushBottom }) => ($flushBottom ? 0 : rem(spacing.xxl))};
 `;
 
 /**
  * Ensures the provided contents fill at least the vertical height of the screen,
  * pushing the provided contents to the top and bottom of the screen when applicable.
  * Contents taller than one screen should see no effect. Takes sticky header into account.
+ *
+ * Set `flushBottom` to remove the gap above the bottom slot, e.g. when the top
+ * content already ends in its own footer that should sit flush against the one
+ * pinned to the bottom.
  */
 export const ScreenFillingWrapper: FC<{
   top: ReactNode;
   bottom: ReactNode;
-}> = observer(function ScreenFillingWrapper({ top, bottom }) {
+  flushBottom?: boolean;
+}> = observer(function ScreenFillingWrapper({
+  top,
+  bottom,
+  flushBottom = false,
+}) {
   return (
     <Wrapper
+      $flushBottom={flushBottom}
       style={{
         minHeight: `calc(100vh - ${useRootStore().uiStore.stickyHeaderHeight}px - ${rem(PAGE_LAYOUT_HEADER_GAP)})`,
       }}

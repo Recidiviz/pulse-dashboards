@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
+import { PageContainer, usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { useUsNeTranslations } from "~@jii/translation";
 
@@ -35,7 +35,7 @@ const UsNeSingleResidentHome = () => {
   }
 
   return (
-    <>
+    <PageContainer>
       <UsNeHomeHeader
         sentenceLastModifiedDate={metadata.sentenceLastModifiedDate}
       />
@@ -43,7 +43,7 @@ const UsNeSingleResidentHome = () => {
       <UsNeDateCardGroup />
       <UsNeGoodTimeCardGroup />
       <UsNeGoodTimeAdjustments />
-    </>
+    </PageContainer>
   );
 };
 

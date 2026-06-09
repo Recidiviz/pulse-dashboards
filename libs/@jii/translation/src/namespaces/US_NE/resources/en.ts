@@ -330,4 +330,6 @@ export default {
       body: jailCreditsDefinition,
     },
   },
+  disclaimer:
+    "This information is provided by a third-party vendor for general informational purposes only. This information is not intended as legal advice or as a substitute for the individualized advice of your counsel. Providing this information does not create an attorney-client relationship between the Nebraska Department of Correctional Services and the user. Providing this information does not create an attorney-client relationship between the third-party vendor and the user. The Nebraska Department of Correctional Services and the third-party vendor shall not be liable for any errors, omissions, delays, or interruptions related to the provided information.",
 };
