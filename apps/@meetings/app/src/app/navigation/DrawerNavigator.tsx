@@ -46,11 +46,22 @@ const ClientsStackNavigator =
 const ResidentsStackNavigator =
   createNativeStackNavigator<ResidentsStackParamList>();
 
+// for test purposes until backend ready
+// const hasSeenOnboarding = false;
+
 export default function DrawerNavigator() {
+  // const navigation =
+  //   useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { hasSupervisionAccess, hasFacilitiesAccess, isLoading, stateCode } =
     useUserContext();
   const { isLoading: isStateLoading } = useStateSelection();
   const { agencyConfigs, isLoading: isLoadingConfigs } = useAgencyConfigs();
+
+  // useEffect(() => {
+  //   if (!hasSeenOnboarding) {
+  //     navigation.navigate("Onboarding");
+  //   }
+  // }, [hasSeenOnboarding]);
 
   // Wait for user metadata and state context to load before checking access
   if (isLoading || isStateLoading || isLoadingConfigs) {
@@ -73,6 +84,10 @@ export default function DrawerNavigator() {
   }
 
   const getInitialRouteName = () => {
+    // for test purposes until backend ready
+    // if (!hasSeenOnboarding) {
+    //   return "Onboarding";
+    // }
     if (hasSupervisionAccess) {
       return "ClientsRoot";
     }
@@ -89,11 +104,14 @@ export default function DrawerNavigator() {
         headerShown: false,
         drawerType: "front",
         drawerStyle: { width: "100%" },
+        // for test purposes until backend ready
+        // swipeEnabled: !hasSeenOnboarding ? false : true,
         swipeEnabled: true,
       }}
       backBehavior="fullHistory"
       drawerContent={(props) => <DrawerContent {...props} />}
     >
+      {/* <Drawer.Screen name="Onboarding" component={OnboardingScreen} /> */}
       {hasSupervisionAccess && (
         <Drawer.Screen name="ClientsRoot" component={ClientsStack} />
       )}

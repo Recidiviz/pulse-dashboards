@@ -96,6 +96,12 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             onPress={navigation.closeDrawer}
           />
         )}
+        {/* <MobileMenuItem
+          icon={UsersIcon}
+          title="Onboarding"
+          screen="Onboarding"
+          onPress={navigation.closeDrawer}
+        /> */}
       </View>
       <View
         className="flex flex-col gap-1.5 bg-screen px-4"

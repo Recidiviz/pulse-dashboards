@@ -54,6 +54,7 @@ export type ResidentsStackParamList = {
 };
 
 export type RootStackParamList = {
+  Onboarding: undefined;
   ClientsRoot: NavigatorScreenParams<ClientsStackParamList>;
   ResidentsRoot: NavigatorScreenParams<ResidentsStackParamList>;
   StateSelection: undefined;

@@ -44,6 +44,7 @@ const linking: LinkingOptions<AppStackParamList> = {
       Login: "login",
       Main: {
         screens: {
+          Onboarding: "onboarding",
           ClientsRoot: {
             screens: {
               Clients: "clients",
