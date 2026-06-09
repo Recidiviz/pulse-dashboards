@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,43 +17,78 @@
 
 import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
-import tk from "timekeeper";
+
+import { ClientRecord } from "~datatypes";
 
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { DocumentSubscription } from "../../../subscriptions";
-import { UsMiMinimumTelephoneReportingOpportunity } from "..";
-import {
-  usMiMinimumTelephoneReportingEligibleClientRecord,
-  usMiMinimumTelephoneReportingReferralRecord,
-} from "../__fixtures__";
+import { UsMiEarlyDischargeOpportunity } from "..";
 
-const usMiMinimumTelephoneReportingAlmostEligibleRecord: DocumentData = {
+const usMiEarlyDischargeEligibleClientRecord: ClientRecord = {
+  recordId: "us_mi_ed_001",
+  personName: { givenNames: "ALICE", surname: "SMITH" },
+  personExternalId: "ed-001",
+  displayId: "ded-001",
+  pseudonymizedId: "ped-001",
   stateCode: "US_MI",
-  externalId: "010",
+  officerId: "OFFICER1",
+  supervisionType: "PAROLE",
+  supervisionLevel: "MEDIUM",
+  supervisionLevelStart: new Date("2021-01-01"),
+  allEligibleOpportunities: ["usMiEarlyDischarge"],
+  personType: "CLIENT",
+};
+
+const usMiEarlyDischargeEligibleRecord: DocumentData = {
+  stateCode: "US_MI",
+  externalId: "ed-001",
   eligibleCriteria: {
-    usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-      initialAssessmentLevel: "MEDIUM/MEDIUM",
-      supervisionLevelRawText: "MEDIUM",
-    },
-    usMiNotRequiredToRegisterUnderSora: null,
-    usMiNotServingIneligibleOffensesForTelephoneReporting: null,
-    supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
-    usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
+    supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: null,
+    servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: null,
+    usMiNoActivePpo: null,
+    usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: null,
+    usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
+      null,
+    supervisionOrSupervisionOutOfStateLevelIsNotHigh: null,
+  },
+  ineligibleCriteria: {},
+  metadata: {
+    supervisionType: "Parole",
+    officers: [],
+    dockets: [],
+  },
+  isEligible: true,
+  isAlmostEligible: false,
+};
+
+const usMiEarlyDischargeAlmostEligibleRecord: DocumentData = {
+  stateCode: "US_MI",
+  externalId: "ed-002",
+  eligibleCriteria: {
+    servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: null,
+    usMiNoActivePpo: null,
+    usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: null,
+    usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
+      null,
+    supervisionOrSupervisionOutOfStateLevelIsNotHigh: null,
   },
   ineligibleCriteria: {
-    onMinimumSupervisionAtLeastSixMonths: {
-      eligibleDate: "2022-09-01",
+    supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+      eligibleDate: "2025-06-01",
     },
   },
   metadata: {
-    eligibleDate: "2022-09-01",
+    supervisionType: "Parole",
+    eligibleDate: "2025-06-01",
+    officers: [],
+    dockets: [],
   },
   isEligible: false,
   isAlmostEligible: true,
 };
 
-let opp: UsMiMinimumTelephoneReportingOpportunity;
+let opp: UsMiEarlyDischargeOpportunity;
 let client: Client;
 let root: RootStore;
 let updatesSub: DocumentSubscription<any>;
@@ -61,48 +96,37 @@ let updatesSub: DocumentSubscription<any>;
 vi.mock("../../../subscriptions");
 
 function createTestUnit(
-  clientRecord: typeof usMiMinimumTelephoneReportingEligibleClientRecord,
+  clientRecord: typeof usMiEarlyDischargeEligibleClientRecord,
   opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
-    "usMiMinimumTelephoneReporting",
+    "usMiEarlyDischarge",
   ]);
   client = new Client(clientRecord, root);
 
-  opp = new UsMiMinimumTelephoneReportingOpportunity(client, opportunityRecord);
+  opp = new UsMiEarlyDischargeOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
-  // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
-  tk.freeze(new Date(2022, 7, 1));
 });
 
 afterEach(() => {
   vi.resetAllMocks();
-  tk.reset();
   configure({ safeDescriptors: true });
 });
 
 describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(
-      usMiMinimumTelephoneReportingEligibleClientRecord,
-      usMiMinimumTelephoneReportingReferralRecord,
+      usMiEarlyDischargeEligibleClientRecord,
+      usMiEarlyDischargeEligibleRecord,
     );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
-  });
-
-  test("requirements almost met", () => {
-    expect(opp.requirementsAlmostMet).toEqual([]);
-  });
-
-  test("requirements met", () => {
-    expect(opp.requirementsMet).toMatchSnapshot();
   });
 
   test("tabTitle returns Eligible Now", () => {
@@ -117,8 +141,8 @@ describe("fully eligible", () => {
 describe("almost eligible", () => {
   beforeEach(() => {
     createTestUnit(
-      usMiMinimumTelephoneReportingEligibleClientRecord,
-      usMiMinimumTelephoneReportingAlmostEligibleRecord,
+      usMiEarlyDischargeEligibleClientRecord,
+      usMiEarlyDischargeAlmostEligibleRecord,
     );
 
     updatesSub = opp.updatesSubscription;

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,43 +17,51 @@
 
 import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
-import tk from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { DocumentSubscription } from "../../../subscriptions";
-import { UsMiMinimumTelephoneReportingOpportunity } from "..";
-import {
-  usMiMinimumTelephoneReportingEligibleClientRecord,
-  usMiMinimumTelephoneReportingReferralRecord,
-} from "../__fixtures__";
+import { UsMiClassificationReviewOpportunity } from "..";
+import { usMiClassificationReviewEligibleClientRecord } from "../__fixtures__";
 
-const usMiMinimumTelephoneReportingAlmostEligibleRecord: DocumentData = {
+const usMiClassificationReviewEligibleRecord: DocumentData = {
   stateCode: "US_MI",
-  externalId: "010",
+  externalId: "cr-eligible-1",
   eligibleCriteria: {
-    usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-      initialAssessmentLevel: "MEDIUM/MEDIUM",
-      supervisionLevelRawText: "MEDIUM",
+    usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+      supervisionLevel: "MAXIMUM",
+      mediumIsLowestSupervisionLevelAllowed: null,
     },
-    usMiNotRequiredToRegisterUnderSora: null,
-    usMiNotServingIneligibleOffensesForTelephoneReporting: null,
-    supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
-    usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
+    usMiSixMonthsPastLastClassificationReviewDate: {
+      eligibleDate: "2022-12-12",
+    },
+  },
+  ineligibleCriteria: {},
+  metadata: { recommendedSupervisionLevel: "MEDIUM" },
+  isEligible: true,
+  isAlmostEligible: false,
+};
+
+const usMiClassificationReviewAlmostEligibleRecord: DocumentData = {
+  stateCode: "US_MI",
+  externalId: "cr-almost-1",
+  eligibleCriteria: {
+    usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+      supervisionLevel: "MAXIMUM",
+      mediumIsLowestSupervisionLevelAllowed: null,
+    },
   },
   ineligibleCriteria: {
-    onMinimumSupervisionAtLeastSixMonths: {
-      eligibleDate: "2022-09-01",
+    usMiPastInitialClassificationReviewDate: {
+      eligibleDate: "2022-12-12",
     },
   },
-  metadata: {
-    eligibleDate: "2022-09-01",
-  },
+  metadata: { recommendedSupervisionLevel: "MEDIUM" },
   isEligible: false,
   isAlmostEligible: true,
 };
 
-let opp: UsMiMinimumTelephoneReportingOpportunity;
+let opp: UsMiClassificationReviewOpportunity;
 let client: Client;
 let root: RootStore;
 let updatesSub: DocumentSubscription<any>;
@@ -61,48 +69,37 @@ let updatesSub: DocumentSubscription<any>;
 vi.mock("../../../subscriptions");
 
 function createTestUnit(
-  clientRecord: typeof usMiMinimumTelephoneReportingEligibleClientRecord,
+  clientRecord: typeof usMiClassificationReviewEligibleClientRecord,
   opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
-    "usMiMinimumTelephoneReporting",
+    "usMiClassificationReview",
   ]);
   client = new Client(clientRecord, root);
 
-  opp = new UsMiMinimumTelephoneReportingOpportunity(client, opportunityRecord);
+  opp = new UsMiClassificationReviewOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
-  // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
-  tk.freeze(new Date(2022, 7, 1));
 });
 
 afterEach(() => {
   vi.resetAllMocks();
-  tk.reset();
   configure({ safeDescriptors: true });
 });
 
 describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(
-      usMiMinimumTelephoneReportingEligibleClientRecord,
-      usMiMinimumTelephoneReportingReferralRecord,
+      usMiClassificationReviewEligibleClientRecord,
+      usMiClassificationReviewEligibleRecord,
     );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
-  });
-
-  test("requirements almost met", () => {
-    expect(opp.requirementsAlmostMet).toEqual([]);
-  });
-
-  test("requirements met", () => {
-    expect(opp.requirementsMet).toMatchSnapshot();
   });
 
   test("tabTitle returns Eligible Now", () => {
@@ -117,8 +114,8 @@ describe("fully eligible", () => {
 describe("almost eligible", () => {
   beforeEach(() => {
     createTestUnit(
-      usMiMinimumTelephoneReportingEligibleClientRecord,
-      usMiMinimumTelephoneReportingAlmostEligibleRecord,
+      usMiClassificationReviewEligibleClientRecord,
+      usMiClassificationReviewAlmostEligibleRecord,
     );
 
     updatesSub = opp.updatesSubscription;

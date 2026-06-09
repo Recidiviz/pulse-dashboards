@@ -18,16 +18,13 @@
 import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsMiSupervisionOpportunityBase } from "../UsMiSupervisionOpportunityBase";
 import {
   UsMiClassificationReviewReferralRecord,
   usMiClassificationReviewSchemaForSupervisionLevelFormatter,
 } from "./UsMiClassificationReviewReferralRecord";
 
-export class UsMiClassificationReviewOpportunity extends OpportunityBase<
-  Client,
-  UsMiClassificationReviewReferralRecord
-> {
+export class UsMiClassificationReviewOpportunity extends UsMiSupervisionOpportunityBase<UsMiClassificationReviewReferralRecord> {
   readonly hideUnknownCaseNoteDates = true;
 
   constructor(client: Client, record: DocumentData) {
