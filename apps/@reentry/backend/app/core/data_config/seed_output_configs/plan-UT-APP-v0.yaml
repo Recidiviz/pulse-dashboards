@@ -104,6 +104,8 @@ prompts:
     Section title: {section}
     Section content: {section_content}
 
+    IMPORTANT: When extracting the source_text_extract, use **exact verbatim quotes only - do not paraphrase.** You may trim the start or end of a longer sentence using '...', but never drop words from within a quote.
+
     For the notes, provide information about what the agent should be prepared to talk about with the client in order to support them in reaching the goal and completing the action items in this section. This could be about money, time, or any other constraint that could be a barrier to achieving the section's goal or individual action items.
 
     For example, if the action item or goal within the section may incur new costs for the client or are expensive, which may be difficult depending on their financial situation, advise the agent to be prepared to discuss this with the client. In this example, you might recommend that the agent walk through options that are covered by the client's insurance or available for free in the community, or other safe approaches to mitigating the financial burden.

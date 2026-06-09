@@ -1,3 +1,5 @@
+import re
+
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langsmith.schemas import Example, Run
@@ -175,6 +177,26 @@ async def tone(run: Run, example: Example):
         "comment": score.explanation,
     }
 
+_SMART_QUOTE_TABLE = str.maketrans(
+    {
+        0x2018: 0x27,  # ' → '
+        0x2019: 0x27,  # ' → '
+        0x201C: 0x22,  # " → "
+        0x201D: 0x22,  # " → "
+    }
+)
+
+
+def _normalize_for_matching(text: str) -> str:
+    # Replace curly/smart quotes with ASCII equivalents so LLM-generated
+    # extracts match stored transcript text, then lowercase and collapse whitespace.
+    text = text.translate(_SMART_QUOTE_TABLE)
+    # Strip boundary ellipses the LLM uses to indicate a trimmed quote.
+    text = re.sub(r"^\s*\.\.\.\s*", "", text)
+    text = re.sub(r"\s*\.\.\.\s*$", "", text)
+    return re.sub(r"\s+", " ", text).lower().strip()
+
+
 # Helper function to extract all annotations from structured plan
 def _extract_all_annotations(structured_plan):
     """Extract all annotations from the structured action plan"""
@@ -205,13 +227,20 @@ async def citations_text_verified(run: Run, example: Example):
     if not all_annotations:
         return {"key": "citations_text_verified", "score": 1}
 
-    corpus = " ".join(
-        m.get("content", "") for m in messages if m.get("content")
-    ).lower()
+    # Include role prefixes (e.g. "client: Yes") so citations that reproduce the
+    # speaker label — as the LLM sometimes does — are still found in the corpus.
+    # Normalize smart/curly quotes so they match the ASCII quotes in stored messages.
+    corpus = _normalize_for_matching(
+        " ".join(
+            f"{m['role']}: {m['content']}" if m.get("role") else m.get("content", "")
+            for m in messages
+            if m.get("content")
+        )
+    )
 
     failed = []
     for i, ann in enumerate(all_annotations, 1):
-        if ann.source_text_extract.lower() not in corpus:
+        if _normalize_for_matching(ann.source_text_extract) not in corpus:
             failed.append(f'Citation {i}: "{ann.source_text_extract}"')
 
     score = 0 if failed else 1

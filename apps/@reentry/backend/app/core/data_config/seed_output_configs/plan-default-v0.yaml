@@ -108,7 +108,7 @@ prompts:
     Section title: {section}
     Section content: {section_content}
 
-    IMPORTANT: Only provide citations from the client's transcripts, never from the decision tree recommendations, intake summary or any other sources.
+    IMPORTANT: When extracting the source_text_extract, use **exact verbatim quotes only - do not paraphrase.** You may trim the start or end of a longer sentence using '...', but never drop words from within a quote.
 
   section_refinement: |
     Perfect, now let's refine the content of the section '{section}'.

@@ -10,13 +10,18 @@ from app.services.resources import Resource, ResourceCategory, ResourceSubcatego
 ### Result Types
 class Annotation(BaseModel):
     source: str = Field(
-        description="The source of the annotation (for eg: Client intake, Client intake summary, Decision tree)"
+        description="The source of the annotation, which should only be 'Client intake messages'"
     )
     source_location: str = Field(
-        description="The location of the annotation in the source (for eg: name of the section, name of the decision tree, or just 'conversation' if it's a conversation)"
+        description="The location of the annotation in the source, which should only be 'conversation'"
     )
     source_text_extract: str = Field(
-        description="Text extract from the source, but not the full paragraph (for eg: ...but i'm struggling with housing...)"
+        description=(
+            "Exact verbatim quote from the client's intake conversation. "
+            "Copy the words exactly as the client said them — do not omit, rearrange, or substitute any words. "
+            "You may trim the beginning or end of a longer sentence using '...' "
+            "(e.g. '...but I'm struggling with housing...'), but never drop words from within the quote."
+        )
     )
 
 
