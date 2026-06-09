@@ -246,6 +246,7 @@ export type MetricValueAccessor =
   | "overall"
   | "timelyDischarge"
   | "timelyContact"
+  | "timelyContactDueDateBased"
   | "timelyRiskAssessment"
   | "timelyDowngrade";
 
@@ -259,6 +260,7 @@ export type VitalsSummaryRecord = {
   overall90Day: number;
   timelyDischarge: number;
   timelyContact: number;
+  timelyContactDueDateBased: number;
   timelyRiskAssessment: number;
   timelyDowngrade: number;
 };

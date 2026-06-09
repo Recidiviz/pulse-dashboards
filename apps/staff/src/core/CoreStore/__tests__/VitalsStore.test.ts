@@ -116,6 +116,20 @@ describe("VitalsStore", () => {
         {
           date: "2021-03-11",
           entityId: "STATE_DOC",
+          metric: "CONTACT_DUE_DATE_BASED",
+          value: 50.5,
+          monthlyAvg: 50.8,
+        },
+        {
+          date: "2021-03-12",
+          entityId: "STATE_DOC",
+          metric: "CONTACT_DUE_DATE_BASED",
+          value: 53.5,
+          monthlyAvg: 53.8,
+        },
+        {
+          date: "2021-03-11",
+          entityId: "STATE_DOC",
           metric: "RISK_ASSESSMENT",
           value: 32.5,
           monthlyAvg: 32.8,
@@ -152,6 +166,7 @@ describe("VitalsStore", () => {
           overall90Day: -2,
           parentEntityId: "STATE_DOC",
           timelyContact: 60,
+          timelyContactDueDateBased: 65,
           timelyDischarge: 63,
           timelyRiskAssessment: 69,
           timelyDowngrade: 67,
@@ -165,6 +180,7 @@ describe("VitalsStore", () => {
           overall90Day: -2,
           parentEntityId: "STATE_DOC",
           timelyContact: 90,
+          timelyContactDueDateBased: 92,
           timelyDischarge: 93,
           timelyRiskAssessment: 99,
           timelyDowngrade: 67,
@@ -390,12 +406,12 @@ describe("VitalsStore", () => {
             {
               data: [
                 {
-                  Total: "43%",
-                  "30D average": "43%",
+                  Total: "51%",
+                  "30D average": "51%",
                 },
                 {
-                  Total: "46%",
-                  "30D average": "46%",
+                  Total: "54%",
+                  "30D average": "54%",
                 },
               ],
               label: "Timely F2F contacts",
@@ -433,7 +449,7 @@ describe("VitalsStore", () => {
                   "90D change": "-2%",
                   "30D change": "0%",
                   "Overall across all practices": "85%",
-                  "Timely F2F contacts": "60%",
+                  "Timely F2F contacts": "65%",
                   "Supervision & risk level match": "67%",
                   "Timely risk assessments": "69%",
                 },
@@ -441,7 +457,7 @@ describe("VitalsStore", () => {
                   "90D change": "-2%",
                   "30D change": "0%",
                   "Overall across all practices": "95%",
-                  "Timely F2F contacts": "90%",
+                  "Timely F2F contacts": "92%",
                   "Supervision & risk level match": "67%",
                   "Timely risk assessments": "99%",
                 },
@@ -474,9 +490,9 @@ describe("VitalsStore", () => {
             name: "Timely risk assessments",
           },
           {
-            accessor: "timelyContact",
+            accessor: "timelyContactDueDateBased",
             description: `of clients have an up-to-date face-to-face contact, according to IDOC policy`,
-            id: "CONTACT",
+            id: "CONTACT_DUE_DATE_BASED",
             name: "Timely F2F contacts",
           },
           {

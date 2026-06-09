@@ -265,9 +265,9 @@ const US_ID_CONFIG = {
     },
     {
       name: METRIC_TYPE_LABELS.F2F_CONTACT,
-      id: METRIC_TYPES.CONTACT,
+      id: METRIC_TYPES.CONTACT_DUE_DATE_BASED,
       description: `of clients have an up-to-date face-to-face contact, according to IDOC policy`,
-      accessor: "timelyContact",
+      accessor: "timelyContactDueDateBased",
     },
     {
       name: METRIC_TYPE_LABELS.DOWNGRADE,

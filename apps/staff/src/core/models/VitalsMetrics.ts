@@ -40,6 +40,7 @@ export function createVitalsSummaryMetric(
       overall: Number(record.overall),
       timelyDischarge: Number(record.timely_discharge),
       timelyContact: Number(record.timely_contact),
+      timelyContactDueDateBased: Number(record.timely_contact_due_date_based),
       timelyRiskAssessment: Number(record.timely_risk_assessment),
       timelyDowngrade: Number(record.timely_downgrade),
       overall30Day: Number(record.overall_30d),

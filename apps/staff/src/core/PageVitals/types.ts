@@ -26,6 +26,7 @@ export const METRIC_TYPES = {
   OVERALL: "OVERALL",
   DISCHARGE: "DISCHARGE",
   CONTACT: "CONTACT",
+  CONTACT_DUE_DATE_BASED: "CONTACT_DUE_DATE_BASED",
   RISK_ASSESSMENT: "RISK_ASSESSMENT",
   DOWNGRADE: "DOWNGRADE",
 } as const;
@@ -68,6 +69,7 @@ export type VitalsSummaryTableRow = {
   overall90Day: number;
   timelyDischarge: number;
   timelyContact: number;
+  timelyContactDueDateBased: number;
   timelyRiskAssessment: number;
   timelyDowngrade: number;
 };
