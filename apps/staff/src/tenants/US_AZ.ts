@@ -43,7 +43,6 @@ const US_AZ_CONFIG = {
           searchType: "FACILITY",
           searchField: ["facilityId"],
           searchTitle: "facility",
-          restrictedToFeatureVariant: "usAzFacilitySearch",
         },
       ],
     },

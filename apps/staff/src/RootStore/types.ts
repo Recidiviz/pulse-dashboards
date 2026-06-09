@@ -85,9 +85,6 @@ export type FeatureVariant =
   | "sentenceProgressV2"
   | "useRecordForIneligibleOpps"
 
-  //// Arizona
-  | "usAzFacilitySearch"
-
   //// California
   | "usCaEnableSMS"
 
@@ -197,7 +194,6 @@ export type FeatureVariantOverrideRecord = PartialRecord<
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
-  usAzFacilitySearch: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
   usCaEnableSMS: {},
@@ -298,7 +294,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         insightsConsistentLoginPill: { activeTenants: ["US_MI"] },
         clientsResidentsTableViewToggle: {},
-        usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
         usMiCaseManagerSearch: {},
