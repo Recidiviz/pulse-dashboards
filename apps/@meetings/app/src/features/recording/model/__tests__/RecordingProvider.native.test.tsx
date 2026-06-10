@@ -83,6 +83,7 @@ const mockPerson = {
   fullName: "John Doe",
 };
 const MEETING_ID = "meeting-1";
+const MEETING_TYPE = "Assessment";
 const RECORDING_URI = "file://test-recording.m4a";
 
 const mockSetStatus = jest.fn().mockResolvedValue(undefined);
@@ -143,14 +144,16 @@ describe("RecordingProvider (native)", () => {
     (useRecordingStore as unknown as jest.Mock).mockReturnValue({
       meetingId: MEETING_ID,
       setMeetingId: jest.fn(),
-      meetingType: null,
-      setMeetingType: jest.fn(),
       person: mockPerson,
       personType: null,
       setPerson: jest.fn(),
       setPersonType: jest.fn(),
       durationMs: 0,
       setDurationMs: mockSetPersistedDurationMs,
+      meetingType: MEETING_TYPE,
+      setMeetingType: jest.fn(),
+      meetingTypeCategory: null,
+      setMeetingTypeCategory: jest.fn(),
     });
     (useRecordingStoreHydrated as unknown as jest.Mock).mockReturnValue(true);
     (useUpdateNotes as jest.Mock).mockReturnValue({

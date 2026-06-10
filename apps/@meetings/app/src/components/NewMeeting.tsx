@@ -41,6 +41,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
 
   const {
     meetingType,
+    meetingTypeCategory,
     status,
     note,
     setNote,
@@ -88,7 +89,10 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
               <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
                 New Meeting
               </Typography>
-              <MeetingTypeTag type={meetingType} />
+              <MeetingTypeTag
+                type={meetingType}
+                typeCategory={meetingTypeCategory}
+              />
             </View>
             <Typography className="text-base text-secondary">
               ID: {person.displayPersonExternalId} • {person.primaryMetadata}

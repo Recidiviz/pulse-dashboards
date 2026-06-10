@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AgencyConfig } from "~@meetings/config";
+
 import { meetingTypes, meetingTypesStyles } from "./config";
 
 export const getMeetingTypeStyles = (type: string) => {
@@ -23,4 +25,54 @@ export const getMeetingTypeStyles = (type: string) => {
     return meetingTypesStyles[index % meetingTypesStyles.length];
   if (index === -1) return meetingTypesStyles[meetingTypesStyles.length - 1];
   return meetingTypesStyles[index];
+};
+
+export const getCategoryTypePlaceholder = (categoryType?: string | null) =>
+  `Select ${categoryType ?? "category"}`;
+
+export const getCategoryTypeError = (categoryType?: string | null) =>
+  `Please select a ${categoryType ?? "category"} before starting the meeting.`;
+
+export const getMeetingTypesOptions = (
+  meetingTypes: AgencyConfig["meetingTypes"],
+) => meetingTypes.map(({ type }) => type);
+
+export const getMeetingTypeCategoriesOptions = (
+  meetingTypes: AgencyConfig["meetingTypes"],
+  meetingType: string | null,
+) => meetingTypes.find(({ type }) => type === meetingType)?.categories;
+
+export const getCategoryType = (
+  meetingTypes: AgencyConfig["meetingTypes"],
+  meetingType: string | null,
+) =>
+  meetingTypes
+    .find(({ type }) => type === meetingType)
+    ?.categoryType?.toLowerCase();
+
+type ValidateAndStartParams = {
+  meetingTypes: AgencyConfig["meetingTypes"];
+  meetingType: string | null;
+  meetingTypeCategoryValue: string | null;
+  setMeetingTypeCategoryError: (categoryType?: string | null) => void;
+  startCallback: () => void;
+};
+
+export const validateAndStart = (params: ValidateAndStartParams) => {
+  const {
+    meetingTypes,
+    meetingType,
+    meetingTypeCategoryValue,
+    setMeetingTypeCategoryError,
+    startCallback,
+  } = params;
+  const categoryType = getCategoryType(meetingTypes, meetingType);
+  if (
+    meetingTypes.find(({ type }) => type === meetingType)?.isCategoryRequired &&
+    !meetingTypeCategoryValue
+  ) {
+    setMeetingTypeCategoryError(categoryType);
+    return;
+  }
+  startCallback();
 };

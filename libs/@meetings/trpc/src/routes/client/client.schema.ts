@@ -22,6 +22,7 @@ export const createMeetingInputSchema = z.object({
   startTime: z.date(),
   meetingId: z.string().cuid2(),
   meetingType: z.string(),
+  meetingTypeCategory: z.string().nullable().optional(),
 });
 
 export const getMeetingsInputSchema = z.object({

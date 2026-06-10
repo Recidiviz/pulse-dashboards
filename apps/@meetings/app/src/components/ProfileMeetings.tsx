@@ -43,6 +43,7 @@ import { useAnalytics } from "../context/AnalyticsContext";
 import { useStateSelection } from "../context/StateContext";
 import { useMeetingTypeStore } from "../entities/meeting-type";
 import { DEFAULT_MEETING_TYPE } from "../entities/meeting-type/config";
+import { validateAndStart } from "../entities/meeting-type/lib";
 import { Person, PersonType } from "../entities/person";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import { useCreateMeeting } from "../hooks/useCreateMeeting";
@@ -103,24 +104,56 @@ const ProfileMeetings = ({
     useRecording<"web">();
   const openAudioUpload = useAudioUploadStore((s) => s.open);
   const audioUploadStatus = useAudioUploadStore((s) => s.status);
-  const { meetingType: meetingTypeValue, setMeetingType: setMeetingTypeValue } =
-    useMeetingTypeStore();
+  const {
+    meetingType: meetingTypeValue,
+    meetingTypeCategory: meetingTypeCategoryValue,
+    meetingTypeCategoryError,
+    setMeetingType: setMeetingTypeValue,
+    setMeetingTypeCategory: setMeetingTypeCategoryValue,
+    setMeetingTypeCategoryError,
+    reset: resetMeetingTypeStore,
+  } = useMeetingTypeStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState(MeetingsSort.NEWEST_FIRST as string);
   const [isNewMeetingSheetOpen, setIsNewMeetingSheetOpen] = useState(false);
   const [isNewMeetingModalOpen, setIsNewMeetingModalOpen] = useState(false);
 
   const handleAudioUpload = useCallback(() => {
-    setIsNewMeetingModalOpen(false);
-    setIsNewMeetingSheetOpen(false);
-    openAudioUpload({ person, personType, meetingType: meetingTypeValue });
-  }, [meetingTypeValue, openAudioUpload, person, personType]);
+    const startUpload = () => {
+      setIsNewMeetingModalOpen(false);
+      setIsNewMeetingSheetOpen(false);
+      openAudioUpload({
+        person,
+        personType,
+        meetingType: meetingTypeValue,
+        meetingTypeCategory: meetingTypeCategoryValue,
+      });
+      resetMeetingTypeStore(meetingTypes[0].type ?? undefined);
+    };
+    validateAndStart({
+      meetingTypes,
+      meetingType: meetingTypeValue,
+      meetingTypeCategoryValue,
+      setMeetingTypeCategoryError,
+      startCallback: startUpload,
+    });
+  }, [
+    meetingTypes,
+    meetingTypeValue,
+    openAudioUpload,
+    person,
+    personType,
+    meetingTypeCategoryValue,
+    resetMeetingTypeStore,
+    setMeetingTypeCategoryError,
+  ]);
 
   const { track } = useAnalytics();
 
   const { handleCreateMeeting, isCreating } = useCreateMeeting({
     person,
     meetingType: meetingTypeValue,
+    meetingTypeCategory: meetingTypeCategoryValue,
     personType: personType,
     onSuccess: (meetingId) => {
       track("meeting_started", { meetingId, personType });
@@ -129,9 +162,11 @@ const ProfileMeetings = ({
           openRecordingView({
             meetingId,
             meetingType: meetingTypeValue,
+            meetingTypeCategory: meetingTypeCategoryValue,
             person,
           });
           startRecordingWeb();
+          resetMeetingTypeStore(meetingTypes[0].type ?? undefined);
           break;
         case "ios":
         case "android":
@@ -140,6 +175,7 @@ const ProfileMeetings = ({
           setPerson(person);
           setPersonType(personType);
           startRecording();
+          resetMeetingTypeStore(meetingTypes[0].type ?? undefined);
           break;
       }
     },
@@ -153,7 +189,7 @@ const ProfileMeetings = ({
 
   useEffect(() => {
     if (meetingTypes.length > 0) {
-      setMeetingTypeValue(meetingTypes[0]);
+      setMeetingTypeValue(meetingTypes[0].type);
     } else {
       setMeetingTypeValue(DEFAULT_MEETING_TYPE);
     }
@@ -203,6 +239,7 @@ const ProfileMeetings = ({
         return {
           id: m.id,
           meetingType: m.meetingType,
+          meetingTypeCategory: m.meetingTypeCategory,
           date,
           time,
           start,
@@ -369,14 +406,27 @@ const ProfileMeetings = ({
           person={person}
           onClose={() => setIsNewMeetingSheetOpen(false)}
           onStartMeeting={() => {
-            setIsNewMeetingSheetOpen(false);
-            handleCreateMeeting();
+            const startMeeting = () => {
+              setIsNewMeetingSheetOpen(false);
+              handleCreateMeeting();
+            };
+
+            validateAndStart({
+              meetingTypes,
+              meetingType: meetingTypeValue,
+              meetingTypeCategoryValue,
+              setMeetingTypeCategoryError,
+              startCallback: startMeeting,
+            });
           }}
           onUploadFile={handleAudioUpload}
           isMeetingCreating={isCreating}
           meetingTypeValue={meetingTypeValue}
           meetingTypes={meetingTypes}
           setMeetingType={setMeetingTypeValue}
+          meetingTypeCategory={meetingTypeCategoryValue}
+          setMeetingTypeCategory={setMeetingTypeCategoryValue}
+          meetingTypeCategoryError={meetingTypeCategoryError}
         />
       )}
       {isNewMeetingModalOpen && (
@@ -384,14 +434,27 @@ const ProfileMeetings = ({
           person={person}
           onClose={() => setIsNewMeetingModalOpen(false)}
           onStartMeeting={() => {
-            setIsNewMeetingModalOpen(false);
-            handleCreateMeeting();
+            const startMeeting = () => {
+              setIsNewMeetingModalOpen(false);
+              handleCreateMeeting();
+            };
+
+            validateAndStart({
+              meetingTypes,
+              meetingType: meetingTypeValue,
+              meetingTypeCategoryValue,
+              setMeetingTypeCategoryError,
+              startCallback: startMeeting,
+            });
           }}
           onUploadFile={handleAudioUpload}
           isMeetingCreating={isCreating}
           meetingTypeValue={meetingTypeValue}
           meetingTypes={meetingTypes}
           setMeetingType={setMeetingTypeValue}
+          meetingTypeCategory={meetingTypeCategoryValue}
+          setMeetingTypeCategory={setMeetingTypeCategoryValue}
+          meetingTypeCategoryError={meetingTypeCategoryError}
         />
       )}
     </SafeAreaView>

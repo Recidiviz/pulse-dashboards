@@ -101,8 +101,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const {
     meetingId,
     meetingType,
+    meetingTypeCategory,
     setMeetingId,
     setMeetingType,
+    setMeetingTypeCategory,
     person,
     personType,
     setPerson,
@@ -146,7 +148,16 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     setPersistedDurationMs(0);
     setNote("");
     await setStatus("idle");
-  }, [timer, setPersistedDurationMs, setNote, setStatus]);
+    setMeetingType(null);
+    setMeetingTypeCategory(null);
+  }, [
+    timer,
+    setPersistedDurationMs,
+    setNote,
+    setStatus,
+    setMeetingType,
+    setMeetingTypeCategory,
+  ]);
 
   /**
    * stopAndUploadRecording()
@@ -571,8 +582,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         setStatus,
         meetingId,
         meetingType,
+        meetingTypeCategory,
         setMeetingId,
         setMeetingType,
+        setMeetingTypeCategory,
         person,
         personType,
         setPerson,

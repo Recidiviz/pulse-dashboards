@@ -19,13 +19,15 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import clsx from "clsx";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   Platform,
   Pressable,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -37,6 +39,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { theme } from "../config/theme";
 import { Typography } from "./Typography";
 
+const BOTTOM_SHEET_FREE_TEXT_OPTION = "Other";
+
 type DropdownProps = {
   className?: string;
   variant?: "text" | "outline";
@@ -47,6 +51,7 @@ type DropdownProps = {
   placeholder?: string;
   defaultEmptyValue?: boolean;
   errorMessage?: string | null;
+  hasFreeTextOption?: boolean;
 };
 
 const Dropdown = ({
@@ -59,6 +64,7 @@ const Dropdown = ({
   placeholder,
   defaultEmptyValue = false,
   errorMessage,
+  hasFreeTextOption = false,
 }: DropdownProps) => {
   const insets = useSafeAreaInsets();
   const [selected, setSelected] = useState(() => {
@@ -66,11 +72,23 @@ const Dropdown = ({
     if (defaultEmptyValue) return null;
     return options[0];
   });
+  const [freeTextValue, setFreeTextValue] = useState(() => {
+    if (value && !options.includes(value)) {
+      return value;
+    }
+    return "";
+  });
+  const [isFreeTextOptionSelected, setIsFreeTextOptionSelected] = useState(
+    () => {
+      if (selected && !options.includes(selected)) {
+        return true;
+      }
+      return false;
+    },
+  );
 
   const [open, setOpen] = useState(false);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-
-  const snapPoints = useMemo(() => ["40%"], []);
 
   const handleToggle = useCallback(() => {
     if (Platform.OS === "web") {
@@ -84,6 +102,15 @@ const Dropdown = ({
     setSelected(opt);
     setOpen(false);
     if (onSelect) onSelect(opt);
+    if (options.includes(opt)) setFreeTextValue("");
+  };
+
+  const handleFreeTextSelect = () => {
+    if (freeTextValue.trim()) {
+      Platform.OS === "web"
+        ? handleDropdownSelect(freeTextValue.trim())
+        : handleBottomSheetSelect(freeTextValue.trim());
+    }
   };
 
   const handleBottomSheetSelect = useCallback(
@@ -92,15 +119,19 @@ const Dropdown = ({
       setOpen(false);
       bottomSheetRef.current?.close();
       if (onSelect) onSelect(opt);
+      if (options.includes(opt)) {
+        setFreeTextValue("");
+        setIsFreeTextOptionSelected(false);
+      }
     },
-    [onSelect],
+    [onSelect, options],
   );
 
   const ScrollableContainer =
     Platform.OS === "web" ? ScrollView : BottomSheetScrollView;
 
   return (
-    <View className={clsx("z-50 flex flex-col items-center gap-2", className)}>
+    <View className={clsx("flex flex-col items-center gap-2", className)}>
       <View
         className={clsx(
           "relative z-50 md:min-w-[200px]",
@@ -154,10 +185,9 @@ const Dropdown = ({
         {open && Platform.OS === "web" && (
           <View
             className={clsx(
-              "absolute right-0 w-fit rounded-lg border border-subtle bg-primary p-1",
+              "absolute right-0 w-fit flex-1 rounded-lg border border-subtle bg-primary p-1",
               variant === "text" && "top-7 w-fit",
-              variant === "outline" &&
-                "top-[120%] max-h-[120px] w-full md:max-h-[176px]",
+              variant === "outline" && "top-[120%] max-h-[150px] w-full",
             )}
             style={{
               shadowColor: theme["backgroundColor"]["brand-light"],
@@ -179,13 +209,34 @@ const Dropdown = ({
                   </Typography>
                 </TouchableOpacity>
               ))}
+              {hasFreeTextOption && (
+                <View className="flex flex-col gap-2 px-2">
+                  <FreeTextInput
+                    value={freeTextValue}
+                    onChange={setFreeTextValue}
+                    placeholder="Type your variant"
+                  />
+                  {freeTextValue.trim().length > 0 && (
+                    <TouchableOpacity
+                      onPress={handleFreeTextSelect}
+                      className="w-fit rounded-full bg-brand px-3 py-2"
+                    >
+                      <Typography className="text-sm font-semibold leading-[16px] text-on-brand">
+                        Continue
+                      </Typography>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
             </ScrollView>
           </View>
         )}
         {Platform.OS !== "web" && (
           <BottomSheetModal
             ref={bottomSheetRef}
-            snapPoints={snapPoints}
+            keyboardBehavior="interactive"
+            keyboardBlurBehavior="restore"
+            enableDynamicSizing
             enablePanDownToClose
             handleIndicatorStyle={{
               backgroundColor: theme["backgroundColor"]["strong"],
@@ -204,9 +255,6 @@ const Dropdown = ({
             <ScrollableContainer className="flex max-h-full flex-1 flex-col px-4">
               <View className="mb-4 flex flex-row items-center justify-between">
                 <View className="pointer-events-none size-8" />
-                <Typography className="text-xl font-semibold text-primary">
-                  Sort by
-                </Typography>
                 <Pressable onPress={() => bottomSheetRef.current?.close()}>
                   <View className="flex size-8 items-center justify-center rounded-full bg-secondary">
                     <XIcon className="!size-4 stroke-tertiary" />
@@ -215,7 +263,7 @@ const Dropdown = ({
               </View>
               <View
                 className="flex size-full flex-col py-1"
-                style={{ paddingBottom: insets.bottom + 16 }}
+                style={{ paddingBottom: insets.bottom + 32 }}
               >
                 {options.map((opt, i) => (
                   <BottomSheetOptionItem
@@ -223,9 +271,38 @@ const Dropdown = ({
                     option={opt}
                     isActive={opt === selected}
                     onSelect={handleBottomSheetSelect}
-                    isLast={i === options.length - 1}
+                    isLast={!hasFreeTextOption && i === options.length - 1}
                   />
                 ))}
+                {hasFreeTextOption && (
+                  <>
+                    <BottomSheetOptionItem
+                      key={BOTTOM_SHEET_FREE_TEXT_OPTION}
+                      option={BOTTOM_SHEET_FREE_TEXT_OPTION}
+                      isActive={isFreeTextOptionSelected}
+                      onSelect={() => setIsFreeTextOptionSelected(true)}
+                      isLast={true}
+                    />
+                    {isFreeTextOptionSelected && (
+                      <View className="flex flex-col gap-2">
+                        <FreeTextInput
+                          value={freeTextValue}
+                          onChange={setFreeTextValue}
+                          placeholder="Type your variant"
+                        />
+                        <TouchableOpacity
+                          onPress={handleFreeTextSelect}
+                          className="h-fit w-full rounded-full bg-brand px-4 py-3 disabled:opacity-40"
+                          disabled={freeTextValue.trim().length === 0}
+                        >
+                          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
+                            Continue
+                          </Typography>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </>
+                )}
               </View>
             </ScrollableContainer>
           </BottomSheetModal>
@@ -252,9 +329,9 @@ const BottomSheetOptionItem = ({
   isLast: boolean;
 }) => {
   return (
-    <Pressable onPress={() => onSelect(option)}>
+    <Pressable onPress={() => onSelect(option)} className="flex-1">
       <View
-        className={`flex w-full flex-1 flex-row items-center justify-between border-subtle py-3 ${isLast ? "border-none" : "border-b"}`}
+        className={`flex w-full flex-1 flex-row items-center justify-between border-subtle py-2 ${isLast ? "border-none" : "border-b"}`}
       >
         <Typography className="text-base font-medium">{option}</Typography>
         <View
@@ -268,5 +345,49 @@ const BottomSheetOptionItem = ({
     </Pressable>
   );
 };
+
+function FreeTextInput({
+  value,
+  placeholder,
+  onChange,
+}: {
+  value: string;
+  placeholder: string;
+  onChange: (t: string) => void;
+}) {
+  const [isFocused, setIsFocused] = useState(false);
+
+  const TextInputComponent =
+    Platform.OS === "web" ? TextInput : BottomSheetTextInput;
+
+  return (
+    <View
+      className="w-full flex-1 flex-row items-center rounded-xl border bg-secondary px-3 py-2"
+      style={{
+        borderColor: isFocused
+          ? theme["borderColor"]["brand"]
+          : theme["borderColor"]["subtle"],
+        boxShadow: isFocused ? theme["boxShadow"]["focus-brand"] : "",
+      }}
+    >
+      <TextInputComponent
+        className="flex-1 py-0 pr-2 font-inter text-sm text-primary outline-none"
+        placeholder={placeholder}
+        placeholderTextColor={theme["colors"]["secondary"]}
+        value={value}
+        onChangeText={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        maxLength={20}
+        textAlignVertical="top"
+      />
+      {value?.length > 0 && (
+        <Typography className="text-xs font-normal text-secondary">
+          {value.length}/20
+        </Typography>
+      )}
+    </View>
+  );
+}
 
 export default Dropdown;

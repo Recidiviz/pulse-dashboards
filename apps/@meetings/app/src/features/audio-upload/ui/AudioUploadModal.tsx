@@ -50,6 +50,7 @@ export function AudioUploadModal({
   const {
     meetingId,
     meetingType,
+    meetingTypeCategory,
     status,
     file,
     error,
@@ -108,7 +109,11 @@ export function AudioUploadModal({
       <View className="w-[520px] p-6">
         <View className="mb-1 flex-row items-center justify-between">
           <Typography className="flex flex-row items-center gap-2 text-xl font-semibold text-primary">
-            Upload audio <MeetingTypeTag type={meetingType} />
+            Upload audio{" "}
+            <MeetingTypeTag
+              type={meetingType}
+              typeCategory={meetingTypeCategory}
+            />
           </Typography>
           <TouchableOpacity onPress={onCancel} className="p-1">
             <XIcon className="size-5 stroke-tertiary" />

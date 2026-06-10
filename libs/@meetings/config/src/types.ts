@@ -29,6 +29,27 @@ export const OutputSpecSchema = z.object({
     .describe("Optional subheaders to include in the output"),
 });
 
+// MeetingTypeSchema
+export const MeetingTypeSchema = z.object({
+  type: z
+    .string()
+    .describe("Type of the meeting, e.g. 'Assessment', 'Collateral Contact'"),
+  isCategoryRequired: z
+    .boolean()
+    .optional()
+    .describe("Whether a category is required for this meeting type"),
+  categories: z
+    .array(z.string())
+    .optional()
+    .describe("Optional list of categories for this meeting type"),
+  categoryType: z
+    .string()
+    .optional()
+    .describe(
+      "Category type, e.g. 'Relationship' for collateral meeting type, used in some front parts like placeholder, error, etc.",
+    ),
+});
+
 /**
  * Schema for a raw agency YAML file.
  *
@@ -53,7 +74,7 @@ export const AgencyConfigFileSchema = z.object({
   /** Appended to base keywords */
   additionalKeywords: z.array(z.string()).optional(),
   /** Each state has its own meeting types list */
-  meetingTypes: z.array(z.string()).optional(),
+  meetingTypes: z.array(MeetingTypeSchema).optional(),
 
   // ── LLM ───────────────────────────────────────────────────
   /** Replaces base glossary entirely */
@@ -91,7 +112,7 @@ export const AgencyConfigSchema = z.object({
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
   keywords: z.array(z.string()).default([]),
-  meetingTypes: z.array(z.string()).default([]),
+  meetingTypes: z.array(MeetingTypeSchema).default([]),
 
   // ── LLM ───────────────────────────────────────────────────
   glossary: z.record(z.string()).default({}),

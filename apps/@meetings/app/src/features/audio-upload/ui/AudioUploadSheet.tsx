@@ -108,7 +108,6 @@ export function AudioUploadSheet({
 
   return (
     <>
-      {" "}
       <BottomSheet
         enableDynamicSizing
         handleComponent={null}

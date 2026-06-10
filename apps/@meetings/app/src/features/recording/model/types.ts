@@ -68,14 +68,17 @@ export type RecordingWeb = RecordingBase & {
   setIsRecordingViewMinimized: (isMinimized: boolean) => void;
   meetingId: string | null;
   meetingType: string | null;
+  meetingTypeCategory: string | null;
   person: Person | null;
   openRecordingView: ({
     meetingId,
     meetingType,
+    meetingTypeCategory,
     person,
   }: {
     meetingId: string;
     meetingType: string;
+    meetingTypeCategory: string | null;
     person: Person;
   }) => void;
   closeRecordingView: () => void;
@@ -84,8 +87,10 @@ export type RecordingWeb = RecordingBase & {
 export type RecordingNative = RecordingBase & {
   meetingId: string | null;
   meetingType: string | null;
+  meetingTypeCategory: string | null;
   setMeetingId: (meetingId: string | null) => void;
   setMeetingType: (meetingType: string | null) => void;
+  setMeetingTypeCategory: (meetingTypeCategory: string | null) => void;
   person: Person | null;
   personType: PersonType | null;
   setPerson: (person: Person | null) => void;

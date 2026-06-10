@@ -60,6 +60,7 @@ export const getDetailsOutputSchema = z.object({
   validationErrorType: z.nativeEnum(ValidationError).nullable(),
   staffEmail: z.string(),
   meetingType: z.string().nullable(),
+  meetingTypeCategory: z.string().nullable(),
   transcription: z
     .object({
       confidence: z.number().nullable(),

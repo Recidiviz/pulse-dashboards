@@ -50,6 +50,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     note,
     meetingId,
     meetingType,
+    meetingTypeCategory,
     person,
     isRecordingViewMinimized,
     durationMs: persistedDurationMs,
@@ -57,6 +58,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     setNote,
     setMeetingId,
     setMeetingType,
+    setMeetingTypeCategory,
     setPerson,
     setIsRecordingViewMinimized,
     setDurationMs: setPersistedDurationMs,
@@ -112,29 +114,23 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     meetingId,
     person,
     meetingType,
+    meetingTypeCategory,
   }: {
     meetingId: string;
     person: Person;
     meetingType: string;
+    meetingTypeCategory: string | null;
   }) => {
     setMeetingId(meetingId);
     setPerson(person);
     setMeetingType(meetingType);
+    setMeetingTypeCategory(meetingTypeCategory);
   };
 
   const closeRecordingView = () => {
     setMeetingId(null);
-    setMeetingType(null);
     setPerson(null);
     setIsRecordingViewMinimized(false);
-  };
-
-  const cleanupRecording = async () => {
-    await recorder.cleanup();
-    timer.reset();
-    setPersistedDurationMs(0);
-    setStatus("idle");
-    setNote("");
   };
 
   useInitialization({
@@ -268,6 +264,16 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
+  const cleanupRecording = async () => {
+    await recorder.cleanup();
+    timer.reset();
+    setPersistedDurationMs(0);
+    setStatus("idle");
+    setNote("");
+    setMeetingType(null);
+    setMeetingTypeCategory(null);
+  };
+
   const pauseRecording = async () => {
     setStatus("uploading");
 
@@ -387,6 +393,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         setIsRecordingViewMinimized,
         meetingId,
         meetingType,
+        meetingTypeCategory,
         person,
         openRecordingView,
         closeRecordingView,

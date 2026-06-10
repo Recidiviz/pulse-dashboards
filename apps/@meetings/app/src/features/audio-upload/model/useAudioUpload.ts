@@ -42,6 +42,7 @@ export function useAudioUpload() {
     person,
     personType: store.personType,
     meetingType: store.meetingType,
+    meetingTypeCategory: store.meetingTypeCategory,
     onSuccess: () => undefined,
   });
   const abortControllerRef = useRef<AbortController | null>(null);

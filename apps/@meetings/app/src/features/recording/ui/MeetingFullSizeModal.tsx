@@ -45,6 +45,7 @@ type Props = {
 export const MeetingFullSizeModal = ({ person }: Props) => {
   const {
     meetingType,
+    meetingTypeCategory,
     status,
     note,
     setNote,
@@ -105,7 +106,11 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
         <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3 pt-5">
           <View className="gap-1">
             <Typography className="flex flex-row items-center gap-2 text-xl font-semibold text-primary">
-              New Meeting <MeetingTypeTag type={meetingType} />
+              New Meeting{" "}
+              <MeetingTypeTag
+                type={meetingType}
+                typeCategory={meetingTypeCategory}
+              />
             </Typography>
             <Typography className="text-base font-medium text-primary">
               {person.fullName}{" "}
@@ -140,7 +145,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
         <View className="flex-1 grow flex-row">
           <View className="grow gap-5 py-5">
             <View className="flex-row items-center gap-1.5 px-8">
-              <NotesSvg className="text-tertiary" />
+              <NotesSvg className="stroke-tertiary" />
               <Typography className="font-semibold text-primary">
                 Notepad
               </Typography>

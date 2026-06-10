@@ -46,6 +46,7 @@ type MeetingCardItemProps = {
   meeting: {
     id: string;
     meetingType: string | null;
+    meetingTypeCategory: string | null;
     date: string;
     time: string;
     duration: string | null;
@@ -123,7 +124,10 @@ const MeetingCardItem = ({
                 <Typography className="mr-1 flex flex-row items-center gap-2 text-base font-medium text-primary">
                   {meeting.date}
                 </Typography>
-                <MeetingTypeTag type={meeting.meetingType} />
+                <MeetingTypeTag
+                  type={meeting.meetingType}
+                  typeCategory={meeting.meetingTypeCategory}
+                />
               </View>
               <Typography className="text-sm leading-4 text-secondary">
                 {meeting.time}
@@ -147,7 +151,10 @@ const MeetingCardItem = ({
                     <Typography className="mr-1 flex flex-row items-center gap-2 text-base font-medium text-primary">
                       {meeting.date}
                     </Typography>
-                    <MeetingTypeTag type={meeting.meetingType} />
+                    <MeetingTypeTag
+                      type={meeting.meetingType}
+                      typeCategory={meeting.meetingTypeCategory}
+                    />
                   </View>
                 </View>
                 <Typography className="text-sm leading-4 text-secondary">

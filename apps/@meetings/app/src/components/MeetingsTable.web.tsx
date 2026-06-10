@@ -59,6 +59,7 @@ type ProfileMeetingNavProp = CompositeNavigationProp<
 type Meeting = {
   id: string;
   meetingType: string | null;
+  meetingTypeCategory: string | null;
   date: string;
   time: string;
   duration: string | null;
@@ -114,7 +115,10 @@ const MeetingRow = ({
         <Typography className="text-sm text-secondary">
           {meeting.date}
         </Typography>
-        <MeetingTypeTag type={meeting.meetingType} />
+        <MeetingTypeTag
+          type={meeting.meetingType}
+          typeCategory={meeting.meetingTypeCategory}
+        />
       </TableCell>
       <TableCell textClassName="text-secondary">{meeting.time}</TableCell>
       <TableCell textClassName="text-secondary">{duration}</TableCell>

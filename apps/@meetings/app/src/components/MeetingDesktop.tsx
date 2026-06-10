@@ -131,7 +131,10 @@ const MeetingDesktop = ({
                 Meeting: {meetingDate}
               </Typography>
               <View className="flex flex-row items-center gap-1">
-                <MeetingTypeTag type={meetingDetails.meetingType} />
+                <MeetingTypeTag
+                  type={meetingDetails.meetingType}
+                  typeCategory={meetingDetails.meetingTypeCategory}
+                />
                 <ClockIcon className="size-4 stroke-tertiary" />
                 <Typography className="text-secondary">
                   {time}

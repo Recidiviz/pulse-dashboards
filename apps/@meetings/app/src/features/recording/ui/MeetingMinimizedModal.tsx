@@ -47,8 +47,12 @@ export function MeetingMinimizedModal({
   onStop,
   onDiscard,
 }: Props) {
-  const { meetingType, status, setIsRecordingViewMinimized } =
-    useRecording<"web">();
+  const {
+    meetingType,
+    meetingTypeCategory,
+    status,
+    setIsRecordingViewMinimized,
+  } = useRecording<"web">();
 
   const isControlsDisabled = status === "uploading" || status === "ending";
 
@@ -57,7 +61,11 @@ export function MeetingMinimizedModal({
       <View className="grow">
         <View className="mb-1 w-full flex-row justify-between">
           <Typography className="flex flex-row items-center gap-2 text-lg font-medium text-primary">
-            {person.fullName} <MeetingTypeTag type={meetingType} />
+            {person.fullName}{" "}
+            <MeetingTypeTag
+              type={meetingType}
+              typeCategory={meetingTypeCategory}
+            />
           </Typography>
           <TouchableOpacity
             className="relative -right-1 -top-1"

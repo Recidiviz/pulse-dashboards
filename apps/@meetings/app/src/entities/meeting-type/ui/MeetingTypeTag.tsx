@@ -20,10 +20,27 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { DEFAULT_MEETING_TYPE } from "../config";
 import { getMeetingTypeStyles } from "../lib";
 
-export function MeetingTypeTag({ type }: { type: string | null }) {
+export function MeetingTypeTag({
+  type,
+  typeCategory,
+}: {
+  type: string | null;
+  typeCategory?: string | null;
+}) {
   if (!type || type === DEFAULT_MEETING_TYPE) return null;
 
   const tagStyles = getMeetingTypeStyles(type);
+
+  if (typeCategory) {
+    return (
+      <Typography
+        style={tagStyles}
+        className="w-fit rounded-lg px-2 py-0.5 text-sm font-normal"
+      >
+        {type} - {typeCategory}
+      </Typography>
+    );
+  }
 
   return (
     <Typography

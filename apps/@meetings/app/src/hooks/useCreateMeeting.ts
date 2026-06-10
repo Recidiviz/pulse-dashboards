@@ -29,6 +29,7 @@ import { useOfflineEventFactory } from "./useOfflineEventFactory";
 type Params = {
   person?: Person | null;
   meetingType: string | null;
+  meetingTypeCategory?: string | null;
   personType?: PersonType | null;
   onSuccess: (meetingId: string) => void;
 };
@@ -36,6 +37,7 @@ type Params = {
 export function useCreateMeeting({
   person,
   meetingType,
+  meetingTypeCategory,
   personType,
   onSuccess,
 }: Params) {
@@ -60,6 +62,7 @@ export function useCreateMeeting({
           type: MeetingEventType.Created,
           meetingId,
           meetingType,
+          meetingTypeCategory,
           personId: person.personId,
           personType,
           startTime,
@@ -73,6 +76,7 @@ export function useCreateMeeting({
         personType,
         meetingId,
         meetingType,
+        meetingTypeCategory,
         startTime,
       });
 

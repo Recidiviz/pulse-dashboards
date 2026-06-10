@@ -30,6 +30,14 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AgencyConfig } from "~@meetings/config";
+
+import {
+  getCategoryType,
+  getCategoryTypePlaceholder,
+  getMeetingTypeCategoriesOptions,
+  getMeetingTypesOptions,
+} from "../entities/meeting-type/lib";
 import { Person } from "../entities/person";
 import PlaySvg from "../shared/assets/icons/play.svg";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
@@ -46,8 +54,11 @@ type NewMeetingRecordingSheetProps = {
   onUploadFile: () => void;
   isMeetingCreating: boolean;
   meetingTypeValue: string | null;
-  meetingTypes: string[];
+  meetingTypes: AgencyConfig["meetingTypes"];
   setMeetingType: (meetingType: string) => void;
+  meetingTypeCategory: string | null;
+  setMeetingTypeCategory: (meetingTypeCategory: string) => void;
+  meetingTypeCategoryError: string | null;
 };
 
 export function NewMeetingRecordingSheet({
@@ -59,9 +70,18 @@ export function NewMeetingRecordingSheet({
   meetingTypeValue,
   meetingTypes,
   setMeetingType,
+  meetingTypeCategory,
+  setMeetingTypeCategory,
+  meetingTypeCategoryError,
 }: NewMeetingRecordingSheetProps) {
   const insets = useSafeAreaInsets();
   const { isOnline } = useIsOnline();
+  const meetingTypesOptions = getMeetingTypesOptions(meetingTypes);
+  const meetingTypeCategoriesOptions = getMeetingTypeCategoriesOptions(
+    meetingTypes,
+    meetingTypeValue,
+  );
+  const categoryType = getCategoryType(meetingTypes, meetingTypeValue);
   return (
     <BottomSheet
       enableDynamicSizing
@@ -125,17 +145,28 @@ export function NewMeetingRecordingSheet({
               </Typography>
             </View>
           </View>
-          <View className="mb-4 w-full">
-            {meetingTypes?.length > 1 && (
-              <Dropdown
-                className="mb-2"
-                variant="outline"
-                value={meetingTypeValue}
-                options={meetingTypes}
-                onSelect={setMeetingType}
-              />
-            )}
-          </View>
+          {meetingTypesOptions?.length > 1 && (
+            <Dropdown
+              className="z-20 mb-4 w-full"
+              variant="outline"
+              value={meetingTypeValue}
+              options={meetingTypesOptions}
+              onSelect={setMeetingType}
+            />
+          )}
+          {meetingTypeCategoriesOptions && (
+            <Dropdown
+              className="z-10 mb-4 w-full"
+              variant="outline"
+              value={meetingTypeCategory}
+              options={meetingTypeCategoriesOptions}
+              onSelect={setMeetingTypeCategory}
+              defaultEmptyValue
+              placeholder={getCategoryTypePlaceholder(categoryType)}
+              hasFreeTextOption
+              errorMessage={meetingTypeCategoryError}
+            />
+          )}
           <TouchableOpacity
             className="mb-3 h-14 w-full flex-row items-center justify-center gap-2 rounded-full bg-brand p-4"
             onPress={onStartMeeting}

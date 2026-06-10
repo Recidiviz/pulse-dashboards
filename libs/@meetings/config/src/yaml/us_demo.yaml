@@ -1,13 +1,21 @@
 name: Demo
 stateCode: US_DEMO
-version: 4
+version: 5
 
 audioTTLDays: null
 transcriptTTLDays: null
 staffFeedbackEnabled: true
 audioPlaybackEnabled: true
 meetingTypes:
-  - Assessment
-  - Contact
-  - Collateral Contact
-  - 120-Day Meeting
+  - type: Assessment
+  - type: Contact
+  - type: 120-Day Meeting
+  - type: Collateral Contact
+    isCategoryRequired: true
+    categories:
+      - Family
+      - Friend
+      - Employer
+      - Treatment Provider
+      - Legal Counsel
+    categoryType: "Relationship"

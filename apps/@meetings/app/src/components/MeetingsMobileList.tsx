@@ -28,6 +28,7 @@ import MeetingsPlaceholder from "./MeetingsPlaceholder";
 type Meeting = {
   id: string;
   meetingType: string | null;
+  meetingTypeCategory: string | null;
   date: string;
   time: string;
   duration: string | null;

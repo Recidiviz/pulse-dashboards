@@ -179,6 +179,7 @@ const millisecondsInOneHour = 60 * 60 * 1000;
 export const fakeActiveMeeting = {
   id: "meeting-1",
   meetingType: pseudoMeetingType,
+  meetingTypeCategory: null,
   staffEmail: fakeStaff[0].email,
   client: {
     connect: {

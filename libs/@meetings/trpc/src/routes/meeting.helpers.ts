@@ -19,6 +19,7 @@ import { TRPCError } from "@trpc/server";
 import keyBy from "lodash/keyBy";
 import uniqBy from "lodash/uniqBy";
 
+import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   PostMeetingProcessingStatus,
   Prisma,
@@ -61,6 +62,7 @@ export async function createMeetingForPerson({
   personType,
   meetingId,
   meetingType,
+  meetingTypeCategory,
   stateCode,
 }: {
   prisma: PrismaClient;
@@ -70,6 +72,7 @@ export async function createMeetingForPerson({
   personType: "client" | "resident";
   meetingId: string;
   meetingType: string;
+  meetingTypeCategory?: string | null;
   stateCode: StateCode;
 }) {
   if (
@@ -83,10 +86,26 @@ export async function createMeetingForPerson({
     });
   }
 
+  const currentAgencyConfig = AGENCY_CONFIGS[stateCode];
+  const agencyConfigMeetingType = currentAgencyConfig.meetingTypes.find(
+    (item) => item.type === meetingType,
+  );
+  if (
+    agencyConfigMeetingType &&
+    agencyConfigMeetingType.isCategoryRequired &&
+    !meetingTypeCategory
+  ) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `Meeting type category is required for ${meetingType} meeting type`,
+    });
+  }
+
   return await prisma.meeting.create({
     data: {
       id: meetingId,
       meetingType,
+      meetingTypeCategory,
       [personType]: {
         connect: {
           personId,
@@ -133,6 +152,7 @@ export async function getMeetingsForPerson({
     select: {
       id: true,
       meetingType: true,
+      meetingTypeCategory: true,
       startTime: true,
       endTime: true,
       postMeetingProcessingStatus: true,

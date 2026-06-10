@@ -17,6 +17,7 @@
 
 import { faker } from "@faker-js/faker";
 import { createId } from "@paralleldrive/cuid2";
+import { TRPCError } from "@trpc/server";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
 import { IMPERSONATED_EMAIL_HEADER_KEY } from "~@meetings/trpc/context";
@@ -399,6 +400,42 @@ describe("client router", () => {
             }),
           ).rejects.toThrow(
             "Recidiviz users may not create non-demo meetings in production",
+          );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+
+      test("Throws if create meeting with meetingType that requires category but not provided", async () => {
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
+
+        await initFastifyAndSetUser(
+          {
+            "https://dashboard.recidiviz.org/email_address":
+              "test@recidiviz.org",
+            "https://dashboard.recidiviz.org/app_metadata": {
+              stateCode: "recidiviz",
+              allowedStates: ["US_DEMO"],
+            },
+          },
+          { stateCode: "US_DEMO" },
+        );
+
+        try {
+          await expect(
+            testTRPCClient.v1.client.createMeeting.mutate({
+              clientId: fakeClients[0].personId,
+              startTime: faker.date.future(),
+              meetingId: createId(),
+              meetingType: "Collateral Contact",
+              meetingTypeCategory: null,
+            }),
+          ).rejects.toThrow(
+            new TRPCError({
+              code: "BAD_REQUEST",
+              message: `Meeting type category is required for Collateral Contact meeting type`,
+            }),
           );
         } finally {
           env.DEPLOY_ENV = originalDeployEnv;

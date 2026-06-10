@@ -28,6 +28,7 @@ type AudioUploadStore = {
   status: AudioUploadStatus;
   meetingId: string | null;
   meetingType: string | null;
+  meetingTypeCategory: string | null;
   person: Person | null;
   personType: PersonType | null;
   file: FileInfo | null;
@@ -45,6 +46,7 @@ type AudioUploadStore = {
   setDialog: (dialog: AudioUploadDialog) => void;
   setMeetingId: (meetingId: string | null) => void;
   setMeetingType: (meetingType: string | null) => void;
+  setMeetingTypeCategory: (meetingTypeCategory: string | null) => void;
   setFile: (file: FileInfo | null) => void;
   setError: (error: string | null) => void;
   setUploadProgress: (uploaded: number, total: number) => void;
@@ -55,6 +57,7 @@ type AudioUploadStore = {
     person: Person;
     personType: PersonType;
     meetingType: string;
+    meetingTypeCategory: string | null;
   }) => void;
   reset: () => void;
 };
@@ -64,6 +67,7 @@ const initialState = {
   dialog: null,
   meetingId: null,
   meetingType: null,
+  meetingTypeCategory: null,
   personType: null,
   person: null,
   file: null,
@@ -84,6 +88,8 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       setDialog: (dialog) => set({ dialog }),
       setMeetingId: (meetingId) => set({ meetingId }),
       setMeetingType: (meetingType) => set({ meetingType }),
+      setMeetingTypeCategory: (meetingTypeCategory) =>
+        set({ meetingTypeCategory }),
       setFile: (file) => set({ file }),
       setError: (error) => set({ error }),
       setUploadProgress: (uploadedBytes, totalBytes) =>
@@ -91,12 +97,13 @@ export const useAudioUploadStore = create<AudioUploadStore>()(
       setRecordingDate: (recordingDate) => set({ recordingDate }),
       setRecordingTime: (recordingTime) => set({ recordingTime }),
       setUserNotepadNotes: (userNotepadNotes) => set({ userNotepadNotes }),
-      open: ({ person, personType, meetingType }) =>
+      open: ({ person, personType, meetingType, meetingTypeCategory }) =>
         set({
           ...initialState,
           person,
           personType,
           meetingType,
+          meetingTypeCategory,
           status: "selecting",
         }),
       reset: () => set(initialState),

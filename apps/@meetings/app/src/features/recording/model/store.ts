@@ -38,6 +38,7 @@ type RecordingStore = {
   personType: PersonType | null;
   meetingId: string | null;
   meetingType: string | null;
+  meetingTypeCategory: string | null;
   isRecordingViewMinimized: boolean;
   durationMs: number;
 
@@ -47,6 +48,7 @@ type RecordingStore = {
   setPersonType: (personType: PersonType | null) => void;
   setMeetingId: (meetingId: string | null) => void;
   setMeetingType: (meetingType: string | null) => void;
+  setMeetingTypeCategory: (meetingTypeCategory: string | null) => void;
   setIsRecordingViewMinimized: (isMinimized: boolean) => void;
   setDurationMs: (durationMs: number) => void;
 };
@@ -66,6 +68,7 @@ export const useRecordingStore = create<RecordingStore>()(
         personType: null,
         meetingId: null,
         meetingType: null,
+        meetingTypeCategory: null,
         isRecordingViewMinimized: false,
         durationMs: 0,
 
@@ -76,6 +79,8 @@ export const useRecordingStore = create<RecordingStore>()(
         },
         setMeetingId: (meetingId: string | null) => set({ meetingId }),
         setMeetingType: (meetingType: string | null) => set({ meetingType }),
+        setMeetingTypeCategory: (meetingTypeCategory: string | null) =>
+          set({ meetingTypeCategory }),
         setPerson: (person: Person | null) => set({ person }),
         setPersonType: (personType: PersonType | null) => set({ personType }),
         setIsRecordingViewMinimized: (isMinimized: boolean) =>

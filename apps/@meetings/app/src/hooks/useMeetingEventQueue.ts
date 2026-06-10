@@ -53,6 +53,7 @@ type MeetingEventMetadata = {
 
 export type CreateMeetingEvent = {
   meetingType: string;
+  meetingTypeCategory?: string | null;
   startTime: Date;
   type: MeetingEventType.Created;
 } & MeetingEventMetadata;

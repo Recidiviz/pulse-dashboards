@@ -94,6 +94,7 @@ describe("meeting router", () => {
       expect(result).toEqual({
         id: fakeActiveMeeting.id,
         meetingType: pseudoMeetingType,
+        meetingTypeCategory: null,
         startTime: fakeActiveMeeting.startTime,
         endTime: null,
         durationMs: null,
@@ -161,6 +162,7 @@ describe("meeting router", () => {
         expect(result).toEqual({
           id: fakeActiveMeeting.id,
           meetingType: pseudoMeetingType,
+          meetingTypeCategory: null,
           startTime: fakeActiveMeeting.startTime,
           endTime: null,
           durationMs: null,

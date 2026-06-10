@@ -217,6 +217,9 @@ model Meeting {
   // This field is required but adding it as optional ensures old meetings are not affected
   // In backend and frontend this will be a required field
   meetingType String?
+  // Additional category for meeting type, if it has any
+  // Agency config has schema for it, if it is required 
+  meetingTypeCategory String?
 }
 
 enum TranscriptionProvider {

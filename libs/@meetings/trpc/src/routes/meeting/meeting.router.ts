@@ -76,6 +76,7 @@ export const meetingRouter = router({
               finalRecordingGCSPath: true,
               audioDeletedAt: true,
               meetingType: true,
+              meetingTypeCategory: true,
               transcriptions: {
                 orderBy: {
                   confidence: "desc",

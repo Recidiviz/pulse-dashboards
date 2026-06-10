@@ -23,7 +23,14 @@ import MinimizeSvg from "~@meetings/app/shared/assets/icons/arrows-pointing-in.s
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { AgencyConfig } from "~@meetings/config";
 
+import {
+  getCategoryType,
+  getCategoryTypePlaceholder,
+  getMeetingTypeCategoriesOptions,
+  getMeetingTypesOptions,
+} from "../entities/meeting-type/lib";
 import { Person } from "../entities/person";
 import useIsOnline from "../shared/lib/useIsOnline";
 import Dropdown from "../shared/ui/Dropdown";
@@ -36,8 +43,11 @@ type NewMeetingOptionsModalProps = {
   onUploadFile: () => void;
   isMeetingCreating: boolean;
   meetingTypeValue: string | null;
-  meetingTypes: string[];
+  meetingTypes: AgencyConfig["meetingTypes"];
   setMeetingType: (meetingType: string) => void;
+  meetingTypeCategory: string | null;
+  setMeetingTypeCategory: (meetingTypeCategory: string) => void;
+  meetingTypeCategoryError: string | null;
 };
 
 export function NewMeetingOptionsModal({
@@ -49,8 +59,17 @@ export function NewMeetingOptionsModal({
   meetingTypeValue,
   meetingTypes,
   setMeetingType,
+  meetingTypeCategory,
+  setMeetingTypeCategory,
+  meetingTypeCategoryError,
 }: NewMeetingOptionsModalProps) {
   const { isOnline } = useIsOnline();
+  const meetingTypesOptions = getMeetingTypesOptions(meetingTypes);
+  const meetingTypeCategoriesOptions = getMeetingTypeCategoriesOptions(
+    meetingTypes,
+    meetingTypeValue,
+  );
+  const categoryType = getCategoryType(meetingTypes, meetingTypeValue);
   return (
     <Modal
       visible
@@ -100,12 +119,26 @@ export function NewMeetingOptionsModal({
             Please note: Summaries and other notes are generated for meetings
             containing 50 words or more.
           </Typography>
-          {meetingTypes?.length > 1 && (
+          {meetingTypesOptions?.length > 1 && (
             <Dropdown
+              className="z-20"
               variant="outline"
               value={meetingTypeValue}
-              options={meetingTypes}
+              options={meetingTypesOptions}
               onSelect={setMeetingType}
+            />
+          )}
+          {meetingTypeCategoriesOptions && (
+            <Dropdown
+              className="z-10"
+              variant="outline"
+              value={meetingTypeCategory}
+              options={meetingTypeCategoriesOptions}
+              onSelect={setMeetingTypeCategory}
+              defaultEmptyValue
+              placeholder={getCategoryTypePlaceholder(categoryType)}
+              hasFreeTextOption
+              errorMessage={meetingTypeCategoryError}
             />
           )}
           <TouchableOpacity

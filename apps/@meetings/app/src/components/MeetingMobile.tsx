@@ -362,7 +362,10 @@ const MeetingMobile = ({
               Meeting: {meetingDate}
             </Typography>
             <View className="flex flex-row items-center gap-1">
-              <MeetingTypeTag type={meetingDetails.meetingType} />
+              <MeetingTypeTag
+                type={meetingDetails.meetingType}
+                typeCategory={meetingDetails.meetingTypeCategory}
+              />
               <ClockIcon className="text-muted size-4" />
               <Typography className="text-sm font-normal leading-[14px] text-gray-500">
                 {time}
