@@ -151,7 +151,6 @@ export const trusteeFormSchema = z.object({
   trusteeNoAssaultiveDisciplinaryWithSeriousInjury: booleanToString,
   trusteeNoEscapeFromLowTrusteePast5Years: booleanToString,
   trusteeNoEscapeFromMediumCloseMaxPast10Years: booleanToString,
-  trusteeNoViolentFelonyConvictionPast5YearsIncarceration: booleanToString,
   trusteeNotConvictedOfFirstDegreeMurder: booleanToString,
   trusteeNotScoredHighForViolence: booleanToString,
   trusteeNotServingForSexualOffense: booleanToString,
@@ -162,6 +161,7 @@ export type TrusteeFormAdditionalFields = {
   trusteeNoFelonyDetainers: string;
   trusteeNoPendingFelonyCharges: string;
   trusteeNoPendingImmigrationActions: string;
+  trusteeNoViolentFelonyConvictionPast5YearsIncarceration: string;
   trusteeNotesForWarden: string;
   trusteeWardenHasApproved: string;
   trusteeDenialReasons: string;
