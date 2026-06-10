@@ -40,7 +40,7 @@ const HeaderRow = styled.div`
   display: flex;
   justify-content: space-between;
   gap: ${rem(spacing.md)};
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: ${rem(spacing.md)};
 `;
 
@@ -48,6 +48,8 @@ const PaddedButton = styled(Button)`
   flex-shrink: 0;
   padding: ${rem(12)} ${rem(spacing.md)};
   color: ${palette.pine3};
+  min-width: ${rem(160)};
+  white-space: nowrap;
 `;
 
 const ManagedComponent = observer(function AccordionSection({

@@ -33,6 +33,30 @@ const AccordionCopyWrapper = withCopyWrapperOverrides({
 // this allows us to interpolate this component into styled-components styles
 const StyledAccordionCopy = styled(AccordionCopyWrapper)``;
 
+const AccordionDetails = styled.details<{ $isOpen: boolean }>`
+  border-top: 1px solid ${palette.slate20};
+
+  &:first-of-type {
+    border-top: none;
+  }
+
+  &:last-of-type {
+    border-bottom: 1px solid ${palette.slate20};
+  }
+
+  // When a row is open, drop the line directly above it so it doesn't crowd
+  // the rounded top corners of the highlighted summary bar. Additionally, drop the
+  // the border on the last row
+  ${({ $isOpen }) =>
+    $isOpen &&
+    css`
+      &,
+      &:last-of-type {
+        border-color: transparent;
+      }
+    `}
+`;
+
 const AccordionPanel = styled.div`
   padding: ${rem(spacing.md)};
   padding-bottom: ${rem(40)};
@@ -67,16 +91,15 @@ const SummaryBar = styled.div<{ $isOpen: boolean }>`
   }
 
   ${({ $isOpen }) =>
-    $isOpen
-      ? css`
-          background-color: ${palette.pine2};
-          border-radius: ${rem(spacing.xs)};
+    $isOpen &&
+    css`
+      background-color: ${palette.pine2};
+      border-radius: ${rem(spacing.xs)};
 
-          ${StyledAccordionCopy}, ${CaretContainer} {
-            color: ${palette.marble1};
-          }
-        `
-      : `border-bottom: 1px solid ${palette.slate30};`}
+      ${StyledAccordionCopy}, ${CaretContainer} {
+        color: ${palette.marble1};
+      }
+    `}
 `;
 
 export type AccordionCopy = Record<string, { header: string; content: string }>;
@@ -126,7 +149,12 @@ export const Accordion = observer(function Accordion({
   return Object.keys(copy).map((panelId) => {
     const isOpen = !!toggledPanels[panelId];
     return (
-      <details key={panelId} id={`${id}-${panelId}`} open={isOpen}>
+      <AccordionDetails
+        key={panelId}
+        id={`${id}-${panelId}`}
+        open={isOpen}
+        $isOpen={isOpen}
+      >
         <AccordionContextProvider value={{ id, toggledPanels, onToggle }}>
           <AccordionSummary
             onClick={(e) => {
@@ -146,7 +174,7 @@ export const Accordion = observer(function Accordion({
             <StyledAccordionCopy>{copy[panelId].content}</StyledAccordionCopy>
           </AccordionPanel>
         </AccordionContextProvider>
-      </details>
+      </AccordionDetails>
     );
   });
 });
