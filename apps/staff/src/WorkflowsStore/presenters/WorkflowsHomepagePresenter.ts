@@ -32,7 +32,6 @@ import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
 
 enum HomepageSpot {
-  TOP,
   BOTTOM,
   CARD,
 }
@@ -189,20 +188,11 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
         .tasksRoutePlanner
     ) {
       return HomepageSpot.CARD;
-    } else if (this.workflowsStore.rootStore.currentTenantId === "US_TX") {
-      // TODO(#9369) When Tasks Route Planner is fully launched in Texas, we can remove
-      // this case
-      return HomepageSpot.TOP;
     } else {
       return HomepageSpot.BOTTOM;
     }
   }
 
-  get showTasksSummaryTop() {
-    return (
-      this.showTasksSummary && this.tasksSummaryLocation === HomepageSpot.TOP
-    );
-  }
   get showTasksSummaryBottom() {
     return (
       this.showTasksSummary && this.tasksSummaryLocation === HomepageSpot.BOTTOM

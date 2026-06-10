@@ -353,7 +353,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
         customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
-        tasksRoutePlanner: { activeTenants: ["US_TX"] },
+        tasksRoutePlanner: { activeTenants: ["US_TX", "US_ID"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         SARBuilder: { activeTenants: ["US_MO"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },

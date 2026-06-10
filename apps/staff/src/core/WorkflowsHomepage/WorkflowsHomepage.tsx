@@ -39,7 +39,6 @@ const ManagedComponent = observer(function WorkflowsHomepage({
     activeOpportunityTypes,
     opportunitiesByType,
     hasOpportunities,
-    showTasksSummaryTop,
     showTasksSummaryBottom,
     showTasksSummaryCard,
     tasks,
@@ -53,7 +52,6 @@ const ManagedComponent = observer(function WorkflowsHomepage({
       <ModelHydrator hydratable={presenter}>
         <WorkflowsResults headerText={headerText} callToActionText={ctaText}>
           {showTasksSummaryCard && <TasksCards tasks={tasks} />}
-          {showTasksSummaryTop && <TasksSummary tasks={tasks} />}
           {hasOpportunities &&
             activeOpportunityTypes &&
             opportunitiesByType && (
