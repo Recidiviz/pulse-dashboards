@@ -76,6 +76,7 @@ import {
 import { UsArResidentInformation } from "./UsAr/UsArResidentInformation";
 import { UsAzResidentInformation } from "./UsAz/UsAzResidentInformation";
 import { UsIdResidentInformation } from "./UsId/UsIdResidentInformation";
+import { UsMoCaseOverview } from "./UsMo/CaseOverview/UsMoCaseOverview";
 import { UsMoResidentInformation } from "./UsMo/UsMoResidentInformation";
 import { UsNdResidentInformation } from "./UsNd/UsNdResidentInformation";
 import { UsUtResidentInformation } from "./UsUt/UsUtResidentInformation";
@@ -382,6 +383,7 @@ export const FullProfile = observer(
     const { isTablet, isMobile } = useIsMobile(true);
     const {
       caseNoteSearch,
+      caseOverview,
       customTasks,
       hideWorkflowsOpportunities,
       sentenceProgressV2,
@@ -481,6 +483,17 @@ export const FullProfile = observer(
           )}
           <Content isMobile={isTablet}>
             <ProfileDetailsWrapper>
+              {caseOverview &&
+                person instanceof Client &&
+                person.stateCode === "US_MO" && (
+                  // `person instanceof Client && stateCode === "US_MO"`
+                  // narrows `person` to a US_MO `Client`. `caseOverview` is
+                  // already gated to the US_MO tenant via `activeTenants`,
+                  // but a US_MO user can also view a Resident profile, so
+                  // the `instanceof Client` guard keeps this path
+                  // Client-only.
+                  <UsMoCaseOverview client={person} />
+                )}
               {person.supervisionTasks?.orderedTasks &&
                 (customTasks ? (
                   <SectionCard>

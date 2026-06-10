@@ -22,6 +22,7 @@ import { milestoneTypes } from "../../milestones/types";
 import { dateStringSchema } from "../../utils/zod";
 import { personMetadataSchema } from "../utils/personMetadataSchema";
 import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
+import { usMoClientMetadataSchema } from "./US_MO/metadata/schema";
 import { usNeClientMetadataSchema } from "./US_NE/metadata/schema";
 import { usUtClientMetadataSchema } from "./US_UT/metadata/schema";
 import { clientEmployerSchema, specialConditionCodeSchema } from "./utils";
@@ -73,6 +74,7 @@ const optionalClientInformation = z
     hasAnyOutOfStateSentences: z.boolean().nullish(),
     custodialAuthority: z.string().nullish(),
     metadata: personMetadataSchema([
+      usMoClientMetadataSchema,
       usNeClientMetadataSchema,
       usUtClientMetadataSchema,
     ]).optional(),

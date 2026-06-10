@@ -115,6 +115,7 @@ export type FeatureVariant =
   //// Missouri
   | "usMoMyCaseload"
   | "customTasks"
+  | "caseOverview"
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
 
@@ -237,6 +238,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsConsistentLoginPill: {},
   usTnTEPENotesForAll: {},
   usMoMyCaseload: {},
+  caseOverview: {},
   usMoSearchByUnit: {},
   usMoWorkRelease: {},
   usMiCaseManagerSearch: {},
@@ -314,6 +316,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaSupervisionLevelDowngrade: {},
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         usIdTasksV2: {},
+        caseOverview: { activeTenants: ["US_MO"] },
+        customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
@@ -339,6 +343,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },
+        caseOverview: { activeTenants: ["US_MO"] },
         tasksPermasnooze: { activeTenants: ["US_MO"] },
         usMoMyCaseload: { activeTenants: ["US_MO"] },
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
