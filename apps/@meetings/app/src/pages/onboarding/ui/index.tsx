@@ -22,6 +22,7 @@ import Modal from "~@meetings/app/shared/ui/Modal";
 
 import { OnboardingMobileStep, OnboardingWebStep } from "../config";
 import { useOnboardingStore } from "../model/store";
+import { HowItWorks } from "./HowItWorks";
 import { Welcome } from "./Welcome";
 
 export function OnboardingScreen() {
@@ -33,6 +34,7 @@ export function OnboardingScreen() {
     return (
       <Modal containerClassName="size-full md:max-w-[1240px] md:max-h-[720px] p-6">
         {webStep === OnboardingWebStep.Welcome && <Welcome />}
+        {webStep === OnboardingWebStep.HowItWorks && <HowItWorks />}
       </Modal>
     );
   }
@@ -43,6 +45,7 @@ export function OnboardingScreen() {
       className="flex-1 bg-primary p-4"
     >
       {mobileStep === OnboardingMobileStep.Welcome && <Welcome />}
+      {mobileStep === OnboardingMobileStep.HowItWorks && <HowItWorks />}
     </View>
   );
 }
