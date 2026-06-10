@@ -109,14 +109,12 @@ export class UsAzImportantDatesPresenter {
       isUpcoming,
       isPast,
       showTentativeCopy,
-      linkUrl,
       shortName,
     }: {
       approvalDateKey: "tprDate" | "dtpDate" | undefined;
       isUpcoming: boolean;
       isPast: boolean;
       showTentativeCopy: boolean;
-      linkUrl: string;
       shortName: string;
     },
   ): Pick<DateEntry, "title" | "value" | "info" | "goLink"> {
@@ -135,13 +133,9 @@ export class UsAzImportantDatesPresenter {
     // Body copy. Precedence: upcoming > past > tentative > default.
     let info: string;
     if (isUpcoming) {
-      info = this.t(($) => $.importantDates.upcomingDateMessage, {
-        replace: { linkUrl },
-      });
+      info = this.t(($) => $.importantDates.upcomingDateMessage);
     } else if (isPast) {
-      info = this.t(($) => $.importantDates.pastDateMessage, {
-        replace: { linkUrl },
-      });
+      info = this.t(($) => $.importantDates.pastDateMessage);
     } else if (showTentativeCopy && approvalDateKey) {
       info = this.t(
         ($) => $.importantDates.dates[approvalDateKey].tentative.info,
@@ -152,7 +146,7 @@ export class UsAzImportantDatesPresenter {
         ($) => $.importantDates.dates[approvalDateKey].approved.info,
       );
     } else {
-      const replace: Record<string, unknown> = { linkUrl };
+      const replace: Record<string, unknown> = {};
       if (entry.dateKey === "tprDate") {
         replace["trLinkUrl"] = linkToDateSection("trToAddDate");
       }
@@ -225,7 +219,6 @@ export class UsAzImportantDatesPresenter {
         isUpcoming,
         isPast,
         showTentativeCopy,
-        linkUrl,
         shortName,
       });
 

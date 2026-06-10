@@ -15,10 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTypedParams } from "react-router-typesafe-routes/dom";
-
 import { usePageTitle, withCopyWrapperOverrides } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
 import { AboutVideoCta } from "../components/AboutVideoCta/AboutVideoCta";
@@ -33,19 +30,12 @@ export function PageMoreInfoAbout() {
   const { t } = useUsAzTranslations();
 
   usePageTitle(t(($) => $.about.heading));
-  const pathParams = useTypedParams(State.Resident.UsAzMoreInformation);
 
   return (
     <DefinitionView
       heading={t(($) => $.about.heading)}
       body={t(($) => $.about.body)}
-      moreInfoPageLinks={[
-        {
-          children: t(($) => $.homePageLinkText),
-          to: State.Resident.buildPath(pathParams),
-        },
-        ...useInfoPageFooterLinks(),
-      ]}
+      moreInfoPageLinks={useInfoPageFooterLinks()}
       CopyWrapperOverride={CopyWrapperWithCustomComponents}
     />
   );

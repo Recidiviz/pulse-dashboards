@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { matchPath, useLocation } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { SimpleLinkProps } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
@@ -27,8 +28,14 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
   const { isDprQualified } = useUsAzSingleResidentContext();
   const { t } = useUsAzTranslations();
   const { pathname } = useLocation();
+  const pathParams = useTypedParams(State.Resident.UsAzMoreInformation);
 
-  const links: Array<SimpleLinkProps> = [];
+  const links: Array<SimpleLinkProps> = [
+    {
+      children: t(($) => $.homePageLinkText),
+      to: State.Resident.buildPath(pathParams),
+    },
+  ];
   if (!matchPath(State.Resident.UsAzMoreInformation.About.path, pathname)) {
     links.push({
       to: `../${State.Resident.$.UsAzMoreInformation.About.buildRelativePath({})}`,

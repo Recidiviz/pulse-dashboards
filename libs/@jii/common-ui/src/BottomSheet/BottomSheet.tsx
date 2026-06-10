@@ -22,7 +22,7 @@ import styled from "styled-components";
 
 import { palette, spacing, typography } from "~design-system";
 
-import { PAGE_WIDTH } from "../constants";
+import { PageContainer } from "../BaseLayout/BaseLayout";
 
 // How long the slide-up/slide-down animation runs, in milliseconds. This matches
 // the base Modal's `transform` transition (300ms) and is passed to react-modal's
@@ -39,30 +39,32 @@ const StyledBottomSheet = styled(Modal)`
     position: fixed;
     top: auto;
     bottom: 0;
-    left: 50%;
-    right: auto;
-    transform: translate(-50%, 100%);
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
 
-    /* Full width on the tablet viewport (601px); max-width is a safeguard for any wider viewports. */
     width: 100%;
-    max-width: ${rem(PAGE_WIDTH)};
+    max-width: 100%;
     /* Cap the height and scroll inside if the content is tall. */
     max-height: 90vh;
     min-height: 75vh;
     overflow-y: auto;
 
-    /* Rounded top corners only, since the bottom sits flush with the screen. */
-    border-radius: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
-    padding: ${rem(spacing.lg)} ${rem(spacing.md)} ${rem(spacing.xl)};
+    border-radius: 0;
+    padding: ${rem(spacing.lg)} 0 ${rem(spacing.xl)};
   }
 
   .ReactModal__Overlay[class*="--after-open"] .ReactModal__Content {
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 
   /* While closing, slide it back down off-screen before it unmounts. */
   .ReactModal__Overlay[class*="--before-close"] .ReactModal__Content {
-    transform: translate(-50%, 100%);
+    transform: translateY(100%);
+  }
+
+  .ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.25);
   }
 `;
 
@@ -74,7 +76,7 @@ const CloseButton = styled.button`
   cursor: pointer;
   color: ${palette.pine4};
   padding: ${rem(spacing.sm)} 0;
-  margin-bottom: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.xxl)};
 `;
 
 export type BottomSheetProps = {
@@ -99,9 +101,11 @@ export const BottomSheet: FC<BottomSheetProps> = ({
     closeTimeoutMS={ANIMATION_MS}
     contentLabel={ariaLabel}
   >
-    <CloseButton type="button" onClick={onRequestClose}>
-      {closeLabel}
-    </CloseButton>
-    {children}
+    <PageContainer>
+      <CloseButton type="button" onClick={onRequestClose}>
+        {closeLabel}
+      </CloseButton>
+      {children}
+    </PageContainer>
   </StyledBottomSheet>
 );

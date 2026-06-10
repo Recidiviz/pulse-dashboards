@@ -20,8 +20,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { SlateCopy } from "~@jii/common-ui";
-import { clickableText } from "~@jii/common-ui";
+import { clickableText, SlateCopy } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 import { spacing } from "~design-system";
 
@@ -39,6 +38,12 @@ const TOCList = styled.ol`
   a {
     ${clickableText}
   }
+`;
+
+// The date TOC is the last thing before the accordion sections, so it gets
+// extra spacing. The first (non-date) TOC keeps the default spacing.
+const DateTOCList = styled(TOCList)`
+  margin-bottom: ${rem(spacing.xxl)};
 `;
 
 export const ImportantDatesTOC = observer(function ImportantDatesTOC({
@@ -67,7 +72,7 @@ export const ImportantDatesTOC = observer(function ImportantDatesTOC({
           : t(($) => $.importantDatesInfoPage.personalDates)}
       </SlateCopy>
 
-      <TOCList>
+      <DateTOCList>
         {presenter.dateHashes.map((hash) => (
           <li key={hash}>
             <Link to={`#${hash}`}>
@@ -75,7 +80,7 @@ export const ImportantDatesTOC = observer(function ImportantDatesTOC({
             </Link>
           </li>
         ))}
-      </TOCList>
+      </DateTOCList>
     </>
   );
 });

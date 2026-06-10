@@ -64,17 +64,17 @@ export default {
       body: importantDatesInfoPage,
     },
     pastDateMessage: `If this date has already passed, it means you have not met all the requirements yet. 
-    Reviewing [the criteria]({{linkUrl}}) will show you what steps you still need to take.`,
+    Reviewing the criteria will show you what steps you still need to take.`,
     pastDateTag: "Only eligible if criteria are met",
     missingDateMessage: "No date on record",
     upcomingDateMessage: `Your date is coming up soon! Remaining compliant with
-    [the criteria]({{linkUrl}}) is the best way to keep your date from changing.`,
+    the criteria is the best way to keep your date from changing.`,
     dates: {
       tprDate: {
         title: "Standard Transition Program (STP)",
         info: `Under STP, you may qualify for release up to 90 days earlier than your
         [Temporary Release (TR)]({{trLinkUrl}}) under the Standard Transition Program if you meet all
-        of [the criteria]({{linkUrl}}). You may also hear this called "Transition Program Release"
+        of the criteria. You may also hear this called "Transition Program Release"
         (TPR) or "Transition Release."`,
         shortName: "STP",
         value: "{{tprDate, formatFullDate}}",
@@ -93,7 +93,7 @@ export default {
       dtpDate: {
         title: "Drug Transition Program (DTP)",
         info: `You may qualify for release up to 90 days earlier than your Temporary Release (TR)
-        under the Drug Transition Program if you meet all of [the criteria]({{linkUrl}}). This
+        under the Drug Transition Program if you meet all of the criteria. This
         is a special version of the Transition Program Release (TPR) for people with only qualifying drug
         possession or use charges. You may also hear this called "Drug Transition Program Release"
         (DTP) or "Drug Transition Release."`,
@@ -114,7 +114,7 @@ export default {
       csbdDate: {
         title: "Community Supervision Begin Date (CSBD)",
         info: `A discretionary release up to 90 days before your ERCD. You must meet
-        [the criteria]({{linkUrl}}) listed in ADCRR Department Order 1002. You may also hear
+        the criteria listed in ADCRR Department Order 1002. You may also hear
         this called a “Temporary Release” (TR) date.`,
         shortName: "CSBD",
         value: "{{csbdDate, formatFullDate}}",
@@ -150,7 +150,7 @@ export default {
       trToAddDate: {
         title: "Temporary Release to Absolute Discharge Date (TR to ADD)",
         info: `A discretionary release up to 90 days before your ADD (Absolute Discharge Date). 
-        You must meet [the criteria]({{linkUrl}}) listed in ADCRR Department Order 1002. This is
+        You must meet the criteria listed in ADCRR Department Order 1002. This is
         used for individuals who will be released to probation following the completion of 
         their prison term.`,
         shortName: "TR to ADD",
