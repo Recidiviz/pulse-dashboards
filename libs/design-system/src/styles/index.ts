@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./palette";
+export { palette } from "./palette";
 export * from "./spacing";
 export * from "./typography";

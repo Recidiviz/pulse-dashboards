@@ -19,7 +19,7 @@ import { css, CSSProp } from "styled-components";
 
 import sassVars from "../scss/typography/_variables.module.scss";
 
-const TYPOGRAPHY_LEVELS = [
+export const TYPOGRAPHY_LEVELS = [
   "Sans12",
   "Sans14",
   "Sans16",
@@ -27,18 +27,18 @@ const TYPOGRAPHY_LEVELS = [
   "Sans24",
   "Serif24",
   "Serif34",
-  "Header88",
-  "Header56",
-  "Header34",
   "Header24",
-  "Body48",
-  "Body40",
-  "Body32",
-  "Body24",
-  "Body19",
-  "Body16",
-  "Body14",
+  "Header34",
+  "Header56",
+  "Header88",
   "Body12",
+  "Body14",
+  "Body16",
+  "Body19",
+  "Body24",
+  "Body32",
+  "Body40",
+  "Body48",
 ] as const;
 type TypographyLevel = (typeof TYPOGRAPHY_LEVELS)[number];
 

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
 import * as React from "react";
 
 export interface IconSVGProps extends React.SVGProps<SVGSVGElement> {
@@ -533,4 +534,8 @@ IconSVG["Next"] = () => (
   </StrokeSVG>
 );
 
-export { IconSVG };
+const iconKinds = Object.keys(IconSVG).sort((a, b) =>
+  ascending(a.toLowerCase(), b.toLowerCase()),
+);
+
+export { iconKinds, IconSVG };

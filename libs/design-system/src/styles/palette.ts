@@ -28,16 +28,12 @@ const basePalette = {
 
   opportunitiesAppGreen: rgb(0, 166, 155),
 
-  /* Marble
-     Used mainly for backgrounds and for knockout elements */
   marble1: white,
   marble2: rgb(249, 250, 250),
   marble3: rgb(244, 245, 245),
   marble4: rgb(239, 241, 241),
   marble5: rgb(233, 237, 237),
 
-  /* Slate
-     Used mainly for UI elements such as text, icons, and borders */
   slate,
   slate05: rgba(slate, 0.05),
   slate06: rgba(slate, 0.06),
@@ -56,14 +52,9 @@ const basePalette = {
   slate85: rgba(slate, 0.85),
   slate90: rgba(slate, 0.9),
 
-  /* Pink
-     Used mainly for status pills
-   */
   pink: rgba(255, 220, 229, 1),
-  darkPink: rgba(76, 12, 28, 1),
+  pinkDark: rgba(76, 12, 28, 1),
 
-  /* Pine
-     Used mainly for UI elements such as text or dark backgrounds */
   pine1: rgb(1, 35, 34),
   pine2: rgb(0, 51, 49),
   pine3: rgb(0, 77, 72),
@@ -74,8 +65,6 @@ const basePalette = {
   white80: rgba(white, 0.8),
 };
 
-/* Signal
-   Used mainly for system alerts, error states, links, tooltips, and highlights */
 const signal = {
   links: rgb(0, 108, 103),
   highlight: rgb(37, 184, 148),
@@ -98,8 +87,6 @@ const profileColorOrder = [
   "#8A654E",
 ];
 
-/* Data
-   Used mainly for data visualizations */
 const data = {
   forest1: rgb(37, 99, 111),
   forest2: rgb(0, 75, 91),

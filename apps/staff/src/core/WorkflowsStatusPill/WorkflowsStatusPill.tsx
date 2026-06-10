@@ -36,7 +36,7 @@ export const WorkflowsStatusPill = ({
 }) => {
   if (person instanceof Client && person.isInCustody) {
     return (
-      <StyledPill color={palette.pink} textColor={palette.darkPink} filled>
+      <StyledPill color={palette.pink} textColor={palette.pinkDark} filled>
         In Custody
       </StyledPill>
     );

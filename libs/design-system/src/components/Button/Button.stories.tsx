@@ -18,7 +18,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "storybook/test";
 
-import { IconSVG } from "../Icon";
+import { iconKinds } from "../Icon";
 import { Button } from "./Button";
 
 const meta = {
@@ -34,7 +34,7 @@ const meta = {
       control: "select",
     },
     icon: {
-      options: ["(none)", ...Object.keys(IconSVG)],
+      options: ["(none)", ...iconKinds],
       control: "select",
       mapping: { "(none)": undefined },
     },

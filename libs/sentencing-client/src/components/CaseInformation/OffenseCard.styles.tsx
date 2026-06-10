@@ -112,7 +112,7 @@ export const MostSevereOffenseBadge = styled.div`
   padding: 0.25rem 0.5rem;
   border-radius: 6.25rem;
   background: ${palette.pink};
-  color: ${palette.darkPink};
+  color: ${palette.pinkDark};
   font-family: "Public Sans";
   font-size: 0.75rem;
   font-weight: 500;

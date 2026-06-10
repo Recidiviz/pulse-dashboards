@@ -48,7 +48,7 @@ const InsightsPill: FC<InsightsPillProps> = ({
   tooltipCopy,
   label,
   color = palette.pink,
-  textColor = palette.darkPink,
+  textColor = palette.pinkDark,
 }) => {
   return (
     <InsightsTooltip contents={tooltipCopy}>

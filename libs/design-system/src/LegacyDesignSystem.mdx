@@ -1,0 +1,11 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Shared/Design System/The Legacy Design System" />
+
+# The Legacy Design System
+
+The `design-system` library in this monorepo is intended to supersede (but has not yet fully replaced) our previous design system, which lives in [a separate repo](https://github.com/Recidiviz/web-libraries/tree/main/packages/design-system) and is packaged and distributed as [a standalone npm package](https://www.npmjs.com/package/@recidiviz/design-system).
+
+That package is now considered deprecated, and this local library should be preferred in all circumstances where the components have already been migrated; this is enforced to some extent with a lint rule, but it remains true even when the linter doesn't catch it. When updates to old components are needed, those components should first be migrated into this library, and then updated here.
+
+You can continue to use components from the legacy design system that have not yet been migrated; refer to its [Storybook instance](https://recidiviz.github.io/web-libraries/) for more information on its contents.

@@ -18,7 +18,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "storybook/test";
 
-import { IconSVG } from "../Icon";
+import { iconKinds } from "../Icon";
 import { Dropdown } from "./Dropdown";
 import { DropdownMenu, type DropdownMenuProps } from "./DropdownMenu";
 import { DropdownMenuItem } from "./DropdownMenuItem";
@@ -94,7 +94,7 @@ const meta: Meta<CombinedArgs> = {
     },
     icon: {
       name: "DropdownToggle: icon",
-      options: ["(none)", ...Object.keys(IconSVG)],
+      options: ["(none)", ...iconKinds],
       control: "select",
       mapping: { "(none)": undefined },
     },

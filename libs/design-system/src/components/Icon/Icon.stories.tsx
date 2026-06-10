@@ -20,9 +20,7 @@ import styled from "styled-components";
 
 import { palette, typography } from "../../styles";
 import { Icon, iconToDataURI } from "./Icon";
-import { IconSVG } from "./IconSVG";
-
-const iconKinds = Object.keys(IconSVG);
+import { iconKinds } from "./IconSVG";
 
 const meta: Meta<typeof Icon> = {
   title: "Shared/Design System/Components/Icon",
