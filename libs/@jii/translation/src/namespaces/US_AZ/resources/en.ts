@@ -248,21 +248,78 @@ export default {
         questions: {
           whySoMany: {
             header: "Why do I have so many different release dates?",
-            content: `Arizona has several different ways someone can be released, and each one has its own date. You might see dates for:
+            content: `Arizona has several different ways someone can be released, and each one has its own calculation.
 
-- **Transition Release (STP or DTP)** — the earliest possible release, up to 90 days before your ERCD.
-- **CSBD or TR to ADD** — release up to about 77 days before your ERCD.
+- **Transition Release (STP or DTP)** — the earliest possible release, up to 90 days before your next eligible earliest release type and date.
+- **CSBD or TR to ADD** — release up to about 77 days before your ERCD based on specific program completions.
 - **ERCD or ADD** — release based on earned credits, usually around 85% of your sentence.
 - **SED** — 100% of your sentence.
 - **CSED** — when your community supervision ends.
 
-**Not all of these dates apply to everyone.** The dates you see on your homepage are the ones that apply to you. The page you're on now explains what each one means.`,
+**Not all of these release types apply to everyone.** The release type and date you see on your homepage are the ones that apply to you. The page you're on now explains what each one means. Tap on "My Release Dates" at the top of this page to read about the release types that apply to you.`,
           },
           datesNotMatchingTimeComp: {
             header:
               "The dates in the app don't match my time comp paperwork. Why?",
             content: `This usually happens because something changed after your time comp paperwork was printed. The app shows what's currently in the computer system that your COIII uses, which is updated more often than printed paperwork.
+
 If your dates have changed, the app should be the more recent source. But if something looks wrong, talk to your COIII — they can check the system and write to Time Comp if there's a real problem.`,
+          },
+          whyDatePushedBack: {
+            header: "Why did my release date get pushed back?",
+            content: `The most common reason is getting a disciplinary violation, where the punishment included losing earned release credits. Losing credits affects every date *except* your **Sentence Expiration Date (SED)**, which is 100% of your sentence and doesn't move.
+
+Other reasons your date might change:
+
+- A new charge was added to your case.
+- A Time Comp audit found something that needed to be corrected.
+- You didn't pass mandatory literacy.
+
+If your date changed and you're not sure why, talk to your COIII.`,
+          },
+          disciplinaryViolation: {
+            header:
+              "I got a disciplinary violation. How does that affect my date?",
+            content: `It depends on the type of violation and which date you're asking about.
+
+- **Transition Release (STP/DTP):** You can't have a Class A or Class B major violation within 6 months of your CSBD or TR to ADD date (those are usually the next earliest release types after Transition Release). If you're within that 6-month window, the violation could mean that you lose your Transition date.
+- **CSBD / TR to ADD, ERCD:** If the punishment for the violation includes losing earned release credits, these dates may move further away.
+- **SED:** Your SED is 100% of your sentence, so it doesn't change.
+
+If you're not sure how a specific violation will affect your dates, talk to your COIII.`,
+          },
+          detainer: {
+            header: "I have a detainer. Does that affect my dates?",
+            content: `It depends on the type of detainer hold you have.
+
+- **Felony holds, felony detainers, or felony warrants** make you ineligible for Transition Release (both STP and DTP) and for CSBD / TR to ADD.
+- **An ICE detainer** also makes you ineligible for early release types if you are not a US Citizen.
+
+A detainer does not change your ERCD or SED. Those dates are still yours, but you may be picked up by another agency when you leave.
+
+If you have questions about a specific detainer, talk to your COIII.`,
+          },
+          mandatoryLiteracy: {
+            header: `Do I have to finish mandatory literacy ("the mandate") to be released?`,
+            content: `For most early release types, yes — unless you have an exemption. Here's how it works for each release type:
+
+- **STP:** You must complete mandatory literacy (or have an exemption).
+- **DTP:** You must at least be enrolled in mandatory literacy — but to be released on your earliest possible date, you must complete it. This is because all other early release types require you to complete mandatory literacy.
+- **CSBD / TR to ADD:** You must complete mandatory literacy, or have an exemption.
+- **ERCD:** You must complete mandatory literacy, or have an exemption.
+
+If you don't pass the mandate, you can't be released on these release types. You will stay in prison until you reach your **Sentence Expiration Date (SED)** — which is 100% of your sentence.
+
+Most people who have less than 6 months between when they arrive at ADCRR and their ERCD are exempt from mandatory literacy.`,
+          },
+          passedMandatoryLiteracy: {
+            header:
+              "I just passed Mandatory Literacy. Why hasn't my date changed yet?",
+            content: `Your dates already assume you will pass mandatory literacy. So when you actually pass it, your dates usually stay the same.
+
+What changes is your *eligibility* — you've now met one of the requirements you needed to meet to be released on those dates. The date itself was already there.
+
+If you think your date should have changed for another reason, talk to your COIII.`,
           },
         },
       },
@@ -276,6 +333,22 @@ If your dates have changed, the app should be the more recent source. But if som
           header: "What does this mean?",
           content:
             "The Standard Transition Program (STP) allows for release up to **90 days before your next earliest eligible release date** if you are willing to attend a program while in the community. It is designed to help people transition to the community earlier. You may also hear it called “Transition Release” or “TPR”. In this section, we call this type of release STP.",
+        },
+        stpVsDtp: {
+          header:
+            "What’s the difference between Standard Transition Program (STP) and Drug Transition Program (DTP)?",
+          content: `Both let you leave prison up to 90 days early if you meet the criteria and agree to attend a program in the community. The main difference is who can get them:
+
+- **Drug Transition Program (DTP)** is only for people whose current sentence is *only* for certain drug possession or use charges. Nothing else can be in your file.
+- **Standard Transition Program (STP)** is for others who meet the criteria, as long as you don’t have a disqualifying conviction.
+
+You can only qualify for one or the other — not both. If you qualify for DTP, you cannot also get STP.`,
+        },
+        senateBill: {
+          header: `Is “Transition Release” the same thing as a “Senate Bill”?`,
+          content: `Transition Release is just *one type* of Senate Bill, but it is not the only one. A Senate Bill is just a law passed by the Arizona government. Transition Release exists because the legislature passed a law (A.R.S. §31-281) that allows you to release up to 90 days early if you meet all the criteria for Transition Release.
+
+When people on the yard say “Senate Bill,” they often mean Transition Release — but the term can mean other things too.`,
         },
         whoHasThisDate: {
           header: "Who has this date?",
@@ -314,6 +387,50 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
 
 For a more detailed list of the specific crimes that would disqualify you, please see ADCRR Department Order 1002, attachments A, B, and C. (You can find this in the FYI app, under the Department Orders section. The attachments are at the end of the document.) You can also look up ARS §31-281, the law that defines Transition Program Release, in the Law Library. It may also be available on your tablet through LexisNexis.`,
         },
+        whyNoDate: {
+          header: "Why don’t I see a Transition Release date on my homepage?",
+          content: `If you don’t see a Transition date, one of two things is true:
+
+- **You’ve never had a Transition Release (STP or DTP) date.** This usually means your current charge or criminal history makes you ineligible. The criteria are listed under <AccordionOpener panelId="toBeReleasedOnThisDate">What do I need to do in order to be released on this date?</AccordionOpener>. The types of convictions that prevent you from being eligible for Transition Release are listed <AccordionOpener panelId="disqualifyingConvictions">here</AccordionOpener>.
+- **You used to have a date, but it was removed.** Your charge didn’t disqualify you, but when Time Comp audited your file, they found you did not meet the criteria. The most common reasons for denial are getting a Class A or B disciplinary ticket within the last 6 months, or being at a custody level other than Medium or Minimum.`,
+        },
+        mandatoryLiteracy: {
+          header: `Do I have to finish mandatory literacy (“the mandate”) to get out on this date?`,
+          content: `Yes, you must complete mandatory literacy, or have an exemption.
+
+If you don’t pass the mandate, you can’t be released on these release types. You will stay in prison until you reach your **Sentence Expiration Date (SED)** — which is 100% of your sentence.`,
+        },
+        tentativeDate: {
+          header: `My date says “tentative.” What does that mean?`,
+          content: `A “tentative” date means Time Comp has not yet officially reviewed and approved the release type and date. You may still get released on this date, but it’s not final yet.
+
+Time Comp usually starts reviewing cases around 7 months before the earliest release date. Once they finish reviewing, your date will either be marked **approved** or removed.
+
+While your date is tentative, the best thing to do is focus on meeting the criteria — stay out of trouble, work on your home plan, and finish anything that’s still required.`,
+        },
+        howToKnowApproved: {
+          header:
+            "How do I know if my Transition Release date is still tentative or has been approved?",
+          content: `Look at the homepage of this app (where dates are listed), and find the section about Standard Transition Program. If it says “you may be eligible…” and that your date is tentative, the date is still tentative.
+
+Once your date is approved, the Standard Transition Program section will show your Transition Release date in big letters, along with a reminder to work on your Home Plan.`,
+        },
+        canLoseTentativeDate: {
+          header: "Can I lose a tentative date?",
+          content: `Yes. When Time Comp reviews your case, they may determine you don’t meet all the criteria. If that happens, the date will be removed. The most important thing you can do is focus on meeting the criteria so that when Time Comp reviews you, you’re in the best position you can be.`,
+        },
+        canLoseApprovedDate: {
+          header: "Can I lose an approved date?",
+          content: `Yes, but it’s harder to lose an approved date. If your date is approved, it means Time Comp confirmed you met all the criteria at the time when they reviewed you.
+
+You can still lose an approved date if you get a major disciplinary violation between the time your date is approved and the day you’re released. To keep your date, focus on staying out of trouble during that window. Work on submitting your home plan so that you’re ready for release.`,
+        },
+        dateGone: {
+          header: "I had an STP date and now it’s gone. What happened?",
+          content: `The most likely reason is that Time Comp reviewed your case and decided you don’t meet all the criteria for Transition Release. This can happen even if the date showed up earlier — that’s because Time Comp’s review is the final word on eligibility.
+
+If this happened to you and you want to know exactly why, talk to your COIII. They can help you understand what changed and whether there’s anything you can do about it.`,
+        },
         ifIAmReleased: {
           header: "If I'm released on STP, what does that mean for me?",
           content: `If you are released on STP, you will begin community supervision early. During the Transition Program Release period (the up to 90 days before you reach your next release date), you will need to regularly attend a program in the community, and report to a community supervision officer.
@@ -333,6 +450,22 @@ Because DTP is a specific category of early release, if you qualify for and are 
 
 The primary goal of DTP is to help you successfully re-enter the community by providing early access to support services and treatment.
 `,
+        },
+        stpVsDtp: {
+          header:
+            "What’s the difference between Standard Transition Program (STP) and Drug Transition Program (DTP)?",
+          content: `Both let you leave prison up to 90 days early if you meet the criteria and agree to attend a program in the community. The main difference is who can get them:
+
+- **Drug Transition Program (DTP)** is only for people whose current sentence is *only* for certain drug possession or use charges. Nothing else can be in your file.
+- **Standard Transition Program (STP)** is for others who meet the criteria, as long as you don’t have a disqualifying conviction.
+
+You can only qualify for one or the other — not both. If you qualify for DTP, you cannot also get STP.`,
+        },
+        senateBill: {
+          header: `Is "Transition Release" the same thing as a "Senate Bill"?`,
+          content: `Transition Release is just *one type* of Senate Bill, but it is not the only one. A Senate Bill is just a law passed by the Arizona government. Transition Release exists because the legislature passed a law (A.R.S. §31-281) that allows you to release up to 90 days early if you meet all the criteria for Transition Release.
+
+When people on the yard say "Senate Bill," they often mean Transition Release — but the term can mean other things too.`,
         },
         whoHasThisDate: {
           header: "Who has this date?",
@@ -356,6 +489,7 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
 - You can’t be found guilty of any Class A or Class B major disciplinary rule violations within 6 months of your CSBD / TR to ADD. Even if you qualified, getting a new major disciplinary infraction could cause you to lose your DTP date.
 - You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you later successfully reenrolled and completed it.
 - You need a home plan that gets approved ASAP (see <AccordionOpener panelId="startHomePlanEarly">next question</AccordionOpener>).
+
 - You can’t have any past arrests, convictions, or requirements to register for sex offenses.
 - You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
 - If you have participated in the Transition Program before, it must have been at least 24 months since your last CSED.
@@ -366,6 +500,50 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
         startHomePlanEarly: {
           header: `Why is it important to start my home plan early?`,
           content: `To get your full 90-day release, you need an approved home plan. Start working on this as soon as you can to avoid delays. If you don’t have a place to go, you might still be released, but that doesn’t mean you can go anywhere you want. You’ll be taken to the Community Corrections Office (CCO) where you may stay in a reentry center or transitional housing facility until a permanent residence is found. So no matter what, you still need a place that’s approved. **Starting early ensures you know exactly where you are going and prevents any last-minute loss of your early release time.**`,
+        },
+        whyNoDate: {
+          header: "Why don’t I see a Transition Release date on my homepage?",
+          content: `If you don’t see a Transition date, one of two things is true:
+
+- **You’ve never had a Transition Release (STP or DTP) date.** This usually means your current charge or criminal history makes you ineligible. The criteria are listed under <AccordionOpener panelId="toBeReleasedOnThisDate">What do I need to do in order to be released on this date?</AccordionOpener>. 
+- **You used to have a date, but it was removed.** Your charge didn’t disqualify you, but when Time Comp audited your file, they found you did not meet the criteria. The most common reasons for denial are getting a Class A or B disciplinary ticket within the last 6 months, or being at a custody level other than Medium or Minimum.`,
+        },
+        mandatoryLiteracy: {
+          header: `Do I have to finish mandatory literacy ("the mandate") to get out on this date?`,
+          content: `You must at least be enrolled in mandatory literacy — but to be released on your earliest possible date, you must complete it. This is because all other early release types require you to complete mandatory literacy.
+
+If you don’t pass the mandate, you can’t be released on these release types. You will stay in prison until you reach your **Sentence Expiration Date (SED)** — which is 100% of your sentence.`,
+        },
+        tentativeDate: {
+          header: `My date says "tentative." What does that mean?`,
+          content: `A "tentative" date means Time Comp has not yet officially reviewed and approved the release type and date. You may still get released on this date, but it’s not final yet.
+
+Time Comp usually starts reviewing cases around 7 months before the earliest release date. Once they finish reviewing, your date will either be marked **approved** or removed.
+
+While your date is tentative, the best thing to do is focus on meeting the criteria — stay out of trouble, work on your home plan, and finish anything that’s still required.`,
+        },
+        howToKnowApproved: {
+          header:
+            "How do I know if my Transition Release date is still tentative or has been approved?",
+          content: `Look at the homepage of this app (where dates are listed), and find the section about Drug Transition Program. If it says "you may be eligible…" and that your date is tentative, the date is still tentative.
+
+Once your date is approved, the Drug Transition Program section will show your Transition Release date in big letters, along with a reminder to work on your Home Plan.`,
+        },
+        canLoseTentativeDate: {
+          header: "Can I lose a tentative date?",
+          content: `Yes. When Time Comp reviews your case, they may determine you don’t meet all the criteria. If that happens, the date will be removed. The most important thing you can do is focus on meeting the criteria so that when Time Comp reviews you, you’re in the best position you can be.`,
+        },
+        canLoseApprovedDate: {
+          header: "Can I lose an approved date?",
+          content: `Yes, but it’s harder to lose an approved date. If your date is approved, it means Time Comp confirmed you met all the criteria at the time when they reviewed you.
+
+You can still lose an approved date if you get a major disciplinary violation between the time your date is approved and the day you’re released. To keep your date, focus on staying out of trouble during that window. Work on submitting your home plan so that you’re ready for release.`,
+        },
+        dateGone: {
+          header: "I had a DTP date and now it’s gone. What happened?",
+          content: `The most likely reason is that Time Comp reviewed your case and decided you don’t meet all the criteria for Transition Release. This can happen even if the date showed up earlier — that’s because Time Comp’s review is the final word on eligibility.
+
+If this happened to you and you want to know exactly why, talk to your COIII. They can help you understand what changed and whether there’s anything you can do about it.`,
         },
         ifIAmReleased: {
           header: "If I'm released on DTP, what does that mean for me?",
@@ -385,6 +563,14 @@ You are required to attend mandatory community-based programs, which may include
           content: `This is a release up to 90 days earlier than ERCD (for most people, it’s ~77 days earlier), which can be granted if you meet <AccordionOpener panelId="toBeReleasedOnThisDate">the criteria</AccordionOpener>.
 
 If your sentence includes a term of Probation following your release, this date is officially called Temporary Release to Absolute Discharge Date (TR to ADD). Be careful not to confuse “Temporary Release” with [“Transition Release” (TPR)](#tprDate), as they are different programs with different rules.`,
+        },
+        twoDifferentNames: {
+          header:
+            "Why can there be two different names for this date (CSBD vs. TR to ADD)?",
+          content: `If you have a Probation term after your current prison sentence, this will be called your “Temporary Release to Absolute Discharge Date”, or TR to ADD. That is because when the “Temporary Release” period is over, you will be “Discharged” from ADCRR, over to the County that will supervise you on Probation.
+
+If you have Community Supervision after your prison sentence, the release type is referred to as your CSBD. If you are released on this release type, and follow your Conditions of Supervision (like reporting as directed to your supervision officer), you would then be on Community Supervision until your Community Supervision End Date (CSED).
+`,
         },
         whoHasThisDate: {
           header: "Who has this date?",
@@ -408,18 +594,16 @@ Please note that Temporary Releases (TR) are at the discretion of the ADCRR Dire
 Please also see ADCRR Department Order 1002, section 8.1, to learn more about this. You can find it in the FYI app, under the Department Orders section.
 `,
         },
+        mandatoryLiteracy: {
+          header: `Do I have to finish mandatory literacy (“the mandate”) to get out on this date?`,
+          content: `Yes, you must complete mandatory literacy, or have an exemption.
+
+If you don’t pass the mandate, you can’t be released on these release types. You will stay in prison until you reach your **Sentence Expiration Date (SED)** — which is 100% of your sentence.`,
+        },
         ifIAmReleased: {
           header:
             "If I’m released on my CSBD or TR to ADD, what does that mean for me?",
           content: `If you are released on your CSBD or TR to ADD, you move to supervision in the community, reporting to a Community Reentry Officer. If you don’t meet requirements (for example: refuse to sign, or haven’t met Mandatory Literacy requirement), you may remain in prison past your CSBD or TR to ADD – either until you meet the CSBD requirements, or reach the next release date whose requirements you meet.`,
-        },
-        twoDifferentNames: {
-          header:
-            "Why can there be two different names for this date (CSBD vs. TR to ADD)?",
-          content: `If you have a Probation term after your current prison sentence, this will be called your “Temporary Release to Absolute Discharge Date”, or TR to ADD. That is because when the “Temporary Release” period is over, you will be “Discharged” from ADCRR, over to the County that will supervise you on Probation.
-
-If you have Community Supervision after your prison sentence, the release type is referred to as your CSBD. If you are released on this release type, and follow your Conditions of Supervision (like reporting as directed to your supervision officer), you would then be on Community Supervision until your Community Supervision End Date (CSED).
-`,
         },
       },
     },
@@ -434,9 +618,21 @@ If you have Community Supervision after your prison sentence, the release type i
 Earned Release Credits are given for time served, good behavior, and program participation.
 `,
         },
+        twoDifferentNames: {
+          header:
+            "Why can there be two different names for this date (ERCD or ADD)?",
+          content: `If you have a probation term after your current prison sentence, this will be called your Absolute Discharge Date, or ADD. That is because you are being “Discharged” from ADCRR to the County that will supervise you on Probation. If you have a term of Community Supervision after your current prison sentence, this is called your ERCD.
+`,
+        },
         whoHasThisDate: {
           header: "Who has this date?",
-          content: `Most people sentenced under Truth in Sentencing (after January 1, 1994), unless you are serving flat-time (day-for-day), or your specific crime doesn't allow for release credits (certain violent or sex offenses).`,
+          content: `Most people sentenced under Truth in Sentencing (after January 1, 1994), unless you are serving flat-time (day-for-day), or your specific crime doesn’t allow for release credits (certain violent or sex offenses).`,
+        },
+        percent: {
+          header: "Where does the 85.7% come from?",
+          content: `Most people sentenced under Truth in Sentencing are eligible to earn 1 day of Earned Release Credit for every 6 days that they serve. If you don’t get any disciplinary infractions that remove your Credits, this means that you would serve 6/7ths of your sentence. 6 divided by 7 is 85.7%.
+
+Note that some people serving time for _only_ non-violent drug possession or use crimes may be eligible for release after serving just 70% of their sentence. This is because they are eligible to earn more release credits – 3 for every 7 days served.`,
         },
         toBeReleasedOnThisDate: {
           header: "What do I need to do in order to be released on this date?",
@@ -448,21 +644,15 @@ Earned Release Credits are given for time served, good behavior, and program par
 Talk to your COIII to understand your program and Mandatory Literacy requirements. Most people who have less than 6 months between the date they arrive at ADCRR and their ERCD are exempt from the Mandatory Literacy requirement.
 `,
         },
-        ifIAmReleased: {
-          header: "If I'm released on this date, what would that mean for me?",
-          content: `If released at your ERCD or ADD, you begin serving the Community Supervision portion of your sentence, or your Probation sentence, in the community. Conditions of supervision apply, including reporting to an officer and possibly electronic monitoring.
-`,
-        },
-        percent: {
-          header: "Where does the 85.7% come from?",
-          content: `Most people sentenced under Truth in Sentencing are eligible to earn 1 day of Earned Release Credit for every 6 days that they serve. If you don’t get any disciplinary infractions that remove your Credits, this means that you would serve 6/7ths of your sentence. 6 divided by 7 is 85.7%.
+        mandatoryLiteracy: {
+          header: `Do I have to finish mandatory literacy (“the mandate”) to get out on this date?`,
+          content: `Yes, you must complete mandatory literacy, or have an exemption.
 
-Note that some people serving time for _only_ non-violent drug possession or use crimes may be eligible for release after serving just 70% of their sentence. This is because they are eligible to earn more release credits – 3 for every 7 days served.`,
+If you don’t pass the mandate, you can’t be released on these release types. You will stay in prison until you reach your **Sentence Expiration Date (SED)** — which is 100% of your sentence.`,
         },
-        twoDifferentNames: {
-          header:
-            "Why can there be two different names for this date (ERCD or ADD)?",
-          content: `If you have a probation term after your current prison sentence, this will be called your Absolute Discharge Date, or ADD. That is because you are being “Discharged” from ADCRR to the County that will supervise you on Probation. If you have a term of Community Supervision after your current prison sentence, this is called your ERCD.
+        ifIAmReleased: {
+          header: "If I’m released on this date, what would that mean for me?",
+          content: `If released at your ERCD or ADD, you begin serving the Community Supervision portion of your sentence, or your Probation sentence, in the community. Conditions of supervision apply, including reporting to an officer and possibly electronic monitoring.
 `,
         },
       },
@@ -485,6 +675,10 @@ Note that some people serving time for _only_ non-violent drug possession or use
         toBeReleasedOnThisDate: {
           header: "What do I need to do in order to be released on this date?",
           content: `If you are still in prison when you reach your SED, there is only one requirement for release: You must sign your Conditions of Supervision. If you refuse to sign, you will stay in prison until you reach your Community Supervision End Date (CSED).`,
+        },
+        mandatoryLiteracy: {
+          header: `Do I have to finish mandatory literacy ("the mandate") to get out on this date?`,
+          content: `No, you can be released after serving 100% of your sentence even if you have not completed mandatory literacy.`,
         },
         ifIAmReleased: {
           header: "If I'm released on this date, what would that mean for me?",
@@ -528,6 +722,15 @@ The CSED is calculated by adding the length of your Community Supervision to you
 If you lose all of your Release Credits and serve 100% of your sentence, the latest that your CSED can be is 115% of your original sentence time.
 
 Please note that time you spend on [Temporary Release](#csbdDate-trToAddDate) (the time between your CSBD and ERCD) or on early release through the [Transition Program](#tprDate) (STP/DTP) does not count towards your Community Supervision term. If you are released on one of the dates before your ERCD, you will spend less time in prison, but will be reporting to a Community Supervision officer for longer. The clock only starts on your Community Supervision term once you reach your ERCD.`,
+        },
+        sedVsCsed: {
+          header: "What's the difference between my SED and my CSED?",
+          content: `Your **SED (Sentence Expiration Date)** is when you finish 100% of your prison sentence. If you are still in prison when you reach your SED, you are released that day — as long as you sign your Conditions of Supervision.
+          Your **CSED (Community Supervision End Date)** is when your supervision ends and you are no longer under ADCRR custody at all.
+
+The two dates are different because most sentences include a period of community supervision *after* the prison part is over. That community supervision time is added to your SED to get your CSED.
+
+If you refuse to sign your Conditions of Supervision at your SED, you stay in prison until your CSED. Staying in prison until your CSED is what people sometimes call "killing your number".`,
         },
       },
     },
