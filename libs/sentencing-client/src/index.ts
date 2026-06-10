@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export type { SARByClient, SARsByClient } from "./api/APIClient";
 export * from "./components/CaseDetails";
 export * from "./components/Dashboard";
 export * from "./components/Dashboard/PSIStaffDashboard";
 export * from "./components/Dashboard/SARStaffDashboard";
 export * from "./components/Dashboard/SupervisorDashboard";
+export { CaseStatusToDisplay } from "./components/Dashboard/types";
+export { isSARArchived } from "./components/Dashboard/utils";
 export * from "./components/SARDetails";
 export * from "./components/StoreProvider/StoreProvider";
 export * from "./datastores/SentencingStore";

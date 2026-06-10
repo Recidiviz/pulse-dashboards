@@ -116,6 +116,7 @@ export type FeatureVariant =
   | "usMoMyCaseload"
   | "customTasks"
   | "caseOverview"
+  | "usMoSarInClientsPage"
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
 
@@ -239,6 +240,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnTEPENotesForAll: {},
   usMoMyCaseload: {},
   caseOverview: {},
+  usMoSarInClientsPage: {},
   usMoSearchByUnit: {},
   usMoWorkRelease: {},
   usMiCaseManagerSearch: {},
@@ -308,6 +310,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnCompliantReporting2025Policy: {},
         usTnInitialClassification: {},
         usTnTEPENotesForAll: {},
+        usMoSarInClientsPage: { activeTenants: ["US_MO"] },
         usMoSearchByUnit: {},
         usMoWorkRelease: {},
         indefiniteSnooze: { activeTenants: ["US_IA"] },
@@ -346,6 +349,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         caseOverview: { activeTenants: ["US_MO"] },
         tasksPermasnooze: { activeTenants: ["US_MO"] },
         usMoMyCaseload: { activeTenants: ["US_MO"] },
+        usMoSarInClientsPage: { activeTenants: ["US_MO"] },
         splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
         customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },

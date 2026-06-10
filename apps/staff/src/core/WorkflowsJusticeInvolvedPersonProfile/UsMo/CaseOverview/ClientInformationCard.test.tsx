@@ -18,12 +18,22 @@
 import { render, screen, within } from "@testing-library/react";
 import { parseISO } from "date-fns";
 import tk from "timekeeper";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { UsMoClientMetadata } from "~datatypes";
 
+import { Client } from "../../../../WorkflowsStore";
 import { ClientInformationCard } from "./ClientInformationCard";
 import type { StructuredAddress } from "./utils";
+
+// `ClientInformationCard` now hosts `<SARReports client={...} />` inline.
+// SARReports depends on the StoreProvider context (feature variants, root
+// store) and the react-query suspense boundary; stub it to a no-op here so
+// these tests stay focused on the card's own Personal Details + Housing
+// rendering. SARReports has its own dedicated test file.
+vi.mock("./SARReports", () => ({
+  SARReports: () => null,
+}));
 
 type Sentences = UsMoClientMetadata["latestCycleSentences"];
 
@@ -51,6 +61,44 @@ const sampleAddress: StructuredAddress = {
   addressZip: "63104",
 };
 
+/** Build a `Client`-shaped stub with the two getters the card reads:
+ * `metadata` (the US_MO subset) and `currentPhysicalResidenceAddressStructured`.
+ * The MobX nature isn't relevant here — the card just reads off whichever
+ * object it gets.
+ *
+ * Defaults are merged via object spread (not destructuring defaults) so that
+ * callers can pass `{ birthdate: undefined }` / `{ address: undefined }` to
+ * exercise the missing-field branches — destructuring defaults would treat
+ * an explicit `undefined` the same as "not provided" and substitute the
+ * default back in.
+ */
+type FakeClientOverrides = {
+  sex?: string;
+  birthdate?: Date;
+  latestCycleSentences?: Sentences;
+  address?: StructuredAddress;
+};
+
+function makeFakeClient(overrides: FakeClientOverrides = {}): Client {
+  const merged = {
+    sex: "MALE",
+    birthdate: sampleBirthdate as Date | undefined,
+    latestCycleSentences: sampleSentences,
+    address: sampleAddress as StructuredAddress | undefined,
+    ...overrides,
+  };
+  const metadata = {
+    stateCode: "US_MO",
+    sex: merged.sex,
+    birthdate: merged.birthdate,
+    latestCycleSentences: merged.latestCycleSentences,
+  } as unknown as UsMoClientMetadata;
+  return {
+    metadata,
+    currentPhysicalResidenceAddressStructured: merged.address,
+  } as unknown as Client;
+}
+
 /** Resolve a row's value element by walking from the row's label.
  * Card structure per section:
  *   <Section>
@@ -77,27 +125,13 @@ describe("ClientInformationCard", () => {
   });
 
   test("renders both section headings", () => {
-    render(
-      <ClientInformationCard
-        sex="MALE"
-        birthdate={sampleBirthdate}
-        latestCycleSentences={sampleSentences}
-        address={sampleAddress}
-      />,
-    );
+    render(<ClientInformationCard client={makeFakeClient()} />);
     expect(screen.getByText("Personal Details")).toBeInTheDocument();
     expect(screen.getByText("Housing")).toBeInTheDocument();
   });
 
   test("renders Personal Details rows with formatted values", () => {
-    render(
-      <ClientInformationCard
-        sex="MALE"
-        birthdate={sampleBirthdate}
-        latestCycleSentences={sampleSentences}
-        address={sampleAddress}
-      />,
-    );
+    render(<ClientInformationCard client={makeFakeClient()} />);
 
     expect(screen.getByText("Gender")).toBeInTheDocument();
     expect(screen.getByText("Male")).toBeInTheDocument();
@@ -119,17 +153,16 @@ describe("ClientInformationCard", () => {
   test("omits classificationType from the offense row when it is empty", () => {
     render(
       <ClientInformationCard
-        sex="MALE"
-        birthdate={sampleBirthdate}
-        latestCycleSentences={[
-          {
-            classificationSubtype: "C",
-            classificationType: "",
-            description: "Unlawful Possession of a Firearm",
-            statute: "571.070",
-          },
-        ]}
-        address={sampleAddress}
+        client={makeFakeClient({
+          latestCycleSentences: [
+            {
+              classificationSubtype: "C",
+              classificationType: "",
+              description: "Unlawful Possession of a Firearm",
+              statute: "571.070",
+            },
+          ],
+        })}
       />,
     );
 
@@ -141,24 +174,14 @@ describe("ClientInformationCard", () => {
   });
 
   test("renders the placeholder when sex is empty", () => {
-    render(
-      <ClientInformationCard
-        sex=""
-        birthdate={sampleBirthdate}
-        latestCycleSentences={sampleSentences}
-        address={sampleAddress}
-      />,
-    );
+    render(<ClientInformationCard client={makeFakeClient({ sex: "" })} />);
     expect(getValueFor("Gender")).toHaveTextContent("N/A");
   });
 
   test("renders the placeholder when birthdate is missing", () => {
     render(
       <ClientInformationCard
-        sex="MALE"
-        birthdate={undefined}
-        latestCycleSentences={sampleSentences}
-        address={sampleAddress}
+        client={makeFakeClient({ birthdate: undefined })}
       />,
     );
     expect(getValueFor("DOB")).toHaveTextContent("N/A");
@@ -167,10 +190,7 @@ describe("ClientInformationCard", () => {
   test("renders the placeholder when latestCycleSentences is empty", () => {
     render(
       <ClientInformationCard
-        sex="MALE"
-        birthdate={sampleBirthdate}
-        latestCycleSentences={[]}
-        address={sampleAddress}
+        client={makeFakeClient({ latestCycleSentences: [] })}
       />,
     );
     expect(getValueFor("Offenses")).toHaveTextContent("N/A");
@@ -179,10 +199,10 @@ describe("ClientInformationCard", () => {
   test("renders multiple sentences in source order", () => {
     render(
       <ClientInformationCard
-        sex="FEMALE"
-        birthdate={parseISO("1990-01-01")}
-        latestCycleSentences={sampleSentences}
-        address={sampleAddress}
+        client={makeFakeClient({
+          sex: "FEMALE",
+          birthdate: parseISO("1990-01-01"),
+        })}
       />,
     );
     const offenseValue = getValueFor("Offenses");
@@ -198,10 +218,11 @@ describe("ClientInformationCard", () => {
   test("capitalizes mixed-case sex input", () => {
     render(
       <ClientInformationCard
-        sex="female"
-        birthdate={parseISO("1990-01-01")}
-        latestCycleSentences={[]}
-        address={sampleAddress}
+        client={makeFakeClient({
+          sex: "female",
+          birthdate: parseISO("1990-01-01"),
+          latestCycleSentences: [],
+        })}
       />,
     );
     expect(screen.getByText("Female")).toBeInTheDocument();
@@ -209,14 +230,7 @@ describe("ClientInformationCard", () => {
 
   describe("Housing section", () => {
     test("renders street line and city/state/zip line", () => {
-      render(
-        <ClientInformationCard
-          sex="MALE"
-          birthdate={sampleBirthdate}
-          latestCycleSentences={sampleSentences}
-          address={sampleAddress}
-        />,
-      );
+      render(<ClientInformationCard client={makeFakeClient()} />);
 
       expect(screen.getByText("Address")).toBeInTheDocument();
 
@@ -228,16 +242,15 @@ describe("ClientInformationCard", () => {
     test("includes addressLine2 when present", () => {
       render(
         <ClientInformationCard
-          sex="MALE"
-          birthdate={sampleBirthdate}
-          latestCycleSentences={sampleSentences}
-          address={{
-            addressLine1: "100 Main St.",
-            addressLine2: "Apt 4B",
-            addressCity: "St. Louis",
-            addressState: "MO",
-            addressZip: "63104",
-          }}
+          client={makeFakeClient({
+            address: {
+              addressLine1: "100 Main St.",
+              addressLine2: "Apt 4B",
+              addressCity: "St. Louis",
+              addressState: "MO",
+              addressZip: "63104",
+            },
+          })}
         />,
       );
       const addressValue = getValueFor("Address");
@@ -249,9 +262,7 @@ describe("ClientInformationCard", () => {
     test("renders the placeholder when address is undefined", () => {
       render(
         <ClientInformationCard
-          sex="MALE"
-          birthdate={sampleBirthdate}
-          latestCycleSentences={sampleSentences}
+          client={makeFakeClient({ address: undefined })}
         />,
       );
       expect(getValueFor("Address")).toHaveTextContent("N/A");
@@ -259,12 +270,7 @@ describe("ClientInformationCard", () => {
 
     test("renders the placeholder when all address fields are empty", () => {
       render(
-        <ClientInformationCard
-          sex="MALE"
-          birthdate={sampleBirthdate}
-          latestCycleSentences={sampleSentences}
-          address={{}}
-        />,
+        <ClientInformationCard client={makeFakeClient({ address: {} })} />,
       );
       expect(getValueFor("Address")).toHaveTextContent("N/A");
     });
@@ -272,10 +278,12 @@ describe("ClientInformationCard", () => {
     test("omits the comma when state/zip are missing", () => {
       render(
         <ClientInformationCard
-          sex="MALE"
-          birthdate={sampleBirthdate}
-          latestCycleSentences={sampleSentences}
-          address={{ addressLine1: "100 Main St.", addressCity: "St. Louis" }}
+          client={makeFakeClient({
+            address: {
+              addressLine1: "100 Main St.",
+              addressCity: "St. Louis",
+            },
+          })}
         />,
       );
       const addressValue = getValueFor("Address");
@@ -290,13 +298,31 @@ describe("ClientInformationCard", () => {
     // which only works if the card forwards `className` to its outermost element.
     const { container } = render(
       <ClientInformationCard
+        client={makeFakeClient()}
         className="custom-class"
-        sex="MALE"
-        birthdate={sampleBirthdate}
-        latestCycleSentences={sampleSentences}
-        address={sampleAddress}
       />,
     );
     expect(container.firstChild).toHaveClass("custom-class");
+  });
+
+  test("renders SARReports inline as a child of the CardFrame", () => {
+    // The mocked SARReports renders nothing visible, so we just confirm the
+    // card mounts cleanly and the CardFrame still contains the two visible
+    // sections (Personal Details + Housing). The structural assertion that
+    // the Reports section is a sibling of the others lives in the
+    // `UsMoCaseOverview` integration test where SARReports is wired in for
+    // real.
+    const { container } = render(
+      <ClientInformationCard client={makeFakeClient()} />,
+    );
+    const visibleSections =
+      container.firstChild?.childNodes &&
+      Array.from(container.firstChild.childNodes).filter(
+        (node): node is HTMLElement =>
+          node instanceof HTMLElement && node.tagName === "SECTION",
+      );
+    expect(visibleSections?.length).toBe(2);
+    expect(screen.getByText("Personal Details")).toBeInTheDocument();
+    expect(screen.getByText("Housing")).toBeInTheDocument();
   });
 });

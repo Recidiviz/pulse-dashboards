@@ -21,7 +21,6 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components";
 
-import { UsMoClientMetadata } from "~datatypes";
 import { palette } from "~design-system";
 
 import { Client } from "../../../../WorkflowsStore";
@@ -60,18 +59,10 @@ type UsMoCaseOverviewProps = {
 export const UsMoCaseOverview = observer(function UsMoCaseOverview({
   client,
 }: UsMoCaseOverviewProps): React.ReactElement {
-  const { sex, birthdate, latestCycleSentences } =
-    client.metadata as UsMoClientMetadata;
-
   return (
     <>
       <SectionHeading>Case Overview</SectionHeading>
-      <StyledClientInformationCard
-        sex={sex}
-        birthdate={birthdate}
-        latestCycleSentences={latestCycleSentences}
-        address={client.currentPhysicalResidenceAddressStructured}
-      />
+      <StyledClientInformationCard client={client} />
     </>
   );
 });

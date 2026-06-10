@@ -26,10 +26,17 @@ import {
   MethodOfUse,
   NeedToBeAddressed,
   ProtectiveFactor,
+  StateCode,
   SubstanceType,
 } from "~@sentencing/prisma/client";
+import { appRouter } from "~@sentencing/trpc/router";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
-import { fakeSAR, fakeSARClient } from "~@sentencing/trpc/test/setup/seed";
+import {
+  fakeSAR,
+  fakeSARClient,
+  fakeSARStaff,
+  fakeStaff,
+} from "~@sentencing/trpc/test/setup/seed";
 
 describe("SAR router", () => {
   describe("getSAR", () => {
@@ -518,6 +525,167 @@ describe("SAR router", () => {
           message: "Sentencing Assessment Report with that id was not found",
         }),
       );
+    });
+  });
+
+  describe("getSARsByClient", () => {
+    // Builds a tRPC caller whose context includes a `staffPseudonymizedId`, so we can
+    // exercise the staff-scoping filter. The httpBatchLink-based `testTRPCClient` hits a
+    // fake JWT that never sets pseudonymizedId (it impersonates a Recidiviz internal user),
+    // so we can't otherwise test the staff-scoped branch end-to-end.
+    function makeCallerForStaff(staffPseudonymizedId: string | undefined) {
+      return appRouter.createCaller({
+        req: {} as never,
+        res: {} as never,
+        isAuthorized: true,
+        prisma: testPrismaClient,
+        staffPseudonymizedId,
+      });
+    }
+
+    test("returns the assigned SAR for the given clientExternalId", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0]).toEqual({
+        id: fakeSAR.id,
+        externalId: fakeSAR.externalId,
+        status: fakeSAR.status,
+        completionDate: null,
+        courtDate: null,
+        staff: { pseudonymizedId: fakeStaff.pseudonymizedId },
+      });
+    });
+
+    test("returns multiple rows when the client has several assigned SARs to the caller", async () => {
+      await testPrismaClient.sentencingAssessmentReport.create({
+        data: {
+          externalId: "sar-ext-2",
+          id: "sar-2",
+          status: CaseStatus.Complete,
+          client: { connect: { externalId: fakeSARClient.externalId } },
+          staff: { connect: { externalId: fakeStaff.externalId } },
+        },
+      });
+
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(2);
+      expect(sars.map((s) => s.id).sort()).toEqual(
+        [fakeSAR.id, "sar-2"].sort(),
+      );
+    });
+
+    test("returns empty array when the client has no SARs", async () => {
+      // Create a fresh client with no SARs.
+      const lonelyClient = await testPrismaClient.client.create({
+        data: {
+          externalId: "lonely-client-ext",
+          pseudonymizedId: "lonely-client-pid",
+          fullName: "Lonely Client",
+          stateCode: StateCode.US_ID,
+          gender: "MALE",
+          birthDate: new Date("1990-01-01"),
+        },
+      });
+
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: lonelyClient.externalId,
+      });
+
+      expect(sars).toEqual([]);
+    });
+
+    test("filters out SARs owned by a different staff member for the same client", async () => {
+      // Add a second SAR for the same client owned by fakeSARStaff.
+      await testPrismaClient.sentencingAssessmentReport.create({
+        data: {
+          externalId: "sar-ext-other-staff",
+          id: "sar-other-staff",
+          status: CaseStatus.InProgress,
+          client: { connect: { externalId: fakeSARClient.externalId } },
+          staff: { connect: { externalId: fakeSARStaff.externalId } },
+        },
+      });
+
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].id).toBe(fakeSAR.id);
+    });
+
+    test("returns all SARs for the client when staffPseudonymizedId is undefined (internal user)", async () => {
+      // Add a SAR owned by a different staff for the same client — an internal user
+      // should still see both.
+      await testPrismaClient.sentencingAssessmentReport.create({
+        data: {
+          externalId: "sar-ext-other-staff",
+          id: "sar-other-staff",
+          status: CaseStatus.InProgress,
+          client: { connect: { externalId: fakeSARClient.externalId } },
+          staff: { connect: { externalId: fakeSARStaff.externalId } },
+        },
+      });
+
+      const internalCaller = makeCallerForStaff(undefined);
+      const sars = await internalCaller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(2);
+      expect(sars.map((s) => s.id).sort()).toEqual(
+        [fakeSAR.id, "sar-other-staff"].sort(),
+      );
+    });
+
+    test("output rows expose only the documented fields", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      const row = sars[0];
+      expect(Object.keys(row).sort()).toEqual(
+        [
+          "completionDate",
+          "courtDate",
+          "externalId",
+          "id",
+          "staff",
+          "status",
+        ].sort(),
+      );
+      // Defense-in-depth: SAR fields that should never leak in this minimal view.
+      expect(row as Record<string, unknown>).not.toHaveProperty(
+        "officerSignature",
+      );
+      expect(row as Record<string, unknown>).not.toHaveProperty(
+        "supervisorSignature",
+      );
+      expect(row as Record<string, unknown>).not.toHaveProperty(
+        "defendantStatement",
+      );
+    });
+
+    test("rejects missing clientExternalId at the Zod boundary", async () => {
+      await expect(() =>
+        testTRPCClient.sar.getSARsByClient.query({
+          // @ts-expect-error Testing wrong type / invalid input
+          clientExternalId: undefined,
+        }),
+      ).rejects.toThrow();
     });
   });
 });

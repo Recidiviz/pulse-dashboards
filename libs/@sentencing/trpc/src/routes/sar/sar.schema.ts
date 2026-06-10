@@ -47,6 +47,10 @@ export const getSARsForStaffInputSchema = z.object({
   staffPseudonymizedId: z.string(),
 });
 
+export const getSARsByClientInputSchema = z.object({
+  clientExternalId: z.string(),
+});
+
 export const mitigatingFactorEnum = z.nativeEnum(ProtectiveFactor);
 export const educationLevelEnum = z.nativeEnum(LevelOfEducation);
 export const substanceEnum = z.nativeEnum(SubstanceType);

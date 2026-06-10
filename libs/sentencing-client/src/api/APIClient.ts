@@ -48,6 +48,10 @@ export type StaffSARs = Staff["sentencingAssessmentReports"];
 
 export type StaffSAR = StaffSARs[number];
 
+export type SARsByClient = Awaited<ReturnType<APIClient["getSARsByClient"]>>;
+
+export type SARByClient = SARsByClient[number];
+
 export type Case = Awaited<ReturnType<APIClient["getCaseDetails"]>>;
 
 export type CaseInsight = NonNullable<Case["insight"]>;
@@ -208,6 +212,15 @@ export class APIClient {
       age: moment().utc().diff(fetchedData.client?.birthDate, "years"),
       client: updatedClient,
     };
+  }
+
+  async getSARsByClient(clientExternalId: string) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    return await this.trpcClient.sar.getSARsByClient.query({
+      clientExternalId,
+    });
   }
 
   async updateCaseDetails(caseId: string, attributes: FormAttributes) {

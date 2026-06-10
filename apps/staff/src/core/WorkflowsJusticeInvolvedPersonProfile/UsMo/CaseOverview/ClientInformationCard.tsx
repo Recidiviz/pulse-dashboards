@@ -15,13 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import styled from "styled-components";
-
 import { UsMoClientMetadata } from "~datatypes";
-import { palette, typography } from "~design-system";
 
 import { toTitleCase } from "../../../../utils";
+import { Client } from "../../../../WorkflowsStore";
+import { SARReports } from "./SARReports";
+import {
+  CardFrame,
+  Label,
+  Row,
+  Section,
+  SectionHeading,
+  Value,
+} from "./styles";
 import {
   buildAddressLines,
   formatDob,
@@ -33,78 +39,12 @@ export type { StructuredAddress };
 
 export type ClientInformationCardProps = {
   // Personal Details
-  sex: string;
-  birthdate?: Date;
-  latestCycleSentences: UsMoClientMetadata["latestCycleSentences"];
-  // Housing
-  address?: StructuredAddress;
-  // Custom styles
+  client: Client;
   className?: string;
 };
 
 /** Placeholder shown when a field is missing. */
 const EMPTY_PLACEHOLDER = "N/A";
-
-/** Bordered frame for the card. Tokens come from Figma node 7432-2685:
- * 1px solid border at rgba(43,84,105,0.2), 4px rounded corners. The
- * "Case Overview" section heading sits above this card and is owned by the
- * parent layout (`UsMoCaseOverview`). */
-const CardFrame = styled.div`
-  background: ${palette.white};
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(4)};
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-
-  /* Divider between adjacent sections (Personal Details → Housing → …). */
-  & > section + section {
-    border-top: 1px solid ${palette.slate20};
-  }
-`;
-
-// Section primitives for the US_MO Case Overview cards. Tokens come from
-// Figma node 7364-3879 / 7432-2685.
-const Section = styled.section`
-  display: flex;
-  flex-direction: column;
-  padding: ${rem(16)};
-  width: 100%;
-`;
-
-const SectionHeading = styled.h3`
-  color: ${palette.slate60};
-  ${typography.Sans14}
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  margin: 0 0 ${rem(8)};
-  padding-right: ${rem(16)};
-`;
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: ${rem(12)};
-  font-weight: 500;
-  gap: ${rem(8)};
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  padding: ${rem(8)} ${rem(16)} ${rem(8)} 0;
-`;
-
-const Label = styled.div`
-  ${typography.Sans12}
-  color: ${palette.pine1};
-`;
-
-const Value = styled.div.attrs({ className: "fs-exclude" })`
-  ${typography.Sans12}
-  color: ${palette.slate85};
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(2)};
-`;
 
 /**
  * Presentational card rendering the US_MO client information sections inside
@@ -115,12 +55,13 @@ const Value = styled.div.attrs({ className: "fs-exclude" })`
  * the parent's responsibility (`UsMoCaseOverview`).
  */
 export const ClientInformationCard = ({
+  client,
   className,
-  sex,
-  birthdate,
-  latestCycleSentences,
-  address,
 }: ClientInformationCardProps) => {
+  const { sex, birthdate, latestCycleSentences } =
+    client.metadata as UsMoClientMetadata;
+  const address = client.currentPhysicalResidenceAddressStructured;
+
   const formattedSex = toTitleCase(sex);
   const addressLines = buildAddressLines(address);
 
@@ -173,6 +114,8 @@ export const ClientInformationCard = ({
           </Value>
         </Row>
       </Section>
+
+      <SARReports clientExternalId={client.externalId} />
     </CardFrame>
   );
 };

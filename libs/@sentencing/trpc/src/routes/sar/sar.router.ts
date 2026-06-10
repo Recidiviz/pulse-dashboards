@@ -31,6 +31,7 @@ import {
   deletePriorTreatmentHistorySchema,
   getSARByIDInputSchema,
   getSARInsightSchema,
+  getSARsByClientInputSchema,
   getSARsForStaffInputSchema,
   updateDrugHistorySchema,
   updateEmploymentHistorySchema,
@@ -207,6 +208,41 @@ export const sarRouter = router({
             sarStaff?.fullName,
           ),
         }));
+      },
+    ),
+
+  // Returns the SARs for a given client that the caller is allowed to see.
+  // Authz mirrors `getSAR`/`getSARsForStaff`: regular users are scoped to SARs where
+  // `staff.pseudonymizedId` matches their JWT pseudonymizedId; Recidiviz internal users
+  // (no JWT pseudonymizedId) are unrestricted. State scoping is implicit --- the
+  // sentencing-client Cloud SQL databases are already state-segmented and `Client.externalId`
+  // is the table's primary key (globally unique), so the tRPC handler does not need to
+  // double-check `stateCode` in the where clause.
+  getSARsByClient: baseProcedure
+    .input(getSARsByClientInputSchema)
+    .query(
+      async ({
+        input: { clientExternalId },
+        ctx: { prisma, staffPseudonymizedId },
+      }) => {
+        return prisma.sentencingAssessmentReport.findMany({
+          where: {
+            clientId: clientExternalId,
+            ...sarStaffFilter(staffPseudonymizedId),
+          },
+          select: {
+            id: true,
+            externalId: true,
+            status: true,
+            completionDate: true,
+            courtDate: true,
+            staff: {
+              select: {
+                pseudonymizedId: true,
+              },
+            },
+          },
+        });
       },
     ),
 

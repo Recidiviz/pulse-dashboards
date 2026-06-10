@@ -28,6 +28,7 @@ import {
   Opportunities,
   SAR,
   SARInsight,
+  SARsByClient,
   Staff,
   Supervisor,
 } from "./APIClient";
@@ -104,6 +105,10 @@ export class OfflineAPIClient {
       "./offlineFixtures/InsightFixtures"
     );
     return SARInsightFixture;
+  }
+
+  async getSARsByClient(): Promise<SARsByClient> {
+    return [];
   }
 
   async getSARDetails(sarId: string): Promise<SAR> {
