@@ -19,7 +19,7 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { Card, CardValue, CopyWrapper, SlateCopy } from "~@jii/common-ui";
-import { palette, spacing } from "~design-system";
+import { palette, spacing, typography } from "~design-system";
 
 export type CardHighlightStyle = "green" | "purple" | "dashed";
 
@@ -106,4 +106,46 @@ export const StyledSlateCopy = styled(SlateCopy)<{ $isPastDate?: boolean }>`
 export const CardValueWrapper = styled.span`
   display: inline-block;
   margin-right: ${rem(spacing.md)};
+`;
+
+export const OverlayEyebrow = styled(CopyWrapper).attrs({
+  options: { forceBlock: true },
+})`
+  p {
+    margin-bottom: ${rem(spacing.xs)};
+  }
+`;
+
+export const OverlayHeading = styled.h2`
+  ${typography.Sans24}
+
+  color: ${palette.pine1};
+  margin: 0 0 ${rem(spacing.md)};
+`;
+
+export const OverlayBody = styled(CopyWrapper)`
+  margin-bottom: ${rem(spacing.xl)};
+
+  /* Left-align the ordinal markers to match the design. The default
+  CopyWrapper ol uses the browser's right-aligned markers, so multi-digit
+  numbers (10, 11, …) hang left of the single digits. Replacing them with a
+  counter rendered in ::before at left: 0 keeps every number flush-left with a
+  hanging indent. Scoped to ol here so the bullet lists are unaffected. */
+  ol {
+    list-style: none;
+    counter-reset: ordinal;
+    padding-left: 0;
+
+    li {
+      position: relative;
+      counter-increment: ordinal;
+      padding-left: ${rem(spacing.xl)};
+    }
+
+    li::before {
+      content: counter(ordinal) ".";
+      position: absolute;
+      left: 0;
+    }
+  }
 `;

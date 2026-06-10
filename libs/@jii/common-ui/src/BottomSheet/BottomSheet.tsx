@@ -1,0 +1,107 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { Modal } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { FC, ReactNode } from "react";
+import styled from "styled-components";
+
+import { palette, spacing, typography } from "~design-system";
+
+import { PAGE_WIDTH } from "../constants";
+
+// How long the slide-up/slide-down animation runs, in milliseconds. This matches
+// the base Modal's `transform` transition (300ms) and is passed to react-modal's
+// `closeTimeoutMS` so the closing animation can play before the modal unmounts.
+const ANIMATION_MS = 300;
+
+/**
+ * `BottomSheet` reuses the design-system `Modal` (a wrapper around react-modal)
+ * for its backdrop, focus trapping, and scroll locking, but restyles it to sit
+ * at the bottom of the screen and slide up, instead of the default centered box.
+ */
+const StyledBottomSheet = styled(Modal)`
+  .ReactModal__Content {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, 100%);
+
+    /* Full width on the tablet viewport (601px); max-width is a safeguard for any wider viewports. */
+    width: 100%;
+    max-width: ${rem(PAGE_WIDTH)};
+    /* Cap the height and scroll inside if the content is tall. */
+    max-height: 90vh;
+    min-height: 75vh;
+    overflow-y: auto;
+
+    /* Rounded top corners only, since the bottom sits flush with the screen. */
+    border-radius: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
+    padding: ${rem(spacing.lg)} ${rem(spacing.md)} ${rem(spacing.xl)};
+  }
+
+  .ReactModal__Overlay[class*="--after-open"] .ReactModal__Content {
+    transform: translate(-50%, 0);
+  }
+
+  /* While closing, slide it back down off-screen before it unmounts. */
+  .ReactModal__Overlay[class*="--before-close"] .ReactModal__Content {
+    transform: translate(-50%, 100%);
+  }
+`;
+
+const CloseButton = styled.button`
+  ${typography.Sans16}
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${palette.pine4};
+  padding: ${rem(spacing.sm)} 0;
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+export type BottomSheetProps = {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  children: ReactNode;
+  closeLabel?: string;
+  ariaLabel: string;
+};
+
+// TODO(OBT-31706): Add Storybook stories for BottomSheet (open/closed, default/custom close label, varying content lengths)
+export const BottomSheet: FC<BottomSheetProps> = ({
+  isOpen,
+  onRequestClose,
+  children,
+  closeLabel = "Close",
+  ariaLabel,
+}) => (
+  <StyledBottomSheet
+    isOpen={isOpen}
+    onRequestClose={onRequestClose}
+    closeTimeoutMS={ANIMATION_MS}
+    contentLabel={ariaLabel}
+  >
+    <CloseButton type="button" onClick={onRequestClose}>
+      {closeLabel}
+    </CloseButton>
+    {children}
+  </StyledBottomSheet>
+);

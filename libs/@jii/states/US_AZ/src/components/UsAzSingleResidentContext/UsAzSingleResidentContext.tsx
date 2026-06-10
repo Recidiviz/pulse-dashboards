@@ -28,6 +28,8 @@ import { SingleResidentContextPresenter } from "./SingleResidentContextPresenter
 
 export type UsAzResidentContext = {
   isDprQualified: boolean;
+  isTprApproved: boolean;
+  isDtpApproved: boolean;
   displayedDates: SingleResidentContextPresenter["displayedDates"];
   metadata: ResidentMetadata<"US_AZ">;
 };
@@ -45,6 +47,8 @@ const ManagedComponent: FC<{ presenter: SingleResidentContextPresenter }> =
       <context.Provider
         value={{
           isDprQualified: presenter.isDprQualified,
+          isTprApproved: presenter.isTprApproved,
+          isDtpApproved: presenter.isDtpApproved,
           metadata: presenter.metadata,
           displayedDates: presenter.displayedDates,
         }}

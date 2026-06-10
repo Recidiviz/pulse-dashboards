@@ -33,6 +33,8 @@ export const usAzResidentMetadataSchema = z.object({
   ercdOrAdd: nullishAsUndefined(z.string()),
   csbdOrTrToAdd: nullishAsUndefined(z.string()),
   lastUpdatedDate: nullishAsUndefined(dateStringSchema),
+  tprApprovalStatus: nullishAsUndefined(z.string()),
+  dtpApprovalStatus: nullishAsUndefined(z.string()),
   // Standalone ingested date fields (sourced from person_projected_date_sessions).
   // These are the preferred fields for single-date consumers like the JII app.
   // The V2 suffix on ercd/csbd avoids collision with the "combined" ercdDate/csbdDate

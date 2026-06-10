@@ -15,75 +15,57 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
+import { useState } from "react";
+
+import { BottomSheet, CardHeading, CardValue, GoLink } from "~@jii/common-ui";
 import {
   useDateDistanceTranslation,
   useUsAzTranslations,
 } from "~@jii/translation";
 
-import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
 import { DateInfoTag } from "./DateInfoTag";
 import {
-  CardHighlightStyle,
   CardValueWrapper,
   DashedBorderSvg,
   DateInfoContent,
   LearnMoreLinkWrapper,
+  OverlayBody,
+  OverlayEyebrow,
+  OverlayHeading,
   StyledCard,
   StyledSlateCopy,
 } from "./styles";
-
-export interface DateInfoCardProps {
-  title: string;
-  date: Date;
-  info: string;
-  shortName: string;
-  dateKey: UsAzDateField;
-  isUpcoming: boolean;
-  linkUrl: string;
-  isPast: boolean;
-}
+import { DateEntry } from "./UsAzImportantDatesPresenter";
 
 export const DateInfoCard = ({
-  title,
   date,
+  title,
   info,
-  shortName,
-  dateKey,
+  value,
+  goLink,
   isUpcoming,
+  isTentative,
   linkUrl,
   isPast,
-}: DateInfoCardProps) => {
+  highlightType,
+  showInfoTag,
+  overlay,
+}: DateEntry) => {
   const { t } = useUsAzTranslations();
   const distanceFromToday = useDateDistanceTranslation(date);
-  /*
-  For upcoming dates in the next 31 days:
-  - CardValue should show distanceFromToday
-  - SlateCopy should be the date
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
-  For all other dates:
-  - CardValue should be the date, SlateCopy should be distanceFromToday in parentheses
-  */
-  const cardValue = isUpcoming
-    ? distanceFromToday
-    : t(($) => $.importantDates.dates[dateKey].value, {
-        replace: { [dateKey]: date },
-      });
-
-  const slateCopyContent = isUpcoming
-    ? t(($) => $.importantDates.dates[dateKey].value, {
-        replace: { [dateKey]: date },
-      })
-    : `(${distanceFromToday})`;
-
-  let highlightType: CardHighlightStyle | undefined;
-  // this ordering is intentional because isPast supersedes TPR/DTP styles
-  if (dateKey === "csbdDate" || isPast) {
-    highlightType = "dashed";
-  } else if (dateKey === "tprDate") {
-    highlightType = "green";
-  } else if (dateKey === "dtpDate") {
-    highlightType = "purple";
+  let cardValue: string | undefined;
+  let slateCopyContent: string;
+  if (isUpcoming) {
+    cardValue = distanceFromToday;
+    slateCopyContent = value;
+  } else if (isTentative && !isPast) {
+    cardValue = value;
+    slateCopyContent = "";
+  } else {
+    cardValue = value;
+    slateCopyContent = `(${distanceFromToday})`;
   }
 
   return (
@@ -96,18 +78,44 @@ export const DateInfoCard = ({
       <CardHeading>{title}</CardHeading>
       <CardValue>
         <CardValueWrapper>{cardValue}</CardValueWrapper>
-        {/* infoTag is part of the dashed style */}
-        {highlightType === "dashed" && (
+        {showInfoTag && (
           <DateInfoTag text={t(($) => $.importantDates.pastDateTag)} />
         )}
       </CardValue>
       <StyledSlateCopy $isPastDate={isPast}>{slateCopyContent}</StyledSlateCopy>
       <DateInfoContent>{info}</DateInfoContent>
       <LearnMoreLinkWrapper>
-        <GoLink to={linkUrl}>
-          {t(($) => $.goLink, { replace: { label: shortName } })}
+        <GoLink
+          to={linkUrl}
+          onClick={
+            overlay
+              ? (e) => {
+                  // Open the overlay instead of navigating to the FAQ page.
+                  e.preventDefault();
+                  setIsOverlayOpen(true);
+                }
+              : undefined
+          }
+        >
+          {goLink}
         </GoLink>
       </LearnMoreLinkWrapper>
+
+      {overlay && (
+        <BottomSheet
+          isOpen={isOverlayOpen}
+          onRequestClose={() => setIsOverlayOpen(false)}
+          closeLabel={overlay.closeLabel}
+          ariaLabel={overlay.heading}
+        >
+          {overlay.eyebrow && (
+            <OverlayEyebrow>{overlay.eyebrow}</OverlayEyebrow>
+          )}
+          <OverlayHeading>{overlay.heading}</OverlayHeading>
+          <OverlayBody>{overlay.body}</OverlayBody>
+          <GoLink to={linkUrl}>{overlay.linkText}</GoLink>
+        </BottomSheet>
+      )}
     </StyledCard>
   );
 };

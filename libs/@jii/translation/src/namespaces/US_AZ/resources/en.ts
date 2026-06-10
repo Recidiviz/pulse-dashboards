@@ -72,22 +72,44 @@ export default {
     dates: {
       tprDate: {
         title: "Standard Transition Program (STP)",
-        info: `Under STP, you may qualify for release up to 90 days earlier than your 
-        [Temporary Release (TR)]({{trLinkUrl}}) under the Standard Transition Program if you meet all 
-        of [the criteria]({{linkUrl}}). You may also hear this called “Transition Program Release” 
-        (TPR) or “Transition Release.”`,
+        info: `Under STP, you may qualify for release up to 90 days earlier than your
+        [Temporary Release (TR)]({{trLinkUrl}}) under the Standard Transition Program if you meet all
+        of [the criteria]({{linkUrl}}). You may also hear this called "Transition Program Release"
+        (TPR) or "Transition Release."`,
         shortName: "STP",
         value: "{{tprDate, formatFullDate}}",
+        approved: {
+          info: `Great work! Time Comp confirmed you've met the criteria for Transition Release.
+          One last thing stands between you and the gate: **an approved home plan**. Get that finalized
+          to walk out on this date. (Steer clear of disciplinary infractions, too — they can still
+          put this date at risk.)`,
+        },
+        tentative: {
+          info: `You may qualify to go home **as early as {{tprDate, formatFullDate}}** ({{tprDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) through the Transition Program.
+          This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria – tap below to learn how. `,
+          value: `You may be eligible for early release through the Transition Program`,
+        },
       },
       dtpDate: {
         title: "Drug Transition Program (DTP)",
         info: `You may qualify for release up to 90 days earlier than your Temporary Release (TR)
-        under the Drug Transition Program if you meet all of [the criteria]({{linkUrl}}). This 
-        is a special version of the Transition Program Release (TPR) for people with only qualifying drug 
-        possession or use charges. You may also hear this called “Drug Transition Program Release” 
-        (DTP) or “Drug Transition Release.”`,
+        under the Drug Transition Program if you meet all of [the criteria]({{linkUrl}}). This
+        is a special version of the Transition Program Release (TPR) for people with only qualifying drug
+        possession or use charges. You may also hear this called "Drug Transition Program Release"
+        (DTP) or "Drug Transition Release."`,
         shortName: "DTP",
         value: "{{dtpDate, formatFullDate}}",
+        approved: {
+          info: `Great work! Time Comp confirmed you've met the criteria for Transition Release.
+          One last thing stands between you and the gate: **an approved home plan**. Get that finalized
+          to walk out on this date. (Steer clear of disciplinary infractions, too — they can still
+          put this date at risk.)`,
+        },
+        tentative: {
+          info: `You may qualify to go home **as early as {{dtpDate, formatFullDate}}** ({{dtpDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) through the Transition Program.
+          This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria – tap below to learn how. `,
+          value: `You may be eligible for early release through the Transition Program`,
+        },
       },
       csbdDate: {
         title: "Community Supervision Begin Date (CSBD)",
@@ -133,6 +155,84 @@ export default {
         their prison term.`,
         shortName: "TR to ADD",
         value: "{{trToAddDate, formatFullDate}}",
+      },
+    },
+    overlay: {
+      closeLabel: "Close",
+      overlayLinkText: "Learn more about {{label}}",
+      goLink: "What do I need to do to qualify for this date?",
+      tprDate: {
+        approved: {
+          eyebrow: "Standard Transition Program",
+          heading:
+            "What to focus on before your release date of {{tprDate, formatFullDate}}.",
+          body: `Here's what to keep in mind between now and then.
+
+**Start now**
+- Get your home plan approved. The sooner, the better! You won't be released until it is.
+- Sign the Transition Program agreement with your COIII
+- Complete the Mandatory Literacy requirement (if you haven't already)
+
+**Watch out for**
+- Disciplinary incidents in the next 6 months can put your date at risk
+- Being removed from a major program can affect your eligibility
+- Staying at Medium or Minimum custody`,
+        },
+        tentative: {
+          eyebrow: "",
+          heading: "Standard Transition Program",
+          body: `To be released on your STP date, you must meet the following criteria:
+
+1. You must sign the Transition Program agreement form – talk to your COIII in order to do this.
+2. You must be classified as Medium or Minimum custody.
+3. You must complete the Mandatory Literacy requirement, unless you have an exemption.
+4. You can’t have any felony holds, felony detainers, or felony warrants.
+5. You must not have been found guilty of any Major Class A or Class B disciplinary rule violations within the last 6 months. You also cannot have any Major Violent rule violations during your current incarceration. Even if you qualified, getting a new infraction could cause you to lose your STP date.
+6. You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you have since successfully reenrolled and completed it.
+7. You must have an approved home plan – starting to work on this ASAP is essential to receiving your full 90 days.
+8. You can’t have any past arrests, convictions, or requirements to register for sex offenses.
+9. You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
+10. If you have participated in the Transition Program before, you must wait at least 24 months after your last [CSED]({{csedLinkUrl}}) date before being eligible again.
+11. You must be a US Citizen or a legal permanent resident without an ICE detainer.
+`,
+        },
+      },
+      dtpDate: {
+        approved: {
+          eyebrow: "Drug Transition Program",
+          heading:
+            "What to focus on before your release date of {{dtpDate, formatFullDate}}.",
+          body: `Here's what to keep in mind between now and then.
+
+**Start now**
+- Get your home plan approved. The sooner, the better! You won't be released until it is.
+- Sign the Transition Program agreement with your COIII
+- Complete the Mandatory Literacy requirement (if you haven't already)
+
+**Watch out for**
+- Disciplinary incidents in the next 6 months can put your date at risk
+- Being removed from a major program can affect your eligibility
+- Staying at Medium or Minimum custody`,
+        },
+        tentative: {
+          eyebrow: "",
+          heading: "Drug Transition Program",
+          body: `The Drug Transition Program (DTP) is for people serving sentences only for qualifying drug possession or use offenses. To qualify, you will need to meet the following criteria:
+
+1. You must sign the Transition Program agreement form.
+2. You must be classified as Medium or Minimum custody.
+3. You must at least be enrolled in Functional Literacy — but to be released on your earliest possible date, you must complete it (see previous question).
+4. You can’t have any felony holds, felony detainers, or felony warrants
+5. You can’t be found guilty of any Class A or Class B major disciplinary rule violations within 6 months of your CSBD / TR to ADD. Even if you qualified, getting a new major disciplinary infraction could cause you to lose your DTP date.
+6. You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you later successfully reenrolled and completed it.
+7. You need a home plan that gets approved ASAP.
+8. You can’t have any past arrests, convictions, or requirements to register for sex offenses.
+9. You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
+10. If you have participated in the Transition Program before, it must have been at least 24 months since your last [CSED]({{csedLinkUrl}}).
+11. You must be a US Citizen or legal permanent resident without an ICE detainer.
+12. You must be up to date with any restitution payments.
+`,
+        },
       },
     },
   },

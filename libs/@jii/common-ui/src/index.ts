@@ -19,6 +19,7 @@ export * from "./Accordion/Accordion";
 export * from "./ActivityList";
 export * from "./BackLink/BackLink";
 export * from "./BaseLayout/BaseLayout";
+export * from "./BottomSheet/BottomSheet";
 export * from "./Buttons/ButtonLink";
 export * from "./Buttons/JIIButton";
 export * from "./Card";

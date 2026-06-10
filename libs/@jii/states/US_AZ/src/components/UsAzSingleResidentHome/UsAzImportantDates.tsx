@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { HomepageSectionHeading } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -47,20 +48,9 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
           {presenter.hasNoDates ? (
             <MissingDateCard dateKey="sedDate" />
           ) : (
-            presenter.dateEntries.map((entry) => {
-              const dateKey = entry.dateKey;
-
-              return (
-                <DateInfoCard
-                  {...entry}
-                  key={dateKey}
-                  title={t(($) => $.importantDates.dates[dateKey].title)}
-                  shortName={t(
-                    ($) => $.importantDates.dates[dateKey].shortName,
-                  )}
-                />
-              );
-            })
+            presenter.dateEntries.map((entry) => (
+              <DateInfoCard {...entry} key={entry.dateKey} />
+            ))
           )}
         </section>
       </div>
@@ -68,10 +58,16 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   });
 
 function usePresenter() {
-  const { displayedDates } = useUsAzSingleResidentContext();
+  const { displayedDates, isTprApproved, isDtpApproved } =
+    useUsAzSingleResidentContext();
+  const { residentFlags } = useSingleResidentContext();
   const { t } = useUsAzTranslations();
 
-  return new UsAzImportantDatesPresenter(displayedDates, t);
+  return new UsAzImportantDatesPresenter(displayedDates, t, {
+    isTprApproved,
+    isDtpApproved,
+    usAzFslImprovements: residentFlags.usAzFslImprovements,
+  });
 }
 
 export const UsAzImportantDates = withPresenterManager({

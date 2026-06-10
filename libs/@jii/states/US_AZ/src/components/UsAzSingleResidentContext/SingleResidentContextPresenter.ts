@@ -36,15 +36,17 @@ const US_AZ_DATE_KEYS = [
  * field names themselves
  */
 export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
-export interface DateEntry {
+
+/**
+ * The minimal date shape the context layer produces: just the normalized date
+ * id and its value. The home-page view enriches each of these into a full
+ * `DateEntry` (see UsAzImportantDatesPresenter).
+ */
+export interface UsAzDisplayedDate {
   dateKey: UsAzDateField;
   date: Date;
-  isUpcoming: boolean; // Within 31 days
-  isPast: boolean;
-  info: string;
-  linkUrl: string;
 }
-export type UsAzDisplayedDates = Pick<DateEntry, "dateKey" | "date">[];
+export type UsAzDisplayedDates = UsAzDisplayedDate[];
 
 /**
  * Maps each normalized date ID to the resident_metadata field that holds
@@ -99,6 +101,24 @@ export class SingleResidentContextPresenter {
     return Boolean(
       this.metadata.isDprEligible && this.metadata.hasAnyDprProgramCompleted,
     );
+  }
+
+  /**
+   * Whether Time Comp has validated (approved) the resident's Transition
+   * Program Release date. When false, the TPR date is still "tentative" and is
+   * displayed with tentative styling/copy.
+   */
+  get isTprApproved(): boolean {
+    return this.metadata.tprApprovalStatus === "APPROVED";
+  }
+
+  /**
+   * Whether Time Comp has validated (approved) the resident's Drug Transition
+   * Program date. When false, the DTP date is still "tentative" and is
+   * displayed with tentative styling/copy.
+   */
+  get isDtpApproved(): boolean {
+    return this.metadata.dtpApprovalStatus === "APPROVED";
   }
 
   /**

@@ -18,6 +18,7 @@
 import { relativeFixtureDate } from "../../../utils/zod";
 import { RawResidentRecord, residentRecordSchema } from "../schema";
 
+// TODO(OBT-31705): Add fixtures for the various TPR/DTP date display scenarios
 export const rawUsAzResidents: Array<RawResidentRecord> = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
@@ -41,6 +42,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
     metadata: {
       acisTprDate: relativeFixtureDate({ days: 5 }),
       projectedTprDate: relativeFixtureDate({ days: 5 }),
+      tprApprovalStatus: "APPROVED",
       acisDtpDate: null,
       projectedDtpDate: null,
       csbdDate: relativeFixtureDate({ days: 95 }),
@@ -191,6 +193,7 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
       projectedTprDate: relativeFixtureDate({ days: 5 }),
       acisDtpDate: relativeFixtureDate({ days: 5 }),
       projectedDtpDate: relativeFixtureDate({ days: 5 }),
+      dtpApprovalStatus: "APPROVED",
       csbdDate: relativeFixtureDate({ days: 95 }),
       csbdDateV2: null,
       trToAddDate: relativeFixtureDate({ days: 95 }),

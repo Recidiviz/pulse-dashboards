@@ -17,9 +17,15 @@
 
 import assertNever from "assert-never";
 
+import { State } from "~@jii/paths";
+
 import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContextPresenter";
 
 export type UsAzDateHash = ReturnType<typeof getInfoPageHashForDateKey>;
+
+export function linkToDateSection(dateKey: UsAzDateField): string {
+  return `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath({})}#${getInfoPageHashForDateKey(dateKey)}`;
+}
 
 export function getInfoPageHashForDateKey(dateKey: UsAzDateField) {
   //  these headings have been explicitly added to the Markdown document

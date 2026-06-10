@@ -130,6 +130,70 @@ describe("DPR active", () => {
   });
 });
 
+describe("approval status", () => {
+  describe("isTprApproved", () => {
+    it("is true only when tprApprovalStatus is APPROVED", () => {
+      expect(
+        new SingleResidentContextPresenter({
+          ...testData,
+          tprApprovalStatus: "APPROVED",
+        }).isTprApproved,
+      ).toBeTrue();
+    });
+
+    it("is false for any other tprApprovalStatus", () => {
+      expect(
+        new SingleResidentContextPresenter({
+          ...testData,
+          tprApprovalStatus: "PENDING",
+        }).isTprApproved,
+      ).toBeFalse();
+    });
+
+    it("is false when tprApprovalStatus is missing", () => {
+      expect(
+        new SingleResidentContextPresenter(testData).isTprApproved,
+      ).toBeFalse();
+    });
+  });
+
+  describe("isDtpApproved", () => {
+    it("is true only when dtpApprovalStatus is APPROVED", () => {
+      expect(
+        new SingleResidentContextPresenter({
+          ...testData,
+          dtpApprovalStatus: "APPROVED",
+        }).isDtpApproved,
+      ).toBeTrue();
+    });
+
+    it("is false for any other dtpApprovalStatus", () => {
+      expect(
+        new SingleResidentContextPresenter({
+          ...testData,
+          dtpApprovalStatus: "DENIED",
+        }).isDtpApproved,
+      ).toBeFalse();
+    });
+
+    it("is false when dtpApprovalStatus is missing", () => {
+      expect(
+        new SingleResidentContextPresenter(testData).isDtpApproved,
+      ).toBeFalse();
+    });
+  });
+
+  it("tracks isTprApproved and isDtpApproved independently", () => {
+    const presenter = new SingleResidentContextPresenter({
+      ...testData,
+      tprApprovalStatus: "APPROVED",
+      dtpApprovalStatus: "PENDING",
+    });
+    expect(presenter.isTprApproved).toBeTrue();
+    expect(presenter.isDtpApproved).toBeFalse();
+  });
+});
+
 describe("displayedDates", () => {
   it("filters out missing dates", () => {
     const allMissingDates: ResidentMetadata<"US_AZ"> = {
