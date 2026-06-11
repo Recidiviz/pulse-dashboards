@@ -17,11 +17,6 @@
 
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
-// Phase 1 collection schemas. Each declares only the fields needed for
-// facet/filter/scope enforcement. Search-target fields (givenNames, surname,
-// name, etc.) are added in later stacked PRs as the search bar lands. Any
-// fields not declared here are dropped by Typesense on import — by design, so
-// we never store more than we need to index.
 export const schemas: CollectionCreateSchema[] = [
   {
     name: "clients",
@@ -32,11 +27,13 @@ export const schemas: CollectionCreateSchema[] = [
         name: "allEligibleOpportunities",
         type: "string[]",
         facet: true,
-        optional: true,
       },
-      { name: "pseudonymizedId", type: "string", optional: true },
+      { name: "pseudonymizedId", type: "string" },
       { name: "personExternalId", type: "string" },
-      { name: "personName", type: "object" },
+      { name: "officerId", type: "string", facet: true },
+      { name: "personName.givenNames", type: "string", optional: true },
+      { name: "personName.surname", type: "string", optional: true },
+      { name: "district", type: "string", optional: true, facet: true },
     ],
   },
   {
@@ -48,11 +45,24 @@ export const schemas: CollectionCreateSchema[] = [
         name: "allEligibleOpportunities",
         type: "string[]",
         facet: true,
-        optional: true,
       },
-      { name: "pseudonymizedId", type: "string", optional: true },
+      { name: "pseudonymizedId", type: "string" },
       { name: "personExternalId", type: "string" },
-      { name: "personName", type: "object" },
+      { name: "officerId", type: "string", optional: true, facet: true },
+      { name: "personName.givenNames", type: "string", optional: true },
+      { name: "personName.surname", type: "string", optional: true },
+      { name: "facilityId", type: "string", optional: true, facet: true },
+      { name: "facilityUnitId", type: "string", optional: true, facet: true },
+      // Used by US_ID tenant config (searchField: ["metadata", "crcFacilities"])
+      // to filter residents by Community Reentry Center facility. The full
+      // `metadata` blob is much larger on residents; declaring only this
+      // nested leaf keeps the indexed surface tight.
+      {
+        name: "metadata.crcFacilities",
+        type: "string[]",
+        optional: true,
+        facet: true,
+      },
     ],
   },
   {
@@ -67,9 +77,10 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
         optional: true,
       },
+      { name: "pseudonymizedId", type: "string" },
       { name: "email", type: "string", optional: true },
-      { name: "givenNames", type: "string" },
-      { name: "surname", type: "string" },
+      { name: "givenNames", type: "string", sort: true },
+      { name: "surname", type: "string", sort: true },
     ],
   },
   {
@@ -77,9 +88,10 @@ export const schemas: CollectionCreateSchema[] = [
     enable_nested_fields: true,
     fields: [
       { name: "stateCode", type: "string", facet: true },
+      { name: "pseudonymizedId", type: "string" },
       { name: "email", type: "string", optional: true },
-      { name: "givenNames", type: "string" },
-      { name: "surname", type: "string" },
+      { name: "givenNames", type: "string", sort: true },
+      { name: "surname", type: "string", sort: true },
     ],
   },
   {
@@ -87,8 +99,7 @@ export const schemas: CollectionCreateSchema[] = [
     enable_nested_fields: true,
     fields: [
       { name: "stateCode", type: "string", facet: true },
-      { name: "id", type: "string" },
-      { name: "name", type: "string" },
+      { name: "name", type: "string", sort: true },
     ],
   },
 ];

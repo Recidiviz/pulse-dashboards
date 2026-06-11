@@ -21,8 +21,8 @@ import {
   compileUserScopePredicate,
   toCrossSystemTypesenseFilter,
   toTypesenseFilter,
-} from "./compileToTypesense";
-import type { StaffScope } from "./types";
+} from "../compileToTypesense";
+import type { StaffScope } from "../types";
 
 describe("compileUserScopePredicate", () => {
   it("unrestricted base → null", () => {

@@ -137,16 +137,56 @@ curl -fsS -X DELETE "https://typesense-staging.recidiviz.org/keys/<id>" \
   -H "X-TYPESENSE-API-KEY: $TS_ADMIN_KEY"
 ```
 
-### Provisioning collections
+### Provisioning collections (initial bootstrap)
 
-Pre-create the Typesense collections from [src/schemas/index.ts](src/schemas/index.ts). The Firebase → Typesense extension requires collections to exist before sync starts, so this is the first step when standing up a new cluster.
+Pre-create the Typesense collections from [src/schemas/index.ts](src/schemas/index.ts). The Firebase → Typesense extension requires collections to exist before sync starts, so this is the first step when standing up a new cluster:
 
 ```bash
-nx provision typesense -c staging                   # create-if-not-exists (safe to re-run)
-nx provision typesense -c staging -- --recreate     # drop + recreate (use when schema has changed incompatibly)
+nx provision typesense -c staging
+# create-if-not-exists (safe to re-run, idempotent)
 ```
 
-Default behavior is idempotent — re-running won't touch existing collections or their data. Use `--recreate` only when you need to apply a schema change that requires dropping the existing collection.
+Re-running is safe — existing collections and their data are left alone.
+
+For schema CHANGES on an existing cluster, use [migrate-schemas](#evolving-a-schema-deploy-safe) instead — `provision` only creates missing collections, it doesn't mutate existing ones.
+
+### Evolving a schema (deploy-safe)
+
+After the initial provision, schema changes (add/drop fields) should land via `migrate-schemas`, which uses Typesense's `PATCH /collections/<n>` to mutate existing collections in place — no data loss, no downtime. This is the path the deploy pipeline takes.
+
+```bash
+nx migrate-schemas typesense -c staging                  # apply
+nx migrate-schemas typesense -c staging -- --dry-run     # preview only, no mutations
+```
+
+What it does for each collection in `src/schemas/index.ts`:
+
+| Local vs. live                                                                     | Action                                                                |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Collection missing in Typesense                                                    | CREATE with local schema                                              |
+| Field declared locally, missing in live                                            | ADD via PATCH (must be `optional: true`)                              |
+| Field in live, not declared locally                                                | DROP via PATCH                                                        |
+| Field exists in both with different attributes                                     | ABORT — Typesense can't mutate field attrs in place; resolve manually |
+| Collection-level setting changed (`enable_nested_fields`, `default_sorting_field`) | ABORT — these are immutable; recreate required                        |
+
+Constraints to know going in:
+
+- **New fields must be `optional: true`.** Existing docs won't have the field until backfill catches up; non-optional would break searches in the interim. The script errors out if it sees a non-optional add.
+- **Type changes aren't supported.** If you need to change a field's `type`, do it as a drop in one deploy and a re-add (under a new name, if possible) in a follow-up deploy. The script aborts rather than silently failing.
+- **`--dry-run` first** if you're unsure. It prints the plan without touching anything.
+
+### Recreating a collection (emergency / manual recovery only)
+
+```bash
+nx provision typesense -c staging -- --recreate
+```
+
+Drops and recreates EVERY collection — **destructive, all docs are lost**. Gated by a typed confirmation prompt; aborts on non-TTY. Use this only when:
+
+- Recovering a corrupted collection during an incident.
+- Changing a collection-level setting (`enable_nested_fields`, `default_sorting_field`) that Typesense considers immutable.
+
+This is never part of the automated deploy. Always follow up with a full backfill from the sync pipeline.
 
 ### Inspecting a remote cluster
 

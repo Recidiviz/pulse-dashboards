@@ -20,13 +20,13 @@ import { describe, expect, it } from "vitest";
 import {
   resolveCrossSystemStaffScopes,
   resolveStaffScope,
-} from "./resolveStaffScope";
+} from "../resolveStaffScope";
 import type {
   ResolveScopeFeatureVariants,
   ResolveScopeInput,
   ResolveScopeUser,
   SingleWorkflowsSystem,
-} from "./types";
+} from "../types";
 
 function makeInput(
   overrides: {

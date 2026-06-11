@@ -70,6 +70,17 @@
         "production": {}
       }
     },
+    "requires-sops-env:migrate-schemas": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/migrate-schemas.ts {args}",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
     "requires-sops-env:list-collections": {
       "executor": "nx:run-commands",
       "options": {
