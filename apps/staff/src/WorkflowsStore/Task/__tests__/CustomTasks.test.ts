@@ -64,6 +64,7 @@ let customTasks: CustomTasks;
 let subscriptionInstance: {
   data: CustomTaskRecord[];
   hydrate: Mock;
+  unsubscribe: Mock;
   hydrationState: any;
 };
 
@@ -74,6 +75,7 @@ beforeEach(() => {
   subscriptionInstance = {
     data: [],
     hydrate: vi.fn(),
+    unsubscribe: vi.fn(),
     hydrationState: { status: "needs hydration" } as const,
   };
   CustomTasksSubscriptionMock.mockImplementation(
@@ -127,6 +129,35 @@ describe("CustomTasks", () => {
 
       subscriptionInstance.hydrationState = { status: "hydrated" };
       expect(customTasks.hydrationState).toEqual({ status: "hydrated" });
+    });
+  });
+
+  describe("retry", () => {
+    test("on a 'failed' subscription, unsubscribes, resets state, and re-hydrates", () => {
+      subscriptionInstance.hydrationState = {
+        status: "failed",
+        error: new Error("listener failed"),
+      };
+
+      customTasks.retry();
+
+      expect(subscriptionInstance.unsubscribe).toHaveBeenCalledTimes(1);
+      expect(subscriptionInstance.hydrationState).toEqual({
+        status: "needs hydration",
+      });
+      expect(subscriptionInstance.hydrate).toHaveBeenCalledTimes(1);
+    });
+
+    test("is a no-op when the subscription is not in 'failed'", () => {
+      subscriptionInstance.hydrationState = { status: "hydrated" };
+
+      customTasks.retry();
+
+      expect(subscriptionInstance.unsubscribe).not.toHaveBeenCalled();
+      expect(subscriptionInstance.hydrate).not.toHaveBeenCalled();
+      expect(subscriptionInstance.hydrationState).toEqual({
+        status: "hydrated",
+      });
     });
   });
 

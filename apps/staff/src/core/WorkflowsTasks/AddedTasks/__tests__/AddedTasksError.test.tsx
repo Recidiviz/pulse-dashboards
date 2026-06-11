@@ -17,19 +17,34 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 
+import { CustomTasks } from "../../../../WorkflowsStore/Task/CustomTasks";
 import { AddedTasksError } from "../AddedTasksError";
 
 describe("AddedTasksError", () => {
   test("renders an alert role with the error message", () => {
-    render(<AddedTasksError onRetry={vi.fn()} />);
+    render(<AddedTasksError />);
     expect(screen.getByRole("alert")).toBeInTheDocument();
     expect(screen.getByText(/couldn’t load added tasks/i)).toBeInTheDocument();
   });
 
-  test("clicking Retry invokes onRetry", () => {
-    const onRetry = vi.fn();
-    render(<AddedTasksError onRetry={onRetry} />);
+  test("clicking Retry calls customTasks.retry() then resetError()", () => {
+    const retry = vi.fn();
+    const resetError = vi.fn();
+    const customTasks = { retry } as unknown as CustomTasks;
+
+    render(
+      <AddedTasksError customTasks={customTasks} resetError={resetError} />,
+    );
     fireEvent.click(screen.getByRole("button", { name: /retry/i }));
-    expect(onRetry).toHaveBeenCalledTimes(1);
+
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(resetError).toHaveBeenCalledTimes(1);
+  });
+
+  test("Retry tolerates missing customTasks / resetError", () => {
+    render(<AddedTasksError />);
+    expect(() =>
+      fireEvent.click(screen.getByRole("button", { name: /retry/i })),
+    ).not.toThrow();
   });
 });

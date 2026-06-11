@@ -21,6 +21,8 @@ import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
+import { CustomTasks } from "../../../WorkflowsStore/Task/CustomTasks";
+
 const ErrorWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -46,18 +48,33 @@ const RetryButton = styled(Button).attrs({
 `;
 
 type AddedTasksErrorProps = {
-  onRetry: () => void;
+  customTasks?: CustomTasks;
+  resetError?: () => void;
 };
 
 /**
- * Small inline error message with a Retry button. Shown when the
- * `CustomTasks` subscription's hydrationState transitions to `"failed"`.
+ * Inline error UI shown by the AddedTasks ErrorBoundary fallback. One Retry
+ * handler covers both failure modes:
+ *
+ * - Hydration failure → `customTasks.retry()` re-attaches the Firestore
+ *   listener (state flips to `"loading"` → the parent throws to Suspense).
+ *   `resetError()` clears the boundary so the suspended child becomes visible.
+ * - Chunk-load failure → `customTasks.retry()` is a no-op (subscription is
+ *   already hydrated, or `customTasks` is undefined). `resetError()` triggers
+ *   the container's lazy retry so the dynamic import is re-attempted.
  */
-export function AddedTasksError({ onRetry }: AddedTasksErrorProps) {
+export function AddedTasksError({
+  customTasks,
+  resetError,
+}: AddedTasksErrorProps) {
+  const handleRetry = () => {
+    customTasks?.retry();
+    resetError?.();
+  };
   return (
     <ErrorWrapper role="alert">
       <ErrorText>Couldn’t load added tasks.</ErrorText>
-      <RetryButton onClick={onRetry}>Retry</RetryButton>
+      <RetryButton onClick={handleRetry}>Retry</RetryButton>
     </ErrorWrapper>
   );
 }

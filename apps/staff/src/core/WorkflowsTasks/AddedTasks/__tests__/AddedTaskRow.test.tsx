@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Timestamp } from "firebase/firestore";
 
 import { palette } from "~design-system";
@@ -23,6 +23,17 @@ import { palette } from "~design-system";
 import { CustomTaskRecord } from "../../../../FirestoreStore";
 import { CustomTasks } from "../../../../WorkflowsStore/Task/CustomTasks";
 import { AddedTaskRow } from "../AddedTaskRow";
+import { handleMutationFailure } from "../mutationErrors";
+
+vi.mock("../mutationErrors", () => ({
+  handleMutationFailure: vi.fn(),
+}));
+
+const handleMutationFailureMock = vi.mocked(handleMutationFailure);
+
+beforeEach(() => {
+  handleMutationFailureMock.mockReset();
+});
 
 function makeRecord(
   overrides: Partial<CustomTaskRecord> = {},
@@ -185,6 +196,32 @@ describe("AddedTaskRow", () => {
     );
   });
 
+  test("toggling the checkbox reports on Firestore failure", async () => {
+    const customTasks = {
+      ...makeCustomTasksMock(),
+      toggleCustomTaskCompleted: vi
+        .fn()
+        .mockRejectedValue(new Error("network")),
+    } as unknown as CustomTasks;
+    render(
+      <AddedTaskRow
+        task={makeRecord({ id: "task-1" })}
+        customTasks={customTasks}
+        isEditing={false}
+        onEditStart={vi.fn()}
+        onEditEnd={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByRole("checkbox"));
+
+    await waitFor(() =>
+      expect(handleMutationFailureMock).toHaveBeenCalledWith(
+        "update",
+        expect.any(Error),
+      ),
+    );
+  });
+
   test("renders completed tasks with the muted color treatment", () => {
     render(
       <AddedTaskRow
@@ -247,7 +284,7 @@ describe("AddedTaskRow", () => {
     expect(screen.getByLabelText("Task title")).toHaveValue("Original");
   });
 
-  test("saving the edit form calls customTasks.editCustomTask and onEditEnd", () => {
+  test("saving the edit form calls customTasks.editCustomTask and onEditEnd on success", async () => {
     const customTasks = makeCustomTasksMock();
     const onEditEnd = vi.fn();
     render(
@@ -274,7 +311,37 @@ describe("AddedTaskRow", () => {
     expect(patch.dueDate).toBeInstanceOf(Date);
     // Non-recurring task being edited — recurrence stays null in the patch.
     expect(patch.recurrence).toBeNull();
-    expect(onEditEnd).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onEditEnd).toHaveBeenCalledTimes(1));
+    expect(handleMutationFailureMock).not.toHaveBeenCalled();
+  });
+
+  test("saving the edit form keeps the row in edit mode and reports on Firestore failure", async () => {
+    const customTasks = {
+      ...makeCustomTasksMock(),
+      editCustomTask: vi.fn().mockRejectedValue(new Error("network")),
+    } as unknown as CustomTasks;
+    const onEditEnd = vi.fn();
+    render(
+      <AddedTaskRow
+        task={makeRecord({ id: "task-1", title: "Old" })}
+        customTasks={customTasks}
+        isEditing
+        onEditStart={vi.fn()}
+        onEditEnd={onEditEnd}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Task title"), {
+      target: { value: "New title" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+
+    await waitFor(() =>
+      expect(handleMutationFailureMock).toHaveBeenCalledWith(
+        "save",
+        expect.any(Error),
+      ),
+    );
+    expect(onEditEnd).not.toHaveBeenCalled();
   });
 
   test("editing a recurring task pre-selects the matching chip and round-trips the RRULE", () => {
@@ -354,6 +421,32 @@ describe("AddedTaskRow", () => {
       fireEvent.click(screen.getByText("Delete task"));
       fireEvent.click(screen.getByRole("button", { name: /confirm/i }));
       expect(customTasks.deleteCustomTask).toHaveBeenCalledWith("task-1");
+    });
+
+    test("Confirm reports on Firestore failure", async () => {
+      const customTasks = {
+        ...makeCustomTasksMock(),
+        deleteCustomTask: vi.fn().mockRejectedValue(new Error("network")),
+      } as unknown as CustomTasks;
+      render(
+        <AddedTaskRow
+          task={makeRecord({ id: "task-1" })}
+          customTasks={customTasks}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      fireEvent.click(findKebabButton());
+      fireEvent.click(screen.getByText("Delete task"));
+      fireEvent.click(screen.getByRole("button", { name: /confirm/i }));
+
+      await waitFor(() =>
+        expect(handleMutationFailureMock).toHaveBeenCalledWith(
+          "delete",
+          expect.any(Error),
+        ),
+      );
     });
 
     test("Cancel returns to the row without deleting", () => {

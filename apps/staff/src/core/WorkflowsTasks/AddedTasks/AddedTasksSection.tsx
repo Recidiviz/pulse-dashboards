@@ -16,19 +16,19 @@
 // =============================================================================
 
 import { Sans14, spacing } from "@recidiviz/design-system";
-import { autorun } from "mobx";
+import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
 import { Client } from "../../../WorkflowsStore";
+import { CustomTasks } from "../../../WorkflowsStore/Task/CustomTasks";
 import { AddedTaskForm, AddedTaskFormValues } from "./AddedTaskForm";
 import { AddedTaskRow } from "./AddedTaskRow";
-import { AddedTasksError } from "./AddedTasksError";
-import { AddedTasksSkeleton } from "./AddedTasksSkeleton";
+import { handleMutationFailure } from "./mutationErrors";
 
 const SectionWrapper = styled.div`
   display: flex;
@@ -62,14 +62,42 @@ type AddedTasksSectionProps = {
 };
 
 /**
- * Renders the "Added Tasks" UI for a single client: a hydration-aware list
- * of `CustomTaskRecord`s plus inline add/edit forms.
+ * Throws to the parent `<Suspense>` while hydration is in progress, and to
+ * the parent `<ErrorBoundary>` on failure. Suspense expects a thrown
+ * `Promise<unknown>` and resolves the fallback when it settles; an
+ * `ErrorBoundary` expects a thrown value and renders its fallback.
  *
- * Hydration ownership: this component triggers `customTasks.hydrate()` on
- * mount (and when the `customTasks` reference changes). The shape mirrors
- * `CaseloadTasksHydrator`'s `autorun`, but is scoped to one person rather
- * than iterating the caseload — we don't want a flag-only client to incur
- * the caseload-wide subscription cost.
+ * `mobx.when(predicate)` returns a real `Promise<void>` that resolves when
+ * the predicate becomes true — exactly the shape Suspense wants. Once
+ * hydration settles to either `"hydrated"` or `"failed"`, the predicate
+ * fires and the suspended render resumes.
+ */
+function useThrowOnHydrationState(customTasks: CustomTasks | undefined): void {
+  if (!customTasks) return;
+  const state = customTasks.hydrationState;
+
+  if (state.status === "needs hydration" || state.status === "loading") {
+    throw when(
+      () =>
+        customTasks.hydrationState.status === "hydrated" ||
+        customTasks.hydrationState.status === "failed",
+    );
+  }
+
+  if (state.status === "failed") {
+    throw state.error ?? new Error("Failed to load added tasks");
+  }
+}
+
+/**
+ * Renders the "Added Tasks" list for a single client. Only handles the
+ * hydrated branch — loading and failure are lifted to the parent
+ * `<Suspense>` / `<ErrorBoundary>` via {@link useThrowOnHydrationState}.
+ *
+ * The `CustomTasks` subscription auto-activates via `onBecomeObserved` when
+ * this `observer` reads `hydrationState` / `orderedTasks`, so no manual
+ * `hydrate()` call is needed. `CaseloadTasksHydrator` primes the
+ * caseload-wide path separately.
  *
  * Default-exported so it can be loaded via `React.lazy()`.
  */
@@ -77,6 +105,7 @@ const AddedTasksSection = observer(function AddedTasksSection({
   person,
 }: AddedTasksSectionProps) {
   const { customTasks } = person;
+  useThrowOnHydrationState(customTasks);
 
   // View-local state. Kept out of MobX because nothing else needs it.
   // `pendingAddIds` is the list of in-flight new-task form instances; each id
@@ -85,36 +114,22 @@ const AddedTasksSection = observer(function AddedTasksSection({
   const [pendingAddIds, setPendingAddIds] = useState<string[]>([]);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!customTasks) return;
-    return autorun(() => {
-      customTasks.hydrate();
-    });
-  }, [customTasks]);
-
   if (!customTasks) return null;
 
-  const { hydrationState, orderedTasks } = customTasks;
-
-  if (
-    hydrationState.status === "needs hydration" ||
-    hydrationState.status === "loading"
-  ) {
-    return <AddedTasksSkeleton />;
-  }
-
-  if (hydrationState.status === "failed") {
-    return <AddedTasksError onRetry={() => customTasks.hydrate()} />;
-  }
+  const { orderedTasks } = customTasks;
 
   const handleAddSave =
     (pendingId: string) => (values: AddedTaskFormValues) => {
-      customTasks.addCustomTask({
-        title: values.title,
-        dueDate: values.dueDate,
-        recurrence: values.recurrence,
-      });
-      setPendingAddIds((ids) => ids.filter((id) => id !== pendingId));
+      customTasks
+        .addCustomTask({
+          title: values.title,
+          dueDate: values.dueDate,
+          recurrence: values.recurrence,
+        })
+        .then(() => {
+          setPendingAddIds((ids) => ids.filter((id) => id !== pendingId));
+        })
+        .catch((err) => handleMutationFailure("save", err));
     };
 
   const handleAddCancel = (pendingId: string) => () => {

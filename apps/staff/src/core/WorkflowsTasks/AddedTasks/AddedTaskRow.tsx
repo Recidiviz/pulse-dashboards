@@ -35,6 +35,7 @@ import {
 } from "../../../WorkflowsStore/Task/customTaskStatus";
 import { AddedTaskForm, AddedTaskFormValues } from "./AddedTaskForm";
 import { AddedTaskKebab } from "./AddedTaskKebab";
+import { handleMutationFailure } from "./mutationErrors";
 
 // Outer container per row. Always rendered regardless of the row's current
 // state (display / editing / confirming delete) so the inter-row divider
@@ -161,12 +162,16 @@ export const AddedTaskRow = observer(function AddedTaskRow({
           initialRecurrence={task.recurrence ?? null}
           initialCompleted={task.completedOn != null}
           onSave={(values: AddedTaskFormValues) => {
-            customTasks.editCustomTask(task.id, {
-              title: values.title,
-              dueDate: values.dueDate,
-              recurrence: values.recurrence,
-            });
-            onEditEnd();
+            customTasks
+              .editCustomTask(task.id, {
+                title: values.title,
+                dueDate: values.dueDate,
+                recurrence: values.recurrence,
+              })
+              .then(() => {
+                onEditEnd();
+              })
+              .catch((err) => handleMutationFailure("save", err));
           }}
           onCancel={onEditEnd}
         />
@@ -181,7 +186,9 @@ export const AddedTaskRow = observer(function AddedTaskRow({
           <ConfirmText>Delete this task?</ConfirmText>
           <ConfirmButton
             onClick={() => {
-              customTasks.deleteCustomTask(task.id);
+              customTasks
+                .deleteCustomTask(task.id)
+                .catch((err) => handleMutationFailure("delete", err));
               setIsConfirmingDelete(false);
             }}
           >
@@ -204,7 +211,9 @@ export const AddedTaskRow = observer(function AddedTaskRow({
           }`}
           checked={completed}
           onChange={(e) =>
-            customTasks.toggleCustomTaskCompleted(task.id, e.target.checked)
+            customTasks
+              .toggleCustomTaskCompleted(task.id, e.target.checked)
+              .catch((err) => handleMutationFailure("update", err))
           }
         />
         <RowTitleColumn>

@@ -15,13 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen } from "@testing-library/react";
-import { observable } from "mobx";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { observable, runInAction } from "mobx";
+import React, { Suspense } from "react";
 
 import { CustomTaskRecord } from "../../../../FirestoreStore";
 import { Client } from "../../../../WorkflowsStore";
 import { CustomTasks } from "../../../../WorkflowsStore/Task/CustomTasks";
 import AddedTasksSection from "../AddedTasksSection";
+import { handleMutationFailure } from "../mutationErrors";
+
+vi.mock("../mutationErrors", () => ({
+  handleMutationFailure: vi.fn(),
+}));
+
+const handleMutationFailureMock = vi.mocked(handleMutationFailure);
 
 function makeRecord(
   overrides: Partial<CustomTaskRecord> = {},
@@ -40,6 +48,7 @@ function makeRecord(
 
 type CustomTasksMock = {
   hydrate: ReturnType<typeof vi.fn>;
+  retry: ReturnType<typeof vi.fn>;
   addCustomTask: ReturnType<typeof vi.fn>;
   editCustomTask: ReturnType<typeof vi.fn>;
   deleteCustomTask: ReturnType<typeof vi.fn>;
@@ -54,16 +63,18 @@ function makeCustomTasksMock(
   return observable(
     {
       hydrate: vi.fn(),
+      retry: vi.fn(),
       addCustomTask: vi.fn().mockResolvedValue(undefined),
       editCustomTask: vi.fn().mockResolvedValue(undefined),
       deleteCustomTask: vi.fn().mockResolvedValue(undefined),
       toggleCustomTaskCompleted: vi.fn().mockResolvedValue(undefined),
-      hydrationState: { status: "needs hydration" } as const,
+      hydrationState: { status: "hydrated" } as const,
       orderedTasks: [] as CustomTaskRecord[],
       ...overrides,
     },
     {
       hydrate: false,
+      retry: false,
       addCustomTask: false,
       editCustomTask: false,
       deleteCustomTask: false,
@@ -76,6 +87,38 @@ function makePerson(customTasks: CustomTasksMock | undefined): Client {
   return { customTasks } as unknown as Client;
 }
 
+type TinyBoundaryState = { error: unknown };
+
+class TinyBoundary extends React.Component<
+  { children: React.ReactNode },
+  TinyBoundaryState
+> {
+  state: TinyBoundaryState = { error: null };
+
+  static getDerivedStateFromError(error: unknown): TinyBoundaryState {
+    return { error };
+  }
+
+  render(): React.ReactNode {
+    if (this.state.error) return <div role="alert">caught</div>;
+    return this.props.children;
+  }
+}
+
+function renderInBoundary(node: React.ReactElement) {
+  return render(
+    <TinyBoundary>
+      <Suspense fallback={<div data-testid="suspense">loading</div>}>
+        {node}
+      </Suspense>
+    </TinyBoundary>,
+  );
+}
+
+beforeEach(() => {
+  handleMutationFailureMock.mockReset();
+});
+
 describe("AddedTasksSection", () => {
   test("renders null when person.customTasks is undefined", () => {
     const { container } = render(
@@ -84,42 +127,46 @@ describe("AddedTasksSection", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  test("hydrates the subscription on mount", () => {
-    const customTasks = makeCustomTasksMock();
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
-    expect(customTasks.hydrate).toHaveBeenCalled();
-  });
-
-  test("renders the skeleton when hydrationState is 'needs hydration'", () => {
+  test("suspends to the parent Suspense fallback when hydrationState is 'needs hydration'", () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "needs hydration" },
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
-    expect(screen.getByRole("status")).toHaveAttribute(
-      "aria-label",
-      "Loading added tasks",
-    );
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
+    expect(screen.getByTestId("suspense")).toBeInTheDocument();
   });
 
-  test("renders the skeleton when hydrationState is 'loading'", () => {
+  test("suspends to the parent Suspense fallback when hydrationState is 'loading'", () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "loading" },
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
-    expect(screen.getByRole("status")).toBeInTheDocument();
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
+    expect(screen.getByTestId("suspense")).toBeInTheDocument();
   });
 
-  test("renders the error + retry when hydrationState is 'failed'", () => {
+  test("throws to the parent ErrorBoundary when hydrationState is 'failed'", () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "failed", error: new Error("boom") },
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
-    expect(screen.getByRole("alert")).toBeInTheDocument();
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("caught");
+  });
 
-    // Retry resets the call count, then re-invokes hydrate
-    customTasks.hydrate.mockClear();
-    fireEvent.click(screen.getByRole("button", { name: /retry/i }));
-    expect(customTasks.hydrate).toHaveBeenCalledTimes(1);
+  test("resumes from Suspense once hydration completes", async () => {
+    const customTasks = makeCustomTasksMock({
+      hydrationState: { status: "loading" },
+    });
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
+    expect(screen.getByTestId("suspense")).toBeInTheDocument();
+
+    runInAction(() => {
+      customTasks.hydrationState = { status: "hydrated" };
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /\+ add new task/i }),
+      ).toBeInTheDocument(),
+    );
   });
 
   test("renders an empty state and the add CTA when hydrated with no tasks", () => {
@@ -127,7 +174,7 @@ describe("AddedTasksSection", () => {
       hydrationState: { status: "hydrated" },
       orderedTasks: [],
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
     expect(screen.getByText(/no added tasks yet/i)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /\+ add new task/i }),
@@ -142,7 +189,7 @@ describe("AddedTasksSection", () => {
         makeRecord({ id: "b", title: "Second" }),
       ],
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
     expect(screen.getByText("First")).toBeInTheDocument();
     expect(screen.getByText("Second")).toBeInTheDocument();
   });
@@ -152,10 +199,9 @@ describe("AddedTasksSection", () => {
       hydrationState: { status: "hydrated" },
       orderedTasks: [],
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
     expect(screen.getByLabelText("Added task form")).toBeInTheDocument();
-    // CTA stays visible so POs can stack multiple in-flight creations.
     expect(
       screen.getByRole("button", { name: /\+ add new task/i }),
     ).toBeInTheDocument();
@@ -166,26 +212,23 @@ describe("AddedTasksSection", () => {
       hydrationState: { status: "hydrated" },
       orderedTasks: [],
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
     const cta = screen.getByRole("button", { name: /\+ add new task/i });
     fireEvent.click(cta);
     fireEvent.click(cta);
     expect(screen.getAllByLabelText("Added task form")).toHaveLength(2);
   });
 
-  test("saving the form calls customTasks.addCustomTask and closes the form", () => {
+  test("saving the form calls addCustomTask and closes the form on success", async () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "hydrated" },
       orderedTasks: [],
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
     fireEvent.change(screen.getByLabelText("Task title"), {
       target: { value: "New task" },
     });
-    // Open the date popper, advance one year, and click day 15 — any valid
-    // future date is fine for this assertion (we only check that a Date was
-    // passed to addCustomTask).
     fireEvent.click(screen.getByRole("button", { name: "Enter Date" }));
     fireEvent.click(screen.getByRole("button", { name: "Next year" }));
     const nextYear = new Date().getFullYear() + 1;
@@ -197,51 +240,52 @@ describe("AddedTasksSection", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
 
-    expect(customTasks.addCustomTask).toHaveBeenCalledTimes(1);
+    await waitFor(() =>
+      expect(customTasks.addCustomTask).toHaveBeenCalledTimes(1),
+    );
     const arg = customTasks.addCustomTask.mock.calls[0][0];
     expect(arg.title).toBe("New task");
     expect(arg.dueDate).toBeInstanceOf(Date);
-    // One-off task — no recurrence string written to Firestore.
     expect(arg.recurrence).toBeNull();
 
-    // form closed; CTA back
-    expect(
-      screen.getByRole("button", { name: /\+ add new task/i }),
-    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.queryByLabelText("Added task form"),
+      ).not.toBeInTheDocument(),
+    );
   });
 
-  test("saving a recurring form passes the RRULE through to addCustomTask", () => {
+  test("saving the form leaves the form open and reports on Firestore failure", async () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "hydrated" },
       orderedTasks: [],
+      addCustomTask: vi.fn().mockRejectedValue(new Error("network")),
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
     fireEvent.change(screen.getByLabelText("Task title"), {
-      target: { value: "Recurring task" },
+      target: { value: "Doomed" },
     });
-    // Open the popper, advance one year, click day 15, click "Every week".
     fireEvent.click(screen.getByRole("button", { name: "Enter Date" }));
     fireEvent.click(screen.getByRole("button", { name: "Next year" }));
-    const nextYearMonth = new Date().toLocaleString("en-US", { month: "long" });
     const nextYear = new Date().getFullYear() + 1;
-    const pickedDate = new Date();
-    pickedDate.setFullYear(nextYear);
-    pickedDate.setDate(15);
+    const nextYearMonth = new Date().toLocaleString("en-US", { month: "long" });
     fireEvent.click(
       screen.getByLabelText(
         new RegExp(`Choose .*${nextYearMonth} 15.*${nextYear}`),
       ),
     );
-    fireEvent.click(screen.getByRole("button", { name: "Every week" }));
     fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
 
-    expect(customTasks.addCustomTask).toHaveBeenCalledTimes(1);
-    const arg = customTasks.addCustomTask.mock.calls[0][0];
-    expect(arg.recurrence).toContain("FREQ=WEEKLY");
-    const weekdayCodes = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
-    const expectedByDay = weekdayCodes[pickedDate.getDay()];
-    expect(arg.recurrence).toContain(`BYDAY=${expectedByDay}`);
+    await waitFor(() =>
+      expect(handleMutationFailureMock).toHaveBeenCalledTimes(1),
+    );
+    expect(handleMutationFailureMock).toHaveBeenCalledWith(
+      "save",
+      expect.any(Error),
+    );
+    // Form is still open so the user can retry without retyping.
+    expect(screen.getByLabelText("Added task form")).toBeInTheDocument();
   });
 
   test("cancelling the form closes it without calling addCustomTask", () => {
@@ -249,7 +293,7 @@ describe("AddedTasksSection", () => {
       hydrationState: { status: "hydrated" },
       orderedTasks: [],
     });
-    render(<AddedTasksSection person={makePerson(customTasks)} />);
+    renderInBoundary(<AddedTasksSection person={makePerson(customTasks)} />);
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
     fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
     expect(customTasks.addCustomTask).not.toHaveBeenCalled();

@@ -21,7 +21,7 @@ import { httpBatchLink } from "@trpc/client";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
-import React, { Suspense } from "react";
+import React from "react";
 import styled from "styled-components";
 import superjson from "superjson";
 
@@ -46,7 +46,7 @@ import {
 } from "../SectionCard";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { AddedTasksSkeleton } from "../WorkflowsTasks/AddedTasks/AddedTasksSkeleton";
+import AddedTasks from "../WorkflowsTasks/AddedTasks";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
 import {
   ClientEmployer,
@@ -80,41 +80,6 @@ import { UsMoCaseOverview } from "./UsMo/CaseOverview/UsMoCaseOverview";
 import { UsMoResidentInformation } from "./UsMo/UsMoResidentInformation";
 import { UsNdResidentInformation } from "./UsNd/UsNdResidentInformation";
 import { UsUtResidentInformation } from "./UsUt/UsUtResidentInformation";
-
-// Lazy-loaded so the Added Tasks chunk (form widgets, kebab menu, etc.)
-// only ships to clients where the `customTasks` feature variant is on.
-const AddedTasksSection = React.lazy(
-  () => import("../WorkflowsTasks/AddedTasks"),
-);
-
-const AddedTasksBlock = ({
-  client,
-  layout,
-}: {
-  client: Client;
-  layout: "card" | "section";
-}) => {
-  const body = (
-    <Suspense fallback={<AddedTasksSkeleton />}>
-      <AddedTasksSection person={client} />
-    </Suspense>
-  );
-  if (layout === "card") {
-    return (
-      <>
-        <SectionCardHeader>Added Tasks</SectionCardHeader>
-        <SectionCardBody>{body}</SectionCardBody>
-      </>
-    );
-  }
-  return (
-    <>
-      <SectionHeading>Added Tasks</SectionHeading>
-      <Divider />
-      {body}
-    </>
-  );
-};
 
 const COLUMNS = "1fr 1.2fr";
 
@@ -511,7 +476,15 @@ export const FullProfile = observer(
                       />
                     </SectionCardBody>
                     {customTasks && person instanceof Client && (
-                      <AddedTasksBlock client={person} layout="card" />
+                      <AddedTasks
+                        client={person}
+                        renderShell={(body) => (
+                          <>
+                            <SectionCardHeader>Added Tasks</SectionCardHeader>
+                            <SectionCardBody>{body}</SectionCardBody>
+                          </>
+                        )}
+                      />
                     )}
                   </SectionCard>
                 ) : (

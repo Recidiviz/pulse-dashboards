@@ -15,7 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Re-export `AddedTasksSection` as the default so `React.lazy(() =>
-// import("./AddedTasks"))` resolves it without an extra namespace.
-export { default } from "./AddedTasksSection";
-export { AddedTasksSkeleton } from "./AddedTasksSkeleton";
+import * as Sentry from "@sentry/react";
+import toast from "react-hot-toast";
+
+/**
+ * Centralized handler for Firestore write failures on the AddedTasks
+ * mutations (add / edit / delete / toggle-complete). Surfaces a toast to the
+ * user so the failure isn't silent, and reports to Sentry tagged by feature
+ * + action so we can spot the failure mode in aggregate.
+ */
+export function handleMutationFailure(action: string, err: unknown): void {
+  Sentry.captureException(err, { tags: { feature: "added_tasks", action } });
+  toast(`Couldn’t ${action} task. Please try again.`);
+}

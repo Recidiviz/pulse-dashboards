@@ -17,7 +17,7 @@
 
 import { startOfDay } from "date-fns";
 import { Timestamp } from "firebase/firestore";
-import { action, computed, makeObservable } from "mobx";
+import { action, computed, makeObservable, runInAction } from "mobx";
 
 import { Hydratable, HydrationState } from "~hydration-utils";
 
@@ -70,6 +70,7 @@ export class CustomTasks implements Hydratable {
 
     makeObservable(this, {
       hydrate: action,
+      retry: action,
       hydrationState: computed,
       orderedTasks: computed,
       activeTaskItems: computed,
@@ -81,6 +82,26 @@ export class CustomTasks implements Hydratable {
   }
 
   hydrate(): void {
+    this.taskSubscription.hydrate();
+  }
+
+  /**
+   * Recovers a Firestore listener that has terminated in `"failed"`. The base
+   * `FirestoreQuerySubscription` leaves `cancelSnapshotListener` set in its
+   * error path, so a fresh `hydrate()` early-returns on the `isActive` check
+   * and never re-attaches. We unsubscribe (which clears the listener
+   * reference) and reset the hydration state machine so the follow-up
+   * `hydrate()` takes the `isHydrationUntouched` branch and flips to
+   * `"loading"`. Idempotent in any non-failed state so a single Retry button
+   * works for both hydration errors and chunk-load errors.
+   */
+  retry(): void {
+    if (this.taskSubscription.hydrationState.status !== "failed") return;
+
+    this.taskSubscription.unsubscribe();
+    runInAction(() => {
+      this.taskSubscription.hydrationState = { status: "needs hydration" };
+    });
     this.taskSubscription.hydrate();
   }
 

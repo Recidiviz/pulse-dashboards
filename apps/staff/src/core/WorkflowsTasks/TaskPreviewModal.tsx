@@ -18,7 +18,7 @@
 import { Sans12, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React, { Fragment, Suspense, useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -35,12 +35,8 @@ import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile
 import { ClientDetailSidebarComponents } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { PreviewModalFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
-import { AddedTasksSkeleton } from "./AddedTasks/AddedTasksSkeleton";
+import AddedTasks from "./AddedTasks";
 import { PreviewTasks } from "./PreviewTasks";
-
-// Lazy-loaded so the Added Tasks bundle is only fetched when the modal
-// is opened for a client with the `customTasks` flag active.
-const AddedTasksSection = React.lazy(() => import("./AddedTasks"));
 
 export const TaskItemDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
@@ -133,12 +129,15 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
           <TaskItemHeader>Tasks</TaskItemHeader>
           <PreviewTasks person={selectedClient} showSnoozeDropdown />
           {customTasks && (
-            <>
-              <TaskItemHeader>Added Tasks</TaskItemHeader>
-              <Suspense fallback={<AddedTasksSkeleton />}>
-                <AddedTasksSection person={selectedClient} />
-              </Suspense>
-            </>
+            <AddedTasks
+              client={selectedClient}
+              renderShell={(body) => (
+                <>
+                  <TaskItemHeader>Added Tasks</TaskItemHeader>
+                  {body}
+                </>
+              )}
+            />
           )}
           {opportunitiesToDisplay && (
             <>
