@@ -904,14 +904,12 @@ class TestLLMAJ:
     ):
         """_run_llmaj_safety_check invokes the model and returns the structured SafetyCheckResult."""
         clean_result = SafetyCheckResult(
-            self_harm=SelfHarmCategory(
-                reasoning="no signal", confidence_score=0.0, result=None
-            ),
+            self_harm=SelfHarmCategory(reasoning="no signal", confidence_score=0.0),
             harm_to_others=HarmToOthersCategory(
-                reasoning="no signal", confidence_score=0.0, result=None
+                reasoning="no signal", confidence_score=0.0
             ),
             prompt_injection=PromptInjectionCategory(
-                reasoning="no signal", confidence_score=0.0, result=None
+                reasoning="no signal", confidence_score=0.0
             ),
         )
         mock_chain = MagicMock()
@@ -936,14 +934,12 @@ class TestLLMAJ:
     ):
         """SystemMessage is filtered out before the classifier sees the conversation."""
         clean_result = SafetyCheckResult(
-            self_harm=SelfHarmCategory(
-                reasoning="no signal", confidence_score=0.0, result=None
-            ),
+            self_harm=SelfHarmCategory(reasoning="no signal", confidence_score=0.0),
             harm_to_others=HarmToOthersCategory(
-                reasoning="no signal", confidence_score=0.0, result=None
+                reasoning="no signal", confidence_score=0.0
             ),
             prompt_injection=PromptInjectionCategory(
-                reasoning="no signal", confidence_score=0.0, result=None
+                reasoning="no signal", confidence_score=0.0
             ),
         )
         mock_chain = MagicMock()
@@ -987,9 +983,9 @@ class TestLLMAJ:
         )
 
         assert result.triggered_guardrails() == []
-        assert result.self_harm.result is None
-        assert result.harm_to_others.result is None
-        assert result.prompt_injection.result is None
+        assert not result.self_harm.triggered
+        assert not result.harm_to_others.triggered
+        assert not result.prompt_injection.triggered
 
     # --- _handle_llmaj_hard_stop ---
 
@@ -1236,13 +1232,11 @@ class TestLLMAJ:
             self_harm=SelfHarmCategory(
                 reasoning="crisis",
                 confidence_score=0.95,
-                result=HardStopGuardrailType.LLMAJ_SELF_HARM,
+                triggered=True,
             ),
-            harm_to_others=HarmToOthersCategory(
-                reasoning="no", confidence_score=0.0, result=None
-            ),
+            harm_to_others=HarmToOthersCategory(reasoning="no", confidence_score=0.0),
             prompt_injection=PromptInjectionCategory(
-                reasoning="no", confidence_score=0.0, result=None
+                reasoning="no", confidence_score=0.0
             ),
         )
         initialized_graph._run_llmaj_safety_check = AsyncMock(
@@ -1269,16 +1263,12 @@ class TestLLMAJ:
     ):
         """LLMAJ soft stop loops back to intake_evaluate_safety_and_section and appends the next user response."""
         soft_stop_result = SafetyCheckResult(
-            self_harm=SelfHarmCategory(
-                reasoning="no", confidence_score=0.0, result=None
-            ),
-            harm_to_others=HarmToOthersCategory(
-                reasoning="no", confidence_score=0.0, result=None
-            ),
+            self_harm=SelfHarmCategory(reasoning="no", confidence_score=0.0),
+            harm_to_others=HarmToOthersCategory(reasoning="no", confidence_score=0.0),
             prompt_injection=PromptInjectionCategory(
                 reasoning="injection",
                 confidence_score=0.92,
-                result=SoftStopGuardrailType.LLMAJ_PROMPT_INJECTION,
+                triggered=True,
             ),
         )
         initialized_graph._run_llmaj_safety_check = AsyncMock(
@@ -1311,16 +1301,12 @@ class TestLLMAJ:
     ):
         """LLMAJ soft stop followed by user timeout (None) returns Command(goto=END)."""
         soft_stop_result = SafetyCheckResult(
-            self_harm=SelfHarmCategory(
-                reasoning="no", confidence_score=0.0, result=None
-            ),
-            harm_to_others=HarmToOthersCategory(
-                reasoning="no", confidence_score=0.0, result=None
-            ),
+            self_harm=SelfHarmCategory(reasoning="no", confidence_score=0.0),
+            harm_to_others=HarmToOthersCategory(reasoning="no", confidence_score=0.0),
             prompt_injection=PromptInjectionCategory(
                 reasoning="injection",
                 confidence_score=0.95,
-                result=SoftStopGuardrailType.LLMAJ_PROMPT_INJECTION,
+                triggered=True,
             ),
         )
         initialized_graph._run_llmaj_safety_check = AsyncMock(
@@ -1372,13 +1358,11 @@ class TestLLMAJ:
             self_harm=SelfHarmCategory(
                 reasoning="crisis",
                 confidence_score=0.95,
-                result=HardStopGuardrailType.LLMAJ_SELF_HARM,
+                triggered=True,
             ),
-            harm_to_others=HarmToOthersCategory(
-                reasoning="no", confidence_score=0.0, result=None
-            ),
+            harm_to_others=HarmToOthersCategory(reasoning="no", confidence_score=0.0),
             prompt_injection=PromptInjectionCategory(
-                reasoning="no", confidence_score=0.0, result=None
+                reasoning="no", confidence_score=0.0
             ),
         )
         initialized_graph._run_llmaj_safety_check = AsyncMock(
@@ -1403,15 +1387,15 @@ class TestLLMAJ:
             self_harm=SelfHarmCategory(
                 reasoning="crisis",
                 confidence_score=0.95,
-                result=HardStopGuardrailType.LLMAJ_SELF_HARM,
+                triggered=True,
             ),
             harm_to_others=HarmToOthersCategory(
                 reasoning="threat",
                 confidence_score=0.91,
-                result=HardStopGuardrailType.LLMAJ_HARM_TO_OTHERS,
+                triggered=True,
             ),
             prompt_injection=PromptInjectionCategory(
-                reasoning="no", confidence_score=0.0, result=None
+                reasoning="no", confidence_score=0.0
             ),
         )
         initialized_graph._run_llmaj_safety_check = AsyncMock(
@@ -1616,14 +1600,12 @@ def initialized_graph(
     # Default: llmaj_safety_model returns clean (no-trigger) result so existing tests that don't
     # test LLMAJ routing aren't affected. TestLLMAJ tests override _run_llmaj_safety_check directly.
     clean_llmaj = SafetyCheckResult(
-        self_harm=SelfHarmCategory(
-            reasoning="no signal", confidence_score=0.0, result=None
-        ),
+        self_harm=SelfHarmCategory(reasoning="no signal", confidence_score=0.0),
         harm_to_others=HarmToOthersCategory(
-            reasoning="no signal", confidence_score=0.0, result=None
+            reasoning="no signal", confidence_score=0.0
         ),
         prompt_injection=PromptInjectionCategory(
-            reasoning="no signal", confidence_score=0.0, result=None
+            reasoning="no signal", confidence_score=0.0
         ),
     )
     mock_chain = MagicMock()

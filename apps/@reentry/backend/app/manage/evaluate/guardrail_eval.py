@@ -820,15 +820,15 @@ async def _evaluate_single_message(model: ChatOpenAI, message: str) -> None:
         return
 
     categories = [
-        ("Self-harm", result.self_harm),
-        ("Harm to others", result.harm_to_others),
-        ("Prompt injection", result.prompt_injection),
+        ("Self-harm", result.self_harm, "llmaj:self-harm"),
+        ("Harm to others", result.harm_to_others, "llmaj:harm-to-others"),
+        ("Prompt injection", result.prompt_injection, "llmaj:prompt-injection"),
     ]
-    triggered = [name for name, cat in categories if cat.result]
+    triggered = [name for name, cat, _ in categories if cat.triggered]
 
     print(f'\nMessage: "{message}"\n')
-    for name, cat in categories:
-        status = f"TRIGGERED ({cat.result})" if cat.result else "clean"
+    for name, cat, guardrail_type in categories:
+        status = f"TRIGGERED ({guardrail_type})" if cat.triggered else "clean"
         print(f"  {name}: {status} (confidence: {cat.confidence_score:.2f})")
         print(f"    Reasoning: {cat.reasoning}\n")
 
@@ -1005,8 +1005,8 @@ async def _generate_conversation(
     }
 
 
-def _passes_threshold(cat_result: str | None, cat_key: str, confidence: float) -> bool:
-    return bool(cat_result) and confidence >= LLMAJ_THRESHOLD_MAP[cat_key]
+def _passes_threshold(cat_triggered: bool, cat_key: str, confidence: float) -> bool:
+    return cat_triggered and confidence >= LLMAJ_THRESHOLD_MAP[cat_key]
 
 
 @traceable(name="guardrail-eval-intake", run_type="chain")
@@ -1081,27 +1081,27 @@ async def _evaluate_messages(
                 None,
                 [
                     (
-                        result.self_harm.result
+                        "llmaj:self-harm"
                         if _passes_threshold(
-                            result.self_harm.result,
+                            result.self_harm.triggered,
                             "self_harm",
                             result.self_harm.confidence_score,
                         )
                         else ""
                     ),
                     (
-                        result.harm_to_others.result
+                        "llmaj:harm-to-others"
                         if _passes_threshold(
-                            result.harm_to_others.result,
+                            result.harm_to_others.triggered,
                             "harm_to_others",
                             result.harm_to_others.confidence_score,
                         )
                         else ""
                     ),
                     (
-                        result.prompt_injection.result
+                        "llmaj:prompt-injection"
                         if _passes_threshold(
-                            result.prompt_injection.result,
+                            result.prompt_injection.triggered,
                             "prompt_injection",
                             result.prompt_injection.confidence_score,
                         )
@@ -1118,17 +1118,21 @@ async def _evaluate_messages(
                 answer=exchange.answer,
                 triggered=triggered_list,
                 self_harm=_CategoryResult(
-                    result=result.self_harm.result or "",
+                    result="llmaj:self-harm" if result.self_harm.triggered else "",
                     confidence=result.self_harm.confidence_score,
                     reasoning=result.self_harm.reasoning,
                 ),
                 harm_to_others=_CategoryResult(
-                    result=result.harm_to_others.result or "",
+                    result="llmaj:harm-to-others"
+                    if result.harm_to_others.triggered
+                    else "",
                     confidence=result.harm_to_others.confidence_score,
                     reasoning=result.harm_to_others.reasoning,
                 ),
                 prompt_injection=_CategoryResult(
-                    result=result.prompt_injection.result or "",
+                    result="llmaj:prompt-injection"
+                    if result.prompt_injection.triggered
+                    else "",
                     confidence=result.prompt_injection.confidence_score,
                     reasoning=result.prompt_injection.reasoning,
                 ),
