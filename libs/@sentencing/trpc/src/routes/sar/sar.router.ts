@@ -42,16 +42,8 @@ import {
   buildSARStaffFilter,
   fetchStaffById,
   resolveAssignedTo,
+  sarAccessFilter,
 } from "~@sentencing/trpc/routes/staff/staff.helpers";
-
-// Builds a Prisma `where` fragment that restricts a SAR query to the requesting staff member.
-// When staffPseudonymizedId is undefined (e.g. Recidiviz internal users), returns an empty
-// object so the query is unrestricted.
-function sarStaffFilter(staffPseudonymizedId: string | undefined) {
-  return staffPseudonymizedId
-    ? { staff: { pseudonymizedId: staffPseudonymizedId } }
-    : {};
-}
 
 export const sarRouter = router({
   getSARInsight: baseProcedure
@@ -75,7 +67,7 @@ export const sarRouter = router({
     .query(async ({ input: { id }, ctx: { prisma, staffPseudonymizedId } }) => {
       // Fold ownership check into the main query — one round trip instead of two.
       const sarData = await prisma.sentencingAssessmentReport.findFirst({
-        where: { id, ...sarStaffFilter(staffPseudonymizedId) },
+        where: { id, ...(await sarAccessFilter(prisma, staffPseudonymizedId)) },
         omit: {
           staffId: true,
           clientId: true,
@@ -228,7 +220,7 @@ export const sarRouter = router({
         return prisma.sentencingAssessmentReport.findMany({
           where: {
             clientId: clientExternalId,
-            ...sarStaffFilter(staffPseudonymizedId),
+            ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
           },
           select: {
             id: true,
@@ -255,7 +247,10 @@ export const sarRouter = router({
       }) => {
         if (staffPseudonymizedId) {
           const accessible = await prisma.sentencingAssessmentReport.findFirst({
-            where: { id, ...sarStaffFilter(staffPseudonymizedId) },
+            where: {
+              id,
+              ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
+            },
             select: { id: true },
           });
           if (!accessible) {
@@ -339,7 +334,10 @@ export const sarRouter = router({
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
       if (staffPseudonymizedId) {
         const accessible = await prisma.sentencingAssessmentReport.findFirst({
-          where: { id: input.sarId, ...sarStaffFilter(staffPseudonymizedId) },
+          where: {
+            id: input.sarId,
+            ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
+          },
           select: { id: true },
         });
         if (!accessible) {
@@ -374,7 +372,10 @@ export const sarRouter = router({
         const accessible = await prisma.employmentHistory.findFirst({
           where: {
             id: input.id,
-            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+            sentencingAssessmentReport: await sarAccessFilter(
+              prisma,
+              staffPseudonymizedId,
+            ),
           },
           select: { id: true },
         });
@@ -407,7 +408,10 @@ export const sarRouter = router({
         const accessible = await prisma.employmentHistory.findFirst({
           where: {
             id: input.id,
-            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+            sentencingAssessmentReport: await sarAccessFilter(
+              prisma,
+              staffPseudonymizedId,
+            ),
           },
           select: { id: true },
         });
@@ -437,7 +441,10 @@ export const sarRouter = router({
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
       if (staffPseudonymizedId) {
         const accessible = await prisma.sentencingAssessmentReport.findFirst({
-          where: { id: input.sarId, ...sarStaffFilter(staffPseudonymizedId) },
+          where: {
+            id: input.sarId,
+            ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
+          },
           select: { id: true },
         });
         if (!accessible) {
@@ -472,7 +479,10 @@ export const sarRouter = router({
         const accessible = await prisma.drugHistory.findFirst({
           where: {
             id: input.id,
-            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+            sentencingAssessmentReport: await sarAccessFilter(
+              prisma,
+              staffPseudonymizedId,
+            ),
           },
           select: { id: true },
         });
@@ -506,7 +516,10 @@ export const sarRouter = router({
         const accessible = await prisma.drugHistory.findFirst({
           where: {
             id: input.id,
-            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+            sentencingAssessmentReport: await sarAccessFilter(
+              prisma,
+              staffPseudonymizedId,
+            ),
           },
           select: { id: true },
         });
@@ -537,7 +550,10 @@ export const sarRouter = router({
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
       if (staffPseudonymizedId) {
         const accessible = await prisma.sentencingAssessmentReport.findFirst({
-          where: { id: input.sarId, ...sarStaffFilter(staffPseudonymizedId) },
+          where: {
+            id: input.sarId,
+            ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
+          },
           select: { id: true },
         });
         if (!accessible) {
@@ -572,7 +588,10 @@ export const sarRouter = router({
         const accessible = await prisma.priorTreatmentHistory.findFirst({
           where: {
             id: input.id,
-            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+            sentencingAssessmentReport: await sarAccessFilter(
+              prisma,
+              staffPseudonymizedId,
+            ),
           },
           select: { id: true },
         });
@@ -606,7 +625,10 @@ export const sarRouter = router({
         const accessible = await prisma.priorTreatmentHistory.findFirst({
           where: {
             id: input.id,
-            sentencingAssessmentReport: sarStaffFilter(staffPseudonymizedId),
+            sentencingAssessmentReport: await sarAccessFilter(
+              prisma,
+              staffPseudonymizedId,
+            ),
           },
           select: { id: true },
         });

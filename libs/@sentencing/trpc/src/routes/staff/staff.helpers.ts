@@ -209,3 +209,18 @@ export function buildSARStaffFilter(
 
   return { pseudonymizedId: staff.pseudonymizedId };
 }
+
+/**
+ * Builds a Prisma `where` fragment that restricts a SAR query to the requesting
+ * staff member, respecting supervisor scoping (district or org-wide).
+ * When staffPseudonymizedId is undefined (e.g. Recidiviz internal users), returns
+ * an empty object so the query is unrestricted.
+ */
+export async function sarAccessFilter(
+  prisma: PrismaClient,
+  staffPseudonymizedId: string | undefined,
+): Promise<Prisma.SentencingAssessmentReportWhereInput> {
+  if (!staffPseudonymizedId) return {};
+  const staff = await fetchStaffById(prisma, staffPseudonymizedId);
+  return { staff: buildSARStaffFilter(staff) };
+}
