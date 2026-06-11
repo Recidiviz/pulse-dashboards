@@ -57,19 +57,24 @@ export const DateInfoCard = ({
 
   let cardValue: string | undefined;
   let slateCopyContent: string;
-  if (isUpcoming) {
-    cardValue = distanceFromToday;
-    slateCopyContent = value;
-  } else if (isTentative && !isPast) {
+  //all tentative cards have the same values here
+  if (isTentative) {
     cardValue = value;
     slateCopyContent = "";
+    //only upcoming tentative cards are exempt from upcoming card copy
+  } else if (isUpcoming) {
+    cardValue = distanceFromToday;
+    slateCopyContent = value;
   } else {
     cardValue = value;
     slateCopyContent = `(${distanceFromToday})`;
   }
 
   return (
-    <StyledCard $isUpcoming={isUpcoming} $highlightType={highlightType}>
+    <StyledCard
+      $isUpcoming={isUpcoming && !isTentative}
+      $highlightType={highlightType}
+    >
       {highlightType === "dashed" && (
         <DashedBorderSvg>
           <rect />

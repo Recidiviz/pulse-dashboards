@@ -19,6 +19,7 @@ import {
   differenceInMonths,
   formatDuration,
   intervalToDuration,
+  startOfDay,
 } from "date-fns";
 
 import { getDateFnsLocale } from "../../utils/date";
@@ -40,9 +41,13 @@ export const formatDateRangeFromTodayFormatter: CachedFormatFunction = (
   return (value) => {
     if (!value) return fallbackText;
 
-    const today = new Date();
-    const start = value < today ? value : today;
-    const end = value < today ? today : value;
+    // Compare at day granularity so the duration is never less than its
+    // smallest displayed unit (a day). Without this, a date under 24h away
+    // rounds to an empty duration string.
+    const today = startOfDay(new Date());
+    const target = startOfDay(value);
+    const start = target < today ? target : today;
+    const end = target < today ? today : target;
     const monthDiff = Math.abs(differenceInMonths(end, start));
 
     const durationFromExp = intervalToDuration({ start, end });

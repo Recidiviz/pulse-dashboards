@@ -57,8 +57,8 @@ export default {
     sectionSubHeader: `These are all of the projected release dates that the Time Computation Unit has calculated 
       for your sentence. These dates may change if you receive a disciplinary infraction and lose 
       release credits, or if your release credits are restored. You may also see some dates appear 
-      or disappear depending on if you meet the qualifying criteria. **Tap the “Learn more about …”
-      button under any of the dates below** to learn more about that release date and its criteria.`,
+      or disappear depending on if you meet the qualifying criteria. **Tap the button under any of the dates below** 
+      to learn more about that release date and its criteria.`,
     moreInfo: {
       heading: "Release Types, Their Requirements, and Restrictions",
       body: importantDatesInfoPage,
@@ -83,11 +83,16 @@ export default {
           One last thing stands between you and the gate: **an approved home plan**. Get that finalized
           to walk out on this date. (Steer clear of disciplinary infractions, too — they can still
           put this date at risk.)`,
+          upcomingInfo: `Great work! Time Comp confirmed you've met the criteria for Transition Release. Make sure that your **home plan is approved** in order to walk out on this date. (Steer clear of disciplinary infractions, too — they can still put this date at risk.)`,
+          pastInfo: `If this date has already passed, it means you have not met all the requirements for release. Reviewing the criteria will show you what steps you still need to take.`,
+          goLink: "What are the criteria to qualify for this date?",
         },
         tentative: {
           info: `You may qualify to go home **as early as {{tprDate, formatFullDate}}** ({{tprDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) through the Transition Program.
           This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria – tap below to learn how. `,
+          pastInfo: `You may qualify to go home sooner than the date of your next release option. This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria — tap below to learn how.`,
           value: `You may be eligible for early release through the Transition Program`,
+          goLink: "What do I need to do to qualify for this date?",
         },
       },
       dtpDate: {
@@ -104,11 +109,16 @@ export default {
           One last thing stands between you and the gate: **an approved home plan**. Get that finalized
           to walk out on this date. (Steer clear of disciplinary infractions, too — they can still
           put this date at risk.)`,
+          upcomingInfo: `Great work! Time Comp confirmed you've met the criteria for Transition Release. Make sure that your **home plan is approved** in order to walk out on this date. (Steer clear of disciplinary infractions, too — they can still put this date at risk.)`,
+          pastInfo: `If this date has already passed, it means you have not met all the requirements for release. Reviewing the criteria will show you what steps you still need to take.`,
+          goLink: "What are the criteria to qualify for this date?",
         },
         tentative: {
           info: `You may qualify to go home **as early as {{dtpDate, formatFullDate}}** ({{dtpDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) through the Transition Program.
           This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria – tap below to learn how. `,
+          pastInfo: `You may qualify to go home sooner than the date of your next release option. This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria — tap below to learn how.`,
           value: `You may be eligible for early release through the Transition Program`,
+          goLink: "What do I need to do to qualify for this date?",
         },
       },
       csbdDate: {
@@ -160,7 +170,6 @@ export default {
     overlay: {
       closeLabel: "Close",
       overlayLinkText: "Learn more about {{label}}",
-      goLink: "What do I need to do to qualify for this date?",
       tprDate: {
         approved: {
           eyebrow: "Standard Transition Program",
@@ -169,14 +178,17 @@ export default {
           body: `Here's what to keep in mind between now and then.
 
 **Start now**
-- Get your home plan approved. The sooner, the better! You won't be released until it is.
-- Sign the Transition Program agreement with your COIII
-- Complete the Mandatory Literacy requirement (if you haven't already)
+- Get your home plan approved. The sooner, the better! Starting to work on this ASAP is essential to receiving your full 90 days.
 
 **Watch out for**
 - Disciplinary incidents in the next 6 months can put your date at risk
 - Being removed from a major program can affect your eligibility
 - Staying at Medium or Minimum custody`,
+          upcomingBody: `Here's what to keep in mind between now and then.
+- Make sure that your home plan is completed and approved
+- Disciplinary incidents can still put your date at risk
+- Being removed from a major program can affect your eligibility
+- You must stay at Medium or Minimum custody`,
         },
         tentative: {
           eyebrow: "",
@@ -205,14 +217,18 @@ export default {
           body: `Here's what to keep in mind between now and then.
 
 **Start now**
-- Get your home plan approved. The sooner, the better! You won't be released until it is.
-- Sign the Transition Program agreement with your COIII
-- Complete the Mandatory Literacy requirement (if you haven't already)
+- Get your home plan approved. The sooner, the better! Starting to work on this ASAP is essential to receiving your full 90 days.
+
 
 **Watch out for**
 - Disciplinary incidents in the next 6 months can put your date at risk
 - Being removed from a major program can affect your eligibility
 - Staying at Medium or Minimum custody`,
+          upcomingBody: `Here's what to keep in mind between now and then.
+- Make sure that your home plan is completed and approved
+- Disciplinary incidents can still put your date at risk
+- Being removed from a major program can affect your eligibility
+- You must stay at Medium or Minimum custody`,
         },
         tentative: {
           eyebrow: "",

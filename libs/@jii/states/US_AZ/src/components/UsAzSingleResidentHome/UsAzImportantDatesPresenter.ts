@@ -71,18 +71,43 @@ export class UsAzImportantDatesPresenter {
   private buildOverlayCopy({
     approvalDateKey,
     isTentative,
+    isPast,
+    isUpcoming,
     date,
     shortName,
   }: {
     approvalDateKey: "tprDate" | "dtpDate";
     isTentative: boolean;
+    isPast: boolean;
+    isUpcoming: boolean;
     date: Date;
     shortName: string;
   }): NonNullable<DateEntry["overlay"]> {
-    const variant = isTentative ? "tentative" : "approved";
+    // Tentative dates and approved dates that have already passed both show the
+    // tentative variant (eyebrow, heading, and criteria-list body).
+    const variant = isTentative || isPast ? "tentative" : "approved";
+
     /* The tentative body's criteria list is mirrored in
     importantDatesFAQ.[tprDate|dtpDate].questions.toBeReleasedOnThisDate.content.
     If eligibility criteria change, update BOTH places so the overlay and FAQ stay in sync. */
+    let body: string;
+    if (variant === "tentative") {
+      body = this.t(
+        ($) => $.importantDates.overlay[approvalDateKey].tentative.body,
+        { replace: { csedLinkUrl: linkToDateSection("csedDate") } },
+      );
+      // Upcoming approved dates get the shorter upcomingBody; everything else
+      // gets the full approved body.
+    } else if (isUpcoming) {
+      body = this.t(
+        ($) => $.importantDates.overlay[approvalDateKey].approved.upcomingBody,
+      );
+    } else {
+      body = this.t(
+        ($) => $.importantDates.overlay[approvalDateKey].approved.body,
+      );
+    }
+
     return {
       eyebrow: this.t(
         ($) => $.importantDates.overlay[approvalDateKey][variant].eyebrow,
@@ -91,10 +116,7 @@ export class UsAzImportantDatesPresenter {
         ($) => $.importantDates.overlay[approvalDateKey][variant].heading,
         { replace: { [approvalDateKey]: date } },
       ),
-      body: this.t(
-        ($) => $.importantDates.overlay[approvalDateKey][variant].body,
-        { replace: { csedLinkUrl: linkToDateSection("csedDate") } },
-      ),
+      body,
       linkText: this.t(($) => $.importantDates.overlay.overlayLinkText, {
         replace: { label: shortName },
       }),
@@ -108,20 +130,23 @@ export class UsAzImportantDatesPresenter {
       approvalDateKey,
       isUpcoming,
       isPast,
-      showTentativeCopy,
+      isTentative,
       shortName,
     }: {
       approvalDateKey: "tprDate" | "dtpDate" | undefined;
       isUpcoming: boolean;
       isPast: boolean;
-      showTentativeCopy: boolean;
+      isTentative: boolean;
       shortName: string;
     },
   ): Pick<DateEntry, "title" | "value" | "info" | "goLink"> {
     const title = this.t(($) => $.importantDates.dates[entry.dateKey].title);
 
+    //for Tpr and Dtp dates that are tentative, have a different value than approved
+    //or not tpr/dtp dates
+    //upcoming card values get set in DateInfoCard
     const value =
-      showTentativeCopy && approvalDateKey
+      isTentative && approvalDateKey
         ? this.t(
             ($) => $.importantDates.dates[approvalDateKey].tentative.value,
             { replace: { [approvalDateKey]: entry.date } },
@@ -130,21 +155,38 @@ export class UsAzImportantDatesPresenter {
             replace: { [entry.dateKey]: entry.date },
           });
 
-    // Body copy. Precedence: upcoming > past > tentative > default.
+    // Body copy
     let info: string;
-    if (isUpcoming) {
-      info = this.t(($) => $.importantDates.upcomingDateMessage);
-    } else if (isPast) {
-      info = this.t(($) => $.importantDates.pastDateMessage);
-    } else if (showTentativeCopy && approvalDateKey) {
+    //tpr/dtp tentative and in the past
+    if (isTentative && approvalDateKey && isPast) {
+      info = this.t(
+        ($) => $.importantDates.dates[approvalDateKey].tentative.pastInfo,
+      );
+      //tpr/dtp tentative and in the future (upcoming and >30 days)
+    } else if (isTentative && approvalDateKey) {
       info = this.t(
         ($) => $.importantDates.dates[approvalDateKey].tentative.info,
         { replace: { [approvalDateKey]: entry.date } },
       );
-    } else if (approvalDateKey) {
+    } //tpr/dtp approved and in the past
+    else if (approvalDateKey && isPast) {
+      info = this.t(
+        ($) => $.importantDates.dates[approvalDateKey].approved.pastInfo,
+      );
+    } //tpr/dtp approved and <30 days away
+    else if (approvalDateKey && isUpcoming) {
+      info = this.t(
+        ($) => $.importantDates.dates[approvalDateKey].approved.upcomingInfo,
+      );
+    } //tpr/dtp approved and >30 days away
+    else if (approvalDateKey) {
       info = this.t(
         ($) => $.importantDates.dates[approvalDateKey].approved.info,
       );
+    } else if (isUpcoming) {
+      info = this.t(($) => $.importantDates.upcomingDateMessage);
+    } else if (isPast) {
+      info = this.t(($) => $.importantDates.pastDateMessage);
     } else {
       const replace: Record<string, unknown> = {};
       if (entry.dateKey === "tprDate") {
@@ -155,9 +197,21 @@ export class UsAzImportantDatesPresenter {
       });
     }
 
-    const goLink = showTentativeCopy
-      ? this.t(($) => $.importantDates.overlay.goLink)
-      : this.t(($) => $.goLink, { replace: { label: shortName } });
+    let goLink: string;
+    //all tentative cards use the same goLink copy
+    if (isTentative && approvalDateKey) {
+      goLink = this.t(
+        ($) => $.importantDates.dates[approvalDateKey].tentative.goLink,
+      );
+    }
+    //approved cards in the past use different goLink copy
+    else if (approvalDateKey && isPast) {
+      goLink = this.t(
+        ($) => $.importantDates.dates[approvalDateKey].approved.goLink,
+      );
+    } else {
+      goLink = this.t(($) => $.goLink, { replace: { label: shortName } });
+    }
 
     return { title, value, info, goLink };
   }
@@ -195,10 +249,6 @@ export class UsAzImportantDatesPresenter {
         isTentative = !this.approval.isDtpApproved;
       }
 
-      /* tentative copy is only shown for future dates that are > 30 days away. If this
-      changes, make sure to update importantDates.dates.tprDate/dtpDate.tentative.info */
-      const showTentativeCopy = isTentative && !isUpcoming && !isPast;
-
       let highlightType: CardHighlightStyle | undefined;
       if (isPast || entry.dateKey === "csbdDate" || isTentative) {
         highlightType = "dashed";
@@ -218,7 +268,7 @@ export class UsAzImportantDatesPresenter {
         approvalDateKey,
         isUpcoming,
         isPast,
-        showTentativeCopy,
+        isTentative,
         shortName,
       });
 
@@ -226,6 +276,8 @@ export class UsAzImportantDatesPresenter {
         ? this.buildOverlayCopy({
             approvalDateKey,
             isTentative,
+            isPast,
+            isUpcoming,
             date: entry.date,
             shortName,
           })

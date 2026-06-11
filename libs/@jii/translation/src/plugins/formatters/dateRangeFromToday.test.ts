@@ -73,6 +73,20 @@ describe("formatDateRangeFromTodayFormatter", () => {
     expect(result).toBe("3 meses");
   });
 
+  it("should compare at day granularity when the clock is not at start of day", async () => {
+    // Freeze at a mid-day time so the raw difference to the target is < 24h.
+    // Without comparing at day granularity, the duration would round to an
+    // empty string; startOfDay ensures it reads as a full day.
+    timekeeper.freeze(new Date("2025-10-30T15:30:00"));
+    const nextDay = new Date("2025-10-31T10:00:00");
+
+    const result = await testTranslation("{{date, formatDateRangeFromToday}}", {
+      date: nextDay,
+    });
+
+    expect(result).toBe("1 day");
+  });
+
   it("should allow custom delimiter", async () => {
     const futureDate = new Date("2030-07-30");
 
