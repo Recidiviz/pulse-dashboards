@@ -22,6 +22,17 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /var/log/typesense
+        touch /var/log/typesense/typesense.log /var/log/typesense/typesense-access.log
+        tail -n +1 -F /var/log/typesense/typesense.log /var/log/typesense/typesense-access.log &
+        exec /opt/typesense-server \
+          --log-dir=/var/log/typesense \
+          --enable-access-logging \
+          --enable-search-logging
 
 volumes:
   typesense_data:

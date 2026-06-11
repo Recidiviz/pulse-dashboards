@@ -58,6 +58,50 @@
         "command": "tsx src/emulator/sync.ts",
         "cwd": "{projectRoot}"
       }
+    },
+    "requires-sops-env:provision": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/provision.ts {args}",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
+    "requires-sops-env:list-collections": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/inspect.ts list",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
+    "requires-sops-env:collection-summary": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/inspect.ts summary",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
+    "requires-sops-env:collection-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/inspect.ts schema --collection={args.collection}",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
     }
   }
 }
