@@ -28,7 +28,7 @@ export type CreateMeetingParams = {
   personId: bigint;
   personType: PersonType;
   meetingId: string;
-  meetingType: string;
+  meetingType?: string;
   meetingTypeCategory?: string | null;
   startTime: Date;
 };

@@ -82,6 +82,33 @@ describe("resident router", () => {
           ]),
         );
       });
+
+      test("Creates a meeting without meetingType", async () => {
+        const startTime = faker.date.future();
+        const meetingId = createId();
+
+        const result = await testTRPCClient.v1.resident.createMeeting.mutate({
+          residentId: fakeResidents[0].personId,
+          startTime,
+          meetingId,
+        });
+
+        expect(result).toEqual({
+          id: meetingId,
+          startTime,
+        });
+
+        const meeting = await testPrismaClient.meeting.findUnique({
+          where: { id: meetingId },
+        });
+        expect(meeting).toEqual(
+          expect.objectContaining({
+            id: meetingId,
+            meetingType: null,
+            meetingTypeCategory: null,
+          }),
+        );
+      });
     });
 
     describe("getMeetings", () => {

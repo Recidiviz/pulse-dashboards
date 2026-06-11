@@ -17,21 +17,20 @@
 
 import { create } from "zustand";
 
-import { DEFAULT_MEETING_TYPE } from "../config";
 import { getCategoryTypeError } from "../lib";
 
 type MeetingTypeStore = {
-  meetingType: string;
+  meetingType: string | null;
   meetingTypeCategory: string | null;
   meetingTypeCategoryError: string | null;
   setMeetingType: (meetingType: string) => void;
   setMeetingTypeCategory: (meetingTypeCategory: string | null) => void;
   setMeetingTypeCategoryError: (categoryType?: string | null) => void;
-  reset: (meetingType?: string) => void;
+  reset: (meetingType?: string | null) => void;
 };
 
 const initialState = {
-  meetingType: DEFAULT_MEETING_TYPE,
+  meetingType: null,
   meetingTypeCategory: null,
   meetingTypeCategoryError: null,
 };
@@ -54,5 +53,5 @@ export const useMeetingTypeStore = create<MeetingTypeStore>()((set) => ({
       meetingTypeCategoryError: getCategoryTypeError(categoryType),
     }),
   reset: (meetingType) =>
-    set({ ...initialState, meetingType: meetingType ?? DEFAULT_MEETING_TYPE }),
+    set({ ...initialState, meetingType: meetingType ?? null }),
 }));

@@ -49,7 +49,7 @@ export function useProcessOfflineEvent() {
             personId: event.personId,
             personType: event.personType,
             meetingId: event.meetingId,
-            meetingType: event.meetingType,
+            meetingType: event.meetingType ?? undefined,
             meetingTypeCategory: event.meetingTypeCategory,
             startTime: event.startTime,
           });

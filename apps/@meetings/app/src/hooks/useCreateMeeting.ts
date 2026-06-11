@@ -55,7 +55,7 @@ export function useCreateMeeting({
       const meetingId = createId();
       const startTime = new Date();
 
-      if (!person || !personType || !meetingType) return meetingId;
+      if (!person || !personType) return meetingId;
 
       if (!isOnline) {
         dispatchOfflineEvent({
@@ -75,7 +75,7 @@ export function useCreateMeeting({
         personId: person.personId,
         personType,
         meetingId,
-        meetingType,
+        meetingType: meetingType ?? undefined,
         meetingTypeCategory,
         startTime,
       });

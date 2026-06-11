@@ -56,7 +56,7 @@ type AudioUploadStore = {
   open: (params: {
     person: Person;
     personType: PersonType;
-    meetingType: string;
+    meetingType: string | null;
     meetingTypeCategory: string | null;
   }) => void;
   reset: () => void;

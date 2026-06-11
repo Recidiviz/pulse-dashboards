@@ -42,7 +42,6 @@ import { useAgencyConfigs } from "../context/AgencyConfigContext";
 import { useAnalytics } from "../context/AnalyticsContext";
 import { useStateSelection } from "../context/StateContext";
 import { useMeetingTypeStore } from "../entities/meeting-type";
-import { DEFAULT_MEETING_TYPE } from "../entities/meeting-type/config";
 import { validateAndStart } from "../entities/meeting-type/lib";
 import { Person, PersonType } from "../entities/person";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
@@ -190,8 +189,6 @@ const ProfileMeetings = ({
   useEffect(() => {
     if (meetingTypes.length > 0) {
       setMeetingTypeValue(meetingTypes[0].type);
-    } else {
-      setMeetingTypeValue(DEFAULT_MEETING_TYPE);
     }
   }, [meetingTypes, meetingTypes.length, setMeetingTypeValue]);
 

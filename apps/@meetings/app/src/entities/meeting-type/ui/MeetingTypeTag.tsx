@@ -17,7 +17,6 @@
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { DEFAULT_MEETING_TYPE } from "../config";
 import { getMeetingTypeStyles } from "../lib";
 
 export function MeetingTypeTag({
@@ -27,7 +26,7 @@ export function MeetingTypeTag({
   type: string | null;
   typeCategory?: string | null;
 }) {
-  if (!type || type === DEFAULT_MEETING_TYPE) return null;
+  if (!type) return null;
 
   const tagStyles = getMeetingTypeStyles(type);
 

@@ -118,7 +118,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   }: {
     meetingId: string;
     person: Person;
-    meetingType: string;
+    meetingType: string | null;
     meetingTypeCategory: string | null;
   }) => {
     setMeetingId(meetingId);

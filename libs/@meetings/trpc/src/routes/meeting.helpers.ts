@@ -71,7 +71,7 @@ export async function createMeetingForPerson({
   startTime: Date;
   personType: "client" | "resident";
   meetingId: string;
-  meetingType: string;
+  meetingType?: string | null;
   meetingTypeCategory?: string | null;
   stateCode: StateCode;
 }) {

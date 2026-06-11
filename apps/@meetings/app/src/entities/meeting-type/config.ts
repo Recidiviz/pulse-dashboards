@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const DEFAULT_MEETING_TYPE = "Default";
-
 // this array should have all types for all states
 // add new types always to the end
 export const meetingTypes = [

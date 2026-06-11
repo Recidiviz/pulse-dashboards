@@ -77,7 +77,7 @@ export type RecordingWeb = RecordingBase & {
     person,
   }: {
     meetingId: string;
-    meetingType: string;
+    meetingType: string | null;
     meetingTypeCategory: string | null;
     person: Person;
   }) => void;
