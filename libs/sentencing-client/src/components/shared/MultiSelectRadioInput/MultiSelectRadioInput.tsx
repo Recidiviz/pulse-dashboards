@@ -94,6 +94,7 @@ export function MultiSelectRadioInput({
                 type="checkbox"
                 checked={skipped}
                 onChange={(e) => onSkipChange(e.target.checked)}
+                disabled={disabled}
               />
             </Styled.SkipContainer>
           )}

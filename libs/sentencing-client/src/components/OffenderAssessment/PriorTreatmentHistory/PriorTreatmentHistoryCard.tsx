@@ -26,10 +26,11 @@ import { PriorTreatmentHistory } from "./types";
 
 interface PriorTreatmentHistoryCardProps {
   presenter: PriorTreatmentHistoryPresenter;
+  disabled?: boolean;
 }
 
 export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps> =
-  observer(function PriorTreatmentHistoryCard({ presenter }) {
+  observer(function PriorTreatmentHistoryCard({ presenter, disabled = false }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [initialData, setInitialData] = useState<
@@ -97,6 +98,7 @@ export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps>
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onUndo={handleUndo}
+                    disabled={disabled}
                   />
                 ))}
               </Styled.HistoryList>
@@ -105,12 +107,14 @@ export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps>
             <Styled.EmptyState>No history added</Styled.EmptyState>
           )}
 
-          <Styled.AddButton
-            onClick={handleAdd}
-            aria-label="Add prior treatment history"
-          >
-            + Add
-          </Styled.AddButton>
+          {!disabled && (
+            <Styled.AddButton
+              onClick={handleAdd}
+              aria-label="Add prior treatment history"
+            >
+              + Add
+            </Styled.AddButton>
+          )}
         </Styled.HistorySection>
 
         <PriorTreatmentHistoryModal

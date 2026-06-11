@@ -43,6 +43,10 @@ export const Checkbox = styled.input`
   width: 1rem;
   height: 1rem;
   accent-color: ${palette.pine4};
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;
 
 export const CheckboxLabel = styled.span`

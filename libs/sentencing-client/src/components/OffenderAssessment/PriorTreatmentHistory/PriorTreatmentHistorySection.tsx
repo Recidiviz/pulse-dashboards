@@ -53,6 +53,7 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
       (histories) => histories.length > 0,
     );
     const isDeclined = presenter.defendantDeclinedToParticipate;
+    const isDisabled = !!presenter.SARData?.completionDate;
 
     const docHistoriesSection = (
       <PriorTreatmentSection>
@@ -137,7 +138,10 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
       <PriorTreatmentHistorySectionContainer>
         <PriorTreatmentSection>
           <SectionTitle>Prior Community Treatment History</SectionTitle>
-          <PriorTreatmentHistoryCard presenter={presenter} />
+          <PriorTreatmentHistoryCard
+            presenter={presenter}
+            disabled={isDisabled}
+          />
           <SkippableTextArea
             label="Summary"
             value={presenter.SARData?.priorTreatmentHistorySummary ?? null}
@@ -147,6 +151,7 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
             onLocalChange={() => presenter.markAsEdited()}
             placeholder="Please enter a summary of prior treatment history"
             height="6.8125rem"
+            disabled={isDisabled}
           />
         </PriorTreatmentSection>
         {docHistoriesSection}

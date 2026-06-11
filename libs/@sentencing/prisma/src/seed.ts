@@ -275,7 +275,7 @@ async function addSARClientsAndReports(
         dateRequested: faker.date.recent(),
         dueDate: faker.date.future(),
         courtDate: faker.datatype.boolean() ? faker.date.future() : null,
-        completionDate: faker.date.future(),
+        completionDate: faker.date.anytime(),
         address: faker.location.streetAddress(),
         // ORAS Assessment data — domain scores and overall max vary by tool type
         // Max scores derived from production data

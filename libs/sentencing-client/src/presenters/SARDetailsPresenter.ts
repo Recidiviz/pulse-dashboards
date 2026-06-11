@@ -393,8 +393,12 @@ export class SARDetailsPresenter implements Hydratable {
     return this.mostSevereCharges.length > 1;
   }
 
+  get isLocked(): boolean {
+    return !!this.SARData?.completionDate;
+  }
+
   async updateMostSevereOffenseName(offenseName: string): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     const sarData = this.SARData;
     runInAction(() => {
@@ -771,7 +775,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update defendant declined to participate */
   async updateDefendantDeclined(value: boolean): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     // Update local state immediately
     runInAction(() => {
@@ -801,7 +805,7 @@ export class SARDetailsPresenter implements Hydratable {
     name: string | null,
     division?: string | null,
   ): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData) {
@@ -831,7 +835,7 @@ export class SARDetailsPresenter implements Hydratable {
     fieldId: K,
     value: string,
   ): Promise<void> {
-    if (!this.SARData?.charges) return;
+    if (!this.SARData?.charges || this.isLocked) return;
 
     // Find the charge in the source data (not the getter)
     const charge = this.SARData.charges.find((c) => c.id === chargeId) as
@@ -883,7 +887,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update needs to be addressed */
   async updateNeedsToBeAddressed(values: string[]): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     // Update local state immediately
     runInAction(() => {
@@ -910,7 +914,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update other need to be addressed */
   async updateOtherNeedToBeAddressed(value: string): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData) {
@@ -935,7 +939,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update mitigating factors */
   async updateMitigatingFactors(values: string[]): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData) {
@@ -960,7 +964,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update other mitigating factor */
   async updateOtherMitigatingFactor(value: string): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData) {
@@ -1005,7 +1009,7 @@ export class SARDetailsPresenter implements Hydratable {
       | "priorTreatmentHistorySummary",
     value: string,
   ): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData) {
@@ -1102,7 +1106,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update employed at offense */
   async updateEmployedAtOffense(value: boolean | null): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     const sarId = this.SARData.id;
 
@@ -1132,7 +1136,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update level of education */
   async updateLevelOfEducation(value: SAR["levelOfEducation"]): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData) {
@@ -1157,7 +1161,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update father name */
   async updateFatherName(value: string): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData?.client) {
@@ -1182,7 +1186,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update mother name */
   async updateMotherName(value: string): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData?.client) {
@@ -1207,7 +1211,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update guardian name */
   async updateGuardianName(value: string): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     runInAction(() => {
       if (this.SARData?.client) {
@@ -1310,7 +1314,7 @@ export class SARDetailsPresenter implements Hydratable {
     skipped: boolean,
     subSection?: string | undefined,
   ): Promise<void> {
-    if (!this.SARData) return;
+    if (!this.SARData || this.isLocked) return;
 
     // Update metadata with proper structure
     const currentMetadata = this.metadata ?? {};

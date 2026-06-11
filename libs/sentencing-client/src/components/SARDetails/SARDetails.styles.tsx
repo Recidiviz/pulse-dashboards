@@ -29,6 +29,12 @@ export const PageContainer = styled.div`
 `;
 
 export const ContentLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`;
+
+export const ReportBuilderLayout = styled.div`
   flex: 1;
   display: flex;
   gap: 24px;
@@ -45,7 +51,7 @@ export const SectionContainer = styled.div`
   flex-direction: column;
   width: 50rem;
   height: fit-content;
-  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding-bottom: 1.5rem;
   gap: 1.5rem;
 `;
 
@@ -60,4 +66,24 @@ export const MainContent = styled.div`
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
   padding-top: 2rem;
   padding-bottom: 2rem;
+  gap: 32px;
+`;
+
+export const CompletionDate = styled.div`
+  color: ${palette.pine2};
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.14px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 16px 16px 22px;
+
+  border-left: 4px solid ${palette.logoBlue};
+  background: ${palette.logoBlue}14;
 `;

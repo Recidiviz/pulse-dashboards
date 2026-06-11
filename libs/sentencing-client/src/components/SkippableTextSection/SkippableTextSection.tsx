@@ -27,6 +27,7 @@ interface SkippableTextSectionProps {
   title: string;
   fieldName: "victimImpactStatement" | "defendantStatement";
   placeholder: string;
+  disabled?: boolean;
 }
 
 export const SkippableTextSection: React.FC<SkippableTextSectionProps> =
@@ -35,6 +36,7 @@ export const SkippableTextSection: React.FC<SkippableTextSectionProps> =
     title,
     fieldName,
     placeholder,
+    disabled = false,
   }) {
     const value = presenter.SARData?.[fieldName] ?? null;
 
@@ -57,6 +59,7 @@ export const SkippableTextSection: React.FC<SkippableTextSectionProps> =
       <SkippableSection
         title={title}
         skipped={skipped}
+        disabled={disabled}
         onSkipChange={(skipped) =>
           presenter.updateFieldSkipped(fieldName, skipped)
         }
@@ -65,7 +68,7 @@ export const SkippableTextSection: React.FC<SkippableTextSectionProps> =
           value={value}
           onChange={handleChange}
           placeholder={placeholder}
-          disabled={skipped}
+          disabled={skipped || disabled}
           height="28.125rem"
           onLocalChange={() => presenter.markFieldAsEditedLocally(fieldName)}
         />

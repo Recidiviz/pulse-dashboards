@@ -26,7 +26,7 @@ export const HeaderContainer = styled.div`
   gap: 12px;
   margin-bottom: 12px;
   width: 100%;
-  padding-top:10px;
+  padding-top: 10px;
 `;
 
 export const SkipContainer = styled.div`
@@ -40,11 +40,15 @@ export const SkipCheckbox = styled.input`
   height: 1rem;
   accent-color: ${palette.pine4};
   cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;
 
-export const SkipLabel = styled.label`
+export const SkipLabel = styled.label<{ $disabled?: boolean }>`
   ${typography.Sans14}
   color: ${palette.slate85};
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
   padding-top: 0.35rem;
 `;

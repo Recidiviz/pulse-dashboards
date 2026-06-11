@@ -35,6 +35,8 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
       institutionalStrategyRecommendation,
     } = presenter.SARData ?? {};
 
+    const isDisabled = !!presenter.SARData?.completionDate;
+
     return (
       <SkippableSection
         title="Summarize Recommendation"
@@ -42,6 +44,7 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
         onSkipChange={(skipped) =>
           presenter.updateFieldSkipped("recommendation", skipped)
         }
+        disabled={isDisabled}
       >
         <SkippableTextArea
           label="Community Strategies"
@@ -50,7 +53,7 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
             presenter.updateCommunityStrategyRecommendation(value)
           }
           placeholder="Please enter a summary of family and social support"
-          disabled={presenter.recommendationSkipped}
+          disabled={presenter.recommendationSkipped || isDisabled}
           onLocalChange={() =>
             presenter.markFieldAsEditedLocally("recommendation")
           }
@@ -60,7 +63,7 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
           value={homePlan ?? null}
           onChange={(value) => presenter.updateHomePlan(value)}
           placeholder="Enter home plan details"
-          disabled={presenter.recommendationSkipped}
+          disabled={presenter.recommendationSkipped || isDisabled}
           onLocalChange={() =>
             presenter.markFieldAsEditedLocally("recommendation")
           }
@@ -73,7 +76,7 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
             presenter.updateInstitutionalStrategyRecommendation(value)
           }
           placeholder="Please enter a summary of institutional strategies and programming"
-          disabled={presenter.recommendationSkipped}
+          disabled={presenter.recommendationSkipped || isDisabled}
           onLocalChange={() =>
             presenter.markFieldAsEditedLocally("recommendation")
           }

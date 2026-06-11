@@ -57,10 +57,17 @@ interface OffenseCardProps {
     fieldId: EditableChargeField,
     value: string,
   ) => Promise<void>;
+  disabled?: boolean;
 }
 
 export const OffenseCard: React.FC<OffenseCardProps> = observer(
-  function OffenseCard({ charge, onUpdate, showTitle, isMostSevere }) {
+  function OffenseCard({
+    charge,
+    onUpdate,
+    showTitle,
+    isMostSevere,
+    disabled,
+  }) {
     // Create debounced save function
     const debouncedSave = useDebouncedCallback(
       (chargeId: string, fieldId: EditableChargeField, value: string) => {
@@ -124,67 +131,115 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
             <ReadOnlyField label="MoCode" value={charge.moCode} />
 
             {/* Editable fields (required) */}
-            <FormField
-              label="Prosecuting Attorney: "
-              value={charge.prosecutingAttorney}
-              onChange={(value) =>
-                handleFieldChange("prosecutingAttorney", value)
-              }
-              type="text"
-              helperText='Write "None Listed" if not applicable'
-              placeholder="Add Name"
-              inline
-            />
-            <FormField
-              label="Defense Attorney: "
-              value={charge.defenseAttorney}
-              onChange={(value) => handleFieldChange("defenseAttorney", value)}
-              type="text"
-              helperText='Write "None Listed" if not applicable'
-              placeholder="Add Name"
-              inline
-            />
-            <FormFieldStyled.FieldContainer>
-              <FormFieldStyled.InlineRow>
-                <FormFieldStyled.Label>Plea Agreement: </FormFieldStyled.Label>
-                <Dropdown
-                  value={pleaOption}
-                  options={PLEA_OPTIONS}
-                  onChange={handlePleaChange}
-                  placeholder={
-                    !pleaOption && charge.pleaAgreement
-                      ? charge.pleaAgreement
-                      : "Select..."
-                  }
-                  styles={Styled.pleaDropdownStyles}
+            {disabled ? (
+              <>
+                <ReadOnlyField
+                  label="Prosecuting Attorney"
+                  value={charge.prosecutingAttorney}
                 />
-              </FormFieldStyled.InlineRow>
-            </FormFieldStyled.FieldContainer>
-            <FormField
-              label="Date of Plea: "
-              value={
-                charge.pleaDate
-                  ? new Date(charge.pleaDate).toISOString().split("T")[0]
-                  : ""
-              }
-              onChange={(value) => handleFieldChange("pleaDate", value)}
-              type="date"
-              placeholder="Enter Date"
-              inline
-              showValidation={false}
-            />
-            <FormField
-              label="Date of Sentencing: "
-              value={
-                charge.sentencingDate
-                  ? new Date(charge.sentencingDate).toISOString().split("T")[0]
-                  : ""
-              }
-              onChange={(value) => handleFieldChange("sentencingDate", value)}
-              type="date"
-              placeholder="Enter Date"
-              inline
-            />
+                <ReadOnlyField
+                  label="Defense Attorney"
+                  value={charge.defenseAttorney}
+                />
+                <ReadOnlyField
+                  label="Plea Agreement"
+                  value={charge.pleaAgreement}
+                />
+                <ReadOnlyField
+                  label="Date of Plea"
+                  value={
+                    charge.pleaDate
+                      ? new Date(charge.pleaDate).toLocaleDateString("en-US", {
+                          timeZone: "UTC",
+                        })
+                      : null
+                  }
+                />
+                <ReadOnlyField
+                  label="Date of Sentencing"
+                  value={
+                    charge.sentencingDate
+                      ? new Date(charge.sentencingDate).toLocaleDateString(
+                          "en-US",
+                          { timeZone: "UTC" },
+                        )
+                      : null
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <FormField
+                  label="Prosecuting Attorney: "
+                  value={charge.prosecutingAttorney}
+                  onChange={(value) =>
+                    handleFieldChange("prosecutingAttorney", value)
+                  }
+                  type="text"
+                  helperText='Write "None Listed" if not applicable'
+                  placeholder="Add Name"
+                  inline
+                />
+                <FormField
+                  label="Defense Attorney: "
+                  value={charge.defenseAttorney}
+                  onChange={(value) =>
+                    handleFieldChange("defenseAttorney", value)
+                  }
+                  type="text"
+                  helperText='Write "None Listed" if not applicable'
+                  placeholder="Add Name"
+                  inline
+                />
+                <FormFieldStyled.FieldContainer>
+                  <FormFieldStyled.InlineRow>
+                    <FormFieldStyled.Label>
+                      Plea Agreement:{" "}
+                    </FormFieldStyled.Label>
+                    <Dropdown
+                      value={pleaOption}
+                      options={PLEA_OPTIONS}
+                      onChange={handlePleaChange}
+                      placeholder={
+                        !pleaOption && charge.pleaAgreement
+                          ? charge.pleaAgreement
+                          : "Select..."
+                      }
+                      styles={Styled.pleaDropdownStyles}
+                    />
+                  </FormFieldStyled.InlineRow>
+                </FormFieldStyled.FieldContainer>
+                <FormField
+                  label="Date of Plea: "
+                  value={
+                    charge.pleaDate
+                      ? new Date(charge.pleaDate).toISOString().split("T")[0]
+                      : ""
+                  }
+                  onChange={(value) => handleFieldChange("pleaDate", value)}
+                  type="date"
+                  placeholder="Enter Date"
+                  inline
+                  showValidation={false}
+                />
+                <FormField
+                  label="Date of Sentencing: "
+                  value={
+                    charge.sentencingDate
+                      ? new Date(charge.sentencingDate)
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                  }
+                  onChange={(value) =>
+                    handleFieldChange("sentencingDate", value)
+                  }
+                  type="date"
+                  placeholder="Enter Date"
+                  inline
+                />
+              </>
+            )}
           </Styled.ColumnSection>
         </Styled.Card>
       </Styled.CardContainer>

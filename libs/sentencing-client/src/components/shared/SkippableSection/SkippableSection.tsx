@@ -24,6 +24,7 @@ export interface SkippableSectionProps {
   skipped: boolean;
   onSkipChange: (skipped: boolean) => void;
   children: React.ReactNode;
+  disabled?: boolean;
 }
 
 export function SkippableSection({
@@ -31,16 +32,18 @@ export function SkippableSection({
   skipped,
   onSkipChange,
   children,
+  disabled = false,
 }: SkippableSectionProps) {
   return (
     <Styled.Wrapper>
       <Styled.HeaderContainer>
         <Styled.Title>{title}</Styled.Title>
         <Styled.SkipContainer>
-          <Styled.SkipLabel>Skip</Styled.SkipLabel>
+          <Styled.SkipLabel $disabled={disabled}>Skip</Styled.SkipLabel>
           <Styled.SkipCheckbox
             type="checkbox"
             checked={skipped}
+            disabled={disabled}
             onChange={(e) => onSkipChange(e.target.checked)}
           />
         </Styled.SkipContainer>

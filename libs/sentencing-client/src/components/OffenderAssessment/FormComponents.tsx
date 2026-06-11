@@ -34,6 +34,7 @@ interface TextFieldProps {
   onChange: (value: string) => Promise<void>;
   placeholder?: string;
   halfWidth?: boolean;
+  disabled?: boolean;
 }
 
 export const TextField: React.FC<TextFieldProps> = ({
@@ -42,6 +43,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   onChange,
   placeholder,
   halfWidth = false,
+  disabled = false,
 }) => {
   const [localValue, setLocalValue] = useState(value ?? "");
   const [touched, setTouched] = useState(false);
@@ -57,6 +59,15 @@ export const TextField: React.FC<TextFieldProps> = ({
     debouncedSave(newValue);
   };
 
+  if (disabled) {
+    return (
+      <Styled.FieldContainer>
+        <Styled.Label>{label}</Styled.Label>
+        <span>{value ?? "Unknown"}</span>
+      </Styled.FieldContainer>
+    );
+  }
+
   return (
     <Styled.FieldContainer>
       <Styled.Label>{label}</Styled.Label>
@@ -68,6 +79,7 @@ export const TextField: React.FC<TextFieldProps> = ({
         placeholder={placeholder}
         halfWidth={halfWidth}
         $hasError={touched && !localValue.trim()}
+        disabled={disabled}
       />
     </Styled.FieldContainer>
   );
@@ -77,12 +89,14 @@ interface EducationDropdownProps {
   label: string;
   value: LevelOfEducation | null;
   onChange: (value: LevelOfEducation | null) => Promise<void>;
+  disabled?: boolean;
 }
 
 export const EducationDropdown: React.FC<EducationDropdownProps> = ({
   label,
   value,
   onChange,
+  disabled = false,
 }) => {
   const options: SelectOption[] = Object.entries(LevelOfEducationLabels).map(
     ([key, label]) => ({ value: key, label }),
@@ -112,6 +126,7 @@ export const EducationDropdown: React.FC<EducationDropdownProps> = ({
         onChange={handleChange}
         placeholder="Select..."
         styles={Styled.dropdownStyles}
+        isDisabled={disabled}
       />
     </Styled.FieldContainer>
   );
@@ -132,12 +147,14 @@ interface BooleanDropdownProps {
   label: string;
   value: boolean | null;
   onChange: (value: boolean | null) => Promise<void>;
+  disabled?: boolean;
 }
 
 export const BooleanDropdown: React.FC<BooleanDropdownProps> = ({
   label,
   value,
   onChange,
+  disabled = false,
 }) => {
   const getSelectedOption = () => {
     if (value === true) return YES_OPTION;
@@ -166,6 +183,7 @@ export const BooleanDropdown: React.FC<BooleanDropdownProps> = ({
         onChange={handleChange}
         placeholder="Select..."
         styles={Styled.dropdownStyles}
+        isDisabled={disabled}
       />
     </Styled.FieldContainer>
   );

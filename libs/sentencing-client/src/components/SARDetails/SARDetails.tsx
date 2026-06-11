@@ -28,6 +28,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SentencingStore } from "../../datastores/SentencingStore";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { sarUrl } from "../../utils/routing";
+import { formatDisplayDate } from "../../utils/utils";
 import { CaseInformation } from "../CaseInformation/CaseInformation";
 import { KeyConsiderations } from "../KeyConsiderations";
 import { OffenderAssessment } from "../OffenderAssessment";
@@ -85,6 +86,7 @@ const SARSectionContent: React.FC<{
           presenter={presenter}
           title="Enter Defendant's Version"
           fieldName="defendantStatement"
+          disabled={!!presenter.SARData?.completionDate}
           placeholder={
             presenter.defendantDeclinedToParticipate === true
               ? "Since the client declined to participate, please write a short paragraph describing your attempts to contact the client."
@@ -98,6 +100,7 @@ const SARSectionContent: React.FC<{
           title="Enter Victim Impact Statement"
           fieldName="victimImpactStatement"
           placeholder="Please add the Victim Impact here"
+          disabled={!!presenter.SARData?.completionDate}
         />
       )}
       {currentSection === SARSection.RECOMMENDATION && (
@@ -154,7 +157,7 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
         offenseNames={offenseNames}
       />
 
-      <Styled.ContentLayout>
+      <Styled.ReportBuilderLayout>
         <SARSideNavigation
           currentSection={currentSection}
           onSectionChange={setCurrentSection}
@@ -163,13 +166,23 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
           presenter={presenter}
         />
 
-        <SARSectionContent
-          key={currentSection}
-          currentSection={currentSection}
-          currentSubsection={currentSubsection}
-          presenter={presenter}
-        />
-      </Styled.ContentLayout>
+        <Styled.ContentLayout>
+          {presenter.SARData?.completionDate && (
+            <Styled.CompletionDate>
+              This investigation was completed on{" "}
+              {formatDisplayDate(presenter.SARData.completionDate)} and can no
+              longer be edited.
+            </Styled.CompletionDate>
+          )}
+
+          <SARSectionContent
+            key={currentSection}
+            currentSection={currentSection}
+            currentSubsection={currentSubsection}
+            presenter={presenter}
+          />
+        </Styled.ContentLayout>
+      </Styled.ReportBuilderLayout>
     </Styled.PageContainer>
   );
 });

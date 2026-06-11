@@ -26,10 +26,11 @@ import { EmploymentHistoryModal } from "./EmploymentHistoryModal";
 
 interface EmploymentHistoryCardProps {
   presenter: OffenderAssessmentPresenter;
+  disabled?: boolean;
 }
 
 export const EmploymentHistoryCard: React.FC<EmploymentHistoryCardProps> =
-  observer(function EmploymentHistoryCard({ presenter }) {
+  observer(function EmploymentHistoryCard({ presenter, disabled = false }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [initialData, setInitialData] = useState<
@@ -101,6 +102,7 @@ export const EmploymentHistoryCard: React.FC<EmploymentHistoryCardProps> =
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onUndo={handleUndo}
+                    disabled={disabled}
                   />
                 ))}
               </Styled.HistoryList>
@@ -109,7 +111,9 @@ export const EmploymentHistoryCard: React.FC<EmploymentHistoryCardProps> =
             <Styled.EmptyState>No employment records</Styled.EmptyState>
           )}
 
-          <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
+          {!disabled && (
+            <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
+          )}
         </Styled.HistorySection>
 
         <EmploymentHistoryModal

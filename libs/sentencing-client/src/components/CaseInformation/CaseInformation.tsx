@@ -55,6 +55,7 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
               type="checkbox"
               checked={defendantDeclinedToParticipate}
               onChange={handleDeclinedToggle}
+              disabled={!!presenter.SARData?.completionDate}
             />
             <Styled.CheckboxLabel>
               Defendant declined to participate in the SAR process
@@ -66,6 +67,7 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
             selectedJudgeName={presenter.SARData?.requestingJudgeName ?? null}
             selectedDivision={presenter.SARData?.division ?? null}
             onUpdate={presenter.updateJudgeSelection}
+            disabled={!!presenter.SARData?.completionDate}
           />
 
           <Styled.OfficerInformationContainer>
@@ -117,6 +119,7 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
             }
             charge={charge}
             onUpdate={handleChargeUpdate}
+            disabled={!!presenter.SARData?.completionDate}
           />
         ))}
         {presenter.hasTie && !defendantDeclinedToParticipate && (

@@ -29,6 +29,7 @@ interface EmploymentHistoryItemProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => Promise<void>;
   onUndo: (data: Omit<EmploymentHistory, "id">) => Promise<void>;
+  disabled?: boolean;
 }
 
 export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
@@ -36,6 +37,7 @@ export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
   onEdit,
   onDelete,
   onUndo,
+  disabled = false,
 }) => {
   const handleDelete = async () => {
     const { id, ...savedData } = history;
@@ -65,20 +67,22 @@ export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
 
   return (
     <Styled.Card>
-      <Styled.IconRow>
-        <Styled.EditButton
-          onClick={() => onEdit(history.id)}
-          aria-label="Edit employment record"
-        >
-          <Icon kind={IconSVG["Edit"]} size={16} />
-        </Styled.EditButton>
-        <Styled.DeleteIconButton
-          onClick={() => void handleDelete()}
-          aria-label="Delete employment record"
-        >
-          <Icon kind={IconSVG["Minus"]} size={8} />
-        </Styled.DeleteIconButton>
-      </Styled.IconRow>
+      {!disabled && (
+        <Styled.IconRow>
+          <Styled.EditButton
+            onClick={() => onEdit(history.id)}
+            aria-label="Edit employment record"
+          >
+            <Icon kind={IconSVG["Edit"]} size={16} />
+          </Styled.EditButton>
+          <Styled.DeleteIconButton
+            onClick={() => void handleDelete()}
+            aria-label="Delete employment record"
+          >
+            <Icon kind={IconSVG["Minus"]} size={8} />
+          </Styled.DeleteIconButton>
+        </Styled.IconRow>
+      )}
 
       <Styled.DataRow>
         <Styled.DataCell>

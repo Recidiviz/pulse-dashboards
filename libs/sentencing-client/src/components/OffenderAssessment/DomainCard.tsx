@@ -27,14 +27,15 @@ interface DomainCardProps {
   riskScore?: number;
   maxDomainScore?: number;
   riskLevel?: RiskLevelKey | null;
-  helperText?: string; // Optional helper text shown below title
-  children?: React.ReactNode; // Domain-specific form fields
+  helperText?: string;
+  children?: React.ReactNode;
   summaryValue: string | null;
   onSummaryChange: (value: string) => Promise<void>;
   cardRef?: React.RefObject<HTMLDivElement | null>;
-  summaryPlaceholder?: string; // Optional custom placeholder for summary text area
-  summaryPlaceholderColor?: string; // Optional custom placeholder color
+  summaryPlaceholder?: string;
+  summaryPlaceholderColor?: string;
   hideSummaryLabel?: boolean;
+  disabled?: boolean;
 }
 
 export const DomainCard: React.FC<DomainCardProps> = ({
@@ -50,6 +51,7 @@ export const DomainCard: React.FC<DomainCardProps> = ({
   summaryPlaceholder,
   summaryPlaceholderColor,
   hideSummaryLabel = false,
+  disabled = false,
 }) => {
   return (
     <Styled.ScrollWrapper ref={cardRef}>
@@ -86,6 +88,7 @@ export const DomainCard: React.FC<DomainCardProps> = ({
             }
             height="6.8125rem"
             placeholderColor={summaryPlaceholderColor}
+            disabled={disabled}
           />
         </Styled.SummarySection>
       </Styled.CardContainer>

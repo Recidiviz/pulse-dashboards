@@ -89,12 +89,14 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
     borderRadius: "0.5rem",
     border: `1px solid ${isFocused ? palette.pine4 : "rgba(43, 84, 105, 0.20)"}`,
     boxShadow: "none",
-    backgroundColor: isDisabled ? palette.slate10 : palette.white,
+    backgroundColor: "rgba(43, 105, 105, 0.03)",
     fontFamily: "Public Sans",
     fontSize: "0.875rem",
     lineHeight: 1.5,
+    cursor: isDisabled ? "not-allowed" : "default",
+    pointerEvents: "auto" as const,
     ":hover": {
-      borderColor: palette.pine4,
+      borderColor: isDisabled ? "rgba(43, 84, 105, 0.20)" : palette.pine4,
     },
   }),
   option: (styles, { isFocused, isSelected }) => ({

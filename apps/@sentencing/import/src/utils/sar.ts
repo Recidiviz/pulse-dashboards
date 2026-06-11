@@ -129,37 +129,41 @@ export async function transformAndLoadSARData(
     }
 
     // Build the base SAR record
-    const assessmentScore = parseInt(sarData.assessment_score ?? "0", 10);
     const newSAR: Record<string, unknown> = {
       externalId: sarData.external_id,
       dueDate: sarData.due_date ?? null,
       courtDate: sarData.court_date ?? null,
       completionDate: sarData.completion_date ?? null,
-      assessmentScore,
-      dateRequested: sarData.assigned_date,
-      assessmentAdministeredBy: sarData.assessment_administered_by,
-      assessmentDate: sarData.assessment_date,
-      assessmentType: sarData.report_type
-        ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[sarData.report_type]
-        : undefined,
     };
 
-    // Map ORAS domain scores and risk levels from assessment_metadata to database fields
-    // domain_score comes as a string from BigQuery, parse to int
-    for (const domain of sarData.assessment_metadata ?? []) {
-      const dbField = ORAS_SECTION_TO_DB_FIELD[domain.domain_name];
-      if (dbField && domain.domain_score) {
-        const score = parseInt(domain.domain_score, 10);
-        if (!isNaN(score)) {
-          newSAR[dbField] = score;
+    if (!sarData.completion_date) {
+      // Only update ORAS data if SAR is incomplete — preserve snapshot on re-import
+      const assessmentScore = parseInt(sarData.assessment_score ?? "0", 10);
+      newSAR["assessmentScore"] = assessmentScore;
+      newSAR["dateRequested"] = sarData.assigned_date;
+      newSAR["assessmentAdministeredBy"] = sarData.assessment_administered_by;
+      newSAR["assessmentDate"] = sarData.assessment_date;
+      newSAR["assessmentType"] = sarData.report_type
+        ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[sarData.report_type]
+        : undefined;
+
+      // Map ORAS domain scores and risk levels from assessment_metadata to database fields
+      // domain_score comes as a string from BigQuery, parse to int
+      for (const domain of sarData.assessment_metadata ?? []) {
+        const dbField = ORAS_SECTION_TO_DB_FIELD[domain.domain_name];
+        if (dbField && domain.domain_score) {
+          const score = parseInt(domain.domain_score, 10);
+          if (!isNaN(score)) {
+            newSAR[dbField] = score;
+          }
         }
-      }
-      if (dbField && domain.domain_risk_level) {
-        // Guard handles any future dbField that lacks a corresponding risk level entry
-        const riskLevelField = SCORE_FIELD_TO_RISK_LEVEL_FIELD[dbField];
-        const riskLevel = RAW_RISK_LEVEL_TO_ENUM[domain.domain_risk_level];
-        if (riskLevelField && riskLevel) {
-          newSAR[riskLevelField] = riskLevel;
+        if (dbField && domain.domain_risk_level) {
+          // Guard handles any future dbField that lacks a corresponding risk level entry
+          const riskLevelField = SCORE_FIELD_TO_RISK_LEVEL_FIELD[dbField];
+          const riskLevel = RAW_RISK_LEVEL_TO_ENUM[domain.domain_risk_level];
+          if (riskLevelField && riskLevel) {
+            newSAR[riskLevelField] = riskLevel;
+          }
         }
       }
     }

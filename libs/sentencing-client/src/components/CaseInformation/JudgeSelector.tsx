@@ -46,6 +46,7 @@ interface JudgeSelectorProps {
   selectedJudgeName: string | null;
   selectedDivision: string | null;
   onUpdate: (name: string | null, division?: string | null) => Promise<void>;
+  disabled?: boolean;
 }
 
 export const JudgeSelector: React.FC<JudgeSelectorProps> = ({
@@ -53,6 +54,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({
   selectedJudgeName,
   selectedDivision,
   onUpdate,
+  disabled,
 }) => {
   const [isOther, setIsOther] = useState(false);
   const [otherName, setOtherName] = useState("");
@@ -121,6 +123,23 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({
     const currentName = isOther ? otherName : selectedJudgeName;
     debouncedDivisionUpdate(currentName, value);
   };
+
+  if (disabled) {
+    return (
+      <Styled.JudgeInformationContainer>
+        <Styled.StaffInfoColumn>
+          <JudgeNameSection>
+            <TitlePrefix>To Honorable</TitlePrefix>
+            <span>{selectedJudgeName ?? "Unknown"}</span>
+          </JudgeNameSection>
+        </Styled.StaffInfoColumn>
+        <InlineRow>
+          <TitlePrefix>Division</TitlePrefix>
+          <span>{selectedDivision ?? "Unknown"}</span>
+        </InlineRow>
+      </Styled.JudgeInformationContainer>
+    );
+  }
 
   return (
     <Styled.JudgeInformationContainer>

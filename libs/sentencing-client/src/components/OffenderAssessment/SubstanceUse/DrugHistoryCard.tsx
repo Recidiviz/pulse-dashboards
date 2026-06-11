@@ -26,10 +26,11 @@ import { DrugHistoryModal } from "./DrugHistoryModal";
 
 interface DrugHistoryCardProps {
   presenter: OffenderAssessmentPresenter;
+  disabled?: boolean;
 }
 
 export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
-  function DrugHistoryCard({ presenter }) {
+  function DrugHistoryCard({ presenter, disabled = false }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [initialData, setInitialData] = useState<DrugHistory | undefined>(
@@ -99,6 +100,7 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onUndo={handleUndo}
+                    disabled={disabled}
                   />
                 ))}
               </Styled.HistoryList>
@@ -107,7 +109,9 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
             <Styled.EmptyState>No substance use records</Styled.EmptyState>
           )}
 
-          <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
+          {!disabled && (
+            <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
+          )}
         </Styled.HistorySection>
 
         <DrugHistoryModal

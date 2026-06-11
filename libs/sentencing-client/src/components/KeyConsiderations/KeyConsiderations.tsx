@@ -102,6 +102,7 @@ export const KeyConsiderations: React.FC<KeyConsiderationsProps> = observer(
               "areasOfNeed",
             )
           }
+          disabled={!!presenter.SARData?.completionDate}
         />
 
         <MultiSelectRadioInput
@@ -121,6 +122,7 @@ export const KeyConsiderations: React.FC<KeyConsiderationsProps> = observer(
               "mitigatingFactors",
             )
           }
+          disabled={!!presenter.SARData?.completionDate}
         />
       </Styled.Container>
     );

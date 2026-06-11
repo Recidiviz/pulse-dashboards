@@ -143,6 +143,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       }
     }, [currentSubsection]);
 
+    const isDisabled = !!presenter.SARData?.completionDate;
+
     if (presenter.defendantDeclinedToParticipate) {
       return (
         <SectionContainer>
@@ -154,6 +156,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
             }
             summaryPlaceholder="Please briefly describe your attempts to contact the client for participation in this report's preparation."
             hideSummaryLabel
+            disabled={isDisabled}
           />
           <DomainCard
             title={getDomainTitle("criminalHistory")}
@@ -162,6 +165,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updateCriminalHistorySummary(value)
             }
             cardRef={criminalHistoryRef}
+            disabled={isDisabled}
           >
             <DomainCardStyled.InfoBox>
               Default text provided below. You can customize this language as
@@ -206,6 +210,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updateCriminalHistorySummary(value)
             }
             cardRef={criminalHistoryRef}
+            disabled={isDisabled}
           >
             <DomainCardStyled.InfoBox>
               Default text provided below. You can customize this language as
@@ -229,17 +234,23 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updateEmploymentSummary(value)
             }
             cardRef={educationRef}
+            disabled={isDisabled}
           >
-            <EmploymentHistoryCard presenter={presenter.offenderAssessment} />
+            <EmploymentHistoryCard
+              presenter={presenter.offenderAssessment}
+              disabled={isDisabled}
+            />
             <EducationDropdown
               label="Highest Level of Education"
               value={levelOfEducation ?? null}
               onChange={(value) => presenter.updateLevelOfEducation(value)}
+              disabled={isDisabled}
             />
             <BooleanDropdown
               label="Employed at Time of Offense"
               value={employedAtOffense ?? null}
               onChange={(value) => presenter.updateEmployedAtOffense(value)}
+              disabled={isDisabled}
             />
           </DomainCard>
         )}
@@ -256,6 +267,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updateFamilyAndSocialSupportSummary(value)
             }
             cardRef={familyRef}
+            disabled={isDisabled}
           >
             <TextField
               label="Father"
@@ -263,6 +275,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               onChange={(value) => presenter.updateFatherName(value)}
               placeholder="Enter father's name"
               halfWidth
+              disabled={isDisabled}
             />
             <TextField
               label="Mother"
@@ -270,6 +283,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               onChange={(value) => presenter.updateMotherName(value)}
               placeholder="Enter mother's name"
               halfWidth
+              disabled={isDisabled}
             />
             <TextField
               label="Who Raised Offender"
@@ -277,6 +291,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               onChange={(value) => presenter.updateGuardianName(value)}
               placeholder="Enter who raised offender"
               halfWidth
+              disabled={isDisabled}
             />
           </DomainCard>
         )}
@@ -290,6 +305,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
             summaryValue={housingSummary ?? null}
             onSummaryChange={(value) => presenter.updateHousingSummary(value)}
             cardRef={neighborhoodRef}
+            disabled={isDisabled}
           />
         )}
 
@@ -304,8 +320,12 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updateDrugHistorySummary(value)
             }
             cardRef={substanceUseRef}
+            disabled={isDisabled}
           >
-            <DrugHistoryCard presenter={presenter.offenderAssessment} />
+            <DrugHistoryCard
+              presenter={presenter.offenderAssessment}
+              disabled={isDisabled}
+            />
           </DomainCard>
         )}
 
@@ -320,6 +340,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updatePeerAssociatesSummary(value)
             }
             cardRef={peerRef}
+            disabled={isDisabled}
           />
         )}
 
@@ -334,6 +355,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updateCriminalAttitudesSummary(value)
             }
             cardRef={attitudesRef}
+            disabled={isDisabled}
           />
         )}
 
@@ -345,6 +367,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               presenter.updateResponsivityAndBarriersSummary(value)
             }
             cardRef={responsivityRef}
+            disabled={isDisabled}
           />
         )}
       </SectionContainer>
