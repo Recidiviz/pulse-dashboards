@@ -55,7 +55,6 @@ interface SummaryOffenderAssessmentProps {
 export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps> =
   observer(function SummaryOffenderAssessment({ presenter }) {
     const sarData = presenter.SARData;
-    const declined = presenter.defendantDeclinedToParticipate;
     const {
       domainsWithoutSubstanceUse,
       groupedByRisk,
@@ -63,7 +62,7 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
     } = presenter.offenderAssessment;
     const { fatherName, motherName, guardianName } = sarData?.client ?? {};
 
-    if (declined) {
+    if (presenter.defendantDeclinedToParticipate) {
       return (
         <Styled.SectionCard>
           <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
@@ -80,6 +79,17 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
               </Styled.SectionBody>
             </Styled.DetailSubsection>
           </Styled.DetailContainer>
+        </Styled.SectionCard>
+      );
+    }
+
+    if (!presenter.hasOrasAssessment) {
+      return (
+        <Styled.SectionCard>
+          <Styled.SectionTitle>Offender Assessment</Styled.SectionTitle>
+          <Styled.SectionBody>
+            <SummaryOrMissing summary={undefined} />
+          </Styled.SectionBody>
         </Styled.SectionCard>
       );
     }

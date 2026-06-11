@@ -1744,6 +1744,8 @@ export class SARDetailsPresenter implements Hydratable {
       totalFilledCount === 1 &&
       formFilledCount === 0;
 
+    if (!this.SARData?.assessmentDate && !this.defendantDeclinedToParticipate)
+      return "incomplete";
     if (totalFilledCount === totalFields) return "complete";
     if (totalFilledCount > 0 && !onlyDefaultCriminalHistory)
       return "incomplete";
