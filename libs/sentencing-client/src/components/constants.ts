@@ -75,6 +75,14 @@ export const ProtectiveFactors: Record<
   Other: "Other",
 };
 
+export const CHARGE_FIELD_LABELS = {
+  prosecutingAttorney: "Prosecuting Attorney",
+  defenseAttorney: "Defense Attorney",
+  pleaAgreement: "Plea Agreement",
+  pleaDate: "Date of Plea / Finding of Guilt",
+  sentencingDate: "Date of Sentencing",
+} as const;
+
 export const LevelOfEducationLabels: Record<
   NonNullable<SAR["levelOfEducation"]>,
   string

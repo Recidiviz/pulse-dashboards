@@ -27,6 +27,7 @@ import {
 } from "../../utils/utils";
 import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
 import { SelectOption } from "../CaseDetails/Form/types";
+import { CHARGE_FIELD_LABELS } from "../constants";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
 import { EditableChargeField } from "./constants";
 import { FormField } from "./FormField";
@@ -134,19 +135,19 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
             {disabled ? (
               <>
                 <ReadOnlyField
-                  label="Prosecuting Attorney"
+                  label={CHARGE_FIELD_LABELS.prosecutingAttorney}
                   value={charge.prosecutingAttorney}
                 />
                 <ReadOnlyField
-                  label="Defense Attorney"
+                  label={CHARGE_FIELD_LABELS.defenseAttorney}
                   value={charge.defenseAttorney}
                 />
                 <ReadOnlyField
-                  label="Plea Agreement"
+                  label={CHARGE_FIELD_LABELS.pleaAgreement}
                   value={charge.pleaAgreement}
                 />
                 <ReadOnlyField
-                  label="Date of Plea"
+                  label={CHARGE_FIELD_LABELS.pleaDate}
                   value={
                     charge.pleaDate
                       ? new Date(charge.pleaDate).toLocaleDateString("en-US", {
@@ -156,7 +157,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
                   }
                 />
                 <ReadOnlyField
-                  label="Date of Sentencing"
+                  label={CHARGE_FIELD_LABELS.sentencingDate}
                   value={
                     charge.sentencingDate
                       ? new Date(charge.sentencingDate).toLocaleDateString(
@@ -170,7 +171,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
             ) : (
               <>
                 <FormField
-                  label="Prosecuting Attorney: "
+                  label={`${CHARGE_FIELD_LABELS.prosecutingAttorney}: `}
                   value={charge.prosecutingAttorney}
                   onChange={(value) =>
                     handleFieldChange("prosecutingAttorney", value)
@@ -181,7 +182,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
                   inline
                 />
                 <FormField
-                  label="Defense Attorney: "
+                  label={`${CHARGE_FIELD_LABELS.defenseAttorney}: `}
                   value={charge.defenseAttorney}
                   onChange={(value) =>
                     handleFieldChange("defenseAttorney", value)
@@ -194,7 +195,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
                 <FormFieldStyled.FieldContainer>
                   <FormFieldStyled.InlineRow>
                     <FormFieldStyled.Label>
-                      Plea Agreement:{" "}
+                      {CHARGE_FIELD_LABELS.pleaAgreement}:{" "}
                     </FormFieldStyled.Label>
                     <Dropdown
                       value={pleaOption}
@@ -210,7 +211,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
                   </FormFieldStyled.InlineRow>
                 </FormFieldStyled.FieldContainer>
                 <FormField
-                  label="Date of Plea: "
+                  label={`${CHARGE_FIELD_LABELS.pleaDate}: `}
                   value={
                     charge.pleaDate
                       ? new Date(charge.pleaDate).toISOString().split("T")[0]
@@ -223,7 +224,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
                   showValidation={false}
                 />
                 <FormField
-                  label="Date of Sentencing: "
+                  label={`${CHARGE_FIELD_LABELS.sentencingDate}: `}
                   value={
                     charge.sentencingDate
                       ? new Date(charge.sentencingDate)

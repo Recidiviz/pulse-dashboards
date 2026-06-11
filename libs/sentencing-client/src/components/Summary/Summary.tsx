@@ -25,6 +25,7 @@ import {
   formatJudgeAndDivision,
 } from "../../utils/utils";
 import DownloadIcon from "../assets/download-icon.svg?react";
+import { CHARGE_FIELD_LABELS } from "../constants";
 import { SARSection } from "../SARDetails/constants";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { ESignatureSection } from "./ESignatureSection";
@@ -71,33 +72,42 @@ const SummaryOffenseCard: React.FC<{
         <div>Judge/ Division: {judgeAndDivision || "—"}</div>
         {isComplete ? (
           <>
-            <div>Prosecuting Attorney: {charge.prosecutingAttorney || "—"}</div>
-            <div>Defense Attorney: {charge.defenseAttorney || "—"}</div>
-            <div>Plea Agreement: {charge.pleaAgreement || "—"}</div>
             <div>
-              Date of Plea/ Finding of Guilt:{" "}
+              {CHARGE_FIELD_LABELS.prosecutingAttorney}:{" "}
+              {charge.prosecutingAttorney || "—"}
+            </div>
+            <div>
+              {CHARGE_FIELD_LABELS.defenseAttorney}:{" "}
+              {charge.defenseAttorney || "—"}
+            </div>
+            <div>
+              {CHARGE_FIELD_LABELS.pleaAgreement}: {charge.pleaAgreement || "—"}
+            </div>
+            <div>
+              {CHARGE_FIELD_LABELS.pleaDate}:{" "}
               {formatDisplayDate(charge.pleaDate)}
             </div>
             <div>
-              Date of Sentencing: {formatDisplayDate(charge.sentencingDate)}
+              {CHARGE_FIELD_LABELS.sentencingDate}:{" "}
+              {formatDisplayDate(charge.sentencingDate)}
             </div>
           </>
         ) : (
           <>
             <FieldOrMissing
-              label="Prosecuting Attorney"
+              label={CHARGE_FIELD_LABELS.prosecutingAttorney}
               value={charge.prosecutingAttorney}
             />
             <FieldOrMissing
-              label="Defense Attorney"
+              label={CHARGE_FIELD_LABELS.defenseAttorney}
               value={charge.defenseAttorney}
             />
             <FieldOrMissing
-              label="Plea Agreement"
+              label={CHARGE_FIELD_LABELS.pleaAgreement}
               value={charge.pleaAgreement}
             />
             <Styled.InlineRow>
-              Date of Plea/ Finding of Guilt:{" "}
+              {CHARGE_FIELD_LABELS.pleaDate}:{" "}
               {charge.pleaDate ? (
                 formatDisplayDate(charge.pleaDate)
               ) : (
@@ -105,7 +115,7 @@ const SummaryOffenseCard: React.FC<{
               )}
             </Styled.InlineRow>
             <Styled.InlineRow>
-              Date of Sentencing:{" "}
+              {CHARGE_FIELD_LABELS.sentencingDate}:{" "}
               {charge.sentencingDate ? (
                 formatDisplayDate(charge.sentencingDate)
               ) : (

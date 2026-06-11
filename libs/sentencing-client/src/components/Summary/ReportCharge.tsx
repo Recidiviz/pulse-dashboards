@@ -23,6 +23,7 @@ import {
   formatInlineClassification,
   formatJudgeAndDivision,
 } from "../../utils/utils";
+import { CHARGE_FIELD_LABELS } from "../constants";
 import { FIELD_ROW_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
@@ -66,25 +67,29 @@ export const ReportCharge: React.FC<ReportChargeProps> = ({
               <Styled.Value>{judgeAndDivision || "—"}</Styled.Value>
             </Styled.RowFlexContainer>
             <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Defense Attorney:</Styled.Label>
+              <Styled.Label>
+                {CHARGE_FIELD_LABELS.defenseAttorney}:
+              </Styled.Label>
               <Styled.Value>{charge.defenseAttorney || "—"}</Styled.Value>
             </Styled.RowFlexContainer>
           </Styled.ReportChargeLeftColumn>
           <Styled.ReportChargeRightColumn gap={FIELD_ROW_GAP}>
             <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Prosecuting Attorney:</Styled.Label>
+              <Styled.Label>
+                {CHARGE_FIELD_LABELS.prosecutingAttorney}:
+              </Styled.Label>
               <Styled.Value>{charge.prosecutingAttorney || "—"}</Styled.Value>
             </Styled.RowFlexContainer>
             <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Plea Agreement:</Styled.Label>
+              <Styled.Label>{CHARGE_FIELD_LABELS.pleaAgreement}:</Styled.Label>
               <Styled.Value>{charge.pleaAgreement || "—"}</Styled.Value>
             </Styled.RowFlexContainer>
             <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Date of Plea:</Styled.Label>
+              <Styled.Label>{CHARGE_FIELD_LABELS.pleaDate}:</Styled.Label>
               <Styled.Value>{formatDisplayDate(charge.pleaDate)}</Styled.Value>
             </Styled.RowFlexContainer>
             <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Date of Sentencing:</Styled.Label>
+              <Styled.Label>{CHARGE_FIELD_LABELS.sentencingDate}:</Styled.Label>
               <Styled.Value>
                 {formatDisplayDate(charge.sentencingDate)}
               </Styled.Value>
