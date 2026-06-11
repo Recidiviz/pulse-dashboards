@@ -97,3 +97,10 @@ resource "google_storage_bucket_iam_member" "acl_viewer" {
   role   = "roles/storage.objectViewer"
   member = "serviceAccount:${google_service_account.default.email}"
 }
+
+# this name needs to match the name configured in recidiviz/metrics/export/export_config.py
+# in the recidiviz-data repo
+resource "google_pubsub_topic" "jii_export_success_topic" {
+  name    = "jii_tablet_export_success"
+  project = var.project_id
+}

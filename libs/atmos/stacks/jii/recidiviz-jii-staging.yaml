@@ -2,6 +2,7 @@
 settings:
   context:
     project_id: recidiviz-jii-staging
+    project_number: 937048170521
     product: jii
     location: us-central1
     secrets_filename: recidiviz-jii-staging.enc.yaml
@@ -22,17 +23,17 @@ components:
         sops_file: "sops/{{ .settings.context.secrets_filename }}"
         deletion_policy: DELETE
         # this is the firebase functions service account, other backends don't need this
-        accessors: ["serviceAccount:937048170521-compute@developer.gserviceaccount.com"]
+        accessors:
+          - "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+
     artifact_registry:
       vars:
         repository_id: jii
-    apps/jii: 
-      vars: 
+    apps/jii:
+      vars:
         artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
         artifact_registry_project_id: "{{ .settings.context.project_id }}"
         server_env_filename: .env.staging
         server_env_secrets_filename: env.staging.enc.yaml
         secrets_filename: "{{ .settings.context.secrets_filename }}"
         firebase_auth_project_id: recidiviz-dashboard-staging
-    
-

@@ -46,7 +46,6 @@ locals {
       name  = key
     }
   ])
-
 }
 
 module "database" {
@@ -139,4 +138,101 @@ module "migrate_db_job" {
 moved {
   from = module.migrate-db-job
   to   = module.migrate_db_job
+}
+
+module "gcs_bucket" {
+  source = "../../vendor/submodules/cloud-storage-bucket"
+
+  project_id = var.project_id
+  location   = var.location
+  prefix     = var.project_id
+  names      = [var.etl_bucket_name, var.archive_bucket_name]
+  versioning = {
+    "jii-etl-data" = true
+  }
+  storage_class = "STANDARD"
+  lifecycle_rules = [{
+    action = {
+      type = "Delete"
+    }
+    condition = {
+      num_newer_versions = 3
+    }
+  }]
+  set_admin_roles = true
+  bucket_admins = {
+    jii-etl-data : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+    jii-etl-data-archive : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+  }
+
+  set_viewer_roles = true
+  bucket_viewers = {
+    jii-etl-data : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+    jii-etl-data-archive : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+  }
+}
+
+
+# Configure a job that will import data from GCS to Postgres
+# We don't execute it on deploy - it will be run when the workflow is triggered
+module "import_job" {
+  source = "../../vendor/cloud-run-job-exec"
+
+  name       = var.import_job_name
+  image      = "${var.artifact_registry_repo}/${var.import_job_name}:${var.import_job_container_version}"
+  project_id = var.project_id
+  location   = var.location
+  env_vars = [
+    { name = "SENTRY_DSN", value = "https://324bfceba46756ff2b971747e423abc6@o432474.ingest.us.sentry.io/4508914785714176" },
+    { name = "SENTRY_PROJECT", value = var.import_job_name },
+    { name = "IMPORT_BUCKET_ID", value = module.gcs_bucket.names[var.etl_bucket_name] }
+  ]
+  cloud_run_deletion_protection = false
+  service_account_email         = google_service_account.default.email
+  exec                          = false
+  timeout                       = "3600s"
+  max_retries                   = 1
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+  }]
+
+  volume_mounts = [{
+    name       = "cloudsql"
+    mount_path = "/cloudsql"
+  }]
+}
+
+# Configure a Google Workflow that is executed when a pubsub notification to the GCS
+# bucket is triggered, which should happen on exports from BQ
+module "handle_jii_gcs_upload" {
+  source = "../../vendor/google-workflows-workflow"
+
+  project_id            = var.project_id
+  region                = var.location
+  service_account_email = google_service_account.default.email
+  workflow_name         = "handle-jii-upload-wf"
+  workflow_trigger = {
+    event_arc = {
+      name                  = "handle-jii-upload-wf"
+      service_account_email = google_service_account.default.email
+      pubsub_topic_id       = google_pubsub_topic.jii_export_success_topic.id
+      matching_criteria = [
+        {
+          attribute = "type"
+          value     = "google.cloud.pubsub.topic.v1.messagePublished"
+        }
+      ]
+    }
+  }
+  workflow_source = file("${path.module}/workflows/handle-jii-gcs-upload.workflows.yaml")
+  env_vars = {
+    PROJECT_ID        = var.project_id
+    JOB_NAME          = module.import_job.id
+    ARCHIVE_BUCKET_ID = module.gcs_bucket.names[var.archive_bucket_name]
+    ETL_BUCKET_ID     = module.gcs_bucket.names[var.etl_bucket_name]
+  }
 }

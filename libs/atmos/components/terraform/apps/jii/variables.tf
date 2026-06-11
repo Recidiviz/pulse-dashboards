@@ -74,6 +74,18 @@ variable "migrate_db_container_version" {
   default     = "latest"
 }
 
+variable "import_job_name" {
+  type        = string
+  description = "The name of the job for running import from BQ to Postgres. Also used for the name of the Docker image and the Sentry project for this job."
+  default     = "jii-data-import"
+}
+
+variable "import_job_container_version" {
+  type        = string
+  description = "The version tag of the image that will be used for the import job"
+  default     = "latest"
+}
+
 variable "artifact_registry_repo" {
   type        = string
   description = "Artifact Registry repository to use for JII"
@@ -108,4 +120,16 @@ variable "deploy_keyring_name" {
   type        = string
   description = "Name of keyring that stores deploy keys"
   default     = "deploy-keys"
+}
+
+variable "etl_bucket_name" {
+  type        = string
+  description = "The name of the GCS bucket used for the import from BQ to Postgres via GCS"
+  default     = "jii-etl-data"
+}
+
+variable "archive_bucket_name" {
+  type        = string
+  description = "The name of the GCS bucket used for archives of the data in the ETL bucket"
+  default     = "jii-etl-data-archive"
 }
