@@ -18,22 +18,21 @@
 import { Platform, TouchableOpacity, View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
-import HowItWorksDesktop from "~@meetings/app/shared/assets/images/how-it-works-desktop.svg";
-import HowItWorksMobile from "~@meetings/app/shared/assets/images/how-it-works-mobile.svg";
+import ScratchpadExplainerImage from "~@meetings/app/shared/assets/images/scratchpad-explainer.svg";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { OnboardingMobileStep, OnboardingWebStep } from "../config";
 import { useOnboardingStore } from "../model/store";
 
-export function HowItWorks() {
+export function ScratchpadExplainer() {
   const setNextWebStep = useOnboardingStore((state) => state.setWebStep);
   const setNextMobileStep = useOnboardingStore((state) => state.setMobileStep);
 
   const setNextStep = () => {
     if (Platform.OS === "web") {
-      setNextWebStep(OnboardingWebStep.ScratchpadExplainer);
+      setNextWebStep(OnboardingWebStep.ProTip1);
     } else {
-      setNextMobileStep(OnboardingMobileStep.ScratchpadExplainer);
+      setNextMobileStep(OnboardingMobileStep.ProTip1);
     }
   };
 
@@ -41,25 +40,24 @@ export function HowItWorks() {
     <View className="flex size-full flex-1 flex-col gap-5 md:flex-row-reverse">
       <View className="flex flex-1 items-center justify-center rounded-[20px] bg-secondary px-4">
         <WordmarkSvg className="absolute left-[36px] top-[30px] h-10 w-[116px] md:left-[30px]" />
-        <HowItWorksMobile className="size-full max-h-[240px] md:hidden" />
-        <HowItWorksDesktop className="hidden size-full md:flex" />
+        <ScratchpadExplainerImage className="size-full max-w-[271px]" />
       </View>
       <View className="flex flex-1 flex-col justify-center">
         <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
-          From conversation to case note.
+          Your notes, guaranteed.
         </Typography>
         <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
-          Just hit record during your client check-in. When you're done,
-          Recidiviz Meetings separates your voice from the client's and drafts
-          your required documentation instantly. You always have the final
-          review before saving.
+          The AI is smart, but you are the expert. Use the Scratchpad during
+          recording to jot down critical observations, nonverbal cues, or
+          details you're worried could get lost. Anything you type here is
+          guaranteed to be included in the final case note draft.
         </Typography>
         <TouchableOpacity
           className="mt-auto w-full rounded-full bg-brand  px-5 py-3 md:mt-0 md:w-fit"
           onPress={setNextStep}
         >
           <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Continue
+            Got it
           </Typography>
         </TouchableOpacity>
       </View>
