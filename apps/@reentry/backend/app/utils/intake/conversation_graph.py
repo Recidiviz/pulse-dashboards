@@ -13,6 +13,7 @@ from langchain_openai.chat_models.base import (
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 from langgraph.types import Command
+from langsmith import traceable
 from openai import ContentFilterFinishReasonError as OpenAIRefusalError
 
 from app.core.config import settings, tracer
@@ -63,6 +64,7 @@ from app.utils.llm_retry_config import INTAKE_ERRORS_TO_RETRY_ON
 from app.utils.slack import send_guardrail_alert
 
 
+@traceable(name="LLMAJ Safety Check", run_type="chain")
 async def run_llmaj_safety_check(
     model: ChatOpenAI,
     messages: list[AnyMessage],

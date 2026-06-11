@@ -962,7 +962,12 @@ class TestLLMAJ:
         )
 
         invoked_messages = mock_chain.ainvoke.call_args[0][0]
-        assert not any(isinstance(m, SystemMessage) for m in invoked_messages)
+        # The caseworker system prompt should be stripped; the LLMAJ safety prompt
+        # (prepended by run_llmaj_safety_check itself) is allowed.
+        assert not any(
+            isinstance(m, SystemMessage) and "GLOBAL_BEHAVIORAL_RULES" in m.content
+            for m in invoked_messages
+        )
         assert len([m for m in invoked_messages if isinstance(m, LCHumanMessage)]) == 1
 
     @pytest.mark.asyncio
