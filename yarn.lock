@@ -45928,6 +45928,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"object.hasown@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "object.hasown@npm:1.1.4"
+  dependencies:
+    define-properties: "npm:^1.2.1"
+    es-abstract: "npm:^1.23.2"
+    es-object-atoms: "npm:^1.0.0"
+  checksum: 10c0/f23187b08d874ef1aea060118c8259eb7f99f93c15a50771d710569534119062b90e087b92952b2d0fb1bb8914d61fb0b43c57fb06f622aaad538fe6868ab987
+  languageName: node
+  linkType: hard
+
 "object.values@npm:^1.1.6":
   version: 1.1.7
   resolution: "object.values@npm:1.1.7"
@@ -51496,6 +51507,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     numeral: "npm:^2.0.6"
     nx: "npm:21.4.0"
+    object.hasown: "npm:^1.1.4"
     openai: "npm:^6.10.0"
     openapi-fetch: "npm:^0.12.2"
     openapi-react-query: "npm:^0.2.0"

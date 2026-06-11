@@ -15,24 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as hasOwn from "object.hasown";
-
-import { initializeSentry } from "~@jii/data";
-import { isDemoMode } from "~client-env-utils";
-import { setDateshift } from "~datatypes";
-
-export function initApp() {
-  // note that this approach doesn't work in offline mode
-  // because the fixtures are imported before this side effect can run;
-  // see solution in FirestoreOfflineAPIClient
-  if (isDemoMode()) {
-    setDateshift(true);
-  }
-
-  initializeSentry();
-
-  // polyfill hasOwn, which our dependency pRetry relies on, for older browsers
-  if (!Object.hasOwn) {
-    hasOwn.shim();
-  }
+declare module "object.hasown" {
+  function shim(): void;
+  function getPolyfill(): (object: object, key: PropertyKey) => boolean;
+  export { getPolyfill, shim };
 }
