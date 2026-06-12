@@ -29,6 +29,7 @@ import {
   Platform,
   ScrollView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
@@ -222,109 +223,116 @@ const Header: React.FC<HeaderProps> = ({
                     </View>
                   </TouchableOpacity>
                   {profileDropdownOpen && (
-                    <View className="absolute right-0 top-16 rounded-[20px] bg-primary p-2 shadow-sm">
-                      <ScrollView contentContainerClassName="gap-1 cursor-pointer">
-                        <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl bg-brand-light-secondary p-3.5">
-                          <ImageBackground
-                            source={BgAvatarImage}
-                            className="size-12 items-center justify-center overflow-hidden rounded-full"
-                            imageClassName="!size-12"
-                          >
-                            <Typography className="text-2xl leading-6 text-on-brand">
-                              {name ? getInitials(name) : "SS"}
-                            </Typography>
-                          </ImageBackground>
-                          <View className="flex flex-col justify-between">
-                            <Typography className="text-base font-semibold leading-5 text-primary">
-                              {name ?? "Test User"}
-                            </Typography>
-                            <Typography className="text-base font-normal text-secondary">
-                              {email ?? "testuser@mail.com"}
-                            </Typography>
+                    <>
+                      <TouchableWithoutFeedback
+                        onPress={() => setProfileDropdownOpen(false)}
+                      >
+                        <View className="fixed inset-0 z-40" />
+                      </TouchableWithoutFeedback>
+                      <View className="absolute right-0 top-16 z-50 rounded-[20px] bg-primary p-2 shadow-sm">
+                        <ScrollView contentContainerClassName="gap-1 cursor-pointer">
+                          <View className="mb-1 flex min-w-[337px] cursor-default flex-row items-center gap-3 rounded-2xl bg-brand-light-secondary p-3.5">
+                            <ImageBackground
+                              source={BgAvatarImage}
+                              className="size-12 items-center justify-center overflow-hidden rounded-full"
+                              imageClassName="!size-12"
+                            >
+                              <Typography className="text-2xl leading-6 text-on-brand">
+                                {name ? getInitials(name) : "SS"}
+                              </Typography>
+                            </ImageBackground>
+                            <View className="flex flex-col justify-between">
+                              <Typography className="text-base font-semibold leading-5 text-primary">
+                                {name ?? "Test User"}
+                              </Typography>
+                              <Typography className="text-base font-normal text-secondary">
+                                {email ?? "testuser@mail.com"}
+                              </Typography>
+                            </View>
                           </View>
-                        </View>
-                        {canSelectStateCode && (
-                          <ProfileMenuItem
-                            link={{
-                              screen: "StateSelection",
-                              onPress: () => setProfileDropdownOpen(false),
-                            }}
-                            label="Profile"
-                            helperText={`Current state: ${currentStateName}`}
-                          />
-                        )}
-                        {hasSupervisionAssistantAccess && (
-                          <ProfileMenuItem
-                            pressable={{
-                              onPress: () =>
-                                handleDropdownMenuPress(() =>
-                                  window.open(
-                                    dashboardUrl,
-                                    "_blank",
-                                    "noopener,noreferrer",
+                          {canSelectStateCode && (
+                            <ProfileMenuItem
+                              link={{
+                                screen: "StateSelection",
+                                onPress: () => setProfileDropdownOpen(false),
+                              }}
+                              label="Profile"
+                              helperText={`Current state: ${currentStateName}`}
+                            />
+                          )}
+                          {hasSupervisionAssistantAccess && (
+                            <ProfileMenuItem
+                              pressable={{
+                                onPress: () =>
+                                  handleDropdownMenuPress(() =>
+                                    window.open(
+                                      dashboardUrl,
+                                      "_blank",
+                                      "noopener,noreferrer",
+                                    ),
                                   ),
-                                ),
-                            }}
-                            label="Go to Supervision Assistant"
-                            icon={
-                              <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
-                            }
-                          />
-                        )}
-                        {hasFacilitiesAssistantAccess && (
-                          <ProfileMenuItem
-                            pressable={{
-                              onPress: () =>
-                                handleDropdownMenuPress(() =>
-                                  window.open(
-                                    dashboardUrl,
-                                    "_blank",
-                                    "noopener,noreferrer",
+                              }}
+                              label="Go to Supervision Assistant"
+                              icon={
+                                <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
+                              }
+                            />
+                          )}
+                          {hasFacilitiesAssistantAccess && (
+                            <ProfileMenuItem
+                              pressable={{
+                                onPress: () =>
+                                  handleDropdownMenuPress(() =>
+                                    window.open(
+                                      dashboardUrl,
+                                      "_blank",
+                                      "noopener,noreferrer",
+                                    ),
                                   ),
-                                ),
-                            }}
-                            label="Go to Facilities Assistant"
-                            icon={
-                              <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
-                            }
-                          />
-                        )}
-                        {hasCasePlanningAssistantAccess && (
-                          <ProfileMenuItem
-                            pressable={{
-                              onPress: () =>
-                                handleDropdownMenuPress(() =>
-                                  window.open(
-                                    cpaUrl,
-                                    "_blank",
-                                    "noopener,noreferrer",
+                              }}
+                              label="Go to Facilities Assistant"
+                              icon={
+                                <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
+                              }
+                            />
+                          )}
+                          {hasCasePlanningAssistantAccess && (
+                            <ProfileMenuItem
+                              pressable={{
+                                onPress: () =>
+                                  handleDropdownMenuPress(() =>
+                                    window.open(
+                                      cpaUrl,
+                                      "_blank",
+                                      "noopener,noreferrer",
+                                    ),
                                   ),
-                                ),
-                            }}
-                            label="Go to Case Planning Assistant"
-                            icon={
-                              <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
-                            }
-                          />
-                        )}
-                        {isRecidivizUser && (
+                              }}
+                              label="Go to Case Planning Assistant"
+                              icon={
+                                <ExternalLinkIcon className="ml-auto size-4 stroke-[3px] text-secondary" />
+                              }
+                            />
+                          )}
+                          {isRecidivizUser && (
+                            <ProfileMenuItem
+                              pressable={{
+                                onPress: () => {
+                                  setShowImpersonationModal(true);
+                                },
+                              }}
+                              label="Impersonate User"
+                            />
+                          )}
                           <ProfileMenuItem
                             pressable={{
-                              onPress: () => {
-                                setShowImpersonationModal(true);
-                              },
+                              onPress: () => handleDropdownMenuPress(onLogout),
                             }}
-                            label="Impersonate User"
+                            label="Log Out"
                           />
-                        )}
-                        <ProfileMenuItem
-                          pressable={{
-                            onPress: () => handleDropdownMenuPress(onLogout),
-                          }}
-                          label="Log Out"
-                        />
-                      </ScrollView>
-                    </View>
+                        </ScrollView>
+                      </View>
+                    </>
                   )}
                 </View>
               </View>

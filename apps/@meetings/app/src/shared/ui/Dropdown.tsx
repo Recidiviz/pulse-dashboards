@@ -29,6 +29,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
@@ -183,53 +184,58 @@ const Dropdown = ({
           </View>
         </Pressable>
         {open && Platform.OS === "web" && (
-          <View
-            className={clsx(
-              "absolute right-0 w-fit flex-1 rounded-lg border border-subtle bg-primary p-1",
-              variant === "text" && "top-7 w-fit",
-              variant === "outline" && "top-[120%] max-h-[150px] w-full",
-            )}
-            style={{
-              shadowColor: theme["backgroundColor"]["brand-light"],
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.1,
-              shadowRadius: 10,
-              elevation: 5,
-            }}
-          >
-            <ScrollView>
-              {options.map((opt) => (
-                <TouchableOpacity
-                  key={opt}
-                  className="group rounded p-2.5 hover:bg-hover"
-                  onPress={() => handleDropdownSelect(opt)}
-                >
-                  <Typography className="whitespace-nowrap text-sm font-medium text-primary group-hover:text-brand">
-                    {opt}
-                  </Typography>
-                </TouchableOpacity>
-              ))}
-              {hasFreeTextOption && (
-                <View className="flex flex-col gap-2 px-2">
-                  <FreeTextInput
-                    value={freeTextValue}
-                    onChange={setFreeTextValue}
-                    placeholder="Type your variant"
-                  />
-                  {freeTextValue.trim().length > 0 && (
-                    <TouchableOpacity
-                      onPress={handleFreeTextSelect}
-                      className="w-fit rounded-full bg-brand px-3 py-2"
-                    >
-                      <Typography className="text-sm font-semibold leading-[16px] text-on-brand">
-                        Continue
-                      </Typography>
-                    </TouchableOpacity>
-                  )}
-                </View>
+          <>
+            <TouchableWithoutFeedback onPress={() => setOpen(false)}>
+              <View className="fixed inset-0 z-40" />
+            </TouchableWithoutFeedback>
+            <View
+              className={clsx(
+                "absolute right-0 z-50 w-fit flex-1 rounded-lg border border-subtle bg-primary p-1",
+                variant === "text" && "top-7 w-fit",
+                variant === "outline" && "top-[120%] max-h-[150px] w-full",
               )}
-            </ScrollView>
-          </View>
+              style={{
+                shadowColor: theme["backgroundColor"]["brand-light"],
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.1,
+                shadowRadius: 10,
+                elevation: 5,
+              }}
+            >
+              <ScrollView>
+                {options.map((opt) => (
+                  <TouchableOpacity
+                    key={opt}
+                    className="group rounded p-2.5 hover:bg-hover"
+                    onPress={() => handleDropdownSelect(opt)}
+                  >
+                    <Typography className="whitespace-nowrap text-sm font-medium text-primary group-hover:text-brand">
+                      {opt}
+                    </Typography>
+                  </TouchableOpacity>
+                ))}
+                {hasFreeTextOption && (
+                  <View className="flex flex-col gap-2 px-2">
+                    <FreeTextInput
+                      value={freeTextValue}
+                      onChange={setFreeTextValue}
+                      placeholder="Type your variant"
+                    />
+                    {freeTextValue.trim().length > 0 && (
+                      <TouchableOpacity
+                        onPress={handleFreeTextSelect}
+                        className="w-fit rounded-full bg-brand px-3 py-2"
+                      >
+                        <Typography className="text-sm font-semibold leading-[16px] text-on-brand">
+                          Continue
+                        </Typography>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
+              </ScrollView>
+            </View>
+          </>
         )}
         {Platform.OS !== "web" && (
           <BottomSheetModal
