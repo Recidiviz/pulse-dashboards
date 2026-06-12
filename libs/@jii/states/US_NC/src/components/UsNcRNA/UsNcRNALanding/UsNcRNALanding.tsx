@@ -17,7 +17,7 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { Card, GoButton, usePageTitle } from "~@jii/common-ui";
+import { Card, GoButton, SlateCopy, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsNcTranslations } from "~@jii/translation";
 
@@ -61,7 +61,9 @@ export function UsNcRNALanding() {
   return (
     <Card>
       <RNAHeading>{heading}</RNAHeading>
-      <RNADescription>{description}</RNADescription>
+      <RNADescription>
+        <SlateCopy>{description}</SlateCopy>
+      </RNADescription>
       <GoButton
         to={State.Resident.UsNcRNA.ConfirmIdentity.buildPath(routeParams)}
       >
