@@ -80,8 +80,7 @@ components:
         # PUBLISHED state. The publisher uses `-rc.X` suffixes for RCs which
         # 404 on CREATE (even though they install via the firebase CLI). With
         # no pin, the API picks the latest PUBLISHED version, which currently
-        # lands us on the v2.x line. Revisit when 3.x stabilizes. Mirror the
-        # staging stack.
+        # lands us on the v2.x line. Revisit when 3.x stabilizes.
         extension_ref: typesense/firestore-typesense-search
 
         # Cloud Functions v2 region for the extension's triggers. Should sit close
@@ -102,3 +101,27 @@ components:
             fields:
               - preferredName
               - stateCode
+
+    # Custom Cloud Function that bulk-imports the once-daily ETL'd collections
+    # into Typesense. Sits alongside the extension above — the extension handles
+    # realtime indexOnWrite for collections in its FIRESTORE_COLLECTION_PATHS,
+    # this function handles batch sync for collections that aren't in that list.
+    # See the component README for the why/how:
+    # libs/atmos/components/terraform/apps/typesense-backfill/README.md
+    apps/typesense-backfill:
+      vars:
+        # Match the Firestore's region so traffic stays local. nam5 is a US
+        # multi-region — us-east1 is the closest single Cloud Functions region
+        # and mirrors staging.
+        region: us-east1
+
+        firestore_database: (default)
+
+        typesense_host: typesense.recidiviz.org
+
+        # Same source-of-truth as the firestore-typesense-search component
+        # above — both consume the schema export. Once realtime-sync vs
+        # batch-sync collections need to diverge per env, switch the consumer
+        # that diverges to a static list (and document why) rather than
+        # filtering the !exec output here.
+        collections: !exec yarn tsx ../../libs/typesense/src/export-collections.ts

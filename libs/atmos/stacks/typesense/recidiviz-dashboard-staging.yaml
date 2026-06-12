@@ -103,3 +103,25 @@ components:
             fields:
               - preferredName
               - stateCode
+
+    # Custom Cloud Function that bulk-imports the once-daily ETL'd collections
+    # into Typesense. Sits alongside the extension above — the extension handles
+    # realtime indexOnWrite for collections in its FIRESTORE_COLLECTION_PATHS,
+    # this function handles batch sync for collections that aren't in that list.
+    # See the component README for the why/how:
+    # libs/atmos/components/terraform/apps/typesense-backfill/README.md
+    apps/typesense-backfill:
+      vars:
+        # Match the Firestore's region so traffic stays local.
+        region: us-east1
+
+        firestore_database: (default)
+
+        typesense_host: typesense-staging.recidiviz.org
+
+        # Same source-of-truth as the firestore-typesense-search component
+        # above — both consume the schema export. Once realtime-sync vs
+        # batch-sync collections need to diverge per env, switch the consumer
+        # that diverges to a static list (and document why) rather than
+        # filtering the !exec output here.
+        collections: !exec yarn tsx ../../libs/typesense/src/export-collections.ts
