@@ -22,7 +22,7 @@ import { ParsedRecord } from "~datatypes";
 import { nullishAsUndefined } from "../../../../utils/zod";
 import { workflowsStaffRecordBaseSchema } from "../../staffWorkflowsRecordBaseSchema";
 
-const addressSchema = nullishAsUndefined(
+export const addressSchema = nullishAsUndefined(
   z.object({
     line1: z.string(),
     line2: nullishAsUndefined(z.string()),
@@ -63,3 +63,5 @@ export const supervisionStaffRecordSchema =
 export type SupervisionStaffRecord = ParsedRecord<
   typeof supervisionStaffRecordSchema
 >;
+
+export type OfficeAddress = NonNullable<z.output<typeof addressSchema>>;

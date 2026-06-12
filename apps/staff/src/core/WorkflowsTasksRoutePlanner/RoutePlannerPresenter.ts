@@ -15,15 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import dedent from "dedent";
 import { makeAutoObservable } from "mobx";
+
+import { OfficeAddress } from "~datatypes";
 
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import {
   RoutePlannerRouteEvent,
   RoutePlannerRouteMetadata,
 } from "../../RootStore/AnalyticsStore/AnalyticsStore";
-import { formatTexasAddress, formatWorkflowsDate } from "../../utils";
+import { TenantId } from "../../RootStore/types";
+import { formatStateAddress, formatWorkflowsDate } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { Officer } from "../../WorkflowsStore/Officer";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
@@ -42,14 +46,22 @@ type MapDirectionsRequestProps = {
   emailBody: string;
 };
 
-function formatTexasDpoAddress(address: {
-  line1: string;
-  line2?: string | undefined;
-  city: string;
-  zip: string;
-}): string {
-  return formatTexasAddress(
-    `${address.line1}${address.line2 ? " " + address.line2 : ""}, ${address.city}, TX ${address.zip}`,
+const VALID_STATES = ["US_TX", "US_ID"] as const;
+
+type RoutePlannerStateCode = (typeof VALID_STATES)[number];
+
+function isValidState(value: TenantId): value is RoutePlannerStateCode {
+  return VALID_STATES.includes(value as RoutePlannerStateCode);
+}
+
+function formatOfficeAddress(
+  address: OfficeAddress,
+  stateCode: RoutePlannerStateCode,
+): string {
+  const state = stateCode.split("_")[1].toUpperCase();
+
+  return formatStateAddress(
+    `${address.line1}${address.line2 ? " " + address.line2 : ""}, ${address.city}, ${state} ${address.zip}`,
   );
 }
 
@@ -64,11 +76,22 @@ export class RoutePlannerPresenter {
   private _userPickedStartingAddress: string | undefined = undefined;
   private _userPickedEndingAddress: string | undefined = undefined;
   private _isEndingAddressMatchingStart = false;
+  private stateCode: RoutePlannerStateCode;
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
     this.analyticsStore = workflowsStore.rootStore.analyticsStore;
 
+    if (
+      workflowsStore.rootStore.currentTenantId &&
+      isValidState(workflowsStore.rootStore.currentTenantId)
+    ) {
+      this.stateCode = workflowsStore.rootStore.currentTenantId;
+    } else {
+      throw new Error(
+        `${workflowsStore.rootStore.currentTenantId} is not a valid state for the Route Planner`,
+      );
+    }
     makeAutoObservable(this);
   }
 
@@ -193,7 +216,7 @@ export class RoutePlannerPresenter {
     // Pick the first valid address from the list
     const formattedAddresses = addresses
       .filter((address) => !!address)
-      .map((address) => formatTexasDpoAddress(address));
+      .map((address) => formatOfficeAddress(address, this.stateCode));
 
     if (formattedAddresses.length !== 0) {
       return formattedAddresses[0];
@@ -204,16 +227,28 @@ export class RoutePlannerPresenter {
    * Return the center in meters of the circular region to limit address predictions toward
    */
   get locationBias(): { lat: number; lng: number } {
-    // The center of a circle encompassing all of Texas
-    return { lat: 31.2, lng: -99.9 };
+    switch (this.stateCode) {
+      case "US_TX":
+        return { lat: 31.2, lng: -99.9 };
+      case "US_ID":
+        return { lat: 45.3, lng: -114.2 };
+      default:
+        return assertNever(this.stateCode);
+    }
   }
 
   /**
    * Return the radius in meters of the circular region to limit address predictions toward
    */
-  get radius(): number | undefined {
-    // The radius of a circle encompassing all of Texas
-    return 660000;
+  get radius(): number {
+    switch (this.stateCode) {
+      case "US_TX":
+        return 660000;
+      case "US_ID":
+        return 455302;
+      default:
+        return assertNever(this.stateCode);
+    }
   }
 
   /**

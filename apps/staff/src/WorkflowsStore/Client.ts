@@ -47,7 +47,7 @@ import {
 import type { RootStore } from "../RootStore";
 import { TENANT_CONFIGS } from "../tenants";
 import {
-  formatTexasAddress,
+  formatStateAddress,
   humanReadableTitleCase,
 } from "../utils/formatStrings";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
@@ -308,9 +308,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   get formattedAddress(): string | undefined {
     if (!this.address) return;
 
-    if (this.stateCode !== "US_TX") return this.address;
+    if (this.stateCode !== "US_TX" && this.stateCode !== "US_ID")
+      return this.address;
 
-    return formatTexasAddress(this.address);
+    return formatStateAddress(this.address);
   }
 
   // The user-generated data about this person's address, from clientUpdatesV2 in Firestore

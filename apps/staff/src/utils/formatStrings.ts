@@ -466,11 +466,12 @@ const capitalizeName = (name: string) =>
 /**
  * Return a formatted version of the provided address for frontend display.
  *
- * Assumes the param is an address from Texas, which arrives in this format:
+ * Assumes the param is an address from Texas or Idaho, which arrives in this format:
  * street city state ZIP
  */
-function formatTexasAddress(address: string): string {
+function formatStateAddress(address: string): string {
   const capitalizationExceptions = [
+    "ID", // Idaho
     "TX", // Texas
     "FM", // Farm-to-market road
     "PR", // Private road
@@ -483,6 +484,8 @@ function formatTexasAddress(address: string): string {
 
   return (
     address
+      .toUpperCase()
+
       // Replace any pipes since they are Google Maps URL special characters
       .replace("|", ", ")
 
@@ -543,7 +546,7 @@ export {
   formatNameLastFirst,
   formatOfficerLabel,
   formatPercent,
-  formatTexasAddress,
+  formatStateAddress,
   formatWorkflowsDate,
   formatWorkflowsDateString,
   formatWorkflowsDateWithoutYear,
