@@ -66,6 +66,7 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
+        "offline": {},
         "staging": {},
         "production": {}
       }
@@ -77,6 +78,7 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
+        "offline": {},
         "staging": {},
         "production": {}
       }
@@ -88,6 +90,7 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
+        "offline": {},
         "staging": {},
         "production": {}
       }
@@ -99,6 +102,7 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
+        "offline": {},
         "staging": {},
         "production": {}
       }
@@ -110,6 +114,7 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
+        "offline": {},
         "staging": {},
         "production": {}
       }
