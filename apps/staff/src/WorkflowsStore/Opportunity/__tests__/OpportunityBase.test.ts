@@ -33,6 +33,7 @@ import {
   OfficerDenialRequest,
   OfficerRequest,
   OpportunityUpdate,
+  SupervisorResponse,
 } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
@@ -1529,6 +1530,9 @@ describe("setOfficerAction", () => {
     vi.spyOn(root.userStore, "userFullName", "get").mockReturnValue(
       "Test Officer",
     );
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      "test-external-id",
+    );
   });
   test("sets approval action", async () => {
     await opp.setOfficerAction({ type: "APPROVAL" });
@@ -1536,12 +1540,13 @@ describe("setOfficerAction", () => {
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
+      updateById: "test-external-id",
       isStale: false,
       type: "APPROVAL",
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction]);
+    ).toHaveBeenCalledWith(opp, [expectedAction], undefined);
   });
   test("sets indefinite snooze denial action", async () => {
     const testAction = {
@@ -1554,12 +1559,13 @@ describe("setOfficerAction", () => {
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
+      updateById: "test-external-id",
       isStale: false,
       ...testAction,
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction]);
+    ).toHaveBeenCalledWith(opp, [expectedAction], undefined);
   });
 
   test("sets denial action with action plan", async () => {
@@ -1574,12 +1580,13 @@ describe("setOfficerAction", () => {
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
+      updateById: "test-external-id",
       isStale: false,
       ...testAction,
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction]);
+    ).toHaveBeenCalledWith(opp, [expectedAction], undefined);
   });
 
   test("Appends action to end of current actionHistory", async () => {
@@ -1604,12 +1611,32 @@ describe("setOfficerAction", () => {
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
+      updateById: "test-external-id",
       isStale: false,
       ...testAction,
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [existingAction, expectedAction]);
+    ).toHaveBeenCalledWith(opp, [existingAction, expectedAction], undefined);
+  });
+
+  test("passes currentReviewerId when APPROVAL action has a reviewerId", async () => {
+    const testAction = {
+      type: "APPROVAL" as const,
+      reviewerId: "reviewer-123",
+    };
+    await opp.setOfficerAction(testAction);
+
+    const expectedAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "Test Officer",
+      updateById: "test-external-id",
+      isStale: false,
+      ...testAction,
+    };
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [expectedAction], "reviewer-123");
   });
 });
 
@@ -1619,6 +1646,9 @@ describe("setSupervisorResponse", () => {
     timekeeper.freeze(new Date(2025, 1, 15));
     vi.spyOn(root.userStore, "userFullName", "get").mockReturnValue(
       "Test Supervisor",
+    );
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      "test-external-id",
     );
   });
 
@@ -1654,13 +1684,14 @@ describe("setSupervisorResponse", () => {
       supervisorResponse: {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
+        updateById: "test-external-id",
         type: "APPROVAL",
       },
     };
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
   });
 
   test("denial of snooze request", async () => {
@@ -1684,13 +1715,14 @@ describe("setSupervisorResponse", () => {
       supervisorResponse: {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
+        updateById: "test-external-id",
         type: "DENIAL",
       },
     };
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
   });
 
   test("approval of grant request", async () => {
@@ -1712,13 +1744,14 @@ describe("setSupervisorResponse", () => {
       supervisorResponse: {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
+        updateById: "test-external-id",
         type: "APPROVAL",
       },
     };
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
   });
 
   test("denial of grant request", async () => {
@@ -1740,13 +1773,51 @@ describe("setSupervisorResponse", () => {
       supervisorResponse: {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
+        updateById: "test-external-id",
         type: "DENIAL",
       },
     };
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
+  });
+
+  test("passes currentReviewerId when REVISION response has a reviewerId", async () => {
+    const testAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "officer@email.gov",
+      isStale: false,
+      type: "APPROVAL",
+    };
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
+      testAction,
+      testAction,
+    ] as OfficerRequest[]);
+
+    await opp.setSupervisorResponse({
+      type: "REVISION",
+      reviewerId: "reviewer-123",
+    } as Omit<SupervisorResponse, "date" | "by">);
+
+    const expectedUpdatedAction = {
+      ...testAction,
+      supervisorResponse: {
+        date: Timestamp.fromDate(new Date()),
+        by: "Test Supervisor",
+        updateById: "test-external-id",
+        type: "REVISION",
+        reviewerId: "reviewer-123",
+      },
+    };
+
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(
+      opp,
+      [testAction, expectedUpdatedAction],
+      "reviewer-123",
+    );
   });
 });
 

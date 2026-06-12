@@ -20,15 +20,14 @@ import { DocumentData } from "@google-cloud/firestore";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm/UsTxAnnualReportStatusForm";
-import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsTxAnnualReportStatusV2DraftData,
   UsTxAnnualReportStatusV2ReferralRecord,
   usTxAnnualReportStatusV2Schema,
 } from "../UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2OpportunityReferralRecord";
+import { UsTxArsErsV2OpportunityBase } from "../UsTxArsErsV2OpportunityBase";
 
-export class UsTxAnnualReportStatusV2Opportunity extends OpportunityBase<
-  Client,
+export class UsTxAnnualReportStatusV2Opportunity extends UsTxArsErsV2OpportunityBase<
   UsTxAnnualReportStatusV2ReferralRecord,
   OpportunityUpdateWithForm<UsTxAnnualReportStatusV2DraftData>
 > {

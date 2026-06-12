@@ -453,7 +453,7 @@ export class OpportunityBase<
       case this.isSubmitted:
         return "SUBMITTED";
 
-      case this.isInRevisionsRequests:
+      case this.isInRevisionsRequested:
         return "REVISIONS_REQUESTED";
 
       case this.isGrantApproved:
@@ -918,7 +918,7 @@ export class OpportunityBase<
    *
    * Only relevant for Iowa at this time.
    */
-  get isInRevisionsRequests(): boolean {
+  get isInRevisionsRequested(): boolean {
     return (
       !!this.latestAction &&
       !this.latestAction.isStale &&
@@ -1156,9 +1156,16 @@ export class OpportunityBase<
     const officerAction = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
+      updateById: this.userId,
       isStale: false,
       ...officerActionParams,
     };
+
+    const currentReviewerId =
+      officerActionParams.type === "APPROVAL"
+        ? officerActionParams.reviewerId
+        : undefined;
+
     const updatedActionHistory = (this.actionHistory ?? []).concat(
       officerAction,
     );
@@ -1177,6 +1184,7 @@ export class OpportunityBase<
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
       updatedActionHistory,
+      currentReviewerId,
     );
 
     this.rootStore.analyticsStore.trackOpportunityApprovalActions({
@@ -1245,7 +1253,7 @@ export class OpportunityBase<
   }
 
   /**
-   * Set the supervisor's `DENIAL` or `APPROVAL` of the latest officer action.
+   * Set the supervisor's `DENIAL`, `APPROVAL`, or `REVISION` of the latest officer request.
    */
   async setSupervisorResponse(
     supervisorResponseParams: Omit<SupervisorResponse, "date" | "by">,
@@ -1253,6 +1261,7 @@ export class OpportunityBase<
     const supervisorResponse = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
+      updateById: this.userId,
       ...supervisorResponseParams,
     } as SupervisorResponse;
 
@@ -1282,9 +1291,15 @@ export class OpportunityBase<
       .slice(0, -1)
       .concat(updatedOfficerAction);
 
+    const currentReviewerId =
+      supervisorResponse.type === "REVISION"
+        ? supervisorResponse.reviewerId
+        : undefined;
+
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
       updatedActionHistory,
+      currentReviewerId,
     );
 
     this.rootStore.analyticsStore.trackOpportunityApprovalActions({
@@ -1301,6 +1316,10 @@ export class OpportunityBase<
   get userName(): string {
     // We'll fall back to the user's email
     return this.rootStore.userStore.userFullName ?? this.currentUserEmail;
+  }
+
+  get userId(): string | undefined {
+    return this.rootStore.userStore.externalId;
   }
 
   get denialViewPrompt(): string {

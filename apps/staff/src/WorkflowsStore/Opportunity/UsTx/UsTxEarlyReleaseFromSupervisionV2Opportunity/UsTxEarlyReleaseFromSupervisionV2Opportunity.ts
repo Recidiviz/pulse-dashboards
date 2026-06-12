@@ -20,15 +20,14 @@ import { DocumentData } from "@google-cloud/firestore";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm/UsTxEarlyReleaseFromSupervisionForm";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsTxArsErsV2OpportunityBase } from "../UsTxArsErsV2OpportunityBase";
 import {
   UsTxEarlyReleaseFromSupervisionV2DraftData,
   UsTxEarlyReleaseFromSupervisionV2ReferralRecord,
   usTxEarlyReleaseFromSupervisionV2Schema,
 } from "../UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
 
-export class UsTxEarlyReleaseFromSupervisionV2Opportunity extends OpportunityBase<
-  Client,
+export class UsTxEarlyReleaseFromSupervisionV2Opportunity extends UsTxArsErsV2OpportunityBase<
   UsTxEarlyReleaseFromSupervisionV2ReferralRecord,
   OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionV2DraftData>
 > {

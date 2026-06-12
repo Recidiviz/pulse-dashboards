@@ -539,9 +539,11 @@ export default class FirestoreStore {
   async updateOpportunityActionHistory(
     opportunity: Opportunity,
     actionHistory: OfficerRequest[],
+    currentReviewerId?: string,
   ): Promise<void> {
     const update = {
       actionHistory,
+      currentReviewerId: currentReviewerId ?? deleteField(),
     };
     return this.updateOpportunity(opportunity, update);
   }

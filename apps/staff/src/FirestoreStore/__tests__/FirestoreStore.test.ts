@@ -734,6 +734,7 @@ describe("FirestoreStore", () => {
               isStale: false,
             },
           ],
+          currentReviewerId: "mock-delete-fn",
         },
         {
           merge: true,
