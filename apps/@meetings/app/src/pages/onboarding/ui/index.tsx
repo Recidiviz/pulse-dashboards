@@ -23,6 +23,10 @@ import Modal from "~@meetings/app/shared/ui/Modal";
 import { OnboardingMobileStep, OnboardingWebStep } from "../config";
 import { useOnboardingStore } from "../model/store";
 import { HowItWorks } from "./HowItWorks";
+import { ProTip1 } from "./ProTip1";
+import { ProTip2 } from "./ProTip2";
+import { ProTip3 } from "./ProTip3";
+import { ProTip4 } from "./ProTip4";
 import { ScratchpadExplainer } from "./ScratchpadExplainer";
 import { Welcome } from "./Welcome";
 
@@ -39,6 +43,10 @@ export function OnboardingScreen() {
         {webStep === OnboardingWebStep.ScratchpadExplainer && (
           <ScratchpadExplainer />
         )}
+        {webStep === OnboardingWebStep.ProTip1 && <ProTip1 />}
+        {webStep === OnboardingWebStep.ProTip2 && <ProTip2 />}
+        {webStep === OnboardingWebStep.ProTip3 && <ProTip3 />}
+        {webStep === OnboardingWebStep.ProTip4 && <ProTip4 />}
       </Modal>
     );
   }
@@ -53,6 +61,10 @@ export function OnboardingScreen() {
       {mobileStep === OnboardingMobileStep.ScratchpadExplainer && (
         <ScratchpadExplainer />
       )}
+      {mobileStep === OnboardingMobileStep.ProTip1 && <ProTip1 />}
+      {mobileStep === OnboardingMobileStep.ProTip2 && <ProTip2 />}
+      {mobileStep === OnboardingMobileStep.ProTip3 && <ProTip3 />}
+      {mobileStep === OnboardingMobileStep.ProTip4 && <ProTip4 />}
     </View>
   );
 }

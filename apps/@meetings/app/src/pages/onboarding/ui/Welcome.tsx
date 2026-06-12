@@ -22,6 +22,7 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { OnboardingMobileStep, OnboardingWebStep } from "../config";
 import { useOnboardingStore } from "../model/store";
+import { DescriptionContainer } from "./DescriptionContainer";
 
 export function Welcome() {
   const setNextWebStep = useOnboardingStore((state) => state.setWebStep);
@@ -47,12 +48,14 @@ export function Welcome() {
         <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
           Less time typing, more time working on what matters.
         </Typography>
-        <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
-          We know managing a heavy caseload means hours of paperwork. Recidiviz
-          Meetings acts as your secure, AI-powered assistant. Simply record your
-          check-ins, and we'll automatically produce your first draft case
-          notes, action items, and status updates.
-        </Typography>
+        <DescriptionContainer>
+          <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
+            We know managing a heavy caseload means hours of paperwork.
+            Recidiviz Meetings acts as your secure, AI-powered assistant. Simply
+            record your check-ins, and we'll automatically produce your first
+            draft case notes, action items, and status updates.
+          </Typography>
+        </DescriptionContainer>
         <TouchableOpacity
           className="mt-auto w-full rounded-full bg-brand  px-5 py-3 md:mt-0 md:w-fit"
           onPress={setNextStep}

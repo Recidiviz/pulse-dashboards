@@ -15,48 +15,68 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Platform, TouchableOpacity, View } from "react-native";
+import { Image, Platform, TouchableOpacity, View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
+import { useIsMobileWidth } from "~@meetings/app/shared/lib/useIsMobileWidth";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import HowItWorksDesktop from "../assets/how-it-works-desktop.svg";
-import HowItWorksMobile from "../assets/how-it-works-mobile.svg";
+import ProTip2Image from "../assets/pro-tip-2.png";
 import { OnboardingMobileStep, OnboardingWebStep } from "../config";
 import { useOnboardingStore } from "../model/store";
 import { DescriptionContainer } from "./DescriptionContainer";
 
-export function HowItWorks() {
+export function ProTip2() {
+  const isMobileWidth = useIsMobileWidth();
   const setNextWebStep = useOnboardingStore((state) => state.setWebStep);
   const setNextMobileStep = useOnboardingStore((state) => state.setMobileStep);
 
   const setNextStep = () => {
     if (Platform.OS === "web") {
-      setNextWebStep(OnboardingWebStep.ScratchpadExplainer);
+      setNextWebStep(OnboardingWebStep.ProTip3);
     } else {
-      setNextMobileStep(OnboardingMobileStep.ScratchpadExplainer);
+      setNextMobileStep(OnboardingMobileStep.ProTip3);
     }
   };
 
   return (
     <View className="flex size-full flex-1 flex-col gap-5 md:flex-row-reverse">
-      <View className="flex flex-1 items-center justify-center rounded-[20px] bg-secondary">
+      <View className="flex flex-1 items-center justify-center rounded-[20px] bg-secondary ">
         <WordmarkSvg className="absolute left-[36px] top-[30px] h-8 w-[116px] md:left-[30px] md:h-10" />
-        <View>
-          <HowItWorksMobile className="size-full max-h-[240px] md:hidden" />
-          <HowItWorksDesktop className="hidden size-full md:flex" />
+        <View className="flex w-full flex-1 items-center justify-center overflow-hidden rounded-[20px] p-9 md:p-5">
+          <Image
+            source={ProTip2Image}
+            resizeMode="contain"
+            style={
+              isMobileWidth
+                ? {
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    aspectRatio: 290 / 200,
+                  }
+                : {
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    aspectRatio: 430 / 297,
+                  }
+            }
+            className="rounded-[20px]"
+          />
         </View>
       </View>
       <View className="flex flex-1 flex-col justify-center">
+        <Typography className="mb-3 text-base font-medium">
+          PRO Tip 2
+        </Typography>
         <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
-          From conversation to case note.
+          The "Mirror Technique".
         </Typography>
         <DescriptionContainer>
           <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
-            Just hit record during your client check-in. When you're done,
-            Recidiviz Meetings separates your voice from the client's and drafts
-            your required documentation instantly. You always have the final
-            review before saving.
+            Sometimes clients are quiet or vague. Instead of constantly asking
+            them to speak up, simply "mirror" or repeat back their important
+            answers. This is great for active listening, and it guarantees the
+            AI catches the exact facts.
           </Typography>
         </DescriptionContainer>
         <TouchableOpacity
@@ -64,7 +84,7 @@ export function HowItWorks() {
           onPress={setNextStep}
         >
           <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Continue
+            Next Tip
           </Typography>
         </TouchableOpacity>
       </View>
