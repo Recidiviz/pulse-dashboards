@@ -77,6 +77,7 @@ import { UsArResidentInformation } from "./UsAr/UsArResidentInformation";
 import { UsAzResidentInformation } from "./UsAz/UsAzResidentInformation";
 import { UsIdResidentInformation } from "./UsId/UsIdResidentInformation";
 import { UsMoCaseOverview } from "./UsMo/CaseOverview/UsMoCaseOverview";
+import { RecentCaseNotes } from "./UsMo/RecentCaseNotes";
 import { UsMoResidentInformation } from "./UsMo/UsMoResidentInformation";
 import { UsNdResidentInformation } from "./UsNd/UsNdResidentInformation";
 import { UsUtResidentInformation } from "./UsUt/UsUtResidentInformation";
@@ -351,6 +352,7 @@ export const FullProfile = observer(
       caseOverview,
       customTasks,
       hideWorkflowsOpportunities,
+      recentCaseNotes,
       sentenceProgressV2,
     } = useFeatureVariants();
 
@@ -511,15 +513,21 @@ export const FullProfile = observer(
                 </div>
               )}
             </ProfileDetailsWrapper>
-            {hideOpportunitiesSection ? null : (
+            {recentCaseNotes && person instanceof Client ? (
               <div>
-                <SectionHeading>Opportunities</SectionHeading>
-                <OpportunitiesAccordion
-                  person={person}
-                  formLinkButton
-                  showIneligibleOpportunityTypes
-                />
+                <RecentCaseNotes client={person} />
               </div>
+            ) : (
+              !hideOpportunitiesSection && (
+                <div>
+                  <SectionHeading>Opportunities</SectionHeading>
+                  <OpportunitiesAccordion
+                    person={person}
+                    formLinkButton
+                    showIneligibleOpportunityTypes
+                  />
+                </div>
+              )
             )}
           </Content>
         </Wrapper>

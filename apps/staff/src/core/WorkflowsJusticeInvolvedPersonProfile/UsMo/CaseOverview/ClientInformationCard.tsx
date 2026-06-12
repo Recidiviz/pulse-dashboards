@@ -19,15 +19,9 @@ import { UsMoClientMetadata } from "~datatypes";
 
 import { toTitleCase } from "../../../../utils";
 import { Client } from "../../../../WorkflowsStore";
+import { CardFrame } from "../shared/styles";
 import { SARReports } from "./SARReports";
-import {
-  CardFrame,
-  Label,
-  Row,
-  Section,
-  SectionHeading,
-  Value,
-} from "./styles";
+import { Label, Row, Section, SectionHeading, Value } from "./styles";
 import {
   buildAddressLines,
   formatDob,

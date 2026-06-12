@@ -29,24 +29,6 @@ import { palette, typography } from "~design-system";
  * Tokens come from Figma nodes 7364-3879 / 7432-2685.
  */
 
-/** Bordered frame for the card. 1px solid border at rgba(43,84,105,0.2),
- * 4px rounded corners. The "Case Overview" section heading sits above this
- * card and is owned by the parent layout (`UsMoCaseOverview`). */
-export const CardFrame = styled.div`
-  background: ${palette.white};
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(4)};
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-
-  /* Divider between adjacent sections (Personal Details -> Housing -> ...). */
-  & > section + section {
-    border-top: 1px solid ${palette.slate20};
-  }
-`;
-
 export const Section = styled.section`
   display: flex;
   flex-direction: column;
