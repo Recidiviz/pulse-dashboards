@@ -23,7 +23,7 @@ import styled from "styled-components";
 import { PAGE_WIDTH } from "~@jii/common-ui";
 
 import { AboutVideoPresenter } from "./AboutVideoPresenter";
-import UsAzAboutVideo from "./UsAzAboutVideo.mp4";
+import UsAzAboutVideo from "./UsAzAboutVideoCaptioned.mp4";
 
 const StyledVideoModal = styled(Modal)`
   .ReactModal__Content {
@@ -53,6 +53,7 @@ export const AboutVideoModal = observer(function AboutVideoModal({
       }}
     >
       {/* This video has captions embedded in the video itself, though this is not ideal. */}
+      {/* TODO(OBT-32382): Create a separate caption track (WebVTT) then remove the eslint-disable below. */}
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video width="100%" controls>
         <source src={UsAzAboutVideo} type="video/mp4" />
