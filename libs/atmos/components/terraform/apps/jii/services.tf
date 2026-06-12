@@ -66,7 +66,7 @@ resource "google_kms_key_ring" "deploy_keyring" {
   location = "us-central1"
 }
 
-# CMEK 
+# CMEK for the database
 resource "google_kms_crypto_key" "cloud_sql_key" {
   provider = google-beta
   name     = "cloudsql"
@@ -74,7 +74,15 @@ resource "google_kms_crypto_key" "cloud_sql_key" {
   purpose  = "ENCRYPT_DECRYPT"
 }
 
-# Grant SA permission to use the CMEK 
+# CMEK for the ETL data GCS bucket
+resource "google_kms_crypto_key" "etl_bucket_key" {
+  provider = google-beta
+  name     = "etl"
+  key_ring = google_kms_key_ring.deploy_keyring.id
+  purpose  = "ENCRYPT_DECRYPT"
+}
+
+# Grant SAs permission to use the database CMEK
 resource "google_kms_crypto_key_iam_binding" "crypto_key" {
   provider      = google-beta
   crypto_key_id = google_kms_crypto_key.cloud_sql_key.id
@@ -82,6 +90,17 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key" {
 
   members = [
     "serviceAccount:${google_project_service_identity.gcp_sa_cloud_sql.email}",
+  ]
+}
+
+# Grant the GCS service agent permission to use the GCS bucket CMEK
+resource "google_kms_crypto_key_iam_binding" "gcs_sa_cmek_user" {
+  provider      = google-beta
+  crypto_key_id = google_kms_crypto_key.etl_bucket_key.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:service-${var.project_number}@gs-project-accounts.iam.gserviceaccount.com",
   ]
 }
 

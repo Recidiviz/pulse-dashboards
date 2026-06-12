@@ -143,6 +143,8 @@ moved {
 module "gcs_bucket" {
   source = "../../vendor/submodules/cloud-storage-bucket"
 
+  depends_on = [google_kms_crypto_key_iam_binding.gcs_sa_cmek_user]
+
   project_id = var.project_id
   location   = var.location
   prefix     = var.project_id
@@ -161,14 +163,19 @@ module "gcs_bucket" {
   }]
   set_admin_roles = true
   bucket_admins = {
-    jii-etl-data : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
-    jii-etl-data-archive : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+    jii-etl-data : "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
+    jii-etl-data-archive : "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
   }
 
   set_viewer_roles = true
   bucket_viewers = {
-    jii-etl-data : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
-    jii-etl-data-archive : "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+    jii-etl-data : "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
+    jii-etl-data-archive : "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
+  }
+
+  encryption_key_names = {
+    jii-etl-data : google_kms_crypto_key.etl_bucket_key.id
+    jii-etl-data-archive : google_kms_crypto_key.etl_bucket_key.id
   }
 }
 

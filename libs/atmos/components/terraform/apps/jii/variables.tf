@@ -3,6 +3,11 @@ variable "project_id" {
   description = "The project that we are deploying the app to"
 }
 
+variable "project_number" {
+  type        = string
+  description = "The automatically generated identifier for the GCP project, used in service account emails"
+}
+
 variable "sql_instance_name" {
   type        = string
   description = "The name of the SQL instance"
