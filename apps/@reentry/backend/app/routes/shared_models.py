@@ -51,11 +51,6 @@ class ClientAddressResponse(BaseModel):
     state: str
 
 
-class ProcessingStatusResponse(BaseModel):
-    processing_status: str
-    frontend_status: str
-
-
 # Forward declarations for cross-dependent types
 class IntakeResponse(ORMResponse):
     client_pseudo_id: str
@@ -74,6 +69,7 @@ class IntakeResponse(ORMResponse):
 
 class PlanResponse(ORMResponse):
     client_pseudo_id: str
+    intake_id: UUID | None = None
     create_execution_id: UUID | None = None
     create_execution: ExecutionResponse | None = None
     create_status: str
@@ -115,6 +111,18 @@ class AssessmentConfigResponse(ORMResponse):
     display_name: str
     description: str | None = None
     state_code: str
+
+
+class SeenStatusResponse(BaseModel):
+    intake_conversation: bool = False
+    intake_summary: bool = False
+    action_plan: bool = False
+
+
+class ProcessingStatusResponse(BaseModel):
+    processing_status: str
+    frontend_status: str
+    seen: SeenStatusResponse = SeenStatusResponse()
 
 
 class IntakeHistoryResponse(ORMResponse):

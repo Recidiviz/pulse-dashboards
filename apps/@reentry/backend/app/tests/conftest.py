@@ -71,6 +71,7 @@ async def async_session() -> AsyncSession:
     import app.models.assessment  # noqa
     import app.models.intake  # noqa
     import app.models.recording  # noqa
+    import app.models.seen_item  # noqa
     import app.models.assessment_config  # noqa
     import app.models.output_config  # noqa
     import app.models.config_audit_log  # noqa

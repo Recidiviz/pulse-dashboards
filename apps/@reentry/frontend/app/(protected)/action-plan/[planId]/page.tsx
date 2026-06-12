@@ -97,6 +97,27 @@ const ActionPlanPage = () => {
     startPolling,
   ]);
 
+  const { mutate: markSeen } = $api.useMutation("post", "/seen-items");
+
+  useEffect(() => {
+    if (
+      dataDetailPlan?.create_status == "completed" &&
+      dataDetailPlan?.intake_id
+    ) {
+      markSeen({
+        body: {
+          intake_id: dataDetailPlan.intake_id,
+          item_type: "action_plan",
+          item_id: planId,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+    }
+  }, [dataDetailPlan?.is_create_execution_finished, dataDetailPlan?.intake_id]);
+
   useEffect(() => {
     if (errorDetailPlan) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

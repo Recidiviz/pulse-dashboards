@@ -413,6 +413,7 @@ export default function IntakeAssessment({
             recordingSession={recordingSession || undefined}
             validTranscription={isValidTranscription}
             outputsEnabled={intakeInfo.outputs_enabled ?? true}
+            seen={intakeStatus?.seen}
           />
         )}
       </div>

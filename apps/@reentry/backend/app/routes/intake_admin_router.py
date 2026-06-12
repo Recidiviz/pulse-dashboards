@@ -27,6 +27,7 @@ from app.crud.intake import (
     update_outputs_enabled_by_intake_id,
 )
 from app.crud.plan import create_plan, get_plan_by_intake_id, retry_plan_creation
+from app.crud.seen_item import get_seen_items_for_admin_and_intakes
 from app.models.base import IntakeStatus, IntakeType
 from app.models.execution import Execution, ExecutionStatus
 from app.models.intake import (
@@ -37,6 +38,7 @@ from app.models.intake import (
 )
 from app.models.models import Plan
 from app.models.recording import RecordingSession
+from app.models.seen_item import SeenItemType
 from app.pdf.renderer import pdf_renderer
 from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
@@ -47,6 +49,7 @@ from app.routes.shared_models import (
     IntakeMessageRole,
     IntakeResponse,
     ProcessingStatusResponse,
+    SeenStatusResponse,
 )
 from app.services.client_data.queries import Queries
 from app.utils.assessment_config_utils import enrich_sections_with_status
@@ -166,6 +169,7 @@ async def prepare_intake_response(
 async def get_processing_status_for_intake(
     intake_id: str,
     session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
     intake = await get_intake_by_id(session, intake_id)
     if not intake:
@@ -176,8 +180,26 @@ async def get_processing_status_for_intake(
         session, intake_id
     )
     frontend_status = compute_frontend_status(intake.status, intake_processing_status)
+
+    plan = await get_plan_by_intake_id(session, intake.id)
+    seen_items = await get_seen_items_for_admin_and_intakes(
+        session, pseudonymized_id, [intake.id]
+    )
+    seen_set = {(item.item_type, item.item_id) for item in seen_items}
+
+    seen = SeenStatusResponse()
+    seen.intake_conversation = (
+        SeenItemType.INTAKE_CONVERSATION,
+        intake.id,
+    ) in seen_set
+    if plan:
+        seen.intake_summary = (SeenItemType.INTAKE_SUMMARY, plan.id) in seen_set
+        seen.action_plan = (SeenItemType.ACTION_PLAN, plan.id) in seen_set
+
     return ProcessingStatusResponse(
-        processing_status=intake_processing_status, frontend_status=frontend_status
+        processing_status=intake_processing_status,
+        frontend_status=frontend_status,
+        seen=seen,
     )
 
 

@@ -17,243 +17,292 @@
 
 import { useRouter } from "next/navigation";
 
-import { ClientRecord,IntakeInfo } from "~@reentry/frontend/(protected)/client/[clientId]/types";
-import {$api} from "~@reentry/frontend/api";
-import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
+import styles from "~@reentry/frontend/(protected)/client/[clientId]/IntakeArtifacts.module.css";
+import {
+  ClientRecord,
+  IntakeInfo,
+} from "~@reentry/frontend/(protected)/client/[clientId]/types";
+import { $api } from "~@reentry/frontend/api";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ArrowRight } from "~@reentry/frontend/components/icons/ArrowRight";
-import Timeline, { TimelineItem } from "~@reentry/frontend/components/intake/TimelineIndicator";
+import Timeline, {
+  TimelineItem,
+} from "~@reentry/frontend/components/intake/TimelineIndicator";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { toUTCDate } from "~@reentry/frontend/utils/date";
 import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
 import { components } from "~@reentry/openapi-types";
 
 interface IntakeArtifactsProps {
-    clientData: ClientRecord
-    intakeInfo: IntakeInfo
-    recordingSession: components["schemas"]["RecordingSessionResponse"] | undefined;
-    validTranscription: boolean | undefined;
-    outputsEnabled: boolean;
+  clientData: ClientRecord;
+  intakeInfo: IntakeInfo;
+  recordingSession:
+    | components["schemas"]["RecordingSessionResponse"]
+    | undefined;
+  validTranscription: boolean | undefined;
+  outputsEnabled: boolean;
+  seen?: components["schemas"]["SeenStatusResponse"];
 }
 
 const TranscriptSection = ({ isDisabled, buttonText, onClick }) => (
-    <div
-        className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${
-            isDisabled && "opacity-40 pointer-events-none"
-        }`}
-    >
+  <div
+    className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${
+      isDisabled && "opacity-40 pointer-events-none"
+    }`}
+  >
     <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
       TRANSCRIPT
     </span>
 
-        <PrimaryButton
-            buttonText={
-                <div className="flex items-center gap-2">
-                    {buttonText}
-                    <ArrowRight />
-                </div>
-            }
-            className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
-            onClick={onClick}
-            ignoreCapabilities={true}
-        />
-    </div>
+    <PrimaryButton
+      buttonText={
+        <div className="flex items-center gap-2">
+          {buttonText}
+          <ArrowRight />
+        </div>
+      }
+      className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
+      onClick={onClick}
+      ignoreCapabilities={true}
+    />
+  </div>
 );
 
-
 const mapIntakeToTimeline = (intakeInfo: IntakeInfo) => {
-    if (!intakeInfo) return [];
+  if (!intakeInfo) return [];
 
-    const userLocale = navigator.language;
-    const timeline: TimelineItem[] = [];
+  const userLocale = navigator.language;
+  const timeline: TimelineItem[] = [];
 
-    const formatTime = (date: Date) =>
-        date.toLocaleTimeString(userLocale, {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-        });
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString(userLocale, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
 
-    const formatDate = (date: Date) =>
-        date.toLocaleDateString(userLocale, {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-        });
-    const createdAt = toUTCDate(intakeInfo.created_at);
-    if (!createdAt) return [];
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString(userLocale, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  const createdAt = toUTCDate(intakeInfo.created_at);
+  if (!createdAt) return [];
 
-    const assignedStep = {
-        time: formatTime(createdAt),
-        description: `Assigned ${formatTime(createdAt)} on ${formatDate(createdAt)}`,
-        isCurrent: intakeInfo.status !== 'completed',
+  const assignedStep = {
+    time: formatTime(createdAt),
+    description: `Assigned ${formatTime(createdAt)} on ${formatDate(createdAt)}`,
+    isCurrent: intakeInfo.status !== "completed",
+    isCompleted: true,
+  };
+
+  timeline.push(assignedStep);
+
+  if (intakeInfo.status === "completed") {
+    const completedAt = toUTCDate(intakeInfo?.completed_at);
+    // We use updated_at as fallback in case completed_at is missing
+    const fallbackUpdatedAt = toUTCDate(intakeInfo?.updated_at);
+
+    const completionTimestamp = intakeInfo?.completed_at
+      ? completedAt
+      : fallbackUpdatedAt;
+
+    if (completionTimestamp) {
+      const completedStep = {
+        time: formatTime(completionTimestamp),
+        description: `Completed ${formatTime(completionTimestamp)} on ${formatDate(completionTimestamp)}`,
+        isCurrent: true,
         isCompleted: true,
-    };
-
-    timeline.push(assignedStep);
-
-    if (intakeInfo.status === 'completed') {
-        const completedAt = toUTCDate(intakeInfo?.completed_at);
-        // We use updated_at as fallback in case completed_at is missing
-        const fallbackUpdatedAt = toUTCDate(intakeInfo?.updated_at);
-
-        const completionTimestamp = intakeInfo?.completed_at
-            ? completedAt
-            : fallbackUpdatedAt;
-
-        if (completionTimestamp) {
-            const completedStep = {
-                time: formatTime(completionTimestamp),
-                description: `Completed ${formatTime(completionTimestamp)} on ${formatDate(completionTimestamp)}`,
-                isCurrent: true,
-                isCompleted: true,
-            };
-            timeline.push(completedStep);
-            timeline[0].isCurrent = false;
-        }
+      };
+      timeline.push(completedStep);
+      timeline[0].isCurrent = false;
     }
-    return timeline;
+  }
+  return timeline;
 };
 
-export default function IntakeArtifacts({clientData, intakeInfo, recordingSession, validTranscription, outputsEnabled}: IntakeArtifactsProps) {
-    const router = useRouter();
+export default function IntakeArtifacts({
+  clientData,
+  intakeInfo,
+  recordingSession,
+  validTranscription,
+  outputsEnabled,
+  seen,
+}: IntakeArtifactsProps) {
+  const router = useRouter();
 
-    const planIncluded = intakeInfo.assessment_config_outputs_action_plan_activated
+  const planIncluded =
+    intakeInfo.assessment_config_outputs_action_plan_activated;
 
-    const timelineData = mapIntakeToTimeline(intakeInfo);
+  const timelineData = mapIntakeToTimeline(intakeInfo);
 
-    const {
-        data: planData, isLoading: isLoadingPlan} = $api.useQuery(
-        "get",
-        "/plans/by-intake/{intake_id}", {
-            params: {
-                path: {
-                    intake_id: intakeInfo.id,
-                },
-            },
-            headers: {
-                Authorization: `Bearer ${useAuth().getAccessToken()}`,
-                "Content-Type": "application/json",
-            },
-            enabled: intakeInfo?.status === "completed" && outputsEnabled
-        });
-
-    const { data: intakeSummary, isLoading: isLoadingSummary} = $api.useQuery(
-        "get",
-        "/plans/{id}/assets/by-filename/{filename}",
-        {
-            params: {
-                path: {
-                    id: planData?.id as string,
-                    filename: "summary.md",
-                },
-                query: {
-                    include_data: true,
-                },
-            },
-            headers: {
-                Authorization: `Bearer ${useAuth().getAccessToken()}`,
-                "Content-Type": "application/json",
-            },
+  const { data: planData, isLoading: isLoadingPlan } = $api.useQuery(
+    "get",
+    "/plans/by-intake/{intake_id}",
+    {
+      params: {
+        path: {
+          intake_id: intakeInfo.id,
         },
-        { enabled: intakeInfo?.status === "completed" && !!(planData?.id) && outputsEnabled}
-    );
+      },
+      headers: {
+        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+      enabled: intakeInfo?.status === "completed" && outputsEnabled,
+    },
+  );
 
-    if(isLoadingPlan || isLoadingSummary){
-        return <div>Loading...</div>;
-    }
+  const { data: intakeSummary, isLoading: isLoadingSummary } = $api.useQuery(
+    "get",
+    "/plans/{id}/assets/by-filename/{filename}",
+    {
+      params: {
+        path: {
+          id: planData?.id as string,
+          filename: "summary.md",
+        },
+        query: {
+          include_data: true,
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+    {
+      enabled:
+        intakeInfo?.status === "completed" && !!planData?.id && outputsEnabled,
+    },
+  );
 
-    return (
-        <div className={"flex flex-col mt-3"}>
-            <div className="flex w-full">
-                <Timeline items={timelineData} />
+  if (isLoadingPlan || isLoadingSummary) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className={"flex flex-col mt-3"}>
+      <div className="flex w-full">
+        <Timeline items={timelineData} />
+      </div>
+
+      <div
+        className={`mt-3 sm:mt-8 w-full sm:grid ${planIncluded ? "sm:grid-cols-3" : "sm:grid-cols-2"}  divide-y sm:divide-x sm:divide-y-0  :divide-[#2b5469]/20 flex flex-col`}
+      >
+        {/* INTAKE TRANSCRIPT*/}
+        {intakeInfo?.intake_type === "transcription" ? (
+          <TranscriptSection
+            isDisabled={
+              intakeInfo?.status !== "completed" &&
+              !((recordingSession?.chunk_count ?? 0) > 0)
+            }
+            buttonText="See transcript"
+            onClick={() => {
+              const recordingId = recordingSession?.id ?? "";
+              router.push(
+                `/client/${clientData?.pseudonymized_client_id}/audio-recording/${recordingId}`,
+              );
+            }}
+          />
+        ) : (
+          <TranscriptSection
+            isDisabled={intakeInfo?.status === "created"}
+            buttonText={
+              <div className="flex items-center gap-2">
+                {seen &&
+                  !seen.intake_conversation &&
+                  intakeInfo?.status !== "created" && (
+                    <span className={styles["unseenDot"]} />
+                  )}
+                See chat history
+              </div>
+            }
+            onClick={() => {
+              router.push(`/intake/${intakeInfo?.id}/chat-history`);
+            }}
+          />
+        )}
+
+        {/* INTAKE SUMMARY*/}
+        <div
+          className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${!intakeSummary ? "opacity-40 pointer-events-none" : ""}`}
+        >
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
+                SUMMARY
+              </span>
+              <AIDisclosure type={AIDisclosureType.Inline} />
             </div>
+          </div>
 
-            <div className={`mt-3 sm:mt-8 w-full sm:grid ${planIncluded ? "sm:grid-cols-3" : "sm:grid-cols-2"}  divide-y sm:divide-x sm:divide-y-0  :divide-[#2b5469]/20 flex flex-col`}>
-                {/* INTAKE TRANSCRIPT*/}
-                {intakeInfo?.intake_type === "transcription" ? (
-                        <TranscriptSection
-                            isDisabled={
-                                intakeInfo?.status !== "completed" &&
-                                !((recordingSession?.chunk_count ?? 0) > 0)
-                            }
-                            buttonText="See transcript"
-                            onClick={() => {
-                                const recordingId = recordingSession?.id ?? "";
-                                router.push(`/client/${clientData?.pseudonymized_client_id}/audio-recording/${recordingId}`);
-                            }}
-                        />
-                    ) : (
-                        <TranscriptSection
-                            isDisabled={intakeInfo?.status === "created"}
-                            buttonText="See chat history"
-                            onClick={() => {
-                                router.push(`/intake/${intakeInfo?.id}/chat-history`);
-                            }}
-                        />
-                    )
-                }
-
-                {/* INTAKE SUMMARY*/}
-                <div className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${!intakeSummary ? "opacity-40 pointer-events-none" : ""}`}>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">SUMMARY</span>
-                            <AIDisclosure type={AIDisclosureType.Inline} />
-                        </div>
-                    </div>
-
-                    <PrimaryButton
-                        buttonText={
-                            <div className="flex items-center gap-2">
-                                See summary <ArrowRight />
-                            </div>
-                        }
-                        disabled={!outputsEnabled}
-                        ignoreCapabilities={true}
-                        className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
-                        onClick={() => router.push(`/client/${clientData?.pseudonymized_client_id}/intake-summary/${planData?.id}`)}
-                    />
-                </div>
-
-                {
-                    planIncluded && (
-                        <>
-                        {/* ACTION PLAN */}
-                        <div className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${planData && planData?.is_create_execution_finished ? "" : "opacity-40 pointer-events-none"}`}>
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">ACTION PLAN</span>
-                                    <AIDisclosure type={AIDisclosureType.Inline} />
-                                </div>
-                            </div>
-
-                            <PrimaryButton
-                                buttonText={
-                                    <div className="flex items-center gap-2">
-                                        See action plan <ArrowRight  />
-                                    </div>
-                                }
-                                disabled={!outputsEnabled}
-                                className={`h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white ${!validTranscription ? "opacity-40 pointer-events-none" : ""}`}
-                                onClick={() => router.push(`/action-plan/${planData?.id}`)}
-                                ignoreCapabilities={true}
-                            />
-                        </div>
-                        </>
-                    )
-                }
-
-                {/* Warning message when outputs are disabled */}
-                {!outputsEnabled && (
-                    <div className="px-0 sm:px-6 py-4">
-                        <p className="text-sm text-[#d97706] font-medium whitespace-nowrap">
-                            Outputs are disabled for this assessment because they are under revision
-                        </p>
-                    </div>
+          <PrimaryButton
+            buttonText={
+              <div className="flex items-center gap-2">
+                {seen && !seen.intake_summary && !!intakeSummary && (
+                  <span className={styles["unseenDot"]} />
                 )}
-            </div>
+                See summary <ArrowRight />
+              </div>
+            }
+            disabled={!outputsEnabled}
+            ignoreCapabilities={true}
+            className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
+            onClick={() =>
+              router.push(
+                `/client/${clientData?.pseudonymized_client_id}/intake-summary/${planData?.id}`,
+              )
+            }
+          />
         </div>
-    );
+
+        {planIncluded && (
+          <>
+            {/* ACTION PLAN */}
+            <div
+              className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${planData && planData?.is_create_execution_finished ? "" : "opacity-40 pointer-events-none"}`}
+            >
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
+                    ACTION PLAN
+                  </span>
+                  <AIDisclosure type={AIDisclosureType.Inline} />
+                </div>
+              </div>
+
+              <PrimaryButton
+                buttonText={
+                  <div className="flex items-center gap-2">
+                    {seen &&
+                      !seen.action_plan &&
+                      planData?.is_create_execution_finished && (
+                        <span className={styles["unseenDot"]} />
+                      )}
+                    See action plan <ArrowRight />
+                  </div>
+                }
+                disabled={!outputsEnabled}
+                className={`h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white ${!validTranscription ? "opacity-40 pointer-events-none" : ""}`}
+                onClick={() => router.push(`/action-plan/${planData?.id}`)}
+                ignoreCapabilities={true}
+              />
+            </div>
+          </>
+        )}
+
+        {/* Warning message when outputs are disabled */}
+        {!outputsEnabled && (
+          <div className="px-0 sm:px-6 py-4">
+            <p className="text-sm text-[#d97706] font-medium whitespace-nowrap">
+              Outputs are disabled for this assessment because they are under
+              revision
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
-
-

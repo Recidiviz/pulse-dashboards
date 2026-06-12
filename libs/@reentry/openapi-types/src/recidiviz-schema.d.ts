@@ -1697,6 +1697,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/seen-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark an artifact as seen */
+        post: operations["mark_seen_seen_items_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/transcription/{intake_id}/complete-intake-transcription": {
         parameters: {
             query?: never;
@@ -4133,6 +4150,20 @@ export interface components {
             /** Internal Access */
             internal_access: boolean;
         };
+        /** MarkSeenRequest */
+        MarkSeenRequest: {
+            /**
+             * Intake Id
+             * Format: uuid
+             */
+            intake_id: string;
+            item_type: components["schemas"]["SeenItemType"];
+            /**
+             * Item Id
+             * Format: uuid
+             */
+            item_id: string;
+        };
         /**
          * NewVersionRequest
          * @description Request schema for creating a new version from an existing config.
@@ -4690,6 +4721,8 @@ export interface components {
             updated_at: string;
             /** Client Pseudo Id */
             client_pseudo_id: string;
+            /** Intake Id */
+            intake_id?: string | null;
             /** Create Execution Id */
             create_execution_id?: string | null;
             create_execution?:
@@ -4724,6 +4757,8 @@ export interface components {
             updated_at: string;
             /** Client Pseudo Id */
             client_pseudo_id: string;
+            /** Intake Id */
+            intake_id?: string | null;
             /** Create Execution Id */
             create_execution_id?: string | null;
             create_execution?:
@@ -4758,6 +4793,8 @@ export interface components {
             updated_at: string;
             /** Client Pseudo Id */
             client_pseudo_id: string;
+            /** Intake Id */
+            intake_id?: string | null;
             /** Create Execution Id */
             create_execution_id?: string | null;
             create_execution?:
@@ -4801,6 +4838,15 @@ export interface components {
             processing_status: string;
             /** Frontend Status */
             frontend_status: string;
+            /** @default {
+             *       "id": "fd545985-f2dc-4663-890f-bcc8b895eb6f",
+             *       "created_at": "2026-05-08T14:44:20.055444",
+             *       "updated_at": "2026-05-08T14:44:20.055447",
+             *       "intake_conversation": false,
+             *       "intake_summary": false,
+             *       "action_plan": false
+             *     } */
+            seen: components["schemas"]["SeenStatusResponse"];
         };
         /** RecordingSessionResponse */
         RecordingSessionResponse: {
@@ -5192,6 +5238,44 @@ export interface components {
             | "Volunteer Opportunities"
             | "Recreation"
             | "Civic Engagement";
+        /**
+         * SeenItemType
+         * @enum {string}
+         */
+        SeenItemType: "intake_conversation" | "intake_summary" | "action_plan";
+        /** SeenStatusResponse */
+        SeenStatusResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id?: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at?: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at?: string;
+            /**
+             * Intake Conversation
+             * @default false
+             */
+            intake_conversation: boolean;
+            /**
+             * Intake Summary
+             * @default false
+             */
+            intake_summary: boolean;
+            /**
+             * Action Plan
+             * @default false
+             */
+            action_plan: boolean;
+        };
         /** SetNotificationRequest */
         SetNotificationRequest: {
             /** Notify */
@@ -8140,7 +8224,9 @@ export interface operations {
     };
     get_processing_status_for_intake_intake_admin__intake_id__processing_status_get: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 intake_id: string;
@@ -9078,6 +9164,39 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SignedUrlResponse"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_seen_seen_items_post: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkSeenRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

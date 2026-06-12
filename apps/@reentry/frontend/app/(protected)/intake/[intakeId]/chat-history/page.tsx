@@ -19,7 +19,7 @@
 
 import { SlidersHorizontal } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
 
 import ChatTemplateEditor from "~@reentry/frontend/(protected)/ai-test-harness/status/[executionId]/ChatTemplateEditor";
@@ -35,6 +35,7 @@ import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
 const IntakeManagementPage = () => {
   const { intakeId } = useParams() as { intakeId: string };
   const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+  const { getAccessToken } = useAuth();
 
   const { data: intakeData } = $api.useQuery(
     "get",
@@ -44,11 +45,29 @@ const IntakeManagementPage = () => {
         path: { intake_id: intakeId },
       },
       headers: {
-        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        Authorization: `Bearer ${getAccessToken()}`,
         "Content-Type": "application/json",
       },
     },
   );
+
+  const { mutate: markSeen } = $api.useMutation("post", "/seen-items");
+
+  useEffect(() => {
+    if (intakeData?.status === "completed") {
+      markSeen({
+        body: {
+          intake_id: intakeId,
+          item_type: "intake_conversation",
+          item_id: intakeId,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+    }
+  }, [intakeData?.status]);
 
   const { data: clientData, isLoading: clientLoading } = $api.useQuery(
     "get",
@@ -58,7 +77,7 @@ const IntakeManagementPage = () => {
         path: { client_pseudo_id: intakeData?.client_pseudo_id as string },
       },
       headers: {
-        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        Authorization: `Bearer ${getAccessToken()}`,
         "Content-Type": "application/json",
       },
     },

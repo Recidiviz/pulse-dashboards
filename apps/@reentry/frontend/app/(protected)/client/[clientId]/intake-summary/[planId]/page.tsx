@@ -92,6 +92,32 @@ const IntakeSummaryPage = () => {
     },
   );
 
+  const { data: planData } = $api.useQuery("get", "/plans/{id}", {
+    params: { path: { id: planId } },
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const { mutate: markSeen } = $api.useMutation("post", "/seen-items");
+
+  useEffect(() => {
+    if (intakeSummary && planData?.intake_id) {
+      markSeen({
+        body: {
+          intake_id: planData.intake_id,
+          item_type: "intake_summary",
+          item_id: planId,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+    }
+  }, [intakeSummary, planData?.intake_id]);
+
   useEffect(() => {
     if (errorIntakeSummary) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

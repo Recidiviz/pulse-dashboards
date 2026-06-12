@@ -32,7 +32,10 @@ import { QueueProvider } from "~@reentry/frontend/contexts/QueueContext";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const AudioRecordingPage: React.FC = () => {
-  const { clientId, sessionId } = useParams() as { clientId: string; sessionId: string };
+  const { clientId, sessionId } = useParams() as {
+    clientId: string;
+    sessionId: string;
+  };
   const { getAccessToken } = useAuth();
   const [needsAddress, setNeedsAddress] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState<string>("created");
@@ -43,7 +46,9 @@ const AudioRecordingPage: React.FC = () => {
   const [audioSeekFunction, setAudioSeekFunction] = useState<
     ((time: number) => void) | null
   >(null);
-  const [currentSpeakerRole, setCurrentSpeakerRole] = useState<string | null>(null);
+  const [currentSpeakerRole, setCurrentSpeakerRole] = useState<string | null>(
+    null,
+  );
   // Form state for address form
   const [addressInput, setAddressInput] = useState("");
   const [city, setCity] = useState("");
@@ -56,7 +61,7 @@ const AudioRecordingPage: React.FC = () => {
     data: clientData,
     isLoading: clientLoading,
     error: clientError,
-    refetch: refetchClient
+    refetch: refetchClient,
   } = $api.useQuery("get", "/clients/{client_pseudo_id}", {
     params: { path: { client_pseudo_id: clientId } },
     headers: {
@@ -66,7 +71,7 @@ const AudioRecordingPage: React.FC = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
   const {
@@ -83,18 +88,20 @@ const AudioRecordingPage: React.FC = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
-
-  const intakeId = useMemo(() => sessionData?.intake_id, [sessionData?.intake_id]);
+  const intakeId = useMemo(
+    () => sessionData?.intake_id,
+    [sessionData?.intake_id],
+  );
 
   const {
     data: address,
     error: addressError,
-    isLoading: addressLoading
+    isLoading: addressLoading,
   } = $api.useQuery("get", "/intake/admin/{intake_id}/address", {
-    params: { path: { intake_id: intakeId as string} },
+    params: { path: { intake_id: intakeId as string } },
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
@@ -103,7 +110,7 @@ const AudioRecordingPage: React.FC = () => {
     refetchOnMount: false,
     refetchOnReconnect: false,
     staleTime: Infinity,
-    enabled: !!intakeId
+    enabled: !!intakeId,
   });
 
   // Compute whether address is needed based on session status and address data
@@ -117,7 +124,9 @@ const AudioRecordingPage: React.FC = () => {
     const addressExists = address?.id && !addressError;
 
     // Show form if session is processing/completed and no address exists
-    const isProcessingOrCompleted = ["processing", "completed"].includes(`${sessionData?.status}`);
+    const isProcessingOrCompleted = ["processing", "completed"].includes(
+      `${sessionData?.status}`,
+    );
     return isProcessingOrCompleted && !addressExists;
   }, [sessionData?.status, address, addressError, addressLoading]);
 
@@ -141,11 +150,11 @@ const AudioRecordingPage: React.FC = () => {
     handleClientError();
   }, [clientError, sessionError]);
 
-  const handleAddressFormClose = async() => {
+  const handleAddressFormClose = async () => {
     await refetchSession();
     await refetchClient();
     // Wait 2 seconds before closing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     setNeedsAddress(false);
     // Reset form fields
     setAddressInput("");
@@ -172,7 +181,6 @@ const AudioRecordingPage: React.FC = () => {
       />
     );
   }
-
 
   if (clientLoading || sessionLoading) {
     return (
@@ -206,7 +214,10 @@ const AudioRecordingPage: React.FC = () => {
     <>
       <PageView />
       <QueueProvider>
-        <NavRecordingPage client_pseudo_id={clientData?.pseudonymized_client_id} safeNavigate={safeNavigate}/>
+        <NavRecordingPage
+          client_pseudo_id={clientData?.pseudonymized_client_id}
+          safeNavigate={safeNavigate}
+        />
         <div className="min-h-[calc(100vh-65px)] self-stretch px-4 md:p-10 pb-24 bg-[#f9fafa] flex flex-col items-start gap-5">
           <UserSummary
             clientData={clientData}

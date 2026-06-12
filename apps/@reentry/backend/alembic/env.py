@@ -25,6 +25,7 @@ import app.models.output_config  # noqa
 import app.models.intake  # noqa
 import app.models.recording  # noqa
 import app.models.ai_persona  # noqa
+import app.models.seen_item  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

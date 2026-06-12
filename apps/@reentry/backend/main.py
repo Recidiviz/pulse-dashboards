@@ -22,6 +22,7 @@ import app.models.intake  # noqa
 import app.models.models  # noqa
 import app.models.plan_decision_tree  # noqa
 import app.models.recording  # noqa
+import app.models.seen_item  # noqa
 from app.auth.auth_core import get_auth0_config, setup_auth
 from app.auth.intake.auth_client_user import setup_client_auth
 from app.core.config import settings
@@ -46,6 +47,7 @@ from app.routes import (
     plan_router,
     recording_session_router,
     resources_router,
+    seen_items_router,
     transcription_router,
     webhook_router,
 )
@@ -222,6 +224,7 @@ app.include_router(client_router.router, prefix="/clients")
 app.include_router(intake_admin_router.router, prefix="/intake/admin")
 app.include_router(intake_internal_router.router, prefix="/intake/internal")
 app.include_router(recording_session_router.router, prefix="/recordings")
+app.include_router(seen_items_router.router, prefix="/seen-items")
 app.include_router(transcription_router.router, prefix="/transcription")
 app.include_router(impersonation_router.router, prefix="/impersonate")
 
