@@ -79,19 +79,19 @@ export default {
         shortName: "STP",
         value: "{{tprDate, formatFullDate}}",
         approved: {
-          info: `Great work! Time Comp confirmed you've met the criteria for Transition Release.
+          info: `Great work! Time Comp confirmed you've met the criteria for earlier release through the Standard Transition Program.
           One last thing stands between you and the gate: **an approved home plan**. Get that finalized
           to walk out on this date. (Steer clear of disciplinary infractions, too — they can still
           put this date at risk.)`,
-          upcomingInfo: `Great work! Time Comp confirmed you've met the criteria for Transition Release. Make sure that your **home plan is approved** in order to walk out on this date. (Steer clear of disciplinary infractions, too — they can still put this date at risk.)`,
+          upcomingInfo: `Great work! Time Comp confirmed you've met the criteria for the Standard Transition Program. Make sure that your **home plan is approved** in order to walk out on this date. (Steer clear of disciplinary infractions, too — they can still put this date at risk.)`,
           pastInfo: `If this date has already passed, it means you have not met all the requirements for release. Reviewing the criteria will show you what steps you still need to take.`,
           goLink: "What are the criteria to qualify for this date?",
         },
         tentative: {
-          info: `You may qualify to go home **as early as {{tprDate, formatFullDate}}** ({{tprDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) through the Transition Program.
-          This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria – tap below to learn how. `,
+          info: `**{{tprDate, formatFullDate}}** ({{tprDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) is the earliest you could go home through the Standard Transition Program.
+          This date is **tentative**, not approved yet — it only happens if you meet the criteria. To reach it, keep your focus on meeting the criteria. Tap below to learn how.`,
           pastInfo: `You may qualify to go home sooner than the date of your next release option. This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria — tap below to learn how.`,
-          value: `You may be eligible for early release through the Transition Program`,
+          value: `You may be eligible for release up to 90 days earlier through Transition Program Release`,
           goLink: "What do I need to do to qualify for this date?",
         },
       },
@@ -105,19 +105,19 @@ export default {
         shortName: "DTP",
         value: "{{dtpDate, formatFullDate}}",
         approved: {
-          info: `Great work! Time Comp confirmed you've met the criteria for Transition Release.
+          info: `Great work! Time Comp confirmed you've met the criteria for earlier release through the Drug Transition Program.
           One last thing stands between you and the gate: **an approved home plan**. Get that finalized
           to walk out on this date. (Steer clear of disciplinary infractions, too — they can still
           put this date at risk.)`,
-          upcomingInfo: `Great work! Time Comp confirmed you've met the criteria for Transition Release. Make sure that your **home plan is approved** in order to walk out on this date. (Steer clear of disciplinary infractions, too — they can still put this date at risk.)`,
+          upcomingInfo: `Great work! Time Comp confirmed you've met the criteria for the Drug Transition Program. Make sure that your **home plan is approved** in order to walk out on this date. (Steer clear of disciplinary infractions, too — they can still put this date at risk.)`,
           pastInfo: `If this date has already passed, it means you have not met all the requirements for release. Reviewing the criteria will show you what steps you still need to take.`,
           goLink: "What are the criteria to qualify for this date?",
         },
         tentative: {
-          info: `You may qualify to go home **as early as {{dtpDate, formatFullDate}}** ({{dtpDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) through the Transition Program.
-          This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria – tap below to learn how. `,
+          info: `**{{dtpDate, formatFullDate}}** ({{dtpDate, formatDateRangeFromToday(delimiter: ' and ')}} from today) is the earliest you could go home through the Drug Transition Program.
+          This date is **tentative**, not approved yet — it only happens if you meet the criteria. To reach it, keep your focus on meeting the criteria. Tap below to learn how.`,
           pastInfo: `You may qualify to go home sooner than the date of your next release option. This date is **tentative**, and not guaranteed. To qualify, focus on meeting the criteria — tap below to learn how.`,
-          value: `You may be eligible for early release through the Transition Program`,
+          value: `You may be eligible for release up to 90 days earlier through Transition Program Release`,
           goLink: "What do I need to do to qualify for this date?",
         },
       },
@@ -195,13 +195,13 @@ export default {
           heading: "Standard Transition Program",
           body: `To be released on your STP date, you must meet the following criteria:
 
-1. You must sign the Transition Program agreement form – talk to your COIII in order to do this.
+1. You must sign the Transition Program agreement form — talk to your COIII in order to do this.
 2. You must be classified as Medium or Minimum custody.
 3. You must complete the Mandatory Literacy requirement, unless you have an exemption.
 4. You can’t have any felony holds, felony detainers, or felony warrants.
 5. You must not have been found guilty of any Major Class A or Class B disciplinary rule violations within the last 6 months. You also cannot have any Major Violent rule violations during your current incarceration. Even if you qualified, getting a new infraction could cause you to lose your STP date.
 6. You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you have since successfully reenrolled and completed it.
-7. You must have an approved home plan – starting to work on this ASAP is essential to receiving your full 90 days.
+7. You must have an approved home plan — starting to work on this ASAP is essential to receiving your full 90 days.
 8. You can’t have any past arrests, convictions, or requirements to register for sex offenses.
 9. You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
 10. If you have participated in the Transition Program before, you must wait at least 24 months after your last [CSED]({{csedLinkUrl}}) date before being eligible again.
@@ -277,7 +277,7 @@ export default {
           datesNotMatchingTimeComp: {
             header:
               "The dates in the app don't match my time comp paperwork. Why?",
-            content: `This usually happens because something changed after your time comp paperwork was printed. The app shows what's currently in the computer system that your COIII uses, which is updated more often than printed paperwork.
+            content: `This usually happens because something changed after your time comp paperwork was printed. The app shows what's currently in the computer system that your COIII uses, which is updated more often than the printed paperwork.
 
 If your dates have changed, the app should be the more recent source. But if something looks wrong, talk to your COIII — they can check the system and write to Time Comp if there's a real problem.`,
           },
@@ -309,7 +309,7 @@ If you're not sure how a specific violation will affect your dates, talk to your
             content: `It depends on the type of detainer hold you have.
 
 - **Felony holds, felony detainers, or felony warrants** make you ineligible for Transition Release (both STP and DTP) and for CSBD / TR to ADD.
-- **An ICE detainer** also makes you ineligible for early release types if you are not a US Citizen.
+- **An ICE detainer** also makes you ineligible for early release programs.
 
 A detainer does not change your ERCD or SED. Those dates are still yours, but you may be picked up by another agency when you leave.
 
@@ -377,13 +377,13 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
           header: "What do I need to do in order to be released on this date?",
           content: `To be released on your STP date, you must meet the following criteria:
 
-- You must sign the Transition Program agreement form – talk to your COIII in order to do this.
+- You must sign the Transition Program agreement form — talk to your COIII in order to do this.
 - You must be classified as Medium or Minimum custody.
 - You must complete the Mandatory Literacy requirement, unless you have an exemption.
 - You can’t have any felony holds, felony detainers, or felony warrants.
 - You must not have been found guilty of any Major Class A or Class B disciplinary rule violations within the last 6 months. You also cannot have any Major Violent rule violations during your current incarceration. Even if you qualified, getting a new infraction could cause you to lose your STP date.
 - You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you have since successfully reenrolled and completed it.
-- You must have an approved home plan – starting to work on this ASAP is essential to receiving your full 90 days.
+- You must have an approved home plan — starting to work on this ASAP is essential to receiving your full 90 days.
 - You can’t have any past arrests, convictions, or requirements to register for sex offenses.
 - You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
 - If you have participated in the Transition Program before, you must wait at least 24 months after your last [CSED](#csedDate) date before being eligible again.
@@ -619,7 +619,7 @@ If you don’t pass the mandate, you can’t be released on these release types.
         ifIAmReleased: {
           header:
             "If I’m released on my CSBD or TR to ADD, what does that mean for me?",
-          content: `If you are released on your CSBD or TR to ADD, you move to supervision in the community, reporting to a Community Reentry Officer. If you don’t meet requirements (for example: refuse to sign, or haven’t met Mandatory Literacy requirement), you may remain in prison past your CSBD or TR to ADD – either until you meet the CSBD requirements, or reach the next release date whose requirements you meet.`,
+          content: `If you are released on your CSBD or TR to ADD, you move to supervision in the community, reporting to a Community Reentry Officer. If you don’t meet requirements (for example: refuse to sign, or haven’t met Mandatory Literacy requirement), you may remain in prison past your CSBD or TR to ADD — either until you meet the CSBD requirements, or reach the next release date whose requirements you meet.`,
         },
       },
     },
@@ -648,7 +648,7 @@ Earned Release Credits are given for time served, good behavior, and program par
           header: "Where does the 85.7% come from?",
           content: `Most people sentenced under Truth in Sentencing are eligible to earn 1 day of Earned Release Credit for every 6 days that they serve. If you don’t get any disciplinary infractions that remove your Credits, this means that you would serve 6/7ths of your sentence. 6 divided by 7 is 85.7%.
 
-Note that some people serving time for _only_ non-violent drug possession or use crimes may be eligible for release after serving just 70% of their sentence. This is because they are eligible to earn more release credits – 3 for every 7 days served.`,
+Note that some people serving time for _only_ non-violent drug possession or use crimes may be eligible for release after serving just 70% of their sentence. This is because they are eligible to earn more release credits — 3 for every 7 days served.`,
         },
         toBeReleasedOnThisDate: {
           header: "What do I need to do in order to be released on this date?",
