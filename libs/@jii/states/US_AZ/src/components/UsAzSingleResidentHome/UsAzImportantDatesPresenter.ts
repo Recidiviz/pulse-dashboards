@@ -218,7 +218,7 @@ export class UsAzImportantDatesPresenter {
 
   get dateEntries(): DateEntry[] {
     // Sort by earliest date first
-    const sortedEntries = this.displayedDates.toSorted((a, b) => {
+    const sortedEntries = this.displayedDates.slice().sort((a, b) => {
       return a.date.getTime() - b.date.getTime();
     });
 
