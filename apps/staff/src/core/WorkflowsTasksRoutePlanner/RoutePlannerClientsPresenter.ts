@@ -127,6 +127,12 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     return this.searchStore.selectedSearchables;
   }
 
+  displayName(person: Client) {
+    if (person.stateCode === "US_TX")
+      return person.displayPreferredNameLastFirst;
+    return person.displayPreferredName;
+  }
+
   /**
    * @returns Record mapping selected caseload IDs to a list of home contact tasks
    * for each caseload.
@@ -160,10 +166,14 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     const taskInfo = tasks.map((task) => {
       return {
         type: this.TASK_TYPE_COPY[task.type] ?? "Other",
-        scheduledStatus: task.hasFutureScheduledContact
-          ? `Scheduled for ${task.futureScheduledContacts?.map((date) => formatWorkflowsDateWithoutYear(date)).join(", ")}`
-          : "To-Do",
-        isScheduled: task.hasFutureScheduledContact,
+        // idaho does not have the ability to view
+        // or schedule appointment dates presently
+        ...(person.stateCode !== "US_ID" && {
+          scheduledStatus: task.hasFutureScheduledContact
+            ? `Scheduled for ${task.futureScheduledContacts?.map((date) => formatWorkflowsDateWithoutYear(date)).join(", ")}`
+            : "To-Do",
+          isScheduled: task.hasFutureScheduledContact,
+        }),
       };
     });
 

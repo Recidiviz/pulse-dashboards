@@ -285,7 +285,7 @@ const CollapsedClientCard = observer(function ClientCard({
 
       <ClientInfo className="fs-exclude">
         <NameRow>
-          <Name>{person.displayPreferredNameLastFirst}</Name>
+          <Name>{presenter.displayName(person)}</Name>
           <WorkflowsTooltip
             person={person}
             contents={<SupervisionLevelTooltip copy={supervisionTooltip} />}
@@ -379,7 +379,7 @@ export const ClientCard = observer(function ClientCard({
 
       <ClientInfo className="fs-exclude">
         <NameRow>
-          <Name>{person.displayPreferredNameLastFirst}</Name>
+          <Name>{presenter.displayName(person)}</Name>
           <WorkflowsTooltip
             person={person}
             contents={<SupervisionLevelTooltip copy={supervisionTooltip} />}
@@ -431,13 +431,15 @@ export const ClientCard = observer(function ClientCard({
                 <TagsIcon />
                 <SmallInfoText>{task.type}</SmallInfoText>
               </InfoRow>
-              <SchedulingBadge
-                color={
-                  task.isScheduled ? palette.slate10 : "rgb(244, 233, 215)"
-                }
-              >
-                {task.scheduledStatus}
-              </SchedulingBadge>
+              {task.scheduledStatus && (
+                <SchedulingBadge
+                  color={
+                    task.isScheduled ? palette.slate10 : "rgb(244, 233, 215)"
+                  }
+                >
+                  {task.scheduledStatus}
+                </SchedulingBadge>
+              )}
             </TasksRow>
           ))}
         </AdditionalInfo>
