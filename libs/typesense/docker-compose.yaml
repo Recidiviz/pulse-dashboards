@@ -17,11 +17,10 @@ services:
       TYPESENSE_API_KEY: xyz
       TYPESENSE_DATA_DIR: /data
       TYPESENSE_ENABLE_CORS: "true"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
-      interval: 5s
-      timeout: 2s
-      retries: 10
+    # Typesense only writes typesense-access.log when --log-dir is set, and once a
+    # log-dir is configured the main log (typesense.log) stops going to stdout too.
+    # So we point both at /var/log/typesense, enable access + search logging, and
+    # tail both files to stdout so `docker compose logs` shows requests + queries.
     entrypoint:
       - /bin/sh
       - -c
@@ -33,6 +32,11 @@ services:
           --log-dir=/var/log/typesense \
           --enable-access-logging \
           --enable-search-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
 volumes:
   typesense_data:

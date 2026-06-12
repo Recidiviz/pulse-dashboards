@@ -1,0 +1,76 @@
+# Typesense search cluster for recidiviz-dashboard-staging.
+settings:
+  context:
+    project_id: recidiviz-dashboard-staging
+    product: typesense
+    location: us-central1
+    fallback_location: us-east1
+
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+import:
+  - ../@defaults/terraform-backend
+
+components:
+  terraform:
+    apps/typesense:
+      vars:
+        region: "{{ .settings.context.location }}"
+
+        # Public endpoint. DNS (A record + cert-validation CNAME) is managed outside
+        # this project — see the endpoint_ip / cert_dns_authorization_record outputs.
+        hostname: typesense-staging.recidiviz.org
+
+        operator_chart_version: 0.4.1
+        typesense_image: typesense/typesense:30.2
+
+        node_machine_type: e2-highmem-2
+        data_disk_size: 50Gi
+
+        monitoring:
+          alert_email: alerts@recidiviz.org
+          # Staging runs looser (higher) thresholds than production — alert later, less noise.
+          disk_alert_ratio: 0.90
+          memory_alert_ratio: 0.95
+          search_latency_alert_ms: 750
+          pending_writes_alert: 200
+
+    # Typesense fallback-region standby for recidiviz-dashboard-staging.
+    #
+    # Idles the slow-to-provision supporting infra (regional static IP, KMS key ring +
+    # crypto keys, CMEK snapshot bucket, cert-DNS authorization, snapshotter GSA + WI
+    # binding, Cloud Router/NAT) in a second region so a regional cutover is a
+    # single var flip (mode: standby → mode: primary) + atmos apply.
+    #
+    # Failover playbook: RUNBOOK.md → "Regional outages".
+    # Cost: ~$5–7/mo for the idle supporting infra. No cluster, no LB, no workloads.
+    apps/typesense--secondary:
+      metadata:
+        component: apps/typesense
+      vars:
+        # Standby: supporting infra only (cluster + workloads + LB + monitoring +
+        # CronJobs are all count = 0 in this mode). Flip to "primary" to fail over.
+        mode: standby
+
+        region: "{{ .settings.context.fallback_location }}"
+
+        # Same hostname as the primary stack — the standby cert DNS authorization
+        # is for this domain so the cert can validate immediately on failover.
+        hostname: typesense-staging.recidiviz.org
+
+        operator_chart_version: 0.4.1
+        typesense_image: typesense/typesense:30.2
+
+        node_machine_type: e2-highmem-2
+        data_disk_size: 50Gi
+
+        # Unused in standby (monitoring policies are count=0) but the variable has
+        # no default, so set the same shape as the primary stack to keep the
+        # validate/plan clean.
+        monitoring:
+          alert_email: alerts@recidiviz.org
+          disk_alert_ratio: 0.90
+          memory_alert_ratio: 0.95
+          search_latency_alert_ms: 750
+          pending_writes_alert: 200
