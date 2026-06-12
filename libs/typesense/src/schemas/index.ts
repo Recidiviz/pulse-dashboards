@@ -102,6 +102,14 @@ export const schemas: CollectionCreateSchema[] = [
       { name: "name", type: "string", sort: true },
     ],
   },
+  {
+    name: "clientUpdatesV2",
+    enable_nested_fields: true,
+    fields: [
+      { name: "stateCode", type: "string", facet: true },
+      { name: "preferredName", type: "string", optional: true },
+    ],
+  },
 ];
 
 // Collections whose Typesense `id` should come from the source record's own

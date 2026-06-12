@@ -70,3 +70,35 @@ components:
           memory_alert_ratio: 0.85
           search_latency_alert_ms: 300
           pending_writes_alert: 50
+
+    # Firebase extension that mirrors Firestore document changes into the Typesense
+    # cluster above. Lives in the same stack file so a typesense rollout (cluster
+    # + sync pipeline) is a single atmos apply.
+    apps/firestore-typesense-search:
+      vars:
+        # Unpinned — the REST API's CREATE endpoint only accepts versions in
+        # PUBLISHED state. The publisher uses `-rc.X` suffixes for RCs which
+        # 404 on CREATE (even though they install via the firebase CLI). With
+        # no pin, the API picks the latest PUBLISHED version, which currently
+        # lands us on the v2.x line. Revisit when 3.x stabilizes. Mirror the
+        # staging stack.
+        extension_ref: typesense/firestore-typesense-search
+
+        # Cloud Functions v2 region for the extension's triggers. Should sit close
+        # to the Firestore database location; nam5 is a multi-region so any US Cloud
+        # Functions region is fine — us-east1 mirrors staging.
+        location: us-east1
+
+        # Project Firestore location for recidiviz-dashboard-production. nam5 is
+        # a US multi-region (not a single region) — that's why the variable is
+        # `location` rather than `region`.
+        firestore_database_location: nam5
+
+        # Matches the typesense component's hostname above.
+        typesense_host: typesense.recidiviz.org
+
+        collections:
+          - name: clientUpdatesV2
+            fields:
+              - preferredName
+              - stateCode
