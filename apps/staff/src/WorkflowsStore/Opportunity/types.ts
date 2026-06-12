@@ -28,12 +28,12 @@ import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,
   ManualSnoozeUpdate,
-  OfficerAction,
-  OfficerApprovalAction,
-  OfficerDenialAction,
+  OfficerApprovalRequest,
+  OfficerDenialRequest,
+  OfficerRequest,
   SharedSnoozeUpdate,
   Submission,
-  SupervisorAction,
+  SupervisorResponse,
   UpdateLog,
 } from "../../FirestoreStore";
 import { PartialRecord } from "../../utils/typeUtils";
@@ -239,15 +239,15 @@ export interface Opportunity<
   defaultManualSnoozeDays(denialReasons: string[]): number | undefined;
   opportunityBannerInfo?: OpportunityBannerInfo;
   bannerInfo?: OpportunityBannerInfo;
-  actionHistory: OfficerAction[] | undefined;
-  latestAction: OfficerAction | undefined;
+  actionHistory: OfficerRequest[] | undefined;
+  latestAction: OfficerRequest | undefined;
   setOfficerAction: (
-    officerActionParams: OfficerApprovalAction | OfficerDenialAction,
+    officerActionParams: OfficerApprovalRequest | OfficerDenialRequest,
   ) => Promise<void>;
   markActionHistoryStale: () => Promise<void>;
   deleteActionHistory: () => Promise<void>;
   setSupervisorResponse: (
-    supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
+    supervisorResponseParams: Omit<SupervisorResponse, "date" | "by">,
   ) => Promise<void>;
   indefiniteDenialReasons: DenialReasonsMap;
   denialViewPrompt: string;

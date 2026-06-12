@@ -27,7 +27,7 @@ import {
   formatWorkflowsDateWithTime,
 } from "../../../../src/utils";
 import PersonIcon from "../../../assets/static/images/person.svg?react";
-import { OfficerAction } from "../../../FirestoreStore";
+import { OfficerRequest } from "../../../FirestoreStore";
 import {
   DetailsBox,
   DetailsHeading,
@@ -49,7 +49,7 @@ const PersonInfoWrapper = styled.div`
 function OfficerActionContents({
   action,
 }: {
-  action: OfficerAction;
+  action: OfficerRequest;
 }): React.ReactElement<any> | undefined {
   if (action.type === "APPROVAL") {
     return (
@@ -111,7 +111,7 @@ function PersonHeader({
 function ActionEntry({
   action,
 }: {
-  action: OfficerAction;
+  action: OfficerRequest;
 }): React.ReactElement<any> | null {
   const response = action.supervisorResponse;
   let actionText: string;
@@ -129,7 +129,7 @@ function ActionEntry({
         <DetailsBox>
           <PersonHeader personName={response.by} date={response.date} />
           <SecureSmallDetailsCopy>{responseText}</SecureSmallDetailsCopy>
-          {response.revisionRequest && (
+          {response.type === "DENIAL" && response.revisionRequest && (
             <SecureSmallDetailsCopy>
               {`Revisions request: ${response.revisionRequest}`}
             </SecureSmallDetailsCopy>

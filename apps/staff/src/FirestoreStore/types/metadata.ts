@@ -20,6 +20,7 @@ import type { Timestamp } from "firebase/firestore";
 export type UpdateLog = {
   date: Timestamp;
   by: string;
+  updateById?: string | undefined;
 };
 
 export type ExternalSystemRequestStatus =
@@ -37,5 +38,6 @@ export type ExternalRequestUpdate<RequestData> = {
  * Utility type that requires at least one property of T to be true
  */
 export type AtLeastOneTrue<T extends Record<string, boolean>> = {
-  [K in keyof T]: Record<K, true> & Partial<Record<Exclude<keyof T, K>, boolean>>
+  [K in keyof T]: Record<K, true> &
+    Partial<Record<Exclude<keyof T, K>, boolean>>;
 }[keyof T];

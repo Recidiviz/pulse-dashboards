@@ -21,9 +21,9 @@ import { Timestamp } from "firebase/firestore";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../../core/views";
 import {
-  OfficerApprovalAction,
-  OfficerDenialAction,
-  SupervisorAction,
+  OfficerApprovalRequest,
+  OfficerDenialRequest,
+  SupervisorResponse,
 } from "../../../../FirestoreStore";
 import { UsIaEarlyDischargeActionsMetadata } from "../../../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Client } from "../../../Client";
@@ -197,7 +197,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   async setOfficerAction(
-    officerActionParams: OfficerApprovalAction | OfficerDenialAction,
+    officerActionParams: OfficerApprovalRequest | OfficerDenialRequest,
   ): Promise<void> {
     const officerAction = {
       date: Timestamp.fromDate(new Date()),
@@ -249,13 +249,13 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   async setSupervisorResponse(
-    supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
+    supervisorResponseParams: Omit<SupervisorResponse, "date" | "by">,
   ): Promise<void> {
     const supervisorResponse = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
       ...supervisorResponseParams,
-    };
+    } as SupervisorResponse;
 
     if (!this.actionHistory || !this.latestAction) {
       throw new Error(
@@ -276,7 +276,10 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     const actionMetadata: UsIaEarlyDischargeActionsMetadata["action"] = {
       type: this.latestAction.type,
       supervisorResponseType: supervisorResponse.type,
-      revisionRequest: supervisorResponse.revisionRequest,
+      revisionRequest:
+        supervisorResponse.type === "DENIAL"
+          ? supervisorResponse.revisionRequest
+          : undefined,
     };
 
     const originalStatus = this.clientStatus;

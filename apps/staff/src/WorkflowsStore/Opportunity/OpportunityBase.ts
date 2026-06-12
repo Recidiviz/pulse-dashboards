@@ -38,14 +38,14 @@ import {
   AutoSnoozeUpdate,
   Denial,
   ManualSnoozeUpdate,
-  OfficerAction,
-  OfficerApprovalAction,
-  OfficerDenialAction,
+  OfficerApprovalRequest,
+  OfficerDenialRequest,
+  OfficerRequest,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
   SharedSnoozeUpdate,
   Submission,
-  SupervisorAction,
+  SupervisorResponse,
   UpdateLog,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -1129,7 +1129,7 @@ export class OpportunityBase<
    * The history of officer actions requiring supervisor approval that have been
    * taken on an opportunity .
    */
-  get actionHistory(): OfficerAction[] | undefined {
+  get actionHistory(): OfficerRequest[] | undefined {
     return this.updates?.actionHistory;
   }
 
@@ -1142,7 +1142,7 @@ export class OpportunityBase<
    * timeline.
    */
   async setOfficerAction(
-    officerActionParams: OfficerApprovalAction | OfficerDenialAction,
+    officerActionParams: OfficerApprovalRequest | OfficerDenialRequest,
   ): Promise<void> {
     // If a client is moving into review, we should
     // delete denials and submissions, if applicable.
@@ -1248,13 +1248,13 @@ export class OpportunityBase<
    * Set the supervisor's `DENIAL` or `APPROVAL` of the latest officer action.
    */
   async setSupervisorResponse(
-    supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
+    supervisorResponseParams: Omit<SupervisorResponse, "date" | "by">,
   ): Promise<void> {
     const supervisorResponse = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
       ...supervisorResponseParams,
-    };
+    } as SupervisorResponse;
 
     if (!this.actionHistory || !this.latestAction) {
       throw new Error(
@@ -1265,7 +1265,10 @@ export class OpportunityBase<
     const actionMetadata: OpportunityApprovalActionsMetadata["action"] = {
       type: this.latestAction.type,
       supervisorResponseType: supervisorResponse.type,
-      revisionRequest: supervisorResponse.revisionRequest,
+      revisionRequest:
+        supervisorResponse.type === "DENIAL"
+          ? supervisorResponse.revisionRequest
+          : undefined,
     };
 
     const originalStatus = this.reviewStatus;

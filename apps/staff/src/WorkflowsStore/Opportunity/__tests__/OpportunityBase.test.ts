@@ -30,8 +30,8 @@ import {
 } from "../../../core/__tests__/testUtils";
 import {
   CombinedUserRecord,
-  OfficerAction,
-  OfficerDenialAction,
+  OfficerDenialRequest,
+  OfficerRequest,
   OpportunityUpdate,
 } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
@@ -1549,7 +1549,7 @@ describe("setOfficerAction", () => {
       denialReasons: ["INDEFINITE REASON"],
       requestedSnoozeLength: undefined,
     };
-    await opp.setOfficerAction(testAction as OfficerDenialAction);
+    await opp.setOfficerAction(testAction as OfficerDenialRequest);
 
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
@@ -1569,7 +1569,7 @@ describe("setOfficerAction", () => {
       requestedSnoozeLength: 30,
       actionPlan: "Test action plan",
     };
-    await opp.setOfficerAction(testAction as OfficerDenialAction);
+    await opp.setOfficerAction(testAction as OfficerDenialRequest);
 
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
@@ -1599,7 +1599,7 @@ describe("setOfficerAction", () => {
       requestedSnoozeLength: 30,
       actionPlan: "Test action plan",
     };
-    await opp.setOfficerAction(testAction as OfficerDenialAction);
+    await opp.setOfficerAction(testAction as OfficerDenialRequest);
 
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
@@ -1624,7 +1624,7 @@ describe("setSupervisorResponse", () => {
 
   test("throws error if actionHistory is empty", async () => {
     vi.spyOn(opp, "actionHistory", "get").mockReturnValue(
-      [] as OfficerAction[],
+      [] as OfficerRequest[],
     );
     await expect(
       opp.setSupervisorResponse({ type: "APPROVAL" }),
@@ -1645,7 +1645,7 @@ describe("setSupervisorResponse", () => {
     vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
       testAction,
       testAction,
-    ] as OfficerAction[]);
+    ] as OfficerRequest[]);
 
     await opp.setSupervisorResponse({ type: "APPROVAL" });
 
@@ -1675,7 +1675,7 @@ describe("setSupervisorResponse", () => {
     vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
       testAction,
       testAction,
-    ] as OfficerAction[]);
+    ] as OfficerRequest[]);
 
     await opp.setSupervisorResponse({ type: "DENIAL" });
 
@@ -1703,7 +1703,7 @@ describe("setSupervisorResponse", () => {
     vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
       testAction,
       testAction,
-    ] as OfficerAction[]);
+    ] as OfficerRequest[]);
 
     await opp.setSupervisorResponse({ type: "APPROVAL" });
 
@@ -1731,7 +1731,7 @@ describe("setSupervisorResponse", () => {
     vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
       testAction,
       testAction,
-    ] as OfficerAction[]);
+    ] as OfficerRequest[]);
 
     await opp.setSupervisorResponse({ type: "DENIAL" });
 

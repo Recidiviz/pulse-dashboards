@@ -27,7 +27,7 @@ import {
   formatWorkflowsDateWithTime,
 } from "../../../../../src/utils";
 import PersonIcon from "../../../../assets/static/images/person.svg?react";
-import { OfficerAction } from "../../../../FirestoreStore";
+import { OfficerRequest } from "../../../../FirestoreStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa/index";
 import {
   DetailsBox,
@@ -45,7 +45,7 @@ const PersonInfoWrapper = styled.div`
 function OfficerActionContents({
   action,
 }: {
-  action: OfficerAction;
+  action: OfficerRequest;
 }): React.ReactElement<any> | undefined {
   if (action.type === "APPROVAL") {
     if (!action.notes) {
@@ -105,7 +105,7 @@ function PersonHeader({
 function ActionEntry({
   action,
 }: {
-  action: OfficerAction;
+  action: OfficerRequest;
 }): React.ReactElement<any> | null {
   if (isApprovalWithEmptyNotes(action)) {
     return null;
@@ -113,7 +113,7 @@ function ActionEntry({
   const response = action.supervisorResponse;
   return (
     <>
-      {response?.revisionRequest && (
+      {response && response.type === "DENIAL" && response.revisionRequest && (
         <DetailsBox>
           <PersonHeader personName={response.by} date={response.date} />
           <SecureSmallDetailsCopy>
@@ -129,7 +129,7 @@ function ActionEntry({
   );
 }
 
-const isApprovalWithEmptyNotes = (action: OfficerAction) =>
+const isApprovalWithEmptyNotes = (action: OfficerRequest) =>
   action.type === "APPROVAL" && !action.notes;
 
 export const UsIaActionPlansAndNotes = observer(

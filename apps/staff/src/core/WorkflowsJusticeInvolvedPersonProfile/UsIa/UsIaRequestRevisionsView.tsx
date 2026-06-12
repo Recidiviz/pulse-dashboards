@@ -30,6 +30,7 @@ import {
   SidePanelContents,
   SidePanelHeader,
 } from "../../../core/sharedComponents";
+import { DenialResponse } from "../../../FirestoreStore/types/opportunity";
 import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
 import {
   DEFAULT_MAX_CHAR_LENGTH,
@@ -64,7 +65,7 @@ export const UsIaRequestRevisionsView: React.FC<OpportunitySidebarProfileProps> 
       await opportunity.setSupervisorResponse({
         type: "DENIAL",
         revisionRequest,
-      });
+      } as DenialResponse);
 
       toast(
         <OpportunityStatusUpdateToast

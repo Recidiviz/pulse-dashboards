@@ -79,7 +79,7 @@ import {
   FormUpdate,
   ManualSnoozeUpdate,
   MilestonesMessage,
-  OfficerAction,
+  OfficerRequest,
   OpportunityUpdateWithForm,
   PersonUpdateType,
   SupervisionTaskUpdate,
@@ -538,7 +538,7 @@ export default class FirestoreStore {
 
   async updateOpportunityActionHistory(
     opportunity: Opportunity,
-    actionHistory: OfficerAction[],
+    actionHistory: OfficerRequest[],
   ): Promise<void> {
     const update = {
       actionHistory,

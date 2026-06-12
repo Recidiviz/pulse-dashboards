@@ -51,17 +51,34 @@ export type AutoSnoozeUpdate = {
   snoozeForDays?: never;
 } & SharedSnoozeUpdate;
 
-export type SupervisorAction = UpdateLog & {
-  type: "APPROVAL" | "DENIAL";
+export type RevisionResponse = UpdateLog & {
+  type: "REVISION";
+  // notes and reviewerId will only be non-null when type is REVISION
+  notes: string;
+  reviewerId: string;
+};
+
+export type ApprovalResponse = UpdateLog & {
+  type: "APPROVAL";
+};
+
+export type DenialResponse = UpdateLog & {
+  type: "DENIAL";
+  // Only relevant for Iowa at this time.
   revisionRequest?: string;
 };
 
-export type OfficerApprovalAction = {
+export type SupervisorResponse = UpdateLog &
+  (RevisionResponse | ApprovalResponse | DenialResponse);
+
+export type OfficerApprovalRequest = {
   type: "APPROVAL";
   notes?: string;
+  // Only relevant for Texas at this time. Used when enableSupervisorReviewChain fv is granted
+  reviewerId?: string;
 };
 
-export type OfficerDenialAction = {
+export type OfficerDenialRequest = {
   type: "DENIAL";
   // TODO(#9611): Move action plan input to the userInput mapping
   actionPlan?: string;
@@ -73,9 +90,9 @@ export type OfficerDenialAction = {
   userInput?: Record<string, string>;
 };
 
-export type OfficerAction = UpdateLog &
-  (OfficerApprovalAction | OfficerDenialAction) & {
-    supervisorResponse?: SupervisorAction;
+export type OfficerRequest = UpdateLog &
+  (OfficerApprovalRequest | OfficerDenialRequest) & {
+    supervisorResponse?: SupervisorResponse;
     // Set to true when this OfficerAction should not be relied upon to determine
     // a client's status or tab. Signifies that some unrelated action has been taken to
     // break the client out of the supervisor approval flow (e.g. the client was
@@ -86,7 +103,7 @@ export type OfficerAction = UpdateLog &
 export type OpportunityUpdate = {
   denial?: Denial;
   submitted?: Submission;
-  actionHistory?: OfficerAction[];
+  actionHistory?: OfficerRequest[];
   manualSnooze?: ManualSnoozeUpdate;
   autoSnooze?: AutoSnoozeUpdate;
   omsSnooze?: ExternalRequestUpdate<{ snoozeUntil: string }>;
@@ -95,6 +112,10 @@ export type OpportunityUpdate = {
   };
   lastViewed?: UpdateLog;
   stateCode?: string;
+  // The most recent (or current) reviewer.
+  // Equivalent to the most recent actionHistory reviewerId if it exists (when type is "APPROVAL")
+  // Stored here for easier firestore querying
+  currentReviewerId?: string;
 };
 
 export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {
