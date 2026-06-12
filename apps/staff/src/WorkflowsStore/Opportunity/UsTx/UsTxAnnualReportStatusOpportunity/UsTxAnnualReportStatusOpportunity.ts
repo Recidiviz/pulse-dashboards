@@ -27,6 +27,7 @@ import {
   usTxAnnualReportStatusSchema,
 } from "./UsTxAnnualReportStatusOpportunityReferralRecord";
 
+// TODO OBT-32657 Clean up V1 opp
 export class UsTxAnnualReportStatusOpportunity extends OpportunityBase<
   Client,
   UsTxAnnualReportStatusReferralRecord,

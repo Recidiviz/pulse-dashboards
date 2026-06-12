@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,16 +22,20 @@ import { opportunitySchemaBase } from "~datatypes";
 import type { UsTxArsErsSharedDraftData } from "../UsTxArsErsSharedUtils";
 import { usTxArsErsSharedFormInformationSchema } from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 
-// TODO OBT-32657 Clean up V1 opp
-export const usTxAnnualReportStatusSchema = opportunitySchemaBase.extend({
+export const usTxAnnualReportStatusV2Schema = opportunitySchemaBase.extend({
   formInformation: usTxArsErsSharedFormInformationSchema,
+  metadata: z
+    .object({
+      grantedAt: z.date().nullish(),
+    })
+    .passthrough(),
 });
 
-export type UsTxAnnualReportStatusReferralRecord = z.infer<
-  typeof usTxAnnualReportStatusSchema
+export type UsTxAnnualReportStatusV2ReferralRecord = z.infer<
+  typeof usTxAnnualReportStatusV2Schema
 >;
 
-export type UsTxAnnualReportStatusDraftData = UsTxArsErsSharedDraftData & {
+export type UsTxAnnualReportStatusV2DraftData = UsTxArsErsSharedDraftData & {
   threeYearsTRASCheck: boolean;
   comment1: string;
   complianceFeesAndEducationCheck: boolean;

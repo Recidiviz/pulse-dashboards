@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,25 +22,24 @@ import { Client } from "../../../Client";
 import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm/UsTxEarlyReleaseFromSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
-  UsTxEarlyReleaseFromSupervisionDraftData,
-  UsTxEarlyReleaseFromSupervisionReferralRecord,
-  usTxEarlyReleaseFromSupervisionSchema,
-} from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
+  UsTxEarlyReleaseFromSupervisionV2DraftData,
+  UsTxEarlyReleaseFromSupervisionV2ReferralRecord,
+  usTxEarlyReleaseFromSupervisionV2Schema,
+} from "../UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
 
-// TODO OBT-32657 Clean up V1 opp
-export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
+export class UsTxEarlyReleaseFromSupervisionV2Opportunity extends OpportunityBase<
   Client,
-  UsTxEarlyReleaseFromSupervisionReferralRecord,
-  OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionDraftData>
+  UsTxEarlyReleaseFromSupervisionV2ReferralRecord,
+  OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionV2DraftData>
 > {
   form: UsTxEarlyReleaseFromSupervisionForm;
 
   constructor(client: Client, record: DocumentData) {
     super(
       client,
-      "usTxEarlyReleaseFromSupervision",
+      "usTxEarlyReleaseFromSupervisionV2",
       client.rootStore,
-      usTxEarlyReleaseFromSupervisionSchema.parse(record),
+      usTxEarlyReleaseFromSupervisionV2Schema.parse(record),
     );
 
     this.form = new UsTxEarlyReleaseFromSupervisionForm(this, this.rootStore);

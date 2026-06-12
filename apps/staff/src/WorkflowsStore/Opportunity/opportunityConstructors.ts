@@ -110,7 +110,9 @@ import {
   UsTnCustodyLevelUpgrade2026V2Opportunity,
 } from "./UsTn/UsTn2026Classification/UsTnRCAFV2";
 import { UsTxAnnualReportStatusOpportunity } from "./UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
+import { UsTxAnnualReportStatusV2Opportunity } from "./UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2Opportunity";
 import { UsTxEarlyReleaseFromSupervisionOpportunity } from "./UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
+import { UsTxEarlyReleaseFromSupervisionV2Opportunity } from "./UsTx/UsTxEarlyReleaseFromSupervisionV2Opportunity/UsTxEarlyReleaseFromSupervisionV2Opportunity";
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
 
 export const opportunityConstructors = {
@@ -232,8 +234,13 @@ export const opportunityConstructors = {
   usTnSeriousMisconductUpgradeV2: UsTnSeriousMisconductUpgradeV2Opportunity,
 
   // US_TX
+  // TODO OBT-32657 Clean up V1 opp
   usTxAnnualReportStatus: UsTxAnnualReportStatusOpportunity,
+  // TODO OBT-32657 Clean up V1 opp
   usTxEarlyReleaseFromSupervision: UsTxEarlyReleaseFromSupervisionOpportunity,
+  usTxAnnualReportStatusV2: UsTxAnnualReportStatusV2Opportunity,
+  usTxEarlyReleaseFromSupervisionV2:
+    UsTxEarlyReleaseFromSupervisionV2Opportunity,
 
   // US_UT
   usUtEarlyTermination: UsUtEarlyTerminationOpportunity,

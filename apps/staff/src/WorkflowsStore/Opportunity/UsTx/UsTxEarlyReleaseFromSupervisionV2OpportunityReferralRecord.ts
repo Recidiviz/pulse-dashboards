@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@ import { opportunitySchemaBase } from "~datatypes";
 
 import type { UsTxArsErsSharedDraftData } from "./UsTxArsErsSharedUtils";
 
-// TODO OBT-32657 Clean up V1 opp
-
 /**
  * Shared `formInformation` shape for the US_TX ARS and ERS forms. Both forms
  * pull the same staff hierarchy and TDCJ number off the referral record.
@@ -41,16 +39,21 @@ export type UsTxArsErsSharedFormInformation = z.infer<
   typeof usTxArsErsSharedFormInformationSchema
 >;
 
-export const usTxEarlyReleaseFromSupervisionSchema =
+export const usTxEarlyReleaseFromSupervisionV2Schema =
   opportunitySchemaBase.extend({
     formInformation: usTxArsErsSharedFormInformationSchema,
+    metadata: z
+      .object({
+        grantedAt: z.date().nullish(),
+      })
+      .passthrough(),
   });
 
-export type UsTxEarlyReleaseFromSupervisionReferralRecord = z.infer<
-  typeof usTxEarlyReleaseFromSupervisionSchema
+export type UsTxEarlyReleaseFromSupervisionV2ReferralRecord = z.infer<
+  typeof usTxEarlyReleaseFromSupervisionV2Schema
 >;
 
-export type UsTxEarlyReleaseFromSupervisionDraftData =
+export type UsTxEarlyReleaseFromSupervisionV2DraftData =
   UsTxArsErsSharedDraftData & {
     atLeastHalfTimeCheck: boolean;
     comment1: string;

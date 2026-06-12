@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,30 +19,29 @@ import { DocumentData } from "@google-cloud/firestore";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm/UsTxEarlyReleaseFromSupervisionForm";
+import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm/UsTxAnnualReportStatusForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
-  UsTxEarlyReleaseFromSupervisionDraftData,
-  UsTxEarlyReleaseFromSupervisionReferralRecord,
-  usTxEarlyReleaseFromSupervisionSchema,
-} from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
+  UsTxAnnualReportStatusV2DraftData,
+  UsTxAnnualReportStatusV2ReferralRecord,
+  usTxAnnualReportStatusV2Schema,
+} from "../UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2OpportunityReferralRecord";
 
-// TODO OBT-32657 Clean up V1 opp
-export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
+export class UsTxAnnualReportStatusV2Opportunity extends OpportunityBase<
   Client,
-  UsTxEarlyReleaseFromSupervisionReferralRecord,
-  OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionDraftData>
+  UsTxAnnualReportStatusV2ReferralRecord,
+  OpportunityUpdateWithForm<UsTxAnnualReportStatusV2DraftData>
 > {
-  form: UsTxEarlyReleaseFromSupervisionForm;
+  form: UsTxAnnualReportStatusForm;
 
   constructor(client: Client, record: DocumentData) {
     super(
       client,
-      "usTxEarlyReleaseFromSupervision",
+      "usTxAnnualReportStatusV2",
       client.rootStore,
-      usTxEarlyReleaseFromSupervisionSchema.parse(record),
+      usTxAnnualReportStatusV2Schema.parse(record),
     );
 
-    this.form = new UsTxEarlyReleaseFromSupervisionForm(this, this.rootStore);
+    this.form = new UsTxAnnualReportStatusForm(this, this.rootStore);
   }
 }

@@ -116,8 +116,12 @@ export const constructedOpportunityTypes = [
   "usTnSeriousMisconductUpgradeV2",
 
   // US_TX
+  // TODO OBT-32657 Clean up V1 opp
   "usTxAnnualReportStatus",
+  // TODO OBT-32657 Clean up V1 opp
   "usTxEarlyReleaseFromSupervision",
+  "usTxAnnualReportStatusV2",
+  "usTxEarlyReleaseFromSupervisionV2",
 
   // US_UT
   "usUtEarlyTermination",
