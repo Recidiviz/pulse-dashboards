@@ -43,19 +43,33 @@ locals {
   # to create a subdir before typesense starts, but the data-dir is guaranteed to
   # exist and be writable. The two log files land alongside the RocksDB data.
   typesense_log_dir = "/usr/share/typesense/data"
-}
 
-# Extra server config the operator mounts onto typesense-server via envFrom.
-resource "kubernetes_config_map" "typesense_logging" {
-  count = local.workload_count
-  metadata {
-    name      = "typesense-logging"
-    namespace = kubernetes_namespace.typesense[0].metadata[0].name
-  }
-  data = {
+  # Extra server flags the operator injects as TYPESENSE_* env vars
+  # These should only be flags which are not supported by the operator's settings
+  typesense_server_config = {
     TYPESENSE_LOG_DIR               = local.typesense_log_dir
     TYPESENSE_ENABLE_ACCESS_LOGGING = "true"
     TYPESENSE_ENABLE_SEARCH_LOGGING = "true"
+  }
+
+  typesense_server_config_hash = substr(sha256(jsonencode(local.typesense_server_config)), 0, 8)
+}
+
+# Extra server config environment variables that the operator mounts onto typesense-server
+resource "kubernetes_config_map" "typesense_configuration" {
+  count = local.workload_count
+  metadata {
+    # Use a content hash so that changing any flag produces a new ConfigMap —
+    # forcing the operator to roll the StatefulSet so pods pick up the change.
+    name      = "typesense-config-${local.typesense_server_config_hash}"
+    namespace = kubernetes_namespace.typesense[0].metadata[0].name
+  }
+  data = local.typesense_server_config
+
+  lifecycle {
+    # create_before_destroy keeps the new ConfigMap present before the old one is removed,
+    # so the operator never briefly references a deleted ConfigMap during the swap.
+    create_before_destroy = true
   }
 }
 

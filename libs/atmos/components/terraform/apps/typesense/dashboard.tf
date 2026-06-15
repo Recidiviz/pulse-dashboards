@@ -8,37 +8,38 @@ resource "google_monitoring_dashboard" "typesense" {
     mosaicLayout = {
       columns = 12
       tiles = [
-        # Row 0 — at-a-glance health gauges.
+        # Row 0 — at-a-glance health gauges. (xPos/yPos omitted when 0 — see contract above.)
         {
-          xPos = 0, yPos = 0, width = 6, height = 4
+          width = 6, height = 4
           widget = {
             title = "Cluster health (probe_success: 1=healthy, 0=down)"
             scorecard = {
               timeSeriesQuery = { prometheusQuery = "min(probe_success)" }
-              gaugeView       = { lowerBound = 0.0, upperBound = 1.0 }
+              gaugeView       = { upperBound = 1.0 }
             }
           }
         },
         {
-          xPos = 6, yPos = 0, width = 6, height = 4
+          xPos = 6, width = 6, height = 4
           widget = {
             # Ready quorum members (want 3). Drops to 2 when a member is down-but-quorum-holding —
             # the state probe_success/quorum alerts miss. From the kube-state STATEFULSET package.
             title = "Ready replicas (want 3)"
             scorecard = {
               timeSeriesQuery = { prometheusQuery = "max(kube_statefulset_status_replicas_ready{namespace=\"${local.typesense_namespace}\", statefulset=\"typesense-sts\"})" }
-              gaugeView       = { lowerBound = 0.0, upperBound = 3.0 }
+              gaugeView       = { upperBound = 3.0 }
             }
           }
         },
         # Row 1 — infra health timelines (uptime + pod restarts).
         {
-          xPos = 0, yPos = 4, width = 6, height = 4
+          yPos = 4, width = 6, height = 4
           widget = {
             title = "Public endpoint uptime (/health)"
             xyChart = {
               dataSets = [{
-                plotType = "LINE"
+                plotType   = "LINE"
+                targetAxis = "Y1"
                 timeSeriesQuery = {
                   timeSeriesFilter = {
                     filter      = "metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\" resource.type=\"uptime_url\""
@@ -55,7 +56,8 @@ resource "google_monitoring_dashboard" "typesense" {
             title = "Pod restarts (typesense namespace)"
             xyChart = {
               dataSets = [{
-                plotType = "LINE"
+                plotType   = "LINE"
+                targetAxis = "Y1"
                 timeSeriesQuery = {
                   timeSeriesFilter = {
                     filter      = "metric.type=\"kubernetes.io/container/restart_count\" resource.type=\"k8s_container\" resource.label.\"namespace_name\"=\"${local.typesense_namespace}\""
@@ -68,14 +70,14 @@ resource "google_monitoring_dashboard" "typesense" {
         },
         # Row 2 — traffic shape.
         {
-          xPos = 0, yPos = 8, width = 6, height = 4
+          yPos = 8, width = 6, height = 4
           widget = {
             title = "Request rate (req/s)"
             xyChart = {
               dataSets = [
-                { plotType = "LINE", legendTemplate = "total", timeSeriesQuery = { prometheusQuery = "typesense_stats_total_requests_per_second" } },
-                { plotType = "LINE", legendTemplate = "search", timeSeriesQuery = { prometheusQuery = "typesense_stats_search_requests_per_second" } },
-                { plotType = "LINE", legendTemplate = "write", timeSeriesQuery = { prometheusQuery = "typesense_stats_write_requests_per_second" } },
+                { plotType = "LINE", targetAxis = "Y1", legendTemplate = "total", timeSeriesQuery = { prometheusQuery = "typesense_stats_total_requests_per_second" } },
+                { plotType = "LINE", targetAxis = "Y1", legendTemplate = "search", timeSeriesQuery = { prometheusQuery = "typesense_stats_search_requests_per_second" } },
+                { plotType = "LINE", targetAxis = "Y1", legendTemplate = "write", timeSeriesQuery = { prometheusQuery = "typesense_stats_write_requests_per_second" } },
               ]
             }
           }
@@ -89,8 +91,8 @@ resource "google_monitoring_dashboard" "typesense" {
               # is the search/write aggregate. (typesense_stats_latency_ms is per-endpoint —
               # don't add it back here as an "overall" line; it's not an aggregate.)
               dataSets = [
-                { plotType = "LINE", legendTemplate = "search", timeSeriesQuery = { prometheusQuery = "typesense_stats_search_latency_ms" } },
-                { plotType = "LINE", legendTemplate = "write", timeSeriesQuery = { prometheusQuery = "typesense_stats_write_latency_ms" } },
+                { plotType = "LINE", targetAxis = "Y1", legendTemplate = "search", timeSeriesQuery = { prometheusQuery = "typesense_stats_search_latency_ms" } },
+                { plotType = "LINE", targetAxis = "Y1", legendTemplate = "write", timeSeriesQuery = { prometheusQuery = "typesense_stats_write_latency_ms" } },
               ]
             }
           }
@@ -99,12 +101,13 @@ resource "google_monitoring_dashboard" "typesense" {
         # exposes typesense_stats_{latency_ms,requests_per_second}{typesense_request="GET /..."}).
         # topk(5) keeps the chart legible once dozens of endpoints are in play.
         {
-          xPos = 0, yPos = 12, width = 6, height = 4
+          yPos = 12, width = 6, height = 4
           widget = {
             title = "Top 5 endpoints by RPS (per-route)"
             xyChart = {
               dataSets = [{
                 plotType        = "LINE"
+                targetAxis      = "Y1"
                 legendTemplate  = "$${metric.labels.typesense_request}"
                 timeSeriesQuery = { prometheusQuery = "topk(5, typesense_stats_requests_per_second)" }
               }]
@@ -118,6 +121,7 @@ resource "google_monitoring_dashboard" "typesense" {
             xyChart = {
               dataSets = [{
                 plotType        = "LINE"
+                targetAxis      = "Y1"
                 legendTemplate  = "$${metric.labels.typesense_request}"
                 timeSeriesQuery = { prometheusQuery = "topk(5, typesense_stats_latency_ms)" }
               }]
@@ -126,11 +130,11 @@ resource "google_monitoring_dashboard" "typesense" {
         },
         # Row 4 — backpressure.
         {
-          xPos = 0, yPos = 16, width = 6, height = 4
+          yPos = 16, width = 6, height = 4
           widget = {
             title = "Overloaded requests/s (should be 0)"
             xyChart = {
-              dataSets = [{ plotType = "LINE", timeSeriesQuery = { prometheusQuery = "typesense_stats_overloaded_requests_per_second" } }]
+              dataSets = [{ plotType = "LINE", targetAxis = "Y1", timeSeriesQuery = { prometheusQuery = "typesense_stats_overloaded_requests_per_second" } }]
             }
           }
         },
@@ -139,18 +143,19 @@ resource "google_monitoring_dashboard" "typesense" {
           widget = {
             title = "Pending write batches (write/replication backlog)"
             xyChart = {
-              dataSets = [{ plotType = "LINE", timeSeriesQuery = { prometheusQuery = "typesense_stats_pending_write_batches" } }]
+              dataSets = [{ plotType = "LINE", targetAxis = "Y1", timeSeriesQuery = { prometheusQuery = "typesense_stats_pending_write_batches" } }]
             }
           }
         },
         # Row 5 — compute.
         {
-          xPos = 0, yPos = 20, width = 6, height = 4
+          yPos = 20, width = 6, height = 4
           widget = {
             title = "CPU usage (cores, per pod)"
             xyChart = {
               dataSets = [{
-                plotType = "LINE"
+                plotType   = "LINE"
+                targetAxis = "Y1"
                 timeSeriesQuery = {
                   timeSeriesFilter = {
                     filter      = "metric.type=\"kubernetes.io/container/cpu/core_usage_time\" resource.type=\"k8s_container\" resource.label.\"namespace_name\"=\"${local.typesense_namespace}\""
@@ -167,7 +172,8 @@ resource "google_monitoring_dashboard" "typesense" {
             title = "Memory used (bytes, per pod)"
             xyChart = {
               dataSets = [{
-                plotType = "LINE"
+                plotType   = "LINE"
+                targetAxis = "Y1"
                 timeSeriesQuery = {
                   timeSeriesFilter = {
                     filter      = "metric.type=\"kubernetes.io/container/memory/used_bytes\" resource.type=\"k8s_container\" resource.label.\"namespace_name\"=\"${local.typesense_namespace}\""
@@ -180,12 +186,13 @@ resource "google_monitoring_dashboard" "typesense" {
         },
         # Row 6 — storage + network.
         {
-          xPos = 0, yPos = 24, width = 6, height = 4
+          yPos = 24, width = 6, height = 4
           widget = {
             title = "Persistent Volume Claim (disk) utilization (per pod)"
             xyChart = {
               dataSets = [{
-                plotType = "LINE"
+                plotType   = "LINE"
+                targetAxis = "Y1"
                 timeSeriesQuery = {
                   timeSeriesFilter = {
                     filter      = "metric.type=\"kubernetes.io/pod/volume/utilization\" resource.type=\"k8s_pod\" resource.label.\"namespace_name\"=\"${local.typesense_namespace}\""
@@ -202,8 +209,8 @@ resource "google_monitoring_dashboard" "typesense" {
             title = "Network throughput (bytes)"
             xyChart = {
               dataSets = [
-                { plotType = "LINE", legendTemplate = "received", timeSeriesQuery = { prometheusQuery = "typesense_metrics_system_network_received_bytes" } },
-                { plotType = "LINE", legendTemplate = "sent", timeSeriesQuery = { prometheusQuery = "typesense_metrics_system_network_sent_bytes" } },
+                { plotType = "LINE", targetAxis = "Y1", legendTemplate = "received", timeSeriesQuery = { prometheusQuery = "typesense_metrics_system_network_received_bytes" } },
+                { plotType = "LINE", targetAxis = "Y1", legendTemplate = "sent", timeSeriesQuery = { prometheusQuery = "typesense_metrics_system_network_sent_bytes" } },
               ]
             }
           }

@@ -76,7 +76,7 @@ resource "kubectl_manifest" "typesense_cluster" {
       # --log-dir at the data-dir on the PVC; the per-replica follower Deployments in
       # logging.tf tail those files to stdout. See logging.tf for the full rationale.
       additionalServerConfiguration = {
-        name = kubernetes_config_map.typesense_logging[0].metadata[0].name
+        name = kubernetes_config_map.typesense_configuration[0].metadata[0].name
       }
 
       storage = {
@@ -133,7 +133,7 @@ resource "kubectl_manifest" "typesense_cluster" {
     helm_release.typesense_operator,
     kubernetes_storage_class_v1.typesense_cmek,
     kubernetes_secret.typesense_admin_api_key,
-    kubernetes_config_map.typesense_logging,
+    kubernetes_config_map.typesense_configuration,
     google_kms_crypto_key_iam_member.pd,
     kubectl_manifest.typesense_gateway,
   ]

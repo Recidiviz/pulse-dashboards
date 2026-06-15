@@ -322,14 +322,23 @@ resource "google_monitoring_alert_policy" "replicas_degraded" {
   user_labels  = merge(local.base_user_labels, { severity = "warning" })
 
   conditions {
-    display_name = "Typesense - ready StatefulSet replicas < 3 for 10m"
+    display_name = "Typesense - ready StatefulSet replicas < 3 for 20m"
     condition_prometheus_query_language {
       # 3 = the TypesenseCluster replica count (typesense.tf). typesense-sts = operator StatefulSet name.
-      # `max by (...)` preserves the GMP-projected PromQL labels so the alert payload carries
-      # `resource.labels` (cluster/location/namespace) — bare `max(...)` strips everything and leaves
-      # PagerDuty with `resource: {labels: {}}` / `resource_name: "__missing__"`.
-      query               = "max by (cluster, location, namespace, statefulset) (kube_statefulset_status_replicas_ready{namespace=\"${local.typesense_namespace}\", statefulset=\"typesense-sts\"}) < 3"
-      duration            = "600s"
+      # `max by (...)` preserves the GMP-projected monitored-resource labels so the alert payload
+      # carries them in `resource.labels` — a `by (...)` clause KEEPS ONLY the listed labels, so any
+      # of GMP's projected prometheus_target labels (project_id, location, cluster, namespace, job,
+      # instance) omitted here is dropped from the payload. We keep project_id/location/cluster/
+      # namespace (project_id is invariant across the series, so adding it doesn't change the max);
+      # job/instance are intentionally dropped so the max spans all pods. bare `max(...)` strips
+      # everything and leaves PagerDuty with `resource: {labels: {}}` / `resource_name: "__missing__"`.
+      query = "max by (project_id, location, cluster, namespace, statefulset) (kube_statefulset_status_replicas_ready{namespace=\"${local.typesense_namespace}\", statefulset=\"typesense-sts\"}) < 3"
+      # 20m, deliberately longer than a full rolling StatefulSet update. A rollout takes the
+      # cluster to 2/3 for the whole window (each pod terminates → restarts → rejoins the Raft
+      # quorum → becomes Ready sequentially):
+      # A genuinely stuck pod (zonal-PV / zone-spread collision — see docs below) stays <3 indefinitely
+      # and still fires, just later; actual quorum loss is covered faster by the probe_success/quorum_down alert
+      duration            = "1200s"
       evaluation_interval = "60s"
     }
   }
