@@ -53,6 +53,9 @@ resource "google_monitoring_uptime_check_config" "typesense" {
   display_name = "typesense-${var.region}-health"
   timeout      = "10s"
   period       = "60s"
+  # Log failed probes (status code / TLS / reset reasons) to Cloud Logging —
+  # without this the only failure signal is the boolean check_passed metric.
+  log_check_failures = true
 
   http_check {
     path           = "/health"
@@ -87,9 +90,13 @@ resource "google_monitoring_alert_policy" "endpoint_down" {
         "resource.type=\"uptime_url\"",
         "metric.label.check_id=\"${google_monitoring_uptime_check_config.typesense[0].uptime_check_id}\"",
       ])
+      # >2 of the 6 checker regions failing, sustained for ~3 consecutive 60s
+      # probe cycles. A real outage fails all regions within one cycle, so this
+      # doesn't slow detection; single-probe blips (which self-heal on the next
+      # probe) can't satisfy the duration and no longer page.
       comparison      = "COMPARISON_GT"
-      threshold_value = 1
-      duration        = "0s"
+      threshold_value = 2
+      duration        = "180s"
       trigger {
         count = 1
       }
