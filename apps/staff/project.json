@@ -16,6 +16,21 @@
         "cwd": "{projectRoot}"
       }
     },
+    "examples": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "EXAMPLES_PATHS=\"{args}\" storybook dev --config-dir .examples",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build-examples": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/examples-static"],
+      "options": {
+        "command": "EXAMPLES_PATHS=\"{args}\" storybook build --config-dir .examples --output-dir examples-static",
+        "cwd": "{projectRoot}"
+      }
+    },
     "test": {
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/apps/staff"],

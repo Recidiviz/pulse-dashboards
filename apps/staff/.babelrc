@@ -1,16 +1,12 @@
 {
   "presets": [
     [
-      "@babel/env",
+      "@nx/react/babel",
       {
-        "modules": "commonjs"
+        "runtime": "automatic",
+        "useBuiltIns": "usage"
       }
     ]
   ],
-  "env": {
-    "test": {
-      /* Required because Jest runs in Node and needs CommonJS modules, disabled in prod */
-      "presets": ["@babel/env", "@babel/react"]
-    }
-  }
+  "plugins": []
 }
