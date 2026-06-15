@@ -334,6 +334,53 @@ exports[`schema for 'US_AR' 'AR_RES005' 1`] = `
 }
 `;
 
+exports[`schema for 'US_AR' 'AR_RES006' 1`] = `
+{
+  "admissionDate": 2025-03-10T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES006",
+  "facilityId": "FACILITY1",
+  "gender": "FEMALE",
+  "metadata": {
+    "cohortCode": "4",
+    "currentCustodyClassification": "C2",
+    "currentGtEarningClass": "I-P",
+    "currentLocation": "1230456",
+    "currentSentences": [
+      {
+        "endDate": 2027-03-10T00:00:00.000Z,
+        "initialTimeServedDays": 0,
+        "personId": 6,
+        "sentenceId": "555666888889996",
+        "startDate": 2025-03-10T00:00:00.000Z,
+      },
+    ],
+    "eligibilityDate": 2026-09-10T00:00:00.000Z,
+    "eligibilityDateName": "Release Eligibility Date",
+    "gedCompletionDate": undefined,
+    "lastUpdatedDate": 2025-04-01T00:00:00.000Z,
+    "maximumReleaseDate": 2027-03-10T00:00:00.000Z,
+    "noIncarcerationSanctionsWithin12Months": true,
+    "noIncarcerationSanctionsWithin6Months": true,
+    "programAchievement": [],
+    "stateCode": "US_AR",
+  },
+  "personExternalId": "AR_RES006",
+  "personName": {
+    "givenNames": "Maria",
+    "middleNames": "Elena",
+    "surname": "Torres",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres006",
+  "recordId": "us_ar_res006",
+  "releaseDate": 2027-03-10T00:00:00.000Z,
+  "stateCode": "US_AR",
+  "unitId": "UNIT A",
+}
+`;
+
 exports[`schema for 'US_AZ' 'RES001' 1`] = `
 {
   "admissionDate": 2020-09-15T00:00:00.000Z,

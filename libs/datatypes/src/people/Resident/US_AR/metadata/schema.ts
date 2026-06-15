@@ -36,6 +36,7 @@ export const usArCurrentSentencesSchema = z.object({
 
 export const usArResidentMetadataSchema = z.object({
   stateCode: z.literal("US_AR"),
+  cohortCode: nullishAsUndefined(z.string()),
   currentCustodyClassification: z.string(),
   currentGtEarningClass: z.string(),
   currentLocation: z.string(),

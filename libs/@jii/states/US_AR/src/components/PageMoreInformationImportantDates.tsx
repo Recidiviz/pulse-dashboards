@@ -21,12 +21,15 @@ import {
 } from "react-router-typesafe-routes/dom";
 
 import { ImportantDatesCopyWrapper } from "~@jii/common-ui";
+import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 
 export function PageMoreInformationImportantDates() {
   const { t } = useUsArTranslations();
+  const { cohortCode } = useResidentMetadata("US_AR");
+  const { residentFlags } = useSingleResidentContext();
   const params = useTypedParams(State.Resident.UsArMoreInformation);
   const [{ backTarget }] = useTypedSearchParams(
     State.Resident.UsArMoreInformation.ImportantDates,
@@ -42,11 +45,18 @@ export function PageMoreInformationImportantDates() {
           to: State.Resident.buildPath(params),
         };
 
+  const showProtectAct =
+    residentFlags.usArFslImprovements && cohortCode === "4";
+
+  const { heading, body } = showProtectAct
+    ? t(($) => $.protectAct.moreInfo, { returnObjects: true })
+    : t(($) => $.importantDates.moreInfo, { returnObjects: true });
+
   return (
     <DefinitionPage
       backLinkProps={backLinkProps}
-      heading={t(($) => $.importantDates.moreInfo.heading)}
-      body={t(($) => $.importantDates.moreInfo.body)}
+      heading={heading}
+      body={body}
       CopyWrapperOverride={ImportantDatesCopyWrapper}
     />
   );

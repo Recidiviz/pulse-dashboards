@@ -45,7 +45,8 @@ type ResidentFlag =
   // TODO OBT-31989 after usAzFslImprovements launch: remove this flag and all references in
   // libs/@jii/configs, libs/@jii/prisma, and libs/@jii/states/US_AZ
   | "usAzFslImprovements"
-  | "usCoV1Experience";
+  | "usCoV1Experience"
+  | "usArFslImprovements";
 
 export type ResidentsConfig = {
   home: {
