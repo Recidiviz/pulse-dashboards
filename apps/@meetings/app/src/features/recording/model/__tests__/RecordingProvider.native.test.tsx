@@ -214,11 +214,46 @@ describe("RecordingProvider (native)", () => {
     });
   });
 
-  describe("stopAndUploadRecording", () => {
-    it("stops active recorder, uploads file and removes URI", async () => {
+  describe("stopRecorder", () => {
+    it("stops the active recorder and persists the URI", async () => {
       (useAudioRecorderState as jest.Mock).mockReturnValue({
         isRecording: true,
       });
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.stopRecorder();
+      });
+
+      expect(mockAudioRecorder.stop).toHaveBeenCalled();
+      expect(storage.saveRecordingUri).toHaveBeenCalledWith(RECORDING_URI);
+    });
+
+    it("sets status to paused and rethrows when stopping fails", async () => {
+      (useAudioRecorderState as jest.Mock).mockReturnValue({
+        isRecording: true,
+      });
+      mockAudioRecorder.stop.mockRejectedValueOnce(new Error("stop failed"));
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await expect(result.current.stopRecorder()).rejects.toThrow(
+          "stop failed",
+        );
+      });
+
+      expect(mockSetStatus).toHaveBeenCalledWith("paused");
+    });
+  });
+
+  describe("uploadRecording", () => {
+    it("uploads the persisted recording and removes the saved URI", async () => {
       (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
 
       const { result } = renderHook(() => useRecording<"native">(), {
@@ -226,10 +261,9 @@ describe("RecordingProvider (native)", () => {
       });
 
       await act(async () => {
-        await result.current.stopAndUploadRecording();
+        await result.current.uploadRecording();
       });
 
-      expect(mockAudioRecorder.stop).toHaveBeenCalled();
       expect(mockUploadSegment).toHaveBeenCalledWith({
         uri: RECORDING_URI,
         meetingId: MEETING_ID,
@@ -239,13 +273,12 @@ describe("RecordingProvider (native)", () => {
       expect(storage.removeRecordingUri).toHaveBeenCalled();
     });
 
-    it("warns and still removes URI when no recording file found", async () => {
-      (useAudioRecorderState as jest.Mock).mockReturnValue({
-        isRecording: false,
-      });
+    it("warns and still removes the URI when no recording file is found", async () => {
       (storage.getRecordingUri as jest.Mock).mockResolvedValue(null);
-      const mockRecorderNoUri = { ...mockAudioRecorder, uri: null };
-      (useAudioRecorder as jest.Mock).mockReturnValue(mockRecorderNoUri);
+      (useAudioRecorder as jest.Mock).mockReturnValue({
+        ...mockAudioRecorder,
+        uri: null,
+      });
       const warnSpy = jest
         .spyOn(console, "warn")
         .mockImplementation(() => undefined);
@@ -255,7 +288,7 @@ describe("RecordingProvider (native)", () => {
       });
 
       await act(async () => {
-        await result.current.stopAndUploadRecording();
+        await result.current.uploadRecording();
       });
 
       expect(mockUploadSegment).not.toHaveBeenCalled();
@@ -278,7 +311,9 @@ describe("RecordingProvider (native)", () => {
       });
 
       await act(async () => {
-        await expect(result.current.stopAndUploadRecording()).rejects.toThrow();
+        await expect(result.current.uploadRecording()).rejects.toThrow(
+          "meetingId is required for uploading",
+        );
       });
     });
   });

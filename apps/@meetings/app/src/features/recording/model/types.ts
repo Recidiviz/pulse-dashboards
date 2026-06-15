@@ -49,7 +49,6 @@ export type RecordingBase = {
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
   discardRecording: () => Promise<void>;
-  stopAndUploadRecording: () => Promise<Blob | null>;
 
   togglePauseResume: () => Promise<void>;
 
@@ -95,4 +94,8 @@ export type RecordingNative = RecordingBase & {
   personType: PersonType | null;
   setPerson: (person: Person | null) => void;
   setPersonType: (personType: PersonType | null) => void;
+  // Low-level recording primitives. togglePauseResume / handleFinishAndSave
+  // compose these; they are exposed so each step can be unit tested in isolation.
+  stopRecorder: () => Promise<void>;
+  uploadRecording: () => Promise<void>;
 };

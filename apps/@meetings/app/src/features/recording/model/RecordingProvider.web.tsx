@@ -192,7 +192,9 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
-  const stopAndUploadRecording = async (): Promise<Blob | null> => {
+  const uploadRecording = async (blob: Blob | null) => {
+    if (!blob) return;
+
     if (!meetingId) {
       Sentry.logger.error("upload.segment.error", {
         meetingId,
@@ -201,21 +203,11 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       throw new Error("meetingId is required for uploading");
     }
 
+    const uriToUpload = URL.createObjectURL(blob);
+
+    Sentry.logger.info("upload.segment.start", { meetingId });
+
     try {
-      const blob = await recorder.stop();
-
-      if (!blob) {
-        return null;
-      }
-
-      if (!isOnline) {
-        return blob;
-      }
-
-      const uriToUpload = URL.createObjectURL(blob);
-
-      Sentry.logger.info("upload.segment.start", { meetingId });
-
       await uploadSegment({
         uri: uriToUpload,
         meetingId,
@@ -229,8 +221,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       });
 
       await recorder.cleanup();
-      URL.revokeObjectURL(uriToUpload);
-      return null;
     } catch (err) {
       const errorMessage = extractError(err);
       Sentry.logger.error("upload.segment.error", {
@@ -241,6 +231,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       console.error(errorMessage);
       alert(errorMessage);
       throw err;
+    } finally {
+      URL.revokeObjectURL(uriToUpload);
     }
   };
 
@@ -280,14 +272,21 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     const duration = timer.stop();
     if (duration) setPersistedDurationMs(duration);
 
-    const blob = await stopAndUploadRecording();
-    if (blob) {
+    const blob = await recorder.stop();
+    if (blob && isOnline) {
+      await uploadRecording(blob);
+    } else if (blob) {
       pendingOfflineBlobRef.current = blob;
     }
   };
 
   const resumeRecording = async () => {
-    await stopAndUploadRecording(); // we need only uploading, the recording is already paused
+    const blob = await recorder.stop();
+    if (blob && isOnline) {
+      await uploadRecording(blob);
+    } else if (blob) {
+      pendingOfflineBlobRef.current = blob;
+    }
     await startRecording();
   };
 
@@ -319,8 +318,12 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     try {
       let audioBlob: Blob | undefined;
       if (recorder.isRecording) {
-        const blob = await stopAndUploadRecording();
-        if (blob) audioBlob = blob;
+        const blob = await recorder.stop();
+        if (blob && isOnline) {
+          await uploadRecording(blob);
+        } else if (blob) {
+          audioBlob = blob;
+        }
       } else {
         audioBlob = pendingOfflineBlobRef.current ?? undefined;
         pendingOfflineBlobRef.current = null;
@@ -406,7 +409,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         startRecording,
         stopRecording,
         discardRecording,
-        stopAndUploadRecording,
         togglePauseResume,
         cleanupRecording,
         handleFinishAndSave,

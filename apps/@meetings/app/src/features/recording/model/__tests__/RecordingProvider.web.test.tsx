@@ -21,7 +21,6 @@ import React from "react";
 import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
 import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
-import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useUploadSegment } from "../../../../shared/api";
 import { RecordingProvider, useRecording } from "..";
@@ -35,7 +34,6 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 jest.mock("../useAudioRecorder.web");
-jest.mock("../../lib/webRecorderDb.web");
 jest.mock("~@meetings/app/hooks/useDiscardMeeting");
 jest.mock("~@meetings/app/hooks/useEndMeeting");
 jest.mock("~@meetings/app/shared/lib/useIsOnline", () => ({
@@ -250,82 +248,6 @@ describe("RecordingProvider (web)", () => {
     });
   });
 
-  describe("stopAndUploadRecording", () => {
-    it("stops recorder, uploads blob and cleans up", async () => {
-      const { result } = renderHook(() => useRecording<"web">(), {
-        wrapper: buildWrapper(),
-      });
-
-      await act(async () => {
-        await result.current.stopAndUploadRecording();
-      });
-
-      expect(mockRecorderStop).toHaveBeenCalled();
-      expect(URL.createObjectURL).toHaveBeenCalled();
-      expect(mockUploadSegment).toHaveBeenCalledWith({
-        uri: BLOB_URL,
-        meetingId: MEETING_ID,
-        contentType: AUDIO_FORMATS.webm.contentType,
-        fileExtension: AUDIO_FORMATS.webm.extension,
-      });
-      expect(mockRecorderCleanup).toHaveBeenCalled();
-      expect(URL.revokeObjectURL).toHaveBeenCalledWith(BLOB_URL);
-    });
-
-    it("warns and returns early when recorder returns no blob", async () => {
-      mockRecorderStop.mockResolvedValueOnce(null);
-      const warnSpy = jest
-        .spyOn(console, "warn")
-        .mockImplementation(() => undefined);
-
-      const { result } = renderHook(() => useRecording<"web">(), {
-        wrapper: buildWrapper(),
-      });
-
-      await act(async () => {
-        await result.current.stopAndUploadRecording();
-      });
-
-      expect(mockUploadSegment).not.toHaveBeenCalled();
-      warnSpy.mockRestore();
-    });
-
-    it("throws when meetingId is not set", async () => {
-      (useRecordingStore as unknown as jest.Mock).mockReturnValue({
-        ...defaultStoreValues,
-        meetingId: null,
-      });
-
-      const { result } = renderHook(() => useRecording<"web">(), {
-        wrapper: buildWrapper(),
-      });
-
-      await act(async () => {
-        await expect(result.current.stopAndUploadRecording()).rejects.toThrow(
-          "meetingId is required for uploading",
-        );
-      });
-    });
-
-    it("when offline: stops recorder, returns blob without uploading or cleaning up", async () => {
-      (useIsOnline as jest.Mock).mockReturnValue({ isOnline: false });
-
-      const { result } = renderHook(() => useRecording<"web">(), {
-        wrapper: buildWrapper(),
-      });
-
-      let returnedBlob: Blob | null = null;
-      await act(async () => {
-        returnedBlob = await result.current.stopAndUploadRecording();
-      });
-
-      expect(mockRecorderStop).toHaveBeenCalled();
-      expect(mockUploadSegment).not.toHaveBeenCalled();
-      expect(mockRecorderCleanup).not.toHaveBeenCalled();
-      expect(returnedBlob).toBeInstanceOf(Blob);
-    });
-  });
-
   describe("togglePauseResume", () => {
     it("pauses (uploads and stops timer) when recording", async () => {
       (useRecordingStore as unknown as jest.Mock).mockReturnValue({
@@ -352,10 +274,6 @@ describe("RecordingProvider (web)", () => {
         ...defaultStoreValues,
         status: "paused",
       });
-      mockRecorderStop.mockResolvedValueOnce(null);
-      const warnSpy = jest
-        .spyOn(console, "warn")
-        .mockImplementation(() => undefined);
 
       const { result } = renderHook(() => useRecording<"web">(), {
         wrapper: buildWrapper(),
@@ -365,10 +283,46 @@ describe("RecordingProvider (web)", () => {
         await result.current.togglePauseResume();
       });
 
+      expect(mockRecorderStop).toHaveBeenCalled();
       expect(mockRecorderStart).toHaveBeenCalled();
       expect(mockTimerStart).toHaveBeenCalled();
       expect(mockSetStatus).toHaveBeenCalledWith("recording");
-      warnSpy.mockRestore();
+    });
+
+    it("when offline: resumes without uploading and preserves the blob for endMeeting", async () => {
+      const mockBlob = new Blob(["audio"], { type: "audio/webm" });
+      mockRecorderStop.mockResolvedValueOnce(mockBlob);
+
+      (useIsOnline as jest.Mock).mockReturnValue({ isOnline: false });
+      (useRecordingStore as unknown as jest.Mock).mockReturnValue({
+        ...defaultStoreValues,
+        status: "paused",
+      });
+
+      const { result } = renderHook(() => useRecording<"web">(), {
+        wrapper: buildWrapper(),
+      });
+
+      // Resume offline — the stopped segment can't be uploaded, so it's stored
+      // in pendingOfflineBlobRef before a fresh recording starts.
+      await act(async () => {
+        await result.current.togglePauseResume();
+      });
+
+      expect(mockRecorderStop).toHaveBeenCalled();
+      expect(mockUploadSegment).not.toHaveBeenCalled();
+      expect(mockRecorderStart).toHaveBeenCalled();
+      expect(mockSetStatus).toHaveBeenCalledWith("recording");
+
+      // The preserved blob is handed to endMeeting on finish (the recorder
+      // reports not recording in the mock, so the pending offline blob is used).
+      await act(async () => {
+        await result.current.handleFinishAndSave();
+      });
+
+      expect(mockEndMeeting).toHaveBeenCalledWith(
+        expect.objectContaining({ audioBlob: mockBlob }),
+      );
     });
 
     it("does nothing when uploading", async () => {

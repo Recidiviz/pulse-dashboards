@@ -160,10 +160,38 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   ]);
 
   /**
-   * stopAndUploadRecording()
-   * Stops recorder, uploads file, removes saved URI.
+   * stopRecorder()
+   * Stops the active recorder and persists the URI to storage.
    */
-  const stopAndUploadRecording = useCallback(async () => {
+  const stopRecorder = useCallback(async () => {
+    try {
+      const savedUri = await getRecordingUri();
+      const uri = savedUri || audioRecorder.uri;
+
+      // Stop active recording first
+      if (recorderState.isRecording) {
+        await audioRecorder.stop();
+        // Fallback to previously saved URI in case audioRecorder.uri isn't set immediately after stopping
+        if (audioRecorder.uri || uri) {
+          await saveRecordingUri((audioRecorder.uri || uri) as string);
+        }
+      }
+    } catch (err) {
+      Sentry.logger.error("stop.recording.error", {
+        error: extractError(err),
+      });
+      await setStatus("paused");
+      throw err;
+    }
+  }, [audioRecorder, recorderState.isRecording, setStatus]);
+
+  /**
+   * uploadRecording()
+   * Uploads the persisted recording. The file is written to disk by expo-audio,
+   * so we read its URI back from storage rather than taking the data as an argument
+   * (unlike the web provider, which uploads an in-memory Blob).
+   */
+  const uploadRecording = useCallback(async () => {
     if (!meetingId) {
       Sentry.logger.error("upload.segment.error", {
         meetingId,
@@ -174,18 +202,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
     try {
       const savedUri = await getRecordingUri();
-      let uri = savedUri || audioRecorder.uri;
-
-      // Stop active recording first
-      if (recorderState.isRecording) {
-        await audioRecorder.stop();
-        // Fallback to previously saved URI in case audioRecorder.uri isn't set immediately after stopping
-        uri = audioRecorder.uri || uri;
-
-        if (audioRecorder.uri) {
-          await saveRecordingUri(audioRecorder.uri);
-        }
-      }
+      const uri = savedUri || audioRecorder.uri;
 
       if (uri) {
         Sentry.logger.info("upload.segment.start", { meetingId });
@@ -200,10 +217,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         const fileInfo = await FileSystem.getInfoAsync(uri);
         const bytes = fileInfo.exists ? fileInfo.size : 0;
 
-        Sentry.logger.info("upload.segment.done", {
-          meetingId,
-          bytes,
-        });
+        Sentry.logger.info("upload.segment.done", { meetingId, bytes });
 
         await removeRecordingUri();
       } else {
@@ -221,14 +235,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await setStatus("paused"); // fallback safe state
       throw err;
     }
-    return null;
-  }, [
-    audioRecorder,
-    meetingId,
-    recorderState.isRecording,
-    setStatus,
-    uploadSegment,
-  ]);
+  }, [audioRecorder.uri, meetingId, setStatus, uploadSegment]);
 
   /**
    * recoverFromStuckState()
@@ -251,7 +258,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       // didn't catch it cleanupRecording/endMeeting below would never run and the
       // user would stay locked out of the "New Meeting" button across reloads.
       try {
-        await stopAndUploadRecording();
+        await stopRecorder();
+        await uploadRecording();
       } catch (err) {
         Sentry.logger.error("upload.segment.error", {
           meetingId,
@@ -294,7 +302,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       setPerson,
       setPersonType,
       cleanupRecording,
-      stopAndUploadRecording,
+      stopRecorder,
+      uploadRecording,
     ],
   );
 
@@ -454,7 +463,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
       Sentry.logger.info("recording.resume", { meetingId });
 
-      await stopAndUploadRecording();
+      await stopRecorder();
+      await uploadRecording();
 
       Sentry.logger.info("recording.pause", { meetingId });
 
@@ -477,7 +487,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
     try {
       if (recorderState.isRecording) {
-        await stopAndUploadRecording();
+        await stopRecorder();
+        await uploadRecording();
       }
 
       const userNotepadNotes = note;
@@ -550,7 +561,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     ) {
       (async () => {
         setStatus("uploading");
-        await stopAndUploadRecording();
+        await stopRecorder();
+        await uploadRecording();
         setStatus("paused");
         sendNotification(
           "Recording Paused",
@@ -562,7 +574,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     if (status !== "stopping") {
       prevRecorderStateRef.current = recorderState.isRecording;
     }
-    // stopAndUploadRecording causes infinite loop if included
+    // stopRecorder/uploadRecording cause infinite loop if included
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, recorderState.isRecording]);
 
@@ -599,7 +611,8 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         startRecording,
         stopRecording,
         discardRecording,
-        stopAndUploadRecording,
+        stopRecorder,
+        uploadRecording,
         togglePauseResume,
         cleanupRecording,
         handleFinishAndSave,
