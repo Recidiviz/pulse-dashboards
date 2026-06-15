@@ -2,8 +2,6 @@ services:
   postgres:
     image: postgres:17
     restart: always
-    env_file:
-      - backend/.env
     environment:
       POSTGRES_USER: "${RECIDIVIZ_POSTGRES_USER}"
       POSTGRES_PASSWORD: "${RECIDIVIZ_POSTGRES_PASSWORD}"
@@ -45,8 +43,9 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    env_file:
-      - backend/.env
+    environment:
+      - PGADMIN_DEFAULT_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD
     ports:
       - "8002:80"
     depends_on:

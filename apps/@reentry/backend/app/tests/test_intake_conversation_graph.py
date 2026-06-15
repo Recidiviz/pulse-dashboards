@@ -932,7 +932,7 @@ class TestLLMAJ:
     async def test_run_llmaj_safety_check_strips_system_messages(
         self, initialized_graph
     ):
-        """SystemMessage is filtered out before the classifier sees the conversation."""
+        """The caseworker system prompt is filtered out before the classifier sees the conversation."""
         clean_result = SafetyCheckResult(
             self_harm=SelfHarmCategory(reasoning="no signal", confidence_score=0.0),
             harm_to_others=HarmToOthersCategory(

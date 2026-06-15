@@ -41,6 +41,11 @@ export default tseslint.config(
       "vite.config.mts.timestamp-*",
       "**/.next/**",
       "**/next-env.d.ts",
+      // Python virtualenvs contain vendored JS that should never be linted.
+      "**/.venv/**",
+      // Python backend — generated data fixtures/examples are BigQuery-style
+      // newline-delimited JSON that the jsonc parser cannot read.
+      "apps/@reentry/backend/data/**",
     ],
   },
   {

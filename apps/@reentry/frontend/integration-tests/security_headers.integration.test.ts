@@ -25,10 +25,10 @@ import { describe, expect, it } from "vitest";
  *
  * To run these tests locally:
  * 1. Start the dev server: yarn nx dev @reentry/frontend
- * 2. In another terminal, run: TEST_BASE_URL=http://localhost:3000 yarn nx test:integration @reentry/frontend
+ * 2. In another terminal, run: TEST_BASE_URL=http://localhost:3000 yarn nx test-integration @reentry/frontend
  *
  * In CI, these tests can be run after deployment to verify headers on the live site:
- * TEST_BASE_URL=https://plan-demo.recidiviz.org yarn nx test:integration @reentry/frontend
+ * TEST_BASE_URL=https://plan-demo.recidiviz.org yarn nx test-integration @reentry/frontend
  *
  * These tests will be skipped if TEST_BASE_URL is not set or if the server is not reachable.
  */

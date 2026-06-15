@@ -12,7 +12,7 @@ This app is called **CPA** internally. It is composed of a Python/FastAPI backen
 
 ## Backend
 
-All backend commands run from `apps/@reentry/backend`.
+Backend tasks are exposed as nx targets (`nx <target> @reentry/backend`) that run from the repo root and auto-load the SOPS-encrypted env (see `project.json`). Raw `uv`/`alembic` commands that have no dedicated target run from `apps/@reentry/backend`.
 
 ### Dev Setup
 
@@ -21,30 +21,31 @@ All backend commands run from `apps/@reentry/backend`.
 brew install cairo pango glib gobject-introspection gdk-pixbuf uv
 
 # Start postgres, redis, and background worker
-cd apps/@reentry && docker compose up
+nx docker-up @reentry/backend
 
 # Run migrations
-cd apps/@reentry/backend && uv run alembic upgrade head
+nx migrate @reentry/backend
 
 # Seed database
-uv run python -m app.manage seed-db
+nx seed-db @reentry/backend
 
 # Start API server
-uv run fastapi dev
+nx dev @reentry/backend
 ```
 
 The API is at `http://localhost:8000`. Docs at `http://localhost:8000/docs`.
 
-The **worker process** must be started with `uv run taskiq worker -r main:broker` to process background tasks. Without it, background tasks (plan generation, transcription, evals) queue but never run.
+The **worker process** must be started with `nx worker @reentry/backend` to process background tasks. Without it, background tasks (plan generation, transcription, evals) queue but never run.
 
 ### Testing
 
 ```bash
-cd apps/@reentry/backend
-DYLD_LIBRARY_PATH=/opt/homebrew/lib uv run pytest   # unit tests (macOS: required for WeasyPrint/libgobject)
+nx test @reentry/backend   # unit tests
 ```
 
-Tests use a real test DB (started by `docker compose up -d postgres-tests`). Do not mock the database.
+macOS: if WeasyPrint/libgobject PDF tests fail to load native libs, prefix with the Homebrew lib path (it propagates through nx to the `uv` subprocess): `DYLD_LIBRARY_PATH=/opt/homebrew/lib nx test @reentry/backend`.
+
+Tests use a real test DB (started by `nx docker-up-tests @reentry/backend`). Do not mock the database.
 
 **TaskIQ tasks in tests** — tasks decorated with `@broker.task` cannot be called directly. Use `.original_func(...)` to bypass the broker:
 
@@ -60,21 +61,25 @@ Uses **SQLModel** (not plain SQLAlchemy). Field definitions, relationships, and 
 
 ### Manage Commands
 
-Run as `uv run python -m app.manage <command>` from `apps/@reentry/backend`.
+Some manage commands have dedicated nx targets (run from the repo root): `nx seed-db @reentry/backend`, `nx generate-client-data @reentry/backend`, `nx reset-client-cache @reentry/backend`. Others run via `uv run python -m app.manage <command>` from `apps/@reentry/backend`.
 
-| Command      | Purpose                                                 |
-| ------------ | ------------------------------------------------------- |
-| `seed-db`    | Seed local database with fixture data                   |
-| `evaluate-*` | LLM eval commands (see `app/manage/evaluate/README.md`) |
+| Command      | How to run                                                                     |
+| ------------ | ------------------------------------------------------------------------------ |
+| `seed-db`    | `nx seed-db @reentry/backend` — seed DB with fixtures                          |
+| `evaluate-*` | `uv run python -m app.manage evaluate-*` (see `app/manage/evaluate/README.md`) |
 
 ### Database Migrations
 
 ```bash
+# Apply migrations
+nx migrate @reentry/backend
+```
+
+The following have no nx target — run them from `apps/@reentry/backend`:
+
+```bash
 # Generate migration after model changes
 uv run alembic revision --autogenerate -m "description"
-
-# Apply migrations
-uv run alembic upgrade head
 
 # Rollback one step
 uv run alembic downgrade -1

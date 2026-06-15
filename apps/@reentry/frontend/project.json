@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@reentry/frontend/app",
   "projectType": "application",
-  "tags": ["scope:client", "reentry"],
+  "tags": ["scope:client", "reentry", "cpa-v0"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
@@ -197,7 +197,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/apps/@reentry/frontend"],
       "cache": true,
@@ -206,7 +206,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test:integration": {
+    "requires-sops-env:test-integration": {
       "executor": "nx:run-commands",
       "outputs": [
         "{workspaceRoot}/coverage/apps/@reentry/frontend-integration"
@@ -215,6 +215,11 @@
       "options": {
         "command": "vitest --config vitest.integration.config.mts",
         "cwd": "{projectRoot}"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": ["{projectRoot}/env.test.enc.yaml"]
+        }
       }
     },
     "openapi": {

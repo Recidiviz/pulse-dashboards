@@ -14,6 +14,8 @@ from pathlib import Path
 import aiohttp
 from gcloud.aio.auth import Token
 
+from app.services.google.auth import get_gcs_token_service_file
+
 # Bucket to config file mapping
 BUCKET_CONFIGS = {
     "recidiviz-recording-bucket-dev": "cors-config-dev.json",
@@ -64,7 +66,6 @@ async def apply_cors_to_bucket(
 
 async def main():
     script_dir = Path(__file__).parent
-    key_path = script_dir.parent / ".secrets" / "gcp-service-account.json"
 
     print("=" * 60)
     print("Applying CORS to all GCS buckets")
@@ -75,20 +76,13 @@ async def main():
     failed_count = 0
 
     async with aiohttp.ClientSession() as session:
-        # Initialize token
-        if key_path.exists():
-            token = Token(
-                service_file=str(key_path),
-                session=session,
-                scopes=["https://www.googleapis.com/auth/devstorage.full_control"],
-            )
-            print(f"Using service account key: {key_path}")
-        else:
-            token = Token(
-                session=session,
-                scopes=["https://www.googleapis.com/auth/devstorage.full_control"],
-            )
-            print("Using default credentials")
+        # Initialize token (uses GCP_SERVICE_ACCOUNT_CREDENTIALS env var if set,
+        # otherwise falls back to Application Default Credentials)
+        token = Token(
+            service_file=get_gcs_token_service_file(),
+            session=session,
+            scopes=["https://www.googleapis.com/auth/devstorage.full_control"],
+        )
 
         print()
 

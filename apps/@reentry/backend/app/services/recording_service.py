@@ -40,6 +40,7 @@ from app.services.audio_converter import (
     DEFAULT_SAMPLE_RATE,
     call_ffmpeg,
 )
+from app.services.google.auth import get_gcs_token_service_file
 
 logger = structlog.get_logger(__name__)
 
@@ -232,23 +233,12 @@ class RecordingService:
     def __init__(self, bucket_name: str):
         self.bucket_name = bucket_name
         self._audio_executor = ThreadPoolExecutor(max_workers=1)
-        key_path = os.path.join(
-            os.path.dirname(__file__), "../../.secrets/gcp-service-account.json"
-        )
         self.session = aiohttp.ClientSession()
-        if os.path.exists(key_path):
-            self.token = Token(
-                service_file=key_path,
-                session=self.session,
-                scopes=["https://www.googleapis.com/auth/devstorage.read_write"],
-            )
-            logger.info("Using service account key for GCS authentication")
-        else:
-            self.token = Token(
-                session=self.session,
-                scopes=["https://www.googleapis.com/auth/devstorage.read_write"],
-            )
-            logger.info("Using default credentials for GCS authentication")
+        self.token = Token(
+            service_file=get_gcs_token_service_file(),
+            session=self.session,
+            scopes=["https://www.googleapis.com/auth/devstorage.read_write"],
+        )
 
         self.storage = Storage(token=self.token, session=self.session)
         self._service_account_email = None

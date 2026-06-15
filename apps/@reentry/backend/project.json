@@ -1,0 +1,140 @@
+{
+  "name": "@reentry/backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@reentry/backend",
+  "projectType": "application",
+  "tags": ["reentry", "cpa-v0", "scope:server"],
+  "targets": {
+    "requires-sops-env:docker-up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up",
+        "cwd": "{workspaceRoot}/apps/@reentry"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:docker-up-tests": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up -d postgres-tests",
+        "cwd": "{workspaceRoot}/apps/@reentry"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "sync": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv sync",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "requires-sops-env:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run fastapi dev",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:worker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run taskiq worker -r main:broker",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run alembic upgrade head",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:seed-db": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run python -m app.manage seed-db",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run pytest -m \"not integration\"",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:test-integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run pytest -m \"integration\"",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:check-test-db-url": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run python -c \"from app.core.config import settings; print(settings.DATABASE_URL_TESTS)\"",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:generate-client-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run python -m app.manage generate-client-data",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:reset-client-cache": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run python -m app.manage reset-client-cache",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    }
+  }
+}

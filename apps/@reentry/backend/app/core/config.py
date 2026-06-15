@@ -98,11 +98,15 @@ class Settings(BaseSettings):
     # Frontend URL for building deep links (e.g. in Slack alerts).
     FRONTEND_URL: str = "http://localhost:3000"
 
+    # Full GCP service-account JSON (the contents of what used to be
+    # .secrets/gcp-service-account.json) as a single string. When empty,
+    # Application Default Credentials (ADC) are used instead.
+    GCP_SERVICE_ACCOUNT_CREDENTIALS: str = ""
+
     # Google Cloud Service account email.
     # In demo-staging-prod this value is populated as an env variable.
     # See the Cloudbuild.yaml files.
-    # For local dev, it is set to empty here; the value will be provided
-    # by the backend/.secrets/gcp-service-account.json.
+    # For local dev, it is set to empty here.
     GCS_SERVICE_ACCOUNT_EMAIL: str = ""
 
     # Firebase Admin Project ID

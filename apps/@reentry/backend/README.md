@@ -34,76 +34,60 @@ gcloud config set project recidiviz-rnd-planner
 
 3. Set up environment variables
 
-Go inside the `apps/@reentry/backend` folder, make a `.env` file. Get the content of the file from one of your teammates.
-
-```bash
-cd apps/@reentry/backend
-```
-
-```
-cp .env_example .env
-```
-
-In the folder `apps/@reentry/backend/.secrets/gcp-service-account.json-sample`, create a `apps/@reentry/backend/.secrets/gcp-service-account.json`.
-Get the content of the file from a teammate.
+Backend env vars are supplied via the SOPS-encrypted `env.dev.enc.yaml` and loaded automatically by the `nx` targets. GCP credentials are provided through the `RECIDIVIZ_GCP_SERVICE_ACCOUNT_CREDENTIALS` env var (the full service-account JSON as a single-line string) — get the value from a teammate. When unset, the backend falls back to Application Default Credentials (`gcloud auth application-default login`).
 
 If you want to customize any settings from your environment, export them with `RECIDIVIZ_` prefix.
 For example:
 
 ```bash
 export RECIDIVIZ_OPENAI_API_KEY=your_openai_api_key
-uv run fastapi dev
+nx dev @reentry/backend
 ```
 
 4. Start the services with docker-compose (postgres, pgadmin, ...)
 
 ```bash
-cd apps/@reentry/backend (relative path to the project root, adjust accordingly)
-docker compose up
+nx docker-up @reentry/backend
 ```
 
-5. Inside the backend folder, run the database migrations
+5. Run the database migrations
 
 ```bash
-cd backend
-uv run alembic upgrade head
+nx migrate @reentry/backend
 ```
 
 6. Seed the database
 
 ```bash
-uv run python -m app.manage seed-db
+nx seed-db @reentry/backend
 ```
 
 # Dev usage
 
 ## Run the backend API
 
-Start services (posgres, redis, pgadmin)
+Start services (postgres, redis, pgadmin)
 
 ```bash
-cd apps/@reentry/backend (relative path to the project root, adjust accordingly)
-docker compose up
+nx docker-up @reentry/backend
 ```
 
 Run migrations
 
 ```bash
-cd apps/@reentry/backend
-uv run alembic upgrade head
+nx migrate @reentry/backend
 ```
 
 Start server
 
 ```bash
-cd apps/@reentry/backend
-uv run fastapi dev
+nx dev @reentry/backend
 ```
 
 Seed the database
 
 ```bash
-uv run python -m app.manage seed-db
+nx seed-db @reentry/backend
 ```
 
 You can now access the API at [http://localhost:8000](http://localhost:8000).
@@ -113,58 +97,57 @@ Run the worker
 For any processing task to run, you need to start the worker
 
 ```bash
-cd apps/@reentry/backend
-uv run taskiq worker -r main:broker
+nx worker @reentry/backend
 ```
 
 ### Adding new packages
 
 - Add packages using uv add.
-- Then run any command and it will automatically sync, or `uv sync` to install and sync the dependent packages. This will update the `uv.lock` file.
+- Then run any command and it will automatically sync, or `nx sync @reentry/backend` to install and sync the dependent packages. This will update the `uv.lock` file.
 
 ## Testing
 
 Run the tests for the `backend`:
 
 ```
-uv run pytest
+nx test @reentry/backend
 ```
 
-To run integration tests only use -m "integration" (skipped by default):
+To run integration tests only (skipped by default):
 
 ```
-uv run pytest -m "integration"
+nx test-integration @reentry/backend
 ```
 
-Other flags:
+Other flags can be forwarded to `pytest` after `--`:
 
 - `--no-cov`: Disables coverage reporting for faster test execution
 - `--log-cli-level=DEBUG`: Control log verbosity (DEBUG, INFO, WARNING, ERROR)
 
-The test database should have started when you ran docker compose up, but here are more precise settings :
+```bash
+nx test @reentry/backend -- --no-cov
+```
+
+The test database should have started when you ran `nx docker-up`, but here are more precise settings :
 
 ```bash
-cd apps/@reentry
-docker compose up -d postgres-tests
+nx docker-up-tests @reentry/backend
 ```
 
 ```bash
-cd apps/@reentry/backend
-RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run pytest
+RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' nx test @reentry/backend
 ```
 
 Optional: apply Alembic migrations to the test database instead of relying on `create_all` in tests:
 
 ```bash
-cd apps/@reentry/backend
-RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run alembic upgrade head
+RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' nx migrate @reentry/backend
 ```
 
 Sanity check the URL pytest will use:
 
 ```bash
-cd apps/@reentry/backend
-uv run python -c "from app.core.config import settings; print(settings.DATABASE_URL_TESTS)"
+nx check-test-db-url @reentry/backend
 ```
 
 ## Updating OpenAPI schema
@@ -197,18 +180,16 @@ The setup section is standalone, it can be skipped entirely if you have setup yo
 ## Generate BigQuery client data (optional)
 
 ```bash
-cd apps/@reentry/backend
-uv run python -m app.manage generate-client-data
+nx generate-client-data @reentry/backend
 ```
 
-This command generates sample client, case manager, and supervision officer data for BigQuery tables. By default, it creates demo data (UXR users) for dev tables. Use `--env demo` to target demo tables and `--mode dev` for realistic fake data instead of demo data. Generated JSON files are saved in `backend/data/examples/clients/` and can be loaded to BigQuery using the provided `bq load` commands. The command also shows table status, deletion commands, and load commands.
+This command generates sample client, case manager, and supervision officer data for BigQuery tables. By default, it creates demo data (UXR users) for dev tables. Pass flags after `--` (e.g. `nx generate-client-data @reentry/backend -- --env demo --mode dev`): `--env demo` targets demo tables and `--mode dev` produces realistic fake data instead of demo data. Generated JSON files are saved in `backend/data/examples/clients/` and can be loaded to BigQuery using the provided `bq load` commands. The command also shows table status, deletion commands, and load commands.
 It will also include fixed data to provision clients that will match between JII and reentry, [apps/@reentry/backend/data/fixtures/README.md](apps/@reentry/backend/data/fixtures/README.md)
 
 To clear Redis cache for client data:
 
 ```bash
-cd apps/@reentry/backend
-uv run python -m app.manage reset-client-cache
+nx reset-client-cache @reentry/backend
 ```
 
 ## Run tasks on deployed environments
