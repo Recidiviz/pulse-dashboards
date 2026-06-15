@@ -101,9 +101,9 @@ doesn't.
 
 1. **Motivation**: "What motivated this change? Any related tasks, projects, or
    features?"
-2. **Related issues**: "Any GitHub issues to link? (e.g., Closes #12345)"
+2. **Related issues**: "Any Linear issues to link? (e.g., Closes OBT-XXXXX)"
    - If the conversation started with addressing a specific issue, suggest it
-   - If the change resolves any in-code TODOs (e.g., `TODO(#12345)`), suggest
+   - If the change resolves any in-code TODOs (e.g., `TODO(OBT-XXXXX)`), suggest
      those issues
    - Still prompt in case there are other related issues
 3. **Testing confidence**: "How did you verify this works?"
@@ -124,9 +124,16 @@ their descriptions.
 Write a **concise** description with these sections:
 
 1. **Why**: Brief motivation and context (from Step 6)
-2. **What**: The fundamental changes, listed in logical review order.
-   Distinguish core changes from resulting refactors.
-3. **Testing**: Why you're confident this works
+2. **What**: The most important changes only — focus on pieces that aren't
+   self-explanatory from the diff. Skip obvious mechanical changes (e.g., "update
+   tests to cover new field"). Prefer one tight sentence over a bullet list when
+   the PR is small. Ask yourself: would a reviewer be confused without this line?
+   If not, cut it.
+3. **Testing**: What was done to verify this beyond CI — e.g., new or modified
+   tests, local manual testing, specific scenarios exercised. Skip anything a
+   reviewer can already see in the GitHub UI (typecheck, unit test pass/fail).
+   Use `N/A` if testing doesn't apply (e.g., pure refactor with no behavior
+   change, docs-only).
 
 Keep it as short as possible while being clear.
 
