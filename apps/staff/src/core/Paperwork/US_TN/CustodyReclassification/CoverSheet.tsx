@@ -105,6 +105,12 @@ const SigBlock = styled.div`
   }
 `;
 
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 47%;
+`;
+
 const FormTextarea = DOCXFormTextArea<UsTnCoverSheetSharedDraftData>;
 
 function getIsPilotVersion(oppType: OpportunityType): boolean {
@@ -367,15 +373,29 @@ const CoverSheet: React.FC = () => {
             </Label>
           </Row>
           <FormTextarea name="disagreementReasons" minRows={4} />
-          <Row>Approving Authority:</Row>
-          <Row>
-            <SigBlock>Signature</SigBlock>
-            <SigBlock>Date</SigBlock>
-            <Item style={{ marginTop: "4em" }}>
-              Approve ________&nbsp;&nbsp;Deny ________
-            </Item>
+          <Row style={{ alignItems: "flex-start" }}>
+            <Column>
+              <div>Approving Authority:</div>
+              <Row>
+                <SigBlock>Signature</SigBlock>
+                <SigBlock>Date</SigBlock>
+              </Row>
+              <Row style={{ justifyContent: "flex-end" }}>
+                <Item>Approve ________&nbsp;&nbsp;Deny ________</Item>
+              </Row>
+            </Column>
+            <Column>
+              <div>Contract Monitor, If applicable:</div>
+              <Row>
+                <SigBlock>Signature</SigBlock>
+                <SigBlock>Date</SigBlock>
+              </Row>
+              <Row style={{ justifyContent: "flex-end" }}>
+                <Item>Approve ________&nbsp;&nbsp;Deny ________</Item>
+              </Row>
+            </Column>
           </Row>
-          <Row>
+          <Row style={{ marginTop: "1em" }}>
             <Label htmlFor="denialReasons">If denied, reasons include:</Label>
           </Row>
           <FormTextarea name="denialReasons" minRows={4} />
