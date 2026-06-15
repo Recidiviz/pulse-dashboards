@@ -184,7 +184,7 @@ const HydratedWorkflowsFormLayout = observer(
   }) {
     const { currentView, setCurrentView } = useOpportunitySidePanel();
     const navigate = useNavigate();
-    const { pathname } = useLocation();
+    const { pathname, key: locationKey } = useLocation();
     const { officerPseudoId, supervisorPseudoId } = useParams();
 
     const { selectedOpportunity, selectedPerson, workflowsMethodologyUrl } =
@@ -216,6 +216,13 @@ const HydratedWorkflowsFormLayout = observer(
               opportunityTypeUrl: urlSection,
             }),
           );
+        } else if (locationKey !== "default") {
+          // Prefer navigate(-1) over passing previousPage through link state so
+          // that any new entry point to this form works correctly without needing
+          // to remember to thread the state key through.
+          // location.key is 'default' only on a fresh deep link; any other value
+          // means React Router pushed this entry, so navigate(-1) stays in-app.
+          navigate(-1);
         } else if (selectedOpportunity?.config.urlSection) {
           const parentUrl = workflowsUrl("opportunityClients", {
             urlSection,

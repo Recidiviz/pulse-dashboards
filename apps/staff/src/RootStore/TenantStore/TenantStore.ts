@@ -147,7 +147,7 @@ export default class TenantStore {
         if (tenantId && queryTenenant !== tenantId) {
           const url = new URL(location.href);
           url.searchParams.set(TENANT_ID_QUERY_PARAM, tenantId);
-          window.history.replaceState(null, "", url.toString());
+          window.history.replaceState(window.history.state, "", url.toString());
         }
       },
     );

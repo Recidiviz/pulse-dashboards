@@ -219,6 +219,44 @@ describe("TenantStore", () => {
     });
   });
 
+  describe("saveTenantIdToQuery", () => {
+    beforeEach(() => {
+      sessionStorage.clear();
+      vi.clearAllMocks();
+      vi.resetAllMocks();
+    });
+
+    it("preserves existing history state when updating the tenant query param", () => {
+      const existingState = { idx: 3, key: "abc123", usr: null };
+      window.history.replaceState(existingState, "");
+      const replaceStateSpy = vi.spyOn(window.history, "replaceState");
+
+      sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, "US_TN");
+
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        isRecidivizUser: true,
+        isAuthorized: true,
+        availableStateCodes: ["US_TN"],
+        userHasAccess: () => true,
+        user: {
+          [metadataField]: { stateCode: "recidiviz" },
+          email_verified: true,
+        },
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+
+      expect(replaceStateSpy).toHaveBeenCalledWith(
+        existingState,
+        expect.anything(),
+        expect.stringContaining("tenantId=US_TN"),
+      );
+    });
+  });
+
   describe("when there is a tenantId in the url query", () => {
     beforeEach(() => {
       // Prevents jsdom from throwing an error that it hasn't implemented navigation

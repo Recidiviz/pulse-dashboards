@@ -67,7 +67,6 @@ export const SelectFormContents = observer(function SelectFormContents({
   const {
     workflowsStore: { opportunityConfigurationStore },
   } = useRootStore();
-
   return (
     <SelectFormWrapper>
       <Header>Select Classification Type</Header>
@@ -85,6 +84,7 @@ export const SelectFormContents = observer(function SelectFormContents({
 
         return (
           <Link
+            key={type}
             to={`/workflows/${config.urlSection}/${pseudonymizedId}/${pseudonymizedId}`}
           >
             <FormLinkButton>
