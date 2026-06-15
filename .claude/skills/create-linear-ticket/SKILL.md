@@ -13,22 +13,23 @@ description:
 
 All Linear tickets for this repo live on the **One Big Team** workspace (identifiers `OBT-####`). This skill creates a new ticket there, and automatically picks the right **Linear project** and **team/product labels** based on which files changed (or, if no changes yet, based on context the user describes).
 
-This skill covers CPA, Spectra, and JII work. Meetings work is out of scope — don't use this skill for changes under `apps/@meetings/` or `libs/@meetings/`.
+This skill covers CPA, Spectra, JII, and Meetings work.
 
 Area → team/product mapping:
 
-| Codebase area                                                                            | Team label      | Default product label                            | Typical Linear projects                                                                              |
-| ---------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `apps/@cpa/`, `apps/@cpa-labeling/`, `libs/@cpa/`                                        | `Team: CPA`     | `Project: CPA`                                   | `CPA - Tech Debt`, `CPA - Internal Tools`, `CPA - Opportunities x CPA Integration`, `[CPA Launch] *` |
-| `apps/@sentencing/`, `libs/@sentencing/`, `libs/sentencing-client/`                      | `Team: Spectra` | `Project: PSI`                                   | `[US_MO] SAR Report Generation`, other PSI projects                                                  |
-| `apps/jii/`, `apps/jii-functions/`, `apps/jii-proxy-server/`, `libs/@jii/`, `apps/@jii/` | `Team: JII`     | `Project: JII Facilities App`                    | `[JII] *` and state-specific JII projects                                                            |
-| `apps/@jii-texting/`, `libs/@jii-texting/`                                               | `Team: JII`     | `Project: JII Texts`                             | JII Texting projects                                                                                 |
-| `apps/@reentry/`, `libs/@reentry/`                                                       | `Team: CPA`     | _(varies — ask)_                                 | Reentry-specific projects                                                                            |
-| `apps/case-notes-server/`, `libs/@case-notes-server/`                                    | `Team: Spectra` | `Project: Case Note Insights`                    | Case Note Insights projects                                                                          |
-| `apps/public-pathways/`, `libs/shared-pathways/`, pathways code in staff                 | `Team: Spectra` | _(none — pathways doesn't have a product label)_ | `[US_NY] Public Pathways`                                                                            |
-| `apps/staff/src/core/Workflows*`, workflow-related staff code                            | `Team: Spectra` | `Project: Workflows`                             | State-specific workflow projects                                                                     |
-| `apps/staff/src/core/Insights*`, insights-related staff code                             | `Team: Spectra` | `Project: Insights`                              | State-specific insights projects                                                                     |
-| `apps/staff/src/core/Tasks*`                                                             | `Team: Spectra` | `Project: Tasks`                                 | `Tasks General Improvements/Maintenance`, state-specific                                             |
+| Codebase area                                                                            | Team label       | Default product label                            | Typical Linear projects                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `apps/@cpa/`, `apps/@cpa-labeling/`, `libs/@cpa/`                                        | `Team: CPA`      | `Project: CPA`                                   | `CPA - Tech Debt`, `CPA - Internal Tools`, `CPA - Opportunities x CPA Integration`, `[CPA Launch] *` |
+| `apps/@sentencing/`, `libs/@sentencing/`, `libs/sentencing-client/`                      | `Team: Spectra`  | `Project: PSI`                                   | `[US_MO] SAR Report Generation`, other PSI projects                                                  |
+| `apps/jii/`, `apps/jii-functions/`, `apps/jii-proxy-server/`, `libs/@jii/`, `apps/@jii/` | `Team: JII`      | `Project: JII Facilities App`                    | `[JII] *` and state-specific JII projects                                                            |
+| `apps/@jii-texting/`, `libs/@jii-texting/`                                               | `Team: JII`      | `Project: JII Texts`                             | JII Texting projects                                                                                 |
+| `apps/@reentry/`, `libs/@reentry/`                                                       | `Team: CPA`      | _(varies — ask)_                                 | Reentry-specific projects                                                                            |
+| `apps/case-notes-server/`, `libs/@case-notes-server/`                                    | `Team: Spectra`  | `Project: Case Note Insights`                    | Case Note Insights projects                                                                          |
+| `apps/public-pathways/`, `libs/shared-pathways/`, pathways code in staff                 | `Team: Spectra`  | _(none — pathways doesn't have a product label)_ | `[US_NY] Public Pathways`                                                                            |
+| `apps/staff/src/core/Workflows*`, workflow-related staff code                            | `Team: Spectra`  | `Project: Workflows`                             | State-specific workflow projects                                                                     |
+| `apps/staff/src/core/Insights*`, insights-related staff code                             | `Team: Spectra`  | `Project: Insights`                              | State-specific insights projects                                                                     |
+| `apps/staff/src/core/Tasks*`                                                             | `Team: Spectra`  | `Project: Tasks`                                 | `Tasks General Improvements/Maintenance`, state-specific                                             |
+| `apps/@meetings/`, `libs/@meetings/`                                                     | `Team: Meetings` | `Project: Meetings`                              | `[Meetings] *`                                                                                       |
 
 If changes span multiple areas, pick the dominant one (most changed files) and tell the user — they can override.
 
@@ -55,8 +56,7 @@ Match the changed paths (or user description) against the area table in the Over
 1. If all/most changed files are under a single area prefix, that's the area.
 2. Pathways work includes any of: `apps/public-pathways/`, `libs/shared-pathways/`, or `apps/staff/src/core/**/Pathways*` and related files.
 3. Shared libs (`libs/ui/`, `libs/design-system/`, `libs/utils/`, `libs/common/`, `libs/datatypes/`) don't belong to a single team — use the downstream consumer as the signal.
-4. If the changes are in `apps/@meetings/` or `libs/@meetings/`, STOP — this skill doesn't cover Meetings. Tell the user and don't proceed.
-5. If the branch name contains a hint (`cpa-...`, `jii-...`, `ny-pathways-...`), use it as a tiebreaker.
+4. If the branch name contains a hint (`cpa-...`, `jii-...`, `ny-pathways-...`, `meetings-...`), use it as a tiebreaker.
 
 If you can't decide confidently, ASK the user which area applies.
 
@@ -133,6 +133,5 @@ If the user is about to start work on this ticket, offer to `git checkout -b ffl
 
 - **Every ticket goes on One Big Team** — that's why identifiers are `OBT-####`. Do not create on the `CPA`, `Spectra (SPE)`, or `JII Squad` teams; those exist for planning but the code tickets live on OBT.
 - **Team labels are how ownership is signaled** — the `Team: X` label is what makes the ticket show up in the owning squad's triage.
-- **Meetings is out of scope** — for changes under `apps/@meetings/` or `libs/@meetings/`, don't use this skill.
 - **When in doubt about the project**, set the project to "None" — it's easier for the team to triage without a wrong project than to undo one.
 - **Never create a ticket without confirming the draft** with the user first.
