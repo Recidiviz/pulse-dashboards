@@ -121,6 +121,7 @@
       "~@sentencing/trpc": ["libs/@sentencing/trpc/src/index.ts"],
       "~@sentencing/trpc-types": ["libs/@sentencing/trpc-types/src/index.ts"],
       "~@sentencing/trpc/*": ["libs/@sentencing/trpc/src/*"],
+      "~@typesense/client": ["libs/@typesense/client/src/index.ts"],
       "~auth": ["libs/auth/src/index.ts"],
       "~case-notes-server/*": ["apps/case-notes-server/src/*"],
       "~client-env-utils": ["libs/client-env-utils/src/index.ts"],
@@ -148,7 +149,6 @@
       "~shared-pathways/*": ["libs/shared-pathways/src/*"],
       "~staff-shared-server": ["libs/staff-shared-server/src/index.ts"],
       "~twilio-api": ["libs/twilio-api/src/index.ts"],
-      "~typesense": ["libs/typesense/src/index.ts"],
       "~ui": ["libs/ui/src/index.ts"],
       "~utils": ["libs/utils/src/index.ts"],
       "~utils/*": ["libs/utils/src/*"]

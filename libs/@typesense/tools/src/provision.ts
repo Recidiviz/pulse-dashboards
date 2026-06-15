@@ -20,8 +20,8 @@
 // requires collections to exist before sync starts; this script creates them.
 //
 // Usage:
-//   nx provision typesense -c staging                  (safe: create-if-not-exists)
-//   nx provision typesense -c staging -- --recreate    (DESTRUCTIVE: drop + recreate)
+//   nx provision '@typesense/tools' -c staging                  (safe: create-if-not-exists)
+//   nx provision '@typesense/tools' -c staging -- --recreate    (DESTRUCTIVE: drop + recreate)
 //
 // Default behavior is create-if-not-exists — safe to re-run, won't touch
 // existing collections or their data.
@@ -36,8 +36,7 @@ import * as readline from "node:readline";
 
 import type { Client as TypesenseClient } from "typesense";
 
-import { createTypesenseClient } from "./client";
-import { schemas } from "./schemas";
+import { createTypesenseClient, schemas } from "~@typesense/client";
 
 // Detects boolean CLI flags in any of the forms nx might pass them through as:
 //   --foo            (bare)
@@ -112,7 +111,7 @@ async function main(): Promise<void> {
   // Require explicit env vars — no offline-style defaults. Pointing this at
   // localhost or running it against the wrong cluster would be very bad.
   const host = process.env["TYPESENSE_HOST"];
-  const apiKey = process.env["TYPESENSE_ADMIN_API_KEY"];
+  const apiKey = process.env["TYPESENSE_API_WRITE_KEY"];
   if (!host) {
     console.error(
       "TYPESENSE_HOST is required (e.g. https://typesense-staging.recidiviz.org)",
@@ -121,7 +120,7 @@ async function main(): Promise<void> {
   }
   if (!apiKey) {
     console.error(
-      "TYPESENSE_ADMIN_API_KEY is required (typesense-admin-api-key from the cluster's k8s secret — NOT the search-only TYPESENSE_API_KEY)",
+      "TYPESENSE_API_WRITE_KEY is required (request elevated jit permissions)",
     );
     process.exit(1);
   }

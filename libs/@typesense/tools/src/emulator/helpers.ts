@@ -27,7 +27,7 @@
 import { DocumentData, Firestore } from "@google-cloud/firestore";
 import type { Client as TypesenseClient } from "typesense";
 
-import { COLLECTIONS_WITH_SOURCE_ID, schemas } from "../schemas";
+import { COLLECTIONS_WITH_SOURCE_ID, schemas } from "~@typesense/client";
 
 const FIRESTORE_EMULATOR_HOST =
   process.env["FIRESTORE_EMULATOR_HOST"] ?? "localhost:8080";

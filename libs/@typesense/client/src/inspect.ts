@@ -20,7 +20,7 @@
 //   summary                 Print names + doc counts + field counts.
 //   schema --collection=X   Print the full field schema for collection X.
 //
-// Reads TYPESENSE_HOST and TYPESENSE_ADMIN_API_KEY from the environment (typically
+// Reads TYPESENSE_HOST and TYPESENSE_API_INSPECT_KEY from the environment (typically
 // loaded by the SOPS plugin from env.<env>.enc.yaml). Admin key is required so the
 // script can hit `/collections` endpoints (the search-only TYPESENSE_API_KEY used by
 // client.ts would 401 here). No writes — safe to run against any cluster.
@@ -31,6 +31,24 @@ type Subcommand = "list" | "summary" | "schema";
 
 function isSubcommand(value: string): value is Subcommand {
   return value === "list" || value === "summary" || value === "schema";
+}
+
+function printTable(rows: Array<Record<string, string | number>>): void {
+  if (rows.length === 0) {
+    console.info("(no rows)");
+    return;
+  }
+  const keys = Object.keys(rows[0]);
+  const widths = keys.map((k) =>
+    Math.max(k.length, ...rows.map((r) => String(r[k]).length)),
+  );
+  const formatRow = (cells: string[]) =>
+    cells.map((c, i) => c.padEnd(widths[i])).join("  ");
+  console.info(formatRow(keys));
+  console.info(formatRow(widths.map((w) => "-".repeat(w))));
+  for (const r of rows) {
+    console.info(formatRow(keys.map((k) => String(r[k]))));
+  }
 }
 
 function parseCollectionArg(): string | undefined {
@@ -46,13 +64,13 @@ function parseCollectionArg(): string | undefined {
 
 async function main(): Promise<void> {
   const host = process.env["TYPESENSE_HOST"];
-  const apiKey = process.env["TYPESENSE_ADMIN_API_KEY"];
+  const apiKey = process.env["TYPESENSE_API_INSPECT_KEY"];
   if (!host) {
     console.error("TYPESENSE_HOST is required");
     process.exit(1);
   }
   if (!apiKey) {
-    console.error("TYPESENSE_ADMIN_API_KEY is required");
+    console.error("TYPESENSE_API_INSPECT_KEY is required");
     process.exit(1);
   }
 
@@ -79,7 +97,7 @@ async function main(): Promise<void> {
       docs: c.num_documents,
       fields: c.fields?.length ?? 0,
     }));
-    console.table(rows);
+    printTable(rows);
     return;
   }
 

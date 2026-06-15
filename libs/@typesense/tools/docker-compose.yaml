@@ -8,7 +8,7 @@ services:
     # Latest stable as of 2026-05. Align with the GKE cluster's image once
     # production infrastructure is finalized.
     image: typesense/typesense:30.2
-    container_name: recidiviz-typesense-offline
+    container_name: typesense-offline
     ports:
       - "8108:8108"
     volumes:

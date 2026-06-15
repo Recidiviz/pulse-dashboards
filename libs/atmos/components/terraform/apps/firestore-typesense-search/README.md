@@ -53,7 +53,7 @@ before it disappears. Subsequent reads of `/keys` only return `value_prefix`,
 not the full value.
 
 > ⚠️ This key is NOT the same as the search-only parent key used by the staff
-> app's search bar (managed in [libs/typesense](../../../../../typesense/)).
+> app's search bar (managed in [libs/@typesense/client](../../../../../@typesense/client/)).
 > The extension needs WRITE permission. If you accidentally encrypt a
 > `documents:search`-only key here, the backfill function logs `Done backfilling`
 > immediately and the cluster pod logs show
@@ -125,7 +125,7 @@ curl -fsS -X DELETE "https://typesense-staging.recidiviz.org/keys/<id>" \
 
 `var.collections` is the single source of truth for the four parallel-list params
 the extension expects. Keep it in sync with the canonical schema definitions in
-[libs/typesense/src/schemas/index.ts](../../../../../typesense/src/schemas/index.ts).
+[libs/@typesense/client/src/schemas/index.ts](../../../../../@typesense/client/src/schemas/index.ts).
 A collection added there must also be added here (and to the cluster's
 provisioning script) for the trigger pipeline to mirror it.
 

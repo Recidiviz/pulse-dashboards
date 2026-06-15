@@ -29,8 +29,8 @@
 import type { Firestore } from "@google-cloud/firestore";
 import type { Client as TypesenseClient } from "typesense";
 
-import { createLocalTypesenseClient } from "../client";
-import { schemas } from "../schemas";
+import { createLocalTypesenseClient, schemas } from "~@typesense/client";
+
 import {
   createLocalFirestoreClient,
   dropAndCreateCollection,

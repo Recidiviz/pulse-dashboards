@@ -98,6 +98,6 @@ variable "collections" {
       - FIRESTORE_COLLECTION_FIELDS_LIST   (fields per collection, comma-joined within, pipe-separated between)
       - FLATTEN_NESTED_DOCUMENTS_LIST      (flatten flag per collection, joined with `,`)
 
-    Mirror the schemas declared in libs/typesense/src/schemas/index.ts — keep in sync.
+    Mirror the schemas declared in libs/@typesense/client/src/schemas/index.ts — keep in sync.
   EOT
 }

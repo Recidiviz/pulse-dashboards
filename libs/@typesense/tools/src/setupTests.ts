@@ -15,25 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  createLocalTypesenseClient,
-  createTypesenseClient,
-  type TypesenseClientConfig,
-} from "./client";
-export { collectionNames, schemas } from "./schemas";
-export {
-  type BaseScope,
-  compileUserScopePredicate,
-  type ResolveCrossSystemScopeInput,
-  resolveCrossSystemStaffScopes,
-  type ResolveScopeFeatureVariants,
-  type ResolveScopeInput,
-  type ResolveScopeUser,
-  resolveStaffScope,
-  resolveStateBase,
-  type SingleWorkflowsSystem,
-  type StaffScope,
-  toCrossSystemTypesenseFilter,
-  toTypesenseFilter,
-  type ToTypesenseFilterClauses,
-} from "./scope";
+import jestExtendedMatchers from "jest-extended";
+
+expect.extend(jestExtendedMatchers);

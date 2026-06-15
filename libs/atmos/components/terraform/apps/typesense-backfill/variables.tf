@@ -55,10 +55,10 @@ variable "collections" {
     fields = list(string)
   }))
   description = <<-EOT
-    Collections to backfill. Mirror libs/typesense/src/schemas/index.ts — keep in sync.
+    Collections to backfill. Mirror libs/@typesense/client/src/schemas/index.ts — keep in sync.
     Each entry's `fields` list determines which Firestore document fields are forwarded to Typesense
     (any other fields are dropped before import). The collection's Typesense schema MUST exist before
-    backfill runs (provisioned by `nx provision typesense -c <env>`).
+    backfill runs (provisioned by `nx provision '@typesense/tools' -c <env>`).
   EOT
 }
 

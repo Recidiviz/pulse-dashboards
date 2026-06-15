@@ -21,7 +21,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: "../../node_modules/.vite/libs/typesense",
+  cacheDir: "../../../node_modules/.vite/libs/@typesense/client",
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
   // Uncomment this if you are using workers.
   // worker: {
@@ -33,14 +33,14 @@ export default defineConfig(() => ({
     globalSetup: ["src/setupTestsGlobal.ts"],
     setupFiles: ["src/setupTests.ts"],
     passWithNoTests: true,
-    name: "typesense",
+    name: "@typesense/client",
     watch: false,
     globals: true,
     environment: "jsdom",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     coverage: {
-      reportsDirectory: "../../coverage/libs/typesense",
+      reportsDirectory: "../../../coverage/libs/@typesense/client",
       provider: "v8" as const,
     },
   },

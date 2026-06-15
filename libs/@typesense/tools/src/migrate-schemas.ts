@@ -37,9 +37,9 @@
 // Flags:
 //   --dry-run   Print the plan and exit without mutating anything.
 //
-// Reads TYPESENSE_HOST and TYPESENSE_ADMIN_API_KEY from the env (SOPS-loaded
-// when invoked through the nx target). Admin scope is required because PATCH
-// is a `collections:*` action.
+// Reads TYPESENSE_HOST and TYPESENSE_API_WRITE_KEY from the env (SOPS-loaded
+// when invoked through the nx target). The write key needs `collections:*`
+// scope because PATCH is a collections-level action.
 
 /* eslint-disable no-await-in-loop --
  * Sequential awaits are intentional throughout the apply step. Each collection
@@ -52,8 +52,7 @@
 import type { CollectionUpdateSchema } from "typesense/lib/Typesense/Collection";
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
-import { createTypesenseClient } from "./client";
-import { schemas } from "./schemas";
+import { createTypesenseClient, schemas } from "~@typesense/client";
 
 type LocalField = NonNullable<CollectionCreateSchema["fields"]>[number];
 type LiveField = LocalField & { drop?: boolean };
@@ -202,14 +201,14 @@ export function checkOptionalOnAdds(diff: SchemaDiff): string[] {
 
 async function main(): Promise<void> {
   const host = process.env["TYPESENSE_HOST"];
-  const apiKey = process.env["TYPESENSE_ADMIN_API_KEY"];
+  const apiKey = process.env["TYPESENSE_API_WRITE_KEY"];
   if (!host) {
     console.error("TYPESENSE_HOST is required");
     process.exit(1);
   }
   if (!apiKey) {
     console.error(
-      "TYPESENSE_ADMIN_API_KEY is required (admin scope — NOT the search-only TYPESENSE_API_KEY)",
+      "TYPESENSE_API_WRITE_KEY is required (needs `collections:*` scope — NOT the search-only TYPESENSE_API_KEY)",
     );
     process.exit(1);
   }

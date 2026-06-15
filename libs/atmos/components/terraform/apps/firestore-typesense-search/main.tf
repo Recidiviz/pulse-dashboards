@@ -8,7 +8,7 @@
 # The four parallel-list params (FIRESTORE_COLLECTION_PATH, TYPESENSE_COLLECTION_NAME,
 # FIRESTORE_COLLECTION_FIELDS, FLATTEN_NESTED_DOCUMENTS) are derived from a
 # single var.collections list — this keeps the extension config in lockstep with
-# the typesense collection schemas declared in libs/typesense/src/schemas/index.ts.
+# the typesense collection schemas declared in libs/@typesense/client/src/schemas/index.ts.
 # 
 # v2.1 of the extension can only sync a single collection schema per instance of
 # the extension. Later versions allow the sync of multiple collection schema via 

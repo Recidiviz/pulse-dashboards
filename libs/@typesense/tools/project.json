@@ -1,9 +1,9 @@
 {
-  "name": "typesense",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/typesense/src",
+  "name": "@typesense/tools",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@typesense/tools/src",
   "projectType": "library",
-  "tags": ["scope:universal"],
+  "tags": ["scope:server"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
@@ -17,7 +17,7 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/typesense"],
+      "outputs": ["{workspaceRoot}/coverage/libs/@typesense/tools"],
       "cache": true,
       "options": {
         "command": "vitest",
@@ -75,42 +75,6 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "tsx src/migrate-schemas.ts {args}",
-        "cwd": "{projectRoot}"
-      },
-      "configurations": {
-        "offline": {},
-        "staging": {},
-        "production": {}
-      }
-    },
-    "requires-sops-env:list-collections": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx src/inspect.ts list",
-        "cwd": "{projectRoot}"
-      },
-      "configurations": {
-        "offline": {},
-        "staging": {},
-        "production": {}
-      }
-    },
-    "requires-sops-env:collection-summary": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx src/inspect.ts summary",
-        "cwd": "{projectRoot}"
-      },
-      "configurations": {
-        "offline": {},
-        "staging": {},
-        "production": {}
-      }
-    },
-    "requires-sops-env:collection-schema": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx src/inspect.ts schema --collection={args.collection}",
         "cwd": "{projectRoot}"
       },
       "configurations": {

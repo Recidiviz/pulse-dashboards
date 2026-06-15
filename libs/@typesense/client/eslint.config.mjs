@@ -21,7 +21,7 @@ import tseslint from "typescript-eslint";
 
 import baseConfig, {
   designSystemRestrictedImports,
-} from "../../eslint.config.mjs";
+} from "../../../eslint.config.mjs";
 
 export default tseslint.config(baseConfig, {
   files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],

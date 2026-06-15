@@ -17,10 +17,11 @@
 
 // One-shot seed: drops and recreates Typesense collections, then imports docs
 // from the Firestore emulator. Run after `nx offline staff` is up if you only
-// need a single snapshot. For live sync, use `nx offline-sync typesense` instead.
+// need a single snapshot. For live sync, use `nx offline-sync '@typesense/tools'`
+// instead.
 
-import { createLocalTypesenseClient } from "../client";
-import { schemas } from "../schemas";
+import { createLocalTypesenseClient, schemas } from "~@typesense/client";
+
 import {
   createLocalFirestoreClient,
   dropAndCreateCollection,

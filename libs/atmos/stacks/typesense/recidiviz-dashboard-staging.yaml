@@ -124,4 +124,4 @@ components:
         # batch-sync collections need to diverge per env, switch the consumer
         # that diverges to a static list (and document why) rather than
         # filtering the !exec output here.
-        collections: !exec yarn tsx ../../libs/typesense/src/export-collections.ts
+        collections: !exec yarn tsx ../../libs/@typesense/client/src/export-collections.ts
