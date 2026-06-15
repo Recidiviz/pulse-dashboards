@@ -24,6 +24,75 @@
         "command": "vitest",
         "cwd": "{projectRoot}"
       }
+    },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "create-base-package-json",
+        {
+          "projects": ["@jii/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "platform": "node",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
+        "sourcemap": true,
+        "tsConfig": "{projectRoot}/tsconfig.json",
+        "generatePackageJson": true,
+        "target": "node22",
+        "minify": true,
+        "external": ["@prisma/client"],
+        "assets": ["{workspaceRoot}/.yarnrc.yml"]
+      },
+      "configurations": {
+        "dev": {
+          "minify": false,
+          "sourcemap": false
+        },
+        "staging": {},
+        "cherry-pick": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "container": {
+      "dependsOn": ["build"],
+      "executor": "@nx-tools/nx-container:build",
+      "cwd": "{projectRoot}",
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-jii-staging/jii/jii-data-import:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-jii-staging/jii/jii-data-import:latest"
+          ]
+        },
+        "cherry-pick": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-jii-staging/jii/jii-data-import:$COMMIT_SHA"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
     }
   }
 }

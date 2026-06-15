@@ -347,6 +347,7 @@ if (
 
   if (deployOppsBackend) {
     imageProjects.push("@jii/server");
+    imageProjects.push("@jii/import");
   }
 
   if (deployCaseNotes) {
