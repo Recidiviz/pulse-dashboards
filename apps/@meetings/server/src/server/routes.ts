@@ -603,6 +603,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
           const structuredActionItems = result.output.actionItems.map(
             (item) => ({
               task: item.task,
+              assignee: item.assignee,
+              deadline: item.deadline ?? null,
               context: item.context ?? null,
               evidenceQuotes: item.evidenceQuotes ?? null,
             }),

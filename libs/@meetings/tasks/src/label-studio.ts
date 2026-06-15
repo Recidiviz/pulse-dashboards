@@ -52,6 +52,18 @@ function formatDuration(seconds: number): string {
   return `${m}m ${s}s`;
 }
 
+type StructuredActionItem = {
+  task: string;
+  assignee: string;
+  deadline?: string | null;
+};
+
+/** Format a structured action item as "[Assignee] Task (due: deadline)". */
+function formatStructuredActionItem(item: StructuredActionItem): string {
+  const base = `[${item.assignee}] ${item.task}`;
+  return item.deadline ? `${base} (due: ${item.deadline})` : base;
+}
+
 /**
  * Build a Label Studio task JSON object from a completed meeting.
  *
@@ -79,6 +91,11 @@ export function buildLabelStudioTask(
       : null;
 
   return {
+    // Allows us to use the label studio UI to randomly assign each task to an annotator by having a
+    // range of numbers that correspond to each annotator. Doing it as a random number instead of
+    // doing the assignments in the code makes it easy to make adjustments in LS later.
+    random_split: Math.random(),
+
     audio: meeting.finalRecordingGCSPath
       ? `gs://${meeting.recordingsGCSBucket}/${meeting.finalRecordingGCSPath}`
       : null,
@@ -92,7 +109,10 @@ export function buildLabelStudioTask(
 
     // ── LLM outputs ─────────────────────────────────────────────────────
     case_note: meeting.caseNote ?? null,
-    action_items: (meeting.actionItems as string[] | null)?.join("\n") ?? null,
+    action_items:
+      (meeting.structuredActionItems as StructuredActionItem[] | null)?.map(
+        formatStructuredActionItem,
+      ) ?? null,
     critical_updates:
       (meeting.criticalUpdates as string[] | null)?.join("\n") ?? null,
 

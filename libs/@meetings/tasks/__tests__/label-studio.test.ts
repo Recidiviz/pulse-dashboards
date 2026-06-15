@@ -47,6 +47,14 @@ function makeMeeting(
     postMeetingProcessingStatus: "COMPLETED",
     caseNote: "Client discussed progress on goals.",
     actionItems: ["Follow up on housing", "Schedule next meeting"],
+    structuredActionItems: [
+      {
+        task: "Follow up on housing",
+        assignee: "Staff Member",
+        deadline: "2026-04-01",
+      },
+      { task: "Schedule next meeting", assignee: "Client", deadline: null },
+    ],
     criticalUpdates: ["Safety concern - details noted"],
     client: { displayPersonExternalId: "DISPLAY-001" },
     resident: null,
@@ -67,24 +75,32 @@ describe("buildLabelStudioTask", () => {
   test("builds task with all fields from a meeting with both providers", () => {
     const task = buildLabelStudioTask(makeMeeting(), "US_NE");
 
-    expect(task).toEqual({
-      audio: "gs://test-bucket/meetings/meeting-1/final.m4a",
-      transcript_assemblyai: "[A]: Hello, how are you?\n[B]: I am doing well.",
-      transcript_deepgram: "[0]: Hello, how are you?",
-      transcript_best_provider: "assemblyai",
-      transcript_best_confidence: 0.95,
-      case_note: "Client discussed progress on goals.",
-      action_items: "Follow up on housing\nSchedule next meeting",
-      critical_updates: "Safety concern - details noted",
-      meta: {
-        State: "US_NE",
-        "Recording date": "2026-03-15",
-        Duration: "30m 0s",
-        "Meeting ID": "meeting-1",
-        "Person Display ID": "DISPLAY-001",
-        "Processing status": "COMPLETED",
-      },
-    });
+    expect(task.random_split).toBeGreaterThanOrEqual(0);
+    expect(task.random_split).toBeLessThan(1);
+    expect(task).toEqual(
+      expect.objectContaining({
+        audio: "gs://test-bucket/meetings/meeting-1/final.m4a",
+        transcript_assemblyai:
+          "[A]: Hello, how are you?\n[B]: I am doing well.",
+        transcript_deepgram: "[0]: Hello, how are you?",
+        transcript_best_provider: "assemblyai",
+        transcript_best_confidence: 0.95,
+        case_note: "Client discussed progress on goals.",
+        action_items: [
+          "[Staff Member] Follow up on housing (due: 2026-04-01)",
+          "[Client] Schedule next meeting",
+        ],
+        critical_updates: "Safety concern - details noted",
+        meta: {
+          State: "US_NE",
+          "Recording date": "2026-03-15",
+          Duration: "30m 0s",
+          "Meeting ID": "meeting-1",
+          "Person Display ID": "DISPLAY-001",
+          "Processing status": "COMPLETED",
+        },
+      }),
+    );
   });
 
   test("selects deepgram as best provider when it has highest confidence", () => {
@@ -110,7 +126,7 @@ describe("buildLabelStudioTask", () => {
         finalRecordingGCSPath: null,
         endTime: null,
         caseNote: null,
-        actionItems: null,
+        structuredActionItems: null,
         criticalUpdates: null,
       }),
       "US_NE",
