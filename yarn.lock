@@ -19913,6 +19913,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/body-scroll-lock@npm:^2.6.1":
+  version: 2.6.2
+  resolution: "@types/body-scroll-lock@npm:2.6.2"
+  checksum: 10c0/835465a8ab361946d838b4b8a5548bffaeef1b873d5c11b36aa740bf654d24cc7b11aa6f419c1cd8cbdc98db2ba4c4bd23e4d8bacda10890894d7a06bef91a04
+  languageName: node
+  linkType: hard
+
 "@types/bonjour@npm:^3.5.13":
   version: 3.5.13
   resolution: "@types/bonjour@npm:3.5.13"
@@ -51302,6 +51309,7 @@ __metadata:
     "@trpc/tanstack-react-query": "npm:^11.9.0"
     "@tsconfig/node20": "npm:^20.1.4"
     "@types/argparse": "npm:^2.0.10"
+    "@types/body-scroll-lock": "npm:^2.6.1"
     "@types/cache-manager": "npm:^3.4.3"
     "@types/cache-manager-ioredis": "npm:^2.0.6"
     "@types/crypto-js": "npm:^4.0.2"
@@ -51363,6 +51371,7 @@ __metadata:
     axios-mock-adapter: "npm:^2.1.0"
     babel-jest: "npm:^30.0.2"
     babel-plugin-styled-components: "npm:^2.1.4"
+    body-scroll-lock: "npm:^3.1.5"
     boring-avatars: "npm:^1.10.1"
     build-url: "npm:^6.0.1"
     cache-manager: "npm:^3.6.1"

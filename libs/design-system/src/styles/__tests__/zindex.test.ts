@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./animation";
-export { palette } from "./palette";
-export * from "./spacing";
-export * from "./typography";
-export * from "./zindex";
+import { zindex } from "../zindex";
+
+describe("zindex tokens", () => {
+  it("exposes toast above modal content", () => {
+    expect(zindex.toast).toBeGreaterThan(zindex.modal.content);
+  });
+
+  it("orders modal content above backdrop", () => {
+    expect(zindex.modal.content).toBeGreaterThan(zindex.modal.backdrop);
+  });
+
+  it("keeps tooltip below modal layers", () => {
+    expect(zindex.tooltip).toBeLessThan(zindex.modal.backdrop);
+  });
+
+  it("matches the legacy values consumers depend on", () => {
+    expect(zindex).toEqual({
+      toast: 1002,
+      modal: { backdrop: 1000, content: 1001 },
+      tooltip: 500,
+    });
+  });
+});

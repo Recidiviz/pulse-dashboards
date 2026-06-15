@@ -17,8 +17,7 @@
 
 import * as React from "react";
 
-import { Icon } from "~design-system";
-
+import { Icon } from "../Icon";
 import { BaseButton, LinkButton } from "./Button.styles";
 import { ButtonProps } from "./Button.types";
 

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./animation";
-export { palette } from "./palette";
-export * from "./spacing";
-export * from "./typography";
-export * from "./zindex";
+import { render } from "@testing-library/react";
+
+import { GlobalStyle } from "../GlobalStyle";
+
+describe("GlobalStyle", () => {
+  it("renders without throwing", () => {
+    expect(() => render(<GlobalStyle />)).not.toThrow();
+  });
+
+  it("is exported as a React component", () => {
+    expect(GlobalStyle).toBeDefined();
+    expect(typeof GlobalStyle).toBe("object");
+  });
+});

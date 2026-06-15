@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./animation";
-export { palette } from "./palette";
-export * from "./spacing";
-export * from "./typography";
-export * from "./zindex";
+import type { JSX } from "react";
+import * as React from "react";
+
+import {
+  ErrorPageBody,
+  ErrorPageHeader,
+  InnerErrorPageContainer,
+  OuterErrorPageContainer,
+} from "./ErrorPage.styles";
+
+export interface ErrorPageProps {
+  headerText: string;
+  logo: React.ReactNode;
+  children: React.ReactNode;
+}
+
+export const ErrorPage = ({
+  headerText,
+  logo,
+  children,
+}: ErrorPageProps): JSX.Element => {
+  return (
+    <OuterErrorPageContainer>
+      <InnerErrorPageContainer>
+        {logo}
+        <ErrorPageHeader>{headerText}</ErrorPageHeader>
+        <ErrorPageBody>{children}</ErrorPageBody>
+      </InnerErrorPageContainer>
+    </OuterErrorPageContainer>
+  );
+};
