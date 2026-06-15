@@ -1,0 +1,3 @@
+# Aurora
+# Google Workflows are allowed for orchestration but cannot process DOC data
+libs/atmos/components/terraform/**/*.workflows.yaml @Recidiviz/aurora
