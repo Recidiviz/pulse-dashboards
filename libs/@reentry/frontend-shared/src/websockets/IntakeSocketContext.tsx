@@ -30,6 +30,7 @@ import {
   useReducer,
   useState,
 } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { components } from "~@reentry/openapi-types";
 
@@ -964,7 +965,7 @@ export function IntakeSocketProvider({
 
         // Show message immediately before the ack returns (optimistic UI).
         // Replaced with the server-confirmed version once the ack arrives.
-        const tempId = crypto.randomUUID();
+        const tempId = uuidv4();
         const now = new Date().toISOString();
         dispatch({
           type: "addHumanMessage",
