@@ -125,6 +125,7 @@ export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {
 export type FormUpdate<FormDataType> = {
   updated: UpdateLog;
   data?: Partial<FormDataType>;
+  fieldAuthors?: Record<string, string>;
 };
 
 export type UsTnContactNote = {

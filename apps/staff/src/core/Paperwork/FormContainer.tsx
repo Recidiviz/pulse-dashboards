@@ -24,14 +24,19 @@ import {
 import * as Sentry from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { FormLastEdited } from "../FormLastEdited";
+import { SubmitApprovalModal } from "./SubmitApprovalModal";
 import { createDownloadLabel } from "./utils";
 
 const FormHeaderBar = styled.div`
@@ -61,7 +66,7 @@ const LastEditedMessage = styled(Sans12)`
   margin-top: ${rem(spacing.sm)};
 `;
 
-export const DownloadButton = styled(Button).attrs({
+const StyledButton = styled(Button).attrs({
   kind: "primary",
   shape: "block",
 })`
@@ -103,7 +108,9 @@ export type FormHeaderProps = {
   additionalHeaderButtons?: React.ReactNode;
 };
 
-export const RevertButton = DownloadButton;
+export const DownloadButton = StyledButton;
+export const RevertButton = StyledButton;
+export const SubmitButton = StyledButton;
 
 export const FormContainer = observer(function FormContainer({
   downloadButtonLabel,
@@ -121,7 +128,12 @@ export const FormContainer = observer(function FormContainer({
 }: FormHeaderProps): React.ReactElement<any> {
   const { form } = opportunity;
   const isDownloadButtonDisabled = isMissingContent || false;
-  const { formRevertButton } = useFeatureVariants();
+  const { formRevertButton, enableSupervisorReviewChain } =
+    useFeatureVariants();
+  const { workflowsStore } = useRootStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const userHasFilledNecessaryFields = form?.userHasFilledNecessaryFields();
 
   if (!form) return <div />;
 
@@ -188,6 +200,30 @@ export const FormContainer = observer(function FormContainer({
                 )}
               </DownloadButton>
             </TooltipTrigger>
+          )}
+          {enableSupervisorReviewChain && (
+            <>
+              <TooltipTrigger
+                contents={
+                  !userHasFilledNecessaryFields
+                    ? "Add Signature, Date, and Recommendation to form"
+                    : undefined
+                }
+              >
+                <SubmitButton
+                  disabled={!userHasFilledNecessaryFields}
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Submit for Approval
+                </SubmitButton>
+              </TooltipTrigger>
+              <SubmitApprovalModal
+                showModal={isModalOpen}
+                onCloseFn={() => setIsModalOpen(false)}
+                opportunity={opportunity}
+                workflowsStore={workflowsStore}
+              />
+            </>
           )}
         </FormHeaderSection>
       </FormHeaderBar>

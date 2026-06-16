@@ -1471,3 +1471,58 @@ describe("user data observer", () => {
     expect(workflowsStore.userKeepAliveDisposer).toBeUndefined();
   });
 });
+
+describe("searchStaff", () => {
+  beforeEach(async () => {
+    await waitForHydration();
+    runInAction(() => {
+      workflowsStore.supervisionStaffSubscription.data =
+        mockSupervisionOfficers;
+    });
+  });
+
+  it("returns empty array for an empty search term", () => {
+    expect(workflowsStore.searchStaff("")).toEqual([]);
+  });
+
+  it("returns empty array for a whitespace-only search term", () => {
+    expect(workflowsStore.searchStaff("   ")).toEqual([]);
+  });
+
+  it("matches by officer id and ranks the exact-id officer first", () => {
+    // "XX_OFFICER2" is similar enough that Fuse may also return it, but the
+    // exact-id match should rank first due to the higher id weight.
+    const results = workflowsStore.searchStaff("XX_OFFICER1");
+    expect(results.length).toBeGreaterThanOrEqual(1);
+    expect(results[0].id).toBe("XX_OFFICER1");
+  });
+
+  it("matches by surname and ranks the exact-surname officer first", () => {
+    // Officer 2 has surname "AlphabeticallyFirst"; officer 1 has "AlphabeticallySecond"
+    const results = workflowsStore.searchStaff("AlphabeticallyFirst");
+    expect(results.length).toBeGreaterThanOrEqual(1);
+    expect(results[0].id).toBe("XX_OFFICER2");
+  });
+
+  it("matches all officers that share the same givenNames", () => {
+    // Both fixture officers have givenNames "TestOfficer"
+    const results = workflowsStore.searchStaff("TestOfficer");
+    expect(results).toHaveLength(2);
+  });
+
+  it("respects the limit parameter", () => {
+    const results = workflowsStore.searchStaff("TestOfficer", 1);
+    expect(results).toHaveLength(1);
+  });
+
+  it("returns empty array when the search term matches no officers", () => {
+    expect(workflowsStore.searchStaff("ZZZNOTAMATCH")).toEqual([]);
+  });
+
+  it("returns empty array when there are no available officers", () => {
+    runInAction(() => {
+      workflowsStore.supervisionStaffSubscription.data = [];
+    });
+    expect(workflowsStore.searchStaff("TestOfficer")).toEqual([]);
+  });
+});

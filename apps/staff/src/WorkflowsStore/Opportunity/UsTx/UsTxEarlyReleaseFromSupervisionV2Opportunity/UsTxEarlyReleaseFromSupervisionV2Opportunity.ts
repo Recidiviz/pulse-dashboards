@@ -19,7 +19,7 @@ import { DocumentData } from "@google-cloud/firestore";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm/UsTxEarlyReleaseFromSupervisionForm";
+import { UsTxEarlyReleaseFromSupervisionV2Form } from "../../Forms/UsTxEarlyReleaseFromSupervisionV2Form/UsTxEarlyReleaseFromSupervisionV2Form";
 import { UsTxArsErsV2OpportunityBase } from "../UsTxArsErsV2OpportunityBase";
 import {
   UsTxEarlyReleaseFromSupervisionV2DraftData,
@@ -31,7 +31,7 @@ export class UsTxEarlyReleaseFromSupervisionV2Opportunity extends UsTxArsErsV2Op
   UsTxEarlyReleaseFromSupervisionV2ReferralRecord,
   OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionV2DraftData>
 > {
-  form: UsTxEarlyReleaseFromSupervisionForm;
+  form: UsTxEarlyReleaseFromSupervisionV2Form;
 
   constructor(client: Client, record: DocumentData) {
     super(
@@ -41,6 +41,6 @@ export class UsTxEarlyReleaseFromSupervisionV2Opportunity extends UsTxArsErsV2Op
       usTxEarlyReleaseFromSupervisionV2Schema.parse(record),
     );
 
-    this.form = new UsTxEarlyReleaseFromSupervisionForm(this, this.rootStore);
+    this.form = new UsTxEarlyReleaseFromSupervisionV2Form(this, this.rootStore);
   }
 }

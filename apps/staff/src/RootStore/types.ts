@@ -148,6 +148,9 @@ export type FeatureVariant =
   | "usTnRcafV2"
   | "usTnRcafV1"
 
+  //// Texas
+  | "enableSupervisorReviewChain"
+
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -270,6 +273,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   crcLikeBeds: {},
   SARBuilder: {},
   splitParoleProbationOutcomes: {},
+  enableSupervisorReviewChain: {},
   supervisorHomepageReviewCard: {},
   insightsSupervisorOpportunityNotifications: {},
   sentenceProgressV2: {},
@@ -282,6 +286,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
     ? {
         actionStrategies: { activeTenants: ["US_MI"] },
         crcLikeBeds: {},
+        enableSupervisorReviewChain: { activeTenants: ["US_TX"] },
         insightsOnboarding: {},
         outcomesModule: {
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],

@@ -69,6 +69,7 @@ export class FormBase<
       draftData: computed,
       formData: computed,
       formLastUpdated: computed,
+      fieldAuthors: computed,
       prefilledData: computed,
       currentUserEmail: computed,
       formIsDownloading: computed,
@@ -86,6 +87,10 @@ export class FormBase<
 
   get currentUserEmail(): string | undefined {
     return this.rootStore.workflowsStore.currentUserEmail;
+  }
+
+  get currentUserId(): string | undefined {
+    return this.rootStore.userStore.externalId;
   }
 
   get type(): OpportunityType {
@@ -106,6 +111,10 @@ export class FormBase<
 
   get draftData(): Partial<FormDisplayType> {
     return this.updates?.data ?? {};
+  }
+
+  get fieldAuthors(): Record<string, string> | undefined {
+    return this.updates?.fieldAuthors;
   }
 
   get prefilledData(): Partial<FormDisplayType> {
@@ -203,7 +212,7 @@ export class FormBase<
 
     await this.rootStore.firestoreStore.updateForm(
       this.opportunity.person.recordId,
-      { data: deleteField() },
+      { data: deleteField(), fieldAuthors: deleteField() },
       this.formId,
     );
     runInAction(() => {
@@ -222,8 +231,10 @@ export class FormBase<
         updated: {
           by: this.currentUserEmail,
           date: serverTimestamp(),
+          updateById: this.currentUserId,
         },
         data: { [name]: deleteField() },
+        fieldAuthors: { [name]: deleteField() },
       },
     };
 
@@ -250,8 +261,12 @@ export class FormBase<
       updated: {
         by: this.currentUserEmail,
         date: serverTimestamp(),
+        updateById: this.currentUserId,
       },
       data: { [name]: value },
+      ...(this.currentUserId && {
+        fieldAuthors: { [name]: this.currentUserId },
+      }),
     };
     const isFirstEdit = !this.formLastUpdated;
 
@@ -359,5 +374,13 @@ export class FormBase<
   async fillAndSaveFile(domElement?: HTMLElement | null): Promise<void> {
     // Override this method in subclasses to implement form-specific download logic.
     return;
+  }
+
+  /**
+   * Used for the Supervisor Approval Flow in Texas (overridden in state specific form classes)
+   * Returns true when a user has completed the necessary form fields to enable the Submit for Approval button
+   */
+  userHasFilledNecessaryFields(): boolean {
+    return false;
   }
 }

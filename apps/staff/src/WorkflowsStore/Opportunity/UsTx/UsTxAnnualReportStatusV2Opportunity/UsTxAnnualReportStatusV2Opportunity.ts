@@ -19,7 +19,7 @@ import { DocumentData } from "@google-cloud/firestore";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm/UsTxAnnualReportStatusForm";
+import { UsTxAnnualReportStatusV2Form } from "../../Forms/UsTxAnnualReportStatusV2Form/UsTxAnnualReportStatusV2Form";
 import {
   UsTxAnnualReportStatusV2DraftData,
   UsTxAnnualReportStatusV2ReferralRecord,
@@ -31,7 +31,7 @@ export class UsTxAnnualReportStatusV2Opportunity extends UsTxArsErsV2Opportunity
   UsTxAnnualReportStatusV2ReferralRecord,
   OpportunityUpdateWithForm<UsTxAnnualReportStatusV2DraftData>
 > {
-  form: UsTxAnnualReportStatusForm;
+  form: UsTxAnnualReportStatusV2Form;
 
   constructor(client: Client, record: DocumentData) {
     super(
@@ -41,6 +41,6 @@ export class UsTxAnnualReportStatusV2Opportunity extends UsTxArsErsV2Opportunity
       usTxAnnualReportStatusV2Schema.parse(record),
     );
 
-    this.form = new UsTxAnnualReportStatusForm(this, this.rootStore);
+    this.form = new UsTxAnnualReportStatusV2Form(this, this.rootStore);
   }
 }

@@ -65,6 +65,59 @@ export type UsTxArsErsSharedDraftData = {
   regionDirectorRemarks: string;
 };
 
+// A map of what fields are required to be able to submit the opportunity to the next reviewer for each role.
+// A string entry must be present in draftData; a string[] entry requires at least one of its values to be present.
+export const US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS: Record<
+  string,
+  (string | string[])[]
+> = {
+  paroleOfficer: [
+    "officerName",
+    "supervisingOfficerSignature",
+    "supervisingOfficerDate",
+    [
+      "supervisingOfficerRecommendCheckYes",
+      "supervisingOfficerRecommendCheckNo",
+    ],
+  ],
+  unitSupervisor: [
+    "unitSupervisorSignature",
+    "unitSupervisorName",
+    "unitSupervisorDate",
+    [
+      "unitSupervisorConcurWithSupervisingOfficerCheckYes",
+      "unitSupervisorConcurWithSupervisingOfficerCheckNo",
+    ],
+  ],
+  paroleSupervisor: [
+    "paroleSupervisorSignature",
+    "paroleSupervisorName",
+    "paroleSupervisorDate",
+    [
+      "paroleSupervisorConcurWithSupervisingOfficerCheckYes",
+      "paroleSupervisorConcurWithSupervisingOfficerCheckNo",
+    ],
+  ],
+  assistantRegionDirector: [
+    "assistantRegionDirectorSignature",
+    "assistantRegionDirectorName",
+    "assistantRegionDirectorDate",
+    [
+      "assistantRegionDirectorConcurWithSupervisingOfficerCheckYes",
+      "assistantRegionDirectorConcurWithSupervisingOfficerCheckNo",
+    ],
+  ],
+  regionDirector: [
+    "regionDirectorSignature",
+    "regionDirectorName",
+    "regionDirectorDate",
+    [
+      "regionDirectorConcurWithSupervisingOfficerCheckYes",
+      "regionDirectorConcurWithSupervisingOfficerCheckNo",
+    ],
+  ],
+};
+
 export function prefilledArsErsSharedDraftData(
   client: Client,
   formInformation: UsTxArsErsSharedFormInformation,

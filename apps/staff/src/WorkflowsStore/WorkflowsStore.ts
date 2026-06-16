@@ -465,6 +465,33 @@ export class WorkflowsStore implements Hydratable {
    * Fuzzy search across display ID, external ID, and name fields,
    * scoped to the current active system (clients or residents).
    */
+  searchStaff(searchTerm: string, limit = 10): StaffRecord[] {
+    if (!searchTerm.trim()) {
+      return [];
+    }
+
+    const fuse = new Fuse(this.availableOfficers, {
+      keys: [
+        { name: "id", weight: 3 },
+        { name: "surname", weight: 1.8 },
+        { name: "givenNames", weight: 1.5 },
+      ],
+      threshold: 0.4, // 0 = exact match, 1 = match anything
+      ignoreLocation: true, // Search entire string, not just beginning
+      minMatchCharLength: 2,
+      includeScore: true,
+    });
+
+    const results = fuse.search(searchTerm, { limit });
+
+    // Fuse results are pre-sorted by relevance
+    return results.map((result) => result.item);
+  }
+
+  /**
+   * Fuzzy search across display ID, external ID, and name fields,
+   * scoped to the current active system (clients or residents).
+   */
   searchPersons(searchTerm: string, limit = 10): JusticeInvolvedPerson[] {
     if (!searchTerm.trim()) {
       return [];

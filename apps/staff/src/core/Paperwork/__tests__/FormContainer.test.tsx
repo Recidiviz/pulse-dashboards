@@ -20,7 +20,10 @@ import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { useFeatureVariants } from "../../../components/StoreProvider/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
 import { Client } from "../../../WorkflowsStore/Client";
@@ -30,6 +33,7 @@ import { FormContainer, FormHeaderProps } from "../FormContainer";
 
 vi.mock("../../../components/StoreProvider/StoreProvider", () => ({
   useFeatureVariants: vi.fn(),
+  useRootStore: vi.fn(),
 }));
 
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {}
@@ -43,6 +47,9 @@ function setup(props: Partial<FormHeaderProps> = {}) {
   rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   (useFeatureVariants as Mock).mockReturnValue({
     formRevertButton: {},
+  });
+  (useRootStore as Mock).mockReturnValue({
+    workflowsStore: rootStore.workflowsStore,
   });
   rootStore.userStore = {
     isRecidivizUser: false,

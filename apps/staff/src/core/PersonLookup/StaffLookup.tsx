@@ -20,18 +20,28 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { StaffRecord } from "~datatypes";
 import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { toTitleCase } from "../../utils";
-import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore/Opportunity";
+import WorkflowsOfficerName from "../WorkflowsOfficerName/WorkflowsOfficerName";
 
 const LookupWrapper = styled.div`
   position: relative;
-  display: inline-block;
+  display: flex;
+  height: ${rem(40)};
+  padding: ${rem(12)} ${rem(17)};
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+
+  border-radius: ${rem(8)};
+  border: ${rem(1)} solid ${palette.signal.links};
+  background: ${palette.white};
 `;
 
 const LookupInput = styled.input<{
@@ -39,92 +49,59 @@ const LookupInput = styled.input<{
   $isFocused: boolean;
 }>`
   display: flex;
-  width: ${rem(240)};
-  height: ${rem(40)};
-  padding: ${rem(12)} ${rem(16)};
+  width: 100%;
+  justify-content: space-between;
   align-items: center;
-  gap: ${rem(8)};
-  flex-shrink: 0;
-  color: ${palette.pine3};
+  border: none;
 
-  border-radius: ${rem(4)};
-  border: 1px solid ${palette.slate20};
-  background: #fff;
-  outline: none;
-
-  &:focus {
-    border-color: ${palette.slate40};
-    gap: ${rem(1)};
-  }
-
-  &:not(:placeholder-shown) {
-    border-color: ${palette.slate60};
-    gap: ${rem(1)};
-  }
-
-  &::placeholder {
-    color: ${palette.text.secondary};
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 16px; /* 114.286% */
+  &:hover,
+  &:focus,
+  &:active {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
   }
 `;
 
 const ResultsDropdown = styled.div`
-  display: flex;
-  width: ${rem(240)};
-  padding: ${rem(12)} 0;
-  flex-direction: column;
-  align-items: stretch;
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
-  background: ${palette.marble1};
-  border: 1px solid ${palette.slate20};
-  border-top: 1px solid ${palette.slate20};
+  display: flex;
+  width: ${rem(547)};
+  padding: ${rem(8)} 0;
+  flex-direction: column;
+  align-items: flex-start;
+
   border-radius: ${rem(8)};
-  box-shadow:
-    0 0 ${rem(1)} 0 ${palette.slate10},
-    0 ${rem(4)} ${rem(8)} 0 ${palette.slate06} 0 ${rem(8)} ${rem(56)} 0
-      ${palette.slate12};
-  max-height: ${rem(190)};
-  overflow-y: auto;
+  background: ${palette.white};
   z-index: ${zindex.tooltip};
+
+  /* Card.Shadow */
+  box-shadow:
+    0 ${rem(15)} ${rem(40)} 0 rgba(53, 83, 98, 0.3),
+    0 ${rem(-1)} ${rem(1)} 0 rgba(19, 44, 82, 0.2) inset;
+
+  max-height: ${rem(200)};
+  overflow-y: auto;
 `;
 
 const ResultItem = styled.div<{ $selected: boolean }>`
-  padding: ${rem(7)} ${rem(16)};
+  display: flex;
+  padding: ${rem(2)} ${rem(16)};
+  flex-direction: column;
+  align-items: flex-start;
   gap: ${rem(8)};
+  align-self: stretch;
   cursor: pointer;
-  background: ${({ $selected }) =>
-    $selected ? palette.slate10 : palette.marble1};
-  border-bottom: 1px solid ${palette.slate10};
 
-  &:last-child {
-    border-bottom: none;
-  }
+  background: ${({ $selected }) =>
+    $selected ? palette.slate10 : palette.white};
 
   &:hover {
     background: ${palette.slate10};
   }
-`;
-
-const PersonName = styled.div`
-  font-weight: ${rem(500)};
-  color: ${palette.pine3};
-  font-size: ${rem(14)};
-  line-height: ${rem(16)};
-  letter-spacing: ${rem(-0.14)};
-`;
-
-const PersonId = styled.div`
-  font-size: ${rem(12)};
-  color: ${palette.slate60};
-  margin-top: ${rem(2)};
-  line-height: ${rem(16)};
-  letter-spacing: ${rem(-0.12)};
 `;
 
 const NoResults = styled.div`
@@ -154,22 +131,38 @@ const ClearButton = styled.button`
   }
 `;
 
-export const PersonLookup = observer(function PersonLookup() {
+type StaffLookupProps = {
+  opportunity: Opportunity<JusticeInvolvedPerson>;
+  onSelect: (officer: StaffRecord | null) => void;
+};
+
+export const StaffLookup = observer(function StaffLookup({
+  opportunity,
+  onSelect,
+}: StaffLookupProps) {
   const { workflowsStore } = useRootStore();
-  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
-  const [results, setResults] = useState<JusticeInvolvedPerson[]>([]);
+  const [results, setResults] = useState<StaffRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const skipNextSearch = useRef(false);
 
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
+        if (skipNextSearch.current) {
+          skipNextSearch.current = false;
+          return;
+        }
         if (value.trim().length >= 2) {
-          const searchResults = workflowsStore.searchPersons(value);
+          const searchResults = workflowsStore
+            .searchStaff(value)
+            .filter(
+              (o) => o.id !== workflowsStore.rootStore.userStore.externalId,
+            );
           setResults(searchResults);
           setShowDropdown(true);
           setSelectedIndex(-1);
@@ -201,13 +194,6 @@ export const PersonLookup = observer(function PersonLookup() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const navigateToPerson = (person: JusticeInvolvedPerson) => {
-    setSearchValue("");
-    setResults([]);
-    setShowDropdown(false);
-    navigate(person.profileUrl);
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || results.length === 0) {
       if (e.key === "Escape") {
@@ -231,9 +217,9 @@ export const PersonLookup = observer(function PersonLookup() {
       case "Enter":
         e.preventDefault();
         if (selectedIndex >= 0 && results[selectedIndex]) {
-          navigateToPerson(results[selectedIndex]);
+          selectStaff(results[selectedIndex]);
         } else if (results.length === 1) {
-          navigateToPerson(results[0]);
+          selectStaff(results[0]);
         }
         break;
       case "Escape":
@@ -242,6 +228,14 @@ export const PersonLookup = observer(function PersonLookup() {
         setSelectedIndex(-1);
         break;
     }
+  };
+
+  const selectStaff = (staff: StaffRecord) => {
+    skipNextSearch.current = true;
+    onSelect(staff);
+    setSearchValue(`${staff.surname}, ${staff.givenNames}`);
+    setShowDropdown(false);
+    setSelectedIndex(-1);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,11 +247,8 @@ export const PersonLookup = observer(function PersonLookup() {
     setResults([]);
     setShowDropdown(false);
     setSelectedIndex(-1);
+    onSelect(null);
     inputRef.current?.focus();
-  };
-
-  const getPersonDisplayName = (person: JusticeInvolvedPerson) => {
-    return person.displayName || "Unknown";
   };
 
   const disableLookup =
@@ -267,8 +258,7 @@ export const PersonLookup = observer(function PersonLookup() {
     return;
   }
 
-  const personTitle = toTitleCase(workflowsStore.justiceInvolvedPersonTitle);
-  const placeholderText = `Search by ${personTitle} ID or Name`;
+  const placeholderText = `Search and Select the next reviewer`;
 
   return (
     <LookupWrapper>
@@ -284,7 +274,7 @@ export const PersonLookup = observer(function PersonLookup() {
         }}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholderText}
-        aria-label={`${personTitle} ID or Name lookup`}
+        aria-label={`Staff ID or Name lookup`}
         $showDropdown={showDropdown && results.length > 0}
         $isFocused={isFocused}
       />
@@ -300,15 +290,14 @@ export const PersonLookup = observer(function PersonLookup() {
       {showDropdown && (
         <ResultsDropdown>
           {results.length > 0 ? (
-            results.map((person, index) => (
+            results.map((staff, index) => (
               <ResultItem
-                key={person.pseudonymizedId}
+                key={staff.id}
                 $selected={index === selectedIndex}
-                onClick={() => navigateToPerson(person)}
+                onClick={() => selectStaff(staff)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <PersonName>{getPersonDisplayName(person)}</PersonName>
-                <PersonId>ID: {person.displayId}</PersonId>
+                <WorkflowsOfficerName officerId={staff.id} />
               </ResultItem>
             ))
           ) : (
