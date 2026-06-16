@@ -22,6 +22,14 @@ components:
         # this project — see the endpoint_ip / cert_dns_authorization_record outputs.
         hostname: typesense-staging.recidiviz.org
 
+        # Origins permitted to send browser requests directly to the cluster. Staging
+        # includes localhost:3000 so devs can run `nx dev staff` against this cluster.
+        # Defense-in-depth on top of per-user scoped-key filtering — see
+        # variables.tf for the security rationale.
+        cors_domains:
+          - http://localhost:3000
+          - https://dashboard-staging.recidiviz.org
+
         operator_chart_version: 0.4.1
         typesense_image: typesense/typesense:30.2
 
@@ -58,6 +66,12 @@ components:
         # Same hostname as the primary stack — the standby cert DNS authorization
         # is for this domain so the cert can validate immediately on failover.
         hostname: typesense-staging.recidiviz.org
+
+        # Mirror primary so the failover flip (mode: standby → primary + apply)
+        # brings up CORS correctly without a second config edit.
+        cors_domains:
+          - http://localhost:3000
+          - https://dashboard-staging.recidiviz.org
 
         operator_chart_version: 0.4.1
         typesense_image: typesense/typesense:30.2

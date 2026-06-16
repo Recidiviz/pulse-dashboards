@@ -70,11 +70,13 @@ resource "kubectl_manifest" "typesense_cluster" {
         name = kubernetes_secret.typesense_admin_api_key[0].metadata[0].name
       }
 
-      # Extra Typesense server settings, mounted by the operator as `envFrom` on the
-      # typesense-server container (TyKO has no command/args override — config is
-      # env-only). This ConfigMap turns on access + search logging and points
-      # --log-dir at the data-dir on the PVC; the per-replica follower Deployments in
-      # logging.tf tail those files to stdout. See logging.tf for the full rationale.
+      # CORS for browser clients: the staff dashboard search bar calls Typesense directly
+      enableCors  = length(var.cors_domains) > 0
+      corsDomains = join(",", var.cors_domains)
+
+      # Extra Typesense server settings, mounted by the operator as `envFrom` on the typesense-server
+      # Environment variables listed here will be set so long as they don't conflict with builtin
+      # operator settings i.e. the operator sets `TYPESENSE_ENABLE_CORS` via the `enableCors` flag
       additionalServerConfiguration = {
         name = kubernetes_config_map.typesense_configuration[0].metadata[0].name
       }

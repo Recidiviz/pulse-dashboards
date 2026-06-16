@@ -32,6 +32,20 @@ variable "hostname" {
   description = "Public hostname for the Typesense endpoint (e.g. typesense-staging.recidiviz.org)"
 }
 
+variable "cors_domains" {
+  type        = list(string)
+  default     = []
+  description = <<-EOT
+    Origins permitted to send browser requests directly to Typesense (e.g. the staff
+    dashboard's deployed URL plus http://localhost:3000 for local dev). Sets
+    --cors-domains via TYPESENSE_CORS_DOMAINS and enables CORS only when the list is
+    non-empty. Scoped keys already enforce per-user filtering, so this is
+    defense-in-depth against scoped-key theft from a malicious page rather than the
+    primary access control. Keep production tight (no localhost); staging can include
+    local dev.
+  EOT
+}
+
 variable "typesense_image" {
   type        = string
   description = "Typesense container image (pin a specific version)"

@@ -22,6 +22,12 @@ components:
         # this project — see the endpoint_ip / cert_dns_authorization_record outputs.
         hostname: typesense.recidiviz.org
 
+        # Origins permitted to send browser requests directly to the cluster.
+        # Production deliberately omits localhost — local dev points at the staging
+        # cluster. Defense-in-depth on top of per-user scoped-key filtering.
+        cors_domains:
+          - https://dashboard.recidiviz.org
+
         operator_chart_version: 0.4.1
         typesense_image: typesense/typesense:30.2
 
@@ -55,6 +61,11 @@ components:
         # Same hostname as the primary stack — the standby cert DNS authorization
         # is for this domain so the cert can validate immediately on failover.
         hostname: typesense.recidiviz.org
+
+        # Mirror primary so the failover flip (mode: standby → primary + apply)
+        # brings up CORS correctly without a second config edit.
+        cors_domains:
+          - https://dashboard.recidiviz.org
 
         operator_chart_version: 0.4.1
         typesense_image: typesense/typesense:30.2
