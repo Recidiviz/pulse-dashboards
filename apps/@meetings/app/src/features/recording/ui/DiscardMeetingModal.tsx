@@ -18,7 +18,7 @@
 import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import { Person } from "~@meetings/app/entities/person";
+import { Person } from "~@meetings/app/shared/api";
 
 import Modal from "../../../shared/ui/Modal";
 import { Typography } from "../../../shared/ui/Typography";

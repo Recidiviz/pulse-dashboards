@@ -17,14 +17,15 @@
 
 import { renderHook } from "@testing-library/react-native";
 
+import { trpc } from "~@meetings/app/shared/api";
+
 import {
   MeetingEventType,
   useMeetingEventQueue,
-} from "~@meetings/app/hooks/useMeetingEventQueue";
-import { useOfflineEventFactory } from "~@meetings/app/hooks/useOfflineEventFactory";
-import { trpc } from "~@meetings/app/shared/api";
+} from "../useMeetingEventQueue";
+import { useOfflineEventFactory } from "../useOfflineEventFactory";
 
-jest.mock("~@meetings/app/hooks/useMeetingEventQueue", () => ({
+jest.mock("../useMeetingEventQueue", () => ({
   MeetingEventType: {
     Created: "created",
     Ended: "ended",

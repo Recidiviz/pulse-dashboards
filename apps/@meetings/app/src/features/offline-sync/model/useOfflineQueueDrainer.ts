@@ -18,9 +18,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth0 } from "react-native-auth0";
 
-import { useSnackbar } from "../shared/ui/Snackbar";
-import { useMeetingEventQueue } from "./useMeetingEventQueue";
-import { useProcessOfflineEvent } from "./useProcessOfflineEvent";
+import {
+  useMeetingEventQueue,
+  useProcessOfflineEvent,
+} from "~@meetings/app/entities/meeting";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 
 const TIMEOUT_MS = 500;
 const RETRY_MAX = 3;

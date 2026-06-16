@@ -18,9 +18,9 @@
 import { FlashList } from "@shopify/flash-list";
 import { View } from "react-native";
 
+import { Person, PersonType } from "~@meetings/app/shared/api";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import { Person, PersonType } from "../entities/person";
 import MeetingCardItem from "./MeetingCardItem";
 import MeetingsHeaderContent from "./MeetingsHeaderContent";
 import MeetingsPlaceholder from "./MeetingsPlaceholder";

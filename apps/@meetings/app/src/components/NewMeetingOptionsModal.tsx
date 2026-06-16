@@ -19,6 +19,7 @@ import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 
+import { Person } from "~@meetings/app/shared/api";
 import MinimizeSvg from "~@meetings/app/shared/assets/icons/arrows-pointing-in.svg";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import Modal from "~@meetings/app/shared/ui/Modal";
@@ -31,7 +32,6 @@ import {
   getMeetingTypeCategoriesOptions,
   getMeetingTypesOptions,
 } from "../entities/meeting-type/lib";
-import { Person } from "../entities/person";
 import useIsOnline from "../shared/lib/useIsOnline";
 import Dropdown from "../shared/ui/Dropdown";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";

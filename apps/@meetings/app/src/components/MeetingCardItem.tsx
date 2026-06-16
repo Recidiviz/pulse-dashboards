@@ -30,10 +30,10 @@ import {
   PencilIcon,
 } from "react-native-heroicons/solid";
 
+import { Person, PersonType } from "~@meetings/app/shared/api";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { MeetingTypeTag } from "../entities/meeting-type";
-import { Person, PersonType } from "../entities/person";
 import { useProcessingText } from "../hooks/useProcessingText";
 import ProcessingSvg from "../shared/assets/icons/processing.svg";
 import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";

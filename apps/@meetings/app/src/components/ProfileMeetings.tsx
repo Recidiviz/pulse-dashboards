@@ -31,7 +31,9 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
+import { useCreateMeeting } from "~@meetings/app/entities/meeting";
 import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
+import { Person, PersonType } from "~@meetings/app/shared/api";
 
 import { ClientMeetings, ResidentMeetings } from "../common/types";
 import Header from "../components/Header";
@@ -43,9 +45,7 @@ import { useAnalytics } from "../context/AnalyticsContext";
 import { useStateSelection } from "../context/StateContext";
 import { useMeetingTypeStore } from "../entities/meeting-type";
 import { validateAndStart } from "../entities/meeting-type/lib";
-import { Person, PersonType } from "../entities/person";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
-import { useCreateMeeting } from "../hooks/useCreateMeeting";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,

@@ -22,7 +22,8 @@ import { TouchableOpacity, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
-import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
+import { useUpdateNotes } from "~@meetings/app/entities/meeting";
+
 import { trpc } from "../shared/api";
 import { useSnackbar } from "../shared/ui/Snackbar";
 import { Typography } from "../shared/ui/Typography";

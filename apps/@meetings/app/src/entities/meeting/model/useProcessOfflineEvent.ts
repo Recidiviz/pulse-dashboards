@@ -18,10 +18,10 @@
 import { TRPCClientError } from "@trpc/client";
 import { Platform } from "react-native";
 
+import { useUploadSegment } from "~@meetings/app/shared/api";
 import { AUDIO_FORMATS } from "~@meetings/config";
 import type { AppRouter } from "~@meetings/trpc-types";
 
-import { useUploadSegment } from "../shared/api";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType, OfflineEvent } from "./useMeetingEventQueue";
 import { useReconnectUploadStore } from "./useReconnectUploadStore";

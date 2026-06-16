@@ -21,7 +21,7 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
-import { Person } from "~@meetings/app/entities/person";
+import { Person } from "~@meetings/app/shared/api";
 
 import MinimizeSvg from "../../../shared/assets/icons/arrows-pointing-in.svg";
 import NotesSvg from "../../../shared/assets/icons/notes.svg";

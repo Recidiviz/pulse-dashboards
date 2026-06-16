@@ -17,10 +17,12 @@
 
 import { useEffect, useState } from "react";
 
-import { ReconnectStatus } from "~@meetings/app/components/ReconnectStatus";
 import { AudioUpload } from "~@meetings/app/features/audio-upload";
+import {
+  ReconnectStatus,
+  useOfflineQueueDrainer,
+} from "~@meetings/app/features/offline-sync";
 import { RecordingProvider } from "~@meetings/app/features/recording";
-import { useOfflineQueueDrainer } from "~@meetings/app/hooks/useOfflineQueueDrainer";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 
 import DrawerNavigator from "./navigation/DrawerNavigator";

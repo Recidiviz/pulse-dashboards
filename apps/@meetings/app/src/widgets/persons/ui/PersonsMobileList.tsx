@@ -24,13 +24,11 @@ import { View } from "react-native";
 import {
   deserializeClient,
   deserializeResident,
-  Person,
-  PersonType,
   serializeSort,
   SortDirection,
   SortOption,
 } from "~@meetings/app/entities/person";
-import { trpc } from "~@meetings/app/shared/api";
+import { Person, PersonType, trpc } from "~@meetings/app/shared/api";
 
 import { PersonCardItem } from "./PersonCardItem";
 import { PersonsHeaderContent } from "./PersonsHeaderContent";

@@ -33,10 +33,12 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 
+import {
+  useDiscardMeeting,
+  useEndMeeting,
+  useUpdateNotes,
+} from "~@meetings/app/entities/meeting";
 import { getPersonType } from "~@meetings/app/entities/person";
-import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
-import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
-import { useUpdateNotes } from "~@meetings/app/hooks/useUpdateNotesMutation";
 import { useUploadSegment } from "~@meetings/app/shared/api";
 import { extractError } from "~@meetings/app/shared/lib/extractError";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";

@@ -17,12 +17,10 @@
 
 import { RouteProp, useRoute } from "@react-navigation/native";
 
+import { Person } from "~@meetings/app/shared/api";
+
 import ProfileMeetings from "../components/ProfileMeetings";
-import {
-  deserializeResident,
-  formatPersonTitle,
-  Person,
-} from "../entities/person";
+import { deserializeResident, formatPersonTitle } from "../entities/person";
 import { useMeetings } from "../hooks/useMeetings";
 import { trpc } from "../shared/api";
 import { ResidentsStackParamList } from "../shared/config/routes";

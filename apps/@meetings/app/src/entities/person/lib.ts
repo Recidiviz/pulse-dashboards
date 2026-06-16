@@ -17,8 +17,6 @@
 
 import { format } from "date-fns";
 
-import { formatRelativeTime } from "~@meetings/app/shared/lib/format";
-
 import {
   Client,
   Person,
@@ -26,8 +24,10 @@ import {
   RawClient,
   RawResident,
   Resident,
-  SortOption,
-} from "./model";
+} from "~@meetings/app/shared/api";
+import { formatRelativeTime } from "~@meetings/app/shared/lib/format";
+
+import { SortOption } from "./model";
 
 export const getPersonType = (person: Person): PersonType => {
   return "supervisionType" in person ? "client" : "resident";

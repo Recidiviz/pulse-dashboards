@@ -30,14 +30,12 @@ import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 import {
   deserializeClient,
   deserializeResident,
-  Person,
-  PersonType,
   serializeSort,
   SortDirection,
   SortOption,
 } from "~@meetings/app/entities/person";
 import { useRecording } from "~@meetings/app/features/recording";
-import { trpc } from "~@meetings/app/shared/api";
+import { Person, PersonType, trpc } from "~@meetings/app/shared/api";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import {
   ClientsStackParamList,

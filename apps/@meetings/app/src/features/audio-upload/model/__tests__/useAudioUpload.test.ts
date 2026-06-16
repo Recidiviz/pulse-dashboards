@@ -17,9 +17,11 @@
 
 import { act, renderHook } from "@testing-library/react-native";
 
-import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
-import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
-import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
+import {
+  useCreateMeeting,
+  useDiscardMeeting,
+  useEndMeeting,
+} from "~@meetings/app/entities/meeting";
 import { AbortError } from "~@meetings/app/shared/lib/errors";
 
 import { trpc, useUploadSegment } from "../../../../shared/api";
@@ -31,9 +33,9 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 jest.mock("~@meetings/app/shared/api/upload-segment");
-jest.mock("~@meetings/app/hooks/useCreateMeeting");
-jest.mock("~@meetings/app/hooks/useEndMeeting");
-jest.mock("~@meetings/app/hooks/useDiscardMeeting");
+jest.mock("~@meetings/app/entities/meeting/model/useCreateMeeting");
+jest.mock("~@meetings/app/entities/meeting/model/useEndMeeting");
+jest.mock("~@meetings/app/entities/meeting/model/useDiscardMeeting");
 jest.mock("~@meetings/app/shared/api/trpc", () => ({
   __esModule: true,
   trpc: {

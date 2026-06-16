@@ -17,9 +17,11 @@
 
 import { useCallback, useRef } from "react";
 
-import { useCreateMeeting } from "~@meetings/app/hooks/useCreateMeeting";
-import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
-import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
+import {
+  useCreateMeeting,
+  useDiscardMeeting,
+  useEndMeeting,
+} from "~@meetings/app/entities/meeting";
 import {
   AbortError,
   FileValidationError,

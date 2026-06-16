@@ -21,12 +21,9 @@ import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import MeetingInProgressBar from "~@meetings/app/components/MeetingInProgressBar";
-import {
-  formatPersonLastMeetingDate,
-  Person,
-  PersonType,
-} from "~@meetings/app/entities/person";
+import { formatPersonLastMeetingDate } from "~@meetings/app/entities/person";
 import { useRecording } from "~@meetings/app/features/recording";
+import { Person, PersonType } from "~@meetings/app/shared/api";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import {
   getInitials,

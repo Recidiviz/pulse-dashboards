@@ -19,7 +19,7 @@ import clsx from "clsx";
 import { View } from "react-native";
 import SearchIcon from "react-native-heroicons/solid/SearchIcon";
 
-import { PersonType } from "~@meetings/app/entities/person";
+import { PersonType } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {

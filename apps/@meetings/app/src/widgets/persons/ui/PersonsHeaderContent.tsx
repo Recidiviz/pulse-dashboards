@@ -20,7 +20,8 @@ import startCase from "lodash/startCase";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
-import { PersonType, SortOption } from "~@meetings/app/entities/person";
+import { SortOption } from "~@meetings/app/entities/person";
+import { PersonType } from "~@meetings/app/shared/api";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";

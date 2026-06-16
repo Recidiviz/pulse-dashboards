@@ -38,6 +38,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 
 import { MeetingDetails } from "../common/types";
@@ -49,7 +50,6 @@ import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import StaffFeedbackTab from "../components/StaffFeedbackTab";
 import { useUserContext } from "../context/UserContext";
 import { MeetingTypeTag } from "../entities/meeting-type";
-import { Person, PersonType } from "../entities/person";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";

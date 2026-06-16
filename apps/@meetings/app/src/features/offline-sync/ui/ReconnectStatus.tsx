@@ -39,24 +39,24 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import simplur from "simplur";
 import { match } from "ts-pattern";
 
-import CloudOffline from "~@meetings/app/shared/assets/icons/cloud-off.svg";
-
-import { Person } from "../entities/person";
 import {
   ReconnectUploadStatus,
   useReconnectUploadStore,
-} from "../hooks/useReconnectUploadStore";
-import { useUploadTimeRemaining } from "../hooks/useUploadTimeRemaining";
-import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
-import { theme } from "../shared/config";
-import { getInitials } from "../shared/lib/format";
-import useIsOnline from "../shared/lib/useIsOnline";
-import { CircularProgressBar } from "../shared/ui/CircularProgressBar";
-import { Expandable } from "../shared/ui/Expandable";
-import { FadeContainer } from "../shared/ui/FadeContainer";
-import { FloatingCard } from "../shared/ui/FloatingCard";
-import { HorizontalDivider } from "../shared/ui/HorizontalDivider";
-import { Typography } from "../shared/ui/Typography";
+} from "~@meetings/app/entities/meeting";
+import { Person } from "~@meetings/app/shared/api";
+import CloudOffline from "~@meetings/app/shared/assets/icons/cloud-off.svg";
+import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
+import { theme } from "~@meetings/app/shared/config";
+import { getInitials } from "~@meetings/app/shared/lib/format";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
+import { CircularProgressBar } from "~@meetings/app/shared/ui/CircularProgressBar";
+import { Expandable } from "~@meetings/app/shared/ui/Expandable";
+import { FadeContainer } from "~@meetings/app/shared/ui/FadeContainer";
+import { FloatingCard } from "~@meetings/app/shared/ui/FloatingCard";
+import { HorizontalDivider } from "~@meetings/app/shared/ui/HorizontalDivider";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+
+import { useUploadTimeRemaining } from "../lib/useUploadTimeRemaining";
 
 type ReconnectRowProps = {
   person?: Person;

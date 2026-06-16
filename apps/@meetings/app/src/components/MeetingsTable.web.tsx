@@ -24,10 +24,10 @@ import React, { useEffect } from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import { Person, PersonType } from "~@meetings/app/shared/api";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { MeetingTypeTag } from "../entities/meeting-type";
-import { Person, PersonType } from "../entities/person";
 import { useProcessingText } from "../hooks/useProcessingText";
 import ProcessingSvg from "../shared/assets/icons/processing.svg";
 import {

@@ -19,9 +19,9 @@ import { createId } from "@paralleldrive/cuid2";
 import { useMutation } from "@tanstack/react-query";
 import { Alert } from "react-native";
 
-import { Person, PersonType } from "~@meetings/app/entities/person";
+import { Person, PersonType } from "~@meetings/app/shared/api";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 
-import useIsOnline from "../shared/lib/useIsOnline";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";

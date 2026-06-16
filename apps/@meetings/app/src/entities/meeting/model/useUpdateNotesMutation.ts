@@ -18,9 +18,9 @@
 import { useMutation } from "@tanstack/react-query";
 import type { inferRouterInputs } from "@trpc/server";
 
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import type { AppRouter } from "~@meetings/trpc-types";
 
-import useIsOnline from "../shared/lib/useIsOnline";
 import { useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";

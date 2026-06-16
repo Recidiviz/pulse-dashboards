@@ -17,7 +17,7 @@
 
 import { create } from "zustand";
 
-import { Person } from "~@meetings/app/entities/person";
+import { Person } from "~@meetings/app/shared/api";
 
 export type ReconnectUploadStatus =
   | "pending"

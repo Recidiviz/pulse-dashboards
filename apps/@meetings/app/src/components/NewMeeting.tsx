@@ -24,8 +24,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Person } from "~@meetings/app/shared/api";
+
 import { MeetingTypeTag } from "../entities/meeting-type";
-import { Person } from "../entities/person";
 import { MeetingControlsMobile, useRecording } from "../features/recording";
 import NotesSvg from "../shared/assets/icons/arrows-poin-outting-in.svg";
 import { Typography } from "../shared/ui/Typography";

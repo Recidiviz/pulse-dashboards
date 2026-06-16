@@ -19,7 +19,8 @@ import { useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import { useUpdateNotes } from "../hooks/useUpdateNotesMutation";
+import { useUpdateNotes } from "~@meetings/app/entities/meeting";
+
 import { trpc } from "../shared/api";
 import Modal from "../shared/ui/Modal";
 import { Typography } from "../shared/ui/Typography";

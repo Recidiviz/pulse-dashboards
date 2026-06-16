@@ -19,7 +19,8 @@ import clsx from "clsx";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import { Person } from "../entities/person";
+import { Person } from "~@meetings/app/shared/api";
+
 import { useRecording } from "../features/recording";
 import PauseSvg from "../shared/assets/icons/pause.svg";
 import PlaySvg from "../shared/assets/icons/play.svg";

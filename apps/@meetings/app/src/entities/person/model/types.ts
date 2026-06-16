@@ -15,34 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AppRouter } from "~@meetings/trpc-types";
-
-export type RawClient = Awaited<
-  ReturnType<AppRouter["v1"]["client"]["list"]>
->["data"][0];
-
-export type Client = RawClient & {
-  primaryMetadata: string;
-  lastMeeting: string;
-  fullName: string;
-};
-
-export type RawResident = Awaited<
-  ReturnType<AppRouter["v1"]["resident"]["get"]>
->;
-
-export type Resident = Awaited<
-  ReturnType<AppRouter["v1"]["resident"]["get"]>
-> & {
-  primaryMetadata: string;
-  lastMeeting: string;
-  fullName: string;
-};
-
-export type Person = Client | Resident;
-
-export type PersonType = "client" | "resident";
-
 export enum SortOption {
   Name = "Name (A-Z)",
   Id = "ID",

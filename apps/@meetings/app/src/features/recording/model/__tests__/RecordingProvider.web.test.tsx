@@ -18,8 +18,10 @@
 import { act, renderHook } from "@testing-library/react-native";
 import React from "react";
 
-import { useDiscardMeeting } from "~@meetings/app/hooks/useDiscardMeeting";
-import { useEndMeeting } from "~@meetings/app/hooks/useEndMeeting";
+import {
+  useDiscardMeeting,
+  useEndMeeting,
+} from "~@meetings/app/entities/meeting";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 
 import { useUploadSegment } from "../../../../shared/api";
@@ -34,8 +36,9 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 jest.mock("../useAudioRecorder.web");
-jest.mock("~@meetings/app/hooks/useDiscardMeeting");
-jest.mock("~@meetings/app/hooks/useEndMeeting");
+jest.mock("../../lib/webRecorderDb.web");
+jest.mock("~@meetings/app/entities/meeting/model/useDiscardMeeting");
+jest.mock("~@meetings/app/entities/meeting/model/useEndMeeting");
 jest.mock("~@meetings/app/shared/lib/useIsOnline", () => ({
   __esModule: true,
   default: jest.fn().mockReturnValue({ isOnline: true }),

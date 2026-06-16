@@ -20,7 +20,8 @@ import clsx from "clsx";
 import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 
-import { Person } from "../entities/person";
+import { Person } from "~@meetings/app/shared/api";
+
 import { useRecording } from "../features/recording";
 import { usePlatform } from "../shared/lib/usePlatform";
 import Dropdown from "../shared/ui/Dropdown";
