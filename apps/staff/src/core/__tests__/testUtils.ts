@@ -252,4 +252,5 @@ export const mockOpportunity: Opportunity<Client> = {
   setSupervisorResponse: async () => undefined,
   isGrantApproved: false,
   latestTransitionDate: undefined,
+  currentReviewerId: undefined,
 };

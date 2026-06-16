@@ -15,17 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Modal, Sans24 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 
 import { StaffRecord } from "~datatypes";
-import { palette } from "~design-system";
-import { Button } from "~design-system";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
@@ -33,77 +28,14 @@ import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 import { StaffLookup } from "../PersonLookup/StaffLookup";
 import { workflowsUrl } from "../views";
-
-const StyledModal = styled(Modal)`
-  .ReactModal__Content {
-    display: flex;
-    width: ${rem(627)};
-    padding: ${rem(40)};
-    flex-direction: column;
-    align-items: flex-start;
-    gap: ${rem(16)};
-    overflow: visible;
-
-    border-radius: ${rem(4)};
-    background: ${palette.white};
-  }
-`;
-
-const ModalSection = styled.div`
-  display: flex;
-  padding-bottom: ${rem(24)};
-  flex-direction: column;
-  align-items: flex-start;
-  gap: ${rem(8)};
-  align-self: stretch;
-`;
-
-const ModalTitle = styled(Sans24)`
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: ${rem(18)};
-  font-style: normal;
-  font-weight: 500;
-  line-height: ${rem(21.6)}; /* 120% */
-  letter-spacing: ${rem(-0.36)};
-`;
-
-const ModalFooter = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: ${rem(8)};
-  align-self: stretch;
-`;
-
-const CancelButton = styled(Button).attrs({ kind: "link" })`
-  display: flex;
-  width: ${rem(160)};
-  height: ${rem(40)};
-  padding: ${rem(8)} ${rem(16)};
-  justify-content: center;
-  align-items: center;
-  gap: ${rem(8)};
-
-  border-radius: ${rem(4)};
-  border: ${rem(1)} solid rgba(53, 83, 98, 0.2);
-
-  &:hover {
-    text-decoration: none;
-  }
-`;
-
-const ForwardButton = styled(Button)`
-  display: flex;
-  height: ${rem(40)};
-  padding: 0 ${rem(16)};
-  justify-content: center;
-  align-items: center;
-  gap: ${rem(10)};
-  flex: 1 0 0;
-
-  border-radius: ${rem(4)};
-  background: ${palette.pine4};
-`;
+import {
+  CancelButton,
+  ModalFooter,
+  ModalSection,
+  ModalTitle,
+  SendButton,
+  StyledModal,
+} from "./ModalStyles";
 
 type SubmitApprovalModalProps = {
   showModal: boolean;
@@ -141,7 +73,7 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
         >
           Cancel
         </CancelButton>
-        <ForwardButton
+        <SendButton
           disabled={!selectedStaff}
           onClick={() => {
             if (!selectedStaff) {
@@ -176,7 +108,7 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
           }}
         >
           Forward
-        </ForwardButton>
+        </SendButton>
       </ModalFooter>
     </StyledModal>
   );

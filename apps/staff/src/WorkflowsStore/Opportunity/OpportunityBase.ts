@@ -195,6 +195,7 @@ export class OpportunityBase<
       latestAction: computed,
       actionHistory: computed,
       compareFunction: computed,
+      currentReviewerId: computed,
     });
 
     this.updateOpportunityEligibility = updateOpportunityEligibility(
@@ -910,6 +911,15 @@ export class OpportunityBase<
 
   get isIndefinitelySnoozed(): boolean {
     return this.denied && !this.manualSnooze && !this.autoSnooze;
+  }
+
+  /**
+   * The most recent (or current) reviewer.
+   * Equivalent to the most recent actionHistory reviewerId if it exists (when type is "APPROVAL")
+   * Stored here for easier firestore querying
+   */
+  get currentReviewerId(): string | undefined {
+    return this.updates?.currentReviewerId;
   }
 
   /**

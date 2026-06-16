@@ -37,6 +37,7 @@ import {
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { FormLastEdited } from "../FormLastEdited";
 import { SubmitApprovalModal } from "./SubmitApprovalModal";
+import { SubmitRevisionModal } from "./SubmitRevisionModal";
 import { createDownloadLabel } from "./utils";
 
 const FormHeaderBar = styled.div`
@@ -131,7 +132,9 @@ export const FormContainer = observer(function FormContainer({
   const { formRevertButton, enableSupervisorReviewChain } =
     useFeatureVariants();
   const { workflowsStore } = useRootStore();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openModal, setOpenModal] = useState<"approval" | "revision" | null>(
+    null,
+  );
 
   const userHasFilledNecessaryFields = form?.userHasFilledNecessaryFields();
 
@@ -212,14 +215,34 @@ export const FormContainer = observer(function FormContainer({
               >
                 <SubmitButton
                   disabled={!userHasFilledNecessaryFields}
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setOpenModal("approval")}
                 >
                   Submit for Approval
                 </SubmitButton>
               </TooltipTrigger>
+              <TooltipTrigger
+                contents={
+                  !opportunity.isInSupervisorReview
+                    ? "No previous reviewers"
+                    : undefined
+                }
+              >
+                <SubmitButton
+                  disabled={!opportunity.isInSupervisorReview}
+                  onClick={() => setOpenModal("revision")}
+                >
+                  Send Back for Revisions
+                </SubmitButton>
+              </TooltipTrigger>
               <SubmitApprovalModal
-                showModal={isModalOpen}
-                onCloseFn={() => setIsModalOpen(false)}
+                showModal={openModal === "approval"}
+                onCloseFn={() => setOpenModal(null)}
+                opportunity={opportunity}
+                workflowsStore={workflowsStore}
+              />
+              <SubmitRevisionModal
+                showModal={openModal === "revision"}
+                onCloseFn={() => setOpenModal(null)}
                 opportunity={opportunity}
                 workflowsStore={workflowsStore}
               />

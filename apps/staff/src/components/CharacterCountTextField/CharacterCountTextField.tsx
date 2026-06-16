@@ -31,12 +31,13 @@ const Section = styled(TextAreaWrapper)`
   border: 2px solid transparent;
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $justifyContent?: string }>`
   ${typography.Sans12}
   color: ${palette.slate85};
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
+  justify-content: ${({ $justifyContent }) =>
+    $justifyContent ?? "space-between"};
   padding: 0.5rem 1.1rem 0;
   margin-bottom: 0;
 `;
@@ -68,6 +69,7 @@ const NumberInput = styled.input`
 
 type CharacterCountTextFieldProps = {
   id?: string;
+  className?: string;
   value: string;
   onChange: (text: string) => void;
   minLength?: number;
@@ -78,12 +80,15 @@ type CharacterCountTextFieldProps = {
   label?: string;
   inputType?: "number" | "text";
   prefix?: string;
+  showCountBottomRight?: boolean;
+  showRequired?: boolean;
 };
 
 export const CharacterCountTextField: React.FC<
   CharacterCountTextFieldProps
 > = ({
   id = "character-count-text-field",
+  className,
   value,
   onChange,
   minLength = 3,
@@ -94,6 +99,8 @@ export const CharacterCountTextField: React.FC<
   label,
   inputType,
   prefix,
+  showCountBottomRight = false,
+  showRequired = false,
 }) => {
   const invalid = isOptional
     ? value.length > 0 && value.length < minLength // If it's an optional field, and the user has entered something, enforce minLength requirement
@@ -111,7 +118,9 @@ export const CharacterCountTextField: React.FC<
   };
 
   return (
-    <div className="CharacterCountTextField">
+    <div
+      className={`CharacterCountTextField${className ? ` ${className}` : ""}`}
+    >
       {header && (
         <TextFieldHeader>
           {header}
@@ -121,9 +130,12 @@ export const CharacterCountTextField: React.FC<
       <Section>
         <Label htmlFor={id}>
           {label ? label : `Enter at least ${minLength} characters`}
-          <span>
-            <Count invalid={invalid}>{value.length}</Count> / {maxLength}
-          </span>
+          {showRequired && <em>*Required</em>}
+          {!showCountBottomRight && !showRequired && (
+            <span>
+              <Count invalid={invalid}>{value.length}</Count> / {maxLength}
+            </span>
+          )}
         </Label>
         {inputType === "number" ? (
           <NumberInputWrapper>
@@ -132,6 +144,11 @@ export const CharacterCountTextField: React.FC<
           </NumberInputWrapper>
         ) : (
           <TextAreaInput {...inputProps} />
+        )}
+        {showCountBottomRight && (
+          <Label $justifyContent="flex-end">
+            <Count invalid={invalid}>{value.length}</Count> / {maxLength}
+          </Label>
         )}
       </Section>
     </div>

@@ -36,7 +36,7 @@ import {
   SupervisorResponse,
   UpdateLog,
 } from "../../FirestoreStore";
-import { PartialRecord } from "../../utils/typeUtils";
+import { DistributiveOmit, PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
 import {
@@ -247,12 +247,16 @@ export interface Opportunity<
   markActionHistoryStale: () => Promise<void>;
   deleteActionHistory: () => Promise<void>;
   setSupervisorResponse: (
-    supervisorResponseParams: Omit<SupervisorResponse, "date" | "by">,
+    supervisorResponseParams: DistributiveOmit<
+      SupervisorResponse,
+      "date" | "by"
+    >,
   ) => Promise<void>;
   indefiniteDenialReasons: DenialReasonsMap;
   denialViewPrompt: string;
   isGrantApproved: boolean;
   latestTransitionDate: Date | undefined;
+  currentReviewerId: string | undefined;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

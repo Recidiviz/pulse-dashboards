@@ -75,6 +75,11 @@ export type Nullable<T> = {
 // https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types
 export type AllPossibleKeys<T> = T extends any ? keyof T : never;
 
+// new typeUtil fn to handle omits for discriminated union types
+export type DistributiveOmit<T, K extends keyof T> = T extends any
+  ? Omit<T, K>
+  : never;
+
 // If T includes both named properties and a fallback index signature,
 // RemoveIndexSignature<T> includes just the explicitly named properties
 export type RemoveIndexSignature<T> = {
