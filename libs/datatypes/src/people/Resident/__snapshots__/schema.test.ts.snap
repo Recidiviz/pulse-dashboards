@@ -2107,7 +2107,7 @@ exports[`schema for 'US_ND' 'ND_RES003' 1`] = `
   "recordId": "us_nd_nd_res003",
   "releaseDate": 2023-06-16T00:00:00.000Z,
   "stateCode": "US_ND",
-  "unitId": "NDSP-ORU",
+  "unitId": "UNIT A",
 }
 `;
 

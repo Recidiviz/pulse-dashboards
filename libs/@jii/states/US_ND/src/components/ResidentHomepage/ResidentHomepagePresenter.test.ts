@@ -34,6 +34,14 @@ describe("sentence dates", () => {
       {
         "dates": [
           {
+            "date": 2022-02-16T00:00:00.000Z,
+            "id": "initialReview",
+          },
+          {
+            "date": 2022-04-16T00:00:00.000Z,
+            "id": "paroleReview",
+          },
+          {
             "date": 2022-07-16T00:00:00.000Z,
             "id": "goodTime",
           },
@@ -44,14 +52,6 @@ describe("sentence dates", () => {
           {
             "date": 2022-10-16T00:00:00.000Z,
             "id": "finalSentExp",
-          },
-          {
-            "date": undefined,
-            "id": "initialReview",
-          },
-          {
-            "date": undefined,
-            "id": "paroleReview",
           },
         ],
       }
@@ -69,6 +69,14 @@ describe("sentence dates", () => {
         "dates": [
           {
             "date": undefined,
+            "id": "initialReview",
+          },
+          {
+            "date": undefined,
+            "id": "paroleReview",
+          },
+          {
+            "date": undefined,
             "id": "goodTime",
           },
           {
@@ -78,14 +86,6 @@ describe("sentence dates", () => {
           {
             "date": undefined,
             "id": "finalSentExp",
-          },
-          {
-            "date": undefined,
-            "id": "initialReview",
-          },
-          {
-            "date": undefined,
-            "id": "paroleReview",
           },
         ],
       }

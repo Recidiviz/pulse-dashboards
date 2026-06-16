@@ -20,8 +20,6 @@ import { makeAutoObservable } from "mobx";
 import { SentenceDatesData } from "~@jii/sentence-dates";
 import { ResidentRecord, UsNdResidentMetadata } from "~datatypes";
 
-import { dateIdEnum, isUnavailableDateId } from "./types";
-
 export class ResidentHomepagePresenter {
   constructor(
     private residentData: UsNdResidentMetadata,
@@ -31,15 +29,19 @@ export class ResidentHomepagePresenter {
   }
 
   get sentenceDatesData(): SentenceDatesData {
+    // these are in a fixed order and should not be sorted by date
+    const dateIds = [
+      "initialReview",
+      "paroleReview",
+      "goodTime",
+      "eightyFivePercent",
+      "finalSentExp",
+    ] as const;
+
     return {
-      // these are in a fixed order and should not be sorted by date
-      dates: dateIdEnum.options.map((id) => ({
+      dates: dateIds.map((id) => ({
         id,
-        // this suppresses the data itself for the "unavailable" dates
-        // but there will also be some UI overrides on top of this
-        date: isUnavailableDateId(id)
-          ? undefined
-          : this.residentData[`${id}Date`],
+        date: this.residentData[`${id}Date`],
       })),
     };
   }

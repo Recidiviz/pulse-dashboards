@@ -32,8 +32,7 @@ export const rawUsNdResidents: Array<RawResidentRecord> = [
     gender: "MALE",
     pseudonymizedId: "anonres003",
     facilityId: "ND_DEMO_FACILITY",
-    // an Opportunities feature is keyed off this specific value
-    unitId: "NDSP-ORU",
+    unitId: "UNIT A",
     officerId: "OFFICER3",
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -2, months: -6 }),

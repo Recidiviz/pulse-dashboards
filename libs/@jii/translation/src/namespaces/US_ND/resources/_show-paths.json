@@ -33,12 +33,5 @@
   "osuBanner": {
     "message": "[US_ND]osuBanner.message",
     "linkText": "[US_ND]osuBanner.linkText"
-  },
-  "dataValidationBanner": {
-    "message": "[US_ND]dataValidationBanner.message"
-  },
-  "unavailableDates": {
-    "placeholderValue": "[US_ND]unavailableDates.placeholderValue",
-    "additionalDescriptionCopy": "[US_ND]unavailableDates.additionalDescriptionCopy"
   }
 }

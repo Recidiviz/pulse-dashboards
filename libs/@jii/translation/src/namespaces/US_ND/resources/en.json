@@ -33,12 +33,5 @@
   "osuBanner": {
     "message": "**If you are still in Orientation, you won’t see dates here yet. They will be available after you have been reviewed by the Case Planning Committee.** Tap “Learn More” for information about sentence dates in general.",
     "linkText": "Learn more"
-  },
-  "dataValidationBanner": {
-    "message": "**This page is still under construction.** Your Initial Review and Parole Review dates are coming soon. Nothing has changed about your parole eligibility or when you'll be reviewed."
-  },
-  "unavailableDates": {
-    "placeholderValue": "Currently unavailable",
-    "additionalDescriptionCopy": "**Not yet available in the app. Refer to your case plan for more information.**"
   }
 }

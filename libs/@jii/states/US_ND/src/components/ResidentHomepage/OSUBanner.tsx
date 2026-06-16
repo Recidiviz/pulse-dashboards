@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { typography } from "@recidiviz/design-system";
+import Markdown from "markdown-to-jsx";
 import { rem, rgba } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
@@ -22,13 +24,27 @@ import styled from "styled-components";
 import { ButtonLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsNdTranslations } from "~@jii/translation";
-import { palette } from "~design-system";
+import { palette, spacing } from "~design-system";
 
-import { Banner, BannerCopy } from "./Banner";
-
-const Wrapper = styled(Banner)`
+// TODO(#6719): refactor to design system and combine with other similar components
+const Wrapper = styled.div`
+  ${typography.Sans14}
   border-left: ${rem(4)} solid ${palette.signal.notification};
   background: ${rgba(palette.signal.notification, 0.1)};
+  margin: ${rem(spacing.xl)} 0;
+  padding: ${rem(spacing.md)};
+  display: flex;
+  gap: ${rem(spacing.xl)};
+  justify-items: space-between;
+  align-items: center;
+
+  span {
+    flex: 1 1 auto;
+  }
+
+  a {
+    flex: 0 0 auto;
+  }
 `;
 
 export const OSUBanner: FC = () => {
@@ -36,7 +52,7 @@ export const OSUBanner: FC = () => {
 
   return (
     <Wrapper>
-      <BannerCopy>{t(($) => $.osuBanner.message)}</BannerCopy>
+      <Markdown>{t(($) => $.osuBanner.message)}</Markdown>
       <ButtonLink
         kind="primary"
         to={State.Resident.$.UsNdMoreInformation.buildRelativePath({
