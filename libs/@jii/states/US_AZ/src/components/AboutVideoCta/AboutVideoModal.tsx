@@ -23,7 +23,15 @@ import styled from "styled-components";
 import { PAGE_WIDTH } from "~@jii/common-ui";
 
 import { AboutVideoPresenter } from "./AboutVideoPresenter";
-import UsAzAboutVideo from "./UsAzAboutVideoCaptioned.mp4";
+import UsAzAboutVideo from "./UsAzAboutVideo.mp4";
+import UsAzAboutVideoCaptions from "./UsAzAboutVideo.vtt";
+
+const StyledVideo = styled.video`
+  width: 100%;
+  aspect-ratio: 16 / 12;
+  object-fit: contain;
+  object-position: top;
+`;
 
 const StyledVideoModal = styled(Modal)`
   .ReactModal__Content {
@@ -52,12 +60,17 @@ export const AboutVideoModal = observer(function AboutVideoModal({
         presenter.videoIsOpen = false;
       }}
     >
-      {/* This video has captions embedded in the video itself, though this is not ideal. */}
-      {/* TODO(OBT-32382): Create a separate caption track (WebVTT) then remove the eslint-disable below. */}
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-      <video width="100%" controls>
+      <StyledVideo controls>
         <source src={UsAzAboutVideo} type="video/mp4" />
-      </video>
+        {/* TODO(OBT-33382): Add Spanish caption track when US_AZ enables Spanish support */}
+        <track
+          src={UsAzAboutVideoCaptions}
+          kind="captions"
+          srcLang="en"
+          label="English"
+          default
+        />
+      </StyledVideo>
     </StyledVideoModal>
   );
 });
