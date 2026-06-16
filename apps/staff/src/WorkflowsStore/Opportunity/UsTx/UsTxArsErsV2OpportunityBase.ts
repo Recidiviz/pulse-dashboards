@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { OpportunityUpdateWithForm } from "../../../FirestoreStore";
 import { Client } from "../../Client";
 import { OpportunityBase } from "../OpportunityBase";
+import { OpportunityTab } from "../types";
 
 export abstract class UsTxArsErsV2OpportunityBase<
   ReferralRecord extends DocumentData,
@@ -35,5 +36,33 @@ export abstract class UsTxArsErsV2OpportunityBase<
       !this.latestAction.isStale &&
       this.latestAction.supervisorResponse?.type === "REVISION"
     );
+  }
+
+  get supervisorReviewTabTitle(): OpportunityTab {
+    return "Submitted for Review";
+  }
+
+  get grantApprovedTabTitle(): OpportunityTab {
+    return "Approved by Supervisor";
+  }
+
+  tabTitle(): OpportunityTab {
+    // Snoozed tab
+    if (this.denied) return this.deniedTabTitle;
+
+    // Submitted for Review tab
+    if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
+
+    // Awaiting Revisions tab
+    if (this.isInRevisionsRequested) return "Awaiting Revisions";
+
+    // Approved tab
+    if (this.isGrantApproved) return this.grantApprovedTabTitle;
+
+    // Almost Eligible tab
+    if (this.almostEligible) return "Almost Eligible";
+
+    // Eligible Now tab
+    return "Eligible Now";
   }
 }

@@ -50,6 +50,7 @@ import { UsTnBaselineClassificationConfiguration } from "./UsTn/UsTnBaselineClas
 import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTn/UsTnCompliantReporting2025PolicyConfiguration";
 import { UsTnSuspensionofDirectSupervisionConfiguration } from "./UsTn/UsTnSuspensionofDirectSupervisionConfiguration";
 import { UsTxAnnualReportStatusConfiguration } from "./UsTx/UsTxAnnualReportStatusConfiguration";
+import { UsTxArsErsV2Configuration } from "./UsTx/UsTxArsErsV2Configuration";
 import { UsTxEarlyReleaseFromSupervisionConfiguration } from "./UsTx/UsTxEarlyReleaseFromSupervision";
 import { UsUtEarlyTerminationConfiguration } from "./UsUt/UsUtEarlyTerminationConfiguration";
 
@@ -143,7 +144,9 @@ const customOpportunityConfigurations: Partial<
 
   // Texas
   usTxAnnualReportStatus: UsTxAnnualReportStatusConfiguration,
+  usTxAnnualReportStatusV2: UsTxArsErsV2Configuration,
   usTxEarlyReleaseFromSupervision: UsTxEarlyReleaseFromSupervisionConfiguration,
+  usTxEarlyReleaseFromSupervisionV2: UsTxArsErsV2Configuration,
 
   // Utah
   usUtEarlyTermination: UsUtEarlyTerminationConfiguration,

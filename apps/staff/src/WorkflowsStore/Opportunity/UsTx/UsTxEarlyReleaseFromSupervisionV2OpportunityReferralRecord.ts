@@ -17,7 +17,10 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
+import {
+  dateStringSchemaWithoutTimeShift,
+  opportunitySchemaBase,
+} from "~datatypes";
 
 import type { UsTxArsErsSharedDraftData } from "./UsTxArsErsSharedUtils";
 
@@ -44,7 +47,7 @@ export const usTxEarlyReleaseFromSupervisionV2Schema =
     formInformation: usTxArsErsSharedFormInformationSchema,
     metadata: z
       .object({
-        grantedAt: z.date().nullish(),
+        grantedAt: dateStringSchemaWithoutTimeShift.nullish(),
       })
       .passthrough(),
   });

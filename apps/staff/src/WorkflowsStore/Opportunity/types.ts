@@ -341,7 +341,11 @@ export type OpportunityTab =
 
   // For US_NC
   | "Submitted for Chief Review"
-  | "Approved by Chief";
+  | "Approved by Chief"
+
+  // For US_TX
+  | "Awaiting Revisions"
+  | "Submitted for Review";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

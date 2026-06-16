@@ -17,7 +17,10 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
+import {
+  dateStringSchemaWithoutTimeShift,
+  opportunitySchemaBase,
+} from "~datatypes";
 
 import type { UsTxArsErsSharedDraftData } from "../UsTxArsErsSharedUtils";
 import { usTxArsErsSharedFormInformationSchema } from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
@@ -26,7 +29,7 @@ export const usTxAnnualReportStatusV2Schema = opportunitySchemaBase.extend({
   formInformation: usTxArsErsSharedFormInformationSchema,
   metadata: z
     .object({
-      grantedAt: z.date().nullish(),
+      grantedAt: dateStringSchemaWithoutTimeShift.nullish(),
     })
     .passthrough(),
 });
