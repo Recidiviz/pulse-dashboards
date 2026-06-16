@@ -127,7 +127,7 @@ const ProfileMeetings = ({
         meetingType: meetingTypeValue,
         meetingTypeCategory: meetingTypeCategoryValue,
       });
-      resetMeetingTypeStore(meetingTypes[0].type ?? undefined);
+      resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
     };
     validateAndStart({
       meetingTypes,
@@ -165,7 +165,7 @@ const ProfileMeetings = ({
             person,
           });
           startRecordingWeb();
-          resetMeetingTypeStore(meetingTypes[0].type ?? undefined);
+          resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
           break;
         case "ios":
         case "android":
@@ -174,7 +174,7 @@ const ProfileMeetings = ({
           setPerson(person);
           setPersonType(personType);
           startRecording();
-          resetMeetingTypeStore(meetingTypes[0].type ?? undefined);
+          resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
           break;
       }
     },
