@@ -34,7 +34,6 @@ import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
 import { downloadZipFile } from "../../utils";
-import { CafScoreSourceModal } from "../common/cafScoreSourceModal";
 import {
   AGE_SUPPORTING_TEXT,
   BLOCKED_DOWNLOAD_WRONG_VERSION_NEW,
@@ -58,6 +57,7 @@ import {
   cafBlockedDownloadTooltip,
   RCAF_V2_CUTOFF_DATE,
 } from "../common/Classification2026/utils";
+import { PreworkModal } from "../common/preworkModal";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
 import HearingNotice from "../CustodyReclassification/HearingNotice";
@@ -134,7 +134,7 @@ export const FormUsTnReclassification2026V2 = observer(
         downloadTooltip={downloadTooltip}
         downloadButtonLabel="Download as .DOCX"
       >
-        <CafScoreSourceModal latestRecordQs={[3, 4, 5, 6]} jobHistoryQs={[7]} />
+        <PreworkModal />
         <FormViewer formRef={formRef}>
           <CoverSheet />
           <PrintablePage stretchable>

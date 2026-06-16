@@ -33,7 +33,6 @@ import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
 import { downloadZipFile } from "../../utils";
-import { CafScoreSourceModal } from "../common/cafScoreSourceModal";
 import {
   AGE_SUPPORTING_TEXT,
   ClassificationFormPage,
@@ -49,6 +48,7 @@ import {
 import classificationNextSteps2026Template from "../common/Classification2026/classification_next_steps_2026.docx";
 import { PostDownloadModal } from "../common/Classification2026/NextStepsModal";
 import { cafBlockedDownloadTooltip } from "../common/Classification2026/utils";
+import { PreworkModal } from "../common/preworkModal";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
 import HearingNotice from "../CustodyReclassification/HearingNotice";
@@ -111,7 +111,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         downloadTooltip={downloadTooltip}
         downloadButtonLabel="Download as .DOCX"
       >
-        <CafScoreSourceModal latestRecordQs={[3, 4, 5, 6]} jobHistoryQs={[7]} />
+        <PreworkModal />
         <FormViewer formRef={formRef}>
           <CoverSheet />
           <PrintablePage stretchable>
