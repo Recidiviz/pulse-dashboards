@@ -57,8 +57,14 @@ export function formatDob(birthdate: Date): string {
  *   "{description} (Class {sub}[ {type}]) - RSMo {statute}"
  * `classificationType` is conditionally included when present.
  *
+ * When the statute is null (e.g. an out-of-state offense that doesn't map to
+ * an RSMo statute) we replace the "- RSMo {statute}" segment with
+ * "(Statute unknown)" so officers know the value is genuinely unknown rather
+ * than missing in error.
+ *
  * e.g. "Possession of Controlled Substance (Class D Felony) - RSMo 579.015"
  * e.g. "Unlawful Possession of a Firearm (Class C) - RSMo 571.070"
+ * e.g. "Out-of-State Offense (Class D Felony) (Statute unknown)"
  */
 export function formatSentence(
   sentence: UsMoClientMetadata["latestCycleSentences"][number],
@@ -66,7 +72,11 @@ export function formatSentence(
   const klass = sentence.classificationType
     ? `Class ${sentence.classificationSubtype} ${sentence.classificationType}`
     : `Class ${sentence.classificationSubtype}`;
-  return `${sentence.description} (${klass}) - RSMo ${sentence.statute}`;
+  const statute =
+    sentence.statute === null
+      ? "(Statute unknown)"
+      : `- RSMo ${sentence.statute}`;
+  return `${sentence.description} (${klass}) ${statute}`;
 }
 
 /**

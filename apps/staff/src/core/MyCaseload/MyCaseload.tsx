@@ -26,11 +26,7 @@ import styled from "styled-components";
 import { palette, typography } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
-import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
+import { useRootStore } from "../../components/StoreProvider";
 import { TasksRowEntity } from "../../WorkflowsStore/Task/types";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { MaxWidthWithSidebar } from "../sharedComponents";
@@ -43,6 +39,7 @@ import {
   MyCaseloadTaskCategory,
 } from "./MyCaseloadBody";
 import { MyCaseloadBodySkeleton } from "./MyCaseloadBodySkeleton";
+import { MyCaseloadPresenter } from "./MyCaseloadPresenter";
 
 // No max-width constraint: MyCaseload has no side panel — every row click
 // full-page-navigates to the client profile — so the search bar spans the
@@ -100,7 +97,7 @@ function MyCaseloadEmptyState() {
 const ManagedComponent = observer(function MyCaseload({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: MyCaseloadPresenter;
 }) {
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -156,6 +153,7 @@ const ManagedComponent = observer(function MyCaseload({
         touchpoints.
       </MyCaseloadSubtitle>
       <CaseloadTasksHydrator
+        emptyWhenNoClients
         initial={<MyCaseloadInitialState />}
         empty={<MyCaseloadEmptyState />}
         loading={
@@ -177,21 +175,13 @@ const ManagedComponent = observer(function MyCaseload({
 });
 
 function usePresenter() {
-  const {
-    workflowsStore,
-    tenantStore,
-    analyticsStore,
-    firestoreStore,
-    tasksFilterStore,
-  } = useRootStore();
-  const featureVariants = useFeatureVariants();
-  return new CaseloadTasksPresenterV2(
+  const { workflowsStore, tenantStore, analyticsStore, tasksFilterStore } =
+    useRootStore();
+  return new MyCaseloadPresenter(
     workflowsStore,
     tenantStore,
     tasksFilterStore,
     analyticsStore,
-    firestoreStore,
-    featureVariants,
   );
 }
 

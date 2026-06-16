@@ -253,12 +253,6 @@ export default class TenantStore {
   }
 
   get tasksTableColumns(): TaskTableColumnId[] {
-    // MyCaseload uses a rolled-up Tasks column (first task + "+n more")
-    // instead of separate task/dueDate/tasksDue columns. The corresponding
-    // cell formatter lives in TasksTable.tsx:getColumnDefs.
-    if (this.rootStore.userStore.activeFeatureVariants.usMoMyCaseload) {
-      return ["name", "id", "supervisionLevel", "caseType", "tasks"];
-    }
     return (
       this.tasksConfiguration?.columns ?? [
         "name",

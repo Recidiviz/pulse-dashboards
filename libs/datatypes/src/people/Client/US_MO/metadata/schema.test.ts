@@ -110,12 +110,30 @@ describe("usMoClientMetadataSchema", () => {
           {
             classificationSubtype: "D",
             classificationType: "Felony",
-            description: "Possession of a controlled substance",
-            // statute intentionally omitted
+            statute: "579.015",
+            // description intentionally omitted
           },
         ],
       }),
     ).toThrow(z.ZodError);
+  });
+
+  test("accepts a sentence with a null statute (e.g. out-of-state offense)", () => {
+    const fixture = {
+      ...validUsMoMetadataInput,
+      latestCycleSentences: [
+        {
+          classificationSubtype: "D",
+          classificationType: "Felony",
+          description: "Out-of-state offense",
+          statute: null,
+        },
+      ],
+    };
+    expect(usMoClientMetadataSchema.parse(fixture)).toEqual({
+      ...fixture,
+      birthdate: parseISO("1988-03-14"),
+    });
   });
 });
 

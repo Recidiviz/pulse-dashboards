@@ -21,8 +21,8 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 
 import * as StoreProvider from "../../../components/StoreProvider";
 import TasksFilterStore from "../../../FilterStore/TasksFilterStore";
-import { CaseloadTasksPresenterV2 } from "../../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import MyCaseload from "..";
+import { MyCaseloadPresenter } from "../MyCaseloadPresenter";
 
 vi.mock("../../../components/StoreProvider");
 // CaseloadSelect drags in deep search-store APIs; stub it for these tests.
@@ -57,7 +57,7 @@ vi.mock("../MyCaseloadBody", async (importOriginal) => {
       tabHref,
       rowLinkUrl,
     }: {
-      presenter: CaseloadTasksPresenterV2;
+      presenter: MyCaseloadPresenter;
       tabHref?: (tab: string) => string;
       rowLinkUrl?: (entity: { person: { profileUrl: string } }) => string;
     }) => (
@@ -129,27 +129,23 @@ describe("MyCaseload (URL ↔ presenter sync)", () => {
     hydratorBranch = "hydrated";
     lastSetCategory.value = undefined;
     vi.spyOn(
-      CaseloadTasksPresenterV2.prototype,
+      MyCaseloadPresenter.prototype,
       "selectedTaskCategory",
       "set",
     ).mockImplementation(function (_v: string) {
       lastSetCategory.value = _v;
     });
     vi.spyOn(
-      CaseloadTasksPresenterV2.prototype,
+      MyCaseloadPresenter.prototype,
       "selectedTaskCategory",
       "get",
     ).mockImplementation(function () {
-      // Mirror the real presenter, whose getter defaults to the first non-empty
-      // category (NOT ALL_TASKS) until something is explicitly selected. This
-      // lets us verify the shell forces ALL_TASKS for missing / unknown slugs.
+      // Return a non-ALL_TASKS value until something is explicitly selected, so
+      // the shell's effect always differs from its ALL_TASKS target and fires
+      // the setter — letting us verify it forces ALL_TASKS for missing /
+      // unknown slugs.
       return (lastSetCategory.value ?? "DUE_THIS_MONTH") as never;
     });
-    vi.spyOn(
-      CaseloadTasksPresenterV2.prototype,
-      "displayedTaskCategories",
-      "get",
-    ).mockReturnValue(["ALL_TASKS", "OVERDUE"] as never);
   });
 
   afterEach(() => {
@@ -224,7 +220,7 @@ describe("MyCaseload (URL ↔ presenter sync)", () => {
 
   it("renders the body once the store mock returns a singleton tasksFilterStore", () => {
     // The shell pulls `tasksFilterStore` from RootStore (singleton) and passes
-    // it to `CaseloadTasksPresenterV2`. We verify the body renders, which
+    // it to `MyCaseloadPresenter`. We verify the body renders, which
     // proves construction succeeded with the supplied filter store.
     const filterStore = {} as unknown as TasksFilterStore;
     setupStoreMock(filterStore);

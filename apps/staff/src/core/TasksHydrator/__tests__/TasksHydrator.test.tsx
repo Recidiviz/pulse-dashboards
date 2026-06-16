@@ -161,6 +161,62 @@ describe("CaseloadTasksHydrator", () => {
     expect(screen.queryByTestId("generic-loading")).not.toBeInTheDocument();
   });
 
+  describe("emptyWhenNoClients (My Caseload)", () => {
+    it("renders hydrated when the caseload has clients but no tasks", () => {
+      // Default behavior would treat this as empty (no supervision tasks); with
+      // emptyWhenNoClients the caseload-with-clients renders the table.
+      setupRootStore({
+        supervisionTasksLoaded: true,
+        hasSupervisionTasks: false,
+        caseloadPersons: [{}],
+      });
+      render(
+        <CaseloadTasksHydrator
+          emptyWhenNoClients
+          initial={<div data-testid="initial" />}
+          empty={<div data-testid="empty" />}
+          hydrated={<div data-testid="hydrated" />}
+        />,
+      );
+      expect(screen.getByTestId("hydrated")).toBeInTheDocument();
+      expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
+    });
+
+    it("renders empty when the caseload genuinely has no clients", () => {
+      setupRootStore({
+        supervisionTasksLoaded: true,
+        hasSupervisionTasks: false,
+        caseloadPersons: [],
+      });
+      render(
+        <CaseloadTasksHydrator
+          emptyWhenNoClients
+          initial={<div data-testid="initial" />}
+          empty={<div data-testid="empty" />}
+          hydrated={<div data-testid="hydrated" />}
+        />,
+      );
+      expect(screen.getByTestId("empty")).toBeInTheDocument();
+      expect(screen.queryByTestId("hydrated")).not.toBeInTheDocument();
+    });
+
+    it("still gates on tasks (default) when the prop is omitted", () => {
+      setupRootStore({
+        supervisionTasksLoaded: true,
+        hasSupervisionTasks: false,
+        caseloadPersons: [{}],
+      });
+      render(
+        <CaseloadTasksHydrator
+          initial={<div data-testid="initial" />}
+          empty={<div data-testid="empty" />}
+          hydrated={<div data-testid="hydrated" />}
+        />,
+      );
+      expect(screen.getByTestId("empty")).toBeInTheDocument();
+    });
+  });
+
   describe("custom tasks hydration", () => {
     function makePersonWithStores({
       supervisionHydrated = false,

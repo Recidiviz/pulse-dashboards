@@ -32,7 +32,7 @@ export const usMoClientMetadataSchema = z.object({
       classificationSubtype: z.string(), // e.g. "D"
       classificationType: z.string(), // e.g. "Felony"
       description: z.string(),
-      statute: z.string(), // RSMo number
+      statute: z.string().nullable(),
     }),
   ),
 });

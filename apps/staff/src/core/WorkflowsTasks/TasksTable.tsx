@@ -32,8 +32,7 @@ import {
   formatWorkflowsDateWithoutYear,
   toTitleCase,
 } from "../../utils";
-import { Client } from "../../WorkflowsStore";
-import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
+import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { TasksRowEntity } from "../../WorkflowsStore/Task/types";
 import {
   CaseloadTable,
@@ -47,6 +46,7 @@ import {
   MaxWidthFlexWrapper,
 } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { InfoButton } from "../WorkflowsJusticeInvolvedPersonProfile/InfoButton";
+import { SupervisionTaskCategory } from "./fixtures";
 import { TaskFrequency } from "./TaskFrequency";
 
 const StyledInfoButton = styled.span`
@@ -196,10 +196,27 @@ function FrequencyCell({ row }: { row: Row<TasksRowEntity> }) {
   return <TaskFrequency task={task} />;
 }
 
+/**
+ * The presenter surface `TasksTable` (and its empty/column helpers) depend on.
+ * Both `CaseloadTasksPresenterV2` (legacy Tasks page) and `MyCaseloadPresenter`
+ * implement it, so the table can back either view without coupling to a
+ * concrete presenter.
+ */
+export interface TasksTablePresenter {
+  emptyTabText: string | undefined;
+  displayIdHeader: string;
+  showOneRowPerClient: boolean;
+  tasksTableColumns: TaskTableColumnId[];
+  rowEntitiesForSelectedCategory: TasksRowEntity[];
+  selectedTaskCategory: SupervisionTaskCategory;
+  selectPerson(person: JusticeInvolvedPerson): void;
+  shouldHighlightRow(entity: TasksRowEntity): boolean;
+}
+
 export const EmptyTasksTabView = ({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: TasksTablePresenter;
 }) => {
   return (
     <MaxWidthFlexWrapper>
@@ -217,7 +234,14 @@ export const EmptyTasksTabView = ({
   );
 };
 
-const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
+// Narrow param (not the full `TasksTablePresenter`) on purpose: `TaskTableColumnId`
+// is derived from `ReturnType<typeof getColumnDefs>`, and `TasksTablePresenter`
+// references `TaskTableColumnId` — annotating with the full interface here would
+// make the column-id type circular.
+const getColumnDefs = (presenter: {
+  displayIdHeader: string;
+  showOneRowPerClient: boolean;
+}) =>
   [
     {
       header: "Name",
@@ -374,7 +398,7 @@ export const TasksTable = observer(function TasksTable({
   rowLinkUrl,
   renderEmptyState,
 }: {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: TasksTablePresenter;
   /**
    * Page-level customization: when provided, rows render as anchors pointing
    * to the returned URL and `selectPerson` is NOT called on click (the link
@@ -387,7 +411,7 @@ export const TasksTable = observer(function TasksTable({
    * the consumer can vary copy by `selectedTaskCategory`. Default (Tasks page):
    * omit this prop to keep the standard `EmptyTasksTabView`.
    */
-  renderEmptyState?: (presenter: CaseloadTasksPresenterV2) => ReactNode;
+  renderEmptyState?: (presenter: TasksTablePresenter) => ReactNode;
 }) {
   // Check if there's data to display
   const hasData = presenter.rowEntitiesForSelectedCategory.length > 0;

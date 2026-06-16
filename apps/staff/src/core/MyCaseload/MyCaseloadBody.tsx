@@ -23,13 +23,13 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TasksRowEntity } from "../../WorkflowsStore/Task/types";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
 import { WorkflowsFilterDropdown } from "../WorkflowsFilters/WorkflowsFilterDropdown";
 import { SupervisionTaskCategory } from "../WorkflowsTasks/fixtures";
 import { TasksTable } from "../WorkflowsTasks/TasksTable";
 import { MyCaseloadEmptyTab } from "./MyCaseloadEmptyTab";
+import { MyCaseloadPresenter } from "./MyCaseloadPresenter";
 
 // Local — NOT pulled from presenter.displayedTaskCategories. MyCaseload shows
 // a deliberate subset; we don't want DUE_NEXT_MONTH / HIDDEN / state-specific
@@ -100,7 +100,7 @@ const MyCaseloadFilterArea = styled.div`
 `;
 
 type MyCaseloadBodyProps = {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: MyCaseloadPresenter;
   tabHref: (category: MyCaseloadTaskCategory) => string;
   rowLinkUrl: (entity: TasksRowEntity) => string;
 };

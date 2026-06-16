@@ -18,7 +18,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-import { CaseloadTasksPresenterV2 } from "../../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import {
   getMyCaseloadCategoryFromSlug,
   MY_CASELOAD_TAB_SLUGS,
@@ -26,6 +25,7 @@ import {
   MyCaseloadBody,
   MyCaseloadTaskCategory,
 } from "../MyCaseloadBody";
+import { MyCaseloadPresenter } from "../MyCaseloadPresenter";
 
 // The full TasksTable + FilterDropdown drag in deeply nested stores; stub them
 // so this suite stays focused on the tab composition and layout.
@@ -43,7 +43,7 @@ function makePresenter(
     selectedTaskCategory: string;
     personsCountForCategory: (category: string) => number;
   }> = {},
-): CaseloadTasksPresenterV2 {
+): MyCaseloadPresenter {
   const state = {
     selectedTaskCategory:
       overrides.selectedTaskCategory ?? ("ALL_TASKS" as string),
@@ -56,7 +56,7 @@ function makePresenter(
       state.selectedTaskCategory = v;
     },
     personsCountForCategory: overrides.personsCountForCategory ?? (() => 0),
-  } as unknown as CaseloadTasksPresenterV2;
+  } as unknown as MyCaseloadPresenter;
 }
 
 function renderBody({
@@ -64,7 +64,7 @@ function renderBody({
   tabHref = (c: MyCaseloadTaskCategory) => `/?tab=${MY_CASELOAD_TAB_SLUGS[c]}`,
   rowLinkUrl = () => "/profile/abc",
 }: {
-  presenter?: CaseloadTasksPresenterV2;
+  presenter?: MyCaseloadPresenter;
   tabHref?: (c: MyCaseloadTaskCategory) => string;
   rowLinkUrl?: () => string;
 } = {}) {

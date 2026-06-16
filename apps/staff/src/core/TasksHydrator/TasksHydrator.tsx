@@ -34,6 +34,12 @@ type TasksHydrator = {
    */
   loading?: React.ReactNode;
   hydrated: React.ReactNode;
+  /**
+   * Gate the `empty` state on the caseload having no clients, rather than the
+   * default of having no tasks. My Caseload's "All Clients" view must render
+   * for a caseload that has clients but no tasks, so it opts into this.
+   */
+  emptyWhenNoClients?: boolean;
 };
 
 export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
@@ -41,6 +47,7 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
   empty,
   loading,
   hydrated,
+  emptyWhenNoClients = false,
 }: TasksHydrator) {
   const { workflowsStore } = useRootStore();
   const {
@@ -85,7 +92,9 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
   const displayNoResults =
     !displayInitialState &&
     !displayLoading &&
-    !workflowsStore.hasSupervisionTasks;
+    (emptyWhenNoClients
+      ? workflowsStore.caseloadPersons.length === 0
+      : !workflowsStore.hasSupervisionTasks);
 
   if (displayInitialState) return <>{initial}</>;
 

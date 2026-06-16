@@ -173,6 +173,29 @@ describe("ClientInformationCard", () => {
     ).toBeInTheDocument();
   });
 
+  test("renders '(Statute unknown)' for an offense with a null statute", () => {
+    render(
+      <ClientInformationCard
+        client={makeFakeClient({
+          latestCycleSentences: [
+            {
+              classificationSubtype: "D",
+              classificationType: "Felony",
+              description: "Out-of-State Offense",
+              statute: null,
+            },
+          ],
+        })}
+      />,
+    );
+
+    expect(
+      screen.getByText(
+        "Out-of-State Offense (Class D Felony) (Statute unknown)",
+      ),
+    ).toBeInTheDocument();
+  });
+
   test("renders the placeholder when sex is empty", () => {
     render(<ClientInformationCard client={makeFakeClient({ sex: "" })} />);
     expect(getValueFor("Gender")).toHaveTextContent("N/A");

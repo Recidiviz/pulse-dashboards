@@ -105,16 +105,22 @@ function makePersonWithTasks(
     dateOffset = 0,
     supervisionLevel = "Low",
     district = "D1",
+    id = undefined as string | undefined,
   } = {},
 ): JusticeInvolvedPerson {
   const tasks = taskTypes.map((type) => ({
     type,
     dueDate: addDays(new Date(), dateOffset),
     isOverdue: overdue,
+    // Lightweight person stub carrying just the grouping key the row builders
+    // read (`task.person.pseudonymizedId`). Intentionally NOT the full person
+    // object — a back-reference would create a cycle that mobx can't observe.
+    person: { pseudonymizedId: id },
   }));
   return {
     district,
     supervisionLevel,
+    pseudonymizedId: id,
     supervisionTasks: {
       readyOrderedTasks: tasks,
       orderedTasks: tasks,
@@ -128,6 +134,12 @@ function getPresenter({
   workflowsStore = mockWorkflowsStore,
   tenantStore = mockTenantStore,
   analyticsStore = mockAnalyticsStore,
+  featureVariants = {},
+}: {
+  workflowsStore?: WorkflowsStore;
+  tenantStore?: TenantStore;
+  analyticsStore?: AnalyticsStore;
+  featureVariants?: Record<string, unknown>;
 }): CaseloadTasksPresenterV2 {
   const filterStore = new TasksFilterStore(
     analyticsStore,
@@ -140,7 +152,7 @@ function getPresenter({
     filterStore,
     analyticsStore,
     {} as FirestoreStore,
-    {},
+    featureVariants as any,
   );
 }
 

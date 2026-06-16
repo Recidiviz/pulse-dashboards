@@ -19,13 +19,12 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { addDays, subDays } from "date-fns";
 import { MemoryRouter } from "react-router-dom";
 
-import { CaseloadTasksPresenterV2 } from "../../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import {
   ClientTasksSummary,
   CustomTaskItem,
   SupervisionTask,
 } from "../../../WorkflowsStore/Task/types";
-import { TasksTable } from "../TasksTable";
+import { TasksTable, TasksTablePresenter } from "../TasksTable";
 
 function makeTask(displayName: string, dueDate: Date): SupervisionTask {
   return { displayName, dueDate } as unknown as SupervisionTask;
@@ -61,8 +60,8 @@ function makeSummary(
 
 function makePresenter(
   rowEntities: ClientTasksSummary[],
-  overrides: Partial<CaseloadTasksPresenterV2> = {},
-): CaseloadTasksPresenterV2 {
+  overrides: Partial<TasksTablePresenter> = {},
+): TasksTablePresenter {
   return {
     rowEntitiesForSelectedCategory: rowEntities,
     tasksTableColumns: ["tasks"],
@@ -72,7 +71,7 @@ function makePresenter(
     shouldHighlightRow: () => false,
     emptyTabText: "No tasks",
     ...overrides,
-  } as unknown as CaseloadTasksPresenterV2;
+  } as unknown as TasksTablePresenter;
 }
 
 function renderTable(
@@ -87,7 +86,7 @@ function renderTable(
     options?.selectPerson
       ? ({
           selectPerson: options.selectPerson,
-        } as unknown as Partial<CaseloadTasksPresenterV2>)
+        } as unknown as Partial<TasksTablePresenter>)
       : {},
   );
   return {

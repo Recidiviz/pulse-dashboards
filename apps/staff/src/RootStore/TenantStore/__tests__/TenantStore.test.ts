@@ -19,11 +19,9 @@ import { TenantConfigs } from "../../../tenants";
 import type { RootStore } from "../..";
 import TenantStore from "..";
 
-function buildTenantStore({
-  usMoMyCaseload = false,
-}: { usMoMyCaseload?: boolean } = {}) {
+function buildTenantStore() {
   const userStore = {
-    activeFeatureVariants: usMoMyCaseload ? { usMoMyCaseload: {} } : {},
+    activeFeatureVariants: {},
     userIsLoading: true,
   };
   const rootStore = { userStore } as unknown as RootStore;
@@ -34,8 +32,8 @@ function buildTenantStore({
 }
 
 describe("TenantStore.tasksTableColumns", () => {
-  it("returns the default Tasks-page column set when usMoMyCaseload is off", () => {
-    const tenantStore = buildTenantStore({ usMoMyCaseload: false });
+  it("returns the default Tasks-page column set when no tenant config is present", () => {
+    const tenantStore = buildTenantStore();
     expect(tenantStore.tasksTableColumns).toEqual([
       "name",
       "id",
@@ -45,17 +43,6 @@ describe("TenantStore.tasksTableColumns", () => {
       "supervisionLevel",
       "caseType",
       "tasksDue",
-    ]);
-  });
-
-  it("returns the MyCaseload column set when usMoMyCaseload is on", () => {
-    const tenantStore = buildTenantStore({ usMoMyCaseload: true });
-    expect(tenantStore.tasksTableColumns).toEqual([
-      "name",
-      "id",
-      "supervisionLevel",
-      "caseType",
-      "tasks",
     ]);
   });
 });

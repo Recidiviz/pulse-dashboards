@@ -116,6 +116,17 @@ describe("formatSentence", () => {
       }),
     ).toBe("Unlawful Possession of a Firearm (Class C) - RSMo 571.070");
   });
+
+  test("renders '(Statute unknown)' in place of the RSMo segment when statute is null", () => {
+    expect(
+      formatSentence({
+        classificationSubtype: "D",
+        classificationType: "Felony",
+        description: "Out-of-State Offense",
+        statute: null,
+      }),
+    ).toBe("Out-of-State Offense (Class D Felony) (Statute unknown)");
+  });
 });
 
 describe("buildAddressLines", () => {
