@@ -1596,95 +1596,6 @@ describe("tasks", () => {
       });
     }
 
-    test("Should export Label Studio task to GCS after successful notetaking", async () => {
-      const meeting = await createMeetingForNotetaking("ls-export-meeting");
-      mockExportLabelStudioTask.mockClear();
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/process-notetaking",
-        headers: { authorization: `Bearer token` },
-        body: { stateCode: "US_NE", meetingId: meeting.id },
-      });
-
-      expect(response.statusCode).toBe(200);
-      expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-        expect.objectContaining({ id: meeting.id }),
-        "US_NE",
-      );
-    });
-
-    test("Should not export Label Studio task for US_DEMO in production", async () => {
-      const meeting = await createMeetingForNotetaking("ls-demo-meeting");
-      mockExportLabelStudioTask.mockClear();
-
-      const originalDeployEnv = env.DEPLOY_ENV;
-      env.DEPLOY_ENV = "production";
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/process-notetaking",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_DEMO", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
-      } finally {
-        env.DEPLOY_ENV = originalDeployEnv;
-      }
-    });
-
-    test("Should export Label Studio task for US_DEMO outside of production", async () => {
-      const meeting = await createMeetingForNotetaking("ls-demo-staging");
-      mockExportLabelStudioTask.mockClear();
-
-      const originalDeployEnv = env.DEPLOY_ENV;
-      env.DEPLOY_ENV = "staging";
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/process-notetaking",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_DEMO", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-          expect.objectContaining({ id: meeting.id }),
-          "US_DEMO",
-        );
-      } finally {
-        env.DEPLOY_ENV = originalDeployEnv;
-      }
-    });
-
-    test("Should remain COMPLETED if Label Studio export fails", async () => {
-      mockExportLabelStudioTask.mockRejectedValueOnce(
-        new Error("GCS upload failed"),
-      );
-      const meeting = await createMeetingForNotetaking("ls-fail-meeting");
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/process-notetaking",
-        headers: { authorization: `Bearer token` },
-        body: { stateCode: "US_NE", meetingId: meeting.id },
-      });
-
-      expect(response.statusCode).toBe(200);
-
-      const updatedMeeting = await testPrismaClient.meeting.findUniqueOrThrow({
-        where: { id: meeting.id },
-      });
-
-      expect(updatedMeeting.postMeetingProcessingStatus).toBe(
-        PostMeetingProcessingStatus.COMPLETED,
-      );
-    });
-
     test("Should queue LLMAJ evaluation task after successful notetaking", async () => {
       const meeting = await createMeetingForNotetaking("llmaj-queue");
       mockCloudTasksClient.createTask.mockClear();
@@ -1917,6 +1828,132 @@ describe("tasks", () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toContain("Missing audio or transcripts");
       expect(mockRunAllEvaluators).not.toHaveBeenCalled();
+    });
+
+    test("Should export Label Studio task with needs_recidiviz_review=false when no BAD scores", async () => {
+      const meeting =
+        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-export");
+      mockExportLabelStudioTask.mockClear();
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+        expect.objectContaining({ id: meeting.id }),
+        "US_NE",
+        false,
+      );
+    });
+
+    test("Should export Label Studio task with needs_recidiviz_review=true when any score is BAD", async () => {
+      const meeting =
+        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-bad-score");
+      mockExportLabelStudioTask.mockClear();
+      mockRunAllEvaluators.mockResolvedValueOnce({
+        scores: {
+          transcriptComparison: null,
+          caseNote: {
+            rationale: "Contains errors",
+            grade: "BAD",
+            hallucinations: [],
+            omissions: [],
+          },
+          actionItems: null,
+          criticalUpdates: null,
+          overall: null,
+        },
+        langsmithTraceId: undefined,
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+        expect.objectContaining({ id: meeting.id }),
+        "US_NE",
+        true,
+      );
+    });
+
+    test("Should not export Label Studio task for US_DEMO in production", async () => {
+      const meeting =
+        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-demo-prod");
+      mockExportLabelStudioTask.mockClear();
+
+      const originalDeployEnv = env.DEPLOY_ENV;
+      env.DEPLOY_ENV = "production";
+
+      try {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_DEMO", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+      } finally {
+        env.DEPLOY_ENV = originalDeployEnv;
+      }
+    });
+
+    test("Should export Label Studio task for US_DEMO outside of production", async () => {
+      const meeting = await createMeetingWithSuccessfulPipelineRun(
+        "llmaj-ls-demo-staging",
+      );
+      mockExportLabelStudioTask.mockClear();
+
+      const originalDeployEnv = env.DEPLOY_ENV;
+      env.DEPLOY_ENV = "staging";
+
+      try {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_DEMO", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+          expect.objectContaining({ id: meeting.id }),
+          "US_DEMO",
+          false,
+        );
+      } finally {
+        env.DEPLOY_ENV = originalDeployEnv;
+      }
+    });
+
+    test("Should return 200 if Label Studio export fails after evaluation", async () => {
+      mockExportLabelStudioTask.mockRejectedValueOnce(
+        new Error("GCS upload failed"),
+      );
+      const meeting =
+        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-fail");
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain(
+        "LLMAJ evaluation completed successfully",
+      );
     });
   });
 });

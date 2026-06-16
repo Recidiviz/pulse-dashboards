@@ -690,32 +690,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
           console.error("Failed to queue LLMAJ evaluation task", e);
         });
 
-        // Export Label Studio task JSON to GCS. Skip US_DEMO in production only —
-        // staging US_DEMO meetings should still flow to Label Studio.
-        if (
-          stateCode !== StateCode.US_DEMO ||
-          env.DEPLOY_ENV !== "production"
-        ) {
-          try {
-            const meetingWithRelations = await prisma.meeting.findUniqueOrThrow(
-              {
-                where: { id: meetingId },
-                include: labelStudioMeetingInclude,
-              },
-            );
-
-            exportLabelStudioTask(meetingWithRelations, stateCode).catch(
-              (e) => {
-                captureException(e);
-                console.error("Failed to export Label Studio task to GCS", e);
-              },
-            );
-          } catch (e) {
-            captureException(e);
-            console.error("Failed to fetch meeting for Label Studio export", e);
-          }
-        }
-
         return reply
           .code(200)
           .send("Notetaking process completed successfully");
@@ -850,6 +824,35 @@ export function registerTaskRoutes(app: FastifyInstance) {
           langsmithTraceId,
         },
       });
+
+      // Export Label Studio task JSON to GCS. Skip US_DEMO in production only —
+      // staging US_DEMO meetings should still flow to Label Studio.
+      if (stateCode !== StateCode.US_DEMO || env.DEPLOY_ENV !== "production") {
+        try {
+          const meetingWithRelations = await prisma.meeting.findUniqueOrThrow({
+            where: { id: meetingId },
+            include: labelStudioMeetingInclude,
+          });
+
+          const needsRecidivizReview =
+            scores.caseNote?.grade === "BAD" ||
+            scores.actionItems?.grade === "BAD" ||
+            scores.criticalUpdates?.grade === "BAD" ||
+            scores.overall?.grade === "BAD";
+
+          exportLabelStudioTask(
+            meetingWithRelations,
+            stateCode,
+            needsRecidivizReview,
+          ).catch((e) => {
+            captureException(e);
+            console.error("Failed to export Label Studio task to GCS", e);
+          });
+        } catch (e) {
+          captureException(e);
+          console.error("Failed to fetch meeting for Label Studio export", e);
+        }
+      }
 
       reply.code(200).send("LLMAJ evaluation completed successfully");
     },

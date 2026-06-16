@@ -73,6 +73,7 @@ function formatStructuredActionItem(item: StructuredActionItem): string {
 export function buildLabelStudioTask(
   meeting: LabelStudioMeeting,
   stateCode: StateCode,
+  needsRecidivizReview = false,
 ) {
   const person = meeting.client ?? meeting.resident;
 
@@ -116,6 +117,8 @@ export function buildLabelStudioTask(
     critical_updates:
       (meeting.criticalUpdates as string[] | null)?.join("\n") ?? null,
 
+    needs_recidiviz_review: needsRecidivizReview,
+
     // ── Meta (human-readable labels for Label Studio <Table> widget) ────
     meta: {
       State: stateCode,
@@ -138,8 +141,9 @@ export function buildLabelStudioTask(
 export async function exportLabelStudioTask(
   meeting: LabelStudioMeeting,
   stateCode: StateCode,
+  needsRecidivizReview = false,
 ): Promise<void> {
-  const task = buildLabelStudioTask(meeting, stateCode);
+  const task = buildLabelStudioTask(meeting, stateCode, needsRecidivizReview);
   const taskJson = JSON.stringify(task, null, 2);
   const fileName = "label-studio-task.json";
 

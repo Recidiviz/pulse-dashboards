@@ -91,6 +91,7 @@ describe("buildLabelStudioTask", () => {
           "[Client] Schedule next meeting",
         ],
         critical_updates: "Safety concern - details noted",
+        needs_recidiviz_review: false,
         meta: {
           State: "US_NE",
           "Recording date": "2026-03-15",
@@ -149,5 +150,10 @@ describe("buildLabelStudioTask", () => {
     );
 
     expect(task.meta["Person Display ID"]).toBe("RESIDENT-001");
+  });
+
+  test("sets needs_recidiviz_review to true when passed", () => {
+    const task = buildLabelStudioTask(makeMeeting(), "US_NE", true);
+    expect(task.needs_recidiviz_review).toBe(true);
   });
 });
