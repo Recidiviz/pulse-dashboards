@@ -20,39 +20,21 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
-import Planner from "~@reentry/frontend/components/action-plan/Planner";
 import ResourceBankLayout from "~@reentry/frontend/components/action-plan/ResourceBankLayout";
-import SidePanel from "~@reentry/frontend/components/action-plan/SidePanel";
-import UpdateResource from "~@reentry/frontend/components/action-plan/UpdateResource";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
-import LoadingSpinner from "~@reentry/frontend/components/base/LoadingSpinner";
 import { PageView } from "~@reentry/frontend/components/PageView";
-import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
-import type { components } from "~@reentry/openapi-types";
-
-type ResourceType = components["schemas"]["Resource"];
 
 const ActionPlanPage = () => {
   const { planId }: { planId: string } = useParams();
   const { getAccessToken } = useAuth();
-  const { track } = useAnalytics();
 
   // Track if outputs are disabled (403 error)
   const [outputsDisabled, setOutputsDisabled] = useState(false);
 
   // ----------- Loading and regeneration reloading ------------
-  const [regenerationMessage, setRegenerationMessage] = useState("");
-  const {
-    isPolling,
-    isCompleted,
-    message,
-    error: errorPolling,
-    startPolling,
-  } = useExecutionPolling({ interval: 5000 });
+  const { isCompleted, startPolling } = useExecutionPolling({ interval: 5000 });
 
   const {
     data: dataDetailPlan,
@@ -132,45 +114,23 @@ const ActionPlanPage = () => {
   }, [errorDetailPlan]);
 
   //----------- Resources --------------
-
-  const [openResourceSection, setOpenResourceSection] = useState(false);
-  const [relatedResourcesLoading, setRelatedResourcesLoading] = useState(false);
-
-  const [relatedResources, setRelatedResources] = useState<ResourceType[]>([]);
-  const [planResources, setPlanResources] = useState<ResourceType[]>([]);
-
-  // The selected resource, from the plan or the list.
-  const [selectedResource, setSelectedResource] = useState<ResourceType | null>(
-    null,
-  );
-  // The resource to maybe switch to
-  const [candidateResource, setCandidateResource] =
-    useState<ResourceType | null>(null);
-
   // Get current plan resources - from the API instead of parsing from markdown
-  const { data: planResourcesData, refetch: refetchPlanResources } =
-    $api.useQuery(
-      "get",
-      "/plans/{id}/resources",
-      {
-        params: {
-          path: {
-            id: dataDetailPlan?.id as string,
-          },
-        },
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-          "Content-Type": "application/json",
+  const { refetch: refetchPlanResources } = $api.useQuery(
+    "get",
+    "/plans/{id}/resources",
+    {
+      params: {
+        path: {
+          id: dataDetailPlan?.id as string,
         },
       },
-      { enabled: !!dataDetailPlan?.id },
-    ); // Only enable when plan ID is available
-
-  useEffect(() => {
-    if (planResourcesData) {
-      setPlanResources(planResourcesData);
-    }
-  }, [planResourcesData]);
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+    { enabled: !!dataDetailPlan?.id },
+  ); // Only enable when plan ID is available
 
   useEffect(() => {
     if (isCompleted) {
@@ -178,94 +138,6 @@ const ActionPlanPage = () => {
       refetchPlanResources();
     }
   }, [isCompleted, refetchDetailPlan, refetchPlanResources]);
-
-  const handleSelectResource = (resource: ResourceType | string) => {
-    track("action_plan_resource_selected", {
-      justiceInvolvedPersonId:
-        dataDetailPlan?.client_record?.pseudonymized_client_id,
-    });
-    let foundResource: ResourceType | undefined;
-    if (typeof resource === "string") {
-      foundResource = planResources.find((r) => r.id === resource);
-      if (!foundResource) {
-        showErrorToast("Failed to find resource in the plan");
-        return;
-      }
-    } else {
-      foundResource = resource;
-    }
-    if (
-      selectedResource?.category !== foundResource?.category ||
-      selectedResource?.subcategory !== foundResource?.subcategory
-    ) {
-      setSelectedResource(foundResource);
-      setRelatedResourcesLoading(true);
-      setOpenResourceSection(true);
-    } else {
-      if (typeof resource === "string") {
-        setSelectedResource(foundResource);
-      } else {
-        setCandidateResource(foundResource);
-      }
-    }
-  };
-
-  const handleOpenResourceSection = () => {
-    setOpenResourceSection(!openResourceSection);
-  };
-
-  const { mutateAsync: updateResourceMutation } = $api.useMutation(
-    "post",
-    "/plans/{id}/generate",
-  );
-
-  const handleUpdateResource = async () => {
-    try {
-      if (candidateResource === null || selectedResource === null) {
-        showErrorToast(
-          "Failed to update the resource, Missing initial or selected resource.",
-        );
-        return;
-      }
-      const response = await updateResourceMutation({
-        params: {
-          path: {
-            id: dataDetailPlan?.id as string,
-          },
-        },
-        body: {
-          resource_to_remove_id: selectedResource.id,
-          resource_to_add_content: candidateResource,
-        },
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.execution_id) {
-        setRegenerationMessage(
-          `Replacing ${selectedResource.name} with ${candidateResource.name}. `,
-        );
-        startPolling(response.execution_id);
-        setSelectedResource(null);
-        setCandidateResource(null);
-        setRelatedResources([]);
-        setOpenResourceSection(false);
-        showSuccessToast(
-          `Updating the action plan with the new resource: ${candidateResource.name}. `,
-        );
-
-        // After resource update is complete, refresh plan resources
-        await refetchPlanResources();
-      } else {
-        console.log("Missing execution_id in response");
-        showErrorToast("Failed to update the resource");
-      }
-    } catch (error) {
-      console.log(error);
-      showErrorToast("Failed to update the resource");
-    }
-  };
 
   if (isLoadingDetailPlan) return <LoadingState />;
 
@@ -279,97 +151,11 @@ const ActionPlanPage = () => {
         </span>
       </div>
     );
-  if (isFeatureEnabled("RESOURCE_BANK")) {
-    return (
-      <>
-        <PageView />
-        <ResourceBankLayout planDetail={dataDetailPlan} />
-      </>
-    );
-  }
 
   return (
     <>
       <PageView />
-      <div
-        className={
-          "bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"
-        }
-      >
-        <div className="w-full h-full justify-start items-start flex flex-col md:flex-row">
-          <SidePanel
-            clientRecord={dataDetailPlan.client_record}
-            planId={dataDetailPlan.id}
-            startPolling={startPolling}
-            setRegenerationMessage={setRegenerationMessage}
-            selectedResource={selectedResource}
-            candidateResource={candidateResource}
-            relatedResourcesLoading={relatedResourcesLoading}
-            planResources={planResources}
-            handleSelectResource={handleSelectResource}
-            relatedResources={relatedResources}
-            handleOpenResourceSection={handleOpenResourceSection}
-            openResourceSection={openResourceSection}
-            setOpenResourceSection={setOpenResourceSection}
-            dataDetailPlan={dataDetailPlan}
-            isPolling={isPolling}
-          />
-          {!isPolling &&
-            dataDetailPlan.create_status === "completed" &&
-            dataDetailPlan.latest_generation && (
-              <Planner
-                refetchDetailPlan={refetchDetailPlan}
-                handleSelectResource={handleSelectResource}
-                planId={planId}
-                clientPseudoId={dataDetailPlan?.client_pseudo_id}
-                planPrompt={dataDetailPlan?.latest_generation?.prompt || ""}
-                clientFullName={
-                  dataDetailPlan?.client_record?.full_name
-                    ? `${dataDetailPlan.client_record.full_name.given_names} ${dataDetailPlan.client_record.full_name.surname}`
-                    : ""
-                }
-                markDownText={
-                  dataDetailPlan?.latest_generation?.markdown_result || ""
-                }
-              />
-            )}
-          {isPolling && (
-            <LoadingSpinner
-              message={`${message ? `${message}.` : ""} This may take several minutes, so feel free to return to this page later.`}
-              regenerationInProgress={isPolling}
-              regenerationMessage={regenerationMessage}
-            />
-          )}
-          {!isLoadingDetailPlan && errorDetailPlan && (
-            <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
-              <div className="text-[#003331] text-lg font-medium">
-                {outputsDisabled
-                  ? "Outputs are disabled for this assessment because they are under revision"
-                  : "An error occurred, plan may not have been started for this client."}
-              </div>
-            </div>
-          )}
-          {!isLoadingDetailPlan &&
-            (dataDetailPlan?.create_status === "failed" || errorPolling) && (
-              <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
-                <span className="text-[#003331] text-lg font-medium">
-                  Failed to generate the plan, please try again or contact
-                  support.
-                </span>
-              </div>
-            )}
-        </div>
-        {candidateResource &&
-          selectedResource &&
-          candidateResource.id !== selectedResource?.id && (
-            <UpdateResource
-              candidateResource={candidateResource}
-              selectedResource={selectedResource}
-              onUpdate={handleUpdateResource}
-              onCancel={() => setCandidateResource(null)}
-            />
-          )}
-      </div>
+      <ResourceBankLayout planDetail={dataDetailPlan} />
     </>
   );
 };

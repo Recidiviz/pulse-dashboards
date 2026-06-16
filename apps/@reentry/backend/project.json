@@ -56,7 +56,7 @@
       },
       "defaultConfiguration": "dev"
     },
-    "requires-sops-env:migrate": {
+    "requires-sops-env:migrate-db": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv run alembic upgrade head",
@@ -71,13 +71,20 @@
     "requires-sops-env:seed-db": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv run python -m app.manage seed-db",
+        "command": "uv run python -m app.manage seed-db --from-staging",
         "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {}
       },
-      "defaultConfiguration": "dev"
+      "defaultConfiguration": "dev",
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": [
+            "{projectRoot}/env.seed-db-with-staging.enc.yaml"
+          ]
+        }
+      }
     },
     "requires-sops-env:test": {
       "executor": "nx:run-commands",
