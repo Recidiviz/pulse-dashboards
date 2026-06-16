@@ -710,5 +710,159 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "AdminSupervision",
       zeroGrantsTooltip: null,
     },
+    usAzTransferToAdministrativeSupervisionV2: {
+      callToAction: null,
+      caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "INELIGIBLE_OFFENSES",
+          text: "Current or prior conviction for an ineligible offense",
+        },
+        {
+          key: "INITIAL_INTAKE",
+          text: "Has not yet completed initial intake and needs assessment",
+        },
+        {
+          key: "EMPLOYMENT",
+          text: "Not currently employed, disabled, retired, or in school",
+        },
+        {
+          key: "SUBSTANCE",
+          text: "Currently dealing with substance use issues",
+        },
+        { key: "IN_CUSTODY", text: "In state or county custody" },
+        { key: "Other", text: "Other" },
+      ],
+      denialText: "Mark Ineligible",
+      deniedTabTitle: "Marked Ineligible",
+      displayName: "Administrative Supervision (v2)",
+      dynamicEligibilityText:
+        "client[|s] may be eligible for Administrative Supervision.",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "usAzOrasRiskLevelIsMediumOrLower",
+          text: "Eligible risk score",
+          tooltip:
+            "(DO 1007 8.1.1 - 8.1.1.1) Risk and needs assessment shows a risk determination of moderate or lower. Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive additional risk and needs assessment are not required to meet criteria 8.1.1 above.",
+        },
+        {
+          key: "usAzNoIneligibleCurrentOrPriorOffense",
+          text: "No current or prior convictions of exclusionary offenses",
+          tooltip:
+            "(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder. See  Attachment A of DO 1007 for a list of offenses excluded under this section.",
+        },
+        {
+          key: "usAzRiskReleaseAssessmentIsCompleted",
+          text: "Initial intake and needs assessment complete",
+          tooltip:
+            "(DO 1007 8.1.3) Has completed initial intake and risk and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (e.g., by telephone or video call).",
+        },
+        {
+          key: "usAzOrasEmployedDisabledRetiredOrStudent",
+          text: "{{#unless record.metadata.isMaybeEligible}}\nCurrently employed, disabled, retired, or in school\n{{/unless}}",
+          tooltip:
+            "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
+        },
+        {
+          key: "usAzMentalHealthScore3OrBelow",
+          text: "Mental Health Score of 3 or below",
+          tooltip: "(DO 1007 8.1.6) Mental Health Score below 4.",
+        },
+        {
+          key: "usAzNotSeverelyMentallyIll",
+          text: "Not SMI-C",
+          tooltip: "(DO 1007 8.1.7) Not SMI-C.",
+        },
+        {
+          key: "usAzOrasHasSubstanceUseIssues",
+          text: "{{#unless record.metadata.isMaybeEligible}}\nNot currently dealing with substance use issues\n{{/unless}}",
+          tooltip:
+            "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+        },
+      ],
+      emptyTabCopy: [
+        {
+          tab: "Eligible per ORAS",
+          text: "At this time, there are no clients who are currently eligible. Please navigate to one of the other tabs.",
+        },
+        { tab: "Submitted for Supervisor Approval", text: "Placeholder text" },
+        { tab: "Approved by Supervisor", text: "Placeholder text" },
+        {
+          tab: "Transferred in ACIS",
+          text: "No clients for the selected officer(s) were marked as transferred within the last day. Clients stop appearing in this tab 24 hours after the change is confirmed in ACIS.",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "At this time, there are no clients who are marked ineligible. Please navigate to one of the other tabs.",
+        },
+      ],
+      firestoreCollection: "US_AZ-TransferToAdminSupervisionV2",
+      hideDenialRevert: true,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 5,
+      ineligibleCriteriaCopy: [],
+      initialHeader:
+        "View low-needs clients who qualify for transfer to Administrative Supervision.",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://drive.google.com/file/d/1U_V_4Xgj3rIWAFjLSbta-MojehPSU-YE/view?usp=drive_link",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: "Validated by data from ACIS",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: ["Supervision"],
+      skipFormPreview: false,
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_AZ",
+      strictlyIneligibleCriteriaCopy: [],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS. [Learn More](https://docs.google.com/document/d/e/2PACX-1vQ55ljjO7rz-6UiHGLwEcH7WR6_ZZIbEynN-92kO5D61wfKIZZVewqLxQdQfjOtv6vnKDSmQKLX9xui/pub)",
+      submittedTabTitle: "Transferred in ACIS",
+      supportsIneligible: false,
+      supportsSubmitted: true,
+      systemType: "SUPERVISION",
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible per ORAS",
+            "Submitted for Supervisor Approval",
+            "Approved by Supervisor",
+            "Transferred in ACIS",
+            "Marked Ineligible",
+          ],
+        },
+      ],
+      tabPrefaceCopy: [
+        {
+          tab: "Eligible per ORAS",
+          text: "Based on ORAS results and ACIS data, clients in this tab appear eligible for Administrative Supervision. Review housing stability and transfer eligible clients to Administrative Supervision per policy.",
+        },
+        { tab: "Submitted for Supervisor Approval", text: "Placeholder text" },
+        { tab: "Approved by Supervisor", text: "Placeholder text" },
+        {
+          tab: "Transferred in ACIS",
+          text: "Clients appear here after you confirm that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "This tab shows clients whose status was updated in this tool. Status updates do not write back to ACIS.",
+        },
+      ],
+      tooltipEligibilityText: null,
+      urlSection: "AdminSupervisionV2",
+      zeroGrantsTooltip: null,
+    },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

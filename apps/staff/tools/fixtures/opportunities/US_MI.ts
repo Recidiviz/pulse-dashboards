@@ -233,28 +233,15 @@ export const mockApiOpportunityConfigurationResponse = {
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
       strictlyIneligibleCriteriaCopy: [],
-      subcategoryHeadings: [
-        { subcategory: "ELIGIBLE_NOW", text: "Eligible" },
-        { subcategory: "ALMOST_ELIGIBLE", text: "Almost Eligible" },
-      ],
-      subcategoryOrderings: [
-        {
-          tab: "Eligible Now",
-          texts: ["ELIGIBLE_NOW", "ALMOST_ELIGIBLE"],
-        },
-      ],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify clients who may be eligible for a supervision level downgrade when a classification review is due or overdue.\n\nA classification review is generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior; per FOA Field Memorandum 2023-211, agents are presumptively required to downgrade clients’ supervision level during each classification review, provided that they have “satisfactorily completed” the prior six months on supervision.\n\nReview clients who meet the supervision level downgrade criteria and the classification review time threshold as per OP 06.04.130I, and downgrade their supervision level in COMS.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
-      tabGroups: [
-        {
-          key: "ELIGIBILITY STATUS",
-          tabs: ["Eligible Now", "Pending", "Marked Ineligible"],
-        },
-      ],
+      tabGroups: null,
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "classificationReview",
@@ -623,10 +610,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { subcategory: "ALMOST_ELIGIBLE", text: "Almost Eligible" },
       ],
       subcategoryOrderings: [
-        {
-          tab: "Eligible Now",
-          texts: ["ELIGIBLE_NOW", "ALMOST_ELIGIBLE"],
-        },
+        { tab: "Eligible Now", texts: ["ELIGIBLE_NOW", "ALMOST_ELIGIBLE"] },
       ],
       subheading:
         "Early Discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision.<br /><br />Review clients who may be eligible for early discharge as per OP 06.05.135 and OP 06.04.130H and complete the discharge paperwork in COMS.",
@@ -637,7 +621,12 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Eligible Now", "Pending", "Marked Ineligible"],
+          tabs: [
+            "Eligible Now",
+            "Supervisor Review",
+            "Pending",
+            "Marked Ineligible",
+          ],
         },
       ],
       tabPrefaceCopy: [],
@@ -764,10 +753,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { subcategory: "ALMOST_ELIGIBLE", text: "Almost Eligible" },
       ],
       subcategoryOrderings: [
-        {
-          tab: "Eligible Now",
-          texts: ["ELIGIBLE_NOW", "ALMOST_ELIGIBLE"],
-        },
+        { tab: "Eligible Now", texts: ["ELIGIBLE_NOW", "ALMOST_ELIGIBLE"] },
       ],
       subheading:
         "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts.<br /><br />Review clients who meet the requirements for minimum telephone reporting as per OP 06.04.130K and transfer them to telephone reporting in COMS.",
@@ -778,7 +764,12 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Eligible Now", "Pending", "Marked Ineligible"],
+          tabs: [
+            "Eligible Now",
+            "Supervisor Review",
+            "Pending",
+            "Marked Ineligible",
+          ],
         },
       ],
       tabPrefaceCopy: [],

@@ -457,16 +457,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnSupervisionTypeIsMisdemeanorProbationer",
           text: "On supervision as a misdemeanor probationer",
         },
-        {
-          key: "usTnHomeVisitSinceIntakeSupervisionLevel",
-          text: "First home visit since intake on {{date eligibleDate}}",
-        },
-        {
-          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
-          text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first two months of being placed on community supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
-        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "usTnCompliantReporting2025PolicyReferrals",
@@ -496,17 +486,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnNegativeArrestCheckInPast6Months",
           text: "{{#if record.metadata.latestNegativeArrestCheck.contactDate}} Latest ARRN ({{date record.metadata.latestNegativeArrestCheck.contactDate}}) is more than 6 months old\n{{else}}\nNo recent ARRNs found\n{{/if}}",
           tooltip: "Client has had no arrests in the past 6 months",
-        },
-        {
-          key: "onIntakeFor60Days",
-          text: "Needs {{daysUntil minimumTimeServedDate}} more days on Intake",
-          tooltip: "Clients must be on intake for 60 days",
-        },
-        {
-          key: "usTnThreeFaceToFaceContactsWithin2MonthsOfIntakeSupervisionStart",
-          text: "Did not have 3 face to face contacts within 2 months of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first two months of being placed on community supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
         },
       ],
       initialHeader:
