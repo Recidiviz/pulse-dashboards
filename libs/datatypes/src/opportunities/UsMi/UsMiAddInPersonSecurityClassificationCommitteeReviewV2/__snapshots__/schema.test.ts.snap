@@ -38,6 +38,7 @@ exports[`schema for almostEligible1 1`] = `
   "isEligible": false,
   "metadata": {
     "daysInSolitarySession": 30,
+    "daysInSolitarySessionType": "BUSINESS",
     "jsonAdSegStaysAndReasonsWithin3Yrs": [
       {
         "stayEndDate": 2022-11-07T00:00:00.000Z,
@@ -102,6 +103,7 @@ exports[`schema for almostEligible2 1`] = `
   "isEligible": false,
   "metadata": {
     "daysInSolitarySession": 30,
+    "daysInSolitarySessionType": "BUSINESS",
     "jsonAdSegStaysAndReasonsWithin3Yrs": [
       {
         "stayEndDate": 2022-11-07T00:00:00.000Z,
@@ -171,6 +173,7 @@ exports[`schema for fullyEligible1 1`] = `
   "metadata": {
     "completedProgramming": "105",
     "daysInSolitarySession": 25,
+    "daysInSolitarySessionType": "CALENDAR",
     "jsonAdSegStaysAndReasonsWithin3Yrs": [
       {
         "stayEndDate": 2021-11-03T00:00:00.000Z,
@@ -261,6 +264,7 @@ exports[`schema for fullyEligible2 1`] = `
   "isEligible": true,
   "metadata": {
     "daysInSolitarySession": 50,
+    "daysInSolitarySessionType": "CALENDAR",
     "jsonAdSegStaysAndReasonsWithin3Yrs": [],
     "jsonRecentBondableOffenses": [
       {

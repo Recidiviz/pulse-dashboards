@@ -84,13 +84,17 @@ export function useUsMiSegregationAlertSettings(
 }
 
 function UsMiSegDurationCell({ opp }: { opp: usMiSCCOppV2 }) {
-  const { daysInSolitarySession, solitarySessionType } = opp.record.metadata;
+  const {
+    daysInSolitarySession,
+    solitarySessionType,
+    daysInSolitarySessionType,
+  } = opp.record.metadata;
   const pillSettings = useUsMiSegregationAlertSettings(
     daysInSolitarySession,
     solitarySessionType,
   );
 
-  const duration = simplur`${opp.record.metadata.daysInSolitarySession} day[|s]`;
+  const duration = simplur`${daysInSolitarySession} ${daysInSolitarySessionType.toLowerCase()} day[|s]`;
   if (!pillSettings) return duration;
   const { tooltip, palette } = pillSettings;
 

@@ -64,7 +64,14 @@ const jsonProgrammingSchema = z.object({
 });
 
 export type UsMiSolitarySessionType = z.output<typeof solitarySessionType>;
+export type UsMiDaysInSolitarySessionType = z.output<
+  typeof daysInSolitarySessionType
+>;
 export type ProgrammingMetadata = z.output<typeof jsonProgrammingSchema>;
+
+const daysInSolitarySessionType = z
+  .literal("BUSINESS")
+  .or(z.literal("CALENDAR"));
 
 export const usMiSecurityClassificationCommitteeReviewV2Schema =
   opportunitySchemaBase.extend({
@@ -116,6 +123,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Schema =
         .default([]),
       nextSccDate: dateStringSchema.optional(),
       tabName: z.string(),
+      daysInSolitarySessionType: daysInSolitarySessionType,
     }),
   });
 
