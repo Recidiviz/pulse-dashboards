@@ -83,17 +83,17 @@ const useResourceSearch = (
         );
       }
 
-      const partners = [...(result.resources ?? [])].sort((a, b) =>
-        a.name.localeCompare(b.name),
+      // Sort order: digital resources first, then physical resources by
+      // distance, then physical resources with no distance last.
+      // -Infinity < any real distance < Infinity, so this single numeric
+      // key drives all three tiers without separate passes.
+      const distanceKey = (r: (typeof result.resources)[number]) => {
+        if (r.resource_type === "DIGITAL") return -Infinity;
+        return r.travel_distance_miles ?? Infinity;
+      };
+      const sorted = [...(result.resources ?? [])].sort(
+        (a, b) => distanceKey(a) - distanceKey(b),
       );
-
-      const local = [...(result.resources ?? [])].sort(
-        (a, b) =>
-          (a.travel_distance_miles ?? Infinity) -
-          (b.travel_distance_miles ?? Infinity),
-      );
-
-      const sorted = [...partners, ...local];
       setResults(sorted as ResourceWithMeta[]);
     } catch (e) {
       console.error("Resource search failed:", e);

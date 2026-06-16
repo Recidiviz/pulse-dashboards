@@ -124,32 +124,109 @@ describe("useResourceSearch", () => {
       );
     });
 
-    it("sets results sorted by travel distance after a successful search", async () => {
-      const near = makeResource({
-        id: "near",
-        name: "Near Shelter",
-        travel_distance_miles: 1,
-      });
-      const far = makeResource({
-        id: "far",
-        name: "Far Shelter",
-        travel_distance_miles: 10,
-      });
+    it("sorts physical resources nearest-first", async () => {
+      const near = makeResource({ id: "near", travel_distance_miles: 1 });
+      const far = makeResource({ id: "far", travel_distance_miles: 10 });
       mockMutateAsync.mockResolvedValue(
         makeApiResponse({ resources: [far, near] }),
       );
 
       const { result } = renderHook(() => useResourceSearch(ADDRESS));
-
       await act(async () => {
         await result.current.search(CATEGORY, SUBCATEGORY, 50);
       });
 
-      expect(result.current.results).not.toBeNull();
-      expect(result.current.searchError).toBeNull();
-      const ids = result.current.results?.map((r) => r.id);
-      expect(ids).toContain("near");
-      expect(ids).toContain("far");
+      expect(result.current.results?.map((r) => r.id)).toEqual(["near", "far"]);
+    });
+
+    it("places DIGITAL resources before physical resources", async () => {
+      const physical = makeResource({
+        id: "physical",
+        resource_type: "COMMUNITY",
+        travel_distance_miles: 1,
+      });
+      const digital = makeResource({
+        id: "digital",
+        resource_type: "DIGITAL",
+        travel_distance_miles: null,
+      });
+      mockMutateAsync.mockResolvedValue(
+        makeApiResponse({ resources: [physical, digital] }),
+      );
+
+      const { result } = renderHook(() => useResourceSearch(ADDRESS));
+      await act(async () => {
+        await result.current.search(CATEGORY, SUBCATEGORY, 50);
+      });
+
+      expect(result.current.results?.map((r) => r.id)).toEqual([
+        "digital",
+        "physical",
+      ]);
+    });
+
+    it("places non-digital resources without distance after those with distance", async () => {
+      const withDistance = makeResource({
+        id: "with-distance",
+        resource_type: "COMMUNITY",
+        travel_distance_miles: 5,
+      });
+      const noDistance = makeResource({
+        id: "no-distance",
+        resource_type: "COMMUNITY",
+        travel_distance_miles: null,
+      });
+      mockMutateAsync.mockResolvedValue(
+        makeApiResponse({ resources: [noDistance, withDistance] }),
+      );
+
+      const { result } = renderHook(() => useResourceSearch(ADDRESS));
+      await act(async () => {
+        await result.current.search(CATEGORY, SUBCATEGORY, 50);
+      });
+
+      expect(result.current.results?.map((r) => r.id)).toEqual([
+        "with-distance",
+        "no-distance",
+      ]);
+    });
+
+    it("applies full sort order: digital first, then by distance, then undistanced physical last", async () => {
+      const resources = [
+        makeResource({
+          id: "no-distance",
+          resource_type: "COMMUNITY",
+          travel_distance_miles: null,
+        }),
+        makeResource({
+          id: "far",
+          resource_type: "COMMUNITY",
+          travel_distance_miles: 10,
+        }),
+        makeResource({
+          id: "digital",
+          resource_type: "DIGITAL",
+          travel_distance_miles: null,
+        }),
+        makeResource({
+          id: "near",
+          resource_type: "COMMUNITY",
+          travel_distance_miles: 1,
+        }),
+      ];
+      mockMutateAsync.mockResolvedValue(makeApiResponse({ resources }));
+
+      const { result } = renderHook(() => useResourceSearch(ADDRESS));
+      await act(async () => {
+        await result.current.search(CATEGORY, SUBCATEGORY, 50);
+      });
+
+      expect(result.current.results?.map((r) => r.id)).toEqual([
+        "digital",
+        "near",
+        "far",
+        "no-distance",
+      ]);
     });
 
     it("sets searchError and no results on api_error", async () => {
