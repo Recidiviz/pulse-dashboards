@@ -118,7 +118,8 @@ export type FeatureVariant =
   | "protectiveFactors"
   | "editCountyFields"
   | "mandatoryMinimum"
-  | "SARBuilder";
+  | "SARBuilder"
+  | "SARSignature";
 
 export type FeatureVariantValue = {
   activeDate?: Date;

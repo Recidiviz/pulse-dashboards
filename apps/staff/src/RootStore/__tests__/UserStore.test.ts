@@ -1257,6 +1257,7 @@ describe("feature variants", () => {
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
         "SARBuilder": {},
+        "SARSignature": {},
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
@@ -1341,6 +1342,7 @@ describe("feature variants", () => {
       {
         "EXTRA_FV": {},
         "SARBuilder": {},
+        "SARSignature": {},
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
@@ -1424,6 +1426,7 @@ describe("feature variants", () => {
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
         "SARBuilder": {},
+        "SARSignature": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
         "caseOverview": {},

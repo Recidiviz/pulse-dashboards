@@ -338,10 +338,12 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             <InsightsSummaryPanel presenter={presenter} />
           )}
 
-        <ESignatureSection
-          presenter={presenter}
-          isReportComplete={isReadyForDownload}
-        />
+        {activeFeatureVariants["SARSignature"] && (
+          <ESignatureSection
+            presenter={presenter}
+            isReportComplete={isReadyForDownload}
+          />
+        )}
       </Styled.SummaryWrapper>
 
       {/* PDF report — off-screen, captured by html2canvas + jsPDF on download */}

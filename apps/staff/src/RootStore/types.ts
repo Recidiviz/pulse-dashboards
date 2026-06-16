@@ -175,7 +175,8 @@ export type FeatureVariant =
   | "mandatoryMinimum"
   | "snoozeCompanions"
   | "splitParoleProbationOutcomes"
-  | "SARBuilder";
+  | "SARBuilder"
+  | "SARSignature";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -272,6 +273,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdTasksV2: {},
   crcLikeBeds: {},
   SARBuilder: {},
+  SARSignature: {},
   splitParoleProbationOutcomes: {},
   enableSupervisorReviewChain: {},
   supervisorHomepageReviewCard: {},
@@ -369,6 +371,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         tasksRoutePlanner: { activeTenants: ["US_TX", "US_ID"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         SARBuilder: { activeTenants: ["US_MO"] },
+        SARSignature: { activeTenants: ["US_MO"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
         hideWorkflowsOpportunities: undefined,
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
