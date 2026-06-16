@@ -276,7 +276,7 @@ async function addSARClientsAndReports(
         dueDate: faker.date.future(),
         courtDate: faker.datatype.boolean() ? faker.date.future() : null,
         completionDate: faker.datatype.boolean()
-          ? faker.date.future()
+          ? faker.date.past()
           : undefined,
         address: faker.location.streetAddress(),
         // ORAS Assessment data — domain scores and overall max vary by tool type
@@ -378,6 +378,7 @@ async function addSARClientsAndReports(
         })(),
         assessmentDate: faker.date.recent(),
         assessmentAdministeredBy: faker.person.fullName(),
+        ORASLastUpdatedAt: faker.date.recent(),
       },
     });
 

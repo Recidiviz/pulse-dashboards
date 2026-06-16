@@ -636,6 +636,7 @@ model SentencingAssessmentReport {
   assessmentType            AssessmentType?
   assessmentDate            DateTime?
   assessmentAdministeredBy  String?
+  ORASLastUpdatedAt         DateTime?
   criminalHistoryLevel      Int?
   educationLevelScore       Int? // Renamed to avoid confusion with levelOfEducation
   neighborhoodLevel         Int?

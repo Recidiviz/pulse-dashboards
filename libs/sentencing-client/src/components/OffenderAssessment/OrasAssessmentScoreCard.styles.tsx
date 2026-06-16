@@ -28,21 +28,35 @@ export const Card = styled.div`
   background: ${palette.white};
 `;
 
-export const CardTitle = styled.h3`
+export const CardTitle = styled.div`
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const ORASTitle = styled.span`
   color: ${palette.pine1};
   font-family: "Public Sans";
   font-size: 1.125rem;
   font-weight: 500;
   line-height: 120%;
   letter-spacing: -0.0225rem;
-  margin: 0 0 1.5rem 0;
+`;
+export const ORASUpdatedText = styled.span`
+  color: ${palette.slate60};
+  font-family: "Public Sans";
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: -0.15px;
 `;
 
 export const CardContent = styled.div`
   display: flex;
   gap: 2.5rem;
   align-items: center;
-  padding-left: 2rem;
+  padding: 2rem 1rem 0 0;
 `;
 
 export const MetadataSection = styled.div`
@@ -82,4 +96,5 @@ export const EmptyState = styled.div`
   font-weight: 500;
   line-height: 120%;
   letter-spacing: -0.00875rem;
+  padding-top: 1.5rem;
 `;

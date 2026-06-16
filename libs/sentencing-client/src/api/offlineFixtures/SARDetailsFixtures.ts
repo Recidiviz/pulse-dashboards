@@ -97,6 +97,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     assessmentType: null,
     assessmentDate: null,
     assessmentAdministeredBy: null,
+    ORASLastUpdatedAt: new Date("2026-01-01"),
 
     // Criminal History Levels
     criminalHistoryLevel: 0,

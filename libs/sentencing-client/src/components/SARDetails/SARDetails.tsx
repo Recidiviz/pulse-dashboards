@@ -35,6 +35,7 @@ import { OffenderAssessment } from "../OffenderAssessment";
 import { PriorTreatmentHistorySection } from "../OffenderAssessment/PriorTreatmentHistory/PriorTreatmentHistorySection";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { Recommendation } from "../Recommendation";
+import { Banner } from "../shared/styles/Banner";
 import { TopProgressBar } from "../shared/TopProgressBar";
 import { SkippableTextSection } from "../SkippableTextSection";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
@@ -168,11 +169,11 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
 
         <Styled.ContentLayout>
           {presenter.SARData?.completionDate && (
-            <Styled.CompletionDate>
+            <Banner>
               This investigation was completed on{" "}
               {formatDisplayDate(presenter.SARData.completionDate)} and can no
               longer be edited.
-            </Styled.CompletionDate>
+            </Banner>
           )}
 
           <SARSectionContent

@@ -18,6 +18,7 @@
 import moment from "moment";
 import React from "react";
 
+import { Banner } from "../shared/styles/Banner";
 import {
   AssessmentTypeKey,
   getAssessmentTypeDisplayName,
@@ -26,16 +27,46 @@ import {
 import * as Styled from "./OrasAssessmentScoreCard.styles";
 import { OrasScoreDonut } from "./OrasScoreDonut";
 
+interface ORASHeaderProps {
+  ORASLastUpdatedAt: Date | null;
+  children: React.ReactNode;
+}
+
 interface OrasAssessmentScoreCardProps {
   score: number;
   assessmentType: AssessmentTypeKey | null;
   assessmentDate: Date | string | null;
   administeredBy: string | null;
+  ORASLastUpdatedAt: Date | null;
 }
+
+const ORASCardWrapper: React.FC<ORASHeaderProps> = ({
+  ORASLastUpdatedAt,
+  children,
+}) => {
+  return (
+    <Styled.Card>
+      <Styled.CardTitle>
+        <Styled.ORASTitle>ORAS Assessment Score</Styled.ORASTitle>
+        <Styled.ORASUpdatedText>
+          Last Updated: {moment.utc(ORASLastUpdatedAt).format("l")}
+        </Styled.ORASUpdatedText>
+      </Styled.CardTitle>
+      <Banner>ORAS data regularly updated on Monday evenings.</Banner>
+      {children}
+    </Styled.Card>
+  );
+};
 
 export const OrasAssessmentScoreCard: React.FC<
   OrasAssessmentScoreCardProps
-> = ({ score, assessmentType, assessmentDate, administeredBy }) => {
+> = ({
+  score,
+  assessmentType,
+  assessmentDate,
+  administeredBy,
+  ORASLastUpdatedAt,
+}) => {
   const maxScore =
     assessmentType !== null
       ? OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE[assessmentType] ?? undefined
@@ -43,16 +74,14 @@ export const OrasAssessmentScoreCard: React.FC<
 
   if (!assessmentDate) {
     return (
-      <Styled.Card>
-        <Styled.CardTitle>ORAS Assessment Score</Styled.CardTitle>
+      <ORASCardWrapper ORASLastUpdatedAt={ORASLastUpdatedAt}>
         <Styled.EmptyState>No ORAS assessment on file.</Styled.EmptyState>
-      </Styled.Card>
+      </ORASCardWrapper>
     );
   }
 
   return (
-    <Styled.Card>
-      <Styled.CardTitle>ORAS Assessment Score</Styled.CardTitle>
+    <ORASCardWrapper ORASLastUpdatedAt={ORASLastUpdatedAt}>
       <Styled.CardContent>
         <OrasScoreDonut score={score} maxScore={maxScore} />
         <Styled.MetadataSection>
@@ -65,7 +94,7 @@ export const OrasAssessmentScoreCard: React.FC<
           <Styled.MetadataItem>
             <Styled.MetadataLabel>Assessment date</Styled.MetadataLabel>
             <Styled.MetadataValue>
-              {moment(assessmentDate).utc().format("MM/DD/YYYY")}
+              {moment(assessmentDate).utc().format("l")}
             </Styled.MetadataValue>
           </Styled.MetadataItem>
           <Styled.MetadataItem>
@@ -76,6 +105,6 @@ export const OrasAssessmentScoreCard: React.FC<
           </Styled.MetadataItem>
         </Styled.MetadataSection>
       </Styled.CardContent>
-    </Styled.Card>
+    </ORASCardWrapper>
   );
 };

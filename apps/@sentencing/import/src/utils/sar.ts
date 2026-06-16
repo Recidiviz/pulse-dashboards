@@ -143,6 +143,7 @@ export async function transformAndLoadSARData(
       newSAR["dateRequested"] = sarData.assigned_date;
       newSAR["assessmentAdministeredBy"] = sarData.assessment_administered_by;
       newSAR["assessmentDate"] = sarData.assessment_date;
+      newSAR["ORASLastUpdatedAt"] = sarData.oras_last_updated;
       newSAR["assessmentType"] = sarData.report_type
         ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[sarData.report_type]
         : undefined;

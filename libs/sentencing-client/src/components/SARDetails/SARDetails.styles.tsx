@@ -68,22 +68,3 @@ export const MainContent = styled.div`
   padding-bottom: 2rem;
   gap: 32px;
 `;
-
-export const CompletionDate = styled.div`
-  color: ${palette.pine2};
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.14px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  justify-content: center;
-  gap: 16px;
-  padding: 16px 16px 16px 22px;
-
-  border-left: 4px solid ${palette.logoBlue};
-  background: ${palette.logoBlue}14;
-`;

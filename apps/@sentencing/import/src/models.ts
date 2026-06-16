@@ -170,6 +170,7 @@ export const SARImportSchema = z.object({
       }),
     )
     .optional(),
+  oras_last_updated: z.coerce.date().nullish(),
 });
 
 export const chargeImportSchema = z.object({

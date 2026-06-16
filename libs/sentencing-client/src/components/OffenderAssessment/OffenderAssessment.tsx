@@ -186,6 +186,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           assessmentType={assessmentType ?? null}
           assessmentDate={assessmentDate ?? null}
           administeredBy={assessmentAdministeredBy ?? null}
+          ORASLastUpdatedAt={presenter.SARData?.ORASLastUpdatedAt ?? null}
         />
 
         {presenter.offenderAssessment.hasOrasAssessment && (
