@@ -84,6 +84,9 @@ export type FeatureVariant =
   | "sentenceProgressV2"
   | "useRecordForIneligibleOpps"
 
+  //// Arizona
+  | "usAzAdminSupervisionApprovalFlow"
+
   //// California
   | "usCaEnableSMS"
 
@@ -194,6 +197,7 @@ export type FeatureVariantOverrideRecord = PartialRecord<
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
+  usAzAdminSupervisionApprovalFlow: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
   usCaEnableSMS: {},

@@ -18,7 +18,11 @@
 import { observer } from "mobx-react-lite";
 
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
-import { deleteSubmitted, markSubmittedAndToast } from "../DropdownMenuButton";
+import {
+  deleteSubmitted,
+  DropdownMenuButton,
+  markSubmittedAndToast,
+} from "../DropdownMenuButton";
 import { StatusAwareButton } from "../MenuButton.styles";
 
 export const UsAzMarkSubmittedButton = observer(
@@ -75,6 +79,15 @@ const UsAzMenuButton = observer(function UsAzMenuButton({
     ? `Update ${opportunity.config.denialNoun}`
     : opportunity.config.denialButtonText ??
       `Mark ${opportunity.config.denialAdjective}`;
+
+  if (opportunity.config.supportsSupervisorReviewOnGrants) {
+    return (
+      <DropdownMenuButton
+        opportunity={opportunity}
+        onDenialButtonClick={onDenialButtonClick}
+      />
+    );
+  }
 
   return (
     <>

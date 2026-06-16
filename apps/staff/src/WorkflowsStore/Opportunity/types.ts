@@ -296,6 +296,7 @@ export type OpportunityTab =
   // For US_AZ Admin Supervision
   | "Eligible per Initial Assessment"
   | "Eligible per ORAS"
+  | "Submitted for Supervisor Review"
 
   // For US_UT Early Termination
   | "Report Due (Other)"

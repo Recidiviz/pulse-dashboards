@@ -372,6 +372,7 @@ export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
   if (
     row.original instanceof UsAzTransferToAdministrativeSupervisionOpportunity
   ) {
+    if (row.original.config.supportsSupervisorReviewOnGrants) return null;
     return (
       <RightAlignedWrapper>
         <UsAzMarkSubmittedButton opportunity={row.original} />

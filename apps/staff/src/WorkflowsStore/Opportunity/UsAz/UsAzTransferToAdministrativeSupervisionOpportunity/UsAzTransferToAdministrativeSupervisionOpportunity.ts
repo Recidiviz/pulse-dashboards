@@ -41,6 +41,8 @@ export class UsAzTransferToAdministrativeSupervisionOpportunity extends Opportun
   tabTitle(): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     if (this.isSubmitted) return this.submittedTabTitle;
+    if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
+    if (this.isGrantApproved) return this.grantApprovedTabTitle;
     if (this.almostEligible) return "Eligible per Initial Assessment";
     return "Eligible per ORAS";
   }

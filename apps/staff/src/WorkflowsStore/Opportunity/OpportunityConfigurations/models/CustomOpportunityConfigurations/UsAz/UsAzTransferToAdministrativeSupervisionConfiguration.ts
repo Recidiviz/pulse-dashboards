@@ -18,7 +18,11 @@
 import { countBy } from "lodash";
 
 import { PartialRecord } from "../../../../../../utils/typeUtils";
-import { Opportunity, OpportunityTab } from "../../../../types";
+import {
+  Opportunity,
+  OpportunityTab,
+  OpportunityTabGroups,
+} from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzTransferToAdministrativeSupervisionConfiguration extends ApiOpportunityConfiguration {
@@ -34,5 +38,40 @@ export class UsAzTransferToAdministrativeSupervisionConfiguration extends ApiOpp
 
   get customSubmittedText(): string {
     return "Don't forget to remove them from the [drug testing schedule](https://aversys.averhealth.com).";
+  }
+
+  get tabGroups(): OpportunityTabGroups {
+    if (!this.supportsSupervisorReviewOnGrants) return super.tabGroups;
+    return {
+      "ELIGIBILITY STATUS": [
+        "Eligible per ORAS",
+        "Eligible per Initial Assessment",
+        this.supervisorReviewTabTitle,
+        this.grantApprovedTabTitle,
+        this.submittedTabTitle,
+        this.deniedTabTitle,
+      ],
+    };
+  }
+
+  get supportsSupervisorReviewOnGrants(): boolean {
+    return !!this.userStore.activeFeatureVariants
+      .usAzAdminSupervisionApprovalFlow;
+  }
+
+  get supervisorReviewTabTitle(): OpportunityTab {
+    return "Submitted for Supervisor Review";
+  }
+
+  get grantApprovedTabTitle(): OpportunityTab {
+    return "Approved by Supervisor";
+  }
+
+  get grantApprovedStatusMessage(): string {
+    return "Approved by Supervisor";
+  }
+
+  get grantReviewDropdownLabel(): string {
+    return "Submit for Supervisor Approval";
   }
 }
