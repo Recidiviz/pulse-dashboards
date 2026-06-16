@@ -34,3 +34,4 @@ components:
         server_env_secrets_filename: env.production.enc.yaml
         secrets_filename: "{{ .settings.context.secrets_filename }}"
         firebase_auth_project_id: recidiviz-dashboard-production
+        import_job_sentry_env: production

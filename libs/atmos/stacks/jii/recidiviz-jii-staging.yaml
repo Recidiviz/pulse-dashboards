@@ -38,3 +38,4 @@ components:
         server_env_secrets_filename: env.staging.enc.yaml
         secrets_filename: "{{ .settings.context.secrets_filename }}"
         firebase_auth_project_id: recidiviz-dashboard-staging
+        import_job_sentry_env: staging

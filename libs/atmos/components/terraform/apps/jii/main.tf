@@ -190,8 +190,8 @@ module "import_job" {
   project_id = var.project_id
   location   = var.location
   env_vars = [
-    { name = "SENTRY_DSN", value = "https://324bfceba46756ff2b971747e423abc6@o432474.ingest.us.sentry.io/4508914785714176" },
-    { name = "SENTRY_PROJECT", value = var.import_job_name },
+    { name = "SENTRY_DSN", value = "https://15a3451c0249dd034129780d4f801daf@o432474.ingest.us.sentry.io/4511576564629504" },
+    { name = "SENTRY_ENV", value = var.import_job_sentry_env },
     { name = "IMPORT_BUCKET_ID", value = module.gcs_bucket.names[var.etl_bucket_name] }
   ]
   cloud_run_deletion_protection = false

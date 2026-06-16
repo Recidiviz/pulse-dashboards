@@ -138,3 +138,8 @@ variable "archive_bucket_name" {
   description = "The name of the GCS bucket used for archives of the data in the ETL bucket"
   default     = "jii-etl-data-archive"
 }
+
+variable "import_job_sentry_env" {
+  type        = string
+  description = "The environment to be used when reporting issues to Sentry from the data import job"
+}

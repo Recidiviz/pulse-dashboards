@@ -66,8 +66,9 @@
       },
       "defaultConfiguration": "dev"
     },
+    "requires-sops-env:upload-sourcemaps": {},
     "container": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "upload-sourcemaps"],
       "executor": "@nx-tools/nx-container:build",
       "cwd": "{projectRoot}",
       "options": {
