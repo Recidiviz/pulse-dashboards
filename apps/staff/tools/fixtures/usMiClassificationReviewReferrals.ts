@@ -69,4 +69,60 @@ export const UsMiClassificationReviewReferralsFixture =
       isEligible: true,
       isAlmostEligible: false,
     },
+    {
+      stateCode: "US_MI",
+      externalId: "cr-ae-1",
+      eligibleCriteria: {
+        usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+          supervisionLevel: "MAXIMUM",
+          mediumIsLowestSupervisionLevelAllowed: null,
+        },
+      },
+      ineligibleCriteria: {
+        usMiPastInitialClassificationReviewDate: {
+          eligibleDate: "2026-12-01",
+        },
+      },
+      metadata: { recommendedSupervisionLevel: "MEDIUM" },
+      caseNotes: {},
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      stateCode: "US_MI",
+      externalId: "cr-ae-denied-1",
+      eligibleCriteria: {
+        usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+          supervisionLevel: "MAXIMUM",
+          mediumIsLowestSupervisionLevelAllowed: null,
+        },
+      },
+      ineligibleCriteria: {
+        usMiPastInitialClassificationReviewDate: {
+          eligibleDate: "2027-01-01",
+        },
+      },
+      metadata: { recommendedSupervisionLevel: "MEDIUM" },
+      caseNotes: {},
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      stateCode: "US_MI",
+      externalId: "cr-pending-1",
+      eligibleCriteria: {
+        usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+          supervisionLevel: "MAXIMUM",
+          mediumIsLowestSupervisionLevelAllowed: null,
+        },
+        usMiPastInitialClassificationReviewDate: {
+          eligibleDate: "2024-11-01",
+        },
+      },
+      ineligibleCriteria: {},
+      metadata: { recommendedSupervisionLevel: "MEDIUM" },
+      caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
   ]);

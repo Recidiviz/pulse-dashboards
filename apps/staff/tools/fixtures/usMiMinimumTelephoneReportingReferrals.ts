@@ -43,5 +43,95 @@ export const usMiMinimumTelephoneReportingReferralsFixture =
         isEligible: true,
         isAlmostEligible: false,
       },
+      {
+        stateCode: "US_MI",
+        externalId: "mtr-ae-1",
+        eligibleCriteria: {
+          usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+            initialAssessmentLevel: "MEDIUM",
+            supervisionLevelRawText: "MEDIUM",
+          },
+          usMiNotServingIneligibleOffensesForTelephoneReporting: null,
+          usMiNotRequiredToRegisterUnderSora: null,
+          supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
+          usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
+        },
+        ineligibleCriteria: {
+          onMinimumSupervisionAtLeastSixMonths: {
+            eligibleDate: "2026-12-01",
+          },
+        },
+        metadata: {
+          eligibleDate: "2026-12-01",
+        },
+        isEligible: false,
+        isAlmostEligible: true,
+      },
+      {
+        stateCode: "US_MI",
+        externalId: "mtr-pending-1",
+        eligibleCriteria: {
+          onMinimumSupervisionAtLeastSixMonths: null,
+          usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+            initialAssessmentLevel: "MEDIUM",
+            supervisionLevelRawText: "MEDIUM",
+          },
+          usMiNotServingIneligibleOffensesForTelephoneReporting: null,
+          usMiNotRequiredToRegisterUnderSora: null,
+          supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
+          usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
+        },
+        ineligibleCriteria: {},
+        metadata: {
+          eligibleDate: "2024-06-01",
+        },
+        isEligible: true,
+        isAlmostEligible: false,
+      },
+      {
+        stateCode: "US_MI",
+        externalId: "mtr-sr-1",
+        eligibleCriteria: {
+          onMinimumSupervisionAtLeastSixMonths: null,
+          usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+            initialAssessmentLevel: "MEDIUM",
+            supervisionLevelRawText: "MEDIUM",
+          },
+          usMiNotServingIneligibleOffensesForTelephoneReporting: null,
+          usMiNotRequiredToRegisterUnderSora: null,
+          supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
+          usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
+        },
+        ineligibleCriteria: {},
+        metadata: {
+          eligibleDate: "2024-01-01",
+        },
+        isEligible: true,
+        isAlmostEligible: false,
+      },
+      {
+        stateCode: "US_MI",
+        externalId: "mtr-ae-denied-1",
+        eligibleCriteria: {
+          usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+            initialAssessmentLevel: "MEDIUM",
+            supervisionLevelRawText: "MEDIUM",
+          },
+          usMiNotServingIneligibleOffensesForTelephoneReporting: null,
+          usMiNotRequiredToRegisterUnderSora: null,
+          supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
+          usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
+        },
+        ineligibleCriteria: {
+          onMinimumSupervisionAtLeastSixMonths: {
+            eligibleDate: "2026-09-01",
+          },
+        },
+        metadata: {
+          eligibleDate: "2026-09-01",
+        },
+        isEligible: false,
+        isAlmostEligible: true,
+      },
     ],
   );

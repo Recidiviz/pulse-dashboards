@@ -341,4 +341,122 @@ export const usMiEarlyDischargeReferralsFixture =
       isEligible: true,
       isAlmostEligible: false,
     },
+    {
+      stateCode: "US_MI",
+      externalId: "ed-ae-1",
+      metadata: {
+        supervisionType: "Probation",
+        eligibleDate: "2026-11-01",
+      },
+      eligibleCriteria: {
+        supervisionNotPastFullTermCompletionDate: {
+          eligibleDate: "2022-03-01",
+        },
+        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+          latestIneligibleConvictions: [],
+        },
+        usMiNoActivePpo: {
+          activePpo: false,
+        },
+        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+          {
+            currentOffenses: [],
+          },
+      },
+      ineligibleCriteria: {
+        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+          eligibleDate: "2026-11-01",
+        },
+      },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      stateCode: "US_MI",
+      externalId: "ed-ae-denied-1",
+      metadata: {
+        supervisionType: "Probation",
+        eligibleDate: "2026-12-01",
+      },
+      eligibleCriteria: {
+        supervisionNotPastFullTermCompletionDate: {
+          eligibleDate: "2022-03-01",
+        },
+        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+          latestIneligibleConvictions: [],
+        },
+        usMiNoActivePpo: {
+          activePpo: false,
+        },
+        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+          {
+            currentOffenses: [],
+          },
+      },
+      ineligibleCriteria: {
+        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+          eligibleDate: "2026-12-01",
+        },
+      },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      stateCode: "US_MI",
+      externalId: "ed-pending-1",
+      metadata: {
+        supervisionType: "Probation",
+        eligibleDate: "2024-09-01",
+      },
+      eligibleCriteria: {
+        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+          eligibleDate: "2022-03-01",
+        },
+        supervisionNotPastFullTermCompletionDate: {
+          eligibleDate: "2022-03-01",
+        },
+        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+          latestIneligibleConvictions: [],
+        },
+        usMiNoActivePpo: {
+          activePpo: false,
+        },
+        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+          {
+            currentOffenses: [],
+          },
+      },
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_MI",
+      externalId: "ed-sr-1",
+      metadata: {
+        supervisionType: "Probation",
+        eligibleDate: "2024-02-01",
+      },
+      eligibleCriteria: {
+        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+          eligibleDate: "2022-03-01",
+        },
+        supervisionNotPastFullTermCompletionDate: {
+          eligibleDate: "2022-03-01",
+        },
+        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+          latestIneligibleConvictions: [],
+        },
+        usMiNoActivePpo: {
+          activePpo: false,
+        },
+        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+          {
+            currentOffenses: [],
+          },
+      },
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
   ]);

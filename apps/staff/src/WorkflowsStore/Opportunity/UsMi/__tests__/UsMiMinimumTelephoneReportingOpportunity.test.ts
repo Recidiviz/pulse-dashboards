@@ -132,4 +132,28 @@ describe("almost eligible", () => {
   test("subcategory returns ALMOST_ELIGIBLE", () => {
     expect(opp.subcategory).toBe("ALMOST_ELIGIBLE");
   });
+
+  test("tabTitle returns deniedTabTitle when denied", () => {
+    updatesSub.data = {
+      denial: {
+        reasons: ["INELIGIBLE_OFFENSE"],
+        updated: { by: "foo", date: vi.fn() as any },
+      },
+      stateCode: "US_MI",
+    };
+    expect(opp.tabTitle()).toBe(opp.deniedTabTitle);
+    expect(opp.tabTitle()).not.toBe("Eligible Now");
+  });
+
+  test("tabTitle returns submittedTabTitle when submitted", () => {
+    updatesSub.data = {
+      submitted: {
+        date: { toDate: () => new Date() } as any,
+        by: "foo",
+      },
+      stateCode: "US_MI",
+    };
+    expect(opp.tabTitle()).toBe(opp.submittedTabTitle);
+    expect(opp.tabTitle()).not.toBe("Eligible Now");
+  });
 });

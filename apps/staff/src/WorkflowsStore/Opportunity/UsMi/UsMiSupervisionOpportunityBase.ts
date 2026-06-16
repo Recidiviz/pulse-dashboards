@@ -42,8 +42,10 @@ export abstract class UsMiSupervisionOpportunityBase<
   protected readonly eligibleTabTitle = "Eligible Now";
 
   tabTitle(): OpportunityTab {
-    if (this.almostEligible) return this.eligibleTabTitle;
-    return super.tabTitle();
+    const parentTab = super.tabTitle();
+    if (this.almostEligible && parentTab === "Almost Eligible")
+      return this.eligibleTabTitle;
+    return parentTab;
   }
 
   get subcategory(): UsMiSupervisionOpportunitySubcategory | undefined {

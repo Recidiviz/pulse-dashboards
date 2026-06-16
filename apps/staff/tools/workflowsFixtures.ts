@@ -346,6 +346,71 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     },
   ];
 
+  const deniedUpdates: Array<{
+    recordId: string;
+    opportunityType: string;
+    stateCode: string;
+    denialReason: string;
+  }> = [
+    {
+      recordId: "us_mi_mtr-ae-denied-1",
+      opportunityType: "usMiMinimumTelephoneReporting",
+      stateCode: "US_MI",
+      denialReason: "FIREARM",
+    },
+    {
+      recordId: "us_mi_ed-ae-denied-1",
+      opportunityType: "usMiEarlyDischarge",
+      stateCode: "US_MI",
+      denialReason: "NONCOMPLIANT",
+    },
+    {
+      recordId: "us_mi_cr-ae-denied-1",
+      opportunityType: "usMiClassificationReview",
+      stateCode: "US_MI",
+      denialReason: "NONCOMPLIANT",
+    },
+  ];
+
+  const submittedUpdates2: Array<{
+    recordId: string;
+    opportunityType: string;
+    stateCode: string;
+  }> = [
+    {
+      recordId: "us_mi_mtr-pending-1",
+      opportunityType: "usMiMinimumTelephoneReporting",
+      stateCode: "US_MI",
+    },
+    {
+      recordId: "us_mi_ed-pending-1",
+      opportunityType: "usMiEarlyDischarge",
+      stateCode: "US_MI",
+    },
+    {
+      recordId: "us_mi_cr-pending-1",
+      opportunityType: "usMiClassificationReview",
+      stateCode: "US_MI",
+    },
+  ];
+
+  const supervisorReviewUpdates: Array<{
+    recordId: string;
+    opportunityType: string;
+    stateCode: string;
+  }> = [
+    {
+      recordId: "us_mi_mtr-sr-1",
+      opportunityType: "usMiMinimumTelephoneReporting",
+      stateCode: "US_MI",
+    },
+    {
+      recordId: "us_mi_ed-sr-1",
+      opportunityType: "usMiEarlyDischarge",
+      stateCode: "US_MI",
+    },
+  ];
+
   const staleLastViewedUpdates: Array<{
     recordId: string;
     opportunityType: string;
@@ -375,6 +440,67 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
         date: Timestamp.fromDate(subDays(new Date(), update.submittedDaysAgo)),
         by: "staff@recidiviz.org",
       },
+      stateCode: update.stateCode,
+    });
+  }
+
+  for (const update of deniedUpdates) {
+    const docRef = db
+      .collection(collectionName)
+      .doc(update.recordId)
+      .collection(subcollection)
+      .doc(update.opportunityType);
+
+    bulkWriter.set(docRef, {
+      denial: {
+        reasons: [update.denialReason],
+        updated: {
+          date: Timestamp.fromDate(subDays(new Date(), 1)),
+          by: "staff@recidiviz.org",
+        },
+      },
+      manualSnooze: {
+        snoozedBy: "staff@recidiviz.org",
+        snoozedOn: subDays(new Date(), 1).toISOString(),
+        snoozeForDays: 90,
+      },
+      stateCode: update.stateCode,
+    });
+  }
+
+  for (const update of submittedUpdates2) {
+    const docRef = db
+      .collection(collectionName)
+      .doc(update.recordId)
+      .collection(subcollection)
+      .doc(update.opportunityType);
+
+    bulkWriter.set(docRef, {
+      submitted: {
+        date: Timestamp.fromDate(subDays(new Date(), 3)),
+        by: "staff@recidiviz.org",
+      },
+      stateCode: update.stateCode,
+    });
+  }
+
+  for (const update of supervisorReviewUpdates) {
+    const docRef = db
+      .collection(collectionName)
+      .doc(update.recordId)
+      .collection(subcollection)
+      .doc(update.opportunityType);
+
+    bulkWriter.set(docRef, {
+      actionHistory: [
+        {
+          type: "APPROVAL",
+          date: Timestamp.fromDate(subDays(new Date(), 1)),
+          by: "staff@recidiviz.org",
+          updateById: "staff",
+          isStale: false,
+        },
+      ],
       stateCode: update.stateCode,
     });
   }
