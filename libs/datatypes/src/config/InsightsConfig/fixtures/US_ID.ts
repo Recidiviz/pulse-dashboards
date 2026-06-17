@@ -115,6 +115,7 @@ export const US_ID: InsightsConfig = {
       bodyDisplayName: "Contact",
     },
   ],
-  vitalsMetricsMethodologyUrl: "https://www.recidiviz.org/",
+  vitalsMetricsMethodologyUrl:
+    "https://docs.google.com/document/d/e/2PACX-1vRN_KixvGRM-PlVlgyqThRaehhmXs-1j3iNJBOv9XWW00caonEqd4t0czI1ohN6VjyJWc16AqCr7rUg/pub",
   worseThanRateLabel: "Far above the statewide rate",
 };
