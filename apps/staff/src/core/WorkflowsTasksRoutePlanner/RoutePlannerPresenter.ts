@@ -351,7 +351,7 @@ export class RoutePlannerPresenter {
       return;
     }
     return this.workflowsStore.rootStore.apiStore.client.post(
-      `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/US_TX/email_user`,
+      `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/${this.stateCode}/email_user`,
       requestBody,
     );
   }
