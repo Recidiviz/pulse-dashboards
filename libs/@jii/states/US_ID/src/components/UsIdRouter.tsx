@@ -22,14 +22,11 @@ import { ReentryAssessment } from "~@jii/paths";
 
 import { PageHome } from "./pages/PageHome";
 import { PageIntakeAssessment } from "./pages/PageIntakeAssessment";
-import { PageInterview } from "./pages/PageInterview";
-
 export const UsIdRouter = () => {
   return (
     <Routes>
       <Route index element={<PageHome />} />
       <Route path={ReentryAssessment.path} element={<PageIntakeAssessment />} />
-      <Route path="cpa" element={<PageInterview />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

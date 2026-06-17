@@ -21,7 +21,6 @@ import { TRPCClient } from "@trpc/client";
 import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
-import { CPAStore } from "~@cpa/staff-client";
 import type { JiiStaffAppRouter } from "~@jii/trpc-types";
 import { isTestEnv } from "~client-env-utils";
 import { FirebaseAuthClient } from "~firebase-auth";
@@ -124,8 +123,6 @@ export class RootStore {
 
   sentencingStore: SentencingStore;
 
-  cpaStore: CPAStore;
-
   firebaseAuthClient: FirebaseAuthClient;
 
   jiiTrpc: {
@@ -185,8 +182,6 @@ export class RootStore {
     this.insightsStore = new InsightsStore(this);
 
     this.sentencingStore = new SentencingStore(this);
-
-    this.cpaStore = new CPAStore(this);
 
     this.jiiTrpc = createJiiTrpcClient({
       firebaseAuthClient: this.firebaseAuthClient,

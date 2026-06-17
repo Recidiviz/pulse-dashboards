@@ -465,7 +465,6 @@ const BetaPill = styled(Pill)`
   border-radius: 4px;
 `;
 
-// TODO(#11341) - Remove external CPA navigation link when CPA is integrated into staff app
 function CPALink({ enabled }: OptionalLinkProps) {
   const { isMobile } = useIsMobile(true);
 
@@ -691,7 +690,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
 
     const isPsiSupervisor = isPsiStaff && sentencingStore.isSupervisor;
 
-    // TODO(#11341) - Remove external CPA navigation link when CPA is integrated into staff app
     const enabledCPA = userStore.getRoutePermission("cpa");
     const hasMeetingsSupervisionPermission = userStore.getRoutePermission(
       "meetingsSupervision",

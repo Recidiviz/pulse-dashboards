@@ -19,7 +19,6 @@
 
 import { groupBy } from "lodash";
 
-import { cpaRootPath } from "~@cpa/staff-client";
 import { SystemId } from "~datatypes";
 import { psiRootPath, sarRootPath } from "~sentencing-client";
 
@@ -39,7 +38,6 @@ export const DASHBOARD_VIEWS = {
   directorDashboard: "directorDashboard",
   psi: psiRootPath,
   sar: sarRootPath,
-  cpa: cpaRootPath,
   revocations: "revocations", // lantern
 } as const;
 export type DashboardViewRootPath = (typeof DASHBOARD_VIEWS)[DashboardView];
@@ -68,7 +66,6 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   insights: `/${DASHBOARD_VIEWS.insights}`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
   psi: `/${DASHBOARD_VIEWS.psi}`,
-  cpa: `/${DASHBOARD_VIEWS.cpa}`,
 };
 
 // Strings that can appear in a Workflows path directly following /workflows/,

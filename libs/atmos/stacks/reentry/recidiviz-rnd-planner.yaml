@@ -1,4 +1,3 @@
-# Infrastructure configuration for the legacy reentry app in recidiviz-rnd-planner
 settings:
   context:
     project_id: recidiviz-rnd-planner
