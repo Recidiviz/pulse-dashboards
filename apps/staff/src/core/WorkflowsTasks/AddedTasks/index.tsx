@@ -16,10 +16,11 @@
 // =============================================================================
 
 import { ErrorBoundary } from "@sentry/react";
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 
 import { useLazyWithRetry } from "../../../utils/lazyWithRetry";
 import { Client } from "../../../WorkflowsStore";
+import { TaskSectionFilter } from "../TaskSectionFilter";
 import { AddedTasksError } from "./AddedTasksError";
 import { AddedTasksSkeleton } from "./AddedTasksSkeleton";
 
@@ -30,9 +31,13 @@ type AddedTasksProps = {
    * with the live body (`<Suspense>` wrapping the lazy section) and again
    * inside the boundary fallback with `<AddedTasksError />`, so the heading
    * stays attached to the body whether the section is loading, hydrated,
-   * or failed.
+   * or failed. The second argument is the "Show Completed" filter node, so
+   * the host can place it in the section heading in every state.
    */
-  renderShell: (body: React.ReactNode) => React.ReactElement;
+  renderShell: (
+    body: React.ReactNode,
+    filter: React.ReactNode,
+  ) => React.ReactElement;
 };
 
 /**
@@ -57,6 +62,17 @@ function AddedTasks({
     () => import("./AddedTasksSection"),
   );
 
+  const [showCompleted, setShowCompleted] = useState(false);
+
+  const filter = (
+    <TaskSectionFilter
+      label="Show Completed"
+      checked={showCompleted}
+      onChange={setShowCompleted}
+      testId="added-tasks-filter"
+    />
+  );
+
   const fallback = ({
     resetError,
   }: {
@@ -70,14 +86,16 @@ function AddedTasks({
           resetError();
         }}
       />,
+      filter,
     );
 
   return (
     <ErrorBoundary fallback={fallback}>
       {renderShell(
         <Suspense fallback={<AddedTasksSkeleton />}>
-          <AddedTasksSection person={client} />
+          <AddedTasksSection person={client} showCompleted={showCompleted} />
         </Suspense>,
+        filter,
       )}
     </ErrorBoundary>
   );

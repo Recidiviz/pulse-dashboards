@@ -18,7 +18,7 @@
 import { Sans12, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -37,6 +37,7 @@ import { PreviewModalFooter } from "../WorkflowsJusticeInvolvedPersonProfile/Opp
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import AddedTasks from "./AddedTasks";
 import { PreviewTasks } from "./PreviewTasks";
+import { FilterHeaderRow, TaskSectionFilter } from "./TaskSectionFilter";
 
 export const TaskItemDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
@@ -94,6 +95,8 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
   } = useRootStore();
   const { customTasks } = useFeatureVariants();
 
+  const [showHidden, setShowHidden] = useState(false);
+
   useEffect(() => {
     if (selectedClient) {
       selectedClient.supervisionTasks?.trackPreviewed(
@@ -126,14 +129,40 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
       pageContent={
         <article>
           <Heading person={selectedClient} />
-          <TaskItemHeader>Tasks</TaskItemHeader>
-          <PreviewTasks person={selectedClient} showSnoozeDropdown />
+          {/* The "Show Hidden" filter + hide-snoozed default are US_MO-only,
+              gated on the `customTasks` variant. Other tenants keep the
+              original behavior: a plain header showing all tasks. */}
+          {customTasks ? (
+            <TaskItemHeader>
+              <FilterHeaderRow>
+                <span>Tasks</span>
+                <TaskSectionFilter
+                  label="Show Hidden"
+                  checked={showHidden}
+                  onChange={setShowHidden}
+                  testId="tasks-filter"
+                />
+              </FilterHeaderRow>
+            </TaskItemHeader>
+          ) : (
+            <TaskItemHeader>Tasks</TaskItemHeader>
+          )}
+          <PreviewTasks
+            person={selectedClient}
+            showSnoozeDropdown
+            hideSnoozed={!!customTasks && !showHidden}
+          />
           {customTasks && (
             <AddedTasks
               client={selectedClient}
-              renderShell={(body) => (
+              renderShell={(body, filter) => (
                 <>
-                  <TaskItemHeader>Added Tasks</TaskItemHeader>
+                  <TaskItemHeader>
+                    <FilterHeaderRow>
+                      <span>Added Tasks</span>
+                      {filter}
+                    </FilterHeaderRow>
+                  </TaskItemHeader>
                   {body}
                 </>
               )}

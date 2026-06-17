@@ -67,7 +67,18 @@ function findKebabButton(): HTMLElement {
 }
 
 describe("AddedTaskRow", () => {
-  test("renders title, due date, and the kebab", () => {
+  // Pin "now" so the relative due-date copy is deterministic. Fake only the
+  // Date constructor so React's scheduler timers are untouched. Anchor at
+  // Mon May 18, 2026 (well before the default June 1 fixture dueDate).
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 4, 18));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("renders title, relative due date, and the kebab", () => {
     render(
       <AddedTaskRow
         task={makeRecord({ title: "Call client" })}
@@ -78,7 +89,8 @@ describe("AddedTaskRow", () => {
       />,
     );
     expect(screen.getByText("Call client")).toBeInTheDocument();
-    expect(screen.getByText(/^Due Jun 1, 2026$/)).toBeInTheDocument();
+    // June 1 is two weeks out from the pinned May 18 "now".
+    expect(screen.getByText(/^Due in 14 days$/)).toBeInTheDocument();
     expect(findKebabButton()).toBeInTheDocument();
   });
 
@@ -110,13 +122,9 @@ describe("AddedTaskRow", () => {
 
   describe("derived completion state for recurring tasks", () => {
     beforeEach(() => {
-      // Fake just the Date constructor so React's scheduler timers are
-      // untouched. Anchor "now" at Mon Jun 22, 2026.
-      vi.useFakeTimers({ toFake: ["Date"] });
+      // Outer beforeEach already enabled fake timers (Date only); just move
+      // the anchor to Mon Jun 22, 2026 for these recurring-cycle cases.
       vi.setSystemTime(new Date(2026, 5, 22));
-    });
-    afterEach(() => {
-      vi.useRealTimers();
     });
 
     test("recurring task completed in the current cycle renders as completed and shows the next cycle's date", () => {
@@ -137,7 +145,8 @@ describe("AddedTaskRow", () => {
         />,
       );
       expect(screen.getByRole("checkbox")).toBeChecked();
-      expect(screen.getByText(/Due Jun 26, 2026/)).toBeInTheDocument();
+      // Next cycle (Jun 26) is 4 days out from the pinned Jun 22 "now".
+      expect(screen.getByText(/Due in 4 days/)).toBeInTheDocument();
     });
 
     test("recurring task with completedOn from a past cycle auto-resets to incomplete", () => {
@@ -159,8 +168,9 @@ describe("AddedTaskRow", () => {
         />,
       );
       expect(screen.getByRole("checkbox")).not.toBeChecked();
-      // The "next due" after Jun 12 17:00 is Jun 19; row shows that cycle.
-      expect(screen.getByText(/Due Jun 19, 2026/)).toBeInTheDocument();
+      // The "next due" after Jun 12 17:00 is Jun 19; that cycle is 3 days
+      // before the pinned Jun 22 "now".
+      expect(screen.getByText(/Due 3 days ago/)).toBeInTheDocument();
     });
   });
 
@@ -174,7 +184,7 @@ describe("AddedTaskRow", () => {
         onEditEnd={vi.fn()}
       />,
     );
-    expect(screen.getByText(/Due Jun 1, 2026/)).toBeInTheDocument();
+    expect(screen.getByText(/Due in 14 days/)).toBeInTheDocument();
   });
 
   test("toggling the checkbox calls customTasks.toggleCustomTaskCompleted with the new state", () => {
@@ -237,6 +247,91 @@ describe("AddedTaskRow", () => {
     );
     const title = screen.getByText("Done");
     expect(title).toHaveStyleRule("color", palette.slate70);
+  });
+
+  describe("due-date copy and color", () => {
+    // Pinned "now" is Mon May 18, 2026 from the outer beforeEach.
+    test("an overdue (not completed) task reads relative '... ago' and renders red", () => {
+      render(
+        <AddedTaskRow
+          // May 1 + 2-day grace = May 3, well past the pinned May 18 "now".
+          task={makeRecord({ dueDate: new Date(2026, 4, 1) })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      const dueDate = screen.getByText(/Due 17 days ago/);
+      expect(dueDate).toBeInTheDocument();
+      expect(dueDate).toHaveStyleRule("color", palette.signal.error);
+    });
+
+    test("a due-today task reads 'Due today' and is not red", () => {
+      render(
+        <AddedTaskRow
+          task={makeRecord({ dueDate: new Date(2026, 4, 18, 9) })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      const dueDate = screen.getByText(/Due today/);
+      expect(dueDate).toBeInTheDocument();
+      expect(dueDate).not.toHaveStyleRule("color", palette.signal.error);
+      expect(dueDate).toHaveStyleRule("color", palette.slate70);
+    });
+
+    test("an upcoming task reads relative 'in ...' and is not red", () => {
+      render(
+        <AddedTaskRow
+          task={makeRecord({ dueDate: new Date(2026, 4, 23) })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      const dueDate = screen.getByText(/Due in 5 days/);
+      expect(dueDate).toBeInTheDocument();
+      expect(dueDate).not.toHaveStyleRule("color", palette.signal.error);
+      expect(dueDate).toHaveStyleRule("color", palette.slate70);
+    });
+
+    test("a within-grace task (1 day past, inside the 2-day window) is not yet red", () => {
+      render(
+        <AddedTaskRow
+          // May 17 + 2-day grace = May 19, still after the May 18 "now".
+          task={makeRecord({ dueDate: new Date(2026, 4, 17) })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      const dueDate = screen.getByText(/Due 1 day ago/);
+      expect(dueDate).not.toHaveStyleRule("color", palette.signal.error);
+      expect(dueDate).toHaveStyleRule("color", palette.slate70);
+    });
+
+    test("a completed task with a past due date is muted slate, never red", () => {
+      render(
+        <AddedTaskRow
+          task={makeRecord({
+            dueDate: new Date(2026, 4, 1),
+            completedOn: new Date(2026, 4, 2),
+          })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      const dueDate = screen.getByText(/Due 17 days ago/);
+      expect(dueDate).not.toHaveStyleRule("color", palette.signal.error);
+      expect(dueDate).toHaveStyleRule("color", palette.slate60);
+    });
   });
 
   test("clicking Edit task invokes onEditStart", () => {

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Sans12, Sans14, spacing } from "@recidiviz/design-system";
+import { addDays, isPast } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -27,7 +28,7 @@ import { Button, palette } from "~design-system";
 import { CheckboxInput } from "../../../components/Checkbox";
 import { describeRecurrence } from "../../../components/DatePicker";
 import { CustomTaskRecord } from "../../../FirestoreStore";
-import { formatWorkflowsDate } from "../../../utils";
+import { formatDueDateFromToday } from "../../../utils";
 import { CustomTasks } from "../../../WorkflowsStore/Task/CustomTasks";
 import {
   getNextDueDate,
@@ -84,9 +85,12 @@ const RowRecurrenceCaption = styled(Sans12)<{ $completed: boolean }>`
   white-space: nowrap;
 `;
 
-const RowDueDate = styled(Sans14)<{ $completed: boolean }>`
-  color: ${({ $completed }) =>
-    $completed ? palette.slate60 : palette.slate70};
+const RowDueDate = styled(Sans14)<{ $completed: boolean; $overdue: boolean }>`
+  color: ${({ $completed, $overdue }) => {
+    if ($completed) return palette.slate60;
+    if ($overdue) return palette.signal.error;
+    return palette.slate70;
+  }};
   white-space: nowrap;
 `;
 
@@ -151,6 +155,10 @@ export const AddedTaskRow = observer(function AddedTaskRow({
   // without any backend write.
   const completed = isTaskCompleted(task);
   const nextDueDate = getNextDueDate(task);
+  // Mirror the supervision-task overdue rule (`Task.isOverdue`): a task is
+  // overdue once `now` is past its due date plus a two-day grace window.
+  // Completed rows keep their muted styling, so overdue is forced false.
+  const overdue = !completed && isPast(addDays(nextDueDate, 2));
 
   if (isEditing) {
     return (
@@ -224,8 +232,8 @@ export const AddedTaskRow = observer(function AddedTaskRow({
             </RowRecurrenceCaption>
           )}
         </RowTitleColumn>
-        <RowDueDate $completed={completed}>
-          Due {formatWorkflowsDate(nextDueDate)}
+        <RowDueDate $completed={completed} $overdue={overdue}>
+          Due {formatDueDateFromToday(nextDueDate)}
         </RowDueDate>
         <AddedTaskKebab
           onEditClick={completed ? undefined : onEditStart}

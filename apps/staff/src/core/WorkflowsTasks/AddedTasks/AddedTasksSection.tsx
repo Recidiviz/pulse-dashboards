@@ -59,6 +59,7 @@ const TaskDivider = styled.hr`
 
 type AddedTasksSectionProps = {
   person: Client;
+  showCompleted: boolean;
 };
 
 /**
@@ -95,14 +96,15 @@ function useThrowOnHydrationState(customTasks: CustomTasks | undefined): void {
  * `<Suspense>` / `<ErrorBoundary>` via {@link useThrowOnHydrationState}.
  *
  * The `CustomTasks` subscription auto-activates via `onBecomeObserved` when
- * this `observer` reads `hydrationState` / `orderedTasks`, so no manual
- * `hydrate()` call is needed. `CaseloadTasksHydrator` primes the
- * caseload-wide path separately.
+ * this `observer` reads `hydrationState` / `outstandingOrderedTasks` /
+ * `allOrderedTasks`, so no manual `hydrate()` call is needed.
+ * `CaseloadTasksHydrator` primes the caseload-wide path separately.
  *
  * Default-exported so it can be loaded via `React.lazy()`.
  */
 const AddedTasksSection = observer(function AddedTasksSection({
   person,
+  showCompleted,
 }: AddedTasksSectionProps) {
   const { customTasks } = person;
   useThrowOnHydrationState(customTasks);
@@ -116,7 +118,9 @@ const AddedTasksSection = observer(function AddedTasksSection({
 
   if (!customTasks) return null;
 
-  const { orderedTasks } = customTasks;
+  const tasks = showCompleted
+    ? customTasks.allOrderedTasks
+    : customTasks.outstandingOrderedTasks;
 
   const handleAddSave =
     (pendingId: string) => (values: AddedTaskFormValues) => {
@@ -138,10 +142,10 @@ const AddedTasksSection = observer(function AddedTasksSection({
 
   return (
     <SectionWrapper>
-      {orderedTasks.length === 0 && pendingAddIds.length === 0 && (
+      {tasks.length === 0 && pendingAddIds.length === 0 && (
         <EmptyState>No added tasks yet.</EmptyState>
       )}
-      {orderedTasks.map((task) => (
+      {tasks.map((task) => (
         <AddedTaskRow
           key={task.id}
           task={task}

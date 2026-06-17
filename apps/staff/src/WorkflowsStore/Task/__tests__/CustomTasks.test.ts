@@ -161,47 +161,55 @@ describe("CustomTasks", () => {
     });
   });
 
-  describe("orderedTasks", () => {
+  describe("outstandingOrderedTasks", () => {
     test("returns an empty array when the subscription has no data", () => {
-      expect(customTasks.orderedTasks).toEqual([]);
+      expect(customTasks.outstandingOrderedTasks).toEqual([]);
     });
 
-    test("sorts active tasks ascending by dueDate, then completed tasks ascending by dueDate", () => {
-      const activeLate = makeRecord({
+    test("excludes completed non-recurring tasks", () => {
+      const active = makeRecord({
         id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-        title: "Active late",
-        dueDate: new Date("2026-08-01"),
-      });
-      const activeEarly = makeRecord({
-        id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
-        title: "Active early",
+        title: "Active",
         dueDate: new Date("2026-06-01"),
       });
-      const completedLate = makeRecord({
-        id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
-        title: "Completed late",
-        dueDate: new Date("2026-07-01"),
-        completedOn: new Date("2026-07-02"),
-      });
-      const completedEarly = makeRecord({
-        id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
-        title: "Completed early",
+      const completed = makeRecord({
+        id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        title: "Completed",
         dueDate: new Date("2026-05-01"),
         completedOn: new Date("2026-05-02"),
       });
+      subscriptionInstance.data = [completed, active];
 
-      subscriptionInstance.data = [
-        completedLate,
-        activeLate,
-        activeEarly,
-        completedEarly,
-      ];
+      expect(customTasks.outstandingOrderedTasks.map((t) => t.title)).toEqual([
+        "Active",
+      ]);
+    });
 
-      expect(customTasks.orderedTasks.map((t) => t.title)).toEqual([
-        "Active early",
-        "Active late",
-        "Completed early",
-        "Completed late",
+    test("sorts the remaining tasks ascending by next due date", () => {
+      const late = makeRecord({
+        id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        title: "Late",
+        dueDate: new Date("2026-08-01"),
+      });
+      const early = makeRecord({
+        id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        title: "Early",
+        dueDate: new Date("2026-06-01"),
+      });
+      const recurring = makeRecord({
+        id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        title: "Recurring",
+        // Anchor far in the past → resolves to 2026-05-08 (a Friday),
+        // earlier than the other two.
+        dueDate: new Date("2025-11-14"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+      });
+      subscriptionInstance.data = [late, early, recurring];
+
+      expect(customTasks.outstandingOrderedTasks.map((t) => t.title)).toEqual([
+        "Recurring",
+        "Early",
+        "Late",
       ]);
     });
 
@@ -218,7 +226,107 @@ describe("CustomTasks", () => {
       });
       subscriptionInstance.data = [tsDue, dateDue];
 
-      expect(customTasks.orderedTasks.map((t) => t.title)).toEqual([
+      expect(customTasks.outstandingOrderedTasks.map((t) => t.title)).toEqual([
+        "Date due",
+        "Timestamp due",
+      ]);
+    });
+
+    test("includes a recurring task whose completion has rolled over (isTaskCompleted false despite completedOn set)", () => {
+      const rolledOver = makeRecord({
+        id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        title: "Rolled over",
+        dueDate: new Date("2025-11-14"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+        // Completed early December 2025; many Fridays have elapsed since, so
+        // the next-after-completedOn is in the past → isTaskCompleted is
+        // false even though completedOn is set, and it stays outstanding.
+        completedOn: new Date("2025-12-01"),
+      });
+      subscriptionInstance.data = [rolledOver];
+
+      expect(customTasks.outstandingOrderedTasks.map((t) => t.title)).toEqual([
+        "Rolled over",
+      ]);
+    });
+
+    test("excludes a recurring task completed in the current cycle (next occurrence still in the future)", () => {
+      const currentlyDone = makeRecord({
+        id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        title: "Currently done",
+        dueDate: new Date("2025-11-14"),
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+        // Last Friday before frozen now (2026-05-14) is 2026-05-08; the next
+        // occurrence after that is 2026-05-15 > now, so isTaskCompleted is
+        // true and the task is filtered out.
+        completedOn: new Date("2026-05-08T13:00:00.000Z"),
+      });
+      subscriptionInstance.data = [currentlyDone];
+
+      expect(customTasks.outstandingOrderedTasks).toEqual([]);
+    });
+  });
+
+  describe("allOrderedTasks", () => {
+    test("returns an empty array when the subscription has no data", () => {
+      expect(customTasks.allOrderedTasks).toEqual([]);
+    });
+
+    test("includes completed tasks and interleaves them with incomplete by next due date", () => {
+      const activeLate = makeRecord({
+        id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        title: "Active late",
+        dueDate: new Date("2026-08-01"),
+      });
+      const activeEarly = makeRecord({
+        id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        title: "Active early",
+        dueDate: new Date("2026-06-01"),
+      });
+      const completedMiddle = makeRecord({
+        id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        title: "Completed middle",
+        dueDate: new Date("2026-07-01"),
+        completedOn: new Date("2026-07-02"),
+      });
+      const completedEarly = makeRecord({
+        id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        title: "Completed early",
+        dueDate: new Date("2026-05-01"),
+        completedOn: new Date("2026-05-02"),
+      });
+
+      subscriptionInstance.data = [
+        completedMiddle,
+        activeLate,
+        activeEarly,
+        completedEarly,
+      ];
+
+      // Sorted strictly by next due date — completed records interleave with
+      // incomplete rather than grouping at the end.
+      expect(customTasks.allOrderedTasks.map((t) => t.title)).toEqual([
+        "Completed early",
+        "Active early",
+        "Completed middle",
+        "Active late",
+      ]);
+    });
+
+    test("sorts Timestamp-valued dueDates correctly alongside Date-valued ones", () => {
+      const tsDue = makeRecord({
+        id: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+        title: "Timestamp due",
+        dueDate: Timestamp.fromDate(new Date("2026-06-15")),
+      });
+      const dateDue = makeRecord({
+        id: "ffffffff-ffff-4fff-8fff-ffffffffffff",
+        title: "Date due",
+        dueDate: new Date("2026-06-10"),
+      });
+      subscriptionInstance.data = [tsDue, dateDue];
+
+      expect(customTasks.allOrderedTasks.map((t) => t.title)).toEqual([
         "Date due",
         "Timestamp due",
       ]);

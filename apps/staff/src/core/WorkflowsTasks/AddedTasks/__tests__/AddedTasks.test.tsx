@@ -33,7 +33,8 @@ type CustomTasksMock = {
   hydrate: ReturnType<typeof vi.fn>;
   retry: ReturnType<typeof vi.fn>;
   hydrationState: CustomTasks["hydrationState"];
-  orderedTasks: never[];
+  outstandingOrderedTasks: never[];
+  allOrderedTasks: never[];
   addCustomTask: ReturnType<typeof vi.fn>;
   editCustomTask: ReturnType<typeof vi.fn>;
   deleteCustomTask: ReturnType<typeof vi.fn>;
@@ -52,7 +53,8 @@ function makeCustomTasksMock(
       deleteCustomTask: vi.fn().mockResolvedValue(undefined),
       toggleCustomTaskCompleted: vi.fn().mockResolvedValue(undefined),
       hydrationState: { status: "hydrated" } as const,
-      orderedTasks: [] as never[],
+      outstandingOrderedTasks: [] as never[],
+      allOrderedTasks: [] as never[],
       ...overrides,
     },
     {
@@ -70,9 +72,10 @@ function makeClient(customTasks: CustomTasksMock | undefined): Client {
   return { customTasks } as unknown as Client;
 }
 
-const renderShell = (body: React.ReactNode) => (
+const renderShell = (body: React.ReactNode, filter: React.ReactNode) => (
   <>
     <h2>Added Tasks</h2>
+    {filter}
     {body}
   </>
 );
@@ -156,6 +159,24 @@ describe("AddedTasks container", () => {
       () =>
         expect(
           screen.getByRole("button", { name: /\+ add new task/i }),
+        ).toBeInTheDocument(),
+      { timeout: 5000 },
+    );
+  });
+
+  test("passes the Show Completed filter node to renderShell", async () => {
+    const customTasks = makeCustomTasksMock({
+      hydrationState: { status: "hydrated" },
+    });
+
+    render(
+      <AddedTasks client={makeClient(customTasks)} renderShell={renderShell} />,
+    );
+
+    await waitFor(
+      () =>
+        expect(
+          screen.getByRole("button", { name: /filter: show completed/i }),
         ).toBeInTheDocument(),
       { timeout: 5000 },
     );

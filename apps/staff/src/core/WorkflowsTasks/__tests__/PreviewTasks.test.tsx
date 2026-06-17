@@ -17,9 +17,15 @@
 
 import { render, screen } from "@testing-library/react";
 
+import * as StoreProvider from "../../../components/StoreProvider";
+import useIsMobile from "../../../hooks/useIsMobile";
 import { SupervisionTask } from "../../../WorkflowsStore";
 import { SnoozeInfo } from "../../../WorkflowsStore/Task/types";
-import { SnoozedTaskInfo } from "../PreviewTasks";
+import { JusticeInvolvedPerson } from "../../../WorkflowsStore/types";
+import { PreviewTasks, SnoozedTaskInfo } from "../PreviewTasks";
+
+vi.mock("../../../components/StoreProvider");
+vi.mock("../../../hooks/useIsMobile");
 
 function buildTask({
   isSnoozed,
@@ -29,6 +35,56 @@ function buildTask({
   snoozeInfo: SnoozeInfo | undefined;
 }): SupervisionTask {
   return { isSnoozed, snoozeInfo } as unknown as SupervisionTask;
+}
+
+// Minimal task shape sufficient for the TaskPreviewV2 render path. The snooze
+// dropdown short-circuits to null because tasksConfig is undefined.
+function buildPreviewTask({
+  displayName,
+  isSnoozed,
+}: {
+  displayName: string;
+  isSnoozed: boolean;
+}): SupervisionTask {
+  return {
+    key: displayName,
+    type: displayName,
+    displayName,
+    isSnoozed,
+    isOverdue: false,
+    snoozeInfo: undefined,
+    additionalDetails: "",
+    dueDateDisplayShort: "in 1 day",
+    contactWindow: "",
+    frequency: "monthly",
+    supplementaryContacts: [],
+    futureScheduledContacts: [],
+    person: { supervisionTasks: { tasksConfig: undefined } },
+  } as unknown as SupervisionTask;
+}
+
+// Build a person whose supervisionTasks exposes both orderedTasks (all tasks,
+// including snoozed) and readyOrderedTasks (non-snoozed only), mirroring
+// TasksBase.
+function buildPerson(tasks: SupervisionTask[]): JusticeInvolvedPerson {
+  return {
+    supervisionTasks: {
+      orderedTasks: tasks,
+      readyOrderedTasks: tasks.filter((task) => !task.isSnoozed),
+      needs: [],
+    },
+  } as unknown as JusticeInvolvedPerson;
+}
+
+function mockStores() {
+  vi.mocked(useIsMobile).mockReturnValue({
+    isMobile: false,
+    isTablet: false,
+  } as ReturnType<typeof useIsMobile>);
+  vi.mocked(StoreProvider.useFeatureVariants).mockReturnValue({});
+  vi.mocked(StoreProvider.useRootStore).mockReturnValue({
+    workflowsStore: { isUsIdLegacyTasksEnabled: false },
+  } as unknown as ReturnType<typeof StoreProvider.useRootStore>);
 }
 
 describe("SnoozedTaskInfo", () => {
@@ -87,5 +143,47 @@ describe("SnoozedTaskInfo", () => {
     expect(node).toBeInTheDocument();
     expect(node.textContent).toContain("officer@example.com");
     expect(node.textContent).not.toMatch(/hidden until/);
+  });
+});
+
+describe("PreviewTasks (hideSnoozed)", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const readyTask = buildPreviewTask({
+    displayName: "Ready Task",
+    isSnoozed: false,
+  });
+  const snoozedTask = buildPreviewTask({
+    displayName: "Snoozed Task",
+    isSnoozed: true,
+  });
+
+  test("renders snoozed tasks by default (no hideSnoozed prop)", () => {
+    mockStores();
+    render(
+      <PreviewTasks
+        person={buildPerson([readyTask, snoozedTask])}
+        showSnoozeDropdown={false}
+      />,
+    );
+
+    expect(screen.getByText("Ready Task")).toBeInTheDocument();
+    expect(screen.getByText("Snoozed Task")).toBeInTheDocument();
+  });
+
+  test("excludes snoozed tasks when hideSnoozed is true", () => {
+    mockStores();
+    render(
+      <PreviewTasks
+        person={buildPerson([readyTask, snoozedTask])}
+        showSnoozeDropdown={false}
+        hideSnoozed
+      />,
+    );
+
+    expect(screen.getByText("Ready Task")).toBeInTheDocument();
+    expect(screen.queryByText("Snoozed Task")).not.toBeInTheDocument();
   });
 });

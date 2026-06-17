@@ -457,12 +457,18 @@ export const PreviewTasks = observer(function PreviewTasks({
   person,
   showSnoozeDropdown,
   empty,
+  hideSnoozed,
 }: PersonProfileProps & {
   showSnoozeDropdown: boolean;
   empty?: React.ReactNode;
+  hideSnoozed?: boolean;
 }) {
   const { isUsIdLegacyTasksEnabled } = useRootStore().workflowsStore;
-  const tasks = uniqBy(person.supervisionTasks?.orderedTasks ?? [], "type");
+  const sourceTasks =
+    person.supervisionTasks?.[
+      hideSnoozed ? "readyOrderedTasks" : "orderedTasks"
+    ] ?? [];
+  const tasks = uniqBy(sourceTasks, "type");
   const needs = person.supervisionTasks?.needs ?? [];
 
   if (!tasks.length && !needs.length && empty) {

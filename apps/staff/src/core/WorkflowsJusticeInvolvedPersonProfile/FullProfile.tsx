@@ -21,7 +21,7 @@ import { httpBatchLink } from "@trpc/client";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import superjson from "superjson";
 
@@ -48,6 +48,10 @@ import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import AddedTasks from "../WorkflowsTasks/AddedTasks";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
+import {
+  FilterHeaderRow,
+  TaskSectionFilter,
+} from "../WorkflowsTasks/TaskSectionFilter";
 import {
   ClientEmployer,
   ClientHousing,
@@ -175,6 +179,32 @@ const SectionHeading = styled(Sans16)`
 
 const TimelineHeading = styled(Sans16)`
   color: ${palette.slate80};
+`;
+
+// Full-bleed, borderless, shorter empty state for the US_MO Tasks card so it
+// reads as part of the card rather than a nested card. Standalone (intentionally
+// not derived from NoOpportunities, which the Opportunities empty state owns).
+const TasksCardEmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: ${rgba(palette.slate, 0.05)};
+  color: ${palette.slate70};
+  height: 7.625rem;
+  margin: 0 -${rem(spacing.md)};
+  padding: ${rem(spacing.md)} 0;
+
+  ${Sans16} {
+    color: ${palette.pine2};
+  }
+`;
+
+// The US_MO Tasks card stacks two sections; the Added Tasks header gets a top
+// border so it stays separated from the (borderless, full-bleed) Tasks section
+// above it.
+const AddedTasksCardHeader = styled(SectionCardHeader)`
+  border-top: 1px solid ${palette.slate10};
 `;
 
 const CasenoteSearchWrapper = styled.div`
@@ -356,6 +386,9 @@ export const FullProfile = observer(
       sentenceProgressV2,
     } = useFeatureVariants();
 
+    // View-local filter state for the US_MO `customTasks` Tasks section.
+    const [showHidden, setShowHidden] = useState(false);
+
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
     });
@@ -402,6 +435,15 @@ export const FullProfile = observer(
         <Sans16>None for now</Sans16>
         <Sans14>New tasks will appear here.</Sans14>
       </NoOpportunities>
+    );
+
+    // US_MO `customTasks` card uses a full-bleed, borderless, half-height empty
+    // state so the Tasks section doesn't look like a card nested in a card.
+    const tasksCardEmpty = (
+      <TasksCardEmptyState>
+        <Sans16>None for now</Sans16>
+        <Sans14>New tasks will appear here.</Sans14>
+      </TasksCardEmptyState>
     );
 
     const notifications: OpportunityNotification[] = Object.values(
@@ -464,15 +506,26 @@ export const FullProfile = observer(
               {person.supervisionTasks?.orderedTasks &&
                 (customTasks ? (
                   <SectionCard>
-                    <SectionCardHeader>Tasks</SectionCardHeader>
+                    <SectionCardHeader>
+                      <FilterHeaderRow>
+                        <span>Tasks</span>
+                        <TaskSectionFilter
+                          label="Show Hidden"
+                          checked={showHidden}
+                          onChange={setShowHidden}
+                          testId="tasks-filter"
+                        />
+                      </FilterHeaderRow>
+                    </SectionCardHeader>
                     <SectionCardBody>
                       <CaseloadTasksHydrator
-                        empty={empty}
+                        empty={tasksCardEmpty}
                         hydrated={
                           <PreviewTasks
                             person={person}
                             showSnoozeDropdown={false}
-                            empty={empty}
+                            hideSnoozed={!showHidden}
+                            empty={tasksCardEmpty}
                           />
                         }
                       />
@@ -480,9 +533,14 @@ export const FullProfile = observer(
                     {customTasks && person instanceof Client && (
                       <AddedTasks
                         client={person}
-                        renderShell={(body) => (
+                        renderShell={(body, filter) => (
                           <>
-                            <SectionCardHeader>Added Tasks</SectionCardHeader>
+                            <AddedTasksCardHeader>
+                              <FilterHeaderRow>
+                                <span>Added Tasks</span>
+                                {filter}
+                              </FilterHeaderRow>
+                            </AddedTasksCardHeader>
                             <SectionCardBody>{body}</SectionCardBody>
                           </>
                         )}

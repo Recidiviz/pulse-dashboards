@@ -72,7 +72,8 @@ export class CustomTasks implements Hydratable {
       hydrate: action,
       retry: action,
       hydrationState: computed,
-      orderedTasks: computed,
+      outstandingOrderedTasks: computed,
+      allOrderedTasks: computed,
       activeTaskItems: computed,
       addCustomTask: action,
       editCustomTask: action,
@@ -110,27 +111,41 @@ export class CustomTasks implements Hydratable {
   }
 
   /**
-   * Returns the subscription's tasks sorted into two contiguous groups:
-   *   1. Active (`completedOn === null`), ascending by `dueDate`.
-   *   2. Completed (`completedOn !== null`), ascending by `dueDate`.
+   * The not-yet-completed tasks, ordered the way a row actually displays
+   * them. Excludes records that are currently completed — for recurring
+   * tasks this defers to `isTaskCompleted`'s auto-rollover logic, so a task
+   * whose `completedOn` predates its next occurrence reappears here. Sorted
+   * ascending by the resolved next due date (`getNextDueDate`), so the
+   * soonest-due item is first.
    *
    * Soft-deleted docs are already filtered out by the subscription's
    * `where("deletedOn", "==", null)` clause, so no client-side filtering
    * is needed here.
    */
-  get orderedTasks(): CustomTaskRecord[] {
-    const tasks = this.taskSubscription.data ?? [];
-    const active: CustomTaskRecord[] = [];
-    const completed: CustomTaskRecord[] = [];
-    for (const t of tasks) {
-      if (t.completedOn != null) completed.push(t);
-      else active.push(t);
-    }
-    const byDueDate = (a: CustomTaskRecord, b: CustomTaskRecord) =>
-      dueDateMs(a.dueDate) - dueDateMs(b.dueDate);
-    active.sort(byDueDate);
-    completed.sort(byDueDate);
-    return [...active, ...completed];
+  get outstandingOrderedTasks(): CustomTaskRecord[] {
+    const now = new Date();
+    return (this.taskSubscription.data ?? [])
+      .filter((record) => !isTaskCompleted(record, now))
+      .sort(
+        (a, b) =>
+          getNextDueDate(a, now).getTime() - getNextDueDate(b, now).getTime(),
+      );
+  }
+
+  /**
+   * Every task, completed or not, ordered ascending by the resolved next
+   * due date (`getNextDueDate`). Completed records are interleaved among the
+   * incomplete ones strictly by date rather than grouped at the end.
+   *
+   * Soft-deleted docs are already filtered out by the subscription's
+   * `where("deletedOn", "==", null)` clause.
+   */
+  get allOrderedTasks(): CustomTaskRecord[] {
+    const now = new Date();
+    return [...(this.taskSubscription.data ?? [])].sort(
+      (a, b) =>
+        getNextDueDate(a, now).getTime() - getNextDueDate(b, now).getTime(),
+    );
   }
 
   /**
@@ -237,8 +252,4 @@ export class CustomTasks implements Hydratable {
         });
       });
   }
-}
-
-function dueDateMs(value: Timestamp | Date): number {
-  return value instanceof Timestamp ? value.toMillis() : value.getTime();
 }
