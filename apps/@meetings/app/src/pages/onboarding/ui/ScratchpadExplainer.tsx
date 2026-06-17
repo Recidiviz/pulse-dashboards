@@ -41,8 +41,8 @@ export function ScratchpadExplainer() {
     <View className="flex size-full flex-1 flex-col gap-5 md:flex-row-reverse">
       <View className="flex flex-1 items-center justify-center rounded-[20px] bg-secondary">
         <WordmarkSvg className="absolute left-[36px] top-[30px] h-8 w-[116px] md:left-[30px] md:h-10" />
-        <View>
-          <ScratchpadExplainerImage className="size-full max-w-[271px]" />
+        <View className="w-full flex-1 items-center justify-center">
+          <ScratchpadExplainerImage className="h-10 w-full max-w-[271px]" />
         </View>
       </View>
       <View className="flex flex-1 flex-col justify-center">

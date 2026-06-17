@@ -260,6 +260,15 @@ const Header: React.FC<HeaderProps> = ({
                               helperText={`Current state: ${currentStateName}`}
                             />
                           )}
+                          {!IS_PROD && (
+                            <ProfileMenuItem
+                              pressable={{
+                                onPress: () =>
+                                  navigation.navigate("Onboarding"),
+                              }}
+                              label="Set Up"
+                            />
+                          )}
                           {hasSupervisionAssistantAccess && (
                             <ProfileMenuItem
                               pressable={{

@@ -45,7 +45,7 @@ export function ProTip1() {
           <Image
             source={ProTip1Image}
             resizeMode="cover"
-            style={{ width: "100%", height: "100%", borderRadius: "20px" }}
+            style={{ width: "100%", height: "100%", borderRadius: 20 }}
           />
         </View>
       </View>

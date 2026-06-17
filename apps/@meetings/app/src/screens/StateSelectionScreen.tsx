@@ -66,7 +66,7 @@ const StateSelectionScreen = () => {
   return (
     <SafeAreaView
       className="flex-1"
-      style={{ marginTop: -insets.top }}
+      style={{ marginTop: -insets.top, marginBottom: insets.bottom }}
       edges={["top"]}
     >
       <Header />

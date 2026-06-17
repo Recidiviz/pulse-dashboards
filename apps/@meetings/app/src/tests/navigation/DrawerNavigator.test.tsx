@@ -22,6 +22,7 @@ import DrawerNavigator from "../../app/navigation/DrawerNavigator";
 import * as AgencyConfigContext from "../../context/AgencyConfigContext";
 import * as StateContext from "../../context/StateContext";
 import * as UserContext from "../../context/UserContext";
+import * as UserModule from "../../entities/user";
 
 // Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
 jest.mock("../../shared/lib/useSetDocumentTitle", () => ({
@@ -57,6 +58,13 @@ jest.mock("../../screens/ClientMeetingScreen", () => null);
 jest.mock("../../screens/ResidentMeetingScreen", () => null);
 jest.mock("../../screens/StateSelectionScreen", () => null);
 jest.mock("../../components/DrawerContent", () => null);
+jest.mock("../../pages/onboarding", () => ({
+  OnboardingScreen: null,
+}));
+
+jest.mock("../../entities/user", () => ({
+  useGetUser: jest.fn(),
+}));
 
 describe("DrawerNavigator", () => {
   const mockUseUserContext = jest.spyOn(UserContext, "useUserContext");
@@ -65,6 +73,7 @@ describe("DrawerNavigator", () => {
     AgencyConfigContext,
     "useAgencyConfigs",
   );
+  const mockUseGetUser = UserModule.useGetUser as jest.Mock;
 
   mockUseAgencyConfigs.mockReturnValue({
     agencyConfigs: {
@@ -77,6 +86,11 @@ describe("DrawerNavigator", () => {
     } as never,
     isLoading: false,
   });
+
+  mockUseGetUser.mockReturnValue({
+    data: { email: "test@example.com", hasSeenOnboarding: true },
+    isLoading: false,
+  } as never);
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -29,6 +29,7 @@ import MobileMenuItem from "../components/MobileMenuItem";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
+import { IS_PROD } from "../shared/config";
 import { getInitials } from "../shared/lib/format";
 import { Typography } from "../shared/ui/Typography";
 import MobileMenuTextItem from "./MobileMenuTextItem";
@@ -96,12 +97,6 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             onPress={navigation.closeDrawer}
           />
         )}
-        {/* <MobileMenuItem
-          icon={UsersIcon}
-          title="Onboarding"
-          screen="Onboarding"
-          onPress={navigation.closeDrawer}
-        /> */}
       </View>
       <View
         className="flex flex-col gap-1.5 bg-screen px-4"
@@ -117,6 +112,12 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
               <Typography className="px-4 text-xs text-secondary">
                 Current state: {currentStateName}
               </Typography>
+            )}
+            {!IS_PROD && (
+              <MobileMenuTextItem
+                title="Set Up"
+                onPress={() => navigation.navigate("Onboarding")}
+              />
             )}
           </>
         )}

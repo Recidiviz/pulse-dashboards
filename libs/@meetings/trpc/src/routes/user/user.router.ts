@@ -15,26 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { create } from "zustand";
+import { auth0Procedure, router } from "~@meetings/trpc/init";
+import { getUserOutputSchema } from "~@meetings/trpc/routes/user/user.schema";
 
-import { OnboardingMobileStep, OnboardingWebStep } from "../config";
-
-type OnboardingStore = {
-  webStep: OnboardingWebStep;
-  mobileStep: OnboardingMobileStep;
-  setWebStep: (step: OnboardingWebStep) => void;
-  setMobileStep: (step: OnboardingMobileStep) => void;
-  reset: () => void;
-};
-
-export const useOnboardingStore = create<OnboardingStore>()((set) => ({
-  webStep: OnboardingWebStep.Welcome,
-  mobileStep: OnboardingMobileStep.Welcome,
-  setWebStep: (step) => set({ webStep: step }),
-  setMobileStep: (step) => set({ mobileStep: step }),
-  reset: () =>
-    set({
-      webStep: OnboardingWebStep.Welcome,
-      mobileStep: OnboardingMobileStep.Welcome,
+export const userRouter = router({
+  get: auth0Procedure
+    .output(getUserOutputSchema)
+    .query(async ({ ctx: { prisma, user } }) => {
+      return prisma.user.findUnique({ where: { email: user.email } });
     }),
-}));
+
+  completeOnboarding: auth0Procedure.mutation(
+    async ({ ctx: { prisma, user } }) => {
+      await prisma.user.upsert({
+        where: { email: user.email },
+        update: { hasSeenOnboarding: true },
+        create: { email: user.email, hasSeenOnboarding: true },
+      });
+    },
+  ),
+});

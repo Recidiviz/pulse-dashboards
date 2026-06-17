@@ -15,4 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { useCompleteOnboarding } from "./model/useCompleteOnboarding";
 export { OnboardingScreen } from "./ui";

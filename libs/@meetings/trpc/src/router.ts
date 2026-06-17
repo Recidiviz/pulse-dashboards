@@ -22,6 +22,7 @@ import { impersonationRouter } from "~@meetings/trpc/routes/impersonation/impers
 import { meetingRouter } from "~@meetings/trpc/routes/meeting/meeting.router";
 import { metadataRouter } from "~@meetings/trpc/routes/metadata/metadata.router";
 import { residentRouter } from "~@meetings/trpc/routes/resident/resident.router";
+import { userRouter } from "~@meetings/trpc/routes/user/user.router";
 
 const v1Router = router({
   client: clientRouter,
@@ -30,6 +31,7 @@ const v1Router = router({
   metadata: metadataRouter,
   resident: residentRouter,
   impersonation: impersonationRouter,
+  user: userRouter,
 });
 
 export const appRouter = router({

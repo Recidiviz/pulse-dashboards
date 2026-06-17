@@ -42,9 +42,9 @@ export function HowItWorks() {
     <View className="flex size-full flex-1 flex-col gap-5 md:flex-row-reverse">
       <View className="flex flex-1 items-center justify-center rounded-[20px] bg-secondary">
         <WordmarkSvg className="absolute left-[36px] top-[30px] h-8 w-[116px] md:left-[30px] md:h-10" />
-        <View>
-          <HowItWorksMobile className="size-full max-h-[240px] md:hidden" />
-          <HowItWorksDesktop className="hidden size-full md:flex" />
+        <View className="w-full flex-1 items-center justify-center">
+          <HowItWorksMobile className="h-[240px] w-full md:hidden" />
+          <HowItWorksDesktop className="hidden w-full md:flex" />
         </View>
       </View>
       <View className="flex flex-1 flex-col justify-center">

@@ -15,26 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { create } from "zustand";
+import { trpc } from "~@meetings/app/shared/api";
 
-import { OnboardingMobileStep, OnboardingWebStep } from "../config";
-
-type OnboardingStore = {
-  webStep: OnboardingWebStep;
-  mobileStep: OnboardingMobileStep;
-  setWebStep: (step: OnboardingWebStep) => void;
-  setMobileStep: (step: OnboardingMobileStep) => void;
-  reset: () => void;
-};
-
-export const useOnboardingStore = create<OnboardingStore>()((set) => ({
-  webStep: OnboardingWebStep.Welcome,
-  mobileStep: OnboardingMobileStep.Welcome,
-  setWebStep: (step) => set({ webStep: step }),
-  setMobileStep: (step) => set({ mobileStep: step }),
-  reset: () =>
-    set({
-      webStep: OnboardingWebStep.Welcome,
-      mobileStep: OnboardingMobileStep.Welcome,
-    }),
-}));
+export function useGetUser() {
+  return trpc.v1.user.get.useQuery();
+}

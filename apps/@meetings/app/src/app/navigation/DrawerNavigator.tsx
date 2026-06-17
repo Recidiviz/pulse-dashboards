@@ -23,8 +23,10 @@ import DrawerContent from "~@meetings/app/components/DrawerContent";
 import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
 import { useStateSelection } from "~@meetings/app/context/StateContext";
 import { useUserContext } from "~@meetings/app/context/UserContext";
+import { useGetUser } from "~@meetings/app/entities/user";
 import { ClientsScreen } from "~@meetings/app/pages/clients";
 import { NoAccessScreen } from "~@meetings/app/pages/no-access";
+import { OnboardingScreen } from "~@meetings/app/pages/onboarding";
 import { ResidentsScreen } from "~@meetings/app/pages/residents";
 import ClientMeetingScreen from "~@meetings/app/screens/ClientMeetingScreen";
 import ClientNewMeetingScreen from "~@meetings/app/screens/ClientNewMeetingScreen";
@@ -35,6 +37,7 @@ import ResidentProfileScreen from "~@meetings/app/screens/ResidentProfileScreen"
 import StateSelectionScreen from "~@meetings/app/screens/StateSelectionScreen";
 import {
   ClientsStackParamList,
+  IS_PROD,
   ResidentsStackParamList,
   RootStackParamList,
 } from "~@meetings/app/shared/config";
@@ -46,25 +49,22 @@ const ClientsStackNavigator =
 const ResidentsStackNavigator =
   createNativeStackNavigator<ResidentsStackParamList>();
 
-// for test purposes until backend ready
-// const hasSeenOnboarding = false;
-
 export default function DrawerNavigator() {
-  // const navigation =
-  //   useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { hasSupervisionAccess, hasFacilitiesAccess, isLoading, stateCode } =
-    useUserContext();
+  const {
+    hasSupervisionAccess,
+    hasFacilitiesAccess,
+    isLoading,
+    stateCode,
+    isRecidivizUser,
+  } = useUserContext();
   const { isLoading: isStateLoading } = useStateSelection();
   const { agencyConfigs, isLoading: isLoadingConfigs } = useAgencyConfigs();
+  const { data: userData, isLoading: isUserLoading } = useGetUser();
 
-  // useEffect(() => {
-  //   if (!hasSeenOnboarding) {
-  //     navigation.navigate("Onboarding");
-  //   }
-  // }, [hasSeenOnboarding]);
+  const hasSeenOnboarding = userData ? userData.hasSeenOnboarding : false;
 
   // Wait for user metadata and state context to load before checking access
-  if (isLoading || isStateLoading || isLoadingConfigs) {
+  if (isLoading || isStateLoading || isLoadingConfigs || isUserLoading) {
     return <Loading message="Loading..." />;
   }
 
@@ -84,10 +84,11 @@ export default function DrawerNavigator() {
   }
 
   const getInitialRouteName = () => {
-    // for test purposes until backend ready
-    // if (!hasSeenOnboarding) {
-    //   return "Onboarding";
-    // }
+    // Temporarily limit this to non-Recidiviz users on staging,
+    // which effectively hides it from all users while development is still in progress.
+    if (!hasSeenOnboarding && !isRecidivizUser && !IS_PROD) {
+      return "Onboarding";
+    }
     if (hasSupervisionAccess) {
       return "ClientsRoot";
     }
@@ -104,14 +105,13 @@ export default function DrawerNavigator() {
         headerShown: false,
         drawerType: "front",
         drawerStyle: { width: "100%" },
-        // for test purposes until backend ready
-        // swipeEnabled: !hasSeenOnboarding ? false : true,
+        // swipeEnabled: hasSeenOnboarding,
         swipeEnabled: true,
       }}
       backBehavior="fullHistory"
       drawerContent={(props) => <DrawerContent {...props} />}
     >
-      {/* <Drawer.Screen name="Onboarding" component={OnboardingScreen} /> */}
+      <Drawer.Screen name="Onboarding" component={OnboardingScreen} />
       {hasSupervisionAccess && (
         <Drawer.Screen name="ClientsRoot" component={ClientsStack} />
       )}

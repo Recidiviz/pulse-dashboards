@@ -15,26 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { create } from "zustand";
+import { trpc } from "~@meetings/app/shared/api";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 
-import { OnboardingMobileStep, OnboardingWebStep } from "../config";
+export function useCompleteOnboarding() {
+  const utils = trpc.useUtils();
+  const { showSnackbar } = useSnackbar();
 
-type OnboardingStore = {
-  webStep: OnboardingWebStep;
-  mobileStep: OnboardingMobileStep;
-  setWebStep: (step: OnboardingWebStep) => void;
-  setMobileStep: (step: OnboardingMobileStep) => void;
-  reset: () => void;
-};
-
-export const useOnboardingStore = create<OnboardingStore>()((set) => ({
-  webStep: OnboardingWebStep.Welcome,
-  mobileStep: OnboardingMobileStep.Welcome,
-  setWebStep: (step) => set({ webStep: step }),
-  setMobileStep: (step) => set({ mobileStep: step }),
-  reset: () =>
-    set({
-      webStep: OnboardingWebStep.Welcome,
-      mobileStep: OnboardingMobileStep.Welcome,
-    }),
-}));
+  return trpc.v1.user.completeOnboarding.useMutation({
+    onSuccess: () => {
+      utils.v1.user.get.invalidate();
+    },
+    onError: () =>
+      showSnackbar("Failed to complete onboarding. Please try again."),
+  });
+}

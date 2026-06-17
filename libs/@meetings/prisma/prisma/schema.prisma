@@ -69,6 +69,11 @@ enum StateCode {
   US_DEMO
 }
 
+model User {
+  email             String  @id
+  hasSeenOnboarding Boolean @default(false)
+}
+
 model Staff {
   stateCode StateCode
   // Explanation of ids:

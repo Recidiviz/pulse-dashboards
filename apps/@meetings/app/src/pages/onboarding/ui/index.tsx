@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useIsFocused } from "@react-navigation/native";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -31,13 +32,17 @@ import { ScratchpadExplainer } from "./ScratchpadExplainer";
 import { Welcome } from "./Welcome";
 
 export function OnboardingScreen() {
+  const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
   const webStep = useOnboardingStore((state) => state.webStep);
   const mobileStep = useOnboardingStore((state) => state.mobileStep);
 
   if (Platform.OS === "web") {
     return (
-      <Modal containerClassName="size-full md:max-w-[1240px] md:max-h-[720px] p-6">
+      <Modal
+        visible={isFocused}
+        containerClassName="size-full md:max-w-[1240px] md:max-h-[720px] p-6"
+      >
         {webStep === OnboardingWebStep.Welcome && <Welcome />}
         {webStep === OnboardingWebStep.HowItWorks && <HowItWorks />}
         {webStep === OnboardingWebStep.ScratchpadExplainer && (
