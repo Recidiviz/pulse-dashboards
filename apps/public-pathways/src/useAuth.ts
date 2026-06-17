@@ -21,7 +21,7 @@ import { useIdleTimer } from "react-idle-timer";
 import { useNavigate } from "react-router-dom";
 
 import { useRootStore } from "./components/StoreProvider";
-import { RootStore } from "./datastores/RootStore";
+import { AUTH_ENABLED, RootStore } from "./datastores/RootStore";
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
@@ -29,25 +29,25 @@ const useAuth = () => {
   const { userStore } = useRootStore() as RootStore;
   const navigate = useNavigate();
 
-  useEffect(
-    () =>
-      // return when's disposer so it is cleaned up if it never runs
-      when(
-        () => !userStore.isAuthorized,
-        // handler keeps React Router in sync with URL changes
-        // that may happen in `authorize` after redirect
-        () =>
-          userStore.authorize((targetUrl: string) => {
-            const url = new URL(targetUrl, window.location.origin);
-            navigate(`${url.pathname}${url.search}${url.hash}`, {
-              replace: true,
-            });
-          }),
-      ),
+  useEffect(() => {
+    // In production the dashboard is public, so skip Auth0 entirely.
+    if (!AUTH_ENABLED) return undefined;
+    // return when's disposer so it is cleaned up if it never runs
+    return when(
+      () => !userStore.isAuthorized,
+      // handler keeps React Router in sync with URL changes
+      // that may happen in `authorize` after redirect
+      () =>
+        userStore.authorize((targetUrl: string) => {
+          const url = new URL(targetUrl, window.location.origin);
+          navigate(`${url.pathname}${url.search}${url.hash}`, {
+            replace: true,
+          });
+        }),
+    );
     // these references should never really change, so this is essentially
     // calling the effect on mount and cleaning it up on unmount
-    [navigate, userStore],
-  );
+  }, [navigate, userStore]);
 
   useIdleTimer({
     onIdle: () => {

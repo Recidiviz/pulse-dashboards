@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { ReactNode } from "react";
 import styled from "styled-components";
 
+import { AUTH_ENABLED } from "../../datastores/RootStore";
 import useAuth from "../../useAuth";
 import { useUserStore } from "../StoreProvider";
 
@@ -40,7 +41,7 @@ const AuthProvider = observer(function AuthProvider({
 
   useAuth();
 
-  if (userIsLoading) {
+  if (AUTH_ENABLED && userIsLoading) {
     return (
       <LoadingContainer>
         <LoadingSpinner />

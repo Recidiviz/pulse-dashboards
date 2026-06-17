@@ -39,6 +39,13 @@ onReactionError((error) => {
 });
 
 /**
+ * Whether the dashboard requires Auth0 login. Auth is disabled in production,
+ * where the dashboard is publicly accessible, and kept on for staging and local
+ * development.
+ */
+export const AUTH_ENABLED = import.meta.env.MODE !== "production";
+
+/**
  * Returns the auth settings configured for the current environment, if any.
  */
 export function getAuthSettings(): Auth0ClientOptions | undefined {
