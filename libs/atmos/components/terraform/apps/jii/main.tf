@@ -162,9 +162,17 @@ module "gcs_bucket" {
     }
   }]
   set_admin_roles = true
+  # The ETL data comes from the calc DAG, so the data platform project service account
+  # also needs to have access to the bucket.
   bucket_admins = {
-    jii-etl-data : "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
-    jii-etl-data-archive : "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
+    jii-etl-data : join(",", [
+      "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com",
+      "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    ])
+    jii-etl-data-archive : join(",", [
+      "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com",
+      "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    ])
   }
 
   set_viewer_roles = true

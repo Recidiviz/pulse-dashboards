@@ -3,6 +3,7 @@ settings:
   context:
     project_id: recidiviz-jii-staging
     project_number: 937048170521
+    data_platform_project_number: 984160736970
     product: jii
     location: us-central1
     secrets_filename: recidiviz-jii-staging.enc.yaml
@@ -11,6 +12,7 @@ settings:
 vars:
   project_id: "{{ .settings.context.project_id }}"
   project_number: "{{ .settings.context.project_number }}"
+  data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
   location: "{{ .settings.context.location }}"
 
 import:

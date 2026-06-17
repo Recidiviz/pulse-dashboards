@@ -123,3 +123,10 @@ resource "google_pubsub_topic" "jii_export_success_topic" {
   name    = "jii_tablet_export_success"
   project = var.project_id
 }
+
+# Grant the Airflow service account in data platform project permission to publish Pub/Sub messages
+resource "google_project_iam_member" "airflow_pubsub_publisher" {
+  project = var.project_id
+  role    = "roles/pubsub.publisher"
+  member  = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+}

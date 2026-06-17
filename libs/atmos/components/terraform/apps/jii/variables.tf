@@ -1,11 +1,16 @@
 variable "project_id" {
   type        = string
-  description = "The project that we are deploying the app to"
+  description = "The project that we are deploying the app to (e.g. recidiviz-jii-staging or recidiviz-jii-production)"
 }
 
 variable "project_number" {
   type        = string
-  description = "The automatically generated identifier for the GCP project, used in service account emails"
+  description = "The automatically generated identifier for the GCP project (recidiviz-jii-staging or recidiviz-jii-production), used in service account emails"
+}
+
+variable "data_platform_project_number" {
+  type        = string
+  description = "The automatically generated identifier for the corresponding data platform GCP project (recidiviz-staging or recidiviz-123), used in service account emails"
 }
 
 variable "sql_instance_name" {
