@@ -5,5 +5,5 @@ FEATURE_FLAGS: dict[str, list[str]] = {
     "INTAKE_RESET": ["pytest", "demo", "dev", "pilot", "development", "staging"],
     "CLIENT_ADDITION": ["pytest", "demo", "dev", "pilot", "development"],
     "CLIENT_DELETION": ["pytest", "demo", "dev", "pilot", "development"],
-    "LLMAJ_SAFETY_CHECK": ["pytest", "dev", "development", "staging"],
+    "LLMAJ_SAFETY_CHECK": ["pytest", "dev", "development", "staging", "prod"],
 }
