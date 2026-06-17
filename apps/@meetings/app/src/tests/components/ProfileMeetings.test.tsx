@@ -19,8 +19,9 @@ import { act, render } from "@testing-library/react-native";
 import React from "react";
 import { Platform } from "react-native";
 
+import { Person } from "~@meetings/app/shared/api/person";
+
 import ProfileMeetings from "../../components/ProfileMeetings";
-import { Person } from "../../entities/person";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
@@ -29,7 +30,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 // Capture the onSuccess callback that ProfileMeetings passes down, so we can
 // invoke it directly without needing to simulate a full tRPC mutation.
 let capturedOnSuccess: ((meetingId: string) => void) | undefined;
-jest.mock("../../hooks/useCreateMeeting", () => ({
+jest.mock("../../entities/meeting/model/useCreateMeeting", () => ({
   useCreateMeeting: jest.fn(
     ({ onSuccess }: { onSuccess: (meetingId: string) => void }) => {
       capturedOnSuccess = onSuccess;
