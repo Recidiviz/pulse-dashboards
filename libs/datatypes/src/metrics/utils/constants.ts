@@ -17,7 +17,7 @@
 
 import { ascending } from "d3-array";
 import { formatISO, startOfMonth, subMonths } from "date-fns";
-import { range } from "lodash";
+import { range } from "lodash-es";
 import { z } from "zod";
 
 import { InsightsConfigMetric } from "../../config/InsightsConfig/schema";

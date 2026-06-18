@@ -21,7 +21,7 @@ import { dateStringSchema } from "~datatypes";
 
 export const rnaWritebackSchema = z.object({
   pseudonymized_id: z.string(),
-  seq_number: z.string().nullable(),
+  seq_number: z.string().nullish(),
   opus_id: z.string(),
   admit_date: dateStringSchema.nullable(),
 });

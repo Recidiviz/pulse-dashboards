@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { groupBy, pick } from "lodash";
+import { groupBy, pick } from "lodash-es";
 
 import { SupervisionOfficerSupervisor } from "../../SupervisionOfficerSupervisor/schema";
 import { rawSupervisionOfficerFixture } from "../fixture";

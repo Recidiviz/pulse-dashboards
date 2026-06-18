@@ -16,7 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 import { ValuesType } from "utility-types";
 
 import { InsightsConfigFixture } from "../../config/InsightsConfig/fixtures/fixture";

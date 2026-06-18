@@ -46,6 +46,23 @@ locals {
       name  = key
     }
   ])
+
+  # This list needs to be marked as nonsensitive so it can be used in `for_each`
+  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
+  import_job_env_vars = nonsensitive([
+    for key, value in merge(
+      local.db_urls,
+      {
+        SENTRY_DSN       = "https://15a3451c0249dd034129780d4f801daf@o432474.ingest.us.sentry.io/4511576564629504"
+        SENTRY_ENV       = var.import_job_sentry_env
+        IMPORT_BUCKET_ID = module.gcs_bucket.names[var.etl_bucket_name]
+      }
+      ) : {
+      # The values are sensitive so we want to omit them from the plans
+      value = sensitive(value)
+      name  = key
+    }
+  ])
 }
 
 module "database" {
@@ -193,15 +210,11 @@ module "gcs_bucket" {
 module "import_job" {
   source = "../../vendor/cloud-run-job-exec"
 
-  name       = var.import_job_name
-  image      = "${var.artifact_registry_repo}/${var.import_job_name}:${var.import_job_container_version}"
-  project_id = var.project_id
-  location   = var.location
-  env_vars = [
-    { name = "SENTRY_DSN", value = "https://15a3451c0249dd034129780d4f801daf@o432474.ingest.us.sentry.io/4511576564629504" },
-    { name = "SENTRY_ENV", value = var.import_job_sentry_env },
-    { name = "IMPORT_BUCKET_ID", value = module.gcs_bucket.names[var.etl_bucket_name] }
-  ]
+  name                          = var.import_job_name
+  image                         = "${var.artifact_registry_repo}/${var.import_job_name}:${var.import_job_container_version}"
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.import_job_env_vars
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   exec                          = false
@@ -250,4 +263,14 @@ module "handle_jii_gcs_upload" {
     ARCHIVE_BUCKET_ID = module.gcs_bucket.names[var.archive_bucket_name]
     ETL_BUCKET_ID     = module.gcs_bucket.names[var.etl_bucket_name]
   }
+}
+
+module "archive_files_wf" {
+  project_id            = var.project_id
+  region                = var.location
+  source                = "../../vendor/google-workflows-workflow"
+  service_account_email = google_service_account.default.email
+  workflow_name         = "archive-files"
+  workflow_source       = file("${path.module}/../shared-infra/workflows/archive-files.workflows.yaml")
+  workflow_description  = "Archives files from GCS bucket into an archive bucket with folders for each date"
 }

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 
 import { LOOKBACK_END_DATES } from "../utils/constants";
 import { rawMetricBenchmarksFixture } from "./fixture";

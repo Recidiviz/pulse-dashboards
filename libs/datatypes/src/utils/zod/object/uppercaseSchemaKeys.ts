@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Dictionary, mapKeys, toUpper } from "lodash";
+import { mapKeys, toUpper } from "lodash-es";
 import { z } from "zod";
 
 export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
@@ -24,7 +24,7 @@ export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
   return z.preprocess(
     // we expect the backend to have transformed all keys into camel case;
     // uppercasing them should make them conform to the status enum
-    (input) => mapKeys(input as Dictionary<unknown>, (v, k) => toUpper(k)),
+    (input) => mapKeys(input as Record<string, unknown>, (v, k) => toUpper(k)),
     schema,
   );
 }

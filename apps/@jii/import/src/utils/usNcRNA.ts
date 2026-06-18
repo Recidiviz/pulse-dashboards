@@ -68,7 +68,7 @@ export async function transformAndLoadRNAWritebackData(
     const newRNAData = {
       pseudonymizedId: d.pseudonymized_id,
       opusId: d.opus_id,
-      seqNumber: d.seq_number,
+      seqNumber: d.seq_number ?? null,
       admitDate: d.admit_date,
       importedAt,
     } satisfies UsNcRNAWritebackDataCreateInput & BulkUpdateEntry;

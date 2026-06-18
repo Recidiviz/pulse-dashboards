@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mapKeys } from "lodash";
+import { mapKeys } from "lodash-es";
 
 /**
  * Renames all occurrences of the keys in `obj` that are present as a key in `oldToNewKeyMapping`.

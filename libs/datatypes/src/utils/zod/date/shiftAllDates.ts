@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isDate } from "lodash";
+import { isDate } from "lodash-es";
 import mapObject from "map-obj";
 
 import { shiftFixtureDate } from "./fixtureDates";

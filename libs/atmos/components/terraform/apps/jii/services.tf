@@ -17,6 +17,20 @@ resource "google_project_iam_member" "cloudrundjobexecutor" {
   member  = "serviceAccount:${google_service_account.default.email}"
 }
 
+# Grant Workflows invoker so the service account can invoke Workflows
+resource "google_project_iam_member" "workflowsinvoker" {
+  project = var.project_id
+  role    = "roles/workflows.invoker"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}
+
+# Grant Eventarc eventReceiver so the service account can receive events
+resource "google_project_iam_member" "eventarceventreceiver" {
+  project = var.project_id
+  role    = "roles/eventarc.eventReceiver"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}
+
 resource "google_project_iam_member" "logwriter" {
   project = var.project_id
   role    = "roles/logging.logWriter"
@@ -115,6 +129,14 @@ resource "google_storage_bucket_iam_member" "acl_viewer" {
   bucket = data.dotenv.env.entries.RECIDIVIZ_ALLOWED_STATES_BUCKET_NAME
   role   = "roles/storage.objectViewer"
   member = "serviceAccount:${google_service_account.default.email}"
+}
+
+# Grant Cloud Storage Object User role to the service account 
+# (read/write for accessing and archiving exports)
+resource "google_project_iam_member" "storageobjectuser" {
+  project = var.project_id
+  role    = "roles/storage.objectUser"
+  member  = "serviceAccount:${google_service_account.default.email}"
 }
 
 # this name needs to match the name configured in recidiviz/metrics/export/export_config.py

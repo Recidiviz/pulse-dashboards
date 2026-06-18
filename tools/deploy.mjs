@@ -719,7 +719,8 @@ if (
       // Deploy the server infrastructure changes for the applicable environment
       await $`yarn atmos:apply apps/jii -s recidiviz-jii-${deployEnv}--jii -- -auto-approve \
             -var server_container_version=${currentRevision} \
-            -var migrate_db_container_version=${currentRevision}`.pipe(
+            -var migrate_db_container_version=${currentRevision} \
+            -var import_job_container_version=${currentRevision}`.pipe(
         process.stdout,
       );
 
