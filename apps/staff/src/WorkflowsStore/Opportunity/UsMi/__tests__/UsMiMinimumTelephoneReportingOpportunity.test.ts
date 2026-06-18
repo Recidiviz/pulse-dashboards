@@ -28,31 +28,6 @@ import {
   usMiMinimumTelephoneReportingReferralRecord,
 } from "../__fixtures__";
 
-const usMiMinimumTelephoneReportingAlmostEligibleRecord: DocumentData = {
-  stateCode: "US_MI",
-  externalId: "010",
-  eligibleCriteria: {
-    usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-      initialAssessmentLevel: "MEDIUM/MEDIUM",
-      supervisionLevelRawText: "MEDIUM",
-    },
-    usMiNotRequiredToRegisterUnderSora: null,
-    usMiNotServingIneligibleOffensesForTelephoneReporting: null,
-    supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
-    usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
-  },
-  ineligibleCriteria: {
-    onMinimumSupervisionAtLeastSixMonths: {
-      eligibleDate: "2022-09-01",
-    },
-  },
-  metadata: {
-    eligibleDate: "2022-09-01",
-  },
-  isEligible: false,
-  isAlmostEligible: true,
-};
-
 let opp: UsMiMinimumTelephoneReportingOpportunity;
 let client: Client;
 let root: RootStore;
@@ -103,57 +78,5 @@ describe("fully eligible", () => {
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
-  });
-
-  test("tabTitle returns Eligible Now", () => {
-    expect(opp.tabTitle()).toBe("Eligible Now");
-  });
-
-  test("subcategory returns ELIGIBLE_NOW", () => {
-    expect(opp.subcategory).toBe("ELIGIBLE_NOW");
-  });
-});
-
-describe("almost eligible", () => {
-  beforeEach(() => {
-    createTestUnit(
-      usMiMinimumTelephoneReportingEligibleClientRecord,
-      usMiMinimumTelephoneReportingAlmostEligibleRecord,
-    );
-
-    updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
-  });
-
-  test("tabTitle returns Eligible Now", () => {
-    expect(opp.tabTitle()).toBe("Eligible Now");
-  });
-
-  test("subcategory returns ALMOST_ELIGIBLE", () => {
-    expect(opp.subcategory).toBe("ALMOST_ELIGIBLE");
-  });
-
-  test("tabTitle returns deniedTabTitle when denied", () => {
-    updatesSub.data = {
-      denial: {
-        reasons: ["INELIGIBLE_OFFENSE"],
-        updated: { by: "foo", date: vi.fn() as any },
-      },
-      stateCode: "US_MI",
-    };
-    expect(opp.tabTitle()).toBe(opp.deniedTabTitle);
-    expect(opp.tabTitle()).not.toBe("Eligible Now");
-  });
-
-  test("tabTitle returns submittedTabTitle when submitted", () => {
-    updatesSub.data = {
-      submitted: {
-        date: { toDate: () => new Date() } as any,
-        by: "foo",
-      },
-      stateCode: "US_MI",
-    };
-    expect(opp.tabTitle()).toBe(opp.submittedTabTitle);
-    expect(opp.tabTitle()).not.toBe("Eligible Now");
   });
 });

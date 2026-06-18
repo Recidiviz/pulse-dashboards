@@ -605,30 +605,15 @@ export const mockApiOpportunityConfigurationResponse = {
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
       strictlyIneligibleCriteriaCopy: [],
-      subcategoryHeadings: [
-        { subcategory: "ELIGIBLE_NOW", text: "Eligible" },
-        { subcategory: "ALMOST_ELIGIBLE", text: "Almost Eligible" },
-      ],
-      subcategoryOrderings: [
-        { tab: "Eligible Now", texts: ["ELIGIBLE_NOW", "ALMOST_ELIGIBLE"] },
-      ],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "Early Discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision.<br /><br />Review clients who may be eligible for early discharge as per OP 06.05.135 and OP 06.04.130H and complete the discharge paperwork in COMS.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
-      tabGroups: [
-        {
-          key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Eligible Now",
-            "Supervisor Review",
-            "Pending",
-            "Marked Ineligible",
-          ],
-        },
-      ],
+      tabGroups: null,
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "earlyDischarge",
@@ -748,30 +733,15 @@ export const mockApiOpportunityConfigurationResponse = {
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
       strictlyIneligibleCriteriaCopy: [],
-      subcategoryHeadings: [
-        { subcategory: "ELIGIBLE_NOW", text: "Eligible" },
-        { subcategory: "ALMOST_ELIGIBLE", text: "Almost Eligible" },
-      ],
-      subcategoryOrderings: [
-        { tab: "Eligible Now", texts: ["ELIGIBLE_NOW", "ALMOST_ELIGIBLE"] },
-      ],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts.<br /><br />Review clients who meet the requirements for minimum telephone reporting as per OP 06.04.130K and transfer them to telephone reporting in COMS.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
-      tabGroups: [
-        {
-          key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Eligible Now",
-            "Supervisor Review",
-            "Pending",
-            "Marked Ineligible",
-          ],
-        },
-      ],
+      tabGroups: null,
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "minimumTelephoneReporting",

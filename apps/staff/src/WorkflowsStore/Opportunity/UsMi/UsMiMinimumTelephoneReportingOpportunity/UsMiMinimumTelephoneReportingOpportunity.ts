@@ -18,13 +18,16 @@
 import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
-import { UsMiSupervisionOpportunityBase } from "../UsMiSupervisionOpportunityBase";
+import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsMiMinimumTelephoneReportingReferralRecord,
   usMiMinimumTelephoneReportingSchema,
 } from "./UsMiMinimumTelephoneReportingReferralRecord";
 
-export class UsMiMinimumTelephoneReportingOpportunity extends UsMiSupervisionOpportunityBase<UsMiMinimumTelephoneReportingReferralRecord> {
+export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
+  Client,
+  UsMiMinimumTelephoneReportingReferralRecord
+> {
   constructor(client: Client, record: DocumentData) {
     super(
       client,
