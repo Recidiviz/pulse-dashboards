@@ -253,4 +253,5 @@ export const mockOpportunity: Opportunity<Client> = {
   isGrantApproved: false,
   latestTransitionDate: undefined,
   currentReviewerId: undefined,
+  isInRevisionsRequested: false,
 };

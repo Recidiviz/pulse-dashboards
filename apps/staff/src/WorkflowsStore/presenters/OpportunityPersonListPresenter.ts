@@ -339,6 +339,39 @@ export class OpportunityPersonListPresenter
         this.opportunityType === "usIdOverdueFaceToFaceContact",
       US_ID_CONTACT_CADENCE:
         this.opportunityType === "usIdOverdueFaceToFaceContact",
+      US_TX_CURRENT_REVIEWER:
+        [
+          "usTxAnnualReportStatusV2",
+          "usTxEarlyReleaseFromSupervisionV2",
+        ].includes(this.opportunityType) &&
+        opportunities.every(
+          (opp) => opp.isInSupervisorReview || opp.isInRevisionsRequested,
+        ),
+      US_TX_SUBMITTED_FOR_REVIEW_DATE:
+        [
+          "usTxAnnualReportStatusV2",
+          "usTxEarlyReleaseFromSupervisionV2",
+        ].includes(this.opportunityType) &&
+        opportunities.every(
+          (opp) => opp.isInSupervisorReview || opp.isInRevisionsRequested,
+        ),
+      US_TX_ALL_REVIEWERS:
+        [
+          "usTxAnnualReportStatusV2",
+          "usTxEarlyReleaseFromSupervisionV2",
+        ].includes(this.opportunityType) &&
+        opportunities.every(
+          (opp) =>
+            opp.isInSupervisorReview ||
+            opp.isInRevisionsRequested ||
+            opp.isGrantApproved,
+        ),
+      US_TX_GRANT_DATE:
+        [
+          "usTxAnnualReportStatusV2",
+          "usTxEarlyReleaseFromSupervisionV2",
+        ].includes(this.opportunityType) &&
+        opportunities.every((opp) => opp.isGrantApproved),
     };
   }
 

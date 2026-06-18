@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { getOfficerFullName } from "./getOfficerFullName";
 
 type WorkflowsOfficerNameProps =
   | {
@@ -43,25 +44,12 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
 
   if (!officerId && !officerEmail) return null;
 
-  const officer = availableOfficers.find((o) => {
-    return officerId ? o.id === officerId : o.email === officerEmail;
-  });
-
-  let officerFullName: string | undefined;
-  // unlikely but not impossible that name data could be missing
-  if (officer?.givenNames && officer?.surname) {
-    // names should display in reverse order in TX
-    if (officer.stateCode === "US_TX") {
-      officerFullName = [officer.surname ?? "", officer.givenNames ?? ""].join(
-        ", ",
-      );
-    } else {
-      officerFullName = `${officer.givenNames} ${officer.surname}`.trim();
-    }
-  }
-
-  if (searchType === "CASELOAD" && officerId)
-    officerFullName = `Caseload ${officerId}`;
+  const officerFullName = getOfficerFullName(
+    availableOfficers,
+    officerId,
+    officerEmail,
+    searchType,
+  );
 
   return (
     <span className="fs-exclude">

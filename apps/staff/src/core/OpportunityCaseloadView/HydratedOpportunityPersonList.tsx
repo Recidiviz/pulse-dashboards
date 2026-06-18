@@ -95,6 +95,7 @@ import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsSt
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { UsIdOverdueFaceToFaceContactOpportunity } from "../../WorkflowsStore/Opportunity/UsId/usIdOverdueFaceToFaceContact";
 import { UsNeGoodTimeRestorationOpportunity } from "../../WorkflowsStore/Opportunity/UsNe";
+import { UsTxArsErsV2OpportunityBase } from "../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsV2OpportunityBase";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseloadSelect } from "../CaseloadSelect";
@@ -297,7 +298,11 @@ export type OpportunityTableColumnId =
   | "US_ID_CASE_TYPE"
   | "US_ID_CONTACT_DUE_DATE"
   | "US_ID_CONTACT_CADENCE"
-  | "US_ID_LAST_VIEWED";
+  | "US_ID_LAST_VIEWED"
+  | "US_TX_CURRENT_REVIEWER"
+  | "US_TX_SUBMITTED_FOR_REVIEW_DATE"
+  | "US_TX_ALL_REVIEWERS"
+  | "US_TX_GRANT_DATE";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -352,7 +357,13 @@ function EligibilityDateCell({
   );
 }
 
-function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
+function CurrentReviewerNameCell({ row }: { row: Row<Opportunity> }) {
+  if (row.original.currentReviewerId) {
+    return <WorkflowsOfficerName officerId={row.original.currentReviewerId} />;
+  }
+}
+
+function AssignedStaffNameCell({ row }: { row: Row<Opportunity> }) {
   const {
     tenantStore: { labels },
   } = useRootStore();
@@ -1217,7 +1228,48 @@ const TableView = observer(function TableView({
         "",
       enableSorting: true,
       sortingFn: "text",
-      cell: OfficerNameCell,
+      cell: AssignedStaffNameCell,
+    },
+    {
+      header: "Current Reviewer",
+      id: "US_TX_CURRENT_REVIEWER",
+      accessorFn: (opp: Opportunity) => opp.currentReviewerId,
+      enableSorting: true,
+      sortingFn: "text",
+      cell: CurrentReviewerNameCell,
+    },
+    {
+      header: "Submitted for Review Date",
+      id: "US_TX_SUBMITTED_FOR_REVIEW_DATE",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsTxArsErsV2OpportunityBase) {
+          return opp.submittedForReviewDate;
+        }
+      },
+      enableSorting: true,
+      sortingFn: "datetime",
+    },
+    {
+      header: "Reviewed By",
+      id: "US_TX_ALL_REVIEWERS",
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (opp instanceof UsTxArsErsV2OpportunityBase) {
+          return opp.allPreviousReviewers.join(", ");
+        }
+      },
+      enableSorting: false,
+    },
+    {
+      header: "Grant Date",
+      id: "US_TX_GRANT_DATE",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsTxArsErsV2OpportunityBase) {
+          return opp.grantDate;
+        }
+      },
+      enableSorting: true,
+      sortingFn: "datetime",
     },
     {
       header: "Last Viewed in Recidiviz",

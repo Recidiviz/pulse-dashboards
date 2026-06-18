@@ -201,6 +201,7 @@ export interface Opportunity<
   readonly submittedButtonText: string;
   readonly undoSubmittedButtonText: string;
   isInSupervisorReview: boolean;
+  isInRevisionsRequested: boolean;
   isInSnoozeReview: boolean;
   isInGrantReview: boolean;
   isIndefinitelySnoozed: boolean;
