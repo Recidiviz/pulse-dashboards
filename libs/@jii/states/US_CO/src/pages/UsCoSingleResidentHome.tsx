@@ -29,6 +29,10 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { UsCoMonthlyReports } from "../components/UsCoSingleResidentHome/UsCoMonthlyReports";
 import { ResidentHomePresenter } from "../presenters/ResidentHomePresenter";
+import {
+  SentenceDatesPedSupplementalOverride,
+  SentenceDatesPedValueOverride,
+} from "./SentenceDatesPedOverrides";
 import { SentenceDatesSectionWrapperOverride } from "./SentenceDatesSectionWrapperOverride";
 
 const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
@@ -59,6 +63,8 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
           stateCode="US_CO"
           componentOverrides={{
             SectionWrapper: SentenceDatesSectionWrapperOverride,
+            DateValue: SentenceDatesPedValueOverride,
+            DateValueSupplemental: SentenceDatesPedSupplementalOverride,
           }}
         />
 

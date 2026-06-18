@@ -1122,6 +1122,7 @@ exports[`schema for 'US_CO' 'RES001' 1`] = `
   "facilityUnitId": null,
   "gender": "MALE",
   "metadata": {
+    "cohortLabel": "STANDARD",
     "creditActivity": [
       {
         "creditDate": 2021-11-16T00:00:00.000Z,
@@ -1204,6 +1205,7 @@ exports[`schema for 'US_CO' 'RES002' 1`] = `
   "facilityUnitId": null,
   "gender": "FEMALE",
   "metadata": {
+    "cohortLabel": "LIFE_WITHOUT_PAROLE",
     "creditActivity": [],
     "incarcerationStartDate": 2019-06-16T00:00:00.000Z,
     "lastUpdatedDate": 2021-12-13T00:00:00.000Z,

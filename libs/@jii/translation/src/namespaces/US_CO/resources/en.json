@@ -64,7 +64,11 @@
     "pageTitle": "Home",
     "lastUpdatedDate": "This information was last updated on {{lastUpdatedDate, formatFullDate}}. The following dates are estimated, if you have questions about your dates please reach out to your Case Manager.",
     "sentenceDates": {
-      "learnMoreLink": "Learn more about dates"
+      "learnMoreLink": "Learn more about dates",
+      "lifeSentence": {
+        "withParole": "Life Sentence With Parole",
+        "withoutParole": "Life Sentence Without Parole"
+      }
     }
   },
   "sentenceDates": {

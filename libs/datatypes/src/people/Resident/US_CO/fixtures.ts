@@ -43,6 +43,7 @@ export const rawUsCoResidents: Array<RawResidentRecord> = [
       pedTent: relativeFixtureDate({ years: 1, months: 3 }),
       mrdTent: relativeFixtureDate({ years: 2 }),
       sddTent: null,
+      cohortLabel: "STANDARD",
       creditActivity: [
         {
           creditDate: relativeFixtureDate({ months: -1 }),
@@ -121,6 +122,7 @@ export const rawUsCoResidents: Array<RawResidentRecord> = [
       pedTent: relativeFixtureDate({ months: 8 }),
       mrdTent: relativeFixtureDate({ years: 1, months: 6 }),
       sddTent: relativeFixtureDate({ years: 3 }),
+      cohortLabel: "LIFE_WITHOUT_PAROLE",
       creditActivity: [],
       lastUpdatedDate: relativeFixtureDate({ days: -3 }),
     },

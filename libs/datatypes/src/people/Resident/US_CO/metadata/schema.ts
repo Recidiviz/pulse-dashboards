@@ -43,6 +43,13 @@ export const usCoResidentMetadataSchema = z.object({
   sddTent: nullishAsUndefined(dateStringSchema),
   creditActivity: z.array(usCoEarnedCreditActivitySchema),
   lastUpdatedDate: nullishAsUndefined(dateStringSchema),
+  cohortLabel: z.enum([
+    "STANDARD",
+    "INDETERMINATE_LIFE_WITH_PAROLE",
+    "LIFE_WITH_PAROLE",
+    "LIFE_WITHOUT_PAROLE",
+    "INTERSTATE_COMPACT",
+  ]),
 });
 
 export type RawUsCoResidentMetadata = z.input<
