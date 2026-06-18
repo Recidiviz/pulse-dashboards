@@ -208,6 +208,7 @@ export const mockOpportunity: Opportunity<Client> = {
     grantReviewDropdownLabel: "Submit for Supervisor",
     excludeIndefiniteSnoozesFromTableView: true,
     enableWorkflowsFilter: false,
+    hidePreviewModal: false,
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

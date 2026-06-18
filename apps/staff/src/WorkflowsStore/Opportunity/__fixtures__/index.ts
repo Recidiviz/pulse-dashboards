@@ -118,6 +118,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   grantReviewDropdownLabel: "Submit for Supervisor",
   excludeIndefiniteSnoozesFromTableView: true,
   enableWorkflowsFilter: false,
+  hidePreviewModal: false,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

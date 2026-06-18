@@ -33,4 +33,8 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
   get hydrateIneligibleRecordsInOpportunityManager() {
     return true;
   }
+
+  get hidePreviewModal(): boolean {
+    return true;
+  }
 }

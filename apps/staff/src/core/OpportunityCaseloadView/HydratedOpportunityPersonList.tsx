@@ -60,7 +60,7 @@ import {
   AccordionItemPanel,
   AccordionItemState,
 } from "react-accessible-accordion";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { OpportunityType } from "~datatypes";
@@ -98,6 +98,7 @@ import { UsNeGoodTimeRestorationOpportunity } from "../../WorkflowsStore/Opportu
 import { UsTxArsErsV2OpportunityBase } from "../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsV2OpportunityBase";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
+import { getLinkToForm } from "../../WorkflowsStore/utils";
 import { CaseloadSelect } from "../CaseloadSelect";
 import {
   CaseloadTable,
@@ -434,6 +435,9 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   allColumns: OpportunityTableColumnDef[];
   subcategory?: string;
 }) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { officerPseudoId, supervisorPseudoId } = useParams();
   const displayedColumns = allColumns.filter(
     (col) => presenter.enabledColumnIds[col.id],
   );
@@ -443,7 +447,14 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
       expandedLastColumn
       data={opportunities}
       columns={displayedColumns}
-      onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
+      onRowClick={(opp) => {
+        presenter.handleOpportunityClick(opp);
+        if (presenter.config.hidePreviewModal) {
+          navigate(
+            getLinkToForm(pathname, opp, officerPseudoId, supervisorPseudoId),
+          );
+        }
+      }}
       onRowRender={(opp) => {
         opp.trackListViewed();
       }}
@@ -1516,11 +1527,13 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         /* List view with no subcategories */
         <CaseloadOpportunityGrid items={allOpportunities} />
       )}
-      <OpportunityPreviewPanel
-        opportunity={presenter.selectedOpportunity}
-        navigableOpportunities={presenter.navigablePeople}
-        selectedPerson={presenter.selectedPerson}
-      />
+      {!presenter.config.hidePreviewModal && (
+        <OpportunityPreviewPanel
+          opportunity={presenter.selectedOpportunity}
+          navigableOpportunities={presenter.navigablePeople}
+          selectedPerson={presenter.selectedPerson}
+        />
+      )}
     </>
   );
 });

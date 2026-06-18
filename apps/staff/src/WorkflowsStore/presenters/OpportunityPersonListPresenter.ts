@@ -316,7 +316,10 @@ export class OpportunityPersonListPresenter
             !isEmpty(opp.indefiniteDenialReasons),
         ),
       SUBMITTED_FOR: this.isViewingSubmittedTab,
-      CTA_BUTTON: true,
+      CTA_BUTTON: ![
+        "usTxAnnualReportStatusV2",
+        "usTxEarlyReleaseFromSupervisionV2",
+      ].includes(this.opportunityType),
       AGREEMENT_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
         this.opportunityType,
       ),

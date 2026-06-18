@@ -19,12 +19,14 @@ import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
+import { getLinkToForm } from "../../WorkflowsStore/utils";
 import { OpportunityCapsule } from "../PersonCapsules";
 import { WorkflowsTooltip } from "../WorkflowsTooltip";
 
@@ -64,6 +66,9 @@ export const CaseloadOpportunityCell = observer(
     const { person } = opportunity;
     const { workflowsStore } = useRootStore();
     const { isTablet } = useIsMobile(true);
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const { officerPseudoId, supervisorPseudoId } = useParams();
 
     return (
       <CellItem
@@ -84,6 +89,16 @@ export const CaseloadOpportunityCell = observer(
               className="PersonListItem__Link"
               onClick={() => {
                 workflowsStore.updateSelectedPersonAndOpportunity(opportunity);
+                if (opportunity.config.hidePreviewModal) {
+                  navigate(
+                    getLinkToForm(
+                      pathname,
+                      opportunity,
+                      officerPseudoId,
+                      supervisorPseudoId,
+                    ),
+                  );
+                }
               }}
             >
               <OpportunityCapsule

@@ -527,4 +527,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get enableWorkflowsFilter(): boolean {
     return this.configurationObject.enableWorkflowsFilter ?? false;
   }
+
+  get hidePreviewModal(): boolean {
+    return false;
+  }
 }

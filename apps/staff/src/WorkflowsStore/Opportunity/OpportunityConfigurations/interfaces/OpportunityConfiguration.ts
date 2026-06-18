@@ -154,4 +154,5 @@ export interface OpportunityConfiguration {
   pendingOverdueDaysThreshold?: number;
 
   eligibleNotViewedDaysThreshold?: number;
+  hidePreviewModal: boolean;
 }
