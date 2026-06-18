@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isDemoMode } from "~client-env-utils";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatNameFirstLast, formatWorkflowsDate } from "../../../utils";
 import {
@@ -24,6 +26,7 @@ import {
   UsIaEarlyDischargeOpportunity,
 } from "../UsIa";
 import { FormBase } from "./FormBase";
+import { resolveCurrentUserName } from "./utils";
 
 export class UsIaEarlyDischargeForm extends FormBase<
   UsIaEarlyDischargeDraftData,
@@ -48,10 +51,13 @@ export class UsIaEarlyDischargeForm extends FormBase<
   }
 
   get currentUserIsSupervisingOfficer(): boolean {
-    return !!this.getCurrentUserFromFormRecord();
+    // isDemoMode allows Recidiviz users to demo signature functionality
+    return isDemoMode() || !!this.getCurrentUserFromFormRecord();
   }
 
   currentUserCanSignApproverField(formType: "cbc" | "parole"): boolean {
+    if (isDemoMode()) return true;
+
     const { userStore } = this.rootStore;
     const signatureField =
       formType === "cbc" ? "officerSignatureCbc" : "officerSignatureParole";
@@ -126,15 +132,17 @@ export class UsIaEarlyDischargeForm extends FormBase<
       expirationDate,
     } = this.person;
 
-    const { userStore } = this.rootStore;
+    const { userStore, workflowsStore } = this.rootStore;
 
     const staff = this.getCurrentUserFromFormRecord();
 
     const staffTitle = staff?.staffTitle || "";
     const workUnit = staff?.workUnit || "";
-    const userName =
-      userStore.userFullNameFromAdminPanel ?? userStore.userFullName;
-    const officerFullName = (staff && userName) ?? "";
+    const officerFullName = resolveCurrentUserName(
+      userStore,
+      workflowsStore.user?.info,
+      staff,
+    );
 
     const todaysDate = formatWorkflowsDate(new Date());
 

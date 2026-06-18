@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatWorkflowsDate } from "../../../utils";
+import { isDemoMode } from "~client-env-utils";
+
+import { formatNameFirstLast, formatWorkflowsDate } from "../../../utils";
 
 type KeysWithPossibleValueType<
   RecordType extends Record<string, unknown>,
@@ -25,6 +27,33 @@ type KeysWithPossibleValueType<
     ? P
     : never]: ValueType;
 };
+
+/**
+ * Resolves the current user's display name from multiple possible sources.
+ * In demo mode, prefers workflowsUserInfo, then userFullName, then userFullNameFromAdminPanel.
+ * Outside demo mode, requires a staffRecord and prefers userFullNameFromAdminPanel over userFullName.
+ */
+export function resolveCurrentUserName(
+  userStore: {
+    userFullName: string | undefined;
+    userFullNameFromAdminPanel: string;
+  },
+  workflowsUserInfo?: { givenNames: string; surname: string },
+  staffRecord?: object,
+): string | undefined {
+  if (isDemoMode()) {
+    if (workflowsUserInfo?.givenNames || workflowsUserInfo?.surname) {
+      return formatNameFirstLast(workflowsUserInfo);
+    }
+    return (
+      userStore.userFullName ||
+      userStore.userFullNameFromAdminPanel ||
+      undefined
+    );
+  }
+  if (!staffRecord) return undefined;
+  return userStore.userFullNameFromAdminPanel || userStore.userFullName;
+}
 
 export const transformPossibleDateFields = <
   FormData extends Record<string, unknown>,

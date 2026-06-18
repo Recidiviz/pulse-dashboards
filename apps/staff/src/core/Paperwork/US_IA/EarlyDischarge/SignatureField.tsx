@@ -24,6 +24,7 @@ import { Button } from "~design-system";
 import { useRootStore } from "../../../../components/StoreProvider";
 import { PartialRecord } from "../../../../utils/typeUtils";
 import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
+import { resolveCurrentUserName } from "../../../../WorkflowsStore/Opportunity/Forms/utils";
 import { UsIaEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { FormUsIaEarlyDischargeInput } from "./FormComponents";
 
@@ -64,16 +65,20 @@ const SignatureField = observer(function SignatureField({
   >;
   additionalFieldsToSave?: (keyof UsIaEarlyDischargeDraftData)[];
 }) {
-  const { userStore, analyticsStore } = useRootStore();
+  const { userStore, workflowsStore, analyticsStore } = useRootStore();
   const userName =
-    userStore.userFullNameFromAdminPanel ?? userStore.userFullName;
+    resolveCurrentUserName(
+      userStore,
+      workflowsStore.user?.info,
+      form.getCurrentUserFromFormRecord(),
+    ) ?? "";
 
   const isSigned = !!form.formData[signatureField];
 
   const onClickButton = () => {
     runInAction(() => {
       if (!isSigned) {
-        form.updateDraftData(signatureField, userName ?? "");
+        form.updateDraftData(signatureField, userName);
         // Save whatever is in shown in the form into the
         // draft data so that it will be available
         // when the supervisor goes to review it.
