@@ -94,8 +94,14 @@ const AuthenticatedApp: React.FC = () => {
               audience,
             });
 
+            // Omit the auth header when creds is undefined (session expiry)
+            // instead of sending "Bearer undefined".
+            if (!creds) {
+              return { statecode, ...impersonationHeaders };
+            }
+
             return {
-              Authorization: `Bearer ${creds?.accessToken}`,
+              Authorization: `Bearer ${creds.accessToken}`,
               statecode,
               ...impersonationHeaders,
             };

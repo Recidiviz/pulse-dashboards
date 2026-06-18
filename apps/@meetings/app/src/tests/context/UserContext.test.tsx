@@ -29,6 +29,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 // Mock react-native-auth0
 const mockGetCredentials = jest.fn();
 const mockClearSession = jest.fn();
+const mockClearCredentials = jest.fn();
 const mockUser = {
   name: "Test User",
   email: "test@example.com",
@@ -77,6 +78,7 @@ describe("UserContext", () => {
         isLoading: false,
         getCredentials: mockGetCredentials,
         clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
       });
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -110,6 +112,7 @@ describe("UserContext", () => {
         isLoading: false,
         getCredentials: mockGetCredentials,
         clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
       });
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -136,7 +139,8 @@ describe("UserContext", () => {
         hasFacilitiesAssistantAccess: false,
         hasCasePlanningAssistantAccess: false,
       });
-      expect(result.current.getCredentials).toBe(mockGetCredentials);
+      // getCredentials is wrapped, so it's no longer the raw mock.
+      expect(typeof result.current.getCredentials).toBe("function");
     });
 
     it("provides authenticated user context with recidiviz user", async () => {
@@ -153,6 +157,7 @@ describe("UserContext", () => {
         isLoading: false,
         getCredentials: mockGetCredentials,
         clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
       });
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -190,6 +195,7 @@ describe("UserContext", () => {
         isLoading: false,
         getCredentials: mockGetCredentials,
         clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
       });
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -209,6 +215,7 @@ describe("UserContext", () => {
         isLoading: false,
         getCredentials: mockGetCredentials,
         clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
       });
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -224,12 +231,114 @@ describe("UserContext", () => {
       });
     });
 
+    it("clears credentials and resolves to undefined when getCredentials hits login_required", async () => {
+      const loginRequiredError = Object.assign(new Error("Login required"), {
+        name: "login_required",
+        code: "login_required",
+      });
+      mockGetCredentials.mockRejectedValue(loginRequiredError);
+      mockClearCredentials.mockResolvedValue(undefined);
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      const { result } = renderHook(() => useUserContext(), { wrapper });
+
+      // The mount effect's request hits login_required, so the wrapper clears
+      // credentials (which makes AppNavigator redirect to login).
+      await waitFor(() => {
+        expect(mockClearCredentials).toHaveBeenCalled();
+      });
+      expect(mockClearSession).not.toHaveBeenCalled();
+
+      await expect(
+        result.current.getCredentials(undefined, undefined, {
+          audience: "test-audience",
+        }),
+      ).resolves.toBeUndefined();
+    });
+
+    it("still resolves to undefined when clearCredentials itself fails", async () => {
+      const loginRequiredError = Object.assign(new Error("Login required"), {
+        name: "login_required",
+        code: "login_required",
+      });
+      mockGetCredentials.mockRejectedValue(loginRequiredError);
+      mockClearCredentials.mockRejectedValue(new Error("clear failed"));
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      const { result } = renderHook(() => useUserContext(), { wrapper });
+
+      await expect(
+        result.current.getCredentials(undefined, undefined, {
+          audience: "test-audience",
+        }),
+      ).resolves.toBeUndefined();
+    });
+
+    it("re-throws errors that are not session expiry, without redirecting", async () => {
+      const networkError = Object.assign(new Error("Network error"), {
+        name: "NO_NETWORK",
+        code: "NO_NETWORK",
+        type: "NO_NETWORK",
+      });
+      mockGetCredentials.mockRejectedValue(networkError);
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      const { result } = renderHook(() => useUserContext(), { wrapper });
+
+      await expect(
+        result.current.getCredentials(undefined, undefined, {
+          audience: "test-audience",
+        }),
+      ).rejects.toThrow("Network error");
+      expect(mockClearCredentials).not.toHaveBeenCalled();
+    });
+
     it("calls clearSession when onLogout is called", async () => {
       mockUseAuth0.mockReturnValue({
         user: mockUser,
         isLoading: false,
         getCredentials: mockGetCredentials,
         clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
       });
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -260,6 +369,7 @@ describe("UserContext", () => {
         isLoading: false,
         getCredentials: mockGetCredentials,
         clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
       });
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (

@@ -16,12 +16,20 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react-native";
-import React, { createContext, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react";
+import type { Credentials } from "react-native-auth0";
 import { useAuth0 } from "react-native-auth0";
 
 import type { FeatureVariantRecord } from "~@meetings/trpc-types";
 
 import { env } from "../shared/config/env";
+import { isLoginRequiredError } from "../shared/lib/auth";
+import { extractError } from "../shared/lib/extractError";
 
 interface UserContextType {
   isLoading: boolean;
@@ -42,7 +50,17 @@ interface UserContextType {
   hasCasePlanningAssistantAccess: boolean;
   isRecidivizUser: boolean;
   onLogout: ReturnType<typeof useAuth0>["clearSession"];
-  getCredentials: ReturnType<typeof useAuth0>["getCredentials"];
+  /**
+   * Wrapped Auth0 `getCredentials`. On session expiry it clears the local
+   * session, redirects to login, and resolves to `undefined` instead of
+   * rejecting, so callers must handle a missing token.
+   */
+  getCredentials: (
+    scope?: string,
+    minTtl?: number,
+    parameters?: Record<string, unknown>,
+    forceRefresh?: boolean,
+  ) => Promise<Credentials | undefined>;
   featureVariants?: FeatureVariantRecord;
 }
 
@@ -52,17 +70,53 @@ export const UserContextProvider: React.FC<{
   isSkipAuthUser: boolean;
   children: React.ReactNode;
 }> = ({ isSkipAuthUser, children }) => {
-  const { user, isLoading, clearSession, getCredentials } = useAuth0();
+  const { user, isLoading, clearSession, getCredentials, clearCredentials } =
+    useAuth0();
+
+  // On session expiry, clear local credentials so `user` becomes null and
+  // AppNavigator routes to login. clearCredentials (not clearSession) avoids a
+  // federated-logout page redirect on web.
+  const getCredentialsWithReauth = useCallback<
+    UserContextType["getCredentials"]
+  >(
+    async (...args) => {
+      try {
+        return await getCredentials(...args);
+      } catch (error) {
+        if (isLoginRequiredError(error)) {
+          Sentry.logger.warn("auth.session_expired.redirect_to_login", {
+            error: extractError(error),
+          });
+          // Honor the resolve-to-undefined contract even if clearing fails.
+          try {
+            await clearCredentials();
+          } catch (clearError) {
+            Sentry.logger.error("auth.clear_credentials.error", {
+              error: extractError(clearError),
+            });
+          }
+          return undefined;
+        }
+        throw error;
+      }
+    },
+    [getCredentials, clearCredentials],
+  );
 
   // Fetch credentials when user first loads to populate app_metadata. For some reason this only
   // gets populated on the user if we request credentials.
   useEffect(() => {
     if (!isSkipAuthUser && user && !isLoading) {
-      getCredentials(undefined, undefined, {
+      // Fire-and-forget; .catch prevents an unhandled rejection.
+      void getCredentialsWithReauth(undefined, undefined, {
         audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
+      }).catch((error) => {
+        Sentry.logger.error("auth.populate_metadata.error", {
+          error: extractError(error),
+        });
       });
     }
-  }, [isSkipAuthUser, user, isLoading, getCredentials]);
+  }, [isSkipAuthUser, user, isLoading, getCredentialsWithReauth]);
 
   useEffect(() => {
     if (isSkipAuthUser) {
@@ -93,7 +147,7 @@ export const UserContextProvider: React.FC<{
           hasFacilitiesAssistantAccess: true,
           hasCasePlanningAssistantAccess: true,
           onLogout: () => Promise.resolve(),
-          getCredentials,
+          getCredentials: getCredentialsWithReauth,
           isRecidivizUser: true,
           featureVariants: undefined,
         }}
@@ -142,7 +196,7 @@ export const UserContextProvider: React.FC<{
         onLogout: async () => {
           await clearSession();
         },
-        getCredentials,
+        getCredentials: getCredentialsWithReauth,
         isRecidivizUser: isRecidiviz,
         featureVariants,
       }}
