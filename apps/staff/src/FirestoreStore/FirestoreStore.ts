@@ -328,8 +328,13 @@ export default class FirestoreStore {
     const docRef = this.doc({ key: "clientUpdatesV2" }, `${recordId}`);
 
     // This is the only place an update should be made to `clientUpdatesV2` without using
-    // the `updateClientUpdatesV2` method
-    return this.updateDocument(docRef, { ...update });
+    // the `updateClientUpdatesV2Document` method. Because the update is written directly to
+    // the person document, include the `stateCode` so the document is properly populated,
+    // matching the behavior of `updateClientUpdatesV2Document`. See #3845.
+    return this.updateDocument(docRef, {
+      stateCode: recordId.slice(0, 5),
+      ...update,
+    });
   }
 
   /**

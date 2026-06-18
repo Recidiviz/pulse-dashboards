@@ -420,6 +420,30 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    test("updatePerson adds stateCode to the person document", async () => {
+      await store.updatePerson("us_ca_123", {
+        preferredName: "Bob",
+      } as Parameters<typeof store.updatePerson>[1]);
+
+      expect(mockSetDoc).toHaveBeenCalledWith(
+        "test-doc-ref",
+        { stateCode: "us_ca", preferredName: "Bob" },
+        { merge: true },
+      );
+    });
+
+    test("updatePerson adds stateCode when updating preferredContactMethod", async () => {
+      await store.updatePerson("us_ca_123", {
+        preferredContactMethod: "Call",
+      } as Parameters<typeof store.updatePerson>[1]);
+
+      expect(mockSetDoc).toHaveBeenCalledWith(
+        "test-doc-ref",
+        { stateCode: "us_ca", preferredContactMethod: "Call" },
+        { merge: true },
+      );
+    });
+
     test("deleteOpportunityDenialAndSnooze", async () => {
       await store.deleteOpportunityDenialAndSnooze(opp);
       expect(mockDoc.mock.calls).toEqual([
