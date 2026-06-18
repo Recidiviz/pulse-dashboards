@@ -25,6 +25,7 @@ import { formatDistanceFromTodayFormatter } from "./plugins/formatters/distanceF
 import { fullDateFormatter } from "./plugins/formatters/fullDate";
 import { monthYearFormatter } from "./plugins/formatters/monthYear";
 import { numberOfDaysFormatter } from "./plugins/formatters/numberOfDays";
+import { withSignFormatter } from "./plugins/formatters/withSign";
 
 export type SupportedLanguagesOption = Array<string> | "_ALL_";
 
@@ -105,6 +106,7 @@ export function createI18nInstance(
     "numberOfDays",
     numberOfDaysFormatter,
   );
+  newInstance.services.formatter?.addCached("withSign", withSignFormatter);
 
   return newInstance;
 }

@@ -23,6 +23,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import {
+  BackLink,
   ButtonLink,
   CopyWrapper,
   HomepageSectionHeading,
@@ -91,6 +92,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
   function UsCoProgramsList({ presenter }) {
     const { t } = useUsCoTranslations();
     const pathParams = useTypedParams(State.Resident);
+    const { residentFlags } = useSingleResidentContext();
 
     const [selectedProgram, setSelectedProgram] = useState<
       UsCoProgram | undefined
@@ -109,6 +111,11 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
         />
 
         <Header>
+          {residentFlags.usCoV1Experience && (
+            <BackLink to={State.Resident.buildPath(pathParams)}>
+              {t(($) => $.programs.backLink)}
+            </BackLink>
+          )}
           <HomepageSectionHeading>
             {t(($) => $.programs.pageTitle)}
           </HomepageSectionHeading>

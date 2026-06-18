@@ -8,10 +8,15 @@
       "earnedTime": {
         "heading": "[US_CO]moreInformation.pages.earnedTime.heading",
         "body": "[US_CO]moreInformation.pages.earnedTime.body"
+      },
+      "yosEarnedTime": {
+        "heading": "[US_CO]moreInformation.pages.yosEarnedTime.heading",
+        "body": "[US_CO]moreInformation.pages.yosEarnedTime.body"
       }
     }
   },
   "programs": {
+    "backLink": "[US_CO]programs.backLink",
     "lastUpdated": "[US_CO]programs.lastUpdated",
     "pageTitle": "[US_CO]programs.pageTitle",
     "pageDescription": "[US_CO]programs.pageDescription",
@@ -57,7 +62,10 @@
   },
   "homepage": {
     "pageTitle": "[US_CO]homepage.pageTitle",
-    "lastUpdatedDate": "[US_CO]homepage.lastUpdatedDate"
+    "lastUpdatedDate": "[US_CO]homepage.lastUpdatedDate",
+    "sentenceDates": {
+      "learnMoreLink": "[US_CO]homepage.sentenceDates.learnMoreLink"
+    }
   },
   "sentenceDates": {
     "dates": {
@@ -69,6 +77,31 @@
         "label": "[US_CO]sentenceDates.dates.pedTent.label",
         "description": "[US_CO]sentenceDates.dates.pedTent.description"
       }
+    }
+  },
+  "monthlyReport": {
+    "pageTitle": "[US_CO]monthlyReport.pageTitle",
+    "noCreditsThisMonth": "[US_CO]monthlyReport.noCreditsThisMonth",
+    "monthLabel": "[US_CO]monthlyReport.monthLabel",
+    "creditCount": "[US_CO]monthlyReport.creditCount",
+    "creditDays_one": "[US_CO]monthlyReport.creditDays_one",
+    "creditDays_other": "[US_CO]monthlyReport.creditDays_other",
+    "creditTypes": {
+      "EARNED_TIME": "[US_CO]monthlyReport.creditTypes.EARNED_TIME",
+      "GOOD_TIME": "[US_CO]monthlyReport.creditTypes.GOOD_TIME",
+      "ACHIEVEMENT": "[US_CO]monthlyReport.creditTypes.ACHIEVEMENT",
+      "OTHER": "[US_CO]monthlyReport.creditTypes.OTHER",
+      "PROJECTED_EARNED_TIME_FINAL_3_MONTHS": "[US_CO]monthlyReport.creditTypes.PROJECTED_EARNED_TIME_FINAL_3_MONTHS"
+    },
+    "summary": {
+      "sectionHeader": "[US_CO]monthlyReport.summary.sectionHeader",
+      "seeFullList": "[US_CO]monthlyReport.summary.seeFullList",
+      "learnMore": "[US_CO]monthlyReport.summary.learnMore"
+    },
+    "allMonths": {
+      "pageTitle": "[US_CO]monthlyReport.allMonths.pageTitle",
+      "heading": "[US_CO]monthlyReport.allMonths.heading",
+      "rowsClickable": "[US_CO]monthlyReport.allMonths.rowsClickable"
     }
   }
 }

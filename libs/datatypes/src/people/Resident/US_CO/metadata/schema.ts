@@ -19,10 +19,18 @@ import { z } from "zod";
 
 import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
+const creditTypeSchema = z.enum([
+  "EARNED_TIME",
+  "GOOD_TIME",
+  "ACHIEVEMENT",
+  "OTHER",
+  "PROJECTED_EARNED_TIME_FINAL_3_MONTHS",
+]);
+
 export const usCoEarnedCreditActivitySchema = z.object({
-  creditDate: dateStringSchema.nullable(),
-  creditType: z.string().nullable(),
-  creditsEarned: z.number().nullable(),
+  creditDate: dateStringSchema,
+  creditType: nullishAsUndefined(creditTypeSchema),
+  creditsEarned: nullishAsUndefined(z.number()),
   goodTimeChangeReason: z.string().nullable(),
   earnedTimeStatus: z.string().nullable(),
 });
@@ -33,7 +41,7 @@ export const usCoResidentMetadataSchema = z.object({
   mrdTent: nullishAsUndefined(dateStringSchema),
   pedTent: nullishAsUndefined(dateStringSchema),
   sddTent: nullishAsUndefined(dateStringSchema),
-  creditActivity: z.array(usCoEarnedCreditActivitySchema).nullable(),
+  creditActivity: z.array(usCoEarnedCreditActivitySchema),
   lastUpdatedDate: nullishAsUndefined(dateStringSchema),
 });
 
@@ -44,3 +52,4 @@ export type UsCoResidentMetadata = z.output<typeof usCoResidentMetadataSchema>;
 export type UsCoEarnedCreditActivity = z.output<
   typeof usCoEarnedCreditActivitySchema
 >;
+export type UsCoCreditType = z.output<typeof creditTypeSchema>;

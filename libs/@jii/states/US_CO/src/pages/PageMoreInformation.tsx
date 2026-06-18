@@ -20,6 +20,7 @@ import {
   useTypedSearchParams,
 } from "react-router-typesafe-routes/dom";
 
+import { useSingleResidentContext } from "~@jii/data";
 import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { UsCoTranslationsObject, useUsCoTranslations } from "~@jii/translation";
@@ -30,6 +31,7 @@ type Props = {
 
 export function PageMoreInformation({ pageSlug }: Props) {
   const { t } = useUsCoTranslations();
+  const { resident } = useSingleResidentContext();
   const params = useTypedParams(State.Resident.UsCoMoreInformation);
   const [{ backTarget }] = useTypedSearchParams(
     State.Resident.UsCoMoreInformation,
@@ -45,6 +47,11 @@ export function PageMoreInformation({ pageSlug }: Props) {
           to: State.Resident.buildPath(params),
           children: t(($) => $.moreInformation.backLink.home),
         };
+
+  pageSlug =
+    pageSlug === "earnedTime" && resident.facilityId === "YOS"
+      ? "yosEarnedTime"
+      : pageSlug;
 
   return (
     <DefinitionPage

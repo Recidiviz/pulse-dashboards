@@ -27,7 +27,9 @@ import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsCoTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
+import { UsCoMonthlyReports } from "../components/UsCoSingleResidentHome/UsCoMonthlyReports";
 import { ResidentHomePresenter } from "../presenters/ResidentHomePresenter";
+import { SentenceDatesSectionWrapperOverride } from "./SentenceDatesSectionWrapperOverride";
 
 const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
   observer(function UsCoSingleResidentHome({ presenter }) {
@@ -52,7 +54,15 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
           })}
         />
 
-        <SentenceDates data={presenter.sentenceDatesData} stateCode="US_CO" />
+        <SentenceDates
+          data={presenter.sentenceDatesData}
+          stateCode="US_CO"
+          componentOverrides={{
+            SectionWrapper: SentenceDatesSectionWrapperOverride,
+          }}
+        />
+
+        <UsCoMonthlyReports />
 
         <ProgramsCtaSection stateCode="US_CO" />
       </BottomPaddedContainer>

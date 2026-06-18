@@ -18,9 +18,11 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { ProgramCatalog, UsCoMoreInformation } from "~@jii/paths";
+import { EGT, ProgramCatalog, UsCoMoreInformation } from "~@jii/paths";
 
 import { PageMoreInformation } from "../pages/PageMoreInformation";
+import { PageUsCoAllMonthsCreditReport } from "../pages/PageUsCoAllMonthsCreditReport";
+import { PageUsCoMonthlyReport } from "../pages/PageUsCoMonthlyReport";
 import { UsCoSingleResidentHome } from "../pages/UsCoSingleResidentHome";
 import { UsCoProgramsList } from "./UsCoProgramsList/UsCoProgramsList";
 
@@ -29,6 +31,14 @@ export function UsCoRouter() {
     <Routes>
       <Route index element={<UsCoSingleResidentHome />} />
       <Route path={ProgramCatalog.path} element={<UsCoProgramsList />} />
+      <Route
+        path={EGT.AllMonths.path}
+        element={<PageUsCoAllMonthsCreditReport />}
+      />
+      <Route
+        path={EGT.MonthlyReport.path}
+        element={<PageUsCoMonthlyReport />}
+      />
       <Route path={UsCoMoreInformation.path}>
         <Route
           path={UsCoMoreInformation.EarnedTime.path}
