@@ -28,6 +28,7 @@ import {
   OpportunityType,
   residentRecordSchema,
   supervisionStaffRecordSchema,
+  usArInstitutionalWorkerStatusSchema,
   usMeAnnualReclassificationSchema,
   usMeMediumTrusteeSchema,
   usMeSCCPSchema,
@@ -47,7 +48,6 @@ import {
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
-import { usArInstitutionalWorkerStatusSchema } from "../src/WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
 import { usAzReleaseToDTPSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPReferralRecord";
 import { usAzReleaseToTPRSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPRReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";

@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { type UsArApprovedVisitorWithChecklist } from "~datatypes";
+
 import { htmlStringToString } from "../../../utils/formatStrings";
 import { UsArInstitutionalWorkerStatusOpportunity } from "../UsAr";
-import { UsArInstitutionalWorkerStatusDraftData } from "../UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
+
+type UsArInstitutionalWorkerStatusDraftData = {
+  visitors: UsArApprovedVisitorWithChecklist[];
+};
 
 export class UsArInstitutionalWorkerStatusOpportunityForm extends FormBase<
   UsArInstitutionalWorkerStatusDraftData,

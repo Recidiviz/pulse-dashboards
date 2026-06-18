@@ -28,6 +28,11 @@ export * from "./milestones/types";
 
 export * from "./opportunities/OpportunityType";
 
+// UsAr Exports: Includes fixtures and schema related to US-AR opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsAr/UsArInstitutionalWorkerStatus/fixtures";
+export * from "./opportunities/UsAr/UsArInstitutionalWorkerStatus/schema";
+
 // UsMe Exports: Includes fixtures and schema related to US-ME opportunities
 // -----------------------------------------------------------------------------
 export { usMeDenialMetadataSchema } from "./opportunities/UsMe/common";

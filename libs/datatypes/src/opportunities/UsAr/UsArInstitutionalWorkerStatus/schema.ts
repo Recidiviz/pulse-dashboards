@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
-
-import { nullishAsUndefined } from "../../schemaHelpers";
+import { ParsedRecord } from "../../../utils/types";
+import { nullishAsUndefined } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 const usArApprovedVisitorSchema = z.object({
   firstName: nullishAsUndefined(z.string()),
@@ -76,18 +76,11 @@ export const usArInstitutionalWorkerStatusSchema = opportunitySchemaBase
   })
   .passthrough();
 
-export type UsArInstitutionalWorkerStatusReferralRecord = z.infer<
-  typeof usArInstitutionalWorkerStatusSchema
->;
-
-export type UsArInstitutionalWorkerStatusReferralRecordRaw = z.input<
+export type UsArInstitutionalWorkerStatusRecord = ParsedRecord<
   typeof usArInstitutionalWorkerStatusSchema
 >;
 
 export type UsArApprovedVisitor = z.infer<typeof usArApprovedVisitorSchema>;
+
 export type UsArApprovedVisitorWithChecklist = Partial<UsArApprovedVisitor> &
   Pick<UsArApprovedVisitor, "checklist">;
-
-export type UsArInstitutionalWorkerStatusDraftData = {
-  visitors: UsArApprovedVisitorWithChecklist[];
-};

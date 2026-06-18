@@ -1,0 +1,71 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligibleWithVisitors 1`] = `
+{
+  "approvedVisitors": [
+    {
+      "checklist": {
+        "accompliceOfResident": false,
+        "authorizedToClaimProperty": true,
+        "canMakeMedDecisions": true,
+        "canShareDentalInfo": false,
+        "canShareMedInfo": true,
+        "canShareMhInfo": true,
+        "emergencyNotify": true,
+        "emergencyNotifyAlt": false,
+        "hasCriminalHistory": false,
+        "isDepCareGuardian": false,
+        "livesWithResident": false,
+        "victimOfResident": false,
+        "worksInLe": false,
+      },
+      "dateOfBirth": "1980-03-15",
+      "dateOfBirthIsApproximate": false,
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "mailingAddress": {
+        "addressLine1": "123 Main St",
+        "addressLine2": undefined,
+      },
+      "middleName": undefined,
+      "partyId": "P001",
+      "physicalAddress": null,
+      "race": "W",
+      "relationshipComments": undefined,
+      "relationshipStatus": "APPROVED",
+      "relationshipStatusDate": "2024-01-10",
+      "relationshipType": "SPOUSE",
+      "seqNum": "1",
+      "sex": "F",
+      "suffix": undefined,
+      "visitationDurDays": undefined,
+      "visitationReviewDate": undefined,
+      "visitationSpecialCondition1": undefined,
+      "visitationSpecialCondition2": undefined,
+      "visitationStatusReason": undefined,
+    },
+  ],
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "RES002",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_AR",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "approvedVisitors": [],
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "RES001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_AR",
+}
+`;

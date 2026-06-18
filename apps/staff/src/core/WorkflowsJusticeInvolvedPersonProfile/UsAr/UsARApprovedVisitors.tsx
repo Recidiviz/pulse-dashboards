@@ -23,12 +23,12 @@ import { rem } from "polished";
 import toast from "react-hot-toast";
 import styled from "styled-components";
 
+import { type UsArApprovedVisitorWithChecklist } from "~datatypes";
 import { palette } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../utils";
 import { Opportunity } from "../../../WorkflowsStore";
 import { UsArInstitutionalWorkerStatusOpportunity } from "../../../WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusOpportunity";
-import { UsArApprovedVisitorWithChecklist } from "../../../WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
 import { DownloadButton } from "../../Paperwork/FormContainer";
 import {
   getPdfTemplate,

@@ -17,18 +17,19 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsArInstitutionalWorkerStatusRecord,
+  usArInstitutionalWorkerStatusSchema,
+} from "~datatypes";
+
 import { Resident } from "../../../Resident";
 import { FormBase } from "../../Forms/FormBase";
 import { UsArInstitutionalWorkerStatusOpportunityForm } from "../../Forms/UsArInstitutionalWorkerStatusOpportunityForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsArInstitutionalWorkerStatusReferralRecord,
-  usArInstitutionalWorkerStatusSchema,
-} from "./UsArInstitutionalWorkerStatusReferralRecord";
 
 export class UsArInstitutionalWorkerStatusOpportunity extends OpportunityBase<
   Resident,
-  UsArInstitutionalWorkerStatusReferralRecord
+  UsArInstitutionalWorkerStatusRecord["output"]
 > {
   directDownloadForm: FormBase<any, any>;
 
