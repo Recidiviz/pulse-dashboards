@@ -171,8 +171,8 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
           {presenter.SARData?.completionDate && (
             <Banner>
               This investigation was completed on{" "}
-              {formatDisplayDate(presenter.SARData.completionDate)} and can no
-              longer be edited.
+              {formatDisplayDate(presenter.SARData.completionDate)} and the
+              report can no longer be edited.
             </Banner>
           )}
 

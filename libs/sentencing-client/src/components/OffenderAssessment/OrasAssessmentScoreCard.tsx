@@ -49,7 +49,10 @@ const ORASCardWrapper: React.FC<ORASHeaderProps> = ({
       <Styled.CardTitle>
         <Styled.ORASTitle>ORAS Assessment Score</Styled.ORASTitle>
         <Styled.ORASUpdatedText>
-          Last Updated: {moment.utc(ORASLastUpdatedAt).format("l")}
+          Last Updated:{" "}
+          {ORASLastUpdatedAt
+            ? moment.utc(ORASLastUpdatedAt).format("l")
+            : "Unknown"}
         </Styled.ORASUpdatedText>
       </Styled.CardTitle>
       <Banner>ORAS data regularly updated on Monday evenings.</Banner>

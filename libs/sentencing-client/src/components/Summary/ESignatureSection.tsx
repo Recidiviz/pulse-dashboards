@@ -72,7 +72,7 @@ const SignatureForm: React.FC<{
   const canSign =
     canCompleteSection &&
     isReportComplete &&
-    signature.trim().length > 0 &&
+    signature.trim().split(/\s+/).length >= 2 && // require at least first and last name
     title.trim().length > 0;
 
   const handleSign = async () => {
