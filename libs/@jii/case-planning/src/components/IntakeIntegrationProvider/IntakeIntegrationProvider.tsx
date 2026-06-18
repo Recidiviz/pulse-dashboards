@@ -63,7 +63,7 @@ export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(
           ...applicationContext,
           analytics: segmentClient,
           features: {
-            enableSTT: true,
+            enableSTT: false,
             bottomInset: EDOVO_OVERLAY_BOTTOM_INSET,
           },
         }}
