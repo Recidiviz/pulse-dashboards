@@ -615,13 +615,14 @@ export function registerTaskRoutes(app: FastifyInstance) {
           // on the agency's staffFeedbackEnabled flag — storing it
           // unconditionally lets us backfill existing meetings if a state is
           // enabled later.
+
           completedMeeting = await prisma.meeting.update({
             where: {
               id: meetingId,
             },
             data: {
               caseNote: result.output.caseNote,
-              actionItems: actionItems,
+              actionItems: actionItems, // TODO OBT-31909: Remove this
               structuredActionItems,
               criticalUpdates: criticalUpdates,
               meetingSummary: result.output.meetingMinutes,
@@ -633,6 +634,18 @@ export function registerTaskRoutes(app: FastifyInstance) {
               staffFeedbackPipelineRunId: result.output.pipelineRunId,
               postMeetingProcessingStatus:
                 PostMeetingProcessingStatus.COMPLETED,
+              meetingActionItems: {
+                createMany: {
+                  data: result.output.actionItems.map((item) => ({
+                    assignee: item.assignee,
+                    generatedTask: item.task,
+                    evidenceQuotes: item.evidenceQuotes ?? [],
+                    completed: false,
+                    deleted: false,
+                    pipelineRunId: result.output.pipelineRunId,
+                  })),
+                },
+              },
             },
             select: {
               staffEmail: true,

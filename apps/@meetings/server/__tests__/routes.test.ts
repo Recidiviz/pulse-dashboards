@@ -1642,6 +1642,152 @@ describe("tasks", () => {
         PostMeetingProcessingStatus.COMPLETED,
       );
     });
+
+    test("Should create MeetingActionItem rows from pipeline output", async () => {
+      const meeting = await createMeetingForNotetaking("action-items-create");
+
+      mockHandleLLMProcessing.mockResolvedValueOnce({
+        output: {
+          caseNote: "Test case note",
+          meetingMinutes: [],
+          actionItems: [
+            {
+              assignee: "Staff Member",
+              task: "Follow up with client",
+              evidenceQuotes: ["Client said they would call back"],
+            },
+            {
+              assignee: "Client",
+              task: "Submit employment forms",
+              evidenceQuotes: [],
+            },
+          ],
+          statusUpdates: [],
+          pipelineRunId: "test-pipeline-run-id",
+        },
+        agencyConfig: {} as never,
+        transcriptInput: {} as never,
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const actionItems = await testPrismaClient.meetingActionItem.findMany({
+        where: { meetingId: meeting.id },
+        orderBy: { generatedTask: "asc" },
+      });
+
+      expect(actionItems).toHaveLength(2);
+      expect(actionItems).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            meetingId: meeting.id,
+            assignee: "Staff Member",
+            generatedTask: "Follow up with client",
+            evidenceQuotes: ["Client said they would call back"],
+            completed: false,
+            deleted: false,
+            editedTask: null,
+            deletedAt: null,
+          }),
+          expect.objectContaining({
+            meetingId: meeting.id,
+            assignee: "Client",
+            generatedTask: "Submit employment forms",
+            evidenceQuotes: [],
+            completed: false,
+            deleted: false,
+            editedTask: null,
+            deletedAt: null,
+          }),
+        ]),
+      );
+    });
+
+    test("Should accumulate MeetingActionItem rows across reprocessing runs", async () => {
+      const meeting = await createMeetingForNotetaking(
+        "action-items-reprocess",
+      );
+
+      mockHandleLLMProcessing.mockResolvedValueOnce({
+        output: {
+          caseNote: "First run",
+          meetingMinutes: [],
+          actionItems: [
+            {
+              assignee: "Staff Member",
+              task: "Original task",
+              evidenceQuotes: [],
+            },
+          ],
+          statusUpdates: [],
+          pipelineRunId: "test-pipeline-run-id-1",
+        },
+        agencyConfig: {} as never,
+        transcriptInput: {} as never,
+      });
+
+      await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      mockHandleLLMProcessing.mockResolvedValueOnce({
+        output: {
+          caseNote: "Second run",
+          meetingMinutes: [],
+          actionItems: [
+            {
+              assignee: "Client",
+              task: "Updated task",
+              evidenceQuotes: ["New supporting quote"],
+            },
+          ],
+          statusUpdates: [],
+          pipelineRunId: "test-pipeline-run-id-2",
+        },
+        agencyConfig: {} as never,
+        transcriptInput: {} as never,
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const actionItems = await testPrismaClient.meetingActionItem.findMany({
+        where: { meetingId: meeting.id },
+        orderBy: { pipelineRunId: "asc" },
+      });
+
+      expect(actionItems).toHaveLength(2);
+      expect(actionItems[0]).toEqual(
+        expect.objectContaining({
+          assignee: "Staff Member",
+          generatedTask: "Original task",
+          pipelineRunId: "test-pipeline-run-id-1",
+        }),
+      );
+      expect(actionItems[1]).toEqual(
+        expect.objectContaining({
+          assignee: "Client",
+          generatedTask: "Updated task",
+          pipelineRunId: "test-pipeline-run-id-2",
+        }),
+      );
+    });
   });
 
   describe("/run-llmaj-evaluation", () => {

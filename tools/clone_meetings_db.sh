@@ -5,7 +5,7 @@
 # -o pipefail Ensure entire pipeline returns non-zero status if part of it fails
 set -euo pipefail
 
-db_name="m-db-preview-$VERSION"
+db_name="m-db-preview-${VERSION,,}"
 
 dbs="$(gcloud sql instances list --project recidiviz-dashboard-staging --filter "$db_name")"
 

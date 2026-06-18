@@ -194,13 +194,8 @@
     "migrate-preview-db": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "gcloud run jobs deploy m-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/meetings/meetings-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --clear-secrets --set-env-vars \"^|^DATABASE_USER=$DATABASE_USER|DATABASE_PASSWORD=$DATABASE_PASSWORD|DATABASE_INSTANCE_CONNECTION_NAME=$DATABASE_INSTANCE_CONNECTION_NAME|DATABASE_STATE_CODES=$DATABASE_STATE_CODES\"",
-        "args": [
-          "--project recidiviz-dashboard-staging",
-          "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:m-db-preview-$VERSION",
-          "--service-account meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com",
-          "--task-timeout 300s"
-        ]
+        "command": "../../../tools/migrate_meetings_preview_db.sh",
+        "cwd": "{projectRoot}"
       }
     },
     "deploy-preview-app": {

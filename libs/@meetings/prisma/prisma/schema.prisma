@@ -190,12 +190,12 @@ model Meeting {
 
   postMeetingProcessingStatus PostMeetingProcessingStatus @default(NOT_STARTED)
 
-  userNotepadNotes      String?
-  caseNote              String?
-  actionItems           Json?
-  structuredActionItems Json?
-  criticalUpdates       Json?
-  meetingSummary        Json?
+  userNotepadNotes           String?
+  caseNote                   String?
+  actionItems                Json?
+  structuredActionItems      Json?
+  criticalUpdates            Json?
+  meetingSummary             Json?
   /// [StaffFeedback]
   staffFeedback              Json?
   staffFeedbackGeneratedAt   DateTime?
@@ -221,10 +221,28 @@ model Meeting {
 
   // This field is required but adding it as optional ensures old meetings are not affected
   // In backend and frontend this will be a required field
-  meetingType String?
+  meetingType         String?
   // Additional category for meeting type, if it has any
   // Agency config has schema for it, if it is required 
   meetingTypeCategory String?
+
+  meetingActionItems MeetingActionItem[]
+}
+
+model MeetingActionItem {
+  id             String    @id @default(uuid())
+  meetingId      String
+  assignee       String
+  createdAt      DateTime  @default(now())
+  completed      Boolean
+  editedTask     String?
+  generatedTask  String
+  evidenceQuotes String[]
+  deleted        Boolean
+  deletedAt      DateTime?
+  pipelineRunId  String
+
+  meeting Meeting @relation(fields: [meetingId], references: [id])
 }
 
 enum TranscriptionProvider {
@@ -318,8 +336,8 @@ model NotetakingPipelineRun {
   /// [ErrorDetails]
   errorDetails Json?
 
-  agentExecutions  NotetakingAgentExecution[]
-  evaluationRuns   NotetakingEvaluationRun[]
+  agentExecutions NotetakingAgentExecution[]
+  evaluationRuns  NotetakingEvaluationRun[]
 }
 
 model NotetakingAgentExecution {

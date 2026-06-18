@@ -5,9 +5,9 @@
 # -o pipefail Ensure entire pipeline returns non-zero status if part of it fails
 set -euo pipefail
 
-db_name="m-db-preview-$VERSION"
-service_name="m-preview-$VERSION"
-migrate_job_name="m-migrate-preview-db-$VERSION"
+db_name="m-db-preview-${VERSION,,}"
+service_name="m-preview-${VERSION,,}"
+migrate_job_name="m-migrate-preview-db-${VERSION,,}"
 
 dbs="$(gcloud sql instances list --project recidiviz-dashboard-staging --filter "$db_name")"
 services="$(gcloud run services list --project recidiviz-dashboard-staging --filter "$service_name")"
