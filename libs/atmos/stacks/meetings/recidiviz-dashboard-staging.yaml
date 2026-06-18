@@ -41,32 +41,34 @@ components:
         artifact_registry_project_id: "{{ .settings.context.project_id }}"
         environment: staging
         domain_name: meet-api-staging.recidiviz.org
+        private_network: projects/recidiviz-dashboard-staging/global/networks/default
         meetings_bucket_cors_origins:
           - "*"
 
-    # TODO(#13122): Add this back in when we're ready to fix it
-    # postgres-bq-data-transfer:
-    #   vars:
-    #     location: "{{ .settings.context.location }}"
-    #     dataset_name: meetings_dashboards_db
-    #     destination_project_id: recidiviz-staging
-    #     destination_service_account_email: "{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com"
-    #     tables:
-    #       - Meeting
-    #       - Staff
-    #       - Client
-    #       - ClientsToStaff
-    #       - Transcription
-    #       - Utterance
-    #       - NotetakingPipelineRun
-    #       - NotetakingAgentExecution
-    #     service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
-    #     postgresql:
-    #       host: !terraform.state cloud-sql-proxy recidiviz-dashboard-staging--shared-infra cloud_sql_proxy_ip
-    #       # For more info on quoting YQ expressions see:
-    #       # https://atmos.tools/core-concepts/stacks/yaml-functions/terraform.state/#using-yq-expressions-to-provide-a-default-value
-    #       port: !terraform.state cloud-sql-proxy recidiviz-dashboard-staging--shared-infra ".ports[""meetings""]"
-    #       username: !terraform.state apps/meetings database_credentials.username
-    #       password: !terraform.state apps/meetings database_credentials.password
-    #       databases:
-    #         - us_ne
+    postgres-bq-data-transfer:
+      vars:
+        location: "{{ .settings.context.location }}"
+        dataset_name: meetings_dashboards_db
+        destination_project_id: recidiviz-staging
+        destination_service_account_email: "{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com"
+        tables:
+          - Meeting
+          - Staff
+          - Client
+          - Resident
+          - Transcription
+          - Utterance
+          - FeedbackVote
+          - NotetakingPipelineRun
+          - NotetakingAgentExecution
+          - NotetakingEvaluationRun
+        service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+        postgresql:
+          host: !terraform.state cloud-sql-proxy recidiviz-dashboard-staging--shared-infra cloud_sql_proxy_ip
+          # For more info on quoting YQ expressions see:
+          # https://atmos.tools/core-concepts/stacks/yaml-functions/terraform.state/#using-yq-expressions-to-provide-a-default-value
+          port: !terraform.state cloud-sql-proxy recidiviz-dashboard-staging--shared-infra ".ports[""meetings""]"
+          username: !terraform.state apps/meetings database_credentials.username
+          password: !terraform.state apps/meetings database_credentials.password
+          databases:
+            - us_ne
