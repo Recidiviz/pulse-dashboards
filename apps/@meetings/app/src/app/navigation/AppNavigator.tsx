@@ -16,7 +16,12 @@
 // =============================================================================
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import {
+  getPathFromState as defaultGetPathFromState,
+  getStateFromPath as defaultGetStateFromPath,
+  LinkingOptions,
+  NavigationContainer,
+} from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useFonts } from "expo-font";
@@ -26,6 +31,8 @@ import superjson from "superjson";
 
 import AppUpdateModal from "~@meetings/app/components/AppUpdateModal";
 import { UserContextProvider } from "~@meetings/app/context/UserContext";
+import { stateCodeParam } from "~@meetings/app/navigation/config";
+import { extractAndRemoveStateCode } from "~@meetings/app/navigation/lib";
 import { LoginScreen } from "~@meetings/app/pages/login";
 import { publicTrpc } from "~@meetings/app/shared/api";
 import { AppStackParamList, env } from "~@meetings/app/shared/config";
@@ -65,6 +72,23 @@ const linking: LinkingOptions<AppStackParamList> = {
         },
       },
     },
+  },
+  // Extract stateCode before default URL parsing so it isn't stored as a
+  // screen param. The value is kept in stateCodeParam for getPathFromState.
+  getStateFromPath(path, config) {
+    const { stateCode, cleanPath } = extractAndRemoveStateCode(path);
+    if (stateCode) {
+      stateCodeParam.current = stateCode;
+    }
+    return defaultGetStateFromPath(cleanPath, config);
+  },
+  // Re-inject stateCode as a query param on every URL React Navigation generates,
+  // so it persists across all navigation events.
+  getPathFromState(state, config) {
+    const path = defaultGetPathFromState(state, config);
+    if (!stateCodeParam.current) return path;
+    const separator = path.includes("?") ? "&" : "?";
+    return `${path}${separator}stateCode=${encodeURIComponent(stateCodeParam.current)}`;
   },
 };
 

@@ -17,6 +17,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+import { stateCodeParam } from "../navigation/config";
 import { getItem, saveItem } from "../shared/lib/storage";
 import { useAgencyConfigs } from "./AgencyConfigContext";
 import { useUserContext } from "./UserContext";
@@ -65,7 +66,7 @@ export const StateCodeProvider: React.FC<{
     userStateCode !== "recidiviz" &&
     recidivizAllowedStates.length <= 1
       ? (userStateCode.toUpperCase() as StateCode)
-      : DEFAULT_STATE_CODE;
+      : ((stateCodeParam.current || DEFAULT_STATE_CODE) as StateCode);
   const [selectedStateCode, setSelectedStateCodeInternal] =
     useState<StateCode>(initialStateCode);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,9 +94,17 @@ export const StateCodeProvider: React.FC<{
           return;
         }
 
-        // For Recidiviz users and skip auth, try to load from storage
+        // For Recidiviz users and skip auth: URL param takes priority over storage
+        if (stateCodeParam.current && stateCodeParam.current in agencyConfigs) {
+          setSelectedStateCodeInternal(stateCodeParam.current as StateCode);
+          setIsLoading(false);
+          return;
+        }
+
+        // Fall back to storage
         const saved = await getItem(SELECTED_STATE_KEY);
         if (saved && saved in agencyConfigs) {
+          stateCodeParam.current = saved; // keep in sync for getPathFromState
           setSelectedStateCodeInternal(saved as StateCode);
         }
         // If no saved state code or invalid, keep the default
@@ -119,6 +128,9 @@ export const StateCodeProvider: React.FC<{
     try {
       await saveItem(SELECTED_STATE_KEY, stateCode);
       setSelectedStateCodeInternal(stateCode);
+      // Update stateCodeParam synchronously so getPathFromState picks it up on
+      // the navigation event that follows this call (e.g. navigate to ClientsRoot).
+      stateCodeParam.current = stateCode;
       // Update the ref (used for TRPC headers)
       selectedStateRef.current = stateCode;
     } catch (error) {

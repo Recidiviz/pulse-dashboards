@@ -28,7 +28,6 @@ import * as UserModule from "../../entities/user";
 jest.mock("../../shared/lib/useSetDocumentTitle", () => ({
   useSetDocumentTitle: () => null,
 }));
-
 // Mock AsyncStorage
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
