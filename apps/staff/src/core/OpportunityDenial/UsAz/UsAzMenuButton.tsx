@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
+import { UsAzTransferToAdministrativeSupervisionV2Opportunity } from "../../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionV2Opportunity/UsAzTransferToAdministrativeSupervisionV2Opportunity";
 import {
   deleteSubmitted,
   DropdownMenuButton,
@@ -25,11 +26,15 @@ import {
 } from "../DropdownMenuButton";
 import { StatusAwareButton } from "../MenuButton.styles";
 
+type UsAzAdminSupOpportunity =
+  | UsAzTransferToAdministrativeSupervisionOpportunity
+  | UsAzTransferToAdministrativeSupervisionV2Opportunity;
+
 export const UsAzMarkSubmittedButton = observer(
   function UsAzMarkSubmittedButton({
     opportunity,
   }: {
-    opportunity: UsAzTransferToAdministrativeSupervisionOpportunity;
+    opportunity: UsAzAdminSupOpportunity;
   }) {
     const submittedText = opportunity.submittedTabTitle;
     const undoSubmitText = `Revert from Transferred`;
@@ -72,7 +77,7 @@ const UsAzMenuButton = observer(function UsAzMenuButton({
   opportunity,
   onDenialButtonClick = () => null,
 }: {
-  opportunity: UsAzTransferToAdministrativeSupervisionOpportunity;
+  opportunity: UsAzAdminSupOpportunity;
   onDenialButtonClick?: () => void;
 }) {
   const denialText = opportunity.denial

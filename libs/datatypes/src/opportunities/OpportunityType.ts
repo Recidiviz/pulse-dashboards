@@ -21,6 +21,7 @@ export const constructedOpportunityTypes = [
 
   // US_AZ
   "usAzTransferToAdministrativeSupervision",
+  "usAzTransferToAdministrativeSupervisionV2",
   "usAzReleaseToDTP",
   "usAzReleaseToTPR",
 

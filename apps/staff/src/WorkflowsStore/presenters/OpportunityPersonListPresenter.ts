@@ -179,6 +179,7 @@ export class OpportunityPersonListPresenter
       // TODO(#7921): More gracefully handle these special cases
       STATUS: ![
         "usAzTransferToAdministrativeSupervision",
+        "usAzTransferToAdministrativeSupervisionV2",
         "usAzReleaseToTPR",
         "usAzReleaseToDTP",
         "usIdOverdueFaceToFaceContact",

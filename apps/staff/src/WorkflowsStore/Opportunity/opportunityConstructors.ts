@@ -53,6 +53,7 @@ import {
   UsAzReleaseToTPROpportunity,
 } from "./UsAz";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "./UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
+import { UsAzTransferToAdministrativeSupervisionV2Opportunity } from "./UsAz/UsAzTransferToAdministrativeSupervisionV2Opportunity/UsAzTransferToAdministrativeSupervisionV2Opportunity";
 import {
   UsIaEarlyDischargeOpportunity,
   UsIaSupervisionLevelDowngradeOpportunity,
@@ -122,6 +123,8 @@ export const opportunityConstructors = {
   // US_AZ
   usAzTransferToAdministrativeSupervision:
     UsAzTransferToAdministrativeSupervisionOpportunity,
+  usAzTransferToAdministrativeSupervisionV2:
+    UsAzTransferToAdministrativeSupervisionV2Opportunity,
   usAzReleaseToTPR: UsAzReleaseToTPROpportunity,
   usAzReleaseToDTP: UsAzReleaseToDTPOpportunity,
 
