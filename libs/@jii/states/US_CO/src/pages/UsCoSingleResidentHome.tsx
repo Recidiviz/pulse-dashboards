@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { BottomPaddedContainer, Redirect, usePageTitle } from "~@jii/common-ui";
-import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
+import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
@@ -29,6 +29,7 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { UsCoMonthlyReports } from "../components/UsCoSingleResidentHome/UsCoMonthlyReports";
 import { ResidentHomePresenter } from "../presenters/ResidentHomePresenter";
+import { useV1Gate } from "../useV1Gate";
 import {
   SentenceDatesPedSupplementalOverride,
   SentenceDatesPedValueOverride,
@@ -37,13 +38,12 @@ import { SentenceDatesSectionWrapperOverride } from "./SentenceDatesSectionWrapp
 
 const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
   observer(function UsCoSingleResidentHome({ presenter }) {
-    const { residentFlags } = useSingleResidentContext();
     const residentUrlParams = useTypedParams(State.Resident);
     const { t } = useUsCoTranslations();
 
     usePageTitle(t(($) => $.homepage.pageTitle));
 
-    if (!residentFlags.usCoV1Experience)
+    if (!useV1Gate())
       return (
         <Redirect
           to={State.Resident.ProgramCatalog.buildPath(residentUrlParams)}

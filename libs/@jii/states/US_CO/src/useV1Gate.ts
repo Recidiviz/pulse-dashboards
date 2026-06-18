@@ -15,17 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
+import { useSingleResidentContext } from "~@jii/data";
 
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+export function useV1Gate(): boolean {
+  const { resident, residentFlags } = useSingleResidentContext();
 
-export const usCoResidentsConfig: ResidentsConfig = {
-  home,
-  translation: {
-    additionalLanguages: [],
-  },
-  enabledResidentFlags: {
-    usCoV1Experience: parseISO("2026-06-22T09:00:00-06:00"),
-  },
-};
+  const pilotFacilities = ["LVCF", "CSP", "LCF"];
+
+  return (
+    !!residentFlags.usCoV1Experience &&
+    !!resident.facilityId &&
+    pilotFacilities.includes(resident.facilityId)
+  );
+}

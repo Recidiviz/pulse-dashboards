@@ -43,6 +43,7 @@ import {
   UsCoProgram,
   UsCoProgramsPresenter,
 } from "../../presenters/UsCoProgramsPresenter";
+import { useV1Gate } from "../../useV1Gate";
 import { CategorySection } from "./CategorySection";
 import { FilterPanel } from "./FilterPanel";
 import { ProgramCard } from "./ProgramCard";
@@ -92,7 +93,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
   function UsCoProgramsList({ presenter }) {
     const { t } = useUsCoTranslations();
     const pathParams = useTypedParams(State.Resident);
-    const { residentFlags } = useSingleResidentContext();
+    const showV1Experience = useV1Gate();
 
     const [selectedProgram, setSelectedProgram] = useState<
       UsCoProgram | undefined
@@ -111,7 +112,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
         />
 
         <Header>
-          {residentFlags.usCoV1Experience && (
+          {showV1Experience && (
             <BackLink to={State.Resident.buildPath(pathParams)}>
               {t(($) => $.programs.backLink)}
             </BackLink>
