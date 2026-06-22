@@ -31,30 +31,35 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
+import { ClientMeetings, ResidentMeetings } from "~@meetings/app/common/types";
+import Header from "~@meetings/app/components/Header";
+import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
+import { useAnalytics } from "~@meetings/app/context/AnalyticsContext";
+import { useStateSelection } from "~@meetings/app/context/StateContext";
 import { useCreateMeeting } from "~@meetings/app/entities/meeting";
+import {
+  useMeetingTypeStore,
+  validateAndStart,
+} from "~@meetings/app/entities/meeting-type";
 import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
+import {
+  MeetingControlsMobile,
+  useRecording,
+} from "~@meetings/app/features/recording";
 import { Person, PersonType } from "~@meetings/app/shared/api";
-
-import { ClientMeetings, ResidentMeetings } from "../common/types";
-import Header from "../components/Header";
-import MeetingsTable from "../components/MeetingsTable.web";
-import { NewMeetingOptionsModal } from "../components/NewMeetingOptionsModal";
-import { NewMeetingRecordingSheet } from "../components/NewMeetingRecordingSheet";
-import { useAgencyConfigs } from "../context/AgencyConfigContext";
-import { useAnalytics } from "../context/AnalyticsContext";
-import { useStateSelection } from "../context/StateContext";
-import { useMeetingTypeStore } from "../entities/meeting-type";
-import { validateAndStart } from "../entities/meeting-type/lib";
-import { MeetingControlsMobile, useRecording } from "../features/recording";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
-} from "../shared/config/routes";
-import { useIsMobileWidth } from "../shared/lib/useIsMobileWidth";
-import { Typography } from "../shared/ui/Typography";
+} from "~@meetings/app/shared/config";
+import { useIsMobileWidth } from "~@meetings/app/shared/lib/useIsMobileWidth";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+
 import MeetingsHeaderContent from "./MeetingsHeaderContent";
 import MeetingsMobileList from "./MeetingsMobileList";
 import MeetingsPlaceholder from "./MeetingsPlaceholder";
+import MeetingsTable from "./MeetingsTable.web";
+import { NewMeetingOptionsModal } from "./NewMeetingOptionsModal";
+import { NewMeetingRecordingSheet } from "./NewMeetingRecordingSheet";
 
 type ProfileNavProp = CompositeNavigationProp<
   NativeStackNavigationProp<ClientsStackParamList, "ClientProfile">,
@@ -76,7 +81,7 @@ type Props = {
   refetch: () => void;
 };
 
-const ProfileMeetings = ({
+export const ProfileMeetings = ({
   person,
   personType,
   rawMeetings,
@@ -457,5 +462,3 @@ const ProfileMeetings = ({
     </SafeAreaView>
   );
 };
-
-export default ProfileMeetings;

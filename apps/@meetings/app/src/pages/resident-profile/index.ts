@@ -15,17 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import useIsOnline from "../shared/lib/useIsOnline";
-
-export function useProcessingText() {
-  const { isOnline } = useIsOnline();
-
-  return {
-    title: isOnline
-      ? "Recording is being processed..."
-      : "No internet connection...",
-    subtitle: isOnline
-      ? "The notes and transcript will become available in a few minutes"
-      : "The recording will upload automatically when you're back online",
-  };
-}
+export { ResidentProfileScreen } from "./ui/ResidentProfileScreen";

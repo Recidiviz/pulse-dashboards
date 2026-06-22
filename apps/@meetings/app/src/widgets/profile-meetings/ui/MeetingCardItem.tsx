@@ -30,17 +30,17 @@ import {
   PencilIcon,
 } from "react-native-heroicons/solid";
 
+import DraftCaseNoteSheet from "~@meetings/app/components/DraftCaseNoteSheet";
+import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { Person, PersonType } from "~@meetings/app/shared/api";
+import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
+import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { isMeetingProcessing } from "~@meetings/app/utils/isMeetingProcessing";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
-import { MeetingTypeTag } from "../entities/meeting-type";
-import { useProcessingText } from "../hooks/useProcessingText";
-import ProcessingSvg from "../shared/assets/icons/processing.svg";
-import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
-import { useSnackbar } from "../shared/ui/Snackbar";
-import { Typography } from "../shared/ui/Typography";
-import { isMeetingProcessing } from "../utils/isMeetingProcessing";
-import DraftCaseNoteSheet from "./DraftCaseNoteSheet";
+import { useProcessingText } from "../lib/useProcessingText";
 
 type MeetingCardItemProps = {
   meeting: {

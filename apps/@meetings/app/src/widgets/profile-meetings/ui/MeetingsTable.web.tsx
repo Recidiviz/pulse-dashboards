@@ -24,18 +24,15 @@ import React, { useEffect } from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { Person, PersonType } from "~@meetings/app/shared/api";
-import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
-
-import { MeetingTypeTag } from "../entities/meeting-type";
-import { useProcessingText } from "../hooks/useProcessingText";
-import ProcessingSvg from "../shared/assets/icons/processing.svg";
+import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
 import {
   ClientsStackParamList,
   ResidentsStackParamList,
-} from "../shared/config/routes";
-import { formatDurationCompact } from "../shared/lib/format";
-import ProcessingErrorBanner from "../shared/ui/ProcessingErrorBanner";
+} from "~@meetings/app/shared/config";
+import { formatDurationCompact } from "~@meetings/app/shared/lib/format";
+import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
 import {
   Table,
   TABLE_CELL_HEIGHT,
@@ -46,10 +43,13 @@ import {
   TableHeadCell,
   TableHeadRow,
   TableRow,
-} from "../shared/ui/Table.web";
-import { TablePagination } from "../shared/ui/TablePagination";
-import { Typography } from "../shared/ui/Typography";
-import { isMeetingProcessing } from "../utils/isMeetingProcessing";
+} from "~@meetings/app/shared/ui/Table.web";
+import { TablePagination } from "~@meetings/app/shared/ui/TablePagination";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { isMeetingProcessing } from "~@meetings/app/utils/isMeetingProcessing";
+import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
+
+import { useProcessingText } from "../lib/useProcessingText";
 
 type ProfileMeetingNavProp = CompositeNavigationProp<
   NativeStackNavigationProp<ClientsStackParamList, "ClientMeeting">,

@@ -20,13 +20,12 @@ import clsx from "clsx";
 import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 
+import { useRecording } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
-
-import { useRecording } from "../features/recording";
-import { usePlatform } from "../shared/lib/usePlatform";
-import Dropdown from "../shared/ui/Dropdown";
-import SearchBar from "../shared/ui/SearchBar";
-import { Typography } from "../shared/ui/Typography";
+import { usePlatform } from "~@meetings/app/shared/lib/usePlatform";
+import Dropdown from "~@meetings/app/shared/ui/Dropdown";
+import SearchBar from "~@meetings/app/shared/ui/SearchBar";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   person: Person;

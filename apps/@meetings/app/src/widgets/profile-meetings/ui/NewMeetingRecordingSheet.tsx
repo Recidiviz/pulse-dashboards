@@ -30,22 +30,24 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Person } from "~@meetings/app/shared/api";
-import { AgencyConfig } from "~@meetings/config";
-
 import {
   getCategoryType,
   getCategoryTypePlaceholder,
   getMeetingTypeCategoriesOptions,
   getMeetingTypesOptions,
-} from "../entities/meeting-type/lib";
-import PlaySvg from "../shared/assets/icons/play.svg";
-import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
-import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
-import useIsOnline from "../shared/lib/useIsOnline";
-import Dropdown from "../shared/ui/Dropdown";
-import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
-import { Typography } from "../shared/ui/Typography";
+} from "~@meetings/app/entities/meeting-type";
+import { Person } from "~@meetings/app/shared/api";
+import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
+import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
+import {
+  getInitials,
+  humanReadableTitleCase,
+} from "~@meetings/app/shared/lib/format";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
+import Dropdown from "~@meetings/app/shared/ui/Dropdown";
+import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { AgencyConfig } from "~@meetings/config";
 
 type NewMeetingRecordingSheetProps = {
   person: Person;

@@ -24,16 +24,16 @@ import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
 import { useStateSelection } from "~@meetings/app/context/StateContext";
 import { useUserContext } from "~@meetings/app/context/UserContext";
 import { useGetUser } from "~@meetings/app/entities/user";
+import { ClientProfileScreen } from "~@meetings/app/pages/client-profile";
 import { ClientsScreen } from "~@meetings/app/pages/clients";
 import { NoAccessScreen } from "~@meetings/app/pages/no-access";
 import { OnboardingScreen } from "~@meetings/app/pages/onboarding";
+import { ResidentProfileScreen } from "~@meetings/app/pages/resident-profile";
 import { ResidentsScreen } from "~@meetings/app/pages/residents";
 import ClientMeetingScreen from "~@meetings/app/screens/ClientMeetingScreen";
 import ClientNewMeetingScreen from "~@meetings/app/screens/ClientNewMeetingScreen";
-import ClientProfileScreen from "~@meetings/app/screens/ClientProfileScreen";
 import ResidentMeetingScreen from "~@meetings/app/screens/ResidentMeetingScreen";
 import ResidentNewMeetingScreen from "~@meetings/app/screens/ResidentNewMeetingScreen";
-import ResidentProfileScreen from "~@meetings/app/screens/ResidentProfileScreen";
 import StateSelectionScreen from "~@meetings/app/screens/StateSelectionScreen";
 import {
   ClientsStackParamList,

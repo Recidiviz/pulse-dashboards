@@ -19,9 +19,9 @@ import { act, render } from "@testing-library/react-native";
 import React from "react";
 import { Platform } from "react-native";
 
-import { Person } from "~@meetings/app/shared/api/person";
+import { Person } from "~@meetings/app/shared/api";
 
-import ProfileMeetings from "../../components/ProfileMeetings";
+import { ProfileMeetings } from "./ProfileMeetings";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
@@ -30,7 +30,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 // Capture the onSuccess callback that ProfileMeetings passes down, so we can
 // invoke it directly without needing to simulate a full tRPC mutation.
 let capturedOnSuccess: ((meetingId: string) => void) | undefined;
-jest.mock("../../entities/meeting/model/useCreateMeeting", () => ({
+jest.mock("~@meetings/app/entities/meeting", () => ({
   useCreateMeeting: jest.fn(
     ({ onSuccess }: { onSuccess: (meetingId: string) => void }) => {
       capturedOnSuccess = onSuccess;
@@ -51,7 +51,7 @@ const mockOpenRecordingView = jest.fn();
 const mockTrack = jest.fn();
 const mockResetMeetingTypeStore = jest.fn();
 
-jest.mock("../../context/AgencyConfigContext", () => ({
+jest.mock("~@meetings/app/context/AgencyConfigContext", () => ({
   useAgencyConfigs: () => ({
     agencyConfigs: {
       US_NE: { stateCode: "US_NE", meetingTypes: mockMeetingTypes },
@@ -60,15 +60,15 @@ jest.mock("../../context/AgencyConfigContext", () => ({
   }),
 }));
 
-jest.mock("../../context/StateContext", () => ({
+jest.mock("~@meetings/app/context/StateContext", () => ({
   useStateSelection: () => ({ selectedStateCode: "US_NE" }),
 }));
 
-jest.mock("../../context/AnalyticsContext", () => ({
+jest.mock("~@meetings/app/context/AnalyticsContext", () => ({
   useAnalytics: () => ({ track: mockTrack }),
 }));
 
-jest.mock("../../features/recording", () => ({
+jest.mock("~@meetings/app/features/recording", () => ({
   MeetingControlsMobile: () => null,
   useRecording: jest.fn(() => ({
     status: null,
@@ -81,7 +81,7 @@ jest.mock("../../features/recording", () => ({
   })),
 }));
 
-jest.mock("../../features/audio-upload", () => ({
+jest.mock("~@meetings/app/features/audio-upload", () => ({
   useAudioUploadStore: jest.fn(
     (selector?: (s: { open: jest.Mock; status: string }) => unknown) => {
       const store = { open: jest.fn(), status: "idle" };
@@ -90,7 +90,7 @@ jest.mock("../../features/audio-upload", () => ({
   ),
 }));
 
-jest.mock("../../entities/meeting-type", () => ({
+jest.mock("~@meetings/app/entities/meeting-type", () => ({
   useMeetingTypeStore: () => ({
     meetingType: null,
     meetingTypeCategory: null,
@@ -114,21 +114,21 @@ jest.mock("react-native-safe-area-context", () => ({
   SafeAreaView: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-jest.mock("../../shared/lib/useIsMobileWidth", () => ({
+jest.mock("~@meetings/app/shared/lib/useIsMobileWidth", () => ({
   useIsMobileWidth: () => true,
 }));
 
-jest.mock("../../components/Header", () => () => null);
-jest.mock("../../components/MeetingsTable.web", () => () => null);
-jest.mock("../../components/NewMeetingOptionsModal", () => ({
+jest.mock("~@meetings/app/components/Header", () => () => null);
+jest.mock("./MeetingsTable.web", () => () => null);
+jest.mock("./NewMeetingOptionsModal", () => ({
   NewMeetingOptionsModal: () => null,
 }));
-jest.mock("../../components/NewMeetingRecordingSheet", () => ({
+jest.mock("./NewMeetingRecordingSheet", () => ({
   NewMeetingRecordingSheet: () => null,
 }));
-jest.mock("../../components/MeetingsMobileList", () => () => null);
-jest.mock("../../components/MeetingsPlaceholder", () => () => null);
-jest.mock("../../components/MeetingsHeaderContent", () => () => null);
+jest.mock("./MeetingsMobileList", () => () => null);
+jest.mock("./MeetingsPlaceholder", () => () => null);
+jest.mock("./MeetingsHeaderContent", () => () => null);
 
 const MEETING_ID = "test-meeting-id";
 

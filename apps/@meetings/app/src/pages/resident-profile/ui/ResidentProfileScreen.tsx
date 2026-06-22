@@ -17,20 +17,21 @@
 
 import { RouteProp, useRoute } from "@react-navigation/native";
 
-import { Person } from "~@meetings/app/shared/api";
+import {
+  deserializeResident,
+  formatPersonTitle,
+} from "~@meetings/app/entities/person";
+import { useMeetings } from "~@meetings/app/hooks/useMeetings";
+import { Person, trpc } from "~@meetings/app/shared/api";
+import { ResidentsStackParamList } from "~@meetings/app/shared/config";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import { ProfileMeetings } from "~@meetings/app/widgets/profile-meetings";
 
-import ProfileMeetings from "../components/ProfileMeetings";
-import { deserializeClient, formatPersonTitle } from "../entities/person";
-import { useMeetings } from "../hooks/useMeetings";
-import { trpc } from "../shared/api";
-import { ClientsStackParamList } from "../shared/config/routes";
-import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
+type ProfileRouteProp = RouteProp<ResidentsStackParamList, "ResidentProfile">;
 
-type ProfileRouteProp = RouteProp<ClientsStackParamList, "ClientProfile">;
-
-const ClientProfileScreenContainer = () => {
+export function ResidentProfileScreen() {
   const route = useRoute<ProfileRouteProp>();
-  const { data: person } = trpc.v1.client.get.useQuery(
+  const { data: person } = trpc.v1.resident.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },
   );
@@ -40,31 +41,25 @@ const ClientProfileScreenContainer = () => {
 
   if (!person) return null;
 
-  return <ClientProfileScreen person={deserializeClient(person)} />;
-};
+  return <ResidentProfileContent person={deserializeResident(person)} />;
+}
 
-type ProfileScreenProps = {
-  person: Person;
-};
-
-const ClientProfileScreen = ({ person }: ProfileScreenProps) => {
+function ResidentProfileContent({ person }: { person: Person }) {
   const {
     data: rawMeetings,
     isLoading,
     error,
     refetch,
-  } = useMeetings({ personId: person.personId, personType: "client" });
+  } = useMeetings({ personId: person.personId, personType: "resident" });
 
   return (
     <ProfileMeetings
       person={person}
-      personType="client"
+      personType="resident"
       rawMeetings={rawMeetings}
       isLoading={isLoading}
       error={error}
       refetch={refetch}
     />
   );
-};
-
-export default ClientProfileScreenContainer;
+}

@@ -19,7 +19,7 @@ import { TouchableOpacity, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import SearchIcon from "react-native-heroicons/solid/SearchIcon";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   handleCreateMeeting: () => void;

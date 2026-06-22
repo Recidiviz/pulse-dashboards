@@ -15,12 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  getCategoryType,
-  getCategoryTypePlaceholder,
-  getMeetingTypeCategoriesOptions,
-  getMeetingTypesOptions,
-  validateAndStart,
-} from "./lib";
-export { useMeetingTypeStore } from "./model/store";
-export { MeetingTypeTag } from "./ui/MeetingTypeTag";
+export { ProfileMeetings } from "./ui/ProfileMeetings";
