@@ -68,7 +68,7 @@ function getSecondaryOrderBy(
     case "supervisionType":
       return Prisma.sql`p."supervisionType" ${dirSql}`;
     case "name":
-      return Prisma.sql`p."givenNames" ${dirSql}, p."surname" ${dirSql}`;
+      return Prisma.sql`p."surname" ${dirSql}, p."givenNames" ${dirSql}`;
     default:
       return Prisma.sql`p."givenNames" ${dirSql}, p."surname" ${dirSql}`;
   }
