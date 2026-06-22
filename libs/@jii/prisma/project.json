@@ -29,6 +29,9 @@
     "prisma-migrate": {
       "dependsOn": ["docker"],
       "executor": "@nx-tools/nx-prisma:migrate",
+      "configurations": {
+        "test": {}
+      },
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
@@ -119,6 +122,9 @@
           "command": "docker compose up --wait"
         },
         "ci": {
+          "command": "echo 'No docker for CI'"
+        },
+        "test": {
           "command": "echo 'No docker for CI'"
         }
       },

@@ -20,11 +20,10 @@ import { useSingleResidentContext } from "~@jii/data";
 export function useV1Gate(): boolean {
   const { resident, residentFlags } = useSingleResidentContext();
 
-  const pilotFacilities = ["LVCF", "CSP", "LCF"];
+  // All residents with the flag should see V1
+  if (residentFlags.usCoV1Experience) return true;
 
-  return (
-    !!residentFlags.usCoV1Experience &&
-    !!resident.facilityId &&
-    pilotFacilities.includes(resident.facilityId)
-  );
+  // Residents at pilot facilities should also see V1
+  const pilotFacilities = ["LVCF", "CSP", "LCF"];
+  return !!resident.facilityId && pilotFacilities.includes(resident.facilityId);
 }
