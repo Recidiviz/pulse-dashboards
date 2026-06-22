@@ -87,7 +87,6 @@ export type BottomSheetProps = {
   ariaLabel: string;
 };
 
-// TODO(OBT-31706): Add Storybook stories for BottomSheet (open/closed, default/custom close label, varying content lengths)
 export const BottomSheet: FC<BottomSheetProps> = ({
   isOpen,
   onRequestClose,
