@@ -35,7 +35,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { Client } from "../../WorkflowsStore";
+import { Client } from "../../WorkflowsStore/Client";
 import { SentenceProgressPresenter } from "../../WorkflowsStore/presenters/SentenceProgressPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CANVAS_HEIGHT, TIMELINE_HEIGHT } from "./SentenceProgressV2";
@@ -92,7 +92,6 @@ export type SentenceProgressPoint = {
   x?: number;
 };
 
-// TODO(#11429): Revisit label alignment for edge cases.
 function useHoverProps(labelPlacement: Placement) {
   const [isOpen, setIsOpen] = useState(false);
   const { refs, floatingStyles, context } = useFloating({
@@ -150,14 +149,12 @@ export const SentenceProgressPointV2 = observer(
       return null;
     }
 
-    const { hoveredTimelineDate } = presenter;
-
-    // Hide if labelHidden by default and point is not hovered.
-    // Or hide if a different hovered point set on the presenter.
-    // TODO(#11429): Revisit hover interactions for start and end dates.
-    const hideLabel =
-      (labelHidden && !isHovered) ||
-      (hoveredTimelineDate && hoveredTimelineDate !== label);
+    // Hover-only labels show only when this point is hovered.
+    // Always-visible labels hide only when a hover-only (middle) date is hovered —
+    // hovering another start/end date leaves them visible.
+    const hideLabel = labelHidden
+      ? !isHovered
+      : presenter.isHoverOnlyDateHovered;
 
     return (
       <>

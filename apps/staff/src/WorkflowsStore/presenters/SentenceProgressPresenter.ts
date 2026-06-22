@@ -89,7 +89,6 @@ export class SentenceProgressPresenter<
   set hoveredTimelineDate(dateLabel: string | undefined) {
     this._hoveredDate = dateLabel;
   }
-
   /**
    * We want to exclude gaps beyond a 7 year cutoff for visual continuity of the progress
    * timeline; this calculates and returns the intervals that should be removed from
@@ -154,6 +153,19 @@ export class SentenceProgressPresenter<
     return unsortedDates.toSorted(
       (a, b) => a.date.getTime() - b.date.getTime(),
     );
+  }
+
+  /**
+   * True when the currently hovered timeline point is a hover-only (non-start/end) date.
+   * Used to hide always-visible labels only when a middle date is hovered, preserving
+   * them when a start or end date is hovered.
+   */
+  get isHoverOnlyDateHovered(): boolean {
+    if (!this.hoveredTimelineDate) return false;
+    const date = this.timelineDates.find(
+      (d) => d.label === this.hoveredTimelineDate,
+    );
+    return date?.hideLabel ?? false;
   }
 
   get shouldShowEmptyState(): boolean {

@@ -26,6 +26,7 @@ import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { SentenceProgressPresenter } from "../../WorkflowsStore/presenters/SentenceProgressPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
@@ -107,6 +108,7 @@ const TimelineViz = ({
 }: {
   presenter: SentenceProgressPresenter<Resident | Client>;
 }) => {
+  const isMobile = useIsMobile();
   const {
     shouldShowEmptyState,
     progressPoints,
@@ -115,7 +117,7 @@ const TimelineViz = ({
     expired,
   } = presenter;
 
-  if (shouldShowEmptyState) return null;
+  if (isMobile || shouldShowEmptyState) return null;
 
   return (
     <TimelineCanvas>
