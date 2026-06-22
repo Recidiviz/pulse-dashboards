@@ -128,23 +128,27 @@ export async function transformAndLoadSARData(
       continue;
     }
 
-    // Build the base SAR record
-    const newSAR: Record<string, unknown> = {
+    // Build the base SAR record (always written)
+    const baseFields: Record<string, unknown> = {
       externalId: sarData.external_id,
       dueDate: sarData.due_date ?? null,
       courtDate: sarData.court_date ?? null,
       completionDate: sarData.completion_date ?? null,
     };
 
+    // ORAS fields — only populated for incomplete SARs, and never overwrite manually-entered data
+    const orasFields: Record<string, unknown> = {};
+
     if (!sarData.completion_date) {
       // Only update ORAS data if SAR is incomplete — preserve snapshot on re-import
       const assessmentScore = parseInt(sarData.assessment_score ?? "0", 10);
-      newSAR["assessmentScore"] = assessmentScore;
-      newSAR["dateRequested"] = sarData.assigned_date;
-      newSAR["assessmentAdministeredBy"] = sarData.assessment_administered_by;
-      newSAR["assessmentDate"] = sarData.assessment_date;
-      newSAR["ORASLastUpdatedAt"] = sarData.oras_last_updated;
-      newSAR["assessmentType"] = sarData.report_type
+      orasFields["assessmentScore"] = assessmentScore;
+      orasFields["dateRequested"] = sarData.assigned_date;
+      orasFields["assessmentAdministeredBy"] =
+        sarData.assessment_administered_by;
+      orasFields["assessmentDate"] = sarData.assessment_date;
+      orasFields["ORASLastUpdatedAt"] = sarData.oras_last_updated;
+      orasFields["assessmentType"] = sarData.report_type
         ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[sarData.report_type]
         : undefined;
 
@@ -155,7 +159,7 @@ export async function transformAndLoadSARData(
         if (dbField && domain.domain_score) {
           const score = parseInt(domain.domain_score, 10);
           if (!isNaN(score)) {
-            newSAR[dbField] = score;
+            orasFields[dbField] = score;
           }
         }
         if (dbField && domain.domain_risk_level) {
@@ -163,7 +167,7 @@ export async function transformAndLoadSARData(
           const riskLevelField = SCORE_FIELD_TO_RISK_LEVEL_FIELD[dbField];
           const riskLevel = RAW_RISK_LEVEL_TO_ENUM[domain.domain_risk_level];
           if (riskLevelField && riskLevel) {
-            newSAR[riskLevelField] = riskLevel;
+            orasFields[riskLevelField] = riskLevel;
           }
         }
       }
@@ -181,22 +185,38 @@ export async function transformAndLoadSARData(
     // Client connection (required for SAR)
     const clientConnection = { connect: { externalId: sarData.client_id } };
 
-    // Load data
-    await prismaClient.sentencingAssessmentReport.upsert({
-      where: {
-        externalId: sarData.external_id,
-      },
-      create: {
-        ...newSAR,
-        staff: createStaffConnection,
-        client: clientConnection,
-        externalId: sarData.external_id,
-      },
-      update: {
-        ...newSAR,
-        staff: updateStaffConnection,
-        client: clientConnection,
-      },
+    // Upsert base fields. On create, include ORAS fields since the record is new and
+    // ORASEnteredManually defaults to false. On update, exclude ORAS fields — the
+    // updateMany below handles them conditionally.
+    await prismaClient.$transaction(async (tx) => {
+      await tx.sentencingAssessmentReport.upsert({
+        where: {
+          externalId: sarData.external_id,
+        },
+        create: {
+          ...baseFields,
+          ...orasFields,
+          staff: createStaffConnection,
+          client: clientConnection,
+          externalId: sarData.external_id,
+        },
+        update: {
+          ...baseFields,
+          staff: updateStaffConnection,
+          client: clientConnection,
+        },
+      });
+
+      // Only overwrite ORAS fields if the officer hasn't manually entered them
+      if (Object.keys(orasFields).length > 0) {
+        await tx.sentencingAssessmentReport.updateMany({
+          where: {
+            externalId: sarData.external_id,
+            ORASEnteredManually: false,
+          },
+          data: orasFields,
+        });
+      }
     });
   }
 }
