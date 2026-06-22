@@ -24,7 +24,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { keepPreviousData } from "@tanstack/react-query";
 import upperFirst from "lodash/upperFirst";
 import React, { useEffect, useMemo, useState } from "react";
-import { ImageBackground, View } from "react-native";
+import { ImageBackground, TouchableOpacity, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import {
@@ -154,6 +154,19 @@ export function PersonsTable({
     );
   };
 
+  const handleSort = (sortOption: SortOption) => {
+    let direction: SortDirection;
+    if (sort.sortBy === sortOption) {
+      direction =
+        sort.direction === SortDirection.Ascending
+          ? SortDirection.Descending
+          : SortDirection.Ascending;
+    } else {
+      direction = SortDirection.Ascending;
+    }
+    setSort({ sortBy: sortOption, direction });
+  };
+
   return (
     <>
       {sectionTitle && (
@@ -166,140 +179,120 @@ export function PersonsTable({
           <TableHead>
             <TableHeadRow>
               <TableHeadCell className="w-[35%]">
-                NAME{" "}
-                <View className="flex flex-col items-center justify-center gap-px p-0.5">
-                  <SortArrow
-                    arrowDirection="up"
-                    isActive={
-                      sort.sortBy === SortOption.Name &&
-                      sort.direction === SortDirection.Ascending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy: SortOption.Name,
-                        direction: SortDirection.Ascending,
-                      })
-                    }
-                  />
-                  <SortArrow
-                    arrowDirection="down"
-                    isActive={
-                      sort.sortBy === SortOption.Name &&
-                      sort.direction === SortDirection.Descending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy: SortOption.Name,
-                        direction: SortDirection.Descending,
-                      })
-                    }
-                  />
-                </View>
+                <TouchableOpacity
+                  onPress={() => handleSort(SortOption.Name)}
+                  className="flex size-full flex-row items-center"
+                >
+                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                    NAME{" "}
+                  </Typography>
+                  <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                    <SortArrow
+                      arrowDirection="up"
+                      isActive={
+                        sort.sortBy === SortOption.Name &&
+                        sort.direction === SortDirection.Ascending
+                      }
+                    />
+                    <SortArrow
+                      arrowDirection="down"
+                      isActive={
+                        sort.sortBy === SortOption.Name &&
+                        sort.direction === SortDirection.Descending
+                      }
+                    />
+                  </View>
+                </TouchableOpacity>
               </TableHeadCell>
               <TableHeadCell className="w-[15%]">
-                ID
-                <View className="flex flex-col items-center justify-center gap-px p-0.5">
-                  <SortArrow
-                    arrowDirection="up"
-                    isActive={
-                      sort.sortBy === SortOption.Id &&
-                      sort.direction === SortDirection.Ascending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy: SortOption.Id,
-                        direction: SortDirection.Ascending,
-                      })
-                    }
-                  />
-                  <SortArrow
-                    arrowDirection="down"
-                    isActive={
-                      sort.sortBy === SortOption.Id &&
-                      sort.direction === SortDirection.Descending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy: SortOption.Id,
-                        direction: SortDirection.Descending,
-                      })
-                    }
-                  />
-                </View>
+                <TouchableOpacity
+                  onPress={() => handleSort(SortOption.Id)}
+                  className="flex size-full flex-row items-center"
+                >
+                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                    ID{" "}
+                  </Typography>
+                  <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                    <SortArrow
+                      arrowDirection="up"
+                      isActive={
+                        sort.sortBy === SortOption.Id &&
+                        sort.direction === SortDirection.Ascending
+                      }
+                    />
+                    <SortArrow
+                      arrowDirection="down"
+                      isActive={
+                        sort.sortBy === SortOption.Id &&
+                        sort.direction === SortDirection.Descending
+                      }
+                    />
+                  </View>
+                </TouchableOpacity>
               </TableHeadCell>
               <TableHeadCell className="w-[23%]">
-                {type === "client" ? "SUPERVISION" : "FACILITY"}
-                <View className="flex flex-col items-center justify-center gap-px p-0.5">
-                  <SortArrow
-                    arrowDirection="up"
-                    isActive={
-                      sort.sortBy ===
-                        (type === "client"
-                          ? SortOption.SupervisionType
-                          : SortOption.Facility) &&
-                      sort.direction === SortDirection.Ascending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy:
-                          type === "client"
+                <TouchableOpacity
+                  onPress={() =>
+                    handleSort(
+                      type === "client"
+                        ? SortOption.SupervisionType
+                        : SortOption.Facility,
+                    )
+                  }
+                  className="flex size-full flex-row items-center"
+                >
+                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                    {type === "client" ? "SUPERVISION" : "FACILITY"}{" "}
+                  </Typography>
+                  <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                    <SortArrow
+                      arrowDirection="up"
+                      isActive={
+                        sort.sortBy ===
+                          (type === "client"
                             ? SortOption.SupervisionType
-                            : SortOption.Facility,
-                        direction: SortDirection.Ascending,
-                      })
-                    }
-                  />
-                  <SortArrow
-                    arrowDirection="down"
-                    isActive={
-                      sort.sortBy ===
-                        (type === "client"
-                          ? SortOption.SupervisionType
-                          : SortOption.Facility) &&
-                      sort.direction === SortDirection.Descending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy:
-                          type === "client"
+                            : SortOption.Facility) &&
+                        sort.direction === SortDirection.Ascending
+                      }
+                    />
+                    <SortArrow
+                      arrowDirection="down"
+                      isActive={
+                        sort.sortBy ===
+                          (type === "client"
                             ? SortOption.SupervisionType
-                            : SortOption.Facility,
-                        direction: SortDirection.Descending,
-                      })
-                    }
-                  />
-                </View>
+                            : SortOption.Facility) &&
+                        sort.direction === SortDirection.Descending
+                      }
+                    />
+                  </View>
+                </TouchableOpacity>
               </TableHeadCell>
               <TableHeadCell className="w-[23%]">
-                LAST MEETING
-                <View className="flex flex-col items-center justify-center gap-px p-0.5">
-                  <SortArrow
-                    arrowDirection="up"
-                    isActive={
-                      sort.sortBy === SortOption.LastMeeting &&
-                      sort.direction === SortDirection.Ascending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy: SortOption.LastMeeting,
-                        direction: SortDirection.Ascending,
-                      })
-                    }
-                  />
-                  <SortArrow
-                    arrowDirection="down"
-                    isActive={
-                      sort.sortBy === SortOption.LastMeeting &&
-                      sort.direction === SortDirection.Descending
-                    }
-                    onPress={() =>
-                      setSort({
-                        sortBy: SortOption.LastMeeting,
-                        direction: SortDirection.Descending,
-                      })
-                    }
-                  />
-                </View>
+                <TouchableOpacity
+                  onPress={() => handleSort(SortOption.LastMeeting)}
+                  className="flex size-full flex-row items-center"
+                >
+                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                    LAST MEETING{" "}
+                  </Typography>
+                  <View className="flex flex-col items-center justify-center gap-px p-0.5">
+                    <SortArrow
+                      arrowDirection="up"
+                      isActive={
+                        sort.sortBy === SortOption.LastMeeting &&
+                        sort.direction === SortDirection.Ascending
+                      }
+                    />
+                    <SortArrow
+                      arrowDirection="down"
+                      isActive={
+                        sort.sortBy === SortOption.LastMeeting &&
+                        sort.direction === SortDirection.Descending
+                      }
+                    />
+                  </View>
+                </TouchableOpacity>
               </TableHeadCell>
               <TableHeadCell className="w-[4%]"></TableHeadCell>
             </TableHeadRow>

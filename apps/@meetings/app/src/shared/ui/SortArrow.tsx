@@ -16,7 +16,6 @@
 // =============================================================================
 
 import clsx from "clsx";
-import { TouchableOpacity } from "react-native";
 
 import TriangleArrowDown from "../../shared/assets/icons/triangle-arrow-down.svg";
 import TriangleArrowUp from "../../shared/assets/icons/triangle-arrow-up.svg";
@@ -25,34 +24,24 @@ type Props = {
   className?: string;
   arrowDirection: "up" | "down";
   isActive: boolean;
-  onPress: () => void;
 };
 
-export function SortArrow({
-  className,
-  arrowDirection,
-  isActive,
-  onPress,
-}: Props) {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      {arrowDirection === "up" ? (
-        <TriangleArrowUp
-          className={clsx(
-            "cursor-pointer",
-            className,
-            isActive ? "fill-primary" : "fill-tertiary",
-          )}
-        />
-      ) : (
-        <TriangleArrowDown
-          className={clsx(
-            "cursor-pointer",
-            className,
-            isActive ? "fill-primary" : "fill-tertiary",
-          )}
-        />
+export function SortArrow({ className, arrowDirection, isActive }: Props) {
+  return arrowDirection === "up" ? (
+    <TriangleArrowUp
+      className={clsx(
+        "cursor-pointer",
+        className,
+        isActive ? "fill-primary" : "fill-tertiary",
       )}
-    </TouchableOpacity>
+    />
+  ) : (
+    <TriangleArrowDown
+      className={clsx(
+        "cursor-pointer",
+        className,
+        isActive ? "fill-primary" : "fill-tertiary",
+      )}
+    />
   );
 }

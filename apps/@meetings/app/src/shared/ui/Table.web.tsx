@@ -75,12 +75,16 @@ export const TableHeadCell = ({
   return (
     <th
       {...props}
-      className={`px-1 first:pl-7 last:pr-7 ${className}`}
+      className={`group px-1 first:pl-7 last:pr-7 ${className}`}
       style={{ height: TABLE_HEAD_CELL_HEIGHT }}
     >
-      <Typography className="flex w-full flex-row gap-1 py-3 text-left text-sm font-medium text-secondary">
-        {children}
-      </Typography>
+      {typeof children === "string" ? (
+        <Typography className="flex w-full flex-row gap-1 text-left text-sm font-medium text-secondary">
+          {children}
+        </Typography>
+      ) : (
+        children
+      )}
     </th>
   );
 };
