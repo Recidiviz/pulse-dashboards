@@ -82,6 +82,16 @@
         "demo": {}
       }
     },
+    "requires-sops-env:dev-be": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
+      },
+      "defaultConfiguration": "dev.local",
+      "configurations": {
+        "dev.local": {}
+      }
+    },
     "update-workflows-fixture": {
       "executor": "nx:run-commands",
       "cache": true,

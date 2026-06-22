@@ -102,15 +102,19 @@ If you are running an application that points to a JII feature you will need to 
 
 ### Running the application locally with a local Python backend
 
-If you have not run the Python server (fka "Case Triage backend", fka "new Pathways backend") locally before, run (from your `recidiviz-data` repository):
+- From your `recidiviz-data` repository do the following:
+
+1. If you have not run the Python server (fka "Case Triage backend", fka "new Pathways backend") locally before, run:
 
 `./recidiviz/tools/case_triage/initialize_development_environment.sh`
 
-This script also may need to be rerun periodically when new secrets are added to it.
+This script also may need to be rerun periodically when new secrets are added to it or when secrets are rotated.
 
-Then, to run the new backend locally, run (also from your `recidiviz-data` repository):
+1. Then, to run the new backend locally, run:
 
 `docker compose -f docker-compose.yaml -f docker-compose.case-triage.yaml up --remove-orphans`
+
+- Note: you should not need to run other commands listed in the recidiviz-data readme document
 
 If you get errors about not having access to containers, you may need to run `gcloud auth login` and `gcloud auth configure-docker` first to authenticate with the Google Cloud registry.
 
@@ -120,9 +124,11 @@ To create the required databases and add data to them, use the [load_fixtures](h
 
 **Tip:** To inspect and/or edit the database contents locally, you can use a GUI like [Postico](https://eggerapps.at/postico/), and connect to the `postgres` database using the host/user/password defined in [docker-compose.yaml](https://github.com/Recidiviz/recidiviz-data/blob/62210d3ebab17c4424abcb17395989f1209e8f0e/docker-compose.yaml#L87-L91). If you edit the contents manually, run the [reset_cache](https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/tools/pathways/reset_cache.py) script to update the cache with the new contents.
 
-To run the frontend against a local Python backend, run (now from `pulse-dashboards`):
+3. To run the frontend against a local Python backend, run (now from `pulse-dashboards`) on the branch you want to test:
 
 `nx dev-be staff`
+
+- Note: This will point the front-end env file to apps/staff/env.dev.local.enc.yaml as opposed to the usual apps/staff/env.development.enc.yaml file. This is just to point VITE_NEW_BACKEND_API_URL to http://localhost:5000. If any further edits are needed in this env file run `sops apps/staff/env.dev.local.enc.yaml` and then add in the env required and close the file. This will sops encrypt it.
 
 ### Running the application locally and fetching from the Demo GCS bucket
 
