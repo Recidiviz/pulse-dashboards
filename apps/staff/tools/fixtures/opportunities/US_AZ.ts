@@ -147,6 +147,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [
         {
           tab: "Fast Trackers",
@@ -402,6 +403,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [
         {
           tab: "Fast Trackers",
@@ -638,6 +640,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "View low-needs clients who qualify for transfer to Administrative Supervision.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1U_V_4Xgj3rIWAFjLSbta-MojehPSU-YE/view?usp=drive_link",
@@ -789,8 +792,14 @@ export const mockApiOpportunityConfigurationResponse = {
           tab: "Eligible per ORAS",
           text: "At this time, there are no clients who are currently eligible. Please navigate to one of the other tabs.",
         },
-        { tab: "Submitted for Supervisor Approval", text: "Placeholder text" },
-        { tab: "Approved by Supervisor", text: "Placeholder text" },
+        {
+          tab: "Submitted for Supervisor Review",
+          text: "At this time, there are no clients who are submitted for supervisor review. Please navigate to one of the other tabs.",
+        },
+        {
+          tab: "Approved by Supervisor",
+          text: "At this time, there are no clients who are approved by your supervisor. Please navigate to one of the other tabs.",
+        },
         {
           tab: "Transferred in ACIS",
           text: "No clients for the selected officer(s) were marked as transferred within the last day. Clients stop appearing in this tab 24 hours after the change is confirmed in ACIS.",
@@ -809,11 +818,18 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "View low-needs clients who qualify for transfer to Administrative Supervision.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1U_V_4Xgj3rIWAFjLSbta-MojehPSU-YE/view?usp=drive_link",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        {
+          text: "Requires validation of DO 1007 section 8.1.4: A client has achieved stable housing while on supervision",
+          tooltip:
+            "See DO 1007 Section 8.1.4 for details on what qualifies as stable housing. ",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
       omsCriteriaHeader: "Validated by data from ACIS",
       overdueOpportunityCalloutCopy: null,
@@ -837,7 +853,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "ELIGIBILITY STATUS",
           tabs: [
             "Eligible per ORAS",
-            "Submitted for Supervisor Approval",
+            "Submitted for Supervisor Review",
             "Approved by Supervisor",
             "Transferred in ACIS",
             "Marked Ineligible",
@@ -849,8 +865,14 @@ export const mockApiOpportunityConfigurationResponse = {
           tab: "Eligible per ORAS",
           text: "Based on ORAS results and ACIS data, clients in this tab appear eligible for Administrative Supervision. Review housing stability and transfer eligible clients to Administrative Supervision per policy.",
         },
-        { tab: "Submitted for Supervisor Approval", text: "Placeholder text" },
-        { tab: "Approved by Supervisor", text: "Placeholder text" },
+        {
+          tab: "Submitted for Supervisor Review",
+          text: "Clients in this tab have been reviewed by a CRO and submitted for supervisor approval. ",
+        },
+        {
+          tab: "Approved by Supervisor",
+          text: "Clients in this tab have been approved for transfer to Administrative Supervision. Complete the transfer by updating their supervision level in ACIS.",
+        },
         {
           tab: "Transferred in ACIS",
           text: "Clients appear here after you confirm that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",

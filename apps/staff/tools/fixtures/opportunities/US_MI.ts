@@ -62,6 +62,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -213,6 +214,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -321,6 +323,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [
         {
           tab: "Needs Re-Screen",
@@ -569,6 +572,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -714,6 +718,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -785,6 +790,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -873,6 +879,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Complete SCC review and fill out 283 Form for eligible residents.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -1041,6 +1048,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -1118,6 +1126,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",

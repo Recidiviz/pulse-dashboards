@@ -85,6 +85,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
       nonOmsCriteria: [
@@ -216,6 +217,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
       nonOmsCriteria: [],
@@ -303,6 +305,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
       nonOmsCriteria: [

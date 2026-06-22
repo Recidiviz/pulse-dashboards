@@ -94,6 +94,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search above to review and refer eligible clients for Credit Reviews.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1cPba5k8U16EF-xBqo9pCZkCqaddk3j_Y/view?usp=sharing",

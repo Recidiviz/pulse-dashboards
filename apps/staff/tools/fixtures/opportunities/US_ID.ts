@@ -61,6 +61,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf",
@@ -182,6 +183,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf",
@@ -261,6 +263,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search for officers above to review clients whose full-term release date is near or has passed.",
       isAlert: true,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
@@ -419,6 +422,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
@@ -602,6 +606,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
@@ -709,6 +714,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view",
@@ -827,6 +833,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
@@ -924,6 +931,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: "These clients are overdue for a face to face contact.",
       isAlert: true,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
@@ -998,6 +1006,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=share_link",
@@ -1116,6 +1125,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",

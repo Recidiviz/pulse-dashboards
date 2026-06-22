@@ -93,6 +93,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review residents who may be eligible for Outside Clearance and download a pre-filled application.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
       nonOmsCriteria: [
@@ -204,6 +205,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
@@ -291,6 +293,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
@@ -372,6 +375,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
@@ -513,6 +517,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review residents who may be eligible for Work Release and download a pre-filled application.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
       nonOmsCriteria: [

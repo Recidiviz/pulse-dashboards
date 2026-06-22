@@ -52,6 +52,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view",
@@ -120,6 +121,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
@@ -179,6 +181,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
@@ -246,6 +249,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
       nonOmsCriteria: [],
@@ -314,6 +318,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
       nonOmsCriteria: [],
@@ -491,6 +496,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review and refer eligible clients for Compliant Reporting using the autofilled paperwork.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view",
@@ -623,6 +629,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
@@ -688,6 +695,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
       nonOmsCriteria: [],
@@ -757,6 +765,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
       nonOmsCriteria: [],
@@ -839,6 +848,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search for officers above to review clients who may be on or past their supervision expiration date.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing",
@@ -905,6 +915,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Complete and submit new classification paperwork for eligible residents. ",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
@@ -975,6 +986,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Complete and submit diagnostic classification paperwork for eligible residents.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
       nonOmsCriteria: [],
@@ -1043,6 +1055,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
       nonOmsCriteria: [],
@@ -1114,6 +1127,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
       nonOmsCriteria: [],
@@ -1251,6 +1265,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible and complete the Direct Supervision Suspension Request form.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://recidiviz.org",
       nonOmsCriteria: [

@@ -119,6 +119,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://docs.google.com/document/d/e/2PACX-1vQqlFtl1xFx92rX0jlal5N92klcsaALS2G9djBYNh-UNxuynROOOGXlb9zJg2NDeX11ZUxWclVD-kBo/pub",
@@ -291,6 +292,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://docs.google.com/document/d/e/2PACX-1vQqlFtl1xFx92rX0jlal5N92klcsaALS2G9djBYNh-UNxuynROOOGXlb9zJg2NDeX11ZUxWclVD-kBo/pub",

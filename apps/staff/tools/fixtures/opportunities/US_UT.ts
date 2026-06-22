@@ -181,6 +181,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review the clients and submit a report to the court or BOPP for those who are strong candidates",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "#",
       nonOmsCriteria: [

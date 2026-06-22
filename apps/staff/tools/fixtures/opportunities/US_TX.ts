@@ -78,6 +78,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Annual Report Status",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
@@ -197,6 +198,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Annual Report Status",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
@@ -332,6 +334,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Early Release from Supervision",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
@@ -468,6 +471,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Early Release from Supervision",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",

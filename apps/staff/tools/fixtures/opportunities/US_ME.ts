@@ -55,6 +55,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search for officers above to review clients who may be good candidates for early termination from probation.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
@@ -166,6 +167,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
@@ -247,6 +249,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search for caseloads to review residents who may be eligible for Medium Trustee Status.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
@@ -320,6 +323,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search for caseloads to review residents who are up for an annual or semi-annual reclassification meeting.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
@@ -404,6 +408,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search for case managers above to review residents in their unit who are approaching SCCP eligibility and complete application paperwork.",
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx",
       nonOmsCriteria: [
@@ -475,6 +480,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
