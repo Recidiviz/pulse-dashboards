@@ -24,7 +24,7 @@ import {
   ResidentsConfig,
 } from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
-import { LocationRecord, ResidentRecord } from "~datatypes";
+import { LocationRecord, WorkflowsResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
 import { OpportunityRecord } from "../../configs/residentsOpportunitySchemas";
@@ -45,7 +45,7 @@ export interface DataAPI {
   residents(
     stateCode: StateCode,
     filters?: Array<FilterParams>,
-  ): Promise<Array<ResidentRecord>>;
+  ): Promise<Array<WorkflowsResidentRecord>>;
   /**
    * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
    * for the given StateCode. Throws if a match cannot be found.
@@ -53,7 +53,7 @@ export interface DataAPI {
   residentByPseudoId(
     stateCode: StateCode,
     residentPseudoId: string,
-  ): Promise<ResidentRecord>;
+  ): Promise<WorkflowsResidentRecord>;
   /**
    * Fetches the opportunity eligibility record for the specified resident
    * and opportunity type for the given StateCode. Throws if a record is not found.

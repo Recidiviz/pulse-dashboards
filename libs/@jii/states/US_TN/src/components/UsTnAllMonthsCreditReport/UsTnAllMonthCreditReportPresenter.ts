@@ -17,7 +17,7 @@
 
 import { groupBy, mapValues } from "lodash";
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import {
   UsTnMonthlyReport,
@@ -26,7 +26,7 @@ import {
 
 export class UsTnAllMonthCreditReportPresenter {
   constructor(
-    public readonly resident: ResidentRecord,
+    public readonly resident: WorkflowsResidentRecord,
     public readonly monthlyReports: UsTnMonthlyReports,
   ) {}
 

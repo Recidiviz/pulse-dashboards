@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RawResidentRecord, residentRecordSchema } from "../schema";
+import {
+  RawWorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 
-export const rawUsArResidents: Array<RawResidentRecord> = [
+export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
   {
     recordId: "us_ar_res001",
     allEligibleOpportunities: [],
@@ -374,5 +377,5 @@ export const rawUsArResidents: Array<RawResidentRecord> = [
 ];
 
 export const usArResidents = rawUsArResidents.map((r) =>
-  residentRecordSchema.parse(r),
+  workflowsResidentRecordSchema.parse(r),
 );

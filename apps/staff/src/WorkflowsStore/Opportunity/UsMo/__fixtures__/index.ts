@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 
-export const usMoPersonRecord: ResidentRecord = {
+export const usMoPersonRecord: WorkflowsResidentRecord = {
   recordId: "us_mo_111",
   personType: "RESIDENT",
   stateCode: "US_MO",

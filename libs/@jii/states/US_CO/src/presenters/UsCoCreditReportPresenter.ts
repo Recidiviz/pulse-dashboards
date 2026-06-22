@@ -20,10 +20,10 @@ import { groupBy, mapValues } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import {
-  ResidentRecord,
   UsCoCreditType,
   UsCoEarnedCreditActivity,
   UsCoResidentMetadata,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 
 export type UsCoMonthlyReport = {
@@ -92,7 +92,7 @@ export class UsCoCreditReportPresenter {
   readonly monthlyReports: UsCoMonthlyReports;
 
   constructor(
-    public readonly resident: ResidentRecord,
+    public readonly resident: WorkflowsResidentRecord,
     metadata: UsCoResidentMetadata,
   ) {
     this.monthlyReports = processMonthlyReports(metadata);

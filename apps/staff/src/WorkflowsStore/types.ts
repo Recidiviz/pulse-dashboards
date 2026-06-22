@@ -18,9 +18,9 @@
 import {
   ClientRecord,
   FullName,
-  ResidentRecord,
   StaffRecord,
   WorkflowsJusticeInvolvedPersonRecord,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 
 import { AnyWorkflowsSystemConfig, StaffFilter } from "../core/models/types";
@@ -125,10 +125,10 @@ export type PersonType = "CLIENT" | "RESIDENT";
 export type PersonRecordType =
   | WorkflowsJusticeInvolvedPersonRecord
   | ClientRecord
-  | ResidentRecord;
+  | WorkflowsResidentRecord;
 
 export type PersonClassForRecord<RecordType extends PersonRecordType> =
-  RecordType extends ResidentRecord
+  RecordType extends WorkflowsResidentRecord
     ? Resident
     : RecordType extends ClientRecord
       ? Client

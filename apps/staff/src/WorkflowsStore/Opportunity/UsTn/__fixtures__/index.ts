@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, OpportunityType, ResidentRecord } from "~datatypes";
+import {
+  ClientRecord,
+  OpportunityType,
+  WorkflowsResidentRecord,
+} from "~datatypes";
 
 import { CombinedUserRecord } from "../../../../FirestoreStore";
 import { UsTnCustodyLevelDowngradeReferralRecordRaw } from "../..";
@@ -69,7 +73,7 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const residentRecordBase: ResidentRecord = {
+export const residentRecordBase: WorkflowsResidentRecord = {
   recordId: "us_tn_002",
   personName: {
     givenNames: "Barney",
@@ -417,10 +421,11 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecordRa
     isAlmostEligible: false,
   };
 
-export const UsTnCustodyLevelDowngradeEligibleResidentRecord: ResidentRecord = {
-  ...residentRecordBase,
-  allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
-};
+export const UsTnCustodyLevelDowngradeEligibleResidentRecord: WorkflowsResidentRecord =
+  {
+    ...residentRecordBase,
+    allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
+  };
 
 export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDowngradeReferralRecordRaw =
   {
@@ -472,7 +477,7 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
     isAlmostEligible: false,
   };
 
-export const UsTnAnnualReclassificationEligibleResidentRecord: ResidentRecord =
+export const UsTnAnnualReclassificationEligibleResidentRecord: WorkflowsResidentRecord =
   {
     ...residentRecordBase,
     allEligibleOpportunities: ["usTnAnnualReclassification"],

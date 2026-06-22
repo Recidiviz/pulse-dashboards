@@ -17,10 +17,10 @@
 
 import { differenceInDays } from "date-fns";
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 export class UsTnImportantDatesPresenter {
-  constructor(public readonly resident: ResidentRecord) {}
+  constructor(public readonly resident: WorkflowsResidentRecord) {}
 
   get metadata() {
     const { metadata } = this.resident;

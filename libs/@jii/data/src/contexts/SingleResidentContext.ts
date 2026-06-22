@@ -19,7 +19,7 @@ import { createContext, useContext } from "react";
 
 import { IncarcerationOpportunityId, OpportunityConfig } from "~@jii/configs";
 import { ResidentFlags } from "~@jii/data";
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 import { useRequiredContext } from "~utils";
 
 import { OpportunityRecord } from "../configs/residentsOpportunitySchemas";
@@ -31,7 +31,7 @@ export type OpportunityData = {
 };
 
 export type SingleResidentContext = {
-  resident: ResidentRecord;
+  resident: WorkflowsResidentRecord;
   opportunities: Array<OpportunityData>;
   residentFlags: ResidentFlags;
 };

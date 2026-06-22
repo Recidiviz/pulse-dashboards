@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import { UsTnImportantDatesPresenter } from "./UsTnImportantDatesPresenter";
 
@@ -30,7 +30,7 @@ describe("UsTnImportantDatesPresenter tests", () => {
           expirationDate,
           expirationDateOriginal,
         },
-      } as never as ResidentRecord);
+      } as never as WorkflowsResidentRecord);
 
       expect(presenter.expirationDateReduced).toBe(true);
     });
@@ -44,7 +44,7 @@ describe("UsTnImportantDatesPresenter tests", () => {
           expirationDate,
           expirationDateOriginal,
         },
-      } as never as ResidentRecord);
+      } as never as WorkflowsResidentRecord);
 
       expect(presenter.expirationDateReduced).toBe(false);
     });
@@ -58,7 +58,7 @@ describe("UsTnImportantDatesPresenter tests", () => {
           expirationDate: new Date(),
           expirationDateOriginal: new Date(),
         },
-      } as never as ResidentRecord);
+      } as never as WorkflowsResidentRecord);
       expect(presenter.expirationDateReduction).toBe("");
     });
 
@@ -71,7 +71,7 @@ describe("UsTnImportantDatesPresenter tests", () => {
           expirationDate,
           expirationDateOriginal,
         },
-      } as never as ResidentRecord);
+      } as never as WorkflowsResidentRecord);
 
       expect(presenter.expirationDateReduction).toBe("121 days");
     });

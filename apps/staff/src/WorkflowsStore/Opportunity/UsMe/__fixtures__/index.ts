@@ -19,8 +19,8 @@ import { Required as RequireKeys } from "utility-types";
 
 import {
   ClientRecord,
-  ResidentRecord,
   UsMeWorkReleaseRecordRaw,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 
 import {
@@ -28,7 +28,7 @@ import {
   UsMeFurloughReleaseReferralRecordRaw,
 } from "..";
 
-export const usMePersonRecord: ResidentRecord = {
+export const usMePersonRecord: WorkflowsResidentRecord = {
   recordId: "us_me_111",
   personType: "RESIDENT",
   stateCode: "US_ME",
@@ -53,7 +53,7 @@ export const usMePersonRecord: ResidentRecord = {
   metadata: {},
 };
 
-export const usMePersonRecordShorterSentence: ResidentRecord = {
+export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
   recordId: "us_me_112",
   personType: "RESIDENT",
   stateCode: "US_ME",

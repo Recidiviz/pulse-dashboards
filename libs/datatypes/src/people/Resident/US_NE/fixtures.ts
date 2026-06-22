@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { relativeFixtureDate, relativeFixtureMonth } from "../../../utils/zod";
-import { RawResidentRecord, residentRecordSchema } from "../schema";
+import {
+  RawWorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 import { RawUsNeResidentMetadata } from "./metadata/schema";
 
 const baseMetadata: RawUsNeResidentMetadata = {
@@ -223,7 +226,7 @@ const res007Metadata: RawUsNeResidentMetadata = {
   jailTimeDays: 145,
 };
 
-export const rawUsNeResidents: Array<RawResidentRecord> = [
+export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
   {
     displayId: "RES001",
     admissionDate: relativeFixtureDate({ years: -2, months: -3 }),
@@ -367,5 +370,5 @@ export const rawUsNeResidents: Array<RawResidentRecord> = [
 ];
 
 export const usNeResidents = rawUsNeResidents.map((r) =>
-  residentRecordSchema.parse(r),
+  workflowsResidentRecordSchema.parse(r),
 );

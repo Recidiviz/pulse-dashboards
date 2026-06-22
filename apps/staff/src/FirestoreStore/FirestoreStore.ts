@@ -47,8 +47,8 @@ import {
   ClientRecord,
   clientRecordSchema,
   OpportunityType,
-  ResidentRecord,
-  residentRecordSchema,
+  WorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
 } from "~datatypes";
 import { collectionNameForCurrentEnv } from "~firestore-api";
 import {
@@ -202,7 +202,7 @@ export default class FirestoreStore {
   async getResident(
     residentId: string,
     stateCode: string,
-  ): Promise<ResidentRecord | undefined> {
+  ): Promise<WorkflowsResidentRecord | undefined> {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
       query(
@@ -215,7 +215,7 @@ export default class FirestoreStore {
 
     const result = results.docs[0];
     if (result.exists())
-      return residentRecordSchema.parse({
+      return workflowsResidentRecordSchema.parse({
         ...result.data(),
         recordId: result.id,
       });

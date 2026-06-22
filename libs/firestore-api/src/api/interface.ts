@@ -18,7 +18,7 @@
 import { where } from "firebase/firestore";
 import { z } from "zod";
 
-import { LocationRecord, ResidentRecord } from "~datatypes";
+import { LocationRecord, WorkflowsResidentRecord } from "~datatypes";
 import { FirestoreCollectionKey } from "~firestore-config";
 
 export type FilterParams = Parameters<typeof where>;
@@ -27,12 +27,12 @@ export interface FirestoreAPI {
   residents(
     stateCode: string,
     filters?: Array<FilterParams>,
-  ): Promise<Array<ResidentRecord>>;
+  ): Promise<Array<WorkflowsResidentRecord>>;
 
   residentByPseudoId(
     stateCode: string,
     pseudoId: string,
-  ): Promise<ResidentRecord>;
+  ): Promise<WorkflowsResidentRecord>;
 
   recordForExternalId<Schema extends z.ZodTypeAny>(
     stateCode: string,

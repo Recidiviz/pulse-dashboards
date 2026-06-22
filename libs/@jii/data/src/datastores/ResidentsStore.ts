@@ -27,7 +27,7 @@ import type {
   JiiResidentAppRouterInputs,
   JiiResidentAppRouterOutputs,
 } from "~@jii/trpc-types";
-import { LocationRecord, ResidentRecord } from "~datatypes";
+import { LocationRecord, WorkflowsResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
@@ -58,7 +58,7 @@ export class ResidentsStore {
   /**
    * Holds all resident records that have been fetched
    */
-  residentsByExternalId: Map<string, ResidentRecord> = new Map();
+  residentsByExternalId: Map<string, WorkflowsResidentRecord> = new Map();
 
   /**
    * Holds all opportunity eligibility records that have been fetched
@@ -120,7 +120,7 @@ export class ResidentsStore {
     this.locations = yield this.apiClient.locations(this.stateCode);
   }
 
-  get residentsByPseudoId(): Map<string, ResidentRecord> {
+  get residentsByPseudoId(): Map<string, WorkflowsResidentRecord> {
     return new Map(
       Object.entries(
         keyBy([...this.residentsByExternalId.values()], "pseudonymizedId"),

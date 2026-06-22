@@ -17,12 +17,12 @@
 
 import { relativeFixtureDate } from "../../../utils/zod/date/fixtureDates";
 import {
-  RawResidentRecord,
-  ResidentRecord,
-  residentRecordSchema,
-} from "../schema";
+  RawWorkflowsResidentRecord,
+  WorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 
-export const rawUsMeResidents: Array<RawResidentRecord> = [
+export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   {
     officerId: "OFFICER5",
     stateCode: "US_ME",
@@ -314,6 +314,5 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
   },
 ];
 
-export const usMeResidents: Array<ResidentRecord> = rawUsMeResidents.map((r) =>
-  residentRecordSchema.parse(r),
-);
+export const usMeResidents: Array<WorkflowsResidentRecord> =
+  rawUsMeResidents.map((r) => workflowsResidentRecordSchema.parse(r));

@@ -21,7 +21,10 @@ import { makeAutoObservable } from "mobx";
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
 import { OpportunityData, ResidentFlags, UserStore } from "~@jii/data";
 import { UsNeTranslationsObject } from "~@jii/translation";
-import { ResidentRecord, UsNeGoodTimeRestorationRecord } from "~datatypes";
+import {
+  UsNeGoodTimeRestorationRecord,
+  WorkflowsResidentRecord,
+} from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { Hydratable, HydrationState } from "~hydration-utils";
 
@@ -33,7 +36,7 @@ export class UsNeTodosPresenter implements Hydratable {
   readonly intakeAssessmentPresenter: IntakeAssessmentPresenter;
 
   constructor(
-    private readonly resident: ResidentRecord,
+    private readonly resident: WorkflowsResidentRecord,
     private readonly opportunities: OpportunityData[],
     private readonly residentFlags: ResidentFlags,
     firebaseAuthClient: FirebaseAuthClient,

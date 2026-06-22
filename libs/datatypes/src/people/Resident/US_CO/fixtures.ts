@@ -16,9 +16,12 @@
 // =============================================================================
 
 import { relativeFixtureDate } from "../../../utils/zod";
-import { RawResidentRecord, residentRecordSchema } from "../schema";
+import {
+  RawWorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 
-export const rawUsCoResidents: Array<RawResidentRecord> = [
+export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
   {
     displayId: "RES001",
     admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
@@ -130,5 +133,5 @@ export const rawUsCoResidents: Array<RawResidentRecord> = [
 ];
 
 export const usCoResidents = rawUsCoResidents.map((r) =>
-  residentRecordSchema.parse(r),
+  workflowsResidentRecordSchema.parse(r),
 );

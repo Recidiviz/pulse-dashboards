@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  RawResidentRecord,
   rawUsArResidents,
   rawUsAzResidents,
   rawUsCoResidents,
@@ -26,6 +25,7 @@ import {
   rawUsNdResidents,
   rawUsNeResidents,
   rawUsTnResidents,
+  RawWorkflowsResidentRecord,
 } from "~datatypes";
 
 import { usMeResidents } from "./residents/usMeResidents";
@@ -34,10 +34,10 @@ import { usMoResidents } from "./residents/usMoResidents";
 import { usUtResidents } from "./residents/usUtResidents";
 import { FirestoreFixture, PersonFixture } from "./utils";
 
-export type ResidentFixture = PersonFixture<RawResidentRecord>;
+export type ResidentFixture = PersonFixture<RawWorkflowsResidentRecord>;
 
-// RawResidentRecords is a superset of ResidentFixture
-const data: Array<ResidentFixture | RawResidentRecord> = [
+// RawWorkflowsResidentRecords is a superset of ResidentFixture
+const data: Array<ResidentFixture | RawWorkflowsResidentRecord> = [
   ...rawUsAzResidents,
   ...rawUsArResidents,
   ...rawUsCoResidents,
@@ -54,7 +54,7 @@ const data: Array<ResidentFixture | RawResidentRecord> = [
 ];
 
 export const residentsData: FirestoreFixture<
-  ResidentFixture | RawResidentRecord
+  ResidentFixture | RawWorkflowsResidentRecord
 > = {
   data,
   idFunc: (r) => r.personExternalId,

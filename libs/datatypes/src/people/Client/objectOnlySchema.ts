@@ -20,8 +20,9 @@ import { z } from "zod";
 import { milestoneSchema } from "../../milestones/schema";
 import { milestoneTypes } from "../../milestones/types";
 import { dateStringSchema } from "../../utils/zod";
+import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 import { personMetadataSchema } from "../utils/personMetadataSchema";
-import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
+import { workflowsJusticeInvolvedPersonMixinSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
 import { usMoClientMetadataSchema } from "./US_MO/metadata/schema";
 import { usNeClientMetadataSchema } from "./US_NE/metadata/schema";
 import { usUtClientMetadataSchema } from "./US_UT/metadata/schema";
@@ -85,13 +86,11 @@ const optionalClientInformation = z
  * This is an intermediate schema that should not be included in the public ~datatypes API.
  * It is separated out to support Zod operations on the object schema before transforms are applied
  */
-export const clientRecordObjectSchema =
-  workflowsJusticeInvolvedPersonRecordSchema
-    .merge(
-      z.object({
-        // the officerId field exists on the justiceInvolvedPersonRecordSchema,
-        // however it is required for the Client object, so we redefine the field type here
-        officerId: z.string(),
-      }),
-    )
-    .merge(optionalClientInformation);
+export const clientRecordObjectSchema = justiceInvolvedPersonRecordSchema
+  .merge(workflowsJusticeInvolvedPersonMixinSchema)
+  .merge(
+    z.object({
+      officerId: z.string(),
+    }),
+  )
+  .merge(optionalClientInformation);

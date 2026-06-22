@@ -19,7 +19,7 @@ import { ascending } from "d3-array";
 import { flowResult, makeAutoObservable, runInAction } from "mobx";
 
 import { ResidentsStore } from "~@jii/data";
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -78,11 +78,11 @@ export class ResidentSelectorPresenter implements Hydratable {
     return this.hydrationSource.hydrate();
   }
 
-  private get allResidents(): Array<ResidentRecord> {
+  private get allResidents(): Array<WorkflowsResidentRecord> {
     return Array.from(this.residentsStore.residentsByExternalId.values());
   }
 
-  private get filteredResidents(): Array<ResidentRecord> {
+  private get filteredResidents(): Array<WorkflowsResidentRecord> {
     return this.allResidents
       .filter((r) => r.facilityId === this.facilityId)
       .sort((a, b) => ascending(a.personName.surname, b.personName.surname));

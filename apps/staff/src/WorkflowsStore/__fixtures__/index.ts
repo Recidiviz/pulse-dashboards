@@ -22,9 +22,9 @@ import {
   LocationRecord,
   makeRecordFixture,
   outputFixtureArray,
-  ResidentRecord,
   SupervisionStaffRecord,
   supervisionStaffRecordSchema,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 
 import { CombinedUserRecord, UserRecord } from "../../FirestoreStore";
@@ -46,7 +46,7 @@ export const mockIncarcerationOfficers: Array<
   IncarcerationStaffRecord["output"]
 > = outputFixtureArray(incarcerationStaffTestFixtures);
 
-export const mockResidents: ResidentRecord[] = [
+export const mockResidents: WorkflowsResidentRecord[] = [
   {
     recordId: "999",
     personType: "RESIDENT",

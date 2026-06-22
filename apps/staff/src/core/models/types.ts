@@ -19,9 +19,9 @@ import {
   ClientRecord,
   LocationRecord,
   MilestoneType,
-  ResidentRecord,
   StaffRecord,
   SystemId,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 import { FirestoreCollectionName } from "~firestore-config";
 import {
@@ -85,7 +85,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   // Workflows
   workflowsSupportedSystems?: SystemId[];
   workflowsSystemConfigs?: {
-    INCARCERATION?: WorkflowsSystemConfig<ResidentRecord, TENANT_ID>;
+    INCARCERATION?: WorkflowsSystemConfig<WorkflowsResidentRecord, TENANT_ID>;
     SUPERVISION?: WorkflowsSystemConfig<ClientRecord, TENANT_ID>;
   };
   workflowsHomepage?: WorkflowsPathSection;
@@ -186,7 +186,7 @@ export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
 
 export type AnyWorkflowsSystemConfig =
   | WorkflowsSystemConfig<ClientRecord, any>
-  | WorkflowsSystemConfig<ResidentRecord, any>;
+  | WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
 
 export type SearchIcon = "flag";
 

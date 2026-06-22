@@ -17,7 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { dateStringSchema, ResidentMetadata } from "~datatypes";
+import { dateStringSchema, WorkflowsResidentMetadata } from "~datatypes";
 
 // Shared constant for all US_AZ date field names that we expect to use
 const US_AZ_DATE_KEYS = [
@@ -61,7 +61,10 @@ const TIS_METADATA_FIELD_BY_DATE_KEY = {
   csedDate: "csedDate",
   addDate: "addDate",
   trToAddDate: "trToAddDate",
-} as const satisfies Record<UsAzDateField, keyof ResidentMetadata<"US_AZ">>;
+} as const satisfies Record<
+  UsAzDateField,
+  keyof WorkflowsResidentMetadata<"US_AZ">
+>;
 
 function parseDate(value: string | Date | undefined): Date | undefined {
   if (typeof value === "string") {
@@ -80,7 +83,7 @@ function capitalize<S extends string>(input: S) {
 }
 
 export class SingleResidentContextPresenter {
-  constructor(public metadata: ResidentMetadata<"US_AZ">) {
+  constructor(public metadata: WorkflowsResidentMetadata<"US_AZ">) {
     makeAutoObservable(this);
   }
 

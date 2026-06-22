@@ -16,9 +16,12 @@
 // =============================================================================
 
 import { relativeFixtureDate } from "../../../utils/zod";
-import { RawResidentRecord, residentRecordSchema } from "../schema";
+import {
+  RawWorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 
-export const rawUsNdResidents: Array<RawResidentRecord> = [
+export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
   {
     allEligibleOpportunities: ["usNdTransferToMinFacility"],
     stateCode: "US_ND",
@@ -97,5 +100,5 @@ export const rawUsNdResidents: Array<RawResidentRecord> = [
 ];
 
 export const usNdResidents = rawUsNdResidents.map((r) =>
-  residentRecordSchema.parse(r),
+  workflowsResidentRecordSchema.parse(r),
 );

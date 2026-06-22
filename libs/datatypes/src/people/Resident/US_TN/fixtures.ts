@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { relativeFixtureDate } from "../../../utils/zod";
-import { RawResidentRecord, residentRecordSchema } from "../schema";
+import {
+  RawWorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 
 const metadata = {
   stateCode: "US_TN" as const,
@@ -120,7 +123,7 @@ const metadata = {
   ],
 };
 
-export const rawUsTnResidents: Array<RawResidentRecord> = [
+export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
     stateCode: "US_TN",
@@ -210,5 +213,5 @@ export const rawUsTnResidents: Array<RawResidentRecord> = [
 ];
 
 export const usTnResidents = rawUsTnResidents.map((r) =>
-  residentRecordSchema.parse(r),
+  workflowsResidentRecordSchema.parse(r),
 );

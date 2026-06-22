@@ -107,7 +107,7 @@ export * from "./people/Client/utils";
 // Resident Exports: Includes fixtures and schema related to Residents
 // -----------------------------------------------------------------------------
 export * from "./people/Resident/fixtures";
-export * from "./people/Resident/schema";
+export * from "./people/Resident/residentCommonSchema";
 export type * from "./people/Resident/US_AR/metadata/schema";
 export * from "./people/Resident/US_AZ/fixtures";
 export type * from "./people/Resident/US_AZ/metadata/schema";
@@ -127,6 +127,7 @@ export * from "./people/Resident/US_NE/fixtures";
 export type * from "./people/Resident/US_NE/metadata/schema";
 export * from "./people/Resident/US_TN/fixtures";
 export type * from "./people/Resident/US_TN/metadata/schema";
+export * from "./people/Resident/workflowsResidentRecordSchema";
 
 // Staff Exports: Includes fixtures and schema related to Staff
 // -----------------------------------------------------------------------------
@@ -154,6 +155,7 @@ export * from "./people/utils/types";
 // Workflows JII Exports: Common utilities for people
 // -----------------------------------------------------------------------------
 export type * from "./people/WorkflowsJusticeInvolvedPerson/schema";
+export type * from "./people/WorkflowsJusticeInvolvedPerson/types";
 
 // =============================================================================
 // Places

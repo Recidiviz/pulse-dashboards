@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,23 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rawAllResidents } from "./fixtures";
-import { stateMetadataSchemas } from "./objectOnlySchema";
-import { residentRecordSchema } from "./schema";
+import { z } from "zod";
 
-const statesWithMetadata: string[] = stateMetadataSchemas.map(
-  (s) => s.shape.stateCode.value,
-);
+import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 
-test.each(rawAllResidents)(
-  "schema for $stateCode $personExternalId",
-  (input) => {
-    const output = residentRecordSchema.parse(input);
-    expect(output).toMatchSnapshot();
-
-    // Residents in state with defined metadata schemas must have non-empty metadata
-    if (statesWithMetadata.includes(input.stateCode)) {
-      expect(output.metadata.stateCode).toBeDefined();
-    }
-  },
-);
+/**
+ * Resident data model that is common across products.
+ * Product-specific schemas should extend this.
+ */
+export const residentCommonSchema = justiceInvolvedPersonRecordSchema.extend({
+  facilityId: z.string().nullish(),
+});

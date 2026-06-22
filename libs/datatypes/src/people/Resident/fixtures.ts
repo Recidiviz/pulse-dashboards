@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RawResidentRecord, ResidentRecord } from "./schema";
 import { rawUsArResidents, usArResidents } from "./US_AR/fixtures";
 import { rawUsAzResidents, usAzResidents } from "./US_AZ/fixtures";
 import { rawUsCoResidents, usCoResidents } from "./US_CO/fixtures";
@@ -26,6 +25,10 @@ import { rawUsNcResidents, usNcResidents } from "./US_NC/fixtures";
 import { rawUsNdResidents, usNdResidents } from "./US_ND/fixtures";
 import { rawUsNeResidents, usNeResidents } from "./US_NE/fixtures";
 import { rawUsTnResidents, usTnResidents } from "./US_TN/fixtures";
+import {
+  RawWorkflowsResidentRecord,
+  WorkflowsResidentRecord,
+} from "./workflowsResidentRecordSchema";
 
 // re-exporting state fixtures for convenience
 export {
@@ -38,7 +41,7 @@ export {
   usMeResidents,
 };
 
-export const allResidents: ResidentRecord[] = [
+export const allResidents: WorkflowsResidentRecord[] = [
   ...usArResidents,
   ...usAzResidents,
   ...usCoResidents,
@@ -51,7 +54,7 @@ export const allResidents: ResidentRecord[] = [
   ...usTnResidents,
 ];
 
-export const rawAllResidents: RawResidentRecord[] = [
+export const rawAllResidents: RawWorkflowsResidentRecord[] = [
   ...rawUsArResidents,
   ...rawUsAzResidents,
   ...rawUsCoResidents,

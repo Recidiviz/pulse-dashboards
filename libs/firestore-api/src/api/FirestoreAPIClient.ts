@@ -47,9 +47,9 @@ import { z } from "zod";
 import {
   LocationRecord,
   locationRecordSchema,
-  ResidentRecord,
-  residentRecordSchema,
   shiftAllDates,
+  WorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
 } from "~datatypes";
 import {
   collectionNameFromConfig,
@@ -146,7 +146,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
     return snapshot.docs
       .map((d) => {
         try {
-          return this.parseFirestoreDocument(residentRecordSchema, {
+          return this.parseFirestoreDocument(workflowsResidentRecordSchema, {
             ...d.data(),
             recordId: d.id,
           });
@@ -155,7 +155,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
           return;
         }
       })
-      .filter((r): r is ResidentRecord => !!r);
+      .filter((r): r is WorkflowsResidentRecord => !!r);
   }
 
   async residentByPseudoId(stateCode: string, pseudoId: string) {
@@ -164,7 +164,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
       { key: "residents" },
       "pseudonymizedId",
       pseudoId,
-      residentRecordSchema,
+      workflowsResidentRecordSchema,
     );
   }
 

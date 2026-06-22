@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import { UsTnMonthlyReports } from "../../UsTnSingleResidentDataContext/context";
 import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
 
 describe("UsTnMonthlyReportsPresenter tests", () => {
-  const resident = { stateCode: "US_TN" } as never as ResidentRecord;
+  const resident = { stateCode: "US_TN" } as never as WorkflowsResidentRecord;
 
   const partialMonthlyReports = {
     "november-2023": { date: new Date("2023-11-01") },

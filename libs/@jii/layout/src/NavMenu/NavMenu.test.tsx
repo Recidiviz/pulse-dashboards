@@ -27,7 +27,7 @@ import {
   UserStore,
 } from "~@jii/data";
 import { TRANSLATOR_MODE_LANGUAGE_CODE } from "~@jii/translation";
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import { NavMenu } from "./NavMenu";
 
@@ -177,7 +177,7 @@ describe("with translator permission", () => {
 });
 
 describe("resident info display", () => {
-  const mockResident: ResidentRecord = {
+  const mockResident: WorkflowsResidentRecord = {
     displayId: "12345",
     personName: {
       givenNames: "John",
@@ -186,7 +186,7 @@ describe("resident info display", () => {
     },
     stateCode: "US_ID",
     pseudonymizedId: "pseudo-123",
-  } as ResidentRecord;
+  } as WorkflowsResidentRecord;
 
   test("shows resident name and DOC ID when context is provided", () => {
     const contextValue = {

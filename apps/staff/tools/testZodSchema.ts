@@ -26,7 +26,6 @@ import {
   clientRecordSchema,
   incarcerationStaffRecordSchema,
   OpportunityType,
-  residentRecordSchema,
   supervisionStaffRecordSchema,
   usArInstitutionalWorkerStatusSchema,
   usAzReleaseToDTPSchema,
@@ -46,6 +45,7 @@ import {
   usPaSpecialCircumstancesSupervisionSchema,
   usTnInitialClassification2026Schema,
   usTnReclassification2026Schema,
+  workflowsResidentRecordSchema,
 } from "~datatypes";
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
@@ -214,7 +214,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
 
 const OTHER_SCHEMAS = {
   residents: {
-    schema: residentRecordSchema,
+    schema: workflowsResidentRecordSchema,
     firestoreCollection: "residents",
   },
   incarcerationStaff: {

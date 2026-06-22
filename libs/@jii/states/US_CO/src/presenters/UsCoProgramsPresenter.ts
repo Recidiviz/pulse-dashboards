@@ -23,7 +23,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -43,7 +43,7 @@ export class UsCoProgramsPresenter implements Hydratable {
   showOnlyStarred = false;
 
   constructor(
-    private readonly resident: ResidentRecord,
+    private readonly resident: WorkflowsResidentRecord,
     private readonly apiClient: DataAPI,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });

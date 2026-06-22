@@ -20,7 +20,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { ResidentMetadata } from "~datatypes";
+import { WorkflowsResidentMetadata } from "~datatypes";
 import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
@@ -44,7 +44,7 @@ const DateMethodologyText = styled(Sans14)`
 `;
 
 export function metadataToDates(
-  metadata: ResidentMetadata<"US_AZ">,
+  metadata: WorkflowsResidentMetadata<"US_AZ">,
   useDtp: boolean,
   inTableTooltip: string,
 ): DateInfo[] {

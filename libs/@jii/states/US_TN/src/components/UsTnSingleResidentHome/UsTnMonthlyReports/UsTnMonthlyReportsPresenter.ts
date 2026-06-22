@@ -17,7 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import {
   UsTnMonthlyReport,
@@ -26,7 +26,7 @@ import {
 
 export class UsTnMonthlyReportsPresenter {
   constructor(
-    public readonly resident: ResidentRecord,
+    public readonly resident: WorkflowsResidentRecord,
     private readonly monthlyReports: UsTnMonthlyReports,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });

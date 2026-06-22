@@ -15,26 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { rawAllResidents } from "./fixtures";
+import { stateMetadataSchemas } from "./stateMetadataSchemas";
+import { workflowsResidentRecordSchema } from "./workflowsResidentRecordSchema";
 
-import { fullNameSchema } from "../utils/fullNameSchema";
+const statesWithMetadata: string[] = stateMetadataSchemas.map(
+  (s) => s.shape.stateCode.value,
+);
 
-/**
- * Fields expected for any justice-involved person data
- * regardless of which system compartment they are currently subject to
- */
-export const justiceInvolvedPersonRecordSchema = z.object({
-  personExternalId: z.string(),
-  pseudonymizedId: z.string(),
-  displayId: z.string(),
-  stateCode: z.string(),
-  personName: fullNameSchema,
-});
+test.each(rawAllResidents)(
+  "schema for $stateCode $personExternalId",
+  (input) => {
+    const output = workflowsResidentRecordSchema.parse(input);
+    expect(output).toMatchSnapshot();
 
-/**
- * Data from the Recidiviz data platform about a justice-involved person
- * (incarcerated or on supervision)
- */
-export type JusticeInvolvedPersonRecord = z.infer<
-  typeof justiceInvolvedPersonRecordSchema
->;
+    // Residents in state with defined metadata schemas must have non-empty metadata
+    if (statesWithMetadata.includes(input.stateCode)) {
+      expect(output.metadata.stateCode).toBeDefined();
+    }
+  },
+);

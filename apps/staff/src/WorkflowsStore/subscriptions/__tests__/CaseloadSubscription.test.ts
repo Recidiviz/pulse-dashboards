@@ -19,7 +19,7 @@ import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
-import { ClientRecord, ResidentRecord } from "~datatypes";
+import { ClientRecord, WorkflowsResidentRecord } from "~datatypes";
 
 import { WorkflowsSystemConfig } from "../../../core/models/types";
 import { WorkflowsStore } from "../../WorkflowsStore";
@@ -34,7 +34,7 @@ const withConverterMock = vi.fn();
 
 let workflowsStoreMock: WorkflowsStore;
 let sub: CaseloadSubscription<ClientRecord>;
-let residentSub: CaseloadSubscription<ResidentRecord>;
+let residentSub: CaseloadSubscription<WorkflowsResidentRecord>;
 
 const supervisionSystemConfig = {
   search: [{ searchType: "DISTRICT", searchField: ["district"] }],
@@ -66,7 +66,7 @@ beforeEach(() => {
     { key: "clients" },
     "CLIENT",
   );
-  residentSub = new CaseloadSubscription<ResidentRecord>(
+  residentSub = new CaseloadSubscription<WorkflowsResidentRecord>(
     workflowsStoreMock,
     { key: "residents" },
     "RESIDENT",

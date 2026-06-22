@@ -17,7 +17,7 @@
 
 import { configure } from "mobx";
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import { RootStore } from "../../RootStore";
 import { Resident } from "../Resident";
@@ -26,7 +26,7 @@ vi.mock("../subscriptions");
 
 let rootStore: RootStore;
 let testResident: Resident;
-let record: ResidentRecord;
+let record: WorkflowsResidentRecord;
 
 function createTestUnit() {
   testResident = new Resident(record, rootStore);
@@ -67,7 +67,10 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-const PROPERTIES_FROM_RECORD: [keyof Resident, keyof ResidentRecord][] = [
+const PROPERTIES_FROM_RECORD: [
+  keyof Resident,
+  keyof WorkflowsResidentRecord,
+][] = [
   ["custodyLevel", "custodyLevel"],
   ["facilityId", "facilityId"],
   ["unitId", "unitId"],

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEqual } from "date-fns";
-import { z } from "zod";
-
-import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
-import { dateStringSchema, nullishAsUndefined } from "../../utils/zod";
-import { personMetadataSchema } from "../utils/personMetadataSchema";
-import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
 import { usArResidentMetadataSchema } from "./US_AR/metadata/schema";
 import { usAzResidentMetadataSchema } from "./US_AZ/metadata/schema";
 import { usCoResidentMetadataSchema } from "./US_CO/metadata/schema";
@@ -35,11 +28,6 @@ import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
 import { usNeResidentMetadataSchema } from "./US_NE/metadata/schema";
 import { usTnResidentMetadataSchema } from "./US_TN/metadata/schema";
 import { usUtResidentMetadataSchema } from "./US_UT/metadata/schema";
-
-/**
- * Magic date that appears in data sometimes and is equivalent to null
- */
-const MISSING_DATE_SENTINEL = new Date(9999, 11, 1);
 
 export const stateMetadataSchemas = [
   usArResidentMetadataSchema,
@@ -56,30 +44,3 @@ export const stateMetadataSchemas = [
   usTnResidentMetadataSchema,
   usUtResidentMetadataSchema,
 ] as const;
-
-/**
- * This is an intermediate schema that should not be included in the public ~datatypes API.
- * It is separated out to support Zod operations on the object schema before transforms are applied
- */
-export const residentRecordObjectSchema =
-  workflowsJusticeInvolvedPersonRecordSchema.merge(
-    z.object({
-      facilityId: z.string().nullish(),
-      unitId: z.string().nullish(),
-      facilityUnitId: z.string().nullish(),
-      custodyLevel: z.string().nullish(),
-      admissionDate: nullishAsUndefined(dateStringSchema),
-      releaseDate: nullishAsUndefined(dateStringSchema).transform((d) => {
-        if (d && isEqual(d, MISSING_DATE_SENTINEL)) {
-          return undefined;
-        }
-        return d;
-      }),
-      portionServedNeeded: usMeXPortionServedEnum.nullish(),
-      sccpEligibilityDate: dateStringSchema.nullish(),
-      usTnFacilityAdmissionDate: nullishAsUndefined(dateStringSchema),
-      usMePortionNeededEligibleDate: dateStringSchema.nullish(),
-      gender: nullishAsUndefined(z.string()),
-      metadata: personMetadataSchema([...stateMetadataSchemas]),
-    }),
-  );

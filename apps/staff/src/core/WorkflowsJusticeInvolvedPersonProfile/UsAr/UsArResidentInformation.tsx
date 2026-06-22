@@ -18,7 +18,7 @@
 import { startOfToday } from "date-fns";
 import React from "react";
 
-import { ResidentMetadata } from "~datatypes";
+import { WorkflowsResidentMetadata } from "~datatypes";
 
 import { formatWorkflowsDate } from "../../../utils";
 import {
@@ -61,7 +61,7 @@ function UsArGoodTimeClassification({
     noIncarcerationSanctionsWithin6Months,
   },
 }: {
-  metadata: ResidentMetadata<"US_AR">;
+  metadata: WorkflowsResidentMetadata<"US_AR">;
 }): React.ReactElement<any> {
   return (
     <DetailsSection>
@@ -98,7 +98,7 @@ function UsArGoodTimeClassification({
 function UsArCurrentStatus({
   metadata: { currentLocation, currentSentences },
 }: {
-  metadata: ResidentMetadata<"US_AR">;
+  metadata: WorkflowsResidentMetadata<"US_AR">;
 }): React.ReactElement<any> {
   return (
     <DetailsSection>
@@ -137,7 +137,7 @@ function UsArCurrentStatus({
 function UsArReleaseDates({
   metadata: { eligibilityDate, eligibilityDateName, maximumReleaseDate },
 }: {
-  metadata: ResidentMetadata<"US_AR">;
+  metadata: WorkflowsResidentMetadata<"US_AR">;
 }): React.ReactElement<any> {
   return (
     <DetailsSection>
@@ -159,7 +159,7 @@ function UsArReleaseDates({
 function UsArProgramming({
   metadata: { programAchievement },
 }: {
-  metadata: ResidentMetadata<"US_AR">;
+  metadata: WorkflowsResidentMetadata<"US_AR">;
 }): React.ReactElement<any> {
   return (
     <DetailsSection>

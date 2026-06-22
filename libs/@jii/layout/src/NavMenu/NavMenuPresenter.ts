@@ -26,7 +26,7 @@ import {
   windowIsIframe,
 } from "~@jii/data";
 import { isOfflineMode } from "~client-env-utils";
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 export type MenuLinks = Array<SimpleNavLinkProps>;
 
@@ -34,7 +34,7 @@ export class NavMenuPresenter {
   constructor(
     public links: MenuLinks,
     private rootStore: RootStore,
-    public readonly resident?: ResidentRecord,
+    public readonly resident?: WorkflowsResidentRecord,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }

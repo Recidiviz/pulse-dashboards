@@ -16,9 +16,9 @@
 // =============================================================================
 
 import {
-  ResidentRecord,
   UsNdResidentMetadata,
   usNdResidents,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
@@ -28,7 +28,7 @@ describe("sentence dates", () => {
     expect(
       new ResidentHomepagePresenter(
         usNdResidents[1].metadata as UsNdResidentMetadata,
-        {} as ResidentRecord,
+        {} as WorkflowsResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
       {
@@ -62,7 +62,7 @@ describe("sentence dates", () => {
     expect(
       new ResidentHomepagePresenter(
         usNdResidents[0].metadata as UsNdResidentMetadata,
-        {} as ResidentRecord,
+        {} as WorkflowsResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
       {

@@ -18,22 +18,14 @@
 import { z } from "zod";
 
 import { OpportunityType } from "../../opportunities/OpportunityType";
-import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 
-export const workflowsJusticeInvolvedPersonRecordSchema =
-  justiceInvolvedPersonRecordSchema.merge(
-    z.object({
-      recordId: z.string(),
-      // TODO($6489): Look at relaxing typing to be string[]
-      allEligibleOpportunities: z.array(
-        z.string().transform((val) => val as OpportunityType),
-      ),
-      allIneligibleOpportunities: z.optional(
-        z.array(z.string().transform((val) => val as OpportunityType)),
-      ),
-    }),
-  );
-
-export type WorkflowsJusticeInvolvedPersonRecord = z.infer<
-  typeof workflowsJusticeInvolvedPersonRecordSchema
->;
+export const workflowsJusticeInvolvedPersonMixinSchema = z.object({
+  recordId: z.string(),
+  // TODO($6489): Look at relaxing typing to be string[]
+  allEligibleOpportunities: z.array(
+    z.string().transform((val) => val as OpportunityType),
+  ),
+  allIneligibleOpportunities: z.optional(
+    z.array(z.string().transform((val) => val as OpportunityType)),
+  ),
+});

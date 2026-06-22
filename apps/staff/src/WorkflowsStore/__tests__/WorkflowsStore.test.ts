@@ -22,9 +22,9 @@ import { IDisposer, keepAlive } from "mobx-utils";
 import {
   ClientRecord,
   OpportunityType,
-  ResidentRecord,
   SupervisionStaffRecord,
   SystemId,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
@@ -227,7 +227,7 @@ function populateClients(clients: ClientRecord[]): void {
   });
 }
 
-function populateResidents(residents: ResidentRecord[]): void {
+function populateResidents(residents: WorkflowsResidentRecord[]): void {
   runInAction(() => {
     workflowsStore.residentsSubscription.data = residents;
     workflowsStore.residentsSubscription.hydrationState = {

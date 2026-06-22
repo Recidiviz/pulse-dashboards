@@ -16,10 +16,13 @@
 // =============================================================================
 
 import { relativeFixtureDate } from "../../../utils/zod";
-import { RawResidentRecord, residentRecordSchema } from "../schema";
+import {
+  RawWorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 
 // TODO(OBT-31705): Add fixtures for the various TPR/DTP date display scenarios
-export const rawUsAzResidents: Array<RawResidentRecord> = [
+export const rawUsAzResidents: Array<RawWorkflowsResidentRecord> = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
@@ -656,5 +659,5 @@ export const rawUsAzResidents: Array<RawResidentRecord> = [
 ];
 
 export const usAzResidents = rawUsAzResidents.map((r) =>
-  residentRecordSchema.parse(r),
+  workflowsResidentRecordSchema.parse(r),
 );

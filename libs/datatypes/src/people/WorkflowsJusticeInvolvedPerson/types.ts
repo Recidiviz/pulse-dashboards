@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { ClientRecord } from "../Client/schema";
+import { WorkflowsResidentRecord } from "../Resident/workflowsResidentRecordSchema";
 
-import { residentRecordObjectSchema } from "./objectOnlySchema";
-
-export const residentRecordSchema = residentRecordObjectSchema.transform(
-  (input) => ({
-    ...input,
-    personType: "RESIDENT" as const,
-  }),
-);
-
-/**
- * Data from the Recidiviz data platform about an incarcerated person
- */
-export type ResidentRecord = z.infer<typeof residentRecordSchema>;
-/**
- * A Resident record in its raw form, as stored in Firestore
- */
-export type RawResidentRecord = z.input<typeof residentRecordSchema>;
-
-export type ResidentMetadata<S> = ResidentRecord["metadata"] & { stateCode: S };
+export type WorkflowsJusticeInvolvedPersonRecord =
+  | ClientRecord
+  | WorkflowsResidentRecord;

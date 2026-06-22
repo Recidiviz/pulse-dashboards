@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentMetadata } from "~datatypes";
+import { WorkflowsResidentMetadata } from "~datatypes";
 
 import { metadataToDates } from "../UsAzDates";
 
@@ -40,7 +40,7 @@ describe("UsAzDates metadataToDates tests", () => {
         value.toISOString(),
       ]),
     ),
-  } as ResidentMetadata<"US_AZ">;
+  } as WorkflowsResidentMetadata<"US_AZ">;
 
   const FAKE_TOOLTIP = "TOOLTIP";
 

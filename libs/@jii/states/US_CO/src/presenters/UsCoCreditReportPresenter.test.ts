@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord, UsCoResidentMetadata } from "~datatypes";
+import { UsCoResidentMetadata, WorkflowsResidentRecord } from "~datatypes";
 
 import { UsCoCreditReportPresenter } from "./UsCoCreditReportPresenter";
 
-const resident = {} as never as ResidentRecord;
+const resident = {} as never as WorkflowsResidentRecord;
 
 const buildMetadata = (
   creditActivity: {

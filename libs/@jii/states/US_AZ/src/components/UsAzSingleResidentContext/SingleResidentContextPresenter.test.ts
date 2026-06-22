@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentMetadata } from "~datatypes";
+import { WorkflowsResidentMetadata } from "~datatypes";
 
 import { SingleResidentContextPresenter } from "./SingleResidentContextPresenter";
 
-const testData: ResidentMetadata<"US_AZ"> = {
+const testData: WorkflowsResidentMetadata<"US_AZ"> = {
   stateCode: "US_AZ",
   isDprEligible: false,
   hasAnyDprProgramCompleted: false,
@@ -196,7 +196,7 @@ describe("approval status", () => {
 
 describe("displayedDates", () => {
   it("filters out missing dates", () => {
-    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+    const allMissingDates: WorkflowsResidentMetadata<"US_AZ"> = {
       stateCode: "US_AZ",
       isDprEligible: false,
       hasAnyDprProgramCompleted: false,
@@ -206,7 +206,7 @@ describe("displayedDates", () => {
   });
 
   it("shows TPR date when DTP date doesn't exist", () => {
-    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+    const allMissingDates: WorkflowsResidentMetadata<"US_AZ"> = {
       stateCode: "US_AZ",
       isDprEligible: false,
       hasAnyDprProgramCompleted: false,
@@ -218,7 +218,7 @@ describe("displayedDates", () => {
   });
 
   it("picks DTP date over TPR date when DPR ineligible", () => {
-    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+    const allMissingDates: WorkflowsResidentMetadata<"US_AZ"> = {
       stateCode: "US_AZ",
       isDprEligible: false,
       hasAnyDprProgramCompleted: false,
@@ -231,7 +231,7 @@ describe("displayedDates", () => {
   });
 
   it("picks DTP date over TPR date when DPR active", () => {
-    const allMissingDates: ResidentMetadata<"US_AZ"> = {
+    const allMissingDates: WorkflowsResidentMetadata<"US_AZ"> = {
       stateCode: "US_AZ",
       isDprEligible: true,
       hasAnyDprProgramCompleted: true,

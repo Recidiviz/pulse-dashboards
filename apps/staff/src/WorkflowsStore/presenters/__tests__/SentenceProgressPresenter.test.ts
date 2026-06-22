@@ -24,7 +24,7 @@ import {
 } from "date-fns";
 import timekeeper from "timekeeper";
 
-import { ClientRecord, fieldToDate, ResidentRecord } from "~datatypes";
+import { ClientRecord, fieldToDate, WorkflowsResidentRecord } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { formatWorkflowsDate } from "../../../utils";
@@ -45,19 +45,19 @@ let workflowsStore: WorkflowsStore;
 // test with US_ND
 const mockTenantId = "US_ND";
 
-const baseResident: ResidentRecord = {
+const baseResident: WorkflowsResidentRecord = {
   ...mockResidents[0],
   releaseDate: fieldToDate("2030-01-01"),
   admissionDate: fieldToDate("2021-06-06"),
 };
 
-const baseResidentWithDateGaps: ResidentRecord = {
+const baseResidentWithDateGaps: WorkflowsResidentRecord = {
   ...baseResident,
   // 7 years and 6 months past today's (frozen) date.
   releaseDate: fieldToDate("2033-06-01"),
 };
 
-const usNDResidentRecord: ResidentRecord = {
+const usNDResidentRecord: WorkflowsResidentRecord = {
   ...baseResident,
   stateCode: "US_ND",
   metadata: {
@@ -67,7 +67,7 @@ const usNDResidentRecord: ResidentRecord = {
   },
 };
 
-const usUtResidentRecord: ResidentRecord = {
+const usUtResidentRecord: WorkflowsResidentRecord = {
   ...baseResident,
   stateCode: "US_UT",
   metadata: {

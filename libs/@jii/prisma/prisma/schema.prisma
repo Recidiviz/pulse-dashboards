@@ -11,10 +11,22 @@ datasource db {
 
 // can be used to store random bits of user activity or preferences
 model UserProperties {
-    id    String    @id
-
+    id                         String    @id
     hasSeenOnboarding          DateTime?
     hideAboutVideoFromHomePage DateTime?
+}
+
+model Resident {
+    personId          Int
+    pseudonymizedId   String  @id
+    personExternalId  String
+    displayId         String
+    givenNames        String?
+    middleNames       String?
+    surname           String?
+    facilityId        String?
+    unitId            String?
+    stateSpecificData Json
 }
 
 // Resident Flags tell the frontend to behave differently for specific residents
@@ -72,11 +84,11 @@ model UsNcRNA {
 
 // Supplemental data for RNA writeback about a resident's RNA status
 model UsNcRNAWritebackData {
-    pseudonymizedId    String    @unique
-    opusId             String
-    seqNumber          String?
-    admitDate          DateTime?
-    importedAt         DateTime
+    pseudonymizedId String    @unique
+    opusId          String
+    seqNumber       String?
+    admitDate       DateTime?
+    importedAt      DateTime
 }
 
 // US_NE (Nebraska) reentry checklist questions

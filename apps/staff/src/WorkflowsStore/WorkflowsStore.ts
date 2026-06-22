@@ -35,12 +35,12 @@ import {
   incarcerationStaffRecordSchema,
   LocationRecord,
   OpportunityType,
-  ResidentRecord,
-  residentRecordSchema,
   StaffRecord,
   SupervisionStaffRecord,
   supervisionStaffRecordSchema,
   SystemId,
+  WorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
 } from "~datatypes";
 import {
   castToError,
@@ -123,7 +123,7 @@ export class WorkflowsStore implements Hydratable {
 
   clientsSubscription: CaseloadSubscription<ClientRecord>;
 
-  residentsSubscription: CaseloadSubscription<ResidentRecord>;
+  residentsSubscription: CaseloadSubscription<WorkflowsResidentRecord>;
 
   locationsSubscription: LocationSubscription;
 
@@ -177,12 +177,13 @@ export class WorkflowsStore implements Hydratable {
       "CLIENT",
       clientRecordSchema,
     );
-    this.residentsSubscription = new CaseloadSubscription<ResidentRecord>(
-      this,
-      { key: "residents" },
-      "RESIDENT",
-      residentRecordSchema,
-    );
+    this.residentsSubscription =
+      new CaseloadSubscription<WorkflowsResidentRecord>(
+        this,
+        { key: "residents" },
+        "RESIDENT",
+        workflowsResidentRecordSchema,
+      );
     this.userSubscription = new UserSubscription(rootStore);
     this.locationsSubscription = new LocationSubscription(rootStore);
 
@@ -380,7 +381,10 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
-  updatePerson(record: ResidentRecord, PersonClass: typeof Resident): void;
+  updatePerson(
+    record: WorkflowsResidentRecord,
+    PersonClass: typeof Resident,
+  ): void;
 
   updatePerson(record: ClientRecord, PersonClass: typeof Client): void;
 
@@ -400,7 +404,9 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
-  updateCaseload(newPersons: (ClientRecord | ResidentRecord)[] = []): void {
+  updateCaseload(
+    newPersons: (ClientRecord | WorkflowsResidentRecord)[] = [],
+  ): void {
     newPersons.forEach((newRecord) => {
       if (newRecord.personType === "CLIENT") {
         this.updatePerson(newRecord, Client);
@@ -589,10 +595,10 @@ export class WorkflowsStore implements Hydratable {
 
   get caseloadSubscription():
     | CaseloadSubscription<ClientRecord>[]
-    | CaseloadSubscription<ResidentRecord>[]
+    | CaseloadSubscription<WorkflowsResidentRecord>[]
     | (
         | CaseloadSubscription<ClientRecord>
-        | CaseloadSubscription<ResidentRecord>
+        | CaseloadSubscription<WorkflowsResidentRecord>
       )[]
     | undefined {
     switch (this.activeSystem) {

@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 
 import { usTnCopy } from "../../configs/copy";
 import { UsTnMonthlyReport } from "../UsTnSingleResidentDataContext/context";
 
 export class UsTnSingleMonthCreditReportPresenter {
   constructor(
-    public readonly resident: ResidentRecord,
+    public readonly resident: WorkflowsResidentRecord,
     public readonly monthSlug: string,
     public readonly monthlyReport?: UsTnMonthlyReport,
   ) {}

@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentMetadata, ResidentRecord } from "~datatypes";
+import { WorkflowsResidentMetadata, WorkflowsResidentRecord } from "~datatypes";
 
 import { useSingleResidentContext } from "../contexts/SingleResidentContext";
 
-type StateCode = ResidentRecord["metadata"]["stateCode"];
+type StateCode = WorkflowsResidentRecord["metadata"]["stateCode"];
 
 /**
  * Returns the current resident's metadata, narrowed to the correct type
@@ -29,7 +29,7 @@ type StateCode = ResidentRecord["metadata"]["stateCode"];
  */
 export function useResidentMetadata<S extends NonNullable<StateCode>>(
   stateCode: S,
-): ResidentMetadata<S> {
+): WorkflowsResidentMetadata<S> {
   const {
     resident: { metadata },
   } = useSingleResidentContext();
@@ -37,7 +37,7 @@ export function useResidentMetadata<S extends NonNullable<StateCode>>(
   if (stateCode === metadata.stateCode) {
     // typescript can't infer this correctly,
     // but if the state codes match then this should be a safe assertion
-    return metadata as ResidentMetadata<S>;
+    return metadata as WorkflowsResidentMetadata<S>;
   }
 
   throw new Error(

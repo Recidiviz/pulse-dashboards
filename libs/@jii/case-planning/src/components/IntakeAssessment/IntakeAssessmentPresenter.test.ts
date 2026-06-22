@@ -16,14 +16,14 @@
 // =============================================================================
 
 import { UserStore } from "~@jii/data";
-import { ResidentRecord } from "~datatypes";
+import { WorkflowsResidentRecord } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
 
 import { IntakeAssessmentPresenter } from "./IntakeAssessmentPresenter";
 
 let mockFirebaseAuthClient: FirebaseAuthClient;
 let mockUserStore: UserStore;
-let mockResident: ResidentRecord;
+let mockResident: WorkflowsResidentRecord;
 
 beforeEach(() => {
   window.sessionStorage.clear();
@@ -38,7 +38,7 @@ beforeEach(() => {
 
   mockResident = {
     pseudonymizedId: "mock-resident-id",
-  } as ResidentRecord;
+  } as WorkflowsResidentRecord;
 });
 
 test("no token", () => {

@@ -22,17 +22,17 @@ import { FIXTURE_SEED_DEFAULT } from "~fixture-generator";
 
 import { fullNameFactory } from "../../utils/factories";
 import {
-  RawResidentRecord,
-  ResidentRecord,
-  residentRecordSchema,
-} from "../schema";
+  RawWorkflowsResidentRecord,
+  WorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "../workflowsResidentRecordSchema";
 import { rawUsMaResidentMetadataFixtures } from "./metadata/fixtures";
 import { RawUsMaResidentMetadata } from "./metadata/schema";
 
 faker.seed(FIXTURE_SEED_DEFAULT);
 
 export const rawUsMaResidents: Array<
-  RawResidentRecord & { metadata: RawUsMaResidentMetadata }
+  RawWorkflowsResidentRecord & { metadata: RawUsMaResidentMetadata }
 > = range(4).map((i) => {
   const resId = `RES${String(i + 1).padStart(3, "0")}`;
   return {
@@ -49,6 +49,5 @@ export const rawUsMaResidents: Array<
   };
 });
 
-export const usMaResidents: Array<ResidentRecord> = rawUsMaResidents.map((r) =>
-  residentRecordSchema.parse(r),
-);
+export const usMaResidents: Array<WorkflowsResidentRecord> =
+  rawUsMaResidents.map((r) => workflowsResidentRecordSchema.parse(r));

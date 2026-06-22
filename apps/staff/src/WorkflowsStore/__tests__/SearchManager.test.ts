@@ -19,7 +19,11 @@ import { and, FieldPath, or, query, where } from "firebase/firestore";
 import { observable } from "mobx";
 import { Mock } from "vitest";
 
-import { ClientRecord, rawUsIdResidents, ResidentRecord } from "~datatypes";
+import {
+  ClientRecord,
+  rawUsIdResidents,
+  WorkflowsResidentRecord,
+} from "~datatypes";
 
 import { WorkflowsSystemConfig } from "../../core/models/types";
 import { Client } from "../Client";
@@ -42,7 +46,7 @@ let residentSearchManager: SearchManager;
 let testClient: Client;
 let clientRecord: ClientRecord;
 let testResident: Resident;
-let residentRecord: ResidentRecord;
+let residentRecord: WorkflowsResidentRecord;
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -418,7 +422,7 @@ describe("matchingPersonsGrouped", () => {
           searchField: ["metadata", "crcFacilities"],
         },
       ],
-    } as WorkflowsSystemConfig<ResidentRecord, any>;
+    } as WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => incarcerationSystemConfig,
     );
@@ -457,7 +461,7 @@ describe("matchingPersonsGrouped", () => {
           searchField: ["metadata", "crcFacilities"],
         },
       ],
-    } as WorkflowsSystemConfig<ResidentRecord, any>;
+    } as WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => incarcerationSystemConfig,
     );
