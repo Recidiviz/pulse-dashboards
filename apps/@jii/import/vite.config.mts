@@ -24,7 +24,7 @@ export default defineConfig(() => ({
   cacheDir: "../../../node_modules/.vite/apps/@jii/import",
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
   test: {
-    mockReset: true,
+    restoreMocks: true,
     unstubEnvs: true,
     globalSetup: ["src/setupTestsGlobal.ts"],
     setupFiles: ["src/setupTests.ts"],

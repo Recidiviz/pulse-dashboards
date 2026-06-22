@@ -40,6 +40,19 @@ export abstract class ImportHandlerBase<T, M> {
     file: string,
   ): AsyncGenerator<unknown>;
 
+  // base implementation does not use stateCode but subclasses may need it
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected shouldImportFile(file: string, stateCode: string): boolean {
+    const { filesToSchemasAndLoaderFns } = this.props;
+
+    if (!(file in filesToSchemasAndLoaderFns)) {
+      console.warn(`No loader function found for file ${file}. Skipping.`);
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Retrieves and transforms data from GCS using the provided schema.
    */
@@ -98,8 +111,7 @@ export abstract class ImportHandlerBase<T, M> {
 
       const lineErrorList: string[] = [];
       try {
-        if (!(file in filesToSchemasAndLoaderFns)) {
-          console.warn(`No loader function found for file ${file}. Skipping.`);
+        if (!this.shouldImportFile(file, stateCode)) {
           continue;
         }
 
