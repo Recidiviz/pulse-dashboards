@@ -17,6 +17,8 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { UsAzReleaseToDTPRecord, usAzReleaseToDTPSchema } from "~datatypes";
+
 import {
   OPPORTUNITY_STATUS_COLORS,
   StatusPalette,
@@ -32,13 +34,9 @@ import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTra
 import { convertStringToUTCDate } from "../../utils/dateUtils";
 import { UsAzReleaseToTPRUpdateRecord } from "../UsAzReleaseToTransitionProgramOpportunityBase";
 import { UsAzReleaseToTransitionProgramOpportunityBase } from "../UsAzReleaseToTransitionProgramOpportunityBase";
-import {
-  UsAzReleaseToDTPReferralRecord,
-  usAzReleaseToDTPSchema,
-} from "./UsAzReleaseToDTPReferralRecord";
 
 export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
-  UsAzReleaseToDTPReferralRecord,
+  UsAzReleaseToDTPRecord["output"],
   UsAzReleaseToTPRUpdateRecord
 > {
   constructor(resident: Resident, record: DocumentData) {

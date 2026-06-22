@@ -21,8 +21,16 @@ import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatNameLastFirst } from "../../../utils/formatStrings";
 import { UsAzReleaseToDTPOpportunity } from "../UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
 import { UsAzReleaseToTPROpportunity } from "../UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
-import { UsAzReleaseToTransitionProgramDraftData } from "../UsAz/UsAzReleaseToTransitionProgramBaseSchema";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
+
+export type UsAzReleaseToTransitionProgramDraftData = {
+  isDTPRelease: boolean;
+  residentNameLastFirst: string;
+  adcNumber: string;
+  residentNameAndAdcNumber: string;
+  date: string;
+  staffNameLastFirst: string;
+};
 
 export class UsAzReleaseToTransitionProgramForm extends FormBase<
   UsAzReleaseToTransitionProgramDraftData,

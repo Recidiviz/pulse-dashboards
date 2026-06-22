@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { UsAzReleaseToTransitionProgramDraftData } from "../../WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTransitionProgramBaseSchema";
+import { UsAzReleaseToTransitionProgramDraftData } from "../../WorkflowsStore/Opportunity/Forms/UsAzReleaseToTransitionProgramForm";
 import { FormContainer } from "../Paperwork/FormContainer";
 import {
   fillAndSavePDF,

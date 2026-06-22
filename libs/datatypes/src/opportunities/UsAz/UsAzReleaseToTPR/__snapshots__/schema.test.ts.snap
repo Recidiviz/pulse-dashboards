@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "RES002",
+  "ineligibleCriteria": {
+    "usAzWithin7DaysOfRecidivizTprDate": {
+      "recidivizTprDate": 2021-12-22T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "tabName": "ALMOST_ELIGIBLE_1",
+  },
+  "stateCode": "US_AZ",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usAzIncarcerationWithin6MonthsOfAcisTprDate": {
+      "acisTprDate": 2022-04-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "tabDescription": "FAST_TRACK",
+  },
+  "stateCode": "US_AZ",
+}
+`;

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
-export * from "./UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
-export * from "./UsAzReleaseToTransitionProgramOpportunityBase";
+import { usAzReleaseToTPRFixtures } from "./fixtures";
+import { usAzReleaseToTPRSchema } from "./schema";
+
+test.each(
+  Object.keys(usAzReleaseToTPRFixtures) as Array<
+    keyof typeof usAzReleaseToTPRFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usAzReleaseToTPRSchema.parse(usAzReleaseToTPRFixtures[key].input),
+  ).toMatchSnapshot();
+});

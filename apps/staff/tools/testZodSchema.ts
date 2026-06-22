@@ -29,6 +29,8 @@ import {
   residentRecordSchema,
   supervisionStaffRecordSchema,
   usArInstitutionalWorkerStatusSchema,
+  usAzReleaseToDTPSchema,
+  usAzReleaseToTPRSchema,
   usMeAnnualReclassificationSchema,
   usMeMediumTrusteeSchema,
   usMeSCCPSchema,
@@ -48,8 +50,6 @@ import {
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
-import { usAzReleaseToDTPSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPReferralRecord";
-import { usAzReleaseToTPRSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPRReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIaEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsIa/UsIaEarlyDischargeOpportunity/UsIaEarlyDischargeOpportunitySchema";
 import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity/EarnedDischargeReferralRecord";

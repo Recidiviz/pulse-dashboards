@@ -33,6 +33,13 @@ export * from "./opportunities/OpportunityType";
 export * from "./opportunities/UsAr/UsArInstitutionalWorkerStatus/fixtures";
 export * from "./opportunities/UsAr/UsArInstitutionalWorkerStatus/schema";
 
+// UsAz Exports: Includes fixtures and schema related to US-AZ opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsAz/UsAzReleaseToDTP/fixtures";
+export * from "./opportunities/UsAz/UsAzReleaseToDTP/schema";
+export * from "./opportunities/UsAz/UsAzReleaseToTPR/fixtures";
+export * from "./opportunities/UsAz/UsAzReleaseToTPR/schema";
+
 // UsMe Exports: Includes fixtures and schema related to US-ME opportunities
 // -----------------------------------------------------------------------------
 export { usMeDenialMetadataSchema } from "./opportunities/UsMe/common";

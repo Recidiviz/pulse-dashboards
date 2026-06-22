@@ -17,6 +17,8 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { UsAzReleaseToTPRRecord, usAzReleaseToTPRSchema } from "~datatypes";
+
 import { Resident } from "../../../Resident";
 import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
 import { OpportunityRequirement } from "../../types";
@@ -25,13 +27,9 @@ import { Reason } from "../../utils/criteriaUtils";
 import { convertStringToUTCDate } from "../../utils/dateUtils";
 import { UsAzReleaseToTPRUpdateRecord } from "../UsAzReleaseToTransitionProgramOpportunityBase";
 import { UsAzReleaseToTransitionProgramOpportunityBase } from "../UsAzReleaseToTransitionProgramOpportunityBase";
-import {
-  UsAzReleaseToTPRReferralRecord,
-  usAzReleaseToTPRSchema,
-} from "./UsAzReleaseToTPRReferralRecord";
 
 export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
-  UsAzReleaseToTPRReferralRecord,
+  UsAzReleaseToTPRRecord["output"],
   UsAzReleaseToTPRUpdateRecord
 > {
   constructor(resident: Resident, record: DocumentData) {

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
-
-import { usAzReleaseToTransitionProgramSchemaBase } from "../UsAzReleaseToTransitionProgramBaseSchema";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
+import { usAzReleaseToTransitionProgramSchemaBase } from "../common";
 
 export const usAzReleaseToDTPSchema = usAzReleaseToTransitionProgramSchemaBase
   .extend({
@@ -61,9 +61,6 @@ export const usAzReleaseToDTPSchema = usAzReleaseToTransitionProgramSchemaBase
     }),
   );
 
-export type UsAzReleaseToDTPReferralRecordRaw = z.input<
-  typeof usAzReleaseToDTPSchema
->;
-export type UsAzReleaseToDTPReferralRecord = z.infer<
+export type UsAzReleaseToDTPRecord = ParsedRecord<
   typeof usAzReleaseToDTPSchema
 >;
