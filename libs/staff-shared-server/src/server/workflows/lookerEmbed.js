@@ -61,8 +61,7 @@ function shouldAllowAccess(req, res) {
   const appMetadata = getAppMetadata(req);
 
   const isAllowed =
-    appMetadata.state_code === "recidiviz" ||
-    !!appMetadata.routes?.director_dashboard;
+    appMetadata.state_code === "recidiviz" || !!appMetadata.routes?.lookerEmbed;
 
   if (!isAllowed) respondWithForbidden(res);
   return isAllowed;

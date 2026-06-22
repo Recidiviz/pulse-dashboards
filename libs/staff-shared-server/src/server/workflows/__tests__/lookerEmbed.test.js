@@ -77,10 +77,10 @@ beforeEach(() => {
 
 describe("acquireSession", () => {
   describe("authorization", () => {
-    it("returns 403 when user lacks director_dashboard route and is not recidiviz", async () => {
+    it("returns 403 when user lacks lookerEmbed route and is not recidiviz", async () => {
       getAppMetadata.mockReturnValue({
         state_code: "us_xx",
-        routes: { director_dashboard: false },
+        routes: { lookerEmbed: false },
       });
 
       const res = makeRes();
@@ -113,10 +113,10 @@ describe("acquireSession", () => {
       );
     });
 
-    it("allows users with director_dashboard route", async () => {
+    it("allows users with lookerEmbed route", async () => {
       getAppMetadata.mockReturnValue({
         state_code: "us_xx",
-        routes: { director_dashboard: true },
+        routes: { lookerEmbed: true },
       });
       mockSdkMethods.acquire_embed_cookieless_session.mockResolvedValue({
         ok: true,
@@ -242,10 +242,10 @@ describe("acquireSession", () => {
 
 describe("generateTokens", () => {
   describe("authorization", () => {
-    it("returns 403 when user lacks director_dashboard route and is not recidiviz", async () => {
+    it("returns 403 when user lacks lookerEmbed route and is not recidiviz", async () => {
       getAppMetadata.mockReturnValue({
         state_code: "us_xx",
-        routes: { director_dashboard: false },
+        routes: { lookerEmbed: false },
       });
 
       const res = makeRes();
