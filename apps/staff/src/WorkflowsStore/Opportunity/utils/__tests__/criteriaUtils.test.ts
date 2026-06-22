@@ -291,6 +291,31 @@ describe("hydrateStr", () => {
       expect(result).toEqual(expected);
     });
 
+    describe("link_to", () => {
+      it("produces a link token", () => {
+        const template = '{{link_to "Process Guide" "https://example.com"}}';
+        const result = hydrateStr(template, {
+          criteria: {},
+          formatters: {},
+          opportunity: mockOpportunity,
+        });
+        expect(result).toBe("[[link:https://example.com|Process Guide]]");
+      });
+
+      it("can be embedded in surrounding text", () => {
+        const template =
+          'See {{link_to "the guide" "https://example.com"}} for more info.';
+        const result = hydrateStr(template, {
+          criteria: {},
+          formatters: {},
+          opportunity: mockOpportunity,
+        });
+        expect(result).toBe(
+          "See [[link:https://example.com|the guide]] for more info.",
+        );
+      });
+    });
+
     it("reports and falls back when a non-existent helper is called", () => {
       const template = "My favorite fondue is {{melt cheese}}!";
       const criteria = { cheese: "gruyere" };

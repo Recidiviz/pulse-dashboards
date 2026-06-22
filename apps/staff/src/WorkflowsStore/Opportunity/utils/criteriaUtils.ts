@@ -128,6 +128,8 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   monthsOrDaysRemainingFromToday: (date) =>
     monthsOrDaysRemainingFromToday(dateify(date)),
 
+  link_to: (text: string, href: string) => `[[link:${href}|${text}]]`,
+
   // US_MI helpers
   usMiSegregationDisplayName,
 };

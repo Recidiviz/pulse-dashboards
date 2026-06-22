@@ -26,6 +26,10 @@ import { Icon, IconSVG, palette } from "~design-system";
 import { formatDollarAmount } from "../../utils/formatStrings";
 import { Opportunity, OpportunityRequirement } from "../../WorkflowsStore";
 import { UsPaSupervisionOpportunityBase } from "../../WorkflowsStore/Opportunity/UsPa/UsPaSupervisionOpportunityBase";
+import {
+  renderWithLinks,
+  renderWithLinksAndTrailing,
+} from "../../WorkflowsStore/Opportunity/utils/renderUtils";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { InfoButton } from "./InfoButton";
 import OpportunityRecommendedLanguageModal from "./OpportunityRecommendedLanguageModal";
@@ -87,6 +91,7 @@ export const CriteriaList = observer(function CriteriaList({
     i: number,
     iconType: ReactElement<any>,
     useRecommendedLanguage?: boolean,
+    renderLinks?: boolean,
   ) => {
     const tooltipElem = (
       <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
@@ -117,6 +122,23 @@ export const CriteriaList = observer(function CriteriaList({
       </>
     );
 
+    const linkedTextElem = tooltip
+      ? renderWithLinksAndTrailing(
+          parsedText,
+          <> {tooltipElem}</>,
+          KeepTogether,
+        )
+      : renderWithLinks(parsedText);
+
+    let contentElem: React.ReactNode;
+    if (useRecommendedLanguage) {
+      contentElem = recommendedLanguageElem;
+    } else if (renderLinks) {
+      contentElem = linkedTextElem;
+    } else {
+      contentElem = splitTextElem;
+    }
+
     return (
       <CriterionWrapper key={key ?? parsedText} alert={alert}>
         {isHeading ? (
@@ -124,9 +146,7 @@ export const CriteriaList = observer(function CriteriaList({
         ) : (
           <>
             {iconType}
-            <CriterionContentWrapper>
-              {useRecommendedLanguage ? recommendedLanguageElem : splitTextElem}
-            </CriterionContentWrapper>
+            <CriterionContentWrapper>{contentElem}</CriterionContentWrapper>
           </>
         )}
       </CriterionWrapper>
@@ -166,7 +186,7 @@ export const CriteriaList = observer(function CriteriaList({
     const icon = (
       <CriterionIcon kind={IconSVG.Check} color={palette.slate30} size={14} />
     );
-    return reqToCriterion(req, i, icon);
+    return reqToCriterion(req, i, icon, false, true);
   };
 
   return (
