@@ -26,7 +26,7 @@ import TopBarLogo from "../components/TopBar/TopBarLogo";
 
 const LanternTopBar: React.FC = observer(function LanternTopBar() {
   const userStore = useUserStore();
-  const hasSARAccess = !!userStore.userAllowedNavigation?.sarAccess;
+  const hasSARAccess = !!userStore.userAllowedNavigation?.sar;
   const hasTasksAccess =
     !!userStore.userAllowedNavigation?.workflows?.includes("tasks");
 
@@ -41,7 +41,7 @@ const LanternTopBar: React.FC = observer(function LanternTopBar() {
         )}
         {hasSARAccess && (
           <li>
-            <NavLink to="/sarAccess">Go to SAR Dashboard</NavLink>
+            <NavLink to="/sar">Go to SAR Dashboard</NavLink>
           </li>
         )}
         <ProfileLink />

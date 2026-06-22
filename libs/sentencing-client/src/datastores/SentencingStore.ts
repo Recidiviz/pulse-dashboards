@@ -195,7 +195,7 @@ export class SentencingStore {
 
   get hasSARAccess(): boolean {
     const sarAccessPermission = this.routePermissions.find(
-      ([route]) => route === ROUTE_PERMISSIONS.sarAccess,
+      ([route]) => route === ROUTE_PERMISSIONS.sar,
     );
     return sarAccessPermission ? sarAccessPermission[1] : false;
   }

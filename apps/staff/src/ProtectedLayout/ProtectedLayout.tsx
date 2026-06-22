@@ -17,7 +17,13 @@
 
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 
 import Loading from "../components/Loading";
 import { useRootStore, useUserStore } from "../components/StoreProvider";
@@ -26,6 +32,12 @@ import Profile from "../core/Profile";
 import useAuth from "../hooks/useAuth";
 import LanternLayout from "../lantern/LanternLayout";
 import RedirectHome from "../RedirectHome";
+
+// Preserve bookmarked /sarAccess URLs after route rename
+const SarAccessRedirect = () => {
+  const { "*": rest } = useParams();
+  return <Navigate replace to={`/sar${rest ? `/${rest}` : ""}`} />;
+};
 
 function usePageViews() {
   const location = useLocation();
@@ -67,6 +79,7 @@ const ProtectedLayout = observer(function ProtectedLayout() {
         path="/revocations"
         element={<Navigate replace to="/community/revocations" />}
       />
+      <Route path="/sarAccess/*" element={<SarAccessRedirect />} />
     </Routes>
   );
 });

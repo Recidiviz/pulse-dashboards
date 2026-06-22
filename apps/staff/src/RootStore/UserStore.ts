@@ -358,7 +358,9 @@ export default class UserStore {
     const routes: RoutePermission[] = routePermissions.map(
       ([fullRoute, permission]: RoutePermission) => {
         const urlComponents = fullRoute.split("_");
-        const route = urlComponents[urlComponents.length - 1];
+        const routeKey = urlComponents[urlComponents.length - 1];
+        // Auth0 still sends "sarAccess" but the nav key was renamed to "sar"
+        const route = routeKey === "sarAccess" ? "sar" : routeKey;
         return [route, permission];
       },
     );

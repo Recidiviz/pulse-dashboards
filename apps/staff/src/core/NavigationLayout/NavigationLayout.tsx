@@ -685,7 +685,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         !!sentencingStore.staffPseudoId) ||
       (isDevOrStagingOrOfflineEnv && enabledPSI);
 
-    const enabledSAR = !!userAllowedNavigation.sarAccess;
+    const enabledSAR = !!userAllowedNavigation.sar;
     const isSARStaff = enabledSAR && !!sentencingStore.staffPseudoId;
 
     const isPsiSupervisor = isPsiStaff && sentencingStore.isSupervisor;

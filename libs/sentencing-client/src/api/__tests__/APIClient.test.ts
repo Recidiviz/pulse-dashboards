@@ -159,7 +159,7 @@ test("should throw an error if staffPseudoId is undefined", async () => {
 
 test("getStaffInfo and return data", async () => {
   // Add SAR access permission to routes
-  sentencingStore.rootStore.userStore.routes.push(["sarAccess", true]);
+  sentencingStore.rootStore.userStore.routes.push(["sar", true]);
 
   const result = await apiClient.getStaffInfo();
   expect(result).toStrictEqual(StaffInfoFixture);
