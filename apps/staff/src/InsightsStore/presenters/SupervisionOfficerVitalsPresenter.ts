@@ -91,7 +91,7 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
           this.isTasksDrilldownEnabled &&
           this.expectCaseloadPopulated(this.officerExternalId),
         () => {
-          if (this.isTasksDrilldownEnabled && !this.officerVitalsContacts)
+          if (this.isContactsDrilldownEnabled && !this.officerVitalsContacts)
             throw new Error("Vitals contacts not yet populated");
         },
       ],
