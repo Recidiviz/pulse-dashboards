@@ -105,3 +105,22 @@ APP_ENV=production eas submit --platform ios --profile production
 ```
 
 Then select the build you want to submit when prompted.
+
+## Over-the-air (OTA) updates
+
+JS-only changes can be shipped to existing native builds via [EAS Update](https://docs.expo.dev/eas-update/introduction/),
+without a new app store submission. Updates are delivered per channel and only
+apply to builds whose `runtimeVersion` matches (set by the `appVersion` policy in
+`app.config.ts`, i.e. the app `version`); native code changes still require a fresh build.
+
+A scheduled workflow (`.github/workflows/meetings-ota-staging.yml`) publishes the
+latest `main` bundle to the `staging` channel every weekday morning, so staging
+builds stay current without a rebuild. It can also be triggered on demand from the
+Actions tab (`workflow_dispatch`).
+
+To publish an OTA update manually, from this directory (`--environment preview`
+inlines the staging `EXPO_PUBLIC_*` vars into the bundle):
+
+```bash
+eas update --channel staging --environment preview --message "..."
+```
