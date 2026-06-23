@@ -1,6 +1,6 @@
 name: North Carolina
 stateCode: US_NC
-version: 2
+version: 3
 
 outputPatches:
   case_note:
@@ -17,3 +17,85 @@ outputPatches:
       - Academic / Vocational
       - Legal
       - Physical Health
+additionalGlossary:
+  ADA: American Disabilities Act
+  AOC: Administrative Office of the Courts
+  CAM: Continuous Alcohol Monitoring
+  CBI: Cognitive Behavior Intervention
+  CC: Curfew Contact
+  CCA: Community Corrections Analyst
+  CDS: Community Development Specialist
+  CJLEADS: Criminal Justice Law Enforcement Automated Data System
+  CJPP: Criminal Justice Partnership Program
+  CPAI: Correctional Program Assessment Inventory
+  CPPO: Chief Probation and Parole Officer
+  CRV: Confinement in Response to Violation
+  CSAS: Community Service Automated System
+  CSWP: Community Service Work Program
+  CTG: Community Threat Group (Gangs - DCC)
+  DACDP: Division Alcoholism and Chemical Dependency
+  DART: Drug Alcohol Recovery Treatment
+  DCC: Community Corrections
+  DCI: Division of Criminal Information
+  DHHS: Department of Health and Human Services
+  DOA: Department of Administration
+  DOL: Department of Labor
+  DOP: Division of Prisons
+  DRC: Day Reporting Center
+  DS: Drug Screen
+  DTC: Drug Treatment Court
+  DV: Domestic Violence
+  EAP: Employee Assistance Program
+  EBP: Evidence Based Practices
+  EHA: Electronic House Arrest
+  EM: Electronic Monitoring
+  ESC: Employment Security Commission
+  FC: Field Contact
+  FLSA: Fair Labor Standard Act
+  FMS: Financial Management System
+  FTA: Failure to Appear
+  FTR: Failure to Report
+  GPS: Global Positioning System
+  HC: Home Contact
+  ICOTS: Interstate Compact Offender Tracking System
+  IMS: Information Management System
+  ISC: Interstate Compact
+  JDM: Judicial District Manager
+  JSC: Judicial Services Coordinator
+  LEP: Limited English Proficient
+  LME: Local Management Entity
+  MFM: Motor Fleet Management
+  MOA: Memorandum of Agreement
+  MOU: Memorandum of Understanding
+  NCAS: North Carolina Accounting System
+  NCAWARE: North Carolina Automated Warrant Repository
+  NCIC: National Crime Information Center
+  NCPPA: North Carolina Probation Parole Association
+  OAR: Offender Accountability Reporting
+  OC: Office Contact
+  OMC: Offender Management Contact
+  OMM: Offender Management Model
+  OPUS: Offender Population Unified System (Information Management System for Probation)
+  OTI: Offender Traits Inventory (DCC Risk Needs Tool)
+  OTS: Office of Transitional Services (DOC - Research and Planning Program)
+  PPO/PO: Probation and Parole Officer
+  PREA: Prison Rape Elimination Act
+  PSI: Pre-sentence Investigation
+  QDC: Quick Dip Confinement
+  RRS: Recidivism Reduction Services (RRS) programs
+  RNA: Risk Needs Assessments (DCC Risk Needs Tools)
+  SASP: Substance Abuse Screening Program
+  SBI: State Bureau of Investigation
+  SBM: Satellite Based Monitoring
+  SCR: Serious Crime Report
+  SPA: State Personnel Act
+  SSA: Satellite Substance Abuse Program
+  STG: Serious Threat Group (Gangs - DOP)
+  SO: Surveillance Officer
+  SOP: Standard Operating Procedure
+  SASSI: Substance Abuse Subtle Screening Inventory
+  SxOM: Sex Offender Management
+  TASC: Treatment Alternative for Safer Communities
+  TECSP: Treatment for Effective Community Supervision Program
+  TX: Treatment
+  VR: Vocational Rehabilitation
