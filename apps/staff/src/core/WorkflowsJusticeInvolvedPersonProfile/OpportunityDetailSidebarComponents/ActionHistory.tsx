@@ -122,7 +122,14 @@ function ActionEntry({
   } else {
     actionText = "grant";
   }
-  const responseText = `${response?.type === "APPROVAL" ? "Approved" : "Denied"} request for ${actionText}`;
+
+  const responseTypeVerb = {
+    APPROVAL: "Approved request",
+    DENIAL: "Denied request",
+    REVISION: "Requested revisions",
+  };
+
+  const responseText = `${response ? responseTypeVerb[response.type] : "Response"} for ${actionText}`;
   return (
     <>
       {response && (
@@ -132,6 +139,11 @@ function ActionEntry({
           {response.type === "DENIAL" && response.revisionRequest && (
             <SecureSmallDetailsCopy>
               {`Revisions request: ${response.revisionRequest}`}
+            </SecureSmallDetailsCopy>
+          )}
+          {response.type === "REVISION" && (
+            <SecureSmallDetailsCopy>
+              {`Reason: ${response.notes}`}
             </SecureSmallDetailsCopy>
           )}
         </DetailsBox>

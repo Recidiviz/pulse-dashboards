@@ -376,6 +376,12 @@ export class OpportunityPersonListPresenter
           "usTxEarlyReleaseFromSupervisionV2",
         ].includes(this.opportunityType) &&
         opportunities.every((opp) => opp.isGrantApproved),
+      US_TX_REVISION_REASON:
+        [
+          "usTxAnnualReportStatusV2",
+          "usTxEarlyReleaseFromSupervisionV2",
+        ].includes(this.opportunityType) &&
+        opportunities.every((opp) => opp.isInRevisionsRequested),
     };
   }
 

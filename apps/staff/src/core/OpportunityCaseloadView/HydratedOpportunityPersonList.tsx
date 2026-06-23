@@ -303,7 +303,8 @@ export type OpportunityTableColumnId =
   | "US_TX_CURRENT_REVIEWER"
   | "US_TX_SUBMITTED_FOR_REVIEW_DATE"
   | "US_TX_ALL_REVIEWERS"
-  | "US_TX_GRANT_DATE";
+  | "US_TX_GRANT_DATE"
+  | "US_TX_REVISION_REASON";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -1267,6 +1268,20 @@ const TableView = observer(function TableView({
         const opp = row.original;
         if (opp instanceof UsTxArsErsV2OpportunityBase) {
           return opp.allPreviousReviewers.join(", ");
+        }
+      },
+      enableSorting: false,
+    },
+    {
+      header: "Revision Reason",
+      id: "US_TX_REVISION_REASON",
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (
+          opp instanceof UsTxArsErsV2OpportunityBase &&
+          opp.latestAction?.supervisorResponse?.type === "REVISION"
+        ) {
+          return opp.latestAction?.supervisorResponse?.notes;
         }
       },
       enableSorting: false,
