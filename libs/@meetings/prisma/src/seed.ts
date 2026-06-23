@@ -139,6 +139,12 @@ export async function main(prisma: PrismaClient) {
       },
     ];
 
+    // Generate staff feedback conforming to StaffFeedbackOutputSchema
+    const staffFeedback = {
+      whatYouDidWell: [faker.lorem.sentence(), faker.lorem.sentence()],
+      growthOpportunities: [faker.lorem.sentence()],
+    };
+
     await prisma.meeting.create({
       data: {
         id: `meeting-${createdClient.personId}`,
@@ -156,6 +162,9 @@ export async function main(prisma: PrismaClient) {
         meetingSummary: meetingSummary,
         caseNote: faker.lorem.paragraphs(3),
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+        staffFeedback: staffFeedback,
+        staffFeedbackGeneratedAt: meetingEnd,
+        staffFeedbackPipelineRunId: `pipeline-${createdClient.personId}`,
         transcriptions: {
           create: [
             {
@@ -264,6 +273,12 @@ export async function main(prisma: PrismaClient) {
       },
     ];
 
+    // Generate staff feedback conforming to StaffFeedbackOutputSchema
+    const staffFeedback = {
+      whatYouDidWell: [faker.lorem.sentence(), faker.lorem.sentence()],
+      growthOpportunities: [faker.lorem.sentence()],
+    };
+
     await prisma.meeting.create({
       data: {
         id: `resident-meeting-${createdResident.personId}`,
@@ -281,6 +296,9 @@ export async function main(prisma: PrismaClient) {
         meetingSummary: meetingSummary,
         caseNote: faker.lorem.paragraphs(3),
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+        staffFeedback: staffFeedback,
+        staffFeedbackGeneratedAt: meetingEnd,
+        staffFeedbackPipelineRunId: `pipeline-${createdResident.personId}`,
         transcriptions: {
           create: [
             {

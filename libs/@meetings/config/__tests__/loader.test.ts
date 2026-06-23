@@ -318,7 +318,7 @@ describe("config loader", () => {
     });
 
     test("staffFeedbackEnabled defaults to false for non-demo states", () => {
-      const config = loadAgencyConfig("US_NE");
+      const config = loadAgencyConfig("US_ND");
       expect(config.staffFeedbackEnabled).toBe(false);
     });
 
