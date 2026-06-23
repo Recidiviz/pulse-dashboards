@@ -38,25 +38,31 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { MeetingDetails } from "~@meetings/app/common/types";
+import DraftCaseNoteSheet from "~@meetings/app/components/DraftCaseNoteSheet";
+import { useUserContext } from "~@meetings/app/context/UserContext";
+import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
+import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
+import {
+  getInitials,
+  humanReadableTitleCase,
+} from "~@meetings/app/shared/lib/format";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+import {
+  formatMeetingDuration,
+  formatMeetingStartDate,
+} from "~@meetings/app/utils/format";
 
-import { MeetingDetails } from "../common/types";
-import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
-import DraftCaseNoteTab from "../components/DraftCaseNoteTab";
-import { BulletListTab } from "../components/MeetingDetailTabs";
-import MeetingTabs, { Tab } from "../components/MeetingTabs";
-import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
-import StaffFeedbackTab from "../components/StaffFeedbackTab";
-import { useUserContext } from "../context/UserContext";
-import { MeetingTypeTag } from "../entities/meeting-type";
-import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
-import { getInitials, humanReadableTitleCase } from "../shared/lib/format";
-import { Typography } from "../shared/ui/Typography";
-import { formatMeetingDuration, formatMeetingStartDate } from "../utils/format";
 import { ActionItemsTab } from "./ActionItemsTab";
 import AudioPlayer from "./AudioPlayer";
+import DraftCaseNoteTab from "./DraftCaseNoteTab";
+import { BulletListTab } from "./MeetingDetailTabs";
 import MeetingNotesSheet from "./MeetingNotesSheet";
+import MeetingTabs, { Tab } from "./MeetingTabs";
+import MeetingTranscriptionTab from "./MeetingTranscriptionTab";
+import StaffFeedbackTab from "./StaffFeedbackTab";
 
 const HEADER_HEIGHT = 64;
 const AUDIO_PLAYER_HEIGHT = 72;

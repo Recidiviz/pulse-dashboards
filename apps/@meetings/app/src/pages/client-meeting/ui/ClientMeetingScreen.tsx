@@ -17,18 +17,21 @@
 
 import { RouteProp, useRoute } from "@react-navigation/native";
 
-import Meeting from "../components/Meeting";
-import { deserializeClient, formatPersonTitle } from "../entities/person";
-import { useMeetingDetails } from "../hooks/useMeetingDetails";
-import { trpc } from "../shared/api";
-import { ClientsStackParamList } from "../shared/config/routes";
-import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
-import Loading from "../shared/ui/Loading";
-import { formatMeetingStartDateTitle } from "../utils/format";
+import {
+  deserializeClient,
+  formatPersonTitle,
+} from "~@meetings/app/entities/person";
+import { useMeetingDetails } from "~@meetings/app/hooks/useMeetingDetails";
+import { trpc } from "~@meetings/app/shared/api";
+import { ClientsStackParamList } from "~@meetings/app/shared/config";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import Loading from "~@meetings/app/shared/ui/Loading";
+import { formatMeetingStartDateTitle } from "~@meetings/app/utils/format";
+import { Meeting } from "~@meetings/app/widgets/meeting";
 
 type MeetingRouteProp = RouteProp<ClientsStackParamList, "ClientMeeting">;
 
-const ClientMeetingScreen = () => {
+export function ClientMeetingScreen() {
   const route = useRoute<MeetingRouteProp>();
   const meetingId = route.params?.meetingId || "";
   const { data: meetingDetails, isLoading: isMeetingDetailsLoading } =
@@ -56,6 +59,4 @@ const ClientMeetingScreen = () => {
       personType="client"
     />
   );
-};
-
-export default ClientMeetingScreen;
+}

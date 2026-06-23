@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { MeetingDetails } from "~@meetings/app/common/types";
 import { Person } from "~@meetings/app/shared/api";
-
-import { MeetingDetails } from "../common/types";
-import { humanReadableTitleCase } from "../shared/lib/format";
+import { humanReadableTitleCase } from "~@meetings/app/shared/lib/format";
 
 type Params = {
   person: Person;

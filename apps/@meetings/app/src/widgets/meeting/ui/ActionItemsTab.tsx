@@ -21,7 +21,7 @@ import { useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { ScrollView as GHScrollView } from "react-native-gesture-handler";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type ActionItem = {
   task: string;

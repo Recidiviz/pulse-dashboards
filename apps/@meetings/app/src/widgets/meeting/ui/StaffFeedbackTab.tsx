@@ -21,9 +21,9 @@ import OutlineThumbUpIcon from "react-native-heroicons/outline/ThumbUpIcon";
 import SolidThumbDownIcon from "react-native-heroicons/solid/ThumbDownIcon";
 import SolidThumbUpIcon from "react-native-heroicons/solid/ThumbUpIcon";
 
-import type { MeetingDetails } from "../common/types";
-import { trpc } from "../shared/api";
-import { Typography } from "../shared/ui/Typography";
+import type { MeetingDetails } from "~@meetings/app/common/types";
+import { trpc } from "~@meetings/app/shared/api";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type StaffFeedback = NonNullable<MeetingDetails["staffFeedback"]>;
 type Vote = MeetingDetails["currentFeedbackVote"];

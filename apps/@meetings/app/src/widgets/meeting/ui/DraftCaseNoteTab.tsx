@@ -23,10 +23,9 @@ import { TextInput } from "react-native-gesture-handler";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
-
-import { trpc } from "../shared/api";
-import { useSnackbar } from "../shared/ui/Snackbar";
-import { Typography } from "../shared/ui/Typography";
+import { trpc } from "~@meetings/app/shared/api";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   meetingId: string;

@@ -18,7 +18,7 @@
 import { Pressable, ScrollView } from "react-native";
 import LockClosedIcon from "react-native-heroicons/solid/LockClosedIcon";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 export enum Tab {
   DraftCaseNotes = "Draft Case Notes",

@@ -35,10 +35,9 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import DashSvg from "~@meetings/app/shared/assets/icons/dash.svg";
 import PauseSvg from "~@meetings/app/shared/assets/icons/pause.svg";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
-
-import { theme } from "../shared/config";
-import { formatDurationNumeric } from "../shared/lib/format";
-import { Typography } from "../shared/ui/Typography";
+import { theme } from "~@meetings/app/shared/config";
+import { formatDurationNumeric } from "~@meetings/app/shared/lib/format";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 const PLAYBACK_RATES = [1, 1.5, 2] as const;
 

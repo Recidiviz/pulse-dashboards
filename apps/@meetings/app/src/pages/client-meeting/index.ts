@@ -15,23 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { View } from "react-native";
-
-import { Typography } from "../shared/ui/Typography";
-
-type Props = {
-  items?: string[] | null;
-};
-
-export const BulletListTab = ({ items }: Props) => (
-  <View className="flex-1 gap-4 pb-4">
-    {items?.map((item, index) => (
-      <View key={index} className="flex-row gap-2 px-4">
-        <Typography className="mt-0.5 text-primary">•</Typography>
-        <Typography className="flex-1 text-base leading-6 tracking-[-0.32px] text-primary">
-          {item}
-        </Typography>
-      </View>
-    ))}
-  </View>
-);
+export { ClientMeetingScreen } from "./ui/ClientMeetingScreen";

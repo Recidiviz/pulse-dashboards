@@ -18,11 +18,11 @@
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { MeetingDetails } from "~@meetings/app/common/types";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 
-import { MeetingDetails } from "../common/types";
-import MeetingDesktop from "../components/MeetingDesktop";
-import MeetingMobile from "../components/MeetingMobile";
+import MeetingDesktop from "./MeetingDesktop";
+import MeetingMobile from "./MeetingMobile";
 
 type Props = {
   meetingId: string;
@@ -31,7 +31,12 @@ type Props = {
   personType: PersonType;
 };
 
-const Meeting = ({ meetingId, meetingDetails, person, personType }: Props) => {
+export const Meeting = ({
+  meetingId,
+  meetingDetails,
+  person,
+  personType,
+}: Props) => {
   // Show transcription tab if the backend returned transcription data
   const showTranscription = meetingDetails?.transcription !== undefined;
   return (
@@ -57,5 +62,3 @@ const Meeting = ({ meetingId, meetingDetails, person, personType }: Props) => {
     </SafeAreaView>
   );
 };
-
-export default Meeting;
