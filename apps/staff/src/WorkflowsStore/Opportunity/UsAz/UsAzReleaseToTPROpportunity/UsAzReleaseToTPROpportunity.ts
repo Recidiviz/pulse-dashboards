@@ -24,7 +24,6 @@ import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTra
 import { OpportunityRequirement } from "../../types";
 import { hydrateReq, hydrateUntypedCriteria } from "../../utils";
 import { Reason } from "../../utils/criteriaUtils";
-import { convertStringToUTCDate } from "../../utils/dateUtils";
 import { UsAzReleaseToTPRUpdateRecord } from "../UsAzReleaseToTransitionProgramOpportunityBase";
 import { UsAzReleaseToTransitionProgramOpportunityBase } from "../UsAzReleaseToTransitionProgramOpportunityBase";
 
@@ -56,12 +55,7 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
     )
       return undefined;
 
-    const secondaryDateString =
-      metadata.acisTprDate ?? metadata.projectedTprDate;
-
-    return secondaryDateString
-      ? convertStringToUTCDate(secondaryDateString)
-      : undefined;
+    return metadata.acisTprDate ?? metadata.projectedTprDate;
   }
 
   get requirementsMet(): OpportunityRequirement[] {

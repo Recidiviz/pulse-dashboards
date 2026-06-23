@@ -21,15 +21,15 @@ import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
 export const usAzResidentMetadataSchema = z.object({
   stateCode: z.literal("US_AZ"),
-  sedDate: nullishAsUndefined(z.string()),
-  ercdDate: nullishAsUndefined(z.string()),
-  csbdDate: nullishAsUndefined(z.string()),
-  projectedCsbdDate: nullishAsUndefined(z.string()),
-  acisTprDate: nullishAsUndefined(z.string()),
-  projectedTprDate: nullishAsUndefined(z.string()),
-  acisDtpDate: nullishAsUndefined(z.string()),
-  projectedDtpDate: nullishAsUndefined(z.string()),
-  csedDate: nullishAsUndefined(z.string()),
+  sedDate: nullishAsUndefined(dateStringSchema),
+  ercdDate: nullishAsUndefined(dateStringSchema),
+  csbdDate: nullishAsUndefined(dateStringSchema),
+  projectedCsbdDate: nullishAsUndefined(dateStringSchema),
+  acisTprDate: nullishAsUndefined(dateStringSchema),
+  projectedTprDate: nullishAsUndefined(dateStringSchema),
+  acisDtpDate: nullishAsUndefined(dateStringSchema),
+  projectedDtpDate: nullishAsUndefined(dateStringSchema),
+  csedDate: nullishAsUndefined(dateStringSchema),
   ercdOrAdd: nullishAsUndefined(z.string()),
   csbdOrTrToAdd: nullishAsUndefined(z.string()),
   lastUpdatedDate: nullishAsUndefined(dateStringSchema),
@@ -40,10 +40,10 @@ export const usAzResidentMetadataSchema = z.object({
   // The V2 suffix on ercd/csbd avoids collision with the "combined" ercdDate/csbdDate
   // fields above, which pack two mutually-exclusive dates into one column and are
   // consumed by workflows.
-  ercdDateV2: nullishAsUndefined(z.string()),
-  csbdDateV2: nullishAsUndefined(z.string()),
-  addDate: nullishAsUndefined(z.string()),
-  trToAddDate: nullishAsUndefined(z.string()),
+  ercdDateV2: nullishAsUndefined(dateStringSchema),
+  csbdDateV2: nullishAsUndefined(dateStringSchema),
+  addDate: nullishAsUndefined(dateStringSchema),
+  trToAddDate: nullishAsUndefined(dateStringSchema),
   isDprEligible: nullishAsUndefined(z.boolean()),
   hasAnyDprProgramCompleted: nullishAsUndefined(z.boolean()),
   // Standalone ingested DPR date fields (no V2 suffix needed — no name collision).

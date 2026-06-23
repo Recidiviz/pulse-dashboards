@@ -100,11 +100,11 @@ test("release date falls back to sedDate for US_AZ when releaseDate is undefined
     releaseDate: undefined,
     metadata: {
       stateCode: "US_AZ",
-      sedDate: "2028-03-15",
+      sedDate: new Date(2028, 2, 15),
     },
   };
   createTestUnit();
-  expect(testResident.releaseDate).toEqual(new Date("2028-03-15"));
+  expect(testResident.releaseDate).toEqual(new Date(2028, 2, 15));
 });
 
 test("SCCP eligibility date", () => {

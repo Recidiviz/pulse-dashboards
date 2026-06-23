@@ -25,14 +25,14 @@ const testData: WorkflowsResidentMetadata<"US_AZ"> = {
   hasAnyDprProgramCompleted: false,
   // realistically a person would not be expected to have all these dates,
   // but this is convenient for testing and the DPR flags should determine the logic anyway
-  sedDate: "2026-03-01",
-  acisTprDate: "2026-03-02",
-  acisDtpDate: "2026-03-03",
-  csbdDateV2: "2026-03-04",
-  ercdDateV2: "2026-03-05",
-  csedDate: "2026-03-06",
-  addDate: "2026-03-07",
-  trToAddDate: "2026-03-08",
+  sedDate: new Date(2026, 2, 1),
+  acisTprDate: new Date(2026, 2, 2),
+  acisDtpDate: new Date(2026, 2, 3),
+  csbdDateV2: new Date(2026, 2, 4),
+  ercdDateV2: new Date(2026, 2, 5),
+  csedDate: new Date(2026, 2, 6),
+  addDate: new Date(2026, 2, 7),
+  trToAddDate: new Date(2026, 2, 8),
   dprTprDate: new Date(2027, 2, 2),
   dprDtpDate: new Date(2027, 2, 3),
   dprCsbdDate: new Date(2027, 2, 4),
@@ -210,7 +210,7 @@ describe("displayedDates", () => {
       stateCode: "US_AZ",
       isDprEligible: false,
       hasAnyDprProgramCompleted: false,
-      acisTprDate: "2026-03-02",
+      acisTprDate: new Date(2026, 2, 2),
     };
     presenter = new SingleResidentContextPresenter(allMissingDates);
     expect(presenter.displayedDates).toHaveLength(1);
@@ -222,8 +222,8 @@ describe("displayedDates", () => {
       stateCode: "US_AZ",
       isDprEligible: false,
       hasAnyDprProgramCompleted: false,
-      acisTprDate: "2026-03-02",
-      acisDtpDate: "2026-03-03",
+      acisTprDate: new Date(2026, 2, 2),
+      acisDtpDate: new Date(2026, 2, 3),
     };
     presenter = new SingleResidentContextPresenter(allMissingDates);
     expect(presenter.displayedDates).toHaveLength(1);

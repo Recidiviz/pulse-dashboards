@@ -24,7 +24,6 @@ import { WorkflowsResidentMetadata } from "~datatypes";
 import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
-import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";
 import { DateInfo, DatesTable } from "../../DatesTable";
 import { DetailsHeading, DetailsSection } from "../../styles";
 import { ResidentProfileProps } from "../../types";
@@ -55,13 +54,13 @@ export function metadataToDates(
     ? [
         {
           label: "DTP",
-          date: optionalFieldToDate(metadata.acisDtpDate),
+          date: metadata.acisDtpDate,
         },
       ]
     : [
         {
           label: "TPR",
-          date: optionalFieldToDate(metadata.acisTprDate),
+          date: metadata.acisTprDate,
         },
       ];
 
@@ -72,7 +71,7 @@ export function metadataToDates(
     ? [
         {
           label: "Projected DTP",
-          date: optionalFieldToDate(metadata.projectedDtpDate),
+          date: metadata.projectedDtpDate,
           tooltip: inTableTooltip,
           highlight: true,
         },
@@ -80,7 +79,7 @@ export function metadataToDates(
     : [
         {
           label: "Projected TPR",
-          date: optionalFieldToDate(metadata.projectedTprDate),
+          date: metadata.projectedTprDate,
           tooltip: inTableTooltip,
           highlight: true,
         },
@@ -107,10 +106,10 @@ export function metadataToDates(
   // Always show CSBD, ERCD, SED, CSED dates
   return [
     ...(hasAcisDates ? realDates : projectedDates),
-    { label: csbdDisplayName, date: optionalFieldToDate(metadata.csbdDate) },
-    { label: ercdDisplayName, date: optionalFieldToDate(metadata.ercdDate) },
-    { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
-    { label: "CSED", date: optionalFieldToDate(metadata.csedDate) },
+    { label: csbdDisplayName, date: metadata.csbdDate },
+    { label: ercdDisplayName, date: metadata.ercdDate },
+    { label: "SED", date: metadata.sedDate },
+    { label: "CSED", date: metadata.csedDate },
   ];
 }
 

@@ -32,15 +32,10 @@ describe("UsAzDates metadataToDates tests", () => {
     csedDate: new Date(2000, 9, 9),
   };
 
-  const FAKE_METADATA = {
+  const FAKE_METADATA: WorkflowsResidentMetadata<"US_AZ"> = {
     stateCode: "US_AZ",
-    ...Object.fromEntries(
-      Object.entries(FAKE_DATES).map(([key, value]) => [
-        key,
-        value.toISOString(),
-      ]),
-    ),
-  } as WorkflowsResidentMetadata<"US_AZ">;
+    ...FAKE_DATES,
+  };
 
   const FAKE_TOOLTIP = "TOOLTIP";
 

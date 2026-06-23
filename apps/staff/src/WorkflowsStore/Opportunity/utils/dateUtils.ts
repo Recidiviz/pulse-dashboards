@@ -17,15 +17,6 @@
 
 import { Opportunity } from "../types";
 
-export const convertStringToUTCDate = (dateString: string): Date => {
-  const date = new Date(dateString);
-  const dateYear = date.getUTCFullYear();
-  const dateMonth = date.getUTCMonth();
-  const dateDay = date.getUTCDate();
-  const dateUTC = new Date(dateYear, dateMonth, dateDay);
-  return dateUTC;
-};
-
 export const opportunityEligibilityDateComparator = (
   a: Opportunity<any>,
   b: Opportunity<any>,
