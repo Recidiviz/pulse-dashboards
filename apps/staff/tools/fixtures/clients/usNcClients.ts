@@ -35,7 +35,7 @@ export const US_NC_CLIENTS: ClientFixture[] = [
     phoneNumber: "5555555678",
     supervisionStartDate: "2021-02-02",
     expirationDate: "2024-08-02",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usNcCreditReductionReview"],
   },
   {
     personName: {
@@ -54,6 +54,6 @@ export const US_NC_CLIENTS: ClientFixture[] = [
     phoneNumber: "5555555678",
     supervisionStartDate: "2020-01-01",
     expirationDate: "2023-03-30",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usNcCreditReductionReview"],
   },
 ];
