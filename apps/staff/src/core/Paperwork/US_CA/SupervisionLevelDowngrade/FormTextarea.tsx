@@ -22,7 +22,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
 import styled from "styled-components";
 
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
+import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useAnimatedValue } from "../../useAnimatedValue";
 import { useReactiveInput } from "../../utils";

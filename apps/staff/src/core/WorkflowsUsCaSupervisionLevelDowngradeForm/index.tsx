@@ -20,7 +20,7 @@ import { PDFDocument, PDFForm } from "pdf-lib";
 import * as React from "react";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/UsCa";
+import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import {

@@ -1,0 +1,48 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "supervisionLevelIsHighFor6Months": {
+      "highStartDate": 2021-04-16T00:00:00.000Z,
+    },
+    "usCaAssessmentLevel3OrLower": {},
+    "usCaHousingTypeIsNotTransient": {},
+  },
+  "externalId": "CLIENT002",
+  "formInformation": {
+    "cdcno": "AB1234",
+  },
+  "ineligibleCriteria": {
+    "noSupervisionViolationWithin6Months": null,
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {},
+  "stateCode": "US_CA",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noSupervisionViolationWithin6Months": null,
+    "supervisionLevelIsHighFor6Months": {
+      "highStartDate": 2021-04-16T00:00:00.000Z,
+    },
+    "usCaAssessmentLevel3OrLower": {},
+    "usCaHousingTypeIsNotTransient": {},
+  },
+  "externalId": "CLIENT001",
+  "formInformation": {
+    "cdcno": "WF1234",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_CA",
+}
+`;

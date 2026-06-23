@@ -17,11 +17,9 @@
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatNameLastFirst } from "../../../utils";
-import {
-  UsCaSupervisionLevelDowngradeOpportunity,
-  UsCaSupervisionLevelDowngradeSharedDraftData,
-} from "../UsCa";
+import { UsCaSupervisionLevelDowngradeOpportunity } from "../UsCa";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
+import { UsCaSupervisionLevelDowngradeSharedDraftData } from "./UsCaSupervisionLevelDowngradeForm";
 
 export class UsCaSupervisionLevelDowngradeForm3043 extends FormBase<
   UsCaSupervisionLevelDowngradeSharedDraftData,

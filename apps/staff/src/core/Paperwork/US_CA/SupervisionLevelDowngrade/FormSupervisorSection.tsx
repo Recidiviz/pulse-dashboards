@@ -18,8 +18,10 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
-import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
+import {
+  UsCaSupervisionLevelDowngradeDraftData,
+  UsCaSupervisionLevelDowngradeForm,
+} from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import FormTextarea from "./FormTextarea";

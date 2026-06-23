@@ -52,6 +52,11 @@ export * from "./opportunities/UsMe/UsMeSCCP/schema";
 export * from "./opportunities/UsMe/UsMeWorkRelease/fixtures";
 export * from "./opportunities/UsMe/UsMeWorkRelease/schema";
 
+// UsCa Exports: Includes fixtures and schema related to US-CA opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsCa/UsCaSupervisionLevelDowngrade/fixtures";
+export * from "./opportunities/UsCa/UsCaSupervisionLevelDowngrade/schema";
+
 // UsMi Exports: Includes fixtures and schema related to US-MI opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReview/fixtures";

@@ -18,18 +18,19 @@
 import * as Sentry from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsCaSupervisionLevelDowngradeRecord,
+  usCaSupervisionLevelDowngradeSchema,
+} from "~datatypes";
+
 import { Client } from "../../../Client";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeForm3043 } from "../../Forms/UsCaSupervisionLevelDowngradeForm3043";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsCaSupervisionLevelDowngradeReferralRecord,
-  usCaSupervisionLevelDowngradeSchema,
-} from "./UsCaSupervisionLevelDowngradeReferralRecord";
 
 export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
-  UsCaSupervisionLevelDowngradeReferralRecord
+  UsCaSupervisionLevelDowngradeRecord["output"]
 > {
   form:
     | UsCaSupervisionLevelDowngradeForm3043

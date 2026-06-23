@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,47 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { type UsCaSupervisionLevelDowngradeRecord } from "~datatypes";
+import { relativeFixtureDate } from "../../../utils/zod/date/fixtureDates";
+import { makeRecordFixture } from "../../../utils/zod/object/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
+import {
+  UsCaSupervisionLevelDowngradeRecord,
+  usCaSupervisionLevelDowngradeSchema,
+} from "./schema";
 
-import { fixtureWithIdKey } from "./utils";
-
-export const usCaSupervisionLevelDowngradeReferrals = fixtureWithIdKey<
-  UsCaSupervisionLevelDowngradeRecord["input"]
->("externalId", [
-  {
+export const usCaSupervisionLevelDowngradeFixtures = {
+  fullyEligible: makeRecordFixture(usCaSupervisionLevelDowngradeSchema, {
     stateCode: "US_CA",
-    externalId: "005",
+    externalId: "CLIENT001",
+    isEligible: true,
+    isAlmostEligible: false,
     formInformation: {
       cdcno: "WF1234",
     },
     eligibleCriteria: {
       noSupervisionViolationWithin6Months: null,
       supervisionLevelIsHighFor6Months: {
-        highStartDate: "2022-03-02",
+        highStartDate: relativeFixtureDate({ months: -8 }),
       },
       usCaAssessmentLevel3OrLower: {},
       usCaHousingTypeIsNotTransient: {},
     },
     ineligibleCriteria: {},
-    isEligible: true,
-    isAlmostEligible: false,
-  },
-  {
+  }),
+  almostEligible: makeRecordFixture(usCaSupervisionLevelDowngradeSchema, {
     stateCode: "US_CA",
-    externalId: "006",
+    externalId: "CLIENT002",
+    isEligible: false,
+    isAlmostEligible: true,
     formInformation: {
       cdcno: "AB1234",
     },
     eligibleCriteria: {
-      noSupervisionViolationWithin6Months: null,
       supervisionLevelIsHighFor6Months: {
-        highStartDate: "2022-05-12",
+        highStartDate: relativeFixtureDate({ months: -8 }),
       },
       usCaAssessmentLevel3OrLower: {},
       usCaHousingTypeIsNotTransient: {},
     },
-    ineligibleCriteria: {},
-    isEligible: true,
-    isAlmostEligible: false,
-  },
-]);
+    ineligibleCriteria: {
+      noSupervisionViolationWithin6Months: null,
+    },
+  }),
+} satisfies FixtureMapping<UsCaSupervisionLevelDowngradeRecord>;

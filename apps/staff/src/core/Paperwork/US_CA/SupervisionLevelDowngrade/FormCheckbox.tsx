@@ -18,8 +18,10 @@
 import { observer } from "mobx-react-lite";
 import { InputHTMLAttributes } from "react";
 
-import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
+import {
+  UsCaSupervisionLevelDowngradeDraftData,
+  UsCaSupervisionLevelDowngradeForm,
+} from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 
 type FormCheckboxProps = InputHTMLAttributes<HTMLInputElement> & {

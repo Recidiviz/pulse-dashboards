@@ -20,7 +20,7 @@ import { PDFForm } from "pdf-lib";
 import styled from "styled-components";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { UsCaSupervisionLevelDowngradeSharedDraftData } from "../../WorkflowsStore/Opportunity/UsCa";
+import { UsCaSupervisionLevelDowngradeSharedDraftData } from "../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { FormContainer } from "../Paperwork/FormContainer";
 import {
   fillAndSavePDF,

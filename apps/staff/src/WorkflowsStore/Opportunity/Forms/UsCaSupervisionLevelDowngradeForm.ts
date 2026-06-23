@@ -17,11 +17,62 @@
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatNameLastFirst } from "../../../utils";
-import {
-  UsCaSupervisionLevelDowngradeDraftData,
-  UsCaSupervisionLevelDowngradeOpportunity,
-} from "../UsCa";
+import { UsCaSupervisionLevelDowngradeOpportunity } from "../UsCa";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
+
+export type UsCaSupervisionLevelDowngradeSharedDraftData = {
+  cdcNumber: string;
+  fullName: string;
+  unit: string;
+  supervisionLevel: string;
+};
+
+export type UsCaSupervisionLevelDowngradeDraftData =
+  UsCaSupervisionLevelDowngradeSharedDraftData & {
+    lastReleaseDate: string;
+    offense: string;
+    csraScore: string;
+    reviewType: "ABBREVIATED" | "STANDARD" | "DISCHARGE";
+    seeDischargeReport: boolean;
+    dischargeReportDate: string;
+    objectiveScore1: number;
+    objectiveScore2: number;
+    objectiveScore3: number;
+    objectiveScore4: number;
+    objectiveScore5: number;
+    form1650Attached: boolean;
+    additionalReportAttached: boolean;
+    moveToNewCategory: boolean;
+    newCategory: string;
+    dateNotified: string;
+    notifiedInPerson: boolean;
+    notifiedByMail: boolean;
+    notifiedByPhone: boolean;
+    notifiedByEmail: boolean;
+    notifiedByLetter: boolean;
+    paroleePresent: "YES" | "NO" | "NOT_REQUIRED";
+    paroleeNotPresent: "TELEPHONED" | "FAILED" | "DECLINED" | "NOT_RESPOND";
+    cdcr1502DRProvided: boolean;
+    reasonableAccommodationProvided: boolean;
+    accommodationDescription: string;
+    otherParticipant1Name: string;
+    otherParticipant1Relation: string;
+    otherParticipant1Comments: string;
+    otherParticipant2Name: string;
+    otherParticipant2Relation: string;
+    otherParticipant2Comments: string;
+    agentSignatureBadge: string;
+    agentSignatureDate: string;
+    supervisorComments: string;
+    supervisorDecision: "REMAIN" | "MOVE" | "SCHEDULE";
+    supervisorNewCategory: string;
+    supervisorEffectiveDate: string;
+    dischargeCommitteeAction: "DISCHARGE" | "RETAIN" | "DEFER";
+    presidingAuthorityName: string;
+    dischargeCommitteeComments: string;
+    supervisorSignatureBadge: string;
+    supervisorSignatureDate: string;
+  };
 
 export class UsCaSupervisionLevelDowngradeForm extends FormBase<
   UsCaSupervisionLevelDowngradeDraftData,

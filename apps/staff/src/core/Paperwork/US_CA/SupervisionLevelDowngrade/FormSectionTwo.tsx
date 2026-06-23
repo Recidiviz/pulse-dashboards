@@ -17,7 +17,7 @@
 
 import styled from "styled-components";
 
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
+import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import FormCommitteeSection from "./FormCommitteeSection";
 import FormInput from "./FormInput";
 import FormSupervisorSection from "./FormSupervisorSection";
