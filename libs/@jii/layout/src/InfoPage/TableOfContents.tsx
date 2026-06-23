@@ -21,7 +21,7 @@ import { compiler } from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { styles } from "~@jii/common-ui";
@@ -67,9 +67,14 @@ const defaultHeadingsAggregator: HeadingsAggregator = (elements) => {
  * heading elements with plain text contents
  */
 const NestedTOCItem: FC<{ entry: TOCEntry }> = ({ entry }) => {
+  // Preserve the current query string (e.g. `?backTarget=programs`) so that the
+  // full-document reload triggered by `reloadDocument` doesn't lose it and reset
+  // the page's back link.
+  const { search } = useLocation();
+
   return (
     <li>
-      <Link to={`#${entry.target.props.id}`} reloadDocument>
+      <Link to={{ search, hash: entry.target.props.id }} reloadDocument>
         {entry.target.props.children}
       </Link>
       {entry.children && (
