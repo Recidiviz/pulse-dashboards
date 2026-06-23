@@ -1191,11 +1191,12 @@ export class OpportunityBase<
 
     const originalStatus = this.reviewStatus;
 
-    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
-      this,
-      updatedActionHistory,
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory({
+      opportunity: this,
+      actionHistory: updatedActionHistory,
       currentReviewerId,
-    );
+      stateCode: this.person.stateCode,
+    });
 
     this.rootStore.analyticsStore.trackOpportunityApprovalActions({
       opportunityType: this.type,
@@ -1229,10 +1230,11 @@ export class OpportunityBase<
         .slice(0, -1)
         .concat(updatedOfficerAction);
 
-      await this.rootStore.firestoreStore.updateOpportunityActionHistory(
-        this,
-        updatedActionHistory,
-      );
+      await this.rootStore.firestoreStore.updateOpportunityActionHistory({
+        opportunity: this,
+        actionHistory: updatedActionHistory,
+        stateCode: this.person.stateCode,
+      });
 
       this.rootStore.analyticsStore.trackOpportunityApprovalActions({
         opportunityType: this.type,
@@ -1306,11 +1308,12 @@ export class OpportunityBase<
         ? supervisorResponse.reviewerId
         : undefined;
 
-    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
-      this,
-      updatedActionHistory,
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory({
+      opportunity: this,
+      actionHistory: updatedActionHistory,
       currentReviewerId,
-    );
+      stateCode: this.person.stateCode,
+    });
 
     this.rootStore.analyticsStore.trackOpportunityApprovalActions({
       opportunityType: this.type,

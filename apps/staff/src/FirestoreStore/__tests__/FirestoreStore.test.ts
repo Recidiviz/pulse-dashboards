@@ -469,6 +469,7 @@ describe("FirestoreStore", () => {
             denial: "mock-delete-fn",
             autoSnooze: "mock-delete-fn",
             manualSnooze: "mock-delete-fn",
+            stateCode: "US_ID",
           },
           {
             merge: true,
@@ -603,7 +604,7 @@ describe("FirestoreStore", () => {
 
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
-        { autoSnooze: update },
+        { autoSnooze: update, stateCode: "US_ID" },
         {
           merge: true,
         },
@@ -630,7 +631,7 @@ describe("FirestoreStore", () => {
 
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
-        { autoSnooze: "mock-delete-fn" },
+        { autoSnooze: "mock-delete-fn", stateCode: "US_ID" },
         {
           merge: true,
         },
@@ -657,7 +658,7 @@ describe("FirestoreStore", () => {
 
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
-        { manualSnooze: update },
+        { manualSnooze: update, stateCode: "US_ID" },
         {
           merge: true,
         },
@@ -684,7 +685,7 @@ describe("FirestoreStore", () => {
 
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
-        { manualSnooze: "mock-delete-fn" },
+        { manualSnooze: "mock-delete-fn", stateCode: "US_ID" },
         {
           merge: true,
         },
@@ -718,6 +719,7 @@ describe("FirestoreStore", () => {
         "test-doc-ref",
         {
           submitted: "mock-delete-fn",
+          stateCode: "US_ID",
         },
         {
           merge: true,
@@ -739,7 +741,10 @@ describe("FirestoreStore", () => {
           supervisorReponse: undefined,
         },
       ];
-      await store.updateOpportunityActionHistory(opp, update);
+      await store.updateOpportunityActionHistory({
+        opportunity: opp,
+        actionHistory: update,
+      });
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
         {
@@ -759,6 +764,7 @@ describe("FirestoreStore", () => {
             },
           ],
           currentReviewerId: "mock-delete-fn",
+          stateCode: "US_ID",
         },
         {
           merge: true,
@@ -772,6 +778,7 @@ describe("FirestoreStore", () => {
         "test-doc-ref",
         {
           actionHistory: "mock-delete-fn",
+          stateCode: "US_ID",
         },
         {
           merge: true,
@@ -895,6 +902,7 @@ describe("FirestoreStore", () => {
           by: userEmail,
           date: "mock-timestamp",
         },
+        stateCode: "US_ID",
       };
       store.updateOpportunityLastViewed(userEmail, opp);
       expect(mockDoc.mock.calls).toEqual([
@@ -939,6 +947,7 @@ describe("FirestoreStore", () => {
           by: userEmail,
           date: "mock-timestamp",
         },
+        stateCode: "US_ID",
       };
       store.updateOpportunityLastViewed(userEmail, opp);
       expect(mockDoc.mock.calls).toEqual([
@@ -986,7 +995,7 @@ describe("FirestoreStore", () => {
       expect(mockSetDoc).not.toBeCalled();
       // eslint-disable-next-line no-console
       expect(console.log).toBeCalledWith(
-        '[IMPERSONATOR IN PROD] Skipping update for: test-doc-ref with updates {"lastViewed":{"by":"user@domain.gov","date":"mock-timestamp"}}',
+        '[IMPERSONATOR IN PROD] Skipping update for: test-doc-ref with updates {"lastViewed":{"by":"user@domain.gov","date":"mock-timestamp"},"stateCode":"US_ID"}',
       );
     });
 
@@ -1107,6 +1116,7 @@ describe("FirestoreStore", () => {
         config: {
           snoozeCompanionOpportunityTypes: ["type1", "type2"],
         },
+        person: { recordId: "us_id_123", stateCode: "US_ID" },
         snoozeCompanionOpportunities: mockCompanionOpportunities,
       } as unknown as Opportunity;
 
@@ -1131,9 +1141,11 @@ describe("FirestoreStore", () => {
       expect(updateSpy).toHaveBeenCalledTimes(3); // 1 for the main opportunity, 2 for companions
       expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[0], {
         autoSnooze: snoozeUpdate,
+        stateCode: "US_ID",
       });
       expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[1], {
         autoSnooze: snoozeUpdate,
+        stateCode: "US_ID",
       });
     });
 
@@ -1143,6 +1155,7 @@ describe("FirestoreStore", () => {
       ] as unknown as Opportunity[];
 
       const mockOpportunity = {
+        person: { recordId: "us_id_123", stateCode: "US_ID" },
         config: {
           snoozeCompanionOpportunityTypes: ["type1"],
         },
@@ -1170,6 +1183,7 @@ describe("FirestoreStore", () => {
       expect(updateSpy).toHaveBeenCalledTimes(2); // 1 for the main opportunity, 1 for the companion
       expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[0], {
         manualSnooze: snoozeUpdate,
+        stateCode: "US_ID",
       });
     });
 

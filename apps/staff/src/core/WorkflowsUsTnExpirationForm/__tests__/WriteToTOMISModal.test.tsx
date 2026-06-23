@@ -232,6 +232,7 @@ describe("WriteToTOMISModal", () => {
           noteStatus: {},
           error: "test error",
         },
+        stateCode: "US_XX",
       }),
     );
   });

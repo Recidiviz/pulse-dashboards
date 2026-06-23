@@ -526,9 +526,10 @@ export default class FirestoreStore {
     deleteSnoozeField: boolean,
   ): Promise<void> {
     const changes = deleteSnoozeField
-      ? { autoSnooze: deleteField() }
+      ? { autoSnooze: deleteField(), stateCode: opportunity.person.stateCode }
       : {
           autoSnooze: { ...snoozeUpdate },
+          stateCode: opportunity.person.stateCode,
         };
 
     await this.updateSnoozeCompanions(opportunity, changes);
@@ -538,17 +539,25 @@ export default class FirestoreStore {
   async deleteOpportunityActionHistory(opportunity: Opportunity) {
     return this.updateOpportunity(opportunity, {
       actionHistory: deleteField(),
+      stateCode: opportunity.person.stateCode,
     });
   }
 
-  async updateOpportunityActionHistory(
-    opportunity: Opportunity,
-    actionHistory: OfficerRequest[],
-    currentReviewerId?: string,
-  ): Promise<void> {
+  async updateOpportunityActionHistory({
+    opportunity,
+    actionHistory,
+    currentReviewerId,
+    stateCode,
+  }: {
+    opportunity: Opportunity;
+    actionHistory: OfficerRequest[];
+    currentReviewerId?: string;
+    stateCode?: string;
+  }): Promise<void> {
     const update = {
       actionHistory,
       currentReviewerId: currentReviewerId ?? deleteField(),
+      stateCode: stateCode ?? opportunity.person.stateCode,
     };
     return this.updateOpportunity(opportunity, update);
   }
@@ -559,9 +568,10 @@ export default class FirestoreStore {
     deleteSnoozeField: boolean,
   ): Promise<void> {
     const changes = deleteSnoozeField
-      ? { manualSnooze: deleteField() }
+      ? { manualSnooze: deleteField(), stateCode: opportunity.person.stateCode }
       : {
           manualSnooze: { ...snoozeUpdate },
+          stateCode: opportunity.person.stateCode,
         };
 
     await this.updateSnoozeCompanions(opportunity, changes);
@@ -632,6 +642,7 @@ export default class FirestoreStore {
               date: serverTimestamp(),
             },
           },
+      stateCode: opportunity.person.stateCode,
     });
   }
 
@@ -641,6 +652,7 @@ export default class FirestoreStore {
   ): Promise<void> {
     return this.updateOpportunity(opportunity, {
       lastViewed: { by: userEmail, date: serverTimestamp() },
+      stateCode: opportunity.person.stateCode,
     });
   }
 
@@ -722,7 +734,10 @@ export default class FirestoreStore {
       },
     };
 
-    return this.updateOpportunity(opportunity, contactNoteUpdate);
+    return this.updateOpportunity(opportunity, {
+      ...contactNoteUpdate,
+      stateCode: opportunity.person.stateCode,
+    });
   }
 
   async updateOmsSnoozeStatus(
@@ -752,12 +767,14 @@ export default class FirestoreStore {
         snoozeUntil,
         ...(error !== undefined && { error }),
       },
+      stateCode: opportunity.person.stateCode,
     });
   }
 
   async deleteOpportunitySubmitted(opportunity: Opportunity) {
     return this.updateOpportunity(opportunity, {
       submitted: deleteField(),
+      stateCode: opportunity.person.stateCode,
     });
   }
 
@@ -766,6 +783,7 @@ export default class FirestoreStore {
       denial: deleteField(),
       autoSnooze: deleteField(),
       manualSnooze: deleteField(),
+      stateCode: opportunity.person.stateCode,
     };
     await this.updateSnoozeCompanions(opportunity, changes);
     return this.updateOpportunity(opportunity, changes);

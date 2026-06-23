@@ -222,10 +222,11 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     const originalStatus = this.clientStatus;
     const originalReviewStatus = this.reviewStatus;
 
-    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
-      this,
-      updatedActionHistory,
-    );
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory({
+      opportunity: this,
+      actionHistory: updatedActionHistory,
+      stateCode: this.person.stateCode,
+    });
 
     // TODO(#9770): remove IA specific tracking events once the state agnostic
     // event has replaced it in the views
@@ -285,10 +286,11 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     const originalStatus = this.clientStatus;
     const originalReviewStatus = this.reviewStatus;
 
-    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
-      this,
-      updatedActionHistory,
-    );
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory({
+      opportunity: this,
+      actionHistory: updatedActionHistory,
+      stateCode: this.person.stateCode,
+    });
 
     // TODO(#9770): remove IA specific tracking events once the state agnostic
     // event has replaced it in the views

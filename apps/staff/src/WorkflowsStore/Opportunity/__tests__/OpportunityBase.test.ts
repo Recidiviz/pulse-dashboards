@@ -1546,7 +1546,12 @@ describe("setOfficerAction", () => {
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [expectedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
   test("sets indefinite snooze denial action", async () => {
     const testAction = {
@@ -1565,7 +1570,12 @@ describe("setOfficerAction", () => {
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [expectedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
 
   test("sets denial action with action plan", async () => {
@@ -1586,7 +1596,12 @@ describe("setOfficerAction", () => {
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [expectedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
 
   test("Appends action to end of current actionHistory", async () => {
@@ -1617,7 +1632,12 @@ describe("setOfficerAction", () => {
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [existingAction, expectedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [existingAction, expectedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
 
   test("passes currentReviewerId when APPROVAL action has a reviewerId", async () => {
@@ -1636,7 +1656,12 @@ describe("setOfficerAction", () => {
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction], "reviewer-123");
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [expectedAction],
+      currentReviewerId: "reviewer-123",
+      stateCode: "US_XX",
+    });
   });
 });
 
@@ -1691,7 +1716,12 @@ describe("setSupervisorResponse", () => {
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [testAction, expectedUpdatedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
 
   test("denial of snooze request", async () => {
@@ -1722,7 +1752,12 @@ describe("setSupervisorResponse", () => {
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [testAction, expectedUpdatedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
 
   test("approval of grant request", async () => {
@@ -1751,7 +1786,12 @@ describe("setSupervisorResponse", () => {
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [testAction, expectedUpdatedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
 
   test("denial of grant request", async () => {
@@ -1780,7 +1820,12 @@ describe("setSupervisorResponse", () => {
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction], undefined);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [testAction, expectedUpdatedAction],
+      currentReviewerId: undefined,
+      stateCode: "US_XX",
+    });
   });
 
   test("passes currentReviewerId when REVISION response has a reviewerId", async () => {
@@ -1813,11 +1858,12 @@ describe("setSupervisorResponse", () => {
 
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(
-      opp,
-      [testAction, expectedUpdatedAction],
-      "reviewer-123",
-    );
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [testAction, expectedUpdatedAction],
+      currentReviewerId: "reviewer-123",
+      stateCode: "US_XX",
+    });
   });
 });
 
@@ -1846,7 +1892,11 @@ describe("markActionHistoryStale", () => {
     };
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
-    ).toHaveBeenCalledWith(opp, [expectedAction]);
+    ).toHaveBeenCalledWith({
+      opportunity: opp,
+      actionHistory: [expectedAction],
+      stateCode: "US_XX",
+    });
   });
 });
 
