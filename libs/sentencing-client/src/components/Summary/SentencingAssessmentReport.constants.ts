@@ -60,3 +60,11 @@ export const ICON_LABEL_GAP = 5;
  * queries this selector to show the banner only on the last-page footer capture.
  */
 export const LEARN_MORE_BANNER_ATTR = "data-sar-learn-more-banner";
+
+/**
+ * Fallback text shown in the Recommendation section when the defendant declined
+ * to participate. Shared by the DOM report (ReportRecommendation) and the
+ * react-pdf template (RecommendationAndPlan) so the wording stays in one place.
+ */
+export const DECLINED_TEXT =
+  "This officer is unable to complete this section due to the fact that the defendant declined to participate in the assessment process.";

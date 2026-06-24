@@ -177,7 +177,8 @@ export type FeatureVariant =
   | "splitParoleProbationOutcomes"
   | "SARBuilder"
   | "SARSignature"
-  | "SARManualORAS";
+  | "SARManualORAS"
+  | "reactPdfSAR";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -276,6 +277,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   SARBuilder: {},
   SARSignature: {},
   SARManualORAS: {},
+  reactPdfSAR: {},
   splitParoleProbationOutcomes: {},
   enableSupervisorReviewChain: {},
   supervisorHomepageReviewCard: {},

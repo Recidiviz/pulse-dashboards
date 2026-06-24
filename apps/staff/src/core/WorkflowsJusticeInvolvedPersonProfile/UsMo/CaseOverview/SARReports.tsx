@@ -29,6 +29,7 @@ import {
 } from "../../../../components/StoreProvider";
 import { SARReportsSection } from "./SARReportsSection";
 import { RowLabel, RowWithAction, Section, SectionHeading } from "./styles";
+import { useDownloadSARReport } from "./useDownloadSARReport";
 
 type SARReportsProps = {
   /** Client's `externalId` — the SAR row's `clientId`. Globally unique across
@@ -105,12 +106,21 @@ const SARReportsContent = function SARReportsContent({
   clientExternalId,
 }: SARReportsProps): React.ReactElement | null {
   const { data: sars } = useSARsForClient(clientExternalId);
+  const { prefetchSAR, downloadSAR, trackBuilderLinkClick } =
+    useDownloadSARReport();
 
   // Empty list still renders nothing — the section is invisible unless there
   // is at least one SAR row, matching Figma.
   if (sars.length === 0) return null;
 
-  return <SARReportsSection sars={sars} />;
+  return (
+    <SARReportsSection
+      sars={sars}
+      onDownload={downloadSAR}
+      onPrefetch={prefetchSAR}
+      onBuilderLinkClick={trackBuilderLinkClick}
+    />
+  );
 };
 
 /**

@@ -18,7 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { palette, typography } from "~design-system";
+import { Button, palette, typography } from "~design-system";
 
 /**
  * Shared styled primitives for the US_MO Case Overview card. Extracted from
@@ -98,5 +98,28 @@ export const RowActionLink = styled.a`
   &:hover,
   &:focus {
     text-decoration: underline;
+  }
+`;
+
+/**
+ * Inline link-styled button for in-place actions (e.g. "Download Report") that
+ * must sit flush next to `RowActionLink`. Uses the design-system link button
+ * (`kind="link"`) but strips its default padding/min-height and matches the
+ * row's `Sans12` so it reads as a plain inline link, not a chunky button.
+ */
+export const RowActionButton = styled(Button).attrs({ kind: "link" })`
+  ${typography.Sans12}
+  color: ${palette.signal.links};
+  min-height: auto;
+  padding: 0;
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 `;

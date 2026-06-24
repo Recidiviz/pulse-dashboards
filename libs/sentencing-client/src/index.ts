@@ -25,6 +25,7 @@ export { CaseStatusToDisplay } from "./components/Dashboard/types";
 export { isSARArchived } from "./components/Dashboard/utils";
 export * from "./components/SARDetails";
 export * from "./components/StoreProvider/StoreProvider";
+export * from "./components/Summary/SARPdfTemplate";
 export * from "./datastores/SentencingStore";
 export * from "./datastores/types";
 export * from "./utils/routing";

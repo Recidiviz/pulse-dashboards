@@ -20,12 +20,13 @@ import React from "react";
 import { SAR } from "../../api";
 import HomePlanIcon from "../assets/home-plan-icon.svg?react";
 import { ReportBlock, SectionContinuationHeader } from "./ReportBlock";
-import { BLOCK_GAP } from "./SentencingAssessmentReport.constants";
+import {
+  BLOCK_GAP,
+  DECLINED_TEXT,
+} from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const SECTION_TITLE = "Recommendation and Supervision Plan";
-const DECLINED_TEXT =
-  "This officer is unable to complete this section due to the fact that the defendant declined to participate in the assessment process.";
 const CONTINUATION_TITLE = `${SECTION_TITLE} Continued...`;
 
 function splitParagraphs(text: string): string[] {

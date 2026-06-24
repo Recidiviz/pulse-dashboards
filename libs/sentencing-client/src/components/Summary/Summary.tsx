@@ -32,6 +32,7 @@ import { ESignatureSection } from "./ESignatureSection";
 import { InsightsSummaryPanel } from "./InsightsSummaryPanel";
 import { MissingBadge } from "./MissingBadge";
 import { exportSARtoPDF } from "./SARPdfExport";
+import { downloadSARPdf } from "./SARPdfTemplate";
 import { SentencingAssessmentReport } from "./SentencingAssessmentReport";
 import * as Styled from "./Summary.styles";
 import { SummaryOffenderAssessment } from "./SummaryOffenderAssessment";
@@ -196,12 +197,19 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
   const [isDownloading, setIsDownloading] = React.useState(false);
 
   const handleClickToDownload = async () => {
-    if (!targetRef.current || isDownloading) return;
+    if (isDownloading) return;
     setIsDownloading(true);
     // Track the click intent before the async export so failures are still captured.
     presenter.trackSARDownloadReportClicked();
     try {
-      await exportSARtoPDF(targetRef.current, fileName);
+      if (activeFeatureVariants["reactPdfSAR"] && sarData) {
+        // New react-pdf renderer, behind a flag: render + save via the shared
+        // helper (also used by the client Full Profile's Download Report),
+        // bypassing the jsPDF + html2canvas DOM capture.
+        await downloadSARPdf(sarData, presenter.insight, fileName);
+      } else if (targetRef.current) {
+        await exportSARtoPDF(targetRef.current, fileName);
+      }
     } catch (e) {
       console.error("SAR PDF export failed:", e);
     } finally {

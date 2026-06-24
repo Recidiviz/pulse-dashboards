@@ -120,7 +120,8 @@ export type FeatureVariant =
   | "mandatoryMinimum"
   | "SARBuilder"
   | "SARSignature"
-  | "SARManualORAS";
+  | "SARManualORAS"
+  | "reactPdfSAR";
 
 export type FeatureVariantValue = {
   activeDate?: Date;

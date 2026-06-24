@@ -23,34 +23,14 @@ import {
   isSARArchived,
   SARByClient,
   SARsByClient,
-  sarUrl,
 } from "~sentencing-client";
 
-import {
-  RowActionLink,
-  RowLabel,
-  RowWithAction,
-  Section,
-  SectionHeading,
-} from "./styles";
-
-/** Label text for the link on an archived SAR row. Plan calls for link-only
- * navigation to the SAR Summary page; the in-tool Download button on that
- * page remains the affordance for downloading. */
-const ARCHIVED_ACTION_LABEL = "View Report";
-
-/** Label text for the link on a not-yet-archived SAR row. */
-const ACTIVE_ACTION_LABEL = "Go to SAR Builder";
+import { SARReportAction } from "./SARReportAction";
+import { RowLabel, RowWithAction, Section, SectionHeading } from "./styles";
 
 /** Map the wire-level SAR status enum to the display string used elsewhere in
  * the SAR product (`CaseStatusToDisplay` from `~sentencing-client`). Falls back
- * to the raw status if the value is unrecognized so we never render a blank.
- *
- * Note: `CaseStatusToDisplay.NotYetStarted` is `"Not yet started"` (only "N"
- * capitalized). The Figma comp shows "In progress" with a lowercase "p"; we
- * intentionally use the existing enum's `"In Progress"` to stay consistent
- * with the rest of the SAR product (Dashboard table, SAR Details header).
- */
+ * to the raw status if the value is unrecognized so we never render a blank. */
 function humanStatus(status: SARByClient["status"]): string {
   return CaseStatusToDisplay[status] ?? status;
 }
@@ -62,43 +42,35 @@ function rowLabel(sar: SARByClient): string {
   return `SAR - ${humanStatus(sar.status)}`;
 }
 
-/** Build the in-tool deep-link to the SAR for this row. Uses `sarDetails`,
- * which lands archived SARs on a read-only summary view and not-yet-archived
- * SARs in the SAR Builder. Returns `undefined` if the SAR has no associated
- * staff record — Prisma marks the relation optional because the SAR / Staff /
- * Client loads run independently, but the assigned-only authz on the tRPC
- * procedure means we should not see `null` staff here in practice. */
-function rowHref(sar: SARByClient): string | undefined {
-  if (!sar.staff) return undefined;
-  return sarUrl("sarDetails", {
-    staffPseudoId: sar.staff.pseudonymizedId,
-    sarId: sar.id,
-  });
-}
-
-function rowActionLabel(sar: SARByClient): string {
-  return isSARArchived(sar) ? ARCHIVED_ACTION_LABEL : ACTIVE_ACTION_LABEL;
-}
-
 type SARReportsSectionProps = {
   sars: SARsByClient;
+  /** Render + download the finished SAR PDF (archived rows). */
+  onDownload: (sar: SARByClient) => Promise<void>;
+  /** Warm the SAR data on hover/focus so the download is instant (archived rows). */
+  onPrefetch: (sar: SARByClient) => void;
+  /** Track the "Go to SAR Builder" link click (not-yet-archived rows). */
+  onBuilderLinkClick: (sar: SARByClient) => void;
 };
 
 /**
- * Presentational "Reports" section of the US_MO Case Overview card. Renders
- * one row per SAR assigned to the calling officer for the current client:
+ * Presentational "Reports" section of the US_MO Case Overview card. Renders one
+ * row per SAR assigned to the calling officer for the current client:
  *
  * - Archived SAR (`completionDate` in the past): label shows "Completed {date}",
- *   action link reads "View Report" and navigates to the SAR Summary page.
+ *   and a "Download Report" button downloads the finished PDF in place
+ *   (prefetched on hover/focus).
  * - Not-yet-archived SAR: label shows the current status, action link reads
  *   "Go to SAR Builder" and navigates to the SAR Builder.
  *
- * Defensively returns `null` for an empty list so the section never renders
- * with just a heading; the container also gates this off but defending in
- * depth keeps this component safe to reuse.
+ * Pure/presentational — all data + side effects are injected by the container
+ * (`SARReports`). Defensively returns `null` for an empty list so the section
+ * never renders with just a heading.
  */
 export function SARReportsSection({
   sars,
+  onDownload,
+  onPrefetch,
+  onBuilderLinkClick,
 }: SARReportsSectionProps): React.ReactElement | null {
   if (sars.length === 0) return null;
 
@@ -108,9 +80,12 @@ export function SARReportsSection({
       {sars.map((sar) => (
         <RowWithAction key={sar.id}>
           <RowLabel>{rowLabel(sar)}</RowLabel>
-          <RowActionLink href={rowHref(sar)}>
-            {rowActionLabel(sar)}
-          </RowActionLink>
+          <SARReportAction
+            sar={sar}
+            onDownload={onDownload}
+            onPrefetch={onPrefetch}
+            onBuilderLinkClick={onBuilderLinkClick}
+          />
         </RowWithAction>
       ))}
     </Section>

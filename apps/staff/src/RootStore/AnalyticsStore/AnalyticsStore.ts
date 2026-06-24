@@ -987,6 +987,15 @@ export default class AnalyticsStore {
     this.track("frontend.sentencing_sar_download_report_clicked", metadata);
   }
 
+  trackSARClientsPageBuilderLinkClicked(
+    metadata: PageOrClickTrackingMetadata,
+  ): void {
+    this.track(
+      "frontend.sentencing_sar_clients_page_builder_link_clicked",
+      metadata,
+    );
+  }
+
   trackSARSignatureAdded(metadata: SARSignatureMetadata): void {
     this.track("frontend.sentencing_sar_signature_added", metadata);
   }

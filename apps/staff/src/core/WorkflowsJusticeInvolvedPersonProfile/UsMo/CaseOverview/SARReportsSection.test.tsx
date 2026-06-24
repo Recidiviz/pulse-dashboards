@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { parseISO } from "date-fns";
+import type { ComponentProps } from "react";
 import tk from "timekeeper";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { SARByClient, SARsByClient, sarUrl } from "~sentencing-client";
 
@@ -37,6 +38,21 @@ function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
     staff: { pseudonymizedId: "staff-pseudo-1" },
     ...overrides,
   } as SARByClient;
+}
+
+/** Render the section with stub handlers; returns the spies for assertions. */
+function renderSection(
+  sars: SARsByClient,
+  props: Partial<ComponentProps<typeof SARReportsSection>> = {},
+) {
+  const handlers = {
+    onDownload: vi.fn(),
+    onPrefetch: vi.fn(),
+    onBuilderLinkClick: vi.fn(),
+    ...props,
+  };
+  const utils = render(<SARReportsSection sars={sars} {...handlers} />);
+  return { ...utils, ...handlers };
 }
 
 /** Fixed "now" for deterministic archived/not-archived branching. */
@@ -59,24 +75,26 @@ describe("SARReportsSection", () => {
   });
 
   test("renders null when the SAR list is empty", () => {
-    const { container } = render(<SARReportsSection sars={[]} />);
+    const { container } = renderSection([]);
     expect(container.firstChild).toBeNull();
   });
 
-  test("renders an archived row with a 'View Report' link and the completion date", () => {
-    render(<SARReportsSection sars={[archivedSAR]} />);
+  test("archived row: completion date + 'Download Report' button; hover prefetches, click downloads", async () => {
+    const { onDownload, onPrefetch } = renderSection([archivedSAR]);
 
     expect(screen.getByText("Reports")).toBeInTheDocument();
     expect(screen.getByText("SAR - Completed 05/05/2026")).toBeInTheDocument();
 
-    const link = screen.getByRole("link", { name: "View Report" });
-    expect(link).toHaveAttribute(
-      "href",
-      sarUrl("sarDetails", {
-        staffPseudoId: "staff-archived",
-        sarId: "archived-1",
-      }),
-    );
+    const button = screen.getByRole("button", { name: "Download Report" });
+    fireEvent.mouseEnter(button);
+    expect(onPrefetch).toHaveBeenCalledWith(archivedSAR);
+
+    // The row delegates to `SARReportAction`, which manages an async in-flight
+    // lock — flush its state updates inside `act` to avoid a warning.
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(onDownload).toHaveBeenCalledWith(archivedSAR);
   });
 
   test("renders one row per non-archived status with 'Go to SAR Builder' links", () => {
@@ -88,7 +106,7 @@ describe("SARReportsSection", () => {
       makeSAR({ id: "s-complete", status: "Complete", completionDate: null }),
     ];
 
-    render(<SARReportsSection sars={sars} />);
+    renderSection(sars);
 
     expect(screen.getByText("SAR - Not yet started")).toBeInTheDocument();
     expect(screen.getByText("SAR - In Progress")).toBeInTheDocument();
@@ -120,20 +138,28 @@ describe("SARReportsSection", () => {
     );
   });
 
+  test("fires onBuilderLinkClick when a 'Go to SAR Builder' link is clicked", () => {
+    const activeSAR = makeSAR({ id: "active-1", status: "InProgress" });
+    const { onBuilderLinkClick } = renderSection([activeSAR]);
+
+    fireEvent.click(screen.getByRole("link", { name: "Go to SAR Builder" }));
+    expect(onBuilderLinkClick).toHaveBeenCalledWith(activeSAR);
+  });
+
   test("renders a mixed archived + in-progress fixture in input order", () => {
     const sars: SARsByClient = [
       archivedSAR,
       makeSAR({ id: "active-1", status: "InProgress" }),
     ];
 
-    render(<SARReportsSection sars={sars} />);
+    renderSection(sars);
 
     const labels = screen.getAllByText(/^SAR - /).map((el) => el.textContent);
     expect(labels).toEqual(["SAR - Completed 05/05/2026", "SAR - In Progress"]);
 
     // Both action types are present.
     expect(
-      screen.getByRole("link", { name: "View Report" }),
+      screen.getByRole("button", { name: "Download Report" }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "Go to SAR Builder" }),
@@ -141,7 +167,7 @@ describe("SARReportsSection", () => {
   });
 
   test("renders inside a <section> so the CardFrame divider rule applies", () => {
-    const { container } = render(<SARReportsSection sars={[archivedSAR]} />);
+    const { container } = renderSection([archivedSAR]);
     expect(container.querySelector("section")).not.toBeNull();
   });
 
@@ -153,7 +179,7 @@ describe("SARReportsSection", () => {
       status: "Complete",
       completionDate: parseISO("2026-12-31"),
     });
-    render(<SARReportsSection sars={[futureSAR]} />);
+    renderSection([futureSAR]);
     expect(screen.getByText("SAR - Complete")).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "Go to SAR Builder" }),

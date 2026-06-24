@@ -89,7 +89,7 @@ export function getRecidivismPlot(
       });
       return acc;
     },
-    <{ cohortMonths: number; eventRate: number }[]>[],
+    [] as { cohortMonths: number; eventRate: number }[],
   );
 
   const data = transformedSeries.flatMap(({ recommendationType, dataPoints }) =>
