@@ -17,312 +17,249 @@
 
 /* eslint-disable no-await-in-loop */
 
-import { faker } from "@faker-js/faker";
 import { Transcript } from "assemblyai";
 
 import {
-  Client,
   PostMeetingProcessingStatus,
   Prisma,
   PrismaClient,
-  Resident,
   StateCode,
 } from "~@meetings/prisma/client";
+import {
+  DEMO_PEOPLE,
+  DemoMinuteSection,
+  DemoPerson,
+  displaySpeaker,
+  parseTranscript,
+} from "~@meetings/prisma/demo-data";
 
-faker.seed(1234);
+// Single demo staff member who "owns" all seeded meetings. Client/resident
+// lists default to the "all" caseload (no email filter), so these meetings are
+// visible to any demo user regardless of this address.
+const STAFF_ID = 1n;
+const STAFF_EMAIL = "demo.officer@recidiviz.org";
+
+const UTTERANCE_CONFIDENCE = 0.96;
+const TRANSCRIPTION_CONFIDENCE = 0.96;
+
+/** Pull the "SUMMARY:" blurb out of a case note for the transcript summary. */
+function caseNoteSummary(caseNote: string): string {
+  const match = caseNote.match(/SUMMARY:\s*([\s\S]*?)(?:\n\n|$)/);
+  return (match ? match[1] : caseNote.split("\n\n")[0]).trim();
+}
+
+/** Spread utterance timestamps evenly across the meeting duration. */
+function buildUtterances(person: DemoPerson, durationMs: number) {
+  const parsed = parseTranscript(person);
+  const slice = parsed.length > 0 ? Math.floor(durationMs / parsed.length) : 0;
+  return parsed.map((u, i) => ({
+    confidence: UTTERANCE_CONFIDENCE,
+    startTimeMs: i * slice,
+    endTimeMs: (i + 1) * slice,
+    speaker: displaySpeaker(person, u.speaker),
+    text: u.text,
+  }));
+}
+
+/** structuredActionItems column shape (mirrors routes.ts persistence). */
+function toStructuredActionItems(person: DemoPerson) {
+  return person.actionItems.map((item) => ({
+    task: item.task,
+    assignee: item.assignee,
+    deadline: item.deadline ?? null,
+    context: item.context ?? null,
+    evidenceQuotes: item.evidenceQuotes ?? null,
+  }));
+}
+
+/** criticalUpdates column shape: "Category - UpdateType: details". */
+function toCriticalUpdateStrings(person: DemoPerson): string[] {
+  return person.criticalUpdates.map(
+    (u) => `${u.category} - ${u.updateType}: ${u.details}`,
+  );
+}
+
+/** Fill in MinuteSectionSchema defaults (status, subItems) recursively. */
+function normalizeMinutes(sections: DemoMinuteSection[]) {
+  const normalizeItem = (item: DemoMinuteSection["items"][number]): object => ({
+    ...(item.timestamp ? { timestamp: item.timestamp } : {}),
+    content: item.content,
+    status: item.status ?? "Discussed",
+    subItems: (item.subItems ?? []).map(normalizeItem),
+  });
+  return sections.map((section) => ({
+    title: section.title,
+    items: section.items.map(normalizeItem),
+  }));
+}
+
+/**
+ * Upsert a single demo meeting and its transcript without touching any
+ * user-created meetings. Clears only this meeting's own transcription/utterance
+ * children before recreating them so re-seeding stays idempotent.
+ */
+async function seedMeeting(
+  prisma: PrismaClient,
+  person: DemoPerson,
+  meetingId: string,
+  personLink: { clientId: bigint } | { residentId: bigint },
+  order: number,
+) {
+  const durationMs = person.durationMinutes * 60 * 1000;
+  // Space meetings ~1.5 days apart, most recent first.
+  const endTime = new Date(Date.now() - order * 36 * 60 * 60 * 1000);
+  const startTime = new Date(endTime.getTime() - durationMs);
+  const utterances = buildUtterances(person, durationMs);
+
+  const existing = await prisma.transcription.findMany({
+    where: { meetingId },
+    select: { id: true },
+  });
+  if (existing.length > 0) {
+    await prisma.utterance.deleteMany({
+      where: { transcriptionId: { in: existing.map((t) => t.id) } },
+    });
+    await prisma.transcription.deleteMany({ where: { meetingId } });
+  }
+
+  const data = {
+    startTime,
+    endTime,
+    durationMs,
+    ...personLink,
+    staffEmail: STAFF_EMAIL,
+    meetingType: person.meetingType,
+    recordingsGCSBucket: "demo-audio-bucket",
+    recordingsFolderPath: meetingId,
+    userNotepadNotes: "",
+    caseNote: person.caseNote,
+    // TODO OBT-31909: actionItems (string[]) is superseded by structuredActionItems.
+    actionItems: person.actionItems.map((item) => item.task),
+    structuredActionItems: toStructuredActionItems(person),
+    criticalUpdates: toCriticalUpdateStrings(person),
+    meetingSummary: normalizeMinutes(person.meetingSummary),
+    staffFeedback: person.staffFeedback,
+    staffFeedbackGeneratedAt: new Date(),
+    staffFeedbackPipelineRunId: `pipeline-${meetingId}`,
+    postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+    transcriptions: {
+      create: [
+        {
+          provider: "ASSEMBLYAI" as const,
+          transcriptObject: {} as Transcript,
+          confidence: TRANSCRIPTION_CONFIDENCE,
+          summary: caseNoteSummary(person.caseNote),
+          utterances: { create: utterances },
+        },
+      ],
+    },
+  } satisfies Prisma.MeetingUncheckedUpdateInput &
+    Prisma.MeetingUncheckedCreateInput;
+
+  await prisma.meeting.upsert({
+    where: { id: meetingId },
+    create: { id: meetingId, ...data },
+    update: data,
+  });
+}
 
 export async function main(prisma: PrismaClient) {
-  // Clean up existing data
-  await prisma.utterance.deleteMany({});
-  await prisma.transcription.deleteMany({});
-  await prisma.meeting.deleteMany({});
-  await prisma.client.deleteMany({});
-  await prisma.resident.deleteMany({});
-  await prisma.staff.deleteMany({});
-
   const importedAt = new Date();
 
-  // Seed single staff
-  const staffEmail = faker.internet.email();
-  await prisma.staff.create({
-    data: {
-      staffId: 1,
-      stableStaffExternalId: `staff-ext-1`,
-      pseudonymizedId: `staff-pid-1`,
-      givenNames: faker.person.firstName(),
-      middleNames: faker.person.firstName(),
-      surname: faker.person.lastName(),
-      email: staffEmail,
+  // Upsert the single demo staff member. NOTE: we deliberately do not wipe the
+  // database — re-seeding upserts the known demo records by stable id and
+  // leaves user-created demo meetings intact (OBT-25443).
+  await prisma.staff.upsert({
+    where: { staffId: STAFF_ID },
+    create: {
+      staffId: STAFF_ID,
+      stableStaffExternalId: "staff-ext-1",
+      pseudonymizedId: "staff-pid-1",
+      givenNames: "Demo",
+      surname: "Officer",
+      email: STAFF_EMAIL,
+      stateCode: StateCode.US_DEMO,
+    },
+    update: {
+      givenNames: "Demo",
+      surname: "Officer",
+      email: STAFF_EMAIL,
       stateCode: StateCode.US_DEMO,
     },
   });
 
-  // Seed Clients
-  const numberOfClients = 10;
-  const createdClients: Client[] = [];
-  for (let i = 0; i < numberOfClients; i++) {
-    const clientData: Prisma.ClientCreateInput = {
-      stateCode: StateCode.US_DEMO,
-      personId: i + 1,
-      stablePersonExternalId: `client-ext-${i + 1}`,
-      stablePersonExternalIdType: "client-ext-type-1",
-      displayPersonExternalId: `client-display-ext-${i + 1}`,
-      pseudonymizedId: `client-pid-${i + 1}`,
-      givenNames: faker.person.firstName(),
-      middleNames: faker.person.firstName(),
-      surname: faker.person.lastName(),
-      suffix: faker.person.suffix(),
-      staffEmails: [staffEmail],
-      supervisionType: "PAROLE",
-      lastImportedAt: importedAt,
-    };
-    const client = await prisma.client.create({ data: clientData });
-    createdClients.push(client);
-  }
+  let clientIndex = 0;
+  let residentIndex = 0;
+  let order = 0;
 
-  // Seed a meeting for every client
-  for (const createdClient of createdClients) {
-    const meetingStart = faker.date.past();
-    const meetingEnd = faker.date.soon({ refDate: meetingStart });
-
-    // Generate sample action items as string array
-    const actionItems = Array.from({ length: 3 }, () => faker.lorem.sentence());
-
-    // Generate structured action items with task + context
-    const structuredActionItems = actionItems.map((task) => ({
-      task,
-      context: faker.lorem.sentence(),
-      evidenceQuotes: [faker.lorem.sentence(), faker.lorem.sentence()],
-    }));
-
-    // Generate sample critical updates as formatted string array
-    const criticalUpdates = Array.from({ length: 2 }, () => {
-      const category = faker.helpers.arrayElement([
-        "Housing",
-        "Employment",
-        "Legal",
-        "Substance",
-        "Family",
-        "Health",
-        "Other",
-      ]);
-      const updateType = faker.helpers.arrayElement([
-        "New",
-        "Change",
-        "Stable/Status Quo",
-      ]);
-      const details = faker.lorem.sentence();
-      return `${category} - ${updateType}: ${details}`;
-    });
-
-    // Generate meeting summary conforming to MinuteSectionSchema
-    const meetingSummary = [
-      {
-        title: "General Discussion",
-        items: Array.from({ length: 3 }, () => ({
-          content: faker.lorem.sentence(),
-          status: faker.helpers.arrayElement([
-            "Discussed",
-            "Completed",
-            "Assigned",
-          ]) as "Discussed" | "Completed" | "Assigned",
-          subItems: [],
-        })),
-      },
-      {
-        title: "Action Items Review",
-        items: Array.from({ length: 2 }, () => ({
-          content: faker.lorem.sentence(),
-          status: "Discussed" as const,
-          subItems: [],
-        })),
-      },
-    ];
-
-    // Generate staff feedback conforming to StaffFeedbackOutputSchema
-    const staffFeedback = {
-      whatYouDidWell: [faker.lorem.sentence(), faker.lorem.sentence()],
-      growthOpportunities: [faker.lorem.sentence()],
-    };
-
-    await prisma.meeting.create({
-      data: {
-        id: `meeting-${createdClient.personId}`,
-        startTime: meetingStart,
-        endTime: meetingEnd,
-        clientId: createdClient.personId,
-        staffEmail: staffEmail,
-        meetingType: null,
-        recordingsGCSBucket: "test-audio-bucket",
-        recordingsFolderPath: `meeting-${createdClient.personId}`,
-        userNotepadNotes: faker.lorem.paragraph(),
-        actionItems: actionItems,
-        structuredActionItems: structuredActionItems,
-        criticalUpdates: criticalUpdates,
-        meetingSummary: meetingSummary,
-        caseNote: faker.lorem.paragraphs(3),
-        postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
-        staffFeedback: staffFeedback,
-        staffFeedbackGeneratedAt: meetingEnd,
-        staffFeedbackPipelineRunId: `pipeline-${createdClient.personId}`,
-        transcriptions: {
-          create: [
-            {
-              id: `meeting-${createdClient.personId}`,
-              provider: faker.helpers.arrayElement(["ASSEMBLYAI", "DEEPGRAM"]),
-              transcriptObject: {} as Transcript,
-              confidence: faker.number.float(),
-              utterances: {
-                create: Array.from({ length: 5 }, (_, i) => ({
-                  confidence: faker.number.float(),
-                  endTimeMs: (i + 1) * 3000,
-                  speaker: faker.helpers.arrayElement([
-                    "Speaker A",
-                    "Speaker B",
-                  ]),
-                  startTimeMs: i * 3000,
-                  text: faker.lorem.sentence(),
-                })),
-              },
-              summary: faker.lorem.paragraph(),
-            },
-          ],
+  for (const person of DEMO_PEOPLE) {
+    if (person.type === "client") {
+      const idx = ++clientIndex;
+      const personId = BigInt(idx);
+      await prisma.client.upsert({
+        where: { personId },
+        create: {
+          stateCode: StateCode.US_DEMO,
+          personId,
+          stablePersonExternalId: `client-ext-${idx}`,
+          stablePersonExternalIdType: "client-ext-type-1",
+          displayPersonExternalId: `client-display-ext-${idx}`,
+          pseudonymizedId: `client-pid-${idx}`,
+          givenNames: person.givenNames,
+          surname: person.surname,
+          supervisionType: "PAROLE",
+          staffEmails: [STAFF_EMAIL],
+          isActive: true,
+          lastImportedAt: importedAt,
         },
-      },
-    });
-  }
-
-  // Seed Residents
-  const numberOfResidents = 10;
-  const createdResidents: Resident[] = [];
-  for (let i = 0; i < numberOfResidents; i++) {
-    const residentData: Prisma.ResidentCreateInput = {
-      stateCode: StateCode.US_DEMO,
-      personId: i + 1,
-      stablePersonExternalId: `resident-ext-${i + 1}`,
-      stablePersonExternalIdType: "resident-ext-type-1",
-      displayPersonExternalId: `resident-display-ext-${i + 1}`,
-      pseudonymizedId: `resident-pid-${i + 1}`,
-      givenNames: faker.person.firstName(),
-      middleNames: faker.person.firstName(),
-      surname: faker.person.lastName(),
-      suffix: faker.person.suffix(),
-      facilityId: `facility-${i + 1}`,
-      lastImportedAt: importedAt,
-    };
-    const resident = await prisma.resident.create({ data: residentData });
-    createdResidents.push(resident);
-  }
-
-  // Seed a meeting for every resident
-  for (const createdResident of createdResidents) {
-    const meetingStart = faker.date.past();
-    const meetingEnd = faker.date.soon({ refDate: meetingStart });
-
-    // Generate sample action items as string array
-    const actionItems = Array.from({ length: 3 }, () => faker.lorem.sentence());
-
-    // Generate structured action items with task + context
-    const structuredActionItems = actionItems.map((task) => ({
-      task,
-      context: faker.lorem.sentence(),
-      evidenceQuotes: [faker.lorem.sentence(), faker.lorem.sentence()],
-    }));
-
-    // Generate sample critical updates as formatted string array
-    const criticalUpdates = Array.from({ length: 2 }, () => {
-      const category = faker.helpers.arrayElement([
-        "Housing",
-        "Employment",
-        "Legal",
-        "Substance",
-        "Family",
-        "Health",
-        "Other",
-      ]);
-      const updateType = faker.helpers.arrayElement([
-        "New",
-        "Change",
-        "Stable/Status Quo",
-      ]);
-      const details = faker.lorem.sentence();
-      return `${category} - ${updateType}: ${details}`;
-    });
-
-    // Generate meeting summary conforming to MinuteSectionSchema
-    const meetingSummary = [
-      {
-        title: "General Discussion",
-        items: Array.from({ length: 3 }, () => ({
-          content: faker.lorem.sentence(),
-          status: faker.helpers.arrayElement([
-            "Discussed",
-            "Completed",
-            "Assigned",
-          ]) as "Discussed" | "Completed" | "Assigned",
-          subItems: [],
-        })),
-      },
-      {
-        title: "Action Items Review",
-        items: Array.from({ length: 2 }, () => ({
-          content: faker.lorem.sentence(),
-          status: "Discussed" as const,
-          subItems: [],
-        })),
-      },
-    ];
-
-    // Generate staff feedback conforming to StaffFeedbackOutputSchema
-    const staffFeedback = {
-      whatYouDidWell: [faker.lorem.sentence(), faker.lorem.sentence()],
-      growthOpportunities: [faker.lorem.sentence()],
-    };
-
-    await prisma.meeting.create({
-      data: {
-        id: `resident-meeting-${createdResident.personId}`,
-        startTime: meetingStart,
-        endTime: meetingEnd,
-        residentId: createdResident.personId,
-        staffEmail: staffEmail,
-        meetingType: null,
-        recordingsGCSBucket: "test-audio-bucket",
-        recordingsFolderPath: `resident-meeting-${createdResident.personId}`,
-        userNotepadNotes: faker.lorem.paragraph(),
-        actionItems: actionItems,
-        structuredActionItems: structuredActionItems,
-        criticalUpdates: criticalUpdates,
-        meetingSummary: meetingSummary,
-        caseNote: faker.lorem.paragraphs(3),
-        postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
-        staffFeedback: staffFeedback,
-        staffFeedbackGeneratedAt: meetingEnd,
-        staffFeedbackPipelineRunId: `pipeline-${createdResident.personId}`,
-        transcriptions: {
-          create: [
-            {
-              id: `resident-meeting-${createdResident.personId}`,
-              provider: faker.helpers.arrayElement(["ASSEMBLYAI", "DEEPGRAM"]),
-              transcriptObject: {} as Transcript,
-              confidence: faker.number.float(),
-              utterances: {
-                create: Array.from({ length: 5 }, (_, i) => ({
-                  confidence: faker.number.float(),
-                  endTimeMs: (i + 1) * 3000,
-                  speaker: faker.helpers.arrayElement([
-                    "Speaker A",
-                    "Speaker B",
-                  ]),
-                  startTimeMs: i * 3000,
-                  text: faker.lorem.sentence(),
-                })),
-              },
-              summary: faker.lorem.paragraph(),
-            },
-          ],
+        update: {
+          givenNames: person.givenNames,
+          surname: person.surname,
+          staffEmails: [STAFF_EMAIL],
+          isActive: true,
+          lastImportedAt: importedAt,
         },
-      },
-    });
+      });
+      await seedMeeting(
+        prisma,
+        person,
+        `meeting-${idx}`,
+        { clientId: personId },
+        order++,
+      );
+    } else {
+      const idx = ++residentIndex;
+      const personId = BigInt(idx);
+      await prisma.resident.upsert({
+        where: { personId },
+        create: {
+          stateCode: StateCode.US_DEMO,
+          personId,
+          stablePersonExternalId: `resident-ext-${idx}`,
+          stablePersonExternalIdType: "resident-ext-type-1",
+          displayPersonExternalId: `resident-display-ext-${idx}`,
+          pseudonymizedId: `resident-pid-${idx}`,
+          givenNames: person.givenNames,
+          surname: person.surname,
+          facilityId: `facility-${idx}`,
+          isActive: true,
+          lastImportedAt: importedAt,
+        },
+        update: {
+          givenNames: person.givenNames,
+          surname: person.surname,
+          facilityId: `facility-${idx}`,
+          isActive: true,
+          lastImportedAt: importedAt,
+        },
+      });
+      await seedMeeting(
+        prisma,
+        person,
+        `resident-meeting-${idx}`,
+        { residentId: personId },
+        order++,
+      );
+    }
   }
 }
