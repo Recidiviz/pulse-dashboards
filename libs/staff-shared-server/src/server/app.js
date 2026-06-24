@@ -37,6 +37,11 @@ import {
   filenameNotEmptyValidation,
   newRevocationsParamValidations,
 } from "./routes/paramsValidation";
+import {
+  typesenseCollectionSchema,
+  typesenseCollectionsSummary,
+  typesenseHealth,
+} from "./typesense/typesenseManagement";
 import { validateStateCode } from "./utils/validateStateCode";
 import { getFirebaseToken } from "./workflows/firebaseToken";
 import {
@@ -238,6 +243,19 @@ app.get("/token", asyncHandler(getFirebaseToken));
 app.get(
   "/api/impersonateAuth0User",
   asyncHandler(api.getImpersonatedUserRestrictions),
+);
+
+// Typesense Management (Recidiviz-internal). Collections are global, not
+// per-state, so these are not mounted under stateApiBaseRoute. They inspect the
+// Typesense cluster this deployment is wired to (staging or production).
+app.get("/api/typesense/health", asyncHandler(typesenseHealth));
+app.get(
+  "/api/typesense/collections",
+  asyncHandler(typesenseCollectionsSummary),
+);
+app.get(
+  "/api/typesense/collections/:collectionName",
+  asyncHandler(typesenseCollectionSchema),
 );
 
 app.get(`${stateApiBaseRoute}looker/config`, asyncHandler(getLookerConfig));
