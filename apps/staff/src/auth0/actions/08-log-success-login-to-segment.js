@@ -4,6 +4,11 @@
  * @param {Event} event - Details about the user and the context in which they are logging in.
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
+function getUserEmail(event) {
+  const { email, emailaddress, emailAddress } = event.user;
+  return email ?? emailaddress ?? emailAddress;
+}
+
 exports.onExecutePostLogin = async (event, api) => {
   const Analytics = require("analytics-node");
   const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, {
@@ -50,7 +55,7 @@ exports.onExecutePostLogin = async (event, api) => {
     event: "Success Login",
     properties: {
       ...appMetadataForTracking,
-      email: user.email,
+      email: getUserEmail(event),
       email_verified: user.email_verified,
       identities: user.identities,
       last_ip: event.request.ip,

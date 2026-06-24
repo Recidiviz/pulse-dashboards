@@ -6,8 +6,13 @@
  */
 const crypto = require("crypto");
 
+function getUserEmail(event) {
+  const { email, emailaddress, emailAddress } = event.user;
+  return email ?? emailaddress ?? emailAddress;
+}
+
 function generateSegmentId(event) {
-  const email = Buffer.from(event.user.email, "utf8");
+  const email = Buffer.from(getUserEmail(event), "utf8");
   return crypto.createHash("sha256").update(email).digest("base64");
 }
 
@@ -43,6 +48,6 @@ exports.onExecutePostLogin = async (event, api) => {
   );
   api.accessToken.setCustomClaim(
     `${namespace}/email_address`,
-    event.user.email,
+    getUserEmail(event),
   );
 };

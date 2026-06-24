@@ -4,6 +4,11 @@
  * @param {Event} event - Details about the context and user that has registered.
  * @param {PostUserRegistrationAPI} api - Methods and utilities to help change the behavior after a signup.
  */
+function getUserEmail(event) {
+  const { email, emailaddress, emailAddress } = event.user;
+  return email ?? emailaddress ?? emailAddress;
+}
+
 exports.onExecutePostUserRegistration = async (event, api) => {
   const Analytics = require("analytics-node");
   const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, {
@@ -50,7 +55,7 @@ exports.onExecutePostUserRegistration = async (event, api) => {
     event: "Success Login",
     properties: {
       ...appMetadataForTracking,
-      email: user.email,
+      email: getUserEmail(event),
       email_verified: user.email_verified,
       last_ip: event?.request?.ip,
       logins_count: 1,

@@ -31,8 +31,8 @@ exports.onExecutePostLogin = async (event, api) => {
     credentials,
   });
 
-  const { app_metadata, email, emailaddress } = event.user;
-  const userEmail = email ?? emailaddress;
+  const { app_metadata, email, emailaddress, emailAddress } = event.user;
+  const userEmail = email ?? emailaddress ?? emailAddress;
 
   let stateCode = app_metadata.state_code?.toLowerCase();
 
