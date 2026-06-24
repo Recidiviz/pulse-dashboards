@@ -28,7 +28,6 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
@@ -87,7 +86,7 @@ const TaskPreviewFooter = ({
 export const TaskPreviewModal = observer(function TaskPreviewModal({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenter | CaseloadTasksPresenterV2;
+  presenter: CaseloadTasksPresenterV2;
 }) {
   const {
     workflowsStore: { selectedClient },
@@ -110,8 +109,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
   const opportunitiesToDisplay = !!Object.values(selectedClient.opportunities)
     .length;
 
-  const showFooter =
-    presenter instanceof CaseloadTasksPresenterV2 && !presenter.showListView;
+  const showFooter = !presenter.showListView;
 
   const sidebarComponents = tasksSidebarComponents.map((name, i) => {
     const Component = ClientDetailSidebarComponents[name];

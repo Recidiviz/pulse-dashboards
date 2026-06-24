@@ -28,7 +28,6 @@ import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import { TasksBodyContainer } from "./styles";
-import { WorkflowsTasksBody } from "./WorkflowsTasksBody";
 import { WorkflowsTasksBodyV2 } from "./WorkflowsTasksBodyV2";
 
 const CaseloadSelectWrapper = styled.div`
@@ -74,14 +73,7 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
       <CaseloadTasksHydrator
         initial={initial}
         empty={empty}
-        hydrated={
-          // TODO(#10615): Remove WorkflowsTasksBody when UsIdTasksV2 is fully rolled out.
-          isUsIdLegacyTasksEnabled ? (
-            <WorkflowsTasksBody />
-          ) : (
-            <WorkflowsTasksBodyV2 />
-          )
-        }
+        hydrated={<WorkflowsTasksBodyV2 />}
       />
     </WorkflowsNavLayout>
   );
