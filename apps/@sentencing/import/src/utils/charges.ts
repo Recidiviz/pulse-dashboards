@@ -201,5 +201,20 @@ export async function transformAndLoadChargeData(
     }
   }
 
+  const incomingChargeExternalIds = new Set(
+    allCharges
+      .filter((c) => sarExternalIds.has(c.case_external_id))
+      .map((c) => c.offense_external_id),
+  );
+
+  await prismaClient.charge.deleteMany({
+    where: {
+      sentencingAssessmentReport: {
+        externalId: { in: [...sarExternalIds] },
+      },
+      chargeExternalId: { notIn: [...incomingChargeExternalIds] },
+    },
+  });
+
   await updateMostSevereOffenses(prismaClient, [...sarExternalIds]);
 }
