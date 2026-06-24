@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import {
   coverSheetInformationSchema,
@@ -61,6 +62,8 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         q4Notes: singleIncidentPeriodReportSchema,
         q5Notes: singleIncidentPeriodReportSchema,
         q7Notes,
+        sixMonthsAgo: dateStringSchema.optional(),
+        twelveMonthsAgo: dateStringSchema.optional(),
       })
       .merge(trusteeFormSchema)
       .merge(coverSheetInformationSchema),

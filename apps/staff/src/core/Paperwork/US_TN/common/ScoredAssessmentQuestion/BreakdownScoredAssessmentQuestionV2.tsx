@@ -24,8 +24,11 @@ import {
   BreakdownAssessmentQuestionSpecV2,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
+import { palette } from "~design-system";
 
 import DOCXFormInput from "../../../DOCXFormInput";
+import { useOpportunityFormContext } from "../../../OpportunityFormContext";
+import { dateWindowString } from "../Classification2026/utils";
 import { SubItem } from "./AssessmentItem";
 
 const BreakdownTable = styled.table`
@@ -42,6 +45,11 @@ const BreakdownTable = styled.table`
       margin-bottom: 0;
     }
   }
+`;
+
+const DateRange = styled.span`
+  color: ${palette.slate85};
+  font-size: 6pt;
 `;
 
 const MultiplierCell = styled.div`
@@ -90,9 +98,14 @@ const BreakdownRow = observer(function BreakdownRow({
 }) {
   const selectionKey = `q${questionNumber}Selection_${period.replace("-", "_")}`;
 
+  const { formData } = useOpportunityFormContext();
+
   return (
     <tr>
-      <th scope="row">PREVIOUS {period} MONTHS</th>
+      <th scope="row">
+        PREVIOUS {period} MONTHS{" "}
+        <DateRange>{dateWindowString(period, formData)}</DateRange>
+      </th>
       <td>
         <MultiplierCell>
           <DOCXFormInput<UsTnReclassification2026DraftData>

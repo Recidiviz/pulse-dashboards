@@ -40,6 +40,7 @@ exports[`schema for fullyEligible 1`] = `
     "q6Score": 0,
     "q7Notes": "",
     "q7Score": 0,
+    "sixMonthsAgo": 2024-06-01T00:00:00.000Z,
     "statusAtHearingSeg": "GEN",
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjury": "true",
@@ -48,6 +49,7 @@ exports[`schema for fullyEligible 1`] = `
     "trusteeNotConvictedOfFirstDegreeMurder": "true",
     "trusteeNotScoredHighForViolence": "false",
     "trusteeNotServingForSexualOffense": "true",
+    "twelveMonthsAgo": 2023-12-01T00:00:00.000Z,
   },
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
@@ -81,6 +83,7 @@ exports[`schema for ineligible 1`] = `
     "q6Score": 0,
     "q7Notes": "Completed TXI (Taxi Maintenance) on 2/2/2023",
     "q7Score": -2,
+    "sixMonthsAgo": 2024-06-01T00:00:00.000Z,
     "statusAtHearingSeg": "GEN",
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjury": "true",
@@ -89,6 +92,7 @@ exports[`schema for ineligible 1`] = `
     "trusteeNotConvictedOfFirstDegreeMurder": "true",
     "trusteeNotScoredHighForViolence": "true",
     "trusteeNotServingForSexualOffense": "true",
+    "twelveMonthsAgo": 2023-12-01T00:00:00.000Z,
   },
   "ineligibleCriteria": {
     "custodyLevelIsNotMax": {

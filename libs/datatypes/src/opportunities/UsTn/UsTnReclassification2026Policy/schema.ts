@@ -53,6 +53,11 @@ export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
       q5Notes: multiIncidentPeriodReportSchema,
       q6Notes,
       q7Notes,
+      sixMonthsAgo: dateStringSchema.optional(),
+      twelveMonthsAgo: dateStringSchema.optional(),
+      eighteenMonthsAgo: dateStringSchema.optional(),
+      thirtySixMonthsAgo: dateStringSchema.optional(),
+      sixtyMonthsAgo: dateStringSchema.optional(),
     })
     .merge(trusteeFormSchema)
     .merge(coverSheetInformationSchema),

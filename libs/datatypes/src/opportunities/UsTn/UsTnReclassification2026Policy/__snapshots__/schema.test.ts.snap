@@ -14,6 +14,7 @@ exports[`schema for fullyEligible 1`] = `
   "externalId": "RES003",
   "formInformation": {
     "activeRecommendations": [],
+    "eighteenMonthsAgo": 2023-06-01T00:00:00.000Z,
     "hasIncompatibles": false,
     "incompatibleArray": [],
     "isServingLife": "false",
@@ -48,7 +49,10 @@ exports[`schema for fullyEligible 1`] = `
     "q7Notes": "Completed ABC (Letter stitching) on 2/2/2022
 Completed XYZ (Xylophone Ensemble) on 4/4/2024",
     "q7Score": 1,
+    "sixMonthsAgo": 2024-06-01T00:00:00.000Z,
+    "sixtyMonthsAgo": 2019-12-01T00:00:00.000Z,
     "statusAtHearingSeg": "GEN",
+    "thirtySixMonthsAgo": 2021-12-01T00:00:00.000Z,
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjury": "true",
     "trusteeNoEscapeFromLowTrusteePast5Years": "true",
@@ -56,6 +60,7 @@ Completed XYZ (Xylophone Ensemble) on 4/4/2024",
     "trusteeNotConvictedOfFirstDegreeMurder": "true",
     "trusteeNotScoredHighForViolence": "true",
     "trusteeNotServingForSexualOffense": "false",
+    "twelveMonthsAgo": 2023-12-01T00:00:00.000Z,
   },
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
@@ -76,6 +81,7 @@ exports[`schema for ineligible 1`] = `
         "Recommendation": "do this thing",
       },
     ],
+    "eighteenMonthsAgo": 2023-06-01T00:00:00.000Z,
     "hasIncompatibles": true,
     "incompatibleArray": [
       {
@@ -162,7 +168,10 @@ exports[`schema for ineligible 1`] = `
     "q6Score": 0,
     "q7Notes": "",
     "q7Score": 1,
+    "sixMonthsAgo": 2024-06-01T00:00:00.000Z,
+    "sixtyMonthsAgo": 2019-12-01T00:00:00.000Z,
     "statusAtHearingSeg": "GEN",
+    "thirtySixMonthsAgo": 2021-12-01T00:00:00.000Z,
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjury": "true",
     "trusteeNoEscapeFromLowTrusteePast5Years": "true",
@@ -170,6 +179,7 @@ exports[`schema for ineligible 1`] = `
     "trusteeNotConvictedOfFirstDegreeMurder": "true",
     "trusteeNotScoredHighForViolence": "true",
     "trusteeNotServingForSexualOffense": "false",
+    "twelveMonthsAgo": 2023-12-01T00:00:00.000Z,
   },
   "ineligibleCriteria": {
     "custodyLevelIsNotMax": {

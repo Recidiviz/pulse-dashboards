@@ -34,6 +34,8 @@ export const usTnInitialClassification2026PolicyFixtures = {
     },
     ineligibleCriteria: {},
     formInformation: {
+      sixMonthsAgo: "2024-06-01",
+      twelveMonthsAgo: "2023-12-01",
       q3Score: -3,
       q4Score: 2,
       q5Score: -1,
@@ -100,6 +102,8 @@ export const usTnInitialClassification2026PolicyFixtures = {
       },
     },
     formInformation: {
+      sixMonthsAgo: "2024-06-01",
+      twelveMonthsAgo: "2023-12-01",
       q3Score: -3,
       q4Score: 2,
       q5Score: -1,

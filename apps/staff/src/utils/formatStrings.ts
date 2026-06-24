@@ -217,6 +217,10 @@ function formatWorkflowsDate(date?: Date | null): string {
   return formatDate(date, "MMM d, yyyy");
 }
 
+function formatWorkflowsDateMonthYear(date: Date): string {
+  return formatDate(date, "MMM yyyy");
+}
+
 function formatWorkflowsDateWithTime(date?: Date | null): string {
   return formatDate(date, "MMM d, yyyy h:mm a");
 }
@@ -548,6 +552,7 @@ export {
   formatPercent,
   formatStateAddress,
   formatWorkflowsDate,
+  formatWorkflowsDateMonthYear,
   formatWorkflowsDateString,
   formatWorkflowsDateWithoutYear,
   formatWorkflowsDateWithTime,

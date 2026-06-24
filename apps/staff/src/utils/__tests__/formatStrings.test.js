@@ -353,6 +353,21 @@ describe("formatStrings", () => {
     });
   });
 
+  describe("formatDateMonthYear", () => {
+    it("returns the same string regardless of the day of the month", () => {
+      const expectedRes = "Apr 2031";
+      expect(utils.formatWorkflowsDateMonthYear(new Date(2031, 3, 1))).toEqual(
+        expectedRes,
+      );
+      expect(utils.formatWorkflowsDateMonthYear(new Date(2031, 3, 12))).toEqual(
+        expectedRes,
+      );
+      expect(utils.formatWorkflowsDateMonthYear(new Date(2031, 3, 30))).toEqual(
+        expectedRes,
+      );
+    });
+  });
+
   describe("formatYearsMonthsFromNow", () => {
     const TEST_DATE = new Date(2022, 2, 2);
 

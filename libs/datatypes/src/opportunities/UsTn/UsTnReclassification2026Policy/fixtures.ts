@@ -38,6 +38,11 @@ export const usTnReclassification2026PolicyFixtures = {
     },
     ineligibleCriteria: {},
     formInformation: {
+      sixMonthsAgo: "2024-06-01",
+      twelveMonthsAgo: "2023-12-01",
+      eighteenMonthsAgo: "2023-06-01",
+      thirtySixMonthsAgo: "2021-12-01",
+      sixtyMonthsAgo: "2019-12-01",
       activeRecommendations: [],
       hasIncompatibles: false,
       incompatibleArray: [],
@@ -118,6 +123,11 @@ export const usTnReclassification2026PolicyFixtures = {
       },
     },
     formInformation: {
+      sixMonthsAgo: "2024-06-01",
+      twelveMonthsAgo: "2023-12-01",
+      eighteenMonthsAgo: "2023-06-01",
+      thirtySixMonthsAgo: "2021-12-01",
+      sixtyMonthsAgo: "2019-12-01",
       hasIncompatibles: true,
       activeRecommendations: [{ Recommendation: "do this thing" }],
       incompatibleArray: [
