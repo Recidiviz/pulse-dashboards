@@ -214,6 +214,47 @@ describe("TomisDenialModal", () => {
     expect(body.contactTypeCodes).toEqual(["DECF"]);
   });
 
+  it("drops stale reason keys that are not valid TOMIS codes", async () => {
+    const { postExternalRequest } = mockRootStore();
+    postExternalRequest.mockResolvedValue({});
+    const opp = tomisMockOpportunity();
+
+    render(
+      <TomisDenialModal
+        opportunity={opp}
+        {...defaultProps}
+        reasons={["CASE", "DECF"]}
+      />,
+    );
+
+    const input = screen.getByTestId("character-count-text-field");
+    fireEvent.change(input, { target: { value: "Test comment" } });
+    fireEvent.click(screen.getByTestId("tomis-submit-button"));
+
+    await waitFor(() => {
+      expect(postExternalRequest).toHaveBeenCalledTimes(1);
+    });
+
+    const [, , body] = postExternalRequest.mock.calls[0];
+    expect(body.contactTypeCodes).toEqual(["DECF"]);
+  });
+
+  it("greys out submit when no eligible codes remain after filtering", () => {
+    mockRootStore();
+    const opp = tomisMockOpportunity();
+
+    render(
+      <TomisDenialModal
+        opportunity={opp}
+        {...defaultProps}
+        reasons={["CASE"]}
+      />,
+    );
+
+    expect(screen.queryByText(/DECF/)).not.toBeInTheDocument();
+    expect(screen.getByTestId("tomis-submit-button")).toBeDisabled();
+  });
+
   it("does not submit when no TOMIS codes are selected", async () => {
     const { postExternalRequest, updateClientUpdatesV2Document } =
       mockRootStore();

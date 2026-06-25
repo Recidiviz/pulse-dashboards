@@ -121,8 +121,9 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     }
   }, [showModal]);
 
+  const denialReasons = opportunity.config.denialReasons;
   const tomisCodes = reasons.filter(
-    (code) => !code.toUpperCase().includes("OTHER"),
+    (code) => code in denialReasons && !code.toUpperCase().includes("OTHER"),
   );
   const hasTomisCodes = tomisCodes.length > 0;
 
@@ -198,8 +199,6 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     }
   };
 
-  const denialReasons = opportunity.config.denialReasons;
-
   const reviewingModal = (
     <div data-testid="tomis-confirmation-screen">
       <DialogModalControls onClose={onCloseFn} />
@@ -209,7 +208,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
           Prefilled with data from TDOC on {formatWorkflowsDate(new Date())}
         </Subtitle>
         {tomisCodes.map((code) => {
-          const description = denialReasons[code] ?? code;
+          const description = denialReasons[code];
           return (
             <DenialCodeBlock key={code}>
               <DenialCodeLabel>
