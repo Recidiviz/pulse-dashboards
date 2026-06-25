@@ -24,7 +24,7 @@ import trdDefinition from "./definitions/trd.md?raw";
 
 export default {
   lastUpdated:
-    "This information is current as of {{sentenceLastModifiedDate, formatFullDate}}",
+    "This information was last changed on {{sentenceLastModifiedDate, formatFullDate}}",
   topLinkText: "Back to top",
   homeLink: "Back",
   definitionsLinksHeading: "Other definitions",
