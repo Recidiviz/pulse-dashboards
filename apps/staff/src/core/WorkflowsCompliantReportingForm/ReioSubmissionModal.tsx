@@ -139,7 +139,7 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
     workflowsStore: { user },
   } = useRootStore();
 
-  const staffId = user?.info?.id ?? "";
+  const staffId = user?.info?.staffExternalId ?? "";
 
   const [comment, setComment] = useState("");
   const [phase, setPhase] = useState<Phase>("EDITING");

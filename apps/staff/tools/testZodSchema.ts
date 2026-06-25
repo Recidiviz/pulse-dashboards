@@ -25,6 +25,7 @@ import { z } from "zod";
 import {
   clientRecordSchema,
   incarcerationStaffRecordSchema,
+  locationRecordSchema,
   OpportunityType,
   supervisionStaffRecordSchema,
   usArInstitutionalWorkerStatusSchema,
@@ -213,18 +214,6 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
 };
 
 const OTHER_SCHEMAS = {
-  residents: {
-    schema: workflowsResidentRecordSchema,
-    firestoreCollection: "residents",
-  },
-  incarcerationStaff: {
-    schema: incarcerationStaffRecordSchema,
-    firestoreCollection: "incarcerationStaff",
-  },
-  supervisionStaff: {
-    schema: supervisionStaffRecordSchema,
-    firestoreCollection: "supervisionStaff",
-  },
   clients: {
     schema: clientRecordSchema,
     firestoreCollection: "clients",
@@ -232,6 +221,22 @@ const OTHER_SCHEMAS = {
   demoClients: {
     schema: clientRecordSchema,
     firestoreCollection: "DEMO_clients",
+  },
+  incarcerationStaff: {
+    schema: incarcerationStaffRecordSchema,
+    firestoreCollection: "incarcerationStaff",
+  },
+  locations: {
+    schema: locationRecordSchema,
+    firestoreCollection: "locations",
+  },
+  residents: {
+    schema: workflowsResidentRecordSchema,
+    firestoreCollection: "residents",
+  },
+  supervisionStaff: {
+    schema: supervisionStaffRecordSchema,
+    firestoreCollection: "supervisionStaff",
   },
 };
 

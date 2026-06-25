@@ -98,7 +98,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
   const currentReviewerId = opportunity.currentReviewerId;
 
   const actionHistoryOfficers = availableOfficers.filter((o) =>
-    previousReviewerIds.has(o.id),
+    previousReviewerIds.has(o.staffExternalId),
   );
   const [selectedStaff, setSelectedStaff] = useState<StaffRecord | null>(null);
   const [reason, setReason] = useState("");
@@ -115,7 +115,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
         <StyledDropdownToggle>
           <NameLabel>
             {selectedStaff ? (
-              <WorkflowsOfficerName officerId={selectedStaff.id} />
+              <WorkflowsOfficerName officerId={selectedStaff.staffExternalId} />
             ) : (
               "Select a previous reviewer"
             )}
@@ -125,10 +125,10 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
         <StyledDropdownMenu>
           {actionHistoryOfficers.map((officer) => (
             <StyledDropdownMenuItem
-              key={officer.id}
+              key={officer.staffExternalId}
               onClick={() => setSelectedStaff(officer)}
             >
-              <WorkflowsOfficerName officerId={officer.id} />
+              <WorkflowsOfficerName officerId={officer.staffExternalId} />
             </StyledDropdownMenuItem>
           ))}
         </StyledDropdownMenu>
@@ -170,7 +170,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
             opportunity.setSupervisorResponse({
               type: "REVISION",
               notes: reason,
-              reviewerId: selectedStaff.id,
+              reviewerId: selectedStaff.staffExternalId,
             });
             toast(
               <OpportunityStatusUpdateToast

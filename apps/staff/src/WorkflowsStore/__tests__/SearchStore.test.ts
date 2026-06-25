@@ -34,26 +34,29 @@ let workflowsStore: any;
 const officers = [
   // two officers supervised by mockSupervisor, one supervised by someone else, plus the mockSupervisor
   {
-    id: "XX_SUPERVISED_OFFICER2",
+    staffExternalId: "XX_SUPERVISED_OFFICER2",
     stateCode: "US_XX",
     givenNames: "TestSupervisedOfficer2",
     surname: "AlphabeticallyFirst",
-    supervisorExternalId: mockSupervisor.info.id,
+    supervisorExternalId: mockSupervisor.info.staffExternalId,
     pseudonymizedId: "p002",
     recordType: "supervisionStaff",
   },
   {
-    id: "XX_SUPERVISED_OFFICER1",
+    staffExternalId: "XX_SUPERVISED_OFFICER1",
     stateCode: "US_XX",
     givenNames: "TestSupervisedOfficer1",
     surname: "AlphabeticallySecond",
     supervisorExternalId: "XX_SUPERVISOR_OTHER",
-    supervisorExternalIds: ["XX_SUPERVISOR_OTHER", mockSupervisor.info.id],
+    supervisorExternalIds: [
+      "XX_SUPERVISOR_OTHER",
+      mockSupervisor.info.staffExternalId,
+    ],
     pseudonymizedId: "p001",
     recordType: "supervisionStaff",
   },
   {
-    id: "XX_SUPERVISED_OFFICER3",
+    staffExternalId: "XX_SUPERVISED_OFFICER3",
     stateCode: "US_XX",
     givenNames: "TestSupervisedOfficer3",
     surname: "SupervisedBySomeoneElse",
@@ -67,7 +70,7 @@ const officers = [
 ];
 
 const supervisedStaff = officers.filter(
-  (o) => o.supervisorExternalId === mockSupervisor.info.id,
+  (o) => o.supervisorExternalId === mockSupervisor.info.staffExternalId,
 );
 
 const mockUpdatedSelectedSearchIds = vi.fn();
@@ -251,9 +254,11 @@ describe("availableSearchables", () => {
 
     workflowsStore.staffSupervisedByCurrentUser = officers.filter(
       (o) =>
-        o.supervisorExternalId === mockSupervisor.info.id ||
+        o.supervisorExternalId === mockSupervisor.info.staffExternalId ||
         (o.supervisorExternalIds &&
-          o.supervisorExternalIds.includes(mockSupervisor.info.id)),
+          o.supervisorExternalIds.includes(
+            mockSupervisor.info.staffExternalId,
+          )),
     );
     workflowsStore.availableOfficers = officers;
 
@@ -277,7 +282,7 @@ describe("availableSearchables", () => {
     ]);
     expect(allStaffSearchableIds).toEqual([
       "XX_SUPERVISED_OFFICER3",
-      mockSupervisor.info.id,
+      mockSupervisor.info.staffExternalId,
     ]);
   });
 
@@ -464,7 +469,7 @@ describe("selectedSearchIds", () => {
     test("defaults to current user's supervised staff", async () => {
       workflowsStore.staffSupervisedByCurrentUser = supervisedStaff;
       expect(searchStore.selectedSearchIds).toEqual(
-        supervisedStaff.map((s) => s.id),
+        supervisedStaff.map((s) => s.staffExternalId),
       );
     });
 
@@ -487,8 +492,8 @@ describe("selectedSearchIds", () => {
 
     test("includes current user", async () => {
       expect(searchStore.selectedSearchIds).toEqual([
-        mockSupervisor.info.id,
-        ...supervisedStaff.map((s) => s.id),
+        mockSupervisor.info.staffExternalId,
+        ...supervisedStaff.map((s) => s.staffExternalId),
       ]);
     });
 
@@ -560,7 +565,7 @@ describe("default selected caseload", () => {
 
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
       expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
-        mockOfficer.info.id,
+        mockOfficer.info.staffExternalId,
       ]);
     });
 
@@ -584,7 +589,7 @@ describe("default selected caseload", () => {
 
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
       expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
-        mockOfficer.info.id,
+        mockOfficer.info.staffExternalId,
       ]);
     });
 

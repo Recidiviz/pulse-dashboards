@@ -161,7 +161,9 @@ export const StaffLookup = observer(function StaffLookup({
           const searchResults = workflowsStore
             .searchStaff(value)
             .filter(
-              (o) => o.id !== workflowsStore.rootStore.userStore.externalId,
+              (o) =>
+                o.staffExternalId !==
+                workflowsStore.rootStore.userStore.externalId,
             );
           setResults(searchResults);
           setShowDropdown(true);
@@ -292,12 +294,12 @@ export const StaffLookup = observer(function StaffLookup({
           {results.length > 0 ? (
             results.map((staff, index) => (
               <ResultItem
-                key={staff.id}
+                key={staff.staffExternalId}
                 $selected={index === selectedIndex}
                 onClick={() => selectStaff(staff)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <WorkflowsOfficerName officerId={staff.id} />
+                <WorkflowsOfficerName officerId={staff.staffExternalId} />
               </ResultItem>
             ))
           ) : (

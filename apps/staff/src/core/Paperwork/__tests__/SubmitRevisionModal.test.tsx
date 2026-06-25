@@ -40,7 +40,11 @@ vi.mock("../../views", async (importOriginal) => ({
   workflowsUrl: () => "/test-url",
 }));
 
-const mockOfficer = { id: "officer1", surname: "Smith", givenNames: "John" };
+const mockOfficer = {
+  staffExternalId: "officer1",
+  surname: "Smith",
+  givenNames: "John",
+};
 const mockWorkflowsStore = { availableOfficers: [mockOfficer] };
 
 function setup(overrides: Partial<typeof mockOpportunity> = {}) {
@@ -48,7 +52,9 @@ function setup(overrides: Partial<typeof mockOpportunity> = {}) {
   const opportunity = {
     ...mockOpportunity,
     person: { ...mockOpportunity.person, displayName: "Test Client" },
-    actionHistory: [{ type: "APPROVAL", updateById: mockOfficer.id }],
+    actionHistory: [
+      { type: "APPROVAL", updateById: mockOfficer.staffExternalId },
+    ],
     setSupervisorResponse: vi.fn(),
     ...overrides,
   };
@@ -73,7 +79,9 @@ function openDropdown() {
 
 function selectOfficer() {
   openDropdown();
-  fireEvent.click(screen.getByRole("menuitem", { name: mockOfficer.id }));
+  fireEvent.click(
+    screen.getByRole("menuitem", { name: mockOfficer.staffExternalId }),
+  );
 }
 
 function enterReason(text = "Needs revision") {
@@ -149,7 +157,7 @@ describe("SendButton", () => {
     expect(opportunity.setSupervisorResponse).toHaveBeenCalledWith({
       type: "REVISION",
       notes: "Needs revision",
-      reviewerId: mockOfficer.id,
+      reviewerId: mockOfficer.staffExternalId,
     });
   });
 
@@ -196,7 +204,7 @@ describe("Officer dropdown", () => {
     setup();
     openDropdown();
     expect(
-      screen.getByRole("menuitem", { name: mockOfficer.id }),
+      screen.getByRole("menuitem", { name: mockOfficer.staffExternalId }),
     ).toBeInTheDocument();
   });
 
@@ -226,7 +234,9 @@ describe("Officer dropdown", () => {
     };
     const opportunity = {
       ...mockOpportunity,
-      actionHistory: [{ type: "APPROVAL", updateById: mockOfficer.id }],
+      actionHistory: [
+        { type: "APPROVAL", updateById: mockOfficer.staffExternalId },
+      ],
       setSupervisorResponse: vi.fn(),
     };
 
@@ -241,7 +251,7 @@ describe("Officer dropdown", () => {
 
     openDropdown();
     expect(
-      screen.getByRole("menuitem", { name: mockOfficer.id }),
+      screen.getByRole("menuitem", { name: mockOfficer.staffExternalId }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("menuitem", { name: otherOfficer.id }),
@@ -251,7 +261,7 @@ describe("Officer dropdown", () => {
 
 describe("CurrentReviewer display", () => {
   it("shows the current reviewer when currentReviewerId is set", () => {
-    setup({ currentReviewerId: mockOfficer.id });
+    setup({ currentReviewerId: mockOfficer.staffExternalId });
     expect(screen.getByText(/Current Reviewer/)).toBeInTheDocument();
   });
 

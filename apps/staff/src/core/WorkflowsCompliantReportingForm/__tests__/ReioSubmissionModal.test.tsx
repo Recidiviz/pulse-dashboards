@@ -40,7 +40,7 @@ const mockRootStore = () => {
       trackReferralFormSubmitted,
     },
     apiStore: { postExternalRequest },
-    workflowsStore: { user: { info: { id: "STAFF123" } } },
+    workflowsStore: { user: { info: { staffExternalId: "STAFF123" } } },
     firestoreStore: {
       doc,
       updateClientUpdatesV2Document,

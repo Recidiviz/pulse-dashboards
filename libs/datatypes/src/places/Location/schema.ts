@@ -21,10 +21,15 @@ import { systemIdEnum } from "../System/SystemId/schema";
 
 export const locationRecordSchema = z.object({
   stateCode: z.string(),
-  id: z.string(),
+  locationId: z.string(),
   name: z.string(),
   system: systemIdEnum,
-  idType: z.enum(["facilityId", "facilityUnitId", "crcFacilityId", "districtId"]),
+  idType: z.enum([
+    "facilityId",
+    "facilityUnitId",
+    "crcFacilityId",
+    "districtId",
+  ]),
 });
 
 export type LocationRecord = z.infer<typeof locationRecordSchema>;

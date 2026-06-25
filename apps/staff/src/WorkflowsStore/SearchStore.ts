@@ -103,7 +103,9 @@ export class SearchStore {
           this.searchType &&
           ["OFFICER", "INCARCERATION_OFFICER"].includes(this.searchType)
         ) {
-          const defaultCaseloadIds = [this.workflowsStore.user.info.id];
+          const defaultCaseloadIds = [
+            this.workflowsStore.user.info.staffExternalId,
+          ];
           this.updateSelectedSearch(defaultCaseloadIds);
           this.workflowsStore.rootStore.analyticsStore.trackCaseloadSearch({
             searchCount: defaultCaseloadIds.length,
@@ -165,10 +167,10 @@ export class SearchStore {
       }
       const supervisedStaffIds =
         this.workflowsStore.staffSupervisedByCurrentUser.map(
-          (staff) => staff.id,
+          (staff) => staff.staffExternalId,
         );
 
-      const currentUserId = info.hasCaseload ? [info.id] : [];
+      const currentUserId = info.hasCaseload ? [info.staffExternalId] : [];
       const staffAndCurrentUserIds = [...currentUserId, ...supervisedStaffIds];
       return staffAndCurrentUserIds;
     }
@@ -248,7 +250,9 @@ export class SearchStore {
           if (this.workflowsStore.user?.info.hasCaseload) {
             const currentUserStaffRecord =
               this.workflowsStore.availableOfficers.find(
-                (officer) => officer.id === this.workflowsStore.user?.info.id,
+                (officer) =>
+                  officer.staffExternalId ===
+                  this.workflowsStore.user?.info.staffExternalId,
               );
             if (currentUserStaffRecord) {
               staffWithCaseload.push(new Officer(currentUserStaffRecord));
@@ -267,8 +271,9 @@ export class SearchStore {
               searchables: this.workflowsStore.availableOfficers
                 .filter(
                   (officer) =>
-                    !staffWithCaseloadIdsSet.has(officer.id) &&
-                    officer.id !== this.workflowsStore.user?.info.id,
+                    !staffWithCaseloadIdsSet.has(officer.staffExternalId) &&
+                    officer.staffExternalId !==
+                      this.workflowsStore.user?.info.staffExternalId,
                 )
                 .map((officer) => new Officer(officer)),
             },

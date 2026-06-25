@@ -146,7 +146,7 @@ export abstract class JusticeInvolvedPersonBase<
 
   get assignedStaff(): StaffRecord | undefined {
     return this.rootStore.workflowsStore?.availableOfficers.find(
-      (o) => o.id === this.assignedStaffId,
+      (o) => o.staffExternalId === this.assignedStaffId,
     );
   }
 

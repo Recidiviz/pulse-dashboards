@@ -19,5 +19,5 @@ import { z } from "zod";
 
 export const staffRecordBaseSchema = z.object({
   district: z.string().nullish(),
-  id: z.string(),
+  staffExternalId: z.string(),
 });

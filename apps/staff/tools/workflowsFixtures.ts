@@ -142,7 +142,8 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
       incarcerationStaff: incarcerationStaffFixtures,
       supervisionStaff: supervisionStaffFixtures,
     },
-    (fixtures) => fixtureFromParsedRecords<ParsedRecord>("id", fixtures),
+    (fixtures) =>
+      fixtureFromParsedRecords<ParsedRecord>("staffExternalId", fixtures),
   ),
   clients: clientsData,
   residents: {

@@ -160,7 +160,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     if (user.name) formattedUserName = splitAuth0UserName(user.name);
 
     return {
-      id:
+      staffExternalId:
         externalId ?? `${stateCode.toLowerCase()}_${user?.email.toLowerCase()}`,
       email: user.email.toLowerCase(),
       stateCode,
@@ -192,7 +192,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     // inject dynamic fixture data in offline mode
     if (isOfflineMode()) {
       injectedUserData = {
-        id: `${stateCode.toLowerCase()}_${user?.email}`,
+        staffExternalId: `${stateCode.toLowerCase()}_${user?.email}`,
         email: user?.email || "",
         stateCode,
         givenNames: user?.name || "Demo",
@@ -210,7 +210,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       if (user?.name) formattedUserName = splitAuth0UserName(user.name);
 
       injectedUserData = {
-        id: "RECIDIVIZ",
+        staffExternalId: "RECIDIVIZ",
         email: user?.email ?? "",
         // should not be undefined if we've gotten this far
         stateCode: currentTenantId as string,

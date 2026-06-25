@@ -34,7 +34,7 @@ import { CombinedUserRecord, UserRecord } from "../../FirestoreStore";
 const incarcerationStaffTestFixtures: Array<IncarcerationStaffRecord> = [
   makeRecordFixture(incarcerationStaffRecordSchema, {
     email: "test-officer-1@example.com",
-    id: "INCARCERATION_OFFICER1",
+    staffExternalId: "INCARCERATION_OFFICER1",
     stateCode: "US_XX",
     givenNames: "TestIncarcerationOfficer1",
     surname: "",
@@ -72,14 +72,14 @@ export const mockResidents: WorkflowsResidentRecord[] = [
 
 export const mockLocations: LocationRecord[] = [
   {
-    id: "FAC1",
+    locationId: "FAC1",
     stateCode: "US_MO",
     idType: "facilityId",
     name: "Facility 1",
     system: "INCARCERATION",
   },
   {
-    id: "FAC2",
+    locationId: "FAC2",
     stateCode: "US_MO",
     idType: "facilityId",
     name: "Facility 2",
@@ -93,7 +93,7 @@ const supervisionStaffTestFixtures = [
   {
     email: "test-officer-1@example.com",
     district: "DISTRICT 1",
-    id: "XX_OFFICER1",
+    staffExternalId: "XX_OFFICER1",
     stateCode: "US_XX",
     givenNames: "TestOfficer",
     surname: "AlphabeticallySecond",
@@ -103,7 +103,7 @@ const supervisionStaffTestFixtures = [
   {
     email: "test-officer-1@example.com",
     district: "DISTRICT 1",
-    id: "XX_OFFICER2",
+    staffExternalId: "XX_OFFICER2",
     stateCode: "US_XX",
     givenNames: "TestOfficer",
     surname: "AlphabeticallyFirst",
@@ -179,7 +179,7 @@ export const mockClients = [
 export const mockSupervisor: CombinedUserRecord = {
   info: {
     email: "test-supervisor@example.com",
-    id: "XX_SUPERVISOR1",
+    staffExternalId: "XX_SUPERVISOR1",
     stateCode: "US_XX",
     givenNames: "TestSupervisorWithStaff",
     surname: "",

@@ -207,7 +207,7 @@ async function waitForHydration({
     // these subs will not be null because we called hydrate() above!
     workflowsStore.userUpdatesSubscription!.data = {
       ...updates,
-      selectedSearchIds: [mockOfficer.info.id],
+      selectedSearchIds: [mockOfficer.info.staffExternalId],
     } as UserUpdateRecord;
     workflowsStore.userUpdatesSubscription!.hydrationState = {
       status: "hydrated",
@@ -451,26 +451,29 @@ const populateSupervisedStaff = () => {
     workflowsStore.supervisionStaffSubscription.data = [
       // two officers supervised by mockSupervisor, one supervised by someone else
       {
-        id: "XX_SUPERVISED_OFFICER1",
+        staffExternalId: "XX_SUPERVISED_OFFICER1",
         stateCode: "US_XX",
         givenNames: "TestSupervisedOfficer1",
         surname: "AlphabeticallySecond",
-        supervisorExternalId: mockSupervisor.info.id,
+        supervisorExternalId: mockSupervisor.info.staffExternalId,
         pseudonymizedId: "p001",
         recordType: "supervisionStaff",
       },
       {
-        id: "XX_SUPERVISED_OFFICER2",
+        staffExternalId: "XX_SUPERVISED_OFFICER2",
         stateCode: "US_XX",
         givenNames: "TestSupervisedOfficer2",
         surname: "AlphabeticallyFirst",
         supervisorExternalId: "XX_SUPERVISOR_OTHER",
-        supervisorExternalIds: ["XX_SUPERVISOR_OTHER", mockSupervisor.info.id],
+        supervisorExternalIds: [
+          "XX_SUPERVISOR_OTHER",
+          mockSupervisor.info.staffExternalId,
+        ],
         pseudonymizedId: "p002",
         recordType: "supervisionStaff",
       },
       {
-        id: "XX_SUPERVISED_OFFICER3",
+        staffExternalId: "XX_SUPERVISED_OFFICER3",
         stateCode: "US_XX",
         givenNames: "TestSupervisedOfficer3",
         surname: "SupervisedBySomeoneElse",
@@ -496,8 +499,12 @@ test("staffSupervisedByCurrentUser provides a list of users supervised by curren
   );
 
   expect(staffSupervisedByCurrentUser).toBeArrayOfSize(2);
-  expect(staffSupervisorExternalIds[0]).toContain(mockSupervisor.info.id);
-  expect(staffSupervisorExternalIds[1]).toContain(mockSupervisor.info.id);
+  expect(staffSupervisorExternalIds[0]).toContain(
+    mockSupervisor.info.staffExternalId,
+  );
+  expect(staffSupervisorExternalIds[1]).toContain(
+    mockSupervisor.info.staffExternalId,
+  );
 });
 
 describe("staffSubscription", () => {
@@ -1494,14 +1501,14 @@ describe("searchStaff", () => {
     // exact-id match should rank first due to the higher id weight.
     const results = workflowsStore.searchStaff("XX_OFFICER1");
     expect(results.length).toBeGreaterThanOrEqual(1);
-    expect(results[0].id).toBe("XX_OFFICER1");
+    expect(results[0].staffExternalId).toBe("XX_OFFICER1");
   });
 
   it("matches by surname and ranks the exact-surname officer first", () => {
     // Officer 2 has surname "AlphabeticallyFirst"; officer 1 has "AlphabeticallySecond"
     const results = workflowsStore.searchStaff("AlphabeticallyFirst");
     expect(results.length).toBeGreaterThanOrEqual(1);
-    expect(results[0].id).toBe("XX_OFFICER2");
+    expect(results[0].staffExternalId).toBe("XX_OFFICER2");
   });
 
   it("matches all officers that share the same givenNames", () => {

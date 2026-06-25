@@ -123,7 +123,7 @@ describe("StaffSubscription tests", () => {
           user: {
             info: {
               district: "TEST_USER_DISTRICT",
-              id: "2222",
+              staffExternalId: "2222",
             },
           },
         },
@@ -280,7 +280,7 @@ describe("StaffSubscription tests", () => {
 
     describe("hasCaseload filtering", () => {
       const baseStaffRecord = {
-        id: "OFFICER1",
+        staffExternalId: "OFFICER1",
         stateCode: "US_TN",
         givenNames: "Test",
         surname: "Officer",
@@ -296,7 +296,7 @@ describe("StaffSubscription tests", () => {
         sub.subscribe();
         mockReceive([{ ...baseStaffRecord, hasCaseload: true }]);
         expect(sub.data).toHaveLength(1);
-        expect(sub.data[0]).toMatchObject({ id: "OFFICER1" });
+        expect(sub.data[0]).toMatchObject({ staffExternalId: "OFFICER1" });
       });
 
       // hasCaseload is optional in the schema; absent hasCaseload passes through unchanged
@@ -305,7 +305,7 @@ describe("StaffSubscription tests", () => {
         sub.subscribe();
         mockReceive([{ ...baseStaffRecord }]);
         expect(sub.data).toHaveLength(1);
-        expect(sub.data[0]).toMatchObject({ id: "OFFICER1" });
+        expect(sub.data[0]).toMatchObject({ staffExternalId: "OFFICER1" });
       });
 
       test("staff with hasCaseload: false is excluded", () => {

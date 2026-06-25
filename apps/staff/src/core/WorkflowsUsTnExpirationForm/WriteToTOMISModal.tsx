@@ -138,7 +138,8 @@ export function createContactNoteRequestBody(
   contactNoteObj: Record<number, string[]>,
   contactNoteDateTime: Date,
 ) {
-  const staffId = opportunity.rootStore.workflowsStore.user?.info.id;
+  const staffId =
+    opportunity.rootStore.workflowsStore.user?.info.staffExternalId;
   const votersRightsCode = opportunity.form.formData.contactTypes
     ?.split(", ")
     .filter((code) => code !== "TEPE");

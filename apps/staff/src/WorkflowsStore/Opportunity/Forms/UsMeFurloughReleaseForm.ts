@@ -49,7 +49,7 @@ export class UsMeFurloughReleaseForm extends FormBase<
       );
       const caseManagerRecord =
         this.rootStore.workflowsStore.availableOfficers.find(
-          (r) => r.id === this.person.assignedStaffId,
+          (r) => r.staffExternalId === this.person.assignedStaffId,
         );
       const caseManager = `${caseManagerRecord?.givenNames} ${caseManagerRecord?.surname}`;
 

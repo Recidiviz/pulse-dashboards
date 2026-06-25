@@ -32,7 +32,11 @@ vi.mock("react-router-dom", async () => ({
 
 vi.mock("react-hot-toast", () => ({ default: mockToast }));
 
-const mockOfficer = { id: "officer1", surname: "Smith", givenNames: "John" };
+const mockOfficer = {
+  staffExternalId: "officer1",
+  surname: "Smith",
+  givenNames: "John",
+};
 
 vi.mock("../../PersonLookup/StaffLookup", () => ({
   StaffLookup: ({
@@ -170,7 +174,7 @@ describe("ForwardButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "Forward" }));
     expect(opportunity.setOfficerAction).toHaveBeenCalledWith({
       type: "APPROVAL",
-      reviewerId: mockOfficer.id,
+      reviewerId: mockOfficer.staffExternalId,
     });
   });
 

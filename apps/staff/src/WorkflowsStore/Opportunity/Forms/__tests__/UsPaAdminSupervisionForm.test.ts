@@ -79,7 +79,11 @@ function createTestUnit() {
     "availableOfficers",
     "get",
   ).mockImplementation(() => [
-    { givenNames: "John", surname: "Doe", id: "OFFICER1" } as StaffRecord,
+    {
+      givenNames: "John",
+      surname: "Doe",
+      staffExternalId: "OFFICER1",
+    } as StaffRecord,
   ]);
   form = opp.form;
 }

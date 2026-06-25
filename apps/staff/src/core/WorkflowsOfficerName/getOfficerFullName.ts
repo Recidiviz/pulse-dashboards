@@ -26,7 +26,9 @@ export function getOfficerFullName(
   searchType: SearchType | undefined,
 ): string | undefined {
   const officer = availableOfficers.find((o) => {
-    return officerId ? o.id === officerId : o.email === officerEmail;
+    return officerId
+      ? o.staffExternalId === officerId
+      : o.email === officerEmail;
   });
 
   let officerFullName: string | undefined;

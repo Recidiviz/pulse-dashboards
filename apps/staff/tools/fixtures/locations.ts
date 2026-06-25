@@ -21,5 +21,5 @@ import { FirestoreFixture } from "./utils";
 
 export const locationsData: FirestoreFixture<LocationRecord> = {
   data: locationRecordFixtures,
-  idFunc: (r) => r.id,
+  idFunc: (r) => r.locationId,
 };

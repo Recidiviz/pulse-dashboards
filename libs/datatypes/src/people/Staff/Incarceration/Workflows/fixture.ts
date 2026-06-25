@@ -26,7 +26,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   // US_AZ - ARIZONA
   {
     email: "az-officer-1@example.com",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_AZ",
     givenNames: "Solomon",
     surname: "Cordova",
@@ -34,7 +34,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   },
   {
     email: "az-officer-2@example.com",
-    id: "OFFICER2",
+    staffExternalId: "OFFICER2",
     stateCode: "US_AZ",
     givenNames: "Safa",
     surname: "Stevens",
@@ -42,7 +42,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   },
   {
     email: "az-officer-3@example.com",
-    id: "OFFICER3",
+    staffExternalId: "OFFICER3",
     stateCode: "US_AZ",
     givenNames: "Idris",
     surname: "Vang",
@@ -52,7 +52,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   // US_ME - MAINE
   {
     email: "test-officer-5@example.com",
-    id: "OFFICER5",
+    staffExternalId: "OFFICER5",
     stateCode: "US_ME",
     givenNames: "Mikolaj",
     surname: "Gomez",
@@ -61,7 +61,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   // US_MI - MICHIGAN
   {
     email: "test-officer-6@example.com",
-    id: "MIOFFICER1",
+    staffExternalId: "MIOFFICER1",
     stateCode: "US_MI",
     givenNames: "Mike",
     surname: "Martin",
@@ -70,7 +70,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   // US_UT - UTAH
   {
     email: "ut-officer-1@example.com",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_UT",
     givenNames: "Michael",
     surname: "Maxwell",
@@ -78,7 +78,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   },
   {
     email: "ut-officer-2@example.com",
-    id: "OFFICER2",
+    staffExternalId: "OFFICER2",
     stateCode: "US_UT",
     givenNames: "Riley",
     surname: "Goodman",

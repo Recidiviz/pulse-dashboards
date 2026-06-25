@@ -42,7 +42,7 @@ import {
 test("staffNameComparator", () => {
   const sortableStaff: StaffRecord[] = [
     {
-      id: "1",
+      staffExternalId: "1",
       recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
@@ -52,7 +52,7 @@ test("staffNameComparator", () => {
       pseudonymizedId: "p001",
     },
     {
-      id: "2",
+      staffExternalId: "2",
       recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
@@ -62,7 +62,7 @@ test("staffNameComparator", () => {
       pseudonymizedId: "p002",
     },
     {
-      id: "3",
+      staffExternalId: "3",
       recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
@@ -72,7 +72,7 @@ test("staffNameComparator", () => {
       pseudonymizedId: "p003",
     },
     {
-      id: "4",
+      staffExternalId: "4",
       recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
@@ -82,7 +82,7 @@ test("staffNameComparator", () => {
       pseudonymizedId: "p004",
     },
     {
-      id: "5",
+      staffExternalId: "5",
       recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
@@ -157,7 +157,7 @@ describe("usMiFilterByUserDistrict", () => {
     info: {
       email: "testEmail",
       givenNames: "testGivenNames",
-      id: "testId",
+      staffExternalId: "testId",
       stateCode: "US_MI",
       surname: "testSurname",
       recordType: "supervisionStaff",
@@ -242,7 +242,7 @@ describe("filterByUserDistrict", () => {
     info: {
       email: "testEmail",
       givenNames: "testGivenNames",
-      id: "testId",
+      staffExternalId: "testId",
       stateCode: "US_XX",
       surname: "testSurname",
       recordType: "supervisionStaff",
@@ -315,7 +315,7 @@ describe("usCaFilterByRoleSubtype", () => {
     info: {
       email: "testEmail",
       givenNames: "test",
-      id: "testId",
+      staffExternalId: "testId",
       stateCode: "US_XX",
       surname: "testSurname",
       recordType: "supervisionStaff" as const,

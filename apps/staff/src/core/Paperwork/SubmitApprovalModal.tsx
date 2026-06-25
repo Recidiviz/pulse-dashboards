@@ -87,7 +87,7 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
             }
             opportunity.setOfficerAction({
               type: "APPROVAL",
-              reviewerId: selectedStaff.id,
+              reviewerId: selectedStaff.staffExternalId,
             });
             toast(
               <OpportunityStatusUpdateToast

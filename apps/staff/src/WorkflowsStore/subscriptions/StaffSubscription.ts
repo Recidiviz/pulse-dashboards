@@ -66,8 +66,12 @@ export class StaffSubscription<
         const constraint = activeFeatureVariants.workflowsSupervisorSearch
           ? or(
               // allow user to also see staff they supervise outside of their district
-              where("supervisorExternalId", "==", user.info.id),
-              where("supervisorExternalIds", "array-contains", user.info.id),
+              where("supervisorExternalId", "==", user.info.staffExternalId),
+              where(
+                "supervisorExternalIds",
+                "array-contains",
+                user.info.staffExternalId,
+              ),
               staffFilterConstraint,
             )
           : staffFilterConstraint;

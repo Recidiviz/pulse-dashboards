@@ -97,7 +97,7 @@ export const usTnUserRecord: CombinedUserRecord = {
   info: {
     email: "test-officer@example.com",
     district: "DISTRICT 50",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_TN",
     givenNames: "Test",
     surname: "Officer1",

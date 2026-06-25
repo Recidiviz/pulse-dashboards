@@ -478,7 +478,7 @@ export class WorkflowsStore implements Hydratable {
 
     const fuse = new Fuse(this.availableOfficers, {
       keys: [
-        { name: "id", weight: 3 },
+        { name: "staffExternalId", weight: 3 },
         { name: "surname", weight: 1.8 },
         { name: "givenNames", weight: 1.5 },
       ],
@@ -866,9 +866,11 @@ export class WorkflowsStore implements Hydratable {
     const filteredOfficers = this.availableOfficers.filter(
       (officer) =>
         ("supervisorExternalId" in officer &&
-          officer.supervisorExternalId === this.user?.info.id) ||
+          officer.supervisorExternalId === this.user?.info.staffExternalId) ||
         ("supervisorExternalIds" in officer &&
-          officer.supervisorExternalIds?.includes(this.user?.info.id)),
+          officer.supervisorExternalIds?.includes(
+            this.user?.info.staffExternalId,
+          )),
     );
     return filteredOfficers.sort(staffNameComparator);
   }

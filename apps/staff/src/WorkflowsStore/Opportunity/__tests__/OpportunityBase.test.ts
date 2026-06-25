@@ -101,7 +101,7 @@ function createTestUnit() {
       stateCode: ineligibleClientRecord.stateCode,
       email: "test@email.gov",
       givenNames: "",
-      id: "abc123",
+      staffExternalId: "abc123",
       surname: "",
       recordType: "supervisionStaff",
       pseudonymizedId: "p123",
@@ -132,7 +132,7 @@ function createTestUnit() {
   client = new Client(
     {
       ...ineligibleClientRecord,
-      officerId: mockSupervisionOfficers[0].id,
+      officerId: mockSupervisionOfficers[0].staffExternalId,
       district: "DISTRICT1",
       // Clients don't have crcFacilities, but adding them here to test analytics logic for array searchFields
       // @ts-ignore
@@ -637,7 +637,7 @@ describe("tracking", () => {
       mockSupervisionOfficers;
     root.workflowsStore.updateActiveSystem("SUPERVISION");
     root.workflowsStore.searchStore = {
-      selectedSearchIds: [mockSupervisionOfficers[0].id],
+      selectedSearchIds: [mockSupervisionOfficers[0].staffExternalId],
     } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
@@ -692,7 +692,10 @@ describe("tracking", () => {
     root.workflowsStore.updateActiveSystem("SUPERVISION");
     // Both location and officer search are used
     root.workflowsStore.searchStore = {
-      selectedSearchIds: ["DISTRICT1", mockSupervisionOfficers[0].id],
+      selectedSearchIds: [
+        "DISTRICT1",
+        mockSupervisionOfficers[0].staffExternalId,
+      ],
     } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
@@ -730,7 +733,10 @@ describe("tracking", () => {
     root.workflowsStore.updateActiveSystem("SUPERVISION");
     // Both location and officer search are used
     root.workflowsStore.searchStore = {
-      selectedSearchIds: ["CRC LRC", mockSupervisionOfficers[0].id],
+      selectedSearchIds: [
+        "CRC LRC",
+        mockSupervisionOfficers[0].staffExternalId,
+      ],
     } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
@@ -773,7 +779,10 @@ describe("tracking", () => {
     root.workflowsStore.updateActiveSystem("SUPERVISION");
     // Both location and officer search are used
     root.workflowsStore.searchStore = {
-      selectedSearchIds: ["LRC CRC", mockSupervisionOfficers[0].id],
+      selectedSearchIds: [
+        "LRC CRC",
+        mockSupervisionOfficers[0].staffExternalId,
+      ],
     } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [

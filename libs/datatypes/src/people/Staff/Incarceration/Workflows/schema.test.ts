@@ -19,7 +19,7 @@ import { incarcerationStaffFixtures } from "./fixture";
 import { incarcerationStaffRecordSchema } from "./schema";
 
 test.each(incarcerationStaffFixtures.map((f) => f.input))(
-  "incarceration staff schema for $stateCode $id",
+  "incarceration staff schema for $stateCode $staffExternalId",
   (input) => {
     expect(incarcerationStaffRecordSchema.parse(input)).toMatchSnapshot();
   },
@@ -30,7 +30,7 @@ test.each([{ type: "incarceration", schema: incarcerationStaffRecordSchema }])(
   ({ type, schema }) => {
     expect(
       schema.parse({
-        id: "test123",
+        staffExternalId: "test123",
         stateCode: "US_XX",
         givenNames: "Test",
         surname: "Person",

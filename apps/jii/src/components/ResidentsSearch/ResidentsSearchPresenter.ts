@@ -70,11 +70,11 @@ export class ResidentsSearchPresenter implements Hydratable {
     const { limitDistrictSearchOptions } = this.residentsStore.config;
 
     if (limitDistrictSearchOptions && district) {
-      facilities = facilities.filter((f) => f.id === district);
+      facilities = facilities.filter((f) => f.locationId === district);
     }
 
     return facilities.map((facility) => ({
-      value: facility.id,
+      value: facility.locationId,
       label: facility.name,
     }));
   }

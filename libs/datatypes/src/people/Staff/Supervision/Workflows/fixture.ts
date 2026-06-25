@@ -26,7 +26,7 @@ export const usIdSupervisionStaffFixtures: Array<
   {
     email: "test-officer-4@example.com",
     district: "DISTRICT 1",
-    id: "OFFICER4",
+    staffExternalId: "OFFICER4",
     stateCode: "US_ID",
     givenNames: "Walter",
     surname: "Harris",
@@ -44,7 +44,7 @@ export const usIdSupervisionStaffFixtures: Array<
   {
     email: "test-officer-6@example.com",
     district: "DISTRICT 1",
-    id: "OFFICER6",
+    staffExternalId: "OFFICER6",
     stateCode: "US_ID",
     givenNames: "Hank",
     surname: "Schroeder",
@@ -63,7 +63,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "test-officer-1@example.com",
     district: "DISTRICT 1",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_CA",
     givenNames: "Maia",
     surname: "Douglas",
@@ -74,7 +74,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_IA - IOWA
   {
     email: "test-officer-1@example.com",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_IA",
     givenNames: "Anne",
     surname: "Teak",
@@ -88,7 +88,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_ME - MAINE
   {
     email: "test-officer-8@example.com",
-    id: "OFFICER8",
+    staffExternalId: "OFFICER8",
     stateCode: "US_ME",
     givenNames: "Brittney",
     surname: "Chapman",
@@ -99,7 +99,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_MI - MICHIGAN
   {
     email: "test-officer-8@example.com",
-    id: "OFFICER8",
+    staffExternalId: "OFFICER8",
     stateCode: "US_MI",
     givenNames: "Antonia",
     surname: "Bonilla",
@@ -110,7 +110,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_NC - NORTH CAROLINA
   {
     email: null,
-    id: "NCOFFICER1",
+    staffExternalId: "NCOFFICER1",
     stateCode: "US_NC",
     givenNames: "Nathalie",
     surname: "Giles",
@@ -122,7 +122,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "test-officer-3@example.com",
     district: "DISTRICT 1",
-    id: "OFFICER3",
+    staffExternalId: "OFFICER3",
     stateCode: "US_ND",
     givenNames: "Sumaiya",
     surname: "Osborne",
@@ -134,7 +134,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "test-officer-ne@example.com",
     district: "DISTRICT 1",
-    id: "NEOFFICER1",
+    staffExternalId: "NEOFFICER1",
     stateCode: "US_NE",
     givenNames: "Sarah",
     surname: "Mitchell",
@@ -145,7 +145,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_OR - OREGON
   {
     email: null,
-    id: "271828",
+    staffExternalId: "271828",
     stateCode: "US_OR",
     givenNames: "271828",
     surname: "271828",
@@ -154,7 +154,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   },
   {
     email: null,
-    id: "314159",
+    staffExternalId: "314159",
     stateCode: "US_OR",
     givenNames: "314159",
     surname: "314159",
@@ -165,7 +165,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_PA - PENNSYLVANIA
   {
     email: "test-officer@example.com",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_PA",
     givenNames: "Dana",
     surname: "Pruitt",
@@ -174,7 +174,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   },
   {
     email: "test-officer@example.com",
-    id: "OFFICER2",
+    staffExternalId: "OFFICER2",
     stateCode: "US_PA",
     givenNames: "Katelyn",
     surname: "Frederick",
@@ -186,7 +186,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "test-officer@example.com",
     district: "Unit 1",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_TN",
     givenNames: "Shayla",
     surname: "Rice",
@@ -198,7 +198,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "tx-test-officer@example.com",
     district: "DISTRICT 1",
-    id: "OFFICER1",
+    staffExternalId: "OFFICER1",
     stateCode: "US_TX",
     givenNames: "Link",
     surname: "Linkus",
@@ -212,7 +212,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "tx-test-officer-2@example.com",
     district: "DISTRICT 42",
-    id: "OFFICER2",
+    staffExternalId: "OFFICER2",
     stateCode: "US_TX",
     givenNames: "Arthur",
     surname: "Jones",
@@ -226,7 +226,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "tx-test-officer-3@example.com",
     district: "DISTRICT 23",
-    id: "OFFICER3",
+    staffExternalId: "OFFICER3",
     stateCode: "US_TX",
     givenNames: "Amanda",
     surname: "Garcia",
@@ -240,7 +240,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "tx-test-officer-4@example.com",
     district: "DISTRICT 81",
-    id: "OFFICER4",
+    staffExternalId: "OFFICER4",
     stateCode: "US_TX",
     givenNames: "Stephanie",
     surname: "Smith",
@@ -254,7 +254,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   {
     email: "tx-test-officer-5@example.com",
     district: "DISTRICT 42",
-    id: "OFFICER5",
+    staffExternalId: "OFFICER5",
     stateCode: "US_TX",
     givenNames: "Christopher",
     surname: "Johnson",
@@ -269,7 +269,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_UT - UTAH
   {
     email: null,
-    id: "UTOFFICER1",
+    staffExternalId: "UTOFFICER1",
     stateCode: "US_UT",
     givenNames: "Sunny",
     surname: "Campana",

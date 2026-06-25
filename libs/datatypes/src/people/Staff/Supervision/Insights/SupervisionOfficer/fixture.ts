@@ -22,7 +22,7 @@ import { RawSupervisionOfficer, supervisionOfficerSchema } from "./schema";
 
 export const rawSupervisionOfficerFixture = [
   {
-    externalId: usIdSupervisionStaffFixtures[0].id,
+    externalId: usIdSupervisionStaffFixtures[0].staffExternalId,
     pseudonymizedId: "hashed-so1",
     fullName: {
       givenNames: usIdSupervisionStaffFixtures[0].givenNames,

@@ -31,6 +31,6 @@ export class Location implements Searchable {
   }
 
   get searchId(): string {
-    return this.record.id;
+    return this.record.locationId;
   }
 }

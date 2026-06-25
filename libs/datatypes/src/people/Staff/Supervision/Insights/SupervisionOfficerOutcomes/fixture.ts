@@ -30,7 +30,7 @@ import {
 export const rawSupervisionOfficerOutcomesFixture: RawSupervisionOfficerOutcomes[] =
   [
     {
-      externalId: usIdSupervisionStaffFixtures[0].id,
+      externalId: usIdSupervisionStaffFixtures[0].staffExternalId,
       pseudonymizedId: "hashed-so1",
       caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
       outlierMetrics: [

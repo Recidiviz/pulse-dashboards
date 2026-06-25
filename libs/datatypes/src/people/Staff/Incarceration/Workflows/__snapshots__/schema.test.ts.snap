@@ -4,9 +4,9 @@ exports[`incarceration staff schema for 'US_AZ' 'OFFICER1' 1`] = `
 {
   "email": "az-officer-1@example.com",
   "givenNames": "Solomon",
-  "id": "OFFICER1",
   "pseudonymizedId": "p001",
   "recordType": "incarcerationStaff",
+  "staffExternalId": "OFFICER1",
   "stateCode": "US_AZ",
   "surname": "Cordova",
 }
@@ -16,9 +16,9 @@ exports[`incarceration staff schema for 'US_AZ' 'OFFICER2' 1`] = `
 {
   "email": "az-officer-2@example.com",
   "givenNames": "Safa",
-  "id": "OFFICER2",
   "pseudonymizedId": "p002",
   "recordType": "incarcerationStaff",
+  "staffExternalId": "OFFICER2",
   "stateCode": "US_AZ",
   "surname": "Stevens",
 }
@@ -28,9 +28,9 @@ exports[`incarceration staff schema for 'US_AZ' 'OFFICER3' 1`] = `
 {
   "email": "az-officer-3@example.com",
   "givenNames": "Idris",
-  "id": "OFFICER3",
   "pseudonymizedId": "p003",
   "recordType": "incarcerationStaff",
+  "staffExternalId": "OFFICER3",
   "stateCode": "US_AZ",
   "surname": "Vang",
 }
@@ -40,9 +40,9 @@ exports[`incarceration staff schema for 'US_ME' 'OFFICER5' 1`] = `
 {
   "email": "test-officer-5@example.com",
   "givenNames": "Mikolaj",
-  "id": "OFFICER5",
   "pseudonymizedId": "p005",
   "recordType": "incarcerationStaff",
+  "staffExternalId": "OFFICER5",
   "stateCode": "US_ME",
   "surname": "Gomez",
 }
@@ -52,9 +52,9 @@ exports[`incarceration staff schema for 'US_MI' 'MIOFFICER1' 1`] = `
 {
   "email": "test-officer-6@example.com",
   "givenNames": "Mike",
-  "id": "MIOFFICER1",
   "pseudonymizedId": "mi001",
   "recordType": "incarcerationStaff",
+  "staffExternalId": "MIOFFICER1",
   "stateCode": "US_MI",
   "surname": "Martin",
 }
@@ -64,9 +64,9 @@ exports[`incarceration staff schema for 'US_UT' 'OFFICER1' 1`] = `
 {
   "email": "ut-officer-1@example.com",
   "givenNames": "Michael",
-  "id": "OFFICER1",
   "pseudonymizedId": "anon_officer1",
   "recordType": "incarcerationStaff",
+  "staffExternalId": "OFFICER1",
   "stateCode": "US_UT",
   "surname": "Maxwell",
 }
@@ -76,9 +76,9 @@ exports[`incarceration staff schema for 'US_UT' 'OFFICER2' 1`] = `
 {
   "email": "ut-officer-2@example.com",
   "givenNames": "Riley",
-  "id": "OFFICER2",
   "pseudonymizedId": "anon_officer2",
   "recordType": "incarcerationStaff",
+  "staffExternalId": "OFFICER2",
   "stateCode": "US_UT",
   "surname": "Goodman",
 }

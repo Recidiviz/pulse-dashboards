@@ -107,7 +107,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     workflowsStore: { user },
   } = useRootStore();
 
-  const staffId = user?.info?.id ?? "";
+  const staffId = user?.info?.staffExternalId ?? "";
 
   const [phase, setPhase] = useState<"REVIEWING" | "SUBMITTING" | "FAILED">(
     "REVIEWING",

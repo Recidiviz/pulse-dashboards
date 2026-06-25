@@ -56,7 +56,7 @@ beforeEach(() => {
     "get",
   ).mockReturnValue([
     {
-      id: "OFFICER1",
+      staffExternalId: "OFFICER1",
       givenNames: "FirstName",
       surname: "LastName",
     } as StaffRecord,
@@ -148,7 +148,7 @@ describe("opportunities", () => {
         "get",
       ).mockReturnValue([
         {
-          id: "OFFICER1",
+          staffExternalId: "OFFICER1",
           givenNames: "FirstName",
         } as StaffRecord,
       ]);
@@ -163,7 +163,7 @@ describe("opportunities", () => {
         "get",
       ).mockReturnValue([
         {
-          id: "OFFICER1",
+          staffExternalId: "OFFICER1",
           surname: "LastName",
         } as unknown as StaffRecord,
       ]);
@@ -178,7 +178,7 @@ describe("opportunities", () => {
         "get",
       ).mockReturnValue([
         {
-          id: "OFFICER2",
+          staffExternalId: "OFFICER2",
           givenNames: "a first name",
           surname: "a last name",
         } as unknown as StaffRecord,
