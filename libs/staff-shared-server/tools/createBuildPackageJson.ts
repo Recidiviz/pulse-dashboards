@@ -47,6 +47,7 @@ packageTemplate.dependencies = {
   // these are used by the application but esbuild just doesn't pick up on them for some reason
   express: repoPackageContents.dependencies.express,
   "path-to-regexp": repoPackageContents.dependencies["path-to-regexp"],
+  typesense: repoPackageContents.dependencies.typesense,
 };
 
 await fs.writeFile(
