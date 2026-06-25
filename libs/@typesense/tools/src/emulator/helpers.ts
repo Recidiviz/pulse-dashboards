@@ -24,10 +24,10 @@
  *   - collections are seeded sequentially to keep log output ordered
  */
 
-import { DocumentData, Firestore } from "@google-cloud/firestore";
+import { Firestore } from "@google-cloud/firestore";
 import type { Client as TypesenseClient } from "typesense";
 
-import { COLLECTIONS_WITH_SOURCE_ID, schemas } from "~@typesense/client";
+import { schemas } from "~@typesense/client";
 
 const FIRESTORE_EMULATOR_HOST =
   process.env["FIRESTORE_EMULATOR_HOST"] ?? "localhost:8080";
@@ -91,24 +91,6 @@ export async function dropAndCreateCollection(
   await typesense.collections().create(schema);
 }
 
-// Returns the id to use when writing a doc to Typesense. For collections in
-// COLLECTIONS_WITH_SOURCE_ID (staff, locations) we use the record's own `id`
-// field so cross-collection references like `client.officerId → staff.id`
-// resolve directly; for everything else we use the composite Firestore doc id.
-export function resolveTypesenseId(
-  collectionName: string,
-  data: DocumentData,
-  firestoreDocId: string,
-): string {
-  if (
-    COLLECTIONS_WITH_SOURCE_ID.has(collectionName) &&
-    typeof data["id"] === "string"
-  ) {
-    return data["id"];
-  }
-  return firestoreDocId;
-}
-
 // Typesense v1.x returns newline-separated JSON results from import().
 // Newer versions may return an already-parsed array. Normalize to string[].
 export function normalizeImportResult(result: unknown): string[] {
@@ -125,10 +107,7 @@ export async function importCollection(
   const snapshot = await db.collection(collectionName).get();
   if (snapshot.empty) return 0;
 
-  const docs = snapshot.docs.map((d) => {
-    const data = d.data();
-    return { ...data, id: resolveTypesenseId(collectionName, data, d.id) };
-  });
+  const docs = snapshot.docs.map((d) => ({ ...d.data(), id: d.id }));
 
   let imported = 0;
   for (let i = 0; i < docs.length; i += IMPORT_CHUNK_SIZE) {

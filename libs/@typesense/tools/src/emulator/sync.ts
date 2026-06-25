@@ -35,7 +35,6 @@ import {
   createLocalFirestoreClient,
   dropAndCreateCollection,
   importCollection,
-  resolveTypesenseId,
   waitForFirestoreEmulator,
   waitForTypesense,
 } from "./helpers";
@@ -60,7 +59,7 @@ function subscribeToCollection(
 
       for (const change of snapshot.docChanges()) {
         const data = change.doc.data();
-        const id = resolveTypesenseId(collectionName, data, change.doc.id);
+        const id = change.doc.id;
 
         if (change.type === "removed") {
           typesense

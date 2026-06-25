@@ -15,7 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { CollectionFieldSchema } from "typesense/lib/Typesense/Collection";
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
+
+const staffCommonFields = [
+  { name: "stateCode", type: "string", facet: true },
+  { name: "staffExternalId", type: "string" },
+  { name: "pseudonymizedId", type: "string" },
+  { name: "email", type: "string", optional: true, infix: true },
+  { name: "givenNames", type: "string", sort: true, infix: true },
+  { name: "surname", type: "string", sort: true, infix: true },
+] as CollectionFieldSchema[];
 
 export const schemas: CollectionCreateSchema[] = [
   {
@@ -31,8 +41,18 @@ export const schemas: CollectionCreateSchema[] = [
       { name: "pseudonymizedId", type: "string" },
       { name: "personExternalId", type: "string" },
       { name: "officerId", type: "string", facet: true },
-      { name: "personName.givenNames", type: "string", optional: true },
-      { name: "personName.surname", type: "string", optional: true },
+      {
+        name: "personName.givenNames",
+        type: "string",
+        optional: true,
+        infix: true,
+      },
+      {
+        name: "personName.surname",
+        type: "string",
+        optional: true,
+        infix: true,
+      },
       { name: "district", type: "string", optional: true, facet: true },
     ],
   },
@@ -49,8 +69,18 @@ export const schemas: CollectionCreateSchema[] = [
       { name: "pseudonymizedId", type: "string" },
       { name: "personExternalId", type: "string" },
       { name: "officerId", type: "string", optional: true, facet: true },
-      { name: "personName.givenNames", type: "string", optional: true },
-      { name: "personName.surname", type: "string", optional: true },
+      {
+        name: "personName.givenNames",
+        type: "string",
+        optional: true,
+        infix: true,
+      },
+      {
+        name: "personName.surname",
+        type: "string",
+        optional: true,
+        infix: true,
+      },
       { name: "facilityId", type: "string", optional: true, facet: true },
       { name: "facilityUnitId", type: "string", optional: true, facet: true },
       // Used by US_ID tenant config (searchField: ["metadata", "crcFacilities"])
@@ -62,6 +92,7 @@ export const schemas: CollectionCreateSchema[] = [
         type: "string[]",
         optional: true,
         facet: true,
+        infix: true,
       },
     ],
   },
@@ -69,7 +100,7 @@ export const schemas: CollectionCreateSchema[] = [
     name: "supervisionStaff",
     enable_nested_fields: true,
     fields: [
-      { name: "stateCode", type: "string", facet: true },
+      ...staffCommonFields,
       { name: "district", type: "string", facet: true, optional: true },
       {
         name: "supervisorExternalId",
@@ -77,29 +108,21 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
         optional: true,
       },
-      { name: "pseudonymizedId", type: "string" },
-      { name: "email", type: "string", optional: true },
-      { name: "givenNames", type: "string", sort: true },
-      { name: "surname", type: "string", sort: true },
     ],
   },
   {
     name: "incarcerationStaff",
     enable_nested_fields: true,
-    fields: [
-      { name: "stateCode", type: "string", facet: true },
-      { name: "pseudonymizedId", type: "string" },
-      { name: "email", type: "string", optional: true },
-      { name: "givenNames", type: "string", sort: true },
-      { name: "surname", type: "string", sort: true },
-    ],
+    fields: staffCommonFields,
   },
   {
     name: "locations",
     enable_nested_fields: true,
     fields: [
+      { name: "locationId", type: "string" },
+      { name: "idType", type: "string", facet: true },
       { name: "stateCode", type: "string", facet: true },
-      { name: "name", type: "string", sort: true },
+      { name: "name", type: "string", sort: true, infix: true },
     ],
   },
   {
@@ -111,18 +134,5 @@ export const schemas: CollectionCreateSchema[] = [
     ],
   },
 ];
-
-// Collections whose Typesense `id` should come from the source record's own
-// `id` field (e.g. staff `OFFICER4`, location `FAC1`) rather than the
-// composite Firestore document id (e.g. `us_id_OFFICER4`). For these, the
-// non-composite id lets queries match cross-collection references like
-// `client.officerId → staff.id` directly. Person collections keep the
-// composite Firestore doc id as their Typesense id and expose
-// `personExternalId` as a separately searchable field instead.
-export const COLLECTIONS_WITH_SOURCE_ID = new Set<string>([
-  "supervisionStaff",
-  "incarcerationStaff",
-  "locations",
-]);
 
 export const collectionNames = schemas.map((s) => s.name);

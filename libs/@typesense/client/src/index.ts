@@ -20,11 +20,7 @@ export {
   createTypesenseClient,
   type TypesenseClientConfig,
 } from "./client";
-export {
-  collectionNames,
-  COLLECTIONS_WITH_SOURCE_ID,
-  schemas,
-} from "./schemas";
+export { collectionNames, schemas } from "./schemas";
 export {
   type BaseScope,
   compileUserScopePredicate,
