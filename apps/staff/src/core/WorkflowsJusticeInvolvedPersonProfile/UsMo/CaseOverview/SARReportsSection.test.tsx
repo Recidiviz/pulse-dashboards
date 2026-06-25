@@ -97,23 +97,19 @@ describe("SARReportsSection", () => {
     expect(onDownload).toHaveBeenCalledWith(archivedSAR);
   });
 
-  test("renders one row per non-archived status with 'Go to SAR Builder' links", () => {
+  test("renders a 'Go to SAR Builder' link for each in-progress (not archived, not Complete) status", () => {
     const sars: SARsByClient = [
       makeSAR({ id: "s-not-yet", status: "NotYetStarted" }),
       makeSAR({ id: "s-in-progress", status: "InProgress" }),
-      // `Complete` without completionDate (or with a future completionDate)
-      // is treated as not archived; exercise that branch too.
-      makeSAR({ id: "s-complete", status: "Complete", completionDate: null }),
     ];
 
     renderSection(sars);
 
     expect(screen.getByText("SAR - Not yet started")).toBeInTheDocument();
     expect(screen.getByText("SAR - In Progress")).toBeInTheDocument();
-    expect(screen.getByText("SAR - Complete")).toBeInTheDocument();
 
     const links = screen.getAllByRole("link", { name: "Go to SAR Builder" });
-    expect(links).toHaveLength(3);
+    expect(links).toHaveLength(2);
     // Each link points at the right (staff, sar) pair.
     expect(links[0]).toHaveAttribute(
       "href",
@@ -129,13 +125,24 @@ describe("SARReportsSection", () => {
         sarId: "s-in-progress",
       }),
     );
-    expect(links[2]).toHaveAttribute(
-      "href",
-      sarUrl("sarDetails", {
-        staffPseudoId: "staff-pseudo-1",
-        sarId: "s-complete",
-      }),
-    );
+  });
+
+  test("a Complete SAR shows Download Report even when not archived", () => {
+    // `Complete` without a past completionDate is not archived (label stays
+    // live), but a Complete SAR always offers Download rather than the builder.
+    const sars: SARsByClient = [
+      makeSAR({ id: "s-complete", status: "Complete", completionDate: null }),
+    ];
+
+    renderSection(sars);
+
+    expect(screen.getByText("SAR - Complete")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Download Report" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Go to SAR Builder" }),
+    ).not.toBeInTheDocument();
   });
 
   test("fires onBuilderLinkClick when a 'Go to SAR Builder' link is clicked", () => {
@@ -171,9 +178,10 @@ describe("SARReportsSection", () => {
     expect(container.querySelector("section")).not.toBeNull();
   });
 
-  test("treats a future completionDate as not archived", () => {
-    // completionDate is after NOW (2026-05-28), so the row should still show
-    // the live status + 'Go to SAR Builder', not the archived branch.
+  test("treats a future completionDate as not archived (label stays live)", () => {
+    // completionDate is after NOW (2026-05-28), so the row is not archived and
+    // keeps the live "SAR - Complete" label rather than "Completed <date>".
+    // Being Complete, its action is Download Report (Complete → Download).
     const futureSAR = makeSAR({
       id: "future-1",
       status: "Complete",
@@ -182,7 +190,7 @@ describe("SARReportsSection", () => {
     renderSection([futureSAR]);
     expect(screen.getByText("SAR - Complete")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Go to SAR Builder" }),
+      screen.getByRole("button", { name: "Download Report" }),
     ).toBeInTheDocument();
   });
 });

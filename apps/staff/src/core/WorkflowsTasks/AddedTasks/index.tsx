@@ -45,11 +45,12 @@ type AddedTasksProps = {
  *
  *   - `useLazyWithRetry` wraps the section import so a failed chunk fetch
  *     can be re-attempted after `resetError()`.
- *   - `<ErrorBoundary>` (Sentry-reporting) catches both chunk-load failures
- *     and the hydration-failure throw from `useThrowOnHydrationState` inside
- *     the section.
- *   - `<Suspense>` catches both the lazy fetch and the hydration-loading
- *     throw from the section; falls back to `<AddedTasksSkeleton>`.
+ *   - `<ErrorBoundary>` (Sentry-reporting) catches chunk-load failures from the
+ *     lazy import. (Hydration *failures* are handled inline by the section,
+ *     which renders `<AddedTasksError>` itself — see AddedTasksSection.)
+ *   - `<Suspense>` catches the lazy chunk fetch; falls back to
+ *     `<AddedTasksSkeleton>`. (Hydration loading is rendered as an inline
+ *     skeleton by the section itself, not thrown to Suspense.)
  *   - Each host supplies its heading/layout primitives via `renderShell`,
  *     which is re-invoked inside the fallback so the heading + body
  *     collapse together on failure.

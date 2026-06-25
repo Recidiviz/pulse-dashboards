@@ -132,7 +132,12 @@ describe("AddedTasksSection", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  test("suspends to the parent Suspense fallback when hydrationState is 'needs hydration'", () => {
+  test("renders the inline skeleton (not Suspense) while 'needs hydration'", () => {
+    // CustomTasks hydrates lazily via onBecomeObserved — reading the task
+    // getters kicks off hydration. We render an inline skeleton rather than
+    // throwing to Suspense so the observer stays mounted and keeps `data`
+    // observed; suspending here would tear the subscription down and ping-pong
+    // the state between "needs hydration" and "loading".
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "needs hydration" },
     });
@@ -142,10 +147,14 @@ describe("AddedTasksSection", () => {
         showCompleted={false}
       />,
     );
-    expect(screen.getByTestId("suspense")).toBeInTheDocument();
+    expect(screen.getByLabelText("Loading added tasks")).toBeInTheDocument();
+    expect(screen.queryByTestId("suspense")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /\+ add new task/i }),
+    ).not.toBeInTheDocument();
   });
 
-  test("suspends to the parent Suspense fallback when hydrationState is 'loading'", () => {
+  test("renders the inline skeleton (not Suspense) while 'loading'", () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "loading" },
     });
@@ -155,10 +164,11 @@ describe("AddedTasksSection", () => {
         showCompleted={false}
       />,
     );
-    expect(screen.getByTestId("suspense")).toBeInTheDocument();
+    expect(screen.getByLabelText("Loading added tasks")).toBeInTheDocument();
+    expect(screen.queryByTestId("suspense")).not.toBeInTheDocument();
   });
 
-  test("throws to the parent ErrorBoundary when hydrationState is 'failed'", () => {
+  test("renders the inline error UI when hydrationState is 'failed' (does not throw)", () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "failed", error: new Error("boom") },
     });
@@ -168,10 +178,28 @@ describe("AddedTasksSection", () => {
         showCompleted={false}
       />,
     );
-    expect(screen.getByRole("alert")).toHaveTextContent("caught");
+    // The section renders AddedTasksError inline rather than throwing to the
+    // boundary (which would show TinyBoundary's "caught").
+    expect(screen.getByText(/couldn.t load added tasks/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /retry/i })).toBeInTheDocument();
+    expect(screen.queryByText("caught")).not.toBeInTheDocument();
   });
 
-  test("resumes from Suspense once hydration completes", async () => {
+  test("Retry on the inline error calls customTasks.retry()", () => {
+    const customTasks = makeCustomTasksMock({
+      hydrationState: { status: "failed", error: new Error("boom") },
+    });
+    renderInBoundary(
+      <AddedTasksSection
+        person={makePerson(customTasks)}
+        showCompleted={false}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /retry/i }));
+    expect(customTasks.retry).toHaveBeenCalledTimes(1);
+  });
+
+  test("swaps the inline skeleton for the body once hydration completes", async () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "loading" },
     });
@@ -181,7 +209,7 @@ describe("AddedTasksSection", () => {
         showCompleted={false}
       />,
     );
-    expect(screen.getByTestId("suspense")).toBeInTheDocument();
+    expect(screen.getByLabelText("Loading added tasks")).toBeInTheDocument();
 
     runInAction(() => {
       customTasks.hydrationState = { status: "hydrated" };
@@ -192,6 +220,9 @@ describe("AddedTasksSection", () => {
         screen.getByRole("button", { name: /\+ add new task/i }),
       ).toBeInTheDocument(),
     );
+    expect(
+      screen.queryByLabelText("Loading added tasks"),
+    ).not.toBeInTheDocument();
   });
 
   test("renders an empty state and the add CTA when hydrated with no tasks", () => {
@@ -340,7 +371,7 @@ describe("AddedTasksSection", () => {
     );
   });
 
-  test("saving the form leaves the form open and reports on Firestore failure", async () => {
+  test("saving clears the form optimistically and still reports a Firestore failure", async () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "hydrated" },
       outstandingOrderedTasks: [],
@@ -374,8 +405,8 @@ describe("AddedTasksSection", () => {
       "save",
       expect.any(Error),
     );
-    // Form is still open so the user can retry without retyping.
-    expect(screen.getByLabelText("Added task form")).toBeInTheDocument();
+    // The form clears on save (optimistic close), even when the save fails.
+    expect(screen.queryByLabelText("Added task form")).not.toBeInTheDocument();
   });
 
   test("cancelling the form closes it without calling addCustomTask", () => {

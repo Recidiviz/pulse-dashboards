@@ -20,7 +20,7 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -157,6 +157,7 @@ const ClearButton = styled.button`
 export const PersonLookup = observer(function PersonLookup() {
   const { workflowsStore } = useRootStore();
   const navigate = useNavigate();
+  const { pathname, search } = useLocation();
   const [searchValue, setSearchValue] = useState("");
   const [results, setResults] = useState<JusticeInvolvedPerson[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -205,7 +206,9 @@ export const PersonLookup = observer(function PersonLookup() {
     setSearchValue("");
     setResults([]);
     setShowDropdown(false);
-    navigate(person.profileUrl);
+    navigate(person.profileUrl, {
+      state: { previousPage: `${pathname}${search}` },
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

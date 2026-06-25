@@ -37,10 +37,10 @@ const ACTIVE_ACTION_LABEL = "Go to SAR Builder";
  * `null` staff here in practice. */
 function builderHref(sar: SARByClient): string | undefined {
   if (!sar.staff) return undefined;
-  return sarUrl("sarDetails", {
+  return `${sarUrl("sarDetails", {
     staffPseudoId: sar.staff.pseudonymizedId,
     sarId: sar.id,
-  });
+  })}${window.location.search}`;
 }
 
 type SARReportActionProps = {
@@ -57,10 +57,11 @@ type SARReportActionProps = {
 /**
  * Per-row action for a single SAR on the US_MO Case Overview "Reports" section.
  *
- * - Archived SAR (`completionDate` in the past): a "Download Report" button that
- *   renders + saves the finished PDF in place (prefetched on hover/focus).
- * - Not-yet-archived SAR: a "Go to SAR Builder" link that navigates to the
- *   builder.
+ * - Archived (`completionDate` in the past) or Complete SAR: a "Download Report"
+ *   button that renders + saves the finished PDF in place (prefetched on
+ *   hover/focus).
+ * - In-progress SAR (not archived and not Complete): a "Go to SAR Builder" link
+ *   that navigates to the builder.
  *
  * The in-flight download lock (`isDownloading`) is **owned by this component**,
  * not the shared download hook, so each row disables only its own button. A
@@ -77,7 +78,10 @@ export function SARReportAction({
 }: SARReportActionProps): React.ReactElement {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  if (!isSARArchived(sar)) {
+  // The builder link is only for an in-progress SAR — neither archived
+  // (completionDate passed) nor marked Complete. Once it is archived or
+  // Complete, offer the Download Report action for the finished/locked report.
+  if (!isSARArchived(sar) && sar.status !== "Complete") {
     return (
       <RowActionLink
         href={builderHref(sar)}

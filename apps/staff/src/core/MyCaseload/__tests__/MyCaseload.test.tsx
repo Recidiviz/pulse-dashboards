@@ -32,6 +32,13 @@ vi.mock("../../CaseloadSelect", () => ({
   ),
 }));
 
+// PersonLookup reads deep search-store APIs (selectedSearchables / searchPersons)
+// and gates its own visibility; its behavior is covered against the real store
+// elsewhere, so stub it here to keep this suite focused on the page shell.
+vi.mock("../../PersonLookup", () => ({
+  PersonLookup: () => <div data-testid="person-lookup">Person lookup</div>,
+}));
+
 // Lets each test choose which hydrator branch renders. Defaults to hydrated.
 let hydratorBranch: "hydrated" | "loading" = "hydrated";
 vi.mock("../../TasksHydrator/TasksHydrator", () => ({
@@ -163,6 +170,13 @@ describe("MyCaseload (URL ↔ presenter sync)", () => {
         /Use this list of clients to plan your week and prepare for upcoming touchpoints\./,
       ),
     ).toBeInTheDocument();
+  });
+
+  it("renders the caseload selector and the client search bar in the header", () => {
+    setupStoreMock();
+    renderApp();
+    expect(screen.getByTestId("caseload-select")).toBeInTheDocument();
+    expect(screen.getByTestId("person-lookup")).toBeInTheDocument();
   });
 
   it("sets the presenter category from ?tab=overdue on mount", () => {

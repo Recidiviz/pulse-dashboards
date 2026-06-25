@@ -53,15 +53,17 @@ type AddedTasksErrorProps = {
 };
 
 /**
- * Inline error UI shown by the AddedTasks ErrorBoundary fallback. One Retry
- * handler covers both failure modes:
+ * Inline error UI with a Retry action. Used in two places, hence the optional
+ * `resetError`:
  *
- * - Hydration failure → `customTasks.retry()` re-attaches the Firestore
- *   listener (state flips to `"loading"` → the parent throws to Suspense).
- *   `resetError()` clears the boundary so the suspended child becomes visible.
- * - Chunk-load failure → `customTasks.retry()` is a no-op (subscription is
- *   already hydrated, or `customTasks` is undefined). `resetError()` triggers
- *   the container's lazy retry so the dynamic import is re-attempted.
+ * - Hydration failure → rendered inline by `AddedTasksSection` (no boundary).
+ *   `customTasks.retry()` re-attaches the Firestore listener (state flips to
+ *   `"loading"`), and the still-mounted section re-renders in place through its
+ *   loading skeleton until the listener delivers data. No `resetError` needed.
+ * - Chunk-load failure → rendered by the container's `<ErrorBoundary>` fallback.
+ *   `customTasks.retry()` is a no-op (subscription is hydrated, or `customTasks`
+ *   is undefined); `resetError()` triggers the container's lazy retry so the
+ *   dynamic import is re-attempted.
  */
 export function AddedTasksError({
   customTasks,

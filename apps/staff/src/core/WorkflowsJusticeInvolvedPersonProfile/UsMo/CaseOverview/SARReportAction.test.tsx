@@ -70,6 +70,9 @@ describe("SARReportAction", () => {
 
   afterEach(() => {
     tk.reset();
+    // builderHref appends window.location.search; reset the URL so a query
+    // string set by one test can't leak into another.
+    window.history.replaceState(null, "", "/");
   });
 
   test("not-archived: renders the SAR Builder link and fires onBuilderLinkClick", () => {
@@ -96,6 +99,87 @@ describe("SARReportAction", () => {
 
     fireEvent.click(link);
     expect(onBuilderLinkClick).toHaveBeenCalledWith(activeSAR);
+  });
+
+  test("not-archived: appends the current query string so the builder loads the same view", () => {
+    const activeSAR = makeSAR({ id: "active-qs", status: "InProgress" });
+    // Mirror landing on the profile from a caseload-scoped URL — the builder
+    // must carry those params through so it loads the accurate view.
+    window.history.replaceState(
+      null,
+      "",
+      "/clients/abc?officerId=OFFICER1&tab=sar",
+    );
+
+    render(
+      <SARReportAction
+        sar={activeSAR}
+        onDownload={vi.fn()}
+        onPrefetch={vi.fn()}
+        onBuilderLinkClick={vi.fn()}
+      />,
+    );
+
+    const link = screen.getByRole("link", { name: "Go to SAR Builder" });
+    expect(link).toHaveAttribute(
+      "href",
+      `${sarUrl("sarDetails", {
+        staffPseudoId: "staff-pseudo-1",
+        sarId: "active-qs",
+      })}?officerId=OFFICER1&tab=sar`,
+    );
+  });
+
+  test("Complete but not yet archived: renders the Download Report button, not the link", () => {
+    // A Complete SAR has a finished report to download even before its
+    // completionDate passes, so it shows Download rather than the builder link.
+    const completeSAR = makeSAR({
+      id: "complete-active",
+      status: "Complete",
+      completionDate: null,
+    });
+
+    render(
+      <SARReportAction
+        sar={completeSAR}
+        onDownload={vi.fn()}
+        onPrefetch={vi.fn()}
+        onBuilderLinkClick={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Download Report" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Go to SAR Builder" }),
+    ).not.toBeInTheDocument();
+  });
+
+  test("archived but not Complete: renders the Download Report button, not the link", () => {
+    // Archival (completionDate passed) alone routes to Download regardless of
+    // status — only an actively-in-progress SAR keeps the builder link.
+    const archivedIncompleteSAR = makeSAR({
+      id: "archived-incomplete",
+      status: "InProgress",
+      completionDate: parseISO("2026-05-05"),
+    });
+
+    render(
+      <SARReportAction
+        sar={archivedIncompleteSAR}
+        onDownload={vi.fn()}
+        onPrefetch={vi.fn()}
+        onBuilderLinkClick={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Download Report" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Go to SAR Builder" }),
+    ).not.toBeInTheDocument();
   });
 
   test("archived: renders the Download Report button and warms the cache on hover + focus", () => {

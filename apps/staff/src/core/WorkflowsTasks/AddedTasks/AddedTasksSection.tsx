@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Sans14, spacing } from "@recidiviz/design-system";
-import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
@@ -25,9 +24,10 @@ import styled from "styled-components";
 import { Button, palette } from "~design-system";
 
 import { Client } from "../../../WorkflowsStore";
-import { CustomTasks } from "../../../WorkflowsStore/Task/CustomTasks";
 import { AddedTaskForm, AddedTaskFormValues } from "./AddedTaskForm";
 import { AddedTaskRow } from "./AddedTaskRow";
+import { AddedTasksError } from "./AddedTasksError";
+import { AddedTasksSkeleton } from "./AddedTasksSkeleton";
 import { handleMutationFailure } from "./mutationErrors";
 
 const SectionWrapper = styled.div`
@@ -63,41 +63,21 @@ type AddedTasksSectionProps = {
 };
 
 /**
- * Throws to the parent `<Suspense>` while hydration is in progress, and to
- * the parent `<ErrorBoundary>` on failure. Suspense expects a thrown
- * `Promise<unknown>` and resolves the fallback when it settles; an
- * `ErrorBoundary` expects a thrown value and renders its fallback.
+ * Renders the "Added Tasks" list for a single client, handling every hydration
+ * state inline: a skeleton while loading, the {@link AddedTasksError} retry UI
+ * on failure, and the task list once hydrated. Nothing is thrown for hydration
+ * — the parent `<Suspense>` / `<ErrorBoundary>` remain only for the lazy chunk
+ * fetch and chunk-load failures.
  *
- * `mobx.when(predicate)` returns a real `Promise<void>` that resolves when
- * the predicate becomes true — exactly the shape Suspense wants. Once
- * hydration settles to either `"hydrated"` or `"failed"`, the predicate
- * fires and the suspended render resumes.
- */
-function useThrowOnHydrationState(customTasks: CustomTasks | undefined): void {
-  if (!customTasks) return;
-  const state = customTasks.hydrationState;
-
-  if (state.status === "needs hydration" || state.status === "loading") {
-    throw when(
-      () =>
-        customTasks.hydrationState.status === "hydrated" ||
-        customTasks.hydrationState.status === "failed",
-    );
-  }
-
-  if (state.status === "failed") {
-    throw state.error ?? new Error("Failed to load added tasks");
-  }
-}
-
-/**
- * Renders the "Added Tasks" list for a single client. Only handles the
- * hydrated branch — loading and failure are lifted to the parent
- * `<Suspense>` / `<ErrorBoundary>` via {@link useThrowOnHydrationState}.
- *
- * The `CustomTasks` subscription auto-activates via `onBecomeObserved` when
- * this `observer` reads `hydrationState` / `outstandingOrderedTasks` /
- * `allOrderedTasks`, so no manual `hydrate()` call is needed.
+ * Handling all states inline means the component never unmounts on a hydration
+ * transition. That matters because the `CustomTasks` subscription stays alive
+ * only while this observer keeps reading `data` — it (un)subscribes lazily via
+ * `onBecomeObserved` / `onBecomeUnobserved`. The task getters are therefore
+ * read up front, before any early return, so `data` stays observed across the
+ * loading→hydrated and error→retry transitions and the lazy Firestore listener
+ * is never torn down mid-load. (Suspending/unmounting mid-load would drop the
+ * observation, and `unsubscribe` would reset the in-progress state back to
+ * `"needs hydration"` — ping-ponging the state so it never settles.)
  * `CaseloadTasksHydrator` primes the caseload-wide path separately.
  *
  * Default-exported so it can be loaded via `React.lazy()`.
@@ -107,7 +87,6 @@ const AddedTasksSection = observer(function AddedTasksSection({
   showCompleted,
 }: AddedTasksSectionProps) {
   const { customTasks } = person;
-  useThrowOnHydrationState(customTasks);
 
   // View-local state. Kept out of MobX because nothing else needs it.
   // `pendingAddIds` is the list of in-flight new-task form instances; each id
@@ -118,20 +97,33 @@ const AddedTasksSection = observer(function AddedTasksSection({
 
   if (!customTasks) return null;
 
+  // Read the task getters before the loading/error branches return: this
+  // observes the subscription's `data`, which keeps its lazy Firestore listener
+  // alive across every hydration transition. Returning early before this read
+  // would drop the observation and tear the listener down mid-load.
   const tasks = showCompleted
     ? customTasks.allOrderedTasks
     : customTasks.outstandingOrderedTasks;
 
+  const { status } = customTasks.hydrationState;
+  if (status === "needs hydration" || status === "loading") {
+    return <AddedTasksSkeleton />;
+  }
+  if (status === "failed") {
+    // Render the retry UI inline rather than throwing to the ErrorBoundary, so
+    // the component stays mounted and `data` stays observed. `retry()` then
+    // re-renders this section in place through loading → hydrated.
+    return <AddedTasksError customTasks={customTasks} />;
+  }
+
   const handleAddSave =
     (pendingId: string) => (values: AddedTaskFormValues) => {
+      setPendingAddIds((ids) => ids.filter((id) => id !== pendingId));
       customTasks
         .addCustomTask({
           title: values.title,
           dueDate: values.dueDate,
           recurrence: values.recurrence,
-        })
-        .then(() => {
-          setPendingAddIds((ids) => ids.filter((id) => id !== pendingId));
         })
         .catch((err) => handleMutationFailure("save", err));
     };

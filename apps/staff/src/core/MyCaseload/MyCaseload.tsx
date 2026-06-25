@@ -27,8 +27,10 @@ import { palette, typography } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { TasksRowEntity } from "../../WorkflowsStore/Task/types";
 import { CaseloadSelect } from "../CaseloadSelect";
+import { PersonLookup } from "../PersonLookup";
 import { MaxWidthWithSidebar } from "../sharedComponents";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
@@ -46,6 +48,15 @@ import { MyCaseloadPresenter } from "./MyCaseloadPresenter";
 // page like the tab+filter row below it.
 const CaseloadSelectWrapper = styled.div`
   ${MaxWidthWithSidebar}
+`;
+
+// Lays out the caseload selector and the client search bar side by side,
+// stacking them on mobile. Mirrors the SelectRow pattern in CaseloadView.
+const SelectRow = styled.div<{ $isMobile: boolean }>`
+  display: flex;
+  flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
+  gap: ${rem(8)};
+  align-items: ${({ $isMobile }) => ($isMobile ? "stretch" : "flex-start")};
 `;
 
 const MyCaseloadHeading = styled.h1`
@@ -101,6 +112,7 @@ const ManagedComponent = observer(function MyCaseload({
 }) {
   const [searchParams] = useSearchParams();
   const location = useLocation();
+  const { isMobile } = useIsMobile(true);
 
   // URL → presenter (continuous). A missing / unknown slug (e.g. no `?tab=` on
   // first load, or a stale ?tab=due-next-month from a Tasks-page bookmark)
@@ -145,7 +157,10 @@ const ManagedComponent = observer(function MyCaseload({
   return (
     <WorkflowsNavLayout limitedWidth={false}>
       <CaseloadSelectWrapper>
-        <CaseloadSelect />
+        <SelectRow $isMobile={isMobile}>
+          <CaseloadSelect />
+          <PersonLookup />
+        </SelectRow>
       </CaseloadSelectWrapper>
       <MyCaseloadHeading>My Caseload</MyCaseloadHeading>
       <MyCaseloadSubtitle>
