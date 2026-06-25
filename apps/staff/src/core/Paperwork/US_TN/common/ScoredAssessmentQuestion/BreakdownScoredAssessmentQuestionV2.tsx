@@ -22,6 +22,7 @@ import styled from "styled-components";
 
 import {
   BreakdownAssessmentQuestionSpecV2,
+  getBreakdownSectionScoreV2,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
 import { palette } from "~design-system";
@@ -55,8 +56,24 @@ const DateRange = styled.span`
 const MultiplierCell = styled.div`
   padding-left: ${rem(spacing.xs)};
   display: flex;
+  align-items: baseline;
   gap: ${rem(spacing.xs)};
 `;
+
+const scoreColor = (score: number): string => {
+  if (score < 0) return palette.signal.error;
+  if (score > 0) return palette.signal.links;
+  return "inherit";
+};
+
+const RowScore = styled.span<{ $score: number }>`
+  margin-left: ${rem(spacing.md)};
+  font-variant-numeric: tabular-nums;
+  color: ${({ $score }) => scoreColor($score)};
+`;
+
+const formatSignedScore = (score: number): string =>
+  score > 0 ? `+${score}` : `${score}`;
 
 export function BreakdownScoredAssessmentQuestionV2({
   questionNumber,
@@ -88,7 +105,7 @@ export function BreakdownScoredAssessmentQuestionV2({
 }
 
 const BreakdownRow = observer(function BreakdownRow({
-  section: { period, multiplier },
+  section,
   questionNumber,
   disabled,
 }: {
@@ -96,9 +113,13 @@ const BreakdownRow = observer(function BreakdownRow({
   questionNumber: number;
   disabled?: boolean;
 }) {
-  const selectionKey = `q${questionNumber}Selection_${period.replace("-", "_")}`;
+  const { period, multiplier } = section;
+  const selectionKey =
+    `q${questionNumber}Selection_${period.replace("-", "_")}` as keyof UsTnReclassification2026DraftData;
 
   const { formData } = useOpportunityFormContext();
+  const count = formData[selectionKey] as number | undefined;
+  const rowScore = getBreakdownSectionScoreV2(section, count);
 
   return (
     <tr>
@@ -109,7 +130,7 @@ const BreakdownRow = observer(function BreakdownRow({
       <td>
         <MultiplierCell>
           <DOCXFormInput<UsTnReclassification2026DraftData>
-            name={selectionKey as keyof UsTnReclassification2026DraftData}
+            name={selectionKey}
             type="number"
             min={0}
             style={{ minWidth: rem(spacing.lg) }}
@@ -118,8 +139,9 @@ const BreakdownRow = observer(function BreakdownRow({
             }}
             inputUpdateDelayMs={500}
           />
-          {`  x ${multiplier} points`}
-          {period === "0-6" && ` (-1 point if None)`}
+          {`× ${multiplier} pt`}
+          {period === "0-6" && ` (−1 if None)`}
+          <RowScore $score={rowScore}>= {formatSignedScore(rowScore)}</RowScore>
         </MultiplierCell>
       </td>
     </tr>

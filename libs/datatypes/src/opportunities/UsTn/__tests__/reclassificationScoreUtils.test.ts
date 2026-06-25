@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { showTrusteeChecklist } from "../reclassificationScoreUtils";
+import {
+  getBreakdownSectionScoreV2,
+  showTrusteeChecklist,
+} from "../reclassificationScoreUtils";
 
 describe("showTrusteeChecklist", () => {
   const formDataBase = {
@@ -70,5 +73,33 @@ describe("showTrusteeChecklist", () => {
 
   it("returns false if no classification level set to LOW", () => {
     expect(showTrusteeChecklist("NOT LOW", formDataBase)).toBeFalse();
+  });
+});
+
+describe("getBreakdownSectionScoreV2", () => {
+  const section_0_6 = { period: "0-6", multiplier: 1 } as const;
+  const section_6_12 = { period: "6-12", multiplier: 1 } as const;
+  const section_36_60 = { period: "36-60", multiplier: 2 } as const;
+
+  it("returns 0 when count is undefined, regardless of period", () => {
+    expect(getBreakdownSectionScoreV2(section_0_6, undefined)).toBe(0);
+    expect(getBreakdownSectionScoreV2(section_6_12, undefined)).toBe(0);
+    expect(getBreakdownSectionScoreV2(section_36_60, undefined)).toBe(0);
+  });
+
+  it("returns -1 only when count is 0 and period is 0-6", () => {
+    expect(getBreakdownSectionScoreV2(section_0_6, 0)).toBe(-1);
+    expect(getBreakdownSectionScoreV2(section_6_12, 0)).toBe(0);
+    expect(getBreakdownSectionScoreV2(section_36_60, 0)).toBe(0);
+  });
+
+  it("returns count * multiplier for positive counts", () => {
+    expect(getBreakdownSectionScoreV2(section_0_6, 2)).toBe(2);
+    expect(getBreakdownSectionScoreV2(section_6_12, 3)).toBe(3);
+    expect(getBreakdownSectionScoreV2(section_36_60, 3)).toBe(6);
+  });
+
+  it("does not clamp the row score (per-question max is applied elsewhere)", () => {
+    expect(getBreakdownSectionScoreV2(section_36_60, 100)).toBe(200);
   });
 });
