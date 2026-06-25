@@ -18,12 +18,39 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { palette, spacing, typography } from "~design-system";
 
 /**
  * Shared US_MO card primitives used across multiple modules (Case Overview,
  * Recent Case Notes, …).
  */
+
+/** Row that lives ABOVE the bordered card frame: title on the left, an optional
+ * action (e.g. "Go to ARB") on the right. Shared by the sibling US_MO modules
+ * so their external headings line up identically. */
+export const ModuleHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
+/** Title text for a module, sitting in `ModuleHeader` above the card frame. */
+export const ModuleHeading = styled.h3`
+  ${typography.Sans16}
+  color: ${palette.slate80};
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0;
+`;
+
+/** Centered empty-state copy shown inside a module's `CardFrame`. */
+export const ModuleEmptyState = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate60};
+  padding: ${rem(16)} ${rem(20)};
+  text-align: center;
+`;
 
 /** Bordered frame for the card. 1px solid border at rgba(43,84,105,0.2),
  * 4px rounded corners. The "Case Overview" section heading sits above this

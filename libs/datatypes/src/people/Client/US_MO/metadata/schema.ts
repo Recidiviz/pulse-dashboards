@@ -15,9 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { trim } from "lodash-es";
 import { z } from "zod";
 
 import { dateStringSchemaWithoutTimeShift } from "../../../../utils/zod";
+
+// Case-plan goal/objective/technique values arrive wrapped in literal double
+// quotes from the raw source (e.g. `"RS02A-Maintain Pro-Social Housing"`). Strip
+// the wrapping quotes (and any surrounding whitespace) at parse time so every
+// consumer gets clean text — mirrors the backend `TRIM(x, '" ')` used for the
+// ORAS officer name in recidiviz-data #81828.
+const quoteStrippedString = z.string().transform((value) => trim(value, '" '));
 
 export const usMoClientMetadataSchema = z.object({
   stateCode: z.literal("US_MO"),
@@ -32,8 +40,36 @@ export const usMoClientMetadataSchema = z.object({
       classificationSubtype: z.string(), // e.g. "D"
       classificationType: z.string(), // e.g. "Felony"
       description: z.string(),
-      statute: z.string().nullable(),
+      statute: z.string().nullish(),
     }),
   ),
+  // ORAS risk/needs assessment. Optional because only ~60% of records have one;
+  // inner fields are nullish to mirror the backend nullish columns. Parsed
+  // assessmentDate to a Date for the same reason as `birthdate` above.
+  orasAssessment: z
+    .object({
+      assessmentDate: dateStringSchemaWithoutTimeShift.nullish(),
+      assessmentType: z.string().nullish(),
+      assessmentScore: z.number().nullish(),
+      assessmentAdministeredBy: z.string().nullish(),
+      lastUpdated: dateStringSchemaWithoutTimeShift.nullish(),
+    })
+    .nullish(),
+  // Case plan goals with their objectives/techniques. Optional because only ~2%
+  // of records have one; inner fields are nullish to mirror the backend.
+  casePlan: z
+    .array(
+      z.object({
+        goal: quoteStrippedString.nullish(),
+        objectivesAndTechniques: z.array(
+          z.object({
+            objective: quoteStrippedString.nullish(),
+            objectiveEndDate: dateStringSchemaWithoutTimeShift.nullish(),
+            techniques: z.array(quoteStrippedString),
+          }),
+        ),
+      }),
+    )
+    .optional(),
 });
 export type UsMoClientMetadata = z.infer<typeof usMoClientMetadataSchema>;

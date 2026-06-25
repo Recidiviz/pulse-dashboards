@@ -81,6 +81,7 @@ import { UsArResidentInformation } from "./UsAr/UsArResidentInformation";
 import { UsAzResidentInformation } from "./UsAz/UsAzResidentInformation";
 import { UsIdResidentInformation } from "./UsId/UsIdResidentInformation";
 import { UsMoCaseOverview } from "./UsMo/CaseOverview/UsMoCaseOverview";
+import { UsMoCasePlanning } from "./UsMo/CasePlanning";
 import { RecentCaseNotes } from "./UsMo/RecentCaseNotes";
 import { UsMoResidentInformation } from "./UsMo/UsMoResidentInformation";
 import { UsNdResidentInformation } from "./UsNd/UsNdResidentInformation";
@@ -218,6 +219,14 @@ const ProfileDetailsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
+`;
+
+// Right column of the profile grid. Stacks the recent case notes (or
+// opportunities) above the US_MO Case Planning module.
+const RightColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(32)};
 `;
 
 function AdditionalDetails({
@@ -384,6 +393,7 @@ export const FullProfile = observer(
       hideWorkflowsOpportunities,
       recentCaseNotes,
       sentenceProgressV2,
+      usMoCasePlanning,
     } = useFeatureVariants();
 
     // View-local filter state for the US_MO `customTasks` Tasks section.
@@ -571,22 +581,27 @@ export const FullProfile = observer(
                 </div>
               )}
             </ProfileDetailsWrapper>
-            {recentCaseNotes && person instanceof Client ? (
-              <div>
+            <RightColumn>
+              {recentCaseNotes && person instanceof Client ? (
                 <RecentCaseNotes client={person} />
-              </div>
-            ) : (
-              !hideOpportunitiesSection && (
-                <div>
-                  <SectionHeading>Opportunities</SectionHeading>
-                  <OpportunitiesAccordion
-                    person={person}
-                    formLinkButton
-                    showIneligibleOpportunityTypes
-                  />
-                </div>
-              )
-            )}
+              ) : (
+                !hideOpportunitiesSection && (
+                  <div>
+                    <SectionHeading>Opportunities</SectionHeading>
+                    <OpportunitiesAccordion
+                      person={person}
+                      formLinkButton
+                      showIneligibleOpportunityTypes
+                    />
+                  </div>
+                )
+              )}
+              {usMoCasePlanning &&
+                person instanceof Client &&
+                person.stateCode === "US_MO" && (
+                  <UsMoCasePlanning client={person} />
+                )}
+            </RightColumn>
           </Content>
         </Wrapper>
       </WorkflowsNavLayout>

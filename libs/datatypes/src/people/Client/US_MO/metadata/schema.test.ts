@@ -20,6 +20,7 @@ import { z } from "zod";
 
 import { rawEligibleClientFixture } from "../../fixture";
 import { clientRecordSchema } from "../../schema";
+import { usMoClientMetadataFixture } from "./fixture";
 import { usMoClientMetadataSchema } from "./schema";
 
 // The schema transforms `birthdate` from an ISO string into a `Date`, so the
@@ -134,6 +135,118 @@ describe("usMoClientMetadataSchema", () => {
       ...fixture,
       birthdate: parseISO("1988-03-14"),
     });
+  });
+});
+
+describe("usMoClientMetadataSchema ORAS assessment and case plan", () => {
+  test("parses the reusable fixture, transforming assessmentDate to a Date", () => {
+    const parsed = usMoClientMetadataSchema.parse(usMoClientMetadataFixture);
+
+    expect(parsed.orasAssessment?.assessmentDate).toEqual(
+      parseISO("2026-04-10"),
+    );
+    expect(parsed.orasAssessment?.lastUpdated).toEqual(parseISO("2026-06-01"));
+    expect(parsed.casePlan).toHaveLength(2);
+    expect(parsed.casePlan?.[0].goal).toBe("RS02A-Maintain Pro-Social Housing");
+    expect(parsed.casePlan?.[0].objectivesAndTechniques).toHaveLength(3);
+  });
+
+  test("accepts a null orasAssessment", () => {
+    const fixture = { ...usMoClientMetadataFixture, orasAssessment: null };
+    expect(() => usMoClientMetadataSchema.parse(fixture)).not.toThrow();
+  });
+
+  test("accepts an orasAssessment without a lastUpdated date", () => {
+    const fixture: z.input<typeof usMoClientMetadataSchema> = {
+      ...usMoClientMetadataFixture,
+      orasAssessment: {
+        assessmentScore: 23,
+        assessmentType: "ORAS_COMMUNITY_SUPERVISION",
+        assessmentAdministeredBy: "MaryAnn Harper",
+        assessmentDate: "2026-04-10",
+      },
+    };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    expect(parsed.orasAssessment?.lastUpdated).toBeUndefined();
+  });
+
+  test("parses when both orasAssessment and casePlan are missing (backward compat)", () => {
+    expect(usMoClientMetadataSchema.parse(validUsMoMetadataInput)).toEqual({
+      ...validUsMoMetadataInput,
+      birthdate: parseISO("1988-03-14"),
+    });
+  });
+
+  test("accepts an empty casePlan array", () => {
+    const fixture = { ...usMoClientMetadataFixture, casePlan: [] };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    expect(parsed.casePlan).toEqual([]);
+  });
+
+  test("accepts a null objectiveEndDate", () => {
+    const parsed = usMoClientMetadataSchema.parse(usMoClientMetadataFixture);
+    expect(
+      parsed.casePlan?.[0].objectivesAndTechniques[0].objectiveEndDate,
+    ).toBeNull();
+  });
+
+  test("accepts a null goal", () => {
+    const fixture = {
+      ...usMoClientMetadataFixture,
+      casePlan: [{ goal: null, objectivesAndTechniques: [] }],
+    };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    expect(parsed.casePlan?.[0].goal).toBeNull();
+  });
+
+  test("strips wrapping double quotes from goal, objective, and techniques", () => {
+    const fixture: z.input<typeof usMoClientMetadataSchema> = {
+      ...usMoClientMetadataFixture,
+      casePlan: [
+        {
+          goal: '"RS02A-Maintain Pro-Social Housing"',
+          objectivesAndTechniques: [
+            {
+              objective: '"RS01.001-Research viable/ stable home plan options"',
+              objectiveEndDate: null,
+              techniques: ['"IC01-Verbal Affirmation"', "SV02-No quotes here"],
+            },
+          ],
+        },
+      ],
+    };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    const goal = parsed.casePlan?.[0];
+    expect(goal?.goal).toBe("RS02A-Maintain Pro-Social Housing");
+    expect(goal?.objectivesAndTechniques[0].objective).toBe(
+      "RS01.001-Research viable/ stable home plan options",
+    );
+    expect(goal?.objectivesAndTechniques[0].techniques).toEqual([
+      "IC01-Verbal Affirmation",
+      "SV02-No quotes here",
+    ]);
+  });
+
+  test("transforms a non-null objectiveEndDate to a Date", () => {
+    const fixture: z.input<typeof usMoClientMetadataSchema> = {
+      ...usMoClientMetadataFixture,
+      casePlan: [
+        {
+          goal: "RS02A-Maintain Pro-Social Housing",
+          objectivesAndTechniques: [
+            {
+              objective: "Some objective",
+              objectiveEndDate: "2026-05-15",
+              techniques: [],
+            },
+          ],
+        },
+      ],
+    };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    expect(
+      parsed.casePlan?.[0].objectivesAndTechniques[0].objectiveEndDate,
+    ).toEqual(parseISO("2026-05-15"));
   });
 });
 

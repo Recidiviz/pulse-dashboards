@@ -120,6 +120,7 @@ export type FeatureVariant =
   | "customTasks"
   | "caseOverview"
   | "recentCaseNotes"
+  | "usMoCasePlanning"
   | "usMoSarInClientsPage"
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
@@ -252,6 +253,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMoMyCaseload: {},
   caseOverview: {},
   recentCaseNotes: {},
+  usMoCasePlanning: {},
   usMoSarInClientsPage: {},
   usMoSearchByUnit: {},
   usMoWorkRelease: {},
@@ -338,6 +340,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIdTasksV2: {},
         caseOverview: { activeTenants: ["US_MO"] },
         recentCaseNotes: { activeTenants: ["US_MO"] },
+        usMoCasePlanning: { activeTenants: ["US_MO"] },
         customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
@@ -366,6 +369,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         caseOverview: { activeTenants: ["US_MO"] },
         recentCaseNotes: { activeTenants: ["US_MO"] },
+        usMoCasePlanning: { activeTenants: ["US_MO"] },
         tasksPermasnooze: { activeTenants: ["US_MO"] },
         usMoMyCaseload: { activeTenants: ["US_MO"] },
         usMoSarInClientsPage: { activeTenants: ["US_MO"] },

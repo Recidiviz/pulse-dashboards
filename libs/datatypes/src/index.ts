@@ -110,7 +110,8 @@ export type * from "./people/JusticeInvolvedPerson/schema";
 // -----------------------------------------------------------------------------
 export * from "./people/Client/fixture";
 export * from "./people/Client/schema";
-export type * from "./people/Client/US_MO/metadata/schema";
+export * from "./people/Client/US_MO/metadata/fixture";
+export * from "./people/Client/US_MO/metadata/schema";
 export * from "./people/Client/utils";
 
 // Resident Exports: Includes fixtures and schema related to Residents

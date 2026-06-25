@@ -22,13 +22,15 @@ import { Icon } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../../WorkflowsStore";
-import { CardFrame } from "../shared/styles";
+import {
+  CardFrame,
+  ModuleEmptyState,
+  ModuleHeader,
+  ModuleHeading,
+} from "../shared/styles";
 import { RecentCaseNoteModal } from "./RecentCaseNoteModal";
 import {
   CardSubtitle,
-  EmptyState,
-  ExternalHeader,
-  ExternalTitle,
   GoToArbButton,
   NoteBody,
   NoteDate,
@@ -63,16 +65,18 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
   };
 
   return (
-    <>
-      <ExternalHeader>
-        <ExternalTitle>Recent Case Notes</ExternalTitle>
+    <div>
+      <ModuleHeader>
+        <ModuleHeading>Recent Case Notes</ModuleHeading>
         <GoToArbButton onClick={handleArbClick}>
           <Icon kind="Open" size={12} /> Go to ARB
         </GoToArbButton>
-      </ExternalHeader>
+      </ModuleHeader>
       <CardFrame>
         {notes.length === 0 ? (
-          <EmptyState>No recent case notes from the past 90 days</EmptyState>
+          <ModuleEmptyState>
+            No recent case notes from the past 90 days
+          </ModuleEmptyState>
         ) : (
           <>
             <CardSubtitle>
@@ -97,7 +101,7 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
         note={selectedNote}
         onRequestClose={() => setSelectedNote(undefined)}
       />
-    </>
+    </div>
   );
 };
 

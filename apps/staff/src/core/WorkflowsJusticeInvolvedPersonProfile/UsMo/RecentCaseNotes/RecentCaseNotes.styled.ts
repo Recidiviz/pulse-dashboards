@@ -47,26 +47,11 @@ export const GoToArbButton = styled(Button).attrs({
 /**
  * Styled primitives for the US_MO "Recent Case Notes" card. Tokens come from
  * Figma node 7364-3879. The card itself reuses `CardFrame` from the sibling
- * Case Overview module; this file adds the card-internal pieces (Header,
- * NoteRow, etc.) that are specific to Recent Case Notes.
+ * Case Overview module, and the external header/title + empty state reuse the
+ * shared `ModuleHeader`/`ModuleHeading`/`ModuleEmptyState` primitives; this
+ * file adds the card-internal pieces (NoteRow, etc.) specific to Recent Case
+ * Notes.
  */
-
-/** Row that lives ABOVE the bordered card frame: title left, "Go to ARB" right.
- * Matches the sibling Case Overview's external-heading pattern. */
-export const ExternalHeader = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: ${rem(8)};
-`;
-
-export const ExternalTitle = styled.h3`
-  ${typography.Sans16}
-  color: ${palette.slate80};
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  margin: 0;
-`;
 
 /** Subtitle copy sitting at the top of the bordered card frame. */
 export const CardSubtitle = styled.p`
@@ -128,11 +113,4 @@ export const NoteBody = styled.p`
   color: ${palette.pine1};
   line-height: 1.6;
   margin: 0;
-`;
-
-export const EmptyState = styled.div`
-  ${typography.Sans14}
-  color: ${palette.slate60};
-  padding: ${rem(16)} ${rem(20)};
-  text-align: center;
 `;

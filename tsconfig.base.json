@@ -121,6 +121,7 @@
       "~hydration-utils": ["libs/hydration-utils/src/index.ts"],
       "~repo": ["plugins/repo/src/index.ts"],
       "~sentencing-client": ["libs/sentencing-client/src/index.ts"],
+      "~sentencing-client/*": ["libs/sentencing-client/src/*"],
       "~server-setup-plugin": ["libs/common/server-setup-plugin/src/index.ts"],
       "~server-setup-plugin/*": ["libs/common/server-setup-plugin/src/*"],
       "~shared-assets/*": ["libs/shared-assets/src/*"],
