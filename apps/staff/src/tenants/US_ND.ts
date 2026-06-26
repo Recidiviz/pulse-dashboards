@@ -42,10 +42,18 @@ const US_ND_CONFIG = {
     methodologyUrl:
       "https://docs.google.com/document/d/1BmzbVFUQhbWOs9IOwR-gykUHNtZin5iUyzPdn8zRdx4/edit",
     tasks: {
+      // TODO(#10615): Remove once Firestore is fully migrated to the ND-specific task types.
       assessment: {
         constructor: UsNdRiskAssessmentTask,
       },
+      // TODO(#10615): Remove once Firestore is fully migrated to the ND-specific task types.
       contact: {
+        constructor: UsNdContactTask,
+      },
+      usNdRiskAssessment: {
+        constructor: UsNdRiskAssessmentTask,
+      },
+      usNdContact: {
         constructor: UsNdContactTask,
       },
     },

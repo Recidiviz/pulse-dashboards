@@ -17,7 +17,10 @@
 
 import { Task } from "../Task";
 
-class UsNdRiskAssessmentTask extends Task<"assessment"> {
+export default class usNdRiskAssessmentTask<
+  // TODO(#10615): Simplify once Firestore is fully migrated to the ND-specific task types.
+  T extends "assessment" | "usNdRiskAssessment",
+> extends Task<T> {
   displayName = "Risk assessment";
   vitalsMetricId = "timely_risk_assessment" as const;
 
@@ -25,5 +28,3 @@ class UsNdRiskAssessmentTask extends Task<"assessment"> {
     return undefined;
   }
 }
-
-export default UsNdRiskAssessmentTask;

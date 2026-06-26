@@ -72,6 +72,9 @@ type UsMoHomeVisitTaskDetails = UsMoTaskDetails & {
   }[];
 };
 
+// ND doesn't use line staff-facing tasks currently, so tasks don't have details.
+type UsNdEmptyDetails = Record<string, never>;
+
 type UsNeAssessmentDetails = {
   assessmentDueDate: string | null;
   mostRecentAssessmentDate: string | null;
@@ -186,6 +189,8 @@ export const SUPERVISION_TASK_TYPES = [
   "usMoPositiveHomeVisit",
   "usMoInPersonContact",
   "usMoPositiveContactWithSignificantOther",
+  "usNdContact",
+  "usNdRiskAssessment",
   "usNeOrasAssessment",
   "usNeStableAssessment",
   "usNePersonalContact",
@@ -219,6 +224,7 @@ export type SupervisionDetails =
   | UsMoTaskDetails
   | UsMoInitialTaskDetails
   | UsMoHomeVisitTaskDetails
+  | UsNdEmptyDetails
   | UsNeAssessmentDetails
   | UsNeContactDetails
   | UsTxContactDetails
@@ -249,6 +255,8 @@ export type SupervisionDetailsForTask = {
   usMoInitialPositiveHomeVisitSmi: UsMoInitialTaskDetails;
   usMoInPersonContact: UsMoTaskDetails;
   usMoPositiveContactWithSignificantOther: UsMoTaskDetails;
+  usNdContact: UsNdEmptyDetails;
+  usNdRiskAssessment: UsNdEmptyDetails;
   usNeOrasAssessment: UsNeAssessmentDetails;
   usNeStableAssessment: UsNeAssessmentDetails;
   usNePersonalContact: UsNeContactDetails;
