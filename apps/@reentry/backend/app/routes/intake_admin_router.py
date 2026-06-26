@@ -39,6 +39,7 @@ from app.models.intake import (
 from app.models.models import Plan
 from app.models.recording import RecordingSession
 from app.models.seen_item import SeenItemType
+from app.pdf.action_plan import markdown_to_html, preprocess_markdown_common
 from app.pdf.renderer import pdf_renderer
 from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
@@ -1000,12 +1001,25 @@ async def generate_chat_history_pdf(
     sections: dict[str, list[dict]] = {}
     for msg in messages:
         section_key = msg.section or "General"
+        if msg.from_role == IntakeMessageRole.CASEWORKER:
+            preprocessed = preprocess_markdown_common(msg.content or "")
+            content = markdown_to_html(preprocessed).strip()
+            # Strip outer <p> so content sits inline with the "Chatbot:" label
+            if content.startswith("<p>"):
+                content = content[3:]
+            if content.endswith("</p>"):
+                content = content[:-4]
+            content = content.replace("</p>\n<p>", "<br><br>").replace(
+                "</p><p>", "<br><br>"
+            )
+        else:
+            content = html_lib.escape(msg.content or "").replace("\n", "<br>")
         sections.setdefault(section_key, []).append(
             {
                 "sender": "Chatbot"
                 if msg.from_role == IntakeMessageRole.CASEWORKER
                 else "Client",
-                "content": html_lib.escape(msg.content or ""),
+                "content": content,
                 "guardrailed_by": displayable_guardrail_flags(msg.guardrailed_by or []),
             }
         )
