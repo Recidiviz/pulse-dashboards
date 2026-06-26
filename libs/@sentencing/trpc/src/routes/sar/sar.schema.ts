@@ -18,6 +18,8 @@
 import { z } from "zod";
 
 import {
+  AssessmentType,
+  DomainRiskLevel,
   FrequencyOfUse,
   Gender,
   LevelOfEducation,
@@ -39,6 +41,30 @@ export const getSARInsightSchema = z.object({
   assessmentScoreBucket: z.number().int(),
 });
 
+export const ORAS_FIELDS: ReadonlyArray<
+  keyof z.infer<typeof updateSARSchema>["attributes"]
+> = [
+  "assessmentScore",
+  "assessmentType",
+  "assessmentDate",
+  "assessmentAdministeredBy",
+  "criminalHistoryLevel",
+  "educationLevelScore",
+  "neighborhoodLevel",
+  "substanceAbuseLevel",
+  "familySocialSupportLevel",
+  "peerAssociatesLevel",
+  "criminalBehaviorLevel",
+  "responsivityLevel",
+  "criminalHistoryRiskLevel",
+  "educationRiskLevel",
+  "neighborhoodRiskLevel",
+  "substanceAbuseRiskLevel",
+  "familySocialSupportRiskLevel",
+  "peerAssociatesRiskLevel",
+  "criminalBehaviorRiskLevel",
+];
+
 export const getSARByIDInputSchema = z.object({
   id: z.string(),
 }) satisfies z.ZodType<GetSARInput>;
@@ -56,6 +82,10 @@ export const educationLevelEnum = z.nativeEnum(LevelOfEducation);
 export const substanceEnum = z.nativeEnum(SubstanceType);
 export const frequencyOfUseEnum = z.nativeEnum(FrequencyOfUse);
 export const methodOfUseEnum = z.nativeEnum(MethodOfUse);
+export const assessmentTypeEnum = z.nativeEnum(AssessmentType);
+export const domainRiskLevelEnum = z.nativeEnum(DomainRiskLevel);
+const domainScore = z.number().int().nullish();
+const domainRiskLevel = domainRiskLevelEnum.nullish();
 
 export const SARMetadataSchema = z.object({
   sections: z.object({
@@ -134,6 +164,28 @@ export const updateSARSchema = z.object({
     supervisorSignature: z.string().nullish(),
     supervisorTitle: z.string().nullish(),
     supervisorLastSignedAt: z.date().nullish(),
+    // Assessment metadata
+    assessmentScore: z.number().int().nullish(),
+    assessmentType: assessmentTypeEnum.nullish(),
+    assessmentDate: z.date().nullish(),
+    assessmentAdministeredBy: z.string().nullish(),
+    // Domain scores
+    criminalHistoryLevel: domainScore,
+    educationLevelScore: domainScore,
+    neighborhoodLevel: domainScore,
+    substanceAbuseLevel: domainScore,
+    familySocialSupportLevel: domainScore,
+    peerAssociatesLevel: domainScore,
+    criminalBehaviorLevel: domainScore,
+    responsivityLevel: domainScore,
+    // Domain risk levels
+    criminalHistoryRiskLevel: domainRiskLevel,
+    educationRiskLevel: domainRiskLevel,
+    neighborhoodRiskLevel: domainRiskLevel,
+    substanceAbuseRiskLevel: domainRiskLevel,
+    familySocialSupportRiskLevel: domainRiskLevel,
+    peerAssociatesRiskLevel: domainRiskLevel,
+    criminalBehaviorRiskLevel: domainRiskLevel,
   }) satisfies z.ZodType<UpsertSARInput>,
 });
 

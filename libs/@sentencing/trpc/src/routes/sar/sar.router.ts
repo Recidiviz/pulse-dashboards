@@ -33,6 +33,7 @@ import {
   getSARInsightSchema,
   getSARsByClientInputSchema,
   getSARsForStaffInputSchema,
+  ORAS_FIELDS,
   updateDrugHistorySchema,
   updateEmploymentHistorySchema,
   updatePriorTreatmentHistorySchema,
@@ -273,6 +274,11 @@ export const sarRouter = router({
               "charges",
             ]),
           };
+
+          if (ORAS_FIELDS.some((f) => attributes[f] !== undefined)) {
+            updateData.ORASEnteredManually = true;
+            updateData.ORASLastUpdatedAt = new Date();
+          }
 
           // Cast metadata to Prisma's InputJsonValue if provided.
           // Explanation: Prisma stores JSON data and expects type `InputJsonValue` (any valid JSON).
