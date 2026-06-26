@@ -18,6 +18,8 @@
 import { DocumentData } from "@google-cloud/firestore";
 import { Timestamp } from "firebase/firestore";
 
+import { UsIaEarlyDischargeRecord, usIaEarlyDischargeSchema } from "~datatypes";
+
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../../core/views";
 import {
@@ -39,16 +41,12 @@ import {
 import { RELEVANT_ED_DENIAL_REASONS } from "..";
 import { UsIaSupervisionLevelDowngradeOpportunity } from "../UsIaSupervisionLevelDowngradeOpportunity";
 import { UsIaEarlyDischargeClientStatus } from "./types";
-import {
-  UsIaEarlyDischargeReferralRecord,
-  usIaEarlyDischargeSchema,
-} from "./UsIaEarlyDischargeOpportunitySchema";
 
 export const PUBLIC_SAFETY_KEY = "PUBLIC SAFETY";
 
 export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   Client,
-  UsIaEarlyDischargeReferralRecord
+  UsIaEarlyDischargeRecord["output"]
 > {
   form?: UsIaEarlyDischargeForm = undefined;
 

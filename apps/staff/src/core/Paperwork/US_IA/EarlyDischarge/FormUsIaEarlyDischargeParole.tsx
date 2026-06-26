@@ -22,8 +22,8 @@ import { Opportunity } from "../../../../WorkflowsStore";
 import {
   packDraftData,
   UsIaEarlyDischargeDraftData,
-  UsIaEarlyDischargeOpportunity,
-} from "../../../../WorkflowsStore/Opportunity/UsIa";
+} from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
+import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";

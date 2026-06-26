@@ -19,14 +19,185 @@ import { isDemoMode } from "~client-env-utils";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatNameFirstLast, formatWorkflowsDate } from "../../../utils";
-import {
-  ChargeRecords,
-  PenaltyRecords,
-  UsIaEarlyDischargeDraftData,
-  UsIaEarlyDischargeOpportunity,
-} from "../UsIa";
+import { UsIaEarlyDischargeOpportunity } from "../UsIa";
 import { FormBase } from "./FormBase";
 import { resolveCurrentUserName } from "./utils";
+
+type PenaltyChargeExternalIdKey = `penaltyChargeExternalId${number}`;
+type SentencePenaltyTypeKey = `sentencePenaltyType${number}`;
+type PenaltyValueKey = `penaltyValue${number}`;
+type SentencePenaltyModifierKey = `sentencePenaltyModifier${number}`;
+type SentenceDateKey = `sentenceDate${number}`;
+export type PenaltyRecords = Record<
+  | PenaltyChargeExternalIdKey
+  | SentencePenaltyTypeKey
+  | PenaltyValueKey
+  | SentencePenaltyModifierKey
+  | SentenceDateKey,
+  string
+>;
+
+type ChargeExternalIdKey = `chargeExternalId${number}`;
+type CauseNumberKey = `causeNumber${number}`;
+type JurisdictionKey = `jurisdiction${number}`;
+type CountsKey = `counts${number}`;
+type DescriptionKey = `description${number}`;
+type StatuteKey = `statute${number}`;
+type ClassificationTypeRawTextKey = `classificationTypeRawText${number}`;
+type CrimeCdOffenseTypeKey = `crimeCdOffenseType${number}`;
+type TddKey = `tdd${number}`;
+type SddKey = `sdd${number}`;
+export type ChargeRecords = Record<
+  | ChargeExternalIdKey
+  | CauseNumberKey
+  | JurisdictionKey
+  | CountsKey
+  | DescriptionKey
+  | StatuteKey
+  | ClassificationTypeRawTextKey
+  | CrimeCdOffenseTypeKey
+  | TddKey
+  | SddKey,
+  string
+>;
+
+export type UsIaEarlyDischargeDraftData = {
+  usCitizenshipStatus: string;
+  todaysDate: string;
+  iconNumber: string;
+  clientFullName: string;
+  supervisionType: string;
+  supervisionStartDate: string;
+  supervisionEndDate: string;
+
+  numberOfCharges: number;
+  numberOfPenalties: number;
+
+  officerFullName: string;
+  staffTitle: string;
+  workUnit: string;
+
+  dischargeDate: string;
+  approverFullName: string;
+  approverTitle: string;
+  officerSignatureCbc: string;
+  officerSignatureIdCbc: string;
+  approverSignatureCbc: string;
+  approverSignatureIdCbc: string;
+  officerSignatureParole: string;
+  officerSignatureIdParole: string;
+  officerSignatureDateParole: string;
+  approverSignatureParole: string;
+  approverSignatureDateParole: string;
+  approverSignatureIdParole: string;
+  progressAndRecommendations: string;
+  caseNumbers: string;
+
+  hasCompletedProbation: boolean;
+  clientStatusProbationForm: string;
+  clientStatusDateProbationForm: string;
+  remainsFinanciallyLiable: boolean;
+  grantedDeferredJudgement: boolean;
+  hasOtherProbationDischargeOrder: boolean;
+  otherProbationDischargeOrderDetails: string;
+} & PenaltyRecords &
+  ChargeRecords;
+
+export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
+  const {
+    usCitizenshipStatus,
+    todaysDate,
+    iconNumber,
+    clientFullName,
+    supervisionType,
+    supervisionStartDate,
+    supervisionEndDate,
+    officerFullName,
+    staffTitle,
+    workUnit,
+    dischargeDate,
+    approverSignatureDateParole,
+    officerSignatureDateParole,
+    hasCompletedProbation,
+    clientStatusProbationForm,
+    clientStatusDateProbationForm,
+    caseNumbers,
+    remainsFinanciallyLiable,
+    grantedDeferredJudgement,
+    hasOtherProbationDischargeOrder,
+    otherProbationDischargeOrderDetails,
+    progressAndRecommendations,
+    approverTitle,
+    approverFullName,
+    officerSignatureCbc,
+    officerSignatureParole,
+    approverSignatureCbc,
+    approverSignatureParole,
+  } = draftData;
+
+  const penalties = [];
+  for (let i = 0; i < draftData.numberOfPenalties; i++) {
+    penalties.push({
+      penaltyValue: draftData[`penaltyValue${i}`],
+      penaltyType: draftData[`sentencePenaltyType${i}`],
+      penaltyModifier: draftData[`sentencePenaltyModifier${i}`],
+      sentenceDate: draftData[`sentenceDate${i}`],
+      chargeExternalId: draftData[`penaltyChargeExternalId${i}`],
+    });
+  }
+
+  const charges = [];
+  for (let i = 0; i < draftData.numberOfCharges; i++) {
+    const chargePenalties = penalties.filter((p) => {
+      return p.chargeExternalId === draftData[`chargeExternalId${i}`];
+    });
+
+    charges.push({
+      causeNumber: draftData[`causeNumber${i}`],
+      jurisdiction: draftData[`jurisdiction${i}`],
+      counts: String(draftData[`counts${i}`]),
+      description: draftData[`description${i}`],
+      statute: draftData[`statute${i}`],
+      classification: draftData[`classificationTypeRawText${i}`],
+      tdd: draftData[`tdd${i}`],
+      sdd: draftData[`sdd${i}`],
+      chargePenalties,
+    });
+  }
+
+  return {
+    usCitizenshipStatus,
+    todaysDate,
+    iconNumber,
+    clientFullName,
+    supervisionType,
+    supervisionStartDate,
+    supervisionEndDate,
+    officerFullName,
+    staffTitle,
+    workUnit,
+    dischargeDate,
+    approverSignatureDateParole,
+    officerSignatureDateParole,
+    officerSignatureCbc,
+    officerSignatureParole,
+    approverSignatureCbc,
+    approverSignatureParole,
+    approverTitle,
+    approverFullName,
+    progressAndRecommendations,
+    hasCompletedProbation,
+    clientStatusProbationForm,
+    clientStatusDateProbationForm,
+    caseNumbers,
+    remainsFinanciallyLiable,
+    grantedDeferredJudgement,
+    hasOtherProbationDischargeOrder,
+    otherProbationDischargeOrderDetails,
+    charges,
+    penalties,
+  };
+}
 
 export class UsIaEarlyDischargeForm extends FormBase<
   UsIaEarlyDischargeDraftData,

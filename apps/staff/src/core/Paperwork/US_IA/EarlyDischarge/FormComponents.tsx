@@ -17,7 +17,7 @@
 
 import * as React from "react";
 
-import { UsIaEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsIa";
+import { UsIaEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { DOCXFormDropdown } from "../../DOCXFormDropdown";
 import DOCXFormInput, { DOCXFormInputProps } from "../../DOCXFormInput";
 import DOCXFormTextArea, { FormTextAreaProps } from "../../DOCXFormTextArea";

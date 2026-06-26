@@ -15,5 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./types";
-export * from "./UsIaEarlyDischargeOpportunity";
+import { usIaSupervisionLevelDowngradeFixtures } from "./fixtures";
+import { usIaSupervisionLevelDowngradeSchema } from "./schema";
+
+test.each(
+  Object.keys(usIaSupervisionLevelDowngradeFixtures) as Array<
+    keyof typeof usIaSupervisionLevelDowngradeFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usIaSupervisionLevelDowngradeSchema.parse(
+      usIaSupervisionLevelDowngradeFixtures[key].input,
+    ),
+  ).toMatchSnapshot();
+});

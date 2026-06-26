@@ -1,0 +1,111 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "notServingALifeSentenceOnSupervisionOrSupervisionOutOfState": null,
+    "notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days": {
+      "eligibleDate": 2021-05-16T00:00:00.000Z,
+    },
+    "supervisionCaseTypeIsNotSexOffense": null,
+    "supervisionLevelIsNotResidentialProgram": null,
+    "supervisionTypeIsNotInvestigation": null,
+    "usIaNoOpenSupervisionModifiers": null,
+    "usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate": null,
+    "usIaNotExcludedFromEarlyDischargeByParoleCondition": null,
+    "usIaNotServingIneligibleOffenseForEarlyDischarge": null,
+    "usIaServingSupervisionCaseAtLeast90Days": {
+      "supervisionCaseStartDate": 2021-03-16T00:00:00.000Z,
+    },
+    "usIaSupervisionFeesPaid": null,
+    "usIaSupervisionLevelIs0NotAvailable12Or3": {
+      "supervisionLevelRawText": "LEVEL 2",
+    },
+  },
+  "externalId": "002",
+  "formInformation": {
+    "charges": [],
+    "penalties": [],
+    "staffAttributes": [],
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "victimFlag": true,
+    "violationsPast6MonthsFlag": true,
+  },
+  "stateCode": "US_IA",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "notServingALifeSentenceOnSupervisionOrSupervisionOutOfState": null,
+    "notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days": {
+      "eligibleDate": 2021-01-16T00:00:00.000Z,
+    },
+    "supervisionCaseTypeIsNotSexOffense": null,
+    "supervisionLevelIsNotResidentialProgram": {
+      "supervisionLevelRawText": "LEVEL 3",
+    },
+    "supervisionTypeIsNotInvestigation": null,
+    "usIaNoOpenSupervisionModifiers": null,
+    "usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate": null,
+    "usIaNotExcludedFromEarlyDischargeByParoleCondition": null,
+    "usIaNotServingIneligibleOffenseForEarlyDischarge": null,
+    "usIaServingSupervisionCaseAtLeast90Days": {
+      "supervisionCaseStartDate": 2020-08-16T00:00:00.000Z,
+    },
+    "usIaSupervisionFeesPaid": null,
+    "usIaSupervisionLevelIs0NotAvailable12Or3": {
+      "supervisionLevelRawText": "LEVEL 3",
+    },
+  },
+  "eligibleDate": 2020-12-16T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": {
+    "USCitizenshipStatus": "US Citizen",
+    "charges": [
+      {
+        "causeNumber": "CN123",
+        "chargeExternalId": "CHARGE-001",
+        "classificationTypeRawText": "Felony",
+        "counts": 1,
+        "crimeCdOffenseType": "Felony",
+        "description": "Sample offense",
+        "jurisdiction": "Polk",
+        "sdd": "",
+        "statute": "XYZ-123",
+        "tdd": "2025-01-01",
+      },
+    ],
+    "penalties": [
+      {
+        "chargeExternalId": "CHARGE-001",
+        "penaltyValue": "1, 3, 21",
+        "sentenceDate": "2024-01-01",
+        "sentencePenaltyModifier": "Increased",
+        "sentencePenaltyType": "Jail",
+      },
+    ],
+    "staffAttributes": [
+      {
+        "officerExternalId": "OFFICER-001",
+        "staffTitle": "Probation Officer",
+        "workUnit": "Case Management",
+      },
+    ],
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "victimFlag": true,
+  },
+  "stateCode": "US_IA",
+}
+`;

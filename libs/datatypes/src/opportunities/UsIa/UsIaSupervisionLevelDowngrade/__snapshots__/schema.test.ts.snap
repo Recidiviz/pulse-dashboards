@@ -1,0 +1,86 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noSupervisionLevelDowngradeWithin6Months": null,
+    "noSupervisionViolationReportWithin6MonthsUsingResponseDate": null,
+    "notServingALifeSentenceOnSupervision": null,
+    "notSupervisionPastFullTermCompletionDateOrUpcoming30Days": {
+      "eligibleDate": "2022-02-16",
+    },
+    "supervisionCaseTypeIsNotSexOffense": null,
+    "supervisionLevelIsMediumOrMinimum": {
+      "supervisionLevel": "MINIMUM",
+      "supervisionLevelStartDate": "2020-10-16",
+    },
+    "supervisionLevelIsNotResidentialProgram": null,
+    "supervisionTypeIsNotInvestigation": null,
+    "usIaNoOpenSupervisionModifiers": null,
+    "usIaNotServingIneligibleOffenseForEarlyDischarge": null,
+    "usIaServingSupervisionCaseAtLeast90Days": {
+      "eligibleDate": "2022-08-16",
+      "supervisionCaseStartDate": "2019-02-16",
+    },
+  },
+  "externalId": "003",
+  "formInformation": {},
+  "ineligibleCriteria": {
+    "usIaNotEligibleOrMarkedIneligibleForEarlyDischarge": {
+      "edDenialReasons": null,
+      "edEligibilityDate": "2020-11-16",
+      "edMarkedIneligibleDate": null,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "openInterventionsFlag": true,
+    "violationsPast6MonthsFlag": true,
+  },
+  "stateCode": "US_IA",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noSupervisionLevelDowngradeWithin6Months": null,
+    "noSupervisionViolationReportWithin6MonthsUsingResponseDate": null,
+    "notServingALifeSentenceOnSupervision": null,
+    "notSupervisionPastFullTermCompletionDateOrUpcoming30Days": {
+      "eligibleDate": "2026-07-16",
+    },
+    "supervisionCaseTypeIsNotSexOffense": null,
+    "supervisionLevelIsMediumOrMinimum": {
+      "supervisionLevel": "MEDIUM",
+      "supervisionLevelStartDate": "2017-08-16",
+    },
+    "supervisionLevelIsNotResidentialProgram": null,
+    "supervisionTypeIsNotInvestigation": null,
+    "usIaNoOpenSupervisionModifiers": null,
+    "usIaNotEligibleOrMarkedIneligibleForEarlyDischarge": {
+      "edDenialReasons": null,
+      "edEligibilityDate": null,
+      "edMarkedIneligibleDate": null,
+    },
+    "usIaNotServingIneligibleOffenseForEarlyDischarge": null,
+    "usIaServingSupervisionCaseAtLeast90Days": {
+      "eligibleDate": "2018-02-16",
+      "supervisionCaseStartDate": "2015-02-16",
+    },
+  },
+  "externalId": "001",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "openInterventionsFlag": false,
+    "violationsPast6MonthsFlag": false,
+  },
+  "stateCode": "US_IA",
+}
+`;

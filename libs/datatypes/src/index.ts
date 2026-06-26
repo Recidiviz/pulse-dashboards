@@ -80,6 +80,13 @@ export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationComm
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsNc/UsNcCreditReductionReview/fixtures";
 
+// UsIa Exports: Includes fixtures and schema related to US-IA opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsIa/UsIaEarlyDischarge/fixtures";
+export * from "./opportunities/UsIa/UsIaEarlyDischarge/schema";
+export * from "./opportunities/UsIa/UsIaSupervisionLevelDowngrade/fixtures";
+export * from "./opportunities/UsIa/UsIaSupervisionLevelDowngrade/schema";
+
 // UsNe Exports: Includes fixtures and schema related to US-NE opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsNe/UsNeGoodTimeRestoration/fixtures";

@@ -17,6 +17,11 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
+import {
+  UsIaSupervisionLevelDowngradeRecord,
+  usIaSupervisionLevelDowngradeSchema,
+} from "~datatypes";
+
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement, OpportunityTab } from "../../types";
@@ -25,14 +30,10 @@ import {
   UsIaEarlyDischargeOpportunity,
   UsIaSupervisionLevelDowngradeClientStatus,
 } from "../UsIaEarlyDischargeOpportunity";
-import {
-  UsIaSupervisionLevelDowngradeReferralRecord,
-  usIaSupervisionLevelDowngradeSchema,
-} from "./UsIaSupervisionLevelDowngradeReferralRecord";
 
 export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
-  UsIaSupervisionLevelDowngradeReferralRecord
+  UsIaSupervisionLevelDowngradeRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     super(

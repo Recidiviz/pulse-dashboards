@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsIaSupervisionLevelDowngradeOpportunity";
-export * from "./UsIaSupervisionLevelDowngradeReferralRecord";

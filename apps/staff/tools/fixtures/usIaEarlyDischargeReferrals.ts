@@ -15,436 +15,436 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { relativeFixtureDate } from "~datatypes";
+import { relativeFixtureDate, UsIaEarlyDischargeRecord } from "~datatypes";
 
-import { UsIaEarlyDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsIa";
 import { fixtureWithIdKey } from "./utils";
 
-export const usIaEarlyDischargeReferralsFixture =
-  fixtureWithIdKey<UsIaEarlyDischargeReferralRecordRaw>("externalId", [
-    {
-      stateCode: "US_IA",
-      externalId: "001",
-      eligibleCriteria: {
-        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
-        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
-        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
-          eligibleDate: relativeFixtureDate({ months: -11 }),
-        },
-        supervisionCaseTypeIsNotSexOffense: null,
-        supervisionTypeIsNotInvestigation: null,
-        usIaNoOpenSupervisionModifiers: null,
-        usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
-        usIaNotServingIneligibleOffenseForEarlyDischarge: null,
-        usIaServingSupervisionCaseAtLeast90Days: {
-          supervisionCaseStartDate: relativeFixtureDate({ months: -16 }),
-        },
-        usIaSupervisionFeesPaid: null,
-        usIaSupervisionLevelIs0NotAvailable12Or3: {
-          supervisionLevelRawText: "LEVEL 3",
-        },
-        supervisionLevelIsNotResidentialProgram: {
-          supervisionLevelRawText: "LEVEL 3",
-        },
+export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
+  UsIaEarlyDischargeRecord["input"]
+>("externalId", [
+  {
+    stateCode: "US_IA",
+    externalId: "001",
+    eligibleCriteria: {
+      usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+      notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
+      notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
+        eligibleDate: relativeFixtureDate({ months: -11 }),
       },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
-      formInformation: {
-        USCitizenshipStatus: "US Citizen",
-        charges: [
-          {
-            causeNumber: "CN123",
-            crimeCdOffenseType: "Felony",
-            jurisdiction: "Polk",
-            classificationTypeRawText: "Felony",
-            counts: 1,
-            description: "Sample offense",
-            statute: "XYZ-123",
-            tdd: "2025-01-01",
-            sdd: "",
-            chargeExternalId: "CHARGE-001",
-          },
-          {
-            causeNumber: "FT987",
-            crimeCdOffenseType: "Felony",
-            jurisdiction: "Monroe",
-            classificationTypeRawText: "Felony",
-            counts: 2,
-            description: "Some other offense",
-            statute: "LMN-444",
-            tdd: "2025-03-01",
-            sdd: "",
-            chargeExternalId: "CHARGE-002",
-          },
-        ],
-        penalties: [
-          {
-            penaltyValue: "$20.00",
-            sentencePenaltyModifier: "None",
-            sentencePenaltyType: "Fine",
-            sentenceDate: "2023-01-01",
-            chargeExternalId: "CHARGE-002",
-          },
-          {
-            penaltyValue: "1, 3, 21",
-            sentencePenaltyModifier: "Increased",
-            sentencePenaltyType: "Jail",
-            sentenceDate: "2024-01-01",
-            chargeExternalId: "CHARGE-001",
-          },
-        ],
-        staffAttributes: [
-          {
-            staffTitle: "Probation Officer",
-            workUnit: "Case Management",
-            officerExternalId: "OFFICER-001",
-          },
-        ],
+      supervisionCaseTypeIsNotSexOffense: null,
+      supervisionTypeIsNotInvestigation: null,
+      usIaNoOpenSupervisionModifiers: null,
+      usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
+      usIaNotServingIneligibleOffenseForEarlyDischarge: null,
+      usIaServingSupervisionCaseAtLeast90Days: {
+        supervisionCaseStartDate: relativeFixtureDate({ months: -16 }),
       },
-      eligibleDate: relativeFixtureDate({ months: -12 }),
-      metadata: {
-        victimFlag: true,
+      usIaSupervisionFeesPaid: null,
+      usIaSupervisionLevelIs0NotAvailable12Or3: {
+        supervisionLevelRawText: "LEVEL 3",
+      },
+      supervisionLevelIsNotResidentialProgram: {
+        supervisionLevelRawText: "LEVEL 3",
       },
     },
-    {
-      stateCode: "US_IA",
-      externalId: "002",
-      eligibleCriteria: {
-        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: {
-          latestViolationReportDates: null,
-          violationExpirationDate: relativeFixtureDate({ months: -6 }),
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    formInformation: {
+      USCitizenshipStatus: "US Citizen",
+      charges: [
+        {
+          causeNumber: "CN123",
+          crimeCdOffenseType: "Felony",
+          jurisdiction: "Polk",
+          classificationTypeRawText: "Felony",
+          counts: 1,
+          description: "Sample offense",
+          statute: "XYZ-123",
+          tdd: "2025-01-01",
+          sdd: "",
+          chargeExternalId: "CHARGE-001",
         },
-        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
-          lifeSentence: false,
-          ineligibleOffenses: null,
+        {
+          causeNumber: "FT987",
+          crimeCdOffenseType: "Felony",
+          jurisdiction: "Monroe",
+          classificationTypeRawText: "Felony",
+          counts: 2,
+          description: "Some other offense",
+          statute: "LMN-444",
+          tdd: "2025-03-01",
+          sdd: "",
+          chargeExternalId: "CHARGE-002",
         },
-        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
-          eligibleDate: relativeFixtureDate({ months: -7 }),
+      ],
+      penalties: [
+        {
+          penaltyValue: "$20.00",
+          sentencePenaltyModifier: "None",
+          sentencePenaltyType: "Fine",
+          sentenceDate: "2023-01-01",
+          chargeExternalId: "CHARGE-002",
         },
-        supervisionCaseTypeIsNotSexOffense: {
-          rawSexOffenseCaseTypes: null,
+        {
+          penaltyValue: "1, 3, 21",
+          sentencePenaltyModifier: "Increased",
+          sentencePenaltyType: "Jail",
+          sentenceDate: "2024-01-01",
+          chargeExternalId: "CHARGE-001",
         },
-        supervisionTypeIsNotInvestigation: {
-          rawSupervisionTypes: null,
+      ],
+      staffAttributes: [
+        {
+          staffTitle: "Probation Officer",
+          workUnit: "Case Management",
+          officerExternalId: "OFFICER-001",
         },
-        usIaNoOpenSupervisionModifiers: null,
-        usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
-        usIaNotServingIneligibleOffenseForEarlyDischarge: null,
-        usIaServingSupervisionCaseAtLeast90Days: {
-          supervisionCaseStartDate: relativeFixtureDate({ months: -17 }),
-        },
-        usIaSupervisionFeesPaid: null,
-        usIaSupervisionLevelIs0NotAvailable12Or3: {
-          supervisionLevelRawText: "LEVEL 3",
-        },
-        supervisionLevelIsNotResidentialProgram: {
-          supervisionLevelRawText: "LEVEL 1",
-        },
+      ],
+    },
+    eligibleDate: relativeFixtureDate({ months: -12 }),
+    metadata: {
+      victimFlag: true,
+    },
+  },
+  {
+    stateCode: "US_IA",
+    externalId: "002",
+    eligibleCriteria: {
+      usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: {
+        latestViolationReportDates: null,
+        violationExpirationDate: relativeFixtureDate({ months: -6 }),
       },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
-      formInformation: {
-        USCitizenshipStatus: "Non-Citizen",
-        charges: [
-          {
-            causeNumber: "CN456",
-            crimeCdOffenseType: "Misdemeanor",
-            jurisdiction: "County Court",
-            classificationTypeRawText: "Misdemeanor",
-            counts: 2,
-            description: "Another sample offense",
-            statute: "ABC-789",
-            tdd: "2026-05-05",
-            sdd: "",
-            chargeExternalId: "CHARGE-003",
-          },
-        ],
-        penalties: [
-          {
-            penaltyValue: "1, 0, 5",
-            sentencePenaltyModifier: "Reduced",
-            sentencePenaltyType: "Probation",
-            sentenceDate: "2024-05-05",
-            chargeExternalId: "CHARGE-003",
-          },
-        ],
-        staffAttributes: [
-          {
-            staffTitle: "Officer",
-            workUnit: "Special Unit",
-            officerExternalId: "OFFICER-002",
-          },
-        ],
+      notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
+        lifeSentence: false,
+        ineligibleOffenses: null,
       },
-      eligibleDate: relativeFixtureDate({ months: -14 }),
-      metadata: {
-        victimFlag: true,
-        victimContactInfo: [
-          {
-            VictimFirstNm: "Jane",
-            VictimLastNm: "Smith",
-            EmailAddress: "jane.smith@email.com",
-            CellPhone: "000-555-1234",
-            Address1: "123 Fake St",
-            City: "Des Moines",
-            State: "IA",
-            ZipCode: "50309",
-          },
-          {
-            VictimFirstNm: "Alice",
-            VictimMiddleNm: "B.",
-            VictimLastNm: "Johnson",
-            EmailAddress: "alice.johnson@email.com",
-            CellPhone: "000-555-5555",
-            Address1: "456 Fake Ave",
-            City: "Cedar Rapids",
-            State: "IA",
-            ZipCode: "52401",
-            Country: "USA",
-          },
-        ],
-        violationsPast6MonthsFlag: true,
+      notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
+        eligibleDate: relativeFixtureDate({ months: -7 }),
+      },
+      supervisionCaseTypeIsNotSexOffense: {
+        rawSexOffenseCaseTypes: null,
+      },
+      supervisionTypeIsNotInvestigation: {
+        rawSupervisionTypes: null,
+      },
+      usIaNoOpenSupervisionModifiers: null,
+      usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
+      usIaNotServingIneligibleOffenseForEarlyDischarge: null,
+      usIaServingSupervisionCaseAtLeast90Days: {
+        supervisionCaseStartDate: relativeFixtureDate({ months: -17 }),
+      },
+      usIaSupervisionFeesPaid: null,
+      usIaSupervisionLevelIs0NotAvailable12Or3: {
+        supervisionLevelRawText: "LEVEL 3",
+      },
+      supervisionLevelIsNotResidentialProgram: {
+        supervisionLevelRawText: "LEVEL 1",
       },
     },
-    {
-      stateCode: "US_IA",
-      externalId: "003",
-      eligibleCriteria: {
-        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
-        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
-        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
-          eligibleDate: relativeFixtureDate({ months: -1 }),
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    formInformation: {
+      USCitizenshipStatus: "Non-Citizen",
+      charges: [
+        {
+          causeNumber: "CN456",
+          crimeCdOffenseType: "Misdemeanor",
+          jurisdiction: "County Court",
+          classificationTypeRawText: "Misdemeanor",
+          counts: 2,
+          description: "Another sample offense",
+          statute: "ABC-789",
+          tdd: "2026-05-05",
+          sdd: "",
+          chargeExternalId: "CHARGE-003",
         },
-        supervisionCaseTypeIsNotSexOffense: {
-          rawSexOffenseCaseTypes: null,
+      ],
+      penalties: [
+        {
+          penaltyValue: "1, 0, 5",
+          sentencePenaltyModifier: "Reduced",
+          sentencePenaltyType: "Probation",
+          sentenceDate: "2024-05-05",
+          chargeExternalId: "CHARGE-003",
         },
-        supervisionTypeIsNotInvestigation: {
-          rawSupervisionTypes: null,
+      ],
+      staffAttributes: [
+        {
+          staffTitle: "Officer",
+          workUnit: "Special Unit",
+          officerExternalId: "OFFICER-002",
         },
-        usIaNoOpenSupervisionModifiers: {
-          openSupervisionModifiers: null,
+      ],
+    },
+    eligibleDate: relativeFixtureDate({ months: -14 }),
+    metadata: {
+      victimFlag: true,
+      victimContactInfo: [
+        {
+          VictimFirstNm: "Jane",
+          VictimLastNm: "Smith",
+          EmailAddress: "jane.smith@example.com",
+          CellPhone: "000-555-1234",
+          Address1: "123 Fake St",
+          City: "Des Moines",
+          State: "IA",
+          ZipCode: "50309",
         },
-        usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
-        usIaNotServingIneligibleOffenseForEarlyDischarge: {
-          ineligibleOffenses: null,
+        {
+          VictimFirstNm: "Alice",
+          VictimMiddleNm: "B.",
+          VictimLastNm: "Johnson",
+          EmailAddress: "alice.johnson@example.com",
+          CellPhone: "000-555-5555",
+          Address1: "456 Fake Ave",
+          City: "Cedar Rapids",
+          State: "IA",
+          ZipCode: "52401",
+          Country: "USA",
         },
-        usIaServingSupervisionCaseAtLeast90Days: {
-          supervisionCaseStartDate: relativeFixtureDate({ months: -2 }),
-        },
-        usIaSupervisionFeesPaid: null,
-        usIaSupervisionLevelIs0NotAvailable12Or3: {
-          supervisionLevelRawText: "LEVEL 1",
-        },
-        supervisionLevelIsNotResidentialProgram: {
-          supervisionLevelRawText: null,
-        },
+      ],
+      violationsPast6MonthsFlag: true,
+    },
+  },
+  {
+    stateCode: "US_IA",
+    externalId: "003",
+    eligibleCriteria: {
+      usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+      notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
+      notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
+        eligibleDate: relativeFixtureDate({ months: -1 }),
       },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
-      formInformation: {
-        USCitizenshipStatus: "US Citizen",
-        charges: [
-          {
-            causeNumber: "CN789",
-            crimeCdOffenseType: "Felony",
-            jurisdiction: "Municipal Court",
-            classificationTypeRawText: "Felony",
-            counts: 1,
-            description: "Minor offense",
-            statute: "XYZ-456",
-            tdd: "2025-07-01",
-            sdd: "",
-            chargeExternalId: "CHARGE-004",
-          },
-        ],
-        penalties: [
-          {
-            penaltyValue: "$18.42",
-            sentencePenaltyModifier: "None",
-            sentencePenaltyType: "Fine",
-            sentenceDate: "2023-07-01",
-            chargeExternalId: "CHARGE-004",
-          },
-        ],
-        staffAttributes: [
-          {
-            staffTitle: "Parole Officer",
-            workUnit: "Central Unit",
-            officerExternalId: "OFFICER-003",
-          },
-        ],
+      supervisionCaseTypeIsNotSexOffense: {
+        rawSexOffenseCaseTypes: null,
       },
-      eligibleDate: relativeFixtureDate({ months: -17 }),
-      metadata: {
-        victimFlag: true,
-        victimContactInfo: [
-          {
-            VictimFirstNm: "Alice",
-            VictimMiddleNm: "B.",
-            VictimLastNm: "Johnson",
-            EmailAddress: "alice.johnson@email.com",
-            CellPhone: "000-555-5555",
-            Address1: "456 Fake Ave",
-            City: "Cedar Rapids",
-            State: "IA",
-            ZipCode: "52401",
-            Country: "USA",
-          },
-        ],
-        dnaRequirementStatus: "Maybe Required",
-        dnaSubmittedFlag: true,
-        mostRecentDnaSubmittedDate: relativeFixtureDate({ days: -10 }),
+      supervisionTypeIsNotInvestigation: {
+        rawSupervisionTypes: null,
+      },
+      usIaNoOpenSupervisionModifiers: {
+        openSupervisionModifiers: null,
+      },
+      usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
+      usIaNotServingIneligibleOffenseForEarlyDischarge: {
+        ineligibleOffenses: null,
+      },
+      usIaServingSupervisionCaseAtLeast90Days: {
+        supervisionCaseStartDate: relativeFixtureDate({ months: -2 }),
+      },
+      usIaSupervisionFeesPaid: null,
+      usIaSupervisionLevelIs0NotAvailable12Or3: {
+        supervisionLevelRawText: "LEVEL 1",
+      },
+      supervisionLevelIsNotResidentialProgram: {
+        supervisionLevelRawText: null,
       },
     },
-    {
-      stateCode: "US_IA",
-      externalId: "004",
-      eligibleCriteria: {
-        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
-        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
-          lifeSentence: false,
-          ineligibleOffenses: null,
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    formInformation: {
+      USCitizenshipStatus: "US Citizen",
+      charges: [
+        {
+          causeNumber: "CN789",
+          crimeCdOffenseType: "Felony",
+          jurisdiction: "Municipal Court",
+          classificationTypeRawText: "Felony",
+          counts: 1,
+          description: "Minor offense",
+          statute: "XYZ-456",
+          tdd: "2025-07-01",
+          sdd: "",
+          chargeExternalId: "CHARGE-004",
         },
-        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
-          eligibleDate: relativeFixtureDate({ months: -3 }),
+      ],
+      penalties: [
+        {
+          penaltyValue: "$18.42",
+          sentencePenaltyModifier: "None",
+          sentencePenaltyType: "Fine",
+          sentenceDate: "2023-07-01",
+          chargeExternalId: "CHARGE-004",
         },
-        supervisionCaseTypeIsNotSexOffense: null,
-        supervisionTypeIsNotInvestigation: {
-          rawSupervisionTypes: null,
+      ],
+      staffAttributes: [
+        {
+          staffTitle: "Parole Officer",
+          workUnit: "Central Unit",
+          officerExternalId: "OFFICER-003",
         },
-        usIaNoOpenSupervisionModifiers: null,
-        usIaNotExcludedFromEarlyDischargeByParoleCondition: {
-          conditions: null,
-        },
-        usIaNotServingIneligibleOffenseForEarlyDischarge: {
-          ineligibleOffenses: null,
-        },
-        usIaServingSupervisionCaseAtLeast90Days: {
-          supervisionCaseStartDate: relativeFixtureDate({ months: -8 }),
-        },
-        usIaSupervisionFeesPaid: {
-          initialBalance: 2000,
-          currentBalance: 2000,
-        },
-        usIaSupervisionLevelIs0NotAvailable12Or3: {
-          supervisionLevelRawText: "LEVEL 2",
-        },
-        supervisionLevelIsNotResidentialProgram: null,
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
-      formInformation: {
-        USCitizenshipStatus: "US Citizen",
-        charges: [
-          {
-            causeNumber: "CN987",
-            crimeCdOffenseType: "Misdemeanor",
-            jurisdiction: "District Court",
-            classificationTypeRawText: "Misdemeanor",
-            counts: 1,
-            description: "Example offense",
-            statute: "ABC-123",
-            tdd: "2026-10-10",
-            sdd: "",
-            chargeExternalId: "CHARGE-001",
-          },
-        ],
-        penalties: [
-          {
-            penaltyValue: "2, 1, 15",
-            sentencePenaltyModifier: "Increased",
-            sentencePenaltyType: "Incarceration",
-            sentenceDate: "2024-10-10",
-            chargeExternalId: "CHARGE-001",
-          },
-        ],
-        staffAttributes: [
-          {
-            staffTitle: "Supervisor",
-            workUnit: "Department X",
-            officerExternalId: "OFFICER-004",
-          },
-        ],
-      },
-      eligibleDate: relativeFixtureDate({ months: -18 }),
-      metadata: {},
+      ],
     },
-    {
-      stateCode: "US_IA",
-      externalId: "005",
-      eligibleCriteria: {
-        usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
-        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
-          lifeSentence: false,
-          ineligibleOffenses: null,
+    eligibleDate: relativeFixtureDate({ months: -17 }),
+    metadata: {
+      victimFlag: true,
+      victimContactInfo: [
+        {
+          VictimFirstNm: "Alice",
+          VictimMiddleNm: "B.",
+          VictimLastNm: "Johnson",
+          EmailAddress: "alice.johnson@example.com",
+          CellPhone: "000-555-5555",
+          Address1: "456 Fake Ave",
+          City: "Cedar Rapids",
+          State: "IA",
+          ZipCode: "52401",
+          Country: "USA",
         },
-        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
-          eligibleDate: relativeFixtureDate({ months: -3 }),
-        },
-        supervisionCaseTypeIsNotSexOffense: null,
-        supervisionTypeIsNotInvestigation: {
-          rawSupervisionTypes: null,
-        },
-        usIaNoOpenSupervisionModifiers: null,
-        usIaNotExcludedFromEarlyDischargeByParoleCondition: {
-          conditions: null,
-        },
-        usIaNotServingIneligibleOffenseForEarlyDischarge: {
-          ineligibleOffenses: null,
-        },
-        usIaServingSupervisionCaseAtLeast90Days: {
-          supervisionCaseStartDate: relativeFixtureDate({ months: -8 }),
-        },
-        usIaSupervisionFeesPaid: {
-          initialBalance: 2000,
-          currentBalance: 2000,
-        },
-        usIaSupervisionLevelIs0NotAvailable12Or3: {
-          supervisionLevelRawText: "LEVEL 2",
-        },
-        supervisionLevelIsNotResidentialProgram: null,
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
-      formInformation: {
-        USCitizenshipStatus: "US Citizen",
-        charges: [
-          {
-            causeNumber: "CN989",
-            crimeCdOffenseType: "Misdemeanor",
-            jurisdiction: "District Court",
-            classificationTypeRawText: "Misdemeanor",
-            counts: 1,
-            description: "Example offense",
-            statute: "ABC-123",
-            tdd: "2026-10-10",
-            sdd: "",
-            chargeExternalId: "CHARGE-001",
-          },
-        ],
-        penalties: [
-          {
-            penaltyValue: "2, 1, 15",
-            sentencePenaltyModifier: "Increased",
-            sentencePenaltyType: "Incarceration",
-            sentenceDate: "2024-10-10",
-            chargeExternalId: "CHARGE-001",
-          },
-        ],
-        staffAttributes: [
-          {
-            staffTitle: "Supervisor",
-            workUnit: "Department X",
-            officerExternalId: "OFFICER-004",
-          },
-        ],
-      },
-      eligibleDate: relativeFixtureDate({ months: -18 }),
-      metadata: {},
+      ],
+      dnaRequirementStatus: "Maybe Required",
+      dnaSubmittedFlag: true,
+      mostRecentDnaSubmittedDate: relativeFixtureDate({ days: -10 }),
     },
-  ]);
+  },
+  {
+    stateCode: "US_IA",
+    externalId: "004",
+    eligibleCriteria: {
+      usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+      notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
+        lifeSentence: false,
+        ineligibleOffenses: null,
+      },
+      notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
+        eligibleDate: relativeFixtureDate({ months: -3 }),
+      },
+      supervisionCaseTypeIsNotSexOffense: null,
+      supervisionTypeIsNotInvestigation: {
+        rawSupervisionTypes: null,
+      },
+      usIaNoOpenSupervisionModifiers: null,
+      usIaNotExcludedFromEarlyDischargeByParoleCondition: {
+        conditions: null,
+      },
+      usIaNotServingIneligibleOffenseForEarlyDischarge: {
+        ineligibleOffenses: null,
+      },
+      usIaServingSupervisionCaseAtLeast90Days: {
+        supervisionCaseStartDate: relativeFixtureDate({ months: -8 }),
+      },
+      usIaSupervisionFeesPaid: {
+        initialBalance: 2000,
+        currentBalance: 2000,
+      },
+      usIaSupervisionLevelIs0NotAvailable12Or3: {
+        supervisionLevelRawText: "LEVEL 2",
+      },
+      supervisionLevelIsNotResidentialProgram: null,
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    formInformation: {
+      USCitizenshipStatus: "US Citizen",
+      charges: [
+        {
+          causeNumber: "CN987",
+          crimeCdOffenseType: "Misdemeanor",
+          jurisdiction: "District Court",
+          classificationTypeRawText: "Misdemeanor",
+          counts: 1,
+          description: "Example offense",
+          statute: "ABC-123",
+          tdd: "2026-10-10",
+          sdd: "",
+          chargeExternalId: "CHARGE-001",
+        },
+      ],
+      penalties: [
+        {
+          penaltyValue: "2, 1, 15",
+          sentencePenaltyModifier: "Increased",
+          sentencePenaltyType: "Incarceration",
+          sentenceDate: "2024-10-10",
+          chargeExternalId: "CHARGE-001",
+        },
+      ],
+      staffAttributes: [
+        {
+          staffTitle: "Supervisor",
+          workUnit: "Department X",
+          officerExternalId: "OFFICER-004",
+        },
+      ],
+    },
+    eligibleDate: relativeFixtureDate({ months: -18 }),
+    metadata: {},
+  },
+  {
+    stateCode: "US_IA",
+    externalId: "005",
+    eligibleCriteria: {
+      usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+      notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
+        lifeSentence: false,
+        ineligibleOffenses: null,
+      },
+      notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+        eligibleDate: relativeFixtureDate({ months: -3 }),
+      },
+      supervisionCaseTypeIsNotSexOffense: null,
+      supervisionTypeIsNotInvestigation: {
+        rawSupervisionTypes: null,
+      },
+      usIaNoOpenSupervisionModifiers: null,
+      usIaNotExcludedFromEarlyDischargeByParoleCondition: {
+        conditions: null,
+      },
+      usIaNotServingIneligibleOffenseForEarlyDischarge: {
+        ineligibleOffenses: null,
+      },
+      usIaServingSupervisionCaseAtLeast90Days: {
+        supervisionCaseStartDate: relativeFixtureDate({ months: -8 }),
+      },
+      usIaSupervisionFeesPaid: {
+        initialBalance: 2000,
+        currentBalance: 2000,
+      },
+      usIaSupervisionLevelIs0NotAvailable12Or3: {
+        supervisionLevelRawText: "LEVEL 2",
+      },
+      supervisionLevelIsNotResidentialProgram: null,
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    formInformation: {
+      USCitizenshipStatus: "US Citizen",
+      charges: [
+        {
+          causeNumber: "CN989",
+          crimeCdOffenseType: "Misdemeanor",
+          jurisdiction: "District Court",
+          classificationTypeRawText: "Misdemeanor",
+          counts: 1,
+          description: "Example offense",
+          statute: "ABC-123",
+          tdd: "2026-10-10",
+          sdd: "",
+          chargeExternalId: "CHARGE-001",
+        },
+      ],
+      penalties: [
+        {
+          penaltyValue: "2, 1, 15",
+          sentencePenaltyModifier: "Increased",
+          sentencePenaltyType: "Incarceration",
+          sentenceDate: "2024-10-10",
+          chargeExternalId: "CHARGE-001",
+        },
+      ],
+      staffAttributes: [
+        {
+          staffTitle: "Supervisor",
+          workUnit: "Department X",
+          officerExternalId: "OFFICER-004",
+        },
+      ],
+    },
+    eligibleDate: relativeFixtureDate({ months: -18 }),
+    metadata: {},
+  },
+]);

@@ -32,6 +32,8 @@ import {
   usAzReleaseToDTPSchema,
   usAzReleaseToTPRSchema,
   usCaSupervisionLevelDowngradeSchema,
+  usIaEarlyDischargeSchema,
+  usIaSupervisionLevelDowngradeSchema,
   usMeAnnualReclassificationSchema,
   usMeMediumTrusteeSchema,
   usMeSCCPSchema,
@@ -52,7 +54,6 @@ import {
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
-import { usIaEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsIa/UsIaEarlyDischargeOpportunity/UsIaEarlyDischargeOpportunitySchema";
 import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity/EarnedDischargeReferralRecord";
 import { usIdLsuSchema } from "../src/WorkflowsStore/Opportunity/UsId/LSUOpportunity/LSUReferralRecord";
 import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerReferralRecord";
@@ -122,6 +123,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
 
   // US_IA
   usIaEarlyDischarge: usIaEarlyDischargeSchema,
+  usIaCompleteSupervisionLevelDowngrade: usIaSupervisionLevelDowngradeSchema,
 
   // US_ID
   earnedDischarge: usIdEarnedDischargeSchema,

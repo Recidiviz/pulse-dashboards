@@ -23,9 +23,11 @@ import { Button } from "~design-system";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { PartialRecord } from "../../../../utils/typeUtils";
-import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
+import {
+  UsIaEarlyDischargeDraftData,
+  UsIaEarlyDischargeForm,
+} from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { resolveCurrentUserName } from "../../../../WorkflowsStore/Opportunity/Forms/utils";
-import { UsIaEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { FormUsIaEarlyDischargeInput } from "./FormComponents";
 
 const SignatureButton = styled(Button)`

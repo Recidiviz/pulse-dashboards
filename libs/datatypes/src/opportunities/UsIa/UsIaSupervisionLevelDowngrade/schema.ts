@@ -15,5 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./types";
-export * from "./UsIaEarlyDischargeOpportunity";
+import { z } from "zod";
+
+import { ParsedRecord } from "../../../utils/types";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+
+export const usIaSupervisionLevelDowngradeSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: z.object({}).passthrough(),
+    ineligibleCriteria: z.object({}).passthrough(),
+  })
+  .passthrough();
+
+export type UsIaSupervisionLevelDowngradeRecord = ParsedRecord<
+  typeof usIaSupervisionLevelDowngradeSchema
+>;

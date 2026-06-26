@@ -15,55 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {} from "date-fns";
+import { makeRecordFixture, relativeFixtureDate } from "../../../utils/zod";
+import { FixtureMapping } from "../../utils/types";
+import { UsIaEarlyDischargeRecord, usIaEarlyDischargeSchema } from "./schema";
 
-import {
-  ClientRecord,
-  relativeFixtureDate,
-  UsIaEarlyDischargeRecord,
-  UsIaSupervisionLevelDowngradeRecord,
-} from "~datatypes";
-
-export const ineligibleClientRecord: ClientRecord = {
-  recordId: "us_ia_001",
-  personName: {
-    givenNames: "BETTY",
-    surname: "RUBBLE",
-  },
-  personExternalId: "001",
-  displayId: "d001",
-  pseudonymizedId: "p001",
-  stateCode: "US_IA",
-  officerId: "OFFICER3",
-  supervisionType: "PROBATION",
-  supervisionLevel: "MEDIUM",
-  supervisionLevelStart: new Date("2019-12-20"),
-  address: "123 Bedrock Lane",
-  phoneNumber: "5555555678",
-  expirationDate: new Date("2024-12-31"),
-  allEligibleOpportunities: [],
-  personType: "CLIENT",
-};
-
-export const usIaSupervisionLevelDowngradeRecordFixture: UsIaSupervisionLevelDowngradeRecord["input"] =
-  {
+export const usIaEarlyDischargeFixtures = {
+  fullyEligible: makeRecordFixture(usIaEarlyDischargeSchema, {
     stateCode: "US_IA",
     externalId: "001",
-    eligibleCriteria: {
-      usIaSupervisionFeesPaid: {
-        supervisionFeesPaidDate: relativeFixtureDate({ months: -12 }),
-      },
-    },
-    ineligibleCriteria: {},
-    isEligible: false,
-    isAlmostEligible: true,
-    eligibleDate: relativeFixtureDate({ months: -12 }),
-  };
-
-export const usIaEarlyDischargeRecordFixture: UsIaEarlyDischargeRecord["input"] =
-  {
-    stateCode: "US_IA",
-    externalId: "001",
+    isEligible: true,
+    isAlmostEligible: false,
     eligibleCriteria: {
       usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
       notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
@@ -87,8 +48,6 @@ export const usIaEarlyDischargeRecordFixture: UsIaEarlyDischargeRecord["input"] 
       },
     },
     ineligibleCriteria: {},
-    isEligible: true,
-    isAlmostEligible: false,
     formInformation: {
       USCitizenshipStatus: "US Citizen",
       charges: [
@@ -104,27 +63,8 @@ export const usIaEarlyDischargeRecordFixture: UsIaEarlyDischargeRecord["input"] 
           sdd: "",
           chargeExternalId: "CHARGE-001",
         },
-        {
-          causeNumber: "FT987",
-          crimeCdOffenseType: "Felony",
-          jurisdiction: "Monroe",
-          classificationTypeRawText: "Felony",
-          counts: 2,
-          description: "Some other offense",
-          statute: "LMN-444",
-          tdd: "2025-03-01",
-          sdd: "",
-          chargeExternalId: "CHARGE-002",
-        },
       ],
       penalties: [
-        {
-          penaltyValue: "$20.00",
-          sentencePenaltyModifier: "None",
-          sentencePenaltyType: "Fine",
-          sentenceDate: "2023-01-01",
-          chargeExternalId: "CHARGE-002",
-        },
         {
           penaltyValue: "1, 3, 21",
           sentencePenaltyModifier: "Increased",
@@ -145,17 +85,37 @@ export const usIaEarlyDischargeRecordFixture: UsIaEarlyDischargeRecord["input"] 
     metadata: {
       victimFlag: true,
     },
-  };
-
-export const usIaSupervisionLevelDowngradeEligibleClientRecord: ClientRecord = {
-  ...ineligibleClientRecord,
-  allEligibleOpportunities: ["usIaCompleteSupervisionLevelDowngrade"],
-};
-
-export const usIaEdAndSldEligibleClientRecord: ClientRecord = {
-  ...ineligibleClientRecord,
-  allEligibleOpportunities: [
-    "usIaCompleteSupervisionLevelDowngrade",
-    "usIaEarlyDischarge",
-  ],
-};
+  }),
+  almostEligible: makeRecordFixture(usIaEarlyDischargeSchema, {
+    stateCode: "US_IA",
+    externalId: "002",
+    isEligible: false,
+    isAlmostEligible: true,
+    eligibleCriteria: {
+      usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+      notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
+      notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
+        eligibleDate: relativeFixtureDate({ months: -7 }),
+      },
+      supervisionCaseTypeIsNotSexOffense: null,
+      supervisionTypeIsNotInvestigation: null,
+      usIaNoOpenSupervisionModifiers: null,
+      usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
+      usIaNotServingIneligibleOffenseForEarlyDischarge: null,
+      usIaServingSupervisionCaseAtLeast90Days: {
+        supervisionCaseStartDate: relativeFixtureDate({ months: -9 }),
+      },
+      usIaSupervisionFeesPaid: null,
+      usIaSupervisionLevelIs0NotAvailable12Or3: {
+        supervisionLevelRawText: "LEVEL 2",
+      },
+      supervisionLevelIsNotResidentialProgram: null,
+    },
+    ineligibleCriteria: {},
+    formInformation: {},
+    metadata: {
+      victimFlag: true,
+      violationsPast6MonthsFlag: true,
+    },
+  }),
+} satisfies FixtureMapping<UsIaEarlyDischargeRecord>;

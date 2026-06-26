@@ -15,21 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { usIaEarlyDischargeFixtures } from "./fixtures";
+import { usIaEarlyDischargeSchema } from "./schema";
 
-import { opportunitySchemaBase } from "~datatypes";
-
-export const usIaSupervisionLevelDowngradeSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z.object({}).passthrough(),
-    ineligibleCriteria: z.object({}).passthrough(),
-  })
-  .passthrough();
-
-export type UsIaSupervisionLevelDowngradeReferralRecordRaw = z.input<
-  typeof usIaSupervisionLevelDowngradeSchema
->;
-
-export type UsIaSupervisionLevelDowngradeReferralRecord = z.infer<
-  typeof usIaSupervisionLevelDowngradeSchema
->;
+test.each(
+  Object.keys(usIaEarlyDischargeFixtures) as Array<
+    keyof typeof usIaEarlyDischargeFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usIaEarlyDischargeSchema.parse(usIaEarlyDischargeFixtures[key].input),
+  ).toMatchSnapshot();
+});
