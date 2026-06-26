@@ -84,7 +84,7 @@ export function prefilledCoverSheetData(
     omsId: resident.externalId,
     institutionName: resident.facilityId,
     recommendationFacilityAssignment: resident.facilityId,
-    date: formatDate(new Date()),
+    date: formatDate(new Date(), "M/d/yyyy"),
   };
 
   out.statusAtHearing = formInformation.statusAtHearingSeg;
@@ -115,12 +115,12 @@ export function prefilledCoverSheetData(
   }
   if (formInformation.sentenceExpirationDate) {
     justifications.push(
-      `REL DATE: ${formatDate(formInformation.sentenceExpirationDate)}`,
+      `REL DATE: ${formatDate(formInformation.sentenceExpirationDate, "M/d/yyyy")}`,
     );
   }
   if (formInformation.sentenceReleaseEligibilityDate) {
     justifications.push(
-      `RED DATE: ${formatDate(formInformation.sentenceReleaseEligibilityDate)}`,
+      `RED DATE: ${formatDate(formInformation.sentenceReleaseEligibilityDate, "M/d/yyyy")}`,
     );
   }
   if (formInformation.healthClassification) {
@@ -134,7 +134,7 @@ export function prefilledCoverSheetData(
   }
   if (formInformation.latestVantageCompletedDate) {
     justifications.push(
-      `RNA DATE: ${formatDate(formInformation.latestVantageCompletedDate)}`,
+      `RNA DATE: ${formatDate(formInformation.latestVantageCompletedDate, "M/d/yyyy")}`,
     );
   }
   if (
