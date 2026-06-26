@@ -26,6 +26,7 @@ function generateIntercomId(event) {
 
 exports.onExecutePostLogin = async (event, api) => {
   const namespace = "https://dashboard.recidiviz.org";
+
   api.idToken.setCustomClaim(
     `${namespace}/user_metadata`,
     event.user.user_metadata,

@@ -19,6 +19,10 @@ components:
           jii-texting: 5433
           meetings: 5444
 
+    auth0-staff:
+      vars:
+        deploy_environment: staging
+
     apps/shared-infra:
       vars:
         project_id: "{{ .settings.context.project_id }}"
