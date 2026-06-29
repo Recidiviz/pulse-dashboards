@@ -18,7 +18,9 @@
 import { z } from "zod";
 
 import {
+  ApprovalValue,
   FeedbackVoteValue,
+  NoteSection,
   PostMeetingProcessingStatus,
 } from "~@meetings/prisma/client";
 import {
@@ -54,6 +56,14 @@ export const getDetailsOutputSchema = z.object({
     generatedAt: z.date(),
   }).nullable(),
   currentFeedbackVote: z.nativeEnum(FeedbackVoteValue).nullable(),
+  // Most-recent user edit per section; null = untouched LLM output.
+  caseNoteEditedAt: z.date().nullable(),
+  actionItemsEditedAt: z.date().nullable(),
+  // Creator approval per section, tied to the active notetakingPipelineRunId.
+  approvals: z.object({
+    caseNote: z.boolean(),
+    actionItems: z.boolean(),
+  }),
   durationMs: z.number().nullable(),
   postMeetingProcessingStatus: z.nativeEnum(PostMeetingProcessingStatus),
   transcriptDeletedAt: z.date().nullable(),
@@ -114,4 +124,10 @@ export const updateNotesInputSchema = z.object({
 export const voteFeedbackInputSchema = z.object({
   meetingId: z.string(),
   vote: z.nativeEnum(FeedbackVoteValue),
+});
+
+export const approveSectionInputSchema = z.object({
+  meetingId: z.string(),
+  section: z.nativeEnum(NoteSection),
+  value: z.nativeEnum(ApprovalValue),
 });

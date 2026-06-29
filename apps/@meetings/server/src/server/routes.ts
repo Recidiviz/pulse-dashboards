@@ -632,6 +632,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
               // so prior FeedbackVote rows are invalidated on reprocess (when
               // the pipeline run id advances).
               staffFeedbackPipelineRunId: result.output.pipelineRunId,
+              // Bind new NoteApproval rows to this run; clear edit stamps (fresh LLM output).
+              notetakingPipelineRunId: result.output.pipelineRunId,
+              caseNoteEditedAt: null,
+              actionItemsEditedAt: null,
               postMeetingProcessingStatus:
                 PostMeetingProcessingStatus.COMPLETED,
               meetingActionItems: {

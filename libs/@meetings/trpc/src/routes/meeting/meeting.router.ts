@@ -23,7 +23,12 @@ import _ from "lodash";
 import { z } from "zod";
 
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
-import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
+import {
+  ApprovalValue,
+  NoteSection,
+  PostMeetingProcessingStatus,
+  Prisma,
+} from "~@meetings/prisma/client";
 import {
   deleteRecordingFiles,
   getSignedUrlForNewRecording,
@@ -34,6 +39,7 @@ import {
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import { deriveValidationErrorType } from "~@meetings/trpc/routes/meeting.helpers";
 import {
+  approveSectionInputSchema,
   createSignedUrlForRecordingInputSchema,
   deleteRecordingsInputSchema,
   discardMeetingInputSchema,
@@ -67,6 +73,9 @@ export const meetingRouter = router({
               staffFeedback: true,
               staffFeedbackGeneratedAt: true,
               staffFeedbackPipelineRunId: true,
+              notetakingPipelineRunId: true,
+              caseNoteEditedAt: true,
+              actionItemsEditedAt: true,
               postMeetingProcessingStatus: true,
               durationMs: true,
               recordingsFolderPath: true,
@@ -177,12 +186,34 @@ export const meetingRouter = router({
                 )
               : null;
 
+          // Latest approval per section for the current run; id tiebreaks equal timestamps.
+          const approvalRows = meeting.notetakingPipelineRunId
+            ? await prisma.noteApproval.findMany({
+                where: {
+                  meetingId,
+                  pipelineRunId: meeting.notetakingPipelineRunId,
+                },
+                orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+                select: { section: true, value: true },
+              })
+            : [];
+
+          const latestApprovalBySection = new Map<NoteSection, ApprovalValue>();
+          for (const row of approvalRows) {
+            if (!latestApprovalBySection.has(row.section)) {
+              latestApprovalBySection.set(row.section, row.value);
+            }
+          }
+          const isApproved = (section: NoteSection) =>
+            latestApprovalBySection.get(section) === ApprovalValue.APPROVED;
+
           return {
             ..._.omit(meeting, [
               "transcriptions",
               "staffFeedback",
               "staffFeedbackGeneratedAt",
               "staffFeedbackPipelineRunId",
+              "notetakingPipelineRunId",
               "recordingsGCSBucket",
               "finalRecordingGCSPath",
               "audioDeletedAt",
@@ -210,6 +241,10 @@ export const meetingRouter = router({
               ) || [],
             staffFeedback,
             currentFeedbackVote: latestVote?.vote ?? null,
+            approvals: {
+              caseNote: isApproved(NoteSection.CASE_NOTE),
+              actionItems: isApproved(NoteSection.ACTION_ITEMS),
+            },
             transcription: includeTranscription
               ? meeting.transcriptions[0] || null
               : undefined,
@@ -364,13 +399,23 @@ export const meetingRouter = router({
         ctx: { prisma },
       }) => {
         try {
+          // Stamp *EditedAt only for fields actually included in the request.
+          const editedAt = new Date();
           await prisma.meeting.update({
             where: { id: meetingId },
             data: {
               userNotepadNotes,
-              actionItems,
-              criticalUpdates,
-              caseNote,
+              ...(caseNote !== undefined && {
+                caseNote,
+                caseNoteEditedAt: editedAt,
+              }),
+              ...(actionItems !== undefined && {
+                actionItems,
+                actionItemsEditedAt: editedAt,
+              }),
+              ...(criticalUpdates !== undefined && {
+                criticalUpdates,
+              }),
             },
           });
         } catch (e) {
@@ -440,6 +485,52 @@ export const meetingRouter = router({
             voterEmail: user.email,
             vote,
             pipelineRunId: meeting.staffFeedbackPipelineRunId,
+          },
+        });
+      },
+    ),
+  approveSection: auth0Procedure
+    .input(approveSectionInputSchema)
+    .mutation(
+      async ({
+        input: { meetingId, section, value },
+        ctx: { prisma, user },
+      }) => {
+        const meeting = await prisma.meeting.findUnique({
+          where: { id: meetingId },
+          select: { notetakingPipelineRunId: true, staffEmail: true },
+        });
+
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
+
+        // Only the staff member who created the meeting can approve its notes.
+        if (meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can approve notes",
+          });
+        }
+
+        if (!meeting.notetakingPipelineRunId) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "Cannot approve notes that have not been generated yet",
+          });
+        }
+
+        // Append-only: never update/delete, so approve/unapprove history is preserved.
+        await prisma.noteApproval.create({
+          data: {
+            meetingId,
+            approverEmail: user.email,
+            section,
+            value,
+            pipelineRunId: meeting.notetakingPipelineRunId,
           },
         });
       },

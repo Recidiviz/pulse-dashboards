@@ -29,7 +29,9 @@ import {
 import { AUDIO_FORMATS } from "~@meetings/config";
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
+  ApprovalValue,
   FeedbackVoteValue,
+  NoteSection,
   PostMeetingProcessingStatus,
 } from "~@meetings/prisma/client";
 import * as meetingsTasks from "~@meetings/tasks";
@@ -108,6 +110,12 @@ describe("meeting router", () => {
         meetingSummary: [],
         staffFeedback: null,
         currentFeedbackVote: null,
+        caseNoteEditedAt: null,
+        actionItemsEditedAt: null,
+        approvals: {
+          caseNote: false,
+          actionItems: false,
+        },
         validationErrorType: null,
         transcriptDeletedAt: null,
         audioUrl: null,
@@ -176,6 +184,12 @@ describe("meeting router", () => {
           meetingSummary: [],
           staffFeedback: null,
           currentFeedbackVote: null,
+          caseNoteEditedAt: null,
+          actionItemsEditedAt: null,
+          approvals: {
+            caseNote: false,
+            actionItems: false,
+          },
           validationErrorType: null,
           transcriptDeletedAt: null,
           audioUrl: null,
@@ -430,6 +444,90 @@ describe("meeting router", () => {
         expect(result.audioUrl).toBe("https://signed.example.com/audio.m4a");
       });
     });
+
+    test("Should reflect the latest NoteApproval per section tied to the active notetakingPipelineRunId", async () => {
+      const currentPipelineRunId = "notes-run-current";
+      const oldPipelineRunId = "notes-run-old";
+
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { notetakingPipelineRunId: currentPipelineRunId },
+      });
+
+      // Stale approval against a prior run; should be ignored.
+      await testPrismaClient.noteApproval.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          approverEmail: fakeStaff[0].email,
+          section: NoteSection.CASE_NOTE,
+          value: ApprovalValue.APPROVED,
+          pipelineRunId: oldPipelineRunId,
+        },
+      });
+
+      // CASE_NOTE: APPROVED then UNAPPROVED, so not approved.
+      await testPrismaClient.noteApproval.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          approverEmail: fakeStaff[0].email,
+          section: NoteSection.CASE_NOTE,
+          value: ApprovalValue.APPROVED,
+          pipelineRunId: currentPipelineRunId,
+        },
+      });
+      await testPrismaClient.noteApproval.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          approverEmail: fakeStaff[0].email,
+          section: NoteSection.CASE_NOTE,
+          value: ApprovalValue.UNAPPROVED,
+          pipelineRunId: currentPipelineRunId,
+        },
+      });
+
+      // ACTION_ITEMS: approved.
+      await testPrismaClient.noteApproval.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          approverEmail: fakeStaff[0].email,
+          section: NoteSection.ACTION_ITEMS,
+          value: ApprovalValue.APPROVED,
+          pipelineRunId: currentPipelineRunId,
+        },
+      });
+
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(result.approvals).toEqual({
+        caseNote: false,
+        actionItems: true,
+      });
+    });
+
+    test("Should return approvals: all false when notetakingPipelineRunId is null", async () => {
+      // Even if there are stray NoteApproval rows from prior runs, none of
+      // them should count when the meeting has no active pipeline run.
+      await testPrismaClient.noteApproval.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          approverEmail: fakeStaff[0].email,
+          section: NoteSection.CASE_NOTE,
+          value: ApprovalValue.APPROVED,
+          pipelineRunId: "some-old-run",
+        },
+      });
+
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(result.approvals).toEqual({
+        caseNote: false,
+        actionItems: false,
+      });
+    });
   });
 
   describe("createSignedUrlForRecording", () => {
@@ -563,6 +661,41 @@ describe("meeting router", () => {
         fakeActiveMeeting.meetingSummary,
       );
       expect(updatedMeeting?.caseNote).toEqual(fakeActiveMeeting.caseNote);
+    });
+
+    test("Should set the matching *EditedAt only for fields that are included", async () => {
+      await testTRPCClient.v1.meeting.updateNotes.mutate({
+        meetingId: fakeActiveMeeting.id,
+        caseNote: "Edited case note",
+      });
+
+      const after = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeActiveMeeting.id },
+      });
+
+      expect(after?.caseNoteEditedAt).toBeInstanceOf(Date);
+      expect(after?.actionItemsEditedAt).toBeNull();
+    });
+
+    test("Should not change *EditedAt when the field is omitted, even if other fields are updated", async () => {
+      // Seed a known caseNoteEditedAt, then update only actionItems.
+      const seededEditedAt = new Date("2026-05-01T00:00:00.000Z");
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { caseNoteEditedAt: seededEditedAt },
+      });
+
+      await testTRPCClient.v1.meeting.updateNotes.mutate({
+        meetingId: fakeActiveMeeting.id,
+        actionItems: ["x"],
+      });
+
+      const after = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeActiveMeeting.id },
+      });
+
+      expect(after?.caseNoteEditedAt).toEqual(seededEditedAt);
+      expect(after?.actionItemsEditedAt).toBeInstanceOf(Date);
     });
   });
 
@@ -791,6 +924,102 @@ describe("meeting router", () => {
           },
         }),
       );
+    });
+  });
+
+  describe("approveSection", () => {
+    test("Should throw NOT_FOUND when the meeting does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.approveSection.mutate({
+          meetingId: "non-existent-meeting-id",
+          section: NoteSection.CASE_NOTE,
+          value: ApprovalValue.APPROVED,
+        }),
+      ).rejects.toMatchObject({
+        message: "Meeting with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should throw PRECONDITION_FAILED when no notes have been generated", async () => {
+      // fakeActiveMeeting starts with notetakingPipelineRunId: null.
+      await expect(
+        testTRPCClient.v1.meeting.approveSection.mutate({
+          meetingId: fakeActiveMeeting.id,
+          section: NoteSection.CASE_NOTE,
+          value: ApprovalValue.APPROVED,
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "PRECONDITION_FAILED" },
+      });
+    });
+
+    test("Should throw FORBIDDEN when the user did not create the meeting", async () => {
+      // fakeMeetingStaff1 is owned by fakeStaff[1]; test client authenticates
+      // as fakeStaff[0].
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeetingStaff1.id },
+        data: { notetakingPipelineRunId: "some-pipeline-run" },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.approveSection.mutate({
+          meetingId: fakeMeetingStaff1.id,
+          section: NoteSection.CASE_NOTE,
+          value: ApprovalValue.APPROVED,
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+
+      const approvals = await testPrismaClient.noteApproval.findMany({
+        where: { meetingId: fakeMeetingStaff1.id },
+      });
+      expect(approvals).toHaveLength(0);
+    });
+
+    test("Should append a row on every call (history-preserving)", async () => {
+      const pipelineRunId = "notes-run-history";
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { notetakingPipelineRunId: pipelineRunId },
+      });
+
+      await testTRPCClient.v1.meeting.approveSection.mutate({
+        meetingId: fakeActiveMeeting.id,
+        section: NoteSection.CASE_NOTE,
+        value: ApprovalValue.APPROVED,
+      });
+      await testTRPCClient.v1.meeting.approveSection.mutate({
+        meetingId: fakeActiveMeeting.id,
+        section: NoteSection.CASE_NOTE,
+        value: ApprovalValue.UNAPPROVED,
+      });
+      await testTRPCClient.v1.meeting.approveSection.mutate({
+        meetingId: fakeActiveMeeting.id,
+        section: NoteSection.CASE_NOTE,
+        value: ApprovalValue.APPROVED,
+      });
+
+      const rows = await testPrismaClient.noteApproval.findMany({
+        where: { meetingId: fakeActiveMeeting.id },
+        orderBy: { createdAt: "asc" },
+      });
+
+      expect(rows).toHaveLength(3);
+      expect(rows.map((r) => r.value)).toEqual([
+        ApprovalValue.APPROVED,
+        ApprovalValue.UNAPPROVED,
+        ApprovalValue.APPROVED,
+      ]);
+      expect(
+        rows.every(
+          (r) =>
+            r.approverEmail === fakeStaff[0].email &&
+            r.pipelineRunId === pipelineRunId &&
+            r.section === NoteSection.CASE_NOTE,
+        ),
+      ).toBe(true);
     });
   });
 });

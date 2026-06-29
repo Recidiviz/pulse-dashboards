@@ -108,6 +108,12 @@ export function useOfflineEventFactory() {
             meetingSummary: null,
             staffFeedback: null,
             currentFeedbackVote: null,
+            caseNoteEditedAt: null,
+            actionItemsEditedAt: null,
+            approvals: {
+              caseNote: false,
+              actionItems: false,
+            },
             postMeetingProcessingStatus: "NOT_STARTED",
             validationErrorType: null,
             transcriptDeletedAt: null,

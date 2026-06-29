@@ -204,6 +204,13 @@ model Meeting {
   // so prior votes are invalidated when the meeting is reprocessed.
   staffFeedbackPipelineRunId String?
 
+  // Run that produced the current notes; advances on regenerate, invalidating prior NoteApproval rows.
+  notetakingPipelineRunId String?
+
+  // Most-recent user edit per section; null = untouched LLM output (cleared on regenerate).
+  caseNoteEditedAt    DateTime?
+  actionItemsEditedAt DateTime?
+
   transcriptDeletedAt DateTime?
   audioDeletedAt      DateTime?
 
@@ -316,6 +323,30 @@ model FeedbackVote {
   meetingId String
 
   @@index([meetingId, voterEmail, pipelineRunId])
+}
+
+enum NoteSection {
+  CASE_NOTE
+  ACTION_ITEMS
+}
+
+enum ApprovalValue {
+  APPROVED
+  UNAPPROVED
+}
+
+model NoteApproval {
+  id            String        @id @default(cuid())
+  createdAt     DateTime      @default(now())
+  approverEmail String
+  section       NoteSection
+  value         ApprovalValue
+
+  // Not FKs (matches FeedbackVote): rows are kept as audit history across reprocess/deletion.
+  pipelineRunId String
+  meetingId     String
+
+  @@index([meetingId, pipelineRunId])
 }
 
 model NotetakingPipelineRun {
