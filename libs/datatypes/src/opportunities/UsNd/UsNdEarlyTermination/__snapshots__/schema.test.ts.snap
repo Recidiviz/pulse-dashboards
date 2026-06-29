@@ -1,0 +1,159 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ineligibleCriteria 1`] = `
+{
+  "data": {
+    "caseNotes": {},
+    "eligibleCriteria": {
+      "supervisionPastEarlyDischargeDate": {
+        "eligibleDate": 2022-01-03T00:00:00.000Z,
+      },
+      "usNdImpliedValidEarlyTerminationSentenceType": {
+        "supervisionType": "PROBATION",
+      },
+      "usNdImpliedValidEarlyTerminationSupervisionLevel": {
+        "supervisionLevel": "MEDIUM",
+      },
+      "usNdNotInActiveRevocationStatus": {
+        "revocationDate": null,
+      },
+    },
+    "externalId": "110",
+    "formInformation": {
+      "clientName": "Jamie Jones",
+      "convictionCounty": "NORTH_CENTRAL",
+      "crimeNames": [
+        "CHARGE 1",
+        "CHARGE 2",
+      ],
+      "criminalNumber": "12345",
+      "judgeName": "JUDGE 1",
+      "judicialDistrictCode": "BISMARCK",
+      "priorCourtDate": 2020-01-03T00:00:00.000Z,
+      "probationExpirationDate": 2022-12-02T00:00:00.000Z,
+      "probationOfficerFullName": "Karl Fog",
+      "probationStartDate": 2020-12-02T00:00:00.000Z,
+      "sentenceLengthMonths": 36,
+      "statesAttorneyEmailAddress": "state.attny.837@example.com",
+      "statesAttorneyMailingAddress": "9234 Maine St., Ohiotown, ND",
+      "statesAttorneyPhoneNumber": "888-867-5309",
+    },
+    "ineligibleCriteria": {
+      "supervisionPastEarlyDischargeDate": {
+        "eligibleDate": 2024-01-03T00:00:00.000Z,
+      },
+    },
+    "isAlmostEligible": false,
+    "isEligible": true,
+    "metadata": {
+      "ICOut": false,
+      "multipleSentences": true,
+      "outOfState": false,
+    },
+    "stateCode": "US_ND",
+  },
+  "success": true,
+}
+`;
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "supervisionPastEarlyDischargeDate": {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+    "usNdImpliedValidEarlyTerminationSentenceType": {
+      "supervisionType": "PROBATION",
+    },
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usNdNotInActiveRevocationStatus": {
+      "revocationDate": null,
+    },
+  },
+  "externalId": "111",
+  "formInformation": {
+    "clientName": "Jamie Jones",
+    "convictionCounty": "NORTH_CENTRAL",
+    "crimeNames": [
+      "CHARGE 1",
+      "CHARGE 2",
+    ],
+    "criminalNumber": "12345",
+    "judgeName": "JUDGE 1",
+    "judicialDistrictCode": "BISMARCK",
+    "priorCourtDate": 2020-01-03T00:00:00.000Z,
+    "probationExpirationDate": 2022-12-02T00:00:00.000Z,
+    "probationOfficerFullName": "Karl Fog",
+    "probationStartDate": 2020-12-02T00:00:00.000Z,
+    "sentenceLengthMonths": 36,
+    "statesAttorneyEmailAddress": "state.attny.837@example.com",
+    "statesAttorneyMailingAddress": "9234 Maine St., Ohiotown, ND",
+    "statesAttorneyPhoneNumber": "888-867-5309",
+  },
+  "ineligibleCriteria": {
+    "supervisionPastEarlyDischargeDate": {
+      "eligibleDate": 2024-01-03T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "ICOut": false,
+    "multipleSentences": true,
+    "outOfState": false,
+  },
+  "stateCode": "US_ND",
+}
+`;
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "supervisionPastEarlyDischargeDate": {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+    "usNdImpliedValidEarlyTerminationSentenceType": {
+      "supervisionType": "PROBATION",
+    },
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usNdNotInActiveRevocationStatus": {
+      "revocationDate": null,
+    },
+  },
+  "externalId": "110",
+  "formInformation": {
+    "clientName": "Jamie Jones",
+    "convictionCounty": "NORTH_CENTRAL",
+    "crimeNames": [
+      "CHARGE 1",
+      "CHARGE 2",
+    ],
+    "criminalNumber": "12345",
+    "judgeName": "JUDGE 1",
+    "judicialDistrictCode": "BISMARCK",
+    "priorCourtDate": 2020-01-03T00:00:00.000Z,
+    "probationExpirationDate": 2022-12-02T00:00:00.000Z,
+    "probationOfficerFullName": "Karl Fog",
+    "probationStartDate": 2020-12-02T00:00:00.000Z,
+    "sentenceLengthMonths": 36,
+    "statesAttorneyEmailAddress": "state.attny.837@example.com",
+    "statesAttorneyMailingAddress": "9234 Maine St., Ohiotown, ND",
+    "statesAttorneyPhoneNumber": "888-867-5309",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "ICOut": false,
+    "multipleSentences": true,
+    "outOfState": false,
+  },
+  "stateCode": "US_ND",
+}
+`;

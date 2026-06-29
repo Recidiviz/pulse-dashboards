@@ -18,20 +18,21 @@
 import { differenceInDays, startOfToday } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsNdEarlyTerminationDraftData,
+  UsNdEarlyTerminationReferralRecord,
+  usNdEarlyTerminationSchema,
+} from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { EarlyTerminationForm } from "../../Forms/EarlyTerminationForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { FormVariant } from "../../types";
-import {
-  UsNdEarlyTerminationDraftData,
-  UsNdEarlyTerminationReferralRecord,
-  usNdEarlyTerminationSchema,
-} from "./UsNdEarlyTerminationReferralRecord";
 
 export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
   Client,
-  UsNdEarlyTerminationReferralRecord,
+  UsNdEarlyTerminationReferralRecord["output"],
   OpportunityUpdateWithForm<UsNdEarlyTerminationDraftData>
 > {
   form: EarlyTerminationForm;
@@ -73,7 +74,9 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
     }
   }
 
-  get metadata(): UsNdEarlyTerminationReferralRecord["metadata"] | undefined {
+  get metadata():
+    | UsNdEarlyTerminationReferralRecord["output"]["metadata"]
+    | undefined {
     return this.record?.metadata;
   }
 

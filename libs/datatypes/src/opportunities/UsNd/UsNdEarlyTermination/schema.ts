@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { startOfToday } from "date-fns";
 import { z } from "zod";
 
-import { isTestEnv } from "~client-env-utils";
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
-
-import { nullishAsUndefined, stringToIntSchema } from "../../schemaHelpers";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema, nullishAsUndefined } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
   formInformation: z
@@ -32,7 +30,7 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
       criminalNumber: z.string(),
       judgeName: z.string(),
       priorCourtDate: dateStringSchema,
-      sentenceLengthMonths: stringToIntSchema,
+      sentenceLengthMonths: z.string().transform((s) => parseInt(s)),
       crimeNames: z.array(z.string()),
       probationStartDate: dateStringSchema,
       probationOfficerFullName: z.string(),
@@ -43,10 +41,7 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
     })
     .partial()
     .extend({
-      probationExpirationDate: dateStringSchema.refine((val) => {
-        // Valid probation expiration dates must be in the future
-        return isTestEnv() || val > startOfToday();
-      }),
+      probationExpirationDate: dateStringSchema,
     }),
   eligibleCriteria: z
     .object({
@@ -88,10 +83,7 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
   }),
 });
 
-export type UsNdEarlyTerminationReferralRecord = z.infer<
-  typeof usNdEarlyTerminationSchema
->;
-export type UsNdEarlyTerminationReferralRecordRaw = z.input<
+export type UsNdEarlyTerminationReferralRecord = ParsedRecord<
   typeof usNdEarlyTerminationSchema
 >;
 

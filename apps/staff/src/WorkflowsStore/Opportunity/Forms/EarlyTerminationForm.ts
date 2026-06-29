@@ -19,14 +19,12 @@ import { deleteField } from "firebase/firestore";
 import { sortBy } from "lodash";
 import moment from "moment";
 
+import { UsNdEarlyTerminationDraftData } from "~datatypes";
 import { pluralize } from "~utils";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UNKNOWN } from "../../Client";
-import {
-  UsNdEarlyTerminationDraftData,
-  UsNdEarlyTerminationOpportunity,
-} from "../UsNd";
+import { UsNdEarlyTerminationOpportunity } from "../UsNd";
 import { FormBase } from "./FormBase";
 
 const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";

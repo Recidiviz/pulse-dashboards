@@ -113,6 +113,13 @@ export * from "./opportunities/UsIa/UsIaEarlyDischarge/schema";
 export * from "./opportunities/UsIa/UsIaSupervisionLevelDowngrade/fixtures";
 export * from "./opportunities/UsIa/UsIaSupervisionLevelDowngrade/schema";
 
+// UsNd Exports: Includes fixtures and schema related to US-ND opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsNd/UsNdEarlyTermination/fixtures";
+export * from "./opportunities/UsNd/UsNdEarlyTermination/schema";
+export * from "./opportunities/UsNd/UsNdTransferToMinFacility/fixtures";
+export * from "./opportunities/UsNd/UsNdTransferToMinFacility/schema";
+
 // UsNe Exports: Includes fixtures and schema related to US-NE opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsNe/UsNeGoodTimeRestoration/fixtures";

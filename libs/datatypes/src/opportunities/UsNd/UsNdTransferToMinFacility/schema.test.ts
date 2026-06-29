@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { usNdTransferToMinFacilityFixtures } from "./fixtures";
+import { usNdTransferToMinFacilitySchema } from "./schema";
 
-import { opportunitySchemaBase } from "~datatypes";
-
-export const usNdTransferToMinFacilitySchema = opportunitySchemaBase.extend({
-  metadata: z
-    .object({
-      tabName: z.string().optional(),
-    })
-    .passthrough(),
+test.each(
+  Object.keys(usNdTransferToMinFacilityFixtures) as Array<
+    keyof typeof usNdTransferToMinFacilityFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usNdTransferToMinFacilitySchema.parse(
+      usNdTransferToMinFacilityFixtures[key].input,
+    ),
+  ).toMatchSnapshot();
 });
-
-export type UsNdTransferToMinFacilityReferralRecord = z.infer<
-  typeof usNdTransferToMinFacilitySchema
->;

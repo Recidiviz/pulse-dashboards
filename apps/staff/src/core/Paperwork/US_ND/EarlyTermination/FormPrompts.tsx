@@ -18,17 +18,20 @@
 import { observer } from "mobx-react-lite";
 import * as React from "react";
 
+import { UsNdEarlyTerminationReferralRecord } from "~datatypes";
+
 import { useRootStore } from "../../../../components/StoreProvider";
 import {
   Client,
   UsNdEarlyTerminationOpportunity,
-  UsNdEarlyTerminationReferralRecord,
 } from "../../../../WorkflowsStore";
 import { Prompt } from "../../FormPrompt";
 
 const getMetadataPrompts = (
   client?: Client,
-  metadata: Partial<UsNdEarlyTerminationReferralRecord["metadata"]> = {},
+  metadata: Partial<
+    UsNdEarlyTerminationReferralRecord["output"]["metadata"]
+  > = {},
 ): (React.ReactElement<any> | number | string)[] => {
   const prompts = [];
   if (metadata.outOfState) {

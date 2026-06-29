@@ -1,0 +1,106 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+      "custodyLevelStartDate": "2021-10-16",
+    },
+    "incarcerationWithin42MonthsOfFullTermCompletionDate": {
+      "fullTermCompletionDate": "2023-02-16",
+    },
+    "noEscapeInCurrentIncarceration": {},
+    "notHousingUnitTypeIsSolitaryConfinement": {},
+    "notInWorkRelease": {},
+    "notIncarcerationWithin3MonthsOfFullTermCompletionDate": {
+      "fullTermCompletionDate": "2023-02-16",
+    },
+    "usNdNoDetainersOrFelonyWarrants": {},
+    "usNdNoRecentReferralsToMinimumHousing": {},
+    "usNdNotInAnOrientationUnit": {},
+    "usNdNotInMinimumSecurityFacility": {},
+    "usNdNotInWtruBtc": {},
+  },
+  "externalId": "ND_RES005",
+  "ineligibleCriteria": {
+    "usNdNotEnrolledInRelevantProgram": {
+      "programDescriptions": "JRCC - SO-SEX OFFENDER TREATMENT PROGRAM@@SO-SEX OFFENDER TREATMENT PROGRAM",
+      "programStatuses": "IN_PROGRESS",
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {},
+  "stateCode": "US_ND",
+}
+`;
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+      "custodyLevelStartDate": "2021-11-16",
+    },
+    "incarcerationWithin42MonthsOfFullTermCompletionDate": {
+      "fullTermCompletionDate": "2024-09-16",
+    },
+    "noEscapeInCurrentIncarceration": {},
+    "notHousingUnitTypeIsSolitaryConfinement": {},
+    "notInWorkRelease": {},
+    "notIncarcerationWithin3MonthsOfFullTermCompletionDate": {
+      "fullTermCompletionDate": "2024-09-16",
+    },
+    "usNdNoDetainersOrFelonyWarrants": {},
+    "usNdNoRecentReferralsToMinimumHousing": {},
+    "usNdNotEnrolledInRelevantProgram": {},
+    "usNdNotInAnOrientationUnit": {},
+    "usNdNotInMinimumSecurityFacility": {},
+    "usNdNotInWtruBtc": {},
+  },
+  "externalId": "ND_RES003",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ND",
+}
+`;
+
+exports[`schema for referralSubmitted 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+      "custodyLevelStartDate": "2021-12-09",
+    },
+    "incarcerationWithin42MonthsOfFullTermCompletionDate": {
+      "fullTermCompletionDate": "2025-01-16",
+    },
+    "noEscapeInCurrentIncarceration": {},
+    "notHousingUnitTypeIsSolitaryConfinement": {},
+    "notInWorkRelease": {},
+    "notIncarcerationWithin3MonthsOfFullTermCompletionDate": {
+      "fullTermCompletionDate": "2025-01-16",
+    },
+    "usNdNoDetainersOrFelonyWarrants": {},
+    "usNdNoRecentReferralsToMinimumHousing": {},
+    "usNdNotEnrolledInRelevantProgram": {},
+    "usNdNotInAnOrientationUnit": {},
+    "usNdNotInMinimumSecurityFacility": {},
+    "usNdNotInWtruBtc": {},
+  },
+  "externalId": "ND_RES004",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": true,
+  "isEligible": true,
+  "metadata": {
+    "tabName": "REFERRAL_SUBMITTED",
+  },
+  "stateCode": "US_ND",
+}
+`;

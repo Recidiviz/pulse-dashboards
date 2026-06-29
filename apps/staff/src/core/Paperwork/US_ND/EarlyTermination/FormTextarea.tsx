@@ -24,9 +24,9 @@ import TextareaAutosize from "react-textarea-autosize";
 import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
 import styled from "styled-components";
 
+import { UsNdEarlyTerminationDraftData } from "~datatypes";
 import { palette } from "~design-system";
 
-import { UsNdEarlyTerminationDraftData } from "../../../../WorkflowsStore";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useAnimatedValue } from "../../useAnimatedValue";
 import { useReactiveInput } from "../../utils";

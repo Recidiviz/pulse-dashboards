@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsNdEarlyTerminationReferralRecord } from "~datatypes";
+import { makeRecordFixture } from "../../../utils/zod";
+import { FixtureMapping } from "../../utils/types";
+import {
+  UsNdEarlyTerminationReferralRecord,
+  usNdEarlyTerminationSchema,
+} from "./schema";
 
-import { externalIdFunc, FirestoreFixture } from "./utils";
-
-const data: UsNdEarlyTerminationReferralRecord["input"][] = [
-  {
+export const usNdEarlyTerminationFixtures = {
+  eligible: makeRecordFixture(usNdEarlyTerminationSchema, {
     stateCode: "US_ND",
     externalId: "110",
     formInformation: {
@@ -30,6 +33,7 @@ const data: UsNdEarlyTerminationReferralRecord["input"][] = [
       priorCourtDate: "2020-01-03",
       sentenceLengthMonths: "36",
       crimeNames: ["CHARGE 1", "CHARGE 2"],
+      probationStartDate: "2020-12-02",
       probationExpirationDate: "2022-12-02",
       probationOfficerFullName: "Karl Fog",
       criminalNumber: "12345",
@@ -37,20 +41,19 @@ const data: UsNdEarlyTerminationReferralRecord["input"][] = [
       statesAttorneyEmailAddress: "state.attny.837@example.com",
       statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
       statesAttorneyPhoneNumber: "888-867-5309",
-      statesAttorneyName: "Sally Lawyer",
     },
     eligibleCriteria: {
       supervisionPastEarlyDischargeDate: {
-        eligibleDate: "2023-04-03",
-      },
-      usNdImpliedValidEarlyTerminationSentenceType: {
-        supervisionType: "SUSPENDED",
-      },
-      usNdImpliedValidEarlyTerminationSupervisionLevel: {
-        supervisionLevel: "MINIMUM",
+        eligibleDate: "2022-01-03",
       },
       usNdNotInActiveRevocationStatus: {
         revocationDate: null,
+      },
+      usNdImpliedValidEarlyTerminationSupervisionLevel: {
+        supervisionLevel: "MEDIUM",
+      },
+      usNdImpliedValidEarlyTerminationSentenceType: {
+        supervisionType: "PROBATION",
       },
     },
     ineligibleCriteria: {},
@@ -59,19 +62,21 @@ const data: UsNdEarlyTerminationReferralRecord["input"][] = [
       outOfState: false,
       ICOut: false,
     },
+    caseNotes: {},
     isEligible: true,
     isAlmostEligible: false,
-  },
-  {
+  }),
+  almostEligible: makeRecordFixture(usNdEarlyTerminationSchema, {
     stateCode: "US_ND",
     externalId: "111",
     formInformation: {
-      clientName: "Justin Timberlake",
+      clientName: "Jamie Jones",
       convictionCounty: "NORTH_CENTRAL",
       judgeName: "JUDGE 1",
       priorCourtDate: "2020-01-03",
       sentenceLengthMonths: "36",
       crimeNames: ["CHARGE 1", "CHARGE 2"],
+      probationStartDate: "2020-12-02",
       probationExpirationDate: "2022-12-02",
       probationOfficerFullName: "Karl Fog",
       criminalNumber: "12345",
@@ -79,22 +84,24 @@ const data: UsNdEarlyTerminationReferralRecord["input"][] = [
       statesAttorneyEmailAddress: "state.attny.837@example.com",
       statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
       statesAttorneyPhoneNumber: "888-867-5309",
-      statesAttorneyName: "Susan Attorney",
     },
     eligibleCriteria: {
-      usNdImpliedValidEarlyTerminationSentenceType: {
-        supervisionType: "SUSPENDED",
-      },
-      usNdImpliedValidEarlyTerminationSupervisionLevel: {
-        supervisionLevel: "MINIMUM",
+      supervisionPastEarlyDischargeDate: {
+        eligibleDate: "2022-01-03",
       },
       usNdNotInActiveRevocationStatus: {
         revocationDate: null,
       },
+      usNdImpliedValidEarlyTerminationSupervisionLevel: {
+        supervisionLevel: "MEDIUM",
+      },
+      usNdImpliedValidEarlyTerminationSentenceType: {
+        supervisionType: "PROBATION",
+      },
     },
     ineligibleCriteria: {
       supervisionPastEarlyDischargeDate: {
-        eligibleDate: "2045-04-03",
+        eligibleDate: "2024-01-03",
       },
     },
     metadata: {
@@ -102,14 +109,8 @@ const data: UsNdEarlyTerminationReferralRecord["input"][] = [
       outOfState: false,
       ICOut: false,
     },
+    caseNotes: {},
     isEligible: false,
     isAlmostEligible: true,
-  },
-];
-
-export const usNdEarlyTerminationFixture: FirestoreFixture<
-  UsNdEarlyTerminationReferralRecord["input"]
-> = {
-  data,
-  idFunc: externalIdFunc,
-};
+  }),
+} satisfies FixtureMapping<UsNdEarlyTerminationReferralRecord>;

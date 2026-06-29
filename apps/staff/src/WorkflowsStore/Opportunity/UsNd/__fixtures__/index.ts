@@ -17,9 +17,7 @@
 
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord } from "~datatypes";
-
-import { UsNdEarlyTerminationReferralRecordRaw } from "../UsNdEarlyTerminationOpportunity";
+import { ClientRecord, UsNdEarlyTerminationReferralRecord } from "~datatypes";
 
 export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
   {
@@ -98,7 +96,7 @@ export const usNdEarlyTerminationAlmostEligibleClientRecord: RequireKeys<ClientR
     pseudonymizedId: "p111",
   };
 
-export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRecordRaw =
+export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRecord["input"] =
   {
     stateCode: "US_ND",
     externalId: "110",
@@ -114,7 +112,7 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
       probationOfficerFullName: "Karl Fog",
       criminalNumber: "12345",
       judicialDistrictCode: "BISMARCK",
-      statesAttorneyEmailAddress: "state.attny.837@state.gov",
+      statesAttorneyEmailAddress: "state.attny.837@example.com",
       statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
       statesAttorneyPhoneNumber: "888-867-5309",
     },
@@ -143,7 +141,7 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
     isAlmostEligible: false,
   };
 
-export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminationReferralRecordRaw =
+export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminationReferralRecord["input"] =
   {
     ...usNdEarlyTerminationReferralRecord,
     externalId: "111",
