@@ -50,6 +50,7 @@
         "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/seed.ts",
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node22",
