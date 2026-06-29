@@ -17,38 +17,16 @@
 
 import Clipboard from "@react-native-clipboard/clipboard";
 
-import type { MinuteSection } from "~@meetings/trpc-types";
-
 type Params = {
   userNotepadNotes: string | null;
   actionItems: string[] | null;
-  criticalUpdates: string[] | null;
-  meetingSummary: MinuteSection[] | null;
 };
-
-type MinuteItem = MinuteSection["items"][number];
-
-function formatMinuteItem(item: MinuteItem) {
-  const line = [item.timestamp, item.content].filter(Boolean).join(" ");
-  if (item.status === "Discussed") return line;
-  return `${line}\n${item.status}`;
-}
-
-function formatMinuteSection(section: MinuteSection) {
-  const itemsText = section.items.map(formatMinuteItem).join("\n");
-  return `${section.title}\n${itemsText}`;
-}
 
 function formatBulletList(label: string, items: string[]) {
   return `${label}:\n- ${items.join("\n- ")}`;
 }
 
-export function copyMeetingNotes({
-  userNotepadNotes,
-  actionItems,
-  criticalUpdates,
-  meetingSummary,
-}: Params) {
+export function copyMeetingNotes({ userNotepadNotes, actionItems }: Params) {
   const parts: string[] = [];
 
   if (userNotepadNotes) {
@@ -57,16 +35,6 @@ export function copyMeetingNotes({
 
   if (actionItems && actionItems.length > 0) {
     parts.push(formatBulletList("Action Items", actionItems));
-  }
-
-  if (criticalUpdates && criticalUpdates.length > 0) {
-    parts.push(formatBulletList("Critical Updates", criticalUpdates));
-  }
-
-  // TODO: format meeting summary after we agree about the structure
-  if (meetingSummary && meetingSummary.length > 0) {
-    const sectionsText = meetingSummary.map(formatMinuteSection).join("\n");
-    parts.push(`Meeting Summary:\n${sectionsText}`);
   }
 
   Clipboard.setString(parts.join("\n\n"));

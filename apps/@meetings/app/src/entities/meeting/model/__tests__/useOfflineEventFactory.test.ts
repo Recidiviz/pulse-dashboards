@@ -375,7 +375,6 @@ describe("useOfflineEventFactory", () => {
         userNotepadNotes: "updated notes",
         actionItems: ["action 1", "action 2"],
         caseNote: "case note text",
-        criticalUpdates: ["critical 1"],
       });
 
       expect(mockMeetingDetailsSetData).toHaveBeenCalledWith(
@@ -388,13 +387,11 @@ describe("useOfflineEventFactory", () => {
         userNotepadNotes: "old notes",
         actionItems: [],
         caseNote: null,
-        criticalUpdates: null,
       });
       expect(updated).toMatchObject({
         userNotepadNotes: "updated notes",
         actionItems: ["action 1", "action 2"],
         caseNote: "case note text",
-        criticalUpdates: ["critical 1"],
       });
     });
 
@@ -413,7 +410,6 @@ describe("useOfflineEventFactory", () => {
         userNotepadNotes: "existing notes",
         actionItems: [],
         caseNote: "existing case note",
-        criticalUpdates: null,
       });
       expect(updated.userNotepadNotes).toBe("existing notes");
       expect(updated.caseNote).toBe("existing case note");

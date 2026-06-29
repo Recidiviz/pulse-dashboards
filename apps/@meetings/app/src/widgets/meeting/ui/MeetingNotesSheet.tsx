@@ -57,9 +57,6 @@ const MeetingNotesSheet = ({
   const [actionItems, setActionItems] = useState(
     meetingDetails.actionItems || [],
   );
-  const [criticalUpdates, setCriticalUpdates] = useState(
-    meetingDetails.criticalUpdates || [],
-  );
   const snapPoints = useMemo(() => ["70%", "90%"], []);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
@@ -76,7 +73,6 @@ const MeetingNotesSheet = ({
 
   const handleClose = () => {
     setActionItems(meetingDetails.actionItems || []);
-    setCriticalUpdates(meetingDetails.criticalUpdates || []);
     bottomSheetRef.current?.close();
   };
 
@@ -85,7 +81,6 @@ const MeetingNotesSheet = ({
       meetingId: meetingDetails.id,
       userNotepadNotes: meetingDetails.userNotepadNotes || "",
       actionItems,
-      criticalUpdates,
       caseNote: meetingDetails.caseNote || "",
     });
   };
@@ -94,8 +89,6 @@ const MeetingNotesSheet = ({
     copyMeetingNotes({
       userNotepadNotes: meetingDetails.userNotepadNotes,
       actionItems: meetingDetails.actionItems,
-      criticalUpdates: meetingDetails.criticalUpdates,
-      meetingSummary: meetingDetails.meetingSummary,
     });
     showSnackbar("Notes copied to clipboard");
   };
@@ -203,17 +196,6 @@ const MeetingNotesSheet = ({
             multiline
             value={actionItems.join("\n")}
             onChangeText={(text) => setActionItems(text.split("\n"))}
-            textAlignVertical="top"
-          />
-          <Typography className="text-left text-base font-semibold text-primary">
-            Critical Updates:
-          </Typography>
-          <TextInput
-            className="p-2"
-            scrollEnabled={false}
-            multiline
-            value={criticalUpdates.join("\n")}
-            onChangeText={(text) => setCriticalUpdates(text.split("\n"))}
             textAlignVertical="top"
           />
         </View>

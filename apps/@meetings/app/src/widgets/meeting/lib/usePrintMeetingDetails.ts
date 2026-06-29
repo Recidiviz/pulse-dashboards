@@ -64,43 +64,6 @@ export function usePrintMeetingDetails({
             .join("") || "<li>No action items for this meeting.</li>"
         }
       </ul>
-      <h3>Critical Updates</h3>
-      <ul>
-        ${
-          meetingDetails?.criticalUpdates
-            ?.map((update) => `<li>${update}</li>`)
-            .join("") || "<li>No updates for this meeting.</li>"
-        }
-      </ul>
-      <h3>Meeting Summary</h3>
-      <ul>
-        ${
-          meetingDetails?.meetingSummary
-            ?.map(
-              (summary) => `
-          <li style="display: flex; flex-direction: column; gap: 8px;">
-            <strong>${summary.title}</strong>
-            <ol>
-              ${summary.items
-                .map(
-                  (item) => `
-                <li>
-                  ${item.timestamp ? `<span>${item.timestamp}</span>` : ""}
-                  <div>
-                    <p>${item.content}</p>
-                    ${item.status !== "Discussed" ? `<span>${item.status}</span>` : ""}
-                  </div>
-                </li>
-              `,
-                )
-                .join("")}
-            </ol>
-          </li>
-        `,
-            )
-            .join("") || "<li>No summary for this meeting.</li>"
-        }
-      </ul>
       <h2>Draft Case Note</h2>
       <p>${meetingDetails?.caseNote || "No case note available."}</p>
     `;

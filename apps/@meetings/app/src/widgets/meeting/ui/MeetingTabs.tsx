@@ -23,7 +23,6 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 export enum Tab {
   DraftCaseNotes = "Draft Case Notes",
   ActionItems = "Action Items",
-  CriticalUpdates = "Critical Updates",
   Transcript = "Transcript",
   StaffFeedback = "Staff Feedback",
 }

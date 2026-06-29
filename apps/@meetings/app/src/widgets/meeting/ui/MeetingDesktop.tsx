@@ -48,7 +48,6 @@ import { usePrintMeetingDetails } from "../lib/usePrintMeetingDetails";
 import { ActionItemsTab } from "./ActionItemsTab";
 import AudioPlayer from "./AudioPlayer";
 import DraftCaseNoteTab from "./DraftCaseNoteTab";
-import { BulletListTab } from "./MeetingDetailTabs";
 import MeetingTabs, { Tab } from "./MeetingTabs";
 import MeetingTranscriptionTab from "./MeetingTranscriptionTab";
 import StaffFeedbackTab from "./StaffFeedbackTab";
@@ -207,9 +206,6 @@ const MeetingDesktop = ({
               )}
               {activeTab === Tab.ActionItems && (
                 <ActionItemsTab items={meetingDetails.structuredActionItems} />
-              )}
-              {activeTab === Tab.CriticalUpdates && (
-                <BulletListTab items={meetingDetails.criticalUpdates} />
               )}
               {activeTab === Tab.StaffFeedback &&
                 meetingDetails.staffFeedback && (

@@ -74,7 +74,6 @@ export type EditMeetingEvent = {
   type: MeetingEventType.Edited;
   userNotepadNotes?: string;
   actionItems?: string[];
-  criticalUpdates?: string[];
   caseNote?: string;
 } & MeetingEventMetadata;
 

@@ -122,7 +122,6 @@ export function useProcessOfflineEvent() {
             meetingId: event.meetingId,
             userNotepadNotes: event.userNotepadNotes,
             actionItems: event.actionItems,
-            criticalUpdates: event.criticalUpdates,
             caseNote: event.caseNote,
           });
           break;

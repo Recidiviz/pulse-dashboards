@@ -176,19 +176,13 @@ export function useOfflineEventFactory() {
       }
 
       case MeetingEventType.Edited: {
-        const {
-          meetingId,
-          actionItems,
-          caseNote,
-          userNotepadNotes,
-          criticalUpdates,
-        } = event as EditMeetingEvent;
+        const { meetingId, actionItems, caseNote, userNotepadNotes } =
+          event as EditMeetingEvent;
         utils.v1.meeting.getDetails.setData({ meetingId }, (old) => {
           if (!old) return old;
           return {
             ...old,
             userNotepadNotes: userNotepadNotes ?? old.userNotepadNotes,
-            criticalUpdates: criticalUpdates ?? old.criticalUpdates,
             actionItems: actionItems ?? old.actionItems,
             caseNote: caseNote ?? old.caseNote,
           };

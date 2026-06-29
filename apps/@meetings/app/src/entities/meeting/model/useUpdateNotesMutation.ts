@@ -43,7 +43,6 @@ export function useUpdateNotes(options?: {
           type: MeetingEventType.Edited,
           meetingId: vars.meetingId,
           userNotepadNotes: vars.userNotepadNotes,
-          criticalUpdates: vars.criticalUpdates,
           actionItems: vars.actionItems,
           caseNote: vars.caseNote,
         });
