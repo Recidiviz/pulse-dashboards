@@ -18,7 +18,7 @@
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { MeetingDetails } from "~@meetings/app/common/types";
+import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 
 import MeetingDesktop from "./MeetingDesktop";

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MeetingDetails } from "~@meetings/app/common/types";
+import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { Person } from "~@meetings/app/shared/api";
 import { humanReadableTitleCase } from "~@meetings/app/shared/lib/format";
 

@@ -28,12 +28,3 @@ export type ClientMeetings = Awaited<
 export type ResidentMeetings = Awaited<
   ReturnType<AppRouter["v1"]["resident"]["getMeetings"]>
 >;
-
-export type RecordingStatus =
-  | "idle"
-  | "recording"
-  | "paused"
-  | "uploading"
-  | "stopping"
-  | "discarding"
-  | "ending";

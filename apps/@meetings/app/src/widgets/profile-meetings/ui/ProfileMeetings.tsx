@@ -31,12 +31,15 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { ClientMeetings, ResidentMeetings } from "~@meetings/app/common/types";
 import Header from "~@meetings/app/components/Header";
 import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
 import { useAnalytics } from "~@meetings/app/context/AnalyticsContext";
 import { useStateSelection } from "~@meetings/app/context/StateContext";
-import { useCreateMeeting } from "~@meetings/app/entities/meeting";
+import {
+  ClientMeetings,
+  ResidentMeetings,
+  useCreateMeeting,
+} from "~@meetings/app/entities/meeting";
 import {
   useMeetingTypeStore,
   validateAndStart,

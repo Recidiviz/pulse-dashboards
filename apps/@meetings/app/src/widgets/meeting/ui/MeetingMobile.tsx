@@ -38,9 +38,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { MeetingDetails } from "~@meetings/app/common/types";
 import DraftCaseNoteSheet from "~@meetings/app/components/DraftCaseNoteSheet";
 import { useUserContext } from "~@meetings/app/context/UserContext";
+import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";

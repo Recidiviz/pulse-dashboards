@@ -21,7 +21,7 @@ import OutlineThumbUpIcon from "react-native-heroicons/outline/ThumbUpIcon";
 import SolidThumbDownIcon from "react-native-heroicons/solid/ThumbDownIcon";
 import SolidThumbUpIcon from "react-native-heroicons/solid/ThumbUpIcon";
 
-import type { MeetingDetails } from "~@meetings/app/common/types";
+import type { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { trpc } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 

@@ -33,8 +33,10 @@ import {
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 
-import { MeetingDetails } from "~@meetings/app/common/types";
-import { useUpdateNotes } from "~@meetings/app/entities/meeting";
+import {
+  type MeetingDetails,
+  useUpdateNotes,
+} from "~@meetings/app/entities/meeting";
 import { theme } from "~@meetings/app/shared/config";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";

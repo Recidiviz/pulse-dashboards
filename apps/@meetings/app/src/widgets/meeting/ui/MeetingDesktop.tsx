@@ -27,9 +27,9 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
-import { MeetingDetails } from "~@meetings/app/common/types";
 import Header from "~@meetings/app/components/Header";
 import { useUserContext } from "~@meetings/app/context/UserContext";
+import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";

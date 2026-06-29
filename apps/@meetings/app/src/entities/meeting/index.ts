@@ -15,6 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export type {
+  ClientMeetings,
+  MeetingDetails,
+  ResidentMeetings,
+} from "./api/meeting";
 export { useCreateMeeting } from "./model/useCreateMeeting";
 export { useDiscardMeeting } from "./model/useDiscardMeeting";
 export { useEndMeeting } from "./model/useEndMeeting";
