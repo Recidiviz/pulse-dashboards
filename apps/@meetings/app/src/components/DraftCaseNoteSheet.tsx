@@ -85,7 +85,7 @@ const DraftCaseNoteSheet = ({
     if (ref.current) {
       ref.current.close();
     }
-    showSnackbar("Case note saved");
+    showSnackbar("Case note saved", 6000);
   };
 
   const handleCopyNotes = () => {

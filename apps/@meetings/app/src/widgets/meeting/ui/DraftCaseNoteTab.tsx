@@ -39,7 +39,7 @@ const DraftCaseNoteTab = ({ meetingId, caseNote }: Props) => {
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
-      showSnackbar("Case note changes saved");
+      showSnackbar("Case note changes saved", 6000);
     },
   });
 
