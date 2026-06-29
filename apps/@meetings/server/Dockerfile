@@ -1,5 +1,5 @@
 # Build stage
-FROM node:22-alpine as builder
+FROM node:22.22-alpine as builder
 WORKDIR /usr/src/app
 
 # Enable corepack so newer versions of yarn can be installed
@@ -12,7 +12,7 @@ RUN yarn workspaces focus --production
 COPY dist/apps/@meetings/server .
 
 # Production stage
-FROM node:22-alpine
+FROM node:22.22-alpine
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
