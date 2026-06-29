@@ -49,13 +49,15 @@ jest.mock("@react-navigation/drawer", () => ({
 // Mock all screen components since they import native modules
 jest.mock("../../pages/clients", () => null);
 jest.mock("../../pages/residents", () => null);
+jest.mock("~@meetings/app/pages/state-selection", () => ({
+  StateSelectionScreen: null,
+}));
 jest.mock("../../pages/client-profile", () => null);
 jest.mock("../../pages/resident-profile", () => null);
 jest.mock("../../pages/client-meeting", () => null);
 jest.mock("../../pages/resident-meeting", () => null);
 jest.mock("../../screens/ClientNewMeetingScreen", () => null);
 jest.mock("../../screens/ResidentNewMeetingScreen", () => null);
-jest.mock("../../screens/StateSelectionScreen", () => null);
 jest.mock("../../components/DrawerContent", () => null);
 jest.mock("../../pages/onboarding", () => ({
   OnboardingScreen: null,

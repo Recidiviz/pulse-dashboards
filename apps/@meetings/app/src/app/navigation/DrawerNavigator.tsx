@@ -32,9 +32,9 @@ import { OnboardingScreen } from "~@meetings/app/pages/onboarding";
 import { ResidentMeetingScreen } from "~@meetings/app/pages/resident-meeting";
 import { ResidentProfileScreen } from "~@meetings/app/pages/resident-profile";
 import { ResidentsScreen } from "~@meetings/app/pages/residents";
+import { StateSelectionScreen } from "~@meetings/app/pages/state-selection";
 import ClientNewMeetingScreen from "~@meetings/app/screens/ClientNewMeetingScreen";
 import ResidentNewMeetingScreen from "~@meetings/app/screens/ResidentNewMeetingScreen";
-import StateSelectionScreen from "~@meetings/app/screens/StateSelectionScreen";
 import {
   ClientsStackParamList,
   IS_PROD,

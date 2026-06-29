@@ -29,18 +29,21 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import Header from "../components/Header";
-import { useAgencyConfigs } from "../context/AgencyConfigContext";
-import { StateCode, useStateSelection } from "../context/StateContext";
-import { trpc } from "../shared/api";
-import { theme } from "../shared/config";
-import { RootStackParamList } from "../shared/config/routes";
-import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
-import { Typography } from "../shared/ui/Typography";
+import Header from "~@meetings/app/components/Header";
+import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
+import {
+  StateCode,
+  useStateSelection,
+} from "~@meetings/app/context/StateContext";
+import { trpc } from "~@meetings/app/shared/api";
+import { theme } from "~@meetings/app/shared/config";
+import { RootStackParamList } from "~@meetings/app/shared/config";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type StateSelectionNavProp = NativeStackNavigationProp<RootStackParamList>;
 
-const StateSelectionScreen = () => {
+export const StateSelectionScreen = () => {
   const insets = useSafeAreaInsets();
   useSetDocumentTitle("State Selection - Recidiviz Meetings");
   const navigation = useNavigation<StateSelectionNavProp>();
@@ -134,5 +137,3 @@ const StateSelectionScreen = () => {
     </SafeAreaView>
   );
 };
-
-export default StateSelectionScreen;
