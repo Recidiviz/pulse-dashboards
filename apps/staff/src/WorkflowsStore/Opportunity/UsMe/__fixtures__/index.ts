@@ -19,14 +19,11 @@ import { Required as RequireKeys } from "utility-types";
 
 import {
   ClientRecord,
+  UsMeEarlyTerminationRecord,
+  UsMeFurloughReleaseRecord,
   UsMeWorkReleaseRecordRaw,
   WorkflowsResidentRecord,
 } from "~datatypes";
-
-import {
-  UsMeEarlyTerminationReferralRecordRaw,
-  UsMeFurloughReleaseReferralRecordRaw,
-} from "..";
 
 export const usMePersonRecord: WorkflowsResidentRecord = {
   recordId: "us_me_111",
@@ -74,7 +71,7 @@ export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
   metadata: {},
 };
 
-export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferralRecordRaw =
+export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseRecord["input"] =
   {
     stateCode: "US_ME",
     externalId: "111",
@@ -247,7 +244,7 @@ export const usMeEarlyTerminationAlmostEligibleSupervisionStartClientRecord: Req
     emailAddress: "tt@example.com",
   };
 
-export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
+export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationRecord["input"] =
   {
     stateCode: "US_ME",
     externalId: "009",
@@ -279,7 +276,7 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
     metadata: {},
   };
 
-export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
+export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEarlyTerminationRecord["input"] =
   {
     stateCode: "US_ME",
     externalId: "010",
@@ -312,7 +309,7 @@ export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEa
     metadata: {},
   };
 
-export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
+export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarlyTerminationRecord["input"] =
   {
     stateCode: "US_ME",
     externalId: "011",

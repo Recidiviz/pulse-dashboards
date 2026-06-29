@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,67 +15,53 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMeEarlyTerminationRecord } from "~datatypes";
+import { mapValues } from "lodash-es";
 
-import { fixtureWithIdKey } from "./utils";
+import {
+  UsMeEarlyTerminationRecord,
+  usMeEarlyTerminationSchema,
+} from "./schema";
 
-export const usMeEarlyTerminationReferralsFixture = fixtureWithIdKey<
-  UsMeEarlyTerminationRecord["input"]
->("externalId", [
-  {
+export const usMeEarlyTerminationFixturesRaw = {
+  ET009Eligible: {
     stateCode: "US_ME",
     externalId: "009",
     eligibleCriteria: {
-      noConvictionWithin6Months: null,
+      usMePaidAllOwedRestitution: { amountOwed: 0 },
+      noConvictionWithin6Months: {},
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: "2024-04-03",
       },
-      supervisionLevelIsMediumOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
-      usMeNoPendingViolationsWhileSupervised: null,
+      supervisionLevelIsMediumOrLower: { supervisionLevel: "MEDIUM" },
+      usMeNoPendingViolationsWhileSupervised: {},
     },
     ineligibleCriteria: {},
     caseNotes: {
-      "Supervision Conditions": [
+      foo: [
         {
-          noteTitle: "Other - Not completed",
-          noteBody: "There are some other conditions",
-          eventDate: "2022-06-17",
-        },
-        {
-          noteTitle: "Report as directed - Not completed",
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: "2022-06-28",
         },
       ],
     },
     isEligible: true,
     isAlmostEligible: false,
-    metadata: {
-      denial: {
-        officerEmail: "officer.smith@example.com",
-        startDate: "2021-12-01",
-        endDate: "2022-01-01",
-        denialReasons: ["BENEFIT", "CONDUCT"],
-      },
-    },
+    metadata: {},
   },
-  {
+  ET010AlmostEligibleRestitution: {
     stateCode: "US_ME",
     externalId: "010",
     eligibleCriteria: {
-      noConvictionWithin6Months: null,
+      noConvictionWithin6Months: {},
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: "2024-04-03",
       },
-      supervisionLevelIsMediumOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
-      usMeNoPendingViolationsWhileSupervised: null,
+      supervisionLevelIsMediumOrLower: { supervisionLevel: "MEDIUM" },
+      usMeNoPendingViolationsWhileSupervised: {},
     },
     ineligibleCriteria: {
-      usMePaidAllOwedRestitution: {
-        amountOwed: 500,
-      },
+      usMePaidAllOwedRestitution: { amountOwed: 500 },
     },
     caseNotes: {
       foo: [
@@ -90,18 +76,16 @@ export const usMeEarlyTerminationReferralsFixture = fixtureWithIdKey<
     isAlmostEligible: true,
     metadata: {},
   },
-  {
+  ET011AlmostEligibleViolation: {
     stateCode: "US_ME",
     externalId: "011",
     eligibleCriteria: {
-      usMePaidAllOwedRestitution: null,
-      noConvictionWithin6Months: null,
+      usMePaidAllOwedRestitution: {},
+      noConvictionWithin6Months: {},
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: "2024-04-03",
       },
-      supervisionLevelIsMediumOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
+      supervisionLevelIsMediumOrLower: { supervisionLevel: "MEDIUM" },
     },
     ineligibleCriteria: {
       usMeNoPendingViolationsWhileSupervised: {
@@ -122,4 +106,9 @@ export const usMeEarlyTerminationReferralsFixture = fixtureWithIdKey<
     isAlmostEligible: true,
     metadata: {},
   },
-]);
+} satisfies Record<string, UsMeEarlyTerminationRecord["input"]>;
+
+export const usMeEarlyTerminationFixtures = mapValues(
+  usMeEarlyTerminationFixturesRaw,
+  (r) => usMeEarlyTerminationSchema.parse(r),
+);

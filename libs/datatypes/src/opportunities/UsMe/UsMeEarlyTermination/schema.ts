@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 
 import { z } from "zod";
 
-import { usMeDenialMetadataSchema } from "~datatypes";
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
-
-import { NullCoalesce } from "../../schemaHelpers";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema, NullCoalesce } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { eligibleDateReasonSchema, usMeDenialMetadataSchema } from "../common";
 
 const usMePaidAllOwedRestitution = NullCoalesce(
   {},
@@ -38,9 +38,8 @@ const eligibleCriteria = z
         })
         .optional(),
     ).optional(),
-    usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: z.object({
-      eligibleDate: dateStringSchema,
-    }),
+    usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart:
+      eligibleDateReasonSchema,
     usMeNoPendingViolationsWhileSupervised: NullCoalesce(
       {},
       z
@@ -72,15 +71,9 @@ const ineligibleCriteria = z
 export const usMeEarlyTerminationSchema = opportunitySchemaBase.extend({
   eligibleCriteria,
   ineligibleCriteria,
-  metadata: z.object({
-    denial: usMeDenialMetadataSchema,
-  }),
+  metadata: z.object({ denial: usMeDenialMetadataSchema }),
 });
 
-export type UsMeEarlyTerminationReferralRecord = z.infer<
-  typeof usMeEarlyTerminationSchema
->;
-
-export type UsMeEarlyTerminationReferralRecordRaw = z.input<
+export type UsMeEarlyTerminationRecord = ParsedRecord<
   typeof usMeEarlyTerminationSchema
 >;

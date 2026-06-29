@@ -15,54 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import {
-  dateStringSchema,
-  opportunitySchemaBase,
-  usMeDenialMetadataSchema,
-} from "~datatypes";
-
-import { eligibleDateSchema } from "../../schemaHelpers";
-
-export const usMeFurloughReleaseSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z
-    .object({
-      usMeThreeYearsRemainingOnSentence: eligibleDateSchema,
-      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease:
-        eligibleDateSchema,
-      usMeNoClassAOrBViolationFor90Days: z
-        .object({
-          eligibleDate: dateStringSchema.nullable(),
-          highestClassViol: z.string(),
-          violType: z.string(),
-        })
-        .nullable(),
-      usMeCustodyLevelIsMinimumOrCommunity: z.object({
-        custodyLevel: z.string(),
-      }),
-      usMeNoDetainersWarrantsOrOther: z
-        .object({
-          detainer: z.string(),
-          detainerStartDate: dateStringSchema.nullable(),
-        })
-        .nullable(),
-      usMeServedHalfOfSentence: eligibleDateSchema.optional(),
-    })
-    .passthrough(),
-  metadata: z.object({
-    denial: usMeDenialMetadataSchema,
-  }),
-});
-
-export type UsMeFurloughReleaseReferralRecord = z.infer<
-  typeof usMeFurloughReleaseSchema
->;
-
-export type UsMeFurloughReleaseReferralRecordRaw = z.input<
-  typeof usMeFurloughReleaseSchema
->;
-
 export type UsMeFurloughReleaseDraftData = {
   residentName: string;
   mdocNo: string;

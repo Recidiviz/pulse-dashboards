@@ -1,0 +1,109 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for RES001Eligible 1`] = `
+{
+  "caseNotes": {
+    "Education": [
+      {
+        "eventDate": 2022-06-02T00:00:00.000Z,
+        "noteBody": "Completed coding course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimumOrCommunity": {
+      "custodyLevel": "COMMUNITY",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2022-08-10T00:00:00.000Z,
+    },
+    "usMeServedHalfOfSentence": {
+      "eligibleDate": 2022-08-10T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2022-05-27T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES002Eligible 1`] = `
+{
+  "caseNotes": {
+    "Employment Training": [
+      {
+        "eventDate": 2021-12-02T00:00:00.000Z,
+        "noteBody": "Completed course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimumOrCommunity": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2022-08-10T00:00:00.000Z,
+    },
+    "usMeServedHalfOfSentence": {
+      "eligibleDate": 2022-08-10T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2022-05-27T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES002",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES003Eligible 1`] = `
+{
+  "caseNotes": {
+    "Education": [
+      {
+        "eventDate": 2022-06-02T00:00:00.000Z,
+        "noteBody": "Completed coding course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimumOrCommunity": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2022-08-10T00:00:00.000Z,
+    },
+    "usMeServedHalfOfSentence": {
+      "eligibleDate": 2022-08-10T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2022-04-27T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES003",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ME",
+}
+`;

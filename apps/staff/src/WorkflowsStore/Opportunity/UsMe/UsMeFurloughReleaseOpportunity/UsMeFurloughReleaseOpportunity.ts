@@ -18,18 +18,19 @@
 import { differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsMeFurloughReleaseRecord,
+  usMeFurloughReleaseSchema,
+} from "~datatypes";
+
 import { FeatureGateError } from "../../../../errors";
 import { Resident } from "../../../Resident";
 import { UsMeFurloughReleaseForm } from "../../Forms/UsMeFurloughReleaseForm";
 import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
-import {
-  UsMeFurloughReleaseReferralRecord,
-  usMeFurloughReleaseSchema,
-} from "./UsMeFurloughReleaseReferralRecord";
 
 export class UsMeFurloughReleaseOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Resident,
-  UsMeFurloughReleaseReferralRecord
+  UsMeFurloughReleaseRecord["output"]
 > {
   readonly hideUnknownCaseNoteDates = true;
 

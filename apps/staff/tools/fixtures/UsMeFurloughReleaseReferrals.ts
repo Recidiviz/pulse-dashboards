@@ -15,111 +15,113 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMeFurloughReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMe";
+import { UsMeFurloughReleaseRecord } from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usMeFurloughReleaseFixture: FirestoreFixture<UsMeFurloughReleaseReferralRecordRaw> =
-  {
-    data: [
-      {
-        stateCode: "US_ME",
-        externalId: "RES001",
-        eligibleCriteria: {
-          usMeCustodyLevelIsMinimumOrCommunity: {
-            custodyLevel: "COMMUNITY",
-          },
-          usMeNoClassAOrBViolationFor90Days: null,
-          usMeNoDetainersWarrantsOrOther: null,
-          usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-            eligibleDate: "2022-08-10",
-          },
-          usMeServedHalfOfSentence: {
-            eligibleDate: "2022-08-10",
-          },
-          usMeThreeYearsRemainingOnSentence: {
-            eligibleDate: "2022-05-27",
-          },
+export const usMeFurloughReleaseFixture: FirestoreFixture<
+  UsMeFurloughReleaseRecord["input"]
+> = {
+  data: [
+    {
+      stateCode: "US_ME",
+      externalId: "RES001",
+      eligibleCriteria: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
+          custodyLevel: "COMMUNITY",
         },
-        ineligibleCriteria: {},
-        caseNotes: {
-          Education: [
-            {
-              eventDate: "2022-06-02",
-              noteTitle: "Graduated",
-              noteBody: "Completed coding course",
-            },
-          ],
+        usMeNoClassAOrBViolationFor90Days: null,
+        usMeNoDetainersWarrantsOrOther: null,
+        usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+          eligibleDate: "2022-08-10",
         },
-        isEligible: true,
-        isAlmostEligible: false,
-        metadata: {},
+        usMeServedHalfOfSentence: {
+          eligibleDate: "2022-08-10",
+        },
+        usMeThreeYearsRemainingOnSentence: {
+          eligibleDate: "2022-05-27",
+        },
       },
-      {
-        stateCode: "US_ME",
-        externalId: "RES002",
-        eligibleCriteria: {
-          usMeCustodyLevelIsMinimumOrCommunity: {
-            custodyLevel: "MINIMUM",
+      ineligibleCriteria: {},
+      caseNotes: {
+        Education: [
+          {
+            eventDate: "2022-06-02",
+            noteTitle: "Graduated",
+            noteBody: "Completed coding course",
           },
-          usMeNoClassAOrBViolationFor90Days: null,
-          usMeNoDetainersWarrantsOrOther: null,
-          usMeThreeYearsRemainingOnSentence: {
-            eligibleDate: "2022-05-27",
-          },
-          usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-            eligibleDate: "2022-08-10",
-          },
-          usMeServedHalfOfSentence: {
-            eligibleDate: "2022-08-10",
-          },
-        },
-        ineligibleCriteria: {},
-        caseNotes: {
-          "Employment Training": [
-            {
-              eventDate: "2021-12-02",
-              noteTitle: "Graduated",
-              noteBody: "Completed course",
-            },
-          ],
-        },
-        isEligible: true,
-        isAlmostEligible: false,
-        metadata: {},
+        ],
       },
-      {
-        stateCode: "US_ME",
-        externalId: "RES003",
-        eligibleCriteria: {
-          usMeCustodyLevelIsMinimumOrCommunity: {
-            custodyLevel: "MINIMUM",
-          },
-          usMeNoDetainersWarrantsOrOther: null,
-          usMeThreeYearsRemainingOnSentence: {
-            eligibleDate: "2022-04-27",
-          },
-          usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-            eligibleDate: "2022-08-10",
-          },
-          usMeNoClassAOrBViolationFor90Days: null,
-          usMeServedHalfOfSentence: {
-            eligibleDate: "2022-08-10",
-          },
+      isEligible: true,
+      isAlmostEligible: false,
+      metadata: {},
+    },
+    {
+      stateCode: "US_ME",
+      externalId: "RES002",
+      eligibleCriteria: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
+          custodyLevel: "MINIMUM",
         },
-        ineligibleCriteria: {},
-        caseNotes: {
-          Education: [
-            {
-              eventDate: "2022-06-02",
-              noteTitle: "Graduated",
-              noteBody: "Completed coding course",
-            },
-          ],
+        usMeNoClassAOrBViolationFor90Days: null,
+        usMeNoDetainersWarrantsOrOther: null,
+        usMeThreeYearsRemainingOnSentence: {
+          eligibleDate: "2022-05-27",
         },
-        isEligible: true,
-        isAlmostEligible: false,
-        metadata: {},
+        usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+          eligibleDate: "2022-08-10",
+        },
+        usMeServedHalfOfSentence: {
+          eligibleDate: "2022-08-10",
+        },
       },
-    ],
-    idFunc: externalIdFunc,
-  };
+      ineligibleCriteria: {},
+      caseNotes: {
+        "Employment Training": [
+          {
+            eventDate: "2021-12-02",
+            noteTitle: "Graduated",
+            noteBody: "Completed course",
+          },
+        ],
+      },
+      isEligible: true,
+      isAlmostEligible: false,
+      metadata: {},
+    },
+    {
+      stateCode: "US_ME",
+      externalId: "RES003",
+      eligibleCriteria: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
+          custodyLevel: "MINIMUM",
+        },
+        usMeNoDetainersWarrantsOrOther: null,
+        usMeThreeYearsRemainingOnSentence: {
+          eligibleDate: "2022-04-27",
+        },
+        usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+          eligibleDate: "2022-08-10",
+        },
+        usMeNoClassAOrBViolationFor90Days: null,
+        usMeServedHalfOfSentence: {
+          eligibleDate: "2022-08-10",
+        },
+      },
+      ineligibleCriteria: {},
+      caseNotes: {
+        Education: [
+          {
+            eventDate: "2022-06-02",
+            noteTitle: "Graduated",
+            noteBody: "Completed coding course",
+          },
+        ],
+      },
+      isEligible: true,
+      isAlmostEligible: false,
+      metadata: {},
+    },
+  ],
+  idFunc: externalIdFunc,
+};

@@ -1,5 +1,107 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`schema for ET009Eligible 1`] = `
+{
+  "caseNotes": {
+    "foo": [
+      {
+        "eventDate": 2022-06-28T00:00:00.000Z,
+        "noteBody": "A body",
+        "noteTitle": "A title",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMeNoPendingViolationsWhileSupervised": {},
+    "usMePaidAllOwedRestitution": {
+      "amountOwed": 0,
+    },
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
+      "eligibleDate": 2024-04-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "009",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for ET010AlmostEligibleRestitution 1`] = `
+{
+  "caseNotes": {
+    "foo": [
+      {
+        "eventDate": 2022-06-28T00:00:00.000Z,
+        "noteBody": "A body",
+        "noteTitle": "A title",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMeNoPendingViolationsWhileSupervised": {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
+      "eligibleDate": 2024-04-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "010",
+  "ineligibleCriteria": {
+    "usMePaidAllOwedRestitution": {
+      "amountOwed": 500,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {},
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for ET011AlmostEligibleViolation 1`] = `
+{
+  "caseNotes": {
+    "foo": [
+      {
+        "eventDate": 2022-06-28T00:00:00.000Z,
+        "noteBody": "A body",
+        "noteTitle": "A title",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMePaidAllOwedRestitution": {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
+      "eligibleDate": 2024-04-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "011",
+  "ineligibleCriteria": {
+    "usMeNoPendingViolationsWhileSupervised": {
+      "currentStatus": "PENDING VIOLATION",
+      "violationDate": 2023-01-01T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {},
+  "stateCode": "US_ME",
+}
+`;
+
 exports[`transform record with null pending violation criteria 1`] = `
 {
   "caseNotes": {},
@@ -10,7 +112,6 @@ exports[`transform record with null pending violation criteria 1`] = `
     },
     "usMeNoPendingViolationsWhileSupervised": {},
     "usMePaidAllOwedRestitution": {},
-    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -33,7 +134,6 @@ exports[`transform record with pending violation ineligibleCriteria 1`] = `
       "supervisionLevel": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": {},
-    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -63,7 +163,6 @@ exports[`transform record with restitution case 1`] = `
     "usMePaidAllOwedRestitution": {
       "amountOwed": 0,
     },
-    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -85,7 +184,6 @@ exports[`transform record with restitution ineligibleCriteria 1`] = `
     "supervisionLevelIsMediumOrLower": {
       "supervisionLevel": "MEDIUM",
     },
-    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -112,7 +210,6 @@ exports[`transform record without restitution case 1`] = `
       "supervisionLevel": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": {},
-    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },

@@ -18,17 +18,18 @@
 import dedent from "dedent";
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsMeEarlyTerminationRecord,
+  usMeEarlyTerminationSchema,
+} from "~datatypes";
+
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
 import { OpportunityRequirement } from "../../types";
 import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
-import {
-  UsMeEarlyTerminationReferralRecord,
-  usMeEarlyTerminationSchema,
-} from "./UsMeEarlyTerminationReferralRecord";
 
 const CRITERIA: Record<
-  keyof UsMeEarlyTerminationReferralRecord["eligibleCriteria"],
+  keyof UsMeEarlyTerminationRecord["output"]["eligibleCriteria"],
   Partial<OpportunityRequirement>
 > = {
   usMePaidAllOwedRestitution: {
@@ -51,7 +52,7 @@ const CRITERIA: Record<
 
 export class UsMeEarlyTerminationOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Client,
-  UsMeEarlyTerminationReferralRecord
+  UsMeEarlyTerminationRecord["output"]
 > {
   readonly hideUnknownCaseNoteDates = true;
 

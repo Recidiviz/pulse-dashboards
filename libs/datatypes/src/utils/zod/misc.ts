@@ -17,6 +17,17 @@
 
 import { z } from "zod";
 
+export function NullCoalesce<T extends z.ZodTypeAny>(
+  fallback: z.input<T>,
+  schema: T,
+) {
+  return z.preprocess((val) => val ?? fallback, schema) as z.ZodEffects<
+    T,
+    z.output<T>,
+    z.input<T> | null
+  >;
+}
+
 export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
   return schema.nullish().transform((output) => {
     return output === null ? undefined : output;
